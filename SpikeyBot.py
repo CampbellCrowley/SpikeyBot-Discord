@@ -179,7 +179,7 @@ async def on_message(message):
       await client.send_message(message.channel, message.author.mention + "\n```lua\nYou created your discord account on " + message.author.created_at.strftime('%A %b/%d/%Y') + "\n```")
     elif message.content.startswith(prefix + 'purge') or message.content.startswith(prefix + 'prune'):
       if message.author.top_role.permissions.manage_messages:
-        if message.content.starswith(prefix + 'purge'):
+        if message.content.startswith(prefix + 'purge'):
           editedmessage = message.content.replace(prefix + 'purge', '', 1).split(' ')
         else:
           editedmessage = message.content.replace(prefix + 'prune', '', 1).split(' ')
