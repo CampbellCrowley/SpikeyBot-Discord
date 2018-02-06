@@ -63,6 +63,10 @@ async def on_message(message):
     if message.content.startswith(prefix):
         print(message.channel.server.name + "#" + message.channel.name + "@" + message.author.name + message.content)
 
+    if message.content.startswith(prefix + 'whoami'):
+        await client.send_message(message.channel, message.author.mention + "\n```I don't know! Should you know that?```")
+        return
+
     if message.content.startswith(prefix + 'updategame '):
         game = ''
         splitstring = message.content.split(' ')
@@ -173,9 +177,12 @@ async def on_message(message):
       if len(editedmessage) > 1:
           print("NYI" + str(len(editedmessage)))
       await client.send_message(message.channel, message.author.mention + "\n```lua\nYou created your discord account on " + message.author.created_at.strftime('%A %b/%d/%Y') + "\n```")
-    elif message.content.startswith(prefix + 'purge'):
-      if message.author.top_role.name == 'God' or message.author.top_role.name == 'Creator of All Powerful Ultra Supreme God Emperor' or message.author.top_role.name == 'Demi-God':
-        editedmessage = message.content.replace(prefix + 'purge', '', 1).split(' ')
+    elif message.content.startswith(prefix + 'purge') or message.content.startswith(prefix + 'prune'):
+      if message.author.top_role.permissions.manage_messages:
+        if message.content.starswith(prefix + 'purge'):
+          editedmessage = message.content.replace(prefix + 'purge', '', 1).split(' ')
+        else:
+          editedmessage = message.content.replace(prefix + 'prune', '', 1).split(' ')
         print("Purging " + editedmessage[1] + " messages from " + str(message.channel));
         await client.purge_from(message.channel, limit=int(editedmessage[1]));
         await client.purge_from(message.channel, limit=1);
