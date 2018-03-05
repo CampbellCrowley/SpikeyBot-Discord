@@ -4,6 +4,11 @@ from time import localtime
 
 """ https://discordapp.com/oauth2/authorize?&client_id=318552464356016131&scope=bot """
 
+class log:
+    def __init__(self, message : str):
+        with open("output.log", "a") as file:
+          file.write(message + "\n")
+
 client = discord.Client()
 if not discord.opus.is_loaded():
   discord.opus.load_opus('opus')
@@ -12,11 +17,12 @@ prefix = '?'
 password = 'password'
 helpmessage = "```py\nLet me see if I can help you:\n" \
             "-----\n" \
+            "# BASIC COMMANDS #\n" \
+            "-----\n" \
             "I can add numbers!\n" \
             "Type \"" + prefix + "add 1 2 3\" to make me do math!\n" \
             "I can also do subtraction!\n" \
             "-----\n" \
-            \
             "I can say stuff!\n" \
             "Type \"" + prefix + "say SpikeyBot is the best!\" to make me say stuff!\n"\
             "-----\n" \
@@ -25,26 +31,54 @@ helpmessage = "```py\nLet me see if I can help you:\n" \
             "-----\n" \
             "I can also tell you the date of when you created your Discord account!\n"\
             "Type \"" + prefix + "discorddate\" and I will tell you!\n"\
-            "-----\n"\
-            "Want to add me to your server?\n"\
-            "Type \"" + prefix + "addme\" and I will send you a link!\n"\
-            "-----\n" \
-            "I have also given those who can manage other roles of others the power to smite!\n"\
-            "They must merely type \"" + prefix + "smite @SpikeyRobot#9836\" and he will be struck down!\n"\
-            "-----\n" \
-            "Need many messages to be deleted, but to lazy to do it manually? Those who can manage messages can be lazy!\n"\
-            "Type \"" + prefix + "purge 5\" to purge 5 messages!\n"\
             "-----\n" \
             "Want to know more about me?\n"\
             "Type \"" + prefix + "pmme\" and I will introduce myself to you!\n"\
             "-----\n" \
-            "Want me to PM SpikeyRobot because you're to shy?\n"\
+            "Want me to PM SpikeyRobot because you are too shy?\n"\
             "Type \"" + prefix + "pmspikey\" and I will forward your message for you! (Be sure to type your message after the command!)\n"\
+            "-----\n" \
+            "=======\n" \
+            "-----\n" \
+            "# LAZY ADMIN STUFF #\n" \
+            "-----\n" \
+            "Need many messages to be deleted, but to lazy to do it manually? Those who can manage messages can be lazy!\n"\
+            "Type \"" + prefix + "purge 5\" to purge 5 messages!\n"\
             "-----\n" \
             "Want to know who you are?\n"\
             "Type \"" + prefix + "whoami\" and I can try to figure it out!\n"\
+            "-----\n"\
+            "Want to add me to your server?\n"\
+            "Type \"" + prefix + "addme\" and I will send you a link!\n"\
             "-----\n" \
-            "Send @SpikeyRobot#9836 feature requests!```"
+            "I have also given those who can manage roles of others the power to smite!\n"\
+            "They must merely type \"" + prefix + "smite @SpikeyRobot#9836\" and he will be struck down!\n"\
+            "-----\n" \
+            "=======\n" \
+            "-----\n" \
+            "# MUSIC COMMANDS! #\n"\
+            "-----\n" \
+            "Have a filthy beat you want @everyone to hear?\n"\
+            "Type \"" + prefix + "play\" 'put url or search here'\n"\
+            "Here is a list of sites you can link: https://rg3.github.io/youtube-dl/supportedsites.html\n"\
+            "-----\n" \
+            "Are the filthy beats no longer filthy?\n"\
+            "Type \"" + prefix + "stop\" and I will stfu!\n"\
+            "-----\n" \
+            "Is the next track better than the current trash?\n" \
+            "Type \"" + prefix + "skip\" and I will toss out the trash!\n"\
+            "-----\n" \
+            "Need the fire jams to wait for you?\n"\
+            "Type \"" + prefix + "pause\" to save the heat for later.\n"\
+            "Type \"" + prefix + "resume\" to stoke the fire!\n"\
+            "-----\n" \
+            "Forgot what is playing?\n" \
+            "Type \"" + prefix + "playing\" and I will let you know!\n" \
+            "-----\n" \
+            "This is also a thing:\n" \
+            "Type \"" + prefix + "kokomo\"\n"\
+            "-----\n" \
+            "Send @SpikeyRobot#9836 feature requests! (Tip: use \"" + prefix + "pmspikey\")```"
 
 helpservermessage = "```py\nI sent you a PM with commands!\n```"
 
@@ -54,8 +88,8 @@ addmessage = "```\nWant to add me to your server? Click this link:\n```\n"\
 previoususer = "0"
 numberofmessages = 1
 
-print('Starting script')
-print(localtime())
+log('Starting script')
+log(str(localtime().tm_year) + "/" + str(localtime().tm_mon) + "/" + str(localtime().tm_mday) + " " + str(localtime().tm_hour) + ":" + str(localtime().tm_min))
 
 class VoiceEntry:
     def __init__(self, message, player):
@@ -64,10 +98,11 @@ class VoiceEntry:
         self.player = player
 
     def __str__(self):
-        fmt = '*{0.title}* uploaded by {0.uploader} and requested by {1.display_name}'
+        fmt = '*{0.title}*\nUploaded by {0.uploader}\nRequested by {1.display_name}\n{0.url}\n'
+        likes = '[likes: {0.likes}, dislikes: {0.dislikes}][views: {0.views}]'
         duration = self.player.duration
         if duration:
-            fmt = fmt + ' [length: {0[0]}m {0[1]}s]'.format(divmod(duration, 60))
+            fmt = fmt + '[length: {0[0]}m {0[1]}s]'.format(divmod(duration, 60)) + likes
         return fmt.format(self.player, self.requester)
 
 class VoiceState:
@@ -87,14 +122,13 @@ class VoiceState:
         player = self.current.player
         return not player.is_done()
 
-    @property
     def player(self):
         return self.current.player
 
     def skip(self):
         self.skip_votes.clear()
         if self.is_playing():
-            self.player.stop()
+            self.current.player.stop()
 
     def toggle_next(self):
         self.bot.loop.call_soon_threadsafe(self.play_next_song.set)
@@ -103,9 +137,16 @@ class VoiceState:
         while True:
             self.play_next_song.clear()
             self.current = await self.songs.get()
-            await self.bot.send_message(self.current.channel, 'Now playing ' + str(self.current))
+            await self.bot.send_message(self.current.channel, 'Now playing [' + str(self.songs.qsize()) + ' in queue]\n```' + str(self.current) +"```")
             self.current.player.start()
-            await self.play_next_song.wait()
+            try:
+              await self.play_next_song.wait()
+            except:
+              nothing = 0
+              # await self.bot.send_message(self.current.channel, 'An error occurred')
+            if self.songs.empty():
+              await self.voice.disconnect()
+              break
 
 class Music:
     """Voice related commands.
@@ -152,7 +193,7 @@ class Music:
         """Summons the bot to join your voice channel."""
         summoned_channel = ctx.message.author.voice_channel
         if summoned_channel is None:
-            await self.bot.send_message(ctx.message.channel, 'You are not in a voice channel.')
+            await self.bot.send_message(ctx.message.channel, ctx.message.author.mention + '\n```You are not in a voice channel.```')
             return False
 
         state = self.get_voice_state(ctx.message.server)
@@ -177,7 +218,7 @@ class Music:
             'quiet': True,
         }
 
-        await self.bot.send_message(ctx.message.channel, ctx.message.author.mention + "\n```Loading... Please wait...```")
+        loading = await self.bot.send_message(ctx.message.channel, ctx.message.author.mention + "\n```Loading... Please wait...```")
 
         try:
             player = await state.voice.create_ytdl_player(song, ytdl_options=opts, after=state.toggle_next)
@@ -185,32 +226,37 @@ class Music:
             fmt = 'An error occurred while processing this request: ```py\n{}: {}\n```'
             await self.bot.send_message(ctx.message.channel, fmt.format(type(e).__name__, e))
         else:
-            player.volume = 0.6
-            entry = VoiceEntry(ctx.message, player)
-            await self.bot.send_message(ctx.message.channel, 'Enqueued ' + str(entry))
-            await state.songs.put(entry)
+            if player.is_live:
+              await self.bot.send_message(ctx.message.channel, ctx.message.author.mention + '\n```I can\'t play livestreams, sorry!```')
+            else:
+              player.volume = 0.6
+              entry = VoiceEntry(ctx.message, player)
+              if not state.songs.empty() or (not state.current == None and state.current.player.is_playing()):
+                await self.bot.send_message(ctx.message.channel, ctx.message.author.mention + ' Enqueued [' + str(state.songs.qsize() + 1) + ' in queue]\n```' + str(entry) + '```')
+              await state.songs.put(entry)
+        await self.bot.delete_message(loading)
 
     async def volume(self, ctx, value : int):
         """Sets the volume of the currently playing song."""
 
         state = self.get_voice_state(ctx.message.server)
         if state.is_playing():
-            player = state.player
+            player = state.current.player
             player.volume = value / 100
-            await self.bot.send_message(ctx.message.channel, 'Set the volume to {:.0%}'.format(player.volume))
+            await self.bot.send_message(ctx.message.channel, ctx.message.author.mention + '\n```Set the volume to {:.0%}```'.format(player.volume))
 
     async def pause(self, ctx):
         """Pauses the currently played song."""
         state = self.get_voice_state(ctx.message.server)
         if state.is_playing():
-            player = state.player
+            player = state.current.player
             player.pause()
 
     async def resume(self, ctx):
         """Resumes the currently played song."""
         state = self.get_voice_state(ctx.message.server)
         if state.is_playing():
-            player = state.player
+            player = state.current.player
             player.resume()
 
     async def stop(self, ctx):
@@ -221,7 +267,7 @@ class Music:
         state = self.get_voice_state(server)
 
         if state.is_playing():
-            player = state.player
+            player = state.current.player
             player.stop()
 
         try:
@@ -238,33 +284,33 @@ class Music:
 
         state = self.get_voice_state(ctx.message.server)
         if not state.is_playing():
-            await self.bot.send_message(ctx.message.channel, 'Not playing any music right now...')
+            await self.bot.send_message(ctx.message.channel, ctx.message.author.mention + '\n```Not playing any music right now.```')
             return
 
         voter = ctx.message.author
         if voter == state.current.requester:
-            await self.bot.send_message(ctx.message.channel, 'Requester requested skipping song...')
+            await self.bot.send_message(ctx.message.channel, voter.mention + '\n```Skipping your song...```')
             state.skip()
         elif voter.id not in state.skip_votes:
             state.skip_votes.add(voter.id)
             total_votes = len(state.skip_votes)
             if total_votes >= 3:
-                await self.bot.send_message(ctx.message.channel, 'Skip vote passed, skipping song...')
+                await self.bot.send_message(ctx.message.channel, voter.mention + '\n```Skip vote passed, skipping song...```')
                 state.skip()
             else:
-                await self.bot.send_message(ctx.message.channel, 'Skip vote added, currently at [{}/3]'.format(total_votes))
+                await self.bot.send_message(ctx.message.channel, voter.mention + '\n```Skip vote added, currently at [{}/3]```'.format(total_votes))
         else:
-            await self.bot.send_message(ctx.message.channel, 'You have already voted to skip this song.')
+            await self.bot.send_message(ctx.message.channel, voter.mention + '\n```You have already voted to skip this song.```')
 
     async def playing(self, ctx):
         """Shows info about the currently played song."""
 
         state = self.get_voice_state(ctx.message.server)
         if state.current is None:
-            await self.bot.send_message(ctx.message.channel, 'Not playing anything.')
+            await self.bot.send_message(ctx.message.channel, ctx.message.author.mention + '\n```Not playing anything.```')
         else:
             skip_count = len(state.skip_votes)
-            await self.bot.send_message(ctx.message.channel, 'Now playing {} [skips: {}/3]'.format(state.current, skip_count))
+            await self.bot.send_message(ctx.message.channel, ctx.message.author.mention + ' Now playing\n```{} [skips: {}/3]```'.format(state.current, skip_count))
 
 class Context:
     def __init__(self, message):
@@ -274,10 +320,10 @@ music = Music(client)
 
 @client.event
 async def on_ready():
-    print('Logged in as')
-    print(client.user.name)
-    print(client.user.id)
-    print('------')
+    log('Logged in as')
+    log(client.user.name)
+    log(client.user.id)
+    log('------')
     await updategame(password, prefix + 'help for help')
     await client.send_message(await client.get_user_info('124733888177111041'), "I just started")
 
@@ -286,35 +332,58 @@ async def on_message(message):
     if message.author == client.user:
         return
 
+    nick = message.author.nick
+    if nick == None:
+        nick = message.author.name
+
     if message.author.id == '267211324612673536':
-        await client.send_message(message.channel, message.author.mention + "\n```Yo! It's a loser hacker wannabe! " + str(message.author.nick) + " shall not be trusted!```")
+        await client.send_message(message.channel, message.author.mention + "\n```Yo! It's a loser hacker wannabe! " + nick + " shall not be trusted!```")
         return
+
+    if message.content.startswith(prefix):
+        log(message.channel.server.name + "#" + message.channel.name + "@" + message.author.name + message.content)
 
     if message.content.startswith(prefix+'version'):
         await client.send_message(message.channel, message.author.mention + "\n```Some version after 0. Probably... ¯\_(ツ)_/¯```")
         return
 
-    nick = message.author.nick
-    if nick == None:
-        nick = message.author.name
-
-    if message.content.startswith(prefix):
-        print(message.channel.server.name + "#" + message.channel.name + "@" + message.author.name + message.content)
-
-    if message.content.startswith(prefix + 'whoami'):
-        await client.send_message(message.channel, message.author.mention + "\n```I don't know! Shouldn't you know that?\nID: " + message.author.id + "```")
+    elif message.content.startswith(prefix + 'whoami'):
+        if message.author.id == '124733888177111041':
+          await client.send_message(message.channel, message.author.mention + "\n```You are the God of everyone in " + message.server.name + "\nID: " + message.author.id + "```")
+        else:
+          await client.send_message(message.channel, message.author.mention + "\n```I don't know! Shouldn't you know that?\nID: " + message.author.id + "```")
         return
+
+    elif message.content.startswith(prefix + 'kokomo'):
+        ctx = Context(message)
+        if await music.summon(ctx):
+          await music.play(ctx, 'https://www.youtube.com/watch?v=fJWmbLS2_ec')
 
     elif message.content.startswith(prefix + 'play '):
         url = message.content.replace(prefix + 'play ', '')
-
         ctx = Context(message)
         if await music.summon(ctx):
           await music.play(ctx, url)
 
-    elif message.content.startswith(prefix+'stop'):
-      ctx = Context(message)
-      music.stop(ctx)
+    elif message.content.startswith(prefix + 'stop') or message.content.startswith(prefix + 'leave'):
+        ctx = Context(message)
+        await music.stop(ctx)
+
+    elif message.content.startswith(prefix + 'skip'):
+        ctx = Context(message)
+        await music.skip(ctx)
+
+    elif message.content.startswith(prefix + 'playing'):
+        ctx = Context(message)
+        await music.playing(ctx)
+
+    elif message.content.startswith(prefix + 'pause'):
+        ctx = Context(message)
+        await music.pause(ctx)
+
+    elif message.content.startswith(prefix + 'resume'):
+        ctx = Context(message)
+        await music.resume(ctx)
 
     elif message.content.startswith(prefix + 'pmme'):
         try:
@@ -419,7 +488,7 @@ async def on_message(message):
             editedmessage = editedmessage.replace('crowley', str(message.author.nick))
             editedmessage = editedmessage.replace('Crowley', str(message.author.nick))
         await client.send_message(message.channel, editedmessage)
-        print("I said \"" + message.content.replace(prefix + 'say ', '', 1) + "\" in " + message.channel.server.name + "#" + message.channel.name)
+        log("I said \"" + message.content.replace(prefix + 'say ', '', 1) + "\" in " + message.channel.server.name + "#" + message.channel.name)
         if message.author.id != "124733888177111041":
             return
 
@@ -464,13 +533,13 @@ async def on_message(message):
     elif message.content.startswith(prefix + 'joindate'):
       editedmessage = message.content.replace(prefix + 'joindate', '', 1).split(' ')
       if len(editedmessage) > 1:
-          print("NYI" + str(len(editedmessage)))
+          log("NYI" + str(len(editedmessage)))
       await client.send_message(message.channel, message.author.mention + "\n```lua\nYou joined this server on " + message.author.joined_at.strftime('%A %b/%d/%Y') + "\n```")
 
     elif message.content.startswith(prefix + 'discorddate'):
       editedmessage = message.content.replace(prefix + 'discorddate', '', 1).split(' ')
       if len(editedmessage) > 1:
-          print("NYI" + str(len(editedmessage)))
+          log("NYI" + str(len(editedmessage)))
       await client.send_message(message.channel, message.author.mention + "\n```lua\nYou created your discord account on " + message.author.created_at.strftime('%A %b/%d/%Y') + "\n```")
     elif message.content.startswith(prefix + 'purge') or message.content.startswith(prefix + 'prune'):
       if message.author.top_role.permissions.manage_messages:
@@ -478,7 +547,7 @@ async def on_message(message):
           editedmessage = message.content.replace(prefix + 'purge', '', 1).split(' ')
         else:
           editedmessage = message.content.replace(prefix + 'prune', '', 1).split(' ')
-        print("Purging " + editedmessage[1] + " messages from " + str(message.channel));
+        log("Purging " + editedmessage[1] + " messages from " + str(message.channel));
         await client.purge_from(message.channel, limit=int(editedmessage[1]));
         await client.purge_from(message.channel, limit=1);
       else:
@@ -499,15 +568,12 @@ async def add(left : int, right : int, channel : discord.Channel):
 async def updategame(password_ : str, game = ''):
     if password_ == password:
         await client.change_presence(game=discord.Game(name=game))
-        print("Changed game to \"" + game + "\"")
+        log("Changed game to \"" + game + "\"")
         return 0
     else:
-        print("Didn't change game (" + password_ + ")")
+        log("Didn't change game (" + password_ + ")")
         return 1
 
 
 while True:
-  try:
-    client.run("MzE4NTUyNDY0MzU2MDE2MTMx.DA0JAA.aNNIG_xR7ROtL4Ro_WZQjLiMLF0")
-  except:
-    print("EXCEPTION. RESTARTING")
+  client.run("MzE4NTUyNDY0MzU2MDE2MTMx.DA0JAA.aNNIG_xR7ROtL4Ro_WZQjLiMLF0")
