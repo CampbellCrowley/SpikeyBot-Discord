@@ -1,5 +1,6 @@
 import discord
 import asyncio
+import random
 from time import localtime
 
 """ https://discordapp.com/oauth2/authorize?&client_id=318552464356016131&scope=bot """
@@ -15,8 +16,8 @@ if not discord.opus.is_loaded():
 
 prefix = '?'
 password = 'password'
-helpmessage = "```py\nLet me see if I can help you:\n" \
-            "-----\n" \
+helpmessage = ["Let me see if I can help you:\n" \
+            "=======\n" \
             "# BASIC COMMANDS #\n" \
             "-----\n" \
             "I can add numbers!\n" \
@@ -38,12 +39,16 @@ helpmessage = "```py\nLet me see if I can help you:\n" \
             "Want me to PM SpikeyRobot because you are too shy?\n"\
             "Type \"" + prefix + "pmspikey\" and I will forward your message for you! (Be sure to type your message after the command!)\n"\
             "-----\n" \
-            "=======\n" \
-            "-----\n" \
+            "Indecisive? I have an unlimited supply of coins!\n"\
+            "Type \"" + prefix + "flip\" and I will flip a coin for you!\n"\
+            "=======\n",\
             "# LAZY ADMIN STUFF #\n" \
             "-----\n" \
             "Need many messages to be deleted, but to lazy to do it manually? Those who can manage messages can be lazy!\n"\
             "Type \"" + prefix + "purge 5\" to purge 5 messages!\n"\
+            "-----\n" \
+            "Want to ban someone in style?\n"\
+            "Type \"" + prefix + "fuckyou\" and I will use the ejector seat!\n"\
             "-----\n" \
             "Want to know who you are?\n"\
             "Type \"" + prefix + "whoami\" and I can try to figure it out!\n"\
@@ -53,14 +58,12 @@ helpmessage = "```py\nLet me see if I can help you:\n" \
             "-----\n" \
             "I have also given those who can manage roles of others the power to smite!\n"\
             "They must merely type \"" + prefix + "smite @SpikeyRobot#9836\" and he will be struck down!\n"\
-            "-----\n" \
-            "=======\n" \
-            "-----\n" \
+            "=======\n",\
             "# MUSIC COMMANDS! #\n"\
             "-----\n" \
             "Have a filthy beat you want @everyone to hear?\n"\
-            "Type \"" + prefix + "play\" 'put url or search here'\n"\
-            "Here is a list of sites you can link: https://rg3.github.io/youtube-dl/supportedsites.html\n"\
+            "Type \"" + prefix + "play 'put url or search here'\"\n"\
+            "Here is a list of sites you can link:\n  https://rg3.github.io/youtube-dl/supportedsites.html\n"\
             "-----\n" \
             "Are the filthy beats no longer filthy?\n"\
             "Type \"" + prefix + "stop\" and I will stfu!\n"\
@@ -78,7 +81,7 @@ helpmessage = "```py\nLet me see if I can help you:\n" \
             "This is also a thing:\n" \
             "Type \"" + prefix + "kokomo\"\n"\
             "-----\n" \
-            "Send @SpikeyRobot#9836 feature requests! (Tip: use \"" + prefix + "pmspikey\")```"
+            "Send @SpikeyRobot#9836 feature requests! (Tip: use \"" + prefix + "pmspikey\")"]
 
 helpservermessage = "```py\nI sent you a PM with commands!\n```"
 
@@ -87,6 +90,9 @@ addmessage = "```\nWant to add me to your server? Click this link:\n```\n"\
 
 previoususer = "0"
 numberofmessages = 1
+
+allowedPMCmds = ['addme', 'help', 'discorddate', 'pmme', 'pmspikey', 'flip', 'whoami']
+banMsgs = ["It was really nice meeting you!", "You're a really great person, I'm sorry I had to do this.", "See you soon!", "And they were never heard from again...", "Poof! Gone like magic!", "Does it seem quiet in here? Or is it just me?"]
 
 log('Starting script')
 log(str(localtime().tm_year) + "/" + str(localtime().tm_mon) + "/" + str(localtime().tm_mday) + " " + str(localtime().tm_hour) + ":" + str(localtime().tm_min))
@@ -98,7 +104,7 @@ class VoiceEntry:
         self.player = player
 
     def __str__(self):
-        fmt = '*{0.title}*\nUploaded by {0.uploader}\nRequested by {1.display_name}\n{0.url}\n'
+        fmt = '{0.title}*\nUploaded by {0.uploader}\nRequested by {1.display_name}\n{0.url}\n'
         likes = '[likes: {0.likes}, dislikes: {0.dislikes}][views: {0.views}]'
         duration = self.player.duration
         if duration:
@@ -139,14 +145,7 @@ class VoiceState:
             self.current = await self.songs.get()
             await self.bot.send_message(self.current.channel, 'Now playing [' + str(self.songs.qsize()) + ' in queue]\n```' + str(self.current) +"```")
             self.current.player.start()
-            try:
-              await self.play_next_song.wait()
-            except:
-              nothing = 0
-              # await self.bot.send_message(self.current.channel, 'An error occurred')
-            if self.songs.empty():
-              await self.voice.disconnect()
-              break
+            await self.play_next_song.wait()
 
 class Music:
     """Voice related commands.
@@ -276,6 +275,7 @@ class Music:
             await state.voice.disconnect()
         except:
             pass
+        await self.bot.send_message(ctx.message.channel, ctx.message.author.mention + '\n```Goodbye!```')
 
     async def skip(self, ctx):
         """Vote to skip a song. The song requester can automatically skip.
@@ -294,11 +294,16 @@ class Music:
         elif voter.id not in state.skip_votes:
             state.skip_votes.add(voter.id)
             total_votes = len(state.skip_votes)
-            if total_votes >= 3:
-                await self.bot.send_message(ctx.message.channel, voter.mention + '\n```Skip vote passed, skipping song...```')
+            num_users = len(ctx.message.author.voice.voice_channel.voice_members) - 1
+            if num_users <= 4:
+                needed_votes = 1
+            else:
+                needed_votes = num_users / 2
+            if needed_votes:
+                await self.bot.send_message(ctx.message.channel, voter.mention + '\n```Skip vote passed, skipping song... [skips: ' + total_votes + '/' + needed_votes + ']```')
                 state.skip()
             else:
-                await self.bot.send_message(ctx.message.channel, voter.mention + '\n```Skip vote added, currently at [{}/3]```'.format(total_votes))
+                await self.bot.send_message(ctx.message.channel, voter.mention + '\n```Skip vote added, currently at [{}/{}]```'.format(total_votes, neded_votes))
         else:
             await self.bot.send_message(ctx.message.channel, voter.mention + '\n```You have already voted to skip this song.```')
 
@@ -310,7 +315,12 @@ class Music:
             await self.bot.send_message(ctx.message.channel, ctx.message.author.mention + '\n```Not playing anything.```')
         else:
             skip_count = len(state.skip_votes)
-            await self.bot.send_message(ctx.message.channel, ctx.message.author.mention + ' Now playing\n```{} [skips: {}/3]```'.format(state.current, skip_count))
+            num_users = len(ctx.message.author.voice.voice_channel.voice_members) - 1
+            if num_users <= 4:
+                needed_votes = 1
+            else:
+                needed_votes = num_users / 2
+            await self.bot.send_message(ctx.message.channel, ctx.message.author.mention + ' Now playing\n```{} [skips: {}/{}]```'.format(state.current, skip_count, needed_votes))
 
 class Context:
     def __init__(self, message):
@@ -328,96 +338,143 @@ async def on_ready():
     await client.send_message(await client.get_user_info('124733888177111041'), "I just started")
 
 @client.event
+async def on_error(event):
+    log("ERROR:" + str(event))
+
+@client.event
 async def on_message(message):
     if message.author == client.user:
         return
 
-    nick = message.author.nick
-    if nick == None:
+    prefix_ = prefix
+    if message.channel.is_private:
+        replyDest = message.author
+        prefix_ = ""
+        isPriv = True
         nick = message.author.name
+        if message.content.startswith(prefix):
+            message.content = message.content.replace(prefix, '')
+    else:
+        replyDest = message.channel
+        nick = message.author.nick
+        isPriv = False
 
     if message.author.id == '267211324612673536':
-        await client.send_message(message.channel, message.author.mention + "\n```Yo! It's a loser hacker wannabe! " + nick + " shall not be trusted!```")
+        await client.send_message(replyDest, message.author.mention + "\n```Yo! It's a loser hacker wannabe! " + nick + " shall not be trusted!```")
         return
 
-    if message.content.startswith(prefix):
-        log(message.channel.server.name + "#" + message.channel.name + "@" + message.author.name + message.content)
-
-    if message.content.startswith(prefix+'version'):
-        await client.send_message(message.channel, message.author.mention + "\n```Some version after 0. Probably... ¯\_(ツ)_/¯```")
-        return
-
-    elif message.content.startswith(prefix + 'whoami'):
-        if message.author.id == '124733888177111041':
-          await client.send_message(message.channel, message.author.mention + "\n```You are the God of everyone in " + message.server.name + "\nID: " + message.author.id + "```")
+    if isPriv or message.content.startswith(prefix_):
+        if isPriv:
+            log("PM: " + "@" + message.author.name + "?" + message.content)
+            for x in range(0, len(message.mentions)):
+                if message.mentions[x].id == client.user.id:
+                  await client.send_message(await client.get_user_info('124733888177111041'), message.author.mention + ": " + message.content)
+                  break
         else:
-          await client.send_message(message.channel, message.author.mention + "\n```I don't know! Shouldn't you know that?\nID: " + message.author.id + "```")
+            log(message.channel.server.name + "#" + message.channel.name + "@" + message.author.name + message.content)
+            for x in range(0, len(message.mentions)):
+                if message.mentions[x].id == client.user.id:
+                  await client.send_message(await client.get_user_info('124733888177111041'), message.channel.server.name + "#" + message.channel.name +message.author.mention + ": " + message.content)
+                  break
+
+    if isPriv:
+        allow = False
+        for x in range(0, len(allowedPMCmds)):
+            if message.content.startswith(allowedPMCmds[x]):
+                allow = True
+                break
+        if not allow:
+            await client.send_message(replyDest, "I'm sorry, but that command doesn't work in a PM. Type \"help\" for a list of commands I can do! All will work in servers, but only some work in PMs.")
+            return
+
+    if message.content.startswith(prefix_ + 'version'):
+        await client.send_message(replyDest, message.author.mention + "\n```Some version after 0. Probably... ¯\_(ツ)_/¯```")
         return
 
-    elif message.content.startswith(prefix + 'kokomo'):
+    elif message.content.startswith(prefix_ + 'whoami'):
+        if not isPriv and message.author.id == '124733888177111041':
+          await client.send_message(replyDest, message.author.mention + "\n```You are the God of everyone in " + message.server.name + "\nID: " + message.author.id + "```")
+        else:
+          await client.send_message(replyDest, message.author.mention + "\n```I don't know! Shouldn't you know that?\nID: " + message.author.id + "```")
+        return
+
+    elif message.content.startswith(prefix_ + 'kokomo'):
         ctx = Context(message)
         if await music.summon(ctx):
           await music.play(ctx, 'https://www.youtube.com/watch?v=fJWmbLS2_ec')
 
-    elif message.content.startswith(prefix + 'play '):
-        url = message.content.replace(prefix + 'play ', '')
+    elif message.content.startswith(prefix_ + 'play '):
+        url = message.content.replace(prefix_ + 'play ', '')
         ctx = Context(message)
         if await music.summon(ctx):
           await music.play(ctx, url)
 
-    elif message.content.startswith(prefix + 'stop') or message.content.startswith(prefix + 'leave'):
+    elif message.content.startswith(prefix_ + 'stop') or message.content.startswith(prefix_ + 'leave'):
         ctx = Context(message)
         await music.stop(ctx)
 
-    elif message.content.startswith(prefix + 'skip'):
+    elif message.content.startswith(prefix_ + 'skip'):
         ctx = Context(message)
         await music.skip(ctx)
 
-    elif message.content.startswith(prefix + 'playing'):
+    elif message.content.startswith(prefix_ + 'playing') or message.content.startswith(prefix_ + 'queue'):
         ctx = Context(message)
         await music.playing(ctx)
 
-    elif message.content.startswith(prefix + 'pause'):
+    elif message.content.startswith(prefix_ + 'pause'):
         ctx = Context(message)
         await music.pause(ctx)
 
-    elif message.content.startswith(prefix + 'resume'):
+    elif message.content.startswith(prefix_ + 'resume'):
         ctx = Context(message)
         await music.resume(ctx)
 
-    elif message.content.startswith(prefix + 'pmme'):
+    elif message.content.startswith(prefix_ + 'flip'):
+        rand = random.randint(0,1)
+        if rand == 0:
+            url = "https://www.campbellcrowley.com/heads.png"
+            text = "Heads!"
+        else:
+            url = "https://www.campbellcrowley.com/tails.png"
+            text = "Tails!"
+        embed = discord.Embed(title=text)
+        embed.set_image(url=url)
+        await client.send_message(replyDest, message.author.mention, embed=embed)
+
+    elif message.content.startswith(prefix_ + 'pmme'):
         try:
-          await client.send_message(message.author, "Hello! My name is SpikeyBot. I was created by SpikeyRobot#9836, so if you wish to add any features, feel free to PM him!\n\nIf you'd like to know what I can do, type **"+prefix+"help** in a server that I am in and I'll let you know!")
-          await client.send_message(message.channel, message.author.mention + "\n```I sent you a message.```:wink:")
+          await client.send_message(message.author, "Hello! My name is SpikeyBot. I was created by SpikeyRobot#9836, so if you wish to add any features, feel free to PM him!\n\nIf you'd like to know what I can do, type **"+prefix+"help** in a server that I am in or **help** in a PM to me and I'll let you know!")
+          if not isPriv:
+            await client.send_message(replyDest, message.author.mention + "\n```I sent you a message.```:wink:")
         except discord.Forbidden:
             await client.send_message(message.author, "Your last message failed to send. You probably have blocked me :(");
 
-    elif message.content.startswith(prefix + 'pmspikey'):
+    elif message.content.startswith(prefix_ + 'pmspikey'):
         additional = ''
-        if len(message.content.replace(prefix + 'pmspikey', '')) == 0:
+        if len(message.content.replace(prefix_ + 'pmspikey', '')) == 0:
             additional = 'Remember, you can put a message after the command!'
         try:
           await client.send_message(await client.get_user_info('124733888177111041'), message.author.mention + ": " + message.content)
-          await client.send_message(message.channel, message.author.mention + "\n```I'll PM SpikeyRobot for you!\n" + additional + "```:wink:")
+          await client.send_message(replyDest, message.author.mention + "\n```I'll PM SpikeyRobot for you!\n" + additional + "```:wink:")
         except discord.Forbidden:
             await client.send_message(message.author, "Your last message failed to send. The user probably blocked me :(");
 
-    elif message.content.startswith(prefix+'pm'):
+    elif message.content.startswith(prefix_+'pm'):
         try:
-          await client.send_message(message.mentions[0], message.author.mention + " sent you this message: " + message.content.replace(prefix+'pm', ''))
-          await client.send_message(message.channel, message.author.mention + "\n```Sent PM```")
+          await client.send_message(message.mentions[0], message.author.mention + " sent you this message: " + message.content.replace(prefix_ + 'pm', ''))
+          await client.send_message(replyDest, message.author.mention + "\n```Sent PM```")
         except discord.Forbidden:
             await client.send_message(message.author, "Your last message failed to send. The user probably blocked me :(");
 
-    elif message.content.startswith(prefix+'thotpm') and (message.author.id == '265418316120719362' or message.author.id == '126464376059330562' or message.author.id == '124733888177111041'):
+    elif message.content.startswith(prefix_+'thotpm') and (message.author.id == '265418316120719362' or message.author.id == '126464376059330562' or message.author.id == '124733888177111041'):
         try:
           await client.delete_message(message)
-          await client.send_message(message.mentions[0], message.content.replace(prefix+'thotpm', ''))
+          await client.send_message(message.mentions[0], message.content.replace(prefix_+'thotpm', ''))
           await client.send_message(await client.get_user_info('124733888177111041'), message.author.mention + ": " + message.content)
         except discord.Forbidden:
-            await client.send_message(message.author, "Your last message failed to send. The user probably blocked me :(");
+          await client.send_message(message.author, "Your last message failed to send. The user probably blocked me :(");
 
-    elif message.content.startswith(prefix + 'updategame '):
+    elif message.content.startswith(prefix_ + 'updategame '):
         game = ''
         splitstring = message.content.split(' ')
         for x in range(2, len(splitstring)):
@@ -426,12 +483,12 @@ async def on_message(message):
         response = await updategame(splitstring[1], game)
         await client.delete_message(message)
         if response == 0:
-            await client.send_message(message.channel, message.author.mention + "\n```css\nI changed my status to \"" + game + "\"!\n```")
+            await client.send_message(replyDest, message.author.mention + "\n```css\nI changed my status to \"" + game + "\"!\n```")
         else:
-            await client.send_message(message.channel, message.author.mention + "\n```fix\nI'm sorry " + str(message.author.nick) + ", but you are not allowed to do that. :(\n```")
+            await client.send_message(replyDest, message.author.mention + "\n```fix\nI'm sorry " + str(message.author.nick) + ", but you are not allowed to do that. :(\n```")
 
-    elif message.content.startswith(prefix + 'add '):
-        splitstring = message.content.replace(prefix + 'add ', '', 1).replace('-', ' -').replace('  ', ' ').replace('+', ' ').split(' ')
+    elif message.content.startswith(prefix_ + 'add '):
+        splitstring = message.content.replace(prefix_ + 'add ', '', 1).replace('-', ' -').replace('  ', ' ').replace('+', ' ').split(' ')
         number = 0
         numnonnumbers = 0
         for x in splitstring:
@@ -453,9 +510,9 @@ async def on_message(message):
             anotherending = ":fire:"
         elif number == 80085 or number == 58008:
             anotherending = ":ok_hand:"
-        await client.send_message(message.channel, message.author.mention + "\n```lua\nYour answer is " + str(number) + "\n" + ending + "\n```\n" + anotherending + "")
+        await client.send_message(replyDest, message.author.mention + "\n```lua\nYour answer is " + str(number) + "\n" + ending + "\n```\n" + anotherending + "")
 
-    elif message.content.startswith(prefix + 'executiveorder'):
+    elif message.content.startswith(prefix_ + 'executiveorder'):
         if message.author.id == '124733888177111041':
           await client.delete_message(message)
           for x in range(0, len(message.server.roles)):
@@ -468,14 +525,14 @@ async def on_message(message):
         else:
           await client.delete_message(message)
 
-    elif message.content.startswith(prefix + 'say '):
+    elif message.content.startswith(prefix_ + 'say '):
         # if message.author.id == '126464376059330562':
             # await client.send_message(message.channel, "Rohan is not permitted to do this cuz he funny. :P")
             # return
 
-        await client.send_message(await client.get_user_info('124733888177111041'), message.author.mention + ": " + message.content)
         await client.delete_message(message)
-        editedmessage = message.content.replace(prefix + 'say ', '', 1)
+        await client.send_message(await client.get_user_info('124733888177111041'), message.author.mention + ": " + message.content)
+        editedmessage = message.content.replace(prefix_ + 'say ', '', 1)
         if message.author.id != "124733888177111041":
             editedmessage = editedmessage.replace('spikey', str(message.author.nick))
             editedmessage = editedmessage.replace('Spikey', str(message.author.nick))
@@ -487,8 +544,9 @@ async def on_message(message):
             editedmessage = editedmessage.replace('Campbell', str(message.author.nick))
             editedmessage = editedmessage.replace('crowley', str(message.author.nick))
             editedmessage = editedmessage.replace('Crowley', str(message.author.nick))
-        await client.send_message(message.channel, editedmessage)
-        log("I said \"" + message.content.replace(prefix + 'say ', '', 1) + "\" in " + message.channel.server.name + "#" + message.channel.name)
+        await client.send_message(replyDest, editedmessage)
+        if not isPriv:
+          log("I said \"" + message.content.replace(prefix_ + 'say ', '', 1) + "\" in " + message.channel.server.name + "#" + message.channel.name)
         if message.author.id != "124733888177111041":
             return
 
@@ -499,9 +557,9 @@ async def on_message(message):
             previoususer = message.author.id
             numberofmessages = 1
         if numberofmessages % 3 == 0:
-            await client.send_message(message.channel, "```Help! " + message.author.nick + ", is putting words into my mouth!```")
+            await client.send_message(replyDest, "```Help! " + message.author.nick + ", is putting words into my mouth!```")
 
-    elif message.content.startswith(prefix + 'smite '):
+    elif message.content.startswith(prefix_ + 'smite '):
         if message.author.top_role.permissions.manage_roles:
             if len(message.mentions) == 0:
                 await client.send_message(message.channel, message.author.mention + '```\nPlease mention someone with the @ symbol to smite.\n```')
@@ -524,43 +582,75 @@ async def on_message(message):
                     try:
                         await client.replace_roles(message.mentions[x], smitedRole)
                         listofPeople += "The gods have struck " + message.mentions[x].name + " with lightning!\n"
-                    except:
-                        listofPeople += "Your lightning missed " + message.mentions[x].name + " by inches! Maybe you should train before trying that again...\n"
+                    except Exception as ex:
+                        listofPeople += "Your lightning missed " + message.mentions[x].name + " by inches! Maybe you should train before trying that again...\n(" + str(ex) + ")\n"
                 await client.send_message(message.channel, message.author.mention + '```\n' + listofPeople + '\n```')
         else:
             await client.send_message(message.channel, message.author.mention + '```\nYou do not have permission for this.\n(Filthy ' + message.author.top_role.name + ')\n```')
 
-    elif message.content.startswith(prefix + 'joindate'):
-      editedmessage = message.content.replace(prefix + 'joindate', '', 1).split(' ')
-      if len(editedmessage) > 1:
-          log("NYI" + str(len(editedmessage)))
-      await client.send_message(message.channel, message.author.mention + "\n```lua\nYou joined this server on " + message.author.joined_at.strftime('%A %b/%d/%Y') + "\n```")
+    elif message.content.startswith(prefix_ + 'joindate'):
+      editedmessage = message.content.replace(prefix_ + 'joindate', '', 1).split(' ')
+      if len(message.mentions) > 0:
+        reponse = ""
+        for x in range(0, len(message.mentions)):
+            if not message.channel.is_private:
+              name = message.mentions[x].nick
+            else:
+              name = message.mentions[x].name
+            response += name + " joined this server on " + message.mentions[x].joined_at.strftime('%A %b/%d/%Y') + "\n"
+        await client.send_message(replyDest, message.author.mention + "\n```lua\n" + response + "```")
+      else:
+        await client.send_message(replyDest, message.author.mention + "\n```lua\nYou joined this server on " + message.author.joined_at.strftime('%A %b/%d/%Y') + "\n```")
 
-    elif message.content.startswith(prefix + 'discorddate'):
-      editedmessage = message.content.replace(prefix + 'discorddate', '', 1).split(' ')
-      if len(editedmessage) > 1:
-          log("NYI" + str(len(editedmessage)))
-      await client.send_message(message.channel, message.author.mention + "\n```lua\nYou created your discord account on " + message.author.created_at.strftime('%A %b/%d/%Y') + "\n```")
-    elif message.content.startswith(prefix + 'purge') or message.content.startswith(prefix + 'prune'):
+    elif message.content.startswith(prefix_ + 'discorddate'):
+      if len(message.mentions) > 0:
+        response = ""
+        for x in range(0, len(message.mentions)):
+            if not message.channel.is_private:
+              name = message.mentions[x].nick
+            else:
+              name = message.mentions[x].name
+            response += name + " created their discord account on " + message.mentions[x].created_at.strftime('%A %b/%d/%Y') + "\n"
+        await client.send_message(replyDest, message.author.mention + "\n```lua\n" + response + "```")
+      else:
+        await client.send_message(replyDest, message.author.mention + "\n```lua\nYou created your discord account on " + message.author.created_at.strftime('%A %b/%d/%Y') + "\n```")
+
+    elif message.content.startswith(prefix_ + 'purge') or message.content.startswith(prefix_ + 'prune'):
       if message.author.top_role.permissions.manage_messages:
-        if message.content.startswith(prefix + 'purge'):
-          editedmessage = message.content.replace(prefix + 'purge', '', 1).split(' ')
+        if message.content.startswith(prefix_ + 'purge'):
+          editedmessage = message.content.replace(prefix_ + 'purge', '', 1).split(' ')
         else:
-          editedmessage = message.content.replace(prefix + 'prune', '', 1).split(' ')
+          editedmessage = message.content.replace(prefix_ + 'prune', '', 1).split(' ')
         log("Purging " + editedmessage[1] + " messages from " + str(message.channel));
         await client.purge_from(message.channel, limit=int(editedmessage[1]));
         await client.purge_from(message.channel, limit=1);
       else:
         await client.send_message(message.channel, message.author.mention + '```\nYou do not have permission for this.\n(Filthy ' + message.author.top_role.name + ')\n```')
 
+    elif message.content.startswith(prefix_ + 'help'):
+        if not isPriv:
+          await client.send_message(replyDest, message.author.mention + "\n" + helpservermessage)
+        for x in range(0, len(helpmessage)):
+          await client.send_message(message.author, "```py\n" + helpmessage[x] + "```")
 
+    elif message.content.startswith(prefix_ + 'addme'):
+        await client.send_message(replyDest, message.author.mention + "\n" + addmessage)
 
-    elif message.content.startswith(prefix + 'help'):
-        await client.send_message(message.channel, message.author.mention + "\n" + helpservermessage)
-        await client.send_message(message.author, helpmessage)
-
-    elif message.content.startswith(prefix + 'addme'):
-        await client.send_message(message.channel, message.author.mention + "\n" + addmessage)
+    elif message.content.startswith(prefix_ + 'fuckyou '):
+      if message.author.top_role.permissions.ban_members:
+        if len(message.mentions) == 0:
+          await client.send_message(message.channel, message.author.mention + '```\nYou must mention people to do that.\n```')
+        else:
+          for x in range(0, len(message.mentions)):
+            msg = banMsgs[random.randint(0, len(banMsgs) - 1)]
+            try:
+              await client.ban(message.mentions[x])
+            except discord.Forbidden:
+              await client.send_message(message.channel, message.author.mention + '```\nI can\'t ban ' + message.mentions[x].mention + ', sorry.```')
+            else:
+              await client.send_message(message.channel, message.mentions[x].mention + '```\n' + msg + '\n```')
+      else:
+        await client.send_message(message.channel, message.author.mention + '```\nYou do not have permission for this.\n(Filthy ' + message.author.top_role.name + ')\n```')
 
 async def add(left : int, right : int, channel : discord.Channel):
     client.send_message(channel, left + right)
