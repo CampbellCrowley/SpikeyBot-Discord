@@ -104,11 +104,11 @@ class VoiceEntry:
         self.player = player
 
     def __str__(self):
-        fmt = '{0.title}*\nUploaded by {0.uploader}\nRequested by {1.display_name}\n{0.url}\n'
-        likes = '[likes: {0.likes}, dislikes: {0.dislikes}][views: {0.views}]'
+        fmt = '{0.title}\nUploaded by {0.uploader}\nRequested by {1.display_name}\n'
+        likes = '[👍 {0.likes:,} 👎 {0.dislikes:,}][👁️ {0.views:,}]'
         duration = self.player.duration
         if duration:
-            fmt = fmt + '[length: {0[0]}m {0[1]}s]'.format(divmod(duration, 60)) + likes
+            fmt = fmt + '[{0[0]}m {0[1]}s]'.format(divmod(duration, 60)) + likes
         return fmt.format(self.player, self.requester)
 
 class VoiceState:
@@ -214,7 +214,10 @@ class Music:
         state = self.get_voice_state(ctx.message.server)
         opts = {
             'default_search': 'auto',
-            'quiet': True,
+            # 'quiet': True,
+            'format': 'bestaudio/best',
+            'noplaylist': True,
+            'verbose': True,
         }
 
         loading = await self.bot.send_message(ctx.message.channel, ctx.message.author.mention + "\n```Loading... Please wait...```")
