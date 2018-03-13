@@ -16,8 +16,7 @@ if not discord.opus.is_loaded():
 
 prefix = '?'
 password = 'password'
-helpmessage = ["Let me see if I can help you:\n" \
-            "=======\n" \
+helpmessage = ["Let me see if I can help you:\n",\
             "# BASIC COMMANDS #\n" \
             "-----\n" \
             "I can add numbers!\n" \
@@ -81,6 +80,7 @@ helpmessage = ["Let me see if I can help you:\n" \
             "This is also a thing:\n" \
             "Type \"" + prefix + "kokomo\"\n"\
             "-----\n" \
+            "=======\n",\
             "Send @SpikeyRobot#9836 feature requests! (Tip: use \"" + prefix + "pmspikey\")"]
 
 helpservermessage = "```py\nI sent you a PM with commands!\n```"
@@ -109,7 +109,13 @@ class VoiceEntry:
         duration = self.player.duration
         if duration:
             fmt = fmt + '[{0[0]}m {0[1]}s]'.format(divmod(duration, 60)) + likes
-        return fmt.format(self.player, self.requester)
+        else:
+            fmt = fmt + likes
+        try:
+            fmt = fmt.format(self.player, self.requester)
+        except:
+            fmt = "Error getting song information."
+        return fmt
 
 class VoiceState:
     def __init__(self, bot):
@@ -120,6 +126,7 @@ class VoiceState:
         self.songs = asyncio.Queue()
         self.skip_votes = set() # a set of user_ids that voted
         self.audio_player = self.bot.loop.create_task(self.audio_player_task())
+        self.loading = 0
 
     def is_playing(self):
         if self.voice is None or self.current is None:
@@ -217,9 +224,10 @@ class Music:
             # 'quiet': True,
             'format': 'bestaudio/best',
             'noplaylist': True,
-            'verbose': True,
+            # 'verbose': True,
         }
 
+        state.loading = state.loading + 1
         loading = await self.bot.send_message(ctx.message.channel, ctx.message.author.mention + "\n```Loading... Please wait...```")
 
         try:
@@ -237,6 +245,7 @@ class Music:
                 await self.bot.send_message(ctx.message.channel, ctx.message.author.mention + ' Enqueued [' + str(state.songs.qsize() + 1) + ' in queue]\n```' + str(entry) + '```')
               await state.songs.put(entry)
         await self.bot.delete_message(loading)
+        state.loading = state.loading - 1
 
     async def volume(self, ctx, value : int):
         """Sets the volume of the currently playing song."""
@@ -302,8 +311,8 @@ class Music:
                 needed_votes = 1
             else:
                 needed_votes = num_users / 2
-            if needed_votes:
-                await self.bot.send_message(ctx.message.channel, voter.mention + '\n```Skip vote passed, skipping song... [skips: ' + total_votes + '/' + needed_votes + ']```')
+            if total_votes >= needed_votes:
+                await self.bot.send_message(ctx.message.channel, voter.mention + '\n```Skip vote passed, skipping song... [skips: ' + str(total_votes) + '/' + str(needed_votes) + ']```')
                 state.skip()
             else:
                 await self.bot.send_message(ctx.message.channel, voter.mention + '\n```Skip vote added, currently at [{}/{}]```'.format(total_votes, neded_votes))
@@ -323,7 +332,7 @@ class Music:
                 needed_votes = 1
             else:
                 needed_votes = num_users / 2
-            await self.bot.send_message(ctx.message.channel, ctx.message.author.mention + ' Now playing\n```{} [skips: {}/{}]```'.format(state.current, skip_count, needed_votes))
+            await self.bot.send_message(ctx.message.channel, ctx.message.author.mention + ' Now playing [' + str(state.songs.qsize() + 1) + ' in queue]\n```{} [skips: {}/{}]```'.format(state.current, skip_count, needed_votes))
 
 class Context:
     def __init__(self, message):
@@ -428,12 +437,12 @@ async def on_message(message):
         ctx = Context(message)
         await music.pause(ctx)
 
-    elif message.content.startswith(prefix_ + 'resume'):
+    elif message.content.startswith(prefix_ + 'resume') or message.content.startswith(prefix_ + 'play'):
         ctx = Context(message)
         await music.resume(ctx)
 
     elif message.content.startswith(prefix_ + 'flip'):
-        rand = random.randint(0,1)
+        rand = random.randint(0, 1)
         if rand == 0:
             url = "https://www.campbellcrowley.com/heads.png"
             text = "Heads!"
@@ -649,7 +658,8 @@ async def on_message(message):
             try:
               await client.ban(message.mentions[x])
             except discord.Forbidden:
-              await client.send_message(message.channel, message.author.mention + '```\nI can\'t ban ' + message.mentions[x].mention + ', sorry.```')
+              mname = message.mentions[x].name
+              await client.send_message(message.channel, message.author.mention + '```\nI can\'t ban ' + mname + ', sorry.```')
             else:
               await client.send_message(message.channel, message.mentions[x].mention + '```\n' + msg + '\n```')
       else:

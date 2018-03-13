@@ -1,0 +1,29 @@
+{
+  "name": "spikeybot-discord",
+  "version": "1.0.0",
+  "description": "SpikeyBot",
+  "homepage": "https://www.campbellcrowley.com/spikeybot",
+  "bugs": {
+    "email": "discord@campbellcrowley.com"
+  },
+  "license": "UNLICENSED",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CampbellCrowley/SpikeyBot-Discord"
+  },
+  "dependencies": {
+    "async": "^2.6.0",
+    "dateformat": "^3.0.3",
+    "discord.js": "^11.3.2",
+    "node-opus": "^0.2.7",
+    "youtube-dl": "^1.12.2",
+    "ytdl-getinfo": "^1.0.5"
+  },
+  "contributors": [
+    {
+      "name": "Campbell Crowley",
+      "email": "dev@campbellcrowley.com"
+    }
+  ]
+}
