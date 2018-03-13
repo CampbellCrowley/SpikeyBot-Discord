@@ -181,7 +181,7 @@ command.on('pmme', msg => {
       .catch(_ => {reply(msg, blockedmessage)});
 });
 command.on('help', msg => {
-  msg.author.send(elpmessage)
+  msg.author.send(helpmessage)
       .then(_ => {
         if (msg.guild != null) reply(msg, helpmessagereply, ":wink:")
       })
@@ -367,8 +367,8 @@ command.on('play', msg => {
         };
       } else {
         msg.channel.send(
-            mention(msg) + " Enqueing " + song + " [" +
-            broadcasts[msg.guild.id].queue.length + " in queue]\n```\n" +
+            mention(msg) + " Enqueuing " + song + " [" +
+            (broadcasts[msg.guild.id].queue.length + 1) + " in queue]\n```\n" +
             formatSongInfo(info) + "\n```");
       }
       queueSong(broadcasts[msg.guild.id], stream, msg, info);
@@ -411,50 +411,97 @@ function queueSong(broadcast, stream, msg, info) {
   }
 };
 function startPlaying(broadcast) {
-  if (!broadcast || broadcast.isPlaying) {
+  if (!broadcast || broadcast.isPlaying || broadcast.isLoading) {
     return;
   }
   if (broadcast.queue.length == 0) {
     command.trigger('stop', broadcast.current.request);
+    broadcast.current.request.channel.send(
+        "Queue is empty!\n```\nSee you later!\n```");
     return;
   }
-  broadcast.isPlaying = true;
+  broadcast.isLoading = true;
   broadcast.skips = {};
   broadcast.current = broadcast.queue.splice(0, 1)[0];
-  broadcast.broadcast.playStream(broadcast.current.stream);
-  broadcast.voice.playBroadcast(broadcast.broadcast).on('end', function() {
-    broadcast.isPlaying = false;
-    startPlaying()
-  });
+  broadcast.broadcast.playStream(broadcast.current.stream)
+      .on('end', function() { endSong(broadcast); });
+  broadcast.voice.playBroadcast(broadcast.broadcast);
+  broadcast.isLoading = false;
+  broadcast.isPlaying = true;
 
   if (typeof broadcast.current.info !== 'undefined') {
     broadcast.current.request.channel.send(
-        "Now playing [" + broadcast.queue.length + " in queue]\n```\n" +
+        "Now playing [" + broadcast.queue.length + " left in queue]\n```\n" +
         formatSongInfo(broadcast.current.info) + "\n```");
   } else {
     reply(broadcast.current.request, "Playing next song");
   }
 };
+function endSong(broadcast) {
+  if (broadcast.isLoading) return;
+  if (broadcast.isPlaying) skipSong(broadcast);
+}
+function skipSong(broadcast) {
+  broadcast.isPlaying = false;
+  broadcast.isLoading = true;
+  startPlaying(broadcast);
+}
 command.on(['leave', 'stop', 'stfu'], msg => {
   if (msg.guild == null) {
     reply(msg, onlyservermessage);
   } else {
-    delete broadcasts[msg.guild.id];
+    var shouldReply = true;
+    if (!broadcasts[msg.guild.id] ||
+        (broadcasts[msg.guild.id].queue.length == 0 &&
+         broadcasts[msg.guild.id].current)) {
+      shouldReply = false;
+    }
     msg.guild.fetchMember(client.user)
         .then(
             me => {
               if (me.voiceChannel != null) {
                 me.voiceChannel.leave();
-                reply(msg, "Goodbye!");
+                if (shouldReply) reply(msg, "Goodbye!");
               } else {
-                reply(msg, "I'm not playing anything.");
+                if (shouldReply) reply(msg, "I'm not playing anything.");
               }
             });
+    delete broadcasts[msg.guild.id];
+  }
+});
+command.on('skip', msg => {
+  if (msg.guild == null) {
+    reply(msg, onlyservermessage);
+  } else if (!broadcasts[msg.guild.id]) {
+    reply(msg, "I'm not playing anything, I can't skip nothing!");
+  } else {
+    reply(msg, "Skipping current song...");
+    skipSong(broadcasts[msg.guild.id]);
+  }
+});
+command.on('queue', msg => {
+  if (msg.guild == null) {
+    reply(msg, onlyservermessage);
+  } else if (!broadcasts[msg.guild.id]) {
+    reply(
+        msg, "I'm not playing anything. Use \"" + prefix +
+            "play Kokomo\" to start playing something!");
+  } else {
+    var queueTitles = [];
+    if (broadcasts[msg.guild.id].current) {
+      queueTitles = queueTitles.concat(
+          ["Now Playing: " + broadcasts[msg.guild.id].current.info.title]);
+    }
+    queueTitles = queueTitles.concat(
+        broadcasts[msg.guild.id].queue.map(function(obj, index) {
+          return (index + 1) + ") " + obj.info.title;
+        }));
+    reply(msg, queueTitles.join('\n'));
   }
 });
 command.on('reboot', msg => {
   if (msg.author.id == spikeyId) {
-    reply(msg, "Rebooting in 1 second!");
+    reply(msg, "Rebooting in 4 seconds!");
     setTimeout(function() { process.exit(1) }, 1000);
   } else {
     reply(msg, "LOL! Good try!");
