@@ -22,8 +22,6 @@ var prevUserSayCnt = 0;
 const introduction = "\nHello! My name is SpikeyBot.\n" +
     "I was created by SpikeyRobot#9836, so if you wish to add any features, feel free to PM him! (Tip: Use **pmspikey**)\n" +
     "\nIf you'd like to know what I can do, type **help** in a PM to me and I'll let you know!";
-const helpmessage =
-    "Sorry! My help message isn't written yet! Please try again another time!";
 const helpmessagereply = "I sent you a DM with commands!";
 const blockedmessage =
     "I couldn't send you a message, you probably blocked me :(";
@@ -42,6 +40,29 @@ const banMsgs = [
   "Between you and me, I didn't like them anyways.",
   "Everyone rejoice! The world has been eradicated of one more person that no one liked anyways."
 ];
+const helpmessage =
+"Here's the list of stuff I can do! PM SpikeyRobot (" + prefix + "pmspikey) feature requests!\n" +
+"```js\n" +
+"=== Music ===\n" +
+  prefix + "play 'url or search' // Play a song in your current voice channel, or add a song to the queue.\n" +
+  prefix + "stop // Stop playing music and leave the voice channel.\n" +
+  prefix + "skip // Skip the currently playing song.\n" +
+  prefix + "queue // View the songs currently in the queue.\n" +
+  prefix + "remove 'index' // Remove a song with the given queue index from the queue.\n" +
+"=== General Stuff ===\n" +
+  prefix + "addme // I will send you a link to add me to your server!\n" +
+  prefix + "help // Send this message to you.\n" +
+  prefix + "say // Make me say something.\n" +
+  prefix + "createdate // I will tell you the date you created your account!\n" +
+  prefix + "joindate // I will tell you the date you joined the server you sent the message from!\n" +
+  prefix + "pmme // I will introduce myself to you!\n" +
+  prefix + "pmspikey 'message' // I will send SpikeyRobot (my creator) your message because you are too shy!\n" +
+  prefix + "flip // I have an unlimited supply of coins! I will flip one for you!\n" +
+"=== Admin Stuff ===\n" +
+  prefix + "purge 'number' // Remove a number of messages from the current text channel!\n" +
+  prefix + "fuckyou/" + prefix + "ban 'mention' // I will ban the person you mention with a flashy message!\n" +
+  prefix + "smite 'mention' // Silence the peasant who dare oppose you!\n```";
+
 
 var broadcasts = {};
 
@@ -103,10 +124,87 @@ function reply(msg, text, post) {
   return msg.channel.send(`${mention(msg)}\n\`\`\`\n${text}\n\`\`\`${post}`);
 }
 
+// Format the info response from ytdl into a human readable format.
+function formatSongInfo(info) {
+  return info.title + "\nUploaded by " + info.uploader + "\n[👍 " +
+      info.like_count + " 👎 " + info.dislike_count + "][👁️ " +
+      info.view_count + "]\n[" + Math.floor(info._duration_raw / 60) + "m " +
+      info._duration_raw % 60 + "s]\n" + info.webpage_url;
+}
+// Add a song to the given broadcast's queue and start playing it not already.
+function queueSong(broadcast, stream, msg, info) {
+  broadcast.queue.push({request: msg, stream: stream, info: info});
+  if (broadcast.voice) {
+    try {
+      startPlaying(broadcast);
+    } catch (err) {
+      console.log(err);
+      reply(msg, "Failed to start music stream!");
+      command.trigger('stop', msg);
+    }
+  } else {
+    msg.member.voiceChannel.join()
+        .then(conn => {
+          broadcast.voice = conn;
+          try {
+            startPlaying(broadcast);
+          } catch(err) {
+            console.log(err);
+            reply(msg, "Failed to start music stream!");
+            command.trigger('stop', msg);
+          }
+        })
+        .catch(err => {
+          console.log(err);
+          reply(msg, "Failed to join voice channel!");
+        });
+  }
+}
+// Start playing the first item in the queue of the broadcast.
+function startPlaying(broadcast) {
+  if (!broadcast || broadcast.isPlaying || broadcast.isLoading) {
+    return;
+  }
+  if (broadcast.queue.length == 0) {
+    command.trigger('stop', broadcast.current.request);
+    broadcast.current.request.channel.send(
+        "Queue is empty!\n```\nSee you later!\n```");
+    return;
+  }
+  broadcast.isLoading = true;
+  broadcast.skips = {};
+  broadcast.current = broadcast.queue.splice(0, 1)[0];
+  broadcast.broadcast.playStream(broadcast.current.stream)
+      .on('end', function() { endSong(broadcast); });
+  broadcast.voice.playBroadcast(broadcast.broadcast);
+  broadcast.isLoading = false;
+  broadcast.isPlaying = true;
+
+  if (typeof broadcast.current.info !== 'undefined') {
+    broadcast.current.request.channel.send(
+        "Now playing [" + broadcast.queue.length + " left in queue]\n```\n" +
+        formatSongInfo(broadcast.current.info) + "\n```");
+  } else {
+    reply(broadcast.current.request, "Playing next song");
+  }
+};
+// Triggered when a song has finished playing.
+function endSong(broadcast) {
+  if (broadcast.isLoading) return;
+  if (broadcast.isPlaying) skipSong(broadcast);
+}
+// Skip the current song, then attempt to play the next.
+function skipSong(broadcast) {
+  broadcast.isPlaying = false;
+  broadcast.isLoading = true;
+  startPlaying(broadcast);
+}
+
 // BEGIN //
 client.on('ready', () => {
   common.LOG(`Logged in as ${client.user.tag}!`);
   updategame(password, '?help for help');
+  client.fetchUser(spikeyId).then(user => {user.send("I just started (JS)")});
 });
 
 client.on('message', msg => {
@@ -376,76 +474,6 @@ command.on('play', msg => {
     });
   }
 });
-function formatSongInfo(info) {
-  return info.title + "\nUploaded by " + info.uploader + "\n[👍 " +
-      info.like_count + " 👎 " + info.dislike_count + "][👁️ " +
-      info.view_count + "]\n[" + Math.floor(info._duration_raw / 60) + "m " +
-      info._duration_raw % 60 + "s]\n" + info.webpage_url;
-}
-function queueSong(broadcast, stream, msg, info) {
-  broadcast.queue.push({request: msg, stream: stream, info: info});
-  if (broadcast.voice) {
-    try {
-      startPlaying(broadcast);
-    } catch (err) {
-      console.log(err);
-      reply(msg, "Failed to start music stream!");
-      command.trigger('stop', msg);
-    }
-  } else {
-    msg.member.voiceChannel.join()
-        .then(conn => {
-          broadcast.voice = conn;
-          try {
-            startPlaying(broadcast);
-          } catch(err) {
-            console.log(err);
-            reply(msg, "Failed to start music stream!");
-            command.trigger('stop', msg);
-          }
-        })
-        .catch(err => {
-          console.log(err);
-          reply(msg, "Failed to join voice channel!");
-        });
-  }
-};
-function startPlaying(broadcast) {
-  if (!broadcast || broadcast.isPlaying || broadcast.isLoading) {
-    return;
-  }
-  if (broadcast.queue.length == 0) {
-    command.trigger('stop', broadcast.current.request);
-    broadcast.current.request.channel.send(
-        "Queue is empty!\n```\nSee you later!\n```");
-    return;
-  }
-  broadcast.isLoading = true;
-  broadcast.skips = {};
-  broadcast.current = broadcast.queue.splice(0, 1)[0];
-  broadcast.broadcast.playStream(broadcast.current.stream)
-      .on('end', function() { endSong(broadcast); });
-  broadcast.voice.playBroadcast(broadcast.broadcast);
-  broadcast.isLoading = false;
-  broadcast.isPlaying = true;
-
-  if (typeof broadcast.current.info !== 'undefined') {
-    broadcast.current.request.channel.send(
-        "Now playing [" + broadcast.queue.length + " left in queue]\n```\n" +
-        formatSongInfo(broadcast.current.info) + "\n```");
-  } else {
-    reply(broadcast.current.request, "Playing next song");
-  }
-};
-function endSong(broadcast) {
-  if (broadcast.isLoading) return;
-  if (broadcast.isPlaying) skipSong(broadcast);
-}
-function skipSong(broadcast) {
-  broadcast.isPlaying = false;
-  broadcast.isLoading = true;
-  startPlaying(broadcast);
-}
 command.on(['leave', 'stop', 'stfu'], msg => {
   if (msg.guild == null) {
     reply(msg, onlyservermessage);
@@ -497,6 +525,32 @@ command.on('queue', msg => {
           return (index + 1) + ") " + obj.info.title;
         }));
     reply(msg, queueTitles.join('\n'));
+  }
+});
+command.on(['remove','dequeue'], msg => {
+  if (msg.guild == null) {
+    reply(msg, onlyservermessage);
+  } else if (
+      !broadcasts[msg.guild.id] || broadcasts[msg.guild.id].queue.length == 0) {
+    reply(
+        msg,
+        "The queue appears to be empty.\nI can't remove nothing from nothing!");
+  } else {
+    var indexString = msg.replace('remove', '').replace('dequeue', '');
+    if (indexString.startsWith(' ')) {
+      reply(
+          msg,
+          "You must specify the index of the song to dequeue.\nYou can view the queue with \"" +
+              prefix + "queue\".");
+    } else {
+      var index = Number(indexString);
+      if (typeof index !== 'number') {
+        reply(msg, "That is not a valid index!");
+      } else {
+        var removed = broadcasts[msg.guild.id].queue.splice(index - 1, 1)[0];
+        reply(msg, "Dequeued: " + removed.info.title);
+      }
+    }
   }
 });
 command.on('reboot', msg => {
