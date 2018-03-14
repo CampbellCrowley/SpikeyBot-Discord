@@ -5,6 +5,13 @@ const ytinfo = require('ytdl-getinfo');
 const ytdl = require('youtube-dl');
 const client = new Discord.Client();
 
+var HGames;
+try {
+  HGames = require('./hungryGames.js');
+} catch (err) {
+  console.log(err);
+}
+
 const isDev = false;
 const prefix = isDev ? '~' : '?';
 
@@ -55,11 +62,12 @@ const helpmessage =
   prefix + "addme // I will send you a link to add me to your server!\n" +
   prefix + "help // Send this message to you.\n" +
   prefix + "say // Make me say something.\n" +
-  prefix + "createdate // I will tell you the date you created your account!\n" +
-  prefix + "joindate // I will tell you the date you joined the server you sent the message from!\n" +
+  prefix + "createdate // I will tell you the date you created your account! (You can mention people)\n" +
+  prefix + "joindate // I will tell you the date you joined the server you sent the message from! (You can mention people)\n" +
   prefix + "pmme // I will introduce myself to you!\n" +
   prefix + "pmspikey 'message' // I will send SpikeyRobot (my creator) your message because you are too shy!\n" +
   prefix + "flip // I have an unlimited supply of coins! I will flip one for you!\n" +
+  prefix + "avatar 'mention' // Need a better look at your profile pic? I'll show you the original\n" +
 "=== Admin Stuff ===\n" +
   prefix + "purge 'number' // Remove a number of messages from the current text channel!\n" +
   prefix + "fuckyou/" + prefix + "ban 'mention' // I will ban the person you mention with a flashy message!\n" +
@@ -76,6 +84,10 @@ function Command() {
   this.trigger = function(cmd, msg) {
     if (cmd.startsWith(prefix)) cmd = cmd.replace(prefix, '');
     if (cmds[cmd]) {
+      if (cmds[cmd].validOnlyOnServer && msg.guild == null) {
+        reply(msg, onlyservermessage);
+        return true;
+      }
       try {
         cmds[cmd](msg);
       } catch (err) {
@@ -88,8 +100,9 @@ function Command() {
       return false;
     }
   };
-  this.on = function(cmd, cb) {
+  this.on = function(cmd, cb, onlyserver) {
     if (typeof cb !== 'function') throw("Event callback must be a function.");
+    cb.validOnlyOnServer = onlyserver || false;
     if (typeof cmd === 'string') {
       cmds[cmd] = cb;
     } else if (Array.isArray(cmd)) {
@@ -198,15 +211,22 @@ function endSong(broadcast) {
 // Skip the current song, then attempt to play the next.
 function skipSong(broadcast) {
   broadcast.isPlaying = false;
-  broadcast.isLoading = true;
   startPlaying(broadcast);
 }
 
 // BEGIN //
 client.on('ready', _ => {
   common.LOG(`Logged in as ${client.user.tag}!`);
-  updategame(password, '?help for help');
+  updategame(password, prefix + 'help for help');
   client.fetchUser(spikeyId).then(user => {user.send("I just started (JS)")});
+  common.LOG("Initializing submodules...");
+  try {
+    HGames.begin(Discord, client, command, common);
+  } catch(err) {
+    client.fetchUser(spikeyId).then(
+        user => {user.send("Failed to initialize HungryGames")});
+    console.log(err);
+  }
 });
 
 client.on('message', msg => {
@@ -255,6 +275,7 @@ command.on('addme', msg => { reply(msg, addmessage, addLink); });
 command.on('help', msg => {
   msg.author.send(helpmessage)
       .then(_ => {
+        if (HGames && HGames.helpMessage) msg.author.send(HGames.helpMessage);
         if (msg.guild != null) reply(msg, helpmessagereply, ":wink:")
       })
       .catch(_ => {reply(msg, blockedmessage)});
@@ -286,15 +307,28 @@ command.on('say', msg => {
   }
 });
 command.on('createdate', msg => {
-  reply(
-      msg, "You created your discord account on " +
-          dateFormat(msg.author.createdTimestamp));
+  if (msg.mentions.users.size == 0) {
+    reply(
+        msg, "You created your discord account on " +
+            dateFormat(msg.author.createdTimestamp));
+  } else {
+    reply(
+        msg, msg.mentions.users.first().username +
+            " created their discord account on " +
+            dateFormat(msg.mentions.users.first().createdTimestamp));
+  }
 });
 command.on('joindate', msg => {
   if (msg.member) {
-    reply(
-        msg,
-        "You joined this server on " + dateFormat(msg.member.joinedTimestamp));
+    if (msg.mentions.users.size == 0) {
+      reply(
+          msg, "You joined this server on " +
+              dateFormat(msg.member.joinedTimestamp));
+    } else {
+      reply(
+          msg, msg.mentions.users.first().username + " joined this server on " +
+              dateFormat(msg.mentions.users.first().joinedTimestamp));
+    }
   } else {
     reply(msg, onlyservermessage);
   }
@@ -343,10 +377,7 @@ command.on('flip', msg => {
   msg.channel.send(embed);
 });
 command.on(['purge', 'prune'], msg => {
-  if (msg.guild == null) {
-    reply(msg, onlyservermessage);
-  } else if (
-      msg.channel.permissionsFor(msg.member)
+  if (msg.channel.permissionsFor(msg.member)
           .has(Discord.Permissions.FLAGS.MANAGE_MESSAGES)) {
     var numString = msg.content.replace(prefix + 'purge ', '')
                         .replace(prefix + 'prune ', '');
@@ -361,12 +392,9 @@ command.on(['purge', 'prune'], msg => {
   } else {
     reply(msg, "I'm sorry, but you don't have permission to delete messages in this channel.");
   }
-});
+}, true);
 command.on(['fuckyou', 'ban'], msg => {
-  if (msg.guild == null) {
-    reply(msg, onlyservermessage);
-  } else if (
-      !msg.member.hasPermission(
+  if (!msg.member.hasPermission(
           Discord.Permissions.FLAGS.BAN_MEMBERS, true, true, true)) {
     reply(
         msg, "You don't have permission for that!\n(Filthy " +
@@ -401,11 +429,9 @@ command.on(['fuckyou', 'ban'], msg => {
       });
     }
   }
-});
+}, true);
 command.on('smite', msg => {
-  if (msg.guild == null) {
-    reply(msg, onlyservermessage);
-  } else if (msg.mentions.members.size == 0) {
+  if (msg.mentions.members.size == 0) {
     reply(msg, "You must mention someone to ban after the command.");
   } else {
     var toSmite = msg.mentions.members.first();
@@ -467,11 +493,9 @@ command.on('smite', msg => {
       });
     }
   }
-});
+}, true);
 command.on('play', msg => {
-  if (msg.guild == null) {
-    reply(msg, onlyservermessage);
-  } else if (msg.member.voiceChannel == null) {
+  if (msg.member.voiceChannel == null) {
     reply(msg, "You aren't in a voice channel!");
   } else {
     var song = msg.content.replace(prefix + 'play', '');
@@ -504,44 +528,34 @@ command.on('play', msg => {
       if (loadingMsg) loadingMsg.delete();
     });
   }
-});
+}, true);
 command.on(['leave', 'stop', 'stfu'], msg => {
-  if (msg.guild == null) {
-    reply(msg, onlyservermessage);
-  } else {
-    var shouldReply = true;
-    if (!broadcasts[msg.guild.id] ||
-        (broadcasts[msg.guild.id].queue.length == 0 &&
-         broadcasts[msg.guild.id].current)) {
-      shouldReply = false;
-    }
-    msg.guild.fetchMember(client.user)
-        .then(
-            me => {
-              if (me.voiceChannel != null) {
-                me.voiceChannel.leave();
-                if (shouldReply) reply(msg, "Goodbye!");
-              } else {
-                if (shouldReply) reply(msg, "I'm not playing anything.");
-              }
-            });
-    delete broadcasts[msg.guild.id];
+  var shouldReply = true;
+  if (!broadcasts[msg.guild.id] ||
+      (broadcasts[msg.guild.id].queue.length == 0 &&
+       broadcasts[msg.guild.id].current)) {
+    shouldReply = false;
   }
-});
+  msg.guild.fetchMember(client.user).then(me => {
+    if (me.voiceChannel != null) {
+      me.voiceChannel.leave();
+      if (shouldReply) reply(msg, "Goodbye!");
+    } else {
+      if (shouldReply) reply(msg, "I'm not playing anything.");
+    }
+  });
+  delete broadcasts[msg.guild.id];
+}, true);
 command.on('skip', msg => {
-  if (msg.guild == null) {
-    reply(msg, onlyservermessage);
-  } else if (!broadcasts[msg.guild.id]) {
+  if (!broadcasts[msg.guild.id]) {
     reply(msg, "I'm not playing anything, I can't skip nothing!");
   } else {
     reply(msg, "Skipping current song...");
     skipSong(broadcasts[msg.guild.id]);
   }
-});
-command.on('queue', msg => {
-  if (msg.guild == null) {
-    reply(msg, onlyservermessage);
-  } else if (!broadcasts[msg.guild.id]) {
+}, true);
+command.on(['queue', 'playing'], msg => {
+  if (!broadcasts[msg.guild.id]) {
     reply(
         msg, "I'm not playing anything. Use \"" + prefix +
             "play Kokomo\" to start playing something!");
@@ -557,37 +571,76 @@ command.on('queue', msg => {
         }));
     reply(msg, queueTitles.join('\n'));
   }
-});
-command.on(['remove','dequeue'], msg => {
-  if (msg.guild == null) {
-    reply(msg, onlyservermessage);
-  } else if (
-      !broadcasts[msg.guild.id] || broadcasts[msg.guild.id].queue.length == 0) {
+}, true);
+command.on(['remove', 'dequeue'], msg => {
+  if (!broadcasts[msg.guild.id] || broadcasts[msg.guild.id].queue.length == 0) {
     reply(
         msg,
         "The queue appears to be empty.\nI can't remove nothing from nothing!");
   } else {
-    var indexString = msg.replace('remove', '').replace('dequeue', '');
-    if (indexString.startsWith(' ')) {
+    var indexString = msg.content.replace(prefix + 'remove', '')
+                          .replace(prefix + 'dequeue', '');
+    if (!indexString.startsWith(' ')) {
       reply(
           msg,
           "You must specify the index of the song to dequeue.\nYou can view the queue with \"" +
               prefix + "queue\".");
     } else {
-      var index = Number(indexString);
-      if (typeof index !== 'number') {
+      var index = Number(indexString.replace(' ', ''));
+      if (typeof index !== 'number' || index <= 0 ||
+          index > broadcasts[msg.guild.id].queue.length) {
         reply(msg, "That is not a valid index!");
       } else {
         var removed = broadcasts[msg.guild.id].queue.splice(index - 1, 1)[0];
-        reply(msg, "Dequeued: " + removed.info.title);
+        reply(msg, "Dequeued #" + index + ": " + removed.info.title);
       }
     }
   }
+}, true);
+command.on(['profile', 'avatar'], msg => {
+  var embed = new Discord.RichEmbed();
+  if (msg.mentions.users.size > 0) {
+    embed.setDescription(
+        msg.mentions.users.first().username + "'s profile picture");
+    embed.setImage(msg.mentions.users.first().avatarURL);
+  } else {
+    embed.setDescription(msg.author.username + "'s profile picture");
+    embed.setImage(msg.author.avatarURL);
+  }
+  msg.channel.send(embed);
 });
+
+
 command.on('reboot', msg => {
   if (msg.author.id == spikeyId) {
     reply(msg, "Rebooting in 4 seconds!");
-    setTimeout(function() { process.exit(1) }, 1000);
+    updategame(password, 'I AM REBOOTING');
+    setTimeout(function() { process.exit(-1) }, 1000);
+  } else {
+    reply(msg, "LOL! Good try!");
+  }
+});
+command.on('reload', msg => {
+  if (msg.author.id == spikeyId) {
+    reply(msg, "Reloading modules...").then(warnMessage => {
+      var error = false;
+      try {
+        HGames.save();
+        delete require.cache[require.resolve('./hungryGames.js')];
+        delete HGames;
+        HGames = require('./hungryGames.js');
+        HGames.begin(Discord, client, command, common);
+      } catch (err) {
+        error = true;
+        common.ERROR("Failed to reload HungryGames");
+        console.log(err);
+      }
+      if (error) {
+        warnMessage.edit("`Reload completed with errors.`");
+      } else {
+        warnMessage.edit("`Reload complete.`");
+      }
+    });
   } else {
     reply(msg, "LOL! Good try!");
   }

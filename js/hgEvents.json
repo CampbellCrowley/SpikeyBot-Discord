@@ -1,0 +1,71 @@
+{
+  "player": [
+    {
+      "message": "{attacker} stabs {victim} to death!",
+      "attacker": {
+        "count": "-1", "outcome": "thrives"
+      },
+      "victim": {
+        "count": "-1", "outcome": "dies"
+      },
+      "probability": 1.0
+    },
+    {
+      "message": "{victim} drowns!",
+      "attacker": {
+        "count": "0", "outcome": "nothing"
+      },
+      "victim": {
+        "count": "1", "outcome": "dies"
+      },
+      "probability": 1.0
+    },
+    {
+      "message": "{attacker} gives {victim} clean water.",
+      "attacker": {
+        "count": "-1", "outcome": "nothing"
+      },
+      "victim": {
+        "count": "-1", "outcome": "thrives"
+      },
+      "probability": 1.0
+    },
+    {
+      "message": "{victim} takes a nap.",
+      "attacker": {
+        "count": "0", "outcome": "nothing"
+      },
+      "victim": {
+        "count": "1", "outcome": "nothing"
+      },
+      "probability": 1.0
+    },
+    {
+      "message": "{victim} takes an arrow to the knee from {attacker}!",
+      "attacker": {
+        "count": "1", "outcome": "nothing"
+      },
+      "victim": {
+        "count": "1", "outcome": "wounded"
+      },
+      "probability": 1.0
+    }
+  ],
+  "arena": [
+    {
+      "message": "Something happened!",
+      "outcome": "nothing",
+      "probability": 1.0
+    },
+    {
+      "message": "Something bad happened!",
+      "outcome": "wounded",
+      "probability": 1.0
+    },
+    {
+      "message": "Something good happened!",
+      "outcome": "thrives",
+      "probability": 1.0
+    }
+  ]
+}
