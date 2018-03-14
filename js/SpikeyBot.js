@@ -20,8 +20,10 @@ var prevUserSayId = "";
 var prevUserSayCnt = 0;
 
 const introduction = "\nHello! My name is SpikeyBot.\n" +
-    "I was created by SpikeyRobot#9836, so if you wish to add any features, feel free to PM him! (Tip: Use **pmspikey**)\n" +
-    "\nIf you'd like to know what I can do, type **help** in a PM to me and I'll let you know!";
+    "I was created by SpikeyRobot#9836, so if you wish to add any features, feel free to PM him! (Tip: Use **" +
+    prefix + "pmspikey**)\n" +
+    "\nIf you'd like to know what I can do, type **" + prefix +
+    "help** in a PM to me and I'll let you know!";
 const helpmessagereply = "I sent you a DM with commands!";
 const blockedmessage =
     "I couldn't send you a message, you probably blocked me :(";
@@ -201,7 +203,7 @@ function skipSong(broadcast) {
 }
 
 // BEGIN //
-client.on('ready', () => {
+client.on('ready', _ => {
   common.LOG(`Logged in as ${client.user.tag}!`);
   updategame(password, '?help for help');
   client.fetchUser(spikeyId).then(user => {user.send("I just started (JS)")});
@@ -230,7 +232,33 @@ client.on('message', msg => {
   }
 });
 
+client.on('guildCreate', guild => {
+  var channel = "";
+  var pos = -1;
+  try {
+    guild.channels.forEach(function(val, key) {
+      if (val.type != 'voice' && val.type != 'category') {
+        if (pos == -1 || val.position < pos) {
+          pos = val.position;
+          channel = val.id;
+        }
+      }
+    });
+    client.channels.get(channel).send(introduction);
+  } catch (err) {
+    common.ERROR("Failed to send welcome to guild:" + guild.id);
+    console.log(err);
+  }
+});
+
 command.on('addme', msg => { reply(msg, addmessage, addLink); });
+command.on('help', msg => {
+  msg.author.send(helpmessage)
+      .then(_ => {
+        if (msg.guild != null) reply(msg, helpmessagereply, ":wink:")
+      })
+      .catch(_ => {reply(msg, blockedmessage)});
+});
 command.on('updategame', msg => {
   msg.delete();
   var command = msg.content.replace(prefix + 'updategame ', '');
@@ -278,13 +306,6 @@ command.on('pmme', msg => {
       })
       .catch(_ => {reply(msg, blockedmessage)});
 });
-command.on('help', msg => {
-  msg.author.send(helpmessage)
-      .then(_ => {
-        if (msg.guild != null) reply(msg, helpmessagereply, ":wink:")
-      })
-      .catch(_ => {reply(msg, blockedmessage)});
-});
 command.on('pmspikey', msg => {
   client.fetchUser(spikeyId)
       .then(
@@ -298,6 +319,16 @@ command.on('pmspikey', msg => {
             msg,
             "Somethine went wrong and I couldn't send your message. Sorry that's all I know :(")
       });
+});
+command.on('thotpm', msg => {
+  if (msg.author.id == spikeyId || msg.author.id == '265418316120719362' ||
+      msg.author.id == '126464376059330562') {
+    msg.delete();
+    if (msg.mentions.users.size == 0) return;
+    msg.mentions.users.first().send(msg.content.replace(prefix + 'thotpm', ''));
+    client.fetchUser(spikeyId).then(
+        user => {user.send(msg.author.tag + ": " + msg.content)});
+  }
 });
 command.on('flip', msg => {
   var rand = Math.round(Math.random());
