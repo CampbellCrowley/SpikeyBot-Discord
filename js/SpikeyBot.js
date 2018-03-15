@@ -104,11 +104,26 @@ function Command() {
     if (typeof cb !== 'function') throw("Event callback must be a function.");
     cb.validOnlyOnServer = onlyserver || false;
     if (typeof cmd === 'string') {
-      cmds[cmd] = cb;
+      if (cmds[cmd]) {
+        common.ERROR(
+            "Attempted to register a second handler for event that already exists! (" +
+            cmd + ")");
+      } else {
+        cmds[cmd] = cb;
+      }
     } else if (Array.isArray(cmd)) {
       for (var i = 0; i < cmd.length; i++) cmds[cmd[i]] = cb;
     } else {
       throw("Event must be string or array of strings");
+    }
+  };
+  this.deleteEvent = function(cmd) {
+    if (cmds[cmd]) {
+      delete cmds[cmd];
+    } else {
+      common.ERROR(
+          "Requested deletion of event handler for event that was never registered! (" +
+          cmd + ")");
     }
   };
 }
@@ -626,6 +641,7 @@ command.on('reload', msg => {
       var error = false;
       try {
         HGames.save();
+        HGames.end();
         delete require.cache[require.resolve('./hungryGames.js')];
         delete HGames;
         HGames = require('./hungryGames.js');
