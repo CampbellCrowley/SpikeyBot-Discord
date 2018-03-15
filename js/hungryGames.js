@@ -7,6 +7,16 @@ const eventFile = 'hgEvents.json';
 
 const roleName = "HG Creator";
 
+// Must total to 1.0
+const multiEventUserDistribution = {
+  1: 0.65,
+  2: 0.25,
+  3: 0.04,
+  4: 0.03,
+  6: 0.02,
+  7: 0.01
+};
+
 var Discord, client, command, common;
 var games = {};
 var defaultPlayerEvents = [];
@@ -28,6 +38,23 @@ fs.readFile(eventFile, function(err, data) {
   } catch (err) {
     console.log(err);
   }
+});
+fs.watchFile(eventFile, function(curr, prev) {
+  if (curr.mtime == pref.mtime) return;
+  if (common) common.LOG("Re-reading default events from file");
+  else console.log("HG: Re-reading default events from file");
+  fs.readFile(eventFile, function(err, data) {
+    if (err) return;
+    try {
+      var parsed = JSON.parse(data);
+      if (parsed) {
+        defaultPlayerEvents = parsed["player"];
+        defaultArenaEvents = parsed["arena"];
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  });
 });
 
 exports.helpMessage = "Hungry Games coming soon!";
@@ -120,9 +147,15 @@ function checkPerms(msg, cb) {
 }
 
 function Player(id, username) {
+  // User id.
   this.id = id;
+  // Username.
   this.name = username;
+  // If this user is still alive.
   this.living = true;
+  // The rank at which this user died.
+  this.rank = 0;
+  // Health state.
   this.state = "normal";
 }
 
@@ -137,6 +170,11 @@ function createGame(msg, id) {
     reply(msg, "Creating a new game with settings from the last game.");
     games[id].currentGame.ended = false;
     games[id].currentGame.day = {num: 0, state: 0};
+    games[id].currentGame.includedUsers.forEach(el => {
+      el.living = true;
+      el.rank = 0;
+      el.state = "normal"
+    });
   } else if (games[id]) {
     reply(msg, "Creating a new game with default settings.");
     games[id].currentGame = {
@@ -157,7 +195,7 @@ function createGame(msg, id) {
     games[id] = {
       excludedUsers: [],
       options: {
-        arenaEvents: true,
+        arenaEvents: false,
         teamSize: 0,
         resurrection: false,
         includeBots: false
@@ -204,9 +242,21 @@ function resetGame(msg, id) {
   }
 }
 function showGameInfo(msg, id) {
-  if (games[id])
-    reply(msg, JSON.stringify(games[id], null, 2));
-  else reply(msg, "No game created");
+  if (games[id]) {
+    var message = JSON.stringify(games[id], null, 2);
+    var messages = [];
+    while (message.length > 0) {
+      var newChunk =
+          message.substring(0, message.length >= 1950 ? 1950 : message.length);
+      messages.push(newChunk);
+      message = message.replace(newChunk, '');
+    }
+    for (var i in messages) {
+      reply(msg, messages[i]).catch(err => { console.log(err); });
+    }
+  } else {
+    reply(msg, "No game created");
+  }
 }
 function showGameEvents(msg) {
   reply(
@@ -228,10 +278,10 @@ function startGame(msg, id) {
       // TODO: Format string for teams.
     } else {
       numUsers = games[id].currentGame.includedUsers.length;
-      teamList = games[id]
-                     .currentGame.includedUsers
-                     .map(function(obj) { return '<@' + obj.id + '>'; })
-                     .join(", ");
+      teamList =
+          games[id]
+              .currentGame.includedUsers.map(function(obj) { return obj.name; })
+              .join(", ");
     }
 
     reply(
@@ -253,9 +303,173 @@ function nextDay(msg, id) {
         msg, "You must start a game first! Use \"?hgstart\" to start a game!");
     return;
   }
+  if (games[id].currentGame.day.state != 0) {
+    reply(msg, "Already simulating day.");
+    return;
+  }
   games[id].currentGame.day.state = 1;
   games[id].currentGame.day.num++;
   games[id].currentGame.day.events = [];
+
+  console.log("Starting new day");
+
+  // TODO: Do arena event if enabled.
+
+  var userPool = games[id].currentGame.includedUsers.filter(function(obj) {
+    return obj.living;
+  });
+  // TODO: Don't let teams attack eachother.
+  var userEventPool = defaultPlayerEvents.concat(games[id].customEvents.player);
+  console.log("Starting events");
+  var loop = 0;
+  while (userPool.length > 0) {
+    loop++;
+    var eventTry =
+        userEventPool[Math.floor(Math.random() * userEventPool.length)];
+
+    var numAttacker = eventTry.attacker.count * 1;
+    var numVictim = eventTry.victim.count * 1;
+
+    var eventEffectsNumMin = 0;
+    if (numVictim < 0) eventEffectsNumMin += 1;
+    else eventEffectsNumMin += numVictim;
+    if (numAttacker < 0) eventEffectsNumMin += 1;
+    else eventEffectsNumMin += numAttacker;
+
+    if (loop > 100) {
+      console.log(
+          "Failed to find suitable event for " + userPool.length + " of " +
+          userEventPool.length + " events. This " + numVictim + "/" +
+          numAttacker + "/" + eventEffectsNumMin);
+      reply(msg, "A stupid error happened :(");
+      games[id].currentGame.day.state = 0;
+      return;
+    }
+    // If the chosen event requires more players than there are remaining, pick
+    // a new event.
+    if (eventEffectsNumMin > userPool.length) continue;
+    loop = 0;
+
+    console.log("Found suitable event");
+
+    var effectedUsers = [];
+
+    var multiAttacker = numAttacker < 0;
+    var multiVictim = numVictim < 0;
+    if (multiAttacker || multiVictim) {
+      do {
+        if (multiAttacker) numAttacker = weightedRand();
+        if (multiVictim) numVictim = weightedRand();
+      } while (numAttacker + numVictim > userPool.length);
+    }
+
+    for (var i = 0; i < numAttacker + numVictim; i++) {
+      var userIndex = Math.floor(Math.random() * userPool.length);
+      effectedUsers.push(userPool.splice(userIndex, 1)[0]);
+    }
+
+    console.log("Affecting users " + effectedUsers.length);
+
+    effectUser = function(i) {
+      var index = userPool.findIndex(function(obj) {
+        return obj.id == effectedUsers[i].id;
+      });
+      userPool.splice(index, 1);
+
+      index = games[id].currentGame.includedUsers.findIndex(function(obj) {
+        return obj.id == effectedUsers[i].id;
+      });
+      return index;
+    };
+
+    killUser = function(i) {
+      var index = effectUser(i);
+      games[id].currentGame.includedUsers[index].living = false;
+      games[id].currentGame.includedUsers[index].state = "dead";
+      // TODO: Calculate rank properly.
+      games[id].currentGame.includedUsers[index].rank = 1;
+    };
+
+    woundUser = function(i) {
+      var index = effectUser(i);
+      games[id].currentGame.includedUsers[index].state = "wounded";
+    };
+    restoreUser = function(i) {
+      var index = effectUser(i);
+      games[id].currentGame.includedUsers[index].state = "normal";
+    };
+
+    if (eventTry.victim.outcome != "nothing") {
+      for (var i = 0; i < numVictim; i++) {
+        if (eventTry.victim.outcome == "dies") killUser(i);
+        else if (eventTry.victim.outcome == "wounded") woundUser(i);
+        else if (eventTry.victim.outcome == "thrives") restoreUser(i);
+      }
+    }
+    if (eventTry.attacker.outcome != "nothing") {
+      for (var i = numVictim; i + numVictim < numAttacker; i++) {
+        if (eventTry.attacker.outcome == "dies") killUser(i);
+        else if (eventTry.attacker.outcome == "wounded") woundUser(i);
+        else if (eventTry.attacker.outcome == "thrives") restoreUser(i);
+      }
+    }
+    // TODO: Store users in events for better output.
+    games[id].currentGame.day.events.push(
+        eventTry.message
+            .replace(
+                "{victim}",
+                formatMultiNames(effectedUsers.splice(0, numVictim)))
+            .replace(
+                "{attacker}",
+                formatMultiNames(effectedUsers.splice(0, numAttacker))));
+    if (effectedUsers.length != 0) {
+      console.log("Effected users remain! " + effectedUsers.length);
+    }
+    console.log("Event complete");
+  }
+  console.log("Ending events");
+
+  var numAlive = 0;
+  var lastIndex = 0;
+  games[id].currentGame.includedUsers.forEach(function(el, i) {
+    if (el.living) {
+      numAlive++;
+      lastIndex = i;
+    }
+  });
+
+  if (numAlive == 1) {
+    games[id].currentGame.day.events.push(
+        "\n" + games[id].currentGame.includedUsers[lastIndex].name +
+        " has won " + games[id].currentGame.name + "!");
+    games[id].currentGame.inProgress = false;
+    games[id].currentGame.ended = true;
+  }
+
+  console.log("Day complete");
+  games[id].currentGame.day.state = 0;
+  // TODO: Format events better.
+  reply(
+      msg, games[id].currentGame.day.events.join('\n'), "Day " +
+          games[id].currentGame.day.num + " has ended with " + numAlive +
+          " remaining.");
+}
+function weightedRand() {
+  var i, sum = 0, r = Math.random();
+  for (i in multiEventUserDistribution) {
+    sum += multiEventUserDistribution[i];
+    if (r <= sum) return i * 1;
+  }
+}
+function formatMultiNames(names) {
+  var output = "";
+  for (var i = 0; i < names.length; i++) {
+    output += names[i].name;
+
+    if (i == names.length - 2) output += ", and ";
+    else if (i != names.length - 1) output += ", ";
+  }
+  return output;
 }
 function endGame(msg, id) {
   if (!games[id] || !games[id].currentGame.inProgress) {

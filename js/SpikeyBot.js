@@ -303,7 +303,7 @@ command.on('updategame', msg => {
   if (updategame(password, game)) {
     reply(msg, "I'm sorry, but you are not allowed to do that. :(\n");
   } else {
-    reply(msg, "I changed my status to \"" + game + "\"!\n```");
+    reply(msg, "I changed my status to \"" + game + "\"!");
   }
 });
 command.on('say', msg => {
@@ -629,7 +629,7 @@ command.on(['profile', 'avatar'], msg => {
 command.on('reboot', msg => {
   if (msg.author.id == spikeyId) {
     reply(msg, "Rebooting in 4 seconds!");
-    updategame(password, 'I AM REBOOTING');
+    // updategame(password, 'I AM REBOOTING');
     setTimeout(function() { process.exit(-1) }, 1000);
   } else {
     reply(msg, "LOL! Good try!");
