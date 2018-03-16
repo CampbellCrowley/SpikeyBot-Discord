@@ -68,6 +68,7 @@ const helpmessage =
   prefix + "pmspikey 'message' // I will send SpikeyRobot (my creator) your message because you are too shy!\n" +
   prefix + "flip // I have an unlimited supply of coins! I will flip one for you!\n" +
   prefix + "avatar 'mention' // Need a better look at your profile pic? I'll show you the original\n" +
+  prefix + "ping 'mention' // Want to know just how laggy someone is? I tell you the pingas!\n" +
 "=== Admin Stuff ===\n" +
   prefix + "purge 'number' // Remove a number of messages from the current text channel!\n" +
   prefix + "fuckyou/" + prefix + "ban 'mention' // I will ban the person you mention with a flashy message!\n" +
@@ -236,7 +237,7 @@ client.on('ready', _ => {
   client.fetchUser(spikeyId).then(user => {user.send("I just started (JS)")});
   common.LOG("Initializing submodules...");
   try {
-    HGames.begin(Discord, client, command, common);
+    HGames.begin(prefix, Discord, client, command, common);
   } catch(err) {
     client.fetchUser(spikeyId).then(
         user => {user.send("Failed to initialize HungryGames")});
@@ -625,6 +626,16 @@ command.on(['profile', 'avatar'], msg => {
   msg.channel.send(embed);
 });
 
+command.on('ping', msg => {
+  if (msg.mentions.users.size > 0) {
+    reply(
+        msg, msg.mentions.users.first().username + " has a ping of " +
+            msg.mentions.members.first().client.ping + "ms");
+  } else {
+    reply(msg, "You have a ping of " + msg.client.ping + "ms");
+  }
+}, true);
+
 
 command.on('reboot', msg => {
   if (msg.author.id == spikeyId) {
@@ -645,7 +656,7 @@ command.on('reload', msg => {
         delete require.cache[require.resolve('./hungryGames.js')];
         delete HGames;
         HGames = require('./hungryGames.js');
-        HGames.begin(Discord, client, command, common);
+        HGames.begin(prefix, Discord, client, command, common);
       } catch (err) {
         error = true;
         common.ERROR("Failed to reload HungryGames");

@@ -9,16 +9,19 @@ const roleName = "HG Creator";
 
 // Must total to 1.0
 const multiEventUserDistribution = {
-  1: 0.65,
-  2: 0.25,
-  3: 0.04,
-  4: 0.03,
-  6: 0.02,
-  7: 0.01
+  1: 0.66,
+  2: 0.27,
+  3: 0.03,
+  4: 0.02,
+  6: 0.015,
+  7: 0.005
 };
 
-var Discord, client, command, common;
+var prefix, Discord, client, command, common;
+var myPrefix, helpMessage;
 var games = {};
+var intervals = {};
+var defaultBloodbathEvents = [];
 var defaultPlayerEvents = [];
 var defaultArenaEvents = [];
 
@@ -27,27 +30,13 @@ fs.readFile(saveFile, function(err, data) {
   games = JSON.parse(data);
   if (!games) games = {};
 });
-fs.readFile(eventFile, function(err, data) {
-  if (err) return;
-  try {
-    var parsed = JSON.parse(data);
-    if (parsed) {
-      defaultPlayerEvents = parsed["player"];
-      defaultArenaEvents = parsed["arena"];
-    }
-  } catch (err) {
-    console.log(err);
-  }
-});
-fs.watchFile(eventFile, function(curr, prev) {
-  if (curr.mtime == pref.mtime) return;
-  if (common) common.LOG("Re-reading default events from file");
-  else console.log("HG: Re-reading default events from file");
+function updateEvents() {
   fs.readFile(eventFile, function(err, data) {
     if (err) return;
     try {
       var parsed = JSON.parse(data);
       if (parsed) {
+        defaultBloodbathEvents = parsed["bloodbath"];
         defaultPlayerEvents = parsed["player"];
         defaultArenaEvents = parsed["arena"];
       }
@@ -55,41 +44,67 @@ fs.watchFile(eventFile, function(curr, prev) {
       console.log(err);
     }
   });
+}
+updateEvents();
+fs.watchFile(eventFile, function(curr, prev) {
+  if (curr.mtime == prev.mtime) return;
+  if (common && common.LOG) {
+    common.LOG("Re-reading default events from file", "HG");
+  } else {
+    console.log("HG: Re-reading default events from file");
+  }
+  updateEvents();
 });
 
-exports.helpMessage = "Hungry Games coming soon!";
+const helpmessagereply = "I sent you a DM with commands!";
+const blockedmessage =
+    "I couldn't send you a message, you probably blocked me :(";
+exports.helpMessage = "Module loading...";
+function setupHelp() {
+exports.helpMessage = "`" + myPrefix + "help` for Hungry Games help.";
+helpMessage =
+"Hungry Games!\n" +
+  "To use any of these commands you must have the \"" + roleName + "\" role.\n" +
+  "```js\n=== Game Settings ===\n" +
+  myPrefix + "create // This will create a game with default settings if it doesn't exist already.\n" +
+  myPrefix + "options [option name] [value] // List options if no name, or change the option if you give a name.\n" +
+  myPrefix + "reset {all/current/events} // Delete data about the Games. Don't choose an option for more info.\n" +
+  "=== Player Settings ===\n" +
+  myPrefix + "players // This will list all players I currently care about.\n" +
+  myPrefix + "exclude {mention} // Prevent someone from being added to the next game.\n" +
+  myPrefix + "include {mention} // Add a person back into the next game.\n" +
+  "=== Events ===\n" +
+  myPrefix + "events // This will list all events that could happen in the game.\n" +
+  myPrefix + "events add // Coming soon!\n" +
+  myPrefix + "events delete // Coming soon!\n" +
+  "=== Time Control ===\n" +
+  myPrefix + "start // This will start a game with your settings.\n" +
+  myPrefix + "end // This will end a game early.\n" +
+  myPrefix + "autoplay // Coming soon!\n" +
+  myPrefix + "pause // Coming soon!\n" +
+  myPrefix + "next // Simulate the next day of the Games!\n```"+
+  "\nMost options do not work yet, This is still very early in development.\n";
+}
 
 // Initialize module.
-exports.begin = function(Discord_, client_, command_, common_) {
+exports.begin = function(prefix_, Discord_, client_, command_, common_) {
+  prefix = prefix_;
+  myPrefix = prefix + "hg ";
   Discord = Discord_;
   client = client_;
   command = command_;
   common = common_;
 
-  command.on('hgcreate', function(msg) { checkPerms(msg, createGame) }, true);
-  command.on('hgreset', function(msg) { checkPerms(msg, resetGame) }, true);
-  command.on('hginfo', function(msg) { checkPerms(msg, showGameInfo) }, true);
-  command.on('hgdefaultevents', function(msg) {
-    checkPerms(msg, showGameEvents)
-  }, true);
-  command.on('hgexclude', function(msg) { checkPerms(msg, excludeUser) }, true);
-  command.on('hginclude', function(msg) { checkPerms(msg, includeUser) }, true);
-  command.on(['hgoption', 'hgoptions'], function(msg) {
-    checkPerms(msg, toggleOpt)
-  }, true);
-  command.on(
-      'hgaddevent', function(msg) { checkPerms(msg, createEvent) }, true);
-  command.on(
-      'hgremoveevent', function(msg) { checkPerms(msg, removeEvent) }, true);
-  command.on('hgevents', function(msg) { checkPerms(msg, listEvents) }, true);
-  command.on('hgplayers', function(msg) { checkPerms(msg, listPlayers) }, true);
-  command.on('hgstart', function(msg) { checkPerms(msg, startGame) }, true);
-  command.on('hgpause', function(msg) { checkPerms(msg, pauseAutoplay) }, true);
-  command.on(
-      'hgautoplay', function(msg) { checkPerms(msg, startAutoplay) }, true);
-  command.on('hgnext', function(msg) { checkPerms(msg, nextDay) }, true);
-  command.on('hgend', function(msg) { checkPerms(msg, endGame) }, true);
-  command.on('hgsave', function(msg) { checkPerms(msg, exports.save) }, false);
+  command.on('hg', function(msg) {
+    try {
+      handleCommand(msg);
+    } catch (err) {
+      common.ERROR("An error occured while perfoming command.", "HG");
+      console.log(err);
+    }
+  });
+
+  setupHelp();
 
   initialized = true;
   common.LOG("HungryGames Init", "HG");
@@ -98,29 +113,105 @@ exports.begin = function(Discord_, client_, command_, common_) {
 exports.end = function() {
   if (!initialized) return;
   initialized = false;
-  command.deleteEvent('hgcreate');
-  command.deleteEvent('hgreset');
-  command.deleteEvent('hginfo');
-  command.deleteEvent('hgdefaultevents');
-  command.deleteEvent('hgexclude');
-  command.deleteEvent('hginclude');
-  command.deleteEvent('hgoption');
-  command.deleteEvent('hgoptions');
-  command.deleteEvent('hgaddevent');
-  command.deleteEvent('hgremoveevent');
-  command.deleteEvent('hgevents');
-  command.deleteEvent('hgplayers');
-  command.deleteEvent('hgstart');
-  command.deleteEvent('hgpause');
-  command.deleteEvent('hgautoplay');
-  command.deleteEvent('hgnext');
-  command.deleteEvent('hgend');
-  command.deleteEvent('hgsave');
+  command.deleteEvent('hg');
   delete command;
   delete Discord;
   delete client;
   delete common;
 };
+
+function handleCommand(msg) {
+  if (msg.content == myPrefix + "help") {
+    help(msg);
+    return;
+  } else if (msg.guild === null) {
+    reply(msg, "This command only works in servers, sorry!");
+    return;
+  }
+  checkPerms(msg, function(msg, id) {
+    var splitText = msg.content.split(' ').slice(1);
+    if (!splitText[0]) {
+      reply(msg, "That isn't a command I understand.");
+      return;
+    }
+    var command = splitText[0].toLowerCase();
+    msg.text = splitText.slice(1).join(' ');
+    switch (command) {
+      case 'create':
+        createGame(msg, id);
+        break;
+      case 'reset':
+        resetGame(msg, id);
+        break;
+      case 'debug':
+        showGameInfo(msg, id);
+        break;
+      case 'debugevents':
+        showGameEvents(msg, id);
+        break;
+      case 'exclude':
+        excludeUser(msg, id);
+        break;
+      case 'include':
+        includeUser(msg, id);
+        break;
+      case 'options':
+      case 'option':
+        toggleOpt(msg, id);
+        break;
+      case 'events':
+        if (!splitText[1]) {
+          listEvents(msg, id);
+        } else {
+          switch (splitText[1].toLowerCase()) {
+            case 'add':
+              createEvent(msg, id);
+              break;
+            case 'delete':
+              removeEvent(msg, id);
+              break;
+            default:
+              reply(
+                  msg,
+                  "I'm sorry, but I don't know how to do that to an event.");
+              break;
+          }
+        }
+        break;
+      case 'players':
+        listPlayers(msg, id);
+        break;
+      case 'start':
+        startGame(msg, id);
+        break;
+      case 'pause':
+        pauseAutoplay(msg, id);
+        break;
+      case 'autoplay':
+        startAutoplay(msg, id);
+        break;
+      case 'next':
+        try {
+          nextDay(msg, id);
+        } catch (err) {
+          console.log(err);
+        }
+        break;
+      case 'end':
+        endGame(msg, id);
+        break;
+      case 'save':
+        exports.save();
+        break;
+      case 'help':
+        help(msg, id);
+        break;
+      default:
+        reply(msg, "That isn't a Hungry Games command!");
+        break;
+    }
+  });
+}
 
 // Creates formatted string for mentioning the author of msg.
 function mention(msg) {
@@ -153,8 +244,10 @@ function Player(id, username) {
   this.name = username;
   // If this user is still alive.
   this.living = true;
+  // If this user is will die at the end of the day.
+  this.bleeding = false;
   // The rank at which this user died.
-  this.rank = 0;
+  this.rank = 1;
   // Health state.
   this.state = "normal";
 }
@@ -169,28 +262,23 @@ function createGame(msg, id) {
   } else if (games[id] && games[id].currentGame) {
     reply(msg, "Creating a new game with settings from the last game.");
     games[id].currentGame.ended = false;
-    games[id].currentGame.day = {num: 0, state: 0};
-    games[id].currentGame.includedUsers.forEach(el => {
-      el.living = true;
-      el.rank = 0;
-      el.state = "normal"
-    });
+    games[id].currentGame.day = {num: 0, state: 0, events: []};
+    games[id].currentGame.includedUsers = getAllPlayers(
+        msg.guild.members, games[id].excludedUsers,
+        games[id].options.includeBots);
+    games[id].currentGame.numAlive = games[id].currentGame.includedUsers.length;
   } else if (games[id]) {
     reply(msg, "Creating a new game with default settings.");
     games[id].currentGame = {
       name: msg.guild.name + "'s Hungry Games",
       inProgress: false,
-      includedUsers:
-          msg.guild.members
-              .filter(function(obj) {
-                return !(!games[id].options.includeBots && obj.user.bot);
-              })
-              .map(function(obj) {
-                return new Player(obj.id, obj.user.username);
-              }),
+      includedUsers: getAllPlayers(
+          msg.guild.members, games[id].excludedUsers,
+          games[id].options.includeBots),
       ended: false,
       day: {num: 0, state: 0, events: []}
     };
+    games[id].currentGame.numAlive = games[id].currentGame.includedUsers.length;
   } else {
     games[id] = {
       excludedUsers: [],
@@ -200,27 +288,37 @@ function createGame(msg, id) {
         resurrection: false,
         includeBots: false
       },
-      customEvents: {player: [], arena: []},
+      customEvents: {bloodbath: [], player: [], arena: []},
       currentGame: {
         name: msg.guild.name + "'s Hungry Games",
         inProgress: false,
-        includedUsers:
-            msg.guild.members.filter(function(obj) { return !obj.user.bot; })
-                .map(function(obj) {
-                  return new Player(obj.id, obj.user.username);
-                }),
+        includedUsers: getAllPlayers(msg.guild.members, [], false),
         ended: false,
         day: {num: 0, state: 0, events: []}
       },
       autoPlay: false
     };
+    games[id].currentGame.numAlive = games[id].currentGame.includedUsers.length;
     reply(
         msg,
         "Created a Hungry Games with default settings and all members included.");
   }
 }
+function getAllPlayers(members, excluded, bots) {
+  var finalMembers = [];
+  if (!bots || excluded instanceof Array) {
+    finalMembers = members.filter(function(obj) {
+      return !(
+          (!bots && obj.user.bot) ||
+          (excluded && excluded.includes(obj.user.id)))
+    });
+  }
+  if (finalMembers.length == 0) finalMembers = members.slice();
+  return finalMembers.map(
+      obj => { return new Player(obj.id, obj.user.username); });
+}
 function resetGame(msg, id) {
-  const command = msg.content.split(' ')[1];
+  const command = msg.text.split(' ')[0];
   if (games[id]) {
     if (command == "all") {
       reply(msg, "Resetting ALL Hungry Games data for this server!");
@@ -288,30 +386,64 @@ function startGame(msg, id) {
         msg, "Let the games begin!",
         `**Included** (${numUsers}):\n${teamList}\n**Excluded** (${games[id].excludedUsers.length}):\n${games[id].excludedUsers.join(", ")}`);
     games[id].currentGame.inProgress = true;
+    if (games[id].autoPlay) {
+      nextDay(msg, id);
+    }
   }
 }
-function pauseAutoplay(msg) {
-  reply(msg, "This doesn't work yet!");
+function pauseAutoplay(msg, id) {
+  if (games[id].autoPlay) {
+    reply(msg, "Autoplay will stop at the end of the current day.");
+    games[id].autoPlay = false;
+  } else {
+    reply(
+        msg, "Not autoplaying. If you wish to autoplay, type \"" + myPrefix +
+            "autoplay\".");
+  }
 }
-function startAutoplay(msg) {
-  reply(msg, "This doesn't work yet!");
+function startAutoplay(msg, id) {
+  if (games[id].autoPlay) {
+    reply(
+        msg, "Already autoplaying. If you wish to stop autoplaying, type \"" +
+            myPrefix + "pause\".");
+  } else {
+    games[id].autoPlay = true;
+    if (games[id].currentGame.inProgress &&
+        games[id].currentGame.day.state == 0) {
+      reply(msg, "Enabling Autoplay! Starting the next day!");
+      nextDay(msg, id);
+    } else if (!games[id].currentGame.inProgress) {
+      reply(
+          msg, "Autoplay is enabled, type \"" + myPrefix + "start\" to begin!");
+    } else {
+      reply(msg, "Enabling Autoplay!");
+    }
+  }
 }
 // Simulate a single day.
 function nextDay(msg, id) {
   if (!games[id] || !games[id].currentGame.inProgress) {
     reply(
-        msg, "You must start a game first! Use \"?hgstart\" to start a game!");
+        msg, "You must start a game first! Use \"" + myPrefix +
+            "start\" to start a game!");
     return;
   }
   if (games[id].currentGame.day.state != 0) {
-    reply(msg, "Already simulating day.");
+    if (intervals[id]) {
+      reply(msg, "Already simulating day.");
+    } else if (games[id].currentGame.day.state == 1) {
+      reply(
+          msg,
+          "I think I'm already simulating... if this isn't true this game has crashed and you must end the game.");
+    } else {
+      intervals[id] =
+          client.setInterval(function() { printEvent(msg, id); }, 3500);
+    }
     return;
   }
   games[id].currentGame.day.state = 1;
   games[id].currentGame.day.num++;
   games[id].currentGame.day.events = [];
-
-  console.log("Starting new day");
 
   // TODO: Do arena event if enabled.
 
@@ -319,13 +451,29 @@ function nextDay(msg, id) {
     return obj.living;
   });
   // TODO: Don't let teams attack eachother.
-  var userEventPool = defaultPlayerEvents.concat(games[id].customEvents.player);
-  console.log("Starting events");
+  var userEventPool;
+  if (games[id].currentGame.day.num == 1) {
+    userEventPool =
+        defaultBloodbathEvents.concat(games[id].customEvents.bloodbath);
+  } else {
+    userEventPool = defaultPlayerEvents.concat(games[id].customEvents.player);
+  }
   var loop = 0;
   while (userPool.length > 0) {
     loop++;
-    var eventTry =
-        userEventPool[Math.floor(Math.random() * userEventPool.length)];
+    var eventIndex = Math.floor(Math.random() * userEventPool.length);
+    if (eventIndex < 0 || eventIndex >= userEventPool.length) {
+      common.ERROR(
+          "Attempted to select event out of range! " + eventIndex + "/" +
+              userEventPool.length,
+          "HG");
+      continue;
+    }
+    var eventTry = userEventPool[eventIndex];
+    if (!eventTry) {
+      common.ERROR("Event at index " + eventIndex + " is invalid!", "HG");
+      continue;
+    }
 
     var numAttacker = eventTry.attacker.count * 1;
     var numVictim = eventTry.victim.count * 1;
@@ -350,8 +498,6 @@ function nextDay(msg, id) {
     if (eventEffectsNumMin > userPool.length) continue;
     loop = 0;
 
-    console.log("Found suitable event");
-
     var effectedUsers = [];
 
     var multiAttacker = numAttacker < 0;
@@ -368,26 +514,24 @@ function nextDay(msg, id) {
       effectedUsers.push(userPool.splice(userIndex, 1)[0]);
     }
 
-    console.log("Affecting users " + effectedUsers.length);
-
     effectUser = function(i) {
-      var index = userPool.findIndex(function(obj) {
+      var index = games[id].currentGame.includedUsers.findIndex(function(obj) {
         return obj.id == effectedUsers[i].id;
       });
-      userPool.splice(index, 1);
-
-      index = games[id].currentGame.includedUsers.findIndex(function(obj) {
-        return obj.id == effectedUsers[i].id;
-      });
+      if (games[id].currentGame.includedUsers[index].state == "wounded") {
+        games[id].currentGame.includedUsers[index].bleeding = true;
+      }
       return index;
     };
 
     killUser = function(i) {
+      // TODO: Track kills
       var index = effectUser(i);
       games[id].currentGame.includedUsers[index].living = false;
+      games[id].currentGame.includedUsers[index].bleeding = false;
       games[id].currentGame.includedUsers[index].state = "dead";
-      // TODO: Calculate rank properly.
-      games[id].currentGame.includedUsers[index].rank = 1;
+      games[id].currentGame.includedUsers[index].rank =
+          games[id].currentGame.numAlive--;
     };
 
     woundUser = function(i) {
@@ -399,60 +543,69 @@ function nextDay(msg, id) {
       games[id].currentGame.includedUsers[index].state = "normal";
     };
 
-    if (eventTry.victim.outcome != "nothing") {
-      for (var i = 0; i < numVictim; i++) {
-        if (eventTry.victim.outcome == "dies") killUser(i);
-        else if (eventTry.victim.outcome == "wounded") woundUser(i);
-        else if (eventTry.victim.outcome == "thrives") restoreUser(i);
+    for (var i = 0; i < numVictim; i++) {
+      switch (eventTry.victim.outcome) {
+        case "dies":
+          killUser(i);
+          break;
+        case "wounded":
+          woundUser(i);
+          break;
+        case "thrives":
+          restoreUser(i);
+          break;
+        default:
+          effectUser(i);
       }
     }
-    if (eventTry.attacker.outcome != "nothing") {
-      for (var i = numVictim; i + numVictim < numAttacker; i++) {
-        if (eventTry.attacker.outcome == "dies") killUser(i);
-        else if (eventTry.attacker.outcome == "wounded") woundUser(i);
-        else if (eventTry.attacker.outcome == "thrives") restoreUser(i);
+    for (var i = numVictim; i < numVictim + numAttacker; i++) {
+      switch (eventTry.attacker.outcome) {
+        case "dies":
+          killUser(i);
+          break;
+        case "wounded":
+          woundUser(i);
+          break;
+        case "thrives":
+          restoreUser(i);
+          break;
+        default:
+          effectUser(i);
       }
     }
-    // TODO: Store users in events for better output.
     games[id].currentGame.day.events.push(
-        eventTry.message
-            .replace(
-                "{victim}",
-                formatMultiNames(effectedUsers.splice(0, numVictim)))
-            .replace(
-                "{attacker}",
-                formatMultiNames(effectedUsers.splice(0, numAttacker))));
+        makeSingleEvent(
+            eventTry.message, effectedUsers, numVictim, numAttacker));
     if (effectedUsers.length != 0) {
       console.log("Effected users remain! " + effectedUsers.length);
     }
-    console.log("Event complete");
   }
-  console.log("Ending events");
-
-  var numAlive = 0;
-  var lastIndex = 0;
-  games[id].currentGame.includedUsers.forEach(function(el, i) {
-    if (el.living) {
-      numAlive++;
-      lastIndex = i;
+  var usersBleeding = [];
+  games[id].currentGame.includedUsers.forEach(function(obj) {
+    if (obj.bleeding && obj.living) {
+      usersBleeding.push(obj);
+      obj.living = false;
+      obj.bleeding = false;
+      obj.state = "dead";
+      obj.rank = games[id].currentGame.numAlive--;
     }
   });
-
-  if (numAlive == 1) {
+  if (usersBleeding.length > 0) {
     games[id].currentGame.day.events.push(
-        "\n" + games[id].currentGame.includedUsers[lastIndex].name +
-        " has won " + games[id].currentGame.name + "!");
-    games[id].currentGame.inProgress = false;
-    games[id].currentGame.ended = true;
+        makeSingleEvent(
+            "{victim} fails to tend to their wounds and dies.", usersBleeding,
+            usersBleeding.length, 0));
   }
+  console.log("Bleeding", usersBleeding.length);
 
-  console.log("Day complete");
-  games[id].currentGame.day.state = 0;
-  // TODO: Format events better.
-  reply(
-      msg, games[id].currentGame.day.events.join('\n'), "Day " +
-          games[id].currentGame.day.num + " has ended with " + numAlive +
-          " remaining.");
+  // Signal ready to display events.
+  games[id].currentGame.day.state = 2;
+
+  var embed = new Discord.RichEmbed();
+  embed.setTitle("Day " + games[id].currentGame.day.num + " has begun!");
+  embed.setColor([0, 255, 0]);
+  msg.channel.send(embed);
+  intervals[id] = client.setInterval(printEvent, 3500, msg, id);
 }
 function weightedRand() {
   var i, sum = 0, r = Math.random();
@@ -464,12 +617,106 @@ function weightedRand() {
 function formatMultiNames(names) {
   var output = "";
   for (var i = 0; i < names.length; i++) {
-    output += names[i].name;
+    output += "`" + names[i].name + "`";
 
     if (i == names.length - 2) output += ", and ";
     else if (i != names.length - 1) output += ", ";
   }
   return output;
+}
+function makeSingleEvent(message, effectedUsers, numVictim, numAttacker) {
+  var effectedVictims = effectedUsers.splice(0, numVictim);
+  var effectedAttackers = effectedUsers.splice(0, numAttacker);
+  return {
+    message:
+        message.replaceAll("{victim}", formatMultiNames(effectedVictims))
+            .replaceAll("{attacker}", formatMultiNames(effectedAttackers)) /*,
+victims: effectedVictims,
+attackers: effectedAttackers */
+  };
+}
+function printEvent(msg, id) {
+  var index = games[id].currentGame.day.state - 2;
+  var events = games[id].currentGame.day.events;
+  if (index == events.length) {
+    client.clearInterval(intervals[id]);
+    printDay(msg, id);
+  } else {
+    msg.channel.send(events[index].message);
+    games[id].currentGame.day.state++;
+  }
+}
+function printDay(msg, id) {
+  var numAlive = 0;
+  var lastIndex = 0;
+  games[id].currentGame.includedUsers.forEach(function(el, i) {
+    if (el.living) {
+      numAlive++;
+      lastIndex = i;
+    }
+  });
+
+  if (games[id].currentGame.numAlive != numAlive) {
+    common.ERROR("Realtime alive count is incorrect!", "HG");
+  }
+
+  var finalMessage = new Discord.RichEmbed();
+  finalMessage.setColor([255, 0, 255]);
+  if (numAlive == 1) {
+    finalMessage.setTitle(
+        "\n`" + games[id].currentGame.includedUsers[lastIndex].name +
+        "` has won " + games[id].currentGame.name + "!");
+    games[id].currentGame.inProgress = false;
+    games[id].currentGame.ended = true;
+    games[id].autoPlay = false;
+  } else if (numAlive < 1) {
+    finalMessage.setTitle(
+        "\nEveryone has died in " + games[id].currentGame.name +
+        "!\nThere are no winners!");
+    games[id].currentGame.inProgress = false;
+    games[id].currentGame.ended = true;
+    games[id].autoPlay = false;
+  } else {
+    finalMessage.setTitle("Status update!");
+    finalMessage.setDescription(
+        games[id]
+            .currentGame.includedUsers
+            .map(function(obj) {
+              return (obj.living ?
+                          (obj.state == "wounded" ? ":heart:" :
+                                                    ":white_check_mark:") :
+                          ":x:") +
+                  "`" + obj.name + "` ";
+            })
+            .join("\n"));
+  }
+
+  var embed = new Discord.RichEmbed();
+  embed.setTitle(
+      "Day " + games[id].currentGame.day.num + " has ended with " + numAlive +
+      " alive!");
+  embed.setColor([255, 0, 0]);
+  msg.channel.send(embed);
+  client.setTimeout(function() { msg.channel.send(finalMessage); }, 1000);
+
+  if (games[id].currentGame.ended) {
+    var rankEmbed = new Discord.RichEmbed();
+    rankEmbed.setTitle("Final ranks");
+    rankEmbed.setDescription(
+        games[id]
+            .currentGame.includedUsers
+            .sort(function(a, b) { return a.rank - b.rank; })
+            .map(function(obj) { return obj.rank + ") " + obj.name; })
+            .join('\n'));
+    rankEmbed.setColor([0, 0, 255]);
+    client.setTimeout(function() { msg.channel.send(rankEmbed); }, 5000);
+  }
+
+  games[id].currentGame.day.state = 0;
+
+  if (games[id].autoPlay) {
+    client.setTimeout(function() { nextDay(msg, id); }, 7000);
+  }
 }
 function endGame(msg, id) {
   if (!games[id] || !games[id].currentGame.inProgress) {
@@ -561,7 +808,8 @@ function listPlayers(msg, id) {
             .join(', ');
   } else {
     stringList +=
-        "There don't appear to be any included players. Have you created a game with \"?hgcreate\"?";
+        "There don't appear to be any included players. Have you created a game with \"" +
+        myPrefix + "create\"?";
   }
   if (games[id] && games[id].excludedUsers) {
     stringList +=
@@ -585,18 +833,28 @@ function getName(msg, user) {
 }
 
 function toggleOpt(msg, id) {
-  var option = msg.content.split(' ')[1];
-  var value = msg.content.split(' ')[2];
+  var option = msg.text.split(' ')[0];
+  var value = msg.text.split(' ')[1];
   if (!games[id] || !games[id].currentGame) {
-    reply(msg, "You must create a game first before editing settings! Use \"?hgcreate\" to create a game.");
+    reply(
+        msg, "You must create a game first before editing settings! Use \"" +
+            myPrefix + "create\" to create a game.");
   } else if (games[id].currentGame.inProgress) {
-    reply(msg, "You must end this game before changing settings. Use \"?htend\" to abort this game.");
-  } else if (typeof option === 'undefined') {
+    reply(
+        msg, "You must end this game before changing settings. Use \"" +
+            myPrefix + "end\" to abort this game.");
+  } else if (typeof option === 'undefined' || option.length == 0) {
     reply(
         msg, "Here are the current options:" +
-            JSON.stringify(games[id].options, null, 2) + ".");
+            JSON.stringify(games[id].options, null, 1)
+                .replace("{", '')
+                .replace("}", ''));
   } else if (typeof games[id].options[option] === 'undefined') {
-    reply(msg, "That is not a valid option to change! Valid options are " + JSON.stringify(games[id].options) + ".");
+    reply(
+        msg, "That is not a valid option to change! Valid options are" +
+            JSON.stringify(games[id].options, null, 1)
+                .replace("{", '')
+                .replace("}", ''));
   } else {
     var type = typeof games[id].options[option];
     if (type === 'number') {
@@ -638,7 +896,17 @@ function removeEvent(msg) {
   reply(msg, "This doesn't work yet!");
 }
 function listEvents(msg, id) {
-  var stringList = "=== Player Events ===\n";
+  var stringList = "=== Bloodbath Events ===\n";
+  if (games[id] && games[id].customEvents.bloodbath) {
+    stringList +=
+        games[id]
+            .customEvents.bloodbath.map(function(obj) { return obj.message; })
+            .join('\n');
+  }
+  stringList +=
+      defaultBloodbathEvents.map(function(obj) { return obj.message; })
+          .join('\n') +
+      "\n\n=== Player Events ===\n";
   if (games[id] && games[id].customEvents.player) {
     stringList +=
         games[id]
@@ -657,7 +925,24 @@ function listEvents(msg, id) {
   stringList +=
       defaultArenaEvents.map(function(obj) { return obj.message; }).join('\n');
 
-  reply(msg, stringList);
+  var messages = [];
+  while (stringList.length > 0) {
+    var newChunk = stringList.substring(
+        0, stringList.length >= 1950 ? 1950 : stringList.length);
+    messages.push(newChunk);
+    stringList = stringList.replace(newChunk, '');
+  }
+  for (var i in messages) {
+    reply(msg, messages[i]).catch(err => { console.log(err); });
+  }
+}
+
+function help(msg, id) {
+  msg.author.send(helpMessage)
+      .then(_ => {
+        if (msg.guild != null) reply(msg, helpmessagereply, ":wink:")
+      })
+      .catch(_ => {reply(msg, blockedmessage)});
 }
 
 // Util //
