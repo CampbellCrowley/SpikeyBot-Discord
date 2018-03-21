@@ -16,6 +16,10 @@ const multiEventUserDistribution = {
   6: 0.015,
   7: 0.005
 };
+// Probability of dead player being revived per day.
+var resurrectProb = 0.10;
+// Probability of an arena event per day.
+var arenaEventProb = 0.25;
 
 var prefix, Discord, client, command, common;
 var myPrefix, helpMessage;
@@ -207,7 +211,9 @@ function handleCommand(msg) {
         help(msg, id);
         break;
       default:
-        reply(msg, "That isn't a Hungry Games command!");
+        reply(
+            msg, "That isn't a Hungry Games command! \"" + myPrefix +
+                "help\" for a list of commands.");
         break;
     }
   });
@@ -285,6 +291,9 @@ function createGame(msg, id) {
       options: {
         arenaEvents: false,
         teamSize: 0,
+        mentionVictor: true,
+        mentionAll: false,
+        mentionEveryoneAtStart: false,
         resurrection: false,
         includeBots: false
       },
@@ -329,10 +338,19 @@ function resetGame(msg, id) {
     } else if (command == "current") {
       reply(msg, "Resetting ALL data for current game!");
       delete games[id].currentGame;
+    } else if (command == "options") {
+      reply(msg, "Resetting ALL options!");
+      games[id].options = {
+        arenaEvents: false,
+        teamSize: 0,
+        mentionVictor: true,
+        mentionAll: false,
+        mentionEveryoneAtStart: false,
+        resurrection: false,
+        includeBots: false
+      };
     } else {
-      reply(
-          msg,
-          "Please specify what data to reset (all {deletes all data for this server}, events {deletes all custom events}, current {deletes all data about the current game))");
+      reply(msg, "Please specify what data to reset (all {deletes all data for this server}, events {deletes all custom events}, current {deletes all data about the current game}, options {resets all options to default values})");
     }
   } else {
     reply(
@@ -384,7 +402,7 @@ function startGame(msg, id) {
 
     reply(
         msg, "Let the games begin!",
-        `**Included** (${numUsers}):\n${teamList}\n**Excluded** (${games[id].excludedUsers.length}):\n${games[id].excludedUsers.join(", ")}`);
+        `${games[id].options.mentionEveryoneAtStart ? "@everyone" : ""}\n**Included** (${numUsers}):\n${teamList}\n**Excluded** (${games[id].excludedUsers.length}):\n${games[id].excludedUsers.join(", ")}`);
     games[id].currentGame.inProgress = true;
     if (games[id].autoPlay) {
       nextDay(msg, id);
@@ -392,8 +410,14 @@ function startGame(msg, id) {
   }
 }
 function pauseAutoplay(msg, id) {
-  if (games[id].autoPlay) {
-    reply(msg, "Autoplay will stop at the end of the current day.");
+  if (!games[id]) {
+    reply(
+        msg, "You must create a game first before using autoplay. Use \"" +
+            myPrefix + "create\" to do this.");
+  } else if (games[id].autoPlay) {
+    msg.channel.send(
+        "<@" + msg.author.id +
+        "> `Autoplay will stop at the end of the current day.`");
     games[id].autoPlay = false;
   } else {
     reply(
@@ -402,7 +426,11 @@ function pauseAutoplay(msg, id) {
   }
 }
 function startAutoplay(msg, id) {
-  if (games[id].autoPlay) {
+  if (!games[id]) {
+    reply(
+        msg, "You must create a game first before using autoplay. Use \"" +
+            myPrefix + "create\" to do this.");
+  } else if (games[id].autoPlay) {
     reply(
         msg, "Already autoplaying. If you wish to stop autoplaying, type \"" +
             myPrefix + "pause\".");
@@ -410,13 +438,16 @@ function startAutoplay(msg, id) {
     games[id].autoPlay = true;
     if (games[id].currentGame.inProgress &&
         games[id].currentGame.day.state == 0) {
-      reply(msg, "Enabling Autoplay! Starting the next day!");
+      msg.channel.send(
+          "<@" + msg.author.id +
+          "> `Enabling Autoplay! Starting the next day!`");
       nextDay(msg, id);
     } else if (!games[id].currentGame.inProgress) {
-      reply(
-          msg, "Autoplay is enabled, type \"" + myPrefix + "start\" to begin!");
+      msg.channel.send(
+          "<@" + msg.author.id + "> `Autoplay is enabled, type \"" + myPrefix +
+          "start\" to begin!`");
     } else {
-      reply(msg, "Enabling Autoplay!");
+      msg.channel.send("<@" + msg.author.id + "> `Enabling autoplay!`");
     }
   }
 }
@@ -445,18 +476,45 @@ function nextDay(msg, id) {
   games[id].currentGame.day.num++;
   games[id].currentGame.day.events = [];
 
-  // TODO: Do arena event if enabled.
+  if (games[id].options.resurrection && Math.random() < resurrectProb) {
+    var deadPool = games[id].currentGame.includedUsers.filter(function(obj) {
+      return !obj.living;
+    });
+    if (deadPool.length > 0) {
+      var resurrected = deadPool[Math.floor(Math.random() * deadPool.length)];
+      resurrected.living = true;
+      resurrected.state = "zombie";
+      resurrected.rank = 1;
+      games[id].currentGame.numAlive++;
+      games[id].currentGame.day.events.push(
+          makeSingleEvent(
+              "{victim} has returned from the dead and was put back into the arena!",
+              [resurrected], 1, 0, games[id].options.mentionAll));
+    }
+  }
 
   var userPool = games[id].currentGame.includedUsers.filter(function(obj) {
     return obj.living;
   });
   // TODO: Don't let teams attack eachother.
   var userEventPool;
+  var doArenaEvent = false;
   if (games[id].currentGame.day.num == 1) {
     userEventPool =
         defaultBloodbathEvents.concat(games[id].customEvents.bloodbath);
   } else {
-    userEventPool = defaultPlayerEvents.concat(games[id].customEvents.player);
+    doArenaEvent =
+        games[id].options.arenaEvents && Math.random() < arenaEventProb;
+    if (doArenaEvent) {
+      var arenaEventPool = defaultArenaEvents.concat(games[id].customEvents.arena);
+      var index = Math.floor(Math.random() * arenaEventPool.length);
+      var arenaEvent = arenaEventPool[index];
+      games[id].currentGame.day.events.push(
+          makeSingleEvent(arenaEvent.message, [], 0, 0, false));
+      userEventPool = arenaEvent.outcomes;
+    } else {
+      userEventPool = defaultPlayerEvents.concat(games[id].customEvents.player);
+    }
   }
   var loop = 0;
   while (userPool.length > 0) {
@@ -575,7 +633,8 @@ function nextDay(msg, id) {
     }
     games[id].currentGame.day.events.push(
         makeSingleEvent(
-            eventTry.message, effectedUsers, numVictim, numAttacker));
+            eventTry.message, effectedUsers, numVictim, numAttacker,
+            games[id].options.mentionAll));
     if (effectedUsers.length != 0) {
       console.log("Effected users remain! " + effectedUsers.length);
     }
@@ -594,9 +653,8 @@ function nextDay(msg, id) {
     games[id].currentGame.day.events.push(
         makeSingleEvent(
             "{victim} fails to tend to their wounds and dies.", usersBleeding,
-            usersBleeding.length, 0));
+            usersBleeding.length, 0, games[id].options.mentionAll));
   }
-  console.log("Bleeding", usersBleeding.length);
 
   // Signal ready to display events.
   games[id].currentGame.day.state = 2;
@@ -614,25 +672,40 @@ function weightedRand() {
     if (r <= sum) return i * 1;
   }
 }
-function formatMultiNames(names) {
+function formatMultiNames(names, mention) {
   var output = "";
   for (var i = 0; i < names.length; i++) {
-    output += "`" + names[i].name + "`";
+    if (mention) {
+      output += "<@" + names[i].id + ">";
+    } else {
+      output += "`" + names[i].name + "`";
+    }
 
     if (i == names.length - 2) output += ", and ";
     else if (i != names.length - 1) output += ", ";
   }
   return output;
 }
-function makeSingleEvent(message, effectedUsers, numVictim, numAttacker) {
+function makeSingleEvent(
+    message, effectedUsers, numVictim, numAttacker, mention) {
   var effectedVictims = effectedUsers.splice(0, numVictim);
   var effectedAttackers = effectedUsers.splice(0, numAttacker);
+  var finalMessage = message;
+  finalMessage = finalMessage.replace(
+      /\[V([^\|]*)\|([^\]]*)\]/g,
+      "$" + (effectedVictims.length > 1 ? "2" : "1"));
+  finalMessage = finalMessage.replace(
+      /\[A([^\|]*)\|([^\]]*)\]/g,
+      "$" + (effectedAttackers.length > 1 ? "2" : "1"));
+  finalMessage =
+      finalMessage
+          .replaceAll("{victim}", formatMultiNames(effectedVictims, mention))
+          .replaceAll(
+              "{attacker}", formatMultiNames(effectedAttackers, mention));
   return {
-    message:
-        message.replaceAll("{victim}", formatMultiNames(effectedVictims))
-            .replaceAll("{attacker}", formatMultiNames(effectedAttackers)) /*,
-victims: effectedVictims,
-attackers: effectedAttackers */
+    message: finalMessage /*,
+     victims: effectedVictims,
+     attackers: effectedAttackers */
   };
 }
 function printEvent(msg, id) {
@@ -663,9 +736,9 @@ function printDay(msg, id) {
   var finalMessage = new Discord.RichEmbed();
   finalMessage.setColor([255, 0, 255]);
   if (numAlive == 1) {
+    var winnerName = games[id].currentGame.includedUsers[lastIndex].name;
     finalMessage.setTitle(
-        "\n`" + games[id].currentGame.includedUsers[lastIndex].name +
-        "` has won " + games[id].currentGame.name + "!");
+        "\n`" + winnerName + "` has won " + games[id].currentGame.name + "!");
     games[id].currentGame.inProgress = false;
     games[id].currentGame.ended = true;
     games[id].autoPlay = false;
@@ -682,11 +755,11 @@ function printDay(msg, id) {
         games[id]
             .currentGame.includedUsers
             .map(function(obj) {
-              return (obj.living ?
-                          (obj.state == "wounded" ? ":heart:" :
-                                                    ":white_check_mark:") :
-                          ":x:") +
-                  "`" + obj.name + "` ";
+              var symbol = ":white_check_mark:";
+              if (!obj.living) symbol = ":x:";
+              else if (obj.state == "wounded") symbol = ":heart:";
+              else if (obj.state == "zombie") symbol = ":negative_squared_cross_mark:";
+              return symbol + "`" + obj.name + "`";
             })
             .join("\n"));
   }
@@ -697,7 +770,15 @@ function printDay(msg, id) {
       " alive!");
   embed.setColor([255, 0, 0]);
   msg.channel.send(embed);
-  client.setTimeout(function() { msg.channel.send(finalMessage); }, 1000);
+
+  client.setTimeout(function() {
+    var winnerTag = "";
+    if (games[id].options.mentionVictor) {
+      winnerTag =
+          "<@" + games[id].currentGame.includedUsers[lastIndex].id + ">";
+    }
+    msg.channel.send(winnerTag, finalMessage);
+  }, 1000);
 
   if (games[id].currentGame.ended) {
     var rankEmbed = new Discord.RichEmbed();
