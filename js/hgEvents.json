@@ -3,1036 +3,909 @@
     {
       "message": "{victim} trip[Vs|] and get[Vs|] impaled by the cornucopia!",
       "attacker": { "count": "0", "outcome": "nothing"},
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{victim} hides in the cornucopia.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "nothing" }
     },
     {
       "message": "{victim} grabs a gun that may or may not work!",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "nothing" }
     },
     {
       "message": "{attacker} finds a gun with one bullet, and kills {victim} with it!",
       "attacker": { "count": "1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "dies" }
     },
     {
       "message": "{attacker} finds a gun with one bullet, but misses {victim} with it!",
       "attacker": { "count": "1", "outcome": "nothing" },
-      "victim": { "count": "1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "nothing" }
     },
     {
       "message": "{attacker} finds a gun with one bullet, and {victim} both die somehow!",
       "attacker": { "count": "1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "2", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "2", "outcome": "dies" }
     },
     {
       "message": "{victim} ends their own life with a butter knife!",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "dies" }
     },
     {
       "message": "{attacker} grabs a shovel.",
       "attacker": { "count": "1", "outcome": "nothing" },
-      "victim": { "count": "0", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "0", "outcome": "nothing" }
     },
     {
       "message": "{attacker} grabs a backpack and retreats.",
       "attacker": { "count": "1", "outcome": "nothing" },
-      "victim": { "count": "0", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "0", "outcome": "nothing" }
     },
     {
       "message": "{attacker} and {victim} fight for a bag. {victim} gives up and runs away.",
       "attacker": { "count": "1", "outcome": "nothing" },
-      "victim": { "count": "1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "nothing" }
     },
     {
       "message": "{attacker} and {victim} fight for a bag. {attacker} gives up and runs away.",
       "attacker": { "count": "1", "outcome": "nothing" },
-      "victim": { "count": "1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "nothing" }
     },
     {
       "message": "{attacker} finds a bow, arrows and a quiver.",
       "attacker": { "count": "1", "outcome": "nothing" },
-      "victim": { "count": "0", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "0", "outcome": "nothing" }
     },
     {
       "message": "{attacker} takes a handful of throwing knives.",
       "attacker": { "count": "1", "outcome": "nothing" },
-      "victim": { "count": "0", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "0", "outcome": "nothing" }
     },
     {
       "message": "{attacker} takes a mace out of {victim}'s hands.",
       "attacker": { "count": "1", "outcome": "nothing" },
-      "victim": { "count": "1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "nothing" }
     },
     {
       "message": "{attacker} stays near the cornucopia for resources.",
       "attacker": { "count": "1", "outcome": "nothing" },
-      "victim": { "count": "0", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "0", "outcome": "nothing" }
     },
     {
       "message": "{attacker} gather[As|] food.",
       "attacker": { "count": "-1", "outcome": "thrives" },
-      "victim": { "count": "0", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "0", "outcome": "nothing" }
     },
     {
       "message": "{attacker} grabs a sword.",
       "attacker": { "count": "1", "outcome": "nothing" },
-      "victim": { "count": "0", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "0", "outcome": "nothing" }
     },
     {
       "message": "{attacker} takes a spear from the cornucopia.",
       "attacker": { "count": "1", "outcome": "nothing" },
-      "victim": { "count": "0", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "0", "outcome": "nothing" }
     },
     {
       "message": "{attacker} manages to find a bag full of explosives.",
       "attacker": { "count": "1", "outcome": "nothing" },
-      "victim": { "count": "0", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "0", "outcome": "nothing" }
     },
     {
       "message": "{attacker} collect[As|] supplies.",
       "attacker": { "count": "-1", "outcome": "nothing" },
-      "victim": { "count": "0", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "0", "outcome": "nothing" }
     },
     {
       "message": "{attacker} grabs all of the alcohol.",
       "attacker": { "count": "1", "outcome": "nothing" },
-      "victim": { "count": "0", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "0", "outcome": "nothing" }
     },
     {
       "message": "{attacker} takes a tent and runs away.",
       "attacker": { "count": "1", "outcome": "nothing" },
-      "victim": { "count": "0", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "0", "outcome": "nothing" }
     },
     {
       "message": "{victim} grabs {attacker}'s backpack, not realizing {attacker} lit the fuse.",
       "attacker": { "count": "1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{attacker} breaks {victim}'s nose for a slice of bread!",
       "attacker": { "count": "1", "outcome": "nothing" },
-      "victim": { "count": "1", "outcome": "wounded" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "wounded" }
     },
     {
       "message": "{attacker} split their supplies, then part ways.",
       "attacker": { "count": "4", "outcome": "thrives" },
-      "victim": { "count": "0", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "0", "outcome": "nothing" }
     },
     {
       "message": "A cannon is heard in the distance signalling a death, but who was it?",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "dies" }
     },
     {
       "message": "{victim} starts singing their national anthem, so {attacker} knocks them out with a headbutt.",
       "attacker": { "count": "1", "outcome": "nothing" },
-      "victim": { "count": "1", "outcome": "wounded" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "wounded" }
     },
     {
       "message": "{attacker} kicks {victim} between [Vthe|their] legs for a bottle of water!",
       "attacker": { "count": "1", "outcome": "thrives" },
-      "victim": { "count": "-1", "outcome": "wounded" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "wounded" }
     },
     {
       "message": "{victim} steps off their podium[V|s] too soon and blow[Vs|] up!",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{attacker} throws a knife into {victim}'s head[V|s]!",
       "attacker": { "count": "1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{victim} accidentally step[Vs|] on a landmine!",
-      "attacker": { "count": "1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "attacker": { "count": "0", "outcome": "nothing"},
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{attacker} catches {victim} off guard and kills them!",
       "attacker": { "count": "1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{attacker} strangles {victim} after a fist fight!",
       "attacker": { "count": "1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "dies" }
     },
     {
       "message": "{attacker} shoots an arrow into {victim}'s head!",
       "attacker": { "count": "1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{victim} can't handle the circumstances and commit[Vs|] suicide!",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{attacker} bashes {victim}'s head with a rock more times than necessary.",
       "attacker": { "count": "1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "dies" }
     },
     {
       "message": "{attacker} snaps {victim}'s neck like a twig.",
       "attacker": { "count": "1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "dies" }
     },
     {
       "message": "{attacker} decapitate[As|] {victim} with a sword.",
       "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{attacker} spear[As|] {victim} in the abdomen.",
       "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{attacker} set[As|] {victim} on fire!",
       "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
-      "message": "{victim} fall[Vs|] into a pit and dies!",
+      "message": "{victim} fall[Vs|] into a pit and die[Vs|]!",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{attacker} stab[As|] {victim} while their back[V|s] [Vis|are] turned!",
       "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{attacker} severely injure[As|] {victim}!",
       "attacker": { "count": "-1", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "wounded" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "wounded" }
     },
     {
       "message": "{attacker} severely injure[As|] {victim}, but put[As|] them out of their misery!",
       "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{attacker} severely injure[As|] {victim}, but let[As|] them live!",
       "attacker": { "count": "-1", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "wounded" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "wounded" }
     },
     {
       "message": "{attacker} severely injure[As|] {victim}, and leave[As|] them to bleed to death.",
       "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{attacker} throw[As|] a knife into {victim}'s chest[V|s].",
       "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{victim} [Vis|are] unable to convince {attacker} not to kill them.",
       "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{victim} manage[Vs|] to convince {attacker} not to kill them.",
       "attacker": { "count": "-1", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "nothing" }
     },
     {
       "message": "{victim} manage[Vs|] to convince {attacker} not to kill them, only to kill {attacker}.",
       "attacker": { "count": "-1", "outcome": "dies" },
-      "victim": { "count": "-1", "outcome": "nothing", "killer": true },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "nothing", "killer": true }
     },
     {
       "message": "{victim} fall[Vs|] into a frozen lake and drown[Vs|].",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{victim}, {attacker} start fighting, and only {victim} survives.",
       "attacker": { "count": "2", "outcome": "dies" },
-      "victim": { "count": "1", "outcome": "nothing", "killer": true },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "nothing", "killer": true }
     },
     {
       "message": "{attacker} force[As|] {victim} to shoot themsel[Vf|ves].",
       "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{attacker} set[As|] a trap, killing {victim}.",
       "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{attacker} kill[As|] {victim} as they try to run away.",
       "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{attacker}, and {victim} agree to commit suicide. {attacker} pussies out last minute and {victim}'s last thought was that of betrayal.",
       "attacker": { "count": "1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "dies" }
     },
     {
       "message": "{attacker} survive[As|].",
       "attacker": { "count": "-1", "outcome": "nothing" },
-      "victim": { "count": "0", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "0", "outcome": "nothing" }
     },
     {
       "message": "{attacker} slice[As|] {victim} with a sword.",
       "attacker": { "count": "1", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "wounded" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "wounded" }
     },
     {
       "message": "{attacker} slice[As|] {victim} with a sword.",
       "attacker": { "count": "1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{attacker} strangle[As|] {victim} with a rope.",
       "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{attacker} kill[As|] {victim} for supplies.",
       "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{attacker} shoots an arrow at {victim} but misses.",
       "attacker": { "count": "1", "outcome": "nothing" },
-      "victim": { "count": "1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "nothing" }
     },
     {
       "message": "{attacker} shoots an arrow at {victim} and kills them.",
       "attacker": { "count": "1", "outcome": "nothing" },
-      "victim": { "count": "1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "nothing" }
     },
     {
       "message": "{attacker} decide[As|] to be nice, and let[As|] {victim} live.",
       "attacker": { "count": "-1", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "nothing" }
     },
     {
       "message": "{attacker} grabs a radio and listens to some sick jams as they run from the cornucopia.",
       "attacker": { "count": "1", "outcome": "nothing" },
-      "victim": { "count": "0", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "0", "outcome": "nothing" }
     }
   ],
   "player": [
     {
       "message": "{attacker} stab[As|] {victim} to death!",
       "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{victim} drowns!",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "dies" }
     },
     {
       "message": "{attacker} give[As|] {victim} clean water.",
       "attacker": { "count": "-1", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "thrives" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "thrives" }
     },
     {
       "message": "{attacker} steal[As|] supplies from {victim} while {victim} sleep[Vs|].",
       "attacker": { "count": "-1", "outcome": "thrives" },
-      "victim": { "count": "-1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "nothing" }
     },
     {
       "message": "{victim} form[Vs|] a suicide pact with {attacker}.",
       "attacker": { "count": "-1", "outcome": "dies" },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{attacker} sneak[As|] up on {victim}, but {victim} is actually a ninja and manages to kill {attacker}!",
       "attacker": { "count": "-1", "outcome": "dies" },
-      "victim": { "count": "1", "outcome": "nothing", "killer": true },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "nothing", "killer": true }
     },
     {
       "message": "{attacker} hides in the bushes and stalks their prey...",
       "attacker": { "count": "1", "outcome": "nothing" },
-      "victim": { "count": "0", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "0", "outcome": "nothing" }
     },
     {
       "message": "{victim} takes a nap.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "nothing" }
     },
     {
       "message": "{victim} goes hunting.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "nothing" }
     },
     {
       "message": "{victim} [Vis|are] clumsy and injure[Vs|] themsel[Vf|ves].",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "wounded" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "wounded" }
     },
     {
       "message": "{victim} explore[Vs|] the arena.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "nothing" }
     },
     {
       "message": "{attacker} [Ais|are] super intimidating and scare[As|] the sheepish {victim} away.",
       "attacker": { "count": "-1", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "nothing" }
     },
     {
       "message": "{attacker} appear[As|] super intimidating and scare[As|] the sheepish {victim} away.",
       "attacker": { "count": "-1", "outcome": "nothing" },
-      "victim": { "count": "1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "nothing" }
     },
     {
       "message": "{victim} barely escape[Vs|] from {attacker}.",
       "attacker": { "count": "-1", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "nothing" }
     },
     {
       "message": "{victim} becomes one with the arena as they camouflage themsel[Vf|ves] into a bush.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "nothing" }
     },
     {
       "message": "{attacker} fashion[As|] themsel[Af|ves] a weapon.",
       "attacker": { "count": "-1", "outcome": "nothing" },
-      "victim": { "count": "0", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "0", "outcome": "nothing" }
     },
     {
       "message": "{attacker} collects a hatchet from a sponsor.",
       "attacker": { "count": "1", "outcome": "nothing" },
-      "victim": { "count": "0", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "0", "outcome": "nothing" }
     },
     {
       "message": "{attacker} collects water from a sponsor.",
       "attacker": { "count": "1", "outcome": "thrives" },
-      "victim": { "count": "0", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "0", "outcome": "nothing" }
     },
     {
       "message": "{attacker} collects clean water from a sponsor.",
       "attacker": { "count": "1", "outcome": "thrives" },
-      "victim": { "count": "0", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "0", "outcome": "nothing" }
     },
     {
       "message": "{attacker} collects food from a sponsor.",
       "attacker": { "count": "1", "outcome": "thrives" },
-      "victim": { "count": "0", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "0", "outcome": "nothing" }
     },
     {
       "message": "{victim} search[Ves|] for water.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "nothing" }
     },
     {
       "message": "{victim} work together for the day.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "2", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "2", "outcome": "nothing" }
     },
     {
       "message": "{victim} work together for the day.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "3", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "3", "outcome": "nothing" }
     },
     {
       "message": "{victim} beg[Vs|] for {attacker} to kill them, but {attacker} refuse[As|].",
       "attacker": { "count": "-1", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "nothing" }
     },
     {
       "message": "{victim} beg[Vs|] for {attacker} to kill them, and {attacker} oblige[As|].",
       "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{victim} begins to go crazy and starts screaming at the top of their lungs until they pass out.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "1", "outcome": "wounded" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "wounded" }
     },
     {
       "message": "{victim} goes completely insane and starts to think they are invincible. To test if this was true, {victim} jumped off a cliff.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "dies" }
     },
     {
       "message": "{victim} sing[Vs|] songs around a campfire while {attacker} watch[Aes|] from the bushes.",
       "attacker": { "count": "-1", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "nothing" }
     },
     {
       "message": "{victim} cries themself to sleep.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "nothing" }
     },
     {
       "message": "{victim} prances through a field of flowers.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "nothing" }
     },
     {
       "message": "{victim} and {attacker} agree that they may not survive, and decide to spend the night together.",
       "attacker": { "count": "1", "outcome": "nothing" },
-      "victim": { "count": "1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "nothing" }
     },
     {
       "message": "{victim} patch[Ves|] {attacker}'s wounds.",
       "attacker": { "count": "-1", "outcome": "thrives" },
-      "victim": { "count": "-1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "nothing" }
     },
     {
       "message": "{attacker} see[As|] smoke in the distance, but decide[As|] not to investigate.",
       "attacker": { "count": "-1", "outcome": "nothing" },
-      "victim": { "count": "0", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "0", "outcome": "nothing" }
     },
     {
       "message": "{attacker} make[As|] a slingshot out of something... who knows.",
       "attacker": { "count": "-1", "outcome": "nothing" },
-      "victim": { "count": "0", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "0", "outcome": "nothing" }
     },
     {
       "message": "{attacker} find[As|] higher ground.",
       "attacker": { "count": "-1", "outcome": "nothing" },
-      "victim": { "count": "0", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "0", "outcome": "nothing" }
     },
     {
       "message": "{victim} sprains their ankle because they are dumb.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "nothing" }
     },
     {
       "message": "{victim} sprains their ankle while running from {attacker}.",
       "attacker": { "count": "-1", "outcome": "nothing" },
-      "victim": { "count": "1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "nothing" }
     },
     {
       "message": "{victim} sprains their ankle while running from {attacker}, allowing {attacker} to catch up and finish off {victim}.",
       "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "dies" }
     },
     {
       "message": "{victim} discovers their inner Zen while meditating.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "nothing" }
     },
     {
       "message": "{victim} discover[Vs|] a river.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "nothing" }
     },
     {
       "message": "{attacker} is bloodthirsty, and hunts for other tributes.",
       "attacker": { "count": "1", "outcome": "nothing" },
-      "victim": { "count": "0", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "0", "outcome": "nothing" }
     },
     {
       "message": "{attacker} hunt[As|] for tributes.",
       "attacker": { "count": "-1", "outcome": "nothing" },
-      "victim": { "count": "0", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "0", "outcome": "nothing" }
     },
     {
       "message": "{attacker} receives a grenade from a sponsor.",
       "attacker": { "count": "1", "outcome": "nothing" },
-      "victim": { "count": "0", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "0", "outcome": "nothing" }
     },
     {
       "message": "{attacker} start[As|] a campfire.",
       "attacker": { "count": "-1", "outcome": "nothing" },
-      "victim": { "count": "0", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "0", "outcome": "nothing" }
     },
     {
       "message": "{attacker} set[As|] up camp for the night.",
       "attacker": { "count": "-1", "outcome": "nothing" },
-      "victim": { "count": "0", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "0", "outcome": "nothing" }
     },
     {
       "message": "{victim} go[Ves|] blind after eating mushrooms.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "wounded" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "wounded" }
     },
     {
       "message": "{victim} climb[Vs|] a tree to get some sleep.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "nothing" }
     },
     {
       "message": "{victim} tell[Vs| each other] stories [Vto|about] themselves.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "nothing" }
     },
     {
       "message": "{victim} go[Ves|] to sleep.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "nothing" }
     },
     {
       "message": "{victim} sleep in shifts.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "4", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "4", "outcome": "nothing" }
     },
     {
       "message": "{victim} tend[Vs|] to their wounds.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "thrives" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "thrives" }
     },
     {
       "message": "{victim} scream[Vs|] for help, but no one hears them.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "nothing" }
     },
     {
       "message": "{victim} scream[Vs|] for help, and get[Vs|] a knife to the back because of it.",
       "attacker": { "count": "1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{victim} scream[Vs|] for help, but it's already too late, {attacker} has already fired their crossbow[A|s].",
       "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{victim} pass[Ves|] out from exhaustion.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "nothing" }
     },
     {
       "message": "{victim} cook[Vs|] their food before putting their fire out.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "nothing" }
     },
     {
       "message": "{attacker} cook[As|] {victim} for dinner.",
       "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{victim} fend[Vs|] {attacker} away from their fire.",
       "attacker": { "count": "-1", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "nothing" }
     },
     {
       "message": "{victim} discuss[Ves|] the games out loud.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "nothing" }
     },
     {
       "message": "{victim} attempts to treat their infection.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "1", "outcome": "thrives" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "thrives" }
     },
     {
       "message": "{victim} attempts to treat their infection.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "1", "outcome": "wounded" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "wounded" }
     },
     {
       "message": "{victim} attempts to treat their infection, but fails.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "dies" }
     },
     {
       "message": "{victim} ha[Vs|ve] nightmares.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "nothing" }
     },
     {
       "message": "{victim} huddle together for warmth.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "2", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "2", "outcome": "nothing" }
     },
     {
       "message": "{victim} believes they will win.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "nothing" }
     },
     {
       "message": "{victim} consider[Vs|] maybe trying to win, but it sounds like effort.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "nothing" }
     },
     {
       "message": "{victim} tell[Vs|] ghost stories.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "nothing" }
     },
     {
       "message": "{victim} let[Vs|] {attacker} into their shelter.",
       "attacker": { "count": "-1", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "nothing" }
     },
     {
       "message": "{victim} let[Vs|] {attacker} into their shelter, and {victim} [Vis|are] killed.",
       "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{victim} can't figure out how to start a fire.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "nothing" }
     },
     {
       "message": "{victim} hold hands.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "2", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "2", "outcome": "nothing" }
     },
     {
       "message": "{attacker} question[As|] {victim}'s sanity.",
       "attacker": { "count": "-1", "outcome": "nothing" },
-      "victim": { "count": "1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "nothing" }
     },
     {
       "message": "{attacker} put[As|] {victim} out of their misery.",
       "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "dies" }
     },
     {
       "message": "{attacker} throws a knife into {victim}'s head[V|s].",
       "attacker": { "count": "1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{victim} beg[Vs|] {attacker} to kill them, {attacker} reluctantly oblige[As|].",
       "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{attacker} drown[As|] {victim}.",
       "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{attacker} strangle[As|] {victim} after a fist fight.",
       "attacker": { "count": "1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "dies" }
     },
     {
       "message": "{attacker} sneaks up on {victim} and snaps {victim}'s neck from behind.",
       "attacker": { "count": "1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "dies" }
     },
     {
       "message": "{attacker} shoots an arrow into {victim}'s head.",
       "attacker": { "count": "1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "dies" }
     },
     {
       "message": "{attacker} shoots an arrow into {victim}'s face while looking into {victim}'s scared eyes.",
       "attacker": { "count": "1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "dies" }
     },
     {
       "message": "{attacker} bashes {victim}'s head into a rock several times after they have died.",
       "attacker": { "count": "1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "dies" }
     },
     {
       "message": "{victim} unknowingly eat[Vs|] toxic berries.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{attacker} poison[As|] {victim}'s food, killing them.",
       "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{attacker} brutally decapitates {victim} with a sword.",
       "attacker": { "count": "1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "dies" }
     },
     {
       "message": "{victim} dies from infection.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "dies" }
     },
     {
       "message": "{attacker} stabs {victim} in the back.",
       "attacker": { "count": "1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "dies" }
     },
     {
       "message": "{attacker} bashes {victim}'s face in with a mace.",
       "attacker": { "count": "1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "dies" }
     },
     {
       "message": "{victim} attempt[Vs|] to climb a tree, but slip[Vs|] and fall[Vs|] to their death.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{attacker} push[Aes|] {victim} off a cliff.",
       "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{attacker} throws a knife info {victim}'s chest[V|s].",
       "attacker": { "count": "1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{attacker}'s trap kills {victim}.",
       "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{attacker} kill[As|] {victim} in their sleep.",
       "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{victim} falls into a frozen lake and drowns.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "dies" }
     },
     {
       "message": "{attacker} force[As|] {victim} to kill themsel[Vf|ves].",
       "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{attacker} set[As|] off explosives killing {victim}.",
       "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{attacker} kill[As|] {victim} as they try to run away.",
       "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "dies" }
     },
     {
       "message": "{victim} die[Vs|] of hypothermia.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{victim} die[Vs|] of starvation.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{victim} die[Vs|] of dehydration.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{victim} die[Vs|] trying to escape the arena.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{attacker} ambush[Aes|] and kill[As|] {victim}.",
       "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{attacker} strangles {victim} with a rope.",
       "attacker": { "count": "1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "dies" }
     },
     {
       "message": "{victim} return[Vs|] to the cornucopia to search for remaining supplies.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "nothing" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "nothing" }
     },
     {
       "message": "{victim} returns to the cornucopia to search for supplies, but walks into {attacker}'s trap and dies.",
       "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "-1", "outcome": "dies" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{victim} returns to the cornucopia and finds medical supplies.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "thrives" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "thrives" }
     },
     {
       "message": "{victim} returns to the cornucopia and finds medical supplies.",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "thrives" },
-      "probability": 1.0
+      "victim": { "count": "-1", "outcome": "thrives" }
+    },
+    {
+      "message": "{victim} get[Vs|] stung by a bee.",
+      "attacker": { "count": "0", "outcome": "nothing" },
+      "victim": { "count": "-1", "outcome": "wounded" }
+    },
+    {
+      "message": "{victim} shoot[Vs|] themsel[Vf|ves] in the foot accidentally.",
+      "attacker": { "count": "0", "outcome": "nothing" },
+      "victim": { "count": "-1", "outcome": "wounded" }
+    },
+    {
+      "message": "{attacker} carves {victim}'s eyes out before finishing them off.",
+      "attacker": { "count": "1", "outcome": "nothing", "killer": true },
+      "victim": { "count": "1", "outcome": "dies" }
+    },
+    {
+      "message": "{attacker} puts a grenade in {victim}'s hood and runs away.",
+      "attacker": { "count": "1", "outcome": "nothing", "killer": true },
+      "victim": { "count": "1", "outcome": "dies" }
+    },
+    {
+      "message": "{attacker} throw[As|] [Aa |]grenade[A|s] at {victim} killing them.",
+      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+      "victim": { "count": "-1", "outcome": "dies" }
+    },
+    {
+      "message": "{victim} look[Vs|] at the sun to tell the time, and go[Ves|] blind.",
+      "attacker": { "count": "0", "outcome": "nothing" },
+      "victim": { "count": "-1", "outcome": "nothing" }
+    },
+    {
+      "message": "{attacker} stalk[As|] {victim} for the day before slitting their throat[V|s].",
+      "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
+      "victim": { "count": "-1", "outcome": "dies" }
+    },
+    {
+      "message": "{victim} form a pentagram, in the hopes they can summon Satan.",
+      "attacker": { "count": "0", "outcome": "nothing"},
+      "victim": { "count": "5", "outcome": "nothing" }
+    },
+    {
+      "message": "{victim} form a pentagram, and manage to summon Satan who kills the 5 of them before disappearing.",
+      "attacker": { "count": "0", "outcome": "nothing"},
+      "victim": { "count": "5", "outcome": "dies" }
     },
     {
       "message": "{victim} takes an arrow to the knee from {attacker}!",
       "attacker": { "count": "1", "outcome": "nothing" },
-      "victim": { "count": "1", "outcome": "wounded" },
-      "probability": 1.0
+      "victim": { "count": "1", "outcome": "wounded" }
     }
   ],
   "arena": [
@@ -1069,8 +942,7 @@
           "attacker": { "count": "0", "outcome": "nothing" },
           "victim": { "count": "2", "outcome": "dies" }
         }
-      ],
-      "probability": 1.0
+      ]
     },
     {
       "message": "Acidic rain pours down on the arena!",
@@ -1105,8 +977,7 @@
           "attacker": { "count": "1", "outcome": "dies", "killer": true },
           "victim": { "count": "1", "outcome": "dies", "killer": true }
         }
-      ],
-      "probability": 1.0
+      ]
     },
     {
       "message": "A cloud of poisonous smoke starts to fill the arena!",
@@ -1141,8 +1012,7 @@
           "attacker": { "count": "0", "outcome": "nothing", "killer": true },
           "victim": { "count": "2", "outcome": "dies" }
         }
-      ],
-      "probability": 1.0
+      ]
     },
     {
       "message": "A monstrous hurricane wreaks havoc on the arena!",
@@ -1177,8 +1047,7 @@
           "attacker": { "count": "-1", "outcome": "dies" },
           "victim": { "count": "-1", "outcome": "dies" }
         }
-      ],
-      "probability": 1.0
+      ]
     },
     {
       "message": "A swarm of tracker jackers invades the arena!",
@@ -1213,8 +1082,7 @@
           "attacker": { "count": "0", "outcome": "nothing" },
           "victim": { "count": "2", "outcome": "dies" }
         }
-      ],
-      "probability": 1.0
+      ]
     },
     {
       "message": "A tsunami rolls into the arena!",
@@ -1249,8 +1117,7 @@
           "attacker": { "count": "0", "outcome": "nothing" },
           "victim": { "count": "2", "outcome": "dies" }
         }
-      ],
-      "probability": 1.0
+      ]
     },
     {
       "message": "A fire spreads through the arena!",
@@ -1285,8 +1152,7 @@
           "attacker": { "count": "0", "outcome": "nothing" },
           "victim": { "count": "-1", "outcome": "dies" }
         }
-      ],
-      "probability": 1.0
+      ]
     },
     {
       "message": "The arena's border begins to rapidly contract!",
@@ -1321,8 +1187,7 @@
           "attacker": { "count": "0", "outcome": "nothing" },
           "victim": { "count": "2", "outcome": "dies" }
         }
-      ],
-      "probability": 1.0
+      ]
     },
     {
       "message": "Monkey mutts fill the arena!",
@@ -1357,8 +1222,7 @@
           "attacker": { "count": "1", "outcome": "dies", "killer": true },
           "victim": { "count": "1", "outcome": "dies", "killer": true }
         }
-      ],
-      "probability": 1.0
+      ]
     },
     {
       "message": "Carnivorous squirrels start attacking the tributes!",
@@ -1393,8 +1257,7 @@
           "attacker": { "count": "0", "outcome": "nothing" },
           "victim": { "count": "2", "outcome": "dies" }
         }
-      ],
-      "probability": 1.0
+      ]
     },
     {
       "message": "A volcano erupts at the center of the arena!",
@@ -1429,8 +1292,7 @@
           "attacker": { "count": "1", "outcome": "dies", "killer": true },
           "victim": { "count": "1", "outcome": "dies", "killer": true }
         }
-      ],
-      "probability": 1.0
+      ]
     },
     {
       "message": "The arena turns pitch black and nobody can see a thing!",
@@ -1465,8 +1327,7 @@
           "attacker": { "count": "0", "outcome": "nothing" },
           "victim": { "count": "2", "outcome": "dies" }
         }
-      ],
-      "probability": 1.0
+      ]
     },
     {
       "message": "The remaining tributes begin to hallucinate!",
@@ -1501,8 +1362,7 @@
           "attacker": { "count": "0", "outcome": "nothing" },
           "victim": { "count": "2", "outcome": "dies" }
         }
-      ],
-      "probability": 1.0
+      ]
     }
   ]
 }

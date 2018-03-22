@@ -8,8 +8,28 @@ const eventFile = 'hgEvents.json';
 
 // Must be supported by dicord. (Mostly just powers of 2).
 const iconSize = 32;
+// Pixels between each icon
+const iconGap = 4;
 
 const roleName = "HG Creator";
+
+const defaultOptions = {
+  arenaEvents: false,
+  teamSize: 0,
+  mentionVictor: true,
+  mentionAll: false,
+  mentionEveryoneAtStart: false,
+  resurrection: false,
+  includeBots: false,
+  allowNoVictors: true,
+  delayEvents: 3500,
+  delayDays: 7000,
+  probabilityOfResurrect: 0.1,
+  probabilityOfArenaEvent: 0.25,
+  probabilityOfBleedToDeath: 0.5
+};
+
+const defaultColor = [200, 125, 0];
 
 // Must total to 1.0
 const multiEventUserDistribution = {
@@ -20,12 +40,6 @@ const multiEventUserDistribution = {
   6: 0.015,
   7: 0.005
 };
-// Probability of a dead player being revived per day.
-var resurrectProb = 0.10;
-// Probability of an arena event per day.
-var arenaEventProb = 0.25;
-// Probability of a wounded player not recovering and dying.
-var bleedDeathProb = 0.5;
 
 var prefix, Discord, client, command, common;
 var myPrefix, helpMessage;
@@ -79,21 +93,25 @@ helpMessage =
   myPrefix + "create // This will create a game with default settings if it doesn't exist already.\n" +
   myPrefix + "options [option name] [value] // List options if no name, or change the option if you give a name.\n" +
   myPrefix + "reset {all/current/events} // Delete data about the Games. Don't choose an option for more info.\n" +
-  "=== Player Settings ===\n" +
+  "\n=== Player Settings ===\n" +
   myPrefix + "players // This will list all players I currently care about.\n" +
   myPrefix + "exclude {mention} // Prevent someone from being added to the next game.\n" +
   myPrefix + "include {mention} // Add a person back into the next game.\n" +
-  "=== Events ===\n" +
+  "\n=== Team Settings ===\n" +
+  myPrefix + "teams swap {mention} {mention} // This will swap two players to the other team.\n" +
+  myPrefix + "teams rename {id/mention} {message...}// Rename a team. Specify its id, or mention someone on a team.\n" +
+  myPrefix + "teams reset // Delete all teams and start over.\n" +
+  "\n=== Events ===\n" +
   myPrefix + "events // This will list all events that could happen in the game.\n" +
   myPrefix + "events add // Coming soon!\n" +
   myPrefix + "events delete // Coming soon!\n" +
-  "=== Time Control ===\n" +
+  "\n=== Time Control ===\n" +
   myPrefix + "start // This will start a game with your settings.\n" +
   myPrefix + "end // This will end a game early.\n" +
-  myPrefix + "autoplay // Coming soon!\n" +
-  myPrefix + "pause // Coming soon!\n" +
+  myPrefix + "autoplay // Automatically continue to the next day after a day is over.\n" +
+  myPrefix + "pause // Stop autoplay at the end of the day.\n" +
   myPrefix + "next // Simulate the next day of the Games!\n```"+
-  "\nMany options do not work yet, This is still early in development.\n";
+  "Some things may not work, this is still in development.\n";
 }
 
 // Initialize module.
@@ -198,6 +216,7 @@ function handleCommand(msg) {
         pauseAutoplay(msg, id);
         break;
       case 'autoplay':
+      case 'auto':
         startAutoplay(msg, id);
         break;
       case 'next':
@@ -212,6 +231,10 @@ function handleCommand(msg) {
         break;
       case 'save':
         exports.save();
+        break;
+      case 'team':
+      case 'teams':
+        editTeam(msg, id);
         break;
       case 'help':
         help(msg, id);
@@ -268,6 +291,19 @@ function Player(id, username, avatarURL) {
   this.kills = 0;
 }
 
+function Team(id, name, players) {
+  // The identifier for this team unique to the server.
+  this.id = id;
+  // The name of the team to show users.
+  this.name = name;
+  // The array of Player objects on this team.
+  this.players = players;
+  // The final rank this team placed once the final member has died.
+  this.rank = 1;
+  // Number of players still alive on this team.
+  this.numAlive = players.length;
+}
+
 // Create //
 function createGame(msg, id) {
   if (games[id] && games[id].currentGame && games[id].currentGame.inProgress) {
@@ -282,6 +318,7 @@ function createGame(msg, id) {
     games[id].currentGame.includedUsers = getAllPlayers(
         msg.guild.members, games[id].excludedUsers,
         games[id].options.includeBots);
+    formTeams(id);
     games[id].currentGame.numAlive = games[id].currentGame.includedUsers.length;
   } else if (games[id]) {
     reply(msg, "Creating a new game with default settings.");
@@ -294,24 +331,18 @@ function createGame(msg, id) {
       ended: false,
       day: {num: 0, state: 0, events: []}
     };
+    formTeams(id);
     games[id].currentGame.numAlive = games[id].currentGame.includedUsers.length;
   } else {
     games[id] = {
       excludedUsers: [],
-      options: {
-        arenaEvents: false,
-        teamSize: 0,
-        mentionVictor: true,
-        mentionAll: false,
-        mentionEveryoneAtStart: false,
-        resurrection: false,
-        includeBots: false
-      },
+      options: defaultOptions,
       customEvents: {bloodbath: [], player: [], arena: []},
       currentGame: {
         name: msg.guild.name + "'s Hungry Games",
         inProgress: false,
         includedUsers: getAllPlayers(msg.guild.members, [], false),
+        teams: [],
         ended: false,
         day: {num: 0, state: 0, events: []}
       },
@@ -337,6 +368,69 @@ function getAllPlayers(members, excluded, bots) {
     return new Player(obj.id, obj.user.username, obj.user.displayAvatarURL);
   });
 }
+function formTeams(id) {
+  var game = games[id];
+  if (game.options.teamSize < 0) game.options.teamSize = 0;
+  if (game.options.teamSize == 0) {
+    game.currentGame.teams = [];
+    return;
+  }
+
+  var teamSize = game.options.teamSize;
+  var numTeams = Math.ceil(game.currentGame.includedUsers.length / teamSize);
+  if (game.currentGame.teams && game.currentGame.teams.length > 0) {
+    var notIncluded = game.currentGame.includedUsers.slice(0);
+    // Remove players from teams if they are no longer included in game.
+    for (var i = 0; i < game.currentGame.teams.length; i++) {
+      var team = game.currentGame.teams[i];
+      for (var j = 0; j < team.players.length; j++) {
+        if (game.currentGame.includedUsers.findIndex(function(obj) {
+              return obj.id == team.players[j];
+            }) < 0) {
+          team.players.splice(j, 1);
+          j--;
+        } else {
+          notIncluded.splice(
+              notIncluded.findIndex(function(obj) {
+                return obj == team.players[j];
+              }),
+              1);
+        }
+      }
+    }
+    // Add players who are not on a team, to a team.
+    for (var i = 0; i < notIncluded.length; i++) {
+      var found = false;
+      for (var j = 0; j < game.currentGame.teams.length; j++) {
+        var team = game.currentGame.teams[j];
+        if (team.players.length < teamSize) {
+          team.players.push(notIncluded[i].id);
+          found = true;
+          break;
+        }
+      }
+      if (found) continue;
+      // Add a team if all existing teams are full.
+      game.currentGame.teams[game.currentGame.length] = new Team(
+          game.currentGame.length, "Team " + game.currentGame.length,
+          [notIncluded[i]]);
+    }
+  } else {
+    // Create all teams for players.
+    game.currentGame.teams = [];
+    for (var i = 0; i < numTeams; i++) {
+      game.currentGame.teams[i] = new Team(
+          i, "Team " + (i + 1),
+          game.currentGame.includedUsers
+              .slice(i * teamSize, i * teamSize + teamSize)
+              .map(function(obj) { return obj.id; }));
+    }
+  }
+  game.currentGame.teams.forEach(function(obj) {
+    obj.numAlive = obj.players.length;
+    obj.rank = 1;
+  });
+}
 function resetGame(msg, id) {
   const command = msg.text.split(' ')[0];
   if (games[id]) {
@@ -351,17 +445,13 @@ function resetGame(msg, id) {
       delete games[id].currentGame;
     } else if (command == "options") {
       reply(msg, "Resetting ALL options!");
-      games[id].options = {
-        arenaEvents: false,
-        teamSize: 0,
-        mentionVictor: true,
-        mentionAll: false,
-        mentionEveryoneAtStart: false,
-        resurrection: false,
-        includeBots: false
-      };
+      games[id].options = defaultOptions;
+    } else if (command == "teams") {
+      reply(msg, "Resetting ALL teams!");
+      games[id].currentGame.teams = [];
+      formTeams(id);
     } else {
-      reply(msg, "Please specify what data to reset (all {deletes all data for this server}, events {deletes all custom events}, current {deletes all data about the current game}, options {resets all options to default values})");
+      reply(msg, "Please specify what data to reset (all {deletes all data for this server}, events {deletes all custom events}, current {deletes all data about the current game}, options {resets all options to default values}, teams {delete all teams and creates new ones})");
     }
   } else {
     reply(
@@ -400,20 +490,39 @@ function startGame(msg, id) {
       createGame(msg, id);
     }
     var teamList = "";
-    var numUsers = 0;
-    if (games[id].teamSize > 0) {
-      // TODO: Format string for teams.
+    var numUsers = games[id].currentGame.includedUsers.length;
+    if (games[id].options.teamSize > 0) {
+      teamList =
+          games[id]
+              .currentGame.teams
+              .map(function(team) {
+                return "__" + team.name + "__\n" +
+                    team.players
+                        .map(function(player) {
+                          return games[id]
+                              .currentGame.includedUsers
+                              .find(function(obj) { return obj.id == player; })
+                              .name;
+                        })
+                        .join(", ");
+              })
+              .join('\n');
     } else {
-      numUsers = games[id].currentGame.includedUsers.length;
       teamList =
           games[id]
               .currentGame.includedUsers.map(function(obj) { return obj.name; })
               .join(", ");
     }
 
+    var included = `**Included** (${numUsers}):\n${teamList}\n`
+    var excluded = "";
+    if (games[id].excludedUsers.length > 0)
+      excluded =
+          `**Excluded** (${games[id].excludedUsers.length}):\n${games[id].excludedUsers.join(", ")}`;
+
     reply(
         msg, "Let the games begin!",
-        `${games[id].options.mentionEveryoneAtStart ? "@everyone\n" : ""}**Included** (${numUsers}):\n${teamList}\n**Excluded** (${games[id].excludedUsers.length}):\n${games[id].excludedUsers.join(", ")}`);
+        `${games[id].options.mentionEveryoneAtStart ? "@everyone\n" : ""}${included}${excluded}`);
     games[id].currentGame.inProgress = true;
     if (games[id].autoPlay) {
       nextDay(msg, id);
@@ -478,8 +587,9 @@ function nextDay(msg, id) {
           msg,
           "I think I'm already simulating... if this isn't true this game has crashed and you must end the game.");
     } else {
-      intervals[id] =
-          client.setInterval(function() { printEvent(msg, id); }, 3500);
+      intervals[id] = client.setInterval(function() {
+        printEvent(msg, id);
+      }, games[id].options.delayEvents);
     }
     return;
   }
@@ -487,7 +597,8 @@ function nextDay(msg, id) {
   games[id].currentGame.day.num++;
   games[id].currentGame.day.events = [];
 
-  if (games[id].options.resurrection && Math.random() < resurrectProb) {
+  if (games[id].options.resurrection &&
+      Math.random() < games[id].options.probabilityOfResurrect) {
     var deadPool = games[id].currentGame.includedUsers.filter(function(obj) {
       return !obj.living;
     });
@@ -495,12 +606,24 @@ function nextDay(msg, id) {
       var resurrected = deadPool[Math.floor(Math.random() * deadPool.length)];
       resurrected.living = true;
       resurrected.state = "zombie";
+      games[id].currentGame.includedUsers.forEach(function(obj) {
+        if (!obj.living && obj.rank < resurrected.rank) obj.rank++;
+      });
       resurrected.rank = 1;
       games[id].currentGame.numAlive++;
       games[id].currentGame.day.events.push(
           makeSingleEvent(
               "{victim} has returned from the dead and was put back into the arena!",
               [resurrected], 1, 0, games[id].options.mentionAll));
+      var team = games[id].currentGame.teams.find(function(obj) {
+        return obj.players.findIndex(function(obj) {
+          return resurrected.id == obj;
+        }) > -1;
+      });
+      team.numAlive++;
+      games[id].currentGame.teams.forEach(function(obj) {
+        if (obj.numAlive == 0 && obj.rank < team.rank) obj.rank++;
+      });
     }
   }
 
@@ -514,8 +637,8 @@ function nextDay(msg, id) {
     userEventPool =
         defaultBloodbathEvents.concat(games[id].customEvents.bloodbath);
   } else {
-    doArenaEvent =
-        games[id].options.arenaEvents && Math.random() < arenaEventProb;
+    doArenaEvent = games[id].options.arenaEvents &&
+        Math.random() < games[id].options.probabilityOfArenaEvent;
     if (doArenaEvent) {
       var arenaEventPool = defaultArenaEvents.concat(games[id].customEvents.arena);
       var index = Math.floor(Math.random() * arenaEventPool.length);
@@ -568,8 +691,6 @@ function nextDay(msg, id) {
     if (eventEffectsNumMin > userPool.length) continue;
     loop = 0;
 
-    var effectedUsers = [];
-
     var multiAttacker = numAttacker < 0;
     var multiVictim = numVictim < 0;
     if (multiAttacker || multiVictim) {
@@ -578,6 +699,16 @@ function nextDay(msg, id) {
         if (multiVictim) numVictim = weightedRand();
       } while (numAttacker + numVictim > userPool.length);
     }
+
+    // Ensure the event we choose will not force all players to be dead.
+    if (!games[id].options.allowNoVictors) {
+      var numRemaining = games[id].currentGame.numAlive;
+      if (eventTry.victim.outcome == "dies") numRemaining -= numVictim;
+      if (eventTry.attacker.outcome == "dies") numRemaining -= numAttacker;
+      if (numRemaining < 1) continue;
+    }
+
+    var effectedUsers = [];
 
     for (var i = 0; i < numAttacker + numVictim; i++) {
       var userIndex = Math.floor(Math.random() * userPool.length);
@@ -602,6 +733,21 @@ function nextDay(msg, id) {
       games[id].currentGame.includedUsers[index].state = "dead";
       games[id].currentGame.includedUsers[index].rank =
           games[id].currentGame.numAlive--;
+      if (games[id].options.teamSize>0){
+        var team = games[id].currentGame.teams.find(function(obj) {
+          return obj.players.findIndex(function(obj) {
+            return effectedUsers[i].id == obj;
+          }) > -1;
+        });
+        team.numAlive--;
+        if (team.numAlive == 0) {
+          var teamsLeft = 0;
+          games[id].currentGame.teams.forEach(function(obj) {
+            if (obj.numAlive > 0) teamsLeft++;
+          });
+          team.rank = teamsLeft + 1;
+        }
+      }
     };
 
     woundUser = function(i, k) {
@@ -661,12 +807,27 @@ function nextDay(msg, id) {
   var usersRecovered = [];
   games[id].currentGame.includedUsers.forEach(function(obj) {
     if (obj.bleeding && obj.living) {
-      if (Math.random() > bleedDeathProb) {
+      if (Math.random() < games[id].options.probabilityOfBleedToDeath &&
+          (games[id].options.allowNoVictors ||
+           games[id].currentGame.numAlive > 1)) {
         usersBleeding.push(obj);
         obj.living = false;
         obj.bleeding = false;
         obj.state = "dead";
         obj.rank = games[id].currentGame.numAlive--;
+        var team = games[id].currentGame.teams.find(function(obj) {
+          return obj.players.findIndex(function(obj) {
+            return obj.id == obj;
+          }) > -1;
+        });
+        team.numAlive--;
+        if (team.numAlive == 0) {
+          var teamsLeft = 0;
+          games[id].currentGame.forEach(function(obj) {
+            if (obj.numAlive > 0) teamsLeft++;
+          });
+          team.rank = teamsLeft + 1;
+        }
       } else {
         usersRecovered.push(obj);
         obj.bleeding = false;
@@ -693,9 +854,11 @@ function nextDay(msg, id) {
 
   var embed = new Discord.RichEmbed();
   embed.setTitle("Day " + games[id].currentGame.day.num + " has begun!");
-  embed.setColor([0, 255, 0]);
+  embed.setColor(defaultColor);
   msg.channel.send(embed);
-  intervals[id] = client.setInterval(printEvent, 3500, msg, id);
+  intervals[id] = client.setInterval(function() {
+    printEvent(msg, id);
+  }, games[id].options.delayEvents);
 }
 function weightedRand() {
   var i, sum = 0, r = Math.random();
@@ -757,12 +920,13 @@ function printEvent(msg, id) {
     if (events[index].icons.length == 0) {
       msg.channel.send(events[index].message);
     } else {
-      var finalImage =
-          new jimp(events[index].icons.length * iconSize, iconSize);
+      var finalImage = new jimp(
+          events[index].icons.length * (iconSize + iconGap) - iconGap,
+          iconSize);
       var responses = 0;
       newImage = function(image) {
         image.resize(iconSize, iconSize);
-        finalImage.blit(image, responses * iconSize, 0);
+        finalImage.blit(image, responses * (iconSize + iconGap), 0);
         responses++;
         if (responses == events[index].icons.length) {
           finalImage.getBuffer(jimp.MIME_PNG, function(err, out) {
@@ -796,7 +960,7 @@ function printDay(msg, id) {
   }
 
   var finalMessage = new Discord.RichEmbed();
-  finalMessage.setColor([255, 0, 255]);
+  finalMessage.setColor(defaultColor);
   if (numAlive == 1) {
     var winnerName = games[id].currentGame.includedUsers[lastIndex].name;
     finalMessage.setTitle(
@@ -814,26 +978,75 @@ function printDay(msg, id) {
     games[id].currentGame.ended = true;
     games[id].autoPlay = false;
   } else {
-    finalMessage.setTitle("Status update!");
-    finalMessage.setDescription(
-        games[id]
-            .currentGame.includedUsers
-            .map(function(obj) {
-              var symbol = ":white_check_mark:";
-              if (!obj.living) symbol = ":x:";
-              else if (obj.state == "wounded") symbol = ":heart:";
-              else if (obj.state == "zombie") symbol = ":negative_squared_cross_mark:";
-              return symbol + "`" + obj.name + "`" +
-                  (obj.kills > 0 ? "(" + obj.kills + ")" : "");
-            })
-            .join("\n"));
+    finalMessage.setTitle("Status update! (kills)");
+    if (games[id].options.teamSize > 0) {
+      games[id].currentGame.includedUsers.sort(function(a, b) {
+        var aTeam = games[id].currentGame.teams.findIndex(function(team) {
+          return team.players.findIndex(function(player) {
+            return player == a.id;
+          }) > -1;
+        });
+        var bTeam = games[id].currentGame.teams.findIndex(function(team) {
+          return team.players.findIndex(function(player) {
+            return player == b.id;
+          }) > -1;
+        });
+        if (aTeam == bTeam) {
+          return a.id - b.id;
+        } else {
+          return aTeam - bTeam;
+        }
+      });
+    }
+    var prevTeam = -1;
+    var statusList = games[id].currentGame.includedUsers.map(function(obj) {
+      var myTeam = -1;
+      if (games[id].options.teamSize > 0) {
+        myTeam = games[id].currentGame.teams.findIndex(function(team) {
+          return team.players.findIndex(function(player) {
+            return player == obj.id;
+          }) > -1;
+        });
+      }
+      var symbol = ":white_check_mark:";
+      if (!obj.living) symbol = ":x:";
+      else if (obj.state == "wounded") symbol = ":heart:";
+      else if (obj.state == "zombie") symbol = ":negative_squared_cross_mark:";
+
+      var shortName = obj.name.substring(0, 16);
+      if (shortName != obj.name) {
+        shortName = shortName.substring(0, 13) + "...";
+      }
+
+      var prefix = "";
+      if (myTeam != prevTeam) {
+        prevTeam = myTeam;
+        prefix = "__" + games[id].currentGame.teams[myTeam].name + "__\n";
+      }
+
+      return prefix + symbol + "`" + shortName + "`" +
+          (obj.kills > 0 ? "(" + obj.kills + ")" : "");
+    });
+    if (games[id].options.teamSize == 0) {
+      statusList.sort();
+    }
+    if (statusList.length >= 3) {
+        var quarterLength = Math.floor(statusList.length / 3);
+        for (var i = 0; i < 2; i++) {
+          var thisMessage = statusList.splice(0, quarterLength).join('\n');
+          finalMessage.addField(i + 1, thisMessage, true);
+      }
+      finalMessage.addField(3, statusList.join('\n'), true);
+    } else {
+      finalMessage.setDescription(statusList.join('\n'));
+    }
   }
 
   var embed = new Discord.RichEmbed();
   embed.setTitle(
       "Day " + games[id].currentGame.day.num + " has ended with " + numAlive +
       " alive!");
-  embed.setColor([255, 0, 0]);
+  embed.setColor(defaultColor);
   msg.channel.send(embed);
 
   client.setTimeout(function() {
@@ -857,14 +1070,28 @@ function printDay(msg, id) {
                   (obj.kills > 0 ? " (" + obj.kills + ")" : "");
             })
             .join('\n'));
-    rankEmbed.setColor([0, 0, 255]);
+    rankEmbed.setColor(defaultColor);
     client.setTimeout(function() { msg.channel.send(rankEmbed); }, 5000);
+    if (games[id].options.teamSize > 0) {
+      var teamRankEmbed = new Discord.RichEmbed();
+      teamRankEmbed.setTitle("Final Team Ranks");
+      teamRankEmbed.setDescription(
+          games[id]
+              .currentGame.teams
+              .sort(function(a, b) { return a.rank - b.rank; })
+              .map(function(obj) { return obj.rank + ") " + obj.name; })
+              .join('\n'));
+      teamRankEmbed.setColor(defaultColor);
+      client.setTimeout(function() { msg.channel.send(teamRankEmbed); }, 8000);
+    }
   }
 
   games[id].currentGame.day.state = 0;
 
   if (games[id].autoPlay) {
-    client.setTimeout(function() { nextDay(msg, id); }, 7000);
+    client.setTimeout(function() {
+      nextDay(msg, id);
+    }, games[id].options.delayDays);
   }
 }
 function endGame(msg, id) {
@@ -933,7 +1160,7 @@ function includeUser(msg, id) {
               new Player(obj.id, obj.username, obj.user.displayAvatarURL));
           response += obj.username + " added to included players.\n";
         } else {
-          // TODO: Add user to teams.
+          formTeams(id);
         }
       }
     });
@@ -951,16 +1178,35 @@ function listPlayers(msg, id) {
       games[id].currentGame.includedUsers) {
     stringList +=
         `=== Included Players (${games[id].currentGame.includedUsers.length}) ===\n`;
+    if (games[id].options.teamSize == 0) {
     stringList +=
         games[id]
             .currentGame.includedUsers.map(function(obj) { return obj.name; })
             .join(', ');
+    } else {
+      stringList +=
+          games[id]
+              .currentGame.teams
+              .map(function(team) {
+                return "__" + team.name + "__\n" +
+                    team.players
+                        .map(function(player) {
+                          return games[id]
+                              .currentGame.includedUsers
+                              .find(function(obj) { return obj.id == player; })
+                              .name;
+                        })
+                        .join(", ");
+              })
+              .join('\n')
+    }
   } else {
     stringList +=
         "There don't appear to be any included players. Have you created a game with \"" +
         myPrefix + "create\"?";
   }
-  if (games[id] && games[id].excludedUsers) {
+  if (games[id] && games[id].excludedUsers &&
+      games[id].excludedUsers.length > 0) {
     stringList +=
         `\n\n=== Excluded Players (${games[id].excludedUsers.length}) ===\n`;
     stringList +=
@@ -998,14 +1244,14 @@ function toggleOpt(msg, id) {
             JSON.stringify(games[id].options, null, 1)
                 .replace("{", '')
                 .replace("}", ''));
-  } else if (typeof games[id].options[option] === 'undefined') {
+  } else if (typeof defaultOptions[option] === 'undefined') {
     reply(
         msg, "That is not a valid option to change! Valid options are" +
             JSON.stringify(games[id].options, null, 1)
                 .replace("{", '')
                 .replace("}", ''));
   } else {
-    var type = typeof games[id].options[option];
+    var type = typeof defaultOptions[option];
     if (type === 'number') {
       value = Number(value);
       if (typeof value !== 'number') {
@@ -1013,28 +1259,109 @@ function toggleOpt(msg, id) {
             msg, "That is not a valid value for " + option +
                 ", which requires a number.");
       } else {
+        var old = games[id].options[option];
         games[id].options[option] = value;
-        reply(msg, "Set " + option + " to " + games[id].options[option]);
+        reply(
+            msg, "Set " + option + " to " + games[id].options[option] +
+                " from " + old);
       }
     } else if (type === 'boolean') {
-      if (typeof value === 'undefined') {
-        games[id].options[option] = !games[id].options[option];
-        reply(msg, "Toggled " + option + " to " + games[id].options[option]);
+      if (value === 'true' || value === 'false') value = value === 'true';
+      if (typeof value !== 'boolean') {
+        reply(
+            msg, "That is not a valid value for " + option +
+                ", which requires true or false.");
       } else {
-        if (value === 'true' || value === 'false') value = value === 'true';
-        if (typeof value !== 'boolean') {
-          reply(
-              msg, "That is not a valid value for " + option +
-                  ", which requires true or false.");
-        } else {
-          games[id].options[option] = value;
-          reply(msg, "Set " + option + " to " + games[id].options[option]);
-        }
+        var old = games[id].options[option];
+        games[id].options[option] = value;
+        reply(
+            msg, "Set " + option + " to " + games[id].options[option] +
+                " from " + old);
       }
     } else {
       reply(msg, "Changing the value of this option is not added yet.");
     }
   }
+}
+
+// Team Management //
+function editTeam(msg, id) {
+  var split = msg.text.split(' ');
+  switch (split[0]) {
+    case 'swap':
+      swapTeamUsers(msg, id);
+      break;
+    case 'rename':
+      renameTeam(msg, id);
+      break;
+    case 'reset':
+      reply(msg, "Resetting ALL teams!");
+      games[id].currentGame.teams = [];
+      formTeams(id);
+      break;
+  }
+}
+function swapTeamUsers(msg, id) {
+  if (msg.mentions.users.size != 2) {
+    reply(msg, "Swapping requires mentioning 2 users to swap teams with eachother.");
+    return;
+  }
+  var user1 = msg.mentions.users.first().id;
+  var user2 = msg.mentions.users.first(2)[1].id;
+  var teamId1 = 0;
+  var playerId1 = 0;
+  var teamId2 = 0;
+  var playerId2 = 0;
+  teamId1 = games[id].currentGame.teams.findIndex(function(team) {
+    var index =
+        team.players.findIndex(function(player) { return player == user1; });
+    if (index > -1) playerId1 = index;
+    return index > -1;
+  });
+  teamId2 = games[id].currentGame.teams.findIndex(function(team) {
+    var index =
+        team.players.findIndex(function(player) { return player == user2; });
+    if (index > -1) playerId2 = index;
+    return index > -1;
+  });
+  if (teamId1 < 0 || teamId2 < 0) {
+    reply(msg, "Please ensure both users are on a team.");
+    return;
+  }
+  var intVal = games[id].currentGame.teams[teamId1].players[playerId1];
+  games[id].currentGame.teams[teamId1].players[playerId1] =
+      games[id].currentGame.teams[teamId2].players[playerId2];
+
+  games[id].currentGame.teams[teamId2].players[playerId2] = intVal;
+
+  reply(msg, "Swapped players!");
+}
+function renameTeam(msg, id) {
+  var split = msg.text.split(' ').slice(1);
+  var message = split.slice(1).join(' ');
+  var search = Number(split[0]);
+  if (isNaN(search) && msg.mentions.users.size == 0) {
+    reply(msg, "Please specify a team id, or mention someone on a team, in order to rename their team.");
+    return;
+  }
+  var teamId = search - 1;
+  if (isNaN(search)) {
+    teamId = games[id].currentGame.teams.findIndex(function(team) {
+      return team.players.findIndex(function(player) {
+        return player == msg.mentions.users.first().id;
+      }) > -1;
+    });
+  }
+  if (teamId < 0 || teamId >= games[id].currentGame.teams.length) {
+    reply(
+        msg, "Please specify a valid team id. (0-" +
+            (games[id].currentGame.teams.length - 1) + ")");
+    return;
+  }
+  reply(
+      msg, "Renaming \"" + games[id].currentGame.teams[teamId].name +
+          "\" to \"" + message + "\"");
+  games[id].currentGame.teams[teamId].name = message;
 }
 
 // Game Events //
@@ -1050,9 +1377,9 @@ function listEvents(msg, id) {
     events = events.concat(games[id].customEvents.bloodbath);
   }
   var file = new Discord.Attachment();
-  file.setFile(Buffer.from(JSON.stringify(events, null, )));
+  file.setFile(Buffer.from(JSON.stringify(events, null, 2)));
   file.setName("BloodbathEvents.json");
-  msg.channel.send(file);
+  msg.channel.send("Bloodbath Events (" + events.length + ")", file);
 
   events = defaultPlayerEvents;
   if (games[id] && games[id].customEvents.player) {
@@ -1061,7 +1388,7 @@ function listEvents(msg, id) {
   var file = new Discord.Attachment();
   file.setFile(Buffer.from(JSON.stringify(events, null, 2)));
   file.setName("PlayerEvents.json");
-  msg.channel.send(file);
+  msg.channel.send("Player Events (" + events.length + ")", file);
 
   events = defaultArenaEvents;
   if (games[id] && games[id].customEvents.arena) {
@@ -1070,7 +1397,7 @@ function listEvents(msg, id) {
   var file = new Discord.Attachment();
   file.setFile(Buffer.from(JSON.stringify(events, null, 2)));
   file.setName("ArenaEvents.json");
-  msg.channel.send(file);
+  msg.channel.send("Arena Events (" + events.length + ")", file);
 }
 
 function help(msg, id) {
