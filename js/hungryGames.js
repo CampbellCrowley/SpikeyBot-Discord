@@ -1,9 +1,13 @@
 const fs = require('fs');
+const jimp = require('jimp');
 
 var initialized = false;
 
 const saveFile = 'hg.json';
 const eventFile = 'hgEvents.json';
+
+// Must be supported by dicord. (Mostly just powers of 2).
+const iconSize = 32;
 
 const roleName = "HG Creator";
 
@@ -16,10 +20,12 @@ const multiEventUserDistribution = {
   6: 0.015,
   7: 0.005
 };
-// Probability of dead player being revived per day.
+// Probability of a dead player being revived per day.
 var resurrectProb = 0.10;
 // Probability of an arena event per day.
 var arenaEventProb = 0.25;
+// Probability of a wounded player not recovering and dying.
+var bleedDeathProb = 0.5;
 
 var prefix, Discord, client, command, common;
 var myPrefix, helpMessage;
@@ -87,7 +93,7 @@ helpMessage =
   myPrefix + "autoplay // Coming soon!\n" +
   myPrefix + "pause // Coming soon!\n" +
   myPrefix + "next // Simulate the next day of the Games!\n```"+
-  "\nMost options do not work yet, This is still very early in development.\n";
+  "\nMany options do not work yet, This is still early in development.\n";
 }
 
 // Initialize module.
@@ -243,11 +249,13 @@ function checkPerms(msg, cb) {
   }
 }
 
-function Player(id, username) {
+function Player(id, username, avatarURL) {
   // User id.
   this.id = id;
   // Username.
   this.name = username;
+  // URL TO user's current avatar.
+  this.avatarURL = avatarURL;
   // If this user is still alive.
   this.living = true;
   // If this user is will die at the end of the day.
@@ -256,6 +264,8 @@ function Player(id, username) {
   this.rank = 1;
   // Health state.
   this.state = "normal";
+  // Number of kills this user has for the game.
+  this.kills = 0;
 }
 
 // Create //
@@ -323,8 +333,9 @@ function getAllPlayers(members, excluded, bots) {
     });
   }
   if (finalMembers.length == 0) finalMembers = members.slice();
-  return finalMembers.map(
-      obj => { return new Player(obj.id, obj.user.username); });
+  return finalMembers.map(obj => {
+    return new Player(obj.id, obj.user.username, obj.user.displayAvatarURL);
+  });
 }
 function resetGame(msg, id) {
   const command = msg.text.split(' ')[0];
@@ -402,7 +413,7 @@ function startGame(msg, id) {
 
     reply(
         msg, "Let the games begin!",
-        `${games[id].options.mentionEveryoneAtStart ? "@everyone" : ""}\n**Included** (${numUsers}):\n${teamList}\n**Excluded** (${games[id].excludedUsers.length}):\n${games[id].excludedUsers.join(", ")}`);
+        `${games[id].options.mentionEveryoneAtStart ? "@everyone\n" : ""}**Included** (${numUsers}):\n${teamList}\n**Excluded** (${games[id].excludedUsers.length}):\n${games[id].excludedUsers.join(", ")}`);
     games[id].currentGame.inProgress = true;
     if (games[id].autoPlay) {
       nextDay(msg, id);
@@ -510,7 +521,8 @@ function nextDay(msg, id) {
       var index = Math.floor(Math.random() * arenaEventPool.length);
       var arenaEvent = arenaEventPool[index];
       games[id].currentGame.day.events.push(
-          makeSingleEvent(arenaEvent.message, [], 0, 0, false));
+          makeSingleEvent(
+              "**___" + arenaEvent.message + "___**", [], 0, 0, false));
       userEventPool = arenaEvent.outcomes;
     } else {
       userEventPool = defaultPlayerEvents.concat(games[id].customEvents.player);
@@ -572,19 +584,19 @@ function nextDay(msg, id) {
       effectedUsers.push(userPool.splice(userIndex, 1)[0]);
     }
 
-    effectUser = function(i) {
+    effectUser = function(i, kills) {
       var index = games[id].currentGame.includedUsers.findIndex(function(obj) {
         return obj.id == effectedUsers[i].id;
       });
       if (games[id].currentGame.includedUsers[index].state == "wounded") {
         games[id].currentGame.includedUsers[index].bleeding = true;
       }
+      games[id].currentGame.includedUsers[index].kills += kills;
       return index;
     };
 
-    killUser = function(i) {
-      // TODO: Track kills
-      var index = effectUser(i);
+    killUser = function(i, k) {
+      var index = effectUser(i, k);
       games[id].currentGame.includedUsers[index].living = false;
       games[id].currentGame.includedUsers[index].bleeding = false;
       games[id].currentGame.includedUsers[index].state = "dead";
@@ -592,43 +604,49 @@ function nextDay(msg, id) {
           games[id].currentGame.numAlive--;
     };
 
-    woundUser = function(i) {
-      var index = effectUser(i);
+    woundUser = function(i, k) {
+      var index = effectUser(i, k);
       games[id].currentGame.includedUsers[index].state = "wounded";
     };
-    restoreUser = function(i) {
-      var index = effectUser(i);
+    restoreUser = function(i, k) {
+      var index = effectUser(i, k);
       games[id].currentGame.includedUsers[index].state = "normal";
     };
 
     for (var i = 0; i < numVictim; i++) {
+      var numKills = 0;
+      if (eventTry.victim.killer) numKills = numAttacker;
       switch (eventTry.victim.outcome) {
         case "dies":
-          killUser(i);
+          killUser(i, numKills);
           break;
         case "wounded":
-          woundUser(i);
+          woundUser(i, numKills);
           break;
         case "thrives":
-          restoreUser(i);
+          restoreUser(i, numKills);
           break;
         default:
-          effectUser(i);
+          effectUser(i, numKills);
+          break;
       }
     }
     for (var i = numVictim; i < numVictim + numAttacker; i++) {
+      var numKills = 0;
+      if (eventTry.attacker.killer) numKills = numVictim;
       switch (eventTry.attacker.outcome) {
         case "dies":
-          killUser(i);
+          killUser(i, numKills);
           break;
         case "wounded":
-          woundUser(i);
+          woundUser(i, numKills);
           break;
         case "thrives":
-          restoreUser(i);
+          restoreUser(i, numKills);
           break;
         default:
-          effectUser(i);
+          effectUser(i, numKills);
+          break;
       }
     }
     games[id].currentGame.day.events.push(
@@ -640,20 +658,34 @@ function nextDay(msg, id) {
     }
   }
   var usersBleeding = [];
+  var usersRecovered = [];
   games[id].currentGame.includedUsers.forEach(function(obj) {
     if (obj.bleeding && obj.living) {
-      usersBleeding.push(obj);
-      obj.living = false;
-      obj.bleeding = false;
-      obj.state = "dead";
-      obj.rank = games[id].currentGame.numAlive--;
+      if (Math.random() > bleedDeathProb) {
+        usersBleeding.push(obj);
+        obj.living = false;
+        obj.bleeding = false;
+        obj.state = "dead";
+        obj.rank = games[id].currentGame.numAlive--;
+      } else {
+        usersRecovered.push(obj);
+        obj.bleeding = false;
+        obj.state = "normal";
+      }
     }
   });
+  if (usersRecovered.length > 0) {
+    games[id].currentGame.day.events.push(
+        makeSingleEvent(
+            "{victim} manage[Vs|] to patch their wounds.", usersRecovered,
+            usersRecovered.length, 0, games[id].options.mentionAll));
+  }
   if (usersBleeding.length > 0) {
     games[id].currentGame.day.events.push(
         makeSingleEvent(
-            "{victim} fails to tend to their wounds and dies.", usersBleeding,
-            usersBleeding.length, 0, games[id].options.mentionAll));
+            "{victim} fail[Vs|] to tend to their wounds and die[Vs|].",
+            usersBleeding, usersBleeding.length, 0,
+            games[id].options.mentionAll));
   }
 
   // Signal ready to display events.
@@ -702,11 +734,18 @@ function makeSingleEvent(
           .replaceAll("{victim}", formatMultiNames(effectedVictims, mention))
           .replaceAll(
               "{attacker}", formatMultiNames(effectedAttackers, mention));
+  var finalIcons = getMiniIcons(effectedAttackers.concat(effectedVictims));
   return {
-    message: finalMessage /*,
+    message: finalMessage,
+    icons: finalIcons /*,
      victims: effectedVictims,
      attackers: effectedAttackers */
   };
+}
+function getMiniIcons(users) {
+  return users.map(function(obj) {
+    return obj.avatarURL.replace(/\?size=[0-9]*/, "") + "?size=" + iconSize;
+  });
 }
 function printEvent(msg, id) {
   var index = games[id].currentGame.day.state - 2;
@@ -715,7 +754,30 @@ function printEvent(msg, id) {
     client.clearInterval(intervals[id]);
     printDay(msg, id);
   } else {
-    msg.channel.send(events[index].message);
+    if (events[index].icons.length == 0) {
+      msg.channel.send(events[index].message);
+    } else {
+      var finalImage =
+          new jimp(events[index].icons.length * iconSize, iconSize);
+      var responses = 0;
+      newImage = function(image) {
+        image.resize(iconSize, iconSize);
+        finalImage.blit(image, responses * iconSize, 0);
+        responses++;
+        if (responses == events[index].icons.length) {
+          finalImage.getBuffer(jimp.MIME_PNG, function(err, out) {
+            msg.channel.send(
+                events[index].message, new Discord.Attachment(out));
+          });
+        }
+      };
+      for (var i = 0; i < events[index].icons.length; i++) {
+        jimp.read(events[index].icons[i]).then(newImage).catch(function(err) {
+          console.log(err);
+          responses++;
+        });
+      }
+    }
     games[id].currentGame.day.state++;
   }
 }
@@ -739,6 +801,8 @@ function printDay(msg, id) {
     var winnerName = games[id].currentGame.includedUsers[lastIndex].name;
     finalMessage.setTitle(
         "\n`" + winnerName + "` has won " + games[id].currentGame.name + "!");
+    finalMessage.setThumbnail(
+        games[id].currentGame.includedUsers[lastIndex].avatarURL);
     games[id].currentGame.inProgress = false;
     games[id].currentGame.ended = true;
     games[id].autoPlay = false;
@@ -759,7 +823,8 @@ function printDay(msg, id) {
               if (!obj.living) symbol = ":x:";
               else if (obj.state == "wounded") symbol = ":heart:";
               else if (obj.state == "zombie") symbol = ":negative_squared_cross_mark:";
-              return symbol + "`" + obj.name + "`";
+              return symbol + "`" + obj.name + "`" +
+                  (obj.kills > 0 ? "(" + obj.kills + ")" : "");
             })
             .join("\n"));
   }
@@ -773,7 +838,7 @@ function printDay(msg, id) {
 
   client.setTimeout(function() {
     var winnerTag = "";
-    if (games[id].options.mentionVictor) {
+    if (numAlive == 1 && games[id].options.mentionVictor) {
       winnerTag =
           "<@" + games[id].currentGame.includedUsers[lastIndex].id + ">";
     }
@@ -782,12 +847,15 @@ function printDay(msg, id) {
 
   if (games[id].currentGame.ended) {
     var rankEmbed = new Discord.RichEmbed();
-    rankEmbed.setTitle("Final ranks");
+    rankEmbed.setTitle("Final Ranks (kills)");
     rankEmbed.setDescription(
         games[id]
             .currentGame.includedUsers
             .sort(function(a, b) { return a.rank - b.rank; })
-            .map(function(obj) { return obj.rank + ") " + obj.name; })
+            .map(function(obj) {
+              return obj.rank + ") " + obj.name +
+                  (obj.kills > 0 ? " (" + obj.kills + ")" : "");
+            })
             .join('\n'));
     rankEmbed.setColor([0, 0, 255]);
     client.setTimeout(function() { msg.channel.send(rankEmbed); }, 5000);
@@ -862,7 +930,7 @@ function includeUser(msg, id) {
       } else {
         if (games[id].options.teamSize == 0) {
           games[id].currentGame.includedUsers.push(
-              new Player(obj.id, obj.username));
+              new Player(obj.id, obj.username, obj.user.displayAvatarURL));
           response += obj.username + " added to included players.\n";
         } else {
           // TODO: Add user to teams.
@@ -977,45 +1045,32 @@ function removeEvent(msg) {
   reply(msg, "This doesn't work yet!");
 }
 function listEvents(msg, id) {
-  var stringList = "=== Bloodbath Events ===\n";
+  var events = defaultBloodbathEvents;
   if (games[id] && games[id].customEvents.bloodbath) {
-    stringList +=
-        games[id]
-            .customEvents.bloodbath.map(function(obj) { return obj.message; })
-            .join('\n');
+    events = events.concat(games[id].customEvents.bloodbath);
   }
-  stringList +=
-      defaultBloodbathEvents.map(function(obj) { return obj.message; })
-          .join('\n') +
-      "\n\n=== Player Events ===\n";
-  if (games[id] && games[id].customEvents.player) {
-    stringList +=
-        games[id]
-            .customEvents.player.map(function(obj) { return obj.message; })
-            .join('\n');
-  }
-  stringList += defaultPlayerEvents.map(function(obj) { return obj.message; })
-                    .join('\n') +
-      "\n\n=== Arena Events ===\n";
-  if (games[id] && games[id].customEvents.arena) {
-    stringList +=
-        games[id]
-            .customEvents.arena.map(function(obj) { return obj.message; })
-            .join('\n');
-  }
-  stringList +=
-      defaultArenaEvents.map(function(obj) { return obj.message; }).join('\n');
+  var file = new Discord.Attachment();
+  file.setFile(Buffer.from(JSON.stringify(events, null, )));
+  file.setName("BloodbathEvents.json");
+  msg.channel.send(file);
 
-  var messages = [];
-  while (stringList.length > 0) {
-    var newChunk = stringList.substring(
-        0, stringList.length >= 1950 ? 1950 : stringList.length);
-    messages.push(newChunk);
-    stringList = stringList.replace(newChunk, '');
+  events = defaultPlayerEvents;
+  if (games[id] && games[id].customEvents.player) {
+    events = events.concat(games[id].customEvents.player);
   }
-  for (var i in messages) {
-    reply(msg, messages[i]).catch(err => { console.log(err); });
+  var file = new Discord.Attachment();
+  file.setFile(Buffer.from(JSON.stringify(events, null, 2)));
+  file.setName("PlayerEvents.json");
+  msg.channel.send(file);
+
+  events = defaultArenaEvents;
+  if (games[id] && games[id].customEvents.arena) {
+    events = events.concat(games[id].customEvents.arena);
   }
+  var file = new Discord.Attachment();
+  file.setFile(Buffer.from(JSON.stringify(events, null, 2)));
+  file.setName("ArenaEvents.json");
+  msg.channel.send(file);
 }
 
 function help(msg, id) {
