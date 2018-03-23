@@ -257,7 +257,7 @@
     },
     {
       "message": "{victim}, {attacker} start fighting, and only {victim} survives.",
-      "attacker": { "count": "2", "outcome": "dies" },
+      "attacker": { "count": "-2", "outcome": "dies" },
       "victim": { "count": "1", "outcome": "nothing", "killer": true }
     },
     {
@@ -312,8 +312,8 @@
     },
     {
       "message": "{attacker} shoots an arrow at {victim} and kills them.",
-      "attacker": { "count": "1", "outcome": "nothing" },
-      "victim": { "count": "1", "outcome": "nothing" }
+      "attacker": { "count": "1", "outcome": "nothing", "killer": true },
+      "victim": { "count": "1", "outcome": "dies" }
     },
     {
       "message": "{attacker} decide[As|] to be nice, and let[As|] {victim} live.",
@@ -563,7 +563,7 @@
       "victim": { "count": "-1", "outcome": "nothing" }
     },
     {
-      "message": "{victim} tell[Vs| each other] stories [Vto|about] themselves.",
+      "message": "{victim} tell[Vs| each other] stories [Vto|about] themsel[Vf|ves].",
       "attacker": { "count": "0", "outcome": "nothing" },
       "victim": { "count": "-1", "outcome": "nothing" }
     },
@@ -901,6 +901,166 @@
       "message": "{victim} form a pentagram, and manage to summon Satan who kills the 5 of them before disappearing.",
       "attacker": { "count": "0", "outcome": "nothing"},
       "victim": { "count": "5", "outcome": "dies" }
+    },
+    {
+      "message": "{attacker} makes {victim} laugh while eating, and {victim} chokes to death on their food.",
+      "attacker": { "count": "1", "outcome": "nothing", "killer": true},
+      "victim": { "count": "1", "outcome": "dies" }
+    },
+    {
+      "message": "{victim} forgot to unload the gun before cleaning it, and shoots themself in the face.",
+      "attacker": { "count": "0", "outcome": "nothing" },
+      "victim": { "count": "1", "outcome": "dies" }
+    },
+    {
+      "message": "{victim} didn't know their limits, and drank too much alcohol.",
+      "attacker": { "count": "0", "outcome": "nothing" },
+      "victim": { "count": "1", "outcome": "dies" }
+    },
+    {
+      "message": "{attacker} drop[As|] a rock from a tree onto {victim}, killing them.",
+      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+      "victim": { "count": "-1", "outcome": "dies" }
+    },
+    {
+      "message": "A coconut falls from a tree and knocks out {victim}.",
+      "attacker": { "count": "0", "outcome": "nothing" },
+      "victim": { "count": "1", "outcome": "wounded" }
+    },
+    {
+      "message": "A coconut falls from a tree and {victim} falls unconscious into the water where they drown.",
+      "attacker": { "count": "0", "outcome": "nothing" },
+      "victim": { "count": "1", "outcome": "dies" }
+    },
+    {
+      "message": "{victim} find[Vs a|] banana[V|s] to eat.",
+      "attacker": { "count": "0", "outcome": "nothing" },
+      "victim": { "count": "-1", "outcome": "thrives" }
+    },
+    {
+      "message": "{victim} begin[Vs|] yodeling.",
+      "attacker": { "count": "0", "outcome": "nothing" },
+      "victim": { "count": "-1", "outcome": "nothing" }
+    },
+    {
+      "message": "{victim}, {attacker} celebrate {victim}'s birthday.",
+      "attacker": { "count": "-2", "outcome": "nothing" },
+      "victim": { "count": "1", "outcome": "nothing" }
+    },
+    {
+      "message": "{victim} celebrates their birthday alone.",
+      "attacker": { "count": "0", "outcome": "nothing" },
+      "victim": { "count": "1", "outcome": "nothing" }
+    },
+    {
+      "message": "{victim} wants their mommy.",
+      "attacker": { "count": "0", "outcome": "nothing" },
+      "victim": { "count": "1", "outcome": "nothing" }
+    },
+    {
+      "message": "{attacker} poisons {victim}'s water while they sleep.",
+      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+      "victim": { "count": "-1", "outcome": "dies" }
+    },
+    {
+      "message": "{attacker} jump[As|] onto {victim} from a tree and kill[As|] them.",
+      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+      "victim": { "count": "-1", "outcome": "dies" }
+    },
+    {
+      "message": "{victim} eat[Vs|] food off the ground and get[Vs|] sick.",
+      "attacker": { "count": "0", "outcome": "nothing" },
+      "victim": { "count": "-1", "outcome": "wounded" }
+    },
+    {
+      "message": "{attacker} get[As|] {victim} infected with their knife, but doesn't kill them.",
+      "attacker": { "count": "-1", "outcome": "nothing" },
+      "victim": { "count": "-1", "outcome": "wounded" }
+    },
+    {
+      "message": "{attacker} find[As|] {dead}'s remains.",
+      "attacker": { "count": "-1", "outcome": "nothing" },
+      "victim": { "count": "0", "outcome": "nothing" }
+    },
+    {
+      "message": "{dead} wish they were alive.",
+      "attacker": { "count": "0", "outcome": "nothing" },
+      "victim": { "count": "0", "outcome": "nothing" }
+    },
+    {
+      "message": "{attacker} kill[As|] {victim} with {dead}'s remains.",
+      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+      "victim": { "count": "-1", "outcome": "dies" }
+    },
+    {
+      "message": "{attacker} slowly pushes their sword into {victim}'s chest and watches the light fade from their eyes.",
+      "attacker": { "count": "1", "outcome": "nothing", "killer": true },
+      "victim": { "count": "1", "outcome": "dies" }
+    },
+    {
+      "message": "{attacker} begin[As|] shooting arrows at {victim}, and kill[As|] them.",
+      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+      "victim": { "count": "-1", "outcome": "dies" }
+    },
+    {
+      "message": "{attacker} begin[As|] shooting arrows at {victim}, but only manage[As|] to wound them.",
+      "attacker": { "count": "-1", "outcome": "nothing" },
+      "victim": { "count": "-1", "outcome": "wounded" }
+    },
+    {
+      "message": "In {attacker}'s bloodlust, they end up killing eachother.",
+      "attacker": { "count": "-2", "outcome": "dies" },
+      "victim": { "count": "0", "outcome": "nothing" }
+    },
+    {
+      "message": "{attacker} begin to starve, and are so desperate they kill eachother for food.",
+      "attacker": { "count": "-2", "outcome": "dies" },
+      "victim": { "count": "0", "outcome": "nothing" }
+    },
+    {
+      "message": "{victim} electrocutes themsel[Vf|ves] while setting a trap.",
+      "attacker": { "count": "0", "outcome": "nothing" },
+      "victim": { "count": "-1", "outcome": "dies" }
+    },
+    {
+      "message": "{attacker} push[Aes|] {victim} into the arena border, killing them.",
+      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+      "victim": { "count": "-1", "outcome": "dies" }
+    },
+    {
+      "message": "{attacker} push[Aes|] {victim} into a fire, killing them.",
+      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+      "victim": { "count": "-1", "outcome": "dies" }
+    },
+    {
+      "message": "{attacker} hold[As|] {victim}'s face in a campfire, scarring them.",
+      "attacker": { "count": "-1", "outcome": "nothing" },
+      "victim": { "count": "1", "outcome": "wounded" }
+    },
+    {
+      "message": "{attacker} hold[As|] {victim}'s face in a campfire, killing them.",
+      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+      "victim": { "count": "1", "outcome": "dies" }
+    },
+    {
+      "message": "{victim} stop[Vs|] to smell the flowers.",
+      "attacker": { "count": "0", "outcome": "nothing" },
+      "victim": { "count": "-1", "outcome": "nothing" }
+    },
+    {
+      "message": "{victim} stop[Vs|] to smell the flowers, and {attacker} stab[As|] them in the back.",
+      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+      "victim": { "count": "-1", "outcome": "dies" }
+    },
+    {
+      "message": "{victim} mistake[Vs|] {attacker} for [Aa |]friend[A|s], and end up dead.",
+      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+      "victim": { "count": "-1", "outcome": "dies" }
+    },
+    {
+      "message": "{victim} overdose[Vs|] on painkillers.",
+      "attacker": { "count": "0", "outcome": "nothing" },
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{victim} takes an arrow to the knee from {attacker}!",
