@@ -126,7 +126,7 @@
       "victim": { "count": "0", "outcome": "nothing" }
     },
     {
-      "message": "A cannon is heard in the distance signalling a death, but who was it?",
+      "message": "A cannon is heard in the distance signalling a death, but who was it? (Hint: {victim})",
       "attacker": { "count": "0", "outcome": "nothing" },
       "victim": { "count": "1", "outcome": "dies" }
     },
@@ -1053,7 +1053,7 @@
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
-      "message": "{victim} mistake[Vs|] {attacker} for [Aa |]friend[A|s], and end up dead.",
+      "message": "{victim} mistake[Vs|] {attacker} for [Aa |]friend[A|s], and end[Vs|] up dead.",
       "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
     },

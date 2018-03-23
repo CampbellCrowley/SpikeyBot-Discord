@@ -7,7 +7,9 @@ const saveFile = 'hg.json';
 const eventFile = 'hgEvents.json';
 
 // Must be supported by dicord. (Mostly just powers of 2).
-const iconSize = 32;
+const iconSize = 48;
+const victorIconSize = 64;
+const fetchSize = 64;
 // Pixels between each icon
 const iconGap = 4;
 
@@ -311,6 +313,16 @@ function Team(id, name, players) {
   this.rank = 1;
   // Number of players still alive on this team.
   this.numAlive = players.length;
+}
+
+function sendAtTime(channel, one, two, time) {
+  if (time <= Date.now()) {
+    channel.send(one, two);
+  } else {
+    client.setTimeout(function() {
+      sendAtTime(channel, one, two, time);
+    }, time - Date.now());
+  }
 }
 
 // Create //
@@ -630,8 +642,8 @@ function nextDay(msg, id) {
   games[id].currentGame.day.num++;
   games[id].currentGame.day.events = [];
 
-  if (games[id].options.resurrection &&
-      Math.random() < games[id].options.probabilityOfResurrect) {
+  while (games[id].options.resurrection &&
+         Math.random() < games[id].options.probabilityOfResurrect) {
     var deadPool = games[id].currentGame.includedUsers.filter(function(obj) {
       return !obj.living;
     });
@@ -1038,7 +1050,10 @@ function makeSingleEvent(
 }
 function getMiniIcons(users) {
   return users.map(function(obj) {
-    return obj.avatarURL.replace(/\?size=[0-9]*/, "") + "?size=" + iconSize;
+    return {
+      url: obj.avatarURL.replace(/\?size=[0-9]*/, "") + "?size=" + fetchSize,
+      id: obj.id
+    };
   });
 }
 function printEvent(msg, id) {
@@ -1054,11 +1069,23 @@ function printEvent(msg, id) {
     } else {
       var finalImage = new jimp(
           events[index].icons.length * (iconSize + iconGap) - iconGap,
-          iconSize);
+          iconSize + iconGap);
       var responses = 0;
-      newImage = function(image) {
+      newImage = function(image, userId, placement) {
         image.resize(iconSize, iconSize);
-        finalImage.blit(image, responses * (iconSize + iconGap), 0);
+        var user = games[id].currentGame.includedUsers.find(function(obj) {
+          return obj.id == userId;
+        });
+        if (!user.living) {
+          finalImage.blit(
+              new jimp(iconSize, iconGap, 0xFF0000FF),
+              placement * (iconSize + iconGap), iconSize);
+        } else if (user.state == "wounded") {
+          finalImage.blit(
+              new jimp(iconSize, iconGap, 0xFFFF00FF),
+              placement * (iconSize + iconGap), iconSize);
+        }
+        finalImage.blit(image, placement * (iconSize + iconGap), 0);
         responses++;
         if (responses == events[index].icons.length) {
           finalImage.getBuffer(jimp.MIME_PNG, function(err, out) {
@@ -1068,10 +1095,14 @@ function printEvent(msg, id) {
         }
       };
       for (var i = 0; i < events[index].icons.length; i++) {
-        jimp.read(events[index].icons[i]).then(newImage).catch(function(err) {
-          console.log(err);
-          responses++;
-        });
+        jimp.read(events[index].icons[i].url)
+            .then(function(userId, placement) {
+              return function(image) { newImage(image, userId, placement); }
+            }(events[index].icons[i].id, i))
+            .catch(function(err) {
+              console.log(err);
+              responses++;
+            });
       }
     }
     games[id].currentGame.day.state++;
@@ -1216,19 +1247,75 @@ function printDay(msg, id) {
   embed.setColor(defaultColor);
   msg.channel.send(embed);
 
-  client.setTimeout(function() {
+  if (numTeams == 1) {
+    var sendTime = Date.now() + (games[id].options.delayDays > 2000 ? 1000 : 0);
     var winnerTag = "";
-    if (numAlive == 1 && games[id].options.mentionVictor) {
-      winnerTag = "<@" + lastId + ">";
-    } else if (numTeams == 1 && games[id].options.mentionVictor) {
+    if (games[id].options.mentionVictor) {
       winnerTag =
           games[id]
               .currentGame.teams[lastTeam]
               .players.map(function(player) { return "<@" + player + ">"; })
               .join(' ');
     }
-    msg.channel.send(winnerTag, finalMessage);
-  }, (games[id].options.delayDays > 2000 ? 1000 : 0));
+    var finalImage = new jimp(
+        games[id].currentGame.teams[lastTeam].players.length *
+                (victorIconSize + iconGap) -
+            iconGap,
+        victorIconSize + iconGap);
+    var responses = 0;
+    newImage = function(image, userId) {
+      image.resize(victorIconSize, victorIconSize);
+      var user = games[id].currentGame.includedUsers.find(function(obj) {
+        return obj.id == userId;
+      });
+      var color = 0x0;
+      if (!user.living) {
+        color = 0xFF0000FF
+      } else if (user.state == "wounded") {
+        color = 0xFFFF00FF;
+      } else {
+        color = 0x00FF00FF;
+      }
+      finalImage.blit(
+          new jimp(victorIconSize, iconGap, color),
+          responses * (victorIconSize + iconGap), victorIconSize);
+      finalImage.blit(image, responses * (victorIconSize + iconGap), 0);
+      responses++;
+      if (responses == games[id].currentGame.teams[lastTeam].players.length) {
+        finalImage.getBuffer(jimp.MIME_PNG, function(err, out) {
+          finalMessage.attachFile(new Discord.Attachment(out));
+          sendAtTime(msg.channel, winnerTag, finalMessage, sendTime);
+        });
+      }
+    };
+    games[id].currentGame.teams[lastTeam].players.forEach(function(player) {
+      var player = games[id].currentGame.includedUsers.find(function(obj) {
+        return obj.id == player;
+      });
+      var icon = player.avatarURL;
+      var userId = player.id;
+      jimp.read(icon)
+          .then(function(userId) {
+            return function(image) { newImage(image, userId); }
+          }(userId))
+          .catch(function(err) {
+            console.log(err);
+            responses++;
+          });
+    });
+  } else {
+    client.setTimeout(function() {
+      var winnerTag = "";
+      if (numAlive == 1) {
+        if (games[id].options.mentionVictor) {
+          winnerTag = "<@" + lastId + ">";
+        }
+        msg.channel.send(winnerTag, finalMessage);
+      } else {
+        msg.channel.send(winnerTag, finalMessage);
+      }
+    }, (games[id].options.delayDays > 2000 ? 1000 : 0));
+  }
 
   if (games[id].currentGame.ended) {
     var rankEmbed = new Discord.RichEmbed();
@@ -1282,7 +1369,7 @@ function printDay(msg, id) {
   if (games[id].autoPlay) {
     client.setTimeout(function() {
       msg.channel.send("`Autoplaying...`")
-          .then(msg => { msg.delete(games[id].options.delayDays - 1000); })
+          .then(msg => { msg.delete(games[id].options.delayDays - 1250); })
           .catch(_ => {});
     }, (games[id].options.delayDays > 2000 ? 1200 : 100));
     client.setTimeout(function() {
