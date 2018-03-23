@@ -147,6 +147,8 @@ exports.end = function() {
   delete Discord;
   delete client;
   delete common;
+  process.removeListener('exit', exit);
+  process.removeListener('SIGINT', sigint);
 };
 
 function handleCommand(msg) {
@@ -231,7 +233,8 @@ function handleCommand(msg) {
         endGame(msg, id);
         break;
       case 'save':
-        exports.save();
+        exports.save("async");
+        msg.channel.send("`Saving all data...`");
         break;
       case 'team':
       case 'teams':
@@ -306,23 +309,24 @@ function Team(id, name, players) {
 }
 
 // Create //
-function createGame(msg, id) {
+function createGame(msg, id, silent) {
   if (games[id] && games[id].currentGame && games[id].currentGame.inProgress) {
-    reply(
-        msg,
-        "This server already has a Hungry Games in progress. If you wish to create a new one, you must end the current one first with \"hgend\".");
+    if (!silent)
+      reply(
+          msg,
+          "This server already has a Hungry Games in progress. If you wish to create a new one, you must end the current one first with \"hgend\".");
     return;
   } else if (games[id] && games[id].currentGame) {
-    reply(msg, "Creating a new game with settings from the last game.");
+    if (!silent)
+      reply(msg, "Creating a new game with settings from the last game.");
     games[id].currentGame.ended = false;
     games[id].currentGame.day = {num: 0, state: 0, events: []};
     games[id].currentGame.includedUsers = getAllPlayers(
         msg.guild.members, games[id].excludedUsers,
         games[id].options.includeBots);
-    formTeams(id);
     games[id].currentGame.numAlive = games[id].currentGame.includedUsers.length;
   } else if (games[id]) {
-    reply(msg, "Creating a new game with default settings.");
+    if (!silent) reply(msg, "Creating a new game with default settings.");
     games[id].currentGame = {
       name: msg.guild.name + "'s Hungry Games",
       inProgress: false,
@@ -332,7 +336,6 @@ function createGame(msg, id) {
       ended: false,
       day: {num: 0, state: 0, events: []}
     };
-    formTeams(id);
     games[id].currentGame.numAlive = games[id].currentGame.includedUsers.length;
   } else {
     games[id] = {
@@ -351,10 +354,12 @@ function createGame(msg, id) {
       previousMessage: 0
     };
     games[id].currentGame.numAlive = games[id].currentGame.includedUsers.length;
-    reply(
-        msg,
-        "Created a Hungry Games with default settings and all members included.");
+    if (!silent)
+      reply(
+          msg,
+          "Created a Hungry Games with default settings and all members included.");
   }
+  formTeams(id);
 }
 function getAllPlayers(members, excluded, bots) {
   var finalMembers = [];
@@ -394,7 +399,7 @@ function formTeams(id) {
         } else {
           notIncluded.splice(
               notIncluded.findIndex(function(obj) {
-                return obj == team.players[j];
+                return obj.id == team.players[j];
               }),
               1);
         }
@@ -413,9 +418,9 @@ function formTeams(id) {
       }
       if (found) continue;
       // Add a team if all existing teams are full.
-      game.currentGame.teams[game.currentGame.length] = new Team(
-          game.currentGame.length, "Team " + game.currentGame.length,
-          [notIncluded[i]]);
+      game.currentGame.teams[game.currentGame.teams.length] = new Team(
+          game.currentGame.teams.length,
+          "Team " + game.currentGame.teams.length, [notIncluded[i].id]);
     }
   } else {
     // Create all teams for players.
@@ -488,23 +493,33 @@ function startGame(msg, id) {
   if (games[id] && games[id].currentGame && games[id].currentGame.inProgress) {
     reply(msg, "A game is already in progress!");
   } else {
-    if (!games[id] || !games[id].currentGame || games[id].currentGame.ended) {
-      createGame(msg, id);
-    }
+    createGame(msg, id, true);
     var teamList = "";
     var numUsers = games[id].currentGame.includedUsers.length;
     if (games[id].options.teamSize > 0) {
       teamList =
           games[id]
               .currentGame.teams
-              .map(function(team) {
-                return "__" + team.name + "__\n" +
+              .map(function(team, index) {
+                return "#" + (index + 1) + " __" + team.name + "__: " +
                     team.players
                         .map(function(player) {
-                          return games[id]
-                              .currentGame.includedUsers
-                              .find(function(obj) { return obj.id == player; })
-                              .name;
+                          try {
+                            return "`" +
+                                games[id]
+                                    .currentGame.includedUsers
+                                    .find(function(obj) {
+                                      return obj.id == player;
+                                    })
+                                    .name +
+                                "`";
+                          } catch(err) {
+                            common.ERROR(
+                                "Failed to find player" + player +
+                                " in included users.");
+                            console.log(games[id].currentGame.teams);
+                            throw err;
+                          }
                         })
                         .join(", ");
               })
@@ -567,9 +582,12 @@ function startAutoplay(msg, id) {
           "> `Enabling Autoplay! Starting the next day!`");
       nextDay(msg, id);
     } else if (!games[id].currentGame.inProgress) {
-      msg.channel.send(
+      /* msg.channel.send(
           "<@" + msg.author.id + "> `Autoplay is enabled, type \"" + myPrefix +
-          "start\" to begin!`");
+          "start\" to begin!`"); */
+      msg.channel.send(
+          "<@" + msg.author.id + "> `Autoplay is enabled, Starting the games!`");
+      startGame(msg, id);
     } else {
       msg.channel.send("<@" + msg.author.id + "> `Enabling autoplay!`");
     }
@@ -810,18 +828,24 @@ function nextDay(msg, id) {
       games[id].currentGame.includedUsers[index].rank =
           games[id].currentGame.numAlive--;
       if (games[id].options.teamSize > 0) {
-        var team = games[id].currentGame.teams.find(function(obj) {
-          return obj.players.findIndex(function(obj) {
-            return effectedUsers[i].id == obj;
+        var team = games[id].currentGame.teams.find(function(team) {
+          return team.players.findIndex(function(obj) {
+            return games[id].currentGame.includedUsers[index].id == obj;
           }) > -1;
         });
-        team.numAlive--;
-        if (team.numAlive == 0) {
-          var teamsLeft = 0;
-          games[id].currentGame.teams.forEach(function(obj) {
-            if (obj.numAlive > 0) teamsLeft++;
-          });
-          team.rank = teamsLeft + 1;
+        if (!team) {
+          console.log(
+              "FAILED TO FIND ADEQUATE TEAM FOR USER",
+              games[id].currentGame.includedUsers[index]);
+        } else {
+          team.numAlive--;
+          if (team.numAlive == 0) {
+            var teamsLeft = 0;
+            games[id].currentGame.teams.forEach(function(obj) {
+              if (obj.numAlive > 0) teamsLeft++;
+            });
+            team.rank = teamsLeft + 1;
+          }
         }
       }
     };
@@ -979,9 +1003,10 @@ function makeSingleEvent(
                         .filter(function(obj) { return !obj.living; })
                         .slice(0, weightedRand());
     if (deadUsers.length == 0) {
-      finalMessage.replaceAll("{dead}", "an animal");
+      finalMessage = finalMessage.replaceAll("{dead}", "an animal");
     } else {
-      finalMessage.replaceAll("{dead}", formatMultiNames(deadUsers, false));
+      finalMessage =
+          finalMessage.replaceAll("{dead}", formatMultiNames(deadUsers, false));
     }
   }
   var finalIcons = getMiniIcons(effectedAttackers.concat(effectedVictims));
@@ -1189,26 +1214,45 @@ function printDay(msg, id) {
   if (games[id].currentGame.ended) {
     var rankEmbed = new Discord.RichEmbed();
     rankEmbed.setTitle("Final Ranks (kills)");
-    rankEmbed.setDescription(
+    var rankList =
         games[id]
             .currentGame.includedUsers
             .sort(function(a, b) { return a.rank - b.rank; })
             .map(function(obj) {
               return obj.rank + ") " + obj.name +
                   (obj.kills > 0 ? " (" + obj.kills + ")" : "");
-            })
-            .join('\n'));
+            });
+    if (rankList.length <= 20) {
+      rankEmbed.setDescription(rankList.join('\n'));
+    } else {
+      var thirdLength = Math.floor(rankList.length / 3);
+      for (var i = 0; i < 2; i++) {
+        var thisMessage = rankList.splice(0, thirdLength).join('\n');
+        rankEmbed.addField(i + 1, thisMessage, true);
+      }
+      rankEmbed.addField(3, rankList.join('\n'), true);
+    }
     rankEmbed.setColor(defaultColor);
     client.setTimeout(function() { msg.channel.send(rankEmbed); }, 5000);
     if (games[id].options.teamSize > 0) {
       var teamRankEmbed = new Discord.RichEmbed();
       teamRankEmbed.setTitle("Final Team Ranks");
-      teamRankEmbed.setDescription(
+      var teamRankList =
           games[id]
               .currentGame.teams
               .sort(function(a, b) { return a.rank - b.rank; })
-              .map(function(obj) { return obj.rank + ") " + obj.name; })
-              .join('\n'));
+              .map(function(obj) { return obj.rank + ") " + obj.name; });
+      games[id].currentGame.teams.sort(function(a, b) { return a.id - b.id; });
+      if (teamRankList.length <= 20) {
+        teamRankEmbed.setDescription(teamRankList.join('\n'));
+      } else {
+        var thirdLength = Math.floor(teamRankList.length / 3);
+        for (var i = 0; i < 2; i++) {
+          var thisMessage = teamRankList.splice(0, thirdLength).join('\n');
+          teamRankEmbed.addField(i + 1, thisMessage, true);
+        }
+        teamRankEmbed.addField(3, teamRankList.join('\n'), true);
+      }
       teamRankEmbed.setColor(defaultColor);
       client.setTimeout(function() { msg.channel.send(teamRankEmbed); }, 8000);
     }
@@ -1234,6 +1278,8 @@ function endGame(msg, id) {
     reply(msg, "The game has ended!");
     games[id].currentGame.inProgress = false;
     games[id].currentGame.ended = true;
+    client.clearInterval(intervals[id]);
+    delete intervals[id];
   }
 }
 
@@ -1317,21 +1363,40 @@ function listPlayers(msg, id) {
             .currentGame.includedUsers.map(function(obj) { return obj.name; })
             .join(', ');
     } else {
+      var numPlayers = 0;
       stringList +=
           games[id]
               .currentGame.teams
-              .map(function(team) {
-                return "__" + team.name + "__\n" +
+              .map(function(team, index) {
+                return "#" + (index + 1) + " __" + team.name + "__: " +
                     team.players
                         .map(function(player) {
-                          return games[id]
-                              .currentGame.includedUsers
-                              .find(function(obj) { return obj.id == player; })
-                              .name;
+                          numPlayers++;
+                          try {
+                            return "`" +
+                                games[id]
+                                    .currentGame.includedUsers
+                                    .find(function(obj) {
+                                      return obj.id == player;
+                                    })
+                                    .name +
+                                "`";
+                          } catch(err) {
+                            common.ERROR(
+                                "Failed to find player" + player +
+                                " in included users.");
+                            console.log(games[id].currentGame.teams);
+                            throw err;
+                          }
                         })
                         .join(", ");
               })
-              .join('\n')
+              .join('\n');
+      if (numPlayers != games[id].currentGame.includedUsers.length) {
+        stringList +=
+            "\n\nSome players were left out! Please reset teams to fix this! (" +
+            numPlayers + "/" + games[id].currentGame.includedUsers.length + ")";
+      }
     }
   } else {
     stringList +=
@@ -1603,15 +1668,17 @@ exports.save = function(opt) {
 };
 
 function exit(code) {
-  if (code == -1) {
-    if (common) common.LOG("Caught exit! Saving!", "HG");
+  if (common && common.LOG) common.LOG("Caught exit!", "HG");
+  if (initialized && code == -1) {
     exports.save();
   }
   try { exports.end(); } catch (err) { }
 }
 function sigint() {
-  if (common) common.LOG("Caught SIGINT! Saving!", "HG");
-  exports.save();
+  if (common && common.LOG) common.LOG("Caught SIGINT!", "HG");
+  if (initialized) {
+    exports.save();
+  }
   try { exports.end(); } catch (err) { }
 }
 

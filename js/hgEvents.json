@@ -1498,7 +1498,7 @@
           "victim": { "count": "-1", "outcome": "nothing" }
         },
         {
-          "message": "{victim} eat[Vs|] [Va|] scorpion[V|s], thinking it is a delicate dessert!",
+          "message": "{victim} eat[Vs|] [Va|] scorpion[V|s], thinking [Vit's a|they're a] delicate dessert!",
           "attacker": { "count": "0", "outcome": "nothing" },
           "victim": { "count": "-1", "outcome": "dies" }
         },
@@ -1513,7 +1513,7 @@
           "victim": { "count": "-1", "outcome": "dies" }
         },
         {
-          "message": "{attacker} drown[As|] {victim}, who they though was a shark trying to eat them!",
+          "message": "{attacker} drown[As|] {victim}, who they thought was a shark trying to eat them!",
           "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
           "victim": { "count": "-1", "outcome": "dies" }
         },

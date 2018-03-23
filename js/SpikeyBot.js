@@ -651,8 +651,11 @@ command.on('reload', msg => {
     reply(msg, "Reloading modules...").then(warnMessage => {
       var error = false;
       try {
-        HGames.save();
-        HGames.end();
+        try {
+          HGames.save();
+          HGames.end();
+        } catch (err) {
+        }
         delete require.cache[require.resolve('./hungryGames.js')];
         delete HGames;
         HGames = require('./hungryGames.js');
