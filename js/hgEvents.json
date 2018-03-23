@@ -355,7 +355,7 @@
     {
       "message": "{attacker} sneak[As|] up on {victim}, but {victim} is actually a ninja and manages to kill {attacker}!",
       "attacker": { "count": "-1", "outcome": "dies" },
-      "victim": { "count": "1", "outcome": "nothing", "killer": true }
+      "victim": { "count": "1", "outcome": "thrives", "killer": true }
     },
     {
       "message": "{attacker} hides in the bushes and stalks their prey...",
@@ -514,7 +514,7 @@
     },
     {
       "message": "{victim} sprains their ankle while running from {attacker}, allowing {attacker} to catch up and finish off {victim}.",
-      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+      "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
       "victim": { "count": "1", "outcome": "dies" }
     },
     {
@@ -589,12 +589,12 @@
     },
     {
       "message": "{victim} scream[Vs|] for help, and get[Vs|] a knife to the back because of it.",
-      "attacker": { "count": "1", "outcome": "nothing", "killer": true },
+      "attacker": { "count": "1", "outcome": "thrives", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{victim} scream[Vs|] for help, but it's already too late, {attacker} has already fired their crossbow[A|s].",
-      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+      "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
@@ -609,7 +609,7 @@
     },
     {
       "message": "{attacker} cook[As|] {victim} for dinner.",
-      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+      "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
@@ -669,7 +669,7 @@
     },
     {
       "message": "{victim} let[Vs|] {attacker} into their shelter, and {victim} [Vis|are] killed.",
-      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+      "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
@@ -689,12 +689,12 @@
     },
     {
       "message": "{attacker} put[As|] {victim} out of their misery.",
-      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+      "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
       "victim": { "count": "1", "outcome": "dies" }
     },
     {
       "message": "{attacker} throws a knife into {victim}'s head[V|s].",
-      "attacker": { "count": "1", "outcome": "nothing", "killer": true },
+      "attacker": { "count": "1", "outcome": "thrives", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
@@ -704,17 +704,17 @@
     },
     {
       "message": "{attacker} drown[As|] {victim}.",
-      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+      "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{attacker} strangle[As|] {victim} after a fist fight.",
-      "attacker": { "count": "1", "outcome": "nothing", "killer": true },
+      "attacker": { "count": "1", "outcome": "thrives", "killer": true },
       "victim": { "count": "1", "outcome": "dies" }
     },
     {
       "message": "{attacker} sneaks up on {victim} and snaps {victim}'s neck from behind.",
-      "attacker": { "count": "1", "outcome": "nothing", "killer": true },
+      "attacker": { "count": "1", "outcome": "thrives", "killer": true },
       "victim": { "count": "1", "outcome": "dies" }
     },
     {
@@ -723,7 +723,7 @@
       "victim": { "count": "1", "outcome": "dies" }
     },
     {
-      "message": "{attacker} shoots an arrow into {victim}'s face while looking into {victim}'s scared eyes.",
+      "message": "{attacker} shoots an arrow into {victim}'s face while looking into {victim}'s wide eyes.",
       "attacker": { "count": "1", "outcome": "nothing", "killer": true },
       "victim": { "count": "1", "outcome": "dies" }
     },
@@ -754,12 +754,12 @@
     },
     {
       "message": "{attacker} stabs {victim} in the back.",
-      "attacker": { "count": "1", "outcome": "nothing", "killer": true },
+      "attacker": { "count": "1", "outcome": "thrives", "killer": true },
       "victim": { "count": "1", "outcome": "dies" }
     },
     {
       "message": "{attacker} bashes {victim}'s face in with a mace.",
-      "attacker": { "count": "1", "outcome": "nothing", "killer": true },
+      "attacker": { "count": "1", "outcome": "thrives", "killer": true },
       "victim": { "count": "1", "outcome": "dies" }
     },
     {
@@ -774,17 +774,17 @@
     },
     {
       "message": "{attacker} throws a knife info {victim}'s chest[V|s].",
-      "attacker": { "count": "1", "outcome": "nothing", "killer": true },
+      "attacker": { "count": "1", "outcome": "thrives", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{attacker}'s trap kills {victim}.",
-      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+      "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{attacker} kill[As|] {victim} in their sleep.",
-      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+      "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
@@ -794,7 +794,7 @@
     },
     {
       "message": "{attacker} force[As|] {victim} to kill themsel[Vf|ves].",
-      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+      "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
@@ -829,12 +829,12 @@
     },
     {
       "message": "{attacker} ambush[Aes|] and kill[As|] {victim}.",
-      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+      "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{attacker} strangles {victim} with a rope.",
-      "attacker": { "count": "1", "outcome": "nothing", "killer": true },
+      "attacker": { "count": "1", "outcome": "thrives", "killer": true },
       "victim": { "count": "1", "outcome": "dies" }
     },
     {
@@ -869,7 +869,7 @@
     },
     {
       "message": "{attacker} carves {victim}'s eyes out before finishing them off.",
-      "attacker": { "count": "1", "outcome": "nothing", "killer": true },
+      "attacker": { "count": "1", "outcome": "thrives", "killer": true },
       "victim": { "count": "1", "outcome": "dies" }
     },
     {
@@ -904,7 +904,7 @@
     },
     {
       "message": "{attacker} makes {victim} laugh while eating, and {victim} chokes to death on their food.",
-      "attacker": { "count": "1", "outcome": "nothing", "killer": true},
+      "attacker": { "count": "1", "outcome": "thrives", "killer": true},
       "victim": { "count": "1", "outcome": "dies" }
     },
     {
@@ -918,8 +918,8 @@
       "victim": { "count": "1", "outcome": "dies" }
     },
     {
-      "message": "{attacker} drop[As|] a rock from a tree onto {victim}, killing them.",
-      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+      "message": "{attacker} drop[As|] [Va |]rock[V|s] from a tree onto {victim}, killing them.",
+      "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
@@ -964,7 +964,7 @@
     },
     {
       "message": "{attacker} jump[As|] onto {victim} from a tree and kill[As|] them.",
-      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+      "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
@@ -994,7 +994,7 @@
     },
     {
       "message": "{attacker} slowly pushes their sword into {victim}'s chest and watches the light fade from their eyes.",
-      "attacker": { "count": "1", "outcome": "nothing", "killer": true },
+      "attacker": { "count": "1", "outcome": "thrives", "killer": true },
       "victim": { "count": "1", "outcome": "dies" }
     },
     {
@@ -1049,18 +1049,68 @@
     },
     {
       "message": "{victim} stop[Vs|] to smell the flowers, and {attacker} stab[As|] them in the back.",
-      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+      "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{victim} mistake[Vs|] {attacker} for [Aa |]friend[A|s], and end up dead.",
-      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+      "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{victim} overdose[Vs|] on painkillers.",
       "attacker": { "count": "0", "outcome": "nothing" },
       "victim": { "count": "-1", "outcome": "dies" }
+    },
+    {
+      "message": "{victim} walk[Vs|] around the arena drunk.",
+      "attacker": { "count": "0", "outcome": "nothing" },
+      "victim": { "count": "-1", "outcome": "nothing" }
+    },
+    {
+      "message": "{victim} investigate[Vs|] a light in the forest, but {attacker} slit[As|] their throat[V|s] before they can see its source.",
+      "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
+      "victim": { "count": "-1", "outcome": "dies" }
+    },
+    {
+      "message": "{attacker} find[As|] supplies left on {dead}'s remains.",
+      "attacker": { "count": "-1", "outcome": "thrives" },
+      "victim": { "count": "0", "outcome": "nothing" }
+    },
+    {
+      "message": "{attacker} corner[As|] {victim} in a cave before killing them.",
+      "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
+      "victim": { "count": "-1", "outcome": "dies" }
+    },
+    {
+      "message": "{victim} run[As|] into a cave to escape {attacker}, but end[Vs|] up trapped and [Ais|are] killed.",
+      "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
+      "victim": { "count": "-1", "outcome": "dies" }
+    },
+    {
+      "message": "{victim} [Vis|are] so dumb, they die of stupidity.",
+      "attacker": { "count": "0", "outcome": "nothing" },
+      "victim": { "count": "-1", "outcome": "dies" }
+    },
+    {
+      "message": "A deadly venomous spider bites {victim}, and they die shortly after.",
+      "attacker": { "count": "0", "outcome": "nothing" },
+      "victim": { "count": "-1", "outcome": "dies" }
+    },
+    {
+      "message": "{victim} get[Vs|] bored and begin[Vs|] watching the bugs in the dirt.",
+      "attacker": { "count": "0", "outcome": "nothing" },
+      "victim": { "count": "-1", "outcome": "nothing" }
+    },
+    {
+      "message": "{victim} [Vis|are] choked to death by {attacker}.",
+      "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
+      "victim": { "count": "-1", "outcome": "dies" }
+    },
+    {
+      "message": "{attacker} take[As|] one of {victim} arm[Vs|].",
+      "attacker": { "count": "-1", "outcome": "nothing" },
+      "victim": { "count": "-1", "outcome": "wounded" }
     },
     {
       "message": "{victim} takes an arrow to the knee from {attacker}!",
@@ -1513,7 +1563,7 @@
           "victim": { "count": "-1", "outcome": "dies" }
         },
         {
-          "message": "{attacker} drown[As|] {victim}, who they thought was a shark trying to eat them!",
+          "message": "{attacker} drown[As|] {victim}, who they thought [Vwas a|were] shark[V|s] trying to eat them!",
           "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
           "victim": { "count": "-1", "outcome": "dies" }
         },

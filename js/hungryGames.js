@@ -18,6 +18,7 @@ const defaultOptions = {
   resurrection: false,
   includeBots: false,
   allowNoVictors: true,
+  bleedDays: 2,
   teamSize: 0,
   teammatesCollaborate: true,
   mentionVictor: true,
@@ -290,7 +291,7 @@ function Player(id, username, avatarURL) {
   // If this user is still alive.
   this.living = true;
   // If this user is will die at the end of the day.
-  this.bleeding = false;
+  this.bleeding = 0;
   // The rank at which this user died.
   this.rank = 1;
   // Health state.
@@ -511,7 +512,7 @@ function startGame(msg, id) {
           games[id]
               .currentGame.teams
               .map(function(team, index) {
-                return "#" + (index + 1) + " __" + team.name + "__: " +
+                return "__" + team.name + "__: " +
                     team.players
                         .map(function(player) {
                           try {
@@ -829,7 +830,9 @@ function nextDay(msg, id) {
         return obj.id == effectedUsers[i].id;
       });
       if (games[id].currentGame.includedUsers[index].state == "wounded") {
-        games[id].currentGame.includedUsers[index].bleeding = true;
+        games[id].currentGame.includedUsers[index].bleeding++;
+      } else {
+        games[id].currentGame.includedUsers[index].bleeding = 0;
       }
       games[id].currentGame.includedUsers[index].kills += kills;
       return index;
@@ -838,7 +841,7 @@ function nextDay(msg, id) {
     killUser = function(i, k) {
       var index = effectUser(i, k);
       games[id].currentGame.includedUsers[index].living = false;
-      games[id].currentGame.includedUsers[index].bleeding = false;
+      games[id].currentGame.includedUsers[index].bleeding = 0;
       games[id].currentGame.includedUsers[index].state = "dead";
       games[id].currentGame.includedUsers[index].rank =
           games[id].currentGame.numAlive--;
@@ -921,13 +924,14 @@ function nextDay(msg, id) {
   var usersBleeding = [];
   var usersRecovered = [];
   games[id].currentGame.includedUsers.forEach(function(obj) {
-    if (obj.bleeding && obj.living) {
+    if (obj.bleeding > 0 && obj.bleeding >= games[id].options.bleedDays &&
+        obj.living) {
       if (Math.random() < games[id].options.probabilityOfBleedToDeath &&
           (games[id].options.allowNoVictors ||
            games[id].currentGame.numAlive > 1)) {
         usersBleeding.push(obj);
         obj.living = false;
-        obj.bleeding = false;
+        obj.bleeding = 0;
         obj.state = "dead";
         obj.rank = games[id].currentGame.numAlive--;
         var team = games[id].currentGame.teams.find(function(team) {
@@ -945,7 +949,7 @@ function nextDay(msg, id) {
         }
       } else {
         usersRecovered.push(obj);
-        obj.bleeding = false;
+        obj.bleeding = 0;
         obj.state = "normal";
       }
     }
