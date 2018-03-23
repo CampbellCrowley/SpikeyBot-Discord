@@ -639,7 +639,7 @@ command.on('ping', msg => {
 
 command.on('reboot', msg => {
   if (msg.author.id == spikeyId) {
-    reply(msg, "Rebooting in 4 seconds!");
+    reply(msg, "Rebooting in 5 seconds!");
     // updategame(password, 'I AM REBOOTING');
     setTimeout(function() { process.exit(-1) }, 1000);
   } else {
