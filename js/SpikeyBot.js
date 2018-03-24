@@ -1,4 +1,5 @@
 const Discord = require('discord.js');
+const fs = require('fs');
 const common = require('/var/www/html/common.js');
 const dateFormat = require('dateformat');
 const ytinfo = require('ytdl-getinfo');
@@ -243,6 +244,15 @@ client.on('ready', _ => {
         user => {user.send("Failed to initialize HungryGames")});
     console.log(err);
   }
+  fs.readFile('reboot.dat', function(err, file) {
+    if (err) return;
+    var msg = JSON.parse(file);
+    var channel = client.channels.get(msg.channel.id);
+    if (channel)
+      channel.fetchMessage(msg.id)
+          .then(msg_ => { msg_.edit("`Reboot complete.`"); })
+          .catch(_ => {});
+  });
 });
 
 client.on('message', msg => {
@@ -269,6 +279,7 @@ client.on('message', msg => {
 });
 
 client.on('guildCreate', guild => {
+  common.LOG("ADDED TO NEW GUILD: " + guild.id + ": " + guild.name);
   var channel = "";
   var pos = -1;
   try {
@@ -283,6 +294,37 @@ client.on('guildCreate', guild => {
     client.channels.get(channel).send(introduction);
   } catch (err) {
     common.ERROR("Failed to send welcome to guild:" + guild.id);
+    console.log(err);
+  }
+});
+
+client.on('guildBanAdd', (guild, user) => {
+  var channel = "";
+  var pos = -1;
+  try {
+    guild.channels.forEach(function(val, key) {
+      if (val.type != 'voice' && val.type != 'category') {
+        if (pos == -1 || val.position < pos) {
+          pos = val.position;
+          channel = val.id;
+        }
+      }
+    });
+    guild.fetchAuditLogs({limit: 1})
+        .then(logs => {
+          client.channels.get(channel).send(
+              "`Poof! " + logs.entries.first().executor.username +
+              " has ensured " + user.username +
+              " will never be seen again...`");
+        })
+        .catch(err => {
+          client.channels.get(channel).send(
+              "`Poof! " + user.username + " was never seen again...`");
+          common.ERROR("Failed to find executor of ban.");
+          console.log(err);
+        });
+  } catch (err) {
+    common.ERROR("Failed to send ban from guild:" + guild.id);
     console.log(err);
   }
 });
@@ -436,10 +478,12 @@ command.on(['fuckyou', 'ban'], msg => {
         var banMsg = banMsgs[Math.floor(Math.random() * banMsgs.length)];
         toBan.ban({reason: banMsg})
             .then(_ => { reply(msg, banMsg, "Banned " + toBan.user.username); })
-            .catch(_ => {
+            .catch(err => {
               reply(
                   msg, "Oops! I wasn't able to ban " + toBan.user.username +
                       "! I'm not sure why though!");
+              common.ERROR("Failed to ban user.");
+              console.log(err);
             });
       }
       });
@@ -636,12 +680,23 @@ command.on('ping', msg => {
   }
 }, true);
 
+command.on('uptime', msg => {
+  var ut = client.uptime;
+  var formattedUptime = Math.floor(ut / 1000 / 60 / 60 / 24) + " Days, " +
+      Math.floor(ut / 1000 / 60 / 60) % 24 + " Hours, " +
+      Math.floor(ut / 1000 / 60) % 60 + " Minutes, " + (ut / 1000) % 60 +
+      " Seconds.";
+  reply(msg, "I have been running for " + formattedUptime);
+});
+
 
 command.on('reboot', msg => {
   if (msg.author.id == spikeyId) {
-    reply(msg, "Rebooting in 5 seconds!");
-    // updategame(password, 'I AM REBOOTING');
-    setTimeout(function() { process.exit(-1) }, 1000);
+    reply(msg, "Rebooting...").then(msg => {
+      var toSave = {id: msg.id, channel: {id: msg.channel.id}};
+      fs.writeFileSync("reboot.dat", JSON.stringify(toSave));
+      process.exit(-1);
+    });
   } else {
     reply(msg, "LOL! Good try!");
   }
