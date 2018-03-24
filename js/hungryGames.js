@@ -6,35 +6,60 @@ var initialized = false;
 const saveFile = 'hg.json';
 const eventFile = 'hgEvents.json';
 
-// Must be supported by dicord. (Mostly just powers of 2).
+// Must be supported by discord. (Mostly just powers of 2).
 const iconSize = 48;
 const victorIconSize = 64;
 const fetchSize = 64;
 // Pixels between each icon
 const iconGap = 4;
 
+// Role that a user must have in order to perform any commands.
 const roleName = "HG Creator";
 
+// Default options for a game.
 const defaultOptions = {
+  // Are arena events possible.
   arenaEvents: true,
+  // Can users be resurrected.
   resurrection: false,
+  // Should bots be included in the games. If this is false, bots cannot be
+  // added manually.
   includeBots: false,
+  // Should it be possible to end a game without any winners.
   allowNoVictors: true,
+  // Number of days a user can bleed before they can die.
   bleedDays: 2,
+  // Maximum size of teams when automatically forming teams.
   teamSize: 0,
+  // Will teammates work together. If false, teammates can kill eachother, and
+  // there will only be 1 victor. If true, teammates cannot kill eachother, and
+  // the game ends when one TEAM is remaining, not one player.
   teammatesCollaborate: true,
+  // Should the victor of the game (can be team), be tagged/mentioned so they
+  // get notified?
   mentionVictor: true,
+  // Should a user be mentioned every time something happens to them in the
+  // game?
   mentionAll: false,
+  // Should @everyone be mentioned when the game is started?
   mentionEveryoneAtStart: false,
+  // Delay in milliseconds between each event being printed.
   delayEvents: 3500,
+  // Delay in milliseconds between each day being printed.
   delayDays: 7000,
+  // Probability that each day a dead player can be put back into the game.
   probabilityOfResurrect: 0.33,
+  // Probability that each day an arena event will happen.
   probabilityOfArenaEvent: 0.25,
+  // Probability that after bleedDays a player will die. If they don't die, they
+  // will heal back to normal.
   probabilityOfBleedToDeath: 0.5
 };
 
+// Default color to choose for embedded messages.
 const defaultColor = [200, 125, 0];
 
+// Probability of each amount of people being chosen for an event.
 // Must total to 1.0
 const multiEventUserDistribution = {
   1: 0.66,
@@ -49,17 +74,24 @@ const multiEventUserDistribution = {
 
 var prefix, Discord, client, command, common;
 var myPrefix, helpMessage;
+// All currently tracked games.
 var games = {};
+// All intervals for printing events.
 var intervals = {};
+// Default parsed bloodbath events.
 var defaultBloodbathEvents = [];
+// Default parsed player events.
 var defaultPlayerEvents = [];
+// Default parsed arena events.
 var defaultArenaEvents = [];
 
+// Read saved game data from disk.
 fs.readFile(saveFile, function(err, data) {
   if (err) return;
   games = JSON.parse(data);
   if (!games) games = {};
 });
+// Parse all default events.
 function updateEvents() {
   fs.readFile(eventFile, function(err, data) {
     if (err) return;
@@ -86,10 +118,13 @@ fs.watchFile(eventFile, function(curr, prev) {
   updateEvents();
 });
 
+// Reply to help on a server.
 const helpmessagereply = "I sent you a DM with commands!";
+// Reply if unable to send message via DM.
 const blockedmessage =
     "I couldn't send you a message, you probably blocked me :(";
 exports.helpMessage = "Module loading...";
+// Set all help messages once we know what prefix to use.
 function setupHelp() {
 exports.helpMessage = "`" + myPrefix + "help` for Hungry Games help.";
 helpMessage =
@@ -112,14 +147,13 @@ helpMessage =
   "\n=== Events ===\n" +
   myPrefix + "events // This will list all events that could happen in the game.\n" +
   myPrefix + "events add // Coming soon!\n" +
-  myPrefix + "events delete // Coming soon!\n" +
+  myPrefix + "events remove // Coming soon!\n" +
   "\n=== Time Control ===\n" +
   myPrefix + "start // This will start a game with your settings.\n" +
   myPrefix + "end // This will end a game early.\n" +
   myPrefix + "autoplay // Automatically continue to the next day after a day is over.\n" +
   myPrefix + "pause // Stop autoplay at the end of the day.\n" +
-  myPrefix + "next // Simulate the next day of the Games!\n```"+
-  "Some things may not work, this is still in development.\n";
+  myPrefix + "next // Simulate the next day of the Games!\n```";
 }
 
 // Initialize module.
@@ -137,6 +171,7 @@ exports.begin = function(prefix_, Discord_, client_, command_, common_) {
     } catch (err) {
       common.ERROR("An error occured while perfoming command.", "HG");
       console.log(err);
+      reply(msg, "Oopsies! Something is broken!");
     }
   });
 
@@ -158,6 +193,7 @@ exports.end = function() {
   process.removeListener('SIGINT', sigint);
 };
 
+// Handle a command from a user and pass into relevant functions.
 function handleCommand(msg) {
   if (msg.content == myPrefix + "help") {
     help(msg);
@@ -205,7 +241,7 @@ function handleCommand(msg) {
             case 'add':
               createEvent(msg, id);
               break;
-            case 'delete':
+            case 'remove':
               removeEvent(msg, id);
               break;
             default:
@@ -268,10 +304,11 @@ function reply(msg, text, post) {
   post = post || "";
   return msg.channel.send(`${mention(msg)}\n\`\`\`\n${text}\n\`\`\`${post}`);
 }
-
+// Check if author of msg has the required role to run commands.
 function checkForRole(msg) {
   return msg.member.roles.exists("name", roleName);
 }
+// Check if author of msg has permissions, then trigger callback with guild id.
 function checkPerms(msg, cb) {
   if (checkForRole(msg)) {
     const id = msg.guild.id;
@@ -283,6 +320,7 @@ function checkPerms(msg, cb) {
   }
 }
 
+// Serializable container for data pertaining to a single user.
 function Player(id, username, avatarURL) {
   // User id.
   this.id = id;
@@ -301,7 +339,7 @@ function Player(id, username, avatarURL) {
   // Number of kills this user has for the game.
   this.kills = 0;
 }
-
+// Serializable container for data about a team in a game.
 function Team(id, name, players) {
   // The identifier for this team unique to the server.
   this.id = id;
@@ -314,7 +352,7 @@ function Team(id, name, players) {
   // Number of players still alive on this team.
   this.numAlive = players.length;
 }
-
+// Delay a message to send at the given time in milliseconds since epoch.
 function sendAtTime(channel, one, two, time) {
   if (time <= Date.now()) {
     channel.send(one, two);
@@ -378,6 +416,8 @@ function createGame(msg, id, silent) {
   }
   formTeams(id);
 }
+// Form an array of Player objects based on guild members, excluded members, and
+// whether to include bots.
 function getAllPlayers(members, excluded, bots) {
   var finalMembers = [];
   if (!bots || excluded instanceof Array) {
@@ -392,6 +432,8 @@ function getAllPlayers(members, excluded, bots) {
     return new Player(obj.id, obj.user.username, obj.user.displayAvatarURL);
   });
 }
+// Add users to teams, and remove excluded users from teams. Deletes empty
+// teams, and adds teams once all teams have teamSize of players.
 function formTeams(id) {
   var game = games[id];
   if (game.options.teamSize < 0) game.options.teamSize = 0;
@@ -402,6 +444,7 @@ function formTeams(id) {
 
   var teamSize = game.options.teamSize;
   var numTeams = Math.ceil(game.currentGame.includedUsers.length / teamSize);
+  // If teams already exist, update them. Otherwise, create new teams.
   if (game.currentGame.teams && game.currentGame.teams.length > 0) {
     game.currentGame.teams.sort(function(a, b) { return a.id - b.id; });
     var notIncluded = game.currentGame.includedUsers.slice(0);
@@ -456,11 +499,13 @@ function formTeams(id) {
               .map(function(obj) { return obj.id; }));
     }
   }
+  // Reset team data.
   game.currentGame.teams.forEach(function(obj) {
     obj.numAlive = obj.players.length;
     obj.rank = 1;
   });
 }
+// Reset data that the user specifies.
 function resetGame(msg, id) {
   const command = msg.text.split(' ')[0];
   if (games[id]) {
@@ -488,6 +533,7 @@ function resetGame(msg, id) {
         msg, "There is no data to reset. Start a new game with \"hgcreate\".");
   }
 }
+// Send all of the game data about the current server to the chat.
 function showGameInfo(msg, id) {
   if (games[id]) {
     var message = JSON.stringify(games[id], null, 2);
@@ -505,6 +551,7 @@ function showGameInfo(msg, id) {
     reply(msg, "No game created");
   }
 }
+// Send all event data about the default events to the chat.
 function showGameEvents(msg) {
   reply(
       msg, "Player: " + JSON.stringify(defaultPlayerEvents, null, 2) +
@@ -589,10 +636,9 @@ function pauseAutoplay(msg, id) {
 }
 function startAutoplay(msg, id) {
   if (!games[id]) {
-    reply(
-        msg, "You must create a game first before using autoplay. Use \"" +
-            myPrefix + "create\" to do this.");
-  } else if (games[id].autoPlay) {
+    createGame(msg, id);
+  }
+  if (games[id].autoPlay && games[id].inProgress) {
     reply(
         msg, "Already autoplaying. If you wish to stop autoplaying, type \"" +
             myPrefix + "pause\".");
@@ -616,7 +662,7 @@ function startAutoplay(msg, id) {
     }
   }
 }
-// Simulate a single day.
+// Simulate a single day then show events to users.
 function nextDay(msg, id) {
   if (!games[id] || !games[id].currentGame.inProgress) {
     reply(
@@ -991,6 +1037,7 @@ function nextDay(msg, id) {
     printEvent(msg, id);
   }, games[id].options.delayEvents);
 }
+// Produce a random number that is weighted by multiEventUserDistribution.
 function weightedRand() {
   var i, sum = 0, r = Math.random();
   for (i in multiEventUserDistribution) {
@@ -998,6 +1045,7 @@ function weightedRand() {
     if (r <= sum) return i * 1;
   }
 }
+// Format an array of users into names based on options and grammar rules.
 function formatMultiNames(names, mention) {
   var output = "";
   for (var i = 0; i < names.length; i++) {
@@ -1012,6 +1060,7 @@ function formatMultiNames(names, mention) {
   }
   return output;
 }
+// Format an event string based on specified users.
 function makeSingleEvent(
     message, effectedUsers, numVictim, numAttacker, mention, id) {
   var effectedVictims = effectedUsers.splice(0, numVictim);
@@ -1048,6 +1097,7 @@ function makeSingleEvent(
      attackers: effectedAttackers */
   };
 }
+// Get an array of icons urls from an array of users.
 function getMiniIcons(users) {
   return users.map(function(obj) {
     return {
@@ -1056,6 +1106,8 @@ function getMiniIcons(users) {
     };
   });
 }
+// Print an event string to the channel and add images, or if no events remain,
+// trigger end of day.
 function printEvent(msg, id) {
   var index = games[id].currentGame.day.state - 2;
   var events = games[id].currentGame.day.events;
@@ -1108,6 +1160,7 @@ function printEvent(msg, id) {
     games[id].currentGame.day.state++;
   }
 }
+// Trigger the end of a day and print summary/outcome at the end of the day.
 function printDay(msg, id) {
   var numAlive = 0;
   var lastIndex = 0;
@@ -1208,7 +1261,7 @@ function printDay(msg, id) {
       }
       var symbol = ":white_check_mark:";
       if (!obj.living) symbol = ":x:";
-      else if (obj.state == "wounded") symbol = ":heart:";
+      else if (obj.state == "wounded") symbol = ":yellow_heart:";
       else if (obj.state == "zombie") symbol = ":negative_squared_cross_mark:";
 
       var shortName = obj.name.substring(0, 16);
@@ -1377,6 +1430,7 @@ function printDay(msg, id) {
     }, games[id].options.delayDays);
   }
 }
+// End a game early.
 function endGame(msg, id) {
   if (!games[id] || !games[id].currentGame.inProgress) {
     reply(msg, "There isn't a game in progress.");
@@ -1391,6 +1445,7 @@ function endGame(msg, id) {
 }
 
 // User Management //
+// Remove a user from users to be in next game.
 function excludeUser(msg, id) {
   if (msg.mentions.users.size == 0) {
     reply(
@@ -1421,6 +1476,7 @@ function excludeUser(msg, id) {
   }
 }
 
+// Add a user back into the next game.
 function includeUser(msg, id) {
   if (msg.mentions.users.size == 0) {
     reply(
@@ -1441,13 +1497,10 @@ function includeUser(msg, id) {
       if (games[id].currentGame.inProgress) {
         response += obj.username + " skipped.\n";
       } else {
-        if (games[id].options.teamSize == 0) {
-          games[id].currentGame.includedUsers.push(
-              new Player(obj.id, obj.username, obj.user.displayAvatarURL));
-          response += obj.username + " added to included players.\n";
-        } else {
-          formTeams(id);
-        }
+        games[id].currentGame.includedUsers.push(
+            new Player(obj.id, obj.username, obj.user.displayAvatarURL));
+        response += obj.username + " added to included players.\n";
+        formTeams(id);
       }
     });
     if (games[id].currentGame.inProgress) {
@@ -1458,6 +1511,7 @@ function includeUser(msg, id) {
   }
 }
 
+// Show a formatted message of all users and teams in current server.
 function listPlayers(msg, id) {
   var stringList = "";
   if (games[id] && games[id].currentGame &&
@@ -1522,6 +1576,8 @@ function listPlayers(msg, id) {
   reply(msg, "List of currently tracked players:", stringList);
 }
 
+// Get the username of a user id if available, or their id if they couldn't be
+// found.
 function getName(msg, user) {
   var name = "";
   if (msg.guild.members.get(user)) {
@@ -1532,6 +1588,7 @@ function getName(msg, user) {
   return name;
 }
 
+// Change an option to a value that the user specifies.
 function toggleOpt(msg, id) {
   var option = msg.text.split(' ')[0];
   var value = msg.text.split(' ')[1];
@@ -1571,7 +1628,7 @@ function toggleOpt(msg, id) {
         reply(
             msg, "Set " + option + " to " + games[id].options[option] +
                 " from " + old);
-        if (option == 'teamSize') {
+        if (option == 'teamSize' && value != 0) {
           reply(
               msg, "To reset teams to the correct size, type \"" + myPrefix +
                   "teams reset\".\nThis will delete all teams, and create new ones.");
@@ -1601,6 +1658,7 @@ function toggleOpt(msg, id) {
 }
 
 // Team Management //
+// Entry for all team commands.
 function editTeam(msg, id) {
   var split = msg.text.split(' ');
   if (games[id].currentGame.inProgress) {
@@ -1636,6 +1694,7 @@ function editTeam(msg, id) {
       break;
   }
 }
+// Swap two users from one team to the other.
 function swapTeamUsers(msg, id) {
   if (msg.mentions.users.size != 2) {
     reply(msg, "Swapping requires mentioning 2 users to swap teams with eachother.");
@@ -1671,6 +1730,7 @@ function swapTeamUsers(msg, id) {
 
   reply(msg, "Swapped players!");
 }
+// Move a single user to another team.
 function moveTeamUser(msg, id) {
   if (msg.mentions.users.size < 1) {
     reply(msg, "You must at least mention one user to move.");
@@ -1731,6 +1791,7 @@ function moveTeamUser(msg, id) {
     games[id].currentGame.teams.splice(teamId1, 1);
   }
 }
+// Rename a team.
 function renameTeam(msg, id) {
   var split = msg.text.split(' ').slice(1);
   var message = split.slice(1).join(' ');
@@ -1759,6 +1820,7 @@ function renameTeam(msg, id) {
   games[id].currentGame.teams[teamId].name = message;
 }
 
+// Swap random users between teams.
 function randomizeTeams(msg, id) {
   var current = games[id].currentGame;
   for (var i = 0; i < current.includedUsers.length; i++) {
@@ -1774,6 +1836,7 @@ function randomizeTeams(msg, id) {
         current.teams[teamId2].players[playerId2];
     current.teams[teamId2].players[playerId2] = intVal;
   }
+  reply(msg, "Teams have been randomized!");
 }
 
 // Game Events //
@@ -1783,6 +1846,7 @@ function createEvent(msg) {
 function removeEvent(msg) {
   reply(msg, "This doesn't work yet!");
 }
+// Put information about an array of events into the array.
 function fetchStats(events) {
   var numKill = 0;
   var numWound = 0;
@@ -1799,6 +1863,8 @@ function fetchStats(events) {
   events.numWound = numWound;
   events.numThrive = numThrive;
 }
+// Allow user to view all events available on their server and summary of each
+// type of event.
 function listEvents(msg, id) {
   var events = defaultBloodbathEvents;
   if (games[id] && games[id].customEvents.bloodbath) {
@@ -1842,6 +1908,7 @@ function listEvents(msg, id) {
   msg.channel.send("Arena Events (" + events.length + ")", file);
 }
 
+// Send help message to DM and reply to server.
 function help(msg, id) {
   msg.author.send(helpMessage)
       .then(_ => {
@@ -1851,6 +1918,7 @@ function help(msg, id) {
 }
 
 // Util //
+// Save all game data to file.
 exports.save = function(opt) {
   if (!initialized) return;
   if (opt == "async") {
@@ -1862,6 +1930,8 @@ exports.save = function(opt) {
   }
 };
 
+// Catch process exiting so we can save if necessary, and remove other handlers
+// to allow for another module to take our place.
 function exit(code) {
   if (common && common.LOG) common.LOG("Caught exit!", "HG");
   if (initialized && code == -1) {
@@ -1869,6 +1939,7 @@ function exit(code) {
   }
   try { exports.end(); } catch (err) { }
 }
+// Same as exit(), but triggred via SIGINT.
 function sigint() {
   if (common && common.LOG) common.LOG("Caught SIGINT!", "HG");
   if (initialized) {
@@ -1877,5 +1948,6 @@ function sigint() {
   try { exports.end(); } catch (err) { }
 }
 
+// Catch reasons for exiting normally.
 process.on('exit', exit);
 process.on('SIGINT', sigint);
