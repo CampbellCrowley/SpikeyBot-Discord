@@ -816,7 +816,8 @@ function nextDay(msg, id) {
       games[id].currentGame.day.events.push(
           makeSingleEvent(
               "{victim} has returned from the dead and was put back into the arena!",
-              [resurrected], 1, 0, games[id].options.mentionAll, id));
+              [resurrected], 1, 0, games[id].options.mentionAll, id, "thrives",
+              "nothing"));
       var team = games[id].currentGame.teams.find(function(obj) {
         return obj.players.findIndex(function(obj) {
           return resurrected.id == obj;
@@ -847,7 +848,8 @@ function nextDay(msg, id) {
       var arenaEvent = arenaEventPool[index];
       games[id].currentGame.day.events.push(
           makeSingleEvent(
-              "**___" + arenaEvent.message + "___**", [], 0, 0, false, id));
+              "**___" + arenaEvent.message + "___**", [], 0, 0, false, id,
+              "nothing", "nothing"));
       userEventPool = arenaEvent.outcomes;
     } else {
       userEventPool = defaultPlayerEvents.concat(games[id].customEvents.player);
@@ -1086,7 +1088,8 @@ function nextDay(msg, id) {
     games[id].currentGame.day.events.push(
         makeSingleEvent(
             eventTry.message, effectedUsers, numVictim, numAttacker,
-            games[id].options.mentionAll, id));
+            games[id].options.mentionAll, id, eventTry.victim.outcome,
+            eventTry.attacker.outcome));
     if (effectedUsers.length != 0) {
       console.log("Effected users remain! " + effectedUsers.length);
     }
@@ -1128,14 +1131,15 @@ function nextDay(msg, id) {
     games[id].currentGame.day.events.push(
         makeSingleEvent(
             "{victim} manage[Vs|] to patch their wounds.", usersRecovered,
-            usersRecovered.length, 0, games[id].options.mentionAll, id));
+            usersRecovered.length, 0, games[id].options.mentionAll, id,
+            "thrives", "nothing"));
   }
   if (usersBleeding.length > 0) {
     games[id].currentGame.day.events.push(
         makeSingleEvent(
             "{victim} fail[Vs|] to tend to their wounds and die[Vs|].",
             usersBleeding, usersBleeding.length, 0,
-            games[id].options.mentionAll, id));
+            games[id].options.mentionAll, id, "dies", "nothing"));
   }
 
   // Signal ready to display events.
@@ -1174,7 +1178,8 @@ function formatMultiNames(names, mention) {
 }
 // Format an event string based on specified users.
 function makeSingleEvent(
-    message, effectedUsers, numVictim, numAttacker, mention, id) {
+    message, effectedUsers, numVictim, numAttacker, mention, id, victimOutcome,
+    attackerOutcome) {
   var effectedVictims = effectedUsers.splice(0, numVictim);
   var effectedAttackers = effectedUsers.splice(0, numAttacker);
   var finalMessage = message;
@@ -1201,12 +1206,13 @@ function makeSingleEvent(
           finalMessage.replaceAll("{dead}", formatMultiNames(deadUsers, false));
     }
   }
-  var finalIcons = getMiniIcons(effectedAttackers.concat(effectedVictims));
+  var finalIcons = getMiniIcons(effectedVictims.concat(effectedAttackers));
   return {
     message: finalMessage,
-    icons: finalIcons /*,
-     victims: effectedVictims,
-     attackers: effectedAttackers */
+    icons: finalIcons,
+    numVictim: numVictim,
+    victimOutcome: victimOutcome,
+    attackerOutcome: attackerOutcome
   };
 }
 // Get an array of icons urls from an array of users.
@@ -1235,16 +1241,13 @@ function printEvent(msg, id) {
           events[index].icons.length * (iconSize + iconGap) - iconGap,
           iconSize + iconGap);
       var responses = 0;
-      newImage = function(image, userId, placement) {
+      newImage = function(image, outcome, placement) {
         image.resize(iconSize, iconSize);
-        var user = games[id].currentGame.includedUsers.find(function(obj) {
-          return obj.id == userId;
-        });
-        if (!user.living) {
+        if (outcome == "dies") {
           finalImage.blit(
               new jimp(iconSize, iconGap, 0xFF0000FF),
               placement * (iconSize + iconGap), iconSize);
-        } else if (user.state == "wounded") {
+        } else if (outcome == "wounded") {
           finalImage.blit(
               new jimp(iconSize, iconGap, 0xFFFF00FF),
               placement * (iconSize + iconGap), iconSize);
@@ -1260,9 +1263,14 @@ function printEvent(msg, id) {
       };
       for (var i = 0; i < events[index].icons.length; i++) {
         jimp.read(events[index].icons[i].url)
-            .then(function(userId, placement) {
-              return function(image) { newImage(image, userId, placement); }
-            }(events[index].icons[i].id, i))
+            .then(
+                function(outcome, placement) {
+                  return function(image) {
+                    newImage(image, outcome, placement);
+                  }
+                }(i < events[index].numVictim ? events[index].victimOutcome :
+                                                 events[index].attackerOutcome,
+                  i))
             .catch(function(err) {
               console.log(err);
               responses++;
@@ -2151,18 +2159,22 @@ function updateEventPreview(msg) {
     cnt++;
   }
   try {
-    var single =
-        makeSingleEvent(msg.text, players.slice(0), 1, 1, false, msg.guild.id)
-            .message;
-    var pluralOne =
-        makeSingleEvent(msg.text, players.slice(0), 2, 1, false, msg.guild.id)
-            .message;
-    var pluralTwo =
-        makeSingleEvent(msg.text, players.slice(0), 1, 2, false, msg.guild.id)
-            .message;
-    var pluralBoth =
-        makeSingleEvent(msg.text, players.slice(0), 2, 2, false, msg.guild.id)
-            .message;
+    var single = makeSingleEvent(
+                     msg.text, players.slice(0), 1, 1, false, msg.guild.id,
+                     "nothing", "nothing")
+                     .message;
+    var pluralOne = makeSingleEvent(
+                        msg.text, players.slice(0), 2, 1, false, msg.guild.id,
+                        "nothing", "nothing")
+                        .message;
+    var pluralTwo = makeSingleEvent(
+                        msg.text, players.slice(0), 1, 2, false, msg.guild.id,
+                        "nothing", "nothing")
+                        .message;
+    var pluralBoth = makeSingleEvent(
+                         msg.text, players.slice(0), 2, 2, false, msg.guild.id,
+                         "nothing", "nothing")
+                         .message;
     msg.myResponse.edit(
         helpMsg + single + "\n" + pluralOne + "\n" + pluralTwo + "\n" +
         pluralBoth);
