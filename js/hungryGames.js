@@ -1995,25 +1995,34 @@ function createEvent(msg, id) {
               });
         };
         getAttackOutcome = function() {
-          createEventOutcome(
-              msg_, authId, "`What is the outcome of the attackers?`",
-              function(outcome) {
-                attackerOutcome = outcome;
-                msg_.channel.send("Loading...").then(msg => {
-                  msg_ = msg;
-                  getVictimOutcome();
+          if (numAttack == 0) {
+            getVictimOutcome();
+          } else {
+            createEventOutcome(
+                msg_, authId, "`What is the outcome of the attackers?`",
+                function(outcome) {
+                  attackerOutcome = outcome;
+                  msg_.channel.send("Loading...").then(msg => {
+                    msg_ = msg;
+                    getVictimOutcome();
+                  });
+                  msg_.delete();
                 });
-                msg_.delete();
-              });
+          }
         };
         getVictimOutcome = function() {
-          createEventOutcome(
-              msg_, authId, "`What is the outcome of the victims?`",
-              function(outcome) {
-                victimOutcome = outcome;
-                finish();
-                msg_.delete();
-              });
+          if (numVictim == 0) {
+            msg_.delete();
+            finish();
+          } else {
+            createEventOutcome(
+                msg_, authId, "`What is the outcome of the victims?`",
+                function(outcome) {
+                  victimOutcome = outcome;
+                  finish();
+                  msg_.delete();
+                });
+          }
         };
         finish = function() {
           msg_.delete();
@@ -2081,6 +2090,7 @@ function createEventNums(msg, id, show, cb) {
        return reaction.emoji.name == emoji.x && user.id == id;
      }, {max: 1}).then(function(reactions) {
     msg.edit("`Cancelled event creation`");
+    msg.clearReactions();
   });
 
   msg.react(emoji.white_check_mark);
@@ -2196,7 +2206,7 @@ function listEvents(msg, id) {
           Math.round(events.numThrive / events.length * 1000) / 10 + "% heal.",
       file); */
 
-  var events = events.concat(games[id].customEvents.player);
+  var events = games[id].customEvents.player;
   var file = new Discord.Attachment();
   file.setFile(Buffer.from(JSON.stringify(events, null, 2)));
   file.setName("PlayerEvents.json");

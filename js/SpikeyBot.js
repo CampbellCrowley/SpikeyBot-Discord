@@ -671,13 +671,9 @@ command.on(['profile', 'avatar'], msg => {
 });
 
 command.on('ping', msg => {
-  if (msg.mentions.users.size > 0) {
-    reply(
-        msg, msg.mentions.users.first().username + " has a ping of " +
-            msg.mentions.members.first().client.ping + "ms");
-  } else {
-    reply(msg, "You have a ping of " + msg.client.ping + "ms");
-  }
+  reply(
+      msg, "My ping is " + msg.client.ping + "ms",
+      "`" + JSON.stringify(msg.client.pings) + "`");
 }, true);
 
 command.on('uptime', msg => {
@@ -694,7 +690,12 @@ command.on('reboot', msg => {
   if (msg.author.id == spikeyId) {
     reply(msg, "Rebooting...").then(msg => {
       var toSave = {id: msg.id, channel: {id: msg.channel.id}};
-      fs.writeFileSync("reboot.dat", JSON.stringify(toSave));
+      try {
+        fs.writeFileSync("reboot.dat", JSON.stringify(toSave));
+      } catch (err) {
+        common.ERROR("Failed to save reboot.dat");
+        console.log(err);
+      }
       process.exit(-1);
     });
   } else {
