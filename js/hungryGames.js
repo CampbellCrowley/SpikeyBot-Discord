@@ -59,6 +59,29 @@ const defaultOptions = {
 // Default color to choose for embedded messages.
 const defaultColor = [200, 125, 0];
 
+const emoji = {
+  x: "❌",
+  white_check_mark: "✅",
+  0: '\u0030\u20E3',
+  1: '\u0031\u20E3',
+  2: '\u0032\u20E3',
+  3: '\u0033\u20E3',
+  4: '\u0034\u20E3',
+  5: '\u0035\u20E3',
+  6: '\u0036\u20E3',
+  7: '\u0037\u20E3',
+  8: '\u0038\u20E3',
+  9: '\u0039\u20E3',
+  10: '\u{1F51F}',
+  arrow_up: "⬆",
+  arrow_down: "⬇",
+  yellow_heart: "💛",
+  negative_squared_cross_mark: "❎",
+  ballot_box_with_check: "☑",
+  skull_crossbones: "☠",
+  slight_smile: "🙂"
+};
+
 // Probability of each amount of people being chosen for an event.
 // Must total to 1.0
 const multiEventUserDistribution = {
@@ -84,6 +107,8 @@ var defaultBloodbathEvents = [];
 var defaultPlayerEvents = [];
 // Default parsed arena events.
 var defaultArenaEvents = [];
+
+var newEventMessages = {};
 
 // Read saved game data from disk.
 fs.readFile(saveFile, function(err, data) {
@@ -145,8 +170,9 @@ helpMessage =
   myPrefix + "teams randomize // Randomize who is on what team.\n" +
   myPrefix + "teams reset // Delete all teams and start over.\n" +
   "\n=== Events ===\n" +
-  myPrefix + "events // This will list all events that could happen in the game.\n" +
-  myPrefix + "events add // Coming soon!\n" +
+  myPrefix + "events // This will list all custom events that could happen in the game.\n" +
+  myPrefix + "debugevents // This will list all events that could happen in the game.\n" +
+  myPrefix + "events add {message} // Begins process of adding a player event.\n" +
   myPrefix + "events remove // Coming soon!\n" +
   "\n=== Time Control ===\n" +
   myPrefix + "start // This will start a game with your settings.\n" +
@@ -177,14 +203,36 @@ exports.begin = function(prefix_, Discord_, client_, command_, common_) {
 
   setupHelp();
 
+  client.on('messageUpdate', handleMessageEdit);
+
   initialized = true;
   common.LOG("HungryGames Init", "HG");
+
+  for (var key in games) {
+    if (games[key].currentGame && games[key].currentGame.state != 0 &&
+        games[key].currentGame.inProgress && games[key].channel &&
+        games[key].msg) {
+      common.LOG(
+          "Resuming game: " + games[key].channel + " " + games[key].msg, "HG");
+      var msg =
+          client.channels.get(games[key].channel)
+              .fetchMessage(games[key].msg)
+              .then(function(key) {
+                return function(msg) { nextDay(msg, key); }
+              }(key))
+              .catch(err => {
+                common.ERROR("Failed to automatically resume games.", "HG");
+                console.log(err);
+              });
+    }
+  }
 };
 // Removes all references to external data and prepares for unloading.
 exports.end = function() {
   if (!initialized) return;
   initialized = false;
   command.deleteEvent('hg');
+  client.removeListener('messageUpdate', handleMessageEdit);
   delete command;
   delete Discord;
   delete client;
@@ -192,6 +240,15 @@ exports.end = function() {
   process.removeListener('exit', exit);
   process.removeListener('SIGINT', sigint);
 };
+
+function handleMessageEdit(oldMsg, newMsg) {
+  if (newEventMessages[oldMsg.id]) {
+    newMsg.text = newMsg.content.split(' ').slice(2).join(' ');
+    newMsg.myResponse = oldMsg.myResponse;
+    newEventMessages[oldMsg.id] = newMsg;
+    updateEventPreview(newMsg);
+  }
+}
 
 // Handle a command from a user and pass into relevant functions.
 function handleCommand(msg) {
@@ -210,6 +267,11 @@ function handleCommand(msg) {
     }
     var command = splitText[0].toLowerCase();
     msg.text = splitText.slice(1).join(' ');
+
+    if (games[id]) {
+      games[id].channel = msg.channel.id;
+      games[id].author = msg.author.id;
+    }
     switch (command) {
       case 'create':
         createGame(msg, id);
@@ -352,6 +414,17 @@ function Team(id, name, players) {
   // Number of players still alive on this team.
   this.numAlive = players.length;
 }
+// Event that can happen in a game.
+function Event(message, numVictim, numAttacker, victimOutcome, attackerOutcome) {
+  this.message = message;
+  this.victim = {count: numVictim, outcome: victimOutcome};
+  this.attacker = {count: numAttacker, outcome: attackerOutcome};
+}
+
+function makePlayer(user) {
+  return new Player(user.id, user.username, user.displayAvatarURL);
+}
+
 // Delay a message to send at the given time in milliseconds since epoch.
 function sendAtTime(channel, one, two, time) {
   if (time <= Date.now()) {
@@ -552,10 +625,47 @@ function showGameInfo(msg, id) {
   }
 }
 // Send all event data about the default events to the chat.
-function showGameEvents(msg) {
-  reply(
-      msg, "Player: " + JSON.stringify(defaultPlayerEvents, null, 2) +
-          "\nArena: " + JSON.stringify(defaultArenaEvents, null, 2));
+function showGameEvents(msg, id) {
+  var events = defaultBloodbathEvents;
+  if (games[id] && games[id].customEvents.bloodbath) {
+    events = events.concat(games[id].customEvents.bloodbath);
+  }
+  var file = new Discord.Attachment();
+  file.setFile(Buffer.from(JSON.stringify(events, null, 2)));
+  file.setName("BloodbathEvents.json");
+  fetchStats(events);
+  msg.channel.send(
+      "Bloodbath Events (" + events.length + ") " +
+          Math.round(events.numKill / events.length * 1000) / 10 + "% kill, " +
+          Math.round(events.numWound / events.length * 1000) / 10 +
+          "% wound, " +
+          Math.round(events.numThrive / events.length * 1000) / 10 + "% heal.",
+      file);
+
+  events = defaultPlayerEvents;
+  if (games[id] && games[id].customEvents.player) {
+    events = events.concat(games[id].customEvents.player);
+  }
+  var file = new Discord.Attachment();
+  file.setFile(Buffer.from(JSON.stringify(events, null, 2)));
+  file.setName("PlayerEvents.json");
+  fetchStats(events);
+  msg.channel.send(
+      "Player Events (" + events.length + ") " +
+          Math.round(events.numKill / events.length * 1000) / 10 + "% kill, " +
+          Math.round(events.numWound / events.length * 1000) / 10 +
+          "% wound, " +
+          Math.round(events.numThrive / events.length * 1000) / 10 + "% heal.",
+      file);
+
+  events = defaultArenaEvents;
+  if (games[id] && games[id].customEvents.arena) {
+    events = events.concat(games[id].customEvents.arena);
+  }
+  var file = new Discord.Attachment();
+  file.setFile(Buffer.from(JSON.stringify(events, null, 2)));
+  file.setName("ArenaEvents.json");
+  msg.channel.send("Arena Events (" + events.length + ")", file);
 }
 
 // Time Control //
@@ -664,7 +774,8 @@ function startAutoplay(msg, id) {
 }
 // Simulate a single day then show events to users.
 function nextDay(msg, id) {
-  if (!games[id] || !games[id].currentGame.inProgress) {
+  if (!games[id] || !games[id].currentGame ||
+      !games[id].currentGame.inProgress) {
     reply(
         msg, "You must start a game first! Use \"" + myPrefix +
             "start\" to start a game!");
@@ -715,6 +826,7 @@ function nextDay(msg, id) {
       games[id].currentGame.teams.forEach(function(obj) {
         if (obj.numAlive == 0 && obj.rank < team.rank) obj.rank++;
       });
+      team.rank = 1;
     }
   }
 
@@ -1259,10 +1371,10 @@ function printDay(msg, id) {
           }) > -1;
         });
       }
-      var symbol = ":white_check_mark:";
-      if (!obj.living) symbol = ":x:";
-      else if (obj.state == "wounded") symbol = ":yellow_heart:";
-      else if (obj.state == "zombie") symbol = ":negative_squared_cross_mark:";
+      var symbol = emoji.white_check_mark;
+      if (!obj.living) symbol = emoji.x;
+      else if (obj.state == "wounded") symbol = emoji.yellow_heart;
+      else if (obj.state == "zombie") symbol = emoji.negative_squared_cross_mark;
 
       var shortName = obj.name.substring(0, 16);
       if (shortName != obj.name) {
@@ -1840,10 +1952,215 @@ function randomizeTeams(msg, id) {
 }
 
 // Game Events //
-function createEvent(msg) {
-  reply(msg, "This doesn't work yet!");
+function createEvent(msg, id) {
+  newEventMessages[msg.id] = msg;
+  const authId = msg.author.id;
+  reply(msg, "Loading...").then(msg_ => {
+    newEventMessages[msg.id].myResponse = msg_;
+    msg_.awaitReactions(function(reaction, user) {
+          return reaction.emoji.name == emoji.white_check_mark &&
+              user.id == authId;
+        }, {max: 1}).then(function(reactions) {
+      const message = newEventMessages[msg.id].text;
+      msg_.delete();
+      msg.channel.send("Loading...").then(function(msg_) {
+        var numVictim = 0;
+        var numAttack = 0;
+        var victimOutcome = "nothing";
+        var attackerOutcome = "nothing";
+        getAttackNum = function() {
+          createEventNums(
+              msg_, authId,
+              "`How many attackers may be in this event? (-1 means at least 1, -2 at least 2)`",
+              num => {
+                numAttack = num;
+                msg_.channel.send("Loading...").then(msg => {
+                  msg_ = msg;
+                  getVictimNum()
+                });
+                msg_.delete();
+              });
+        };
+        getVictimNum = function() {
+          createEventNums(
+              msg_, authId,
+              "`How many victims may be in this event? (-1 means at least 1, -2 at least 2)`",
+              num => {
+                numVictim = num;
+                msg_.channel.send("Loading...").then(msg => {
+                  msg_ = msg;
+                  getAttackOutcome();
+                });
+                msg_.delete();
+              });
+        };
+        getAttackOutcome = function() {
+          createEventOutcome(
+              msg_, authId, "`What is the outcome of the attackers?`",
+              function(outcome) {
+                attackerOutcome = outcome;
+                msg_.channel.send("Loading...").then(msg => {
+                  msg_ = msg;
+                  getVictimOutcome();
+                });
+                msg_.delete();
+              });
+        };
+        getVictimOutcome = function() {
+          createEventOutcome(
+              msg_, authId, "`What is the outcome of the victims?`",
+              function(outcome) {
+                victimOutcome = outcome;
+                finish();
+                msg_.delete();
+              });
+        };
+        finish = function() {
+          msg_.delete();
+          msg.channel.send("`Event created!`");
+          var newEvent = new Event(
+              message, numVictim, numAttack, victimOutcome, attackerOutcome);
+          games[id].customEvents.player.push(newEvent);
+        };
+
+        getAttackNum();
+      });
+      delete newEventMessages[msg.id];
+    });
+    msg_.awaitReactions(function(reaction, user) {
+          return reaction.emoji.name == emoji.x && user.id == msg.author.id;
+        }, {max: 1}).then(function(reactions) {
+      msg_.edit("`Cancelled event creation.`");
+      msg_.clearReactions();
+      delete newEventMessages[msg.id];
+    });
+    msg_.react(emoji.white_check_mark);
+    msg_.react(emoji.x);
+    updateEventPreview(newEventMessages[msg.id]);
+  });
 }
-function removeEvent(msg) {
+function createEventNums(msg, id, show, cb) {
+  msg.edit(show + "\nNone");
+
+  var num = 0;
+  regUp = function() {
+    msg.awaitReactions(function(reaction, user) {
+         if (user.id != client.user.id) reaction.remove(user);
+         return reaction.emoji.name == emoji.arrow_up && user.id == id;
+       }, {max: 1}).then(function(reactions) {
+      num++;
+      var message = "None";
+      if (num < 0) message = "At least " + num * -1 + " people.";
+      else if (num > 0) message = num + " people exactly.";
+      msg.edit(show + "\n" + message);
+      regUp();
+    });
+  };
+  regUp();
+  regDown = function() {
+    msg.awaitReactions(function(reaction, user) {
+         if (user.id != client.user.id) reaction.remove(user);
+         return reaction.emoji.name == emoji.arrow_down && user.id == id;
+       }, {max: 1}).then(function(reactions) {
+      num--;
+      var message = "None";
+      if (num < 0) message = "At least " + num * -1 + " people.";
+      else if (num > 0) message = num + " people exactly.";
+      msg.edit(show + "\n" + message);
+      regDown();
+    });
+  };
+  regDown();
+  msg.awaitReactions(function(reaction, user) {
+       return reaction.emoji.name == emoji.white_check_mark && user.id == id;
+     }, {max: 1}).then(function(reactions) {
+    msg.delete();
+    cb(num);
+  });
+  msg.awaitReactions(function(reaction, user) {
+       return reaction.emoji.name == emoji.x && user.id == id;
+     }, {max: 1}).then(function(reactions) {
+    msg.edit("`Cancelled event creation`");
+  });
+
+  msg.react(emoji.white_check_mark);
+  msg.react(emoji.x);
+  setTimeout(function() {
+    msg.react(emoji.arrow_up);
+    msg.react(emoji.arrow_down);
+  }, 100);
+}
+function createEventOutcome(msg, id, show, cb) {
+  msg.edit(
+      show + "\n" + emoji.white_check_mark + "Nothing, " + emoji.x + "Dies, " +
+      emoji.yellow_heart + "Wounded, " + emoji.arrow_up + "Healed");
+
+  msg.awaitReactions(function(reaction, user) {
+       return reaction.emoji.name == emoji.arrow_up && user.id == id;
+     }, {max: 1}).then(function(reactions) {
+    cb("thrives");
+  });
+  msg.awaitReactions(function(reaction, user) {
+       return reaction.emoji.name == emoji.yellow_heart && user.id == id;
+     }, {max: 1}).then(function(reactions) {
+    cb("wounded");
+  });
+  msg.awaitReactions(function(reaction, user) {
+       return reaction.emoji.name == emoji.white_check_mark && user.id == id;
+     }, {max: 1}).then(function(reactions) {
+    msg.clearReactions();
+    cb("nothing");
+  });
+  msg.awaitReactions(function(reaction, user) {
+       return reaction.emoji.name == emoji.x && user.id == id;
+     }, {max: 1}).then(function(reactions) {
+    msg.clearReactions();
+    cb("dies");
+  });
+
+  msg.react(emoji.white_check_mark);
+  msg.react(emoji.x);
+  msg.react(emoji.yellow_heart);
+  msg.react(emoji.arrow_up);
+}
+
+function updateEventPreview(msg) {
+  msg.text = msg.text.split(' ').slice(1).join(' ');
+  var helpMsg =
+      "```\nEdit your message until you are happy with the below outcomes, then click the checkmark." +
+      "\nReplace names with \"{victim}\" or \"{attacker}\" (with brackets)." +
+      "\nUse \"[Vsinglular|plural]\" or \"[Asingular|plural]\" to put \"singular\" if there's only one person, or \"plural\" if there are more" +
+      "\n (A for attacker, V for victim).\n```";
+  var users = msg.guild.members.random(4);
+  var players = [];
+  var cnt = 0;
+  for (var i = 0; cnt < 4; i++) {
+    var nextUser = users[i % users.length];
+    if (typeof nextUser === 'undefined') continue;
+    players.push(makePlayer(nextUser.user));
+    cnt++;
+  }
+  try {
+    var single =
+        makeSingleEvent(msg.text, players.slice(0), 1, 1, false, msg.guild.id)
+            .message;
+    var pluralOne =
+        makeSingleEvent(msg.text, players.slice(0), 2, 1, false, msg.guild.id)
+            .message;
+    var pluralTwo =
+        makeSingleEvent(msg.text, players.slice(0), 1, 2, false, msg.guild.id)
+            .message;
+    var pluralBoth =
+        makeSingleEvent(msg.text, players.slice(0), 2, 2, false, msg.guild.id)
+            .message;
+    msg.myResponse.edit(
+        helpMsg + single + "\n" + pluralOne + "\n" + pluralTwo + "\n" +
+        pluralBoth);
+  } catch (err) {
+    console.log(err);
+  }
+}
+function removeEvent(msg, id) {
   reply(msg, "This doesn't work yet!");
 }
 // Put information about an array of events into the array.
@@ -1866,10 +2183,7 @@ function fetchStats(events) {
 // Allow user to view all events available on their server and summary of each
 // type of event.
 function listEvents(msg, id) {
-  var events = defaultBloodbathEvents;
-  if (games[id] && games[id].customEvents.bloodbath) {
-    events = events.concat(games[id].customEvents.bloodbath);
-  }
+  /* var events = games[id].customEvents.bloodbath;
   var file = new Discord.Attachment();
   file.setFile(Buffer.from(JSON.stringify(events, null, 2)));
   file.setName("BloodbathEvents.json");
@@ -1880,12 +2194,9 @@ function listEvents(msg, id) {
           Math.round(events.numWound / events.length * 1000) / 10 +
           "% wound, " +
           Math.round(events.numThrive / events.length * 1000) / 10 + "% heal.",
-      file);
+      file); */
 
-  events = defaultPlayerEvents;
-  if (games[id] && games[id].customEvents.player) {
-    events = events.concat(games[id].customEvents.player);
-  }
+  var events = events.concat(games[id].customEvents.player);
   var file = new Discord.Attachment();
   file.setFile(Buffer.from(JSON.stringify(events, null, 2)));
   file.setName("PlayerEvents.json");
@@ -1898,14 +2209,11 @@ function listEvents(msg, id) {
           Math.round(events.numThrive / events.length * 1000) / 10 + "% heal.",
       file);
 
-  events = defaultArenaEvents;
-  if (games[id] && games[id].customEvents.arena) {
-    events = events.concat(games[id].customEvents.arena);
-  }
+  /* var events = events.concat(games[id].customEvents.arena);
   var file = new Discord.Attachment();
   file.setFile(Buffer.from(JSON.stringify(events, null, 2)));
   file.setName("ArenaEvents.json");
-  msg.channel.send("Arena Events (" + events.length + ")", file);
+  msg.channel.send("Arena Events (" + events.length + ")", file); */
 }
 
 // Send help message to DM and reply to server.

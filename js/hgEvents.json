@@ -126,7 +126,7 @@
       "victim": { "count": "0", "outcome": "nothing" }
     },
     {
-      "message": "A cannon is heard in the distance signalling a death, but who was it? (Hint: {victim})",
+      "message": "A cannon is heard in the distance signalling a death, but who was it?",
       "attacker": { "count": "0", "outcome": "nothing" },
       "victim": { "count": "1", "outcome": "dies" }
     },

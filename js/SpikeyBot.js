@@ -267,9 +267,9 @@ client.on('message', msg => {
     if (msg.guild != null) {
       common.LOG(
           msg.guild.name + "#" + msg.channel.name + "@" + msg.author.username +
-          "?" + msg.content);
+          msg.content);
     } else {
-      common.LOG("PM: @" + msg.author.username + "?" + msg.content);
+      common.LOG("PM: @" + msg.author.username + msg.content);
     }
     if (!command.trigger(msg.content.split(' ')[0], msg) && msg.guild == null) {
       msg.channel.send(
