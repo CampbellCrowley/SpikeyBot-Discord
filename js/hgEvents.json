@@ -1,6 +1,11 @@
 {
   "bloodbath": [
     {
+      "message": "{attacker} stabs {victim} in the back with a trident!",
+      "attacker": { "count": "1", "outcome": "nothing", "killer": true},
+      "victim": { "count": "-1", "outcome": "dies" }
+    },
+    {
       "message": "{victim} trip[Vs|] and get[Vs|] impaled by the cornucopia!",
       "attacker": { "count": "0", "outcome": "nothing"},
       "victim": { "count": "-1", "outcome": "dies" }
@@ -12,6 +17,11 @@
     },
     {
       "message": "{victim} grabs a gun that may or may not work!",
+      "attacker": { "count": "0", "outcome": "nothing" },
+      "victim": { "count": "1", "outcome": "nothing" }
+    },
+    {
+      "message": "{victim} grabs a gun that definitely does not work.",
       "attacker": { "count": "0", "outcome": "nothing" },
       "victim": { "count": "1", "outcome": "nothing" }
     },
@@ -31,9 +41,9 @@
       "victim": { "count": "2", "outcome": "dies" }
     },
     {
-      "message": "{victim} ends their own life with a butter knife!",
+      "message": "{victim} end[Vs|] their own [Vlife|lives] with [Va |]butter [Vknife|knives]!",
       "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "1", "outcome": "dies" }
+      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{attacker} grabs a shovel.",
@@ -41,8 +51,8 @@
       "victim": { "count": "0", "outcome": "nothing" }
     },
     {
-      "message": "{attacker} grabs a backpack and retreats.",
-      "attacker": { "count": "1", "outcome": "nothing" },
+      "message": "{attacker} grab[As|] a backpack and retreat[As|].",
+      "attacker": { "count": "-1", "outcome": "nothing" },
       "victim": { "count": "0", "outcome": "nothing" }
     },
     {
@@ -61,8 +71,13 @@
       "victim": { "count": "0", "outcome": "nothing" }
     },
     {
-      "message": "{attacker} takes a handful of throwing knives.",
-      "attacker": { "count": "1", "outcome": "nothing" },
+      "message": "{attacker} finds a bow, arrows and a quiver, and manages to kill {victim}.",
+      "attacker": { "count": "1", "outcome": "nothing", "killer": true },
+      "victim": { "count": "-1", "outcome": "dies" }
+    },
+    {
+      "message": "{attacker} take[As|] a handful of throwing knives.",
+      "attacker": { "count": "-1", "outcome": "nothing" },
       "victim": { "count": "0", "outcome": "nothing" }
     },
     {
@@ -124,11 +139,6 @@
       "message": "{attacker} split their supplies, then part ways.",
       "attacker": { "count": "4", "outcome": "thrives" },
       "victim": { "count": "0", "outcome": "nothing" }
-    },
-    {
-      "message": "A cannon is heard in the distance signalling a death, but who was it?",
-      "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "1", "outcome": "dies" }
     },
     {
       "message": "{victim} starts singing their national anthem, so {attacker} knocks them out with a headbutt.",
