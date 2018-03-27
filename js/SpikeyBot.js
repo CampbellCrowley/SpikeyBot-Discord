@@ -235,7 +235,7 @@ function skipSong(broadcast) {
 client.on('ready', _ => {
   common.LOG(`Logged in as ${client.user.tag}!`);
   updategame(password, prefix + 'help for help');
-  client.fetchUser(spikeyId).then(user => {user.send("I just started (JS)")});
+  client.fetchUser(spikeyId).then(user => {user.send("I just rebooted (JS)")});
   common.LOG("Initializing submodules...");
   try {
     HGames.begin(prefix, Discord, client, command, common);

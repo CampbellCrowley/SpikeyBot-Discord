@@ -17,7 +17,10 @@ const iconGap = 4;
 const roleName = "HG Creator";
 
 // Number of events to show on a single page of events.
-const numEventsPerPage = 25;
+const numEventsPerPage = 10;
+
+// Maximum amount of time to wait for reactions to a message.
+const maxReactAwaitTime = 15 * 1000 * 60;  // 15 Minutes
 
 // Default options for a game.
 const defaultOptions = {
@@ -78,6 +81,13 @@ const emoji = {
   10: '\u{1F51F}',
   arrow_up: "⬆",
   arrow_down: "⬇",
+  arrow_double_up: "⏫",
+  arrow_double_down: "⏬",
+  arrow_left: "⬅",
+  arrow_right: "➡",
+  arrow_double_left: "⏪",
+  arrow_double_right: "⏩",
+  arrows_counterclockwise: "🔄",
   crossed_swords: "⚔",
   shield: "🛡",
   heart: "❤",
@@ -90,6 +100,8 @@ const emoji = {
   slight_smile: "🙂",
   question: "⚔"
 };
+
+const alph = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 // Probability of each amount of people being chosen for an event.
 // Must total to 1.0
@@ -116,7 +128,8 @@ var defaultBloodbathEvents = [];
 var defaultPlayerEvents = [];
 // Default parsed arena events.
 var defaultArenaEvents = [];
-
+// Messages that the user sent with a new event to add, for storage while
+// getting the rest of the information about the event.
 var newEventMessages = {};
 
 // Read saved game data from disk.
@@ -218,7 +231,10 @@ exports.begin = function(prefix_, Discord_, client_, command_, common_) {
   common.LOG("HungryGames Init", "HG");
 
   for (var key in games) {
-    if (games[key].currentGame && games[key].currentGame.state != 0 &&
+    if (key == "reactedMessages") {
+      delete games[key];
+    } else if (
+        games[key].currentGame && games[key].currentGame.day.state != 0 &&
         games[key].currentGame.inProgress && games[key].channel &&
         games[key].msg) {
       common.LOG(
@@ -264,6 +280,10 @@ function handleCommand(msg) {
   if (msg.content == myPrefix + "help") {
     help(msg);
     return;
+  } else if (msg.content.split(' ')[1] == "makemewin") {
+    reply(
+        msg, "Your probability of winning has increased by " + nothing() + "!");
+    return;
   } else if (msg.guild === null) {
     reply(msg, "This command only works in servers, sorry!");
     return;
@@ -283,6 +303,8 @@ function handleCommand(msg) {
     }
     switch (command) {
       case 'create':
+      case 'c':
+      case 'new':
         createGame(msg, id);
         break;
       case 'reset':
@@ -295,13 +317,21 @@ function handleCommand(msg) {
         showGameEvents(msg, id);
         break;
       case 'exclude':
+      case 'remove':
+      case 'exc':
+      case 'ex':
         excludeUser(msg, id);
         break;
       case 'include':
+      case 'add':
+      case 'inc':
+      case 'in':
         includeUser(msg, id);
         break;
       case 'options':
       case 'option':
+      case 'opt':
+      case 'opts':
         toggleOpt(msg, id);
         break;
       case 'events':
@@ -324,16 +354,22 @@ function handleCommand(msg) {
         }
         break;
       case 'players':
+      case 'player':
         listPlayers(msg, id);
         break;
       case 'start':
+      case 's':
         startGame(msg, id);
         break;
       case 'pause':
+      case 'stop':
         pauseAutoplay(msg, id);
         break;
       case 'autoplay':
       case 'auto':
+      case 'resume':
+      case 'play':
+      case 'go':
         startAutoplay(msg, id);
         break;
       case 'next':
@@ -352,6 +388,7 @@ function handleCommand(msg) {
         break;
       case 'team':
       case 'teams':
+      case 't':
         editTeam(msg, id);
         break;
       case 'help':
@@ -690,7 +727,9 @@ function showGameEvents(msg, id) {
 // Time Control //
 function startGame(msg, id) {
   if (games[id] && games[id].currentGame && games[id].currentGame.inProgress) {
-    reply(msg, "A game is already in progress!");
+    reply(
+        msg, "A game is already in progress! (\"" + myPrefix +
+            "next\" for next day, or \"" + myPrefix + "end\" to abort)");
   } else {
     createGame(msg, id, true);
     var teamList = "";
@@ -734,7 +773,7 @@ function startGame(msg, id) {
     var excluded = "";
     if (games[id].excludedUsers.length > 0)
       excluded =
-          `**Excluded** (${games[id].excludedUsers.length}):\n${games[id].excludedUsers.join(", ")}`;
+          `**Excluded** (${games[id].excludedUsers.length}):\n${games[id].excludedUsers.map(function(obj) { return getName(msg, obj); }).join(", ")}`;
 
     reply(
         msg,
@@ -1525,7 +1564,11 @@ function printDay(msg, id) {
             .currentGame.includedUsers
             .sort(function(a, b) { return a.rank - b.rank; })
             .map(function(obj) {
-              return obj.rank + ") " + obj.name +
+              var shortName = obj.name.substring(0, 16);
+              if (shortName != obj.name) {
+                shortName = shortName.substring(0, 13) + "...";
+              }
+              return obj.rank + ") " + shortName +
                   (obj.kills > 0 ? " (" + obj.kills + ")" : "");
             });
     if (rankList.length <= 20) {
@@ -1606,7 +1649,7 @@ function excludeUser(msg, id) {
       } else {
         games[id].excludedUsers.push(obj.id);
         response += obj.username + " added to blacklist.\n";
-        if (!games[id].currentGame.inProgress && !games[id].currentGame.ended) {
+        if (!games[id].currentGame.inProgress) {
           var index =
               games[id].currentGame.includedUsers.findIndex(function(el) {
                 return el.id == obj.id;
@@ -1615,6 +1658,10 @@ function excludeUser(msg, id) {
             games[id].currentGame.includedUsers.splice(index, 1);
             response += obj.username + " removed from included players.\n";
             formTeams(id);
+          } else {
+            common.ERROR(
+                "Failed to remove player from included list. (" + obj.id + ")",
+                "HG");
           }
         }
       }
@@ -1645,7 +1692,7 @@ function includeUser(msg, id) {
         response += obj.username + " skipped.\n";
       } else {
         games[id].currentGame.includedUsers.push(
-            new Player(obj.id, obj.username, obj.user.displayAvatarURL));
+            new Player(obj.id, obj.username, obj.displayAvatarURL));
         response += obj.username + " added to included players.\n";
         formTeams(id);
       }
@@ -1996,7 +2043,11 @@ function createEvent(msg, id) {
           return (reaction.emoji.name == emoji.white_check_mark ||
                   reaction.emoji.name == emoji.x) &&
               user.id == authId;
-        }, {max: 1}).then(function(reactions) {
+        }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
+      if (reactions.size == 0) {
+        msg_.clearReactions();
+        return;
+      }
       if (reactions.first().emoji.name == emoji.x) {
         msg_.channel.send("`Cancelled event creation.`");
         msg_.delete();
@@ -2134,25 +2185,31 @@ function createEventNums(msg, id, show, cb) {
                  reaction.emoji.name == emoji.white_check_mark ||
                  reaction.emoji.name == emoji.x) &&
              user.id == id;
-       }, {max: 1}).then(function(reactions) {
-         var name = reactions.first().emoji.name;
-         if (name == emoji.arrow_up) {
-           num++;
-         } else if (name== emoji.arrow_down) {
-           num--;
-         } else if (name == emoji.white_check_mark) {
-           cb(num);
-           return;
-         } else if (name == emoji.x) {
-           msg.channel.send("`Cancelled event creation`");
-           msg.delete();
-           return;
-         }
-         var message = "No people.";
-         if (num < 0) message = "At least " + num * -1 + " people.";
-         else if (num > 0) message = num + " people exactly.";
-         msg.edit(show + "\n" + message);
-         regLis();
+       }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
+      if (reactions.size == 0) {
+        msg.clearReactions();
+        return;
+      }
+      var name = reactions.first().emoji.name;
+      if (name == emoji.arrow_up) {
+        num++;
+      } else if (name == emoji.arrow_down) {
+        num--;
+      } else if (name == emoji.white_check_mark) {
+        cb(num);
+        return;
+      } else if (name == emoji.x) {
+        msg.channel.send("`Cancelled event creation`");
+        msg.delete();
+        return;
+      }
+      var message = "No people.";
+      if (num < 0)
+        message = "At least " + num * -1 + " people.";
+      else if (num > 0)
+        message = num + " people exactly.";
+      msg.edit(show + "\n" + message);
+      regLis();
     });
   };
 
@@ -2175,7 +2232,11 @@ function createEventOutcome(msg, id, show, cb) {
                reaction.emoji.name == getOutcomeEmoji("nothing") ||
                reaction.emoji.name == getOutcomeEmoji("dies")) &&
            user.id == id;
-     }, {max: 1}).then(function(reactions) {
+     }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
+    if (reactions.size == 0) {
+      msg.clearReactions();
+      return;
+    }
     switch (reactions.first().emoji.name) {
       case getOutcomeEmoji("thrives"):
         cb("thrives");
@@ -2201,14 +2262,19 @@ function createEventAttacker(msg, id, show, cb) {
   msg.edit(show);
 
   msg.awaitReactions(function(reaction, user) {
-       return reaction.emoji.name == emoji.white_check_mark && user.id == id;
-     }, {max: 1}).then(function(reactions) {
-    cb(true);
-  });
-  msg.awaitReactions(function(reaction, user) {
-       return reaction.emoji.name == emoji.x && user.id == id;
-     }, {max: 1}).then(function(reactions) {
-    cb(false);
+       return (reaction.emoji.name == emoji.white_check_mark ||
+               reaction.emoji.name == emoji.x) &&
+           user.id == id;
+     }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
+    if (reactions.size == 0) {
+      msg.clearReactions();
+      return;
+    }
+    if (reactions.first().emoji.name == emoji.white_check_mark) {
+      cb(true);
+    } else {
+      cb(false);
+    }
   });
 
   msg.react(emoji.white_check_mark);
@@ -2277,42 +2343,110 @@ function fetchStats(events) {
 }
 // Allow user to view all events available on their server and summary of each
 // type of event.
-function listEvents(msg, id, page, editMsg) {
-  /* var events = games[id].customEvents.bloodbath;
-  var file = new Discord.Attachment();
-  file.setFile(Buffer.from(JSON.stringify(events, null, 2)));
-  file.setName("BloodbathEvents.json");
-  fetchStats(events);
-  msg.channel.send(
-      "Bloodbath Events (" + events.length + ") " +
-          Math.round(events.numKill / events.length * 1000) / 10 + "% kill, " +
-          Math.round(events.numWound / events.length * 1000) / 10 +
-          "% wound, " +
-          Math.round(events.numThrive / events.length * 1000) / 10 + "% heal.",
-      file); */
+function listEvents(msg, id, page, eventType, editMsg) {
+  var embed = new Discord.RichEmbed();
 
-  var events = games[id].customEvents.player;
+  var events = [];
+  var numCustomEvents = 0;
+  var title;
+  if (!eventType) eventType = "player";
+  if (eventType == "player") {
+    if (games[id].customEvents.player) {
+      events = games[id].customEvents.player.slice(0);
+      numCustomEvents = games[id].customEvents.player.length;
+    }
+    events.push(
+        new Event(emoji.arrow_up + "Custom | Default" + emoji.arrow_down));
+    events = events.concat(defaultPlayerEvents);
+    title = "Player";
+    fetchStats(events);
+    embed.setColor([0, 255, 0]);
+  } else if (eventType == "bloodbath") {
+    if (games[id].customEvents.bloodbath) {
+      events = games[id].customEvents.bloodbath.slice(0);
+      numCustomEvents = games[id].customEvents.bloodbath.length;
+    }
+    events.push(
+        new Event(emoji.arrow_up + "Custom | Default" + emoji.arrow_down));
+    events = events.concat(defaultBloodbathEvents);
+    title = "Bloodbath";
+    fetchStats(events);
+    embed.setColor([255, 0, 0]);
+  } else if (eventType == "arena") {
+    if (games[id].customEvents.arena) {
+      events = games[id].customEvents.arena.slice(0);
+      numCustomEvents = games[id].customEvents.arena.length;
+    }
+    if (numCustomEvents == 0 && page <= 0) {
+      page = 1;
+    }
+    events.push(
+        new Event(emoji.arrow_up + "Custom | Default" + emoji.arrow_down));
+    events = events.concat(defaultArenaEvents);
 
-  if (page * numEventsPerPage >= events.length) {
-    page = Math.ceil(events.length / numEventsPerPage) - 1;
+    events = events.map(function(obj, i) {
+      if (obj.outcomes) {
+        fetchStats(obj.outcomes);
+
+        return new Event(
+            "**___" + obj.message + "___** (" +
+            Math.round(obj.outcomes.numKill / obj.outcomes.length * 1000) / 10 +
+            "% kill, " +
+            Math.round(obj.outcomes.numWound / obj.outcomes.length * 1000) / 10 +
+            "% wound, " +
+            Math.round(obj.outcomes.numThrive / obj.outcomes.length * 1000) / 10 +
+            "% heal.)\n" +
+            obj.outcomes
+                .map(function(outcome, index) {
+                  return alph[index] + ") " + formatEventString(outcome, true);
+                })
+                .join("\n"));
+      } else {
+        obj.message = "**___" + obj.message + "___**";
+        return obj;
+      }
+    });
+    title = "Arena";
+    embed.setColor([0, 0, 255]);
+  } else {
+    common.ERROR("HOW COULD THIS BE? I've made a mistake!", "HG");
+  }
+
+  const numEvents = events.length;
+  const numThisPage = eventType == "arena" ? 1 : numEventsPerPage;
+  const numPages = Math.ceil(numEvents / numThisPage);
+  if (page * numThisPage >= numEvents) {
+    page = numPages - 1;
   } else if (page < 0) {
     page = 0;
   }
 
-  var embed = new Discord.RichEmbed();
-  fetchStats(events);
-  embed.setTitle(
-      "Custom Player Events (" + events.length + ") " +
-      Math.round(events.numKill / events.length * 1000) / 10 + "% kill, " +
-      Math.round(events.numWound / events.length * 1000) / 10 + "% wound, " +
-      Math.round(events.numThrive / events.length * 1000) / 10 +
-      "% heal. (Page: " + (page + 1) + "/" +
-      Math.ceil(events.length / numEventsPerPage) + ")");
+  var fullTitle = "All " + title + " Events (" + (numEvents - 1) + ") ";
+  if (eventType != "arena") {
+    fullTitle += Math.round(events.numKill / events.length * 1000) / 10 +
+        "% kill, " + Math.round(events.numWound / events.length * 1000) / 10 +
+        "% wound, " + Math.round(events.numThrive / events.length * 1000) / 10 +
+        "% heal.";
+  }
+  embed.setTitle(fullTitle);
+  embed.setFooter("(Page: " + (page + 1) + "/" + numPages + ")");
 
   embed.setDescription(
-      events.slice(page * numEventsPerPage, (page + 1) * numEventsPerPage)
+      events.slice(page * numThisPage, (page + 1) * numThisPage)
           .map(function(obj, index) {
-            return index + ") " + formatEventString(obj);
+            var num = (index + 1 + numThisPage * page);
+            if (eventType == "arena") {
+              num = 0;
+            } else {
+              // Not equal to because we are 1 indexed, not 0.
+              if (num > numCustomEvents) num -= numCustomEvents + 1;
+            }
+
+            if (num == 0) {
+              return obj.message;
+            } else {
+              return num + ") " + formatEventString(obj, true);
+            }
           })
           .join('\n'));
 
@@ -2320,47 +2454,76 @@ function listEvents(msg, id, page, editMsg) {
     msg_.awaitReactions(function(reaction, user) {
           if (user.id != client.user.id) reaction.remove(user);
           return user.id == msg.author.id &&
-              (reaction.emoji.name == emoji.arrow_up ||
-               reaction.emoji.name == emoji.arrow_down);
-        }, {max: 1}).then(function(reactions) {
-          if (reactions.first().emoji.name == emoji.arrow_up) {
-            listEvents(msg, id, page + 1, msg_);
-          } else {
-            listEvents(msg, id, page - 1, msg_);
-          }
+              (reaction.emoji.name == emoji.arrow_right ||
+               reaction.emoji.name == emoji.arrow_left ||
+               reaction.emoji.name == emoji.arrow_double_right ||
+               reaction.emoji.name == emoji.arrow_double_left ||
+               reaction.emoji.name == emoji.arrows_counterclockwise);
+        }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
+      if (reactions.size == 0) {
+        msg_.clearReactions();
+        return;
+      }
+      switch (reactions.first().emoji.name) {
+        case emoji.arrow_right:
+          listEvents(msg, id, page + 1, eventType, msg_);
+          break;
+        case emoji.arrow_left:
+          listEvents(msg, id, page - 1, eventType, msg_);
+          break;
+        case emoji.arrow_double_right:
+          listEvents(msg, id, numPages - 1, eventType, msg_);
+          break;
+        case emoji.arrow_double_left:
+          listEvents(msg, id, 0, eventType, msg_);
+          break;
+        case emoji.arrows_counterclockwise:
+          if (eventType == "player")
+            eventType = "arena";
+          else if (eventType == "arena")
+            eventType = "bloodbath";
+          else if (eventType == "bloodbath")
+            eventType = "player";
+          listEvents(msg, id, 0, eventType, msg_);
+          break;
+      }
     });
 
     var myReactions = msg_.reactions.filter(function(obj) { return obj.me; });
-    if (!myReactions.exists("name", emoji.arrow_up)) {
-      msg_.react(emoji.arrow_up);
-    }
-    if (!myReactions.exists("name", emoji.arrow_down)) {
-      msg_.react(emoji.arrow_down);
+    if (!myReactions.exists("name", emoji.arrow_right) ||
+        !myReactions.exists("name", emoji.arrow_left) ||
+        !myReactions.exists("name", emoji.arrow_double_right) ||
+        !myReactions.exists("name", emoji.arrow_double_left) ||
+        !myReactions.exists("name", emoji.arrows_counterclockwise)) {
+      msg_.react(emoji.arrow_double_left).then(_ => {
+        msg_.react(emoji.arrow_left).then(_ => {
+          msg_.react(emoji.arrow_right).then(_ => {
+            msg_.react(emoji.arrow_double_right).then(_ => {
+              msg_.react(emoji.arrows_counterclockwise);
+            });
+          });
+        });
+      }).catch(console.log);
     }
   };
 
   if (!editMsg) msg.channel.send(embed).then(callback);
   else editMsg.edit(embed).then(callback);
-
-
-  /* var events = events.concat(games[id].customEvents.arena);
-  var file = new Discord.Attachment();
-  file.setFile(Buffer.from(JSON.stringify(events, null, 2)));
-  file.setName("ArenaEvents.json");
-  msg.channel.send("Arena Events (" + events.length + ")", file); */
 }
 
-function formatEventString(arenaEvent) {
+function formatEventString(arenaEvent, newline) {
   var message = arenaEvent.message.replaceAll('{attacker}', '`attacker`')
                     .replaceAll('{victim}', '`victim`')
-                    .replaceAll('{dead}', '`dead`') +
-      " (";
-  message += emoji.crossed_swords + ": " + arenaEvent.attacker.count;
+                    .replaceAll('{dead}', '`dead`');
+  if (newline) message += "\n    ";
+  message += "(" + emoji.crossed_swords + ": " + arenaEvent.attacker.count;
   if (arenaEvent.attacker.count != 0) {
     message += ", " + getOutcomeEmoji(arenaEvent.attacker.outcome) +
         (arenaEvent.attacker.killer ? " Killer " : "");
   }
-  message += ") (" + emoji.shield + ": " + arenaEvent.victim.count;
+  message += ")";
+  if (newline) message += "\n    ";
+  message += "(" + emoji.shield + ": " + arenaEvent.victim.count;
   if (arenaEvent.victim.count != 0) {
     message += ", " + getOutcomeEmoji(arenaEvent.victim.outcome) +
         (arenaEvent.victim.killer ? " Killer" : "");
@@ -2393,6 +2556,14 @@ function help(msg, id) {
       .catch(_ => {reply(msg, blockedmessage)});
 }
 
+function nothing() {
+  const nothings = [
+    "nix", "naught", "nothing", "zilch", "void", "zero", "zip", "zippo",
+    "diddly"
+  ];
+  return nothings[Math.floor(Math.random() * nothings.length)];
+}
+
 // Util //
 // Save all game data to file.
 exports.save = function(opt) {
@@ -2413,7 +2584,12 @@ function exit(code) {
   if (initialized && code == -1) {
     exports.save();
   }
-  try { exports.end(); } catch (err) { }
+  try {
+    exports.end();
+  } catch (err) {
+    common.ERROR("Exception during end!", "HG");
+    console.log(err);
+  }
 }
 // Same as exit(), but triggred via SIGINT.
 function sigint() {
@@ -2429,5 +2605,5 @@ process.on('exit', exit);
 process.on('SIGINT', sigint);
 
 process.on('unhandledRejection', function(reason, p) {
-  console.log('Unhandled Rejection at:\n', p, '\nreason:', reason);
+  console.log('Unhandled Rejection at:\n', p /*, '\nreason:', reason*/);
 });

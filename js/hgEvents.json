@@ -151,7 +151,7 @@
       "victim": { "count": "-1", "outcome": "wounded" }
     },
     {
-      "message": "{victim} steps off their podium[V|s] too soon and blow[Vs|] up!",
+      "message": "{victim} had stepped off their podium[V|s] too soon and [Vwas|were] blown up.",
       "attacker": { "count": "0", "outcome": "nothing" },
       "victim": { "count": "-1", "outcome": "dies" }
     },
@@ -1141,6 +1141,16 @@
           "message": "{victim} [Vis|are] crushed by a pack of wolf mutts!",
           "attacker": { "count": "0", "outcome": "nothing" },
           "victim": { "count": "-1", "outcome": "dies" }
+        },
+        {
+          "message": "{victim} [Vis|are] chased by a pack of wolf mutts, but manage[Vs|] to escape up a tree with wounds!",
+          "attacker": { "count": "0", "outcome": "nothing" },
+          "victim": { "count": "-1", "outcome": "wounded" }
+        },
+        {
+          "message": "{victim} lure[Vs|] a pack of wolf mutts into a trap to survive!",
+          "attacker": { "count": "0", "outcome": "nothing" },
+          "victim": { "count": "-1", "outcome": "nothing" }
         },
         {
           "message": "{victim} [Vis|are] eaten by a pack of wolf mutts!",
