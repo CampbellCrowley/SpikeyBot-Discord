@@ -5,10 +5,13 @@ var initialized = false;
 
 const saveFile = 'hg.json';
 const eventFile = 'hgEvents.json';
+const messageFile = 'hgMessages.json';
 
-// Must be supported by discord. (Mostly just powers of 2).
+// The size of the icon to show for each event.
 const iconSize = 48;
+// The size of the user icons to show for the victors.
 const victorIconSize = 64;
+// The size of the icon to request from discord.
 const fetchSize = 64;
 // Pixels between each icon
 const iconGap = 4;
@@ -62,6 +65,13 @@ const defaultOptions = {
   probabilityOfBleedToDeath: 0.5
 };
 
+// If a larger percentage of people die in one day than this value, then show a
+// relevant message.
+const lotsOfDeathRate = 0.75;
+// If a lower percentage of people die in one day than this value, then show a
+// relevant message.
+const littleDeathRate = 0.25;
+
 // Default color to choose for embedded messages.
 const defaultColor = [200, 125, 0];
 
@@ -98,7 +108,9 @@ const emoji = {
   ballot_box_with_check: "☑",
   skull_crossbones: "☠",
   slight_smile: "🙂",
-  question: "⚔"
+  question: "⚔",
+  red_circle: "🔴",
+  trophy: "🏆"
 };
 
 const alph = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -107,9 +119,10 @@ const alph = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 // Must total to 1.0
 const multiEventUserDistribution = {
   1: 0.66,
-  2: 0.269,
+  2: 0.259,
   3: 0.03,
   4: 0.02,
+  5: 0.01,
   6: 0.015,
   7: 0.005,
   8: 0.0005,
@@ -120,6 +133,8 @@ var prefix, Discord, client, command, common;
 var myPrefix, helpMessage;
 // All currently tracked games.
 var games = {};
+// All messages to show for games.
+var messages = {};
 // All intervals for printing events.
 var intervals = {};
 // Default parsed bloodbath events.
@@ -164,6 +179,30 @@ fs.watchFile(eventFile, function(curr, prev) {
   }
   updateEvents();
 });
+// Parse all messages.
+function updateMessages() {
+  fs.readFile(messageFile, function(err, data) {
+    if (err) return;
+    try {
+      var parsed = JSON.parse(data);
+      if (parsed) {
+        messages = parsed;
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  });
+}
+updateMessages();
+fs.watchFile(messageFile, function(curr, prev) {
+  if (curr.mtime == prev.mtime) return;
+  if (common && common.LOG) {
+    common.LOG("Re-reading messages from file", "HG");
+  } else {
+    console.log("HG: Re-reading messages from file");
+  }
+  updateMessages();
+});
 
 // Reply to help on a server.
 const helpmessagereply = "I sent you a DM with commands!";
@@ -194,8 +233,8 @@ helpMessage =
   "\n=== Events ===\n" +
   myPrefix + "events // This will list all custom events that could happen in the game.\n" +
   myPrefix + "debugevents // This will list all events that could happen in the game.\n" +
-  myPrefix + "events add {message} // Begins process of adding a player event.\n" +
-  myPrefix + "events remove // Coming soon!\n" +
+  myPrefix + "events add {message} // Begins process of adding a custom event.\n" +
+  myPrefix + "events remove {number} // Remove a custom event. The number is the number shown in the list of events (" + myPrefix + "events).\n" +
   "\n=== Time Control ===\n" +
   myPrefix + "start // This will start a game with your settings.\n" +
   myPrefix + "end // This will end a game early.\n" +
@@ -284,6 +323,10 @@ function handleCommand(msg) {
     reply(
         msg, "Your probability of winning has increased by " + nothing() + "!");
     return;
+  } else if (msg.content.split(' ')[1] == "makemelose") {
+    reply(
+        msg, "Your probability of losing has increased by " + nothing() + "!");
+    return;
   } else if (msg.guild === null) {
     reply(msg, "This command only works in servers, sorry!");
     return;
@@ -335,14 +378,17 @@ function handleCommand(msg) {
         toggleOpt(msg, id);
         break;
       case 'events':
+      case 'event':
         if (!splitText[1]) {
           listEvents(msg, id, 0);
         } else {
           switch (splitText[1].toLowerCase()) {
             case 'add':
+            case 'create':
               createEvent(msg, id);
               break;
             case 'remove':
+            case 'delete':
               removeEvent(msg, id);
               break;
             default:
@@ -373,6 +419,7 @@ function handleCommand(msg) {
         startAutoplay(msg, id);
         break;
       case 'next':
+      case 'nextday':
         try {
           nextDay(msg, id);
         } catch (err) {
@@ -380,6 +427,7 @@ function handleCommand(msg) {
         }
         break;
       case 'end':
+      case 'abort':
         endGame(msg, id);
         break;
       case 'save':
@@ -396,8 +444,8 @@ function handleCommand(msg) {
         break;
       default:
         reply(
-            msg, "That isn't a Hungry Games command! \"" + myPrefix +
-                "help\" for a list of commands.");
+            msg, "Oh noes! I can't understand that! \"" + myPrefix +
+                "help\" for help.");
         break;
     }
   });
@@ -423,8 +471,8 @@ function checkPerms(msg, cb) {
     cb(msg, id);
   } else {
     reply(
-        msg, "Sorry! But you don't have the \"" + roleName +
-            "\" role! You can't manage the Hungry Games!");
+        msg, "Ha! Nice try! I don't listen to people without the \"" +
+            roleName + "\" role!");
   }
 }
 
@@ -643,7 +691,7 @@ function resetGame(msg, id) {
       delete games[id];
     } else if (command == "events") {
       reply(msg, "Resetting ALL Hungry Games events for this server!");
-      games[id].customEvents = {player: [], arena: []};
+      games[id].customEvents = {bloodbath: [], player: [], arena: []};
     } else if (command == "current") {
       reply(msg, "Resetting ALL data for current game!");
       delete games[id].currentGame;
@@ -777,8 +825,8 @@ function startGame(msg, id) {
 
     reply(
         msg,
-        "Let the games begin!" + (games[id].autoPlay ? "" : "\n(\"" + myPrefix +
-                                          "next\" for next day.)"),
+        getMessage("gameStart") + (games[id].autoPlay ? "" : "\n(\"" +
+                                           myPrefix + "next\" for next day.)"),
         `${games[id].options.mentionEveryoneAtStart ? "@everyone\n" : ""}${included}${excluded}`);
     games[id].currentGame.inProgress = true;
     if (games[id].autoPlay) {
@@ -873,9 +921,8 @@ function nextDay(msg, id) {
       games[id].currentGame.numAlive++;
       games[id].currentGame.day.events.push(
           makeSingleEvent(
-              "{victim} has returned from the dead and was put back into the arena!",
-              [resurrected], 1, 0, games[id].options.mentionAll, id, "thrives",
-              "nothing"));
+              getMessage("resurrected"), [resurrected], 1, 0,
+              games[id].options.mentionAll, id, "thrives", "nothing"));
       var team = games[id].currentGame.teams.find(function(obj) {
         return obj.players.findIndex(function(obj) {
           return resurrected.id == obj;
@@ -889,9 +936,11 @@ function nextDay(msg, id) {
     }
   }
 
+
   var userPool = games[id].currentGame.includedUsers.filter(function(obj) {
     return obj.living;
   });
+  var startingAlive = userPool.length;
   var userEventPool;
   var doArenaEvent = false;
   if (games[id].currentGame.day.num == 0) {
@@ -905,9 +954,9 @@ function nextDay(msg, id) {
       var index = Math.floor(Math.random() * arenaEventPool.length);
       var arenaEvent = arenaEventPool[index];
       games[id].currentGame.day.events.push(
-          makeSingleEvent(
-              "**___" + arenaEvent.message + "___**", [], 0, 0, false, id,
-              "nothing", "nothing"));
+          makeMessageEvent(getMessage("eventStart"), id));
+      games[id].currentGame.day.events.push(
+          makeMessageEvent("**___" + arenaEvent.message + "___**", id));
       userEventPool = arenaEvent.outcomes;
     } else {
       userEventPool = defaultPlayerEvents.concat(games[id].customEvents.player);
@@ -1068,7 +1117,9 @@ function nextDay(msg, id) {
       return index;
     };
 
+    var numKilled = 0;
     killUser = function(i, k) {
+      numKilled++;
       var index = effectUser(i, k);
       games[id].currentGame.includedUsers[index].living = false;
       games[id].currentGame.includedUsers[index].bleeding = 0;
@@ -1151,6 +1202,16 @@ function nextDay(msg, id) {
     if (effectedUsers.length != 0) {
       console.log("Effected users remain! " + effectedUsers.length);
     }
+
+    if (numKilled > 5) {
+      games[id].currentGame.day.events.push(
+          makeMessageEvent(getMessage("slaughter"), id));
+    }
+  }
+
+  if (doArenaEvent) {
+    games[id].currentGame.day.events.push(
+        makeMessageEvent(getMessage("eventEnd"), id));
   }
   var usersBleeding = [];
   var usersRecovered = [];
@@ -1165,18 +1226,20 @@ function nextDay(msg, id) {
         obj.bleeding = 0;
         obj.state = "dead";
         obj.rank = games[id].currentGame.numAlive--;
-        var team = games[id].currentGame.teams.find(function(team) {
-          return team.players.findIndex(function(player) {
-            return obj.id == player;
-          }) > -1;
-        });
-        team.numAlive--;
-        if (team.numAlive == 0) {
-          var teamsLeft = 0;
-          games[id].currentGame.teams.forEach(function(obj) {
-            if (obj.numAlive > 0) teamsLeft++;
+        if (games[id].options.teamSize > 0) {
+          var team = games[id].currentGame.teams.find(function(team) {
+            return team.players.findIndex(function(player) {
+              return obj.id == player;
+            }) > -1;
           });
-          team.rank = teamsLeft + 1;
+          team.numAlive--;
+          if (team.numAlive == 0) {
+            var teamsLeft = 0;
+            games[id].currentGame.teams.forEach(function(obj) {
+              if (obj.numAlive > 0) teamsLeft++;
+            });
+            team.rank = teamsLeft + 1;
+          }
         }
       } else {
         usersRecovered.push(obj);
@@ -1188,16 +1251,26 @@ function nextDay(msg, id) {
   if (usersRecovered.length > 0) {
     games[id].currentGame.day.events.push(
         makeSingleEvent(
-            "{victim} manage[Vs|] to patch their wounds.", usersRecovered,
-            usersRecovered.length, 0, games[id].options.mentionAll, id,
-            "thrives", "nothing"));
+            getMessage("patchWounds"), usersRecovered, usersRecovered.length, 0,
+            games[id].options.mentionAll, id, "thrives", "nothing"));
   }
   if (usersBleeding.length > 0) {
     games[id].currentGame.day.events.push(
         makeSingleEvent(
-            "{victim} fail[Vs|] to tend to their wounds and die[Vs|].",
-            usersBleeding, usersBleeding.length, 0,
+            getMessage("bleedOut"), usersBleeding, usersBleeding.length, 0,
             games[id].options.mentionAll, id, "dies", "nothing"));
+  }
+
+  var deathRate = 1 - (games[id].currentGame.numAlive / startingAlive);
+  if (deathRate > lotsOfDeathRate) {
+    games[id].currentGame.day.events.splice(
+        0, 0, makeMessageEvent(getMessage("lotsOfDeath"), id));
+  } else if (deathRate == 0) {
+    games[id].currentGame.day.events.splice(
+        0, 0, makeMessageEvent(getMessage("noDeath"), id));
+  } else if (deathRate < littleDeathRate) {
+    games[id].currentGame.day.events.splice(
+        0, 0, makeMessageEvent(getMessage("littleDeath"), id));
   }
 
   // Signal ready to display events.
@@ -1205,9 +1278,10 @@ function nextDay(msg, id) {
 
   var embed = new Discord.RichEmbed();
   if (games[id].currentGame.day.num == 0) {
-    embed.setTitle("The bloodbath has begun!");
+    embed.setTitle(getMessage("bloodbathStart"));
   } else {
-    embed.setTitle("Day " + games[id].currentGame.day.num + " has begun!");
+    embed.setTitle(
+        getMessage("dayStart").replaceAll("{}", games[id].currentGame.day.num));
   }
   embed.setColor(defaultColor);
   msg.channel.send(embed);
@@ -1237,6 +1311,9 @@ function formatMultiNames(names, mention) {
     else if (i != names.length - 1) output += ", ";
   }
   return output;
+}
+function makeMessageEvent(message, id) {
+  return makeSingleEvent(message, [], 0, 0, false, id, "nothing", "nothing");
 }
 // Format an event string based on specified users.
 function makeSingleEvent(
@@ -1349,6 +1426,8 @@ function printDay(msg, id) {
   var lastId = 0;
   var numTeams = 0;
   var lastTeam = 0;
+  var numWholeTeams = 0;
+  var lastWholeTeam = 0;
   games[id].currentGame.includedUsers.forEach(function(el, i) {
     if (el.living) {
       numAlive++;
@@ -1361,6 +1440,10 @@ function printDay(msg, id) {
       if (team.numAlive > 0) {
         numTeams++;
         lastTeam = index;
+      }
+      if (team.numAlive == team.players.length) {
+        numWholeTeams++;
+        lastWholeTeam = index;
       }
     });
   }
@@ -1473,15 +1556,22 @@ function printDay(msg, id) {
     } else {
       finalMessage.setDescription(statusList.join('\n'));
     }
+    if (numWholeTeams == 1) {
+      finalMessage.setFooter(
+          getMessage("teamRemaining")
+              .replaceAll(
+                  "{}", games[id].currentGame.teams[lastWholeTeam].name));
+    }
   }
 
   var embed = new Discord.RichEmbed();
   if (games[id].currentGame.day.num == 0) {
-    embed.setTitle("Bloodbath has ended.");
+    embed.setTitle(getMessage("bloodbathEnd"));
   } else {
     embed.setTitle(
-        "Day " + games[id].currentGame.day.num + " has ended with " + numAlive +
-        " alive!");
+        getMessage("dayEnd")
+            .replaceAll("{day}", games[id].currentGame.day.num)
+            .replaceAll("{alive}", numAlive));
   }
   embed.setColor(defaultColor);
   msg.channel.send(embed);
@@ -1751,6 +1841,9 @@ function listPlayers(msg, id) {
         stringList +=
             "\n\nSome players were left out! Please reset teams to fix this! (" +
             numPlayers + "/" + games[id].currentGame.includedUsers.length + ")";
+        common.ERROR(
+            "Failed to list all players! " + numPlayers + "/" +
+            games[id].currentGame.includedUsers.length + ": " + id);
       }
     }
   } else {
@@ -2040,20 +2133,17 @@ function createEvent(msg, id) {
   reply(msg, "Loading...").then(msg_ => {
     newEventMessages[msg.id].myResponse = msg_;
     msg_.awaitReactions(function(reaction, user) {
-          return (reaction.emoji.name == emoji.white_check_mark ||
-                  reaction.emoji.name == emoji.x) &&
+          return (reaction.emoji.name == emoji.red_circle ||
+                  reaction.emoji.name == emoji.trophy) &&
               user.id == authId;
         }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
       if (reactions.size == 0) {
         msg_.clearReactions();
         return;
       }
-      if (reactions.first().emoji.name == emoji.x) {
-        msg_.channel.send("`Cancelled event creation.`");
-        msg_.delete();
-        delete newEventMessages[msg.id];
-        return;
-      }
+      var eventType = "player";
+      if (reactions.first().emoji.name == emoji.red_circle)
+        eventType = "bloodbath";
       const message = newEventMessages[msg.id].text;
       msg_.delete();
       msg.channel.send("Loading...").then(function(msg_) {
@@ -2160,16 +2250,21 @@ function createEvent(msg, id) {
           var newEvent = new Event(
               message, numVictim, numAttacker, victimOutcome, attackerOutcome,
               victimKiller, attackerKiller);
-          msg.channel.send("`Event created!`\n" + formatEventString(newEvent));
-          games[id].customEvents.player.push(newEvent);
+          msg.channel.send(
+              "`Event created!`\n" + formatEventString(newEvent) + "\n" +
+              eventType);
+          if (eventType == "bloodbath") {
+            games[id].customEvents.bloodbath.push(newEvent);
+          } else {
+            games[id].customEvents.player.push(newEvent);
+          }
         };
 
         getAttackNum();
       });
       delete newEventMessages[msg.id];
     });
-    msg_.react(emoji.white_check_mark);
-    msg_.react(emoji.x);
+    msg_.react(emoji.red_circle).then(_ => { msg_.react(emoji.trophy); });
     updateEventPreview(newEventMessages[msg.id]);
   });
 }
@@ -2182,13 +2277,12 @@ function createEventNums(msg, id, show, cb) {
          if (user.id != client.user.id) reaction.remove(user);
          return (reaction.emoji.name == emoji.arrow_up ||
                  reaction.emoji.name == emoji.arrow_down ||
-                 reaction.emoji.name == emoji.white_check_mark ||
-                 reaction.emoji.name == emoji.x) &&
+                 reaction.emoji.name == emoji.white_check_mark) &&
              user.id == id;
        }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
-      if (reactions.size == 0) {
-        msg.clearReactions();
-        return;
+         if (reactions.size == 0) {
+           msg.clearReactions();
+           return;
       }
       var name = reactions.first().emoji.name;
       if (name == emoji.arrow_up) {
@@ -2198,16 +2292,10 @@ function createEventNums(msg, id, show, cb) {
       } else if (name == emoji.white_check_mark) {
         cb(num);
         return;
-      } else if (name == emoji.x) {
-        msg.channel.send("`Cancelled event creation`");
-        msg.delete();
-        return;
       }
       var message = "No people.";
-      if (num < 0)
-        message = "At least " + num * -1 + " people.";
-      else if (num > 0)
-        message = num + " people exactly.";
+      if (num < 0) message = "At least " + num * -1 + " people.";
+      else if (num > 0) message = num + " people exactly.";
       msg.edit(show + "\n" + message);
       regLis();
     });
@@ -2215,10 +2303,9 @@ function createEventNums(msg, id, show, cb) {
 
   regLis();
 
-  msg.react(emoji.white_check_mark);
-  msg.react(emoji.x);
-  msg.react(emoji.arrow_up);
-  msg.react(emoji.arrow_down);
+  msg.react(emoji.white_check_mark).then(_ => {
+    msg.react(emoji.arrow_up).then(_ => { msg.react(emoji.arrow_down); });
+  });
 }
 function createEventOutcome(msg, id, show, cb) {
   msg.edit(
@@ -2253,10 +2340,13 @@ function createEventOutcome(msg, id, show, cb) {
     }
   });
 
-  msg.react(emoji.white_check_mark);
-  msg.react(emoji.skull);
-  msg.react(emoji.yellow_heart);
-  msg.react(emoji.heart);
+  msg.react(getOutcomeEmoji("nothing")).then(_ => {
+    msg.react(getOutcomeEmoji("dies")).then(_ => {
+      msg.react(getOutcomeEmoji("wounded")).then(_ => {
+        msg.react(getOutcomeEmoji("thrives"));
+      });
+    });
+  });
 }
 function createEventAttacker(msg, id, show, cb) {
   msg.edit(show);
@@ -2277,8 +2367,7 @@ function createEventAttacker(msg, id, show, cb) {
     }
   });
 
-  msg.react(emoji.white_check_mark);
-  msg.react(emoji.x);
+  msg.react(emoji.white_check_mark).then(_ => { msg.react(emoji.x); });
 }
 
 function updateEventPreview(msg) {
@@ -2288,6 +2377,8 @@ function updateEventPreview(msg) {
       "\nReplace names with \"{victim}\" or \"{attacker}\" (with brackets)." +
       "\nUse \"[Vsinglular|plural]\" or \"[Asingular|plural]\" to put \"singular\" if there's only one person, or \"plural\" if there are more" +
       "\n (A for attacker, V for victim).\n```";
+  var finalOptionsHelp =
+      emoji.red_circle + "Bloodbath event, " + emoji.trophy + "Normal event.";
   var users = msg.guild.members.random(4);
   var players = [];
   var cnt = 0;
@@ -2316,13 +2407,71 @@ function updateEventPreview(msg) {
                          .message;
     msg.myResponse.edit(
         helpMsg + single + "\n" + pluralOne + "\n" + pluralTwo + "\n" +
-        pluralBoth);
+        pluralBoth + "\n\n" + finalOptionsHelp);
   } catch (err) {
     console.log(err);
   }
 }
 function removeEvent(msg, id) {
-  reply(msg, "This doesn't work yet!");
+  const split = msg.text.split(' ');
+
+  if (split.length == 1) {
+    reply(
+        msg,
+        "You must specify the number of the custom event you wish to remove.");
+    return;
+  } else if (isNaN(split[1])) {
+    reply(msg, "The number you specified, isn't a number, please pick a number.");
+    return;
+  } else if (split[1] <= 0) {
+    reply(msg, "The number you chose, is a bad number. I don't like it.");
+    return;
+  }
+
+  const num = split[1] - 1;
+
+  reply(msg, "Which type of event is this?",
+      emoji.red_circle + "Bloodbath, " + emoji.trophy + "Normal.").then(msg_ => {
+    msg_.awaitReactions(function(reaction, user) {
+      return user.id == msg.author.id &&
+              (reaction.emoji.name == emoji.red_circle ||
+               reaction.emoji.name == emoji.trophy);
+    }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
+      if (reactions.size == 0) {
+        msg_.clearReactions();
+        return;
+      }
+      var eventType = "player";
+      if (reactions.first().emoji.name == emoji.red_circle)
+        eventType = "bloodbath";
+
+      if (eventType == "player") {
+        if (num >= games[id].customEvents.player.length) {
+          reply(
+              msg,
+              "That number is a really big scary number. Try a smaller one.");
+          msg_.delete();
+        } else {
+          const removed = games[id].customEvents.player.splice(num, 1)[0];
+          reply(msg, "Removed event.", formatEventString(removed, true));
+          msg_.delete();
+        }
+      } else {
+        if (num >= games[id].customEvents.bloodbath.length) {
+          reply(
+              msg,
+              "That number is a really big scary number. Try a smaller one.");
+          msg_.delete();
+        } else {
+          const removed = games[id].customEvents.bloodbath.splice(num, 1)[0];
+          reply(msg, "Removed event.", formatEventString(removed, true));
+          msg_.delete();
+        }
+      }
+    });
+
+    msg_.react(emoji.red_circle).then(_ => { msg_.react(emoji.trophy); });
+  });
 }
 // Put information about an array of events into the array.
 function fetchStats(events) {
@@ -2559,9 +2708,17 @@ function help(msg, id) {
 function nothing() {
   const nothings = [
     "nix", "naught", "nothing", "zilch", "void", "zero", "zip", "zippo",
-    "diddly"
+    "diddly", emoji.x
   ];
   return nothings[Math.floor(Math.random() * nothings.length)];
+}
+
+function getMessage(type) {
+  const list = messages[type];
+  if (!list) return "badtype";
+  const length = list.length;
+  if (length == 0) return "nomessage";
+  return list[Math.floor(Math.random() * length)];
 }
 
 // Util //
@@ -2605,5 +2762,6 @@ process.on('exit', exit);
 process.on('SIGINT', sigint);
 
 process.on('unhandledRejection', function(reason, p) {
-  console.log('Unhandled Rejection at:\n', p /*, '\nreason:', reason*/);
+  // console.log('Unhandled Rejection at:\n', p /*, '\nreason:', reason*/);
+  console.log('Unhandled Rejection:\n', reason);
 });

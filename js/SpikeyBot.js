@@ -27,6 +27,8 @@ const smitePerms =
 var prevUserSayId = "";
 var prevUserSayCnt = 0;
 
+var reactToAnthony = true;
+
 const introduction = "\nHello! My name is SpikeyBot.\n" +
     "I was created by SpikeyRobot#9836, so if you wish to add any features, feel free to PM him! (Tip: Use **" +
     prefix + "pmspikey**)\n" +
@@ -252,6 +254,8 @@ client.on('ready', _ => {
       channel.fetchMessage(msg.id)
           .then(msg_ => { msg_.edit("`Reboot complete.`"); })
           .catch(_ => {});
+
+    if (msg.noReactToAnthony) reactToAnthony = false;
   });
 });
 
@@ -262,6 +266,8 @@ client.on('message', msg => {
   if (msg.guild == null && !msg.content.startsWith(prefix)) {
     msg.content = prefix + msg.content;
   }
+
+  if (reactToAnthony && msg.author.id == '174030717846552576') msg.react('😮');
 
   if (isCmd(msg, '')) {
     if (msg.guild != null) {
@@ -330,6 +336,11 @@ client.on('guildBanAdd', (guild, user) => {
 });
 
 command.on('addme', msg => { reply(msg, addmessage, addLink); });
+
+command.on('togglereact', msg => {
+  reply(msg, "Toggled reactions to Anthony to " + !reactToAnthony + '. 😮');
+  reactToAnthony = !reactToAnthony;
+});
 command.on('help', msg => {
   msg.author.send(helpmessage)
       .then(_ => {
@@ -415,7 +426,7 @@ command.on('pmspikey', msg => {
 command.on('thotpm', msg => {
   if (msg.author.id == spikeyId || msg.author.id == '265418316120719362' ||
       msg.author.id == '126464376059330562') {
-    msg.delete();
+    if (msg.guild != null) msg.delete();
     if (msg.mentions.users.size == 0) return;
     msg.mentions.users.first().send(msg.content.replace(prefix + 'thotpm', ''));
     client.fetchUser(spikeyId).then(
@@ -680,8 +691,8 @@ command.on('uptime', msg => {
   var ut = client.uptime;
   var formattedUptime = Math.floor(ut / 1000 / 60 / 60 / 24) + " Days, " +
       Math.floor(ut / 1000 / 60 / 60) % 24 + " Hours, " +
-      Math.floor(ut / 1000 / 60) % 60 + " Minutes, " + (ut / 1000) % 60 +
-      " Seconds.";
+      Math.floor(ut / 1000 / 60) % 60 + " Minutes, " +
+      Math.floor((ut / 1000) % 60) + " Seconds.";
   reply(msg, "I have been running for " + formattedUptime);
 });
 
@@ -689,7 +700,11 @@ command.on('uptime', msg => {
 command.on('reboot', msg => {
   if (msg.author.id == spikeyId) {
     reply(msg, "Rebooting...").then(msg => {
-      var toSave = {id: msg.id, channel: {id: msg.channel.id}};
+      var toSave = {
+        id: msg.id,
+        channel: {id: msg.channel.id},
+        noReactToAnthony: !reactToAnthony
+      };
       try {
         fs.writeFileSync("reboot.dat", JSON.stringify(toSave));
       } catch (err) {
