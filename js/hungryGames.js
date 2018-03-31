@@ -6,6 +6,7 @@ var initialized = false;
 const saveFile = 'hg.json';
 const eventFile = 'hgEvents.json';
 const messageFile = 'hgMessages.json';
+const battleFile = 'hgBattles.json';
 
 // The size of the icon to show for each event.
 const iconSize = 48;
@@ -38,6 +39,8 @@ const defaultOptions = {
   allowNoVictors: true,
   // Number of days a user can bleed before they can die.
   bleedDays: 2,
+  // The amount of health each user gets for a battle.
+  battleHealth: 5,
   // Maximum size of teams when automatically forming teams.
   teamSize: 0,
   // Will teammates work together. If false, teammates can kill eachother, and
@@ -62,7 +65,9 @@ const defaultOptions = {
   probabilityOfArenaEvent: 0.25,
   // Probability that after bleedDays a player will die. If they don't die, they
   // will heal back to normal.
-  probabilityOfBleedToDeath: 0.5
+  probabilityOfBleedToDeath: 0.5,
+  // Probability of an event being replaced by a battle between two players.
+  probabilityOfBattle: 0.05
 };
 
 // If a larger percentage of people die in one day than this value, then show a
@@ -135,8 +140,12 @@ var myPrefix, helpMessage;
 var games = {};
 // All messages to show for games.
 var messages = {};
+// All attacks and outcomes for battles.
+var battles = {};
 // All intervals for printing events.
 var intervals = {};
+// Storage of battle messages to edit the content of on the next update.
+var battleMessage = {};
 // Default parsed bloodbath events.
 var defaultBloodbathEvents = [];
 // Default parsed player events.
@@ -202,6 +211,30 @@ fs.watchFile(messageFile, function(curr, prev) {
     console.log("HG: Re-reading messages from file");
   }
   updateMessages();
+});
+// Parse all battles.
+function updateBattles() {
+  fs.readFile(battleFile, function(err, data) {
+    if (err) return;
+    try {
+      var parsed = JSON.parse(data);
+      if (parsed) {
+        battles = parsed;
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  });
+}
+updateBattles();
+fs.watchFile(battleFile, function(curr, prev) {
+  if (curr.mtime == prev.mtime) return;
+  if (common && common.LOG) {
+    common.LOG("Re-reading battles from file", "HG");
+  } else {
+    console.log("HG: Re-reading battles from file");
+  }
+  updateBattles();
 });
 
 // Reply to help on a server.
@@ -511,7 +544,8 @@ function Team(id, name, players) {
 // Event that can happen in a game.
 function Event(
     message, numVictim = 0, numAttacker = 0, victimOutcome = "nothing",
-    attackerOutcome = "nothing", victimKiller = false, attackerKiller = false) {
+    attackerOutcome = "nothing", victimKiller = false, attackerKiller = false,
+    battle = false, state = 0, attacks = []) {
   this.message = message;
   this.victim = {
     count: numVictim,
@@ -523,6 +557,9 @@ function Event(
     outcome: attackerOutcome,
     killer: attackerKiller
   };
+  this.battle = battle;
+  this.state = state;
+  this.attacks = attacks;
 }
 
 function makePlayer(user) {
@@ -964,147 +1001,51 @@ function nextDay(msg, id) {
   }
   var loop = 0;
   while (userPool.length > 0) {
-    loop++;
-    var eventIndex = Math.floor(Math.random() * userEventPool.length);
-    if (eventIndex < 0 || eventIndex >= userEventPool.length) {
-      common.ERROR(
-          "Attempted to select event out of range! " + eventIndex + "/" +
-              userEventPool.length,
-          "HG");
-      continue;
-    }
-    var eventTry = userEventPool[eventIndex];
-    if (!eventTry) {
-      common.ERROR("Event at index " + eventIndex + " is invalid!", "HG");
-      continue;
-    }
-
-    var numAttacker = eventTry.attacker.count * 1;
-    var numVictim = eventTry.victim.count * 1;
-
-    var eventEffectsNumMin = 0;
-    if (numVictim < 0) eventEffectsNumMin -= numVictim;
-    else eventEffectsNumMin += numVictim;
-    if (numAttacker < 0) eventEffectsNumMin -= numAttacker;
-    else eventEffectsNumMin += numAttacker;
-
-    if (loop > 100) {
-      console.log(
-          "Failed to find suitable event for " + userPool.length + " of " +
-          userEventPool.length + " events. This " + numVictim + "/" +
-          numAttacker + "/" + eventEffectsNumMin);
-      reply(msg, "A stupid error happened :(");
-      games[id].currentGame.day.state = 0;
-      return;
-    }
-    // If the chosen event requires more players than there are remaining, pick
-    // a new event.
-    if (eventEffectsNumMin > userPool.length) continue;
-
-    var multiAttacker = numAttacker < 0;
-    var multiVictim = numVictim < 0;
-    var attackerMin = -numAttacker;
-    var victimMin = -numVictim;
-    if (multiAttacker || multiVictim) {
+    var eventTry;
+    var effectedUsers;
+    var numAttacker, numVictim;
+    var doBattle = !doArenaEvent && userPool.length > 1 &&
+        Math.random() < games[id].options.probabilityOfBattle &&
+        validateEventRequirements(
+            1, 1, userPool, games[id].currentGame.numAlive,
+            games[id].currentGame.teams, games[id].options, true, false);
+    if (doBattle) {
       do {
-        if (multiAttacker) numAttacker = weightedRand() + (attackerMin - 1);
-        if (multiVictim) numVictim = weightedRand() + (victimMin - 1);
-      } while (numAttacker + numVictim > userPool.length);
-    }
-
-    if (games[id].options.teammatesCollaborate &&
-        games[id].options.teamSize > 0) {
-      var largestTeam = {index: 0, size: 0};
-      var numTeams = 0;
-      for (var i = 0; i < games[id].currentGame.teams.length; i++) {
-        var team = games[id].currentGame.teams[i];
-        var numPool = 0;
-
-        team.players.forEach(function(player) {
-          if (userPool.findIndex(function(pool) {
-                return pool.id == player && pool.living;
-              }) > -1) {
-            numPool++;
-          }
-        });
-
-        team.numPool = numPool;
-        if (numPool > largestTeam.size) {
-          largestTeam = {index: i, size: numPool};
-        }
-        if (numPool > 0) numTeams++;
-      }
-      if (numTeams < 2) {
-        if (eventTry.attacker.outcome == "dies" ||
-            eventTry.victim.outcome == "dies") {
-          continue;
-        }
-      }
-      if (!((numAttacker <= largestTeam.size &&
-             numVictim <= userPool.length - largestTeam.size) ||
-            (numVictim <= largestTeam.size &&
-             numAttacker <= userPool.length - largestTeam.size))) {
-        continue;
-      }
-    }
-
-    // Ensure the event we choose will not force all players to be dead.
-    if (!games[id].options.allowNoVictors) {
-      var numRemaining = games[id].currentGame.numAlive;
-      if (eventTry.victim.outcome == "dies") numRemaining -= numVictim;
-      if (eventTry.attacker.outcome == "dies") numRemaining -= numAttacker;
-      if (numRemaining < 1) continue;
-    }
-
-    // We found a valid event, reset fail counter.
-    loop = 0;
-
-    var effectedUsers = [];
-
-    if (games[id].options.teammatesCollaborate &&
-        games[id].options.teamSize > 0) {
-      var isAttacker = false;
-      var validTeam = games[id].currentGame.teams.findIndex(function(team) {
-        var canBeVictim = false;
-        if (numAttacker <= team.numPool &&
-            numVictim <= userPool.length - team.numPool) {
-          isAttacker = true;
-        }
-        if (numVictim <= team.numPool &&
-             numAttacker <= userPool.length - team.numPool) {
-          canBeVictim = true;
-        }
-        if (!isAttacker && !canBeVictim) {
-          return false;
-        }
-        if (isAttacker && canBeVictim) {
-          isAttacker = Math.random() > 0.5;
-        }
-        return true;
-      });
-      findMatching = function(match) {
-        return userPool.findIndex(function(pool) {
-          var teamId = games[id].currentGame.teams.findIndex(function(team) {
-            return team.players.findIndex(function(player) {
-              return player == pool.id;
-            }) > -1;
-          });
-          return match ? (teamId == validTeam) : (teamId != validTeam);
-        })
-      };
-      for (var i = 0; i < numAttacker + numVictim; i++) {
-        var userIndex = findMatching(
-            (i < numVictim && !isAttacker) || (i >= numVictim && isAttacker));
-        effectedUsers.push(userPool.splice(userIndex, 1)[0]);
-      }
+        numAttacker = weightedRand();
+        numVictim = weightedRand();
+      } while (!validateEventRequirements(
+          numVictim, numAttacker, userPool, games[id].currentGame.numAlive,
+          games[id].currentGame.teams, games[id].options, true, false));
+      effectedUsers = pickEffectedPlayers(
+          numVictim, numAttacker, games[id].options, userPool,
+          games[id].currentGame.teams);
+      eventTry = makeBattleEvent(
+          effectedUsers, numVictim, numAttacker, games[id].options.mentionAll,
+          id);
     } else {
-      for (var i = 0; i < numAttacker + numVictim; i++) {
-        var userIndex = Math.floor(Math.random() * userPool.length);
-        effectedUsers.push(userPool.splice(userIndex, 1)[0]);
+      eventTry = pickEvent(
+          userPool, userEventPool, games[id].options,
+          games[id].currentGame.numAlive, games[id].currentGame.teams);
+      if (eventTry == null) {
+        reply(msg, "A stupid error happened :(");
+        games[id].currentGame.day.state = 0;
+        return;
       }
+
+      numAttacker = eventTry.attacker.count;
+      numVictim = eventTry.victim.count;
+      effectedUsers = pickEffectedPlayers(
+          numVictim, numAttacker, games[id].options, userPool,
+          games[id].currentGame.teams);
     }
 
     effectUser = function(i, kills) {
+      if (!effectedUsers[i]) {
+        common.ERROR(
+            "Effected users invalid index:" + i + "/" + effectedUsers.length,
+            "HG");
+        console.log(effectedUsers);
+      }
       var index = games[id].currentGame.includedUsers.findIndex(function(obj) {
         return obj.id == effectedUsers[i].id;
       });
@@ -1194,11 +1135,16 @@ function nextDay(msg, id) {
           break;
       }
     }
-    games[id].currentGame.day.events.push(
-        makeSingleEvent(
-            eventTry.message, effectedUsers, numVictim, numAttacker,
-            games[id].options.mentionAll, id, eventTry.victim.outcome,
-            eventTry.attacker.outcome));
+    if (doBattle) {
+      games[id].currentGame.day.events.push(eventTry);
+      effectedUsers = [];
+    } else {
+      games[id].currentGame.day.events.push(
+          makeSingleEvent(
+              eventTry.message, effectedUsers, numVictim, numAttacker,
+              games[id].options.mentionAll, id, eventTry.victim.outcome,
+              eventTry.attacker.outcome));
+    }
     if (effectedUsers.length != 0) {
       console.log("Effected users remain! " + effectedUsers.length);
     }
@@ -1289,6 +1235,278 @@ function nextDay(msg, id) {
     printEvent(msg, id);
   }, games[id].options.delayEvents);
 }
+function pickEvent(userPool, eventPool, options, numAlive, teams) {
+  var loop = 0;
+  while (loop < 100) {
+    loop++;
+    var eventIndex = Math.floor(Math.random() * eventPool.length);
+    if (eventIndex < 0 || eventIndex >= eventPool.length) {
+      common.ERROR(
+          "Attempted to select event out of range! " + eventIndex + "/" +
+              eventPool.length,
+          "HG");
+      continue;
+    }
+    var eventTry = eventPool[eventIndex];
+    if (!eventTry) {
+      common.ERROR("Event at index " + eventIndex + " is invalid!", "HG");
+      continue;
+    }
+
+    var numAttacker = eventTry.attacker.count * 1;
+    var numVictim = eventTry.victim.count * 1;
+
+    var eventEffectsNumMin = 0;
+    if (numVictim < 0) eventEffectsNumMin -= numVictim;
+    else eventEffectsNumMin += numVictim;
+    if (numAttacker < 0) eventEffectsNumMin -= numAttacker;
+    else eventEffectsNumMin += numAttacker;
+
+    // If the chosen event requires more players than there are remaining, pick
+    // a new event.
+    if (eventEffectsNumMin > userPool.length) continue;
+
+    var multiAttacker = numAttacker < 0;
+    var multiVictim = numVictim < 0;
+    var attackerMin = -numAttacker;
+    var victimMin = -numVictim;
+    if (multiAttacker || multiVictim) {
+      do {
+        if (multiAttacker) numAttacker = weightedRand() + (attackerMin - 1);
+        if (multiVictim) numVictim = weightedRand() + (victimMin - 1);
+      } while (numAttacker + numVictim > userPool.length);
+    }
+
+    if (!validateEventRequirements(
+            numVictim, numAttacker, userPool, numAlive, teams, options,
+            eventTry.victim.outcome == "dies",
+            eventTry.attacker.outcome == "dies")) {
+      continue;
+    }
+
+    eventTry = eventPool.slice(eventIndex, eventIndex + 1)[0];
+
+    eventTry.attacker.count = numAttacker;
+    eventTry.victim.count = numVictim;
+
+    return eventTry;
+  }
+  console.log(
+      "Failed to find suitable event for " + userPool.length + " of " +
+      eventPool.length + " events. This " + numVictim + "/" + numAttacker +
+      "/" + eventEffectsNumMin);
+  return null;
+}
+// Ensure teammates don't attack eachother.
+function validateEventTeamConstraint(
+    numVictim, numAttacker, userPool, teams, options, victimsDie,
+    attackersDie) {
+  if (options.teammatesCollaborate && options.teamSize > 0) {
+    var largestTeam = {index: 0, size: 0};
+    var numTeams = 0;
+    for (var i = 0; i < teams.length; i++) {
+      var team = teams[i];
+      var numPool = 0;
+
+      team.players.forEach(function(player) {
+        if (userPool.findIndex(function(pool) {
+              return pool.id == player && pool.living;
+            }) > -1) {
+          numPool++;
+        }
+      });
+
+      team.numPool = numPool;
+      if (numPool > largestTeam.size) {
+        largestTeam = {index: i, size: numPool};
+      }
+      if (numPool > 0) numTeams++;
+    }
+    if (numTeams < 2) {
+      if (attackersDie || victimsDie) {
+        return false;
+      }
+    }
+    return (numAttacker <= largestTeam.size &&
+            numVictim <= userPool.length - largestTeam.size) ||
+        (numVictim <= largestTeam.size &&
+         numAttacker <= userPool.length - largestTeam.size);
+  }
+  return true;
+}
+// Ensure the event we choose will not force all players to be dead.
+function validateEventVictorConstraint(
+    numVictim, numAttacker, numAlive, options, victimsDie, attackersDie) {
+  if (!options.allowNoVictors) {
+    var numRemaining = numAlive;
+    if (victimsDie) numRemaining -= numVictim;
+    if (attackersDie) numRemaining -= numAttacker;
+    return numRemaining >= 1;
+  }
+  return true;
+}
+// Ensure the number of users in an event is mathemetically possible.
+function validateEventNumConstraint(
+    numVictim, numAttacker, userPool, numAlive) {
+  return numVictim + numAttacker <= userPool.length &&
+      numVictim + numAttacker <= numAlive;
+}
+// Ensure the event chosen meets all requirements for actually being used in the
+// current game.
+function validateEventRequirements(
+    numVictim, numAttacker, userPool, numAlive, teams, options, victimsDie,
+    attackersDie) {
+  return validateEventNumConstraint(
+             numVictim, numAttacker, userPool, numAlive) &&
+      validateEventTeamConstraint(
+             numVictim, numAttacker, userPool, teams, options, victimsDie,
+             attackersDie) &&
+      validateEventVictorConstraint(
+             numVictim, numAttacker, numAlive, options, victimsDie,
+             attackersDie);
+}
+function pickEffectedPlayers(
+    numVictim, numAttacker, options, userPool, teams) {
+  var effectedUsers = [];
+  if (options.teammatesCollaborate && options.teamSize > 0) {
+    var isAttacker = false;
+    var validTeam = teams.findIndex(function(team) {
+      var canBeVictim = false;
+      if (numAttacker <= team.numPool &&
+          numVictim <= userPool.length - team.numPool) {
+        isAttacker = true;
+      }
+      if (numVictim <= team.numPool &&
+          numAttacker <= userPool.length - team.numPool) {
+        canBeVictim = true;
+      }
+      if (!isAttacker && !canBeVictim) {
+        return false;
+      }
+      if (isAttacker && canBeVictim) {
+        isAttacker = Math.random() > 0.5;
+      }
+      return true;
+    });
+    findMatching = function(match) {
+      return userPool.findIndex(function(pool) {
+        var teamId = teams.findIndex(function(team) {
+          return team.players.findIndex(function(player) {
+            return player == pool.id;
+          }) > -1;
+        });
+        return match ? (teamId == validTeam) : (teamId != validTeam);
+      })
+    };
+    for (var i = 0; i < numAttacker + numVictim; i++) {
+      var userIndex = findMatching(
+          (i < numVictim && !isAttacker) || (i >= numVictim && isAttacker));
+      effectedUsers.push(userPool.splice(userIndex, 1)[0]);
+    }
+  } else {
+    for (var i = 0; i < numAttacker + numVictim; i++) {
+      var userIndex = Math.floor(Math.random() * userPool.length);
+      effectedUsers.push(userPool.splice(userIndex, 1)[0]);
+    }
+  }
+  return effectedUsers;
+}
+function makeBattleEvent(effectedUsers, numVictim, numAttacker, mention, id) {
+  const outcomeMessage =
+      battles.outcomes[Math.floor(Math.random() * battles.outcomes.length)];
+  var finalEvent = makeSingleEvent(
+      outcomeMessage, effectedUsers.slice(0), numVictim, numAttacker, mention,
+      id, "dies", "nothing");
+  finalEvent.battle = true;
+  finalEvent.state = 0;
+  finalEvent.attacks = [];
+  var userHealth = new Array(effectedUsers.length).fill(0);
+  const maxHealth = games[id].options.battleHealth * 1;
+  var numAlive = numVictim;
+  var duplicateCount = 0;
+  var lastAttack = {index: 0, attacker: 0, victim: 0};
+  var loop = 0;
+  do {
+    loop++;
+    if (loop > 1000) {
+      throw("INFINITE LOOP");
+    }
+    var eventIndex = Math.floor(Math.random() * battles.attacks.length);
+    var eventTry = battles.attacks[eventIndex];
+    eventTry.attacker.damage *= 1;
+    eventTry.victim.damage *= 1;
+
+    const flipRoles = Math.random() > 0.5;
+    const attackerIndex = Math.floor(Math.random() * numAttacker) + numVictim;
+
+    if (loop == 999) {
+      console.log(
+          "Failed to find valid event for battle!\n", eventTry, flipRoles,
+          userHealth, "\nAttacker:", attackerIndex, "\nUsers:",
+          effectedUsers.length, "\nAlive:", numAlive, "\nFINAL:", finalEvent);
+    }
+
+    if ((!flipRoles &&
+         userHealth[attackerIndex] + eventTry.attacker.damage >= maxHealth) ||
+        (flipRoles &&
+         userHealth[attackerIndex] + eventTry.victim.damage >= maxHealth)) {
+      continue;
+    }
+
+    var victimIndex = Math.floor(Math.random() * numAlive);
+
+    var count = 0;
+    for (var i = 0; i < numVictim; i++) {
+      if (userHealth[i] < maxHealth) count++;
+      if (count == victimIndex + 1) {
+        victimIndex = i;
+        break;
+      }
+    }
+
+    userHealth[victimIndex] +=
+        (flipRoles ? eventTry.attacker.damage : eventTry.victim.damage);
+    userHealth[attackerIndex] +=
+        (!flipRoles ? eventTry.attacker.damage : eventTry.victim.damage);
+
+    if (userHealth[victimIndex] >= maxHealth) {
+      numAlive--;
+    }
+
+    if (lastAttack.id == eventIndex && lastAttack.attacker == attackerIndex &&
+        lastAttack.victim == victimIndex) {
+      duplicateCount++;
+    } else {
+      duplicateCount = 0;
+    }
+    lastAttack = {
+      index: eventIndex,
+      attacker: attackerIndex,
+      victim: victimIndex
+    };
+
+    const healthText = effectedUsers
+                           .map(function(obj, index) {
+                             return "`" + obj.name + "`: " +
+                                 Math.max((maxHealth - userHealth[index]), 0) +
+                                 "HP";
+                           })
+                           .sort(function(a, b) { return a.id - b.id; })
+                           .join(", ");
+    var messageText = eventTry.message;
+    if (duplicateCount > 0) {
+      messageText += " x" + (duplicateCount + 1);
+    }
+
+    finalEvent.attacks.push(
+        makeSingleEvent(
+            "**A battle has broken out!**\n" + messageText + "\n" + healthText,
+            [effectedUsers[victimIndex], effectedUsers[attackerIndex]], 1, 1,
+            false, id, "nothing", "nothing"));
+
+  } while(numAlive > 0);
+  return finalEvent;
+}
 // Produce a random number that is weighted by multiEventUserDistribution.
 function weightedRand() {
   var i, sum = 0, r = Math.random();
@@ -1350,8 +1568,8 @@ function makeSingleEvent(
     message: finalMessage,
     icons: finalIcons,
     numVictim: numVictim,
-    victimOutcome: victimOutcome,
-    attackerOutcome: attackerOutcome
+    victim: {outcome: victimOutcome},
+    attacker: {outcome: attackerOutcome}
   };
 }
 // Get an array of icons urls from an array of users.
@@ -1372,7 +1590,19 @@ function printEvent(msg, id) {
     client.clearInterval(intervals[id]);
     delete intervals[id];
     printDay(msg, id);
+  } else if (
+      events[index].battle &&
+      events[index].state < events[index].attacks.length) {
+    var battleState = events[index].state;
+    if (!battleMessage[id]) {
+      msg.channel.send(events[index].attacks[battleState].message)
+          .then(msg_ => { battleMessage[id] = msg_; });
+    } else {
+      battleMessage[id].edit(events[index].attacks[battleState].message);
+    }
+    events[index].state++;
   } else {
+    delete battleMessage[id];
     if (events[index].icons.length == 0) {
       msg.channel.send(events[index].message);
     } else {
@@ -1407,8 +1637,8 @@ function printEvent(msg, id) {
                   return function(image) {
                     newImage(image, outcome, placement);
                   }
-                }(i < events[index].numVictim ? events[index].victimOutcome :
-                                                 events[index].attackerOutcome,
+                }(i < events[index].numVictim ? events[index].victim.outcome :
+                                                events[index].attacker.outcome,
                   i))
             .catch(function(err) {
               console.log(err);

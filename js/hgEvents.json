@@ -408,7 +408,7 @@
       "victim": { "count": "-1", "outcome": "nothing" }
     },
     {
-      "message": "{victim} becomes one with the arena as they camouflage themsel[Vf|ves] into a bush.",
+      "message": "{victim} become[Vs|] one with the arena as they camouflage themsel[Vf|ves] into a bush.",
       "attacker": { "count": "0", "outcome": "nothing" },
       "victim": { "count": "-1", "outcome": "nothing" }
     },
