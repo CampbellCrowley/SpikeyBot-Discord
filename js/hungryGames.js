@@ -28,46 +28,99 @@ const maxReactAwaitTime = 15 * 1000 * 60;  // 15 Minutes
 
 // Default options for a game.
 const defaultOptions = {
-  // Are arena events possible.
-  arenaEvents: true,
-  // Can users be resurrected.
-  resurrection: false,
-  // Should bots be included in the games. If this is false, bots cannot be
-  // added manually.
-  includeBots: false,
-  // Should it be possible to end a game without any winners.
-  allowNoVictors: true,
-  // Number of days a user can bleed before they can die.
-  bleedDays: 2,
-  // The amount of health each user gets for a battle.
-  battleHealth: 5,
-  // Maximum size of teams when automatically forming teams.
-  teamSize: 0,
-  // Will teammates work together. If false, teammates can kill eachother, and
-  // there will only be 1 victor. If true, teammates cannot kill eachother, and
-  // the game ends when one TEAM is remaining, not one player.
-  teammatesCollaborate: true,
-  // Should the victor of the game (can be team), be tagged/mentioned so they
-  // get notified?
-  mentionVictor: true,
-  // Should a user be mentioned every time something happens to them in the
-  // game?
-  mentionAll: false,
-  // Should @everyone be mentioned when the game is started?
-  mentionEveryoneAtStart: false,
-  // Delay in milliseconds between each event being printed.
-  delayEvents: 3500,
-  // Delay in milliseconds between each day being printed.
-  delayDays: 7000,
-  // Probability that each day a dead player can be put back into the game.
-  probabilityOfResurrect: 0.33,
-  // Probability that each day an arena event will happen.
-  probabilityOfArenaEvent: 0.25,
-  // Probability that after bleedDays a player will die. If they don't die, they
-  // will heal back to normal.
-  probabilityOfBleedToDeath: 0.5,
-  // Probability of an event being replaced by a battle between two players.
-  probabilityOfBattle: 0.05
+  bloodbathDeathRate: {
+    value: "normal",
+    values: ["verylow", "low", "normal", "high", "veryhigh"],
+    comment:
+        "Controls how many people die in the bloodbath. Can be [\"verylow\", \"low\", \"normal\", \"high\", \"veryhigh\"]."
+  },
+  playerDeathRate: {
+    value: "normal",
+    values: ["verylow", "low", "normal", "high", "veryhigh"],
+    comment:
+        "Controls how many people die each day. Can be [\"verylow\", \"low\", \"normal\", \"high\", \"veryhigh\"]."
+  },
+  arenaEvents: {
+    value: true,
+    comment:
+        "Are arena events possible. (Events like wolf mutts, or a volcano erupting.)"
+  },
+  resurrection: {
+    value: false,
+    comment: "Can users be resurrected and placed back into the arena."
+  },
+  includeBots: {
+    value: false,
+    comment:
+        "Should bots be included in the games. If this is false, bots cannot be added manually."
+  },
+  allowNoVictors: {
+    value: true,
+    comment:
+        "Should it be possible to end a game without any winners. If true, it is possible for every player to die, causing the game to end with everyone dead. False forces at least one winner."
+  },
+  bleedDays: {
+    value: 2,
+    comment: "Number of days a user can bleed before they can die."
+  },
+  battleHealth:
+      {value: 5, comment: "The amount of health each user gets for a battle."},
+  teamSize: {
+    value: 0,
+    comment: "Maximum size of teams when automatically forming teams."
+  },
+  teammatesCollaborate: {
+    value: true,
+    comment:
+        "Will teammates work together. If false, teammates can kill eachother, and there will only be 1 victor. If true, teammates cannot kill eachother, and the game ends when one TEAM is remaining, not one player."
+  },
+  mentionVictor: {
+    value: true,
+    comment:
+        "Should the victor of the game (can be team), be tagged/mentioned so they get notified?"
+  },
+  mentionAll: {
+    value: false,
+    comment:
+        "Should a user be mentioned every time something happens to them in the game?"
+  },
+  mentionEveryoneAtStart: {
+    value: false,
+    comment: "Should @everyone be mentioned when the game is started?"
+  },
+  delayEvents: {
+    value: 3500,
+    time: true,
+    comment: "Delay in milliseconds between each event being printed."
+  },
+  delayDays: {
+    value: 7000,
+    time: true,
+    comment: "Delay in milliseconds between each day being printed."
+  },
+  probabilityOfResurrect: {
+    value: 0.33,
+    percent: true,
+    comment:
+        "Probability each day that a dead player can be put back into the game."
+  },
+  probabilityOfArenaEvent: {
+    value: 0.25,
+    percent: true,
+    comment: "Probability each day that an arena event will happen."
+  },
+  probabilityOfBleedToDeath: {
+    value: 0.5,
+    percent: true,
+    comment:
+        "Probability that after bleedDays a player will die. If they don't die, they will heal back to normal."
+  },
+  probabilityOfBattle: {
+    value: 0.05,
+    percent: true,
+    comment:
+        "Probability of an event being replaced by a battle between two players."
+  }
 };
 
 // If a larger percentage of people die in one day than this value, then show a
@@ -134,6 +187,14 @@ const multiEventUserDistribution = {
   9: 0.0005
 };
 
+const deathRateWeights = {
+  verylow: {kill: 1, nothing: 4},
+  low: {kill: 1, nothing: 2},
+  normal: {kill: 3, nothing: 5},
+  high: {kill: 1, nothing: 1},
+  veryhigh: {kill: 2, nothing: 1}
+};
+
 var prefix, Discord, client, command, common;
 var myPrefix, helpMessage;
 // All currently tracked games.
@@ -155,6 +216,8 @@ var defaultArenaEvents = [];
 // Messages that the user sent with a new event to add, for storage while
 // getting the rest of the information about the event.
 var newEventMessages = {};
+// Messages I have sent showing current options.
+var optionMessages = {};
 
 // Read saved game data from disk.
 fs.readFile(saveFile, function(err, data) {
@@ -245,9 +308,9 @@ const blockedmessage =
 exports.helpMessage = "Module loading...";
 // Set all help messages once we know what prefix to use.
 function setupHelp() {
-exports.helpMessage = "`" + myPrefix + "help` for Hungry Games help.";
-helpMessage =
-"Hungry Games!\n" +
+  exports.helpMessage = "`" + myPrefix + "help` for Hungry Games help.";
+  helpMessage =
+  "Hungry Games!\n" +
   "To use any of these commands you must have the \"" + roleName + "\" role.\n" +
   "```js\n=== Game Settings ===\n" +
   myPrefix + "create // This will create a game with default settings if it doesn't exist already.\n" +
@@ -303,10 +366,20 @@ exports.begin = function(prefix_, Discord_, client_, command_, common_) {
   common.LOG("HungryGames Init", "HG");
 
   for (var key in games) {
-    if (key == "reactedMessages") {
-      delete games[key];
-    } else if (
-        games[key].currentGame && games[key].currentGame.day.state != 0 &&
+    if (games[key].options) {
+      for (var opt in defaultOptions) {
+        if (typeof games[key].options[opt] === 'undefined') {
+          games[key].options[opt] = defaultOptions[opt].value;
+        }
+      }
+      for (var opt in games[key].options) {
+        if (typeof defaultOptions[opt] === 'undefined') {
+          delete games[key].options[opt];
+        }
+      }
+    }
+
+    if (games[key].currentGame && games[key].currentGame.day.state != 0 &&
         games[key].currentGame.inProgress && games[key].channel &&
         games[key].msg) {
       common.LOG(
@@ -999,6 +1072,11 @@ function nextDay(msg, id) {
       userEventPool = defaultPlayerEvents.concat(games[id].customEvents.player);
     }
   }
+
+  const deathRate = games[id].currentGame.day.num == 0 ?
+      games[id].options.bloodBathDeathRate :
+      games[id].options.playerDeathRate;
+
   var loop = 0;
   while (userPool.length > 0) {
     var eventTry;
@@ -1011,8 +1089,8 @@ function nextDay(msg, id) {
             games[id].currentGame.teams, games[id].options, true, false);
     if (doBattle) {
       do {
-        numAttacker = weightedRand();
-        numVictim = weightedRand();
+        numAttacker = weightedUserRand();
+        numVictim = weightedUserRand();
       } while (!validateEventRequirements(
           numVictim, numAttacker, userPool, games[id].currentGame.numAlive,
           games[id].currentGame.teams, games[id].options, true, false));
@@ -1025,7 +1103,8 @@ function nextDay(msg, id) {
     } else {
       eventTry = pickEvent(
           userPool, userEventPool, games[id].options,
-          games[id].currentGame.numAlive, games[id].currentGame.teams);
+          games[id].currentGame.numAlive, games[id].currentGame.teams,
+          deathRate);
       if (eventTry == null) {
         reply(msg, "A stupid error happened :(");
         games[id].currentGame.day.state = 0;
@@ -1231,22 +1310,17 @@ function nextDay(msg, id) {
   }
   embed.setColor(defaultColor);
   msg.channel.send(embed);
+  command.disable("say", msg.channel.id);
+  games[id].outputChannel = msg.channel.id;
   intervals[id] = client.setInterval(function() {
     printEvent(msg, id);
   }, games[id].options.delayEvents);
 }
-function pickEvent(userPool, eventPool, options, numAlive, teams) {
+function pickEvent(userPool, eventPool, options, numAlive, teams, deathRate) {
   var loop = 0;
   while (loop < 100) {
     loop++;
-    var eventIndex = Math.floor(Math.random() * eventPool.length);
-    if (eventIndex < 0 || eventIndex >= eventPool.length) {
-      common.ERROR(
-          "Attempted to select event out of range! " + eventIndex + "/" +
-              eventPool.length,
-          "HG");
-      continue;
-    }
+    var eventIndex = weightedEvent(eventPool, deathRate);
     var eventTry = eventPool[eventIndex];
     if (!eventTry) {
       common.ERROR("Event at index " + eventIndex + " is invalid!", "HG");
@@ -1272,8 +1346,8 @@ function pickEvent(userPool, eventPool, options, numAlive, teams) {
     var victimMin = -numVictim;
     if (multiAttacker || multiVictim) {
       do {
-        if (multiAttacker) numAttacker = weightedRand() + (attackerMin - 1);
-        if (multiVictim) numVictim = weightedRand() + (victimMin - 1);
+        if (multiAttacker) numAttacker = weightedUserRand() + (attackerMin - 1);
+        if (multiVictim) numVictim = weightedUserRand() + (victimMin - 1);
       } while (numAttacker + numVictim > userPool.length);
     }
 
@@ -1291,10 +1365,11 @@ function pickEvent(userPool, eventPool, options, numAlive, teams) {
 
     return eventTry;
   }
-  console.log(
+  common.ERROR(
       "Failed to find suitable event for " + userPool.length + " of " +
-      eventPool.length + " events. This " + numVictim + "/" + numAttacker +
-      "/" + eventEffectsNumMin);
+          eventPool.length + " events. This " + numVictim + "/" + numAttacker +
+          "/" + eventEffectsNumMin,
+      "HG");
   return null;
 }
 // Ensure teammates don't attack eachother.
@@ -1420,11 +1495,30 @@ function makeBattleEvent(effectedUsers, numVictim, numAttacker, mention, id) {
   finalEvent.battle = true;
   finalEvent.state = 0;
   finalEvent.attacks = [];
+
   var userHealth = new Array(effectedUsers.length).fill(0);
   const maxHealth = games[id].options.battleHealth * 1;
   var numAlive = numVictim;
   var duplicateCount = 0;
   var lastAttack = {index: 0, attacker: 0, victim: 0};
+
+  const startMessage =
+      battles.starts[Math.floor(Math.random() * battles.starts.length)];
+  const battleString = "**A battle has broken out!**";
+  var healthText = effectedUsers
+                       .map(function(obj, index) {
+                         return "`" + obj.name + "`: " +
+                             Math.max((maxHealth - userHealth[index]), 0) +
+                             "HP";
+                       })
+                       .sort(function(a, b) { return a.id - b.id; })
+                       .join(", ");
+  finalEvent.attacks.push(
+      makeSingleEvent(
+          battleString + "\n" + startMessage + "\n" + healthText,
+          effectedUsers.slice(0), numVictim, numAttacker, false, id, "nothing",
+          "nothing"));
+
   var loop = 0;
   do {
     loop++;
@@ -1473,7 +1567,8 @@ function makeBattleEvent(effectedUsers, numVictim, numAttacker, mention, id) {
       numAlive--;
     }
 
-    if (lastAttack.id == eventIndex && lastAttack.attacker == attackerIndex &&
+    if (lastAttack.index == eventIndex &&
+        lastAttack.attacker == attackerIndex &&
         lastAttack.victim == victimIndex) {
       duplicateCount++;
     } else {
@@ -1500,7 +1595,7 @@ function makeBattleEvent(effectedUsers, numVictim, numAttacker, mention, id) {
 
     finalEvent.attacks.push(
         makeSingleEvent(
-            "**A battle has broken out!**\n" + messageText + "\n" + healthText,
+            battleString + "\n" + messageText + "\n" + healthText,
             [effectedUsers[victimIndex], effectedUsers[attackerIndex]], 1, 1,
             false, id, "nothing", "nothing"));
 
@@ -1508,12 +1603,43 @@ function makeBattleEvent(effectedUsers, numVictim, numAttacker, mention, id) {
   return finalEvent;
 }
 // Produce a random number that is weighted by multiEventUserDistribution.
-function weightedRand() {
+function weightedUserRand() {
   var i, sum = 0, r = Math.random();
   for (i in multiEventUserDistribution) {
     sum += multiEventUserDistribution[i];
     if (r <= sum) return i * 1;
   }
+}
+// Produce a random event that using weighted probabilites.
+function weightedEvent(eventPool, weightOpt) {
+  const rates = deathRateWeights[weightOpt];
+  var sum = 0;
+  for (var i in eventPool) {
+    if (!eventPool[i]) continue;
+    if (isEventDeadly(eventPool[i])) {
+      sum += rates.kill;
+    } else {
+      sum += rates.nothing;
+    }
+  }
+  const rand = Math.random() * sum;
+  sum = 0;
+  for (var i in eventPool) {
+    if (!eventPool[i]) continue;
+    if (isEventDeadly(eventPool[i])) {
+      sum += rates.kill;
+    } else {
+      sum += rates.nothing;
+    }
+    if (rand <= sum) return i;
+  }
+  throw("BROKEN WEIGHTED EVENT GENERATOR.");
+}
+function isEventDeadly(eventTry) {
+  return eventTry.attacker.outcome == "dies" ||
+      eventTry.victim.outcome == "dies" ||
+      eventTry.attacker.outcome == "wounded" ||
+      eventTry.victim.outcome == "wounded";
 }
 // Format an array of users into names based on options and grammar rules.
 function formatMultiNames(names, mention) {
@@ -1555,7 +1681,7 @@ function makeSingleEvent(
     var deadUsers = games[id]
                         .currentGame.includedUsers
                         .filter(function(obj) { return !obj.living; })
-                        .slice(0, weightedRand());
+                        .slice(0, weightedUserRand());
     if (deadUsers.length == 0) {
       finalMessage = finalMessage.replaceAll("{dead}", "an animal");
     } else {
@@ -1938,6 +2064,8 @@ function printDay(msg, id) {
     client.setTimeout(function() {
       nextDay(msg, id);
     }, games[id].options.delayDays);
+  } else {
+    command.enable("say", msg.channel.id);
   }
 }
 // End a game early.
@@ -1951,6 +2079,8 @@ function endGame(msg, id) {
     games[id].autoPlay = false;
     client.clearInterval(intervals[id]);
     delete intervals[id];
+    delete battleMessage[id];
+    command.enable("say", games[id].outputChannel);
   }
 }
 
@@ -2114,11 +2244,7 @@ function toggleOpt(msg, id) {
         msg, "You must create a game first before editing settings! Use \"" +
             myPrefix + "create\" to create a game.");
   } else if (typeof option === 'undefined' || option.length == 0) {
-    reply(
-        msg, "Here are the current options (delays are in milliseconds):" +
-            JSON.stringify(games[id].options, null, 1)
-                .replace("{", '')
-                .replace("}", ''));
+    showOpts(msg, games[id].options);
   } else if (games[id].currentGame.inProgress) {
     reply(
         msg, "You must end this game before changing settings. Use \"" +
@@ -2131,7 +2257,7 @@ function toggleOpt(msg, id) {
                 .replace("{", '')
                 .replace("}", ''));
   } else {
-    var type = typeof defaultOptions[option];
+    var type = typeof defaultOptions[option].value;
     if (type === 'number') {
       value = Number(value);
       if (typeof value !== 'number') {
@@ -2168,10 +2294,105 @@ function toggleOpt(msg, id) {
           createGame(msg, id, true);
         }
       }
+    } else if (type === 'string') {
+      if (defaultOptions[option].values.lastIndexOf(value) < 0) {
+        reply(
+            msg, "That is not a valid value for " + option +
+                ", which requires one of the following: " +
+                JSON.stringify(defaultOptions[option].values) +
+                ". (Currently " + games[id].options[option] + ")");
+      } else {
+        var old = games[id].options[option];
+        games[id].options[option] = value;
+        reply(
+            msg, "Set " + option + " to " + games[id].options[option] +
+                " from " + old);
+      }
     } else {
-      reply(msg, "Changing the value of this option is not added yet.");
+      reply(
+          msg,
+          "Changing the value of this option is not added yet. (" + type + ")");
     }
   }
+}
+function showOpts(msg, options) {
+  const entries = Object.entries(options);
+
+  var bodyList = entries.map(function(obj) {
+    var key = obj[0];
+    var val = obj[1];
+
+    return key + ": " + val + " (default: " +
+        defaultOptions[key].value + ")\n" + "/* " +
+        defaultOptions[key].comment + " */";
+  });
+
+  var totalLength = 0;
+  var bodyFields = [[]];
+  var fieldIndex = 0;
+  for (var i in bodyList) {
+    if (bodyList[i].length + totalLength > 1500) {
+      fieldIndex++;
+      totalLength = 0;
+      bodyFields[fieldIndex] = [];
+    }
+    totalLength += bodyList[i].length;
+    bodyFields[fieldIndex].push(bodyList[i]);
+  }
+
+  var page = 0;
+  if (msg.optId) page = msg.optId;
+  if (page < 0) page = 0;
+  if (page >= bodyFields.length) page = bodyFields.length - 1;
+
+  var embed = new Discord.RichEmbed();
+  embed.setTitle("Current Options");
+  embed.setFooter("Page " + (page + 1) + " of " + (bodyFields.length));
+  embed.setDescription("```js\n" + bodyFields[page].join("\n\n") + "```");
+  embed.addField(
+      "Change Number Example", myPrefix + "options probabilityOfResurrect 0.1",
+      true);
+  embed.addField(
+      "Change Boolean Example", myPrefix + "options teammatesCollaborate true",
+      true);
+
+  if (optionMessages[msg.id]) {
+    msg.edit(embed).then(msg_ => {
+      msg_.origAuth = msg.origAuth;
+      optChangeListener(msg_, options, page);
+    });
+  } else {
+    msg.channel.send(embed).then(msg_ => {
+      msg_.origAuth = msg.author.id;
+      optChangeListener(msg_, options, page);
+    });
+  }
+}
+
+function optChangeListener(msg_, options, index) {
+  msg_.optId = index;
+  optionMessages[msg_.id] = msg_;
+  msg_.react(emoji.arrow_left).then(_ => {msg_.react(emoji.arrow_right)});
+  msg_.awaitReactions(function(reaction, user) {
+        if (user.id != client.user.id) reaction.remove(user);
+        return (reaction.emoji.name == emoji.arrow_right ||
+                reaction.emoji.name == emoji.arrow_left) /* &&
+            user.id == msg_.origAuth*/ &&
+            user.id != client.user.id;
+      }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
+        if (reactions.size == 0) {
+          msg_.clearReactions();
+          delete optionMessages[msg_.id];
+          return;
+    }
+    var name = reactions.first().emoji.name;
+    if (name == emoji.arrow_right) {
+      msg_.optId++;
+    } else if (name == emoji.arrow_left) {
+      msg_.optId--;
+    }
+    showOpts(msg_, options);
+  });
 }
 
 // Team Management //
@@ -2369,6 +2590,7 @@ function createEvent(msg, id) {
         }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
       if (reactions.size == 0) {
         msg_.clearReactions();
+        delete newEventMessages[msg.id];
         return;
       }
       var eventType = "player";

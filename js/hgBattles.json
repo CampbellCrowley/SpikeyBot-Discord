@@ -1,4 +1,10 @@
 {
+  "starts": [
+    "Punches start being thrown!",
+    "A fight to the death begins!",
+    "This will only end with someone dead.",
+    "A fight between rivals!"
+  ],
   "attacks": [
     {
       "message": "{attacker} punches {victim} in the face!",
@@ -47,6 +53,7 @@
     "{attacker} leave[Vs|] the fight with bruises, {victim} leave[Vs|] the fight dead.",
     "{attacker} [Ahas|have] dominated {victim}.",
     "{attacker} [Ais|are] clearly better than {victim}.",
-    "{attacker} start[As|] t-bagging {victim}."
+    "{attacker} start[As|] t-bagging {victim}.",
+    "{victim} bleed[Vs|] to death as {attacker} walk[As|] away."
   ]
 }

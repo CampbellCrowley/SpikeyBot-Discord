@@ -338,6 +338,51 @@
   ],
   "player": [
     {
+      "message": "{attacker} find[As|] a gym and lift[As|] weights.",
+      "attacker": { "count": "-1", "outcome": "nothing" },
+      "victim": { "count": "0", "outcome": "nothing" }
+    },
+    {
+      "message": "{attacker} cut[As|] down a tree for firewood.",
+      "attacker": { "count": "-1", "outcome": "nothing" },
+      "victim": { "count": "0", "outcome": "nothing" }
+    },
+    {
+      "message": "{attacker} become[As|] drunk from partying too hard with {victim}.",
+      "attacker": { "count": "-1", "outcome": "nothing" },
+      "victim": { "count": "-1", "outcome": "nothing" }
+    },
+    {
+      "message": "{attacker} laughs at their own jokes.",
+      "attacker": { "count": "1", "outcome": "nothing" },
+      "victim": { "count": "0", "outcome": "nothing" }
+    },
+    {
+      "message": "{attacker} wish[Aes|] they had memes.",
+      "attacker": { "count": "-1", "outcome": "nothing" },
+      "victim": { "count": "0", "outcome": "nothing" }
+    },
+    {
+      "message": "{attacker} find[As|] a taco.",
+      "attacker": { "count": "-1", "outcome": "thrives" },
+      "victim": { "count": "0", "outcome": "nothing" }
+    },
+    {
+      "message": "{attacker} startle[As|] {victim} while they're taking a dump.",
+      "attacker": { "count": "-1", "outcome": "nothing" },
+      "victim": { "count": "-1", "outcome": "nothing" }
+    },
+    {
+      "message": "{attacker} listen[As|] to music on a radio they found.",
+      "attacker": { "count": "-1", "outcome": "thrives" },
+      "victim": { "count": "0", "outcome": "nothing" }
+    },
+    {
+      "message": "{attacker} get[As|] a laptop from a sponsor.",
+      "attacker": { "count": "-1", "outcome": "thrives" },
+      "victim": { "count": "0", "outcome": "nothing" }
+    },
+    {
       "message": "{attacker} stab[As|] {victim} to death!",
       "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }

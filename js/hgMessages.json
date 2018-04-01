@@ -4,13 +4,19 @@
     "The sun rises on day {}.",
     "Prepare for day {}, it is here!",
     "Day {} is upon us!",
+    "Light has returned to the arena. Day {} has begun.",
+    "Good morning! Try to survive day {}.",
+    "Day {}. Another day, another chance to die.",
     "Beware, day {}..."
   ],
   "dayEnd": [
     "Day {day} has ended with {alive} alive!",
     "{alive} have survived to see the end of day {day}.",
     "{alive} people survived day {day}.",
-    "Day {day} was nice to {alive} people.",
+    "Day {day} was kind to only {alive} people.",
+    "Day {day} sets its sun on {alive} people.",
+    "Only {alive} see the end of day {day}.",
+    "{alive} survived day {day}'s events.",
     "The sun of day {day} has set on the {alive} remaining."
   ],
   "gameStart": [
@@ -24,13 +30,20 @@
     "THE BLOOD IS EVERYWHERE!",
     "Now the fun begins...",
     "The blood is coming...",
-    "Beware, blood will be spilt."
+    "Who wants blood?",
+    "I've prepared a bath for you. A bloodbath!",
+    "The dirt will be soaked in blood.",
+    "This is only the begininng...",
+    "Beware, blood will be spilt.",
+    "Beware, blood will be spilled."
   ],
   "bloodbathEnd": [
     "Bloodbath has ended.",
     "Now, the game has begun.",
     "Blood has been spilt.",
     "The day has only just begun.",
+    "The bloodbath may have ended, but the games have only just begun!",
+    "The end of the bloodbath only marks a new beginning.",
     "The end is still nowhere in sight."
   ],
   "eventStart": [
@@ -85,7 +98,7 @@
     "So, I was told that it's okay not to kill people sometimes.",
     "I called in sick today, and my replacement couldn't bring himself to kill anyone today, sorry! #blamerohan",
     "I just looked into the future, and all of you are surprisingly good at surviving...",
-    "I fully apologize in advance or today.",
+    "I fully apologize in advance for today.",
     "I would say today is my fault, but I think Kyp should take the blame.",
     "Nobody? How? This is the Games? People survive this?",
     "All of you living, are pansies! Go kill someone!",
@@ -119,6 +132,7 @@
     "{victim} manage[Vs|] to patch their wounds.",
     "{victim} recover[Vs|].",
     "{victim} manage[Vs|] to live another day.",
+    "{victim} repair[Vs|] themsel[Vf|ves].",
     "{victim}'s prayers are answered, and their wounds have miraculously been healed."
   ],
   "bleedOut": [

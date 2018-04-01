@@ -39,6 +39,8 @@ const blockedmessage =
     "I couldn't send you a message, you probably blocked me :(";
 const onlyservermessage = "This command only works in servers, sorry!";
 const addmessage = "Want to add me to your server? Click this link:";
+const disabledcommandmessage =
+    "This command has been disabled in this channel.";
 const addLink =
     "https://discordapp.com/oauth2/authorize?&client_id=318552464356016131&scope=bot";
 const banMsgs = [
@@ -85,11 +87,16 @@ common.begin();
 // Command event management.
 function Command() {
   var cmds = {};
+  var blacklist = {};
   this.trigger = function(cmd, msg) {
     if (cmd.startsWith(prefix)) cmd = cmd.replace(prefix, '');
     if (cmds[cmd]) {
       if (cmds[cmd].validOnlyOnServer && msg.guild == null) {
         reply(msg, onlyservermessage);
+        return true;
+      } else if (
+          blacklist[cmd] && blacklist[cmd].lastIndexOf(msg.channel.id) > -1) {
+        reply(msg, disabledcommandmessage);
         return true;
       }
       try {
@@ -124,10 +131,41 @@ function Command() {
   this.deleteEvent = function(cmd) {
     if (cmds[cmd]) {
       delete cmds[cmd];
+      delete blacklist[cmd];
     } else {
       common.ERROR(
           "Requested deletion of event handler for event that was never registered! (" +
           cmd + ")");
+    }
+  };
+  this.disable = function (cmd, channel) {
+    if (cmds[cmd]) {
+      if (!blacklist[cmd] || blacklist[cmd].lastIndexOf(channel) == -1) {
+        if (!blacklist[cmd]) blacklist[cmd] = [channel];
+        else blacklist[cmd].push(channel);
+        /* } else {
+          common.ERROR(
+              "Requested disable of command that is already disabled! (" + cmd +
+              ")"); */
+      }
+    } else {
+      common.ERROR(
+          "Requested disable for event that was never registered! (" + cmd +
+          ")");
+    }
+  };
+  this.enable = function (cmd, channel) {
+    if (blacklist[cmd]) {
+      var index = blacklist[cmd].lastIndexOf(channel);
+      if (index > -1) {
+        blacklist[cmd].splice(index, 1);
+      } else {
+        common.ERROR(
+            "Requested enable of event that is enabled! (" + cmd + ")");
+      }
+    } else {
+      common.ERROR(
+          "Requested enable for event that is not disabled! (" + cmd + ")");
     }
   };
 }
@@ -238,7 +276,7 @@ client.on('ready', _ => {
   common.LOG(`Logged in as ${client.user.tag}!`);
   updategame(password, prefix + 'help for help');
   client.fetchUser(spikeyId).then(user => {user.send("I just rebooted (JS)")});
-  common.LOG("Initializing submodules...");
+  // common.LOG("Initializing submodules...");
   try {
     HGames.begin(prefix, Discord, client, command, common);
   } catch(err) {
