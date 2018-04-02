@@ -1138,7 +1138,7 @@
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
-      "message": "{victim} run[As|] into a cave to escape {attacker}, but end[Vs|] up trapped and [Ais|are] killed.",
+      "message": "{victim} run[Vs|] into a cave to escape {attacker}, but end[Vs|] up trapped and [Vis|are] killed.",
       "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
     },

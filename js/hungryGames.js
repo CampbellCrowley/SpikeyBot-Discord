@@ -1074,7 +1074,7 @@ function nextDay(msg, id) {
   }
 
   const deathRate = games[id].currentGame.day.num == 0 ?
-      games[id].options.bloodBathDeathRate :
+      games[id].options.bloodbathDeathRate :
       games[id].options.playerDeathRate;
 
   var loop = 0;
@@ -1286,14 +1286,14 @@ function nextDay(msg, id) {
             games[id].options.mentionAll, id, "dies", "nothing"));
   }
 
-  var deathRate = 1 - (games[id].currentGame.numAlive / startingAlive);
-  if (deathRate > lotsOfDeathRate) {
+  var deathPercentage = 1 - (games[id].currentGame.numAlive / startingAlive);
+  if (deathPercentage > lotsOfDeathRate) {
     games[id].currentGame.day.events.splice(
         0, 0, makeMessageEvent(getMessage("lotsOfDeath"), id));
-  } else if (deathRate == 0) {
+  } else if (deathPercentage == 0) {
     games[id].currentGame.day.events.splice(
         0, 0, makeMessageEvent(getMessage("noDeath"), id));
-  } else if (deathRate < littleDeathRate) {
+  } else if (deathPercentage < littleDeathRate) {
     games[id].currentGame.day.events.splice(
         0, 0, makeMessageEvent(getMessage("littleDeath"), id));
   }
@@ -1580,14 +1580,15 @@ function makeBattleEvent(effectedUsers, numVictim, numAttacker, mention, id) {
       victim: victimIndex
     };
 
-    const healthText = effectedUsers
-                           .map(function(obj, index) {
-                             return "`" + obj.name + "`: " +
-                                 Math.max((maxHealth - userHealth[index]), 0) +
-                                 "HP";
-                           })
-                           .sort(function(a, b) { return a.id - b.id; })
-                           .join(", ");
+    const healthText =
+        effectedUsers
+            .map(function(obj, index) {
+              const health = Math.max((maxHealth - userHealth[index]), 0);
+              const prePost = health == 0 ? "~~" : "";
+              return prePost + "`" + obj.name + "`: " + health + "HP" + prePost;
+            })
+            .sort(function(a, b) { return a.id - b.id; })
+            .join(", ");
     var messageText = eventTry.message;
     if (duplicateCount > 0) {
       messageText += " x" + (duplicateCount + 1);
@@ -1596,8 +1597,11 @@ function makeBattleEvent(effectedUsers, numVictim, numAttacker, mention, id) {
     finalEvent.attacks.push(
         makeSingleEvent(
             battleString + "\n" + messageText + "\n" + healthText,
-            [effectedUsers[victimIndex], effectedUsers[attackerIndex]], 1, 1,
-            false, id, "nothing", "nothing"));
+            [
+              effectedUsers[flipRoles ? attackerIndex : victimIndex],
+              effectedUsers[flipRoles ? victimIndex : attackerIndex]
+            ],
+            1, 1, false, id, "nothing", "nothing"));
 
   } while(numAlive > 0);
   return finalEvent;

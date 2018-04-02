@@ -50,7 +50,7 @@
   "outcomes": [
     "{attacker} [Ahas|have] won the battle against {victim}!",
     "{attacker} [Ahas|have] survived the fight with {victim}.",
-    "{attacker} leave[Vs|] the fight with bruises, {victim} leave[Vs|] the fight dead.",
+    "{attacker} leave[As|] the fight with bruises, {victim} leave[Vs|] the fight dead.",
     "{attacker} [Ahas|have] dominated {victim}.",
     "{attacker} [Ais|are] clearly better than {victim}.",
     "{attacker} start[As|] t-bagging {victim}.",
