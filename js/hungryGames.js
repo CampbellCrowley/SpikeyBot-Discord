@@ -8,10 +8,16 @@ const eventFile = 'hgEvents.json';
 const messageFile = 'hgMessages.json';
 const battleFile = 'hgBattles.json';
 
+const fistLeft = "fist_left.png";
+const fistRight = "fist_right.png";
+const fistBoth = "fist_both.png";
+
 // The size of the icon to show for each event.
-const iconSize = 48;
+const iconSize = 64;
+// The size of the icon to show for each battle event.
+const battleIconSize = 32;
 // The size of the user icons to show for the victors.
-const victorIconSize = 64;
+const victorIconSize = 80;
 // The size of the icon to request from discord.
 const fetchSize = 64;
 // Pixels between each icon
@@ -128,7 +134,7 @@ const defaultOptions = {
 const lotsOfDeathRate = 0.75;
 // If a lower percentage of people die in one day than this value, then show a
 // relevant message.
-const littleDeathRate = 0.25;
+const littleDeathRate = 0.15;
 
 // Default color to choose for embedded messages.
 const defaultColor = [200, 125, 0];
@@ -981,7 +987,8 @@ function startAutoplay(msg, id) {
           "<@" + msg.author.id + "> `Autoplay is enabled, type \"" + myPrefix +
           "start\" to begin!`"); */
       msg.channel.send(
-          "<@" + msg.author.id + "> `Autoplay is enabled, Starting the games!`");
+          "<@" + msg.author.id +
+          "> `Autoplay is enabled. Starting the games!`");
       startGame(msg, id);
     } else {
       msg.channel.send("<@" + msg.author.id + "> `Enabling autoplay!`");
@@ -1214,16 +1221,25 @@ function nextDay(msg, id) {
           break;
       }
     }
+
+    var finalEvent = eventTry;
     if (doBattle) {
-      games[id].currentGame.day.events.push(eventTry);
       effectedUsers = [];
     } else {
-      games[id].currentGame.day.events.push(
-          makeSingleEvent(
-              eventTry.message, effectedUsers, numVictim, numAttacker,
-              games[id].options.mentionAll, id, eventTry.victim.outcome,
-              eventTry.attacker.outcome));
+      finalEvent = makeSingleEvent(
+          eventTry.message, effectedUsers, numVictim, numAttacker,
+          games[id].options.mentionAll, id, eventTry.victim.outcome,
+          eventTry.attacker.outcome);
     }
+    if (eventTry.attacker.killer && eventTry.victim.killer) {
+      finalEvent.icons.splice(numVictim, 0, {url: fistBoth});
+    } else if (eventTry.attacker.killer) {
+      finalEvent.icons.splice(numVictim, 0, {url: fistRight});
+    } else if (eventTry.victim.killer) {
+      finalEvent.icons.splice(numVictim, 0, {url: fistLeft});
+    }
+    games[id].currentGame.day.events.push(finalEvent);
+
     if (effectedUsers.length != 0) {
       console.log("Effected users remain! " + effectedUsers.length);
     }
@@ -1492,6 +1508,7 @@ function makeBattleEvent(effectedUsers, numVictim, numAttacker, mention, id) {
   var finalEvent = makeSingleEvent(
       outcomeMessage, effectedUsers.slice(0), numVictim, numAttacker, mention,
       id, "dies", "nothing");
+  finalEvent.attacker.killer = true;
   finalEvent.battle = true;
   finalEvent.state = 0;
   finalEvent.attacks = [];
@@ -1558,10 +1575,13 @@ function makeBattleEvent(effectedUsers, numVictim, numAttacker, mention, id) {
       }
     }
 
-    userHealth[victimIndex] +=
+    const victimDamage =
         (flipRoles ? eventTry.attacker.damage : eventTry.victim.damage);
-    userHealth[attackerIndex] +=
+    const attackerDamage =
         (!flipRoles ? eventTry.attacker.damage : eventTry.victim.damage);
+
+    userHealth[victimIndex] += victimDamage;
+    userHealth[attackerIndex] += attackerDamage;
 
     if (userHealth[victimIndex] >= maxHealth) {
       numAlive--;
@@ -1594,14 +1614,25 @@ function makeBattleEvent(effectedUsers, numVictim, numAttacker, mention, id) {
       messageText += " x" + (duplicateCount + 1);
     }
 
-    finalEvent.attacks.push(
-        makeSingleEvent(
-            battleString + "\n" + messageText + "\n" + healthText,
-            [
-              effectedUsers[flipRoles ? attackerIndex : victimIndex],
-              effectedUsers[flipRoles ? victimIndex : attackerIndex]
-            ],
-            1, 1, false, id, "nothing", "nothing"));
+    var newEvent = makeSingleEvent(
+        battleString + "\n" + messageText + "\n" + healthText,
+        [
+          effectedUsers[flipRoles ? attackerIndex : victimIndex],
+          effectedUsers[flipRoles ? victimIndex : attackerIndex]
+        ],
+        1, 1, false, id,
+        !flipRoles && userHealth[victimIndex] >= maxHealth ? "dies" : "nothing",
+        flipRoles && userHealth[victimIndex] >= maxHealth ? "dies" : "nothing");
+
+    if (victimDamage && attackerDamage) {
+      newEvent.icons.splice(1, 0, {url: fistBoth});
+    } else if (attackerDamage) {
+      newEvent.icons.splice(1, 0, {url: flipRoles ? fistLeft : fistRight});
+    } else if (victimDamage) {
+      newEvent.icons.splice(1, 0, {url: flipRoles ? fistRight : fistLeft});
+    }
+
+    finalEvent.attacks.push(newEvent);
 
   } while(numAlive > 0);
   return finalEvent;
@@ -1723,12 +1754,76 @@ function printEvent(msg, id) {
   } else if (
       events[index].battle &&
       events[index].state < events[index].attacks.length) {
-    var battleState = events[index].state;
-    if (!battleMessage[id]) {
-      msg.channel.send(events[index].attacks[battleState].message)
-          .then(msg_ => { battleMessage[id] = msg_; });
+    const battleState = events[index].state;
+    var embed = new Discord.RichEmbed();
+    const message = events[index].attacks[battleState].message.split('\n');
+    embed.addField(message[1], message[2]);
+    embed.setColor([50, 0, 0]);
+
+    if (events[index].attacks[battleState].icons.length == 0) {
+      // Send without image.
+      if (!battleMessage[id]) {
+        msg.channel.send(message[0], embed).then(msg_ => {
+          battleMessage[id] = msg_;
+        });
+      } else {
+        battleMessage[id].edit(message[0], embed);
+      }
     } else {
-      battleMessage[id].edit(events[index].attacks[battleState].message);
+      // Create image, then send.
+      var finalImage = new jimp(
+          events[index].attacks[battleState].icons.length *
+                  (battleIconSize + iconGap) -
+              iconGap,
+          battleIconSize + iconGap);
+      var responses = 0;
+      newImage = function(image, outcome, placement) {
+        image.resize(battleIconSize, battleIconSize);
+        if (outcome == "dies") {
+          finalImage.blit(
+              new jimp(battleIconSize, iconGap, 0xFF0000FF),
+              placement * (battleIconSize + iconGap), battleIconSize);
+        } else if (outcome == "wounded") {
+          finalImage.blit(
+              new jimp(battleIconSize, iconGap, 0xFFFF00FF),
+              placement * (battleIconSize + iconGap), battleIconSize);
+        }
+        finalImage.blit(image, placement * (battleIconSize + iconGap), 0);
+        responses++;
+        if (responses == events[index].attacks[battleState].icons.length) {
+          finalImage.getBuffer(jimp.MIME_PNG, function(err, out) {
+            // Attach file, then send.
+            embed.attachFile(new Discord.Attachment(out));
+            // if (!battleMessage[id]) {
+              msg.channel.send(message[0], embed).then(msg_ => {
+                battleMessage[id] = msg_;
+              });
+            // } else {
+            //   battleMessage[id].edit(message[0], embed);
+            // }
+          });
+        }
+      };
+      var numNonUser = 0;
+      for (var i = 0; i < events[index].attacks[battleState].icons.length;
+           i++) {
+        var outcome = events[index].attacks[battleState].victim.outcome;
+        if (!events[index].attacks[battleState].icons[i].id) {
+          numNonUser++;
+          outcome = "nothing";
+        } else if (
+            i >= events[index].attacks[battleState].numVictim + numNonUser) {
+          outcome = events[index].attacks[battleState].attacker.outcome;
+        }
+        jimp.read(events[index].attacks[battleState].icons[i].url)
+            .then(function(outcome, placement) {
+              return function(image) { newImage(image, outcome, placement); };
+            }(outcome, i))
+            .catch(function(err) {
+              console.log(err);
+              responses++;
+            });
+      }
     }
     events[index].state++;
   } else {
@@ -1736,6 +1831,9 @@ function printEvent(msg, id) {
     if (events[index].icons.length == 0) {
       msg.channel.send(events[index].message);
     } else {
+      var embed = new Discord.RichEmbed();
+      embed.setDescription(events[index].message);
+      embed.setColor([125, 0, 0]);
       var finalImage = new jimp(
           events[index].icons.length * (iconSize + iconGap) - iconGap,
           iconSize + iconGap);
@@ -1755,21 +1853,24 @@ function printEvent(msg, id) {
         responses++;
         if (responses == events[index].icons.length) {
           finalImage.getBuffer(jimp.MIME_PNG, function(err, out) {
-            msg.channel.send(
-                events[index].message, new Discord.Attachment(out));
+            embed.attachFile(new Discord.Attachment(out));
+            msg.channel.send(embed);
           });
         }
       };
+      var numNonUser = 0;
       for (var i = 0; i < events[index].icons.length; i++) {
+        var outcome = events[index].victim.outcome;
+        if (!events[index].icons[i].id) {
+          numNonUser++;
+          outcome = "nothing";
+        } else if (i >= events[index].numVictim + numNonUser) {
+          outcome = events[index].attacker.outcome;
+        }
         jimp.read(events[index].icons[i].url)
-            .then(
-                function(outcome, placement) {
-                  return function(image) {
-                    newImage(image, outcome, placement);
-                  }
-                }(i < events[index].numVictim ? events[index].victim.outcome :
-                                                events[index].attacker.outcome,
-                  i))
+            .then(function(outcome, placement) {
+              return function(image) { newImage(image, outcome, placement); }
+            }(outcome, events[index].icons.length - i - 1))
             .catch(function(err) {
               console.log(err);
               responses++;
