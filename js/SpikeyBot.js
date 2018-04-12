@@ -6,7 +6,10 @@ const ytinfo = require('ytdl-getinfo');
 const ytdl = require('youtube-dl');
 const math = require('mathjs');
 const vm = require('vm');
+const jimp = require('jimp');
 const client = new Discord.Client();
+
+math.config({matrix: "Array"});
 
 var HGames;
 try {
@@ -77,6 +80,11 @@ const helpmessage =
   prefix + "flip // I have an unlimited supply of coins! I will flip one for you!\n" +
   prefix + "avatar 'mention' // Need a better look at your profile pic? I'll show you the original\n" +
   prefix + "ping 'mention' // Want to know just how laggy someone is? I tell you the pingas!\n" +
+"=== Math Stuff ===\n" +
+  prefix + "add 'numbers' // Add positive or negative numbers separated by spaces.\n" +
+  prefix + "simplify 'equation' // Simplify an equation with numbers and variables.\n" +
+  prefix + "evaluate 'problem' // Solve a math problem, and convert units.\n" +
+  prefix + "derive 'equation with x' // Find dy/dx of an equation.\n" +
 "=== Admin Stuff ===\n" +
   prefix + "purge 'number' // Remove a number of messages from the current text channel!\n" +
   prefix + "fuckyou/" + prefix + "ban 'mention' // I will ban the person you mention with a flashy message!\n" +
@@ -324,6 +332,11 @@ client.on('message', msg => {
   }
   if (msg.author.bot) return;
 
+  const regexForm = new RegExp("^[yY]\\s*=");
+  if (msg.content.match(regexForm)) {
+    msg.content = "?graph " + msg.content;
+  }
+
   if (msg.guild === null && !msg.content.startsWith(prefix)) {
     msg.content = prefix + msg.content;
   }
@@ -444,20 +457,23 @@ command.on('add', msg => {
 command.on('simplify', msg => {
   try {
     var formula = msg.content.replace(prefix + 'simplify', '');
-    if (formula.indexOf('=') > -1) {
-      var split = formula.split('=');
-      formula = split[1] + " - (" + split[0] + ")";
-    }
-    var simplified = math.simplify(formula).toString();
-    simplified = simplified.replace(/ \* ([A-Za-z])/g, "$1");
-    reply(msg, simplified);
+    reply(msg, simplify(formula));
   } catch(err) {
     reply(msg, err.message);
   }
 });
-command.on('eval', msg => {
+function simplify(formula) {
+  if (formula.indexOf('=') > -1) {
+    var split = formula.split('=');
+    formula = split[1] + " - (" + split[0] + ")";
+  }
+  var simplified = math.simplify(formula).toString();
+  return simplified.replace(/ \* ([A-Za-z])/g, "$1");
+}
+command.on(['eval', 'evaluate'], msg => {
   try {
-    var forumla = msg.content.replace(prefix + 'eval', '');
+    var formula = msg.content.replace(prefix + 'eval', '')
+                      .replace(prefix + 'evaluate', '');
     if (formula.indexOf('=') > -1) {
       var split = formula.split('=');
       formula = split[1] + " - (" + split[0] + ")";
@@ -468,6 +484,107 @@ command.on('eval', msg => {
   } catch(err) {
     reply(msg, err.message);
   }
+});
+
+command.on('graph', msg => {
+  const graphSize = 200;
+  const dotSize = 2;
+  var xVal, yVal, ypVal, domainMin, domainMax, rangeMin, rangeMax;
+  var cmd = msg.content.replace(prefix + "graph", "");
+  var expression = cmd.replace(/\[.*\]|\n/gm, '');
+  try {
+    var expr = math.compile(expression);
+    var domainTemp = cmd.match(/\[([^,]*),([^\]]*)\]/m);
+    var rangeTemp = cmd.match(/\[[^\]]*\][^\[]*\[([^,]*),([^\]]*)\]/m);
+    if (domainTemp !== null && domainTemp.length == 3) {
+      domainMin = math.eval(domainTemp[1]);
+      domainMax = math.eval(domainTemp[2]);
+    } else {
+      domainMin = -10;
+      domainMax = 10;
+    }
+    if (rangeTemp !== null && rangeTemp.length == 3) {
+      rangeMin = math.eval(rangeTemp[1]);
+      rangeMax = math.eval(rangeTemp[2]);
+    }
+    xVal = math.range(
+        domainMin, domainMax, (domainMax - domainMin) / graphSize / dotSize);
+    yVal = xVal.map(function(x) { return expr.eval({x: x}); });
+    try {
+      var formula = expression;
+      if (formula.indexOf('=') > -1) {
+        var split = formula.split('=');
+        formula = split[1] + " - (" + split[0] + ")";
+      }
+      var exprSlope = math.derivative(formula, 'x');
+      ypVal = xVal.map(function(x) { return exprSlope.eval({x: x}); });
+    } catch (err) {
+      console.log(err);
+      msg.channel.send("Failed to derive. ");
+      ypVal = xVal.map(function(x) { return 1; });
+    }
+  } catch(err) {
+    reply(msg, err.message);
+    return;
+  }
+  var finalImage = new jimp(graphSize, graphSize, 0xFFFFFFFF);
+  var minY = 0;
+  var maxY = 0;
+  if (typeof rangeMin === 'undefined') {
+    yVal.forEach(function(obj) {
+      if (minY > obj) minY = obj;
+      if (maxY < obj) maxY = obj;
+    });
+  } else {
+    minY = rangeMin;
+    maxY = rangeMax;
+  }
+  var zeroY = Math.round(-minY / (maxY - minY) * graphSize);
+  var zeroX = Math.round(-domainMin / (domainMax - domainMin) * graphSize);
+  finalImage.blit(new jimp(dotSize, graphSize, 0xDDDDDDFF), zeroX, 0);
+  finalImage.blit(
+      new jimp(graphSize, dotSize, 0xDDDDDDFF), 0, graphSize - zeroY);
+
+  var lastSlope;
+  var turningPoints = [];
+  for (var i = 0; i < xVal.length; i++) {
+    const y =
+        graphSize - Math.round((yVal[i] - minY) / (maxY - minY) * graphSize);
+    if (y >= graphSize || y < 0) continue;
+    var myColor = 0x000000FF;
+    mySize = dotSize;
+    if ((lastSlope < 0 && ypVal[i] >= 0) || (lastSlope > 0 && ypVal[i] <= 0)) {
+      myColor = 0xFF0000FF;
+      turningPoints.push({x: xVal[i], y: yVal[i]});
+      mySize = dotSize * 2;
+    }
+    lastSlope = ypVal[i];
+    finalImage.blit(
+        new jimp(mySize, mySize, myColor), i / xVal.length * graphSize, y);
+  }
+  var expMatch = expression.match(/^\s?[yY]\s*=(.*)/);
+  if (!expMatch) {
+    expression = "y = " + simplify(expression);
+  } else {
+    expression = "y = " + simplify(expMatch[1]);
+  }
+  finalImage.getBuffer(jimp.MIME_PNG, function(err, out) {
+    var embed = new Discord.RichEmbed();
+    embed.setTitle("Graph of " + expression);
+    embed.setDescription(
+        "Plot Domain: [" + domainMin + ", " + domainMax + "]\nPlot Range: [" +
+        minY + ", " + maxY + "]");
+    embed.attachFile(new Discord.Attachment(out, "graph.png"));
+    if (turningPoints.length > 0) {
+      embed.addField(
+          "Approximate Turning Points",
+          turningPoints
+              .map(function(obj) { return "(" + obj.x + ", " + obj.y + ")"; })
+              .join('\n'),
+          false);
+    }
+    msg.channel.send(embed);
+  });
 });
 command.on('derive', msg => {
   try {
@@ -799,6 +916,14 @@ command.on('smite', msg => {
     }
   }
 }, true);
+command.on('kokomo', msg => {
+  msg.content = "?play kokomo";
+  command.trigger('play', msg);
+});
+command.on('vi', msg => {
+  msg.content = "?play vi rap";
+  command.trigger('play', msg);
+});
 command.on('play', msg => {
   if (msg.member.voiceChannel === null) {
     reply(msg, "You aren't in a voice channel!");
@@ -842,7 +967,7 @@ command.on(['leave', 'stop', 'stfu'], msg => {
     shouldReply = false;
   }
   msg.guild.fetchMember(client.user).then(me => {
-    if (me.voiceChannel !== null) {
+    if (typeof me.voiceChannel !== 'undefined') {
       me.voiceChannel.leave();
       if (shouldReply) reply(msg, "Goodbye!");
     } else {
