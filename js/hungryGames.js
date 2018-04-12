@@ -1090,7 +1090,8 @@ function nextDay(msg, id) {
     var effectedUsers;
     var numAttacker, numVictim;
     var doBattle = !doArenaEvent && userPool.length > 1 &&
-        Math.random() < games[id].options.probabilityOfBattle &&
+        (Math.random() < games[id].options.probabilityOfBattle ||
+         games[id].currentGame.numAlive == 2) &&
         validateEventRequirements(
             1, 1, userPool, games[id].currentGame.numAlive,
             games[id].currentGame.teams, games[id].options, true, false);
@@ -1231,13 +1232,13 @@ function nextDay(msg, id) {
           games[id].options.mentionAll, id, eventTry.victim.outcome,
           eventTry.attacker.outcome);
     }
-    if (eventTry.attacker.killer && eventTry.victim.killer) {
+    /* if (eventTry.attacker.killer && eventTry.victim.killer) {
       finalEvent.icons.splice(numVictim, 0, {url: fistBoth});
     } else if (eventTry.attacker.killer) {
       finalEvent.icons.splice(numVictim, 0, {url: fistRight});
     } else if (eventTry.victim.killer) {
       finalEvent.icons.splice(numVictim, 0, {url: fistLeft});
-    }
+    } */
     games[id].currentGame.day.events.push(finalEvent);
 
     if (effectedUsers.length != 0) {
@@ -1517,7 +1518,7 @@ function makeBattleEvent(effectedUsers, numVictim, numAttacker, mention, id) {
   const maxHealth = games[id].options.battleHealth * 1;
   var numAlive = numVictim;
   var duplicateCount = 0;
-  var lastAttack = {index: 0, attacker: 0, victim: 0};
+  var lastAttack = {index: 0, attacker: 0, victim: 0, flipRoles: false};
 
   const startMessage =
       battles.starts[Math.floor(Math.random() * battles.starts.length)];
@@ -1589,7 +1590,7 @@ function makeBattleEvent(effectedUsers, numVictim, numAttacker, mention, id) {
 
     if (lastAttack.index == eventIndex &&
         lastAttack.attacker == attackerIndex &&
-        lastAttack.victim == victimIndex) {
+        lastAttack.victim == victimIndex && lastAttack.flipRoles == flipRoles) {
       duplicateCount++;
     } else {
       duplicateCount = 0;
@@ -1597,7 +1598,8 @@ function makeBattleEvent(effectedUsers, numVictim, numAttacker, mention, id) {
     lastAttack = {
       index: eventIndex,
       attacker: attackerIndex,
-      victim: victimIndex
+      victim: victimIndex,
+      flipRoles: flipRoles
     };
 
     const healthText =
@@ -3309,14 +3311,21 @@ function exit(code) {
 function sigint() {
   if (common && common.LOG) common.LOG("Caught SIGINT!", "HG");
   if (initialized) {
-    exports.save();
+    try {
+      exports.save();
+    } catch (err) {
+      common.ERROR("FAILED TO SAVE ON SIGINT" + err, "HG");
+    }
   }
   try { exports.end(); } catch (err) { }
+  process.removeListener('exit', exit);
+  process.exit();
 }
 
 // Catch reasons for exiting normally.
 process.on('exit', exit);
 process.on('SIGINT', sigint);
+process.on('SIGHUP', sigint);
 
 process.on('unhandledRejection', function(reason, p) {
   // console.log('Unhandled Rejection at:\n', p /*, '\nreason:', reason*/);

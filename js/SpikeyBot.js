@@ -4,6 +4,8 @@ const common = require('/var/www/html/common.js');
 const dateFormat = require('dateformat');
 const ytinfo = require('ytdl-getinfo');
 const ytdl = require('youtube-dl');
+const math = require('mathjs');
+const vm = require('vm');
 const client = new Discord.Client();
 
 var HGames;
@@ -28,6 +30,7 @@ var prevUserSayId = "";
 var prevUserSayCnt = 0;
 
 var reactToAnthony = true;
+var timers = [];
 
 const introduction = "\nHello! My name is SpikeyBot.\n" +
     "I was created by SpikeyRobot#9836, so if you wish to add any features, feel free to PM him! (Tip: Use **" +
@@ -91,7 +94,7 @@ function Command() {
   this.trigger = function(cmd, msg) {
     if (cmd.startsWith(prefix)) cmd = cmd.replace(prefix, '');
     if (cmds[cmd]) {
-      if (cmds[cmd].validOnlyOnServer && msg.guild == null) {
+      if (cmds[cmd].validOnlyOnServer && msg.guild === null) {
         reply(msg, onlyservermessage);
         return true;
       } else if (
@@ -193,7 +196,7 @@ function mention(msg) {
 // Replies to the author and channel of msg with the given message.
 function reply(msg, text, post) {
   post = post || "";
-  return msg.channel.send(`${mention(msg)}\n\`\`\`\n${text}\n\`\`\`${post}`);
+  return msg.channel.send(mention(msg) + "\n```\n" + text + "\n```" + post);
 }
 
 // Format the info response from ytdl into a human readable format.
@@ -237,7 +240,7 @@ function startPlaying(broadcast) {
   if (!broadcast || broadcast.isPlaying || broadcast.isLoading) {
     return;
   }
-  if (broadcast.queue.length == 0) {
+  if (broadcast.queue.length === 0) {
     command.trigger('stop', broadcast.current.request);
     broadcast.current.request.channel.send(
         "Queue is empty!\n```\nSee you later!\n```");
@@ -259,7 +262,7 @@ function startPlaying(broadcast) {
   } else {
     reply(broadcast.current.request, "Playing next song");
   }
-};
+}
 // Triggered when a song has finished playing.
 function endSong(broadcast) {
   if (broadcast.isLoading) return;
@@ -275,13 +278,14 @@ function skipSong(broadcast) {
 client.on('ready', _ => {
   common.LOG(`Logged in as ${client.user.tag}!`);
   updategame(password, prefix + 'help for help');
-  client.fetchUser(spikeyId).then(user => {user.send("I just rebooted (JS)")});
+  client.fetchUser(spikeyId).then(
+      user => { user.send("I just rebooted (JS)"); });
   // common.LOG("Initializing submodules...");
   try {
     HGames.begin(prefix, Discord, client, command, common);
   } catch(err) {
     client.fetchUser(spikeyId).then(
-        user => {user.send("Failed to initialize HungryGames")});
+        user => { user.send("Failed to initialize HungryGames"); });
     console.log(err);
   }
   fs.readFile('reboot.dat', function(err, file) {
@@ -294,28 +298,49 @@ client.on('ready', _ => {
           .catch(_ => {});
 
     if (msg.noReactToAnthony) reactToAnthony = false;
+
+    setTimer = function(timer) {
+      timers.push(timer);
+      return function() {
+        client.fetchUser(timer.id).then(user => {
+          user.send(timer.message);
+          timers =
+              timers.filter(function(obj) { return obj.time > Date.now(); });
+        });
+      };
+    };
+
+    const now = Date.now();
+    for (var i in msg.timers) {
+      client.setTimeout(setTimer(msg.timers[i]), msg.timers[i].time - now);
+    }
   });
 });
 
 client.on('message', msg => {
   if (msg.author.id == client.user.id) return;
+  if (msg.content.endsWith(", I'm Dad!")) {
+    msg.channel.send("Hi Dad, I'm Spikey!");
+  }
   if (msg.author.bot) return;
 
-  if (msg.guild == null && !msg.content.startsWith(prefix)) {
+  if (msg.guild === null && !msg.content.startsWith(prefix)) {
     msg.content = prefix + msg.content;
   }
 
   if (reactToAnthony && msg.author.id == '174030717846552576') msg.react('😮');
 
   if (isCmd(msg, '')) {
-    if (msg.guild != null) {
+    if (msg.guild !== null) {
       common.LOG(
           msg.guild.name + "#" + msg.channel.name + "@" + msg.author.username +
-          msg.content);
+          msg.content.replaceAll('\n', '\\n'));
     } else {
-      common.LOG("PM: @" + msg.author.username + msg.content);
+      common.LOG(
+          "PM: @" + msg.author.username + msg.content.replaceAll('\n', '\\n'));
     }
-    if (!command.trigger(msg.content.split(' ')[0], msg) && msg.guild == null) {
+    if (!command.trigger(msg.content.split(/ |\n/)[0], msg) &&
+        msg.guild === null) {
       msg.channel.send(
           "Oops! I'm not sure how to help with that! Type **help** for a list of commands I know how to respond to.");
     }
@@ -375,6 +400,177 @@ client.on('guildBanAdd', (guild, user) => {
 
 command.on('addme', msg => { reply(msg, addmessage, addLink); });
 
+command.on('add', msg => {
+  const splitstring = msg.content.replace(prefix + 'add ', '')
+                        .replaceAll('-', ' -')
+                        .replaceAll('  ', ' ')
+                        .replaceAll('\\+', ' ')
+                        .split(' ');
+  if (splitstring.join('').match(/[^0-9\-]*/)) {
+    reply(
+        msg, "This command only adds and subtracts numbers. Use \"" + prefix +
+            "math\" for more complex math.");
+    return;
+  }
+  var number = 0;
+  var numNonNumber = 0;
+  for (var i in splitstring) {
+    if (typeof(splitstring[i] * 1) !== 'number') {
+      numNonNumber++;
+    } else {
+      number += splitstring[i] * 1;
+    }
+  }
+  var ending = "";
+  var anotherEnding = "";
+  if (numNonNumber > 0) {
+    ending =
+        "But you entered the numbers oddly, so I am not sure if I understood you properly.";
+  }
+  if (number == 69) {
+    anotherEnding = ":wink:";
+  } else if (number == 420) {
+    anotherEnding = ":four_leaf_clover:";
+  } else if (number == 666) {
+    anotherEnding = ":smiling_imp:";
+  } else if (number == 9001) {
+    anotherEnding = ":fire:";
+  } else if (number == 80085 || number == 58008) {
+    anotherEnding = ":ok_hand:";
+  }
+  reply(msg, number + "\n" + ending, anotherEnding);
+});
+
+command.on('simplify', msg => {
+  try {
+    var formula = msg.content.replace(prefix + 'simplify', '');
+    if (formula.indexOf('=') > -1) {
+      var split = formula.split('=');
+      formula = split[1] + " - (" + split[0] + ")";
+    }
+    var simplified = math.simplify(formula).toString();
+    simplified = simplified.replace(/ \* ([A-Za-z])/g, "$1");
+    reply(msg, simplified);
+  } catch(err) {
+    reply(msg, err.message);
+  }
+});
+command.on('eval', msg => {
+  try {
+    var forumla = msg.content.replace(prefix + 'eval', '');
+    if (formula.indexOf('=') > -1) {
+      var split = formula.split('=');
+      formula = split[1] + " - (" + split[0] + ")";
+    }
+    var simplified = math.eval(formula).toString();
+    simplified = simplified.replace(/ \* ([A-Za-z])/g, "$1");
+    reply(msg, simplified);
+  } catch(err) {
+    reply(msg, err.message);
+  }
+});
+command.on('derive', msg => {
+  try {
+    var formula = msg.content.replace(prefix + 'derive', '');
+    if (formula.indexOf('=') > -1) {
+      var split = formula.split('=');
+      formula = split[1] + " - (" + split[0] + ")";
+    }
+    var simplified = math.derivative(formula, 'x').toString();
+    simplified = simplified.replace(/ \* ([A-Za-z])/g, "$1");
+    reply(msg, simplified);
+  } catch(err) {
+    reply(msg, err.message);
+  }
+});
+
+command.on('js', msg => {
+  try {
+    var sandbox = {__stdout: [], __stderr: []};
+
+    var code =
+        "(function(cb){console.log=(function(w){return function(){w.apply(console,arguments);cb.apply(null,arguments);};})(console.log);})(function(v){__stdout.push(v);});(function(cb){console.error=(function(w){return function(){w.apply(console,arguments);cb.apply(null,arguments);};})(console.error);})(function(v){__stderr.push(v);});\n";
+
+    code += msg.content.replace(prefix + 'js', '');
+    var stdexit = vm.runInNewContext(
+        code, sandbox, {filename: "Line", timeout: "100", lineOffset: -1});
+    var stdout = sandbox.__stdout;
+    var stderr = sandbox.__stderr;
+    delete sandbox.__stdout;
+    delete sandbox.__stderr;
+    var embed = new Discord.RichEmbed();
+    embed.setColor([0, 255, 255]);
+    if (stdout.length > 0) {
+      embed.addField(
+          "console.log", JSON.stringify(stdout, null, 2).substr(0, 1000), true);
+    }
+    if (stderr.length > 0) {
+      embed.addField(
+          "console.error", JSON.stringify(stderr, null, 2).substr(0, 1000),
+          true);
+    }
+    if (Object.keys(sandbox).length !== 0) {
+      embed.addField(
+          "Global Variables", JSON.stringify(sandbox, null, 2)
+                                  .replace(/^(?:{)+|^(?:})|^(?:  )/gm, ''),
+          true);
+    }
+    if (stdexit) {
+      embed.addField(
+          "Returned Value", JSON.stringify(stdexit, null, 2).substr(0, 1000),
+          true);
+    }
+    msg.channel.send(mention(msg), embed);
+  } catch (err) {
+    if (err.message == "Script execution timed out.") {
+      reply(
+          msg, "Oops! Your script was running for too long.",
+          "(100 milliseconds is the longest a script may run.)");
+    } else {
+      reply(msg, err.stack.split('\n').splice(0, 6).join('\n'));
+    }
+  }
+});
+
+command.on(['timer', 'timers'], msg => {
+  var split = msg.content.replace(prefix + "timer ", '').split(' ');
+  if (split[0] == prefix + "timer" || split[0] == prefix + "timers") {
+    var num = 0;
+    var messages =
+        timers.filter(function(obj) { return obj.id == msg.author.id; })
+            .map(function(obj) {
+              num++;
+              return "In " +
+                  Math.floor((obj.time - Date.now()) / 1000 / 60 * 10) / 10 +
+                  " minutes: " + obj.message;
+            });
+    reply(msg, "You have " + num + " timers set.\n" + messages.join('\n'));
+    return;
+  }
+  var time = split.splice(0, 1);
+  var origMessage = split.join(' ');
+  var message = origMessage ||
+      "Your timer for " + time + " minute" + (time == "1" ? "" : "s") +
+          " is over!";
+
+  if (time > 0) {
+    client.setTimeout(function() {
+      msg.author.send(
+          message );
+      timers = timers.filter(function(obj) { return obj.time > Date.now(); });
+    }, time * 1000 * 60);
+    timers.push({
+      id: msg.author.id,
+      message: message,
+      time: Date.now() + time * 1000 * 60
+    });
+
+    reply(msg, "Set timer for " + time + " minutes.", origMessage);
+  } else {
+    reply(msg, "Oops! Please make sure your time is larger than 0.");
+  }
+});
+
 command.on('togglereact', msg => {
   reply(msg, "Toggled reactions to Anthony to " + !reactToAnthony + '. 😮');
   reactToAnthony = !reactToAnthony;
@@ -383,9 +579,9 @@ command.on('help', msg => {
   msg.author.send(helpmessage)
       .then(_ => {
         if (HGames && HGames.helpMessage) msg.author.send(HGames.helpMessage);
-        if (msg.guild != null) reply(msg, helpmessagereply, ":wink:")
+        if (msg.guild !== null) reply(msg, helpmessagereply, ":wink:");
       })
-      .catch(_ => {reply(msg, blockedmessage)});
+      .catch(_ => { reply(msg, blockedmessage); });
 });
 command.on('updategame', msg => {
   msg.delete();
@@ -401,20 +597,20 @@ command.on('updategame', msg => {
 command.on('say', msg => {
   msg.delete();
   var content = msg.content.replace(prefix + 'say', '');
-  if (content.indexOf(' ') == 0) content.replace(' ', '');
+  if (content.indexOf(' ') === 0) content.replace(' ', '');
   msg.channel.send(content);
   if (prevUserSayId != msg.author.id) {
     prevUserSayId = msg.author.id;
     prevUserSayCnt = 0;
   }
   prevUserSayCnt++;
-  if (prevUserSayCnt % 3 == 0) {
+  if (prevUserSayCnt % 3 === 0) {
     msg.channel.send(
         "Help! " + mention(msg) + " is putting words into my mouth!");
   }
 });
 command.on('createdate', msg => {
-  if (msg.mentions.users.size == 0) {
+  if (msg.mentions.users.size === 0) {
     reply(
         msg, "You created your discord account on " +
             dateFormat(msg.author.createdTimestamp));
@@ -427,7 +623,7 @@ command.on('createdate', msg => {
 });
 command.on('joindate', msg => {
   if (msg.member) {
-    if (msg.mentions.users.size == 0) {
+    if (msg.mentions.users.size === 0) {
       reply(
           msg, "You joined this server on " +
               dateFormat(msg.member.joinedTimestamp));
@@ -443,32 +639,32 @@ command.on('joindate', msg => {
 command.on('pmme', msg => {
   msg.author.send(introduction)
       .then(_ => {
-        if (msg.guild != null) reply(msg, "I sent you a message.", ":wink:")
+        if (msg.guild !== null) reply(msg, "I sent you a message.", ":wink:");
       })
-      .catch(_ => {reply(msg, blockedmessage)});
+      .catch(_ => { reply(msg, blockedmessage); });
 });
 command.on('pmspikey', msg => {
   client.fetchUser(spikeyId)
-      .then(
-          user => {user.send(msg.author.tag + ": " + msg.content)
-                       .then(
-                           _ => {reply(
-                               msg, "I sent your message to SpikeyRobot.")})})
+      .then(user => {
+        user.send(msg.author.tag + ": " + msg.content).then(_ => {
+          reply(msg, "I sent your message to SpikeyRobot.");
+        });
+      })
       .catch(err => {
         console.log(err);
         reply(
             msg,
-            "Somethine went wrong and I couldn't send your message. Sorry that's all I know :(")
+            "Somethine went wrong and I couldn't send your message. Sorry that's all I know :(");
       });
 });
 command.on('thotpm', msg => {
   if (msg.author.id == spikeyId || msg.author.id == '265418316120719362' ||
       msg.author.id == '126464376059330562') {
-    if (msg.guild != null) msg.delete();
-    if (msg.mentions.users.size == 0) return;
+    if (msg.guild !== null) msg.delete();
+    if (msg.mentions.users.size === 0) return;
     msg.mentions.users.first().send(msg.content.replace(prefix + 'thotpm', ''));
     client.fetchUser(spikeyId).then(
-        user => {user.send(msg.author.tag + ": " + msg.content)});
+        user => { user.send(msg.author.tag + ": " + msg.content); });
   }
 });
 command.on('flip', msg => {
@@ -489,7 +685,7 @@ command.on(['purge', 'prune'], msg => {
     var numString = msg.content.replace(prefix + 'purge ', '')
                         .replace(prefix + 'prune ', '');
     var num = Number(numString);
-    if (numString.length == 0 || typeof num !== 'number') {
+    if (numString.length === 0 || typeof num !== 'number') {
       reply(
           msg,
           "You must specify the number of messages to purge. (ex: ?purge 5)");
@@ -506,7 +702,7 @@ command.on(['fuckyou', 'ban'], msg => {
     reply(
         msg, "You don't have permission for that!\n(Filthy " +
             msg.member.highestRole.name + ")");
-  } else if (msg.mentions.members.size == 0) {
+  } else if (msg.mentions.members.size === 0) {
     reply(msg, "You must mention someone to ban after the command.");
   } else {
     var toBan = msg.mentions.members.first();
@@ -540,7 +736,7 @@ command.on(['fuckyou', 'ban'], msg => {
   }
 }, true);
 command.on('smite', msg => {
-  if (msg.mentions.members.size == 0) {
+  if (msg.mentions.members.size === 0) {
     reply(msg, "You must mention someone to ban after the command.");
   } else {
     var toSmite = msg.mentions.members.first();
@@ -604,7 +800,7 @@ command.on('smite', msg => {
   }
 }, true);
 command.on('play', msg => {
-  if (msg.member.voiceChannel == null) {
+  if (msg.member.voiceChannel === null) {
     reply(msg, "You aren't in a voice channel!");
   } else {
     var song = msg.content.replace(prefix + 'play', '');
@@ -641,12 +837,12 @@ command.on('play', msg => {
 command.on(['leave', 'stop', 'stfu'], msg => {
   var shouldReply = true;
   if (!broadcasts[msg.guild.id] ||
-      (broadcasts[msg.guild.id].queue.length == 0 &&
+      (broadcasts[msg.guild.id].queue.length === 0 &&
        broadcasts[msg.guild.id].current)) {
     shouldReply = false;
   }
   msg.guild.fetchMember(client.user).then(me => {
-    if (me.voiceChannel != null) {
+    if (me.voiceChannel !== null) {
       me.voiceChannel.leave();
       if (shouldReply) reply(msg, "Goodbye!");
     } else {
@@ -682,7 +878,8 @@ command.on(['queue', 'playing'], msg => {
   }
 }, true);
 command.on(['remove', 'dequeue'], msg => {
-  if (!broadcasts[msg.guild.id] || broadcasts[msg.guild.id].queue.length == 0) {
+  if (!broadcasts[msg.guild.id] ||
+      broadcasts[msg.guild.id].queue.length === 0) {
     reply(
         msg,
         "The queue appears to be empty.\nI can't remove nothing from nothing!");
@@ -738,10 +935,12 @@ command.on('uptime', msg => {
 command.on('reboot', msg => {
   if (msg.author.id == spikeyId) {
     reply(msg, "Rebooting...").then(msg => {
+      const now = Date.now();
       var toSave = {
         id: msg.id,
         channel: {id: msg.channel.id},
-        noReactToAnthony: !reactToAnthony
+        noReactToAnthony: !reactToAnthony,
+        timers: timers
       };
       try {
         fs.writeFileSync("reboot.dat", JSON.stringify(toSave));
@@ -766,7 +965,7 @@ command.on('reload', msg => {
         } catch (err) {
         }
         delete require.cache[require.resolve('./hungryGames.js')];
-        delete HGames;
+        // delete HGames;
         HGames = require('./hungryGames.js');
         HGames.begin(prefix, Discord, client, command, common);
       } catch (err) {
