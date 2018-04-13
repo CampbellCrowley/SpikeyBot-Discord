@@ -1,10 +1,11 @@
 const Discord = require('discord.js');
 const fs = require('fs');
-const common = require('/var/www/html/common.js');
+const common = require('./common.js');
 const dateFormat = require('dateformat');
 const ytinfo = require('ytdl-getinfo');
 const ytdl = require('youtube-dl');
 const math = require('mathjs');
+const algebra = require('algebra.js');
 const vm = require('vm');
 const jimp = require('jimp');
 const client = new Discord.Client();
@@ -44,7 +45,8 @@ const helpmessagereply = "I sent you a DM with commands!";
 const blockedmessage =
     "I couldn't send you a message, you probably blocked me :(";
 const onlyservermessage = "This command only works in servers, sorry!";
-const addmessage = "Want to add me to your server? Click this link:";
+const addmessage =
+    "Want to add me to your server? Click this link:\n(You'll need to be signed into discord in your browser first)";
 const disabledcommandmessage =
     "This command has been disabled in this channel.";
 const addLink =
@@ -60,35 +62,68 @@ const banMsgs = [
   "Between you and me, I didn't like them anyways.",
   "Everyone rejoice! The world has been eradicated of one more person that no one liked anyways."
 ];
-const helpmessage =
-"Here's the list of stuff I can do! PM SpikeyRobot (" + prefix + "pmspikey) feature requests!\n" +
-"```js\n" +
-"=== Music ===\n" +
-  prefix + "play 'url or search' // Play a song in your current voice channel, or add a song to the queue.\n" +
-  prefix + "stop // Stop playing music and leave the voice channel.\n" +
-  prefix + "skip // Skip the currently playing song.\n" +
-  prefix + "queue // View the songs currently in the queue.\n" +
-  prefix + "remove 'index' // Remove a song with the given queue index from the queue.\n" +
-"=== General Stuff ===\n" +
-  prefix + "addme // I will send you a link to add me to your server!\n" +
-  prefix + "help // Send this message to you.\n" +
-  prefix + "say // Make me say something.\n" +
-  prefix + "createdate // I will tell you the date you created your account! (You can mention people)\n" +
-  prefix + "joindate // I will tell you the date you joined the server you sent the message from! (You can mention people)\n" +
-  prefix + "pmme // I will introduce myself to you!\n" +
-  prefix + "pmspikey 'message' // I will send SpikeyRobot (my creator) your message because you are too shy!\n" +
-  prefix + "flip // I have an unlimited supply of coins! I will flip one for you!\n" +
-  prefix + "avatar 'mention' // Need a better look at your profile pic? I'll show you the original\n" +
-  prefix + "ping 'mention' // Want to know just how laggy someone is? I tell you the pingas!\n" +
-"=== Math Stuff ===\n" +
-  prefix + "add 'numbers' // Add positive or negative numbers separated by spaces.\n" +
-  prefix + "simplify 'equation' // Simplify an equation with numbers and variables.\n" +
-  prefix + "evaluate 'problem' // Solve a math problem, and convert units.\n" +
-  prefix + "derive 'equation with x' // Find dy/dx of an equation.\n" +
-"=== Admin Stuff ===\n" +
-  prefix + "purge 'number' // Remove a number of messages from the current text channel!\n" +
-  prefix + "fuckyou/" + prefix + "ban 'mention' // I will ban the person you mention with a flashy message!\n" +
-  prefix + "smite 'mention' // Silence the peasant who dare oppose you!\n```";
+const helpObject = {
+  title: "Here's the list of stuff I can do! PM SpikeyRobot (" + prefix +
+      "pmspikey) feature requests!\n",
+  sections: [
+    {
+      title: "Music",
+      rows: [
+        "play 'url or search' // Play a song in your current voice channel, or add a song to the queue.",
+        "stop // Stop playing music and leave the voice channel.",
+        "skip // Skip the currently playing song.",
+        "queue // View the songs currently in the queue.",
+        "remove 'index' // Remove a song with the given queue index from the queue."
+      ]
+    },
+    {
+      title: "General Stuff",
+      rows: [
+        "addme // I will send you a link to add me to your server!",
+        "help // Send this message to you.", "say // Make me say something.",
+        "createdate // I will tell you the date you created your account! (You can mention people)",
+        "joindate // I will tell you the date you joined the server you sent the message from! (You can mention people)",
+        "pmme // I will introduce myself to you!",
+        "pmspikey 'message' // I will send SpikeyRobot (my creator) your message because you are too shy!",
+        "flip // I have an unlimited supply of coins! I will flip one for you!",
+        "avatar 'mention' // Need a better look at your profile pic? I'll show you the original",
+        "ping // Want to know what my delay to the server is? I can tell you my ping!"
+      ]
+    },
+    {
+      title: "Math Stuff",
+      rows: [
+        "add 'numbers' // Add positive or negative numbers separated by spaces.",
+        "simplify 'equation' // Simplify an equation with numbers and variables.",
+        "solve 'eqution' // Solve an equation for each variable in the equation.",
+        "evaluate 'problem' // Solve a math problem, and convert units.",
+        "derive 'equation with x' // Find dy/dx of an equation.",
+        "graph 'equation with x' '[xMin, xMax]' '[yMin, yMax]' // Graph an equation, Maxes and mins are all optional, but brackets are required."
+      ]
+    },
+    {
+      title: "Admin Stuff",
+      rows: [
+        "purge 'number' // Remove a number of messages from the current text channel!",
+        "fuckyou/" + prefix +
+            "ban 'mention' // I will ban the person you mention with a flashy message!",
+        "smite 'mention' // Silence the peasant who dare oppose you!"
+      ]
+    },
+  ]
+};
+
+// Format help message into rich embed.
+var tmpHelp = new Discord.RichEmbed();
+tmpHelp.setTitle(helpObject.title);
+helpObject.sections.forEach(function(obj) {
+  tmpHelp.addField(
+      obj.title, "```js\n" +
+          obj.rows.map(function(row) { return prefix + row; }).join('\n') +
+          "\n```",
+      true);
+});
+const helpmessage = tmpHelp;
 
 
 var broadcasts = {};
@@ -457,7 +492,9 @@ command.on('add', msg => {
 command.on('simplify', msg => {
   try {
     var formula = msg.content.replace(prefix + 'simplify', '');
-    reply(msg, simplify(formula));
+    var simplified = simplify(formula);
+    var hasVar = simplified.match(/[A-Za-z]/);
+    reply(msg, (hasVar ? "0 = " : "") + simplified);
   } catch(err) {
     reply(msg, err.message);
   }
@@ -470,6 +507,32 @@ function simplify(formula) {
   var simplified = math.simplify(formula).toString();
   return simplified.replace(/ \* ([A-Za-z])/g, "$1");
 }
+
+command.on('solve', msg => {
+  if (msg.content.lastIndexOf('=') != msg.content.indexOf('=')) {
+    reply(msg, "Please ensure your equation has exactly 1 equals sign.");
+    return;
+  }
+  const equation = msg.content.replace(prefix + 'solve', '');
+  const variables = equation.match(/[A-Za-z]+/gm);
+  if (!variables || variables.length < 1) {
+    reply(msg, "Please ensure you have at least one variable in the equation.");
+    return;
+  }
+  try {
+    var messages = [];
+    for (var i = 0; i < variables.length; i++) {
+      messages.push(algebra.parse(equation).solveFor(variables[i]).toString());
+    }
+    const outMessage =
+        messages.map(function(obj, i) { return variables[i] + " = " + obj; })
+            .join('\n');
+    reply(msg, outMessage);
+  } catch (err) {
+    reply(
+        msg, "Something went wrong while solving that equation.", err.message);
+  }
+});
 command.on(['eval', 'evaluate'], msg => {
   try {
     var formula = msg.content.replace(prefix + 'eval', '')
@@ -520,7 +583,7 @@ command.on('graph', msg => {
       ypVal = xVal.map(function(x) { return exprSlope.eval({x: x}); });
     } catch (err) {
       console.log(err);
-      msg.channel.send("Failed to derive. ");
+      msg.channel.send("Failed to derive given equation. " + err.message);
       ypVal = xVal.map(function(x) { return 1; });
     }
   } catch(err) {
@@ -535,6 +598,8 @@ command.on('graph', msg => {
       if (minY > obj) minY = obj;
       if (maxY < obj) maxY = obj;
     });
+    minY += minY * 0.05;
+    maxY += maxY * 0.05;
   } else {
     minY = rangeMin;
     maxY = rangeMax;
@@ -1106,6 +1171,21 @@ command.on('reload', msg => {
     });
   } else {
     reply(msg, "LOL! Good try!");
+  }
+});
+
+command.on('game', msg => {
+  var user = msg.author;
+  if (msg.mentions.users.size !== 0) {
+    user = msg.mentions.users.first();
+  }
+  if (user.presence.game) {
+    reply(
+        msg, user.username + ": " + user.presence.status,
+        user.presence.game.type + ": " + user.presence.game.name + "(" +
+            user.presence.game.url + ")");
+  } else {
+    reply(msg, user.username + ": " + user.presence.status, user.presence.game);
   }
 });
 

@@ -311,38 +311,78 @@ const helpmessagereply = "I sent you a DM with commands!";
 // Reply if unable to send message via DM.
 const blockedmessage =
     "I couldn't send you a message, you probably blocked me :(";
+const helpObject = {
+  title: "Hungry Games!",
+  description: "To use any of these commands you must have the \"" + roleName +
+      "\" role.",
+  sections: [
+    {
+      title: "Game Settings",
+      rows: [
+        "create // This will create a game with default settings if it doesn't exist already.",
+        "options 'option name' 'value' // List options if no name, or change the option if you give a name.",
+        "reset 'all/current/events/options/teams' // Delete data about the Games. Don't choose an option for more info."
+      ]
+    },
+    {
+      title: "Player Settings",
+      rows: [
+        "players // This will list all players I currently care about.",
+        "exclude 'mention' // Prevent someone from being added to the next game.",
+        "include 'mention' // Add a person back into the next game."
+      ]
+    },
+    {
+      title: "Team Settings",
+      rows: [
+        "teams swap 'mention' 'mention' // This will swap two players to the other team.",
+        "teams move 'mention' 'id/mention' // This will move the first player, to another team. (Ignores teamSize option)",
+        "teams rename 'id/mention' 'name...' // Rename a team. Specify its id, or mention someone on a team.",
+        "teams randomize // Randomize who is on what team.",
+        "teams reset // Delete all teams and start over."
+      ]
+    },
+    {
+      title: "Events",
+      rows: [
+        "events // This will list all custom events that could happen in the game.",
+        "debugevents // This will let you download all of the events and their data.",
+        "events add 'message' // Begins process of adding a custom event.",
+        "events remove 'number' // Remove a custom event. The number is the number shown in the list of events."
+      ]
+    },
+    {
+      title: "Time Control",
+      rows: [
+        "start // This will start a game with your settings.",
+        "end // This will end a game early.",
+        "autoplay // Automatically continue to the next day after a day is over.",
+        "pause // Stop autoplay at the end of the day.",
+        "next // Simulate the next day of the Games!"
+      ]
+    }
+  ]
+};
 exports.helpMessage = "Module loading...";
 // Set all help messages once we know what prefix to use.
 function setupHelp() {
   exports.helpMessage = "`" + myPrefix + "help` for Hungry Games help.";
-  helpMessage =
-  "Hungry Games!\n" +
-  "To use any of these commands you must have the \"" + roleName + "\" role.\n" +
-  "```js\n=== Game Settings ===\n" +
-  myPrefix + "create // This will create a game with default settings if it doesn't exist already.\n" +
-  myPrefix + "options [option name] [value] // List options if no name, or change the option if you give a name.\n" +
-  myPrefix + "reset {all/current/events/options/teams} // Delete data about the Games. Don't choose an option for more info.\n" +
-  "\n=== Player Settings ===\n" +
-  myPrefix + "players // This will list all players I currently care about.\n" +
-  myPrefix + "exclude {mention} // Prevent someone from being added to the next game.\n" +
-  myPrefix + "include {mention} // Add a person back into the next game.\n" +
-  "\n=== Team Settings ===\n" +
-  myPrefix + "teams swap {mention} {mention} // This will swap two players to the other team.\n" +
-  myPrefix + "teams move {mention} {id/mention} // This will move the first player, to another team. (Ignores teamSize option)\n" +
-  myPrefix + "teams rename {id/mention} {name...} // Rename a team. Specify its id, or mention someone on a team.\n" +
-  myPrefix + "teams randomize // Randomize who is on what team.\n" +
-  myPrefix + "teams reset // Delete all teams and start over.\n" +
-  "\n=== Events ===\n" +
-  myPrefix + "events // This will list all custom events that could happen in the game.\n" +
-  myPrefix + "debugevents // This will list all events that could happen in the game.\n" +
-  myPrefix + "events add {message} // Begins process of adding a custom event.\n" +
-  myPrefix + "events remove {number} // Remove a custom event. The number is the number shown in the list of events (" + myPrefix + "events).\n" +
-  "\n=== Time Control ===\n" +
-  myPrefix + "start // This will start a game with your settings.\n" +
-  myPrefix + "end // This will end a game early.\n" +
-  myPrefix + "autoplay // Automatically continue to the next day after a day is over.\n" +
-  myPrefix + "pause // Stop autoplay at the end of the day.\n" +
-  myPrefix + "next // Simulate the next day of the Games!\n```";
+// Format help message into rich embed.
+  var tmpHelp = new Discord.RichEmbed();
+  tmpHelp.setTitle(helpObject.title);
+  tmpHelp.setDescription(helpObject.description);
+  helpObject.sections.forEach(function(obj) {
+    tmpHelp.addField(
+        obj.title, "```js\n" +
+            obj.rows
+                .map(function(row) {
+                  return myPrefix + row.replaceAll('{prefix}', myPrefix);
+                })
+                .join('\n') +
+            "\n```",
+        true);
+  });
+  helpMessage = tmpHelp;
 }
 
 // Initialize module.
@@ -1795,7 +1835,7 @@ function printEvent(msg, id) {
         if (responses == events[index].attacks[battleState].icons.length) {
           finalImage.getBuffer(jimp.MIME_PNG, function(err, out) {
             // Attach file, then send.
-            embed.attachFile(new Discord.Attachment(out));
+            embed.attachFile(new Discord.Attachment(out, "hgEvent.png"));
             // if (!battleMessage[id]) {
               msg.channel.send(message[0], embed).then(msg_ => {
                 battleMessage[id] = msg_;
@@ -1855,7 +1895,7 @@ function printEvent(msg, id) {
         responses++;
         if (responses == events[index].icons.length) {
           finalImage.getBuffer(jimp.MIME_PNG, function(err, out) {
-            embed.attachFile(new Discord.Attachment(out));
+            embed.attachFile(new Discord.Attachment(out, "hgBattle.png"));
             msg.channel.send(embed);
           });
         }
@@ -2075,7 +2115,8 @@ function printDay(msg, id) {
       responses++;
       if (responses == games[id].currentGame.teams[lastTeam].players.length) {
         finalImage.getBuffer(jimp.MIME_PNG, function(err, out) {
-          finalMessage.attachFile(new Discord.Attachment(out));
+          finalMessage.attachFile(
+              new Discord.Attachment(out, "hgTeamVictor.png"));
           sendAtTime(msg.channel, winnerTag, finalMessage, sendTime);
         });
       }
@@ -2811,7 +2852,7 @@ function createEvent(msg, id) {
               victimKiller, attackerKiller);
           msg.channel.send(
               "`Event created!`\n" + formatEventString(newEvent) + "\n" +
-              eventType);
+              eventType + " event");
           if (eventType == "bloodbath") {
             games[id].customEvents.bloodbath.push(newEvent);
           } else {
@@ -2932,8 +2973,8 @@ function createEventAttacker(msg, id, show, cb) {
 function updateEventPreview(msg) {
   msg.text = msg.text.split(' ').slice(1).join(' ');
   var helpMsg =
-      "```\nEdit your message until you are happy with the below outcomes, then click the checkmark." +
-      "\nReplace names with \"{victim}\" or \"{attacker}\" (with brackets)." +
+      "```\nEdit your message until you are happy with the below outcomes, then click the type of event.\n" +
+      "\nReplace names with \"{victim}\" or \"{attacker}\" (with brackets).\n" +
       "\nUse \"[Vsinglular|plural]\" or \"[Asingular|plural]\" to put \"singular\" if there's only one person, or \"plural\" if there are more" +
       "\n (A for attacker, V for victim).\n```";
   var finalOptionsHelp =
