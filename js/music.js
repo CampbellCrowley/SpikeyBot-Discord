@@ -74,7 +74,7 @@ function formatSongInfo(info) {
       formNum(info.like_count) + " 👎 " + formNum(info.dislike_count) +
       "][👁️ " + formNum(info.view_count) + "]\n[" +
       Math.floor(info._duration_raw / 60) + "m " + info._duration_raw % 60 +
-      "s]\n" + info.webpage_url);
+      "s]");
   if (info.thumbnail) output.setThumbnail(info.thumbnail);
   output.setURL(info.webpage_url);
   output.setColor([50, 200, 255]);
@@ -86,7 +86,7 @@ function formNum(num) {
   var tmpString = [];
   for (var i = 0; i < numString.length; i++) {
     if (i > 0 && i % 3 === 0) tmpString.push(",");
-    tmpString.push(numString.substr(i, 1));
+    tmpString.push(numString.substr(-i - 1, 1));
   }
   return tmpString.reverse().join('');
 }
@@ -134,7 +134,11 @@ function startPlaying(broadcast) {
   broadcast.skips = {};
   broadcast.current = broadcast.queue.splice(0, 1)[0];
   try {
-    broadcast.current.stream = ytdl(broadcast.current.song, ytdlOpts);
+    if (broadcast.current.info) {
+      broadcast.current.stream = ytdl(broadcast.current.info.url, ytdlOpts);
+    } else {
+      broadcast.current.stream = ytdl(broadcast.current.song, ytdlOpts);
+    }
     broadcast.broadcast.playStream(broadcast.current.stream)
         .on('end', function() { endSong(broadcast); });
     broadcast.voice.playBroadcast(broadcast.broadcast);
@@ -170,7 +174,7 @@ function endSong(broadcast) {
 }
 // Skip the current song, then attempt to play the next.
 function skipSong(broadcast) {
-  if (broadcast.voice) broadcast.voice.end();
+  if (broadcast.broadcast) broadcast.broadcast.end();
   broadcast.isPlaying = false;
   startPlaying(broadcast);
 }
@@ -251,16 +255,21 @@ function commandQueue(msg) {
         msg, "I'm not playing anything. Use \"" + prefix +
             "play Kokomo\" to start playing something!");
   } else {
-    var queueTitles = [];
+    var emebed;
     if (broadcasts[msg.guild.id].current) {
-      queueTitles = queueTitles.concat(
-          ["Now Playing: " + broadcasts[msg.guild.id].current.info.title]);
+      embed = formatSongInfo(broadcasts[msg.guild.id].current.info);
+      embed.setTitle("Current Song Queue");
+    } else {
+      embed = new Discord.RichEmbed();
     }
-    queueTitles = queueTitles.concat(
-        broadcasts[msg.guild.id].queue.map(function(obj, index) {
-          return (index + 1) + ") " + obj.info.title;
-        }));
-    reply(msg, queueTitles.join('\n'));
+    embed.addField(
+        "Queue", broadcasts[msg.guild.id]
+                     .queue
+                     .map(function(obj, index) {
+                       return (index + 1) + ") " + obj.info.title;
+                     })
+                     .join('\n'));
+    msg.channel.send(embed);
   }
 }
 function commandRemove(msg) {

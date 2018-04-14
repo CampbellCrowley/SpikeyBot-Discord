@@ -574,6 +574,7 @@ command.on('graph', msg => {
         "Plot Domain: [" + domainMin + ", " + domainMax + "]\nPlot Range: [" +
         minY + ", " + maxY + "]");
     embed.attachFile(new Discord.Attachment(out, "graph.png"));
+    embed.setColor([255, 255, 255]);
     if (turningPoints.length > 0) {
       embed.addField(
           "Approximate Turning Points",
