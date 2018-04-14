@@ -2,8 +2,6 @@ const Discord = require('discord.js');
 const fs = require('fs');
 const common = require('./common.js');
 const dateFormat = require('dateformat');
-const ytinfo = require('ytdl-getinfo');
-const ytdl = require('youtube-dl');
 const math = require('mathjs');
 const algebra = require('algebra.js');
 const vm = require('vm');
@@ -15,6 +13,12 @@ math.config({matrix: "Array"});
 var HGames;
 try {
   HGames = require('./hungryGames.js');
+} catch (err) {
+  console.log(err);
+}
+var Music;
+try {
+  Music = require('./music.js');
 } catch (err) {
   console.log(err);
 }
@@ -124,9 +128,6 @@ helpObject.sections.forEach(function(obj) {
       true);
 });
 const helpmessage = tmpHelp;
-
-
-var broadcasts = {};
 
 common.begin();
 
@@ -242,81 +243,6 @@ function reply(msg, text, post) {
   return msg.channel.send(mention(msg) + "\n```\n" + text + "\n```" + post);
 }
 
-// Format the info response from ytdl into a human readable format.
-function formatSongInfo(info) {
-  return info.title + "\nUploaded by " + info.uploader + "\n[👍 " +
-      info.like_count + " 👎 " + info.dislike_count + "][👁️ " +
-      info.view_count + "]\n[" + Math.floor(info._duration_raw / 60) + "m " +
-      info._duration_raw % 60 + "s]\n" + info.webpage_url;
-}
-// Add a song to the given broadcast's queue and start playing it not already.
-function queueSong(broadcast, stream, msg, info) {
-  broadcast.queue.push({request: msg, stream: stream, info: info});
-  if (broadcast.voice) {
-    try {
-      startPlaying(broadcast);
-    } catch (err) {
-      console.log(err);
-      reply(msg, "Failed to start music stream!");
-      command.trigger('stop', msg);
-    }
-  } else {
-    msg.member.voiceChannel.join()
-        .then(conn => {
-          broadcast.voice = conn;
-          try {
-            startPlaying(broadcast);
-          } catch(err) {
-            console.log(err);
-            reply(msg, "Failed to start music stream!");
-            command.trigger('stop', msg);
-          }
-        })
-        .catch(err => {
-          console.log(err);
-          reply(msg, "Failed to join voice channel!");
-        });
-  }
-}
-// Start playing the first item in the queue of the broadcast.
-function startPlaying(broadcast) {
-  if (!broadcast || broadcast.isPlaying || broadcast.isLoading) {
-    return;
-  }
-  if (broadcast.queue.length === 0) {
-    command.trigger('stop', broadcast.current.request);
-    broadcast.current.request.channel.send(
-        "Queue is empty!\n```\nSee you later!\n```");
-    return;
-  }
-  broadcast.isLoading = true;
-  broadcast.skips = {};
-  broadcast.current = broadcast.queue.splice(0, 1)[0];
-  broadcast.broadcast.playStream(broadcast.current.stream)
-      .on('end', function() { endSong(broadcast); });
-  broadcast.voice.playBroadcast(broadcast.broadcast);
-  broadcast.isLoading = false;
-  broadcast.isPlaying = true;
-
-  if (typeof broadcast.current.info !== 'undefined') {
-    broadcast.current.request.channel.send(
-        "Now playing [" + broadcast.queue.length + " left in queue]\n```\n" +
-        formatSongInfo(broadcast.current.info) + "\n```");
-  } else {
-    reply(broadcast.current.request, "Playing next song");
-  }
-}
-// Triggered when a song has finished playing.
-function endSong(broadcast) {
-  if (broadcast.isLoading) return;
-  if (broadcast.isPlaying) skipSong(broadcast);
-}
-// Skip the current song, then attempt to play the next.
-function skipSong(broadcast) {
-  broadcast.isPlaying = false;
-  startPlaying(broadcast);
-}
-
 // BEGIN //
 client.on('ready', _ => {
   common.LOG(`Logged in as ${client.user.tag}!`);
@@ -329,6 +255,13 @@ client.on('ready', _ => {
   } catch(err) {
     client.fetchUser(spikeyId).then(
         user => { user.send("Failed to initialize HungryGames"); });
+    console.log(err);
+  }
+  try {
+    Music.begin(prefix, Discord, client, command, common);
+  } catch(err) {
+    client.fetchUser(spikeyId).then(
+        user => { user.send("Failed to initialize Music"); });
     console.log(err);
   }
   fs.readFile('reboot.dat', function(err, file) {
@@ -367,6 +300,7 @@ client.on('message', msg => {
   }
   if (msg.author.bot) return;
 
+  // If message is equation we can graph.
   const regexForm = new RegExp("^[yY]\\s*=");
   if (msg.content.match(regexForm)) {
     msg.content = "?graph " + msg.content;
@@ -761,6 +695,7 @@ command.on('help', msg => {
   msg.author.send(helpmessage)
       .then(_ => {
         if (HGames && HGames.helpMessage) msg.author.send(HGames.helpMessage);
+        if (Music && Music.helpMessage) msg.author.send(Music.helpMessage);
         if (msg.guild !== null) reply(msg, helpmessagereply, ":wink:");
       })
       .catch(_ => { reply(msg, blockedmessage); });
@@ -981,118 +916,6 @@ command.on('smite', msg => {
     }
   }
 }, true);
-command.on('kokomo', msg => {
-  msg.content = "?play kokomo";
-  command.trigger('play', msg);
-});
-command.on('vi', msg => {
-  msg.content = "?play vi rap";
-  command.trigger('play', msg);
-});
-command.on('play', msg => {
-  if (msg.member.voiceChannel === null) {
-    reply(msg, "You aren't in a voice channel!");
-  } else {
-    var song = msg.content.replace(prefix + 'play', '');
-    if (!song.startsWith(' ')) {
-      reply(msg, "Please specify a song to play.");
-      return;
-    } else {
-      song = song.replace(' ', '');
-    }
-    var loadingMsg;
-    reply(msg, "Loading " + song + "\nPlease wait...")
-        .then(msg => loadingMsg = msg);
-    var stream = ytdl(
-        song, ['-f bestaudio/best', '--no-playlist', '--default-search=auto']);
-    stream.on('info', info => {
-      if (!broadcasts[msg.guild.id]) {
-        broadcasts[msg.guild.id] = {
-          queue: [],
-          skips: {},
-          isPlaying: false,
-          broadcast: client.createVoiceBroadcast()
-        };
-      } else {
-        msg.channel.send(
-            mention(msg) + " Enqueuing " + song + " [" +
-            (broadcasts[msg.guild.id].queue.length + 1) + " in queue]\n```\n" +
-            formatSongInfo(info) + "\n```");
-      }
-      queueSong(broadcasts[msg.guild.id], stream, msg, info);
-      if (loadingMsg) loadingMsg.delete();
-    });
-  }
-}, true);
-command.on(['leave', 'stop', 'stfu'], msg => {
-  var shouldReply = true;
-  if (!broadcasts[msg.guild.id] ||
-      (broadcasts[msg.guild.id].queue.length === 0 &&
-       broadcasts[msg.guild.id].current)) {
-    shouldReply = false;
-  }
-  msg.guild.fetchMember(client.user).then(me => {
-    if (typeof me.voiceChannel !== 'undefined') {
-      me.voiceChannel.leave();
-      if (shouldReply) reply(msg, "Goodbye!");
-    } else {
-      if (shouldReply) reply(msg, "I'm not playing anything.");
-    }
-  });
-  delete broadcasts[msg.guild.id];
-}, true);
-command.on('skip', msg => {
-  if (!broadcasts[msg.guild.id]) {
-    reply(msg, "I'm not playing anything, I can't skip nothing!");
-  } else {
-    reply(msg, "Skipping current song...");
-    skipSong(broadcasts[msg.guild.id]);
-  }
-}, true);
-command.on(['queue', 'playing'], msg => {
-  if (!broadcasts[msg.guild.id]) {
-    reply(
-        msg, "I'm not playing anything. Use \"" + prefix +
-            "play Kokomo\" to start playing something!");
-  } else {
-    var queueTitles = [];
-    if (broadcasts[msg.guild.id].current) {
-      queueTitles = queueTitles.concat(
-          ["Now Playing: " + broadcasts[msg.guild.id].current.info.title]);
-    }
-    queueTitles = queueTitles.concat(
-        broadcasts[msg.guild.id].queue.map(function(obj, index) {
-          return (index + 1) + ") " + obj.info.title;
-        }));
-    reply(msg, queueTitles.join('\n'));
-  }
-}, true);
-command.on(['remove', 'dequeue'], msg => {
-  if (!broadcasts[msg.guild.id] ||
-      broadcasts[msg.guild.id].queue.length === 0) {
-    reply(
-        msg,
-        "The queue appears to be empty.\nI can't remove nothing from nothing!");
-  } else {
-    var indexString = msg.content.replace(prefix + 'remove', '')
-                          .replace(prefix + 'dequeue', '');
-    if (!indexString.startsWith(' ')) {
-      reply(
-          msg,
-          "You must specify the index of the song to dequeue.\nYou can view the queue with \"" +
-              prefix + "queue\".");
-    } else {
-      var index = Number(indexString.replace(' ', ''));
-      if (typeof index !== 'number' || index <= 0 ||
-          index > broadcasts[msg.guild.id].queue.length) {
-        reply(msg, "That is not a valid index!");
-      } else {
-        var removed = broadcasts[msg.guild.id].queue.splice(index - 1, 1)[0];
-        reply(msg, "Dequeued #" + index + ": " + removed.info.title);
-      }
-    }
-  }
-}, true);
 command.on(['profile', 'avatar'], msg => {
   var embed = new Discord.RichEmbed();
   if (msg.mentions.users.size > 0) {
@@ -1161,6 +984,15 @@ command.on('reload', msg => {
       } catch (err) {
         error = true;
         common.ERROR("Failed to reload HungryGames");
+        console.log(err);
+      }
+      try {
+        delete require.cache[require.resolve('./music.js')];
+        Music = require('./music.js');
+        Music.begin(prefix, Discord, client, command, common);
+      } catch (err) {
+        error = true;
+        common.ERROR("Failed to reload Music");
         console.log(err);
       }
       if (error) {
