@@ -77,7 +77,8 @@ const helpObject = {
         "stop // Stop playing music and leave the voice channel.",
         "skip // Skip the currently playing song.",
         "queue // View the songs currently in the queue.",
-        "remove 'index' // Remove a song with the given queue index from the queue."
+        "remove 'index' // Remove a song with the given queue index from the queue.",
+        "lyrics 'song' // Search for song lyrics."
       ]
     },
     {
