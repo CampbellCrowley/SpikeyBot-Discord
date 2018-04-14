@@ -423,12 +423,12 @@ function commandLyrics(msg) {
     response.on('data', function(chunk) { content += chunk; });
     response.on('end', function() {
       if (response.statusCode == 200) {
-        msg.channel.send("Search successful").then(msg => {
-          msg.delete(2000);
+        msg.channel.send("`Asking where to find song...`").then(msg => {
+          msg.delete(6000);
         });
         var parsed = JSON.parse(content);
         if (parsed.response.hits.length === 0) {
-          reply(msg, "Failed to find lyrics. No matches found.");
+          reply(msg, "`Failed to find lyrics. No matches found.`");
         } else {
           reqLyricsURL(msg, parsed.response.hits[0].result.id);
         }
@@ -448,6 +448,9 @@ function commandLyrics(msg) {
   });
   req.end();
   req.on('error', function(e) { common.ERROR(e, "Music"); });
+  msg.channel.send("`Asking if song exists...`").then(msg => {
+    msg.delete(7000);
+  });
 }
 function reqLyricsURL(msg, id) {
   var thisReq = geniusRequest;
@@ -457,8 +460,8 @@ function reqLyricsURL(msg, id) {
     response.on('data', function(chunk) { content += chunk; });
     response.on('end', function() {
       if (response.statusCode == 200) {
-        msg.channel.send("Lyrics url fetched.").then(msg => {
-          msg.delete(2000);
+        msg.channel.send("`Asking for lyrics...`").then(msg => {
+          msg.delete(4000);
         });
         var parsed = JSON.parse(content);
         fetchLyricsPage(
@@ -489,7 +492,7 @@ function fetchLyricsPage(msg, url, title, thumb) {
     response.on('data', function(chunk) { content += chunk; });
     response.on('end', function() {
       if (response.statusCode == 200) {
-        msg.channel.send("Lyrics page fetched.").then(msg => {
+        msg.channel.send("`Crawling webpage...`").then(msg => {
           msg.delete(2000);
         });
         stripLyrics(msg, content, title, url, thumb);
@@ -513,26 +516,35 @@ function fetchLyricsPage(msg, url, title, thumb) {
 function stripLyrics(msg, content, title, url, thumb) {
   try {
     var body = content.match(/<!--sse-->([\s\S]*?)<!--\/sse-->/gm)[1];
-    var lyrics = body.match(/^([^<]*)<|>([^<]*)<|>([^<]*)$/g)
+    var lyrics = body.match(/^([^<>]*)<|>([^<>]*)<|>([^<>]*)$/gm)
                      .slice(1)
                      .join('')
-                     .replace(/<>|^\s*|^>\s*/gm, '');
+                     .replace(/<>|^\s*/gm, '')
+                     .replace('>', '');
+    var splitLyrics = lyrics.match(/\[[^\]]*\][^\[]*/gm);
     var embed = new Discord.RichEmbed();
     if (title) embed.setTitle(title);
-    if (url) {
-      embed.setFooter(url);
-      embed.setURL(url);
-    }
-    if (thumb) {
-      embed.setThumbnail(thumb);
-    }
-    for (var i = 0; i < 25 && lyrics.length > i * 1024; i++) {
+    if (url) embed.setURL(url);
+    if (thumb) embed.setThumbnail(thumb);
+    /* for (var i = 0; i < 25 && lyrics.length > i * 1024; i++) {
       embed.addField('\u200B', lyrics.substr(i * 1024, 1024), true);
+    } */
+    var numFields = 0;
+    for (var i = 0; numFields < 25 && i < splitLyrics.length; i++) {
+      var splitLine = splitLyrics[i].match(/\[([^\]]*)\]\n([\s\S]*)/m);
+      var secTitle = splitLine[1].substr(0, 256);
+      var secBody = splitLine[2];
+      for (var j = 0; numFields < 25 && j * 1024 < secBody.length; j++) {
+        embed.addField(
+            j === 0 ? secTitle : '\u200B',
+            secBody.substr(j * 1024, 1024) || '\u200B', true);
+        numFields++;
+      }
     }
     embed.setColor([0, 255, 255]);
     msg.channel.send(embed);
   } catch(err) {
     console.log(err);
-    msg.channel.send("FAILED to parse lyrics: " + err.message);
+    msg.channel.send("`FAILED to parse lyrics: " + err.message + "`");
   }
 }

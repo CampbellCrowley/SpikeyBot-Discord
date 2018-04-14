@@ -71,7 +71,7 @@ const helpObject = {
       "pmspikey) feature requests!\n",
   sections: [
     {
-      title: "Music",
+      title: "Music Stuff",
       rows: [
         "play 'url or search' // Play a song in your current voice channel, or add a song to the queue.",
         "stop // Stop playing music and leave the voice channel.",
@@ -91,7 +91,7 @@ const helpObject = {
         "pmme // I will introduce myself to you!",
         "pmspikey 'message' // I will send SpikeyRobot (my creator) your message because you are too shy!",
         "flip // I have an unlimited supply of coins! I will flip one for you!",
-        "avatar 'mention' // Need a better look at your profile pic? I'll show you the original",
+        "avatar 'mention' // Need a better look at your profile pic? I'll show you the original.",
         "ping // Want to know what my delay to the server is? I can tell you my ping!"
       ]
     },
