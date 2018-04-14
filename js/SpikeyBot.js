@@ -454,19 +454,19 @@ command.on('solve', msg => {
     reply(msg, "Please ensure you have at least one variable in the equation.");
     return;
   }
-  try {
-    var messages = [];
-    for (var i = 0; i < variables.length; i++) {
+  var error = "";
+  var messages = [];
+  for (var i = 0; i < variables.length; i++) {
+    try {
       messages.push(algebra.parse(equation).solveFor(variables[i]).toString());
+    } catch (err) {
+      error += "For " + variables[i] + ": " + err.message + "\n";
     }
-    const outMessage =
-        messages.map(function(obj, i) { return variables[i] + " = " + obj; })
-            .join('\n');
-    reply(msg, outMessage);
-  } catch (err) {
-    reply(
-        msg, "Something went wrong while solving that equation.", err.message);
   }
+  const outMessage =
+      messages.map(function(obj, i) { return variables[i] + " = " + obj; })
+          .join('\n');
+  reply(msg, outMessage || "Oops, somthing didn't work!", error);
 });
 command.on(['eval', 'evaluate'], msg => {
   try {
