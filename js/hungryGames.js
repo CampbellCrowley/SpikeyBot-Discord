@@ -1062,24 +1062,26 @@ function nextDay(msg, id) {
   games[id].currentGame.day.num++;
   games[id].currentGame.day.events = [];
 
+  var deadPool = games[id].currentGame.includedUsers.filter(function(obj) {
+    return !obj.living;
+  });
   while (games[id].options.resurrection &&
-         Math.random() < games[id].options.probabilityOfResurrect) {
-    var deadPool = games[id].currentGame.includedUsers.filter(function(obj) {
-      return !obj.living;
+         Math.random() < games[id].options.probabilityOfResurrect &&
+         deadPool.length > 0) {
+    var resurrected =
+        deadPool.splice(Math.floor(Math.random() * deadPool.length), 1)[0];
+    resurrected.living = true;
+    resurrected.state = "zombie";
+    games[id].currentGame.includedUsers.forEach(function(obj) {
+      if (!obj.living && obj.rank < resurrected.rank) obj.rank++;
     });
-    if (deadPool.length > 0) {
-      var resurrected = deadPool[Math.floor(Math.random() * deadPool.length)];
-      resurrected.living = true;
-      resurrected.state = "zombie";
-      games[id].currentGame.includedUsers.forEach(function(obj) {
-        if (!obj.living && obj.rank < resurrected.rank) obj.rank++;
-      });
-      resurrected.rank = 1;
-      games[id].currentGame.numAlive++;
-      games[id].currentGame.day.events.push(
-          makeSingleEvent(
-              getMessage("resurrected"), [resurrected], 1, 0,
-              games[id].options.mentionAll, id, "thrives", "nothing"));
+    resurrected.rank = 1;
+    games[id].currentGame.numAlive++;
+    games[id].currentGame.day.events.push(
+        makeSingleEvent(
+            getMessage("resurrected"), [resurrected], 1, 0,
+            games[id].options.mentionAll, id, "thrives", "nothing"));
+    if (games[id].options.teamSize > 0) {
       var team = games[id].currentGame.teams.find(function(obj) {
         return obj.players.findIndex(function(obj) {
           return resurrected.id == obj;
@@ -1090,7 +1092,7 @@ function nextDay(msg, id) {
         if (obj.numAlive == 0 && obj.rank < team.rank) obj.rank++;
       });
       team.rank = 1;
-    }
+      }
   }
 
 
@@ -2414,6 +2416,10 @@ function toggleOpt(msg, id) {
                 ", which requires a number. (Currently " +
                 games[id].options[option] + ")");
       } else {
+        if ((option == "delayDays" || option == "delayEvents") && value < 500) {
+          value = 1000;
+        }
+
         var old = games[id].options[option];
         games[id].options[option] = value;
         reply(
@@ -2423,8 +2429,7 @@ function toggleOpt(msg, id) {
           reply(
               msg, "To reset teams to the correct size, type \"" + myPrefix +
                   "teams reset\".\nThis will delete all teams, and create new ones.");
-        }
-      }
+        }       }
     } else if (type === 'boolean') {
       if (value === 'true' || value === 'false') value = value === 'true';
       if (typeof value !== 'boolean') {
@@ -3338,7 +3343,7 @@ exports.save = function(opt) {
 // to allow for another module to take our place.
 function exit(code) {
   if (common && common.LOG) common.LOG("Caught exit!", "HG");
-  if (initialized && code == -1) {
+  if (initialized /* && code == -1 */) {
     exports.save();
   }
   try {
