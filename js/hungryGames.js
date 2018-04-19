@@ -364,16 +364,20 @@ const helpObject = {
   ]
 };
 exports.helpMessage = "Module loading...";
+const webURL = "https://www.campbellcrowley.com/spikeybot";
 // Set all help messages once we know what prefix to use.
 function setupHelp() {
   exports.helpMessage = "`" + myPrefix + "help` for Hungry Games help.";
-// Format help message into rich embed.
+  // Format help message into rich embed.
   var tmpHelp = new Discord.RichEmbed();
   tmpHelp.setTitle(helpObject.title);
+  tmpHelp.setURL(webURL + "#" + encodeURIComponent(helpObject.title));
   tmpHelp.setDescription(helpObject.description);
   helpObject.sections.forEach(function(obj) {
+    var titleID = encodeURIComponent(obj.title);
+    var titleURL = "[web](" + webURL + "#" + titleID + ")";
     tmpHelp.addField(
-        obj.title, "```js\n" +
+        obj.title, titleURL + "```js\n" +
             obj.rows
                 .map(function(row) {
                   return myPrefix + row.replaceAll('{prefix}', myPrefix);
@@ -3342,7 +3346,8 @@ exports.save = function(opt) {
 // Catch process exiting so we can save if necessary, and remove other handlers
 // to allow for another module to take our place.
 function exit(code) {
-  if (common && common.LOG) common.LOG("Caught exit!", "HG");
+  if (common && common.LOG) common.LOG("Caught exit!" + code, "HG");
+  else console.log("Caught exit!", code);
   if (initialized /* && code == -1 */) {
     exports.save();
   }
@@ -3356,6 +3361,7 @@ function exit(code) {
 // Same as exit(), but triggred via SIGINT.
 function sigint() {
   if (common && common.LOG) common.LOG("Caught SIGINT!", "HG");
+  else console.log("Caught SIGINT!");
   if (initialized) {
     try {
       exports.save();
@@ -3368,10 +3374,11 @@ function sigint() {
   process.exit();
 }
 
-// Catch reasons for exiting normally.
+// Catch reasons for exiting in order to save first.
 process.on('exit', exit);
 process.on('SIGINT', sigint);
 process.on('SIGHUP', sigint);
+process.on('SIGTERM', sigint);
 
 process.on('unhandledRejection', function(reason, p) {
   // console.log('Unhandled Rejection at:\n', p /*, '\nreason:', reason*/);

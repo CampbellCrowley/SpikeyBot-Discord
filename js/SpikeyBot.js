@@ -118,12 +118,17 @@ const helpObject = {
   ]
 };
 
+const webURL = "https://www.campbellcrowley.com/spikeybot";
+
 // Format help message into rich embed.
 var tmpHelp = new Discord.RichEmbed();
 tmpHelp.setTitle(helpObject.title);
+tmpHelp.setURL(webURL);
 helpObject.sections.forEach(function(obj) {
+  var titleID = encodeURIComponent(obj.title);
+  var titleURL = "[web](" + webURL + "#" + titleID + ")";
   tmpHelp.addField(
-      obj.title, "```js\n" +
+      obj.title, titleURL + "```js\n" +
           obj.rows.map(function(row) { return prefix + row; }).join('\n') +
           "\n```",
       true);
