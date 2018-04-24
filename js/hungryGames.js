@@ -686,7 +686,8 @@ function Event(
 }
 
 function makePlayer(user) {
-  return new Player(user.id, user.username, user.displayAvatarURL);
+  return new Player(
+      user.id, user.username.replaceAll('`', '\\`'), user.displayAvatarURL);
 }
 
 // Delay a message to send at the given time in milliseconds since epoch.
@@ -732,7 +733,6 @@ function createGame(msg, id, silent) {
   } else {
     games[id] = {
       excludedUsers: [],
-      options: defaultOptions,
       customEvents: {bloodbath: [], player: [], arena: []},
       currentGame: {
         name: msg.guild.name + "'s Hungry Games",
@@ -746,6 +746,11 @@ function createGame(msg, id, silent) {
       previousMessage: 0
     };
     games[id].currentGame.numAlive = games[id].currentGame.includedUsers.length;
+    const optKeys = Object.keys(defaultOptions);
+    games[id].options = {};
+    for (var i in optKeys) {
+      games[id].options[optKeys[i]] = defaultOptions[optKeys[i]].value;
+    }
     if (!silent)
       reply(
           msg,
@@ -910,7 +915,7 @@ function showGameEvents(msg, id) {
   if (games[id] && games[id].customEvents.player) {
     events = events.concat(games[id].customEvents.player);
   }
-  var file = new Discord.Attachment();
+  file = new Discord.Attachment();
   file.setFile(Buffer.from(JSON.stringify(events, null, 2)));
   file.setName("PlayerEvents.json");
   fetchStats(events);
@@ -926,7 +931,7 @@ function showGameEvents(msg, id) {
   if (games[id] && games[id].customEvents.arena) {
     events = events.concat(games[id].customEvents.arena);
   }
-  var file = new Discord.Attachment();
+  file = new Discord.Attachment();
   file.setFile(Buffer.from(JSON.stringify(events, null, 2)));
   file.setName("ArenaEvents.json");
   msg.channel.send("Arena Events (" + events.length + ")", file);
@@ -977,11 +982,13 @@ function startGame(msg, id) {
               .join(", ");
     }
 
-    var included = `**Included** (${numUsers}):\n${teamList}\n`
+    var included = `**Included** (${numUsers}):\n${teamList}\n`;
     var excluded = "";
     if (games[id].excludedUsers.length > 0)
-      excluded =
-          `**Excluded** (${games[id].excludedUsers.length}):\n${games[id].excludedUsers.map(function(obj) { return getName(msg, obj); }).join(", ")}`;
+      excluded = "**Excluded** (" + games[id].excludedUsers.length + "):\n" +
+          games[id]
+              .excludedUsers.map(function(obj) { return getName(msg, obj); })
+              .join(", ");
 
     reply(
         msg,
@@ -1021,7 +1028,7 @@ function startAutoplay(msg, id) {
   } else {
     games[id].autoPlay = true;
     if (games[id].currentGame.inProgress &&
-        games[id].currentGame.day.state == 0) {
+        games[id].currentGame.day.state === 0) {
       msg.channel.send(
           "<@" + msg.author.id +
           "> `Enabling Autoplay! Starting the next day!`");
@@ -1048,7 +1055,7 @@ function nextDay(msg, id) {
             "start\" to start a game!");
     return;
   }
-  if (games[id].currentGame.day.state != 0) {
+  if (games[id].currentGame.day.state !== 0) {
     if (intervals[id]) {
       reply(msg, "Already simulating day.");
     } else if (games[id].currentGame.day.state == 1) {
@@ -1093,7 +1100,7 @@ function nextDay(msg, id) {
       });
       team.numAlive++;
       games[id].currentGame.teams.forEach(function(obj) {
-        if (obj.numAlive == 0 && obj.rank < team.rank) obj.rank++;
+        if (obj.numAlive === 0 && obj.rank < team.rank) obj.rank++;
       });
       team.rank = 1;
       }
@@ -1106,7 +1113,7 @@ function nextDay(msg, id) {
   var startingAlive = userPool.length;
   var userEventPool;
   var doArenaEvent = false;
-  if (games[id].currentGame.day.num == 0) {
+  if (games[id].currentGame.day.num === 0) {
     userEventPool =
         defaultBloodbathEvents.concat(games[id].customEvents.bloodbath);
   } else {
@@ -1126,7 +1133,7 @@ function nextDay(msg, id) {
     }
   }
 
-  const deathRate = games[id].currentGame.day.num == 0 ?
+  const deathRate = games[id].currentGame.day.num === 0 ?
       games[id].options.bloodbathDeathRate :
       games[id].options.playerDeathRate;
 
@@ -1159,7 +1166,7 @@ function nextDay(msg, id) {
           userPool, userEventPool, games[id].options,
           games[id].currentGame.numAlive, games[id].currentGame.teams,
           deathRate);
-      if (eventTry == null) {
+      if (!eventTry) {
         reply(msg, "A stupid error happened :(");
         games[id].currentGame.day.state = 0;
         return;
@@ -1212,7 +1219,7 @@ function nextDay(msg, id) {
               games[id].currentGame.includedUsers[index]);
         } else {
           team.numAlive--;
-          if (team.numAlive == 0) {
+          if (team.numAlive === 0) {
             var teamsLeft = 0;
             games[id].currentGame.teams.forEach(function(obj) {
               if (obj.numAlive > 0) teamsLeft++;
@@ -1287,7 +1294,7 @@ function nextDay(msg, id) {
     } */
     games[id].currentGame.day.events.push(finalEvent);
 
-    if (effectedUsers.length != 0) {
+    if (effectedUsers.length !== 0) {
       console.log("Effected users remain! " + effectedUsers.length);
     }
 
@@ -1321,7 +1328,7 @@ function nextDay(msg, id) {
             }) > -1;
           });
           team.numAlive--;
-          if (team.numAlive == 0) {
+          if (team.numAlive === 0) {
             var teamsLeft = 0;
             games[id].currentGame.teams.forEach(function(obj) {
               if (obj.numAlive > 0) teamsLeft++;
@@ -1353,7 +1360,7 @@ function nextDay(msg, id) {
   if (deathPercentage > lotsOfDeathRate) {
     games[id].currentGame.day.events.splice(
         0, 0, makeMessageEvent(getMessage("lotsOfDeath"), id));
-  } else if (deathPercentage == 0) {
+  } else if (deathPercentage === 0) {
     games[id].currentGame.day.events.splice(
         0, 0, makeMessageEvent(getMessage("noDeath"), id));
   } else if (deathPercentage < littleDeathRate) {
@@ -1365,7 +1372,7 @@ function nextDay(msg, id) {
   games[id].currentGame.day.state = 2;
 
   var embed = new Discord.RichEmbed();
-  if (games[id].currentGame.day.num == 0) {
+  if (games[id].currentGame.day.num === 0) {
     embed.setTitle(getMessage("bloodbathStart"));
   } else {
     embed.setTitle(
@@ -1430,8 +1437,7 @@ function pickEvent(userPool, eventPool, options, numAlive, teams, deathRate) {
   }
   common.ERROR(
       "Failed to find suitable event for " + userPool.length + " of " +
-          eventPool.length + " events. This " + numVictim + "/" + numAttacker +
-          "/" + eventEffectsNumMin,
+          eventPool.length + " events.",
       "HG");
   return null;
 }
@@ -1648,11 +1654,11 @@ function makeBattleEvent(effectedUsers, numVictim, numAttacker, mention, id) {
       flipRoles: flipRoles
     };
 
-    const healthText =
+    healthText =
         effectedUsers
             .map(function(obj, index) {
               const health = Math.max((maxHealth - userHealth[index]), 0);
-              const prePost = health == 0 ? "~~" : "";
+              const prePost = health === 0 ? "~~" : "";
               return prePost + "`" + obj.name + "`: " + health + "HP" + prePost;
             })
             .sort(function(a, b) { return a.id - b.id; })
@@ -1765,7 +1771,7 @@ function makeSingleEvent(
                         .currentGame.includedUsers
                         .filter(function(obj) { return !obj.living; })
                         .slice(0, weightedUserRand());
-    if (deadUsers.length == 0) {
+    if (deadUsers.length === 0) {
       finalMessage = finalMessage.replaceAll("{dead}", "an animal");
     } else {
       finalMessage =
@@ -1808,7 +1814,7 @@ function printEvent(msg, id) {
     embed.addField(message[1], message[2]);
     embed.setColor([50, 0, 0]);
 
-    if (events[index].attacks[battleState].icons.length == 0) {
+    if (events[index].attacks[battleState].icons.length === 0) {
       // Send without image.
       if (!battleMessage[id]) {
         msg.channel.send(message[0], embed).then(msg_ => {
@@ -1876,7 +1882,7 @@ function printEvent(msg, id) {
     events[index].state++;
   } else {
     delete battleMessage[id];
-    if (events[index].icons.length == 0) {
+    if (events[index].icons.length === 0) {
       msg.channel.send(events[index].message);
     } else {
       var embed = new Discord.RichEmbed();
@@ -2208,6 +2214,7 @@ function printDay(msg, id) {
   }
 
   games[id].currentGame.day.state = 0;
+  games[id].currentGame.day.events = [];
 
   if (games[id].autoPlay) {
     client.setTimeout(function() {
@@ -2220,6 +2227,7 @@ function printDay(msg, id) {
     }, games[id].options.delayDays);
   } else {
     command.enable("say", msg.channel.id);
+    games[id].currentGame.includedUsers = [];
   }
 }
 // End a game early.

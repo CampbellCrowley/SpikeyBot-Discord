@@ -10,17 +10,14 @@ const client = new Discord.Client();
 
 math.config({matrix: "Array"});
 
-var HGames;
-try {
-  HGames = require('./hungryGames.js');
-} catch (err) {
-  console.log(err);
-}
-var Music;
-try {
-  Music = require('./music.js');
-} catch (err) {
-  console.log(err);
+var subModuleNames = ['./hungryGames.js', './music.js'];
+var subModules = [];
+for (var i in subModuleNames) {
+  try {
+    subModules[i] = require(subModuleNames[i]);
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 const isDev = false;
@@ -256,19 +253,17 @@ client.on('ready', _ => {
   client.fetchUser(spikeyId).then(
       user => { user.send("I just rebooted (JS)"); });
   // common.LOG("Initializing submodules...");
-  try {
-    HGames.begin(prefix, Discord, client, command, common);
-  } catch(err) {
-    client.fetchUser(spikeyId).then(
-        user => { user.send("Failed to initialize HungryGames"); });
-    console.log(err);
-  }
-  try {
-    Music.begin(prefix, Discord, client, command, common);
-  } catch(err) {
-    client.fetchUser(spikeyId).then(
-        user => { user.send("Failed to initialize Music"); });
-    console.log(err);
+  for (var i in subModules) {
+    try {
+      subModules[i].begin(prefix, Discord, client, command, common);
+    } catch (err) {
+      client.fetchUser(spikeyId).then((function(i) {
+        return function(user) {
+          user.send("Failed to initialize " + subModuleNames[i]);
+        };
+      })(i));
+      console.log(err);
+    }
   }
   fs.readFile('reboot.dat', function(err, file) {
     if (err) return;
@@ -701,8 +696,10 @@ command.on('togglereact', msg => {
 command.on('help', msg => {
   msg.author.send(helpmessage)
       .then(_ => {
-        if (HGames && HGames.helpMessage) msg.author.send(HGames.helpMessage);
-        if (Music && Music.helpMessage) msg.author.send(Music.helpMessage);
+        for (var i in subModules) {
+          const mod = subModules[i];
+          if (mod && mod.helpMessage) msg.author.send(mod.helpMessage);
+        }
         if (msg.guild !== null) reply(msg, helpmessagereply, ":wink:");
       })
       .catch(_ => { reply(msg, blockedmessage); });
@@ -978,29 +975,21 @@ command.on('reload', msg => {
   if (msg.author.id == spikeyId) {
     reply(msg, "Reloading modules...").then(warnMessage => {
       var error = false;
-      try {
+      for (var i in subModules) {
         try {
-          HGames.save();
-          HGames.end();
+          try {
+            subModules[i].save();
+            subModules[i].end();
+          } catch (err) {
+          }
+          delete require.cache[require.resolve(subModuleNames[i])];
+          subModules[i] = require(subModuleNames[i]);
+          subModules[i].begin(prefix, Discord, client, command, common);
         } catch (err) {
+          error = true;
+          common.ERROR("Failed to reload " + subModuleNames[i]);
+          console.log(err);
         }
-        delete require.cache[require.resolve('./hungryGames.js')];
-        // delete HGames;
-        HGames = require('./hungryGames.js');
-        HGames.begin(prefix, Discord, client, command, common);
-      } catch (err) {
-        error = true;
-        common.ERROR("Failed to reload HungryGames");
-        console.log(err);
-      }
-      try {
-        delete require.cache[require.resolve('./music.js')];
-        Music = require('./music.js');
-        Music.begin(prefix, Discord, client, command, common);
-      } catch (err) {
-        error = true;
-        common.ERROR("Failed to reload Music");
-        console.log(err);
       }
       if (error) {
         warnMessage.edit("`Reload completed with errors.`");

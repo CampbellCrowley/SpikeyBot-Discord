@@ -105,6 +105,9 @@ exports.end = function() {
   delete common;
 };
 
+exports.save = function() {};
+exports.end = function() {};
+
 // Creates formatted string for mentioning the author of msg.
 function mention(msg) {
   return `<@${msg.author.id}>`;
