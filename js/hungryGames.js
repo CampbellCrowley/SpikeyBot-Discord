@@ -369,7 +369,7 @@ const webURL = "https://www.campbellcrowley.com/spikeybot";
 function setupHelp() {
   exports.helpMessage = "`" + myPrefix + "help` for Hungry Games help.";
   // Format help message into rich embed.
-  var tmpHelp = new Discord.RichEmbed();
+  var tmpHelp = new Discord.MessageEmbed();
   tmpHelp.setTitle(helpObject.title);
   tmpHelp.setURL(webURL + "#" + encodeURIComponent(helpObject.title));
   tmpHelp.setDescription(helpObject.description);
@@ -1371,7 +1371,7 @@ function nextDay(msg, id) {
   // Signal ready to display events.
   games[id].currentGame.day.state = 2;
 
-  var embed = new Discord.RichEmbed();
+  var embed = new Discord.MessageEmbed();
   if (games[id].currentGame.day.num === 0) {
     embed.setTitle(getMessage("bloodbathStart"));
   } else {
@@ -1809,7 +1809,7 @@ function printEvent(msg, id) {
       events[index].battle &&
       events[index].state < events[index].attacks.length) {
     const battleState = events[index].state;
-    var embed = new Discord.RichEmbed();
+    var embed = new Discord.MessageEmbed();
     const message = events[index].attacks[battleState].message.split('\n');
     embed.addField(message[1], message[2]);
     embed.setColor([50, 0, 0]);
@@ -1885,7 +1885,7 @@ function printEvent(msg, id) {
     if (events[index].icons.length === 0) {
       msg.channel.send(events[index].message);
     } else {
-      var embed = new Discord.RichEmbed();
+      var embed = new Discord.MessageEmbed();
       embed.setDescription(events[index].message);
       embed.setColor([125, 0, 0]);
       var finalImage = new jimp(
@@ -1967,7 +1967,7 @@ function printDay(msg, id) {
     common.ERROR("Realtime alive count is incorrect!", "HG");
   }
 
-  var finalMessage = new Discord.RichEmbed();
+  var finalMessage = new Discord.MessageEmbed();
   finalMessage.setColor(defaultColor);
   if (numTeams == 1) {
     var teamName = games[id].currentGame.teams[lastTeam].name;
@@ -2079,7 +2079,7 @@ function printDay(msg, id) {
     }
   }
 
-  var embed = new Discord.RichEmbed();
+  var embed = new Discord.MessageEmbed();
   if (games[id].currentGame.day.num == 0) {
     embed.setTitle(getMessage("bloodbathEnd"));
   } else {
@@ -2163,7 +2163,7 @@ function printDay(msg, id) {
   }
 
   if (games[id].currentGame.ended) {
-    var rankEmbed = new Discord.RichEmbed();
+    var rankEmbed = new Discord.MessageEmbed();
     rankEmbed.setTitle("Final Ranks (kills)");
     var rankList =
         games[id]
@@ -2190,7 +2190,7 @@ function printDay(msg, id) {
     rankEmbed.setColor(defaultColor);
     client.setTimeout(function() { msg.channel.send(rankEmbed); }, 5000);
     if (games[id].options.teamSize > 0) {
-      var teamRankEmbed = new Discord.RichEmbed();
+      var teamRankEmbed = new Discord.MessageEmbed();
       teamRankEmbed.setTitle("Final Team Ranks");
       var teamRankList =
           games[id]
@@ -2510,7 +2510,7 @@ function showOpts(msg, options) {
   if (page < 0) page = 0;
   if (page >= bodyFields.length) page = bodyFields.length - 1;
 
-  var embed = new Discord.RichEmbed();
+  var embed = new Discord.MessageEmbed();
   embed.setTitle("Current Options");
   embed.setFooter("Page " + (page + 1) + " of " + (bodyFields.length));
   embed.setDescription("```js\n" + bodyFields[page].join("\n\n") + "```");
@@ -3110,7 +3110,7 @@ function fetchStats(events) {
 // Allow user to view all events available on their server and summary of each
 // type of event.
 function listEvents(msg, id, page, eventType, editMsg) {
-  var embed = new Discord.RichEmbed();
+  var embed = new Discord.MessageEmbed();
 
   var events = [];
   var numCustomEvents = 0;

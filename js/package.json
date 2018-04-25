@@ -16,13 +16,12 @@
     "algebra.js": "^0.2.6",
     "async": "^2.6.0",
     "dateformat": "^3.0.3",
-    "discord.js": "^11.3.2",
+    "discord.js": "github:discordjs/discord.js",
     "jimp": "^0.2.28",
     "mathjs": "^4.1.1",
     "node-opus": "^0.2.7",
-    "simple-oauth2": "^1.5.2",
-    "youtube-dl": "^1.12.2",
-    "ytdl-getinfo": "^1.0.5"
+    "uws": "^9.148.0",
+    "youtube-dl": "^1.12.2"
   },
   "contributors": [
     {

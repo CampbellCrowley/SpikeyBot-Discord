@@ -1,4 +1,5 @@
 const ytdl = require('youtube-dl');
+const fs = require('fs');
 
 
 const geniusId = "P16rUAwFfDqa6orLH8sd5_VGpWTDVNnxXwjkVdEGuQODF6_D2miuEPQPhmSXsik7";
@@ -15,7 +16,6 @@ const geniusRequest = {
       {"Accept": "application/json", "Authorization": "Bearer " + geniusClient},
   method: "GET"
 };
-// const oauth2 = require('simple-oauth2').create(credentials);
 const https = require('https');
 
 var initialized = false;
@@ -28,7 +28,7 @@ var myPrefix, helpMessage;
 var broadcasts = {};
 
 const special = {
-  'vi rap': {
+  'nice try vi': {
     cmd: 'vi',
     url: "https://www.youtube.com/watch?v=c1NoTNCiomU",
     file: '/home/discord/SpikeyBot-Discord/js/sounds/viRap.webm'
@@ -68,13 +68,14 @@ exports.begin = function(prefix_, Discord_, client_, command_, common_) {
   command.on(['queue', 'playing'], commandQueue, true);
   command.on(['remove', 'dequeue'], commandRemove, true);
   command.on('lyrics', commandLyrics);
+  command.on('record', commandRecord, true);
 
   command.on('kokomo', msg => {
     msg.content = "?play kokomo";
     command.trigger('play', msg);
   });
   command.on('vi', msg => {
-    msg.content = "?play vi rap";
+    msg.content = "?play nice try vi";
     command.trigger('play', msg);
   });
   command.on('airhorn', msg => {
@@ -106,7 +107,6 @@ exports.end = function() {
 };
 
 exports.save = function() {};
-exports.end = function() {};
 
 // Creates formatted string for mentioning the author of msg.
 function mention(msg) {
@@ -120,7 +120,7 @@ function reply(msg, text, post) {
 
 // Format the info response from ytdl into a human readable format.
 function formatSongInfo(info) {
-  var output = new Discord.RichEmbed();
+  var output = new Discord.MessageEmbed();
   output.setDescription(
       info.title + "\nUploaded by " + info.uploader + "\n[👍 " +
       formNum(info.like_count) + " 👎 " + formNum(info.dislike_count) +
@@ -186,7 +186,7 @@ function startPlaying(broadcast) {
   broadcast.current = broadcast.queue.splice(0, 1)[0];
   try {
     makeBroadcast(broadcast);
-    broadcast.voice.playBroadcast(broadcast.broadcast);
+    broadcast.voice.play(broadcast.broadcast);
   } catch (err) {
     console.log(err);
     endSong(broadcast);
@@ -205,7 +205,7 @@ function startPlaying(broadcast) {
     if (special[broadcast.current.song]) {
       if (!special[broadcast.current.song].url) {
         broadcast.isLoading = false;
-        var embed = new Discord.RichEmbed();
+        var embed = new Discord.MessageEmbed();
         embed.setTitle(
             "Now playing [" + broadcast.queue.length + " left in queue]");
         embed.setColor([50, 200, 255]);
@@ -243,7 +243,7 @@ function startPlaying(broadcast) {
 }
 function makeBroadcast(broadcast) {
   if (special[broadcast.current.song]) {
-    broadcast.broadcast.playFile(special[broadcast.current.song].file)
+    broadcast.broadcast.play(special[broadcast.current.song].file)
         .on('end', function() { endSong(broadcast); });
   } else {
     if (broadcast.current.info) {
@@ -252,7 +252,7 @@ function makeBroadcast(broadcast) {
       broadcast.current.stream = ytdl(broadcast.current.song, ytdlOpts);
     }
 
-    broadcast.broadcast.playStream(broadcast.current.stream)
+    broadcast.broadcast.play(broadcast.current.stream)
         .on('end', function() { endSong(broadcast); });
   }
 }
@@ -263,7 +263,7 @@ function endSong(broadcast) {
 }
 // Skip the current song, then attempt to play the next.
 function skipSong(broadcast) {
-  if (broadcast.broadcast) broadcast.broadcast.end();
+  if (broadcast.broadcast) broadcast.broadcast.dispatcher.pause();
   broadcast.isPlaying = false;
   startPlaying(broadcast);
 }
@@ -291,7 +291,7 @@ function commandPlay(msg) {
       enqueueSong(broadcasts[msg.guild.id], song, msg);
     } else {
       if (special[song]) {
-        var embed = new Discord.RichEmbed();
+        var embed = new Discord.MessageEmbed();
         embed.setTitle(
             "Enqueuing " + song + " [" +
             (broadcasts[msg.guild.id].queue.length + 1) + " in queue]");
@@ -333,7 +333,7 @@ function commandLeave(msg) {
        broadcasts[msg.guild.id].current)) {
     shouldReply = false;
   }
-  msg.guild.fetchMember(client.user).then(me => {
+  msg.guild.members.fetch(client.user).then(me => {
     if (typeof me.voiceChannel !== 'undefined') {
       me.voiceChannel.leave();
       if (shouldReply) reply(msg, "Goodbye!");
@@ -362,13 +362,13 @@ function commandQueue(msg) {
       if (broadcasts[msg.guild.id].current.info) {
         embed = formatSongInfo(broadcasts[msg.guild.id].current.info);
       } else {
-        embed = new Discord.RichEmbed();
+        embed = new Discord.MessageEmbed();
         embed.setColor([50, 200, 255]);
         embed.setDescription(broadcasts[msg.guild.id].current.song);
       }
       embed.setTitle("Current Song Queue");
     } else {
-      embed = new Discord.RichEmbed();
+      embed = new Discord.MessageEmbed();
     }
     if (broadcasts[msg.guild.id].queue.length > 0) {
       embed.addField(
@@ -525,7 +525,7 @@ function stripLyrics(msg, content, title, url, thumb) {
                      .replace(/<>|^\s*/gm, '')
                      .replace('>', '');
     var splitLyrics = lyrics.match(/\[[^\]]*\][^\[]*/gm);
-    var embed = new Discord.RichEmbed();
+    var embed = new Discord.MessageEmbed();
     if (title) embed.setTitle(title);
     if (url) embed.setURL(url);
     if (thumb) embed.setThumbnail(thumb);
@@ -550,4 +550,55 @@ function stripLyrics(msg, content, title, url, thumb) {
     console.log(err);
     msg.channel.send("`FAILED to parse lyrics: " + err.message + "`");
   }
+}
+
+function commandRecord(msg) {
+  if (msg.member.voiceChannel === null) {
+    reply(msg, "You aren't in a voice channel!");
+    return;
+  }
+  const filename = "recordings/" +
+      encodeURIComponent(msg.member.voiceChannel.name + Date.now()) + ".opus";
+  const url = "https://www.campbellcrowley.com/spikeybot/" + filename;
+  if (msg.mentions.users.size === 0) {
+    reply(msg, "Recording everyone in voice channel. Type ?stop to stop", url);
+  } else {
+    reply(
+        msg, "Only recording " +
+            msg.mentions.users
+                .map(function(obj) {
+                  return "`" + obj.username.replaceAll('`', '\\`') + "`";
+                })
+                .join(', '),
+        url);
+  }
+  var message;
+  var streams = {};
+  var file = fs.createWriteStream(filename);
+  file.on('close', _ => { msg.channel.send("Saved to " + url); });
+  listen = function(user, receiver, conn) {
+    if (streams[user.id] ||
+        (msg.mentions.users.size > 0 && !msg.mentions.users.find(user.id))) {
+      return;
+    }
+    var stream = receiver.createStream(msg.author, {end: 'manual'});
+    streams[user.id] = stream;
+    stream.pipe(file);
+    conn.on('disconnect', _ => { stream.destroy(); });
+  };
+  msg.member.voiceChannel.join().then(conn => {
+    var startSound =
+        conn.play("/home/discord/SpikeyBot-Discord/js/sounds/plink.m4a");
+    startSound.on('end', _ => {
+      var receiver = conn.createReceiver();
+      msg.member.voiceChannel.members.forEach(function(member) {
+        listen(member.user, receiver, conn);
+      });
+      conn.on('speaking', function(user, speaking) {
+        if (speaking) {
+          listen(user, receiver, conn);
+        }
+      });
+    });
+  });
 }

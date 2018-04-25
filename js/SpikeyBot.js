@@ -118,7 +118,7 @@ const helpObject = {
 const webURL = "https://www.campbellcrowley.com/spikeybot";
 
 // Format help message into rich embed.
-var tmpHelp = new Discord.RichEmbed();
+var tmpHelp = new Discord.MessageEmbed();
 tmpHelp.setTitle(helpObject.title);
 tmpHelp.setURL(webURL);
 helpObject.sections.forEach(function(obj) {
@@ -250,14 +250,14 @@ function reply(msg, text, post) {
 client.on('ready', _ => {
   common.LOG(`Logged in as ${client.user.tag}!`);
   updategame(password, prefix + 'help for help');
-  client.fetchUser(spikeyId).then(
+  client.users.fetch(spikeyId).then(
       user => { user.send("I just rebooted (JS)"); });
   // common.LOG("Initializing submodules...");
   for (var i in subModules) {
     try {
       subModules[i].begin(prefix, Discord, client, command, common);
     } catch (err) {
-      client.fetchUser(spikeyId).then((function(i) {
+      client.users.fetch(spikeyId).then((function(i) {
         return function(user) {
           user.send("Failed to initialize " + subModuleNames[i]);
         };
@@ -270,7 +270,7 @@ client.on('ready', _ => {
     var msg = JSON.parse(file);
     var channel = client.channels.get(msg.channel.id);
     if (channel)
-      channel.fetchMessage(msg.id)
+      channel.messages.fetch(msg.id)
           .then(msg_ => { msg_.edit("`Reboot complete.`"); })
           .catch(_ => {});
 
@@ -279,7 +279,7 @@ client.on('ready', _ => {
     setTimer = function(timer) {
       timers.push(timer);
       return function() {
-        client.fetchUser(timer.id).then(user => {
+        client.users.fetch(timer.id).then(user => {
           user.send(timer.message);
           timers =
               timers.filter(function(obj) { return obj.time > Date.now(); });
@@ -569,7 +569,7 @@ command.on('graph', msg => {
     expression = "y = " + simplify(expMatch[1]);
   }
   finalImage.getBuffer(jimp.MIME_PNG, function(err, out) {
-    var embed = new Discord.RichEmbed();
+    var embed = new Discord.MessageEmbed();
     embed.setTitle("Graph of " + expression);
     embed.setDescription(
         "Plot Domain: [" + domainMin + ", " + domainMax + "]\nPlot Range: [" +
@@ -616,7 +616,7 @@ command.on('js', msg => {
     var stderr = sandbox.__stderr;
     delete sandbox.__stdout;
     delete sandbox.__stderr;
-    var embed = new Discord.RichEmbed();
+    var embed = new Discord.MessageEmbed();
     embed.setColor([0, 255, 255]);
     if (stdout.length > 0) {
       embed.addField(
@@ -765,7 +765,7 @@ command.on('pmme', msg => {
       .catch(_ => { reply(msg, blockedmessage); });
 });
 command.on('pmspikey', msg => {
-  client.fetchUser(spikeyId)
+  client.users.fetch(spikeyId)
       .then(user => {
         user.send(msg.author.tag + ": " + msg.content).then(_ => {
           reply(msg, "I sent your message to SpikeyRobot.");
@@ -784,7 +784,7 @@ command.on('thotpm', msg => {
     if (msg.guild !== null) msg.delete();
     if (msg.mentions.users.size === 0) return;
     msg.mentions.users.first().send(msg.content.replace(prefix + 'thotpm', ''));
-    client.fetchUser(spikeyId).then(
+    client.users.fetch(spikeyId).then(
         user => { user.send(msg.author.tag + ": " + msg.content); });
   }
 });
@@ -796,7 +796,7 @@ command.on('flip', msg => {
     url = "https://www.campbellcrowley.com/tails.png";
     text = "Tails!";
   }
-  var embed = new Discord.RichEmbed({title: text});
+  var embed = new Discord.MessageEmbed({title: text});
   embed.setImage(url);
   msg.channel.send(embed);
 });
@@ -921,7 +921,7 @@ command.on('smite', msg => {
   }
 }, true);
 command.on(['profile', 'avatar'], msg => {
-  var embed = new Discord.RichEmbed();
+  var embed = new Discord.MessageEmbed();
   if (msg.mentions.users.size > 0) {
     embed.setDescription(
         msg.mentions.users.first().username + "'s profile picture");
