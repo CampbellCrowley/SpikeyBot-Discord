@@ -115,10 +115,6 @@ function Command() {
       if (!blacklist[cmd] || blacklist[cmd].lastIndexOf(channel) == -1) {
         if (!blacklist[cmd]) blacklist[cmd] = [channel];
         else blacklist[cmd].push(channel);
-        /* } else {
-          common.ERROR(
-              "Requested disable of command that is already disabled! (" + cmd +
-              ")"); */
       }
     } else {
       common.ERROR(
@@ -150,7 +146,7 @@ function isCmd(msg, cmd) {
 // Changes the bot's status message.
 function updategame(password_, game) {
   if (password_ == password) {
-    client.user.setPresence({game: {name: game}});
+    client.user.setActivity(game, {name: game, type: "WATCHING"});
     common.LOG('Changed game to "' + game + '"');
     return 0;
   } else {
@@ -174,7 +170,6 @@ client.on('ready', _ => {
   updategame(password, prefix + 'help for help');
   client.users.fetch(spikeyId).then(
       user => { user.send("I just rebooted (JS)"); });
-  // common.LOG("Initializing submodules...");
   for (var i in subModules) {
     try {
       subModules[i].begin(prefix, Discord, client, command, common);

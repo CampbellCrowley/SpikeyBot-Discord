@@ -2137,6 +2137,7 @@ function printDay(msg, id) {
           finalMessage.attachFiles(
               [new Discord.MessageAttachment(out, "hgTeamVictor.png")]);
           sendAtTime(msg.channel, winnerTag, finalMessage, sendTime);
+          games[id].currentGame.includedUsers = [];
         });
       }
     };
@@ -2163,6 +2164,7 @@ function printDay(msg, id) {
           winnerTag = "<@" + lastId + ">";
         }
         msg.channel.send(winnerTag, finalMessage);
+        games[id].currentGame.includedUsers = [];
       } else {
         msg.channel.send(winnerTag, finalMessage);
       }
@@ -2226,7 +2228,12 @@ function printDay(msg, id) {
   if (games[id].autoPlay) {
     client.setTimeout(function() {
       msg.channel.send("`Autoplaying...`")
-          .then(msg => { msg.delete(games[id].options.delayDays - 1250); })
+          .then(msg => {
+            msg.delete({
+              timeout: games[id].options.delayDays - 1250,
+              reason: "I can do whatever I want!"
+            });
+          })
           .catch(_ => {});
     }, (games[id].options.delayDays > 2000 ? 1200 : 100));
     client.setTimeout(function() {
@@ -2234,7 +2241,6 @@ function printDay(msg, id) {
     }, games[id].options.delayDays);
   } else {
     command.enable("say", msg.channel.id);
-    games[id].currentGame.includedUsers = [];
   }
 }
 // End a game early.
