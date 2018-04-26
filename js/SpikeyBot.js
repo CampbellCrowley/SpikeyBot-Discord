@@ -13,12 +13,12 @@ for (var i in subModuleNames) {
   }
 }
 
-const isDev = false;
+const isDev = process.argv[2] === "dev";
 const prefix = isDev ? '~' : '?';
 
 var reactToAnthony = true;
 
-common.begin();
+common.begin(false, !isDev);
 
 // Password for changing the game the bot is playing. This doesn't need to be
 // secure, and I could probably just remove it.
