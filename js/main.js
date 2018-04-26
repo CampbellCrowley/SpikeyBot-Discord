@@ -637,39 +637,42 @@ function commandBan(msg) {
           Discord.Permissions.FLAGS.BAN_MEMBERS, true, true, true)) {
     reply(
         msg, "You don't have permission for that!\n(Filthy " +
-            msg.member.highestRole.name + ")");
+            msg.member.roles.highest.name + ")");
   } else if (msg.mentions.members.size === 0) {
     reply(msg, "You must mention someone to ban after the command.");
   } else {
-    var toBan = msg.mentions.members.first();
-    if (msg.guild.ownerID !== msg.author.id &&
-        Discord.Role.comparePositions(
-            msg.member.highestRole, toBan.highestRole) <= 0) {
-      reply(
-          msg, "You can't ban " + toBan.user.username +
-              "! You are not stronger than them!");
-    } else {
-      msg.guild.members.fetch(client.user).then(me => {
-        var myRole = me.highestRole;
-        if (Discord.Role.comparePositions(myRole, toBan.highestRole) <= 0) {
-          reply(
-              msg, "I can't ban " + toBan.user.username +
-                  "! I am not strong enough!");
-        } else {
-          var banMsg = banMsgs[Math.floor(Math.random() * banMsgs.length)];
-          toBan.ban({reason: banMsg})
-              .then(
-                  _ => { reply(msg, banMsg, "Banned " + toBan.user.username); })
-              .catch(err => {
-                reply(
-                    msg, "Oops! I wasn't able to ban " + toBan.user.username +
-                        "! I'm not sure why though!");
-                common.ERROR("Failed to ban user.");
-                console.log(err);
-              });
-        }
-      });
-    }
+    msg.mentions.members.forEach(function(toBan) {
+      if (msg.guild.ownerID !== msg.author.id &&
+          msg.member.roles.highest.comparePositionTo(toBan.roles.highest) <=
+              0) {
+        reply(
+            msg, "You can't ban " + toBan.user.username +
+                "! You are not stronger than them!");
+      } else {
+        msg.guild.members.fetch(client.user).then(me => {
+          var myRole = me.roles.highest;
+          if (toBan.roles.highest &&
+              myRole.comparePositionTo(toBan.roles.highest) <= 0) {
+            reply(
+                msg, "I can't ban " + toBan.user.username +
+                    "! I am not strong enough!");
+          } else {
+            var banMsg = banMsgs[Math.floor(Math.random() * banMsgs.length)];
+            toBan.ban({reason: banMsg})
+                .then(_ => {
+                  reply(msg, banMsg, "Banned " + toBan.user.username);
+                })
+                .catch(err => {
+                  reply(
+                      msg, "Oops! I wasn't able to ban " + toBan.user.username +
+                          "! I'm not sure why though!");
+                  common.ERROR("Failed to ban user.");
+                  console.log(err);
+                });
+          }
+        });
+      }
+    });
   }
 }
 function commandSmite(msg) {
@@ -678,15 +681,15 @@ function commandSmite(msg) {
   } else {
     var toSmite = msg.mentions.members.first();
     if (msg.guild.ownerID !== msg.author.id &&
-        msg.member.Discord.Role.comparePositions(
-            msg.member.highestRole, toSmite.highestRole) <= 0) {
+        msg.member.roles.highest.comparePositionTo(toSmite.role.highest) <= 0) {
       reply(
           msg, "You can't smite " + toSmite.user.username +
               "! You are not stronger than them!");
     } else {
       msg.guild.members.fetch(client.user).then(me => {
-        var myRole = me.highestRole;
-        if (Discord.Role.comparePositions(myRole, toSmite.highestRole) <= 0) {
+        var myRole = me.roles.highest;
+        if (toSmite.roles.highest &&
+            Discord.Role.comparePositions(myRole, toSmite.roles.highest) <= 0) {
           reply(
               msg, "I can't smite " + toSmite.user.username +
                   "! I am not strong enough!");
