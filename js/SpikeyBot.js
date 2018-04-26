@@ -24,6 +24,10 @@ common.begin();
 // secure, and I could probably just remove it.
 const password = "password";
 const spikeyId = "124733888177111041";
+const trustedIds = [
+  spikeyId,             // Me
+  "126464376059330562"  // Rohan
+];
 
 const introduction = "\nHello! My name is SpikeyBot.\n" +
     "I was created by SpikeyRobot#9836, so if you wish to add any features, feel free to PM him! (Tip: Use **" +
@@ -183,6 +187,12 @@ client.on('ready', _ => {
       })(i));
     }
   }
+  if (subModules.length != subModuleNames.length) {
+    client.users.fetch(spikeyId).then(user => {
+      user.send(
+          "Failed to compile a submodule. Check log for more info. Previous initialization errors may be incorrect.");
+    });
+  }
   fs.readFile('reboot.dat', function(err, file) {
     if (err) return;
     var msg = JSON.parse(file);
@@ -312,7 +322,7 @@ command.on('updategame', msg => {
 });
 
 command.on('reboot', msg => {
-  if (msg.author.id == spikeyId) {
+  if (trustedIds.includes(msg.author.id)) {
     reply(msg, "Rebooting...").then(msg => {
       const now = Date.now();
       var toSave = {
@@ -329,11 +339,13 @@ command.on('reboot', msg => {
       process.exit(-1);
     });
   } else {
-    reply(msg, "LOL! Good try!");
+    reply(
+        msg, "LOL! Good try!",
+        "It appears SpikeyRobot doesn't trust you enough with this command. Sorry!");
   }
 });
 command.on('reload', msg => {
-  if (msg.author.id == spikeyId) {
+  if (trustedIds.includes(msg.author.id)) {
     reply(msg, "Reloading modules...").then(warnMessage => {
       var error = false;
       for (var i in subModules) {
@@ -373,7 +385,9 @@ command.on('reload', msg => {
       }
     });
   } else {
-    reply(msg, "LOL! Good try!");
+    reply(
+        msg, "LOL! Good try!",
+        "It appears SpikeyRobot doesn't trust you enough with this command. Sorry!");
   }
 });
 

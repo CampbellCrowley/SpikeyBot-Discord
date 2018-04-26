@@ -461,6 +461,7 @@ exports.end = function() {
   process.removeListener('SIGINT', sigint);
   process.removeListener('SIGHUP', sigint);
   process.removeListener('SIGTERM', sigint);
+  process.removeListener('unhandledRejection', unhandledRejection);
 };
 
 function handleMessageEdit(oldMsg, newMsg) {
@@ -689,7 +690,8 @@ function Event(
 
 function makePlayer(user) {
   return new Player(
-      user.id, user.username.replaceAll('`', '\\`'), user.displayAvatarURL);
+      user.id, user.username.replaceAll('`', '\\`'),
+      user.displayAvatarURL({format: 'png'}));
 }
 
 // Delay a message to send at the given time in milliseconds since epoch.
@@ -773,7 +775,8 @@ function getAllPlayers(members, excluded, bots) {
   }
   if (finalMembers.length == 0) finalMembers = members.slice();
   return finalMembers.map(obj => {
-    return new Player(obj.id, obj.user.username, obj.user.displayAvatarURL);
+    return new Player(
+        obj.id, obj.user.username, obj.user.displayAvatarURL({format: 'png'}));
   });
 }
 // Add users to teams, and remove excluded users from teams. Deletes empty
@@ -901,7 +904,7 @@ function showGameEvents(msg, id) {
   if (games[id] && games[id].customEvents.bloodbath) {
     events = events.concat(games[id].customEvents.bloodbath);
   }
-  var file = new Discord.Attachment();
+  var file = new Discord.MessageAttachment();
   file.setFile(Buffer.from(JSON.stringify(events, null, 2)));
   file.setName("BloodbathEvents.json");
   fetchStats(events);
@@ -917,7 +920,7 @@ function showGameEvents(msg, id) {
   if (games[id] && games[id].customEvents.player) {
     events = events.concat(games[id].customEvents.player);
   }
-  file = new Discord.Attachment();
+  file = new Discord.MessageAttachment();
   file.setFile(Buffer.from(JSON.stringify(events, null, 2)));
   file.setName("PlayerEvents.json");
   fetchStats(events);
@@ -933,7 +936,7 @@ function showGameEvents(msg, id) {
   if (games[id] && games[id].customEvents.arena) {
     events = events.concat(games[id].customEvents.arena);
   }
-  file = new Discord.Attachment();
+  file = new Discord.MessageAttachment();
   file.setFile(Buffer.from(JSON.stringify(events, null, 2)));
   file.setName("ArenaEvents.json");
   msg.channel.send("Arena Events (" + events.length + ")", file);
@@ -1849,7 +1852,8 @@ function printEvent(msg, id) {
         if (responses == events[index].attacks[battleState].icons.length) {
           finalImage.getBuffer(jimp.MIME_PNG, function(err, out) {
             // Attach file, then send.
-            embed.attachFile(new Discord.Attachment(out, "hgEvent.png"));
+            embed.attachFiles(
+                [new Discord.MessageAttachment(out, "hgEvent.png")]);
             // if (!battleMessage[id]) {
               msg.channel.send(message[0], embed).then(msg_ => {
                 battleMessage[id] = msg_;
@@ -1909,7 +1913,8 @@ function printEvent(msg, id) {
         responses++;
         if (responses == events[index].icons.length) {
           finalImage.getBuffer(jimp.MIME_PNG, function(err, out) {
-            embed.attachFile(new Discord.Attachment(out, "hgBattle.png"));
+            embed.attachFiles(
+                [new Discord.MessageAttachment(out, "hgBattle.png")]);
             msg.channel.send(embed);
           });
         }
@@ -2129,8 +2134,8 @@ function printDay(msg, id) {
       responses++;
       if (responses == games[id].currentGame.teams[lastTeam].players.length) {
         finalImage.getBuffer(jimp.MIME_PNG, function(err, out) {
-          finalMessage.attachFile(
-              new Discord.Attachment(out, "hgTeamVictor.png"));
+          finalMessage.attachFiles(
+              [new Discord.MessageAttachment(out, "hgTeamVictor.png")]);
           sendAtTime(msg.channel, winnerTag, finalMessage, sendTime);
         });
       }
@@ -2306,7 +2311,8 @@ function includeUser(msg, id) {
         response += obj.username + " skipped.\n";
       } else {
         games[id].currentGame.includedUsers.push(
-            new Player(obj.id, obj.username, obj.displayAvatarURL));
+            new Player(
+                obj.id, obj.username, obj.displayAvatarURL({format: 'png'})));
         response += obj.username + " added to included players.\n";
         formTeams(id);
       }
@@ -2541,14 +2547,14 @@ function optChangeListener(msg_, options, index) {
   optionMessages[msg_.id] = msg_;
   msg_.react(emoji.arrow_left).then(_ => {msg_.react(emoji.arrow_right)});
   msg_.awaitReactions(function(reaction, user) {
-        if (user.id != client.user.id) reaction.remove(user);
+        if (user.id != client.user.id) reaction.users.remove(user);
         return (reaction.emoji.name == emoji.arrow_right ||
                 reaction.emoji.name == emoji.arrow_left) /* &&
             user.id == msg_.origAuth*/ &&
             user.id != client.user.id;
       }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
         if (reactions.size == 0) {
-          msg_.clearReactions();
+          msg_.reactions.removeAll();
           delete optionMessages[msg_.id];
           return;
     }
@@ -2756,7 +2762,7 @@ function createEvent(msg, id) {
               user.id == authId;
         }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
       if (reactions.size == 0) {
-        msg_.clearReactions();
+        msg_.reactions.removeAll();
         delete newEventMessages[msg.id];
         return;
       }
@@ -2778,7 +2784,7 @@ function createEvent(msg, id) {
               "`How many attackers may be in this event? (-1 means at least 1, -2 at least 2)`",
               num => {
                 numAttacker = num;
-                // msg_.clearReactions();
+                // msg_.reactions.removeAll();
                 msg_.channel.send("Loading...").then(msg => {
                   msg_ = msg;
                   getVictimNum()
@@ -2792,7 +2798,7 @@ function createEvent(msg, id) {
               "`How many victims may be in this event? (-1 means at least 1, -2 at least 2)`",
               num => {
                 numVictim = num;
-                // msg_.clearReactions();
+                // msg_.reactions.removeAll();
                 msg_.channel.send("Loading...").then(msg => {
                   msg_ = msg;
                   getAttackOutcome();
@@ -2808,7 +2814,7 @@ function createEvent(msg, id) {
                 msg_, authId, "`What is the outcome of the attackers?`",
                 function(outcome) {
                   attackerOutcome = outcome;
-                  // msg_.clearReactions();
+                  // msg_.reactions.removeAll();
                   msg_.channel.send("Loading...").then(msg => {
                     msg_ = msg;
                     getVictimOutcome();
@@ -2825,7 +2831,7 @@ function createEvent(msg, id) {
                 msg_, authId, "`What is the outcome of the victims?`",
                 function(outcome) {
                   victimOutcome = outcome;
-                  // msg_.clearReactions();
+                  // msg_.reactions.removeAll();
                   msg_.channel.send("Loading...").then(msg => {
                     msg_ = msg;
                     getIsAttackerKiller();
@@ -2843,7 +2849,7 @@ function createEvent(msg, id) {
                 "`Do the attacker(s) kill someone in this event?`",
                 function(outcome) {
                   attackerKiller = outcome;
-                  // msg_.clearReactions();
+                  // msg_.reactions.removeAll();
                   msg_.channel.send("Loading...").then(msg => {
                     msg_ = msg;
                     getIsVictimKiller();
@@ -2893,14 +2899,14 @@ function createEventNums(msg, id, show, cb) {
   var num = 0;
   regLis = function() {
     msg.awaitReactions(function(reaction, user) {
-         if (user.id != client.user.id) reaction.remove(user);
+         if (user.id != client.user.id) reaction.users.remove(user);
          return (reaction.emoji.name == emoji.arrow_up ||
                  reaction.emoji.name == emoji.arrow_down ||
                  reaction.emoji.name == emoji.white_check_mark) &&
              user.id == id;
        }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
          if (reactions.size == 0) {
-           msg.clearReactions();
+           msg.reactions.removeAll();
            return;
       }
       var name = reactions.first().emoji.name;
@@ -2940,7 +2946,7 @@ function createEventOutcome(msg, id, show, cb) {
            user.id == id;
      }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
     if (reactions.size == 0) {
-      msg.clearReactions();
+      msg.reactions.removeAll();
       return;
     }
     switch (reactions.first().emoji.name) {
@@ -2976,7 +2982,7 @@ function createEventAttacker(msg, id, show, cb) {
            user.id == id;
      }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
     if (reactions.size == 0) {
-      msg.clearReactions();
+      msg.reactions.removeAll();
       return;
     }
     if (reactions.first().emoji.name == emoji.white_check_mark) {
@@ -3057,7 +3063,7 @@ function removeEvent(msg, id) {
                reaction.emoji.name == emoji.trophy);
     }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
       if (reactions.size == 0) {
-        msg_.clearReactions();
+        msg_.reactions.removeAll();
         return;
       }
       var eventType = "player";
@@ -3220,7 +3226,7 @@ function listEvents(msg, id, page, eventType, editMsg) {
 
   callback = function(msg_) {
     msg_.awaitReactions(function(reaction, user) {
-          if (user.id != client.user.id) reaction.remove(user);
+          if (user.id != client.user.id) reaction.users.remove(user);
           return user.id == msg.author.id &&
               (reaction.emoji.name == emoji.arrow_right ||
                reaction.emoji.name == emoji.arrow_left ||
@@ -3229,7 +3235,7 @@ function listEvents(msg, id, page, eventType, editMsg) {
                reaction.emoji.name == emoji.arrows_counterclockwise);
         }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
       if (reactions.size == 0) {
-        msg_.clearReactions();
+        msg_.reactions.removeAll();
         return;
       }
       switch (reactions.first().emoji.name) {
@@ -3390,7 +3396,8 @@ process.on('SIGINT', sigint);
 process.on('SIGHUP', sigint);
 process.on('SIGTERM', sigint);
 
-process.on('unhandledRejection', function(reason, p) {
+function unhandledRejection(reason, p) {
   // console.log('Unhandled Rejection at:\n', p /*, '\nreason:', reason*/);
   console.log('Unhandled Rejection:\n', reason);
-});
+}
+process.on('unhandledRejection', unhandledRejection);

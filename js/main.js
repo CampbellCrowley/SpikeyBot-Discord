@@ -419,7 +419,7 @@ function commandGraph (msg) {
     embed.setDescription(
         "Plot Domain: [" + domainMin + ", " + domainMax + "]\nPlot Range: [" +
         minY + ", " + maxY + "]");
-    embed.attachFile(new Discord.Attachment(out, "graph.png"));
+    embed.attachFiles([new Discord.MessageAttachment(out, "graph.png")]);
     embed.setColor([255, 255, 255]);
     if (turningPoints.length > 0) {
       embed.addField(
@@ -649,24 +649,25 @@ function commandBan(msg) {
           msg, "You can't ban " + toBan.user.username +
               "! You are not stronger than them!");
     } else {
-      msg.guild.fetchMember(client.user).then(me => {
+      msg.guild.members.fetch(client.user).then(me => {
         var myRole = me.highestRole;
         if (Discord.Role.comparePositions(myRole, toBan.highestRole) <= 0) {
           reply(
               msg, "I can't ban " + toBan.user.username +
                   "! I am not strong enough!");
-      } else {
-        var banMsg = banMsgs[Math.floor(Math.random() * banMsgs.length)];
-        toBan.ban({reason: banMsg})
-            .then(_ => { reply(msg, banMsg, "Banned " + toBan.user.username); })
-            .catch(err => {
-              reply(
-                  msg, "Oops! I wasn't able to ban " + toBan.user.username +
-                      "! I'm not sure why though!");
-              common.ERROR("Failed to ban user.");
-              console.log(err);
-            });
-      }
+        } else {
+          var banMsg = banMsgs[Math.floor(Math.random() * banMsgs.length)];
+          toBan.ban({reason: banMsg})
+              .then(
+                  _ => { reply(msg, banMsg, "Banned " + toBan.user.username); })
+              .catch(err => {
+                reply(
+                    msg, "Oops! I wasn't able to ban " + toBan.user.username +
+                        "! I'm not sure why though!");
+                common.ERROR("Failed to ban user.");
+                console.log(err);
+              });
+        }
       });
     }
   }
@@ -683,7 +684,7 @@ function commandSmite(msg) {
           msg, "You can't smite " + toSmite.user.username +
               "! You are not stronger than them!");
     } else {
-      msg.guild.fetchMember(client.user).then(me => {
+      msg.guild.members.fetch(client.user).then(me => {
         var myRole = me.highestRole;
         if (Discord.Role.comparePositions(myRole, toSmite.highestRole) <= 0) {
           reply(
@@ -700,7 +701,7 @@ function commandSmite(msg) {
           });
           smite = function(role, member) {
             try {
-              member.setRoles([role]).then(_ => {
+              member.roles.set([role]).then(_ => {
                 reply(
                     msg, "The gods have struck " + member.user.username +
                         " with lightning!");
@@ -712,8 +713,8 @@ function commandSmite(msg) {
             }
           };
           if (!hasSmiteRole) {
-            msg.guild
-                .createRole({
+            msg.guild.roles
+                .create({
                   name: "Smited",
                   position: 0,
                   hoist: true,
@@ -740,10 +741,10 @@ function commandAvatar(msg) {
   if (msg.mentions.users.size > 0) {
     embed.setDescription(
         msg.mentions.users.first().username + "'s profile picture");
-    embed.setImage(msg.mentions.users.first().avatarURL);
+    embed.setImage(msg.mentions.users.first().avatarURL({size: 2048}));
   } else {
     embed.setDescription(msg.author.username + "'s profile picture");
-    embed.setImage(msg.author.avatarURL);
+    embed.setImage(msg.author.avatarURL({size: 2048}));
   }
   msg.channel.send(embed);
 }
