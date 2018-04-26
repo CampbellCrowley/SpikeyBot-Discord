@@ -2137,7 +2137,6 @@ function printDay(msg, id) {
           finalMessage.attachFiles(
               [new Discord.MessageAttachment(out, "hgTeamVictor.png")]);
           sendAtTime(msg.channel, winnerTag, finalMessage, sendTime);
-          games[id].currentGame.includedUsers = [];
         });
       }
     };
@@ -2164,7 +2163,6 @@ function printDay(msg, id) {
           winnerTag = "<@" + lastId + ">";
         }
         msg.channel.send(winnerTag, finalMessage);
-        games[id].currentGame.includedUsers = [];
       } else {
         msg.channel.send(winnerTag, finalMessage);
       }
@@ -2364,9 +2362,9 @@ function listPlayers(msg, id) {
                                 "`";
                           } catch(err) {
                             common.ERROR(
-                                "Failed to find player" + player +
+                                "Failed to find player " + player +
                                 " in included users.");
-                            console.log(games[id].currentGame.teams);
+                            console.log(games[id].currentGame.includedUsers);
                             throw err;
                           }
                         })
