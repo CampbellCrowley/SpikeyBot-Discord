@@ -28,5 +28,11 @@
       "name": "Campbell Crowley",
       "email": "dev@campbellcrowley.com"
     }
-  ]
+  ],
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "eslint": "^4.19.1",
+    "eslint-config-google": "^0.9.1",
+    "mocha": "^5.1.1"
+  }
 }

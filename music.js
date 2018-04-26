@@ -3,46 +3,50 @@ const fs = require('fs');
 
 
 const geniusClient =
-    "l5zrX9XIDrJuz-kS1u7zS5sE81KzrH3qxZL5tAvprE9GG-L1KYlZklQDXL6wf3sn";
+    'l5zrX9XIDrJuz-kS1u7zS5sE81KzrH3qxZL5tAvprE9GG-L1KYlZklQDXL6wf3sn';
 const geniusRequest = {
   hostname: 'api.genius.com',
   path: '/search/',
   headers:
-      {"Accept": "application/json", "Authorization": "Bearer " + geniusClient},
-  method: "GET"
+      {'Accept': 'application/json', 'Authorization': 'Bearer ' + geniusClient},
+  method: 'GET',
 };
 const https = require('https');
 
-var initialized = false;
+let initialized = false;
 
 exports.helpMessage = undefined;
 
-var prefix, Discord, client, command, common;
-var myPrefix, helpMessage;
+let prefix;
+let Discord;
+let client;
+let command;
+let common;
+let myPrefix;
 
-var broadcasts = {};
+let broadcasts = {};
 
 const special = {
   'nice try vi': {
     cmd: 'vi',
-    url: "https://www.youtube.com/watch?v=c1NoTNCiomU",
-    file: '/home/discord/SpikeyBot-Discord/js/sounds/viRap.webm'
+    url: 'https://www.youtube.com/watch?v=c1NoTNCiomU',
+    file: '/home/discord/SpikeyBot-Discord/js/sounds/viRap.webm',
   },
   'airhorn': {
     cmd: 'airhorn',
-    url: "",
-    file: '/home/discord/SpikeyBot-Discord/js/sounds/airhorn.mp3'
+    url: '',
+    file: '/home/discord/SpikeyBot-Discord/js/sounds/airhorn.mp3',
   },
   'rickroll': {
     cmd: 'rickroll',
-    url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-    file: '/home/discord/SpikeyBot-Discord/js/sounds/rickRoll.webm'
+    url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+    file: '/home/discord/SpikeyBot-Discord/js/sounds/rickRoll.webm',
   },
   'kokomo': {
     cmd: 'kokomo',
-    url: "https://www.youtube.com/watch?v=fJWmbLS2_ec",
-    file: "/home/discord/SpikeyBot-Discord/js/sounds/kokomo.webm"
-  }
+    url: 'https://www.youtube.com/watch?v=fJWmbLS2_ec',
+    file: '/home/discord/SpikeyBot-Discord/js/sounds/kokomo.webm',
+  },
 };
 
 const ytdlOpts =
@@ -65,25 +69,25 @@ exports.begin = function(prefix_, Discord_, client_, command_, common_) {
   command.on('lyrics', commandLyrics);
   command.on('record', commandRecord, true);
 
-  command.on('kokomo', msg => {
-    msg.content = "?play kokomo";
+  command.on('kokomo', (msg) => {
+    msg.content = '?play kokomo';
     command.trigger('play', msg);
   });
-  command.on('vi', msg => {
-    msg.content = "?play nice try vi";
+  command.on('vi', (msg) => {
+    msg.content = '?play nice try vi';
     command.trigger('play', msg);
   });
-  command.on('airhorn', msg => {
-    msg.content = "?play airhorn";
+  command.on('airhorn', (msg) => {
+    msg.content = '?play airhorn';
     command.trigger('play', msg);
   });
-  command.on('rickroll', msg => {
-    msg.content = "?play rickroll";
+  command.on('rickroll', (msg) => {
+    msg.content = '?play rickroll';
     command.trigger('play', msg);
   });
 
   initialized = true;
-  common.LOG("Music Init", "Music");
+  common.LOG('Music Init', 'Music');
 };
 //
 // Removes all references to external data and prepares for unloading.
@@ -116,30 +120,30 @@ function mention(msg) {
 }
 // Replies to the author and channel of msg with the given message.
 function reply(msg, text, post) {
-  post = post || "";
+  post = post || '';
   return msg.channel.send(`${mention(msg)}\n\`\`\`\n${text}\n\`\`\`${post}`);
 }
 
 // Format the info response from ytdl into a human readable format.
 function formatSongInfo(info) {
-  var output = new Discord.MessageEmbed();
+  let output = new Discord.MessageEmbed();
   output.setDescription(
-      info.title + "\nUploaded by " + info.uploader + "\n[👍 " +
-      formNum(info.like_count) + " 👎 " + formNum(info.dislike_count) +
-      "][👁️ " + formNum(info.view_count) + "]\n[" +
-      Math.floor(info._duration_raw / 60) + "m " + info._duration_raw % 60 +
-      "s]");
+      info.title + '\nUploaded by ' + info.uploader + '\n[👍 ' +
+      formNum(info.like_count) + ' 👎 ' + formNum(info.dislike_count) +
+      '][👁️ ' + formNum(info.view_count) + ']\n[' +
+      Math.floor(info._duration_raw / 60) + 'm ' + info._duration_raw % 60 +
+      's]');
   if (info.thumbnail) output.setThumbnail(info.thumbnail);
   output.setURL(info.webpage_url);
   output.setColor([50, 200, 255]);
   return output;
 }
 function formNum(num) {
-  var output = "";
-  var numString = (num + "");
-  var tmpString = [];
-  for (var i = 0; i < numString.length; i++) {
-    if (i > 0 && i % 3 === 0) tmpString.push(",");
+  let output = '';
+  let numString = (num + '');
+  let tmpString = [];
+  for (let i = 0; i < numString.length; i++) {
+    if (i > 0 && i % 3 === 0) tmpString.push(',');
     tmpString.push(numString.substr(-i - 1, 1));
   }
   return tmpString.reverse().join('');
@@ -152,24 +156,24 @@ function enqueueSong(broadcast, song, msg, info) {
       startPlaying(broadcast);
     } catch (err) {
       console.log(err);
-      reply(msg, "Failed to start music stream!");
+      reply(msg, 'Failed to start music stream!');
       command.trigger('stop', msg);
     }
   } else {
     msg.member.voiceChannel.join()
-        .then(conn => {
+        .then((conn) => {
           broadcast.voice = conn;
           try {
             startPlaying(broadcast);
           } catch (err) {
             console.log(err);
-            reply(msg, "Failed to start music stream!");
+            reply(msg, 'Failed to start music stream!');
             command.trigger('stop', msg);
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
-          reply(msg, "Failed to join voice channel!");
+          reply(msg, 'Failed to join voice channel!');
         });
   }
 }
@@ -180,7 +184,7 @@ function startPlaying(broadcast) {
   }
   if (broadcast.queue.length === 0) {
     command.trigger('stop', broadcast.current.request);
-    broadcast.current.request.channel.send("`Queue is empty!`");
+    broadcast.current.request.channel.send('`Queue is empty!`');
     return;
   }
   broadcast.isLoading = true;
@@ -199,17 +203,19 @@ function startPlaying(broadcast) {
   if (typeof broadcast.current.info !== 'undefined') {
     var embed = formatSongInfo(broadcast.current.info);
     embed.setTitle(
-        "Now playing [" + broadcast.queue.length + " left in queue]");
+        'Now playing [' + broadcast.queue.length + ' left in queue]');
     broadcast.current.request.channel.send(embed);
     broadcast.current.stream.on(
-        'info', info => { broadcast.isLoading = false; });
+        'info', (info) => {
+ broadcast.isLoading = false;
+});
   } else {
     if (special[broadcast.current.song]) {
       if (!special[broadcast.current.song].url) {
         broadcast.isLoading = false;
         var embed = new Discord.MessageEmbed();
         embed.setTitle(
-            "Now playing [" + broadcast.queue.length + " left in queue]");
+            'Now playing [' + broadcast.queue.length + ' left in queue]');
         embed.setColor([50, 200, 255]);
         embed.setDescription(broadcast.current.song);
         broadcast.current.request.channel.send(embed);
@@ -220,24 +226,24 @@ function startPlaying(broadcast) {
               console.log(err);
               reply(
                   msg,
-                  "Oops, something went wrong while getting info for this song!");
+                  'Oops, something went wrong while getting info for this song!');
             } else {
               broadcast.isLoading = false;
               broadcast.current.info = info;
-              var embed = formatSongInfo(broadcast.current.info);
+              let embed = formatSongInfo(broadcast.current.info);
               embed.setTitle(
-                  "Now playing [" + broadcast.queue.length + " left in queue]");
+                  'Now playing [' + broadcast.queue.length + ' left in queue]');
               broadcast.current.request.channel.send(embed);
             }
           });
       }
     } else {
-      broadcast.current.stream.on('info', info => {
+      broadcast.current.stream.on('info', (info) => {
         broadcast.isLoading = false;
         broadcast.current.info = info;
-        var embed = formatSongInfo(broadcast.current.info);
+        let embed = formatSongInfo(broadcast.current.info);
         embed.setTitle(
-            "Now playing [" + broadcast.queue.length + " left in queue]");
+            'Now playing [' + broadcast.queue.length + ' left in queue]');
         broadcast.current.request.channel.send(embed);
       });
     }
@@ -246,7 +252,9 @@ function startPlaying(broadcast) {
 function makeBroadcast(broadcast) {
   if (special[broadcast.current.song]) {
     broadcast.broadcast.play(special[broadcast.current.song].file)
-        .on('end', function() { endSong(broadcast); });
+        .on('end', function() {
+ endSong(broadcast);
+});
   } else {
     if (broadcast.current.info) {
       broadcast.current.stream = ytdl(broadcast.current.info.url, ytdlOpts);
@@ -255,7 +263,9 @@ function makeBroadcast(broadcast) {
     }
 
     broadcast.broadcast.play(broadcast.current.stream)
-        .on('end', function() { endSong(broadcast); });
+        .on('end', function() {
+ endSong(broadcast);
+});
   }
 }
 // Triggered when a song has finished playing.
@@ -272,52 +282,52 @@ function skipSong(broadcast) {
 
 function commandPlay(msg) {
   if (msg.member.voiceChannel === null) {
-    reply(msg, "You aren't in a voice channel!");
+    reply(msg, 'You aren\'t in a voice channel!');
   } else {
-    var song = msg.content.replace(prefix + 'play', '');
+    let song = msg.content.replace(myPrefix + 'play', '');
     if (!song.startsWith(' ')) {
-      reply(msg, "Please specify a song to play.");
+      reply(msg, 'Please specify a song to play.');
       return;
     } else {
       song = song.replace(' ', '');
     }
     if (!broadcasts[msg.guild.id]) {
-      reply(msg, "Loading " + song + "\nPlease wait...")
-          .then(msg => msg.delete(10000));
+      reply(msg, 'Loading ' + song + '\nPlease wait...')
+          .then((msg) => msg.delete(10000));
       broadcasts[msg.guild.id] = {
         queue: [],
         skips: {},
         isPlaying: false,
-        broadcast: client.createVoiceBroadcast()
+        broadcast: client.createVoiceBroadcast(),
       };
       enqueueSong(broadcasts[msg.guild.id], song, msg);
     } else {
       if (special[song]) {
-        var embed = new Discord.MessageEmbed();
+        let embed = new Discord.MessageEmbed();
         embed.setTitle(
-            "Enqueuing " + song + " [" +
-            (broadcasts[msg.guild.id].queue.length + 1) + " in queue]");
+            'Enqueuing ' + song + ' [' +
+            (broadcasts[msg.guild.id].queue.length + 1) + ' in queue]');
         embed.setColor([50, 200, 255]);
         msg.channel.send(mention(msg), embed);
         enqueueSong(broadcasts[msg.guild.id], song, msg);
       } else {
-        var loadingMsg;
-        reply(msg, "Loading " + song + "\nPlease wait...")
-            .then(msg => loadingMsg = msg);
+        let loadingMsg;
+        reply(msg, 'Loading ' + song + '\nPlease wait...')
+            .then((msg) => loadingMsg = msg);
         ytdl.getInfo(song, ytdlOpts, (err, info) => {
           if (err) {
             reply(
                 msg,
-                "Oops, something went wrong while searching for that song!");
+                'Oops, something went wrong while searching for that song!');
             console.log(err);
-          } else if (info._duration_raw == 0) {
-            reply(msg, "Sorry, but I can't play live streams currently.");
+          } else if (info._duration_raw === 0) {
+            reply(msg, 'Sorry, but I can\'t play live streams currently.');
           } else {
             if (broadcasts[msg.guild.id].isPlaying) {
-              var embed = formatSongInfo(info);
+              let embed = formatSongInfo(info);
               embed.setTitle(
-                  "Enqueuing " + song + " [" +
-                  (broadcasts[msg.guild.id].queue.length + 1) + " in queue]");
+                  'Enqueuing ' + song + ' [' +
+                  (broadcasts[msg.guild.id].queue.length + 1) + ' in queue]');
               msg.channel.send(mention(msg), embed);
               enqueueSong(broadcasts[msg.guild.id], song, msg, info);
             }
@@ -329,37 +339,37 @@ function commandPlay(msg) {
   }
 }
 function commandLeave(msg) {
-  var shouldReply = true;
+  let shouldReply = true;
   if (!broadcasts[msg.guild.id] ||
       (broadcasts[msg.guild.id].queue.length === 0 &&
        broadcasts[msg.guild.id].current)) {
     shouldReply = false;
   }
-  msg.guild.members.fetch(client.user).then(me => {
+  msg.guild.members.fetch(client.user).then((me) => {
     if (typeof me.voiceChannel !== 'undefined') {
       me.voiceChannel.leave();
-      if (shouldReply) reply(msg, "Goodbye!");
+      if (shouldReply) reply(msg, 'Goodbye!');
     } else {
-      if (shouldReply) reply(msg, "I'm not playing anything.");
+      if (shouldReply) reply(msg, 'I\'m not playing anything.');
     }
   });
   delete broadcasts[msg.guild.id];
 }
 function commandSkip(msg) {
   if (!broadcasts[msg.guild.id]) {
-    reply(msg, "I'm not playing anything, I can't skip nothing!");
+    reply(msg, 'I\'m not playing anything, I can\'t skip nothing!');
   } else {
-    reply(msg, "Skipping current song...");
+    reply(msg, 'Skipping current song...');
     skipSong(broadcasts[msg.guild.id]);
   }
 }
 function commandQueue(msg) {
   if (!broadcasts[msg.guild.id]) {
     reply(
-        msg, "I'm not playing anything. Use \"" + prefix +
-            "play Kokomo\" to start playing something!");
+        msg, 'I\'m not playing anything. Use "' + myPrefix +
+            'play Kokomo" to start playing something!');
   } else {
-    var emebed;
+    let emebed;
     if (broadcasts[msg.guild.id].current) {
       if (broadcasts[msg.guild.id].current.info) {
         embed = formatSongInfo(broadcasts[msg.guild.id].current.info);
@@ -368,19 +378,19 @@ function commandQueue(msg) {
         embed.setColor([50, 200, 255]);
         embed.setDescription(broadcasts[msg.guild.id].current.song);
       }
-      embed.setTitle("Current Song Queue");
+      embed.setTitle('Current Song Queue');
     } else {
       embed = new Discord.MessageEmbed();
     }
     if (broadcasts[msg.guild.id].queue.length > 0) {
       embed.addField(
-          "Queue", broadcasts[msg.guild.id]
+          'Queue', broadcasts[msg.guild.id]
                        .queue
                        .map(function(obj, index) {
                          if (obj.info) {
-                           return (index + 1) + ") " + obj.info.title;
+                           return (index + 1) + ') ' + obj.info.title;
                          } else {
-                           return (index + 1) + ") " + obj.song;
+                           return (index + 1) + ') ' + obj.song;
                          }
                        })
                        .join('\n'));
@@ -393,153 +403,165 @@ function commandRemove(msg) {
       broadcasts[msg.guild.id].queue.length === 0) {
     reply(
         msg,
-        "The queue appears to be empty.\nI can't remove nothing from nothing!");
+        'The queue appears to be empty.\nI can\'t remove nothing from nothing!');
   } else {
-    var indexString = msg.content.replace(prefix + 'remove', '')
-                          .replace(prefix + 'dequeue', '');
+    let indexString = msg.content.replace(myPrefix + 'remove', '')
+                          .replace(myPrefix + 'dequeue', '');
     if (!indexString.startsWith(' ')) {
       reply(
           msg,
-          "You must specify the index of the song to dequeue.\nYou can view the queue with \"" +
-              prefix + "queue\".");
+          'You must specify the index of the song to dequeue.\nYou can view the queue with "' +
+              myPrefix + 'queue".');
     } else {
-      var index = Number(indexString.replace(' ', ''));
+      let index = Number(indexString.replace(' ', ''));
       if (typeof index !== 'number' || index <= 0 ||
           index > broadcasts[msg.guild.id].queue.length) {
-        reply(msg, "That is not a valid index!");
+        reply(msg, 'That is not a valid index!');
       } else {
-        var removed = broadcasts[msg.guild.id].queue.splice(index - 1, 1)[0];
-        reply(msg, "Dequeued #" + index + ": " + removed.info.title);
+        let removed = broadcasts[msg.guild.id].queue.splice(index - 1, 1)[0];
+        reply(msg, 'Dequeued #' + index + ': ' + removed.info.title);
       }
     }
   }
 }
 function commandLyrics(msg) {
-  var song = msg.content.replace(myPrefix + "lyrics", '');
+  let song = msg.content.replace(myPrefix + 'lyrics', '');
   if (song.length <= 1) {
-    reply(msg, "Please specify a song.");
+    reply(msg, 'Please specify a song.');
     return;
   }
   song = song.replace(' ', '');
-  var thisReq = geniusRequest;
-  thisReq.path = "/search?q=" + encodeURIComponent(song);
-  var req = https.request(thisReq, function(response) {
-    var content = '';
-    response.on('data', function(chunk) { content += chunk; });
+  let thisReq = geniusRequest;
+  thisReq.path = '/search?q=' + encodeURIComponent(song);
+  let req = https.request(thisReq, function(response) {
+    let content = '';
+    response.on('data', function(chunk) {
+ content += chunk;
+});
     response.on('end', function() {
       if (response.statusCode == 200) {
-        msg.channel.send("`Asking where to find song...`").then(msg => {
+        msg.channel.send('`Asking where to find song...`').then((msg) => {
           msg.delete(6000);
         });
-        var parsed = JSON.parse(content);
+        let parsed = JSON.parse(content);
         if (parsed.response.hits.length === 0) {
-          reply(msg, "`Failed to find lyrics. No matches found.`");
+          reply(msg, '`Failed to find lyrics. No matches found.`');
         } else {
           reqLyricsURL(msg, parsed.response.hits[0].result.id);
         }
       } else {
         msg.channel.send(
-            response.statusCode + "```json\n" +
-            JSON.stringify(response.headers, null, 2) + "```\n```html\n" +
-            content + "\n```");
+            response.statusCode + '```json\n' +
+            JSON.stringify(response.headers, null, 2) + '```\n```html\n' +
+            content + '\n```');
       }
     });
     response.on('close', function() {
-      common.LOG("Genius request closed! " + content.length, "Music");
+      common.LOG('Genius request closed! ' + content.length, 'Music');
     });
     response.on('error', function() {
-      common.LOG("Genius request errored! " + content.length, "Music");
+      common.LOG('Genius request errored! ' + content.length, 'Music');
     });
   });
   req.end();
-  req.on('error', function(e) { common.ERROR(e, "Music"); });
-  msg.channel.send("`Asking if song exists...`").then(msg => {
+  req.on('error', function(e) {
+ common.ERROR(e, 'Music');
+});
+  msg.channel.send('`Asking if song exists...`').then((msg) => {
     msg.delete(7000);
   });
 }
 function reqLyricsURL(msg, id) {
-  var thisReq = geniusRequest;
-  thisReq.path = "/songs/" + id + "?text_format=plain";
-  var req = https.request(thisReq, function(response) {
-    var content = '';
-    response.on('data', function(chunk) { content += chunk; });
+  let thisReq = geniusRequest;
+  thisReq.path = '/songs/' + id + '?text_format=plain';
+  let req = https.request(thisReq, function(response) {
+    let content = '';
+    response.on('data', function(chunk) {
+ content += chunk;
+});
     response.on('end', function() {
       if (response.statusCode == 200) {
-        msg.channel.send("`Asking for lyrics...`").then(msg => {
+        msg.channel.send('`Asking for lyrics...`').then((msg) => {
           msg.delete(4000);
         });
-        var parsed = JSON.parse(content);
+        let parsed = JSON.parse(content);
         fetchLyricsPage(
             msg, parsed.response.song.url, parsed.response.song.full_title,
             parsed.response.song.song_art_image_thumbnail_url);
       } else {
         msg.channel.send(
-            response.statusCode + "```json\n" +
-            JSON.stringify(response.headers, null, 2) + "```\n```html\n" +
-            content + "\n```");
+            response.statusCode + '```json\n' +
+            JSON.stringify(response.headers, null, 2) + '```\n```html\n' +
+            content + '\n```');
       }
     });
     response.on('close', function() {
-      common.LOG("Genius request closed! " + content.length, "Music");
+      common.LOG('Genius request closed! ' + content.length, 'Music');
     });
     response.on('error', function() {
-      common.LOG("Genius request errored! " + content.length, "Music");
+      common.LOG('Genius request errored! ' + content.length, 'Music');
     });
   });
   req.end();
-  req.on('error', function(e) { common.ERROR(e, "Music"); });
+  req.on('error', function(e) {
+ common.ERROR(e, 'Music');
+});
 }
 function fetchLyricsPage(msg, url, title, thumb) {
-  var URL = url.match(/https:\/\/([^\/]*)(.*)/);
-  const thisReq = {hostname: URL[1], path: URL[2], method: "GET"};
-  var req = https.request(thisReq, function(response) {
-    var content = '';
-    response.on('data', function(chunk) { content += chunk; });
+  let URL = url.match(/https:\/\/([^\/]*)(.*)/);
+  const thisReq = {hostname: URL[1], path: URL[2], method: 'GET'};
+  let req = https.request(thisReq, function(response) {
+    let content = '';
+    response.on('data', function(chunk) {
+ content += chunk;
+});
     response.on('end', function() {
       if (response.statusCode == 200) {
-        msg.channel.send("`Crawling webpage...`").then(msg => {
+        msg.channel.send('`Crawling webpage...`').then((msg) => {
           msg.delete(2000);
         });
         stripLyrics(msg, content, title, url, thumb);
       } else {
         msg.channel.send(
-            response.statusCode + "```json\n" +
-            JSON.stringify(response.headers, null, 2) + "```\n```html\n" +
-            content + "\n```");
+            response.statusCode + '```json\n' +
+            JSON.stringify(response.headers, null, 2) + '```\n```html\n' +
+            content + '\n```');
       }
     });
     response.on('close', function() {
-      common.LOG("Genius request closed! " + content.length, "Music");
+      common.LOG('Genius request closed! ' + content.length, 'Music');
     });
     response.on('error', function() {
-      common.LOG("Genius request errored! " + content.length, "Music");
+      common.LOG('Genius request errored! ' + content.length, 'Music');
     });
   });
   req.end();
-  req.on('error', function(e) { common.ERROR(e, "Music"); });
+  req.on('error', function(e) {
+ common.ERROR(e, 'Music');
+});
 }
 function stripLyrics(msg, content, title, url, thumb) {
   try {
-    var body = content.match(/<!--sse-->([\s\S]*?)<!--\/sse-->/gm)[1];
-    var lyrics = body.match(/^([^<>]*)<|>([^<>]*)<|>([^<>]*)$/gm)
+    let body = content.match(/<!--sse-->([\s\S]*?)<!--\/sse-->/gm)[1];
+    let lyrics = body.match(/^([^<>]*)<|>([^<>]*)<|>([^<>]*)$/gm)
                      .slice(1)
                      .join('')
                      .replace(/<>|^\s*/gm, '')
                      .replace('>', '');
-    var splitLyrics = lyrics.match(/\[[^\]]*\][^\[]*/gm);
-    var embed = new Discord.MessageEmbed();
+    let splitLyrics = lyrics.match(/\[[^\]]*\][^\[]*/gm);
+    let embed = new Discord.MessageEmbed();
     if (title) embed.setTitle(title);
     if (url) embed.setURL(url);
     if (thumb) embed.setThumbnail(thumb);
     /* for (var i = 0; i < 25 && lyrics.length > i * 1024; i++) {
       embed.addField('\u200B', lyrics.substr(i * 1024, 1024), true);
     } */
-    var numFields = 0;
-    for (var i = 0; numFields < 25 && i < splitLyrics.length; i++) {
-      var splitLine = splitLyrics[i].match(/\[([^\]]*)\]\n([\s\S]*)/m);
-      var secTitle = splitLine[1].substr(0, 256);
-      var secBody = splitLine[2];
-      for (var j = 0; numFields < 25 && j * 1024 < secBody.length; j++) {
+    let numFields = 0;
+    for (let i = 0; numFields < 25 && i < splitLyrics.length; i++) {
+      let splitLine = splitLyrics[i].match(/\[([^\]]*)\]\n([\s\S]*)/m);
+      let secTitle = splitLine[1].substr(0, 256);
+      let secBody = splitLine[2];
+      for (let j = 0; numFields < 25 && j * 1024 < secBody.length; j++) {
         embed.addField(
             j === 0 ? secTitle : '\u200B',
             secBody.substr(j * 1024, 1024) || '\u200B', true);
@@ -548,55 +570,59 @@ function stripLyrics(msg, content, title, url, thumb) {
     }
     embed.setColor([0, 255, 255]);
     msg.channel.send(embed);
-  } catch(err) {
+  } catch (err) {
     console.log(err);
-    msg.channel.send("`FAILED to parse lyrics: " + err.message + "`");
+    msg.channel.send('`FAILED to parse lyrics: ' + err.message + '`');
   }
 }
 
 function commandRecord(msg) {
   if (msg.member.voiceChannel === null) {
-    reply(msg, "You aren't in a voice channel!");
+    reply(msg, 'You aren\'t in a voice channel!');
     return;
   }
-  const filename = "recordings/" +
-      encodeURIComponent(msg.member.voiceChannel.name + Date.now()) + ".opus";
-  const url = "https://www.campbellcrowley.com/spikeybot/" + filename;
+  const filename = 'recordings/' +
+      encodeURIComponent(msg.member.voiceChannel.name + Date.now()) + '.opus';
+  const url = 'https://www.campbellcrowley.com/spikeybot/' + filename;
   if (msg.mentions.users.size === 0) {
-    reply(msg, "Recording everyone in voice channel. Type ?stop to stop", url);
+    reply(msg, 'Recording everyone in voice channel. Type ?stop to stop', url);
   } else {
     reply(
-        msg, "Only recording " +
+        msg, 'Only recording ' +
             msg.mentions.users
                 .map(function(obj) {
-                  return "`" + obj.username.replaceAll('`', '\\`') + "`";
+                  return '`' + obj.username.replaceAll('`', '\\`') + '`';
                 })
                 .join(', '),
         url);
   }
-  var message;
-  var streams = {};
-  var file = fs.createWriteStream(filename);
-  file.on('close', _ => { msg.channel.send("Saved to " + url); });
+  let message;
+  let streams = {};
+  let file = fs.createWriteStream(filename);
+  file.on('close', () => {
+ msg.channel.send('Saved to ' + url);
+});
   listen = function(user, receiver, conn) {
     if (streams[user.id] ||
         (msg.mentions.users.size > 0 && !msg.mentions.users.find(user.id))) {
       return;
     }
-    var stream = receiver.createStream(msg.author, {end: 'manual'});
+    let stream = receiver.createStream(msg.author, {end: 'manual'});
     streams[user.id] = stream;
     stream.pipe(file);
-    conn.on('disconnect', _ => { stream.destroy(); });
+    conn.on('disconnect', () => {
+ stream.destroy();
+});
   };
-  msg.member.voiceChannel.join().then(conn => {
-    var startSound =
-        conn.play("/home/discord/SpikeyBot-Discord/js/sounds/plink.m4a");
-    startSound.on('end', _ => {
-      var receiver = conn.createReceiver();
+  msg.member.voiceChannel.join().then((conn) => {
+    let startSound =
+        conn.play('/home/discord/SpikeyBot-Discord/js/sounds/plink.m4a');
+    startSound.on('end', () => {
+      let receiver = conn.createReceiver();
       msg.member.voiceChannel.members.forEach(function(member) {
         listen(member.user, receiver, conn);
       });
-      conn.on('speaking', function(user, speaking) {
+      conn.on('speaking', (user, speaking) => {
         if (speaking) {
           listen(user, receiver, conn);
         }
