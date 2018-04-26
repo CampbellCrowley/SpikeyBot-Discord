@@ -2,13 +2,8 @@ const ytdl = require('youtube-dl');
 const fs = require('fs');
 
 
-const geniusId = "P16rUAwFfDqa6orLH8sd5_VGpWTDVNnxXwjkVdEGuQODF6_D2miuEPQPhmSXsik7";
-const geniusSecret = "5a9Kbhd31hyoQTN0Tr7cTds9PkrjZFXM5FDDrPZr8KFmBQn--kGS9iX3UOSVoMlHWcX0ZpFIqAWQpadtUd4t2g";
-const geniusClient = "l5zrX9XIDrJuz-kS1u7zS5sE81KzrH3qxZL5tAvprE9GG-L1KYlZklQDXL6wf3sn";
-const credentials = {
-  client: {id: geniusId, secret: geniusSecret},
-  auth: {tokenHost: "https://api.genius.com"}
-};
+const geniusClient =
+    "l5zrX9XIDrJuz-kS1u7zS5sE81KzrH3qxZL5tAvprE9GG-L1KYlZklQDXL6wf3sn";
 const geniusRequest = {
   hostname: 'api.genius.com',
   path: '/search/',
@@ -90,7 +85,7 @@ exports.begin = function(prefix_, Discord_, client_, command_, common_) {
   initialized = true;
   common.LOG("Music Init", "Music");
 };
-
+//
 // Removes all references to external data and prepares for unloading.
 exports.end = function() {
   if (!initialized) return;
@@ -100,6 +95,13 @@ exports.end = function() {
   command.deleteEvent('skip');
   command.deleteEvent(['queue', 'playing']);
   command.deleteEvent(['remove', 'dequeue']);
+  command.deleteEvent('lyrics');
+  command.deleteEvent('record');
+  command.deleteEvent('kokomo');
+  command.deleteEvent('vi');
+  command.deleteEvent('airhorn');
+  command.deleteEvent('rickroll');
+
   delete command;
   delete Discord;
   delete client;

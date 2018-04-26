@@ -459,6 +459,8 @@ exports.end = function() {
   delete common;
   process.removeListener('exit', exit);
   process.removeListener('SIGINT', sigint);
+  process.removeListener('SIGHUP', sigint);
+  process.removeListener('SIGTERM', sigint);
 };
 
 function handleMessageEdit(oldMsg, newMsg) {
