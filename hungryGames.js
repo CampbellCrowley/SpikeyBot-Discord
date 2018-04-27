@@ -1,5 +1,5 @@
 const fs = require('fs');
-const jimp = require('jimp');
+const Jimp = require('Jimp');
 
 let initialized = false;
 
@@ -38,18 +38,21 @@ const defaultOptions = {
     value: 'normal',
     values: ['verylow', 'low', 'normal', 'high', 'veryhigh'],
     comment:
-        'Controls how many people die in the bloodbath. Can be ["verylow", "low", "normal", "high", "veryhigh"].',
+        'Controls how many people die in the bloodbath. Can be ["verylow", ' +
+        '"low", "normal", "high", "veryhigh"].',
   },
   playerDeathRate: {
     value: 'normal',
     values: ['verylow', 'low', 'normal', 'high', 'veryhigh'],
     comment:
-        'Controls how many people die each day. Can be ["verylow", "low", "normal", "high", "veryhigh"].',
+        'Controls how many people die each day. Can be ["verylow", "low", ' +
+        '"normal", "high", "veryhigh"].',
   },
   arenaEvents: {
     value: true,
     comment:
-        'Are arena events possible. (Events like wolf mutts, or a volcano erupting.)',
+        'Are arena events possible. (Events like wolf mutts, or a volcano ' +
+        'erupting.)',
   },
   resurrection: {
     value: false,
@@ -58,12 +61,15 @@ const defaultOptions = {
   includeBots: {
     value: false,
     comment:
-        'Should bots be included in the games. If this is false, bots cannot be added manually.',
+        'Should bots be included in the games. If this is false, bots cannot ' +
+        'be added manually.',
   },
   allowNoVictors: {
     value: true,
     comment:
-        'Should it be possible to end a game without any winners. If true, it is possible for every player to die, causing the game to end with everyone dead. False forces at least one winner.',
+        'Should it be possible to end a game without any winners. If true, ' +
+        'it is possible for every player to die, causing the game to end ' +
+        'with everyone dead. False forces at least one winner.',
   },
   bleedDays: {
     value: 2,
@@ -77,18 +83,22 @@ const defaultOptions = {
   },
   teammatesCollaborate: {
     value: true,
-    comment:
-        'Will teammates work together. If false, teammates can kill eachother, and there will only be 1 victor. If true, teammates cannot kill eachother, and the game ends when one TEAM is remaining, not one player.',
+    comment: 'Will teammates work together. If false, teammates can kill ' +
+        'eachother, and there will only be 1 victor. If true, teammates ' +
+        'cannot kill eachother, and the game ends when one TEAM is ' +
+        'remaining, not one player.',
   },
   mentionVictor: {
     value: true,
     comment:
-        'Should the victor of the game (can be team), be tagged/mentioned so they get notified?',
+        'Should the victor of the game (can be team), be tagged/mentioned so ' +
+        'they get notified?',
   },
   mentionAll: {
     value: false,
     comment:
-        'Should a user be mentioned every time something happens to them in the game?',
+        'Should a user be mentioned every time something happens to them in ' +
+        'the game?',
   },
   mentionEveryoneAtStart: {
     value: false,
@@ -108,7 +118,8 @@ const defaultOptions = {
     value: 0.33,
     percent: true,
     comment:
-        'Probability each day that a dead player can be put back into the game.',
+        'Probability each day that a dead player can be put back into the ' +
+        'game.',
   },
   probabilityOfArenaEvent: {
     value: 0.25,
@@ -119,13 +130,14 @@ const defaultOptions = {
     value: 0.5,
     percent: true,
     comment:
-        'Probability that after bleedDays a player will die. If they don\'t die, they will heal back to normal.',
+        'Probability that after bleedDays a player will die. If they don\'t ' +
+        'die, they will heal back to normal.',
   },
   probabilityOfBattle: {
     value: 0.05,
     percent: true,
-    comment:
-        'Probability of an event being replaced by a battle between two players.',
+    comment: 'Probability of an event being replaced by a battle between two ' +
+        'players.',
   },
 };
 
@@ -327,31 +339,38 @@ const blockedmessage =
     'I couldn\'t send you a message, you probably blocked me :(';
 const helpObject = {
   title: 'Hungry Games!',
-  description: 'To use any of these commands you must have the "' + roleName +
-      '" role.',
+  description:
+      'To use any of these commands you must have the "' + roleName + '" role.',
   sections: [
     {
       title: 'Game Settings',
       rows: [
-        'create // This will create a game with default settings if it doesn\'t exist already.',
-        'options \'option name\' \'value\' // List options if no name, or change the option if you give a name.',
-        'reset \'all/current/events/options/teams\' // Delete data about the Games. Don\'t choose an option for more info.',
+        'create // This will create a game with default settings if it ' +
+            'doesn\'t exist already.',
+        'options \'option name\' \'value\' // List options if no name, or ' +
+            'change the option if you give a name.',
+        'reset \'all/current/events/options/teams\' // Delete data about the ' +
+            'Games. Don\'t choose an option for more info.',
       ],
     },
     {
       title: 'Player Settings',
       rows: [
         'players // This will list all players I currently care about.',
-        'exclude \'mention\' // Prevent someone from being added to the next game.',
+        'exclude \'mention\' // Prevent someone from being added to the next ' +
+            'game.',
         'include \'mention\' // Add a person back into the next game.',
       ],
     },
     {
       title: 'Team Settings',
       rows: [
-        'teams swap \'mention\' \'mention\' // This will swap two players to the other team.',
-        'teams move \'mention\' \'id/mention\' // This will move the first player, to another team. (Ignores teamSize option)',
-        'teams rename \'id/mention\' \'name...\' // Rename a team. Specify its id, or mention someone on a team.',
+        'teams swap \'mention\' \'mention\' // This will swap two players to ' +
+            'the other team.',
+        'teams move \'mention\' \'id/mention\' // This will move the first ' +
+            'player, to another team. (Ignores teamSize option)',
+        'teams rename \'id/mention\' \'name...\' // Rename a team. Specify ' +
+            'its id, or mention someone on a team.',
         'teams randomize // Randomize who is on what team.',
         'teams reset // Delete all teams and start over.',
       ],
@@ -359,10 +378,13 @@ const helpObject = {
     {
       title: 'Events',
       rows: [
-        'events // This will list all custom events that could happen in the game.',
-        'debugevents // This will let you download all of the events and their data.',
+        'events // This will list all custom events that could happen in the ' +
+            'game.',
+        'debugevents // This will let you download all of the events and ' +
+            'their data.',
         'events add \'message\' // Begins process of adding a custom event.',
-        'events remove \'number\' // Remove a custom event. The number is the number shown in the list of events.',
+        'events remove \'number\' // Remove a custom event. The number is ' +
+            'the number shown in the list of events.',
       ],
     },
     {
@@ -370,7 +392,8 @@ const helpObject = {
       rows: [
         'start // This will start a game with your settings.',
         'end // This will end a game early.',
-        'autoplay // Automatically continue to the next day after a day is over.',
+        'autoplay // Automatically continue to the next day after a day is ' +
+            'over.',
         'pause // Stop autoplay at the end of the day.',
         'next // Simulate the next day of the Games!',
       ],
@@ -442,13 +465,16 @@ exports.begin = function(prefix_, Discord_, client_, command_, common_) {
   common.log('HungryGames Init', 'HG');
 
   for (let key in games) {
+    if (!games[i] instanceof Object) continue;
     if (games[key].options) {
       for (let opt in defaultOptions) {
+        if (!defaultOptions[opt] instanceof Object) continue;
         if (typeof games[key].options[opt] === 'undefined') {
           games[key].options[opt] = defaultOptions[opt].value;
         }
       }
       for (let opt in games[key].options) {
+        if (!games[key].options[opt] instanceof Object) continue;
         if (typeof defaultOptions[opt] === 'undefined') {
           delete games[key].options[opt];
         }
@@ -458,20 +484,24 @@ exports.begin = function(prefix_, Discord_, client_, command_, common_) {
     if (games[key].currentGame && games[key].currentGame.day.state != 0 &&
         games[key].currentGame.inProgress && games[key].channel &&
         games[key].msg) {
+      // If the bot stopped while simulating a day, just start over and try
+      // again.
+      if (games[key].currentGame.day.state === 1) {
+        games[key].currentGame.day.state = 0;
+      }
       common.log(
           'Resuming game: ' + games[key].channel + ' ' + games[key].msg, 'HG');
-      let msg =
-          client.channels.get(games[key].channel)
-              .fetchMessage(games[key].msg)
-              .then(function(key) {
-                return function(msg) {
-                  nextDay(msg, key);
-                };
-              }(key))
-              .catch((err) => {
-                common.error('Failed to automatically resume games.', 'HG');
-                console.log(err);
-              });
+      client.channels.get(games[key].channel)
+          .fetchMessage(games[key].msg)
+          .then(function(key) {
+            return function(msg) {
+              nextDay(msg, key);
+            };
+          }(key))
+          .catch((err) => {
+            common.error('Failed to automatically resume games.', 'HG');
+            console.log(err);
+          });
     }
   }
 };
@@ -496,7 +526,8 @@ exports.end = function() {
 };
 
 /**
- * Hanlder for when the create event message is edited and we should update our message with the updated event.
+ * Hanlder for when the create event message is edited and we should update our
+ * message with the updated event.
  *
  * @param {Discord.Message} oldMsg The message before being edited.
  * @param {Discord.Message} newMsg The message after being edited.
@@ -834,10 +865,20 @@ function makePlayer(user) {
  * Delay a message to send at the given time in milliseconds since epoch.
  *
  * @param {Discord.TextChannel} channel The channel to send the message in.
- * @param {Discord.StringResolvable|Discord.MessageOptions|Discord.MessageEmbed|Discord.MessageAttachment|Discord.MessageAttachment[]}
- * one The message to send.
- * @param {Discord.StringResolvable|Discord.MessageOptions|Discord.MessageEmbed|Discord.MessageAttachment|Discord.MessageAttachment[]}
- * two The message to send.
+ * @param {
+ *          Discord.StringResolvable|
+ *          Discord.MessageOptions|
+ *          Discord.MessageEmbed|
+ *          Discord.MessageAttachment|
+ *          Discord.MessageAttachment[]
+ * } one The message to send.
+ * @param {
+ *          Discord.StringResolvable|
+ *          Discord.MessageOptions|
+ *          Discord.MessageEmbed|
+ *          Discord.MessageAttachment|
+ *          Discord.MessageAttachment[]
+ * } two The message to send.
  * @param {number} time The time to send the message in milliseconds since
  * epoch.
  */
@@ -864,7 +905,9 @@ function createGame(msg, id, silent) {
     if (!silent) {
       reply(
           msg,
-          'This server already has a Hungry Games in progress. If you wish to create a new one, you must end the current one first with "hgend".');
+          'This server already has a Hungry Games in progress. If you wish ' +
+              'to create a new one, you must end the current one first with' +
+              '"hgend".');
     }
     return;
   } else if (games[id] && games[id].currentGame) {
@@ -908,13 +951,14 @@ function createGame(msg, id, silent) {
     const optKeys = Object.keys(defaultOptions);
     games[id].options = {};
     for (let i in optKeys) {
+      if (typeof optKeys[i] !== 'string') continue;
       games[id].options[optKeys[i]] = defaultOptions[optKeys[i]].value;
     }
     if (!silent) {
-reply(
-          msg,
-          'Created a Hungry Games with default settings and all members included.');
-}
+      reply(
+          msg, 'Created a Hungry Games with default settings and all members ' +
+              'included.');
+    }
   }
   formTeams(id);
 }
@@ -1051,7 +1095,12 @@ function resetGame(msg, id) {
       games[id].currentGame.teams = [];
       formTeams(id);
     } else {
-      reply(msg, 'Please specify what data to reset.\nall {deletes all data for this server},\nevents {deletes all custom events},\ncurrent {deletes all data about the current game},\noptions {resets all options to default values},\nteams {delete all teams and creates new ones}.');
+      reply(
+          msg, 'Please specify what data to reset.\nall {deletes all data ' +
+              'for this server},\nevents {deletes all custom events},\n' +
+              'current {deletes all data about the current game},\noptions ' +
+              '{resets all options to default values},\nteams {delete all ' +
+              'teams and creates new ones}.');
     }
   } else {
     reply(
@@ -1075,6 +1124,7 @@ function showGameInfo(msg, id) {
       message = message.replace(newChunk, '');
     }
     for (let i in messages) {
+      if (typeof messages[i] === 'undefined') continue;
       reply(msg, messages[i]).catch((err) => {
         console.log(err);
       });
@@ -1280,7 +1330,8 @@ function nextDay(msg, id) {
     } else if (games[id].currentGame.day.state == 1) {
       reply(
           msg,
-          'I think I\'m already simulating... if this isn\'t true this game has crashed and you must end the game.');
+          'I think I\'m already simulating... if this isn\'t true this game ' +
+              'has crashed and you must end the game.');
     } else {
       intervals[id] = client.setInterval(function() {
         printEvent(msg, id);
@@ -1339,7 +1390,8 @@ function nextDay(msg, id) {
     doArenaEvent = games[id].options.arenaEvents &&
         Math.random() < games[id].options.probabilityOfArenaEvent;
     if (doArenaEvent) {
-      let arenaEventPool = defaultArenaEvents.concat(games[id].customEvents.arena);
+      let arenaEventPool =
+          defaultArenaEvents.concat(games[id].customEvents.arena);
       let index = Math.floor(Math.random() * arenaEventPool.length);
       let arenaEvent = arenaEventPool[index];
       games[id].currentGame.day.events.push(
@@ -1356,11 +1408,11 @@ function nextDay(msg, id) {
       games[id].options.bloodbathDeathRate :
       games[id].options.playerDeathRate;
 
-  let loop = 0;
   while (userPool.length > 0) {
     let eventTry;
     let affectedUsers;
-    let numAttacker, numVictim;
+    let numAttacker;
+    let numVictim;
     let doBattle = !doArenaEvent && userPool.length > 1 &&
         (Math.random() < games[id].options.probabilityOfBattle ||
          games[id].currentGame.numAlive == 2) &&
@@ -1897,7 +1949,7 @@ function makeBattleEvent(affectedUsers, numVictim, numAttacker, mention, id) {
   do {
     loop++;
     if (loop > 1000) {
-      throw ('INFINITE LOOP');
+      throw new Error('INFINITE LOOP');
     }
     let eventIndex = Math.floor(Math.random() * battles.attacks.length);
     let eventTry = battles.attacks[eventIndex];
@@ -2002,10 +2054,17 @@ function makeBattleEvent(affectedUsers, numVictim, numAttacker, mention, id) {
  * @return {number} The weighted number outcome.
  */
 function weightedUserRand() {
-  let i, sum = 0, r = Math.random();
-  for (i in multiEventUserDistribution) {
-    sum += multiEventUserDistribution[i];
-    if (r <= sum) return i * 1;
+  let sum = 0;
+  let r = Math.random();
+  for (let i in multiEventUserDistribution) {
+    if (typeof multiEventUserDistribution[i] !== 'number') {
+      throw new Error(
+          'Invalid value for multiEventUserDistribution:' +
+          multiEventUserDistribution[i]);
+    } else {
+      sum += multiEventUserDistribution[i];
+      if (r <= sum) return i * 1;
+    }
   }
 }
 /**
@@ -2037,7 +2096,7 @@ function weightedEvent(eventPool, weightOpt) {
     }
     if (rand <= sum) return i;
   }
-  throw ('BROKEN WEIGHTED EVENT GENERATOR.');
+  throw new Error('BROKEN WEIGHTED EVENT GENERATOR.');
 }
 /**
  * Decide if the given event should be considered deadly.
@@ -2187,7 +2246,7 @@ function printEvent(msg, id) {
       }
     } else {
       // Create image, then send.
-      let finalImage = new jimp(
+      let finalImage = new Jimp(
           events[index].attacks[battleState].icons.length *
                   (battleIconSize + iconGap) -
               iconGap,
@@ -2197,17 +2256,17 @@ function printEvent(msg, id) {
         image.resize(battleIconSize, battleIconSize);
         if (outcome == 'dies') {
           finalImage.blit(
-              new jimp(battleIconSize, iconGap, 0xFF0000FF),
+              new Jimp(battleIconSize, iconGap, 0xFF0000FF),
               placement * (battleIconSize + iconGap), battleIconSize);
         } else if (outcome == 'wounded') {
           finalImage.blit(
-              new jimp(battleIconSize, iconGap, 0xFFFF00FF),
+              new Jimp(battleIconSize, iconGap, 0xFFFF00FF),
               placement * (battleIconSize + iconGap), battleIconSize);
         }
         finalImage.blit(image, placement * (battleIconSize + iconGap), 0);
         responses++;
         if (responses == events[index].attacks[battleState].icons.length) {
-          finalImage.getBuffer(jimp.MIME_PNG, function(err, out) {
+          finalImage.getBuffer(Jimp.MIME_PNG, function(err, out) {
             // Attach file, then send.
             embed.attachFiles(
                 [new Discord.MessageAttachment(out, 'hgEvent.png')]);
@@ -2232,7 +2291,7 @@ function printEvent(msg, id) {
             i >= events[index].attacks[battleState].numVictim + numNonUser) {
           outcome = events[index].attacks[battleState].attacker.outcome;
         }
-        jimp.read(events[index].attacks[battleState].icons[i].url)
+        Jimp.read(events[index].attacks[battleState].icons[i].url)
             .then(function(outcome, placement) {
               return function(image) {
                 newImage(image, outcome, placement);
@@ -2253,7 +2312,7 @@ function printEvent(msg, id) {
       let embed = new Discord.MessageEmbed();
       embed.setDescription(events[index].message);
       embed.setColor([125, 0, 0]);
-      let finalImage = new jimp(
+      let finalImage = new Jimp(
           events[index].icons.length * (iconSize + iconGap) - iconGap,
           iconSize + iconGap);
       let responses = 0;
@@ -2261,17 +2320,17 @@ function printEvent(msg, id) {
         image.resize(iconSize, iconSize);
         if (outcome == 'dies') {
           finalImage.blit(
-              new jimp(iconSize, iconGap, 0xFF0000FF),
+              new Jimp(iconSize, iconGap, 0xFF0000FF),
               placement * (iconSize + iconGap), iconSize);
         } else if (outcome == 'wounded') {
           finalImage.blit(
-              new jimp(iconSize, iconGap, 0xFFFF00FF),
+              new Jimp(iconSize, iconGap, 0xFFFF00FF),
               placement * (iconSize + iconGap), iconSize);
         }
         finalImage.blit(image, placement * (iconSize + iconGap), 0);
         responses++;
         if (responses == events[index].icons.length) {
-          finalImage.getBuffer(jimp.MIME_PNG, function(err, out) {
+          finalImage.getBuffer(Jimp.MIME_PNG, function(err, out) {
             embed.attachFiles(
                 [new Discord.MessageAttachment(out, 'hgBattle.png')]);
             msg.channel.send(embed);
@@ -2287,7 +2346,7 @@ function printEvent(msg, id) {
         } else if (i >= events[index].numVictim + numNonUser) {
           outcome = events[index].attacker.outcome;
         }
-        jimp.read(events[index].icons[i].url)
+        Jimp.read(events[index].icons[i].url)
             .then(function(outcome, placement) {
               return function(image) {
  newImage(image, outcome, placement);
@@ -2478,7 +2537,7 @@ function printDay(msg, id) {
 })
               .join(' ');
     }
-    let finalImage = new jimp(
+    let finalImage = new Jimp(
         games[id].currentGame.teams[lastTeam].players.length *
                 (victorIconSize + iconGap) -
             iconGap,
@@ -2498,12 +2557,12 @@ function printDay(msg, id) {
         color = 0x00FF00FF;
       }
       finalImage.blit(
-          new jimp(victorIconSize, iconGap, color),
+          new Jimp(victorIconSize, iconGap, color),
           responses * (victorIconSize + iconGap), victorIconSize);
       finalImage.blit(image, responses * (victorIconSize + iconGap), 0);
       responses++;
       if (responses == games[id].currentGame.teams[lastTeam].players.length) {
-        finalImage.getBuffer(jimp.MIME_PNG, function(err, out) {
+        finalImage.getBuffer(Jimp.MIME_PNG, function(err, out) {
           finalMessage.attachFiles(
               [new Discord.MessageAttachment(out, 'hgTeamVictor.png')]);
           sendAtTime(msg.channel, winnerTag, finalMessage, sendTime);
@@ -2516,7 +2575,7 @@ function printDay(msg, id) {
       });
       let icon = player.avatarURL;
       let userId = player.id;
-      jimp.read(icon)
+      Jimp.read(icon)
           .then(function(userId) {
             return function(image) {
               newImage(image, userId);
@@ -2657,7 +2716,8 @@ function excludeUser(msg, id) {
   if (msg.mentions.users.size == 0) {
     reply(
         msg,
-        'You must mention people you wish for me to exclude from the next game.');
+        'You must mention people you wish for me to exclude from the next ' +
+            'game.');
   } else {
     let response = '';
     msg.mentions.users.forEach(function(obj) {
@@ -2722,7 +2782,8 @@ function includeUser(msg, id) {
     });
     if (games[id].currentGame.inProgress) {
       response +=
-          'Players were skipped because a game is currently in progress. Players cannot be added to a game while it\'s in progress.';
+          'Players were skipped because a game is currently in progress. ' +
+          'Players cannot be added to a game while it\'s in progress.';
     }
     reply(msg, response);
   }
@@ -2776,8 +2837,9 @@ function listPlayers(msg, id) {
               .join('\n');
       if (numPlayers != games[id].currentGame.includedUsers.length) {
         stringList +=
-            '\n\nSome players were left out! Please reset teams to fix this! (' +
-            numPlayers + '/' + games[id].currentGame.includedUsers.length + ')';
+            '\n\nSome players were left out! Please reset teams to fix this! ' +
+            '(' + numPlayers + '/' +
+            games[id].currentGame.includedUsers.length + ')';
         common.error(
             'Failed to list all players! ' + numPlayers + '/' +
             games[id].currentGame.includedUsers.length + ': ' + id);
@@ -2785,8 +2847,8 @@ function listPlayers(msg, id) {
     }
   } else {
     stringList +=
-        'There don\'t appear to be any included players. Have you created a game with "' +
-        myPrefix + 'create"?';
+        'There don\'t appear to be any included players. Have you created a ' +
+        'game with "' + myPrefix + 'create"?';
   }
   if (games[id] && games[id].excludedUsers &&
       games[id].excludedUsers.length > 0) {
@@ -2866,7 +2928,8 @@ function toggleOpt(msg, id) {
         if (option == 'teamSize' && value != 0) {
           reply(
               msg, 'To reset teams to the correct size, type "' + myPrefix +
-                  'teams reset".\nThis will delete all teams, and create new ones.');
+                  'teams reset".\nThis will delete all teams, and create new ' +
+                  'ones.');
         }
       }
     } else if (type === 'boolean') {
@@ -2929,6 +2992,7 @@ function showOpts(msg, options) {
   let bodyFields = [[]];
   let fieldIndex = 0;
   for (let i in bodyList) {
+    if (!bodyList[i] instanceof Object) continue;
     if (bodyList[i].length + totalLength > 1500) {
       fieldIndex++;
       totalLength = 0;
@@ -3052,7 +3116,9 @@ function editTeam(msg, id) {
  */
 function swapTeamUsers(msg, id) {
   if (msg.mentions.users.size != 2) {
-    reply(msg, 'Swapping requires mentioning 2 users to swap teams with eachother.');
+    reply(
+        msg, 'Swapping requires mentioning 2 users to swap teams with ' +
+            'eachother.');
     return;
   }
   let user1 = msg.mentions.users.first().id;
@@ -3133,7 +3199,9 @@ function moveTeamUser(msg, id) {
     teamId2 = msg.text.split(' ')[2] - 1;
   }
   if (teamId1 < 0 || teamId2 < 0 || isNaN(teamId2)) {
-    reply(msg, 'Please ensure the first option is the user, and the second is the destination (either a mention or a team id).');
+    reply(
+        msg, 'Please ensure the first option is the user, and the second ' +
+            'is the destination (either a mention or a team id).');
     console.log(teamId1, teamId2);
     return;
   }
@@ -3167,7 +3235,9 @@ function renameTeam(msg, id) {
   let message = split.slice(1).join(' ');
   let search = Number(split[0]);
   if (isNaN(search) && msg.mentions.users.size == 0) {
-    reply(msg, 'Please specify a team id, or mention someone on a team, in order to rename their team.');
+    reply(
+        msg, 'Please specify a team id, or mention someone on a team, in ' +
+            'order to rename their team.');
     return;
   }
   let teamId = search - 1;
@@ -3252,7 +3322,8 @@ function createEvent(msg, id) {
         getAttackNum = function() {
           createEventNums(
               msg_, authId,
-              '`How many attackers may be in this event? (-1 means at least 1, -2 at least 2)`',
+              '`How many attackers may be in this event? (-1 means at least ' +
+                  '1, -2 at least 2)`',
               (num) => {
                 numAttacker = num;
                 // msg_.reactions.removeAll();
@@ -3266,7 +3337,8 @@ function createEvent(msg, id) {
         getVictimNum = function() {
           createEventNums(
               msg_, authId,
-              '`How many victims may be in this event? (-1 means at least 1, -2 at least 2)`',
+              '`How many victims may be in this event? (-1 means at least ' +
+                  '1, -2 at least 2)`',
               (num) => {
                 numVictim = num;
                 // msg_.reactions.removeAll();
@@ -3522,17 +3594,19 @@ function createEventAttacker(msg, id, show, cb) {
 }
 
 /**
- * When a user is creating a custom event and edits their message, we need to edit the preview.
+ * When a user is creating a custom event and edits their message, we need to
+ * edit the preview.
  *
  * @param {Discord.Message} msg Our message previewing the new event.
  */
 function updateEventPreview(msg) {
   msg.text = msg.text.split(' ').slice(1).join(' ');
   let helpMsg =
-      '```\nEdit your message until you are happy with the below outcomes, then click the type of event.\n' +
-      '\nReplace names with "{victim}" or "{attacker}" (with brackets).\n' +
-      '\nUse "[Vsinglular|plural]" or "[Asingular|plural]" to put "singular" if there\'s only one person, or "plural" if there are more' +
-      '\n (A for attacker, V for victim).\n```';
+      '```\nEdit your message until you are happy with the below outcomes, ' +
+      'then click the type of event.\n\nReplace names with "{victim}" or ' +
+      '"{attacker}" (with brackets).\n\nUse "[Vsinglular|plural]" or ' +
+      '"[Asingular|plural]" to put "singular" if there\'s only one person, ' +
+      'or "plural" if there are more\n (A for attacker, V for victim).\n```';
   let finalOptionsHelp =
       emoji.red_circle + 'Bloodbath event, ' + emoji.trophy + 'Normal event.';
   let users = msg.guild.members.random(4);
@@ -3583,7 +3657,9 @@ function removeEvent(msg, id) {
         'You must specify the number of the custom event you wish to remove.');
     return;
   } else if (isNaN(split[1])) {
-    reply(msg, 'The number you specified, isn\'t a number, please pick a number.');
+    reply(
+        msg,
+        'The number you specified, isn\'t a number, please pick a number.');
     return;
   } else if (split[1] <= 0) {
     reply(msg, 'The number you chose, is a bad number. I don\'t like it.');
@@ -3592,51 +3668,56 @@ function removeEvent(msg, id) {
 
   const num = split[1] - 1;
 
-  reply(msg, 'Which type of event is this?',
-      emoji.red_circle + 'Bloodbath, ' + emoji.trophy + 'Normal.').then((msg_) => {
-    msg_.awaitReactions(function(reaction, user) {
-      return user.id == msg.author.id &&
-              (reaction.emoji.name == emoji.red_circle ||
-               reaction.emoji.name == emoji.trophy);
-    }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
-      if (reactions.size == 0) {
-        msg_.reactions.removeAll();
-        return;
-      }
-      let eventType = 'player';
-      if (reactions.first().emoji.name == emoji.red_circle) {
-        eventType = 'bloodbath';
-      }
+  reply(
+      msg, 'Which type of event is this?',
+      emoji.red_circle + 'Bloodbath, ' + emoji.trophy + 'Normal.')
+      .then((msg_) => {
+        msg_.awaitReactions(function(reaction, user) {
+              return user.id == msg.author.id &&
+                  (reaction.emoji.name == emoji.red_circle ||
+                   reaction.emoji.name == emoji.trophy);
+            }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
+          if (reactions.size == 0) {
+            msg_.reactions.removeAll();
+            return;
+          }
+          let eventType = 'player';
+          if (reactions.first().emoji.name == emoji.red_circle) {
+            eventType = 'bloodbath';
+          }
 
-      if (eventType == 'player') {
-        if (num >= games[id].customEvents.player.length) {
-          reply(
-              msg,
-              'That number is a really big scary number. Try a smaller one.');
-          msg_.delete();
-        } else {
-          const removed = games[id].customEvents.player.splice(num, 1)[0];
-          reply(msg, 'Removed event.', formatEventString(removed, true));
-          msg_.delete();
-        }
-      } else {
-        if (num >= games[id].customEvents.bloodbath.length) {
-          reply(
-              msg,
-              'That number is a really big scary number. Try a smaller one.');
-          msg_.delete();
-        } else {
-          const removed = games[id].customEvents.bloodbath.splice(num, 1)[0];
-          reply(msg, 'Removed event.', formatEventString(removed, true));
-          msg_.delete();
-        }
-      }
-    });
+          if (eventType == 'player') {
+            if (num >= games[id].customEvents.player.length) {
+              reply(
+                  msg,
+                  'That number is a really big scary number. Try a smaller ' +
+                      'one.');
+              msg_.delete();
+            } else {
+              const removed = games[id].customEvents.player.splice(num, 1)[0];
+              reply(msg, 'Removed event.', formatEventString(removed, true));
+              msg_.delete();
+            }
+          } else {
+            if (num >= games[id].customEvents.bloodbath.length) {
+              reply(
+                  msg,
+                  'That number is a really big scary number. Try a smaller ' +
+                      'one.');
+              msg_.delete();
+            } else {
+              const removed =
+                  games[id].customEvents.bloodbath.splice(num, 1)[0];
+              reply(msg, 'Removed event.', formatEventString(removed, true));
+              msg_.delete();
+            }
+          }
+        });
 
-    msg_.react(emoji.red_circle).then(() => {
-      msg_.react(emoji.trophy);
-    });
-  });
+        msg_.react(emoji.red_circle).then(() => {
+ msg_.react(emoji.trophy);
+});
+      });
 }
 /**
  * Put information about an array of events into the array.
@@ -3718,19 +3799,21 @@ function listEvents(msg, id, page, eventType, editMsg) {
       if (obj.outcomes) {
         fetchStats(obj.outcomes);
 
-        return new Event(
-            '**___' + obj.message + '___** (' +
-            Math.round(obj.outcomes.numKill / obj.outcomes.length * 1000) / 10 +
-            '% kill, ' +
-            Math.round(obj.outcomes.numWound / obj.outcomes.length * 1000) / 10 +
-            '% wound, ' +
-            Math.round(obj.outcomes.numThrive / obj.outcomes.length * 1000) / 10 +
-            '% heal.)\n' +
+        const percentKill = obj.outcomes.numKill / obj.outcomes.length;
+        const percentWound = obj.outcomes.numWound / obj.outcomes.length;
+        const percentHeal = obj.outcomes.numThrive / obj.outcomes.length;
+
+        const eventMessage = '**___' + obj.message + '___** (' +
+            Math.round(percentKill * 1000) / 10 + '% kill, ' +
+            Math.round(percentWound * 1000) / 10 + '% wound, ' +
+            Math.round(percentHeal * 1000) / 10 + '% heal.)\n' +
             obj.outcomes
                 .map(function(outcome, index) {
                   return alph[index] + ') ' + formatEventString(outcome, true);
                 })
-                .join('\n'));
+                .join('\n');
+
+        return new Event(eventMessage);
       } else {
         obj.message = '**___' + obj.message + '___**';
         return obj;
