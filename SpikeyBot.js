@@ -253,9 +253,9 @@ function reply(msg, text, post) {
 // BEGIN //
 client.on('ready', () => {
   common.log(`Logged in as ${client.user.tag}!`);
-  updateGame(password, prefix + 'help for help');
+  if (!onlymusic) updateGame(password, prefix + 'help for help');
   client.users.fetch(spikeyId).then((user) => {
-    user.send('I just rebooted (JS)' + (onlymusic ? ' ONLYMUSIC' : 'ALL'));
+    user.send('I just rebooted (JS)' + (onlymusic ? ' ONLYMUSIC' : ' ALL'));
   });
   for (let i in subModules) {
     if (!subModules[i] instanceof Object || !subModules[i].begin) continue;
@@ -428,20 +428,24 @@ if (!onlymusic) {
 // to be immediately restarted.
 command.on('reboot', (msg) => {
   if (trustedIds.includes(msg.author.id)) {
-    reply(msg, 'Rebooting...').then((msg) => {
-      let toSave = {
-        id: msg.id,
-        channel: {id: msg.channel.id},
-        noReactToAnthony: !reactToAnthony,
-      };
-      try {
-        fs.writeFileSync('reboot.dat', JSON.stringify(toSave));
-      } catch (err) {
-        common.error('Failed to save reboot.dat');
-        console.log(err);
-      }
+    if (onlymusic) {
       process.exit(-1);
-    });
+    } else {
+      reply(msg, 'Rebooting...').then((msg) => {
+        let toSave = {
+          id: msg.id,
+          channel: {id: msg.channel.id},
+          noReactToAnthony: !reactToAnthony,
+        };
+        try {
+          fs.writeFileSync('reboot.dat', JSON.stringify(toSave));
+        } catch (err) {
+          common.error('Failed to save reboot.dat');
+          console.log(err);
+        }
+        process.exit(-1);
+      });
+    }
   } else {
     reply(
         msg, 'LOL! Good try!',
@@ -487,6 +491,8 @@ command.on('reload', (msg) => {
       }
       if (error) {
         warnMessage.edit('`Reload completed with errors.`');
+      } else if (onlymusic) {
+        warnMessage.delete();
       } else {
         warnMessage.edit('`Reload complete.`');
       }
