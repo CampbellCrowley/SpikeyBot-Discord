@@ -1,5 +1,5 @@
 const fs = require('fs');
-const Jimp = require('Jimp');
+const Jimp = require('jimp');
 
 let initialized = false;
 

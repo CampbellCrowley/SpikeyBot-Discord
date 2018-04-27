@@ -2,7 +2,7 @@ const dateFormat = require('dateformat');
 const math = require('mathjs');
 const algebra = require('algebra.js');
 const vm = require('vm');
-const Jimp = require('Jimp');
+const Jimp = require('jimp');
 const fs = require('fs');
 
 math.config({matrix: 'Array'});
