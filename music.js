@@ -430,7 +430,7 @@ function commandLeave(msg) {
     shouldReply = false;
   }
   msg.guild.members.fetch(client.user).then((me) => {
-    if (typeof me.voiceChannel !== 'undefined') {
+    if (me.voiceChannel) {
       me.voiceChannel.leave();
       if (shouldReply) reply(msg, 'Goodbye!');
     } else {
