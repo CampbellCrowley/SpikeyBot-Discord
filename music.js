@@ -46,7 +46,7 @@ const special = {
     cmd: 'kokomo',
     url: 'https://www.youtube.com/watch?v=fJWmbLS2_ec',
     file: '/home/discord/SpikeyBot-Discord/js/sounds/kokomo.webm',
-  },
+  }
 };
 
 const ytdlOpts =

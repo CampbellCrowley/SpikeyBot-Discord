@@ -79,7 +79,8 @@ const defaultOptions = {
       {value: 5, comment: 'The amount of health each user gets for a battle.'},
   teamSize: {
     value: 0,
-    comment: 'Maximum size of teams when automatically forming teams.',
+    comment: 'Maximum size of teams when automatically forming teams. 0 to ' +
+        'disable teams',
   },
   teammatesCollaborate: {
     value: true,
@@ -465,7 +466,7 @@ exports.begin = function(prefix_, Discord_, client_, command_, common_) {
   common.log('HungryGames Init', 'HG');
 
   for (let key in games) {
-    if (!games[i] instanceof Object) continue;
+    if (!games[key] instanceof Object) continue;
     if (games[key].options) {
       for (let opt in defaultOptions) {
         if (!defaultOptions[opt] instanceof Object) continue;
@@ -481,7 +482,8 @@ exports.begin = function(prefix_, Discord_, client_, command_, common_) {
       }
     }
 
-    if (games[key].currentGame && games[key].currentGame.day.state != 0 &&
+    if (games[key].currentGame &&
+        (games[key].currentGame.day.state > 0 || games[key].options.autoPlay) &&
         games[key].currentGame.inProgress && games[key].channel &&
         games[key].msg) {
       // If the bot stopped while simulating a day, just start over and try
@@ -551,8 +553,7 @@ function handleCommand(msg) {
     help(msg);
     return;
   } else if (msg.content.split(' ')[1] == 'makemewin') {
-    reply(
-        msg, 'Your probability of winning has increased by ' + nothing() + '!');
+    reply(msg, 'Everyone\'s probability of winning has increased!');
     return;
   } else if (msg.content.split(' ')[1] == 'makemelose') {
     reply(
@@ -3940,14 +3941,16 @@ function formatEventString(arenaEvent, newline) {
                     .replaceAll('{victim}', '`victim`')
                     .replaceAll('{dead}', '`dead`');
   if (newline) message += '\n    ';
-  message += '(' + emoji.crossed_swords + ': ' + arenaEvent.attacker.count;
+  message += '(' + emoji.crossed_swords + ': ' +
+      ('' + arenaEvent.attacker.count).replace('-', '>');
   if (arenaEvent.attacker.count != 0) {
     message += ', ' + getOutcomeEmoji(arenaEvent.attacker.outcome) +
         (arenaEvent.attacker.killer ? ' Killer ' : '');
   }
   message += ')';
   if (newline) message += '\n    ';
-  message += '(' + emoji.shield + ': ' + arenaEvent.victim.count;
+  message += '(' + emoji.shield + ': ' +
+      ('' + arenaEvent.victim.count).replace('-', '>');
   if (arenaEvent.victim.count != 0) {
     message += ', ' + getOutcomeEmoji(arenaEvent.victim.outcome) +
         (arenaEvent.victim.killer ? ' Killer' : '');
