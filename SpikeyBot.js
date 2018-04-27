@@ -5,13 +5,15 @@ const client = new Discord.Client();
 
 let subModuleNames = ['./main.js', './hungryGames.js', './music.js'];
 let subModules = [];
-for (let i in subModuleNames) {
-  try {
-    subModules[i] = require(subModuleNames[i]);
-  } catch (err) {
-    console.log(err);
+(function() {
+  for (let i in subModuleNames) {
+    try {
+      subModules[i] = require(subModuleNames[i]);
+    } catch (err) {
+      console.log(err);
+    }
   }
-}
+})();
 
 const isDev = process.argv[2] === 'dev';
 const prefix = isDev ? '~' : '?';
@@ -41,10 +43,30 @@ const onlyservermessage = 'This command only works in servers, sorry!';
 const disabledcommandmessage =
     'This command has been disabled in this channel.';
 
-// Command event management.
+/** Defines command event triggering interface. */
 function Command() {
+  // All tracked commands with handlers.
   let cmds = {};
+  // List of disabled commands.
   let blacklist = {};
+
+  /**
+   * The function to call when a command is triggered.
+   *
+   * @callback commandHandler
+   * @param {Discord.Message} msg The message sent in Discord.
+   */
+
+  /**
+   * Trigger a command firing and call it's handler passing in msg as only
+   * argument.
+   *
+   * @param {string} cmd Array of strings or a string of the command to
+   * trigger.
+   * @param {Discord.Message} msg Message received from Discord to pass to
+   * handler.
+   * @return {boolean} True if command was handled by us.
+   */
   this.trigger = function(cmd, msg) {
     if (cmd.startsWith(prefix)) cmd = cmd.replace(prefix, '');
     if (cmds[cmd]) {
@@ -68,6 +90,14 @@ function Command() {
       return false;
     }
   };
+  /**
+   * Registers a listener for a command.
+   *
+   * @param {string|string[]} cmd Command to listen for.
+   * @param {commandHandler} cb Function to call when command is triggered.
+   * @param {boolean} [onlyserver=false] Whether the command is only allowed on
+   * a server.
+   */
   this.on = function(cmd, cb, onlyserver) {
     if (typeof cb !== 'function') throw ('Event callback must be a function.');
     cb.validOnlyOnServer = onlyserver || false;
@@ -85,6 +115,11 @@ function Command() {
       throw ('Event must be string or array of strings');
     }
   };
+  /**
+   * Remove listener for a command.
+   *
+   * @param {string|string[]} cmd Command to remove listener for.
+   */
   this.deleteEvent = function(cmd) {
     if (typeof cmd === 'string') {
       if (cmds[cmd]) {
@@ -110,6 +145,13 @@ function Command() {
       throw ('Event must be string or array of strings');
     }
   };
+  /**
+   * Temporarily disables calling the handler for the given command in a certain
+   * Discord text channel.
+   *
+   * @param {string} cmd Command to disable.
+   * @param {string} channel ID of channel to disable command for.
+   */
   this.disable = function(cmd, channel) {
     if (cmds[cmd]) {
       if (!blacklist[cmd] || blacklist[cmd].lastIndexOf(channel) == -1) {
@@ -122,6 +164,12 @@ function Command() {
           ')');
     }
   };
+  /**
+   * Re-enable a command that was disabled previously.
+   *
+   * @param {string} cmd Command to enable.
+   * @param {string} channel ID of channel to enable command for.
+   */
   this.enable = function(cmd, channel) {
     if (blacklist[cmd]) {
       let index = blacklist[cmd].lastIndexOf(channel);
@@ -137,41 +185,64 @@ function Command() {
     }
   };
 }
-let command = new Command();
+const command = new Command();
 
-// Checks if given message is the given command.
+/**
+ * Checks if given message is the given command.
+ *
+ * @param {Discord.Message} msg Message from Discord to check if it is the given
+ * command.
+ * @param {string} cmd Command to check if the message is this command.
+ * @return {boolean} True if msg is the given command.
+ */
 function isCmd(msg, cmd) {
   return msg.content.startsWith(prefix + cmd);
 }
-// Changes the bot's status message.
-function updategame(password_, game) {
+/**
+ * Changes the bot's status message.
+ *
+ * @param {string} password_ Password required to change status.
+ * @param {string} game New message to set game to.
+ * @return {boolean} True if an error occurred.
+ */
+function updateGame(password_, game) {
   if (password_ == password) {
     client.user.setActivity(game, {name: game, type: 'WATCHING'});
     common.LOG('Changed game to "' + game + '"');
-    return 0;
+    return false;
   } else {
     common.LOG('Didn\'t change game (' + password_ + ')');
-    return 1;
+    return true;
   }
 }
-// Creates formatted string for mentioning the author of msg.
+/**
+ * Creates formatted string for mentioning the author of msg.
+ *
+ * @param {Discord.Message} msg Message to format a mention for the author of.
+ * @return {string} Formatted mention string.
+ */
 function mention(msg) {
   return `<@${msg.author.id}>`;
 }
-// Replies to the author and channel of msg with the given message.
+/**
+ * Replies to the author and channel of msg with the given message.
+ *
+ * @param {Discord.Message} msg Message to reply to.
+ * @param {string} text The main body of the message.
+ * @param {string} post The footer of the message.
+ * @return {Promise} Promise of Discord.Message that we attempted to send.
+ */
 function reply(msg, text, post) {
   post = post || '';
   return msg.channel.send(mention(msg) + '\n```\n' + text + '\n```' + post);
 }
 
 // BEGIN //
-client.on('ready', (_) => {
+client.on('ready', () => {
   common.LOG(`Logged in as ${client.user.tag}!`);
-  updategame(password, prefix + 'help for help');
+  updateGame(password, prefix + 'help for help');
   client.users.fetch(spikeyId).then(
-      (user) => {
- user.send('I just rebooted (JS)');
-});
+      (user) => { user.send('I just rebooted (JS)'); });
   for (let i in subModules) {
     try {
       subModules[i].begin(prefix, Discord, client, command, common);
@@ -195,17 +266,16 @@ client.on('ready', (_) => {
     let msg = JSON.parse(file);
     let channel = client.channels.get(msg.channel.id);
     if (channel) {
-channel.messages.fetch(msg.id)
-          .then((msg_) => {
- msg_.edit('`Reboot complete.`');
-})
-          .catch((_) => {});
-}
+      channel.messages.fetch(msg.id)
+          .then((msg_) => { msg_.edit('`Reboot complete.`'); })
+          .catch(() => {});
+    }
 
     if (msg.noReactToAnthony) reactToAnthony = false;
   });
 });
 
+// Handle a message sent.
 client.on('message', (msg) => {
   if (msg.author.id == client.user.id) return;
   if (msg.content.endsWith(', I\'m Dad!')) {
@@ -242,6 +312,7 @@ client.on('message', (msg) => {
   }
 });
 
+// Handle being added to a guild.
 client.on('guildCreate', (guild) => {
   common.LOG('ADDED TO NEW GUILD: ' + guild.id + ': ' + guild.name);
   let channel = '';
@@ -262,6 +333,7 @@ client.on('guildCreate', (guild) => {
   }
 });
 
+// Handle user banned on a guild.
 client.on('guildBanAdd', (guild, user) => {
   let channel = '';
   let pos = -1;
@@ -293,11 +365,12 @@ client.on('guildBanAdd', (guild, user) => {
   }
 });
 
-
+// Toggle reactions to Anthony.
 command.on('togglereact', (msg) => {
   reply(msg, 'Toggled reactions to Anthony to ' + !reactToAnthony + '. 😮');
   reactToAnthony = !reactToAnthony;
 });
+// Send help message to user who requested it.
 command.on('help', (msg) => {
   try {
     for (let i in subModules) {
@@ -309,18 +382,21 @@ command.on('help', (msg) => {
     reply(msg, blockedmessage);
   }
 });
+// Change current status message.
 command.on('updategame', (msg) => {
   msg.delete();
   let command = msg.content.replace(prefix + 'updategame ', '');
   let password = command.split(' ')[0];
   let game = command.replace(password + ' ', '');
-  if (updategame(password, game)) {
+  if (updateGame(password, game)) {
     reply(msg, 'I\'m sorry, but you are not allowed to do that. :(\n');
   } else {
     reply(msg, 'I changed my status to "' + game + '"!');
   }
 });
 
+// Trigger a reboot of the bot. Actually just gracefully shuts down, and expects
+// to be immediately restarted.
 command.on('reboot', (msg) => {
   if (trustedIds.includes(msg.author.id)) {
     reply(msg, 'Rebooting...').then((msg) => {
@@ -344,6 +420,7 @@ command.on('reboot', (msg) => {
         'It appears SpikeyRobot doesn\'t trust you enough with this command. Sorry!');
   }
 });
+// Reload all sub modules by unloading then re-requiring.
 command.on('reload', (msg) => {
   if (trustedIds.includes(msg.author.id)) {
     reply(msg, 'Reloading modules...').then((warnMessage) => {
