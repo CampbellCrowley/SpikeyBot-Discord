@@ -3,23 +3,35 @@ const fs = require('fs');
 const common = require('./common.js');
 const client = new Discord.Client();
 
-let subModuleNames = ['./main.js', './hungryGames.js', './music.js'];
+let subModuleNames = [];
+let setDev = false;
+let onlymusic = false;
 let subModules = [];
+for (let i in process.argv) {
+  if (process.argv[i] === 'dev') {
+    setDev = true;
+  } else if (process.argv[i] === 'onlymusic') {
+    onlymusic = true;
+  } else if (i > 1 && typeof process.argv[i] === 'string') {
+    subModuleNames.push(process.argv[i]);
+  }
+}
 for (let i in subModuleNames) {
   if (typeof subModuleNames[i] !== 'string') continue;
   try {
     subModules[i] = require(subModuleNames[i]);
   } catch (err) {
-    console.log(err);
+    console.log(subModuleNames[i], err);
   }
 }
 
-const isDev = process.argv[2] === 'dev';
+const isDev = setDev;
 const prefix = isDev ? '~' : '?';
 
-let reactToAnthony = true;
-
 common.begin(false, !isDev);
+if (onlymusic) common.log('STARTING IN MUSIC ONLY MODE');
+
+let reactToAnthony = true;
 
 // Password for changing the game the bot is playing. This doesn't need to be
 // secure, and I could probably just remove it.
@@ -243,7 +255,7 @@ client.on('ready', () => {
   common.log(`Logged in as ${client.user.tag}!`);
   updateGame(password, prefix + 'help for help');
   client.users.fetch(spikeyId).then((user) => {
-    user.send('I just rebooted (JS)');
+    user.send('I just rebooted (JS)' + (onlymusic ? ' ONLYMUSIC' : 'ALL'));
   });
   for (let i in subModules) {
     if (!subModules[i] instanceof Object || !subModules[i].begin) continue;
@@ -265,26 +277,28 @@ client.on('ready', () => {
           'initialization errors may be incorrect.');
     });
   }
-  fs.readFile('reboot.dat', function(err, file) {
-    if (err) return;
-    let msg = JSON.parse(file);
-    let channel = client.channels.get(msg.channel.id);
-    if (channel) {
-      channel.messages.fetch(msg.id)
-          .then((msg_) => {
-            msg_.edit('`Reboot complete.`');
-          })
-          .catch(() => {});
-    }
+  if (!onlymusic) {
+    fs.readFile('reboot.dat', function(err, file) {
+      if (err) return;
+      let msg = JSON.parse(file);
+      let channel = client.channels.get(msg.channel.id);
+      if (channel) {
+        channel.messages.fetch(msg.id)
+            .then((msg_) => {
+              msg_.edit('`Reboot complete.`');
+            })
+            .catch(() => {});
+      }
 
-    if (msg.noReactToAnthony) reactToAnthony = false;
-  });
+      if (msg.noReactToAnthony) reactToAnthony = false;
+    });
+  }
 });
 
 // Handle a message sent.
 client.on('message', (msg) => {
   if (msg.author.id == client.user.id) return;
-  if (msg.content.endsWith(', I\'m Dad!')) {
+  if (!onlymusic && msg.content.endsWith(', I\'m Dad!')) {
     msg.channel.send('Hi Dad, I\'m Spikey!');
   }
   if (msg.author.bot) return;
@@ -299,19 +313,24 @@ client.on('message', (msg) => {
     msg.content = prefix + msg.content;
   }
 
-  if (reactToAnthony && msg.author.id == '174030717846552576') msg.react('😮');
+  if (!onlymusic && reactToAnthony && msg.author.id == '174030717846552576') {
+    msg.react('😮');
+  }
 
   if (isCmd(msg, '')) {
-    if (msg.guild !== null) {
-      common.log(
-          msg.guild.name + '#' + msg.channel.name + '@' + msg.author.username +
-          msg.content.replaceAll('\n', '\\n'));
-    } else {
-      common.log(
-          'PM: @' + msg.author.username + msg.content.replaceAll('\n', '\\n'));
+    if (!onlymusic) {
+      if (msg.guild !== null) {
+        common.log(
+            msg.guild.name + '#' + msg.channel.name + '@' +
+            msg.author.username + msg.content.replaceAll('\n', '\\n'));
+      } else {
+        common.log(
+            'PM: @' + msg.author.username +
+            msg.content.replaceAll('\n', '\\n'));
+      }
     }
     if (!command.trigger(msg.content.split(/ |\n/)[0], msg) &&
-        msg.guild === null) {
+        msg.guild === null && !onlymusic) {
       msg.channel.send(
           'Oops! I\'m not sure how to help with that! Type **help** for a ' +
           'list of commands I know how to respond to.');
@@ -319,89 +338,91 @@ client.on('message', (msg) => {
   }
 });
 
-// Handle being added to a guild.
-client.on('guildCreate', (guild) => {
-  common.log('ADDED TO NEW GUILD: ' + guild.id + ': ' + guild.name);
-  let channel = '';
-  let pos = -1;
-  try {
-    guild.channels.forEach(function(val, key) {
-      if (val.type != 'voice' && val.type != 'category') {
-        if (pos == -1 || val.position < pos) {
-          pos = val.position;
-          channel = val.id;
+if (!onlymusic) {
+  // Handle being added to a guild.
+  client.on('guildCreate', (guild) => {
+    common.log('ADDED TO NEW GUILD: ' + guild.id + ': ' + guild.name);
+    let channel = '';
+    let pos = -1;
+    try {
+      guild.channels.forEach(function(val, key) {
+        if (val.type != 'voice' && val.type != 'category') {
+          if (pos == -1 || val.position < pos) {
+            pos = val.position;
+            channel = val.id;
+          }
         }
-      }
-    });
-    client.channels.get(channel).send(introduction);
-  } catch (err) {
-    common.error('Failed to send welcome to guild:' + guild.id);
-    console.log(err);
-  }
-});
-
-// Handle user banned on a guild.
-client.on('guildBanAdd', (guild, user) => {
-  let channel = '';
-  let pos = -1;
-  try {
-    guild.channels.forEach(function(val, key) {
-      if (val.type != 'voice' && val.type != 'category') {
-        if (pos == -1 || val.position < pos) {
-          pos = val.position;
-          channel = val.id;
-        }
-      }
-    });
-    guild.fetchAuditLogs({limit: 1})
-        .then((logs) => {
-          client.channels.get(channel).send(
-              '`Poof! ' + logs.entries.first().executor.username +
-              ' has ensured ' + user.username +
-              ' will never be seen again...`');
-        })
-        .catch((err) => {
-          client.channels.get(channel).send(
-              '`Poof! ' + user.username + ' was never seen again...`');
-          common.error('Failed to find executor of ban.');
-          console.log(err);
-        });
-  } catch (err) {
-    common.error('Failed to send ban from guild:' + guild.id);
-    console.log(err);
-  }
-});
-
-// Toggle reactions to Anthony.
-command.on('togglereact', (msg) => {
-  reply(msg, 'Toggled reactions to Anthony to ' + !reactToAnthony + '. 😮');
-  reactToAnthony = !reactToAnthony;
-});
-// Send help message to user who requested it.
-command.on('help', (msg) => {
-  try {
-    for (let i in subModules) {
-      if (subModules[i] instanceof Object && subModules[i].helpMessage) {
-        msg.author.send(subModules[i].helpMessage);
-      }
+      });
+      client.channels.get(channel).send(introduction);
+    } catch (err) {
+      common.error('Failed to send welcome to guild:' + guild.id);
+      console.log(err);
     }
-    if (msg.guild !== null) reply(msg, helpmessagereply, ':wink:');
-  } catch (err) {
-    reply(msg, blockedmessage);
-  }
-});
-// Change current status message.
-command.on('updategame', (msg) => {
-  msg.delete();
-  let command = msg.content.replace(prefix + 'updategame ', '');
-  let password = command.split(' ')[0];
-  let game = command.replace(password + ' ', '');
-  if (updateGame(password, game)) {
-    reply(msg, 'I\'m sorry, but you are not allowed to do that. :(\n');
-  } else {
-    reply(msg, 'I changed my status to "' + game + '"!');
-  }
-});
+  });
+
+  // Handle user banned on a guild.
+  client.on('guildBanAdd', (guild, user) => {
+    let channel = '';
+    let pos = -1;
+    try {
+      guild.channels.forEach(function(val, key) {
+        if (val.type != 'voice' && val.type != 'category') {
+          if (pos == -1 || val.position < pos) {
+            pos = val.position;
+            channel = val.id;
+          }
+        }
+      });
+      guild.fetchAuditLogs({limit: 1})
+          .then((logs) => {
+            client.channels.get(channel).send(
+                '`Poof! ' + logs.entries.first().executor.username +
+                ' has ensured ' + user.username +
+                ' will never be seen again...`');
+          })
+          .catch((err) => {
+            client.channels.get(channel).send(
+                '`Poof! ' + user.username + ' was never seen again...`');
+            common.error('Failed to find executor of ban.');
+            console.log(err);
+          });
+    } catch (err) {
+      common.error('Failed to send ban from guild:' + guild.id);
+      console.log(err);
+    }
+  });
+
+  // Toggle reactions to Anthony.
+  command.on('togglereact', (msg) => {
+    reply(msg, 'Toggled reactions to Anthony to ' + !reactToAnthony + '. 😮');
+    reactToAnthony = !reactToAnthony;
+  });
+  // Send help message to user who requested it.
+  command.on('help', (msg) => {
+    try {
+      for (let i in subModules) {
+        if (subModules[i] instanceof Object && subModules[i].helpMessage) {
+          msg.author.send(subModules[i].helpMessage);
+        }
+      }
+      if (msg.guild !== null) reply(msg, helpmessagereply, ':wink:');
+    } catch (err) {
+      reply(msg, blockedmessage);
+    }
+  });
+  // Change current status message.
+  command.on('updategame', (msg) => {
+    msg.delete();
+    let command = msg.content.replace(prefix + 'updategame ', '');
+    let password = command.split(' ')[0];
+    let game = command.replace(password + ' ', '');
+    if (updateGame(password, game)) {
+      reply(msg, 'I\'m sorry, but you are not allowed to do that. :(\n');
+    } else {
+      reply(msg, 'I changed my status to "' + game + '"!');
+    }
+  });
+}
 
 // Trigger a reboot of the bot. Actually just gracefully shuts down, and expects
 // to be immediately restarted.
