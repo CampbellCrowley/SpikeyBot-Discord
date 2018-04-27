@@ -1,5 +1,7 @@
 const ytdl = require('youtube-dl');
 const fs = require('fs');
+const ogg = require('ogg');
+const opus = require('node-opus');
 
 
 const geniusClient =
@@ -30,22 +32,22 @@ const special = {
   'nice try vi': {
     cmd: 'vi',
     url: 'https://www.youtube.com/watch?v=c1NoTNCiomU',
-    file: '/home/discord/SpikeyBot-Discord/js/sounds/viRap.webm',
+    file: './sounds/viRap.ogg',
   },
   'airhorn': {
     cmd: 'airhorn',
     url: '',
-    file: '/home/discord/SpikeyBot-Discord/js/sounds/airhorn.mp3',
+    file: './sounds/airhorn.ogg',
   },
   'rickroll': {
     cmd: 'rickroll',
     url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-    file: '/home/discord/SpikeyBot-Discord/js/sounds/rickRoll.webm',
+    file: './sounds/rickRoll.ogg',
   },
   'kokomo': {
     cmd: 'kokomo',
     url: 'https://www.youtube.com/watch?v=fJWmbLS2_ec',
-    file: '/home/discord/SpikeyBot-Discord/js/sounds/kokomo.webm',
+    file: './sounds/kokomo.ogg',
   },
 };
 
@@ -79,19 +81,19 @@ exports.begin = function(prefix_, Discord_, client_, command_, common_) {
   command.on('record', commandRecord, true);
 
   command.on('kokomo', (msg) => {
-    msg.content = '?play kokomo';
+    msg.content = myPrefix + 'play kokomo';
     command.trigger('play', msg);
   });
   command.on('vi', (msg) => {
-    msg.content = '?play nice try vi';
+    msg.content = myPrefix + 'play nice try vi';
     command.trigger('play', msg);
   });
   command.on('airhorn', (msg) => {
-    msg.content = '?play airhorn';
+    msg.content = myPrefix + 'play airhorn';
     command.trigger('play', msg);
   });
   command.on('rickroll', (msg) => {
-    msg.content = '?play rickroll';
+    msg.content = myPrefix + 'play rickroll';
     command.trigger('play', msg);
   });
 
@@ -237,7 +239,7 @@ function startPlaying(broadcast) {
   broadcast.current = broadcast.queue.splice(0, 1)[0];
   try {
     makeBroadcast(broadcast);
-    broadcast.voice.play(broadcast.broadcast);
+    // broadcast.voice.play(broadcast.broadcast);
   } catch (err) {
     console.log(err);
     endSong(broadcast);
@@ -266,13 +268,14 @@ function startPlaying(broadcast) {
       } else {
         ytdl.getInfo(
             special[broadcast.current.song].url, ytdlOpts, (err, info) => {
+              broadcast.isLoading = false;
               if (err) {
+                common.error(err.message.split('\n')[1]);
                 console.log(err);
                 broadcast.current.request.channel.send(
                     '```Oops, something went wrong while getting info for ' +
-                    'this song!```');
+                    'this song!```\n' + err.message.split('\n')[1]);
               } else {
-                broadcast.isLoading = false;
                 broadcast.current.info = info;
                 let embed = formatSongInfo(broadcast.current.info);
                 embed.setTitle(
@@ -302,21 +305,33 @@ function startPlaying(broadcast) {
  */
 function makeBroadcast(broadcast) {
   if (special[broadcast.current.song]) {
-    broadcast.broadcast.play(special[broadcast.current.song].file)
-        .on('end', function() {
-          endSong(broadcast);
-        });
+    const file = fs.createReadStream(special[broadcast.current.song].file);
+
+    broadcast.current.stream = file;
   } else {
     if (broadcast.current.info) {
       broadcast.current.stream = ytdl(broadcast.current.info.url, ytdlOpts);
     } else {
       broadcast.current.stream = ytdl(broadcast.current.song, ytdlOpts);
     }
-
-    broadcast.broadcast.play(broadcast.current.stream).on('end', function() {
-      endSong(broadcast);
-    });
   }
+  broadcast.broadcast = broadcast.voice.play(broadcast.current.stream);
+
+  broadcast.broadcast.on('end', function() {
+    endSong(broadcast);
+  });
+  broadcast.broadcast.on('speaking', function(speaking) {
+    if (!speaking) endSong(broadcast);
+  });
+  broadcast.broadcast.on('start', function() {
+    common.log("Started playing: " + broadcast.current.song, "Music");
+  });
+  broadcast.broadcast.on('error', function() {
+    common.error("Error in starting broadcast", "Music");
+  });
+  /* broadcast.broadcast.on('debug', function(info) {
+    common.log("DEBUG: " + info, "Music");
+  }); */
 }
 /**
  * Triggered when a song has finished playing.
@@ -333,7 +348,6 @@ function endSong(broadcast) {
  * @param {Object} broadcast The object storing all relevant information.
  */
 function skipSong(broadcast) {
-  if (broadcast.broadcast) broadcast.broadcast.dispatcher.pause();
   broadcast.isPlaying = false;
   startPlaying(broadcast);
 }
@@ -379,10 +393,12 @@ function commandPlay(msg) {
             .then((msg) => loadingMsg = msg);
         ytdl.getInfo(song, ytdlOpts, (err, info) => {
           if (err) {
+            common.error(err.message.split('\n')[1]);
+            console.log(err);
             reply(
                 msg,
-                'Oops, something went wrong while searching for that song!');
-            console.log(err);
+                'Oops, something went wrong while searching for that song!',
+                err.message.split('\n')[1]);
           } else if (info._duration_raw === 0) {
             reply(msg, 'Sorry, but I can\'t play live streams currently.');
           } else {
@@ -724,17 +740,20 @@ function commandRecord(msg) {
         (msg.mentions.users.size > 0 && !msg.mentions.users.find(user.id))) {
       return;
     }
-    let stream = receiver.createStream(msg.author, {end: 'manual'});
+    let stream =
+        receiver.createStream(msg.author, {end: 'manual', mode: 'pcm'});
     streams[user.id] = stream;
-    stream.pipe(file);
-    conn.on('disconnect', () => {
+    // stream.pipe(file);
+    streamToOgg(stream, file);
+    /* conn.on('disconnect', () => {
       stream.destroy();
-    });
+    }); */
   };
   msg.member.voiceChannel.join().then((conn) => {
-    let startSound =
-        conn.play('/home/discord/SpikeyBot-Discord/js/sounds/plink.m4a');
-    startSound.on('end', () => {
+    // Timeout and sound are due to current Discord but requiring bot to play
+    // sound for 0.1s before being able to receive audio.
+    let startSound = conn.play('./sounds/plink.ogg');
+    client.setTimeout(() => {
       let receiver = conn.createReceiver();
       msg.member.voiceChannel.members.forEach(function(member) {
         listen(member.user, receiver, conn);
@@ -744,6 +763,19 @@ function commandRecord(msg) {
           listen(user, receiver, conn);
         }
       });
-    });
+    }, 100);
   });
+}
+
+/**
+ * Coverts an incoming Opus stream to a ogg format and writes it to file.
+ *
+ * @param {ReadableStream} stream The opus stream from Discord.
+ * @param {WritableStream} file The file stream we are writing to.
+ */
+function streamToOgg(input, file) {
+  const opusEncoder = new opus.Encoder();
+  const oggEncoder = new ogg.Encoder();
+  input.pipe(opusEncoder).pipe(oggEncoder.stream());
+  oggEncoder.pipe(file);
 }
