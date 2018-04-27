@@ -3,7 +3,6 @@ const fs = require('fs');
 const ogg = require('ogg');
 const opus = require('node-opus');
 
-
 const geniusClient =
     'l5zrX9XIDrJuz-kS1u7zS5sE81KzrH3qxZL5tAvprE9GG-L1KYlZklQDXL6wf3sn';
 const geniusRequest = {
@@ -324,10 +323,10 @@ function makeBroadcast(broadcast) {
     if (!speaking) endSong(broadcast);
   });
   broadcast.broadcast.on('start', function() {
-    common.log("Started playing: " + broadcast.current.song, "Music");
+    common.log('Started playing: ' + broadcast.current.song, 'Music');
   });
   broadcast.broadcast.on('error', function() {
-    common.error("Error in starting broadcast", "Music");
+    common.error('Error in starting broadcast', 'Music');
   });
   /* broadcast.broadcast.on('debug', function(info) {
     common.log("DEBUG: " + info, "Music");
@@ -752,7 +751,7 @@ function commandRecord(msg) {
   msg.member.voiceChannel.join().then((conn) => {
     // Timeout and sound are due to current Discord but requiring bot to play
     // sound for 0.1s before being able to receive audio.
-    let startSound = conn.play('./sounds/plink.ogg');
+    conn.play('./sounds/plink.ogg');
     client.setTimeout(() => {
       let receiver = conn.createReceiver();
       msg.member.voiceChannel.members.forEach(function(member) {
@@ -770,7 +769,7 @@ function commandRecord(msg) {
 /**
  * Coverts an incoming Opus stream to a ogg format and writes it to file.
  *
- * @param {ReadableStream} stream The opus stream from Discord.
+ * @param {ReadableStream} input The opus stream from Discord.
  * @param {WritableStream} file The file stream we are writing to.
  */
 function streamToOgg(input, file) {
