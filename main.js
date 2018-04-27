@@ -2,7 +2,7 @@ const dateFormat = require('dateformat');
 const math = require('mathjs');
 const algebra = require('algebra.js');
 const vm = require('vm');
-const jimp = require('jimp');
+const Jimp = require('Jimp');
 const fs = require('fs');
 
 math.config({matrix: 'Array'});
@@ -24,39 +24,54 @@ let prevUserSayCnt = 0;
 
 let timers = [];
 
-const introduction = '\nHello! My name is SpikeyBot.\n' +
-    'I was created by SpikeyRobot#9836, so if you wish to add any features, feel free to PM him! (Tip: Use **{prefix}pmspikey**)\n' +
-    '\nIf you\'d like to know what I can do, type **{prefix}help** in a PM to me and I\'ll let you know!';
+const introduction = '\nHello! My name is SpikeyBot.\nI was created by ' +
+    'SpikeyRobot#9836, so if you wish to add any features, feel free to PM ' +
+    'him! (Tip: Use **{prefix}pmspikey**)\n\nIf you\'d like to know what I ' +
+    'can do, type **{prefix}help** in a PM to me and I\'ll let you know!';
 const blockedmessage =
     'I couldn\'t send you a message, you probably blocked me :(';
 const addmessage =
-    'Want to add me to your server? Click this link:\n(You\'ll need to be signed into discord in your browser first)';
-const addLink =
-    'https://discordapp.com/oauth2/authorize?&client_id=318552464356016131&scope=bot';
+    'Want to add me to your server? Click this link:\n(You\'ll need to be ' +
+    'signed into discord in your browser first)';
+const addLink = 'https://discordapp.com/oauth2/authorize?' +
+    '&client_id=318552464356016131&scope=bot';
 const banMsgs = [
   'It was really nice meeting you!',
-  'You\'re a really great person, I\'m sorry I had to do this.', 'See you soon!',
-  'And they were never heard from again...', 'Poof! Gone like magic!',
+  'You\'re a really great person, I\'m sorry I had to do this.',
+  'See you soon!',
+  'And they were never heard from again...',
+  'Poof! Gone like magic!',
   'Does it seem quiet in here? Or is it just me?',
   'And like the trash, they\'re were taken out!',
   'Looks like they made like a tree, and leaf-ed. (sorry)',
   'Oof! Looks like my boot to their behind left a mark!',
   'Between you and me, I didn\'t like them anyways.',
-  'Everyone rejoice! The world has been eradicated of one more person that no one liked anyways.',
+  'Everyone rejoice! The world has been eradicated of one more person that ' +
+      'no one liked anyways.',
 ];
+const defaultCode =
+    '(function(cb){console.log=(function(w){return function(){w.apply(console' +
+    ',arguments);cb.apply(null,arguments);};})(console.log);})(function(v){st' +
+    'dout.push(v);});(function(cb){console.error=(function(w){return function' +
+    '(){w.apply(console,arguments);cb.apply(null,arguments);};})(console.erro' +
+    'r);})(function(v){stderr.push(v);});\n';
+
 exports.helpMessage = 'Loading...';
 const helpObject = {
   title:
-      'Here\'s the list of stuff I can do! PM SpikeyRobot ({prefix}pmspikey) feature requests!\n',
+      'Here\'s the list of stuff I can do! PM SpikeyRobot ({prefix}pmspikey) ' +
+      'feature requests!\n',
   sections: [
     {
       title: 'Music Stuff',
       rows: [
-        'play \'url or search\' // Play a song in your current voice channel, or add a song to the queue.',
+        'play \'url or search\' // Play a song in your current voice ' +
+            'channel, or add a song to the queue.',
         'stop // Stop playing music and leave the voice channel.',
         'skip // Skip the currently playing song.',
         'queue // View the songs currently in the queue.',
-        'remove \'index\' // Remove a song with the given queue index from the queue.',
+        'remove \'index\' // Remove a song with the given queue index from ' +
+            'the queue.',
         'lyrics \'song\' // Search for song lyrics.',
       ],
     },
@@ -64,32 +79,45 @@ const helpObject = {
       title: 'General Stuff',
       rows: [
         'addme // I will send you a link to add me to your server!',
-        'help // Send this message to you.', 'say // Make me say something.',
-        'createdate // I will tell you the date you created your account! (You can mention people)',
-        'joindate // I will tell you the date you joined the server you sent the message from! (You can mention people)',
+        'help // Send this message to you.',
+        'say // Make me say something.',
+        'createdate // I will tell you the date you created your account! ' +
+            '(You can mention people)',
+        'joindate // I will tell you the date you joined the server you sent ' +
+            'the message from! (You can mention people)',
         'pmme // I will introduce myself to you!',
-        'pmspikey \'message\' // I will send SpikeyRobot (my creator) your message because you are too shy!',
+        'pmspikey \'message\' // I will send SpikeyRobot (my creator) your ' +
+            'message because you are too shy!',
         'flip // I have an unlimited supply of coins! I will flip one for you!',
-        'avatar \'mention\' // Need a better look at your profile pic? I\'ll show you the original.',
-        'ping // Want to know what my delay to the server is? I can tell you my ping!',
+        'avatar \'mention\' // Need a better look at your profile pic? I\'ll ' +
+            'show you the original.',
+        'ping // Want to know what my delay to the server is? I can tell you ' +
+            'my ping!',
       ],
     },
     {
       title: 'Math Stuff',
       rows: [
-        'add \'numbers\' // Add positive or negative numbers separated by spaces.',
-        'simplify \'equation\' // Simplify an equation with numbers and variables.',
-        'solve \'eqution\' // Solve an equation for each variable in the equation.',
+        'add \'numbers\' // Add positive or negative numbers separated by ' +
+            'spaces.',
+        'simplify \'equation\' // Simplify an equation with numbers and ' +
+            'variables.',
+        'solve \'eqution\' // Solve an equation for each variable in the ' +
+            'equation.',
         'evaluate \'problem\' // Solve a math problem, and convert units.',
         'derive \'equation with x\' // Find dy/dx of an equation.',
-        'graph \'equation with x\' \'[xMin, xMax]\' \'[yMin, yMax]\' // Graph an equation, Maxes and mins are all optional, but brackets are required.',
+        'graph \'equation with x\' \'[xMin, xMax]\' \'[yMin, yMax]\' // ' +
+            'Graph an equation, Maxes and mins are all optional, but ' +
+            'brackets are required.',
       ],
     },
     {
       title: 'Admin Stuff',
       rows: [
-        'purge \'number\' // Remove a number of messages from the current text channel!',
-        'fuckyou/{prefix}ban \'mention\' // I will ban the person you mention with a flashy message!',
+        'purge \'number\' // Remove a number of messages from the current ' +
+            'text channel!',
+        'fuckyou/{prefix}ban \'mention\' // I will ban the person you ' +
+            'mention with a flashy message!',
         'smite \'mention\' // Silence the peasant who dare oppose you!',
       ],
     },
@@ -126,7 +154,8 @@ function reply(msg, text, post) {
  * @param {string} prefix_ The global prefix for this bot.
  * @param {Discord} Discord_ The Discord object for the API library.
  * @param {Discord.Client} client_ The client that represents this bot.
- * @param {Command} command_ The command instance in which to register command listeners.
+ * @param {Command} command_ The command instance in which to register command
+ * listeners.
  * @param {Object} common_ Object storing common functions.
  */
 exports.begin = function(prefix_, Discord_, client_, command_, common_) {
@@ -181,7 +210,9 @@ exports.begin = function(prefix_, Discord_, client_, command_, common_) {
 
     const now = Date.now();
     for (let i in msg.timers) {
-      client.setTimeout(setTimer(msg.timers[i]), msg.timers[i].time - now);
+      if (msg.timers[i] instanceof Object && msg.timers[i].time) {
+        client.setTimeout(setTimer(msg.timers[i]), msg.timers[i].time - now);
+      }
     }
   });
 
@@ -292,7 +323,8 @@ function commandAdd(msg) {
   let anotherEnding = '';
   if (numNonNumber > 0) {
     ending =
-        'But you entered the numbers oddly, so I am not sure if I understood you properly.';
+        'But you entered the numbers oddly, so I am not sure if I understood ' +
+        'you properly.';
   }
   if (number == 69) {
     anotherEnding = ':wink:';
@@ -398,7 +430,13 @@ function commandEvaluate(msg) {
 function commandGraph(msg) {
   const graphSize = 200;
   const dotSize = 2;
-  let xVal, yVal, ypVal, domainMin, domainMax, rangeMin, rangeMax;
+  let xVal;
+  let yVal;
+  let ypVal;
+  let domainMin;
+  let domainMax;
+  let rangeMin;
+  let rangeMax;
   let cmd = msg.content.replace(myPrefix + 'graph', '');
   let expression = cmd.replace(/\[.*\]|\n/gm, '');
   try {
@@ -442,7 +480,7 @@ function commandGraph(msg) {
     reply(msg, err.message);
     return;
   }
-  let finalImage = new jimp(graphSize, graphSize, 0xFFFFFFFF);
+  let finalImage = new Jimp(graphSize, graphSize, 0xFFFFFFFF);
   let minY = 0;
   let maxY = 0;
   if (typeof rangeMin === 'undefined') {
@@ -458,9 +496,9 @@ function commandGraph(msg) {
   }
   let zeroY = Math.round(-minY / (maxY - minY) * graphSize);
   let zeroX = Math.round(-domainMin / (domainMax - domainMin) * graphSize);
-  finalImage.blit(new jimp(dotSize, graphSize, 0xDDDDDDFF), zeroX, 0);
+  finalImage.blit(new Jimp(dotSize, graphSize, 0xDDDDDDFF), zeroX, 0);
   finalImage.blit(
-      new jimp(graphSize, dotSize, 0xDDDDDDFF), 0, graphSize - zeroY);
+      new Jimp(graphSize, dotSize, 0xDDDDDDFF), 0, graphSize - zeroY);
 
   let lastSlope;
   let turningPoints = [];
@@ -477,7 +515,7 @@ function commandGraph(msg) {
     }
     lastSlope = ypVal[i];
     finalImage.blit(
-        new jimp(mySize, mySize, myColor), i / xVal.length * graphSize, y);
+        new Jimp(mySize, mySize, myColor), i / xVal.length * graphSize, y);
   }
   let expMatch = expression.match(/^\s?[yY]\s*=(.*)/);
   if (!expMatch) {
@@ -485,7 +523,7 @@ function commandGraph(msg) {
   } else {
     expression = 'y = ' + simplify(expMatch[1]);
   }
-  finalImage.getBuffer(jimp.MIME_PNG, function(err, out) {
+  finalImage.getBuffer(Jimp.MIME_PNG, function(err, out) {
     let embed = new Discord.MessageEmbed();
     embed.setTitle('Graph of ' + expression);
     embed.setDescription(
@@ -533,10 +571,7 @@ function commandJS(msg) {
   try {
     let sandbox = {__stdout: [], __stderr: []};
 
-    let code =
-        '(function(cb){console.log=(function(w){return function(){w.apply(console,arguments);cb.apply(null,arguments);};})(console.log);})(function(v){__stdout.push(v);});(function(cb){console.error=(function(w){return function(){w.apply(console,arguments);cb.apply(null,arguments);};})(console.error);})(function(v){__stderr.push(v);});\n';
-
-    code += msg.content.replace(myPrefix + 'js', '');
+    let code = defaultCode + msg.content.replace(myPrefix + 'js', '');
     let stdexit = vm.runInNewContext(
         code, sandbox, {filename: 'Line', timeout: '100', lineOffset: -1});
     let stdout = sandbox.__stdout;
@@ -709,7 +744,8 @@ function commandPmSpikey(msg) {
         console.log(err);
         reply(
             msg,
-            'Something went wrong and I couldn\'t send your message. Sorry that\'s all I know :(');
+            'Something went wrong and I couldn\'t send your message. Sorry ' +
+                'that\'s all I know :(');
       });
 }
 /**
@@ -766,7 +802,10 @@ function commandPurge(msg) {
       msg.channel.bulkDelete(num + 1);
     }
   } else {
-    reply(msg, 'I\'m sorry, but you don\'t have permission to delete messages in this channel.');
+    reply(
+        msg,
+        'I\'m sorry, but you don\'t have permission to delete messages in ' +
+            'this channel.');
   }
 }
 /**
@@ -875,12 +914,12 @@ function commandSmite(msg) {
                   mentionable: true,
                 })
                 .then((role) => {
- smite(role, toSmite);
-})
-                .catch(() => {
+                  smite(role, toSmite);
+                }).catch(() => {
                   reply(
                       msg, 'I couldn\'t smite ' + toSmite.user.username +
-                          ' because there isn\'t a "Smited" role and I couldn\'t make it!');
+                          ' because there isn\'t a "Smited" role and I ' +
+                          'couldn\'t make it!');
                 });
           } else {
             smite(smiteRole, toSmite);
@@ -934,7 +973,8 @@ function commandUptime(msg) {
 }
 
 /**
- * Reply to message saying what game the mentioned user is playing and possibly other information about their profile.
+ * Reply to message saying what game the mentioned user is playing and possibly
+ * other information about their profile.
  *
  * @param {Discord.Message} msg Message that triggered command.
  */
