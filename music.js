@@ -304,8 +304,8 @@ function makeBroadcast(broadcast) {
   if (special[broadcast.current.song]) {
     broadcast.broadcast.play(special[broadcast.current.song].file)
         .on('end', function() {
-      endSong(broadcast);
-    });
+          endSong(broadcast);
+        });
   } else {
     if (broadcast.current.info) {
       broadcast.current.stream = ytdl(broadcast.current.info.url, ytdlOpts);
@@ -313,8 +313,7 @@ function makeBroadcast(broadcast) {
       broadcast.current.stream = ytdl(broadcast.current.song, ytdlOpts);
     }
 
-    broadcast.broadcast.play(broadcast.current.stream)
-        .on('end', function() {
+    broadcast.broadcast.play(broadcast.current.stream).on('end', function() {
       endSong(broadcast);
     });
   }
