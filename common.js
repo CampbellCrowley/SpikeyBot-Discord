@@ -6,28 +6,14 @@ var async = require('async');
 var dateFormat = require('dateformat');
 const prefixLength = 13;
 
-var headerFileLastModified;
-var footerFileLastModified;
-var stylesFileLastModified;
-var headerFile;
-var footerFile;
-var stylesFile;
-var shouldReplaceTags = false;
-
 var mycolor = 0;
 const app = process.argv[1].substring(process.argv[1].lastIndexOf('/') + 1);
 var title;
 
-var subDom = "dev";
 exports.isRelease = false;
 
-exports.begin = function(replaceFileTags, isRelease) {
+exports.begin = function(_, isRelease) {
   exports.isRelease = isRelease || false;
-  if (replaceFileTags) {
-    shouldReplaceTags = true;
-    updateCachedFiles(true);
-    setInterval(updateCachedFiles, 5000);
-  }
   switch(app) {
     case "Master.js":
       mycolor = 32;
@@ -54,6 +40,7 @@ exports.begin = function(replaceFileTags, isRelease) {
   var temptitle = app;
   if (exports.isRelease) temptitle = "R" + temptitle;
   else temptitle = "D" + temptitle;
+
   for (var i = temptitle.length; i < prefixLength; i++) {
     temptitle += " ";
   }
@@ -115,60 +102,6 @@ exports.updatePrefix = function(ip) {
   return "[" + title + date + " " + formattedIP + "]:";
 };
 
-
-exports.res404 = function(res) {
-  fs.exists("/var/www/html/404.html", function(exists) {
-    if (exists) {
-      exports.getFile("/var/www/html/404.html", res, "text/html", true);
-    } else {
-      exports.error("File not found:  404.html");
-      res.end("404");
-    }
-  });
-};
-
-exports.getFile = function(localPath, res, mimeType, is404) {
-  is404 = (is404 !== undefined && is404 === true);
-  fs.readFile(localPath, function(err, contents_) {
-    if (!err) {
-      try {
-        var contents = contents_.toString();
-        subDom = getSubDom(localPath);
-        replaceTags(contents, function(contents) {
-          if (contents_.toString() !== contents)
-            contents_ = Buffer.from(contents);
-          res.setHeader("Content-Length", contents_.length);
-          res.setHeader("Content-Type", mimeType);
-          if (is404) {
-            res.statusCode = 404;
-          } else {
-            res.statusCode = 200;
-          }
-          res.end(contents_);
-        });
-      } catch (e) {
-        res.setHeader("Content-Length", contents_.length);
-        res.setHeader("Content-Type", mimeType || "text/plain");
-        if (is404) {
-          res.statusCode = 404;
-        } else {
-          res.statusCode = 200;
-        }
-        res.end(contents_);
-      }
-    } else {
-      res.writeHead(500);
-      res.end();
-    }
-  });
-};
-
-function getSubDom(localPath) {
-  localPath = path.normalize(localPath);
-  if (localPath.indexOf("/var/www/trax") === 0) return "trax";
-  if (localPath.indexOf("/var/www/www") === 0) return "www";
-  return "dev";
-}
 exports.log = function(message, ip) {
   if (exports.isRelease) {
     console.log(
@@ -189,140 +122,8 @@ exports.error = function(message, ip) {
 function getTrace() {
   var func = __function + ":" + __line;
   while (func.length < 20) func += " ";
+  func = func.substr(func.length - 20, 20);
   return func;
-}
-
-function replaceTags(contents, cb) {
-  if (!shouldReplaceTags) cb(contents);
-
-  async.waterfall(
-      [
-        function(cb) { cb(null, contents); }, replaceHeader, replaceFooter,
-        replaceStyles, replaceURLS
-      ],
-      function(err, contents) {
-        if (err) exports.error(err);
-        else cb(contents);
-      });
-}
-
-function replaceHeader(contents, cb) {
-  contents = contents.toString();
-  var Tag = "<div id=\"mainheader\"></div>";
-  if (contents.indexOf(Tag) > -1) {
-    contents = contents.replaceAll(Tag, headerFile);
-    cb(null, contents);
-  } else {
-    cb(null, contents);
-  }
-}
-function replaceFooter(contents, cb) {
-  contents = contents.toString();
-  var Tag = "<div id=\"mainfooter\"></div>";
-  if (contents.indexOf(Tag) > -1) {
-    contents = contents.replaceAll(Tag, footerFile);
-    cb(null, contents);
-  } else {
-    cb(null, contents);
-  }
-}
-function replaceStyles(contents, cb) {
-  contents = contents.toString();
-  var Tag = "<style></style>";
-  if (contents.indexOf(Tag) > -1) {
-    contents = contents.replaceAll(Tag, "<style>" + stylesFile + "</style>");
-    cb(null, contents);
-  } else {
-    cb(null, contents);
-  }
-}
-function replaceURLS(contents, cb) {
-  contents = contents.toString();
-  if (subDom !== 'dev') {
-    contents = contents.replaceAll(
-        "dev.campbellcrowley.com/" + subDom, subDom + ".campbellcrowley.com");
-    contents = contents.replaceAll(
-        "'dev.campbellcrowley.com', {path: '/socket.io/" + subDom + "'",
-        "'" + subDom + ".campbellcrowley.com', {");
-    cb(null, contents);
-  } else {
-    cb(null, contents);
-  }
-}
-
-function updateCachedFiles(force) {
-  fs.stat('./header.html', function(err, stats) {
-    if (err) {
-      exports.error(err);
-      return;
-    }
-    var mtime = stats.mtime + "";
-    if (force !== true && headerFileLastModified === mtime &&
-        typeof headerFile !== 'undefined')
-      return;
-
-    headerFileLastModified = mtime;
-    fs.readFile('./header.html', function(err, data) {
-      if (err !== null) {
-        exports.error(err);
-        return;
-      }
-      exports.log("Updating header.html");
-      try {
-        headerFile = data.toString();
-      } catch (e) {
-        exports.error(e);
-      }
-    });
-  });
-  fs.stat('./footer.html', function(err, stats) {
-    if (err) {
-      exports.error(err);
-      return;
-    }
-    var mtime = stats.mtime + "";
-    if (force !== true && footerFileLastModified === mtime &&
-        typeof footerFile !== 'undefined')
-      return;
-
-    footerFileLastModified = mtime;
-    fs.readFile('./footer.html', function(err, data) {
-      if (err !== null) {
-        exports.error(err);
-        return;
-      }
-      exports.log("Updating footer.html");
-      try {
-        footerFile = data.toString();
-      } catch (e) {
-        exports.error(e);
-      }
-    });
-  });
-  fs.stat('./styles.css', function(err, stats) {
-    if (err) {
-      exports.error(err);
-      return;
-    }
-    var mtime = stats.mtime + "";
-    if (force !== true && stylesFileLastModified === mtime &&
-        typeof stylesFile !== 'undefined')
-      return;
-
-    stylesFileLastModified = mtime;
-    fs.readFile('./styles.css', function(err, data) {
-      if (err !== null) {
-        exports.error(err);
-        return;
-      }
-      exports.log("Updating styles.css");
-      try {
-        stylesFile = data.toString();
-      } catch (e) {
-        exports.error(e);
-      }
-    });
-  });
 }
 
 String.prototype.replaceAll = function(search, replacement) {

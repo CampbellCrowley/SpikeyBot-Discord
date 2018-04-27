@@ -45,7 +45,7 @@ const special = {
   },
   'kokomo': {
     cmd: 'kokomo',
-    url: 'https://www.youtube.com/watch?v=fJWmbLS2_ec',
+    url: 'https://www.youtube.com/watch?v=bOyJUF0p9Wc',
     file: './sounds/kokomo.ogg',
   },
 };
@@ -96,6 +96,8 @@ exports.begin = function(prefix_, Discord_, client_, command_, common_) {
     command.trigger('play', msg);
   });
 
+  client.on('voiceStateUpdate', handleVoiceStateUpdate);
+
   initialized = true;
   common.log('Music Init', 'Music');
 };
@@ -117,6 +119,8 @@ exports.end = function() {
   command.deleteEvent('vi');
   command.deleteEvent('airhorn');
   command.deleteEvent('rickroll');
+
+  client.removeListener('voiceStateUpdate', handleVoiceStateUpdate);
 
   delete command;
   delete Discord;
@@ -146,6 +150,24 @@ function mention(msg) {
 function reply(msg, text, post) {
   post = post || '';
   return msg.channel.send(`${mention(msg)}\n\`\`\`\n${text}\n\`\`\`${post}`);
+}
+
+/**
+ * Leave a voice channel if all other users have left. Should also cause music
+ * and recordings to stop.
+ *
+ * @param {Discord.GuildMember} oldMem Member before status update.
+ * @param {Discord.GuildMember} newMem Member after status update.
+ */
+function handleVoiceStateUpdate(oldMem, newMem) {
+  if (oldMem.voiceChannel && oldMem.voiceChannel.members &&
+      oldMem.voiceChannel.members.size === 1 &&
+      oldMem.voiceChannel.members.get(client.user.id)) {
+    common.log(
+        "Leaving voice channel because everyone left me to be alone :(",
+        "Music");
+    oldMem.voiceChannel.leave();
+  }
 }
 
 /**
@@ -225,11 +247,12 @@ function enqueueSong(broadcast, song, msg, info) {
  * song.
  */
 function startPlaying(broadcast) {
-  if (!broadcast || broadcast.isPlaying || broadcast.isLoading) {
+  if (!broadcast || broadcast.isPlaying || broadcast.isLoading ||
+      (broadcast.current && !broadcasts[broadcast.current.request.guild.id])) {
     return;
   }
   if (broadcast.queue.length === 0) {
-    command.trigger('stop', broadcast.current.request);
+    broadcast.voice.disconnect();
     broadcast.current.request.channel.send('`Queue is empty!`');
     return;
   }
@@ -270,7 +293,6 @@ function startPlaying(broadcast) {
               broadcast.isLoading = false;
               if (err) {
                 common.error(err.message.split('\n')[1]);
-                console.log(err);
                 broadcast.current.request.channel.send(
                     '```Oops, something went wrong while getting info for ' +
                     'this song!```\n' + err.message.split('\n')[1]);
@@ -316,6 +338,14 @@ function makeBroadcast(broadcast) {
   }
   broadcast.broadcast = broadcast.voice.play(broadcast.current.stream);
 
+  broadcast.broadcast.setBitrate(42);
+  broadcast.broadcast.setFEC(true);
+  broadcast.broadcast.setVolume(0.5);
+
+  broadcast.voice.ondisconnect = function() {
+    if (broadcast.current.stream) broadcast.current.stream.destroy();
+  };
+
   broadcast.broadcast.on('end', function() {
     endSong(broadcast);
   });
@@ -325,8 +355,14 @@ function makeBroadcast(broadcast) {
   broadcast.broadcast.on('start', function() {
     common.log('Started playing: ' + broadcast.current.song, 'Music');
   });
-  broadcast.broadcast.on('error', function() {
+  broadcast.broadcast.on('error', function(err) {
     common.error('Error in starting broadcast', 'Music');
+    console.log(err);
+    broadcast.current.request.channel.send(
+        "```An error occured while attempting to play " + broadcast.current.song +
+        ".```");
+    broadcast.isLoading = false;
+    skipSong(broadcast);
   });
   /* broadcast.broadcast.on('debug', function(info) {
     common.log("DEBUG: " + info, "Music");
@@ -393,7 +429,6 @@ function commandPlay(msg) {
         ytdl.getInfo(song, ytdlOpts, (err, info) => {
           if (err) {
             common.error(err.message.split('\n')[1]);
-            console.log(err);
             reply(
                 msg,
                 'Oops, something went wrong while searching for that song!',
@@ -422,18 +457,12 @@ function commandPlay(msg) {
  * @param {Discord.Message} msg The message that triggered the command.
  */
 function commandLeave(msg) {
-  let shouldReply = true;
-  if (!broadcasts[msg.guild.id] ||
-      (broadcasts[msg.guild.id].queue.length === 0 &&
-       broadcasts[msg.guild.id].current)) {
-    shouldReply = false;
-  }
   msg.guild.members.fetch(client.user).then((me) => {
     if (me.voiceChannel) {
       me.voiceChannel.leave();
-      if (shouldReply) reply(msg, 'Goodbye!');
+      reply(msg, 'Goodbye!');
     } else {
-      if (shouldReply) reply(msg, 'I\'m not playing anything.');
+      reply(msg, 'I\'m not playing anything.');
     }
   });
   delete broadcasts[msg.guild.id];
