@@ -98,16 +98,37 @@ const helpObject = {
 
 const webURL = 'https://www.campbellcrowley.com/spikeybot';
 
-// Creates formatted string for mentioning the author of msg.
+/**
+ * Creates formatted string for mentioning the author of msg.
+ *
+ * @param {Discord.Message} msg Message to format a mention for the author of.
+ * @return {string} Formatted mention string.
+ */
 function mention(msg) {
   return `<@${msg.author.id}>`;
 }
-// Replies to the author and channel of msg with the given message.
+/**
+ * Replies to the author and channel of msg with the given message.
+ *
+ * @param {Discord.Message} msg Message to reply to.
+ * @param {string} text The main body of the message.
+ * @param {string} post The footer of the message.
+ * @return {Promise} Promise of Discord.Message that we attempted to send.
+ */
 function reply(msg, text, post) {
   post = post || '';
   return msg.channel.send(mention(msg) + '\n```\n' + text + '\n```' + post);
 }
 
+/**
+ * Initialize this submodule.
+ *
+ * @param {string} prefix_ The global prefix for this bot.
+ * @param {Discord} Discord_ The Discord object for the API library.
+ * @param {Discord.Client} client_ The client that represents this bot.
+ * @param {Command} command_ The command instance in which to register command listeners.
+ * @param {Object} common_ Object storing common functions.
+ */
 exports.begin = function(prefix_, Discord_, client_, command_, common_) {
   prefix = prefix_;
   myPrefix = prefix;
@@ -151,10 +172,9 @@ exports.begin = function(prefix_, Discord_, client_, command_, common_) {
       return function() {
         client.users.fetch(timer.id).then((user) => {
           user.send(timer.message);
-          timers =
-              timers.filter(function(obj) {
- return obj.time > Date.now();
-});
+          timers = timers.filter(function(obj) {
+            return obj.time > Date.now();
+          });
         });
       };
     };
@@ -185,9 +205,12 @@ exports.begin = function(prefix_, Discord_, client_, command_, common_) {
   exports.helpMessage = tmpHelp;
 
   initialized = true;
-  common.LOG('Main Init', 'Main');
+  common.log('Main Init', 'Main');
 };
 
+/**
+ * Shutdown and disable this submodule. Removes all event listeners.
+ */
 exports.end = function() {
   if (!initialized) return;
   initialized = false;
@@ -221,17 +244,27 @@ exports.end = function() {
   delete Discord;
   delete client;
   delete common;
-  process.removeListener('exit', exit);
-  process.removeListener('SIGINT', sigint);
-  process.removeListener('SIGHUP', sigint);
-  process.removeListener('SIGTERM', sigint);
 };
+
+/**
+ * Saves all data to files necessary for saving current state.
+ */
 exports.save = function() {};
 
+/**
+ * Replies to message with URL for inviting the bot to a guild.
+ *
+ * @param {Discord.Message} msg Message that triggered command.
+ */
 function commandAddMe(msg) {
   reply(msg, addmessage, addLink);
 }
 
+/**
+ * Parses message and adds given numbers.
+ *
+ * @param {Discord.Message} msg Message that triggered command.
+ */
 function commandAdd(msg) {
   const splitstring = msg.content.replace(myPrefix + 'add ', '')
                         .replaceAll('-', ' -')
@@ -275,6 +308,11 @@ function commandAdd(msg) {
   reply(msg, number + '\n' + ending, anotherEnding);
 }
 
+/**
+ * Simplifies equation given in message.
+ *
+ * @param {Discord.Message} msg Message that triggered command.
+ */
 function commandSimplify(msg) {
   try {
     let formula = msg.content.replace(myPrefix + 'simplify', '');
@@ -285,6 +323,12 @@ function commandSimplify(msg) {
     reply(msg, err.message);
   }
 }
+/**
+ * Simplifies given formula.
+ *
+ * @param {string} formula The formula to attempt to simplify.
+ * @return {string} Simplified formula.
+ */
 function simplify(formula) {
   if (formula.indexOf('=') > -1) {
     let split = formula.split('=');
@@ -294,6 +338,11 @@ function simplify(formula) {
   return simplified.replace(/ \* ([A-Za-z])/g, '$1');
 }
 
+/**
+ * Solve an equation.
+ *
+ * @param {Discord.Message} msg Message that triggered command.
+ */
 function commandSolve(msg) {
   if (msg.content.lastIndexOf('=') != msg.content.indexOf('=')) {
     reply(msg, 'Please ensure your equation has exactly 1 equals sign.');
@@ -314,13 +363,16 @@ function commandSolve(msg) {
       error += 'For ' + variables[i] + ': ' + err.message + '\n';
     }
   }
-  const outMessage =
-      messages.map(function(obj, i) {
- return variables[i] + ' = ' + obj;
-})
-          .join('\n');
+  const outMessage = messages.map(function(obj, i) {
+    return variables[i] + ' = ' + obj;
+  }).join('\n');
   reply(msg, outMessage || 'Oops, somthing didn\'t work!', error);
 }
+/**
+ * Evaluate a string as an equation with units.
+ *
+ * @param {Discord.Message} msg Message that triggered command.
+ */
 function commandEvaluate(msg) {
   try {
     let formula = msg.content.replace(myPrefix + 'eval', '')
@@ -337,6 +389,12 @@ function commandEvaluate(msg) {
   }
 }
 
+/**
+ * Graph a given equation by plugging in values for X and creating an image
+ * based off values.
+ *
+ * @param {Discord.Message} msg Message that triggered command.
+ */
 function commandGraph(msg) {
   const graphSize = 200;
   const dotSize = 2;
@@ -361,8 +419,8 @@ function commandGraph(msg) {
     xVal = math.range(
         domainMin, domainMax, (domainMax - domainMin) / graphSize / dotSize);
     yVal = xVal.map(function(x) {
- return expr.eval({x: x});
-});
+      return expr.eval({x: x});
+    });
     try {
       let formula = expression;
       if (formula.indexOf('=') > -1) {
@@ -371,14 +429,14 @@ function commandGraph(msg) {
       }
       let exprSlope = math.derivative(formula, 'x');
       ypVal = xVal.map(function(x) {
- return exprSlope.eval({x: x});
-});
+        return exprSlope.eval({x: x});
+      });
     } catch (err) {
       console.log(err);
       msg.channel.send('Failed to derive given equation. ' + err.message);
       ypVal = xVal.map(function(x) {
- return 1;
-});
+        return 1;
+      });
     }
   } catch (err) {
     reply(msg, err.message);
@@ -438,16 +496,19 @@ function commandGraph(msg) {
     if (turningPoints.length > 0) {
       embed.addField(
           'Approximate Turning Points',
-          turningPoints
-              .map(function(obj) {
- return '(' + obj.x + ', ' + obj.y + ')';
-})
-              .join('\n'),
+          turningPoints.map(function(obj) {
+            return '(' + obj.x + ', ' + obj.y + ')';
+          }).join('\n'),
           false);
     }
     msg.channel.send(embed);
   });
 }
+/**
+ * Take the derivative of a given equation in terms of dy/dx.
+ *
+ * @param {Discord.Message} msg Message that triggered command.
+ */
 function commandDerive(msg) {
   try {
     let formula = msg.content.replace(myPrefix + 'derive', '');
@@ -463,6 +524,11 @@ function commandDerive(msg) {
   }
 }
 
+/**
+ * Run javascript code in VM, then show user outcome.
+ *
+ * @param {Discord.Message} msg Message that triggered command.
+ */
 function commandJS(msg) {
   try {
     let sandbox = {__stdout: [], __stderr: []};
@@ -511,6 +577,12 @@ function commandJS(msg) {
   }
 }
 
+/**
+ * Set a timer for a certain about of time. After which, the bot will DM the
+ * user the message they specified.
+ *
+ * @param {Discord.Message} msg Message that triggered command.
+ */
 function commandTimer(msg) {
   let split = msg.content.replace(myPrefix + 'timer ', '').split(' ');
   if (split[0] == myPrefix + 'timer' || split[0] == myPrefix + 'timers') {
@@ -554,6 +626,12 @@ function commandTimer(msg) {
   }
 }
 
+/**
+ * The user's message will be deleted and the bot will send an identical message
+ * without the command to make it seem like the bot sent the message.
+ *
+ * @param {Discord.Message} msg Message that triggered command.
+ */
 function commandSay(msg) {
   msg.delete();
   let content = msg.content.replace(myPrefix + 'say', '');
@@ -569,6 +647,11 @@ function commandSay(msg) {
         'Help! ' + mention(msg) + ' is putting words into my mouth!');
   }
 }
+/**
+ * Tell the user the date when they created their Discord account.
+ *
+ * @param {Discord.Message} msg Message that triggered command.
+ */
 function commandCreateDate(msg) {
   if (msg.mentions.users.size === 0) {
     reply(
@@ -581,6 +664,11 @@ function commandCreateDate(msg) {
             dateFormat(msg.mentions.users.first().createdTimestamp));
   }
 }
+/**
+ * Tell the user the date when they joined the server the message was sent from.
+ *
+ * @param {Discord.Message} msg Message that triggered command.
+ */
 function commandJoinDate(msg) {
   if (msg.mentions.users.size === 0) {
     reply(
@@ -592,15 +680,24 @@ function commandJoinDate(msg) {
             dateFormat(msg.mentions.users.first().joinedTimestamp));
   }
 }
+/**
+ * Send the user a PM with a greeting introducing who the bot is.
+ *
+ * @param {Discord.Message} msg Message that triggered command.
+ */
 function commandPmMe(msg) {
   msg.author.send(introduction.replaceAll('{prefix}', myPrefix))
       .then(() => {
         if (msg.guild !== null) reply(msg, 'I sent you a message.', ':wink:');
-      })
-      .catch(() => {
- reply(msg, blockedmessage);
-});
+      }).catch(() => {
+        reply(msg, blockedmessage);
+      });
 }
+/**
+ * Send a PM to SpikeyRobot with a message.
+ *
+ * @param {Discord.Message} msg Message that triggered command.
+ */
 function commandPmSpikey(msg) {
   client.users.fetch(spikeyId)
       .then((user) => {
@@ -612,21 +709,32 @@ function commandPmSpikey(msg) {
         console.log(err);
         reply(
             msg,
-            'Somethine went wrong and I couldn\'t send your message. Sorry that\'s all I know :(');
+            'Something went wrong and I couldn\'t send your message. Sorry that\'s all I know :(');
       });
 }
+/**
+ * Send a PM to a mentioned user semi-anonymously. Messages are copied to
+ * SpikeyRobot to monitor for abuse. This command only works for 3 people.
+ *
+ * @param {Discord.Message} msg Message that triggered command.
+ */
 function commandThotPm(msg) {
   if (msg.author.id == spikeyId || msg.author.id == '265418316120719362' ||
       msg.author.id == '126464376059330562') {
     if (msg.guild !== null) msg.delete();
     if (msg.mentions.users.size === 0) return;
-    msg.mentions.users.first().send(msg.content.replace(myPrefix + 'thotpm', ''));
-    client.users.fetch(spikeyId).then(
-        (user) => {
- user.send(msg.author.tag + ': ' + msg.content);
-});
+    msg.mentions.users.first().send(
+        msg.content.replace(myPrefix + 'thotpm', ''));
+    client.users.fetch(spikeyId).then((user) => {
+      user.send(msg.author.tag + ': ' + msg.content);
+    });
   }
 }
+/**
+ * Send an image of a coin, either Heads or Tails.
+ *
+ * @param {Discord.Message} msg Message that triggered command.
+ */
 function commandFlip(msg) {
   let rand = Math.round(Math.random());
   let url = 'https://www.campbellcrowley.com/heads.png';
@@ -639,6 +747,11 @@ function commandFlip(msg) {
   embed.setImage(url);
   msg.channel.send(embed);
 }
+/**
+ * Delete a given number of messages from a text channel.
+ *
+ * @param {Discord.Message} msg Message that triggered command.
+ */
 function commandPurge(msg) {
   if (msg.channel.permissionsFor(msg.member)
           .has(Discord.Permissions.FLAGS.MANAGE_MESSAGES)) {
@@ -656,6 +769,11 @@ function commandPurge(msg) {
     reply(msg, 'I\'m sorry, but you don\'t have permission to delete messages in this channel.');
   }
 }
+/**
+ * Ban a mentioed user and send a message saying they were banned.
+ *
+ * @param {Discord.Message} msg Message that triggered command.
+ */
 function commandBan(msg) {
   if (!msg.member.hasPermission(
           Discord.Permissions.FLAGS.BAN_MEMBERS, true, true, true)) {
@@ -688,9 +806,9 @@ function commandBan(msg) {
                 })
                 .catch((err) => {
                   reply(
-                      msg, 'Oops! I wasn\'t able to ban ' + toBan.user.username +
-                          '! I\'m not sure why though!');
-                  common.ERROR('Failed to ban user.');
+                      msg, 'Oops! I wasn\'t able to ban ' +
+                          toBan.user.username + '! I\'m not sure why though!');
+                  common.error('Failed to ban user.');
                   console.log(err);
                 });
           }
@@ -699,6 +817,13 @@ function commandBan(msg) {
     });
   }
 }
+/**
+ * Remove all roles from a user and give them a role that prevents them from
+ * doing anything. Checks if all parties involved have permission to do this
+ * without the bot's help.
+ *
+ * @param {Discord.Message} msg Message that triggered command.
+ */
 function commandSmite(msg) {
   if (msg.mentions.members.size === 0) {
     reply(msg, 'You must mention someone to ban after the command.');
@@ -765,6 +890,11 @@ function commandSmite(msg) {
     }
   }
 }
+/**
+ * Send a larger resolution version of the mentioned user's avatar.
+ *
+ * @param {Discord.Message} msg Message that triggered command.
+ */
 function commandAvatar(msg) {
   let embed = new Discord.MessageEmbed();
   if (msg.mentions.users.size > 0) {
@@ -778,12 +908,22 @@ function commandAvatar(msg) {
   msg.channel.send(embed);
 }
 
+/**
+ * Reply to user with my ping to the Discord servers.
+ *
+ * @param {Discord.Message} msg Message that triggered command.
+ */
 function commandPing(msg) {
   reply(
       msg, 'My ping is ' + msg.client.ping + 'ms',
       '`' + JSON.stringify(msg.client.pings) + '`');
 }
 
+/**
+ * Reply to message with the amount of time since the bot has been running.
+ *
+ * @param {Discord.Message} msg Message that triggered command.
+ */
 function commandUptime(msg) {
   let ut = client.uptime;
   let formattedUptime = Math.floor(ut / 1000 / 60 / 60 / 24) + ' Days, ' +
@@ -793,6 +933,11 @@ function commandUptime(msg) {
   reply(msg, 'I have been running for ' + formattedUptime);
 }
 
+/**
+ * Reply to message saying what game the mentioned user is playing and possibly other information about their profile.
+ *
+ * @param {Discord.Message} msg Message that triggered command.
+ */
 function commandGame(msg) {
   let user = msg.author;
   if (msg.mentions.users.size !== 0) {
@@ -807,7 +952,3 @@ function commandGame(msg) {
     reply(msg, user.username + ': ' + user.presence.status, user.presence.game);
   }
 }
-
-
-function exit() {}
-function sigint() {}
