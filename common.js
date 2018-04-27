@@ -62,7 +62,7 @@ exports.begin = function(replaceFileTags, isRelease) {
   temptitle += " ";
   title = temptitle;
 
-  exports.LOG(app + " Begin");
+  exports.log(app + " Begin");
 };
 
 exports.padIp = function(str) {
@@ -121,7 +121,7 @@ exports.res404 = function(res) {
     if (exists) {
       exports.getFile("/var/www/html/404.html", res, "text/html", true);
     } else {
-      exports.ERROR("File not found:  404.html");
+      exports.error("File not found:  404.html");
       res.end("404");
     }
   });
@@ -169,7 +169,7 @@ function getSubDom(localPath) {
   if (localPath.indexOf("/var/www/www") === 0) return "www";
   return "dev";
 }
-exports.LOG = function(message, ip) {
+exports.log = function(message, ip) {
   if (exports.isRelease) {
     console.log(
         getTrace() + exports.updatePrefix(ip),
@@ -180,7 +180,7 @@ exports.LOG = function(message, ip) {
         message, "\033[1;0m");
   }
 };
-exports.ERROR = function(message, ip) {
+exports.error = function(message, ip) {
   console.log(
       getTrace() + "\033[;31m" + exports.updatePrefix(ip), message,
       "\033[1;0m");
@@ -201,7 +201,7 @@ function replaceTags(contents, cb) {
         replaceStyles, replaceURLS
       ],
       function(err, contents) {
-        if (err) exports.ERROR(err);
+        if (err) exports.error(err);
         else cb(contents);
       });
 }
@@ -253,7 +253,7 @@ function replaceURLS(contents, cb) {
 function updateCachedFiles(force) {
   fs.stat('./header.html', function(err, stats) {
     if (err) {
-      exports.ERROR(err);
+      exports.error(err);
       return;
     }
     var mtime = stats.mtime + "";
@@ -264,20 +264,20 @@ function updateCachedFiles(force) {
     headerFileLastModified = mtime;
     fs.readFile('./header.html', function(err, data) {
       if (err !== null) {
-        exports.ERROR(err);
+        exports.error(err);
         return;
       }
-      exports.LOG("Updating header.html");
+      exports.log("Updating header.html");
       try {
         headerFile = data.toString();
       } catch (e) {
-        exports.ERROR(e);
+        exports.error(e);
       }
     });
   });
   fs.stat('./footer.html', function(err, stats) {
     if (err) {
-      exports.ERROR(err);
+      exports.error(err);
       return;
     }
     var mtime = stats.mtime + "";
@@ -288,20 +288,20 @@ function updateCachedFiles(force) {
     footerFileLastModified = mtime;
     fs.readFile('./footer.html', function(err, data) {
       if (err !== null) {
-        exports.ERROR(err);
+        exports.error(err);
         return;
       }
-      exports.LOG("Updating footer.html");
+      exports.log("Updating footer.html");
       try {
         footerFile = data.toString();
       } catch (e) {
-        exports.ERROR(e);
+        exports.error(e);
       }
     });
   });
   fs.stat('./styles.css', function(err, stats) {
     if (err) {
-      exports.ERROR(err);
+      exports.error(err);
       return;
     }
     var mtime = stats.mtime + "";
@@ -312,14 +312,14 @@ function updateCachedFiles(force) {
     stylesFileLastModified = mtime;
     fs.readFile('./styles.css', function(err, data) {
       if (err !== null) {
-        exports.ERROR(err);
+        exports.error(err);
         return;
       }
-      exports.LOG("Updating styles.css");
+      exports.log("Updating styles.css");
       try {
         stylesFile = data.toString();
       } catch (e) {
-        exports.ERROR(e);
+        exports.error(e);
       }
     });
   });
