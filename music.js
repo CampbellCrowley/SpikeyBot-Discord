@@ -173,7 +173,6 @@ function formatSongInfo(info) {
  * @return {string} The formatted number.
  */
 function formNum(num) {
-  let output = '';
   let numString = (num + '');
   let tmpString = [];
   for (let i = 0; i < numString.length; i++) {
@@ -247,7 +246,7 @@ function startPlaying(broadcast) {
   broadcast.isPlaying = true;
 
   if (typeof broadcast.current.info !== 'undefined') {
-    var embed = formatSongInfo(broadcast.current.info);
+    let embed = formatSongInfo(broadcast.current.info);
     embed.setTitle(
         'Now playing [' + broadcast.queue.length + ' left in queue]');
     broadcast.current.request.channel.send(embed);
@@ -258,7 +257,7 @@ function startPlaying(broadcast) {
     if (special[broadcast.current.song]) {
       if (!special[broadcast.current.song].url) {
         broadcast.isLoading = false;
-        var embed = new Discord.MessageEmbed();
+        let embed = new Discord.MessageEmbed();
         embed.setTitle(
             'Now playing [' + broadcast.queue.length + ' left in queue]');
         embed.setColor([50, 200, 255]);
@@ -449,7 +448,7 @@ function commandQueue(msg) {
         msg, 'I\'m not playing anything. Use "' + myPrefix +
             'play Kokomo" to start playing something!');
   } else {
-    let emebed;
+    let embed;
     if (broadcasts[msg.guild.id].current) {
       if (broadcasts[msg.guild.id].current.info) {
         embed = formatSongInfo(broadcasts[msg.guild.id].current.info);
@@ -525,7 +524,9 @@ function commandLyrics(msg) {
   thisReq.path = '/search?q=' + encodeURIComponent(song);
   let req = https.request(thisReq, function(response) {
     let content = '';
-    response.on('data', function(chunk) { content += chunk; });
+    response.on('data', function(chunk) {
+      content += chunk;
+    });
     response.on('end', function() {
       if (response.statusCode == 200) {
         msg.channel.send('`Asking where to find song...`').then((msg) => {
@@ -552,7 +553,9 @@ function commandLyrics(msg) {
     });
   });
   req.end();
-  req.on('error', function(e) { common.error(e, 'Music'); });
+  req.on('error', function(e) {
+    common.error(e, 'Music');
+  });
   msg.channel.send('`Asking if song exists...`').then((msg) => {
     msg.delete(7000);
   });
@@ -569,7 +572,9 @@ function reqLyricsURL(msg, id) {
   thisReq.path = '/songs/' + id + '?text_format=plain';
   let req = https.request(thisReq, function(response) {
     let content = '';
-    response.on('data', function(chunk) { content += chunk; });
+    response.on('data', function(chunk) {
+      content += chunk;
+    });
     response.on('end', function() {
       if (response.statusCode == 200) {
         msg.channel.send('`Asking for lyrics...`').then((msg) => {
@@ -664,9 +669,6 @@ function stripLyrics(msg, content, title, url, thumb) {
     if (title) embed.setTitle(title);
     if (url) embed.setURL(url);
     if (thumb) embed.setThumbnail(thumb);
-    /* for (var i = 0; i < 25 && lyrics.length > i * 1024; i++) {
-      embed.addField('\u200B', lyrics.substr(i * 1024, 1024), true);
-    } */
     let numFields = 0;
     for (let i = 0; numFields < 25 && i < splitLyrics.length; i++) {
       let splitLine = splitLyrics[i].match(/\[([^\]]*)\]\n([\s\S]*)/m);
@@ -713,7 +715,6 @@ function commandRecord(msg) {
                 .join(', '),
         url);
   }
-  let message;
   let streams = {};
   let file = fs.createWriteStream(filename);
   file.on('close', () => {
