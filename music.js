@@ -46,7 +46,7 @@ const special = {
     cmd: 'kokomo',
     url: 'https://www.youtube.com/watch?v=fJWmbLS2_ec',
     file: '/home/discord/SpikeyBot-Discord/js/sounds/kokomo.webm',
-  }
+  },
 };
 
 const ytdlOpts =
@@ -264,23 +264,23 @@ function startPlaying(broadcast) {
         embed.setDescription(broadcast.current.song);
         broadcast.current.request.channel.send(embed);
       } else {
-      ytdl.getInfo(
-          special[broadcast.current.song].url, ytdlOpts, (err, info) => {
-            if (err) {
-              console.log(err);
-              reply(
-                  msg,
-                  'Oops, something went wrong while getting info for this ' +
-                      'song!');
-            } else {
-              broadcast.isLoading = false;
-              broadcast.current.info = info;
-              let embed = formatSongInfo(broadcast.current.info);
-              embed.setTitle(
-                  'Now playing [' + broadcast.queue.length + ' left in queue]');
-              broadcast.current.request.channel.send(embed);
-            }
-          });
+        ytdl.getInfo(
+            special[broadcast.current.song].url, ytdlOpts, (err, info) => {
+              if (err) {
+                console.log(err);
+                broadcast.current.request.channel.send(
+                    '```Oops, something went wrong while getting info for ' +
+                    'this song!```');
+              } else {
+                broadcast.isLoading = false;
+                broadcast.current.info = info;
+                let embed = formatSongInfo(broadcast.current.info);
+                embed.setTitle(
+                    'Now playing [' + broadcast.queue.length +
+                    ' left in queue]');
+                broadcast.current.request.channel.send(embed);
+              }
+            });
       }
     } else {
       broadcast.current.stream.on('info', (info) => {

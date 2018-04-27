@@ -270,9 +270,11 @@ client.on('ready', () => {
     let msg = JSON.parse(file);
     let channel = client.channels.get(msg.channel.id);
     if (channel) {
-      channel.messages.fetch(msg.id).then((msg_) => {
-        msg_.edit('`Reboot complete.`');
-      }).catch(() => {});
+      channel.messages.fetch(msg.id)
+          .then((msg_) => {
+            msg_.edit('`Reboot complete.`');
+          })
+          .catch(() => {});
     }
 
     if (msg.noReactToAnthony) reactToAnthony = false;

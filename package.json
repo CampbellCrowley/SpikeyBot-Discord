@@ -34,8 +34,5 @@
     "eslint": "^4.19.1",
     "eslint-config-google": "^0.9.1",
     "mocha": "^5.1.1"
-  },
-  "scripts": {
-    "lint": "eslint SpikeyBot.js main.js hungryGames.js music.js"
   }
 }

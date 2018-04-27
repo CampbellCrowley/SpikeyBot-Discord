@@ -2,3 +2,11 @@
 BasedOnStyle:  Google
 ---
 Language:        JavaScript
+AllowShortFunctionsOnASingleLine: Empty
+---
+Language:        Cpp
+# Force pointers to the type for C++.
+DerivePointerAlignment: false
+PointerAlignment: Right
+Standard: Cpp11
+---
