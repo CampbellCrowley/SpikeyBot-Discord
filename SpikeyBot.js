@@ -5,15 +5,14 @@ const client = new Discord.Client();
 
 let subModuleNames = ['./main.js', './hungryGames.js', './music.js'];
 let subModules = [];
-(function() {
-  for (let i in subModuleNames) {
-    try {
-      subModules[i] = require(subModuleNames[i]);
-    } catch (err) {
-      console.log(err);
-    }
+for (let i in subModuleNames) {
+  if (typeof subModuleNames[i] !== 'string') continue;
+  try {
+    subModules[i] = require(subModuleNames[i]);
+  } catch (err) {
+    console.log(err);
   }
-})();
+}
 
 const isDev = process.argv[2] === 'dev';
 const prefix = isDev ? '~' : '?';
@@ -31,11 +30,11 @@ const trustedIds = [
   '126464376059330562', // Rohan
 ];
 
-const introduction = '\nHello! My name is SpikeyBot.\n' +
-    'I was created by SpikeyRobot#9836, so if you wish to add any features, feel free to PM him! (Tip: Use **' +
-    prefix + 'pmspikey**)\n' +
-    '\nIf you\'d like to know what I can do, type **' + prefix +
-    'help** in a PM to me and I\'ll let you know!';
+const introduction = '\nHello! My name is SpikeyBot.\nI was created by ' +
+    'SpikeyRobot#9836, so if you wish to add any features, feel free to PM ' +
+    'him! (Tip: Use **' + prefix + 'pmspikey**)\n\nIf you\'d like to know ' +
+    'what I can do, type **' + prefix + 'help** in a PM to me and I\'ll let ' +
+    'you know!';
 const helpmessagereply = 'I sent you a DM with commands!';
 const blockedmessage =
     'I couldn\'t send you a message, you probably blocked me :(';
@@ -81,7 +80,7 @@ function Command() {
       try {
         cmds[cmd](msg);
       } catch (err) {
-        common.ERROR(cmd + ': FAILED');
+        common.error(cmd + ': FAILED');
         console.log(err);
         reply(msg, 'An error occurred! Oh noes!');
       }
@@ -99,20 +98,22 @@ function Command() {
    * a server.
    */
   this.on = function(cmd, cb, onlyserver) {
-    if (typeof cb !== 'function') throw ('Event callback must be a function.');
+    if (typeof cb !== 'function') {
+      throw new Error('Event callback must be a function.');
+    }
     cb.validOnlyOnServer = onlyserver || false;
     if (typeof cmd === 'string') {
       if (cmds[cmd]) {
-        common.ERROR(
-            'Attempted to register a second handler for event that already exists! (' +
-            cmd + ')');
+        common.error(
+            'Attempted to register a second handler for event that already ' +
+            'exists! (' + cmd + ')');
       } else {
         cmds[cmd] = cb;
       }
     } else if (Array.isArray(cmd)) {
       for (let i = 0; i < cmd.length; i++) cmds[cmd[i]] = cb;
     } else {
-      throw ('Event must be string or array of strings');
+      throw new Error('Event must be string or array of strings');
     }
   };
   /**
@@ -126,9 +127,9 @@ function Command() {
         delete cmds[cmd];
         delete blacklist[cmd];
       } else {
-        common.ERROR(
-            'Requested deletion of event handler for event that was never registered! (' +
-            cmd + ')');
+        common.error(
+            'Requested deletion of event handler for event that was never ' +
+            'registered! (' + cmd + ')');
       }
     } else if (Array.isArray(cmd)) {
       for (let i = 0; i < cmd.length; i++) {
@@ -136,13 +137,13 @@ function Command() {
           delete cmds[cmd[i]];
           delete blacklist[cmd[i]];
         } else {
-          common.ERROR(
-              'Requested deletion of event handler for event that was never registered! (' +
-              cmd[i] + ')');
+          common.error(
+              'Requested deletion of event handler for event that was never ' +
+              'registered! (' + cmd[i] + ')');
         }
       }
     } else {
-      throw ('Event must be string or array of strings');
+      throw new Error('Event must be string or array of strings');
     }
   };
   /**
@@ -159,7 +160,7 @@ function Command() {
         else blacklist[cmd].push(channel);
       }
     } else {
-      common.ERROR(
+      common.error(
           'Requested disable for event that was never registered! (' + cmd +
           ')');
     }
@@ -176,11 +177,11 @@ function Command() {
       if (index > -1) {
         blacklist[cmd].splice(index, 1);
       } else {
-        common.ERROR(
+        common.error(
             'Requested enable of event that is enabled! (' + cmd + ')');
       }
     } else {
-      common.ERROR(
+      common.error(
           'Requested enable for event that is not disabled! (' + cmd + ')');
     }
   };
@@ -208,10 +209,10 @@ function isCmd(msg, cmd) {
 function updateGame(password_, game) {
   if (password_ == password) {
     client.user.setActivity(game, {name: game, type: 'WATCHING'});
-    common.LOG('Changed game to "' + game + '"');
+    common.log('Changed game to "' + game + '"');
     return false;
   } else {
-    common.LOG('Didn\'t change game (' + password_ + ')');
+    common.log('Didn\'t change game (' + password_ + ')');
     return true;
   }
 }
@@ -239,11 +240,13 @@ function reply(msg, text, post) {
 
 // BEGIN //
 client.on('ready', () => {
-  common.LOG(`Logged in as ${client.user.tag}!`);
+  common.log(`Logged in as ${client.user.tag}!`);
   updateGame(password, prefix + 'help for help');
-  client.users.fetch(spikeyId).then(
-      (user) => { user.send('I just rebooted (JS)'); });
+  client.users.fetch(spikeyId).then((user) => {
+    user.send('I just rebooted (JS)');
+  });
   for (let i in subModules) {
+    if (!subModules[i] instanceof Object || !subModules[i].begin) continue;
     try {
       subModules[i].begin(prefix, Discord, client, command, common);
     } catch (err) {
@@ -258,7 +261,8 @@ client.on('ready', () => {
   if (subModules.length != subModuleNames.length) {
     client.users.fetch(spikeyId).then((user) => {
       user.send(
-          'Failed to compile a submodule. Check log for more info. Previous initialization errors may be incorrect.');
+          'Failed to compile a submodule. Check log for more info. Previous ' +
+          'initialization errors may be incorrect.');
     });
   }
   fs.readFile('reboot.dat', function(err, file) {
@@ -266,9 +270,9 @@ client.on('ready', () => {
     let msg = JSON.parse(file);
     let channel = client.channels.get(msg.channel.id);
     if (channel) {
-      channel.messages.fetch(msg.id)
-          .then((msg_) => { msg_.edit('`Reboot complete.`'); })
-          .catch(() => {});
+      channel.messages.fetch(msg.id).then((msg_) => {
+        msg_.edit('`Reboot complete.`');
+      }).catch(() => {});
     }
 
     if (msg.noReactToAnthony) reactToAnthony = false;
@@ -297,24 +301,25 @@ client.on('message', (msg) => {
 
   if (isCmd(msg, '')) {
     if (msg.guild !== null) {
-      common.LOG(
+      common.log(
           msg.guild.name + '#' + msg.channel.name + '@' + msg.author.username +
           msg.content.replaceAll('\n', '\\n'));
     } else {
-      common.LOG(
+      common.log(
           'PM: @' + msg.author.username + msg.content.replaceAll('\n', '\\n'));
     }
     if (!command.trigger(msg.content.split(/ |\n/)[0], msg) &&
         msg.guild === null) {
       msg.channel.send(
-          'Oops! I\'m not sure how to help with that! Type **help** for a list of commands I know how to respond to.');
+          'Oops! I\'m not sure how to help with that! Type **help** for a ' +
+          'list of commands I know how to respond to.');
     }
   }
 });
 
 // Handle being added to a guild.
 client.on('guildCreate', (guild) => {
-  common.LOG('ADDED TO NEW GUILD: ' + guild.id + ': ' + guild.name);
+  common.log('ADDED TO NEW GUILD: ' + guild.id + ': ' + guild.name);
   let channel = '';
   let pos = -1;
   try {
@@ -328,7 +333,7 @@ client.on('guildCreate', (guild) => {
     });
     client.channels.get(channel).send(introduction);
   } catch (err) {
-    common.ERROR('Failed to send welcome to guild:' + guild.id);
+    common.error('Failed to send welcome to guild:' + guild.id);
     console.log(err);
   }
 });
@@ -356,11 +361,11 @@ client.on('guildBanAdd', (guild, user) => {
         .catch((err) => {
           client.channels.get(channel).send(
               '`Poof! ' + user.username + ' was never seen again...`');
-          common.ERROR('Failed to find executor of ban.');
+          common.error('Failed to find executor of ban.');
           console.log(err);
         });
   } catch (err) {
-    common.ERROR('Failed to send ban from guild:' + guild.id);
+    common.error('Failed to send ban from guild:' + guild.id);
     console.log(err);
   }
 });
@@ -374,8 +379,9 @@ command.on('togglereact', (msg) => {
 command.on('help', (msg) => {
   try {
     for (let i in subModules) {
-      const mod = subModules[i];
-      if (mod && mod.helpMessage) msg.author.send(mod.helpMessage);
+      if (subModules[i] instanceof Object && subModules[i].helpMessage) {
+        msg.author.send(subModules[i].helpMessage);
+      }
     }
     if (msg.guild !== null) reply(msg, helpmessagereply, ':wink:');
   } catch (err) {
@@ -400,7 +406,6 @@ command.on('updategame', (msg) => {
 command.on('reboot', (msg) => {
   if (trustedIds.includes(msg.author.id)) {
     reply(msg, 'Rebooting...').then((msg) => {
-      const now = Date.now();
       let toSave = {
         id: msg.id,
         channel: {id: msg.channel.id},
@@ -409,7 +414,7 @@ command.on('reboot', (msg) => {
       try {
         fs.writeFileSync('reboot.dat', JSON.stringify(toSave));
       } catch (err) {
-        common.ERROR('Failed to save reboot.dat');
+        common.error('Failed to save reboot.dat');
         console.log(err);
       }
       process.exit(-1);
@@ -417,7 +422,8 @@ command.on('reboot', (msg) => {
   } else {
     reply(
         msg, 'LOL! Good try!',
-        'It appears SpikeyRobot doesn\'t trust you enough with this command. Sorry!');
+        'It appears SpikeyRobot doesn\'t trust you enough with this command. ' +
+            'Sorry!');
   }
 });
 // Reload all sub modules by unloading then re-requiring.
@@ -426,24 +432,25 @@ command.on('reload', (msg) => {
     reply(msg, 'Reloading modules...').then((warnMessage) => {
       let error = false;
       for (let i in subModules) {
+        if (!subModules[i] instanceof Object) continue;
         try {
           try {
             if (subModules[i].save) {
               subModules[i].save();
             } else {
-              common.ERROR(
+              common.error(
                   'Submodule ' + subModuleNames[i] +
                   ' does not have a save() function.');
             }
             if (subModules[i].end) {
               subModules[i].end();
             } else {
-              common.ERROR(
+              common.error(
                   'Submodule ' + subModuleNames[i] +
                   ' does not have an end() function.');
             }
           } catch (err) {
-            common.ERROR('Error on unloading ' + subModuleNames[i]);
+            common.error('Error on unloading ' + subModuleNames[i]);
             console.log(err);
           }
           delete require.cache[require.resolve(subModuleNames[i])];
@@ -451,7 +458,7 @@ command.on('reload', (msg) => {
           subModules[i].begin(prefix, Discord, client, command, common);
         } catch (err) {
           error = true;
-          common.ERROR('Failed to reload ' + subModuleNames[i]);
+          common.error('Failed to reload ' + subModuleNames[i]);
           console.log(err);
         }
       }
@@ -464,12 +471,15 @@ command.on('reload', (msg) => {
   } else {
     reply(
         msg, 'LOL! Good try!',
-        'It appears SpikeyRobot doesn\'t trust you enough with this command. Sorry!');
+        'It appears SpikeyRobot doesn\'t trust you enough with this command. ' +
+            'Sorry!');
   }
 });
 
-// Dev: https://discordapp.com/oauth2/authorize?&client_id=422623712534200321&scope=bot
-// Rel: https://discordapp.com/oauth2/authorize?&client_id=318552464356016131&scope=bot
+// Dev:
+// https://discordapp.com/oauth2/authorize?&client_id=422623712534200321&scope=bot
+// Rel:
+// https://discordapp.com/oauth2/authorize?&client_id=318552464356016131&scope=bot
 if (isDev) {
   client.login('NDIyNjIzNzEyNTM0MjAwMzIx.DYeenA.K5pUxL8GGtVm1ml_Eb6SaZxSKnE');
 } else {
