@@ -52,7 +52,16 @@ const special = {
 const ytdlOpts =
     ['-f bestaudio/best', '--no-playlist', '--default-search=auto'];
 
-// Initialize module.
+/**
+ * Initialize this submodule.
+ *
+ * @param {string} prefix_ The global prefix for this bot.
+ * @param {Discord} Discord_ The Discord object for the API library.
+ * @param {Discord.Client} client_ The client that represents this bot.
+ * @param {Command} command_ The command instance in which to register command
+ * listeners.
+ * @param {Object} common_ Object storing common functions.
+ */
 exports.begin = function(prefix_, Discord_, client_, command_, common_) {
   prefix = prefix_;
   myPrefix = prefix;
@@ -87,10 +96,12 @@ exports.begin = function(prefix_, Discord_, client_, command_, common_) {
   });
 
   initialized = true;
-  common.LOG('Music Init', 'Music');
+  common.log('Music Init', 'Music');
 };
-//
-// Removes all references to external data and prepares for unloading.
+
+/**
+ * Shutdown and disable this submodule. Removes all event listeners.
+ */
 exports.end = function() {
   if (!initialized) return;
   initialized = false;
@@ -114,17 +125,34 @@ exports.end = function() {
 
 exports.save = function() {};
 
-// Creates formatted string for mentioning the author of msg.
+/**
+ * Creates formatted string for mentioning the author of msg.
+ *
+ * @param {Discord.Message} msg Message to format a mention for the author of.
+ * @return {string} Formatted mention string.
+ */
 function mention(msg) {
   return `<@${msg.author.id}>`;
 }
-// Replies to the author and channel of msg with the given message.
+/**
+ * Replies to the author and channel of msg with the given message.
+ *
+ * @param {Discord.Message} msg Message to reply to.
+ * @param {string} text The main body of the message.
+ * @param {string} post The footer of the message.
+ * @return {Promise} Promise of Discord.Message that we attempted to send.
+ */
 function reply(msg, text, post) {
   post = post || '';
   return msg.channel.send(`${mention(msg)}\n\`\`\`\n${text}\n\`\`\`${post}`);
 }
 
-// Format the info response from ytdl into a human readable format.
+/**
+ * Format the info response from ytdl into a human readable format.
+ *
+ * @param {Object} info The info received from ytdl about the song.
+ * @return {Discord.MessageEmbed} The formatted song info.
+ */
 function formatSongInfo(info) {
   let output = new Discord.MessageEmbed();
   output.setDescription(
@@ -138,6 +166,12 @@ function formatSongInfo(info) {
   output.setColor([50, 200, 255]);
   return output;
 }
+/**
+ * Add commas between digits on large numbers.
+ *
+ * @param {number|string} num The number to format.
+ * @return {string} The formatted number.
+ */
 function formNum(num) {
   let output = '';
   let numString = (num + '');
@@ -148,7 +182,14 @@ function formNum(num) {
   }
   return tmpString.reverse().join('');
 }
-// Add a song to the given broadcast's queue and start playing it not already.
+/**
+ * Add a song to the given broadcast's queue and start playing it not already.
+ *
+ * @param {Object} broadcast The broadcast storage container.
+ * @param {string} song The song that was requested.
+ * @param {Discord.Message} msg The message that requested the song.
+ * @param {Object} info The info from ytdl about the song.
+ */
 function enqueueSong(broadcast, song, msg, info) {
   broadcast.queue.push({request: msg, song: song, info: info});
   if (broadcast.voice) {
@@ -177,7 +218,12 @@ function enqueueSong(broadcast, song, msg, info) {
         });
   }
 }
-// Start playing the first item in the queue of the broadcast.
+/**
+ * Start playing the first item in the queue of the broadcast.
+ *
+ * @param {Object} broadcast The container storing all information about the
+ * song.
+ */
 function startPlaying(broadcast) {
   if (!broadcast || broadcast.isPlaying || broadcast.isLoading) {
     return;
@@ -205,10 +251,9 @@ function startPlaying(broadcast) {
     embed.setTitle(
         'Now playing [' + broadcast.queue.length + ' left in queue]');
     broadcast.current.request.channel.send(embed);
-    broadcast.current.stream.on(
-        'info', (info) => {
- broadcast.isLoading = false;
-});
+    broadcast.current.stream.on('info', (info) => {
+      broadcast.isLoading = false;
+    });
   } else {
     if (special[broadcast.current.song]) {
       if (!special[broadcast.current.song].url) {
@@ -226,7 +271,8 @@ function startPlaying(broadcast) {
               console.log(err);
               reply(
                   msg,
-                  'Oops, something went wrong while getting info for this song!');
+                  'Oops, something went wrong while getting info for this ' +
+                      'song!');
             } else {
               broadcast.isLoading = false;
               broadcast.current.info = info;
@@ -249,12 +295,18 @@ function startPlaying(broadcast) {
     }
   }
 }
+/**
+ * Create a voice channel broadcast based off of the media source, and start
+ * playing the audio.
+ *
+ * @param {Object} broadcast The object storing all relevant information.
+ */
 function makeBroadcast(broadcast) {
   if (special[broadcast.current.song]) {
     broadcast.broadcast.play(special[broadcast.current.song].file)
         .on('end', function() {
- endSong(broadcast);
-});
+      endSong(broadcast);
+    });
   } else {
     if (broadcast.current.info) {
       broadcast.current.stream = ytdl(broadcast.current.info.url, ytdlOpts);
@@ -264,22 +316,35 @@ function makeBroadcast(broadcast) {
 
     broadcast.broadcast.play(broadcast.current.stream)
         .on('end', function() {
- endSong(broadcast);
-});
+      endSong(broadcast);
+    });
   }
 }
-// Triggered when a song has finished playing.
+/**
+ * Triggered when a song has finished playing.
+ *
+ * @param {Object} broadcast The object storing all relevant information.
+ */
 function endSong(broadcast) {
   if (broadcast.isLoading) return;
   if (broadcast.isPlaying) skipSong(broadcast);
 }
-// Skip the current song, then attempt to play the next.
+/**
+ * Skip the current song, then attempt to play the next.
+ *
+ * @param {Object} broadcast The object storing all relevant information.
+ */
 function skipSong(broadcast) {
   if (broadcast.broadcast) broadcast.broadcast.dispatcher.pause();
   broadcast.isPlaying = false;
   startPlaying(broadcast);
 }
 
+/**
+ * Search for a song to play based off user request.
+ *
+ * @param {Discord.Message} msg The message that triggered command.
+ */
 function commandPlay(msg) {
   if (msg.member.voiceChannel === null) {
     reply(msg, 'You aren\'t in a voice channel!');
@@ -338,6 +403,11 @@ function commandPlay(msg) {
     }
   }
 }
+/**
+ * Cause the bot to leave the voice channel and stop playing music.
+ *
+ * @param {Discord.Message} msg The message that triggered the command.
+ */
 function commandLeave(msg) {
   let shouldReply = true;
   if (!broadcasts[msg.guild.id] ||
@@ -355,6 +425,11 @@ function commandLeave(msg) {
   });
   delete broadcasts[msg.guild.id];
 }
+/**
+ * Skip the currently playing song and continue to the next in the queue.
+ *
+ * @param {Discord.Message} msg The message that triggered the command.
+ */
 function commandSkip(msg) {
   if (!broadcasts[msg.guild.id]) {
     reply(msg, 'I\'m not playing anything, I can\'t skip nothing!');
@@ -363,6 +438,11 @@ function commandSkip(msg) {
     skipSong(broadcasts[msg.guild.id]);
   }
 }
+/**
+ * Show the user what is in the queue.
+ *
+ * @param {Discord.Message} msg The message that triggered the command.
+ */
 function commandQueue(msg) {
   if (!broadcasts[msg.guild.id]) {
     reply(
@@ -398,20 +478,25 @@ function commandQueue(msg) {
     msg.channel.send(embed);
   }
 }
+/**
+ * Remove a song from the queue.
+ *
+ * @param {Discord.Message} msg The message that triggered the command.
+ */
 function commandRemove(msg) {
   if (!broadcasts[msg.guild.id] ||
       broadcasts[msg.guild.id].queue.length === 0) {
     reply(
-        msg,
-        'The queue appears to be empty.\nI can\'t remove nothing from nothing!');
+        msg, 'The queue appears to be empty.\nI can\'t remove nothing from ' +
+            'nothing!');
   } else {
     let indexString = msg.content.replace(myPrefix + 'remove', '')
                           .replace(myPrefix + 'dequeue', '');
     if (!indexString.startsWith(' ')) {
       reply(
           msg,
-          'You must specify the index of the song to dequeue.\nYou can view the queue with "' +
-              myPrefix + 'queue".');
+          'You must specify the index of the song to dequeue.\nYou can view ' +
+              'the queue with "' + myPrefix + 'queue".');
     } else {
       let index = Number(indexString.replace(' ', ''));
       if (typeof index !== 'number' || index <= 0 ||
@@ -424,6 +509,11 @@ function commandRemove(msg) {
     }
   }
 }
+/**
+ * Search for a song's lyrics via Genius.
+ *
+ * @param {Discord.Message} msg The message that triggered the command.
+ */
 function commandLyrics(msg) {
   let song = msg.content.replace(myPrefix + 'lyrics', '');
   if (song.length <= 1) {
@@ -435,9 +525,7 @@ function commandLyrics(msg) {
   thisReq.path = '/search?q=' + encodeURIComponent(song);
   let req = https.request(thisReq, function(response) {
     let content = '';
-    response.on('data', function(chunk) {
- content += chunk;
-});
+    response.on('data', function(chunk) { content += chunk; });
     response.on('end', function() {
       if (response.statusCode == 200) {
         msg.channel.send('`Asking where to find song...`').then((msg) => {
@@ -457,28 +545,31 @@ function commandLyrics(msg) {
       }
     });
     response.on('close', function() {
-      common.LOG('Genius request closed! ' + content.length, 'Music');
+      common.log('Genius request closed! ' + content.length, 'Music');
     });
     response.on('error', function() {
-      common.LOG('Genius request errored! ' + content.length, 'Music');
+      common.log('Genius request errored! ' + content.length, 'Music');
     });
   });
   req.end();
-  req.on('error', function(e) {
- common.ERROR(e, 'Music');
-});
+  req.on('error', function(e) { common.error(e, 'Music'); });
   msg.channel.send('`Asking if song exists...`').then((msg) => {
     msg.delete(7000);
   });
 }
+/**
+ * Request the song information from Genius from previous search to find the
+ * page where the lyrics are.
+ *
+ * @param {Discord.Message} msg The message that triggered the command.
+ * @param {string} id The id of the first song in the search results.
+ */
 function reqLyricsURL(msg, id) {
   let thisReq = geniusRequest;
   thisReq.path = '/songs/' + id + '?text_format=plain';
   let req = https.request(thisReq, function(response) {
     let content = '';
-    response.on('data', function(chunk) {
- content += chunk;
-});
+    response.on('data', function(chunk) { content += chunk; });
     response.on('end', function() {
       if (response.statusCode == 200) {
         msg.channel.send('`Asking for lyrics...`').then((msg) => {
@@ -496,25 +587,34 @@ function reqLyricsURL(msg, id) {
       }
     });
     response.on('close', function() {
-      common.LOG('Genius request closed! ' + content.length, 'Music');
+      common.log('Genius request closed! ' + content.length, 'Music');
     });
     response.on('error', function() {
-      common.LOG('Genius request errored! ' + content.length, 'Music');
+      common.log('Genius request errored! ' + content.length, 'Music');
     });
   });
   req.end();
   req.on('error', function(e) {
- common.ERROR(e, 'Music');
-});
+    common.error(e, 'Music');
+  });
 }
+/**
+ * Request the webpage that has the song lyrics on them from Genius.
+ *
+ * @param {Discord.Message} msg The message that triggered the command.
+ * @param {string} url The url of the page to request.
+ * @param {string} title The song title for showing the user later.
+ * @param {string} thumb The url of the album art thumbnail to show the user
+ * later.
+ */
 function fetchLyricsPage(msg, url, title, thumb) {
   let URL = url.match(/https:\/\/([^\/]*)(.*)/);
   const thisReq = {hostname: URL[1], path: URL[2], method: 'GET'};
   let req = https.request(thisReq, function(response) {
     let content = '';
     response.on('data', function(chunk) {
- content += chunk;
-});
+      content += chunk;
+    });
     response.on('end', function() {
       if (response.statusCode == 200) {
         msg.channel.send('`Crawling webpage...`').then((msg) => {
@@ -529,17 +629,28 @@ function fetchLyricsPage(msg, url, title, thumb) {
       }
     });
     response.on('close', function() {
-      common.LOG('Genius request closed! ' + content.length, 'Music');
+      common.log('Genius request closed! ' + content.length, 'Music');
     });
     response.on('error', function() {
-      common.LOG('Genius request errored! ' + content.length, 'Music');
+      common.log('Genius request errored! ' + content.length, 'Music');
     });
   });
   req.end();
   req.on('error', function(e) {
- common.ERROR(e, 'Music');
-});
+    common.error(e, 'Music');
+  });
 }
+/**
+ * Crawl the received webpage for the data we need, then format the data and
+ * show it to the user.
+ *
+ * @param {Discord.Message} msg The message that triggered the command.
+ * @param {string} content The entire page received.
+ * @param {string} title The song title for showing the user.
+ * @param {string} url The url of where we fetched the lyrics to show the user.
+ * @param {string} thumb The url of the album art thumbnail to show the user
+ * later.
+ */
 function stripLyrics(msg, content, title, url, thumb) {
   try {
     let body = content.match(/<!--sse-->([\s\S]*?)<!--\/sse-->/gm)[1];
@@ -576,6 +687,12 @@ function stripLyrics(msg, content, title, url, thumb) {
   }
 }
 
+/**
+ * Join a voice channel and record the specified users audio to a file on this
+ * server.
+ *
+ * @param {Discord.Message} msg The message that triggered the command.
+ */
 function commandRecord(msg) {
   if (msg.member.voiceChannel === null) {
     reply(msg, 'You aren\'t in a voice channel!');
@@ -600,8 +717,8 @@ function commandRecord(msg) {
   let streams = {};
   let file = fs.createWriteStream(filename);
   file.on('close', () => {
- msg.channel.send('Saved to ' + url);
-});
+    msg.channel.send('Saved to ' + url);
+  });
   listen = function(user, receiver, conn) {
     if (streams[user.id] ||
         (msg.mentions.users.size > 0 && !msg.mentions.users.find(user.id))) {
@@ -611,8 +728,8 @@ function commandRecord(msg) {
     streams[user.id] = stream;
     stream.pipe(file);
     conn.on('disconnect', () => {
- stream.destroy();
-});
+      stream.destroy();
+    });
   };
   msg.member.voiceChannel.join().then((conn) => {
     let startSound =
