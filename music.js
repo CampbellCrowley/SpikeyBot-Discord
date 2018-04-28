@@ -164,8 +164,8 @@ function handleVoiceStateUpdate(oldMem, newMem) {
       oldMem.voiceChannel.members.size === 1 &&
       oldMem.voiceChannel.members.get(client.user.id)) {
     common.log(
-        "Leaving voice channel because everyone left me to be alone :(",
-        "Music");
+        'Leaving voice channel because everyone left me to be alone :(',
+        'Music');
     oldMem.voiceChannel.leave();
   }
 }
@@ -252,7 +252,15 @@ function startPlaying(broadcast) {
     return;
   }
   if (broadcast.queue.length === 0) {
-    broadcast.voice.disconnect();
+    client.setTimeout(function() {
+      const file = fs.createReadStream('sounds/windowsshutdown.ogg');
+      const bcast = broadcast.voice.play(file);
+      bcast.setVolume(0.2);
+      client.setTimeout(function() {
+        broadcast.voice.disconnect();
+        delete broadcasts[broadcast.current.request.guild.id];
+      }, 2000);
+    }, 500);
     broadcast.current.request.channel.send('`Queue is empty!`');
     return;
   }
@@ -346,27 +354,21 @@ function makeBroadcast(broadcast) {
     if (broadcast.current.stream) broadcast.current.stream.destroy();
   };
 
-  broadcast.broadcast.on('end', function() {
+  /* broadcast.current.stream.on('end', function() {
     endSong(broadcast);
-  });
+  }); */
   broadcast.broadcast.on('speaking', function(speaking) {
     if (!speaking) endSong(broadcast);
-  });
-  broadcast.broadcast.on('start', function() {
-    common.log('Started playing: ' + broadcast.current.song, 'Music');
   });
   broadcast.broadcast.on('error', function(err) {
     common.error('Error in starting broadcast', 'Music');
     console.log(err);
     broadcast.current.request.channel.send(
-        "```An error occured while attempting to play " + broadcast.current.song +
-        ".```");
+        '```An error occured while attempting to play ' +
+        broadcast.current.song + '.```');
     broadcast.isLoading = false;
     skipSong(broadcast);
   });
-  /* broadcast.broadcast.on('debug', function(info) {
-    common.log("DEBUG: " + info, "Music");
-  }); */
 }
 /**
  * Triggered when a song has finished playing.
