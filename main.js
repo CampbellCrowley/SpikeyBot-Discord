@@ -793,8 +793,8 @@ function commandPurge(msg) {
           .has(Discord.Permissions.FLAGS.MANAGE_MESSAGES)) {
     let numString = msg.content.replace(myPrefix + 'purge ', '')
                         .replace(myPrefix + 'prune ', '');
-    let num = Number(numString);
-    if (numString.length === 0 || typeof num !== 'number') {
+    let num = (numString + 1) * 1;
+    if (numString.length === 0 || isNaN(num)) {
       reply(
           msg,
           'You must specify the number of messages to purge. (ex: ?purge 5)');
@@ -869,7 +869,8 @@ function commandSmite(msg) {
   } else {
     let toSmite = msg.mentions.members.first();
     if (msg.guild.ownerID !== msg.author.id &&
-        msg.member.roles.highest.comparePositionTo(toSmite.role.highest) <= 0) {
+        msg.member.roles.highest.comparePositionTo(toSmite.roles.highest) <=
+            0) {
       reply(
           msg, 'You can\'t smite ' + toSmite.user.username +
               '! You are not stronger than them!');
