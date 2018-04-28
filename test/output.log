@@ -1,0 +1,48 @@
+exports.begin:58    [;44m[DSpikeyBot.js 04-28 01:31:49 SELF           ]: SpikeyBot.js Begin [1;0m
+client.on:256       [;44m[DSpikeyBot.js 04-28 01:31:54 SELF           ]: Logged in as SpikeyBot-dev#2096! [1;0m
+updateGame:225      [;44m[DSpikeyBot.js 04-28 01:31:54 SELF           ]: Changed game to "~help for help" [1;0m
+exports.begin:239   [;44m[DSpikeyBot.js 04-28 01:31:54 Main           ]: Main Init [1;0m
+exports.begin:102   [;44m[DSpikeyBot.js 04-28 01:31:54 Music          ]: Music Init [1;0m
+exports.begin:466   [;44m[DSpikeyBot.js 04-28 01:31:54 HG             ]: HungryGames Init [1;0m
+client.on:338       [;44m[DSpikeyBot.js 04-28 01:31:55 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~`UNIT TEST MODE ENABLED`~ [1;0m
+client.on:338       [;44m[DSpikeyBot.js 04-28 01:31:57 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~say Hello World! [1;0m
+client.on:338       [;44m[DSpikeyBot.js 04-28 01:31:59 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~add 5 6 7 [1;0m
+client.on:338       [;44m[DSpikeyBot.js 04-28 01:32:02 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~simplify 5x=7y [1;0m
+client.on:338       [;44m[DSpikeyBot.js 04-28 01:32:05 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~solve 5x=7y [1;0m
+client.on:338       [;44m[DSpikeyBot.js 04-28 01:32:07 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~eval 1km in meters [1;0m
+client.on:338       [;44m[DSpikeyBot.js 04-28 01:32:10 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~derive y=5x [1;0m
+client.on:338       [;44m[DSpikeyBot.js 04-28 01:32:12 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~addme [1;0m
+client.on:338       [;44m[DSpikeyBot.js 04-28 01:32:15 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~help [1;0m
+Unhandled Rejection:
+ { DiscordAPIError: Cannot send messages to this user
+    at item.request.gen.end (/home/campbell/SpikeyBot-Discord/node_modules/discord.js/src/rest/handlers/RequestHandler.js:79:65)
+    at then (/home/campbell/SpikeyBot-Discord/node_modules/snekfetch/src/index.js:215:21)
+    at <anonymous>
+    at process._tickCallback (internal/process/next_tick.js:188:7)
+  name: 'DiscordAPIError',
+  message: 'Cannot send messages to this user',
+  path: '/api/v7/users/422623712534200321/channels',
+  code: 50007 }
+Unhandled Rejection:
+ { DiscordAPIError: Cannot send messages to this user
+    at item.request.gen.end (/home/campbell/SpikeyBot-Discord/node_modules/discord.js/src/rest/handlers/RequestHandler.js:79:65)
+    at then (/home/campbell/SpikeyBot-Discord/node_modules/snekfetch/src/index.js:215:21)
+    at <anonymous>
+    at process._tickCallback (internal/process/next_tick.js:188:7)
+  name: 'DiscordAPIError',
+  message: 'Cannot send messages to this user',
+  path: '/api/v7/users/422623712534200321/channels',
+  code: 50007 }
+client.on:338       [;44m[DSpikeyBot.js 04-28 01:32:17 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~createdate [1;0m
+client.on:338       [;44m[DSpikeyBot.js 04-28 01:32:20 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~joindate [1;0m
+client.on:338       [;44m[DSpikeyBot.js 04-28 01:32:22 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~pmme [1;0m
+client.on:338       [;44m[DSpikeyBot.js 04-28 01:32:24 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~pmspikey I am running a unit test. [1;0m
+client.on:342       [;44m[DSpikeyBot.js 04-28 01:32:24 SELF           ]: PM: @SpikeyBot-dev~SpikeyBot-dev#2096: ~pmspikey I am running a unit test. [1;0m
+client.on:338       [;44m[DSpikeyBot.js 04-28 01:32:27 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~flip [1;0m
+client.on:338       [;44m[DSpikeyBot.js 04-28 01:32:30 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~avatar [1;0m
+client.on:338       [;44m[DSpikeyBot.js 04-28 01:32:32 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~ping [1;0m
+client.on:338       [;44m[DSpikeyBot.js 04-28 01:32:34 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~hg create [1;0m
+client.on:338       [;44m[DSpikeyBot.js 04-28 01:32:36 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~hg start [1;0m
+client.on:338       [;44m[DSpikeyBot.js 04-28 01:32:39 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~hg reset all [1;0m
+sigint:4067         [;44m[DSpikeyBot.js 04-28 01:32:44 HG             ]: Caught SIGINT! [1;0m
+exports.save:4039   [;44m[DSpikeyBot.js 04-28 01:32:44 HG             ]: Saving sync [1;0m

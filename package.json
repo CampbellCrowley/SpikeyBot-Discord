@@ -39,6 +39,7 @@
   "scripts": {
     "install": ".hooks/install-hooks.sh",
     "lint": "eslint *.js",
-    "lint:fix": "eslint *.js --fix"
+    "lint:fix": "eslint *.js --fix",
+    "test": "mocha --delay"
   }
 }

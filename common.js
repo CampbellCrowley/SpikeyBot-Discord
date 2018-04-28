@@ -12,8 +12,8 @@ exports.isRelease = false;
 /**
  * Initialize variables and settings for logging properly.
  *
- * @param {*} _ Unused. Kept for match number of arguments with other versions
- * of common.js.
+ * @param {*} _ Unused. Kept to match number of arguments with other versions of
+ * common.js.
  * @param {boolean} isRelease Is this a release version, or a development
  * version of the app running.
  */

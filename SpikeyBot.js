@@ -3,6 +3,7 @@ const fs = require('fs');
 const common = require('./common.js');
 const client = new Discord.Client();
 
+let testMode = false;
 let subModuleNames = [];
 let setDev = false;
 let onlymusic = false;
@@ -297,11 +298,25 @@ client.on('ready', () => {
 
 // Handle a message sent.
 client.on('message', (msg) => {
-  if (msg.author.id == client.user.id) return;
+  if (!testMode && msg.author.id === client.user.id) {
+    if (isDev && msg.content === "~`RUN UNIT TESTS`~") {
+      testMode = true;
+      msg.channel.send("~`UNIT TEST MODE ENABLED`~");
+    }
+    return;
+  } else if (testMode && msg.author.id !== client.user.id) {
+    return;
+  } else if (
+      testMode && msg.author.id === client.user.id &&
+      msg.content === "~`END UNIT TESTS`~") {
+    testMode = false;
+    msg.channel.send("~`UNIT TEST MODE DISABLED`~");
+    return;
+  }
   if (!onlymusic && msg.content.endsWith(', I\'m Dad!')) {
     msg.channel.send('Hi Dad, I\'m Spikey!');
   }
-  if (msg.author.bot) return;
+  if (!testMode && msg.author.bot) return;
 
   // If message is equation we can graph.
   const regexForm = new RegExp('^[yY]\\s*=');
@@ -330,7 +345,7 @@ client.on('message', (msg) => {
       }
     }
     if (!command.trigger(msg.content.split(/ |\n/)[0], msg) &&
-        msg.guild === null && !onlymusic) {
+        msg.guild === null && !onlymusic && !testMode) {
       msg.channel.send(
           'Oops! I\'m not sure how to help with that! Type **help** for a ' +
           'list of commands I know how to respond to.');
