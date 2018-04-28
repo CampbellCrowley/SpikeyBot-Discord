@@ -299,18 +299,18 @@ client.on('ready', () => {
 // Handle a message sent.
 client.on('message', (msg) => {
   if (!testMode && msg.author.id === client.user.id) {
-    if (isDev && msg.content === "~`RUN UNIT TESTS`~") {
+    if (isDev && msg.content === '~`RUN UNIT TESTS`~') {
       testMode = true;
-      msg.channel.send("~`UNIT TEST MODE ENABLED`~");
+      msg.channel.send('~`UNIT TEST MODE ENABLED`~');
     }
     return;
   } else if (testMode && msg.author.id !== client.user.id) {
     return;
   } else if (
       testMode && msg.author.id === client.user.id &&
-      msg.content === "~`END UNIT TESTS`~") {
+      msg.content === '~`END UNIT TESTS`~') {
     testMode = false;
-    msg.channel.send("~`UNIT TEST MODE DISABLED`~");
+    msg.channel.send('~`UNIT TEST MODE DISABLED`~');
     return;
   }
   if (!onlymusic && msg.content.endsWith(', I\'m Dad!')) {
