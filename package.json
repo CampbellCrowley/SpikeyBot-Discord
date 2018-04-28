@@ -37,6 +37,8 @@
     "mocha": "^5.1.1"
   },
   "scripts": {
-    "install": ".hooks/install-hooks.sh"
+    "install": ".hooks/install-hooks.sh",
+    "lint": "eslint *.js",
+    "lint:fix": "eslint *.js --fix"
   }
 }
