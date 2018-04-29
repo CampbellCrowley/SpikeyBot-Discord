@@ -3838,7 +3838,7 @@ function listEvents(msg, id, page, eventType, editMsg) {
     embed.setColor([0, 0, 255]);
   } else {
     common.error('HOW COULD THIS BE? I\'ve made a mistake!', 'HG');
-    reply(msg, "BIG Oops! THIS SHOULD _never_ happen");
+    reply(msg, 'BIG Oops! THIS SHOULD _never_ happen');
   }
 
   const numEvents = events.length;

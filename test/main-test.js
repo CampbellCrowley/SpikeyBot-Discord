@@ -71,7 +71,7 @@ const mainTests = [
 const hgTests = [
   new Test('Reset All command', "~hg reset all", ['#noerr']),
   new Test(
-      "Create command", "~hg create",
+      'Create command', "~hg create",
       ['<@422623712534200321>\n```\nCreated a Hungry Games with default ' +
        'settings and all members included.\n```']),
   new Test("Create command again", "~hg create", ["#noerr"]),
