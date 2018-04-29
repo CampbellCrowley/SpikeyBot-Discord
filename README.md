@@ -43,6 +43,7 @@
 - updategame (Changes bot's status)
 - reboot (Triggers a graceful shutdown of the entire bot. Assumes the parent process will restart automatically)
 - reload (Gracefully unloads all sub-modules, and re-loads and initializes them)
+- record (Record audio in a voice channel. Mention people to only record specific people.)
 
 # Events
 - Added to guild

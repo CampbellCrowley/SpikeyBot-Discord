@@ -194,7 +194,7 @@ exports.begin = function(prefix_, Discord_, client_, command_, common_) {
   command.on('game', commandGame);
   command.on('version', commandVersion);
 
-  fs.readFile('timers.dat', function(err, file) {
+  fs.readFile('./save/timers.dat', function(err, file) {
     if (err) return;
     let msg = JSON.parse(file);
     setTimer = function(timer) {
@@ -271,7 +271,7 @@ exports.end = function() {
   command.deleteEvent('game');
   command.deleteEvent('version');
 
-  fs.writeFileSync('timers.dat', JSON.stringify({timers: timers}));
+  fs.writeFileSync('./save/timers.dat', JSON.stringify({timers: timers}));
 
   delete command;
   delete Discord;

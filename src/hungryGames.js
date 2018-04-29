@@ -3,14 +3,14 @@ const Jimp = require('jimp');
 
 let initialized = false;
 
-const saveFile = 'hg.json';
-const eventFile = 'hgEvents.json';
-const messageFile = 'hgMessages.json';
-const battleFile = 'hgBattles.json';
+const saveFile = './save/hg.json';
+const eventFile = './save/hgEvents.json';
+const messageFile = './save/hgMessages.json';
+const battleFile = './save/hgBattles.json';
 
-const fistLeft = 'fist_left.png';
-const fistRight = 'fist_right.png';
-const fistBoth = 'fist_both.png';
+const fistLeft = './img/fist_left.png';
+const fistRight = './img/fist_right.png';
+const fistBoth = './img/fist_both.png';
 
 // The size of the icon to show for each event.
 const iconSize = 64;

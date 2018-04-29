@@ -253,7 +253,7 @@ function startPlaying(broadcast) {
   }
   if (broadcast.queue.length === 0) {
     client.setTimeout(function() {
-      const file = fs.createReadStream('sounds/windowsshutdown.ogg');
+      const file = fs.createReadStream('./sounds/windowsshutdown.ogg');
       const bcast = broadcast.voice.play(file);
       bcast.setVolume(0.2);
       client.setTimeout(function() {

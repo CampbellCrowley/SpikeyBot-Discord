@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const fs = require('fs');
 const common = require('./common.js');
-const auth = require('./auth.js');
+const auth = require('../auth.js');
 const client = new Discord.Client();
 
 let testMode = false;
@@ -280,7 +280,7 @@ client.on('ready', () => {
     });
   }
   if (!onlymusic) {
-    fs.readFile('reboot.dat', function(err, file) {
+    fs.readFile('./save/reboot.dat', function(err, file) {
       if (err) return;
       let msg = JSON.parse(file);
       let channel = client.channels.get(msg.channel.id);
@@ -454,7 +454,7 @@ command.on('reboot', (msg) => {
           noReactToAnthony: !reactToAnthony,
         };
         try {
-          fs.writeFileSync('reboot.dat', JSON.stringify(toSave));
+          fs.writeFileSync('./save/reboot.dat', JSON.stringify(toSave));
         } catch (err) {
           common.error('Failed to save reboot.dat');
           console.log(err);
