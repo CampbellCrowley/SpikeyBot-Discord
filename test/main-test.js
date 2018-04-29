@@ -81,12 +81,10 @@ const mainTests = [
       ]),
   new Test(
       'Create Date command', '~createdate',
-      ['<@422623712534200321>\n```\nYou created your discord account on Sun ' +
-       'Mar 11 2018 22:15:45\n```']),
+      ['^<@422623712534200321>\n```\nYou created your discord account on ']),
   new Test(
       'Join Date command', '~joindate',
-      ['<@422623712534200321>\n```\nYou joined this server on Sun Mar 11 ' +
-       '2018 22:23:29\n```']),
+      ['^<@422623712534200321>\n```\nYou joined this server on ']),
   new Test(
       'PM Me command', '~pmme',
       ['<@422623712534200321>\n```\nI couldn\'t send you a message, you ' +
