@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/CampbellCrowley/SpikeyBot-Discord.svg?token=PP4wnzGprzXKuy3cGpsv&branch=master)](https://travis-ci.com/CampbellCrowley/SpikeyBot-Discord)  
+[![Build Status](https://travis-ci.org/CampbellCrowley/SpikeyBot-Discord.svg?branch=master)](https://travis-ci.com/CampbellCrowley/SpikeyBot-Discord)  
 [Website](https://www.campbellcrowley.com/spikeybot/)
 
 # Commands
