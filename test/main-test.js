@@ -3,7 +3,7 @@ let Discord = require('discord.js');
 let client = new Discord.Client();
 let spawn = require('child_process').spawn;
 let fs = require('fs');
-let auth = require('./auth.js');
+let auth = require('../auth.js');
 
 /* eslint-disable */
 var oldSpawn = spawn;

@@ -19,5 +19,7 @@ else
   echo -e "\e[36m\e[1mTest triggered for branch \"${TRAVIS_BRANCH}\"."
 fi
 
+echo "exports.dev = '$DISCORD_TOKEN';" > auth.js
+
 # Run the tests
 npm run lintandtest
