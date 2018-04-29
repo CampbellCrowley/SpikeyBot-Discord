@@ -192,6 +192,7 @@ exports.begin = function(prefix_, Discord_, client_, command_, common_) {
   command.on('ping', commandPing);
   command.on('uptime', commandUptime);
   command.on('game', commandGame);
+  command.on('version', commandVersion);
 
   fs.readFile('timers.dat', function(err, file) {
     if (err) return;
@@ -268,6 +269,7 @@ exports.end = function() {
   command.deleteEvent('ping');
   command.deleteEvent('uptime');
   command.deleteEvent('game');
+  command.deleteEvent('version');
 
   fs.writeFileSync('timers.dat', JSON.stringify({timers: timers}));
 
@@ -992,4 +994,15 @@ function commandGame(msg) {
   } else {
     reply(msg, user.username + ': ' + user.presence.status, user.presence.game);
   }
+}
+
+/**
+ * Read the current version from package.json and show it to the user.
+ *
+ * @param {Discord.Message} msg Message that triggered command.
+ */
+function commandVersion(msg) {
+  fs.readFile('package.json', function(err, data) {
+    reply(msg, "My current version is " + JSON.parse(data).version);
+  });
 }

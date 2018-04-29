@@ -1105,7 +1105,8 @@ function resetGame(msg, id) {
     }
   } else {
     reply(
-        msg, 'There is no data to reset. Start a new game with "hgcreate".');
+        msg, 'There is no data to reset. Start a new game with "' + myPrefix +
+            'create".');
   }
 }
 /**
