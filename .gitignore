@@ -3,3 +3,4 @@ recordings/
 reboot.dat
 hg.json
 *.log
+auth.js

@@ -1,6 +1,7 @@
 const Discord = require('discord.js');
 const fs = require('fs');
 const common = require('./common.js');
+const auth = require('./auth.js');
 const client = new Discord.Client();
 
 let testMode = false;
@@ -525,7 +526,7 @@ command.on('reload', (msg) => {
 // Rel:
 // https://discordapp.com/oauth2/authorize?&client_id=318552464356016131&scope=bot
 if (isDev) {
-  client.login('NDIyNjIzNzEyNTM0MjAwMzIx.DYeenA.K5pUxL8GGtVm1ml_Eb6SaZxSKnE');
+  client.login(auth.dev);
 } else {
-  client.login('MzE4NTUyNDY0MzU2MDE2MTMx.DA0JAA.aNNIG_xR7ROtL4Ro_WZQjLiMLF0');
+  client.login(auth.release);
 }

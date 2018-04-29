@@ -3,6 +3,7 @@ let Discord = require('discord.js');
 let client = new Discord.Client();
 let spawn = require('child_process').spawn;
 let fs = require('fs');
+let auth = require('./auth.js');
 
 /* eslint-disable */
 var oldSpawn = spawn;
@@ -267,7 +268,7 @@ function testMessageContent(msg) {
 }
 
 
-client.login('NDIyNjIzNzEyNTM0MjAwMzIx.DYeenA.K5pUxL8GGtVm1ml_Eb6SaZxSKnE');
+client.login(auth.dev);
 client.on('message', testMessageContent);
 client.on('ready', () => {
   console.log("Test bot ready");
