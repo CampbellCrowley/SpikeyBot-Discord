@@ -1,6 +1,6 @@
 #!/bin/bash
 
-STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep ".js$" | tr -d '\n')
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep ".js$" | tr '\n' ' ')
 
 if [[ "$STAGED_FILES" = "" ]]; then
   exit 0
@@ -10,8 +10,9 @@ PASS=true
 
 echo "Validating Javascript:"
 
-"$(git rev-parse --show-toplevel)/node_modules/.bin/eslint" "$STAGED_FILES"
+ESLINT="$(git rev-parse --show-toplevel)/node_modules/.bin/eslint"
 
+"$ESLINT" "$STAGED_FILES"
 if [[ "$?" == 0 ]]; then
   echo -e "\t\033[32mESLint Passed: $STAGED_FILES\033[0m"
 else

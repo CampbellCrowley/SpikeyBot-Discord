@@ -2,7 +2,7 @@ let expect = require('chai').expect;
 let Discord = require('discord.js');
 let client = new Discord.Client();
 let spawn = require('child_process').spawn;
-let fs = require('fs');
+let fs = require("fs");
 
 let spawnOpts = {cwd: __dirname + "/..", stdio: "pipe"};
 let log = fs.createWriteStream(__dirname + "/output.log");
