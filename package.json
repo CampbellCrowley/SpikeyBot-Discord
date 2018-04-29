@@ -40,7 +40,7 @@
     "install": ".hooks/install-hooks.sh",
     "lint": "eslint *.js",
     "lint:fix": "eslint *.js --fix",
-    "lintandtes": "npm run lint && npm run test",
+    "lintandtest": "npm run lint && npm run test",
     "test": "mocha --delay",
     "test:hg": "mocha --delay --grep \"START|Hungry Games|END\"",
     "test:main": "mocha --delay --grep \"START|Main Module|END\""
