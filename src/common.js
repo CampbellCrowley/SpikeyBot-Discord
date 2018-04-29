@@ -139,11 +139,11 @@ exports.log = function(message, ip) {
   if (exports.isRelease) {
     console.log(
         getTrace() + exports.updatePrefix(ip),
-        '\033[;' + mycolor + 'm' + message, '\033[1;0m');
+        '\x1B[;' + mycolor + 'm' + message, '\x1B[1;0m');
   } else {
     console.log(
-        getTrace() + '\033[;' + mycolor + 'm' + exports.updatePrefix(ip),
-        message, '\033[1;0m');
+        getTrace() + '\x1B[;' + mycolor + 'm' + exports.updatePrefix(ip),
+        message, '\x1B[1;0m');
   }
 };
 /**
@@ -155,8 +155,8 @@ exports.log = function(message, ip) {
  */
 exports.error = function(message, ip) {
   console.log(
-      getTrace() + '\033[;31m' + exports.updatePrefix(ip), message,
-      '\033[1;0m');
+      getTrace() + '\x1B[;31m' + exports.updatePrefix(ip), message,
+      '\x1B[1;0m');
 };
 
 /**

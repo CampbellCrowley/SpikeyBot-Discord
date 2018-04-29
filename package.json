@@ -34,6 +34,7 @@
     "chai": "^4.1.2",
     "eslint": "^4.19.1",
     "eslint-config-google": "^0.9.1",
+    "jsdoc-to-markdown": "^4.0.1",
     "mocha": "^5.1.1"
   },
   "scripts": {
@@ -45,6 +46,7 @@
     "test:hg": "mocha --delay --grep \"START|Hungry Games|END\"",
     "test:main": "mocha --delay --grep \"START|Main Module|END\"",
     "run": "npm run kill; (nodejs src/SpikeyBot.js dev onlymusic ./music.js &) && (nodejs src/SpikeyBot.js dev ./hungryGames.js ./main.js &)",
-    "kill": "killall nodejs"
+    "kill": "killall nodejs",
+    "docs": "jsdoc2md src/*.js > docs/api.md"
   }
 }

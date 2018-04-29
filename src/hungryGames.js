@@ -516,10 +516,6 @@ exports.end = function() {
   initialized = false;
   command.deleteEvent('hg');
   client.removeListener('messageUpdate', handleMessageEdit);
-  delete command;
-  delete Discord;
-  delete client;
-  delete common;
   process.removeListener('exit', exit);
   process.removeListener('SIGINT', sigint);
   process.removeListener('SIGHUP', sigint);
@@ -2197,11 +2193,18 @@ function makeSingleEvent(
     attacker: {outcome: attackerOutcome},
   };
 }
+
+/**
+ * @typedef UserIconUrl
+ * @type {object}
+ * @property {string} url Url of icon.
+ * @property {string} id Id of the user the icon belongs to.
+ */
 /**
  * Get an array of icons urls from an array of users.
  *
  * @param {Player[]} users Array of users to process.
- * @return {{url: string, id: string}[]} The user ids and urls for all users
+ * @return {UserIconUrl[]} The user ids and urls for all users
  * avatars.
  */
 function getMiniIcons(users) {
@@ -2413,8 +2416,8 @@ function printDay(msg, id) {
               return games[id]
                   .currentGame.includedUsers
                   .find(function(user) {
- return user.id == player;
-})
+                    return user.id == player;
+                  })
                   .name;
             })
             .join(', '));
@@ -2529,13 +2532,13 @@ function printDay(msg, id) {
     let sendTime = Date.now() + (games[id].options.delayDays > 2000 ? 1000 : 0);
     let winnerTag = '';
     if (games[id].options.mentionVictor) {
-      winnerTag =
-          games[id]
-              .currentGame.teams[lastTeam]
-              .players.map(function(player) {
- return '<@' + player + '>';
-})
-              .join(' ');
+      winnerTag = games[id]
+                      .currentGame.teams[lastTeam]
+                      .players
+                      .map(function(player) {
+                        return '<@' + player + '>';
+                      })
+                      .join(' ');
     }
     let finalImage = new Jimp(
         games[id].currentGame.teams[lastTeam].players.length *
@@ -2607,8 +2610,8 @@ function printDay(msg, id) {
         games[id]
             .currentGame.includedUsers
             .sort(function(a, b) {
- return a.rank - b.rank;
-})
+              return a.rank - b.rank;
+            })
             .map(function(obj) {
               let shortName = obj.name.substring(0, 16);
               if (shortName != obj.name) {
@@ -2629,8 +2632,8 @@ function printDay(msg, id) {
     }
     rankEmbed.setColor(defaultColor);
     client.setTimeout(function() {
- msg.channel.send(rankEmbed);
-}, 5000);
+      msg.channel.send(rankEmbed);
+    }, 5000);
     if (games[id].options.teamSize > 0) {
       let teamRankEmbed = new Discord.MessageEmbed();
       teamRankEmbed.setTitle('Final Team Ranks');
@@ -2658,8 +2661,8 @@ function printDay(msg, id) {
       }
       teamRankEmbed.setColor(defaultColor);
       client.setTimeout(function() {
- msg.channel.send(teamRankEmbed);
-}, 8000);
+        msg.channel.send(teamRankEmbed);
+      }, 8000);
     }
   }
 

@@ -263,11 +263,6 @@ exports.end = function() {
   command.deleteEvent('version');
 
   fs.writeFileSync('./save/timers.dat', JSON.stringify({timers: timers}));
-
-  delete command;
-  delete Discord;
-  delete client;
-  delete common;
 };
 
 /**

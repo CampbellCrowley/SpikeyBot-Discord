@@ -121,11 +121,6 @@ exports.end = function() {
   command.deleteEvent('rickroll');
 
   client.removeListener('voiceStateUpdate', handleVoiceStateUpdate);
-
-  delete command;
-  delete Discord;
-  delete client;
-  delete common;
 };
 
 exports.save = function() {};

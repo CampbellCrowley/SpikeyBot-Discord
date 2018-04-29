@@ -27,4 +27,17 @@ if ! $PASS; then
   # echo -e "\033[42mCOMMIT SUCCEEDED\033[0m"
 fi
 
+if [[ "$?" != 0 ]]; then
+  exit $?
+fi
+
+DOCGEN="jsdoc2md src/*.js > docs/api.md"
+echo "Creating docs"
+"$DOCGEN"
+if [[ "$?" != 0 ]]; then
+  exit $?
+fi
+
+git add docs/
+
 exit $?
