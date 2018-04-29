@@ -1,42 +1,11 @@
-exports.begin:58    [;44m[DSpikeyBot.js 04-28 05:51:53 SELF           ]: SpikeyBot.js Begin [1;0m
-client.on:256       [;44m[DSpikeyBot.js 04-28 05:51:58 SELF           ]: Logged in as SpikeyBot-dev#2096! [1;0m
-updateGame:225      [;44m[DSpikeyBot.js 04-28 05:51:58 SELF           ]: Changed game to "~help for help" [1;0m
-exports.begin:239   [;44m[DSpikeyBot.js 04-28 05:51:58 Main           ]: Main Init [1;0m
-exports.begin:102   [;44m[DSpikeyBot.js 04-28 05:51:58 Music          ]: Music Init [1;0m
-exports.begin:466   [;44m[DSpikeyBot.js 04-28 05:51:58 HG             ]: HungryGames Init [1;0m
-client.on:338       [;44m[DSpikeyBot.js 04-28 05:51:59 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~`UNIT TEST MODE ENABLED`~ [1;0m
-client.on:338       [;44m[DSpikeyBot.js 04-28 05:52:02 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~hg reset all [1;0m
-client.on:338       [;44m[DSpikeyBot.js 04-28 05:52:05 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~hg create [1;0m
-client.on:338       [;44m[DSpikeyBot.js 04-28 05:52:09 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~hg create [1;0m
-client.on:338       [;44m[DSpikeyBot.js 04-28 05:52:12 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~hg start [1;0m
-client.on:338       [;44m[DSpikeyBot.js 04-28 05:52:15 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~hg start [1;0m
-client.on:338       [;44m[DSpikeyBot.js 04-28 05:52:18 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~hg end [1;0m
-Command.enable:197  [;31m[DSpikeyBot.js 04-28 05:52:18 SELF           ]: Requested enable for event that is not disabled! (say) [1;0m
-client.on:338       [;44m[DSpikeyBot.js 04-28 05:52:22 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~hg end [1;0m
-client.on:338       [;44m[DSpikeyBot.js 04-28 05:52:25 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~hg options [1;0m
-client.on:338       [;44m[DSpikeyBot.js 04-28 05:52:28 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~hg options playerDeathRate veryhigh [1;0m
-client.on:338       [;44m[DSpikeyBot.js 04-28 05:52:32 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~hg options arenaEvents false [1;0m
-client.on:338       [;44m[DSpikeyBot.js 04-28 05:52:35 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~hg options teamSize 10 [1;0m
-client.on:338       [;44m[DSpikeyBot.js 04-28 05:52:38 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~hg exclude SpikeyRobot [1;0m
-client.on:338       [;44m[DSpikeyBot.js 04-28 05:52:42 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~hg exclude <@124733888177111041> [1;0m
-client.on:338       [;44m[DSpikeyBot.js 04-28 05:52:45 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~hg players [1;0m
-client.on:338       [;44m[DSpikeyBot.js 04-28 05:52:48 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~hg exclude <@124733888177111041> [1;0m
-client.on:338       [;44m[DSpikeyBot.js 04-28 05:52:51 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~hg include SpikeyRobot [1;0m
-client.on:338       [;44m[DSpikeyBot.js 04-28 05:52:55 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~hg include <@124733888177111041> [1;0m
-client.on:338       [;44m[DSpikeyBot.js 04-28 05:52:58 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~hg include <@124733888177111041> [1;0m
-client.on:338       [;44m[DSpikeyBot.js 04-28 05:53:01 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~hg players [1;0m
-client.on:338       [;44m[DSpikeyBot.js 04-28 05:53:05 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~hg teams rename <@124733888177111041> The overlord [1;0m
-client.on:338       [;44m[DSpikeyBot.js 04-28 05:53:08 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~hg teams [1;0m
-client.on:338       [;44m[DSpikeyBot.js 04-28 05:53:11 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~hg teams randomize [1;0m
-client.on:338       [;44m[DSpikeyBot.js 04-28 05:53:14 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~hg reset options [1;0m
-client.on:338       [;44m[DSpikeyBot.js 04-28 05:53:18 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~hg reset all [1;0m
-client.on:338       [;44m[DSpikeyBot.js 04-28 05:53:21 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~hg events [1;0m
-client.on:338       [;44m[DSpikeyBot.js 04-28 05:53:24 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~hg players [1;0m
-client.on:338       [;44m[DSpikeyBot.js 04-28 05:53:27 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~hg exclude [1;0m
-client.on:338       [;44m[DSpikeyBot.js 04-28 05:53:31 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~hg include [1;0m
-client.on:338       [;44m[DSpikeyBot.js 04-28 05:53:34 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~hg events add [1;0m
-client.on:338       [;44m[DSpikeyBot.js 04-28 05:53:37 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~hg events add someEvent {victim} {attacker} {dead} [Vs|p] [As|p] [1;0m
-client.on:338       [;44m[DSpikeyBot.js 04-28 05:53:40 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~hg events remove 0 [1;0m
-client.on:338       [;44m[DSpikeyBot.js 04-28 05:53:44 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~hg pause [1;0m
-sigint:4082         [;44m[DSpikeyBot.js 04-28 05:53:50 HG             ]: Caught SIGINT! [1;0m
-exports.save:4054   [;44m[DSpikeyBot.js 04-28 05:53:50 HG             ]: Saving sync [1;0m
+exports.begin:58    [;44m[DSpikeyBot.js 04-28 06:20:37 SELF           ]: SpikeyBot.js Begin [1;0m
+client.on:256       [;44m[DSpikeyBot.js 04-28 06:20:43 SELF           ]: Logged in as SpikeyBot-dev#2096! [1;0m
+updateGame:225      [;44m[DSpikeyBot.js 04-28 06:20:43 SELF           ]: Changed game to "~help for help" [1;0m
+exports.begin:239   [;44m[DSpikeyBot.js 04-28 06:20:43 Main           ]: Main Init [1;0m
+exports.begin:102   [;44m[DSpikeyBot.js 04-28 06:20:43 Music          ]: Music Init [1;0m
+exports.begin:466   [;44m[DSpikeyBot.js 04-28 06:20:43 HG             ]: HungryGames Init [1;0m
+client.on:338       [;44m[DSpikeyBot.js 04-28 06:20:43 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~`UNIT TEST MODE ENABLED`~ [1;0m
+client.on:338       [;44m[DSpikeyBot.js 04-28 06:20:46 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~say Hello World! [1;0m
+client.on:338       [;44m[DSpikeyBot.js 04-28 06:20:50 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~add 5 6 7 [1;0m
+client.on:338       [;44m[DSpikeyBot.js 04-28 06:20:53 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~simplify 5x=7y [1;0m
+client.on:338       [;44m[DSpikeyBot.js 04-28 06:20:56 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~solve 5x=7y [1;0m
