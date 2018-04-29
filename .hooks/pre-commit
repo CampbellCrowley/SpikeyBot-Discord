@@ -31,9 +31,9 @@ if [[ "$?" != 0 ]]; then
   exit $?
 fi
 
-DOCGEN="jsdoc2md src/*.js > docs/api.md"
 echo "Creating docs"
-"$DOCGEN"
+jsdoc2md src/*.js > docs/api.md
+
 if [[ "$?" != 0 ]]; then
   exit $?
 fi
