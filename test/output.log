@@ -1,11 +1,10 @@
-exports.begin:58    [;44m[DSpikeyBot.js 04-28 06:20:37 SELF           ]: SpikeyBot.js Begin [1;0m
-client.on:256       [;44m[DSpikeyBot.js 04-28 06:20:43 SELF           ]: Logged in as SpikeyBot-dev#2096! [1;0m
-updateGame:225      [;44m[DSpikeyBot.js 04-28 06:20:43 SELF           ]: Changed game to "~help for help" [1;0m
-exports.begin:239   [;44m[DSpikeyBot.js 04-28 06:20:43 Main           ]: Main Init [1;0m
-exports.begin:102   [;44m[DSpikeyBot.js 04-28 06:20:43 Music          ]: Music Init [1;0m
-exports.begin:466   [;44m[DSpikeyBot.js 04-28 06:20:43 HG             ]: HungryGames Init [1;0m
-client.on:338       [;44m[DSpikeyBot.js 04-28 06:20:43 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~`UNIT TEST MODE ENABLED`~ [1;0m
-client.on:338       [;44m[DSpikeyBot.js 04-28 06:20:46 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~say Hello World! [1;0m
-client.on:338       [;44m[DSpikeyBot.js 04-28 06:20:50 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~add 5 6 7 [1;0m
-client.on:338       [;44m[DSpikeyBot.js 04-28 06:20:53 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~simplify 5x=7y [1;0m
-client.on:338       [;44m[DSpikeyBot.js 04-28 06:20:56 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~solve 5x=7y [1;0m
+module.js:549
+    throw err;
+    ^
+
+Error: Cannot find module '/SpikeyBot.js'
+    at Function.Module._resolveFilename (module.js:547:15)
+    at Function.Module._load (module.js:474:25)
+    at Function.Module.runMain (module.js:693:10)
+    at startup (bootstrap_node.js:188:16)
+    at bootstrap_node.js:609:3

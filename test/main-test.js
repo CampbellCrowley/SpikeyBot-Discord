@@ -4,12 +4,16 @@ let client = new Discord.Client();
 let spawn = require('child_process').spawn;
 let fs = require('fs');
 
-let spawnOpts = {cwd: __dirname + '/..', stdio: 'pipe'};
+let spawnOpts = {cwd: '/..', stdio: 'pipe'};
 let log = fs.createWriteStream(__dirname + '/output.log');
+console.log(__dirname, '<-- Dir | CWD -->', process.cwd());
 let bot = spawn(
     'nodejs',
     [
-      __dirname + '/../SpikeyBot.js', 'dev', './main.js', './music.js',
+      'SpikeyBot.js',
+      'dev',
+      './main.js',
+      './music.js',
       './hungryGames.js',
     ],
     spawnOpts);
