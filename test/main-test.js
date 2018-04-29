@@ -4,21 +4,37 @@ let client = new Discord.Client();
 let spawn = require('child_process').spawn;
 let fs = require('fs');
 
+/* eslint-disable */
+(function() {
+  var childProcess = require("child_process");
+  var oldSpawn = childProcess.spawn;
+  function mySpawn() {
+    console.log('spawn called');
+    console.log(arguments);
+    var result = oldSpawn.apply(this, arguments);
+    return result;
+  }
+  childProcess.spawn = mySpawn;
+})();
+/* eslint */
+
 let spawnOpts = {cwd: '/..', stdio: 'pipe'};
 let log = fs.createWriteStream(__dirname + '/output.log');
 console.log(__dirname, '<-- Dir | CWD -->', process.cwd());
 let bot = spawn(
     'nodejs',
     [
-      'SpikeyBot.js',
+      __dirname + '/../SpikeyBot.js',
       'dev',
       './main.js',
       './music.js',
       './hungryGames.js',
     ],
     spawnOpts);
+console.log("SPAWNED");
 bot.stdout.pipe(log);
 bot.stderr.pipe(log);
+console.log("Piping to log");
 
 after(function() {
   bot.kill('SIGHUP');
@@ -257,8 +273,10 @@ function testMessageContent(msg) {
 client.login('NDIyNjIzNzEyNTM0MjAwMzIx.DYeenA.K5pUxL8GGtVm1ml_Eb6SaZxSKnE');
 client.on('message', testMessageContent);
 client.on('ready', () => {
+  console.log("TEST bot ready");
   channel = client.channels.get(channelID);
 });
+console.log("Begin test bot");
 
 /**
  * Start running an array of Tests.
