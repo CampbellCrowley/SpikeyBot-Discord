@@ -5,7 +5,7 @@
 ###### [Web Page with command help](https://www.campbellcrowley.com/spikeybot/) (also available from bot with `help` command)
 ## Main
 #### General
-`addme` `help` `say` `createdate` `joindate` `pmme` `pmspikey` `flip` `avatar` `ping`
+`addme` `help` `say` `createdate` `joindate` `pmme` `pmspikey` `flip` `avatar` `ping` `timer`
 #### Music
 `play` `stop` `skip` `queue` `remove` `lyrics`
 #### Math
@@ -29,7 +29,6 @@
 
 ## Hidden
 - js (Run javascript code)
-- timer (Set a timer)(*Should be visible*)
 - thotpm (Semi-anonymously have the bot DM someone)
 - uptime (Amount of time the bot has been running)
 - version (Current bot version)

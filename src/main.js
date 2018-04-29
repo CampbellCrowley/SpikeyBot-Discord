@@ -93,6 +93,9 @@ const helpObject = {
             'show you the original.',
         'ping // Want to know what my delay to the server is? I can tell you ' +
             'my ping!',
+        'timer \'seconds\' \'message...\' // Set a timer for a certain ' +
+            'number of seconds. The bot will DM you the message at the end. ' +
+            'No options lists timers.',
       ],
     },
     {
@@ -197,22 +200,10 @@ exports.begin = function(prefix_, Discord_, client_, command_, common_) {
   fs.readFile('./save/timers.dat', function(err, file) {
     if (err) return;
     let msg = JSON.parse(file);
-    setTimer = function(timer) {
-      timers.push(timer);
-      return function() {
-        client.users.fetch(timer.id).then((user) => {
-          user.send(timer.message);
-          timers = timers.filter(function(obj) {
-            return obj.time > Date.now();
-          });
-        });
-      };
-    };
 
-    const now = Date.now();
     for (let i in msg.timers) {
       if (msg.timers[i] instanceof Object && msg.timers[i].time) {
-        client.setTimeout(setTimer(msg.timers[i]), msg.timers[i].time - now);
+        setTimer(msg.timers[i]);
       }
     }
   });
@@ -625,9 +616,10 @@ function commandTimer(msg) {
   if (split[0] == myPrefix + 'timer' || split[0] == myPrefix + 'timers') {
     let num = 0;
     let messages =
-        timers.filter(function(obj) {
- return obj.id == msg.author.id;
-})
+        timers
+            .filter(function(obj) {
+              return obj.id == msg.author.id;
+            })
             .map(function(obj) {
               num++;
               return 'In ' +
@@ -644,14 +636,7 @@ function commandTimer(msg) {
           ' is over!';
 
   if (time > 0) {
-    client.setTimeout(function() {
-      msg.author.send(
-          message );
-      timers = timers.filter(function(obj) {
- return obj.time > Date.now();
-});
-    }, time * 1000 * 60);
-    timers.push({
+    setTimer({
       id: msg.author.id,
       message: message,
       time: Date.now() + time * 1000 * 60,
@@ -1025,4 +1010,27 @@ function commandVersion(msg) {
   fs.readFile('package.json', function(err, data) {
     reply(msg, 'My current version is ' + JSON.parse(data).version);
   });
+}
+
+/**
+ * Sets a timer for an amount of time with a message.
+ *
+ * @param {Object} timer The settings for the timer.
+ * @param {string} timer.id The id of the user who set the timer.
+ * @param {string} timer.message The message for when the timer ends.
+ * @param {number} timer.time The time since epoch at which the timer will end.
+ */
+function setTimer(timer) {
+  timers.push(timer);
+  const now = Date.now();
+  client.setTimeout(function() {
+    client.users.fetch(timer.id).then(
+        (user) => {
+          user.send(timer.message);
+          const now = Date.now();
+          timers = timers.filter(function(obj) {
+            return obj.time > now;
+          });
+        });
+  }, msg.timers[i].time - now);
 }
