@@ -15,7 +15,7 @@ function mySpawn() {
 spawn = mySpawn;
 /* eslint */
 
-let spawnOpts = {cwd: '/..', stdio: 'pipe'};
+let spawnOpts = {cwd: __dirname + '/..', stdio: 'pipe'};
 let log = fs.createWriteStream(__dirname + '/output.log');
 console.log(__dirname, '<-- Dir | CWD -->', process.cwd());
 let bot = spawn(
