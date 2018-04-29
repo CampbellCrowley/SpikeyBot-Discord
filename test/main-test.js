@@ -18,8 +18,9 @@ spawn = mySpawn;
 let spawnOpts = {cwd: __dirname + '/..', stdio: 'pipe'};
 let log = fs.createWriteStream(__dirname + '/output.log');
 console.log(__dirname, '<-- Dir | CWD -->', process.cwd());
+let node = __dirname.startsWith('/home/travis/build') ? 'node' : 'nodejs';
 let bot = spawn(
-    'nodejs',
+    node,
     [
       'SpikeyBot.js',
       'dev',
@@ -28,7 +29,7 @@ let bot = spawn(
       './hungryGames.js',
     ],
     spawnOpts);
-console.log("SPAWNED");
+console.log("Spawned primary bot");
 bot.stdout.pipe(log);
 bot.stderr.pipe(log);
 console.log("Piping to log");
@@ -271,7 +272,7 @@ function testMessageContent(msg) {
 client.login('NDIyNjIzNzEyNTM0MjAwMzIx.DYeenA.K5pUxL8GGtVm1ml_Eb6SaZxSKnE');
 client.on('message', testMessageContent);
 client.on('ready', () => {
-  console.log("TEST bot ready");
+  console.log("Test bot ready");
   channel = client.channels.get(channelID);
 });
 console.log("Begin test bot");
