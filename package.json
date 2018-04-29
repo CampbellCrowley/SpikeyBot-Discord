@@ -1,6 +1,6 @@
 {
   "name": "spikeybot-discord",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "SpikeyBot",
   "homepage": "https://www.campbellcrowley.com/spikeybot",
   "bugs": {
@@ -38,11 +38,13 @@
   },
   "scripts": {
     "install": ".hooks/install-hooks.sh",
-    "lint": "eslint ./**/*.js",
-    "lint:fix": "eslint ./**/*.js --fix",
+    "lint": "eslint ./*.js ./**/*.js",
+    "lint:fix": "eslint ./*.js ./**/*.js --fix",
     "lintandtest": "npm run lint && npm run test",
     "test": "mocha --delay",
     "test:hg": "mocha --delay --grep \"START|Hungry Games|END\"",
-    "test:main": "mocha --delay --grep \"START|Main Module|END\""
+    "test:main": "mocha --delay --grep \"START|Main Module|END\"",
+    "run": "killall nodejs; (nodejs SpikeyBot.js dev onlymusic ./music.js &) && (nodejs SpikeyBot.js dev ./hungryGames.js ./main.js &)",
+    "kill": "killall nodejs"
   }
 }

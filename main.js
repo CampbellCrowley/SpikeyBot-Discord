@@ -794,14 +794,34 @@ function commandPurge(msg) {
   if (msg.channel.permissionsFor(msg.member)
           .has(Discord.Permissions.FLAGS.MANAGE_MESSAGES)) {
     let numString = msg.content.replace(myPrefix + 'purge ', '')
-                        .replace(myPrefix + 'prune ', '');
-    let num = (numString + 1) * 1;
+                        .replace(myPrefix + 'prune ', '')
+                        .replace(/\<[^\>]*>|\s/g, '');
+    let num = (numString * 1) + 1;
     if (numString.length === 0 || isNaN(num)) {
       reply(
           msg,
           'You must specify the number of messages to purge. (ex: ?purge 5)');
     } else {
-      msg.channel.bulkDelete(num + 1);
+      if (msg.mentions.users.size > 0) {
+        let toDelete = msg.channel.messages.filter(function(obj) {
+          return msg.mentions.users.find(function(mention) {
+            return obj.author.id === mention.id;
+          });
+        });
+        msg.channel.bulkDelete(toDelete.first(num - 1));
+        reply(
+            msg, 'Deleted ' + (num - 1) + ' messages by ' +
+                msg.mentions.users
+                    .map(function(obj) {
+                      return obj.username;
+                    })
+                    .join(', '))
+            .then((msg_) => {
+              msg_.delete({timeout: 5000});
+            });
+      } else {
+        msg.channel.bulkDelete(num);
+      }
     }
   } else {
     reply(
@@ -1003,6 +1023,6 @@ function commandGame(msg) {
  */
 function commandVersion(msg) {
   fs.readFile('package.json', function(err, data) {
-    reply(msg, "My current version is " + JSON.parse(data).version);
+    reply(msg, 'My current version is ' + JSON.parse(data).version);
   });
 }
