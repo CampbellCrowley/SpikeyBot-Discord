@@ -907,8 +907,8 @@ function createGame(msg, id, silent) {
       reply(
           msg,
           'This server already has a Hungry Games in progress. If you wish ' +
-              'to create a new one, you must end the current one first with' +
-              '"hgend".');
+              'to create a new one, you must end the current one first with "' +
+              myPrefix + 'end".');
     }
     return;
   } else if (games[id] && games[id].currentGame) {
@@ -1262,9 +1262,7 @@ function startGame(msg, id) {
  */
 function pauseAutoplay(msg, id) {
   if (!games[id]) {
-    reply(
-        msg, 'You must create a game first before using autoplay. Use "' +
-            myPrefix + 'create" to do this.');
+    reply(msg, 'You must first create a game with "' + myPrefix + 'create".');
   } else if (games[id].autoPlay) {
     msg.channel.send(
         '<@' + msg.author.id +
@@ -2714,7 +2712,9 @@ function endGame(msg, id) {
  * @param {string} id The id of the guild this was triggered from.
  */
 function excludeUser(msg, id) {
-  if (msg.mentions.users.size == 0) {
+  if (!games[id]) {
+    reply(msg, 'You must first create a game with "' + myPrefix + 'create".');
+  } else if (msg.mentions.users.size == 0) {
     reply(
         msg,
         'You must mention people you wish for me to exclude from the next ' +
@@ -2755,14 +2755,16 @@ function excludeUser(msg, id) {
  * @param {string} id The id of the guild this was triggered from.
  */
 function includeUser(msg, id) {
-  if (msg.mentions.users.size == 0) {
+  if (!games[id]) {
+    reply(msg, 'You must first create a game with "' + myPrefix + 'create".');
+  } else if (msg.mentions.users.size == 0) {
     reply(
         msg,
         'You must mention people you wish for me to include in the next game.');
   } else {
     let response = '';
     msg.mentions.users.forEach(function(obj) {
-      if (!games[id].options.includeBots && obj.user.bot) {
+      if (!games[id].options.includeBots && obj.bot) {
         response += obj.username + ' is a bot, but bots are disabled.\n';
         return;
       }
@@ -2773,12 +2775,16 @@ function includeUser(msg, id) {
       }
       if (games[id].currentGame.inProgress) {
         response += obj.username + ' skipped.\n';
-      } else {
+      } else if (!games[id].currentGame.includedUsers.find((u) => {
+                   return u.id === obj.id;
+                 })) {
         games[id].currentGame.includedUsers.push(
             new Player(
                 obj.id, obj.username, obj.displayAvatarURL({format: 'png'})));
         response += obj.username + ' added to included players.\n';
         formTeams(id);
+      } else {
+        response += obj.username + ' is already included.\n';
       }
     });
     if (games[id].currentGame.inProgress) {
@@ -3293,6 +3299,10 @@ function randomizeTeams(msg, id) {
  * @param {string} id The id of the guild this was triggered from.
  */
 function createEvent(msg, id) {
+  if (!games[id]) {
+    reply(msg, 'You must first create a game with "' + myPrefix + 'create".');
+    return;
+  }
   newEventMessages[msg.id] = msg;
   const authId = msg.author.id;
   reply(msg, 'Loading...').then((msg_) => {
@@ -3650,6 +3660,10 @@ function updateEventPreview(msg) {
  * @param {string} id The id of the guild this was triggered from.
  */
 function removeEvent(msg, id) {
+  if (!games[id]) {
+    reply(msg, 'You must first create a game with "' + myPrefix + 'create".');
+    return;
+  }
   const split = msg.text.split(' ');
 
   if (split.length == 1) {
@@ -3763,7 +3777,7 @@ function listEvents(msg, id, page, eventType, editMsg) {
   let title;
   if (!eventType) eventType = 'player';
   if (eventType == 'player') {
-    if (games[id].customEvents.player) {
+    if (games[id] && games[id].customEvents.player) {
       events = games[id].customEvents.player.slice(0);
       numCustomEvents = games[id].customEvents.player.length;
     }
@@ -3774,7 +3788,7 @@ function listEvents(msg, id, page, eventType, editMsg) {
     fetchStats(events);
     embed.setColor([0, 255, 0]);
   } else if (eventType == 'bloodbath') {
-    if (games[id].customEvents.bloodbath) {
+    if (games[id] && games[id].customEvents.bloodbath) {
       events = games[id].customEvents.bloodbath.slice(0);
       numCustomEvents = games[id].customEvents.bloodbath.length;
     }
@@ -3785,7 +3799,7 @@ function listEvents(msg, id, page, eventType, editMsg) {
     fetchStats(events);
     embed.setColor([255, 0, 0]);
   } else if (eventType == 'arena') {
-    if (games[id].customEvents.arena) {
+    if (games[id] && games[id].customEvents.arena) {
       events = games[id].customEvents.arena.slice(0);
       numCustomEvents = games[id].customEvents.arena.length;
     }
@@ -3824,6 +3838,7 @@ function listEvents(msg, id, page, eventType, editMsg) {
     embed.setColor([0, 0, 255]);
   } else {
     common.error('HOW COULD THIS BE? I\'ve made a mistake!', 'HG');
+    reply(msg, "BIG Oops! THIS SHOULD _never_ happen");
   }
 
   const numEvents = events.length;

@@ -64,17 +64,107 @@ const mainTests = [
   new Test(
       'PM Spikey command', '~pmspikey I am running a unit test.',
       ['<@422623712534200321>\n```\nI sent your message to SpikeyRobot.\n```']),
-  new Test('Flip command', '~flip', ['!error']),
-  new Test('Avatar command', '~avatar', ['!error']),
-  new Test('Ping command', '~ping', ['!error'])
+  new Test('Flip command', '~flip', ['#embed']),
+  new Test('Avatar command', '~avatar', ['#embed']),
+  new Test('Ping command', '~ping', ['^My ping is'])
 ];
 const hgTests = [
-  new Test("Create command", "~hg create", ["!error"]),
-  new Test("Start command", "~hg start", ["!error"]),
+  new Test('Reset All command', "~hg reset all", ['#noerr']),
+  new Test(
+      "Create command", "~hg create",
+      ['<@422623712534200321>\n```\nCreated a Hungry Games with default ' +
+       'settings and all members included.\n```']),
+  new Test("Create command again", "~hg create", ["#noerr"]),
+  new Test("Start command", "~hg start", ["#noerr"]),
+  new Test("Start command again", "~hg start", ["#noerr"]),
+  new Test(
+      "End command", "~hg end",
+      ['<@422623712534200321>\n```\nThe game has ended!\n```']),
+  new Test("End command again", "~hg end", ["#noerr"]),
+  new Test("Option command", "~hg options", ["#embed"]),
+  new Test(
+      "Change option string", "~hg options playerDeathRate veryhigh",
+      ['<@422623712534200321>\n```\nSet playerDeathRate to veryhigh from ' +
+       'normal\n```']),
+  new Test(
+      "Change option boolean", "~hg options arenaEvents false",
+      ['<@422623712534200321>\n```\nSet arenaEvents to false from true\n```']),
+  new Test(
+      "Change option number", "~hg options teamSize 10",
+      [
+        '<@422623712534200321>\n```\nSet teamSize to 10 from 0\n```',
+        '<@422623712534200321>\n```\nTo reset teams to the correct size, ' +
+            'type "~hg teams reset".\nThis will delete all teams, and create ' +
+            'new ones.\n```'
+      ]),
+  new Test(
+      "Exclude player nomention", "~hg exclude SpikeyRobot",
+      ['<@422623712534200321>\n```\nYou must mention people you wish for me ' +
+       'to exclude from the next game.\n```']),
+  new Test(
+      "Exclude player", "~hg exclude <@124733888177111041>",
+      ['<@422623712534200321>\n```\nSpikeyRobot added to blacklist.\n' +
+       'SpikeyRobot removed from included players.\n\n```']),
+  new Test("List teams and check excluded", "~hg players", ["!`SpikeyRobot`"]),
+  new Test(
+      "Exclude player already excluded", "~hg exclude <@124733888177111041>",
+      ['<@422623712534200321>\n```\nSpikeyRobot is already excluded.\n\n```']),
+  new Test(
+      "Include player nomention", "~hg include SpikeyRobot",
+      ['<@422623712534200321>\n```\nYou must mention people you wish for me ' +
+       'to include in the next game.\n```']),
+  new Test(
+      "Include player", "~hg include <@124733888177111041>",
+      ['<@422623712534200321>\n```\nSpikeyRobot removed from blacklist.\n' +
+       'SpikeyRobot added to included players.\n\n```']),
+  new Test(
+      "Include player already included", "~hg include <@124733888177111041>",
+      ['<@422623712534200321>\n```\nSpikeyRobot is already included.\n\n```']),
+  new Test("List teams and check included", "~hg players", ["^`SpikeyRobot`"]),
+  new Test(
+      'Rename Team', "~hg teams rename <@124733888177111041> The overlord",
+      ['^to "The overlord"']),
+  new Test(
+      "List teams and check rename", "~hg teams", ["^__The overlord__: `"]),
+  new Test("Randomize teams", "~hg teams randomize", ["#noerr"]),
+  new Test(
+      'Reset Options command', "~hg reset options",
+      ['<@422623712534200321>\n```\nResetting ALL options!\n```']),
   new Test(
       'Reset All command', "~hg reset all",
       ['<@422623712534200321>\n```\nResetting ALL Hungry Games data for ' +
-       'this server!\n```'])
+       'this server!\n```']),
+  new Test('Events command', "~hg events", ['#embed']),
+  new Test(
+      'No data: List players', "~hg players",
+      ['<@422623712534200321>\n```\nList of currently tracked players:\n```' +
+       'There don\'t appear to be any included players. Have you created a ' +
+       'game with "~hg create"?']),
+  new Test(
+      'No data: Exclude', "~hg exclude",
+      ['<@422623712534200321>\n```\nYou must first create a game with "~hg ' +
+       'create".\n```']),
+  new Test(
+      'No data: Include', "~hg include",
+      ['<@422623712534200321>\n```\nYou must first create a game with "~hg ' +
+       'create".\n```']),
+  new Test(
+      'No data: Event add', "~hg events add",
+      ['<@422623712534200321>\n```\nYou must first create a game with "~hg ' +
+       'create".\n```']),
+  new Test(
+      'No data: Event add',
+      "~hg events add someEvent {victim} {attacker} {dead} [Vs|p] [As|p]",
+      ['<@422623712534200321>\n```\nYou must first create a game with "~hg ' +
+       'create".\n```']),
+  new Test(
+      'No data: Event remove', "~hg events remove 0",
+      ['<@422623712534200321>\n```\nYou must first create a game with "~hg ' +
+       'create".\n```']),
+  new Test(
+      'No data: Pause autoplay', "~hg pause",
+      ['<@422623712534200321>\n```\nYou must first create a game with "~hg ' +
+       'create".\n```'])
 ];
 
 let ready = false;
@@ -82,7 +172,6 @@ let currentTest;
 let currentTestPart = -1;
 let testTimeout;
 let currentDone;
-let extraMessages = -1;
 
 let channelID = "439642818084995074";
 let channel;
@@ -92,7 +181,6 @@ function sendCommand(test, done) {
   currentDone = done;
 
   currentTestPart = -1;
-  extraMessages = -1;
   channel.send(test.command);
 }
 
@@ -110,20 +198,31 @@ function testMessageContent(msg) {
   expect(msg.content).to.be.a('string');
   if (currentTestPart === -1) {
     expect(msg.content).to.equal(currentTest.command);
-    currentTestPart++;
   } else if (currentTestPart < currentTest.responses.length) {
-    if (currentTest.responses[currentTestPart] === '!error') {
+    if (currentTest.responses[currentTestPart] === '#noerr') {
       expect(msg.content)
           .to.not.include("Oops")
           .and.not.include("LOL!")
+          .and.not.include("Oh no")
+          .and.not.include(" error ")
           .and.not.include("Nice try!");
+    } else if (currentTest.responses[currentTestPart] === '#embed') {
+      expect(msg.embeds).to.be.lengthOf.above(0);
+    } else if (currentTest.responses[currentTestPart].startsWith('^')) {
+      expect(msg.content)
+          .to.include(currentTest.responses[currentTestPart].substr(1));
+    } else if (currentTest.responses[currentTestPart].startsWith('!')) {
+      expect(msg.content)
+          .to.not.include(currentTest.responses[currentTestPart].substr(1));
     } else {
       expect(msg.content).to.equal(currentTest.responses[currentTestPart]);
     }
-    currentTestPart++;
   }
-  if (currentTestPart >= currentTest.responses.length) {
+  currentTestPart++;
+  if (currentTestPart === currentTest.responses.length) {
     currentDone();
+  } else {
+    expect(currentTestPart).to.be.below(currentTest.responses.length);
   }
 }
 
@@ -135,40 +234,40 @@ client.on('ready', () => {
 });
 
 function runTests(tests) {
+  afterEach('Wait for extra...', function(done) {
+    this.timeout(4000);
+    setTimeout(done, 3000);
+  });
   for (var i in tests) {
     (function(i) {
-      describe(tests[i].title, function() {
-        it("Primary", function(done) {
-          this.timeout(10000);
-          sendCommand(tests[i], done);
-        });
-        it("Extra", function(done) {
-          this.timeout(2100);
-          setTimeout(done, 2000);
-        });
+      it(tests[i].title, function(done) {
+        this.timeout(10000);
+        sendCommand(tests[i], done);
       });
     })(i);
   }
 }
 
 function startTests() {
-  describe("START", function() {
-    runTests([new Test(
-        'Enable test mode', "~`RUN UNIT TESTS`~",
-        ["~`UNIT TEST MODE ENABLED`~"])]);
-  });
-  describe("SpikeyBot", function() {
-    describe("Main Module", function() {
-      runTests(mainTests);
+  describe("All Tests", function() {
+    describe("START", function() {
+      runTests([new Test(
+          'Enable test mode', "~`RUN UNIT TESTS`~",
+          ["~`UNIT TEST MODE ENABLED`~"])]);
     });
-    describe("Hungry Games", function() {
-      runTests(hgTests);
+    describe("SpikeyBot", function() {
+      describe("Main Module", function() {
+        runTests(mainTests);
+      });
+      describe("Hungry Games", function() {
+        runTests(hgTests);
+      });
     });
-  });
-  describe("END", function() {
-    runTests([new Test(
-        'Disable test mode', "~`END UNIT TESTS`~",
-        ["~`UNIT TEST MODE DISABLED`~"])]);
+    describe("END", function() {
+      runTests([new Test(
+          'Disable test mode', "~`END UNIT TESTS`~",
+          ["~`UNIT TEST MODE DISABLED`~"])]);
+    });
   });
   run();
 }
