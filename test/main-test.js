@@ -23,7 +23,7 @@ let node = __dirname.startsWith('/home/travis/build') ? 'node' : 'nodejs';
 let bot = spawn(
     node,
     [
-      'SpikeyBot.js',
+      'src/SpikeyBot.js',
       'dev',
       './main.js',
       './music.js',
