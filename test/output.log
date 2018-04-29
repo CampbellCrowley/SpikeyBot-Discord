@@ -1,9 +1,4 @@
-exports.begin:58    [;44m[DSpikeyBot.js 04-28 07:11:27 SELF           ]: SpikeyBot.js Begin [1;0m
+exports.begin:58    [;44m[DSpikeyBot.js 04-28 07:25:06 SELF           ]: SpikeyBot.js Begin [1;0m
 HG: Re-reading default events from file
 HG: Re-reading messages from file
 HG: Re-reading battles from file
-client.on:256       [;44m[DSpikeyBot.js 04-28 07:11:32 SELF           ]: Logged in as SpikeyBot-dev#2096! [1;0m
-updateGame:225      [;44m[DSpikeyBot.js 04-28 07:11:32 SELF           ]: Changed game to "~help for help" [1;0m
-exports.begin:239   [;44m[DSpikeyBot.js 04-28 07:11:32 Main           ]: Main Init [1;0m
-exports.begin:102   [;44m[DSpikeyBot.js 04-28 07:11:32 Music          ]: Music Init [1;0m
-exports.begin:466   [;44m[DSpikeyBot.js 04-28 07:11:32 HG             ]: HungryGames Init [1;0m

@@ -5,17 +5,14 @@ let spawn = require('child_process').spawn;
 let fs = require('fs');
 
 /* eslint-disable */
-(function() {
-  var childProcess = require("child_process");
-  var oldSpawn = childProcess.spawn;
-  function mySpawn() {
-    console.log('spawn called');
-    console.log(arguments);
-    var result = oldSpawn.apply(this, arguments);
-    return result;
-  }
-  childProcess.spawn = mySpawn;
-})();
+var oldSpawn = spawn;
+function mySpawn() {
+  console.log('spawn called');
+  console.log(arguments);
+  var result = oldSpawn.apply(this, arguments);
+  return result;
+}
+spawn = mySpawn;
 /* eslint */
 
 let spawnOpts = {cwd: '/..', stdio: 'pipe'};
@@ -24,7 +21,7 @@ console.log(__dirname, '<-- Dir | CWD -->', process.cwd());
 let bot = spawn(
     'nodejs',
     [
-      __dirname + '/../SpikeyBot.js',
+      'SpikeyBot.js',
       'dev',
       './main.js',
       './music.js',
@@ -46,7 +43,8 @@ after(function() {
  *
  * @param {string} title_ The title of the test case.
  * @param {string} cmd_ The command to send from/to the bot.
- * @param {string[]} res_ An array of responses that are expected. All responses
+ * @param {string[]} res_ An array of responses that are expected. All
+ * responses
  * are expected, and in the same order.
  */
 function Test(title_, cmd_, res_) {
