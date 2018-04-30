@@ -190,6 +190,7 @@ Hunger Games simulator.
         * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
         * [.common](#SubModule+common) : [<code>Common</code>](#Common)
         * *[.myName](#SubModule+myName) : <code>string</code>*
+        * [.initialized](#SubModule+initialized) : <code>boolean</code> ℗
         * [.initialize()](#SubModule+initialize)
         * [.begin(prefix, Discord, client, command, common)](#SubModule+begin)
         * [.end()](#SubModule+end)
@@ -383,6 +384,15 @@ defined before begin().
 **Kind**: instance abstract property of [<code>HungryGames</code>](#HungryGames)  
 **Overrides**: [<code>myName</code>](#SubModule+myName)  
 **Access**: protected  
+<a name="SubModule+initialized"></a>
+
+### hungryGames.initialized : <code>boolean</code> ℗
+Has this subModule been initialized yet (Has begin() been called).
+
+**Kind**: instance property of [<code>HungryGames</code>](#HungryGames)  
+**Default**: <code>false</code>  
+**Access**: private  
+**Read only**: true  
 <a name="SubModule+initialize"></a>
 
 ### hungryGames.initialize()
@@ -945,7 +955,7 @@ Create a Player from a given Disord.User.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| user | <code>Discord.User</code> | User to make a Player from. |
+| user | <code>Discord~User</code> | User to make a Player from. |
 
 <a name="HungryGames..sendAtTime"></a>
 
@@ -957,9 +967,9 @@ Delay a message to send at the given time in milliseconds since epoch.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| channel | <code>Discord.TextChannel</code> | The channel to send the message in. |
-| one | <code>Discord.StringResolvable</code> \| <code>Discord~MessageOptions</code> \| <code>Discord~MessageEmbed</code> \| <code>Discord~MessageAttachment</code> \| <code>Array.&lt;Discord~MessageAttachment&gt;</code> | The message to send. |
-| two | <code>Discord.StringResolvable</code> \| <code>Discord~MessageOptions</code> \| <code>Discord~MessageEmbed</code> \| <code>Discord~MessageAttachment</code> \| <code>Array.&lt;Discord~MessageAttachment&gt;</code> | The message to send. |
+| channel | <code>Discord~TextChannel</code> | The channel to send the message in. |
+| one | <code>Discord~StringResolvable</code> \| <code>Discord~MessageOptions</code> \| <code>Discord~MessageEmbed</code> \| <code>Discord~MessageAttachment</code> \| <code>Array.&lt;Discord~MessageAttachment&gt;</code> | The message to send. |
+| two | <code>Discord~StringResolvable</code> \| <code>Discord~MessageOptions</code> \| <code>Discord~MessageEmbed</code> \| <code>Discord~MessageAttachment</code> \| <code>Array.&lt;Discord~MessageAttachment&gt;</code> | The message to send. |
 | time | <code>number</code> | The time to send the message in milliseconds since epoch. |
 
 <a name="HungryGames..createGame"></a>
@@ -988,7 +998,7 @@ and whether to include bots.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| members | <code>Discord.Collection.&lt;Discord.GuildMember&gt;</code> | All members in guild. |
+| members | <code>Discord~Collection.&lt;Discord~GuildMember&gt;</code> | All members in guild. |
 | excluded | <code>Array.&lt;string&gt;</code> | Array of ids of users that should not be included in the games. |
 | bots | <code>boolean</code> | Should bots be included in the games. |
 
@@ -1885,6 +1895,7 @@ Basic commands and features for the bot.
         * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
         * [.common](#SubModule+common) : [<code>Common</code>](#Common)
         * [.myName](#SubModule+myName) : <code>string</code>
+        * [.initialized](#SubModule+initialized) : <code>boolean</code> ℗
         * [.initialize()](#SubModule+initialize)
         * [.begin(prefix, Discord, client, command, common)](#SubModule+begin)
         * [.end()](#SubModule+end)
@@ -1998,6 +2009,15 @@ defined before begin().
 **Kind**: instance property of [<code>Main</code>](#Main)  
 **Overrides**: [<code>myName</code>](#SubModule+myName)  
 **Access**: protected  
+<a name="SubModule+initialized"></a>
+
+### main.initialized : <code>boolean</code> ℗
+Has this subModule been initialized yet (Has begin() been called).
+
+**Kind**: instance property of [<code>Main</code>](#Main)  
+**Default**: <code>false</code>  
+**Access**: private  
+**Read only**: true  
 <a name="SubModule+initialize"></a>
 
 ### main.initialize()
@@ -2514,6 +2534,7 @@ Music and audio related commands.
         * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
         * [.common](#SubModule+common) : [<code>Common</code>](#Common)
         * *[.myName](#SubModule+myName) : <code>string</code>*
+        * [.initialized](#SubModule+initialized) : <code>boolean</code> ℗
         * [.initialize()](#SubModule+initialize)
         * [.begin(prefix, Discord, client, command, common)](#SubModule+begin)
         * [.end()](#SubModule+end)
@@ -2613,6 +2634,15 @@ defined before begin().
 **Kind**: instance abstract property of [<code>Music</code>](#Music)  
 **Overrides**: [<code>myName</code>](#SubModule+myName)  
 **Access**: protected  
+<a name="SubModule+initialized"></a>
+
+### music.initialized : <code>boolean</code> ℗
+Has this subModule been initialized yet (Has begin() been called).
+
+**Kind**: instance property of [<code>Music</code>](#Music)  
+**Default**: <code>false</code>  
+**Access**: private  
+**Read only**: true  
 <a name="SubModule+initialize"></a>
 
 ### music.initialize()
@@ -3419,6 +3449,7 @@ Base class for all Sub-Modules.
         * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
         * [.common](#SubModule+common) : [<code>Common</code>](#Common)
         * *[.myName](#SubModule+myName) : <code>string</code>*
+        * [.initialized](#SubModule+initialized) : <code>boolean</code> ℗
         * *[.initialize()](#SubModule+initialize)*
         * [.begin(prefix, Discord, client, command, common)](#SubModule+begin)
         * [.end()](#SubModule+end)
@@ -3426,8 +3457,6 @@ Base class for all Sub-Modules.
         * *[.save()](#SubModule+save)*
     * _static_
         * [.extend(child)](#SubModule.extend)
-    * _inner_
-        * [~initialized](#SubModule..initialized) : <code>boolean</code> ℗
 
 <a name="SubModule+helpMessage"></a>
 
@@ -3492,6 +3521,15 @@ defined before begin().
 
 **Kind**: instance abstract property of [<code>SubModule</code>](#SubModule)  
 **Access**: protected  
+<a name="SubModule+initialized"></a>
+
+### subModule.initialized : <code>boolean</code> ℗
+Has this subModule been initialized yet (Has begin() been called).
+
+**Kind**: instance property of [<code>SubModule</code>](#SubModule)  
+**Default**: <code>false</code>  
+**Access**: private  
+**Read only**: true  
 <a name="SubModule+initialize"></a>
 
 ### *subModule.initialize()*
@@ -3545,14 +3583,6 @@ Extends SubModule as the base class of a child.
 | --- | --- | --- |
 | child | <code>Object</code> | The child class to extend. |
 
-<a name="SubModule..initialized"></a>
-
-### SubModule~initialized : <code>boolean</code> ℗
-Has this subModule been initialized yet (Has begin() been called).
-
-**Kind**: inner property of [<code>SubModule</code>](#SubModule)  
-**Default**: <code>false</code>  
-**Access**: private  
 <a name="commandHandler"></a>
 
 ## commandHandler : <code>function</code>

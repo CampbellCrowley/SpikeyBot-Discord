@@ -86,8 +86,9 @@ function SubModule() {
    * @private
    * @type {boolean}
    * @default
+   * @readonly
    */
-  let initialized = false;
+  this.initialized = false;
 
   /**
    * Initialize this submodule.
@@ -107,19 +108,19 @@ function SubModule() {
     this.command = command;
     this.common = common;
 
-    if (initialized) return;
+    if (this.initialized) return;
     this.initialize();
     common.log(this.myName + ' Init', this.myName);
-    initialized = true;
+    this.initialized = true;
   };
 
   /**
    * Trigger subModule to shutdown and get ready for process terminating.
    */
   this.end = function() {
-    if (!initialized) return;
+    if (!this.initialized) return;
     this.shutdown();
-    initialized = false;
+    this.initialized = false;
   };
 
   /**

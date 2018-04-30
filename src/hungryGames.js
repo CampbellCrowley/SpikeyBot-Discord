@@ -573,8 +573,8 @@ function HungryGames() {
   updateEvents();
   fs.watchFile(eventFile, function(curr, prev) {
     if (curr.mtime == prev.mtime) return;
-    if (common && common.log) {
-      common.log('Re-reading default events from file', 'HG');
+    if (self.common && self.common.log) {
+      self.common.log('Re-reading default events from file', 'HG');
     } else {
       console.log('HG: Re-reading default events from file');
     }
@@ -602,8 +602,8 @@ function HungryGames() {
   updateMessages();
   fs.watchFile(messageFile, function(curr, prev) {
     if (curr.mtime == prev.mtime) return;
-    if (common && common.log) {
-      common.log('Re-reading messages from file', 'HG');
+    if (self.common && self.common.log) {
+      self.common.log('Re-reading messages from file', 'HG');
     } else {
       console.log('HG: Re-reading messages from file');
     }
@@ -631,8 +631,8 @@ function HungryGames() {
   updateBattles();
   fs.watchFile(battleFile, function(curr, prev) {
     if (curr.mtime == prev.mtime) return;
-    if (common && common.log) {
-      common.log('Re-reading battles from file', 'HG');
+    if (self.common && self.common.log) {
+      self.common.log('Re-reading battles from file', 'HG');
     } else {
       console.log('HG: Re-reading battles from file');
     }
@@ -742,9 +742,9 @@ function HungryGames() {
    * @private
    */
   function setupHelp() {
-    exports.helpMessage = '`' + myPrefix + 'help` for Hungry Games help.';
+    self.helpMessage = '`' + self.myPrefix + 'help` for Hungry Games help.';
     // Format help message into rich embed.
-    let tmpHelp = new Discord.MessageEmbed();
+    let tmpHelp = new self.Discord.MessageEmbed();
     tmpHelp.setTitle(helpObject.title);
     tmpHelp.setURL(webURL + '#' + encodeURIComponent(helpObject.title));
     tmpHelp.setDescription(helpObject.description);
@@ -755,7 +755,8 @@ function HungryGames() {
           obj.title, titleURL + '```js\n' +
               obj.rows
                   .map(function(row) {
-                    return myPrefix + row.replaceAll('{prefix}', myPrefix);
+                    return self.myPrefix +
+                        row.replaceAll('{prefix}', self.myPrefix);
                   })
                   .join('\n') +
               '\n```',
@@ -770,7 +771,7 @@ function HungryGames() {
       try {
         handleCommand(msg);
       } catch (err) {
-        common.error('An error occured while perfoming command.', 'HG');
+        self.common.error('An error occured while perfoming command.', 'HG');
         console.log(err);
         reply(msg, 'Oopsies! Something is broken!');
       }
@@ -817,7 +818,7 @@ function HungryGames() {
               };
             }(key))
             .catch((err) => {
-              common.error('Failed to automatically resume games.', 'HG');
+              self.common.error('Failed to automatically resume games.', 'HG');
               console.log(err);
             });
       }
@@ -861,7 +862,7 @@ function HungryGames() {
    * @listens SpikeyBot~Command#hg
    */
   function handleCommand(msg) {
-    if (msg.content == myPrefix + 'help') {
+    if (msg.content == self.myPrefix + 'help') {
       help(msg);
       return;
     } else if (msg.content.split(' ')[1] == 'makemewin') {
@@ -976,7 +977,7 @@ function HungryGames() {
           endGame(msg, id);
           break;
         case 'save':
-          exports.save('async');
+          self.save('async');
           msg.channel.send('`Saving all data...`');
           break;
         case 'team':
@@ -989,7 +990,7 @@ function HungryGames() {
           break;
         default:
           reply(
-              msg, 'Oh noes! I can\'t understand that! "' + myPrefix +
+              msg, 'Oh noes! I can\'t understand that! "' + self.myPrefix +
                   'help" for help.');
           break;
       }
@@ -1195,7 +1196,7 @@ function HungryGames() {
    * Create a Player from a given Disord.User.
    *
    * @private
-   * @param {Discord.User} user User to make a Player from.
+   * @param {Discord~User} user User to make a Player from.
    * @return {HungryGames~Player} Player object created from User.
    */
   function makePlayer(user) {
@@ -1208,16 +1209,16 @@ function HungryGames() {
    * Delay a message to send at the given time in milliseconds since epoch.
    *
    * @private
-   * @param {Discord.TextChannel} channel The channel to send the message in.
+   * @param {Discord~TextChannel} channel The channel to send the message in.
    * @param {
-   *          Discord.StringResolvable|
+   *          Discord~StringResolvable|
    *          Discord~MessageOptions|
    *          Discord~MessageEmbed|
    *          Discord~MessageAttachment|
    *          Discord~MessageAttachment[]
    * } one The message to send.
    * @param {
-   *          Discord.StringResolvable|
+   *          Discord~StringResolvable|
    *          Discord~MessageOptions|
    *          Discord~MessageEmbed|
    *          Discord~MessageAttachment|
@@ -1230,7 +1231,7 @@ function HungryGames() {
     if (time <= Date.now()) {
       channel.send(one, two);
     } else {
-      client.setTimeout(function() {
+      self.client.setTimeout(function() {
         sendAtTime(channel, one, two, time);
       }, time - Date.now());
     }
@@ -1253,7 +1254,7 @@ function HungryGames() {
             msg,
             'This server already has a Hungry Games in progress. If you wish ' +
                 'to create a new one, you must end the current one first ' +
-                'with "' + myPrefix + 'end".');
+                'with "' + self.myPrefix + 'end".');
       }
       return;
     } else if (games[id] && games[id].currentGame) {
@@ -1316,7 +1317,7 @@ function HungryGames() {
    * and whether to include bots.
    *
    * @private
-   * @param {Discord.Collection<Discord.GuildMember>} members All members in
+   * @param {Discord~Collection<Discord~GuildMember>} members All members in
    * guild.
    * @param {string[]} excluded Array of ids of users that should not be
    * included in the games.
@@ -1457,8 +1458,8 @@ function HungryGames() {
       }
     } else {
       reply(
-          msg, 'There is no data to reset. Start a new game with "' + myPrefix +
-              'create".');
+          msg, 'There is no data to reset. Start a new game with "' +
+              self.myPrefix + 'create".');
     }
   }
   /**
@@ -1500,7 +1501,7 @@ function HungryGames() {
     if (games[id] && games[id].customEvents.bloodbath) {
       events = events.concat(games[id].customEvents.bloodbath);
     }
-    let file = new Discord.MessageAttachment();
+    let file = new self.Discord.MessageAttachment();
     file.setFile(Buffer.from(JSON.stringify(events, null, 2)));
     file.setName('BloodbathEvents.json');
     fetchStats(events);
@@ -1518,7 +1519,7 @@ function HungryGames() {
     if (games[id] && games[id].customEvents.player) {
       events = events.concat(games[id].customEvents.player);
     }
-    file = new Discord.MessageAttachment();
+    file = new self.Discord.MessageAttachment();
     file.setFile(Buffer.from(JSON.stringify(events, null, 2)));
     file.setName('PlayerEvents.json');
     fetchStats(events);
@@ -1536,7 +1537,7 @@ function HungryGames() {
     if (games[id] && games[id].customEvents.arena) {
       events = events.concat(games[id].customEvents.arena);
     }
-    file = new Discord.MessageAttachment();
+    file = new self.Discord.MessageAttachment();
     file.setFile(Buffer.from(JSON.stringify(events, null, 2)));
     file.setName('ArenaEvents.json');
     msg.channel.send('Arena Events (' + events.length + ')', file);
@@ -1554,8 +1555,8 @@ function HungryGames() {
     if (games[id] && games[id].currentGame &&
         games[id].currentGame.inProgress) {
       reply(
-          msg, 'A game is already in progress! ("' + myPrefix +
-              'next" for next day, or "' + myPrefix + 'end" to abort)');
+          msg, 'A game is already in progress! ("' + self.myPrefix +
+              'next" for next day, or "' + self.myPrefix + 'end" to abort)');
     } else {
       createGame(msg, id, true);
       let teamList = '';
@@ -1577,7 +1578,7 @@ function HungryGames() {
                                              .name +
                                          '`';
                                    } catch (err) {
-                                     common.error(
+                                     self.common.error(
                                          'Failed to find player' + player +
                                          ' in included users.');
                                      console.log(games[id].currentGame.teams);
@@ -1609,9 +1610,9 @@ function HungryGames() {
       }
 
       reply(
-          msg,
-          getMessage('gameStart') + (games[id].autoPlay ? '' : '\n("' +
-                                             myPrefix + 'next" for next day.)'),
+          msg, getMessage('gameStart') +
+              (games[id].autoPlay ? '' : '\n("' + self.myPrefix +
+                       'next" for next day.)'),
           (games[id].options.mentionEveryoneAtStart ? '@everyone\n' : '') +
               included + excluded);
       games[id].currentGame.inProgress = true;
@@ -1629,7 +1630,9 @@ function HungryGames() {
    */
   function pauseAutoplay(msg, id) {
     if (!games[id]) {
-      reply(msg, 'You must first create a game with "' + myPrefix + 'create".');
+      reply(
+          msg,
+          'You must first create a game with "' + self.myPrefix + 'create".');
     } else if (games[id].autoPlay) {
       msg.channel.send(
           '<@' + msg.author.id +
@@ -1637,8 +1640,8 @@ function HungryGames() {
       games[id].autoPlay = false;
     } else {
       reply(
-          msg, 'Not autoplaying. If you wish to autoplay, type "' + myPrefix +
-              'autoplay".');
+          msg, 'Not autoplaying. If you wish to autoplay, type "' +
+              self.myPrefix + 'autoplay".');
     }
   }
   /**
@@ -1655,7 +1658,7 @@ function HungryGames() {
     if (games[id].autoPlay && games[id].inProgress) {
       reply(
           msg, 'Already autoplaying. If you wish to stop autoplaying, type "' +
-              myPrefix + 'pause".');
+              self.myPrefix + 'pause".');
     } else {
       games[id].autoPlay = true;
       if (games[id].currentGame.inProgress &&
@@ -1666,7 +1669,8 @@ function HungryGames() {
         nextDay(msg, id);
       } else if (!games[id].currentGame.inProgress) {
         /* msg.channel.send(
-            "<@" + msg.author.id + "> `Autoplay is enabled, type \"" + myPrefix
+            "<@" + msg.author.id + "> `Autoplay is enabled, type \"" +
+           self.myPrefix
            +
             "start\" to begin!`"); */
         msg.channel.send(
@@ -1689,7 +1693,7 @@ function HungryGames() {
     if (!games[id] || !games[id].currentGame ||
         !games[id].currentGame.inProgress) {
       reply(
-          msg, 'You must start a game first! Use "' + myPrefix +
+          msg, 'You must start a game first! Use "' + self.myPrefix +
               'start" to start a game!');
       return;
     }
@@ -1702,7 +1706,7 @@ function HungryGames() {
             'I think I\'m already simulating... if this isn\'t true this ' +
                 'game has crashed and you must end the game.');
       } else {
-        intervals[id] = client.setInterval(function() {
+        intervals[id] = self.client.setInterval(function() {
           printEvent(msg, id);
         }, games[id].options.delayEvents);
       }
@@ -1822,7 +1826,7 @@ function HungryGames() {
 
       effectUser = function(i, kills) {
         if (!affectedUsers[i]) {
-          common.error(
+          self.common.error(
               'Affected users invalid index:' + i + '/' + affectedUsers.length,
               'HG');
           console.log(affectedUsers);
@@ -2013,7 +2017,7 @@ function HungryGames() {
     // Signal ready to display events.
     games[id].currentGame.day.state = 2;
 
-    let embed = new Discord.MessageEmbed();
+    let embed = new self.Discord.MessageEmbed();
     if (games[id].currentGame.day.num === 0) {
       embed.setTitle(getMessage('bloodbathStart'));
     } else {
@@ -2023,9 +2027,9 @@ function HungryGames() {
     }
     embed.setColor(defaultColor);
     msg.channel.send(embed);
-    command.disable('say', msg.channel.id);
+    self.command.disable('say', msg.channel.id);
     games[id].outputChannel = msg.channel.id;
-    intervals[id] = client.setInterval(function() {
+    intervals[id] = self.client.setInterval(function() {
       printEvent(msg, id);
     }, games[id].options.delayEvents);
   }
@@ -2051,7 +2055,8 @@ function HungryGames() {
       let eventIndex = weightedEvent(eventPool, deathRate);
       let eventTry = eventPool[eventIndex];
       if (!eventTry) {
-        common.error('Event at index ' + eventIndex + ' is invalid!', 'HG');
+        self.common.error(
+            'Event at index ' + eventIndex + ' is invalid!', 'HG');
         continue;
       }
 
@@ -2102,7 +2107,7 @@ function HungryGames() {
 
       return eventTry;
     }
-    common.error(
+    self.common.error(
         'Failed to find suitable event for ' + userPool.length + ' of ' +
             eventPool.length + ' events.',
         'HG');
@@ -2640,14 +2645,14 @@ function HungryGames() {
     let index = games[id].currentGame.day.state - 2;
     let events = games[id].currentGame.day.events;
     if (index == events.length) {
-      client.clearInterval(intervals[id]);
+      self.client.clearInterval(intervals[id]);
       delete intervals[id];
       printDay(msg, id);
     } else if (
         events[index].battle &&
         events[index].state < events[index].attacks.length) {
       const battleState = events[index].state;
-      let embed = new Discord.MessageEmbed();
+      let embed = new self.Discord.MessageEmbed();
       const message = events[index].attacks[battleState].message.split('\n');
       embed.addField(message[1], message[2]);
       embed.setColor([50, 0, 0]);
@@ -2686,7 +2691,7 @@ function HungryGames() {
             finalImage.getBuffer(Jimp.MIME_PNG, function(err, out) {
               // Attach file, then send.
               embed.attachFiles(
-                  [new Discord.MessageAttachment(out, 'hgEvent.png')]);
+                  [new self.Discord.MessageAttachment(out, 'hgEvent.png')]);
               // if (!battleMessage[id]) {
               msg.channel.send(message[0], embed).then((msg_) => {
                 battleMessage[id] = msg_;
@@ -2726,7 +2731,7 @@ function HungryGames() {
       if (events[index].icons.length === 0) {
         msg.channel.send(events[index].message);
       } else {
-        let embed = new Discord.MessageEmbed();
+        let embed = new self.Discord.MessageEmbed();
         embed.setDescription(events[index].message);
         embed.setColor([125, 0, 0]);
         let finalImage = new Jimp(
@@ -2749,7 +2754,7 @@ function HungryGames() {
           if (responses == events[index].icons.length) {
             finalImage.getBuffer(Jimp.MIME_PNG, function(err, out) {
               embed.attachFiles(
-                  [new Discord.MessageAttachment(out, 'hgBattle.png')]);
+                  [new self.Discord.MessageAttachment(out, 'hgBattle.png')]);
               msg.channel.send(embed);
             });
           }
@@ -2814,10 +2819,10 @@ function HungryGames() {
     }
 
     if (games[id].currentGame.numAlive != numAlive) {
-      common.error('Realtime alive count is incorrect!', 'HG');
+      self.common.error('Realtime alive count is incorrect!', 'HG');
     }
 
-    let finalMessage = new Discord.MessageEmbed();
+    let finalMessage = new self.Discord.MessageEmbed();
     finalMessage.setColor(defaultColor);
     if (numTeams == 1) {
       let teamName = games[id].currentGame.teams[lastTeam].name;
@@ -2935,7 +2940,7 @@ function HungryGames() {
       }
     }
 
-    let embed = new Discord.MessageEmbed();
+    let embed = new self.Discord.MessageEmbed();
     if (games[id].currentGame.day.num == 0) {
       embed.setTitle(getMessage('bloodbathEnd'));
     } else {
@@ -2987,7 +2992,7 @@ function HungryGames() {
         if (responses == games[id].currentGame.teams[lastTeam].players.length) {
           finalImage.getBuffer(Jimp.MIME_PNG, function(err, out) {
             finalMessage.attachFiles(
-                [new Discord.MessageAttachment(out, 'hgTeamVictor.png')]);
+                [new self.Discord.MessageAttachment(out, 'hgTeamVictor.png')]);
             sendAtTime(msg.channel, winnerTag, finalMessage, sendTime);
           });
         }
@@ -3010,7 +3015,7 @@ function HungryGames() {
             });
       });
     } else if (games[id].currentGame.day.num > 0) {
-      client.setTimeout(function() {
+      self.client.setTimeout(function() {
         let winnerTag = '';
         if (numAlive == 1) {
           if (games[id].options.mentionVictor) {
@@ -3024,7 +3029,7 @@ function HungryGames() {
     }
 
     if (games[id].currentGame.ended) {
-      let rankEmbed = new Discord.MessageEmbed();
+      let rankEmbed = new self.Discord.MessageEmbed();
       rankEmbed.setTitle('Final Ranks (kills)');
       let rankList = games[id]
                          .currentGame.includedUsers
@@ -3050,11 +3055,11 @@ function HungryGames() {
         rankEmbed.addField(3, rankList.join('\n'), true);
       }
       rankEmbed.setColor(defaultColor);
-      client.setTimeout(function() {
+      self.client.setTimeout(function() {
         msg.channel.send(rankEmbed);
       }, 5000);
       if (games[id].options.teamSize > 0) {
-        let teamRankEmbed = new Discord.MessageEmbed();
+        let teamRankEmbed = new self.Discord.MessageEmbed();
         teamRankEmbed.setTitle('Final Team Ranks');
         let teamRankList = games[id]
                                .currentGame.teams
@@ -3078,7 +3083,7 @@ function HungryGames() {
           teamRankEmbed.addField(3, teamRankList.join('\n'), true);
         }
         teamRankEmbed.setColor(defaultColor);
-        client.setTimeout(function() {
+        self.client.setTimeout(function() {
           msg.channel.send(teamRankEmbed);
         }, 8000);
       }
@@ -3088,7 +3093,7 @@ function HungryGames() {
     games[id].currentGame.day.events = [];
 
     if (games[id].autoPlay) {
-      client.setTimeout(function() {
+      self.client.setTimeout(function() {
         msg.channel.send('`Autoplaying...`')
             .then((msg) => {
               msg.delete({
@@ -3098,11 +3103,11 @@ function HungryGames() {
             })
             .catch(() => {});
       }, (games[id].options.delayDays > 2000 ? 1200 : 100));
-      client.setTimeout(function() {
+      self.client.setTimeout(function() {
         nextDay(msg, id);
       }, games[id].options.delayDays);
     } else {
-      command.enable('say', msg.channel.id);
+      self.command.enable('say', msg.channel.id);
     }
   }
   /**
@@ -3120,10 +3125,10 @@ function HungryGames() {
       games[id].currentGame.inProgress = false;
       games[id].currentGame.ended = true;
       games[id].autoPlay = false;
-      client.clearInterval(intervals[id]);
+      self.client.clearInterval(intervals[id]);
       delete intervals[id];
       delete battleMessage[id];
-      command.enable('say', games[id].outputChannel);
+      self.command.enable('say', games[id].outputChannel);
     }
   }
 
@@ -3137,7 +3142,9 @@ function HungryGames() {
    */
   function excludeUser(msg, id) {
     if (!games[id]) {
-      reply(msg, 'You must first create a game with "' + myPrefix + 'create".');
+      reply(
+          msg,
+          'You must first create a game with "' + self.myPrefix + 'create".');
     } else if (msg.mentions.users.size == 0) {
       reply(
           msg,
@@ -3161,7 +3168,7 @@ function HungryGames() {
               response += obj.username + ' removed from included players.\n';
               formTeams(id);
             } else {
-              common.error(
+              self.common.error(
                   'Failed to remove player from included list. (' + obj.id +
                       ')',
                   'HG');
@@ -3182,7 +3189,9 @@ function HungryGames() {
    */
   function includeUser(msg, id) {
     if (!games[id]) {
-      reply(msg, 'You must first create a game with "' + myPrefix + 'create".');
+      reply(
+          msg,
+          'You must first create a game with "' + self.myPrefix + 'create".');
     } else if (msg.mentions.users.size == 0) {
       reply(
           msg,
@@ -3263,7 +3272,7 @@ function HungryGames() {
                                       .name +
                                   '`';
                             } catch (err) {
-                              common.error(
+                              self.common.error(
                                   'Failed to find player ' + player +
                                   ' in included users.');
                               console.log(games[id].currentGame.includedUsers);
@@ -3278,7 +3287,7 @@ function HungryGames() {
               '\n\nSome players were left out! Please reset teams to fix ' +
               'this! (' + numPlayers + '/' +
               games[id].currentGame.includedUsers.length + ')';
-          common.error(
+          self.common.error(
               'Failed to list all players! ' + numPlayers + '/' +
               games[id].currentGame.includedUsers.length + ': ' + id);
         }
@@ -3286,7 +3295,7 @@ function HungryGames() {
     } else {
       stringList +=
           'There don\'t appear to be any included players. Have you ' +
-          'created a game with "' + myPrefix + 'create"?';
+          'created a game with "' + self.myPrefix + 'create"?';
     }
     if (games[id] && games[id].excludedUsers &&
         games[id].excludedUsers.length > 0) {
@@ -3334,13 +3343,13 @@ function HungryGames() {
     if (!games[id] || !games[id].currentGame) {
       reply(
           msg, 'You must create a game first before editing settings! Use "' +
-              myPrefix + 'create" to create a game.');
+              self.myPrefix + 'create" to create a game.');
     } else if (typeof option === 'undefined' || option.length == 0) {
       showOpts(msg, games[id].options);
     } else if (games[id].currentGame.inProgress) {
       reply(
           msg, 'You must end this game before changing settings. Use "' +
-              myPrefix + 'end" to abort this game.');
+              self.myPrefix + 'end" to abort this game.');
     } else if (typeof defaultOptions[option] === 'undefined') {
       reply(
           msg,
@@ -3370,7 +3379,8 @@ function HungryGames() {
                   ' from ' + old);
           if (option == 'teamSize' && value != 0) {
             reply(
-                msg, 'To reset teams to the correct size, type "' + myPrefix +
+                msg, 'To reset teams to the correct size, type "' +
+                    self.myPrefix +
                     'teams reset".\nThis will delete all teams, and create ' +
                     'new ones.');
           }
@@ -3451,16 +3461,16 @@ function HungryGames() {
     if (page < 0) page = 0;
     if (page >= bodyFields.length) page = bodyFields.length - 1;
 
-    let embed = new Discord.MessageEmbed();
+    let embed = new self.Discord.MessageEmbed();
     embed.setTitle('Current Options');
     embed.setFooter('Page ' + (page + 1) + ' of ' + (bodyFields.length));
     embed.setDescription('```js\n' + bodyFields[page].join('\n\n') + '```');
     embed.addField(
         'Change Number Example',
-        myPrefix + 'options probabilityOfResurrect 0.1', true);
+        self.myPrefix + 'options probabilityOfResurrect 0.1', true);
     embed.addField(
         'Change Boolean Example',
-        myPrefix + 'options teammatesCollaborate true', true);
+        self.myPrefix + 'options teammatesCollaborate true', true);
 
     if (optionMessages[msg.id]) {
       msg.edit(embed).then((msg_) => {
@@ -3490,11 +3500,11 @@ function HungryGames() {
       msg_.react(emoji.arrow_right);
     });
     msg_.awaitReactions(function(reaction, user) {
-          if (user.id != client.user.id) reaction.users.remove(user);
+          if (user.id != self.client.user.id) reaction.users.remove(user);
           return (reaction.emoji.name == emoji.arrow_right ||
                   reaction.emoji.name == emoji.arrow_left) /* &&
             user.id == msg_.origAuth*/ &&
-              user.id != client.user.id;
+              user.id != self.client.user.id;
         }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
       if (reactions.size == 0) {
         msg_.reactions.removeAll();
@@ -3742,7 +3752,9 @@ function HungryGames() {
    */
   function createEvent(msg, id) {
     if (!games[id]) {
-      reply(msg, 'You must first create a game with "' + myPrefix + 'create".');
+      reply(
+          msg,
+          'You must first create a game with "' + self.myPrefix + 'create".');
       return;
     }
     newEventMessages[msg.id] = msg;
@@ -3916,7 +3928,7 @@ function HungryGames() {
     let num = 0;
     regLis = function() {
       msg.awaitReactions(function(reaction, user) {
-           if (user.id != client.user.id) reaction.users.remove(user);
+           if (user.id != self.client.user.id) reaction.users.remove(user);
            return (reaction.emoji.name == emoji.arrow_up ||
                    reaction.emoji.name == emoji.arrow_down ||
                    reaction.emoji.name == emoji.white_check_mark) &&
@@ -4112,7 +4124,9 @@ function HungryGames() {
    */
   function removeEvent(msg, id) {
     if (!games[id]) {
-      reply(msg, 'You must first create a game with "' + myPrefix + 'create".');
+      reply(
+          msg,
+          'You must first create a game with "' + self.myPrefix + 'create".');
       return;
     }
     const split = msg.text.split(' ');
@@ -4225,7 +4239,7 @@ function HungryGames() {
    * new message.
    */
   function listEvents(msg, id, page, eventType, editMsg) {
-    let embed = new Discord.MessageEmbed();
+    let embed = new self.Discord.MessageEmbed();
 
     let events = [];
     let numCustomEvents = 0;
@@ -4293,7 +4307,7 @@ function HungryGames() {
       title = 'Arena';
       embed.setColor([0, 0, 255]);
     } else {
-      common.error('HOW COULD THIS BE? I\'ve made a mistake!', 'HG');
+      self.common.error('HOW COULD THIS BE? I\'ve made a mistake!', 'HG');
       reply(msg, 'BIG Oops! THIS SHOULD _never_ happen');
     }
 
@@ -4337,7 +4351,7 @@ function HungryGames() {
 
     callback = function(msg_) {
       msg_.awaitReactions(function(reaction, user) {
-            if (user.id != client.user.id) reaction.users.remove(user);
+            if (user.id != self.client.user.id) reaction.users.remove(user);
             return user.id == msg.author.id &&
                 (reaction.emoji.name == emoji.arrow_right ||
                  reaction.emoji.name == emoji.arrow_left ||
@@ -4521,12 +4535,12 @@ function HungryGames() {
    * synchronous.
    */
   this.save = function(opt) {
-    if (!initialized) return;
+    if (!self.initialized) return;
     if (opt == 'async') {
-      common.log('Saving async', 'HG');
+      self.common.log('Saving async', 'HG');
       fs.writeFile(saveFile, JSON.stringify(games), function() {});
     } else {
-      common.log('Saving sync', 'HG');
+      self.common.log('Saving sync', 'HG');
       fs.writeFileSync(saveFile, JSON.stringify(games));
     }
   };
@@ -4540,18 +4554,18 @@ function HungryGames() {
    * @listens Process#exit
    */
   function exit(code) {
-    if (common && common.log) {
-      common.log('Caught exit!' + code, 'HG');
+    if (self.common && self.common.log) {
+      self.common.log('Caught exit!' + code, 'HG');
     } else {
       console.log('Caught exit!', code);
     }
-    if (initialized /* && code == -1 */) {
-      exports.save();
+    if (self.initialized /* && code == -1 */) {
+      self.save();
     }
     try {
-      exports.end();
+      self.end();
     } catch (err) {
-      common.error('Exception during end!', 'HG');
+      self.common.error('Exception during end!', 'HG');
       console.log(err);
     }
   }
@@ -4564,20 +4578,20 @@ function HungryGames() {
    * @listens Process#SIGTERM
    */
   function sigint() {
-    if (common && common.log) {
-      common.log('Caught SIGINT!', 'HG');
+    if (self.common && self.common.log) {
+      self.common.log('Caught SIGINT!', 'HG');
     } else {
       console.log('Caught SIGINT!');
     }
-    if (initialized) {
+    if (self.initialized) {
       try {
-        exports.save();
+        self.save();
       } catch (err) {
-        common.error('FAILED TO SAVE ON SIGINT' + err, 'HG');
+        self.common.error('FAILED TO SAVE ON SIGINT' + err, 'HG');
       }
     }
     try {
-      exports.end();
+      self.end();
     } catch (err) {
     }
     process.removeListener('exit', exit);
