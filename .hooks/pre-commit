@@ -29,7 +29,8 @@ if [[ "$?" != 0 ]]; then
 fi
 
 echo "Creating docs"
-jsdoc2md src/*.js --private > docs/README.md
+JSDOC2MD="$(git rev-parse --show-toplevel)/node_modules/.bin/jsdoc2md"
+"$JSDOC2MD" src/*.js --private > docs/README.md
 
 if [[ "$?" != 0 ]]; then
   exit $?

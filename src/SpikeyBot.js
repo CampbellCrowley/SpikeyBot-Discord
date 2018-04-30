@@ -5,7 +5,7 @@ const auth = require('../auth.js');
 const client = new Discord.Client();
 
 /**
- * Main class that manages the bot.
+ * @classdesc Main class that manages the bot.
  * @class
  */
 function SpikeyBot() {
@@ -106,8 +106,7 @@ function SpikeyBot() {
   ];
 
   /**
-   * The introduction message the bots sends when joining a guild or pmme is
-   * used.
+   * The introduction message the bots sends when joining a guild.
    *
    * @private
    * @type {string}

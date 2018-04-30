@@ -3,7 +3,7 @@
 let dateFormat = require('dateformat');
 
 /**
- * Common functions accross my projects. Mostly just logging.
+ * @classdesc Common functions accross my projects. Mostly just logging.
  * @class
  */
 function Common() {

@@ -1,12 +1,18 @@
 ## Classes
 
 <dl>
-<dt><a href="#SpikeyBot">SpikeyBot</a></dt>
-<dd></dd>
 <dt><a href="#Common">Common</a></dt>
-<dd></dd>
+<dd><p>Common functions accross my projects. Mostly just logging.</p>
+</dd>
+<dt><a href="#Main">Main</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
+<dd><p>Basic commands and features for the bot.</p>
+</dd>
+<dt><a href="#SpikeyBot">SpikeyBot</a></dt>
+<dd><p>Main class that manages the bot.</p>
+</dd>
 <dt><a href="#SubModule">SubModule</a></dt>
-<dd></dd>
+<dd><p>Base class for all Sub-Modules.</p>
+</dd>
 </dl>
 
 ## Functions
@@ -242,106 +248,6 @@ to allow for another module to take our place.</p>
 <dt><a href="#unhandledRejection">unhandledRejection(reason, p)</a></dt>
 <dd><p>Handler for an unhandledRejection.</p>
 </dd>
-<dt><a href="#mention">mention(msg)</a> ⇒ <code>string</code></dt>
-<dd><p>Creates formatted string for mentioning the author of msg.</p>
-</dd>
-<dt><a href="#reply">reply(msg, text, post)</a> ⇒ <code>Promise</code></dt>
-<dd><p>Replies to the author and channel of msg with the given message.</p>
-</dd>
-<dt><a href="#begin">begin(prefix_, Discord_, client_, command_, common_)</a></dt>
-<dd><p>Initialize this submodule.</p>
-</dd>
-<dt><a href="#end">end()</a></dt>
-<dd><p>Shutdown and disable this submodule. Removes all event listeners.</p>
-</dd>
-<dt><a href="#save">save()</a></dt>
-<dd><p>Saves all data to files necessary for saving current state.</p>
-</dd>
-<dt><a href="#commandAddMe">commandAddMe(msg)</a> : <code>commandHandler</code></dt>
-<dd><p>Replies to message with URL for inviting the bot to a guild.</p>
-</dd>
-<dt><a href="#commandAdd">commandAdd(msg)</a></dt>
-<dd><p>Parses message and adds given numbers.</p>
-</dd>
-<dt><a href="#commandSimplify">commandSimplify(msg)</a></dt>
-<dd><p>Simplifies equation given in message.</p>
-</dd>
-<dt><a href="#simplify">simplify(formula)</a> ⇒ <code>string</code></dt>
-<dd><p>Simplifies given formula.</p>
-</dd>
-<dt><a href="#commandSolve">commandSolve(msg)</a></dt>
-<dd><p>Solve an equation.</p>
-</dd>
-<dt><a href="#commandEvaluate">commandEvaluate(msg)</a></dt>
-<dd><p>Evaluate a string as an equation with units.</p>
-</dd>
-<dt><a href="#commandGraph">commandGraph(msg)</a></dt>
-<dd><p>Graph a given equation by plugging in values for X and creating an image
-based off values.</p>
-</dd>
-<dt><a href="#commandDerive">commandDerive(msg)</a></dt>
-<dd><p>Take the derivative of a given equation in terms of dy/dx.</p>
-</dd>
-<dt><a href="#commandJS">commandJS(msg)</a></dt>
-<dd><p>Run javascript code in VM, then show user outcome.</p>
-</dd>
-<dt><a href="#commandTimer">commandTimer(msg)</a></dt>
-<dd><p>Set a timer for a certain about of time. After which, the bot will DM the
-user the message they specified.</p>
-</dd>
-<dt><a href="#commandSay">commandSay(msg)</a></dt>
-<dd><p>The user&#39;s message will be deleted and the bot will send an identical message
-without the command to make it seem like the bot sent the message.</p>
-</dd>
-<dt><a href="#commandCreateDate">commandCreateDate(msg)</a></dt>
-<dd><p>Tell the user the date when they created their Discord account.</p>
-</dd>
-<dt><a href="#commandJoinDate">commandJoinDate(msg)</a></dt>
-<dd><p>Tell the user the date when they joined the server the message was sent from.</p>
-</dd>
-<dt><a href="#commandPmMe">commandPmMe(msg)</a></dt>
-<dd><p>Send the user a PM with a greeting introducing who the bot is.</p>
-</dd>
-<dt><a href="#commandPmSpikey">commandPmSpikey(msg)</a></dt>
-<dd><p>Send a PM to SpikeyRobot with a message.</p>
-</dd>
-<dt><a href="#commandThotPm">commandThotPm(msg)</a></dt>
-<dd><p>Send a PM to a mentioned user semi-anonymously. Messages are copied to
-SpikeyRobot to monitor for abuse. This command only works for 3 people.</p>
-</dd>
-<dt><a href="#commandFlip">commandFlip(msg)</a></dt>
-<dd><p>Send an image of a coin, either Heads or Tails.</p>
-</dd>
-<dt><a href="#commandPurge">commandPurge(msg)</a></dt>
-<dd><p>Delete a given number of messages from a text channel.</p>
-</dd>
-<dt><a href="#commandBan">commandBan(msg)</a></dt>
-<dd><p>Ban a mentioed user and send a message saying they were banned.</p>
-</dd>
-<dt><a href="#commandSmite">commandSmite(msg)</a></dt>
-<dd><p>Remove all roles from a user and give them a role that prevents them from
-doing anything. Checks if all parties involved have permission to do this
-without the bot&#39;s help.</p>
-</dd>
-<dt><a href="#commandAvatar">commandAvatar(msg)</a></dt>
-<dd><p>Send a larger resolution version of the mentioned user&#39;s avatar.</p>
-</dd>
-<dt><a href="#commandPing">commandPing(msg)</a></dt>
-<dd><p>Reply to user with my ping to the Discord servers.</p>
-</dd>
-<dt><a href="#commandUptime">commandUptime(msg)</a></dt>
-<dd><p>Reply to message with the amount of time since the bot has been running.</p>
-</dd>
-<dt><a href="#commandGame">commandGame(msg)</a></dt>
-<dd><p>Reply to message saying what game the mentioned user is playing and possibly
-other information about their profile.</p>
-</dd>
-<dt><a href="#commandVersion">commandVersion(msg)</a></dt>
-<dd><p>Read the current version from package.json and show it to the user.</p>
-</dd>
-<dt><a href="#setTimer">setTimer(timer)</a></dt>
-<dd><p>Sets a timer for an amount of time with a message.</p>
-</dd>
 <dt><a href="#begin">begin(prefix_, Discord_, client_, command_, common_)</a></dt>
 <dd><p>Initialize this submodule.</p>
 </dd>
@@ -445,13 +351,782 @@ server.</p>
 </dd>
 </dl>
 
+<a name="Common"></a>
+
+## Common
+Common functions accross my projects. Mostly just logging.
+
+**Kind**: global class  
+
+* [Common](#Common)
+    * _instance_
+        * [.isRelease](#Common+isRelease) : <code>boolean</code>
+        * [.begin(_, isRelease)](#Common+begin)
+        * [.padIp(str)](#Common+padIp) ⇒ <code>string</code>
+        * [.getIPName(ip)](#Common+getIPName) ⇒ <code>string</code>
+        * [.updatePrefix(ip)](#Common+updatePrefix) ⇒ <code>string</code>
+        * [.log(message, ip)](#Common+log)
+        * [.error(message, ip)](#Common+error)
+    * _inner_
+        * [~mycolor](#Common..mycolor) : <code>number</code> ℗
+        * [~title](#Common..title) : <code>string</code> ℗
+        * [~prefixLength](#Common..prefixLength) : <code>number</code> ℗
+        * [~app](#Common..app) : <code>string</code> ℗
+        * [~getTrace()](#Common..getTrace) ⇒ <code>string</code> ℗
+
+<a name="Common+isRelease"></a>
+
+### common.isRelease : <code>boolean</code>
+Whether this should be shown as a release version, or a debug version in
+the log.
+
+**Kind**: instance property of [<code>Common</code>](#Common)  
+<a name="Common+begin"></a>
+
+### common.begin(_, isRelease)
+Initialize variables and settings for logging properly.
+
+**Kind**: instance method of [<code>Common</code>](#Common)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| _ | <code>\*</code> | Unused. Kept to match number of arguments with other versions of common.js. |
+| isRelease | <code>boolean</code> | Is this a release version, or a development version of the app running. |
+
+<a name="Common+padIp"></a>
+
+### common.padIp(str) ⇒ <code>string</code>
+Pad an IP address with zeroes
+
+**Kind**: instance method of [<code>Common</code>](#Common)  
+**Returns**: <code>string</code> - The padded address.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| str | <code>number</code> | The ipv4 address as a string to format. |
+
+<a name="Common+getIPName"></a>
+
+### common.getIPName(ip) ⇒ <code>string</code>
+Formats a given IP address by padding with zeroes, or completely replacing
+with a human readable alias if the address is a known location.
+
+**Kind**: instance method of [<code>Common</code>](#Common)  
+**Returns**: <code>string</code> - The formmatted address.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| ip | <code>string</code> | The ip address to format. |
+
+<a name="Common+updatePrefix"></a>
+
+### common.updatePrefix(ip) ⇒ <code>string</code>
+Format a prefix for a log message or error. Includes the ip before the
+message.
+
+**Kind**: instance method of [<code>Common</code>](#Common)  
+**Returns**: <code>string</code> - The formatted prefix for a log message.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| ip | <code>string</code> | The ip to include in the prefix. |
+
+<a name="Common+log"></a>
+
+### common.log(message, ip)
+Format a log message to be logged.
+
+**Kind**: instance method of [<code>Common</code>](#Common)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| message | <code>string</code> | The message to display. |
+| ip | <code>string</code> | The IP address or unique identifier of the client that caused this event to happen. |
+
+<a name="Common+error"></a>
+
+### common.error(message, ip)
+Format an error message to be logged.
+
+**Kind**: instance method of [<code>Common</code>](#Common)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| message | <code>string</code> | The message to display. |
+| ip | <code>string</code> | The IP address or unique identifier of the client that caused this event to happen. |
+
+<a name="Common..mycolor"></a>
+
+### Common~mycolor : <code>number</code> ℗
+The color code to prefix log messages with for this script.
+
+**Kind**: inner property of [<code>Common</code>](#Common)  
+**Default**: <code>0</code>  
+**Access**: private  
+<a name="Common..title"></a>
+
+### Common~title : <code>string</code> ℗
+The final formatted filename for logging.
+
+**Kind**: inner property of [<code>Common</code>](#Common)  
+**Access**: private  
+<a name="Common..prefixLength"></a>
+
+### Common~prefixLength : <code>number</code> ℗
+The number of characters reserved for the filename of the script.
+
+**Kind**: inner constant of [<code>Common</code>](#Common)  
+**Default**: <code>13</code>  
+**Access**: private  
+<a name="Common..app"></a>
+
+### Common~app : <code>string</code> ℗
+The script's filename to show in the log.
+
+**Kind**: inner constant of [<code>Common</code>](#Common)  
+**Access**: private  
+<a name="Common..getTrace"></a>
+
+### Common~getTrace() ⇒ <code>string</code> ℗
+Gets the name and line number of the current function stack.
+
+**Kind**: inner method of [<code>Common</code>](#Common)  
+**Returns**: <code>string</code> - Formatted string with length 20.  
+**Access**: private  
+<a name="Main"></a>
+
+## Main ⇐ [<code>SubModule</code>](#SubModule)
+Basic commands and features for the bot.
+
+**Kind**: global class  
+**Extends**: [<code>SubModule</code>](#SubModule)  
+
+* [Main](#Main) ⇐ [<code>SubModule</code>](#SubModule)
+    * _instance_
+        * [.helpMessage](#SubModule+helpMessage) : <code>string</code> \| <code>Discord~MessageEmbed</code>
+        * [.prefix](#SubModule+prefix) : <code>string</code>
+        * [.myPrefix](#SubModule+myPrefix) : <code>string</code>
+        * *[.prePrefix](#SubModule+prePrefix) : <code>string</code>*
+        * [.Discord](#SubModule+Discord) : <code>Discord</code>
+        * [.client](#SubModule+client) : <code>Discord~Client</code>
+        * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
+        * [.common](#SubModule+common) : [<code>Common</code>](#Common)
+        * [.myName](#SubModule+myName) : <code>string</code>
+        * [.initialize()](#SubModule+initialize)
+        * [.begin(prefix, Discord, client, command, common)](#SubModule+begin)
+        * [.end()](#SubModule+end)
+        * [.shutdown()](#SubModule+shutdown)
+        * *[.save()](#SubModule+save)*
+    * _inner_
+        * [~prevUserSayId](#Main..prevUserSayId) : <code>string</code> ℗
+        * [~prevUserSayCnt](#Main..prevUserSayCnt) : <code>number</code> ℗
+        * [~timers](#Main..timers) : [<code>Array.&lt;Timer&gt;</code>](#Main..Timer) ℗
+        * [~spikeyId](#Main..spikeyId) : <code>string</code> ℗
+        * [~introduction](#Main..introduction) : <code>string</code> ℗
+        * [~blockedmessage](#Main..blockedmessage) : <code>string</code> ℗
+        * [~addmessage](#Main..addmessage) : <code>string</code> ℗
+        * [~addLink](#Main..addLink) : <code>string</code> ℗
+        * [~banMsgs](#Main..banMsgs) : <code>Array.&lt;string&gt;</code> ℗
+        * [~defaultCode](#Main..defaultCode) : <code>Array.&lt;string&gt;</code> ℗
+        * [~helpObject](#Main..helpObject) ℗
+        * [~webURL](#Main..webURL) : <code>string</code> ℗
+        * [~mention(msg)](#Main..mention) ⇒ <code>string</code> ℗
+        * [~reply(msg, text, post)](#Main..reply) ⇒ <code>Promise</code> ℗
+        * [~commandAddMe(msg)](#Main..commandAddMe) : <code>commandHandler</code> ℗
+        * [~commandAdd(msg)](#Main..commandAdd) : <code>commandHandler</code> ℗
+        * [~commandSimplify(msg)](#Main..commandSimplify) : <code>commandHandler</code> ℗
+        * [~simplify(formula)](#Main..simplify) ⇒ <code>string</code> ℗
+        * [~commandSolve(msg)](#Main..commandSolve) : <code>commandHandler</code> ℗
+        * [~commandEvaluate(msg)](#Main..commandEvaluate) : <code>commandHandler</code> ℗
+        * [~commandGraph(msg)](#Main..commandGraph) : <code>commandHandler</code> ℗
+        * [~commandDerive(msg)](#Main..commandDerive) : <code>commandHandler</code> ℗
+        * [~commandJS(msg)](#Main..commandJS) : <code>commandHandler</code> ℗
+        * [~commandTimer(msg)](#Main..commandTimer) : <code>commandHandler</code> ℗
+        * [~commandSay(msg)](#Main..commandSay) : <code>commandHandler</code> ℗
+        * [~commandCreateDate(msg)](#Main..commandCreateDate) : <code>commandHandler</code> ℗
+        * [~commandJoinDate(msg)](#Main..commandJoinDate) : <code>commandHandler</code> ℗
+        * [~commandPmMe(msg)](#Main..commandPmMe) : <code>commandHandler</code> ℗
+        * [~commandPmSpikey(msg)](#Main..commandPmSpikey) : <code>commandHandler</code> ℗
+        * [~commandThotPm(msg)](#Main..commandThotPm) : <code>commandHandler</code> ℗
+        * [~commandFlip(msg)](#Main..commandFlip) : <code>commandHandler</code> ℗
+        * [~commandPurge(msg)](#Main..commandPurge) : <code>commandHandler</code> ℗
+        * [~commandBan(msg)](#Main..commandBan) : <code>commandHandler</code> ℗
+        * [~commandSmite(msg)](#Main..commandSmite) : <code>commandHandler</code> ℗
+        * [~commandAvatar(msg)](#Main..commandAvatar) : <code>commandHandler</code> ℗
+        * [~commandPing(msg)](#Main..commandPing) : <code>commandHandler</code> ℗
+        * [~commandUptime(msg)](#Main..commandUptime) : <code>commandHandler</code> ℗
+        * [~commandGame(msg)](#Main..commandGame) : <code>commandHandler</code> ℗
+        * [~commandVersion(msg)](#Main..commandVersion) : <code>commandHandler</code> ℗
+        * [~setTimer(timer)](#Main..setTimer) ℗
+        * [~Timer](#Main..Timer) : <code>Object</code>
+
+<a name="SubModule+helpMessage"></a>
+
+### main.helpMessage : <code>string</code> \| <code>Discord~MessageEmbed</code>
+The help message to show the user in the main help message.
+
+**Kind**: instance property of [<code>Main</code>](#Main)  
+**Overrides**: [<code>helpMessage</code>](#SubModule+helpMessage)  
+<a name="SubModule+prefix"></a>
+
+### main.prefix : <code>string</code>
+The main prefix in use for this bot. Only available after begin() is
+called.
+
+**Kind**: instance property of [<code>Main</code>](#Main)  
+**Read only**: true  
+<a name="SubModule+myPrefix"></a>
+
+### main.myPrefix : <code>string</code>
+The prefix this submodule uses. Formed by appending this.prefix to
+this.prePrefix. this.prePrefix must be defined before begin(), otherwise it
+is ignored.
+
+**Kind**: instance property of [<code>Main</code>](#Main)  
+**Read only**: true  
+<a name="SubModule+prePrefix"></a>
+
+### *main.prePrefix : <code>string</code>*
+The prefix for the global prefix for this subModule. Must be defined before
+begin(), otherwise it is ignored.
+
+**Kind**: instance abstract property of [<code>Main</code>](#Main)  
+**Default**: <code>&quot;&quot;</code>  
+<a name="SubModule+Discord"></a>
+
+### main.Discord : <code>Discord</code>
+The current Discord object instance of the bot.
+
+**Kind**: instance property of [<code>Main</code>](#Main)  
+<a name="SubModule+client"></a>
+
+### main.client : <code>Discord~Client</code>
+The current bot client.
+
+**Kind**: instance property of [<code>Main</code>](#Main)  
+<a name="SubModule+command"></a>
+
+### main.command : [<code>Command</code>](#SpikeyBot..Command)
+The command object for registering command listeners.
+
+**Kind**: instance property of [<code>Main</code>](#Main)  
+<a name="SubModule+common"></a>
+
+### main.common : [<code>Common</code>](#Common)
+The common object.
+
+**Kind**: instance property of [<code>Main</code>](#Main)  
+<a name="SubModule+myName"></a>
+
+### main.myName : <code>string</code>
+The name of this submodule. Used for differentiating in the log. Should be
+defined before begin().
+
+**Kind**: instance property of [<code>Main</code>](#Main)  
+**Overrides**: [<code>myName</code>](#SubModule+myName)  
+**Access**: protected  
+<a name="SubModule+initialize"></a>
+
+### main.initialize()
+The function called at the end of begin() for further initialization
+specific to the subModule. Must be defined before begin() is called.
+
+**Kind**: instance method of [<code>Main</code>](#Main)  
+**Overrides**: [<code>initialize</code>](#SubModule+initialize)  
+**Access**: protected  
+<a name="SubModule+begin"></a>
+
+### main.begin(prefix, Discord, client, command, common)
+Initialize this submodule.
+
+**Kind**: instance method of [<code>Main</code>](#Main)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| prefix | <code>string</code> | The global prefix for this bot. |
+| Discord | <code>Discord</code> | The Discord object for the API library. |
+| client | <code>Discord~Client</code> | The client that represents this bot. |
+| command | <code>Command</code> | The command instance in which to register command listeners. |
+| common | <code>Object</code> | Object storing common functions. |
+
+<a name="SubModule+end"></a>
+
+### main.end()
+Trigger subModule to shutdown and get ready for process terminating.
+
+**Kind**: instance method of [<code>Main</code>](#Main)  
+<a name="SubModule+shutdown"></a>
+
+### main.shutdown()
+Shutdown and disable this submodule. Removes all event listeners.
+
+**Kind**: instance method of [<code>Main</code>](#Main)  
+**Overrides**: [<code>shutdown</code>](#SubModule+shutdown)  
+<a name="SubModule+save"></a>
+
+### *main.save()*
+Saves all data to files necessary for saving current state.
+
+**Kind**: instance abstract method of [<code>Main</code>](#Main)  
+<a name="Main..prevUserSayId"></a>
+
+### Main~prevUserSayId : <code>string</code> ℗
+The id of the last user to user the say command.
+
+**Kind**: inner property of [<code>Main</code>](#Main)  
+**Access**: private  
+<a name="Main..prevUserSayCnt"></a>
+
+### Main~prevUserSayCnt : <code>number</code> ℗
+The number of times the say command has been used consecutively by the
+previous user.
+
+**Kind**: inner property of [<code>Main</code>](#Main)  
+**Access**: private  
+<a name="Main..timers"></a>
+
+### Main~timers : [<code>Array.&lt;Timer&gt;</code>](#Main..Timer) ℗
+Array of all timers currently set.
+
+**Kind**: inner property of [<code>Main</code>](#Main)  
+**Access**: private  
+<a name="Main..spikeyId"></a>
+
+### Main~spikeyId : <code>string</code> ℗
+SpikeyRobot's Discord ID
+
+**Kind**: inner constant of [<code>Main</code>](#Main)  
+**Access**: private  
+<a name="Main..introduction"></a>
+
+### Main~introduction : <code>string</code> ℗
+The introduction message the bots sends when pmme is used.
+
+**Kind**: inner constant of [<code>Main</code>](#Main)  
+**Access**: private  
+<a name="Main..blockedmessage"></a>
+
+### Main~blockedmessage : <code>string</code> ℗
+The message sent to the channel where the user asked to be DM'd, but we
+were unable to deliver the DM.
+
+**Kind**: inner constant of [<code>Main</code>](#Main)  
+**Access**: private  
+<a name="Main..addmessage"></a>
+
+### Main~addmessage : <code>string</code> ℗
+The message with instructions of how to add the bot to a server.
+
+**Kind**: inner constant of [<code>Main</code>](#Main)  
+**Access**: private  
+<a name="Main..addLink"></a>
+
+### Main~addLink : <code>string</code> ℗
+The URL that adds the bot to a new server.
+
+**Kind**: inner constant of [<code>Main</code>](#Main)  
+**Access**: private  
+<a name="Main..banMsgs"></a>
+
+### Main~banMsgs : <code>Array.&lt;string&gt;</code> ℗
+All of the possible messages to show when using the ban command.
+
+**Kind**: inner constant of [<code>Main</code>](#Main)  
+**Access**: private  
+<a name="Main..defaultCode"></a>
+
+### Main~defaultCode : <code>Array.&lt;string&gt;</code> ℗
+The default code to insert at the beginning of the js command.
+
+**Kind**: inner constant of [<code>Main</code>](#Main)  
+**Access**: private  
+<a name="Main..helpObject"></a>
+
+### Main~helpObject ℗
+The object that stores all data to be formatted into the help message.
+
+**Kind**: inner constant of [<code>Main</code>](#Main)  
+**Access**: private  
+<a name="Main..webURL"></a>
+
+### Main~webURL : <code>string</code> ℗
+The website base URL for pointing to for more help and documentation.
+
+**Kind**: inner constant of [<code>Main</code>](#Main)  
+**Access**: private  
+<a name="Main..mention"></a>
+
+### Main~mention(msg) ⇒ <code>string</code> ℗
+Creates formatted string for mentioning the author of msg.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Returns**: <code>string</code> - Formatted mention string.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message to format a mention for the author of. |
+
+<a name="Main..reply"></a>
+
+### Main~reply(msg, text, post) ⇒ <code>Promise</code> ℗
+Replies to the author and channel of msg with the given message.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Returns**: <code>Promise</code> - Promise of Discord~Message that we attempted to send.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message to reply to. |
+| text | <code>string</code> | The main body of the message. |
+| post | <code>string</code> | The footer of the message. |
+
+<a name="Main..commandAddMe"></a>
+
+### Main~commandAddMe(msg) : <code>commandHandler</code> ℗
+Replies to message with URL for inviting the bot to a guild.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Main..commandAdd"></a>
+
+### Main~commandAdd(msg) : <code>commandHandler</code> ℗
+Parses message and adds given numbers.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Main..commandSimplify"></a>
+
+### Main~commandSimplify(msg) : <code>commandHandler</code> ℗
+Simplifies equation given in message.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Main..simplify"></a>
+
+### Main~simplify(formula) ⇒ <code>string</code> ℗
+Simplifies given formula.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Returns**: <code>string</code> - Simplified formula.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| formula | <code>string</code> | The formula to attempt to simplify. |
+
+<a name="Main..commandSolve"></a>
+
+### Main~commandSolve(msg) : <code>commandHandler</code> ℗
+Solve an equation.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Main..commandEvaluate"></a>
+
+### Main~commandEvaluate(msg) : <code>commandHandler</code> ℗
+Evaluate a string as an equation with units.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Main..commandGraph"></a>
+
+### Main~commandGraph(msg) : <code>commandHandler</code> ℗
+Graph a given equation by plugging in values for X and creating an image
+based off values.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Main..commandDerive"></a>
+
+### Main~commandDerive(msg) : <code>commandHandler</code> ℗
+Take the derivative of a given equation in terms of dy/dx.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Main..commandJS"></a>
+
+### Main~commandJS(msg) : <code>commandHandler</code> ℗
+Run javascript code in VM, then show user outcome.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Main..commandTimer"></a>
+
+### Main~commandTimer(msg) : <code>commandHandler</code> ℗
+Set a timer for a certain about of time. After which, the bot will DM the
+user the message they specified.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Main..commandSay"></a>
+
+### Main~commandSay(msg) : <code>commandHandler</code> ℗
+The user's message will be deleted and the bot will send an identical
+message
+without the command to make it seem like the bot sent the message.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Main..commandCreateDate"></a>
+
+### Main~commandCreateDate(msg) : <code>commandHandler</code> ℗
+Tell the user the date when they created their Discord account.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Main..commandJoinDate"></a>
+
+### Main~commandJoinDate(msg) : <code>commandHandler</code> ℗
+Tell the user the date when they joined the server the message was sent
+from.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Main..commandPmMe"></a>
+
+### Main~commandPmMe(msg) : <code>commandHandler</code> ℗
+Send the user a PM with a greeting introducing who the bot is.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Main..commandPmSpikey"></a>
+
+### Main~commandPmSpikey(msg) : <code>commandHandler</code> ℗
+Send a PM to SpikeyRobot with a message.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Main..commandThotPm"></a>
+
+### Main~commandThotPm(msg) : <code>commandHandler</code> ℗
+Send a PM to a mentioned user semi-anonymously. Messages are copied to
+SpikeyRobot to monitor for abuse. This command only works for 3 people.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Main..commandFlip"></a>
+
+### Main~commandFlip(msg) : <code>commandHandler</code> ℗
+Send an image of a coin, either Heads or Tails.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Main..commandPurge"></a>
+
+### Main~commandPurge(msg) : <code>commandHandler</code> ℗
+Delete a given number of messages from a text channel.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Main..commandBan"></a>
+
+### Main~commandBan(msg) : <code>commandHandler</code> ℗
+Ban a mentioed user and send a message saying they were banned.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Main..commandSmite"></a>
+
+### Main~commandSmite(msg) : <code>commandHandler</code> ℗
+Remove all roles from a user and give them a role that prevents them from
+doing anything. Checks if all parties involved have permission to do this
+without the bot's help.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Main..commandAvatar"></a>
+
+### Main~commandAvatar(msg) : <code>commandHandler</code> ℗
+Send a larger resolution version of the mentioned user's avatar.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Main..commandPing"></a>
+
+### Main~commandPing(msg) : <code>commandHandler</code> ℗
+Reply to user with my ping to the Discord servers.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Main..commandUptime"></a>
+
+### Main~commandUptime(msg) : <code>commandHandler</code> ℗
+Reply to message with the amount of time since the bot has been running.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Main..commandGame"></a>
+
+### Main~commandGame(msg) : <code>commandHandler</code> ℗
+Reply to message saying what game the mentioned user is playing and
+possibly
+other information about their profile.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Main..commandVersion"></a>
+
+### Main~commandVersion(msg) : <code>commandHandler</code> ℗
+Read the current version from package.json and show it to the user.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Main..setTimer"></a>
+
+### Main~setTimer(timer) ℗
+Sets a timer for an amount of time with a message.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| timer | [<code>Timer</code>](#Main..Timer) | The settings for the timer. |
+
+<a name="Main..Timer"></a>
+
+### Main~Timer : <code>Object</code>
+An object storing information about a timer.
+
+**Kind**: inner typedef of [<code>Main</code>](#Main)  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| id | <code>string</code> | The id of the user who set the timer. |
+| message | <code>string</code> | The message for when the timer ends. |
+| time | <code>number</code> | The time since epoch at which the timer will end. |
+
 <a name="SpikeyBot"></a>
 
 ## SpikeyBot
+Main class that manages the bot.
+
 **Kind**: global class  
 
 * [SpikeyBot](#SpikeyBot)
-    * [new SpikeyBot()](#new_SpikeyBot_new)
     * [~Command](#SpikeyBot..Command)
         * [new Command()](#new_SpikeyBot..Command_new)
         * _instance_
@@ -481,7 +1156,8 @@ server.</p>
     * [~updateGame(password_, game)](#SpikeyBot..updateGame) ⇒ <code>boolean</code> ℗
     * [~mention(msg)](#SpikeyBot..mention) ⇒ <code>string</code> ℗
     * [~reply(msg, text, post)](#SpikeyBot..reply) ⇒ <code>Promise</code> ℗
-    * [~onMessage(msg)](#SpikeyBot..onMessage)
+    * [~onReady()](#SpikeyBot..onReady) ℗
+    * [~onMessage(msg)](#SpikeyBot..onMessage) ℗
     * [~onGuildCreate(guild)](#SpikeyBot..onGuildCreate) ℗
     * [~onGuildBanAdd(guild, user)](#SpikeyBot..onGuildBanAdd) ℗
     * [~commandToggleReact(msg)](#SpikeyBot..commandToggleReact) : <code>commandHandler</code> ℗
@@ -489,11 +1165,6 @@ server.</p>
     * [~commandUpdateGame(msg)](#SpikeyBot..commandUpdateGame) : <code>commandHandler</code> ℗
     * [~commandReboot(msg)](#SpikeyBot..commandReboot) : <code>commandHandler</code> ℗
     * [~commandReload(msg)](#SpikeyBot..commandReload) : <code>commandHandler</code> ℗
-
-<a name="new_SpikeyBot_new"></a>
-
-### new SpikeyBot()
-Main class that manages the bot.
 
 <a name="SpikeyBot..Command"></a>
 
@@ -660,8 +1331,7 @@ Discord IDs that are allowed to reboot the bot.
 <a name="SpikeyBot..introduction"></a>
 
 ### SpikeyBot~introduction : <code>string</code> ℗
-The introduction message the bots sends when joining a guild or pmme is
-used.
+The introduction message the bots sends when joining a guild.
 
 **Kind**: inner constant of [<code>SpikeyBot</code>](#SpikeyBot)  
 **Access**: private  
@@ -759,13 +1429,21 @@ Replies to the author and channel of msg with the given message.
 | text | <code>string</code> | The main body of the message. |
 | post | <code>string</code> | The footer of the message. |
 
+<a name="SpikeyBot..onReady"></a>
+
+### SpikeyBot~onReady() ℗
+The bot has become ready.
+
+**Kind**: inner method of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Access**: private  
 <a name="SpikeyBot..onMessage"></a>
 
-### SpikeyBot~onMessage(msg)
+### SpikeyBot~onMessage(msg) ℗
 Handle a message sent.
 
 **Kind**: inner method of [<code>SpikeyBot</code>](#SpikeyBot)  
 **Emits**: [<code>Command</code>](#event_Command)  
+**Access**: private  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -857,181 +1535,37 @@ Reload all sub modules by unloading then re-requiring.
 | --- | --- | --- |
 | msg | <code>Discord.Message</code> | Message that triggered command. |
 
-<a name="Common"></a>
-
-## Common
-**Kind**: global class  
-
-* [Common](#Common)
-    * [new Common()](#new_Common_new)
-    * _instance_
-        * [.isRelease](#Common+isRelease) : <code>boolean</code>
-        * [.begin(_, isRelease)](#Common+begin)
-        * [.padIp(str)](#Common+padIp) ⇒ <code>string</code>
-        * [.getIPName(ip)](#Common+getIPName) ⇒ <code>string</code>
-        * [.updatePrefix(ip)](#Common+updatePrefix) ⇒ <code>string</code>
-        * [.log(message, ip)](#Common+log)
-        * [.error(message, ip)](#Common+error)
-    * _inner_
-        * [~mycolor](#Common..mycolor) : <code>number</code> ℗
-        * [~title](#Common..title) : <code>string</code> ℗
-        * [~prefixLength](#Common..prefixLength) : <code>number</code> ℗
-        * [~app](#Common..app) : <code>string</code> ℗
-        * [~getTrace()](#Common..getTrace) ⇒ <code>string</code> ℗
-
-<a name="new_Common_new"></a>
-
-### new Common()
-Common functions accross my projects. Mostly just logging.
-
-<a name="Common+isRelease"></a>
-
-### common.isRelease : <code>boolean</code>
-Whether this should be shown as a release version, or a debug version in
-the log.
-
-**Kind**: instance property of [<code>Common</code>](#Common)  
-<a name="Common+begin"></a>
-
-### common.begin(_, isRelease)
-Initialize variables and settings for logging properly.
-
-**Kind**: instance method of [<code>Common</code>](#Common)  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| _ | <code>\*</code> | Unused. Kept to match number of arguments with other versions of common.js. |
-| isRelease | <code>boolean</code> | Is this a release version, or a development version of the app running. |
-
-<a name="Common+padIp"></a>
-
-### common.padIp(str) ⇒ <code>string</code>
-Pad an IP address with zeroes
-
-**Kind**: instance method of [<code>Common</code>](#Common)  
-**Returns**: <code>string</code> - The padded address.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| str | <code>number</code> | The ipv4 address as a string to format. |
-
-<a name="Common+getIPName"></a>
-
-### common.getIPName(ip) ⇒ <code>string</code>
-Formats a given IP address by padding with zeroes, or completely replacing
-with a human readable alias if the address is a known location.
-
-**Kind**: instance method of [<code>Common</code>](#Common)  
-**Returns**: <code>string</code> - The formmatted address.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| ip | <code>string</code> | The ip address to format. |
-
-<a name="Common+updatePrefix"></a>
-
-### common.updatePrefix(ip) ⇒ <code>string</code>
-Format a prefix for a log message or error. Includes the ip before the
-message.
-
-**Kind**: instance method of [<code>Common</code>](#Common)  
-**Returns**: <code>string</code> - The formatted prefix for a log message.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| ip | <code>string</code> | The ip to include in the prefix. |
-
-<a name="Common+log"></a>
-
-### common.log(message, ip)
-Format a log message to be logged.
-
-**Kind**: instance method of [<code>Common</code>](#Common)  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| message | <code>string</code> | The message to display. |
-| ip | <code>string</code> | The IP address or unique identifier of the client that caused this event to happen. |
-
-<a name="Common+error"></a>
-
-### common.error(message, ip)
-Format an error message to be logged.
-
-**Kind**: instance method of [<code>Common</code>](#Common)  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| message | <code>string</code> | The message to display. |
-| ip | <code>string</code> | The IP address or unique identifier of the client that caused this event to happen. |
-
-<a name="Common..mycolor"></a>
-
-### Common~mycolor : <code>number</code> ℗
-The color code to prefix log messages with for this script.
-
-**Kind**: inner property of [<code>Common</code>](#Common)  
-**Default**: <code>0</code>  
-**Access**: private  
-<a name="Common..title"></a>
-
-### Common~title : <code>string</code> ℗
-The final formatted filename for logging.
-
-**Kind**: inner property of [<code>Common</code>](#Common)  
-**Access**: private  
-<a name="Common..prefixLength"></a>
-
-### Common~prefixLength : <code>number</code> ℗
-The number of characters reserved for the filename of the script.
-
-**Kind**: inner constant of [<code>Common</code>](#Common)  
-**Default**: <code>13</code>  
-**Access**: private  
-<a name="Common..app"></a>
-
-### Common~app : <code>string</code> ℗
-The script's filename to show in the log.
-
-**Kind**: inner constant of [<code>Common</code>](#Common)  
-**Access**: private  
-<a name="Common..getTrace"></a>
-
-### Common~getTrace() ⇒ <code>string</code> ℗
-Gets the name and line number of the current function stack.
-
-**Kind**: inner method of [<code>Common</code>](#Common)  
-**Returns**: <code>string</code> - Formatted string with length 20.  
-**Access**: private  
 <a name="SubModule"></a>
 
 ## SubModule
+Base class for all Sub-Modules.
+
 **Kind**: global class  
 
 * [SubModule](#SubModule)
-    * [new SubModule()](#new_SubModule_new)
-    * [.helpMessage](#SubModule+helpMessage) : <code>string</code> \| <code>Discord.MessageEmbed</code>
-    * [.prefix](#SubModule+prefix) : <code>string</code>
-    * [.myPrefix](#SubModule+myPrefix) : <code>string</code>
-    * [.prePrefix](#SubModule+prePrefix) : <code>string</code>
-    * [.Discord](#SubModule+Discord) : <code>Discord</code>
-    * [.client](#SubModule+client) : <code>Discord.Client</code>
-    * [.command](#SubModule+command) : <code>Command</code>
-    * [.common](#SubModule+common) : [<code>Common</code>](#Common)
-    * *[.myName](#SubModule+myName) : <code>string</code>*
-    * *[.initialize()](#SubModule+initialize) : <code>function</code>*
-    * [.begin(prefix, Discord, client, command, common)](#SubModule+begin)
-    * *[.end()](#SubModule+end)*
-    * [.save()](#SubModule+save)
-
-<a name="new_SubModule_new"></a>
-
-### new SubModule()
-Base class for all Sub-Modules.
+    * _instance_
+        * [.helpMessage](#SubModule+helpMessage) : <code>string</code> \| <code>Discord~MessageEmbed</code>
+        * [.prefix](#SubModule+prefix) : <code>string</code>
+        * [.myPrefix](#SubModule+myPrefix) : <code>string</code>
+        * *[.prePrefix](#SubModule+prePrefix) : <code>string</code>*
+        * [.Discord](#SubModule+Discord) : <code>Discord</code>
+        * [.client](#SubModule+client) : <code>Discord~Client</code>
+        * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
+        * [.common](#SubModule+common) : [<code>Common</code>](#Common)
+        * *[.myName](#SubModule+myName) : <code>string</code>*
+        * *[.initialize()](#SubModule+initialize)*
+        * [.begin(prefix, Discord, client, command, common)](#SubModule+begin)
+        * [.end()](#SubModule+end)
+        * *[.shutdown()](#SubModule+shutdown)*
+        * *[.save()](#SubModule+save)*
+    * _static_
+        * [.extend(child)](#SubModule.extend)
+    * _inner_
+        * [~initialized](#SubModule..initialized) : <code>boolean</code> ℗
 
 <a name="SubModule+helpMessage"></a>
 
-### subModule.helpMessage : <code>string</code> \| <code>Discord.MessageEmbed</code>
+### subModule.helpMessage : <code>string</code> \| <code>Discord~MessageEmbed</code>
 The help message to show the user in the main help message.
 
 **Kind**: instance property of [<code>SubModule</code>](#SubModule)  
@@ -1054,11 +1588,11 @@ is ignored.
 **Read only**: true  
 <a name="SubModule+prePrefix"></a>
 
-### subModule.prePrefix : <code>string</code>
+### *subModule.prePrefix : <code>string</code>*
 The prefix for the global prefix for this subModule. Must be defined before
 begin(), otherwise it is ignored.
 
-**Kind**: instance property of [<code>SubModule</code>](#SubModule)  
+**Kind**: instance abstract property of [<code>SubModule</code>](#SubModule)  
 **Default**: <code>&quot;&quot;</code>  
 <a name="SubModule+Discord"></a>
 
@@ -1068,13 +1602,13 @@ The current Discord object instance of the bot.
 **Kind**: instance property of [<code>SubModule</code>](#SubModule)  
 <a name="SubModule+client"></a>
 
-### subModule.client : <code>Discord.Client</code>
+### subModule.client : <code>Discord~Client</code>
 The current bot client.
 
 **Kind**: instance property of [<code>SubModule</code>](#SubModule)  
 <a name="SubModule+command"></a>
 
-### subModule.command : <code>Command</code>
+### subModule.command : [<code>Command</code>](#SpikeyBot..Command)
 The command object for registering command listeners.
 
 **Kind**: instance property of [<code>SubModule</code>](#SubModule)  
@@ -1094,7 +1628,7 @@ defined before begin().
 **Access**: protected  
 <a name="SubModule+initialize"></a>
 
-### *subModule.initialize() : <code>function</code>*
+### *subModule.initialize()*
 The function called at the end of begin() for further initialization
 specific to the subModule. Must be defined before begin() is called.
 
@@ -1111,22 +1645,47 @@ Initialize this submodule.
 | --- | --- | --- |
 | prefix | <code>string</code> | The global prefix for this bot. |
 | Discord | <code>Discord</code> | The Discord object for the API library. |
-| client | <code>Discord.Client</code> | The client that represents this bot. |
+| client | <code>Discord~Client</code> | The client that represents this bot. |
 | command | <code>Command</code> | The command instance in which to register command listeners. |
 | common | <code>Object</code> | Object storing common functions. |
 
 <a name="SubModule+end"></a>
 
-### *subModule.end()*
+### subModule.end()
+Trigger subModule to shutdown and get ready for process terminating.
+
+**Kind**: instance method of [<code>SubModule</code>](#SubModule)  
+<a name="SubModule+shutdown"></a>
+
+### *subModule.shutdown()*
 Shutdown and disable this submodule. Removes all event listeners.
 
 **Kind**: instance abstract method of [<code>SubModule</code>](#SubModule)  
 <a name="SubModule+save"></a>
 
-### subModule.save()
+### *subModule.save()*
 Saves all data to files necessary for saving current state.
 
-**Kind**: instance method of [<code>SubModule</code>](#SubModule)  
+**Kind**: instance abstract method of [<code>SubModule</code>](#SubModule)  
+<a name="SubModule.extend"></a>
+
+### SubModule.extend(child)
+Extends SubModule as the base class of a child.
+
+**Kind**: static method of [<code>SubModule</code>](#SubModule)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| child | <code>Object</code> | The child class to extend. |
+
+<a name="SubModule..initialized"></a>
+
+### SubModule~initialized : <code>boolean</code> ℗
+Has this subModule been initialized yet (Has begin() been called).
+
+**Kind**: inner property of [<code>SubModule</code>](#SubModule)  
+**Default**: <code>false</code>  
+**Access**: private  
 <a name="updateEvents"></a>
 
 ## updateEvents()
@@ -2077,356 +2636,6 @@ Handler for an unhandledRejection.
 | --- | --- | --- |
 | reason | <code>Object</code> | Reason for rejection. |
 | p | <code>Promise</code> | The promise that caused the rejection. |
-
-<a name="mention"></a>
-
-## mention(msg) ⇒ <code>string</code>
-Creates formatted string for mentioning the author of msg.
-
-**Kind**: global function  
-**Returns**: <code>string</code> - Formatted mention string.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord.Message</code> | Message to format a mention for the author of. |
-
-<a name="reply"></a>
-
-## reply(msg, text, post) ⇒ <code>Promise</code>
-Replies to the author and channel of msg with the given message.
-
-**Kind**: global function  
-**Returns**: <code>Promise</code> - Promise of Discord.Message that we attempted to send.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord.Message</code> | Message to reply to. |
-| text | <code>string</code> | The main body of the message. |
-| post | <code>string</code> | The footer of the message. |
-
-<a name="begin"></a>
-
-## begin(prefix_, Discord_, client_, command_, common_)
-Initialize this submodule.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| prefix_ | <code>string</code> | The global prefix for this bot. |
-| Discord_ | <code>Discord</code> | The Discord object for the API library. |
-| client_ | <code>Discord.Client</code> | The client that represents this bot. |
-| command_ | <code>Command</code> | The command instance in which to register command listeners. |
-| common_ | <code>Object</code> | Object storing common functions. |
-
-<a name="end"></a>
-
-## end()
-Shutdown and disable this submodule. Removes all event listeners.
-
-**Kind**: global function  
-<a name="save"></a>
-
-## save()
-Saves all data to files necessary for saving current state.
-
-**Kind**: global function  
-<a name="commandAddMe"></a>
-
-## commandAddMe(msg) : <code>commandHandler</code>
-Replies to message with URL for inviting the bot to a guild.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord.Message</code> | Message that triggered command. |
-
-<a name="commandAdd"></a>
-
-## commandAdd(msg)
-Parses message and adds given numbers.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord.Message</code> | Message that triggered command. |
-
-<a name="commandSimplify"></a>
-
-## commandSimplify(msg)
-Simplifies equation given in message.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord.Message</code> | Message that triggered command. |
-
-<a name="simplify"></a>
-
-## simplify(formula) ⇒ <code>string</code>
-Simplifies given formula.
-
-**Kind**: global function  
-**Returns**: <code>string</code> - Simplified formula.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| formula | <code>string</code> | The formula to attempt to simplify. |
-
-<a name="commandSolve"></a>
-
-## commandSolve(msg)
-Solve an equation.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord.Message</code> | Message that triggered command. |
-
-<a name="commandEvaluate"></a>
-
-## commandEvaluate(msg)
-Evaluate a string as an equation with units.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord.Message</code> | Message that triggered command. |
-
-<a name="commandGraph"></a>
-
-## commandGraph(msg)
-Graph a given equation by plugging in values for X and creating an image
-based off values.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord.Message</code> | Message that triggered command. |
-
-<a name="commandDerive"></a>
-
-## commandDerive(msg)
-Take the derivative of a given equation in terms of dy/dx.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord.Message</code> | Message that triggered command. |
-
-<a name="commandJS"></a>
-
-## commandJS(msg)
-Run javascript code in VM, then show user outcome.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord.Message</code> | Message that triggered command. |
-
-<a name="commandTimer"></a>
-
-## commandTimer(msg)
-Set a timer for a certain about of time. After which, the bot will DM the
-user the message they specified.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord.Message</code> | Message that triggered command. |
-
-<a name="commandSay"></a>
-
-## commandSay(msg)
-The user's message will be deleted and the bot will send an identical message
-without the command to make it seem like the bot sent the message.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord.Message</code> | Message that triggered command. |
-
-<a name="commandCreateDate"></a>
-
-## commandCreateDate(msg)
-Tell the user the date when they created their Discord account.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord.Message</code> | Message that triggered command. |
-
-<a name="commandJoinDate"></a>
-
-## commandJoinDate(msg)
-Tell the user the date when they joined the server the message was sent from.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord.Message</code> | Message that triggered command. |
-
-<a name="commandPmMe"></a>
-
-## commandPmMe(msg)
-Send the user a PM with a greeting introducing who the bot is.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord.Message</code> | Message that triggered command. |
-
-<a name="commandPmSpikey"></a>
-
-## commandPmSpikey(msg)
-Send a PM to SpikeyRobot with a message.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord.Message</code> | Message that triggered command. |
-
-<a name="commandThotPm"></a>
-
-## commandThotPm(msg)
-Send a PM to a mentioned user semi-anonymously. Messages are copied to
-SpikeyRobot to monitor for abuse. This command only works for 3 people.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord.Message</code> | Message that triggered command. |
-
-<a name="commandFlip"></a>
-
-## commandFlip(msg)
-Send an image of a coin, either Heads or Tails.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord.Message</code> | Message that triggered command. |
-
-<a name="commandPurge"></a>
-
-## commandPurge(msg)
-Delete a given number of messages from a text channel.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord.Message</code> | Message that triggered command. |
-
-<a name="commandBan"></a>
-
-## commandBan(msg)
-Ban a mentioed user and send a message saying they were banned.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord.Message</code> | Message that triggered command. |
-
-<a name="commandSmite"></a>
-
-## commandSmite(msg)
-Remove all roles from a user and give them a role that prevents them from
-doing anything. Checks if all parties involved have permission to do this
-without the bot's help.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord.Message</code> | Message that triggered command. |
-
-<a name="commandAvatar"></a>
-
-## commandAvatar(msg)
-Send a larger resolution version of the mentioned user's avatar.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord.Message</code> | Message that triggered command. |
-
-<a name="commandPing"></a>
-
-## commandPing(msg)
-Reply to user with my ping to the Discord servers.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord.Message</code> | Message that triggered command. |
-
-<a name="commandUptime"></a>
-
-## commandUptime(msg)
-Reply to message with the amount of time since the bot has been running.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord.Message</code> | Message that triggered command. |
-
-<a name="commandGame"></a>
-
-## commandGame(msg)
-Reply to message saying what game the mentioned user is playing and possibly
-other information about their profile.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord.Message</code> | Message that triggered command. |
-
-<a name="commandVersion"></a>
-
-## commandVersion(msg)
-Read the current version from package.json and show it to the user.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord.Message</code> | Message that triggered command. |
-
-<a name="setTimer"></a>
-
-## setTimer(timer)
-Sets a timer for an amount of time with a message.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| timer | <code>Object</code> | The settings for the timer. |
-| timer.id | <code>string</code> | The id of the user who set the timer. |
-| timer.message | <code>string</code> | The message for when the timer ends. |
-| timer.time | <code>number</code> | The time since epoch at which the timer will end. |
 
 <a name="begin"></a>
 
