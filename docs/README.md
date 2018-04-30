@@ -3062,6 +3062,7 @@ Main class that manages the bot.
             * [~cmds](#SpikeyBot..Command..cmds) : [<code>Object.&lt;commandHandler&gt;</code>](#commandHandler) ℗
             * [~blacklist](#SpikeyBot..Command..blacklist) : <code>Object.&lt;Array.&lt;string&gt;&gt;</code> ℗
     * [~testMode](#SpikeyBot..testMode) : <code>boolean</code> ℗
+    * [~testInstance](#SpikeyBot..testInstance) : <code>boolean</code> ℗
     * [~subModuleNames](#SpikeyBot..subModuleNames) : <code>Array.&lt;string&gt;</code> ℗
     * [~setDev](#SpikeyBot..setDev) : <code>boolean</code> ℗
     * [~minimal](#SpikeyBot..minimal) : <code>boolean</code> ℗
@@ -3190,6 +3191,14 @@ List of disabled commands, and the channels they are disabled in.
 
 ### SpikeyBot~testMode : <code>boolean</code> ℗
 Is the bot currently responding as a unit test.
+
+**Kind**: inner property of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Access**: private  
+<a name="SpikeyBot..testInstance"></a>
+
+### SpikeyBot~testInstance : <code>boolean</code> ℗
+Is the bot started with the intent of solely running a unit test. Reduces
+messages sent that are unnecessary.
 
 **Kind**: inner property of [<code>SpikeyBot</code>](#SpikeyBot)  
 **Access**: private  

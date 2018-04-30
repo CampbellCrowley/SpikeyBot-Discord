@@ -25,6 +25,14 @@ function SpikeyBot() {
    */
   let testMode = false;
   /**
+   * Is the bot started with the intent of solely running a unit test. Reduces
+   * messages sent that are unnecessary.
+   *
+   * @private
+   * @type {boolean}
+   */
+  let testInstance = false;
+  /**
    * The list of all submodules to load.
    *
    * @private
@@ -61,13 +69,18 @@ function SpikeyBot() {
     } else if (
         process.argv[i] === 'minimal' || process.argv[i] === 'onlymusic') {
       minimal = true;
+    } else if (process.argv[i] === 'test') {
+      testInstance = true;
     } else if (i > 1 && typeof process.argv[i] === 'string') {
       subModuleNames.push(process.argv[i]);
     }
   }
   // Attempt to load submodules.
   for (let i in subModuleNames) {
-    if (typeof subModuleNames[i] !== 'string') continue;
+    if (typeof subModuleNames[i] !== 'string' ||
+        !subModuleNames[i].startsWith("./")) {
+      continue;
+    }
     try {
       subModules[i] = require(subModuleNames[i]);
     } catch (err) {
@@ -375,10 +388,18 @@ function SpikeyBot() {
    */
   function onReady() {
     common.log(`Logged in as ${client.user.tag}!`);
-    if (!minimal) updateGame(prefix + 'help for help');
-    client.users.fetch(spikeyId).then((user) => {
-      user.send('I just rebooted (JS)' + (minimal ? ' ONLYMUSIC' : ' ALL'));
-    });
+    if (!minimal) {
+      if (testInstance) {
+        updateGame('Running unit test...');
+      } else {
+        updateGame(prefix + 'help for help');
+      }
+    }
+    if (!testInstance) {
+      client.users.fetch(spikeyId).then((user) => {
+        user.send('I just rebooted (JS)' + (minimal ? ' ONLYMUSIC' : ' ALL'));
+      });
+    }
     for (let i in subModules) {
       if (!subModules[i] instanceof Object || !subModules[i].begin) continue;
       try {

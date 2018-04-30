@@ -281,6 +281,9 @@ function Main() {
     self.command.on('game', commandGame);
     self.command.on('version', commandVersion);
 
+    self.client.on('guildCreate', onGuildCreate);
+    self.client.on('guildBanAdd', onGuildBanAdd);
+
     fs.readFile('./save/timers.dat', function(err, file) {
       if (err) return;
       let msg = JSON.parse(file);
@@ -340,10 +343,12 @@ function Main() {
     self.command.deleteEvent('game');
     self.command.deleteEvent('version');
 
+    self.client.removeListener('guildCreate', onGuildCreate);
+    self.client.removeListener('guildBanAdd', onGuildBanAdd);
+
     fs.writeFileSync('./save/timers.dat', JSON.stringify({timers: timers}));
   };
 
-  this.client.on('guildCreate', onGuildCreate);
   /**
    * Handle being added to a guild.
    *
@@ -371,7 +376,6 @@ function Main() {
     }
   }
 
-  this.client.on('guildBanAdd', onGuildBanAdd);
   /**
    * Handle user banned on a guild.
    *

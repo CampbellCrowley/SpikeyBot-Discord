@@ -25,6 +25,7 @@ let bot = spawn(
     [
       'src/SpikeyBot.js',
       'dev',
+      'test',
       './main.js',
       './music.js',
       './hungryGames.js',
