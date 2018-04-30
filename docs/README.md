@@ -190,7 +190,7 @@ Hunger Games simulator.
         * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
         * [.common](#SubModule+common) : [<code>Common</code>](#Common)
         * *[.myName](#SubModule+myName) : <code>string</code>*
-        * [.initialized](#SubModule+initialized) : <code>boolean</code> ℗
+        * [.initialized](#SubModule+initialized) : <code>boolean</code>
         * [.initialize()](#SubModule+initialize)
         * [.begin(prefix, Discord, client, command, common)](#SubModule+begin)
         * [.end()](#SubModule+end)
@@ -228,7 +228,7 @@ Hunger Games simulator.
         * [~roleName](#HungryGames..roleName) : <code>string</code> ℗
         * [~numEventsPerPage](#HungryGames..numEventsPerPage) : <code>number</code> ℗
         * [~maxReactAwaitTime](#HungryGames..maxReactAwaitTime) : <code>number</code> ℗
-        * [~defaultOption](#HungryGames..defaultOption) : <code>Object</code> ℗
+        * [~defaultOptions](#HungryGames..defaultOptions) : <code>Object.&lt;{value: (string\|number\|boolean), values: ?Array.&lt;string&gt;, comment: string}&gt;</code> ℗
         * [~lotsOfDeathRate](#HungryGames..lotsOfDeathRate) : <code>number</code> ℗
         * [~littleDeathRate](#HungryGames..littleDeathRate) : <code>number</code> ℗
         * [~defaultColor](#HungryGames..defaultColor) : <code>Discord~ColorResolveable</code> ℗
@@ -245,23 +245,23 @@ Hunger Games simulator.
         * [~updateBattles()](#HungryGames..updateBattles) ℗
         * [~setupHelp()](#HungryGames..setupHelp) ℗
         * [~handleMessageEdit(oldMsg, newMsg)](#HungryGames..handleMessageEdit) ℗
-        * [~handleCommand(msg)](#HungryGames..handleCommand) ℗
+        * [~handleCommand(msg)](#HungryGames..handleCommand) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~mention(msg)](#HungryGames..mention) ⇒ <code>string</code> ℗
         * [~reply(msg, text, post)](#HungryGames..reply) ⇒ <code>Promise.&lt;Discord~Message&gt;</code> ℗
         * [~checkForRole(msg)](#HungryGames..checkForRole) ⇒ <code>boolean</code> ℗
         * [~checkPerms(msg, cb)](#HungryGames..checkPerms) ℗
         * [~makePlayer(user)](#HungryGames..makePlayer) ⇒ [<code>Player</code>](#HungryGames..Player) ℗
         * [~sendAtTime(channel, one, two, time)](#HungryGames..sendAtTime) ℗
-        * [~createGame(msg, id, [silent])](#HungryGames..createGame) ℗
+        * [~createGame(msg, id, [silent])](#HungryGames..createGame) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~getAllPlayers(members, excluded, bots)](#HungryGames..getAllPlayers) ⇒ [<code>Array.&lt;Player&gt;</code>](#HungryGames..Player) ℗
         * [~formTeams(id)](#HungryGames..formTeams) ℗
-        * [~resetGame(msg, id)](#HungryGames..resetGame) ℗
-        * [~showGameInfo(msg, id)](#HungryGames..showGameInfo) ℗
-        * [~showGameEvents(msg, id)](#HungryGames..showGameEvents) ℗
-        * [~startGame(msg, id)](#HungryGames..startGame) ℗
-        * [~pauseAutoplay(msg, id)](#HungryGames..pauseAutoplay) ℗
-        * [~startAutoplay(msg, id)](#HungryGames..startAutoplay) ℗
-        * [~nextDay(msg, id)](#HungryGames..nextDay) ℗
+        * [~resetGame(msg, id)](#HungryGames..resetGame) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+        * [~showGameInfo(msg, id)](#HungryGames..showGameInfo) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+        * [~showGameEvents(msg, id)](#HungryGames..showGameEvents) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+        * [~startGame(msg, id)](#HungryGames..startGame) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+        * [~pauseAutoplay(msg, id)](#HungryGames..pauseAutoplay) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+        * [~startAutoplay(msg, id)](#HungryGames..startAutoplay) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+        * [~nextDay(msg, id)](#HungryGames..nextDay) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~pickEvent(userPool, eventPool, options, numAlive, teams, deathRate)](#HungryGames..pickEvent) ⇒ [<code>Event</code>](#HungryGames..Event) ℗
         * [~validateEventTeamConstraint(numVictim, numAttacker, userPool, teams, options, victimsDie, attackersDie)](#HungryGames..validateEventTeamConstraint) ⇒ <code>boolean</code> ℗
         * [~validateEventVictorConstraint(numVictim, numAttacker, numAlive, options, victimsDie, attackersDie)](#HungryGames..validateEventVictorConstraint) ⇒ <code>boolean</code> ℗
@@ -278,30 +278,30 @@ Hunger Games simulator.
         * [~getMiniIcons(users)](#HungryGames..getMiniIcons) ⇒ [<code>Array.&lt;UserIconUrl&gt;</code>](#HungryGames..UserIconUrl) ℗
         * [~printEvent(msg, id)](#HungryGames..printEvent) ℗
         * [~printDay(msg, id)](#HungryGames..printDay) ℗
-        * [~endGame(msg, id)](#HungryGames..endGame) ℗
-        * [~excludeUser(msg, id)](#HungryGames..excludeUser) ℗
-        * [~includeUser(msg, id)](#HungryGames..includeUser) ℗
-        * [~listPlayers(msg, id)](#HungryGames..listPlayers) ℗
+        * [~endGame(msg, id)](#HungryGames..endGame) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+        * [~excludeUser(msg, id)](#HungryGames..excludeUser) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+        * [~includeUser(msg, id)](#HungryGames..includeUser) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+        * [~listPlayers(msg, id)](#HungryGames..listPlayers) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~getName(msg, user)](#HungryGames..getName) ⇒ <code>string</code> ℗
-        * [~toggleOpt(msg, id)](#HungryGames..toggleOpt) ℗
+        * [~toggleOpt(msg, id)](#HungryGames..toggleOpt) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~showOpts(msg, options)](#HungryGames..showOpts) ℗
         * [~optChangeListener(msg_, options, index)](#HungryGames..optChangeListener) ℗
-        * [~editTeam(msg, id)](#HungryGames..editTeam) ℗
+        * [~editTeam(msg, id)](#HungryGames..editTeam) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~swapTeamUsers(msg, id)](#HungryGames..swapTeamUsers) ℗
         * [~moveTeamUser(msg, id)](#HungryGames..moveTeamUser) ℗
         * [~renameTeam(msg, id)](#HungryGames..renameTeam) ℗
         * [~randomizeTeams(msg, id)](#HungryGames..randomizeTeams) ℗
-        * [~createEvent(msg, id)](#HungryGames..createEvent) ℗
+        * [~createEvent(msg, id)](#HungryGames..createEvent) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~createEventNums(msg, id, show, cb)](#HungryGames..createEventNums) ℗
         * [~createEventOutcome(msg, id, show, cb)](#HungryGames..createEventOutcome) ℗
         * [~createEventAttacker(msg, id, show, cb)](#HungryGames..createEventAttacker) ℗
         * [~updateEventPreview(msg)](#HungryGames..updateEventPreview) ℗
-        * [~removeEvent(msg, id)](#HungryGames..removeEvent) ℗
+        * [~removeEvent(msg, id)](#HungryGames..removeEvent) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~fetchStats(events)](#HungryGames..fetchStats) ℗
-        * [~listEvents(msg, id, [page], [eventType], [editMsg])](#HungryGames..listEvents) ℗
+        * [~listEvents(msg, id, [page], [eventType], [editMsg])](#HungryGames..listEvents) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~formatEventString(arenaEvent, [newline])](#HungryGames..formatEventString) ⇒ <code>string</code> ℗
         * [~getOutcomeEmoji(outcome)](#HungryGames..getOutcomeEmoji) ⇒ <code>string</code> ℗
-        * [~help(msg, id)](#HungryGames..help) ℗
+        * [~help(msg, id)](#HungryGames..help) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~nothing()](#HungryGames..nothing) ⇒ <code>string</code> ℗
         * [~getMessage(type)](#HungryGames..getMessage) ⇒ <code>string</code> ℗
         * [~exit([code])](#HungryGames..exit) ℗
@@ -386,12 +386,12 @@ defined before begin().
 **Access**: protected  
 <a name="SubModule+initialized"></a>
 
-### hungryGames.initialized : <code>boolean</code> ℗
+### hungryGames.initialized : <code>boolean</code>
 Has this subModule been initialized yet (Has begin() been called).
 
 **Kind**: instance property of [<code>HungryGames</code>](#HungryGames)  
 **Default**: <code>false</code>  
-**Access**: private  
+**Access**: protected  
 **Read only**: true  
 <a name="SubModule+initialize"></a>
 
@@ -414,7 +414,7 @@ Initialize this submodule.
 | prefix | <code>string</code> | The global prefix for this bot. |
 | Discord | <code>Discord</code> | The Discord object for the API library. |
 | client | <code>Discord~Client</code> | The client that represents this bot. |
-| command | <code>Command</code> | The command instance in which to register command listeners. |
+| command | [<code>Command</code>](#SpikeyBot..Command) | The command instance in which to register command listeners. |
 | common | [<code>Common</code>](#Common) | Class storing common functions. |
 
 <a name="SubModule+end"></a>
@@ -520,7 +520,7 @@ Event that can happen in a game.
 | [numVictim] | <code>number</code> | <code>0</code> | The number of victims in this event. |
 | [numAttacker] | <code>number</code> | <code>0</code> | The number of attackers in this event. |
 | [victimOutcome] | <code>string</code> | <code>&quot;&#x27;nothing&#x27;&quot;</code> | The outcome of the victims from this event. |
-| [attackerOutcome] | <code>string</code> | <code>&quot;&#x27;notnorth&#x27;&quot;</code> | The outcome of the attackers from this event. |
+| [attackerOutcome] | <code>string</code> | <code>&quot;&#x27;nothing&#x27;&quot;</code> | The outcome of the attackers from this event. |
 | [victimKiller] | <code>boolean</code> | <code>false</code> | Do the victims kill anyone in this event. Used for calculating kill count. |
 | [attackerKiller] | <code>boolean</code> | <code>false</code> | Do the attackers kill anyone in this event. Used for calculating kill count. |
 | [battle] | <code>boolean</code> | <code>false</code> | Is this event a battle? |
@@ -737,10 +737,9 @@ Maximum amount of time to wait for reactions to a message.
 
 **Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
 **Access**: private  
-<a name="HungryGames..defaultOption"></a>
+<a name="HungryGames..defaultOptions"></a>
 
-### HungryGames~defaultOption : <code>Object</code> ℗
-/**
+### HungryGames~defaultOptions : <code>Object.&lt;{value: (string\|number\|boolean), values: ?Array.&lt;string&gt;, comment: string}&gt;</code> ℗
 Default options for a game.
 
 **Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
@@ -878,7 +877,7 @@ our message with the updated event.
 
 <a name="HungryGames..handleCommand"></a>
 
-### HungryGames~handleCommand(msg) ℗
+### HungryGames~handleCommand(msg) : [<code>commandHandler</code>](#commandHandler) ℗
 Handle a command from a user and pass into relevant functions.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
@@ -974,7 +973,7 @@ Delay a message to send at the given time in milliseconds since epoch.
 
 <a name="HungryGames..createGame"></a>
 
-### HungryGames~createGame(msg, id, [silent]) ℗
+### HungryGames~createGame(msg, id, [silent]) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
 Create a Hungry Games for a guild.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
@@ -1017,7 +1016,7 @@ teams, and adds teams once all teams have teamSize of players.
 
 <a name="HungryGames..resetGame"></a>
 
-### HungryGames~resetGame(msg, id) ℗
+### HungryGames~resetGame(msg, id) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
 Reset data that the user specifies.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
@@ -1030,7 +1029,7 @@ Reset data that the user specifies.
 
 <a name="HungryGames..showGameInfo"></a>
 
-### HungryGames~showGameInfo(msg, id) ℗
+### HungryGames~showGameInfo(msg, id) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
 Send all of the game data about the current server to the chat.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
@@ -1043,7 +1042,7 @@ Send all of the game data about the current server to the chat.
 
 <a name="HungryGames..showGameEvents"></a>
 
-### HungryGames~showGameEvents(msg, id) ℗
+### HungryGames~showGameEvents(msg, id) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
 Send all event data about the default events to the chat.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
@@ -1056,7 +1055,7 @@ Send all event data about the default events to the chat.
 
 <a name="HungryGames..startGame"></a>
 
-### HungryGames~startGame(msg, id) ℗
+### HungryGames~startGame(msg, id) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
 Start the games in the channel this was called from.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
@@ -1069,7 +1068,7 @@ Start the games in the channel this was called from.
 
 <a name="HungryGames..pauseAutoplay"></a>
 
-### HungryGames~pauseAutoplay(msg, id) ℗
+### HungryGames~pauseAutoplay(msg, id) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
 Stop autoplaying.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
@@ -1082,7 +1081,7 @@ Stop autoplaying.
 
 <a name="HungryGames..startAutoplay"></a>
 
-### HungryGames~startAutoplay(msg, id) ℗
+### HungryGames~startAutoplay(msg, id) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
 Start autoplaying.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
@@ -1095,7 +1094,7 @@ Start autoplaying.
 
 <a name="HungryGames..nextDay"></a>
 
-### HungryGames~nextDay(msg, id) ℗
+### HungryGames~nextDay(msg, id) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
 Simulate a single day then show events to users.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
@@ -1365,7 +1364,7 @@ Trigger the end of a day and print summary/outcome at the end of the day.
 
 <a name="HungryGames..endGame"></a>
 
-### HungryGames~endGame(msg, id) ℗
+### HungryGames~endGame(msg, id) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
 End a game early.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
@@ -1378,7 +1377,7 @@ End a game early.
 
 <a name="HungryGames..excludeUser"></a>
 
-### HungryGames~excludeUser(msg, id) ℗
+### HungryGames~excludeUser(msg, id) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
 Remove a user from users to be in next game.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
@@ -1391,7 +1390,7 @@ Remove a user from users to be in next game.
 
 <a name="HungryGames..includeUser"></a>
 
-### HungryGames~includeUser(msg, id) ℗
+### HungryGames~includeUser(msg, id) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
 Add a user back into the next game.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
@@ -1404,7 +1403,7 @@ Add a user back into the next game.
 
 <a name="HungryGames..listPlayers"></a>
 
-### HungryGames~listPlayers(msg, id) ℗
+### HungryGames~listPlayers(msg, id) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
 Show a formatted message of all users and teams in current server.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
@@ -1432,7 +1431,7 @@ found.
 
 <a name="HungryGames..toggleOpt"></a>
 
-### HungryGames~toggleOpt(msg, id) ℗
+### HungryGames~toggleOpt(msg, id) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
 Change an option to a value that the user specifies.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
@@ -1472,7 +1471,7 @@ The callback for when the user chooses to change page of the options.
 
 <a name="HungryGames..editTeam"></a>
 
-### HungryGames~editTeam(msg, id) ℗
+### HungryGames~editTeam(msg, id) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
 Entry for all team commands.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
@@ -1537,7 +1536,7 @@ Swap random users between teams.
 
 <a name="HungryGames..createEvent"></a>
 
-### HungryGames~createEvent(msg, id) ℗
+### HungryGames~createEvent(msg, id) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
 Create a custom event for a guild.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
@@ -1609,7 +1608,7 @@ edit the preview.
 
 <a name="HungryGames..removeEvent"></a>
 
-### HungryGames~removeEvent(msg, id) ℗
+### HungryGames~removeEvent(msg, id) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
 Delete a custom event from a guild.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
@@ -1634,7 +1633,7 @@ Put information about an array of events into the array.
 
 <a name="HungryGames..listEvents"></a>
 
-### HungryGames~listEvents(msg, id, [page], [eventType], [editMsg]) ℗
+### HungryGames~listEvents(msg, id, [page], [eventType], [editMsg]) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
 Allow user to view all events available on their server and summary of each
 type of event.
 
@@ -1678,7 +1677,7 @@ Get the emoji for a specific outcome of an event.
 
 <a name="HungryGames..help"></a>
 
-### HungryGames~help(msg, id) ℗
+### HungryGames~help(msg, id) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
 Send help message to DM and reply to server.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
@@ -1895,7 +1894,7 @@ Basic commands and features for the bot.
         * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
         * [.common](#SubModule+common) : [<code>Common</code>](#Common)
         * [.myName](#SubModule+myName) : <code>string</code>
-        * [.initialized](#SubModule+initialized) : <code>boolean</code> ℗
+        * [.initialized](#SubModule+initialized) : <code>boolean</code>
         * [.initialize()](#SubModule+initialize)
         * [.begin(prefix, Discord, client, command, common)](#SubModule+begin)
         * [.end()](#SubModule+end)
@@ -2011,12 +2010,12 @@ defined before begin().
 **Access**: protected  
 <a name="SubModule+initialized"></a>
 
-### main.initialized : <code>boolean</code> ℗
+### main.initialized : <code>boolean</code>
 Has this subModule been initialized yet (Has begin() been called).
 
 **Kind**: instance property of [<code>Main</code>](#Main)  
 **Default**: <code>false</code>  
-**Access**: private  
+**Access**: protected  
 **Read only**: true  
 <a name="SubModule+initialize"></a>
 
@@ -2039,7 +2038,7 @@ Initialize this submodule.
 | prefix | <code>string</code> | The global prefix for this bot. |
 | Discord | <code>Discord</code> | The Discord object for the API library. |
 | client | <code>Discord~Client</code> | The client that represents this bot. |
-| command | <code>Command</code> | The command instance in which to register command listeners. |
+| command | [<code>Command</code>](#SpikeyBot..Command) | The command instance in which to register command listeners. |
 | common | [<code>Common</code>](#Common) | Class storing common functions. |
 
 <a name="SubModule+end"></a>
@@ -2521,7 +2520,6 @@ Music and audio related commands.
 **Kind**: global class  
 **Extends**: [<code>SubModule</code>](#SubModule)  
 **Emits**: <code>SpikeyBot~Command#event:stop</code>  
-**Listen**: SpikeyBot~Command  
 
 * [Music](#Music) ⇐ [<code>SubModule</code>](#SubModule)
     * _instance_
@@ -2534,7 +2532,7 @@ Music and audio related commands.
         * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
         * [.common](#SubModule+common) : [<code>Common</code>](#Common)
         * *[.myName](#SubModule+myName) : <code>string</code>*
-        * [.initialized](#SubModule+initialized) : <code>boolean</code> ℗
+        * [.initialized](#SubModule+initialized) : <code>boolean</code>
         * [.initialize()](#SubModule+initialize)
         * [.begin(prefix, Discord, client, command, common)](#SubModule+begin)
         * [.end()](#SubModule+end)
@@ -2546,7 +2544,7 @@ Music and audio related commands.
         * [~broadcasts](#Music..broadcasts) : [<code>Object.&lt;Broadcast&gt;</code>](#Music..Broadcast) ℗
         * [~geniusClient](#Music..geniusClient) : <code>string</code> ℗
         * [~geniusRequest](#Music..geniusRequest) : <code>Object</code> ℗
-        * [~special](#Music..special) : <code>Object.&lt;Object&gt;</code> ℗
+        * [~special](#Music..special) : <code>Object.&lt;Object.&lt;{cmd: string, url: ?string, file: string}&gt;&gt;</code> ℗
         * [~ytdlOpts](#Music..ytdlOpts) : <code>Array.&lt;string&gt;</code> ℗
         * [~mention(msg)](#Music..mention) ⇒ <code>string</code> ℗
         * [~reply(msg, text, post)](#Music..reply) ⇒ <code>Promise</code> ℗
@@ -2636,12 +2634,12 @@ defined before begin().
 **Access**: protected  
 <a name="SubModule+initialized"></a>
 
-### music.initialized : <code>boolean</code> ℗
+### music.initialized : <code>boolean</code>
 Has this subModule been initialized yet (Has begin() been called).
 
 **Kind**: instance property of [<code>Music</code>](#Music)  
 **Default**: <code>false</code>  
-**Access**: private  
+**Access**: protected  
 **Read only**: true  
 <a name="SubModule+initialize"></a>
 
@@ -2664,7 +2662,7 @@ Initialize this submodule.
 | prefix | <code>string</code> | The global prefix for this bot. |
 | Discord | <code>Discord</code> | The Discord object for the API library. |
 | client | <code>Discord~Client</code> | The client that represents this bot. |
-| command | <code>Command</code> | The command instance in which to register command listeners. |
+| command | [<code>Command</code>](#SpikeyBot..Command) | The command instance in which to register command listeners. |
 | common | [<code>Common</code>](#Common) | Class storing common functions. |
 
 <a name="SubModule+end"></a>
@@ -2720,10 +2718,11 @@ The Genuius client token we use to fetch information from their api
 The request headers to send to genius.
 
 **Kind**: inner constant of [<code>Music</code>](#Music)  
+**Default**: <code>{&quot;hostname&quot;:&quot;api.genius.com&quot;,&quot;path&quot;:&quot;/search/&quot;,&quot;headers&quot;:&quot;&quot;,&quot;method&quot;:&quot;GET&quot;}</code>  
 **Access**: private  
 <a name="Music..special"></a>
 
-### Music~special : <code>Object.&lt;Object&gt;</code> ℗
+### Music~special : <code>Object.&lt;Object.&lt;{cmd: string, url: ?string, file: string}&gt;&gt;</code> ℗
 Special cases of requests to handle seperately.
 
 **Kind**: inner constant of [<code>Music</code>](#Music)  
@@ -2734,6 +2733,7 @@ Special cases of requests to handle seperately.
 Options passed to youtube-dl for fetching videos.
 
 **Kind**: inner constant of [<code>Music</code>](#Music)  
+**Default**: <code>[&quot;-f bestaudio/best&quot;,&quot;--no-playlist&quot;,&quot;--default-search&#x3D;auto&quot;]</code>  
 **Access**: private  
 <a name="Music..mention"></a>
 
@@ -3020,7 +3020,7 @@ Information about a server's music and queue.
 Main class that manages the bot.
 
 **Kind**: global class  
-**Emits**: <code>SpikeyBot~event:Command</code>  
+**Emits**: <code>SpikeyBot~Command#event:\*</code>  
 
 * [SpikeyBot](#SpikeyBot)
     * [~Command](#SpikeyBot..Command)
@@ -3449,7 +3449,7 @@ Base class for all Sub-Modules.
         * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
         * [.common](#SubModule+common) : [<code>Common</code>](#Common)
         * *[.myName](#SubModule+myName) : <code>string</code>*
-        * [.initialized](#SubModule+initialized) : <code>boolean</code> ℗
+        * [.initialized](#SubModule+initialized) : <code>boolean</code>
         * *[.initialize()](#SubModule+initialize)*
         * [.begin(prefix, Discord, client, command, common)](#SubModule+begin)
         * [.end()](#SubModule+end)
@@ -3523,12 +3523,12 @@ defined before begin().
 **Access**: protected  
 <a name="SubModule+initialized"></a>
 
-### subModule.initialized : <code>boolean</code> ℗
+### subModule.initialized : <code>boolean</code>
 Has this subModule been initialized yet (Has begin() been called).
 
 **Kind**: instance property of [<code>SubModule</code>](#SubModule)  
 **Default**: <code>false</code>  
-**Access**: private  
+**Access**: protected  
 **Read only**: true  
 <a name="SubModule+initialize"></a>
 
@@ -3550,7 +3550,7 @@ Initialize this submodule.
 | prefix | <code>string</code> | The global prefix for this bot. |
 | Discord | <code>Discord</code> | The Discord object for the API library. |
 | client | <code>Discord~Client</code> | The client that represents this bot. |
-| command | <code>Command</code> | The command instance in which to register command listeners. |
+| command | [<code>Command</code>](#SpikeyBot..Command) | The command instance in which to register command listeners. |
 | common | [<code>Common</code>](#Common) | Class storing common functions. |
 
 <a name="SubModule+end"></a>

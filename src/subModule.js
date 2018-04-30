@@ -83,7 +83,7 @@ function SubModule() {
   /**
    * Has this subModule been initialized yet (Has begin() been called).
    *
-   * @private
+   * @protected
    * @type {boolean}
    * @default
    * @readonly
@@ -96,8 +96,8 @@ function SubModule() {
    * @param {string} prefix The global prefix for this bot.
    * @param {Discord} Discord The Discord object for the API library.
    * @param {Discord~Client} client The client that represents this bot.
-   * @param {Command} command The command instance in which to register command
-   * listeners.
+   * @param {SpikeyBot~Command} command The command instance in which to
+   * register command listeners.
    * @param {Common} common Class storing common functions.
    */
   this.begin = function(prefix, Discord, client, command, common) {

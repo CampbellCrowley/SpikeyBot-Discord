@@ -8,7 +8,18 @@ require('./subModule.js')(Music);
  * @classdesc Music and audio related commands.
  * @class
  * @augments SubModule
- * @listen SpikeyBot~Command
+ * @listens Discord~Client#handleVoiceStateUpdate
+ * @listens SpikeyBot~Command#play
+ * @listens SpikeyBot~Command#leave
+ * @listens SpikeyBot~Command#stop
+ * @listens SpikeyBot~Command#stfu
+ * @listens SpikeyBot~Command#skip
+ * @listens SpikeyBot~Command#queue
+ * @listens SpikeyBot~Command#playing
+ * @listens SpikeyBot~Command#remove
+ * @listens SpikeyBot~Command#dequeue
+ * @listens SpikeyBot~Command#lyrics
+ * @listens SpikeyBot~Command#record
  * @fires SpikeyBot~Command#stop
  */
 function Music() {
@@ -28,6 +39,7 @@ function Music() {
    *
    * @private
    * @type {Object}
+   * @default
    * @constant
    */
   const geniusRequest = {
@@ -69,7 +81,7 @@ function Music() {
    * Special cases of requests to handle seperately.
    *
    * @private
-   * @type {Object.<Object>}
+   * @type {Object.<Object.<{cmd: string, url: ?string, file: string}>>}
    * @constant
    */
   const special = {
@@ -100,6 +112,7 @@ function Music() {
    *
    * @private
    * @type {string[]}
+   * @default
    * @constant
    */
   const ytdlOpts =

@@ -6,7 +6,7 @@ require('./subModule.js')(HungryGames); // Extends the SubModule class.
  * @classdesc Hunger Games simulator.
  * @class
  * @augments SubModule
- * @listens SpikeyBot~Command
+ * @listens SpikeyBot~Command#hg
  */
 function HungryGames() {
   const self = this;
@@ -162,19 +162,14 @@ function HungryGames() {
   const maxReactAwaitTime = 15 * 1000 * 60; // 15 Minutes
 
   /**
-   * @typedef {
-   *   {
-   *     value: string|number|boolean,
-   *     values: ?string[],
-   *     comment: string
-   *   }
-   * } HungryGames~defaultOption
-
-  /**
    * Default options for a game.
    *
    * @private
-   * @type {Object.<HungryGames~defaultOption>}
+   * @type {Object.<{
+   *     value: string|number|boolean,
+   *     values: ?string[],
+   *     comment: string
+   *   }>}
    * @constant
    */
   const defaultOptions = {
@@ -858,6 +853,7 @@ function HungryGames() {
    * Handle a command from a user and pass into relevant functions.
    *
    * @private
+   * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
    * @listens SpikeyBot~Command#hg
    */
@@ -926,7 +922,7 @@ function HungryGames() {
         case 'events':
         case 'event':
           if (!splitText[1]) {
-            listEvents(msg, id, 0);
+            listEvents(msg, id);
           } else {
             switch (splitText[1].toLowerCase()) {
               case 'add':
@@ -1134,7 +1130,7 @@ function HungryGames() {
    * @param {number} [numAttacker=0] The number of attackers in this event.
    * @param {string} [victimOutcome='nothing'] The outcome of the victims from
    * this event.
-   * @param {string} [attackerOutcome='notnorth'] The outcome of the attackers
+   * @param {string} [attackerOutcome='nothing'] The outcome of the attackers
    * from this event.
    * @param {boolean} [victimKiller=false] Do the victims kill anyone in this
    * event. Used for calculating kill count.
@@ -1242,6 +1238,7 @@ function HungryGames() {
    * Create a Hungry Games for a guild.
    *
    * @private
+   * @type {HungryGames~hgCommandHandler}
    * @param {Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
    * @param {boolean} [silent=false] Should we suppress replies to message.
@@ -1426,6 +1423,7 @@ function HungryGames() {
    * Reset data that the user specifies.
    *
    * @private
+   * @type {HungryGames~hgCommandHandler}
    * @param {Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
    */
@@ -1466,6 +1464,7 @@ function HungryGames() {
    * Send all of the game data about the current server to the chat.
    *
    * @private
+   * @type {HungryGames~hgCommandHandler}
    * @param {Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
    */
@@ -1493,6 +1492,7 @@ function HungryGames() {
    * Send all event data about the default events to the chat.
    *
    * @private
+   * @type {HungryGames~hgCommandHandler}
    * @param {Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
    */
@@ -1548,6 +1548,7 @@ function HungryGames() {
    * Start the games in the channel this was called from.
    *
    * @private
+   * @type {HungryGames~hgCommandHandler}
    * @param {Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
    */
@@ -1625,6 +1626,7 @@ function HungryGames() {
    * Stop autoplaying.
    *
    * @private
+   * @type {HungryGames~hgCommandHandler}
    * @param {Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
    */
@@ -1648,6 +1650,7 @@ function HungryGames() {
    * Start autoplaying.
    *
    * @private
+   * @type {HungryGames~hgCommandHandler}
    * @param {Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
    */
@@ -1686,6 +1689,7 @@ function HungryGames() {
    * Simulate a single day then show events to users.
    *
    * @private
+   * @type {HungryGames~hgCommandHandler}
    * @param {Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
    */
@@ -3114,6 +3118,7 @@ function HungryGames() {
    * End a game early.
    *
    * @private
+   * @type {HungryGames~hgCommandHandler}
    * @param {Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
    */
@@ -3137,6 +3142,7 @@ function HungryGames() {
    * Remove a user from users to be in next game.
    *
    * @private
+   * @type {HungryGames~hgCommandHandler}
    * @param {Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
    */
@@ -3184,6 +3190,7 @@ function HungryGames() {
    * Add a user back into the next game.
    *
    * @private
+   * @type {HungryGames~hgCommandHandler}
    * @param {Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
    */
@@ -3236,6 +3243,7 @@ function HungryGames() {
    * Show a formatted message of all users and teams in current server.
    *
    * @private
+   * @type {HungryGames~hgCommandHandler}
    * @param {Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
    */
@@ -3334,6 +3342,7 @@ function HungryGames() {
    * Change an option to a value that the user specifies.
    *
    * @private
+   * @type {HungryGames~hgCommandHandler}
    * @param {Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
    */
@@ -3526,6 +3535,7 @@ function HungryGames() {
    * Entry for all team commands.
    *
    * @private
+   * @type {HungryGames~hgCommandHandler}
    * @param {Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
    */
@@ -3747,6 +3757,7 @@ function HungryGames() {
    * Create a custom event for a guild.
    *
    * @private
+   * @type {HungryGames~hgCommandHandler}
    * @param {Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
    */
@@ -4119,6 +4130,7 @@ function HungryGames() {
    * Delete a custom event from a guild.
    *
    * @private
+   * @type {HungryGames~hgCommandHandler}
    * @param {Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
    */
@@ -4231,6 +4243,7 @@ function HungryGames() {
    * type of event.
    *
    * @private
+   * @type {HungryGames~hgCommandHandler}
    * @param {Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
    * @param {number} [page=0] The page number to show.
@@ -4476,6 +4489,7 @@ function HungryGames() {
    * Send help message to DM and reply to server.
    *
    * @private
+   * @type {HungryGames~hgCommandHandler}
    * @param {Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
    */

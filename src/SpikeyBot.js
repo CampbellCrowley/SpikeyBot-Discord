@@ -7,7 +7,16 @@ const client = new Discord.Client();
 /**
  * @classdesc Main class that manages the bot.
  * @class
- * @fires SpikeyBot~Command
+ * @listens Discord~Client#ready
+ * @listens Discord~Client#message
+ * @listens Discord~Client#guildCreate
+ * @listens Discord~Client#guildBanAdd
+ * @listens SpikeyBot~Command#toggleReact
+ * @listens SpikeyBot~Command#help
+ * @listens SpikeyBot~Command#updateGame
+ * @listens SpikeyBot~Command#reboot
+ * @listens SpikeyBot~Command#reload
+ * @fires SpikeyBot~Command#*
  */
 function SpikeyBot() {
   /**
