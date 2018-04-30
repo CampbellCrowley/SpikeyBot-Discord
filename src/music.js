@@ -855,7 +855,7 @@ function Music() {
           receiver.createStream(msg.author, {end: 'manual', mode: 'pcm'});
       streams[user.id] = stream;
       // stream.pipe(file);
-      self.streamToOgg(stream, file);
+      Music.streamToOgg(stream, file);
       /* conn.on('disconnect', () => {
         stream.destroy();
       }); */
