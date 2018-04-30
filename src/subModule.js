@@ -20,23 +20,23 @@ function SubModule() {
   this.prefix;
 
   /**
-   * The prefix this submodule uses. Formed by appending this.prefix to
-   * this.prePrefix. this.prePrefix must be defined before begin(), otherwise it
-   * is ignored.
+   * The prefix this submodule uses. Formed by prepending this.prefix to
+   * this.postPrefix. this.postPrefix must be defined before begin(), otherwise
+   * it is ignored.
    *
    * @readonly
    * @type {string}
    */
   this.myPrefix;
   /**
-   * The prefix for the global prefix for this subModule. Must be defined before
-   * begin(), otherwise it is ignored.
+   * The postfix for the global prefix for this subModule. Must be defined
+   * before begin(), otherwise it is ignored.
    *
    * @abstract
    * @type {string}
    * @default
    */
-  this.prePrefix = '';
+  this.postPrefix = '';
   /**
    * The current Discord object instance of the bot.
    *
@@ -97,11 +97,11 @@ function SubModule() {
    * @param {Discord~Client} client The client that represents this bot.
    * @param {Command} command The command instance in which to register command
    * listeners.
-   * @param {Object} common Object storing common functions.
+   * @param {Common} common Class storing common functions.
    */
   this.begin = function(prefix, Discord, client, command, common) {
     this.prefix = prefix;
-    this.myPrefix = this.prePrefix + prefix;
+    this.myPrefix = this.postPrefix + prefix;
     this.Discord = Discord;
     this.client = client;
     this.command = command;

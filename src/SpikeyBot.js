@@ -7,6 +7,7 @@ const client = new Discord.Client();
 /**
  * @classdesc Main class that manages the bot.
  * @class
+ * @fires SpikeyBot~Command
  */
 function SpikeyBot() {
   /**
@@ -157,7 +158,7 @@ function SpikeyBot() {
       'This command has been disabled in this channel.';
 
   /**
-   * Defines command event triggering interface.
+   * Command event triggering interface.
    * @class
    */
   function Command() {
@@ -165,22 +166,21 @@ function SpikeyBot() {
      * The function to call when a command is triggered.
      *
      * @callback commandHandler
-     * @param {Discord.Message} msg The message sent in Discord.
-     * @event Command
+     * @param {Discord~Message} msg The message sent in Discord.
      */
 
     /**
      * All tracked commands with handlers.
      *
      * @private
-     * @type {Object.<string, commandHandler>}
+     * @type {Object.<commandHandler>}
      */
     let cmds = {};
     /**
      * List of disabled commands, and the channels they are disabled in.
      *
      * @private
-     * @type {Object.<string, string[]>}
+     * @type {Object.<string[]>}
      */
     let blacklist = {};
 
@@ -190,7 +190,7 @@ function SpikeyBot() {
      *
      * @param {string} cmd Array of strings or a string of the command to
      * trigger.
-     * @param {Discord.Message} msg Message received from Discord to pass to
+     * @param {Discord~Message} msg Message received from Discord to pass to
      * handler.
      * @return {boolean} True if command was handled by us.
      */
@@ -322,7 +322,7 @@ function SpikeyBot() {
    * The current instance of Command.
    *
    * @private
-   * @type {Command}
+   * @type {SpikeyBot~Command}
    * @constant
    */
   const command = new Command();
@@ -331,7 +331,7 @@ function SpikeyBot() {
    * Checks if given message is the given command.
    *
    * @private
-   * @param {Discord.Message} msg Message from Discord to check if it is the
+   * @param {Discord~Message} msg Message from Discord to check if it is the
    * given
    * command.
    * @param {string} cmd Command to check if the message is this command.
@@ -362,7 +362,7 @@ function SpikeyBot() {
    * Creates formatted string for mentioning the author of msg.
    *
    * @private
-   * @param {Discord.Message} msg Message to format a mention for the author of.
+   * @param {Discord~Message} msg Message to format a mention for the author of.
    * @return {string} Formatted mention string.
    */
   function mention(msg) {
@@ -372,7 +372,7 @@ function SpikeyBot() {
    * Replies to the author and channel of msg with the given message.
    *
    * @private
-   * @param {Discord.Message} msg Message to reply to.
+   * @param {Discord~Message} msg Message to reply to.
    * @param {string} text The main body of the message.
    * @param {string} post The footer of the message.
    * @return {Promise} Promise of Discord.Message that we attempted to send.
@@ -439,8 +439,8 @@ function SpikeyBot() {
    * Handle a message sent.
    *
    * @private
-   * @param {Discord.Message} msg Message that was sent in Discord.
-   * @fires Command
+   * @param {Discord~Message} msg Message that was sent in Discord.
+   * @fires SpikeyBot~Command
    * @listens Discord@message
    */
   function onMessage(msg) {
@@ -506,7 +506,7 @@ function SpikeyBot() {
      *
      * @private
      * @param {Discord.Guild} guild The guild that we just joined.
-     * @listens Discord#guildCreate
+     * @listens Discord~Client#guildCreate
      */
     function onGuildCreate(guild) {
       common.log('ADDED TO NEW GUILD: ' + guild.id + ': ' + guild.name);
@@ -535,7 +535,7 @@ function SpikeyBot() {
      * @private
      * @param {Discord.Guild} guild The guild on which the ban happened.
      * @param {Discord.User} user The user that was banned.
-     * @listens Discord#guildBanAdd
+     * @listens Discord~Client#guildBanAdd
      */
     function onGuildBanAdd(guild, user) {
       let channel = '';
@@ -574,8 +574,8 @@ function SpikeyBot() {
      *
      * @private
      * @type {commandHandler}
-     * @param {Discord.Message} msg Message that triggered command.
-     * @listens Command#toggleReact
+     * @param {Discord~Message} msg Message that triggered command.
+     * @listens SpikeyBot~Command#toggleReact
      */
     function commandToggleReact(msg) {
       reply(msg, 'Toggled reactions to Anthony to ' + !reactToAnthony + '. 😮');
@@ -588,8 +588,8 @@ function SpikeyBot() {
      *
      * @private
      * @type {commandHandler}
-     * @param {Discord.Message} msg Message that triggered command.
-     * @listens Command#help
+     * @param {Discord~Message} msg Message that triggered command.
+     * @listens SpikeyBot~Command#help
      */
     function commandHelp(msg) {
       try {
@@ -610,8 +610,8 @@ function SpikeyBot() {
      *
      * @private
      * @type {commandHandler}
-     * @param {Discord.Message} msg Message that triggered command.
-     * @listens Command#updateGame
+     * @param {Discord~Message} msg Message that triggered command.
+     * @listens SpikeyBot~Command#updateGame
      */
     function commandUpdateGame(msg) {
       msg.delete();
@@ -633,8 +633,8 @@ function SpikeyBot() {
    *
    * @private
    * @type {commandHandler}
-   * @param {Discord.Message} msg Message that triggered command.
-   * @listens Command#reboot
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens SpikeyBot~Command#reboot
    */
   function commandReboot(msg) {
     if (trustedIds.includes(msg.author.id)) {
@@ -670,8 +670,8 @@ function SpikeyBot() {
    *
    * @private
    * @type {commandHandler}
-   * @param {Discord.Message} msg Message that triggered command.
-   * @listens Command#reload
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens SpikeyBot~Command#reload
    */
   function commandReload(msg) {
     if (trustedIds.includes(msg.author.id)) {

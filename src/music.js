@@ -8,9 +8,12 @@ require('./subModule.js')(Music);
  * @classdesc Music and audio related commands.
  * @class
  * @augments SubModule
+ * @listen SpikeyBot~Command
+ * @fires SpikeyBot~Command#stop
  */
 function Music() {
   const self = this;
+  this.myName = 'Music';
   /**
    * The Genuius client token we use to fetch information from their api
    *
@@ -44,7 +47,7 @@ function Music() {
    * @typedef {Object} Music~Broadcast
    *
    * @property {string[]} queue Requests that have been queued.
-   * @property {Object.<string, boolean>} skips Stores user id's and whether
+   * @property {Object.<boolean>} skips Stores user id's and whether
    * they have voted to skip. Non-existent user means they have not voted to
    * skip.
    * @property {boolean} isPlaying Is audio currntly being streamed to the
@@ -58,7 +61,7 @@ function Music() {
    * Stored by guild id.
    *
    * @private
-   * @type {Object.<string,Broadcast>}
+   * @type {Object.<Music~Broadcast>}
    */
   let broadcasts = {};
 
@@ -66,7 +69,7 @@ function Music() {
    * Special cases of requests to handle seperately.
    *
    * @private
-   * @type {Object.<string, Object>}
+   * @type {Object.<Object>}
    * @constant
    */
   const special = {
@@ -180,7 +183,7 @@ function Music() {
    * @private
    * @param {Discord~GuildMember} oldMem Member before status update.
    * @param {Discord~GuildMember} newMem Member after status update.
-   * @listens Discord#handleVoiceStateUpdate
+   * @listens Discord~Client#handleVoiceStateUpdate
    */
   function handleVoiceStateUpdate(oldMem, newMem) {
     if (oldMem.voiceChannel && oldMem.voiceChannel.members &&
@@ -233,7 +236,7 @@ function Music() {
    * Add a song to the given broadcast's queue and start playing it not already.
    *
    * @private
-   * @param {Broadcast} broadcast The broadcast storage container.
+   * @param {Music~Broadcast} broadcast The broadcast storage container.
    * @param {string} song The song that was requested.
    * @param {Discord~Message} msg The message that requested the song.
    * @param {Object} info The info from ytdl about the song.
@@ -271,8 +274,8 @@ function Music() {
    * Start playing the first item in the queue of the broadcast.
    *
    * @private
-   * @param {Broadcast} broadcast The container storing all information about
-   * the song.
+   * @param {Music~Broadcast} broadcast The container storing all information
+   * about the song.
    */
   function startPlaying(broadcast) {
     if (!broadcast || broadcast.isPlaying || broadcast.isLoading ||
@@ -360,7 +363,8 @@ function Music() {
    * playing the audio.
    *
    * @private
-   * @param {Broadcast} broadcast The object storing all relevant information.
+   * @param {Music~Broadcast} broadcast The object storing all relevant
+   * information.
    */
   function makeBroadcast(broadcast) {
     if (special[broadcast.current.song]) {
@@ -404,7 +408,8 @@ function Music() {
    * Triggered when a song has finished playing.
    *
    * @private
-   * @param {Broadcast} broadcast The object storing all relevant information.
+   * @param {Music~Broadcast} broadcast The object storing all relevant
+   * information.
    */
   function endSong(broadcast) {
     if (broadcast.isLoading) return;
@@ -414,7 +419,8 @@ function Music() {
    * Skip the current song, then attempt to play the next.
    *
    * @private
-   * @param {Broadcast} broadcast The object storing all relevant information.
+   * @param {Music~Broadcast} broadcast The object storing all relevant
+   * information.
    */
   function skipSong(broadcast) {
     broadcast.isPlaying = false;
