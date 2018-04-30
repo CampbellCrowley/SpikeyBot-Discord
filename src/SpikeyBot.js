@@ -78,7 +78,7 @@ function SpikeyBot() {
   // Attempt to load submodules.
   for (let i in subModuleNames) {
     if (typeof subModuleNames[i] !== 'string' ||
-        !subModuleNames[i].startsWith("./")) {
+        !subModuleNames[i].startsWith('./')) {
       continue;
     }
     try {
@@ -92,7 +92,7 @@ function SpikeyBot() {
   const prefix = isDev ? '~' : '?';
 
   common.begin(false, !isDev);
-  if (minimal) common.log('STARTING IN MUSIC ONLY MODE');
+  if (minimal) common.log('STARTING IN MINIMAL MODE');
 
   /**
    * Should we add a reaction to every message that Anthony sends. Overriden if
@@ -209,6 +209,7 @@ function SpikeyBot() {
           reply(msg, disabledcommandmessage);
           return true;
         }
+        msg.text = msg.content.replace(prefix + cmd, '');
         try {
           cmds[cmd](msg);
         } catch (err) {
@@ -395,11 +396,13 @@ function SpikeyBot() {
         updateGame(prefix + 'help for help');
       }
     }
-    if (!testInstance) {
-      client.users.fetch(spikeyId).then((user) => {
-        user.send('I just rebooted (JS)' + (minimal ? ' ONLYMUSIC' : ' ALL'));
-      });
-    }
+    client.users.fetch(spikeyId).then((user) => {
+      if (testInstance) {
+        user.send('Beginning in unit test mode');
+      } else {
+        user.send('I just rebooted (JS)' + (minimal ? ' MINIMAL' : ' ALL'));
+      }
+    });
     for (let i in subModules) {
       if (!subModules[i] instanceof Object || !subModules[i].begin) continue;
       try {
