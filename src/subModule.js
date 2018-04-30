@@ -126,6 +126,7 @@ function SubModule() {
    * Shutdown and disable this submodule. Removes all event listeners.
    *
    * @abstract
+   * @protected
    */
   this.shutdown = function() {};
 

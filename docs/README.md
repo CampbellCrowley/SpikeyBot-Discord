@@ -7,6 +7,9 @@
 <dt><a href="#Main">Main</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
 <dd><p>Basic commands and features for the bot.</p>
 </dd>
+<dt><a href="#Music">Music</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
+<dd><p>Music and audio related commands.</p>
+</dd>
 <dt><a href="#SpikeyBot">SpikeyBot</a></dt>
 <dd><p>Main class that manages the bot.</p>
 </dd>
@@ -247,80 +250,6 @@ to allow for another module to take our place.</p>
 </dd>
 <dt><a href="#unhandledRejection">unhandledRejection(reason, p)</a></dt>
 <dd><p>Handler for an unhandledRejection.</p>
-</dd>
-<dt><a href="#begin">begin(prefix_, Discord_, client_, command_, common_)</a></dt>
-<dd><p>Initialize this submodule.</p>
-</dd>
-<dt><a href="#end">end()</a></dt>
-<dd><p>Shutdown and disable this submodule. Removes all event listeners.</p>
-</dd>
-<dt><a href="#mention">mention(msg)</a> ⇒ <code>string</code></dt>
-<dd><p>Creates formatted string for mentioning the author of msg.</p>
-</dd>
-<dt><a href="#reply">reply(msg, text, post)</a> ⇒ <code>Promise</code></dt>
-<dd><p>Replies to the author and channel of msg with the given message.</p>
-</dd>
-<dt><a href="#handleVoiceStateUpdate">handleVoiceStateUpdate(oldMem, newMem)</a></dt>
-<dd><p>Leave a voice channel if all other users have left. Should also cause music
-and recordings to stop.</p>
-</dd>
-<dt><a href="#formatSongInfo">formatSongInfo(info)</a> ⇒ <code>Discord.MessageEmbed</code></dt>
-<dd><p>Format the info response from ytdl into a human readable format.</p>
-</dd>
-<dt><a href="#formNum">formNum(num)</a> ⇒ <code>string</code></dt>
-<dd><p>Add commas between digits on large numbers.</p>
-</dd>
-<dt><a href="#enqueueSong">enqueueSong(broadcast, song, msg, info)</a></dt>
-<dd><p>Add a song to the given broadcast&#39;s queue and start playing it not already.</p>
-</dd>
-<dt><a href="#startPlaying">startPlaying(broadcast)</a></dt>
-<dd><p>Start playing the first item in the queue of the broadcast.</p>
-</dd>
-<dt><a href="#makeBroadcast">makeBroadcast(broadcast)</a></dt>
-<dd><p>Create a voice channel broadcast based off of the media source, and start
-playing the audio.</p>
-</dd>
-<dt><a href="#endSong">endSong(broadcast)</a></dt>
-<dd><p>Triggered when a song has finished playing.</p>
-</dd>
-<dt><a href="#skipSong">skipSong(broadcast)</a></dt>
-<dd><p>Skip the current song, then attempt to play the next.</p>
-</dd>
-<dt><a href="#commandPlay">commandPlay(msg)</a></dt>
-<dd><p>Search for a song to play based off user request.</p>
-</dd>
-<dt><a href="#commandLeave">commandLeave(msg)</a></dt>
-<dd><p>Cause the bot to leave the voice channel and stop playing music.</p>
-</dd>
-<dt><a href="#commandSkip">commandSkip(msg)</a></dt>
-<dd><p>Skip the currently playing song and continue to the next in the queue.</p>
-</dd>
-<dt><a href="#commandQueue">commandQueue(msg)</a></dt>
-<dd><p>Show the user what is in the queue.</p>
-</dd>
-<dt><a href="#commandRemove">commandRemove(msg)</a></dt>
-<dd><p>Remove a song from the queue.</p>
-</dd>
-<dt><a href="#commandLyrics">commandLyrics(msg)</a></dt>
-<dd><p>Search for a song&#39;s lyrics via Genius.</p>
-</dd>
-<dt><a href="#reqLyricsURL">reqLyricsURL(msg, id)</a></dt>
-<dd><p>Request the song information from Genius from previous search to find the
-page where the lyrics are.</p>
-</dd>
-<dt><a href="#fetchLyricsPage">fetchLyricsPage(msg, url, title, thumb)</a></dt>
-<dd><p>Request the webpage that has the song lyrics on them from Genius.</p>
-</dd>
-<dt><a href="#stripLyrics">stripLyrics(msg, content, title, url, thumb)</a></dt>
-<dd><p>Crawl the received webpage for the data we need, then format the data and
-show it to the user.</p>
-</dd>
-<dt><a href="#commandRecord">commandRecord(msg)</a></dt>
-<dd><p>Join a voice channel and record the specified users audio to a file on this
-server.</p>
-</dd>
-<dt><a href="#streamToOgg">streamToOgg(input, file)</a></dt>
-<dd><p>Coverts an incoming Opus stream to a ogg format and writes it to file.</p>
 </dd>
 </dl>
 
@@ -662,6 +591,7 @@ Shutdown and disable this submodule. Removes all event listeners.
 
 **Kind**: instance method of [<code>Main</code>](#Main)  
 **Overrides**: [<code>shutdown</code>](#SubModule+shutdown)  
+**Access**: protected  
 <a name="SubModule+save"></a>
 
 ### *main.save()*
@@ -1118,6 +1048,494 @@ An object storing information about a timer.
 | id | <code>string</code> | The id of the user who set the timer. |
 | message | <code>string</code> | The message for when the timer ends. |
 | time | <code>number</code> | The time since epoch at which the timer will end. |
+
+<a name="Music"></a>
+
+## Music ⇐ [<code>SubModule</code>](#SubModule)
+Music and audio related commands.
+
+**Kind**: global class  
+**Extends**: [<code>SubModule</code>](#SubModule)  
+
+* [Music](#Music) ⇐ [<code>SubModule</code>](#SubModule)
+    * _instance_
+        * [.helpMessage](#SubModule+helpMessage) : <code>string</code> \| <code>Discord~MessageEmbed</code>
+        * [.prefix](#SubModule+prefix) : <code>string</code>
+        * [.myPrefix](#SubModule+myPrefix) : <code>string</code>
+        * *[.prePrefix](#SubModule+prePrefix) : <code>string</code>*
+        * [.Discord](#SubModule+Discord) : <code>Discord</code>
+        * [.client](#SubModule+client) : <code>Discord~Client</code>
+        * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
+        * [.common](#SubModule+common) : [<code>Common</code>](#Common)
+        * *[.myName](#SubModule+myName) : <code>string</code>*
+        * [.initialize()](#SubModule+initialize)
+        * [.begin(prefix, Discord, client, command, common)](#SubModule+begin)
+        * [.end()](#SubModule+end)
+        * [.shutdown()](#SubModule+shutdown)
+        * *[.save()](#SubModule+save)*
+    * _static_
+        * [.streamToOgg(input, file)](#Music.streamToOgg)
+    * _inner_
+        * [~broadcasts](#Music..broadcasts) : <code>Object.&lt;string, Broadcast&gt;</code> ℗
+        * [~geniusClient](#Music..geniusClient) : <code>string</code> ℗
+        * [~geniusRequest](#Music..geniusRequest) : <code>Object</code> ℗
+        * [~special](#Music..special) : <code>Object.&lt;string, Object&gt;</code> ℗
+        * [~ytdlOpts](#Music..ytdlOpts) : <code>Array.&lt;string&gt;</code> ℗
+        * [~mention(msg)](#Music..mention) ⇒ <code>string</code> ℗
+        * [~reply(msg, text, post)](#Music..reply) ⇒ <code>Promise</code> ℗
+        * [~handleVoiceStateUpdate(oldMem, newMem)](#Music..handleVoiceStateUpdate) ℗
+        * [~formatSongInfo(info)](#Music..formatSongInfo) ⇒ <code>Discord~MessageEmbed</code> ℗
+        * [~formNum(num)](#Music..formNum) ⇒ <code>string</code> ℗
+        * [~enqueueSong(broadcast, song, msg, info)](#Music..enqueueSong) ℗
+        * [~startPlaying(broadcast)](#Music..startPlaying) ℗
+        * [~makeBroadcast(broadcast)](#Music..makeBroadcast) ℗
+        * [~endSong(broadcast)](#Music..endSong) ℗
+        * [~skipSong(broadcast)](#Music..skipSong) ℗
+        * [~commandPlay(msg)](#Music..commandPlay) : <code>commandHandler</code> ℗
+        * [~commandLeave(msg)](#Music..commandLeave) : <code>commandHandler</code> ℗
+        * [~commandSkip(msg)](#Music..commandSkip) : <code>commandHandler</code> ℗
+        * [~commandQueue(msg)](#Music..commandQueue) : <code>commandHandler</code> ℗
+        * [~commandRemove(msg)](#Music..commandRemove) : <code>commandHandler</code> ℗
+        * [~commandLyrics(msg)](#Music..commandLyrics) : <code>commandHandler</code> ℗
+        * [~reqLyricsURL(msg, id)](#Music..reqLyricsURL) ℗
+        * [~fetchLyricsPage(msg, url, title, thumb)](#Music..fetchLyricsPage) ℗
+        * [~stripLyrics(msg, content, title, url, thumb)](#Music..stripLyrics) ℗
+        * [~commandRecord(msg)](#Music..commandRecord) : <code>commandHandler</code> ℗
+        * [~Broadcast](#Music..Broadcast) : <code>Object</code>
+
+<a name="SubModule+helpMessage"></a>
+
+### music.helpMessage : <code>string</code> \| <code>Discord~MessageEmbed</code>
+The help message to show the user in the main help message.
+
+**Kind**: instance property of [<code>Music</code>](#Music)  
+<a name="SubModule+prefix"></a>
+
+### music.prefix : <code>string</code>
+The main prefix in use for this bot. Only available after begin() is
+called.
+
+**Kind**: instance property of [<code>Music</code>](#Music)  
+**Read only**: true  
+<a name="SubModule+myPrefix"></a>
+
+### music.myPrefix : <code>string</code>
+The prefix this submodule uses. Formed by appending this.prefix to
+this.prePrefix. this.prePrefix must be defined before begin(), otherwise it
+is ignored.
+
+**Kind**: instance property of [<code>Music</code>](#Music)  
+**Read only**: true  
+<a name="SubModule+prePrefix"></a>
+
+### *music.prePrefix : <code>string</code>*
+The prefix for the global prefix for this subModule. Must be defined before
+begin(), otherwise it is ignored.
+
+**Kind**: instance abstract property of [<code>Music</code>](#Music)  
+**Default**: <code>&quot;&quot;</code>  
+<a name="SubModule+Discord"></a>
+
+### music.Discord : <code>Discord</code>
+The current Discord object instance of the bot.
+
+**Kind**: instance property of [<code>Music</code>](#Music)  
+<a name="SubModule+client"></a>
+
+### music.client : <code>Discord~Client</code>
+The current bot client.
+
+**Kind**: instance property of [<code>Music</code>](#Music)  
+<a name="SubModule+command"></a>
+
+### music.command : [<code>Command</code>](#SpikeyBot..Command)
+The command object for registering command listeners.
+
+**Kind**: instance property of [<code>Music</code>](#Music)  
+<a name="SubModule+common"></a>
+
+### music.common : [<code>Common</code>](#Common)
+The common object.
+
+**Kind**: instance property of [<code>Music</code>](#Music)  
+<a name="SubModule+myName"></a>
+
+### *music.myName : <code>string</code>*
+The name of this submodule. Used for differentiating in the log. Should be
+defined before begin().
+
+**Kind**: instance abstract property of [<code>Music</code>](#Music)  
+**Access**: protected  
+<a name="SubModule+initialize"></a>
+
+### music.initialize()
+The function called at the end of begin() for further initialization
+specific to the subModule. Must be defined before begin() is called.
+
+**Kind**: instance method of [<code>Music</code>](#Music)  
+**Overrides**: [<code>initialize</code>](#SubModule+initialize)  
+**Access**: protected  
+<a name="SubModule+begin"></a>
+
+### music.begin(prefix, Discord, client, command, common)
+Initialize this submodule.
+
+**Kind**: instance method of [<code>Music</code>](#Music)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| prefix | <code>string</code> | The global prefix for this bot. |
+| Discord | <code>Discord</code> | The Discord object for the API library. |
+| client | <code>Discord~Client</code> | The client that represents this bot. |
+| command | <code>Command</code> | The command instance in which to register command listeners. |
+| common | <code>Object</code> | Object storing common functions. |
+
+<a name="SubModule+end"></a>
+
+### music.end()
+Trigger subModule to shutdown and get ready for process terminating.
+
+**Kind**: instance method of [<code>Music</code>](#Music)  
+<a name="SubModule+shutdown"></a>
+
+### music.shutdown()
+Shutdown and disable this submodule. Removes all event listeners.
+
+**Kind**: instance method of [<code>Music</code>](#Music)  
+**Overrides**: [<code>shutdown</code>](#SubModule+shutdown)  
+**Access**: protected  
+<a name="SubModule+save"></a>
+
+### *music.save()*
+Saves all data to files necessary for saving current state.
+
+**Kind**: instance abstract method of [<code>Music</code>](#Music)  
+<a name="Music.streamToOgg"></a>
+
+### Music.streamToOgg(input, file)
+Coverts an incoming Opus stream to a ogg format and writes it to file.
+
+**Kind**: static method of [<code>Music</code>](#Music)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| input | <code>ReadableStream</code> | The opus stream from Discord. |
+| file | <code>WritableStream</code> | The file stream we are writing to. |
+
+<a name="Music..broadcasts"></a>
+
+### Music~broadcasts : <code>Object.&lt;string, Broadcast&gt;</code> ℗
+All current audio broadcasts to voice channels. Stores all relavent data.
+Stored by guild id.
+
+**Kind**: inner property of [<code>Music</code>](#Music)  
+**Access**: private  
+<a name="Music..geniusClient"></a>
+
+### Music~geniusClient : <code>string</code> ℗
+The Genuius client token we use to fetch information from their api
+
+**Kind**: inner constant of [<code>Music</code>](#Music)  
+**Access**: private  
+<a name="Music..geniusRequest"></a>
+
+### Music~geniusRequest : <code>Object</code> ℗
+The request headers to send to genius.
+
+**Kind**: inner constant of [<code>Music</code>](#Music)  
+**Access**: private  
+<a name="Music..special"></a>
+
+### Music~special : <code>Object.&lt;string, Object&gt;</code> ℗
+Special cases of requests to handle seperately.
+
+**Kind**: inner constant of [<code>Music</code>](#Music)  
+**Access**: private  
+<a name="Music..ytdlOpts"></a>
+
+### Music~ytdlOpts : <code>Array.&lt;string&gt;</code> ℗
+Options passed to youtube-dl for fetching videos.
+
+**Kind**: inner constant of [<code>Music</code>](#Music)  
+**Access**: private  
+<a name="Music..mention"></a>
+
+### Music~mention(msg) ⇒ <code>string</code> ℗
+Creates formatted string for mentioning the author of msg.
+
+**Kind**: inner method of [<code>Music</code>](#Music)  
+**Returns**: <code>string</code> - Formatted mention string.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message to format a mention for the author of. |
+
+<a name="Music..reply"></a>
+
+### Music~reply(msg, text, post) ⇒ <code>Promise</code> ℗
+Replies to the author and channel of msg with the given message.
+
+**Kind**: inner method of [<code>Music</code>](#Music)  
+**Returns**: <code>Promise</code> - Promise of Discord~Message that we attempted to send.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message to reply to. |
+| text | <code>string</code> | The main body of the message. |
+| post | <code>string</code> | The footer of the message. |
+
+<a name="Music..handleVoiceStateUpdate"></a>
+
+### Music~handleVoiceStateUpdate(oldMem, newMem) ℗
+Leave a voice channel if all other users have left. Should also cause music
+and recordings to stop.
+
+**Kind**: inner method of [<code>Music</code>](#Music)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| oldMem | <code>Discord~GuildMember</code> | Member before status update. |
+| newMem | <code>Discord~GuildMember</code> | Member after status update. |
+
+<a name="Music..formatSongInfo"></a>
+
+### Music~formatSongInfo(info) ⇒ <code>Discord~MessageEmbed</code> ℗
+Format the info response from ytdl into a human readable format.
+
+**Kind**: inner method of [<code>Music</code>](#Music)  
+**Returns**: <code>Discord~MessageEmbed</code> - The formatted song info.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| info | <code>Object</code> | The info received from ytdl about the song. |
+
+<a name="Music..formNum"></a>
+
+### Music~formNum(num) ⇒ <code>string</code> ℗
+Add commas between digits on large numbers.
+
+**Kind**: inner method of [<code>Music</code>](#Music)  
+**Returns**: <code>string</code> - The formatted number.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| num | <code>number</code> \| <code>string</code> | The number to format. |
+
+<a name="Music..enqueueSong"></a>
+
+### Music~enqueueSong(broadcast, song, msg, info) ℗
+Add a song to the given broadcast's queue and start playing it not already.
+
+**Kind**: inner method of [<code>Music</code>](#Music)  
+**Emits**: <code>SpikeyBot~Command#event:stop</code>  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| broadcast | <code>Broadcast</code> | The broadcast storage container. |
+| song | <code>string</code> | The song that was requested. |
+| msg | <code>Discord~Message</code> | The message that requested the song. |
+| info | <code>Object</code> | The info from ytdl about the song. |
+
+<a name="Music..startPlaying"></a>
+
+### Music~startPlaying(broadcast) ℗
+Start playing the first item in the queue of the broadcast.
+
+**Kind**: inner method of [<code>Music</code>](#Music)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| broadcast | <code>Broadcast</code> | The container storing all information about the song. |
+
+<a name="Music..makeBroadcast"></a>
+
+### Music~makeBroadcast(broadcast) ℗
+Create a voice channel broadcast based off of the media source, and start
+playing the audio.
+
+**Kind**: inner method of [<code>Music</code>](#Music)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| broadcast | <code>Broadcast</code> | The object storing all relevant information. |
+
+<a name="Music..endSong"></a>
+
+### Music~endSong(broadcast) ℗
+Triggered when a song has finished playing.
+
+**Kind**: inner method of [<code>Music</code>](#Music)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| broadcast | <code>Broadcast</code> | The object storing all relevant information. |
+
+<a name="Music..skipSong"></a>
+
+### Music~skipSong(broadcast) ℗
+Skip the current song, then attempt to play the next.
+
+**Kind**: inner method of [<code>Music</code>](#Music)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| broadcast | <code>Broadcast</code> | The object storing all relevant information. |
+
+<a name="Music..commandPlay"></a>
+
+### Music~commandPlay(msg) : <code>commandHandler</code> ℗
+Search for a song to play based off user request.
+
+**Kind**: inner method of [<code>Music</code>](#Music)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message that triggered command. |
+
+<a name="Music..commandLeave"></a>
+
+### Music~commandLeave(msg) : <code>commandHandler</code> ℗
+Cause the bot to leave the voice channel and stop playing music.
+
+**Kind**: inner method of [<code>Music</code>](#Music)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message that triggered the command. |
+
+<a name="Music..commandSkip"></a>
+
+### Music~commandSkip(msg) : <code>commandHandler</code> ℗
+Skip the currently playing song and continue to the next in the queue.
+
+**Kind**: inner method of [<code>Music</code>](#Music)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message that triggered the command. |
+
+<a name="Music..commandQueue"></a>
+
+### Music~commandQueue(msg) : <code>commandHandler</code> ℗
+Show the user what is in the queue.
+
+**Kind**: inner method of [<code>Music</code>](#Music)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message that triggered the command. |
+
+<a name="Music..commandRemove"></a>
+
+### Music~commandRemove(msg) : <code>commandHandler</code> ℗
+Remove a song from the queue.
+
+**Kind**: inner method of [<code>Music</code>](#Music)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message that triggered the command. |
+
+<a name="Music..commandLyrics"></a>
+
+### Music~commandLyrics(msg) : <code>commandHandler</code> ℗
+Search for a song's lyrics via Genius.
+
+**Kind**: inner method of [<code>Music</code>](#Music)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message that triggered the command. |
+
+<a name="Music..reqLyricsURL"></a>
+
+### Music~reqLyricsURL(msg, id) ℗
+Request the song information from Genius from previous search to find the
+page where the lyrics are.
+
+**Kind**: inner method of [<code>Music</code>](#Music)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message that triggered the command. |
+| id | <code>string</code> | The id of the first song in the search results. |
+
+<a name="Music..fetchLyricsPage"></a>
+
+### Music~fetchLyricsPage(msg, url, title, thumb) ℗
+Request the webpage that has the song lyrics on them from Genius.
+
+**Kind**: inner method of [<code>Music</code>](#Music)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message that triggered the command. |
+| url | <code>string</code> | The url of the page to request. |
+| title | <code>string</code> | The song title for showing the user later. |
+| thumb | <code>string</code> | The url of the album art thumbnail to show the user later. |
+
+<a name="Music..stripLyrics"></a>
+
+### Music~stripLyrics(msg, content, title, url, thumb) ℗
+Crawl the received webpage for the data we need, then format the data and
+show it to the user.
+
+**Kind**: inner method of [<code>Music</code>](#Music)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message that triggered the command. |
+| content | <code>string</code> | The entire page received. |
+| title | <code>string</code> | The song title for showing the user. |
+| url | <code>string</code> | The url of where we fetched the lyrics to show the user. |
+| thumb | <code>string</code> | The url of the album art thumbnail to show the user later. |
+
+<a name="Music..commandRecord"></a>
+
+### Music~commandRecord(msg) : <code>commandHandler</code> ℗
+Join a voice channel and record the specified users audio to a file on this
+server.
+
+**Kind**: inner method of [<code>Music</code>](#Music)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message that triggered the command. |
+
+<a name="Music..Broadcast"></a>
+
+### Music~Broadcast : <code>Object</code>
+Information about a server's music and queue.
+
+**Kind**: inner typedef of [<code>Music</code>](#Music)  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| queue | <code>Array.&lt;string&gt;</code> | Requests that have been queued. |
+| skips | <code>Object.&lt;string, boolean&gt;</code> | Stores user id's and whether they have voted to skip. Non-existent user means they have not voted to skip. |
+| isPlaying | <code>boolean</code> | Is audio currntly being streamed to the channel. |
+| broadcast | <code>Discord~VoiceBroadcast</code> | The Discord voice broadcast actually playing the audio. |
 
 <a name="SpikeyBot"></a>
 
@@ -1661,6 +2079,7 @@ Trigger subModule to shutdown and get ready for process terminating.
 Shutdown and disable this submodule. Removes all event listeners.
 
 **Kind**: instance abstract method of [<code>SubModule</code>](#SubModule)  
+**Access**: protected  
 <a name="SubModule+save"></a>
 
 ### *subModule.save()*
@@ -2636,282 +3055,6 @@ Handler for an unhandledRejection.
 | --- | --- | --- |
 | reason | <code>Object</code> | Reason for rejection. |
 | p | <code>Promise</code> | The promise that caused the rejection. |
-
-<a name="begin"></a>
-
-## begin(prefix_, Discord_, client_, command_, common_)
-Initialize this submodule.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| prefix_ | <code>string</code> | The global prefix for this bot. |
-| Discord_ | <code>Discord</code> | The Discord object for the API library. |
-| client_ | <code>Discord.Client</code> | The client that represents this bot. |
-| command_ | <code>Command</code> | The command instance in which to register command listeners. |
-| common_ | <code>Object</code> | Object storing common functions. |
-
-<a name="end"></a>
-
-## end()
-Shutdown and disable this submodule. Removes all event listeners.
-
-**Kind**: global function  
-<a name="mention"></a>
-
-## mention(msg) ⇒ <code>string</code>
-Creates formatted string for mentioning the author of msg.
-
-**Kind**: global function  
-**Returns**: <code>string</code> - Formatted mention string.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord.Message</code> | Message to format a mention for the author of. |
-
-<a name="reply"></a>
-
-## reply(msg, text, post) ⇒ <code>Promise</code>
-Replies to the author and channel of msg with the given message.
-
-**Kind**: global function  
-**Returns**: <code>Promise</code> - Promise of Discord.Message that we attempted to send.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord.Message</code> | Message to reply to. |
-| text | <code>string</code> | The main body of the message. |
-| post | <code>string</code> | The footer of the message. |
-
-<a name="handleVoiceStateUpdate"></a>
-
-## handleVoiceStateUpdate(oldMem, newMem)
-Leave a voice channel if all other users have left. Should also cause music
-and recordings to stop.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| oldMem | <code>Discord.GuildMember</code> | Member before status update. |
-| newMem | <code>Discord.GuildMember</code> | Member after status update. |
-
-<a name="formatSongInfo"></a>
-
-## formatSongInfo(info) ⇒ <code>Discord.MessageEmbed</code>
-Format the info response from ytdl into a human readable format.
-
-**Kind**: global function  
-**Returns**: <code>Discord.MessageEmbed</code> - The formatted song info.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| info | <code>Object</code> | The info received from ytdl about the song. |
-
-<a name="formNum"></a>
-
-## formNum(num) ⇒ <code>string</code>
-Add commas between digits on large numbers.
-
-**Kind**: global function  
-**Returns**: <code>string</code> - The formatted number.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| num | <code>number</code> \| <code>string</code> | The number to format. |
-
-<a name="enqueueSong"></a>
-
-## enqueueSong(broadcast, song, msg, info)
-Add a song to the given broadcast's queue and start playing it not already.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| broadcast | <code>Object</code> | The broadcast storage container. |
-| song | <code>string</code> | The song that was requested. |
-| msg | <code>Discord.Message</code> | The message that requested the song. |
-| info | <code>Object</code> | The info from ytdl about the song. |
-
-<a name="startPlaying"></a>
-
-## startPlaying(broadcast)
-Start playing the first item in the queue of the broadcast.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| broadcast | <code>Object</code> | The container storing all information about the song. |
-
-<a name="makeBroadcast"></a>
-
-## makeBroadcast(broadcast)
-Create a voice channel broadcast based off of the media source, and start
-playing the audio.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| broadcast | <code>Object</code> | The object storing all relevant information. |
-
-<a name="endSong"></a>
-
-## endSong(broadcast)
-Triggered when a song has finished playing.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| broadcast | <code>Object</code> | The object storing all relevant information. |
-
-<a name="skipSong"></a>
-
-## skipSong(broadcast)
-Skip the current song, then attempt to play the next.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| broadcast | <code>Object</code> | The object storing all relevant information. |
-
-<a name="commandPlay"></a>
-
-## commandPlay(msg)
-Search for a song to play based off user request.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord.Message</code> | The message that triggered command. |
-
-<a name="commandLeave"></a>
-
-## commandLeave(msg)
-Cause the bot to leave the voice channel and stop playing music.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord.Message</code> | The message that triggered the command. |
-
-<a name="commandSkip"></a>
-
-## commandSkip(msg)
-Skip the currently playing song and continue to the next in the queue.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord.Message</code> | The message that triggered the command. |
-
-<a name="commandQueue"></a>
-
-## commandQueue(msg)
-Show the user what is in the queue.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord.Message</code> | The message that triggered the command. |
-
-<a name="commandRemove"></a>
-
-## commandRemove(msg)
-Remove a song from the queue.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord.Message</code> | The message that triggered the command. |
-
-<a name="commandLyrics"></a>
-
-## commandLyrics(msg)
-Search for a song's lyrics via Genius.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord.Message</code> | The message that triggered the command. |
-
-<a name="reqLyricsURL"></a>
-
-## reqLyricsURL(msg, id)
-Request the song information from Genius from previous search to find the
-page where the lyrics are.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord.Message</code> | The message that triggered the command. |
-| id | <code>string</code> | The id of the first song in the search results. |
-
-<a name="fetchLyricsPage"></a>
-
-## fetchLyricsPage(msg, url, title, thumb)
-Request the webpage that has the song lyrics on them from Genius.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord.Message</code> | The message that triggered the command. |
-| url | <code>string</code> | The url of the page to request. |
-| title | <code>string</code> | The song title for showing the user later. |
-| thumb | <code>string</code> | The url of the album art thumbnail to show the user later. |
-
-<a name="stripLyrics"></a>
-
-## stripLyrics(msg, content, title, url, thumb)
-Crawl the received webpage for the data we need, then format the data and
-show it to the user.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord.Message</code> | The message that triggered the command. |
-| content | <code>string</code> | The entire page received. |
-| title | <code>string</code> | The song title for showing the user. |
-| url | <code>string</code> | The url of where we fetched the lyrics to show the user. |
-| thumb | <code>string</code> | The url of the album art thumbnail to show the user later. |
-
-<a name="commandRecord"></a>
-
-## commandRecord(msg)
-Join a voice channel and record the specified users audio to a file on this
-server.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord.Message</code> | The message that triggered the command. |
-
-<a name="streamToOgg"></a>
-
-## streamToOgg(input, file)
-Coverts an incoming Opus stream to a ogg format and writes it to file.
-
-**Kind**: global function  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| input | <code>ReadableStream</code> | The opus stream from Discord. |
-| file | <code>WritableStream</code> | The file stream we are writing to. |
 
 <a name="event_Command"></a>
 
