@@ -12,6 +12,8 @@ math.config({matrix: 'Array'});
  * @classdesc Basic commands and features for the bot.
  * @class
  * @augments SubModule
+ * @listens Discord~Client#guildCreate
+ * @listens Discord~Client#guildBanAdd
  * @listens SpikeyBot~Command
  */
 function Main() {
@@ -340,6 +342,76 @@ function Main() {
 
     fs.writeFileSync('./save/timers.dat', JSON.stringify({timers: timers}));
   };
+
+  this.client.on('guildCreate', onGuildCreate);
+  /**
+   * Handle being added to a guild.
+   *
+   * @private
+   * @param {Discord.Guild} guild The guild that we just joined.
+   * @listens Discord~Client#guildCreate
+   */
+  function onGuildCreate(guild) {
+    self.common.log('ADDED TO NEW GUILD: ' + guild.id + ': ' + guild.name);
+    let channel = '';
+    let pos = -1;
+    try {
+      guild.channels.forEach(function(val, key) {
+        if (val.type != 'voice' && val.type != 'category') {
+          if (pos == -1 || val.position < pos) {
+            pos = val.position;
+            channel = val.id;
+          }
+        }
+      });
+      self.client.channels.get(channel).send(introduction);
+    } catch (err) {
+      self.common.error('Failed to send welcome to guild:' + guild.id);
+      console.log(err);
+    }
+  }
+
+  this.client.on('guildBanAdd', onGuildBanAdd);
+  /**
+   * Handle user banned on a guild.
+   *
+   * @private
+   * @param {Discord.Guild} guild The guild on which the ban happened.
+   * @param {Discord.User} user The user that was banned.
+   * @listens Discord~Client#guildBanAdd
+   */
+  function onGuildBanAdd(guild, user) {
+    let channel = '';
+    let pos = -1;
+    try {
+      guild.channels.forEach(function(val, key) {
+        if (val.type != 'voice' && val.type != 'category') {
+          if (pos == -1 || val.position < pos) {
+            pos = val.position;
+            channel = val.id;
+          }
+        }
+      });
+      guild.fetchAuditLogs({limit: 1})
+          .then((logs) => {
+            if (logs.entries.first().executor.id !== self.client.user.id) {
+              self.client.channels.get(channel).send(
+                  '`Poof! ' + logs.entries.first().executor.username +
+                  ' has ensured ' + user.username +
+                  ' will never be seen again...`');
+            }
+          })
+          .catch((err) => {
+            self.client.channels.get(channel).send(
+                '`Poof! ' + user.username + ' was never seen again...`');
+            self.common.error('Failed to find executor of ban.');
+            console.log(err);
+          });
+    } catch (err) {
+      self.common.error('Failed to send ban from guild:' + guild.id);
+      console.log(err);
+    }
+  }
 
   /**
    * Replies to message with URL for inviting the bot to a guild.

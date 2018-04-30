@@ -1915,6 +1915,8 @@ Basic commands and features for the bot.
         * [~webURL](#Main..webURL) : <code>string</code> ℗
         * [~mention(msg)](#Main..mention) ⇒ <code>string</code> ℗
         * [~reply(msg, text, post)](#Main..reply) ⇒ <code>Promise</code> ℗
+        * [~onGuildCreate(guild)](#Main..onGuildCreate) ℗
+        * [~onGuildBanAdd(guild, user)](#Main..onGuildBanAdd) ℗
         * [~commandAddMe(msg)](#Main..commandAddMe) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandAdd(msg)](#Main..commandAdd) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandSimplify(msg)](#Main..commandSimplify) : [<code>commandHandler</code>](#commandHandler) ℗
@@ -2174,6 +2176,31 @@ Replies to the author and channel of msg with the given message.
 | msg | <code>Discord~Message</code> | Message to reply to. |
 | text | <code>string</code> | The main body of the message. |
 | post | <code>string</code> | The footer of the message. |
+
+<a name="Main..onGuildCreate"></a>
+
+### Main~onGuildCreate(guild) ℗
+Handle being added to a guild.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| guild | <code>Discord.Guild</code> | The guild that we just joined. |
+
+<a name="Main..onGuildBanAdd"></a>
+
+### Main~onGuildBanAdd(guild, user) ℗
+Handle user banned on a guild.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| guild | <code>Discord.Guild</code> | The guild on which the ban happened. |
+| user | <code>Discord.User</code> | The user that was banned. |
 
 <a name="Main..commandAddMe"></a>
 
@@ -3042,7 +3069,6 @@ Main class that manages the bot.
     * [~reactToAnthony](#SpikeyBot..reactToAnthony) : <code>boolean</code> ℗
     * [~spikeyId](#SpikeyBot..spikeyId) : <code>string</code> ℗
     * [~trustedIds](#SpikeyBot..trustedIds) : <code>Array.&lt;string&gt;</code> ℗
-    * [~introduction](#SpikeyBot..introduction) : <code>string</code> ℗
     * [~helpmessagereply](#SpikeyBot..helpmessagereply) : <code>string</code> ℗
     * [~blockedmessage](#SpikeyBot..blockedmessage) : <code>string</code> ℗
     * [~onlyservermessage](#SpikeyBot..onlyservermessage) : <code>string</code> ℗
@@ -3054,8 +3080,6 @@ Main class that manages the bot.
     * [~reply(msg, text, post)](#SpikeyBot..reply) ⇒ <code>Promise</code> ℗
     * [~onReady()](#SpikeyBot..onReady) ℗
     * [~onMessage(msg)](#SpikeyBot..onMessage) ℗
-    * [~onGuildCreate(guild)](#SpikeyBot..onGuildCreate) ℗
-    * [~onGuildBanAdd(guild, user)](#SpikeyBot..onGuildBanAdd) ℗
     * [~commandToggleReact(msg)](#SpikeyBot..commandToggleReact) : [<code>commandHandler</code>](#commandHandler) ℗
     * [~commandHelp(msg)](#SpikeyBot..commandHelp) : [<code>commandHandler</code>](#commandHandler) ℗
     * [~commandUpdateGame(msg)](#SpikeyBot..commandUpdateGame) : [<code>commandHandler</code>](#commandHandler) ℗
@@ -3224,13 +3248,6 @@ Discord IDs that are allowed to reboot the bot.
 
 **Kind**: inner constant of [<code>SpikeyBot</code>](#SpikeyBot)  
 **Access**: private  
-<a name="SpikeyBot..introduction"></a>
-
-### SpikeyBot~introduction : <code>string</code> ℗
-The introduction message the bots sends when joining a guild.
-
-**Kind**: inner constant of [<code>SpikeyBot</code>](#SpikeyBot)  
-**Access**: private  
 <a name="SpikeyBot..helpmessagereply"></a>
 
 ### SpikeyBot~helpmessagereply : <code>string</code> ℗
@@ -3344,31 +3361,6 @@ Handle a message sent.
 | Param | Type | Description |
 | --- | --- | --- |
 | msg | <code>Discord~Message</code> | Message that was sent in Discord. |
-
-<a name="SpikeyBot..onGuildCreate"></a>
-
-### SpikeyBot~onGuildCreate(guild) ℗
-Handle being added to a guild.
-
-**Kind**: inner method of [<code>SpikeyBot</code>](#SpikeyBot)  
-**Access**: private  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| guild | <code>Discord.Guild</code> | The guild that we just joined. |
-
-<a name="SpikeyBot..onGuildBanAdd"></a>
-
-### SpikeyBot~onGuildBanAdd(guild, user) ℗
-Handle user banned on a guild.
-
-**Kind**: inner method of [<code>SpikeyBot</code>](#SpikeyBot)  
-**Access**: private  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| guild | <code>Discord.Guild</code> | The guild on which the ban happened. |
-| user | <code>Discord.User</code> | The user that was banned. |
 
 <a name="SpikeyBot..commandToggleReact"></a>
 

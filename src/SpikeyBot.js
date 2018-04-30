@@ -9,8 +9,6 @@ const client = new Discord.Client();
  * @class
  * @listens Discord~Client#ready
  * @listens Discord~Client#message
- * @listens Discord~Client#guildCreate
- * @listens Discord~Client#guildBanAdd
  * @listens SpikeyBot~Command#toggleReact
  * @listens SpikeyBot~Command#help
  * @listens SpikeyBot~Command#updateGame
@@ -115,19 +113,6 @@ function SpikeyBot() {
     '126464376059330562', // Rohan
   ];
 
-  /**
-   * The introduction message the bots sends when joining a guild.
-   *
-   * @private
-   * @type {string}
-   * @constant
-   */
-  const introduction = '\nHello! My name is SpikeyBot.\nI was created by ' +
-      'SpikeyRobot#9836, so if you wish to add any features, feel free to PM ' +
-      'him! (Tip: Use **' + prefix + 'pmspikey**)\n\nIf you\'d like to know ' +
-      'what I can do, type **' + prefix +
-      'help** in a PM to me and I\'ll let ' +
-      'you know!';
   /**
    * The message sent to the channel where the user asked for help.
    *
@@ -509,74 +494,6 @@ function SpikeyBot() {
   }
 
   if (!onlymusic) {
-    client.on('guildCreate', onGuildCreate);
-    /**
-     * Handle being added to a guild.
-     *
-     * @private
-     * @param {Discord.Guild} guild The guild that we just joined.
-     * @listens Discord~Client#guildCreate
-     */
-    function onGuildCreate(guild) {
-      common.log('ADDED TO NEW GUILD: ' + guild.id + ': ' + guild.name);
-      let channel = '';
-      let pos = -1;
-      try {
-        guild.channels.forEach(function(val, key) {
-          if (val.type != 'voice' && val.type != 'category') {
-            if (pos == -1 || val.position < pos) {
-              pos = val.position;
-              channel = val.id;
-            }
-          }
-        });
-        client.channels.get(channel).send(introduction);
-      } catch (err) {
-        common.error('Failed to send welcome to guild:' + guild.id);
-        console.log(err);
-      }
-    }
-
-    client.on('guildBanAdd', onGuildBanAdd);
-    /**
-     * Handle user banned on a guild.
-     *
-     * @private
-     * @param {Discord.Guild} guild The guild on which the ban happened.
-     * @param {Discord.User} user The user that was banned.
-     * @listens Discord~Client#guildBanAdd
-     */
-    function onGuildBanAdd(guild, user) {
-      let channel = '';
-      let pos = -1;
-      try {
-        guild.channels.forEach(function(val, key) {
-          if (val.type != 'voice' && val.type != 'category') {
-            if (pos == -1 || val.position < pos) {
-              pos = val.position;
-              channel = val.id;
-            }
-          }
-        });
-        guild.fetchAuditLogs({limit: 1})
-            .then((logs) => {
-              client.channels.get(channel).send(
-                  '`Poof! ' + logs.entries.first().executor.username +
-                  ' has ensured ' + user.username +
-                  ' will never be seen again...`');
-            })
-            .catch((err) => {
-              client.channels.get(channel).send(
-                  '`Poof! ' + user.username + ' was never seen again...`');
-              common.error('Failed to find executor of ban.');
-              console.log(err);
-            });
-      } catch (err) {
-        common.error('Failed to send ban from guild:' + guild.id);
-        console.log(err);
-      }
-    }
-
     command.on('togglereact', commandToggleReact);
     /**
      * Toggle reactions to Anthony.
