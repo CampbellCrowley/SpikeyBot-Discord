@@ -47,6 +47,6 @@
     "test:main": "mocha --delay --grep \"START|Main Module|END\"",
     "run": "npm run kill; (nodejs src/SpikeyBot.js dev onlymusic ./music.js &) && (nodejs src/SpikeyBot.js dev ./hungryGames.js ./main.js &)",
     "kill": "killall nodejs",
-    "docs": "jsdoc2md src/*.js > docs/api.md"
+    "docs": "npm run lint && jsdoc2md src/*.js --private > docs/README.md"
   }
 }

@@ -16,15 +16,12 @@ ESLINT="$(git rev-parse --show-toplevel)/node_modules/.bin/eslint"
 if [[ "$?" == 0 ]]; then
   echo -e "\t\033[32mESLint Passed: $STAGED_FILES\033[0m"
 else
-  # echo -e "\t\033[41mESLint Failed: $STAGED_FILES\033[0m"
   PASS=false
 fi
 
 if ! $PASS; then
   echo -e "\033[41mCOMMIT FAILED:\033[0m Your commit contains files that should pass ESLint but do not. Please fix the ESLint errors and try again."
   exit 1
-# else
-  # echo -e "\033[42mCOMMIT SUCCEEDED\033[0m"
 fi
 
 if [[ "$?" != 0 ]]; then
@@ -32,7 +29,7 @@ if [[ "$?" != 0 ]]; then
 fi
 
 echo "Creating docs"
-jsdoc2md src/*.js > docs/api.md
+jsdoc2md src/*.js --private > docs/README.md
 
 if [[ "$?" != 0 ]]; then
   exit $?

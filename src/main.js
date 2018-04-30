@@ -273,6 +273,7 @@ exports.save = function() {};
 /**
  * Replies to message with URL for inviting the bot to a guild.
  *
+ * @type {commandHandler}
  * @param {Discord.Message} msg Message that triggered command.
  */
 function commandAddMe(msg) {
