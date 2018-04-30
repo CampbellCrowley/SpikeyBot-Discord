@@ -223,7 +223,7 @@ function sendCommand(test, done) {
 /**
  * Check a received message against test criteria.
  *
- * @param {Discord.Message} msg The message received. Includes messages we sent,
+ * @param {Discord~Message} msg The message received. Includes messages we sent,
  * as well as the bot sent.
  */
 function testMessageContent(msg) {

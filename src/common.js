@@ -207,6 +207,76 @@ function Common() {
   }
 }
 
+/**
+ * SpikeyRobot's Discord ID
+ *
+ * @type {string}
+ * @constant
+ */
+Common.prototype.spikeyId = '124733888177111041';
+/**
+ * SpikeyRobot's Discord ID
+ *
+ * @type {string}
+ * @constant
+ */
+Common.spikeyId = Common.prototype.spikeyId;
+
+/**
+ * The website base URL for pointing to for more help and documentation.
+ *
+ * @type {string}
+ * @constant
+ */
+Common.prototype.webURL = 'https://www.campbellcrowley.com/spikeybot';
+/**
+ * The website base URL for pointing to for more help and documentation.
+ *
+ * @type {string}
+ * @constant
+ */
+Common.webURL = Common.prototype.webURL;
+
+/**
+ * Creates formatted string for mentioning the author of msg.
+ *
+ * @param {Discord~Message} msg Message to format a mention for the author of.
+ * @return {string} Formatted mention string.
+ */
+Common.prototype.mention = function(msg) {
+  return `<@${msg.author.id}>`;
+};
+/**
+ * Creates formatted string for mentioning the author of msg.
+ *
+ * @param {Discord~Message} msg Message to format a mention for the author of.
+ * @return {string} Formatted mention string.
+ */
+Common.mention = Common.prototype.mention;
+
+/**
+ * Replies to the author and channel of msg with the given message.
+ *
+ * @param {Discord~Message} msg Message to reply to.
+ * @param {string} text The main body of the message.
+ * @param {string} post The footer of the message.
+ * @return {Promise} Promise of Discord~Message that we attempted to send.
+ */
+Common.prototype.reply = function(msg, text, post) {
+  return msg.channel.send(
+      Common.mention(msg) + '\n```\n' + text + '\n```' + (post || ''));
+};
+/**
+ * Replies to the author and channel of msg with the given message.
+ *
+ * @param {Discord~Message} msg Message to reply to.
+ * @param {string} text The main body of the message.
+ * @param {string} post The footer of the message.
+ * @return {Promise} Promise of Discord~Message that we attempted to send.
+ */
+Common.reply = Common.prototype.reply;
+
+
 /* eslint-disable-next-line no-extend-native */
 String.prototype.replaceAll = function(search, replacement) {
   let target = this;

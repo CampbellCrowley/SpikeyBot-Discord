@@ -39,12 +39,21 @@ Common functions accross my projects. Mostly just logging.
 * [Common](#Common)
     * _instance_
         * [.isRelease](#Common+isRelease) : <code>boolean</code>
+        * [.spikeyId](#Common+spikeyId) : <code>string</code>
+        * [.webURL](#Common+webURL) : <code>string</code>
         * [.begin(_, isRelease)](#Common+begin)
         * [.padIp(str)](#Common+padIp) ⇒ <code>string</code>
         * [.getIPName(ip)](#Common+getIPName) ⇒ <code>string</code>
         * [.updatePrefix(ip)](#Common+updatePrefix) ⇒ <code>string</code>
         * [.log(message, ip)](#Common+log)
         * [.error(message, ip)](#Common+error)
+        * [.mention(msg)](#Common+mention) ⇒ <code>string</code>
+        * [.reply(msg, text, post)](#Common+reply) ⇒ <code>Promise</code>
+    * _static_
+        * [.mention](#Common.mention) ⇒ <code>string</code>
+        * [.reply](#Common.reply) ⇒ <code>Promise</code>
+        * [.spikeyId](#Common.spikeyId) : <code>string</code>
+        * [.webURL](#Common.webURL) : <code>string</code>
     * _inner_
         * [~mycolor](#Common..mycolor) : <code>number</code> ℗
         * [~title](#Common..title) : <code>string</code> ℗
@@ -59,6 +68,18 @@ Whether this should be shown as a release version, or a debug version in
 the log.
 
 **Kind**: instance property of [<code>Common</code>](#Common)  
+<a name="Common+spikeyId"></a>
+
+### common.spikeyId : <code>string</code>
+SpikeyRobot's Discord ID
+
+**Kind**: instance constant of [<code>Common</code>](#Common)  
+<a name="Common+webURL"></a>
+
+### common.webURL : <code>string</code>
+The website base URL for pointing to for more help and documentation.
+
+**Kind**: instance constant of [<code>Common</code>](#Common)  
 <a name="Common+begin"></a>
 
 ### common.begin(_, isRelease)
@@ -133,6 +154,70 @@ Format an error message to be logged.
 | message | <code>string</code> | The message to display. |
 | ip | <code>string</code> | The IP address or unique identifier of the client that caused this event to happen. |
 
+<a name="Common+mention"></a>
+
+### common.mention(msg) ⇒ <code>string</code>
+Creates formatted string for mentioning the author of msg.
+
+**Kind**: instance method of [<code>Common</code>](#Common)  
+**Returns**: <code>string</code> - Formatted mention string.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message to format a mention for the author of. |
+
+<a name="Common+reply"></a>
+
+### common.reply(msg, text, post) ⇒ <code>Promise</code>
+Replies to the author and channel of msg with the given message.
+
+**Kind**: instance method of [<code>Common</code>](#Common)  
+**Returns**: <code>Promise</code> - Promise of Discord~Message that we attempted to send.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message to reply to. |
+| text | <code>string</code> | The main body of the message. |
+| post | <code>string</code> | The footer of the message. |
+
+<a name="Common.mention"></a>
+
+### Common.mention ⇒ <code>string</code>
+Creates formatted string for mentioning the author of msg.
+
+**Kind**: static property of [<code>Common</code>](#Common)  
+**Returns**: <code>string</code> - Formatted mention string.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message to format a mention for the author of. |
+
+<a name="Common.reply"></a>
+
+### Common.reply ⇒ <code>Promise</code>
+Replies to the author and channel of msg with the given message.
+
+**Kind**: static property of [<code>Common</code>](#Common)  
+**Returns**: <code>Promise</code> - Promise of Discord~Message that we attempted to send.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message to reply to. |
+| text | <code>string</code> | The main body of the message. |
+| post | <code>string</code> | The footer of the message. |
+
+<a name="Common.spikeyId"></a>
+
+### Common.spikeyId : <code>string</code>
+SpikeyRobot's Discord ID
+
+**Kind**: static constant of [<code>Common</code>](#Common)  
+<a name="Common.webURL"></a>
+
+### Common.webURL : <code>string</code>
+The website base URL for pointing to for more help and documentation.
+
+**Kind**: static constant of [<code>Common</code>](#Common)  
 <a name="Common..mycolor"></a>
 
 ### Common~mycolor : <code>number</code> ℗
@@ -239,15 +324,12 @@ Hunger Games simulator.
         * [~helpmessagereply](#HungryGames..helpmessagereply) : <code>string</code> ℗
         * [~blockedmessage](#HungryGames..blockedmessage) : <code>string</code> ℗
         * [~helpObject](#HungryGames..helpObject) ℗
-        * [~webURL](#HungryGames..webURL) : <code>string</code> ℗
         * [~updateEvents()](#HungryGames..updateEvents) ℗
         * [~updateMessages()](#HungryGames..updateMessages) ℗
         * [~updateBattles()](#HungryGames..updateBattles) ℗
         * [~setupHelp()](#HungryGames..setupHelp) ℗
         * [~handleMessageEdit(oldMsg, newMsg)](#HungryGames..handleMessageEdit) ℗
         * [~handleCommand(msg)](#HungryGames..handleCommand) : [<code>commandHandler</code>](#commandHandler) ℗
-        * [~mention(msg)](#HungryGames..mention) ⇒ <code>string</code> ℗
-        * [~reply(msg, text, post)](#HungryGames..reply) ⇒ <code>Promise.&lt;Discord~Message&gt;</code> ℗
         * [~checkForRole(msg)](#HungryGames..checkForRole) ⇒ <code>boolean</code> ℗
         * [~checkPerms(msg, cb)](#HungryGames..checkPerms) ℗
         * [~makePlayer(user)](#HungryGames..makePlayer) ⇒ [<code>Player</code>](#HungryGames..Player) ℗
@@ -273,7 +355,7 @@ Hunger Games simulator.
         * [~weightedEvent(eventPool, weightOpt)](#HungryGames..weightedEvent) ⇒ <code>number</code> ℗
         * [~isEventDeadly(eventTry)](#HungryGames..isEventDeadly) ⇒ <code>boolean</code> ℗
         * [~formatMultiNames(names, mention)](#HungryGames..formatMultiNames) ⇒ <code>string</code> ℗
-        * [~makeMessageEvent(message, id)](#HungryGames..makeMessageEvent) ⇒ [<code>Event</code>](#HungryGames..Event) ℗
+        * [~makeMessageEvent(message, [id])](#HungryGames..makeMessageEvent) ⇒ [<code>Event</code>](#HungryGames..Event) ℗
         * [~makeSingleEvent(message, affectedUsers, numVictim, numAttacker, mention, id, victimOutcome, attackerOutcome)](#HungryGames..makeSingleEvent) ⇒ <code>HungryGames~FinalEvent</code> ℗
         * [~getMiniIcons(users)](#HungryGames..getMiniIcons) ⇒ [<code>Array.&lt;UserIconUrl&gt;</code>](#HungryGames..UserIconUrl) ℗
         * [~printEvent(msg, id)](#HungryGames..printEvent) ℗
@@ -519,13 +601,13 @@ Event that can happen in a game.
 | message | <code>string</code> |  | The message to show. |
 | [numVictim] | <code>number</code> | <code>0</code> | The number of victims in this event. |
 | [numAttacker] | <code>number</code> | <code>0</code> | The number of attackers in this event. |
-| [victimOutcome] | <code>string</code> | <code>&quot;&#x27;nothing&#x27;&quot;</code> | The outcome of the victims from this event. |
-| [attackerOutcome] | <code>string</code> | <code>&quot;&#x27;nothing&#x27;&quot;</code> | The outcome of the attackers from this event. |
+| [victimOutcome] | <code>string</code> | <code>&quot;nothing&quot;</code> | The outcome of the victims from this event. |
+| [attackerOutcome] | <code>string</code> | <code>&quot;nothing&quot;</code> | The outcome of the attackers from this event. |
 | [victimKiller] | <code>boolean</code> | <code>false</code> | Do the victims kill anyone in this event. Used for calculating kill count. |
 | [attackerKiller] | <code>boolean</code> | <code>false</code> | Do the attackers kill anyone in this event. Used for calculating kill count. |
 | [battle] | <code>boolean</code> | <code>false</code> | Is this event a battle? |
 | [state] | <code>number</code> | <code>0</code> | State of event if there are multiple attacks before the event. |
-| [attacks] | [<code>Array.&lt;Event&gt;</code>](#HungryGames..Event) |  | Array of attacks that take place before the event. |
+| [attacks] | [<code>Array.&lt;Event&gt;</code>](#HungryGames..Event) | <code>[]</code> | Array of attacks that take place before the event. |
 
 <a name="HungryGames..games"></a>
 
@@ -736,6 +818,7 @@ Number of events to show on a single page of events.
 Maximum amount of time to wait for reactions to a message.
 
 **Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
+**Default**: <code>15 Minutes</code>  
 **Access**: private  
 <a name="HungryGames..defaultOptions"></a>
 
@@ -826,13 +909,6 @@ The object that stores all data to be formatted into the help message.
 
 **Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
 **Access**: private  
-<a name="HungryGames..webURL"></a>
-
-### HungryGames~webURL : <code>string</code> ℗
-The website base URL for pointing to for more help and documentation.
-
-**Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
-**Access**: private  
 <a name="HungryGames..updateEvents"></a>
 
 ### HungryGames~updateEvents() ℗
@@ -886,35 +962,6 @@ Handle a command from a user and pass into relevant functions.
 | Param | Type | Description |
 | --- | --- | --- |
 | msg | <code>Discord~Message</code> | Message that triggered command. |
-
-<a name="HungryGames..mention"></a>
-
-### HungryGames~mention(msg) ⇒ <code>string</code> ℗
-Creates formatted string for mentioning the author of msg.
-
-**Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
-**Returns**: <code>string</code> - Formatted mention string.  
-**Access**: private  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord~Message</code> | Message to format a mention for the author of. |
-
-<a name="HungryGames..reply"></a>
-
-### HungryGames~reply(msg, text, post) ⇒ <code>Promise.&lt;Discord~Message&gt;</code> ℗
-Replies to the author and channel of msg with the given message.
-
-**Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
-**Returns**: <code>Promise.&lt;Discord~Message&gt;</code> - Promise of Discord~Message that we
-attempted to send.  
-**Access**: private  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord~Message</code> | Message to reply to. |
-| text | <code>string</code> | The main body of the message. |
-| post | <code>string</code> | The footer of the message. |
 
 <a name="HungryGames..checkForRole"></a>
 
@@ -1170,7 +1217,7 @@ Ensure the number of users in an event is mathematically possible.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
 **Returns**: <code>boolean</code> - If the event requires a number of players that is valid
-from the number of plaers left to choose from.  
+from the number of players left to choose from.  
 **Access**: private  
 
 | Param | Type | Description |
@@ -1245,6 +1292,7 @@ Produce a random number that is weighted by multiEventUserDistribution.
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
 **Returns**: <code>number</code> - The weighted number outcome.  
 **Access**: private  
+**See**: [multiEventUserDistribution](#HungryGames..multiEventUserDistribution)  
 <a name="HungryGames..weightedEvent"></a>
 
 ### HungryGames~weightedEvent(eventPool, weightOpt) ⇒ <code>number</code> ℗
@@ -1253,6 +1301,7 @@ Produce a random event that using weighted probabilities.
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
 **Returns**: <code>number</code> - The index of the event that was chosen.  
 **Access**: private  
+**See**: {@link HungryGames~deathRateWeights)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -1288,7 +1337,7 @@ Format an array of users into names based on options and grammar rules.
 
 <a name="HungryGames..makeMessageEvent"></a>
 
-### HungryGames~makeMessageEvent(message, id) ⇒ [<code>Event</code>](#HungryGames..Event) ℗
+### HungryGames~makeMessageEvent(message, [id]) ⇒ [<code>Event</code>](#HungryGames..Event) ℗
 Make an event that doesn't affect any players and is just a plain message.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
@@ -1298,7 +1347,7 @@ Make an event that doesn't affect any players and is just a plain message.
 | Param | Type | Description |
 | --- | --- | --- |
 | message | <code>string</code> | The message to show. |
-| id | <code>string</code> | The id of the guild that initially triggered this. |
+| [id] | <code>string</code> | The id of the guild that initially triggered this. Required only if the given message contains '{dead}'. |
 
 <a name="HungryGames..makeSingleEvent"></a>
 
@@ -1904,7 +1953,6 @@ Basic commands and features for the bot.
         * [~prevUserSayId](#Main..prevUserSayId) : <code>string</code> ℗
         * [~prevUserSayCnt](#Main..prevUserSayCnt) : <code>number</code> ℗
         * [~timers](#Main..timers) : [<code>Array.&lt;Timer&gt;</code>](#Main..Timer) ℗
-        * [~spikeyId](#Main..spikeyId) : <code>string</code> ℗
         * [~introduction](#Main..introduction) : <code>string</code> ℗
         * [~blockedmessage](#Main..blockedmessage) : <code>string</code> ℗
         * [~addmessage](#Main..addmessage) : <code>string</code> ℗
@@ -1912,9 +1960,6 @@ Basic commands and features for the bot.
         * [~banMsgs](#Main..banMsgs) : <code>Array.&lt;string&gt;</code> ℗
         * [~defaultCode](#Main..defaultCode) : <code>Array.&lt;string&gt;</code> ℗
         * [~helpObject](#Main..helpObject) ℗
-        * [~webURL](#Main..webURL) : <code>string</code> ℗
-        * [~mention(msg)](#Main..mention) ⇒ <code>string</code> ℗
-        * [~reply(msg, text, post)](#Main..reply) ⇒ <code>Promise</code> ℗
         * [~onGuildCreate(guild)](#Main..onGuildCreate) ℗
         * [~onGuildBanAdd(guild, user)](#Main..onGuildBanAdd) ℗
         * [~commandAddMe(msg)](#Main..commandAddMe) : [<code>commandHandler</code>](#commandHandler) ℗
@@ -2066,7 +2111,7 @@ Saves all data to files necessary for saving current state.
 <a name="Main..prevUserSayId"></a>
 
 ### Main~prevUserSayId : <code>string</code> ℗
-The id of the last user to user the say command.
+The id of the last user to use the say command.
 
 **Kind**: inner property of [<code>Main</code>](#Main)  
 **Access**: private  
@@ -2084,13 +2129,6 @@ previous user.
 Array of all timers currently set.
 
 **Kind**: inner property of [<code>Main</code>](#Main)  
-**Access**: private  
-<a name="Main..spikeyId"></a>
-
-### Main~spikeyId : <code>string</code> ℗
-SpikeyRobot's Discord ID
-
-**Kind**: inner constant of [<code>Main</code>](#Main)  
 **Access**: private  
 <a name="Main..introduction"></a>
 
@@ -2142,41 +2180,6 @@ The object that stores all data to be formatted into the help message.
 
 **Kind**: inner constant of [<code>Main</code>](#Main)  
 **Access**: private  
-<a name="Main..webURL"></a>
-
-### Main~webURL : <code>string</code> ℗
-The website base URL for pointing to for more help and documentation.
-
-**Kind**: inner constant of [<code>Main</code>](#Main)  
-**Access**: private  
-<a name="Main..mention"></a>
-
-### Main~mention(msg) ⇒ <code>string</code> ℗
-Creates formatted string for mentioning the author of msg.
-
-**Kind**: inner method of [<code>Main</code>](#Main)  
-**Returns**: <code>string</code> - Formatted mention string.  
-**Access**: private  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord~Message</code> | Message to format a mention for the author of. |
-
-<a name="Main..reply"></a>
-
-### Main~reply(msg, text, post) ⇒ <code>Promise</code> ℗
-Replies to the author and channel of msg with the given message.
-
-**Kind**: inner method of [<code>Main</code>](#Main)  
-**Returns**: <code>Promise</code> - Promise of Discord~Message that we attempted to send.  
-**Access**: private  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord~Message</code> | Message to reply to. |
-| text | <code>string</code> | The main body of the message. |
-| post | <code>string</code> | The footer of the message. |
-
 <a name="Main..onGuildCreate"></a>
 
 ### Main~onGuildCreate(guild) ℗
@@ -3068,7 +3071,6 @@ Main class that manages the bot.
     * [~minimal](#SpikeyBot..minimal) : <code>boolean</code> ℗
     * [~subModules](#SpikeyBot..subModules) : [<code>Array.&lt;SubModule&gt;</code>](#SubModule) ℗
     * [~reactToAnthony](#SpikeyBot..reactToAnthony) : <code>boolean</code> ℗
-    * [~spikeyId](#SpikeyBot..spikeyId) : <code>string</code> ℗
     * [~trustedIds](#SpikeyBot..trustedIds) : <code>Array.&lt;string&gt;</code> ℗
     * [~helpmessagereply](#SpikeyBot..helpmessagereply) : <code>string</code> ℗
     * [~blockedmessage](#SpikeyBot..blockedmessage) : <code>string</code> ℗
@@ -3077,8 +3079,6 @@ Main class that manages the bot.
     * [~command](#SpikeyBot..command) : [<code>Command</code>](#SpikeyBot..Command) ℗
     * [~isCmd(msg, cmd)](#SpikeyBot..isCmd) ⇒ <code>boolean</code> ℗
     * [~updateGame(game)](#SpikeyBot..updateGame) ℗
-    * [~mention(msg)](#SpikeyBot..mention) ⇒ <code>string</code> ℗
-    * [~reply(msg, text, post)](#SpikeyBot..reply) ⇒ <code>Promise</code> ℗
     * [~onReady()](#SpikeyBot..onReady) ℗
     * [~onMessage(msg)](#SpikeyBot..onMessage) ℗
     * [~commandToggleReact(msg)](#SpikeyBot..commandToggleReact) : [<code>commandHandler</code>](#commandHandler) ℗
@@ -3239,13 +3239,6 @@ reboot.dat exists.
 
 **Kind**: inner property of [<code>SpikeyBot</code>](#SpikeyBot)  
 **Access**: private  
-<a name="SpikeyBot..spikeyId"></a>
-
-### SpikeyBot~spikeyId : <code>string</code> ℗
-SpikeyRobot's Discord ID.
-
-**Kind**: inner constant of [<code>SpikeyBot</code>](#SpikeyBot)  
-**Access**: private  
 <a name="SpikeyBot..trustedIds"></a>
 
 ### SpikeyBot~trustedIds : <code>Array.&lt;string&gt;</code> ℗
@@ -3316,34 +3309,6 @@ Changes the bot's status message.
 | Param | Type | Description |
 | --- | --- | --- |
 | game | <code>string</code> | New message to set game to. |
-
-<a name="SpikeyBot..mention"></a>
-
-### SpikeyBot~mention(msg) ⇒ <code>string</code> ℗
-Creates formatted string for mentioning the author of msg.
-
-**Kind**: inner method of [<code>SpikeyBot</code>](#SpikeyBot)  
-**Returns**: <code>string</code> - Formatted mention string.  
-**Access**: private  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord~Message</code> | Message to format a mention for the author of. |
-
-<a name="SpikeyBot..reply"></a>
-
-### SpikeyBot~reply(msg, text, post) ⇒ <code>Promise</code> ℗
-Replies to the author and channel of msg with the given message.
-
-**Kind**: inner method of [<code>SpikeyBot</code>](#SpikeyBot)  
-**Returns**: <code>Promise</code> - Promise of Discord.Message that we attempted to send.  
-**Access**: private  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord~Message</code> | Message to reply to. |
-| text | <code>string</code> | The main body of the message. |
-| post | <code>string</code> | The footer of the message. |
 
 <a name="SpikeyBot..onReady"></a>
 

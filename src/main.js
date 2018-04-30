@@ -14,21 +14,40 @@ math.config({matrix: 'Array'});
  * @augments SubModule
  * @listens Discord~Client#guildCreate
  * @listens Discord~Client#guildBanAdd
- * @listens SpikeyBot~Command
+ * @listens SpikeyBot~Command#addMe
+ * @listens SpikeyBot~Command#add
+ * @listens SpikeyBot~Command#simplify
+ * @listens SpikeyBot~Command#solve
+ * @listens SpikeyBot~Command#eval
+ * @listens SpikeyBot~Command#evaluate
+ * @listens SpikeyBot~Command#graph
+ * @listens SpikeyBot~Command#derive
+ * @listens SpikeyBot~Command#js
+ * @listens SpikeyBot~Command#timer
+ * @listens SpikeyBot~Command#timers
+ * @listens SpikeyBot~Command#say
+ * @listens SpikeyBot~Command#createDate
+ * @listens SpikeyBot~Command#joinDate
+ * @listens SpikeyBot~Command#pmMe
+ * @listens SpikeyBot~Command#pmSpikey
+ * @listens SpikeyBot~Command#thotPm
+ * @listens SpikeyBot~Command#flip
+ * @listens SpikeyBot~Command#purge
+ * @listens SpikeyBot~Command#prune
+ * @listens SpikeyBot~Command#fuckYou
+ * @listens SpikeyBot~Command#ban
+ * @listens SpikeyBot~Command#smite
+ * @listens SpikeyBot~Command#profile
+ * @listens SpikeyBot~Command#avatar
+ * @listens SpikeyBot~Command#ping
+ * @listens SpikeyBot~Command#uptime
+ * @listens SpikeyBot~Command#game
+ * @listens SpikeyBot~Command#version
  */
 function Main() {
   const self = this;
   /** @inheritdoc */
   this.myName = 'Main';
-
-  /**
-   * SpikeyRobot's Discord ID
-   *
-   * @private
-   * @type {string}
-   * @constant
-   */
-  const spikeyId = '124733888177111041';
 
   /*
    * Stores the required permissions for smiting a user. Defined at
@@ -40,7 +59,7 @@ function Main() {
   let smitePerms;
 
   /**
-   * The id of the last user to user the say command.
+   * The id of the last user to use the say command.
    *
    * @private
    * @type {string}
@@ -208,8 +227,9 @@ function Main() {
       {
         title: 'Admin Stuff',
         rows: [
-          'purge \'number\' // Remove a number of messages from the current ' +
-              'text channel!',
+          'purge \'number\' \'mentions\' // Remove a number of messages from ' +
+              'the current text channel. Mention people to only remove their ' +
+              'messages.',
           'fuckyou/{prefix}ban \'mention\' // I will ban the person you ' +
               'mention with a flashy message!',
           'smite \'mention\' // Silence the peasant who dare oppose you!',
@@ -217,39 +237,6 @@ function Main() {
       },
     ],
   };
-
-  /**
-   * The website base URL for pointing to for more help and documentation.
-   *
-   * @private
-   * @type {string}
-   * @constant
-   */
-  const webURL = 'https://www.campbellcrowley.com/spikeybot';
-
-  /**
-   * Creates formatted string for mentioning the author of msg.
-   *
-   * @private
-   * @param {Discord~Message} msg Message to format a mention for the author of.
-   * @return {string} Formatted mention string.
-   */
-  function mention(msg) {
-    return `<@${msg.author.id}>`;
-  }
-  /**
-   * Replies to the author and channel of msg with the given message.
-   *
-   * @private
-   * @param {Discord~Message} msg Message to reply to.
-   * @param {string} text The main body of the message.
-   * @param {string} post The footer of the message.
-   * @return {Promise} Promise of Discord~Message that we attempted to send.
-   */
-  function reply(msg, text, post) {
-    post = post || '';
-    return msg.channel.send(mention(msg) + '\n```\n' + text + '\n```' + post);
-  }
 
   /** @inheritdoc */
   this.initialize = function() {
@@ -298,10 +285,10 @@ function Main() {
     // Format help message into rich embed.
     let tmpHelp = new self.Discord.MessageEmbed();
     tmpHelp.setTitle(helpObject.title.replaceAll('{prefix}', self.myPrefix));
-    tmpHelp.setURL(webURL);
+    tmpHelp.setURL(self.common.webURL);
     helpObject.sections.forEach(function(obj) {
       let titleID = encodeURIComponent(obj.title);
-      const titleURL = '[web](' + webURL + '#' + titleID + ')';
+      const titleURL = '[web](' + self.common.webURL + '#' + titleID + ')';
       tmpHelp.addField(
           obj.title, titleURL + '```js\n' +
               obj.rows
@@ -426,7 +413,7 @@ function Main() {
    * @listens SpikeyBot~Command#addMe
    */
   function commandAddMe(msg) {
-    reply(msg, addmessage, addLink);
+    self.common.reply(msg, addmessage, addLink);
   }
 
   /**
@@ -444,7 +431,7 @@ function Main() {
                             .replaceAll('\\+', ' ')
                             .split(' ');
     if (splitstring.join('').match(/[^0-9\-]/g)) {
-      reply(
+      self.common.reply(
           msg, 'This command only adds and subtracts numbers. Use "' +
               self.myPrefix + 'solve" or "' + self.myPrefix +
               'simplify" for more complex math.',
@@ -478,7 +465,7 @@ function Main() {
     } else if (number == 80085 || number == 58008) {
       anotherEnding = ':ok_hand:';
     }
-    reply(msg, number + '\n' + ending, anotherEnding);
+    self.common.reply(msg, number + '\n' + ending, anotherEnding);
   }
 
   /**
@@ -494,9 +481,9 @@ function Main() {
       let formula = msg.content.replace(self.myPrefix + 'simplify', '');
       let simplified = simplify(formula);
       let hasVar = simplified.match(/[A-Za-z]/);
-      reply(msg, (hasVar ? '0 = ' : '') + simplified);
+      self.common.reply(msg, (hasVar ? '0 = ' : '') + simplified);
     } catch (err) {
-      reply(msg, err.message);
+      self.common.reply(msg, err.message);
     }
   }
   /**
@@ -525,13 +512,14 @@ function Main() {
    */
   function commandSolve(msg) {
     if (msg.content.lastIndexOf('=') != msg.content.indexOf('=')) {
-      reply(msg, 'Please ensure your equation has exactly 1 equals sign.');
+      self.common.reply(
+          msg, 'Please ensure your equation has exactly 1 equals sign.');
       return;
     }
     const equation = msg.content.replace(self.myPrefix + 'solve', '');
     const variables = equation.match(/[A-Za-z]+/gm);
     if (!variables || variables.length < 1) {
-      reply(
+      self.common.reply(
           msg, 'Please ensure you have at least one variable in the equation.');
       return;
     }
@@ -550,7 +538,7 @@ function Main() {
                              return variables[i] + ' = ' + obj;
                            })
                            .join('\n');
-    reply(msg, outMessage || 'Oops, somthing didn\'t work!', error);
+    self.common.reply(msg, outMessage || 'Oops, somthing didn\'t work!', error);
   }
   /**
    * Evaluate a string as an equation with units.
@@ -570,9 +558,9 @@ function Main() {
       }
       let simplified = math.eval(formula).toString();
       simplified = simplified.replace(/ \* ([A-Za-z])/g, '$1');
-      reply(msg, simplified);
+      self.common.reply(msg, simplified);
     } catch (err) {
-      reply(msg, err.message);
+      self.common.reply(msg, err.message);
     }
   }
 
@@ -635,7 +623,7 @@ function Main() {
         });
       }
     } catch (err) {
-      reply(msg, err.message);
+      self.common.reply(msg, err.message);
       return;
     }
     let finalImage = new Jimp(graphSize, graphSize, 0xFFFFFFFF);
@@ -720,9 +708,9 @@ function Main() {
       }
       let simplified = math.derivative(formula, 'x').toString();
       simplified = simplified.replace(/ \* ([A-Za-z])/g, '$1');
-      reply(msg, simplified);
+      self.common.reply(msg, simplified);
     } catch (err) {
-      reply(msg, err.message);
+      self.common.reply(msg, err.message);
     }
   }
 
@@ -768,14 +756,14 @@ function Main() {
             'Returned Value', JSON.stringify(stdexit, null, 2).substr(0, 1000),
             true);
       }
-      msg.channel.send(mention(msg), embed);
+      msg.channel.send(self.common.mention(msg), embed);
     } catch (err) {
       if (err.message == 'Script execution timed out.') {
-        reply(
+        self.common.reply(
             msg, 'Oops! Your script was running for too long.',
             '(100 milliseconds is the longest a script may run.)');
       } else {
-        reply(msg, err.stack.split('\n').splice(0, 6).join('\n'));
+        self.common.reply(msg, err.stack.split('\n').splice(0, 6).join('\n'));
       }
     }
   }
@@ -805,7 +793,8 @@ function Main() {
                     Math.floor((obj.time - Date.now()) / 1000 / 60 * 10) / 10 +
                     ' minutes: ' + obj.message;
               });
-      reply(msg, 'You have ' + num + ' timers set.\n' + messages.join('\n'));
+      self.common.reply(
+          msg, 'You have ' + num + ' timers set.\n' + messages.join('\n'));
       return;
     }
     let time = split.splice(0, 1);
@@ -821,9 +810,11 @@ function Main() {
         time: Date.now() + time * 1000 * 60,
       });
 
-      reply(msg, 'Set timer for ' + time + ' minutes.', origMessage);
+      self.common.reply(
+          msg, 'Set timer for ' + time + ' minutes.', origMessage);
     } else {
-      reply(msg, 'Oops! Please make sure your time is larger than 0.');
+      self.common.reply(
+          msg, 'Oops! Please make sure your time is larger than 0.');
     }
   }
 
@@ -849,7 +840,8 @@ function Main() {
     prevUserSayCnt++;
     if (prevUserSayCnt % 3 === 0) {
       msg.channel.send(
-          'Help! ' + mention(msg) + ' is putting words into my mouth!');
+          'Help! ' + self.common.mention(msg) +
+          ' is putting words into my mouth!');
     }
   }
   /**
@@ -862,11 +854,11 @@ function Main() {
    */
   function commandCreateDate(msg) {
     if (msg.mentions.users.size === 0) {
-      reply(
+      self.common.reply(
           msg, 'You created your discord account on ' +
               dateFormat(msg.author.createdTimestamp));
     } else {
-      reply(
+      self.common.reply(
           msg, msg.mentions.users.first().username +
               ' created their discord account on ' +
               dateFormat(msg.mentions.users.first().createdTimestamp));
@@ -883,11 +875,11 @@ function Main() {
    */
   function commandJoinDate(msg) {
     if (msg.mentions.users.size === 0) {
-      reply(
+      self.common.reply(
           msg, 'You joined this server on ' +
               dateFormat(msg.member.joinedTimestamp));
     } else {
-      reply(
+      self.common.reply(
           msg, msg.mentions.users.first().username + ' joined this server on ' +
               dateFormat(msg.mentions.users.first().joinedTimestamp));
     }
@@ -903,10 +895,12 @@ function Main() {
   function commandPmMe(msg) {
     msg.author.send(introduction.replaceAll('{prefix}', self.myPrefix))
         .then(() => {
-          if (msg.guild !== null) reply(msg, 'I sent you a message.', ':wink:');
+          if (msg.guild !== null) {
+            self.common.reply(msg, 'I sent you a message.', ':wink:');
+          }
         })
         .catch(() => {
-          reply(msg, blockedmessage);
+          self.common.reply(msg, blockedmessage);
         });
   }
   /**
@@ -918,15 +912,15 @@ function Main() {
    * @listens SpikeyBot~Command#pmSpikey
    */
   function commandPmSpikey(msg) {
-    self.client.users.fetch(spikeyId)
+    self.client.users.fetch(self.common.spikeyId)
         .then((user) => {
           user.send(msg.author.tag + ': ' + msg.content).then(() => {
-            reply(msg, 'I sent your message to SpikeyRobot.');
+            self.common.reply(msg, 'I sent your message to SpikeyRobot.');
           });
         })
         .catch((err) => {
           console.log(err);
-          reply(
+          self.common.reply(
               msg,
               'Something went wrong and I couldn\'t send your message. Sorry ' +
                   'that\'s all I know :(');
@@ -942,13 +936,14 @@ function Main() {
    * @listens SpikeyBot~Command#thotPm
    */
   function commandThotPm(msg) {
-    if (msg.author.id == spikeyId || msg.author.id == '265418316120719362' ||
+    if (msg.author.id == self.common.spikeyId ||
+        msg.author.id == '265418316120719362' ||
         msg.author.id == '126464376059330562') {
       if (msg.guild !== null) msg.delete();
       if (msg.mentions.users.size === 0) return;
       msg.mentions.users.first().send(
           msg.content.replace(self.myPrefix + 'thotpm', ''));
-      self.client.users.fetch(spikeyId).then((user) => {
+      self.client.users.fetch(self.common.spikeyId).then((user) => {
         user.send(msg.author.tag + ': ' + msg.content);
       });
     }
@@ -989,7 +984,7 @@ function Main() {
                           .replace(/\<[^\>]*>|\s/g, '');
       let num = (numString * 1) + 1;
       if (numString.length === 0 || isNaN(num)) {
-        reply(
+        self.common.reply(
             msg,
             'You must specify the number of messages to purge. (ex: ?purge 5)');
       } else {
@@ -1000,7 +995,7 @@ function Main() {
             });
           });
           msg.channel.bulkDelete(toDelete.first(num - 1));
-          reply(
+          self.common.reply(
               msg, 'Deleted ' + (num - 1) + ' messages by ' +
                   msg.mentions.users
                       .map(function(obj) {
@@ -1015,7 +1010,7 @@ function Main() {
         }
       }
     } else {
-      reply(
+      self.common.reply(
           msg,
           'I\'m sorry, but you don\'t have permission to delete messages in ' +
               'this channel.');
@@ -1032,17 +1027,18 @@ function Main() {
   function commandBan(msg) {
     if (!msg.member.hasPermission(
             self.Discord.Permissions.FLAGS.BAN_MEMBERS, true, true, true)) {
-      reply(
+      self.common.reply(
           msg, 'You don\'t have permission for that!\n(Filthy ' +
               msg.member.roles.highest.name + ')');
     } else if (msg.mentions.members.size === 0) {
-      reply(msg, 'You must mention someone to ban after the command.');
+      self.common.reply(
+          msg, 'You must mention someone to ban after the command.');
     } else {
       msg.mentions.members.forEach(function(toBan) {
         if (msg.guild.ownerID !== msg.author.id &&
             msg.member.roles.highest.comparePositionTo(toBan.roles.highest) <=
                 0) {
-          reply(
+          self.common.reply(
               msg, 'You can\'t ban ' + toBan.user.username +
                   '! You are not stronger than them!');
         } else {
@@ -1050,21 +1046,22 @@ function Main() {
             let myRole = me.roles.highest;
             if (toBan.roles.highest &&
                 myRole.comparePositionTo(toBan.roles.highest) <= 0) {
-              reply(
+              self.common.reply(
                   msg, 'I can\'t ban ' + toBan.user.username +
                       '! I am not strong enough!');
             } else {
               let banMsg = banMsgs[Math.floor(Math.random() * banMsgs.length)];
               toBan.ban({reason: banMsg})
                   .then(() => {
-                    reply(msg, banMsg, 'Banned ' + toBan.user.username);
+                    self.common.reply(
+                        msg, banMsg, 'Banned ' + toBan.user.username);
                   })
                   .catch((err) => {
-                    reply(
+                    self.common.reply(
                         msg, 'Oops! I wasn\'t able to ban ' +
                             toBan.user.username +
                             '! I\'m not sure why though!');
-                    this.common.error('Failed to ban user.');
+                    self.common.error('Failed to ban user.');
                     console.log(err);
                   });
             }
@@ -1085,13 +1082,14 @@ function Main() {
    */
   function commandSmite(msg) {
     if (msg.mentions.members.size === 0) {
-      reply(msg, 'You must mention someone to ban after the command.');
+      self.common.reply(
+          msg, 'You must mention someone to ban after the command.');
     } else {
       let toSmite = msg.mentions.members.first();
       if (msg.guild.ownerID !== msg.author.id &&
           msg.member.roles.highest.comparePositionTo(toSmite.roles.highest) <=
               0) {
-        reply(
+        self.common.reply(
             msg, 'You can\'t smite ' + toSmite.user.username +
                 '! You are not stronger than them!');
       } else {
@@ -1100,7 +1098,7 @@ function Main() {
           if (toSmite.roles.highest &&
               self.Discord.Role.comparePositions(
                   myRole, toSmite.roles.highest) <= 0) {
-            reply(
+            self.common.reply(
                 msg, 'I can\'t smite ' + toSmite.user.username +
                     '! I am not strong enough!');
           } else {
@@ -1115,12 +1113,12 @@ function Main() {
             smite = function(role, member) {
               try {
                 member.roles.set([role]).then(() => {
-                  reply(
+                  self.common.reply(
                       msg, 'The gods have struck ' + member.user.username +
                           ' with lightning!');
                 });
               } catch (err) {
-                reply(
+                self.common.reply(
                     msg, 'Oops! I wasn\'t able to smite ' +
                         member.user.username + '! I\'m not sure why though!');
               }
@@ -1139,7 +1137,7 @@ function Main() {
                     smite(role, toSmite);
                   })
                   .catch(() => {
-                    reply(
+                    self.common.reply(
                         msg, 'I couldn\'t smite ' + toSmite.user.username +
                             ' because there isn\'t a "Smited" role and I ' +
                             'couldn\'t make it!');
@@ -1182,7 +1180,7 @@ function Main() {
    * @listens SpikeyBot~Command#ping
    */
   function commandPing(msg) {
-    reply(
+    self.common.reply(
         msg, 'My ping is ' + msg.client.ping + 'ms',
         '`' + JSON.stringify(msg.client.pings) + '`');
   }
@@ -1201,7 +1199,7 @@ function Main() {
         Math.floor(ut / 1000 / 60 / 60) % 24 + ' Hours, ' +
         Math.floor(ut / 1000 / 60) % 60 + ' Minutes, ' +
         Math.floor((ut / 1000) % 60) + ' Seconds.';
-    reply(msg, 'I have been running for ' + formattedUptime);
+    self.common.reply(msg, 'I have been running for ' + formattedUptime);
   }
 
   /**
@@ -1220,12 +1218,12 @@ function Main() {
       user = msg.mentions.users.first();
     }
     if (user.presence.game) {
-      reply(
+      self.common.reply(
           msg, user.username + ': ' + user.presence.status,
           user.presence.game.type + ': ' + user.presence.game.name + '(' +
               user.presence.game.url + ')');
     } else {
-      reply(
+      self.common.reply(
           msg, user.username + ': ' + user.presence.status, user.presence.game);
     }
   }
@@ -1240,7 +1238,8 @@ function Main() {
    */
   function commandVersion(msg) {
     fs.readFile('package.json', function(err, data) {
-      reply(msg, 'My current version is ' + JSON.parse(data).version);
+      self.common.reply(
+          msg, 'My current version is ' + JSON.parse(data).version);
     });
   }
 

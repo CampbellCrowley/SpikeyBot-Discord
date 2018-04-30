@@ -104,14 +104,6 @@ function SpikeyBot() {
   let reactToAnthony = true;
 
   /**
-   * SpikeyRobot's Discord ID.
-   *
-   * @private
-   * @type {string}
-   * @constant
-   */
-  const spikeyId = '124733888177111041';
-  /**
    * Discord IDs that are allowed to reboot the bot.
    *
    * @private
@@ -119,8 +111,8 @@ function SpikeyBot() {
    * @constant
    */
   const trustedIds = [
-    spikeyId, // Me
-    '126464376059330562', // Rohan
+    common.spikeyId,       // Me
+    '126464376059330562',  // Rohan
   ];
 
   /**
@@ -202,11 +194,11 @@ function SpikeyBot() {
       if (cmd.startsWith(prefix)) cmd = cmd.replace(prefix, '');
       if (cmds[cmd]) {
         if (cmds[cmd].validOnlyOnServer && msg.guild === null) {
-          reply(msg, onlyservermessage);
+          common.reply(msg, onlyservermessage);
           return true;
         } else if (
             blacklist[cmd] && blacklist[cmd].lastIndexOf(msg.channel.id) > -1) {
-          reply(msg, disabledcommandmessage);
+          common.reply(msg, disabledcommandmessage);
           return true;
         }
         msg.text = msg.content.replace(prefix + cmd, '');
@@ -215,7 +207,7 @@ function SpikeyBot() {
         } catch (err) {
           common.error(cmd + ': FAILED');
           console.log(err);
-          reply(msg, 'An error occurred! Oh noes!');
+          common.reply(msg, 'An error occurred! Oh noes!');
         }
         return true;
       } else {
@@ -355,29 +347,6 @@ function SpikeyBot() {
     client.user.setActivity(game, {name: game, type: 'WATCHING'});
     // common.log('Changed game to "' + game + '"');
   }
-  /**
-   * Creates formatted string for mentioning the author of msg.
-   *
-   * @private
-   * @param {Discord~Message} msg Message to format a mention for the author of.
-   * @return {string} Formatted mention string.
-   */
-  function mention(msg) {
-    return `<@${msg.author.id}>`;
-  }
-  /**
-   * Replies to the author and channel of msg with the given message.
-   *
-   * @private
-   * @param {Discord~Message} msg Message to reply to.
-   * @param {string} text The main body of the message.
-   * @param {string} post The footer of the message.
-   * @return {Promise} Promise of Discord.Message that we attempted to send.
-   */
-  function reply(msg, text, post) {
-    post = post || '';
-    return msg.channel.send(mention(msg) + '\n```\n' + text + '\n```' + post);
-  }
 
   // BEGIN //
   client.on('ready', onReady);
@@ -396,7 +365,7 @@ function SpikeyBot() {
         updateGame(prefix + 'help for help');
       }
     }
-    client.users.fetch(spikeyId).then((user) => {
+    client.users.fetch(common.spikeyId).then((user) => {
       if (testInstance) {
         user.send('Beginning in unit test mode');
       } else {
@@ -409,7 +378,7 @@ function SpikeyBot() {
         subModules[i].begin(prefix, Discord, client, command, common);
       } catch (err) {
         console.log(err);
-        client.users.fetch(spikeyId).then((function(i) {
+        client.users.fetch(common.spikeyId).then((function(i) {
           return function(user) {
             user.send('Failed to initialize ' + subModuleNames[i]);
           };
@@ -417,7 +386,7 @@ function SpikeyBot() {
       }
     }
     if (subModules.length != subModuleNames.length) {
-      client.users.fetch(spikeyId).then((user) => {
+      client.users.fetch(common.spikeyId).then((user) => {
         user.send(
             'Failed to compile a submodule. Check log for more info. ' +
             'Previous initialization errors may be incorrect.');
@@ -517,7 +486,8 @@ function SpikeyBot() {
      * @listens SpikeyBot~Command#toggleReact
      */
     function commandToggleReact(msg) {
-      reply(msg, 'Toggled reactions to Anthony to ' + !reactToAnthony + '. 😮');
+      common.reply(
+          msg, 'Toggled reactions to Anthony to ' + !reactToAnthony + '. 😮');
       reactToAnthony = !reactToAnthony;
     }
 
@@ -537,9 +507,9 @@ function SpikeyBot() {
             msg.author.send(subModules[i].helpMessage);
           }
         }
-        if (msg.guild !== null) reply(msg, helpmessagereply, ':wink:');
+        if (msg.guild !== null) common.reply(msg, helpmessagereply, ':wink:');
       } catch (err) {
-        reply(msg, blockedmessage);
+        common.reply(msg, blockedmessage);
       }
     }
 
@@ -553,12 +523,13 @@ function SpikeyBot() {
      * @listens SpikeyBot~Command#updateGame
      */
     function commandUpdateGame(msg) {
-      if (msg.author.id !== spikeyId) {
-        reply(msg, 'I\'m sorry, but you are not allowed to do that. :(\n');
+      if (msg.author.id !== common.spikeyId) {
+        common.reply(
+            msg, 'I\'m sorry, but you are not allowed to do that. :(\n');
       } else {
         let game = msg.content.replace(prefix + 'updategame ', '');
         updateGame(game);
-        reply(msg, 'I changed my status to "' + game + '"!');
+        common.reply(msg, 'I changed my status to "' + game + '"!');
       }
     }
   }
@@ -578,7 +549,7 @@ function SpikeyBot() {
       if (minimal) {
         process.exit(-1);
       } else {
-        reply(msg, 'Rebooting...').then((msg) => {
+        common.reply(msg, 'Rebooting...').then((msg) => {
           let toSave = {
             id: msg.id,
             channel: {id: msg.channel.id},
@@ -594,7 +565,7 @@ function SpikeyBot() {
         });
       }
     } else {
-      reply(
+      common.reply(
           msg, 'LOL! Good try!',
           'It appears SpikeyRobot doesn\'t trust you enough with this ' +
               'command. Sorry!');
@@ -612,7 +583,7 @@ function SpikeyBot() {
    */
   function commandReload(msg) {
     if (trustedIds.includes(msg.author.id)) {
-      reply(msg, 'Reloading modules...').then((warnMessage) => {
+      common.reply(msg, 'Reloading modules...').then((warnMessage) => {
         let error = false;
         for (let i in subModules) {
           if (!subModules[i] instanceof Object) continue;
@@ -654,7 +625,7 @@ function SpikeyBot() {
         }
       });
     } else {
-      reply(
+      common.reply(
           msg, 'LOL! Good try!',
           'It appears SpikeyRobot doesn\'t trust you enough with this ' +
               'command. Sorry!');

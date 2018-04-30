@@ -1,6 +1,6 @@
 const fs = require('fs');
 const Jimp = require('jimp');
-require('./subModule.js')(HungryGames); // Extends the SubModule class.
+require('./subModule.js')(HungryGames);  // Extends the SubModule class.
 
 /**
  * @classdesc Hunger Games simulator.
@@ -157,9 +157,9 @@ function HungryGames() {
    * @private
    * @type {number}
    * @constant
-   * @default
+   * @default 15 Minutes
    */
-  const maxReactAwaitTime = 15 * 1000 * 60; // 15 Minutes
+  const maxReactAwaitTime = 15 * 1000 * 60;  // 15 Minutes
 
   /**
    * Default options for a game.
@@ -722,14 +722,6 @@ function HungryGames() {
   };
   /** @inheritdoc */
   this.helpMessage = 'Module loading...';
-  /**
-   * The website base URL for pointing to for more help and documentation.
-   *
-   * @private
-   * @type {string}
-   * @constant
-   */
-  const webURL = 'https://www.campbellcrowley.com/spikeybot';
 
   /**
    * Set all help messages once we know what prefix to use.
@@ -741,11 +733,12 @@ function HungryGames() {
     // Format help message into rich embed.
     let tmpHelp = new self.Discord.MessageEmbed();
     tmpHelp.setTitle(helpObject.title);
-    tmpHelp.setURL(webURL + '#' + encodeURIComponent(helpObject.title));
+    tmpHelp.setURL(
+        self.common.webURL + '#' + encodeURIComponent(helpObject.title));
     tmpHelp.setDescription(helpObject.description);
     helpObject.sections.forEach(function(obj) {
       let titleID = encodeURIComponent(obj.title);
-      let titleURL = '[web](' + webURL + '#' + titleID + ')';
+      let titleURL = '[web](' + self.common.webURL + '#' + titleID + ')';
       tmpHelp.addField(
           obj.title, titleURL + '```js\n' +
               obj.rows
@@ -768,7 +761,7 @@ function HungryGames() {
       } catch (err) {
         self.common.error('An error occured while perfoming command.', 'HG');
         console.log(err);
-        reply(msg, 'Oopsies! Something is broken!');
+        self.common.reply(msg, 'Oopsies! Something is broken!');
       }
     });
 
@@ -862,21 +855,22 @@ function HungryGames() {
       help(msg);
       return;
     } else if (msg.content.split(' ')[1] == 'makemewin') {
-      reply(msg, 'Everyone\'s probability of winning has increased!');
+      self.common.reply(
+          msg, 'Everyone\'s probability of winning has increased!');
       return;
     } else if (msg.content.split(' ')[1] == 'makemelose') {
-      reply(
+      self.common.reply(
           msg,
           'Your probability of losing has increased by ' + nothing() + '!');
       return;
     } else if (msg.guild === null) {
-      reply(msg, 'This command only works in servers, sorry!');
+      self.common.reply(msg, 'This command only works in servers, sorry!');
       return;
     }
     checkPerms(msg, function(msg, id) {
       let splitText = msg.content.split(' ').slice(1);
       if (!splitText[0]) {
-        reply(msg, 'That isn\'t a command I understand.');
+        self.common.reply(msg, 'That isn\'t a command I understand.');
         return;
       }
       let command = splitText[0].toLowerCase();
@@ -934,7 +928,7 @@ function HungryGames() {
                 removeEvent(msg, id);
                 break;
               default:
-                reply(
+                self.common.reply(
                     msg, 'I\'m sorry, but I don\'t know how to do that to an ' +
                         'event.');
                 break;
@@ -985,7 +979,7 @@ function HungryGames() {
           help(msg, id);
           break;
         default:
-          reply(
+          self.common.reply(
               msg, 'Oh noes! I can\'t understand that! "' + self.myPrefix +
                   'help" for help.');
           break;
@@ -993,30 +987,6 @@ function HungryGames() {
     });
   }
 
-  /**
-   * Creates formatted string for mentioning the author of msg.
-   *
-   * @private
-   * @param {Discord~Message} msg Message to format a mention for the author of.
-   * @return {string} Formatted mention string.
-   */
-  function mention(msg) {
-    return `<@${msg.author.id}>`;
-  }
-  /**
-   * Replies to the author and channel of msg with the given message.
-   *
-   * @private
-   * @param {Discord~Message} msg Message to reply to.
-   * @param {string} text The main body of the message.
-   * @param {string} post The footer of the message.
-   * @return {Promise.<Discord~Message>} Promise of Discord~Message that we
-   * attempted to send.
-   */
-  function reply(msg, text, post) {
-    post = post || '';
-    return msg.channel.send(mention(msg) + '\n```\n' + text + '\n```' + post);
-  }
   /**
    * Check if author of msg has the required role to run commands.
    *
@@ -1053,7 +1023,7 @@ function HungryGames() {
       const id = msg.guild.id;
       cb(msg, id);
     } else {
-      reply(
+      self.common.reply(
           msg, 'Ha! Nice try! I don\'t listen to people without the "' +
               roleName + '" role!');
     }
@@ -1128,9 +1098,9 @@ function HungryGames() {
    * @param {string} message The message to show.
    * @param {number} [numVictim=0] The number of victims in this event.
    * @param {number} [numAttacker=0] The number of attackers in this event.
-   * @param {string} [victimOutcome='nothing'] The outcome of the victims from
+   * @param {string} [victimOutcome=nothing] The outcome of the victims from
    * this event.
-   * @param {string} [attackerOutcome='nothing'] The outcome of the attackers
+   * @param {string} [attackerOutcome=nothing] The outcome of the attackers
    * from this event.
    * @param {boolean} [victimKiller=false] Do the victims kill anyone in this
    * event. Used for calculating kill count.
@@ -1139,7 +1109,7 @@ function HungryGames() {
    * @param {boolean} [battle] Is this event a battle?
    * @param {number} [state=0] State of event if there are multiple attacks
    * before the event.
-   * @param {HungryGames~Event[]} [attacks] Array of attacks that take place
+   * @param {HungryGames~Event[]} [attacks=[]] Array of attacks that take place
    * before the event.
    * @property {string} message The message to show.
    * @property {{count: number, outcome: string, killer: boolean}} victim
@@ -1247,7 +1217,7 @@ function HungryGames() {
     if (games[id] && games[id].currentGame &&
         games[id].currentGame.inProgress) {
       if (!silent) {
-        reply(
+        self.common.reply(
             msg,
             'This server already has a Hungry Games in progress. If you wish ' +
                 'to create a new one, you must end the current one first ' +
@@ -1256,7 +1226,8 @@ function HungryGames() {
       return;
     } else if (games[id] && games[id].currentGame) {
       if (!silent) {
-        reply(msg, 'Creating a new game with settings from the last game.');
+        self.common.reply(
+            msg, 'Creating a new game with settings from the last game.');
       }
       games[id].currentGame.ended = false;
       games[id].currentGame.day = {num: -1, state: 0, events: []};
@@ -1266,7 +1237,9 @@ function HungryGames() {
       games[id].currentGame.numAlive =
           games[id].currentGame.includedUsers.length;
     } else if (games[id]) {
-      if (!silent) reply(msg, 'Creating a new game with default settings.');
+      if (!silent) {
+        self.common.reply(msg, 'Creating a new game with default settings.');
+      }
       games[id].currentGame = {
         name: msg.guild.name + '\'s Hungry Games',
         inProgress: false,
@@ -1301,7 +1274,7 @@ function HungryGames() {
         games[id].options[optKeys[i]] = defaultOptions[optKeys[i]].value;
       }
       if (!silent) {
-        reply(
+        self.common.reply(
             msg,
             'Created a Hungry Games with default settings and all members ' +
                 'included.');
@@ -1431,23 +1404,25 @@ function HungryGames() {
     const command = msg.text.split(' ')[0];
     if (games[id]) {
       if (command == 'all') {
-        reply(msg, 'Resetting ALL Hungry Games data for this server!');
+        self.common.reply(
+            msg, 'Resetting ALL Hungry Games data for this server!');
         delete games[id];
       } else if (command == 'events') {
-        reply(msg, 'Resetting ALL Hungry Games events for this server!');
+        self.common.reply(
+            msg, 'Resetting ALL Hungry Games events for this server!');
         games[id].customEvents = {bloodbath: [], player: [], arena: []};
       } else if (command == 'current') {
-        reply(msg, 'Resetting ALL data for current game!');
+        self.common.reply(msg, 'Resetting ALL data for current game!');
         delete games[id].currentGame;
       } else if (command == 'options') {
-        reply(msg, 'Resetting ALL options!');
+        self.common.reply(msg, 'Resetting ALL options!');
         games[id].options = defaultOptions;
       } else if (command == 'teams') {
-        reply(msg, 'Resetting ALL teams!');
+        self.common.reply(msg, 'Resetting ALL teams!');
         games[id].currentGame.teams = [];
         formTeams(id);
       } else {
-        reply(
+        self.common.reply(
             msg, 'Please specify what data to reset.\nall {deletes all data ' +
                 'for this server},\nevents {deletes all custom events},\n' +
                 'current {deletes all data about the current game},\noptions ' +
@@ -1455,7 +1430,7 @@ function HungryGames() {
                 'teams and creates new ones}.');
       }
     } else {
-      reply(
+      self.common.reply(
           msg, 'There is no data to reset. Start a new game with "' +
               self.myPrefix + 'create".');
     }
@@ -1480,12 +1455,12 @@ function HungryGames() {
       }
       for (let i in messages) {
         if (typeof messages[i] === 'undefined') continue;
-        reply(msg, messages[i]).catch((err) => {
+        self.common.reply(msg, messages[i]).catch((err) => {
           console.log(err);
         });
       }
     } else {
-      reply(msg, 'No game created');
+      self.common.reply(msg, 'No game created');
     }
   }
   /**
@@ -1555,7 +1530,7 @@ function HungryGames() {
   function startGame(msg, id) {
     if (games[id] && games[id].currentGame &&
         games[id].currentGame.inProgress) {
-      reply(
+      self.common.reply(
           msg, 'A game is already in progress! ("' + self.myPrefix +
               'next" for next day, or "' + self.myPrefix + 'end" to abort)');
     } else {
@@ -1610,7 +1585,7 @@ function HungryGames() {
                 .join(', ');
       }
 
-      reply(
+      self.common.reply(
           msg, getMessage('gameStart') +
               (games[id].autoPlay ? '' : '\n("' + self.myPrefix +
                        'next" for next day.)'),
@@ -1632,7 +1607,7 @@ function HungryGames() {
    */
   function pauseAutoplay(msg, id) {
     if (!games[id]) {
-      reply(
+      self.common.reply(
           msg,
           'You must first create a game with "' + self.myPrefix + 'create".');
     } else if (games[id].autoPlay) {
@@ -1641,7 +1616,7 @@ function HungryGames() {
           '> `Autoplay will stop at the end of the current day.`');
       games[id].autoPlay = false;
     } else {
-      reply(
+      self.common.reply(
           msg, 'Not autoplaying. If you wish to autoplay, type "' +
               self.myPrefix + 'autoplay".');
     }
@@ -1659,7 +1634,7 @@ function HungryGames() {
       createGame(msg, id);
     }
     if (games[id].autoPlay && games[id].inProgress) {
-      reply(
+      self.common.reply(
           msg, 'Already autoplaying. If you wish to stop autoplaying, type "' +
               self.myPrefix + 'pause".');
     } else {
@@ -1696,16 +1671,16 @@ function HungryGames() {
   function nextDay(msg, id) {
     if (!games[id] || !games[id].currentGame ||
         !games[id].currentGame.inProgress) {
-      reply(
+      self.common.reply(
           msg, 'You must start a game first! Use "' + self.myPrefix +
               'start" to start a game!');
       return;
     }
     if (games[id].currentGame.day.state !== 0) {
       if (intervals[id]) {
-        reply(msg, 'Already simulating day.');
+        self.common.reply(msg, 'Already simulating day.');
       } else if (games[id].currentGame.day.state == 1) {
-        reply(
+        self.common.reply(
             msg,
             'I think I\'m already simulating... if this isn\'t true this ' +
                 'game has crashed and you must end the game.');
@@ -1816,7 +1791,7 @@ function HungryGames() {
             games[id].currentGame.numAlive, games[id].currentGame.teams,
             deathRate);
         if (!eventTry) {
-          reply(msg, 'A stupid error happened :(');
+          self.common.reply(msg, 'A stupid error happened :(');
           games[id].currentGame.day.state = 0;
           return;
         }
@@ -2201,7 +2176,7 @@ function HungryGames() {
    * into an event.
    * @param {number} numAlive Total number of living players left in the game.
    * @return {boolean} If the event requires a number of players that is valid
-   * from the number of plaers left to choose from.
+   * from the number of players left to choose from.
    */
   function validateEventNumConstraint(
       numVictim, numAttacker, userPool, numAlive) {
@@ -2454,6 +2429,7 @@ function HungryGames() {
   }
   /**
    * Produce a random number that is weighted by multiEventUserDistribution.
+   * @see {@link HungryGames~multiEventUserDistribution}
    *
    * @private
    * @return {number} The weighted number outcome.
@@ -2474,6 +2450,7 @@ function HungryGames() {
   }
   /**
    * Produce a random event that using weighted probabilities.
+   * @see {@link HungryGames~deathRateWeights)
    *
    * @private
    * @param {HungryGames~Event[]} eventPool The pool of all events to consider.
@@ -2549,7 +2526,8 @@ function HungryGames() {
    *
    * @private
    * @param {string} message The message to show.
-   * @param {string} id The id of the guild that initially triggered this.
+   * @param {string} [id] The id of the guild that initially triggered this.
+   * Required only if the given message contains '{dead}'.
    * @return {HungryGames~Event} The event that was created.
    */
   function makeMessageEvent(message, id) {
@@ -3124,9 +3102,9 @@ function HungryGames() {
    */
   function endGame(msg, id) {
     if (!games[id] || !games[id].currentGame.inProgress) {
-      reply(msg, 'There isn\'t a game in progress.');
+      self.common.reply(msg, 'There isn\'t a game in progress.');
     } else {
-      reply(msg, 'The game has ended!');
+      self.common.reply(msg, 'The game has ended!');
       games[id].currentGame.inProgress = false;
       games[id].currentGame.ended = true;
       games[id].autoPlay = false;
@@ -3148,11 +3126,11 @@ function HungryGames() {
    */
   function excludeUser(msg, id) {
     if (!games[id]) {
-      reply(
+      self.common.reply(
           msg,
           'You must first create a game with "' + self.myPrefix + 'create".');
     } else if (msg.mentions.users.size == 0) {
-      reply(
+      self.common.reply(
           msg,
           'You must mention people you wish for me to exclude from the next ' +
               'game.');
@@ -3182,7 +3160,7 @@ function HungryGames() {
           }
         }
       });
-      reply(msg, response);
+      self.common.reply(msg, response);
     }
   }
 
@@ -3196,11 +3174,11 @@ function HungryGames() {
    */
   function includeUser(msg, id) {
     if (!games[id]) {
-      reply(
+      self.common.reply(
           msg,
           'You must first create a game with "' + self.myPrefix + 'create".');
     } else if (msg.mentions.users.size == 0) {
-      reply(
+      self.common.reply(
           msg,
           'You must mention people you wish for me to include in the next ' +
               'game.');
@@ -3235,7 +3213,7 @@ function HungryGames() {
             'Players were skipped because a game is currently in progress. ' +
             'Players cannot be added to a game while it\'s in progress.';
       }
-      reply(msg, response);
+      self.common.reply(msg, response);
     }
   }
 
@@ -3316,7 +3294,7 @@ function HungryGames() {
                         })
                         .join(', ');
     }
-    reply(msg, 'List of currently tracked players:', stringList);
+    self.common.reply(msg, 'List of currently tracked players:', stringList);
   }
 
   /**
@@ -3350,17 +3328,17 @@ function HungryGames() {
     let option = msg.text.split(' ')[0];
     let value = msg.text.split(' ')[1];
     if (!games[id] || !games[id].currentGame) {
-      reply(
+      self.common.reply(
           msg, 'You must create a game first before editing settings! Use "' +
               self.myPrefix + 'create" to create a game.');
     } else if (typeof option === 'undefined' || option.length == 0) {
       showOpts(msg, games[id].options);
     } else if (games[id].currentGame.inProgress) {
-      reply(
+      self.common.reply(
           msg, 'You must end this game before changing settings. Use "' +
               self.myPrefix + 'end" to abort this game.');
     } else if (typeof defaultOptions[option] === 'undefined') {
-      reply(
+      self.common.reply(
           msg,
           'That is not a valid option to change! (Delays are in milliseconds)' +
               JSON.stringify(games[id].options, null, 1)
@@ -3371,7 +3349,7 @@ function HungryGames() {
       if (type === 'number') {
         value = Number(value);
         if (typeof value !== 'number') {
-          reply(
+          self.common.reply(
               msg, 'That is not a valid value for ' + option +
                   ', which requires a number. (Currently ' +
                   games[id].options[option] + ')');
@@ -3383,11 +3361,11 @@ function HungryGames() {
 
           let old = games[id].options[option];
           games[id].options[option] = value;
-          reply(
+          self.common.reply(
               msg, 'Set ' + option + ' to ' + games[id].options[option] +
                   ' from ' + old);
           if (option == 'teamSize' && value != 0) {
-            reply(
+            self.common.reply(
                 msg, 'To reset teams to the correct size, type "' +
                     self.myPrefix +
                     'teams reset".\nThis will delete all teams, and create ' +
@@ -3397,14 +3375,14 @@ function HungryGames() {
       } else if (type === 'boolean') {
         if (value === 'true' || value === 'false') value = value === 'true';
         if (typeof value !== 'boolean') {
-          reply(
+          self.common.reply(
               msg, 'That is not a valid value for ' + option +
                   ', which requires true or false. (Currently ' +
                   games[id].options[option] + ')');
         } else {
           let old = games[id].options[option];
           games[id].options[option] = value;
-          reply(
+          self.common.reply(
               msg, 'Set ' + option + ' to ' + games[id].options[option] +
                   ' from ' + old);
           if (option == 'includeBots') {
@@ -3413,7 +3391,7 @@ function HungryGames() {
         }
       } else if (type === 'string') {
         if (defaultOptions[option].values.lastIndexOf(value) < 0) {
-          reply(
+          self.common.reply(
               msg, 'That is not a valid value for ' + option +
                   ', which requires one of the following: ' +
                   JSON.stringify(defaultOptions[option].values) +
@@ -3421,12 +3399,12 @@ function HungryGames() {
         } else {
           let old = games[id].options[option];
           games[id].options[option] = value;
-          reply(
+          self.common.reply(
               msg, 'Set ' + option + ' to ' + games[id].options[option] +
                   ' from ' + old);
         }
       } else {
-        reply(
+        self.common.reply(
             msg, 'Changing the value of this option is not added yet. (' +
                 type + ')');
       }
@@ -3546,7 +3524,7 @@ function HungryGames() {
         case 'swap':
         case 'reset':
           msg.channel.send(
-              mention(msg) +
+              self.common.mention(msg) +
               ' `You must end the current game before editing teams.`');
           return;
       }
@@ -3562,7 +3540,7 @@ function HungryGames() {
         renameTeam(msg, id);
         break;
       case 'reset':
-        reply(msg, 'Resetting ALL teams!');
+        self.common.reply(msg, 'Resetting ALL teams!');
         games[id].currentGame.teams = [];
         formTeams(id);
         break;
@@ -3583,7 +3561,7 @@ function HungryGames() {
    */
   function swapTeamUsers(msg, id) {
     if (msg.mentions.users.size != 2) {
-      reply(
+      self.common.reply(
           msg, 'Swapping requires mentioning 2 users to swap teams with ' +
               'eachother.');
       return;
@@ -3609,7 +3587,7 @@ function HungryGames() {
       return index > -1;
     });
     if (teamId1 < 0 || teamId2 < 0) {
-      reply(msg, 'Please ensure both users are on a team.');
+      self.common.reply(msg, 'Please ensure both users are on a team.');
       return;
     }
     let intVal = games[id].currentGame.teams[teamId1].players[playerId1];
@@ -3618,7 +3596,7 @@ function HungryGames() {
 
     games[id].currentGame.teams[teamId2].players[playerId2] = intVal;
 
-    reply(msg, 'Swapped players!');
+    self.common.reply(msg, 'Swapped players!');
   }
   /**
    * Move a single user to another team.
@@ -3629,7 +3607,7 @@ function HungryGames() {
    */
   function moveTeamUser(msg, id) {
     if (msg.mentions.users.size < 1) {
-      reply(msg, 'You must at least mention one user to move.');
+      self.common.reply(msg, 'You must at least mention one user to move.');
       return;
     }
     let user1 = msg.mentions.users.first().id;
@@ -3665,7 +3643,7 @@ function HungryGames() {
       teamId2 = msg.text.split(' ')[2] - 1;
     }
     if (teamId1 < 0 || teamId2 < 0 || isNaN(teamId2)) {
-      reply(
+      self.common.reply(
           msg, 'Please ensure the first option is the user, and the second ' +
               'is the destination (either a mention or a team id).');
       console.log(teamId1, teamId2);
@@ -3678,7 +3656,7 @@ function HungryGames() {
               'Team ' + (games[id].currentGame.teams.length + 1), []));
       teamId2 = games[id].currentGame.teams.length - 1;
     }
-    reply(
+    self.common.reply(
         msg, 'Moving `' + msg.mentions.users.first().username + '` from ' +
             games[id].currentGame.teams[teamId1].name + ' to ' +
             games[id].currentGame.teams[teamId2].name);
@@ -3702,7 +3680,7 @@ function HungryGames() {
     let message = split.slice(1).join(' ');
     let search = Number(split[0]);
     if (isNaN(search) && msg.mentions.users.size == 0) {
-      reply(
+      self.common.reply(
           msg, 'Please specify a team id, or mention someone on a team, in ' +
               'order to rename their team.');
       return;
@@ -3716,12 +3694,12 @@ function HungryGames() {
       });
     }
     if (teamId < 0 || teamId >= games[id].currentGame.teams.length) {
-      reply(
+      self.common.reply(
           msg, 'Please specify a valid team id. (0-' +
               (games[id].currentGame.teams.length - 1) + ')');
       return;
     }
-    reply(
+    self.common.reply(
         msg, 'Renaming "' + games[id].currentGame.teams[teamId].name +
             '" to "' + message + '"');
     games[id].currentGame.teams[teamId].name = message;
@@ -3749,7 +3727,7 @@ function HungryGames() {
           current.teams[teamId2].players[playerId2];
       current.teams[teamId2].players[playerId2] = intVal;
     }
-    reply(msg, 'Teams have been randomized!');
+    self.common.reply(msg, 'Teams have been randomized!');
   }
 
   // Game Events //
@@ -3763,14 +3741,14 @@ function HungryGames() {
    */
   function createEvent(msg, id) {
     if (!games[id]) {
-      reply(
+      self.common.reply(
           msg,
           'You must first create a game with "' + self.myPrefix + 'create".');
       return;
     }
     newEventMessages[msg.id] = msg;
     const authId = msg.author.id;
-    reply(msg, 'Loading...').then((msg_) => {
+    self.common.reply(msg, 'Loading...').then((msg_) => {
       newEventMessages[msg.id].myResponse = msg_;
       msg_.awaitReactions(function(reaction, user) {
             return (reaction.emoji.name == emoji.red_circle ||
@@ -4136,7 +4114,7 @@ function HungryGames() {
    */
   function removeEvent(msg, id) {
     if (!games[id]) {
-      reply(
+      self.common.reply(
           msg,
           'You must first create a game with "' + self.myPrefix + 'create".');
       return;
@@ -4144,25 +4122,27 @@ function HungryGames() {
     const split = msg.text.split(' ');
 
     if (split.length == 1) {
-      reply(
+      self.common.reply(
           msg, 'You must specify the number of the custom event you wish to ' +
               'remove.');
       return;
     } else if (isNaN(split[1])) {
-      reply(
+      self.common.reply(
           msg,
           'The number you specified, isn\'t a number, please pick a number.');
       return;
     } else if (split[1] <= 0) {
-      reply(msg, 'The number you chose, is a bad number. I don\'t like it.');
+      self.common.reply(
+          msg, 'The number you chose, is a bad number. I don\'t like it.');
       return;
     }
 
     const num = split[1] - 1;
 
-    reply(
-        msg, 'Which type of event is this?',
-        emoji.red_circle + 'Bloodbath, ' + emoji.trophy + 'Normal.')
+    self.common
+        .reply(
+            msg, 'Which type of event is this?',
+            emoji.red_circle + 'Bloodbath, ' + emoji.trophy + 'Normal.')
         .then((msg_) => {
           msg_.awaitReactions(function(reaction, user) {
                 return user.id == msg.author.id &&
@@ -4180,19 +4160,20 @@ function HungryGames() {
 
             if (eventType == 'player') {
               if (num >= games[id].customEvents.player.length) {
-                reply(
+                self.common.reply(
                     msg,
                     'That number is a really big scary number. Try a smaller ' +
                         'one.');
                 msg_.delete();
               } else {
                 const removed = games[id].customEvents.player.splice(num, 1)[0];
-                reply(msg, 'Removed event.', formatEventString(removed, true));
+                self.common.reply(
+                    msg, 'Removed event.', formatEventString(removed, true));
                 msg_.delete();
               }
             } else {
               if (num >= games[id].customEvents.bloodbath.length) {
-                reply(
+                self.common.reply(
                     msg,
                     'That number is a really big scary number. Try a smaller ' +
                         'one.');
@@ -4200,7 +4181,8 @@ function HungryGames() {
               } else {
                 const removed =
                     games[id].customEvents.bloodbath.splice(num, 1)[0];
-                reply(msg, 'Removed event.', formatEventString(removed, true));
+                self.common.reply(
+                    msg, 'Removed event.', formatEventString(removed, true));
                 msg_.delete();
               }
             }
@@ -4321,7 +4303,7 @@ function HungryGames() {
       embed.setColor([0, 0, 255]);
     } else {
       self.common.error('HOW COULD THIS BE? I\'ve made a mistake!', 'HG');
-      reply(msg, 'BIG Oops! THIS SHOULD _never_ happen');
+      self.common.reply(msg, 'BIG Oops! THIS SHOULD _never_ happen');
     }
 
     const numEvents = events.length;
@@ -4496,10 +4478,12 @@ function HungryGames() {
   function help(msg, id) {
     msg.author.send(helpMessage)
         .then(() => {
-          if (msg.guild != null) reply(msg, helpmessagereply, ':wink:');
+          if (msg.guild != null) {
+            self.common.reply(msg, helpmessagereply, ':wink:');
+          }
         })
         .catch(() => {
-          reply(msg, blockedmessage);
+          self.common.reply(msg, blockedmessage);
         });
   }
 
