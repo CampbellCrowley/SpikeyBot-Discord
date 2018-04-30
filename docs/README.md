@@ -3064,7 +3064,7 @@ Main class that manages the bot.
     * [~testMode](#SpikeyBot..testMode) : <code>boolean</code> ℗
     * [~subModuleNames](#SpikeyBot..subModuleNames) : <code>Array.&lt;string&gt;</code> ℗
     * [~setDev](#SpikeyBot..setDev) : <code>boolean</code> ℗
-    * [~onlymusic](#SpikeyBot..onlymusic) : <code>boolean</code> ℗
+    * [~minimal](#SpikeyBot..minimal) : <code>boolean</code> ℗
     * [~subModules](#SpikeyBot..subModules) : [<code>Array.&lt;SubModule&gt;</code>](#SubModule) ℗
     * [~reactToAnthony](#SpikeyBot..reactToAnthony) : <code>boolean</code> ℗
     * [~spikeyId](#SpikeyBot..spikeyId) : <code>string</code> ℗
@@ -3207,18 +3207,14 @@ Is this bot running in development mode.
 
 **Kind**: inner property of [<code>SpikeyBot</code>](#SpikeyBot)  
 **Access**: private  
-<a name="SpikeyBot..onlymusic"></a>
+<a name="SpikeyBot..minimal"></a>
 
-### SpikeyBot~onlymusic : <code>boolean</code> ℗
+### SpikeyBot~minimal : <code>boolean</code> ℗
 Should this bot only load minimal features as to not overlap with multiple
 instances.
 
 **Kind**: inner property of [<code>SpikeyBot</code>](#SpikeyBot)  
 **Access**: private  
-**Todo**
-
-- [ ] Rename this.
-
 <a name="SpikeyBot..subModules"></a>
 
 ### SpikeyBot~subModules : [<code>Array.&lt;SubModule&gt;</code>](#SubModule) ℗

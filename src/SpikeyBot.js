@@ -42,11 +42,10 @@ function SpikeyBot() {
    * Should this bot only load minimal features as to not overlap with multiple
    * instances.
    *
-   * @todo Rename this.
    * @private
    * @type {boolean}
    */
-  let onlymusic = false;
+  let minimal = false;
   /**
    * Instances of sub-modules currently loaded.
    *
@@ -59,8 +58,9 @@ function SpikeyBot() {
   for (let i in process.argv) {
     if (process.argv[i] === 'dev') {
       setDev = true;
-    } else if (process.argv[i] === 'onlymusic') {
-      onlymusic = true;
+    } else if (
+        process.argv[i] === 'minimal' || process.argv[i] === 'onlymusic') {
+      minimal = true;
     } else if (i > 1 && typeof process.argv[i] === 'string') {
       subModuleNames.push(process.argv[i]);
     }
@@ -79,7 +79,7 @@ function SpikeyBot() {
   const prefix = isDev ? '~' : '?';
 
   common.begin(false, !isDev);
-  if (onlymusic) common.log('STARTING IN MUSIC ONLY MODE');
+  if (minimal) common.log('STARTING IN MUSIC ONLY MODE');
 
   /**
    * Should we add a reaction to every message that Anthony sends. Overriden if
@@ -375,9 +375,9 @@ function SpikeyBot() {
    */
   function onReady() {
     common.log(`Logged in as ${client.user.tag}!`);
-    if (!onlymusic) updateGame(prefix + 'help for help');
+    if (!minimal) updateGame(prefix + 'help for help');
     client.users.fetch(spikeyId).then((user) => {
-      user.send('I just rebooted (JS)' + (onlymusic ? ' ONLYMUSIC' : ' ALL'));
+      user.send('I just rebooted (JS)' + (minimal ? ' ONLYMUSIC' : ' ALL'));
     });
     for (let i in subModules) {
       if (!subModules[i] instanceof Object || !subModules[i].begin) continue;
@@ -399,7 +399,7 @@ function SpikeyBot() {
             'Previous initialization errors may be incorrect.');
       });
     }
-    if (!onlymusic) {
+    if (!minimal) {
       fs.readFile('./save/reboot.dat', function(err, file) {
         if (err) return;
         let msg = JSON.parse(file);
@@ -442,7 +442,7 @@ function SpikeyBot() {
       msg.channel.send('~`UNIT TEST MODE DISABLED`~');
       return;
     }
-    if (!onlymusic && msg.content.endsWith(', I\'m Dad!')) {
+    if (!minimal && msg.content.endsWith(', I\'m Dad!')) {
       msg.channel.send('Hi Dad, I\'m Spikey!');
     }
     if (!testMode && msg.author.bot) return;
@@ -457,12 +457,12 @@ function SpikeyBot() {
       msg.content = prefix + msg.content;
     }
 
-    if (!onlymusic && reactToAnthony && msg.author.id == '174030717846552576') {
+    if (!minimal && reactToAnthony && msg.author.id == '174030717846552576') {
       msg.react('😮');
     }
 
     if (isCmd(msg, '')) {
-      if (!onlymusic) {
+      if (!minimal) {
         if (msg.guild !== null) {
           common.log(
               msg.guild.name + '#' + msg.channel.name + '@' +
@@ -474,7 +474,7 @@ function SpikeyBot() {
         }
       }
       if (!command.trigger(msg.content.split(/ |\n/)[0], msg) &&
-          msg.guild === null && !onlymusic && !testMode) {
+          msg.guild === null && !minimal && !testMode) {
         msg.channel.send(
             'Oops! I\'m not sure how to help with that! Type **help** for a ' +
             'list of commands I know how to respond to.');
@@ -482,7 +482,7 @@ function SpikeyBot() {
     }
   }
 
-  if (!onlymusic) {
+  if (!minimal) {
     command.on('togglereact', commandToggleReact);
     /**
      * Toggle reactions to Anthony.
@@ -551,7 +551,7 @@ function SpikeyBot() {
    */
   function commandReboot(msg) {
     if (trustedIds.includes(msg.author.id)) {
-      if (onlymusic) {
+      if (minimal) {
         process.exit(-1);
       } else {
         reply(msg, 'Rebooting...').then((msg) => {
@@ -623,7 +623,7 @@ function SpikeyBot() {
         }
         if (error) {
           warnMessage.edit('`Reload completed with errors.`');
-        } else if (onlymusic) {
+        } else if (minimal) {
           warnMessage.delete();
         } else {
           warnMessage.edit('`Reload complete.`');
