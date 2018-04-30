@@ -102,7 +102,7 @@ function SubModule() {
    */
   this.begin = function(prefix, Discord, client, command, common) {
     this.prefix = prefix;
-    this.myPrefix = this.postPrefix + prefix;
+    this.myPrefix = prefix + this.postPrefix;
     this.Discord = Discord;
     this.client = client;
     this.command = command;
