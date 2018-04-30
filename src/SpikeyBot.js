@@ -90,9 +90,6 @@ function SpikeyBot() {
    */
   let reactToAnthony = true;
 
-  // Password for changing the game the bot is playing. This doesn't need to be
-  // secure, and I could probably just remove it.
-  const password = 'password';
   /**
    * SpikeyRobot's Discord ID.
    *
@@ -338,19 +335,11 @@ function SpikeyBot() {
    * Changes the bot's status message.
    *
    * @private
-   * @param {string} password_ Password required to change status.
    * @param {string} game New message to set game to.
-   * @return {boolean} True if an error occurred.
    */
-  function updateGame(password_, game) {
-    if (password_ == password) {
-      client.user.setActivity(game, {name: game, type: 'WATCHING'});
-      common.log('Changed game to "' + game + '"');
-      return false;
-    } else {
-      common.log('Didn\'t change game (' + password_ + ')');
-      return true;
-    }
+  function updateGame(game) {
+    client.user.setActivity(game, {name: game, type: 'WATCHING'});
+    // common.log('Changed game to "' + game + '"');
   }
   /**
    * Creates formatted string for mentioning the author of msg.
@@ -382,11 +371,11 @@ function SpikeyBot() {
    * The bot has become ready.
    *
    * @private
-   * @listens Discord@ready
+   * @listens Discord~Client#ready
    */
   function onReady() {
     common.log(`Logged in as ${client.user.tag}!`);
-    if (!onlymusic) updateGame(password, prefix + 'help for help');
+    if (!onlymusic) updateGame(prefix + 'help for help');
     client.users.fetch(spikeyId).then((user) => {
       user.send('I just rebooted (JS)' + (onlymusic ? ' ONLYMUSIC' : ' ALL'));
     });
@@ -435,7 +424,7 @@ function SpikeyBot() {
    * @private
    * @param {Discord~Message} msg Message that was sent in Discord.
    * @fires SpikeyBot~Command
-   * @listens Discord@message
+   * @listens Discord~Client#message
    */
   function onMessage(msg) {
     if (!testMode && msg.author.id === client.user.id) {
@@ -540,13 +529,11 @@ function SpikeyBot() {
      * @listens SpikeyBot~Command#updateGame
      */
     function commandUpdateGame(msg) {
-      msg.delete();
-      let command = msg.content.replace(prefix + 'updategame ', '');
-      let password = command.split(' ')[0];
-      let game = command.replace(password + ' ', '');
-      if (updateGame(password, game)) {
+      if (msg.author.id !== spikeyId) {
         reply(msg, 'I\'m sorry, but you are not allowed to do that. :(\n');
       } else {
+        let game = msg.content.replace(prefix + 'updategame ', '');
+        updateGame(game);
         reply(msg, 'I changed my status to "' + game + '"!');
       }
     }

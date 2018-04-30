@@ -3075,7 +3075,7 @@ Main class that manages the bot.
     * [~disabledcommandmessage](#SpikeyBot..disabledcommandmessage) : <code>string</code> ℗
     * [~command](#SpikeyBot..command) : [<code>Command</code>](#SpikeyBot..Command) ℗
     * [~isCmd(msg, cmd)](#SpikeyBot..isCmd) ⇒ <code>boolean</code> ℗
-    * [~updateGame(password_, game)](#SpikeyBot..updateGame) ⇒ <code>boolean</code> ℗
+    * [~updateGame(game)](#SpikeyBot..updateGame) ℗
     * [~mention(msg)](#SpikeyBot..mention) ⇒ <code>string</code> ℗
     * [~reply(msg, text, post)](#SpikeyBot..reply) ⇒ <code>Promise</code> ℗
     * [~onReady()](#SpikeyBot..onReady) ℗
@@ -3302,16 +3302,14 @@ Checks if given message is the given command.
 
 <a name="SpikeyBot..updateGame"></a>
 
-### SpikeyBot~updateGame(password_, game) ⇒ <code>boolean</code> ℗
+### SpikeyBot~updateGame(game) ℗
 Changes the bot's status message.
 
 **Kind**: inner method of [<code>SpikeyBot</code>](#SpikeyBot)  
-**Returns**: <code>boolean</code> - True if an error occurred.  
 **Access**: private  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| password_ | <code>string</code> | Password required to change status. |
 | game | <code>string</code> | New message to set game to. |
 
 <a name="SpikeyBot..mention"></a>
