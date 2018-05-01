@@ -1,6 +1,7 @@
 {
   "title": "Hungry Games!",
   "description": "To use any of these commands you must have the \"{hgRole}\" role.",
+  "prefix": "hg ",
   "sections": [
     {
       "title": "Game Settings",
