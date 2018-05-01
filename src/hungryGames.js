@@ -657,69 +657,7 @@ function HungryGames() {
    * @private
    * @constant
    */
-  const helpObject = {
-    title: 'Hungry Games!',
-    description: 'To use any of these commands you must have the "' + roleName +
-        '" role.',
-    sections: [
-      {
-        title: 'Game Settings',
-        rows: [
-          'create // This will create a game with default settings if it ' +
-              'doesn\'t exist already.',
-          'options \'option name\' \'value\' // List options if no name, or ' +
-              'change the option if you give a name.',
-          'reset \'all/current/events/options/teams\' // Delete data about ' +
-              'the Games. Don\'t choose an option for more info.',
-        ],
-      },
-      {
-        title: 'Player Settings',
-        rows: [
-          'players // This will list all players I currently care about.',
-          'exclude \'mention\' // Prevent someone from being added to the ' +
-              'next game.',
-          'include \'mention\' // Add a person back into the next game.',
-        ],
-      },
-      {
-        title: 'Team Settings',
-        rows: [
-          'teams swap \'mention\' \'mention\' // This will swap two players ' +
-              'to the other team.',
-          'teams move \'mention\' \'id/mention\' // This will move the first ' +
-              'player, to another team. (Ignores teamSize option)',
-          'teams rename \'id/mention\' \'name...\' // Rename a team. Specify ' +
-              'its id, or mention someone on a team.',
-          'teams randomize // Randomize who is on what team.',
-          'teams reset // Delete all teams and start over.',
-        ],
-      },
-      {
-        title: 'Events',
-        rows: [
-          'events // This will list all custom events that could happen in ' +
-              'the game.',
-          'debugevents // This will let you download all of the events and ' +
-              'their data.',
-          'events add \'message\' // Begins process of adding a custom event.',
-          'events remove \'number\' // Remove a custom event. The number is ' +
-              'the number shown in the list of events.',
-        ],
-      },
-      {
-        title: 'Time Control',
-        rows: [
-          'start // This will start a game with your settings.',
-          'end // This will end a game early.',
-          'autoplay // Automatically continue to the next day after a day is ' +
-              'over.',
-          'pause // Stop autoplay at the end of the day.',
-          'next // Simulate the next day of the Games!',
-        ],
-      },
-    ],
-  };
+  const helpObject = JSON.parse(fs.readFileSync('./docs/hgHelp.json'));
   /** @inheritdoc */
   this.helpMessage = 'Module loading...';
 
