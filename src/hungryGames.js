@@ -673,7 +673,8 @@ function HungryGames() {
     tmpHelp.setTitle(helpObject.title);
     tmpHelp.setURL(
         self.common.webURL + '#' + encodeURIComponent(helpObject.title));
-    tmpHelp.setDescription(helpObject.description);
+    tmpHelp.setDescription(
+        helpObject.description.replaceAll('{hgRole}', hgRole));
     helpObject.sections.forEach(function(obj) {
       let titleID = encodeURIComponent(obj.title);
       let titleURL = '[web](' + self.common.webURL + '#' + titleID + ')';

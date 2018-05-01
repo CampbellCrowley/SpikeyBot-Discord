@@ -1,5 +1,6 @@
 {
-  "title": "Here's the list of stuff I can do! PM SpikeyRobot ({prefix}pmspikey) feature requests!\n",
+  "title": "Main Commands",
+  "description": "Here's the list of stuff I can do! PM SpikeyRobot ({prefix}pmspikey) feature requests!\n",
   "sections": [
     {
       "title": "Music Stuff",

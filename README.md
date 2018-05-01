@@ -35,6 +35,8 @@
 - game (Information about a user's current visible status)
 - hg save (Causes hungry games to save all data manually)
 - hg debug (Dumps current guild's hungry games data into chat)(*Should be improved*)
+- hg makemewin (Replies with a message telling the user their chances of winning have not increased)
+- hg makemelose (Replies with a message telling the user their chances of losing have not increased)
 - vi (Alias for `play nice try vi`)
 - airhorn (Plays airhorn sound)
 - rickroll (Plays Rick Astley in voice channel)
