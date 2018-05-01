@@ -3,10 +3,11 @@
 let dateFormat = require('dateformat');
 
 /**
- * @classdesc Common functions accross my projects. Mostly just logging.
+ * Commonly required things. Helper functions and constants.
  * @class
  */
 function Common() {
+  const self = this;
   /**
    * The number of characters reserved for the filename of the script.
    * @private
@@ -53,32 +54,14 @@ function Common() {
    * version of the app running.
    */
   this.begin = function(_, isRelease) {
-    this.isRelease = isRelease || false;
+    self.isRelease = isRelease || false;
     switch (app) {
-      case 'Master.js':
-        mycolor = 32;
-        break;
-      case 'app.js':
-        mycolor = 36;
-        break;
-      case 'stopwatch.js':
-        mycolor = 34;
-        break;
-      case 'accounts.js':
-        mycolor = 35;
-        break;
-      case 'proxy.js':
-        mycolor = 37;
-        break;
-      case 'trax.js':
-        mycolor = 33;
-        break;
       case 'SpikeyBot.js':
         mycolor = 44;
         break;
     }
     let temptitle = app;
-    if (this.isRelease) temptitle = 'R' + temptitle;
+    if (self.isRelease) temptitle = 'R' + temptitle;
     else temptitle = 'D' + temptitle;
 
     for (let i = temptitle.length; i < prefixLength; i++) {
@@ -90,7 +73,7 @@ function Common() {
     temptitle += ' ';
     title = temptitle;
 
-    this.log(app + ' Begin');
+    self.log(app + ' Begin');
   };
 
   /**
@@ -123,7 +106,7 @@ function Common() {
    * @return {string} The formmatted address.
    */
   this.getIPName = function(ip) {
-    ip = this.padIp(ip);
+    ip = self.padIp(ip);
     switch (ip) {
       default:
         return ip;
@@ -157,7 +140,7 @@ function Common() {
     if (typeof ip === 'undefined') {
       ip = 'SELF           ';
     }
-    const formattedIP = this.getIPName(ip.replace('::ffff:', ''));
+    const formattedIP = self.getIPName(ip.replace('::ffff:', ''));
 
     const date = dateFormat(new Date(), 'mm-dd hh:MM:ss');
     return '[' + title + date + ' ' + formattedIP + ']:';
@@ -171,13 +154,13 @@ function Common() {
    * caused this event to happen.
    */
   this.log = function(message, ip) {
-    if (this.isRelease) {
+    if (self.isRelease) {
       console.log(
-          getTrace() + this.updatePrefix(ip),
+          getTrace() + self.updatePrefix(ip),
           '\x1B[;' + mycolor + 'm' + message, '\x1B[1;0m');
     } else {
       console.log(
-          getTrace() + '\x1B[;' + mycolor + 'm' + this.updatePrefix(ip),
+          getTrace() + '\x1B[;' + mycolor + 'm' + self.updatePrefix(ip),
           message, '\x1B[1;0m');
     }
   };
@@ -190,7 +173,7 @@ function Common() {
    */
   this.error = function(message, ip) {
     console.log(
-        getTrace() + '\x1B[;31m' + this.updatePrefix(ip), message, '\x1B[1;0m');
+        getTrace() + '\x1B[;31m' + self.updatePrefix(ip), message, '\x1B[1;0m');
   };
 
   /**

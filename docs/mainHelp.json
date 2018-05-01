@@ -19,8 +19,8 @@
         "addme // I will send you a link to add me to your server!",
         "help // Send this message to you.",
         "say // Make me say something.",
-        "createdate // I will tell you the date you created your account! (You can mention people)",
-        "joindate // I will tell you the date you joined the server you sent the message from! (You can mention people)",
+        "createdate 'mention' // I will tell you the date you created your account!",
+        "joindate 'mention' // I will tell you the date you joined the server you sent the message from!",
         "pmme // I will introduce myself to you!",
         "pmspikey 'message' // I will send SpikeyRobot (my creator) your message because you are too shy!",
         "flip // I have an unlimited supply of coins! I will flip one for you!",
@@ -34,7 +34,7 @@
       "rows": [
         "add 'numbers' // Add positive or negative numbers separated by spaces.",
         "simplify 'equation' // Simplify an equation with numbers and variables.",
-        "solve 'eqution' // Solve an equation for each variable in the equation.",
+        "solve 'equation' // Solve an equation for each variable in the equation.",
         "evaluate 'problem' // Solve a math problem, and convert units.",
         "derive 'equation with x' // Find dy/dx of an equation.",
         "graph 'equation with x' '[xMin, xMax]' '[yMin, yMax]' // Graph an equation, Maxes and mins are all optional, but brackets are required."
