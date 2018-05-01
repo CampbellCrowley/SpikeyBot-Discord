@@ -3,6 +3,7 @@
 
 ***
 ## Music Stuff
+
 | Command | Description |
 | --- | --- |
 | ?play 'url or search'  |  Play a song in your current voice channel, or add a song to the queue. |
@@ -11,7 +12,9 @@
 | ?queue  |  View the songs currently in the queue. |
 | ?remove 'index'  |  Remove a song with the given queue index from the queue. |
 | ?lyrics 'song'  |  Search for song lyrics. |
+
 ## General Stuff
+
 | Command | Description |
 | --- | --- |
 | ?addme  |  I will send you a link to add me to your server! |
@@ -25,7 +28,9 @@
 | ?avatar 'mention'  |  Need a better look at your profile pic? I'll show you the original. |
 | ?ping  |  Want to know what my delay to the server is? I can tell you my ping! |
 | ?timer 'seconds' 'message...'  |  Set a timer for a certain number of seconds. The bot will DM you the message at the end. No options lists timers. |
+
 ## Math Stuff
+
 | Command | Description |
 | --- | --- |
 | ?add 'numbers'  |  Add positive or negative numbers separated by spaces. |
@@ -34,9 +39,12 @@
 | ?evaluate 'problem'  |  Solve a math problem, and convert units. |
 | ?derive 'equation with x'  |  Find dy/dx of an equation. |
 | ?graph 'equation with x' '[xMin, xMax]' '[yMin, yMax]'  |  Graph an equation, Maxes and mins are all optional, but brackets are required. |
+
 ## Admin Stuff
+
 | Command | Description |
 | --- | --- |
 | ?purge 'number' 'mentions'  |  Remove a number of messages from the current text channel. Mention people to only remove their messages. |
 | ?fuckyou/?ban 'mention'  |  I will ban the person you mention with a flashy message! |
 | ?smite 'mention'  |  Silence the peasant who dare oppose you! |
+

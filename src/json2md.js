@@ -50,12 +50,13 @@ function objToMd(file) {
     if (sec.title) {
       text += '## ' + repTags(sec.title) + '\n';
     }
-    text += '| Command | Description |\n';
+    text += '\n| Command | Description |\n';
     text += '| --- | --- |\n';
     for (let r in sec.rows) {
       let row = repTags(sec.rows[r]).split('//');
       text += '| ' + prefix + row[0] + ' | ' + row[1] + ' |\n';
     }
+    text += '\n';
   }
   return text;
 }
