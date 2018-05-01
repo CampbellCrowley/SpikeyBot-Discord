@@ -22,16 +22,12 @@ function convertFile(filename) {
       return;
     }
     try {
-      fs.writeFile(
-          filename.replace(/\.json$/, '.md'), objToMd(JSON.parse(file)),
-          function(err) {
-            if (err) {
-              console.log(
-                  'Failed to write file', filename.replace(/\.json$/, '.md'),
-                  err);
-              return;
-            }
-          });
+      fs.writeFile(filename + '.md', objToMd(JSON.parse(file)), function(err) {
+        if (err) {
+          console.log('Failed to write file', filename + '.md', err);
+          return;
+        }
+      });
     } catch (e) {
       console.log('Failed to convert to md', filename, e);
       return;
