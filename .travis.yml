@@ -6,6 +6,12 @@ script: bash ./travis/test.sh
 cache:
   directories:
     - node_modules
+branches:
+  except:
+  - unreviewed/*
+  only:
+  - master
+  - indev
 sudo: false
 dist: trusty
 after_success:
