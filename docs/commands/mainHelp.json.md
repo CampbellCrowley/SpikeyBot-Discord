@@ -28,6 +28,7 @@
 | ?avatar 'mention'  |  Need a better look at your profile pic? I'll show you the original. |
 | ?ping  |  Want to know what my delay to the server is? I can tell you my ping! |
 | ?timer 'seconds' 'message...'  |  Set a timer for a certain number of seconds. The bot will DM you the message at the end. No options lists timers. |
+| ?tictactoe 'mention'  |  Start a game of Tic Tac Toe! |
 
 ## Math Stuff
 

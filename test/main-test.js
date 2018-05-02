@@ -29,6 +29,7 @@ let bot = spawn(
       './main.js',
       './music.js',
       './hungryGames.js',
+      './ticTacToe.js',
     ],
     spawnOpts);
 console.log("Spawned primary bot");
