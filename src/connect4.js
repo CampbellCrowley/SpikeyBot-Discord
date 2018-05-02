@@ -95,7 +95,7 @@ function Connect4() {
   }
 
   /**
-   * Class that stores the current state of a tic tac toe game.
+   * Class that stores the current state of a connect 4 game.
    * @class
    *
    * @public
@@ -256,7 +256,7 @@ function Connect4() {
    *
    * @private
    * @param {Discord~Message} msg The message to add the reactions to.
-   * @param {TicTacToe~Game} game The game to update when changes are made.
+   * @param {Connect4~Game} game The game to update when changes are made.
    */
   function addListener(msg, game) {
     msg.awaitReactions(function(reaction, user) {

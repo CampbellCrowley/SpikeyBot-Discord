@@ -326,7 +326,7 @@ Manages a Connect 4 game.
 <a name="new_Connect4+Game_new"></a>
 
 #### new this.Game(players, msg)
-Class that stores the current state of a tic tac toe game.
+Class that stores the current state of a connect 4 game.
 
 
 | Param | Type | Description |
@@ -571,7 +571,7 @@ Add the listener for reactions to the game.
 | Param | Type | Description |
 | --- | --- | --- |
 | msg | <code>Discord~Message</code> | The message to add the reactions to. |
-| game | <code>TicTacToe~Game</code> | The game to update when changes are made. |
+| game | <code>Connect4~Game</code> | The game to update when changes are made. |
 
 <a name="Connect4..checkWin"></a>
 
