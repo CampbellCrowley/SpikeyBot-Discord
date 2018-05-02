@@ -281,6 +281,7 @@ function Connect4() {
            msg.edit(
                'Game timed out!\nThe game has ended because nobody made a ' +
                'move in too long!');
+           game.print(game.turn == 1 ? 2 : 1);
            return;
          }
          if (!game.players.p1 && game.turn == 1) {

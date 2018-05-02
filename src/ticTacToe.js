@@ -11,14 +11,9 @@ function TicTacToe() {
   /** @inheritdoc */
   this.myName = 'TicTacToe';
 
-  /**
-   * @inheritdoc
-   * @todo Create help for this.
-   */
-  this.helpMessage = undefined;
-
+  /** @inheritdoc */
   this.initialize = function() {
-    self.command.on('tictactoe', commandTicTacToe, true);
+    self.command.on('tictactoe', commandTicTacToe);
   };
 
   /** @inheritdoc */
@@ -80,7 +75,7 @@ function TicTacToe() {
   }
 
   /**
-   * Class that stores the currnt state of a tic tac toe game.
+   * Class that stores the current state of a tic tac toe game.
    * @class
    *
    * @public
