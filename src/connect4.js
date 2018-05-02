@@ -247,7 +247,7 @@ function Connect4() {
    */
   function addReactions(msg, index = 0) {
     msg.react(emoji[index]).then((_) => {
-      if (index < numCols) addReactions(msg, index + 1);
+      if (index < numCols - 1) addReactions(msg, index + 1);
     });
   }
 
@@ -309,9 +309,9 @@ function Connect4() {
            addListener(msg, game);
            return;
          }
-         if (game.board[1][move] != 0) {
+         /* if (game.board[1][move] != 0) {
            reactions.first().users.remove(self.client.user);
-         }
+         } */
          let row;
          for (row = 1; row < numRows; row++) {
            if (game.board[row][move] != 0) {
