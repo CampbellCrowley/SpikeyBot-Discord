@@ -39,8 +39,13 @@ bot.stderr.pipe(log);
 console.log("Piping to log");
 
 after(function() {
+  console.log("SHUTDOWN");
   bot.kill('SIGHUP');
   client.destroy();
+  setTimeout(function() {
+    console.log("KILL");
+    process.kill(process.pid);
+  }, 1000);
 });
 
 /**
