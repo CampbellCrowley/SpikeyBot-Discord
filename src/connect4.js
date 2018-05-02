@@ -334,7 +334,8 @@ function Connect4() {
    *
    * @param {number[]} board Array of 9 numbers defining a board. 0 is nobody, 1
    * is player 1, 2 is player 2.
-   * @param {number} latest The index where the latest move occurred.
+   * @param {number} latestR The row index where the latest move occurred.
+   * @param {number} latestC The column index where the latest move occurred.
    * @return {number} Returns 0 if game is not over, 1 if player 1 won, 2 if
    * player 2 won, 3 if draw.
    */

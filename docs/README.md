@@ -4,6 +4,9 @@
 <dl>
 <dt><a href="#Common">Common</a></dt>
 <dd></dd>
+<dt><a href="#Connect4">Connect4</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
+<dd><p>Manages a Connect 4 game.</p>
+</dd>
 <dt><a href="#HungryGames">HungryGames</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
 <dd><p>Hunger Games simulator.</p>
 </dd>
@@ -263,6 +266,328 @@ Gets the name and line number of the current function stack.
 **Kind**: inner method of [<code>Common</code>](#Common)  
 **Returns**: <code>string</code> - Formatted string with length 20.  
 **Access**: private  
+<a name="Connect4"></a>
+
+## Connect4 ⇐ [<code>SubModule</code>](#SubModule)
+Manages a Connect 4 game.
+
+**Kind**: global class  
+**Extends**: [<code>SubModule</code>](#SubModule)  
+
+* [Connect4](#Connect4) ⇐ [<code>SubModule</code>](#SubModule)
+    * _instance_
+        * [.Game](#Connect4+Game)
+            * [new this.Game(players, msg)](#new_Connect4+Game_new)
+            * [.players](#Connect4+Game+players) : <code>Object</code>
+            * [.board](#Connect4+Game+board) : <code>Array.&lt;Array.&lt;number&gt;&gt;</code>
+            * [.turn](#Connect4+Game+turn)
+            * [.msg](#Connect4+Game+msg) : <code>Discord~Message</code>
+            * [.print([winner])](#Connect4+Game+print)
+        * [.helpMessage](#SubModule+helpMessage) : <code>string</code> \| <code>Discord~MessageEmbed</code>
+        * [.prefix](#SubModule+prefix) : <code>string</code>
+        * [.myPrefix](#SubModule+myPrefix) : <code>string</code>
+        * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
+        * [.Discord](#SubModule+Discord) : <code>Discord</code>
+        * [.client](#SubModule+client) : <code>Discord~Client</code>
+        * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
+        * [.common](#SubModule+common) : [<code>Common</code>](#Common)
+        * [.myName](#SubModule+myName) : <code>string</code>
+        * [.initialized](#SubModule+initialized) : <code>boolean</code>
+        * [.createGame(players, channel)](#Connect4+createGame)
+        * [.initialize()](#SubModule+initialize)
+        * [.begin(prefix, Discord, client, command, common)](#SubModule+begin)
+        * [.end()](#SubModule+end)
+        * [.shutdown()](#SubModule+shutdown)
+        * *[.save()](#SubModule+save)*
+    * _inner_
+        * [~maxReactAwaitTime](#Connect4..maxReactAwaitTime) : <code>number</code> ℗
+        * [~numRows](#Connect4..numRows) : <code>number</code> ℗
+        * [~numCols](#Connect4..numCols) : <code>number</code> ℗
+        * [~emoji](#Connect4..emoji) : <code>Object.&lt;string&gt;</code> ℗
+        * [~commandConnect4(msg)](#Connect4..commandConnect4) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~addReactions(msg, index)](#Connect4..addReactions) ℗
+        * [~addListener(msg, game)](#Connect4..addListener) ℗
+        * [~checkWin(board, latestR, latestC)](#Connect4..checkWin) ⇒ <code>number</code>
+
+<a name="Connect4+Game"></a>
+
+### connect4.Game
+**Kind**: instance class of [<code>Connect4</code>](#Connect4)  
+**Access**: public  
+
+* [.Game](#Connect4+Game)
+    * [new this.Game(players, msg)](#new_Connect4+Game_new)
+    * [.players](#Connect4+Game+players) : <code>Object</code>
+    * [.board](#Connect4+Game+board) : <code>Array.&lt;Array.&lt;number&gt;&gt;</code>
+    * [.turn](#Connect4+Game+turn)
+    * [.msg](#Connect4+Game+msg) : <code>Discord~Message</code>
+    * [.print([winner])](#Connect4+Game+print)
+
+<a name="new_Connect4+Game_new"></a>
+
+#### new this.Game(players, msg)
+Class that stores the current state of a tic tac toe game.
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| players | <code>Object</code> | The players in this game. |
+| msg | <code>Discord~Message</code> | The message displaying the current game. |
+
+<a name="Connect4+Game+players"></a>
+
+#### game.players : <code>Object</code>
+The players in this game.
+
+**Kind**: instance property of [<code>Game</code>](#Connect4+Game)  
+<a name="Connect4+Game+board"></a>
+
+#### game.board : <code>Array.&lt;Array.&lt;number&gt;&gt;</code>
+2D Array of a 7w x 6h board. 0 is nobody, 1 is player 1, 2 is player 2.
+
+**Kind**: instance property of [<code>Game</code>](#Connect4+Game)  
+<a name="Connect4+Game+turn"></a>
+
+#### game.turn
+Which player's turn it is. Either 1 or 2.
+
+**Kind**: instance property of [<code>Game</code>](#Connect4+Game)  
+<a name="Connect4+Game+msg"></a>
+
+#### game.msg : <code>Discord~Message</code>
+The message displaying the current game.
+
+**Kind**: instance property of [<code>Game</code>](#Connect4+Game)  
+<a name="Connect4+Game+print"></a>
+
+#### game.print([winner])
+Edit the current message to show the current board.
+
+**Kind**: instance method of [<code>Game</code>](#Connect4+Game)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [winner] | <code>number</code> | <code>0</code> | The player who has won the game. 0 is game not done, 1 is player 1, 2 is player 2, 3 is draw. |
+
+<a name="SubModule+helpMessage"></a>
+
+### connect4.helpMessage : <code>string</code> \| <code>Discord~MessageEmbed</code>
+The help message to show the user in the main help message.
+
+**Kind**: instance property of [<code>Connect4</code>](#Connect4)  
+<a name="SubModule+prefix"></a>
+
+### connect4.prefix : <code>string</code>
+The main prefix in use for this bot. Only available after begin() is
+called.
+
+**Kind**: instance property of [<code>Connect4</code>](#Connect4)  
+**Read only**: true  
+<a name="SubModule+myPrefix"></a>
+
+### connect4.myPrefix : <code>string</code>
+The prefix this submodule uses. Formed by prepending this.prefix to
+this.postPrefix. this.postPrefix must be defined before begin(), otherwise
+it is ignored.
+
+**Kind**: instance property of [<code>Connect4</code>](#Connect4)  
+**Read only**: true  
+<a name="SubModule+postPrefix"></a>
+
+### *connect4.postPrefix : <code>string</code>*
+The postfix for the global prefix for this subModule. Must be defined
+before begin(), otherwise it is ignored.
+
+**Kind**: instance abstract property of [<code>Connect4</code>](#Connect4)  
+**Default**: <code>&quot;&quot;</code>  
+<a name="SubModule+Discord"></a>
+
+### connect4.Discord : <code>Discord</code>
+The current Discord object instance of the bot.
+
+**Kind**: instance property of [<code>Connect4</code>](#Connect4)  
+<a name="SubModule+client"></a>
+
+### connect4.client : <code>Discord~Client</code>
+The current bot client.
+
+**Kind**: instance property of [<code>Connect4</code>](#Connect4)  
+<a name="SubModule+command"></a>
+
+### connect4.command : [<code>Command</code>](#SpikeyBot..Command)
+The command object for registering command listeners.
+
+**Kind**: instance property of [<code>Connect4</code>](#Connect4)  
+<a name="SubModule+common"></a>
+
+### connect4.common : [<code>Common</code>](#Common)
+The common object.
+
+**Kind**: instance property of [<code>Connect4</code>](#Connect4)  
+<a name="SubModule+myName"></a>
+
+### connect4.myName : <code>string</code>
+The name of this submodule. Used for differentiating in the log. Should be
+defined before begin().
+
+**Kind**: instance property of [<code>Connect4</code>](#Connect4)  
+**Overrides**: [<code>myName</code>](#SubModule+myName)  
+**Access**: protected  
+<a name="SubModule+initialized"></a>
+
+### connect4.initialized : <code>boolean</code>
+Has this subModule been initialized yet (Has begin() been called).
+
+**Kind**: instance property of [<code>Connect4</code>](#Connect4)  
+**Default**: <code>false</code>  
+**Access**: protected  
+**Read only**: true  
+<a name="Connect4+createGame"></a>
+
+### connect4.createGame(players, channel)
+Create a game with the given players in a given text channel.
+
+**Kind**: instance method of [<code>Connect4</code>](#Connect4)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| players | <code>Object</code> | The players in the game. |
+| channel | <code>Discord~TextChannel</code> | The text channel to send messages. |
+
+<a name="SubModule+initialize"></a>
+
+### connect4.initialize()
+The function called at the end of begin() for further initialization
+specific to the subModule. Must be defined before begin() is called.
+
+**Kind**: instance method of [<code>Connect4</code>](#Connect4)  
+**Overrides**: [<code>initialize</code>](#SubModule+initialize)  
+**Access**: protected  
+<a name="SubModule+begin"></a>
+
+### connect4.begin(prefix, Discord, client, command, common)
+Initialize this submodule.
+
+**Kind**: instance method of [<code>Connect4</code>](#Connect4)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| prefix | <code>string</code> | The global prefix for this bot. |
+| Discord | <code>Discord</code> | The Discord object for the API library. |
+| client | <code>Discord~Client</code> | The client that represents this bot. |
+| command | [<code>Command</code>](#SpikeyBot..Command) | The command instance in which to register command listeners. |
+| common | [<code>Common</code>](#Common) | Class storing common functions. |
+
+<a name="SubModule+end"></a>
+
+### connect4.end()
+Trigger subModule to shutdown and get ready for process terminating.
+
+**Kind**: instance method of [<code>Connect4</code>](#Connect4)  
+<a name="SubModule+shutdown"></a>
+
+### connect4.shutdown()
+Shutdown and disable this submodule. Removes all event listeners.
+
+**Kind**: instance method of [<code>Connect4</code>](#Connect4)  
+**Overrides**: [<code>shutdown</code>](#SubModule+shutdown)  
+**Access**: protected  
+<a name="SubModule+save"></a>
+
+### *connect4.save()*
+Saves all data to files necessary for saving current state.
+
+**Kind**: instance abstract method of [<code>Connect4</code>](#Connect4)  
+<a name="Connect4..maxReactAwaitTime"></a>
+
+### Connect4~maxReactAwaitTime : <code>number</code> ℗
+Maximum amount of time to wait for reactions to a message. Also becomes
+maximum amount of time a game will run with no input, because controls will
+be disabled after this timeout.
+
+**Kind**: inner constant of [<code>Connect4</code>](#Connect4)  
+**Default**: <code>5 Minutes</code>  
+**Access**: private  
+<a name="Connect4..numRows"></a>
+
+### Connect4~numRows : <code>number</code> ℗
+The number of rows in the board.
+
+**Kind**: inner constant of [<code>Connect4</code>](#Connect4)  
+**Default**: <code>6</code>  
+**Access**: private  
+<a name="Connect4..numCols"></a>
+
+### Connect4~numCols : <code>number</code> ℗
+The number of columns in the board.
+
+**Kind**: inner constant of [<code>Connect4</code>](#Connect4)  
+**Default**: <code>7</code>  
+**Access**: private  
+<a name="Connect4..emoji"></a>
+
+### Connect4~emoji : <code>Object.&lt;string&gt;</code> ℗
+Helper object of emoji characters mapped to names.
+
+**Kind**: inner constant of [<code>Connect4</code>](#Connect4)  
+**Default**: <code>{&quot;undefined&quot;:&quot;9⃣&quot;,&quot;X&quot;:&quot;❌&quot;,&quot;O&quot;:&quot;⭕&quot;}</code>  
+**Access**: private  
+<a name="Connect4..commandConnect4"></a>
+
+### Connect4~commandConnect4(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Starts a connect 4 game. If someone is mentioned it will start a game
+between the message author and the mentioned person. Otherwise, waits for
+someone to play.
+
+**Kind**: inner method of [<code>Connect4</code>](#Connect4)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Connect4..addReactions"></a>
+
+### Connect4~addReactions(msg, index) ℗
+Add the reactions to a message for controls of the game. Recursive.
+
+**Kind**: inner method of [<code>Connect4</code>](#Connect4)  
+**Access**: private  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| msg | <code>Discord~Message</code> |  | The message to add the reactions to. |
+| index | <code>number</code> | <code>0</code> | The number of reactions we have added so far. |
+
+<a name="Connect4..addListener"></a>
+
+### Connect4~addListener(msg, game) ℗
+Add the listener for reactions to the game.
+
+**Kind**: inner method of [<code>Connect4</code>](#Connect4)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message to add the reactions to. |
+| game | <code>TicTacToe~Game</code> | The game to update when changes are made. |
+
+<a name="Connect4..checkWin"></a>
+
+### Connect4~checkWin(board, latestR, latestC) ⇒ <code>number</code>
+Checks if the given board has a winner, or if the game is over.
+
+**Kind**: inner method of [<code>Connect4</code>](#Connect4)  
+**Returns**: <code>number</code> - Returns 0 if game is not over, 1 if player 1 won, 2 if
+player 2 won, 3 if draw.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| board | <code>Array.&lt;number&gt;</code> | Array of 9 numbers defining a board. 0 is nobody, 1 is player 1, 2 is player 2. |
+| latestR | <code>number</code> | The row index where the latest move occurred. |
+| latestC | <code>number</code> | The column index where the latest move occurred. |
+
 <a name="HungryGames"></a>
 
 ## HungryGames ⇐ [<code>SubModule</code>](#SubModule)
@@ -3581,7 +3906,7 @@ Manages a tic-tac-toe game.
         * [.myName](#SubModule+myName) : <code>string</code>
         * [.initialized](#SubModule+initialized) : <code>boolean</code>
         * [.createGame(players, channel)](#TicTacToe+createGame)
-        * *[.initialize()](#SubModule+initialize)*
+        * [.initialize()](#SubModule+initialize)
         * [.begin(prefix, Discord, client, command, common)](#SubModule+begin)
         * [.end()](#SubModule+end)
         * [.shutdown()](#SubModule+shutdown)
@@ -3614,7 +3939,7 @@ Manages a tic-tac-toe game.
 <a name="new_TicTacToe+Game_new"></a>
 
 #### new this.Game(players, msg)
-Class that stores the currnt state of a tic tac toe game.
+Class that stores the current state of a tic tac toe game.
 
 
 | Param | Type | Description |
@@ -3671,7 +3996,6 @@ The template string for the game's board.
 The help message to show the user in the main help message.
 
 **Kind**: instance property of [<code>TicTacToe</code>](#TicTacToe)  
-**Overrides**: [<code>helpMessage</code>](#SubModule+helpMessage)  
 <a name="SubModule+prefix"></a>
 
 ### ticTacToe.prefix : <code>string</code>
@@ -3754,11 +4078,11 @@ Create a game with the given players in a given text channel.
 
 <a name="SubModule+initialize"></a>
 
-### *ticTacToe.initialize()*
+### ticTacToe.initialize()
 The function called at the end of begin() for further initialization
 specific to the subModule. Must be defined before begin() is called.
 
-**Kind**: instance abstract method of [<code>TicTacToe</code>](#TicTacToe)  
+**Kind**: instance method of [<code>TicTacToe</code>](#TicTacToe)  
 **Overrides**: [<code>initialize</code>](#SubModule+initialize)  
 **Access**: protected  
 <a name="SubModule+begin"></a>
