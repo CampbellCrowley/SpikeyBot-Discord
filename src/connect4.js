@@ -247,7 +247,7 @@ function Connect4() {
    */
   function addReactions(msg, index = 0) {
     msg.react(emoji[index]).then((_) => {
-      if (index < numCols) addReactions(msg, index + 1);
+      if (index < numCols - 1) addReactions(msg, index + 1);
     });
   }
 
@@ -309,9 +309,9 @@ function Connect4() {
            addListener(msg, game);
            return;
          }
-         if (game.board[1][move] != 0) {
+         /* if (game.board[1][move] != 0) {
            reactions.first().users.remove(self.client.user);
-         }
+         } */
          let row;
          for (row = 1; row < numRows; row++) {
            if (game.board[row][move] != 0) {
@@ -344,7 +344,7 @@ function Connect4() {
     let player = board[latestR][latestC];
     // Column
     let count = 0;
-    for (let r = latestR - 3; r < latestR + 3 && r < numRows; r++) {
+    for (let r = latestR - 3; r <= latestR + 3 && r < numRows; r++) {
       if (r < 0) continue;
 
       if (board[r][latestC] == player) count++;
@@ -354,7 +354,7 @@ function Connect4() {
     }
     // Row
     count = 0;
-    for (let c = latestC - 3; c < latestC + 3 && c < numCols; c++) {
+    for (let c = latestC - 3; c <= latestC + 3 && c < numCols; c++) {
       if (c < 0) continue;
 
       if (board[latestR][c] == player) count++;
