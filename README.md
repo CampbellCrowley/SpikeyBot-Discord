@@ -5,7 +5,7 @@
 ###### [Web Page with command help](https://www.campbellcrowley.com/spikeybot/) (also available from bot with `help` command)
 ## Main
 #### General
-`addme` `help` `say` `createdate` `joindate` `pmme` `pmspikey` `flip` `avatar` `ping` `timer`
+`addme` `help` `say` `createdate` `joindate` `pmme` `pmspikey` `flip` `avatar` `ping` `timer` `connect4` `tictactoe`
 #### Music
 `play` `stop` `skip` `queue` `remove` `lyrics`
 #### Math
@@ -29,7 +29,7 @@
 
 ## Hidden
 - js (Run javascript code)
-- thotpm (Semi-anonymously have the bot DM someone)
+- thotpm (Semi-anonymously have the bot DM someone. Only a couple people can use this command)
 - uptime (Amount of time the bot has been running)
 - version (Current bot version)
 - game (Information about a user's current visible status)
@@ -67,15 +67,16 @@
     5) Is an embed
     6) Correct number of messages
   - Does not work if multiple instances of bot are running.
+  - Does not check the content of embeds.
   - Need more thorough and flexible tests.
 - Linting
   - All commits are checked by eslint using Google defaults.
   - Eslint is run with pre-commit git hook.
 - Most code is moved into sub-modules for easier division and reloading.
-  - Music-Only mode (*needs renaming*) only loads minimal features to allow for multiple bots to run without overlap.
+  - Minimal mode only loads minimal features to allow for multiple bots to run without overlap.
   - Music sub-module is expected to run in separate process to improve performance until better solution for music is made.
   - Submodules are passed in via command line arguments.
-    - Path relative to cwd should be given.
+    - Path relative to module should be given.
     - Must be valid for directly being passed into `require()`.
 - Files
   - Most persistent data is saved to disk when bot shuts down.
