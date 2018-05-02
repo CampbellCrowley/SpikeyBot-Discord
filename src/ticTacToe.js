@@ -166,7 +166,7 @@ function TicTacToe() {
       embed.addField('\u200B', finalBoard, true);
       if (winner == 0) {
         embed.addField(
-            names[this.turn - 1] + '\'s turn (' + (this.turn == 1 ? "X" : "O") +
+            names[this.turn - 1] + '\'s turn (' + (this.turn == 1 ? 'X' : 'O') +
                 ')',
             '`' + names[0] + '` is X\n`' + names[1] + '` is O', true);
       } else {
@@ -176,15 +176,15 @@ function TicTacToe() {
       }
 
       if (winner == 3) {
-        embed.addField("Draw game!", "Nobody wins");
+        embed.addField('Draw game!', 'Nobody wins');
       } else if (winner == 2) {
         embed.addField(
-            game.players.p2.username + " Won! " + emoji.O,
-            game.players.p1.username + ", try harder next time.");
+            game.players.p2.username + ' Won! ' + emoji.O,
+            game.players.p1.username + ', try harder next time.');
       } else if (winner == 1) {
         embed.addField(
-            game.players.p1.username + " Won! " + emoji.X,
-            game.players.p2.username + ", try harder next time.");
+            game.players.p1.username + ' Won! ' + emoji.X,
+            game.players.p2.username + ', try harder next time.');
       }
       msg.edit('\u200B', embed);
     };
@@ -288,6 +288,7 @@ function TicTacToe() {
    *
    * @param {number[]} board Array of 9 numbers defining a board. 0 is nobody, 1
    * is player 1, 2 is player 2.
+   * @param {number} latest The index where the latest move occurred.
    * @return {number} Returns 0 if game is not over, 1 if player 1 won, 2 if
    * player 2 won, 3 if draw.
    */
@@ -305,7 +306,7 @@ function TicTacToe() {
       if (i == 2) return player;
     }
     // Diagonals
-    switch(latest) {
+    switch (latest) {
       case 0:
       case 4:
       case 8:
@@ -314,7 +315,7 @@ function TicTacToe() {
       default:
         break;
     }
-    switch(latest) {
+    switch (latest) {
       case 2:
       case 4:
       case 6:

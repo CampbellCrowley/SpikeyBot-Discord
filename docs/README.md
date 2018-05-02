@@ -3562,11 +3562,14 @@ Manages a tic-tac-toe game.
     * _instance_
         * [.Game](#TicTacToe+Game)
             * [new this.Game(players, msg)](#new_TicTacToe+Game_new)
-            * [.players](#TicTacToe+Game+players) : <code>Object</code>
-            * [.board](#TicTacToe+Game+board) : <code>Array.&lt;number&gt;</code>
-            * [.turn](#TicTacToe+Game+turn)
-            * [.msg](#TicTacToe+Game+msg) : <code>Discord~Message</code>
-            * [.print()](#TicTacToe+Game+print)
+            * _instance_
+                * [.players](#TicTacToe+Game+players) : <code>Object</code>
+                * [.board](#TicTacToe+Game+board) : <code>Array.&lt;number&gt;</code>
+                * [.turn](#TicTacToe+Game+turn)
+                * [.msg](#TicTacToe+Game+msg) : <code>Discord~Message</code>
+                * [.print([winner])](#TicTacToe+Game+print)
+            * _inner_
+                * [~boardString](#TicTacToe+Game..boardString) : <code>string</code> ℗
         * [.helpMessage](#SubModule+helpMessage) : <code>string</code> \| <code>Discord~MessageEmbed</code>
         * [.prefix](#SubModule+prefix) : <code>string</code>
         * [.myPrefix](#SubModule+myPrefix) : <code>string</code>
@@ -3584,9 +3587,12 @@ Manages a tic-tac-toe game.
         * [.shutdown()](#SubModule+shutdown)
         * *[.save()](#SubModule+save)*
     * _inner_
+        * [~maxReactAwaitTime](#TicTacToe..maxReactAwaitTime) : <code>number</code> ℗
         * [~emoji](#TicTacToe..emoji) : <code>Object.&lt;string&gt;</code> ℗
         * [~commandTicTacToe(msg)](#TicTacToe..commandTicTacToe) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~addReactions(msg, index)](#TicTacToe..addReactions) ℗
+        * [~addListener(msg, game)](#TicTacToe..addListener) ℗
+        * [~checkWin(board, latest)](#TicTacToe..checkWin) ⇒ <code>number</code>
 
 <a name="TicTacToe+Game"></a>
 
@@ -3596,11 +3602,14 @@ Manages a tic-tac-toe game.
 
 * [.Game](#TicTacToe+Game)
     * [new this.Game(players, msg)](#new_TicTacToe+Game_new)
-    * [.players](#TicTacToe+Game+players) : <code>Object</code>
-    * [.board](#TicTacToe+Game+board) : <code>Array.&lt;number&gt;</code>
-    * [.turn](#TicTacToe+Game+turn)
-    * [.msg](#TicTacToe+Game+msg) : <code>Discord~Message</code>
-    * [.print()](#TicTacToe+Game+print)
+    * _instance_
+        * [.players](#TicTacToe+Game+players) : <code>Object</code>
+        * [.board](#TicTacToe+Game+board) : <code>Array.&lt;number&gt;</code>
+        * [.turn](#TicTacToe+Game+turn)
+        * [.msg](#TicTacToe+Game+msg) : <code>Discord~Message</code>
+        * [.print([winner])](#TicTacToe+Game+print)
+    * _inner_
+        * [~boardString](#TicTacToe+Game..boardString) : <code>string</code> ℗
 
 <a name="new_TicTacToe+Game_new"></a>
 
@@ -3640,10 +3649,22 @@ The message displaying the current game.
 **Kind**: instance property of [<code>Game</code>](#TicTacToe+Game)  
 <a name="TicTacToe+Game+print"></a>
 
-#### game.print()
+#### game.print([winner])
 Edit the current message to show the current board.
 
 **Kind**: instance method of [<code>Game</code>](#TicTacToe+Game)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [winner] | <code>number</code> | <code>0</code> | The player who has won the game. 0 is game not done, 1 is player 1, 2 is player 2, 3 is draw. |
+
+<a name="TicTacToe+Game..boardString"></a>
+
+#### Game~boardString : <code>string</code> ℗
+The template string for the game's board.
+
+**Kind**: inner constant of [<code>Game</code>](#TicTacToe+Game)  
+**Access**: private  
 <a name="SubModule+helpMessage"></a>
 
 ### ticTacToe.helpMessage : <code>string</code> \| <code>Discord~MessageEmbed</code>
@@ -3775,13 +3796,23 @@ Shutdown and disable this submodule. Removes all event listeners.
 Saves all data to files necessary for saving current state.
 
 **Kind**: instance abstract method of [<code>TicTacToe</code>](#TicTacToe)  
+<a name="TicTacToe..maxReactAwaitTime"></a>
+
+### TicTacToe~maxReactAwaitTime : <code>number</code> ℗
+Maximum amount of time to wait for reactions to a message. Also becomes
+maximum amount of time a game will run with no input, because controls will
+be disabled after this timeout.
+
+**Kind**: inner constant of [<code>TicTacToe</code>](#TicTacToe)  
+**Default**: <code>5 Minutes</code>  
+**Access**: private  
 <a name="TicTacToe..emoji"></a>
 
 ### TicTacToe~emoji : <code>Object.&lt;string&gt;</code> ℗
 Helper object of emoji characters mapped to names.
 
 **Kind**: inner constant of [<code>TicTacToe</code>](#TicTacToe)  
-**Default**: <code>{&quot;undefined&quot;:&quot;9⃣&quot;}</code>  
+**Default**: <code>{&quot;undefined&quot;:&quot;9⃣&quot;,&quot;X&quot;:&quot;❌&quot;,&quot;O&quot;:&quot;⭕&quot;}</code>  
 **Access**: private  
 <a name="TicTacToe..commandTicTacToe"></a>
 
@@ -3809,6 +3840,33 @@ Add the reactions to a message for controls of the game. Recursive.
 | --- | --- | --- | --- |
 | msg | <code>Discord~Message</code> |  | The message to add the reactions to. |
 | index | <code>number</code> | <code>0</code> | The number of reactions we have added so far. |
+
+<a name="TicTacToe..addListener"></a>
+
+### TicTacToe~addListener(msg, game) ℗
+Add the listener for reactions to the game.
+
+**Kind**: inner method of [<code>TicTacToe</code>](#TicTacToe)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message to add the reactions to. |
+| game | <code>TicTacToe~Game</code> | The game to update when changes are made. |
+
+<a name="TicTacToe..checkWin"></a>
+
+### TicTacToe~checkWin(board, latest) ⇒ <code>number</code>
+Checks if the given board has a winner, or if the game is over.
+
+**Kind**: inner method of [<code>TicTacToe</code>](#TicTacToe)  
+**Returns**: <code>number</code> - Returns 0 if game is not over, 1 if player 1 won, 2 if
+player 2 won, 3 if draw.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| board | <code>Array.&lt;number&gt;</code> | Array of 9 numbers defining a board. 0 is nobody, 1 is player 1, 2 is player 2. |
+| latest | <code>number</code> | The index where the latest move occurred. |
 
 <a name="commandHandler"></a>
 
