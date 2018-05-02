@@ -583,10 +583,19 @@ function SpikeyBot() {
    */
   function commandReload(msg) {
     if (trustedIds.includes(msg.author.id)) {
+      let toReload = msg.text.split(' ').splice(1);
+      let reloaded = [];
       common.reply(msg, 'Reloading modules...').then((warnMessage) => {
         let error = false;
         for (let i in subModules) {
           if (!subModules[i] instanceof Object) continue;
+          if (toReload.length > 0) {
+            if (!toReload.find(function(el) {
+                  return subModuleNames[i] == el;
+                })) {
+              continue;
+            }
+          }
           try {
             try {
               if (subModules[i].save) {
@@ -610,6 +619,7 @@ function SpikeyBot() {
             delete require.cache[require.resolve(subModuleNames[i])];
             subModules[i] = require(subModuleNames[i]);
             subModules[i].begin(prefix, Discord, client, command, common);
+            reloaded.push(subModuleNames[i]);
           } catch (err) {
             error = true;
             common.error('Failed to reload ' + subModuleNames[i]);
@@ -617,11 +627,15 @@ function SpikeyBot() {
           }
         }
         if (error) {
-          warnMessage.edit('`Reload completed with errors.`');
+          warnMessage.edit(
+              '`Reload completed with errors.`\n' +
+              (reloaded.join(' ') || 'NOTHING reloaded'));
         } else if (minimal) {
           warnMessage.delete();
         } else {
-          warnMessage.edit('`Reload complete.`');
+          warnMessage.edit(
+              '`Reload complete.`\n' +
+              (reloaded.join(' ') || 'NOTHING reloaded'));
         }
       });
     } else {

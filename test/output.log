@@ -1,8 +1,0 @@
-exports.begin:58    [;44m[DSpikeyBot.js 04-28 07:35:39 SELF           ]: SpikeyBot.js Begin [1;0m
-client.on:256       [;44m[DSpikeyBot.js 04-28 07:35:44 SELF           ]: Logged in as SpikeyBot-dev#2096! [1;0m
-updateGame:225      [;44m[DSpikeyBot.js 04-28 07:35:44 SELF           ]: Changed game to "~help for help" [1;0m
-exports.begin:239   [;44m[DSpikeyBot.js 04-28 07:35:44 Main           ]: Main Init [1;0m
-exports.begin:102   [;44m[DSpikeyBot.js 04-28 07:35:44 Music          ]: Music Init [1;0m
-exports.begin:466   [;44m[DSpikeyBot.js 04-28 07:35:44 HG             ]: HungryGames Init [1;0m
-client.on:338       [;44m[DSpikeyBot.js 04-28 07:35:45 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~`UNIT TEST MODE ENABLED`~ [1;0m
-client.on:338       [;44m[DSpikeyBot.js 04-28 07:35:45 SELF           ]: Campbell's Soup Kitchen#unittesting@SpikeyBot-dev~`RUN UNIT TESTS`~ [1;0m
