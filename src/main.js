@@ -216,7 +216,8 @@ function Main() {
     let tmpHelp = new self.Discord.MessageEmbed();
     tmpHelp.setTitle(helpObject.title.replaceAll('{prefix}', self.myPrefix));
     tmpHelp.setURL(self.common.webURL);
-    tmpHelp.setDescription(helpObject.description);
+    tmpHelp.setDescription(
+        helpObject.description.replaceAll('{prefix}', self.myPrefix));
     helpObject.sections.forEach(function(obj) {
       let titleID = encodeURIComponent(obj.title);
       const titleURL = '[web](' + self.common.webURL + '#' + titleID + ')';
