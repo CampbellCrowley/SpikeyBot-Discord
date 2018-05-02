@@ -43,8 +43,8 @@ after(function() {
   bot.kill('SIGHUP');
   client.destroy();
   setTimeout(function() {
-    console.log("KILL");
-    process.kill(process.pid);
+    console.log("EXIT");
+    process.exit(0);
   }, 1000);
 });
 
