@@ -3,8 +3,7 @@
 
 <dl>
 <dt><a href="#Common">Common</a></dt>
-<dd><p>Common functions accross my projects. Mostly just logging.</p>
-</dd>
+<dd></dd>
 <dt><a href="#HungryGames">HungryGames</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
 <dd><p>Hunger Games simulator.</p>
 </dd>
@@ -20,6 +19,9 @@
 <dt><a href="#SubModule">SubModule</a></dt>
 <dd><p>Base class for all Sub-Modules.</p>
 </dd>
+<dt><a href="#TicTacToe">TicTacToe</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
+<dd><p>Manages a tic-tac-toe game.</p>
+</dd>
 </dl>
 
 ## Typedefs
@@ -33,11 +35,10 @@
 <a name="Common"></a>
 
 ## Common
-Common functions accross my projects. Mostly just logging.
-
 **Kind**: global class  
 
 * [Common](#Common)
+    * [new Common()](#new_Common_new)
     * _instance_
         * [.isRelease](#Common+isRelease) : <code>boolean</code>
         * [.spikeyId](#Common+spikeyId) : <code>string</code>
@@ -61,6 +62,11 @@ Common functions accross my projects. Mostly just logging.
         * [~prefixLength](#Common..prefixLength) : <code>number</code> ℗
         * [~app](#Common..app) : <code>string</code> ℗
         * [~getTrace()](#Common..getTrace) ⇒ <code>string</code> ℗
+
+<a name="new_Common_new"></a>
+
+### new Common()
+Commonly required things. Helper functions and constants.
 
 <a name="Common+isRelease"></a>
 
@@ -3543,6 +3549,266 @@ Extends SubModule as the base class of a child.
 | Param | Type | Description |
 | --- | --- | --- |
 | child | <code>Object</code> | The child class to extend. |
+
+<a name="TicTacToe"></a>
+
+## TicTacToe ⇐ [<code>SubModule</code>](#SubModule)
+Manages a tic-tac-toe game.
+
+**Kind**: global class  
+**Extends**: [<code>SubModule</code>](#SubModule)  
+
+* [TicTacToe](#TicTacToe) ⇐ [<code>SubModule</code>](#SubModule)
+    * _instance_
+        * [.Game](#TicTacToe+Game)
+            * [new this.Game(players, msg)](#new_TicTacToe+Game_new)
+            * [.players](#TicTacToe+Game+players) : <code>Object</code>
+            * [.board](#TicTacToe+Game+board) : <code>Array.&lt;number&gt;</code>
+            * [.turn](#TicTacToe+Game+turn)
+            * [.msg](#TicTacToe+Game+msg) : <code>Discord~Message</code>
+            * [.print()](#TicTacToe+Game+print)
+        * [.helpMessage](#SubModule+helpMessage) : <code>string</code> \| <code>Discord~MessageEmbed</code>
+        * [.prefix](#SubModule+prefix) : <code>string</code>
+        * [.myPrefix](#SubModule+myPrefix) : <code>string</code>
+        * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
+        * [.Discord](#SubModule+Discord) : <code>Discord</code>
+        * [.client](#SubModule+client) : <code>Discord~Client</code>
+        * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
+        * [.common](#SubModule+common) : [<code>Common</code>](#Common)
+        * [.myName](#SubModule+myName) : <code>string</code>
+        * [.initialized](#SubModule+initialized) : <code>boolean</code>
+        * [.createGame(players, channel)](#TicTacToe+createGame)
+        * *[.initialize()](#SubModule+initialize)*
+        * [.begin(prefix, Discord, client, command, common)](#SubModule+begin)
+        * [.end()](#SubModule+end)
+        * [.shutdown()](#SubModule+shutdown)
+        * *[.save()](#SubModule+save)*
+    * _inner_
+        * [~emoji](#TicTacToe..emoji) : <code>Object.&lt;string&gt;</code> ℗
+        * [~commandTicTacToe(msg)](#TicTacToe..commandTicTacToe) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~addReactions(msg, index)](#TicTacToe..addReactions) ℗
+
+<a name="TicTacToe+Game"></a>
+
+### ticTacToe.Game
+**Kind**: instance class of [<code>TicTacToe</code>](#TicTacToe)  
+**Access**: public  
+
+* [.Game](#TicTacToe+Game)
+    * [new this.Game(players, msg)](#new_TicTacToe+Game_new)
+    * [.players](#TicTacToe+Game+players) : <code>Object</code>
+    * [.board](#TicTacToe+Game+board) : <code>Array.&lt;number&gt;</code>
+    * [.turn](#TicTacToe+Game+turn)
+    * [.msg](#TicTacToe+Game+msg) : <code>Discord~Message</code>
+    * [.print()](#TicTacToe+Game+print)
+
+<a name="new_TicTacToe+Game_new"></a>
+
+#### new this.Game(players, msg)
+Class that stores the currnt state of a tic tac toe game.
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| players | <code>Object</code> | The players in this game. |
+| msg | <code>Discord~Message</code> | The message displaying the current game. |
+
+<a name="TicTacToe+Game+players"></a>
+
+#### game.players : <code>Object</code>
+The players in this game.
+
+**Kind**: instance property of [<code>Game</code>](#TicTacToe+Game)  
+<a name="TicTacToe+Game+board"></a>
+
+#### game.board : <code>Array.&lt;number&gt;</code>
+An array of 9 elements that stores 0, 1, or 2 to signify who owns which
+space of the board. 0 is nobody, 1 is player 1, 2 is player 2.
+
+**Kind**: instance property of [<code>Game</code>](#TicTacToe+Game)  
+<a name="TicTacToe+Game+turn"></a>
+
+#### game.turn
+Which player's turn it is. Either 1 or 2.
+
+**Kind**: instance property of [<code>Game</code>](#TicTacToe+Game)  
+<a name="TicTacToe+Game+msg"></a>
+
+#### game.msg : <code>Discord~Message</code>
+The message displaying the current game.
+
+**Kind**: instance property of [<code>Game</code>](#TicTacToe+Game)  
+<a name="TicTacToe+Game+print"></a>
+
+#### game.print()
+Edit the current message to show the current board.
+
+**Kind**: instance method of [<code>Game</code>](#TicTacToe+Game)  
+<a name="SubModule+helpMessage"></a>
+
+### ticTacToe.helpMessage : <code>string</code> \| <code>Discord~MessageEmbed</code>
+The help message to show the user in the main help message.
+
+**Kind**: instance property of [<code>TicTacToe</code>](#TicTacToe)  
+**Overrides**: [<code>helpMessage</code>](#SubModule+helpMessage)  
+<a name="SubModule+prefix"></a>
+
+### ticTacToe.prefix : <code>string</code>
+The main prefix in use for this bot. Only available after begin() is
+called.
+
+**Kind**: instance property of [<code>TicTacToe</code>](#TicTacToe)  
+**Read only**: true  
+<a name="SubModule+myPrefix"></a>
+
+### ticTacToe.myPrefix : <code>string</code>
+The prefix this submodule uses. Formed by prepending this.prefix to
+this.postPrefix. this.postPrefix must be defined before begin(), otherwise
+it is ignored.
+
+**Kind**: instance property of [<code>TicTacToe</code>](#TicTacToe)  
+**Read only**: true  
+<a name="SubModule+postPrefix"></a>
+
+### *ticTacToe.postPrefix : <code>string</code>*
+The postfix for the global prefix for this subModule. Must be defined
+before begin(), otherwise it is ignored.
+
+**Kind**: instance abstract property of [<code>TicTacToe</code>](#TicTacToe)  
+**Default**: <code>&quot;&quot;</code>  
+<a name="SubModule+Discord"></a>
+
+### ticTacToe.Discord : <code>Discord</code>
+The current Discord object instance of the bot.
+
+**Kind**: instance property of [<code>TicTacToe</code>](#TicTacToe)  
+<a name="SubModule+client"></a>
+
+### ticTacToe.client : <code>Discord~Client</code>
+The current bot client.
+
+**Kind**: instance property of [<code>TicTacToe</code>](#TicTacToe)  
+<a name="SubModule+command"></a>
+
+### ticTacToe.command : [<code>Command</code>](#SpikeyBot..Command)
+The command object for registering command listeners.
+
+**Kind**: instance property of [<code>TicTacToe</code>](#TicTacToe)  
+<a name="SubModule+common"></a>
+
+### ticTacToe.common : [<code>Common</code>](#Common)
+The common object.
+
+**Kind**: instance property of [<code>TicTacToe</code>](#TicTacToe)  
+<a name="SubModule+myName"></a>
+
+### ticTacToe.myName : <code>string</code>
+The name of this submodule. Used for differentiating in the log. Should be
+defined before begin().
+
+**Kind**: instance property of [<code>TicTacToe</code>](#TicTacToe)  
+**Overrides**: [<code>myName</code>](#SubModule+myName)  
+**Access**: protected  
+<a name="SubModule+initialized"></a>
+
+### ticTacToe.initialized : <code>boolean</code>
+Has this subModule been initialized yet (Has begin() been called).
+
+**Kind**: instance property of [<code>TicTacToe</code>](#TicTacToe)  
+**Default**: <code>false</code>  
+**Access**: protected  
+**Read only**: true  
+<a name="TicTacToe+createGame"></a>
+
+### ticTacToe.createGame(players, channel)
+Create a game with the given players in a given text channel.
+
+**Kind**: instance method of [<code>TicTacToe</code>](#TicTacToe)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| players | <code>Object</code> | The players in the game. |
+| channel | <code>Discord~TextChannel</code> | The text channel to send messages. |
+
+<a name="SubModule+initialize"></a>
+
+### *ticTacToe.initialize()*
+The function called at the end of begin() for further initialization
+specific to the subModule. Must be defined before begin() is called.
+
+**Kind**: instance abstract method of [<code>TicTacToe</code>](#TicTacToe)  
+**Overrides**: [<code>initialize</code>](#SubModule+initialize)  
+**Access**: protected  
+<a name="SubModule+begin"></a>
+
+### ticTacToe.begin(prefix, Discord, client, command, common)
+Initialize this submodule.
+
+**Kind**: instance method of [<code>TicTacToe</code>](#TicTacToe)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| prefix | <code>string</code> | The global prefix for this bot. |
+| Discord | <code>Discord</code> | The Discord object for the API library. |
+| client | <code>Discord~Client</code> | The client that represents this bot. |
+| command | [<code>Command</code>](#SpikeyBot..Command) | The command instance in which to register command listeners. |
+| common | [<code>Common</code>](#Common) | Class storing common functions. |
+
+<a name="SubModule+end"></a>
+
+### ticTacToe.end()
+Trigger subModule to shutdown and get ready for process terminating.
+
+**Kind**: instance method of [<code>TicTacToe</code>](#TicTacToe)  
+<a name="SubModule+shutdown"></a>
+
+### ticTacToe.shutdown()
+Shutdown and disable this submodule. Removes all event listeners.
+
+**Kind**: instance method of [<code>TicTacToe</code>](#TicTacToe)  
+**Overrides**: [<code>shutdown</code>](#SubModule+shutdown)  
+**Access**: protected  
+<a name="SubModule+save"></a>
+
+### *ticTacToe.save()*
+Saves all data to files necessary for saving current state.
+
+**Kind**: instance abstract method of [<code>TicTacToe</code>](#TicTacToe)  
+<a name="TicTacToe..emoji"></a>
+
+### TicTacToe~emoji : <code>Object.&lt;string&gt;</code> ℗
+Helper object of emoji characters mapped to names.
+
+**Kind**: inner constant of [<code>TicTacToe</code>](#TicTacToe)  
+**Default**: <code>{&quot;undefined&quot;:&quot;9⃣&quot;}</code>  
+**Access**: private  
+<a name="TicTacToe..commandTicTacToe"></a>
+
+### TicTacToe~commandTicTacToe(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Starts a tic tac toe game. If someone is mentioned it will start a game
+between the message author and the mentioned person. Otherwise, waits for
+someone to play.
+
+**Kind**: inner method of [<code>TicTacToe</code>](#TicTacToe)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="TicTacToe..addReactions"></a>
+
+### TicTacToe~addReactions(msg, index) ℗
+Add the reactions to a message for controls of the game. Recursive.
+
+**Kind**: inner method of [<code>TicTacToe</code>](#TicTacToe)  
+**Access**: private  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| msg | <code>Discord~Message</code> |  | The message to add the reactions to. |
+| index | <code>number</code> | <code>0</code> | The number of reactions we have added so far. |
 
 <a name="commandHandler"></a>
 
