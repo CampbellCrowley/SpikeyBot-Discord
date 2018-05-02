@@ -30,6 +30,7 @@ let bot = spawn(
       './music.js',
       './hungryGames.js',
       './ticTacToe.js',
+      './connect4.js',
     ],
     spawnOpts);
 console.log("Spawned primary bot");
@@ -99,6 +100,7 @@ const mainTests = [
   new Test('Avatar command', '~avatar', ['#embed']),
   new Test('Ping command', '~ping', ['^My ping is']),
   new Test('Tic Tac Toe command', '~tictactoe', ['`Loading TicTacToe...`']),
+  new Test('Connect 4 command', '~connect4', ['`Loading Connect 4...`']),
 ];
 const hgTests = [
   new Test('Reset All command', '~hg reset all', ['#noerr']),
