@@ -97,6 +97,7 @@ const mainTests = [
   new Test('Flip command', '~flip', ['#embed']),
   new Test('Avatar command', '~avatar', ['#embed']),
   new Test('Ping command', '~ping', ['^My ping is']),
+  new Test('Tic Tac Toe command', '~tictactoe', ['`Loading TicTacToe...`']),
 ];
 const hgTests = [
   new Test('Reset All command', '~hg reset all', ['#noerr']),

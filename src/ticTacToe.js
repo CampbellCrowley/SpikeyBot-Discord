@@ -27,14 +27,16 @@ function TicTacToe() {
   };
 
   /**
-   * Number of pixels large to make the image of the board.
+   * Maximum amount of time to wait for reactions to a message. Also becomes
+   * maximum amount of time a game will run with no input, because controls will
+   * be disabled after this timeout.
    *
    * @private
    * @constant
-   * @default
    * @type {number}
+   * @default 5 Minutes
    */
-  // const boardSize = 128;
+  const maxReactAwaitTime = 5 * 1000 * 60; // 5 Minutes
 
   /**
    * Helper object of emoji characters mapped to names.
@@ -55,6 +57,8 @@ function TicTacToe() {
     7: '\u0037\u20E3',
     8: '\u0038\u20E3',
     9: '\u0039\u20E3',
+    X: '❌',
+    O: '⭕',
   };
 
   /**
@@ -85,6 +89,7 @@ function TicTacToe() {
    * @param {Discord~Message} msg The message displaying the current game.
    */
   this.Game = function(players, msg) {
+    const game = this;
     /**
      * The players in this game.
      * @type {{p1: Discord~User, p2: Discord~User}}
@@ -106,20 +111,82 @@ function TicTacToe() {
      * @type {Discord~Message}
      */
     this.msg = msg;
+
+    /**
+     * The template string for the game's board.
+     *
+     * @private
+     * @type {string}
+     * @constant
+     * @default
+     */
+    const boardString = '```css\n   |   |   \n{0}|{1}|{2}\n___|___|___\n' +
+        '   |   |   \n{3}|{4}|{5}\n___|___|___\n' +
+        '   |   |   \n{6}|{7}|{8}\n   |   |   \n```';
+
     /**
      * Edit the current message to show the current board.
+     *
+     * @param {number} [winner=0] The player who has won the game. 0 is game not
+     * done, 1 is player 1, 2 is player 2, 3 is draw.
      */
-    this.print = function() {
+    this.print = function(winner = 0) {
       let embed = new self.Discord.MessageEmbed();
       let names = ['Nobody', 'Nobody'];
+      let gameFull = true;
       if (this.players.p1) {
-        names[0] = '`' + this.players.p1.username + '`';
+        names[0] = this.players.p1.username;
+      } else {
+        gameFull = false;
       }
       if (this.players.p2) {
-        names[1] = '`' + this.players.p2.username + '`';
+        names[1] = this.players.p2.username;
+      } else {
+        gameFull = false;
       }
       embed.setTitle(names[0] + ' vs ' + names[1]);
-      msg.edit(embed);
+      if (!gameFull) {
+        embed.setDescription('To join the game, just make a move!');
+      }
+
+      let finalBoard = boardString.replace(/\{(.)\}/g, function(match, num) {
+        switch (game.board[num]) {
+          case 1:
+            if (winner > 0 && winner != 1) return ' x ';
+            return ' X ';
+          case 2:
+            if (winner > 0 && winner != 2) return ' o ';
+            return ' O ';
+          default:
+            if (winner > 0) return '   ';
+            return ' ' + num + ' ';
+        }
+      });
+
+      embed.addField('\u200B', finalBoard, true);
+      if (winner == 0) {
+        embed.addField(
+            names[this.turn - 1] + '\'s turn (' + (this.turn == 1 ? "X" : "O") +
+                ')',
+            '`' + names[0] + '` is X\n`' + names[1] + '` is O', true);
+      } else {
+        embed.addField(
+            '\u200B', '`' + names[0] + '` was X\n`' + names[1] + '` was O',
+            true);
+      }
+
+      if (winner == 3) {
+        embed.addField("Draw game!", "Nobody wins");
+      } else if (winner == 2) {
+        embed.addField(
+            game.players.p2.username + " Won! " + emoji.O,
+            game.players.p1.username + ", try harder next time.");
+      } else if (winner == 1) {
+        embed.addField(
+            game.players.p1.username + " Won! " + emoji.X,
+            game.players.p2.username + ", try harder next time.");
+      }
+      msg.edit('\u200B', embed);
     };
   };
 
@@ -136,6 +203,7 @@ function TicTacToe() {
       let game = new self.Game(players, msg);
       game.print();
       addReactions(msg);
+      addListener(msg, game);
     });
   };
 
@@ -148,8 +216,118 @@ function TicTacToe() {
    */
   function addReactions(msg, index = 0) {
     msg.react(emoji[index]).then((_) => {
-      if (index < 9) addReactions(msg, index + 1);
+      if (index < 8) addReactions(msg, index + 1);
     });
+  }
+
+  /**
+   * Add the listener for reactions to the game.
+   *
+   * @private
+   * @param {Discord~Message} msg The message to add the reactions to.
+   * @param {TicTacToe~Game} game The game to update when changes are made.
+   */
+  function addListener(msg, game) {
+    msg.awaitReactions(function(reaction, user) {
+         if (user.id != self.client.user.id) reaction.users.remove(user);
+         else return false;
+
+         if (game.turn == 1 && game.players.p1 &&
+             user.id != game.players.p1.id) {
+           return false;
+         }
+         if (game.turn == 2 && game.players.p2 &&
+             user.id != game.players.p2.id) {
+           return false;
+         }
+         for (let i = 0; i < 9; i++) {
+           if (emoji[i] == reaction.emoji.name) return true;
+         }
+         return false;
+       }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
+         if (reactions.size == 0) {
+           msg.reactions.removeAll();
+           msg.edit(
+               'Game timed out!\nThe game has ended because nobody made a ' +
+               'move in too long!');
+           return;
+         }
+         if (!game.players.p1 && game.turn == 1) {
+           game.players.p1 = reactions.first().users.first(2)[1];
+         }
+         if (!game.players.p2 && game.turn == 2) {
+           game.players.p2 = reactions.first().users.first(2)[1];
+         }
+         reactions.first().users.remove(self.client.user);
+
+         let move = -1;
+         const choice = reactions.first().emoji;
+         for (let i = 0; i < 9; i++) {
+           if (emoji[i] == choice.name && game.board[i] === 0) {
+             move = i;
+             break;
+           }
+         }
+         if (move == -1) {
+           addListener(msg, game);
+           return;
+         }
+         game.board[move] = game.turn;
+         let winner = checkWin(game.board, move);
+         if (winner != 0) {
+           msg.reactions.removeAll();
+         } else {
+           game.turn = game.turn === 1 ? 2 : 1;
+           addListener(msg, game);
+         }
+         game.print(winner);
+       });
+  }
+  /**
+   * Checks if the given board has a winner, or if the game is over.
+   *
+   * @param {number[]} board Array of 9 numbers defining a board. 0 is nobody, 1
+   * is player 1, 2 is player 2.
+   * @return {number} Returns 0 if game is not over, 1 if player 1 won, 2 if
+   * player 2 won, 3 if draw.
+   */
+  function checkWin(board, latest) {
+    let player = board[latest];
+    // Column
+    for (let i = 1; i < 3; i++) {
+      if (board[(i * 3) % 9] != player) break;
+      if (i == 2) return player;
+    }
+    // Row
+    let row = Math.floor(latest / 3) * 3;
+    for (let i = 1; i < 3; i++) {
+      if (board[(i + latest - row) % 3 + row] != player) break;
+      if (i == 2) return player;
+    }
+    // Diagonals
+    switch(latest) {
+      case 0:
+      case 4:
+      case 8:
+        if (board[0] == board[4] && board[4] == board[8]) return player;
+        break;
+      default:
+        break;
+    }
+    switch(latest) {
+      case 2:
+      case 4:
+      case 6:
+        if (board[2] == board[4] && board[4] == board[6]) return player;
+        break;
+      default:
+        break;
+    }
+    // Is board full
+    for (let i = 0; i < 9; i++) {
+      if (board[i] == 0) return 0;
+    }
+    return 3;
   }
 }
 
