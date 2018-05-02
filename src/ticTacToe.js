@@ -179,12 +179,12 @@ function TicTacToe() {
         embed.addField('Draw game!', 'Nobody wins');
       } else if (winner == 2) {
         embed.addField(
-            game.players.p2.username + ' Won! ' + emoji.O,
-            game.players.p1.username + ', try harder next time.');
+            names[1] + ' Won! ' + emoji.O,
+            names[0] + ', try harder next time.');
       } else if (winner == 1) {
         embed.addField(
-            game.players.p1.username + ' Won! ' + emoji.X,
-            game.players.p2.username + ', try harder next time.');
+            names[0] + ' Won! ' + emoji.X,
+            names[1] + ', try harder next time.');
       }
       msg.edit('\u200B', embed);
     };
@@ -250,6 +250,7 @@ function TicTacToe() {
            msg.edit(
                'Game timed out!\nThe game has ended because nobody made a ' +
                'move in too long!');
+           game.print(game.turn == 1 ? 2 : 1);
            return;
          }
          if (!game.players.p1 && game.turn == 1) {
