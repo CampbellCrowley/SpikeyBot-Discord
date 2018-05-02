@@ -344,7 +344,7 @@ function Connect4() {
     let player = board[latestR][latestC];
     // Column
     let count = 0;
-    for (let r = latestR - 3; r < latestR + 3 && r < numRows; r++) {
+    for (let r = latestR - 3; r <= latestR + 3 && r < numRows; r++) {
       if (r < 0) continue;
 
       if (board[r][latestC] == player) count++;
@@ -354,7 +354,7 @@ function Connect4() {
     }
     // Row
     count = 0;
-    for (let c = latestC - 3; c < latestC + 3 && c < numCols; c++) {
+    for (let c = latestC - 3; c <= latestC + 3 && c < numCols; c++) {
       if (c < 0) continue;
 
       if (board[latestR][c] == player) count++;
