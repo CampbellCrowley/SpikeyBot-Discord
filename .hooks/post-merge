@@ -1,6 +1,4 @@
 #!/bin/bash
 
-echo $1
-
 echo "Running install in-case of package changes."
 npm i
