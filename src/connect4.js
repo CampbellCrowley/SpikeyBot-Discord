@@ -378,7 +378,7 @@ function Connect4() {
     // Diag BL to TR
     count = 0;
     for (let r = latestR + 3, c = latestC - 3;
-         r >= latestR - 3 && r > 0 && c <= latestC + 3 && c < numCols;
+         r >= latestR - 3 && r >= 0 && c <= latestC + 3 && c < numCols;
          r--, c++) {
       if (r >= numRows) continue;
       if (c < 0) continue;
