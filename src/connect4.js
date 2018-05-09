@@ -365,7 +365,7 @@ function Connect4() {
     // Diag TL to BR
     count = 0;
     for (let r = latestR - 3, c = latestC - 3;
-         r < latestR + 3 && r < numRows && c < latestC + 3 && c < numCols;
+         r <= latestR + 3 && r < numRows && c <= latestC + 3 && c < numCols;
          r++, c++) {
       if (r < 0) continue;
       if (c < 0) continue;
@@ -380,7 +380,7 @@ function Connect4() {
     for (let r = latestR + 3, c = latestC - 3;
          r >= latestR - 3 && r >= 0 && c <= latestC + 3 && c < numCols;
          r--, c++) {
-      if (r >= numRows) continue;
+      if (r > numRows - 1) continue;
       if (c < 0) continue;
 
       if (board[r][c] == player) count++;
