@@ -99,7 +99,7 @@ function Main() {
       'SpikeyRobot#9836, so if you wish to add any features, feel free to PM ' +
       'him! (Tip: Use **{prefix}pmspikey**)\n\nIf you\'d like to know what I ' +
       'can do, type **{prefix}help** in a PM to me and I\'ll let you know!\n' +
-      'The help is also available on my web page: https://spikeybot.com/';
+      'The help is also available on my web page: https://www.spikeybot.com/';
   /**
    * The message sent to the channel where the user asked to be DM'd, but we
    * were unable to deliver the DM.
