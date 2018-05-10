@@ -3,6 +3,35 @@
   "description": "Here's the list of stuff I can do! PM SpikeyRobot ({prefix}pmspikey) feature requests!\n",
   "sections": [
     {
+      "title": "General Stuff",
+      "rows": [
+        "addme // I will send you a link to add me to your server!",
+        "help // Send this message to you.",
+        "say // Make me say something.",
+        "createdate 'mention' // I will tell you the date you created your account!",
+        "joindate 'mention' // I will tell you the date you joined the server you sent the message from!",
+        "pmme // I will introduce myself to you!",
+        "pmspikey 'message' // I will send SpikeyRobot (my creator) your message because you are too shy!",
+        "avatar 'mention' // Need a better look at your profile pic? I'll show you the original.",
+        "ping // Want to know what my delay to the server is? I can tell you my ping!",
+        "timer 'seconds' 'message...' // Set a timer for a certain number of seconds. The bot will DM you the message at the end. No options lists timers."
+      ]
+    },
+    {
+      "title": "Games",
+      "rows": [
+        "tictactoe 'mention' // Play a game of Tic Tac Toe with someone! (Mention someone to challenge them)",
+        "connect4 'mention' // Start a game of Connect 4 against someone! (Mention someone to challenge them)"
+      ]
+    },
+    {
+      "title": "Random Stuff",
+      "rows": [
+        "flip // I have an unlimited supply of coins! I will flip one for you!",
+        "roll 'numbers...' // Roll dice with any number of sides. Separate multiple numbers with spaces to roll multiple dice."
+      ]
+    },
+    {
       "title": "Music Stuff",
       "rows": [
         "play 'url or search' // Play a song in your current voice channel, or add a song to the queue.",
@@ -14,24 +43,6 @@
       ]
     },
     {
-      "title": "General Stuff",
-      "rows": [
-        "addme // I will send you a link to add me to your server!",
-        "help // Send this message to you.",
-        "say // Make me say something.",
-        "createdate 'mention' // I will tell you the date you created your account!",
-        "joindate 'mention' // I will tell you the date you joined the server you sent the message from!",
-        "pmme // I will introduce myself to you!",
-        "pmspikey 'message' // I will send SpikeyRobot (my creator) your message because you are too shy!",
-        "flip // I have an unlimited supply of coins! I will flip one for you!",
-        "avatar 'mention' // Need a better look at your profile pic? I'll show you the original.",
-        "ping // Want to know what my delay to the server is? I can tell you my ping!",
-        "timer 'seconds' 'message...' // Set a timer for a certain number of seconds. The bot will DM you the message at the end. No options lists timers.",
-        "tictactoe 'mention' // Start a game of Tic Tac Toe!",
-        "connect4 'mention' // Start a game of Connect 4!"
-      ]
-    },
-    {
       "title": "Math Stuff",
       "rows": [
         "add 'numbers' // Add positive or negative numbers separated by spaces.",
@@ -39,8 +50,7 @@
         "solve 'equation' // Solve an equation for each variable in the equation.",
         "evaluate 'problem' // Solve a math problem, and convert units.",
         "derive 'equation with x' // Find dy/dx of an equation.",
-        "graph 'equation with x' '[xMin, xMax]' '[yMin, yMax]' // Graph an equation, Maxes and mins are all optional, but brackets are required.",
-        "roll 'numbers...' // Roll dice with any number of sides. Separate multiple numbers with spaces to roll multiple dice."
+        "graph 'equation with x' '[xMin, xMax]' '[yMin, yMax]' // Graph an equation, Maxes and mins are all optional, but brackets are required."
       ]
     },
     {
