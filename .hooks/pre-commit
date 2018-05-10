@@ -3,7 +3,7 @@
 STAGED_SCRIPTS=$(git diff --cached --name-only --diff-filter=ACM | grep ".js$" | tr '\n' ' ')
 STAGED_DATA=$(git diff --cached --name-only --diff-filter=ACM | grep ".json$" | tr '\n' ' ')
 
-# if [[ "$STAGED_FILES" = "" ]]; then
+# if [[ "$STAGED_SCRIPTS" = "" ]]; then
 #   exit 0
 # fi
 
@@ -14,9 +14,9 @@ if [[ "$STAGED_SCRIPTS" != "" ]]; then
 
   ESLINT="$(git rev-parse --show-toplevel)/node_modules/.bin/eslint"
 
-  "$ESLINT" "$STAGED_FILES"
+  "$ESLINT" "$STAGED_SCRIPTS"
   if [[ "$?" == 0 ]]; then
-    echo -e "\t\033[32mESLint Passed: $STAGED_FILES\033[0m"
+    echo -e "\t\033[32mESLint Passed: $STAGED_SCRIPTS\033[0m"
   else
     PASS=false
   fi
