@@ -1,5 +1,5 @@
 // Copyright 2018 Campbell Crowley. All rights reserved.
-// Author: Campbell Crowley (web@campbellcrowley.com)
+// Author: Campbell Crowley (dev@campbellcrowley.com)
 let dateFormat = require('dateformat');
 
 /**

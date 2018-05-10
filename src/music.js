@@ -1,3 +1,5 @@
+// Copyright 2018 Campbell Crowley. All rights reserved.
+// Author: Campbell Crowley (dev@campbellcrowley.com)
 const ytdl = require('youtube-dl');
 const fs = require('fs');
 const ogg = require('ogg');
@@ -827,7 +829,7 @@ function Music() {
     }
     const filename = 'recordings/' +
         encodeURIComponent(msg.member.voiceChannel.name + Date.now()) + '.opus';
-    const url = 'https://www.campbellcrowley.com/spikeybot/' + filename;
+    const url = self.common.webURL + filename;
     if (msg.mentions.users.size === 0) {
       reply(
           msg, 'Recording everyone in voice channel. Type ?stop to stop', url);

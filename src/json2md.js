@@ -1,3 +1,5 @@
+// Copyright 2018 Campbell Crowley. All rights reserved.
+// Author: Campbell Crowley (dev@campbellcrowley.com)
 /* eslint-disable require-jsdoc, guard-for-in */
 let fs = require('fs');
 

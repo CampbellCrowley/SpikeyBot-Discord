@@ -1,11 +1,15 @@
 [![Build Status](https://travis-ci.org/CampbellCrowley/SpikeyBot-Discord.svg?branch=master)](https://travis-ci.com/CampbellCrowley/SpikeyBot-Discord)  
-[Website](https://www.campbellcrowley.com/spikeybot/)
+[Website](https://www.spikeybot.com/)
 
 # Commands
-###### [Web Page with command help](https://www.campbellcrowley.com/spikeybot/) (also available from bot with `help` command)
+###### [Web Page with command help](https://www.spikeybot.com/) (also available from bot with `help` command)
 ## Main
 #### General
-`addme` `help` `say` `createdate` `joindate` `pmme` `pmspikey` `flip` `avatar` `ping` `timer` `connect4` `tictactoe`
+`addme` `help` `say` `createdate` `joindate` `pmme` `pmspikey` `avatar` `ping` `timer`
+#### Games
+`connect4` `tictactoe`
+#### Random
+`flip` `roll`
 #### Music
 `play` `stop` `skip` `queue` `remove` `lyrics`
 #### Math

@@ -1,3 +1,5 @@
+// Copyright 2018 Campbell Crowley. All rights reserved.
+// Author: Campbell Crowley (dev@campbellcrowley.com)
 const fs = require('fs');
 const Jimp = require('jimp');
 require('./subModule.js')(HungryGames);  // Extends the SubModule class.

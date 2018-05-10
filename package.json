@@ -2,9 +2,9 @@
   "name": "spikeybot-discord",
   "version": "1.4.1",
   "description": "SpikeyBot",
-  "homepage": "https://www.campbellcrowley.com/spikeybot",
+  "homepage": "https://www.spikeybot.com/",
   "bugs": {
-    "email": "discord@campbellcrowley.com"
+    "email": "bugs@spikeybot.com"
   },
   "license": "UNLICENSED",
   "private": false,
