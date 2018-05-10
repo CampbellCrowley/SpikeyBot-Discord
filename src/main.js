@@ -43,6 +43,10 @@ math.config({matrix: 'Array'});
  * @listens SpikeyBot~Command#uptime
  * @listens SpikeyBot~Command#game
  * @listens SpikeyBot~Command#version
+ * @listens SpikeyBot~Command#roll
+ * @listens SpikeyBot~Command#dice
+ * @listens SpikeyBot~Command#die
+ * @listens SpikeyBot~Command#d
  */
 function Main() {
   const self = this;
@@ -199,6 +203,7 @@ function Main() {
     self.command.on('uptime', commandUptime);
     self.command.on('game', commandGame);
     self.command.on('version', commandVersion);
+    self.command.on(['dice', 'die', 'roll', 'd'], commandRollDie);
 
     self.client.on('guildCreate', onGuildCreate);
     self.client.on('guildBanAdd', onGuildBanAdd);
@@ -263,6 +268,7 @@ function Main() {
     self.command.deleteEvent('uptime');
     self.command.deleteEvent('game');
     self.command.deleteEvent('version');
+    self.command.deleteEvent(['dice', 'die', 'roll', 'd']);
 
     self.client.removeListener('guildCreate', onGuildCreate);
     self.client.removeListener('guildBanAdd', onGuildBanAdd);
@@ -1204,6 +1210,50 @@ function Main() {
         });
       });
     }, msg.timers[i].time - now);
+  }
+
+  /**
+   * Roll a die with the given number of sides.
+   *
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens SpikeyBot~Command#roll
+   * @listens SpikeyBot~Command#dice
+   * @listens SpikeyBot~Command#die
+   * @listens SpikeyBot~Command#d
+   */
+  function commandRollDie(msg) {
+    let embed = new self.Discord.MessageEmbed();
+
+    let numbers = msg.text.replace(/[^0-9\s]+/g, '').split(/\s+/).splice(1);
+    if (numbers.length === 0) {
+      numbers = [6];
+    }
+
+    let outcomes = [];
+    numbers.forEach((el, i) => {
+      outcomes[i] = Math.floor(Math.random() * el) + 1;
+    });
+
+    embed.setTitle(
+        'Rolling ' + numbers.length + ' di' +
+        (numbers.length == 1 ? 'e' : 'ce'));
+
+    if (numbers.length > 1) {
+      let sum = 0;
+      let outList = numbers.map((el, i) => {
+        sum += outcomes[i];
+        return el + ' --> ' + outcomes[i];
+      });
+
+      embed.setDescription('{sides} --> {rolled}\n' + outList.join('\n'));
+      embed.setFooter('Sum: ' + sum);
+    } else {
+      embed.setDescription('Rolled: ' + outcomes[0]);
+    }
+
+    msg.channel.send(self.common.mention(msg), embed);
   }
 }
 module.exports = new Main();

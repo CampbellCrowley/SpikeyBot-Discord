@@ -2320,6 +2320,7 @@ Basic commands and features for the bot.
         * [~commandGame(msg)](#Main..commandGame) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandVersion(msg)](#Main..commandVersion) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~setTimer(timer)](#Main..setTimer) ℗
+        * [~commandRollDie(msg)](#Main..commandRollDie) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~Timer](#Main..Timer) : <code>Object</code>
 
 <a name="SubModule+helpMessage"></a>
@@ -2859,6 +2860,18 @@ Sets a timer for an amount of time with a message.
 | Param | Type | Description |
 | --- | --- | --- |
 | timer | [<code>Timer</code>](#Main..Timer) | The settings for the timer. |
+
+<a name="Main..commandRollDie"></a>
+
+### Main~commandRollDie(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Roll a die with the given number of sides.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
 
 <a name="Main..Timer"></a>
 
