@@ -211,7 +211,7 @@ Common.spikeyId = Common.prototype.spikeyId;
  * @type {string}
  * @constant
  */
-Common.prototype.webURL = 'https://www.campbellcrowley.com/spikeybot';
+Common.prototype.webURL = 'https://www.spikeybot.com/';
 /**
  * The website base URL for pointing to for more help and documentation.
  *

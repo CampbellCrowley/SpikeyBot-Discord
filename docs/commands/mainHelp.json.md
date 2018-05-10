@@ -2,17 +2,6 @@
 #### Here's the list of stuff I can do! PM SpikeyRobot (?pmspikey) feature requests!
 
 ***
-## Music Stuff
-
-| Command | Description |
-| --- | --- |
-| ?play 'url or search'  |  Play a song in your current voice channel, or add a song to the queue. |
-| ?stop  |  Stop playing music and leave the voice channel. |
-| ?skip  |  Skip the currently playing song. |
-| ?queue  |  View the songs currently in the queue. |
-| ?remove 'index'  |  Remove a song with the given queue index from the queue. |
-| ?lyrics 'song'  |  Search for song lyrics. |
-
 ## General Stuff
 
 | Command | Description |
@@ -24,12 +13,34 @@
 | ?joindate 'mention'  |  I will tell you the date you joined the server you sent the message from! |
 | ?pmme  |  I will introduce myself to you! |
 | ?pmspikey 'message'  |  I will send SpikeyRobot (my creator) your message because you are too shy! |
-| ?flip  |  I have an unlimited supply of coins! I will flip one for you! |
 | ?avatar 'mention'  |  Need a better look at your profile pic? I'll show you the original. |
 | ?ping  |  Want to know what my delay to the server is? I can tell you my ping! |
 | ?timer 'seconds' 'message...'  |  Set a timer for a certain number of seconds. The bot will DM you the message at the end. No options lists timers. |
-| ?tictactoe 'mention'  |  Start a game of Tic Tac Toe! |
-| ?connect4 'mention'  |  Start a game of Connect 4! |
+
+## Games
+
+| Command | Description |
+| --- | --- |
+| ?tictactoe 'mention'  |  Play a game of Tic Tac Toe with someone! (Mention someone to challenge them) |
+| ?connect4 'mention'  |  Start a game of Connect 4 against someone! (Mention someone to challenge them) |
+
+## Random Stuff
+
+| Command | Description |
+| --- | --- |
+| ?flip  |  I have an unlimited supply of coins! I will flip one for you! |
+| ?roll 'numbers...'  |  Roll dice with any number of sides. Separate multiple numbers with spaces to roll multiple dice. |
+
+## Music Stuff
+
+| Command | Description |
+| --- | --- |
+| ?play 'url or search'  |  Play a song in your current voice channel, or add a song to the queue. |
+| ?stop  |  Stop playing music and leave the voice channel. |
+| ?skip  |  Skip the currently playing song. |
+| ?queue  |  View the songs currently in the queue. |
+| ?remove 'index'  |  Remove a song with the given queue index from the queue. |
+| ?lyrics 'song'  |  Search for song lyrics. |
 
 ## Math Stuff
 
