@@ -28,8 +28,7 @@
         "ping // Want to know what my delay to the server is? I can tell you my ping!",
         "timer 'seconds' 'message...' // Set a timer for a certain number of seconds. The bot will DM you the message at the end. No options lists timers.",
         "tictactoe 'mention' // Start a game of Tic Tac Toe!",
-        "connect4 'mention' // Start a game of Connect 4!",
-        "roll 'numbers...' // Roll dice with any number of sides. Separate multiple numbers with spaces to roll multiple dice."
+        "connect4 'mention' // Start a game of Connect 4!"
       ]
     },
     {
@@ -40,7 +39,8 @@
         "solve 'equation' // Solve an equation for each variable in the equation.",
         "evaluate 'problem' // Solve a math problem, and convert units.",
         "derive 'equation with x' // Find dy/dx of an equation.",
-        "graph 'equation with x' '[xMin, xMax]' '[yMin, yMax]' // Graph an equation, Maxes and mins are all optional, but brackets are required."
+        "graph 'equation with x' '[xMin, xMax]' '[yMin, yMax]' // Graph an equation, Maxes and mins are all optional, but brackets are required.",
+        "roll 'numbers...' // Roll dice with any number of sides. Separate multiple numbers with spaces to roll multiple dice."
       ]
     },
     {
