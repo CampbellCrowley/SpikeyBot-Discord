@@ -13,6 +13,15 @@ require('./subModule.js')(HungryGames);  // Extends the SubModule class.
 function HungryGames() {
   const self = this;
 
+  let Web;
+  /**
+   * Instance of the web class that can control this instance.
+   *
+   * @private
+   * @type {HGWeb}
+   */
+  let web;
+
   this.myName = 'HG';
   this.postPrefix = 'hg ';
 
@@ -752,6 +761,12 @@ function HungryGames() {
             });
       }
     }
+    try {
+      Web = require('./hgWeb.js');
+      web = new Web(self);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   /** @inheritdoc */
@@ -763,6 +778,9 @@ function HungryGames() {
     process.removeListener('SIGHUP', sigint);
     process.removeListener('SIGTERM', sigint);
     process.removeListener('unhandledRejection', unhandledRejection);
+    if (web) web.shutdown();
+    web = null;
+    delete require.cache[require.resolve('./hgWeb.js')];
   };
 
   /**
