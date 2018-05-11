@@ -12,6 +12,8 @@ const clientSecret = 'ZRehbwR30wKV-h6c11kREheORrJtcobR';
 /**
  * @classdesc Creates a web interface for managing the Hungry Games.
  * @class
+ *
+ * @param {HungryGames} hg The hungry games object that we will be controlling.
  */
 function HGWeb(hg) {
   let app = http.createServer(handler);
@@ -32,7 +34,7 @@ function HGWeb(hg) {
     protocol: 'https:',
     host: 'discordapp.com',
     path: '/api/oauth2/token',
-    method: 'POST'
+    method: 'POST',
   };
   /**
    * The url to send a request to the discord api.
@@ -46,7 +48,7 @@ function HGWeb(hg) {
     protocol: 'https:',
     host: 'discordapp.com',
     path: '/api',
-    method: 'GET'
+    method: 'GET',
   };
 
   /**
@@ -69,7 +71,7 @@ function HGWeb(hg) {
    */
   function handler(req, res) {
     res.writeHead(418);
-    res.end("TEAPOT");
+    res.end('TEAPOT');
   }
 
   /**
@@ -86,7 +88,7 @@ function HGWeb(hg) {
     loginInfo = JSON.parse(fs.readFileSync('./save/hgWebClients.json') || {});
     let keys = Object.keys(loginInfo);
     const now = Date.now();
-    for (var i in keys) {
+    for (let i in keys) {
       if (loginInfo[keys[i]].expiration_date < now) delete loginInfo[keys[i]];
     }
   } catch (err) {
@@ -100,18 +102,16 @@ function HGWeb(hg) {
    * @param {Socket} socket The socket.io socket that connected.
    */
   function socketConnection(socket) {
-    let authenticated = false;
     const ipName =
         hg.common.getIPName(socket.handshake.headers['x-forwarded-for']);
     hg.common.log('Socket connected: ' + ipName, socket.id);
 
     let userData = {};
-    let refreshTimeout;
     let session = Math.random() * 10000000000000000;
     let restoreAttempt = false;
 
     socket.on('restore', (sess) => {
-      if (restoreAttempt /*|| currentSessions[sess]*/) {
+      if (restoreAttempt /* || currentSessions[sess]*/) {
         socket.emit('authorized', 'Restore Failed', null);
         console.log(restoreAttempt, sess);
         return;
@@ -122,8 +122,8 @@ function HGWeb(hg) {
         session = sess;
         if (loginInfo[session].expires_at < Date.now()) {
           refreshToken(loginInfo.refresh_token, (err, data) => {
-            let parsed;
             if (!err) {
+              let parsed;
               try {
                 parsed = JSON.parse(data);
                 hg.common.log('Refreshed token');
@@ -137,7 +137,7 @@ function HGWeb(hg) {
                 socket.emit('authorized', 'Restore Failed', null);
                 return;
               }
-              receivedLoginInfo(JSON.parse(data));
+              receivedLoginInfo(parsed);
               fetchIdentity(loginInfo[session], (identity) => {
                 userData = identity;
                 if (userData) {
@@ -183,6 +183,13 @@ function HGWeb(hg) {
         }
       });
     });
+    /**
+     * Received the login credentials for user, lets store it for this session,
+     * and refresh the tokens when necessary.
+     *
+     * @private
+     * @param {Object} data User data.
+     */
     function receivedLoginInfo(data) {
       if (data) {
         data.expires_at = data.expires_in * 1000 + Date.now();
@@ -202,7 +209,7 @@ function HGWeb(hg) {
         } else {
           try {
             socket.emit('guilds', null, JSON.parse(data));
-          } catch(err) {
+          } catch (err) {
             hg.common.error(err, 'HG');
             socket.emit('guilds', 'Failed', null);
           }
@@ -211,23 +218,32 @@ function HGWeb(hg) {
     });
 
     socket.on('logout', () => {
+      clearTimeout(loginInfo[session].refreshTimeout);
       delete loginInfo[session];
       delete currentSessions[session];
     });
 
     socket.on('disconnect', () => {
       hg.common.log('Socket disconnected: ' + ipName, socket.id);
-      clearTimeout(refreshTimeout);
+      clearTimeout(loginInfo[session].refreshTimeout);
     });
   }
 
+  /**
+   * Fetches the identiry of the user we have the token of.
+   *
+   * @private
+   * @param {LoginInfo} loginInfo The credentials of the session user.
+   * @param {singleCB} cb The callback storing the user's data, or null if
+   * something went wrong.
+   */
   function fetchIdentity(loginInfo, cb) {
     apiRequest(loginInfo, '/users/@me', (err, data) => {
       if (!err) {
         let parsed = JSON.parse(data);
         parsed.session = {
           id: loginInfo.session,
-          expiration_date: loginInfo.expiration_date
+          expiration_date: loginInfo.expiration_date,
         };
         cb(parsed);
       } else {
@@ -236,15 +252,31 @@ function HGWeb(hg) {
     });
   }
 
+  /**
+   * Formats a request to the discord api at the given path.
+   *
+   * @param {LoginInfo} loginInfo The credentials of the user we are sending the
+   * request for.
+   * @param {string} path The path for the api request to send.
+   * @param {basicCallback} cb The response from the https request with error
+   * and data arguments.
+   */
   function apiRequest(loginInfo, path, cb) {
     let host = apiHost;
     host.path = '/api' + path;
     host.headers = {
-      'Authorization': loginInfo.token_type + ' ' + loginInfo.access_token
+      'Authorization': loginInfo.token_type + ' ' + loginInfo.access_token,
     };
     discordRequest('', cb, host);
   }
 
+  /**
+   * Send a https request to discord.
+   *
+   * @param {?Object|string} data The data to send in the request.
+   * @param {basicCallback} cb Callback with error, and data arguments.
+   * @param {?Object} host Request object to override the default with.
+   */
   function discordRequest(data, cb, host) {
     host = host || tokenHost;
     let req = https.request(host, (response) => {
@@ -271,8 +303,16 @@ function HGWeb(hg) {
     req.on('error', console.log);
   }
 
+  /**
+   * Refreshes the given token once it expires.
+   *
+   * @param {LoginInfo} loginInfo The credentials to refresh.
+   * @param {singleCB} cb The callback that is fired storing the new credentials
+   * once they are refreshed.
+   */
   function makeRefreshTimeout(loginInfo, cb) {
-    setTimeout(function() {
+    clearTimeout(loginInfo.refreshTimeout);
+    loginInfo.refreshTimeout = setTimeout(function() {
       refreshToken(loginInfo.refresh_token, (err, data) => {
         let parsed;
         if (!err) {
@@ -289,24 +329,39 @@ function HGWeb(hg) {
     }, loginInfo.expires_in * 1000);
   }
 
+  /**
+   * Request new credentials with refresh token from discord.
+   *
+   * @param {string} refreshToken The refresh token used for refreshing
+   * credentials.
+   * @param {basicCallback} cb The callback from the https request, with an
+   * error argument, and a data argument.
+   */
   function refreshToken(refreshToken, cb) {
     const data = {
       client_id: clientId,
       client_secret: clientSecret,
       grant_type: 'refresh_token',
       refresh_token: refreshToken,
-      redirect_uri: 'https://www.spikeybot.com/redirect'
+      redirect_uri: 'https://www.spikeybot.com/redirect',
     };
     discordRequest(data, cb);
   }
 
+  /**
+   * Authenticate with the discord server using a login code.
+   *
+   * @param {string} code The login code received from our client.
+   * @param {basicCallback} cb The response from the https request with error
+   * and data arguments.
+   */
   function authorizeRequest(code, cb) {
     const data = {
       client_id: clientId,
       client_secret: clientSecret,
       grant_type: 'authorization_code',
       code: code,
-      redirect_uri: 'https://www.spikeybot.com/redirect'
+      redirect_uri: 'https://www.spikeybot.com/redirect',
     };
     discordRequest(data, cb);
   }
