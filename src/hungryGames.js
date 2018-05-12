@@ -151,6 +151,7 @@ function HungryGames() {
    * @default
    */
   const roleName = 'HG Creator';
+  this.roleName = roleName;
 
   /**
    * Number of events to show on a single page of events.
@@ -781,6 +782,18 @@ function HungryGames() {
     if (web) web.shutdown();
     web = null;
     delete require.cache[require.resolve('./hgWeb.js')];
+  };
+
+  /**
+   * Returns a reference to the current games object for a given guild.
+   *
+   * @public
+   * @param {string} id The guild id to get the data for.
+   * @returns {?HungryGames~GuildGame} The current object storing all data about
+   * game in a guild.
+   */
+  this.getGame = function(id) {
+    return games[id];
   };
 
   /**

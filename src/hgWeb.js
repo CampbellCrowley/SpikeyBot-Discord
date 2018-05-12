@@ -5,9 +5,10 @@ const http = require('http');
 const https = require('https');
 const socketIo = require('socket.io');
 const querystring = require('querystring');
+const auth = require('../auth.js');
 
 const clientId = '444293534720458753';
-const clientSecret = 'ZRehbwR30wKV-h6c11kREheORrJtcobR';
+const clientSecret = auth.webSecret;
 
 /**
  * @classdesc Creates a web interface for managing the Hungry Games.
@@ -107,7 +108,10 @@ function HGWeb(hg) {
     hg.common.log('Socket connected: ' + ipName, socket.id);
 
     let userData = {};
-    let session = Math.random() * 10000000000000000;
+    let session = Math.random().toString(36).substring(2, 15) +
+        Math.random().toString(36).substring(2, 15) +
+        Math.random().toString(36).substring(2, 15) +
+        Math.random().toString(36).substring(2, 15);
     let restoreAttempt = false;
 
     socket.on('restore', (sess) => {
@@ -201,20 +205,42 @@ function HGWeb(hg) {
     }
 
     socket.on('fetchGuilds', () => {
-      if (!loginInfo[session]) return;
-      apiRequest(loginInfo[session], '/users/@me/guilds', (err, data) => {
-        if (err) {
-          hg.common.error(err, 'HG');
-          socket.emit('guilds', 'Failed', null);
-        } else {
-          try {
-            socket.emit('guilds', null, JSON.parse(data));
-          } catch (err) {
-            hg.common.error(err, 'HG');
-            socket.emit('guilds', 'Failed', null);
-          }
-        }
-      });
+      if (!userData) return;
+      try {
+        let guilds = hg.client.guilds.filterArray((obj) => {
+          return obj.members.get(userData.id);
+        });
+        let strippedGuilds = guilds.map((g) => {
+          let member = g.members.get(userData.id);
+          let newG = {};
+          newG.iconURL = g.iconURL();
+          newG.name = g.name;
+          newG.id = g.id;
+          newG.members = g.members.map((m) => {
+            return m.id;
+          });
+          newG.myself = makeMember(member);
+          newG.hg = hg.getGame(g.id);
+          return newG;
+        });
+        socket.emit('guilds', null, strippedGuilds);
+      } catch(err) {
+        hg.common.error(err, 'HG');
+        socket.emit('guilds', 'Failed', null);
+      }
+    });
+
+    socket.on('fetchMember', (gId, mId) => {
+      if (!userData) return;
+      let g = hg.client.guilds.get(gId);
+      if (!g) return;
+      let user = g.members.get(userData.id);
+      if (!user || !user.roles.find('name', hg.roleName)) return;
+      let m = g.members.get(mId);
+      if (!m) return;
+      let member = makeMember(m);
+
+      socket.emit('member', gId, mId, member);
     });
 
     socket.on('logout', () => {
@@ -225,7 +251,7 @@ function HGWeb(hg) {
 
     socket.on('disconnect', () => {
       hg.common.log('Socket disconnected: ' + ipName, socket.id);
-      clearTimeout(loginInfo[session].refreshTimeout);
+      if (loginInfo[session]) clearTimeout(loginInfo[session].refreshTimeout);
     });
   }
 
@@ -250,6 +276,32 @@ function HGWeb(hg) {
         cb(null);
       }
     });
+  }
+
+  /**
+   * Strips a Discord~GuildMember to only the necessary data that a client will
+   * need.
+   *
+   * @param {Discord~GuildMember} m The guild member to strip the data from.
+   * @return {Object} The minimal member.
+   */
+  function makeMember(m) {
+    return {
+      nickname: m.nickname,
+      hgRole: m.roles.find('name', hg.roleName),
+      roles: m.roles.filterArray(() => {
+        return true;
+      }),
+      color: m.displayColor,
+      guild: {id: m.guild.id},
+      user: {
+        username: m.user.username,
+        avatarURL: m.user.displayAvatarURL(),
+        id: m.user.id,
+        bot: m.user.bot
+      },
+      joinedTimestamp: m.joinedTimestamp
+    };
   }
 
   /**
