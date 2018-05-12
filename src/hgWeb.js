@@ -252,6 +252,10 @@ function HGWeb(hg) {
       socket.emit('game', gId, hg.getGame(gId));
     });
 
+    socket.on('fetchDefaultOptions', () => {
+      socket.emit('defaultOptions', hg.defaultOptions);
+    });
+
     socket.on('excludeMember', (gId, mId) => {
       if (!userData) return;
       let g = hg.client.guilds.get(gId);
@@ -271,6 +275,18 @@ function HGWeb(hg) {
 
       hg.includeUsers([mId], gId);
       socket.emit('game', gId, hg.getGame(gId));
+    });
+    socket.on('toggleOption', (gId, option, value) => {
+      if (!userData) return;
+      let g = hg.client.guilds.get(gId);
+      if (!g) return;
+      let member = g.members.get(userData.id);
+      if (!member || !member.roles.find('name', hg.roleName)) return;
+
+      hg.setOption(gId, option, value);
+      if (hg.getGame(gId)) {
+        socket.emit('option', gId, option, hg.getGame(gId).options[option]);
+      }
     });
 
     socket.on('logout', () => {

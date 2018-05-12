@@ -293,6 +293,7 @@ function HungryGames() {
           'players.',
     },
   };
+  this.defaultOptions = defaultOptions;
 
   /**
    * If a larger percentage of people die in one day than this value, then show
@@ -1186,6 +1187,11 @@ function HungryGames() {
    * @param {boolean} [silent=false] Should we suppress replies to message.
    */
   function createGame(msg, id, silent) {
+    if (!msg) {
+      silent = true;
+      msg = {};
+      msg.guild = self.client.guilds.get(id);
+    }
     if (games[id] && games[id].currentGame &&
         games[id].currentGame.inProgress) {
       if (!silent) {
@@ -3348,32 +3354,46 @@ function HungryGames() {
   function toggleOpt(msg, id) {
     let option = msg.text.split(' ')[0];
     let value = msg.text.split(' ')[1];
-    if (!games[id] || !games[id].currentGame) {
-      self.common.reply(
-          msg, 'You must create a game first before editing settings! Use "' +
-              self.myPrefix + 'create" to create a game.');
-    } else if (typeof option === 'undefined' || option.length == 0) {
+    let output = self.setOption(id, option, value);
+    if (!output) {
       showOpts(msg, games[id].options);
+    } else {
+      self.common.reply(msg, output);
+    }
+  }
+  /**
+   * Change an option to a value for the given guild.
+   *
+   * @public
+   * @param {string} id The guild id to change the option in.
+   * @param {?string} option The option key to change.
+   * @param {?string|boolean|number} value The value to change the option to.
+   * @return {string} A message saying what happened, or null if we should show
+   * the user the list of options instead.
+   */
+  this.setOption = function(id, option, value) {
+    if (!games[id] || !games[id].currentGame) {
+      return 'You must create a game first before editing settings! Use "' +
+          self.myPrefix + 'create" to create a game.';
+    } else if (typeof option === 'undefined' || option.length == 0) {
+      return null;
     } else if (games[id].currentGame.inProgress) {
-      self.common.reply(
-          msg, 'You must end this game before changing settings. Use "' +
-              self.myPrefix + 'end" to abort this game.');
+      return 'You must end this game before changing settings. Use "' +
+          self.myPrefix + 'end" to abort this game.';
     } else if (typeof defaultOptions[option] === 'undefined') {
-      self.common.reply(
-          msg,
-          'That is not a valid option to change! (Delays are in milliseconds)' +
-              JSON.stringify(games[id].options, null, 1)
-                  .replace('{', '')
-                  .replace('}', ''));
+      return 'That is not a valid option to change! (Delays are in ' +
+          'milliseconds)' +
+          JSON.stringify(games[id].options, null, 1)
+              .replace('{', '')
+              .replace('}', '');
     } else {
       let type = typeof defaultOptions[option].value;
       if (type === 'number') {
         value = Number(value);
         if (typeof value !== 'number') {
-          self.common.reply(
-              msg, 'That is not a valid value for ' + option +
-                  ', which requires a number. (Currently ' +
-                  games[id].options[option] + ')');
+          return 'That is not a valid value for ' + option +
+              ', which requires a number. (Currently ' +
+              games[id].options[option] + ')';
         } else {
           if ((option == 'delayDays' || option == 'delayEvents') &&
               value < 500) {
@@ -3382,55 +3402,50 @@ function HungryGames() {
 
           let old = games[id].options[option];
           games[id].options[option] = value;
-          self.common.reply(
-              msg, 'Set ' + option + ' to ' + games[id].options[option] +
-                  ' from ' + old);
           if (option == 'teamSize' && value != 0) {
-            self.common.reply(
-                msg, 'To reset teams to the correct size, type "' +
-                    self.myPrefix +
-                    'teams reset".\nThis will delete all teams, and create ' +
-                    'new ones.');
+            return 'To reset teams to the correct size, type "' +
+                self.myPrefix +
+                'teams reset".\nThis will delete all teams, and create ' +
+                'new ones.';
+          } else {
+            return 'Set ' + option + ' to ' + games[id].options[option] +
+                ' from ' + old;
           }
         }
       } else if (type === 'boolean') {
         if (value === 'true' || value === 'false') value = value === 'true';
         if (typeof value !== 'boolean') {
-          self.common.reply(
-              msg, 'That is not a valid value for ' + option +
-                  ', which requires true or false. (Currently ' +
-                  games[id].options[option] + ')');
+          return 'That is not a valid value for ' + option +
+              ', which requires true or false. (Currently ' +
+              games[id].options[option] + ')';
         } else {
           let old = games[id].options[option];
           games[id].options[option] = value;
-          self.common.reply(
-              msg, 'Set ' + option + ' to ' + games[id].options[option] +
-                  ' from ' + old);
           if (option == 'includeBots') {
-            createGame(msg, id, true);
+            createGame(null, id, true);
+            // createGame(msg, id, true);
           }
+          return 'Set ' + option + ' to ' + games[id].options[option] +
+              ' from ' + old;
         }
       } else if (type === 'string') {
         if (defaultOptions[option].values.lastIndexOf(value) < 0) {
-          self.common.reply(
-              msg, 'That is not a valid value for ' + option +
-                  ', which requires one of the following: ' +
-                  JSON.stringify(defaultOptions[option].values) +
-                  '. (Currently ' + games[id].options[option] + ')');
+          return 'That is not a valid value for ' + option +
+              ', which requires one of the following: ' +
+              JSON.stringify(defaultOptions[option].values) + '. (Currently ' +
+              games[id].options[option] + ')';
         } else {
           let old = games[id].options[option];
           games[id].options[option] = value;
-          self.common.reply(
-              msg, 'Set ' + option + ' to ' + games[id].options[option] +
-                  ' from ' + old);
+          return 'Set ' + option + ' to ' + games[id].options[option] +
+              ' from ' + old;
         }
       } else {
-        self.common.reply(
-            msg, 'Changing the value of this option is not added yet. (' +
-                type + ')');
+        return 'Changing the value of this option is not added yet. (' + type +
+            ')';
       }
     }
-  }
+  };
   /**
    * Format the options for the games and show them to the user.
    *
