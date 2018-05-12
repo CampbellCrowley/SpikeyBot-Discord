@@ -59,6 +59,7 @@ function HGWeb(hg) {
   this.shutdown = function() {
     io.close();
     app.close();
+    clearInterval(purgeInterval);
     fs.writeFileSync('./save/hgWebClients.json', JSON.stringify(loginInfo));
     hg.common.log('Web Shutdown', 'HG');
   };
@@ -87,13 +88,23 @@ function HGWeb(hg) {
 
   try {
     loginInfo = JSON.parse(fs.readFileSync('./save/hgWebClients.json') || {});
+  } catch (err) {
+    console.log(err);
+    loginInfo = {};
+  }
+  let purgeInterval = setInterval(purgeSessions, 60 * 60 * 1000);
+
+  /**
+   * Purge stale data from loginInfo.
+   *
+   * @private
+   */
+  function purgeSessions() {
     let keys = Object.keys(loginInfo);
     const now = Date.now();
     for (let i in keys) {
       if (loginInfo[keys[i]].expiration_date < now) delete loginInfo[keys[i]];
     }
-  } catch (err) {
-    console.log(err);
   }
 
   io.on('connection', socketConnection);
@@ -219,6 +230,14 @@ function HGWeb(hg) {
           newG.members = g.members.map((m) => {
             return m.id;
           });
+          newG.channels = g.channels
+                              .filter((c) => {
+                                return c.permissionsFor(member).has(
+                                    hg.Discord.Permissions.FLAGS.VIEW_CHANNEL);
+                              })
+                              .map((c) => {
+                                return c.id;
+                              });
           newG.myself = makeMember(member);
           return newG;
         });
@@ -241,13 +260,33 @@ function HGWeb(hg) {
 
       socket.emit('member', gId, mId, member);
     });
-
-    socket.on('fetchGames', (gId) => {
+    socket.on('fetchChannel', (gId, cId) => {
       if (!userData) return;
       let g = hg.client.guilds.get(gId);
       if (!g) return;
       let member = g.members.get(userData.id);
       if (!member || !member.roles.find('name', hg.roleName)) return;
+      let m = g.members.get(userData.id);
+
+      let channel = g.channels.get(cId);
+      if (!channel) return;
+
+      let perms = channel.permissionsFor(m);
+      if (!perms.has(hg.Discord.Permissions.FLAGS.VIEW_CHANNEL)) return;
+
+      let stripped = {};
+      stripped.id = channel.id;
+      stripped.permissions = perms.bitfield;
+      stripped.name = channel.name;
+      stripped.position = channel.position;
+      if (channel.parent) stripped.parent = {position: channel.parent.position};
+      stripped.type = channel.type;
+
+      socket.emit('channel', gId, cId, stripped);
+    });
+
+    socket.on('fetchGames', (gId) => {
+      if (!checkPerm(userData, gId)) return;
 
       socket.emit('game', gId, hg.getGame(gId));
     });
@@ -257,36 +296,56 @@ function HGWeb(hg) {
     });
 
     socket.on('excludeMember', (gId, mId) => {
-      if (!userData) return;
-      let g = hg.client.guilds.get(gId);
-      if (!g) return;
-      let member = g.members.get(userData.id);
-      if (!member || !member.roles.find('name', hg.roleName)) return;
-
-      hg.excludeUsers([mId], gId);
+      if (!checkPerm(userData, gId)) return;
+      socket.emit('message', hg.excludeUsers([mId], gId));
       socket.emit('game', gId, hg.getGame(gId));
     });
     socket.on('includeMember', (gId, mId) => {
-      if (!userData) return;
-      let g = hg.client.guilds.get(gId);
-      if (!g) return;
-      let member = g.members.get(userData.id);
-      if (!member || !member.roles.find('name', hg.roleName)) return;
-
-      hg.includeUsers([mId], gId);
+      if (!checkPerm(userData, gId)) return;
+      socket.emit('message', hg.includeUsers([mId], gId));
       socket.emit('game', gId, hg.getGame(gId));
     });
     socket.on('toggleOption', (gId, option, value) => {
-      if (!userData) return;
-      let g = hg.client.guilds.get(gId);
-      if (!g) return;
-      let member = g.members.get(userData.id);
-      if (!member || !member.roles.find('name', hg.roleName)) return;
-
-      hg.setOption(gId, option, value);
+      if (!checkPerm(userData, gId)) return;
+      socket.emit('message', hg.setOption(gId, option, value));
       if (hg.getGame(gId)) {
         socket.emit('option', gId, option, hg.getGame(gId).options[option]);
       }
+    });
+    socket.on('createGame', (gId) => {
+      if (!checkPerm(userData, gId)) return;
+      hg.createGame(gId);
+      socket.emit('message', 'Game created');
+      socket.emit('game', gId, hg.getGame(gId));
+    });
+    socket.on('resetGame', (gId, cmd) => {
+      if (!checkPerm(userData, gId)) return;
+      socket.emit('message', hg.resetGame(gId, cmd));
+      socket.emit('game', gId, hg.getGame(gId));
+    });
+    socket.on('startGame', (gId, cId) => {
+      if (!checkChannelPerm(userData, gId, cId)) return;
+      hg.startGame(userData.id, gId, cId);
+      socket.emit('message', 'Game started');
+      socket.emit('game', gId, hg.getGame(gId));
+    });
+    socket.on('startAutoplay', (gId, cId) => {
+      if (!checkChannelPerm(userData, gId, cId)) return;
+      hg.startAutoplay(userData.id, gId, cId);
+      socket.emit('message', 'Autoplay enabled');
+      socket.emit('game', gId, hg.getGame(gId));
+    });
+    socket.on('endGame', (gId) => {
+      if (!checkPerm(userData, gId)) return;
+      hg.endGame(userData.id, gId);
+      socket.emit('message', 'Game ended');
+      socket.emit('game', gId, hg.getGame(gId));
+    });
+    socket.on('pauseAutoplay', (gId) => {
+      if (!checkPerm(userData, gId)) return;
+      hg.pauseAutoplay(userData.id, gId);
+      socket.emit('message', 'Autoplay paused');
+      socket.emit('game', gId, hg.getGame(gId));
     });
 
     socket.on('logout', () => {
@@ -299,6 +358,50 @@ function HGWeb(hg) {
       hg.common.log('Socket disconnected: ' + ipName, socket.id);
       if (loginInfo[session]) clearTimeout(loginInfo[session].refreshTimeout);
     });
+  }
+
+  /**
+   * Check that the given user has permission to manage the games in the given
+   * guild.
+   *
+   * @param {UserData} userData The user to check.
+   * @param {string} gId The guild id to check against.
+   * @return {boolean} Whther the user has permission or not to manage the
+   * hungry games in the given guild.
+   */
+  function checkPerm(userData, gId) {
+    if (!userData) return false;
+    let g = hg.client.guilds.get(gId);
+    if (!g) return false;
+    let member = g.members.get(userData.id);
+    if (!member || !member.roles.find('name', hg.roleName)) return false;
+    return true;
+  }
+  /**
+   * Check that the given user has permission to see and send messages in the
+   * given channel, as well as manage the games in the given guild.
+   *
+   * @param {UserData} userData The user to check.
+   * @param {string} gId The guild id of the guild that contains the channel.
+   * @param {string} cId The channel id to check against.
+   * @return {boolean} Whther the user has permission or not to manage the
+   * hungry games in the given guild and has permission to send messages in the
+   * given channel.
+   */
+  function checkChannelPerm(userData, gId, cId) {
+    if (!userData) return false;
+    let g = hg.client.guilds.get(gId);
+    if (!g) return false;
+    let m = g.members.get(userData.id);
+    if (!m || !m.roles.find('name', hg.roleName)) return false;
+
+    let channel = g.channels.get(cId);
+    if (!channel) return false;
+
+    let perms = channel.permissionsFor(m);
+    if (!perms.has(hg.Discord.Permissions.FLAGS.VIEW_CHANNEL)) return false;
+    if (!perms.has(hg.Discord.Permissions.FLAGS.SEND_MESSAGES)) return false;
+    return true;
   }
 
   /**

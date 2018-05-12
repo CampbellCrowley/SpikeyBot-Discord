@@ -246,6 +246,7 @@ Common.mention = Common.prototype.mention;
  * @return {Promise} Promise of Discord~Message that we attempted to send.
  */
 Common.prototype.reply = function(msg, text, post) {
+  if (!msg.channel || !msg.channel.send) return null;
   return msg.channel.send(
       Common.mention(msg) + '\n```\n' + text + '\n```' + (post || ''));
 };

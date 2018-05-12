@@ -1261,6 +1261,16 @@ function HungryGames() {
     formTeams(id);
   }
   /**
+   * Create a Hungry Games for a guild.
+   *
+   * @public
+   * @param {string} id The id of the guild to create the game in.
+   */
+  this.createGame = function(id) {
+    createGame(null, id, true);
+  };
+
+  /**
    * Form an array of Player objects based on guild members, excluded members,
    * and whether to include bots.
    *
@@ -1380,39 +1390,51 @@ function HungryGames() {
    */
   function resetGame(msg, id) {
     const command = msg.text.split(' ')[0];
+    self.common.reply(msg, self.resetGame(id, command));
+  }
+  /**
+   * Reset the speciefied category of data from a game.
+   *
+   * @public
+   * @param {string} id The id of the guild to modify.
+   * @param {string} command The category of data to reset.
+   * @return {string} The message explaining what happened.
+   */
+  this.resetGame = function(id, command) {
     if (games[id]) {
       if (command == 'all') {
-        self.common.reply(
-            msg, 'Resetting ALL Hungry Games data for this server!');
         delete games[id];
+        return 'Resetting ALL Hungry Games data for this server!';
       } else if (command == 'events') {
-        self.common.reply(
-            msg, 'Resetting ALL Hungry Games events for this server!');
         games[id].customEvents = {bloodbath: [], player: [], arena: []};
+        return 'Resetting ALL Hungry Games events for this server!';
       } else if (command == 'current') {
-        self.common.reply(msg, 'Resetting ALL data for current game!');
         delete games[id].currentGame;
+        return 'Resetting ALL data for current game!';
       } else if (command == 'options') {
-        self.common.reply(msg, 'Resetting ALL options!');
-        games[id].options = defaultOptions;
+        const optKeys = Object.keys(defaultOptions);
+        games[id].options = {};
+        for (let i in optKeys) {
+          if (typeof optKeys[i] !== 'string') continue;
+          games[id].options[optKeys[i]] = defaultOptions[optKeys[i]].value;
+        }
+        return 'Resetting ALL options!';
       } else if (command == 'teams') {
-        self.common.reply(msg, 'Resetting ALL teams!');
         games[id].currentGame.teams = [];
         formTeams(id);
+        return 'Resetting ALL teams!';
       } else {
-        self.common.reply(
-            msg, 'Please specify what data to reset.\nall {deletes all data ' +
-                'for this server},\nevents {deletes all custom events},\n' +
-                'current {deletes all data about the current game},\noptions ' +
-                '{resets all options to default values},\nteams {delete all ' +
-                'teams and creates new ones}.');
+        return 'Please specify what data to reset.\nall {deletes all data ' +
+            'for this server},\nevents {deletes all custom events},\n' +
+            'current {deletes all data about the current game},\noptions ' +
+            '{resets all options to default values},\nteams {delete all ' +
+            'teams and creates new ones}.';
       }
     } else {
-      self.common.reply(
-          msg, 'There is no data to reset. Start a new game with "' +
-              self.myPrefix + 'create".');
+      return 'There is no data to reset. Start a new game with "' +
+          self.myPrefix + 'create".';
     }
-  }
+  };
   /**
    * Send all of the game data about the current server to the chat.
    *
@@ -1558,7 +1580,7 @@ function HungryGames() {
             games[id]
                 .excludedUsers
                 .map(function(obj) {
-                  return getName(msg, obj);
+                  return getName(msg.guild, obj);
                 })
                 .join(', ');
       }
@@ -1574,6 +1596,69 @@ function HungryGames() {
         nextDay(msg, id);
       }
     }
+  }
+  /**
+   * Start the games in the given channel and guild by the given user.
+   *
+   * @public
+   * @param {string} uId The id of the user who trigged the games to start.
+   * @param {string} gId The id of the guild to run the games in.
+   * @param {string} cId The id of the channel to run the games in.
+   */
+  this.startGame = function(uId, gId, cId) {
+    startGame(makeMessage(uId, gId, cId), gId);
+  };
+  /**
+   * Start autoplay in the given channel and guild by the given user.
+   *
+   * @public
+   * @param {string} uId The id of the user who trigged autoplay to start.
+   * @param {string} gId The id of the guild to run autoplay in.
+   * @param {string} cId The id of the channel to run autoplay in.
+   */
+  this.startAutoplay = function(uId, gId, cId) {
+    startAutoplay(makeMessage(uId, gId, cId), gId);
+  };
+  /**
+   * End the games in the given guild as the given user.
+   *
+   * @public
+   * @param {string} uId The id of the user who trigged the games to end.
+   * @param {string} gId The id of the guild to end the games in.
+   */
+  this.endGame = function(uId, gId) {
+    endGame(makeMessage(uId, gId, null), gId);
+  };
+  /**
+   * Pause autoplay in the given guild as the given user.
+   *
+   * @public
+   * @param {string} uId The id of the user who trigged autoplay to end.
+   * @param {string} gId The id of the guild to end autoplay.
+   */
+  this.pauseAutoplay = function(uId, gId) {
+    pauseAutoplay(makeMessage(uId, gId, null), gId);
+  };
+  /**
+   * Forms a Discord~Message similar object from given IDs.
+   *
+   * @private
+   * @param {string} uId The id of the user who trigged the games to start.
+   * @param {string} gId The id of the guild to run the games in.
+   * @param {string} cId The id of the channel to run the games in.
+   * @return {
+   *   {
+   *     author: Discord~Member,
+   *     guild: Discord~Guild,
+   *     channel: Discord~GuildChannel
+   *   }
+   * } The created message-like object.
+   */
+  function makeMessage(uId, gId, cId) {
+    let g = self.client.guilds.get(gId);
+    if (!g) return null;
+    if (!cId && games[gId]) cId = games[gId].channel;
+    return {author: g.members.get(uId), guild: g, channel: g.channels.get(cId)};
   }
   /**
    * Stop autoplaying.
@@ -3142,7 +3227,8 @@ function HungryGames() {
         }
       }
       if (games[id].excludedUsers.includes(obj.id)) {
-        response += obj.username + ' is already excluded.\n';
+        response += obj.username +
+            ' is already excluded. Create a new game to reset players.\n';
       } else {
         games[id].excludedUsers.push(obj.id);
         response += obj.username + ' added to blacklist.\n';
@@ -3317,7 +3403,7 @@ function HungryGames() {
       stringList += games[id]
                         .excludedUsers
                         .map(function(obj) {
-                          return getName(msg, obj);
+                          return getName(msg.guild, obj);
                         })
                         .join(', ');
     }
@@ -3329,14 +3415,14 @@ function HungryGames() {
    * found.
    *
    * @private
-   * @param {Discord~Message} msg The message that lead to this being called.
+   * @param {Discord~Guild} guild The guild to look for the user in.
    * @param {string} user The id of the user to find the name of.
    * @return {string} The user's name or id if name was unable to be found.
    */
-  function getName(msg, user) {
+  function getName(guild, user) {
     let name = '';
-    if (msg.guild.members.get(user)) {
-      name = msg.guild.members.get(user).user.username;
+    if (guild.members.get(user)) {
+      name = guild.members.get(user).user.username;
     } else {
       name = user;
     }
