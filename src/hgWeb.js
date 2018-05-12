@@ -224,7 +224,7 @@ function HGWeb(hg) {
           return newG;
         });
         socket.emit('guilds', null, strippedGuilds);
-      } catch(err) {
+      } catch (err) {
         hg.common.error(err, 'HG');
         socket.emit('guilds', 'Failed', null);
       }
@@ -298,9 +298,9 @@ function HGWeb(hg) {
         username: m.user.username,
         avatarURL: m.user.displayAvatarURL(),
         id: m.user.id,
-        bot: m.user.bot
+        bot: m.user.bot,
       },
-      joinedTimestamp: m.joinedTimestamp
+      joinedTimestamp: m.joinedTimestamp,
     };
   }
 

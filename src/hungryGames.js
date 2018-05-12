@@ -789,7 +789,7 @@ function HungryGames() {
    *
    * @public
    * @param {string} id The guild id to get the data for.
-   * @returns {?HungryGames~GuildGame} The current object storing all data about
+   * @return {?HungryGames~GuildGame} The current object storing all data about
    * game in a guild.
    */
   this.getGame = function(id) {
