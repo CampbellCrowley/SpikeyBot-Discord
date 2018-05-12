@@ -3107,34 +3107,58 @@ function HungryGames() {
           'You must mention people you wish for me to exclude from the next ' +
               'game.');
     } else {
-      let response = '';
-      msg.mentions.users.forEach(function(obj) {
-        if (games[id].excludedUsers.includes(obj.id)) {
-          response += obj.username + ' is already excluded.\n';
-        } else {
-          games[id].excludedUsers.push(obj.id);
-          response += obj.username + ' added to blacklist.\n';
-          if (!games[id].currentGame.inProgress) {
-            let index =
-                games[id].currentGame.includedUsers.findIndex(function(el) {
-                  return el.id == obj.id;
-                });
-            if (index >= 0) {
-              games[id].currentGame.includedUsers.splice(index, 1);
-              response += obj.username + ' removed from included players.\n';
-              formTeams(id);
-            } else {
-              self.common.error(
-                  'Failed to remove player from included list. (' + obj.id +
-                      ')',
-                  'HG');
-            }
-          }
-        }
-      });
-      self.common.reply(msg, response);
+      self.common.reply(msg, self.excludeUsers(msg.mentions.users, id));
     }
   }
+
+  /**
+   * Removes users from a games of a given guild.
+   *
+   * @public
+   * @param {string[]|Discord~User[]} users The users to exclude.
+   * @param {string} id The guild id to remove the users from.
+   * @return {string} A string with the outcomes of each user. May have
+   * multiple lines for a single user.
+   */
+  this.excludeUsers = function(users, id) {
+    let response = '';
+    if (!Array.isArray(users)) {
+      users = users.filterArray(() => {
+        return true;
+      });
+    }
+    users.forEach(function(obj) {
+      if (typeof obj === 'string') {
+        obj = self.client.users.get(obj);
+        if (!obj) {
+          response += obj + ' is not a valid id.\n';
+          return;
+        }
+      }
+      if (games[id].excludedUsers.includes(obj.id)) {
+        response += obj.username + ' is already excluded.\n';
+      } else {
+        games[id].excludedUsers.push(obj.id);
+        response += obj.username + ' added to blacklist.\n';
+        if (!games[id].currentGame.inProgress) {
+          let index =
+              games[id].currentGame.includedUsers.findIndex(function(el) {
+                return el.id == obj.id;
+              });
+          if (index >= 0) {
+            games[id].currentGame.includedUsers.splice(index, 1);
+            response += obj.username + ' removed from included players.\n';
+            formTeams(id);
+          } else {
+            self.common.error(
+                'Failed to remove player from included list. (' + obj.id + ')',
+                'HG');
+          }
+        }
+      }
+    });
+    return response;
+  };
 
   /**
    * Add a user back into the next game.
@@ -3155,39 +3179,64 @@ function HungryGames() {
           'You must mention people you wish for me to include in the next ' +
               'game.');
     } else {
-      let response = '';
-      msg.mentions.users.forEach(function(obj) {
-        if (!games[id].options.includeBots && obj.bot) {
-          response += obj.username + ' is a bot, but bots are disabled.\n';
-          return;
-        }
-        let excludeIndex = games[id].excludedUsers.indexOf(obj.id);
-        if (excludeIndex >= 0) {
-          response += obj.username + ' removed from blacklist.\n';
-          games[id].excludedUsers.splice(excludeIndex, 1);
-        }
-        if (games[id].currentGame.inProgress) {
-          response += obj.username + ' skipped.\n';
-        } else if (!games[id].currentGame.includedUsers.find((u) => {
-                     return u.id === obj.id;
-                   })) {
-          games[id].currentGame.includedUsers.push(
-              new Player(
-                  obj.id, obj.username, obj.displayAvatarURL({format: 'png'})));
-          response += obj.username + ' added to included players.\n';
-          formTeams(id);
-        } else {
-          response += obj.username + ' is already included.\n';
-        }
-      });
-      if (games[id].currentGame.inProgress) {
-        response +=
-            'Players were skipped because a game is currently in progress. ' +
-            'Players cannot be added to a game while it\'s in progress.';
-      }
-      self.common.reply(msg, response);
+      self.common.reply(msg, self.includeUsers(msg.mentions.users, id));
     }
   }
+
+  /**
+   * Adds a user back into the next game.
+   *
+   * @public
+   * @param {string[]|Discord~User[]} users The users to include.
+   * @param {string} id The guild id to add the users to.
+   * @return {string} A string with the outcomes of each user. May have
+   * multiple lines for a single user.
+   */
+  this.includeUsers = function(users, id) {
+    let response = '';
+    if (!Array.isArray(users)) {
+      users = users.filterArray(() => {
+        return true;
+      });
+    }
+    users.forEach(function(obj) {
+      if (typeof obj === 'string') {
+        obj = self.client.users.get(obj);
+        if (!obj) {
+          response += obj + ' is not a valid id.\n';
+          return;
+        }
+      }
+      if (!games[id].options.includeBots && obj.bot) {
+        response += obj.username + ' is a bot, but bots are disabled.\n';
+        return;
+      }
+      let excludeIndex = games[id].excludedUsers.indexOf(obj.id);
+      if (excludeIndex >= 0) {
+        response += obj.username + ' removed from blacklist.\n';
+        games[id].excludedUsers.splice(excludeIndex, 1);
+      }
+      if (games[id].currentGame.inProgress) {
+        response += obj.username + ' skipped.\n';
+      } else if (!games[id].currentGame.includedUsers.find((u) => {
+                   return u.id === obj.id;
+                 })) {
+        games[id].currentGame.includedUsers.push(
+            new Player(
+                obj.id, obj.username, obj.displayAvatarURL({format: 'png'})));
+        response += obj.username + ' added to included players.\n';
+        formTeams(id);
+      } else {
+        response += obj.username + ' is already included.\n';
+      }
+    });
+    if (games[id].currentGame.inProgress) {
+      response +=
+          'Players were skipped because a game is currently in progress. ' +
+          'Players cannot be added to a game while it\'s in progress.';
+    }
+    return response;
+  };
 
   /**
    * Show a formatted message of all users and teams in current server.

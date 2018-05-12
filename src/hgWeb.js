@@ -220,7 +220,6 @@ function HGWeb(hg) {
             return m.id;
           });
           newG.myself = makeMember(member);
-          newG.hg = hg.getGame(g.id);
           return newG;
         });
         socket.emit('guilds', null, strippedGuilds);
@@ -241,6 +240,37 @@ function HGWeb(hg) {
       let member = makeMember(m);
 
       socket.emit('member', gId, mId, member);
+    });
+
+    socket.on('fetchGames', (gId) => {
+      if (!userData) return;
+      let g = hg.client.guilds.get(gId);
+      if (!g) return;
+      let member = g.members.get(userData.id);
+      if (!member || !member.roles.find('name', hg.roleName)) return;
+
+      socket.emit('game', gId, hg.getGame(gId));
+    });
+
+    socket.on('excludeMember', (gId, mId) => {
+      if (!userData) return;
+      let g = hg.client.guilds.get(gId);
+      if (!g) return;
+      let member = g.members.get(userData.id);
+      if (!member || !member.roles.find('name', hg.roleName)) return;
+
+      hg.excludeUsers([mId], gId);
+      socket.emit('game', gId, hg.getGame(gId));
+    });
+    socket.on('includeMember', (gId, mId) => {
+      if (!userData) return;
+      let g = hg.client.guilds.get(gId);
+      if (!g) return;
+      let member = g.members.get(userData.id);
+      if (!member || !member.roles.find('name', hg.roleName)) return;
+
+      hg.includeUsers([mId], gId);
+      socket.emit('game', gId, hg.getGame(gId));
     });
 
     socket.on('logout', () => {
