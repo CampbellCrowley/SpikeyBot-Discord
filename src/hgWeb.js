@@ -347,6 +347,11 @@ function HGWeb(hg) {
       socket.emit('message', 'Autoplay paused');
       socket.emit('game', gId, hg.getGame(gId));
     });
+    socket.on('editTeam', (gId, cmd, one, two) => {
+      if (!checkPerm(userData, gId)) return;
+      hg.editTeam(userData.id, gId, cmd, one, two);
+      socket.emit('game', gId, hg.getGame(gId));
+    });
 
     socket.on('logout', () => {
       clearTimeout(loginInfo[session].refreshTimeout);

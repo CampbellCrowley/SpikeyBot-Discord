@@ -1643,9 +1643,10 @@ function HungryGames() {
    * Forms a Discord~Message similar object from given IDs.
    *
    * @private
-   * @param {string} uId The id of the user who trigged the games to start.
-   * @param {string} gId The id of the guild to run the games in.
-   * @param {string} cId The id of the channel to run the games in.
+   * @param {string} uId The id of the user who wrote this message.
+   * @param {string} gId The id of the guild this message is in.
+   * @param {?string} cId The id of the channel this message was 'sent' in.
+   * @param {?string} msg The message content.
    * @return {
    *   {
    *     author: Discord~Member,
@@ -1654,11 +1655,17 @@ function HungryGames() {
    *   }
    * } The created message-like object.
    */
-  function makeMessage(uId, gId, cId) {
+  function makeMessage(uId, gId, cId, msg) {
     let g = self.client.guilds.get(gId);
     if (!g) return null;
     if (!cId && games[gId]) cId = games[gId].channel;
-    return {author: g.members.get(uId), guild: g, channel: g.channels.get(cId)};
+    return {
+      author: g.members.get(uId),
+      guild: g,
+      channel: g.channels.get(cId),
+      text: msg,
+      content: msg,
+    };
   }
   /**
    * Stop autoplaying.
@@ -3674,6 +3681,89 @@ function HungryGames() {
         break;
     }
   }
+  /**
+   * Allows editing teams. Entry for all team actions.
+   *
+   * @public
+   * @param {string} uId The id of the user is running the action.
+   * @param {string} gId The id of the guild to run this in.
+   * @param {string} cmd The command to run on the teams.
+   * @param {string} one The id of the user to swap, or the new name of the team
+   * if we're renaming a team.
+   * @param {string} two The id of the user to swap, or the team id if we're
+   * moving a player to a team.
+   */
+  this.editTeam = function(uId, gId, cmd, one, two) {
+    switch (cmd) {
+      case 'swap':
+        let p1 = -1;
+        let team1 = games[gId].currentGame.teams.find((t) => {
+          return t.players.find((p, i) => {
+            if (p == one) {
+              p1 = i;
+              return true;
+            }
+            return false;
+          });
+        });
+        let p2 = -1;
+        let team2 = games[gId].currentGame.teams.find((t) => {
+          return t.players.find((p, i) => {
+            if (p == two) {
+              p2 = i;
+            }
+            return false;
+          });
+        });
+        if (!team1 || !team2) break;
+        let tmp = team1.players.splice(p1, 1);
+        team1.players.push(team2.players.splice(p2, 1));
+        team2.players.push(tmp);
+        break;
+      case 'move':
+        let pId = -1;
+        let tId = -1;
+        let teamS = games[gId].currentGame.teams.find((t, i) => {
+          if (t.players.find((p, j) => {
+                if (p == one) {
+                  pId = j;
+                  return true;
+                }
+                return false;
+              })) {
+            tId = i;
+            return true;
+          }
+          return false;
+        });
+        let teamD = games[gId].currentGame.teams.find((t) => {
+          return t.id == two;
+        });
+        if (!teamS) break;
+        if (!teamD) {
+          teamD =
+              games[gId]
+                  .currentGame
+                  .teams[games[gId].currentGame.teams.push(
+                             new Team(
+                                 games[gId].currentGame.teams.length, 'Team ' +
+                                     (games[gId].currentGame.teams.length + 1),
+                                 [])) -
+                         1];
+        }
+        teamD.players.push(teamS.players.splice(pId, 1));
+        if (teamS.players.length === 0) {
+          games[gId].currentGame.teams.splice(tId, 1);
+        }
+        break;
+      default:
+        editTeam(
+            makeMessage(
+                uId, gId, null, cmd + ' ' + (one || '') + ' ' + (two || '')),
+            gId);
+        break;
+    }
+  };
   /**
    * Swap two users from one team to the other.
    *
