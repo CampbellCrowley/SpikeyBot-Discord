@@ -889,7 +889,7 @@ function HungryGames() {
         case 'events':
         case 'event':
           if (!splitText[1]) {
-            listEvents(msg, id);
+            listEvents(msg, id, 0);
           } else {
             switch (splitText[1].toLowerCase()) {
               case 'add':
@@ -1175,6 +1175,20 @@ function HungryGames() {
       }, time - Date.now());
     }
   }
+
+  /**
+   * Returns an object storing all of the default events for the games.
+   *
+   * @public
+   * @return {{bloodbath: Object, player: Object, arena: Object}}
+   */
+  this.getDefaultEvents = function() {
+    return {
+      bloodbath: defaultBloodbathEvents,
+      player: defaultPlayerEvents,
+      arena: defaultArenaEvents,
+    };
+  };
 
   // Create //
   /**

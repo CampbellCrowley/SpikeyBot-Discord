@@ -845,6 +845,7 @@ Hunger Games simulator.
         * *[.myName](#SubModule+myName) : <code>string</code>*
         * [.initialized](#SubModule+initialized) : <code>boolean</code>
         * [.getGame(id)](#HungryGames+getGame) ⇒ [<code>GuildGame</code>](#HungryGames..GuildGame)
+        * [.getDefaultEvents()](#HungryGames+getDefaultEvents) ⇒ <code>Object</code>
         * [.createGame(id)](#HungryGames+createGame)
         * [.resetGame(id, command)](#HungryGames+resetGame) ⇒ <code>string</code>
         * [.startGame(uId, gId, cId)](#HungryGames+startGame)
@@ -1070,6 +1071,13 @@ game in a guild.
 | --- | --- | --- |
 | id | <code>string</code> | The guild id to get the data for. |
 
+<a name="HungryGames+getDefaultEvents"></a>
+
+### hungryGames.getDefaultEvents() ⇒ <code>Object</code>
+Returns an object storing all of the default events for the games.
+
+**Kind**: instance method of [<code>HungryGames</code>](#HungryGames)  
+**Access**: public  
 <a name="HungryGames+createGame"></a>
 
 ### hungryGames.createGame(id)

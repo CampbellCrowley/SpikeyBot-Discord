@@ -294,6 +294,9 @@ function HGWeb(hg) {
     socket.on('fetchDefaultOptions', () => {
       socket.emit('defaultOptions', hg.defaultOptions);
     });
+    socket.on('fetchDefaultEvents', () => {
+      socket.emit('defaultEvents', hg.getDefaultEvents());
+    });
 
     socket.on('excludeMember', (gId, mId) => {
       if (!checkPerm(userData, gId)) return;
@@ -310,6 +313,9 @@ function HGWeb(hg) {
       socket.emit('message', hg.setOption(gId, option, value));
       if (hg.getGame(gId)) {
         socket.emit('option', gId, option, hg.getGame(gId).options[option]);
+        if (option === 'teamSize') {
+          socket.emit('game', gId, hg.getGame(gId));
+        }
       }
     });
     socket.on('createGame', (gId) => {
