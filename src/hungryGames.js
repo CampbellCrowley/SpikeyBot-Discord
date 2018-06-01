@@ -968,7 +968,7 @@ function HungryGames() {
    * @return {boolean} If the message author has the necessary role.
    */
   function checkForRole(msg) {
-    return msg.member.roles.exists('name', roleName);
+    return msg.member.roles.find((r) => r.name == roleName);
   }
 
   /**
@@ -3235,9 +3235,7 @@ function HungryGames() {
   this.excludeUsers = function(users, id) {
     let response = '';
     if (!Array.isArray(users)) {
-      users = users.filterArray(() => {
-        return true;
-      });
+      users = users.array();
     }
     users.forEach(function(obj) {
       if (typeof obj === 'string') {
@@ -3308,9 +3306,7 @@ function HungryGames() {
   this.includeUsers = function(users, id) {
     let response = '';
     if (!Array.isArray(users)) {
-      users = users.filterArray(() => {
-        return true;
-      });
+      users = users.array();
     }
     users.forEach(function(obj) {
       if (typeof obj === 'string') {
@@ -3940,6 +3936,10 @@ function HungryGames() {
    */
   function randomizeTeams(msg, id) {
     let current = games[id].currentGame;
+    if (current.teams.length == 0) {
+      self.common.reply(msg, 'There are no teams to randomize.');
+      return;
+    }
     for (let i = 0; i < current.includedUsers.length; i++) {
       let teamId1 = Math.floor(Math.random() * current.teams.length);
       let playerId1 =
@@ -4096,16 +4096,17 @@ function HungryGames() {
           };
           finish = function() {
             msg_.delete();
-            let newEvent = new Event(
-                message, numVictim, numAttacker, victimOutcome, attackerOutcome,
-                victimKiller, attackerKiller);
-            msg.channel.send(
-                '`Event created!`\n' + formatEventString(newEvent) + '\n' +
-                eventType + ' event');
-            if (eventType == 'bloodbath') {
-              games[id].customEvents.bloodbath.push(newEvent);
+            let error = self.makeAndAddEvent(
+                id, eventType, message, numVictim, numAttacker, victimOutcome,
+                attackerOutcome, victimKiller, attackerKiller);
+            if (error) {
+              msg.channel.send(
+                  '`Failed to create event!`\n' + eventType + ' event\n' +
+                  error);
             } else {
-              games[id].customEvents.player.push(newEvent);
+              msg.channel.send(
+                  '`Event created!`\n' + formatEventString(newEvent) + '\n' +
+                  eventType + ' event');
             }
           };
 
@@ -4119,6 +4120,29 @@ function HungryGames() {
       updateEventPreview(newEventMessages[msg.id]);
     });
   }
+
+  this.makeAndAddEvent = function(
+      id, type, message, numVictim, numAttacker, victimOutcome, attackerOutcome,
+      victimKiller, attackerKiller) {
+    if (!games[id] || !games[id].customEvents ||
+        !games[id].customEvents[type]) {
+      return 'Invalid ID or type.';
+    }
+    if (type === 'arena') return 'NYI';
+    return self.addEvent(
+        id, type, new Event(
+                      message, numVictim, numAttacker, victimOutcome,
+                      attackerOutcome, victimKiller, attackerKiller));
+  };
+  this.addEvent = function(id, type, event) {
+    if (!games[id] || !games[id].customEvents ||
+        !games[id].customEvents[type]) {
+      return 'Invalid ID or type.';
+    }
+    games[id].customEvents[type].push(event);
+    return null;
+  };
+
   /**
    * The callback after receiving a number from user input.
    *
@@ -4613,11 +4637,11 @@ function HungryGames() {
       let myReactions = msg_.reactions.filter(function(obj) {
         return obj.me;
       });
-      if (!myReactions.exists('name', emoji.arrow_right) ||
-          !myReactions.exists('name', emoji.arrow_left) ||
-          !myReactions.exists('name', emoji.arrow_double_right) ||
-          !myReactions.exists('name', emoji.arrow_double_left) ||
-          !myReactions.exists('name', emoji.arrows_counterclockwise)) {
+      if (!myReactions.find((r) => r.name == emoji.arrow_right) ||
+          !myReactions.find((r) => r.name == emoji.arrow_left) ||
+          !myReactions.find((r) => r.name == emoji.arrow_double_right) ||
+          !myReactions.find((r) => r.name == emoji.arrow_double_left) ||
+          !myReactions.find((r) => r.name == emoji.arrows_counterclockwise)) {
         msg_.react(emoji.arrow_double_left)
             .then(() => {
               msg_.react(emoji.arrow_left).then(() => {

@@ -122,6 +122,7 @@ function Music() {
 
   /** @inheritdoc */
   this.initialize = function() {
+    self.command.on('join', commandJoin, true);
     self.command.on('play', commandPlay, true);
     self.command.on(['leave', 'stop', 'stfu'], commandLeave, true);
     self.command.on('skip', commandSkip, true);
@@ -152,6 +153,7 @@ function Music() {
 
   /** @inheritdoc */
   this.shutdown = function() {
+    self.command.deleteEvent('join');
     self.command.deleteEvent('play');
     self.command.deleteEvent(['leave', 'stop', 'stfu']);
     self.command.deleteEvent('skip');
@@ -440,6 +442,22 @@ function Music() {
   function skipSong(broadcast) {
     broadcast.isPlaying = false;
     startPlaying(broadcast);
+  }
+
+  /**
+   * Join a voice channel that the user is in.
+   *
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg The message that triggered command.
+   * @listens SpikeyBot~Command#join
+   */
+  function commandJoin(msg) {
+    if (msg.member.voiceChannel === null) {
+      reply(msg, 'You aren\'t in a voice channel!');
+    } else {
+      msg.member.voiceChannel.join();
+    }
   }
 
   /**
@@ -850,7 +868,7 @@ function Music() {
     });
     listen = function(user, receiver, conn) {
       if (streams[user.id] ||
-          (msg.mentions.users.size > 0 && !msg.mentions.users.find(user.id))) {
+          (msg.mentions.users.size > 0 && !msg.mentions.users.get(user.id))) {
         return;
       }
       let stream =
@@ -863,7 +881,7 @@ function Music() {
       }); */
     };
     msg.member.voiceChannel.join().then((conn) => {
-      // Timeout and sound are due to current Discord but requiring bot to play
+      // Timeout and sound are due to current Discord bug requiring bot to play
       // sound for 0.1s before being able to receive audio.
       conn.play('./sounds/plink.ogg');
       self.client.setTimeout(() => {

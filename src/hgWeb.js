@@ -20,7 +20,11 @@ function HGWeb(hg) {
   let app = http.createServer(handler);
   let io = socketIo(
       app, {path: '/www.spikeybot.com/socket.io/hg', serveClient: false});
-  app.listen(8010);
+  app.on('error', console.error);
+  try {
+    app.listen(8010);
+  } catch (err) {
+  }
 
   /**
    * The url to send a received `code` to via `POST` to receive a user's
@@ -218,9 +222,9 @@ function HGWeb(hg) {
     socket.on('fetchGuilds', () => {
       if (!userData) return;
       try {
-        let guilds = hg.client.guilds.filterArray((obj) => {
+        let guilds = hg.client.guilds.filter((obj) => {
           return obj.members.get(userData.id);
-        });
+        }).array();
         let strippedGuilds = guilds.map((g) => {
           let member = g.members.get(userData.id);
           let newG = {};
@@ -253,7 +257,7 @@ function HGWeb(hg) {
       let g = hg.client.guilds.get(gId);
       if (!g) return;
       let user = g.members.get(userData.id);
-      if (!user || !user.roles.find('name', hg.roleName)) return;
+      if (!user || !user.roles.find((r) => r.name == hg.roleName)) return;
       let m = g.members.get(mId);
       if (!m) return;
       let member = makeMember(m);
@@ -265,7 +269,7 @@ function HGWeb(hg) {
       let g = hg.client.guilds.get(gId);
       if (!g) return;
       let member = g.members.get(userData.id);
-      if (!member || !member.roles.find('name', hg.roleName)) return;
+      if (!member || !member.roles.find((r) => r.name == hg.roleName)) return;
       let m = g.members.get(userData.id);
 
       let channel = g.channels.get(cId);
@@ -358,9 +362,19 @@ function HGWeb(hg) {
       hg.editTeam(userData.id, gId, cmd, one, two);
       socket.emit('game', gId, hg.getGame(gId));
     });
+    socket.on('createEvent', (gId, type, message, nV, nA, oV, oA, kV, kA) => {
+      if (!checkPerm(userData, gId)) return;
+      let err = hg.makeAndAddEvent(gId, type, message, nV, nA, oV, oA, kV, kA);
+      if (err) {
+        socket.emit('message', 'Failed to create event: ' + err);
+      } else {
+        socket.emit('message', 'Created ' + type + ' event.');
+        socket.emit('game', gId, hg.getGame(gId));
+      }
+    });
 
     socket.on('logout', () => {
-      clearTimeout(loginInfo[session].refreshTimeout);
+      if (loginInfo[session]) clearTimeout(loginInfo[session].refreshTimeout);
       delete loginInfo[session];
       delete currentSessions[session];
     });
@@ -385,7 +399,9 @@ function HGWeb(hg) {
     let g = hg.client.guilds.get(gId);
     if (!g) return false;
     let member = g.members.get(userData.id);
-    if (!member || !member.roles.find('name', hg.roleName)) return false;
+    if (!member || !member.roles.find((r) => r.name == hg.roleName)) {
+      return false;
+    }
     return true;
   }
   /**
@@ -404,7 +420,7 @@ function HGWeb(hg) {
     let g = hg.client.guilds.get(gId);
     if (!g) return false;
     let m = g.members.get(userData.id);
-    if (!m || !m.roles.find('name', hg.roleName)) return false;
+    if (!m || !m.roles.get((r) => r.name == hg.roleName)) return false;
 
     let channel = g.channels.get(cId);
     if (!channel) return false;
@@ -448,10 +464,12 @@ function HGWeb(hg) {
   function makeMember(m) {
     return {
       nickname: m.nickname,
-      hgRole: m.roles.find('name', hg.roleName),
-      roles: m.roles.filterArray(() => {
-        return true;
-      }),
+      hgRole: m.roles.find((r) => r.name == hg.roleName),
+      roles: m.roles
+                 .filter(() => {
+                   return true;
+                 })
+                 .array(),
       color: m.displayColor,
       guild: {id: m.guild.id},
       user: {

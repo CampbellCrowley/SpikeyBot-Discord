@@ -3367,6 +3367,7 @@ Music and audio related commands.
         * [~makeBroadcast(broadcast)](#Music..makeBroadcast) ℗
         * [~endSong(broadcast)](#Music..endSong) ℗
         * [~skipSong(broadcast)](#Music..skipSong) ℗
+        * [~commandJoin(msg)](#Music..commandJoin) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandPlay(msg)](#Music..commandPlay) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandLeave(msg)](#Music..commandLeave) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandSkip(msg)](#Music..commandSkip) : [<code>commandHandler</code>](#commandHandler) ℗
@@ -3678,6 +3679,18 @@ Skip the current song, then attempt to play the next.
 | Param | Type | Description |
 | --- | --- | --- |
 | broadcast | [<code>Broadcast</code>](#Music..Broadcast) | The object storing all relevant information. |
+
+<a name="Music..commandJoin"></a>
+
+### Music~commandJoin(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Join a voice channel that the user is in.
+
+**Kind**: inner method of [<code>Music</code>](#Music)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message that triggered command. |
 
 <a name="Music..commandPlay"></a>
 
