@@ -372,6 +372,16 @@ function HGWeb(hg) {
         socket.emit('game', gId, hg.getGame(gId));
       }
     });
+    socket.on('removeEvent', (gId, type, event) => {
+      if (!checkPerm(userData, gId)) return;
+      let err = hg.removeEvent(gId, type, event);
+      if (err) {
+        socket.emit('message', 'Failed to remove event: ' + err);
+      } else {
+        socket.emit('message', 'Removed event.');
+        socket.emit('game', gId, hg.getGame(gId));
+      }
+    });
 
     socket.on('logout', () => {
       if (loginInfo[session]) clearTimeout(loginInfo[session].refreshTimeout);

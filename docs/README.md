@@ -856,6 +856,10 @@ Hunger Games simulator.
         * [.includeUsers(users, id)](#HungryGames+includeUsers) ⇒ <code>string</code>
         * [.setOption(id, option, value)](#HungryGames+setOption) ⇒ <code>string</code>
         * [.editTeam(uId, gId, cmd, one, two)](#HungryGames+editTeam)
+        * [.makeAndAddEvent(id, type, message, numVictim, numAttacker, victimOutcome, attackerOutcome, victimKiller, attackerKiller)](#HungryGames+makeAndAddEvent) ⇒ <code>string</code>
+        * [.addEvent(id, type, event)](#HungryGames+addEvent) ⇒ <code>string</code>
+        * [.removeEvent(id, type, event)](#HungryGames+removeEvent) ⇒ <code>string</code>
+        * [.eventsEqual(e1, e2)](#HungryGames+eventsEqual) ⇒ <code>boolean</code>
         * [.initialize()](#SubModule+initialize)
         * [.begin(prefix, Discord, client, command, common)](#SubModule+begin)
         * [.end()](#SubModule+end)
@@ -1220,6 +1224,70 @@ Allows editing teams. Entry for all team actions.
 | one | <code>string</code> | The id of the user to swap, or the new name of the team if we're renaming a team. |
 | two | <code>string</code> | The id of the user to swap, or the team id if we're moving a player to a team. |
 
+<a name="HungryGames+makeAndAddEvent"></a>
+
+### hungryGames.makeAndAddEvent(id, type, message, numVictim, numAttacker, victimOutcome, attackerOutcome, victimKiller, attackerKiller) ⇒ <code>string</code>
+Creates an event and adds it to the custom events for the given guild.
+
+**Kind**: instance method of [<code>HungryGames</code>](#HungryGames)  
+**Returns**: <code>string</code> - Error message or null if no error.  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| id | <code>string</code> | The guild id to add the event to. |
+| type | <code>string</code> | The type of event this is. Either 'player', 'bloodbath', or 'arena'. |
+| message | <code>string</code> | The event message. |
+| numVictim | <code>number</code> | The number of victims in the event. |
+| numAttacker | <code>number</code> | The number of attackers in the event. |
+| victimOutcome | <code>string</code> | The outcome of the victims due to this event. |
+| attackerOutcome | <code>string</code> | The outcome of the attackers due to this event. |
+| victimKiller | <code>boolean</code> | Do the victims kill anyone. |
+| attackerKiller | <code>boolean</code> | Do the attackers kill anyone. |
+
+<a name="HungryGames+addEvent"></a>
+
+### hungryGames.addEvent(id, type, event) ⇒ <code>string</code>
+Adds a given event to the given guild's custom events.
+
+**Kind**: instance method of [<code>HungryGames</code>](#HungryGames)  
+**Returns**: <code>string</code> - Error message or null if no error.  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| id | <code>string</code> | The id of the guild to add the event to. |
+| type | <code>string</code> | The type of event this is. |
+| event | [<code>Event</code>](#HungryGames..Event) | The event to add. |
+
+<a name="HungryGames+removeEvent"></a>
+
+### hungryGames.removeEvent(id, type, event) ⇒ <code>string</code>
+Searches custom events for the given one, then removes it from the custom
+events.
+
+**Kind**: instance method of [<code>HungryGames</code>](#HungryGames)  
+**Returns**: <code>string</code> - Error message or null if no error.  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| id | <code>string</code> | The id of the guild to remove the event from. |
+| type | <code>string</code> | The type of event this is. |
+| event | [<code>Event</code>](#HungryGames..Event) | The event to search for. |
+
+<a name="HungryGames+eventsEqual"></a>
+
+### hungryGames.eventsEqual(e1, e2) ⇒ <code>boolean</code>
+Checks if the two given events are equivalent.
+
+**Kind**: instance method of [<code>HungryGames</code>](#HungryGames)  
+
+| Param | Type |
+| --- | --- |
+| e1 | [<code>Event</code>](#HungryGames..Event) | 
+| e2 | [<code>Event</code>](#HungryGames..Event) | 
+
 <a name="SubModule+initialize"></a>
 
 ### hungryGames.initialize()
@@ -1333,7 +1401,7 @@ Event that can happen in a game.
 | message | <code>string</code> | The message to show. |
 | victim | <code>Object</code> | Information about the victims in this event. |
 | attacker | <code>Object</code> | Information about the attackers in this event. |
-| battle | <code>boolean</code> | Does this event a battle. |
+| battle | <code>boolean</code> | Is this event a battle event. |
 | state | <code>number</code> | The current state of printing the battle messages. |
 | attacks | [<code>Array.&lt;Event&gt;</code>](#HungryGames..Event) | The attacks in a battle to show before the message. |
 

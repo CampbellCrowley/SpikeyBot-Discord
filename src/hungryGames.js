@@ -1064,6 +1064,8 @@ function HungryGames() {
     // Number of players still alive on this team.
     this.numAlive = players.length;
   };
+  this.Team = Team;
+
   /**
    * @classdesc Event that can happen in a game.
    * @class
@@ -1089,7 +1091,7 @@ function HungryGames() {
    * Information about the victims in this event.
    * @property {{count: number, outcome: string, killer: boolean}} attacker
    * Information about the attackers in this event.
-   * @property {boolean} battle Does this event a battle.
+   * @property {boolean} battle Is this event a battle event.
    * @property {number} state The current state of printing the battle messages.
    * @property {HungryGames~Event[]} attacks The attacks in a battle to show
    * before the message.
@@ -1113,6 +1115,7 @@ function HungryGames() {
     this.state = state;
     this.attacks = attacks;
   }
+  this.Event = Event;
 
   /**
    * A single battle in an Event.
@@ -4121,6 +4124,23 @@ function HungryGames() {
     });
   }
 
+  /**
+   * Creates an event and adds it to the custom events for the given guild.
+   *
+   * @public
+   * @param {string} id The guild id to add the event to.
+   * @param {string} type The type of event this is. Either 'player',
+   * 'bloodbath', or 'arena'.
+   * @param {string} message The event message.
+   * @param {number} numVictim The number of victims in the event.
+   * @param {number} numAttacker The number of attackers in the event.
+   * @param {string} victimOutcome The outcome of the victims due to this event.
+   * @param {string} attackerOutcome The outcome of the attackers due to this
+   * event.
+   * @param {boolean} victimKiller Do the victims kill anyone.
+   * @param {boolean} attackerKiller Do the attackers kill anyone.
+   * @return {?string} Error message or null if no error.
+   */
   this.makeAndAddEvent = function(
       id, type, message, numVictim, numAttacker, victimOutcome, attackerOutcome,
       victimKiller, attackerKiller) {
@@ -4134,13 +4154,87 @@ function HungryGames() {
                       message, numVictim, numAttacker, victimOutcome,
                       attackerOutcome, victimKiller, attackerKiller));
   };
+  /**
+   * Adds a given event to the given guild's custom events.
+   *
+   * @public
+   * @param {string} id The id of the guild to add the event to.
+   * @param {string} type The type of event this is.
+   * @param {HungryGames~Event} event The event to add.
+   * @return {?string} Error message or null if no error.
+   */
   this.addEvent = function(id, type, event) {
     if (!games[id] || !games[id].customEvents ||
         !games[id].customEvents[type]) {
       return 'Invalid ID or type.';
     }
+    if (!event.message || event.message.length == 0) {
+      return 'Event must have a message.';
+    }
+    for (let i in games[id].customEvents[type]) {
+      if (self.eventsEqual(event, games[id].customEvents[type][i])) {
+        return 'Event already exists!';
+      }
+    }
     games[id].customEvents[type].push(event);
     return null;
+  };
+
+  /**
+   * Searches custom events for the given one, then removes it from the custom
+   * events.
+   *
+   * @public
+   * @param {string} id The id of the guild to remove the event from.
+   * @param {string} type The type of event this is.
+   * @param {HungryGames~Event} event The event to search for.
+   * @return {?string} Error message or null if no error.
+   */
+  this.removeEvent = function(id, type, event) {
+    if (!games[id] || !games[id].customEvents ||
+        !games[id].customEvents[type]) {
+      return 'Invalid ID or type.';
+    }
+    let list = games[id].customEvents[type];
+    for (let i in list) {
+      if (self.eventsEqual(list[i], event)) {
+        list.splice(i, 1);
+        return null;
+      }
+    }
+    return 'Failed to find event to remove.';
+  };
+
+  /**
+   * Checks if the two given events are equivalent.
+   *
+   * @param {HungryGames~Event} e1
+   * @param {HungryGames~Event} e2
+   * @return {boolean}
+   */
+  this.eventsEqual = function(e1, e2) {
+    if (!e1 || !e2) return false;
+    if (e1.message != e2.message) return false;
+    if (!e1.battle != !e2.battle) return false;
+    let v1 = e1.victim;
+    let v2 = e2.victim;
+    if (v1 && v2) {
+      if (v1.count != v2.count) return false;
+      if (v1.outcome != v2.outcome) return false;
+      if (!v1.killer != !v2.killer) return false;
+    } else if (!(!v1 && !v2)) {
+      return false;
+    }
+    let a1 = e1.attacker;
+    let a2 = e2.attacker;
+    if (a1 && a2) {
+      if (a1.count != a2.count) return false;
+      if (a1.outcome != a2.outcome) return false;
+      if (!a1.killer != !a2.killer) return false;
+    } else if (!(!a1 && !a2)) {
+      return false;
+    }
+    return true;
   };
 
   /**
