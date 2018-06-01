@@ -131,10 +131,9 @@ const hgTests = [
   new Test(
       'Change option number', '~hg options teamSize 10',
       [
-        '<@422623712534200321>\n```\nSet teamSize to 10 from 0\n```',
-        '<@422623712534200321>\n```\nTo reset teams to the correct size, ' +
-            'type "~hg teams reset".\nThis will delete all teams, and create ' +
-            'new ones.\n```',
+        '<@422623712534200321>\n```\nSet teamSize to 10 from 0\nTo reset ' +
+            'teams to the correct size, type "~hg teams reset".\nThis will ' +
+            'delete all teams, and create new ones.\n```',
       ]),
   new Test(
       'Exclude player nomention', '~hg exclude SpikeyRobot',
@@ -147,7 +146,8 @@ const hgTests = [
   new Test('List teams and check excluded', '~hg players', ['!`SpikeyRobot`']),
   new Test(
       'Exclude player already excluded', '~hg exclude <@124733888177111041>',
-      ['<@422623712534200321>\n```\nSpikeyRobot is already excluded.\n\n```']),
+      ['<@422623712534200321>\n```\nSpikeyRobot is already excluded. ' +
+       'Create a new game to reset players.\n\n```']),
   new Test(
       'Include player nomention', '~hg include SpikeyRobot',
       ['<@422623712534200321>\n```\nYou must mention people you wish for me ' +

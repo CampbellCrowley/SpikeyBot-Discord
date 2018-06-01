@@ -3509,8 +3509,9 @@ function HungryGames() {
           let old = games[id].options[option];
           games[id].options[option] = value;
           if (option == 'teamSize' && value != 0) {
-            return 'To reset teams to the correct size, type "' +
-                self.myPrefix +
+            return 'Set ' + option + ' to ' + games[id].options[option] +
+                ' from ' + old +
+                '\nTo reset teams to the correct size, type "' + self.myPrefix +
                 'teams reset".\nThis will delete all teams, and create ' +
                 'new ones.';
           } else {
