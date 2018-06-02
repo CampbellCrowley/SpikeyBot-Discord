@@ -35,6 +35,7 @@
       "title": "Music Stuff",
       "rows": [
         "play 'url or search' // Play a song in your current voice channel, or add a song to the queue.",
+        "join // Join you in your voice channel.",
         "stop // Stop playing music and leave the voice channel.",
         "skip // Skip the currently playing song.",
         "queue // View the songs currently in the queue.",

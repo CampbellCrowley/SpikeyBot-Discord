@@ -1058,10 +1058,39 @@ function Main() {
                       msg, 'The gods have struck ' + member.user.username +
                           ' with lightning!');
                 });
+                member.guild.channels.forEach(function(channel) {
+                  if (channel.permissionsLocked) return;
+                  let overwrites = channel.permissionOverwrites.get(role.id);
+                  if (overwrites) {
+                    if (channel.type == 'category') {
+                      if (overwrites.denied.has(
+                              self.Discord.Permissions.FLAGS.SPEAK) &&
+                          overwrites.denied.has(
+                              self.Discord.Permissions.FLAGS.SEND_MESSAGES)) {
+                        return;
+                      }
+                    } else if (channel.type == 'voice') {
+                      if (overwrites.denied.has(
+                              self.Discord.Permissions.FLAGS.SPEAK)) {
+                        return;
+                      }
+                    } else if (channel.type == 'text') {
+                      if (overwrites.denied.has(
+                              self.Discord.Permissions.FLAGS.SEND_MESSAGES)) {
+                        return;
+                      }
+                    }
+                  }
+                  channel
+                      .updateOverwrite(
+                          role, {SEND_MESSAGES: false, SPEAK: false})
+                      .catch(console.error);
+                });
               } catch (err) {
                 self.common.reply(
                     msg, 'Oops! I wasn\'t able to smite ' +
                         member.user.username + '! I\'m not sure why though!');
+                console.log(err);
               }
             };
             if (!hasSmiteRole) {
