@@ -4,3 +4,4 @@ reboot.dat
 hg.json
 *.log
 auth.js
+save/hgWebClients.json
