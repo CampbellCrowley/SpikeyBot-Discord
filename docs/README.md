@@ -601,24 +601,24 @@ Creates a web interface for managing the Hungry Games.
 * [HGWeb](#HGWeb)
     * [new HGWeb(hg)](#new_HGWeb_new)
     * _instance_
-        * [.shutdown()](#HGWeb+shutdown) ℗
+        * [.shutdown()](#HGWeb+shutdown)
     * _inner_
         * [~loginInfo](#HGWeb..loginInfo) : <code>Object.&lt;Object&gt;</code> ℗
         * [~tokenHost](#HGWeb..tokenHost) : <code>Object</code> ℗
         * [~apiHost](#HGWeb..apiHost) : <code>Object</code> ℗
         * [~handler(req, res)](#HGWeb..handler) ℗
         * [~purgeSessions()](#HGWeb..purgeSessions) ℗
-        * [~socketConnection(socket)](#HGWeb..socketConnection)
+        * [~socketConnection(socket)](#HGWeb..socketConnection) ℗
             * [~receivedLoginInfo(data)](#HGWeb..socketConnection..receivedLoginInfo) ℗
-        * [~checkPerm(userData, gId)](#HGWeb..checkPerm) ⇒ <code>boolean</code>
-        * [~checkChannelPerm(userData, gId, cId)](#HGWeb..checkChannelPerm) ⇒ <code>boolean</code>
+        * [~checkPerm(userData, gId)](#HGWeb..checkPerm) ⇒ <code>boolean</code> ℗
+        * [~checkChannelPerm(userData, gId, cId)](#HGWeb..checkChannelPerm) ⇒ <code>boolean</code> ℗
         * [~fetchIdentity(loginInfo, cb)](#HGWeb..fetchIdentity) ℗
-        * [~makeMember(m)](#HGWeb..makeMember) ⇒ <code>Object</code>
-        * [~apiRequest(loginInfo, path, cb)](#HGWeb..apiRequest)
-        * [~discordRequest(data, cb, host)](#HGWeb..discordRequest)
-        * [~makeRefreshTimeout(loginInfo, cb)](#HGWeb..makeRefreshTimeout)
-        * [~refreshToken(refreshToken, cb)](#HGWeb..refreshToken)
-        * [~authorizeRequest(code, cb)](#HGWeb..authorizeRequest)
+        * [~makeMember(m)](#HGWeb..makeMember) ⇒ <code>Object</code> ℗
+        * [~apiRequest(loginInfo, path, cb)](#HGWeb..apiRequest) ℗
+        * [~discordRequest(data, cb, host)](#HGWeb..discordRequest) ℗
+        * [~makeRefreshTimeout(loginInfo, cb)](#HGWeb..makeRefreshTimeout) ℗
+        * [~refreshToken(refreshToken, cb)](#HGWeb..refreshToken) ℗
+        * [~authorizeRequest(code, cb)](#HGWeb..authorizeRequest) ℗
 
 <a name="new_HGWeb_new"></a>
 
@@ -630,11 +630,11 @@ Creates a web interface for managing the Hungry Games.
 
 <a name="HGWeb+shutdown"></a>
 
-### hgWeb.shutdown() ℗
+### hgWeb.shutdown()
 Causes a full shutdown of all servers.
 
 **Kind**: instance method of [<code>HGWeb</code>](#HGWeb)  
-**Access**: private  
+**Access**: public  
 <a name="HGWeb..loginInfo"></a>
 
 ### HGWeb~loginInfo : <code>Object.&lt;Object&gt;</code> ℗
@@ -682,10 +682,11 @@ Purge stale data from loginInfo.
 **Access**: private  
 <a name="HGWeb..socketConnection"></a>
 
-### HGWeb~socketConnection(socket)
+### HGWeb~socketConnection(socket) ℗
 Handler for a new socket connecting.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -706,13 +707,14 @@ and refresh the tokens when necessary.
 
 <a name="HGWeb..checkPerm"></a>
 
-### HGWeb~checkPerm(userData, gId) ⇒ <code>boolean</code>
+### HGWeb~checkPerm(userData, gId) ⇒ <code>boolean</code> ℗
 Check that the given user has permission to manage the games in the given
 guild.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
 **Returns**: <code>boolean</code> - Whther the user has permission or not to manage the
 hungry games in the given guild.  
+**Access**: private  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -721,7 +723,7 @@ hungry games in the given guild.
 
 <a name="HGWeb..checkChannelPerm"></a>
 
-### HGWeb~checkChannelPerm(userData, gId, cId) ⇒ <code>boolean</code>
+### HGWeb~checkChannelPerm(userData, gId, cId) ⇒ <code>boolean</code> ℗
 Check that the given user has permission to see and send messages in the
 given channel, as well as manage the games in the given guild.
 
@@ -729,6 +731,7 @@ given channel, as well as manage the games in the given guild.
 **Returns**: <code>boolean</code> - Whther the user has permission or not to manage the
 hungry games in the given guild and has permission to send messages in the
 given channel.  
+**Access**: private  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -751,12 +754,13 @@ Fetches the identiry of the user we have the token of.
 
 <a name="HGWeb..makeMember"></a>
 
-### HGWeb~makeMember(m) ⇒ <code>Object</code>
+### HGWeb~makeMember(m) ⇒ <code>Object</code> ℗
 Strips a Discord~GuildMember to only the necessary data that a client will
 need.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
 **Returns**: <code>Object</code> - The minimal member.  
+**Access**: private  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -764,10 +768,11 @@ need.
 
 <a name="HGWeb..apiRequest"></a>
 
-### HGWeb~apiRequest(loginInfo, path, cb)
+### HGWeb~apiRequest(loginInfo, path, cb) ℗
 Formats a request to the discord api at the given path.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -777,10 +782,11 @@ Formats a request to the discord api at the given path.
 
 <a name="HGWeb..discordRequest"></a>
 
-### HGWeb~discordRequest(data, cb, host)
+### HGWeb~discordRequest(data, cb, host) ℗
 Send a https request to discord.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -790,10 +796,11 @@ Send a https request to discord.
 
 <a name="HGWeb..makeRefreshTimeout"></a>
 
-### HGWeb~makeRefreshTimeout(loginInfo, cb)
+### HGWeb~makeRefreshTimeout(loginInfo, cb) ℗
 Refreshes the given token once it expires.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -802,10 +809,11 @@ Refreshes the given token once it expires.
 
 <a name="HGWeb..refreshToken"></a>
 
-### HGWeb~refreshToken(refreshToken, cb)
+### HGWeb~refreshToken(refreshToken, cb) ℗
 Request new credentials with refresh token from discord.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -814,10 +822,11 @@ Request new credentials with refresh token from discord.
 
 <a name="HGWeb..authorizeRequest"></a>
 
-### HGWeb~authorizeRequest(code, cb)
+### HGWeb~authorizeRequest(code, cb) ℗
 Authenticate with the discord server using a login code.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -1679,7 +1688,6 @@ Default color to choose for embedded messages.
 Helper object of emoji characters mapped to names.
 
 **Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
-**Default**: <code>{&quot;x&quot;:&quot;❌&quot;,&quot;white_check_mark&quot;:&quot;✅&quot;,&quot;undefined&quot;:&quot;🔟&quot;,&quot;arrow_up&quot;:&quot;⬆&quot;,&quot;arrow_down&quot;:&quot;⬇&quot;,&quot;arrow_double_up&quot;:&quot;⏫&quot;,&quot;arrow_double_down&quot;:&quot;⏬&quot;,&quot;arrow_left&quot;:&quot;⬅&quot;,&quot;arrow_right&quot;:&quot;➡&quot;,&quot;arrow_double_left&quot;:&quot;⏪&quot;,&quot;arrow_double_right&quot;:&quot;⏩&quot;,&quot;arrows_counterclockwise&quot;:&quot;🔄&quot;,&quot;crossed_swords&quot;:&quot;⚔&quot;,&quot;shield&quot;:&quot;🛡&quot;,&quot;heart&quot;:&quot;❤&quot;,&quot;yellow_heart&quot;:&quot;💛&quot;,&quot;broken_heart&quot;:&quot;💔&quot;,&quot;skull&quot;:&quot;💀&quot;,&quot;negative_squared_cross_mark&quot;:&quot;❎&quot;,&quot;ballot_box_with_check&quot;:&quot;☑&quot;,&quot;skull_crossbones&quot;:&quot;☠&quot;,&quot;slight_smile&quot;:&quot;🙂&quot;,&quot;question&quot;:&quot;⚔&quot;,&quot;red_circle&quot;:&quot;🔴&quot;,&quot;trophy&quot;:&quot;🏆&quot;}</code>  
 **Access**: private  
 <a name="HungryGames..alph"></a>
 
@@ -2789,6 +2797,8 @@ Basic commands and features for the bot.
         * [~prevUserSayId](#Main..prevUserSayId) : <code>string</code> ℗
         * [~prevUserSayCnt](#Main..prevUserSayCnt) : <code>number</code> ℗
         * [~timers](#Main..timers) : [<code>Array.&lt;Timer&gt;</code>](#Main..Timer) ℗
+        * [~disabledAutoSmite](#Main..disabledAutoSmite) : <code>Object.&lt;boolean&gt;</code> ℗
+        * [~mentionAccumulator](#Main..mentionAccumulator) : <code>Object.&lt;Object.&lt;string&gt;&gt;</code> ℗
         * [~introduction](#Main..introduction) : <code>string</code> ℗
         * [~blockedmessage](#Main..blockedmessage) : <code>string</code> ℗
         * [~addmessage](#Main..addmessage) : <code>string</code> ℗
@@ -2798,6 +2808,8 @@ Basic commands and features for the bot.
         * [~helpObject](#Main..helpObject) ℗
         * [~onGuildCreate(guild)](#Main..onGuildCreate) ℗
         * [~onGuildBanAdd(guild, user)](#Main..onGuildBanAdd) ℗
+        * [~commandToggleMute(msg)](#Main..commandToggleMute) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~onMessage(msg)](#Main..onMessage) ℗
         * [~commandAddMe(msg)](#Main..commandAddMe) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandAdd(msg)](#Main..commandAdd) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandSimplify(msg)](#Main..commandSimplify) : [<code>commandHandler</code>](#commandHandler) ℗
@@ -2967,6 +2979,21 @@ Array of all timers currently set.
 
 **Kind**: inner property of [<code>Main</code>](#Main)  
 **Access**: private  
+<a name="Main..disabledAutoSmite"></a>
+
+### Main~disabledAutoSmite : <code>Object.&lt;boolean&gt;</code> ℗
+All guilds that have disabled the auto-smite feature.
+
+**Kind**: inner property of [<code>Main</code>](#Main)  
+**Access**: private  
+<a name="Main..mentionAccumulator"></a>
+
+### Main~mentionAccumulator : <code>Object.&lt;Object.&lt;string&gt;&gt;</code> ℗
+The guilds with auto-smite enabled, and members who have mentioned
+
+**Kind**: inner property of [<code>Main</code>](#Main)  
+**Access**: private  
+**Everyone,**: and the timestamps of these mentions.  
 <a name="Main..introduction"></a>
 
 ### Main~introduction : <code>string</code> ℗
@@ -3027,7 +3054,7 @@ Handle being added to a guild.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| guild | <code>Discord.Guild</code> | The guild that we just joined. |
+| guild | <code>Discord~Guild</code> | The guild that we just joined. |
 
 <a name="Main..onGuildBanAdd"></a>
 
@@ -3039,8 +3066,32 @@ Handle user banned on a guild.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| guild | <code>Discord.Guild</code> | The guild on which the ban happened. |
-| user | <code>Discord.User</code> | The user that was banned. |
+| guild | <code>Discord~Guild</code> | The guild on which the ban happened. |
+| user | <code>Discord~User</code> | The user that was banned. |
+
+<a name="Main..commandToggleMute"></a>
+
+### Main~commandToggleMute(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Toggles auto-muting a user for using @everyone too much.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Main..onMessage"></a>
+
+### Main~onMessage(msg) ℗
+Handle receiving a message for use on auto-muting users who spam @everyone.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message that was sent. |
 
 <a name="Main..commandAddMe"></a>
 

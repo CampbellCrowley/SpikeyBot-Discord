@@ -332,7 +332,6 @@ function HungryGames() {
    * @private
    * @type {Object.<string>}
    * @constant
-   * @default
    */
   const emoji = {
     x: '❌',

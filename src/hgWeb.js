@@ -58,7 +58,7 @@ function HGWeb(hg) {
 
   /**
    * Causes a full shutdown of all servers.
-   * @private
+   * @public
    */
   this.shutdown = function() {
     io.close();
@@ -115,6 +115,7 @@ function HGWeb(hg) {
   /**
    * Handler for a new socket connecting.
    *
+   * @private
    * @param {Socket} socket The socket.io socket that connected.
    */
   function socketConnection(socket) {
@@ -399,6 +400,7 @@ function HGWeb(hg) {
    * Check that the given user has permission to manage the games in the given
    * guild.
    *
+   * @private
    * @param {UserData} userData The user to check.
    * @param {string} gId The guild id to check against.
    * @return {boolean} Whther the user has permission or not to manage the
@@ -418,6 +420,7 @@ function HGWeb(hg) {
    * Check that the given user has permission to see and send messages in the
    * given channel, as well as manage the games in the given guild.
    *
+   * @private
    * @param {UserData} userData The user to check.
    * @param {string} gId The guild id of the guild that contains the channel.
    * @param {string} cId The channel id to check against.
@@ -468,6 +471,7 @@ function HGWeb(hg) {
    * Strips a Discord~GuildMember to only the necessary data that a client will
    * need.
    *
+   * @private
    * @param {Discord~GuildMember} m The guild member to strip the data from.
    * @return {Object} The minimal member.
    */
@@ -495,6 +499,7 @@ function HGWeb(hg) {
   /**
    * Formats a request to the discord api at the given path.
    *
+   * @private
    * @param {LoginInfo} loginInfo The credentials of the user we are sending the
    * request for.
    * @param {string} path The path for the api request to send.
@@ -513,6 +518,7 @@ function HGWeb(hg) {
   /**
    * Send a https request to discord.
    *
+   * @private
    * @param {?Object|string} data The data to send in the request.
    * @param {basicCallback} cb Callback with error, and data arguments.
    * @param {?Object} host Request object to override the default with.
@@ -546,6 +552,7 @@ function HGWeb(hg) {
   /**
    * Refreshes the given token once it expires.
    *
+   * @private
    * @param {LoginInfo} loginInfo The credentials to refresh.
    * @param {singleCB} cb The callback that is fired storing the new credentials
    * once they are refreshed.
@@ -572,6 +579,7 @@ function HGWeb(hg) {
   /**
    * Request new credentials with refresh token from discord.
    *
+   * @private
    * @param {string} refreshToken The refresh token used for refreshing
    * credentials.
    * @param {basicCallback} cb The callback from the https request, with an
@@ -591,6 +599,7 @@ function HGWeb(hg) {
   /**
    * Authenticate with the discord server using a login code.
    *
+   * @private
    * @param {string} code The login code received from our client.
    * @param {basicCallback} cb The response from the https request with error
    * and data arguments.

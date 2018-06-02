@@ -85,6 +85,7 @@
 | Command | Description |
 | --- | --- |
 | ?play 'url or search'  |  Play a song in your current voice channel, or add a song to the queue. |
+| ?join  |  Join you in your voice channel. |
 | ?stop  |  Stop playing music and leave the voice channel. |
 | ?skip  |  Skip the currently playing song. |
 | ?queue  |  View the songs currently in the queue. |
@@ -109,4 +110,5 @@
 | ?purge 'number' 'mentions'  |  Remove a number of messages from the current text channel. Mention people to only remove their messages. |
 | ?fuckyou/?ban 'mention'  |  I will ban the person you mention with a flashy message! |
 | ?smite 'mention'  |  Silence the peasant who dare oppose you! |
+| ?togglemute  |  Turn on or off automatically preventing a person from using @everyone if they spam it. |
 
