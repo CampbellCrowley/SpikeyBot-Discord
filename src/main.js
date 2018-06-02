@@ -89,6 +89,23 @@ function Main() {
   let timers = [];
 
   /**
+   * All guilds that have disabled the auto-smite feature.
+   *
+   * @private
+   * @type {Object.<boolean>}
+   */
+  let disabledAutoSmite = {};
+
+  /**
+   * The guilds with auto-smite enabled, and members who have mentioned
+   * @everyone, and the timestamps of these mentions.
+   *
+   * @private
+   * @type {Object.<Object.<string>>}
+   */
+  let mentionAccumulator = {};
+
+  /**
    * The introduction message the bots sends when pmme is used.
    *
    * @private
@@ -205,19 +222,22 @@ function Main() {
     self.command.on('game', commandGame);
     self.command.on('version', commandVersion);
     self.command.on(['dice', 'die', 'roll', 'd'], commandRollDie);
+    self.command.on('togglemute', commandToggleMute, true);
 
     self.client.on('guildCreate', onGuildCreate);
     self.client.on('guildBanAdd', onGuildBanAdd);
+    self.client.on('message', onMessage);
 
     fs.readFile('./save/timers.dat', function(err, file) {
       if (err) return;
-      let msg = JSON.parse(file);
+      let parsed = JSON.parse(file);
 
-      for (let i in msg.timers) {
-        if (msg.timers[i] instanceof Object && msg.timers[i].time) {
-          setTimer(msg.timers[i]);
+      for (let i in parsed.timers) {
+        if (parsed.timers[i] instanceof Object && parsed.timers[i].time) {
+          setTimer(parsed.timers[i]);
         }
       }
+      disabledAutoSmite = parsed.disabledAutoSmite || {};
     });
 
     // Format help message into rich embed.
@@ -273,15 +293,18 @@ function Main() {
 
     self.client.removeListener('guildCreate', onGuildCreate);
     self.client.removeListener('guildBanAdd', onGuildBanAdd);
+    self.client.removeListener('message', onMessage);
 
-    fs.writeFileSync('./save/timers.dat', JSON.stringify({timers: timers}));
+    fs.writeFileSync(
+        './save/timers.dat',
+        JSON.stringify({timers: timers, disabledAutoSmite: disabledAutoSmite}));
   };
 
   /**
    * Handle being added to a guild.
    *
    * @private
-   * @param {Discord.Guild} guild The guild that we just joined.
+   * @param {Discord~Guild} guild The guild that we just joined.
    * @listens Discord~Client#guildCreate
    */
   function onGuildCreate(guild) {
@@ -308,8 +331,8 @@ function Main() {
    * Handle user banned on a guild.
    *
    * @private
-   * @param {Discord.Guild} guild The guild on which the ban happened.
-   * @param {Discord.User} user The user that was banned.
+   * @param {Discord~Guild} guild The guild on which the ban happened.
+   * @param {Discord~User} user The user that was banned.
    * @listens Discord~Client#guildBanAdd
    */
   function onGuildBanAdd(guild, user) {
@@ -342,6 +365,133 @@ function Main() {
     } catch (err) {
       self.common.error('Failed to send ban from guild:' + guild.id);
       console.log(err);
+    }
+  }
+
+  /**
+   * Toggles auto-muting a user for using @everyone too much.
+   *
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens SpikeyBot~Command#toggleMute
+   */
+  function commandToggleMute(msg) {
+    if (msg.member.hasPermission(self.Discord.Permissions.FLAGS.MANAGE_ROLES)) {
+      if (disabledAutoSmite[msg.guild.id]) {
+        delete disabledAutoSmite[msg.guild.id];
+        self.common.reply(
+            msg, 'Enabled banning mentioning everyone automatically.');
+      } else {
+        disabledAutoSmite[msg.guild.id] = true;
+        self.common.reply(
+            msg, 'Disabled banning mentioning everyone automatically.');
+      }
+    } else {
+      self.common.reply(
+          msg,
+          'You must have permission to manage roles to toggle this setting.');
+    }
+  }
+  /**
+   * Handle receiving a message for use on auto-muting users who spam @everyone.
+   *
+   * @private
+   * @param {Discord~Message} msg The message that was sent.
+   * @listens Discord~Client#message
+   */
+  function onMessage(msg) {
+    if (!msg.guild) return;
+    if (disabledAutoSmite[msg.guild.id]) return;
+    if (msg.mentions.everyone) {
+      if (!mentionAccumulator[msg.guild.id]) {
+        mentionAccumulator[msg.guild.id] = {};
+      }
+      if (!mentionAccumulator[msg.guild.id][msg.author.id]) {
+        mentionAccumulator[msg.guild.id][msg.author.id] = [];
+      }
+      mentionAccumulator[msg.guild.id][msg.author.id].push(
+          msg.createdTimestamp);
+
+      let timestamps = mentionAccumulator[msg.guild.id][msg.author.id];
+      let count = 0;
+      let now = Date.now();
+      for (let i = timestamps.length - 1; i >= 0; i--) {
+        if (now - timestamps[i] < 2 * 60 * 1000) count++;
+        else timestamps.splice(i, 1);
+      }
+      if (count == 3) {
+        let hasMuteRole = false;
+        let muteRole;
+        let toMute = msg.member;
+        msg.guild.roles.forEach(function(val, key) {
+          if (val.name == 'MentionAbuser') {
+            hasMuteRole = true;
+            muteRole = val;
+          }
+        });
+        mute = function(role, member) {
+          try {
+            member.roles.add(role).then(() => {
+              self.common.reply(
+                  msg, 'I think you need a break from mentioning everyone.');
+            });
+            member.guild.channels.forEach(
+                function(channel) {
+                  if (channel.permissionsLocked) return;
+                  let overwrites = channel.permissionOverwrites.get(role.id);
+                  if (overwrites) {
+                    if (channel.type == 'category') {
+                      if (overwrites.denied.has(
+                              self.Discord.Permissions.FLAGS
+                                  .MENTION_EVERYONE)) {
+                        return;
+                      }
+                    } else if (channel.type == 'text') {
+                      if (overwrites.denied.has(
+                              self.Discord.Permissions.FLAGS
+                                  .MENTION_EVERYONE)) {
+                        return;
+                      }
+                    }
+                  }
+                  channel.updateOverwrite(role, {MENTION_EVERYONE: false})
+                      .catch(console.error);
+                });
+          } catch (err) {
+            self.common.reply(
+                msg, 'Oops! I wasn\'t able to mute ' + member.user.username +
+                    '! I\'m not sure why though!');
+            console.log(err);
+          }
+        };
+        if (!hasMuteRole) {
+          msg.guild.roles
+              .create({
+                data: {
+                  name: 'MentionAbuser',
+                  position: 0,
+                  hoist: true,
+                  color: '#2f3136',
+                  permissions: 0,
+                  mentionable: true,
+                },
+              })
+              .then((role) => {
+                mute(role, toMute);
+              })
+              .catch(() => {
+                self.common.reply(
+                    msg, 'I couldn\'t mute ' + toMute.user.username +
+                        ' because there isn\'t a "MentionAbuser" role and I ' +
+                        'couldn\'t make it!');
+              });
+        } else {
+          mute(muteRole, toMute);
+        }
+      } else if (count > 3) {
+        msg.channel.send(self.common.mention(msg) + ' Please stop.');
+      }
     }
   }
 
@@ -1096,12 +1246,14 @@ function Main() {
             if (!hasSmiteRole) {
               msg.guild.roles
                   .create({
-                    name: 'Smited',
-                    position: 0,
-                    hoist: true,
-                    color: '#2f3136',
-                    permissions: smitePerms,
-                    mentionable: true,
+                    data: {
+                      name: 'Smited',
+                      position: 0,
+                      hoist: true,
+                      color: '#2f3136',
+                      permissions: smitePerms,
+                      mentionable: true,
+                    },
                   })
                   .then((role) => {
                     smite(role, toSmite);
