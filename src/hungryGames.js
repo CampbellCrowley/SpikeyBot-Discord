@@ -3658,8 +3658,10 @@ function HungryGames() {
    * @type {HungryGames~hgCommandHandler}
    * @param {Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
+   * @param {boolean} [silent=false] Should we disable replying to the given
+   * message?
    */
-  function editTeam(msg, id) {
+  function editTeam(msg, id, silent) {
     let split = msg.text.split(' ');
     if (games[id].currentGame.inProgress) {
       switch (split[0]) {
@@ -3679,10 +3681,10 @@ function HungryGames() {
         moveTeamUser(msg, id);
         break;
       case 'rename':
-        renameTeam(msg, id);
+        renameTeam(msg, id, silent);
         break;
       case 'reset':
-        self.common.reply(msg, 'Resetting ALL teams!');
+        if (!silent) self.common.reply(msg, 'Resetting ALL teams!');
         games[id].currentGame.teams = [];
         formTeams(id);
         break;
@@ -3773,7 +3775,7 @@ function HungryGames() {
         editTeam(
             makeMessage(
                 uId, gId, null, cmd + ' ' + (one || '') + ' ' + (two || '')),
-            gId);
+            gId, true);
         break;
     }
   };
@@ -3899,15 +3901,18 @@ function HungryGames() {
    * @private
    * @param {Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
+   * @param {boolean} [silent=false] Disable replying to message.
    */
-  function renameTeam(msg, id) {
+  function renameTeam(msg, id, silent) {
     let split = msg.text.split(' ').slice(1);
     let message = split.slice(1).join(' ');
     let search = Number(split[0]);
-    if (isNaN(search) && msg.mentions.users.size == 0) {
-      self.common.reply(
-          msg, 'Please specify a team id, or mention someone on a team, in ' +
-              'order to rename their team.');
+    if (isNaN(search) && (!msg.mentions || msg.mentions.users.size == 0)) {
+      if (!silent) {
+        self.common.reply(
+            msg, 'Please specify a team id, or mention someone on a team, in ' +
+                'order to rename their team.');
+      }
       return;
     }
     let teamId = search - 1;
@@ -3919,14 +3924,18 @@ function HungryGames() {
       });
     }
     if (teamId < 0 || teamId >= games[id].currentGame.teams.length) {
-      self.common.reply(
-          msg, 'Please specify a valid team id. (0-' +
-              (games[id].currentGame.teams.length - 1) + ')');
+      if (!silent) {
+        self.common.reply(
+            msg, 'Please specify a valid team id. (0 - ' +
+                (games[id].currentGame.teams.length - 1) + ')');
+      }
       return;
     }
-    self.common.reply(
-        msg, 'Renaming "' + games[id].currentGame.teams[teamId].name +
-            '" to "' + message + '"');
+    if (!silent) {
+      self.common.reply(
+          msg, 'Renaming "' + games[id].currentGame.teams[teamId].name +
+              '" to "' + message + '"');
+    }
     games[id].currentGame.teams[teamId].name = message;
   }
 

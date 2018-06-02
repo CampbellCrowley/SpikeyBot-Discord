@@ -963,10 +963,10 @@ Hunger Games simulator.
         * [~toggleOpt(msg, id)](#HungryGames..toggleOpt) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~showOpts(msg, options)](#HungryGames..showOpts) ℗
         * [~optChangeListener(msg_, options, index)](#HungryGames..optChangeListener) ℗
-        * [~editTeam(msg, id)](#HungryGames..editTeam) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+        * [~editTeam(msg, id, [silent])](#HungryGames..editTeam) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~swapTeamUsers(msg, id)](#HungryGames..swapTeamUsers) ℗
         * [~moveTeamUser(msg, id)](#HungryGames..moveTeamUser) ℗
-        * [~renameTeam(msg, id)](#HungryGames..renameTeam) ℗
+        * [~renameTeam(msg, id, [silent])](#HungryGames..renameTeam) ℗
         * [~randomizeTeams(msg, id)](#HungryGames..randomizeTeams) ℗
         * [~createEvent(msg, id)](#HungryGames..createEvent) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~createEventNums(msg, id, show, cb)](#HungryGames..createEventNums) ℗
@@ -2364,16 +2364,17 @@ The callback for when the user chooses to change page of the options.
 
 <a name="HungryGames..editTeam"></a>
 
-### HungryGames~editTeam(msg, id) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+### HungryGames~editTeam(msg, id, [silent]) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
 Entry for all team commands.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
 **Access**: private  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord~Message</code> | The message that lead to this being called. |
-| id | <code>string</code> | The id of the guild this was triggered from. |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| msg | <code>Discord~Message</code> |  | The message that lead to this being called. |
+| id | <code>string</code> |  | The id of the guild this was triggered from. |
+| [silent] | <code>boolean</code> | <code>false</code> | Should we disable replying to the given message? |
 
 <a name="HungryGames..swapTeamUsers"></a>
 
@@ -2403,16 +2404,17 @@ Move a single user to another team.
 
 <a name="HungryGames..renameTeam"></a>
 
-### HungryGames~renameTeam(msg, id) ℗
+### HungryGames~renameTeam(msg, id, [silent]) ℗
 Rename a team.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
 **Access**: private  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord~Message</code> | The message that lead to this being called. |
-| id | <code>string</code> | The id of the guild this was triggered from. |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| msg | <code>Discord~Message</code> |  | The message that lead to this being called. |
+| id | <code>string</code> |  | The id of the guild this was triggered from. |
+| [silent] | <code>boolean</code> | <code>false</code> | Disable replying to message. |
 
 <a name="HungryGames..randomizeTeams"></a>
 
