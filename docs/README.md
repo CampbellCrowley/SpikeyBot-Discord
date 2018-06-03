@@ -602,8 +602,10 @@ Creates a web interface for managing the Hungry Games.
     * [new HGWeb(hg)](#new_HGWeb_new)
     * _instance_
         * [.shutdown()](#HGWeb+shutdown)
+        * [.dayStateChange(gId)](#HGWeb+dayStateChange)
     * _inner_
         * [~loginInfo](#HGWeb..loginInfo) : <code>Object.&lt;Object&gt;</code> ℗
+        * [~sockets](#HGWeb..sockets) : <code>Object.&lt;Socket&gt;</code> ℗
         * [~tokenHost](#HGWeb..tokenHost) : <code>Object</code> ℗
         * [~apiHost](#HGWeb..apiHost) : <code>Object</code> ℗
         * [~handler(req, res)](#HGWeb..handler) ℗
@@ -636,11 +638,32 @@ Causes a full shutdown of all servers.
 
 **Kind**: instance method of [<code>HGWeb</code>](#HGWeb)  
 **Access**: public  
+<a name="HGWeb+dayStateChange"></a>
+
+### hgWeb.dayStateChange(gId)
+This gets fired whenever the day state of any game changes in the hungry
+games. This then notifies all clients that the state changed, if they care
+about the guild.
+
+**Kind**: instance method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| gId | <code>string</code> | Guild id of the state change. |
+
 <a name="HGWeb..loginInfo"></a>
 
 ### HGWeb~loginInfo : <code>Object.&lt;Object&gt;</code> ℗
 Stores the tokens and associated data for all clients connected while data
 is valid.
+
+**Kind**: inner property of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+<a name="HGWeb..sockets"></a>
+
+### HGWeb~sockets : <code>Object.&lt;Socket&gt;</code> ℗
+Map of all currently connected sockets.
 
 **Kind**: inner property of [<code>HGWeb</code>](#HGWeb)  
 **Access**: private  

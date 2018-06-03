@@ -2093,6 +2093,7 @@ function HungryGames() {
     }
 
     // Signal ready to display events.
+    if (web && web.dayStateChange) web.dayStateChange(id);
     games[id].currentGame.day.state = 2;
 
     let embed = new self.Discord.MessageEmbed();
@@ -2108,6 +2109,7 @@ function HungryGames() {
     self.command.disable('say', msg.channel.id);
     games[id].outputChannel = msg.channel.id;
     intervals[id] = self.client.setInterval(function() {
+      if (web && web.dayStateChange) web.dayStateChange(id);
       printEvent(msg, id);
     }, games[id].options.delayEvents);
   }
@@ -2905,7 +2907,7 @@ function HungryGames() {
 
     let finalMessage = new self.Discord.MessageEmbed();
     finalMessage.setColor(defaultColor);
-    if (numTeams == 1) {
+    if (games[id].options.teammatesCollaborate && numTeams == 1) {
       let teamName = games[id].currentGame.teams[lastTeam].name;
       finalMessage.setTitle(
           '\n' + teamName + ' has won ' + games[id].currentGame.name + '!');

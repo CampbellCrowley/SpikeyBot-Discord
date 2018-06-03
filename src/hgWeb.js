@@ -90,6 +90,15 @@ function HGWeb(hg) {
   let loginInfo = {};
   let currentSessions = {};
 
+
+  /**
+   * Map of all currently connected sockets.
+   *
+   * @private
+   * @type {Object.<Socket>}
+   */
+  let sockets = {};
+
   try {
     loginInfo = JSON.parse(fs.readFileSync('./save/hgWebClients.json') || {});
   } catch (err) {
@@ -122,6 +131,7 @@ function HGWeb(hg) {
     const ipName =
         hg.common.getIPName(socket.handshake.headers['x-forwarded-for']);
     hg.common.log('Socket connected: ' + ipName, socket.id);
+    sockets[socket.id] = socket;
 
     let userData = {};
     let session = Math.random().toString(36).substring(2, 15) +
@@ -247,6 +257,9 @@ function HGWeb(hg) {
           return newG;
         });
         socket.emit('guilds', null, strippedGuilds);
+        socket.cachedGuilds = strippedGuilds.map((g) => {
+          return g.id;
+        });
       } catch (err) {
         hg.common.error(err, 'HG');
         socket.emit('guilds', 'Failed', null);
@@ -297,6 +310,36 @@ function HGWeb(hg) {
       }
 
       socket.emit('game', gId, hg.getGame(gId));
+    });
+    socket.on('fetchDay', (gId) => {
+      let hasPerm = true;
+      if (!userData) {
+        hasPerm = false;
+      } else {
+        let g = hg.client.guilds.get(gId);
+        if (!g) {
+          hasPerm = false;
+        } else {
+          let m = g.members.get(userData.id);
+          if (!m) {
+            hasPerm = false;
+          }
+        }
+      }
+      if (!hasPerm) {
+        replyNoPerm(socket, 'fetchDay');
+        return;
+      }
+      let game = hg.getGame(gId);
+      if (!game || !game.currentGame || !game.currentGame.day) {
+        socket.emit(
+            'message',
+            'There doesn\'t appear to be a game on this server yet.');
+        return;
+      }
+
+      socket.emit(
+          'day', gId, game.currentGame.day, game.currentGame.includedUsers);
     });
 
     socket.on('fetchDefaultOptions', () => {
@@ -441,8 +484,36 @@ function HGWeb(hg) {
     socket.on('disconnect', () => {
       hg.common.log('Socket disconnected: ' + ipName, socket.id);
       if (loginInfo[session]) clearTimeout(loginInfo[session].refreshTimeout);
+      delete sockets[socket.id];
     });
   }
+
+  /**
+   * This gets fired whenever the day state of any game changes in the hungry
+   * games. This then notifies all clients that the state changed, if they care
+   * about the guild.
+   *
+   * @public
+   * @param {string} gId Guild id of the state change.
+   */
+  this.dayStateChange = function(gId) {
+    let keys = Object.keys(sockets);
+    let game = hg.getGame(gId);
+    let eventState = null;
+    if (game.currentGame.day.events[game.currentGame.day.state - 2] &&
+        game.currentGame.day.events[game.currentGame.day.state - 2].battle) {
+      eventState =
+          game.currentGame.day.events[game.currentGame.day.state - 2].state;
+    }
+    for (let i in keys) {
+      if (!sockets[keys[i]].cachedGuilds) continue;
+      if (sockets[keys[i]].cachedGuilds.find((g) => g === gId)) {
+        sockets[keys[i]].emit(
+            'dayState', gId, game.currentGame.day.num,
+            game.currentGame.day.state, eventState);
+      }
+    }
+  };
 
   /**
    * Send a message to the given socket inorming the client that the command
@@ -453,7 +524,7 @@ function HGWeb(hg) {
    * @param {string} cmd THe command the client attempted.
    */
   function replyNoPerm(socket, cmd) {
-    common.log('Attempted ' + cmd + ' without permission.', socket.id);
+    hg.common.log('Attempted ' + cmd + ' without permission.', socket.id);
     socket.emit(
         'message', 'Failed to run command "' + cmd +
             '" because you don\'t have permission for this.');
@@ -496,7 +567,7 @@ function HGWeb(hg) {
     let g = hg.client.guilds.get(gId);
     if (!g) return false;
     let m = g.members.get(userData.id);
-    if (!m || !m.roles.get((r) => r.name == hg.roleName)) return false;
+    if (!m || !m.roles.find((r) => r.name == hg.roleName)) return false;
 
     let channel = g.channels.get(cId);
     if (!channel) return false;
