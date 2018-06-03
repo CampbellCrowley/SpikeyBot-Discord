@@ -1746,6 +1746,19 @@ function HungryGames() {
       }
     }
   }
+
+  /**
+   * Start the next day of the game in the given channel and guild by the given
+   * user.
+   *
+   * @public
+   * @param {string} uId The id of the user who trigged autoplay to start.
+   * @param {string} gId The id of the guild to run autoplay in.
+   * @param {string} cId The id of the channel to run autoplay in.
+   */
+  this.nextDay = function(uId, gId, cId) {
+    nextDay(makeMessage(uId, gId, cId), gId);
+  };
   /**
    * Simulate a single day then show events to users.
    *

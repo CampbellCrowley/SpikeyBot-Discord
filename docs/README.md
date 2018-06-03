@@ -610,6 +610,7 @@ Creates a web interface for managing the Hungry Games.
         * [~purgeSessions()](#HGWeb..purgeSessions) ℗
         * [~socketConnection(socket)](#HGWeb..socketConnection) ℗
             * [~receivedLoginInfo(data)](#HGWeb..socketConnection..receivedLoginInfo) ℗
+        * [~replyNoPerm(socket, cmd)](#HGWeb..replyNoPerm) ℗
         * [~checkPerm(userData, gId)](#HGWeb..checkPerm) ⇒ <code>boolean</code> ℗
         * [~checkChannelPerm(userData, gId, cId)](#HGWeb..checkChannelPerm) ⇒ <code>boolean</code> ℗
         * [~fetchIdentity(loginInfo, cb)](#HGWeb..fetchIdentity) ℗
@@ -704,6 +705,20 @@ and refresh the tokens when necessary.
 | Param | Type | Description |
 | --- | --- | --- |
 | data | <code>Object</code> | User data. |
+
+<a name="HGWeb..replyNoPerm"></a>
+
+### HGWeb~replyNoPerm(socket, cmd) ℗
+Send a message to the given socket inorming the client that the command
+they attempted failed due to insufficient permission.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| socket | <code>Socket</code> | The socket.io socket to reply on. |
+| cmd | <code>string</code> | THe command the client attempted. |
 
 <a name="HGWeb..checkPerm"></a>
 
@@ -861,6 +876,7 @@ Hunger Games simulator.
         * [.startAutoplay(uId, gId, cId)](#HungryGames+startAutoplay)
         * [.endGame(uId, gId)](#HungryGames+endGame)
         * [.pauseAutoplay(uId, gId)](#HungryGames+pauseAutoplay)
+        * [.nextDay(uId, gId, cId)](#HungryGames+nextDay)
         * [.excludeUsers(users, id)](#HungryGames+excludeUsers) ⇒ <code>string</code>
         * [.includeUsers(users, id)](#HungryGames+includeUsers) ⇒ <code>string</code>
         * [.setOption(id, option, value)](#HungryGames+setOption) ⇒ <code>string</code>
@@ -1170,6 +1186,21 @@ Pause autoplay in the given guild as the given user.
 | --- | --- | --- |
 | uId | <code>string</code> | The id of the user who trigged autoplay to end. |
 | gId | <code>string</code> | The id of the guild to end autoplay. |
+
+<a name="HungryGames+nextDay"></a>
+
+### hungryGames.nextDay(uId, gId, cId)
+Start the next day of the game in the given channel and guild by the given
+user.
+
+**Kind**: instance method of [<code>HungryGames</code>](#HungryGames)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| uId | <code>string</code> | The id of the user who trigged autoplay to start. |
+| gId | <code>string</code> | The id of the guild to run autoplay in. |
+| cId | <code>string</code> | The id of the channel to run autoplay in. |
 
 <a name="HungryGames+excludeUsers"></a>
 

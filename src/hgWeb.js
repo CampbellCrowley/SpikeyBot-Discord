@@ -291,7 +291,10 @@ function HGWeb(hg) {
     });
 
     socket.on('fetchGames', (gId) => {
-      if (!checkPerm(userData, gId)) return;
+      if (!checkPerm(userData, gId)) {
+        replyNoPerm(socket, 'fetchGames');
+        return;
+      }
 
       socket.emit('game', gId, hg.getGame(gId));
     });
@@ -304,17 +307,26 @@ function HGWeb(hg) {
     });
 
     socket.on('excludeMember', (gId, mId) => {
-      if (!checkPerm(userData, gId)) return;
+      if (!checkPerm(userData, gId)) {
+        replyNoPerm(socket, 'excludeMember');
+        return;
+      }
       socket.emit('message', hg.excludeUsers([mId], gId));
       socket.emit('game', gId, hg.getGame(gId));
     });
     socket.on('includeMember', (gId, mId) => {
-      if (!checkPerm(userData, gId)) return;
+      if (!checkPerm(userData, gId)) {
+        replyNoPerm(socket, 'includeMember');
+        return;
+      }
       socket.emit('message', hg.includeUsers([mId], gId));
       socket.emit('game', gId, hg.getGame(gId));
     });
     socket.on('toggleOption', (gId, option, value) => {
-      if (!checkPerm(userData, gId)) return;
+      if (!checkPerm(userData, gId)) {
+        replyNoPerm(socket, 'toggleOption');
+        return;
+      }
       socket.emit('message', hg.setOption(gId, option, value));
       if (hg.getGame(gId)) {
         socket.emit('option', gId, option, hg.getGame(gId).options[option]);
@@ -324,47 +336,80 @@ function HGWeb(hg) {
       }
     });
     socket.on('createGame', (gId) => {
-      if (!checkPerm(userData, gId)) return;
+      if (!checkPerm(userData, gId)) {
+        replyNoPerm(socket, 'createGame');
+        return;
+      }
       hg.createGame(gId);
       socket.emit('message', 'Game created');
       socket.emit('game', gId, hg.getGame(gId));
     });
     socket.on('resetGame', (gId, cmd) => {
-      if (!checkPerm(userData, gId)) return;
+      if (!checkPerm(userData, gId)) {
+        replyNoPerm(socket, 'resetGame');
+        return;
+      }
       socket.emit('message', hg.resetGame(gId, cmd));
       socket.emit('game', gId, hg.getGame(gId));
     });
     socket.on('startGame', (gId, cId) => {
-      if (!checkChannelPerm(userData, gId, cId)) return;
+      if (!checkChannelPerm(userData, gId, cId)) {
+        replyNoPerm(socket, 'startGame');
+        return;
+      }
       hg.startGame(userData.id, gId, cId);
       socket.emit('message', 'Game started');
       socket.emit('game', gId, hg.getGame(gId));
     });
     socket.on('startAutoplay', (gId, cId) => {
-      if (!checkChannelPerm(userData, gId, cId)) return;
+      if (!checkChannelPerm(userData, gId, cId)) {
+        replyNoPerm(socket, 'startAutoplay');
+        return;
+      }
       hg.startAutoplay(userData.id, gId, cId);
       socket.emit('message', 'Autoplay enabled');
       socket.emit('game', gId, hg.getGame(gId));
     });
+    socket.on('nextDay', (gId, cId) => {
+      if (!checkChannelPerm(userData, gId, cId)) {
+        replyNoPerm(socket, 'checkChannelPerm');
+        return;
+      }
+      hg.nextDay(userData.id, gId, cId);
+      socket.emit('message', 'Starting next day');
+    });
     socket.on('endGame', (gId) => {
-      if (!checkPerm(userData, gId)) return;
+      if (!checkPerm(userData, gId)) {
+        replyNoPerm(socket, 'endGame');
+        return;
+      }
       hg.endGame(userData.id, gId);
       socket.emit('message', 'Game ended');
       socket.emit('game', gId, hg.getGame(gId));
     });
     socket.on('pauseAutoplay', (gId) => {
-      if (!checkPerm(userData, gId)) return;
+      if (!checkPerm(userData, gId)) {
+        replyNoPerm(socket, 'pauseAutoplay');
+        return;
+      }
       hg.pauseAutoplay(userData.id, gId);
       socket.emit('message', 'Autoplay paused');
       socket.emit('game', gId, hg.getGame(gId));
     });
     socket.on('editTeam', (gId, cmd, one, two) => {
-      if (!checkPerm(userData, gId)) return;
+      if (!checkPerm(userData, gId)) {
+        replyNoPerm(socket, 'editTeam');
+        return;
+      }
       hg.editTeam(userData.id, gId, cmd, one, two);
+      socket.emit('message', 'Request received to ' + cmd + ' team');
       socket.emit('game', gId, hg.getGame(gId));
     });
     socket.on('createEvent', (gId, type, message, nV, nA, oV, oA, kV, kA) => {
-      if (!checkPerm(userData, gId)) return;
+      if (!checkPerm(userData, gId)) {
+        replyNoPerm(socket, 'createEvent');
+        return;
+      }
       let err = hg.makeAndAddEvent(gId, type, message, nV, nA, oV, oA, kV, kA);
       if (err) {
         socket.emit('message', 'Failed to create event: ' + err);
@@ -374,7 +419,10 @@ function HGWeb(hg) {
       }
     });
     socket.on('removeEvent', (gId, type, event) => {
-      if (!checkPerm(userData, gId)) return;
+      if (!checkPerm(userData, gId)) {
+        replyNoPerm(socket, 'removeEvent');
+        return;
+      }
       let err = hg.removeEvent(gId, type, event);
       if (err) {
         socket.emit('message', 'Failed to remove event: ' + err);
@@ -394,6 +442,21 @@ function HGWeb(hg) {
       hg.common.log('Socket disconnected: ' + ipName, socket.id);
       if (loginInfo[session]) clearTimeout(loginInfo[session].refreshTimeout);
     });
+  }
+
+  /**
+   * Send a message to the given socket inorming the client that the command
+   * they attempted failed due to insufficient permission.
+   *
+   * @private
+   * @param {Socket} socket The socket.io socket to reply on.
+   * @param {string} cmd THe command the client attempted.
+   */
+  function replyNoPerm(socket, cmd) {
+    common.log('Attempted ' + cmd + ' without permission.', socket.id);
+    socket.emit(
+        'message', 'Failed to run command "' + cmd +
+            '" because you don\'t have permission for this.');
   }
 
   /**
