@@ -7,6 +7,11 @@
     "Light has returned to the arena. Day {} has begun.",
     "Good morning! Try to survive day {}.",
     "Day {}. Another day, another chance to die.",
+    "#{}... has begun...",
+    "{} is the number of today. Today is day {}.",
+    "I like the number {}, it means somebody will die today.",
+    "Today is day {}.",
+    "Rise and shine! It's day {}!",
     "Beware, day {}..."
   ],
   "dayEnd": [

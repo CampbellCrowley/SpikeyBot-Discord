@@ -701,6 +701,11 @@ function HungryGames() {
               '\n```',
           true);
     });
+    tmpHelp.addField(
+        'Web Interface', '[Hungry Games Online Control](' + self.common.webURL +
+            'hg/)```Manage the Games without using commands!\n' +
+            self.common.webURL + 'hg/```',
+        true);
     helpMessage = tmpHelp;
   }
 
@@ -3022,18 +3027,19 @@ function HungryGames() {
                     '{}', games[id].currentGame.teams[lastWholeTeam].name));
       }
     }
-
-    let embed = new self.Discord.MessageEmbed();
-    if (games[id].currentGame.day.num == 0) {
-      embed.setTitle(getMessage('bloodbathEnd'));
-    } else {
-      embed.setTitle(
-          getMessage('dayEnd')
-              .replaceAll('{day}', games[id].currentGame.day.num)
-              .replaceAll('{alive}', numAlive));
+    if (!games[id].currentGame.ended) {
+      let embed = new self.Discord.MessageEmbed();
+      if (games[id].currentGame.day.num == 0) {
+        embed.setTitle(getMessage('bloodbathEnd'));
+      } else {
+        embed.setTitle(
+            getMessage('dayEnd')
+                .replaceAll('{day}', games[id].currentGame.day.num)
+                .replaceAll('{alive}', numAlive));
+      }
+      embed.setColor(defaultColor);
+      msg.channel.send(embed);
     }
-    embed.setColor(defaultColor);
-    msg.channel.send(embed);
 
     if (numTeams == 1) {
       let sendTime =

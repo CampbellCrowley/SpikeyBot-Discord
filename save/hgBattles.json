@@ -7,6 +7,31 @@
   ],
   "attacks": [
     {
+      "message": "{attacker}, and {victim} fall off a small cliff!",
+      "attacker": { "damage": 1 },
+      "victim": { "damage": 1 }
+    },
+    {
+      "message": "{attacker} kicks {victim} in the rear!",
+      "attacker": { "damage": 0 },
+      "victim": { "damage": 1 }
+    },
+    {
+      "message": "{attacker} knocks a tooth from {victim}'s mouth!",
+      "attacker": { "damage": 0 },
+      "victim": { "damage": 1 }
+    },
+    {
+      "message": "{attacker} dodges {victim}'s fist, then punches {victim} in the mouth!",
+      "attacker": { "damage": 0 },
+      "victim": { "damage": 1 }
+    },
+    {
+      "message": "{victim} is knocked down by {attacker}!",
+      "attacker": { "damage": 0 },
+      "victim": { "damage": 1 }
+    },
+    {
       "message": "{attacker} punches {victim} in the face!",
       "attacker": { "damage": 0 },
       "victim": { "damage": 1 }

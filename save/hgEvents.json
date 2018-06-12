@@ -338,16 +338,6 @@
   ],
   "player": [
     {
-      "message": "{victim} discover[Vs|] друг in a forest.",
-      "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "nothing" }
-    },
-    {
-      "message": "{victim} discover[Vs|] друг in a forest, and while distracted, {attacker} kill[As|] them!",
-      "attacker": { "count": "-1", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "dies" }
-    },
-    {
       "message": "{victim} pretend[Vs|] this is really Fortnite.",
       "attacker": { "count": "0", "outcome": "nothing" },
       "victim": { "count": "-1", "outcome": "nothing" }
@@ -359,11 +349,6 @@
     },
     {
       "message": "{victim} pretend[Vs|] this is really PUBG.",
-      "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "nothing" }
-    },
-    {
-      "message": "{victim} think[Vs|] they can be as cool as the yodeling Walmart kid, and start[Vs|] yodeling.",
       "attacker": { "count": "0", "outcome": "nothing" },
       "victim": { "count": "-1", "outcome": "nothing" }
     },
