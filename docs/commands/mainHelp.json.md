@@ -37,10 +37,10 @@
 | --- | --- |
 | ?play 'url or search'  |  Play a song in your current voice channel, or add a song to the queue. |
 | ?join  |  Join you in your voice channel. |
-| ?stop  |  Stop playing music and leave the voice channel. |
+| ?stop  |  Stop playing music and leave the voice channel. [leave, stop, stfu] |
 | ?skip  |  Skip the currently playing song. |
-| ?queue  |  View the songs currently in the queue. |
-| ?remove 'index'  |  Remove a song with the given queue index from the queue. |
+| ?queue  |  View the songs currently in the queue. [queue, playing] |
+| ?remove 'index'  |  Remove a song with the given queue index from the queue. [remove, dequeue] |
 | ?lyrics 'song'  |  Search for song lyrics. |
 
 ## Math Stuff
