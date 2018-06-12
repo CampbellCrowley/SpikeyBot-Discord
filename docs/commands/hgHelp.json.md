@@ -5,17 +5,17 @@
 
 | Command | Description |
 | --- | --- |
-| ?hg create  |  This will create a game with default settings if it doesn't exist already. |
-| ?hg options 'option name' 'value'  |  List options if no name, or change the option if you give a name. |
+| ?hg create  |  This will create a game with default settings if it doesn't exist already. [create, c, new] |
+| ?hg options 'option name' 'value'  |  List options if no name, or change the option if you give a name. [options, option, opt, opts] |
 | ?hg reset 'all/current/events/options/teams'  |  Delete data about the Games. Don't choose an option for more info. |
 
 ## Player Settings
 
 | Command | Description |
 | --- | --- |
-| ?hg players  |  This will list all players I currently care about. |
-| ?hg exclude 'mention'  |  Prevent someone from being added to the next game. |
-| ?hg include 'mention'  |  Add a person back into the next game. |
+| ?hg players  |  This will list all players I currently care about. [players, player] |
+| ?hg exclude 'mention'  |  Prevent someone from being added to the next game. [exclude, remove, exc, ex] |
+| ?hg include 'mention'  |  Add a person back into the next game. [include, add, inc, in] |
 
 ## Team Settings
 
@@ -31,18 +31,18 @@
 
 | Command | Description |
 | --- | --- |
-| ?hg events  |  This will list all custom events that could happen in the game. |
+| ?hg events  |  This will list all custom events that could happen in the game. [events, event] |
 | ?hg debugevents  |  This will let you download all of the events and their data. |
-| ?hg events add 'message'  |  Begins process of adding a custom event. |
-| ?hg events remove 'number'  |  Remove a custom event. The number is the number shown in the list of events. |
+| ?hg events add 'message'  |  Begins process of adding a custom event. [add, create] |
+| ?hg events remove 'number'  |  Remove a custom event. The number is the number shown in the list of events. [remove, delete] |
 
 ## Time Control
 
 | Command | Description |
 | --- | --- |
-| ?hg start  |  This will start a game with your settings. |
-| ?hg end  |  This will end a game early. |
-| ?hg autoplay  |  Automatically continue to the next day after a day is over. |
-| ?hg pause  |  Stop autoplay at the end of the day. |
-| ?hg next  |  Simulate the next day of the Games! |
+| ?hg start  |  This will start a game with your settings. [start, s] |
+| ?hg end  |  This will end a game early. [end, abort] |
+| ?hg autoplay  |  Automatically continue to the next day after a day is over. [autoplay, auto, resume, play, go] |
+| ?hg pause  |  Stop autoplay at the end of the day. [pause, stop] |
+| ?hg next  |  Simulate the next day of the Games! [next, nextday] |
 

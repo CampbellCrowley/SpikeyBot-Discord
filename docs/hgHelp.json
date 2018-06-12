@@ -6,17 +6,17 @@
     {
       "title": "Game Settings",
       "rows": [
-        "create // This will create a game with default settings if it doesn't exist already.",
-        "options 'option name' 'value' // List options if no name, or change the option if you give a name.",
+        "create // This will create a game with default settings if it doesn't exist already. [create, c, new]",
+        "options 'option name' 'value' // List options if no name, or change the option if you give a name. [options, option, opt, opts]",
         "reset 'all/current/events/options/teams' // Delete data about the Games. Don't choose an option for more info."
       ]
     },
     {
       "title": "Player Settings",
       "rows": [
-        "players // This will list all players I currently care about.",
-        "exclude 'mention' // Prevent someone from being added to the next game.",
-        "include 'mention' // Add a person back into the next game."
+        "players // This will list all players I currently care about. [players, player]",
+        "exclude 'mention' // Prevent someone from being added to the next game. [exclude, remove, exc, ex]",
+        "include 'mention' // Add a person back into the next game. [include, add, inc, in]"
       ]
     },
     {
@@ -32,20 +32,20 @@
     {
       "title": "Events",
       "rows": [
-        "events // This will list all custom events that could happen in the game.",
+        "events // This will list all custom events that could happen in the game. [events, event]",
         "debugevents // This will let you download all of the events and their data.",
-        "events add 'message' // Begins process of adding a custom event.",
-        "events remove 'number' // Remove a custom event. The number is the number shown in the list of events."
+        "events add 'message' // Begins process of adding a custom event. [add, create]",
+        "events remove 'number' // Remove a custom event. The number is the number shown in the list of events. [remove, delete]"
       ]
     },
     {
       "title": "Time Control",
       "rows": [
-        "start // This will start a game with your settings.",
-        "end // This will end a game early.",
-        "autoplay // Automatically continue to the next day after a day is over.",
-        "pause // Stop autoplay at the end of the day.",
-        "next // Simulate the next day of the Games!"
+        "start // This will start a game with your settings. [start, s]",
+        "end // This will end a game early. [end, abort]",
+        "autoplay // Automatically continue to the next day after a day is over. [autoplay, auto, resume, play, go]",
+        "pause // Stop autoplay at the end of the day. [pause, stop]",
+        "next // Simulate the next day of the Games! [next, nextday]"
       ]
     }
   ]

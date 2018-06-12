@@ -6,17 +6,17 @@
 
 | Command | Description |
 | --- | --- |
-| ?hg create  |  This will create a game with default settings if it doesn't exist already. |
-| ?hg options 'option name' 'value'  |  List options if no name, or change the option if you give a name. |
+| ?hg create  |  This will create a game with default settings if it doesn't exist already. [create, c, new] |
+| ?hg options 'option name' 'value'  |  List options if no name, or change the option if you give a name. [options, option, opt, opts] |
 | ?hg reset 'all/current/events/options/teams'  |  Delete data about the Games. Don't choose an option for more info. |
 
 ## Player Settings
 
 | Command | Description |
 | --- | --- |
-| ?hg players  |  This will list all players I currently care about. |
-| ?hg exclude 'mention'  |  Prevent someone from being added to the next game. |
-| ?hg include 'mention'  |  Add a person back into the next game. |
+| ?hg players  |  This will list all players I currently care about. [players, player] |
+| ?hg exclude 'mention'  |  Prevent someone from being added to the next game. [exclude, remove, exc, ex] |
+| ?hg include 'mention'  |  Add a person back into the next game. [include, add, inc, in] |
 
 ## Team Settings
 
@@ -32,20 +32,20 @@
 
 | Command | Description |
 | --- | --- |
-| ?hg events  |  This will list all custom events that could happen in the game. |
+| ?hg events  |  This will list all custom events that could happen in the game. [events, event] |
 | ?hg debugevents  |  This will let you download all of the events and their data. |
-| ?hg events add 'message'  |  Begins process of adding a custom event. |
-| ?hg events remove 'number'  |  Remove a custom event. The number is the number shown in the list of events. |
+| ?hg events add 'message'  |  Begins process of adding a custom event. [add, create] |
+| ?hg events remove 'number'  |  Remove a custom event. The number is the number shown in the list of events. [remove, delete] |
 
 ## Time Control
 
 | Command | Description |
 | --- | --- |
-| ?hg start  |  This will start a game with your settings. |
-| ?hg end  |  This will end a game early. |
-| ?hg autoplay  |  Automatically continue to the next day after a day is over. |
-| ?hg pause  |  Stop autoplay at the end of the day. |
-| ?hg next  |  Simulate the next day of the Games! |
+| ?hg start  |  This will start a game with your settings. [start, s] |
+| ?hg end  |  This will end a game early. [end, abort] |
+| ?hg autoplay  |  Automatically continue to the next day after a day is over. [autoplay, auto, resume, play, go] |
+| ?hg pause  |  Stop autoplay at the end of the day. [pause, stop] |
+| ?hg next  |  Simulate the next day of the Games! [next, nextday] |
 
 # Main Commands
 #### Here's the list of stuff I can do! PM SpikeyRobot (?pmspikey) feature requests!
@@ -62,7 +62,7 @@
 | ?joindate 'mention'  |  I will tell you the date you joined the server you sent the message from! |
 | ?pmme  |  I will introduce myself to you! |
 | ?pmspikey 'message'  |  I will send SpikeyRobot (my creator) your message because you are too shy! |
-| ?avatar 'mention'  |  Need a better look at your profile pic? I'll show you the original. |
+| ?avatar 'mention'  |  Need a better look at your profile pic? I'll show you the original. [avatar, profile] |
 | ?ping  |  Want to know what my delay to the server is? I can tell you my ping! |
 | ?timer 'seconds' 'message...'  |  Set a timer for a certain number of seconds. The bot will DM you the message at the end. No options lists timers. |
 
@@ -78,7 +78,7 @@
 | Command | Description |
 | --- | --- |
 | ?flip  |  I have an unlimited supply of coins! I will flip one for you! |
-| ?roll 'numbers...'  |  Roll dice with any number of sides. Separate multiple numbers with spaces to roll multiple dice. |
+| ?roll 'numbers...'  |  Roll dice with any number of sides. Separate multiple numbers with spaces to roll multiple dice. [roll, dice, die, d] |
 
 ## Music Stuff
 
@@ -99,7 +99,7 @@
 | ?add 'numbers'  |  Add positive or negative numbers separated by spaces. |
 | ?simplify 'equation'  |  Simplify an equation with numbers and variables. |
 | ?solve 'equation'  |  Solve an equation for each variable in the equation. |
-| ?evaluate 'problem'  |  Solve a math problem, and convert units. |
+| ?evaluate 'problem'  |  Solve a math problem, and convert units. [eval, evaluate] |
 | ?derive 'equation with x'  |  Find dy/dx of an equation. |
 | ?graph 'equation with x' '[xMin, xMax]' '[yMin, yMax]'  |  Graph an equation, Maxes and mins are all optional, but brackets are required. |
 
@@ -107,8 +107,8 @@
 
 | Command | Description |
 | --- | --- |
-| ?purge 'number' 'mentions'  |  Remove a number of messages from the current text channel. Mention people to only remove their messages. |
-| ?fuckyou/?ban 'mention'  |  I will ban the person you mention with a flashy message! |
+| ?purge 'number' 'mentions'  |  Remove a number of messages from the current text channel. Mention people to only remove their messages. [purge, prune] |
+| ?ban 'mention'  |  I will ban the person you mention with a flashy message! [ban, fuckyou] |
 | ?smite 'mention'  |  Silence the peasant who dare oppose you! |
 | ?togglemute  |  Turn on or off automatically preventing a person from using @everyone if they spam it. |
 
