@@ -579,7 +579,7 @@ function HGWeb(hg) {
   }
 
   /**
-   * Fetches the identiry of the user we have the token of.
+   * Fetches the identity of the user we have the token of.
    *
    * @private
    * @param {LoginInfo} loginInfo The credentials of the session user.

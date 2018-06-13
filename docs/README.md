@@ -780,7 +780,7 @@ given channel.
 <a name="HGWeb..fetchIdentity"></a>
 
 ### HGWeb~fetchIdentity(loginInfo, cb) ℗
-Fetches the identiry of the user we have the token of.
+Fetches the identity of the user we have the token of.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
 **Access**: private  
