@@ -18,6 +18,11 @@
     {
       "message": "{victim} grabs a gun that may or may not work!",
       "attacker": { "count": "0", "outcome": "nothing" },
+      "victim": { "count": "1", "outcome": "nothing", "weapon": {"name": "gun", "count": 6 } }
+    },
+    {
+      "message": "{victim} grabs a gun that may or may not work!",
+      "attacker": { "count": "0", "outcome": "nothing" },
       "victim": { "count": "1", "outcome": "nothing" }
     },
     {
@@ -47,7 +52,7 @@
     },
     {
       "message": "{attacker} grabs a shovel.",
-      "attacker": { "count": "1", "outcome": "nothing" },
+      "attacker": { "count": "1", "outcome": "nothing", "weapon": { "name": "shovel", "count": "1" } },
       "victim": { "count": "0", "outcome": "nothing" }
     },
     {
@@ -66,23 +71,23 @@
       "victim": { "count": "1", "outcome": "nothing" }
     },
     {
-      "message": "{attacker} finds a bow, arrows and a quiver.",
-      "attacker": { "count": "1", "outcome": "nothing" },
+      "message": "{attacker} finds a bow, 5 arrows, and a quiver.",
+      "attacker": { "count": "1", "outcome": "nothing", "weapon": { "name": "bow", "count": 5 } },
       "victim": { "count": "0", "outcome": "nothing" }
     },
     {
       "message": "{attacker} finds a bow, arrows and a quiver, and manages to kill {victim}.",
-      "attacker": { "count": "1", "outcome": "nothing", "killer": true },
+      "attacker": { "count": "1", "outcome": "nothing", "killer": true, "weapon": { "name": "bow", "count": 2 } },
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{attacker} take[As|] a handful of throwing knives.",
-      "attacker": { "count": "-1", "outcome": "nothing" },
+      "attacker": { "count": "-1", "outcome": "nothing", "weapon": { "name": "throwingknives", "count": 5 } },
       "victim": { "count": "0", "outcome": "nothing" }
     },
     {
       "message": "{attacker} takes a mace out of {victim}'s hands.",
-      "attacker": { "count": "1", "outcome": "nothing" },
+      "attacker": { "count": "1", "outcome": "nothing", "weapon": { "name": "mace", "count": 1 } },
       "victim": { "count": "1", "outcome": "nothing" }
     },
     {
@@ -97,17 +102,17 @@
     },
     {
       "message": "{attacker} grabs a sword.",
-      "attacker": { "count": "1", "outcome": "nothing" },
+      "attacker": { "count": "1", "outcome": "nothing", "weapon": { "name": "sword", "count": 1 } },
       "victim": { "count": "0", "outcome": "nothing" }
     },
     {
       "message": "{attacker} takes a spear from the cornucopia.",
-      "attacker": { "count": "1", "outcome": "nothing" },
+      "attacker": { "count": "1", "outcome": "nothing", "weapon": { "name": "spear", "count": 1 } },
       "victim": { "count": "0", "outcome": "nothing" }
     },
     {
       "message": "{attacker} manages to find a bag full of explosives.",
-      "attacker": { "count": "1", "outcome": "nothing" },
+      "attacker": { "count": "1", "outcome": "nothing", "weapon": { "name": "explosives", "count": 3 } },
       "victim": { "count": "0", "outcome": "nothing" }
     },
     {
@@ -117,7 +122,7 @@
     },
     {
       "message": "{attacker} grabs all of the alcohol.",
-      "attacker": { "count": "1", "outcome": "nothing" },
+      "attacker": { "count": "1", "outcome": "nothing", "weapon": { "name": "alcohol", "count": 3 } },
       "victim": { "count": "0", "outcome": "nothing" }
     },
     {
@@ -197,7 +202,7 @@
     },
     {
       "message": "{attacker} decapitate[As|] {victim} with a sword.",
-      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+      "attacker": { "count": "-1", "outcome": "nothing", "killer": true, "weapon": { "name": "sword", "count": 1 } },
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
@@ -297,12 +302,12 @@
     },
     {
       "message": "{attacker} slice[As|] {victim} with a sword.",
-      "attacker": { "count": "1", "outcome": "nothing" },
+      "attacker": { "count": "1", "outcome": "nothing", "weapon": { "name": "sword", "count": 1 } },
       "victim": { "count": "-1", "outcome": "wounded" }
     },
     {
       "message": "{attacker} slice[As|] {victim} with a sword.",
-      "attacker": { "count": "1", "outcome": "nothing", "killer": true },
+      "attacker": { "count": "1", "outcome": "nothing", "killer": true, "weapon": { "name": "sword", "count": 1 } },
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
@@ -317,12 +322,12 @@
     },
     {
       "message": "{attacker} shoots an arrow at {victim} but misses.",
-      "attacker": { "count": "1", "outcome": "nothing" },
+      "attacker": { "count": "1", "outcome": "nothing", "weapon": { "name": "bow", "count": 2 } },
       "victim": { "count": "1", "outcome": "nothing" }
     },
     {
       "message": "{attacker} shoots an arrow at {victim} and kills them.",
-      "attacker": { "count": "1", "outcome": "nothing", "killer": true },
+      "attacker": { "count": "1", "outcome": "nothing", "killer": true, "weapon": { "name": "bow", "count": 2 } },
       "victim": { "count": "1", "outcome": "dies" }
     },
     {
@@ -479,7 +484,7 @@
     },
     {
       "message": "{attacker} collects a hatchet from a sponsor.",
-      "attacker": { "count": "1", "outcome": "nothing" },
+      "attacker": { "count": "1", "outcome": "nothing", "weapon": { "name": "hatchet", "count": 1 } },
       "victim": { "count": "0", "outcome": "nothing" }
     },
     {
@@ -564,7 +569,7 @@
     },
     {
       "message": "{attacker} make[As|] a slingshot out of something... who knows.",
-      "attacker": { "count": "-1", "outcome": "nothing" },
+      "attacker": { "count": "-1", "outcome": "nothing", "weapon": { "name": "slingshot", "count": 1 } },
       "victim": { "count": "0", "outcome": "nothing" }
     },
     {

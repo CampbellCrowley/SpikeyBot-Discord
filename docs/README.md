@@ -926,6 +926,7 @@ Hunger Games simulator.
         * [~battles](#HungryGames..battles) : <code>Object</code> ℗
         * [~intervals](#HungryGames..intervals) : <code>Object.&lt;number&gt;</code> ℗
         * [~battleMessage](#HungryGames..battleMessage) : <code>Object.&lt;Discord~Message&gt;</code> ℗
+        * [~weapons](#HungryGames..weapons) : <code>Object</code> ℗
         * [~defaultBloodbathEvents](#HungryGames..defaultBloodbathEvents) : [<code>Array.&lt;Event&gt;</code>](#HungryGames..Event) ℗
         * [~defaultPlayerEvents](#HungryGames..defaultPlayerEvents) : [<code>Array.&lt;Event&gt;</code>](#HungryGames..Event) ℗
         * [~defaultArenaEvents](#HungryGames..defaultArenaEvents) : [<code>Array.&lt;ArenaEvent&gt;</code>](#HungryGames..ArenaEvent) ℗
@@ -935,6 +936,7 @@ Hunger Games simulator.
         * [~eventFile](#HungryGames..eventFile) : <code>string</code> ℗
         * [~messageFile](#HungryGames..messageFile) : <code>string</code> ℗
         * [~battleFile](#HungryGames..battleFile) : <code>string</code> ℗
+        * [~weaponsFile](#HungryGames..weaponsFile) : <code>string</code> ℗
         * [~fistLeft](#HungryGames..fistLeft) : <code>string</code> ℗
         * [~fistRight](#HungryGames..fistRight) : <code>string</code> ℗
         * [~fistBoth](#HungryGames..fistBoth) : <code>string</code> ℗
@@ -960,6 +962,7 @@ Hunger Games simulator.
         * [~updateEvents()](#HungryGames..updateEvents) ℗
         * [~updateMessages()](#HungryGames..updateMessages) ℗
         * [~updateBattles()](#HungryGames..updateBattles) ℗
+        * [~updateWeapons()](#HungryGames..updateWeapons) ℗
         * [~setupHelp()](#HungryGames..setupHelp) ℗
         * [~handleMessageEdit(oldMsg, newMsg)](#HungryGames..handleMessageEdit) ℗
         * [~handleCommand(msg)](#HungryGames..handleCommand) : [<code>commandHandler</code>](#commandHandler) ℗
@@ -978,12 +981,12 @@ Hunger Games simulator.
         * [~pauseAutoplay(msg, id)](#HungryGames..pauseAutoplay) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~startAutoplay(msg, id)](#HungryGames..startAutoplay) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~nextDay(msg, id)](#HungryGames..nextDay) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
-        * [~pickEvent(userPool, eventPool, options, numAlive, teams, deathRate)](#HungryGames..pickEvent) ⇒ [<code>Event</code>](#HungryGames..Event) ℗
-        * [~validateEventTeamConstraint(numVictim, numAttacker, userPool, teams, options, victimsDie, attackersDie)](#HungryGames..validateEventTeamConstraint) ⇒ <code>boolean</code> ℗
+        * [~pickEvent(userPool, eventPool, options, numAlive, teams, deathRate, weaponWielder)](#HungryGames..pickEvent) ⇒ [<code>Event</code>](#HungryGames..Event) ℗
+        * [~validateEventTeamConstraint(numVictim, numAttacker, userPool, teams, options, victimsDie, attackersDie, weaponWielder)](#HungryGames..validateEventTeamConstraint) ⇒ <code>boolean</code> ℗
         * [~validateEventVictorConstraint(numVictim, numAttacker, numAlive, options, victimsDie, attackersDie)](#HungryGames..validateEventVictorConstraint) ⇒ <code>boolean</code> ℗
         * [~validateEventNumConstraint(numVictim, numAttacker, userPool, numAlive)](#HungryGames..validateEventNumConstraint) ⇒ <code>boolean</code> ℗
-        * [~validateEventRequirements(numVictim, numAttacker, userPool, numAlive, teams, options, victimsDie, attackersDie)](#HungryGames..validateEventRequirements) ⇒ <code>boolean</code> ℗
-        * [~pickAffectedPlayers(numVictim, numAttacker, options, userPool, teams)](#HungryGames..pickAffectedPlayers) ⇒ [<code>Array.&lt;Player&gt;</code>](#HungryGames..Player) ℗
+        * [~validateEventRequirements(numVictim, numAttacker, userPool, numAlive, teams, options, victimsDie, attackersDie, weaponWielder)](#HungryGames..validateEventRequirements) ⇒ <code>boolean</code> ℗
+        * [~pickAffectedPlayers(numVictim, numAttacker, options, userPool, teams, weaponWielder)](#HungryGames..pickAffectedPlayers) ⇒ [<code>Array.&lt;Player&gt;</code>](#HungryGames..Player) ℗
         * [~makeBattleEvent(affectedUsers, numVictim, numAttacker, mention, id)](#HungryGames..makeBattleEvent) ⇒ [<code>Event</code>](#HungryGames..Event) ℗
         * [~weightedUserRand()](#HungryGames..weightedUserRand) ⇒ <code>number</code> ℗
         * [~weightedEvent(eventPool, weightOpt)](#HungryGames..weightedEvent) ⇒ <code>number</code> ℗
@@ -1414,6 +1417,7 @@ Serializable container for data pertaining to a single user.
 | rank | <code>number</code> | The current rank of the player in the game. |
 | state | <code>string</code> | The current player state (normal, wounded, dead, zombie). |
 | kills | <code>number</code> | The number of players this player has caused to die. |
+| weapons | <code>Object.&lt;number&gt;</code> | The weapons the player currently has and how many of each. |
 
 <a name="new_HungryGames..Player_new"></a>
 
@@ -1533,6 +1537,15 @@ Storage of battle messages to edit the content of on the next update.
 **Kind**: inner property of [<code>HungryGames</code>](#HungryGames)  
 **Default**: <code>{}</code>  
 **Access**: private  
+<a name="HungryGames..weapons"></a>
+
+### HungryGames~weapons : <code>Object</code> ℗
+All weapons and their respective actions. Parsed from file.
+
+**Kind**: inner property of [<code>HungryGames</code>](#HungryGames)  
+**Default**: <code>{}</code>  
+**Access**: private  
+**See**: [weaponsFile](#HungryGames..weaponsFile)  
 <a name="HungryGames..defaultBloodbathEvents"></a>
 
 ### HungryGames~defaultBloodbathEvents : [<code>Array.&lt;Event&gt;</code>](#HungryGames..Event) ℗
@@ -1615,6 +1628,15 @@ The file path to read battle events.
 **Default**: <code>&quot;./save/hgBattles.json&quot;</code>  
 **Access**: private  
 **See**: [battles](#HungryGames..battles)  
+<a name="HungryGames..weaponsFile"></a>
+
+### HungryGames~weaponsFile : <code>string</code> ℗
+The file path to read weapon events.
+
+**Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
+**Default**: <code>&quot;./save/hgWeapons.json&quot;</code>  
+**Access**: private  
+**See**: [weapons](#HungryGames..weapons)  
 <a name="HungryGames..fistLeft"></a>
 
 ### HungryGames~fistLeft : <code>string</code> ℗
@@ -1809,6 +1831,13 @@ Parse all messages from file.
 
 ### HungryGames~updateBattles() ℗
 Parse all battles from file.
+
+**Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
+**Access**: private  
+<a name="HungryGames..updateWeapons"></a>
+
+### HungryGames~updateWeapons() ℗
+Parse all weapons events from file.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
 **Access**: private  
@@ -2052,7 +2081,7 @@ Simulate a single day then show events to users.
 
 <a name="HungryGames..pickEvent"></a>
 
-### HungryGames~pickEvent(userPool, eventPool, options, numAlive, teams, deathRate) ⇒ [<code>Event</code>](#HungryGames..Event) ℗
+### HungryGames~pickEvent(userPool, eventPool, options, numAlive, teams, deathRate, weaponWielder) ⇒ [<code>Event</code>](#HungryGames..Event) ℗
 Pick event that satisfies all requirements and settings.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
@@ -2068,10 +2097,11 @@ requirements, or null if something went wrong.
 | numAlive | <code>number</code> | Number of players in the game still alive. |
 | teams | [<code>Array.&lt;Team&gt;</code>](#HungryGames..Team) | Array of teams in this game. |
 | deathRate | [<code>EventWeights</code>](#HungryGames..EventWeights) | Death rate weights. |
+| weaponWielder | <code>Player</code> | A player that is using a weapon in this event, or null if no player is using a weapon. |
 
 <a name="HungryGames..validateEventTeamConstraint"></a>
 
-### HungryGames~validateEventTeamConstraint(numVictim, numAttacker, userPool, teams, options, victimsDie, attackersDie) ⇒ <code>boolean</code> ℗
+### HungryGames~validateEventTeamConstraint(numVictim, numAttacker, userPool, teams, options, victimsDie, attackersDie, weaponWielder) ⇒ <code>boolean</code> ℗
 Ensure teammates don't attack eachother.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
@@ -2088,6 +2118,7 @@ about teammates.
 | options | <code>Object</code> | Options for this game. |
 | victimsDie | <code>boolean</code> | Do the victims die in this event? |
 | attackersDie | <code>boolean</code> | Do the attackers die in this event? |
+| weaponWielder | <code>Player</code> | A player that is using a weapon in this event, or null if no player is using a weapon. |
 
 <a name="HungryGames..validateEventVictorConstraint"></a>
 
@@ -2127,7 +2158,7 @@ from the number of players left to choose from.
 
 <a name="HungryGames..validateEventRequirements"></a>
 
-### HungryGames~validateEventRequirements(numVictim, numAttacker, userPool, numAlive, teams, options, victimsDie, attackersDie) ⇒ <code>boolean</code> ℗
+### HungryGames~validateEventRequirements(numVictim, numAttacker, userPool, numAlive, teams, options, victimsDie, attackersDie, weaponWielder) ⇒ <code>boolean</code> ℗
 Ensure the event chosen meets all requirements for actually being used in
 the current game.
 
@@ -2145,10 +2176,11 @@ the current game.
 | options | <code>Object</code> | The options set for this game. |
 | victimsDie | <code>boolean</code> | Do the victims die in this event? |
 | attackersDie | <code>boolean</code> | Do the attackers die in this event? |
+| weaponWielder | <code>Player</code> | A player that is using a weapon in this event, or null if no player is using a weapon. |
 
 <a name="HungryGames..pickAffectedPlayers"></a>
 
-### HungryGames~pickAffectedPlayers(numVictim, numAttacker, options, userPool, teams) ⇒ [<code>Array.&lt;Player&gt;</code>](#HungryGames..Player) ℗
+### HungryGames~pickAffectedPlayers(numVictim, numAttacker, options, userPool, teams, weaponWielder) ⇒ [<code>Array.&lt;Player&gt;</code>](#HungryGames..Player) ℗
 Pick the players to put into an event.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
@@ -2163,6 +2195,7 @@ by this event.
 | options | <code>Object</code> | Options for this game. |
 | userPool | [<code>Array.&lt;Player&gt;</code>](#HungryGames..Player) | Pool of all remaining players to put into an event. |
 | teams | [<code>Array.&lt;Team&gt;</code>](#HungryGames..Team) | All teams in this game. |
+| weaponWielder | <code>Player</code> | A player that is using a weapon in this event, or null if no player is using a weapon. |
 
 <a name="HungryGames..makeBattleEvent"></a>
 

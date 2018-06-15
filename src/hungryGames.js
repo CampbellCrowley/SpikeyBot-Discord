@@ -67,6 +67,16 @@ function HungryGames() {
    * @default
    */
   const battleFile = './save/hgBattles.json';
+  /**
+   * The file path to read weapon events.
+   * @see {@link HungryGames~weapons}
+   *
+   * @private
+   * @type {string}
+   * @constant
+   * @default
+   */
+  const weaponsFile = './save/hgWeapons.json';
 
   /**
    * The file path to read attacking left image.
@@ -292,6 +302,13 @@ function HungryGames() {
           'Probability of an event being replaced by a battle between two ' +
           'players.',
     },
+    probabilityOfUseWeapon: {
+      value: 0.33,
+      percent: true,
+      comment:
+          'Probability of each player using their weapon each day if they ' +
+          'have one.',
+    },
   };
   this.defaultOptions = defaultOptions;
 
@@ -509,6 +526,15 @@ function HungryGames() {
    */
   let battleMessage = {};
   /**
+   * All weapons and their respective actions. Parsed from file.
+   * @see {@link HungryGames~weaponsFile}
+   *
+   * @private
+   * @type {Object}
+   * @default
+   */
+  let weapons = {};
+  /**
    * Default parsed bloodbath events.
    * @see {@link HungryGames~eventFile}
    *
@@ -645,6 +671,34 @@ function HungryGames() {
     }
     updateBattles();
   });
+  /**
+   * Parse all weapons events from file.
+   *
+   * @private
+   */
+  function updateWeapons() {
+    fs.readFile(weaponsFile, function(err, data) {
+      if (err) return;
+      try {
+        let parsed = JSON.parse(data);
+        if (parsed) {
+          weapons = parsed;
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    });
+  }
+  updateWeapons();
+  fs.watchFile(weaponsFile, function(curr, prev) {
+    if (curr.mtime == prev.mtime) return;
+    if (self.common && self.common.log) {
+      self.common.log('Re-reading default weapons from file', 'HG');
+    } else {
+      console.log('HG: Re-reading default weapons from file');
+    }
+    updateWeapons();
+  });
 
   /**
    * Reply to help on a server.
@@ -730,7 +784,8 @@ function HungryGames() {
       if (games[key].options) {
         for (let opt in defaultOptions) {
           if (!defaultOptions[opt] instanceof Object) continue;
-          if (typeof games[key].options[opt] === 'undefined') {
+          if (typeof games[key].options[opt] !==
+              typeof defaultOptions[opt].value) {
             games[key].options[opt] = defaultOptions[opt].value;
           }
         }
@@ -1023,6 +1078,8 @@ function HungryGames() {
    * zombie).
    * @property {number} kills The number of players this player has caused to
    * die.
+   * @property {Object.<number>} weapons The weapons the player currently has
+   * and how many of each.
    */
   function Player(id, username, avatarURL) {
     // User id.
@@ -1041,6 +1098,8 @@ function HungryGames() {
     this.state = 'normal';
     // Number of kills this user has for the game.
     this.kills = 0;
+    // Map of the weapons this user currently has, and how many of each.
+    this.weapons = {};
   };
 
   /**
@@ -1861,6 +1920,9 @@ function HungryGames() {
       }
     }
 
+    // TODO: Allow custom user-created weapons.
+    let weaponEventPool = weapons;
+
     const deathRate = games[id].currentGame.day.num === 0 ?
         games[id].options.bloodbathDeathRate :
         games[id].options.playerDeathRate;
@@ -1870,7 +1932,75 @@ function HungryGames() {
       let affectedUsers;
       let numAttacker;
       let numVictim;
-      let doBattle = !doArenaEvent && userPool.length > 1 &&
+
+      let userWithWeapon = null;
+      if (!doArenaEvent) {
+        let usersWithWeapon = [];
+        for (let i = 0; i < userPool.length; i++) {
+          if (userPool[i].weapons &&
+              Object.keys(userPool[i].weapons).length > 0) {
+            usersWithWeapon.push(userPool[i]);
+          }
+        }
+        if (usersWithWeapon.length > 0) {
+          userWithWeapon = usersWithWeapon[Math.floor(
+              Math.random() * usersWithWeapon.length)];
+        }
+      }
+      let useWeapon = userWithWeapon &&
+          Math.random() < games[id].options.probabilityOfUseWeapon;
+      if (useWeapon) {
+        let userWeapons = Object.keys(userWithWeapon.weapons);
+        let chosenWeapon =
+            userWeapons[Math.floor(Math.random() * userWeapons.length)];
+
+        if (!weaponEventPool[chosenWeapon]) {
+          useWeapon = false;
+          console.log('No event pool with weapon', chosenWeapon);
+        } else {
+          eventTry = pickEvent(
+              userPool, weaponEventPool[chosenWeapon].outcomes,
+              games[id].options, games[id].currentGame.numAlive,
+              games[id].currentGame.teams, deathRate);
+          if (!eventTry) {
+            useWeapon = false;
+            console.log(
+                'No event with weapon', chosenWeapon, 'for available players');
+          } else {
+            numAttacker = eventTry.attacker.count;
+            numVictim = eventTry.victim.count;
+            affectedUsers = pickAffectedPlayers(
+                numVictim, numAttacker, games[id].options, userPool,
+                games[id].currentGame.teams, userWithWeapon);
+
+            let consumed = eventTry.consumes;
+            if (consumed == 'V') consumed = numVictim;
+            else if (consumed == 'A') consumed = numAttacker;
+            userWithWeapon.weapons[chosenWeapon] -= consumed;
+            if (userWithWeapon.weapons[chosenWeapon] <= 0) {
+              delete userWithWeapon.weapons[chosenWeapon];
+            }
+            if (!eventTry.message) {
+              let owner = formatMultiNames(
+                              [userWithWeapon], game[id].options.mentionAll) +
+                  '\'s ';
+              eventTry.message =
+                  weapons.message
+                      .replaceAll(
+                          '{weapon}',
+                          owner + (weaponEventPool[chosenWeapon].name ||
+                                   chosenWeapon))
+                      .replaceAll('{action}', eventTry.action)
+                      .replace(
+                          /\[C([^\|]*)\|([^\]]*)\]/g, function(match, p1, p2) {
+                            return consumes == 1 ? p1 : p2;
+                          });
+            }
+          }
+        }
+      }
+
+      let doBattle = !useWeapon && !doArenaEvent && userPool.length > 1 &&
           (Math.random() < games[id].options.probabilityOfBattle ||
            games[id].currentGame.numAlive == 2) &&
           validateEventRequirements(
@@ -1889,7 +2019,7 @@ function HungryGames() {
         eventTry = makeBattleEvent(
             affectedUsers, numVictim, numAttacker, games[id].options.mentionAll,
             id);
-      } else {
+      } else if (!useWeapon) {
         eventTry = pickEvent(
             userPool, userEventPool, games[id].options,
             games[id].currentGame.numAlive, games[id].currentGame.teams,
@@ -1907,7 +2037,7 @@ function HungryGames() {
             games[id].currentGame.teams);
       }
 
-      effectUser = function(i, kills) {
+      effectUser = function(i, kills, weapon) {
         if (!affectedUsers[i]) {
           self.common.error(
               'Affected users invalid index:' + i + '/' + affectedUsers.length,
@@ -1923,14 +2053,32 @@ function HungryGames() {
         } else {
           games[id].currentGame.includedUsers[index].bleeding = 0;
         }
+        if (weapon) {
+          if (typeof games[id]
+                  .currentGame.includedUsers[index]
+                  .weapons[weapon.name] === 'number') {
+            games[id].currentGame.includedUsers[index].weapons[weapon.name] +=
+                weapon.count;
+          } else {
+            games[id].currentGame.includedUsers[index].weapons[weapon.name] =
+                weapon.count;
+          }
+          if (games[id]
+                  .currentGame.includedUsers[index]
+                  .weapons[weapon.name] === 0) {
+            delete games[id]
+                .currentGame.includedUsers[index]
+                .weapons[weapon.name];
+          }
+        }
         games[id].currentGame.includedUsers[index].kills += kills;
         return index;
       };
 
       let numKilled = 0;
-      killUser = function(i, k) {
+      killUser = function(i, k, w) {
         numKilled++;
-        let index = effectUser(i, k);
+        let index = effectUser(i, k, w);
         games[id].currentGame.includedUsers[index].living = false;
         games[id].currentGame.includedUsers[index].bleeding = 0;
         games[id].currentGame.includedUsers[index].state = 'dead';
@@ -1959,48 +2107,50 @@ function HungryGames() {
         }
       };
 
-      woundUser = function(i, k) {
-        let index = effectUser(i, k);
+      woundUser = function(i, k, w) {
+        let index = effectUser(i, k, w);
         games[id].currentGame.includedUsers[index].state = 'wounded';
       };
-      restoreUser = function(i, k) {
-        let index = effectUser(i, k);
+      restoreUser = function(i, k, w) {
+        let index = effectUser(i, k, w);
         games[id].currentGame.includedUsers[index].state = 'normal';
       };
 
+      let weapon = eventTry.victim.weapon;
       for (let i = 0; i < numVictim; i++) {
         let numKills = 0;
         if (eventTry.victim.killer) numKills = numAttacker;
         switch (eventTry.victim.outcome) {
           case 'dies':
-            killUser(i, numKills);
+            killUser(i, numKills, weapon);
             break;
           case 'wounded':
-            woundUser(i, numKills);
+            woundUser(i, numKills, weapon);
             break;
           case 'thrives':
-            restoreUser(i, numKills);
+            restoreUser(i, numKills, weapon);
             break;
           default:
-            effectUser(i, numKills);
+            effectUser(i, numKills, weapon);
             break;
         }
       }
+      weapon = eventTry.attacker.weapon;
       for (let i = numVictim; i < numVictim + numAttacker; i++) {
         let numKills = 0;
         if (eventTry.attacker.killer) numKills = numVictim;
         switch (eventTry.attacker.outcome) {
           case 'dies':
-            killUser(i, numKills);
+            killUser(i, numKills, weapon);
             break;
           case 'wounded':
-            woundUser(i, numKills);
+            woundUser(i, numKills, weapon);
             break;
           case 'thrives':
-            restoreUser(i, numKills);
+            restoreUser(i, numKills, weapon);
             break;
           default:
-            effectUser(i, numKills);
+            effectUser(i, numKills, weapon);
             break;
         }
       }
@@ -2027,7 +2177,7 @@ function HungryGames() {
         console.log('Affected users remain! ' + affectedUsers.length);
       }
 
-      if (numKilled > 5) {
+      if (numKilled > 4) {
         games[id].currentGame.day.events.push(
             makeMessageEvent(getMessage('slaughter'), id));
       }
@@ -2130,10 +2280,13 @@ function HungryGames() {
    * @param {number} numAlive Number of players in the game still alive.
    * @param {HungryGames~Team[]} teams Array of teams in this game.
    * @param {HungryGames~EventWeights} deathRate Death rate weights.
+   * @param {?Player} weaponWielder A player that is using a weapon in this
+   * event, or null if no player is using a weapon.
    * @return {?HungryGames~Event} The chosen event that satisfies all
    * requirements, or null if something went wrong.
    */
-  function pickEvent(userPool, eventPool, options, numAlive, teams, deathRate) {
+  function pickEvent(
+      userPool, eventPool, options, numAlive, teams, deathRate, weaponWielder) {
     let loop = 0;
     while (loop < 100) {
       loop++;
@@ -2161,8 +2314,7 @@ function HungryGames() {
       }
 
       // If the chosen event requires more players than there are remaining,
-      // pick
-      // a new event.
+      // pick a new event.
       if (eventEffectsNumMin > userPool.length) continue;
 
       let multiAttacker = numAttacker < 0;
@@ -2181,7 +2333,7 @@ function HungryGames() {
       if (!validateEventRequirements(
               numVictim, numAttacker, userPool, numAlive, teams, options,
               eventTry.victim.outcome == 'dies',
-              eventTry.attacker.outcome == 'dies')) {
+              eventTry.attacker.outcome == 'dies', weaponWielder)) {
         continue;
       }
 
@@ -2210,42 +2362,75 @@ function HungryGames() {
    * @param {Object} options Options for this game.
    * @param {boolean} victimsDie Do the victims die in this event?
    * @param {boolean} attackersDie Do the attackers die in this event?
+   * @param {?Player} weaponWielder A player that is using a weapon in this
+   * event, or null if no player is using a weapon.
    * @return {boolean} Is is possible to use this event with current settings
    * about teammates.
    */
   function validateEventTeamConstraint(
       numVictim, numAttacker, userPool, teams, options, victimsDie,
-      attackersDie) {
+      attackersDie, weaponWielder) {
     if (options.teammatesCollaborate && options.teamSize > 0) {
-      let largestTeam = {index: 0, size: 0};
-      let numTeams = 0;
-      for (let i = 0; i < teams.length; i++) {
-        let team = teams[i];
-        let numPool = 0;
-
-        team.players.forEach(function(player) {
-          if (userPool.findIndex(function(pool) {
-                return pool.id == player && pool.living;
-              }) > -1) {
-            numPool++;
-          }
+      if (weaponWielder) {
+        let attackerTeam = teams.find(function(team) {
+          return team.players.findIndex(function(p) {
+            return p.id === weaponWielder.id;
+          }) > -1;
         });
+        let numTeams = 0;
+        for (let i = 0; i < teams.length; i++) {
+          let team = teams[i];
+          let numPool = 0;
 
-        team.numPool = numPool;
-        if (numPool > largestTeam.size) {
-          largestTeam = {index: i, size: numPool};
+          team.players.forEach(function(player) {
+            if (userPool.findIndex(function(pool) {
+                  return pool.id == player && pool.living;
+                }) > -1) {
+              numPool++;
+            }
+          });
+
+          team.numPool = numPool;
+          if (numPool > 0) numTeams++;
         }
-        if (numPool > 0) numTeams++;
-      }
-      if (numTeams < 2) {
-        if (attackersDie || victimsDie) {
-          return false;
+        if (numTeams < 2) {
+          if (attackersDie || victimsDie) {
+            return false;
+          }
         }
+        return numAttacker <= attackerTeam.size &&
+            numVictim <= userPool.length - attackerTeam.size;
+      } else {
+        let largestTeam = {index: 0, size: 0};
+        let numTeams = 0;
+        for (let i = 0; i < teams.length; i++) {
+          let team = teams[i];
+          let numPool = 0;
+
+          team.players.forEach(function(player) {
+            if (userPool.findIndex(function(pool) {
+                  return pool.id == player && pool.living;
+                }) > -1) {
+              numPool++;
+            }
+          });
+
+          team.numPool = numPool;
+          if (numPool > largestTeam.size) {
+            largestTeam = {index: i, size: numPool};
+          }
+          if (numPool > 0) numTeams++;
+        }
+        if (numTeams < 2) {
+          if (attackersDie || victimsDie) {
+            return false;
+          }
+        }
+        return (numAttacker <= largestTeam.size &&
+                numVictim <= userPool.length - largestTeam.size) ||
+            (numVictim <= largestTeam.size &&
+             numAttacker <= userPool.length - largestTeam.size);
       }
-      return (numAttacker <= largestTeam.size &&
-              numVictim <= userPool.length - largestTeam.size) ||
-          (numVictim <= largestTeam.size &&
-           numAttacker <= userPool.length - largestTeam.size);
     }
     return true;
   }
@@ -2303,16 +2488,18 @@ function HungryGames() {
    * @param {Object} options The options set for this game.
    * @param {boolean} victimsDie Do the victims die in this event?
    * @param {boolean} attackersDie Do the attackers die in this event?
+   * @param {?Player} weaponWielder A player that is using a weapon in this
+   * event, or null if no player is using a weapon.
    * @return {boolean} If all constraints are met with the given event.
    */
   function validateEventRequirements(
       numVictim, numAttacker, userPool, numAlive, teams, options, victimsDie,
-      attackersDie) {
+      attackersDie, weaponWielder) {
     return validateEventNumConstraint(
                numVictim, numAttacker, userPool, numAlive) &&
         validateEventTeamConstraint(
                numVictim, numAttacker, userPool, teams, options, victimsDie,
-               attackersDie) &&
+               attackersDie, weaponWielder) &&
         validateEventVictorConstraint(
                numVictim, numAttacker, numAlive, options, victimsDie,
                attackersDie);
@@ -2327,15 +2514,24 @@ function HungryGames() {
    * @param {HungryGames~Player[]} userPool Pool of all remaining players to put
    * into an event.
    * @param {HungryGames~Team[]} teams All teams in this game.
+   * @param {?Player} weaponWielder A player that is using a weapon in this
+   * event, or null if no player is using a weapon.
    * @return {HungryGames~Player[]} Array of all players that will be affected
    * by this event.
    */
   function pickAffectedPlayers(
-      numVictim, numAttacker, options, userPool, teams) {
+      numVictim, numAttacker, options, userPool, teams, weaponWielder) {
     let affectedUsers = [];
     if (options.teammatesCollaborate && options.teamSize > 0) {
       let isAttacker = false;
       let validTeam = teams.findIndex(function(team) {
+        if (weaponWielder) {
+          isAttacker = true;
+          return team.players.findIndex(function(p) {
+            return p.id === weaponWielder.id;
+          }) > -1;
+        }
+
         let canBeVictim = false;
         if (numAttacker <= team.numPool &&
             numVictim <= userPool.length - team.numPool) {
