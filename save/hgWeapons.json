@@ -1,5 +1,5 @@
 {
-  "message": "{attacker} {action} {victim} with {weapon}",
+  "message": "{attacker} {action} {victim} with {weapon}.",
   "grenade": {
     "outcomes": [
       {
@@ -154,8 +154,8 @@
         "consumes": 0
       },
       {
-        "message": "{attacker}'s slingshot breaks while they're testing it!",
-        "attacker": { "count": "1", "outcome": "nothing" },
+        "message": "{attacker}'s slingshot[A|s] break[As|] while they're testing it!",
+        "attacker": { "count": "-1", "outcome": "nothing" },
         "victim": { "count": "0", "outcome": "nothing" },
         "consumes": 1
       },
@@ -248,6 +248,12 @@
         "consumes": 1
       },
       {
+        "message": "{attacker}'s quiver drops all of its arrows while {attacker} isn't paying attention.",
+        "attacker": { "count": "1", "outcome": "nothing" },
+        "victim": { "count": "0", "outcome": "nothing" },
+        "consumes": 100
+      },
+      {
         "message": "{attacker} shoots an arrow into {victim}'s face while looking into {victim}'s wide eyes.",
         "attacker": { "count": "1", "outcome": "nothing", "killer": true },
         "victim": { "count": "1", "outcome": "dies" },
@@ -301,10 +307,16 @@
         "consumes": "V"
       },
       {
-        "message": "{attacker} throws[As|] [Va knife|knives] into the leg[V|s] of {victim}!",
+        "message": "{attacker} throw[As|] [Va knife|knives] into the leg[V|s] of {victim}!",
         "attacker": { "count": "-1", "outcome": "nothing" },
         "victim": { "count": "-1", "outcome": "wounded" },
         "consumes": "V"
+      },
+      {
+        "message": "{attacker} lose[As|] their knives!",
+        "attacker": { "count": "-1", "outcome": "nothing" },
+        "victim": { "count": "0", "outcome": "nothing" },
+        "consumes": 100
       },
       {
         "message": "{attacker} throws [Va knife|knives] into {victim}'s head[V|s].",
@@ -466,7 +478,7 @@
     "consumable": "toothbrush[C|es]",
     "outcomes": [
       {
-        "message": "{attacker} brush[Aes|] {victim}'s teeth!",
+        "message": "{attacker} brush[Aes|] {victim}'s teeth with {owner}'s toothbrush!",
         "attacker": { "count": "-1", "outcome": "nothing" },
         "victim": { "count": "1", "outcome": "thrives" },
         "consumes": 0
@@ -484,7 +496,7 @@
         "consumes": "V"
       },
       {
-        "message": "{attacker} drop[As|] {owner}'s toothbrush in the mud, and leave it there because that's disgusting.",
+        "message": "{attacker} drop[As|] {owner}'s toothbrush in the mud, and leave[As|] it there because that's disgusting.",
         "attacker": { "count": "1", "outcome": "nothing" },
         "victim": { "count": "0", "outcome": "nothing" },
         "consumes": 1
@@ -551,7 +563,7 @@
   "spear": {
     "outcomes": [
       {
-        "message": "{attacker} stabs[As|] {victim} to death with {owner}'s spear!",
+        "message": "{attacker} stab[As|] {victim} to death with {owner}'s spear!",
         "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
         "victim": { "count": "-1", "outcome": "dies" },
         "consumes": 0

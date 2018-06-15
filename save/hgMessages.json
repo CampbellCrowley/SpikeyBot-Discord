@@ -142,7 +142,7 @@
   ],
   "bleedOut": [
     "{victim} fail[Vs|] to tend to their wounds and die[Vs|].",
-    "{victim} get[Vs|] passes out from blood loss, and never awakes again.",
+    "{victim} pass[Ves|] out from blood loss, and never awake[Vs|] again.",
     "{victim} couldn't find medical help, and die[Vs|].",
     "The light fades from {victim}'s eyes.",
     "{victim} lose[Vs|] the will to live.",

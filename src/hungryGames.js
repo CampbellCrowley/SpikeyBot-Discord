@@ -251,6 +251,12 @@ function HungryGames() {
           'cannot kill eachother, and the game ends when one TEAM is ' +
           'remaining, not one player.',
     },
+    useEnemyWeapon: {
+      value: false,
+      comment:
+          'This will allow the attacker in an event to use the victim\'s ' +
+          'weapon against them.',
+    },
     mentionVictor: {
       value: true,
       comment:
@@ -303,7 +309,7 @@ function HungryGames() {
           'players.',
     },
     probabilityOfUseWeapon: {
-      value: 0.66,
+      value: 0.75,
       percent: true,
       comment:
           'Probability of each player using their weapon each day if they ' +
@@ -458,6 +464,7 @@ function HungryGames() {
    *   {
    *     bloodbath: HungryGames~Event[],
    *     player: HungryGames~Event[],
+   *     weapon: HungryGames~ArenaEvent[],
    *     arena: HungryGames~ArenaEvent[]
    *   }
    * } customEvents All custom events for the guild.
@@ -1252,6 +1259,7 @@ function HungryGames() {
     return {
       bloodbath: defaultBloodbathEvents,
       player: defaultPlayerEvents,
+      weapon: weapons,
       arena: defaultArenaEvents,
     };
   };
@@ -1963,11 +1971,13 @@ function HungryGames() {
           eventTry = pickEvent(
               userPool, weaponEventPool[chosenWeapon].outcomes,
               games[id].options, games[id].currentGame.numAlive,
-              games[id].currentGame.teams, deathRate);
+              games[id].currentGame.teams, deathRate, userWithWeapon);
           if (!eventTry) {
             useWeapon = false;
-            console.log(
-                'No event with weapon', chosenWeapon, 'for available players');
+            self.common.error(
+                'No event with weapon "' + chosenWeapon +
+                    '" for available players',
+                'HG');
           } else {
             numAttacker = eventTry.attacker.count;
             numVictim = eventTry.victim.count;
@@ -2438,8 +2448,8 @@ function HungryGames() {
       return eventTry;
     }
     self.common.error(
-        'Failed to find suitable event for ' + userPool.length + ' of ' +
-            eventPool.length + ' events.',
+        'Failed to find suitable event for ' + userPool.length +
+            ' players, from ' + eventPool.length + ' events.',
         'HG');
     return null;
   }
@@ -2465,11 +2475,6 @@ function HungryGames() {
       attackersDie, weaponWielder) {
     if (options.teammatesCollaborate && options.teamSize > 0) {
       if (weaponWielder) {
-        let attackerTeam = teams.find(function(team) {
-          return team.players.findIndex(function(p) {
-            return p.id === weaponWielder.id;
-          }) > -1;
-        });
         let numTeams = 0;
         for (let i = 0; i < teams.length; i++) {
           let team = teams[i];
@@ -2491,8 +2496,13 @@ function HungryGames() {
             return false;
           }
         }
-        return numAttacker <= attackerTeam.size &&
-            numVictim <= userPool.length - attackerTeam.size;
+        let attackerTeam = teams.find(function(team) {
+          return team.players.findIndex(function(p) {
+            return p === weaponWielder.id;
+          }) > -1;
+        });
+        return numAttacker <= attackerTeam.numPool &&
+            numVictim <= userPool.length - attackerTeam.numPool;
       } else {
         let largestTeam = {index: 0, size: 0};
         let numTeams = 0;
@@ -2619,8 +2629,9 @@ function HungryGames() {
       let isAttacker = false;
       let validTeam = teams.findIndex(function(team) {
         if (weaponWielder) {
+          isAttacker = options.useEnemyWeapon ? (Math.random() > 0.5) : true;
           return team.players.findIndex(function(p) {
-            return p.id === weaponWielder.id;
+            return p === weaponWielder.id;
           }) > -1;
         }
 
