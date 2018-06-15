@@ -16,6 +16,16 @@
       "victim": { "count": "1", "outcome": "nothing" }
     },
     {
+      "message": "{attacker} finds a grenade in the cornucopia.",
+      "attacker": { "count": "1", "outcome": "nothing", "weapon": { "name": "grenade", "count": 1 } },
+      "victim": { "count": "0", "outcome": "nothing" }
+    },
+    {
+      "message": "{victim} grabs a gun with 6 shots in it.",
+      "attacker": { "count": "0", "outcome": "nothing" },
+      "victim": { "count": "1", "outcome": "nothing", "weapon": {"name": "gun", "count": 6 } }
+    },
+    {
       "message": "{victim} grabs a gun that may or may not work!",
       "attacker": { "count": "0", "outcome": "nothing" },
       "victim": { "count": "1", "outcome": "nothing", "weapon": {"name": "gun", "count": 6 } }
@@ -142,7 +152,7 @@
     },
     {
       "message": "{attacker} split their supplies, then part ways.",
-      "attacker": { "count": "4", "outcome": "thrives" },
+      "attacker": { "count": "-2", "outcome": "thrives" },
       "victim": { "count": "0", "outcome": "nothing" }
     },
     {
@@ -161,7 +171,7 @@
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
-      "message": "{attacker} throws a knife into {victim}'s head[V|s]!",
+      "message": "{attacker} throws their only knife into {victim}'s head[V|s]!",
       "attacker": { "count": "1", "outcome": "nothing", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
     },
@@ -181,7 +191,7 @@
       "victim": { "count": "1", "outcome": "dies" }
     },
     {
-      "message": "{attacker} shoots an arrow into {victim}'s head!",
+      "message": "{attacker} shoots their only arrow into {victim}'s head!",
       "attacker": { "count": "1", "outcome": "nothing", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
     },
@@ -194,6 +204,11 @@
       "message": "{attacker} bashes {victim}'s head with a rock more times than necessary.",
       "attacker": { "count": "1", "outcome": "nothing", "killer": true },
       "victim": { "count": "1", "outcome": "dies" }
+    },
+    {
+      "message": "{attacker} grab[As|] a toothbrush.",
+      "attacker": { "count": "-1", "outcome": "nothing", "weapon": { "name": "toothbrush", "count": 1 } },
+      "victim": { "count": "0", "outcome": "nothing" }
     },
     {
       "message": "{attacker} snaps {victim}'s neck like a twig.",
@@ -343,6 +358,76 @@
   ],
   "player": [
     {
+      "message": "{attacker} grabs a sword from a supply cache.",
+      "attacker": { "count": "1", "outcome": "nothing", "weapon": { "name": "sword", "count": 1 } },
+      "victim": { "count": "0", "outcome": "nothing" }
+    },
+    {
+      "message": "{attacker} make[As|] a slingshot out of something... who knows.",
+      "attacker": { "count": "-1", "outcome": "nothing", "weapon": { "name": "slingshot", "count": 1 } },
+      "victim": { "count": "0", "outcome": "nothing" }
+    },
+    {
+      "message": "{attacker} receives a grenade from a sponsor.",
+      "attacker": { "count": "1", "outcome": "nothing", "weapon": { "name": "grenade", "count": 1 } },
+      "victim": { "count": "0", "outcome": "nothing" }
+    },
+    {
+      "message": "{attacker} takes a spear from the cornucopia.",
+      "attacker": { "count": "1", "outcome": "nothing", "weapon": { "name": "spear", "count": 1 } },
+      "victim": { "count": "0", "outcome": "nothing" }
+    },
+    {
+      "message": "{victim} receives a gun with 6 shots in it from a sponsor.",
+      "attacker": { "count": "0", "outcome": "nothing" },
+      "victim": { "count": "1", "outcome": "nothing", "weapon": {"name": "gun", "count": 6 } }
+    },
+    {
+      "message": "{attacker} manages to find a bag full of explosives.",
+      "attacker": { "count": "1", "outcome": "nothing", "weapon": { "name": "explosives", "count": 3 } },
+      "victim": { "count": "0", "outcome": "nothing" }
+    },
+    {
+      "message": "{attacker} finds a few bottle of some alcoholic beverage.",
+      "attacker": { "count": "1", "outcome": "nothing", "weapon": { "name": "alcohol", "count": 3 } },
+      "victim": { "count": "0", "outcome": "nothing" }
+    },
+    {
+      "message": "{attacker} receives a toothbrush from a sponsor.",
+      "attacker": { "count": "1", "outcome": "nothing", "weapon": { "name": "toothbrush", "count": 1 } },
+      "victim": { "count": "0", "outcome": "nothing" }
+    },
+    {
+      "message": "{attacker} finds a bow, 5 arrows, and a quiver.",
+      "attacker": { "count": "1", "outcome": "nothing", "weapon": { "name": "bow", "count": 5 } },
+      "victim": { "count": "0", "outcome": "nothing" }
+    },
+    {
+      "message": "{attacker} receives a long rope from a sponsor.",
+      "attacker": { "count": "1", "outcome": "nothing", "weapon": { "name": "rope", "count": 1 } },
+      "victim": { "count": "0", "outcome": "nothing" }
+    },
+    {
+      "message": "{attacker} receive[As a|] handful[A|s] of throwing knives from [Aa |]sponsor[A|s].",
+      "attacker": { "count": "-1", "outcome": "nothing", "weapon": { "name": "throwingknives", "count": 5 } },
+      "victim": { "count": "0", "outcome": "nothing" }
+    },
+    {
+      "message": "{attacker} find[As a|] mace[A|s].",
+      "attacker": { "count": "-1", "outcome": "nothing", "weapon": { "name": "mace", "count": 1 } },
+      "victim": { "count": "0", "outcome": "nothing" }
+    },
+    {
+      "message": "{attacker} get[As a|] phial[A|s] of poison from sponsors.",
+      "attacker": { "count": "-1", "outcome": "nothing", "weapon": { "name": "poison", "count": 3 } },
+      "victim": { "count": "0", "outcome": "nothing" }
+    },
+    {
+      "message": "{attacker} receive[As a|] shovel[A|s] from [Aa |]sponsor[A|s].",
+      "attacker": { "count": "-1", "outcome": "nothing", "weapon": { "name": "shovel", "count": "1" } },
+      "victim": { "count": "0", "outcome": "nothing" }
+    },
+    {
       "message": "{victim} pretend[Vs|] this is really Fortnite.",
       "attacker": { "count": "0", "outcome": "nothing" },
       "victim": { "count": "-1", "outcome": "nothing" }
@@ -359,11 +444,6 @@
     },
     {
       "message": "{attacker} find[As|] a gym and lift[As|] weights.",
-      "attacker": { "count": "-1", "outcome": "nothing" },
-      "victim": { "count": "0", "outcome": "nothing" }
-    },
-    {
-      "message": "{attacker} cut[As|] down a tree for firewood.",
       "attacker": { "count": "-1", "outcome": "nothing" },
       "victim": { "count": "0", "outcome": "nothing" }
     },
@@ -568,11 +648,6 @@
       "victim": { "count": "0", "outcome": "nothing" }
     },
     {
-      "message": "{attacker} make[As|] a slingshot out of something... who knows.",
-      "attacker": { "count": "-1", "outcome": "nothing", "weapon": { "name": "slingshot", "count": 1 } },
-      "victim": { "count": "0", "outcome": "nothing" }
-    },
-    {
       "message": "{attacker} find[As|] higher ground.",
       "attacker": { "count": "-1", "outcome": "nothing" },
       "victim": { "count": "0", "outcome": "nothing" }
@@ -610,11 +685,6 @@
     {
       "message": "{attacker} hunt[As|] for tributes.",
       "attacker": { "count": "-1", "outcome": "nothing" },
-      "victim": { "count": "0", "outcome": "nothing" }
-    },
-    {
-      "message": "{attacker} receives a grenade from a sponsor.",
-      "attacker": { "count": "1", "outcome": "nothing" },
       "victim": { "count": "0", "outcome": "nothing" }
     },
     {
@@ -768,11 +838,6 @@
       "victim": { "count": "1", "outcome": "dies" }
     },
     {
-      "message": "{attacker} throws a knife into {victim}'s head[V|s].",
-      "attacker": { "count": "1", "outcome": "thrives", "killer": true },
-      "victim": { "count": "-1", "outcome": "dies" }
-    },
-    {
       "message": "{victim} beg[Vs|] {attacker} to kill them, {attacker} reluctantly oblige[As|].",
       "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
@@ -793,16 +858,6 @@
       "victim": { "count": "1", "outcome": "dies" }
     },
     {
-      "message": "{attacker} shoots an arrow into {victim}'s head.",
-      "attacker": { "count": "1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "1", "outcome": "dies" }
-    },
-    {
-      "message": "{attacker} shoots an arrow into {victim}'s face while looking into {victim}'s wide eyes.",
-      "attacker": { "count": "1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "1", "outcome": "dies" }
-    },
-    {
       "message": "{attacker} bashes {victim}'s head into a rock several times after they have died.",
       "attacker": { "count": "1", "outcome": "nothing", "killer": true },
       "victim": { "count": "1", "outcome": "dies" }
@@ -813,27 +868,12 @@
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
-      "message": "{attacker} poison[As|] {victim}'s food, killing them.",
-      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "-1", "outcome": "dies" }
-    },
-    {
-      "message": "{attacker} brutally decapitates {victim} with a sword.",
-      "attacker": { "count": "1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "1", "outcome": "dies" }
-    },
-    {
       "message": "{victim} dies from infection.",
       "attacker": { "count": "0", "outcome": "nothing" },
       "victim": { "count": "1", "outcome": "dies" }
     },
     {
-      "message": "{attacker} stabs {victim} in the back.",
-      "attacker": { "count": "1", "outcome": "thrives", "killer": true },
-      "victim": { "count": "1", "outcome": "dies" }
-    },
-    {
-      "message": "{attacker} bashes {victim}'s face in with a mace.",
+      "message": "{attacker} stabs {victim} in the back with a stick.",
       "attacker": { "count": "1", "outcome": "thrives", "killer": true },
       "victim": { "count": "1", "outcome": "dies" }
     },
@@ -845,11 +885,6 @@
     {
       "message": "{attacker} push[Aes|] {victim} off a cliff.",
       "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "-1", "outcome": "dies" }
-    },
-    {
-      "message": "{attacker} throws a knife info {victim}'s chest[V|s].",
-      "attacker": { "count": "1", "outcome": "thrives", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
@@ -870,11 +905,6 @@
     {
       "message": "{attacker} force[As|] {victim} to kill themsel[Vf|ves].",
       "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
-      "victim": { "count": "-1", "outcome": "dies" }
-    },
-    {
-      "message": "{attacker} set[As|] off explosives killing {victim}.",
-      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
@@ -908,11 +938,6 @@
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
-      "message": "{attacker} strangles {victim} with a rope.",
-      "attacker": { "count": "1", "outcome": "thrives", "killer": true },
-      "victim": { "count": "1", "outcome": "dies" }
-    },
-    {
       "message": "{victim} return[Vs|] to the cornucopia to search for remaining supplies.",
       "attacker": { "count": "0", "outcome": "nothing" },
       "victim": { "count": "-1", "outcome": "nothing" }
@@ -933,7 +958,7 @@
       "victim": { "count": "-1", "outcome": "thrives" }
     },
     {
-      "message": "{victim} get[Vs|] stung by a bee.",
+      "message": "{victim} get[Vs|] stung by a deadly bee.",
       "attacker": { "count": "0", "outcome": "nothing" },
       "victim": { "count": "-1", "outcome": "wounded" }
     },
@@ -946,16 +971,6 @@
       "message": "{attacker} carves {victim}'s eyes out before finishing them off.",
       "attacker": { "count": "1", "outcome": "thrives", "killer": true },
       "victim": { "count": "1", "outcome": "dies" }
-    },
-    {
-      "message": "{attacker} puts a grenade in {victim}'s hood and runs away.",
-      "attacker": { "count": "1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "1", "outcome": "dies" }
-    },
-    {
-      "message": "{attacker} throw[As|] [Aa |]grenade[A|s] at {victim} killing them.",
-      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{victim} look[Vs|] at the sun to tell the time, and go[Ves|] blind.",
@@ -980,16 +995,6 @@
     {
       "message": "{attacker} makes {victim} laugh while eating, and {victim} chokes to death on their food.",
       "attacker": { "count": "1", "outcome": "thrives", "killer": true},
-      "victim": { "count": "1", "outcome": "dies" }
-    },
-    {
-      "message": "{victim} forgot to unload the gun before cleaning it, and shoots themself in the face.",
-      "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "1", "outcome": "dies" }
-    },
-    {
-      "message": "{victim} didn't know their limits, and drank too much alcohol.",
-      "attacker": { "count": "0", "outcome": "nothing" },
       "victim": { "count": "1", "outcome": "dies" }
     },
     {
@@ -1033,11 +1038,6 @@
       "victim": { "count": "1", "outcome": "nothing" }
     },
     {
-      "message": "{attacker} poisons {victim}'s water while they sleep.",
-      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "-1", "outcome": "dies" }
-    },
-    {
       "message": "{attacker} jump[As|] onto {victim} from a tree and kill[As|] them.",
       "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
@@ -1066,21 +1066,6 @@
       "message": "{attacker} kill[As|] {victim} with {dead}'s remains.",
       "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
-    },
-    {
-      "message": "{attacker} slowly pushes their sword into {victim}'s chest and watches the light fade from their eyes.",
-      "attacker": { "count": "1", "outcome": "thrives", "killer": true },
-      "victim": { "count": "1", "outcome": "dies" }
-    },
-    {
-      "message": "{attacker} begin[As|] shooting arrows at {victim}, and kill[As|] them.",
-      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
-      "victim": { "count": "-1", "outcome": "dies" }
-    },
-    {
-      "message": "{attacker} begin[As|] shooting arrows at {victim}, but only manage[As|] to wound them.",
-      "attacker": { "count": "-1", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "wounded" }
     },
     {
       "message": "In {attacker}'s bloodlust, they end up killing eachother.",
@@ -1138,11 +1123,6 @@
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
-      "message": "{victim} walk[Vs|] around the arena drunk.",
-      "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "nothing" }
-    },
-    {
       "message": "{victim} investigate[Vs|] a light in the forest, but {attacker} slit[As|] their throat[V|s] before they can see its source.",
       "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
@@ -1186,11 +1166,6 @@
       "message": "{attacker} take[As|] one of {victim} arm[Vs|].",
       "attacker": { "count": "-1", "outcome": "nothing" },
       "victim": { "count": "-1", "outcome": "wounded" }
-    },
-    {
-      "message": "{victim} takes an arrow to the knee from {attacker}!",
-      "attacker": { "count": "1", "outcome": "nothing" },
-      "victim": { "count": "1", "outcome": "wounded" }
     }
   ],
   "arena": [

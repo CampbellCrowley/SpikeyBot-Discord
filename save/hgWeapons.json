@@ -9,13 +9,37 @@
         "consumes": 1
       },
       {
+        "action": "wound[As|]",
+        "attacker": { "count": "-1", "outcome": "nothing" },
+        "victim": { "count": "-1", "outcome": "wounded" },
+        "consumes": 1
+      },
+      {
+        "action": "kill[As|]",
+        "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+        "victim": { "count": "-1", "outcome": "dies" },
+        "consumes": 1
+      },
+      {
         "action": "miss[Aes|]",
         "attacker": { "count": "-1", "outcome": "nothing" },
         "victim": { "count": "-1", "outcome": "nothing" },
         "consumes": 1
       },
       {
-        "message": "{attacker} blows themselves up with their grenade!",
+        "message": "{attacker} puts a grenade in {victim}'s hood and runs away.",
+        "attacker": { "count": "1", "outcome": "nothing", "killer": true },
+        "victim": { "count": "1", "outcome": "dies" },
+        "consumes": 1
+      },
+      {
+        "message": "{attacker} throw[As|] [Aa |]grenade[A|s] at {victim} killing them.",
+        "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+        "victim": { "count": "-1", "outcome": "dies" },
+        "consumes": 1
+      },
+      {
+        "message": "{attacker} blows themselves up with {owner}'s grenade!",
         "attacker": { "count": "1", "outcome": "dies" },
         "victim": { "count": "0", "outcome": "nothing" },
         "consumes": 1
@@ -31,13 +55,31 @@
         "consumes": 1
       },
       {
+        "action": "wound[As|]",
+        "attacker": { "count": "-1", "outcome": "nothing" },
+        "victim": { "count": "-1", "outcome": "wounded" },
+        "consumes": 1
+      },
+      {
+        "action": "kill[As|]",
+        "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+        "victim": { "count": "-1", "outcome": "dies" },
+        "consumes": 1
+      },
+      {
         "action": "miss[Aes|]",
         "attacker": { "count": "-1", "outcome": "nothing" },
         "victim": { "count": "-1", "outcome": "nothing" },
         "consumes": 1
       },
       {
-        "message": "{attacker} blows themselves up while prepping their explosives!",
+        "message": "{attacker} set[As|] off explosives killing {victim}.",
+        "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+        "victim": { "count": "-1", "outcome": "dies" },
+        "consumes": 1
+      },
+      {
+        "message": "{attacker} blows themselves up while prepping {owner}'s explosives!",
         "attacker": { "count": "1", "outcome": "dies" },
         "victim": { "count": "0", "outcome": "nothing" },
         "consumes": 1
@@ -45,6 +87,7 @@
     ]
   },
   "alcohol": {
+    "consumable": "bottle[C|s] of alcohol",
     "outcomes": [
       {
         "message": "{attacker} make[As|] a Molotov Cocktail and kill[As|] {victim} with it!",
@@ -59,13 +102,25 @@
         "consumes": 2
       },
       {
+        "message": "{victim} walk[Vs|] around the arena drunk.",
+        "attacker": { "count": "0", "outcome": "nothing" },
+        "victim": { "count": "-1", "outcome": "nothing" },
+        "consumes": 1
+      },
+      {
         "message": "{attacker} make[As|] Molotov Cocktails and kill[As|] {victim} with them!",
         "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
         "victim": { "count": "-1", "outcome": "dies" },
         "consumes": 3
       },
       {
-        "message": "{attacker} get[As|] a little too drunk with their alcohol.",
+        "message": "{victim} didn't know their limits, and drank too much alcohol.",
+        "attacker": { "count": "0", "outcome": "nothing" },
+        "victim": { "count": "1", "outcome": "dies" },
+        "consumes": 3
+      },
+      {
+        "message": "{attacker} get[As|] a little too drunk with {owner}'s alcohol.",
         "attacker": { "count": "-1", "outcome": "wounded" },
         "victim": { "count": "0", "outcome": "nothing" },
         "consumes": "A"
@@ -81,7 +136,19 @@
         "consumes": 0
       },
       {
-        "message": "{attacker} wound[As|] {victim} with their slingshot!",
+        "action": "wound[As|]",
+        "attacker": { "count": "-1", "outcome": "nothing" },
+        "victim": { "count": "-1", "outcome": "wounded" },
+        "consumes": 0
+      },
+      {
+        "action": "kill[As|]",
+        "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
+        "victim": { "count": "-1", "outcome": "dies" },
+        "consumes": 0
+      },
+      {
+        "message": "{attacker} wound[As|] {victim} with {owner}'s slingshot!",
         "attacker": { "count": "-1", "outcome": "nothing" },
         "victim": { "count": "-1", "outcome": "wounded" },
         "consumes": 0
@@ -101,6 +168,7 @@
     ]
   },
   "gun": {
+    "consumable": "bullet[C|s]",
     "outcomes": [
       {
         "action": "shoot[As|]",
@@ -109,16 +177,34 @@
         "consumes": "V"
       },
       {
-        "message": "{attacker} shoot[As|] {victim} in the leg[V|s] with their gun!",
+        "action": "wound[As|]",
         "attacker": { "count": "-1", "outcome": "nothing" },
         "victim": { "count": "-1", "outcome": "wounded" },
         "consumes": "V"
       },
       {
-        "message": "{attacker} clean[As|] their gun in anticipation for a fight.",
+        "action": "kill[As|]",
+        "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
+        "victim": { "count": "-1", "outcome": "dies" },
+        "consumes": "V"
+      },
+      {
+        "message": "{attacker} shoot[As|] {victim} in the leg[V|s] with {owner}'s gun!",
+        "attacker": { "count": "-1", "outcome": "nothing" },
+        "victim": { "count": "-1", "outcome": "wounded" },
+        "consumes": "V"
+      },
+      {
+        "message": "{attacker} clean[As|] {owner}'s gun in anticipation for a fight.",
         "attacker": { "count": "-1", "outcome": "nothing" },
         "victim": { "count": "0", "outcome": "nothing" },
         "consumes": 0
+      },
+      {
+        "message": "{victim} forgot to unload the gun before cleaning it, and shoots themself in the face.",
+        "attacker": { "count": "0", "outcome": "nothing" },
+        "victim": { "count": "1", "outcome": "dies" },
+        "consumes": 1
       },
       {
         "action": "miss[Aes|] their shot at",
@@ -129,6 +215,7 @@
     ]
   },
   "bow": {
+    "consumable": "arrow[C|s]",
     "outcomes": [
       {
         "action": "shoot[As|]",
@@ -137,15 +224,57 @@
         "consumes": "V"
       },
       {
-        "message": "{attacker} shoot[As|] {victim} in the leg[V|s] with their bow!",
+        "action": "wound[As|]",
         "attacker": { "count": "-1", "outcome": "nothing" },
         "victim": { "count": "-1", "outcome": "wounded" },
         "consumes": "V"
       },
       {
+        "action": "kill[As|]",
+        "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
+        "victim": { "count": "-1", "outcome": "dies" },
+        "consumes": "V"
+      },
+      {
+        "message": "{attacker} shoot[As|] {victim} in the leg[V|s] with {owner}'s bow!",
+        "attacker": { "count": "-1", "outcome": "nothing" },
+        "victim": { "count": "-1", "outcome": "wounded" },
+        "consumes": "V"
+      },
+      {
+        "message": "{attacker} shoots an arrow into {victim}'s head.",
+        "attacker": { "count": "1", "outcome": "nothing", "killer": true },
+        "victim": { "count": "1", "outcome": "dies" },
+        "consumes": 1
+      },
+      {
+        "message": "{attacker} shoots an arrow into {victim}'s face while looking into {victim}'s wide eyes.",
+        "attacker": { "count": "1", "outcome": "nothing", "killer": true },
+        "victim": { "count": "1", "outcome": "dies" },
+        "consumes": 1
+      },
+      {
+        "message": "{attacker} begin[As|] shooting arrows at {victim}, and kill[As|] them.",
+        "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+        "victim": { "count": "-1", "outcome": "dies" },
+        "consumes": 3
+      },
+      {
+        "message": "{attacker} begin[As|] shooting arrows at {victim}, but only manage[As|] to wound them.",
+        "attacker": { "count": "-1", "outcome": "nothing" },
+        "victim": { "count": "-1", "outcome": "wounded" },
+        "consumes": 3
+      },
+      {
         "action": "miss[Aes|] their shot at",
         "attacker": { "count": "-1", "outcome": "nothing" },
         "victim": { "count": "-1", "outcome": "nothing" },
+        "consumes": 1
+      },
+      {
+        "message": "{victim} takes an arrow to the knee from {attacker}!",
+        "attacker": { "count": "1", "outcome": "nothing" },
+        "victim": { "count": "1", "outcome": "wounded" },
         "consumes": 1
       }
     ]
@@ -160,9 +289,27 @@
         "consumes": "V"
       },
       {
+        "message": "{attacker} throws [Va knife|knives] into {victim}'s chest[V|s].",
+        "attacker": { "count": "1", "outcome": "thrives", "killer": true },
+        "victim": { "count": "-1", "outcome": "dies" },
+        "consumes": "V"
+      },
+      {
+        "action": "kill[As|]",
+        "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
+        "victim": { "count": "-1", "outcome": "dies" },
+        "consumes": "V"
+      },
+      {
         "message": "{attacker} throws[As|] [Va knife|knives] into the leg[V|s] of {victim}!",
         "attacker": { "count": "-1", "outcome": "nothing" },
         "victim": { "count": "-1", "outcome": "wounded" },
+        "consumes": "V"
+      },
+      {
+        "message": "{attacker} throws [Va knife|knives] into {victim}'s head[V|s].",
+        "attacker": { "count": "1", "outcome": "thrives", "killer": true },
+        "victim": { "count": "-1", "outcome": "dies" },
         "consumes": "V"
       },
       {
@@ -176,110 +323,250 @@
   "shovel": {
     "outcomes": [
       {
-        "message": "{attacker} whack[As|] {victim} to death with their shovel!",
+        "message": "{attacker} whack[As|] {victim} to death with {owner}'s shovel!",
         "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
         "victim": { "count": "-1", "outcome": "dies" },
-        "consumes": "0"
+        "consumes": 0
+      },
+      {
+        "action": "kill[As|]",
+        "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
+        "victim": { "count": "-1", "outcome": "dies" },
+        "consumes": 0
       },
       {
         "action": "wound[As|]",
         "attacker": { "count": "-1", "outcome": "nothing" },
         "victim": { "count": "-1", "outcome": "wounded" },
-        "consumes": "0"
+        "consumes": 0
       },
       {
         "message": "{attacker} break[As|] a shovel while digging a hole.",
         "attacker": { "count": "-1", "outcome": "nothing" },
         "victim": { "count": "0", "outcome": "nothing" },
-        "consumes": "1"
+        "consumes": 1
       }
     ]
   },
   "mace": {
     "outcomes": [
       {
-        "message": "{attacker} whack[As|] {victim} to death with their mace!",
+        "message": "{attacker} whack[As|] {victim} to death with {owner}'s mace!",
         "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
         "victim": { "count": "-1", "outcome": "dies" },
-        "consumes": "0"
+        "consumes": 0
+      },
+      {
+        "message": "{attacker} forget[As|] {owner}'s mace and left it behind!",
+        "attacker": { "count": "-1", "outcome": "nothing" },
+        "victim": { "count": "0", "outcome": "nothing" },
+        "consumes": 1
+      },
+      {
+        "message": "{attacker} bashes {victim}'s face in with a mace.",
+        "attacker": { "count": "1", "outcome": "thrives", "killer": true },
+        "victim": { "count": "1", "outcome": "dies" },
+        "consumes": 0
+      },
+      {
+        "action": "kill[As|]",
+        "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
+        "victim": { "count": "-1", "outcome": "dies" },
+        "consumes": 0
       },
       {
         "action": "wound[As|]",
         "attacker": { "count": "-1", "outcome": "nothing" },
         "victim": { "count": "-1", "outcome": "wounded" },
-        "consumes": "0"
+        "consumes": 0
       },
       {
-        "message": "{attacker} break[As|] their mace while showing off to {victim}.",
+        "message": "{attacker} break[As|] {owner}'s mace while showing off to {victim}.",
         "attacker": { "count": "-1", "outcome": "nothing" },
         "victim": { "count": "-1", "outcome": "nothing" },
-        "consumes": "1"
+        "consumes": 1
       }
     ]
   },
   "sword": {
     "outcomes": [
       {
-        "message": "{attacker} whack[As|] {victim} to death with their sword!",
+        "message": "{attacker} whack[As|] {victim} to death with {owner}'s sword!",
         "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
         "victim": { "count": "-1", "outcome": "dies" },
-        "consumes": "0"
+        "consumes": 0
+      },
+      {
+        "action": "kill[As|]",
+        "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
+        "victim": { "count": "-1", "outcome": "dies" },
+        "consumes": 0
       },
       {
         "action": "wound[As|]",
         "attacker": { "count": "-1", "outcome": "nothing" },
         "victim": { "count": "-1", "outcome": "wounded" },
-        "consumes": "0"
+        "consumes": 0
       },
       {
-        "message": "{attacker} break[As|] their sword accidentally.",
+        "message": "{attacker} brutally decapitates {victim} with a sword.",
+        "attacker": { "count": "1", "outcome": "nothing", "killer": true },
+        "victim": { "count": "-1", "outcome": "dies" },
+        "consumes": 0
+      },
+      {
+        "message": "{attacker} slowly pushes {owner}'s sword into {victim}'s chest and watches the light fade from their eyes.",
+        "attacker": { "count": "1", "outcome": "thrives", "killer": true },
+        "victim": { "count": "1", "outcome": "dies" },
+        "consumes": 0
+      },
+      {
+        "message": "{attacker} break[As|] {owner}'s sword accidentally.",
         "attacker": { "count": "-1", "outcome": "nothing" },
         "victim": { "count": "0", "outcome": "nothing" },
-        "consumes": "1"
+        "consumes": 1
       }
     ]
   },
   "hatchet": {
     "outcomes": [
       {
-        "message": "{attacker} whack[As|] {victim} to death with their hatchet!",
-        "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+        "message": "{attacker} whack[As|] {victim} to death with {owner}'s hatchet!",
+        "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
         "victim": { "count": "-1", "outcome": "dies" },
-        "consumes": "0"
+        "consumes": 0
+      },
+      {
+        "message": "{attacker} cut[As|] down a tree for firewood.",
+        "attacker": { "count": "-1", "outcome": "nothing" },
+        "victim": { "count": "0", "outcome": "nothing" },
+        "consumes": 0
+      },
+      {
+        "action": "kill[As|]",
+        "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
+        "victim": { "count": "-1", "outcome": "dies" },
+        "consumes": 0
       },
       {
         "action": "wound[As|]",
         "attacker": { "count": "-1", "outcome": "nothing" },
         "victim": { "count": "-1", "outcome": "wounded" },
-        "consumes": "0"
+        "consumes": 0
       },
       {
-        "message": "{attacker} break[As|] their hatchet while chopping a tree.",
+        "message": "{attacker} break[As|] {owner}'s hatchet while chopping a tree.",
         "attacker": { "count": "-1", "outcome": "nothing" },
         "victim": { "count": "0", "outcome": "nothing" },
-        "consumes": "1"
+        "consumes": 1
+      }
+    ]
+  },
+  "toothbrush": {
+    "consumable": "toothbrush[C|es]",
+    "outcomes": [
+      {
+        "message": "{attacker} brush[Aes|] {victim}'s teeth!",
+        "attacker": { "count": "-1", "outcome": "nothing" },
+        "victim": { "count": "1", "outcome": "thrives" },
+        "consumes": 0
+      },
+      {
+        "message": "{attacker} brush[Aes|] their teeth with {owner}'s toothbrush.",
+        "attacker": { "count": "-1", "outcome": "thrives" },
+        "victim": { "count": "0", "outcome": "nothing" },
+        "consumes": 0
+      },
+      {
+        "message": "{attacker} stab[As|] {victim} in the eye with {owner}'s toothbrush.",
+        "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+        "victim": { "count": "-1", "outcome": "dies" },
+        "consumes": "V"
+      },
+      {
+        "message": "{attacker} drop[As|] {owner}'s toothbrush in the mud, and leave it there because that's disgusting.",
+        "attacker": { "count": "1", "outcome": "nothing" },
+        "victim": { "count": "0", "outcome": "nothing" },
+        "consumes": 1
+      }
+    ]
+  },
+  "rope": {
+    "outcomes": [
+      {
+        "message": "{attacker} strangle[As|] {victim} to death with {owner}'s rope!",
+        "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
+        "victim": { "count": "-1", "outcome": "dies" },
+        "consumes": 0
+      },
+      {
+        "message": "{attacker} makes a noose with {owner}'s rope, and kills themself.",
+        "attacker": { "count": "1", "outcome": "dies" },
+        "victim": { "count": "0", "outcome": "nothing" },
+        "consumes": 1
+      },
+      {
+        "message": "{attacker} trip[As|] {victim} with {owner}'s rope, and kill[As|] them while they're on the ground.",
+        "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
+        "victim": { "count": "-1", "outcome": "dies" },
+        "consumes": 0
+      },
+      {
+        "message": "{attacker} cut[As|] {owner}'s rope too short, and it becomes unusable.",
+        "attacker": { "count": "1", "outcome": "nothing" },
+        "victim": { "count": "0", "outcome": "nothing" },
+        "consumes": 1
+      }
+    ]
+  },
+  "poison": {
+    "consumable": "phial[C|s] of poison",
+    "outcomes": [
+      {
+        "action": "poison[As|]",
+        "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
+        "victim": { "count": "-1", "outcome": "dies" },
+        "consumes": "V"
+      },
+      {
+        "message": "{attacker} poison[As|] {victim}'s food, killing them.",
+        "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
+        "victim": { "count": "-1", "outcome": "dies" },
+        "consumes": "V"
+      },
+      {
+        "message": "{attacker} poisons {victim}'s water while they sleep.",
+        "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+        "victim": { "count": "-1", "outcome": "dies" },
+        "consumes": "V"
+      },
+      {
+        "message": "{attacker} didn't wash their hands after touching {owner}'s poison and dies.",
+        "attacker": { "count": "1", "outcome": "dies" },
+        "victim": { "count": "0", "outcome": "nothing" },
+        "consumes": 1
       }
     ]
   },
   "spear": {
     "outcomes": [
       {
-        "message": "{attacker} stabs[As|] {victim} to death with their spear!",
-        "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+        "message": "{attacker} stabs[As|] {victim} to death with {owner}'s spear!",
+        "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
         "victim": { "count": "-1", "outcome": "dies" },
-        "consumes": "0"
+        "consumes": 0
       },
       {
         "action": "wound[As|]",
         "attacker": { "count": "-1", "outcome": "nothing" },
         "victim": { "count": "-1", "outcome": "wounded" },
-        "consumes": "0"
+        "consumes": 0
       },
       {
-        "message": "{attacker} break[As|] their spear while practicing with it.",
+        "message": "{attacker} break[As|] {owner}'s spear while practicing with it.",
         "attacker": { "count": "-1", "outcome": "nothing" },
         "victim": { "count": "0", "outcome": "nothing" },
-        "consumes": "1"
+        "consumes": 1
       }
     ]
   }

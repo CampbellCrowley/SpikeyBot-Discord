@@ -303,7 +303,7 @@ function HungryGames() {
           'players.',
     },
     probabilityOfUseWeapon: {
-      value: 0.33,
+      value: 0.66,
       percent: true,
       comment:
           'Probability of each player using their weapon each day if they ' +
@@ -1933,6 +1933,8 @@ function HungryGames() {
       let numAttacker;
       let numVictim;
 
+      let subMessage = '';
+
       let userWithWeapon = null;
       if (!doArenaEvent) {
         let usersWithWeapon = [];
@@ -1979,22 +1981,54 @@ function HungryGames() {
             userWithWeapon.weapons[chosenWeapon] -= consumed;
             if (userWithWeapon.weapons[chosenWeapon] <= 0) {
               delete userWithWeapon.weapons[chosenWeapon];
+
+              let weaponName = chosenWeapon;
+              let consumableName = weaponName;
+              if (weapons[weaponName].consumable) {
+                consumableName = weapons[weaponName].consumable.replace(
+                    /\[C([^\|]*)\|([^\]]*)\]/g, '$2');
+              } else if (weapons[weaponName].name) {
+                consumableName = weapons[weaponName].name.replace(
+                    /\[C([^\|]*)\|([^\]]*)\]/g, '$2');
+              } else {
+                consumableName += 's';
+              }
+              subMessage += formatMultiNames([userWithWeapon], false) +
+                  ' ran out of ' + consumableName + '.';
+            } else if (consumed != 0) {
+              let weaponName = chosenWeapon;
+              let consumableName = weaponName;
+              let count = consumed;
+              if (weapons[weaponName].consumable) {
+                consumableName = weapons[weaponName].consumable.replace(
+                    /\[C([^\|]*)\|([^\]]*)\]/g, '$' + (count == 1 ? '1' : '2'));
+              } else if (weapons[weaponName].name) {
+                consumableName = weapons[weaponName].name.replace(
+                    /\[C([^\|]*)\|([^\]]*)\]/g, '$' + (count == 1 ? '1' : '2'));
+              } else if (count != 1) {
+                consumableName += 's';
+              }
+              subMessage += formatMultiNames([userWithWeapon], false) +
+                  ' lost ' + count + ' ' + consumableName + '.';
             }
+
             if (!eventTry.message) {
               let owner = formatMultiNames(
-                              [userWithWeapon], game[id].options.mentionAll) +
+                              [userWithWeapon], games[id].options.mentionAll) +
                   '\'s ';
+              let weaponName =
+                  weaponEventPool[chosenWeapon].name || chosenWeapon;
               eventTry.message =
-                  weapons.message
-                      .replaceAll(
-                          '{weapon}',
-                          owner + (weaponEventPool[chosenWeapon].name ||
-                                   chosenWeapon))
+                  weapons.message.replaceAll('{weapon}', owner + weaponName)
                       .replaceAll('{action}', eventTry.action)
                       .replace(
-                          /\[C([^\|]*)\|([^\]]*)\]/g, function(match, p1, p2) {
-                            return consumes == 1 ? p1 : p2;
-                          });
+                          /\[C([^\|]*)\|([^\]]*)\]/g,
+                          '$' + (consumed == 1 ? '1' : '2'));
+            } else {
+              eventTry.message = eventTry.message.replaceAll(
+                  '{owner}',
+                  formatMultiNames(
+                      [userWithWeapon], games[id].options.mentionAll));
             }
           }
         }
@@ -2038,7 +2072,7 @@ function HungryGames() {
       }
 
       effectUser = function(i, kills, weapon) {
-        if (!affectedUsers[i]) {
+        if (!affectedUsers[i] || typeof affectedUsers[i] === 'undefined') {
           self.common.error(
               'Affected users invalid index:' + i + '/' + affectedUsers.length,
               'HG');
@@ -2156,6 +2190,64 @@ function HungryGames() {
       }
 
       let finalEvent = eventTry;
+
+      if (eventTry.attacker.weapon) {
+        for (let i = 0; i < numAttacker; i++) {
+          let user = affectedUsers[numVictim + i];
+          let consumableList =
+              Object
+                  .entries(user.weapons || {[eventTry.attacker.weapon.name]: 0})
+                  .map(function(el) {
+                    let weaponName = el[0];
+                    let consumableName = weaponName;
+                    let count = el[1];
+                    if (weapons[weaponName].consumable) {
+                      consumableName = weapons[weaponName].consumable.replace(
+                          /\[C([^\|]*)\|([^\]]*)\]/g,
+                          '$' + (count == 1 ? '1' : '2'));
+                    } else if (weapons[weaponName].name) {
+                      consumableName = weapons[weaponName].name.replace(
+                          /\[C([^\|]*)\|([^\]]*)\]/g,
+                          '$' + (count == 1 ? '1' : '2'));
+                    } else if (count != 1) {
+                      consumableName += 's';
+                    }
+                    return (count || 0) + ' ' + consumableName;
+                  })
+                  .join(', ');
+          subMessage += '\n' + formatMultiNames([user], false) + ' now has ' +
+              consumableList + '.';
+        }
+      }
+      if (eventTry.victim.weapon) {
+        for (let i = 0; i < numVictim; i++) {
+          let user = affectedUsers[i];
+          let consumableList =
+              Object
+                  .entries(user.weapons || {[eventTry.attacker.weapon.name]: 0})
+                  .map(function(el) {
+                    let weaponName = el[0];
+                    let consumableName = weaponName;
+                    let count = el[1];
+                    if (weapons[weaponName].consumable) {
+                      consumableName = weapons[weaponName].consumable.replace(
+                          /\[C([^\|]*)\|([^\]]*)\]/g,
+                          '$' + (count == 1 ? '1' : '2'));
+                    } else if (weapons[weaponName].name) {
+                      consumableName = weapons[weaponName].name.replace(
+                          /\[C([^\|]*)\|([^\]]*)\]/g,
+                          '$' + (count == 1 ? '1' : '2'));
+                    } else if (count != 1) {
+                      consumableName += 's';
+                    }
+                    return (count || 0) + ' ' + consumableName;
+                  })
+                  .join(', ');
+          subMessage += '\n' + formatMultiNames([user], false) + ' now has ' +
+              consumableList + '.';
+        }
+      }
+
       if (doBattle) {
         affectedUsers = [];
       } else {
@@ -2163,6 +2255,7 @@ function HungryGames() {
             eventTry.message, affectedUsers, numVictim, numAttacker,
             games[id].options.mentionAll, id, eventTry.victim.outcome,
             eventTry.attacker.outcome);
+        finalEvent.subMessage = subMessage;
       }
       /* if (eventTry.attacker.killer && eventTry.victim.killer) {
         finalEvent.icons.splice(numVictim, 0, {url: fistBoth});
@@ -2526,7 +2619,6 @@ function HungryGames() {
       let isAttacker = false;
       let validTeam = teams.findIndex(function(team) {
         if (weaponWielder) {
-          isAttacker = true;
           return team.players.findIndex(function(p) {
             return p.id === weaponWielder.id;
           }) > -1;
@@ -2565,9 +2657,20 @@ function HungryGames() {
         affectedUsers.push(userPool.splice(userIndex, 1)[0]);
       }
     } else {
-      for (let i = 0; i < numAttacker + numVictim; i++) {
+      let i = weaponWielder ? 1 : 0;
+      for (i; i < numAttacker + numVictim; i++) {
         let userIndex = Math.floor(Math.random() * userPool.length);
+        if (weaponWielder && weaponWielder.id == userPool[userIndex].id) {
+          i--;
+          continue;
+        }
         affectedUsers.push(userPool.splice(userIndex, 1)[0]);
+      }
+      if (weaponWielder) {
+        let wielderIndex = userPool.findIndex(function(u) {
+          return u.id == weaponWielder.id;
+        });
+        affectedUsers.push(userPool.splice(wielderIndex, 1)[0]);
       }
     }
     return affectedUsers;
@@ -3013,10 +3116,17 @@ function HungryGames() {
     } else {
       delete battleMessage[id];
       if (events[index].icons.length === 0) {
-        msg.channel.send(events[index].message);
+        msg.channel.send(
+            events[index].message + '\n' + (events[index].subMessage || ''));
       } else {
         let embed = new self.Discord.MessageEmbed();
-        embed.setDescription(events[index].message);
+        if (events[index].subMessage) {
+          // embed.addField('\u200B', events[index].subMessage, false);
+          embed.setDescription(
+              events[index].message + '\n' + events[index].subMessage);
+        } else {
+          embed.setDescription(events[index].message);
+        }
         embed.setColor([125, 0, 0]);
         let finalImage = new Jimp(
             events[index].icons.length * (iconSize + iconGap) - iconGap,
@@ -3031,6 +3141,10 @@ function HungryGames() {
           } else if (outcome == 'wounded') {
             finalImage.blit(
                 new Jimp(iconSize, iconGap, 0xFFFF00FF),
+                placement * (iconSize + iconGap), iconSize);
+          } else if (outcome == 'thrives') {
+            finalImage.blit(
+                new Jimp(iconSize, iconGap, 0x00FF00FF),
                 placement * (iconSize + iconGap), iconSize);
           }
           finalImage.blit(image, placement * (iconSize + iconGap), 0);
@@ -3185,8 +3299,8 @@ function HungryGames() {
           symbol = emoji.skull;
         } else if (obj.state == 'wounded') {
           symbol = emoji.yellow_heart;
-        } else if (obj.state == 'zombie') {
-          symbol = emoji.broken_heart;
+        /* } else if (obj.state == 'zombie') {
+          symbol = emoji.broken_heart; */
         }
 
         let shortName = obj.name.substring(0, 16);
@@ -3207,12 +3321,13 @@ function HungryGames() {
         statusList.sort();
       }
       if (statusList.length >= 3) {
-        let quarterLength = Math.floor(statusList.length / 3);
-        for (let i = 0; i < 2; i++) {
+        let numCols = statusList.length > 10 ? 3 : 2;
+        let quarterLength = Math.ceil(statusList.length / numCols);
+        for (let i = 0; i < numCols - 1; i++) {
           let thisMessage = statusList.splice(0, quarterLength).join('\n');
           finalMessage.addField(i + 1, thisMessage, true);
         }
-        finalMessage.addField(3, statusList.join('\n'), true);
+        finalMessage.addField(numCols, statusList.join('\n'), true);
       } else {
         finalMessage.setDescription(statusList.join('\n'));
       }
