@@ -2501,6 +2501,10 @@ function HungryGames() {
             return p === weaponWielder.id;
           }) > -1;
         });
+        if (!attackerTeam) {
+          console.error(weaponWielder, 'not on any team', teams);
+          return false;
+        }
         return numAttacker <= attackerTeam.numPool &&
             numVictim <= userPool.length - attackerTeam.numPool;
       } else {
