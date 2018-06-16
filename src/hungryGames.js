@@ -1596,6 +1596,15 @@ function HungryGames() {
             '% heal.',
         file);
 
+    events = weapons;
+    if (games[id] && games[id].customEvents.weapon) {
+      events = events.concat(games[id].customEvents.weapon);
+    }
+    file = new self.Discord.MessageAttachment();
+    file.setFile(Buffer.from(JSON.stringify(events, null, 2)));
+    file.setName('WeaponEvents.json');
+    msg.channel.send('Arena Events (' + events.length + ')', file);
+
     events = defaultArenaEvents;
     if (games[id] && games[id].customEvents.arena) {
       events = events.concat(games[id].customEvents.arena);
