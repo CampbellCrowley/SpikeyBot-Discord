@@ -2021,10 +2021,10 @@ function HungryGames() {
               let count = consumed;
               if (weapons[weaponName].consumable) {
                 consumableName = weapons[weaponName].consumable.replace(
-                    /\[C([^\|]*)\|([^\]]*)\]/g, '$' + (count == 1 ? '1' : '2'));
+                    /\[C([^\|]*)\|([^\]]*)\]/g, (count == 1 ? '$1' : '$2'));
               } else if (weapons[weaponName].name) {
                 consumableName = weapons[weaponName].name.replace(
-                    /\[C([^\|]*)\|([^\]]*)\]/g, '$' + (count == 1 ? '1' : '2'));
+                    /\[C([^\|]*)\|([^\]]*)\]/g, (count == 1 ? '$1' : '$2'));
               } else if (count != 1) {
                 consumableName += 's';
               }
@@ -2032,23 +2032,26 @@ function HungryGames() {
                   ' lost ' + count + ' ' + consumableName + '.';
             }
 
+            let owner = 'their';
+            if (numAttacker > 1 ||
+                (numAttacker == 1 &&
+                 affectedUsers[numVictim].id != userWithWeapon.id)) {
+              owner = formatMultiNames(
+                          [userWithWeapon], games[id].options.mentionAll) +
+                  '\'s';
+            }
             if (!eventTry.message) {
-              let owner = formatMultiNames(
-                              [userWithWeapon], games[id].options.mentionAll) +
-                  '\'s ';
               let weaponName =
                   weaponEventPool[chosenWeapon].name || chosenWeapon;
               eventTry.message =
-                  weapons.message.replaceAll('{weapon}', owner + weaponName)
+                  weapons.message
+                      .replaceAll('{weapon}', owner + ' ' + weaponName)
                       .replaceAll('{action}', eventTry.action)
                       .replace(
                           /\[C([^\|]*)\|([^\]]*)\]/g,
-                          '$' + (consumed == 1 ? '1' : '2'));
+                          (consumed == 1 ? '$1' : '$2'));
             } else {
-              eventTry.message = eventTry.message.replaceAll(
-                  '{owner}',
-                  formatMultiNames(
-                      [userWithWeapon], games[id].options.mentionAll));
+              eventTry.message = eventTry.message.replaceAll('{owner}', owner);
             }
           }
         }
@@ -3000,12 +3003,15 @@ function HungryGames() {
             .replaceAll(
                 '{attacker}', formatMultiNames(affectedAttackers, mention));
     if (finalMessage.indexOf('{dead}') > -1) {
-      let deadUsers = games[id]
-                          .currentGame.includedUsers
-                          .filter(function(obj) {
-                            return !obj.living;
-                          })
-                          .slice(0, weightedUserRand());
+      let deadUsers =
+          games[id]
+              .currentGame.includedUsers
+              .filter(function(obj) {
+                return !obj.living && !affectedUsers.find(function(u) {
+                  return u.id == obj.id;
+                });
+              })
+              .slice(0, weightedUserRand());
       let numDead = deadUsers.length;
       if (numDead === 0) {
         finalMessage = finalMessage.replaceAll('{dead}', 'an animal');

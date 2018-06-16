@@ -438,7 +438,7 @@
       "victim": { "count": "0", "outcome": "nothing" }
     },
     {
-      "message": "{attacker} get[As a|] vial[A|s] of poison from sponsors.",
+      "message": "{attacker} get[As|] vials of poison from sponsors.",
       "attacker": { "count": "-1", "outcome": "nothing", "weapon": { "name": "poison", "count": 3 } },
       "victim": { "count": "0", "outcome": "nothing" }
     },
