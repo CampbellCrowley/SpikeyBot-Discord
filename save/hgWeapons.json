@@ -491,7 +491,7 @@
         "consumes": 0
       },
       {
-        "message": "{attacker} brutally decapitates {victim} with a sword.",
+        "message": "{attacker} brutally decapitates {victim} with {owner} sword.",
         "attacker": { "count": "1", "outcome": "nothing", "killer": true },
         "victim": { "count": "-1", "outcome": "dies" },
         "consumes": 0

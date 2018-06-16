@@ -2014,7 +2014,7 @@ function HungryGames() {
                 consumableName += 's';
               }
               subMessage += formatMultiNames([userWithWeapon], false) +
-                  ' ran out of ' + consumableName + '.';
+                  ' runs out of ' + consumableName + '.';
             } else if (consumed != 0) {
               let weaponName = chosenWeapon;
               let consumableName = weaponName;
