@@ -1603,7 +1603,8 @@ function HungryGames() {
     file = new self.Discord.MessageAttachment();
     file.setFile(Buffer.from(JSON.stringify(events, null, 2)));
     file.setName('WeaponEvents.json');
-    msg.channel.send('Arena Events (' + events.length + ')', file);
+    msg.channel.send(
+        'Weapon Events (' + Object.keys(events).length + ')', file);
 
     events = defaultArenaEvents;
     if (games[id] && games[id].customEvents.arena) {
@@ -2135,6 +2136,7 @@ function HungryGames() {
         games[id].currentGame.includedUsers[index].living = false;
         games[id].currentGame.includedUsers[index].bleeding = 0;
         games[id].currentGame.includedUsers[index].state = 'dead';
+        games[id].currentGame.includedUsers[index].weapons = {};
         games[id].currentGame.includedUsers[index].rank =
             games[id].currentGame.numAlive--;
         if (games[id].options.teamSize > 0) {
@@ -3004,11 +3006,15 @@ function HungryGames() {
                             return !obj.living;
                           })
                           .slice(0, weightedUserRand());
-      if (deadUsers.length === 0) {
+      let numDead = deadUsers.length;
+      if (numDead === 0) {
         finalMessage = finalMessage.replaceAll('{dead}', 'an animal');
       } else {
-        finalMessage = finalMessage.replaceAll(
-            '{dead}', formatMultiNames(deadUsers, false));
+        finalMessage =
+            finalMessage
+                .replace(
+                    /\[D([^\|]*)\|([^\]]*)\]/g, numDead === 1 ? '$1' : '$2')
+                .replaceAll('{dead}', formatMultiNames(deadUsers, false));
       }
     }
     let finalIcons = getMiniIcons(affectedVictims.concat(affectedAttackers));

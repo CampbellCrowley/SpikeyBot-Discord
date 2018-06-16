@@ -266,6 +266,11 @@
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
+      "message": "{attacker} find[As a|] kni[Afe|ves] in the cornucopia.",
+      "attacker": { "count": "-1", "outcome": "nothing", "weapon": { "name": "knife", "count": 1 } },
+      "victim": { "count": "0", "outcome": "nothing" }
+    },
+    {
       "message": "{victim} [Vis|are] unable to convince {attacker} not to kill them.",
       "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
@@ -378,13 +383,28 @@
       "victim": { "count": "0", "outcome": "nothing" }
     },
     {
-      "message": "{victim} receives a gun with 6 shots in it from a sponsor.",
+      "message": "{victim} receives a gun with bullets in it from a sponsor.",
       "attacker": { "count": "0", "outcome": "nothing" },
       "victim": { "count": "1", "outcome": "nothing", "weapon": {"name": "gun", "count": 6 } }
     },
     {
-      "message": "{attacker} manages to find a bag full of explosives.",
-      "attacker": { "count": "1", "outcome": "nothing", "weapon": { "name": "explosives", "count": 3 } },
+      "message": "{attacker} manage[As|] to find [Aa bag|bags] full of explosives.",
+      "attacker": { "count": "-1", "outcome": "nothing", "weapon": { "name": "explosives", "count": 3 } },
+      "victim": { "count": "0", "outcome": "nothing" }
+    },
+    {
+      "message": "{attacker} find[As a|] kni[Afe|ves] on {dead}'s corpse[D|s].",
+      "attacker": { "count": "-1", "outcome": "nothing", "weapon": { "name": "knife", "count": 1 } },
+      "victim": { "count": "0", "outcome": "nothing" }
+    },
+    {
+      "message": "{attacker} craft[As a|] kni[Afe|ves] from materials they found.",
+      "attacker": { "count": "-1", "outcome": "nothing", "weapon": { "name": "knife", "count": 1 } },
+      "victim": { "count": "0", "outcome": "nothing" }
+    },
+    {
+      "message": "{attacker} craft[As a|] bow[A|s] and arrows from materials they found.",
+      "attacker": { "count": "-1", "outcome": "nothing", "weapon": { "name": "bow", "count": 3 } },
       "victim": { "count": "0", "outcome": "nothing" }
     },
     {
@@ -418,7 +438,7 @@
       "victim": { "count": "0", "outcome": "nothing" }
     },
     {
-      "message": "{attacker} get[As a|] phial[A|s] of poison from sponsors.",
+      "message": "{attacker} get[As a|] vial[A|s] of poison from sponsors.",
       "attacker": { "count": "-1", "outcome": "nothing", "weapon": { "name": "poison", "count": 3 } },
       "victim": { "count": "0", "outcome": "nothing" }
     },
@@ -443,14 +463,19 @@
       "victim": { "count": "-1", "outcome": "nothing" }
     },
     {
-      "message": "{attacker} find[As|] a gym and lift[As|] weights.",
+      "message": "{attacker} chat[As|] with {dead}.",
       "attacker": { "count": "-1", "outcome": "nothing" },
       "victim": { "count": "0", "outcome": "nothing" }
     },
     {
-      "message": "{attacker} become[As|] drunk from partying too hard with {victim}.",
+      "message": "{dead} convince[Ds|] {victim} to jump off a cliff.",
+      "attacker": { "count": "0", "outcome": "nothing" },
+      "victim": { "count": "-1", "outcome": "dies" }
+    },
+    {
+      "message": "{attacker} find[As|] a gym and lift[As|] weights.",
       "attacker": { "count": "-1", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "nothing" }
+      "victim": { "count": "0", "outcome": "nothing" }
     },
     {
       "message": "{attacker} laughs at their own jokes.",
@@ -1048,17 +1073,12 @@
       "victim": { "count": "-1", "outcome": "wounded" }
     },
     {
-      "message": "{attacker} get[As|] {victim} infected with their knife, but doesn't kill them.",
-      "attacker": { "count": "-1", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "wounded" }
-    },
-    {
       "message": "{attacker} find[As|] {dead}'s remains.",
       "attacker": { "count": "-1", "outcome": "nothing" },
       "victim": { "count": "0", "outcome": "nothing" }
     },
     {
-      "message": "{dead} wish they were alive.",
+      "message": "{dead} wish[Des|] they were alive.",
       "attacker": { "count": "0", "outcome": "nothing" },
       "victim": { "count": "0", "outcome": "nothing" }
     },
@@ -1161,6 +1181,26 @@
       "message": "{victim} [Vis|are] choked to death by {attacker}.",
       "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
+    },
+    {
+      "message": "Something happened!",
+      "attacker": { "count": "0", "outcome": "nothing" },
+      "victim": { "count": "0", "outcome": "nothing" }
+    },
+    {
+      "message": "{attacker} do[Aes|] something, idk.",
+      "attacker": { "count": "-1", "outcome": "nothing" },
+      "victim": { "count": "0", "outcome": "nothing" }
+    },
+    {
+      "message": "{attacker} do[Aes|] something, and {victim} die[Vs|].",
+      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+      "victim": { "count": "-1", "outcome": "dies" }
+    },
+    {
+      "message": "{victim} looked at me funny so I killed them.",
+      "attacker": { "count": "0", "outcome": "nothing" },
+      "victim": { "count": "1", "outcome": "dies" }
     },
     {
       "message": "{attacker} take[As|] one of {victim} arm[Vs|].",
