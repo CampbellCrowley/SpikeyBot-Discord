@@ -3299,7 +3299,7 @@ function HungryGames() {
       games[id].currentGame.inProgress = false;
       games[id].currentGame.ended = true;
       games[id].autoPlay = false;
-    } else if (games[id].currentGame.day.num >= 0) {
+    } else {
       finalMessage.setTitle('Status update! (kills)');
       if (games[id].options.teamSize > 0) {
         games[id].currentGame.includedUsers.sort(function(a, b) {
@@ -3450,7 +3450,7 @@ function HungryGames() {
               responses++;
             });
       });
-    } else if (games[id].currentGame.day.num > 0) {
+    } else {
       self.client.setTimeout(function() {
         let winnerTag = '';
         if (numAlive == 1) {
