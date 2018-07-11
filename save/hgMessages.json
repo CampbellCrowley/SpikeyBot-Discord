@@ -146,6 +146,6 @@
     "{victim} couldn't find medical help, and die[Vs|].",
     "The light fades from {victim}'s eyes.",
     "{victim} lose[Vs|] the will to live.",
-    "{victim} [Vis|are] unable to hold onto life any longer, and die."
+    "{victim} [Vis|are] unable to hold onto life any longer, and die[Vs|]."
   ]
 }
