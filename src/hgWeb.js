@@ -6,6 +6,7 @@ const https = require('https');
 const socketIo = require('socket.io');
 const querystring = require('querystring');
 const auth = require('../auth.js');
+const crypto = require('crypto');
 
 const clientId = '444293534720458753';
 const clientSecret = auth.webSecret;
@@ -134,10 +135,7 @@ function HGWeb(hg) {
     sockets[socket.id] = socket;
 
     let userData = {};
-    let session = Math.random().toString(36).substring(2, 15) +
-        Math.random().toString(36).substring(2, 15) +
-        Math.random().toString(36).substring(2, 15) +
-        Math.random().toString(36).substring(2, 15);
+    let session = crypto.randomBytes(128).toString('hex');
     let restoreAttempt = false;
 
     socket.on('restore', (sess) => {
