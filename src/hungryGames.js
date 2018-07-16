@@ -1633,62 +1633,98 @@ function HungryGames() {
               'next" for next day, or "' + self.myPrefix + 'end" to abort)');
     } else {
       createGame(msg, id, true);
-      let teamList = '';
+
+      let finalMessage = new self.Discord.MessageEmbed();
+      finalMessage.setTitle(getMessage('gameStart'));
+      finalMessage.setColor(defaultColor);
+
       let numUsers = games[id].currentGame.includedUsers.length;
       if (games[id].options.teamSize > 0) {
-        teamList = games[id]
-                       .currentGame.teams
-                       .map(function(team, index) {
-                         return '__' + team.name + '__: ' +
-                             team.players
-                                 .map(function(player) {
-                                   try {
-                                     return '`' +
-                                         games[id]
-                                             .currentGame.includedUsers
-                                             .find(function(obj) {
-                                               return obj.id == player;
-                                             })
-                                             .name +
-                                         '`';
-                                   } catch (err) {
-                                     self.common.error(
-                                         'Failed to find player' + player +
-                                         ' in included users.');
-                                     console.log(games[id].currentGame.teams);
-                                     throw err;
-                                   }
-                                 })
-                                 .join(', ');
-                       })
-                       .join('\n');
-      } else {
-        teamList = games[id]
-                       .currentGame.includedUsers
-                       .map(function(obj) {
-                         return obj.name;
-                       })
-                       .join(', ');
+        games[id].currentGame.includedUsers.sort(function(a, b) {
+          let aTeam = games[id].currentGame.teams.findIndex(function(team) {
+            return team.players.findIndex(function(player) {
+              return player == a.id;
+            }) > -1;
+          });
+          let bTeam = games[id].currentGame.teams.findIndex(function(team) {
+            return team.players.findIndex(function(player) {
+              return player == b.id;
+            }) > -1;
+          });
+          if (aTeam == bTeam) {
+            return a.id - b.id;
+          } else {
+            return aTeam - bTeam;
+          }
+        });
       }
+      let prevTeam = -1;
+      let statusList = games[id].currentGame.includedUsers.map(function(obj) {
+        let myTeam = -1;
+        if (games[id].options.teamSize > 0) {
+          myTeam = games[id].currentGame.teams.findIndex(function(team) {
+            return team.players.findIndex(function(player) {
+              return player == obj.id;
+            }) > -1;
+          });
+        }
 
-      let included = `**Included** (${numUsers}):\n${teamList}\n`;
-      let excluded = '';
+        let shortName = obj.name.substring(0, 16);
+        if (shortName != obj.name) {
+          shortName = shortName.substring(0, 13) + '...';
+        }
+
+        let prefix = '';
+        if (myTeam != prevTeam) {
+          prevTeam = myTeam;
+          prefix = '__' + games[id].currentGame.teams[myTeam].name + '__\n';
+        }
+
+        return prefix + '`' + shortName + '`';
+      });
+      if (games[id].options.teamSize == 0) {
+        statusList.sort();
+      }
+      if (statusList.length >= 3) {
+        let numCols = statusList.length > 10 ? 3 : 2;
+        let quarterLength = Math.ceil(statusList.length / numCols);
+        for (let i = 0; i < numCols - 1; i++) {
+          let thisMessage = statusList.splice(0, quarterLength).join('\n');
+          finalMessage.addField(
+              'Included (' + (i * quarterLength + 1) + '-' +
+                  ((i + 1) * quarterLength) + ')',
+              thisMessage, true);
+        }
+        finalMessage.addField(
+            'Included (' + ((numCols - 1) * quarterLength + 1) + '-' +
+                numUsers + ')',
+            statusList.join('\n'), true);
+      } else {
+        finalMessage.addField(
+            'Included (' + numUsers + ')', statusList.join('\n'), false);
+      }
       if (games[id].excludedUsers.length > 0) {
-        excluded = '**Excluded** (' + games[id].excludedUsers.length + '):\n' +
+        finalMessage.addField(
+            'Excluded (' + games[id].excludedUsers.length + ')',
             games[id]
                 .excludedUsers
                 .map(function(obj) {
                   return getName(msg.guild, obj);
                 })
-                .join(', ');
+                .join(', '),
+            false);
       }
 
-      self.common.reply(
-          msg, getMessage('gameStart') +
-              (games[id].autoPlay ? '' : '\n("' + self.myPrefix +
-                       'next" for next day.)'),
-          (games[id].options.mentionEveryoneAtStart ? '@everyone\n' : '') +
-              included + excluded);
+      if (!games[id].autoPlay) {
+        finalMessage.setFooter('"' + self.myPrefix + 'next" for next day.');
+      }
+
+      if (games[id].options.mentionEveryoneAtStart) {
+        finalMessage.setDescription('@everyone');
+      }
+
+      msg.channel.send(self.common.mention(msg), finalMessage);
+
       games[id].currentGame.inProgress = true;
       if (games[id].autoPlay) {
         nextDay(msg, id);
@@ -3245,7 +3281,7 @@ function HungryGames() {
           numTeams++;
           lastTeam = index;
         }
-        if (team.numAlive == team.players.length) {
+        if (team.numAlive > 1 && team.numAlive == team.players.length) {
           numWholeTeams++;
           lastWholeTeam = index;
         }
@@ -3361,9 +3397,14 @@ function HungryGames() {
         let quarterLength = Math.ceil(statusList.length / numCols);
         for (let i = 0; i < numCols - 1; i++) {
           let thisMessage = statusList.splice(0, quarterLength).join('\n');
-          finalMessage.addField(i + 1, thisMessage, true);
+          finalMessage.addField(
+              (i * quarterLength + 1) + '-' + ((i + 1) * quarterLength),
+              thisMessage, true);
         }
-        finalMessage.addField(numCols, statusList.join('\n'), true);
+        finalMessage.addField(
+            ((numCols - 1) * quarterLength + 1) + '-' +
+                games[id].currentGame.includedUsers.length,
+            statusList.join('\n'), true);
       } else {
         finalMessage.setDescription(statusList.join('\n'));
       }
@@ -3497,26 +3538,55 @@ function HungryGames() {
       if (games[id].options.teamSize > 0) {
         let teamRankEmbed = new self.Discord.MessageEmbed();
         teamRankEmbed.setTitle('Final Team Ranks');
-        let teamRankList = games[id]
-                               .currentGame.teams
-                               .sort(function(a, b) {
-                                 return a.rank - b.rank;
-                               })
-                               .map(function(obj) {
-                                 return obj.rank + ') ' + obj.name;
-                               });
-        games[id].currentGame.teams.sort(function(a, b) {
-          return a.id - b.id;
+        games[id].currentGame.includedUsers.sort(function(a, b) {
+          let aTeam = games[id].currentGame.teams.find(function(team) {
+            return team.players.findIndex(function(player) {
+              return player == a.id;
+            }) > -1;
+          });
+          let bTeam = games[id].currentGame.teams.find(function(team) {
+            return team.players.findIndex(function(player) {
+              return player == b.id;
+            }) > -1;
+          });
+          if (aTeam.id == bTeam.id) {
+            return a.rank - b.rank;
+          } else {
+            return aTeam.rank - bTeam.rank;
+          }
         });
-        if (teamRankList.length <= 20) {
-          teamRankEmbed.setDescription(teamRankList.join('\n'));
-        } else {
-          let thirdLength = Math.floor(teamRankList.length / 3);
-          for (let i = 0; i < 2; i++) {
-            let thisMessage = teamRankList.splice(0, thirdLength).join('\n');
+        let prevTeam = -1;
+        let statusList = games[id].currentGame.includedUsers.map(function(obj) {
+          let myTeam = -1;
+          myTeam = games[id].currentGame.teams.findIndex(function(team) {
+            return team.players.findIndex(function(player) {
+              return player == obj.id;
+            }) > -1;
+          });
+          let shortName = obj.name.substring(0, 16);
+          if (shortName != obj.name) {
+            shortName = shortName.substring(0, 13) + '...';
+          }
+
+          let prefix = '';
+          if (myTeam != prevTeam) {
+            prevTeam = myTeam;
+            prefix = games[id].currentGame.teams[myTeam].rank + ') __' +
+                games[id].currentGame.teams[myTeam].name + '__\n';
+          }
+
+          return prefix + '`' + shortName + '`';
+        });
+        if (statusList.length >= 3) {
+          let numCols = statusList.length > 10 ? 3 : 2;
+          let quarterLength = Math.ceil(statusList.length / numCols);
+          for (let i = 0; i < numCols - 1; i++) {
+            let thisMessage = statusList.splice(0, quarterLength).join('\n');
             teamRankEmbed.addField(i + 1, thisMessage, true);
           }
-          teamRankEmbed.addField(3, teamRankList.join('\n'), true);
+          teamRankEmbed.addField(numCols, statusList.join('\n'), true);
+        } else {
+          teamRankEmbed.setDescription(statusList.join('\n'));
         }
         teamRankEmbed.setColor(defaultColor);
         self.client.setTimeout(function() {
@@ -3726,75 +3796,95 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function listPlayers(msg, id) {
-    let stringList = '';
+    let finalMessage = new self.Discord.MessageEmbed();
+    finalMessage.setTitle('List of currently tracked players');
+    finalMessage.setColor(defaultColor);
     if (games[id] && games[id].currentGame &&
         games[id].currentGame.includedUsers) {
-      stringList += '=== Included Players (' +
-          games[id].currentGame.includedUsers.length + ') ===\n';
-      if (games[id].options.teamSize == 0) {
-        stringList += games[id]
-                          .currentGame.includedUsers
-                          .map(function(obj) {
-                            return obj.name;
-                          })
-                          .join(', ');
-      } else {
-        let numPlayers = 0;
-        stringList +=
-            games[id]
-                .currentGame.teams
-                .map(function(team, index) {
-                  return '#' + (index + 1) + ' __' + team.name + '__: ' +
-                      team.players
-                          .map(function(player) {
-                            numPlayers++;
-                            try {
-                              return '`' +
-                                  games[id]
-                                      .currentGame.includedUsers
-                                      .find(function(obj) {
-                                        return obj.id == player;
-                                      })
-                                      .name +
-                                  '`';
-                            } catch (err) {
-                              self.common.error(
-                                  'Failed to find player ' + player +
-                                  ' in included users.');
-                              console.log(games[id].currentGame.includedUsers);
-                              throw err;
-                            }
-                          })
-                          .join(', ');
-                })
-                .join('\n');
-        if (numPlayers != games[id].currentGame.includedUsers.length) {
-          stringList +=
-              '\n\nSome players were left out! Please reset teams to fix ' +
-              'this! (' + numPlayers + '/' +
-              games[id].currentGame.includedUsers.length + ')';
-          self.common.error(
-              'Failed to list all players! ' + numPlayers + '/' +
-              games[id].currentGame.includedUsers.length + ': ' + id);
+      let numUsers = games[id].currentGame.includedUsers.length;
+      if (games[id].options.teamSize > 0) {
+        games[id].currentGame.includedUsers.sort(function(a, b) {
+          let aTeam = games[id].currentGame.teams.findIndex(function(team) {
+            return team.players.findIndex(function(player) {
+              return player == a.id;
+            }) > -1;
+          });
+          let bTeam = games[id].currentGame.teams.findIndex(function(team) {
+            return team.players.findIndex(function(player) {
+              return player == b.id;
+            }) > -1;
+          });
+          if (aTeam == bTeam) {
+            return a.id - b.id;
+          } else {
+            return aTeam - bTeam;
+          }
+        });
+      }
+      let prevTeam = -1;
+      let statusList = games[id].currentGame.includedUsers.map(function(obj) {
+        let myTeam = -1;
+        if (games[id].options.teamSize > 0) {
+          myTeam = games[id].currentGame.teams.findIndex(function(team) {
+            return team.players.findIndex(function(player) {
+              return player == obj.id;
+            }) > -1;
+          });
         }
+
+        let shortName = obj.name.substring(0, 16);
+        if (shortName != obj.name) {
+          shortName = shortName.substring(0, 13) + '...';
+        }
+
+        let prefix = '';
+        if (myTeam != prevTeam) {
+          prevTeam = myTeam;
+          prefix = '__' + games[id].currentGame.teams[myTeam].name + '__\n';
+        }
+
+        return prefix + '`' + shortName + '`';
+      });
+      if (games[id].options.teamSize == 0) {
+        statusList.sort();
+      }
+      if (statusList.length >= 3) {
+        let numCols = statusList.length > 10 ? 3 : 2;
+        let quarterLength = Math.ceil(statusList.length / numCols);
+        for (let i = 0; i < numCols - 1; i++) {
+          let thisMessage = statusList.splice(0, quarterLength).join('\n');
+          finalMessage.addField(
+              'Included (' + (i * quarterLength + 1) + '-' +
+                  ((i + 1) * quarterLength) + ')',
+              thisMessage, true);
+        }
+        finalMessage.addField(
+            'Included (' + ((numCols - 1) * quarterLength + 1) + '-' +
+                numUsers + ')',
+            statusList.join('\n'), true);
+      } else {
+        finalMessage.addField(
+            'Included (' + numUsers + ')', statusList.join('\n') || 'Nobody...',
+            false);
       }
     } else {
-      stringList +=
+      finalMessage.setDescription(
           'There don\'t appear to be any included players. Have you ' +
-          'created a game with "' + self.myPrefix + 'create"?';
+          'created a game with "' + self.myPrefix + 'create"?');
     }
     if (games[id] && games[id].excludedUsers &&
         games[id].excludedUsers.length > 0) {
-      stringList +=
-          `\n\n=== Excluded Players (${games[id].excludedUsers.length}) ===\n`;
-      stringList += games[id]
-                        .excludedUsers
-                        .map(function(obj) {
-                          return getName(msg.guild, obj);
-                        })
-                        .join(', ');
+      finalMessage.addField(
+          'Excluded (' + games[id].excludedUsers.length + ')',
+          games[id]
+              .excludedUsers
+              .map(function(obj) {
+                return getName(msg.guild, obj);
+              })
+              .join(', '),
+          false);
     }
-    self.common.reply(msg, 'List of currently tracked players:', stringList);
+    msg.channel.send(self.common.mention(msg), finalMessage);
   }
 
   /**

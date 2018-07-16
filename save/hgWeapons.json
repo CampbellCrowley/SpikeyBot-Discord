@@ -39,6 +39,12 @@
         "consumes": 1
       },
       {
+        "message": "{victim} steal[Vs|] [Aa |]grenade[A|s] from {attacker}!",
+        "attacker": { "count": "1", "outcome": "nothing" },
+        "victim": { "count": "1", "outcome": "nothing", "weapon": { "name": "grenade", "count": 1} },
+        "consumes": 1
+      },
+      {
         "message": "{attacker} blow[As|] themsel[Af|ves] up with {owner} grenade!",
         "attacker": { "count": "-1", "outcome": "dies" },
         "victim": { "count": "0", "outcome": "nothing" },
@@ -76,6 +82,12 @@
         "message": "{attacker} set[As|] off explosives killing {victim}.",
         "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
         "victim": { "count": "-1", "outcome": "dies" },
+        "consumes": 1
+      },
+      {
+        "message": "{victim} steal[Vs|] [Aan |]explosive[A|s] from {attacker}!",
+        "attacker": { "count": "1", "outcome": "nothing" },
+        "victim": { "count": "1", "outcome": "nothing", "weapon": { "name": "explosive", "count": 1} },
         "consumes": 1
       },
       {
@@ -118,6 +130,12 @@
         "attacker": { "count": "0", "outcome": "nothing" },
         "victim": { "count": "1", "outcome": "dies" },
         "consumes": 3
+      },
+      {
+        "message": "{victim} steal[Vs|] [Aa |]bottle[A|s] of alcohol from {attacker}!",
+        "attacker": { "count": "1", "outcome": "nothing" },
+        "victim": { "count": "1", "outcome": "nothing", "weapon": { "name": "alcohol", "count": 1} },
+        "consumes": 1
       },
       {
         "message": "{victim} become[As|] drunk from partying too hard with {attacker} and {owner} alcohol.",
@@ -165,6 +183,12 @@
         "consumes": 1
       },
       {
+        "message": "{victim} steal[Vs|] [Aa |]slingshot[A|s] from {attacker}!",
+        "attacker": { "count": "1", "outcome": "nothing" },
+        "victim": { "count": "1", "outcome": "nothing", "weapon": { "name": "slingshot", "count": 1} },
+        "consumes": 1
+      },
+      {
         "action": "miss[Aes|] their shot at",
         "attacker": { "count": "-1", "outcome": "nothing" },
         "victim": { "count": "-1", "outcome": "nothing" },
@@ -204,6 +228,12 @@
         "attacker": { "count": "-1", "outcome": "nothing" },
         "victim": { "count": "0", "outcome": "nothing" },
         "consumes": 0
+      },
+      {
+        "message": "{victim} tr[Vies|y] to steal {owner} gun from {attacker}, but {attacker} shoots them!",
+        "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+        "victim": { "count": "-1", "outcome": "dies" },
+        "consumes": 1
       },
       {
         "message": "{victim} forgot to unload the gun before cleaning it, and shoots themself in the face.",
@@ -330,6 +360,12 @@
         "consumes": 0
       },
       {
+        "message": "{victim} steal[Vs|] [Aa |]knife[A|s] from {attacker}!",
+        "attacker": { "count": "1", "outcome": "nothing" },
+        "victim": { "count": "1", "outcome": "nothing", "weapon": { "name": "knife", "count": 1 } },
+        "consumes": 1
+      },
+      {
         "message": "{attacker} get[As|] {victim} infected with {owner} knife, but doesn't kill them.",
         "attacker": { "count": "-1", "outcome": "nothing" },
         "victim": { "count": "-1", "outcome": "wounded" },
@@ -377,6 +413,12 @@
         "consumes": "V"
       },
       {
+        "message": "{victim} steal[Vs|] [Aa |]throwing kni[Afe|ves] from {attacker}!",
+        "attacker": { "count": "1", "outcome": "nothing" },
+        "victim": { "count": "1", "outcome": "nothing", "weapon": { "name": "throwingknives", "count": 1 } },
+        "consumes": 1
+      },
+      {
         "action": "miss[Aes|] their throw at",
         "attacker": { "count": "-1", "outcome": "nothing" },
         "victim": { "count": "-1", "outcome": "nothing" },
@@ -388,6 +430,12 @@
     "outcomes": [
       {
         "message": "{attacker} whack[As|] {victim} to death with {owner} shovel!",
+        "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+        "victim": { "count": "-1", "outcome": "dies" },
+        "consumes": 0
+      },
+      {
+        "message": "{attacker} stab[As|] {victim} to death with {owner} shovel!",
         "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
         "victim": { "count": "-1", "outcome": "dies" },
         "consumes": 0
@@ -420,6 +468,12 @@
         "message": "{attacker} break[As|] {owner} shovel while digging [Da |]grave[D|s] for {dead}.",
         "attacker": { "count": "-1", "outcome": "nothing" },
         "victim": { "count": "0", "outcome": "nothing" },
+        "consumes": 1
+      },
+      {
+        "message": "{victim} steal[Vs|] [Aa |]shovel[A|s] from {attacker}!",
+        "attacker": { "count": "1", "outcome": "nothing" },
+        "victim": { "count": "1", "outcome": "nothing", "weapon": { "name": "shovel", "count": 1 } },
         "consumes": 1
       },
       {
@@ -463,6 +517,12 @@
         "consumes": 0
       },
       {
+        "message": "{victim} steal[Vs|] [Aa |]mace[A|s] from {attacker}!",
+        "attacker": { "count": "1", "outcome": "nothing" },
+        "victim": { "count": "1", "outcome": "nothing", "weapon": { "name": "mace", "count": 1 } },
+        "consumes": 1
+      },
+      {
         "message": "{attacker} break[As|] {owner} mace while showing off to {victim}.",
         "attacker": { "count": "-1", "outcome": "nothing" },
         "victim": { "count": "-1", "outcome": "nothing" },
@@ -503,6 +563,12 @@
         "consumes": 0
       },
       {
+        "message": "{victim} steal[Vs|] [Aa |]sword[A|s] from {attacker}!",
+        "attacker": { "count": "1", "outcome": "nothing" },
+        "victim": { "count": "1", "outcome": "nothing", "weapon": { "name": "sword", "count": 1 } },
+        "consumes": 1
+      },
+      {
         "message": "{attacker} break[As|] {owner} sword accidentally.",
         "attacker": { "count": "-1", "outcome": "nothing" },
         "victim": { "count": "0", "outcome": "nothing" },
@@ -537,6 +603,12 @@
         "consumes": 0
       },
       {
+        "message": "{victim} steal[Vs|] [Aa |]hatchet[A|s] from {attacker}!",
+        "attacker": { "count": "1", "outcome": "nothing" },
+        "victim": { "count": "1", "outcome": "nothing", "weapon": { "name": "sword", "count": 1 } },
+        "consumes": 1
+      },
+      {
         "message": "{attacker} break[As|] {owner} hatchet while chopping a tree.",
         "attacker": { "count": "-1", "outcome": "nothing" },
         "victim": { "count": "0", "outcome": "nothing" },
@@ -564,6 +636,12 @@
         "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
         "victim": { "count": "-1", "outcome": "dies" },
         "consumes": "V"
+      },
+      {
+        "message": "{victim} steal[As|] {attacker}'s toothbrush.",
+        "attacker": { "count": "1", "outcome": "nothing" },
+        "victim": { "count": "1", "outcome": "nothing", "weapon": { "name": "toothbrush", "count": 1 } },
+        "consumes": 1
       },
       {
         "message": "{attacker} drop[As|] {owner} toothbrush in the mud, and leave[As|] it there because that's disgusting.",
@@ -594,6 +672,12 @@
         "consumes": 0
       },
       {
+        "message": "{victim} steal[Vs|] [Aa |]rope[A|s] from {attacker}!",
+        "attacker": { "count": "1", "outcome": "nothing" },
+        "victim": { "count": "1", "outcome": "nothing", "weapon": { "name": "rope", "count": 1 } },
+        "consumes": 1
+      },
+      {
         "message": "{attacker} cut[As|] {owner} rope too short, and it becomes unusable.",
         "attacker": { "count": "1", "outcome": "nothing" },
         "victim": { "count": "0", "outcome": "nothing" },
@@ -621,6 +705,12 @@
         "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
         "victim": { "count": "-1", "outcome": "dies" },
         "consumes": "V"
+      },
+      {
+        "message": "{victim} steal[Vs|] [Aa |]vial[A|s] of poison from {attacker}!",
+        "attacker": { "count": "1", "outcome": "nothing" },
+        "victim": { "count": "1", "outcome": "nothing", "weapon": { "name": "poison", "count": 1 } },
+        "consumes": 1
       },
       {
         "message": "{attacker} didn't wash their hands after touching {owner} poison and dies.",
@@ -655,6 +745,12 @@
         "attacker": { "count": "-1", "outcome": "nothing" },
         "victim": { "count": "-1", "outcome": "wounded" },
         "consumes": 0
+      },
+      {
+        "message": "{victim} steal[Vs|] [Aa |]spear[A|s] from {attacker}!",
+        "attacker": { "count": "1", "outcome": "nothing" },
+        "victim": { "count": "1", "outcome": "nothing", "weapon": { "name": "spear", "count": 1 } },
+        "consumes": 1
       },
       {
         "message": "{attacker} break[As|] {owner} spear while practicing with it.",

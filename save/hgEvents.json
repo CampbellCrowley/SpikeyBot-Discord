@@ -1203,6 +1203,16 @@
       "victim": { "count": "1", "outcome": "dies" }
     },
     {
+      "message": "{attacker} smother[As|] {victim} in their love, killing them.",
+      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+      "victim": { "count": "-1", "outcome": "dies" }
+    },
+    {
+      "message": "{attacker} smother[As|] {victim} in their friendship, killing them.",
+      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+      "victim": { "count": "-1", "outcome": "dies" }
+    },
+    {
       "message": "{attacker} take[As|] one of {victim} arm[Vs|].",
       "attacker": { "count": "-1", "outcome": "nothing" },
       "victim": { "count": "-1", "outcome": "wounded" }
