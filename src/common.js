@@ -15,7 +15,7 @@ function Common() {
    * @type {number}
    * @default
    */
-  const prefixLength = 13;
+  const prefixLength = 14;
 
   /**
    * The color code to prefix log messages with for this script.
@@ -89,12 +89,19 @@ function Common() {
         res[i] = ('000' + res[i]).slice(-3);
         res[i] = res[i].replace(':', '0');
       }
-      return res.join('.');
+      return res.join('.') + '                       ';
+    } else if (str.match(/:/g) || [] == 7) {
+      let res = str.split(':');
+      for (let i = 0; i < res.length; i++) {
+        res[i] = ('0000' + res[i]).slice(-4);
+        // res[i] = res[i].replace(':', '0');
+      }
+      return res.join(':');
     } else {
-      for (let i = str.length; i < 15; i++) {
+      for (let i = str.length; i < 45; i++) {
         str += ' ';
       }
-      return str.substring(0, 15);
+      return str.substring(0, 45);
     }
   };
 

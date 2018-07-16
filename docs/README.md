@@ -252,7 +252,7 @@ The final formatted filename for logging.
 The number of characters reserved for the filename of the script.
 
 **Kind**: inner constant of [<code>Common</code>](#Common)  
-**Default**: <code>13</code>  
+**Default**: <code>14</code>  
 **Access**: private  
 <a name="Common..app"></a>
 
