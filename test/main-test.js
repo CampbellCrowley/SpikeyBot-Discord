@@ -143,7 +143,7 @@ const hgTests = [
       'Exclude player', '~hg exclude <@124733888177111041>',
       ['<@422623712534200321>\n```\nSpikeyRobot added to blacklist.\n' +
        'SpikeyRobot removed from included players.\n\n```']),
-  new Test('List teams and check excluded', '~hg players', ['!`SpikeyRobot`']),
+  new Test('List teams and check excluded', '~hg players', ['#embed']),
   new Test(
       'Exclude player already excluded', '~hg exclude <@124733888177111041>',
       ['<@422623712534200321>\n```\nSpikeyRobot is already excluded. ' +
@@ -159,12 +159,11 @@ const hgTests = [
   new Test(
       'Include player already included', '~hg include <@124733888177111041>',
       ['<@422623712534200321>\n```\nSpikeyRobot is already included.\n\n```']),
-  new Test('List teams and check included', '~hg players', ['^`SpikeyRobot`']),
+  new Test('List teams and check included', '~hg players', ['#embed']),
   new Test(
       'Rename Team', '~hg teams rename <@124733888177111041> The overlord',
       ['^to "The overlord"']),
-  new Test(
-      'List teams and check rename', '~hg teams', ['^__The overlord__: `']),
+  new Test('List teams and check rename', '~hg teams', ['#embed']),
   new Test('Randomize teams', '~hg teams randomize', ['#noerr']),
   new Test(
       'Reset Options command', '~hg reset options',
@@ -174,11 +173,7 @@ const hgTests = [
       ['<@422623712534200321>\n```\nResetting ALL Hungry Games data for ' +
        'this server!\n```']),
   new Test('Events command', '~hg events', ['#embed']),
-  new Test(
-      'No data: List players', '~hg players',
-      ['<@422623712534200321>\n```\nList of currently tracked players:\n```' +
-       'There don\'t appear to be any included players. Have you created a ' +
-       'game with "~hg create"?']),
+  new Test('No data: List players', '~hg players', ['#embed']),
   new Test(
       'No data: Exclude', '~hg exclude',
       ['<@422623712534200321>\n```\nYou must first create a game with "~hg ' +
