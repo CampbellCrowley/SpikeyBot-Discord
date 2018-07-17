@@ -161,6 +161,8 @@ function Connect4() {
       }
 
       let finalBoard = '```css\n' +
+          // '012345678901234567890123456\n' +
+          '        Connect Four           \n' +
           this.board
               .map(function(row, rowNum) {
                 return row
