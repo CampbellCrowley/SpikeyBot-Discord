@@ -2887,6 +2887,7 @@ Basic commands and features for the bot.
         * [~prevUserSayCnt](#Main..prevUserSayCnt) : <code>number</code> ℗
         * [~timers](#Main..timers) : [<code>Array.&lt;Timer&gt;</code>](#Main..Timer) ℗
         * [~disabledAutoSmite](#Main..disabledAutoSmite) : <code>Object.&lt;boolean&gt;</code> ℗
+        * [~riggedCounter](#Main..riggedCounter) : <code>number</code> ℗
         * [~mentionAccumulator](#Main..mentionAccumulator) : <code>Object.&lt;Object.&lt;string&gt;&gt;</code> ℗
         * [~introduction](#Main..introduction) : <code>string</code> ℗
         * [~blockedmessage](#Main..blockedmessage) : <code>string</code> ℗
@@ -2899,6 +2900,8 @@ Basic commands and features for the bot.
         * [~onGuildBanAdd(guild, user)](#Main..onGuildBanAdd) ℗
         * [~commandToggleMute(msg)](#Main..commandToggleMute) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~onMessage(msg)](#Main..onMessage) ℗
+        * [~checkSimilarity(s1, s2)](#Main..checkSimilarity) ⇒ <code>number</code> ℗
+        * [~editDistance(s1, s2)](#Main..editDistance) ⇒ <code>number</code> ℗
         * [~commandAddMe(msg)](#Main..commandAddMe) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandAdd(msg)](#Main..commandAdd) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandSimplify(msg)](#Main..commandSimplify) : [<code>commandHandler</code>](#commandHandler) ℗
@@ -3075,6 +3078,13 @@ All guilds that have disabled the auto-smite feature.
 
 **Kind**: inner property of [<code>Main</code>](#Main)  
 **Access**: private  
+<a name="Main..riggedCounter"></a>
+
+### Main~riggedCounter : <code>number</code> ℗
+Number of times "Rigged" has been said on all servers.
+
+**Kind**: inner property of [<code>Main</code>](#Main)  
+**Access**: private  
 <a name="Main..mentionAccumulator"></a>
 
 ### Main~mentionAccumulator : <code>Object.&lt;Object.&lt;string&gt;&gt;</code> ℗
@@ -3181,6 +3191,32 @@ Handle receiving a message for use on auto-muting users who spam @everyone.
 | Param | Type | Description |
 | --- | --- | --- |
 | msg | <code>Discord~Message</code> | The message that was sent. |
+
+<a name="Main..checkSimilarity"></a>
+
+### Main~checkSimilarity(s1, s2) ⇒ <code>number</code> ℗
+Returns the percentage of how similar the two given strings are.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type |
+| --- | --- |
+| s1 | <code>string</code> | 
+| s2 | <code>string</code> | 
+
+<a name="Main..editDistance"></a>
+
+### Main~editDistance(s1, s2) ⇒ <code>number</code> ℗
+Calculates the edit distance between the two strings.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type |
+| --- | --- |
+| s1 | <code>string</code> | 
+| s2 | <code>string</code> | 
 
 <a name="Main..commandAddMe"></a>
 

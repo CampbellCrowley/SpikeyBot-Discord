@@ -97,6 +97,14 @@ function Main() {
   let disabledAutoSmite = {};
 
   /**
+   * Number of times "Rigged" has been said on all servers.
+   *
+   * @private
+   * @type {number}
+   */
+  let riggedCounter = 0;
+
+  /**
    * The guilds with auto-smite enabled, and members who have mentioned
    * @everyone, and the timestamps of these mentions.
    *
@@ -238,6 +246,7 @@ function Main() {
         }
       }
       disabledAutoSmite = parsed.disabledAutoSmite || {};
+      riggedCounter = parsed.riggedCounterNum || 0;
     });
 
     // Format help message into rich embed.
@@ -295,9 +304,11 @@ function Main() {
     self.client.removeListener('guildBanAdd', onGuildBanAdd);
     self.client.removeListener('message', onMessage);
 
-    fs.writeFileSync(
-        './save/timers.dat',
-        JSON.stringify({timers: timers, disabledAutoSmite: disabledAutoSmite}));
+    fs.writeFileSync('./save/timers.dat', JSON.stringify({
+      timers: timers,
+      disabledAutoSmite: disabledAutoSmite,
+      riggedCounterNum: riggedCounter,
+    }));
   };
 
   /**
@@ -402,6 +413,25 @@ function Main() {
    */
   function onMessage(msg) {
     if (!msg.guild) return;
+    if (msg.author.id != self.client.user.id) {
+      let riggedSimilarity = 0;
+      let matchedRigged = msg.content.toLowerCase().replace(/\W/g, '').match(
+          /r.*i.*g.*g.*e.*d/g);
+      if (matchedRigged) {
+        for (let i = 0; i < matchedRigged.length; i++) {
+          let check = matchedRigged[i].replace(/([\S])\1+/g, '$1');
+          riggedSimilarity = checkSimilarity('riged', check);
+          let similarityCheck = riggedSimilarity > 0.6667 &&
+              riggedSimilarity > checkSimilarity('trigered', check);
+          if (similarityCheck) {
+            riggedCounter++;
+            msg.channel.send('#' + riggedCounter);
+            break;
+          }
+        }
+      }
+    }
+
     if (disabledAutoSmite[msg.guild.id]) return;
     if (msg.mentions.everyone) {
       if (!mentionAccumulator[msg.guild.id]) {
@@ -493,6 +523,62 @@ function Main() {
         msg.channel.send(self.common.mention(msg) + ' Please stop.');
       }
     }
+  }
+
+  /**
+   * Returns the percentage of how similar the two given strings are.
+   *
+   * @private
+   * @param {string} s1
+   * @param {string} s2
+   * @return {number}
+   */
+  function checkSimilarity(s1, s2) {
+    let longer = s1;
+    let shorter = s2;
+    if (s1.length < s2.length) {
+      longer = s2;
+      shorter = s1;
+    }
+    let longerLength = longer.length;
+    if (longerLength == 0) {
+      return 1.0;
+    }
+    return (longerLength - editDistance(longer, shorter)) /
+        parseFloat(longerLength);
+  }
+  /**
+   * Calculates the edit distance between the two strings.
+   *
+   * @private
+   * @param {string} s1
+   * @param {string} s2
+   * @return {number}
+   */
+  function editDistance(s1, s2) {
+    s1 = s1.toLowerCase();
+    s2 = s2.toLowerCase();
+
+    let costs = [];
+    for (let i = 0; i <= s1.length; i++) {
+      let lastValue = i;
+      for (let j = 0; j <= s2.length; j++) {
+        if (i == 0) {
+          costs[j] = j;
+        } else {
+          if (j > 0) {
+            let newValue = costs[j - 1];
+            if (s1.charAt(i - 1) != s2.charAt(j - 1)) {
+              newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
+            }
+            costs[j - 1] = lastValue;
+            lastValue = newValue;
+          }
+        }
+      }
+      if (i > 0) costs[s2.length] = lastValue;
+    }
+    return costs[s2.length];
   }
 
   /**
