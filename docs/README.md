@@ -2897,6 +2897,7 @@ Basic commands and features for the bot.
         * [~defaultCode](#Main..defaultCode) : <code>Array.&lt;string&gt;</code> ℗
         * [~helpObject](#Main..helpObject) ℗
         * [~onGuildCreate(guild)](#Main..onGuildCreate) ℗
+        * [~onGuildDelete(guild)](#Main..onGuildDelete) ℗
         * [~onGuildBanAdd(guild, user)](#Main..onGuildBanAdd) ℗
         * [~commandToggleMute(msg)](#Main..commandToggleMute) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~onMessage(msg)](#Main..onMessage) ℗
@@ -3154,6 +3155,18 @@ Handle being added to a guild.
 | Param | Type | Description |
 | --- | --- | --- |
 | guild | <code>Discord~Guild</code> | The guild that we just joined. |
+
+<a name="Main..onGuildDelete"></a>
+
+### Main~onGuildDelete(guild) ℗
+Handle being removed from a guild.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| guild | <code>Discord~Guild</code> | The guild that we just left. |
 
 <a name="Main..onGuildBanAdd"></a>
 

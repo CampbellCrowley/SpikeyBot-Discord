@@ -15,6 +15,7 @@ math.config({matrix: 'Array'});
  * @class
  * @augments SubModule
  * @listens Discord~Client#guildCreate
+ * @listens Discord~Client#guildDelete
  * @listens Discord~Client#guildBanAdd
  * @listens SpikeyBot~Command#addMe
  * @listens SpikeyBot~Command#add
@@ -233,6 +234,7 @@ function Main() {
     self.command.on('togglemute', commandToggleMute, true);
 
     self.client.on('guildCreate', onGuildCreate);
+    self.client.on('guildDelete', onGuildDelete);
     self.client.on('guildBanAdd', onGuildBanAdd);
     self.client.on('message', onMessage);
 
@@ -301,6 +303,7 @@ function Main() {
     self.command.deleteEvent(['dice', 'die', 'roll', 'd']);
 
     self.client.removeListener('guildCreate', onGuildCreate);
+    self.client.removeListener('guildDelete', onGuildDelete);
     self.client.removeListener('guildBanAdd', onGuildBanAdd);
     self.client.removeListener('message', onMessage);
 
@@ -336,6 +339,16 @@ function Main() {
       self.common.error('Failed to send welcome to guild:' + guild.id);
       console.log(err);
     }
+  }
+  /**
+   * Handle being removed from a guild.
+   *
+   * @private
+   * @param {Discord~Guild} guild The guild that we just left.
+   * @listens Discord~Client#guildDelete
+   */
+  function onGuildDelete(guild) {
+    self.common.log('REMOVED FROM GUILD: ' + guild.id + ': ' + guild.name);
   }
 
   /**
