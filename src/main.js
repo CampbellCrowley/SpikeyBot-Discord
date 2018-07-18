@@ -301,6 +301,7 @@ function Main() {
     self.command.deleteEvent('game');
     self.command.deleteEvent('version');
     self.command.deleteEvent(['dice', 'die', 'roll', 'd']);
+    self.command.deleteEvent('togglemute');
 
     self.client.removeListener('guildCreate', onGuildCreate);
     self.client.removeListener('guildDelete', onGuildDelete);
