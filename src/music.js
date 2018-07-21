@@ -512,7 +512,8 @@ function Music() {
             } else if (info._duration_raw === 0) {
               reply(msg, 'Sorry, but I can\'t play live streams currently.');
             } else {
-              if (broadcasts[msg.guild.id].isPlaying) {
+              if (broadcasts[msg.guild.id] &&
+                  broadcasts[msg.guild.id].isPlaying) {
                 let embed = formatSongInfo(info);
                 embed.setTitle(
                     'Enqueuing ' + song + ' [' +
