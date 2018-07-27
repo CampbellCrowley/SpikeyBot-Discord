@@ -441,7 +441,7 @@ function Main() {
     if (msg.author.id != self.client.user.id) {
       let riggedSimilarity = 0;
       let matchedRigged = msg.content.toLowerCase().replace(/\W/g, '').match(
-          /r.*i.*g.*g.*e.*d/g);
+          /r[^i]*i[^g]*g[^g]*g[^e]*e[^d]*d/g);
       if (matchedRigged) {
         for (let i = 0; i < matchedRigged.length; i++) {
           let check = matchedRigged[i].replace(/([\S])\1+/g, '$1');

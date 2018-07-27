@@ -5,4 +5,4 @@ hg.json
 *.log
 auth.js
 save/hgWebClients.json
-save/timers.json
+save/timers.dat
