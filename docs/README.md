@@ -924,7 +924,8 @@ Hunger Games simulator.
         * [~games](#HungryGames..games) : [<code>Object.&lt;GuildGame&gt;</code>](#HungryGames..GuildGame) ℗
         * [~messages](#HungryGames..messages) : <code>Object.&lt;Array.&lt;string&gt;&gt;</code> ℗
         * [~battles](#HungryGames..battles) : <code>Object</code> ℗
-        * [~intervals](#HungryGames..intervals) : <code>Object.&lt;number&gt;</code> ℗
+        * [~dayEventIntervals](#HungryGames..dayEventIntervals) : <code>Object.&lt;number&gt;</code> ℗
+        * [~autoPlayTimeout](#HungryGames..autoPlayTimeout) : <code>Object.&lt;number&gt;</code> ℗
         * [~battleMessage](#HungryGames..battleMessage) : <code>Object.&lt;Discord~Message&gt;</code> ℗
         * [~weapons](#HungryGames..weapons) : <code>Object</code> ℗
         * [~defaultBloodbathEvents](#HungryGames..defaultBloodbathEvents) : [<code>Array.&lt;Event&gt;</code>](#HungryGames..Event) ℗
@@ -1521,10 +1522,19 @@ All attacks and outcomes for battles.
 **Kind**: inner property of [<code>HungryGames</code>](#HungryGames)  
 **Access**: private  
 **See**: [battleFile](#HungryGames..battleFile)  
-<a name="HungryGames..intervals"></a>
+<a name="HungryGames..dayEventIntervals"></a>
 
-### HungryGames~intervals : <code>Object.&lt;number&gt;</code> ℗
+### HungryGames~dayEventIntervals : <code>Object.&lt;number&gt;</code> ℗
 All intervals for printing events.
+
+**Kind**: inner property of [<code>HungryGames</code>](#HungryGames)  
+**Default**: <code>{}</code>  
+**Access**: private  
+<a name="HungryGames..autoPlayTimeout"></a>
+
+### HungryGames~autoPlayTimeout : <code>Object.&lt;number&gt;</code> ℗
+The timeout to continue autoplaying after the day ends. Used for cancelling
+if user ends the game between days.
 
 **Kind**: inner property of [<code>HungryGames</code>](#HungryGames)  
 **Default**: <code>{}</code>  

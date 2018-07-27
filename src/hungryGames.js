@@ -523,7 +523,16 @@ function HungryGames() {
    * @type {Object.<number>}
    * @default
    */
-  let intervals = {};
+  let dayEventIntervals = {};
+  /**
+   * The timeout to continue autoplaying after the day ends. Used for cancelling
+   * if user ends the game between days.
+   *
+   * @private
+   * @type {Object.<number>}
+   * @default
+   */
+  let autoPlayTimeout = {};
   /**
    * Storage of battle messages to edit the content of on the next update.
    *
@@ -1894,7 +1903,7 @@ function HungryGames() {
       return;
     }
     if (games[id].currentGame.day.state !== 0) {
-      if (intervals[id]) {
+      if (dayEventIntervals[id]) {
         self.common.reply(msg, 'Already simulating day.');
       } else if (games[id].currentGame.day.state == 1) {
         self.common.reply(
@@ -1902,7 +1911,7 @@ function HungryGames() {
             'I think I\'m already simulating... if this isn\'t true this ' +
                 'game has crashed and you must end the game.');
       } else {
-        intervals[id] = self.client.setInterval(function() {
+        dayEventIntervals[id] = self.client.setInterval(function() {
           printEvent(msg, id);
         }, games[id].options.delayEvents);
       }
@@ -2412,11 +2421,15 @@ function HungryGames() {
           getMessage('dayStart')
               .replaceAll('{}', games[id].currentGame.day.num));
     }
+    if (!games[id].autoPlay) {
+      embed.setFooter(
+          'Tip: Use "' + self.myPrefix + 'autoplay" to automate the games.');
+    }
     embed.setColor(defaultColor);
     msg.channel.send(embed);
     self.command.disable('say', msg.channel.id);
     games[id].outputChannel = msg.channel.id;
-    intervals[id] = self.client.setInterval(function() {
+    dayEventIntervals[id] = self.client.setInterval(function() {
       if (web && web.dayStateChange) web.dayStateChange(id);
       printEvent(msg, id);
     }, games[id].options.delayEvents);
@@ -3104,8 +3117,8 @@ function HungryGames() {
     let index = games[id].currentGame.day.state - 2;
     let events = games[id].currentGame.day.events;
     if (index == events.length) {
-      self.client.clearInterval(intervals[id]);
-      delete intervals[id];
+      self.client.clearInterval(dayEventIntervals[id]);
+      delete dayEventIntervals[id];
       printDay(msg, id);
     } else if (
         events[index].battle &&
@@ -3425,6 +3438,9 @@ function HungryGames() {
                 .replaceAll('{day}', games[id].currentGame.day.num)
                 .replaceAll('{alive}', numAlive));
       }
+      if (!games[id].autoPlay) {
+        embed.setFooter('"' + self.myPrefix + 'next" for next day.');
+      }
       embed.setColor(defaultColor);
       msg.channel.send(embed);
     }
@@ -3609,7 +3625,8 @@ function HungryGames() {
             })
             .catch(() => {});
       }, (games[id].options.delayDays > 2000 ? 1200 : 100));
-      self.client.setTimeout(function() {
+      autoPlayTimeout[id] = self.client.setTimeout(function() {
+        delete autoPlayTimeout[id];
         nextDay(msg, id);
       }, games[id].options.delayDays);
     } else {
@@ -3632,8 +3649,10 @@ function HungryGames() {
       games[id].currentGame.inProgress = false;
       games[id].currentGame.ended = true;
       games[id].autoPlay = false;
-      self.client.clearInterval(intervals[id]);
-      delete intervals[id];
+      self.client.clearInterval(dayEventIntervals[id]);
+      self.client.clearTimeout(autoPlayTimeout[id]);
+      delete dayEventIntervals[id];
+      delete autoPlayTimeout[id];
       delete battleMessage[id];
       self.command.enable('say', games[id].outputChannel);
     }
