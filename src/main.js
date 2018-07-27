@@ -443,18 +443,25 @@ function Main() {
       let matchedRigged = msg.content.toLowerCase().replace(/\W/g, '').match(
           /r[^i]*i[^g]*g[^g]*g[^e]*e[^d]*d/g);
       if (matchedRigged) {
-        let message = '';
+        let startCount = riggedCounter;
+        let matchCount = 0;
         for (let i = 0; i < matchedRigged.length; i++) {
           let check = matchedRigged[i].replace(/([\S])\1+/g, '$1');
           riggedSimilarity = checkSimilarity('riged', check);
           let similarityCheck = riggedSimilarity > 0.6667 &&
               riggedSimilarity > checkSimilarity('trigered', check);
           if (similarityCheck) {
-            riggedCounter++;
-            message += ' #' + riggedCounter;
+            matchCount++;
           }
         }
-        if (message.length > 1) msg.channel.send(message);
+        if (matchCount > 0) {
+          if (matchCount > 1) {
+            msg.channel.send(
+                '#' + (startCount + 1) + ' - ' + (riggedCounter += matchCount));
+          } else {
+            msg.channel.send('#' + (riggedCounter += matchCount));
+          }
+        }
       }
     }
 
