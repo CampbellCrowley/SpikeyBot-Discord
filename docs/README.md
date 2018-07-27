@@ -2930,6 +2930,7 @@ Basic commands and features for the bot.
         * [~commandVersion(msg)](#Main..commandVersion) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~setTimer(timer)](#Main..setTimer) ℗
         * [~commandRollDie(msg)](#Main..commandRollDie) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~sigint()](#Main..sigint) ℗
         * [~Timer](#Main..Timer) : <code>Object</code>
 
 <a name="SubModule+helpMessage"></a>
@@ -3566,6 +3567,13 @@ Roll a die with the given number of sides.
 | --- | --- | --- |
 | msg | <code>Discord~Message</code> | Message that triggered command. |
 
+<a name="Main..sigint"></a>
+
+### Main~sigint() ℗
+Triggered via SIGINT, SIGHUP or SIGTERM. Saves data before exiting.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
 <a name="Main..Timer"></a>
 
 ### Main~Timer : <code>Object</code>

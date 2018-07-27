@@ -238,6 +238,12 @@ function Main() {
     self.client.on('guildBanAdd', onGuildBanAdd);
     self.client.on('message', onMessage);
 
+    // Catch reasons for exiting in order to save first.
+    process.on('exit', sigint);
+    process.on('SIGINT', sigint);
+    process.on('SIGHUP', sigint);
+    process.on('SIGTERM', sigint);
+
     fs.readFile('./save/timers.dat', function(err, file) {
       if (err) return;
       let parsed = JSON.parse(file);
@@ -307,6 +313,11 @@ function Main() {
     self.client.removeListener('guildDelete', onGuildDelete);
     self.client.removeListener('guildBanAdd', onGuildBanAdd);
     self.client.removeListener('message', onMessage);
+
+    process.removeListener('exit', sigint);
+    process.removeListener('SIGINT', sigint);
+    process.removeListener('SIGHUP', sigint);
+    process.removeListener('SIGTERM', sigint);
 
     fs.writeFileSync('./save/timers.dat', JSON.stringify({
       timers: timers,
@@ -1536,6 +1547,28 @@ function Main() {
     }
 
     msg.channel.send(self.common.mention(msg), embed);
+  }
+
+  /**
+   * Triggered via SIGINT, SIGHUP or SIGTERM. Saves data before exiting.
+   *
+   * @private
+   * @listens Process#SIGINT
+   * @listens Process#SIGHUP
+   * @listens Process#SIGTERM
+   */
+  function sigint() {
+    if (self.common && self.common.log) {
+      self.common.log('Caught exit!', 'Main');
+    } else {
+      console.log('Caught exit!');
+    }
+    try {
+      self.end();
+    } catch (err) {
+    }
+    process.removeListener('exit', sigint);
+    process.exit();
   }
 }
 module.exports = new Main();
