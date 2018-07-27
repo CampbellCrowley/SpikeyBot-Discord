@@ -443,6 +443,7 @@ function Main() {
       let matchedRigged = msg.content.toLowerCase().replace(/\W/g, '').match(
           /r[^i]*i[^g]*g[^g]*g[^e]*e[^d]*d/g);
       if (matchedRigged) {
+        let message = '';
         for (let i = 0; i < matchedRigged.length; i++) {
           let check = matchedRigged[i].replace(/([\S])\1+/g, '$1');
           riggedSimilarity = checkSimilarity('riged', check);
@@ -450,10 +451,10 @@ function Main() {
               riggedSimilarity > checkSimilarity('trigered', check);
           if (similarityCheck) {
             riggedCounter++;
-            msg.channel.send('#' + riggedCounter);
-            break;
+            message += ' #' + riggedCounter;
           }
         }
+        msg.channel.send(message);
       }
     }
 
