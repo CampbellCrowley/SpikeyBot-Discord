@@ -454,7 +454,7 @@ function Main() {
             message += ' #' + riggedCounter;
           }
         }
-        msg.channel.send(message);
+        if (message.length > 1) msg.channel.send(message);
       }
     }
 
