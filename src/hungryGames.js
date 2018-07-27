@@ -2402,8 +2402,8 @@ function HungryGames() {
       games[id].currentGame.day.events.splice(
           0, 0, makeMessageEvent(getMessage('lotsOfDeath'), id));
     } else if (deathPercentage === 0) {
-      games[id].currentGame.day.events.splice(
-          0, 0, makeMessageEvent(getMessage('noDeath'), id));
+      games[id].currentGame.day.events.push(
+          makeMessageEvent(getMessage('noDeath'), id));
     } else if (deathPercentage < littleDeathRate) {
       games[id].currentGame.day.events.splice(
           0, 0, makeMessageEvent(getMessage('littleDeath'), id));
