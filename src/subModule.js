@@ -112,7 +112,7 @@ function SubModule() {
 
     if (this.initialized) return;
     this.initialize();
-    common.log(this.myName + ' Init', this.myName);
+    this.common.log(this.myName + ' Init', this.myName);
     this.initialized = true;
   };
 
@@ -123,6 +123,7 @@ function SubModule() {
     if (!this.initialized) return;
     this.shutdown();
     this.initialized = false;
+    this.common.log(this.myName + ' Shutdown', this.myName);
   };
 
   /**

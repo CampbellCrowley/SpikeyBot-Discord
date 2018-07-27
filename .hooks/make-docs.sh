@@ -23,3 +23,6 @@ JSDOC="$GITROOT/docs/README.md"
 echo "[Commands Help](commands/)" > "$JSDOC"
 
 "$GITROOT/node_modules/.bin/jsdoc2md" src/*.js --private >> "$JSDOC"
+
+rm -rf /tmp/jsdoc-api/
+rm -rf /tmp/dmd/

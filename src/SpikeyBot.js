@@ -548,6 +548,9 @@ function SpikeyBot() {
    */
   function commandReboot(msg) {
     if (trustedIds.includes(msg.author.id)) {
+      for (let i = 0; i < subModules.length; i++) {
+        if (subModules[i] && subModules[i].end) subModules[i].end();
+      }
       if (minimal) {
         process.exit(-1);
       } else {

@@ -66,7 +66,6 @@ function HGWeb(hg) {
     app.close();
     clearInterval(purgeInterval);
     fs.writeFileSync('./save/hgWebClients.json', JSON.stringify(loginInfo));
-    hg.common.log('Web Shutdown', 'HG');
   };
 
   /**

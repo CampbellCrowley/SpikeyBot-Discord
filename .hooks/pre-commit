@@ -35,13 +35,13 @@ if [[ "$STAGED_SCRIPTS" != "" || "$STAGED_DATA" != "" ]]; then
   echo "Linting"
   npm run lint
   if [[ "$?" != 0 ]]; then
-    exit $?
+    exit 1
   fi
 
   echo "Creating docs"
   bash .hooks/make-docs.sh
   if [[ "$?" != 0 ]]; then
-    exit $?
+    exit 1
   fi
 
   git add docs/
