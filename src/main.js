@@ -1117,9 +1117,10 @@ function Main() {
   function commandPmSpikey(msg) {
     self.client.users.fetch(self.common.spikeyId)
         .then((user) => {
-          user.send(msg.author.tag + ': ' + msg.content).then(() => {
-            self.common.reply(msg, 'I sent your message to SpikeyRobot.');
-          });
+          user.send(msg.author.id + ': ' + msg.author.tag + ': ' + msg.content)
+              .then(() => {
+                self.common.reply(msg, 'I sent your message to SpikeyRobot.');
+              });
         })
         .catch((err) => {
           console.log(err);
