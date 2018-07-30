@@ -2940,6 +2940,8 @@ Basic commands and features for the bot.
         * [~commandVersion(msg)](#Main..commandVersion) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~setTimer(timer)](#Main..setTimer) ℗
         * [~commandRollDie(msg)](#Main..commandRollDie) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~commandPerms(msg)](#Main..commandPerms) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~prePad(num, digits)](#Main..prePad) ⇒ <code>string</code> ℗
         * [~sigint()](#Main..sigint) ℗
         * [~Timer](#Main..Timer) : <code>Object</code>
 
@@ -3576,6 +3578,32 @@ Roll a die with the given number of sides.
 | Param | Type | Description |
 | --- | --- | --- |
 | msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Main..commandPerms"></a>
+
+### Main~commandPerms(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Send information about permissions for debugging.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Main..prePad"></a>
+
+### Main~prePad(num, digits) ⇒ <code>string</code> ℗
+Pad a number with leading zeroes so that it is `digits` long.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Returns**: <code>string</code> - The padded string.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| num | <code>string</code> \| <code>number</code> | The number to pad with zeroes. |
+| digits | <code>number</code> | The minimum number of digits to make the output have. |
 
 <a name="Main..sigint"></a>
 

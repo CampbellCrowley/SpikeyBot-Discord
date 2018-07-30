@@ -50,6 +50,8 @@ math.config({matrix: 'Array'});
  * @listens SpikeyBot~Command#dice
  * @listens SpikeyBot~Command#die
  * @listens SpikeyBot~Command#d
+ * @listens SpikeyBot~Command#toggleMute
+ * @listens SpikeyBot~Command#perms
  */
 function Main() {
   const self = this;
@@ -232,6 +234,7 @@ function Main() {
     self.command.on('version', commandVersion);
     self.command.on(['dice', 'die', 'roll', 'd'], commandRollDie);
     self.command.on('togglemute', commandToggleMute, true);
+    self.command.on('perms', commandPerms, true);
 
     self.client.on('guildCreate', onGuildCreate);
     self.client.on('guildDelete', onGuildDelete);
@@ -308,6 +311,7 @@ function Main() {
     self.command.deleteEvent('version');
     self.command.deleteEvent(['dice', 'die', 'roll', 'd']);
     self.command.deleteEvent('togglemute');
+    self.command.deleteEvent('perms');
 
     self.client.removeListener('guildCreate', onGuildCreate);
     self.client.removeListener('guildDelete', onGuildDelete);
@@ -443,18 +447,25 @@ function Main() {
       let matchedRigged = msg.content.toLowerCase().replace(/\W/g, '').match(
           /r[^i]*i[^g]*g[^g]*g[^e]*e[^d]*d/g);
       if (matchedRigged) {
-        let message = '';
+        let startCount = riggedCounter;
+        let matchCount = 0;
         for (let i = 0; i < matchedRigged.length; i++) {
           let check = matchedRigged[i].replace(/([\S])\1+/g, '$1');
           riggedSimilarity = checkSimilarity('riged', check);
           let similarityCheck = riggedSimilarity > 0.6667 &&
               riggedSimilarity > checkSimilarity('trigered', check);
           if (similarityCheck) {
-            riggedCounter++;
-            message += ' #' + riggedCounter;
+            matchCount++;
           }
         }
-        if (message.length > 1) msg.channel.send(message);
+        if (matchCount > 0) {
+          if (matchCount > 1) {
+            msg.channel.send(
+                '#' + (startCount + 1) + ' - ' + (riggedCounter += matchCount));
+          } else {
+            msg.channel.send('#' + (riggedCounter += matchCount));
+          }
+        }
       }
     }
 
@@ -1181,7 +1192,15 @@ function Main() {
    * @listens SpikeyBot~Command#purge
    */
   function commandPurge(msg) {
-    if (msg.channel.permissionsFor(msg.member)
+    if (!msg.channel.permissionsFor(self.client.user)
+             .has(self.Discord.Permissions.FLAGS.MANAGE_MESSAGES)) {
+      self.common.reply(
+          msg,
+          'I\'m sorry, but I don\'t have permission to delete messages in ' +
+              'this channel.\nTo allow me to do this, please give me ' +
+              'permission to Manage Messages.');
+    } else if (
+        msg.channel.permissionsFor(msg.member)
             .has(self.Discord.Permissions.FLAGS.MANAGE_MESSAGES)) {
       let numString = msg.content.replace(self.myPrefix + 'purge ', '')
                           .replace(self.myPrefix + 'prune ', '')
@@ -1192,25 +1211,37 @@ function Main() {
             msg,
             'You must specify the number of messages to purge. (ex: ?purge 5)');
       } else {
+        const limited = num > 101;
+        if (limited || num == 101) {
+          num = 100;
+        }
         if (msg.mentions.users.size > 0) {
+          if (!limited) num--;
           let toDelete = msg.channel.messages.filter(function(obj) {
             return msg.mentions.users.find(function(mention) {
               return obj.author.id === mention.id;
             });
           });
-          msg.channel.bulkDelete(toDelete.first(num - 1));
-          self.common.reply(
-              msg, 'Deleted ' + (num - 1) + ' messages by ' +
-                  msg.mentions.users
-                      .map(function(obj) {
-                        return obj.username;
-                      })
-                      .join(', '))
-              .then((msg_) => {
-                msg_.delete({timeout: 5000});
-              });
+          msg.channel.bulkDelete(toDelete.first(num)).then(() => {
+            self.common
+                .reply(
+                    msg, 'Deleted ' + num + ' messages by ' +
+                        msg.mentions.users
+                            .map(function(obj) {
+                              return obj.username;
+                            })
+                            .join(', '))
+                .then((msg_) => {
+                  msg_.delete({timeout: 5000});
+                });
+          });
         } else {
-          msg.channel.bulkDelete(num);
+          msg.channel.bulkDelete(num).then(() => {
+            if (limited) {
+              self.common.reply(
+                  msg, 'Number of messages deleted limited to 100.');
+            }
+          });
         }
       }
     } else {
@@ -1549,6 +1580,59 @@ function Main() {
     }
 
     msg.channel.send(self.common.mention(msg), embed);
+  }
+
+  /**
+   * Send information about permissions for debugging.
+   *
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens SpikeyBot~Command#perms
+   */
+  function commandPerms(msg) {
+    let embed = new self.Discord.MessageEmbed();
+    embed.setTitle('Permissions');
+    embed.addField(
+        'Channel', '```css\n' +
+            prePad(msg.channel.permissionsFor(msg.author).bitfield.toString(2),
+                   31) +
+            ' You\n' +
+            prePad(msg.channel.permissionsFor(self.client.user)
+                       .bitfield.toString(2),
+                   31) +
+            ' Me```');
+    embed.addField(
+        'Guild', '```css\n' +
+            prePad(msg.member.permissions.bitfield.toString(2), 31) + ' You\n' +
+            prePad(msg.guild.member(self.client.user)
+                       .permissions.bitfield.toString(2),
+                   31) +
+            ' Me```');
+
+    let allPermPairs = Object.entries(self.Discord.Permissions.FLAGS);
+    let formatted = allPermPairs.map((el) => {
+      return prePad(el[1].toString(2), 31) + ' ' + el[0];
+    }).join('\n');
+    embed.setDescription('```css\n' + formatted + '```');
+
+    msg.channel.send(embed);
+  }
+  /**
+   * Pad a number with leading zeroes so that it is `digits` long.
+   *
+   * @private
+   * @param {string|number} num The number to pad with zeroes.
+   * @param {number} digits The minimum number of digits to make the output
+   * have.
+   * @return {string} The padded string.
+   */
+  function prePad(num, digits) {
+    let str = num + '';
+    while (str.length < digits) {
+      str = '0' + str;
+    }
+    return str;
   }
 
   /**
