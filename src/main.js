@@ -50,6 +50,8 @@ math.config({matrix: 'Array'});
  * @listens SpikeyBot~Command#dice
  * @listens SpikeyBot~Command#die
  * @listens SpikeyBot~Command#d
+ * @listens SpikeyBot~Command#toggleMute
+ * @listens SpikeyBot~Command#perms
  */
 function Main() {
   const self = this;
@@ -232,6 +234,7 @@ function Main() {
     self.command.on('version', commandVersion);
     self.command.on(['dice', 'die', 'roll', 'd'], commandRollDie);
     self.command.on('togglemute', commandToggleMute, true);
+    self.command.on('perms', commandPerms, true);
 
     self.client.on('guildCreate', onGuildCreate);
     self.client.on('guildDelete', onGuildDelete);
@@ -308,6 +311,7 @@ function Main() {
     self.command.deleteEvent('version');
     self.command.deleteEvent(['dice', 'die', 'roll', 'd']);
     self.command.deleteEvent('togglemute');
+    self.command.deleteEvent('perms');
 
     self.client.removeListener('guildCreate', onGuildCreate);
     self.client.removeListener('guildDelete', onGuildDelete);
@@ -1192,8 +1196,8 @@ function Main() {
       self.common.reply(
           msg,
           'I\'m sorry, but I don\'t have permission to delete messages in ' +
-              'this channel. To allow me to do this, please give me ' +
-              'permission to `Manage Messages`.');
+              'this channel.\nTo allow me to do this, please give me ' +
+              'permission to Manage Messages.');
     } else if (
         msg.channel.permissionsFor(msg.member)
             .has(self.Discord.Permissions.FLAGS.MANAGE_MESSAGES)) {
@@ -1201,31 +1205,42 @@ function Main() {
                           .replace(self.myPrefix + 'prune ', '')
                           .replace(/\<[^\>]*>|\s/g, '');
       let num = (numString * 1) + 1;
-      if (num > 100) num = 100;
       if (numString.length === 0 || isNaN(num)) {
         self.common.reply(
             msg,
             'You must specify the number of messages to purge. (ex: ?purge 5)');
       } else {
+        const limited = num > 101;
+        if (limited || num == 101) {
+          num = 100;
+        }
         if (msg.mentions.users.size > 0) {
+          if (!limited) num--;
           let toDelete = msg.channel.messages.filter(function(obj) {
             return msg.mentions.users.find(function(mention) {
               return obj.author.id === mention.id;
             });
           });
-          msg.channel.bulkDelete(toDelete.first(num - 1));
-          self.common.reply(
-              msg, 'Deleted ' + (num - 1) + ' messages by ' +
-                  msg.mentions.users
-                      .map(function(obj) {
-                        return obj.username;
-                      })
-                      .join(', '))
-              .then((msg_) => {
-                msg_.delete({timeout: 5000});
-              });
+          msg.channel.bulkDelete(toDelete.first(num)).then(() => {
+            self.common
+                .reply(
+                    msg, 'Deleted ' + num + ' messages by ' +
+                        msg.mentions.users
+                            .map(function(obj) {
+                              return obj.username;
+                            })
+                            .join(', '))
+                .then((msg_) => {
+                  msg_.delete({timeout: 5000});
+                });
+          });
         } else {
-          msg.channel.bulkDelete(num);
+          msg.channel.bulkDelete(num).then(() => {
+            if (limited) {
+              self.common.reply(
+                  msg, 'Number of messages deleted limited to 100.');
+            }
+          });
         }
       }
     } else {
@@ -1564,6 +1579,59 @@ function Main() {
     }
 
     msg.channel.send(self.common.mention(msg), embed);
+  }
+
+  /**
+   * Send information about permissions for debugging.
+   *
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens SpikeyBot~Command#perms
+   */
+  function commandPerms(msg) {
+    let embed = new self.Discord.MessageEmbed();
+    embed.setTitle('Permissions');
+    embed.addField(
+        'Channel', '```css\n' +
+            prePad(msg.channel.permissionsFor(msg.author).bitfield.toString(2),
+                   31) +
+            ' You\n' +
+            prePad(msg.channel.permissionsFor(self.client.user)
+                       .bitfield.toString(2),
+                   31) +
+            ' Me```');
+    embed.addField(
+        'Guild', '```css\n' +
+            prePad(msg.member.permissions.bitfield.toString(2), 31) + ' You\n' +
+            prePad(msg.guild.member(self.client.user)
+                       .permissions.bitfield.toString(2),
+                   31) +
+            ' Me```');
+
+    let allPermPairs = Object.entries(self.Discord.Permissions.FLAGS);
+    let formatted = allPermPairs.map((el) => {
+      return prePad(el[1].toString(2), 31) + ' ' + el[0];
+    }).join('\n');
+    embed.setDescription('```css\n' + formatted + '```');
+
+    msg.channel.send(embed);
+  }
+  /**
+   * Pad a number with leading zeroes so that it is `digits` long.
+   *
+   * @private
+   * @param {string|number} num The number to pad with zeroes.
+   * @param {number} digits The minimum number of digits to make the output
+   * have.
+   * @return {string} The padded string.
+   */
+  function prePad(num, digits) {
+    let str = num + '';
+    while (str.length < digits) {
+      str = '0' + str;
+    }
+    return str;
   }
 
   /**
