@@ -18,7 +18,7 @@
     "dateformat": "^3.0.3",
     "discord.js": "github:discordjs/discord.js",
     "jimp": "^0.2.28",
-    "mathjs": "^4.4.1",
+    "mathjs": "^4.4.2",
     "node-opus": "^0.2.9",
     "ogg": "^1.2.5",
     "socket.io": "^2.1.1",
