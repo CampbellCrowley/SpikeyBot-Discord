@@ -1187,7 +1187,15 @@ function Main() {
    * @listens SpikeyBot~Command#purge
    */
   function commandPurge(msg) {
-    if (msg.channel.permissionsFor(msg.member)
+    if (!msg.channel.permissionsFor(self.client.user)
+             .has(self.Discord.Permissions.FLAGS.MANAGE_MESSAGES)) {
+      self.common.reply(
+          msg,
+          'I\'m sorry, but I don\'t have permission to delete messages in ' +
+              'this channel. To allow me to do this, please give me ' +
+              'permission to `Manage Messages`.');
+    } else if (
+        msg.channel.permissionsFor(msg.member)
             .has(self.Discord.Permissions.FLAGS.MANAGE_MESSAGES)) {
       let numString = msg.content.replace(self.myPrefix + 'purge ', '')
                           .replace(self.myPrefix + 'prune ', '')
