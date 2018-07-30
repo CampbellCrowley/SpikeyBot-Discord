@@ -355,7 +355,11 @@ function SpikeyBot() {
    * @param {string} game New message to set game to.
    */
   function updateGame(game) {
-    client.user.setActivity(game, {name: game, type: 'WATCHING'});
+    client.user.setPresence({
+      activity:
+          {name: game, type: 'WATCHING', url: 'https://www.spikeybot.com'},
+      status: (testInstance ? 'dnd' : 'online'),
+    });
     // common.log('Changed game to "' + game + '"');
   }
 
