@@ -1193,6 +1193,7 @@ function Main() {
                           .replace(self.myPrefix + 'prune ', '')
                           .replace(/\<[^\>]*>|\s/g, '');
       let num = (numString * 1) + 1;
+      if (num > 100) num = 100;
       if (numString.length === 0 || isNaN(num)) {
         self.common.reply(
             msg,
