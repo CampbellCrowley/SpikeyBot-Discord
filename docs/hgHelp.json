@@ -1,6 +1,6 @@
 {
   "title": "Hungry Games!",
-  "description": "To use any of these commands you must have the \"{hgRole}\" role.",
+  "description": "To use any of these commands you must have the \"{hgRole}\" role. Use https://www.spikeybot.com/hg/ if commands are too hard.",
   "prefix": "hg ",
   "sections": [
     {

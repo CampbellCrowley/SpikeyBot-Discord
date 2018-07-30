@@ -15,7 +15,7 @@
 #### Math
 `add` `simplify` `solve` `evaluate` `derive` `graph`
 #### Admin
-`purge` `ban` `smite`
+`purge` `ban` `smite` `togglemute`
 
 ## Hungry Games
 #### Game
@@ -34,6 +34,7 @@
 ## Hidden
 - js (Run javascript code)
 - thotpm (Semi-anonymously have the bot DM someone. Only a couple people can use this command)
+- pmuser (Sends the specified user a pm from the bot, but tells the recipient who the sender was)
 - uptime (Amount of time the bot has been running)
 - version (Current bot version)
 - game (Information about a user's current visible status)
@@ -49,6 +50,7 @@
 - reboot (Triggers a graceful shutdown of the entire bot. Assumes the parent process will restart automatically)
 - reload (Gracefully unloads all sub-modules, and re-loads and initializes them)
 - record (Record audio in a voice channel. Mention people to only record specific people.)
+- perms (Sends a message with the bitfields of all permissions, as well as the sender's and the bot's permissions for the guild and channel)
 
 # Events
 - Added to guild

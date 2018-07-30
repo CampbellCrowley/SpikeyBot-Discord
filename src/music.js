@@ -851,7 +851,9 @@ function Music() {
     const url = self.common.webURL + filename;
     if (msg.mentions.users.size === 0) {
       reply(
-          msg, 'Recording everyone in voice channel. Type ?stop to stop', url);
+          msg, 'Recording everyone in voice channel. Type ' + self.myPrefix +
+              'stop to stop',
+          url);
     } else {
       reply(
           msg, 'Only recording ' +

@@ -34,6 +34,7 @@ math.config({matrix: 'Array'});
  * @listens SpikeyBot~Command#pmMe
  * @listens SpikeyBot~Command#pmSpikey
  * @listens SpikeyBot~Command#thotPm
+ * @listens SpikeyBot~Command#pmUser
  * @listens SpikeyBot~Command#flip
  * @listens SpikeyBot~Command#purge
  * @listens SpikeyBot~Command#prune
@@ -223,6 +224,7 @@ function Main() {
     self.command.on('pmme', commandPmMe);
     self.command.on('pmspikey', commandPmSpikey);
     self.command.on('thotpm', commandThotPm);
+    self.command.on('pmuser', commandPmUser);
     self.command.on('flip', commandFlip);
     self.command.on(['purge', 'prune'], commandPurge, true);
     self.command.on(['fuckyou', 'ban'], commandBan, true);
@@ -300,6 +302,7 @@ function Main() {
     self.command.deleteEvent('pmme');
     self.command.deleteEvent('pmspikey');
     self.command.deleteEvent('thotpm');
+    self.command.deleteEvent('pmuser');
     self.command.deleteEvent('flip');
     self.command.deleteEvent(['purge', 'prune']);
     self.command.deleteEvent(['fuckyou', 'ban']);
@@ -1161,6 +1164,73 @@ function Main() {
       self.client.users.fetch(self.common.spikeyId).then((user) => {
         user.send(msg.author.tag + ': ' + msg.content);
       });
+    }
+  }
+  /**
+   * Send a PM to a specific user via a given id or name and descriminator.
+   *
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens SpikeyBot~Command#pmUser
+   */
+  function commandPmUser(msg) {
+    const userString = (msg.text.split(' ')[1] || '').replace(/^@|^<@|>$/g, '');
+    if (!userString) {
+      self.common.reply(msg, 'Please specify a user and a message.');
+      return;
+    }
+    self.client.users.fetch(userString)
+        .then((user) => {
+          if (user) {
+            sendPm(msg, user, msg.text.split(' ').slice(2).join(' '));
+          } else {
+            lookupByName();
+          }
+        })
+        .catch(() => {
+          lookupByName();
+        });
+    /**
+     * Lookup a user by their tag name.
+     * @private
+     */
+    function lookupByName() {
+      let userObject = self.client.users.find((user) => {
+        return user.tag.toLowerCase() == userString.toLowerCase();
+      });
+      if (userObject) {
+        sendPm(msg, userObject, msg.text.split(' ').slice(2).join(' '));
+      } else {
+        self.common.reply(
+            msg, 'I was unable to find that user: ' + userString +
+                '\nYou may use their account ID or Username with the ' +
+                '# and number.');
+      }
+    }
+    /**
+     * Send a pm to the user.
+     *
+     * @private
+     * @param {Discord~Message} msg Message that triggered command.
+     * @param {Discord~User} user The user to send the pm to.
+     * @param {string} message The message to send to the user.
+     */
+    function sendPm(msg, user, message) {
+      user.send(
+              user.tag + ' has asked me to send you this message:\n' + message)
+          .then(() => {
+            self.common.reply(msg, 'Message sent!');
+          })
+          .catch((err) => {
+            self.common.reply(
+                msg, 'Something sent wrong in sending the message.\n' +
+                    'This probably wasn\'t your fault.',
+                err.message);
+            self.common.error(
+                'Failed to send pm to user: ' + user.username + ' ' + user.id);
+            comon.error(err);
+          });
     }
   }
   /**

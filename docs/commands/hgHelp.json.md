@@ -1,5 +1,5 @@
 # Hungry Games!
-#### To use any of these commands you must have the "HG Creator" role.
+#### To use any of these commands you must have the "HG Creator" role. Use https://www.spikeybot.com/hg/ if commands are too hard.
 ***
 ## Game Settings
 

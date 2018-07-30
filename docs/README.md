@@ -2929,6 +2929,9 @@ Basic commands and features for the bot.
         * [~commandPmMe(msg)](#Main..commandPmMe) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandPmSpikey(msg)](#Main..commandPmSpikey) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandThotPm(msg)](#Main..commandThotPm) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~commandPmUser(msg)](#Main..commandPmUser) : [<code>commandHandler</code>](#commandHandler) ℗
+            * [~lookupByName()](#Main..commandPmUser..lookupByName) ℗
+            * [~sendPm(msg, user, message)](#Main..commandPmUser..sendPm) ℗
         * [~commandFlip(msg)](#Main..commandFlip) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandPurge(msg)](#Main..commandPurge) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandBan(msg)](#Main..commandBan) : [<code>commandHandler</code>](#commandHandler) ℗
@@ -3442,6 +3445,44 @@ SpikeyRobot to monitor for abuse. This command only works for 3 people.
 | Param | Type | Description |
 | --- | --- | --- |
 | msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Main..commandPmUser"></a>
+
+### Main~commandPmUser(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Send a PM to a specific user via a given id or name and descriminator.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+
+* [~commandPmUser(msg)](#Main..commandPmUser) : [<code>commandHandler</code>](#commandHandler) ℗
+    * [~lookupByName()](#Main..commandPmUser..lookupByName) ℗
+    * [~sendPm(msg, user, message)](#Main..commandPmUser..sendPm) ℗
+
+<a name="Main..commandPmUser..lookupByName"></a>
+
+#### commandPmUser~lookupByName() ℗
+Lookup a user by their tag name.
+
+**Kind**: inner method of [<code>commandPmUser</code>](#Main..commandPmUser)  
+**Access**: private  
+<a name="Main..commandPmUser..sendPm"></a>
+
+#### commandPmUser~sendPm(msg, user, message) ℗
+Send a pm to the user.
+
+**Kind**: inner method of [<code>commandPmUser</code>](#Main..commandPmUser)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+| user | <code>Discord~User</code> | The user to send the pm to. |
+| message | <code>string</code> | The message to send to the user. |
 
 <a name="Main..commandFlip"></a>
 
