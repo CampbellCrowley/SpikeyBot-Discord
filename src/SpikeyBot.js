@@ -27,6 +27,15 @@ function SpikeyBot() {
    */
   let testMode = false;
   /**
+   * The channel id for the channel to reserve for only unit testing in.
+   *
+   * @private
+   * @default
+   * @constant
+   * @type {string}
+   */
+  const testChannel = '439642818084995074';
+  /**
    * Is the bot started with the intent of solely running a unit test. Reduces
    * messages sent that are unnecessary.
    *
@@ -422,7 +431,8 @@ function SpikeyBot() {
    * @listens Discord~Client#message
    */
   function onMessage(msg) {
-    if (!testMode && msg.author.id === client.user.id) {
+    if (!testMode && msg.author.id === client.user.id &&
+        msg.channel.id == testChannel) {
       if (isDev && msg.content === '~`RUN UNIT TESTS`~') {
         testMode = true;
         msg.channel.send('~`UNIT TEST MODE ENABLED`~');
@@ -432,11 +442,16 @@ function SpikeyBot() {
       return;
     } else if (
         testMode && msg.author.id === client.user.id &&
-        msg.content === '~`END UNIT TESTS`~') {
+        msg.content === '~`END UNIT TESTS`~' && msg.channel.id == testChannel) {
       testMode = false;
       msg.channel.send('~`UNIT TEST MODE DISABLED`~');
       return;
     }
+
+    // Only respond to messages in the test channel if we are in unit test mode.
+    // In unit test mode, only respond to messages in the test channel.
+    if (testMode != (msg.channel.id == testChannel)) return;
+
     if (!minimal && msg.content.endsWith(', I\'m Dad!')) {
       msg.channel.send('Hi Dad, I\'m Spikey!');
     }

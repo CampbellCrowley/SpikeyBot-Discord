@@ -4168,6 +4168,7 @@ Main class that manages the bot.
     * [~minimal](#SpikeyBot..minimal) : <code>boolean</code> ℗
     * [~subModules](#SpikeyBot..subModules) : [<code>Array.&lt;SubModule&gt;</code>](#SubModule) ℗
     * [~reactToAnthony](#SpikeyBot..reactToAnthony) : <code>boolean</code> ℗
+    * [~testChannel](#SpikeyBot..testChannel) : <code>string</code> ℗
     * [~trustedIds](#SpikeyBot..trustedIds) : <code>Array.&lt;string&gt;</code> ℗
     * [~helpmessagereply](#SpikeyBot..helpmessagereply) : <code>string</code> ℗
     * [~blockedmessage](#SpikeyBot..blockedmessage) : <code>string</code> ℗
@@ -4335,6 +4336,14 @@ Should we add a reaction to every message that Anthony sends. Overriden if
 reboot.dat exists.
 
 **Kind**: inner property of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Access**: private  
+<a name="SpikeyBot..testChannel"></a>
+
+### SpikeyBot~testChannel : <code>string</code> ℗
+The channel id for the channel to reserve for only unit testing in.
+
+**Kind**: inner constant of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Default**: <code>&quot;439642818084995074&quot;</code>  
 **Access**: private  
 <a name="SpikeyBot..trustedIds"></a>
 
