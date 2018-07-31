@@ -73,14 +73,24 @@ function SpikeyBot() {
    */
   let subModules = [];
 
+  /**
+   * Reason the bot was disconnected from Discord's servers.
+   *
+   * @private
+   * @default
+   * @type {?string}
+   */
+  let disconnectReason = null;
+
   // Parse cli args.
   for (let i in process.argv) {
-    if (process.argv[i] === 'dev') {
+    if (process.argv[i] === 'dev' || process.argv[i] === '--dev') {
       setDev = true;
     } else if (
-        process.argv[i] === 'minimal' || process.argv[i] === 'onlymusic') {
+        process.argv[i] === 'minimal' || process.argv[i] === 'onlymusic' ||
+        process.argv[i] === '--minimal' || process.argv[i] === '--onlymusic') {
       minimal = true;
-    } else if (process.argv[i] === 'test') {
+    } else if (process.argv[i] === 'test' || process.argv[i] === '--test') {
       testInstance = true;
     } else if (i > 1 && typeof process.argv[i] === 'string') {
       subModuleNames.push(process.argv[i]);
@@ -380,32 +390,32 @@ function SpikeyBot() {
         updateGame(prefix + 'help for help');
       }
     }
-    client.users.fetch(common.spikeyId).then((user) => {
-      if (testInstance) {
-        user.send('Beginning in unit test mode');
-      } else {
-        user.send('I just rebooted (JS)' + (minimal ? ' MINIMAL' : ' ALL'));
+    let logChannel = client.channels.get(common.logChannel);
+    if (testInstance) {
+      logChannel.send('Beginning in unit test mode');
+    } else {
+      let additional = '';
+      if (disconnectReason) {
+        additional = ' after disconnecting from Discord!\n' + disconnectReason;
+        disconnectReason = null;
       }
-    });
+      logChannel.send(
+          'I just rebooted (JS) ' + (minimal ? 'MINIMAL' : 'FULL') +
+          additional);
+    }
     for (let i in subModules) {
       if (!subModules[i] instanceof Object || !subModules[i].begin) continue;
       try {
         subModules[i].begin(prefix, Discord, client, command, common);
       } catch (err) {
         console.log(err);
-        client.users.fetch(common.spikeyId).then((function(i) {
-          return function(user) {
-            user.send('Failed to initialize ' + subModuleNames[i]);
-          };
-        })(i));
+        logChannel.send('Failed to initialize ' + subModuleNames[i]);
       }
     }
     if (subModules.length != subModuleNames.length) {
-      client.users.fetch(common.spikeyId).then((user) => {
-        user.send(
-            'Failed to compile a submodule. Check log for more info. ' +
-            'Previous initialization errors may be incorrect.');
-      });
+      logChannel.send(
+          'Failed to compile a submodule. Check log for more info. ' +
+          'Previous initialization errors may be incorrect.');
     }
     if (!minimal) {
       fs.readFile('./save/reboot.dat', function(err, file) {
@@ -423,6 +433,20 @@ function SpikeyBot() {
         if (msg.noReactToAnthony) reactToAnthony = false;
       });
     }
+  }
+
+  client.on('disconnect', onDisconnect);
+  /**
+   * The bot has disconnected from Discord.
+   *
+   * @private
+   * @listens Discord~Client#disconnect
+   * @param {CloseEvent} event The websocket close event.
+   */
+  function onDisconnect(event) {
+    disconnectReason = event.reason || 'Unknown';
+    common.error(
+        'Disconnected from Discord! ' + event.code + ' ' + event.reason);
   }
 
   client.on('message', onMessage);

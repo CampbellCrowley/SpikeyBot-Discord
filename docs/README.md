@@ -48,6 +48,7 @@
     * _instance_
         * [.isRelease](#Common+isRelease) : <code>boolean</code>
         * [.spikeyId](#Common+spikeyId) : <code>string</code>
+        * [.logChannel](#Common+logChannel) : <code>string</code>
         * [.webURL](#Common+webURL) : <code>string</code>
         * [.begin(_, isRelease)](#Common+begin)
         * [.padIp(str)](#Common+padIp) ⇒ <code>string</code>
@@ -61,6 +62,7 @@
         * [.mention](#Common.mention) ⇒ <code>string</code>
         * [.reply](#Common.reply) ⇒ <code>Promise</code>
         * [.spikeyId](#Common.spikeyId) : <code>string</code>
+        * [.logChannel](#Common.logChannel) : <code>string</code>
         * [.webURL](#Common.webURL) : <code>string</code>
     * _inner_
         * [~mycolor](#Common..mycolor) : <code>number</code> ℗
@@ -87,6 +89,13 @@ the log.
 SpikeyRobot's Discord ID
 
 **Kind**: instance constant of [<code>Common</code>](#Common)  
+<a name="Common+logChannel"></a>
+
+### common.logChannel : <code>string</code>
+The channel id for the channel to send general log messages to.
+
+**Kind**: instance constant of [<code>Common</code>](#Common)  
+**Default**: <code>&quot;473935520821673991&quot;</code>  
 <a name="Common+webURL"></a>
 
 ### common.webURL : <code>string</code>
@@ -223,6 +232,12 @@ Replies to the author and channel of msg with the given message.
 
 ### Common.spikeyId : <code>string</code>
 SpikeyRobot's Discord ID
+
+**Kind**: static constant of [<code>Common</code>](#Common)  
+<a name="Common.logChannel"></a>
+
+### Common.logChannel : <code>string</code>
+The channel id for the channel to send general log messages to.
 
 **Kind**: static constant of [<code>Common</code>](#Common)  
 <a name="Common.webURL"></a>
@@ -4208,6 +4223,7 @@ Main class that manages the bot.
     * [~setDev](#SpikeyBot..setDev) : <code>boolean</code> ℗
     * [~minimal](#SpikeyBot..minimal) : <code>boolean</code> ℗
     * [~subModules](#SpikeyBot..subModules) : [<code>Array.&lt;SubModule&gt;</code>](#SubModule) ℗
+    * [~disconnectReason](#SpikeyBot..disconnectReason) : <code>string</code> ℗
     * [~reactToAnthony](#SpikeyBot..reactToAnthony) : <code>boolean</code> ℗
     * [~testChannel](#SpikeyBot..testChannel) : <code>string</code> ℗
     * [~trustedIds](#SpikeyBot..trustedIds) : <code>Array.&lt;string&gt;</code> ℗
@@ -4219,6 +4235,7 @@ Main class that manages the bot.
     * [~isCmd(msg, cmd)](#SpikeyBot..isCmd) ⇒ <code>boolean</code> ℗
     * [~updateGame(game)](#SpikeyBot..updateGame) ℗
     * [~onReady()](#SpikeyBot..onReady) ℗
+    * [~onDisconnect(event)](#SpikeyBot..onDisconnect) ℗
     * [~onMessage(msg)](#SpikeyBot..onMessage) ℗
     * [~commandToggleReact(msg)](#SpikeyBot..commandToggleReact) : [<code>commandHandler</code>](#commandHandler) ℗
     * [~commandHelp(msg)](#SpikeyBot..commandHelp) : [<code>commandHandler</code>](#commandHandler) ℗
@@ -4370,6 +4387,14 @@ Instances of sub-modules currently loaded.
 
 **Kind**: inner property of [<code>SpikeyBot</code>](#SpikeyBot)  
 **Access**: private  
+<a name="SpikeyBot..disconnectReason"></a>
+
+### SpikeyBot~disconnectReason : <code>string</code> ℗
+Reason the bot was disconnected from Discord's servers.
+
+**Kind**: inner property of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Default**: <code>null</code>  
+**Access**: private  
 <a name="SpikeyBot..reactToAnthony"></a>
 
 ### SpikeyBot~reactToAnthony : <code>boolean</code> ℗
@@ -4464,6 +4489,18 @@ The bot has become ready.
 
 **Kind**: inner method of [<code>SpikeyBot</code>](#SpikeyBot)  
 **Access**: private  
+<a name="SpikeyBot..onDisconnect"></a>
+
+### SpikeyBot~onDisconnect(event) ℗
+The bot has disconnected from Discord.
+
+**Kind**: inner method of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| event | <code>CloseEvent</code> | The websocket close event. |
+
 <a name="SpikeyBot..onMessage"></a>
 
 ### SpikeyBot~onMessage(msg) ℗

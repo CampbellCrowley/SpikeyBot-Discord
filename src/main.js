@@ -1330,8 +1330,7 @@ function Main() {
    * @listens SpikeyBot~Command#ban
    */
   function commandBan(msg) {
-    if (!msg.member.hasPermission(
-            self.Discord.Permissions.FLAGS.BAN_MEMBERS, true, true, true)) {
+    if (!msg.member.hasPermission(self.Discord.Permissions.FLAGS.BAN_MEMBERS)) {
       self.common.reply(
           msg, 'You don\'t have permission for that!\n(Filthy ' +
               msg.member.roles.highest.name + ')');
