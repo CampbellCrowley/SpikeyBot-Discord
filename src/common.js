@@ -210,9 +210,28 @@ Common.prototype.spikeyId = '124733888177111041';
  * SpikeyRobot's Discord ID
  *
  * @type {string}
+ * @default
  * @constant
  */
 Common.spikeyId = Common.prototype.spikeyId;
+
+/**
+ * The channel id for the channel to send general log messages to.
+ *
+ * @default
+ * @constant
+ * @type {string}
+ */
+Common.prototype.logChannel = '473935520821673991';
+/**
+ * The channel id for the channel to send general log messages to.
+ *
+ * @default
+ * @constant
+ * @type {string}
+ */
+Common.logChannel = Common.prototype.logChannel;
+
 
 /**
  * The website base URL for pointing to for more help and documentation.
