@@ -906,6 +906,8 @@ Hunger Games simulator.
         * [.common](#SubModule+common) : [<code>Common</code>](#Common)
         * *[.myName](#SubModule+myName) : <code>string</code>*
         * [.initialized](#SubModule+initialized) : <code>boolean</code>
+        * [.roleName](#HungryGames+roleName) : <code>string</code>
+        * [.defaultOptions](#HungryGames+defaultOptions) : <code>Object.&lt;{value: (string\|number\|boolean), values: ?Array.&lt;string&gt;, comment: string}&gt;</code>
         * [.getGame(id)](#HungryGames+getGame) ⇒ [<code>GuildGame</code>](#HungryGames..GuildGame)
         * [.getDefaultEvents()](#HungryGames+getDefaultEvents) ⇒ <code>Object</code>
         * [.createGame(id)](#HungryGames+createGame)
@@ -936,6 +938,7 @@ Hunger Games simulator.
         * [~Event](#HungryGames..Event)
             * [new Event(message, [numVictim], [numAttacker], [victimOutcome], [attackerOutcome], [victimKiller], [attackerKiller], [battle], [state], [attacks])](#new_HungryGames..Event_new)
         * [~web](#HungryGames..web) : [<code>HGWeb</code>](#HGWeb) ℗
+        * [~findTimestamps](#HungryGames..findTimestamps) : <code>Object.&lt;number&gt;</code> ℗
         * [~games](#HungryGames..games) : [<code>Object.&lt;GuildGame&gt;</code>](#HungryGames..GuildGame) ℗
         * [~messages](#HungryGames..messages) : <code>Object.&lt;Array.&lt;string&gt;&gt;</code> ℗
         * [~battles](#HungryGames..battles) : <code>Object</code> ℗
@@ -948,7 +951,10 @@ Hunger Games simulator.
         * [~defaultArenaEvents](#HungryGames..defaultArenaEvents) : [<code>Array.&lt;ArenaEvent&gt;</code>](#HungryGames..ArenaEvent) ℗
         * [~newEventMessages](#HungryGames..newEventMessages) : <code>Object.&lt;Discord~Message&gt;</code> ℗
         * [~optionMessages](#HungryGames..optionMessages) : <code>Object.&lt;Discord~Message&gt;</code> ℗
+        * [~oldSaveFile](#HungryGames..oldSaveFile) : <code>string</code> ℗
         * [~saveFile](#HungryGames..saveFile) : <code>string</code> ℗
+        * [~guildSaveDir](#HungryGames..guildSaveDir) : <code>string</code> ℗
+        * [~hgSaveDir](#HungryGames..hgSaveDir) : <code>string</code> ℗
         * [~eventFile](#HungryGames..eventFile) : <code>string</code> ℗
         * [~messageFile](#HungryGames..messageFile) : <code>string</code> ℗
         * [~battleFile](#HungryGames..battleFile) : <code>string</code> ℗
@@ -964,6 +970,7 @@ Hunger Games simulator.
         * [~roleName](#HungryGames..roleName) : <code>string</code> ℗
         * [~numEventsPerPage](#HungryGames..numEventsPerPage) : <code>number</code> ℗
         * [~maxReactAwaitTime](#HungryGames..maxReactAwaitTime) : <code>number</code> ℗
+        * [~findDelay](#HungryGames..findDelay) : <code>number</code> ℗
         * [~defaultOptions](#HungryGames..defaultOptions) : <code>Object.&lt;{value: (string\|number\|boolean), values: ?Array.&lt;string&gt;, comment: string}&gt;</code> ℗
         * [~lotsOfDeathRate](#HungryGames..lotsOfDeathRate) : <code>number</code> ℗
         * [~littleDeathRate](#HungryGames..littleDeathRate) : <code>number</code> ℗
@@ -1039,6 +1046,7 @@ Hunger Games simulator.
         * [~help(msg, id)](#HungryGames..help) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~nothing()](#HungryGames..nothing) ⇒ <code>string</code> ℗
         * [~getMessage(type)](#HungryGames..getMessage) ⇒ <code>string</code> ℗
+        * [~find(id)](#HungryGames..find) ⇒ [<code>GuildGame</code>](#HungryGames..GuildGame) ℗
         * [~exit([code])](#HungryGames..exit) ℗
         * [~sigint()](#HungryGames..sigint) ℗
         * [~unhandledRejection(reason, p)](#HungryGames..unhandledRejection) ℗
@@ -1128,6 +1136,18 @@ Has this subModule been initialized yet (Has begin() been called).
 **Default**: <code>false</code>  
 **Access**: protected  
 **Read only**: true  
+<a name="HungryGames+roleName"></a>
+
+### hungryGames.roleName : <code>string</code>
+Role that a user must have in order to perform any commands.
+
+**Kind**: instance constant of [<code>HungryGames</code>](#HungryGames)  
+<a name="HungryGames+defaultOptions"></a>
+
+### hungryGames.defaultOptions : <code>Object.&lt;{value: (string\|number\|boolean), values: ?Array.&lt;string&gt;, comment: string}&gt;</code>
+Default options for a game.
+
+**Kind**: instance constant of [<code>HungryGames</code>](#HungryGames)  
 <a name="HungryGames+getGame"></a>
 
 ### hungryGames.getGame(id) ⇒ [<code>GuildGame</code>](#HungryGames..GuildGame)
@@ -1512,6 +1532,14 @@ Instance of the web class that can control this instance.
 
 **Kind**: inner property of [<code>HungryGames</code>](#HungryGames)  
 **Access**: private  
+<a name="HungryGames..findTimestamps"></a>
+
+### HungryGames~findTimestamps : <code>Object.&lt;number&gt;</code> ℗
+Stores the guilds we have looked for their data recently and the timestamp
+at which we looked. Used to reduce filesystem requests and blocking.
+
+**Kind**: inner property of [<code>HungryGames</code>](#HungryGames)  
+**Access**: private  
 <a name="HungryGames..games"></a>
 
 ### HungryGames~games : [<code>Object.&lt;GuildGame&gt;</code>](#HungryGames..GuildGame) ℗
@@ -1612,15 +1640,66 @@ Messages I have sent showing current options.
 **Kind**: inner property of [<code>HungryGames</code>](#HungryGames)  
 **Default**: <code>{}</code>  
 **Access**: private  
-<a name="HungryGames..saveFile"></a>
+<a name="HungryGames..oldSaveFile"></a>
 
-### HungryGames~saveFile : <code>string</code> ℗
-The file path to save current state.
+### HungryGames~oldSaveFile : <code>string</code> ℗
+The old file location for storing hg data in order to upgrade data to new
+format.
 
 **Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
 **Default**: <code>&quot;./save/hg.json&quot;</code>  
 **Access**: private  
-**See**: [games](#HungryGames..games)  
+**See**
+
+- [games](#HungryGames..games)
+- [saveFile](#HungryGames..saveFile)
+- [HungryGames~saveFileDir](HungryGames~saveFileDir)
+
+<a name="HungryGames..saveFile"></a>
+
+### HungryGames~saveFile : <code>string</code> ℗
+The file path to save current state for a specific guild relative to
+HungryGames~guildSaveDir.
+
+**Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
+**Default**: <code>&quot;game.json&quot;</code>  
+**Access**: private  
+**See**
+
+- [games](#HungryGames..games)
+- [HungryGames~saveFileDir](HungryGames~saveFileDir)
+- [hgSaveDir](#HungryGames..hgSaveDir)
+
+<a name="HungryGames..guildSaveDir"></a>
+
+### HungryGames~guildSaveDir : <code>string</code> ℗
+The root file directory for finding saved data related to individual
+guilds.
+
+**Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
+**Default**: <code>&quot;./save/guilds/&quot;</code>  
+**Access**: private  
+**See**
+
+- [games](#HungryGames..games)
+- [saveFile](#HungryGames..saveFile)
+- [hgSaveDir](#HungryGames..hgSaveDir)
+
+<a name="HungryGames..hgSaveDir"></a>
+
+### HungryGames~hgSaveDir : <code>string</code> ℗
+The file directory for finding saved data related to the hungry games data
+of individual guilds.
+
+**Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
+**Default**: <code>&quot;/hg/&quot;</code>  
+**Access**: private  
+**See**
+
+- [games](#HungryGames..games)
+- [saveFile](#HungryGames..saveFile)
+- [HungryGames~saveFileDir](HungryGames~saveFileDir)
+
 <a name="HungryGames..eventFile"></a>
 
 ### HungryGames~eventFile : <code>string</code> ℗
@@ -1749,6 +1828,14 @@ Maximum amount of time to wait for reactions to a message.
 
 **Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
 **Default**: <code>15 Minutes</code>  
+**Access**: private  
+<a name="HungryGames..findDelay"></a>
+
+### HungryGames~findDelay : <code>number</code> ℗
+The delay after failing to find a guild's data to look for it again.
+
+**Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
+**Default**: <code>15 Seconds</code>  
 **Access**: private  
 <a name="HungryGames..defaultOptions"></a>
 
@@ -2715,6 +2802,21 @@ Get a random message of a given type from hgMessages.json.
 | Param | Type | Description |
 | --- | --- | --- |
 | type | <code>string</code> | The message type to get. |
+
+<a name="HungryGames..find"></a>
+
+### HungryGames~find(id) ⇒ [<code>GuildGame</code>](#HungryGames..GuildGame) ℗
+Returns a guild's game data. Returns cached version if that exists, or
+searches the file system for saved data. Data will only be checked from
+disk at most once every `HungryGames~findDelay` milliseconds. Returns
+`null` if data could not be found, or an error occurred.
+
+**Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| id | <code>number</code> \| <code>string</code> | The guild id to get the data for. |
 
 <a name="HungryGames..exit"></a>
 

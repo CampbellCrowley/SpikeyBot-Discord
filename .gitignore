@@ -1,7 +1,7 @@
 node_modules/
 recordings/
 reboot.dat
-hg.json
+save/guilds/*
 *.log
 auth.js
 save/hgWebClients.json
