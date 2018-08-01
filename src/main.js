@@ -126,7 +126,7 @@ function Main() {
    * @private
    * @type {number}
    */
-  let riggedCounter = 0;
+  // let riggedCounter = 0;
 
   /**
    * The guilds with auto-smite enabled, and members who have mentioned
@@ -279,7 +279,7 @@ function Main() {
         }
       }
       disabledAutoSmite = parsed.disabledAutoSmite || {};
-      riggedCounter = parsed.riggedCounterNum || 0;
+      self.client.riggedCounter = parsed.riggedCounterNum || 0;
       fs.rename(
           './save/timers.dat', './save/timers.dat.deleteme', function(err2) {
             if (err2) {
@@ -352,11 +352,13 @@ function Main() {
 
     fs.readFile('./save/rigged-counter.txt', function(err, file) {
       if (err) {
-        riggedCounter = 0;
+        self.client.riggedCounter = 0;
+        console.log(err);
         return;
       }
       let tmp = file * 1;
-      if (!isNaN(tmp)) riggedCounter = tmp;
+      if (!isNaN(tmp)) self.client.riggedCounter = tmp;
+      else console.log(tmp, 'is not a number');
     });
 
     // Format help message into rich embed.
@@ -380,6 +382,26 @@ function Main() {
           true);
     });
     self.helpMessage = tmpHelp;
+
+    if (self.client.shard) {
+      /* eslint-disable no-unused-vars */
+      /**
+       * Receive message from another shard telling us to update our "rigged"
+       * counter.
+       *
+       * @private
+       * @param {number} newNum The new value to set the counter to.
+       */
+      self.client.updateRiggedCounter = function(newNum) {
+        /* eslint-enable no-unused-vars */
+        if (newNum < this.riggedCounter) {
+          this.shard.broadcastEval(
+              'this.updateRiggedCounter(' + this.riggedCounter + ')');
+        } else {
+          this.riggedCounter = newNum;
+        }
+      };
+    }
   };
 
   /** @inheritdoc */
@@ -459,11 +481,11 @@ function Main() {
     });
     if (!self.client.shard || self.client.shard.id == 0) {
       const dir = './save/';
-      const filename = dir + '/rigged-counter.txt';
+      const filename = dir + 'rigged-counter.txt';
       if (opt == 'async') {
-        mkAndWrite(filename, dir, riggedCounter + '');
+        mkAndWrite(filename, dir, self.client.riggedCounter + '');
       } else {
-        mkAndWriteSync(filename, dir, riggedCounter + '');
+        mkAndWriteSync(filename, dir, self.client.riggedCounter + '');
       }
     }
   };
@@ -638,7 +660,7 @@ function Main() {
       let matchedRigged = msg.content.toLowerCase().replace(/\W/g, '').match(
           /r[^i]*i[^g]*g[^g]*g[^e]*e[^d]*d/g);
       if (matchedRigged) {
-        let startCount = riggedCounter;
+        let startCount = self.client.riggedCounter;
         let matchCount = 0;
         for (let i = 0; i < matchedRigged.length; i++) {
           let check = matchedRigged[i].replace(/([\S])\1+/g, '$1');
@@ -653,14 +675,15 @@ function Main() {
           // Disabled multple because people were spamming it.
           if (false && matchCount > 1) {
             msg.channel.send(
-                '#' + (startCount + 1) + ' - ' + (riggedCounter += matchCount));
+                '#' + (startCount + 1) + ' - ' +
+                (self.client.riggedCounter += matchCount));
           } else {
-            msg.channel.send('#' + (riggedCounter += 1));
+            msg.channel.send('#' + (self.client.riggedCounter += 1));
           }
           if (self.client.shard) {
             self.client.shard.broadcastEval(
-                'updateRiggedCounter(' + riggedCounter + ',' + matchCount +
-                ')');
+                'this.updateRiggedCounter(' + self.client.riggedCounter + ',' +
+                matchCount + ')');
           }
         }
       }
@@ -682,10 +705,10 @@ function Main() {
       let now = Date.now();
       for (let i = timestamps.length - 1; i >= 0; i--) {
         if (now - timestamps[i] < 2 * 60 * 1000) {
-count++;
-} else {
-timestamps.splice(i, 1);
-}
+          count++;
+        } else {
+          timestamps.splice(i, 1);
+        }
       }
       if (count == 3) {
         let hasMuteRole = false;
@@ -1898,21 +1921,6 @@ timestamps.splice(i, 1);
     return str;
   }
 
-  /* eslint-disable no-unused-vars */
-  /**
-   * Receive message from another shard telling us to update our "rigged"
-   * counter.
-   *
-   * @private
-   * @param {number} newNum The new value to set the counter to.
-   * @param {number} increment The amount that the value has changed due to this
-   * event.
-   */
-  function updateRiggedCounter(newNum, increment) {
-    /* eslint-enable no-unused-vars */
-    console.log('new', newNum, 'old', riggedCounter, 'inc', increment);
-  }
-
   /**
    * Triggered via SIGINT, SIGHUP or SIGTERM. Saves data before exiting.
    *
@@ -1921,7 +1929,8 @@ timestamps.splice(i, 1);
    * @listens Process#SIGHUP
    * @listens Process#SIGTERM
    */
-  function sigint() {
+  function
+  sigint() {
     if (self.common && self.common.log) {
       self.common.log('Caught exit!', 'Main');
     } else {

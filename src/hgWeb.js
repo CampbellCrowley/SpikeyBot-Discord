@@ -42,8 +42,8 @@ function HGWeb(hg) {
    * @private
    */
   function startClient() {
-    ioClient =
-        socketIo('localhost:8010', {path: '/www.spikeybot.com/socket.io/hg/'});
+    ioClient = require('socket.io-client')(
+        'localhost:8010', {path: '/www.spikeybot.com/socket.io/hg/'});
     ioClient.on('connection', clientSocketConnection);
   }
 

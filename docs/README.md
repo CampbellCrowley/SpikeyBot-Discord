@@ -3430,7 +3430,6 @@ Basic commands and features for the bot.
         * [~prevUserSayCnt](#Main..prevUserSayCnt) : <code>number</code> ℗
         * [~timers](#Main..timers) : [<code>Array.&lt;Timer&gt;</code>](#Main..Timer) ℗
         * [~disabledAutoSmite](#Main..disabledAutoSmite) : <code>Object.&lt;boolean&gt;</code> ℗
-        * [~riggedCounter](#Main..riggedCounter) : <code>number</code> ℗
         * [~mentionAccumulator](#Main..mentionAccumulator) : <code>Object.&lt;Object.&lt;string&gt;&gt;</code> ℗
         * [~introduction](#Main..introduction) : <code>string</code> ℗
         * [~blockedmessage](#Main..blockedmessage) : <code>string</code> ℗
@@ -3480,7 +3479,6 @@ Basic commands and features for the bot.
         * [~commandRollDie(msg)](#Main..commandRollDie) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandPerms(msg)](#Main..commandPerms) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~prePad(num, digits)](#Main..prePad) ⇒ <code>string</code> ℗
-        * [~updateRiggedCounter(newNum, increment)](#Main..updateRiggedCounter) ℗
         * [~sigint()](#Main..sigint) ℗
         * [~Timer](#Main..Timer) : <code>Object</code>
 
@@ -3636,13 +3634,6 @@ Array of all timers currently set.
 
 ### Main~disabledAutoSmite : <code>Object.&lt;boolean&gt;</code> ℗
 All guilds that have disabled the auto-smite feature.
-
-**Kind**: inner property of [<code>Main</code>](#Main)  
-**Access**: private  
-<a name="Main..riggedCounter"></a>
-
-### Main~riggedCounter : <code>number</code> ℗
-Number of times "Rigged" has been said on all servers.
 
 **Kind**: inner property of [<code>Main</code>](#Main)  
 **Access**: private  
@@ -4221,20 +4212,6 @@ Pad a number with leading zeroes so that it is `digits` long.
 | --- | --- | --- |
 | num | <code>string</code> \| <code>number</code> | The number to pad with zeroes. |
 | digits | <code>number</code> | The minimum number of digits to make the output have. |
-
-<a name="Main..updateRiggedCounter"></a>
-
-### Main~updateRiggedCounter(newNum, increment) ℗
-Receive message from another shard telling us to update our "rigged"
-counter.
-
-**Kind**: inner method of [<code>Main</code>](#Main)  
-**Access**: private  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| newNum | <code>number</code> | The new value to set the counter to. |
-| increment | <code>number</code> | The amount that the value has changed due to this event. |
 
 <a name="Main..sigint"></a>
 

@@ -460,9 +460,9 @@ function SpikeyBot() {
       }
     }
     let logChannel = client.channels.get(common.logChannel);
-    if (testInstance) {
+    if (testInstance && logChannel) {
       logChannel.send('Beginning in unit test mode (JS' + version + ')');
-    } else {
+    } else if (logChannel) {
       let additional = '';
       if (client.shard) {
         additional +=
@@ -482,13 +482,18 @@ function SpikeyBot() {
         subModules[i].begin(prefix, Discord, client, command, common);
       } catch (err) {
         console.log(err);
-        logChannel.send('Failed to initialize ' + subModuleNames[i]);
+        if (logChannel) {
+          logChannel.send('Failed to initialize ' + subModuleNames[i]);
+        }
       }
     }
     if (subModules.length != subModuleNames.length) {
-      logChannel.send(
-          'Failed to compile a submodule. Check log for more info. ' +
-          'Previous initialization errors may be incorrect.');
+      common.error('Loaded submodules does not match modules to load.');
+      if (logChannel) {
+        logChannel.send(
+            'Failed to compile a submodule. Check log for more info. ' +
+            'Previous initialization errors may be incorrect.');
+      }
     }
     if (!minimal) {
       fs.readFile('./save/reboot.dat', function(err, file) {
