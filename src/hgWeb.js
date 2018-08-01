@@ -669,10 +669,9 @@ function HGWeb(hg) {
   function fetchGuilds(userData, socket) {
     if (!userData) return;
 
-    const siblings = io.sockets.to('siblings');
+    const siblings = io.sockets.to('siblings').connected;
 
-    let numReplies = 0;
-    if (siblings) Object.keys(siblings.connected).length + 1;
+    const numReplies = (Object.entries(siblings).length || 0);
     let replied = 0;
     let guildBuffer = {};
 
@@ -704,7 +703,9 @@ function HGWeb(hg) {
       }
     }
 
-    if (siblings) siblings.emit('fetchGuilds', done);
+    Object.entries(siblings).forEach((obj) => {
+      obj[1].emit('fetchGuilds', done);
+    });
 
     try {
       let guilds = hg.client.guilds
