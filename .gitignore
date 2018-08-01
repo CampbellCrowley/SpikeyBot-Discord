@@ -1,8 +1,8 @@
 node_modules/
 recordings/
 reboot.dat
-save/guilds/*
 *.log
 auth.js
+save/guilds/*
 save/hgWebClients.json
-save/timers.dat
+save/rigged-counter.txt
