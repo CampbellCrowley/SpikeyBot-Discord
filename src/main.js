@@ -462,11 +462,12 @@ function Main() {
           }
         }
         if (matchCount > 0) {
-          if (matchCount > 1) {
+          // Disabled multple because people were spamming it.
+          if (false && matchCount > 1) {
             msg.channel.send(
                 '#' + (startCount + 1) + ' - ' + (riggedCounter += matchCount));
           } else {
-            msg.channel.send('#' + (riggedCounter += matchCount));
+            msg.channel.send('#' + (riggedCounter += 1));
           }
         }
       }
