@@ -30,6 +30,15 @@
 </dd>
 </dl>
 
+## Functions
+
+<dl>
+<dt><a href="#unhandledRejection">unhandledRejection(reason, p)</a> ℗</dt>
+<dd><p>Handler for an unhandledRejection or uncaughtException, to prevent the bot
+from silently crashing without an error.</p>
+</dd>
+</dl>
+
 ## Typedefs
 
 <dl>
@@ -50,6 +59,8 @@
         * [.spikeyId](#Common+spikeyId) : <code>string</code>
         * [.logChannel](#Common+logChannel) : <code>string</code>
         * [.webURL](#Common+webURL) : <code>string</code>
+        * [.guildSaveDir](#Common+guildSaveDir) : <code>string</code>
+        * [.userSaveDir](#Common+userSaveDir) : <code>string</code>
         * [.begin(_, isRelease)](#Common+begin)
         * [.padIp(str)](#Common+padIp) ⇒ <code>string</code>
         * [.getIPName(ip)](#Common+getIPName) ⇒ <code>string</code>
@@ -64,6 +75,8 @@
         * [.spikeyId](#Common.spikeyId) : <code>string</code>
         * [.logChannel](#Common.logChannel) : <code>string</code>
         * [.webURL](#Common.webURL) : <code>string</code>
+        * [.guildSaveDir](#Common.guildSaveDir) : <code>string</code>
+        * [.userSaveDir](#Common.userSaveDir) : <code>string</code>
     * _inner_
         * [~mycolor](#Common..mycolor) : <code>number</code> ℗
         * [~title](#Common..title) : <code>string</code> ℗
@@ -102,6 +115,23 @@ The channel id for the channel to send general log messages to.
 The website base URL for pointing to for more help and documentation.
 
 **Kind**: instance constant of [<code>Common</code>](#Common)  
+**Default**: <code>&quot;https://www.spikeybot.com/&quot;</code>  
+<a name="Common+guildSaveDir"></a>
+
+### common.guildSaveDir : <code>string</code>
+The root file directory for finding saved data related to individual
+guilds.
+
+**Kind**: instance constant of [<code>Common</code>](#Common)  
+**Default**: <code>&quot;./save/guilds/&quot;</code>  
+<a name="Common+userSaveDir"></a>
+
+### common.userSaveDir : <code>string</code>
+The root file directory for finding saved data related to individual
+users.
+
+**Kind**: instance constant of [<code>Common</code>](#Common)  
+**Default**: <code>&quot;./save/users/&quot;</code>  
 <a name="Common+begin"></a>
 
 ### common.begin(_, isRelease)
@@ -246,6 +276,20 @@ The channel id for the channel to send general log messages to.
 The website base URL for pointing to for more help and documentation.
 
 **Kind**: static constant of [<code>Common</code>](#Common)  
+<a name="Common.guildSaveDir"></a>
+
+### Common.guildSaveDir : <code>string</code>
+The root file directory for finding saved data related to individual
+guilds.
+
+**Kind**: static constant of [<code>Common</code>](#Common)  
+<a name="Common.userSaveDir"></a>
+
+### Common.userSaveDir : <code>string</code>
+The root file directory for finding saved data related to individual
+users.
+
+**Kind**: static constant of [<code>Common</code>](#Common)  
 <a name="Common..mycolor"></a>
 
 ### Common~mycolor : <code>number</code> ℗
@@ -298,7 +342,7 @@ Manages a Connect 4 game.
             * [new this.Game(players, msg)](#new_Connect4+Game_new)
             * [.players](#Connect4+Game+players) : <code>Object</code>
             * [.board](#Connect4+Game+board) : <code>Array.&lt;Array.&lt;number&gt;&gt;</code>
-            * [.turn](#Connect4+Game+turn)
+            * [.turn](#Connect4+Game+turn) : <code>number</code>
             * [.msg](#Connect4+Game+msg) : <code>Discord~Message</code>
             * [.print([winner])](#Connect4+Game+print)
         * [.helpMessage](#SubModule+helpMessage) : <code>string</code> \| <code>Discord~MessageEmbed</code>
@@ -337,7 +381,7 @@ Manages a Connect 4 game.
     * [new this.Game(players, msg)](#new_Connect4+Game_new)
     * [.players](#Connect4+Game+players) : <code>Object</code>
     * [.board](#Connect4+Game+board) : <code>Array.&lt;Array.&lt;number&gt;&gt;</code>
-    * [.turn](#Connect4+Game+turn)
+    * [.turn](#Connect4+Game+turn) : <code>number</code>
     * [.msg](#Connect4+Game+msg) : <code>Discord~Message</code>
     * [.print([winner])](#Connect4+Game+print)
 
@@ -366,7 +410,7 @@ The players in this game.
 **Kind**: instance property of [<code>Game</code>](#Connect4+Game)  
 <a name="Connect4+Game+turn"></a>
 
-#### game.turn
+#### game.turn : <code>number</code>
 Which player's turn it is. Either 1 or 2.
 
 **Kind**: instance property of [<code>Game</code>](#Connect4+Game)  
@@ -616,18 +660,22 @@ Creates a web interface for managing the Hungry Games.
 * [HGWeb](#HGWeb)
     * [new HGWeb(hg)](#new_HGWeb_new)
     * _instance_
-        * [.shutdown()](#HGWeb+shutdown)
+        * [.shutdown([skipSave])](#HGWeb+shutdown)
         * [.dayStateChange(gId)](#HGWeb+dayStateChange)
     * _inner_
         * [~loginInfo](#HGWeb..loginInfo) : <code>Object.&lt;Object&gt;</code> ℗
         * [~sockets](#HGWeb..sockets) : <code>Object.&lt;Socket&gt;</code> ℗
         * [~tokenHost](#HGWeb..tokenHost) : <code>Object</code> ℗
         * [~apiHost](#HGWeb..apiHost) : <code>Object</code> ℗
+        * [~startClient()](#HGWeb..startClient) ℗
         * [~handler(req, res)](#HGWeb..handler) ℗
         * [~purgeSessions()](#HGWeb..purgeSessions) ℗
         * [~socketConnection(socket)](#HGWeb..socketConnection) ℗
             * [~receivedLoginInfo(data)](#HGWeb..socketConnection..receivedLoginInfo) ℗
+            * [~callSocketFunction(func, args)](#HGWeb..socketConnection..callSocketFunction) ℗
+        * [~clientSocketConnection(socket)](#HGWeb..clientSocketConnection) ℗
         * [~replyNoPerm(socket, cmd)](#HGWeb..replyNoPerm) ℗
+        * [~checkMyGuild(gId)](#HGWeb..checkMyGuild) ⇒ <code>boolean</code> ℗
         * [~checkPerm(userData, gId)](#HGWeb..checkPerm) ⇒ <code>boolean</code> ℗
         * [~checkChannelPerm(userData, gId, cId)](#HGWeb..checkChannelPerm) ⇒ <code>boolean</code> ℗
         * [~fetchIdentity(loginInfo, cb)](#HGWeb..fetchIdentity) ℗
@@ -637,6 +685,25 @@ Creates a web interface for managing the Hungry Games.
         * [~makeRefreshTimeout(loginInfo, cb)](#HGWeb..makeRefreshTimeout) ℗
         * [~refreshToken(refreshToken, cb)](#HGWeb..refreshToken) ℗
         * [~authorizeRequest(code, cb)](#HGWeb..authorizeRequest) ℗
+        * [~fetchGuilds(userData, socket)](#HGWeb..fetchGuilds) : <code>HGWeb~SocketFunction</code> ℗
+            * [~done(guilds, [err], [response])](#HGWeb..fetchGuilds..done) ℗
+        * [~fetchMember(userData, socket, gId, mId)](#HGWeb..fetchMember) : <code>HGWeb~SocketFunction</code> ℗
+        * [~fetchChannel(userData, socket, gId, cId)](#HGWeb..fetchChannel) : <code>HGWeb~SocketFunction</code> ℗
+        * [~fetchGames(userData, socket, gId)](#HGWeb..fetchGames) : <code>HGWeb~SocketFunction</code> ℗
+        * [~fetchDay(userData, socket, gId)](#HGWeb..fetchDay) : <code>HGWeb~SocketFunction</code> ℗
+        * [~excludeMember(userData, socket, gId, mId)](#HGWeb..excludeMember) : <code>HGWeb~SocketFunction</code> ℗
+        * [~includeMember(userData, socket, gId, mId)](#HGWeb..includeMember) : <code>HGWeb~SocketFunction</code> ℗
+        * [~toggleOption(userData, socket, gId, option, value)](#HGWeb..toggleOption) : <code>HGWeb~SocketFunction</code> ℗
+        * [~createGame(userData, socket, gId)](#HGWeb..createGame) : <code>HGWeb~SocketFunction</code> ℗
+        * [~resetGame(userData, socket, gId, cmd)](#HGWeb..resetGame) : <code>HGWeb~SocketFunction</code> ℗
+        * [~startGame(userData, socket, gId, cId)](#HGWeb..startGame) : <code>HGWeb~SocketFunction</code> ℗
+        * [~startAutoplay(userData, socket, gId, cId)](#HGWeb..startAutoplay) : <code>HGWeb~SocketFunction</code> ℗
+        * [~nextDay(userData, socket, gId, cId)](#HGWeb..nextDay) : <code>HGWeb~SocketFunction</code> ℗
+        * [~endGame(userData, socket, gId)](#HGWeb..endGame) : <code>HGWeb~SocketFunction</code> ℗
+        * [~pauseAutoplay(userData, socket, gId)](#HGWeb..pauseAutoplay) : <code>HGWeb~SocketFunction</code> ℗
+        * [~editTeam(userData, socket, gId, cmd, one, two)](#HGWeb..editTeam) : <code>HGWeb~SocketFunction</code> ℗
+        * [~createEvent(userData, socket, gId, type, message, nV, nA, oV, oA, kV, kA)](#HGWeb..createEvent) : <code>HGWeb~SocketFunction</code> ℗
+        * [~removeEvent(userData, socket, gId, type, event)](#HGWeb..removeEvent) : <code>HGWeb~SocketFunction</code> ℗
 
 <a name="new_HGWeb_new"></a>
 
@@ -648,11 +715,16 @@ Creates a web interface for managing the Hungry Games.
 
 <a name="HGWeb+shutdown"></a>
 
-### hgWeb.shutdown()
+### hgWeb.shutdown([skipSave])
 Causes a full shutdown of all servers.
 
 **Kind**: instance method of [<code>HGWeb</code>](#HGWeb)  
 **Access**: public  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [skipSave] | <code>boolean</code> | <code>false</code> | Skip writing data to file. |
+
 <a name="HGWeb+dayStateChange"></a>
 
 ### hgWeb.dayStateChange(gId)
@@ -699,6 +771,13 @@ The url to send a request to the discord api.
 **Kind**: inner constant of [<code>HGWeb</code>](#HGWeb)  
 **Default**: <code>{&quot;protocol&quot;:&quot;https:&quot;,&quot;host&quot;:&quot;discordapp.com&quot;,&quot;path&quot;:&quot;/api&quot;,&quot;method&quot;:&quot;GET&quot;}</code>  
 **Access**: private  
+<a name="HGWeb..startClient"></a>
+
+### HGWeb~startClient() ℗
+Start a socketio client connection to the primary running server.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
 <a name="HGWeb..handler"></a>
 
 ### HGWeb~handler(req, res) ℗
@@ -729,12 +808,18 @@ Handler for a new socket connecting.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| socket | <code>Socket</code> | The socket.io socket that connected. |
+| socket | <code>socketIo~Socket</code> | The socket.io socket that connected. |
+
+
+* [~socketConnection(socket)](#HGWeb..socketConnection) ℗
+    * [~receivedLoginInfo(data)](#HGWeb..socketConnection..receivedLoginInfo) ℗
+    * [~callSocketFunction(func, args)](#HGWeb..socketConnection..callSocketFunction) ℗
 
 <a name="HGWeb..socketConnection..receivedLoginInfo"></a>
 
 #### socketConnection~receivedLoginInfo(data) ℗
-Received the login credentials for user, lets store it for this session,
+Received the login credentials for user, lets store it for this
+session,
 and refresh the tokens when necessary.
 
 **Kind**: inner method of [<code>socketConnection</code>](#HGWeb..socketConnection)  
@@ -743,6 +828,32 @@ and refresh the tokens when necessary.
 | Param | Type | Description |
 | --- | --- | --- |
 | data | <code>Object</code> | User data. |
+
+<a name="HGWeb..socketConnection..callSocketFunction"></a>
+
+#### socketConnection~callSocketFunction(func, args) ℗
+Calls the functions with added arguments, and copies the request to all
+sibling clients.
+
+**Kind**: inner method of [<code>socketConnection</code>](#HGWeb..socketConnection)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| func | <code>function</code> | The function to call. |
+| args | <code>Array.&lt;\*&gt;</code> | Array of arguments to send to function. |
+
+<a name="HGWeb..clientSocketConnection"></a>
+
+### HGWeb~clientSocketConnection(socket) ℗
+Handler for connecting as a client to the server.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| socket | <code>socketIo~Socket</code> | The socket.io socket that connected. |
 
 <a name="HGWeb..replyNoPerm"></a>
 
@@ -757,6 +868,19 @@ they attempted failed due to insufficient permission.
 | --- | --- | --- |
 | socket | <code>Socket</code> | The socket.io socket to reply on. |
 | cmd | <code>string</code> | THe command the client attempted. |
+
+<a name="HGWeb..checkMyGuild"></a>
+
+### HGWeb~checkMyGuild(gId) ⇒ <code>boolean</code> ℗
+Checks if the current shard is responsible for the requested guild.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Returns**: <code>boolean</code> - True if this shard has this guild.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| gId | <code>number</code> \| <code>string</code> | The guild id to check. |
 
 <a name="HGWeb..checkPerm"></a>
 
@@ -886,6 +1010,311 @@ Authenticate with the discord server using a login code.
 | code | <code>string</code> | The login code received from our client. |
 | cb | <code>basicCallback</code> | The response from the https request with error and data arguments. |
 
+<a name="HGWeb..fetchGuilds"></a>
+
+### HGWeb~fetchGuilds(userData, socket) : <code>HGWeb~SocketFunction</code> ℗
+Fetch all relevant data for all mutual guilds with the user and send it to
+the user.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+
+<a name="HGWeb..fetchGuilds..done"></a>
+
+#### fetchGuilds~done(guilds, [err], [response]) ℗
+The callback for each response with the requested data. Replies to the
+user once all requests have replied.
+
+**Kind**: inner method of [<code>fetchGuilds</code>](#HGWeb..fetchGuilds)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| guilds | <code>string</code> \| <code>Object</code> | Either the guild data to send to the user, or 'guilds' if this is a reply from a sibling client. |
+| [err] | <code>string</code> | The error that occurred, or null if no error. |
+| [response] | <code>Object</code> | The guild data if `guilds` equals 'guilds'. |
+
+<a name="HGWeb..fetchMember"></a>
+
+### HGWeb~fetchMember(userData, socket, gId, mId) : <code>HGWeb~SocketFunction</code> ℗
+Fetch data about a member of a guild.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| mId | <code>number</code> \| <code>string</code> | The member's id to lookup. |
+
+<a name="HGWeb..fetchChannel"></a>
+
+### HGWeb~fetchChannel(userData, socket, gId, cId) : <code>HGWeb~SocketFunction</code> ℗
+Fetch data about a channel of a guild.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| cId | <code>number</code> \| <code>string</code> | The channel's id to lookup. |
+
+<a name="HGWeb..fetchGames"></a>
+
+### HGWeb~fetchGames(userData, socket, gId) : <code>HGWeb~SocketFunction</code> ℗
+Fetch all game data within a guild.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.getGame}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+
+<a name="HGWeb..fetchDay"></a>
+
+### HGWeb~fetchDay(userData, socket, gId) : <code>HGWeb~SocketFunction</code> ℗
+Fetch the updated game's day information.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.getGame}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+
+<a name="HGWeb..excludeMember"></a>
+
+### HGWeb~excludeMember(userData, socket, gId, mId) : <code>HGWeb~SocketFunction</code> ℗
+Exclude a member from the Games.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.excludeUsers}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| mId | <code>number</code> \| <code>string</code> | The member id to exclude. |
+
+<a name="HGWeb..includeMember"></a>
+
+### HGWeb~includeMember(userData, socket, gId, mId) : <code>HGWeb~SocketFunction</code> ℗
+Include a member in the Games.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.includeUsers}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| mId | <code>number</code> \| <code>string</code> | The member id to include. |
+
+<a name="HGWeb..toggleOption"></a>
+
+### HGWeb~toggleOption(userData, socket, gId, option, value) : <code>HGWeb~SocketFunction</code> ℗
+Toggle an option in the Games.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.setOption}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| option | <code>string</code> | The option to change. |
+| value | <code>string</code> \| <code>number</code> | The value to set option to. |
+
+<a name="HGWeb..createGame"></a>
+
+### HGWeb~createGame(userData, socket, gId) : <code>HGWeb~SocketFunction</code> ℗
+Create a Game.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.createGame}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+
+<a name="HGWeb..resetGame"></a>
+
+### HGWeb~resetGame(userData, socket, gId, cmd) : <code>HGWeb~SocketFunction</code> ℗
+Reset game data.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.resetGame}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| cmd | <code>string</code> | Command specifying what data to delete. |
+
+<a name="HGWeb..startGame"></a>
+
+### HGWeb~startGame(userData, socket, gId, cId) : <code>HGWeb~SocketFunction</code> ℗
+Start the game.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.startGame}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| cId | <code>number</code> \| <code>string</code> | Channel to start the game in. |
+
+<a name="HGWeb..startAutoplay"></a>
+
+### HGWeb~startAutoplay(userData, socket, gId, cId) : <code>HGWeb~SocketFunction</code> ℗
+Enable autoplay.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.startAutoplay}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| cId | <code>number</code> \| <code>string</code> | Channel to send the messages in. |
+
+<a name="HGWeb..nextDay"></a>
+
+### HGWeb~nextDay(userData, socket, gId, cId) : <code>HGWeb~SocketFunction</code> ℗
+Start the next day.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.nextDay}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| cId | <code>number</code> \| <code>string</code> | Channel to send the messages in. |
+
+<a name="HGWeb..endGame"></a>
+
+### HGWeb~endGame(userData, socket, gId) : <code>HGWeb~SocketFunction</code> ℗
+End the game.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.endGame}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+
+<a name="HGWeb..pauseAutoplay"></a>
+
+### HGWeb~pauseAutoplay(userData, socket, gId) : <code>HGWeb~SocketFunction</code> ℗
+Disable autoplay.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.pauseAutoplay}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+
+<a name="HGWeb..editTeam"></a>
+
+### HGWeb~editTeam(userData, socket, gId, cmd, one, two) : <code>HGWeb~SocketFunction</code> ℗
+Edit the teams.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.editTeam}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| cmd | <code>string</code> | The command to run. |
+| one | <code>string</code> | The first argument. |
+| two | <code>string</code> | The second argument. |
+
+<a name="HGWeb..createEvent"></a>
+
+### HGWeb~createEvent(userData, socket, gId, type, message, nV, nA, oV, oA, kV, kA) : <code>HGWeb~SocketFunction</code> ℗
+Create a game event.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.createEvent}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| type | <code>string</code> | The type of event. |
+| message | <code>string</code> | The message of the event. |
+| nV | <code>string</code> | Number of victims. |
+| nA | <code>string</code> | Number of attackers. |
+| oV | <code>string</code> | Outcome of victims. |
+| oA | <code>string</code> | Outcome of attackers. |
+| kV | <code>string</code> | Do the victims kill. |
+| kA | <code>string</code> | Do the attackers kill. |
+
+<a name="HGWeb..removeEvent"></a>
+
+### HGWeb~removeEvent(userData, socket, gId, type, event) : <code>HGWeb~SocketFunction</code> ℗
+Remove a game event.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.removeEvent}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| type | <code>string</code> | The type of event. |
+| event | [<code>Event</code>](#HungryGames..Event) | The game event to remove. |
+
 <a name="HungryGames"></a>
 
 ## HungryGames ⇐ [<code>SubModule</code>](#SubModule)
@@ -906,6 +1335,8 @@ Hunger Games simulator.
         * [.common](#SubModule+common) : [<code>Common</code>](#Common)
         * *[.myName](#SubModule+myName) : <code>string</code>*
         * [.initialized](#SubModule+initialized) : <code>boolean</code>
+        * [.roleName](#HungryGames+roleName) : <code>string</code>
+        * [.defaultOptions](#HungryGames+defaultOptions) : <code>Object.&lt;{value: (string\|number\|boolean), values: ?Array.&lt;string&gt;, comment: string}&gt;</code>
         * [.getGame(id)](#HungryGames+getGame) ⇒ [<code>GuildGame</code>](#HungryGames..GuildGame)
         * [.getDefaultEvents()](#HungryGames+getDefaultEvents) ⇒ <code>Object</code>
         * [.createGame(id)](#HungryGames+createGame)
@@ -936,6 +1367,7 @@ Hunger Games simulator.
         * [~Event](#HungryGames..Event)
             * [new Event(message, [numVictim], [numAttacker], [victimOutcome], [attackerOutcome], [victimKiller], [attackerKiller], [battle], [state], [attacks])](#new_HungryGames..Event_new)
         * [~web](#HungryGames..web) : [<code>HGWeb</code>](#HGWeb) ℗
+        * [~findTimestamps](#HungryGames..findTimestamps) : <code>Object.&lt;number&gt;</code> ℗
         * [~games](#HungryGames..games) : [<code>Object.&lt;GuildGame&gt;</code>](#HungryGames..GuildGame) ℗
         * [~messages](#HungryGames..messages) : <code>Object.&lt;Array.&lt;string&gt;&gt;</code> ℗
         * [~battles](#HungryGames..battles) : <code>Object</code> ℗
@@ -948,7 +1380,9 @@ Hunger Games simulator.
         * [~defaultArenaEvents](#HungryGames..defaultArenaEvents) : [<code>Array.&lt;ArenaEvent&gt;</code>](#HungryGames..ArenaEvent) ℗
         * [~newEventMessages](#HungryGames..newEventMessages) : <code>Object.&lt;Discord~Message&gt;</code> ℗
         * [~optionMessages](#HungryGames..optionMessages) : <code>Object.&lt;Discord~Message&gt;</code> ℗
+        * [~oldSaveFile](#HungryGames..oldSaveFile) : <code>string</code> ℗
         * [~saveFile](#HungryGames..saveFile) : <code>string</code> ℗
+        * [~hgSaveDir](#HungryGames..hgSaveDir) : <code>string</code> ℗
         * [~eventFile](#HungryGames..eventFile) : <code>string</code> ℗
         * [~messageFile](#HungryGames..messageFile) : <code>string</code> ℗
         * [~battleFile](#HungryGames..battleFile) : <code>string</code> ℗
@@ -964,6 +1398,7 @@ Hunger Games simulator.
         * [~roleName](#HungryGames..roleName) : <code>string</code> ℗
         * [~numEventsPerPage](#HungryGames..numEventsPerPage) : <code>number</code> ℗
         * [~maxReactAwaitTime](#HungryGames..maxReactAwaitTime) : <code>number</code> ℗
+        * [~findDelay](#HungryGames..findDelay) : <code>number</code> ℗
         * [~defaultOptions](#HungryGames..defaultOptions) : <code>Object.&lt;{value: (string\|number\|boolean), values: ?Array.&lt;string&gt;, comment: string}&gt;</code> ℗
         * [~lotsOfDeathRate](#HungryGames..lotsOfDeathRate) : <code>number</code> ℗
         * [~littleDeathRate](#HungryGames..littleDeathRate) : <code>number</code> ℗
@@ -1039,6 +1474,7 @@ Hunger Games simulator.
         * [~help(msg, id)](#HungryGames..help) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~nothing()](#HungryGames..nothing) ⇒ <code>string</code> ℗
         * [~getMessage(type)](#HungryGames..getMessage) ⇒ <code>string</code> ℗
+        * [~find(id)](#HungryGames..find) ⇒ [<code>GuildGame</code>](#HungryGames..GuildGame) ℗
         * [~exit([code])](#HungryGames..exit) ℗
         * [~sigint()](#HungryGames..sigint) ℗
         * [~unhandledRejection(reason, p)](#HungryGames..unhandledRejection) ℗
@@ -1128,6 +1564,18 @@ Has this subModule been initialized yet (Has begin() been called).
 **Default**: <code>false</code>  
 **Access**: protected  
 **Read only**: true  
+<a name="HungryGames+roleName"></a>
+
+### hungryGames.roleName : <code>string</code>
+Role that a user must have in order to perform any commands.
+
+**Kind**: instance constant of [<code>HungryGames</code>](#HungryGames)  
+<a name="HungryGames+defaultOptions"></a>
+
+### hungryGames.defaultOptions : <code>Object.&lt;{value: (string\|number\|boolean), values: ?Array.&lt;string&gt;, comment: string}&gt;</code>
+Default options for a game.
+
+**Kind**: instance constant of [<code>HungryGames</code>](#HungryGames)  
 <a name="HungryGames+getGame"></a>
 
 ### hungryGames.getGame(id) ⇒ [<code>GuildGame</code>](#HungryGames..GuildGame)
@@ -1512,6 +1960,14 @@ Instance of the web class that can control this instance.
 
 **Kind**: inner property of [<code>HungryGames</code>](#HungryGames)  
 **Access**: private  
+<a name="HungryGames..findTimestamps"></a>
+
+### HungryGames~findTimestamps : <code>Object.&lt;number&gt;</code> ℗
+Stores the guilds we have looked for their data recently and the timestamp
+at which we looked. Used to reduce filesystem requests and blocking.
+
+**Kind**: inner property of [<code>HungryGames</code>](#HungryGames)  
+**Access**: private  
 <a name="HungryGames..games"></a>
 
 ### HungryGames~games : [<code>Object.&lt;GuildGame&gt;</code>](#HungryGames..GuildGame) ℗
@@ -1612,15 +2068,53 @@ Messages I have sent showing current options.
 **Kind**: inner property of [<code>HungryGames</code>](#HungryGames)  
 **Default**: <code>{}</code>  
 **Access**: private  
-<a name="HungryGames..saveFile"></a>
+<a name="HungryGames..oldSaveFile"></a>
 
-### HungryGames~saveFile : <code>string</code> ℗
-The file path to save current state.
+### HungryGames~oldSaveFile : <code>string</code> ℗
+The old file location for storing hg data in order to upgrade data to new
+format.
 
 **Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
 **Default**: <code>&quot;./save/hg.json&quot;</code>  
 **Access**: private  
-**See**: [games](#HungryGames..games)  
+**See**
+
+- [games](#HungryGames..games)
+- [saveFile](#HungryGames..saveFile)
+- [HungryGames~saveFileDir](HungryGames~saveFileDir)
+
+<a name="HungryGames..saveFile"></a>
+
+### HungryGames~saveFile : <code>string</code> ℗
+The file path to save current state for a specific guild relative to
+Common~guildSaveDir.
+
+**Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
+**Default**: <code>&quot;game.json&quot;</code>  
+**Access**: private  
+**See**
+
+- [Common~guildSaveDir](Common~guildSaveDir)
+- [games](#HungryGames..games)
+- [HungryGames~saveFileDir](HungryGames~saveFileDir)
+- [hgSaveDir](#HungryGames..hgSaveDir)
+
+<a name="HungryGames..hgSaveDir"></a>
+
+### HungryGames~hgSaveDir : <code>string</code> ℗
+The file directory for finding saved data related to the hungry games data
+of individual guilds.
+
+**Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
+**Default**: <code>&quot;/hg/&quot;</code>  
+**Access**: private  
+**See**
+
+- [Common~guildSaveDir](Common~guildSaveDir)
+- [games](#HungryGames..games)
+- [saveFile](#HungryGames..saveFile)
+- [HungryGames~saveFileDir](HungryGames~saveFileDir)
+
 <a name="HungryGames..eventFile"></a>
 
 ### HungryGames~eventFile : <code>string</code> ℗
@@ -1749,6 +2243,14 @@ Maximum amount of time to wait for reactions to a message.
 
 **Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
 **Default**: <code>15 Minutes</code>  
+**Access**: private  
+<a name="HungryGames..findDelay"></a>
+
+### HungryGames~findDelay : <code>number</code> ℗
+The delay after failing to find a guild's data to look for it again.
+
+**Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
+**Default**: <code>15 Seconds</code>  
 **Access**: private  
 <a name="HungryGames..defaultOptions"></a>
 
@@ -2716,6 +3218,21 @@ Get a random message of a given type from hgMessages.json.
 | --- | --- | --- |
 | type | <code>string</code> | The message type to get. |
 
+<a name="HungryGames..find"></a>
+
+### HungryGames~find(id) ⇒ [<code>GuildGame</code>](#HungryGames..GuildGame) ℗
+Returns a guild's game data. Returns cached version if that exists, or
+searches the file system for saved data. Data will only be checked from
+disk at most once every `HungryGames~findDelay` milliseconds. Returns
+`null` if data could not be found, or an error occurred.
+
+**Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| id | <code>number</code> \| <code>string</code> | The guild id to get the data for. |
+
 <a name="HungryGames..exit"></a>
 
 ### HungryGames~exit([code]) ℗
@@ -2906,8 +3423,9 @@ Basic commands and features for the bot.
         * [.begin(prefix, Discord, client, command, common)](#SubModule+begin)
         * [.end()](#SubModule+end)
         * [.shutdown()](#SubModule+shutdown)
-        * *[.save()](#SubModule+save)*
+        * [.save()](#SubModule+save)
     * _inner_
+        * [~version](#Main..version) : <code>string</code> ℗
         * [~prevUserSayId](#Main..prevUserSayId) : <code>string</code> ℗
         * [~prevUserSayCnt](#Main..prevUserSayCnt) : <code>number</code> ℗
         * [~timers](#Main..timers) : [<code>Array.&lt;Timer&gt;</code>](#Main..Timer) ℗
@@ -2921,6 +3439,8 @@ Basic commands and features for the bot.
         * [~banMsgs](#Main..banMsgs) : <code>Array.&lt;string&gt;</code> ℗
         * [~defaultCode](#Main..defaultCode) : <code>Array.&lt;string&gt;</code> ℗
         * [~helpObject](#Main..helpObject) ℗
+        * [~mkAndWrite(filename, dir, data)](#Main..mkAndWrite) ℗
+        * [~mkAndWriteSync(filename, dir, data)](#Main..mkAndWriteSync) ℗
         * [~onGuildCreate(guild)](#Main..onGuildCreate) ℗
         * [~onGuildDelete(guild)](#Main..onGuildDelete) ℗
         * [~onGuildBanAdd(guild, user)](#Main..onGuildBanAdd) ℗
@@ -2960,6 +3480,7 @@ Basic commands and features for the bot.
         * [~commandRollDie(msg)](#Main..commandRollDie) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandPerms(msg)](#Main..commandPerms) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~prePad(num, digits)](#Main..prePad) ⇒ <code>string</code> ℗
+        * [~updateRiggedCounter(newNum, increment)](#Main..updateRiggedCounter) ℗
         * [~sigint()](#Main..sigint) ℗
         * [~Timer](#Main..Timer) : <code>Object</code>
 
@@ -3077,10 +3598,18 @@ Shutdown and disable this submodule. Removes all event listeners.
 **Access**: protected  
 <a name="SubModule+save"></a>
 
-### *main.save()*
+### main.save()
 Saves all data to files necessary for saving current state.
 
-**Kind**: instance abstract method of [<code>Main</code>](#Main)  
+**Kind**: instance method of [<code>Main</code>](#Main)  
+**Overrides**: [<code>save</code>](#SubModule+save)  
+<a name="Main..version"></a>
+
+### Main~version : <code>string</code> ℗
+The current bot version parsed from package.json.
+
+**Kind**: inner property of [<code>Main</code>](#Main)  
+**Access**: private  
 <a name="Main..prevUserSayId"></a>
 
 ### Main~prevUserSayId : <code>string</code> ℗
@@ -3175,6 +3704,38 @@ The object that stores all data to be formatted into the help message.
 
 **Kind**: inner constant of [<code>Main</code>](#Main)  
 **Access**: private  
+<a name="Main..mkAndWrite"></a>
+
+### Main~mkAndWrite(filename, dir, data) ℗
+Write data to a file and make sure the directory exists or create it if it
+doesn't. Async
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+**See**: [mkAndWriteSync](#Main..mkAndWriteSync)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| filename | <code>string</code> | The name of the file including the directory. |
+| dir | <code>string</code> | The directory path without the file's name. |
+| data | <code>string</code> | The data to write to the file. |
+
+<a name="Main..mkAndWriteSync"></a>
+
+### Main~mkAndWriteSync(filename, dir, data) ℗
+Write data to a file and make sure the directory exists or create it if it
+doesn't. Synchronous
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+**See**: [mkAndWrite](#Main..mkAndWrite)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| filename | <code>string</code> | The name of the file including the directory. |
+| dir | <code>string</code> | The directory path without the file's name. |
+| data | <code>string</code> | The data to write to the file. |
+
 <a name="Main..onGuildCreate"></a>
 
 ### Main~onGuildCreate(guild) ℗
@@ -3660,6 +4221,20 @@ Pad a number with leading zeroes so that it is `digits` long.
 | --- | --- | --- |
 | num | <code>string</code> \| <code>number</code> | The number to pad with zeroes. |
 | digits | <code>number</code> | The minimum number of digits to make the output have. |
+
+<a name="Main..updateRiggedCounter"></a>
+
+### Main~updateRiggedCounter(newNum, increment) ℗
+Receive message from another shard telling us to update our "rigged"
+counter.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| newNum | <code>number</code> | The new value to set the counter to. |
+| increment | <code>number</code> | The amount that the value has changed due to this event. |
 
 <a name="Main..sigint"></a>
 
@@ -4224,7 +4799,10 @@ Main class that manages the bot.
     * [~minimal](#SpikeyBot..minimal) : <code>boolean</code> ℗
     * [~subModules](#SpikeyBot..subModules) : [<code>Array.&lt;SubModule&gt;</code>](#SubModule) ℗
     * [~disconnectReason](#SpikeyBot..disconnectReason) : <code>string</code> ℗
+    * [~enableSharding](#SpikeyBot..enableSharding) : <code>boolean</code> ℗
+    * [~numShards](#SpikeyBot..numShards) : <code>number</code> ℗
     * [~reactToAnthony](#SpikeyBot..reactToAnthony) : <code>boolean</code> ℗
+    * [~version](#SpikeyBot..version) : <code>string</code> ℗
     * [~testChannel](#SpikeyBot..testChannel) : <code>string</code> ℗
     * [~trustedIds](#SpikeyBot..trustedIds) : <code>Array.&lt;string&gt;</code> ℗
     * [~helpmessagereply](#SpikeyBot..helpmessagereply) : <code>string</code> ℗
@@ -4395,6 +4973,24 @@ Reason the bot was disconnected from Discord's servers.
 **Kind**: inner property of [<code>SpikeyBot</code>](#SpikeyBot)  
 **Default**: <code>null</code>  
 **Access**: private  
+<a name="SpikeyBot..enableSharding"></a>
+
+### SpikeyBot~enableSharding : <code>boolean</code> ℗
+Whether or not to spawn the bot as multiple shards. Enabled with `--shards`
+cli argument.
+
+**Kind**: inner property of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Default**: <code>false</code>  
+**Access**: private  
+<a name="SpikeyBot..numShards"></a>
+
+### SpikeyBot~numShards : <code>number</code> ℗
+The number of shards to use if sharding is enabled. 0 to let Discord
+decide. Set from `--shards=#` cli argument.
+
+**Kind**: inner property of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Default**: <code>0</code>  
+**Access**: private  
 <a name="SpikeyBot..reactToAnthony"></a>
 
 ### SpikeyBot~reactToAnthony : <code>boolean</code> ℗
@@ -4402,6 +4998,13 @@ Should we add a reaction to every message that Anthony sends. Overriden if
 reboot.dat exists.
 
 **Kind**: inner property of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Access**: private  
+<a name="SpikeyBot..version"></a>
+
+### SpikeyBot~version : <code>string</code> ℗
+The current bot version parsed from package.json.
+
+**Kind**: inner constant of [<code>SpikeyBot</code>](#SpikeyBot)  
 **Access**: private  
 <a name="SpikeyBot..testChannel"></a>
 
@@ -4742,7 +5345,7 @@ Manages a tic-tac-toe game.
             * _instance_
                 * [.players](#TicTacToe+Game+players) : <code>Object</code>
                 * [.board](#TicTacToe+Game+board) : <code>Array.&lt;number&gt;</code>
-                * [.turn](#TicTacToe+Game+turn)
+                * [.turn](#TicTacToe+Game+turn) : <code>number</code>
                 * [.msg](#TicTacToe+Game+msg) : <code>Discord~Message</code>
                 * [.print([winner])](#TicTacToe+Game+print)
             * _inner_
@@ -4782,7 +5385,7 @@ Manages a tic-tac-toe game.
     * _instance_
         * [.players](#TicTacToe+Game+players) : <code>Object</code>
         * [.board](#TicTacToe+Game+board) : <code>Array.&lt;number&gt;</code>
-        * [.turn](#TicTacToe+Game+turn)
+        * [.turn](#TicTacToe+Game+turn) : <code>number</code>
         * [.msg](#TicTacToe+Game+msg) : <code>Discord~Message</code>
         * [.print([winner])](#TicTacToe+Game+print)
     * _inner_
@@ -4814,7 +5417,7 @@ space of the board. 0 is nobody, 1 is player 1, 2 is player 2.
 **Kind**: instance property of [<code>Game</code>](#TicTacToe+Game)  
 <a name="TicTacToe+Game+turn"></a>
 
-#### game.turn
+#### game.turn : <code>number</code>
 Which player's turn it is. Either 1 or 2.
 
 **Kind**: instance property of [<code>Game</code>](#TicTacToe+Game)  
@@ -5043,6 +5646,20 @@ player 2 won, 3 if draw.
 | --- | --- | --- |
 | board | <code>Array.&lt;number&gt;</code> | Array of 9 numbers defining a board. 0 is nobody, 1 is player 1, 2 is player 2. |
 | latest | <code>number</code> | The index where the latest move occurred. |
+
+<a name="unhandledRejection"></a>
+
+## unhandledRejection(reason, p) ℗
+Handler for an unhandledRejection or uncaughtException, to prevent the bot
+from silently crashing without an error.
+
+**Kind**: global function  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| reason | <code>Object</code> | Reason for rejection. |
+| p | <code>Promise</code> | The promise that caused the rejection. |
 
 <a name="commandHandler"></a>
 

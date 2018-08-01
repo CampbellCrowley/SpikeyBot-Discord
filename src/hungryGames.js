@@ -2,6 +2,8 @@
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const fs = require('fs');
 const Jimp = require('jimp');
+const mkdirp = require('mkdirp'); // mkdir -p
+const rimraf = require('rimraf'); // rm -rf
 require('./subModule.js')(HungryGames);  // Extends the SubModule class.
 
 /**
@@ -26,15 +28,46 @@ function HungryGames() {
   this.postPrefix = 'hg ';
 
   /**
-   * The file path to save current state.
+   * The old file location for storing hg data in order to upgrade data to new
+   * format.
    * @see {@link HungryGames~games}
+   * @see {@link HungryGames~saveFile}
+   * @see {@link HungryGames~saveFileDir}
    *
    * @private
    * @type {string}
    * @constant
    * @default
    */
-  const saveFile = './save/hg.json';
+  const oldSaveFile = './save/hg.json';
+  /**
+   * The file path to save current state for a specific guild relative to
+   * Common~guildSaveDir.
+   * @see {@link Common~guildSaveDir}
+   * @see {@link HungryGames~games}
+   * @see {@link HungryGames~saveFileDir}
+   * @see {@link HungryGames~hgSaveDir}
+   *
+   * @private
+   * @type {string}
+   * @constant
+   * @default
+   */
+  const saveFile = 'game.json';
+  /**
+   * The file directory for finding saved data related to the hungry games data
+   * of individual guilds.
+   * @see {@link Common~guildSaveDir}
+   * @see {@link HungryGames~games}
+   * @see {@link HungryGames~saveFile}
+   * @see {@link HungryGames~saveFileDir}
+   *
+   * @private
+   * @type {string}
+   * @constant
+   * @default
+   */
+  const hgSaveDir = '/hg/';
   /**
    * The file path to read default events.
    * @see {@link HungryGames~defaultPlayerEvents}
@@ -161,6 +194,12 @@ function HungryGames() {
    * @default
    */
   const roleName = 'HG Creator';
+  /**
+   * Role that a user must have in order to perform any commands.
+   *
+   * @type {string}
+   * @constant
+   */
   this.roleName = roleName;
 
   /**
@@ -182,6 +221,24 @@ function HungryGames() {
    * @default 15 Minutes
    */
   const maxReactAwaitTime = 15 * 1000 * 60;  // 15 Minutes
+
+  /**
+   * Stores the guilds we have looked for their data recently and the timestamp
+   * at which we looked. Used to reduce filesystem requests and blocking.
+   *
+   * @private
+   * @type {Object.<number>}
+   */
+  let findTimestamps = {};
+  /**
+   * The delay after failing to find a guild's data to look for it again.
+   *
+   * @private
+   * @type {number}
+   * @constant
+   * @default 15 Seconds
+   */
+  const findDelay = 15000;
 
   /**
    * Default options for a game.
@@ -316,6 +373,16 @@ function HungryGames() {
           'have one.',
     },
   };
+  /**
+   * Default options for a game.
+   *
+   * @type {Object.<{
+   *     value: string|number|boolean,
+   *     values: ?string[],
+   *     comment: string
+   *   }>}
+   * @constant
+   */
   this.defaultOptions = defaultOptions;
 
   /**
@@ -593,9 +660,23 @@ function HungryGames() {
   let optionMessages = {};
 
   // Read saved game data from disk.
-  fs.readFile(saveFile, function(err, data) {
+  fs.readFile(oldSaveFile, function(err, data) {
     if (err) return;
-    games = JSON.parse(data);
+    try {
+      games = JSON.parse(data);
+      self.save('async', true);
+      fs.rename(oldSaveFile, oldSaveFile + '.deleteme', function(err) {
+        if (err) {
+          console.error('Failed to rename old HG save file.', err);
+        } else {
+          console.log(
+              'Updated HG to new file system. Renamed ' + oldSaveFile + ' to ' +
+              oldSaveFile + '.deleteme');
+        }
+      });
+    } catch (e) {
+      console.error('Failed to parse legacy HG data.');
+    }
     if (!games) games = {};
   });
 
@@ -795,6 +876,8 @@ function HungryGames() {
 
     self.client.on('messageUpdate', handleMessageEdit);
 
+    // TODO: Remove this loop since `games` will not be populated at this point.
+    // TODO: Find a way to resume games with new file system.
     for (let key in games) {
       if (!games[key] instanceof Object) continue;
       if (games[key].options) {
@@ -869,7 +952,7 @@ function HungryGames() {
    * game in a guild.
    */
   this.getGame = function(id) {
-    return games[id];
+    return find(id);
   };
 
   /**
@@ -924,9 +1007,9 @@ function HungryGames() {
       let command = splitText[0].toLowerCase();
       msg.text = splitText.slice(1).join(' ');
 
-      if (games[id]) {
-        games[id].channel = msg.channel.id;
-        games[id].author = msg.author.id;
+      if (find(id)) {
+        find(id).channel = msg.channel.id;
+        find(id).author = msg.author.id;
       }
       switch (command) {
         case 'create':
@@ -1289,8 +1372,8 @@ function HungryGames() {
       msg = {};
       msg.guild = self.client.guilds.get(id);
     }
-    if (games[id] && games[id].currentGame &&
-        games[id].currentGame.inProgress) {
+    if (find(id) && find(id).currentGame &&
+        find(id).currentGame.inProgress) {
       if (!silent) {
         self.common.reply(
             msg,
@@ -1299,33 +1382,33 @@ function HungryGames() {
                 'with "' + self.myPrefix + 'end".');
       }
       return;
-    } else if (games[id] && games[id].currentGame) {
+    } else if (find(id) && find(id).currentGame) {
       if (!silent) {
         self.common.reply(
             msg, 'Creating a new game with settings from the last game.');
       }
-      games[id].currentGame.ended = false;
-      games[id].currentGame.day = {num: -1, state: 0, events: []};
-      games[id].currentGame.includedUsers = getAllPlayers(
-          msg.guild.members, games[id].excludedUsers,
-          games[id].options.includeBots);
-      games[id].currentGame.numAlive =
-          games[id].currentGame.includedUsers.length;
-    } else if (games[id]) {
+      find(id).currentGame.ended = false;
+      find(id).currentGame.day = {num: -1, state: 0, events: []};
+      find(id).currentGame.includedUsers = getAllPlayers(
+          msg.guild.members, find(id).excludedUsers,
+          find(id).options.includeBots);
+      find(id).currentGame.numAlive =
+          find(id).currentGame.includedUsers.length;
+    } else if (find(id)) {
       if (!silent) {
         self.common.reply(msg, 'Creating a new game with default settings.');
       }
-      games[id].currentGame = {
+      find(id).currentGame = {
         name: msg.guild.name + '\'s Hungry Games',
         inProgress: false,
         includedUsers: getAllPlayers(
-            msg.guild.members, games[id].excludedUsers,
-            games[id].options.includeBots),
+            msg.guild.members, find(id).excludedUsers,
+            find(id).options.includeBots),
         ended: false,
         day: {num: -1, state: 0, events: []},
       };
-      games[id].currentGame.numAlive =
-          games[id].currentGame.includedUsers.length;
+      find(id).currentGame.numAlive =
+          find(id).currentGame.includedUsers.length;
     } else {
       games[id] = {
         excludedUsers: [],
@@ -1340,13 +1423,13 @@ function HungryGames() {
         },
         autoPlay: false,
       };
-      games[id].currentGame.numAlive =
-          games[id].currentGame.includedUsers.length;
+      find(id).currentGame.numAlive =
+          find(id).currentGame.includedUsers.length;
       const optKeys = Object.keys(defaultOptions);
-      games[id].options = {};
+      find(id).options = {};
       for (let i in optKeys) {
         if (typeof optKeys[i] !== 'string') continue;
-        games[id].options[optKeys[i]] = defaultOptions[optKeys[i]].value;
+        find(id).options[optKeys[i]] = defaultOptions[optKeys[i]].value;
       }
       if (!silent) {
         self.common.reply(
@@ -1403,7 +1486,7 @@ function HungryGames() {
    * @param {string} id Id of guild where this was triggered from.
    */
   function formTeams(id) {
-    let game = games[id];
+    let game = find(id);
     if (game.options.teamSize < 0) game.options.teamSize = 0;
     if (game.options.teamSize == 0) {
       game.currentGame.teams = [];
@@ -1498,26 +1581,34 @@ function HungryGames() {
    * @return {string} The message explaining what happened.
    */
   this.resetGame = function(id, command) {
-    if (games[id]) {
+    if (find(id)) {
       if (command == 'all') {
         delete games[id];
+        rimraf(self.common.guildSaveDir + id + hgSaveDir, function(err) {
+          if (!err) return;
+          self.common.error(
+              'Failed to delete directory: ' + self.common.guildSaveDir + id +
+                  hgSaveDir,
+              'HG');
+          console.error(err);
+        });
         return 'Resetting ALL Hungry Games data for this server!';
       } else if (command == 'events') {
-        games[id].customEvents = {bloodbath: [], player: [], arena: []};
+        find(id).customEvents = {bloodbath: [], player: [], arena: []};
         return 'Resetting ALL Hungry Games events for this server!';
       } else if (command == 'current') {
-        delete games[id].currentGame;
+        delete find(id).currentGame;
         return 'Resetting ALL data for current game!';
       } else if (command == 'options') {
         const optKeys = Object.keys(defaultOptions);
-        games[id].options = {};
+        find(id).options = {};
         for (let i in optKeys) {
           if (typeof optKeys[i] !== 'string') continue;
-          games[id].options[optKeys[i]] = defaultOptions[optKeys[i]].value;
+          find(id).options[optKeys[i]] = defaultOptions[optKeys[i]].value;
         }
         return 'Resetting ALL options!';
       } else if (command == 'teams') {
-        games[id].currentGame.teams = [];
+        find(id).currentGame.teams = [];
         formTeams(id);
         return 'Resetting ALL teams!';
       } else {
@@ -1541,8 +1632,8 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function showGameInfo(msg, id) {
-    if (games[id]) {
-      let message = JSON.stringify(games[id], null, 2);
+    if (find(id)) {
+      let message = JSON.stringify(find(id), null, 2);
       let messages = [];
       while (message.length > 0) {
         let newChunk = message.substring(
@@ -1570,8 +1661,8 @@ function HungryGames() {
    */
   function showGameEvents(msg, id) {
     let events = defaultBloodbathEvents;
-    if (games[id] && games[id].customEvents.bloodbath) {
-      events = events.concat(games[id].customEvents.bloodbath);
+    if (find(id) && find(id).customEvents.bloodbath) {
+      events = events.concat(find(id).customEvents.bloodbath);
     }
     let file = new self.Discord.MessageAttachment();
     file.setFile(Buffer.from(JSON.stringify(events, null, 2)));
@@ -1588,8 +1679,8 @@ function HungryGames() {
         file);
 
     events = defaultPlayerEvents;
-    if (games[id] && games[id].customEvents.player) {
-      events = events.concat(games[id].customEvents.player);
+    if (find(id) && find(id).customEvents.player) {
+      events = events.concat(find(id).customEvents.player);
     }
     file = new self.Discord.MessageAttachment();
     file.setFile(Buffer.from(JSON.stringify(events, null, 2)));
@@ -1606,8 +1697,8 @@ function HungryGames() {
         file);
 
     events = weapons;
-    if (games[id] && games[id].customEvents.weapon) {
-      events = events.concat(games[id].customEvents.weapon);
+    if (find(id) && find(id).customEvents.weapon) {
+      events = events.concat(find(id).customEvents.weapon);
     }
     file = new self.Discord.MessageAttachment();
     file.setFile(Buffer.from(JSON.stringify(events, null, 2)));
@@ -1616,8 +1707,8 @@ function HungryGames() {
         'Weapon Events (' + Object.keys(events).length + ')', file);
 
     events = defaultArenaEvents;
-    if (games[id] && games[id].customEvents.arena) {
-      events = events.concat(games[id].customEvents.arena);
+    if (find(id) && find(id).customEvents.arena) {
+      events = events.concat(find(id).customEvents.arena);
     }
     file = new self.Discord.MessageAttachment();
     file.setFile(Buffer.from(JSON.stringify(events, null, 2)));
@@ -1635,8 +1726,8 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function startGame(msg, id) {
-    if (games[id] && games[id].currentGame &&
-        games[id].currentGame.inProgress) {
+    if (find(id) && find(id).currentGame &&
+        find(id).currentGame.inProgress) {
       self.common.reply(
           msg, 'A game is already in progress! ("' + self.myPrefix +
               'next" for next day, or "' + self.myPrefix + 'end" to abort)');
@@ -1647,15 +1738,15 @@ function HungryGames() {
       finalMessage.setTitle(getMessage('gameStart'));
       finalMessage.setColor(defaultColor);
 
-      let numUsers = games[id].currentGame.includedUsers.length;
-      if (games[id].options.teamSize > 0) {
-        games[id].currentGame.includedUsers.sort(function(a, b) {
-          let aTeam = games[id].currentGame.teams.findIndex(function(team) {
+      let numUsers = find(id).currentGame.includedUsers.length;
+      if (find(id).options.teamSize > 0) {
+        find(id).currentGame.includedUsers.sort(function(a, b) {
+          let aTeam = find(id).currentGame.teams.findIndex(function(team) {
             return team.players.findIndex(function(player) {
               return player == a.id;
             }) > -1;
           });
-          let bTeam = games[id].currentGame.teams.findIndex(function(team) {
+          let bTeam = find(id).currentGame.teams.findIndex(function(team) {
             return team.players.findIndex(function(player) {
               return player == b.id;
             }) > -1;
@@ -1668,10 +1759,10 @@ function HungryGames() {
         });
       }
       let prevTeam = -1;
-      let statusList = games[id].currentGame.includedUsers.map(function(obj) {
+      let statusList = find(id).currentGame.includedUsers.map(function(obj) {
         let myTeam = -1;
-        if (games[id].options.teamSize > 0) {
-          myTeam = games[id].currentGame.teams.findIndex(function(team) {
+        if (find(id).options.teamSize > 0) {
+          myTeam = find(id).currentGame.teams.findIndex(function(team) {
             return team.players.findIndex(function(player) {
               return player == obj.id;
             }) > -1;
@@ -1686,12 +1777,12 @@ function HungryGames() {
         let prefix = '';
         if (myTeam != prevTeam) {
           prevTeam = myTeam;
-          prefix = '__' + games[id].currentGame.teams[myTeam].name + '__\n';
+          prefix = '__' + find(id).currentGame.teams[myTeam].name + '__\n';
         }
 
         return prefix + '`' + shortName + '`';
       });
-      if (games[id].options.teamSize == 0) {
+      if (find(id).options.teamSize == 0) {
         statusList.sort();
       }
       if (statusList.length >= 3) {
@@ -1712,10 +1803,10 @@ function HungryGames() {
         finalMessage.addField(
             'Included (' + numUsers + ')', statusList.join('\n'), false);
       }
-      if (games[id].excludedUsers.length > 0) {
+      if (find(id).excludedUsers.length > 0) {
         finalMessage.addField(
-            'Excluded (' + games[id].excludedUsers.length + ')',
-            games[id]
+            'Excluded (' + find(id).excludedUsers.length + ')',
+            find(id)
                 .excludedUsers
                 .map(function(obj) {
                   return getName(msg.guild, obj);
@@ -1724,18 +1815,18 @@ function HungryGames() {
             false);
       }
 
-      if (!games[id].autoPlay) {
+      if (!find(id).autoPlay) {
         finalMessage.setFooter('"' + self.myPrefix + 'next" for next day.');
       }
 
-      if (games[id].options.mentionEveryoneAtStart) {
+      if (find(id).options.mentionEveryoneAtStart) {
         finalMessage.setDescription('@everyone');
       }
 
       msg.channel.send(self.common.mention(msg), finalMessage);
 
-      games[id].currentGame.inProgress = true;
-      if (games[id].autoPlay) {
+      find(id).currentGame.inProgress = true;
+      if (find(id).autoPlay) {
         nextDay(msg, id);
       }
     }
@@ -1819,15 +1910,15 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function pauseAutoplay(msg, id) {
-    if (!games[id]) {
+    if (!find(id)) {
       self.common.reply(
           msg,
           'You must first create a game with "' + self.myPrefix + 'create".');
-    } else if (games[id].autoPlay) {
+    } else if (find(id).autoPlay) {
       msg.channel.send(
           '<@' + msg.author.id +
           '> `Autoplay will stop at the end of the current day.`');
-      games[id].autoPlay = false;
+      find(id).autoPlay = false;
     } else {
       self.common.reply(
           msg, 'Not autoplaying. If you wish to autoplay, type "' +
@@ -1843,22 +1934,22 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function startAutoplay(msg, id) {
-    if (!games[id]) {
+    if (!find(id)) {
       createGame(msg, id);
     }
-    if (games[id].autoPlay && games[id].inProgress) {
+    if (find(id).autoPlay && find(id).inProgress) {
       self.common.reply(
           msg, 'Already autoplaying. If you wish to stop autoplaying, type "' +
               self.myPrefix + 'pause".');
     } else {
-      games[id].autoPlay = true;
-      if (games[id].currentGame.inProgress &&
-          games[id].currentGame.day.state === 0) {
+      find(id).autoPlay = true;
+      if (find(id).currentGame.inProgress &&
+          find(id).currentGame.day.state === 0) {
         msg.channel.send(
             '<@' + msg.author.id +
             '> `Enabling Autoplay! Starting the next day!`');
         nextDay(msg, id);
-      } else if (!games[id].currentGame.inProgress) {
+      } else if (!find(id).currentGame.inProgress) {
         /* msg.channel.send(
             "<@" + msg.author.id + "> `Autoplay is enabled, type \"" +
            self.myPrefix
@@ -1895,17 +1986,17 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function nextDay(msg, id) {
-    if (!games[id] || !games[id].currentGame ||
-        !games[id].currentGame.inProgress) {
+    if (!find(id) || !find(id).currentGame ||
+        !find(id).currentGame.inProgress) {
       self.common.reply(
           msg, 'You must start a game first! Use "' + self.myPrefix +
               'start" to start a game!');
       return;
     }
-    if (games[id].currentGame.day.state !== 0) {
+    if (find(id).currentGame.day.state !== 0) {
       if (dayEventIntervals[id]) {
         self.common.reply(msg, 'Already simulating day.');
-      } else if (games[id].currentGame.day.state == 1) {
+      } else if (find(id).currentGame.day.state == 1) {
         self.common.reply(
             msg,
             'I think I\'m already simulating... if this isn\'t true this ' +
@@ -1913,41 +2004,41 @@ function HungryGames() {
       } else {
         dayEventIntervals[id] = self.client.setInterval(function() {
           printEvent(msg, id);
-        }, games[id].options.delayEvents);
+        }, find(id).options.delayEvents);
       }
       return;
     }
-    games[id].currentGame.day.state = 1;
-    games[id].currentGame.day.num++;
-    games[id].currentGame.day.events = [];
+    find(id).currentGame.day.state = 1;
+    find(id).currentGame.day.num++;
+    find(id).currentGame.day.events = [];
 
-    let deadPool = games[id].currentGame.includedUsers.filter(function(obj) {
+    let deadPool = find(id).currentGame.includedUsers.filter(function(obj) {
       return !obj.living;
     });
-    while (games[id].options.resurrection &&
-           Math.random() < games[id].options.probabilityOfResurrect &&
+    while (find(id).options.resurrection &&
+           Math.random() < find(id).options.probabilityOfResurrect &&
            deadPool.length > 0) {
       let resurrected =
           deadPool.splice(Math.floor(Math.random() * deadPool.length), 1)[0];
       resurrected.living = true;
       resurrected.state = 'zombie';
-      games[id].currentGame.includedUsers.forEach(function(obj) {
+      find(id).currentGame.includedUsers.forEach(function(obj) {
         if (!obj.living && obj.rank < resurrected.rank) obj.rank++;
       });
       resurrected.rank = 1;
-      games[id].currentGame.numAlive++;
-      games[id].currentGame.day.events.push(
+      find(id).currentGame.numAlive++;
+      find(id).currentGame.day.events.push(
           makeSingleEvent(
               getMessage('resurrected'), [resurrected], 1, 0,
-              games[id].options.mentionAll, id, 'thrives', 'nothing'));
-      if (games[id].options.teamSize > 0) {
-        let team = games[id].currentGame.teams.find(function(obj) {
+              find(id).options.mentionAll, id, 'thrives', 'nothing'));
+      if (find(id).options.teamSize > 0) {
+        let team = find(id).currentGame.teams.find(function(obj) {
           return obj.players.findIndex(function(obj) {
             return resurrected.id == obj;
           }) > -1;
         });
         team.numAlive++;
-        games[id].currentGame.teams.forEach(function(obj) {
+        find(id).currentGame.teams.forEach(function(obj) {
           if (obj.numAlive === 0 && obj.rank < team.rank) obj.rank++;
         });
         team.rank = 1;
@@ -1955,40 +2046,40 @@ function HungryGames() {
     }
 
 
-    let userPool = games[id].currentGame.includedUsers.filter(function(obj) {
+    let userPool = find(id).currentGame.includedUsers.filter(function(obj) {
       return obj.living;
     });
     let startingAlive = userPool.length;
     let userEventPool;
     let doArenaEvent = false;
-    if (games[id].currentGame.day.num === 0) {
+    if (find(id).currentGame.day.num === 0) {
       userEventPool =
-          defaultBloodbathEvents.concat(games[id].customEvents.bloodbath);
+          defaultBloodbathEvents.concat(find(id).customEvents.bloodbath);
     } else {
-      doArenaEvent = games[id].options.arenaEvents &&
-          Math.random() < games[id].options.probabilityOfArenaEvent;
+      doArenaEvent = find(id).options.arenaEvents &&
+          Math.random() < find(id).options.probabilityOfArenaEvent;
       if (doArenaEvent) {
         let arenaEventPool =
-            defaultArenaEvents.concat(games[id].customEvents.arena);
+            defaultArenaEvents.concat(find(id).customEvents.arena);
         let index = Math.floor(Math.random() * arenaEventPool.length);
         let arenaEvent = arenaEventPool[index];
-        games[id].currentGame.day.events.push(
+        find(id).currentGame.day.events.push(
             makeMessageEvent(getMessage('eventStart'), id));
-        games[id].currentGame.day.events.push(
+        find(id).currentGame.day.events.push(
             makeMessageEvent('**___' + arenaEvent.message + '___**', id));
         userEventPool = arenaEvent.outcomes;
       } else {
         userEventPool =
-            defaultPlayerEvents.concat(games[id].customEvents.player);
+            defaultPlayerEvents.concat(find(id).customEvents.player);
       }
     }
 
     // TODO: Allow custom user-created weapons.
     let weaponEventPool = weapons;
 
-    const deathRate = games[id].currentGame.day.num === 0 ?
-        games[id].options.bloodbathDeathRate :
-        games[id].options.playerDeathRate;
+    const deathRate = find(id).currentGame.day.num === 0 ?
+        find(id).options.bloodbathDeathRate :
+        find(id).options.playerDeathRate;
 
     while (userPool.length > 0) {
       let eventTry;
@@ -2013,7 +2104,7 @@ function HungryGames() {
         }
       }
       let useWeapon = userWithWeapon &&
-          Math.random() < games[id].options.probabilityOfUseWeapon;
+          Math.random() < find(id).options.probabilityOfUseWeapon;
       if (useWeapon) {
         let userWeapons = Object.keys(userWithWeapon.weapons);
         let chosenWeapon =
@@ -2025,8 +2116,8 @@ function HungryGames() {
         } else {
           eventTry = pickEvent(
               userPool, weaponEventPool[chosenWeapon].outcomes,
-              games[id].options, games[id].currentGame.numAlive,
-              games[id].currentGame.teams, deathRate, userWithWeapon);
+              find(id).options, find(id).currentGame.numAlive,
+              find(id).currentGame.teams, deathRate, userWithWeapon);
           if (!eventTry) {
             useWeapon = false;
             self.common.error(
@@ -2037,8 +2128,8 @@ function HungryGames() {
             numAttacker = eventTry.attacker.count;
             numVictim = eventTry.victim.count;
             affectedUsers = pickAffectedPlayers(
-                numVictim, numAttacker, games[id].options, userPool,
-                games[id].currentGame.teams, userWithWeapon);
+                numVictim, numAttacker, find(id).options, userPool,
+                find(id).currentGame.teams, userWithWeapon);
 
             let consumed = eventTry.consumes;
             if (consumed == 'V') consumed = numVictim;
@@ -2082,7 +2173,7 @@ function HungryGames() {
                 (numAttacker == 1 &&
                  affectedUsers[numVictim].id != userWithWeapon.id)) {
               owner = formatMultiNames(
-                          [userWithWeapon], games[id].options.mentionAll) +
+                          [userWithWeapon], find(id).options.mentionAll) +
                   '\'s';
             }
             if (!eventTry.message) {
@@ -2103,40 +2194,40 @@ function HungryGames() {
       }
 
       let doBattle = !useWeapon && !doArenaEvent && userPool.length > 1 &&
-          (Math.random() < games[id].options.probabilityOfBattle ||
-           games[id].currentGame.numAlive == 2) &&
+          (Math.random() < find(id).options.probabilityOfBattle ||
+           find(id).currentGame.numAlive == 2) &&
           validateEventRequirements(
-              1, 1, userPool, games[id].currentGame.numAlive,
-              games[id].currentGame.teams, games[id].options, true, false);
+              1, 1, userPool, find(id).currentGame.numAlive,
+              find(id).currentGame.teams, find(id).options, true, false);
       if (doBattle) {
         do {
           numAttacker = weightedUserRand();
           numVictim = weightedUserRand();
         } while (!validateEventRequirements(
-            numVictim, numAttacker, userPool, games[id].currentGame.numAlive,
-            games[id].currentGame.teams, games[id].options, true, false));
+            numVictim, numAttacker, userPool, find(id).currentGame.numAlive,
+            find(id).currentGame.teams, find(id).options, true, false));
         affectedUsers = pickAffectedPlayers(
-            numVictim, numAttacker, games[id].options, userPool,
-            games[id].currentGame.teams);
+            numVictim, numAttacker, find(id).options, userPool,
+            find(id).currentGame.teams);
         eventTry = makeBattleEvent(
-            affectedUsers, numVictim, numAttacker, games[id].options.mentionAll,
+            affectedUsers, numVictim, numAttacker, find(id).options.mentionAll,
             id);
       } else if (!useWeapon) {
         eventTry = pickEvent(
-            userPool, userEventPool, games[id].options,
-            games[id].currentGame.numAlive, games[id].currentGame.teams,
+            userPool, userEventPool, find(id).options,
+            find(id).currentGame.numAlive, find(id).currentGame.teams,
             deathRate);
         if (!eventTry) {
           self.common.reply(msg, 'A stupid error happened :(');
-          games[id].currentGame.day.state = 0;
+          find(id).currentGame.day.state = 0;
           return;
         }
 
         numAttacker = eventTry.attacker.count;
         numVictim = eventTry.victim.count;
         affectedUsers = pickAffectedPlayers(
-            numVictim, numAttacker, games[id].options, userPool,
-            games[id].currentGame.teams);
+            numVictim, numAttacker, find(id).options, userPool,
+            find(id).currentGame.teams);
       }
 
       effectUser = function(i, kills, weapon) {
@@ -2147,33 +2238,33 @@ function HungryGames() {
           console.log(affectedUsers);
         }
         let index =
-            games[id].currentGame.includedUsers.findIndex(function(obj) {
+            find(id).currentGame.includedUsers.findIndex(function(obj) {
               return obj.id == affectedUsers[i].id;
             });
-        if (games[id].currentGame.includedUsers[index].state == 'wounded') {
-          games[id].currentGame.includedUsers[index].bleeding++;
+        if (find(id).currentGame.includedUsers[index].state == 'wounded') {
+          find(id).currentGame.includedUsers[index].bleeding++;
         } else {
-          games[id].currentGame.includedUsers[index].bleeding = 0;
+          find(id).currentGame.includedUsers[index].bleeding = 0;
         }
         if (weapon) {
-          if (typeof games[id]
+          if (typeof find(id)
                   .currentGame.includedUsers[index]
                   .weapons[weapon.name] === 'number') {
-            games[id].currentGame.includedUsers[index].weapons[weapon.name] +=
+            find(id).currentGame.includedUsers[index].weapons[weapon.name] +=
                 weapon.count;
           } else {
-            games[id].currentGame.includedUsers[index].weapons[weapon.name] =
+            find(id).currentGame.includedUsers[index].weapons[weapon.name] =
                 weapon.count;
           }
-          if (games[id]
+          if (find(id)
                   .currentGame.includedUsers[index]
                   .weapons[weapon.name] === 0) {
-            delete games[id]
+            delete find(id)
                 .currentGame.includedUsers[index]
                 .weapons[weapon.name];
           }
         }
-        games[id].currentGame.includedUsers[index].kills += kills;
+        find(id).currentGame.includedUsers[index].kills += kills;
         return index;
       };
 
@@ -2181,27 +2272,27 @@ function HungryGames() {
       killUser = function(i, k, w) {
         numKilled++;
         let index = effectUser(i, k, w);
-        games[id].currentGame.includedUsers[index].living = false;
-        games[id].currentGame.includedUsers[index].bleeding = 0;
-        games[id].currentGame.includedUsers[index].state = 'dead';
-        games[id].currentGame.includedUsers[index].weapons = {};
-        games[id].currentGame.includedUsers[index].rank =
-            games[id].currentGame.numAlive--;
-        if (games[id].options.teamSize > 0) {
-          let team = games[id].currentGame.teams.find(function(team) {
+        find(id).currentGame.includedUsers[index].living = false;
+        find(id).currentGame.includedUsers[index].bleeding = 0;
+        find(id).currentGame.includedUsers[index].state = 'dead';
+        find(id).currentGame.includedUsers[index].weapons = {};
+        find(id).currentGame.includedUsers[index].rank =
+            find(id).currentGame.numAlive--;
+        if (find(id).options.teamSize > 0) {
+          let team = find(id).currentGame.teams.find(function(team) {
             return team.players.findIndex(function(obj) {
-              return games[id].currentGame.includedUsers[index].id == obj;
+              return find(id).currentGame.includedUsers[index].id == obj;
             }) > -1;
           });
           if (!team) {
             console.log(
                 'FAILED TO FIND ADEQUATE TEAM FOR USER',
-                games[id].currentGame.includedUsers[index]);
+                find(id).currentGame.includedUsers[index]);
           } else {
             team.numAlive--;
             if (team.numAlive === 0) {
               let teamsLeft = 0;
-              games[id].currentGame.teams.forEach(function(obj) {
+              find(id).currentGame.teams.forEach(function(obj) {
                 if (obj.numAlive > 0) teamsLeft++;
               });
               team.rank = teamsLeft + 1;
@@ -2212,11 +2303,11 @@ function HungryGames() {
 
       woundUser = function(i, k, w) {
         let index = effectUser(i, k, w);
-        games[id].currentGame.includedUsers[index].state = 'wounded';
+        find(id).currentGame.includedUsers[index].state = 'wounded';
       };
       restoreUser = function(i, k, w) {
         let index = effectUser(i, k, w);
-        games[id].currentGame.includedUsers[index].state = 'normal';
+        find(id).currentGame.includedUsers[index].state = 'normal';
       };
 
       let weapon = eventTry.victim.weapon;
@@ -2322,7 +2413,7 @@ function HungryGames() {
       } else {
         finalEvent = makeSingleEvent(
             eventTry.message, affectedUsers, numVictim, numAttacker,
-            games[id].options.mentionAll, id, eventTry.victim.outcome,
+            find(id).options.mentionAll, id, eventTry.victim.outcome,
             eventTry.attacker.outcome);
         finalEvent.subMessage = subMessage;
       }
@@ -2333,37 +2424,37 @@ function HungryGames() {
       } else if (eventTry.victim.killer) {
         finalEvent.icons.splice(numVictim, 0, {url: fistLeft});
       } */
-      games[id].currentGame.day.events.push(finalEvent);
+      find(id).currentGame.day.events.push(finalEvent);
 
       if (affectedUsers.length !== 0) {
         console.log('Affected users remain! ' + affectedUsers.length);
       }
 
       if (numKilled > 4) {
-        games[id].currentGame.day.events.push(
+        find(id).currentGame.day.events.push(
             makeMessageEvent(getMessage('slaughter'), id));
       }
     }
 
     if (doArenaEvent) {
-      games[id].currentGame.day.events.push(
+      find(id).currentGame.day.events.push(
           makeMessageEvent(getMessage('eventEnd'), id));
     }
     let usersBleeding = [];
     let usersRecovered = [];
-    games[id].currentGame.includedUsers.forEach(function(obj) {
-      if (obj.bleeding > 0 && obj.bleeding >= games[id].options.bleedDays &&
+    find(id).currentGame.includedUsers.forEach(function(obj) {
+      if (obj.bleeding > 0 && obj.bleeding >= find(id).options.bleedDays &&
           obj.living) {
-        if (Math.random() < games[id].options.probabilityOfBleedToDeath &&
-            (games[id].options.allowNoVictors ||
-             games[id].currentGame.numAlive > 1)) {
+        if (Math.random() < find(id).options.probabilityOfBleedToDeath &&
+            (find(id).options.allowNoVictors ||
+             find(id).currentGame.numAlive > 1)) {
           usersBleeding.push(obj);
           obj.living = false;
           obj.bleeding = 0;
           obj.state = 'dead';
-          obj.rank = games[id].currentGame.numAlive--;
-          if (games[id].options.teamSize > 0) {
-            let team = games[id].currentGame.teams.find(function(team) {
+          obj.rank = find(id).currentGame.numAlive--;
+          if (find(id).options.teamSize > 0) {
+            let team = find(id).currentGame.teams.find(function(team) {
               return team.players.findIndex(function(player) {
                 return obj.id == player;
               }) > -1;
@@ -2371,7 +2462,7 @@ function HungryGames() {
             team.numAlive--;
             if (team.numAlive === 0) {
               let teamsLeft = 0;
-              games[id].currentGame.teams.forEach(function(obj) {
+              find(id).currentGame.teams.forEach(function(obj) {
                 if (obj.numAlive > 0) teamsLeft++;
               });
               team.rank = teamsLeft + 1;
@@ -2385,54 +2476,54 @@ function HungryGames() {
       }
     });
     if (usersRecovered.length > 0) {
-      games[id].currentGame.day.events.push(
+      find(id).currentGame.day.events.push(
           makeSingleEvent(
               getMessage('patchWounds'), usersRecovered, usersRecovered.length,
-              0, games[id].options.mentionAll, id, 'thrives', 'nothing'));
+              0, find(id).options.mentionAll, id, 'thrives', 'nothing'));
     }
     if (usersBleeding.length > 0) {
-      games[id].currentGame.day.events.push(
+      find(id).currentGame.day.events.push(
           makeSingleEvent(
               getMessage('bleedOut'), usersBleeding, usersBleeding.length, 0,
-              games[id].options.mentionAll, id, 'dies', 'nothing'));
+              find(id).options.mentionAll, id, 'dies', 'nothing'));
     }
 
-    let deathPercentage = 1 - (games[id].currentGame.numAlive / startingAlive);
+    let deathPercentage = 1 - (find(id).currentGame.numAlive / startingAlive);
     if (deathPercentage > lotsOfDeathRate) {
-      games[id].currentGame.day.events.splice(
+      find(id).currentGame.day.events.splice(
           0, 0, makeMessageEvent(getMessage('lotsOfDeath'), id));
     } else if (deathPercentage === 0) {
-      games[id].currentGame.day.events.push(
+      find(id).currentGame.day.events.push(
           makeMessageEvent(getMessage('noDeath'), id));
     } else if (deathPercentage < littleDeathRate) {
-      games[id].currentGame.day.events.splice(
+      find(id).currentGame.day.events.splice(
           0, 0, makeMessageEvent(getMessage('littleDeath'), id));
     }
 
     // Signal ready to display events.
     if (web && web.dayStateChange) web.dayStateChange(id);
-    games[id].currentGame.day.state = 2;
+    find(id).currentGame.day.state = 2;
 
     let embed = new self.Discord.MessageEmbed();
-    if (games[id].currentGame.day.num === 0) {
+    if (find(id).currentGame.day.num === 0) {
       embed.setTitle(getMessage('bloodbathStart'));
     } else {
       embed.setTitle(
           getMessage('dayStart')
-              .replaceAll('{}', games[id].currentGame.day.num));
+              .replaceAll('{}', find(id).currentGame.day.num));
     }
-    if (!games[id].autoPlay) {
+    if (!find(id).autoPlay) {
       embed.setFooter(
           'Tip: Use "' + self.myPrefix + 'autoplay" to automate the games.');
     }
     embed.setColor(defaultColor);
     msg.channel.send(embed);
     self.command.disable('say', msg.channel.id);
-    games[id].outputChannel = msg.channel.id;
+    find(id).outputChannel = msg.channel.id;
     dayEventIntervals[id] = self.client.setInterval(function() {
       if (web && web.dayStateChange) web.dayStateChange(id);
       printEvent(msg, id);
-    }, games[id].options.delayEvents);
+    }, find(id).options.delayEvents);
   }
   /**
    * Pick event that satisfies all requirements and settings.
@@ -2779,7 +2870,7 @@ function HungryGames() {
     finalEvent.attacks = [];
 
     let userHealth = new Array(affectedUsers.length).fill(0);
-    const maxHealth = games[id].options.battleHealth * 1;
+    const maxHealth = find(id).options.battleHealth * 1;
     let numAlive = numVictim;
     let duplicateCount = 0;
     let lastAttack = {index: 0, attacker: 0, victim: 0, flipRoles: false};
@@ -3053,7 +3144,7 @@ function HungryGames() {
                 '{attacker}', formatMultiNames(affectedAttackers, mention));
     if (finalMessage.indexOf('{dead}') > -1) {
       let deadUsers =
-          games[id]
+          find(id)
               .currentGame.includedUsers
               .filter(function(obj) {
                 return !obj.living && !affectedUsers.find(function(u) {
@@ -3114,8 +3205,8 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function printEvent(msg, id) {
-    let index = games[id].currentGame.day.state - 2;
-    let events = games[id].currentGame.day.events;
+    let index = find(id).currentGame.day.state - 2;
+    let events = find(id).currentGame.day.events;
     if (index == events.length) {
       self.client.clearInterval(dayEventIntervals[id]);
       delete dayEventIntervals[id];
@@ -3263,7 +3354,7 @@ function HungryGames() {
               });
         }
       }
-      games[id].currentGame.day.state++;
+      find(id).currentGame.day.state++;
     }
   }
   /**
@@ -3281,15 +3372,15 @@ function HungryGames() {
     let lastTeam = 0;
     let numWholeTeams = 0;
     let lastWholeTeam = 0;
-    games[id].currentGame.includedUsers.forEach(function(el, i) {
+    find(id).currentGame.includedUsers.forEach(function(el, i) {
       if (el.living) {
         numAlive++;
         lastIndex = i;
         lastId = el.id;
       }
     });
-    if (games[id].options.teamSize > 0) {
-      games[id].currentGame.teams.forEach(function(team, index) {
+    if (find(id).options.teamSize > 0) {
+      find(id).currentGame.teams.forEach(function(team, index) {
         if (team.numAlive > 0) {
           numTeams++;
           lastTeam = index;
@@ -3301,22 +3392,22 @@ function HungryGames() {
       });
     }
 
-    if (games[id].currentGame.numAlive != numAlive) {
+    if (find(id).currentGame.numAlive != numAlive) {
       self.common.error('Realtime alive count is incorrect!', 'HG');
     }
 
     let finalMessage = new self.Discord.MessageEmbed();
     finalMessage.setColor(defaultColor);
-    if (games[id].options.teammatesCollaborate && numTeams == 1) {
-      let teamName = games[id].currentGame.teams[lastTeam].name;
+    if (find(id).options.teammatesCollaborate && numTeams == 1) {
+      let teamName = find(id).currentGame.teams[lastTeam].name;
       finalMessage.setTitle(
-          '\n' + teamName + ' has won ' + games[id].currentGame.name + '!');
+          '\n' + teamName + ' has won ' + find(id).currentGame.name + '!');
       finalMessage.setDescription(
-          games[id]
+          find(id)
               .currentGame.teams[lastTeam]
               .players
               .map(function(player) {
-                return games[id]
+                return find(id)
                     .currentGame.includedUsers
                     .find(function(user) {
                       return user.id == player;
@@ -3324,40 +3415,40 @@ function HungryGames() {
                     .name;
               })
               .join(', '));
-      games[id].currentGame.inProgress = false;
-      games[id].currentGame.ended = true;
-      games[id].autoPlay = false;
+      find(id).currentGame.inProgress = false;
+      find(id).currentGame.ended = true;
+      find(id).autoPlay = false;
     } else if (numAlive == 1) {
-      let winnerName = games[id].currentGame.includedUsers[lastIndex].name;
+      let winnerName = find(id).currentGame.includedUsers[lastIndex].name;
       let teamName = '';
-      if (games[id].options.teamSize > 0) {
-        teamName = '(' + games[id].currentGame.teams[lastTeam].name + ') ';
+      if (find(id).options.teamSize > 0) {
+        teamName = '(' + find(id).currentGame.teams[lastTeam].name + ') ';
       }
       finalMessage.setTitle(
           '\n`' + winnerName + teamName + '` has won ' +
-          games[id].currentGame.name + '!');
+          find(id).currentGame.name + '!');
       finalMessage.setThumbnail(
-          games[id].currentGame.includedUsers[lastIndex].avatarURL);
-      games[id].currentGame.inProgress = false;
-      games[id].currentGame.ended = true;
-      games[id].autoPlay = false;
+          find(id).currentGame.includedUsers[lastIndex].avatarURL);
+      find(id).currentGame.inProgress = false;
+      find(id).currentGame.ended = true;
+      find(id).autoPlay = false;
     } else if (numAlive < 1) {
       finalMessage.setTitle(
-          '\nEveryone has died in ' + games[id].currentGame.name +
+          '\nEveryone has died in ' + find(id).currentGame.name +
           '!\nThere are no winners!');
-      games[id].currentGame.inProgress = false;
-      games[id].currentGame.ended = true;
-      games[id].autoPlay = false;
+      find(id).currentGame.inProgress = false;
+      find(id).currentGame.ended = true;
+      find(id).autoPlay = false;
     } else {
       finalMessage.setTitle('Status update! (kills)');
-      if (games[id].options.teamSize > 0) {
-        games[id].currentGame.includedUsers.sort(function(a, b) {
-          let aTeam = games[id].currentGame.teams.findIndex(function(team) {
+      if (find(id).options.teamSize > 0) {
+        find(id).currentGame.includedUsers.sort(function(a, b) {
+          let aTeam = find(id).currentGame.teams.findIndex(function(team) {
             return team.players.findIndex(function(player) {
               return player == a.id;
             }) > -1;
           });
-          let bTeam = games[id].currentGame.teams.findIndex(function(team) {
+          let bTeam = find(id).currentGame.teams.findIndex(function(team) {
             return team.players.findIndex(function(player) {
               return player == b.id;
             }) > -1;
@@ -3370,10 +3461,10 @@ function HungryGames() {
         });
       }
       let prevTeam = -1;
-      let statusList = games[id].currentGame.includedUsers.map(function(obj) {
+      let statusList = find(id).currentGame.includedUsers.map(function(obj) {
         let myTeam = -1;
-        if (games[id].options.teamSize > 0) {
-          myTeam = games[id].currentGame.teams.findIndex(function(team) {
+        if (find(id).options.teamSize > 0) {
+          myTeam = find(id).currentGame.teams.findIndex(function(team) {
             return team.players.findIndex(function(player) {
               return player == obj.id;
             }) > -1;
@@ -3396,13 +3487,13 @@ function HungryGames() {
         let prefix = '';
         if (myTeam != prevTeam) {
           prevTeam = myTeam;
-          prefix = '__' + games[id].currentGame.teams[myTeam].name + '__\n';
+          prefix = '__' + find(id).currentGame.teams[myTeam].name + '__\n';
         }
 
         return prefix + symbol + '`' + shortName + '`' +
             (obj.kills > 0 ? '(' + obj.kills + ')' : '');
       });
-      if (games[id].options.teamSize == 0) {
+      if (find(id).options.teamSize == 0) {
         statusList.sort();
       }
       if (statusList.length >= 3) {
@@ -3416,7 +3507,7 @@ function HungryGames() {
         }
         finalMessage.addField(
             ((numCols - 1) * quarterLength + 1) + '-' +
-                games[id].currentGame.includedUsers.length,
+                find(id).currentGame.includedUsers.length,
             statusList.join('\n'), true);
       } else {
         finalMessage.setDescription(statusList.join('\n'));
@@ -3425,20 +3516,20 @@ function HungryGames() {
         finalMessage.setFooter(
             getMessage('teamRemaining')
                 .replaceAll(
-                    '{}', games[id].currentGame.teams[lastWholeTeam].name));
+                    '{}', find(id).currentGame.teams[lastWholeTeam].name));
       }
     }
-    if (!games[id].currentGame.ended) {
+    if (!find(id).currentGame.ended) {
       let embed = new self.Discord.MessageEmbed();
-      if (games[id].currentGame.day.num == 0) {
+      if (find(id).currentGame.day.num == 0) {
         embed.setTitle(getMessage('bloodbathEnd'));
       } else {
         embed.setTitle(
             getMessage('dayEnd')
-                .replaceAll('{day}', games[id].currentGame.day.num)
+                .replaceAll('{day}', find(id).currentGame.day.num)
                 .replaceAll('{alive}', numAlive));
       }
-      if (!games[id].autoPlay) {
+      if (!find(id).autoPlay) {
         embed.setFooter('"' + self.myPrefix + 'next" for next day.');
       }
       embed.setColor(defaultColor);
@@ -3447,10 +3538,10 @@ function HungryGames() {
 
     if (numTeams == 1) {
       let sendTime =
-          Date.now() + (games[id].options.delayDays > 2000 ? 1000 : 0);
+          Date.now() + (find(id).options.delayDays > 2000 ? 1000 : 0);
       let winnerTag = '';
-      if (games[id].options.mentionVictor) {
-        winnerTag = games[id]
+      if (find(id).options.mentionVictor) {
+        winnerTag = find(id)
                         .currentGame.teams[lastTeam]
                         .players
                         .map(function(player) {
@@ -3459,14 +3550,14 @@ function HungryGames() {
                         .join(' ');
       }
       let finalImage = new Jimp(
-          games[id].currentGame.teams[lastTeam].players.length *
+          find(id).currentGame.teams[lastTeam].players.length *
                   (victorIconSize + iconGap) -
               iconGap,
           victorIconSize + iconGap);
       let responses = 0;
       newImage = function(image, userId) {
         image.resize(victorIconSize, victorIconSize);
-        let user = games[id].currentGame.includedUsers.find(function(obj) {
+        let user = find(id).currentGame.includedUsers.find(function(obj) {
           return obj.id == userId;
         });
         let color = 0x0;
@@ -3482,7 +3573,7 @@ function HungryGames() {
             responses * (victorIconSize + iconGap), victorIconSize);
         finalImage.blit(image, responses * (victorIconSize + iconGap), 0);
         responses++;
-        if (responses == games[id].currentGame.teams[lastTeam].players.length) {
+        if (responses == find(id).currentGame.teams[lastTeam].players.length) {
           finalImage.getBuffer(Jimp.MIME_PNG, function(err, out) {
             finalMessage.attachFiles(
                 [new self.Discord.MessageAttachment(out, 'hgTeamVictor.png')]);
@@ -3490,8 +3581,8 @@ function HungryGames() {
           });
         }
       };
-      games[id].currentGame.teams[lastTeam].players.forEach(function(player) {
-        player = games[id].currentGame.includedUsers.find(function(obj) {
+      find(id).currentGame.teams[lastTeam].players.forEach(function(player) {
+        player = find(id).currentGame.includedUsers.find(function(obj) {
           return obj.id == player;
         });
         let icon = player.avatarURL;
@@ -3511,20 +3602,20 @@ function HungryGames() {
       self.client.setTimeout(function() {
         let winnerTag = '';
         if (numAlive == 1) {
-          if (games[id].options.mentionVictor) {
+          if (find(id).options.mentionVictor) {
             winnerTag = '<@' + lastId + '>';
           }
           msg.channel.send(winnerTag, finalMessage);
         } else {
           msg.channel.send(winnerTag, finalMessage);
         }
-      }, (games[id].options.delayDays > 2000 ? 1000 : 0));
+      }, (find(id).options.delayDays > 2000 ? 1000 : 0));
     }
 
-    if (games[id].currentGame.ended) {
+    if (find(id).currentGame.ended) {
       let rankEmbed = new self.Discord.MessageEmbed();
       rankEmbed.setTitle('Final Ranks (kills)');
-      let rankList = games[id]
+      let rankList = find(id)
                          .currentGame.includedUsers
                          .sort(function(a, b) {
                            return a.rank - b.rank;
@@ -3551,16 +3642,16 @@ function HungryGames() {
       self.client.setTimeout(function() {
         msg.channel.send(rankEmbed);
       }, 5000);
-      if (games[id].options.teamSize > 0) {
+      if (find(id).options.teamSize > 0) {
         let teamRankEmbed = new self.Discord.MessageEmbed();
         teamRankEmbed.setTitle('Final Team Ranks');
-        games[id].currentGame.includedUsers.sort(function(a, b) {
-          let aTeam = games[id].currentGame.teams.find(function(team) {
+        find(id).currentGame.includedUsers.sort(function(a, b) {
+          let aTeam = find(id).currentGame.teams.find(function(team) {
             return team.players.findIndex(function(player) {
               return player == a.id;
             }) > -1;
           });
-          let bTeam = games[id].currentGame.teams.find(function(team) {
+          let bTeam = find(id).currentGame.teams.find(function(team) {
             return team.players.findIndex(function(player) {
               return player == b.id;
             }) > -1;
@@ -3572,9 +3663,9 @@ function HungryGames() {
           }
         });
         let prevTeam = -1;
-        let statusList = games[id].currentGame.includedUsers.map(function(obj) {
+        let statusList = find(id).currentGame.includedUsers.map(function(obj) {
           let myTeam = -1;
-          myTeam = games[id].currentGame.teams.findIndex(function(team) {
+          myTeam = find(id).currentGame.teams.findIndex(function(team) {
             return team.players.findIndex(function(player) {
               return player == obj.id;
             }) > -1;
@@ -3587,8 +3678,8 @@ function HungryGames() {
           let prefix = '';
           if (myTeam != prevTeam) {
             prevTeam = myTeam;
-            prefix = games[id].currentGame.teams[myTeam].rank + ') __' +
-                games[id].currentGame.teams[myTeam].name + '__\n';
+            prefix = find(id).currentGame.teams[myTeam].rank + ') __' +
+                find(id).currentGame.teams[myTeam].name + '__\n';
           }
 
           return prefix + '`' + shortName + '`';
@@ -3611,24 +3702,24 @@ function HungryGames() {
       }
     }
 
-    games[id].currentGame.day.state = 0;
-    games[id].currentGame.day.events = [];
+    find(id).currentGame.day.state = 0;
+    find(id).currentGame.day.events = [];
 
-    if (games[id].autoPlay) {
+    if (find(id).autoPlay) {
       self.client.setTimeout(function() {
         msg.channel.send('`Autoplaying...`')
             .then((msg) => {
               msg.delete({
-                timeout: games[id].options.delayDays - 1250,
+                timeout: find(id).options.delayDays - 1250,
                 reason: 'I can do whatever I want!',
               });
             })
             .catch(() => {});
-      }, (games[id].options.delayDays > 2000 ? 1200 : 100));
+      }, (find(id).options.delayDays > 2000 ? 1200 : 100));
       autoPlayTimeout[id] = self.client.setTimeout(function() {
         delete autoPlayTimeout[id];
         nextDay(msg, id);
-      }, games[id].options.delayDays);
+      }, find(id).options.delayDays);
     } else {
       self.command.enable('say', msg.channel.id);
     }
@@ -3642,19 +3733,19 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function endGame(msg, id) {
-    if (!games[id] || !games[id].currentGame.inProgress) {
+    if (!find(id) || !find(id).currentGame.inProgress) {
       self.common.reply(msg, 'There isn\'t a game in progress.');
     } else {
       self.common.reply(msg, 'The game has ended!');
-      games[id].currentGame.inProgress = false;
-      games[id].currentGame.ended = true;
-      games[id].autoPlay = false;
+      find(id).currentGame.inProgress = false;
+      find(id).currentGame.ended = true;
+      find(id).autoPlay = false;
       self.client.clearInterval(dayEventIntervals[id]);
       self.client.clearTimeout(autoPlayTimeout[id]);
       delete dayEventIntervals[id];
       delete autoPlayTimeout[id];
       delete battleMessage[id];
-      self.command.enable('say', games[id].outputChannel);
+      self.command.enable('say', find(id).outputChannel);
     }
   }
 
@@ -3668,7 +3759,7 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function excludeUser(msg, id) {
-    if (!games[id]) {
+    if (!find(id)) {
       self.common.reply(
           msg,
           'You must first create a game with "' + self.myPrefix + 'create".');
@@ -3704,19 +3795,19 @@ function HungryGames() {
           return;
         }
       }
-      if (games[id].excludedUsers.includes(obj.id)) {
+      if (find(id).excludedUsers.includes(obj.id)) {
         response += obj.username +
             ' is already excluded. Create a new game to reset players.\n';
       } else {
-        games[id].excludedUsers.push(obj.id);
+        find(id).excludedUsers.push(obj.id);
         response += obj.username + ' added to blacklist.\n';
-        if (!games[id].currentGame.inProgress) {
+        if (!find(id).currentGame.inProgress) {
           let index =
-              games[id].currentGame.includedUsers.findIndex(function(el) {
+              find(id).currentGame.includedUsers.findIndex(function(el) {
                 return el.id == obj.id;
               });
           if (index >= 0) {
-            games[id].currentGame.includedUsers.splice(index, 1);
+            find(id).currentGame.includedUsers.splice(index, 1);
             response += obj.username + ' removed from included players.\n';
             formTeams(id);
           } else {
@@ -3739,7 +3830,7 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function includeUser(msg, id) {
-    if (!games[id]) {
+    if (!find(id)) {
       self.common.reply(
           msg,
           'You must first create a game with "' + self.myPrefix + 'create".');
@@ -3775,21 +3866,21 @@ function HungryGames() {
           return;
         }
       }
-      if (!games[id].options.includeBots && obj.bot) {
+      if (!find(id).options.includeBots && obj.bot) {
         response += obj.username + ' is a bot, but bots are disabled.\n';
         return;
       }
-      let excludeIndex = games[id].excludedUsers.indexOf(obj.id);
+      let excludeIndex = find(id).excludedUsers.indexOf(obj.id);
       if (excludeIndex >= 0) {
         response += obj.username + ' removed from blacklist.\n';
-        games[id].excludedUsers.splice(excludeIndex, 1);
+        find(id).excludedUsers.splice(excludeIndex, 1);
       }
-      if (games[id].currentGame.inProgress) {
+      if (find(id).currentGame.inProgress) {
         response += obj.username + ' skipped.\n';
-      } else if (!games[id].currentGame.includedUsers.find((u) => {
+      } else if (!find(id).currentGame.includedUsers.find((u) => {
                    return u.id === obj.id;
                  })) {
-        games[id].currentGame.includedUsers.push(
+        find(id).currentGame.includedUsers.push(
             new Player(
                 obj.id, obj.username, obj.displayAvatarURL({format: 'png'})));
         response += obj.username + ' added to included players.\n';
@@ -3798,7 +3889,7 @@ function HungryGames() {
         response += obj.username + ' is already included.\n';
       }
     });
-    if (games[id].currentGame.inProgress) {
+    if (find(id).currentGame.inProgress) {
       response +=
           'Players were skipped because a game is currently in progress. ' +
           'Players cannot be added to a game while it\'s in progress.';
@@ -3818,17 +3909,17 @@ function HungryGames() {
     let finalMessage = new self.Discord.MessageEmbed();
     finalMessage.setTitle('List of currently tracked players');
     finalMessage.setColor(defaultColor);
-    if (games[id] && games[id].currentGame &&
-        games[id].currentGame.includedUsers) {
-      let numUsers = games[id].currentGame.includedUsers.length;
-      if (games[id].options.teamSize > 0) {
-        games[id].currentGame.includedUsers.sort(function(a, b) {
-          let aTeam = games[id].currentGame.teams.findIndex(function(team) {
+    if (find(id) && find(id).currentGame &&
+        find(id).currentGame.includedUsers) {
+      let numUsers = find(id).currentGame.includedUsers.length;
+      if (find(id).options.teamSize > 0) {
+        find(id).currentGame.includedUsers.sort(function(a, b) {
+          let aTeam = find(id).currentGame.teams.findIndex(function(team) {
             return team.players.findIndex(function(player) {
               return player == a.id;
             }) > -1;
           });
-          let bTeam = games[id].currentGame.teams.findIndex(function(team) {
+          let bTeam = find(id).currentGame.teams.findIndex(function(team) {
             return team.players.findIndex(function(player) {
               return player == b.id;
             }) > -1;
@@ -3841,10 +3932,10 @@ function HungryGames() {
         });
       }
       let prevTeam = -1;
-      let statusList = games[id].currentGame.includedUsers.map(function(obj) {
+      let statusList = find(id).currentGame.includedUsers.map(function(obj) {
         let myTeam = -1;
-        if (games[id].options.teamSize > 0) {
-          myTeam = games[id].currentGame.teams.findIndex(function(team) {
+        if (find(id).options.teamSize > 0) {
+          myTeam = find(id).currentGame.teams.findIndex(function(team) {
             return team.players.findIndex(function(player) {
               return player == obj.id;
             }) > -1;
@@ -3859,12 +3950,12 @@ function HungryGames() {
         let prefix = '';
         if (myTeam != prevTeam) {
           prevTeam = myTeam;
-          prefix = '__' + games[id].currentGame.teams[myTeam].name + '__\n';
+          prefix = '__' + find(id).currentGame.teams[myTeam].name + '__\n';
         }
 
         return prefix + '`' + shortName + '`';
       });
-      if (games[id].options.teamSize == 0) {
+      if (find(id).options.teamSize == 0) {
         statusList.sort();
       }
       if (statusList.length >= 3) {
@@ -3891,11 +3982,11 @@ function HungryGames() {
           'There don\'t appear to be any included players. Have you ' +
           'created a game with "' + self.myPrefix + 'create"?');
     }
-    if (games[id] && games[id].excludedUsers &&
-        games[id].excludedUsers.length > 0) {
+    if (find(id) && find(id).excludedUsers &&
+        find(id).excludedUsers.length > 0) {
       finalMessage.addField(
-          'Excluded (' + games[id].excludedUsers.length + ')',
-          games[id]
+          'Excluded (' + find(id).excludedUsers.length + ')',
+          find(id)
               .excludedUsers
               .map(function(obj) {
                 return getName(msg.guild, obj);
@@ -3938,7 +4029,7 @@ function HungryGames() {
     let value = msg.text.split(' ')[1];
     let output = self.setOption(id, option, value);
     if (!output) {
-      showOpts(msg, games[id].options);
+      showOpts(msg, find(id).options);
     } else {
       self.common.reply(msg, output);
     }
@@ -3954,18 +4045,18 @@ function HungryGames() {
    * the user the list of options instead.
    */
   this.setOption = function(id, option, value) {
-    if (!games[id] || !games[id].currentGame) {
+    if (!find(id) || !find(id).currentGame) {
       return 'You must create a game first before editing settings! Use "' +
           self.myPrefix + 'create" to create a game.';
     } else if (typeof option === 'undefined' || option.length == 0) {
       return null;
-    } else if (games[id].currentGame.inProgress) {
+    } else if (find(id).currentGame.inProgress) {
       return 'You must end this game before changing settings. Use "' +
           self.myPrefix + 'end" to abort this game.';
     } else if (typeof defaultOptions[option] === 'undefined') {
       return 'That is not a valid option to change! (Delays are in ' +
           'milliseconds)' +
-          JSON.stringify(games[id].options, null, 1)
+          JSON.stringify(find(id).options, null, 1)
               .replace('{', '')
               .replace('}', '');
     } else {
@@ -3975,23 +4066,23 @@ function HungryGames() {
         if (typeof value !== 'number') {
           return 'That is not a valid value for ' + option +
               ', which requires a number. (Currently ' +
-              games[id].options[option] + ')';
+              find(id).options[option] + ')';
         } else {
           if ((option == 'delayDays' || option == 'delayEvents') &&
               value < 500) {
             value = 1000;
           }
 
-          let old = games[id].options[option];
-          games[id].options[option] = value;
+          let old = find(id).options[option];
+          find(id).options[option] = value;
           if (option == 'teamSize' && value != 0) {
-            return 'Set ' + option + ' to ' + games[id].options[option] +
+            return 'Set ' + option + ' to ' + find(id).options[option] +
                 ' from ' + old +
                 '\nTo reset teams to the correct size, type "' + self.myPrefix +
                 'teams reset".\nThis will delete all teams, and create ' +
                 'new ones.';
           } else {
-            return 'Set ' + option + ' to ' + games[id].options[option] +
+            return 'Set ' + option + ' to ' + find(id).options[option] +
                 ' from ' + old;
           }
         }
@@ -4000,15 +4091,15 @@ function HungryGames() {
         if (typeof value !== 'boolean') {
           return 'That is not a valid value for ' + option +
               ', which requires true or false. (Currently ' +
-              games[id].options[option] + ')';
+              find(id).options[option] + ')';
         } else {
-          let old = games[id].options[option];
-          games[id].options[option] = value;
+          let old = find(id).options[option];
+          find(id).options[option] = value;
           if (option == 'includeBots') {
             createGame(null, id, true);
             // createGame(msg, id, true);
           }
-          return 'Set ' + option + ' to ' + games[id].options[option] +
+          return 'Set ' + option + ' to ' + find(id).options[option] +
               ' from ' + old;
         }
       } else if (type === 'string') {
@@ -4016,11 +4107,11 @@ function HungryGames() {
           return 'That is not a valid value for ' + option +
               ', which requires one of the following: ' +
               JSON.stringify(defaultOptions[option].values) + '. (Currently ' +
-              games[id].options[option] + ')';
+              find(id).options[option] + ')';
         } else {
-          let old = games[id].options[option];
-          games[id].options[option] = value;
-          return 'Set ' + option + ' to ' + games[id].options[option] +
+          let old = find(id).options[option];
+          find(id).options[option] = value;
+          return 'Set ' + option + ' to ' + find(id).options[option] +
               ' from ' + old;
         }
       } else {
@@ -4140,7 +4231,7 @@ function HungryGames() {
    */
   function editTeam(msg, id, silent) {
     let split = msg.text.split(' ');
-    if (games[id].currentGame.inProgress) {
+    if (find(id).currentGame.inProgress) {
       switch (split[0]) {
         case 'swap':
         case 'reset':
@@ -4162,7 +4253,7 @@ function HungryGames() {
         break;
       case 'reset':
         if (!silent) self.common.reply(msg, 'Resetting ALL teams!');
-        games[id].currentGame.teams = [];
+        find(id).currentGame.teams = [];
         formTeams(id);
         break;
       case 'randomize':
@@ -4276,14 +4367,14 @@ function HungryGames() {
     let playerId1 = 0;
     let teamId2 = 0;
     let playerId2 = 0;
-    teamId1 = games[id].currentGame.teams.findIndex(function(team) {
+    teamId1 = find(id).currentGame.teams.findIndex(function(team) {
       let index = team.players.findIndex(function(player) {
         return player == user1;
       });
       if (index > -1) playerId1 = index;
       return index > -1;
     });
-    teamId2 = games[id].currentGame.teams.findIndex(function(team) {
+    teamId2 = find(id).currentGame.teams.findIndex(function(team) {
       let index = team.players.findIndex(function(player) {
         return player == user2;
       });
@@ -4294,11 +4385,11 @@ function HungryGames() {
       self.common.reply(msg, 'Please ensure both users are on a team.');
       return;
     }
-    let intVal = games[id].currentGame.teams[teamId1].players[playerId1];
-    games[id].currentGame.teams[teamId1].players[playerId1] =
-        games[id].currentGame.teams[teamId2].players[playerId2];
+    let intVal = find(id).currentGame.teams[teamId1].players[playerId1];
+    find(id).currentGame.teams[teamId1].players[playerId1] =
+        find(id).currentGame.teams[teamId2].players[playerId2];
 
-    games[id].currentGame.teams[teamId2].players[playerId2] = intVal;
+    find(id).currentGame.teams[teamId2].players[playerId2] = intVal;
 
     self.common.reply(msg, 'Swapped players!');
   }
@@ -4330,7 +4421,7 @@ function HungryGames() {
     }
 
     let teamId2 = 0;
-    teamId1 = games[id].currentGame.teams.findIndex(function(team) {
+    teamId1 = find(id).currentGame.teams.findIndex(function(team) {
       let index = team.players.findIndex(function(player) {
         return player == user1;
       });
@@ -4338,7 +4429,7 @@ function HungryGames() {
       return index > -1;
     });
     if (user2 > 0) {
-      teamId2 = games[id].currentGame.teams.findIndex(function(team) {
+      teamId2 = find(id).currentGame.teams.findIndex(function(team) {
         return team.players.findIndex(function(player) {
           return player == user2;
         }) > -1;
@@ -4353,23 +4444,23 @@ function HungryGames() {
       console.log(teamId1, teamId2);
       return;
     }
-    if (teamId2 >= games[id].currentGame.teams.length) {
-      games[id].currentGame.teams.push(
+    if (teamId2 >= find(id).currentGame.teams.length) {
+      find(id).currentGame.teams.push(
           new Team(
-              games[id].currentGame.teams.length,
-              'Team ' + (games[id].currentGame.teams.length + 1), []));
-      teamId2 = games[id].currentGame.teams.length - 1;
+              find(id).currentGame.teams.length,
+              'Team ' + (find(id).currentGame.teams.length + 1), []));
+      teamId2 = find(id).currentGame.teams.length - 1;
     }
     self.common.reply(
         msg, 'Moving `' + msg.mentions.users.first().username + '` from ' +
-            games[id].currentGame.teams[teamId1].name + ' to ' +
-            games[id].currentGame.teams[teamId2].name);
+            find(id).currentGame.teams[teamId1].name + ' to ' +
+            find(id).currentGame.teams[teamId2].name);
 
-    games[id].currentGame.teams[teamId2].players.push(
-        games[id].currentGame.teams[teamId1].players.splice(playerId1, 1)[0]);
+    find(id).currentGame.teams[teamId2].players.push(
+        find(id).currentGame.teams[teamId1].players.splice(playerId1, 1)[0]);
 
-    if (games[id].currentGame.teams[teamId1].players.length == 0) {
-      games[id].currentGame.teams.splice(teamId1, 1);
+    if (find(id).currentGame.teams[teamId1].players.length == 0) {
+      find(id).currentGame.teams.splice(teamId1, 1);
     }
   }
   /**
@@ -4394,26 +4485,26 @@ function HungryGames() {
     }
     let teamId = search - 1;
     if (isNaN(search)) {
-      teamId = games[id].currentGame.teams.findIndex(function(team) {
+      teamId = find(id).currentGame.teams.findIndex(function(team) {
         return team.players.findIndex(function(player) {
           return player == msg.mentions.users.first().id;
         }) > -1;
       });
     }
-    if (teamId < 0 || teamId >= games[id].currentGame.teams.length) {
+    if (teamId < 0 || teamId >= find(id).currentGame.teams.length) {
       if (!silent) {
         self.common.reply(
             msg, 'Please specify a valid team id. (0 - ' +
-                (games[id].currentGame.teams.length - 1) + ')');
+                (find(id).currentGame.teams.length - 1) + ')');
       }
       return;
     }
     if (!silent) {
       self.common.reply(
-          msg, 'Renaming "' + games[id].currentGame.teams[teamId].name +
+          msg, 'Renaming "' + find(id).currentGame.teams[teamId].name +
               '" to "' + message + '"');
     }
-    games[id].currentGame.teams[teamId].name = message;
+    find(id).currentGame.teams[teamId].name = message;
   }
 
   /**
@@ -4424,7 +4515,7 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function randomizeTeams(msg, id) {
-    let current = games[id].currentGame;
+    let current = find(id).currentGame;
     if (current.teams.length == 0) {
       self.common.reply(msg, 'There are no teams to randomize.');
       return;
@@ -4455,7 +4546,7 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function createEvent(msg, id) {
-    if (!games[id]) {
+    if (!find(id)) {
       self.common.reply(
           msg,
           'You must first create a game with "' + self.myPrefix + 'create".');
@@ -4630,8 +4721,8 @@ function HungryGames() {
   this.makeAndAddEvent = function(
       id, type, message, numVictim, numAttacker, victimOutcome, attackerOutcome,
       victimKiller, attackerKiller) {
-    if (!games[id] || !games[id].customEvents ||
-        !games[id].customEvents[type]) {
+    if (!find(id) || !find(id).customEvents ||
+        !find(id).customEvents[type]) {
       return 'Invalid ID or type.';
     }
     if (type === 'arena') return 'NYI';
@@ -4650,19 +4741,19 @@ function HungryGames() {
    * @return {?string} Error message or null if no error.
    */
   this.addEvent = function(id, type, event) {
-    if (!games[id] || !games[id].customEvents ||
-        !games[id].customEvents[type]) {
+    if (!find(id) || !find(id).customEvents ||
+        !find(id).customEvents[type]) {
       return 'Invalid ID or type.';
     }
     if (!event.message || event.message.length == 0) {
       return 'Event must have a message.';
     }
-    for (let i in games[id].customEvents[type]) {
-      if (self.eventsEqual(event, games[id].customEvents[type][i])) {
+    for (let i in find(id).customEvents[type]) {
+      if (self.eventsEqual(event, find(id).customEvents[type][i])) {
         return 'Event already exists!';
       }
     }
-    games[id].customEvents[type].push(event);
+    find(id).customEvents[type].push(event);
     return null;
   };
 
@@ -4677,11 +4768,11 @@ function HungryGames() {
    * @return {?string} Error message or null if no error.
    */
   this.removeEvent = function(id, type, event) {
-    if (!games[id] || !games[id].customEvents ||
-        !games[id].customEvents[type]) {
+    if (!find(id) || !find(id).customEvents ||
+        !find(id).customEvents[type]) {
       return 'Invalid ID or type.';
     }
-    let list = games[id].customEvents[type];
+    let list = find(id).customEvents[type];
     for (let i in list) {
       if (self.eventsEqual(list[i], event)) {
         list.splice(i, 1);
@@ -4943,7 +5034,7 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function removeEvent(msg, id) {
-    if (!games[id]) {
+    if (!find(id)) {
       self.common.reply(
           msg,
           'You must first create a game with "' + self.myPrefix + 'create".');
@@ -4989,20 +5080,20 @@ function HungryGames() {
             }
 
             if (eventType == 'player') {
-              if (num >= games[id].customEvents.player.length) {
+              if (num >= find(id).customEvents.player.length) {
                 self.common.reply(
                     msg,
                     'That number is a really big scary number. Try a smaller ' +
                         'one.');
                 msg_.delete();
               } else {
-                const removed = games[id].customEvents.player.splice(num, 1)[0];
+                const removed = find(id).customEvents.player.splice(num, 1)[0];
                 self.common.reply(
                     msg, 'Removed event.', formatEventString(removed, true));
                 msg_.delete();
               }
             } else {
-              if (num >= games[id].customEvents.bloodbath.length) {
+              if (num >= find(id).customEvents.bloodbath.length) {
                 self.common.reply(
                     msg,
                     'That number is a really big scary number. Try a smaller ' +
@@ -5010,7 +5101,7 @@ function HungryGames() {
                 msg_.delete();
               } else {
                 const removed =
-                    games[id].customEvents.bloodbath.splice(num, 1)[0];
+                    find(id).customEvents.bloodbath.splice(num, 1)[0];
                 self.common.reply(
                     msg, 'Removed event.', formatEventString(removed, true));
                 msg_.delete();
@@ -5071,9 +5162,9 @@ function HungryGames() {
     let title;
     if (!eventType) eventType = 'player';
     if (eventType == 'player') {
-      if (games[id] && games[id].customEvents.player) {
-        events = games[id].customEvents.player.slice(0);
-        numCustomEvents = games[id].customEvents.player.length;
+      if (find(id) && find(id).customEvents.player) {
+        events = find(id).customEvents.player.slice(0);
+        numCustomEvents = find(id).customEvents.player.length;
       }
       events.push(
           new Event(emoji.arrow_up + 'Custom | Default' + emoji.arrow_down));
@@ -5082,9 +5173,9 @@ function HungryGames() {
       fetchStats(events);
       embed.setColor([0, 255, 0]);
     } else if (eventType == 'bloodbath') {
-      if (games[id] && games[id].customEvents.bloodbath) {
-        events = games[id].customEvents.bloodbath.slice(0);
-        numCustomEvents = games[id].customEvents.bloodbath.length;
+      if (find(id) && find(id).customEvents.bloodbath) {
+        events = find(id).customEvents.bloodbath.slice(0);
+        numCustomEvents = find(id).customEvents.bloodbath.length;
       }
       events.push(
           new Event(emoji.arrow_up + 'Custom | Default' + emoji.arrow_down));
@@ -5093,9 +5184,9 @@ function HungryGames() {
       fetchStats(events);
       embed.setColor([255, 0, 0]);
     } else if (eventType == 'arena') {
-      if (games[id] && games[id].customEvents.arena) {
-        events = games[id].customEvents.arena.slice(0);
-        numCustomEvents = games[id].customEvents.arena.length;
+      if (find(id) && find(id).customEvents.arena) {
+        events = find(id).customEvents.arena.slice(0);
+        numCustomEvents = find(id).customEvents.arena.length;
       }
       if (numCustomEvents == 0 && page <= 0) {
         page = 1;
@@ -5354,6 +5445,60 @@ function HungryGames() {
     return list[Math.floor(Math.random() * length)];
   }
 
+  /**
+   * Returns a guild's game data. Returns cached version if that exists, or
+   * searches the file system for saved data. Data will only be checked from
+   * disk at most once every `HungryGames~findDelay` milliseconds. Returns
+   * `null` if data could not be found, or an error occurred.
+   *
+   * @private
+   * @param {number|string} id The guild id to get the data for.
+   * @return {?HungryGames~GuildGame}
+   */
+  function find(id) {
+    if (games[id]) return games[id];
+    if (Date.now() - findTimestamps[id] < findDelay) return null;
+    findTimestamps[id] = Date.now();
+    try {
+      let tmp =
+          fs.readFileSync(self.common.guildSaveDir + id + hgSaveDir + saveFile);
+      try {
+        games[id] = JSON.parse(tmp);
+        self.common.log('Loaded game from file ' + id, 'HG');
+      } catch (e2) {
+        self.common.error('Failed to parse game data for guild ' + id, 'HG');
+        return null;
+      }
+    } catch (e) {
+      // File probably doesn't exist.
+      // TODO: Log if something goes wrong other than file not existing.
+      return null;
+    }
+
+    // Flush default and stale options.
+    if (games[id].options) {
+      for (let opt in defaultOptions) {
+        if (!defaultOptions[opt] instanceof Object) continue;
+        if (typeof games[id].options[opt] !==
+            typeof defaultOptions[opt].value) {
+          games[id].options[opt] = defaultOptions[opt].value;
+        }
+      }
+      for (let opt in games[id].options) {
+        if (!games[id].options[opt] instanceof Object) continue;
+        if (typeof defaultOptions[opt] === 'undefined') {
+          delete games[id].options[opt];
+        }
+      }
+    }
+    // If the bot stopped while simulating a day, just start over and try
+    // again.
+    if (games[id].currentGame.day.state === 1) {
+      games[id].currentGame.day.state = 0;
+    }
+    return games[id];
+  }
+
   // Util //
   /**
    * Save all game data to file.
@@ -5361,16 +5506,59 @@ function HungryGames() {
    * @override
    * @param {string} [opt='sync'] Can be 'async', otherwise defaults to
    * synchronous.
+   * @param {boolean} [wait=false] If requested before subModule is initialized,
+   * keep trying until it is initialized.
    */
-  this.save = function(opt) {
-    if (!self.initialized) return;
+  this.save = function(opt, wait) {
+    if (!self.initialized) {
+      if (wait) {
+        setTimeout(function() {
+          self.save(opt, wait);
+        });
+      }
+      return;
+    }
     if (opt == 'async') {
       self.common.log('Saving async', 'HG');
-      fs.writeFile(saveFile, JSON.stringify(games), function() {});
     } else {
       self.common.log('Saving sync', 'HG');
-      fs.writeFileSync(saveFile, JSON.stringify(games));
     }
+    Object.entries(games).forEach(function(obj) {
+      const id = obj[0];
+      const data = obj[1];
+      const dir = self.common.guildSaveDir + id + hgSaveDir;
+      const filename = dir + saveFile;
+      if (opt == 'async') {
+        mkdirp(dir, function(err) {
+          if (err) {
+            self.common.error('Failed to create directory for ' + dir, 'HG');
+            console.error(err);
+            return;
+          }
+          fs.writeFile(filename, JSON.stringify(data), function(err2) {
+            if (err2) {
+              self.common.error('Failed to save HG data for ' + filename, 'HG');
+              console.error(err2);
+            }
+          });
+        });
+      } else {
+        try {
+          mkdirp.sync(dir);
+        } catch (err) {
+          self.common.error('Failed to create directory for ' + dir, 'HG');
+          console.error(err);
+          return;
+        }
+        try {
+          fs.writeFileSync(filename, JSON.stringify(data));
+        } catch (err) {
+          self.common.error('Failed to save HG data for ' + filename, 'HG');
+          console.error(err);
+          return;
+        }
+      }
+    });
   };
 
   /**
@@ -5383,9 +5571,9 @@ function HungryGames() {
    */
   function exit(code) {
     if (self.common && self.common.log) {
-      self.common.log('Caught exit!' + code, 'HG');
+      self.common.log('Caught exit! ' + code, 'HG');
     } else {
-      console.log('Caught exit!', code);
+      console.log('Caught exit! ', code);
     }
     if (self.initialized /* && code == -1 */) {
       self.save();
@@ -5409,7 +5597,7 @@ function HungryGames() {
     if (self.common && self.common.log) {
       self.common.log('Caught SIGINT!', 'HG');
     } else {
-      console.log('Caught SIGINT!');
+      console.log('HG: Caught SIGINT!');
     }
     if (self.initialized) {
       try {

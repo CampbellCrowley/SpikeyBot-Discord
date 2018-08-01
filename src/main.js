@@ -6,6 +6,7 @@ const algebra = require('algebra.js');
 const vm = require('vm');
 const Jimp = require('jimp');
 const fs = require('fs');
+const mkdirp = require('mkdirp');
 require('./subModule.js')(Main); // Extends the SubModule class.
 
 math.config({matrix: 'Array'});
@@ -58,6 +59,25 @@ function Main() {
   const self = this;
   /** @inheritdoc */
   this.myName = 'Main';
+
+  /**
+   * The current bot version parsed from package.json.
+   *
+   * @private
+   * @type {string}
+   */
+  let version = 'Unknown';
+  fs.readFile('package.json', function(err, data) {
+    if (err) {
+      console.log(err);
+      return;
+    }
+    try {
+      version = JSON.parse(data).version;
+    } catch (e) {
+      console.log(e);
+    }
+  });
 
   /*
    * Stores the required permissions for smiting a user. Defined at
@@ -260,6 +280,83 @@ function Main() {
       }
       disabledAutoSmite = parsed.disabledAutoSmite || {};
       riggedCounter = parsed.riggedCounterNum || 0;
+      fs.rename(
+          './save/timers.dat', './save/timers.dat.deleteme', function(err2) {
+            if (err2) {
+              self.common.error('Failed to rename ./save/timers.dat', 'Main');
+            } else {
+              self.common.log(
+                  'Updated data to new format. Renamed ./save/timers.dat to ' +
+                      './save.timers.deleteme',
+                  'Main');
+              self.save('async');
+            }
+          });
+    });
+
+    if (!self.client.shard || self.client.shard.id == 0) {
+      fs.readdir(self.common.userSaveDir, function(err, items) {
+        if (err) return;
+        for (let i = 0; i < items.length; i++) {
+          const dir = self.common.userSaveDir + items[i] + '/timers/';
+
+          fs.readdir(dir, function(dir) {
+            return function(err2, timerItems) {
+              if (err2) return;
+              for (let j = 0; j < timerItems.length; j++) {
+                const filename = dir + timerItems[j];
+                fs.readFile(filename, function(filename) {
+                  return function(err3, file) {
+                    if (err3) return;
+                    let parsed;
+                    try {
+                      parsed = JSON.parse(file);
+                    } catch (e) {
+                      self.common.error(
+                          'Failed to parse timer file: ' + filename, 'Main');
+                      console.error(e);
+                      return;
+                    }
+                    setTimer(parsed);
+                    fs.unlink(filename, function(err4) {
+                      if (err4) {
+                        self.common.error(
+                            'Failed to delete timer save file: ' + filename,
+                            'Main');
+                        console.error(err4);
+                      }
+                    });
+                  };
+                }(filename));
+              }
+            };
+          }(dir));
+        }
+      });
+    }
+
+    self.client.guilds.forEach(function(g) {
+      fs.readFile(
+          self.common.guildSaveDir + g.id + '/main-config.json',
+          function(err, file) {
+            if (err) return;
+            let parsed;
+            try {
+              parsed = JSON.parse(file);
+            } catch (e) {
+              return;
+            }
+            disabledAutoSmite[g.id] = parsed.disabledAutoSmite || false;
+          });
+    });
+
+    fs.readFile('./save/rigged-counter.txt', function(err, file) {
+      if (err) {
+        riggedCounter = 0;
+        return;
+      }
+      let tmp = file * 1;
+      if (!isNaN(tmp)) riggedCounter = tmp;
     });
 
     // Format help message into rich embed.
@@ -325,13 +422,104 @@ function Main() {
     process.removeListener('SIGINT', sigint);
     process.removeListener('SIGHUP', sigint);
     process.removeListener('SIGTERM', sigint);
-
-    fs.writeFileSync('./save/timers.dat', JSON.stringify({
-      timers: timers,
-      disabledAutoSmite: disabledAutoSmite,
-      riggedCounterNum: riggedCounter,
-    }));
   };
+
+  /**
+   * Save all data to file.
+   *
+   * @override
+   * @param {string} [opt='sync'] Can be 'async', othwerwise defaults to
+   * synchronous.
+   */
+  this.save = function(opt) {
+    if (!self.initialized) return;
+    if (opt == 'async') {
+      self.common.log('Saving async', 'Main');
+    } else {
+      self.common.log('Saving sync', 'Main');
+    }
+    timers.forEach(function(obj) {
+      const dir = self.common.userSaveDir + obj.id + '/timers/';
+      const filename = dir + obj.time + '.json';
+      if (opt == 'async') {
+        mkAndWrite(filename, dir, JSON.stringify(obj));
+      } else {
+        mkAndWriteSync(filename, dir, JSON.stringify(obj));
+      }
+    });
+    self.client.guilds.forEach(function(g) {
+      const dir = self.common.guildSaveDir + g.id;
+      const filename = dir + '/main-config.json';
+      let obj = {disabledAutoSmite: disabledAutoSmite[g.id]};
+      if (opt == 'async') {
+        mkAndWrite(filename, dir, JSON.stringify(obj));
+      } else {
+        mkAndWriteSync(filename, dir, JSON.stringify(obj));
+      }
+    });
+    if (!self.client.shard || self.client.shard.id == 0) {
+      const dir = './save/';
+      const filename = dir + '/rigged-counter.txt';
+      if (opt == 'async') {
+        mkAndWrite(filename, dir, riggedCounter + '');
+      } else {
+        mkAndWriteSync(filename, dir, riggedCounter + '');
+      }
+    }
+  };
+
+  /**
+   * Write data to a file and make sure the directory exists or create it if it
+   * doesn't. Async
+   * @see {@link Main~mkAndWriteSync}
+   *
+   * @private
+   * @param {string} filename The name of the file including the directory.
+   * @param {string} dir The directory path without the file's name.
+   * @param {string} data The data to write to the file.
+   */
+  function mkAndWrite(filename, dir, data) {
+    mkdirp(dir, function(err) {
+      if (err) {
+        self.common.error('Failed to make directory: ' + dir, 'Main');
+        console.error(err);
+        return;
+      }
+      fs.writeFile(filename, data, function(err2) {
+        if (err2) {
+          self.common.error('Failed to save timer: ' + filename, 'Main');
+          console.error(err2);
+          return;
+        }
+      });
+    });
+  }
+  /**
+   * Write data to a file and make sure the directory exists or create it if it
+   * doesn't. Synchronous
+   * @see {@link Main~mkAndWrite}
+   *
+   * @private
+   * @param {string} filename The name of the file including the directory.
+   * @param {string} dir The directory path without the file's name.
+   * @param {string} data The data to write to the file.
+   */
+  function mkAndWriteSync(filename, dir, data) {
+    try {
+      mkdirp.sync(dir);
+    } catch (err) {
+      self.common.error('Failed to make directory: ' + dir, 'Main');
+      console.error(err);
+      return;
+    }
+    try {
+      fs.writeFileSync(filename, data);
+    } catch (err) {
+      self.common.error('Failed to save timer: ' + filename, 'Main');
+      console.error(err);
+      return;
+    }
+  }
 
   /**
    * Handle being added to a guild.
@@ -422,7 +610,7 @@ function Main() {
   function commandToggleMute(msg) {
     if (msg.member.hasPermission(self.Discord.Permissions.FLAGS.MANAGE_ROLES)) {
       if (disabledAutoSmite[msg.guild.id]) {
-        delete disabledAutoSmite[msg.guild.id];
+        disabledAutoSmite[msg.guild.id] = false;
         self.common.reply(
             msg, 'Enabled banning mentioning everyone automatically.');
       } else {
@@ -469,6 +657,11 @@ function Main() {
           } else {
             msg.channel.send('#' + (riggedCounter += 1));
           }
+          if (self.client.shard) {
+            self.client.shard.broadcastEval(
+                'updateRiggedCounter(' + riggedCounter + ',' + matchCount +
+                ')');
+          }
         }
       }
     }
@@ -488,8 +681,11 @@ function Main() {
       let count = 0;
       let now = Date.now();
       for (let i = timestamps.length - 1; i >= 0; i--) {
-        if (now - timestamps[i] < 2 * 60 * 1000) count++;
-        else timestamps.splice(i, 1);
+        if (now - timestamps[i] < 2 * 60 * 1000) {
+count++;
+} else {
+timestamps.splice(i, 1);
+}
       }
       if (count == 3) {
         let hasMuteRole = false;
@@ -1573,10 +1769,7 @@ function Main() {
    * @listens SpikeyBot~Command#version
    */
   function commandVersion(msg) {
-    fs.readFile('package.json', function(err, data) {
-      self.common.reply(
-          msg, 'My current version is ' + JSON.parse(data).version);
-    });
+    self.common.reply(msg, 'My current version is ' + version);
   }
 
   /**
@@ -1605,7 +1798,7 @@ function Main() {
           return obj.time > now;
         });
       });
-    }, msg.timers[i].time - now);
+    }, timer.time - now);
   }
 
   /**
@@ -1705,6 +1898,21 @@ function Main() {
     return str;
   }
 
+  /* eslint-disable no-unused-vars */
+  /**
+   * Receive message from another shard telling us to update our "rigged"
+   * counter.
+   *
+   * @private
+   * @param {number} newNum The new value to set the counter to.
+   * @param {number} increment The amount that the value has changed due to this
+   * event.
+   */
+  function updateRiggedCounter(newNum, increment) {
+    /* eslint-enable no-unused-vars */
+    console.log('new', newNum, 'old', riggedCounter, 'inc', increment);
+  }
+
   /**
    * Triggered via SIGINT, SIGHUP or SIGTERM. Saves data before exiting.
    *
@@ -1717,11 +1925,17 @@ function Main() {
     if (self.common && self.common.log) {
       self.common.log('Caught exit!', 'Main');
     } else {
-      console.log('Caught exit!');
+      console.log('Main: Caught exit!');
+    }
+    try {
+      self.save();
+    } catch (err) {
+      console.log('Main: Failed to save', err);
     }
     try {
       self.end();
     } catch (err) {
+      console.log('Main: Failed to shutdown', err);
     }
     process.removeListener('exit', sigint);
     process.exit();

@@ -238,6 +238,7 @@ Common.logChannel = Common.prototype.logChannel;
  *
  * @type {string}
  * @constant
+ * @default
  */
 Common.prototype.webURL = 'https://www.spikeybot.com/';
 /**
@@ -247,6 +248,42 @@ Common.prototype.webURL = 'https://www.spikeybot.com/';
  * @constant
  */
 Common.webURL = Common.prototype.webURL;
+
+/**
+ * The root file directory for finding saved data related to individual
+ * guilds.
+ *
+ * @type {string}
+ * @constant
+ * @default
+ */
+Common.prototype.guildSaveDir = './save/guilds/';
+/**
+ * The root file directory for finding saved data related to individual
+ * guilds.
+ *
+ * @type {string}
+ * @constant
+ */
+Common.guildSaveDir = Common.prototype.guildSaveDir;
+
+/**
+ * The root file directory for finding saved data related to individual
+ * users.
+ *
+ * @type {string}
+ * @constant
+ * @default
+ */
+Common.prototype.userSaveDir = './save/users/';
+/**
+ * The root file directory for finding saved data related to individual
+ * users.
+ *
+ * @type {string}
+ * @constant
+ */
+Common.userSaveDir = Common.prototype.userSaveDir;
 
 /**
  * Creates formatted string for mentioning the author of msg.

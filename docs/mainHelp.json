@@ -18,7 +18,7 @@
       ]
     },
     {
-      "title": "Games",
+      "title": "Games Stuff",
       "rows": [
         "tictactoe 'mention' // Play a game of Tic Tac Toe with someone! (Mention someone to challenge them)",
         "connect4 'mention' // Start a game of Connect 4 against someone! (Mention someone to challenge them)"

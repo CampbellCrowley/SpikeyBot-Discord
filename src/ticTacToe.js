@@ -100,7 +100,7 @@ function TicTacToe() {
     this.board = [0, 0, 0, 0, 0, 0, 0, 0, 0];
     /**
      * Which player's turn it is. Either 1 or 2.
-     * @type {number]
+     * @type {number}
      */
     this.turn = 1;
     /**
