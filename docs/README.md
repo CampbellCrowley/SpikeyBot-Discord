@@ -3010,6 +3010,7 @@ Basic commands and features for the bot.
         * [.shutdown()](#SubModule+shutdown)
         * *[.save()](#SubModule+save)*
     * _inner_
+        * [~version](#Main..version) : <code>string</code> ℗
         * [~prevUserSayId](#Main..prevUserSayId) : <code>string</code> ℗
         * [~prevUserSayCnt](#Main..prevUserSayCnt) : <code>number</code> ℗
         * [~timers](#Main..timers) : [<code>Array.&lt;Timer&gt;</code>](#Main..Timer) ℗
@@ -3183,6 +3184,13 @@ Shutdown and disable this submodule. Removes all event listeners.
 Saves all data to files necessary for saving current state.
 
 **Kind**: instance abstract method of [<code>Main</code>](#Main)  
+<a name="Main..version"></a>
+
+### Main~version : <code>string</code> ℗
+The current bot version parsed from package.json.
+
+**Kind**: inner property of [<code>Main</code>](#Main)  
+**Access**: private  
 <a name="Main..prevUserSayId"></a>
 
 ### Main~prevUserSayId : <code>string</code> ℗
@@ -4326,7 +4334,10 @@ Main class that manages the bot.
     * [~minimal](#SpikeyBot..minimal) : <code>boolean</code> ℗
     * [~subModules](#SpikeyBot..subModules) : [<code>Array.&lt;SubModule&gt;</code>](#SubModule) ℗
     * [~disconnectReason](#SpikeyBot..disconnectReason) : <code>string</code> ℗
+    * [~enableSharding](#SpikeyBot..enableSharding) : <code>boolean</code> ℗
+    * [~numShards](#SpikeyBot..numShards) : <code>number</code> ℗
     * [~reactToAnthony](#SpikeyBot..reactToAnthony) : <code>boolean</code> ℗
+    * [~version](#SpikeyBot..version) : <code>string</code> ℗
     * [~testChannel](#SpikeyBot..testChannel) : <code>string</code> ℗
     * [~trustedIds](#SpikeyBot..trustedIds) : <code>Array.&lt;string&gt;</code> ℗
     * [~helpmessagereply](#SpikeyBot..helpmessagereply) : <code>string</code> ℗
@@ -4497,6 +4508,24 @@ Reason the bot was disconnected from Discord's servers.
 **Kind**: inner property of [<code>SpikeyBot</code>](#SpikeyBot)  
 **Default**: <code>null</code>  
 **Access**: private  
+<a name="SpikeyBot..enableSharding"></a>
+
+### SpikeyBot~enableSharding : <code>boolean</code> ℗
+Whether or not to spawn the bot as multiple shards. Enabled with `--shards`
+cli argument.
+
+**Kind**: inner property of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Default**: <code>false</code>  
+**Access**: private  
+<a name="SpikeyBot..numShards"></a>
+
+### SpikeyBot~numShards : <code>number</code> ℗
+The number of shards to use if sharding is enabled. 0 to let Discord
+decide. Set from `--shards=#` cli argument.
+
+**Kind**: inner property of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Default**: <code>0</code>  
+**Access**: private  
 <a name="SpikeyBot..reactToAnthony"></a>
 
 ### SpikeyBot~reactToAnthony : <code>boolean</code> ℗
@@ -4504,6 +4533,13 @@ Should we add a reaction to every message that Anthony sends. Overriden if
 reboot.dat exists.
 
 **Kind**: inner property of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Access**: private  
+<a name="SpikeyBot..version"></a>
+
+### SpikeyBot~version : <code>string</code> ℗
+The current bot version parsed from package.json.
+
+**Kind**: inner constant of [<code>SpikeyBot</code>](#SpikeyBot)  
 **Access**: private  
 <a name="SpikeyBot..testChannel"></a>
 

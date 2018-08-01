@@ -49,10 +49,14 @@
     "test:hg": "mocha --delay --grep \"START|Hungry Games|END\"",
     "test:main": "mocha --delay --grep \"START|Main Module|END\"",
     "run": "npm run kill; npm start",
+    "run:shards": "npm run kill; npm start:shards",
     "run:single": "npm run kill; npm run start:single",
-    "start": "(nodejs src/SpikeyBot.js dev onlymusic ./music.js &) && (nodejs src/SpikeyBot.js dev ./hungryGames.js ./main.js ./ticTacToe.js ./connect4.js &)",
-    "start:single": "nodejs src/SpikeyBot.js dev ./hungryGames.js ./main.js ./ticTacToe.js ./connect4.js ./music.js &",
-    "kill": "killall nodejs",
+    "run:shards:single": "npm run kill; npm run start:shards:single",
+    "start": "(nodejs src/SpikeyBot.js --dev --minimal ./music.js &) && (nodejs src/SpikeyBot.js --dev ./hungryGames.js ./main.js ./ticTacToe.js ./connect4.js &)",
+    "start:shards": "(nodejs src/SpikeyBot.js --dev --minimal ./music.js --shards &) && (nodejs src/SpikeyBot.js --dev --shards ./hungryGames.js ./main.js ./ticTacToe.js ./connect4.js &)",
+    "start:single": "nodejs src/SpikeyBot.js --dev ./hungryGames.js ./main.js ./ticTacToe.js ./connect4.js ./music.js &",
+    "start:shards:single": "nodejs src/SpikeyBot.js --dev --shards ./hungryGames.js ./main.js ./ticTacToe.js ./connect4.js ./music.js &",
+    "kill": "killall nodejs node",
     "docs": "npm run lint && bash .hooks/make-docs.sh",
     "docs:help": "nodejs src/json2md.js docs/*.json"
   }

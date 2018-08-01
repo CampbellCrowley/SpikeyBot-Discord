@@ -59,6 +59,25 @@ function Main() {
   /** @inheritdoc */
   this.myName = 'Main';
 
+  /**
+   * The current bot version parsed from package.json.
+   *
+   * @private
+   * @type {string}
+   */
+  let version = 'Unknown';
+  fs.readFile('package.json', function(err, data) {
+    if (err) {
+      console.log(err);
+      return;
+    }
+    try {
+      version = JSON.parse(data).version;
+    } catch (e) {
+      console.log(e);
+    }
+  });
+
   /*
    * Stores the required permissions for smiting a user. Defined at
    * initialize().
@@ -1572,10 +1591,7 @@ function Main() {
    * @listens SpikeyBot~Command#version
    */
   function commandVersion(msg) {
-    fs.readFile('package.json', function(err, data) {
-      self.common.reply(
-          msg, 'My current version is ' + JSON.parse(data).version);
-    });
+    self.common.reply(msg, 'My current version is ' + version);
   }
 
   /**

@@ -4,7 +4,6 @@ const Discord = require('discord.js');
 const fs = require('fs');
 const common = require('./common.js');
 const auth = require('../auth.js');
-const client = new Discord.Client();
 
 /**
  * @classdesc Main class that manages the bot.
@@ -19,6 +18,14 @@ const client = new Discord.Client();
  * @fires SpikeyBot~Command#*
  */
 function SpikeyBot() {
+  /**
+   * The current bot version parsed from package.json.
+   *
+   * @private
+   * @type {string}
+   */
+  const version = JSON.parse(fs.readFileSync('package.json')).version;
+
   /**
    * Is the bot currently responding as a unit test.
    *
@@ -72,7 +79,6 @@ function SpikeyBot() {
    * @type {SubModule[]}
    */
   let subModules = [];
-
   /**
    * Reason the bot was disconnected from Discord's servers.
    *
@@ -81,6 +87,24 @@ function SpikeyBot() {
    * @type {?string}
    */
   let disconnectReason = null;
+  /**
+   * Whether or not to spawn the bot as multiple shards. Enabled with `--shards`
+   * cli argument.
+   *
+   * @private
+   * @default
+   * @type {boolean}
+   */
+  let enableSharding = false;
+  /**
+   * The number of shards to use if sharding is enabled. 0 to let Discord
+   * decide. Set from `--shards=#` cli argument.
+   *
+   * @private
+   * @default
+   * @type {number}
+   */
+  let numShards = 0;
 
   // Parse cli args.
   for (let i in process.argv) {
@@ -92,10 +116,40 @@ function SpikeyBot() {
       minimal = true;
     } else if (process.argv[i] === 'test' || process.argv[i] === '--test') {
       testInstance = true;
+    } else if (process.argv[i].startsWith('--shards')) {
+      enableSharding = true;
+      if (process.argv[i].indexOf('=') > -1) {
+        numShards = process.argv[i].split('=')[1] * 1 || 0;
+      }
     } else if (i > 1 && typeof process.argv[i] === 'string') {
       subModuleNames.push(process.argv[i]);
     }
   }
+
+  const isDev = setDev;
+  common.begin(false, !isDev);
+
+  if (enableSharding) {
+    common.log(
+        'Sharding enabled with ' + (numShards || 'auto'), 'ShardingManager');
+    const manager = new Discord.ShardingManager('./src/SpikeyBot.js', {
+      token: setDev ? auth.dev : auth.release,
+      totalShards: numShards || 'auto',
+      shardArgs: process.argv.filter((arg) => {
+        return !arg.startsWith('--shards');
+      }),
+    });
+    manager.on('shardCreate', (shard) => {
+      common.log('Launched shard ' + shard.id, 'ShardingManager');
+    });
+    manager.spawn();
+    return;
+  }
+
+  // If we are not managing shards, just start normally.
+  const client = new Discord.Client();
+
+
   // Attempt to load submodules.
   for (let i in subModuleNames) {
     if (typeof subModuleNames[i] !== 'string' ||
@@ -109,10 +163,8 @@ function SpikeyBot() {
     }
   }
 
-  const isDev = setDev;
   const prefix = isDev ? '~' : '?';
 
-  common.begin(false, !isDev);
   if (minimal) common.log('STARTING IN MINIMAL MODE');
 
   /**
@@ -382,7 +434,7 @@ function SpikeyBot() {
    * @listens Discord~Client#ready
    */
   function onReady() {
-    common.log(`Logged in as ${client.user.tag}!`);
+    common.log(`Logged in as ${client.user.tag} (${version})`);
     if (!minimal) {
       if (testInstance) {
         updateGame('Running unit test...');
@@ -395,13 +447,17 @@ function SpikeyBot() {
       logChannel.send('Beginning in unit test mode');
     } else {
       let additional = '';
+      if (client.shard) {
+        additional +=
+            ' Shard: ' + client.shard.id + ' of ' + client.shard.count;
+      }
       if (disconnectReason) {
-        additional = ' after disconnecting from Discord!\n' + disconnectReason;
+        additional += ' after disconnecting from Discord!\n' + disconnectReason;
         disconnectReason = null;
       }
       logChannel.send(
-          'I just rebooted (JS) ' + (minimal ? 'MINIMAL' : 'FULL') +
-          additional);
+          'I just rebooted (JS' + version + ') ' +
+          (minimal ? 'MINIMAL' : 'FULL') + additional);
     }
     for (let i in subModules) {
       if (!subModules[i] instanceof Object || !subModules[i].begin) continue;
