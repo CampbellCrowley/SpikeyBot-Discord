@@ -359,6 +359,8 @@ Manages a Connect 4 game.
         * [.initialize()](#SubModule+initialize)
         * [.begin(prefix, Discord, client, command, common)](#SubModule+begin)
         * [.end()](#SubModule+end)
+        * [.log(msg)](#SubModule+log)
+        * [.error(msg)](#SubModule+error)
         * [.shutdown()](#SubModule+shutdown)
         * *[.save()](#SubModule+save)*
     * _inner_
@@ -532,6 +534,7 @@ specific to the subModule. Must be defined before begin() is called.
 Initialize this submodule.
 
 **Kind**: instance method of [<code>Connect4</code>](#Connect4)  
+**Access**: public  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -547,6 +550,31 @@ Initialize this submodule.
 Trigger subModule to shutdown and get ready for process terminating.
 
 **Kind**: instance method of [<code>Connect4</code>](#Connect4)  
+**Access**: public  
+<a name="SubModule+log"></a>
+
+### connect4.log(msg)
+Log using common.log, but automatically set name.
+
+**Kind**: instance method of [<code>Connect4</code>](#Connect4)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+error"></a>
+
+### connect4.error(msg)
+Log using common.error, but automatically set name.
+
+**Kind**: instance method of [<code>Connect4</code>](#Connect4)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
 <a name="SubModule+shutdown"></a>
 
 ### connect4.shutdown()
@@ -1357,6 +1385,8 @@ Hunger Games simulator.
         * [.initialize()](#SubModule+initialize)
         * [.begin(prefix, Discord, client, command, common)](#SubModule+begin)
         * [.end()](#SubModule+end)
+        * [.log(msg)](#SubModule+log)
+        * [.error(msg)](#SubModule+error)
         * [.shutdown()](#SubModule+shutdown)
         * [.save()](#SubModule+save)
     * _inner_
@@ -1833,6 +1863,7 @@ specific to the subModule. Must be defined before begin() is called.
 Initialize this submodule.
 
 **Kind**: instance method of [<code>HungryGames</code>](#HungryGames)  
+**Access**: public  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -1848,6 +1879,31 @@ Initialize this submodule.
 Trigger subModule to shutdown and get ready for process terminating.
 
 **Kind**: instance method of [<code>HungryGames</code>](#HungryGames)  
+**Access**: public  
+<a name="SubModule+log"></a>
+
+### hungryGames.log(msg)
+Log using common.log, but automatically set name.
+
+**Kind**: instance method of [<code>HungryGames</code>](#HungryGames)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+error"></a>
+
+### hungryGames.error(msg)
+Log using common.error, but automatically set name.
+
+**Kind**: instance method of [<code>HungryGames</code>](#HungryGames)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
 <a name="SubModule+shutdown"></a>
 
 ### hungryGames.shutdown()
@@ -3422,6 +3478,8 @@ Basic commands and features for the bot.
         * [.initialize()](#SubModule+initialize)
         * [.begin(prefix, Discord, client, command, common)](#SubModule+begin)
         * [.end()](#SubModule+end)
+        * [.log(msg)](#SubModule+log)
+        * [.error(msg)](#SubModule+error)
         * [.shutdown()](#SubModule+shutdown)
         * [.save()](#SubModule+save)
     * _inner_
@@ -3571,6 +3629,7 @@ specific to the subModule. Must be defined before begin() is called.
 Initialize this submodule.
 
 **Kind**: instance method of [<code>Main</code>](#Main)  
+**Access**: public  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -3586,6 +3645,31 @@ Initialize this submodule.
 Trigger subModule to shutdown and get ready for process terminating.
 
 **Kind**: instance method of [<code>Main</code>](#Main)  
+**Access**: public  
+<a name="SubModule+log"></a>
+
+### main.log(msg)
+Log using common.log, but automatically set name.
+
+**Kind**: instance method of [<code>Main</code>](#Main)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+error"></a>
+
+### main.error(msg)
+Log using common.error, but automatically set name.
+
+**Kind**: instance method of [<code>Main</code>](#Main)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
 <a name="SubModule+shutdown"></a>
 
 ### main.shutdown()
@@ -4258,6 +4342,8 @@ Music and audio related commands.
         * [.initialize()](#SubModule+initialize)
         * [.begin(prefix, Discord, client, command, common)](#SubModule+begin)
         * [.end()](#SubModule+end)
+        * [.log(msg)](#SubModule+log)
+        * [.error(msg)](#SubModule+error)
         * [.shutdown()](#SubModule+shutdown)
         * *[.save()](#SubModule+save)*
     * _static_
@@ -4379,6 +4465,7 @@ specific to the subModule. Must be defined before begin() is called.
 Initialize this submodule.
 
 **Kind**: instance method of [<code>Music</code>](#Music)  
+**Access**: public  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -4394,6 +4481,31 @@ Initialize this submodule.
 Trigger subModule to shutdown and get ready for process terminating.
 
 **Kind**: instance method of [<code>Music</code>](#Music)  
+**Access**: public  
+<a name="SubModule+log"></a>
+
+### music.log(msg)
+Log using common.log, but automatically set name.
+
+**Kind**: instance method of [<code>Music</code>](#Music)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+error"></a>
+
+### music.error(msg)
+Log using common.error, but automatically set name.
+
+**Kind**: instance method of [<code>Music</code>](#Music)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
 <a name="SubModule+shutdown"></a>
 
 ### music.shutdown()
@@ -5177,6 +5289,8 @@ Base class for all Sub-Modules.
         * *[.initialize()](#SubModule+initialize)*
         * [.begin(prefix, Discord, client, command, common)](#SubModule+begin)
         * [.end()](#SubModule+end)
+        * [.log(msg)](#SubModule+log)
+        * [.error(msg)](#SubModule+error)
         * *[.shutdown()](#SubModule+shutdown)*
         * *[.save()](#SubModule+save)*
     * _static_
@@ -5268,6 +5382,7 @@ specific to the subModule. Must be defined before begin() is called.
 Initialize this submodule.
 
 **Kind**: instance method of [<code>SubModule</code>](#SubModule)  
+**Access**: public  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -5283,6 +5398,31 @@ Initialize this submodule.
 Trigger subModule to shutdown and get ready for process terminating.
 
 **Kind**: instance method of [<code>SubModule</code>](#SubModule)  
+**Access**: public  
+<a name="SubModule+log"></a>
+
+### subModule.log(msg)
+Log using common.log, but automatically set name.
+
+**Kind**: instance method of [<code>SubModule</code>](#SubModule)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+error"></a>
+
+### subModule.error(msg)
+Log using common.error, but automatically set name.
+
+**Kind**: instance method of [<code>SubModule</code>](#SubModule)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
 <a name="SubModule+shutdown"></a>
 
 ### *subModule.shutdown()*
@@ -5341,6 +5481,8 @@ Manages a tic-tac-toe game.
         * [.initialize()](#SubModule+initialize)
         * [.begin(prefix, Discord, client, command, common)](#SubModule+begin)
         * [.end()](#SubModule+end)
+        * [.log(msg)](#SubModule+log)
+        * [.error(msg)](#SubModule+error)
         * [.shutdown()](#SubModule+shutdown)
         * *[.save()](#SubModule+save)*
     * _inner_
@@ -5523,6 +5665,7 @@ specific to the subModule. Must be defined before begin() is called.
 Initialize this submodule.
 
 **Kind**: instance method of [<code>TicTacToe</code>](#TicTacToe)  
+**Access**: public  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -5538,6 +5681,31 @@ Initialize this submodule.
 Trigger subModule to shutdown and get ready for process terminating.
 
 **Kind**: instance method of [<code>TicTacToe</code>](#TicTacToe)  
+**Access**: public  
+<a name="SubModule+log"></a>
+
+### ticTacToe.log(msg)
+Log using common.log, but automatically set name.
+
+**Kind**: instance method of [<code>TicTacToe</code>](#TicTacToe)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+error"></a>
+
+### ticTacToe.error(msg)
+Log using common.error, but automatically set name.
+
+**Kind**: instance method of [<code>TicTacToe</code>](#TicTacToe)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
 <a name="SubModule+shutdown"></a>
 
 ### ticTacToe.shutdown()

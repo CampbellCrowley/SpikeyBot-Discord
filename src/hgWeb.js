@@ -354,7 +354,7 @@ function HGWeb(hg) {
 
     socket.on('disconnect', () => {
       hg.common.log(
-          'Socket disconnected (' + Object.keys(sockets).length - 1 + '): ' +
+          'Socket disconnected (' + (Object.keys(sockets).length - 1) + '): ' +
               ipName,
           socket.id);
       if (loginInfo[session]) clearTimeout(loginInfo[session].refreshTimeout);
