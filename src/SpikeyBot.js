@@ -6,6 +6,23 @@ const common = require('./common.js');
 const auth = require('../auth.js');
 
 /**
+ * Handler for an unhandledRejection or uncaughtException, to prevent the bot
+ * from silently crashing without an error.
+ *
+ * @private
+ * @param {Object} reason Reason for rejection.
+ * @param {Promise} p The promise that caused the rejection.
+ * @listens Process#unhandledRejection
+ * @listens Process#uncaughtException
+ */
+function unhandledRejection(reason, p) {
+  // console.log('Unhandled Rejection at:\n', p /*, '\nreason:', reason*/);
+  console.log(reason);
+}
+process.on('unhandledRejection', unhandledRejection);
+process.on('uncaughtException', unhandledRejection);
+
+/**
  * @classdesc Main class that manages the bot.
  * @class
  * @listens Discord~Client#ready
@@ -444,7 +461,7 @@ function SpikeyBot() {
     }
     let logChannel = client.channels.get(common.logChannel);
     if (testInstance) {
-      logChannel.send('Beginning in unit test mode');
+      logChannel.send('Beginning in unit test mode (JS' + version + ')');
     } else {
       let additional = '';
       if (client.shard) {
@@ -648,7 +665,19 @@ function SpikeyBot() {
   function commandReboot(msg) {
     if (trustedIds.includes(msg.author.id)) {
       for (let i = 0; i < subModules.length; i++) {
-        if (subModules[i] && subModules[i].end) subModules[i].end();
+        try {
+          if (subModules[i] && subModules[i].save) subModules[i].save();
+        } catch (e) {
+          self.common.error(subModuleNames[i] + ' failed to save on reboot.');
+          console.error(e);
+        }
+        try {
+          if (subModules[i] && subModules[i].end) subModules[i].end();
+        } catch (e) {
+          self.common.error(
+              subModuleNames[i] + ' failed to shutdown properly.');
+          console.error(e);
+        }
       }
       if (minimal) {
         process.exit(-1);

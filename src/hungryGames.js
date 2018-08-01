@@ -42,7 +42,8 @@ function HungryGames() {
   const oldSaveFile = './save/hg.json';
   /**
    * The file path to save current state for a specific guild relative to
-   * HungryGames~guildSaveDir.
+   * Common~guildSaveDir.
+   * @see {@link Common~guildSaveDir}
    * @see {@link HungryGames~games}
    * @see {@link HungryGames~saveFileDir}
    * @see {@link HungryGames~hgSaveDir}
@@ -54,21 +55,9 @@ function HungryGames() {
    */
   const saveFile = 'game.json';
   /**
-   * The root file directory for finding saved data related to individual
-   * guilds.
-   * @see {@link HungryGames~games}
-   * @see {@link HungryGames~saveFile}
-   * @see {@link HungryGames~hgSaveDir}
-   *
-   * @private
-   * @type {string}
-   * @constant
-   * @default
-   */
-  const guildSaveDir = './save/guilds/';
-  /**
    * The file directory for finding saved data related to the hungry games data
    * of individual guilds.
+   * @see {@link Common~guildSaveDir}
    * @see {@link HungryGames~games}
    * @see {@link HungryGames~saveFile}
    * @see {@link HungryGames~saveFileDir}
@@ -1595,10 +1584,11 @@ function HungryGames() {
     if (find(id)) {
       if (command == 'all') {
         delete games[id];
-        rimraf(guildSaveDir + id + hgSaveDir, function(err) {
+        rimraf(self.common.guildSaveDir + id + hgSaveDir, function(err) {
           if (!err) return;
           self.common.error(
-              'Failed to delete directory: ' + guildSaveDir + id + hgSaveDir,
+              'Failed to delete directory: ' + self.common.guildSaveDir + id +
+                  hgSaveDir,
               'HG');
           console.error(err);
         });
@@ -5470,7 +5460,8 @@ function HungryGames() {
     if (Date.now() - findTimestamps[id] < findDelay) return null;
     findTimestamps[id] = Date.now();
     try {
-      let tmp = fs.readFileSync(guildSaveDir + id + hgSaveDir + saveFile);
+      let tmp =
+          fs.readFileSync(self.common.guildSaveDir + id + hgSaveDir + saveFile);
       try {
         games[id] = JSON.parse(tmp);
         self.common.log('Loaded game from file ' + id, 'HG');
@@ -5535,7 +5526,7 @@ function HungryGames() {
     Object.entries(games).forEach(function(obj) {
       const id = obj[0];
       const data = obj[1];
-      const dir = guildSaveDir + id + hgSaveDir;
+      const dir = self.common.guildSaveDir + id + hgSaveDir;
       const filename = dir + saveFile;
       if (opt == 'async') {
         mkdirp(dir, function(err) {
@@ -5580,9 +5571,9 @@ function HungryGames() {
    */
   function exit(code) {
     if (self.common && self.common.log) {
-      self.common.log('Caught exit!' + code, 'HG');
+      self.common.log('Caught exit! ' + code, 'HG');
     } else {
-      console.log('Caught exit!', code);
+      console.log('Caught exit! ', code);
     }
     if (self.initialized /* && code == -1 */) {
       self.save();
@@ -5606,7 +5597,7 @@ function HungryGames() {
     if (self.common && self.common.log) {
       self.common.log('Caught SIGINT!', 'HG');
     } else {
-      console.log('Caught SIGINT!');
+      console.log('HG: Caught SIGINT!');
     }
     if (self.initialized) {
       try {

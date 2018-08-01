@@ -30,6 +30,15 @@
 </dd>
 </dl>
 
+## Functions
+
+<dl>
+<dt><a href="#unhandledRejection">unhandledRejection(reason, p)</a> ℗</dt>
+<dd><p>Handler for an unhandledRejection or uncaughtException, to prevent the bot
+from silently crashing without an error.</p>
+</dd>
+</dl>
+
 ## Typedefs
 
 <dl>
@@ -50,6 +59,8 @@
         * [.spikeyId](#Common+spikeyId) : <code>string</code>
         * [.logChannel](#Common+logChannel) : <code>string</code>
         * [.webURL](#Common+webURL) : <code>string</code>
+        * [.guildSaveDir](#Common+guildSaveDir) : <code>string</code>
+        * [.userSaveDir](#Common+userSaveDir) : <code>string</code>
         * [.begin(_, isRelease)](#Common+begin)
         * [.padIp(str)](#Common+padIp) ⇒ <code>string</code>
         * [.getIPName(ip)](#Common+getIPName) ⇒ <code>string</code>
@@ -64,6 +75,8 @@
         * [.spikeyId](#Common.spikeyId) : <code>string</code>
         * [.logChannel](#Common.logChannel) : <code>string</code>
         * [.webURL](#Common.webURL) : <code>string</code>
+        * [.guildSaveDir](#Common.guildSaveDir) : <code>string</code>
+        * [.userSaveDir](#Common.userSaveDir) : <code>string</code>
     * _inner_
         * [~mycolor](#Common..mycolor) : <code>number</code> ℗
         * [~title](#Common..title) : <code>string</code> ℗
@@ -102,6 +115,23 @@ The channel id for the channel to send general log messages to.
 The website base URL for pointing to for more help and documentation.
 
 **Kind**: instance constant of [<code>Common</code>](#Common)  
+**Default**: <code>&quot;https://www.spikeybot.com/&quot;</code>  
+<a name="Common+guildSaveDir"></a>
+
+### common.guildSaveDir : <code>string</code>
+The root file directory for finding saved data related to individual
+guilds.
+
+**Kind**: instance constant of [<code>Common</code>](#Common)  
+**Default**: <code>&quot;./save/guilds/&quot;</code>  
+<a name="Common+userSaveDir"></a>
+
+### common.userSaveDir : <code>string</code>
+The root file directory for finding saved data related to individual
+users.
+
+**Kind**: instance constant of [<code>Common</code>](#Common)  
+**Default**: <code>&quot;./save/users/&quot;</code>  
 <a name="Common+begin"></a>
 
 ### common.begin(_, isRelease)
@@ -244,6 +274,20 @@ The channel id for the channel to send general log messages to.
 
 ### Common.webURL : <code>string</code>
 The website base URL for pointing to for more help and documentation.
+
+**Kind**: static constant of [<code>Common</code>](#Common)  
+<a name="Common.guildSaveDir"></a>
+
+### Common.guildSaveDir : <code>string</code>
+The root file directory for finding saved data related to individual
+guilds.
+
+**Kind**: static constant of [<code>Common</code>](#Common)  
+<a name="Common.userSaveDir"></a>
+
+### Common.userSaveDir : <code>string</code>
+The root file directory for finding saved data related to individual
+users.
 
 **Kind**: static constant of [<code>Common</code>](#Common)  
 <a name="Common..mycolor"></a>
@@ -1338,7 +1382,6 @@ Hunger Games simulator.
         * [~optionMessages](#HungryGames..optionMessages) : <code>Object.&lt;Discord~Message&gt;</code> ℗
         * [~oldSaveFile](#HungryGames..oldSaveFile) : <code>string</code> ℗
         * [~saveFile](#HungryGames..saveFile) : <code>string</code> ℗
-        * [~guildSaveDir](#HungryGames..guildSaveDir) : <code>string</code> ℗
         * [~hgSaveDir](#HungryGames..hgSaveDir) : <code>string</code> ℗
         * [~eventFile](#HungryGames..eventFile) : <code>string</code> ℗
         * [~messageFile](#HungryGames..messageFile) : <code>string</code> ℗
@@ -2044,30 +2087,16 @@ format.
 
 ### HungryGames~saveFile : <code>string</code> ℗
 The file path to save current state for a specific guild relative to
-HungryGames~guildSaveDir.
+Common~guildSaveDir.
 
 **Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
 **Default**: <code>&quot;game.json&quot;</code>  
 **Access**: private  
 **See**
 
+- [Common~guildSaveDir](Common~guildSaveDir)
 - [games](#HungryGames..games)
 - [HungryGames~saveFileDir](HungryGames~saveFileDir)
-- [hgSaveDir](#HungryGames..hgSaveDir)
-
-<a name="HungryGames..guildSaveDir"></a>
-
-### HungryGames~guildSaveDir : <code>string</code> ℗
-The root file directory for finding saved data related to individual
-guilds.
-
-**Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
-**Default**: <code>&quot;./save/guilds/&quot;</code>  
-**Access**: private  
-**See**
-
-- [games](#HungryGames..games)
-- [saveFile](#HungryGames..saveFile)
 - [hgSaveDir](#HungryGames..hgSaveDir)
 
 <a name="HungryGames..hgSaveDir"></a>
@@ -2081,6 +2110,7 @@ of individual guilds.
 **Access**: private  
 **See**
 
+- [Common~guildSaveDir](Common~guildSaveDir)
 - [games](#HungryGames..games)
 - [saveFile](#HungryGames..saveFile)
 - [HungryGames~saveFileDir](HungryGames~saveFileDir)
@@ -3393,7 +3423,7 @@ Basic commands and features for the bot.
         * [.begin(prefix, Discord, client, command, common)](#SubModule+begin)
         * [.end()](#SubModule+end)
         * [.shutdown()](#SubModule+shutdown)
-        * *[.save()](#SubModule+save)*
+        * [.save()](#SubModule+save)
     * _inner_
         * [~version](#Main..version) : <code>string</code> ℗
         * [~prevUserSayId](#Main..prevUserSayId) : <code>string</code> ℗
@@ -3409,6 +3439,8 @@ Basic commands and features for the bot.
         * [~banMsgs](#Main..banMsgs) : <code>Array.&lt;string&gt;</code> ℗
         * [~defaultCode](#Main..defaultCode) : <code>Array.&lt;string&gt;</code> ℗
         * [~helpObject](#Main..helpObject) ℗
+        * [~mkAndWrite(filename, dir, data)](#Main..mkAndWrite) ℗
+        * [~mkAndWriteSync(filename, dir, data)](#Main..mkAndWriteSync) ℗
         * [~onGuildCreate(guild)](#Main..onGuildCreate) ℗
         * [~onGuildDelete(guild)](#Main..onGuildDelete) ℗
         * [~onGuildBanAdd(guild, user)](#Main..onGuildBanAdd) ℗
@@ -3448,6 +3480,7 @@ Basic commands and features for the bot.
         * [~commandRollDie(msg)](#Main..commandRollDie) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandPerms(msg)](#Main..commandPerms) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~prePad(num, digits)](#Main..prePad) ⇒ <code>string</code> ℗
+        * [~updateRiggedCounter(newNum, increment)](#Main..updateRiggedCounter) ℗
         * [~sigint()](#Main..sigint) ℗
         * [~Timer](#Main..Timer) : <code>Object</code>
 
@@ -3565,10 +3598,11 @@ Shutdown and disable this submodule. Removes all event listeners.
 **Access**: protected  
 <a name="SubModule+save"></a>
 
-### *main.save()*
+### main.save()
 Saves all data to files necessary for saving current state.
 
-**Kind**: instance abstract method of [<code>Main</code>](#Main)  
+**Kind**: instance method of [<code>Main</code>](#Main)  
+**Overrides**: [<code>save</code>](#SubModule+save)  
 <a name="Main..version"></a>
 
 ### Main~version : <code>string</code> ℗
@@ -3670,6 +3704,38 @@ The object that stores all data to be formatted into the help message.
 
 **Kind**: inner constant of [<code>Main</code>](#Main)  
 **Access**: private  
+<a name="Main..mkAndWrite"></a>
+
+### Main~mkAndWrite(filename, dir, data) ℗
+Write data to a file and make sure the directory exists or create it if it
+doesn't. Async
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+**See**: [mkAndWriteSync](#Main..mkAndWriteSync)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| filename | <code>string</code> | The name of the file including the directory. |
+| dir | <code>string</code> | The directory path without the file's name. |
+| data | <code>string</code> | The data to write to the file. |
+
+<a name="Main..mkAndWriteSync"></a>
+
+### Main~mkAndWriteSync(filename, dir, data) ℗
+Write data to a file and make sure the directory exists or create it if it
+doesn't. Synchronous
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+**See**: [mkAndWrite](#Main..mkAndWrite)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| filename | <code>string</code> | The name of the file including the directory. |
+| dir | <code>string</code> | The directory path without the file's name. |
+| data | <code>string</code> | The data to write to the file. |
+
 <a name="Main..onGuildCreate"></a>
 
 ### Main~onGuildCreate(guild) ℗
@@ -4155,6 +4221,20 @@ Pad a number with leading zeroes so that it is `digits` long.
 | --- | --- | --- |
 | num | <code>string</code> \| <code>number</code> | The number to pad with zeroes. |
 | digits | <code>number</code> | The minimum number of digits to make the output have. |
+
+<a name="Main..updateRiggedCounter"></a>
+
+### Main~updateRiggedCounter(newNum, increment) ℗
+Receive message from another shard telling us to update our "rigged"
+counter.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| newNum | <code>number</code> | The new value to set the counter to. |
+| increment | <code>number</code> | The amount that the value has changed due to this event. |
 
 <a name="Main..sigint"></a>
 
@@ -5566,6 +5646,20 @@ player 2 won, 3 if draw.
 | --- | --- | --- |
 | board | <code>Array.&lt;number&gt;</code> | Array of 9 numbers defining a board. 0 is nobody, 1 is player 1, 2 is player 2. |
 | latest | <code>number</code> | The index where the latest move occurred. |
+
+<a name="unhandledRejection"></a>
+
+## unhandledRejection(reason, p) ℗
+Handler for an unhandledRejection or uncaughtException, to prevent the bot
+from silently crashing without an error.
+
+**Kind**: global function  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| reason | <code>Object</code> | Reason for rejection. |
+| p | <code>Promise</code> | The promise that caused the rejection. |
 
 <a name="commandHandler"></a>
 
