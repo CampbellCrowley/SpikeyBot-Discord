@@ -298,7 +298,7 @@ Manages a Connect 4 game.
             * [new this.Game(players, msg)](#new_Connect4+Game_new)
             * [.players](#Connect4+Game+players) : <code>Object</code>
             * [.board](#Connect4+Game+board) : <code>Array.&lt;Array.&lt;number&gt;&gt;</code>
-            * [.turn](#Connect4+Game+turn)
+            * [.turn](#Connect4+Game+turn) : <code>number</code>
             * [.msg](#Connect4+Game+msg) : <code>Discord~Message</code>
             * [.print([winner])](#Connect4+Game+print)
         * [.helpMessage](#SubModule+helpMessage) : <code>string</code> \| <code>Discord~MessageEmbed</code>
@@ -337,7 +337,7 @@ Manages a Connect 4 game.
     * [new this.Game(players, msg)](#new_Connect4+Game_new)
     * [.players](#Connect4+Game+players) : <code>Object</code>
     * [.board](#Connect4+Game+board) : <code>Array.&lt;Array.&lt;number&gt;&gt;</code>
-    * [.turn](#Connect4+Game+turn)
+    * [.turn](#Connect4+Game+turn) : <code>number</code>
     * [.msg](#Connect4+Game+msg) : <code>Discord~Message</code>
     * [.print([winner])](#Connect4+Game+print)
 
@@ -366,7 +366,7 @@ The players in this game.
 **Kind**: instance property of [<code>Game</code>](#Connect4+Game)  
 <a name="Connect4+Game+turn"></a>
 
-#### game.turn
+#### game.turn : <code>number</code>
 Which player's turn it is. Either 1 or 2.
 
 **Kind**: instance property of [<code>Game</code>](#Connect4+Game)  
@@ -616,18 +616,22 @@ Creates a web interface for managing the Hungry Games.
 * [HGWeb](#HGWeb)
     * [new HGWeb(hg)](#new_HGWeb_new)
     * _instance_
-        * [.shutdown()](#HGWeb+shutdown)
+        * [.shutdown([skipSave])](#HGWeb+shutdown)
         * [.dayStateChange(gId)](#HGWeb+dayStateChange)
     * _inner_
         * [~loginInfo](#HGWeb..loginInfo) : <code>Object.&lt;Object&gt;</code> ℗
         * [~sockets](#HGWeb..sockets) : <code>Object.&lt;Socket&gt;</code> ℗
         * [~tokenHost](#HGWeb..tokenHost) : <code>Object</code> ℗
         * [~apiHost](#HGWeb..apiHost) : <code>Object</code> ℗
+        * [~startClient()](#HGWeb..startClient) ℗
         * [~handler(req, res)](#HGWeb..handler) ℗
         * [~purgeSessions()](#HGWeb..purgeSessions) ℗
         * [~socketConnection(socket)](#HGWeb..socketConnection) ℗
             * [~receivedLoginInfo(data)](#HGWeb..socketConnection..receivedLoginInfo) ℗
+            * [~callSocketFunction(func, args)](#HGWeb..socketConnection..callSocketFunction) ℗
+        * [~clientSocketConnection(socket)](#HGWeb..clientSocketConnection) ℗
         * [~replyNoPerm(socket, cmd)](#HGWeb..replyNoPerm) ℗
+        * [~checkMyGuild(gId)](#HGWeb..checkMyGuild) ⇒ <code>boolean</code> ℗
         * [~checkPerm(userData, gId)](#HGWeb..checkPerm) ⇒ <code>boolean</code> ℗
         * [~checkChannelPerm(userData, gId, cId)](#HGWeb..checkChannelPerm) ⇒ <code>boolean</code> ℗
         * [~fetchIdentity(loginInfo, cb)](#HGWeb..fetchIdentity) ℗
@@ -637,6 +641,25 @@ Creates a web interface for managing the Hungry Games.
         * [~makeRefreshTimeout(loginInfo, cb)](#HGWeb..makeRefreshTimeout) ℗
         * [~refreshToken(refreshToken, cb)](#HGWeb..refreshToken) ℗
         * [~authorizeRequest(code, cb)](#HGWeb..authorizeRequest) ℗
+        * [~fetchGuilds(userData, socket)](#HGWeb..fetchGuilds) : <code>HGWeb~SocketFunction</code> ℗
+            * [~done(guilds, [err], [response])](#HGWeb..fetchGuilds..done) ℗
+        * [~fetchMember(userData, socket, gId, mId)](#HGWeb..fetchMember) : <code>HGWeb~SocketFunction</code> ℗
+        * [~fetchChannel(userData, socket, gId, cId)](#HGWeb..fetchChannel) : <code>HGWeb~SocketFunction</code> ℗
+        * [~fetchGames(userData, socket, gId)](#HGWeb..fetchGames) : <code>HGWeb~SocketFunction</code> ℗
+        * [~fetchDay(userData, socket, gId)](#HGWeb..fetchDay) : <code>HGWeb~SocketFunction</code> ℗
+        * [~excludeMember(userData, socket, gId, mId)](#HGWeb..excludeMember) : <code>HGWeb~SocketFunction</code> ℗
+        * [~includeMember(userData, socket, gId, mId)](#HGWeb..includeMember) : <code>HGWeb~SocketFunction</code> ℗
+        * [~toggleOption(userData, socket, gId, option, value)](#HGWeb..toggleOption) : <code>HGWeb~SocketFunction</code> ℗
+        * [~createGame(userData, socket, gId)](#HGWeb..createGame) : <code>HGWeb~SocketFunction</code> ℗
+        * [~resetGame(userData, socket, gId, cmd)](#HGWeb..resetGame) : <code>HGWeb~SocketFunction</code> ℗
+        * [~startGame(userData, socket, gId, cId)](#HGWeb..startGame) : <code>HGWeb~SocketFunction</code> ℗
+        * [~startAutoplay(userData, socket, gId, cId)](#HGWeb..startAutoplay) : <code>HGWeb~SocketFunction</code> ℗
+        * [~nextDay(userData, socket, gId, cId)](#HGWeb..nextDay) : <code>HGWeb~SocketFunction</code> ℗
+        * [~endGame(userData, socket, gId)](#HGWeb..endGame) : <code>HGWeb~SocketFunction</code> ℗
+        * [~pauseAutoplay(userData, socket, gId)](#HGWeb..pauseAutoplay) : <code>HGWeb~SocketFunction</code> ℗
+        * [~editTeam(userData, socket, gId, cmd, one, two)](#HGWeb..editTeam) : <code>HGWeb~SocketFunction</code> ℗
+        * [~createEvent(userData, socket, gId, type, message, nV, nA, oV, oA, kV, kA)](#HGWeb..createEvent) : <code>HGWeb~SocketFunction</code> ℗
+        * [~removeEvent(userData, socket, gId, type, event)](#HGWeb..removeEvent) : <code>HGWeb~SocketFunction</code> ℗
 
 <a name="new_HGWeb_new"></a>
 
@@ -648,11 +671,16 @@ Creates a web interface for managing the Hungry Games.
 
 <a name="HGWeb+shutdown"></a>
 
-### hgWeb.shutdown()
+### hgWeb.shutdown([skipSave])
 Causes a full shutdown of all servers.
 
 **Kind**: instance method of [<code>HGWeb</code>](#HGWeb)  
 **Access**: public  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [skipSave] | <code>boolean</code> | <code>false</code> | Skip writing data to file. |
+
 <a name="HGWeb+dayStateChange"></a>
 
 ### hgWeb.dayStateChange(gId)
@@ -699,6 +727,13 @@ The url to send a request to the discord api.
 **Kind**: inner constant of [<code>HGWeb</code>](#HGWeb)  
 **Default**: <code>{&quot;protocol&quot;:&quot;https:&quot;,&quot;host&quot;:&quot;discordapp.com&quot;,&quot;path&quot;:&quot;/api&quot;,&quot;method&quot;:&quot;GET&quot;}</code>  
 **Access**: private  
+<a name="HGWeb..startClient"></a>
+
+### HGWeb~startClient() ℗
+Start a socketio client connection to the primary running server.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
 <a name="HGWeb..handler"></a>
 
 ### HGWeb~handler(req, res) ℗
@@ -729,12 +764,18 @@ Handler for a new socket connecting.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| socket | <code>Socket</code> | The socket.io socket that connected. |
+| socket | <code>socketIo~Socket</code> | The socket.io socket that connected. |
+
+
+* [~socketConnection(socket)](#HGWeb..socketConnection) ℗
+    * [~receivedLoginInfo(data)](#HGWeb..socketConnection..receivedLoginInfo) ℗
+    * [~callSocketFunction(func, args)](#HGWeb..socketConnection..callSocketFunction) ℗
 
 <a name="HGWeb..socketConnection..receivedLoginInfo"></a>
 
 #### socketConnection~receivedLoginInfo(data) ℗
-Received the login credentials for user, lets store it for this session,
+Received the login credentials for user, lets store it for this
+session,
 and refresh the tokens when necessary.
 
 **Kind**: inner method of [<code>socketConnection</code>](#HGWeb..socketConnection)  
@@ -743,6 +784,32 @@ and refresh the tokens when necessary.
 | Param | Type | Description |
 | --- | --- | --- |
 | data | <code>Object</code> | User data. |
+
+<a name="HGWeb..socketConnection..callSocketFunction"></a>
+
+#### socketConnection~callSocketFunction(func, args) ℗
+Calls the functions with added arguments, and copies the request to all
+sibling clients.
+
+**Kind**: inner method of [<code>socketConnection</code>](#HGWeb..socketConnection)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| func | <code>function</code> | The function to call. |
+| args | <code>Array.&lt;\*&gt;</code> | Array of arguments to send to function. |
+
+<a name="HGWeb..clientSocketConnection"></a>
+
+### HGWeb~clientSocketConnection(socket) ℗
+Handler for connecting as a client to the server.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| socket | <code>socketIo~Socket</code> | The socket.io socket that connected. |
 
 <a name="HGWeb..replyNoPerm"></a>
 
@@ -757,6 +824,19 @@ they attempted failed due to insufficient permission.
 | --- | --- | --- |
 | socket | <code>Socket</code> | The socket.io socket to reply on. |
 | cmd | <code>string</code> | THe command the client attempted. |
+
+<a name="HGWeb..checkMyGuild"></a>
+
+### HGWeb~checkMyGuild(gId) ⇒ <code>boolean</code> ℗
+Checks if the current shard is responsible for the requested guild.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Returns**: <code>boolean</code> - True if this shard has this guild.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| gId | <code>number</code> \| <code>string</code> | The guild id to check. |
 
 <a name="HGWeb..checkPerm"></a>
 
@@ -885,6 +965,311 @@ Authenticate with the discord server using a login code.
 | --- | --- | --- |
 | code | <code>string</code> | The login code received from our client. |
 | cb | <code>basicCallback</code> | The response from the https request with error and data arguments. |
+
+<a name="HGWeb..fetchGuilds"></a>
+
+### HGWeb~fetchGuilds(userData, socket) : <code>HGWeb~SocketFunction</code> ℗
+Fetch all relevant data for all mutual guilds with the user and send it to
+the user.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+
+<a name="HGWeb..fetchGuilds..done"></a>
+
+#### fetchGuilds~done(guilds, [err], [response]) ℗
+The callback for each response with the requested data. Replies to the
+user once all requests have replied.
+
+**Kind**: inner method of [<code>fetchGuilds</code>](#HGWeb..fetchGuilds)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| guilds | <code>string</code> \| <code>Object</code> | Either the guild data to send to the user, or 'guilds' if this is a reply from a sibling client. |
+| [err] | <code>string</code> | The error that occurred, or null if no error. |
+| [response] | <code>Object</code> | The guild data if `guilds` equals 'guilds'. |
+
+<a name="HGWeb..fetchMember"></a>
+
+### HGWeb~fetchMember(userData, socket, gId, mId) : <code>HGWeb~SocketFunction</code> ℗
+Fetch data about a member of a guild.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| mId | <code>number</code> \| <code>string</code> | The member's id to lookup. |
+
+<a name="HGWeb..fetchChannel"></a>
+
+### HGWeb~fetchChannel(userData, socket, gId, cId) : <code>HGWeb~SocketFunction</code> ℗
+Fetch data about a channel of a guild.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| cId | <code>number</code> \| <code>string</code> | The channel's id to lookup. |
+
+<a name="HGWeb..fetchGames"></a>
+
+### HGWeb~fetchGames(userData, socket, gId) : <code>HGWeb~SocketFunction</code> ℗
+Fetch all game data within a guild.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.getGame}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+
+<a name="HGWeb..fetchDay"></a>
+
+### HGWeb~fetchDay(userData, socket, gId) : <code>HGWeb~SocketFunction</code> ℗
+Fetch the updated game's day information.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.getGame}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+
+<a name="HGWeb..excludeMember"></a>
+
+### HGWeb~excludeMember(userData, socket, gId, mId) : <code>HGWeb~SocketFunction</code> ℗
+Exclude a member from the Games.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.excludeUsers}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| mId | <code>number</code> \| <code>string</code> | The member id to exclude. |
+
+<a name="HGWeb..includeMember"></a>
+
+### HGWeb~includeMember(userData, socket, gId, mId) : <code>HGWeb~SocketFunction</code> ℗
+Include a member in the Games.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.includeUsers}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| mId | <code>number</code> \| <code>string</code> | The member id to include. |
+
+<a name="HGWeb..toggleOption"></a>
+
+### HGWeb~toggleOption(userData, socket, gId, option, value) : <code>HGWeb~SocketFunction</code> ℗
+Toggle an option in the Games.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.setOption}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| option | <code>string</code> | The option to change. |
+| value | <code>string</code> \| <code>number</code> | The value to set option to. |
+
+<a name="HGWeb..createGame"></a>
+
+### HGWeb~createGame(userData, socket, gId) : <code>HGWeb~SocketFunction</code> ℗
+Create a Game.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.createGame}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+
+<a name="HGWeb..resetGame"></a>
+
+### HGWeb~resetGame(userData, socket, gId, cmd) : <code>HGWeb~SocketFunction</code> ℗
+Reset game data.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.resetGame}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| cmd | <code>string</code> | Command specifying what data to delete. |
+
+<a name="HGWeb..startGame"></a>
+
+### HGWeb~startGame(userData, socket, gId, cId) : <code>HGWeb~SocketFunction</code> ℗
+Start the game.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.startGame}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| cId | <code>number</code> \| <code>string</code> | Channel to start the game in. |
+
+<a name="HGWeb..startAutoplay"></a>
+
+### HGWeb~startAutoplay(userData, socket, gId, cId) : <code>HGWeb~SocketFunction</code> ℗
+Enable autoplay.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.startAutoplay}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| cId | <code>number</code> \| <code>string</code> | Channel to send the messages in. |
+
+<a name="HGWeb..nextDay"></a>
+
+### HGWeb~nextDay(userData, socket, gId, cId) : <code>HGWeb~SocketFunction</code> ℗
+Start the next day.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.nextDay}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| cId | <code>number</code> \| <code>string</code> | Channel to send the messages in. |
+
+<a name="HGWeb..endGame"></a>
+
+### HGWeb~endGame(userData, socket, gId) : <code>HGWeb~SocketFunction</code> ℗
+End the game.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.endGame}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+
+<a name="HGWeb..pauseAutoplay"></a>
+
+### HGWeb~pauseAutoplay(userData, socket, gId) : <code>HGWeb~SocketFunction</code> ℗
+Disable autoplay.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.pauseAutoplay}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+
+<a name="HGWeb..editTeam"></a>
+
+### HGWeb~editTeam(userData, socket, gId, cmd, one, two) : <code>HGWeb~SocketFunction</code> ℗
+Edit the teams.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.editTeam}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| cmd | <code>string</code> | The command to run. |
+| one | <code>string</code> | The first argument. |
+| two | <code>string</code> | The second argument. |
+
+<a name="HGWeb..createEvent"></a>
+
+### HGWeb~createEvent(userData, socket, gId, type, message, nV, nA, oV, oA, kV, kA) : <code>HGWeb~SocketFunction</code> ℗
+Create a game event.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.createEvent}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| type | <code>string</code> | The type of event. |
+| message | <code>string</code> | The message of the event. |
+| nV | <code>string</code> | Number of victims. |
+| nA | <code>string</code> | Number of attackers. |
+| oV | <code>string</code> | Outcome of victims. |
+| oA | <code>string</code> | Outcome of attackers. |
+| kV | <code>string</code> | Do the victims kill. |
+| kA | <code>string</code> | Do the attackers kill. |
+
+<a name="HGWeb..removeEvent"></a>
+
+### HGWeb~removeEvent(userData, socket, gId, type, event) : <code>HGWeb~SocketFunction</code> ℗
+Remove a game event.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.removeEvent}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| type | <code>string</code> | The type of event. |
+| event | [<code>Event</code>](#HungryGames..Event) | The game event to remove. |
 
 <a name="HungryGames"></a>
 
@@ -4880,7 +5265,7 @@ Manages a tic-tac-toe game.
             * _instance_
                 * [.players](#TicTacToe+Game+players) : <code>Object</code>
                 * [.board](#TicTacToe+Game+board) : <code>Array.&lt;number&gt;</code>
-                * [.turn](#TicTacToe+Game+turn)
+                * [.turn](#TicTacToe+Game+turn) : <code>number</code>
                 * [.msg](#TicTacToe+Game+msg) : <code>Discord~Message</code>
                 * [.print([winner])](#TicTacToe+Game+print)
             * _inner_
@@ -4920,7 +5305,7 @@ Manages a tic-tac-toe game.
     * _instance_
         * [.players](#TicTacToe+Game+players) : <code>Object</code>
         * [.board](#TicTacToe+Game+board) : <code>Array.&lt;number&gt;</code>
-        * [.turn](#TicTacToe+Game+turn)
+        * [.turn](#TicTacToe+Game+turn) : <code>number</code>
         * [.msg](#TicTacToe+Game+msg) : <code>Discord~Message</code>
         * [.print([winner])](#TicTacToe+Game+print)
     * _inner_
@@ -4952,7 +5337,7 @@ space of the board. 0 is nobody, 1 is player 1, 2 is player 2.
 **Kind**: instance property of [<code>Game</code>](#TicTacToe+Game)  
 <a name="TicTacToe+Game+turn"></a>
 
-#### game.turn
+#### game.turn : <code>number</code>
 Which player's turn it is. Either 1 or 2.
 
 **Kind**: instance property of [<code>Game</code>](#TicTacToe+Game)  

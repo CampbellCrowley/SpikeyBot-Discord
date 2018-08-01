@@ -66,7 +66,7 @@
 | ?ping  |  Want to know what my delay to the server is? I can tell you my ping! |
 | ?timer 'seconds' 'message...'  |  Set a timer for a certain number of seconds. The bot will DM you the message at the end. No options lists timers. |
 
-## Games
+## Games Stuff
 
 | Command | Description |
 | --- | --- |
