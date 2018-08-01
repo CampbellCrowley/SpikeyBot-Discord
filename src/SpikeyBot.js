@@ -665,7 +665,11 @@ function SpikeyBot() {
             common.error('Failed to save reboot.dat');
             console.log(err);
           }
-          process.exit(-1);
+          if (client.shard) {
+            client.shard.respawnAll();
+          } else {
+            process.exit(-1);
+          }
         });
       }
     } else {
