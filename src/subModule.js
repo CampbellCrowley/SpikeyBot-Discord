@@ -95,6 +95,7 @@ function SubModule() {
   /**
    * Initialize this submodule.
    *
+   * @public
    * @param {string} prefix The global prefix for this bot.
    * @param {Discord} Discord The Discord object for the API library.
    * @param {Discord~Client} client The client that represents this bot.
@@ -112,18 +113,47 @@ function SubModule() {
 
     if (this.initialized) return;
     this.initialize();
-    this.common.log(this.myName + ' Init', this.myName);
+    this.log(this.myName + ' Init');
     this.initialized = true;
   };
 
   /**
    * Trigger subModule to shutdown and get ready for process terminating.
+   *
+   * @public
    */
   this.end = function() {
     if (!this.initialized) return;
     this.shutdown();
     this.initialized = false;
-    this.common.log(this.myName + ' Shutdown', this.myName);
+    this.log(this.myName + ' Shutdown', this.myName);
+  };
+
+  /**
+   * Log using common.log, but automatically set name.
+   *
+   * @protected
+   * @param {string} msg The message to log.
+   */
+  this.log = function(msg) {
+    if (this.client.shard) {
+      this.common.log(msg, this.client.shard.id + ' ' + this.myName);
+    } else {
+      this.common.log(msg, this.myName);
+    }
+  };
+  /**
+   * Log using common.error, but automatically set name.
+   *
+   * @protected
+   * @param {string} msg The message to log.
+   */
+  this.error = function(msg) {
+    if (this.client.shard) {
+      this.common.error(msg, this.client.shard.id + ' ' + this.myName);
+    } else {
+      this.common.error(msg, this.myName);
+    }
   };
 
   /**
