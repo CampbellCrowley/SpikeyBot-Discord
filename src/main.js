@@ -54,6 +54,7 @@ math.config({matrix: 'Array'});
  * @listens SpikeyBot~Command#d
  * @listens SpikeyBot~Command#toggleMute
  * @listens SpikeyBot~Command#perms
+ * @listens SpikeyBot~Commands#stats
  */
 function Main() {
   const self = this;
@@ -257,6 +258,7 @@ function Main() {
     self.command.on(['dice', 'die', 'roll', 'd'], commandRollDie);
     self.command.on('togglemute', commandToggleMute, true);
     self.command.on('perms', commandPerms, true);
+    self.command.on('stats', commandStats);
 
     self.client.on('guildCreate', onGuildCreate);
     self.client.on('guildDelete', onGuildDelete);
@@ -401,6 +403,16 @@ function Main() {
           this.riggedCounter = newNum;
         }
       };
+      /* eslint-disable no-unused-vars */
+      /**
+       * Receive message from another shard asking for out statistics.
+       * @see {@link Main~getStats()}
+       *
+       * @private
+       * @returns {Object} The statistics we collected.
+       */
+      self.client.getStats = getStats;
+      /* eslint-enable no-unused-vars */
     }
   };
 
@@ -434,6 +446,7 @@ function Main() {
     self.command.deleteEvent(['dice', 'die', 'roll', 'd']);
     self.command.deleteEvent('togglemute');
     self.command.deleteEvent('perms');
+    self.command.deleteEvent('stats');
 
     self.client.removeListener('guildCreate', onGuildCreate);
     self.client.removeListener('guildDelete', onGuildDelete);
@@ -1772,14 +1785,19 @@ function Main() {
     if (msg.mentions.users.size !== 0) {
       user = msg.mentions.users.first();
     }
-    if (user.presence.game) {
+    if (user.presence.activity) {
       self.common.reply(
           msg, user.username + ': ' + user.presence.status,
-          user.presence.game.type + ': ' + user.presence.game.name + '(' +
-              user.presence.game.url + ')');
+          user.presence.activity.type + ': ' + user.presence.activity.name +
+              '(' + user.presence.activity.url + ')\nDetails: ' +
+              (user.presence.activity.details || 'none') + ' (' +
+              ((user.activity.party && user.activity.party.size.join('/')) ||
+               'No party') +
+              ')');
     } else {
       self.common.reply(
-          msg, user.username + ': ' + user.presence.status, user.presence.game);
+          msg, user.username + ': ' + user.presence.status,
+          user.presence.activity);
     }
   }
 
@@ -1919,6 +1937,145 @@ function Main() {
       str = '0' + str;
     }
     return str;
+  }
+
+  /**
+   * Send information about the bot.
+   *
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens SpikeyBot~Command#stats
+   */
+  function commandStats(msg) {
+    let numShards = 0;
+    let reqShard = 0;
+    if (self.client.shard) {
+      numShards = self.client.shard.count;
+      reqShard = self.client.shard.id;
+    }
+    let values = {
+      numGuilds: 0,
+      numUsers: 0,
+      numBots: 0,
+      numUsersOnline: 0,
+      numChannels: 0,
+      uptimes: [],
+      activities: {},
+      largestActivity: {name: 'Unknown', count: 0},
+    };
+    /**
+     * Callback once all shards have replied with their stats.
+     *
+     * @private
+     * @param {Array.<Object>} res Array of each response object.
+     */
+    function statsResponse(res) {
+      for (let i = 0; i < res.length; i++) {
+        values.numGuilds += res[i].numGuilds;
+        values.numUsers += res[i].numUsers;
+        values.numBots += res[i].numBots;
+        values.numUsersOnline += res[i].numUsersOnline;
+        values.numChannels += res[i].numChannels;
+        values.uptimes.push(res[i].uptime);
+        let actVals = Object.entries(res[i].activities);
+        for (let j = 0; j < actVals.length; j++) {
+          if (values.activities[actVals[j][0]]) {
+            values.activities[actVals[j][0]] +=
+                res[i].activities[actVals[j][0]];
+          } else {
+            values.activities[actVals[j][0]] = res[i].activities[actVals[j][0]];
+          }
+          if (values.activities[actVals[j][0]] > values.largestActivity.count) {
+            values.largestActivity = {
+              name: actVals[j][0],
+              count: values.activities[actVals[j][0]],
+            };
+          }
+        }
+      }
+
+      let embed = new self.Discord.MessageEmbed();
+      embed.setTitle('SpikeyBot Stats');
+      embed.setDescription(
+          'These statistics are collected from the entire bot, ' +
+          'across all shards.');
+
+      const guildString = 'Number of guilds: ' + values.numGuilds +
+          '\nNumber of channels: ' + values.numChannels;
+      embed.addField('Guilds', guildString, true);
+
+      const userString = 'Number of users: ' + values.numUsers +
+          '\nNumber of users that are bots: ' + values.numBots +
+          '\nNumber of online users: ' + values.numUsersOnline;
+      embed.addField('Users', userString, true);
+
+      const actString = 'Number of activities users are doing: ' +
+          Object.keys(values.activities).length +
+          '\nMost popular activity:\n`' + values.largestActivity.name +
+          '`\n with ' + values.largestActivity.count + ' users.';
+      embed.addField('Activities/Games', actString, true);
+
+      const shardUptimes = values.uptimes.map((el, i) => {
+        return 'Shard #' + i + ' up ' + el;
+      });
+      const shardString = 'Number of shards: ' + numShards +
+          '\nThis guild/channel is in shard #' + reqShard + '\n' +
+          shardUptimes.join('\n');
+      embed.addField('Shards', shardString, true);
+
+      embed.setColor([0, 100, 255]);
+
+      msg.channel.send(self.common.mention(msg), embed);
+    }
+
+    if (self.client.shard) {
+      self.client.shard.broadcastEval('this.getStats()').then(statsResponse);
+    } else {
+      statsResponse([getStats()]);
+    }
+  }
+  /**
+   * Fetch our statistics about the bot.
+   *
+   * @private
+   * @return {Object} The statistics we collected.
+   */
+  function getStats() {
+    let out = {
+      numGuilds: 0,
+      numUsers: 0,
+      numBots: 0,
+      numUsersOnline: 0,
+      numChannels: 0,
+      uptime: '0 days',
+      activities: {},
+    };
+
+    out.numGuilds = self.client.guilds.size;
+    let onlineUsers = self.client.users.filter((u) => {
+      if (u.id != self.client.user.id) {
+        if (u.presence.activity && !u.bot) {
+          let actName =
+              u.presence.activity.type + ': ' + u.presence.activity.name;
+          if (out.activities[actName]) {
+            out.activities[actName]++;
+          } else {
+            out.activities[actName] = 1;
+          }
+        } else if (u.bot) {
+          out.numBots++;
+        }
+      }
+      return u.presence.status === 'online';
+    });
+    out.numUsersOnline = onlineUsers.size;
+    out.numUsers = self.client.users.size - 1;
+    out.numChannels = self.client.channels.size;
+    let ut = self.client.uptime;
+    out.uptime = Math.floor(ut / 1000 / 60 / 60 / 24) + ' Days, ' +
+        Math.floor(ut / 1000 / 60 / 60) % 24 + ' Hours';
+    return out;
   }
 
   /**

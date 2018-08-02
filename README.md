@@ -5,7 +5,7 @@
 ###### [Web Page with command help](https://www.spikeybot.com/) (also available from bot with `help` command)
 ## Main
 #### General
-`addme` `help` `say` `createdate` `joindate` `pmme` `pmspikey` `avatar` `ping` `timer`
+`addme` `help` `say` `createdate` `joindate` `pmme` `pmspikey` `avatar` `ping` `timer` `stats`
 #### Games
 `connect4` `tictactoe`
 #### Random

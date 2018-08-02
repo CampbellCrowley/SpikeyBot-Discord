@@ -3479,6 +3479,9 @@ Basic commands and features for the bot.
         * [~commandRollDie(msg)](#Main..commandRollDie) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandPerms(msg)](#Main..commandPerms) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~prePad(num, digits)](#Main..prePad) ⇒ <code>string</code> ℗
+        * [~commandStats(msg)](#Main..commandStats) : [<code>commandHandler</code>](#commandHandler) ℗
+            * [~statsResponse(res)](#Main..commandStats..statsResponse) ℗
+        * [~getStats()](#Main..getStats) ⇒ <code>Object</code> ℗
         * [~sigint()](#Main..sigint) ℗
         * [~Timer](#Main..Timer) : <code>Object</code>
 
@@ -4213,6 +4216,38 @@ Pad a number with leading zeroes so that it is `digits` long.
 | num | <code>string</code> \| <code>number</code> | The number to pad with zeroes. |
 | digits | <code>number</code> | The minimum number of digits to make the output have. |
 
+<a name="Main..commandStats"></a>
+
+### Main~commandStats(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Send information about the bot.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Main..commandStats..statsResponse"></a>
+
+#### commandStats~statsResponse(res) ℗
+Callback once all shards have replied with their stats.
+
+**Kind**: inner method of [<code>commandStats</code>](#Main..commandStats)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| res | <code>Array.&lt;Object&gt;</code> | Array of each response object. |
+
+<a name="Main..getStats"></a>
+
+### Main~getStats() ⇒ <code>Object</code> ℗
+Fetch our statistics about the bot.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Returns**: <code>Object</code> - The statistics we collected.  
+**Access**: private  
 <a name="Main..sigint"></a>
 
 ### Main~sigint() ℗
