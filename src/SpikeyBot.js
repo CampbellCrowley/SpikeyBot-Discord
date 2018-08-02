@@ -511,11 +511,14 @@ function SpikeyBot() {
         if (msg.noReactToAnthony) reactToAnthony = false;
       });
     }
+    initialized = true;
+    disconnectReason = 'Unknown reason for disconnect.';
   }
 
   client.on('disconnect', onDisconnect);
   /**
-   * The bot has disconnected from Discord.
+   * The bot has disconnected from Discord and will not be attempting to
+   * reconnect.
    *
    * @private
    * @listens Discord~Client#disconnect
@@ -525,6 +528,18 @@ function SpikeyBot() {
     disconnectReason = event.reason || 'Unknown';
     common.error(
         'Disconnected from Discord! ' + event.code + ' ' + event.reason);
+  }
+
+  client.on('reconnecting', onReconnecting);
+  /**
+   * The bot has disconnected from Discord, and is reconnecting.
+   *
+   * @private
+   * @listens Discord~Client#reconnecting
+   */
+  function onReconnecting() {
+    disconnectReason = 'Reconnecting to network.';
+    common.error('Reconnecting to Discord!');
   }
 
   client.on('message', onMessage);
