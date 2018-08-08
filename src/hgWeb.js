@@ -695,7 +695,7 @@ function HGWeb(hg) {
       }
       guildBuffer = Object.assign(guilds, guildBuffer);
       replied++;
-      if (replied == numReplies) {
+      if (replied >= numReplies) {
         socket.emit('guilds', null, guildBuffer);
         socket.cachedGuilds = guildBuffer.map((g) => {
           return g.id;
