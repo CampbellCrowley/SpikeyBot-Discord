@@ -1082,7 +1082,6 @@ function HGWeb(hg) {
       return;
     }
     hg.editTeam(userData.id, gId, cmd, one, two);
-    socket.emit('message', 'Request received to ' + cmd + ' team');
     socket.emit('game', gId, hg.getGame(gId));
   }
   /**

@@ -158,6 +158,16 @@ function SpikeyBot() {
     });
     manager.on('shardCreate', (shard) => {
       common.log('Launched shard ' + shard.id, 'ShardingManager');
+      shard.on('message', (msg) => {
+        common.log('Received message from shard ' + shard.id + ': ' + msg);
+        if (msg === 'reboot hard') {
+          common.log('TRIGGERED HARD REBOOT!');
+          manager.shards.forEach((s) => {
+            s.process.kill('SIGHUP');
+          });
+          process.exit(-1);
+        }
+      });
     });
     manager.spawn();
     return;
@@ -699,10 +709,21 @@ function SpikeyBot() {
           console.error(e);
         }
       }
+      const doHardReboot = msg.text.split(' ')[1] === 'hard';
+      const reboot = function(hard) {
+        if (!client.shard || !hard) {
+          process.exit(-1);
+        } else if (hard) {
+          client.shard.send('reboot hard');
+        } else {
+          client.shard.respawnAll();
+        }
+      };
       if (minimal) {
-        process.exit(-1);
+        reboot(doHardReboot);
       } else {
-        common.reply(msg, 'Rebooting...').then((msg) => {
+        const extra = doHardReboot ? ' (HARD)' : '';
+        common.reply(msg, 'Rebooting...' + extra).then((msg) => {
           let toSave = {
             id: msg.id,
             channel: {id: msg.channel.id},
@@ -714,11 +735,7 @@ function SpikeyBot() {
             common.error('Failed to save reboot.dat');
             console.log(err);
           }
-          if (client.shard) {
-            client.shard.respawnAll();
-          } else {
-            process.exit(-1);
-          }
+          reboot(doHardReboot);
         });
       }
     } else {
