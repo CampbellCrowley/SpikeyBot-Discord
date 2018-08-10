@@ -208,11 +208,10 @@ function Main() {
    * @constant
    */
   const defaultCode =
-      '(function(cb){console.log=(function(w){return function(){w.apply(conso' +
-      'le,arguments);cb.apply(null,arguments);};})(console.log);})(function(v' +
-      '){stdout.push(v);});(function(cb){console.error=(function(w){return fu' +
-      'nction(){w.apply(console,arguments);cb.apply(null,arguments);};})(cons' +
-      'ole.error);})(function(v){stderr.push(v);});\n';
+      '((cb)=>{console.log=((w)=>{return (...a)=>{w.apply(console,a);cb.apply' +
+      '(null,a);};})(console.log);})((v)=>{__stdout.push(v);});((cb)=>{consol' +
+      'e.error=((w)=>{return (...a)=>{w.apply(console,a);cb.apply(null,a);};}' +
+      ')(console.error);})((v)=>{__stderr.push(v);});\n';
 
   /** @inheritdoc */
   this.helpMessage = 'Loading...';
