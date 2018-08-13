@@ -375,8 +375,15 @@ function Main() {
           obj.title, titleURL + '```js\n' +
               obj.rows
                   .map(function(row) {
-                    return self.myPrefix +
-                        row.replaceAll('{prefix}', self.myPrefix);
+                    if (typeof row === 'string') {
+                      return self.myPrefix +
+                          row.replaceAll('{prefix}', self.myPrefix);
+                    } else if (typeof row === 'object') {
+                      return self.myPrefix +
+                          row.command.replaceAll('{prefix}', self.myPrefix) +
+                          ' // ' +
+                          row.description.replaceAll('{prefix}', self.myPrefix);
+                    }
                   })
                   .join('\n') +
               '\n```',
