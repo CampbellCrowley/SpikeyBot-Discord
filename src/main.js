@@ -1475,7 +1475,9 @@ function Main() {
       user.send(
               user.tag + ' has asked me to send you this message:\n' + message)
           .then(() => {
-            self.common.reply(msg, 'Message sent!');
+            self.common.reply(
+                msg, 'Message sent to ' + user.tag, msg.author.tag +
+                    ' has asked me to send you this message:\n' + message);
           })
           .catch((err) => {
             self.common.reply(

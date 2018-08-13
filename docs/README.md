@@ -665,6 +665,7 @@ Creates a web interface for managing the Hungry Games.
     * _inner_
         * [~loginInfo](#HGWeb..loginInfo) : <code>Object.&lt;Object&gt;</code> ℗
         * [~sockets](#HGWeb..sockets) : <code>Object.&lt;Socket&gt;</code> ℗
+        * [~siblingSockets](#HGWeb..siblingSockets) : <code>Object.&lt;Socket&gt;</code> ℗
         * [~tokenHost](#HGWeb..tokenHost) : <code>Object</code> ℗
         * [~apiHost](#HGWeb..apiHost) : <code>Object</code> ℗
         * [~startClient()](#HGWeb..startClient) ℗
@@ -672,7 +673,7 @@ Creates a web interface for managing the Hungry Games.
         * [~purgeSessions()](#HGWeb..purgeSessions) ℗
         * [~socketConnection(socket)](#HGWeb..socketConnection) ℗
             * [~receivedLoginInfo(data)](#HGWeb..socketConnection..receivedLoginInfo) ℗
-            * [~callSocketFunction(func, args)](#HGWeb..socketConnection..callSocketFunction) ℗
+            * [~callSocketFunction(func, args, [forward])](#HGWeb..socketConnection..callSocketFunction) ℗
         * [~clientSocketConnection(socket)](#HGWeb..clientSocketConnection) ℗
         * [~replyNoPerm(socket, cmd)](#HGWeb..replyNoPerm) ℗
         * [~checkMyGuild(gId)](#HGWeb..checkMyGuild) ⇒ <code>boolean</code> ℗
@@ -754,6 +755,13 @@ Map of all currently connected sockets.
 
 **Kind**: inner property of [<code>HGWeb</code>](#HGWeb)  
 **Access**: private  
+<a name="HGWeb..siblingSockets"></a>
+
+### HGWeb~siblingSockets : <code>Object.&lt;Socket&gt;</code> ℗
+Map of all sockets connected that are siblings.
+
+**Kind**: inner property of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
 <a name="HGWeb..tokenHost"></a>
 
 ### HGWeb~tokenHost : <code>Object</code> ℗
@@ -813,7 +821,7 @@ Handler for a new socket connecting.
 
 * [~socketConnection(socket)](#HGWeb..socketConnection) ℗
     * [~receivedLoginInfo(data)](#HGWeb..socketConnection..receivedLoginInfo) ℗
-    * [~callSocketFunction(func, args)](#HGWeb..socketConnection..callSocketFunction) ℗
+    * [~callSocketFunction(func, args, [forward])](#HGWeb..socketConnection..callSocketFunction) ℗
 
 <a name="HGWeb..socketConnection..receivedLoginInfo"></a>
 
@@ -831,17 +839,18 @@ and refresh the tokens when necessary.
 
 <a name="HGWeb..socketConnection..callSocketFunction"></a>
 
-#### socketConnection~callSocketFunction(func, args) ℗
+#### socketConnection~callSocketFunction(func, args, [forward]) ℗
 Calls the functions with added arguments, and copies the request to all
 sibling clients.
 
 **Kind**: inner method of [<code>socketConnection</code>](#HGWeb..socketConnection)  
 **Access**: private  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| func | <code>function</code> | The function to call. |
-| args | <code>Array.&lt;\*&gt;</code> | Array of arguments to send to function. |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| func | <code>function</code> |  | The function to call. |
+| args | <code>Array.&lt;\*&gt;</code> |  | Array of arguments to send to function. |
+| [forward] | <code>boolean</code> | <code>true</code> | Forward this request directly to all siblings. |
 
 <a name="HGWeb..clientSocketConnection"></a>
 
@@ -1472,6 +1481,7 @@ Hunger Games simulator.
         * [~formatEventString(arenaEvent, [newline])](#HungryGames..formatEventString) ⇒ <code>string</code> ℗
         * [~getOutcomeEmoji(outcome)](#HungryGames..getOutcomeEmoji) ⇒ <code>string</code> ℗
         * [~help(msg, id)](#HungryGames..help) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+        * [~commandStats(msg, id)](#HungryGames..commandStats) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~nothing()](#HungryGames..nothing) ⇒ <code>string</code> ℗
         * [~getMessage(type)](#HungryGames..getMessage) ⇒ <code>string</code> ℗
         * [~find(id)](#HungryGames..find) ⇒ [<code>GuildGame</code>](#HungryGames..GuildGame) ℗
@@ -3188,6 +3198,20 @@ Get the emoji for a specific outcome of an event.
 
 ### HungryGames~help(msg, id) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
 Send help message to DM and reply to server.
+
+**Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message that lead to this being called. |
+| id | <code>string</code> | The id of the guild this was triggered from. |
+
+<a name="HungryGames..commandStats"></a>
+
+### HungryGames~commandStats(msg, id) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+Replies to the user with stats about all the currently loaded games in this
+shard.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
 **Access**: private  

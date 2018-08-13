@@ -1116,6 +1116,9 @@ function HungryGames() {
         case 'help':
           help(msg, id);
           break;
+        case 'stats':
+          commandStats(msg, id);
+          break;
         default:
           self.common.reply(
               msg, 'Oh noes! I can\'t understand that! "' + self.myPrefix +
@@ -5486,6 +5489,28 @@ function HungryGames() {
         .catch(() => {
           self.common.reply(msg, blockedmessage);
         });
+  }
+
+  /**
+   * Replies to the user with stats about all the currently loaded games in this
+   * shard.
+   *
+   * @private
+   * @type {HungryGames~hgCommandHandler}
+   * @param {Discord~Message} msg The message that lead to this being called.
+   * @param {string} id The id of the guild this was triggered from.
+   */
+  function commandStats(msg, id) {
+    let loadedEntries = Object.entries(games);
+    let numInProgress = loadedEntries
+                            .filter((game) => {
+                              return game[1].currentGame.inProgress &&
+                                  game[1].currentGame.day.state > 0;
+                            })
+                            .length;
+    self.common.reply(
+        msg, 'There are ' + numInProgress + ' games currently simulating of ' +
+            loadedEntries.length + ' currently loaded.');
   }
 
   /**

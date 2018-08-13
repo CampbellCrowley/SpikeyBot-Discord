@@ -42,6 +42,9 @@ function HGWeb(hg) {
    * @private
    */
   function startClient() {
+    hg.common.log(
+        'Restarting into client mode due to server already bound to port.',
+        'HG Web');
     ioClient = require('socket.io-client')(
         'localhost:8010', {path: '/www.spikeybot.com/socket.io/hg/'});
     ioClient.on('connection', clientSocketConnection);
@@ -123,6 +126,14 @@ function HGWeb(hg) {
    */
   let sockets = {};
 
+  /**
+   * Map of all sockets connected that are siblings.
+   *
+   * @private
+   * @type {Object.<Socket>}
+   */
+  let siblingSockets = {};
+
   try {
     loginInfo = JSON.parse(fs.readFileSync('./save/hgWebClients.json') || {});
   } catch (err) {
@@ -168,8 +179,9 @@ function HGWeb(hg) {
     // TODO: Replace this authentication with gpg key-pairs;
     socket.on('vaderIAmYourSon', (verification, cb) => {
       if (verification === auth.hgWebSiblingVerification) {
-        socket.join('siblings');
+        siblingSockets[socket.id] = socket;
         cb(auth.hgWebSiblingVerificationResponse);
+        hg.common.log('Client connected as child successfully.', socket.id);
       }
     });
     socket.on('restore', (sess) => {
@@ -275,7 +287,7 @@ function HGWeb(hg) {
 
     // Restricted Access //
     socket.on('fetchGuilds', (...args) => {
-      callSocketFunction(fetchGuilds, args);
+      callSocketFunction(fetchGuilds, args, false);
     });
     socket.on('fetchMember', (...args) => {
       callSocketFunction(fetchMember, args);
@@ -337,13 +349,18 @@ function HGWeb(hg) {
      * @private
      * @param {Function} func The function to call.
      * @param {Array.<*>} args Array of arguments to send to function.
+     * @param {boolean} [forward=true] Forward this request directly to all
+     * siblings.
      */
-    function callSocketFunction(func, args) {
+    function callSocketFunction(func, args, forward = true) {
       func.apply(func, [userData, socket].concat(args));
-      io.sockets.to('siblings')
-          .emit('forwardedRequest', userData, socket.id, (...res) => {
+      if (forward) {
+        Object.entries(siblingSockets).forEach((s) => {
+          s[1].emit('forwardedRequest', userData, socket.id, (...res) => {
             socket.emit(...res);
           }, args);
+        });
+      }
     }
 
     socket.on('logout', () => {
@@ -358,6 +375,7 @@ function HGWeb(hg) {
               ipName,
           socket.id);
       if (loginInfo[session]) clearTimeout(loginInfo[session].refreshTimeout);
+      if (siblingSockets[socket.id]) delete siblingSockets[socket.id];
       delete sockets[socket.id];
     });
   }
@@ -667,11 +685,12 @@ function HGWeb(hg) {
    * @param {socketIo~Socket} socket The socket connection to reply on.
    */
   function fetchGuilds(userData, socket) {
-    if (!userData) return;
+    if (!userData) {
+      hg.common.error('Fetch Guilds without userData', 'HG Web');
+      return;
+    }
 
-    const siblings = io.sockets.to('siblings').connected;
-
-    const numReplies = (Object.entries(siblings).length || 0);
+    const numReplies = (Object.entries(siblingSockets).length || 0);
     let replied = 0;
     let guildBuffer = {};
 
@@ -703,7 +722,7 @@ function HGWeb(hg) {
       }
     }
 
-    Object.entries(siblings).forEach((obj) => {
+    Object.entries(siblingSockets).forEach((obj, i) => {
       obj[1].emit('fetchGuilds', done);
     });
 
