@@ -1,7 +1,11 @@
+## Time Control
+## Events
+## Team Settings
+## Player Settings
+## Game Settings
 # Hungry Games!
 #### To use any of these commands you must have the "HG Creator" role. Use https://www.spikeybot.com/hg/ if commands are too hard.
 ***
-## Game Settings
 
 | Command | Description |
 | --- | --- |
@@ -9,7 +13,6 @@
 | ?hg options 'option name' 'value'  |  List options if no name, or change the option if you give a name. [options, option, opt, opts] |
 | ?hg reset 'all/current/events/options/teams'  |  Delete data about the Games. Don't choose an option for more info. |
 
-## Player Settings
 
 | Command | Description |
 | --- | --- |
@@ -17,7 +20,6 @@
 | ?hg exclude 'mention'  |  Prevent someone from being added to the next game. [exclude, remove, exc, ex] |
 | ?hg include 'mention'  |  Add a person back into the next game. [include, add, inc, in] |
 
-## Team Settings
 
 | Command | Description |
 | --- | --- |
@@ -27,7 +29,6 @@
 | ?hg teams randomize  |  Randomize who is on what team. |
 | ?hg teams reset  |  Delete all teams and start over. |
 
-## Events
 
 | Command | Description |
 | --- | --- |
@@ -36,7 +37,6 @@
 | ?hg events add 'message'  |  Begins process of adding a custom event. [add, create] |
 | ?hg events remove 'number'  |  Remove a custom event. The number is the number shown in the list of events. [remove, delete] |
 
-## Time Control
 
 | Command | Description |
 | --- | --- |

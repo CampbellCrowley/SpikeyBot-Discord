@@ -50,13 +50,30 @@ function objToMd(file) {
   for (let i in file.sections) {
     let sec = file.sections[i];
     if (sec.title) {
-      text += '## ' + repTags(sec.title) + '\n';
+      text = '## ' + repTags(sec.title) + '\n' + text;
     }
-    text += '\n| Command | Description |\n';
-    text += '| --- | --- |\n';
+
+    const hasAliases = sec.rows.find(function(row) {
+      return row.aliases;
+    });
+
+    text +=
+        '\n| Command | Description |' + (hasAliases ? ' Aliases |\n' : '\n');
+    text += '| --- | --- |' + (hasAliases ? ' --- |\n' : '\n');
+
     for (let r in sec.rows) {
-      let row = repTags(sec.rows[r]).split('//');
-      text += '| ' + prefix + row[0] + ' | ' + row[1] + ' |\n';
+      let row = ['', '', ''];
+      if (typeof sec.rows[r] === 'string') {
+        row = repTags(sec.rows[r]).split('//');
+      } else if (typeof sec.rows[r] === 'object') {
+        row[0] = repTags(sec.rows[r].command);
+        row[1] = repTags(sec.rows[r].description);
+        if (hasAliases) {
+          row[2] = sec.rows[r].aliases || '';
+        }
+      }
+      text += '| ' + prefix + row[0] + ' | ' + row[1] + ' |' +
+          (hasAliases ? ' ' + row[2] + ' |\n' : '\n');
     }
     text += '\n';
   }
