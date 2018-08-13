@@ -6,46 +6,119 @@
     {
       "title": "Game Settings",
       "rows": [
-        "create // This will create a game with default settings if it doesn't exist already. [create, c, new]",
-        "options 'option name' 'value' // List options if no name, or change the option if you give a name. [options, option, opt, opts]",
-        "reset 'all/current/events/options/teams' // Delete data about the Games. Don't choose an option for more info."
+        {
+          "command": "create",
+          "description": "This will create a game with default settings if it doesn't exist already.",
+          "aliases": "create, c, new"
+        },
+        {
+          "command": "options 'option name' 'value'",
+          "description": "List options if no name, or change the option if you give a name.",
+          "aliases": "options, option, opt, opts"
+        },
+        {
+          "command": "reset 'all/current/events/options/teams'",
+          "description": "Delete data about the Games. Don't choose an option for more info."
+        }
       ]
     },
     {
       "title": "Player Settings",
       "rows": [
-        "players // This will list all players I currently care about. [players, player]",
-        "exclude 'mention' // Prevent someone from being added to the next game. [exclude, remove, exc, ex]",
-        "include 'mention' // Add a person back into the next game. [include, add, inc, in]"
+        {
+          "command": "players",
+          "description": "This will list all players I currently care about.",
+          "aliases": "players, player"
+        },
+        {
+          "command": "exclude 'mention'",
+          "description": "Prevent someone from being added to the next game.",
+          "aliases": "exclude, remove, exc, ex"
+        },
+        {
+          "command": "include 'mention'",
+          "description": "Add a person back into the next game.",
+          "aliases": "include, add, inc, in"
+        }
       ]
     },
     {
       "title": "Team Settings",
       "rows": [
-        "teams swap 'mention' 'mention' // This will swap two players to the other team.",
-        "teams move 'mention' 'id/mention' // This will move the first player, to another team. (Ignores teamSize option)",
-        "teams rename 'id/mention' 'name...' // Rename a team. Specify its id, or mention someone on a team.",
-        "teams randomize // Randomize who is on what team.",
-        "teams reset // Delete all teams and start over."
+        {
+          "command": "teams swap 'mention' 'mention'",
+          "description": "This will swap two players to the other team."
+        },
+        {
+          "command": "teams move 'mention' 'id/mention'",
+          "description": "This will move the first player, to another team. (Ignores teamSize option)"
+        },
+        {
+          "command": "teams rename 'id/mention' 'name...'",
+          "description": "Rename a team. Specify its id, or mention someone on a team."
+        },
+        {
+          "command": "teams randomize",
+          "description": "Randomize who is on what team."
+        },
+        {
+          "command": "teams reset",
+          "description": "Delete all teams and start over."
+        }
       ]
     },
     {
       "title": "Events",
       "rows": [
-        "events // This will list all custom events that could happen in the game. [events, event]",
-        "debugevents // This will let you download all of the events and their data.",
-        "events add 'message' // Begins process of adding a custom event. [add, create]",
-        "events remove 'number' // Remove a custom event. The number is the number shown in the list of events. [remove, delete]"
+        {
+          "command": "events",
+          "description": "This will list all custom events that could happen in the game.",
+          "aliases": "events, event"
+        },
+        {
+          "command": "debugevents",
+          "description": "This will let you download all of the events and their data."
+        },
+        {
+          "command": "events add 'message'",
+          "description": "Begins process of adding a custom event.",
+          "aliases": "add, create"
+        },
+        {
+          "command": "events remove 'number'",
+          "description": "Remove a custom event. The number is the number shown in the list of events.",
+          "aliases": "remove, delete"
+        }
       ]
     },
     {
       "title": "Time Control",
       "rows": [
-        "start // This will start a game with your settings. [start, s]",
-        "end // This will end a game early. [end, abort]",
-        "autoplay // Automatically continue to the next day after a day is over. [autoplay, auto, resume, play, go]",
-        "pause // Stop autoplay at the end of the day. [pause, stop]",
-        "next // Simulate the next day of the Games! [next, nextday]"
+        {
+          "command": "start",
+          "description": "This will start a game with your settings.",
+          "aliases": "start, s"
+        },
+        {
+          "command": "end",
+          "description": "This will end a game early.",
+          "aliases": "end, abort"
+        },
+        {
+          "command": "autoplay",
+          "description": "Automatically continue to the next day after a day is over.",
+          "aliases": "autoplay, auto, resume, play, go"
+        },
+        {
+          "command": "pause",
+          "description": "Stop autoplay at the end of the day.",
+          "aliases": "pause, stop"
+        },
+        {
+          "command": "next",
+          "description": "Simulate the next day of the Games!",
+          "aliases": "next, nextday"
+        }
       ]
     }
   ]
