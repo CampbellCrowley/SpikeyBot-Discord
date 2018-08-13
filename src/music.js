@@ -668,9 +668,6 @@ function Music() {
       });
       response.on('end', function() {
         if (response.statusCode == 200) {
-          msg.channel.send('`Asking where to find song...`').then((msg) => {
-            msg.delete(6000);
-          });
           let parsed = JSON.parse(content);
           if (parsed.response.hits.length === 0) {
             reply(msg, '`Failed to find lyrics. No matches found.`');
@@ -695,8 +692,8 @@ function Music() {
     req.on('error', function(e) {
       self.common.error(e, 'Music');
     });
-    msg.channel.send('`Asking if song exists...`').then((msg) => {
-      msg.delete(7000);
+    msg.channel.send('`Loading...`').then((msg) => {
+      msg.delete(30000);
     });
   }
   /**
@@ -717,9 +714,6 @@ function Music() {
       });
       response.on('end', function() {
         if (response.statusCode == 200) {
-          msg.channel.send('`Asking for lyrics...`').then((msg) => {
-            msg.delete(4000);
-          });
           let parsed = JSON.parse(content);
           fetchLyricsPage(
               msg, parsed.response.song.url, parsed.response.song.full_title,
@@ -763,9 +757,6 @@ function Music() {
       });
       response.on('end', function() {
         if (response.statusCode == 200) {
-          msg.channel.send('`Crawling webpage...`').then((msg) => {
-            msg.delete(2000);
-          });
           stripLyrics(msg, content, title, url, thumb);
         } else {
           msg.channel.send(
@@ -802,33 +793,43 @@ function Music() {
   function stripLyrics(msg, content, title, url, thumb) {
     try {
       let body = content.match(/<!--sse-->([\s\S]*?)<!--\/sse-->/gm)[1];
-      let lyrics = body.match(/^([^<>]*)<|>([^<>]*)<|>([^<>]*)$/gm)
-                       .slice(1)
-                       .join('')
-                       .replace(/<>|^\s*/gm, '')
-                       .replace('>', '');
-      let splitLyrics = lyrics.match(/\[[^\]]*\][^\[]*/gm);
+      let lyrics = [];
+      let matches = [];
+      const regex = /<a[^>]*>([^<]*)<\/a>/gm;
+      while (matches = regex.exec(body)) {
+        lyrics.push(matches[1]);
+      }
+      let splitLyrics =
+          lyrics.join('\n').match(/(\[[^\]]*\][^\[]*)/gm).slice(1);
       let embed = new self.Discord.MessageEmbed();
       if (title) embed.setTitle(title);
       if (url) embed.setURL(url);
       if (thumb) embed.setThumbnail(thumb);
       let numFields = 0;
       for (let i = 0; numFields < 25 && i < splitLyrics.length; i++) {
-        let splitLine = splitLyrics[i].match(/\[([^\]]*)\]\n([\s\S]*)/m);
+        let splitLine = splitLyrics[i].match(/\[([^\]]*)\]\n([^]*)/m);
+        if (!splitLine) continue;
         let secTitle = splitLine[1].substr(0, 256);
         let secBody = splitLine[2];
         for (let j = 0; numFields < 25 && j * 1024 < secBody.length; j++) {
           embed.addField(
-              j === 0 ? secTitle : '\u200B',
+              j === 0 ? secTitle : (secTitle + ' continued...').substr(0, 256),
               secBody.substr(j * 1024, 1024) || '\u200B', true);
           numFields++;
         }
       }
       embed.setColor([0, 255, 255]);
-      msg.channel.send(embed);
+      msg.channel.send(embed).catch((err) => {
+        console.log(err);
+        msg.channel.send(
+            '`Something went wrong while formatting the lyrics.' +
+            '\nHere is the link to the page I found:`\n' + url);
+      });
     } catch (err) {
       console.log(err);
-      msg.channel.send('`FAILED to parse lyrics: ' + err.message + '`');
+      msg.channel.send(
+          '`Something went wrong while formatting the lyrics.' +
+          '\nHere is the link to the page I found:`\n' + url);
     }
   }
 

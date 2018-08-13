@@ -69,7 +69,7 @@ See [spikeybot.com](https://www.spikeybot.com/) for examples and more informatio
 | ?pmspikey 'message' | I will send SpikeyRobot (my creator) your message because you are too shy! |  |
 | ?avatar 'mention' | Need a better look at your profile pic? I'll show you the original. | avatar, profile |
 | ?ping | Want to know what my delay to the server is? I can tell you my ping! |  |
-| ?timer 'seconds' 'message...' | Set a timer for a certain number of seconds. The bot will DM you the message at the end. No options lists timers. |  |
+| ?timer 'minutes' 'message...' | Set a timer for a certain number of seconds. The bot will DM you the message at the end. No options lists timers. |  |
 | ?stats | Displays statistics about the bot and the servers it's on. |  |
 
 

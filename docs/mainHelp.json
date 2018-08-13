@@ -7,7 +7,14 @@
       "rows": [
         {
           "command": "addme",
-          "description": "I will send you a link to add me to your server!"
+          "description": "I will send you a link to add me to your server!",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "addme",
+              "result": "Replies with a link that will allow you to add the bot to your own server."
+            }
+          ]
         },
         {
           "command": "help",
@@ -15,40 +22,133 @@
         },
         {
           "command": "say",
-          "description": "Make me say something."
+          "description": "Make me say something.",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "say Hello World!",
+              "result": "Your message gets deleted (if the bot has permission to manage messages), and the bot says \"Hello World!\""
+            }
+          ]
         },
         {
           "command": "createdate 'mention'",
-          "description": "I will tell you the date you created your account!"
+          "description": "I will tell you the date you created your account!",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "createdate",
+              "result": "The bot will tell you the date you created your account in the Los Angeles timezone."
+            },
+            {
+              "description": "Mentioning",
+              "command": "createdate @SpikeyRobot",
+              "result": "The bot will tell you the date SpikeyRobot created their account in the Los Angeles timezone."
+            }
+          ]
         },
         {
           "command": "joindate 'mention'",
-          "description": "I will tell you the date you joined the server you sent the message from!"
+          "description": "I will tell you the date you joined the server you sent the message from!",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "joindate",
+              "result": "The bot will tell you the date you joined the server where you sent the message, in the Los Angeles timezone."
+            },
+            {
+              "description": "Mentioning",
+              "command": "createdate @SpikeyRobot",
+              "result": "The bot will tell you the date SpikeyRobot joined the server where you sent the message, in the Los Angeles timezone."
+            }
+          ]
         },
         {
           "command": "pmme",
-          "description": "I will introduce myself to you!"
+          "description": "I will introduce myself to you!",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "pmme",
+              "result": "The bot will send you a direct message giving a brief description about itself."
+            }
+          ]
         },
         {
           "command": "pmspikey 'message'",
-          "description": "I will send SpikeyRobot (my creator) your message because you are too shy!"
+          "description": "I will send SpikeyRobot (my creator) your message because you are too shy!",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "pmspikey You should totally add blockchain to the bot!",
+              "result": "The bot will send a direct message to @SpikeyRobot#9836 telling him to add your ridiculous feature idea."
+            }
+          ]
         },
         {
           "command": "avatar 'mention'",
           "description": "Need a better look at your profile pic? I'll show you the original.",
-          "aliases": "avatar, profile"
+          "aliases": "avatar, profile",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "avatar",
+              "result": "Your profile picture will be sent as a reply to your command."
+            },
+            {
+              "description": "Mentioning",
+              "command": "avatar @SpikeyRobot",
+              "result": "SpikeyRobot's profile picture will be sent as a reply to your command."
+            }
+          ]
         },
         {
           "command": "ping",
-          "description": "Want to know what my delay to the server is? I can tell you my ping!"
+          "description": "Want to know what my delay to the server is? I can tell you my ping!",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "ping",
+              "result": "The bot will reply with the delay in milliseconds between the bot and Discord's server that it is connected to, as well as the 3 previous values."
+            }
+          ]
         },
         {
-          "command": "timer 'seconds' 'message...'",
-          "description": "Set a timer for a certain number of seconds. The bot will DM you the message at the end. No options lists timers."
+          "command": "timer 'minutes' 'message...'",
+          "description": "Set a timer for a certain number of seconds. The bot will DM you the message at the end. No options lists timers.",
+          "examples": [
+            {
+              "description": "1 minute timer with message",
+              "command": "timer 1 It has been one minute!",
+              "result": "After 60 seconds, the bot will send you a direct message saying \"It has been one minute!\"."
+            },
+            {
+              "description": "60 minute timer with message",
+              "command": "timer 60 It has been one hour!",
+              "result": "After 1 hour, the bot will send you a direct message saying \"It has been one hour!\"."
+            },
+            {
+              "description": "20 minute timer without message",
+              "command": "timer 20",
+              "result": "After 20 minutes, the bot will send you a direct message saying \"Your timer for 20 minutes is over!\"."
+            },
+            {
+              "description": "List current timers",
+              "command": "timer",
+              "result": "Will reply telling you which timers of yours it currently knows about."
+            }
+          ]
         },
         {
           "command": "stats",
-          "description": "Displays statistics about the bot and the servers it's on."
+          "description": "Displays statistics about the bot and the servers it's on.",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "stats",
+              "result": "The bot will reply with information about the number of users, number Discord servers (guilds), and similar data."
+            }
+          ]
         }
       ]
     },
@@ -57,11 +157,35 @@
       "rows": [
         {
           "command": "tictactoe 'mention'",
-          "description": "Play a game of Tic Tac Toe with someone! (Mention someone to challenge them)"
+          "description": "Play a game of Tic Tac Toe with someone! (Mention someone to challenge them)",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "tictactoe",
+              "result": "Starts a game of tic-tac-toe in the chat. Second person to make a move becomes player 2."
+            },
+            {
+              "description": "Mentioning",
+              "command": "tictactoe @SpikeyRobot",
+              "result": "Starts a game of tic-tac-toe in the chat and SpikeyRobot will be player 2."
+            }
+          ]
         },
         {
           "command": "connect4 'mention'",
-          "description": "Start a game of Connect 4 against someone! (Mention someone to challenge them)"
+          "description": "Start a game of Connect 4 against someone! (Mention someone to challenge them)",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "connect4",
+              "result": "Starts a game of connect4 in the chat. Second person to make a move becomes player 2."
+            },
+            {
+              "description": "Mentioning",
+              "command": "connect4 @SpikeyRobot",
+              "result": "Starts a game of connect4 in the chat and SpikeyRobot will be player 2."
+            }
+          ]
         }
       ]
     },
@@ -70,12 +194,36 @@
       "rows": [
         {
           "command": "flip",
-          "description": "I have an unlimited supply of coins! I will flip one for you!"
+          "description": "I have an unlimited supply of coins! I will flip one for you!",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "flip",
+              "result": "Replies with either Heads or Tails as well as an image of such."
+            }
+          ]
         },
         {
           "command": "roll 'numbers...'",
           "description": "Roll dice with any number of sides. Separate multiple numbers with spaces to roll multiple dice.",
-          "aliases": "roll, dice, die, d"
+          "aliases": "roll, dice, die, d",
+          "examples": [
+            {
+              "description": "Roll one 6-sided die",
+              "command": "d 6",
+              "result": "Replies with a value between 1 and 6 as if a die with 6 sides had been rolled."
+            },
+            {
+              "description": "Roll two 6-sided dice",
+              "command": "d 6 6",
+              "result": "Replies with a value between 1 and 6 for each die, as well as the total sum of both the rolled values."
+            },
+            {
+              "description": "Roll three 20-sided dice",
+              "command": "d 20 20 20",
+              "result": "Replies with a value between 1 and 20 for each of the three dice, as well as the sum of all three rolled values."
+            }
+          ]
         }
       ]
     },
@@ -84,34 +232,98 @@
       "rows": [
         {
           "command": "play 'url or search'",
-          "description": "Play a song in your current voice channel, or add a song to the queue."
+          "description": "Play a song in your current voice channel, or add a song to the queue.",
+          "examples": [
+            {
+              "description": "Search for a song",
+              "command": "play Something by The Beatles",
+              "result": "Joins the voice channel you are in, and starts playing the song \"Something\" by The Beatles. If a song is already playing, this one will be added to the queue."
+            },
+            {
+              "description": "Play a YouTube video from a URL",
+              "command": "play https://www.youtube.com/watch?v=HyHNuVaZJ-k",
+              "result": "Starts playing \"Feel Good Inc.\" by Gorillaz in your voice channel, or adds it to the queue of songs."
+            },
+            {
+              "description": "Play song/video from non-YouTube URL",
+              "command": "play https://soundcloud.com/uiceheidd/lucid-dreams-forget-me",
+              "result": "Will play or enqueue \"Lucid Dreams\" by Juice WRLD from SoundCloud. For a full list of all supported websites, see <a href=\"https://github.com/rg3/youtube-dl/blob/master/docs/supportedsites.md\">this</a> GitHub page."
+            }
+          ]
         },
         {
           "command": "join",
-          "description": "Join you in your voice channel."
+          "description": "Join you in your voice channel.",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "join",
+              "result": "The bot will join the voice channel you are in. This may cause it to stop playing music, or skip the currently playing song."
+            }
+          ]
         },
         {
           "command": "stop",
           "description": "Stop playing music and leave the voice channel.",
-          "aliases": "leave, stop, stfu"
+          "aliases": "leave, stop, stfu",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "leave",
+              "result": "The bot will leave the voice channel it is currently in and remove all songs from the queue."
+            }
+          ]
         },
         {
           "command": "skip",
-          "description": "Skip the currently playing song."
+          "description": "Skip the currently playing song.",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "skip",
+              "result": "The bot will skip the current song, and attempt to play the next song in the queue. If the queue is empty, this has the same effect as the stop command."
+            }
+          ]
         },
         {
           "command": "queue",
           "description": "View the songs currently in the queue.",
-          "aliases": "queue, playing"
+          "aliases": "queue, playing",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "playing",
+              "result": "Bot replies with a list of the current songs in the queue to play."
+            }
+          ]
         },
         {
           "command": "remove 'index'",
           "description": "Remove a song with the given queue index from the queue.",
-          "aliases": "remove, dequeue"
+          "aliases": "remove, dequeue",
+          "examples": [
+            {
+              "description": "Remove the next song",
+              "command": "remove 1",
+              "result": "Removes the next song from the queue. Use the queue/playing command to find out which index to use."
+            },
+            {
+              "description": "Dequeue the third song in the queue",
+              "command": "remove 3",
+              "result": "Removes the third song from the queue. Use the queue/playing command to find out which index to use."
+            }
+          ]
         },
         {
           "command": "lyrics 'song'",
-          "description": "Search for song lyrics."
+          "description": "Search for song lyrics.",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "lyrics Eminem Rap God",
+              "result": "The bot will fetch lyrics of \"Rap God\" by Eminem from Genius.com and send them to you in the chat."
+            }
+          ]
         }
       ]
     },
@@ -120,15 +332,66 @@
       "rows": [
         {
           "command": "add 'numbers'",
-          "description": "Add positive or negative numbers separated by spaces."
+          "description": "Add positive or negative numbers separated by spaces.",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "add 1 10 100",
+              "result": "The bot will add the 3 numbers and reply with \"111\"."
+            },
+            {
+              "description": "Negative Numbers",
+              "command": "add -1 -10 -100 50",
+              "result": "The bot will add the 4 numbers and reply with \"-61\"."
+            },
+            {
+              "description": "Addition and Subtraction",
+              "command": "add 5+6-2+8",
+              "result": "The bot will add the 4 numbers and reply with \"17\"."
+            }
+          ]
         },
         {
           "command": "simplify 'equation'",
-          "description": "Simplify an equation with numbers and variables."
+          "description": "Simplify an equation with numbers and variables.",
+          "examples": [
+            {
+              "description": "Basic Equation",
+              "command": "simplify 12 + 9 * 6x",
+              "result": "```0 = 54x + 12```"
+            },
+            {
+              "description": "Multiple Variables",
+              "command": "simplify 2x = 14y - 2",
+              "result": "```0 = 14y - 2 * (x + 1)```"
+            },
+            {
+              "description": "Order of Operations",
+              "command": "simplify (8 * 9 + 6 / 2 ^ 3) * 4 = x",
+              "result": "```0 = x - 291```"
+            }
+          ]
         },
         {
           "command": "solve 'equation'",
-          "description": "Solve an equation for each variable in the equation."
+          "description": "Solve an equation for each variable in the equation.",
+          "examples": [
+            {
+              "description": "Basic Equation",
+              "command": "solve 12 + 9 * 6x = 0",
+              "result": "```x = -2/9```"
+            },
+            {
+              "description": "Multiple Variables",
+              "command": "solve 2x = 14y - 2",
+              "result": "```x = 7y - 1<br>y = 1/7x + 1/7```"
+            },
+            {
+              "description": "Order of Operations",
+              "command": "solve (8 * 9 + 6 / (2 ^ 3)) * 4 = x",
+              "result": "```x = 291```<br>Notice: Exponents don't follow order of operations properly, you should surround them in parentheses."
+            }
+          ]
         },
         {
           "command": "evaluate 'problem'",

@@ -974,19 +974,31 @@ function Main() {
     }
     const equation = msg.content.replace(self.myPrefix + 'solve', '');
     const variables = equation.match(/[A-Za-z]+/gm);
+    const equals = equation.match(/=/g);
     if (!variables || variables.length < 1) {
       self.common.reply(
           msg, 'Please ensure you have at least one variable in the equation.');
+      return;
+    } else if (!equals || equals.length < 1) {
+      self.common.reply(
+          msg, 'Please ensure your equation has exactly 1 equals sign.');
       return;
     }
     let error = '';
     let messages = [];
     for (let i = 0; i < variables.length; i++) {
+      let parsed;
       try {
-        messages.push(
-            algebra.parse(equation).solveFor(variables[i]).toString());
+        parsed = algebra.parse(equation);
       } catch (err) {
         error += 'For ' + variables[i] + ': ' + err.message + '\n';
+        continue;
+      }
+      try {
+        messages.push(parsed.solveFor(variables[i]).toString());
+      } catch (err) {
+        error += 'For ' + variables[i] + ': ' + err.message + '\n';
+        continue;
       }
     }
     const outMessage = messages
@@ -994,7 +1006,8 @@ function Main() {
                              return variables[i] + ' = ' + obj;
                            })
                            .join('\n');
-    self.common.reply(msg, outMessage || 'Oops, somthing didn\'t work!', error);
+    self.common.reply(
+        msg, outMessage || 'Oops, something didn\'t work!', error);
   }
   /**
    * Evaluate a string as an equation with units.
@@ -1260,6 +1273,9 @@ function Main() {
             ' is over!';
 
     if (time > 0) {
+      if (time > 2147483647 / 1000 / 60) {
+        time = 2147483647 / 1000 / 60;
+      }
       setTimer({
         id: msg.author.id,
         message: message,
