@@ -1704,7 +1704,7 @@ multiple lines for a single user.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| users | <code>Array.&lt;string&gt;</code> \| <code>Array.&lt;Discord~User&gt;</code> | The users to exclude. |
+| users | <code>string</code> \| <code>Array.&lt;string&gt;</code> \| <code>Array.&lt;Discord~User&gt;</code> | The users to exclude, or 'everyone' to exclude everyone. |
 | id | <code>string</code> | The guild id to remove the users from. |
 
 <a name="HungryGames+includeUsers"></a>
@@ -1719,7 +1719,7 @@ multiple lines for a single user.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| users | <code>Array.&lt;string&gt;</code> \| <code>Array.&lt;Discord~User&gt;</code> | The users to include. |
+| users | <code>string</code> \| <code>Array.&lt;string&gt;</code> \| <code>Array.&lt;Discord~User&gt;</code> | The users to include, or 'everyone' to include all users. |
 | id | <code>string</code> | The guild id to add the users to. |
 
 <a name="HungryGames+setOption"></a>

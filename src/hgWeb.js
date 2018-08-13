@@ -871,7 +871,11 @@ function HGWeb(hg) {
       replyNoPerm(socket, 'excludeMember');
       return;
     }
-    socket.emit('message', hg.excludeUsers([mId], gId));
+    if (mId === 'everyone') {
+      socket.emit('message', hg.excludeUsers(mId, gId));
+    } else {
+      socket.emit('message', hg.excludeUsers([mId], gId));
+    }
     socket.emit('game', gId, hg.getGame(gId));
   }
   /**
@@ -891,7 +895,11 @@ function HGWeb(hg) {
       replyNoPerm(socket, 'includeMember');
       return;
     }
-    socket.emit('message', hg.includeUsers([mId], gId));
+    if (mId === 'everyone') {
+      socket.emit('message', hg.includeUsers(mId, gId));
+    } else {
+      socket.emit('message', hg.includeUsers([mId], gId));
+    }
     socket.emit('game', gId, hg.getGame(gId));
   }
   /**

@@ -2368,6 +2368,12 @@ function HungryGames() {
                     let weaponName = el[0];
                     let consumableName = weaponName;
                     let count = el[1];
+                    if (!weapons[weaponName]) {
+                      self.common.error(
+                          'Failed to find weapon: ' + weaponName, 'HG');
+                      return '(Unknown weapon ' + weaponName +
+                          '. This is a bug.)';
+                    }
                     if (weapons[weaponName].consumable) {
                       consumableName = weapons[weaponName].consumable.replace(
                           /\[C([^\|]*)\|([^\]]*)\]/g,
@@ -2396,6 +2402,12 @@ function HungryGames() {
                     let weaponName = el[0];
                     let consumableName = weaponName;
                     let count = el[1];
+                    if (!weapons[weaponName]) {
+                      self.common.error(
+                          'Failed to find weapon: ' + weaponName, 'HG');
+                      return '(Unknown weapon ' + weaponName +
+                          '. This is a bug.)';
+                    }
                     if (weapons[weaponName].consumable) {
                       consumableName = weapons[weaponName].consumable.replace(
                           /\[C([^\|]*)\|([^\]]*)\]/g,
@@ -3770,6 +3782,17 @@ function HungryGames() {
       self.common.reply(
           msg,
           'You must first create a game with "' + self.myPrefix + 'create".');
+    } else if (
+        msg.text.split(' ')[0] === 'everyone' ||
+        msg.text.split(' ')[0] === '@everyone') {
+      const response = self.excludeUsers('everyone', id);
+      if (find(id).currentGame.inProgress) {
+        self.common.reply(
+            msg, 'Everyone will be removed from the next game.', response);
+      } else {
+        self.common.reply(
+            msg, 'Everyone has been removed from the games.', response);
+      }
     } else if (msg.mentions.users.size == 0) {
       self.common.reply(
           msg,
@@ -3784,16 +3807,25 @@ function HungryGames() {
    * Removes users from a games of a given guild.
    *
    * @public
-   * @param {string[]|Discord~User[]} users The users to exclude.
+   * @param {string|string[]|Discord~User[]} users The users to exclude, or
+   * 'everyone' to exclude everyone.
    * @param {string} id The guild id to remove the users from.
    * @return {string} A string with the outcomes of each user. May have
    * multiple lines for a single user.
    */
   this.excludeUsers = function(users, id) {
     let response = '';
+    if (users === 'everyone') {
+      users = find(id).currentGame.includedUsers.map(function(u) {
+        return u.id;
+      });
+    } else if (typeof users === 'string') {
+      return 'Invalid users';
+    }
     if (!Array.isArray(users)) {
       users = users.array();
     }
+    const onlyError = users.length > 5;
     users.forEach(function(obj) {
       if (typeof obj === 'string') {
         obj = self.client.users.get(obj);
@@ -3803,11 +3835,15 @@ function HungryGames() {
         }
       }
       if (find(id).excludedUsers.includes(obj.id)) {
-        response += obj.username +
-            ' is already excluded. Create a new game to reset players.\n';
+        if (!onlyError) {
+          response += obj.username +
+              ' is already excluded. Create a new game to reset players.\n';
+        }
       } else {
         find(id).excludedUsers.push(obj.id);
-        response += obj.username + ' added to blacklist.\n';
+        if (!onlyError) {
+          response += obj.username + ' added to blacklist.\n';
+        }
         if (!find(id).currentGame.inProgress) {
           let index =
               find(id).currentGame.includedUsers.findIndex(function(el) {
@@ -3815,9 +3851,13 @@ function HungryGames() {
               });
           if (index >= 0) {
             find(id).currentGame.includedUsers.splice(index, 1);
-            response += obj.username + ' removed from included players.\n';
+            if (!onlyError) {
+              response += obj.username + ' removed from included players.\n';
+            }
             formTeams(id);
           } else {
+            response +=
+                'Failed to remove ' + obj.username + ' for an unknown reason.';
             self.common.error(
                 'Failed to remove player from included list. (' + obj.id + ')',
                 'HG');
@@ -3825,7 +3865,7 @@ function HungryGames() {
         }
       }
     });
-    return response;
+    return response || 'Succeeded without errors.';
   };
 
   /**
@@ -3841,6 +3881,17 @@ function HungryGames() {
       self.common.reply(
           msg,
           'You must first create a game with "' + self.myPrefix + 'create".');
+    } else if (
+        msg.text.split(' ')[0] === 'everyone' ||
+        msg.text.split(' ')[0] === '@everyone') {
+      const response = self.includeUsers('everyone', id);
+      if (find(id).currentGame.inProgress) {
+        self.common.reply(
+            msg, 'Everyone will be added into the next game.', response);
+      } else {
+        self.common.reply(
+            msg, 'Everyone has been added to the games.', response);
+      }
     } else if (msg.mentions.users.size == 0) {
       self.common.reply(
           msg,
@@ -3855,16 +3906,23 @@ function HungryGames() {
    * Adds a user back into the next game.
    *
    * @public
-   * @param {string[]|Discord~User[]} users The users to include.
+   * @param {string|string[]|Discord~User[]} users The users to include, or
+   * 'everyone' to include all users.
    * @param {string} id The guild id to add the users to.
    * @return {string} A string with the outcomes of each user. May have
    * multiple lines for a single user.
    */
   this.includeUsers = function(users, id) {
     let response = '';
+    if (users === 'everyone') {
+      users = find(id).excludedUsers.slice(0);
+    } else if (typeof users === 'string') {
+      return 'Invalid users';
+    }
     if (!Array.isArray(users)) {
       users = users.array();
     }
+    const onlyError = users.length > 5;
     users.forEach(function(obj) {
       if (typeof obj === 'string') {
         obj = self.client.users.get(obj);
@@ -3879,21 +3937,29 @@ function HungryGames() {
       }
       let excludeIndex = find(id).excludedUsers.indexOf(obj.id);
       if (excludeIndex >= 0) {
-        response += obj.username + ' removed from blacklist.\n';
+        if (!onlyError) {
+          response += obj.username + ' removed from blacklist.\n';
+        }
         find(id).excludedUsers.splice(excludeIndex, 1);
       }
       if (find(id).currentGame.inProgress) {
-        response += obj.username + ' skipped.\n';
+        if (!onlyError) {
+          response += obj.username + ' skipped.\n';
+        }
       } else if (!find(id).currentGame.includedUsers.find((u) => {
                    return u.id === obj.id;
                  })) {
         find(id).currentGame.includedUsers.push(
             new Player(
                 obj.id, obj.username, obj.displayAvatarURL({format: 'png'})));
-        response += obj.username + ' added to included players.\n';
+        if (!onlyError) {
+          response += obj.username + ' added to included players.\n';
+        }
         formTeams(id);
       } else {
-        response += obj.username + ' is already included.\n';
+        if (!onlyError) {
+          response += obj.username + ' is already included.\n';
+        }
       }
     });
     if (find(id).currentGame.inProgress) {
@@ -3901,7 +3967,7 @@ function HungryGames() {
           'Players were skipped because a game is currently in progress. ' +
           'Players cannot be added to a game while it\'s in progress.';
     }
-    return response;
+    return response || 'Succeeded without errors';
   };
 
   /**
@@ -3969,7 +4035,8 @@ function HungryGames() {
         let numCols = statusList.length > 10 ? 3 : 2;
         let quarterLength = Math.ceil(statusList.length / numCols);
         for (let i = 0; i < numCols - 1; i++) {
-          let thisMessage = statusList.splice(0, quarterLength).join('\n');
+          let thisMessage =
+              statusList.splice(0, quarterLength).join('\n').substr(0, 1024);
           finalMessage.addField(
               'Included (' + (i * quarterLength + 1) + '-' +
                   ((i + 1) * quarterLength) + ')',
@@ -3978,7 +4045,7 @@ function HungryGames() {
         finalMessage.addField(
             'Included (' + ((numCols - 1) * quarterLength + 1) + '-' +
                 numUsers + ')',
-            statusList.join('\n'), true);
+            statusList.join('\n').substr(0, 1024), true);
       } else {
         finalMessage.addField(
             'Included (' + numUsers + ')', statusList.join('\n') || 'Nobody...',
@@ -3991,14 +4058,20 @@ function HungryGames() {
     }
     if (find(id) && find(id).excludedUsers &&
         find(id).excludedUsers.length > 0) {
+      let excludedList = find(id)
+                             .excludedUsers
+                             .map(function(obj) {
+                               return getName(msg.guild, obj);
+                             })
+                             .join(', ');
+      let trimmedList = excludedList.substr(0, 1024);
+      if (excludedList != trimmedList) {
+        excludedList = trimmedList.substr(0, 1021) + '...';
+      } else {
+        excludedList = trimmedList;
+      }
       finalMessage.addField(
-          'Excluded (' + find(id).excludedUsers.length + ')',
-          find(id)
-              .excludedUsers
-              .map(function(obj) {
-                return getName(msg.guild, obj);
-              })
-              .join(', '),
+          'Excluded (' + find(id).excludedUsers.length + ')', excludedList,
           false);
     }
     msg.channel.send(self.common.mention(msg), finalMessage);
