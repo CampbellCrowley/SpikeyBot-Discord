@@ -1431,7 +1431,7 @@ Hunger Games simulator.
         * [~makePlayer(user)](#HungryGames..makePlayer) ⇒ [<code>Player</code>](#HungryGames..Player) ℗
         * [~sendAtTime(channel, one, two, time)](#HungryGames..sendAtTime) ℗
         * [~createGame(msg, id, [silent])](#HungryGames..createGame) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
-        * [~getAllPlayers(members, excluded, bots)](#HungryGames..getAllPlayers) ⇒ [<code>Array.&lt;Player&gt;</code>](#HungryGames..Player) ℗
+        * [~getAllPlayers(members, excluded, bots, included, excludeByDefault)](#HungryGames..getAllPlayers) ⇒ [<code>Array.&lt;Player&gt;</code>](#HungryGames..Player) ℗
         * [~formTeams(id)](#HungryGames..formTeams) ℗
         * [~resetGame(msg, id)](#HungryGames..resetGame) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~showGameInfo(msg, id)](#HungryGames..showGameInfo) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
@@ -2482,7 +2482,7 @@ Create a Hungry Games for a guild.
 
 <a name="HungryGames..getAllPlayers"></a>
 
-### HungryGames~getAllPlayers(members, excluded, bots) ⇒ [<code>Array.&lt;Player&gt;</code>](#HungryGames..Player) ℗
+### HungryGames~getAllPlayers(members, excluded, bots, included, excludeByDefault) ⇒ [<code>Array.&lt;Player&gt;</code>](#HungryGames..Player) ℗
 Form an array of Player objects based on guild members, excluded members,
 and whether to include bots.
 
@@ -2495,6 +2495,8 @@ and whether to include bots.
 | members | <code>Discord~Collection.&lt;Discord~GuildMember&gt;</code> | All members in guild. |
 | excluded | <code>Array.&lt;string&gt;</code> | Array of ids of users that should not be included in the games. |
 | bots | <code>boolean</code> | Should bots be included in the games. |
+| included | <code>Array.&lt;string&gt;</code> | Array of ids of users that should be included in the games. Used if excludeByDefault is true. |
+| excludeByDefault | <code>boolean</code> | Should new users be excluded from the game by default? |
 
 <a name="HungryGames..formTeams"></a>
 

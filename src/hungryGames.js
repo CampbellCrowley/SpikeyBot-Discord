@@ -281,6 +281,12 @@ function HungryGames() {
       comment: 'Should bots be included in the games. If this is false, bots ' +
           'cannot be added manually.',
     },
+    excludeNewUsers: {
+      value: false,
+      comment: 'Should new users who join your server be excluded from the ' +
+          'games by default. True will add all new users to the blacklist, ' +
+          'false will put all new users into the next game automatically.',
+    },
     allowNoVictors: {
       value: true,
       comment:
@@ -1406,7 +1412,8 @@ function HungryGames() {
       find(id).currentGame.day = {num: -1, state: 0, events: []};
       find(id).currentGame.includedUsers = getAllPlayers(
           msg.guild.members, find(id).excludedUsers,
-          find(id).options.includeBots);
+          find(id).options.includeBots, find(id).includedUsers,
+          find(id).options.excludeNewUsers);
       find(id).currentGame.numAlive =
           find(id).currentGame.includedUsers.length;
     } else if (find(id)) {
@@ -1418,7 +1425,8 @@ function HungryGames() {
         inProgress: false,
         includedUsers: getAllPlayers(
             msg.guild.members, find(id).excludedUsers,
-            find(id).options.includeBots),
+            find(id).options.includeBots, find(id).includedUsers,
+            find(id).options.excludeNewUsers),
         ended: false,
         day: {num: -1, state: 0, events: []},
       };
@@ -1427,11 +1435,12 @@ function HungryGames() {
     } else {
       games[id] = {
         excludedUsers: [],
+        includedUsers: [],
         customEvents: {bloodbath: [], player: [], arena: []},
         currentGame: {
           name: msg.guild.name + '\'s Hungry Games',
           inProgress: false,
-          includedUsers: getAllPlayers(msg.guild.members, [], false),
+          includedUsers: getAllPlayers(msg.guild.members, [], false, [], false),
           teams: [],
           ended: false,
           day: {num: -1, state: 0, events: []},
@@ -1475,15 +1484,50 @@ function HungryGames() {
    * @param {string[]} excluded Array of ids of users that should not be
    * included in the games.
    * @param {boolean} bots Should bots be included in the games.
+   * @param {string[]} included Array of ids of users that should be included in
+   * the games. Used if excludeByDefault is true.
+   * @param {boolean} excludeByDefault Should new users be excluded from the
+   * game by default?
    * @return {HungryGames~Player[]} Array of players to include in the games.
    */
-  function getAllPlayers(members, excluded, bots) {
+  function getAllPlayers(members, excluded, bots, included, excludeByDefault) {
     let finalMembers = [];
-    if (!bots || excluded instanceof Array) {
+    if (!bots || Array.isArray(excluded)) {
       finalMembers = members.filter(function(obj) {
+        if (included && excluded &&
+            !included.includes(obj.user.id) &&
+            !excluded.includes(obj.user.id)) {
+          if (excludeByDefault) {
+            excluded.push(obj.user.id);
+          } else {
+            included.push(obj.user.id);
+          }
+        } else if (
+            included && excluded && included.includes(obj.user.id) &&
+            excluded.includes(obj.user.id)) {
+          self.common.error(
+              'User in both blacklist and whitelist: ' + obj.user.id +
+                  ' Guild: ' + obj.guild.id,
+              'HG');
+          if (excludeByDefault) {
+            included.splice(
+                included.findIndex((el) => {
+                  return el == obj.user.id;
+                }),
+                1);
+          } else {
+            excluded.splice(
+                excluded.findIndex((el) => {
+                  return el == obj.user.id;
+                }),
+                1);
+          }
+        }
         return !(
             (!bots && obj.user.bot) ||
-            (excluded && excluded.includes(obj.user.id)));
+            (excluded && excluded.includes(obj.user.id) ||
+             (excludeByDefault && included &&
+              !included.includes(obj.user.id))));
       });
     }
     if (finalMembers.length == 0) finalMembers = members.slice();
@@ -1626,12 +1670,17 @@ function HungryGames() {
         find(id).currentGame.teams = [];
         formTeams(id);
         return 'Resetting ALL teams!';
+      } else if (command == 'users') {
+        find(id).includedUsers = [];
+        find(id).excludedUsers = [];
+        return 'Resetting ALL user data!';
       } else {
         return 'Please specify what data to reset.\nall {deletes all data ' +
             'for this server},\nevents {deletes all custom events},\n' +
             'current {deletes all data about the current game},\noptions ' +
             '{resets all options to default values},\nteams {delete all ' +
-            'teams and creates new ones}.';
+            'teams and creates new ones},\nusers {delete data about where to ' +
+            'put users when creating a new game}.';
       }
     } else {
       return 'There is no data to reset. Start a new game with "' +
@@ -3858,7 +3907,7 @@ function HungryGames() {
     if (!Array.isArray(users)) {
       users = users.array();
     }
-    const onlyError = users.length > 5;
+    const onlyError = users.length > 2;
     users.forEach(function(obj) {
       if (typeof obj === 'string') {
         obj = self.client.users.get(obj);
@@ -3876,6 +3925,16 @@ function HungryGames() {
         find(id).excludedUsers.push(obj.id);
         if (!onlyError) {
           response += obj.username + ' added to blacklist.\n';
+        }
+        if (!find(id).includedUsers) find(id).includedUsers = [];
+        let oldI = find(id).includedUsers.findIndex((el) => {
+          return el === obj.id;
+        });
+        if (oldI > -1) {
+          find(id).includedUsers.splice(oldI, 1);
+          if (!onlyError) {
+            response += obj.username + ' removed from whitelist.\n';
+          }
         }
         if (!find(id).currentGame.inProgress) {
           let index =
@@ -3955,7 +4014,7 @@ function HungryGames() {
     if (!Array.isArray(users)) {
       users = users.array();
     }
-    const onlyError = users.length > 5;
+    const onlyError = users.length > 2;
     users.forEach(function(obj) {
       if (typeof obj === 'string') {
         obj = self.client.users.get(obj);
@@ -3974,6 +4033,12 @@ function HungryGames() {
           response += obj.username + ' removed from blacklist.\n';
         }
         find(id).excludedUsers.splice(excludeIndex, 1);
+      }
+      if (!find(id).includedUsers.includes(obj.id)) {
+        find(id).includedUsers.push(obj.id);
+        if (!onlyError) {
+          response += obj.username + ' added to whitelist.\n';
+        }
       }
       if (find(id).currentGame.inProgress) {
         if (!onlyError) {
