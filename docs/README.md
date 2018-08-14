@@ -3506,6 +3506,7 @@ Basic commands and features for the bot.
         * [~commandStats(msg)](#Main..commandStats) : [<code>commandHandler</code>](#commandHandler) ℗
             * [~statsResponse(res)](#Main..commandStats..statsResponse) ℗
         * [~getStats()](#Main..getStats) ⇒ <code>Object</code> ℗
+        * [~commandLookup(msg)](#Main..commandLookup) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~sigint()](#Main..sigint) ℗
         * [~Timer](#Main..Timer) : <code>Object</code>
 
@@ -4272,6 +4273,18 @@ Fetch our statistics about the bot.
 **Kind**: inner method of [<code>Main</code>](#Main)  
 **Returns**: <code>Object</code> - The statistics we collected.  
 **Access**: private  
+<a name="Main..commandLookup"></a>
+
+### Main~commandLookup(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Lookup an ID and give information about what it represents.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
 <a name="Main..sigint"></a>
 
 ### Main~sigint() ℗

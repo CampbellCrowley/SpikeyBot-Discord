@@ -55,6 +55,7 @@ math.config({matrix: 'Array'});
  * @listens SpikeyBot~Command#toggleMute
  * @listens SpikeyBot~Command#perms
  * @listens SpikeyBot~Commands#stats
+ * @listens SpikeyBot~Commands#lookup
  */
 function Main() {
   const self = this;
@@ -258,6 +259,7 @@ function Main() {
     self.command.on('togglemute', commandToggleMute, true);
     self.command.on('perms', commandPerms, true);
     self.command.on('stats', commandStats);
+    self.command.on('lookup', commandLookup);
 
     self.client.on('guildCreate', onGuildCreate);
     self.client.on('guildDelete', onGuildDelete);
@@ -453,6 +455,7 @@ function Main() {
     self.command.deleteEvent('togglemute');
     self.command.deleteEvent('perms');
     self.command.deleteEvent('stats');
+    self.command.deleteEvent('lookup');
 
     self.client.removeListener('guildCreate', onGuildCreate);
     self.client.removeListener('guildDelete', onGuildDelete);
@@ -2103,6 +2106,54 @@ function Main() {
   }
 
   /**
+   * Lookup an ID and give information about what it represents.
+   *
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens SpikeyBot~Command#lookup
+   */
+  function commandLookup(msg) {
+    let id = msg.text.split(' ')[1];
+
+    let user = self.client.users.get(id);
+    let guild = self.client.guilds.get(id);
+    let channel = self.client.channels.get(id);
+
+    if (user) {
+      msg.channel.send(id + ': User: `' + user.tag.replace(/`/g, '\\`') + '`');
+    }
+    if (guild && !channel) {
+      msg.channel.send(
+          id + ': Guild: `' + guild.name.replace(/`/g, '\\`') + '`');
+    }
+    if (channel) {
+      if (channel.guild) {
+        msg.channel.send(
+            id + ': Guild Channel: `' + channel.name.replace(/`/g, '\\`') +
+            '` in guild `' + channel.guild.name.replace(/`/g, '\\`') + '` (' +
+            channel.guild.id + ')');
+      } else {
+        msg.channel.send(
+            id + ': Channel: `' + channel.name.replace(/`/g, '\\`') + '`');
+      }
+    }
+
+    if (!user && !guild && !channel) {
+      self.client.users.fetch(id)
+          .then((user) => {
+            msg.channel.send(
+                id + ': User: `' + user.tag.replace(/`/g, '\\`') + '`');
+          })
+          .catch((err) => {
+            self.common.error('Failed to lookup id: ' + id);
+            console.error(err);
+            msg.channel.send(id + ' Failed to be looked up.');
+          });
+    }
+  }
+
+  /**
    * Triggered via SIGINT, SIGHUP or SIGTERM. Saves data before exiting.
    *
    * @private
@@ -2110,8 +2161,7 @@ function Main() {
    * @listens Process#SIGHUP
    * @listens Process#SIGTERM
    */
-  function
-  sigint() {
+  function sigint() {
     if (self.common && self.common.log) {
       self.common.log('Caught exit!', 'Main');
     } else {

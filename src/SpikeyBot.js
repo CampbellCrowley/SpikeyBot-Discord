@@ -606,11 +606,11 @@ function SpikeyBot() {
       if (!minimal) {
         if (msg.guild !== null) {
           common.log(
-              msg.guild.name + '#' + msg.channel.name + '@' +
-              msg.author.username + msg.content.replaceAll('\n', '\\n'));
+              msg.channel.id + '@' + msg.author.id +
+              msg.content.replaceAll('\n', '\\n'));
         } else {
           common.log(
-              'PM: @' + msg.author.username +
+              'PM: @' + msg.author.id + '@' + msg.author.tag +
               msg.content.replaceAll('\n', '\\n'));
         }
       }
