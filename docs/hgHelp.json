@@ -9,16 +9,61 @@
         {
           "command": "create",
           "description": "This will create a game with default settings if it doesn't exist already.",
-          "aliases": "create, c, new"
+          "aliases": "create, c, new",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "create"
+            }
+          ]
         },
         {
           "command": "options 'option name' 'value'",
           "description": "List options if no name, or change the option if you give a name.",
-          "aliases": "options, option, opt, opts"
+          "aliases": "options, option, opt, opts",
+          "examples": [
+            {
+              "description": "Show Current Options",
+              "command": "opt",
+              "result": "All changeable options, their current values, and a description will be sent. Change pages by clicking on the reactions."
+            },
+            {
+              "description": "Change a Boolean Option",
+              "command": "opt includeBots true",
+              "result": "Bots will be allowed in the games.<br>Notice: Option names are case sensitive, they must be written exactly as they appear in the list."
+            },
+            {
+              "description": "Change a Percentage Option",
+              "command": "opt probabilityOfResurrect 0.1",
+              "result": "The probability of resurrection will be set to 10%.<br>Notice: Option names are case sensitive, they must be written exactly as they appear in the list."
+            },
+            {
+              "description": "Change a String Option",
+              "command": "opt playerDeathRate veryhigh",
+              "result": "The probability of a player being killed or wounded will become very high.<br>Notice: Option names are case sensitive, they must be written exactly as they appear in the list."
+            }
+          ]
         },
         {
           "command": "reset 'all/current/events/options/teams'",
-          "description": "Delete data about the Games. Don't choose an option for more info."
+          "description": "Delete data about the Games. Don't choose an option for more info.",
+          "examples": [
+            {
+              "description": "Show Reset Options",
+              "command": "reset",
+              "result": "Bot will send resettable values and a little info about each."
+            },
+            {
+              "description": "Delete All Data",
+              "command": "reset all",
+              "result": "Bot will delete all data about the games in this server. This cannot be undone."
+            },
+            {
+              "description": "Reset Options",
+              "command": "reset options",
+              "result": "All options will be reset to their default values. This cannot be undone."
+            }
+          ]
         }
       ]
     },
@@ -28,17 +73,57 @@
         {
           "command": "players",
           "description": "This will list all players I currently care about.",
-          "aliases": "players, player"
+          "aliases": "players, player",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "players"
+            }
+          ]
         },
         {
           "command": "exclude 'mention'",
           "description": "Prevent someone from being added to the next game.",
-          "aliases": "exclude, remove, exc, ex"
+          "aliases": "exclude, remove, exc, ex",
+          "examples": [
+            {
+              "description": "Exclude a Single User",
+              "command": "exclude @SpikeyRobot",
+              "result": "SpikeyRobot will not participate in the next game that is started. He will not be removed from a game that is currently in progress."
+            },
+            {
+              "description": "Exclude Multiple Users",
+              "command": "exclude @SpikeyRobot @SpikeyBot",
+              "result": "SpikeyRobot and SpikeyBot will not participate in the next game that is started. They will not be removed from a game that is currently in progress."
+            },
+            {
+              "description": "Exclude Everyone",
+              "command": "exclude everyone",
+              "result": "All users will be removed from the next games."
+            }
+          ]
         },
         {
           "command": "include 'mention'",
           "description": "Add a person back into the next game.",
-          "aliases": "include, add, inc, in"
+          "aliases": "include, add, inc, in",
+          "examples": [
+            {
+              "description": "Include a Single User",
+              "command": "include @SpikeyRobot",
+              "result": "SpikeyRobot will participate in the next game that is started. He will not be added to a game that is currently in progress."
+            },
+            {
+              "description": "Include Multiple Users",
+              "command": "include @SpikeyRobot @SpikeyBot",
+              "result": "SpikeyRobot and SpikeyBot will participate in the next game that is started. They will not be added to a game that is currently in progress."
+            },
+            {
+              "description": "Include Everyone",
+              "command": "include everyone",
+              "result": "All users will be added to the next games."
+            }
+          ]
         }
       ]
     },
@@ -47,23 +132,68 @@
       "rows": [
         {
           "command": "teams swap 'mention' 'mention'",
-          "description": "This will swap two players to the other team."
+          "description": "This will swap two players to the other team.",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "team swap @SpikeyRobot @SpikeyBot",
+              "result": "SpikeyRobot will be put on SpikeyBot's Team, and SpikeyBot will be put on SpikeyRobot's original team."
+            }
+          ]
         },
         {
           "command": "teams move 'mention' 'id/mention'",
-          "description": "This will move the first player, to another team. (Ignores teamSize option)"
+          "description": "This will move the first player, to another team. (Ignores teamSize option)",
+          "examples": [
+            {
+              "description": "Move Using ID",
+              "command": "team move @SpikeyRobot 2",
+              "result": "SpikeyRobot will be put on Team 2 even if the team is full."
+            },
+            {
+              "description": "Move Using Mention",
+              "command": "team move @SpikeyRobot @SpikeyBot",
+              "result": "SpikeyRobot will be put on the team that SpikeyBot is on even if the team is full."
+            }
+          ]
         },
         {
           "command": "teams rename 'id/mention' 'name...'",
-          "description": "Rename a team. Specify its id, or mention someone on a team."
+          "description": "Rename a team. Specify its id, or mention someone on a team.",
+          "examples": [
+            {
+              "description": "Rename Using ID",
+              "command": "team rename 3 The Bestest Team",
+              "result": "Team 3 will be called \"The Bestest Team\"."
+            },
+            {
+              "description": "Rename Using Mention",
+              "command": "team rename @SpikeyRobot The Greatest Team Ever!!!",
+              "result": "The team that SpikeyRobot is on will be called \"The Greatest Team Ever!!!\"."
+            }
+          ]
         },
         {
           "command": "teams randomize",
-          "description": "Randomize who is on what team."
+          "description": "Randomize who is on what team.",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "team randomize",
+              "result": "All teams will be reset, and users will be swapped at random to make entirely new teams."
+            }
+          ]
         },
         {
           "command": "teams reset",
-          "description": "Delete all teams and start over."
+          "description": "Delete all teams and start over.",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "team reset",
+              "result": "All teams will be reset."
+            }
+          ]
         }
       ]
     },
@@ -73,21 +203,49 @@
         {
           "command": "events",
           "description": "This will list all custom events that could happen in the game.",
-          "aliases": "events, event"
+          "aliases": "events, event",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "events",
+              "result": "Message with list of all events will be sent. Use arrow reactions to change page, circle arrows to change event type."
+            }
+          ]
         },
         {
           "command": "debugevents",
-          "description": "This will let you download all of the events and their data."
+          "description": "This will let you download all of the events and their data.",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "debugevents",
+              "result": "Multiple file downloads will be sent to you with some information about each file."
+            }
+          ]
         },
         {
           "command": "events add 'message'",
-          "description": "Begins process of adding a custom event.",
-          "aliases": "add, create"
+          "description": "Begins process of adding a custom event. Not all event types can be created yet due to the complications of making a UI.",
+          "aliases": "add, create",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "event create {victim} [Vis|are] killed by {attacker}!",
+              "result": "Edit the message you sent until the examples look correct to you, then use the reactions on the bot's message to continue event creation."
+            }
+          ]
         },
         {
           "command": "events remove 'number'",
           "description": "Remove a custom event. The number is the number shown in the list of events.",
-          "aliases": "remove, delete"
+          "aliases": "remove, delete",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "event delete 10",
+              "result": "Start to delete custom event #10, click the reactions to choose which type of event this was."
+            }
+          ]
         }
       ]
     },
@@ -97,27 +255,60 @@
         {
           "command": "start",
           "description": "This will start a game with your settings.",
-          "aliases": "start, s"
+          "aliases": "start, s",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "start",
+              "result": "If you use Autoplay, this isn't necessary."
+            }
+          ]
         },
         {
           "command": "end",
           "description": "This will end a game early.",
-          "aliases": "end, abort"
+          "aliases": "end, abort",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "end"
+            }
+          ]
         },
         {
           "command": "autoplay",
           "description": "Automatically continue to the next day after a day is over.",
-          "aliases": "autoplay, auto, resume, play, go"
+          "aliases": "autoplay, auto, resume, play, go",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "go",
+              "result": "Autoplay is enabled, if a game is not in progress, it will be created and started."
+            }
+          ]
         },
         {
           "command": "pause",
           "description": "Stop autoplay at the end of the day.",
-          "aliases": "pause, stop"
+          "aliases": "pause, stop",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "pause",
+              "result": "Autoplay is disabled but the rest of the day will still be sent before pausing."
+            }
+          ]
         },
         {
           "command": "next",
           "description": "Simulate the next day of the Games!",
-          "aliases": "next, nextday"
+          "aliases": "next, nextday",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "next"
+            }
+          ]
         }
       ]
     }

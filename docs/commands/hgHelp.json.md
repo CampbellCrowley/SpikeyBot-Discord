@@ -34,7 +34,7 @@
 | --- | --- | --- |
 | ?hg events | This will list all custom events that could happen in the game. | events, event |
 | ?hg debugevents | This will let you download all of the events and their data. |  |
-| ?hg events add 'message' | Begins process of adding a custom event. | add, create |
+| ?hg events add 'message' | Begins process of adding a custom event. Not all event types can be created yet due to the complications of making a UI. | add, create |
 | ?hg events remove 'number' | Remove a custom event. The number is the number shown in the list of events. | remove, delete |
 
 
