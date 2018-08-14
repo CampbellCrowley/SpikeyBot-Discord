@@ -396,15 +396,66 @@
         {
           "command": "evaluate 'problem'",
           "description": "Solve a math problem, and convert units.",
-          "aliases": "eval, evaluate"
+          "aliases": "eval, evaluate",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "eval 12 + 9 * 6 ^ 2 / 2",
+              "result": "```174```"
+            },
+            {
+              "description": "Convert Units",
+              "command": "eval 1000m / 2s in mi/h",
+              "result": "```1118.468146027201 mi / h```"
+            },
+            {
+              "description": "Convert Angles",
+              "command": "eval 180 degrees in radians",
+              "result": "```3.141592653589793 radians```"
+            },
+            {
+              "description": "Complex Example",
+              "command": "eval (10cm) + ((5ft/s) + (2m/s/s * 3s)) * 4 minutes",
+              "result": "```1.8058599999999998 km```"
+            }
+          ]
         },
         {
           "command": "derive 'equation with x'",
-          "description": "Find dy/dx of an equation."
+          "description": "Find dy/dx of an equation.",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "derive 5x^2 + 4x + 2 = y",
+              "result": "```-(10x + 4)```"
+            },
+            {
+              "description": "Harder Problem",
+              "command": "derive x = 10y + 5y^2 + 3",
+              "result": "```-1```"
+            }
+          ]
         },
         {
           "command": "graph 'equation with x' '[xMin, xMax]' '[yMin, yMax]'",
-          "description": "Graph an equation, Maxes and mins are all optional, but brackets are required."
+          "description": "Graph an equation, Maxes and mins are all optional, but brackets are required.",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "graph x^2 - 5",
+              "result": "<img src=\"https://i.imgur.com/CI7UU9p.png\">"
+            },
+            {
+              "description": "User Defined Graph Domain",
+              "command": "graph sin(x / 10) [-40, 40]",
+              "result": "<img src=\"https://i.imgur.com/cAqBC7E.png\">"
+            },
+            {
+              "description": "User Defined Graph Domain and Range",
+              "command": "graph sin(x / 10) [-40, 40] [-2, 2]",
+              "result": "<img src=\"https://i.imgur.com/ZX9B7Ru.png\">"
+            }
+          ]
         }
       ]
     },
@@ -413,21 +464,63 @@
       "rows": [
         {
           "command": "purge 'number' 'mentions'",
-          "description": "Remove a number of messages from the current text channel. Mention people to only remove their messages.",
-          "aliases": "purge, prune"
+          "description": "Remove a number of messages from the current text channel. Mention people to only remove their messages. Limited to 100 messages per command (Discord doesn't allow more). May stop at messages sent 2 weeks prior.",
+          "aliases": "purge, prune",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "purge 5",
+              "result": "The last 5 messages sent in the current channel will be deleted."
+            },
+            {
+              "description": "Delete Specific User's Messages",
+              "command": "purge 10 @SpikeyRobot",
+              "result": "The last 10 of SpikeyRobot's messages will be deleted from the current channel."
+            },
+            {
+              "description": "Delete Multiple Users' Messages",
+              "command": "purge 20 @SpikeyRobot @SpikeyBot",
+              "result": "The last 20 messages in the channel that were sent by either SpikeyRobot or SpikeyBot will be deleted."
+            }
+          ]
         },
         {
           "command": "ban 'mention'",
           "description": "I will ban the person you mention with a flashy message!",
-          "aliases": "ban, fuckyou"
+          "aliases": "ban, fuckyou",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "ban @SpikeyRobot",
+              "result": "SpikeyRobot will be banned from your server, and the bot will send a message in the chat saying goodbye."
+            },
+            {
+              "description": "Ban Multiple Users",
+              "command": "ban @SpikeyRobot @RoboSoupCan",
+              "result": "SpikeyRobot and RoboSoupCan will be banned from your server, and the bot will send a message in the chat saying goodbye."
+            }
+          ]
         },
         {
           "command": "smite 'mention'",
-          "description": "Silence the peasant who dare oppose you!"
+          "description": "Silence the peasant who dare oppose you!",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "smite @SpikeyRobot",
+              "result": "All of SpikeyRobot's roles will be removed, and he will be given the \"Smited\" role which will not allow him to send messages or talk in voice channels, but can still see and hear what is going on."
+            }
+          ]
         },
         {
           "command": "togglemute",
-          "description": "Turn on or off automatically preventing a person from using @everyone if they spam it."
+          "description": "Turn on or off automatically preventing a person from using @everyone if they spam it.",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "togglemute"
+            }
+          ]
         }
       ]
     }
