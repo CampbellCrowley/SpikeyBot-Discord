@@ -245,26 +245,30 @@ function HungryGames() {
    *
    * @private
    * @type {Object.<{
-   *     value: string|number|boolean,
+   *     value: string|number|boolean|Object,
    *     values: ?string[],
    *     comment: string
    *   }>}
    * @constant
    */
   const defaultOptions = {
-    bloodbathDeathRate: {
-      value: 'normal',
-      values: ['verylow', 'low', 'normal', 'high', 'veryhigh'],
+    bloodbathOutcomeProbs: {
+      value: {kill: 30, wound: 6, thrive: 8, nothing: 56},
       comment:
-          'Controls how many people die in the bloodbath. Can be ["verylow", ' +
-          '"low", "normal", "high", "veryhigh"].',
+          'Relative probabilities of choosing an event with each outcome.' +
+          ' This is for the bloodbath events.',
     },
-    playerDeathRate: {
-      value: 'normal',
-      values: ['verylow', 'low', 'normal', 'high', 'veryhigh'],
+    playerOutcomeProbs: {
+      value: {kill: 22, wound: 4, thrive: 8, nothing: 66},
       comment:
-          'Controls how many people die each day. Can be ["verylow", "low", ' +
-          '"normal", "high", "veryhigh"].',
+          'Relative probabilities of choosing an event with each outcome.' +
+          ' This is for normal daily events.',
+    },
+    arenaOutcomeProbs: {
+      value: {kill: 70, wound: 10, thrive: 5, nothing: 15},
+      comment:
+          'Relative Probabilities of choosing an event with each outcome.' +
+          'This is for the special arena events.',
     },
     arenaEvents: {
       value: true,
@@ -499,37 +503,20 @@ function HungryGames() {
   };
 
   /**
-   * Weighting value for choosing events. A ratio of 1:1 would not modify
-   * probabilities. A ratio of 2:1 would make all events that kill twice as
-   * likely to be chosen.
-   * @typedef {Object} HungryGames~EventWeights
+   * Probabilities for each choosing an event with each type of outcome.
+   * @typedef {Object} HungryGames~OutcomeProbabilities}
    *
-   * @property {number} kill Relative weight of events that kill.
-   * @property {number} nothing Relative weight of events that don't kill.
+   * @property {number} kill Relative probability of events that can kill.
+   * @property {number} wound Relative probability of events that can wound.
+   * @property {number} thrive Relative probability of events that can heal.
+   * @property {number} nothing Relative probability of events that do nothing.
    */
-
-  /**
-   * Weighting values for modifying choosing of events.
-   *
-   * @private
-   * @type {Object.<HungryGames~EventWeights>}
-   * @constant
-   * @default
-   */
-  const deathRateWeights = {
-    verylow: {kill: 1, nothing: 4},
-    low: {kill: 1, nothing: 2},
-    normal: {kill: 3, nothing: 5},
-    high: {kill: 1, nothing: 1},
-    veryhigh: {kill: 2, nothing: 1},
-  };
 
   /**
    * A singe instance of a game in a guild.
    * @typedef {Object} HungryGames~GuildGame
    *
-   * @property {Object.<number|boolean|string>} options The game
-   * options.
+   * @property {Object.<number|boolean|string|Object>} options The game options.
    * @property {boolean} autoPlay Is the game currently autoplaying.
    * @property {string[]} excludedUsers The ids of the users to exclude from the
    * games.
@@ -950,7 +937,6 @@ function HungryGames() {
     process.removeListener('SIGINT', sigint);
     process.removeListener('SIGHUP', sigint);
     process.removeListener('SIGTERM', sigint);
-    process.removeListener('unhandledRejection', unhandledRejection);
     if (web) web.shutdown();
     web = null;
     delete require.cache[require.resolve('./hgWeb.js')];
@@ -2141,9 +2127,10 @@ function HungryGames() {
     // TODO: Allow custom user-created weapons.
     let weaponEventPool = weapons;
 
-    const deathRate = find(id).currentGame.day.num === 0 ?
-        find(id).options.bloodbathDeathRate :
-        find(id).options.playerDeathRate;
+    const probOpts = find(id).currentGame.day.num === 0 ?
+        find(id).options.bloodbathOutcomeProbs :
+        (doArenaEvent ? find(id).options.arenaOutcomeProbs :
+                        find(id).options.playerOutcomeProbs);
 
     while (userPool.length > 0) {
       let eventTry;
@@ -2181,7 +2168,7 @@ function HungryGames() {
           eventTry = pickEvent(
               userPool, weaponEventPool[chosenWeapon].outcomes,
               find(id).options, find(id).currentGame.numAlive,
-              find(id).currentGame.teams, deathRate, userWithWeapon);
+              find(id).currentGame.teams, probOpts, userWithWeapon);
           if (!eventTry) {
             useWeapon = false;
             self.common.error(
@@ -2280,7 +2267,7 @@ function HungryGames() {
         eventTry = pickEvent(
             userPool, userEventPool, find(id).options,
             find(id).currentGame.numAlive, find(id).currentGame.teams,
-            deathRate);
+            probOpts);
         if (!eventTry) {
           self.common.reply(
               msg, 'A stupid error happened :(', 'Try again with `' +
@@ -2622,18 +2609,18 @@ function HungryGames() {
    * @param {Object} options The options set in the current game.
    * @param {number} numAlive Number of players in the game still alive.
    * @param {HungryGames~Team[]} teams Array of teams in this game.
-   * @param {HungryGames~EventWeights} deathRate Death rate weights.
+   * @param {HungryGames~OutcomeProbabilities} probOpts Death rate weights.
    * @param {?Player} weaponWielder A player that is using a weapon in this
    * event, or null if no player is using a weapon.
    * @return {?HungryGames~Event} The chosen event that satisfies all
    * requirements, or null if something went wrong.
    */
   function pickEvent(
-      userPool, eventPool, options, numAlive, teams, deathRate, weaponWielder) {
+      userPool, eventPool, options, numAlive, teams, probOpts, weaponWielder) {
     let loop = 0;
     while (loop < 100) {
       loop++;
-      let eventIndex = weightedEvent(eventPool, deathRate);
+      let eventIndex = probabilityEvent(eventPool, probOpts);
       let eventTry = eventPool[eventIndex];
       if (!eventTry) {
         self.common.error(
@@ -3108,65 +3095,55 @@ function HungryGames() {
       }
     }
   }
+
   /**
-   * Produce a random event that using weighted probabilities.
-   * @see {@link HungryGames~deathRateWeights)
+   * Produce a random event that using probabilities set in options.
    *
    * @private
    * @param {HungryGames~Event[]} eventPool The pool of all events to consider.
-   * @param {HungryGames~EventWeights} weightOpt The weighting options.
+   * @param {{kill: number, wound: number, thrive: number, nothing: number}}
+   * probabilityOpts The probabilities of each type of event being used.
+   * @param {number} [recurse=0] The current recusrive depth.
    * @return {number} The index of the event that was chosen.
    */
-  function weightedEvent(eventPool, weightOpt) {
-    const rates = deathRateWeights[weightOpt];
-    let sum = 0;
-    for (let i in eventPool) {
-      if (!eventPool[i]) continue;
-      if (!eventPool[i].attacker) {
-        self.common.error(
-            'Event does not have attacker data: ' +
-            JSON.stringify(eventPool[i]));
-        continue;
-      }
-      if (!eventPool[i].victim) {
-        self.common.error(
-            'Event does not have victim data: ' + JSON.stringify(eventPool[i]));
-        continue;
-      }
-      if (isEventDeadly(eventPool[i])) {
-        sum += rates.kill;
-      } else {
-        sum += rates.nothing;
+  function probabilityEvent(eventPool, probabilityOpts, recurse = 0) {
+    let probTotal = probabilityOpts.kill + probabilityOpts.wound +
+        probabilityOpts.thrive + probabilityOpts.nothing;
+
+    const value = Math.random() * probTotal;
+
+    let type;
+    if (value > (probTotal -= probabilityOpts.nothing)) type = null;
+    else if (value > (probTotal -= probabilityOpts.thrive)) type = 'thrives';
+    else if (value > (probTotal -= probabilityOpts.wound)) type = 'wounded';
+    else type = 'dies';
+
+    let finalPool = [];
+
+    for (let i = 0; i < eventPool.length; i++) {
+      if (type && (eventPool[i].attacker.outcome == type ||
+                   eventPool[i].victim.outcome == type)) {
+        finalPool.push(i);
+      } else if (
+          !type && eventPool[i].attacker.outcome == 'nothing' &&
+          eventPool[i].victim.outcome == 'nothing') {
+        finalPool.push(i);
       }
     }
-    const rand = Math.random() * sum;
-    sum = 0;
-    for (let i in eventPool) {
-      if (!eventPool[i]) continue;
-      if (!eventPool[i].attacker || !eventPool[i].victim) {
-        continue;
-      }
-      if (isEventDeadly(eventPool[i])) {
-        sum += rates.kill;
+    if (finalPool.length == 0) {
+      if (recurse < 10) {
+        console.log(value, type, 'Failed:', recurse + 1);
+        return probabilityEvent(eventPool, probabilityOpts, recurse + 1);
       } else {
-        sum += rates.nothing;
+        self.common.error(
+            'Failed to find event with probabilities: ' +
+            JSON.stringify(probabilityOpts) + ' from ' + eventPool.length +
+            ' events.');
+        return Math.floor(Math.random() * eventPool.length);
       }
-      if (rand <= sum) return i;
+    } else {
+      return finalPool[Math.floor(Math.random() * finalPool.length)];
     }
-    throw new Error('BROKEN WEIGHTED EVENT GENERATOR.');
-  }
-  /**
-   * Decide if the given event should be considered deadly.
-   *
-   * @private
-   * @param {HungryGames~Event} eventTry The event to check.
-   * @return {boolean} If the event is considered deadly.
-   */
-  function isEventDeadly(eventTry) {
-    return eventTry.attacker.outcome == 'dies' ||
-        eventTry.victim.outcome == 'dies' ||
-        eventTry.attacker.outcome == 'wounded' ||
-        eventTry.victim.outcome == 'wounded';
   }
   /**
    * Format an array of users into names based on options and grammar rules.
@@ -3254,7 +3231,8 @@ function HungryGames() {
               .slice(0, weightedUserRand());
       let numDead = deadUsers.length;
       if (numDead === 0) {
-        finalMessage = finalMessage.replaceAll('{dead}', 'an animal');
+        finalMessage = finalMessage.replaceAll('{dead}', 'an animal')
+                           .replace(/\[D([^\|]*)\|([^\]]*)\]/g, '$1');
       } else {
         finalMessage =
             finalMessage
@@ -4205,7 +4183,7 @@ function HungryGames() {
   function toggleOpt(msg, id) {
     let option = msg.text.split(' ')[0];
     let value = msg.text.split(' ')[1];
-    let output = self.setOption(id, option, value);
+    let output = self.setOption(id, option, value, msg.text);
     if (!output) {
       showOpts(msg, find(id).options);
     } else {
@@ -4219,10 +4197,13 @@ function HungryGames() {
    * @param {string} id The guild id to change the option in.
    * @param {?string} option The option key to change.
    * @param {?string|boolean|number} value The value to change the option to.
+   * @param {?string} text The original message sent without the command prefix
+   * in the case we are changing the value of an object and require all user
+   * inputted data.
    * @return {string} A message saying what happened, or null if we should show
    * the user the list of options instead.
    */
-  this.setOption = function(id, option, value) {
+  this.setOption = function(id, option, value, text) {
     if (!find(id) || !find(id).currentGame) {
       return 'You must create a game first before editing settings! Use "' +
           self.myPrefix + 'create" to create a game.';
@@ -4232,72 +4213,99 @@ function HungryGames() {
       return 'You must end this game before changing settings. Use "' +
           self.myPrefix + 'end" to abort this game.';
     } else if (typeof defaultOptions[option] === 'undefined') {
-      return 'That is not a valid option to change! (Delays are in ' +
-          'milliseconds)' +
+      return 'That is not a valid option to change!' +
           JSON.stringify(find(id).options, null, 1)
               .replace('{', '')
               .replace('}', '');
     } else {
-      let type = typeof defaultOptions[option].value;
-      if (type === 'number') {
-        value = Number(value);
-        if (typeof value !== 'number') {
-          return 'That is not a valid value for ' + option +
-              ', which requires a number. (Currently ' +
-              find(id).options[option] + ')';
-        } else {
-          if ((option == 'delayDays' || option == 'delayEvents') &&
-              value < 500) {
-            value = 1000;
-          }
-
-          let old = find(id).options[option];
-          find(id).options[option] = value;
-          if (option == 'teamSize' && value != 0) {
-            return 'Set ' + option + ' to ' + find(id).options[option] +
-                ' from ' + old +
-                '\nTo reset teams to the correct size, type "' + self.myPrefix +
-                'teams reset".\nThis will delete all teams, and create ' +
-                'new ones.';
-          } else {
-            return 'Set ' + option + ' to ' + find(id).options[option] +
-                ' from ' + old;
-          }
-        }
-      } else if (type === 'boolean') {
-        if (value === 'true' || value === 'false') value = value === 'true';
-        if (typeof value !== 'boolean') {
-          return 'That is not a valid value for ' + option +
-              ', which requires true or false. (Currently ' +
-              find(id).options[option] + ')';
-        } else {
-          let old = find(id).options[option];
-          find(id).options[option] = value;
-          if (option == 'includeBots') {
-            createGame(null, id, true);
-            // createGame(msg, id, true);
-          }
-          return 'Set ' + option + ' to ' + find(id).options[option] +
-              ' from ' + old;
-        }
-      } else if (type === 'string') {
-        if (defaultOptions[option].values.lastIndexOf(value) < 0) {
-          return 'That is not a valid value for ' + option +
-              ', which requires one of the following: ' +
-              JSON.stringify(defaultOptions[option].values) + '. (Currently ' +
-              find(id).options[option] + ')';
-        } else {
-          let old = find(id).options[option];
-          find(id).options[option] = value;
-          return 'Set ' + option + ' to ' + find(id).options[option] +
-              ' from ' + old;
-        }
-      } else {
-        return 'Changing the value of this option is not added yet. (' + type +
-            ')';
-      }
+      return changeObjectValue(
+          find(id).options, defaultOptions, option, value, text.split(' '));
     }
   };
+
+  /**
+   * Recurse through an object to change a certain child value based off a given
+   * array of words.
+   *
+   * @private
+   * @param {HungryGames~GuildGame.options} obj The object with the values to
+   * change.
+   * @param {HungryGames~defaultOptions} defaultObj The default template object
+   * to base changes off of.
+   * @param {string} option The first value to check.
+   * @param {number|boolean|string} value The value to change to, or the next
+   * option key to check if we have not found an end to a branch yet.
+   * @param {Array.<string|boolean|number>} values All keys leading to the final
+   * value, as well as the final value.
+   * @return {string} Message saying what happened. Can be an error message.
+   */
+  function changeObjectValue(obj, defaultObj, option, value, values) {
+    let type = typeof(
+        (defaultObj[option] && defaultObj[option].value) || defaultObj[option]);
+    if (type === 'number') {
+      value = Number(value);
+      if (typeof value !== 'number') {
+        return 'That is not a valid value for ' + option +
+            ', which requires a number. (Currently ' + obj[option] + ')';
+      } else {
+        if ((option == 'delayDays' || option == 'delayEvents') && value < 500) {
+          value = 1000;
+        }
+
+        let old = obj[option];
+        obj[option] = value;
+        if (option == 'teamSize' && value != 0) {
+          return 'Set ' + option + ' to ' + obj[option] + ' from ' + old +
+              '\nTo reset teams to the correct size, type "' + self.myPrefix +
+              'teams reset".\nThis will delete all teams, and create ' +
+              'new ones.';
+        } else {
+          return 'Set ' + option + ' to ' + obj[option] + ' from ' + old;
+        }
+      }
+    } else if (type === 'boolean') {
+      if (value === 'true' || value === 'false') value = value === 'true';
+      if (typeof value !== 'boolean') {
+        return 'That is not a valid value for ' + option +
+            ', which requires true or false. (Currently ' + obj[option] + ')';
+      } else {
+        let old = obj[option];
+        obj[option] = value;
+        if (option == 'includeBots') {
+          createGame(null, id, true);
+          // createGame(msg, id, true);
+        }
+        return 'Set ' + option + ' to ' + obj[option] + ' from ' + old;
+      }
+    } else if (type === 'string') {
+      if (defaultObj[option].values.lastIndexOf(value) < 0) {
+        return 'That is not a valid value for ' + option +
+            ', which requires one of the following: ' +
+            JSON.stringify(defaultObj[option].values) + '. (Currently ' +
+            obj[option] + ')';
+      } else {
+        let old = obj[option];
+        obj[option] = value;
+        return 'Set ' + option + ' to ' + obj[option] + ' from ' + old;
+      }
+    } else if (type === 'object') {
+      if (typeof defaultObj[option].value[value] === 'undefined') {
+        return '`' + value + '` is not a valid option to change!' +
+            JSON.stringify(obj[option], null, 1)
+                .replace('{', '')
+                .replace('}', '');
+      } else {
+        return changeObjectValue(
+            obj[option], defaultObj[option].value || defaultObj[option],
+            values[1], values[2], values.slice(3));
+      }
+    } else {
+      return 'Changing the value of this option does not work yet. (' + option +
+          ': ' + type + ')\n' + JSON.stringify(defaultObj) + '(' + value + ')' +
+          JSON.stringify(values);
+    }
+  }
+
   /**
    * Format the options for the games and show them to the user.
    *
@@ -4312,8 +4320,8 @@ function HungryGames() {
       let key = obj[0];
       let val = obj[1];
 
-      return key + ': ' + val + ' (default: ' + defaultOptions[key].value +
-          ')\n' +
+      return key + ': ' + JSON.stringify(val) + ' (default: ' +
+          JSON.stringify(defaultOptions[key].value) + ')\n' +
           '/* ' + defaultOptions[key].comment + ' */';
     });
 
@@ -4341,11 +4349,11 @@ function HungryGames() {
     embed.setFooter('Page ' + (page + 1) + ' of ' + (bodyFields.length));
     embed.setDescription('```js\n' + bodyFields[page].join('\n\n') + '```');
     embed.addField(
-        'Change Number Example',
+        'Simple Example',
         self.myPrefix + 'options probabilityOfResurrect 0.1', true);
     embed.addField(
-        'Change Boolean Example',
-        self.myPrefix + 'options teammatesCollaborate true', true);
+        'Change Object Example',
+        self.myPrefix + 'options playerOutcomeProbs kill 23', true);
 
     if (optionMessages[msg.id]) {
       msg.edit(embed).then((msg_) => {
@@ -5819,20 +5827,6 @@ function HungryGames() {
   process.on('SIGINT', sigint);
   process.on('SIGHUP', sigint);
   process.on('SIGTERM', sigint);
-
-  /**
-   * Handler for an unhandledRejection.
-   *
-   * @private
-   * @param {Object} reason Reason for rejection.
-   * @param {Promise} p The promise that caused the rejection.
-   * @listens Process#unhandledRejection
-   */
-  function unhandledRejection(reason, p) {
-    // console.log('Unhandled Rejection at:\n', p /*, '\nreason:', reason*/);
-    console.log('Unhandled Rejection:\n', reason);
-  }
-  process.on('unhandledRejection', unhandledRejection);
 }
 
 module.exports = new HungryGames();
