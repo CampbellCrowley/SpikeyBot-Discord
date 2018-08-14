@@ -122,9 +122,8 @@ const hgTests = [
   new Test('End command again', '~hg end', ['#noerr']),
   new Test('Option command', '~hg options', ['#embed']),
   new Test(
-      'Change option string', '~hg options playerDeathRate veryhigh',
-      ['<@422623712534200321>\n```\nSet playerDeathRate to veryhigh from ' +
-       'normal\n```']),
+      'Change option object number', '~hg options playerOutcomeProbs kill 100',
+      ['<@422623712534200321>\n```\nSet kill to 100 from 22\n```']),
   new Test(
       'Change option boolean', '~hg options arenaEvents false',
       ['<@422623712534200321>\n```\nSet arenaEvents to false from true\n```']),
@@ -142,7 +141,8 @@ const hgTests = [
   new Test(
       'Exclude player', '~hg exclude <@124733888177111041>',
       ['<@422623712534200321>\n```\nSpikeyRobot added to blacklist.\n' +
-       'SpikeyRobot removed from included players.\n\n```']),
+       'SpikeyRobot removed from whitelist.\nSpikeyRobot removed from ' +
+       'included players.\n\n```']),
   new Test('List teams and check excluded', '~hg players', ['#embed']),
   new Test(
       'Exclude player already excluded', '~hg exclude <@124733888177111041>',
@@ -155,7 +155,8 @@ const hgTests = [
   new Test(
       'Include player', '~hg include <@124733888177111041>',
       ['<@422623712534200321>\n```\nSpikeyRobot removed from blacklist.\n' +
-       'SpikeyRobot added to included players.\n\n```']),
+       'SpikeyRobot added to whitelist.\nSpikeyRobot added to included ' +
+       'players.\n\n```']),
   new Test(
       'Include player already included', '~hg include <@124733888177111041>',
       ['<@422623712534200321>\n```\nSpikeyRobot is already included.\n\n```']),

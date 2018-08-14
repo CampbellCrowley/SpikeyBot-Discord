@@ -1357,7 +1357,7 @@ Hunger Games simulator.
         * [.nextDay(uId, gId, cId)](#HungryGames+nextDay)
         * [.excludeUsers(users, id)](#HungryGames+excludeUsers) ⇒ <code>string</code>
         * [.includeUsers(users, id)](#HungryGames+includeUsers) ⇒ <code>string</code>
-        * [.setOption(id, option, value)](#HungryGames+setOption) ⇒ <code>string</code>
+        * [.setOption(id, option, value, text)](#HungryGames+setOption) ⇒ <code>string</code>
         * [.editTeam(uId, gId, cmd, one, two)](#HungryGames+editTeam)
         * [.makeAndAddEvent(id, type, message, numVictim, numAttacker, victimOutcome, attackerOutcome, victimKiller, attackerKiller)](#HungryGames+makeAndAddEvent) ⇒ <code>string</code>
         * [.addEvent(id, type, event)](#HungryGames+addEvent) ⇒ <code>string</code>
@@ -1408,14 +1408,13 @@ Hunger Games simulator.
         * [~numEventsPerPage](#HungryGames..numEventsPerPage) : <code>number</code> ℗
         * [~maxReactAwaitTime](#HungryGames..maxReactAwaitTime) : <code>number</code> ℗
         * [~findDelay](#HungryGames..findDelay) : <code>number</code> ℗
-        * [~defaultOptions](#HungryGames..defaultOptions) : <code>Object.&lt;{value: (string\|number\|boolean), values: ?Array.&lt;string&gt;, comment: string}&gt;</code> ℗
+        * [~defaultOptions](#HungryGames..defaultOptions) : <code>Object.&lt;{value: (string\|number\|boolean\|Object), values: ?Array.&lt;string&gt;, comment: string}&gt;</code> ℗
         * [~lotsOfDeathRate](#HungryGames..lotsOfDeathRate) : <code>number</code> ℗
         * [~littleDeathRate](#HungryGames..littleDeathRate) : <code>number</code> ℗
         * [~defaultColor](#HungryGames..defaultColor) : <code>Discord~ColorResolveable</code> ℗
         * [~emoji](#HungryGames..emoji) : <code>Object.&lt;string&gt;</code> ℗
         * [~alph](#HungryGames..alph) : <code>string</code> ℗
         * [~multiEventUserDistribution](#HungryGames..multiEventUserDistribution) : <code>Object</code> ℗
-        * [~deathRateWeights](#HungryGames..deathRateWeights) : [<code>Object.&lt;EventWeights&gt;</code>](#HungryGames..EventWeights) ℗
         * [~helpmessagereply](#HungryGames..helpmessagereply) : <code>string</code> ℗
         * [~blockedmessage](#HungryGames..blockedmessage) : <code>string</code> ℗
         * [~helpObject](#HungryGames..helpObject) ℗
@@ -1441,7 +1440,7 @@ Hunger Games simulator.
         * [~pauseAutoplay(msg, id)](#HungryGames..pauseAutoplay) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~startAutoplay(msg, id)](#HungryGames..startAutoplay) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~nextDay(msg, id)](#HungryGames..nextDay) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
-        * [~pickEvent(userPool, eventPool, options, numAlive, teams, deathRate, weaponWielder)](#HungryGames..pickEvent) ⇒ [<code>Event</code>](#HungryGames..Event) ℗
+        * [~pickEvent(userPool, eventPool, options, numAlive, teams, probOpts, weaponWielder)](#HungryGames..pickEvent) ⇒ [<code>Event</code>](#HungryGames..Event) ℗
         * [~validateEventTeamConstraint(numVictim, numAttacker, userPool, teams, options, victimsDie, attackersDie, weaponWielder)](#HungryGames..validateEventTeamConstraint) ⇒ <code>boolean</code> ℗
         * [~validateEventVictorConstraint(numVictim, numAttacker, numAlive, options, victimsDie, attackersDie)](#HungryGames..validateEventVictorConstraint) ⇒ <code>boolean</code> ℗
         * [~validateEventNumConstraint(numVictim, numAttacker, userPool, numAlive)](#HungryGames..validateEventNumConstraint) ⇒ <code>boolean</code> ℗
@@ -1449,8 +1448,7 @@ Hunger Games simulator.
         * [~pickAffectedPlayers(numVictim, numAttacker, options, userPool, teams, weaponWielder)](#HungryGames..pickAffectedPlayers) ⇒ [<code>Array.&lt;Player&gt;</code>](#HungryGames..Player) ℗
         * [~makeBattleEvent(affectedUsers, numVictim, numAttacker, mention, id)](#HungryGames..makeBattleEvent) ⇒ [<code>Event</code>](#HungryGames..Event) ℗
         * [~weightedUserRand()](#HungryGames..weightedUserRand) ⇒ <code>number</code> ℗
-        * [~weightedEvent(eventPool, weightOpt)](#HungryGames..weightedEvent) ⇒ <code>number</code> ℗
-        * [~isEventDeadly(eventTry)](#HungryGames..isEventDeadly) ⇒ <code>boolean</code> ℗
+        * [~probabilityEvent(eventPool, probabilityOpts, [recurse])](#HungryGames..probabilityEvent) ⇒ <code>number</code> ℗
         * [~formatMultiNames(names, mention)](#HungryGames..formatMultiNames) ⇒ <code>string</code> ℗
         * [~makeMessageEvent(message, [id])](#HungryGames..makeMessageEvent) ⇒ [<code>Event</code>](#HungryGames..Event) ℗
         * [~makeSingleEvent(message, affectedUsers, numVictim, numAttacker, mention, id, victimOutcome, attackerOutcome)](#HungryGames..makeSingleEvent) ⇒ <code>HungryGames~FinalEvent</code> ℗
@@ -1463,6 +1461,7 @@ Hunger Games simulator.
         * [~listPlayers(msg, id)](#HungryGames..listPlayers) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~getName(guild, user)](#HungryGames..getName) ⇒ <code>string</code> ℗
         * [~toggleOpt(msg, id)](#HungryGames..toggleOpt) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+        * [~changeObjectValue(obj, defaultObj, option, value, values)](#HungryGames..changeObjectValue) ⇒ <code>string</code> ℗
         * [~showOpts(msg, options)](#HungryGames..showOpts) ℗
         * [~optChangeListener(msg_, options, index)](#HungryGames..optChangeListener) ℗
         * [~editTeam(msg, id, [silent])](#HungryGames..editTeam) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
@@ -1487,8 +1486,7 @@ Hunger Games simulator.
         * [~find(id)](#HungryGames..find) ⇒ [<code>GuildGame</code>](#HungryGames..GuildGame) ℗
         * [~exit([code])](#HungryGames..exit) ℗
         * [~sigint()](#HungryGames..sigint) ℗
-        * [~unhandledRejection(reason, p)](#HungryGames..unhandledRejection) ℗
-        * [~EventWeights](#HungryGames..EventWeights) : <code>Object</code>
+        * [~OutcomeProbabilities}](#HungryGames..OutcomeProbabilities}) : <code>Object</code>
         * [~GuildGame](#HungryGames..GuildGame) : <code>Object</code>
         * [~Game](#HungryGames..Game) : <code>Object</code>
         * [~hgCommandHandler](#HungryGames..hgCommandHandler) : <code>function</code>
@@ -1734,7 +1732,7 @@ multiple lines for a single user.
 
 <a name="HungryGames+setOption"></a>
 
-### hungryGames.setOption(id, option, value) ⇒ <code>string</code>
+### hungryGames.setOption(id, option, value, text) ⇒ <code>string</code>
 Change an option to a value for the given guild.
 
 **Kind**: instance method of [<code>HungryGames</code>](#HungryGames)  
@@ -1747,6 +1745,7 @@ the user the list of options instead.
 | id | <code>string</code> | The guild id to change the option in. |
 | option | <code>string</code> | The option key to change. |
 | value | <code>string</code> \| <code>boolean</code> \| <code>number</code> | The value to change the option to. |
+| text | <code>string</code> | The original message sent without the command prefix in the case we are changing the value of an object and require all user inputted data. |
 
 <a name="HungryGames+editTeam"></a>
 
@@ -2264,7 +2263,7 @@ The delay after failing to find a guild's data to look for it again.
 **Access**: private  
 <a name="HungryGames..defaultOptions"></a>
 
-### HungryGames~defaultOptions : <code>Object.&lt;{value: (string\|number\|boolean), values: ?Array.&lt;string&gt;, comment: string}&gt;</code> ℗
+### HungryGames~defaultOptions : <code>Object.&lt;{value: (string\|number\|boolean\|Object), values: ?Array.&lt;string&gt;, comment: string}&gt;</code> ℗
 Default options for a game.
 
 **Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
@@ -2318,14 +2317,6 @@ to 1.0
 
 **Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
 **Default**: <code>{&quot;undefined&quot;:0.0005}</code>  
-**Access**: private  
-<a name="HungryGames..deathRateWeights"></a>
-
-### HungryGames~deathRateWeights : [<code>Object.&lt;EventWeights&gt;</code>](#HungryGames..EventWeights) ℗
-Weighting values for modifying choosing of events.
-
-**Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
-**Default**: <code>{&quot;verylow&quot;:&quot;&quot;,&quot;low&quot;:&quot;&quot;,&quot;normal&quot;:&quot;&quot;,&quot;high&quot;:&quot;&quot;,&quot;veryhigh&quot;:&quot;&quot;}</code>  
 **Access**: private  
 <a name="HungryGames..helpmessagereply"></a>
 
@@ -2620,7 +2611,7 @@ Simulate a single day then show events to users.
 
 <a name="HungryGames..pickEvent"></a>
 
-### HungryGames~pickEvent(userPool, eventPool, options, numAlive, teams, deathRate, weaponWielder) ⇒ [<code>Event</code>](#HungryGames..Event) ℗
+### HungryGames~pickEvent(userPool, eventPool, options, numAlive, teams, probOpts, weaponWielder) ⇒ [<code>Event</code>](#HungryGames..Event) ℗
 Pick event that satisfies all requirements and settings.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
@@ -2635,7 +2626,7 @@ requirements, or null if something went wrong.
 | options | <code>Object</code> | The options set in the current game. |
 | numAlive | <code>number</code> | Number of players in the game still alive. |
 | teams | [<code>Array.&lt;Team&gt;</code>](#HungryGames..Team) | Array of teams in this game. |
-| deathRate | [<code>EventWeights</code>](#HungryGames..EventWeights) | Death rate weights. |
+| probOpts | <code>HungryGames~OutcomeProbabilities</code> | Death rate weights. |
 | weaponWielder | <code>Player</code> | A player that is using a weapon in this event, or null if no player is using a weapon. |
 
 <a name="HungryGames..validateEventTeamConstraint"></a>
@@ -2763,33 +2754,20 @@ Produce a random number that is weighted by multiEventUserDistribution.
 **Returns**: <code>number</code> - The weighted number outcome.  
 **Access**: private  
 **See**: [multiEventUserDistribution](#HungryGames..multiEventUserDistribution)  
-<a name="HungryGames..weightedEvent"></a>
+<a name="HungryGames..probabilityEvent"></a>
 
-### HungryGames~weightedEvent(eventPool, weightOpt) ⇒ <code>number</code> ℗
-Produce a random event that using weighted probabilities.
+### HungryGames~probabilityEvent(eventPool, probabilityOpts, [recurse]) ⇒ <code>number</code> ℗
+Produce a random event that using probabilities set in options.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
 **Returns**: <code>number</code> - The index of the event that was chosen.  
 **Access**: private  
-**See**: {@link HungryGames~deathRateWeights)  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| eventPool | [<code>Array.&lt;Event&gt;</code>](#HungryGames..Event) | The pool of all events to consider. |
-| weightOpt | [<code>EventWeights</code>](#HungryGames..EventWeights) | The weighting options. |
-
-<a name="HungryGames..isEventDeadly"></a>
-
-### HungryGames~isEventDeadly(eventTry) ⇒ <code>boolean</code> ℗
-Decide if the given event should be considered deadly.
-
-**Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
-**Returns**: <code>boolean</code> - If the event is considered deadly.  
-**Access**: private  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| eventTry | [<code>Event</code>](#HungryGames..Event) | The event to check. |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| eventPool | [<code>Array.&lt;Event&gt;</code>](#HungryGames..Event) |  | The pool of all events to consider. |
+| probabilityOpts | <code>Object</code> |  | The probabilities of each type of event being used. |
+| [recurse] | <code>number</code> | <code>0</code> | The current recusrive depth. |
 
 <a name="HungryGames..formatMultiNames"></a>
 
@@ -2960,6 +2938,24 @@ Change an option to a value that the user specifies.
 | --- | --- | --- |
 | msg | <code>Discord~Message</code> | The message that lead to this being called. |
 | id | <code>string</code> | The id of the guild this was triggered from. |
+
+<a name="HungryGames..changeObjectValue"></a>
+
+### HungryGames~changeObjectValue(obj, defaultObj, option, value, values) ⇒ <code>string</code> ℗
+Recurse through an object to change a certain child value based off a given
+array of words.
+
+**Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
+**Returns**: <code>string</code> - Message saying what happened. Can be an error message.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| obj | <code>HungryGames~GuildGame.options</code> | The object with the values to change. |
+| defaultObj | [<code>defaultOptions</code>](#HungryGames..defaultOptions) | The default template object to base changes off of. |
+| option | <code>string</code> | The first value to check. |
+| value | <code>number</code> \| <code>boolean</code> \| <code>string</code> | The value to change to, or the next option key to check if we have not found an end to a branch yet. |
+| values | <code>Array.&lt;(string\|boolean\|number)&gt;</code> | All keys leading to the final value, as well as the final value. |
 
 <a name="HungryGames..showOpts"></a>
 
@@ -3279,33 +3275,20 @@ Same as exit(), but triggered via SIGINT, SIGHUP or SIGTERM.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
 **Access**: private  
-<a name="HungryGames..unhandledRejection"></a>
+<a name="HungryGames..OutcomeProbabilities}"></a>
 
-### HungryGames~unhandledRejection(reason, p) ℗
-Handler for an unhandledRejection.
-
-**Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
-**Access**: private  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| reason | <code>Object</code> | Reason for rejection. |
-| p | <code>Promise</code> | The promise that caused the rejection. |
-
-<a name="HungryGames..EventWeights"></a>
-
-### HungryGames~EventWeights : <code>Object</code>
-Weighting value for choosing events. A ratio of 1:1 would not modify
-probabilities. A ratio of 2:1 would make all events that kill twice as
-likely to be chosen.
+### HungryGames~OutcomeProbabilities} : <code>Object</code>
+Probabilities for each choosing an event with each type of outcome.
 
 **Kind**: inner typedef of [<code>HungryGames</code>](#HungryGames)  
 **Properties**
 
 | Name | Type | Description |
 | --- | --- | --- |
-| kill | <code>number</code> | Relative weight of events that kill. |
-| nothing | <code>number</code> | Relative weight of events that don't kill. |
+| kill | <code>number</code> | Relative probability of events that can kill. |
+| wound | <code>number</code> | Relative probability of events that can wound. |
+| thrive | <code>number</code> | Relative probability of events that can heal. |
+| nothing | <code>number</code> | Relative probability of events that do nothing. |
 
 <a name="HungryGames..GuildGame"></a>
 
@@ -3317,7 +3300,7 @@ A singe instance of a game in a guild.
 
 | Name | Type | Description |
 | --- | --- | --- |
-| options | <code>Object.&lt;(number\|boolean\|string)&gt;</code> | The game options. |
+| options | <code>Object.&lt;(number\|boolean\|string\|Object)&gt;</code> | The game options. |
 | autoPlay | <code>boolean</code> | Is the game currently autoplaying. |
 | excludedUsers | <code>Array.&lt;string&gt;</code> | The ids of the users to exclude from the games. |
 | customEvents | <code>Object</code> | All custom events for the guild. |
