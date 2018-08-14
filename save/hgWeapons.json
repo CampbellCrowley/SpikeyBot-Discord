@@ -91,6 +91,12 @@
         "consumes": 1
       },
       {
+        "message": "{attacker} uses {owner} exposives as a chair.",
+        "attacker": { "count": "1", "outcome": "nothing" },
+        "victim": { "count": "0", "outcome": "nothing" },
+        "consumes": 0
+      },
+      {
         "message": "{attacker} blows themselves up while prepping {owner} explosives!",
         "attacker": { "count": "1", "outcome": "dies" },
         "victim": { "count": "0", "outcome": "nothing" },
@@ -114,9 +120,9 @@
         "consumes": 2
       },
       {
-        "message": "{victim} walk[Vs|] around the arena drunk.",
-        "attacker": { "count": "0", "outcome": "nothing" },
-        "victim": { "count": "-1", "outcome": "nothing" },
+        "message": "{attacker} walk[As|] around the arena drunk.",
+        "attacker": { "count": "-1", "outcome": "nothing" },
+        "victim": { "count": "0", "outcome": "nothing" },
         "consumes": 1
       },
       {
@@ -126,9 +132,9 @@
         "consumes": 3
       },
       {
-        "message": "{victim} didn't know their limits, and drank too much alcohol.",
-        "attacker": { "count": "0", "outcome": "nothing" },
-        "victim": { "count": "1", "outcome": "dies" },
+        "message": "{attacker} didn't know their limits, and drank too much alcohol.",
+        "attacker": { "count": "1", "outcome": "dies" },
+        "victim": { "count": "0", "outcome": "nothing" },
         "consumes": 3
       },
       {
@@ -711,6 +717,12 @@
         "attacker": { "count": "1", "outcome": "nothing" },
         "victim": { "count": "1", "outcome": "nothing", "weapon": { "name": "poison", "count": 1 } },
         "consumes": 1
+      },
+      {
+        "message": "{attacker} ponder[As|] who to kill with {owner} vial of poison.",
+        "attacker": { "count": "-1", "outcome": "nothing" },
+        "victim": { "count": "0", "outcome": "nothing" },
+        "consumes": 0
       },
       {
         "message": "{attacker} didn't wash their hands after touching {owner} poison and dies.",

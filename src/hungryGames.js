@@ -948,6 +948,11 @@ function HungryGames() {
     if (web) web.shutdown();
     web = null;
     delete require.cache[require.resolve('./hgWeb.js')];
+
+    fs.unwatchFile(eventFile);
+    fs.unwatchFile(messageFile);
+    fs.unwatchFile(battleFile);
+    fs.unwatchFile(weaponsFile);
   };
 
   /**
@@ -2228,7 +2233,17 @@ function HungryGames() {
             find(id).currentGame.numAlive, find(id).currentGame.teams,
             deathRate);
         if (!eventTry) {
-          self.common.reply(msg, 'A stupid error happened :(');
+          self.common.reply(
+              msg, 'A stupid error happened :(', 'Try again with `' +
+                  self.myPrefix +
+                  'next`. If this happens again please report ' +
+                  'this to SpikeyRobot#9836');
+          self.common.error(
+              'No event for ' + userPool.length + ' from ' +
+                  userEventPool.length + ' events. No weapon, Arena Event: ' +
+                  (doArenaEvent ? arenaEvent.message : 'No') + ', Day: ' +
+                  find(id).currentGame.day.num,
+              id);
           find(id).currentGame.day.state = 0;
           return;
         }
@@ -3058,6 +3073,17 @@ function HungryGames() {
     let sum = 0;
     for (let i in eventPool) {
       if (!eventPool[i]) continue;
+      if (!eventPool[i].attacker) {
+        self.common.error(
+            'Event does not have attacker data: ' +
+            JSON.stringify(eventPool[i]));
+        continue;
+      }
+      if (!eventPool[i].victim) {
+        self.common.error(
+            'Event does not have victim data: ' + JSON.stringify(eventPool[i]));
+        continue;
+      }
       if (isEventDeadly(eventPool[i])) {
         sum += rates.kill;
       } else {
@@ -3068,6 +3094,9 @@ function HungryGames() {
     sum = 0;
     for (let i in eventPool) {
       if (!eventPool[i]) continue;
+      if (!eventPool[i].attacker || !eventPool[i].victim) {
+        continue;
+      }
       if (isEventDeadly(eventPool[i])) {
         sum += rates.kill;
       } else {
@@ -3732,9 +3761,10 @@ function HungryGames() {
         msg.channel.send('`Autoplaying...`')
             .then((msg) => {
               msg.delete({
-                timeout: find(id).options.delayDays - 1250,
-                reason: 'I can do whatever I want!',
-              });
+                   timeout: find(id).options.delayDays - 1250,
+                   reason: 'I can do whatever I want!',
+                 })
+                  .catch(() => {});
             })
             .catch(() => {});
       }, (find(id).options.delayDays > 2000 ? 1200 : 100));
@@ -4654,7 +4684,7 @@ function HungryGames() {
           eventType = 'bloodbath';
         }
         const message = newEventMessages[msg.id].text;
-        msg_.delete();
+        msg_.delete().catch(() => {});
         msg.channel.send('Loading...').then(function(msg_) {
           let numVictim = 0;
           let numAttacker = 0;
@@ -4674,7 +4704,7 @@ function HungryGames() {
                     msg_ = msg;
                     getVictimNum();
                   });
-                  msg_.delete();
+                  msg_.delete().catch(() => {});
                 });
           };
           getVictimNum = function() {
@@ -4689,7 +4719,7 @@ function HungryGames() {
                     msg_ = msg;
                     getAttackOutcome();
                   });
-                  msg_.delete();
+                  msg_.delete().catch(() => {});
                 });
           };
           getAttackOutcome = function() {
@@ -4705,7 +4735,7 @@ function HungryGames() {
                       msg_ = msg;
                       getVictimOutcome();
                     });
-                    msg_.delete();
+                    msg_.delete().catch(() => {});
                   });
             }
           };
@@ -4722,7 +4752,7 @@ function HungryGames() {
                       msg_ = msg;
                       getIsAttackerKiller();
                     });
-                    msg_.delete();
+                    msg_.delete().catch(() => {});
                   });
             }
           };
@@ -4740,7 +4770,7 @@ function HungryGames() {
                       msg_ = msg;
                       getIsVictimKiller();
                     });
-                    msg_.delete();
+                    msg_.delete().catch(()=>{});
                   });
             }
           };
@@ -4758,7 +4788,7 @@ function HungryGames() {
             }
           };
           finish = function() {
-            msg_.delete();
+            msg_.delete().catch(()=>{});
             let error = self.makeAndAddEvent(
                 id, eventType, message, numVictim, numAttacker, victimOutcome,
                 attackerOutcome, victimKiller, attackerKiller);
@@ -5168,12 +5198,12 @@ function HungryGames() {
                     msg,
                     'That number is a really big scary number. Try a smaller ' +
                         'one.');
-                msg_.delete();
+                msg_.delete().catch(()=>{});
               } else {
                 const removed = find(id).customEvents.player.splice(num, 1)[0];
                 self.common.reply(
                     msg, 'Removed event.', formatEventString(removed, true));
-                msg_.delete();
+                msg_.delete().catch(()=>{});
               }
             } else {
               if (num >= find(id).customEvents.bloodbath.length) {
@@ -5181,13 +5211,13 @@ function HungryGames() {
                     msg,
                     'That number is a really big scary number. Try a smaller ' +
                         'one.');
-                msg_.delete();
+                msg_.delete().catch(()=>{});
               } else {
                 const removed =
                     find(id).customEvents.bloodbath.splice(num, 1)[0];
                 self.common.reply(
                     msg, 'Removed event.', formatEventString(removed, true));
-                msg_.delete();
+                msg_.delete().catch(()=>{});
               }
             }
           });
