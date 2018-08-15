@@ -29,7 +29,7 @@
 #### Time Control
 `create` `start` `end` `autoplay` `pause` `next`
 #### Other
-`help`
+`help` `stats`
 
 ## Hidden
 - js (Run javascript code)
@@ -39,7 +39,7 @@
 - version (Current bot version)
 - game (Information about a user's current visible status)
 - hg save (Causes hungry games to save all data manually)
-- hg debug (Dumps current guild's hungry games data into chat)(*Should be improved*)
+- hg debug (Dumps current guild's hungry games data into a file)
 - hg makemewin (Replies with a message telling the user their chances of winning have not increased)
 - hg makemelose (Replies with a message telling the user their chances of losing have not increased)
 - vi (Alias for `play nice try vi`)
@@ -51,6 +51,7 @@
 - reload (Gracefully unloads all sub-modules, and re-loads and initializes them)
 - record (Record audio in a voice channel. Mention people to only record specific people.)
 - perms (Sends a message with the bitfields of all permissions, as well as the sender's and the bot's permissions for the guild and channel)
+- lookup (Finds information about a given ID)
 
 # Events
 - Added to guild
