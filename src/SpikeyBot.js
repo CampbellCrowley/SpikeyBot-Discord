@@ -772,6 +772,10 @@ function SpikeyBot() {
               continue;
             }
           }
+          if (!subModules[i].unloadable()) {
+            reloaded.push('(' + subModuleNames[i] + ': not unloadable)');
+            continue;
+          }
           try {
             try {
               if (subModules[i].save) {

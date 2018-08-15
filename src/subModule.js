@@ -111,6 +111,21 @@ function SubModule() {
     this.command = command;
     this.common = common;
 
+    this.log = function(msg) {
+      if (this.client.shard) {
+        this.common.log(msg, this.client.shard.id + ' ' + this.myName, 1);
+      } else {
+        this.common.log(msg, this.myName, 1);
+      }
+    };
+    this.error = function(msg) {
+      if (this.client.shard) {
+        this.common.error(msg, this.client.shard.id + ' ' + this.myName, 1);
+      } else {
+        this.common.error(msg, this.myName, 1);
+      }
+    };
+
     if (this.initialized) return;
     this.initialize();
     this.log(this.myName + ' Init');
@@ -126,7 +141,7 @@ function SubModule() {
     if (!this.initialized) return;
     this.shutdown();
     this.initialized = false;
-    this.log(this.myName + ' Shutdown', this.myName);
+    this.log(this.myName + ' Shutdown');
   };
 
   /**
@@ -136,11 +151,7 @@ function SubModule() {
    * @param {string} msg The message to log.
    */
   this.log = function(msg) {
-    if (this.client.shard) {
-      this.common.log(msg, this.client.shard.id + ' ' + this.myName);
-    } else {
-      this.common.log(msg, this.myName);
-    }
+    console.log(msg);
   };
   /**
    * Log using common.error, but automatically set name.
@@ -149,11 +160,7 @@ function SubModule() {
    * @param {string} msg The message to log.
    */
   this.error = function(msg) {
-    if (this.client.shard) {
-      this.common.error(msg, this.client.shard.id + ' ' + this.myName);
-    } else {
-      this.common.error(msg, this.myName);
-    }
+    console.error(msg);
   };
 
   /**
@@ -191,8 +198,8 @@ function SubModule() {
  * @param {Object} child The child class to extend.
  */
 SubModule.extend = function(child) {
-  child.prototype = new SubModule();
-  child.prototype.constructor = child;
+    child.prototype = new SubModule();
+    child.prototype.constructor = child;
 };
 
 module.exports = SubModule.extend;

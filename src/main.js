@@ -286,9 +286,9 @@ function Main() {
       fs.rename(
           './save/timers.dat', './save/timers.dat.deleteme', function(err2) {
             if (err2) {
-              self.common.error('Failed to rename ./save/timers.dat', 'Main');
+              self.error('Failed to rename ./save/timers.dat', 'Main');
             } else {
-              self.common.log(
+              self.log(
                   'Updated data to new format. Renamed ./save/timers.dat to ' +
                       './save.timers.deleteme',
                   'Main');
@@ -315,7 +315,7 @@ function Main() {
                     try {
                       parsed = JSON.parse(file);
                     } catch (e) {
-                      self.common.error(
+                      self.error(
                           'Failed to parse timer file: ' + filename, 'Main');
                       console.error(e);
                       return;
@@ -323,7 +323,7 @@ function Main() {
                     setTimer(parsed);
                     fs.unlink(filename, function(err4) {
                       if (err4) {
-                        self.common.error(
+                        self.error(
                             'Failed to delete timer save file: ' + filename,
                             'Main');
                         console.error(err4);
@@ -478,9 +478,9 @@ function Main() {
   this.save = function(opt) {
     if (!self.initialized) return;
     if (opt == 'async') {
-      self.common.log('Saving async', 'Main');
+      self.log('Saving async', 'Main');
     } else {
-      self.common.log('Saving sync', 'Main');
+      self.log('Saving sync', 'Main');
     }
     timers.forEach(function(obj) {
       const dir = self.common.userSaveDir + obj.id + '/timers/';
@@ -525,13 +525,13 @@ function Main() {
   function mkAndWrite(filename, dir, data) {
     mkdirp(dir, function(err) {
       if (err) {
-        self.common.error('Failed to make directory: ' + dir, 'Main');
+        self.error('Failed to make directory: ' + dir, 'Main');
         console.error(err);
         return;
       }
       fs.writeFile(filename, data, function(err2) {
         if (err2) {
-          self.common.error('Failed to save timer: ' + filename, 'Main');
+          self.error('Failed to save timer: ' + filename, 'Main');
           console.error(err2);
           return;
         }
@@ -552,14 +552,14 @@ function Main() {
     try {
       mkdirp.sync(dir);
     } catch (err) {
-      self.common.error('Failed to make directory: ' + dir, 'Main');
+      self.error('Failed to make directory: ' + dir, 'Main');
       console.error(err);
       return;
     }
     try {
       fs.writeFileSync(filename, data);
     } catch (err) {
-      self.common.error('Failed to save timer: ' + filename, 'Main');
+      self.error('Failed to save timer: ' + filename, 'Main');
       console.error(err);
       return;
     }
@@ -573,7 +573,7 @@ function Main() {
    * @listens Discord~Client#guildCreate
    */
   function onGuildCreate(guild) {
-    self.common.log('ADDED TO NEW GUILD: ' + guild.id + ': ' + guild.name);
+    self.log('ADDED TO NEW GUILD: ' + guild.id + ': ' + guild.name);
     let channel = '';
     let pos = -1;
     try {
@@ -587,7 +587,7 @@ function Main() {
       });
       self.client.channels.get(channel).send(introduction);
     } catch (err) {
-      self.common.error('Failed to send welcome to guild:' + guild.id);
+      self.error('Failed to send welcome to guild:' + guild.id);
       console.log(err);
     }
   }
@@ -599,7 +599,7 @@ function Main() {
    * @listens Discord~Client#guildDelete
    */
   function onGuildDelete(guild) {
-    self.common.log('REMOVED FROM GUILD: ' + guild.id + ': ' + guild.name);
+    self.log('REMOVED FROM GUILD: ' + guild.id + ': ' + guild.name);
   }
 
   /**
@@ -634,11 +634,11 @@ function Main() {
           .catch((err) => {
             self.client.channels.get(channel).send(
                 '`Poof! ' + user.username + ' was never seen again...`');
-            self.common.error('Failed to find executor of ban.');
+            self.error('Failed to find executor of ban.');
             console.log(err);
           });
     } catch (err) {
-      self.common.error('Failed to send ban from guild:' + guild.id);
+      self.error('Failed to send ban from guild:' + guild.id);
       console.log(err);
     }
   }
@@ -1487,7 +1487,7 @@ function Main() {
                 msg, 'Something sent wrong in sending the message.\n' +
                     'This probably wasn\'t your fault.',
                 err.message);
-            self.common.error(
+            self.error(
                 'Failed to send pm to user: ' + user.username + ' ' + user.id);
             comon.error(err);
           });
@@ -1625,7 +1625,7 @@ function Main() {
                         msg, 'Oops! I wasn\'t able to ban ' +
                             toBan.user.username +
                             '! I\'m not sure why though!');
-                    self.common.error('Failed to ban user.');
+                    self.error('Failed to ban user.');
                     console.log(err);
                   });
             }
@@ -2146,7 +2146,7 @@ function Main() {
                 id + ': User: `' + user.tag.replace(/`/g, '\\`') + '`');
           })
           .catch((err) => {
-            self.common.error('Failed to lookup id: ' + id);
+            self.error('Failed to lookup id: ' + id);
             console.error(err);
             msg.channel.send(id + ' Failed to be looked up.');
           });
@@ -2162,8 +2162,8 @@ function Main() {
    * @listens Process#SIGTERM
    */
   function sigint() {
-    if (self.common && self.common.log) {
-      self.common.log('Caught exit!', 'Main');
+    if (self.initialized) {
+      self.log('Caught exit!', 'Main');
     } else {
       console.log('Main: Caught exit!');
     }

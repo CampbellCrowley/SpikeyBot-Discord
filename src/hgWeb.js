@@ -200,12 +200,11 @@ function HGWeb(hg) {
               let parsed;
               try {
                 parsed = JSON.parse(data);
-                hg.common.log('Refreshed token');
+                hg.log('Refreshed token');
               } catch (err) {
-                hg.common.error(
+                hg.error(
                     'Failed to parse request from discord token refresh: ' +
-                        err,
-                    'HG');
+                    err);
                 delete currentSessions[sess];
                 console.log('Parsing failed', sess);
                 socket.emit('authorized', 'Restore Failed', null);
@@ -594,7 +593,7 @@ function HGWeb(hg) {
         if (response.statusCode == 200) {
           cb(null, content);
         } else {
-          hg.common.error(response.statusCode + ': ' + content);
+          hg.error(response.statusCode + ': ' + content);
           console.log(host, data);
           cb(response.statusCode + ' from discord');
         }
@@ -626,9 +625,8 @@ function HGWeb(hg) {
           try {
             parsed = JSON.parse(data);
           } catch (err) {
-            hg.common.error(
-                'Failed to parse request from discord token refresh: ' + err,
-                'HG');
+            hg.error(
+                'Failed to parse request from discord token refresh: ' + err);
           }
         }
         cb(parsed);
@@ -754,7 +752,7 @@ function HGWeb(hg) {
       });
       done(strippedGuilds);
     } catch (err) {
-      hg.common.error(err, 'HG');
+      hg.error(err);
       // socket.emit('guilds', 'Failed', null);
       done();
     }
@@ -1172,7 +1170,7 @@ function HGWeb(hg) {
     }
   }
 
-  hg.common.log('Init Web', 'HG');
+  hg.log('Init Web');
 }
 
 module.exports = HGWeb;

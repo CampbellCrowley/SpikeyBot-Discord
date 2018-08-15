@@ -65,8 +65,8 @@ from silently crashing without an error.</p>
         * [.padIp(str)](#Common+padIp) ⇒ <code>string</code>
         * [.getIPName(ip)](#Common+getIPName) ⇒ <code>string</code>
         * [.updatePrefix(ip)](#Common+updatePrefix) ⇒ <code>string</code>
-        * [.log(message, ip)](#Common+log)
-        * [.error(message, ip)](#Common+error)
+        * [.log(message, ip, [traceIncrease])](#Common+log)
+        * [.error(message, ip, [traceIncrease])](#Common+error)
         * [.mention(msg)](#Common+mention) ⇒ <code>string</code>
         * [.reply(msg, text, post)](#Common+reply) ⇒ <code>Promise</code>
     * _static_
@@ -82,7 +82,9 @@ from silently crashing without an error.</p>
         * [~title](#Common..title) : <code>string</code> ℗
         * [~prefixLength](#Common..prefixLength) : <code>number</code> ℗
         * [~app](#Common..app) : <code>string</code> ℗
-        * [~getTrace()](#Common..getTrace) ⇒ <code>string</code> ℗
+        * [~getTrace([traceIncrease])](#Common..getTrace) ⇒ <code>string</code> ℗
+        * [~__line([inc])](#Common..__line) ⇒ <code>number</code> ℗
+        * [~__function([inc])](#Common..__function) ⇒ <code>string</code> ℗
 
 <a name="new_Common_new"></a>
 
@@ -184,27 +186,29 @@ message.
 
 <a name="Common+log"></a>
 
-### common.log(message, ip)
+### common.log(message, ip, [traceIncrease])
 Format a log message to be logged.
 
 **Kind**: instance method of [<code>Common</code>](#Common)  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| message | <code>string</code> | The message to display. |
-| ip | <code>string</code> | The IP address or unique identifier of the client that caused this event to happen. |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| message | <code>string</code> |  | The message to display. |
+| ip | <code>string</code> |  | The IP address or unique identifier of the client that caused this event to happen. |
+| [traceIncrease] | <code>number</code> | <code>0</code> | Increase the distance up the stack to show the in the log. |
 
 <a name="Common+error"></a>
 
-### common.error(message, ip)
+### common.error(message, ip, [traceIncrease])
 Format an error message to be logged.
 
 **Kind**: instance method of [<code>Common</code>](#Common)  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| message | <code>string</code> | The message to display. |
-| ip | <code>string</code> | The IP address or unique identifier of the client that caused this event to happen. |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| message | <code>string</code> |  | The message to display. |
+| ip | <code>string</code> |  | The IP address or unique identifier of the client that caused this event to happen. |
+| [traceIncrease] | <code>number</code> | <code>0</code> | Increase the distance up the stack to show the in the log. |
 
 <a name="Common+mention"></a>
 
@@ -322,12 +326,43 @@ The script's filename to show in the log.
 **Access**: private  
 <a name="Common..getTrace"></a>
 
-### Common~getTrace() ⇒ <code>string</code> ℗
+### Common~getTrace([traceIncrease]) ⇒ <code>string</code> ℗
 Gets the name and line number of the current function stack.
 
 **Kind**: inner method of [<code>Common</code>](#Common)  
 **Returns**: <code>string</code> - Formatted string with length 20.  
 **Access**: private  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [traceIncrease] | <code>number</code> | <code>0</code> | Increase the distance up the stack to show the in the log. |
+
+<a name="Common..__line"></a>
+
+### Common~__line([inc]) ⇒ <code>number</code> ℗
+Gets the line number of the function that called a log function.
+
+**Kind**: inner method of [<code>Common</code>](#Common)  
+**Returns**: <code>number</code> - Line number of call in stack.  
+**Access**: private  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [inc] | <code>number</code> | <code>0</code> | Increase distance up the stack to return; |
+
+<a name="Common..__function"></a>
+
+### Common~__function([inc]) ⇒ <code>string</code> ℗
+Gets the name of the function that called a log function.
+
+**Kind**: inner method of [<code>Common</code>](#Common)  
+**Returns**: <code>string</code> - Function name in call stack.  
+**Access**: private  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [inc] | <code>number</code> | <code>0</code> | Increase distance up the stack to return; |
+
 <a name="Connect4"></a>
 
 ## Connect4 ⇐ [<code>SubModule</code>](#SubModule)
@@ -1403,6 +1438,7 @@ Hunger Games simulator.
         * [.addEvent(id, type, event)](#HungryGames+addEvent) ⇒ <code>string</code>
         * [.removeEvent(id, type, event)](#HungryGames+removeEvent) ⇒ <code>string</code>
         * [.eventsEqual(e1, e2)](#HungryGames+eventsEqual) ⇒ <code>boolean</code>
+        * [.getNumSimulating()](#HungryGames+getNumSimulating) ⇒ <code>number</code>
         * [.initialize()](#SubModule+initialize)
         * [.begin(prefix, Discord, client, command, common)](#SubModule+begin)
         * [.end()](#SubModule+end)
@@ -1410,7 +1446,7 @@ Hunger Games simulator.
         * [.error(msg)](#SubModule+error)
         * [.shutdown()](#SubModule+shutdown)
         * [.save()](#SubModule+save)
-        * *[.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>*
+        * [.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>
     * _inner_
         * [~Player](#HungryGames..Player)
             * [new Player(id, username, avatarURL)](#new_HungryGames..Player_new)
@@ -1870,6 +1906,14 @@ Checks if the two given events are equivalent.
 | e1 | [<code>Event</code>](#HungryGames..Event) | 
 | e2 | [<code>Event</code>](#HungryGames..Event) | 
 
+<a name="HungryGames+getNumSimulating"></a>
+
+### hungryGames.getNumSimulating() ⇒ <code>number</code>
+Returns the number of games that are currently being shown to users.
+
+**Kind**: instance method of [<code>HungryGames</code>](#HungryGames)  
+**Returns**: <code>number</code> - Number of games simulating.  
+**Access**: public  
 <a name="SubModule+initialize"></a>
 
 ### hungryGames.initialize()
@@ -1943,12 +1987,13 @@ Saves all data to files necessary for saving current state.
 **Overrides**: [<code>save</code>](#SubModule+save)  
 <a name="SubModule+unloadable"></a>
 
-### *hungryGames.unloadable() ⇒ <code>boolean</code>*
+### hungryGames.unloadable() ⇒ <code>boolean</code>
 Check if this module is in a state that is ready to be unloaded. If false
 is returned, this module should not be unloaded and doing such may risk
 putting the module into an uncontrollable state.
 
-**Kind**: instance abstract method of [<code>HungryGames</code>](#HungryGames)  
+**Kind**: instance method of [<code>HungryGames</code>](#HungryGames)  
+**Overrides**: [<code>unloadable</code>](#SubModule+unloadable)  
 **Returns**: <code>boolean</code> - True if can be unloaded, false if cannot.  
 **Access**: public  
 <a name="HungryGames..Player"></a>
@@ -4437,7 +4482,7 @@ Music and audio related commands.
         * [.error(msg)](#SubModule+error)
         * [.shutdown()](#SubModule+shutdown)
         * *[.save()](#SubModule+save)*
-        * *[.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>*
+        * [.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>
     * _static_
         * [.streamToOgg(input, file)](#Music.streamToOgg)
     * _inner_
@@ -4614,12 +4659,13 @@ Saves all data to files necessary for saving current state.
 **Kind**: instance abstract method of [<code>Music</code>](#Music)  
 <a name="SubModule+unloadable"></a>
 
-### *music.unloadable() ⇒ <code>boolean</code>*
+### music.unloadable() ⇒ <code>boolean</code>
 Check if this module is in a state that is ready to be unloaded. If false
 is returned, this module should not be unloaded and doing such may risk
 putting the module into an uncontrollable state.
 
-**Kind**: instance abstract method of [<code>Music</code>](#Music)  
+**Kind**: instance method of [<code>Music</code>](#Music)  
+**Overrides**: [<code>unloadable</code>](#SubModule+unloadable)  
 **Returns**: <code>boolean</code> - True if can be unloaded, false if cannot.  
 **Access**: public  
 <a name="Music.streamToOgg"></a>

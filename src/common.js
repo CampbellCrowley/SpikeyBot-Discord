@@ -147,7 +147,7 @@ function Common() {
    */
   this.updatePrefix = function(ip) {
     if (typeof ip === 'undefined') {
-      ip = 'SELF           ';
+      ip = '               ';
     }
     const formattedIP = self.getIPName(ip.replace('::ffff:', ''));
 
@@ -161,15 +161,18 @@ function Common() {
    * @param {string} message The message to display.
    * @param {string} ip The IP address or unique identifier of the client that
    * caused this event to happen.
+   * @param {number} [traceIncrease=0] Increase the distance up the stack to
+   * show the in the log.
    */
-  this.log = function(message, ip) {
+  this.log = function(message, ip, traceIncrease = 0) {
     if (self.isRelease) {
       console.log(
-          getTrace() + self.updatePrefix(ip),
+          getTrace(traceIncrease) + self.updatePrefix(ip),
           '\x1B[;' + mycolor + 'm' + message, '\x1B[1;0m');
     } else {
       console.log(
-          getTrace() + '\x1B[;' + mycolor + 'm' + self.updatePrefix(ip),
+          getTrace(traceIncrease) + '\x1B[;' + mycolor + 'm' +
+              self.updatePrefix(ip),
           message, '\x1B[1;0m');
     }
   };
@@ -179,23 +182,51 @@ function Common() {
    * @param {string} message The message to display.
    * @param {string} ip The IP address or unique identifier of the client that
    * caused this event to happen.
+   * @param {number} [traceIncrease=0] Increase the distance up the stack to
+   * show the in the log.
    */
-  this.error = function(message, ip) {
+  this.error = function(message, ip, traceIncrease = 0) {
     console.log(
-        getTrace() + '\x1B[;31m' + self.updatePrefix(ip), message, '\x1B[1;0m');
+        getTrace(traceIncrease) + '\x1B[;31m' + self.updatePrefix(ip), message,
+        '\x1B[1;0m');
   };
 
   /**
    * Gets the name and line number of the current function stack.
    * @private
    *
+   * @param {number} [traceIncrease=0] Increase the distance up the stack to
+   * show the in the log.
    * @return {string} Formatted string with length 20.
    */
-  function getTrace() {
-    let func = __function + ':' + __line;
+  function getTrace(traceIncrease = 0) {
+    if (typeof traceIncrease !== 'number') traceIncrease = 0;
+    let func = __function(traceIncrease) + ':' + __line(traceIncrease);
     while (func.length < 20) func += ' ';
     func = func.substr(func.length - 20, 20);
     return func;
+  }
+
+  /**
+   * Gets the line number of the function that called a log function.
+   *
+   * @private
+   * @param {number} [inc=0] Increase distance up the stack to return;
+   * @return {number} Line number of call in stack.
+   */
+  function __line(inc = 0) {
+    return __stack[3 + inc].getLineNumber();
+  }
+
+  /**
+   * Gets the name of the function that called a log function.
+   *
+   * @private
+   * @param {number} [inc=0] Increase distance up the stack to return;
+   * @return {string} Function name in call stack.
+   */
+  function __function(inc = 0) {
+    return __stack[3 + inc].getFunctionName();
   }
 }
 
@@ -347,24 +378,6 @@ Object.defineProperty(global, '__stack', {
     let stack = err.stack;
     Error.prepareStackTrace = orig;
     return stack;
-  },
-});
-
-/**
- * Gets the line number of the function that called a log function.
- */
-Object.defineProperty(global, '__line', {
-  get: function() {
-    return __stack[3].getLineNumber();
-  },
-});
-
-/**
- * Gets the name of the function that called a log function.
- */
-Object.defineProperty(global, '__function', {
-  get: function() {
-    return __stack[3].getFunctionName();
   },
 });
 

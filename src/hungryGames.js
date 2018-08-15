@@ -696,8 +696,8 @@ function HungryGames() {
   updateEvents();
   fs.watchFile(eventFile, function(curr, prev) {
     if (curr.mtime == prev.mtime) return;
-    if (self.common && self.common.log) {
-      self.common.log('Re-reading default events from file', 'HG');
+    if (self.initialized) {
+      self.log('Re-reading default events from file');
     } else {
       console.log('HG: Re-reading default events from file');
     }
@@ -725,8 +725,8 @@ function HungryGames() {
   updateMessages();
   fs.watchFile(messageFile, function(curr, prev) {
     if (curr.mtime == prev.mtime) return;
-    if (self.common && self.common.log) {
-      self.common.log('Re-reading messages from file', 'HG');
+    if (self.initialized) {
+      self.log('Re-reading messages from file');
     } else {
       console.log('HG: Re-reading messages from file');
     }
@@ -754,8 +754,8 @@ function HungryGames() {
   updateBattles();
   fs.watchFile(battleFile, function(curr, prev) {
     if (curr.mtime == prev.mtime) return;
-    if (self.common && self.common.log) {
-      self.common.log('Re-reading battles from file', 'HG');
+    if (self.initialized) {
+      self.log('Re-reading battles from file');
     } else {
       console.log('HG: Re-reading battles from file');
     }
@@ -782,8 +782,8 @@ function HungryGames() {
   updateWeapons();
   fs.watchFile(weaponsFile, function(curr, prev) {
     if (curr.mtime == prev.mtime) return;
-    if (self.common && self.common.log) {
-      self.common.log('Re-reading default weapons from file', 'HG');
+    if (self.initialized) {
+      self.log('Re-reading default weapons from file');
     } else {
       console.log('HG: Re-reading default weapons from file');
     }
@@ -866,7 +866,7 @@ function HungryGames() {
       try {
         handleCommand(msg);
       } catch (err) {
-        self.common.error('An error occured while perfoming command.', 'HG');
+        self.error('An error occured while perfoming command.');
         console.log(err);
         self.common.reply(msg, 'Oopsies! Something is broken!');
       }
@@ -905,9 +905,7 @@ function HungryGames() {
         if (games[key].currentGame.day.state === 1) {
           games[key].currentGame.day.state = 0;
         }
-        self.common.log(
-            'Resuming game: ' + games[key].channel + ' ' + games[key].msg,
-            'HG');
+        self.log('Resuming game: ' + games[key].channel + ' ' + games[key].msg);
         self.client.channels.get(games[key].channel)
             .fetchMessage(games[key].msg)
             .then(function(key) {
@@ -916,7 +914,7 @@ function HungryGames() {
               };
             }(key))
             .catch((err) => {
-              self.common.error('Failed to automatically resume games.', 'HG');
+              self.error('Failed to automatically resume games.');
               console.log(err);
             });
       }
@@ -945,6 +943,11 @@ function HungryGames() {
     fs.unwatchFile(messageFile);
     fs.unwatchFile(battleFile);
     fs.unwatchFile(weaponsFile);
+  };
+
+  /** @inheritdoc */
+  this.unloadable = function() {
+    return self.getNumSimulating() === 0;
   };
 
   /**
@@ -1493,10 +1496,9 @@ function HungryGames() {
         } else if (
             included && excluded && included.includes(obj.user.id) &&
             excluded.includes(obj.user.id)) {
-          self.common.error(
+          self.error(
               'User in both blacklist and whitelist: ' + obj.user.id +
-                  ' Guild: ' + obj.guild.id,
-              'HG');
+              ' Guild: ' + obj.guild.id);
           if (excludeByDefault) {
             included.splice(
                 included.findIndex((el) => {
@@ -1607,9 +1609,9 @@ function HungryGames() {
       obj.rank = 1;
       obj.players.forEach(function(p) {
         if (typeof p !== 'string' && typeof p !== 'number') {
-          self.common.error(
-              'Player in team is invalid: ' + typeof p + ' in team ' + obj.id,
-              id);
+          self.error(
+              'Player in team is invalid: ' + typeof p + ' in team ' + obj.id +
+              ' guild: ' + id);
         }
       });
     });
@@ -1640,10 +1642,9 @@ function HungryGames() {
         delete games[id];
         rimraf(self.common.guildSaveDir + id + hgSaveDir, function(err) {
           if (!err) return;
-          self.common.error(
+          self.error(
               'Failed to delete directory: ' + self.common.guildSaveDir + id +
-                  hgSaveDir,
-              'HG');
+              hgSaveDir);
           console.error(err);
         });
         return 'Resetting ALL Hungry Games data for this server!';
@@ -2176,10 +2177,9 @@ function HungryGames() {
               find(id).currentGame.teams, probOpts, userWithWeapon);
           if (!eventTry) {
             useWeapon = false;
-            self.common.error(
+            self.error(
                 'No event with weapon "' + chosenWeapon +
-                    '" for available players ' + id,
-                'HG');
+                '" for available players ' + id);
           } else {
             numAttacker = eventTry.attacker.count;
             numVictim = eventTry.victim.count;
@@ -2279,12 +2279,11 @@ function HungryGames() {
                   self.myPrefix +
                   'next`. If this happens again please report ' +
                   'this to SpikeyRobot#9836');
-          self.common.error(
+          self.error(
               'No event for ' + userPool.length + ' from ' +
-                  userEventPool.length + ' events. No weapon, Arena Event: ' +
-                  (doArenaEvent ? 'Yes' : 'No') + ', Day: ' +
-                  find(id).currentGame.day.num,
-              id);
+              userEventPool.length + ' events. No weapon, Arena Event: ' +
+              (doArenaEvent ? 'Yes' : 'No') + ', Day: ' +
+              find(id).currentGame.day.num + ' Guild: ' + id);
           find(id).currentGame.day.state = 0;
           return;
         }
@@ -2298,9 +2297,8 @@ function HungryGames() {
 
       effectUser = function(i, kills, weapon) {
         if (!affectedUsers[i] || typeof affectedUsers[i] === 'undefined') {
-          self.common.error(
-              'Affected users invalid index:' + i + '/' + affectedUsers.length,
-              'HG');
+          self.error(
+              'Affected users invalid index:' + i + '/' + affectedUsers.length);
           console.log(affectedUsers);
         }
         let index =
@@ -2428,8 +2426,7 @@ function HungryGames() {
                     let consumableName = weaponName;
                     let count = el[1];
                     if (!weapons[weaponName]) {
-                      self.common.error(
-                          'Failed to find weapon: ' + weaponName, 'HG');
+                      self.error('Failed to find weapon: ' + weaponName);
                       return '(Unknown weapon ' + weaponName +
                           '. This is a bug.)';
                     }
@@ -2462,8 +2459,7 @@ function HungryGames() {
                     let consumableName = weaponName;
                     let count = el[1];
                     if (!weapons[weaponName]) {
-                      self.common.error(
-                          'Failed to find weapon: ' + weaponName, 'HG');
+                      self.error('Failed to find weapon: ' + weaponName);
                       return '(Unknown weapon ' + weaponName +
                           '. This is a bug.)';
                     }
@@ -2628,8 +2624,7 @@ function HungryGames() {
       let eventIndex = probabilityEvent(eventPool, probOpts);
       let eventTry = eventPool[eventIndex];
       if (!eventTry) {
-        self.common.error(
-            'Event at index ' + eventIndex + ' is invalid!', 'HG');
+        self.error('Event at index ' + eventIndex + ' is invalid!');
         continue;
       }
 
@@ -2679,10 +2674,9 @@ function HungryGames() {
 
       return eventTry;
     }
-    self.common.error(
+    self.error(
         'Failed to find suitable event for ' + userPool.length +
-            ' players, from ' + eventPool.length + ' events.',
-        'HG');
+        ' players, from ' + eventPool.length + ' events.');
     return null;
   }
   /**
@@ -2734,7 +2728,7 @@ function HungryGames() {
           }) > -1;
         });
         if (!attackerTeam) {
-          self.common.error(weaponWielder.id + ' not on any team');
+          self.error(weaponWielder.id + ' not on any team');
           return false;
         }
         return numAttacker <= attackerTeam.numPool &&
@@ -3139,7 +3133,7 @@ function HungryGames() {
       if (recurse < 10) {
         return probabilityEvent(eventPool, probabilityOpts, recurse + 1);
       } else {
-        self.common.error(
+        self.error(
             'Failed to find event with probabilities: ' +
             JSON.stringify(probabilityOpts) + ' from ' + eventPool.length +
             ' events.');
@@ -3475,7 +3469,7 @@ function HungryGames() {
     }
 
     if (find(id).currentGame.numAlive != numAlive) {
-      self.common.error('Realtime alive count is incorrect!', 'HG');
+      self.error('Realtime alive count is incorrect!');
     }
 
     let finalMessage = new self.Discord.MessageEmbed();
@@ -3932,9 +3926,8 @@ function HungryGames() {
           } else {
             response +=
                 'Failed to remove ' + obj.username + ' for an unknown reason.';
-            self.common.error(
-                'Failed to remove player from included list. (' + obj.id + ')',
-                'HG');
+            self.error(
+                'Failed to remove player from included list. (' + obj.id + ')');
           }
         }
       }
@@ -5419,7 +5412,7 @@ function HungryGames() {
       title = 'Arena';
       embed.setColor([0, 0, 255]);
     } else {
-      self.common.error('HOW COULD THIS BE? I\'ve made a mistake!', 'HG');
+      self.error('HOW COULD THIS BE? I\'ve made a mistake!');
       self.common.reply(msg, 'BIG Oops! THIS SHOULD _never_ happen');
     }
 
@@ -5614,17 +5607,26 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function commandStats(msg, id) {
-    let loadedEntries = Object.entries(games);
-    let numInProgress = loadedEntries
-                            .filter((game) => {
-                              return game[1].currentGame.inProgress &&
-                                  game[1].currentGame.day.state > 1;
-                            })
-                            .length;
     self.common.reply(
-        msg, 'There are ' + numInProgress + ' games currently simulating of ' +
-            loadedEntries.length + ' currently loaded.');
+        msg, 'There are ' + self.getNumSimulating() +
+            ' games currently simulating of ' + loadedEntries.length +
+            ' currently loaded.');
   }
+
+  /**
+   * Returns the number of games that are currently being shown to users.
+   *
+   * @public
+   * @return {number} Number of games simulating.
+   */
+  this.getNumSimulating = function() {
+    const loadedEntries = Object.entries(games);
+    const inProgress = loadedEntries.filter((game) => {
+      return game[1].currentGame.inProgress &&
+          game[1].currentGame.day.state > 1;
+    });
+    return inProgress.length;
+  };
 
   /**
    * Get a random word that means "nothing".
@@ -5682,9 +5684,9 @@ function HungryGames() {
           fs.readFileSync(self.common.guildSaveDir + id + hgSaveDir + saveFile);
       try {
         games[id] = JSON.parse(tmp);
-        self.common.log('Loaded game from file ' + id, 'HG');
+        self.log('Loaded game from file ' + id);
       } catch (e2) {
-        self.common.error('Failed to parse game data for guild ' + id, 'HG');
+        self.error('Failed to parse game data for guild ' + id);
         return null;
       }
     } catch (e) {
@@ -5724,7 +5726,8 @@ function HungryGames() {
    * @override
    * @param {string} [opt='sync'] Can be 'async', otherwise defaults to
    * synchronous.
-   * @param {boolean} [wait=false] If requested before subModule is initialized,
+   * @param {boolean} [wait=false] If requested before subModule is
+   * initialized,
    * keep trying until it is initialized.
    */
   this.save = function(opt, wait) {
@@ -5737,9 +5740,9 @@ function HungryGames() {
       return;
     }
     if (opt == 'async') {
-      self.common.log('Saving async', 'HG');
+      self.log('Saving async');
     } else {
-      self.common.log('Saving sync', 'HG');
+      self.log('Saving sync');
     }
     Object.entries(games).forEach(function(obj) {
       const id = obj[0];
@@ -5749,13 +5752,13 @@ function HungryGames() {
       if (opt == 'async') {
         mkdirp(dir, function(err) {
           if (err) {
-            self.common.error('Failed to create directory for ' + dir, 'HG');
+            self.error('Failed to create directory for ' + dir);
             console.error(err);
             return;
           }
           fs.writeFile(filename, JSON.stringify(data), function(err2) {
             if (err2) {
-              self.common.error('Failed to save HG data for ' + filename, 'HG');
+              self.error('Failed to save HG data for ' + filename);
               console.error(err2);
             }
           });
@@ -5764,14 +5767,14 @@ function HungryGames() {
         try {
           mkdirp.sync(dir);
         } catch (err) {
-          self.common.error('Failed to create directory for ' + dir, 'HG');
+          self.error('Failed to create directory for ' + dir);
           console.error(err);
           return;
         }
         try {
           fs.writeFileSync(filename, JSON.stringify(data));
         } catch (err) {
-          self.common.error('Failed to save HG data for ' + filename, 'HG');
+          self.error('Failed to save HG data for ' + filename);
           console.error(err);
           return;
         }
@@ -5788,8 +5791,8 @@ function HungryGames() {
    * @listens Process#exit
    */
   function exit(code) {
-    if (self.common && self.common.log) {
-      self.common.log('Caught exit! ' + code, 'HG');
+    if (self.initialized) {
+      self.log('Caught exit! ' + code);
     } else {
       console.log('Caught exit! ', code);
     }
@@ -5799,7 +5802,7 @@ function HungryGames() {
     try {
       self.end();
     } catch (err) {
-      self.common.error('Exception during end!', 'HG');
+      self.error('Exception during end!');
       console.log(err);
     }
   }
@@ -5812,8 +5815,8 @@ function HungryGames() {
    * @listens Process#SIGTERM
    */
   function sigint() {
-    if (self.common && self.common.log) {
-      self.common.log('Caught SIGINT!', 'HG');
+    if (self.initialized) {
+      self.log('Caught SIGINT!');
     } else {
       console.log('HG: Caught SIGINT!');
     }
@@ -5821,7 +5824,7 @@ function HungryGames() {
       try {
         self.save();
       } catch (err) {
-        self.common.error('FAILED TO SAVE ON SIGINT' + err, 'HG');
+        self.error('FAILED TO SAVE ON SIGINT' + err);
       }
     }
     try {

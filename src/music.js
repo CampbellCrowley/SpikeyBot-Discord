@@ -169,6 +169,11 @@ function Music() {
     self.client.removeListener('voiceStateUpdate', handleVoiceStateUpdate);
   };
 
+  /** @inheritdoc */
+  this.unloadable = function() {
+    return Object.keys(broadcasts).length === 0;
+  };
+
   /**
    * Creates formatted string for mentioning the author of msg.
    *
@@ -206,9 +211,7 @@ function Music() {
     if (oldMem.voiceChannel && oldMem.voiceChannel.members &&
         oldMem.voiceChannel.members.size === 1 &&
         oldMem.voiceChannel.members.get(self.client.user.id)) {
-      self.common.log(
-          'Leaving voice channel because everyone left me to be alone :(',
-          'Music');
+      self.log('Leaving voice channel because everyone left me to be alone :(');
       oldMem.voiceChannel.leave();
     }
   }
@@ -349,7 +352,7 @@ function Music() {
               special[broadcast.current.song].url, ytdlOpts, (err, info) => {
                 broadcast.isLoading = false;
                 if (err) {
-                  self.common.error(err.message.split('\n')[1]);
+                  self.error(err.message.split('\n')[1]);
                   broadcast.current.request.channel.send(
                       '```Oops, something went wrong while getting info for ' +
                       'this song!```\n' + err.message.split('\n')[1]);
@@ -412,7 +415,7 @@ function Music() {
       if (!speaking) endSong(broadcast);
     });
     broadcast.broadcast.on('error', function(err) {
-      self.common.error('Error in starting broadcast', 'Music');
+      self.error('Error in starting broadcast');
       console.log(err);
       broadcast.current.request.channel.send(
           '```An error occured while attempting to play ' +
@@ -504,7 +507,7 @@ function Music() {
               .then((msg) => loadingMsg = msg);
           ytdl.getInfo(song, ytdlOpts, (err, info) => {
             if (err) {
-              self.common.error(err.message.split('\n')[1]);
+              self.error(err.message.split('\n')[1]);
               reply(
                   msg,
                   'Oops, something went wrong while searching for that song!',
@@ -682,15 +685,15 @@ function Music() {
         }
       });
       response.on('close', function() {
-        self.common.log('Genius request closed! ' + content.length, 'Music');
+        self.log('Genius request closed! ' + content.length);
       });
       response.on('error', function() {
-        self.common.log('Genius request errored! ' + content.length, 'Music');
+        self.log('Genius request errored! ' + content.length);
       });
     });
     req.end();
     req.on('error', function(e) {
-      self.common.error(e, 'Music');
+      self.error(e);
     });
     msg.channel.send('`Loading...`').then((msg) => {
       msg.delete(30000);
@@ -726,15 +729,15 @@ function Music() {
         }
       });
       response.on('close', function() {
-        self.common.log('Genius request closed! ' + content.length, 'Music');
+        self.log('Genius request closed! ' + content.length);
       });
       response.on('error', function() {
-        self.common.log('Genius request errored! ' + content.length, 'Music');
+        self.log('Genius request errored! ' + content.length);
       });
     });
     req.end();
     req.on('error', function(e) {
-      self.common.error(e, 'Music');
+      self.error(e);
     });
   }
   /**
@@ -766,15 +769,15 @@ function Music() {
         }
       });
       response.on('close', function() {
-        self.common.log('Genius request closed! ' + content.length, 'Music');
+        self.log('Genius request closed! ' + content.length);
       });
       response.on('error', function() {
-        self.common.log('Genius request errored! ' + content.length, 'Music');
+        self.log('Genius request errored! ' + content.length);
       });
     });
     req.end();
     req.on('error', function(e) {
-      self.common.error(e, 'Music');
+      self.error(e);
     });
   }
   /**
