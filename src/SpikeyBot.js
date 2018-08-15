@@ -467,6 +467,8 @@ function SpikeyBot() {
     if (!minimal) {
       if (testInstance) {
         updateGame('Running unit test...');
+      } else if (isDev) {
+        updateGame('Version: ' + version);
       } else {
         updateGame(prefix + 'help for help');
       }

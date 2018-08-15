@@ -123,14 +123,6 @@ function Main() {
   let disabledAutoSmite = {};
 
   /**
-   * Number of times "Rigged" has been said on all servers.
-   *
-   * @private
-   * @type {number}
-   */
-  // let riggedCounter = 0;
-
-  /**
    * The guilds with auto-smite enabled, and members who have mentioned
    * @everyone, and the timestamps of these mentions.
    *
@@ -677,7 +669,8 @@ function Main() {
    */
   function onMessage(msg) {
     if (!msg.guild) return;
-    if (msg.author.id != self.client.user.id) {
+    if (msg.author.id != self.client.user.id &&
+        msg.author.id != self.common.spikeyId) {
       let riggedSimilarity = 0;
       let matchedRigged = msg.content.toLowerCase().replace(/\W/g, '').match(
           /r[^i]*i[^g]*g[^g]*g[^e]*e[^d]*d/g);
