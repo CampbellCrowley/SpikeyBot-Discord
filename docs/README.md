@@ -359,8 +359,11 @@ Manages a Connect 4 game.
         * [.initialize()](#SubModule+initialize)
         * [.begin(prefix, Discord, client, command, common)](#SubModule+begin)
         * [.end()](#SubModule+end)
+        * [.log(msg)](#SubModule+log)
+        * [.error(msg)](#SubModule+error)
         * [.shutdown()](#SubModule+shutdown)
         * *[.save()](#SubModule+save)*
+        * *[.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>*
     * _inner_
         * [~maxReactAwaitTime](#Connect4..maxReactAwaitTime) : <code>number</code> ℗
         * [~numRows](#Connect4..numRows) : <code>number</code> ℗
@@ -532,6 +535,7 @@ specific to the subModule. Must be defined before begin() is called.
 Initialize this submodule.
 
 **Kind**: instance method of [<code>Connect4</code>](#Connect4)  
+**Access**: public  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -547,6 +551,31 @@ Initialize this submodule.
 Trigger subModule to shutdown and get ready for process terminating.
 
 **Kind**: instance method of [<code>Connect4</code>](#Connect4)  
+**Access**: public  
+<a name="SubModule+log"></a>
+
+### connect4.log(msg)
+Log using common.log, but automatically set name.
+
+**Kind**: instance method of [<code>Connect4</code>](#Connect4)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+error"></a>
+
+### connect4.error(msg)
+Log using common.error, but automatically set name.
+
+**Kind**: instance method of [<code>Connect4</code>](#Connect4)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
 <a name="SubModule+shutdown"></a>
 
 ### connect4.shutdown()
@@ -561,6 +590,16 @@ Shutdown and disable this submodule. Removes all event listeners.
 Saves all data to files necessary for saving current state.
 
 **Kind**: instance abstract method of [<code>Connect4</code>](#Connect4)  
+<a name="SubModule+unloadable"></a>
+
+### *connect4.unloadable() ⇒ <code>boolean</code>*
+Check if this module is in a state that is ready to be unloaded. If false
+is returned, this module should not be unloaded and doing such may risk
+putting the module into an uncontrollable state.
+
+**Kind**: instance abstract method of [<code>Connect4</code>](#Connect4)  
+**Returns**: <code>boolean</code> - True if can be unloaded, false if cannot.  
+**Access**: public  
 <a name="Connect4..maxReactAwaitTime"></a>
 
 ### Connect4~maxReactAwaitTime : <code>number</code> ℗
@@ -1367,8 +1406,11 @@ Hunger Games simulator.
         * [.initialize()](#SubModule+initialize)
         * [.begin(prefix, Discord, client, command, common)](#SubModule+begin)
         * [.end()](#SubModule+end)
+        * [.log(msg)](#SubModule+log)
+        * [.error(msg)](#SubModule+error)
         * [.shutdown()](#SubModule+shutdown)
         * [.save()](#SubModule+save)
+        * *[.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>*
     * _inner_
         * [~Player](#HungryGames..Player)
             * [new Player(id, username, avatarURL)](#new_HungryGames..Player_new)
@@ -1843,6 +1885,7 @@ specific to the subModule. Must be defined before begin() is called.
 Initialize this submodule.
 
 **Kind**: instance method of [<code>HungryGames</code>](#HungryGames)  
+**Access**: public  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -1858,6 +1901,31 @@ Initialize this submodule.
 Trigger subModule to shutdown and get ready for process terminating.
 
 **Kind**: instance method of [<code>HungryGames</code>](#HungryGames)  
+**Access**: public  
+<a name="SubModule+log"></a>
+
+### hungryGames.log(msg)
+Log using common.log, but automatically set name.
+
+**Kind**: instance method of [<code>HungryGames</code>](#HungryGames)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+error"></a>
+
+### hungryGames.error(msg)
+Log using common.error, but automatically set name.
+
+**Kind**: instance method of [<code>HungryGames</code>](#HungryGames)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
 <a name="SubModule+shutdown"></a>
 
 ### hungryGames.shutdown()
@@ -1873,6 +1941,16 @@ Saves all data to files necessary for saving current state.
 
 **Kind**: instance method of [<code>HungryGames</code>](#HungryGames)  
 **Overrides**: [<code>save</code>](#SubModule+save)  
+<a name="SubModule+unloadable"></a>
+
+### *hungryGames.unloadable() ⇒ <code>boolean</code>*
+Check if this module is in a state that is ready to be unloaded. If false
+is returned, this module should not be unloaded and doing such may risk
+putting the module into an uncontrollable state.
+
+**Kind**: instance abstract method of [<code>HungryGames</code>](#HungryGames)  
+**Returns**: <code>boolean</code> - True if can be unloaded, false if cannot.  
+**Access**: public  
 <a name="HungryGames..Player"></a>
 
 ### HungryGames~Player
@@ -3432,8 +3510,11 @@ Basic commands and features for the bot.
         * [.initialize()](#SubModule+initialize)
         * [.begin(prefix, Discord, client, command, common)](#SubModule+begin)
         * [.end()](#SubModule+end)
+        * [.log(msg)](#SubModule+log)
+        * [.error(msg)](#SubModule+error)
         * [.shutdown()](#SubModule+shutdown)
         * [.save()](#SubModule+save)
+        * *[.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>*
     * _inner_
         * [~version](#Main..version) : <code>string</code> ℗
         * [~prevUserSayId](#Main..prevUserSayId) : <code>string</code> ℗
@@ -3585,6 +3666,7 @@ specific to the subModule. Must be defined before begin() is called.
 Initialize this submodule.
 
 **Kind**: instance method of [<code>Main</code>](#Main)  
+**Access**: public  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -3600,6 +3682,31 @@ Initialize this submodule.
 Trigger subModule to shutdown and get ready for process terminating.
 
 **Kind**: instance method of [<code>Main</code>](#Main)  
+**Access**: public  
+<a name="SubModule+log"></a>
+
+### main.log(msg)
+Log using common.log, but automatically set name.
+
+**Kind**: instance method of [<code>Main</code>](#Main)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+error"></a>
+
+### main.error(msg)
+Log using common.error, but automatically set name.
+
+**Kind**: instance method of [<code>Main</code>](#Main)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
 <a name="SubModule+shutdown"></a>
 
 ### main.shutdown()
@@ -3615,6 +3722,16 @@ Saves all data to files necessary for saving current state.
 
 **Kind**: instance method of [<code>Main</code>](#Main)  
 **Overrides**: [<code>save</code>](#SubModule+save)  
+<a name="SubModule+unloadable"></a>
+
+### *main.unloadable() ⇒ <code>boolean</code>*
+Check if this module is in a state that is ready to be unloaded. If false
+is returned, this module should not be unloaded and doing such may risk
+putting the module into an uncontrollable state.
+
+**Kind**: instance abstract method of [<code>Main</code>](#Main)  
+**Returns**: <code>boolean</code> - True if can be unloaded, false if cannot.  
+**Access**: public  
 <a name="Main..version"></a>
 
 ### Main~version : <code>string</code> ℗
@@ -4316,8 +4433,11 @@ Music and audio related commands.
         * [.initialize()](#SubModule+initialize)
         * [.begin(prefix, Discord, client, command, common)](#SubModule+begin)
         * [.end()](#SubModule+end)
+        * [.log(msg)](#SubModule+log)
+        * [.error(msg)](#SubModule+error)
         * [.shutdown()](#SubModule+shutdown)
         * *[.save()](#SubModule+save)*
+        * *[.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>*
     * _static_
         * [.streamToOgg(input, file)](#Music.streamToOgg)
     * _inner_
@@ -4437,6 +4557,7 @@ specific to the subModule. Must be defined before begin() is called.
 Initialize this submodule.
 
 **Kind**: instance method of [<code>Music</code>](#Music)  
+**Access**: public  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -4452,6 +4573,31 @@ Initialize this submodule.
 Trigger subModule to shutdown and get ready for process terminating.
 
 **Kind**: instance method of [<code>Music</code>](#Music)  
+**Access**: public  
+<a name="SubModule+log"></a>
+
+### music.log(msg)
+Log using common.log, but automatically set name.
+
+**Kind**: instance method of [<code>Music</code>](#Music)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+error"></a>
+
+### music.error(msg)
+Log using common.error, but automatically set name.
+
+**Kind**: instance method of [<code>Music</code>](#Music)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
 <a name="SubModule+shutdown"></a>
 
 ### music.shutdown()
@@ -4466,6 +4612,16 @@ Shutdown and disable this submodule. Removes all event listeners.
 Saves all data to files necessary for saving current state.
 
 **Kind**: instance abstract method of [<code>Music</code>](#Music)  
+<a name="SubModule+unloadable"></a>
+
+### *music.unloadable() ⇒ <code>boolean</code>*
+Check if this module is in a state that is ready to be unloaded. If false
+is returned, this module should not be unloaded and doing such may risk
+putting the module into an uncontrollable state.
+
+**Kind**: instance abstract method of [<code>Music</code>](#Music)  
+**Returns**: <code>boolean</code> - True if can be unloaded, false if cannot.  
+**Access**: public  
 <a name="Music.streamToOgg"></a>
 
 ### Music.streamToOgg(input, file)
@@ -5244,8 +5400,11 @@ Base class for all Sub-Modules.
         * *[.initialize()](#SubModule+initialize)*
         * [.begin(prefix, Discord, client, command, common)](#SubModule+begin)
         * [.end()](#SubModule+end)
+        * [.log(msg)](#SubModule+log)
+        * [.error(msg)](#SubModule+error)
         * *[.shutdown()](#SubModule+shutdown)*
         * *[.save()](#SubModule+save)*
+        * *[.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>*
     * _static_
         * [.extend(child)](#SubModule.extend)
 
@@ -5335,6 +5494,7 @@ specific to the subModule. Must be defined before begin() is called.
 Initialize this submodule.
 
 **Kind**: instance method of [<code>SubModule</code>](#SubModule)  
+**Access**: public  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -5350,6 +5510,31 @@ Initialize this submodule.
 Trigger subModule to shutdown and get ready for process terminating.
 
 **Kind**: instance method of [<code>SubModule</code>](#SubModule)  
+**Access**: public  
+<a name="SubModule+log"></a>
+
+### subModule.log(msg)
+Log using common.log, but automatically set name.
+
+**Kind**: instance method of [<code>SubModule</code>](#SubModule)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+error"></a>
+
+### subModule.error(msg)
+Log using common.error, but automatically set name.
+
+**Kind**: instance method of [<code>SubModule</code>](#SubModule)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
 <a name="SubModule+shutdown"></a>
 
 ### *subModule.shutdown()*
@@ -5363,6 +5548,16 @@ Shutdown and disable this submodule. Removes all event listeners.
 Saves all data to files necessary for saving current state.
 
 **Kind**: instance abstract method of [<code>SubModule</code>](#SubModule)  
+<a name="SubModule+unloadable"></a>
+
+### *subModule.unloadable() ⇒ <code>boolean</code>*
+Check if this module is in a state that is ready to be unloaded. If false
+is returned, this module should not be unloaded and doing such may risk
+putting the module into an uncontrollable state.
+
+**Kind**: instance abstract method of [<code>SubModule</code>](#SubModule)  
+**Returns**: <code>boolean</code> - True if can be unloaded, false if cannot.  
+**Access**: public  
 <a name="SubModule.extend"></a>
 
 ### SubModule.extend(child)
@@ -5408,8 +5603,11 @@ Manages a tic-tac-toe game.
         * [.initialize()](#SubModule+initialize)
         * [.begin(prefix, Discord, client, command, common)](#SubModule+begin)
         * [.end()](#SubModule+end)
+        * [.log(msg)](#SubModule+log)
+        * [.error(msg)](#SubModule+error)
         * [.shutdown()](#SubModule+shutdown)
         * *[.save()](#SubModule+save)*
+        * *[.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>*
     * _inner_
         * [~maxReactAwaitTime](#TicTacToe..maxReactAwaitTime) : <code>number</code> ℗
         * [~emoji](#TicTacToe..emoji) : <code>Object.&lt;string&gt;</code> ℗
@@ -5590,6 +5788,7 @@ specific to the subModule. Must be defined before begin() is called.
 Initialize this submodule.
 
 **Kind**: instance method of [<code>TicTacToe</code>](#TicTacToe)  
+**Access**: public  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -5605,6 +5804,31 @@ Initialize this submodule.
 Trigger subModule to shutdown and get ready for process terminating.
 
 **Kind**: instance method of [<code>TicTacToe</code>](#TicTacToe)  
+**Access**: public  
+<a name="SubModule+log"></a>
+
+### ticTacToe.log(msg)
+Log using common.log, but automatically set name.
+
+**Kind**: instance method of [<code>TicTacToe</code>](#TicTacToe)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+error"></a>
+
+### ticTacToe.error(msg)
+Log using common.error, but automatically set name.
+
+**Kind**: instance method of [<code>TicTacToe</code>](#TicTacToe)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
 <a name="SubModule+shutdown"></a>
 
 ### ticTacToe.shutdown()
@@ -5619,6 +5843,16 @@ Shutdown and disable this submodule. Removes all event listeners.
 Saves all data to files necessary for saving current state.
 
 **Kind**: instance abstract method of [<code>TicTacToe</code>](#TicTacToe)  
+<a name="SubModule+unloadable"></a>
+
+### *ticTacToe.unloadable() ⇒ <code>boolean</code>*
+Check if this module is in a state that is ready to be unloaded. If false
+is returned, this module should not be unloaded and doing such may risk
+putting the module into an uncontrollable state.
+
+**Kind**: instance abstract method of [<code>TicTacToe</code>](#TicTacToe)  
+**Returns**: <code>boolean</code> - True if can be unloaded, false if cannot.  
+**Access**: public  
 <a name="TicTacToe..maxReactAwaitTime"></a>
 
 ### TicTacToe~maxReactAwaitTime : <code>number</code> ℗
