@@ -4466,7 +4466,7 @@ function HungryGames() {
    * moving a player to a team.
    */
   this.editTeam = function(uId, gId, cmd, one, two) {
-    if (find(id).currentGame.inProgress) {
+    if (find(gId).currentGame.inProgress) {
       switch (split[0]) {
         case 'swap':
         case 'reset':
@@ -4502,7 +4502,7 @@ function HungryGames() {
       case 'move':
         let pId = -1;
         let tId = -1;
-        let teamS = games[gId].currentGame.teams.find((t, i) => {
+        let teamS = find(gId).currentGame.teams.find((t, i) => {
           if (t.players.find((p, j) => {
                 if (p == one) {
                   pId = j;
@@ -4515,24 +4515,24 @@ function HungryGames() {
           }
           return false;
         });
-        let teamD = games[gId].currentGame.teams.find((t) => {
+        let teamD = find(gId).currentGame.teams.find((t) => {
           return t.id == two;
         });
         if (!teamS) break;
         if (!teamD) {
           teamD =
-              games[gId]
+              find(gId)
                   .currentGame
-                  .teams[games[gId].currentGame.teams.push(
+                  .teams[find(gId).currentGame.teams.push(
                              new Team(
-                                 games[gId].currentGame.teams.length, 'Team ' +
-                                     (games[gId].currentGame.teams.length + 1),
+                                 find(gId).currentGame.teams.length, 'Team ' +
+                                     (find(gId).currentGame.teams.length + 1),
                                  [])) -
                          1];
         }
         teamD.players.push(teamS.players.splice(pId, 1));
         if (teamS.players.length === 0) {
-          games[gId].currentGame.teams.splice(tId, 1);
+          find(gId).currentGame.teams.splice(tId, 1);
         }
         break;
       default:
