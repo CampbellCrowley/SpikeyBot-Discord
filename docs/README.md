@@ -694,7 +694,7 @@ Creates a web interface for managing the Hungry Games.
         * [~fetchDay(userData, socket, gId)](#HGWeb..fetchDay) : <code>HGWeb~SocketFunction</code> ℗
         * [~excludeMember(userData, socket, gId, mId)](#HGWeb..excludeMember) : <code>HGWeb~SocketFunction</code> ℗
         * [~includeMember(userData, socket, gId, mId)](#HGWeb..includeMember) : <code>HGWeb~SocketFunction</code> ℗
-        * [~toggleOption(userData, socket, gId, option, value)](#HGWeb..toggleOption) : <code>HGWeb~SocketFunction</code> ℗
+        * [~toggleOption(userData, socket, gId, option, value, extra)](#HGWeb..toggleOption) : <code>HGWeb~SocketFunction</code> ℗
         * [~createGame(userData, socket, gId)](#HGWeb..createGame) : <code>HGWeb~SocketFunction</code> ℗
         * [~resetGame(userData, socket, gId, cmd)](#HGWeb..resetGame) : <code>HGWeb~SocketFunction</code> ℗
         * [~startGame(userData, socket, gId, cId)](#HGWeb..startGame) : <code>HGWeb~SocketFunction</code> ℗
@@ -1142,7 +1142,7 @@ Include a member in the Games.
 
 <a name="HGWeb..toggleOption"></a>
 
-### HGWeb~toggleOption(userData, socket, gId, option, value) : <code>HGWeb~SocketFunction</code> ℗
+### HGWeb~toggleOption(userData, socket, gId, option, value, extra) : <code>HGWeb~SocketFunction</code> ℗
 Toggle an option in the Games.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
@@ -1156,6 +1156,7 @@ Toggle an option in the Games.
 | gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
 | option | <code>string</code> | The option to change. |
 | value | <code>string</code> \| <code>number</code> | The value to set option to. |
+| extra | <code>string</code> | The extra text if the option is in an object. |
 
 <a name="HGWeb..createGame"></a>
 

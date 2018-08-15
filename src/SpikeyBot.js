@@ -159,7 +159,9 @@ function SpikeyBot() {
     manager.on('shardCreate', (shard) => {
       common.log('Launched shard ' + shard.id, 'ShardingManager');
       shard.on('message', (msg) => {
-        common.log('Received message from shard ' + shard.id + ': ' + msg);
+        common.log(
+            'Received message from shard ' + shard.id + ': ' +
+            JSON.stringify(msg));
         if (msg === 'reboot hard') {
           common.log('TRIGGERED HARD REBOOT!');
           manager.shards.forEach((s) => {

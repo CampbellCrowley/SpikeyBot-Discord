@@ -932,14 +932,15 @@ function HGWeb(hg) {
    * @param {number|string} gId The guild id to look at.
    * @param {string} option The option to change.
    * @param {string|number} value The value to set option to.
+   * @param {string} extra The extra text if the option is in an object.
    */
-  function toggleOption(userData, socket, gId, option, value) {
+  function toggleOption(userData, socket, gId, option, value, extra) {
     if (!checkPerm(userData, gId)) {
       if (!checkMyGuild(gId)) return;
       replyNoPerm(socket, 'toggleOption');
       return;
     }
-    socket.emit('message', hg.setOption(gId, option, value));
+    socket.emit('message', hg.setOption(gId, option, value, extra));
     if (hg.getGame(gId)) {
       socket.emit('option', gId, option, hg.getGame(gId).options[option]);
       if (option === 'teamSize') {
