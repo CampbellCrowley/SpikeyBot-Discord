@@ -1683,20 +1683,10 @@ function HungryGames() {
    */
   function showGameInfo(msg, id) {
     if (find(id)) {
-      let message = JSON.stringify(find(id), null, 2);
-      let messages = [];
-      while (message.length > 0) {
-        let newChunk = message.substring(
-            0, message.length >= 1950 ? 1950 : message.length);
-        messages.push(newChunk);
-        message = message.replace(newChunk, '');
-      }
-      for (let i in messages) {
-        if (typeof messages[i] === 'undefined') continue;
-        self.common.reply(msg, messages[i]).catch((err) => {
-          console.log(err);
-        });
-      }
+      let file = new self.Discord.MessageAttachment();
+      file.setFile(Buffer.from(JSON.stringify(find(id), null, 2)));
+      file.setName('HG-' + id + '.json');
+      msg.channel.send('HG Data for guild ' + id, file);
     } else {
       self.common.reply(msg, 'No game created');
     }
@@ -2729,7 +2719,7 @@ function HungryGames() {
           }) > -1;
         });
         if (!attackerTeam) {
-          console.error(weaponWielder, 'not on any team', teams);
+          self.common.error(weaponWielder.id + ' not on any team');
           return false;
         }
         return numAttacker <= attackerTeam.numPool &&
