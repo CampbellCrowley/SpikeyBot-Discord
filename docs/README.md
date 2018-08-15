@@ -1358,7 +1358,7 @@ Hunger Games simulator.
         * [.nextDay(uId, gId, cId)](#HungryGames+nextDay)
         * [.excludeUsers(users, id)](#HungryGames+excludeUsers) ⇒ <code>string</code>
         * [.includeUsers(users, id)](#HungryGames+includeUsers) ⇒ <code>string</code>
-        * [.setOption(id, option, value, text)](#HungryGames+setOption) ⇒ <code>string</code>
+        * [.setOption(id, option, value, [text])](#HungryGames+setOption) ⇒ <code>string</code>
         * [.editTeam(uId, gId, cmd, one, two)](#HungryGames+editTeam)
         * [.makeAndAddEvent(id, type, message, numVictim, numAttacker, victimOutcome, attackerOutcome, victimKiller, attackerKiller)](#HungryGames+makeAndAddEvent) ⇒ <code>string</code>
         * [.addEvent(id, type, event)](#HungryGames+addEvent) ⇒ <code>string</code>
@@ -1733,7 +1733,7 @@ multiple lines for a single user.
 
 <a name="HungryGames+setOption"></a>
 
-### hungryGames.setOption(id, option, value, text) ⇒ <code>string</code>
+### hungryGames.setOption(id, option, value, [text]) ⇒ <code>string</code>
 Change an option to a value for the given guild.
 
 **Kind**: instance method of [<code>HungryGames</code>](#HungryGames)  
@@ -1741,12 +1741,12 @@ Change an option to a value for the given guild.
 the user the list of options instead.  
 **Access**: public  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| id | <code>string</code> | The guild id to change the option in. |
-| option | <code>string</code> | The option key to change. |
-| value | <code>string</code> \| <code>boolean</code> \| <code>number</code> | The value to change the option to. |
-| text | <code>string</code> | The original message sent without the command prefix in the case we are changing the value of an object and require all user inputted data. |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| id | <code>string</code> |  | The guild id to change the option in. |
+| option | <code>string</code> |  | The option key to change. |
+| value | <code>string</code> \| <code>boolean</code> \| <code>number</code> |  | The value to change the option to. |
+| [text] | <code>string</code> | <code>&quot;&#x27;&#x27;&quot;</code> | The original message sent without the command prefix in the case we are changing the value of an object and require all user inputted data. |
 
 <a name="HungryGames+editTeam"></a>
 

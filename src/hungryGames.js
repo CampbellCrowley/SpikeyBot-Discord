@@ -1426,13 +1426,15 @@ function HungryGames() {
         currentGame: {
           name: msg.guild.name + '\'s Hungry Games',
           inProgress: false,
-          includedUsers: getAllPlayers(msg.guild.members, [], false, [], false),
           teams: [],
           ended: false,
           day: {num: -1, state: 0, events: []},
         },
         autoPlay: false,
       };
+      games[id].currentGame.includedUsers = getAllPlayers(
+          msg.guild.members, games[id].excludedUsers, false,
+          games[id].includedUsers, false);
       find(id).currentGame.numAlive =
           find(id).currentGame.includedUsers.length;
       const optKeys = Object.keys(defaultOptions);
@@ -1552,14 +1554,14 @@ function HungryGames() {
         team.id = i;
         for (let j = 0; j < team.players.length; j++) {
           if (game.currentGame.includedUsers.findIndex(function(obj) {
-                return obj.id == team.players[j];
+                return obj.id === team.players[j];
               }) < 0) {
             team.players.splice(j, 1);
             j--;
           } else {
             notIncluded.splice(
                 notIncluded.findIndex(function(obj) {
-                  return obj.id == team.players[j];
+                  return obj.id === team.players[j];
                 }),
                 1);
           }
@@ -1603,6 +1605,13 @@ function HungryGames() {
     game.currentGame.teams.forEach(function(obj) {
       obj.numAlive = obj.players.length;
       obj.rank = 1;
+      obj.players.forEach(function(p) {
+        if (typeof p !== 'string' && typeof p !== 'number') {
+          self.common.error(
+              'Player in team is invalid: ' + typeof p + ' in team ' + obj.id,
+              id);
+        }
+      });
     });
   }
   /**
@@ -1682,13 +1691,19 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function showGameInfo(msg, id) {
-    if (find(id)) {
+    let finalId = id;
+    if (msg.author.id == self.common.spikeyId) {
+      if (msg.text.split(' ')[0]) {
+        finalId = msg.text.split(' ')[0];
+      }
+    }
+    if (find(finalId)) {
       let file = new self.Discord.MessageAttachment();
-      file.setFile(Buffer.from(JSON.stringify(find(id), null, 2)));
-      file.setName('HG-' + id + '.json');
-      msg.channel.send('HG Data for guild ' + id, file);
+      file.setFile(Buffer.from(JSON.stringify(find(finalId), null, 2)));
+      file.setName('HG-' + finalId + '.json');
+      msg.channel.send('HG Data for guild ' + finalId, file);
     } else {
-      self.common.reply(msg, 'No game created');
+      self.common.reply(msg, 'No game created', finalId);
     }
   }
   /**
@@ -2163,7 +2178,7 @@ function HungryGames() {
             useWeapon = false;
             self.common.error(
                 'No event with weapon "' + chosenWeapon +
-                    '" for available players',
+                    '" for available players ' + id,
                 'HG');
           } else {
             numAttacker = eventTry.attacker.count;
@@ -2267,7 +2282,7 @@ function HungryGames() {
           self.common.error(
               'No event for ' + userPool.length + ' from ' +
                   userEventPool.length + ' events. No weapon, Arena Event: ' +
-                  (doArenaEvent ? arenaEvent.message : 'No') + ', Day: ' +
+                  (doArenaEvent ? 'Yes' : 'No') + ', Day: ' +
                   find(id).currentGame.day.num,
               id);
           find(id).currentGame.day.state = 0;
@@ -2338,7 +2353,7 @@ function HungryGames() {
           if (!team) {
             console.log(
                 'FAILED TO FIND ADEQUATE TEAM FOR USER',
-                find(id).currentGame.includedUsers[index]);
+                find(id).currentGame.includedUsers[index].id);
           } else {
             team.numAlive--;
             if (team.numAlive === 0) {
@@ -3122,7 +3137,6 @@ function HungryGames() {
     }
     if (finalPool.length == 0) {
       if (recurse < 10) {
-        console.log(value, type, 'Failed:', recurse + 1);
         return probabilityEvent(eventPool, probabilityOpts, recurse + 1);
       } else {
         self.common.error(
@@ -4187,13 +4201,13 @@ function HungryGames() {
    * @param {string} id The guild id to change the option in.
    * @param {?string} option The option key to change.
    * @param {?string|boolean|number} value The value to change the option to.
-   * @param {?string} text The original message sent without the command prefix
-   * in the case we are changing the value of an object and require all user
-   * inputted data.
+   * @param {string} [text=''] The original message sent without the command
+   * prefix in the case we are changing the value of an object and require all
+   * user inputted data.
    * @return {string} A message saying what happened, or null if we should show
    * the user the list of options instead.
    */
-  this.setOption = function(id, option, value, text) {
+  this.setOption = function(id, option, value, text = '') {
     if (!find(id) || !find(id).currentGame) {
       return 'You must create a game first before editing settings! Use "' +
           self.myPrefix + 'create" to create a game.';
@@ -4452,10 +4466,17 @@ function HungryGames() {
    * moving a player to a team.
    */
   this.editTeam = function(uId, gId, cmd, one, two) {
+    if (find(id).currentGame.inProgress) {
+      switch (split[0]) {
+        case 'swap':
+        case 'reset':
+          return;
+      }
+    }
     switch (cmd) {
       case 'swap':
         let p1 = -1;
-        let team1 = games[gId].currentGame.teams.find((t) => {
+        let team1 = find(gId).currentGame.teams.find((t) => {
           return t.players.find((p, i) => {
             if (p == one) {
               p1 = i;
@@ -4465,7 +4486,7 @@ function HungryGames() {
           });
         });
         let p2 = -1;
-        let team2 = games[gId].currentGame.teams.find((t) => {
+        let team2 = find(gId).currentGame.teams.find((t) => {
           return t.players.find((p, i) => {
             if (p == two) {
               p2 = i;
@@ -5597,7 +5618,7 @@ function HungryGames() {
     let numInProgress = loadedEntries
                             .filter((game) => {
                               return game[1].currentGame.inProgress &&
-                                  game[1].currentGame.day.state > 0;
+                                  game[1].currentGame.day.state > 1;
                             })
                             .length;
     self.common.reply(

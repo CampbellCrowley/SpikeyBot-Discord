@@ -413,6 +413,12 @@
         "consumes": 100
       },
       {
+        "message": "{attacker} sharpen[As|] {owner} knives.",
+        "attacker": { "count": "-1", "outcome": "nothing" },
+        "victim": { "count": "0", "outcome": "nothing" },
+        "consumes": 0
+      },
+      {
         "message": "{attacker} throws [Va knife|knives] into {victim}'s head[V|s].",
         "attacker": { "count": "1", "outcome": "thrives", "killer": true },
         "victim": { "count": "-1", "outcome": "dies" },
@@ -422,7 +428,7 @@
         "message": "{victim} steal[Vs|] [Aa |]throwing kni[Afe|ves] from {attacker}!",
         "attacker": { "count": "1", "outcome": "nothing" },
         "victim": { "count": "1", "outcome": "nothing", "weapon": { "name": "throwingknives", "count": 1 } },
-        "consumes": 1
+        "consumes": "V"
       },
       {
         "action": "miss[Aes|] their throw at",
