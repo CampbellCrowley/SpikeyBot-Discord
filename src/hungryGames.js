@@ -1554,7 +1554,8 @@ function HungryGames() {
             corruptTeam = true;
             self.error(
                 '(PreTeamForm) Player in team is invalid: ' + typeof p +
-                ' in team ' + obj.id + ' guild: ' + id);
+                ' in team ' + obj.id + ' guild: ' + id + ' players: ' +
+                JSON.stringify(obj.players));
           }
         });
       });
@@ -1625,7 +1626,8 @@ function HungryGames() {
           corruptTeam = true;
           self.error(
               '(PostTeamForm) Player in team is invalid: ' + typeof p +
-              ' in team ' + obj.id + ' guild: ' + id);
+              ' in team ' + obj.id + ' guild: ' + id + ' players: ' +
+              JSON.stringify(obj.players));
         }
       });
     });
@@ -3926,14 +3928,12 @@ function HungryGames() {
           response += obj.username + ' added to blacklist.\n';
         }
         if (!find(id).includedUsers) find(id).includedUsers = [];
-        let oldI = find(id).includedUsers.findIndex((el) => {
-          return el === obj.id;
-        });
-        if (oldI > -1) {
-          find(id).includedUsers.splice(oldI, 1);
+        let includeIndex = find(id).includedUsers.indexOf(obj.id);
+        if (includeIndex >= 0) {
           if (!onlyError) {
             response += obj.username + ' removed from whitelist.\n';
           }
+          find(id).includedUsers.splice(includeIndex, 1);
         }
         if (!find(id).currentGame.inProgress) {
           let index =
@@ -4546,7 +4546,7 @@ function HungryGames() {
                                  [])) -
                          1];
         }
-        teamD.players.push(teamS.players.splice(pId, 1));
+        teamD.players.push(teamS.players.splice(pId, 1)[0]);
         if (teamS.players.length === 0) {
           find(gId).currentGame.teams.splice(tId, 1);
         }
