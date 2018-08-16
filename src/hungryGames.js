@@ -2133,6 +2133,7 @@ function HungryGames() {
     let startingAlive = userPool.length;
     let userEventPool;
     let doArenaEvent = false;
+    let arenaEvent;
     if (find(id).currentGame.day.num === 0) {
       userEventPool =
           defaultBloodbathEvents.concat(find(id).customEvents.bloodbath);
@@ -2143,7 +2144,7 @@ function HungryGames() {
         let arenaEventPool =
             defaultArenaEvents.concat(find(id).customEvents.arena);
         let index = Math.floor(Math.random() * arenaEventPool.length);
-        let arenaEvent = arenaEventPool[index];
+        arenaEvent = arenaEventPool[index];
         find(id).currentGame.day.events.push(
             makeMessageEvent(getMessage('eventStart'), id));
         find(id).currentGame.day.events.push(
@@ -2307,7 +2308,7 @@ function HungryGames() {
           self.error(
               'No event for ' + userPool.length + ' from ' +
               userEventPool.length + ' events. No weapon, Arena Event: ' +
-              (doArenaEvent ? 'Yes' : 'No') + ', Day: ' +
+              (doArenaEvent ? arenaEvent.message : 'No') + ', Day: ' +
               find(id).currentGame.day.num + ' Guild: ' + id);
           find(id).currentGame.day.state = 0;
           return;
