@@ -1542,10 +1542,23 @@ function HungryGames() {
       return;
     }
 
+    let corruptTeam = false;
+
     let teamSize = game.options.teamSize;
     let numTeams = Math.ceil(game.currentGame.includedUsers.length / teamSize);
     // If teams already exist, update them. Otherwise, create new teams.
     if (game.currentGame.teams && game.currentGame.teams.length > 0) {
+      game.currentGame.teams.forEach(function(obj) {
+        obj.players.forEach(function(p) {
+          if (typeof p !== 'string' && typeof p !== 'number') {
+            corruptTeam = true;
+            self.error(
+                '(PreTeamForm) Player in team is invalid: ' + typeof p +
+                ' in team ' + obj.id + ' guild: ' + id);
+          }
+        });
+      });
+
       game.currentGame.teams.sort(function(a, b) {
         return a.id - b.id;
       });
@@ -1609,12 +1622,22 @@ function HungryGames() {
       obj.rank = 1;
       obj.players.forEach(function(p) {
         if (typeof p !== 'string' && typeof p !== 'number') {
+          corruptTeam = true;
           self.error(
-              'Player in team is invalid: ' + typeof p + ' in team ' + obj.id +
-              ' guild: ' + id);
+              '(PostTeamForm) Player in team is invalid: ' + typeof p +
+              ' in team ' + obj.id + ' guild: ' + id);
         }
       });
     });
+
+    if (corruptTeam) {
+      self.client.channels.get(game.channel)
+          .send(
+              '<@' + game.author +
+              '>\n```\nTeams appeared to be corrupted, teams may have been ' +
+              'rearranged.\n```\nThis error has been reported and is being ' +
+              'looked into.');
+    }
   }
   /**
    * Reset data that the user specifies.
