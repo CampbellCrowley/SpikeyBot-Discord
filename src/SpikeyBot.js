@@ -659,7 +659,11 @@ function SpikeyBot() {
             msg.author.send(subModules[i].helpMessage);
           }
         }
-        if (msg.guild !== null) common.reply(msg, helpmessagereply, ':wink:');
+        if (msg.guild !== null) {
+          common.reply(
+              msg, helpmessagereply,
+              'Tip: https://www.spikeybot.com also has more information.');
+        }
       } catch (err) {
         common.reply(msg, blockedmessage);
       }
