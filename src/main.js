@@ -1876,21 +1876,70 @@ function Main() {
   function commandRollDie(msg) {
     let embed = new self.Discord.MessageEmbed();
 
-    let numbers = msg.text.replace(/[^0-9\s]+/g, '').split(/\s+/).splice(1);
+    let numbers = msg.text.split(/\s+/).splice(1);
+    let allSame = true;
     if (numbers.length === 0) {
       numbers = [6];
+    } else {
+      let matchNum = 0;
+      for (let i = 0; i < numbers.length; i++) {
+        let el = numbers[i];
+        let match = el.match(/([0-9]+)[xX\*]([0-9]+)/);
+        if (!match) {
+          if (i == 0) {
+            matchNum = el;
+          } else if (el != matchNum) {
+            allSame = false;
+          }
+        } else {
+          if (match[2] > 0) {
+            if (i == 0) {
+              matchNum = match[1];
+            } else if (match[1] != matchNum) {
+              allSame = false;
+            }
+            numbers.splice(i, 1, match[1]);
+            for (let j = 0; j < match[2] - 1; j++) {
+              numbers.splice(i, 0, match[1]);
+            }
+          } else {
+            numbers.splice(i, 1);
+          }
+        }
+      }
+    }
+
+    if (numbers.length > 500) {
+      embed.setTitle('Sorry, but you may only roll at most 500 dice.');
+      msg.channel.send(self.common.mention(msg), embed);
+      return;
     }
 
     let outcomes = [];
     numbers.forEach((el, i) => {
-      outcomes[i] = Math.floor(Math.random() * el) + 1;
+      outcomes[i] = Math.ceil(Math.random() * el);
     });
 
-    embed.setTitle(
-        'Rolling ' + numbers.length + ' di' +
-        (numbers.length == 1 ? 'e' : 'ce'));
+    if (allSame) {
+      embed.setTitle(
+          'Rolling ' + numbers.length + ' (' + numbers[0] + ' sided) di' +
+          (numbers.length == 1 ? 'e' : 'ce'));
+    } else {
+      embed.setTitle(
+          'Rolling ' + numbers.length + ' di' +
+          (numbers.length == 1 ? 'e' : 'ce'));
+    }
 
-    if (numbers.length > 1) {
+    if (allSame && numbers.length > 1) {
+      let sum = 0;
+      let outList = outcomes.slice(0);
+      numbers.forEach((el, i) => {
+        sum += outcomes[i];
+      });
+
+      embed.setDescription(outList.join(', '));
+      embed.setFooter('Sum: ' + sum);
+    } else if (!allSame && numbers.length > 1) {
       let sum = 0;
       let outList = numbers.map((el, i) => {
         sum += outcomes[i];
@@ -1903,7 +1952,15 @@ function Main() {
       embed.setDescription('Rolled: ' + outcomes[0]);
     }
 
-    msg.channel.send(self.common.mention(msg), embed);
+    msg.channel.send(self.common.mention(msg), embed).catch((e) => {
+      if (e.code == 50035) {
+        self.common.reply(
+            msg, 'Oops! I wasn\'t able to fit all of the outcomes ' +
+                'into a message.\nPlease try again with fewer dice.');
+      } else {
+        console.error(e);
+      }
+    });
   }
 
   /**

@@ -219,9 +219,19 @@
               "result": "Replies with a value between 1 and 6 for each die, as well as the total sum of both the rolled values."
             },
             {
-              "description": "Roll three 20-sided dice",
-              "command": "d 20 20 20",
+              "description": "Roll two 6-sided dice using a multiplier",
+              "command": "d 6x2",
+              "result": "Replies with a value between 1 and 6 for each die, as well as the total sum of both the rolled values."
+            },
+            {
+              "description": "Roll three 20-sided dice using a multiplier",
+              "command": "d 20x3",
               "result": "Replies with a value between 1 and 20 for each of the three dice, as well as the sum of all three rolled values."
+            },
+            {
+              "description": "Roll multiple types of dice",
+              "command": "d 20x3 6x4 10x8",
+              "result": "Rolls 3 20-sided, 4 6-sided and 8 10-sided dice."
             }
           ]
         }
