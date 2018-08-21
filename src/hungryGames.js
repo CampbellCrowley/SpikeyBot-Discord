@@ -5633,7 +5633,7 @@ function HungryGames() {
   function commandStats(msg, id) {
     self.common.reply(
         msg, 'There are ' + self.getNumSimulating() +
-            ' games currently simulating of ' + loadedEntries.length +
+            ' games currently simulating of ' + Object.keys(games).length +
             ' currently loaded.');
   }
 
