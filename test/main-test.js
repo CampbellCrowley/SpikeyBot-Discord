@@ -86,7 +86,8 @@ const mainTests = [
   new Test(
       'Help command', '~help',
       [
-        '<@422623712534200321>\n```\nI sent you a DM with commands!\n```:wink:',
+        '<@422623712534200321>\n```\nI sent you a DM with commands!\n```Tip: ' +
+            'https://www.spikeybot.com also has more information.',
       ]),
   new Test(
       'Create Date command', '~createdate',
