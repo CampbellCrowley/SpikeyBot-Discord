@@ -1343,7 +1343,10 @@ function HungryGames() {
    */
   function sendAtTime(channel, one, two, time) {
     if (time <= Date.now()) {
-      channel.send(one, two);
+      channel.send(one, two).catch((err) => {
+        self.error('Failed to send message to channel: ' + channel.id);
+        console.error(err);
+      });
     } else {
       self.client.setTimeout(function() {
         sendAtTime(channel, one, two, time);
@@ -1904,7 +1907,10 @@ function HungryGames() {
         finalMessage.setDescription('@everyone');
       }
 
-      msg.channel.send(self.common.mention(msg), finalMessage);
+      msg.channel.send(self.common.mention(msg), finalMessage).catch((err) => {
+        self.error('Failed to send start game message: ' + msg.channel.id);
+        console.error(err);
+      });
 
       find(id).currentGame.inProgress = true;
       if (find(id).autoPlay) {
@@ -3325,9 +3331,16 @@ function HungryGames() {
       if (events[index].attacks[battleState].icons.length === 0) {
         // Send without image.
         if (!battleMessage[id]) {
-          msg.channel.send(message[0], embed).then((msg_) => {
-            battleMessage[id] = msg_;
-          });
+          msg.channel.send(message[0], embed)
+              .then((msg_) => {
+                battleMessage[id] = msg_;
+              })
+              .catch((err) => {
+                self.error(
+                    'Failed to send battle event message without image: ' +
+                    msg.channel.id);
+                console.error(err);
+              });
         } else {
           battleMessage[id].edit(message[0], embed);
         }
@@ -3357,13 +3370,16 @@ function HungryGames() {
               // Attach file, then send.
               embed.attachFiles(
                   [new self.Discord.MessageAttachment(out, 'hgEvent.png')]);
-              // if (!battleMessage[id]) {
-              msg.channel.send(message[0], embed).then((msg_) => {
-                battleMessage[id] = msg_;
-              });
-              // } else {
-              //   battleMessage[id].edit(message[0], embed);
-              // }
+              msg.channel.send(message[0], embed)
+                  .then((msg_) => {
+                    battleMessage[id] = msg_;
+                  })
+                  .catch((err) => {
+                    self.error(
+                        'Failed to send battle event message with image: ' +
+                        msg.channel.id);
+                    console.error(err);
+                  });
             });
           }
         };
@@ -3394,8 +3410,15 @@ function HungryGames() {
     } else {
       delete battleMessage[id];
       if (events[index].icons.length === 0) {
-        msg.channel.send(
-            events[index].message + '\n' + (events[index].subMessage || ''));
+        msg.channel
+            .send(
+                events[index].message + '\n' + (events[index].subMessage || ''))
+            .catch((err) => {
+              self.error(
+                  'Failed to send message without image: ' +
+                  msg.channel.id);
+              console.error(err);
+            });
       } else {
         let embed = new self.Discord.MessageEmbed();
         if (events[index].subMessage) {
@@ -3431,7 +3454,12 @@ function HungryGames() {
             finalImage.getBuffer(Jimp.MIME_PNG, function(err, out) {
               embed.attachFiles(
                   [new self.Discord.MessageAttachment(out, 'hgBattle.png')]);
-              msg.channel.send(embed);
+              msg.channel.send(embed).catch((err) => {
+                self.error(
+                    'Failed to send message with image: ' +
+                    msg.channel.id);
+                console.error(err);
+              });
             });
           }
         };
@@ -3707,9 +3735,15 @@ function HungryGames() {
           if (find(id).options.mentionVictor) {
             winnerTag = '<@' + lastId + '>';
           }
-          msg.channel.send(winnerTag, finalMessage);
+          msg.channel.send(winnerTag, finalMessage).catch((err) => {
+            self.error('Failed to send solo winner message: ' + msg.channel.id);
+            console.error(err);
+          });
         } else {
-          msg.channel.send(winnerTag, finalMessage);
+          msg.channel.send(winnerTag, finalMessage).catch((err) => {
+            self.error('Failed to send winner message: ' + msg.channel.id);
+            console.error(err);
+          });
         }
       }, (find(id).options.delayDays > 2000 ? 1000 : 0));
     }
@@ -3742,7 +3776,10 @@ function HungryGames() {
       }
       rankEmbed.setColor(defaultColor);
       self.client.setTimeout(function() {
-        msg.channel.send(rankEmbed);
+        msg.channel.send(rankEmbed).catch((err) => {
+          self.error('Failed to send ranks message: ' + msg.channel.id);
+          console.error(err);
+        });
       }, 5000);
       if (find(id).options.teamSize > 0) {
         let teamRankEmbed = new self.Discord.MessageEmbed();
@@ -3799,7 +3836,10 @@ function HungryGames() {
         }
         teamRankEmbed.setColor(defaultColor);
         self.client.setTimeout(function() {
-          msg.channel.send(teamRankEmbed);
+          msg.channel.send(teamRankEmbed).catch((err) => {
+            self.error('Failed to send final team ranks: ' + msg.channel.id);
+            console.error(err);
+          });
         }, 8000);
       }
     }
@@ -4171,7 +4211,12 @@ function HungryGames() {
           'Excluded (' + find(id).excludedUsers.length + ')', excludedList,
           false);
     }
-    msg.channel.send(self.common.mention(msg), finalMessage);
+    msg.channel.send(self.common.mention(msg), finalMessage).catch((err) => {
+      self.common.reply(
+          msg, 'Oops, Discord rejected my message for some reason...');
+      self.error('Failed to send list of players message: ' + msg.channel.id);
+      console.error(err);
+    });
   }
 
   /**

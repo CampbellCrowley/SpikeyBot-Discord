@@ -165,8 +165,9 @@ function HGWeb(hg) {
   function socketConnection(socket) {
     // x-forwarded-for is trusted because the last process this jumps through is
     // our local proxy.
-    const ipName =
-        hg.common.getIPName(socket.handshake.headers['x-forwarded-for']);
+    const ipName = hg.common.getIPName(
+        socket.handshake.headers['x-forwarded-for'] ||
+        socket.handshake.address);
     hg.common.log(
         'Socket connected (' + Object.keys(sockets).length + '): ' + ipName,
         socket.id);
