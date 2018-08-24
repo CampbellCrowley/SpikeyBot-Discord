@@ -760,25 +760,28 @@ Creates a web interface for managing the Hungry Games.
         * [~makeRefreshTimeout(loginInfo, cb)](#HGWeb..makeRefreshTimeout) ℗
         * [~refreshToken(refreshToken, cb)](#HGWeb..refreshToken) ℗
         * [~authorizeRequest(code, cb)](#HGWeb..authorizeRequest) ℗
-        * [~fetchGuilds(userData, socket)](#HGWeb..fetchGuilds) : <code>HGWeb~SocketFunction</code> ℗
+        * [~fetchGuilds(userData, socket, [cb])](#HGWeb..fetchGuilds) : <code>HGWeb~SocketFunction</code> ℗
             * [~done(guilds, [err], [response])](#HGWeb..fetchGuilds..done) ℗
-        * [~fetchMember(userData, socket, gId, mId)](#HGWeb..fetchMember) : <code>HGWeb~SocketFunction</code> ℗
-        * [~fetchChannel(userData, socket, gId, cId)](#HGWeb..fetchChannel) : <code>HGWeb~SocketFunction</code> ℗
-        * [~fetchGames(userData, socket, gId)](#HGWeb..fetchGames) : <code>HGWeb~SocketFunction</code> ℗
-        * [~fetchDay(userData, socket, gId)](#HGWeb..fetchDay) : <code>HGWeb~SocketFunction</code> ℗
-        * [~excludeMember(userData, socket, gId, mId)](#HGWeb..excludeMember) : <code>HGWeb~SocketFunction</code> ℗
-        * [~includeMember(userData, socket, gId, mId)](#HGWeb..includeMember) : <code>HGWeb~SocketFunction</code> ℗
-        * [~toggleOption(userData, socket, gId, option, value, extra)](#HGWeb..toggleOption) : <code>HGWeb~SocketFunction</code> ℗
-        * [~createGame(userData, socket, gId)](#HGWeb..createGame) : <code>HGWeb~SocketFunction</code> ℗
-        * [~resetGame(userData, socket, gId, cmd)](#HGWeb..resetGame) : <code>HGWeb~SocketFunction</code> ℗
-        * [~startGame(userData, socket, gId, cId)](#HGWeb..startGame) : <code>HGWeb~SocketFunction</code> ℗
-        * [~startAutoplay(userData, socket, gId, cId)](#HGWeb..startAutoplay) : <code>HGWeb~SocketFunction</code> ℗
-        * [~nextDay(userData, socket, gId, cId)](#HGWeb..nextDay) : <code>HGWeb~SocketFunction</code> ℗
-        * [~endGame(userData, socket, gId)](#HGWeb..endGame) : <code>HGWeb~SocketFunction</code> ℗
-        * [~pauseAutoplay(userData, socket, gId)](#HGWeb..pauseAutoplay) : <code>HGWeb~SocketFunction</code> ℗
-        * [~editTeam(userData, socket, gId, cmd, one, two)](#HGWeb..editTeam) : <code>HGWeb~SocketFunction</code> ℗
-        * [~createEvent(userData, socket, gId, type, message, nV, nA, oV, oA, kV, kA)](#HGWeb..createEvent) : <code>HGWeb~SocketFunction</code> ℗
-        * [~removeEvent(userData, socket, gId, type, event)](#HGWeb..removeEvent) : <code>HGWeb~SocketFunction</code> ℗
+        * [~fetchMember(userData, socket, gId, mId, [cb])](#HGWeb..fetchMember) : <code>HGWeb~SocketFunction</code> ℗
+        * [~fetchChannel(userData, socket, gId, cId, [cb])](#HGWeb..fetchChannel) : <code>HGWeb~SocketFunction</code> ℗
+        * [~fetchGames(userData, socket, gId, [cb])](#HGWeb..fetchGames) : <code>HGWeb~SocketFunction</code> ℗
+        * [~fetchDay(userData, socket, gId, [cb])](#HGWeb..fetchDay) : <code>HGWeb~SocketFunction</code> ℗
+        * [~excludeMember(userData, socket, gId, mId, [cb])](#HGWeb..excludeMember) : <code>HGWeb~SocketFunction</code> ℗
+        * [~includeMember(userData, socket, gId, mId, [cb])](#HGWeb..includeMember) : <code>HGWeb~SocketFunction</code> ℗
+        * [~toggleOption(userData, socket, gId, option, value, extra, [cb])](#HGWeb..toggleOption) : <code>HGWeb~SocketFunction</code> ℗
+        * [~createGame(userData, socket, gId, [cb])](#HGWeb..createGame) : <code>HGWeb~SocketFunction</code> ℗
+        * [~resetGame(userData, socket, gId, cmd, [cb])](#HGWeb..resetGame) : <code>HGWeb~SocketFunction</code> ℗
+        * [~startGame(userData, socket, gId, cId, [cb])](#HGWeb..startGame) : <code>HGWeb~SocketFunction</code> ℗
+        * [~startAutoplay(userData, socket, gId, cId, [cb])](#HGWeb..startAutoplay) : <code>HGWeb~SocketFunction</code> ℗
+        * [~nextDay(userData, socket, gId, cId, [cb])](#HGWeb..nextDay) : <code>HGWeb~SocketFunction</code> ℗
+        * [~endGame(userData, socket, gId, [cb])](#HGWeb..endGame) : <code>HGWeb~SocketFunction</code> ℗
+        * [~pauseAutoplay(userData, socket, gId, [cb])](#HGWeb..pauseAutoplay) : <code>HGWeb~SocketFunction</code> ℗
+        * [~editTeam(userData, socket, gId, cmd, one, two, [cb])](#HGWeb..editTeam) : <code>HGWeb~SocketFunction</code> ℗
+        * [~createEvent(userData, socket, gId, type, message, nV, nA, oV, oA, kV, kA, [cb])](#HGWeb..createEvent) : <code>HGWeb~SocketFunction</code> ℗
+        * [~createMajorEvent(userData, socket, gId, type, data, [cb])](#HGWeb..createMajorEvent) : <code>HGWeb~SocketFunction</code> ℗
+        * [~editMajorEvent(userData, socket, gId, type, search, data, name, newName, [cb])](#HGWeb..editMajorEvent) : <code>HGWeb~SocketFunction</code> ℗
+        * [~removeEvent(userData, socket, gId, type, event, [cb])](#HGWeb..removeEvent) : <code>HGWeb~SocketFunction</code> ℗
+        * [~basicCB](#HGWeb..basicCB) : <code>function</code>
 
 <a name="new_HGWeb_new"></a>
 
@@ -1095,7 +1098,7 @@ Authenticate with the discord server using a login code.
 
 <a name="HGWeb..fetchGuilds"></a>
 
-### HGWeb~fetchGuilds(userData, socket) : <code>HGWeb~SocketFunction</code> ℗
+### HGWeb~fetchGuilds(userData, socket, [cb]) : <code>HGWeb~SocketFunction</code> ℗
 Fetch all relevant data for all mutual guilds with the user and send it to
 the user.
 
@@ -1106,6 +1109,7 @@ the user.
 | --- | --- | --- |
 | userData | <code>Object</code> | The current user's session data. |
 | socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
 
 <a name="HGWeb..fetchGuilds..done"></a>
 
@@ -1124,7 +1128,7 @@ user once all requests have replied.
 
 <a name="HGWeb..fetchMember"></a>
 
-### HGWeb~fetchMember(userData, socket, gId, mId) : <code>HGWeb~SocketFunction</code> ℗
+### HGWeb~fetchMember(userData, socket, gId, mId, [cb]) : <code>HGWeb~SocketFunction</code> ℗
 Fetch data about a member of a guild.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
@@ -1136,10 +1140,11 @@ Fetch data about a member of a guild.
 | socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
 | gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
 | mId | <code>number</code> \| <code>string</code> | The member's id to lookup. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
 
 <a name="HGWeb..fetchChannel"></a>
 
-### HGWeb~fetchChannel(userData, socket, gId, cId) : <code>HGWeb~SocketFunction</code> ℗
+### HGWeb~fetchChannel(userData, socket, gId, cId, [cb]) : <code>HGWeb~SocketFunction</code> ℗
 Fetch data about a channel of a guild.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
@@ -1151,10 +1156,11 @@ Fetch data about a channel of a guild.
 | socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
 | gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
 | cId | <code>number</code> \| <code>string</code> | The channel's id to lookup. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
 
 <a name="HGWeb..fetchGames"></a>
 
-### HGWeb~fetchGames(userData, socket, gId) : <code>HGWeb~SocketFunction</code> ℗
+### HGWeb~fetchGames(userData, socket, gId, [cb]) : <code>HGWeb~SocketFunction</code> ℗
 Fetch all game data within a guild.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
@@ -1166,10 +1172,11 @@ Fetch all game data within a guild.
 | userData | <code>Object</code> | The current user's session data. |
 | socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
 | gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
 
 <a name="HGWeb..fetchDay"></a>
 
-### HGWeb~fetchDay(userData, socket, gId) : <code>HGWeb~SocketFunction</code> ℗
+### HGWeb~fetchDay(userData, socket, gId, [cb]) : <code>HGWeb~SocketFunction</code> ℗
 Fetch the updated game's day information.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
@@ -1181,10 +1188,11 @@ Fetch the updated game's day information.
 | userData | <code>Object</code> | The current user's session data. |
 | socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
 | gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
 
 <a name="HGWeb..excludeMember"></a>
 
-### HGWeb~excludeMember(userData, socket, gId, mId) : <code>HGWeb~SocketFunction</code> ℗
+### HGWeb~excludeMember(userData, socket, gId, mId, [cb]) : <code>HGWeb~SocketFunction</code> ℗
 Exclude a member from the Games.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
@@ -1197,10 +1205,11 @@ Exclude a member from the Games.
 | socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
 | gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
 | mId | <code>number</code> \| <code>string</code> | The member id to exclude. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
 
 <a name="HGWeb..includeMember"></a>
 
-### HGWeb~includeMember(userData, socket, gId, mId) : <code>HGWeb~SocketFunction</code> ℗
+### HGWeb~includeMember(userData, socket, gId, mId, [cb]) : <code>HGWeb~SocketFunction</code> ℗
 Include a member in the Games.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
@@ -1213,10 +1222,11 @@ Include a member in the Games.
 | socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
 | gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
 | mId | <code>number</code> \| <code>string</code> | The member id to include. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
 
 <a name="HGWeb..toggleOption"></a>
 
-### HGWeb~toggleOption(userData, socket, gId, option, value, extra) : <code>HGWeb~SocketFunction</code> ℗
+### HGWeb~toggleOption(userData, socket, gId, option, value, extra, [cb]) : <code>HGWeb~SocketFunction</code> ℗
 Toggle an option in the Games.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
@@ -1231,10 +1241,11 @@ Toggle an option in the Games.
 | option | <code>string</code> | The option to change. |
 | value | <code>string</code> \| <code>number</code> | The value to set option to. |
 | extra | <code>string</code> | The extra text if the option is in an object. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
 
 <a name="HGWeb..createGame"></a>
 
-### HGWeb~createGame(userData, socket, gId) : <code>HGWeb~SocketFunction</code> ℗
+### HGWeb~createGame(userData, socket, gId, [cb]) : <code>HGWeb~SocketFunction</code> ℗
 Create a Game.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
@@ -1246,10 +1257,11 @@ Create a Game.
 | userData | <code>Object</code> | The current user's session data. |
 | socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
 | gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
 
 <a name="HGWeb..resetGame"></a>
 
-### HGWeb~resetGame(userData, socket, gId, cmd) : <code>HGWeb~SocketFunction</code> ℗
+### HGWeb~resetGame(userData, socket, gId, cmd, [cb]) : <code>HGWeb~SocketFunction</code> ℗
 Reset game data.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
@@ -1262,10 +1274,11 @@ Reset game data.
 | socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
 | gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
 | cmd | <code>string</code> | Command specifying what data to delete. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
 
 <a name="HGWeb..startGame"></a>
 
-### HGWeb~startGame(userData, socket, gId, cId) : <code>HGWeb~SocketFunction</code> ℗
+### HGWeb~startGame(userData, socket, gId, cId, [cb]) : <code>HGWeb~SocketFunction</code> ℗
 Start the game.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
@@ -1278,10 +1291,11 @@ Start the game.
 | socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
 | gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
 | cId | <code>number</code> \| <code>string</code> | Channel to start the game in. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
 
 <a name="HGWeb..startAutoplay"></a>
 
-### HGWeb~startAutoplay(userData, socket, gId, cId) : <code>HGWeb~SocketFunction</code> ℗
+### HGWeb~startAutoplay(userData, socket, gId, cId, [cb]) : <code>HGWeb~SocketFunction</code> ℗
 Enable autoplay.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
@@ -1294,10 +1308,11 @@ Enable autoplay.
 | socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
 | gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
 | cId | <code>number</code> \| <code>string</code> | Channel to send the messages in. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
 
 <a name="HGWeb..nextDay"></a>
 
-### HGWeb~nextDay(userData, socket, gId, cId) : <code>HGWeb~SocketFunction</code> ℗
+### HGWeb~nextDay(userData, socket, gId, cId, [cb]) : <code>HGWeb~SocketFunction</code> ℗
 Start the next day.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
@@ -1310,10 +1325,11 @@ Start the next day.
 | socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
 | gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
 | cId | <code>number</code> \| <code>string</code> | Channel to send the messages in. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
 
 <a name="HGWeb..endGame"></a>
 
-### HGWeb~endGame(userData, socket, gId) : <code>HGWeb~SocketFunction</code> ℗
+### HGWeb~endGame(userData, socket, gId, [cb]) : <code>HGWeb~SocketFunction</code> ℗
 End the game.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
@@ -1325,10 +1341,11 @@ End the game.
 | userData | <code>Object</code> | The current user's session data. |
 | socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
 | gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
 
 <a name="HGWeb..pauseAutoplay"></a>
 
-### HGWeb~pauseAutoplay(userData, socket, gId) : <code>HGWeb~SocketFunction</code> ℗
+### HGWeb~pauseAutoplay(userData, socket, gId, [cb]) : <code>HGWeb~SocketFunction</code> ℗
 Disable autoplay.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
@@ -1340,10 +1357,11 @@ Disable autoplay.
 | userData | <code>Object</code> | The current user's session data. |
 | socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
 | gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
 
 <a name="HGWeb..editTeam"></a>
 
-### HGWeb~editTeam(userData, socket, gId, cmd, one, two) : <code>HGWeb~SocketFunction</code> ℗
+### HGWeb~editTeam(userData, socket, gId, cmd, one, two, [cb]) : <code>HGWeb~SocketFunction</code> ℗
 Edit the teams.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
@@ -1358,10 +1376,11 @@ Edit the teams.
 | cmd | <code>string</code> | The command to run. |
 | one | <code>string</code> | The first argument. |
 | two | <code>string</code> | The second argument. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
 
 <a name="HGWeb..createEvent"></a>
 
-### HGWeb~createEvent(userData, socket, gId, type, message, nV, nA, oV, oA, kV, kA) : <code>HGWeb~SocketFunction</code> ℗
+### HGWeb~createEvent(userData, socket, gId, type, message, nV, nA, oV, oA, kV, kA, [cb]) : <code>HGWeb~SocketFunction</code> ℗
 Create a game event.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
@@ -1381,10 +1400,51 @@ Create a game event.
 | oA | <code>string</code> | Outcome of attackers. |
 | kV | <code>string</code> | Do the victims kill. |
 | kA | <code>string</code> | Do the attackers kill. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
+
+<a name="HGWeb..createMajorEvent"></a>
+
+### HGWeb~createMajorEvent(userData, socket, gId, type, data, [cb]) : <code>HGWeb~SocketFunction</code> ℗
+Create a larger game event. Either Arena or Weapon at this point. If
+message or weapon name already exists, this will instead edit the event.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.addMajorEvent}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| type | <code>string</code> | The type of event. |
+| data | [<code>ArenaEvent</code>](#HungryGames..ArenaEvent) \| [<code>WeaponEvent</code>](#HungryGames..WeaponEvent) | The event data. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
+
+<a name="HGWeb..editMajorEvent"></a>
+
+### HGWeb~editMajorEvent(userData, socket, gId, type, search, data, name, newName, [cb]) : <code>HGWeb~SocketFunction</code> ℗
+Delete a larger game event. Either Arena or Weapon at this point.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.editMajorEvent}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| type | <code>string</code> | The type of event. |
+| search | [<code>ArenaEvent</code>](#HungryGames..ArenaEvent) \| [<code>WeaponEvent</code>](#HungryGames..WeaponEvent) | The event data to find to edit. |
+| data | [<code>ArenaEvent</code>](#HungryGames..ArenaEvent) \| [<code>WeaponEvent</code>](#HungryGames..WeaponEvent) | The event data to set the matched searches to. |
+| name | <code>string</code> | The internal name of the weapon to find. |
+| newName | <code>string</code> | The new internal name of the weapon. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
 
 <a name="HGWeb..removeEvent"></a>
 
-### HGWeb~removeEvent(userData, socket, gId, type, event) : <code>HGWeb~SocketFunction</code> ℗
+### HGWeb~removeEvent(userData, socket, gId, type, event, [cb]) : <code>HGWeb~SocketFunction</code> ℗
 Remove a game event.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
@@ -1398,6 +1458,19 @@ Remove a game event.
 | gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
 | type | <code>string</code> | The type of event. |
 | event | [<code>Event</code>](#HungryGames..Event) | The game event to remove. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
+
+<a name="HGWeb..basicCB"></a>
+
+### HGWeb~basicCB : <code>function</code>
+Basic callback with single argument. The argument is null if there is no
+error, or a string if there was an error.
+
+**Kind**: inner typedef of [<code>HGWeb</code>](#HGWeb)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| err | <code>string</code> | The error response. |
 
 <a name="HungryGames"></a>
 
@@ -1436,6 +1509,8 @@ Hunger Games simulator.
         * [.editTeam(uId, gId, cmd, one, two)](#HungryGames+editTeam)
         * [.makeAndAddEvent(id, type, message, numVictim, numAttacker, victimOutcome, attackerOutcome, victimKiller, attackerKiller)](#HungryGames+makeAndAddEvent) ⇒ <code>string</code>
         * [.addEvent(id, type, event)](#HungryGames+addEvent) ⇒ <code>string</code>
+        * [.addMajorEvent(id, type, data, [name])](#HungryGames+addMajorEvent) ⇒ <code>string</code>
+        * [.editMajorEvent(id, type, search, data, [name], [newName])](#HungryGames+editMajorEvent) ⇒ <code>string</code>
         * [.removeEvent(id, type, event)](#HungryGames+removeEvent) ⇒ <code>string</code>
         * [.eventsEqual(e1, e2)](#HungryGames+eventsEqual) ⇒ <code>boolean</code>
         * [.getNumSimulating()](#HungryGames+getNumSimulating) ⇒ <code>number</code>
@@ -1462,7 +1537,7 @@ Hunger Games simulator.
         * [~dayEventIntervals](#HungryGames..dayEventIntervals) : <code>Object.&lt;number&gt;</code> ℗
         * [~autoPlayTimeout](#HungryGames..autoPlayTimeout) : <code>Object.&lt;number&gt;</code> ℗
         * [~battleMessage](#HungryGames..battleMessage) : <code>Object.&lt;Discord~Message&gt;</code> ℗
-        * [~weapons](#HungryGames..weapons) : <code>Object</code> ℗
+        * [~weapons](#HungryGames..weapons) : [<code>Object.&lt;WeaponEvent&gt;</code>](#HungryGames..WeaponEvent) ℗
         * [~defaultBloodbathEvents](#HungryGames..defaultBloodbathEvents) : [<code>Array.&lt;Event&gt;</code>](#HungryGames..Event) ℗
         * [~defaultPlayerEvents](#HungryGames..defaultPlayerEvents) : [<code>Array.&lt;Event&gt;</code>](#HungryGames..Event) ℗
         * [~defaultArenaEvents](#HungryGames..defaultArenaEvents) : [<code>Array.&lt;ArenaEvent&gt;</code>](#HungryGames..ArenaEvent) ℗
@@ -1571,6 +1646,7 @@ Hunger Games simulator.
         * [~hgCommandHandler](#HungryGames..hgCommandHandler) : <code>function</code>
         * [~Battle](#HungryGames..Battle) : <code>Object</code>
         * [~ArenaEvent](#HungryGames..ArenaEvent) : <code>Object</code>
+        * [~WeaponEvent](#HungryGames..WeaponEvent) : <code>Object</code>
         * [~UserIconUrl](#HungryGames..UserIconUrl) : <code>Object</code>
         * [~createEventNumCallback](#HungryGames..createEventNumCallback) : <code>function</code>
         * [~createEventOutcomeCallback](#HungryGames..createEventOutcomeCallback) : <code>function</code>
@@ -1854,7 +1930,7 @@ Creates an event and adds it to the custom events for the given guild.
 | Param | Type | Description |
 | --- | --- | --- |
 | id | <code>string</code> | The guild id to add the event to. |
-| type | <code>string</code> | The type of event this is. Either 'player', 'bloodbath', or 'arena'. |
+| type | <code>string</code> | The type of event this is. Either 'player' or 'bloodbath'. |
 | message | <code>string</code> | The event message. |
 | numVictim | <code>number</code> | The number of victims in the event. |
 | numAttacker | <code>number</code> | The number of attackers in the event. |
@@ -1878,11 +1954,48 @@ Adds a given event to the given guild's custom events.
 | type | <code>string</code> | The type of event this is. |
 | event | [<code>Event</code>](#HungryGames..Event) | The event to add. |
 
+<a name="HungryGames+addMajorEvent"></a>
+
+### hungryGames.addMajorEvent(id, type, data, [name]) ⇒ <code>string</code>
+Creates an event and adds it to the custom events for the given guild. Or
+edits an existing event by appending new events to the major event.
+
+**Kind**: instance method of [<code>HungryGames</code>](#HungryGames)  
+**Returns**: <code>string</code> - Error message or null if no error.  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| id | <code>string</code> | The guild id to add the event to. |
+| type | <code>string</code> | The type of event this is. Either 'arena' or 'weapon'. |
+| data | [<code>ArenaEvent</code>](#HungryGames..ArenaEvent) \| [<code>WeaponEvent</code>](#HungryGames..WeaponEvent) | The event data. |
+| [name] | <code>string</code> | The internal name of the weapon being added. |
+
+<a name="HungryGames+editMajorEvent"></a>
+
+### hungryGames.editMajorEvent(id, type, search, data, [name], [newName]) ⇒ <code>string</code>
+Searches custom events for the given one, then edits it with the given
+data. If the data is null besides required data for finding the major
+event, the major event gets deleted. (Arena or Weapon events)
+
+**Kind**: instance method of [<code>HungryGames</code>](#HungryGames)  
+**Returns**: <code>string</code> - Error message or null if no error.  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| id | <code>string</code> | The id of the guild to remove the event from. |
+| type | <code>string</code> | The type of event this is. |
+| search | [<code>ArenaEvent</code>](#HungryGames..ArenaEvent) \| [<code>WeaponEvent</code>](#HungryGames..WeaponEvent) | The event data to use to search for. |
+| data | [<code>ArenaEvent</code>](#HungryGames..ArenaEvent) \| [<code>WeaponEvent</code>](#HungryGames..WeaponEvent) | The event data to set the matched search to. If this is null, the event is deleted. |
+| [name] | <code>string</code> | The name of the weapon to look for or the message of the arena event to edit. |
+| [newName] | <code>string</code> | The new name of the weapon that was found with `name`. |
+
 <a name="HungryGames+removeEvent"></a>
 
 ### hungryGames.removeEvent(id, type, event) ⇒ <code>string</code>
 Searches custom events for the given one, then removes it from the custom
-events.
+events. (Bloodbath or Player events)
 
 **Kind**: instance method of [<code>HungryGames</code>](#HungryGames)  
 **Returns**: <code>string</code> - Error message or null if no error.  
@@ -2063,11 +2176,13 @@ Event that can happen in a game.
 | Name | Type | Description |
 | --- | --- | --- |
 | message | <code>string</code> | The message to show. |
+| [action] | <code>string</code> | The action to format into a message if this is a weapon event. |
 | victim | <code>Object</code> | Information about the victims in this event. |
 | attacker | <code>Object</code> | Information about the attackers in this event. |
 | battle | <code>boolean</code> | Is this event a battle event. |
 | state | <code>number</code> | The current state of printing the battle messages. |
 | attacks | [<code>Array.&lt;Event&gt;</code>](#HungryGames..Event) | The attacks in a battle to show before the message. |
+| [consumes] | <code>number</code> \| <code>string</code> | Amount of consumables used if this is a weapon event. |
 
 <a name="new_HungryGames..Event_new"></a>
 
@@ -2153,7 +2268,7 @@ Storage of battle messages to edit the content of on the next update.
 **Access**: private  
 <a name="HungryGames..weapons"></a>
 
-### HungryGames~weapons : <code>Object</code> ℗
+### HungryGames~weapons : [<code>Object.&lt;WeaponEvent&gt;</code>](#HungryGames..WeaponEvent) ℗
 All weapons and their respective actions. Parsed from file.
 
 **Kind**: inner property of [<code>HungryGames</code>](#HungryGames)  
@@ -3485,6 +3600,20 @@ An Arena event storing Events.
 | --- | --- | --- |
 | message | <code>string</code> | The message at the start of the arena event. |
 | outcomes | [<code>Array.&lt;Event&gt;</code>](#HungryGames..Event) | All possible events in this arena event. |
+
+<a name="HungryGames..WeaponEvent"></a>
+
+### HungryGames~WeaponEvent : <code>Object</code>
+An Arena event storing Events.
+
+**Kind**: inner typedef of [<code>HungryGames</code>](#HungryGames)  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| [name] | <code>string</code> | Formattable name to use as the human readable weapon name. |
+| [consumable] | <code>string</code> | The formatable string for what to call this weapons consumable items. |
+| outcomes | [<code>Array.&lt;Event&gt;</code>](#HungryGames..Event) | All possible events in this weapon event. |
 
 <a name="HungryGames..UserIconUrl"></a>
 

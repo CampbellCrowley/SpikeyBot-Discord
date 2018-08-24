@@ -524,7 +524,7 @@ function HungryGames() {
    *   {
    *     bloodbath: HungryGames~Event[],
    *     player: HungryGames~Event[],
-   *     weapon: HungryGames~ArenaEvent[],
+   *     weapon: HungryGames~WeaponEvent[],
    *     arena: HungryGames~ArenaEvent[]
    *   }
    * } customEvents All custom events for the guild.
@@ -606,7 +606,7 @@ function HungryGames() {
    * @see {@link HungryGames~weaponsFile}
    *
    * @private
-   * @type {Object}
+   * @type {Object.<HungryGames~WeaponEvent>}
    * @default
    */
   let weapons = {};
@@ -1259,6 +1259,8 @@ function HungryGames() {
    * @param {HungryGames~Event[]} [attacks=[]] Array of attacks that take place
    * before the event.
    * @property {string} message The message to show.
+   * @property {string} [action] The action to format into a message if this is
+   * a weapon event.
    * @property {{count: number, outcome: string, killer: boolean}} victim
    * Information about the victims in this event.
    * @property {{count: number, outcome: string, killer: boolean}} attacker
@@ -1267,6 +1269,8 @@ function HungryGames() {
    * @property {number} state The current state of printing the battle messages.
    * @property {HungryGames~Event[]} attacks The attacks in a battle to show
    * before the message.
+   * @property {number|string} [consumes] Amount of consumables used if this is
+   * a weapon event.
    */
   function Event(
       message, numVictim = 0, numAttacker = 0, victimOutcome = 'nothing',
@@ -1303,6 +1307,17 @@ function HungryGames() {
    *
    * @property {string} message The message at the start of the arena event.
    * @property {HungryGames~Event[]} outcomes All possible events in this arena
+   * event.
+   */
+  /**
+   * An Arena event storing Events.
+   * @typedef {Object} HungryGames~WeaponEvent
+   *
+   * @property {string} [name] Formattable name to use as the human readable
+   * weapon name.
+   * @property {string} [consumable] The formatable string for what to call this
+   * weapons consumable items.
+   * @property {HungryGames~Event[]} outcomes All possible events in this weapon
    * event.
    */
 
@@ -1428,7 +1443,7 @@ function HungryGames() {
       games[id] = {
         excludedUsers: [],
         includedUsers: [],
-        customEvents: {bloodbath: [], player: [], arena: []},
+        customEvents: {bloodbath: [], player: [], arena: [], weapon: {}},
         currentGame: {
           name: msg.guild.name + '\'s Hungry Games',
           inProgress: false,
@@ -1677,7 +1692,8 @@ function HungryGames() {
         });
         return 'Resetting ALL Hungry Games data for this server!';
       } else if (command == 'events') {
-        find(id).customEvents = {bloodbath: [], player: [], arena: []};
+        find(id).customEvents =
+            {bloodbath: [], player: [], arena: [], weapon: {}};
         return 'Resetting ALL Hungry Games events for this server!';
       } else if (command == 'current') {
         delete find(id).currentGame;
@@ -4964,8 +4980,8 @@ function HungryGames() {
    *
    * @public
    * @param {string} id The guild id to add the event to.
-   * @param {string} type The type of event this is. Either 'player',
-   * 'bloodbath', or 'arena'.
+   * @param {string} type The type of event this is. Either 'player' or
+   * 'bloodbath'.
    * @param {string} message The event message.
    * @param {number} numVictim The number of victims in the event.
    * @param {number} numAttacker The number of attackers in the event.
@@ -4979,11 +4995,10 @@ function HungryGames() {
   this.makeAndAddEvent = function(
       id, type, message, numVictim, numAttacker, victimOutcome, attackerOutcome,
       victimKiller, attackerKiller) {
-    if (!find(id) || !find(id).customEvents ||
-        !find(id).customEvents[type]) {
-      return 'Invalid ID or type.';
+    if (type !== 'player' && type !== 'bloodbath') return 'Invalid Type';
+    if (!find(id) || !find(id).customEvents) {
+      return 'Invalid ID or no game.';
     }
-    if (type === 'arena') return 'NYI';
     return self.addEvent(
         id, type, new Event(
                       message, numVictim, numAttacker, victimOutcome,
@@ -4999,9 +5014,9 @@ function HungryGames() {
    * @return {?string} Error message or null if no error.
    */
   this.addEvent = function(id, type, event) {
-    if (!find(id) || !find(id).customEvents ||
-        !find(id).customEvents[type]) {
-      return 'Invalid ID or type.';
+    if (type !== 'bloodbath' && type !== 'player') return 'Invalid Type';
+    if (!find(id) || !find(id).customEvents) {
+      return 'Invalid ID or no game.';
     }
     if (!event.message || event.message.length == 0) {
       return 'Event must have a message.';
@@ -5016,8 +5031,152 @@ function HungryGames() {
   };
 
   /**
+   * Creates an event and adds it to the custom events for the given guild. Or
+   * edits an existing event by appending new events to the major event.
+   *
+   * @public
+   * @param {string} id The guild id to add the event to.
+   * @param {string} type The type of event this is. Either 'arena' or 'weapon'.
+   * @param {HungryGames~ArenaEvent|HungryGames~WeaponEvent} data The event
+   * data.
+   * @param {string} [name] The internal name of the weapon being added.
+   * @return {?string} Error message or null if no error.
+   */
+  this.addMajorEvent = function(id, type, data, name) {
+    if (type !== 'arena' && type !== 'weapon') return 'Invalid Type';
+    if (!find(id) || !find(id).customEvents) {
+      return 'Invalid ID or no game.';
+    }
+    if (type === 'arena') {
+      if (!data.message || data.message.length == 0) {
+        return 'Event must have a message.';
+      }
+      for (let i = 0; i< find(id).customEvents[type].length; i++) {
+        if (find(id).customEvents[type][i].message === data.message) {
+          find(id).customEvents[type][i] =
+              Object.assign(find(id).customEvents[type][i], data);
+          return null;
+        }
+      }
+      find(id).customEvents[type].push(data);
+      return null;
+    } else if (type === 'weapon') {
+      if (find(id).customEvents[type][name]) {
+        if (data.name) find(id).customEvents[type][name].name = data.name;
+        if (data.consumable) {
+          find(id).customEvents[type][name].consumable = data.consumable;
+        }
+        for (let i = 0; i < data.outcomes.length; i++) {
+          let exists = false;
+          let dEl = data.outcomes[i];
+          for (let j = 0; j < find(id).customEvents[type][name].outcomes.length;
+               j++) {
+            let el = find(id).customEvents[type][name].outcomes[j];
+            if (self.eventsEqual(el, dEl)) {
+              exists = true;
+              break;
+            }
+          }
+          if (exists) continue;
+          find(id).customEvents[type][name].outcomes.push(data.outcomes[i]);
+        }
+      } else {
+        find(id).customEvents[type][name] = data;
+      }
+      return null;
+    }
+    return 'Invalid Type';
+  };
+
+  /**
+   * Searches custom events for the given one, then edits it with the given
+   * data. If the data is null besides required data for finding the major
+   * event, the major event gets deleted. (Arena or Weapon events)
+   *
+   * @public
+   * @param {string} id The id of the guild to remove the event from.
+   * @param {string} type The type of event this is.
+   * @param {HungryGames~ArenaEvent|HungryGames~WeaponEvent} search The event
+   * data to use to search for.
+   * @param {?HungryGames~ArenaEvent|HungryGames~WeaponEvent} data The event
+   * data to set the matched search to. If this is null, the event is deleted.
+   * @param {string} [name] The name of the weapon to look for or the message of
+   * the arena event to edit.
+   * @param {string} [newName] The new name of the weapon that was found with
+   * `name`.
+   * @return {?string} Error message or null if no error.
+   */
+  this.editMajorEvent = function(id, type, search, data, name, newName) {
+    if (type !== 'arena' && type !== 'weapon') return 'Invalid Type';
+    if (!find(id) || !find(id).customEvents) {
+      return 'Invalid ID or no game.';
+    }
+    let list = find(id).customEvents[type];
+    if (type === 'arena') {
+      let match;
+      let matchId = -1;
+      for (let i = 0; i < list.length; i++) {
+        if (list[i].message == search.message) {
+          match = list[i];
+          matchId = i;
+          break;
+        }
+      }
+      if (!match) return 'Failed to find event to edit.';
+
+      if (!data) {
+        find(id).customEvents[type].splice(matchId, 1);
+        return null;
+      }
+      match.message = data.message;
+      if (!search.outcomes || search.outcomes.length == 0) return null;
+      for (let i = 0; i < match.outcomes.length; i++) {
+        let one = match.outcomes[i];
+        for (let j = 0; j < search.outcomes.length; j++) {
+          let two = search.outcomes[j];
+          if (self.eventsEqual(one, two)) {
+            if (data.outcomes[j]) {
+              one = data.outcomes[j];
+            } else {
+              match.outcomes.splice(i, 1);
+              i--;
+            }
+            break;
+          }
+        }
+      }
+    } else if (type === 'weapon') {
+      let match = find(id).customEvents[type][name];
+      if (!match) return 'Failed to find weapon to edit.';
+      if (newName) {
+        match = find(id).customEvents[type][newName] = Object.assign({}, match);
+        delete find(id).customEvents[type][name];
+      }
+      if (!search) return null;
+      if (search.name) match.name = data.name;
+      if (search.consumable) match.consumable = data.consumable;
+      if (!search.outcomes || search.outcomes.length == 0) return null;
+      for (let i = 0; i < search.outcomes.length; i++) {
+        for (let j = 0; j < match.outcomes.length; j++) {
+          if (self.eventsEqual(search.outcomes[i], match.outcomes[j])) {
+            if (!data.outcomes[i]) {
+              match.outcomes.splice(j, 1);
+            } else {
+              match.outcomes[j] = data.outcomes[i];
+            }
+            break;
+          }
+        }
+      }
+      return null;
+    }
+
+    return 'Failed to find event to edit.';
+  };
+
+  /**
    * Searches custom events for the given one, then removes it from the custom
-   * events.
+   * events. (Bloodbath or Player events)
    *
    * @public
    * @param {string} id The id of the guild to remove the event from.
@@ -5026,9 +5185,9 @@ function HungryGames() {
    * @return {?string} Error message or null if no error.
    */
   this.removeEvent = function(id, type, event) {
-    if (!find(id) || !find(id).customEvents ||
-        !find(id).customEvents[type]) {
-      return 'Invalid ID or type.';
+    if (type !== 'bloodbath' && type !== 'player') return 'Invalid Type';
+    if (!find(id) || !find(id).customEvents) {
+      return 'Invalid ID or no game.';
     }
     let list = find(id).customEvents[type];
     for (let i in list) {
@@ -5050,6 +5209,8 @@ function HungryGames() {
   this.eventsEqual = function(e1, e2) {
     if (!e1 || !e2) return false;
     if (e1.message != e2.message) return false;
+    if (e1.action != e2.action) return false;
+    if (e1.consumes != e2.consumes) return false;
     if (!e1.battle != !e2.battle) return false;
     let v1 = e1.victim;
     let v2 = e2.victim;

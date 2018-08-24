@@ -337,6 +337,12 @@ function HGWeb(hg) {
     socket.on('createEvent', (...args) => {
       callSocketFunction(createEvent, args);
     });
+    socket.on('createMajorEvent', (...args) => {
+      callSocketFunction(createMajorEvent, args);
+    });
+    socket.on('editMajorEvent', (...args) => {
+      callSocketFunction(editMajorEvent, args);
+    });
     socket.on('removeEvent', (...args) => {
       callSocketFunction(removeEvent, args);
     });
@@ -1220,7 +1226,7 @@ function HGWeb(hg) {
   /**
    * Create a larger game event. Either Arena or Weapon at this point. If
    * message or weapon name already exists, this will instead edit the event.
-   * @see {HungryGames.createMajorEvent}
+   * @see {HungryGames.addMajorEvent}
    *
    * @private
    * @type {HGWeb~SocketFunction}
@@ -1228,7 +1234,8 @@ function HGWeb(hg) {
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
    * @param {string} type The type of event.
-   * @param {Object} data The event data.
+   * @param {HungryGames~ArenaEvent|HungryGames~WeaponEvent} data The event
+   * data.
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete, or has failed.
    */
@@ -1236,16 +1243,54 @@ function HGWeb(hg) {
     if (!checkPerm(userData, gId)) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, 'createEvent');
+      replyNoPerm(socket, 'createMajorEvent');
       return;
     }
-    let err = hg.makeAndAddMajorEvent(gId, type, data);
+    let err = hg.addMajorEvent(gId, type, data);
     if (err) {
       if (typeof cb === 'function') cb('ATTEMPT_FAILED');
       socket.emit('message', 'Failed to create event: ' + err);
     } else {
       if (typeof cb === 'function') cb();
       socket.emit('message', 'Created ' + type + ' event.');
+      socket.emit('game', gId, hg.getGame(gId));
+    }
+  }
+
+  /**
+   * Delete a larger game event. Either Arena or Weapon at this point.
+   * @see {HungryGames.editMajorEvent}
+   *
+   * @private
+   * @type {HGWeb~SocketFunction}
+   * @param {Object} userData The current user's session data.
+   * @param {socketIo~Socket} socket The socket connection to reply on.
+   * @param {number|string} gId The guild id to look at.
+   * @param {string} type The type of event.
+   * @param {HungryGames~ArenaEvent|HungryGames~WeaponEvent} search The event
+   * data to find to edit.
+   * @param {HungryGames~ArenaEvent|HungryGames~WeaponEvent} data The event
+   * data to set the matched searches to.
+   * @param {?string} name The internal name of the weapon to find.
+   * @param {?string} newName The new internal name of the weapon.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete, or has failed.
+   */
+  function editMajorEvent(
+      userData, socket, gId, type, search, data, name, newName, cb) {
+    if (!checkPerm(userData, gId)) {
+      if (!checkMyGuild(gId)) return;
+      if (typeof cb === 'function') cb('NO_PERM');
+      replyNoPerm(socket, 'removeMajorEvent');
+      return;
+    }
+    let err = hg.editMajorEvent(gId, type, search, data, name, newName);
+    if (err) {
+      if (typeof cb === 'function') cb('ATTEMPT_FAILED');
+      socket.emit('message', 'Failed to edit event: ' + err);
+    } else {
+      if (typeof cb === 'function') cb();
+      socket.emit('message', 'Edited ' + type + ' event.');
       socket.emit('game', gId, hg.getGame(gId));
     }
   }
