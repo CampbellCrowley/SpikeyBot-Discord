@@ -603,6 +603,7 @@ function Main() {
    * @listens Discord~Client#guildBanAdd
    */
   function onGuildBanAdd(guild, user) {
+    if (user.id == self.client.id) return;
     let channel = '';
     let pos = -1;
     try {

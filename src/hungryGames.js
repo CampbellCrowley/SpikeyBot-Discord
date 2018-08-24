@@ -5128,14 +5128,14 @@ function HungryGames() {
         find(id).customEvents[type].splice(matchId, 1);
         return null;
       }
-      match.message = data.message;
+      if (search.message) match.message = data.message;
       if (!search.outcomes || search.outcomes.length == 0) return null;
       for (let i = 0; i < match.outcomes.length; i++) {
         let one = match.outcomes[i];
         for (let j = 0; j < search.outcomes.length; j++) {
           let two = search.outcomes[j];
           if (self.eventsEqual(one, two)) {
-            if (data.outcomes[j]) {
+            if (data.outcomes && data.outcomes[j]) {
               one = data.outcomes[j];
             } else {
               match.outcomes.splice(i, 1);
@@ -5145,6 +5145,10 @@ function HungryGames() {
           }
         }
       }
+      if (match.outcomes.length == 0) {
+        find(id).customEvents[type].splice(matchId, 1);
+      }
+      return null;
     } else if (type === 'weapon') {
       let match = find(id).customEvents[type][name];
       if (!match) return 'Failed to find weapon to edit.';
@@ -5153,13 +5157,17 @@ function HungryGames() {
         delete find(id).customEvents[type][name];
       }
       if (!search) return null;
+      if (!data) {
+        delete find(id).customEvents[type][name];
+        return null;
+      }
       if (search.name) match.name = data.name;
       if (search.consumable) match.consumable = data.consumable;
       if (!search.outcomes || search.outcomes.length == 0) return null;
       for (let i = 0; i < search.outcomes.length; i++) {
         for (let j = 0; j < match.outcomes.length; j++) {
           if (self.eventsEqual(search.outcomes[i], match.outcomes[j])) {
-            if (!data.outcomes[i]) {
+            if (!data.outcomes || !data.outcomes[i]) {
               match.outcomes.splice(j, 1);
             } else {
               match.outcomes[j] = data.outcomes[i];
@@ -5167,6 +5175,9 @@ function HungryGames() {
             break;
           }
         }
+      }
+      if (match.outcomes.length == 0) {
+        delete find(id).customEvents[type][name];
       }
       return null;
     }
