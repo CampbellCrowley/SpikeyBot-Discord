@@ -2175,7 +2175,8 @@ function Main() {
     }
     if (guild && !channel) {
       msg.channel.send(
-          id + ': Guild: `' + guild.name.replace(/`/g, '\\`') + '`');
+          id + ': Guild: `' + guild.name.replace(/`/g, '\\`') + '` has ' +
+          guild.members.size + ' members.');
     }
     if (channel) {
       if (channel.guild) {
