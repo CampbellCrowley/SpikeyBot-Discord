@@ -356,7 +356,7 @@ function HGWeb(hg) {
       if (forward) {
         Object.entries(siblingSockets).forEach((s) => {
           s[1].emit('forwardedRequest', userData, socket.id, (...res) => {
-            socket.emit(...res);
+            socket.emit(res);
           }, args);
         });
       }
@@ -674,6 +674,14 @@ function HGWeb(hg) {
   }
 
   /**
+   * Basic callback with single argument. The argument is null if there is no
+   * error, or a string if there was an error.
+   * @callback HGWeb~basicCB
+   *
+   * @param {?string} err The error response.
+   */
+
+  /**
    * Fetch all relevant data for all mutual guilds with the user and send it to
    * the user.
    *
@@ -681,10 +689,13 @@ function HGWeb(hg) {
    * @type {HGWeb~SocketFunction}
    * @param {Object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete, or has failed.
    */
-  function fetchGuilds(userData, socket) {
+  function fetchGuilds(userData, socket, cb) {
     if (!userData) {
       hg.common.error('Fetch Guilds without userData', 'HG Web');
+      if (typeof cb === 'function') cb('SIGNED_OUT');
       return;
     }
 
@@ -713,6 +724,7 @@ function HGWeb(hg) {
       guildBuffer = Object.assign(guilds, guildBuffer);
       replied++;
       if (replied >= numReplies) {
+        if (typeof cb === 'function') cb();
         socket.emit('guilds', null, guildBuffer);
         socket.cachedGuilds = guildBuffer.map((g) => {
           return g.id;
@@ -766,8 +778,10 @@ function HGWeb(hg) {
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
    * @param {number|string} mId The member's id to lookup.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete, or has failed.
    */
-  function fetchMember(userData, socket, gId, mId) {
+  function fetchMember(userData, socket, gId, mId, cb) {
     if (!userData) return;
     let g = hg.client.guilds.get(gId);
     if (!g) return;
@@ -777,6 +791,7 @@ function HGWeb(hg) {
     if (!m) return;
     let member = makeMember(m);
 
+    if (typeof cb === 'function') cb();
     socket.emit('member', gId, mId, member);
   }
   /**
@@ -788,8 +803,10 @@ function HGWeb(hg) {
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
    * @param {number|string} cId The channel's id to lookup.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete, or has failed.
    */
-  function fetchChannel(userData, socket, gId, cId) {
+  function fetchChannel(userData, socket, gId, cId, cb) {
     if (!userData) return;
     let g = hg.client.guilds.get(gId);
     if (!g) return;
@@ -811,6 +828,7 @@ function HGWeb(hg) {
     if (channel.parent) stripped.parent = {position: channel.parent.position};
     stripped.type = channel.type;
 
+    if (typeof cb === 'function') cb();
     socket.emit('channel', gId, cId, stripped);
   }
   /**
@@ -822,14 +840,17 @@ function HGWeb(hg) {
    * @param {Object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete, or has failed.
    */
-  function fetchGames(userData, socket, gId) {
+  function fetchGames(userData, socket, gId, cb) {
     if (!checkPerm(userData, gId)) {
       if (!checkMyGuild(gId)) return;
       replyNoPerm(socket, 'fetchGames');
       return;
     }
 
+    if (typeof cb === 'function') cb();
     socket.emit('game', gId, hg.getGame(gId));
   }
   /**
@@ -841,8 +862,10 @@ function HGWeb(hg) {
    * @param {Object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete, or has failed.
    */
-  function fetchDay(userData, socket, gId) {
+  function fetchDay(userData, socket, gId, cb) {
     let hasPerm = true;
     if (!userData) {
       hasPerm = false;
@@ -863,11 +886,13 @@ function HGWeb(hg) {
     }
     let game = hg.getGame(gId);
     if (!game || !game.currentGame || !game.currentGame.day) {
+      if (typeof cb === 'function') cb('NO_GAME_IN_GUILD');
       socket.emit(
           'message', 'There doesn\'t appear to be a game on this server yet.');
       return;
     }
 
+    if (typeof cb === 'function') cb();
     socket.emit(
         'day', gId, game.currentGame.day, game.currentGame.includedUsers);
   }
@@ -881,10 +906,13 @@ function HGWeb(hg) {
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
    * @param {number|string} mId The member id to exclude.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete, or has failed.
    */
-  function excludeMember(userData, socket, gId, mId) {
+  function excludeMember(userData, socket, gId, mId, cb) {
     if (!checkPerm(userData, gId)) {
       if (!checkMyGuild(gId)) return;
+      if (typeof cb === 'function') cb('NO_PERM');
       replyNoPerm(socket, 'excludeMember');
       return;
     }
@@ -893,6 +921,7 @@ function HGWeb(hg) {
     } else {
       socket.emit('message', hg.excludeUsers([mId], gId));
     }
+    if (typeof cb === 'function') cb();
     socket.emit('game', gId, hg.getGame(gId));
   }
   /**
@@ -905,10 +934,13 @@ function HGWeb(hg) {
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
    * @param {number|string} mId The member id to include.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete, or has failed.
    */
-  function includeMember(userData, socket, gId, mId) {
+  function includeMember(userData, socket, gId, mId, cb) {
     if (!checkPerm(userData, gId)) {
       if (!checkMyGuild(gId)) return;
+      if (typeof cb === 'function') cb('NO_PERM');
       replyNoPerm(socket, 'includeMember');
       return;
     }
@@ -917,6 +949,7 @@ function HGWeb(hg) {
     } else {
       socket.emit('message', hg.includeUsers([mId], gId));
     }
+    if (typeof cb === 'function') cb();
     socket.emit('game', gId, hg.getGame(gId));
   }
   /**
@@ -931,13 +964,17 @@ function HGWeb(hg) {
    * @param {string} option The option to change.
    * @param {string|number} value The value to set option to.
    * @param {string} extra The extra text if the option is in an object.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete, or has failed.
    */
-  function toggleOption(userData, socket, gId, option, value, extra) {
+  function toggleOption(userData, socket, gId, option, value, extra, cb) {
     if (!checkPerm(userData, gId)) {
       if (!checkMyGuild(gId)) return;
+      if (typeof cb === 'function') cb('NO_PERM');
       replyNoPerm(socket, 'toggleOption');
       return;
     }
+    if (typeof cb === 'function') cb();
     socket.emit('message', hg.setOption(gId, option, value, extra));
     if (hg.getGame(gId)) {
       socket.emit('option', gId, option, hg.getGame(gId).options[option]);
@@ -955,14 +992,18 @@ function HGWeb(hg) {
    * @param {Object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete, or has failed.
    */
-  function createGame(userData, socket, gId) {
+  function createGame(userData, socket, gId, cb) {
     if (!checkPerm(userData, gId)) {
       if (!checkMyGuild(gId)) return;
+      if (typeof cb === 'function') cb('NO_PERM');
       replyNoPerm(socket, 'createGame');
       return;
     }
     hg.createGame(gId);
+    if (typeof cb === 'function') cb();
     socket.emit('message', 'Game created');
     socket.emit('game', gId, hg.getGame(gId));
   }
@@ -976,13 +1017,17 @@ function HGWeb(hg) {
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
    * @param {string} cmd Command specifying what data to delete.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete, or has failed.
    */
-  function resetGame(userData, socket, gId, cmd) {
+  function resetGame(userData, socket, gId, cmd, cb) {
     if (!checkPerm(userData, gId)) {
       if (!checkMyGuild(gId)) return;
+      if (typeof cb === 'function') cb('NO_PERM');
       replyNoPerm(socket, 'resetGame');
       return;
     }
+    if (typeof cb === 'function') cb();
     socket.emit('message', hg.resetGame(gId, cmd));
     socket.emit('game', gId, hg.getGame(gId));
   }
@@ -996,14 +1041,18 @@ function HGWeb(hg) {
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
    * @param {number|string} cId Channel to start the game in.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete, or has failed.
    */
-  function startGame(userData, socket, gId, cId) {
+  function startGame(userData, socket, gId, cId, cb) {
     if (!checkChannelPerm(userData, gId, cId)) {
       if (!checkMyGuild(gId)) return;
+      if (typeof cb === 'function') cb('NO_PERM');
       replyNoPerm(socket, 'startGame');
       return;
     }
     hg.startGame(userData.id, gId, cId);
+    if (typeof cb === 'function') cb();
     socket.emit('message', 'Game started');
     socket.emit('game', gId, hg.getGame(gId));
   }
@@ -1017,14 +1066,18 @@ function HGWeb(hg) {
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
    * @param {number|string} cId Channel to send the messages in.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete, or has failed.
    */
-  function startAutoplay(userData, socket, gId, cId) {
+  function startAutoplay(userData, socket, gId, cId, cb) {
     if (!checkChannelPerm(userData, gId, cId)) {
       if (!checkMyGuild(gId)) return;
+      if (typeof cb === 'function') cb('NO_PERM');
       replyNoPerm(socket, 'startAutoplay');
       return;
     }
     hg.startAutoplay(userData.id, gId, cId);
+    if (typeof cb === 'function') cb();
     socket.emit('message', 'Autoplay enabled');
     socket.emit('game', gId, hg.getGame(gId));
   }
@@ -1038,14 +1091,18 @@ function HGWeb(hg) {
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
    * @param {number|string} cId Channel to send the messages in.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete, or has failed.
    */
-  function nextDay(userData, socket, gId, cId) {
+  function nextDay(userData, socket, gId, cId, cb) {
     if (!checkChannelPerm(userData, gId, cId)) {
       if (!checkMyGuild(gId)) return;
+      if (typeof cb === 'function') cb('NO_PERM');
       replyNoPerm(socket, 'checkChannelPerm');
       return;
     }
     hg.nextDay(userData.id, gId, cId);
+    if (typeof cb === 'function') cb();
     socket.emit('message', 'Starting next day');
   }
   /**
@@ -1057,14 +1114,18 @@ function HGWeb(hg) {
    * @param {Object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete, or has failed.
    */
-  function endGame(userData, socket, gId) {
+  function endGame(userData, socket, gId, cb) {
     if (!checkPerm(userData, gId)) {
       if (!checkMyGuild(gId)) return;
+      if (typeof cb === 'function') cb('NO_PERM');
       replyNoPerm(socket, 'endGame');
       return;
     }
     hg.endGame(userData.id, gId);
+    if (typeof cb === 'function') cb();
     socket.emit('message', 'Game ended');
     socket.emit('game', gId, hg.getGame(gId));
   }
@@ -1077,14 +1138,18 @@ function HGWeb(hg) {
    * @param {Object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete, or has failed.
    */
-  function pauseAutoplay(userData, socket, gId) {
+  function pauseAutoplay(userData, socket, gId, cb) {
     if (!checkPerm(userData, gId)) {
       if (!checkMyGuild(gId)) return;
+      if (typeof cb === 'function') cb('NO_PERM');
       replyNoPerm(socket, 'pauseAutoplay');
       return;
     }
     hg.pauseAutoplay(userData.id, gId);
+    if (typeof cb === 'function') cb();
     socket.emit('message', 'Autoplay paused');
     socket.emit('game', gId, hg.getGame(gId));
   }
@@ -1100,8 +1165,10 @@ function HGWeb(hg) {
    * @param {string} cmd The command to run.
    * @param {string} one The first argument.
    * @param {string} two The second argument.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete, or has failed.
    */
-  function editTeam(userData, socket, gId, cmd, one, two) {
+  function editTeam(userData, socket, gId, cmd, one, two, cb) {
     if (!checkPerm(userData, gId)) {
       if (!checkMyGuild(gId)) return;
       replyNoPerm(socket, 'editTeam');
@@ -1127,22 +1194,61 @@ function HGWeb(hg) {
    * @param {string} oA Outcome of attackers.
    * @param {string} kV Do the victims kill.
    * @param {string} kA Do the attackers kill.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete, or has failed.
    */
   function createEvent(
-      userData, socket, gId, type, message, nV, nA, oV, oA, kV, kA) {
+      userData, socket, gId, type, message, nV, nA, oV, oA, kV, kA, cb) {
     if (!checkPerm(userData, gId)) {
       if (!checkMyGuild(gId)) return;
+      if (typeof cb === 'function') cb('NO_PERM');
       replyNoPerm(socket, 'createEvent');
       return;
     }
     let err = hg.makeAndAddEvent(gId, type, message, nV, nA, oV, oA, kV, kA);
     if (err) {
+      if (typeof cb === 'function') cb('ATTEMPT_FAILED');
       socket.emit('message', 'Failed to create event: ' + err);
     } else {
+      if (typeof cb === 'function') cb();
       socket.emit('message', 'Created ' + type + ' event.');
       socket.emit('game', gId, hg.getGame(gId));
     }
   }
+
+  /**
+   * Create a larger game event. Either Arena or Weapon at this point. If
+   * message or weapon name already exists, this will instead edit the event.
+   * @see {HungryGames.createMajorEvent}
+   *
+   * @private
+   * @type {HGWeb~SocketFunction}
+   * @param {Object} userData The current user's session data.
+   * @param {socketIo~Socket} socket The socket connection to reply on.
+   * @param {number|string} gId The guild id to look at.
+   * @param {string} type The type of event.
+   * @param {Object} data The event data.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete, or has failed.
+   */
+  function createMajorEvent(userData, socket, gId, type, data, cb) {
+    if (!checkPerm(userData, gId)) {
+      if (!checkMyGuild(gId)) return;
+      if (typeof cb === 'function') cb('NO_PERM');
+      replyNoPerm(socket, 'createEvent');
+      return;
+    }
+    let err = hg.makeAndAddMajorEvent(gId, type, data);
+    if (err) {
+      if (typeof cb === 'function') cb('ATTEMPT_FAILED');
+      socket.emit('message', 'Failed to create event: ' + err);
+    } else {
+      if (typeof cb === 'function') cb();
+      socket.emit('message', 'Created ' + type + ' event.');
+      socket.emit('game', gId, hg.getGame(gId));
+    }
+  }
+
   /**
    * Remove a game event.
    * @see {HungryGames.removeEvent}
@@ -1154,17 +1260,22 @@ function HGWeb(hg) {
    * @param {number|string} gId The guild id to look at.
    * @param {string} type The type of event.
    * @param {HungryGames~Event} event The game event to remove.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete, or has failed.
    */
-  function removeEvent(userData, socket, gId, type, event) {
+  function removeEvent(userData, socket, gId, type, event, cb) {
     if (!checkPerm(userData, gId)) {
       if (!checkMyGuild(gId)) return;
+      if (typeof cb === 'function') cb('NO_PERM');
       replyNoPerm(socket, 'removeEvent');
       return;
     }
     let err = hg.removeEvent(gId, type, event);
     if (err) {
+      if (typeof cb === 'function') cb('ATTEMPT_FAILED');
       socket.emit('message', 'Failed to remove event: ' + err);
     } else {
+      if (typeof cb === 'function') cb();
       socket.emit('message', 'Removed event.');
       socket.emit('game', gId, hg.getGame(gId));
     }
