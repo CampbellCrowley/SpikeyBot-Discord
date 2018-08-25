@@ -2178,8 +2178,18 @@ function HungryGames() {
       }
     }
 
-    // TODO: Allow custom user-created weapons.
-    let weaponEventPool = weapons;
+    let weaponEventPool = Object.assign({}, weapons);
+    if (find(id).customEvents.weapon && find(id).customEvents.weapon) {
+      let entries = Object.entries(find(id).customEvents.weapon);
+      for (let i = 0; i < entries.length; i++) {
+        if (weaponEventPool[entries[i][0]]) {
+          weaponEventPool[entries[i][0]] =
+              weaponEventPool[entries[i][0]].concat(entries[i][1]);
+        } else {
+          weaponEventPool[entries[i][0]] = entries[i][1];
+        }
+      }
+    }
 
     const probOpts = find(id).currentGame.day.num === 0 ?
         find(id).options.bloodbathOutcomeProbs :

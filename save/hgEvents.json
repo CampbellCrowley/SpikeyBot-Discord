@@ -408,7 +408,7 @@
       "victim": { "count": "0", "outcome": "nothing" }
     },
     {
-      "message": "{attacker} finds a few bottle of some alcoholic beverage.",
+      "message": "{attacker} finds a few bottles of some alcoholic beverage.",
       "attacker": { "count": "1", "outcome": "nothing", "weapon": { "name": "alcohol", "count": 3 } },
       "victim": { "count": "0", "outcome": "nothing" }
     },
