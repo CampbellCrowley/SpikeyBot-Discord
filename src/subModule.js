@@ -65,6 +65,26 @@ function SubModule() {
   this.common;
 
   /**
+   * The parent SpikeyBot instance.
+   *
+   * @type {SpikeyBot}
+   */
+  this.bot;
+
+  /**
+   * The commit at HEAD at the time this module was loaded. Essentially the
+   * version of this submodule.
+   *
+   * @public
+   * @constant
+   * @type {string}
+   */
+  this.commit = require('child_process')
+                    .execSync('git rev-parse --short HEAD')
+                    .toString()
+                    .trim();
+
+  /**
    * The name of this submodule. Used for differentiating in the log. Should be
    * defined before begin().
    *
@@ -102,14 +122,16 @@ function SubModule() {
    * @param {SpikeyBot~Command} command The command instance in which to
    * register command listeners.
    * @param {Common} common Class storing common functions.
+   * @param {SpikeyBot} bot The parent SpikeyBot instance.
    */
-  this.begin = function(prefix, Discord, client, command, common) {
+  this.begin = function(prefix, Discord, client, command, common, bot) {
     this.prefix = prefix;
     this.myPrefix = prefix + this.postPrefix;
     this.Discord = Discord;
     this.client = client;
     this.command = command;
     this.common = common;
+    this.bot = bot;
 
     this.log = function(msg) {
       if (this.client.shard) {

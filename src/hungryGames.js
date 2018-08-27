@@ -4965,7 +4965,7 @@ function HungryGames() {
             }
           };
           finish = function() {
-            msg_.delete().catch(()=>{});
+            msg_.delete().catch(() => {});
             let error = self.makeAndAddEvent(
                 id, eventType, message, numVictim, numAttacker, victimOutcome,
                 attackerOutcome, victimKiller, attackerKiller);
@@ -5531,12 +5531,12 @@ function HungryGames() {
                     msg,
                     'That number is a really big scary number. Try a smaller ' +
                         'one.');
-                msg_.delete().catch(()=>{});
+                msg_.delete().catch(() => {});
               } else {
                 const removed = find(id).customEvents.player.splice(num, 1)[0];
                 self.common.reply(
                     msg, 'Removed event.', formatEventString(removed, true));
-                msg_.delete().catch(()=>{});
+                msg_.delete().catch(() => {});
               }
             } else {
               if (num >= find(id).customEvents.bloodbath.length) {
@@ -5544,13 +5544,13 @@ function HungryGames() {
                     msg,
                     'That number is a really big scary number. Try a smaller ' +
                         'one.');
-                msg_.delete().catch(()=>{});
+                msg_.delete().catch(() => {});
               } else {
                 const removed =
                     find(id).customEvents.bloodbath.splice(num, 1)[0];
                 self.common.reply(
                     msg, 'Removed event.', formatEventString(removed, true));
-                msg_.delete().catch(()=>{});
+                msg_.delete().catch(() => {});
               }
             }
           });

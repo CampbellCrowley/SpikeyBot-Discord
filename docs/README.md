@@ -388,11 +388,13 @@ Manages a Connect 4 game.
         * [.client](#SubModule+client) : <code>Discord~Client</code>
         * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
         * [.common](#SubModule+common) : [<code>Common</code>](#Common)
+        * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
         * [.myName](#SubModule+myName) : <code>string</code>
         * [.initialized](#SubModule+initialized) : <code>boolean</code>
+        * [.commit](#SubModule+commit) : <code>string</code>
         * [.createGame(players, channel)](#Connect4+createGame)
         * [.initialize()](#SubModule+initialize)
-        * [.begin(prefix, Discord, client, command, common)](#SubModule+begin)
+        * [.begin(prefix, Discord, client, command, common, bot)](#SubModule+begin)
         * [.end()](#SubModule+end)
         * [.log(msg)](#SubModule+log)
         * [.error(msg)](#SubModule+error)
@@ -524,6 +526,12 @@ The command object for registering command listeners.
 The common object.
 
 **Kind**: instance property of [<code>Connect4</code>](#Connect4)  
+<a name="SubModule+bot"></a>
+
+### connect4.bot : [<code>SpikeyBot</code>](#SpikeyBot)
+The parent SpikeyBot instance.
+
+**Kind**: instance property of [<code>Connect4</code>](#Connect4)  
 <a name="SubModule+myName"></a>
 
 ### connect4.myName : <code>string</code>
@@ -542,6 +550,14 @@ Has this subModule been initialized yet (Has begin() been called).
 **Default**: <code>false</code>  
 **Access**: protected  
 **Read only**: true  
+<a name="SubModule+commit"></a>
+
+### connect4.commit : <code>string</code>
+The commit at HEAD at the time this module was loaded. Essentially the
+version of this submodule.
+
+**Kind**: instance constant of [<code>Connect4</code>](#Connect4)  
+**Access**: public  
 <a name="Connect4+createGame"></a>
 
 ### connect4.createGame(players, channel)
@@ -566,7 +582,7 @@ specific to the subModule. Must be defined before begin() is called.
 **Access**: protected  
 <a name="SubModule+begin"></a>
 
-### connect4.begin(prefix, Discord, client, command, common)
+### connect4.begin(prefix, Discord, client, command, common, bot)
 Initialize this submodule.
 
 **Kind**: instance method of [<code>Connect4</code>](#Connect4)  
@@ -579,6 +595,7 @@ Initialize this submodule.
 | client | <code>Discord~Client</code> | The client that represents this bot. |
 | command | [<code>Command</code>](#SpikeyBot..Command) | The command instance in which to register command listeners. |
 | common | [<code>Common</code>](#Common) | Class storing common functions. |
+| bot | [<code>SpikeyBot</code>](#SpikeyBot) | The parent SpikeyBot instance. |
 
 <a name="SubModule+end"></a>
 
@@ -1490,10 +1507,12 @@ Hunger Games simulator.
         * [.client](#SubModule+client) : <code>Discord~Client</code>
         * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
         * [.common](#SubModule+common) : [<code>Common</code>](#Common)
+        * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
         * *[.myName](#SubModule+myName) : <code>string</code>*
         * [.initialized](#SubModule+initialized) : <code>boolean</code>
         * [.roleName](#HungryGames+roleName) : <code>string</code>
         * [.defaultOptions](#HungryGames+defaultOptions) : <code>Object.&lt;{value: (string\|number\|boolean), values: ?Array.&lt;string&gt;, comment: string}&gt;</code>
+        * [.commit](#SubModule+commit) : <code>string</code>
         * [.getGame(id)](#HungryGames+getGame) ⇒ [<code>GuildGame</code>](#HungryGames..GuildGame)
         * [.getDefaultEvents()](#HungryGames+getDefaultEvents) ⇒ <code>Object</code>
         * [.createGame(id)](#HungryGames+createGame)
@@ -1515,7 +1534,7 @@ Hunger Games simulator.
         * [.eventsEqual(e1, e2)](#HungryGames+eventsEqual) ⇒ <code>boolean</code>
         * [.getNumSimulating()](#HungryGames+getNumSimulating) ⇒ <code>number</code>
         * [.initialize()](#SubModule+initialize)
-        * [.begin(prefix, Discord, client, command, common)](#SubModule+begin)
+        * [.begin(prefix, Discord, client, command, common, bot)](#SubModule+begin)
         * [.end()](#SubModule+end)
         * [.log(msg)](#SubModule+log)
         * [.error(msg)](#SubModule+error)
@@ -1710,6 +1729,12 @@ The command object for registering command listeners.
 The common object.
 
 **Kind**: instance property of [<code>HungryGames</code>](#HungryGames)  
+<a name="SubModule+bot"></a>
+
+### hungryGames.bot : [<code>SpikeyBot</code>](#SpikeyBot)
+The parent SpikeyBot instance.
+
+**Kind**: instance property of [<code>HungryGames</code>](#HungryGames)  
 <a name="SubModule+myName"></a>
 
 ### *hungryGames.myName : <code>string</code>*
@@ -1740,6 +1765,14 @@ Role that a user must have in order to perform any commands.
 Default options for a game.
 
 **Kind**: instance constant of [<code>HungryGames</code>](#HungryGames)  
+<a name="SubModule+commit"></a>
+
+### hungryGames.commit : <code>string</code>
+The commit at HEAD at the time this module was loaded. Essentially the
+version of this submodule.
+
+**Kind**: instance constant of [<code>HungryGames</code>](#HungryGames)  
+**Access**: public  
 <a name="HungryGames+getGame"></a>
 
 ### hungryGames.getGame(id) ⇒ [<code>GuildGame</code>](#HungryGames..GuildGame)
@@ -2039,7 +2072,7 @@ specific to the subModule. Must be defined before begin() is called.
 **Access**: protected  
 <a name="SubModule+begin"></a>
 
-### hungryGames.begin(prefix, Discord, client, command, common)
+### hungryGames.begin(prefix, Discord, client, command, common, bot)
 Initialize this submodule.
 
 **Kind**: instance method of [<code>HungryGames</code>](#HungryGames)  
@@ -2052,6 +2085,7 @@ Initialize this submodule.
 | client | <code>Discord~Client</code> | The client that represents this bot. |
 | command | [<code>Command</code>](#SpikeyBot..Command) | The command instance in which to register command listeners. |
 | common | [<code>Common</code>](#Common) | Class storing common functions. |
+| bot | [<code>SpikeyBot</code>](#SpikeyBot) | The parent SpikeyBot instance. |
 
 <a name="SubModule+end"></a>
 
@@ -3697,10 +3731,12 @@ Basic commands and features for the bot.
         * [.client](#SubModule+client) : <code>Discord~Client</code>
         * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
         * [.common](#SubModule+common) : [<code>Common</code>](#Common)
+        * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
         * [.myName](#SubModule+myName) : <code>string</code>
         * [.initialized](#SubModule+initialized) : <code>boolean</code>
+        * [.commit](#SubModule+commit) : <code>string</code>
         * [.initialize()](#SubModule+initialize)
-        * [.begin(prefix, Discord, client, command, common)](#SubModule+begin)
+        * [.begin(prefix, Discord, client, command, common, bot)](#SubModule+begin)
         * [.end()](#SubModule+end)
         * [.log(msg)](#SubModule+log)
         * [.error(msg)](#SubModule+error)
@@ -3709,6 +3745,7 @@ Basic commands and features for the bot.
         * *[.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>*
     * _inner_
         * [~version](#Main..version) : <code>string</code> ℗
+        * [~commit](#Main..commit) : <code>string</code> ℗
         * [~prevUserSayId](#Main..prevUserSayId) : <code>string</code> ℗
         * [~prevUserSayCnt](#Main..prevUserSayCnt) : <code>number</code> ℗
         * [~timers](#Main..timers) : [<code>Array.&lt;Timer&gt;</code>](#Main..Timer) ℗
@@ -3825,6 +3862,12 @@ The command object for registering command listeners.
 The common object.
 
 **Kind**: instance property of [<code>Main</code>](#Main)  
+<a name="SubModule+bot"></a>
+
+### main.bot : [<code>SpikeyBot</code>](#SpikeyBot)
+The parent SpikeyBot instance.
+
+**Kind**: instance property of [<code>Main</code>](#Main)  
 <a name="SubModule+myName"></a>
 
 ### main.myName : <code>string</code>
@@ -3843,6 +3886,14 @@ Has this subModule been initialized yet (Has begin() been called).
 **Default**: <code>false</code>  
 **Access**: protected  
 **Read only**: true  
+<a name="SubModule+commit"></a>
+
+### main.commit : <code>string</code>
+The commit at HEAD at the time this module was loaded. Essentially the
+version of this submodule.
+
+**Kind**: instance constant of [<code>Main</code>](#Main)  
+**Access**: public  
 <a name="SubModule+initialize"></a>
 
 ### main.initialize()
@@ -3854,7 +3905,7 @@ specific to the subModule. Must be defined before begin() is called.
 **Access**: protected  
 <a name="SubModule+begin"></a>
 
-### main.begin(prefix, Discord, client, command, common)
+### main.begin(prefix, Discord, client, command, common, bot)
 Initialize this submodule.
 
 **Kind**: instance method of [<code>Main</code>](#Main)  
@@ -3867,6 +3918,7 @@ Initialize this submodule.
 | client | <code>Discord~Client</code> | The client that represents this bot. |
 | command | [<code>Command</code>](#SpikeyBot..Command) | The command instance in which to register command listeners. |
 | common | [<code>Common</code>](#Common) | Class storing common functions. |
+| bot | [<code>SpikeyBot</code>](#SpikeyBot) | The parent SpikeyBot instance. |
 
 <a name="SubModule+end"></a>
 
@@ -3928,6 +3980,13 @@ putting the module into an uncontrollable state.
 
 ### Main~version : <code>string</code> ℗
 The current bot version parsed from package.json.
+
+**Kind**: inner property of [<code>Main</code>](#Main)  
+**Access**: private  
+<a name="Main..commit"></a>
+
+### Main~commit : <code>string</code> ℗
+The current commit hash at HEAD.
 
 **Kind**: inner property of [<code>Main</code>](#Main)  
 **Access**: private  
@@ -4464,8 +4523,7 @@ Reply to message with the amount of time since the bot has been running.
 
 ### Main~commandGame(msg) : [<code>commandHandler</code>](#commandHandler) ℗
 Reply to message saying what game the mentioned user is playing and
-possibly
-other information about their profile.
+possibly other information about their profile.
 
 **Kind**: inner method of [<code>Main</code>](#Main)  
 **Access**: private  
@@ -4620,10 +4678,12 @@ Music and audio related commands.
         * [.client](#SubModule+client) : <code>Discord~Client</code>
         * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
         * [.common](#SubModule+common) : [<code>Common</code>](#Common)
+        * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
         * *[.myName](#SubModule+myName) : <code>string</code>*
         * [.initialized](#SubModule+initialized) : <code>boolean</code>
+        * [.commit](#SubModule+commit) : <code>string</code>
         * [.initialize()](#SubModule+initialize)
-        * [.begin(prefix, Discord, client, command, common)](#SubModule+begin)
+        * [.begin(prefix, Discord, client, command, common, bot)](#SubModule+begin)
         * [.end()](#SubModule+end)
         * [.log(msg)](#SubModule+log)
         * [.error(msg)](#SubModule+error)
@@ -4716,6 +4776,12 @@ The command object for registering command listeners.
 The common object.
 
 **Kind**: instance property of [<code>Music</code>](#Music)  
+<a name="SubModule+bot"></a>
+
+### music.bot : [<code>SpikeyBot</code>](#SpikeyBot)
+The parent SpikeyBot instance.
+
+**Kind**: instance property of [<code>Music</code>](#Music)  
 <a name="SubModule+myName"></a>
 
 ### *music.myName : <code>string</code>*
@@ -4734,6 +4800,14 @@ Has this subModule been initialized yet (Has begin() been called).
 **Default**: <code>false</code>  
 **Access**: protected  
 **Read only**: true  
+<a name="SubModule+commit"></a>
+
+### music.commit : <code>string</code>
+The commit at HEAD at the time this module was loaded. Essentially the
+version of this submodule.
+
+**Kind**: instance constant of [<code>Music</code>](#Music)  
+**Access**: public  
 <a name="SubModule+initialize"></a>
 
 ### music.initialize()
@@ -4745,7 +4819,7 @@ specific to the subModule. Must be defined before begin() is called.
 **Access**: protected  
 <a name="SubModule+begin"></a>
 
-### music.begin(prefix, Discord, client, command, common)
+### music.begin(prefix, Discord, client, command, common, bot)
 Initialize this submodule.
 
 **Kind**: instance method of [<code>Music</code>](#Music)  
@@ -4758,6 +4832,7 @@ Initialize this submodule.
 | client | <code>Discord~Client</code> | The client that represents this bot. |
 | command | [<code>Command</code>](#SpikeyBot..Command) | The command instance in which to register command listeners. |
 | common | [<code>Common</code>](#Common) | Class storing common functions. |
+| bot | [<code>SpikeyBot</code>](#SpikeyBot) | The parent SpikeyBot instance. |
 
 <a name="SubModule+end"></a>
 
@@ -5165,47 +5240,57 @@ Main class that manages the bot.
 **Emits**: <code>SpikeyBot~Command#event:\*</code>  
 
 * [SpikeyBot](#SpikeyBot)
-    * [~Command](#SpikeyBot..Command)
-        * [new Command()](#new_SpikeyBot..Command_new)
-        * _instance_
-            * [.trigger(cmd, msg)](#SpikeyBot..Command+trigger) ⇒ <code>boolean</code>
-            * [.on(cmd, cb, [onlyserver])](#SpikeyBot..Command+on)
-            * [.deleteEvent(cmd)](#SpikeyBot..Command+deleteEvent)
-            * [.disable(cmd, channel)](#SpikeyBot..Command+disable)
-            * [.enable(cmd, channel)](#SpikeyBot..Command+enable)
-        * _inner_
-            * [~cmds](#SpikeyBot..Command..cmds) : [<code>Object.&lt;commandHandler&gt;</code>](#commandHandler) ℗
-            * [~blacklist](#SpikeyBot..Command..blacklist) : <code>Object.&lt;Array.&lt;string&gt;&gt;</code> ℗
-    * [~testMode](#SpikeyBot..testMode) : <code>boolean</code> ℗
-    * [~testInstance](#SpikeyBot..testInstance) : <code>boolean</code> ℗
-    * [~subModuleNames](#SpikeyBot..subModuleNames) : <code>Array.&lt;string&gt;</code> ℗
-    * [~setDev](#SpikeyBot..setDev) : <code>boolean</code> ℗
-    * [~minimal](#SpikeyBot..minimal) : <code>boolean</code> ℗
-    * [~subModules](#SpikeyBot..subModules) : [<code>Array.&lt;SubModule&gt;</code>](#SubModule) ℗
-    * [~disconnectReason](#SpikeyBot..disconnectReason) : <code>string</code> ℗
-    * [~enableSharding](#SpikeyBot..enableSharding) : <code>boolean</code> ℗
-    * [~numShards](#SpikeyBot..numShards) : <code>number</code> ℗
-    * [~reactToAnthony](#SpikeyBot..reactToAnthony) : <code>boolean</code> ℗
-    * [~version](#SpikeyBot..version) : <code>string</code> ℗
-    * [~testChannel](#SpikeyBot..testChannel) : <code>string</code> ℗
-    * [~trustedIds](#SpikeyBot..trustedIds) : <code>Array.&lt;string&gt;</code> ℗
-    * [~helpmessagereply](#SpikeyBot..helpmessagereply) : <code>string</code> ℗
-    * [~blockedmessage](#SpikeyBot..blockedmessage) : <code>string</code> ℗
-    * [~onlyservermessage](#SpikeyBot..onlyservermessage) : <code>string</code> ℗
-    * [~disabledcommandmessage](#SpikeyBot..disabledcommandmessage) : <code>string</code> ℗
-    * [~command](#SpikeyBot..command) : [<code>Command</code>](#SpikeyBot..Command) ℗
-    * [~isCmd(msg, cmd)](#SpikeyBot..isCmd) ⇒ <code>boolean</code> ℗
-    * [~updateGame(game)](#SpikeyBot..updateGame) ℗
-    * [~onReady()](#SpikeyBot..onReady) ℗
-    * [~onDisconnect(event)](#SpikeyBot..onDisconnect) ℗
-    * [~onReconnecting()](#SpikeyBot..onReconnecting) ℗
-    * [~onMessage(msg)](#SpikeyBot..onMessage) ℗
-    * [~commandToggleReact(msg)](#SpikeyBot..commandToggleReact) : [<code>commandHandler</code>](#commandHandler) ℗
-    * [~commandHelp(msg)](#SpikeyBot..commandHelp) : [<code>commandHandler</code>](#commandHandler) ℗
-    * [~commandUpdateGame(msg)](#SpikeyBot..commandUpdateGame) : [<code>commandHandler</code>](#commandHandler) ℗
-    * [~commandReboot(msg)](#SpikeyBot..commandReboot) : [<code>commandHandler</code>](#commandHandler) ℗
-    * [~commandReload(msg)](#SpikeyBot..commandReload) : [<code>commandHandler</code>](#commandHandler) ℗
+    * _instance_
+        * [.getSubmoduleCommits()](#SpikeyBot+getSubmoduleCommits) ⇒ <code>Array.&lt;{name: string, commit: string}&gt;</code>
+    * _inner_
+        * [~Command](#SpikeyBot..Command)
+            * [new Command()](#new_SpikeyBot..Command_new)
+            * _instance_
+                * [.trigger(cmd, msg)](#SpikeyBot..Command+trigger) ⇒ <code>boolean</code>
+                * [.on(cmd, cb, [onlyserver])](#SpikeyBot..Command+on)
+                * [.deleteEvent(cmd)](#SpikeyBot..Command+deleteEvent)
+                * [.disable(cmd, channel)](#SpikeyBot..Command+disable)
+                * [.enable(cmd, channel)](#SpikeyBot..Command+enable)
+            * _inner_
+                * [~cmds](#SpikeyBot..Command..cmds) : [<code>Object.&lt;commandHandler&gt;</code>](#commandHandler) ℗
+                * [~blacklist](#SpikeyBot..Command..blacklist) : <code>Object.&lt;Array.&lt;string&gt;&gt;</code> ℗
+        * [~testMode](#SpikeyBot..testMode) : <code>boolean</code> ℗
+        * [~testInstance](#SpikeyBot..testInstance) : <code>boolean</code> ℗
+        * [~subModuleNames](#SpikeyBot..subModuleNames) : <code>Array.&lt;string&gt;</code> ℗
+        * [~setDev](#SpikeyBot..setDev) : <code>boolean</code> ℗
+        * [~minimal](#SpikeyBot..minimal) : <code>boolean</code> ℗
+        * [~subModules](#SpikeyBot..subModules) : [<code>Array.&lt;SubModule&gt;</code>](#SubModule) ℗
+        * [~disconnectReason](#SpikeyBot..disconnectReason) : <code>string</code> ℗
+        * [~enableSharding](#SpikeyBot..enableSharding) : <code>boolean</code> ℗
+        * [~numShards](#SpikeyBot..numShards) : <code>number</code> ℗
+        * [~reactToAnthony](#SpikeyBot..reactToAnthony) : <code>boolean</code> ℗
+        * [~version](#SpikeyBot..version) : <code>string</code> ℗
+        * [~testChannel](#SpikeyBot..testChannel) : <code>string</code> ℗
+        * [~trustedIds](#SpikeyBot..trustedIds) : <code>Array.&lt;string&gt;</code> ℗
+        * [~helpmessagereply](#SpikeyBot..helpmessagereply) : <code>string</code> ℗
+        * [~blockedmessage](#SpikeyBot..blockedmessage) : <code>string</code> ℗
+        * [~onlyservermessage](#SpikeyBot..onlyservermessage) : <code>string</code> ℗
+        * [~disabledcommandmessage](#SpikeyBot..disabledcommandmessage) : <code>string</code> ℗
+        * [~command](#SpikeyBot..command) : [<code>Command</code>](#SpikeyBot..Command) ℗
+        * [~isCmd(msg, cmd)](#SpikeyBot..isCmd) ⇒ <code>boolean</code> ℗
+        * [~updateGame(game)](#SpikeyBot..updateGame) ℗
+        * [~onReady()](#SpikeyBot..onReady) ℗
+        * [~onDisconnect(event)](#SpikeyBot..onDisconnect) ℗
+        * [~onReconnecting()](#SpikeyBot..onReconnecting) ℗
+        * [~onMessage(msg)](#SpikeyBot..onMessage) ℗
+        * [~commandToggleReact(msg)](#SpikeyBot..commandToggleReact) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~commandHelp(msg)](#SpikeyBot..commandHelp) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~commandUpdateGame(msg)](#SpikeyBot..commandUpdateGame) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~commandReboot(msg)](#SpikeyBot..commandReboot) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~commandReload(msg)](#SpikeyBot..commandReload) : [<code>commandHandler</code>](#commandHandler) ℗
 
+<a name="SpikeyBot+getSubmoduleCommits"></a>
+
+### spikeyBot.getSubmoduleCommits() ⇒ <code>Array.&lt;{name: string, commit: string}&gt;</code>
+Get array of all submodule names and the commit they were last loaded from.
+
+**Kind**: instance method of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Access**: public  
 <a name="SpikeyBot..Command"></a>
 
 ### SpikeyBot~Command
@@ -5588,10 +5673,12 @@ Base class for all Sub-Modules.
         * [.client](#SubModule+client) : <code>Discord~Client</code>
         * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
         * [.common](#SubModule+common) : [<code>Common</code>](#Common)
+        * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
         * *[.myName](#SubModule+myName) : <code>string</code>*
         * [.initialized](#SubModule+initialized) : <code>boolean</code>
+        * [.commit](#SubModule+commit) : <code>string</code>
         * *[.initialize()](#SubModule+initialize)*
-        * [.begin(prefix, Discord, client, command, common)](#SubModule+begin)
+        * [.begin(prefix, Discord, client, command, common, bot)](#SubModule+begin)
         * [.end()](#SubModule+end)
         * [.log(msg)](#SubModule+log)
         * [.error(msg)](#SubModule+error)
@@ -5656,6 +5743,12 @@ The command object for registering command listeners.
 The common object.
 
 **Kind**: instance property of [<code>SubModule</code>](#SubModule)  
+<a name="SubModule+bot"></a>
+
+### subModule.bot : [<code>SpikeyBot</code>](#SpikeyBot)
+The parent SpikeyBot instance.
+
+**Kind**: instance property of [<code>SubModule</code>](#SubModule)  
 <a name="SubModule+myName"></a>
 
 ### *subModule.myName : <code>string</code>*
@@ -5673,6 +5766,14 @@ Has this subModule been initialized yet (Has begin() been called).
 **Default**: <code>false</code>  
 **Access**: protected  
 **Read only**: true  
+<a name="SubModule+commit"></a>
+
+### subModule.commit : <code>string</code>
+The commit at HEAD at the time this module was loaded. Essentially the
+version of this submodule.
+
+**Kind**: instance constant of [<code>SubModule</code>](#SubModule)  
+**Access**: public  
 <a name="SubModule+initialize"></a>
 
 ### *subModule.initialize()*
@@ -5683,7 +5784,7 @@ specific to the subModule. Must be defined before begin() is called.
 **Access**: protected  
 <a name="SubModule+begin"></a>
 
-### subModule.begin(prefix, Discord, client, command, common)
+### subModule.begin(prefix, Discord, client, command, common, bot)
 Initialize this submodule.
 
 **Kind**: instance method of [<code>SubModule</code>](#SubModule)  
@@ -5696,6 +5797,7 @@ Initialize this submodule.
 | client | <code>Discord~Client</code> | The client that represents this bot. |
 | command | [<code>Command</code>](#SpikeyBot..Command) | The command instance in which to register command listeners. |
 | common | [<code>Common</code>](#Common) | Class storing common functions. |
+| bot | [<code>SpikeyBot</code>](#SpikeyBot) | The parent SpikeyBot instance. |
 
 <a name="SubModule+end"></a>
 
@@ -5790,11 +5892,13 @@ Manages a tic-tac-toe game.
         * [.client](#SubModule+client) : <code>Discord~Client</code>
         * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
         * [.common](#SubModule+common) : [<code>Common</code>](#Common)
+        * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
         * [.myName](#SubModule+myName) : <code>string</code>
         * [.initialized](#SubModule+initialized) : <code>boolean</code>
+        * [.commit](#SubModule+commit) : <code>string</code>
         * [.createGame(players, channel)](#TicTacToe+createGame)
         * [.initialize()](#SubModule+initialize)
-        * [.begin(prefix, Discord, client, command, common)](#SubModule+begin)
+        * [.begin(prefix, Discord, client, command, common, bot)](#SubModule+begin)
         * [.end()](#SubModule+end)
         * [.log(msg)](#SubModule+log)
         * [.error(msg)](#SubModule+error)
@@ -5935,6 +6039,12 @@ The command object for registering command listeners.
 The common object.
 
 **Kind**: instance property of [<code>TicTacToe</code>](#TicTacToe)  
+<a name="SubModule+bot"></a>
+
+### ticTacToe.bot : [<code>SpikeyBot</code>](#SpikeyBot)
+The parent SpikeyBot instance.
+
+**Kind**: instance property of [<code>TicTacToe</code>](#TicTacToe)  
 <a name="SubModule+myName"></a>
 
 ### ticTacToe.myName : <code>string</code>
@@ -5953,6 +6063,14 @@ Has this subModule been initialized yet (Has begin() been called).
 **Default**: <code>false</code>  
 **Access**: protected  
 **Read only**: true  
+<a name="SubModule+commit"></a>
+
+### ticTacToe.commit : <code>string</code>
+The commit at HEAD at the time this module was loaded. Essentially the
+version of this submodule.
+
+**Kind**: instance constant of [<code>TicTacToe</code>](#TicTacToe)  
+**Access**: public  
 <a name="TicTacToe+createGame"></a>
 
 ### ticTacToe.createGame(players, channel)
@@ -5977,7 +6095,7 @@ specific to the subModule. Must be defined before begin() is called.
 **Access**: protected  
 <a name="SubModule+begin"></a>
 
-### ticTacToe.begin(prefix, Discord, client, command, common)
+### ticTacToe.begin(prefix, Discord, client, command, common, bot)
 Initialize this submodule.
 
 **Kind**: instance method of [<code>TicTacToe</code>](#TicTacToe)  
@@ -5990,6 +6108,7 @@ Initialize this submodule.
 | client | <code>Discord~Client</code> | The client that represents this bot. |
 | command | [<code>Command</code>](#SpikeyBot..Command) | The command instance in which to register command listeners. |
 | common | [<code>Common</code>](#Common) | Class storing common functions. |
+| bot | [<code>SpikeyBot</code>](#SpikeyBot) | The parent SpikeyBot instance. |
 
 <a name="SubModule+end"></a>
 

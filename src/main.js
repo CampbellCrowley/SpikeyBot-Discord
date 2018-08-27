@@ -69,6 +69,13 @@ function Main() {
    * @type {string}
    */
   let version = 'Unknown';
+  /**
+   * The current commit hash at HEAD.
+   *
+   * @private
+   * @type {string}
+   */
+  let commit = 'Unknown';
   fs.readFile('package.json', function(err, data) {
     if (err) {
       console.log(err);
@@ -79,6 +86,9 @@ function Main() {
     } catch (e) {
       console.log(e);
     }
+  });
+  require('child_process').exec('git rev-parse HEAD', (err, stdout) => {
+    commit = stdout.toString().trim();
   });
 
   /*
@@ -1793,8 +1803,7 @@ function Main() {
 
   /**
    * Reply to message saying what game the mentioned user is playing and
-   * possibly
-   * other information about their profile.
+   * possibly other information about their profile.
    *
    * @private
    * @type {commandHandler}
@@ -1831,7 +1840,15 @@ function Main() {
    * @listens SpikeyBot~Command#version
    */
   function commandVersion(msg) {
-    self.common.reply(msg, 'My current version is ' + version);
+    self.common.reply(
+        msg, 'My current version is ' + version + '\nCommit: ' + commit +
+            '\nDiscord.js: ' + (self.Discord.version || 'Unknown') +
+            '\n\nSubModules:\n' +
+            self.bot.getSubmoduleCommits()
+                .map((el) => {
+                  return el.name + ': ' + el.commit;
+                })
+                .join('\n'));
   }
 
   /**
@@ -2040,7 +2057,8 @@ function Main() {
       numChannels: 0,
       uptimes: [],
       activities: {},
-      largestActivity: {name: 'Unknown', count: 0},
+      largestActivity: {name: 'Nothing', count: 0},
+      versions: [],
     };
     /**
      * Callback once all shards have replied with their stats.
@@ -2056,6 +2074,7 @@ function Main() {
         values.numUsersOnline += res[i].numUsersOnline;
         values.numChannels += res[i].numChannels;
         values.uptimes.push(res[i].uptime);
+        values.versions.push(res[i].version);
         let actVals = Object.entries(res[i].activities);
         for (let j = 0; j < actVals.length; j++) {
           if (values.activities[actVals[j][0]]) {
@@ -2095,12 +2114,18 @@ function Main() {
       embed.addField('Activities/Games', actString, true);
 
       const shardUptimes = values.uptimes.map((el, i) => {
-        return 'Shard #' + i + ' up ' + el;
+        return 'Shard #' + i + ' (' + values.versions[i] + ')\n- up ' + el;
       });
       const shardString = 'Number of shards: ' + numShards +
           '\nThis guild/channel is in shard #' + reqShard + '\n' +
           shardUptimes.join('\n');
       embed.addField('Shards', shardString, true);
+
+      embed.addField(
+          'Bot Version',
+          'Shard: ' + version + '\nCommit: ' + commit.slice(0, 8) +
+              '\nDiscord.js: ' + (self.Discord.version || 'Unknown'),
+          true);
 
       embed.setColor([0, 100, 255]);
 
@@ -2128,6 +2153,7 @@ function Main() {
       numChannels: 0,
       uptime: '0 days',
       activities: {},
+      version: version + '#' + commit.slice(0, 8),
     };
 
     out.numGuilds = self.client.guilds.size;

@@ -35,13 +35,18 @@ process.on('uncaughtException', unhandledRejection);
  * @fires SpikeyBot~Command#*
  */
 function SpikeyBot() {
+  const self = this;
   /**
    * The current bot version parsed from package.json.
    *
    * @private
    * @type {string}
    */
-  const version = JSON.parse(fs.readFileSync('package.json')).version;
+  const version = JSON.parse(fs.readFileSync('package.json')).version + '#' +
+      require('child_process')
+          .execSync('git rev-parse --short HEAD')
+          .toString()
+          .trim();
 
   /**
    * Is the bot currently responding as a unit test.
@@ -493,7 +498,7 @@ function SpikeyBot() {
     for (let i in subModules) {
       if (!subModules[i] instanceof Object || !subModules[i].begin) continue;
       try {
-        subModules[i].begin(prefix, Discord, client, command, common);
+        subModules[i].begin(prefix, Discord, client, command, common, self);
       } catch (err) {
         console.log(err);
         if (logChannel) {
@@ -804,7 +809,7 @@ function SpikeyBot() {
             }
             delete require.cache[require.resolve(subModuleNames[i])];
             subModules[i] = require(subModuleNames[i]);
-            subModules[i].begin(prefix, Discord, client, command, common);
+            subModules[i].begin(prefix, Discord, client, command, common, self);
             reloaded.push(subModuleNames[i]);
           } catch (err) {
             error = true;
@@ -831,6 +836,22 @@ function SpikeyBot() {
               'command. Sorry!');
     }
   }
+
+  /**
+   * Get array of all submodule names and the commit they were last loaded from.
+   *
+   * @public
+   * @return {Array.<{name: string, commit: string}>}
+   */
+  this.getSubmoduleCommits = function() {
+    return subModules
+        .map((el, i) => {
+          return {name: subModuleNames[i], commit: el.commit || 'Unknown'};
+        })
+        .filter((el) => {
+          return el.name && el.name.length > 0;
+        });
+  };
 
   // Dev:
   // https://discordapp.com/oauth2/authorize?&client_id=422623712534200321&scope=bot
