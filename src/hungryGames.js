@@ -1228,7 +1228,7 @@ function HungryGames() {
     // The identifier for this team unique to the server.
     this.id = id;
     // The name of the team to show users.
-    this.name = name;
+    this.name = name.slice(0, 101);
     // The array of player ids on this team.
     this.players = players;
     // The final rank this team placed once the final member has died.
@@ -1886,8 +1886,9 @@ function HungryGames() {
         statusList.sort();
       }
       if (statusList.length >= 3) {
-        let numCols = statusList.length > 10 ? 3 : 2;
-        let quarterLength = Math.ceil(statusList.length / numCols);
+        const numCols = calcColNum(statusList.length > 10 ? 3 : 2, statusList);
+
+        const quarterLength = Math.ceil(statusList.length / numCols);
         for (let i = 0; i < numCols - 1; i++) {
           let thisMessage = statusList.splice(0, quarterLength).join('\n');
           finalMessage.addField(
@@ -3653,8 +3654,9 @@ function HungryGames() {
         statusList.sort();
       }
       if (statusList.length >= 3) {
-        let numCols = statusList.length > 10 ? 3 : 2;
-        let quarterLength = Math.ceil(statusList.length / numCols);
+        const numCols = calcColNum(statusList.length > 10 ? 3 : 2, statusList);
+
+        const quarterLength = Math.ceil(statusList.length / numCols);
         for (let i = 0; i < numCols - 1; i++) {
           let thisMessage = statusList.splice(0, quarterLength).join('\n');
           finalMessage.addField(
@@ -3850,8 +3852,10 @@ function HungryGames() {
           return prefix + '`' + shortName + '`';
         });
         if (statusList.length >= 3) {
-          let numCols = statusList.length > 10 ? 3 : 2;
-          let quarterLength = Math.ceil(statusList.length / numCols);
+          const numCols =
+              calcColNum(statusList.length > 10 ? 3 : 2, statusList);
+
+          const quarterLength = Math.ceil(statusList.length / numCols);
           for (let i = 0; i < numCols - 1; i++) {
             let thisMessage = statusList.splice(0, quarterLength).join('\n');
             teamRankEmbed.addField(i + 1, thisMessage, true);
@@ -4195,8 +4199,9 @@ function HungryGames() {
         statusList.sort();
       }
       if (statusList.length >= 3) {
-        let numCols = statusList.length > 10 ? 3 : 2;
-        let quarterLength = Math.ceil(statusList.length / numCols);
+        const numCols = calcColNum(statusList.length > 10 ? 3 : 2, statusList);
+
+        const quarterLength = Math.ceil(statusList.length / numCols);
         for (let i = 0; i < numCols - 1; i++) {
           let thisMessage =
               statusList.splice(0, quarterLength).join('\n').substr(0, 1024);
@@ -4555,7 +4560,7 @@ function HungryGames() {
    */
   this.editTeam = function(uId, gId, cmd, one, two) {
     if (find(gId).currentGame.inProgress) {
-      switch (split[0]) {
+      switch (cmd) {
         case 'swap':
         case 'reset':
           return;
@@ -4783,6 +4788,7 @@ function HungryGames() {
       }
       return;
     }
+    message = message.slice(0, 101);
     if (!silent) {
       self.common.reply(
           msg, 'Renaming "' + find(id).currentGame.teams[teamId].name +
@@ -5968,6 +5974,31 @@ function HungryGames() {
       games[id].currentGame.day.state = 0;
     }
     return games[id];
+  }
+
+  /**
+   * Calculates the number of columns for the given player list. Assumes maximum
+   * character count of 1024 per section.
+   * @see {@link
+   * https://discordapp.com/developers/docs/resources/channel#embed-limits}
+   * @private
+   *
+   * @param {number} numCols Minimum number of columns.
+   * @param {string[]} statusList List of text to check.
+   * @return {number} Number of colums the data shall be formatted as.
+   */
+  function calcColNum(numCols, statusList) {
+    if (numCols === statusList.length) return numCols;
+    if (numCols > 25) return 25;
+    const quarterLength = Math.ceil(statusList.length / numCols);
+    for (let i = 0; i < numCols; i++) {
+      if (statusList.slice(quarterLength * i, quarterLength * (i + 1))
+              .join('\n')
+              .length > 1024) {
+        return calcColNum(numCols + 1, statusList);
+      }
+    }
+    return numCols;
   }
 
   // Util //

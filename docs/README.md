@@ -1638,6 +1638,7 @@ Hunger Games simulator.
         * [~nothing()](#HungryGames..nothing) ⇒ <code>string</code> ℗
         * [~getMessage(type)](#HungryGames..getMessage) ⇒ <code>string</code> ℗
         * [~find(id)](#HungryGames..find) ⇒ [<code>GuildGame</code>](#HungryGames..GuildGame) ℗
+        * [~calcColNum(numCols, statusList)](#HungryGames..calcColNum) ⇒ <code>number</code> ℗
         * [~exit([code])](#HungryGames..exit) ℗
         * [~sigint()](#HungryGames..sigint) ℗
         * [~OutcomeProbabilities}](#HungryGames..OutcomeProbabilities}) : <code>Object</code>
@@ -3493,6 +3494,23 @@ disk at most once every `HungryGames~findDelay` milliseconds. Returns
 | Param | Type | Description |
 | --- | --- | --- |
 | id | <code>number</code> \| <code>string</code> | The guild id to get the data for. |
+
+<a name="HungryGames..calcColNum"></a>
+
+### HungryGames~calcColNum(numCols, statusList) ⇒ <code>number</code> ℗
+Calculates the number of columns for the given player list. Assumes maximum
+character count of 1024 per section.
+
+**Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
+**Returns**: <code>number</code> - Number of colums the data shall be formatted as.  
+**Access**: private  
+**See**: {@link
+https://discordapp.com/developers/docs/resources/channel#embed-limits}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| numCols | <code>number</code> | Minimum number of columns. |
+| statusList | <code>Array.&lt;string&gt;</code> | List of text to check. |
 
 <a name="HungryGames..exit"></a>
 
