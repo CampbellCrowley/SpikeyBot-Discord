@@ -5985,8 +5985,8 @@ function HungryGames() {
   /**
    * Calculates the number of columns for the given player list. Assumes maximum
    * character count of 1024 per section.
-   * @see {@link
-   * https://discordapp.com/developers/docs/resources/channel#embed-limits}
+   * [Discord API Docs](
+   * https://discordapp.com/developers/docs/resources/channel#embed-limits)
    * @private
    *
    * @param {number} numCols Minimum number of columns.

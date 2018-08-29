@@ -3534,12 +3534,12 @@ disk at most once every `HungryGames~findDelay` milliseconds. Returns
 ### HungryGames~calcColNum(numCols, statusList) ⇒ <code>number</code> ℗
 Calculates the number of columns for the given player list. Assumes maximum
 character count of 1024 per section.
+[Discord API Docs](
+https://discordapp.com/developers/docs/resources/channel#embed-limits)
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
 **Returns**: <code>number</code> - Number of colums the data shall be formatted as.  
 **Access**: private  
-**See**: {@link
-https://discordapp.com/developers/docs/resources/channel#embed-limits}  
 
 | Param | Type | Description |
 | --- | --- | --- |

@@ -2123,7 +2123,7 @@ function Main() {
 
       embed.addField(
           'Bot Version',
-          'Shard: ' + version + '\nCommit: ' + commit.slice(0, 8) +
+          'Shard: ' + version + '\nCommit: ' + commit.slice(0, 7) +
               '\nDiscord.js: ' + (self.Discord.version || 'Unknown'),
           true);
 
@@ -2153,7 +2153,7 @@ function Main() {
       numChannels: 0,
       uptime: '0 days',
       activities: {},
-      version: version + '#' + commit.slice(0, 8),
+      version: version + '#' + commit.slice(0, 7),
     };
 
     out.numGuilds = self.client.guilds.size;
