@@ -1885,9 +1885,9 @@ function HungryGames() {
       if (find(id).options.teamSize == 0) {
         statusList.sort();
       }
-      if (statusList.length >= 3) {
-        const numCols = calcColNum(statusList.length > 10 ? 3 : 2, statusList);
 
+      const numCols = calcColNum(statusList.length > 10 ? 3 : 2, statusList);
+      if (statusList.length >= 3) {
         const quarterLength = Math.ceil(statusList.length / numCols);
         for (let i = 0; i < numCols - 1; i++) {
           let thisMessage = statusList.splice(0, quarterLength).join('\n');
@@ -1905,14 +1905,20 @@ function HungryGames() {
             'Included (' + numUsers + ')', statusList.join('\n'), false);
       }
       if (find(id).excludedUsers.length > 0) {
+        let excludedList = find(id)
+                               .excludedUsers
+                               .map(function(obj) {
+                                 return getName(msg.guild, obj);
+                               })
+                               .join(', ');
+        let trimmedList = excludedList.substr(0, 1024);
+        if (excludedList != trimmedList) {
+          excludedList = trimmedList.substr(0, 1021) + '...';
+        } else {
+          excludedList = trimmedList;
+        }
         finalMessage.addField(
-            'Excluded (' + find(id).excludedUsers.length + ')',
-            find(id)
-                .excludedUsers
-                .map(function(obj) {
-                  return getName(msg.guild, obj);
-                })
-                .join(', '),
+            'Excluded (' + find(id).excludedUsers.length + ')', excludedList,
             false);
       }
 
@@ -1925,7 +1931,9 @@ function HungryGames() {
       }
 
       msg.channel.send(self.common.mention(msg), finalMessage).catch((err) => {
-        self.error('Failed to send start game message: ' + msg.channel.id);
+        self.error(
+            'Failed to send start game message: ' + msg.channel.id +
+            ' (Cols: ' + numCols + ')');
         console.error(err);
       });
 
