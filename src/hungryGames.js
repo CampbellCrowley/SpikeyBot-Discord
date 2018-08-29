@@ -4479,14 +4479,16 @@ function HungryGames() {
       msg_.react(emoji.arrow_right);
     });
     msg_.awaitReactions(function(reaction, user) {
-          if (user.id != self.client.user.id) reaction.users.remove(user);
+          if (user.id != self.client.user.id) {
+            reaction.users.remove(user).catch(() => {});
+          }
           return (reaction.emoji.name == emoji.arrow_right ||
                   reaction.emoji.name == emoji.arrow_left) /* &&
             user.id == msg_.origAuth*/ &&
               user.id != self.client.user.id;
         }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
       if (reactions.size == 0) {
-        msg_.reactions.removeAll();
+        msg_.reactions.removeAll().catch(() => {});
         delete optionMessages[msg_.id];
         return;
       }
@@ -4852,7 +4854,7 @@ function HungryGames() {
                 user.id == authId;
           }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
         if (reactions.size == 0) {
-          msg_.reactions.removeAll();
+          msg_.reactions.removeAll().catch(() => {});
           delete newEventMessages[msg.id];
           return;
         }
@@ -5284,14 +5286,16 @@ function HungryGames() {
     let num = 0;
     regLis = function() {
       msg.awaitReactions(function(reaction, user) {
-           if (user.id != self.client.user.id) reaction.users.remove(user);
+           if (user.id != self.client.user.id) {
+             reaction.users.remove(user).catch(() => {});
+           }
            return (reaction.emoji.name == emoji.arrow_up ||
                    reaction.emoji.name == emoji.arrow_down ||
                    reaction.emoji.name == emoji.white_check_mark) &&
                user.id == id;
          }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
         if (reactions.size == 0) {
-          msg.reactions.removeAll();
+          msg.reactions.removeAll().catch(() => {});
           return;
         }
         let name = reactions.first().emoji.name;
@@ -5353,7 +5357,7 @@ function HungryGames() {
              user.id == id;
        }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
       if (reactions.size == 0) {
-        msg.reactions.removeAll();
+        msg.reactions.removeAll().catch(() => {});
         return;
       }
       switch (reactions.first().emoji.name) {
@@ -5406,7 +5410,7 @@ function HungryGames() {
              user.id == id;
        }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
       if (reactions.size == 0) {
-        msg.reactions.removeAll();
+        msg.reactions.removeAll().catch(() => {});
         return;
       }
       if (reactions.first().emoji.name == emoji.white_check_mark) {
@@ -5517,7 +5521,7 @@ function HungryGames() {
                      reaction.emoji.name == emoji.trophy);
               }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
             if (reactions.size == 0) {
-              msg_.reactions.removeAll();
+              msg_.reactions.removeAll().catch(()=>{});
               return;
             }
             let eventType = 'player';
@@ -5713,7 +5717,9 @@ function HungryGames() {
 
     callback = function(msg_) {
       msg_.awaitReactions(function(reaction, user) {
-            if (user.id != self.client.user.id) reaction.users.remove(user);
+            if (user.id != self.client.user.id) {
+              reaction.users.remove(user).catch(() => {});
+            }
             return user.id == msg.author.id &&
                 (reaction.emoji.name == emoji.arrow_right ||
                  reaction.emoji.name == emoji.arrow_left ||
@@ -5722,7 +5728,7 @@ function HungryGames() {
                  reaction.emoji.name == emoji.arrows_counterclockwise);
           }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
         if (reactions.size == 0) {
-          msg_.reactions.removeAll();
+          msg_.reactions.removeAll().catch(() => {});
           return;
         }
         switch (reactions.first().emoji.name) {
