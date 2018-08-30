@@ -733,75 +733,75 @@ function SpikeyBot() {
         common.reply(msg, 'I changed my status to "' + game + '"!');
       }
     }
-  }
 
-  command.on('changeprefix', commandChangePrefix, true);
-  /**
-   * Change the custom prefix for the given guild.
-   *
-   * @private
-   * @type {commandHandler}
-   * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#changePrefix
-   */
-  function commandChangePrefix(msg) {
-    const perms = msg.member.permissions;
-    const confirmEmoji = '✅';
-    const newPrefix = msg.text.slice(1);
-    if (!perms.has(Discord.Permissions.FLAGS.ADMINISTRATOR)) {
-      common.reply(
-          msg, 'Sorry, but you must be a server administrator to set a ' +
-              'custom prefix.');
-      return;
-    } else if (newPrefix.length < 1) {
-      common.reply(msg, 'Please specify a new prefix after the command.');
-    } else if (newPrefix.indexOf('`') > -1) {
-      common.reply(
-          msg,
-          'Sorry, but custom prefixes may not contain the `\\`` character.');
-    } else if (newPrefix.match(/\s/)) {
-      common.reply(
-          msg, 'Sorry, but custom prefixes may not contain any whitespace.');
-    } else {
-      msg.channel
-          .send(
-              common.mention(msg) +
-              ' Are you sure you wish to change the command prefix for this ' +
-              'server from `' + self.getPrefix(msg.guild.id) + '` to `' +
-              newPrefix + '`?')
-          .then((msg_) => {
-            msg_.react(confirmEmoji);
-            msg_.awaitReactions((reaction, user) => {
-                  if (user.id !== msg.author.id) return false;
-                  return reaction.emoji.name == confirmEmoji;
-                }, {max: 1, time: 60000}).then((reactions) => {
-              msg_.reactions.removeAll().catch(() => {});
-              if (reactions.size == 0) {
+    command.on('changeprefix', commandChangePrefix, true);
+    /**
+     * Change the custom prefix for the given guild.
+     *
+     * @private
+     * @type {commandHandler}
+     * @param {Discord~Message} msg Message that triggered command.
+     * @listens SpikeyBot~Command#changePrefix
+     */
+    function commandChangePrefix(msg) {
+      const perms = msg.member.permissions;
+      const confirmEmoji = '✅';
+      const newPrefix = msg.text.slice(1);
+      if (!perms.has(Discord.Permissions.FLAGS.ADMINISTRATOR)) {
+        common.reply(
+            msg, 'Sorry, but you must be a server administrator to set a ' +
+                'custom prefix.');
+        return;
+      } else if (newPrefix.length < 1) {
+        common.reply(msg, 'Please specify a new prefix after the command.');
+      } else if (newPrefix.indexOf('`') > -1) {
+        common.reply(
+            msg,
+            'Sorry, but custom prefixes may not contain the `\\`` character.');
+      } else if (newPrefix.match(/\s/)) {
+        common.reply(
+            msg, 'Sorry, but custom prefixes may not contain any whitespace.');
+      } else {
+        msg.channel
+            .send(
+                common.mention(msg) +
+                ' Are you sure you wish to change the command prefix for ' +
+                'this server from `' + self.getPrefix(msg.guild.id) + '` to `' +
+                newPrefix + '`?')
+            .then((msg_) => {
+              msg_.react(confirmEmoji);
+              msg_.awaitReactions((reaction, user) => {
+                    if (user.id !== msg.author.id) return false;
+                    return reaction.emoji.name == confirmEmoji;
+                  }, {max: 1, time: 60000}).then((reactions) => {
+                msg_.reactions.removeAll().catch(() => {});
+                if (reactions.size == 0) {
+                  msg_.edit(
+                      'Changing custom prefix timed out. Enter command again ' +
+                      'if you still wish to change the command prefix.');
+                  return;
+                }
+                guildPrefixes[msg.guild.id] = newPrefix;
                 msg_.edit(
-                    'Changing custom prefix timed out. Enter command again ' +
-                    'if you still wish to change the command prefix.');
-                return;
-              }
-              guildPrefixes[msg.guild.id] = newPrefix;
-              msg_.edit(
-                  common.mention(msg) + ' Prefix changed to `' + newPrefix +
-                  '`!');
-              fs.writeFile(
-                  common.guildSaveDir + msg.guild.id + guildPrefixFile,
-                  newPrefix, function(err) {
-                    if (err) {
-                      common.error(
-                          'Failed to save guild custom prefix! ' +
-                          msg.guild.id + ' (' + newPrefix + ')');
-                      console.error(err);
-                    } else {
-                      common.log(
-                          'Guild ' + msg.guild.id + ' updated prefix to ' +
-                          newPrefix);
-                    }
-                  });
+                    common.mention(msg) + ' Prefix changed to `' + newPrefix +
+                    '`!');
+                fs.writeFile(
+                    common.guildSaveDir + msg.guild.id + guildPrefixFile,
+                    newPrefix, function(err) {
+                      if (err) {
+                        common.error(
+                            'Failed to save guild custom prefix! ' +
+                            msg.guild.id + ' (' + newPrefix + ')');
+                        console.error(err);
+                      } else {
+                        common.log(
+                            'Guild ' + msg.guild.id + ' updated prefix to ' +
+                            newPrefix);
+                      }
+                    });
+              });
             });
-          });
+      }
     }
   }
 
