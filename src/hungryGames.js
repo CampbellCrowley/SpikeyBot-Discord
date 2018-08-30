@@ -1723,8 +1723,8 @@ function HungryGames() {
             'put users when creating a new game}.';
       }
     } else {
-      return 'There is no data to reset. Start a new game with "' + msg.prefix +
-          self.postPrefix + 'create".';
+      return 'There is no data to reset. Start a new game with "' +
+          self.bot.getPrefix(id) + self.postPrefix + 'create".';
     }
   };
   /**
@@ -4315,15 +4315,16 @@ function HungryGames() {
   this.setOption = function(id, option, value, text = '') {
     if (!find(id) || !find(id).currentGame) {
       return 'You must create a game first before editing settings! Use "' +
-          msg.prefix + self.postPrefix + 'create" to create a game.';
+          self.bot.getPrefix(id) + self.postPrefix +
+          'create" to create a game.';
     } else if (typeof option === 'undefined' || option.length == 0) {
       return null;
     } else if (find(id).currentGame.inProgress) {
       return 'You must end this game before changing settings. Use "' +
-          msg.prefix + self.postPrefix + 'end" to abort this game.';
+          self.bot.getPrefix(id) + self.postPrefix + 'end" to abort this game.';
     } else if (typeof defaultOptions[option] === 'undefined') {
       return 'That is not a valid option to change! (' + option + ')\nUse `' +
-          msg.prefix + self.postPrefix +
+          self.bot.getPrefix(id) + self.postPrefix +
           'options` to see all changeable options.';
     } else {
       return changeObjectValue(
@@ -4367,8 +4368,7 @@ function HungryGames() {
         obj[option] = value;
         if (option == 'teamSize' && value != 0) {
           return 'Set ' + option + ' to ' + obj[option] + ' from ' + old +
-              '\nTo reset teams to the correct size, type "' + msg.prefix +
-              self.postPrefix +
+              '\nTo reset teams to the correct size, type "' + self.myPrefix +
               'teams reset".\nThis will delete all teams, and create ' +
               'new ones.';
         } else {

@@ -635,7 +635,7 @@ function SpikeyBot() {
     }
     if (!testMode && msg.author.bot) return;
 
-    msg.prefix = getPrefix(msg.guild);
+    msg.prefix = self.getPrefix(msg.guild);
 
     // If message is equation we can graph.
     const regexForm = new RegExp('^[yY]\\s*=');
@@ -767,8 +767,8 @@ function SpikeyBot() {
           .send(
               common.mention(msg) +
               ' Are you sure you wish to change the command prefix for this ' +
-              'server from `' + getPrefix(msg.guild.id) + '` to `' + newPrefix +
-              '`?')
+              'server from `' + self.getPrefix(msg.guild.id) + '` to `' +
+              newPrefix + '`?')
           .then((msg_) => {
             msg_.react(confirmEmoji);
             msg_.awaitReactions((reaction, user) => {
@@ -966,16 +966,16 @@ function SpikeyBot() {
 
   /**
    * Get this guild's custom prefix. Returns the default prefix otherwise.
-   * @private
+   * @public
    *
    * @param {?Discord~Guild|string|number} id The guild id or guild to lookup.
    * @return {string} The prefix for all commands in the given guild.
    */
-  function getPrefix(id) {
+  this.getPrefix = function(id) {
     if (!id) return defaultPrefix;
     if (typeof id === 'object') id = id.id;
     return guildPrefixes[id] || defaultPrefix;
-  }
+  };
 
   /**
    * Load prefixes from file for the given guilds asynchronously.

@@ -5242,6 +5242,7 @@ Main class that manages the bot.
 * [SpikeyBot](#SpikeyBot)
     * _instance_
         * [.getSubmoduleCommits()](#SpikeyBot+getSubmoduleCommits) ⇒ <code>Array.&lt;{name: string, commit: string}&gt;</code>
+        * [.getPrefix(id)](#SpikeyBot+getPrefix) ⇒ <code>string</code>
     * _inner_
         * [~Command](#SpikeyBot..Command)
             * [new Command()](#new_SpikeyBot..Command_new)
@@ -5287,7 +5288,6 @@ Main class that manages the bot.
         * [~commandChangePrefix(msg)](#SpikeyBot..commandChangePrefix) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandReboot(msg)](#SpikeyBot..commandReboot) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandReload(msg)](#SpikeyBot..commandReload) : [<code>commandHandler</code>](#commandHandler) ℗
-        * [~getPrefix(id)](#SpikeyBot..getPrefix) ⇒ <code>string</code> ℗
         * [~loadGuildPrefixes(guilds)](#SpikeyBot..loadGuildPrefixes) ℗
 
 <a name="SpikeyBot+getSubmoduleCommits"></a>
@@ -5297,6 +5297,19 @@ Get array of all submodule names and the commit they were last loaded from.
 
 **Kind**: instance method of [<code>SpikeyBot</code>](#SpikeyBot)  
 **Access**: public  
+<a name="SpikeyBot+getPrefix"></a>
+
+### spikeyBot.getPrefix(id) ⇒ <code>string</code>
+Get this guild's custom prefix. Returns the default prefix otherwise.
+
+**Kind**: instance method of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Returns**: <code>string</code> - The prefix for all commands in the given guild.  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| id | <code>Discord~Guild</code> \| <code>string</code> \| <code>number</code> | The guild id or guild to lookup. |
+
 <a name="SpikeyBot..Command"></a>
 
 ### SpikeyBot~Command
@@ -5697,19 +5710,6 @@ Reload all sub modules by unloading then re-requiring.
 | Param | Type | Description |
 | --- | --- | --- |
 | msg | <code>Discord~Message</code> | Message that triggered command. |
-
-<a name="SpikeyBot..getPrefix"></a>
-
-### SpikeyBot~getPrefix(id) ⇒ <code>string</code> ℗
-Get this guild's custom prefix. Returns the default prefix otherwise.
-
-**Kind**: inner method of [<code>SpikeyBot</code>](#SpikeyBot)  
-**Returns**: <code>string</code> - The prefix for all commands in the given guild.  
-**Access**: private  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| id | <code>Discord~Guild</code> \| <code>string</code> \| <code>number</code> | The guild id or guild to lookup. |
 
 <a name="SpikeyBot..loadGuildPrefixes"></a>
 
