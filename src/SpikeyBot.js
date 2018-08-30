@@ -508,26 +508,23 @@ function SpikeyBot() {
       }
     }
     let logChannel = client.channels.get(common.logChannel);
-    if (!isDev) {
-      if (testInstance && logChannel) {
-        logChannel.send('Beginning in unit test mode (JS' + version + ')');
-      } else if (logChannel) {
-        let additional = '';
-        if (client.shard) {
-          additional +=
-              ' Shard: ' + client.shard.id + ' of ' + client.shard.count;
-        }
-        if (disconnectReason) {
-          additional +=
-              ' after disconnecting from Discord!\n' + disconnectReason;
-          disconnectReason = null;
-        } else if (!initialized) {
-          additional += ' from cold stop.';
-        }
-        logChannel.send(
-            'I just rebooted (JS' + version + ') ' +
-            (minimal ? 'MINIMAL' : 'FULL') + additional);
+    if (testInstance && logChannel) {
+      logChannel.send('Beginning in unit test mode (JS' + version + ')');
+    } else if (logChannel && !isDev) {
+      let additional = '';
+      if (client.shard) {
+        additional +=
+            ' Shard: ' + client.shard.id + ' of ' + client.shard.count;
       }
+      if (disconnectReason) {
+        additional += ' after disconnecting from Discord!\n' + disconnectReason;
+        disconnectReason = null;
+      } else if (!initialized) {
+        additional += ' from cold stop.';
+      }
+      logChannel.send(
+          'I just rebooted (JS' + version + ') ' +
+          (minimal ? 'MINIMAL' : 'FULL') + additional);
     }
     // Initialize all submodules even if we have already initialized the bot,
     // because this will updated the reference to the current client if this was
