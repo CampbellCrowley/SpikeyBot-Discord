@@ -999,7 +999,6 @@ function SpikeyBot() {
           loadGuildPrefixes(guilds);
         } else {
           common.log('Finished loading custom prefixes.');
-          console.log(guildPrefixes);
         }
       };
     };
