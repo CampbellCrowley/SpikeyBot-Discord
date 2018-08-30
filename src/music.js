@@ -4,6 +4,7 @@ const ytdl = require('youtube-dl');
 const fs = require('fs');
 const ogg = require('ogg');
 const opus = require('node-opus');
+const spawn = require('threads').spawn;
 require('./subModule.js')(Music);
 
 /**
@@ -305,13 +306,8 @@ function Music() {
     }
     if (broadcast.queue.length === 0) {
       self.client.setTimeout(function() {
-        const file = fs.createReadStream('./sounds/windowsshutdown.ogg');
-        const bcast = broadcast.voice.play(file);
-        bcast.setVolume(0.2);
-        self.client.setTimeout(function() {
-          broadcast.voice.disconnect();
-          delete broadcasts[broadcast.current.request.guild.id];
-        }, 2000);
+        broadcast.voice.disconnect();
+        delete broadcasts[broadcast.current.request.guild.id];
       }, 500);
       broadcast.current.request.channel.send('`Queue is empty!`');
       return;
@@ -904,6 +900,9 @@ function Music() {
       }, 100);
     });
   }
+}
+function playInThread() {
+
 }
 /**
  * Coverts an incoming Opus stream to a ogg format and writes it to file.
