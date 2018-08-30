@@ -762,6 +762,9 @@ function SpikeyBot() {
       common.reply(
           msg,
           'Sorry, but custom prefixes may not contain the `\\`` character.');
+    } else if (newPrefix.match(/\s/)) {
+      common.reply(
+          msg, 'Sorry, but custom prefixes may not contain any whitespace.');
     } else {
       msg.channel
           .send(
@@ -968,10 +971,11 @@ function SpikeyBot() {
    * Get this guild's custom prefix. Returns the default prefix otherwise.
    * @private
    *
-   * @param {Discord~Guild|string|number} id The guild id or guild to lookup.
+   * @param {?Discord~Guild|string|number} id The guild id or guild to lookup.
    * @return {string} The prefix for all commands in the given guild.
    */
   function getPrefix(id) {
+    if (!id) return defaultPrefix;
     if (typeof id === 'object') id = id.id;
     return guildPrefixes[id] || defaultPrefix;
   }
@@ -989,7 +993,7 @@ function SpikeyBot() {
     const onFileRead = function(id) {
       return function(err, data) {
         if (!err && data.toString().length > 0) {
-          guildPrefixes[id] = data.toString();
+          guildPrefixes[id] = data.toString().replace(/\s/g, '');
         }
         if (guilds.length > 0) {
           loadGuildPrefixes(guilds);

@@ -393,6 +393,10 @@ function Main() {
               '\n```',
           true);
     });
+    tmpHelp.setFooter(
+        'Note: If a custom prefix is being used, replace `' + self.myPrefix +
+        '` with the custom prefix.\nNote 2: Custom prefixes will not have a ' +
+        'space after them.');
     self.helpMessage = tmpHelp;
 
     if (self.client.shard) {
@@ -888,16 +892,15 @@ function Main() {
    * @listens SpikeyBot~Command#add
    */
   function commandAdd(msg) {
-    const splitstring = msg.content.replace(self.myPrefix + 'add ', '')
-                            .replaceAll('-', ' -')
+    const splitstring = msg.text.replaceAll('-', ' -')
                             .replaceAll('  ', ' ')
                             .replaceAll('\\+', ' ')
                             .split(' ');
     if (splitstring.join('').match(/[^0-9\-]/g)) {
       self.common.reply(
-          msg, 'This command only adds and subtracts numbers. Use "' +
-              self.myPrefix + 'solve" or "' + self.myPrefix +
-              'simplify" for more complex math.',
+          msg,
+          'This command only adds and subtracts numbers. Use "' + msg.prefix +
+              'solve" or "' + msg.prefix + 'simplify" for more complex math.',
           'The following characters are not allowed: ' +
               JSON.stringify(splitstring.join('').match(/[^0-9\-]/g).join('')));
       return;
@@ -941,7 +944,7 @@ function Main() {
    */
   function commandSimplify(msg) {
     try {
-      let formula = msg.content.replace(self.myPrefix + 'simplify', '');
+      let formula = msg.text;
       let simplified = simplify(formula);
       let hasVar = simplified.match(/[A-Za-z]/);
       self.common.reply(msg, (hasVar ? '0 = ' : '') + simplified);
@@ -979,7 +982,7 @@ function Main() {
           msg, 'Please ensure your equation has exactly 1 equals sign.');
       return;
     }
-    const equation = msg.content.replace(self.myPrefix + 'solve', '');
+    const equation = msg.text;
     const variables = equation.match(/[A-Za-z]+/gm);
     const equals = equation.match(/=/g);
     if (!variables || variables.length < 1) {
@@ -1022,12 +1025,12 @@ function Main() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
+   * @listens SpikeyBot~Command#eval
    * @listens SpikeyBot~Command#evaluate
    */
   function commandEvaluate(msg) {
     try {
-      let formula = msg.content.replace(self.myPrefix + 'eval', '')
-                        .replace(self.myPrefix + 'evaluate', '');
+      let formula = msg.text;
       if (formula.indexOf('=') > -1) {
         let split = formula.split('=');
         formula = split[1] + ' - (' + split[0] + ')';
@@ -1059,7 +1062,7 @@ function Main() {
     let domainMax;
     let rangeMin;
     let rangeMax;
-    let cmd = msg.content.replace(self.myPrefix + 'graph', '');
+    let cmd = msg.text;
     let expression = cmd.replace(/\[.*\]|\n/gm, '');
     try {
       let expr = math.compile(expression);
@@ -1177,7 +1180,7 @@ function Main() {
    */
   function commandDerive(msg) {
     try {
-      let formula = msg.content.replace(self.myPrefix + 'derive', '');
+      let formula = msg.text;
       if (formula.indexOf('=') > -1) {
         let split = formula.split('=');
         formula = split[1] + ' - (' + split[0] + ')';
@@ -1202,7 +1205,7 @@ function Main() {
     try {
       let sandbox = {__stdout: [], __stderr: []};
 
-      let code = defaultCode + msg.content.replace(self.myPrefix + 'js', '');
+      let code = defaultCode + msg.text;
       let stdexit = vm.runInNewContext(
           code, sandbox, {filename: 'Line', timeout: '100', lineOffset: -1});
       let stdout = sandbox.__stdout;
@@ -1254,9 +1257,8 @@ function Main() {
    * @listens SpikeyBot~Command#timer
    */
   function commandTimer(msg) {
-    let split = msg.content.replace(self.myPrefix + 'timer ', '').split(' ');
-    if (split[0] == self.myPrefix + 'timer' ||
-        split[0] == self.myPrefix + 'timers') {
+    let split = msg.text.split(' ');
+    if (split[0] == msg.prefix + 'timer' || split[0] == msg.prefix + 'timers') {
       let num = 0;
       let messages =
           timers
@@ -1309,7 +1311,7 @@ function Main() {
    */
   function commandSay(msg) {
     msg.delete();
-    let content = msg.content.replace(self.myPrefix + 'say', '');
+    let content = msg.text;
     if (content.indexOf(' ') === 0) content.replace(' ', '');
     msg.channel.send(content);
     if (prevUserSayId != msg.author.id) {
@@ -1372,7 +1374,7 @@ function Main() {
    * @listens SpikeyBot~Command#pmMe
    */
   function commandPmMe(msg) {
-    msg.author.send(introduction.replaceAll('{prefix}', self.myPrefix))
+    msg.author.send(introduction.replaceAll('{prefix}', msg.prefix))
         .then(() => {
           if (msg.guild !== null) {
             self.common.reply(msg, 'I sent you a message.', ':wink:');
@@ -1421,8 +1423,7 @@ function Main() {
         msg.author.id == '126464376059330562') {
       if (msg.guild !== null) msg.delete();
       if (msg.mentions.users.size === 0) return;
-      msg.mentions.users.first().send(
-          msg.content.replace(self.myPrefix + 'thotpm', ''));
+      msg.mentions.users.first().send(msg.text);
       self.client.users.fetch(self.common.spikeyId).then((user) => {
         user.send(msg.author.tag + ': ' + msg.content);
       });
@@ -1536,9 +1537,7 @@ function Main() {
     } else if (
         msg.channel.permissionsFor(msg.member)
             .has(self.Discord.Permissions.FLAGS.MANAGE_MESSAGES)) {
-      let numString = msg.content.replace(self.myPrefix + 'purge ', '')
-                          .replace(self.myPrefix + 'prune ', '')
-                          .replace(/\<[^\>]*>|\s/g, '');
+      let numString = msg.text.replace(/\<[^\>]*>|\s/g, '');
       let num = (numString * 1) + 1;
       if (numString.length === 0 || isNaN(num)) {
         self.common.reply(

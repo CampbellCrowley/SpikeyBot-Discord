@@ -989,7 +989,7 @@ function HungryGames() {
    * @listens SpikeyBot~Command#hg
    */
   function handleCommand(msg) {
-    if (msg.content == self.myPrefix + 'help') {
+    if (msg.content == msg.prefix + self.postPrefix + 'help') {
       help(msg);
       return;
     } else if (msg.content.split(' ')[1] == 'makemewin') {
@@ -1121,8 +1121,8 @@ function HungryGames() {
           break;
         default:
           self.common.reply(
-              msg, 'Oh noes! I can\'t understand that! "' + self.myPrefix +
-                  'help" for help.');
+              msg, 'Oh noes! I can\'t understand that! "' + msg.prefix +
+                  self.postPrefix + 'help" for help.');
           break;
       }
     });
@@ -1407,7 +1407,7 @@ function HungryGames() {
             msg,
             'This server already has a Hungry Games in progress. If you wish ' +
                 'to create a new one, you must end the current one first ' +
-                'with "' + self.myPrefix + 'end".');
+                'with "' + msg.prefix + self.postPrefix + 'end".');
       }
       return;
     } else if (find(id) && find(id).currentGame) {
@@ -1723,8 +1723,8 @@ function HungryGames() {
             'put users when creating a new game}.';
       }
     } else {
-      return 'There is no data to reset. Start a new game with "' +
-          self.myPrefix + 'create".';
+      return 'There is no data to reset. Start a new game with "' + msg.prefix +
+          self.postPrefix + 'create".';
     }
   };
   /**
@@ -1829,8 +1829,9 @@ function HungryGames() {
     if (find(id) && find(id).currentGame &&
         find(id).currentGame.inProgress) {
       self.common.reply(
-          msg, 'A game is already in progress! ("' + self.myPrefix +
-              'next" for next day, or "' + self.myPrefix + 'end" to abort)');
+          msg, 'A game is already in progress! ("' + msg.prefix +
+              self.postPrefix + 'next" for next day, or "' + msg.prefix +
+              self.postPrefix + 'end" to abort)');
     } else {
       createGame(msg, id, true);
 
@@ -1923,7 +1924,8 @@ function HungryGames() {
       }
 
       if (!find(id).autoPlay) {
-        finalMessage.setFooter('"' + self.myPrefix + 'next" for next day.');
+        finalMessage.setFooter(
+            '"' + msg.prefix + self.postPrefix + 'next" for next day.');
       }
 
       if (find(id).options.mentionEveryoneAtStart) {
@@ -2024,8 +2026,8 @@ function HungryGames() {
   function pauseAutoplay(msg, id) {
     if (!find(id)) {
       self.common.reply(
-          msg,
-          'You must first create a game with "' + self.myPrefix + 'create".');
+          msg, 'You must first create a game with "' + msg.prefix +
+              self.postPrefix + 'create".');
     } else if (find(id).autoPlay) {
       msg.channel.send(
           '<@' + msg.author.id +
@@ -2033,8 +2035,8 @@ function HungryGames() {
       find(id).autoPlay = false;
     } else {
       self.common.reply(
-          msg, 'Not autoplaying. If you wish to autoplay, type "' +
-              self.myPrefix + 'autoplay".');
+          msg, 'Not autoplaying. If you wish to autoplay, type "' + msg.prefix +
+              self.postPrefix + 'autoplay".');
     }
   }
   /**
@@ -2052,7 +2054,7 @@ function HungryGames() {
     if (find(id).autoPlay && find(id).inProgress) {
       self.common.reply(
           msg, 'Already autoplaying. If you wish to stop autoplaying, type "' +
-              self.myPrefix + 'pause".');
+              msg.prefix + self.postPrefix + 'pause".');
     } else {
       find(id).autoPlay = true;
       if (find(id).currentGame.inProgress &&
@@ -2064,7 +2066,7 @@ function HungryGames() {
       } else if (!find(id).currentGame.inProgress) {
         /* msg.channel.send(
             "<@" + msg.author.id + "> `Autoplay is enabled, type \"" +
-           self.myPrefix
+           msg.prefix + self.postPrefix
            +
             "start\" to begin!`"); */
         msg.channel.send(
@@ -2101,8 +2103,8 @@ function HungryGames() {
     if (!find(id) || !find(id).currentGame ||
         !find(id).currentGame.inProgress) {
       self.common.reply(
-          msg, 'You must start a game first! Use "' + self.myPrefix +
-              'start" to start a game!');
+          msg, 'You must start a game first! Use "' + msg.prefix +
+              self.postPrefix + 'start" to start a game!');
       return;
     }
     if (find(id).currentGame.day.state !== 0) {
@@ -2343,7 +2345,7 @@ function HungryGames() {
         if (!eventTry) {
           self.common.reply(
               msg, 'A stupid error happened :(', 'Try again with `' +
-                  self.myPrefix +
+                  msg.prefix + self.postPrefix +
                   'next`. If this happens again please report ' +
                   'this to SpikeyRobot#9836');
           self.error(
@@ -2655,7 +2657,8 @@ function HungryGames() {
     }
     if (!find(id).autoPlay) {
       embed.setFooter(
-          'Tip: Use "' + self.myPrefix + 'autoplay" to automate the games.');
+          'Tip: Use "' + msg.prefix + self.postPrefix +
+          'autoplay" to automate the games.');
     }
     embed.setColor(defaultColor);
     msg.channel.send(embed);
@@ -3696,7 +3699,8 @@ function HungryGames() {
                 .replaceAll('{alive}', numAlive));
       }
       if (!find(id).autoPlay) {
-        embed.setFooter('"' + self.myPrefix + 'next" for next day.');
+        embed.setFooter(
+            '"' + msg.prefix + self.postPrefix + 'next" for next day.');
       }
       embed.setColor(defaultColor);
       msg.channel.send(embed);
@@ -3942,8 +3946,8 @@ function HungryGames() {
   function excludeUser(msg, id) {
     if (!find(id)) {
       self.common.reply(
-          msg,
-          'You must first create a game with "' + self.myPrefix + 'create".');
+          msg, 'You must first create a game with "' + msg.prefix +
+              self.postPrefix + 'create".');
     } else if (
         msg.text.split(' ')[0] === 'everyone' ||
         msg.text.split(' ')[0] === '@everyone') {
@@ -4048,8 +4052,8 @@ function HungryGames() {
   function includeUser(msg, id) {
     if (!find(id)) {
       self.common.reply(
-          msg,
-          'You must first create a game with "' + self.myPrefix + 'create".');
+          msg, 'You must first create a game with "' + msg.prefix +
+              self.postPrefix + 'create".');
     } else if (
         msg.text.split(' ')[0] === 'everyone' ||
         msg.text.split(' ')[0] === '@everyone') {
@@ -4230,7 +4234,7 @@ function HungryGames() {
     } else {
       finalMessage.setDescription(
           'There don\'t appear to be any included players. Have you ' +
-          'created a game with "' + self.myPrefix + 'create"?');
+          'created a game with "' + msg.prefix + self.postPrefix + 'create"?');
     }
     if (find(id) && find(id).excludedUsers &&
         find(id).excludedUsers.length > 0) {
@@ -4311,15 +4315,16 @@ function HungryGames() {
   this.setOption = function(id, option, value, text = '') {
     if (!find(id) || !find(id).currentGame) {
       return 'You must create a game first before editing settings! Use "' +
-          self.myPrefix + 'create" to create a game.';
+          msg.prefix + self.postPrefix + 'create" to create a game.';
     } else if (typeof option === 'undefined' || option.length == 0) {
       return null;
     } else if (find(id).currentGame.inProgress) {
       return 'You must end this game before changing settings. Use "' +
-          self.myPrefix + 'end" to abort this game.';
+          msg.prefix + self.postPrefix + 'end" to abort this game.';
     } else if (typeof defaultOptions[option] === 'undefined') {
       return 'That is not a valid option to change! (' + option + ')\nUse `' +
-          self.myPrefix + 'options` to see all changeable options.';
+          msg.prefix + self.postPrefix +
+          'options` to see all changeable options.';
     } else {
       return changeObjectValue(
           find(id).options, defaultOptions, option, value, text.split(' '));
@@ -4362,7 +4367,8 @@ function HungryGames() {
         obj[option] = value;
         if (option == 'teamSize' && value != 0) {
           return 'Set ' + option + ' to ' + obj[option] + ' from ' + old +
-              '\nTo reset teams to the correct size, type "' + self.myPrefix +
+              '\nTo reset teams to the correct size, type "' + msg.prefix +
+              self.postPrefix +
               'teams reset".\nThis will delete all teams, and create ' +
               'new ones.';
         } else {
@@ -4454,10 +4460,12 @@ function HungryGames() {
     embed.setDescription('```js\n' + bodyFields[page].join('\n\n') + '```');
     embed.addField(
         'Simple Example',
-        self.myPrefix + 'options probabilityOfResurrect 0.1', true);
+        msg.prefix + self.postPrefix + 'options probabilityOfResurrect 0.1',
+        true);
     embed.addField(
         'Change Object Example',
-        self.myPrefix + 'options playerOutcomeProbs kill 23', true);
+        msg.prefix + self.postPrefix + 'options playerOutcomeProbs kill 23',
+        true);
 
     if (optionMessages[msg.id]) {
       msg.edit(embed).then((msg_) => {
@@ -4848,8 +4856,8 @@ function HungryGames() {
   function createEvent(msg, id) {
     if (!find(id)) {
       self.common.reply(
-          msg,
-          'You must first create a game with "' + self.myPrefix + 'create".');
+          msg, 'You must first create a game with "' + msg.prefix +
+              self.postPrefix + 'create".');
       return;
     }
     newEventMessages[msg.id] = msg;
@@ -5494,8 +5502,8 @@ function HungryGames() {
   function removeEvent(msg, id) {
     if (!find(id)) {
       self.common.reply(
-          msg,
-          'You must first create a game with "' + self.myPrefix + 'create".');
+          msg, 'You must first create a game with "' + msg.prefix +
+              self.postPrefix + 'create".');
       return;
     }
     const split = msg.text.split(' ');

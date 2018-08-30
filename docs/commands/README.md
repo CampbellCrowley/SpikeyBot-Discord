@@ -112,4 +112,5 @@ See [spikeybot.com](https://www.spikeybot.com/) for examples and more informatio
 | ?ban 'mention' | I will ban the person you mention with a flashy message! | ban, fuckyou |
 | ?smite 'mention' | Silence the peasant who dare oppose you! |  |
 | ?togglemute | Turn on or off automatically preventing a person from using @everyone if they spam it. |  |
+| ?changeprefix | Set a custom prefix for all commands on the current server. |  |
 

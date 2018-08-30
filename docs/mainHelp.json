@@ -531,6 +531,17 @@
               "command": "togglemute"
             }
           ]
+        },
+        {
+          "command": "changeprefix",
+          "description": "Set a custom prefix for all commands on the current server.",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "changeprefix !#!",
+              "result": "After confirming, all commands must start with !#!. For example ```{prefix}ping``` would become ```!#!ping```."
+            }
+          ]
         }
       ]
     }

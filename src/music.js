@@ -132,19 +132,19 @@ function Music() {
     self.command.on('record', commandRecord, true);
 
     self.command.on('kokomo', (msg) => {
-      msg.content = self.myPrefix + 'play kokomo';
+      msg.content = msg.prefix + 'play kokomo';
       self.command.trigger('play', msg);
     });
     self.command.on('vi', (msg) => {
-      msg.content = self.myPrefix + 'play nice try vi';
+      msg.content = msg.prefix + 'play nice try vi';
       self.command.trigger('play', msg);
     });
     self.command.on('airhorn', (msg) => {
-      msg.content = self.myPrefix + 'play airhorn';
+      msg.content = msg.prefix + 'play airhorn';
       self.command.trigger('play', msg);
     });
     self.command.on('rickroll', (msg) => {
-      msg.content = self.myPrefix + 'play rickroll';
+      msg.content = msg.prefix + 'play rickroll';
       self.command.trigger('play', msg);
     });
 
@@ -475,7 +475,7 @@ function Music() {
     if (msg.member.voiceChannel === null) {
       reply(msg, 'You aren\'t in a voice channel!');
     } else {
-      let song = msg.content.replace(self.myPrefix + 'play', '');
+      let song = msg.text;
       if (!song.startsWith(' ')) {
         reply(msg, 'Please specify a song to play.');
         return;
@@ -580,7 +580,7 @@ function Music() {
   function commandQueue(msg) {
     if (!broadcasts[msg.guild.id]) {
       reply(
-          msg, 'I\'m not playing anything. Use "' + self.myPrefix +
+          msg, 'I\'m not playing anything. Use "' + msg.prefix +
               'play Kokomo" to start playing something!');
     } else {
       let embed;
@@ -628,13 +628,12 @@ function Music() {
           msg, 'The queue appears to be empty.\nI can\'t remove nothing ' +
               'from nothing!');
     } else {
-      let indexString = msg.content.replace(self.myPrefix + 'remove', '')
-                            .replace(self.myPrefix + 'dequeue', '');
+      let indexString = msg.text;
       if (!indexString.startsWith(' ')) {
         reply(
             msg,
             'You must specify the index of the song to dequeue.\nYou can ' +
-                'view the queue with "' + self.myPrefix + 'queue".');
+                'view the queue with "' + msg.prefix + 'queue".');
       } else {
         let index = Number(indexString.replace(' ', ''));
         if (typeof index !== 'number' || index <= 0 ||
@@ -656,7 +655,7 @@ function Music() {
    * @listens SpikeyBot~Command#lyrics
    */
   function commandLyrics(msg) {
-    let song = msg.content.replace(self.myPrefix + 'lyrics', '');
+    let song = msg.text;
     if (song.length <= 1) {
       reply(msg, 'Please specify a song.');
       return;
@@ -855,7 +854,7 @@ function Music() {
     const url = self.common.webURL + filename;
     if (msg.mentions.users.size === 0) {
       reply(
-          msg, 'Recording everyone in voice channel. Type ' + self.myPrefix +
+          msg, 'Recording everyone in voice channel. Type ' + msg.prefix +
               'stop to stop',
           url);
     } else {
