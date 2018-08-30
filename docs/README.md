@@ -5263,10 +5263,13 @@ Main class that manages the bot.
         * [~disconnectReason](#SpikeyBot..disconnectReason) : <code>string</code> ℗
         * [~enableSharding](#SpikeyBot..enableSharding) : <code>boolean</code> ℗
         * [~numShards](#SpikeyBot..numShards) : <code>number</code> ℗
+        * [~initialized](#SpikeyBot..initialized) : <code>boolean</code> ℗
         * [~reactToAnthony](#SpikeyBot..reactToAnthony) : <code>boolean</code> ℗
+        * [~guildPrefixes](#SpikeyBot..guildPrefixes) : <code>Object.&lt;string&gt;</code> ℗
         * [~version](#SpikeyBot..version) : <code>string</code> ℗
         * [~testChannel](#SpikeyBot..testChannel) : <code>string</code> ℗
         * [~trustedIds](#SpikeyBot..trustedIds) : <code>Array.&lt;string&gt;</code> ℗
+        * [~guildPrefixFile](#SpikeyBot..guildPrefixFile) : <code>string</code> ℗
         * [~helpmessagereply](#SpikeyBot..helpmessagereply) : <code>string</code> ℗
         * [~blockedmessage](#SpikeyBot..blockedmessage) : <code>string</code> ℗
         * [~onlyservermessage](#SpikeyBot..onlyservermessage) : <code>string</code> ℗
@@ -5281,8 +5284,11 @@ Main class that manages the bot.
         * [~commandToggleReact(msg)](#SpikeyBot..commandToggleReact) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandHelp(msg)](#SpikeyBot..commandHelp) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandUpdateGame(msg)](#SpikeyBot..commandUpdateGame) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~commandChangePrefix(msg)](#SpikeyBot..commandChangePrefix) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandReboot(msg)](#SpikeyBot..commandReboot) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandReload(msg)](#SpikeyBot..commandReload) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~getPrefix(id)](#SpikeyBot..getPrefix) ⇒ <code>string</code> ℗
+        * [~loadGuildPrefixes(guilds)](#SpikeyBot..loadGuildPrefixes) ℗
 
 <a name="SpikeyBot+getSubmoduleCommits"></a>
 
@@ -5461,11 +5467,27 @@ decide. Set from `--shards=#` cli argument.
 **Kind**: inner property of [<code>SpikeyBot</code>](#SpikeyBot)  
 **Default**: <code>0</code>  
 **Access**: private  
+<a name="SpikeyBot..initialized"></a>
+
+### SpikeyBot~initialized : <code>boolean</code> ℗
+Has the bot been initialized already.
+
+**Kind**: inner property of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Default**: <code>false</code>  
+**Access**: private  
 <a name="SpikeyBot..reactToAnthony"></a>
 
 ### SpikeyBot~reactToAnthony : <code>boolean</code> ℗
 Should we add a reaction to every message that Anthony sends. Overriden if
 reboot.dat exists.
+
+**Kind**: inner property of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Access**: private  
+<a name="SpikeyBot..guildPrefixes"></a>
+
+### SpikeyBot~guildPrefixes : <code>Object.&lt;string&gt;</code> ℗
+Cache of all loaded guild's command prefixes. Populated asyncronously after
+client ready event.
 
 **Kind**: inner property of [<code>SpikeyBot</code>](#SpikeyBot)  
 **Access**: private  
@@ -5491,6 +5513,14 @@ Discord IDs that are allowed to reboot the bot.
 
 **Kind**: inner constant of [<code>SpikeyBot</code>](#SpikeyBot)  
 **Access**: private  
+<a name="SpikeyBot..guildPrefixFile"></a>
+
+### SpikeyBot~guildPrefixFile : <code>string</code> ℗
+The path in the guild's subdirectory where we store custom prefixes.
+
+**Kind**: inner constant of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Access**: private  
+**Defaut**:   
 <a name="SpikeyBot..helpmessagereply"></a>
 
 ### SpikeyBot~helpmessagereply : <code>string</code> ℗
@@ -5631,6 +5661,18 @@ Change current status message.
 | --- | --- | --- |
 | msg | <code>Discord~Message</code> | Message that triggered command. |
 
+<a name="SpikeyBot..commandChangePrefix"></a>
+
+### SpikeyBot~commandChangePrefix(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Change the custom prefix for the given guild.
+
+**Kind**: inner method of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
 <a name="SpikeyBot..commandReboot"></a>
 
 ### SpikeyBot~commandReboot(msg) : [<code>commandHandler</code>](#commandHandler) ℗
@@ -5655,6 +5697,31 @@ Reload all sub modules by unloading then re-requiring.
 | Param | Type | Description |
 | --- | --- | --- |
 | msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="SpikeyBot..getPrefix"></a>
+
+### SpikeyBot~getPrefix(id) ⇒ <code>string</code> ℗
+Get this guild's custom prefix. Returns the default prefix otherwise.
+
+**Kind**: inner method of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Returns**: <code>string</code> - The prefix for all commands in the given guild.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| id | <code>Discord~Guild</code> \| <code>string</code> \| <code>number</code> | The guild id or guild to lookup. |
+
+<a name="SpikeyBot..loadGuildPrefixes"></a>
+
+### SpikeyBot~loadGuildPrefixes(guilds) ℗
+Load prefixes from file for the given guilds asynchronously.
+
+**Kind**: inner method of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| guilds | <code>Array.&lt;Discord~Guild&gt;</code> | Array of guilds to fetch the custom prefixes of. |
 
 <a name="SubModule"></a>
 

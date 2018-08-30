@@ -197,9 +197,18 @@ function SpikeyBot() {
     }
   }
 
-  const prefix = isDev ? '~' : '?';
+  const defaultPrefix = isDev ? '~' : '?';
 
   if (minimal) common.log('STARTING IN MINIMAL MODE');
+
+  /**
+   * Has the bot been initialized already.
+   *
+   * @private
+   * @default
+   * @type {boolean}
+   */
+  let initialized = false;
 
   /**
    * Should we add a reaction to every message that Anthony sends. Overriden if
@@ -221,6 +230,25 @@ function SpikeyBot() {
     common.spikeyId,       // Me
     '126464376059330562',  // Rohan
   ];
+
+  /**
+   * Cache of all loaded guild's command prefixes. Populated asyncronously after
+   * client ready event.
+   *
+   * @private
+   * @type {Object.<string>}
+   */
+  let guildPrefixes = {};
+
+  /**
+   * The path in the guild's subdirectory where we store custom prefixes.
+   *
+   * @private
+   * @constant
+   * @defaut
+   * @type {string}
+   */
+  const guildPrefixFile = '/prefix.txt';
 
   /**
    * The message sent to the channel where the user asked for help.
@@ -298,7 +326,8 @@ function SpikeyBot() {
      * @return {boolean} True if command was handled by us.
      */
     this.trigger = function(cmd, msg) {
-      if (cmd.startsWith(prefix)) cmd = cmd.replace(prefix, '');
+      if (cmd.startsWith(msg.prefix)) cmd = cmd.replace(msg.prefix, '');
+      cmd = cmd.toLowerCase();
       if (cmds[cmd]) {
         if (cmds[cmd].validOnlyOnServer && msg.guild === null) {
           common.reply(msg, onlyservermessage);
@@ -308,7 +337,7 @@ function SpikeyBot() {
           common.reply(msg, disabledcommandmessage);
           return true;
         }
-        msg.text = msg.content.replace(prefix + cmd, '');
+        msg.text = msg.content.replace(msg.prefix + cmd, '');
         try {
           cmds[cmd](msg);
         } catch (err) {
@@ -442,7 +471,7 @@ function SpikeyBot() {
    * @return {boolean} True if msg is the given command.
    */
   function isCmd(msg, cmd) {
-    return msg.content.startsWith(prefix + cmd);
+    return msg.content.startsWith(msg.prefix + cmd);
   }
   /**
    * Changes the bot's status message.
@@ -475,30 +504,39 @@ function SpikeyBot() {
       } else if (isDev) {
         updateGame('Version: ' + version);
       } else {
-        updateGame(prefix + 'help for help');
+        updateGame(defaultPrefix + 'help for help');
       }
     }
     let logChannel = client.channels.get(common.logChannel);
-    if (testInstance && logChannel) {
-      logChannel.send('Beginning in unit test mode (JS' + version + ')');
-    } else if (logChannel) {
-      let additional = '';
-      if (client.shard) {
-        additional +=
-            ' Shard: ' + client.shard.id + ' of ' + client.shard.count;
+    if (!isDev) {
+      if (testInstance && logChannel) {
+        logChannel.send('Beginning in unit test mode (JS' + version + ')');
+      } else if (logChannel) {
+        let additional = '';
+        if (client.shard) {
+          additional +=
+              ' Shard: ' + client.shard.id + ' of ' + client.shard.count;
+        }
+        if (disconnectReason) {
+          additional +=
+              ' after disconnecting from Discord!\n' + disconnectReason;
+          disconnectReason = null;
+        } else if (!initialized) {
+          additional += ' from cold stop.';
+        }
+        logChannel.send(
+            'I just rebooted (JS' + version + ') ' +
+            (minimal ? 'MINIMAL' : 'FULL') + additional);
       }
-      if (disconnectReason) {
-        additional += ' after disconnecting from Discord!\n' + disconnectReason;
-        disconnectReason = null;
-      }
-      logChannel.send(
-          'I just rebooted (JS' + version + ') ' +
-          (minimal ? 'MINIMAL' : 'FULL') + additional);
     }
+    // Initialize all submodules even if we have already initialized the bot,
+    // because this will updated the reference to the current client if this was
+    // changed during reconnection.
     for (let i in subModules) {
       if (!subModules[i] instanceof Object || !subModules[i].begin) continue;
       try {
-        subModules[i].begin(prefix, Discord, client, command, common, self);
+        subModules[i].begin(
+            defaultPrefix, Discord, client, command, common, self);
       } catch (err) {
         console.log(err);
         if (logChannel) {
@@ -514,7 +552,7 @@ function SpikeyBot() {
             'Previous initialization errors may be incorrect.');
       }
     }
-    if (!minimal) {
+    if (!minimal && !initialized) {
       fs.readFile('./save/reboot.dat', function(err, file) {
         if (err) return;
         let msg = JSON.parse(file);
@@ -529,6 +567,9 @@ function SpikeyBot() {
 
         if (msg.noReactToAnthony) reactToAnthony = false;
       });
+    }
+    if (!initialized) {
+      loadGuildPrefixes(Array.from(client.guilds.array()));
     }
     initialized = true;
     disconnectReason = 'Unknown reason for disconnect.';
@@ -597,14 +638,16 @@ function SpikeyBot() {
     }
     if (!testMode && msg.author.bot) return;
 
+    msg.prefix = getPrefix(msg.guild);
+
     // If message is equation we can graph.
     const regexForm = new RegExp('^[yY]\\s*=');
     if (msg.content.match(regexForm)) {
-      msg.content = '?graph ' + msg.content;
+      msg.content = msg.prefix + 'graph ' + msg.content;
     }
 
-    if (msg.guild === null && !msg.content.startsWith(prefix)) {
-      msg.content = prefix + msg.content;
+    if (msg.guild === null && !msg.content.startsWith(msg.prefix)) {
+      msg.content = msg.prefix + msg.content;
     }
 
     if (!minimal && reactToAnthony && msg.author.id == '174030717846552576') {
@@ -688,10 +731,77 @@ function SpikeyBot() {
         common.reply(
             msg, 'I\'m sorry, but you are not allowed to do that. :(\n');
       } else {
-        let game = msg.content.replace(prefix + 'updategame ', '');
+        let game = msg.content.replace(msg.prefix + 'updategame ', '');
         updateGame(game);
         common.reply(msg, 'I changed my status to "' + game + '"!');
       }
+    }
+  }
+
+  command.on('changeprefix', commandChangePrefix, true);
+  /**
+   * Change the custom prefix for the given guild.
+   *
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens SpikeyBot~Command#changePrefix
+   */
+  function commandChangePrefix(msg) {
+    const perms = msg.member.permissions;
+    const confirmEmoji = '✅';
+    const newPrefix = msg.text.slice(1);
+    if (!perms.has(Discord.Permissions.FLAGS.ADMINISTRATOR)) {
+      common.reply(
+          msg, 'Sorry, but you must be a server administrator to set a ' +
+              'custom prefix.');
+      return;
+    } else if (newPrefix.length < 1) {
+      common.reply(msg, 'Please specify a new prefix after the command.');
+    } else if (newPrefix.indexOf('`') > -1) {
+      common.reply(
+          msg,
+          'Sorry, but custom prefixes may not contain the `\\`` character.');
+    } else {
+      msg.channel
+          .send(
+              common.mention(msg) +
+              ' Are you sure you wish to change the command prefix for this ' +
+              'server from `' + getPrefix(msg.guild.id) + '` to `' + newPrefix +
+              '`?')
+          .then((msg_) => {
+            msg_.react(confirmEmoji);
+            msg_.awaitReactions((reaction, user) => {
+                  if (user.id !== msg.author.id) return false;
+                  return reaction.emoji.name == confirmEmoji;
+                }, {max: 1, time: 60000}).then((reactions) => {
+              msg_.reactions.removeAll().catch(() => {});
+              if (reactions.size == 0) {
+                msg_.edit(
+                    'Changing custom prefix timed out. Enter command again ' +
+                    'if you still wish to change the command prefix.');
+                return;
+              }
+              guildPrefixes[msg.guild.id] = newPrefix;
+              msg_.edit(
+                  common.mention(msg) + ' Prefix changed to `' + newPrefix +
+                  '`!');
+              fs.writeFile(
+                  common.guildSaveDir + msg.guild.id + guildPrefixFile,
+                  newPrefix, function(err) {
+                    if (err) {
+                      common.error(
+                          'Failed to save guild custom prefix! ' +
+                          msg.guild.id + ' (' + newPrefix + ')');
+                      console.error(err);
+                    } else {
+                      common.log(
+                          'Guild ' + msg.guild.id + ' updated prefix to ' +
+                          newPrefix);
+                    }
+                  });
+            });
+          });
     }
   }
 
@@ -809,7 +919,8 @@ function SpikeyBot() {
             }
             delete require.cache[require.resolve(subModuleNames[i])];
             subModules[i] = require(subModuleNames[i]);
-            subModules[i].begin(prefix, Discord, client, command, common, self);
+            subModules[i].begin(
+                defaultPrefix, Discord, client, command, common, self);
             reloaded.push(subModuleNames[i]);
           } catch (err) {
             error = true;
@@ -852,6 +963,44 @@ function SpikeyBot() {
           return el.name && el.name.length > 0;
         });
   };
+
+  /**
+   * Get this guild's custom prefix. Returns the default prefix otherwise.
+   * @private
+   *
+   * @param {Discord~Guild|string|number} id The guild id or guild to lookup.
+   * @return {string} The prefix for all commands in the given guild.
+   */
+  function getPrefix(id) {
+    if (typeof id === 'object') id = id.id;
+    return guildPrefixes[id] || defaultPrefix;
+  }
+
+  /**
+   * Load prefixes from file for the given guilds asynchronously.
+   * @private
+   *
+   * @param {Discord~Guild[]} guilds Array of guilds to fetch the custom
+   * prefixes of.
+   */
+  function loadGuildPrefixes(guilds) {
+    const id = guilds.splice(0, 1)[0].id;
+    const guildFile = common.guildSaveDir + id + guildPrefixFile;
+    const onFileRead = function(id) {
+      return function(err, data) {
+        if (!err && data.toString().length > 0) {
+          guildPrefixes[id] = data.toString();
+        }
+        if (guilds.length > 0) {
+          loadGuildPrefixes(guilds);
+        } else {
+          common.log('Finished loading custom prefixes.');
+          console.log(guildPrefixes);
+        }
+      };
+    };
+    fs.readFile(guildFile, onFileRead(id));
+  }
 
   // Dev:
   // https://discordapp.com/oauth2/authorize?&client_id=422623712534200321&scope=bot
