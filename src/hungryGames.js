@@ -1086,7 +1086,6 @@ function HungryGames() {
           startGame(msg, id);
           break;
         case 'pause':
-        case 'stop':
           pauseAutoplay(msg, id);
           break;
         case 'autoplay':
@@ -1107,6 +1106,7 @@ function HungryGames() {
           break;
         case 'end':
         case 'abort':
+        case 'stop':
           endGame(msg, id);
           break;
         case 'save':
