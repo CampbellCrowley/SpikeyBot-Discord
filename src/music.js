@@ -1,17 +1,18 @@
 // Copyright 2018 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
-const ytdl = require('youtube-dl');
-const fs = require('fs');
+const ytdl = require('youtube-dl'); // Music thread uses separate require.
+const fs = require('fs'); // Music thread uses separate require.
 const ogg = require('ogg');
 const opus = require('node-opus');
 const spawn = require('threads').spawn;
+const Readable = require('stream').Readable;
 require('./subModule.js')(Music);
 
 /**
  * @classdesc Music and audio related commands.
  * @class
  * @augments SubModule
- * @listens Discord~Client#handleVoiceStateUpdate
+ * @listens Discord~Client#voiceStateUpdate
  * @listens SpikeyBot~Command#play
  * @listens SpikeyBot~Command#leave
  * @listens SpikeyBot~Command#stop
@@ -204,16 +205,16 @@ function Music() {
    * and recordings to stop.
    *
    * @private
-   * @param {Discord~GuildMember} oldMem Member before status update.
-   * @param {Discord~GuildMember} newMem Member after status update.
-   * @listens Discord~Client#handleVoiceStateUpdate
+   * @param {Discord~VoiceState} oldState State before status update.
+   * @param {Discord~VoiceState} newState State after status update.
+   * @listens Discord~Client#voiceStateUpdate
    */
-  function handleVoiceStateUpdate(oldMem, newMem) {
-    if (oldMem.voiceChannel && oldMem.voiceChannel.members &&
-        oldMem.voiceChannel.members.size === 1 &&
-        oldMem.voiceChannel.members.get(self.client.user.id)) {
+  function handleVoiceStateUpdate(oldState, newState) {
+    if (oldState.channel && oldState.channel.members &&
+        oldState.channel.members.size === 1 &&
+        oldState.channel.members.get(self.client.user.id)) {
       self.log('Leaving voice channel because everyone left me to be alone :(');
-      oldMem.voiceChannel.leave();
+      oldState.channel.leave();
     }
   }
 
@@ -274,7 +275,7 @@ function Music() {
         self.command.trigger('stop', msg);
       }
     } else {
-      msg.member.voiceChannel.join()
+      msg.member.voice.channel.join()
           .then((conn) => {
             broadcast.voice = conn;
             try {
@@ -314,6 +315,9 @@ function Music() {
     }
     broadcast.isLoading = true;
     broadcast.skips = {};
+    if (broadcast.current && broadcast.current.thread) {
+      broadcast.current.thread.kill();
+    }
     broadcast.current = broadcast.queue.splice(0, 1)[0];
     try {
       makeBroadcast(broadcast);
@@ -330,9 +334,9 @@ function Music() {
       embed.setTitle(
           'Now playing [' + broadcast.queue.length + ' left in queue]');
       broadcast.current.request.channel.send(embed);
-      broadcast.current.stream.on('info', (info) => {
+      broadcast.current.oninfo = function(info) {
         broadcast.isLoading = false;
-      });
+      };
     } else {
       if (special[broadcast.current.song]) {
         if (!special[broadcast.current.song].url) {
@@ -363,14 +367,14 @@ function Music() {
               });
         }
       } else {
-        broadcast.current.stream.on('info', (info) => {
+        broadcast.current.oninfo = function(info) {
           broadcast.isLoading = false;
           broadcast.current.info = info;
           let embed = formatSongInfo(broadcast.current.info);
           embed.setTitle(
               'Now playing [' + broadcast.queue.length + ' left in queue]');
           broadcast.current.request.channel.send(embed);
-        });
+        };
       }
     }
   }
@@ -383,60 +387,100 @@ function Music() {
    * information.
    */
   function makeBroadcast(broadcast) {
+    // Setup voice connection listeners.
+    broadcast.voice.on('disconnect', () => {
+      if (broadcast.current.stream) broadcast.current.stream.destroy();
+      if (broadcast.current.thread) broadcast.current.thread.kill();
+    });
+
+    broadcast.voice.on('speaking', function(user, speaking) {
+      console.log('VoiceConnection:', user.username, speaking);
+      if (!broadcast.voice.speaking) endSong(broadcast);
+    });
+
+    // Setup readable stream for audio data.
+    broadcast.current.readable = new Readable();
+    broadcast.current.readable._read = function() {};
+    broadcast.broadcast = broadcast.voice.play(broadcast.current.readable);
+
+    broadcast.broadcast.on('speaking', function(speaking) {
+      if (!speaking) endSong(broadcast);
+    });
+
+    broadcast.broadcast.setBitrate(42);
+    broadcast.broadcast.setFEC(true);
+    broadcast.broadcast.setVolume(0.5);
+
+    broadcast.broadcast.on('error', function(err) {
+      self.error('Error in starting broadcast');
+      console.log(err);
+      broadcast.current.request.channel.send(
+          '```An error occured while attempting to play ' +
+          broadcast.current.song + '.```');
+      broadcast.isLoading = false;
+      skipSong(broadcast);
+    });
+
+    // Spawn thread for starting audio stream.
     let input = {
       song: broadcast.current.song,
       special: special,
-      ytdl: ytdl,
-      fs: fs,
       ytdlOpts: ytdlOpts,
     };
     if (broadcast.current.info) {
       input.song = broadcast.current.info.url;
     }
-    spawn(startStream)
-        .send(input)
-        .on('message', function(stream) {
-          broadcast.broadcast = broadcast.voice.play(stream);
-
-          broadcast.broadcast.setBitrate(42);
-          broadcast.broadcast.setFEC(true);
-          broadcast.broadcast.setVolume(0.5);
-
-          broadcast.voice.ondisconnect = function() {
-            if (broadcast.current.stream) broadcast.current.stream.destroy();
-          };
-
-          /* broadcast.current.stream.on('end', function() {
-            endSong(broadcast);
-          }); */
-          broadcast.broadcast.on('speaking', function(speaking) {
-            if (!speaking) endSong(broadcast);
-          });
-          broadcast.broadcast.on('error', function(err) {
-            self.error('Error in starting broadcast');
-            console.log(err);
-            broadcast.current.request.channel.send(
-                '```An error occured while attempting to play ' +
-                broadcast.current.song + '.```');
-            broadcast.isLoading = false;
-            skipSong(broadcast);
-          });
-        });
+    broadcast.current.thread = spawn(startStream);
+    broadcast.current.thread.send(input);
+    broadcast.current.thread.on('progress', function(data) {
+      if (data.ytdlinfo) {
+        broadcast.current.oninfo(data.ytdlinfo);
+        return;
+      }
+      if (data.data) data.data = Buffer.from(data.data);
+      broadcast.current.readable.push(data.data);
+    });
+    broadcast.current.thread.on('done', function() {
+      broadcast.current.thread.kill();
+    });
+    broadcast.current.thread.on('error', function(err) {
+      self.error('Error in thread');
+      console.log(err);
+      broadcast.current.request.channel.send(
+          '```An error occured while attempting to play ' +
+          broadcast.current.song + '.```');
+      broadcast.isLoading = false;
+      skipSong(broadcast);
+    });
   }
 
   /**
    * Starts the streams as a thread and reports done with the streams.
    *
+   * @private
    * @param {Object} input Input vars.
-   * @param {function} done Done function.
+   * @param {function} done Done callback.
+   * @param {function} progress Progress callback.
    */
-  function startStream(input, done) {
+  function startStream(input, done, progress) {
+    let stream;
     if (input.special[input.song]) {
-      done(input.fs.createReadStream(input.special[input.song].file));
+      stream = require('fs').createReadStream(input.special[input.song].file);
     } else {
-      done(input.ytdl(input.song, input.ytdlOpts));
+      stream = require('youtube-dl')(input.song, input.ytdlOpts);
+      stream.on('info', function(info) {
+        progress({ytdlinfo: info});
+      });
     }
+    stream.on('data', function(chunk) {
+      progress({data: chunk});
+    });
+    stream.on('close', function() {
+      progress({data: null});
+      done();
+    });
   }
+
   /**
    * Triggered when a song has finished playing.
    *
@@ -469,10 +513,10 @@ function Music() {
    * @listens SpikeyBot~Command#join
    */
   function commandJoin(msg) {
-    if (msg.member.voiceChannel === null) {
+    if (msg.member.voice.channel === null) {
       reply(msg, 'You aren\'t in a voice channel!');
     } else {
-      msg.member.voiceChannel.join();
+      msg.member.voice.channel.join();
     }
   }
 
@@ -485,7 +529,7 @@ function Music() {
    * @listens SpikeyBot~Command#play
    */
   function commandPlay(msg) {
-    if (msg.member.voiceChannel === null) {
+    if (msg.member.voice.channel === null) {
       reply(msg, 'You aren\'t in a voice channel!');
     } else {
       let song = msg.content.replace(self.myPrefix + 'play', '');
@@ -556,8 +600,8 @@ function Music() {
    */
   function commandLeave(msg) {
     msg.guild.members.fetch(self.client.user).then((me) => {
-      if (me.voiceChannel) {
-        me.voiceChannel.leave();
+      if (me.voice.channel) {
+        me.voice.channel.leave();
         reply(msg, 'Goodbye!');
       } else {
         reply(msg, 'I\'m not playing anything.');
@@ -859,12 +903,13 @@ function Music() {
    * @listens SpikeyBot~Command#record
    */
   function commandRecord(msg) {
-    if (msg.member.voiceChannel === null) {
+    if (msg.member.voice.channel === null) {
       reply(msg, 'You aren\'t in a voice channel!');
       return;
     }
     const filename = 'recordings/' +
-        encodeURIComponent(msg.member.voiceChannel.name + Date.now()) + '.opus';
+        encodeURIComponent(msg.member.voice.channel.name + Date.now()) +
+        '.opus';
     const url = self.common.webURL + filename;
     if (msg.mentions.users.size === 0) {
       reply(
@@ -900,13 +945,13 @@ function Music() {
         stream.destroy();
       }); */
     };
-    msg.member.voiceChannel.join().then((conn) => {
+    msg.member.voice.channel.join().then((conn) => {
       // Timeout and sound are due to current Discord bug requiring bot to play
       // sound for 0.1s before being able to receive audio.
       conn.play('./sounds/plink.ogg');
       self.client.setTimeout(() => {
         let receiver = conn.createReceiver();
-        msg.member.voiceChannel.members.forEach(function(member) {
+        msg.member.voice.channel.members.forEach(function(member) {
           listen(member.user, receiver, conn);
         });
         conn.on('speaking', (user, speaking) => {
