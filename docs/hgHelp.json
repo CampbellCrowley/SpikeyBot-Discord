@@ -267,7 +267,7 @@
         {
           "command": "end",
           "description": "This will end a game early.",
-          "aliases": "end, abort",
+          "aliases": "end, abort, stop",
           "examples": [
             {
               "description": "Basic Usage",
@@ -290,7 +290,6 @@
         {
           "command": "pause",
           "description": "Stop autoplay at the end of the day.",
-          "aliases": "pause, stop",
           "examples": [
             {
               "description": "Basic Usage",

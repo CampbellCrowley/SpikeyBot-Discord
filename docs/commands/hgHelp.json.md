@@ -41,8 +41,8 @@
 | Command | Description | Aliases |
 | --- | --- | --- |
 | ?hg start | This will start a game with your settings. | start, s |
-| ?hg end | This will end a game early. | end, abort |
+| ?hg end | This will end a game early. | end, abort, stop |
 | ?hg autoplay | Automatically continue to the next day after a day is over. | autoplay, auto, resume, play, go |
-| ?hg pause | Stop autoplay at the end of the day. | pause, stop |
+| ?hg pause | Stop autoplay at the end of the day. |  |
 | ?hg next | Simulate the next day of the Games! | next, nextday |
 
