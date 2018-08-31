@@ -4700,13 +4700,13 @@ Music and audio related commands.
         * [~ytdlOpts](#Music..ytdlOpts) : <code>Array.&lt;string&gt;</code> ℗
         * [~mention(msg)](#Music..mention) ⇒ <code>string</code> ℗
         * [~reply(msg, text, post)](#Music..reply) ⇒ <code>Promise</code> ℗
-        * [~handleVoiceStateUpdate(oldMem, newMem)](#Music..handleVoiceStateUpdate) ℗
+        * [~handleVoiceStateUpdate(oldState, newState)](#Music..handleVoiceStateUpdate) ℗
         * [~formatSongInfo(info)](#Music..formatSongInfo) ⇒ <code>Discord~MessageEmbed</code> ℗
         * [~formNum(num)](#Music..formNum) ⇒ <code>string</code> ℗
         * [~enqueueSong(broadcast, song, msg, info)](#Music..enqueueSong) ℗
         * [~startPlaying(broadcast)](#Music..startPlaying) ℗
         * [~makeBroadcast(broadcast)](#Music..makeBroadcast) ℗
-        * [~startStream(input, done)](#Music..startStream)
+        * [~startStream(input, done, progress)](#Music..startStream) ℗
         * [~endSong(broadcast)](#Music..endSong) ℗
         * [~skipSong(broadcast)](#Music..skipSong) ℗
         * [~commandJoin(msg)](#Music..commandJoin) : [<code>commandHandler</code>](#commandHandler) ℗
@@ -4971,7 +4971,7 @@ Replies to the author and channel of msg with the given message.
 
 <a name="Music..handleVoiceStateUpdate"></a>
 
-### Music~handleVoiceStateUpdate(oldMem, newMem) ℗
+### Music~handleVoiceStateUpdate(oldState, newState) ℗
 Leave a voice channel if all other users have left. Should also cause music
 and recordings to stop.
 
@@ -4980,8 +4980,8 @@ and recordings to stop.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| oldMem | <code>Discord~GuildMember</code> | Member before status update. |
-| newMem | <code>Discord~GuildMember</code> | Member after status update. |
+| oldState | <code>Discord~VoiceState</code> | State before status update. |
+| newState | <code>Discord~VoiceState</code> | State after status update. |
 
 <a name="Music..formatSongInfo"></a>
 
@@ -5052,15 +5052,17 @@ playing the audio.
 
 <a name="Music..startStream"></a>
 
-### Music~startStream(input, done)
+### Music~startStream(input, done, progress) ℗
 Starts the streams as a thread and reports done with the streams.
 
 **Kind**: inner method of [<code>Music</code>](#Music)  
+**Access**: private  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | input | <code>Object</code> | Input vars. |
-| done | <code>function</code> | Done function. |
+| done | <code>function</code> | Done callback. |
+| progress | <code>function</code> | Progress callback. |
 
 <a name="Music..endSong"></a>
 
