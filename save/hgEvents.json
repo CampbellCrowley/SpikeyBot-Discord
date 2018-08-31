@@ -1398,9 +1398,9 @@
           "victim": { "count": "1", "outcome": "dies" }
         },
         {
-          "message": "{victim} run out of places to run and are stung to death!",
+          "message": "{victim} run[Vs|] out of places to run and [Vis|are] stung to death!",
           "attacker": { "count": "0", "outcome": "nothing" },
-          "victim": { "count": "2", "outcome": "dies" }
+          "victim": { "count": "-1", "outcome": "dies" }
         }
       ]
     },

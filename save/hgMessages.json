@@ -103,7 +103,7 @@
     "So, I was told that it's okay not to kill people sometimes.",
     "I called in sick today, and my replacement couldn't bring himself to kill anyone today, sorry! #blamerohan",
     "Looks like all of you are surprisingly good at surviving...",
-    "I fully apologize in advance for today.",
+    "I fully apologize for today.",
     "I would say today is my fault, but I think Kyp should take the blame.",
     "Nobody? How? This is the Games? People survive this?",
     "All of you living, are pansies! Go kill someone!",
@@ -131,7 +131,9 @@
     "Hey {}! Don't fuck up!"
   ],
   "resurrected": [
-    "{victim} ha[Vs|ve] returned from the dead and [Vwas|were] put back into the arena!"
+    "{victim} ha[Vs|ve] returned from the dead and [Vwas|were] put back into the arena!",
+    "{victim} ha[Vs|ve] been revived and [Vwas|were] put back into the arena!",
+    "{victim} ha[Vs|ve] been resurrected and [Vwas|were] put back into the arena!"
   ],
   "patchWounds": [
     "{victim} manage[Vs|] to patch their wounds.",

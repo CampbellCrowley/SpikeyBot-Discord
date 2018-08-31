@@ -1614,10 +1614,10 @@ Hunger Games simulator.
         * [~startAutoplay(msg, id)](#HungryGames..startAutoplay) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~nextDay(msg, id, [retry])](#HungryGames..nextDay) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~pickEvent(userPool, eventPool, options, numAlive, teams, probOpts, weaponWielder)](#HungryGames..pickEvent) ⇒ [<code>Event</code>](#HungryGames..Event) ℗
-        * [~validateEventTeamConstraint(numVictim, numAttacker, userPool, teams, options, victimsDie, attackersDie, weaponWielder)](#HungryGames..validateEventTeamConstraint) ⇒ <code>boolean</code> ℗
+        * [~validateEventTeamConstraint(numVictim, numAttacker, userPool, teams, options, victimsDie, attackersDie, weaponWielder)](#HungryGames..validateEventTeamConstraint) ⇒ <code>string</code> ℗
         * [~validateEventVictorConstraint(numVictim, numAttacker, numAlive, options, victimsDie, attackersDie)](#HungryGames..validateEventVictorConstraint) ⇒ <code>boolean</code> ℗
         * [~validateEventNumConstraint(numVictim, numAttacker, userPool, numAlive)](#HungryGames..validateEventNumConstraint) ⇒ <code>boolean</code> ℗
-        * [~validateEventRequirements(numVictim, numAttacker, userPool, numAlive, teams, options, victimsDie, attackersDie, weaponWielder)](#HungryGames..validateEventRequirements) ⇒ <code>boolean</code> ℗
+        * [~validateEventRequirements(numVictim, numAttacker, userPool, numAlive, teams, options, victimsDie, attackersDie, weaponWielder)](#HungryGames..validateEventRequirements) ⇒ <code>string</code> ℗
         * [~pickAffectedPlayers(numVictim, numAttacker, options, userPool, teams, weaponWielder)](#HungryGames..pickAffectedPlayers) ⇒ [<code>Array.&lt;Player&gt;</code>](#HungryGames..Player) ℗
         * [~makeBattleEvent(affectedUsers, numVictim, numAttacker, mention, id)](#HungryGames..makeBattleEvent) ⇒ [<code>Event</code>](#HungryGames..Event) ℗
         * [~weightedUserRand()](#HungryGames..weightedUserRand) ⇒ <code>number</code> ℗
@@ -1658,6 +1658,7 @@ Hunger Games simulator.
         * [~getMessage(type)](#HungryGames..getMessage) ⇒ <code>string</code> ℗
         * [~find(id)](#HungryGames..find) ⇒ [<code>GuildGame</code>](#HungryGames..GuildGame) ℗
         * [~calcColNum(numCols, statusList)](#HungryGames..calcColNum) ⇒ <code>number</code> ℗
+        * [~deepFreeze(object)](#HungryGames..deepFreeze) ⇒ <code>Object</code> ℗
         * [~exit([code])](#HungryGames..exit) ℗
         * [~sigint()](#HungryGames..sigint) ℗
         * [~OutcomeProbabilities}](#HungryGames..OutcomeProbabilities}) : <code>Object</code>
@@ -2906,12 +2907,11 @@ requirements, or null if something went wrong.
 
 <a name="HungryGames..validateEventTeamConstraint"></a>
 
-### HungryGames~validateEventTeamConstraint(numVictim, numAttacker, userPool, teams, options, victimsDie, attackersDie, weaponWielder) ⇒ <code>boolean</code> ℗
+### HungryGames~validateEventTeamConstraint(numVictim, numAttacker, userPool, teams, options, victimsDie, attackersDie, weaponWielder) ⇒ <code>string</code> ℗
 Ensure teammates don't attack eachother.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
-**Returns**: <code>boolean</code> - Is is possible to use this event with current settings
-about teammates.  
+**Returns**: <code>string</code> - String describing failing check, or null of pass.  
 **Access**: private  
 
 | Param | Type | Description |
@@ -2963,12 +2963,12 @@ from the number of players left to choose from.
 
 <a name="HungryGames..validateEventRequirements"></a>
 
-### HungryGames~validateEventRequirements(numVictim, numAttacker, userPool, numAlive, teams, options, victimsDie, attackersDie, weaponWielder) ⇒ <code>boolean</code> ℗
+### HungryGames~validateEventRequirements(numVictim, numAttacker, userPool, numAlive, teams, options, victimsDie, attackersDie, weaponWielder) ⇒ <code>string</code> ℗
 Ensure the event chosen meets all requirements for actually being used in
 the current game.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
-**Returns**: <code>boolean</code> - If all constraints are met with the given event.  
+**Returns**: <code>string</code> - String of failing constraint check, or null if passes.  
 **Access**: private  
 
 | Param | Type | Description |
@@ -3546,6 +3546,19 @@ https://discordapp.com/developers/docs/resources/channel#embed-limits)
 | --- | --- | --- |
 | numCols | <code>number</code> | Minimum number of columns. |
 | statusList | <code>Array.&lt;string&gt;</code> | List of text to check. |
+
+<a name="HungryGames..deepFreeze"></a>
+
+### HungryGames~deepFreeze(object) ⇒ <code>Object</code> ℗
+Recursively freeze all elements of an object.
+
+**Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
+**Returns**: <code>Object</code> - The frozen object.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| object | <code>Object</code> | The object to deep freeze. |
 
 <a name="HungryGames..exit"></a>
 

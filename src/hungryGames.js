@@ -1,5 +1,6 @@
 // Copyright 2018 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
+'use strict';
 const fs = require('fs');
 const Jimp = require('jimp');
 const mkdirp = require('mkdirp'); // mkdir -p
@@ -382,6 +383,10 @@ function HungryGames() {
           'Probability of each player using their weapon each day if they ' +
           'have one.',
     },
+    disableOutput: {
+      value: false,
+      comment: 'Debugging purposes only! DO NOT ENABLE!',
+    },
   };
   /**
    * Default options for a game.
@@ -684,9 +689,9 @@ function HungryGames() {
       try {
         let parsed = JSON.parse(data);
         if (parsed) {
-          defaultBloodbathEvents = parsed['bloodbath'];
-          defaultPlayerEvents = parsed['player'];
-          defaultArenaEvents = parsed['arena'];
+          defaultBloodbathEvents = deepFreeze(parsed['bloodbath']);
+          defaultPlayerEvents = deepFreeze(parsed['player']);
+          defaultArenaEvents = deepFreeze(parsed['arena']);
         }
       } catch (err) {
         console.log(err);
@@ -715,7 +720,7 @@ function HungryGames() {
       try {
         let parsed = JSON.parse(data);
         if (parsed) {
-          messages = parsed;
+          messages = deepFreeze(parsed);
         }
       } catch (err) {
         console.log(err);
@@ -744,7 +749,7 @@ function HungryGames() {
       try {
         let parsed = JSON.parse(data);
         if (parsed) {
-          battles = parsed;
+          battles = deepFreeze(parsed);
         }
       } catch (err) {
         console.log(err);
@@ -772,7 +777,7 @@ function HungryGames() {
       try {
         let parsed = JSON.parse(data);
         if (parsed) {
-          weapons = parsed;
+          weapons = deepFreeze(parsed);
         }
       } catch (err) {
         console.log(err);
@@ -1086,6 +1091,7 @@ function HungryGames() {
           pauseAutoplay(msg, id);
           break;
         case 'autoplay':
+        case 'autostart':
         case 'auto':
         case 'resume':
         case 'play':
@@ -2101,7 +2107,7 @@ function HungryGames() {
    * @param {boolean} [retry=true] If we hit an error, should we retry before
    * giving up.
    */
-  function nextDay(msg, id, retry=true) {
+  function nextDay(msg, id, retry = true) {
     if (!find(id) || !find(id).currentGame ||
         !find(id).currentGame.inProgress) {
       self.common.reply(
@@ -2120,19 +2126,22 @@ function HungryGames() {
       } else {
         dayEventIntervals[id] = self.client.setInterval(function() {
           printEvent(msg, id);
-        }, find(id).options.delayEvents);
+        }, find(id).options.disableOutput ? 10 : find(id).options.delayEvents);
       }
       return;
     }
     find(id).currentGame.day.state = 1;
     find(id).currentGame.day.num++;
     find(id).currentGame.day.events = [];
+    /* if (find(id).options.disableOutput) {
+      process.stdout.write(find(id).currentGame.day.num + ' ');
+    } */
 
     let deadPool = find(id).currentGame.includedUsers.filter(function(obj) {
       return !obj.living;
     });
-    while (find(id).options.resurrection &&
-           Math.random() < find(id).options.probabilityOfResurrect &&
+    let resurrectProb = find(id).options.probabilityOfResurrect;
+    while (find(id).options.resurrection && Math.random() < resurrectProb &&
            deadPool.length > 0) {
       let resurrected =
           deadPool.splice(Math.floor(Math.random() * deadPool.length), 1)[0];
@@ -2159,6 +2168,7 @@ function HungryGames() {
         });
         team.rank = 1;
       }
+      resurrectProb -= 0.15;
     }
 
 
@@ -2323,14 +2333,14 @@ function HungryGames() {
       let doBattle = !useWeapon && !doArenaEvent && userPool.length > 1 &&
           (Math.random() < find(id).options.probabilityOfBattle ||
            find(id).currentGame.numAlive == 2) &&
-          validateEventRequirements(
+          !validateEventRequirements(
               1, 1, userPool, find(id).currentGame.numAlive,
               find(id).currentGame.teams, find(id).options, true, false);
       if (doBattle) {
         do {
           numAttacker = weightedUserRand();
           numVictim = weightedUserRand();
-        } while (!validateEventRequirements(
+        } while (validateEventRequirements(
             numVictim, numAttacker, userPool, find(id).currentGame.numAlive,
             find(id).currentGame.teams, find(id).options, true, false));
         affectedUsers = pickAffectedPlayers(
@@ -2352,6 +2362,7 @@ function HungryGames() {
               find(id).currentGame.day.num + ' Guild: ' + id + ' Retrying: ' +
               retry);
           find(id).currentGame.day.state = 0;
+          find(id).currentGame.day.num--;
           if (retry) {
             nextDay(msg, id, false);
           } else {
@@ -2654,7 +2665,6 @@ function HungryGames() {
     // Signal ready to display events.
     if (web && web.dayStateChange) web.dayStateChange(id);
     find(id).currentGame.day.state = 2;
-
     let embed = new self.Discord.MessageEmbed();
     if (find(id).currentGame.day.num === 0) {
       embed.setTitle(getMessage('bloodbathStart'));
@@ -2669,13 +2679,15 @@ function HungryGames() {
           'autoplay" to automate the games.');
     }
     embed.setColor(defaultColor);
-    msg.channel.send(embed);
+    if (!find(id).options.disableOutput) {
+      msg.channel.send(embed);
+    }
     self.command.disable('say', msg.channel.id);
     find(id).outputChannel = msg.channel.id;
     dayEventIntervals[id] = self.client.setInterval(function() {
       if (web && web.dayStateChange) web.dayStateChange(id);
       printEvent(msg, id);
-    }, find(id).options.delayEvents);
+    }, find(id).options.disableOutput ? 10 : find(id).options.delayEvents);
   }
   /**
    * Pick event that satisfies all requirements and settings.
@@ -2696,6 +2708,7 @@ function HungryGames() {
    */
   function pickEvent(
       userPool, eventPool, options, numAlive, teams, probOpts, weaponWielder) {
+    let fails = [];
     let loop = 0;
     while (loop < 100) {
       loop++;
@@ -2703,6 +2716,7 @@ function HungryGames() {
       let eventTry = eventPool[eventIndex];
       if (!eventTry) {
         self.error('Event at index ' + eventIndex + ' is invalid!');
+        fails.push('Invalid Event');
         continue;
       }
 
@@ -2723,7 +2737,13 @@ function HungryGames() {
 
       // If the chosen event requires more players than there are remaining,
       // pick a new event.
-      if (eventEffectsNumMin > userPool.length) continue;
+      if (eventEffectsNumMin > userPool.length) {
+        fails.push(
+            'Event too large (' + eventEffectsNumMin + ' > ' + userPool.length +
+            '): ' + eventIndex + ' V:' + eventTry.victim.count + ' A:' +
+            eventTry.attacker.count + ' M:' + eventTry.message);
+        continue;
+      }
 
       let multiAttacker = numAttacker < 0;
       let multiVictim = numVictim < 0;
@@ -2734,27 +2754,35 @@ function HungryGames() {
           if (multiAttacker) {
             numAttacker = weightedUserRand() + (attackerMin - 1);
           }
-          if (multiVictim) numVictim = weightedUserRand() + (victimMin - 1);
+          if (multiVictim) {
+            numVictim = weightedUserRand() + (victimMin - 1);
+          }
         } while (numAttacker + numVictim > userPool.length);
       }
 
-      if (!validateEventRequirements(
-              numVictim, numAttacker, userPool, numAlive, teams, options,
-              eventTry.victim.outcome == 'dies',
-              eventTry.attacker.outcome == 'dies', weaponWielder)) {
+      let failReason = validateEventRequirements(
+          numVictim, numAttacker, userPool, numAlive, teams, options,
+          eventTry.victim.outcome == 'dies',
+          eventTry.attacker.outcome == 'dies', weaponWielder);
+      if (failReason) {
+        fails.push(
+            'Fails event requirement validation: ' + eventIndex + ' ' +
+            failReason);
         continue;
       }
 
-      eventTry = eventPool.slice(eventIndex, eventIndex + 1)[0];
+      let finalEvent = JSON.parse(JSON.stringify(eventPool[eventIndex]));
 
-      eventTry.attacker.count = numAttacker;
-      eventTry.victim.count = numVictim;
+      finalEvent.attacker.count = numAttacker;
+      finalEvent.victim.count = numVictim;
 
-      return eventTry;
+      return finalEvent;
     }
     self.error(
         'Failed to find suitable event for ' + userPool.length +
-        ' players, from ' + eventPool.length + ' events.');
+        ' players, from ' + eventPool.length + ' events with ' + numAlive +
+        ' alive.');
+    console.error(fails);
     return null;
   }
   /**
@@ -2771,8 +2799,7 @@ function HungryGames() {
    * @param {boolean} attackersDie Do the attackers die in this event?
    * @param {?Player} weaponWielder A player that is using a weapon in this
    * event, or null if no player is using a weapon.
-   * @return {boolean} Is is possible to use this event with current settings
-   * about teammates.
+   * @return {?string} String describing failing check, or null of pass.
    */
   function validateEventTeamConstraint(
       numVictim, numAttacker, userPool, teams, options, victimsDie,
@@ -2797,7 +2824,7 @@ function HungryGames() {
         }
         if (numTeams < 2) {
           if (attackersDie || victimsDie) {
-            return false;
+            return 'TEAM_WEAPON_NO_OPPONENT';
           }
         }
         let attackerTeam = teams.find(function(team) {
@@ -2807,10 +2834,12 @@ function HungryGames() {
         });
         if (!attackerTeam) {
           self.error(weaponWielder.id + ' not on any team');
-          return false;
+          return 'TEAM_WEAPON_NO_TEAM';
         }
-        return numAttacker <= attackerTeam.numPool &&
-            numVictim <= userPool.length - attackerTeam.numPool;
+        return !(numAttacker <= attackerTeam.numPool &&
+                 numVictim <= userPool.length - attackerTeam.numPool) &&
+            'TEAM_WEAPON_TOO_LARGE' ||
+            null;
       } else {
         let largestTeam = {index: 0, size: 0};
         let numTeams = 0;
@@ -2834,16 +2863,18 @@ function HungryGames() {
         }
         if (numTeams < 2) {
           if (attackersDie || victimsDie) {
-            return false;
+            return 'TEAM_NO_OPPONENT';
           }
         }
-        return (numAttacker <= largestTeam.size &&
-                numVictim <= userPool.length - largestTeam.size) ||
-            (numVictim <= largestTeam.size &&
-             numAttacker <= userPool.length - largestTeam.size);
+        return !((numAttacker <= largestTeam.size &&
+                  numVictim <= userPool.length - largestTeam.size) ||
+                 (numVictim <= largestTeam.size &&
+                  numAttacker <= userPool.length - largestTeam.size)) &&
+            'TEAM_TOO_LARGE' ||
+            null;
       }
     }
-    return true;
+    return null;
   }
   /**
    * Ensure the event we choose will not force all players to be dead.
@@ -2901,19 +2932,27 @@ function HungryGames() {
    * @param {boolean} attackersDie Do the attackers die in this event?
    * @param {?Player} weaponWielder A player that is using a weapon in this
    * event, or null if no player is using a weapon.
-   * @return {boolean} If all constraints are met with the given event.
+   * @return {?string} String of failing constraint check, or null if passes.
    */
   function validateEventRequirements(
       numVictim, numAttacker, userPool, numAlive, teams, options, victimsDie,
       attackersDie, weaponWielder) {
-    return validateEventNumConstraint(
-               numVictim, numAttacker, userPool, numAlive) &&
-        validateEventTeamConstraint(
-               numVictim, numAttacker, userPool, teams, options, victimsDie,
-               attackersDie, weaponWielder) &&
-        validateEventVictorConstraint(
-               numVictim, numAttacker, numAlive, options, victimsDie,
-               attackersDie);
+    if (!validateEventNumConstraint(
+            numVictim, numAttacker, userPool, numAlive)) {
+      return 'NUM_CONSTRAINT';
+    }
+    let failReason = validateEventTeamConstraint(
+        numVictim, numAttacker, userPool, teams, options, victimsDie,
+        attackersDie, weaponWielder);
+    if (failReason) {
+      return 'TEAM_CONSTRAINT-' + failReason;
+    }
+    if (!validateEventVictorConstraint(
+            numVictim, numAttacker, numAlive, options, victimsDie,
+            attackersDie)) {
+      return 'VICTOR_CONSTRAINT';
+    }
+    return null;
   }
   /**
    * Pick the players to put into an event.
@@ -3052,8 +3091,8 @@ function HungryGames() {
       }
       let eventIndex = Math.floor(Math.random() * battles.attacks.length);
       let eventTry = battles.attacks[eventIndex];
-      eventTry.attacker.damage *= 1;
-      eventTry.victim.damage *= 1;
+      const attackerEventDamage = eventTry.attacker.damage * 1;
+      const victimEventDamage = eventTry.victim.damage * 1;
 
       const flipRoles = Math.random() > 0.5;
       const attackerIndex = Math.floor(Math.random() * numAttacker) + numVictim;
@@ -3066,9 +3105,9 @@ function HungryGames() {
       }
 
       if ((!flipRoles &&
-           userHealth[attackerIndex] + eventTry.attacker.damage >= maxHealth) ||
+           userHealth[attackerIndex] + attackerEventDamage >= maxHealth) ||
           (flipRoles &&
-           userHealth[attackerIndex] + eventTry.victim.damage >= maxHealth)) {
+           userHealth[attackerIndex] + victimEventDamage >= maxHealth)) {
         continue;
       }
 
@@ -3084,9 +3123,9 @@ function HungryGames() {
       }
 
       const victimDamage =
-          (flipRoles ? eventTry.attacker.damage : eventTry.victim.damage);
+          (flipRoles ? attackerEventDamage : victimEventDamage);
       const attackerDamage =
-          (!flipRoles ? eventTry.attacker.damage : eventTry.victim.damage);
+          (!flipRoles ? attackerEventDamage : victimEventDamage);
 
       userHealth[victimIndex] += victimDamage;
       userHealth[attackerIndex] += attackerDamage;
@@ -3377,16 +3416,18 @@ function HungryGames() {
       if (events[index].attacks[battleState].icons.length === 0) {
         // Send without image.
         if (!battleMessage[id]) {
-          msg.channel.send(message[0], embed)
-              .then((msg_) => {
-                battleMessage[id] = msg_;
-              })
-              .catch((err) => {
-                self.error(
-                    'Failed to send battle event message without image: ' +
-                    msg.channel.id);
-                console.error(err);
-              });
+          if (!find(id).options.disableOutput) {
+            msg.channel.send(message[0], embed)
+                .then((msg_) => {
+                  battleMessage[id] = msg_;
+                })
+                .catch((err) => {
+                  self.error(
+                      'Failed to send battle event message without image: ' +
+                      msg.channel.id);
+                  console.error(err);
+                });
+          }
         } else {
           battleMessage[id].edit(message[0], embed);
         }
@@ -3416,16 +3457,18 @@ function HungryGames() {
               // Attach file, then send.
               embed.attachFiles(
                   [new self.Discord.MessageAttachment(out, 'hgEvent.png')]);
-              msg.channel.send(message[0], embed)
-                  .then((msg_) => {
-                    battleMessage[id] = msg_;
-                  })
-                  .catch((err) => {
-                    self.error(
-                        'Failed to send battle event message with image: ' +
-                        msg.channel.id);
-                    console.error(err);
-                  });
+              if (!find(id).options.disableOutput) {
+                msg.channel.send(message[0], embed)
+                    .then((msg_) => {
+                      battleMessage[id] = msg_;
+                    })
+                    .catch((err) => {
+                      self.error(
+                          'Failed to send battle event message with image: ' +
+                          msg.channel.id);
+                      console.error(err);
+                    });
+              }
             });
           }
         };
@@ -3456,15 +3499,17 @@ function HungryGames() {
     } else {
       delete battleMessage[id];
       if (events[index].icons.length === 0) {
-        msg.channel
-            .send(
-                events[index].message + '\n' + (events[index].subMessage || ''))
-            .catch((err) => {
-              self.error(
-                  'Failed to send message without image: ' +
-                  msg.channel.id);
-              console.error(err);
-            });
+        if (!find(id).options.disableOutput) {
+          msg.channel
+              .send(
+                  events[index].message + '\n' +
+                  (events[index].subMessage || ''))
+              .catch((err) => {
+                self.error(
+                    'Failed to send message without image: ' + msg.channel.id);
+                console.error(err);
+              });
+        }
       } else {
         let embed = new self.Discord.MessageEmbed();
         if (events[index].subMessage) {
@@ -3500,12 +3545,13 @@ function HungryGames() {
             finalImage.getBuffer(Jimp.MIME_PNG, function(err, out) {
               embed.attachFiles(
                   [new self.Discord.MessageAttachment(out, 'hgBattle.png')]);
-              msg.channel.send(embed).catch((err) => {
-                self.error(
-                    'Failed to send message with image: ' +
-                    msg.channel.id);
-                console.error(err);
-              });
+              if (!find(id).options.disableOutput) {
+                msg.channel.send(embed).catch((err) => {
+                  self.error(
+                      'Failed to send message with image: ' + msg.channel.id);
+                  console.error(err);
+                });
+              }
             });
           }
         };
@@ -3711,7 +3757,7 @@ function HungryGames() {
             '"' + msg.prefix + self.postPrefix + 'next" for next day.');
       }
       embed.setColor(defaultColor);
-      msg.channel.send(embed);
+      if (!find(id).options.disableOutput) msg.channel.send(embed);
     }
 
     if (numTeams == 1) {
@@ -3739,11 +3785,11 @@ function HungryGames() {
           return obj.id == userId;
         });
         let color = 0x0;
-        if (!user.living) {
+        if (user && !user.living) {
           color = 0xFF0000FF;
-        } else if (user.state == 'wounded') {
+        } else if (user && user.state == 'wounded') {
           color = 0xFFFF00FF;
-        } else {
+        } else if (user) {
           color = 0x00FF00FF;
         }
         finalImage.blit(
@@ -3783,11 +3829,13 @@ function HungryGames() {
           if (find(id).options.mentionVictor) {
             winnerTag = '<@' + lastId + '>';
           }
+          if (find(id).options.disableOutput) return;
           msg.channel.send(winnerTag, finalMessage).catch((err) => {
             self.error('Failed to send solo winner message: ' + msg.channel.id);
             console.error(err);
           });
         } else {
+          if (find(id).options.disableOutput) return;
           msg.channel.send(winnerTag, finalMessage).catch((err) => {
             self.error('Failed to send winner message: ' + msg.channel.id);
             console.error(err);
@@ -3823,12 +3871,14 @@ function HungryGames() {
         rankEmbed.addField(3, rankList.join('\n'), true);
       }
       rankEmbed.setColor(defaultColor);
-      self.client.setTimeout(function() {
-        msg.channel.send(rankEmbed).catch((err) => {
-          self.error('Failed to send ranks message: ' + msg.channel.id);
-          console.error(err);
-        });
-      }, 5000);
+      if (!find(id).options.disableOutput) {
+        self.client.setTimeout(function() {
+          msg.channel.send(rankEmbed).catch((err) => {
+            self.error('Failed to send ranks message: ' + msg.channel.id);
+            console.error(err);
+          });
+        }, 5000);
+      }
       if (find(id).options.teamSize > 0) {
         let teamRankEmbed = new self.Discord.MessageEmbed();
         teamRankEmbed.setTitle('Final Team Ranks');
@@ -3885,12 +3935,14 @@ function HungryGames() {
           teamRankEmbed.setDescription(statusList.join('\n'));
         }
         teamRankEmbed.setColor(defaultColor);
-        self.client.setTimeout(function() {
-          msg.channel.send(teamRankEmbed).catch((err) => {
-            self.error('Failed to send final team ranks: ' + msg.channel.id);
-            console.error(err);
-          });
-        }, 8000);
+        if (!find(id).options.disableOutput) {
+          self.client.setTimeout(function() {
+            msg.channel.send(teamRankEmbed).catch((err) => {
+              self.error('Failed to send final team ranks: ' + msg.channel.id);
+              console.error(err);
+            });
+          }, 8000);
+        }
       }
     }
 
@@ -3898,21 +3950,25 @@ function HungryGames() {
     find(id).currentGame.day.events = [];
 
     if (find(id).autoPlay) {
-      self.client.setTimeout(function() {
-        msg.channel.send('`Autoplaying...`')
-            .then((msg) => {
-              msg.delete({
-                   timeout: find(id).options.delayDays - 1250,
-                   reason: 'I can do whatever I want!',
-                 })
-                  .catch(() => {});
-            })
-            .catch(() => {});
-      }, (find(id).options.delayDays > 2000 ? 1200 : 100));
-      autoPlayTimeout[id] = self.client.setTimeout(function() {
-        delete autoPlayTimeout[id];
+      if (!find(id).options.disableOutput) {
+        self.client.setTimeout(function() {
+          msg.channel.send('`Autoplaying...`')
+              .then((msg) => {
+                msg.delete({
+                     timeout: find(id).options.delayDays - 1250,
+                     reason: 'I can do whatever I want!',
+                   })
+                    .catch(() => {});
+              })
+              .catch(() => {});
+        }, (find(id).options.delayDays > 2000 ? 1200 : 100));
+        autoPlayTimeout[id] = self.client.setTimeout(function() {
+          delete autoPlayTimeout[id];
+          nextDay(msg, id);
+        }, find(id).options.delayDays);
+      } else {
         nextDay(msg, id);
-      }, find(id).options.delayDays);
+      }
     } else {
       self.command.enable('say', msg.channel.id);
     }
@@ -6029,6 +6085,23 @@ function HungryGames() {
       }
     }
     return numCols;
+  }
+
+  /**
+   * Recursively freeze all elements of an object.
+   *
+   * @private
+   * @param {Object} object The object to deep freeze.
+   * @return {Object} The frozen object.
+   */
+  function deepFreeze(object) {
+    let propNames = Object.getOwnPropertyNames(object);
+    for (let name of propNames) {
+      let value = object[name];
+      object[name] =
+          value && typeof value === 'object' ? deepFreeze(value) : value;
+    }
+    return Object.freeze(object);
   }
 
   // Util //
