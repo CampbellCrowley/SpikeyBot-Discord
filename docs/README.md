@@ -4706,6 +4706,7 @@ Music and audio related commands.
         * [~enqueueSong(broadcast, song, msg, info)](#Music..enqueueSong) ℗
         * [~startPlaying(broadcast)](#Music..startPlaying) ℗
         * [~makeBroadcast(broadcast)](#Music..makeBroadcast) ℗
+        * [~startStream(input, done)](#Music..startStream)
         * [~endSong(broadcast)](#Music..endSong) ℗
         * [~skipSong(broadcast)](#Music..skipSong) ℗
         * [~commandJoin(msg)](#Music..commandJoin) : [<code>commandHandler</code>](#commandHandler) ℗
@@ -5048,6 +5049,18 @@ playing the audio.
 | Param | Type | Description |
 | --- | --- | --- |
 | broadcast | [<code>Broadcast</code>](#Music..Broadcast) | The object storing all relevant information. |
+
+<a name="Music..startStream"></a>
+
+### Music~startStream(input, done)
+Starts the streams as a thread and reports done with the streams.
+
+**Kind**: inner method of [<code>Music</code>](#Music)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| input | <code>Object</code> | Input vars. |
+| done | <code>function</code> | Done function. |
 
 <a name="Music..endSong"></a>
 

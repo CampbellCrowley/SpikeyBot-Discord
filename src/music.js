@@ -4,6 +4,7 @@ const ytdl = require('youtube-dl');
 const fs = require('fs');
 const ogg = require('ogg');
 const opus = require('node-opus');
+const spawn = require('threads').spawn;
 require('./subModule.js')(Music);
 
 /**
@@ -387,42 +388,59 @@ function Music() {
    * information.
    */
   function makeBroadcast(broadcast) {
-    if (special[broadcast.current.song]) {
-      const file = fs.createReadStream(special[broadcast.current.song].file);
-
-      broadcast.current.stream = file;
-    } else {
-      if (broadcast.current.info) {
-        broadcast.current.stream = ytdl(broadcast.current.info.url, ytdlOpts);
-      } else {
-        broadcast.current.stream = ytdl(broadcast.current.song, ytdlOpts);
-      }
-    }
-    broadcast.broadcast = broadcast.voice.play(broadcast.current.stream);
-
-    broadcast.broadcast.setBitrate(42);
-    broadcast.broadcast.setFEC(true);
-    broadcast.broadcast.setVolume(0.5);
-
-    broadcast.voice.ondisconnect = function() {
-      if (broadcast.current.stream) broadcast.current.stream.destroy();
+    let input = {
+      song: broadcast.current.song,
+      special: special,
+      ytdl: ytdl,
+      fs: fs,
+      ytdlOpts: ytdlOpts,
     };
+    if (broadcast.current.info) {
+      input.song = broadcast.current.info.url;
+    }
+    spawn(startStream)
+        .send(input)
+        .on('message', function(stream) {
+          broadcast.broadcast = broadcast.voice.play(stream);
 
-    /* broadcast.current.stream.on('end', function() {
-      endSong(broadcast);
-    }); */
-    broadcast.broadcast.on('speaking', function(speaking) {
-      if (!speaking) endSong(broadcast);
-    });
-    broadcast.broadcast.on('error', function(err) {
-      self.error('Error in starting broadcast');
-      console.log(err);
-      broadcast.current.request.channel.send(
-          '```An error occured while attempting to play ' +
-          broadcast.current.song + '.```');
-      broadcast.isLoading = false;
-      skipSong(broadcast);
-    });
+          broadcast.broadcast.setBitrate(42);
+          broadcast.broadcast.setFEC(true);
+          broadcast.broadcast.setVolume(0.5);
+
+          broadcast.voice.ondisconnect = function() {
+            if (broadcast.current.stream) broadcast.current.stream.destroy();
+          };
+
+          /* broadcast.current.stream.on('end', function() {
+            endSong(broadcast);
+          }); */
+          broadcast.broadcast.on('speaking', function(speaking) {
+            if (!speaking) endSong(broadcast);
+          });
+          broadcast.broadcast.on('error', function(err) {
+            self.error('Error in starting broadcast');
+            console.log(err);
+            broadcast.current.request.channel.send(
+                '```An error occured while attempting to play ' +
+                broadcast.current.song + '.```');
+            broadcast.isLoading = false;
+            skipSong(broadcast);
+          });
+        });
+  }
+
+  /**
+   * Starts the streams as a thread and reports done with the streams.
+   *
+   * @param {Object} input Input vars.
+   * @param {function} done Done function.
+   */
+  function startStream(input, done) {
+    if (input.special[input.song]) {
+      done(input.fs.createReadStream(input.special[input.song].file));
+    } else {
+      done(input.ytdl(input.song, input.ytdlOpts));
+    }
   }
   /**
    * Triggered when a song has finished playing.
