@@ -1,6 +1,5 @@
 // Copyright 2018 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
-'use strict';
 const fs = require('fs');
 const Jimp = require('jimp');
 const mkdirp = require('mkdirp'); // mkdir -p
@@ -862,7 +861,7 @@ function HungryGames() {
             'hg/)```Manage the Games without using commands!\n' +
             self.common.webURL + 'hg/```',
         true);
-    helpMessage = tmpHelp;
+    self.helpMessage = tmpHelp;
   }
 
   /** @inheritdoc */
@@ -5693,29 +5692,30 @@ function HungryGames() {
     if (!eventType) eventType = 'player';
     if (eventType == 'player') {
       if (find(id) && find(id).customEvents.player) {
-        events = find(id).customEvents.player.slice(0);
+        events = JSON.parse(JSON.stringify(find(id).customEvents.player));
         numCustomEvents = find(id).customEvents.player.length;
       }
       events.push(
           new Event(emoji.arrow_up + 'Custom | Default' + emoji.arrow_down));
-      events = events.concat(defaultPlayerEvents);
+      events = events.concat(JSON.parse(JSON.stringify(defaultPlayerEvents)));
       title = 'Player';
       fetchStats(events);
       embed.setColor([0, 255, 0]);
     } else if (eventType == 'bloodbath') {
       if (find(id) && find(id).customEvents.bloodbath) {
-        events = find(id).customEvents.bloodbath.slice(0);
+        events = JSON.parse(JSON.stringify(find(id).customEvents.bloodbath));
         numCustomEvents = find(id).customEvents.bloodbath.length;
       }
       events.push(
           new Event(emoji.arrow_up + 'Custom | Default' + emoji.arrow_down));
-      events = events.concat(defaultBloodbathEvents);
+      events =
+          events.concat(JSON.parse(JSON.stringify(defaultBloodbathEvents)));
       title = 'Bloodbath';
       fetchStats(events);
       embed.setColor([255, 0, 0]);
     } else if (eventType == 'arena') {
       if (find(id) && find(id).customEvents.arena) {
-        events = find(id).customEvents.arena.slice(0);
+        events = JSON.parse(JSON.stringify(find(id).customEvents.arena));
         numCustomEvents = find(id).customEvents.arena.length;
       }
       if (numCustomEvents == 0 && page <= 0) {
@@ -5723,7 +5723,7 @@ function HungryGames() {
       }
       events.push(
           new Event(emoji.arrow_up + 'Custom | Default' + emoji.arrow_down));
-      events = events.concat(defaultArenaEvents);
+      events = events.concat(JSON.parse(JSON.stringify(defaultArenaEvents)));
 
       events = events.map(function(obj, i) {
         if (obj.outcomes) {
@@ -5795,7 +5795,7 @@ function HungryGames() {
             })
             .join('\n'));
 
-    callback = function(msg_) {
+    let callback = function(msg_) {
       msg_.awaitReactions(function(reaction, user) {
             if (user.id != self.client.user.id) {
               reaction.users.remove(user).catch(() => {});
@@ -5929,7 +5929,7 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function help(msg, id) {
-    msg.author.send(helpMessage)
+    msg.author.send(self.helpMessage)
         .then(() => {
           if (msg.guild != null) {
             self.common.reply(msg, helpmessagereply, ':wink:');
