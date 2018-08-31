@@ -2098,8 +2098,10 @@ function HungryGames() {
    * @type {HungryGames~hgCommandHandler}
    * @param {Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
+   * @param {boolean} [retry=true] If we hit an error, should we retry before
+   * giving up.
    */
-  function nextDay(msg, id) {
+  function nextDay(msg, id, retry=true) {
     if (!find(id) || !find(id).currentGame ||
         !find(id).currentGame.inProgress) {
       self.common.reply(
@@ -2343,17 +2345,23 @@ function HungryGames() {
             find(id).currentGame.numAlive, find(id).currentGame.teams,
             probOpts);
         if (!eventTry) {
-          self.common.reply(
-              msg, 'A stupid error happened :(', 'Try again with `' +
-                  msg.prefix + self.postPrefix +
-                  'next`. If this happens again please report ' +
-                  'this to SpikeyRobot#9836');
           self.error(
               'No event for ' + userPool.length + ' from ' +
               userEventPool.length + ' events. No weapon, Arena Event: ' +
               (doArenaEvent ? arenaEvent.message : 'No') + ', Day: ' +
-              find(id).currentGame.day.num + ' Guild: ' + id);
+              find(id).currentGame.day.num + ' Guild: ' + id + ' Retrying: ' +
+              retry);
           find(id).currentGame.day.state = 0;
+          if (retry) {
+            nextDay(msg, id, false);
+          } else {
+            self.common.reply(
+                msg, 'A stupid error happened :(', 'Try again with `' +
+                    msg.prefix + self.postPrefix +
+                    'next`. If this happens again please report this to ' +
+                    'SpikeyRobot#9836\n(Failed to find valid event for ' +
+                    'remaining players)');
+          }
           return;
         }
 
@@ -3172,7 +3180,7 @@ function HungryGames() {
    * @param {HungryGames~Event[]} eventPool The pool of all events to consider.
    * @param {{kill: number, wound: number, thrive: number, nothing: number}}
    * probabilityOpts The probabilities of each type of event being used.
-   * @param {number} [recurse=0] The current recusrive depth.
+   * @param {number} [recurse=0] The current recursive depth.
    * @return {number} The index of the event that was chosen.
    */
   function probabilityEvent(eventPool, probabilityOpts, recurse = 0) {

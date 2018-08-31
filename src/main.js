@@ -2197,7 +2197,13 @@ function Main() {
     let channel = self.client.channels.get(id);
 
     if (user) {
-      msg.channel.send(id + ': User: `' + user.tag.replace(/`/g, '\\`') + '`');
+      let guilds = [];
+      self.client.guilds.forEach((g) => {
+        if (g.members.get(id)) guilds.push(g.id);
+      });
+      msg.channel.send(
+          id + ': User: `' + user.tag.replace(/`/g, '\\`') + '` has ' +
+          guilds.length + ' mutual guilds:\n```' + guilds.join(', ') + '```');
     }
     if (guild && !channel) {
       msg.channel.send(

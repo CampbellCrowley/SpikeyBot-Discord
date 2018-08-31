@@ -1612,7 +1612,7 @@ Hunger Games simulator.
         * [~makeMessage(uId, gId, cId, msg)](#HungryGames..makeMessage) ⇒ <code>Object</code> ℗
         * [~pauseAutoplay(msg, id)](#HungryGames..pauseAutoplay) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~startAutoplay(msg, id)](#HungryGames..startAutoplay) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
-        * [~nextDay(msg, id)](#HungryGames..nextDay) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+        * [~nextDay(msg, id, [retry])](#HungryGames..nextDay) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~pickEvent(userPool, eventPool, options, numAlive, teams, probOpts, weaponWielder)](#HungryGames..pickEvent) ⇒ [<code>Event</code>](#HungryGames..Event) ℗
         * [~validateEventTeamConstraint(numVictim, numAttacker, userPool, teams, options, victimsDie, attackersDie, weaponWielder)](#HungryGames..validateEventTeamConstraint) ⇒ <code>boolean</code> ℗
         * [~validateEventVictorConstraint(numVictim, numAttacker, numAlive, options, victimsDie, attackersDie)](#HungryGames..validateEventVictorConstraint) ⇒ <code>boolean</code> ℗
@@ -2872,16 +2872,17 @@ Start autoplaying.
 
 <a name="HungryGames..nextDay"></a>
 
-### HungryGames~nextDay(msg, id) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+### HungryGames~nextDay(msg, id, [retry]) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
 Simulate a single day then show events to users.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
 **Access**: private  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord~Message</code> | The message that lead to this being called. |
-| id | <code>string</code> | The id of the guild this was triggered from. |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| msg | <code>Discord~Message</code> |  | The message that lead to this being called. |
+| id | <code>string</code> |  | The id of the guild this was triggered from. |
+| [retry] | <code>boolean</code> | <code>true</code> | If we hit an error, should we retry before giving up. |
 
 <a name="HungryGames..pickEvent"></a>
 
@@ -3041,7 +3042,7 @@ Produce a random event that using probabilities set in options.
 | --- | --- | --- | --- |
 | eventPool | [<code>Array.&lt;Event&gt;</code>](#HungryGames..Event) |  | The pool of all events to consider. |
 | probabilityOpts | <code>Object</code> |  | The probabilities of each type of event being used. |
-| [recurse] | <code>number</code> | <code>0</code> | The current recusrive depth. |
+| [recurse] | <code>number</code> | <code>0</code> | The current recursive depth. |
 
 <a name="HungryGames..formatMultiNames"></a>
 
