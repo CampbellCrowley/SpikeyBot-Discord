@@ -393,11 +393,6 @@ function Music() {
       if (broadcast.current.thread) broadcast.current.thread.kill();
     });
 
-    broadcast.voice.on('speaking', function(user, speaking) {
-      console.log('VoiceConnection:', user.username, speaking);
-      if (!broadcast.voice.speaking) endSong(broadcast);
-    });
-
     // Setup readable stream for audio data.
     broadcast.current.readable = new Readable();
     broadcast.current.readable._read = function() {};
