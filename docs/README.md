@@ -5317,6 +5317,8 @@ Main class that manages the bot.
         * [~commandChangePrefix(msg)](#SpikeyBot..commandChangePrefix) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandReboot(msg)](#SpikeyBot..commandReboot) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandReload(msg)](#SpikeyBot..commandReload) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~reloadSubModules([toReload], [reloaded], [schedule])](#SpikeyBot..reloadSubModules) ⇒ <code>boolean</code> ℗
+        * [~commandUpdate(msg)](#SpikeyBot..commandUpdate) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~loadGuildPrefixes(guilds)](#SpikeyBot..loadGuildPrefixes) ℗
 
 <a name="SpikeyBot+getSubmoduleCommits"></a>
@@ -5732,6 +5734,37 @@ expects to be immediately restarted.
 
 ### SpikeyBot~commandReload(msg) : [<code>commandHandler</code>](#commandHandler) ℗
 Reload all sub modules by unloading then re-requiring.
+
+**Kind**: inner method of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="SpikeyBot..reloadSubModules"></a>
+
+### SpikeyBot~reloadSubModules([toReload], [reloaded], [schedule]) ⇒ <code>boolean</code> ℗
+Reloads submodules from file. Reloads all modules if `toReload` is not
+specified. `reloaded` will contain the list of messages describing which
+submodules were reloaded, or not.
+
+**Kind**: inner method of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Returns**: <code>boolean</code> - True if something failed and not all submodules were
+reloaded.  
+**Access**: private  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [toReload] | <code>string</code> \| <code>Array.&lt;string&gt;</code> |  | Specify submodules to reload, or null to reload all submodules. |
+| [reloaded] | <code>Array.&lt;string&gt;</code> |  | Reference to a variable to store output status information about outcomes of attempting to reload submodules. |
+| [schedule] | <code>boolean</code> | <code>true</code> | Automatically re-schedule reload for submodules if they are in an unloadable state. |
+
+<a name="SpikeyBot..commandUpdate"></a>
+
+### SpikeyBot~commandUpdate(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Trigger fetching the latest version of the bot from git, then tell all
+shards to reload the changes.
 
 **Kind**: inner method of [<code>SpikeyBot</code>](#SpikeyBot)  
 **Access**: private  

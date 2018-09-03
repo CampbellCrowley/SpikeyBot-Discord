@@ -4,6 +4,7 @@ const Discord = require('discord.js');
 const fs = require('fs');
 const common = require('./common.js');
 const auth = require('../auth.js');
+const childProcess = require('child_process');
 
 /**
  * Handler for an unhandledRejection or uncaughtException, to prevent the bot
@@ -43,10 +44,7 @@ function SpikeyBot() {
    * @type {string}
    */
   const version = JSON.parse(fs.readFileSync('package.json')).version + '#' +
-      require('child_process')
-          .execSync('git rev-parse --short HEAD')
-          .toString()
-          .trim();
+      childProcess.execSync('git rev-parse --short HEAD').toString().trim();
 
   /**
    * Is the bot currently responding as a unit test.
@@ -143,7 +141,7 @@ function SpikeyBot() {
       if (process.argv[i].indexOf('=') > -1) {
         numShards = process.argv[i].split('=')[1] * 1 || 0;
       }
-    } else if (i > 1 && typeof process.argv[i] === 'string') {
+    } else if (i > 3 && typeof process.argv[i] === 'string') {
       subModuleNames.push(process.argv[i]);
     }
   }
@@ -185,9 +183,9 @@ function SpikeyBot() {
 
 
   // Attempt to load submodules.
-  for (let i in subModuleNames) {
+  for (let i = 0; i < subModuleNames.length; i++) {
     if (typeof subModuleNames[i] !== 'string' ||
-        !subModuleNames[i].startsWith('./')) {
+        subModuleNames[i].startsWith('--')) {
       continue;
     }
     try {
@@ -883,52 +881,7 @@ function SpikeyBot() {
       let toReload = msg.text.split(' ').splice(1);
       let reloaded = [];
       common.reply(msg, 'Reloading modules...').then((warnMessage) => {
-        let error = false;
-        for (let i in subModules) {
-          if (!subModules[i] instanceof Object) continue;
-          if (toReload.length > 0) {
-            if (!toReload.find(function(el) {
-                  return subModuleNames[i] == el;
-                })) {
-              continue;
-            }
-          }
-          if (!subModules[i].unloadable()) {
-            reloaded.push('(' + subModuleNames[i] + ': not unloadable)');
-            continue;
-          }
-          try {
-            try {
-              if (subModules[i].save) {
-                subModules[i].save();
-              } else {
-                common.error(
-                    'Submodule ' + subModuleNames[i] +
-                    ' does not have a save() function.');
-              }
-              if (subModules[i].end) {
-                subModules[i].end();
-              } else {
-                common.error(
-                    'Submodule ' + subModuleNames[i] +
-                    ' does not have an end() function.');
-              }
-            } catch (err) {
-              common.error('Error on unloading ' + subModuleNames[i]);
-              console.log(err);
-            }
-            delete require.cache[require.resolve(subModuleNames[i])];
-            subModules[i] = require(subModuleNames[i]);
-            subModules[i].begin(
-                defaultPrefix, Discord, client, command, common, self);
-            reloaded.push(subModuleNames[i]);
-          } catch (err) {
-            error = true;
-            common.error('Failed to reload ' + subModuleNames[i]);
-            console.log(err);
-          }
-        }
-        if (error) {
+        if (reloadSubModules(toReload, reloaded)) {
           warnMessage.edit(
               '`Reload completed with errors.`\n' +
               (reloaded.join(' ') || 'NOTHING reloaded'));
@@ -946,6 +899,158 @@ function SpikeyBot() {
           'It appears SpikeyRobot doesn\'t trust you enough with this ' +
               'command. Sorry!');
     }
+  }
+
+  /**
+   * Reloads submodules from file. Reloads all modules if `toReload` is not
+   * specified. `reloaded` will contain the list of messages describing which
+   * submodules were reloaded, or not.
+   * @private
+   *
+   * @param {?string|string[]} [toReload] Specify submodules to reload, or null
+   * to reload all submodules.
+   * @param {string[]} [reloaded] Reference to a variable to store output status
+   * information about outcomes of attempting to reload submodules.
+   * @param {boolean} [schedule=true] Automatically re-schedule reload for
+   * submodules if they are in an unloadable state.
+   * @return {boolean} True if something failed and not all submodules were
+   * reloaded.
+   */
+  function reloadSubModules(toReload, reloaded, schedule) {
+    if (!Array.isArray(reloaded)) reloaded = [];
+    if (!toReload) toReload = [];
+    else if (typeof toReload === 'string') toReload = [toReload];
+    if (typeof schedule === 'undefined') schedule = true;
+
+    let error = false;
+
+    for (let i = 0; i < subModules.length; i++) {
+      if (toReload.length > 0) {
+        if (!toReload.find(function(el) {
+              return subModuleNames[i] == el;
+            })) {
+          continue;
+        }
+      }
+      if (!subModules[i].unloadable()) {
+        if (schedule) {
+          reloaded.push('(' + subModuleNames[i] + ': reload scheduled)');
+          setTimeout(function() {
+            reloadSubModules(subModuleNames[i]);
+          }, 10000);
+        } else {
+          reloaded.push('(' + subModuleNames[i] + ': not unloadable)');
+        }
+        continue;
+      }
+      try {
+        try {
+          if (subModules[i].save) {
+            subModules[i].save();
+          } else {
+            common.error(
+                'Submodule ' + subModuleNames[i] +
+                ' does not have a save() function.');
+          }
+          if (subModules[i].end) {
+            subModules[i].end();
+          } else {
+            common.error(
+                'Submodule ' + subModuleNames[i] +
+                ' does not have an end() function.');
+          }
+        } catch (err) {
+          common.error('Error on unloading ' + subModuleNames[i]);
+          console.log(err);
+        }
+        delete require.cache[require.resolve(subModuleNames[i])];
+        subModules[i] = require(subModuleNames[i]);
+        subModules[i].begin(
+            defaultPrefix, Discord, client, command, common, self);
+        reloaded.push(subModuleNames[i]);
+      } catch (err) {
+        error = true;
+        common.error('Failed to reload ' + subModuleNames[i]);
+        console.log(err);
+      }
+    }
+    return error;
+  }
+
+  /**
+   * Check current loaded submodule commit to last modified commit, and reload
+   * if the file has changed.
+   *
+   * @public
+   */
+  client.reloadUpdatedSubmodules = function() {
+    try {
+      common.log('Reloading updated submodules.');
+      for (let i = 0; i < subModules.length; i++) {
+        childProcess
+            .exec(
+                'git diff-index --quiet ' + subModules[i].commit +
+                ' -- ./src/' + subModuleNames[i])
+            .on('close', ((name) => {
+                  return (code, signal) => {
+                    if (code) {
+                      let out = [];
+                      reloadSubModules(name, out);
+                      if (out) common.log(out.join(' '));
+                    } else {
+                      common.log(name + ' unchanged (' + code + ')');
+                    }
+                  };
+                })(subModuleNames[i]));
+      }
+    } catch (err) {
+      common.error('Failed to reload updated submodules!');
+      console.error(err);
+    }
+  };
+
+  command.on('update', commandUpdate);
+  /**
+   * Trigger fetching the latest version of the bot from git, then tell all
+   * shards to reload the changes.
+   *
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens SpikeyBot~Command#update
+   */
+  function commandUpdate(msg) {
+    if (!trustedIds.includes(msg.author.id)) {
+      common.reply(
+          msg, 'LOL! Good try!',
+          'It appears SpikeyRobot doesn\'t trust you enough with this ' +
+              'command. Sorry!');
+      return;
+    }
+    common.log(
+        'Triggered update: ' + __dirname + ' <-- DIR | CWD -->' +
+        process.cwd());
+    common.reply(msg, 'Updating from git...').then((msg_) => {
+      childProcess.exec(
+          'ssh-agent $(ssh-add ~/.ssh/sb_id_rsa_nopass) && git pull',
+          function(err, stdout, stderr) {
+            if (!err) {
+              if (stdout && stdout !== 'null') console.log('STDOUT:', stdout);
+              if (stderr && stderr !== 'null') console.error('STDERR:', stderr);
+              client.reloadUpdatedSubmodules();
+              if (client.shard) {
+                client.shard.broadcastEval('this.reloadUpdatedSubmodules');
+              }
+              msg_.edit(common.mention(msg) + ' Bot update complete!');
+            } else {
+              common.error('Failed to pull latest update.');
+              console.error(err);
+              if (stdout && stdout !== 'null') console.log('STDOUT:', stdout);
+              if (stderr && stderr !== 'null') console.error('STDERR:', stderr);
+              msg_.edit(common.mention(msg) + ' Bot update FAILED!');
+            }
+          });
+    });
   }
 
   /**
