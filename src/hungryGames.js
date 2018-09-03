@@ -1837,6 +1837,13 @@ function HungryGames() {
           msg, 'A game is already in progress! ("' + msg.prefix +
               self.postPrefix + 'next" for next day, or "' + msg.prefix +
               self.postPrefix + 'end" to abort)');
+    } else if (
+        !msg.channel.permissionsFor(msg.guild.me)
+             .has(self.Discord.Permissions.FLAGS.ATTACH_FILES)) {
+      self.common.reply(
+          msg, 'Sorry, but I need permission to send images ' +
+              'in this channel before I can start the games.\nPlease ensure ' +
+              'I have the "Attach Files" permission in this channel.');
     } else {
       createGame(msg, id, true);
 
@@ -1938,6 +1945,9 @@ function HungryGames() {
       }
 
       msg.channel.send(self.common.mention(msg), finalMessage).catch((err) => {
+        self.common.reply(
+            msg, 'Game started!',
+            'Discord rejected my normal message for some reason...');
         self.error(
             'Failed to send start game message: ' + msg.channel.id +
             ' (Cols: ' + numCols + ')');
@@ -4307,9 +4317,9 @@ function HungryGames() {
                                return getName(msg.guild, obj);
                              })
                              .join(', ');
-      let trimmedList = excludedList.substr(0, 1024);
+      let trimmedList = excludedList.substr(0, 512);
       if (excludedList != trimmedList) {
-        excludedList = trimmedList.substr(0, 1021) + '...';
+        excludedList = trimmedList.substr(0, 509) + '...';
       } else {
         excludedList = trimmedList;
       }
@@ -4319,7 +4329,9 @@ function HungryGames() {
     }
     msg.channel.send(self.common.mention(msg), finalMessage).catch((err) => {
       self.common.reply(
-          msg, 'Oops, Discord rejected my message for some reason...');
+          msg, 'Oops, Discord rejected my message for some reason...',
+          'This is possibly because there are too many people in the games ' +
+              'to show in this list.');
       self.error('Failed to send list of players message: ' + msg.channel.id);
       console.error(err);
     });
@@ -6064,7 +6076,9 @@ function HungryGames() {
 
   /**
    * Calculates the number of columns for the given player list. Assumes maximum
-   * character count of 1024 per section.
+   * character count of 1024 per section. The number of columns also becomes
+   * limited to 5, because we will run into the embed total character limit of
+   * 6000 if we add any more.
    * [Discord API Docs](
    * https://discordapp.com/developers/docs/resources/channel#embed-limits)
    * @private
@@ -6075,7 +6089,8 @@ function HungryGames() {
    */
   function calcColNum(numCols, statusList) {
     if (numCols === statusList.length) return numCols;
-    if (numCols > 25) return 25;
+    // if (numCols > 25) return 25;
+    if (numCols > 5) return 5;
     const quarterLength = Math.ceil(statusList.length / numCols);
     for (let i = 0; i < numCols; i++) {
       if (statusList.slice(quarterLength * i, quarterLength * (i + 1))

@@ -3534,7 +3534,9 @@ disk at most once every `HungryGames~findDelay` milliseconds. Returns
 
 ### HungryGames~calcColNum(numCols, statusList) ⇒ <code>number</code> ℗
 Calculates the number of columns for the given player list. Assumes maximum
-character count of 1024 per section.
+character count of 1024 per section. The number of columns also becomes
+limited to 5, because we will run into the embed total character limit of
+6000 if we add any more.
 [Discord API Docs](
 https://discordapp.com/developers/docs/resources/channel#embed-limits)
 
