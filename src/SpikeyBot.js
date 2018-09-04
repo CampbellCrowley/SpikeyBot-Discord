@@ -1032,7 +1032,7 @@ function SpikeyBot() {
         process.cwd());
     common.reply(msg, 'Updating from git...').then((msg_) => {
       childProcess.exec(
-          'ssh-agent $(ssh-add ~/.ssh/sb_id_rsa_nopass) && git pull',
+          'eval `ssh-agent $(ssh-add ~/.ssh/sb_id_rsa_nopass)` && git pull',
           function(err, stdout, stderr) {
             if (!err) {
               if (stdout && stdout !== 'null') console.log('STDOUT:', stdout);
