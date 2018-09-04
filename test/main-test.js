@@ -136,6 +136,11 @@ const hgTests = [
             'delete all teams, and create new ones.\n```',
       ]),
   new Test(
+      'Change sub-option number', '~hg options playerOutcomeProbs kill 23',
+      [
+        '<@422623712534200321>\n```\nSet kill to 23 from 22\n```',
+      ]),
+  new Test(
       'Exclude player nomention', '~hg exclude SpikeyRobot',
       ['<@422623712534200321>\n```\nYou must mention people you wish for me ' +
        'to exclude from the next game.\n```']),
@@ -170,6 +175,14 @@ const hgTests = [
   new Test(
       'Reset Options command', '~hg reset options',
       ['<@422623712534200321>\n```\nResetting ALL options!\n```']),
+  new Test(
+      'Enable no output mode', '~hg opt disableOutput true',
+      [
+        '<@422623712534200321>\n```\nSet disableOutput to true from false\n```'
+      ]),
+  new Test('Run a game with no output', '~hg go', ['#noerr', '#embed']),
+  new Test('Run another game with no output', '~hg go', ['#noerr', '#embed']),
+  new Test('Run another game with no output', '~hg go', ['#noerr', '#embed']),
   new Test(
       'Reset All command', '~hg reset all',
       ['<@422623712534200321>\n```\nResetting ALL Hungry Games data for ' +

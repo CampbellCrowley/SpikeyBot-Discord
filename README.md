@@ -15,7 +15,7 @@
 #### Math
 `add` `simplify` `solve` `evaluate` `derive` `graph`
 #### Admin
-`purge` `ban` `smite` `togglemute` `changeprefix`
+`purge` `ban` `smite` `togglemute` `changeprefix` `togglebanmessages`
 
 ## Hungry Games
 #### Game

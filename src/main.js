@@ -133,6 +133,14 @@ function Main() {
   let disabledAutoSmite = {};
 
   /**
+   * All guilds that have disabled sending messages when someone is banned.
+   *
+   * @private
+   * @type {Object.<boolean>}
+   */
+  let disabledBanMessage = {};
+
+  /**
    * The guilds with auto-smite enabled, and members who have mentioned
    * @everyone, and the timestamps of these mentions.
    *
@@ -263,6 +271,7 @@ function Main() {
     self.command.on('perms', commandPerms, true);
     self.command.on('stats', commandStats);
     self.command.on('lookup', commandLookup);
+    self.command.on('togglebanmessages', commandToggleBanMessages, true);
 
     self.client.on('guildCreate', onGuildCreate);
     self.client.on('guildDelete', onGuildDelete);
@@ -353,6 +362,7 @@ function Main() {
               return;
             }
             disabledAutoSmite[g.id] = parsed.disabledAutoSmite || false;
+            disabledBanMessage[g.id] = parsed.disabledBanMessage || false;
           });
     });
 
@@ -463,6 +473,7 @@ function Main() {
     self.command.deleteEvent('perms');
     self.command.deleteEvent('stats');
     self.command.deleteEvent('lookup');
+    self.command.deleteEvent('togglebanmessages');
 
     self.client.removeListener('guildCreate', onGuildCreate);
     self.client.removeListener('guildDelete', onGuildDelete);
@@ -501,7 +512,10 @@ function Main() {
     self.client.guilds.forEach(function(g) {
       const dir = self.common.guildSaveDir + g.id;
       const filename = dir + '/main-config.json';
-      let obj = {disabledAutoSmite: disabledAutoSmite[g.id]};
+      let obj = {
+        disabledAutoSmite: disabledAutoSmite[g.id],
+        disabledBanMessage: disabledBanMessage[g.id],
+      };
       if (opt == 'async') {
         mkAndWrite(filename, dir, JSON.stringify(obj));
       } else {
@@ -619,12 +633,19 @@ function Main() {
    */
   function onGuildBanAdd(guild, user) {
     if (user.id == self.client.id) return;
+    if (disabledBanMessage[guild.id]) return;
+    if (!guild.me.hasPermission(
+            self.Discord.Permissions.FLAGS.VIEW_AUDIT_LOG)) {
+      return;
+    }
     let channel = '';
     let pos = -1;
     try {
       guild.channels.forEach(function(val, key) {
         if (val.type != 'voice' && val.type != 'category') {
-          if (pos == -1 || val.position < pos) {
+          if ((pos == -1 || val.position < pos) &&
+              val.permissionsFor(self.client.user)
+                  .has(self.Discord.Permissions.FLAGS.SEND_MESSAGES)) {
             pos = val.position;
             channel = val.id;
           }
@@ -636,7 +657,9 @@ function Main() {
               self.client.channels.get(channel).send(
                   '`Poof! ' + logs.entries.first().executor.username +
                   ' has ensured ' + user.username +
-                  ' will never be seen again...`');
+                  ' will never be seen again...`\nAdmins can disable these ' +
+                  'messages with `' + self.bot.getPrefix(guild.id) +
+                  'togglebanmessages`.');
             }
           })
           .catch((err) => {
@@ -674,6 +697,32 @@ function Main() {
       self.common.reply(
           msg,
           'You must have permission to manage roles to toggle this setting.');
+    }
+  }
+  /**
+   * Toggles sending a message when a user is banned from a guild.
+   *
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens SpikeyBot~Command#toggleBanMessages
+   */
+  function commandToggleBanMessages(msg) {
+    if (msg.member.hasPermission(
+            self.Discord.Permissions.FLAGS.ADMINISTRATOR)) {
+      if (disabledBanMessage[msg.guild.id]) {
+        disabledBanMessage[msg.guild.id] = false;
+        self.common.reply(
+            msg, 'Enabled showing a message when a user is banned.');
+      } else {
+        disabledBanMessage[msg.guild.id] = true;
+        self.common.reply(
+            msg, 'Disabled showing a message when a user is banned.');
+      }
+    } else {
+      self.common.reply(
+          msg,
+          'You must have the Administrator permission to toggle this setting.');
     }
   }
   /**

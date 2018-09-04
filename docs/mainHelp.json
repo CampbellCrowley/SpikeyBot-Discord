@@ -533,6 +533,16 @@
           ]
         },
         {
+          "command": "togglebanmessages",
+          "description": "Turn on or off sending a message when someone gets banned.",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "togglebanmessages"
+            }
+          ]
+        },
+        {
           "command": "changeprefix",
           "description": "Set a custom prefix for all commands on the current server.",
           "examples": [

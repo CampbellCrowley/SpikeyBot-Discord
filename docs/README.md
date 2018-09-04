@@ -3766,6 +3766,7 @@ Basic commands and features for the bot.
         * [~prevUserSayCnt](#Main..prevUserSayCnt) : <code>number</code> ℗
         * [~timers](#Main..timers) : [<code>Array.&lt;Timer&gt;</code>](#Main..Timer) ℗
         * [~disabledAutoSmite](#Main..disabledAutoSmite) : <code>Object.&lt;boolean&gt;</code> ℗
+        * [~disabledBanMessage](#Main..disabledBanMessage) : <code>Object.&lt;boolean&gt;</code> ℗
         * [~mentionAccumulator](#Main..mentionAccumulator) : <code>Object.&lt;Object.&lt;string&gt;&gt;</code> ℗
         * [~introduction](#Main..introduction) : <code>string</code> ℗
         * [~blockedmessage](#Main..blockedmessage) : <code>string</code> ℗
@@ -3780,6 +3781,7 @@ Basic commands and features for the bot.
         * [~onGuildDelete(guild)](#Main..onGuildDelete) ℗
         * [~onGuildBanAdd(guild, user)](#Main..onGuildBanAdd) ℗
         * [~commandToggleMute(msg)](#Main..commandToggleMute) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~commandToggleBanMessages(msg)](#Main..commandToggleBanMessages) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~onMessage(msg)](#Main..onMessage) ℗
         * [~checkSimilarity(s1, s2)](#Main..checkSimilarity) ⇒ <code>number</code> ℗
         * [~editDistance(s1, s2)](#Main..editDistance) ⇒ <code>number</code> ℗
@@ -4035,6 +4037,13 @@ All guilds that have disabled the auto-smite feature.
 
 **Kind**: inner property of [<code>Main</code>](#Main)  
 **Access**: private  
+<a name="Main..disabledBanMessage"></a>
+
+### Main~disabledBanMessage : <code>Object.&lt;boolean&gt;</code> ℗
+All guilds that have disabled sending messages when someone is banned.
+
+**Kind**: inner property of [<code>Main</code>](#Main)  
+**Access**: private  
 <a name="Main..mentionAccumulator"></a>
 
 ### Main~mentionAccumulator : <code>Object.&lt;Object.&lt;string&gt;&gt;</code> ℗
@@ -4166,6 +4175,18 @@ Handle user banned on a guild.
 
 ### Main~commandToggleMute(msg) : [<code>commandHandler</code>](#commandHandler) ℗
 Toggles auto-muting a user for using @everyone too much.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Main..commandToggleBanMessages"></a>
+
+### Main~commandToggleBanMessages(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Toggles sending a message when a user is banned from a guild.
 
 **Kind**: inner method of [<code>Main</code>](#Main)  
 **Access**: private  

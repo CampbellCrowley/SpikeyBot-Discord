@@ -607,21 +607,24 @@ function SpikeyBot() {
    * @listens Discord~Client#message
    */
   function onMessage(msg) {
-    if (!testMode && msg.author.id === client.user.id &&
-        msg.channel.id == testChannel) {
-      if (isDev && msg.content === '~`RUN UNIT TESTS`~') {
-        testMode = true;
-        msg.channel.send('~`UNIT TEST MODE ENABLED`~');
+    if (testInstance) {
+      if (!testMode && msg.author.id === client.user.id &&
+          msg.channel.id == testChannel) {
+        if (isDev && msg.content === '~`RUN UNIT TESTS`~') {
+          testMode = true;
+          msg.channel.send('~`UNIT TEST MODE ENABLED`~');
+        }
+        return;
+      } else if (testMode && msg.author.id !== client.user.id) {
+        return;
+      } else if (
+          testMode && msg.author.id === client.user.id &&
+          msg.content === '~`END UNIT TESTS`~' &&
+          msg.channel.id == testChannel) {
+        testMode = false;
+        msg.channel.send('~`UNIT TEST MODE DISABLED`~');
+        return;
       }
-      return;
-    } else if (testMode && msg.author.id !== client.user.id) {
-      return;
-    } else if (
-        testMode && msg.author.id === client.user.id &&
-        msg.content === '~`END UNIT TESTS`~' && msg.channel.id == testChannel) {
-      testMode = false;
-      msg.channel.send('~`UNIT TEST MODE DISABLED`~');
-      return;
     }
 
     // Only respond to messages in the test channel if we are in unit test mode.
@@ -650,6 +653,9 @@ function SpikeyBot() {
     }
 
     if (isCmd(msg, '')) {
+      if (msg.content.match(/^\?+$/)) {
+        return;
+      }
       if (!minimal) {
         if (msg.guild !== null) {
           common.log(
@@ -1032,7 +1038,8 @@ function SpikeyBot() {
         process.cwd());
     common.reply(msg, 'Updating from git...').then((msg_) => {
       childProcess.exec(
-          'eval `ssh-agent $(ssh-add ~/.ssh/sb_id_rsa_nopass)` && git pull',
+          'exec ssh-agent bash -c "ssh-add ~/.ssh/sb_id_rsa_nopass && ' +
+              'git pull"; kill $SSH_AGENT_PID',
           function(err, stdout, stderr) {
             if (!err) {
               if (stdout && stdout !== 'null') console.log('STDOUT:', stdout);
@@ -1041,7 +1048,31 @@ function SpikeyBot() {
               if (client.shard) {
                 client.shard.broadcastEval('this.reloadUpdatedSubmodules');
               }
-              msg_.edit(common.mention(msg) + ' Bot update complete!');
+              try {
+                childProcess.execSync(
+                    'git diff-index --quiet ' + version.split('#')[1] +
+                    ' -- ./src/' +
+                    module.filename.slice(
+                        __filename.lastIndexOf('/') + 1,
+                        module.filename.length));
+                msg_.edit(common.mention(msg) + ' Bot update complete!');
+              } catch (err) {
+                if (err.status === 1) {
+                  msg_.edit(
+                      common.mention(msg) +
+                      ' Bot update complete, but requires manual reboot.');
+                } else {
+                  common.error(
+                      'Checking for SpikeyBot.js changes failed: ' +
+                      err.status);
+                  console.error('STDOUT:', err.stdout);
+                  console.error('STDERR:', err.stderr);
+                  msg_.edit(
+                      common.mention(msg) +
+                      ' Bot update complete, but failed to check if ' +
+                      'reboot is necessary.');
+                }
+              }
             } else {
               common.error('Failed to pull latest update.');
               console.error(err);
