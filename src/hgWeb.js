@@ -177,7 +177,7 @@ function HGWeb(hg) {
     let session = crypto.randomBytes(128).toString('hex');
     let restoreAttempt = false;
 
-    // TODO: Replace this authentication with gpg key-pairs;
+    // @TODO: Replace this authentication with gpg key-pairs;
     socket.on('vaderIAmYourSon', (verification, cb) => {
       if (verification === auth.hgWebSiblingVerification) {
         siblingSockets[socket.id] = socket;

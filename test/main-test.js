@@ -136,11 +136,6 @@ const hgTests = [
             'delete all teams, and create new ones.\n```',
       ]),
   new Test(
-      'Change sub-option number', '~hg options playerOutcomeProbs kill 23',
-      [
-        '<@422623712534200321>\n```\nSet kill to 23 from 22\n```',
-      ]),
-  new Test(
       'Exclude player nomention', '~hg exclude SpikeyRobot',
       ['<@422623712534200321>\n```\nYou must mention people you wish for me ' +
        'to exclude from the next game.\n```']),
