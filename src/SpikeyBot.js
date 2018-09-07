@@ -1039,7 +1039,7 @@ function SpikeyBot() {
     common.reply(msg, 'Updating from git...').then((msg_) => {
       childProcess.exec(
           'exec ssh-agent bash -c "ssh-add ~/.ssh/sb_id_rsa_nopass && ' +
-              'git pull"; kill $SSH_AGENT_PID',
+              'git pull && npm i && npm up"; kill $SSH_AGENT_PID',
           function(err, stdout, stderr) {
             if (!err) {
               if (stdout && stdout !== 'null') console.log('STDOUT:', stdout);
