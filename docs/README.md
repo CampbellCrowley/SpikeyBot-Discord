@@ -5393,6 +5393,7 @@ Main class that manages the bot.
         * [~testChannel](#SpikeyBot..testChannel) : <code>string</code> ℗
         * [~trustedIds](#SpikeyBot..trustedIds) : <code>Array.&lt;string&gt;</code> ℗
         * [~guildPrefixFile](#SpikeyBot..guildPrefixFile) : <code>string</code> ℗
+        * [~guildCustomPrefixFile](#SpikeyBot..guildCustomPrefixFile) : <code>string</code> ℗
         * [~helpmessagereply](#SpikeyBot..helpmessagereply) : <code>string</code> ℗
         * [~blockedmessage](#SpikeyBot..blockedmessage) : <code>string</code> ℗
         * [~onlyservermessage](#SpikeyBot..onlyservermessage) : <code>string</code> ℗
@@ -5663,6 +5664,15 @@ Discord IDs that are allowed to reboot the bot.
 
 ### SpikeyBot~guildPrefixFile : <code>string</code> ℗
 The path in the guild's subdirectory where we store custom prefixes.
+
+**Kind**: inner constant of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Access**: private  
+**Defaut**:   
+<a name="SpikeyBot..guildCustomPrefixFile"></a>
+
+### SpikeyBot~guildCustomPrefixFile : <code>string</code> ℗
+The path in the guild's subdirectory where we store custom prefixes for
+bots with custom names.
 
 **Kind**: inner constant of [<code>SpikeyBot</code>](#SpikeyBot)  
 **Access**: private  

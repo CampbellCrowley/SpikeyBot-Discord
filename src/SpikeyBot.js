@@ -266,6 +266,17 @@ function SpikeyBot() {
   const guildPrefixFile = '/prefix.txt';
 
   /**
+   * The path in the guild's subdirectory where we store custom prefixes for
+   * bots with custom names.
+   *
+   * @private
+   * @constant
+   * @defaut
+   * @type {string}
+   */
+  const guildCustomPrefixFile = '/prefixes.json';
+
+  /**
    * The message sent to the channel where the user asked for help.
    *
    * @private
@@ -806,20 +817,55 @@ function SpikeyBot() {
                 msg_.edit(
                     common.mention(msg) + ' Prefix changed to `' + newPrefix +
                     '`!');
-                fs.writeFile(
-                    common.guildSaveDir + msg.guild.id + guildPrefixFile,
-                    newPrefix, function(err) {
-                      if (err) {
-                        common.error(
-                            'Failed to save guild custom prefix! ' +
-                            msg.guild.id + ' (' + newPrefix + ')');
-                        console.error(err);
-                      } else {
-                        common.log(
-                            'Guild ' + msg.guild.id + ' updated prefix to ' +
-                            newPrefix);
-                      }
-                    });
+                if (botName) {
+                  fs.readFile(
+                      common.guildSaveDir + msg.guild.id +
+                          guildCustomPrefixFile,
+                      function(err, data) {
+                        let finalPrefix = newPrefix;
+                        if (data) {
+                          let parsed = JSON.parse(data);
+                          parsed[botName] = newPrefix;
+                          finalPrefix = JSON.stringify(parsed);
+                        } else {
+                          let newData = {};
+                          newData[botName] = newPrefix;
+                          finalPrefix = JSON.stringify(newData);
+                        }
+                        fs.writeFile(
+                            common.guildSaveDir + msg.guild.id +
+                                guildCustomPrefixFile,
+                            finalPrefix, function(err) {
+                              if (err) {
+                                common.error(
+                                    'Failed to save guild custom prefix! ' +
+                                    msg.guild.id + ' (' + botName + ': ' +
+                                    newPrefix + ')');
+                                console.error(err);
+                              } else {
+                                common.log(
+                                    'Guild ' + msg.guild.id +
+                                    ' updated prefix to ' + botName + ': ' +
+                                    newPrefix);
+                              }
+                            });
+                      });
+                } else {
+                  fs.writeFile(
+                      common.guildSaveDir + msg.guild.id + guildPrefixFile,
+                      newPrefix, function(err) {
+                        if (err) {
+                          common.error(
+                              'Failed to save guild custom prefix! ' +
+                              msg.guild.id + ' (' + newPrefix + ')');
+                          console.error(err);
+                        } else {
+                          common.log(
+                              'Guild ' + msg.guild.id + ' updated prefix to ' +
+                              newPrefix);
+                        }
+                      });
+                }
               });
             });
       }
@@ -1140,11 +1186,19 @@ function SpikeyBot() {
   function loadGuildPrefixes(guilds) {
     if (guilds.length == 0) return;
     const id = guilds.splice(0, 1)[0].id;
-    const guildFile = common.guildSaveDir + id + guildPrefixFile;
+    const guildFile = common.guildSaveDir + id +
+        (botName ? guildCustomPrefixFile : guildPrefixFile);
     const onFileRead = function(id) {
       return function(err, data) {
         if (!err && data.toString().length > 0) {
-          guildPrefixes[id] = data.toString().replace(/\s/g, '');
+          if (botName) {
+            const parsed = JSON.parse(data);
+            if (parsed && parsed[botName]) {
+              guildPrefixes[id] = parsed[botName];
+            }
+          } else {
+            guildPrefixes[id] = data.toString().replace(/\s/g, '');
+          }
         }
         if (guilds.length > 0) {
           loadGuildPrefixes(guilds);
