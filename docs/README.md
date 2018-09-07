@@ -4735,6 +4735,7 @@ Music and audio related commands.
         * [~geniusRequest](#Music..geniusRequest) : <code>Object</code> ℗
         * [~special](#Music..special) : <code>Object.&lt;Object.&lt;{cmd: string, url: ?string, file: string}&gt;&gt;</code> ℗
         * [~ytdlOpts](#Music..ytdlOpts) : <code>Array.&lt;string&gt;</code> ℗
+        * [~streamOptions](#Music..streamOptions) : <code>Discord~StreamOptions</code> ℗
         * [~mention(msg)](#Music..mention) ⇒ <code>string</code> ℗
         * [~reply(msg, text, post)](#Music..reply) ⇒ <code>Promise</code> ℗
         * [~handleVoiceStateUpdate(oldState, newState)](#Music..handleVoiceStateUpdate) ℗
@@ -4747,6 +4748,10 @@ Music and audio related commands.
         * [~endSong(broadcast)](#Music..endSong) ℗
         * [~skipSong(broadcast)](#Music..skipSong) ℗
         * [~commandJoin(msg)](#Music..commandJoin) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~commandPause(msg)](#Music..commandPause) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~pauseBroadcast(broadcast)](#Music..pauseBroadcast) ⇒ <code>boolean</code> ℗
+        * [~commandResume(msg)](#Music..commandResume) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~resumeBroadcast(broadcast)](#Music..resumeBroadcast) ⇒ <code>boolean</code> ℗
         * [~commandPlay(msg)](#Music..commandPlay) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandLeave(msg)](#Music..commandLeave) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandSkip(msg)](#Music..commandSkip) : [<code>commandHandler</code>](#commandHandler) ℗
@@ -4978,6 +4983,15 @@ Options passed to youtube-dl for fetching videos.
 **Kind**: inner constant of [<code>Music</code>](#Music)  
 **Default**: <code>[&quot;-f bestaudio/best&quot;,&quot;--no-playlist&quot;,&quot;--default-search&#x3D;auto&quot;]</code>  
 **Access**: private  
+<a name="Music..streamOptions"></a>
+
+### Music~streamOptions : <code>Discord~StreamOptions</code> ℗
+Options to pass into the stream dispatcher.
+[StreamOptions](https://discord.js.org/#/docs/main/master/typedef/StreamOptions)
+
+**Kind**: inner constant of [<code>Music</code>](#Music)  
+**Default**: <code>{&quot;passes&quot;:2,&quot;fec&quot;:true,&quot;bitrate&quot;:42,&quot;volume&quot;:0.5,&quot;plp&quot;:0.01}</code>  
+**Access**: private  
 <a name="Music..mention"></a>
 
 ### Music~mention(msg) ⇒ <code>string</code> ℗
@@ -5137,6 +5151,58 @@ Join a voice channel that the user is in.
 | --- | --- | --- |
 | msg | <code>Discord~Message</code> | The message that triggered command. |
 
+<a name="Music..commandPause"></a>
+
+### Music~commandPause(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Pause the currently playing music broadcast.
+
+**Kind**: inner method of [<code>Music</code>](#Music)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message that triggered command. |
+
+<a name="Music..pauseBroadcast"></a>
+
+### Music~pauseBroadcast(broadcast) ⇒ <code>boolean</code> ℗
+Cause the given broadcast to be paused.
+
+**Kind**: inner method of [<code>Music</code>](#Music)  
+**Returns**: <code>boolean</code> - If the music was actully paused. False if the music is
+already paused or nothing is playing.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| broadcast | [<code>Broadcast</code>](#Music..Broadcast) | The object storing all relevant information. |
+
+<a name="Music..commandResume"></a>
+
+### Music~commandResume(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Resume the currently paused music broadcast.
+
+**Kind**: inner method of [<code>Music</code>](#Music)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message that triggered command. |
+
+<a name="Music..resumeBroadcast"></a>
+
+### Music~resumeBroadcast(broadcast) ⇒ <code>boolean</code> ℗
+Cause the given broadcast to be resumed.
+
+**Kind**: inner method of [<code>Music</code>](#Music)  
+**Returns**: <code>boolean</code> - If the music was actully resumed. False if the music is
+already playing or nothing is playing.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| broadcast | [<code>Broadcast</code>](#Music..Broadcast) | The object storing all relevant information. |
+
 <a name="Music..commandPlay"></a>
 
 ### Music~commandPlay(msg) : [<code>commandHandler</code>](#commandHandler) ℗
@@ -5282,6 +5348,9 @@ Information about a server's music and queue.
 | skips | <code>Object.&lt;boolean&gt;</code> | Stores user id's and whether they have voted to skip. Non-existent user means they have not voted to skip. |
 | isPlaying | <code>boolean</code> | Is audio currntly being streamed to the channel. |
 | broadcast | <code>Discord~VoiceBroadcast</code> | The Discord voice broadcast actually playing the audio. |
+| voice | <code>Discord~VoiceConnection</code> | The current voice connection audio is being streamed to. |
+| current | <code>Object</code> | The current broadcast information including thread, readable stream, and song information. |
+| interval | <code>Interval</code> | The interval for checking if we are done playing audio. |
 
 <a name="SpikeyBot"></a>
 

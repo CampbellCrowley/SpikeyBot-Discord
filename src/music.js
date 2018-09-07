@@ -14,6 +14,8 @@ require('./subModule.js')(Music);
  * @augments SubModule
  * @listens Discord~Client#voiceStateUpdate
  * @listens SpikeyBot~Command#play
+ * @listens SpikeyBot~Command#pause
+ * @listens SpikeyBot~Command#resume
  * @listens SpikeyBot~Command#leave
  * @listens SpikeyBot~Command#stop
  * @listens SpikeyBot~Command#stfu
@@ -68,8 +70,14 @@ function Music() {
    * skip.
    * @property {boolean} isPlaying Is audio currntly being streamed to the
    * channel.
-   * @property {Discord~VoiceBroadcast} broadcast The Discord voice broadcast
+   * @property {?Discord~VoiceBroadcast} broadcast The Discord voice broadcast
    * actually playing the audio.
+   * @property {?Discord~VoiceConnection} voice The current voice connection
+   * audio is being streamed to.
+   * @property {?Object} current The current broadcast information including
+   * thread, readable stream, and song information.
+   * @property {?Interval} interval The interval for checking if we are done
+   * playing audio.
    */
 
   /**
@@ -122,13 +130,27 @@ function Music() {
   const ytdlOpts =
       ['-f bestaudio/best', '--no-playlist', '--default-search=auto'];
 
+  /**
+   * Options to pass into the stream dispatcher.
+   * [StreamOptions](https://discord.js.org/#/docs/main/master/typedef/StreamOptions)
+   *
+   * @private
+   * @constant
+   * @type {Discord~StreamOptions}
+   * @default
+   */
+  const streamOptions =
+      {passes: 2, fec: true, bitrate: 42, volume: 0.5, plp: 0.01};
+
   /** @inheritdoc */
   this.initialize = function() {
     self.command.on('join', commandJoin, true);
     self.command.on('play', commandPlay, true);
+    self.command.on('pause', commandPause, true);
+    self.command.on('resume', commandResume, true);
     self.command.on(['leave', 'stop', 'stfu'], commandLeave, true);
     self.command.on('skip', commandSkip, true);
-    self.command.on(['queue', 'playing'], commandQueue, true);
+    self.command.on(['q', 'queue', 'playing'], commandQueue, true);
     self.command.on(['remove', 'dequeue'], commandRemove, true);
     self.command.on('lyrics', commandLyrics);
     self.command.on('record', commandRecord, true);
@@ -157,9 +179,11 @@ function Music() {
   this.shutdown = function() {
     self.command.deleteEvent('join');
     self.command.deleteEvent('play');
+    self.command.deleteEvent('pause');
+    self.command.deleteEvent('resume');
     self.command.deleteEvent(['leave', 'stop', 'stfu']);
     self.command.deleteEvent('skip');
-    self.command.deleteEvent(['queue', 'playing']);
+    self.command.deleteEvent(['q', 'queue', 'playing']);
     self.command.deleteEvent(['remove', 'dequeue']);
     self.command.deleteEvent('lyrics');
     self.command.deleteEvent('record');
@@ -389,22 +413,23 @@ function Music() {
   function makeBroadcast(broadcast) {
     // Setup voice connection listeners.
     broadcast.voice.on('disconnect', () => {
-      if (broadcast.current.stream) broadcast.current.stream.destroy();
+      if (broadcast.current.readable) broadcast.current.readable.destroy();
       if (broadcast.current.thread) broadcast.current.thread.kill();
+      if (broadcast.interval) self.client.clearInterval(broadcast.interval);
     });
 
     // Setup readable stream for audio data.
     broadcast.current.readable = new Readable();
     broadcast.current.readable._read = function() {};
-    broadcast.broadcast = broadcast.voice.play(broadcast.current.readable);
+    broadcast.broadcast =
+        broadcast.voice.play(broadcast.current.readable, streamOptions);
 
-    broadcast.broadcast.on('speaking', function(speaking) {
-      if (!speaking) endSong(broadcast);
+    broadcast.broadcast.on('end', function() {
+      endSong(broadcast);
     });
-
-    broadcast.broadcast.setBitrate(42);
-    broadcast.broadcast.setFEC(true);
-    broadcast.broadcast.setVolume(0.5);
+    broadcast.broadcast.on('close', function() {
+      endSong(broadcast);
+    });
 
     broadcast.broadcast.on('error', function(err) {
       self.error('Error in starting broadcast');
@@ -470,6 +495,10 @@ function Music() {
     stream.on('data', function(chunk) {
       progress({data: chunk});
     });
+    stream.on('end', function() {
+      progress({data: null});
+      done();
+    });
     stream.on('close', function() {
       progress({data: null});
       done();
@@ -513,6 +542,84 @@ function Music() {
     } else {
       msg.member.voice.channel.join();
     }
+  }
+
+  /**
+   * Pause the currently playing music broadcast.
+   *
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg The message that triggered command.
+   * @listens SpikeyBot~Command#pause
+   */
+  function commandPause(msg) {
+    if (!broadcasts[msg.guild.id]) {
+      self.common.reply(msg, 'Nothing is playing!');
+    } else if (!broadcasts[msg.guild.id].broadcast) {
+      self.common.reply(msg, 'Nothing is playing!');
+    } else {
+      if (pauseBroadcast(broadcasts[msg.guild.id])) {
+        self.common.reply(msg, 'Music paused.');
+      } else {
+        self.common.reply(msg, 'Music was already paused!');
+      }
+    }
+  }
+
+  /**
+   * Cause the given broadcast to be paused.
+   *
+   * @private
+   * @param {Music~Broadcast} broadcast The object storing all relevant
+   * information.
+   * @return {boolean} If the music was actully paused. False if the music is
+   * already paused or nothing is playing.
+   */
+  function pauseBroadcast(broadcast) {
+    if (!broadcast.broadcast) return false;
+    if (!broadcast.broadcast.pause) return false;
+    if (broadcast.broadcast.paused) return false;
+    broadcast.broadcast.pause(true);
+    return true;
+  }
+
+  /**
+   * Resume the currently paused music broadcast.
+   *
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg The message that triggered command.
+   * @listens SpikeyBot~Command#resume
+   */
+  function commandResume(msg) {
+    if (!broadcasts[msg.guild.id]) {
+      self.common.reply(msg, 'Nothing is playing!');
+    } else if (!broadcasts[msg.guild.id].broadcast) {
+      self.common.reply(msg, 'Nothing is playing!');
+    } else {
+      if (resumeBroadcast(broadcasts[msg.guild.id])) {
+        self.common.reply(msg, 'Music resumed.');
+      } else {
+        self.common.reply(msg, 'Music was already playing!');
+      }
+    }
+  }
+
+  /**
+   * Cause the given broadcast to be resumed.
+   *
+   * @private
+   * @param {Music~Broadcast} broadcast The object storing all relevant
+   * information.
+   * @return {boolean} If the music was actully resumed. False if the music is
+   * already playing or nothing is playing.
+   */
+  function resumeBroadcast(broadcast) {
+    if (!broadcast.broadcast) return false;
+    if (!broadcast.broadcast.resume) return false;
+    if (!broadcast.broadcast.paused) return false;
+    broadcast.broadcast.resume();
+    return true;
   }
 
   /**

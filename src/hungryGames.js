@@ -3732,7 +3732,8 @@ function HungryGames() {
 
         const quarterLength = Math.ceil(statusList.length / numCols);
         for (let i = 0; i < numCols - 1; i++) {
-          let thisMessage = statusList.splice(0, quarterLength).join('\n');
+          let thisMessage =
+              statusList.splice(0, quarterLength).join('\n').slice(0, 1025);
           finalMessage.addField(
               (i * quarterLength + 1) + '-' + ((i + 1) * quarterLength),
               thisMessage, true);
@@ -3740,7 +3741,7 @@ function HungryGames() {
         finalMessage.addField(
             ((numCols - 1) * quarterLength + 1) + '-' +
                 find(id).currentGame.includedUsers.length,
-            statusList.join('\n'), true);
+            statusList.join('\n').slice(0, 1025), true);
       } else {
         finalMessage.setDescription(statusList.join('\n'));
       }
@@ -3874,10 +3875,11 @@ function HungryGames() {
       } else {
         let thirdLength = Math.floor(rankList.length / 3);
         for (let i = 0; i < 2; i++) {
-          let thisMessage = rankList.splice(0, thirdLength).join('\n');
+          let thisMessage =
+              rankList.splice(0, thirdLength).join('\n').slice(0, 1025);
           rankEmbed.addField(i + 1, thisMessage, true);
         }
-        rankEmbed.addField(3, rankList.join('\n'), true);
+        rankEmbed.addField(3, rankList.join('\n').slice(0, 1025), true);
       }
       rankEmbed.setColor(defaultColor);
       if (!find(id).options.disableOutput) {

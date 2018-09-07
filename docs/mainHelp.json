@@ -325,6 +325,28 @@
           ]
         },
         {
+          "command": "pause",
+          "description": "Pause the currently playing music.",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "pause",
+              "result": ""
+            }
+          ]
+        },
+        {
+          "command": "resume",
+          "description": "Resume the currently paused music.",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "resume",
+              "result": ""
+            }
+          ]
+        },
+        {
           "command": "lyrics 'song'",
           "description": "Search for song lyrics.",
           "examples": [

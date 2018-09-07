@@ -11,7 +11,7 @@
 #### Random
 `flip` `roll`
 #### Music
-`play` `stop` `skip` `queue` `remove` `lyrics`
+`play` `stop` `skip` `queue` `remove` `lyrics` `pause` `resume`
 #### Math
 `add` `simplify` `solve` `evaluate` `derive` `graph`
 #### Admin

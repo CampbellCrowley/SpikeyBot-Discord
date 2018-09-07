@@ -44,6 +44,8 @@ See [spikeybot.com](https://www.spikeybot.com/) for examples and more informatio
 | ?skip | Skip the currently playing song. |  |
 | ?queue | View the songs currently in the queue. | queue, playing |
 | ?remove 'index' | Remove a song with the given queue index from the queue. | remove, dequeue |
+| ?pause | Pause the currently playing music. |  |
+| ?resume | Resume the currently paused music. |  |
 | ?lyrics 'song' | Search for song lyrics. |  |
 
 
