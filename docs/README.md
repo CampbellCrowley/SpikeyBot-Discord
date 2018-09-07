@@ -5385,6 +5385,7 @@ Main class that manages the bot.
         * [~disconnectReason](#SpikeyBot..disconnectReason) : <code>string</code> ℗
         * [~enableSharding](#SpikeyBot..enableSharding) : <code>boolean</code> ℗
         * [~numShards](#SpikeyBot..numShards) : <code>number</code> ℗
+        * [~botName](#SpikeyBot..botName) : <code>string</code> ℗
         * [~initialized](#SpikeyBot..initialized) : <code>boolean</code> ℗
         * [~reactToAnthony](#SpikeyBot..reactToAnthony) : <code>boolean</code> ℗
         * [~guildPrefixes](#SpikeyBot..guildPrefixes) : <code>Object.&lt;string&gt;</code> ℗
@@ -5602,6 +5603,15 @@ decide. Set from `--shards=#` cli argument.
 
 **Kind**: inner property of [<code>SpikeyBot</code>](#SpikeyBot)  
 **Default**: <code>0</code>  
+**Access**: private  
+<a name="SpikeyBot..botName"></a>
+
+### SpikeyBot~botName : <code>string</code> ℗
+The name of the client secret to use. Defaults to release either release or
+dev depending on the --dev flag.
+
+**Kind**: inner property of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Default**: <code>null</code>  
 **Access**: private  
 <a name="SpikeyBot..initialized"></a>
 

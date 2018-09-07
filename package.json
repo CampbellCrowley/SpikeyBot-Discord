@@ -50,7 +50,9 @@
     "test:hg": "mocha --delay --grep \"START|Hungry Games|END\"",
     "test:main": "mocha --delay --grep \"START|Main Module|END\"",
     "run": "npm run kill; npm start",
+    "run:rem": "npm run kill; npm run start:rem",
     "start": "nodejs src/SpikeyBot.js --dev --shards ./hungryGames.js ./main.js ./ticTacToe.js ./connect4.js ./music.js &",
+    "start:rem": "nodejs src/SpikeyBot.js --dev --shards --botname rembot ./hungryGames.js ./main.js ./ticTacToe.js ./connect4.js ./music.js &",
     "kill": "killall nodejs node; exit 0;",
     "docs": "npm run lint && bash .hooks/make-docs.sh",
     "docs:help": "nodejs src/json2md.js docs/*.json"

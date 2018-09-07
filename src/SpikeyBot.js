@@ -126,10 +126,27 @@ function SpikeyBot() {
    */
   let numShards = 0;
 
+  /**
+   * The name of the client secret to use. Defaults to release either release or
+   * dev depending on the --dev flag.
+   *
+   * @private
+   * @default
+   * @type {string}
+   */
+  let botName = null;
+
   // Parse cli args.
-  for (let i in process.argv) {
+  for (let i = 0; i < process.argv.length; i++) {
     if (process.argv[i] === 'dev' || process.argv[i] === '--dev') {
       setDev = true;
+    } else if (process.argv[i].startsWith('--botname')) {
+      if (process.argv[i].indexOf('=') > -1) {
+        botName = process.argv[i].split('=')[1] || '';
+      } else if (process.argv.length > i + 1) {
+        botName = process.argv[i + 1] || '';
+        i++;
+      }
     } else if (
         process.argv[i] === 'minimal' || process.argv[i] === 'onlymusic' ||
         process.argv[i] === '--minimal' || process.argv[i] === '--onlymusic') {
@@ -1121,6 +1138,7 @@ function SpikeyBot() {
    * prefixes of.
    */
   function loadGuildPrefixes(guilds) {
+    if (guilds.length == 0) return;
     const id = guilds.splice(0, 1)[0].id;
     const guildFile = common.guildSaveDir + id + guildPrefixFile;
     const onFileRead = function(id) {
@@ -1142,7 +1160,14 @@ function SpikeyBot() {
   // https://discordapp.com/oauth2/authorize?&client_id=422623712534200321&scope=bot
   // Rel:
   // https://discordapp.com/oauth2/authorize?&client_id=318552464356016131&scope=bot
-  if (isDev) {
+  if (botName) {
+    if (!auth[botName]) {
+      common.error('Failed to find auth entry for ' + botName);
+      process.exit(1);
+    } else {
+      client.login(auth[botName]);
+    }
+  } else if (isDev) {
     client.login(auth.dev);
   } else {
     client.login(auth.release);
