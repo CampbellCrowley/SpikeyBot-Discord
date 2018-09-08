@@ -46,8 +46,8 @@ function HGWeb(hg) {
         'Restarting into client mode due to server already bound to port.',
         'HG Web');
     ioClient = require('socket.io-client')(
-        'localhost:8010', {path: '/www.spikeybot.com/socket.io/hg/'});
-    ioClient.on('connection', clientSocketConnection);
+        'http://localhost:8010', {path: '/www.spikeybot.com/socket.io/hg/'});
+    clientSocketConnection(ioClient);
   }
 
   /**
@@ -86,9 +86,9 @@ function HGWeb(hg) {
    * @param {boolean} [skipSave=false] Skip writing data to file.
    */
   this.shutdown = function(skipSave) {
-    io.close();
+    if (io) io.close();
     if (ioClient) ioClient.close();
-    app.close();
+    if (app) app.close();
     clearInterval(purgeInterval);
     if (!skipSave) {
       fs.writeFileSync('./save/hgWebClients.json', JSON.stringify(loginInfo));
@@ -182,7 +182,8 @@ function HGWeb(hg) {
       if (verification === auth.hgWebSiblingVerification) {
         siblingSockets[socket.id] = socket;
         cb(auth.hgWebSiblingVerificationResponse);
-        hg.common.log('Client connected as child successfully.', socket.id);
+      } else {
+        hg.common.error('Client failed to authenticate as child.', socket.id);
       }
     });
     socket.on('restore', (sess) => {
@@ -364,7 +365,7 @@ function HGWeb(hg) {
         Object.entries(siblingSockets).forEach((s) => {
           s[1].emit('forwardedRequest', userData, socket.id, (...res) => {
             socket.emit(res);
-          }, args);
+          }, func.name, args);
         });
       }
     }
@@ -393,10 +394,18 @@ function HGWeb(hg) {
    */
   function clientSocketConnection(socket) {
     let authenticated = false;
-    socket.emit('vaderIAmYourSon', auth.hgWebSiblingVerification, (res) => {
-      authenticated = res === auth.hgWebSiblingVerificationResponse;
+    socket.on('connect', () => {
+      socket.emit('vaderIAmYourSon', auth.hgWebSiblingVerification, (res) => {
+        hg.common.log('Sibling authenticated successfully.');
+        authenticated = res === auth.hgWebSiblingVerificationResponse;
+      });
     });
-    socket.on('forwardedRequest', (userData, sId, cb, ...args) => {
+
+    socket.on('fetchGuilds', (userData, id, cb) => {
+      fetchGuilds(userData, {id: id}, cb);
+    });
+
+    socket.on('forwardedRequest', (userData, sId, cb, func, ...args) => {
       if (!authenticated) return;
       let fakeSocket = {
         emit: function(...args) {
@@ -404,7 +413,11 @@ function HGWeb(hg) {
         },
         id: sId,
       };
-      self[args[0]].apply(self[args[0]], [userData, fakeSocket].concat(args));
+      if (!self[func]) {
+        hg.common.error(func + ': is not a function.');
+      } else {
+        self[func].apply(self[func], [userData, fakeSocket].concat(args));
+      }
     });
   }
 
@@ -706,42 +719,46 @@ function HGWeb(hg) {
       return;
     }
 
-    const numReplies = (Object.entries(siblingSockets).length || 0);
-    let replied = 0;
-    let guildBuffer = {};
-
-    /**
-     * The callback for each response with the requested data. Replies to the
-     * user once all requests have replied.
-     *
-     * @private
-     * @param {string|Object} guilds Either the guild data to send to the user,
-     * or 'guilds' if this is a reply from a sibling client.
-     * @param {?string} [err] The error that occurred, or null if no error.
-     * @param {Object} [response] The guild data if `guilds` equals 'guilds'.
-     */
-    function done(guilds, err, response) {
-      if (guilds === 'guilds') {
-        if (err) {
-          guilds = null;
-        } else {
-          guilds = response;
+    let done;
+    if (typeof cb === 'function') {
+      done = cb;
+    } else {
+      const numReplies = (Object.entries(siblingSockets).length || 0);
+      let replied = 0;
+      let guildBuffer = {};
+      /**
+       * The callback for each response with the requested data. Replies to the
+       * user once all requests have replied.
+       *
+       * @private
+       * @param {string|Object} guilds Either the guild data to send to the
+       * user,
+       * or 'guilds' if this is a reply from a sibling client.
+       * @param {?string} [err] The error that occurred, or null if no error.
+       * @param {Object} [response] The guild data if `guilds` equals 'guilds'.
+       */
+      done = function(guilds, err, response) {
+        if (guilds === 'guilds') {
+          if (err) {
+            guilds = null;
+          } else {
+            guilds = response;
+          }
         }
-      }
-      guildBuffer = Object.assign(guilds, guildBuffer);
-      replied++;
-      if (replied >= numReplies) {
-        if (typeof cb === 'function') cb();
-        socket.emit('guilds', null, guildBuffer);
-        socket.cachedGuilds = guildBuffer.map((g) => {
-          return g.id;
-        });
-      }
+        for (let i = 0; i < guilds.length; i++) {
+          guildBuffer[guilds[i].id] = guilds[i];
+        }
+        replied++;
+        if (replied > numReplies) {
+          if (typeof cb === 'function') cb();
+          socket.emit('guilds', null, guildBuffer);
+          socket.cachedGuilds = Object.keys(guildBuffer);
+        }
+      };
+      Object.entries(siblingSockets).forEach((obj, i) => {
+        obj[1].emit('fetchGuilds', userData, socket.id, done);
+      });
     }
-
-    Object.entries(siblingSockets).forEach((obj, i) => {
-      obj[1].emit('fetchGuilds', done);
-    });
 
     try {
       let guilds = hg.client.guilds
@@ -776,6 +793,7 @@ function HGWeb(hg) {
       done();
     }
   }
+  this.fetchGuilds = fetchGuilds;
   /**
    * Fetch data about a member of a guild.
    *
@@ -801,6 +819,7 @@ function HGWeb(hg) {
     if (typeof cb === 'function') cb();
     socket.emit('member', gId, mId, member);
   }
+  this.fetchMember = fetchMember;
   /**
    * Fetch data about a channel of a guild.
    *
@@ -838,6 +857,7 @@ function HGWeb(hg) {
     if (typeof cb === 'function') cb();
     socket.emit('channel', gId, cId, stripped);
   }
+  this.fetchChannel = fetchChannel;
   /**
    * Fetch all game data within a guild.
    * @see {HungryGames.getGame}
@@ -860,6 +880,7 @@ function HGWeb(hg) {
     if (typeof cb === 'function') cb();
     socket.emit('game', gId, hg.getGame(gId));
   }
+  this.fetchGames = fetchGames;
   /**
    * Fetch the updated game's day information.
    * @see {HungryGames.getGame}
@@ -903,6 +924,7 @@ function HGWeb(hg) {
     socket.emit(
         'day', gId, game.currentGame.day, game.currentGame.includedUsers);
   }
+  this.fetchDay = fetchDay;
   /**
    * Exclude a member from the Games.
    * @see {HungryGames.excludeUsers}
@@ -931,6 +953,7 @@ function HGWeb(hg) {
     if (typeof cb === 'function') cb();
     socket.emit('game', gId, hg.getGame(gId));
   }
+  this.excludeMember = excludeMember;
   /**
    * Include a member in the Games.
    * @see {HungryGames.includeUsers}
@@ -959,6 +982,7 @@ function HGWeb(hg) {
     if (typeof cb === 'function') cb();
     socket.emit('game', gId, hg.getGame(gId));
   }
+  this.includeMember = includeMember;
   /**
    * Toggle an option in the Games.
    * @see {HungryGames.setOption}
@@ -990,6 +1014,7 @@ function HGWeb(hg) {
       }
     }
   }
+  this.toggleOption = toggleOption;
   /**
    * Create a Game.
    * @see {HungryGames.createGame}
@@ -1014,6 +1039,7 @@ function HGWeb(hg) {
     socket.emit('message', 'Game created');
     socket.emit('game', gId, hg.getGame(gId));
   }
+  this.createGame = createGame;
   /**
    * Reset game data.
    * @see {HungryGames.resetGame}
@@ -1038,6 +1064,7 @@ function HGWeb(hg) {
     socket.emit('message', hg.resetGame(gId, cmd));
     socket.emit('game', gId, hg.getGame(gId));
   }
+  this.resetGame = resetGame;
   /**
    * Start the game.
    * @see {HungryGames.startGame}
@@ -1063,6 +1090,7 @@ function HGWeb(hg) {
     socket.emit('message', 'Game started');
     socket.emit('game', gId, hg.getGame(gId));
   }
+  this.startGame = startGame;
   /**
    * Enable autoplay.
    * @see {HungryGames.startAutoplay}
@@ -1088,6 +1116,7 @@ function HGWeb(hg) {
     socket.emit('message', 'Autoplay enabled');
     socket.emit('game', gId, hg.getGame(gId));
   }
+  this.startAutoplay = startAutoplay;
   /**
    * Start the next day.
    * @see {HungryGames.nextDay}
@@ -1112,6 +1141,7 @@ function HGWeb(hg) {
     if (typeof cb === 'function') cb();
     socket.emit('message', 'Starting next day');
   }
+  this.nextDay = nextDay;
   /**
    * End the game.
    * @see {HungryGames.endGame}
@@ -1136,6 +1166,7 @@ function HGWeb(hg) {
     socket.emit('message', 'Game ended');
     socket.emit('game', gId, hg.getGame(gId));
   }
+  this.endGame = endGame;
   /**
    * Disable autoplay.
    * @see {HungryGames.pauseAutoplay}
@@ -1160,6 +1191,7 @@ function HGWeb(hg) {
     socket.emit('message', 'Autoplay paused');
     socket.emit('game', gId, hg.getGame(gId));
   }
+  this.pauseAutoplay = pauseAutoplay;
   /**
    * Edit the teams.
    * @see {HungryGames.editTeam}
@@ -1184,6 +1216,7 @@ function HGWeb(hg) {
     hg.editTeam(userData.id, gId, cmd, one, two);
     socket.emit('game', gId, hg.getGame(gId));
   }
+  this.editTeam = editTeam;
   /**
    * Create a game event.
    * @see {HungryGames.createEvent}
@@ -1222,6 +1255,7 @@ function HGWeb(hg) {
       socket.emit('game', gId, hg.getGame(gId));
     }
   }
+  this.createEvent = createEvent;
 
   /**
    * Create a larger game event. Either Arena or Weapon at this point. If
@@ -1256,6 +1290,7 @@ function HGWeb(hg) {
       socket.emit('game', gId, hg.getGame(gId));
     }
   }
+  this.createMajorEvent = createMajorEvent;
 
   /**
    * Delete a larger game event. Either Arena or Weapon at this point.
@@ -1294,6 +1329,7 @@ function HGWeb(hg) {
       socket.emit('game', gId, hg.getGame(gId));
     }
   }
+  this.editMajorEvent = editMajorEvent;
 
   /**
    * Remove a game event.
@@ -1326,6 +1362,7 @@ function HGWeb(hg) {
       socket.emit('game', gId, hg.getGame(gId));
     }
   }
+  this.removeEvent = removeEvent;
 
   hg.log('Init Web');
 }
