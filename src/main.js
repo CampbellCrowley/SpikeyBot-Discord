@@ -1360,7 +1360,7 @@ function Main() {
    * @listens SpikeyBot~Command#say
    */
   function commandSay(msg) {
-    msg.delete();
+    msg.delete().catch(() => {});
     let content = msg.text;
     if (content.indexOf(' ') === 0) content.replace(' ', '');
     msg.channel.send(content);
@@ -1708,7 +1708,8 @@ function Main() {
               0) {
         self.common.reply(
             msg, 'You can\'t smite ' + toSmite.user.username +
-                '! You are not stronger than them!');
+                '! You are not stronger than them!',
+            'Your role is not higher than theirs.');
       } else {
         msg.guild.members.fetch(self.client.user).then((me) => {
           let myRole = me.roles.highest;
@@ -1717,7 +1718,8 @@ function Main() {
                   myRole, toSmite.roles.highest) <= 0) {
             self.common.reply(
                 msg, 'I can\'t smite ' + toSmite.user.username +
-                    '! I am not strong enough!');
+                    '! I am not strong enough!',
+                'I need permission to have a higher role.');
           } else {
             let hasSmiteRole = false;
             let smiteRole;
