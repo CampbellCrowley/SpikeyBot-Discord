@@ -146,7 +146,8 @@
       {
         "message": "{victim} become[As|] drunk from partying too hard with {attacker} and {owner} alcohol.",
         "attacker": { "count": "-1", "outcome": "nothing" },
-        "victim": { "count": "-1", "outcome": "nothing" }
+        "victim": { "count": "-1", "outcome": "nothing" },
+        "consumes": "A"
       },
       {
         "message": "{attacker} get[As|] a little too drunk with {owner} alcohol.",
