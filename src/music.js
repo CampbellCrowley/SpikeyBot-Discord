@@ -312,7 +312,7 @@ function Music() {
           })
           .catch((err) => {
             console.log(err);
-            reply(msg, 'Failed to join voice channel!');
+            reply(msg, 'I am unable to join your voice channel.', err.message);
           });
     }
   }
@@ -540,7 +540,9 @@ function Music() {
     if (msg.member.voice.channel === null) {
       reply(msg, 'You aren\'t in a voice channel!');
     } else {
-      msg.member.voice.channel.join();
+      msg.member.voice.channel.join().catch((err) => {
+        reply(msg, 'I am unable to join your voice channel.', err.message);
+      });
     }
   }
 
@@ -1046,22 +1048,27 @@ function Music() {
         stream.destroy();
       }); */
     };
-    msg.member.voice.channel.join().then((conn) => {
-      // Timeout and sound are due to current Discord bug requiring bot to play
-      // sound for 0.1s before being able to receive audio.
-      conn.play('./sounds/plink.ogg');
-      self.client.setTimeout(() => {
-        let receiver = conn.createReceiver();
-        msg.member.voice.channel.members.forEach(function(member) {
-          listen(member.user, receiver, conn);
+    msg.member.voice.channel.join()
+        .then((conn) => {
+          // Timeout and sound are due to current Discord bug requiring bot to
+          // play
+          // sound for 0.1s before being able to receive audio.
+          conn.play('./sounds/plink.ogg');
+          self.client.setTimeout(() => {
+            let receiver = conn.createReceiver();
+            msg.member.voice.channel.members.forEach(function(member) {
+              listen(member.user, receiver, conn);
+            });
+            conn.on('speaking', (user, speaking) => {
+              if (speaking) {
+                listen(user, receiver, conn);
+              }
+            });
+          }, 100);
+        })
+        .catch((err) => {
+          reply(msg, 'I am unable to join your voice channel.', err.message);
         });
-        conn.on('speaking', (user, speaking) => {
-          if (speaking) {
-            listen(user, receiver, conn);
-          }
-        });
-      }, 100);
-    });
   }
 }
 /**
