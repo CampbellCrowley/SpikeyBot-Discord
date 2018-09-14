@@ -5042,7 +5042,7 @@ function HungryGames() {
                       msg_ = msg;
                       getIsVictimKiller();
                     });
-                    msg_.delete().catch(()=>{});
+                    msg_.delete().catch(() => {});
                   });
             }
           };
@@ -5070,8 +5070,12 @@ function HungryGames() {
                   error);
             } else {
               msg.channel.send(
-                  '`Event created!`\n' + formatEventString(newEvent) + '\n' +
-                  eventType + ' event');
+                  '`Event created!`\n' +
+                  formatEventString(
+                      new Event(
+                          message, numVictim, numAttacker, victimOutcome,
+                          attackerOutcome, victimKiller, attackerKiller)) +
+                  '\n' + eventType + ' event');
             }
           };
 
@@ -5563,7 +5567,9 @@ function HungryGames() {
                            .message;
       msg.myResponse.edit(
           helpMsg + single + '\n' + pluralOne + '\n' + pluralTwo + '\n' +
-          pluralBoth + '\n\n' + finalOptionsHelp);
+          pluralBoth +
+          '\n\n(Tip: The Hungry Games can be managed from my website: ' +
+          'https://www.spikeybot.com/hg/)\n' + finalOptionsHelp);
     } catch (err) {
       console.log(err);
     }
@@ -5884,7 +5890,7 @@ function HungryGames() {
    * Format an event to show its settings to the user.
    *
    * @private
-   * @param {HungryGames~Event} arenaEvent The event to format.
+   * @param {HungryGames~Event|string} arenaEvent The event to format.
    * @param {boolean} [newline=false] If a new line should be inserted for
    * better formatting.
    * @return {string} The formatted message with emojis.

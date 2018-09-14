@@ -3451,7 +3451,7 @@ Format an event to show its settings to the user.
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| arenaEvent | [<code>Event</code>](#HungryGames..Event) |  | The event to format. |
+| arenaEvent | [<code>Event</code>](#HungryGames..Event) \| <code>string</code> |  | The event to format. |
 | [newline] | <code>boolean</code> | <code>false</code> | If a new line should be inserted for better formatting. |
 
 <a name="HungryGames..getOutcomeEmoji"></a>
