@@ -812,13 +812,13 @@ function Main() {
                   let overwrites = channel.permissionOverwrites.get(role.id);
                   if (overwrites) {
                     if (channel.type == 'category') {
-                      if (overwrites.denied.has(
+                      if (overwrites.deny.has(
                               self.Discord.Permissions.FLAGS
                                   .MENTION_EVERYONE)) {
                         return;
                       }
                     } else if (channel.type == 'text') {
-                      if (overwrites.denied.has(
+                      if (overwrites.deny.has(
                               self.Discord.Permissions.FLAGS
                                   .MENTION_EVERYONE)) {
                         return;
@@ -1741,19 +1741,19 @@ function Main() {
                   let overwrites = channel.permissionOverwrites.get(role.id);
                   if (overwrites) {
                     if (channel.type == 'category') {
-                      if (overwrites.denied.has(
+                      if (overwrites.deny.has(
                               self.Discord.Permissions.FLAGS.SPEAK) &&
-                          overwrites.denied.has(
+                          overwrites.deny.has(
                               self.Discord.Permissions.FLAGS.SEND_MESSAGES)) {
                         return;
                       }
                     } else if (channel.type == 'voice') {
-                      if (overwrites.denied.has(
+                      if (overwrites.deny.has(
                               self.Discord.Permissions.FLAGS.SPEAK)) {
                         return;
                       }
                     } else if (channel.type == 'text') {
-                      if (overwrites.denied.has(
+                      if (overwrites.deny.has(
                               self.Discord.Permissions.FLAGS.SEND_MESSAGES)) {
                         return;
                       }
