@@ -85,6 +85,16 @@ function SubModule() {
                     .trim();
 
   /**
+   * The time at which this madule was loaded for use in checking if the module
+   * needs to be reloaded because the file has been modified since loading.
+   *
+   * @public
+   * @constant
+   * @type {number}
+   */
+  this.loadTime = Date.now();
+
+  /**
    * The name of this submodule. Used for differentiating in the log. Should be
    * defined before begin().
    *

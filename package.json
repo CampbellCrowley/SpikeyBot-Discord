@@ -55,6 +55,7 @@
     "start:rem": "nodejs src/SpikeyBot.js --dev --shards --botname rembot ./hungryGames.js ./main.js ./ticTacToe.js ./connect4.js ./music.js &",
     "kill": "killall nodejs node; exit 0;",
     "docs": "npm run lint && bash .hooks/make-docs.sh",
-    "docs:help": "nodejs src/json2md.js docs/*.json"
+    "docs:help": "nodejs src/json2md.js docs/*.json",
+    "update": "git checkout -- package-lock.json && exec ssh-agent bash -c \"ssh-add ~/.ssh/sb_id_rsa_nopass && git pull && npm i && npm i youtube-dl && npm up\"; kill $SSH_AGENT_PID"
   }
 }

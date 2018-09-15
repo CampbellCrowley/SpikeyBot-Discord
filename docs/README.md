@@ -392,6 +392,7 @@ Manages a Connect 4 game.
         * [.myName](#SubModule+myName) : <code>string</code>
         * [.initialized](#SubModule+initialized) : <code>boolean</code>
         * [.commit](#SubModule+commit) : <code>string</code>
+        * [.loadTime](#SubModule+loadTime) : <code>number</code>
         * [.createGame(players, channel)](#Connect4+createGame)
         * [.initialize()](#SubModule+initialize)
         * [.begin(prefix, Discord, client, command, common, bot)](#SubModule+begin)
@@ -555,6 +556,14 @@ Has this subModule been initialized yet (Has begin() been called).
 ### connect4.commit : <code>string</code>
 The commit at HEAD at the time this module was loaded. Essentially the
 version of this submodule.
+
+**Kind**: instance constant of [<code>Connect4</code>](#Connect4)  
+**Access**: public  
+<a name="SubModule+loadTime"></a>
+
+### connect4.loadTime : <code>number</code>
+The time at which this madule was loaded for use in checking if the module
+needs to be reloaded because the file has been modified since loading.
 
 **Kind**: instance constant of [<code>Connect4</code>](#Connect4)  
 **Access**: public  
@@ -1513,6 +1522,7 @@ Hunger Games simulator.
         * [.roleName](#HungryGames+roleName) : <code>string</code>
         * [.defaultOptions](#HungryGames+defaultOptions) : <code>Object.&lt;{value: (string\|number\|boolean), values: ?Array.&lt;string&gt;, comment: string}&gt;</code>
         * [.commit](#SubModule+commit) : <code>string</code>
+        * [.loadTime](#SubModule+loadTime) : <code>number</code>
         * [.getGame(id)](#HungryGames+getGame) ⇒ [<code>GuildGame</code>](#HungryGames..GuildGame)
         * [.getDefaultEvents()](#HungryGames+getDefaultEvents) ⇒ <code>Object</code>
         * [.createGame(id)](#HungryGames+createGame)
@@ -1771,6 +1781,14 @@ Default options for a game.
 ### hungryGames.commit : <code>string</code>
 The commit at HEAD at the time this module was loaded. Essentially the
 version of this submodule.
+
+**Kind**: instance constant of [<code>HungryGames</code>](#HungryGames)  
+**Access**: public  
+<a name="SubModule+loadTime"></a>
+
+### hungryGames.loadTime : <code>number</code>
+The time at which this madule was loaded for use in checking if the module
+needs to be reloaded because the file has been modified since loading.
 
 **Kind**: instance constant of [<code>HungryGames</code>](#HungryGames)  
 **Access**: public  
@@ -3751,6 +3769,7 @@ Basic commands and features for the bot.
         * [.myName](#SubModule+myName) : <code>string</code>
         * [.initialized](#SubModule+initialized) : <code>boolean</code>
         * [.commit](#SubModule+commit) : <code>string</code>
+        * [.loadTime](#SubModule+loadTime) : <code>number</code>
         * [.initialize()](#SubModule+initialize)
         * [.begin(prefix, Discord, client, command, common, bot)](#SubModule+begin)
         * [.end()](#SubModule+end)
@@ -3909,6 +3928,14 @@ Has this subModule been initialized yet (Has begin() been called).
 ### main.commit : <code>string</code>
 The commit at HEAD at the time this module was loaded. Essentially the
 version of this submodule.
+
+**Kind**: instance constant of [<code>Main</code>](#Main)  
+**Access**: public  
+<a name="SubModule+loadTime"></a>
+
+### main.loadTime : <code>number</code>
+The time at which this madule was loaded for use in checking if the module
+needs to be reloaded because the file has been modified since loading.
 
 **Kind**: instance constant of [<code>Main</code>](#Main)  
 **Access**: public  
@@ -4719,6 +4746,7 @@ Music and audio related commands.
         * *[.myName](#SubModule+myName) : <code>string</code>*
         * [.initialized](#SubModule+initialized) : <code>boolean</code>
         * [.commit](#SubModule+commit) : <code>string</code>
+        * [.loadTime](#SubModule+loadTime) : <code>number</code>
         * [.initialize()](#SubModule+initialize)
         * [.begin(prefix, Discord, client, command, common, bot)](#SubModule+begin)
         * [.end()](#SubModule+end)
@@ -4848,6 +4876,14 @@ Has this subModule been initialized yet (Has begin() been called).
 ### music.commit : <code>string</code>
 The commit at HEAD at the time this module was loaded. Essentially the
 version of this submodule.
+
+**Kind**: instance constant of [<code>Music</code>](#Music)  
+**Access**: public  
+<a name="SubModule+loadTime"></a>
+
+### music.loadTime : <code>number</code>
+The time at which this madule was loaded for use in checking if the module
+needs to be reloaded because the file has been modified since loading.
 
 **Kind**: instance constant of [<code>Music</code>](#Music)  
 **Access**: public  
@@ -5918,6 +5954,7 @@ Base class for all Sub-Modules.
         * *[.myName](#SubModule+myName) : <code>string</code>*
         * [.initialized](#SubModule+initialized) : <code>boolean</code>
         * [.commit](#SubModule+commit) : <code>string</code>
+        * [.loadTime](#SubModule+loadTime) : <code>number</code>
         * *[.initialize()](#SubModule+initialize)*
         * [.begin(prefix, Discord, client, command, common, bot)](#SubModule+begin)
         * [.end()](#SubModule+end)
@@ -6012,6 +6049,14 @@ Has this subModule been initialized yet (Has begin() been called).
 ### subModule.commit : <code>string</code>
 The commit at HEAD at the time this module was loaded. Essentially the
 version of this submodule.
+
+**Kind**: instance constant of [<code>SubModule</code>](#SubModule)  
+**Access**: public  
+<a name="SubModule+loadTime"></a>
+
+### subModule.loadTime : <code>number</code>
+The time at which this madule was loaded for use in checking if the module
+needs to be reloaded because the file has been modified since loading.
 
 **Kind**: instance constant of [<code>SubModule</code>](#SubModule)  
 **Access**: public  
@@ -6137,6 +6182,7 @@ Manages a tic-tac-toe game.
         * [.myName](#SubModule+myName) : <code>string</code>
         * [.initialized](#SubModule+initialized) : <code>boolean</code>
         * [.commit](#SubModule+commit) : <code>string</code>
+        * [.loadTime](#SubModule+loadTime) : <code>number</code>
         * [.createGame(players, channel)](#TicTacToe+createGame)
         * [.initialize()](#SubModule+initialize)
         * [.begin(prefix, Discord, client, command, common, bot)](#SubModule+begin)
@@ -6309,6 +6355,14 @@ Has this subModule been initialized yet (Has begin() been called).
 ### ticTacToe.commit : <code>string</code>
 The commit at HEAD at the time this module was loaded. Essentially the
 version of this submodule.
+
+**Kind**: instance constant of [<code>TicTacToe</code>](#TicTacToe)  
+**Access**: public  
+<a name="SubModule+loadTime"></a>
+
+### ticTacToe.loadTime : <code>number</code>
+The time at which this madule was loaded for use in checking if the module
+needs to be reloaded because the file has been modified since loading.
 
 **Kind**: instance constant of [<code>TicTacToe</code>](#TicTacToe)  
 **Access**: public  

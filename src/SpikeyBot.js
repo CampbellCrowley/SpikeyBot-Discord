@@ -992,25 +992,57 @@ function SpikeyBot() {
     if (typeof schedule === 'undefined') schedule = true;
 
     let error = false;
+    let force = false;
+    let noSchedule = false;
+
+    let numArg = 0;
+    if (toReload.find(function(el) {
+          return '--force' == el;
+        })) {
+      force = true;
+      numArg++;
+    }
+    if (toReload.find(function(el) {
+          return '--no-schedule' == el;
+        })) {
+      noSchedule = true;
+      numArg++;
+    }
 
     for (let i = 0; i < subModules.length; i++) {
-      if (toReload.length > 0) {
+      if (toReload.length > numArg) {
         if (!toReload.find(function(el) {
               return subModuleNames[i] == el;
             })) {
           continue;
         }
       }
-      if (!subModules[i].unloadable()) {
-        if (schedule) {
-          reloaded.push('(' + subModuleNames[i] + ': reload scheduled)');
-          setTimeout(function() {
-            reloadSubModules(subModuleNames[i]);
-          }, 10000);
-        } else {
-          reloaded.push('(' + subModuleNames[i] + ': not unloadable)');
+      if (!force) {
+        try {
+          if (fs.statSync(__dirname + '/' + subModuleNames[i]).mtime <=
+              subModules[i].loadTime) {
+            reloaded.push('(' + subModuleNames[i] + ': unchanged)');
+            continue;
+          }
+        } catch (err) {
+          common.error('Failed to stat submodule: ' + subModuleNames[i]);
+          console.error(err);
+          reloaded.push('(' + subModuleNames[i] + ': failed to stat)');
+          continue;
         }
-        continue;
+      }
+      if (!noSchedule) {
+        if (!subModules[i].unloadable()) {
+          if (schedule) {
+            reloaded.push('(' + subModuleNames[i] + ': reload scheduled)');
+            setTimeout(function() {
+              reloadSubModules(subModuleNames[i]);
+            }, 10000);
+          } else {
+            reloaded.push('(' + subModuleNames[i] + ': not unloadable)');
+          }
+          continue;
+        }
       }
       try {
         try {
@@ -1101,9 +1133,7 @@ function SpikeyBot() {
         process.cwd());
     common.reply(msg, 'Updating from git...').then((msg_) => {
       childProcess.exec(
-          'exec ssh-agent bash -c "ssh-add ~/.ssh/sb_id_rsa_nopass && ' +
-              'git pull && npm i && npm up"; kill $SSH_AGENT_PID',
-          function(err, stdout, stderr) {
+          'npm run update', function(err, stdout, stderr) {
             if (!err) {
               if (stdout && stdout !== 'null') console.log('STDOUT:', stdout);
               if (stderr && stderr !== 'null') console.error('STDERR:', stderr);
