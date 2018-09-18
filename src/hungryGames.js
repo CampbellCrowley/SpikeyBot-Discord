@@ -5952,11 +5952,16 @@ function HungryGames() {
     msg.author.send(self.helpMessage)
         .then(() => {
           if (msg.guild != null) {
-            self.common.reply(msg, helpmessagereply, ':wink:');
+            self.common.reply(msg, helpmessagereply, ':wink:').catch((err) => {
+              self.error(
+                  'Failed to send HG help message reply in channel: ' +
+                  msg.channel.id);
+              console.error(err);
+            });
           }
         })
         .catch(() => {
-          self.common.reply(msg, blockedmessage);
+          self.common.reply(msg, blockedmessage).catch(() => {});
         });
   }
 

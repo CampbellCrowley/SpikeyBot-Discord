@@ -600,12 +600,20 @@ function Main() {
     try {
       guild.channels.forEach(function(val, key) {
         if (val.type != 'voice' && val.type != 'category') {
-          if (pos == -1 || val.position < pos) {
+          if ((pos == -1 || val.position < pos) &&
+              val.permissionsFor(self.client.id)
+                  .has(self.Discord.Permissions.FLAGS.SEND_MESSAGES)) {
             pos = val.position;
             channel = val.id;
           }
         }
       });
+      if (!channel || pos < 0) {
+        self.error(
+            'Unable to send welcome message in new guild due to no ' +
+            'available channel: ' + guild.id);
+        return;
+      }
       self.client.channels.get(channel).send(introduction);
     } catch (err) {
       self.error('Failed to send welcome to guild:' + guild.id);
@@ -2102,6 +2110,7 @@ function Main() {
     }
     let values = {
       numGuilds: 0,
+      numLargestGuild: 0,
       numUsers: 0,
       numBots: 0,
       numUsersOnline: 0,
@@ -2120,6 +2129,8 @@ function Main() {
     function statsResponse(res) {
       for (let i = 0; i < res.length; i++) {
         values.numGuilds += res[i].numGuilds;
+        values.numLargestGuild =
+            Math.max(res[i].numLargestGuild, values.numLargestGuild);
         values.numUsers += res[i].numUsers;
         values.numBots += res[i].numBots;
         values.numUsersOnline += res[i].numUsersOnline;
@@ -2150,7 +2161,8 @@ function Main() {
           'across all shards.');
 
       const guildString = 'Number of guilds: ' + values.numGuilds +
-          '\nNumber of channels: ' + values.numChannels;
+          '\nLargest Guild: ' + values.numLargestGuild +
+          ' members\nNumber of channels: ' + values.numChannels;
       embed.addField('Guilds', guildString, true);
 
       const userString = 'Number of users: ' + values.numUsers +
@@ -2158,10 +2170,10 @@ function Main() {
           '\nNumber of online users: ' + values.numUsersOnline;
       embed.addField('Users', userString, true);
 
-      const actString = 'Number of activities users are doing: ' +
+      const actString = 'Number of activities people are doing: ' +
           Object.keys(values.activities).length +
           '\nMost popular activity:\n`' + values.largestActivity.name +
-          '`\n with ' + values.largestActivity.count + ' users.';
+          '`\n with ' + values.largestActivity.count + ' people.';
       embed.addField('Activities/Games', actString, true);
 
       const shardUptimes = values.uptimes.map((el, i) => {
@@ -2173,9 +2185,14 @@ function Main() {
       embed.addField('Shards', shardString, true);
 
       embed.addField(
-          'Bot Version',
+          'This Shard Version',
           'Shard: ' + version + '\nCommit: ' + commit.slice(0, 7) +
-              '\nDiscord.js: ' + (self.Discord.version || 'Unknown'),
+              '\nDiscord.js: ' + (self.Discord.version || 'Unknown') + '\n' +
+              self.bot.getSubmoduleCommits()
+                  .map((el) => {
+                    return el.name + ': ' + el.commit;
+                  })
+                  .join('\n'),
           true);
 
       embed.setColor([0, 100, 255]);
@@ -2198,6 +2215,7 @@ function Main() {
   function getStats() {
     let out = {
       numGuilds: 0,
+      numLargestGuild: 0,
       numUsers: 0,
       numBots: 0,
       numUsersOnline: 0,
@@ -2208,6 +2226,11 @@ function Main() {
     };
 
     out.numGuilds = self.client.guilds.size;
+    let maxNum = 0;
+    out.numLargestGuild = self.client.guilds.forEach((g) => {
+      maxNum = Math.max(g.members.size, maxNum);
+    });
+    out.numLargestGuild = maxNum;
     let onlineUsers = self.client.users.filter((u) => {
       if (u.id != self.client.user.id) {
         if (u.presence.activity && !u.bot) {
@@ -2225,7 +2248,7 @@ function Main() {
       return u.presence.status === 'online';
     });
     out.numUsersOnline = onlineUsers.size;
-    out.numUsers = self.client.users.size - 1;
+    out.numUsers = self.client.users.size;
     out.numChannels = self.client.channels.size;
     let ut = self.client.uptime;
     out.uptime = Math.floor(ut / 1000 / 60 / 60 / 24) + ' Days, ' +

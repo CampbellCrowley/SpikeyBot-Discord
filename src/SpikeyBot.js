@@ -731,18 +731,42 @@ function SpikeyBot() {
      */
     function commandHelp(msg) {
       try {
+        let error = false;
         for (let i in subModules) {
           if (subModules[i] instanceof Object && subModules[i].helpMessage) {
-            msg.author.send(subModules[i].helpMessage);
+            msg.author.send(subModules[i].helpMessage).catch((err) => {
+              if (msg.guild !== null && !error) {
+                error = true;
+                common
+                    .reply(
+                        msg, 'Oops! I wasn\'t able to send you the help!\n' +
+                            'Did you block me?',
+                        err.message)
+                    .catch(() => {});
+                common.error(
+                    'Failed to send help message in DM to user: ' +
+                    msg.author.id);
+                console.error(err);
+              }
+            });
           }
         }
         if (msg.guild !== null) {
-          common.reply(
-              msg, helpmessagereply,
-              'Tip: https://www.spikeybot.com also has more information.');
+          common
+              .reply(
+                  msg, helpmessagereply,
+                  'Tip: https://www.spikeybot.com also has more information.')
+              .catch((err) => {
+                common.error(
+                    'Unable to reply to help command in channel: ' +
+                    msg.channel.id);
+                console.log(err);
+              });
         }
       } catch (err) {
         common.reply(msg, blockedmessage);
+        common.error('An error occured while sending help message!');
+        console.error(err);
       }
     }
 
