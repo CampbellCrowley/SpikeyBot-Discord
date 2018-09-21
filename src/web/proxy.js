@@ -167,21 +167,39 @@ function WebProxy() {
         'Socket connected (' + Object.keys(sockets).length + '): ' + ipName,
         socket.id);
     sockets[socket.id] = socket;
-    let server = sIOClient('http://localhost:' + pathPorts[reqPath], {
-      path: reqPath,
-      extraHeaders:
-          {'x-forwarded-for': socket.handshake.headers['x-forwarded-for']}
-    });
+    let server;
+    if (!pathPorts[reqPath]) {
+      self.common.error(
+          'Client requested uknown endpoint: ' + reqPath, socket.id);
+    } else {
+      server = sIOClient('http://localhost:' + pathPorts[reqPath], {
+        path: reqPath,
+        extraHeaders:
+            {'x-forwarded-for': socket.handshake.headers['x-forwarded-for']}
+      });
 
-    // Add custom semi-wildcard listeners.
-    let sonevent = server.onevent;
-    server.onevent = function(packet) {
-      var args = packet.data || [];
-      sonevent.call(this, packet);
-      if (server.listeners(args[0]).length) return;
-      packet.data = ['*'].concat(args);
-      sonevent.call(this, packet);
-    };
+      // Add custom semi-wildcard listeners.
+      let sonevent = server.onevent;
+      server.onevent = function(packet) {
+        var args = packet.data || [];
+        sonevent.call(this, packet);
+        if (server.listeners(args[0]).length) return;
+        packet.data = ['*'].concat(args);
+        sonevent.call(this, packet);
+      };
+      server.on('connect', () => {
+        socket.on('*', (...args) => {
+          server.emit.apply(server, [args[0], userData].concat(args.slice(1)));
+        });
+      });
+      server.on('*', (...args) => {
+        socket.emit.apply(socket, args);
+      });
+      server.on('disconnect', () => {
+        socket.disconnect();
+      });
+
+    }
     let onevent = socket.onevent;
     socket.onevent = function(packet) {
       var args = packet.data || [];
@@ -190,18 +208,6 @@ function WebProxy() {
       packet.data = ['*'].concat(args);
       onevent.call(this, packet);
     };
-
-    server.on('connect', () => {
-      socket.on('*', (...args) => {
-        server.emit.apply(server, [args[0], userData].concat(args.slice(1)));
-      });
-    });
-    server.on('*', (...args) => {
-      socket.emit.apply(socket, args);
-    });
-    server.on('disconnect', () => {
-      socket.disconnect();
-    });
 
     socket.on('restore', (sess) => {
       if (restoreAttempt /* || currentSessions[sess]*/) {
@@ -290,7 +296,7 @@ function WebProxy() {
           socket.id);
       if (loginInfo[session]) clearTimeout(loginInfo[session].refreshTimeout);
       delete sockets[socket.id];
-      server.close();
+      if (server) server.close();
     });
 
     /**
