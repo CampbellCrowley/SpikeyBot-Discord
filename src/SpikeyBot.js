@@ -1049,7 +1049,9 @@ function SpikeyBot() {
             continue;
           }
         } catch (err) {
-          common.error('Failed to stat submodule: ' + subModuleNames[i]);
+          common.error(
+              'Failed to stat submodule: ' + __dirname + '/' +
+              subModuleNames[i]);
           console.error(err);
           reloaded.push('(' + subModuleNames[i] + ': failed to stat)');
           continue;

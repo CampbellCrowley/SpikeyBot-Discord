@@ -924,7 +924,7 @@ function HungryGames() {
       }
     }
     try {
-      Web = require('./hgWeb.js');
+      Web = require('./web/hg.js');
       web = new Web(self);
     } catch (err) {
       console.log(err);
@@ -941,7 +941,7 @@ function HungryGames() {
     process.removeListener('SIGTERM', sigint);
     if (web) web.shutdown();
     web = null;
-    delete require.cache[require.resolve('./hgWeb.js')];
+    delete require.cache[require.resolve('./web/hg.js')];
 
     fs.unwatchFile(eventFile);
     fs.unwatchFile(messageFile);

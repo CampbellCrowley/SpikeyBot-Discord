@@ -5,4 +5,5 @@ reboot.dat
 auth.js
 save/guilds/*
 save/hgWebClients.json
+save/webClients.json
 save/rigged-counter.txt
