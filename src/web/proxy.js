@@ -2,6 +2,7 @@ const fs = require('fs');
 const http = require('http');
 const https = require('https');
 const socketIo = require('socket.io');
+const sIOClient = require('socket.io-client');
 const querystring = require('querystring');
 const auth = require('../../auth.js');
 const crypto = require('crypto');
@@ -50,7 +51,7 @@ function WebProxy() {
     method: 'GET',
   };
 
-  const pathPorts = {'/www.spikeybot.com/socket.io/hg/': 8011};
+  let pathPorts = {};
 
   /**
    * Stores the tokens and associated data for all clients connected while data
@@ -95,10 +96,13 @@ function WebProxy() {
       console.error('Proxy failed to bind to port for unknown reason.', err);
     }
   });
-  app.listen(8010);
 
   /** @inheritdoc */
-  this.initialize = function() {};
+  this.initialize = function() {
+    pathPorts['/www.spikeybot.com/socket.io/dev/hg/'] = 8013;
+    pathPorts['/www.spikeybot.com/socket.io/hg/'] = 8011;
+    app.listen((self.common.isRelease ? 8010 : 8012));
+  };
 
   /**
    * Causes a full shutdown of all servers.
@@ -149,31 +153,55 @@ function WebProxy() {
   function socketConnection(socket) {
     // x-forwarded-for is trusted because the last process this jumps through is
     // our local proxy.
-    const ipName = hg.common.getIPName(
+    const ipName = self.common.getIPName(
         socket.handshake.headers['x-forwarded-for'] ||
         socket.handshake.address);
-    hg.common.log(
-        'Socket connected (' + Object.keys(sockets).length + '): ' + ipName,
-        socket.id);
-    sockets[socket.id] = socket;
 
-    const reqPath = socket.handshake.url;
-
-    let server = require('socket.io-client')(
-        'http://localhost:' + pathPorts[reqPath], {path: reqPath});
-
-    let onevent = socket.onevent;
-    socket.onevent = function(packet) {
-      var args = packet.data || [];
-      onevent.call(this, packet);  // original call
-      if (socket.hasListeners(args[0])) return;
-      packet.data = ["*"].concat(args);
-      onevent.call(this, packet);  // additional call to catch-all
-    };
+    const reqPath = socket.handshake.url.split('?')[0];
 
     let userData = {};
     let session = crypto.randomBytes(128).toString('hex');
     let restoreAttempt = false;
+
+    self.common.log(
+        'Socket connected (' + Object.keys(sockets).length + '): ' + ipName,
+        socket.id);
+    sockets[socket.id] = socket;
+    let server = sIOClient('http://localhost:' + pathPorts[reqPath], {
+      path: reqPath,
+      extraHeaders:
+          {'x-forwarded-for': socket.handshake.headers['x-forwarded-for']}
+    });
+
+    // Add custom semi-wildcard listeners.
+    let sonevent = server.onevent;
+    server.onevent = function(packet) {
+      var args = packet.data || [];
+      sonevent.call(this, packet);
+      if (server.listeners(args[0]).length) return;
+      packet.data = ['*'].concat(args);
+      sonevent.call(this, packet);
+    };
+    let onevent = socket.onevent;
+    socket.onevent = function(packet) {
+      var args = packet.data || [];
+      onevent.call(this, packet);
+      if (socket.listenerCount(args[0])) return;
+      packet.data = ['*'].concat(args);
+      onevent.call(this, packet);
+    };
+
+    server.on('connect', () => {
+      socket.on('*', (...args) => {
+        server.emit.apply(server, [args[0], userData].concat(args.slice(1)));
+      });
+    });
+    server.on('*', (...args) => {
+      socket.emit.apply(socket, args);
+    });
+    server.on('disconnect', () => {
+      socket.disconnect();
+    });
 
     socket.on('restore', (sess) => {
       if (restoreAttempt /* || currentSessions[sess]*/) {
@@ -191,9 +219,9 @@ function WebProxy() {
               let parsed;
               try {
                 parsed = JSON.parse(data);
-                hg.log('Refreshed token');
+                self.log('Refreshed token');
               } catch (err) {
-                hg.error(
+                self.error(
                     'Failed to parse request from discord token refresh: ' +
                     err);
                 delete currentSessions[sess];
@@ -256,17 +284,13 @@ function WebProxy() {
     });
 
     socket.on('disconnect', () => {
-      hg.common.log(
+      self.common.log(
           'Socket disconnected (' + (Object.keys(sockets).length - 1) + '): ' +
               ipName,
           socket.id);
       if (loginInfo[session]) clearTimeout(loginInfo[session].refreshTimeout);
       delete sockets[socket.id];
       server.close();
-    });
-
-    socket.on('*', (...args) => {
-      server.emit.apply(server.emit, [args[0], userData].concat(args.slice(1)));
     });
 
     /**
@@ -348,7 +372,7 @@ function WebProxy() {
         if (response.statusCode == 200) {
           cb(null, content);
         } else {
-          hg.error(response.statusCode + ': ' + content);
+          self.error(response.statusCode + ': ' + content);
           console.log(host, data);
           cb(response.statusCode + ' from discord');
         }
@@ -380,7 +404,7 @@ function WebProxy() {
           try {
             parsed = JSON.parse(data);
           } catch (err) {
-            hg.error(
+            self.error(
                 'Failed to parse request from discord token refresh: ' + err);
           }
         }

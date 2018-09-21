@@ -15,8 +15,11 @@ function HGWeb(hg) {
   let ioClient;
 
   let app = http.createServer(handler);
-  let io = socketIo(
-      app, {path: '/www.spikeybot.com/socket.io/hg', serveClient: false});
+  let io = socketIo(app, {
+    path: hg.common.isRelease ? '/www.spikeybot.com/socket.io/hg' :
+                                '/www.spikeybot.com/socket.io/dev/hg',
+    serveClient: false
+  });
 
   app.on('error', function(err) {
     if (err.code === 'EADDRINUSE') {
@@ -26,7 +29,7 @@ function HGWeb(hg) {
       console.error('HGWeb failed to bind to port for unknown reason.', err);
     }
   });
-  app.listen(8011);
+  app.listen(hg.common.isRelease ? 8011 : 8013);
 
   /**
    * Start a socketio client connection to the primary running server.
@@ -38,7 +41,8 @@ function HGWeb(hg) {
         'Restarting into client mode due to server already bound to port.',
         'HG Web');
     ioClient = require('socket.io-client')(
-        'http://localhost:8011', {path: '/www.spikeybot.com/socket.io/hg/'});
+        hg.common.isRelease ? 'http://localhost:8011' : 'http://localhost:8013',
+        {path: '/www.spikeybot.com/socket.io/hg/'});
     clientSocketConnection(ioClient);
   }
 
