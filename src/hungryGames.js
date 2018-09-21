@@ -3449,17 +3449,21 @@ function HungryGames() {
             battleIconSize + iconGap);
         let responses = 0;
         newImage = function(image, outcome, placement) {
-          image.resize(battleIconSize, battleIconSize);
-          if (outcome == 'dies') {
-            finalImage.blit(
-                new Jimp(battleIconSize, iconGap, 0xFF0000FF),
-                placement * (battleIconSize + iconGap), battleIconSize);
-          } else if (outcome == 'wounded') {
-            finalImage.blit(
-                new Jimp(battleIconSize, iconGap, 0xFFFF00FF),
-                placement * (battleIconSize + iconGap), battleIconSize);
+          try {
+            image.resize(battleIconSize, battleIconSize);
+            if (outcome == 'dies') {
+              finalImage.blit(
+                  new Jimp(battleIconSize, iconGap, 0xFF0000FF),
+                  placement * (battleIconSize + iconGap), battleIconSize);
+            } else if (outcome == 'wounded') {
+              finalImage.blit(
+                  new Jimp(battleIconSize, iconGap, 0xFFFF00FF),
+                  placement * (battleIconSize + iconGap), battleIconSize);
+            }
+            finalImage.blit(image, placement * (battleIconSize + iconGap), 0);
+          } catch (err) {
+            console.error(err);
           }
-          finalImage.blit(image, placement * (battleIconSize + iconGap), 0);
           responses++;
           if (responses == events[index].attacks[battleState].icons.length) {
             finalImage.getBuffer(Jimp.MIME_PNG, function(err, out) {
@@ -3534,21 +3538,25 @@ function HungryGames() {
             iconSize + iconGap);
         let responses = 0;
         newImage = function(image, outcome, placement) {
-          image.resize(iconSize, iconSize);
-          if (outcome == 'dies') {
-            finalImage.blit(
-                new Jimp(iconSize, iconGap, 0xFF0000FF),
-                placement * (iconSize + iconGap), iconSize);
-          } else if (outcome == 'wounded') {
-            finalImage.blit(
-                new Jimp(iconSize, iconGap, 0xFFFF00FF),
-                placement * (iconSize + iconGap), iconSize);
-          } else if (outcome == 'thrives') {
-            finalImage.blit(
-                new Jimp(iconSize, iconGap, 0x00FF00FF),
-                placement * (iconSize + iconGap), iconSize);
+          try {
+            image.resize(iconSize, iconSize);
+            if (outcome == 'dies') {
+              finalImage.blit(
+                  new Jimp(iconSize, iconGap, 0xFF0000FF),
+                  placement * (iconSize + iconGap), iconSize);
+            } else if (outcome == 'wounded') {
+              finalImage.blit(
+                  new Jimp(iconSize, iconGap, 0xFFFF00FF),
+                  placement * (iconSize + iconGap), iconSize);
+            } else if (outcome == 'thrives') {
+              finalImage.blit(
+                  new Jimp(iconSize, iconGap, 0x00FF00FF),
+                  placement * (iconSize + iconGap), iconSize);
+            }
+            finalImage.blit(image, placement * (iconSize + iconGap), 0);
+          } catch (err) {
+            console.error(err);
           }
-          finalImage.blit(image, placement * (iconSize + iconGap), 0);
           responses++;
           if (responses == events[index].icons.length) {
             finalImage.getBuffer(Jimp.MIME_PNG, function(err, out) {
@@ -3790,22 +3798,26 @@ function HungryGames() {
           victorIconSize + iconGap);
       let responses = 0;
       newImage = function(image, userId) {
-        image.resize(victorIconSize, victorIconSize);
-        let user = find(id).currentGame.includedUsers.find(function(obj) {
-          return obj.id == userId;
-        });
-        let color = 0x0;
-        if (user && !user.living) {
-          color = 0xFF0000FF;
-        } else if (user && user.state == 'wounded') {
-          color = 0xFFFF00FF;
-        } else if (user) {
-          color = 0x00FF00FF;
+        try {
+          image.resize(victorIconSize, victorIconSize);
+          let user = find(id).currentGame.includedUsers.find(function(obj) {
+            return obj.id == userId;
+          });
+          let color = 0x0;
+          if (user && !user.living) {
+            color = 0xFF0000FF;
+          } else if (user && user.state == 'wounded') {
+            color = 0xFFFF00FF;
+          } else if (user) {
+            color = 0x00FF00FF;
+          }
+          finalImage.blit(
+              new Jimp(victorIconSize, iconGap, color),
+              responses * (victorIconSize + iconGap), victorIconSize);
+          finalImage.blit(image, responses * (victorIconSize + iconGap), 0);
+        } catch (err) {
+          console.error(err);
         }
-        finalImage.blit(
-            new Jimp(victorIconSize, iconGap, color),
-            responses * (victorIconSize + iconGap), victorIconSize);
-        finalImage.blit(image, responses * (victorIconSize + iconGap), 0);
         responses++;
         if (responses == find(id).currentGame.teams[lastTeam].players.length) {
           finalImage.getBuffer(Jimp.MIME_PNG, function(err, out) {
