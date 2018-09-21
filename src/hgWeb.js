@@ -409,7 +409,7 @@ function HGWeb(hg) {
       if (!authenticated) return;
       let fakeSocket = {
         emit: function(...args) {
-          cb(args);
+          if (typeof cb == 'function') cb(args);
         },
         id: sId,
       };
