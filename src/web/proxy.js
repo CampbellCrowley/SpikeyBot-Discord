@@ -1,3 +1,5 @@
+// Copyright 2018 Campbell Crowley. All rights reserved.
+// Author: Campbell Crowley (web@campbellcrowley.com)
 const fs = require('fs');
 const http = require('http');
 const https = require('https');
@@ -6,6 +8,8 @@ const sIOClient = require('socket.io-client');
 const querystring = require('querystring');
 const auth = require('../../auth.js');
 const crypto = require('crypto');
+const sql = require('mysql');
+const dateFormat = require('dateformat');
 
 const clientId = '444293534720458753';
 const clientSecret = auth.webSecret;
@@ -50,6 +54,36 @@ function WebProxy() {
     path: '/api',
     method: 'GET',
   };
+
+  /**
+   * The object describing the connection with the SQL server.
+   *
+   * @private
+   * @type {sql.ConnectionConfig}
+   */
+  let sqlCon;
+  /**
+   * Create initial connection with sql server.
+   *
+   * @private
+   */
+  function connectSQL() {
+    /* eslint-disable-next-line new-cap */
+    sqlCon = new sql.createConnection({
+      user: 'discord',
+      password: 'sqliscool',
+      host: 'Campbell-Pi-2.local',
+      database: 'appusers',
+      port: 3306,
+    });
+    sqlCon.on('error', function(e) {
+      self.error(e);
+      if (e.fatal) {
+        connectSQL();
+      }
+    });
+  }
+  connectSQL();
 
   let pathPorts = {};
 
@@ -101,7 +135,11 @@ function WebProxy() {
   this.initialize = function() {
     pathPorts['/www.spikeybot.com/socket.io/dev/hg/'] = 8013;
     pathPorts['/www.spikeybot.com/socket.io/hg/'] = 8011;
-    app.listen((self.common.isRelease ? 8010 : 8012));
+    pathPorts['/www.spikeybot.com/socket.io/dev/account/'] = 8015;
+    pathPorts['/www.spikeybot.com/socket.io/account/'] = 8014;
+    setTimeout(() => {
+      app.listen(self.common.isRelease ? 8010 : 8012);
+    });
   };
 
   /**
@@ -182,10 +220,12 @@ function WebProxy() {
       let sonevent = server.onevent;
       server.onevent = function(packet) {
         var args = packet.data || [];
-        sonevent.call(this, packet);
-        if (server.listeners(args[0]).length) return;
-        packet.data = ['*'].concat(args);
-        sonevent.call(this, packet);
+        if (server.listeners(args[0]).length) {
+          sonevent.call(this, packet);
+        } else {
+          packet.data = ['*'].concat(args);
+          sonevent.call(this, packet);
+        }
       };
       server.on('connect', () => {
         socket.on('*', (...args) => {
@@ -203,10 +243,12 @@ function WebProxy() {
     let onevent = socket.onevent;
     socket.onevent = function(packet) {
       var args = packet.data || [];
-      onevent.call(this, packet);
-      if (socket.listenerCount(args[0])) return;
-      packet.data = ['*'].concat(args);
-      onevent.call(this, packet);
+      if (socket.listenerCount(args[0])) {
+        onevent.call(this, packet);
+      } else {
+        packet.data = ['*'].concat(args);
+        onevent.call(this, packet);
+      }
     };
 
     socket.on('restore', (sess) => {
@@ -333,6 +375,15 @@ function WebProxy() {
           id: loginInfo.session,
           expiration_date: loginInfo.expiration_date,
         };
+        const now = dateFormat(new Date(), 'yyyy-mm-dd\'T\'HH:MM:ss.l\'Z\'');
+        const toSend = sqlCon.format(
+            'INSERT INTO Discord (id) values (?) ON DUPLICATE KEY UPDATE ?',
+            [parsed.id, {lastLogin: now}]);
+        sqlCon.query(toSend, (err) => {
+          if (err) {
+            self.error(err);
+          }
+        });
         cb(parsed);
       } else {
         cb(null);

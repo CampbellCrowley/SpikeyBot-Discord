@@ -159,8 +159,9 @@ function SubModule() {
     };
 
     if (this.initialized) return;
+    this.log(this.myName + ' Initialize...');
     this.initialize();
-    this.log(this.myName + ' Init');
+    this.log(this.myName + ' Initialized');
     this.initialized = true;
   };
 

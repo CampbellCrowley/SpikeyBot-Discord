@@ -600,9 +600,9 @@ function Main() {
     try {
       guild.channels.forEach(function(val, key) {
         if (val.type != 'voice' && val.type != 'category') {
-          if ((pos == -1 || val.position < pos) &&
-              val.permissionsFor(self.client.id)
-                  .has(self.Discord.Permissions.FLAGS.SEND_MESSAGES)) {
+          let perms = val.permissionsFor(self.client.id);
+          if ((pos == -1 || val.position < pos) && perms &&
+              perms.has(self.Discord.Permissions.FLAGS.SEND_MESSAGES)) {
             pos = val.position;
             channel = val.id;
           }
