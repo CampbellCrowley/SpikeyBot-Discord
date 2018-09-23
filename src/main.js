@@ -272,6 +272,7 @@ function Main() {
     self.command.on('stats', commandStats);
     self.command.on('lookup', commandLookup);
     self.command.on('togglebanmessages', commandToggleBanMessages, true);
+    self.command.on('sendto', commandSendTo);
 
     self.client.on('guildCreate', onGuildCreate);
     self.client.on('guildDelete', onGuildDelete);
@@ -474,6 +475,7 @@ function Main() {
     self.command.deleteEvent('stats');
     self.command.deleteEvent('lookup');
     self.command.deleteEvent('togglebanmessages');
+    self.command.on('sendto');
 
     self.client.removeListener('guildCreate', onGuildCreate);
     self.client.removeListener('guildDelete', onGuildDelete);
@@ -2308,6 +2310,50 @@ function Main() {
             console.error(err);
             msg.channel.send(id + ' Failed to be looked up.');
           });
+    }
+  }
+
+  /**
+   * Lookup an ID and send a message to the given channel or user without
+   * telling the recipient who sent the message. Only looks up cached users and
+   * channels on the same shard.
+   *
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens SpikeyBot~Command#sendto
+   */
+  function commandSendTo(msg) {
+    if (msg.author.id != self.common.spikeyId) return;
+    const idString = (msg.text.split(' ')[1] || '').replace(/^@|^<@|>$/g, '');
+    if (!idString) {
+      self.common.reply(msg, 'Please specify a channel and a message.');
+      return;
+    }
+    let channel = self.client.channels.get(idString);
+    let user = self.client.users.get(idString);
+    if (channel) {
+      channel.send(msg.text.split(' ').slice(2).join(' '))
+          .then(() => {
+            self.common.reply(msg, 'Message sent!');
+          })
+          .catch((err) => {
+            self.common.reply(
+                msg, 'Oops! I am unable to send a message to that channel!',
+                err.message);
+          });
+    } else if (user) {
+      user.send(msg.text.split(' ').slice(2).join(' '))
+          .then(() => {
+            self.common.reply(msg, 'Message sent!');
+          })
+          .catch((err) => {
+            self.common.reply(
+                msg, 'Oops! I am unable to send a message to that user!',
+                err.message);
+          });
+    } else {
+      self.common.reply(msg, 'I am unable to find that user or channel. :(');
     }
   }
 

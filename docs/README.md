@@ -3089,6 +3089,7 @@ Basic commands and features for the bot.
             * [~statsResponse(res)](#Main..commandStats..statsResponse) ℗
         * [~getStats()](#Main..getStats) ⇒ <code>Object</code> ℗
         * [~commandLookup(msg)](#Main..commandLookup) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~commandSendTo(msg)](#Main..commandSendTo) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~sigint()](#Main..sigint) ℗
         * [~Timer](#Main..Timer) : <code>Object</code>
 
@@ -3943,6 +3944,20 @@ Fetch our statistics about the bot.
 
 ### Main~commandLookup(msg) : [<code>commandHandler</code>](#commandHandler) ℗
 Lookup an ID and give information about what it represents.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Main..commandSendTo"></a>
+
+### Main~commandSendTo(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Lookup an ID and send a message to the given channel or user without
+telling the recipient who sent the message. Only looks up cached users and
+channels on the same shard.
 
 **Kind**: inner method of [<code>Main</code>](#Main)  
 **Access**: private  
