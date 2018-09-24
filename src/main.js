@@ -1966,11 +1966,18 @@ function Main() {
       let matchNum = 0;
       for (let i = 0; i < numbers.length; i++) {
         let el = numbers[i];
-        let match = el.match(/([0-9]+)([xXdD\*])([0-9]+)/);
+        let match = el.match(/(\d*)([xXdD\*])(\d+)/);
         if (!match) {
+          let firstNum = el.match(/(\d+)/);
+          if (!firstNum) {
+            numbers.splice(i, 1);
+            i--;
+            continue;
+          }
+          numbers[i] = firstNum[1];
           if (i == 0) {
-            matchNum = el;
-          } else if (el != matchNum) {
+            matchNum = firstNum[1];
+          } else if (firstNum[1] != matchNum) {
             allSame = false;
           }
         } else {
@@ -1979,18 +1986,17 @@ function Main() {
             match[3] = match[1];
             match[1] = temp;
           }
-          if (match[3] > 0) {
-            if (i == 0) {
-              matchNum = match[1];
-            } else if (match[1] != matchNum) {
-              allSame = false;
-            }
-            numbers.splice(i, 1, match[1]);
-            for (let j = 0; j < match[3] - 1; j++) {
-              numbers.splice(i, 0, match[1]);
-            }
-          } else {
-            numbers.splice(i, 1);
+          if (!match[1] || match[1] <= 0 || isNaN(Number(match[1]))) {
+            match[1] = 1;
+          }
+          if (i == 0) {
+            matchNum = match[1];
+          } else if (match[1] != matchNum) {
+            allSame = false;
+          }
+          numbers.splice(i, 1, match[1]);
+          for (let j = 0; j < match[3] - 1; j++) {
+            numbers.splice(i, 0, match[1]);
           }
         }
       }
