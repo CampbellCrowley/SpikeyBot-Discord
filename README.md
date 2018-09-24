@@ -52,6 +52,7 @@
 - record (Record audio in a voice channel. Mention people to only record specific people.)
 - perms (Sends a message with the bitfields of all permissions, as well as the sender's and the bot's permissions for the guild and channel)
 - lookup (Finds information about a given ID)
+- sendto (Given a user or channel ID, the bot will send the message anonymously. Only Spikey can do this)
 
 # Events
 - Added to guild

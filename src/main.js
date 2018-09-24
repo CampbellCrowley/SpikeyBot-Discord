@@ -779,99 +779,102 @@ function Main() {
       }
     }
 
-    if (disabledAutoSmite[msg.guild.id]) return;
-    if (msg.mentions.everyone) {
-      if (!mentionAccumulator[msg.guild.id]) {
-        mentionAccumulator[msg.guild.id] = {};
-      }
-      if (!mentionAccumulator[msg.guild.id][msg.author.id]) {
-        mentionAccumulator[msg.guild.id][msg.author.id] = [];
-      }
-      mentionAccumulator[msg.guild.id][msg.author.id].push(
-          msg.createdTimestamp);
-
-      let timestamps = mentionAccumulator[msg.guild.id][msg.author.id];
-      let count = 0;
-      let now = Date.now();
-      for (let i = timestamps.length - 1; i >= 0; i--) {
-        if (now - timestamps[i] < 2 * 60 * 1000) {
-          count++;
-        } else {
-          timestamps.splice(i, 1);
+    if (!disabledAutoSmite[msg.guild.id]) {
+      if (msg.mentions.everyone) {
+        if (!mentionAccumulator[msg.guild.id]) {
+          mentionAccumulator[msg.guild.id] = {};
         }
-      }
-      if (count == 3) {
-        let hasMuteRole = false;
-        let muteRole;
-        let toMute = msg.member;
-        msg.guild.roles.forEach(function(val, key) {
-          if (val.name == 'MentionAbuser') {
-            hasMuteRole = true;
-            muteRole = val;
+        if (!mentionAccumulator[msg.guild.id][msg.author.id]) {
+          mentionAccumulator[msg.guild.id][msg.author.id] = [];
+        }
+        mentionAccumulator[msg.guild.id][msg.author.id].push(
+            msg.createdTimestamp);
+
+        let timestamps = mentionAccumulator[msg.guild.id][msg.author.id];
+        let count = 0;
+        let now = Date.now();
+        for (let i = timestamps.length - 1; i >= 0; i--) {
+          if (now - timestamps[i] < 2 * 60 * 1000) {
+            count++;
+          } else {
+            timestamps.splice(i, 1);
           }
-        });
-        mute = function(role, member) {
-          try {
-            member.roles.add(role).then(() => {
-              self.common.reply(
-                  msg, 'I think you need a break from mentioning everyone.');
-            });
-            member.guild.channels.forEach(
-                function(channel) {
-                  if (channel.permissionsLocked) return;
-                  let overwrites = channel.permissionOverwrites.get(role.id);
-                  if (overwrites) {
-                    if (channel.type == 'category') {
-                      if (overwrites.deny.has(
-                              self.Discord.Permissions.FLAGS
-                                  .MENTION_EVERYONE)) {
-                        return;
-                      }
-                    } else if (channel.type == 'text') {
-                      if (overwrites.deny.has(
-                              self.Discord.Permissions.FLAGS
-                                  .MENTION_EVERYONE)) {
-                        return;
-                      }
+        }
+        if (count == 3) {
+          let hasMuteRole = false;
+          let muteRole;
+          let toMute = msg.member;
+          msg.guild.roles.forEach(function(val, key) {
+            if (val.name == 'MentionAbuser') {
+              hasMuteRole = true;
+              muteRole = val;
+            }
+          });
+          mute = function(role, member) {
+            try {
+              member.roles.add(role).then(() => {
+                self.common.reply(
+                    msg, 'I think you need a break from mentioning everyone.');
+              });
+              member.guild.channels.forEach(function(channel) {
+                if (channel.permissionsLocked) return;
+                let overwrites = channel.permissionOverwrites.get(role.id);
+                if (overwrites) {
+                  if (channel.type == 'category') {
+                    if (overwrites.deny.has(
+                            self.Discord.Permissions.FLAGS.MENTION_EVERYONE)) {
+                      return;
+                    }
+                  } else if (channel.type == 'text') {
+                    if (overwrites.deny.has(
+                            self.Discord.Permissions.FLAGS.MENTION_EVERYONE)) {
+                      return;
                     }
                   }
-                  channel.updateOverwrite(role, {MENTION_EVERYONE: false})
-                      .catch(console.error);
-                });
-          } catch (err) {
-            self.common.reply(
-                msg, 'Oops! I wasn\'t able to mute ' + member.user.username +
-                    '! I\'m not sure why though!');
-            console.log(err);
-          }
-        };
-        if (!hasMuteRole) {
-          msg.guild.roles
-              .create({
-                data: {
-                  name: 'MentionAbuser',
-                  position: 0,
-                  hoist: true,
-                  color: '#2f3136',
-                  permissions: 0,
-                  mentionable: true,
-                },
-              })
-              .then((role) => {
-                mute(role, toMute);
-              })
-              .catch(() => {
-                self.common.reply(
-                    msg, 'I couldn\'t mute ' + toMute.user.username +
-                        ' because there isn\'t a "MentionAbuser" role and I ' +
-                        'couldn\'t make it!');
+                }
+                channel.updateOverwrite(role, {MENTION_EVERYONE: false})
+                    .catch(console.error);
               });
-        } else {
-          mute(muteRole, toMute);
+            } catch (err) {
+              self.common.reply(
+                  msg, 'Oops! I wasn\'t able to mute ' + member.user.username +
+                      '! I\'m not sure why though!');
+              console.log(err);
+            }
+          };
+          if (!hasMuteRole) {
+            msg.guild.roles
+                .create({
+                  data: {
+                    name: 'MentionAbuser',
+                    position: 0,
+                    hoist: true,
+                    color: '#2f3136',
+                    permissions: 0,
+                    mentionable: true,
+                  },
+                })
+                .then((role) => {
+                  mute(role, toMute);
+                })
+                .catch(() => {
+                  self.common.reply(
+                      msg, 'I couldn\'t mute ' + toMute.user.username +
+                          ' because there isn\'t a "MentionAbuser" role and ' +
+                          'I couldn\'t make it!');
+                });
+          } else {
+            mute(muteRole, toMute);
+          }
+        } else if (count > 3) {
+          msg.channel.send(self.common.mention(msg) + ' Please stop.');
         }
-      } else if (count > 3) {
-        msg.channel.send(self.common.mention(msg) + ' Please stop.');
       }
+    }
+    if (msg.content.match(/^[0-9]*[dD][0-9]+\b/)) {
+      msg.prefix = self.bot.getPrefix(msg.guild);
+      msg.content = msg.prefix + 'd ' + msg.content;
+      self.command.trigger('d', msg);
     }
   }
 
@@ -1963,7 +1966,7 @@ function Main() {
       let matchNum = 0;
       for (let i = 0; i < numbers.length; i++) {
         let el = numbers[i];
-        let match = el.match(/([0-9]+)[xX\*]([0-9]+)/);
+        let match = el.match(/([0-9]+)([xXdD\*])([0-9]+)/);
         if (!match) {
           if (i == 0) {
             matchNum = el;
@@ -1971,14 +1974,19 @@ function Main() {
             allSame = false;
           }
         } else {
-          if (match[2] > 0) {
+          if (match[2].toLowerCase() == 'd') {
+            let temp = match[3];
+            match[3] = match[1];
+            match[1] = temp;
+          }
+          if (match[3] > 0) {
             if (i == 0) {
               matchNum = match[1];
             } else if (match[1] != matchNum) {
               allSame = false;
             }
             numbers.splice(i, 1, match[1]);
-            for (let j = 0; j < match[2] - 1; j++) {
+            for (let j = 0; j < match[3] - 1; j++) {
               numbers.splice(i, 0, match[1]);
             }
           } else {
@@ -2011,22 +2019,42 @@ function Main() {
 
     if (allSame && numbers.length > 1) {
       let sum = 0;
+      let max = 0;
+      let min = outcomes[0];
       let outList = outcomes.slice(0);
       numbers.forEach((el, i) => {
         sum += outcomes[i];
+        max = Math.max(max, outcomes[i]);
+        min = Math.min(min, outcomes[i]);
       });
 
       embed.setDescription(outList.join(', '));
-      embed.setFooter('Sum: ' + sum);
+      if (outList.length > 3) {
+        embed.setFooter(
+            'Sum: ' + sum + ', Max: ' + max + ', Min: ' + min + ', Avg: ' +
+            (sum / outList.length));
+      } else {
+        embed.setFooter('Sum: ' + sum);
+      }
     } else if (!allSame && numbers.length > 1) {
       let sum = 0;
+      let max = 0;
+      let min = outcomes[0];
       let outList = numbers.map((el, i) => {
         sum += outcomes[i];
+        max = Math.max(max, outcomes[i]);
+        min = Math.min(min, outcomes[i]);
         return el + ' --> ' + outcomes[i];
       });
 
       embed.setDescription('{sides} --> {rolled}\n' + outList.join('\n'));
-      embed.setFooter('Sum: ' + sum);
+      if (outList.length > 3) {
+        embed.setFooter(
+            'Sum: ' + sum + ', Max: ' + max + ', Min: ' + min + ', Avg: ' +
+            (sum / outList.length));
+      } else {
+        embed.setFooter('Sum: ' + sum);
+      }
     } else {
       embed.setDescription('Rolled: ' + outcomes[0]);
     }
