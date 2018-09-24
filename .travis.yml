@@ -10,7 +10,6 @@ branches:
   except:
   - unreviewed/*
   only:
-  - master
   - indev
 sudo: false
 dist: trusty
