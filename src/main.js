@@ -475,7 +475,7 @@ function Main() {
     self.command.deleteEvent('stats');
     self.command.deleteEvent('lookup');
     self.command.deleteEvent('togglebanmessages');
-    self.command.on('sendto');
+    self.command.deleteEvent('sendto');
 
     self.client.removeListener('guildCreate', onGuildCreate);
     self.client.removeListener('guildDelete', onGuildDelete);

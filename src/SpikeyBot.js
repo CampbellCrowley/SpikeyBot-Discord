@@ -912,14 +912,13 @@ function SpikeyBot() {
         try {
           if (subModules[i] && subModules[i].save) subModules[i].save();
         } catch (e) {
-          self.common.error(subModuleNames[i] + ' failed to save on reboot.');
+          common.error(subModuleNames[i] + ' failed to save on reboot.');
           console.error(e);
         }
         try {
           if (subModules[i] && subModules[i].end) subModules[i].end();
         } catch (e) {
-          self.common.error(
-              subModuleNames[i] + ' failed to shutdown properly.');
+          common.error(subModuleNames[i] + ' failed to shutdown properly.');
           console.error(e);
         }
       }
