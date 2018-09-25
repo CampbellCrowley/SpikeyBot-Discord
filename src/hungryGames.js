@@ -2028,6 +2028,7 @@ function HungryGames() {
       channel: g.channels.get(cId),
       text: msg,
       content: msg,
+      prefix: self.bot.getPrefix(gId),
     };
   }
   /**
