@@ -1924,9 +1924,9 @@ function HungryGames() {
                                  return getName(msg.guild, obj);
                                })
                                .join(', ');
-        let trimmedList = excludedList.substr(0, 1024);
+        let trimmedList = excludedList.substr(0, 512);
         if (excludedList != trimmedList) {
-          excludedList = trimmedList.substr(0, 1021) + '...';
+          excludedList = trimmedList.substr(0, 509) + '...';
         } else {
           excludedList = trimmedList;
         }
@@ -3641,7 +3641,7 @@ function HungryGames() {
       let teamName = find(id).currentGame.teams[lastTeam].name;
       finalMessage.setTitle(
           '\n' + teamName + ' has won ' + find(id).currentGame.name + '!');
-      finalMessage.setDescription(
+      let teamPlayerList =
           find(id)
               .currentGame.teams[lastTeam]
               .players
@@ -3653,7 +3653,11 @@ function HungryGames() {
                     })
                     .name;
               })
-              .join(', '));
+              .join(', ');
+      if (teamPlayerList.length > 1024) {
+        teamPlayerList = teamPlayerList.substring(0, 1021) + '...';
+      }
+      finalMessage.setDescription(teamPlayerList);
       find(id).currentGame.inProgress = false;
       find(id).currentGame.ended = true;
       find(id).autoPlay = false;

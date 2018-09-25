@@ -601,8 +601,8 @@ function Main() {
     let pos = -1;
     try {
       guild.channels.forEach(function(val, key) {
-        if (val.type != 'voice' && val.type != 'category') {
-          let perms = val.permissionsFor(self.client.id);
+        if (val.type == 'text') {
+          let perms = val.permissionsFor(self.client.user);
           if ((pos == -1 || val.position < pos) && perms &&
               perms.has(self.Discord.Permissions.FLAGS.SEND_MESSAGES)) {
             pos = val.position;
