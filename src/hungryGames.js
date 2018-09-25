@@ -1395,7 +1395,7 @@ function HungryGames() {
    *
    * @private
    * @type {HungryGames~hgCommandHandler}
-   * @param {Discord~Message} msg The message that lead to this being called.
+   * @param {?Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
    * @param {boolean} [silent=false] Should we suppress replies to message.
    */
@@ -4422,7 +4422,7 @@ function HungryGames() {
           'options` to see all changeable options.';
     } else {
       return changeObjectValue(
-          find(id).options, defaultOptions, option, value, text.split(' '));
+          find(id).options, defaultOptions, option, value, text.split(' '), id);
     }
   };
 
@@ -4440,9 +4440,10 @@ function HungryGames() {
    * option key to check if we have not found an end to a branch yet.
    * @param {Array.<string|boolean|number>} values All keys leading to the final
    * value, as well as the final value.
+   * @param {string} id The id of the guild this was triggered for.
    * @return {string} Message saying what happened. Can be an error message.
    */
-  function changeObjectValue(obj, defaultObj, option, value, values) {
+  function changeObjectValue(obj, defaultObj, option, value, values, id) {
     let type = typeof defaultObj[option];
     if (type !== 'undefined' &&
         typeof defaultObj[option].value !== 'undefined') {
@@ -4501,7 +4502,7 @@ function HungryGames() {
       } else {
         return changeObjectValue(
             obj[option], defaultObj[option].value || defaultObj[option],
-            values[1], values[2], values.slice(3));
+            values[1], values[2], values.slice(3), id);
       }
     } else {
       return 'Changing the value of this option does not work yet. (' + option +
