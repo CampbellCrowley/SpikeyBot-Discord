@@ -893,7 +893,7 @@ Hunger Games simulator.
         * [~listPlayers(msg, id)](#HungryGames..listPlayers) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~getName(guild, user)](#HungryGames..getName) ⇒ <code>string</code> ℗
         * [~toggleOpt(msg, id)](#HungryGames..toggleOpt) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
-        * [~changeObjectValue(obj, defaultObj, option, value, values)](#HungryGames..changeObjectValue) ⇒ <code>string</code> ℗
+        * [~changeObjectValue(obj, defaultObj, option, value, values, id)](#HungryGames..changeObjectValue) ⇒ <code>string</code> ℗
         * [~showOpts(msg, options)](#HungryGames..showOpts) ℗
         * [~optChangeListener(msg_, options, index)](#HungryGames..optChangeListener) ℗
         * [~editTeam(msg, id, [silent])](#HungryGames..editTeam) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
@@ -2483,7 +2483,7 @@ Change an option to a value that the user specifies.
 
 <a name="HungryGames..changeObjectValue"></a>
 
-### HungryGames~changeObjectValue(obj, defaultObj, option, value, values) ⇒ <code>string</code> ℗
+### HungryGames~changeObjectValue(obj, defaultObj, option, value, values, id) ⇒ <code>string</code> ℗
 Recurse through an object to change a certain child value based off a given
 array of words.
 
@@ -2498,6 +2498,7 @@ array of words.
 | option | <code>string</code> | The first value to check. |
 | value | <code>number</code> \| <code>boolean</code> \| <code>string</code> | The value to change to, or the next option key to check if we have not found an end to a branch yet. |
 | values | <code>Array.&lt;(string\|boolean\|number)&gt;</code> | All keys leading to the final value, as well as the final value. |
+| id | <code>string</code> | The id of the guild this was triggered for. |
 
 <a name="HungryGames..showOpts"></a>
 
