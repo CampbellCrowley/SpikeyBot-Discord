@@ -4630,6 +4630,14 @@ function HungryGames() {
           return;
       }
     }
+    if (find(id).options.teamSize == 0) {
+      self.common.reply(
+          msg,
+          'There are no teams to edit. If you wish to have teams, you can ' +
+              'set teamSize to the size of teams you wish to have.',
+          msg.prefix + self.postPrefix + 'opt teamSize 2');
+      return;
+    }
     switch (split[0]) {
       case 'swap':
         swapTeamUsers(msg, id);
@@ -4834,10 +4842,16 @@ function HungryGames() {
       teamId2 = msg.text.split(' ')[2] - 1;
     }
     if (teamId1 < 0 || teamId2 < 0 || isNaN(teamId2)) {
+      let extra = null;
+      if (user2 > 0 && teamId2 < 0) {
+        extra = 'Is ' + self.client.users.get(user2).username + ' on a team?';
+      } else if (user1 > 0 && teamId1 < 0) {
+        extra = 'Is ' + self.client.users.get(user1).username + ' on a team?';
+      }
       self.common.reply(
           msg, 'Please ensure the first option is the user, and the second ' +
-              'is the destination (either a mention or a team id).');
-      console.log(teamId1, teamId2);
+              'is the destination (either a mention or a team id).',
+          extra);
       return;
     }
     if (teamId2 >= find(id).currentGame.teams.length) {
@@ -4848,7 +4862,7 @@ function HungryGames() {
       teamId2 = find(id).currentGame.teams.length - 1;
     }
     self.common.reply(
-        msg, 'Moving `' + msg.mentions.users.first().username + '` from ' +
+        msg, 'Moving `' + self.client.users.get(user1).username + '` from ' +
             find(id).currentGame.teams[teamId1].name + ' to ' +
             find(id).currentGame.teams[teamId2].name);
 
