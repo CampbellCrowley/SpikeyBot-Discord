@@ -4055,6 +4055,8 @@ Music and audio related commands.
         * [~fetchLyricsPage(msg, url, title, thumb)](#Music..fetchLyricsPage) ℗
         * [~stripLyrics(msg, content, title, url, thumb)](#Music..stripLyrics) ℗
         * [~commandRecord(msg)](#Music..commandRecord) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~formatDateTime(date)](#Music..formatDateTime) ⇒ <code>string</code> ℗
+        * [~monthToShort(month)](#Music..monthToShort) ⇒ <code>string</code> ℗
         * [~Broadcast](#Music..Broadcast) : <code>Object</code>
 
 <a name="SubModule+helpMessage"></a>
@@ -4634,6 +4636,32 @@ server.
 | Param | Type | Description |
 | --- | --- | --- |
 | msg | <code>Discord~Message</code> | The message that triggered the command. |
+
+<a name="Music..formatDateTime"></a>
+
+### Music~formatDateTime(date) ⇒ <code>string</code> ℗
+Formats a given date into a datestring.
+
+**Kind**: inner method of [<code>Music</code>](#Music)  
+**Returns**: <code>string</code> - The formatted datetime.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| date | <code>Date</code> \| <code>number</code> \| <code>string</code> | The date that Date() can accept. |
+
+<a name="Music..monthToShort"></a>
+
+### Music~monthToShort(month) ⇒ <code>string</code> ℗
+Convert the month number to a 3 letter string of the month's name.
+
+**Kind**: inner method of [<code>Music</code>](#Music)  
+**Returns**: <code>string</code> - The 3 character string.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| month | <code>number</code> | The month number (1-12). |
 
 <a name="Music..Broadcast"></a>
 

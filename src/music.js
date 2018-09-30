@@ -1010,9 +1010,10 @@ function Music() {
       reply(msg, 'You aren\'t in a voice channel!');
       return;
     }
-    const filename = 'recordings/' +
-        encodeURIComponent(msg.member.voice.channel.name + Date.now()) +
-        '.opus';
+    const filename = 'recordings/' + encodeURIComponent(
+                                         msg.member.voice.channel.id + '_' +
+                                         formatDateTime(Date.now())) +
+        '.ogg';
     const url = self.common.webURL + filename;
     if (msg.mentions.users.size === 0) {
       reply(
@@ -1051,11 +1052,10 @@ function Music() {
     msg.member.voice.channel.join()
         .then((conn) => {
           // Timeout and sound are due to current Discord bug requiring bot to
-          // play
-          // sound for 0.1s before being able to receive audio.
+          // play sound for 0.1s before being able to receive audio.
           conn.play('./sounds/plink.ogg');
           self.client.setTimeout(() => {
-            let receiver = conn.createReceiver();
+            let receiver = conn.receiver;
             msg.member.voice.channel.members.forEach(function(member) {
               listen(member.user, receiver, conn);
             });
@@ -1069,6 +1069,35 @@ function Music() {
         .catch((err) => {
           reply(msg, 'I am unable to join your voice channel.', err.message);
         });
+  }
+
+  /**
+   * Formats a given date into a datestring.
+   *
+   * @private
+   * @param {?Date|number|string} date The date that Date() can accept.
+   * @return {string} The formatted datetime.
+   */
+  function formatDateTime(date) {
+    const d = new Date(date);
+    return monthToShort(d.getUTCMonth()) + '-' + d.getUTCDate() + '-' +
+        d.getUTCFullYear() + '_at_' + d.getUTCHours() + '-' +
+        ('0' + d.getUTCMinutes()).slice(-2) + '-' +
+        ('0' + d.getUTCSeconds()).slice(-2) + '_UTC';
+  }
+
+  /**
+   * Convert the month number to a 3 letter string of the month's name.
+   *
+   * @private
+   * @param {number} month The month number (1-12).
+   * @return {string} The 3 character string.
+   */
+  function monthToShort(month) {
+    return [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct',
+      'Nov', 'Dec',
+    ][month];
   }
 }
 /**
