@@ -340,6 +340,12 @@ function HungryGames() {
       value: false,
       comment: 'Should @everyone be mentioned when the game is started?',
     },
+    useNicknames: {
+      value: false,
+      comment: 'Should we use user\'s custom server nicknames instead of ' +
+          'their account username? Names only change when a new game is ' +
+          'created.',
+    },
     delayEvents: {
       value: 3500,
       time: true,
@@ -1182,9 +1188,15 @@ function HungryGames() {
    * @param {string} id The id of the user this object is representing.
    * @param {string} username The name of the user to show in the game.
    * @param {string} avatarURL URL to avatar to show for the user in the game.
+   * @param {?string} [nickname=null] The nickname for this user usually
+   * assigned by the guild. If the user does not have a nickname, this will have
+   * the same value as `name`.
    * @property {string} id The id of the User this Player represents.
    * @property {string} name The name of this Player.
    * @property {string} avatarURL The URL to the discord avatar of the User.
+   * @property {string} nickname The nickname for this user usually assigned by
+   * the guild. If the user does not have a nickname, this will have the same
+   * value as `name`.
    * @property {boolean} living Is the player still alive.
    * @property {number} bleeding How many days has the player been wounded.
    * @property {number} rank The current rank of the player in the game.
@@ -1195,13 +1207,19 @@ function HungryGames() {
    * @property {Object.<number>} weapons The weapons the player currently has
    * and how many of each.
    */
-  function Player(id, username, avatarURL) {
+  function Player(id, username, avatarURL, nickname = null) {
+    // Replace backtick with Unicode 1FEF Greek Varia because it looks the same,
+    // but it wont ruin formatting.
+    username = username.replaceAll('`', '`');
+    if (typeof nickname === 'string') nickname = nickname.replaceAll('`', '`');
     // User id.
     this.id = id;
     // Username.
     this.name = username;
     // URL TO user's current avatar.
     this.avatarURL = avatarURL;
+    // Nickname for this user.
+    this.nickname = nickname || username;
     // If this user is still alive.
     this.living = true;
     // If this user is will die at the end of the day.
@@ -1330,13 +1348,15 @@ function HungryGames() {
    * Create a Player from a given Disord.User.
    *
    * @private
-   * @param {Discord~User} user User to make a Player from.
+   * @param {Discord~User|Discord~GuildMember} member User or GuildMember to
+   * make a Player from.
    * @return {HungryGames~Player} Player object created from User.
    */
-  function makePlayer(user) {
+  function makePlayer(member) {
+    let user = mamber.user || member;
     return new Player(
-        user.id, user.username.replaceAll('`', '\\`'),
-        user.displayAvatarURL({format: 'png'}));
+        user.id, user.username, user.displayAvatarURL({format: 'png'}),
+        member.nickname);
   }
 
   /**
@@ -1546,8 +1566,8 @@ function HungryGames() {
     if (finalMembers.length == 0) finalMembers = members.slice();
     return finalMembers.map((obj) => {
       return new Player(
-          obj.id, obj.user.username,
-          obj.user.displayAvatarURL({format: 'png'}));
+          obj.id, obj.user.username, obj.user.displayAvatarURL({format: 'png'}),
+          obj.nickname);
     });
   }
   /**
@@ -1882,9 +1902,17 @@ function HungryGames() {
           });
         }
 
-        let shortName = obj.name.substring(0, 16);
-        if (shortName != obj.name) {
-          shortName = shortName.substring(0, 13) + '...';
+        let shortName;
+        if (obj.nickname && find(id).options.useNicknames) {
+          shortName = obj.nickname.substring(0, 16);
+          if (shortName != obj.nickname) {
+            shortName = shortName.substring(0, 13) + '...';
+          }
+        } else {
+          shortName = obj.name.substring(0, 16);
+          if (shortName != obj.name) {
+            shortName = shortName.substring(0, 13) + '...';
+          }
         }
 
         let prefix = '';
@@ -2165,7 +2193,8 @@ function HungryGames() {
       find(id).currentGame.day.events.push(
           makeSingleEvent(
               getMessage('resurrected'), [resurrected], 1, 0,
-              find(id).options.mentionAll, id, 'thrives', 'nothing'));
+              find(id).options.mentionAll, id, 'thrives', 'nothing',
+              find(id).options.useNicknames));
       if (find(id).options.teamSize > 0) {
         let team = find(id).currentGame.teams.find(function(obj) {
           return obj.players.findIndex(function(obj) {
@@ -2586,7 +2615,7 @@ function HungryGames() {
         finalEvent = makeSingleEvent(
             eventTry.message, affectedUsers, numVictim, numAttacker,
             find(id).options.mentionAll, id, eventTry.victim.outcome,
-            eventTry.attacker.outcome);
+            eventTry.attacker.outcome, find(id).options.useNicknames);
         finalEvent.subMessage = subMessage;
       }
       /* if (eventTry.attacker.killer && eventTry.victim.killer) {
@@ -2651,13 +2680,15 @@ function HungryGames() {
       find(id).currentGame.day.events.push(
           makeSingleEvent(
               getMessage('patchWounds'), usersRecovered, usersRecovered.length,
-              0, find(id).options.mentionAll, id, 'thrives', 'nothing'));
+              0, find(id).options.mentionAll, id, 'thrives', 'nothing',
+              find(id).options.useNicknames));
     }
     if (usersBleeding.length > 0) {
       find(id).currentGame.day.events.push(
           makeSingleEvent(
               getMessage('bleedOut'), usersBleeding, usersBleeding.length, 0,
-              find(id).options.mentionAll, id, 'dies', 'nothing'));
+              find(id).options.mentionAll, id, 'dies', 'nothing',
+              find(id).options.useNicknames));
     }
 
     let deathPercentage = 1 - (find(id).currentGame.numAlive / startingAlive);
@@ -3055,14 +3086,17 @@ function HungryGames() {
    * @param {boolean} mention Should every player be mentioned when their name
    * comes up?
    * @param {string} id The id of the guild that triggered this initially.
+   * @param {boolean} [useNicknames=false] Should we use guild nicknames instead
+   * of usernames?
    * @return {HungryGames~Event} The event that was created.
    */
-  function makeBattleEvent(affectedUsers, numVictim, numAttacker, mention, id) {
+  function makeBattleEvent(
+      affectedUsers, numVictim, numAttacker, mention, id, useNicknames) {
     const outcomeMessage =
         battles.outcomes[Math.floor(Math.random() * battles.outcomes.length)];
     let finalEvent = makeSingleEvent(
         outcomeMessage, affectedUsers.slice(0), numVictim, numAttacker, mention,
-        id, 'dies', 'nothing');
+        id, 'dies', 'nothing', useNicknames);
     finalEvent.attacker.killer = true;
     finalEvent.battle = true;
     finalEvent.state = 0;
@@ -3077,21 +3111,22 @@ function HungryGames() {
     const startMessage =
         battles.starts[Math.floor(Math.random() * battles.starts.length)];
     const battleString = '**A battle has broken out!**';
-    let healthText = affectedUsers
-                         .map(function(obj, index) {
-                           return '`' + obj.name + '`: ' +
-                               Math.max((maxHealth - userHealth[index]), 0) +
-                               'HP';
-                         })
-                         .sort(function(a, b) {
-                           return a.id - b.id;
-                         })
-                         .join(', ');
+    let healthText =
+        affectedUsers
+            .map(function(obj, index) {
+              return '`' +
+                  (useNicknames ? (obj.nickname || obj.name) : obj.name) +
+                  '`: ' + Math.max((maxHealth - userHealth[index]), 0) + 'HP';
+            })
+            .sort(function(a, b) {
+              return a.id - b.id;
+            })
+            .join(', ');
     finalEvent.attacks.push(
         makeSingleEvent(
             battleString + '\n' + startMessage + '\n' + healthText,
             affectedUsers.slice(0), numVictim, numAttacker, false, id,
-            'nothing', 'nothing'));
+            'nothing', 'nothing', useNicknames));
 
     let loop = 0;
     do {
@@ -3164,8 +3199,10 @@ function HungryGames() {
                          const health =
                              Math.max((maxHealth - userHealth[index]), 0);
                          const prePost = health === 0 ? '~~' : '';
-                         return prePost + '`' + obj.name + '`: ' + health +
-                             'HP' + prePost;
+                         return prePost + '`' +
+                             (useNicknames ? (obj.nickname || obj.name) :
+                                             obj.name) +
+                             '`: ' + health + 'HP' + prePost;
                        })
                        .sort(function(a, b) {
                          return a.id - b.id;
@@ -3186,7 +3223,8 @@ function HungryGames() {
           !flipRoles && userHealth[victimIndex] >= maxHealth ? 'dies' :
                                                                'nothing',
           flipRoles && userHealth[victimIndex] >= maxHealth ? 'dies' :
-                                                              'nothing');
+                                                              'nothing',
+          useNicknames);
 
       if (victimDamage && attackerDamage) {
         newEvent.icons.splice(1, 0, {url: fistBoth});
@@ -3276,15 +3314,18 @@ function HungryGames() {
    * @private
    * @param {HungryGames~Player[]} names An array of players to format the names
    * of.
-   * @param {boolean} mention Should the players be mentioned or just show their
-   * name normally.
+   * @param {string} [format='username'] Setting of how to format the user's
+   * name. `username` will use their account name, `mention` will use their ID
+   * to format a mention tag, `nickname` will use their custom guild nickname.
    * @return {string} The formatted string of names.
    */
-  function formatMultiNames(names, mention) {
+  function formatMultiNames(names, format = 'username') {
     let output = '';
     for (let i = 0; i < names.length; i++) {
-      if (mention) {
+      if (format === 'mention') {
         output += '<@' + names[i].id + '>';
+      } else if (format === 'nickname') {
+        output += '`' + (names[i].nickname || names[i].name) + '`';
       } else {
         output += '`' + names[i].name + '`';
       }
@@ -3307,7 +3348,8 @@ function HungryGames() {
    * @return {HungryGames~Event} The event that was created.
    */
   function makeMessageEvent(message, id) {
-    return makeSingleEvent(message, [], 0, 0, false, id, 'nothing', 'nothing');
+    return makeSingleEvent(
+        message, [], 0, 0, false, id, 'nothing', 'nothing', false);
   }
   /**
    * Format an event string based on specified users.
@@ -3324,12 +3366,20 @@ function HungryGames() {
    * @param {string} victimOutcome The outcome of the victims from this event.
    * @param {string} attackerOutcome The outcome of the attackers from this
    * event.
+   * @param {boolean} [useNickname=false] Use player nicknames instead of their
+   * username.
    * @return {HungryGames~FinalEvent} The final event that was created and
    * formatted ready for display.
    */
   function makeSingleEvent(
       message, affectedUsers, numVictim, numAttacker, mention, id,
-      victimOutcome, attackerOutcome) {
+      victimOutcome, attackerOutcome, useNickname = false) {
+    let mentionString = '';
+    if (mention) {
+      for (let i = 0; i < affectedUsers.length; i++) {
+        mentionString += '<@' + affectedUsers[i].id + '>';
+      }
+    }
     let affectedVictims = affectedUsers.splice(0, numVictim);
     let affectedAttackers = affectedUsers.splice(0, numAttacker);
     let finalMessage = message;
@@ -3341,9 +3391,10 @@ function HungryGames() {
         '$' + (affectedAttackers.length > 1 ? '2' : '1'));
     finalMessage =
         finalMessage
-            .replaceAll('{victim}', formatMultiNames(affectedVictims, mention))
             .replaceAll(
-                '{attacker}', formatMultiNames(affectedAttackers, mention));
+                '{victim}', formatMultiNames(affectedVictims, useNickname))
+            .replaceAll(
+                '{attacker}', formatMultiNames(affectedAttackers, useNickname));
     if (finalMessage.indexOf('{dead}') > -1) {
       let deadUsers =
           find(id)
@@ -3373,6 +3424,7 @@ function HungryGames() {
       numVictim: numVictim,
       victim: {outcome: victimOutcome},
       attacker: {outcome: attackerOutcome},
+      mentionString: mentionString,
     };
   }
 
@@ -3564,11 +3616,13 @@ function HungryGames() {
               embed.attachFiles(
                   [new self.Discord.MessageAttachment(out, 'hgBattle.png')]);
               if (!find(id).options.disableOutput) {
-                msg.channel.send(embed).catch((err) => {
-                  self.error(
-                      'Failed to send message with image: ' + msg.channel.id);
-                  console.error(err);
-                });
+                msg.channel.send(events[index].mentionString, embed)
+                    .catch((err) => {
+                      self.error(
+                          'Failed to send message with image: ' +
+                          msg.channel.id);
+                      console.error(err);
+                    });
               }
             });
           }
@@ -3647,12 +3701,14 @@ function HungryGames() {
               .currentGame.teams[lastTeam]
               .players
               .map(function(player) {
-                return find(id)
-                    .currentGame.includedUsers
-                    .find(function(user) {
-                      return user.id == player;
-                    })
-                    .name;
+                let p = find(id).currentGame.includedUsers.find(function(user) {
+                  return user.id == player;
+                });
+                if (find(id).options.useNicknames) {
+                  return p.nickname || p.name;
+                } else {
+                  return p.name;
+                }
               })
               .join(', ');
       if (teamPlayerList.length > 1024) {
@@ -3663,7 +3719,9 @@ function HungryGames() {
       find(id).currentGame.ended = true;
       find(id).autoPlay = false;
     } else if (numAlive == 1) {
-      let winnerName = find(id).currentGame.includedUsers[lastIndex].name;
+      let p = find(id).currentGame.includedUsers[lastIndex];
+      let winnerName =
+          find(id).options.useNicknames ? (p.nickname || p.name) : p.name;
       let teamName = '';
       if (find(id).options.teamSize > 0) {
         teamName = '(' + find(id).currentGame.teams[lastTeam].name + ') ';
@@ -3723,9 +3781,17 @@ function HungryGames() {
           symbol = emoji.broken_heart; */
         }
 
-        let shortName = obj.name.substring(0, 16);
-        if (shortName != obj.name) {
-          shortName = shortName.substring(0, 13) + '...';
+        let shortName;
+        if (obj.nickname && find(id).options.useNicknames) {
+          shortName = obj.nickname.substring(0, 16);
+          if (shortName != obj.nickname) {
+            shortName = shortName.substring(0, 13) + '...';
+          }
+        } else {
+          shortName = obj.name.substring(0, 16);
+          if (shortName != obj.name) {
+            shortName = shortName.substring(0, 13) + '...';
+          }
         }
 
         let prefix = '';
@@ -3880,9 +3946,17 @@ function HungryGames() {
                            return a.rank - b.rank;
                          })
                          .map(function(obj) {
-                           let shortName = obj.name.substring(0, 16);
-                           if (shortName != obj.name) {
-                             shortName = shortName.substring(0, 13) + '...';
+                           let shortName;
+                           if (obj.nickname && find(id).options.useNicknames) {
+                             shortName = obj.nickname.substring(0, 16);
+                             if (shortName != obj.nickname) {
+                               shortName = shortName.substring(0, 13) + '...';
+                             }
+                           } else {
+                             shortName = obj.name.substring(0, 16);
+                             if (shortName != obj.name) {
+                               shortName = shortName.substring(0, 13) + '...';
+                             }
                            }
                            return obj.rank + ') ' + shortName +
                                (obj.kills > 0 ? ' (' + obj.kills + ')' : '');
@@ -3935,9 +4009,17 @@ function HungryGames() {
               return player == obj.id;
             }) > -1;
           });
-          let shortName = obj.name.substring(0, 16);
-          if (shortName != obj.name) {
-            shortName = shortName.substring(0, 13) + '...';
+          let shortName;
+          if (obj.nickname && find(id).options.useNicknames) {
+            shortName = obj.nickname.substring(0, 16);
+            if (shortName != obj.nickname) {
+              shortName = shortName.substring(0, 13) + '...';
+            }
+          } else {
+            shortName = obj.name.substring(0, 16);
+            if (shortName != obj.name) {
+              shortName = shortName.substring(0, 13) + '...';
+            }
           }
 
           let prefix = '';
@@ -4222,7 +4304,8 @@ function HungryGames() {
                  })) {
         find(id).currentGame.includedUsers.push(
             new Player(
-                obj.id, obj.username, obj.displayAvatarURL({format: 'png'})));
+                obj.id, obj.username, obj.displayAvatarURL({format: 'png'}),
+                obj.nickname));
         if (!onlyError) {
           response += obj.username + ' added to included players.\n';
         }
@@ -4286,9 +4369,17 @@ function HungryGames() {
           });
         }
 
-        let shortName = obj.name.substring(0, 16);
-        if (shortName != obj.name) {
-          shortName = shortName.substring(0, 13) + '...';
+        let shortName;
+        if (obj.nickname && find(id).options.useNicknames) {
+          shortName = obj.nickname.substring(0, 16);
+          if (shortName != obj.nickname) {
+            shortName = shortName.substring(0, 13) + '...';
+          }
+        } else {
+          shortName = obj.name.substring(0, 16);
+          if (shortName != obj.name) {
+            shortName = shortName.substring(0, 13) + '...';
+          }
         }
 
         let prefix = '';
@@ -4564,12 +4655,12 @@ function HungryGames() {
 
     if (optionMessages[msg.id]) {
       msg.edit(embed).then((msg_) => {
-        msg_.origAuth = msg.origAuth;
-        optChangeListener(msg_, options, page);
+        optChangeListener(msg, options, page);
       });
     } else {
       msg.channel.send(embed).then((msg_) => {
         msg_.origAuth = msg.author.id;
+        msg_.prefix = self.bot.getPrefix(msg.guild);
         optChangeListener(msg_, options, page);
       });
     }
@@ -5583,20 +5674,21 @@ function HungryGames() {
     try {
       let single = makeSingleEvent(
                        msg.text, players.slice(0), 1, 1, false, msg.guild.id,
-                       'nothing', 'nothing')
+                       'nothing', 'nothing', find(id).options.useNicknames)
                        .message;
       let pluralOne = makeSingleEvent(
                           msg.text, players.slice(0), 2, 1, false, msg.guild.id,
-                          'nothing', 'nothing')
+                          'nothing', 'nothing', find(id).options.useNicknames)
                           .message;
       let pluralTwo = makeSingleEvent(
                           msg.text, players.slice(0), 1, 2, false, msg.guild.id,
-                          'nothing', 'nothing')
+                          'nothing', 'nothing', find(id).options.useNicknames)
                           .message;
-      let pluralBoth = makeSingleEvent(
-                           msg.text, players.slice(0), 2, 2, false,
-                           msg.guild.id, 'nothing', 'nothing')
-                           .message;
+      let pluralBoth =
+          makeSingleEvent(
+              msg.text, players.slice(0), 2, 2, false, msg.guild.id, 'nothing',
+              'nothing', find(id).options.useNicknames)
+              .message;
       msg.myResponse.edit(
           helpMsg + single + '\n' + pluralOne + '\n' + pluralTwo + '\n' +
           pluralBoth +

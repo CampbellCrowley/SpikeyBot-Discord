@@ -802,7 +802,7 @@ Hunger Games simulator.
         * [.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>
     * _inner_
         * [~Player](#HungryGames..Player)
-            * [new Player(id, username, avatarURL)](#new_HungryGames..Player_new)
+            * [new Player(id, username, avatarURL, [nickname])](#new_HungryGames..Player_new)
         * [~Team](#HungryGames..Team)
             * [new Team(id, name, players)](#new_HungryGames..Team_new)
         * [~Event](#HungryGames..Event)
@@ -859,7 +859,7 @@ Hunger Games simulator.
         * [~handleCommand(msg)](#HungryGames..handleCommand) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~checkForRole(msg)](#HungryGames..checkForRole) ⇒ <code>boolean</code> ℗
         * [~checkPerms(msg, cb)](#HungryGames..checkPerms) ℗
-        * [~makePlayer(user)](#HungryGames..makePlayer) ⇒ [<code>Player</code>](#HungryGames..Player) ℗
+        * [~makePlayer(member)](#HungryGames..makePlayer) ⇒ [<code>Player</code>](#HungryGames..Player) ℗
         * [~sendAtTime(channel, one, two, time)](#HungryGames..sendAtTime) ℗
         * [~createGame(msg, id, [silent])](#HungryGames..createGame) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~getAllPlayers(members, excluded, bots, included, excludeByDefault)](#HungryGames..getAllPlayers) ⇒ [<code>Array.&lt;Player&gt;</code>](#HungryGames..Player) ℗
@@ -878,12 +878,12 @@ Hunger Games simulator.
         * [~validateEventNumConstraint(numVictim, numAttacker, userPool, numAlive)](#HungryGames..validateEventNumConstraint) ⇒ <code>boolean</code> ℗
         * [~validateEventRequirements(numVictim, numAttacker, userPool, numAlive, teams, options, victimsDie, attackersDie, weaponWielder)](#HungryGames..validateEventRequirements) ⇒ <code>string</code> ℗
         * [~pickAffectedPlayers(numVictim, numAttacker, options, userPool, teams, weaponWielder)](#HungryGames..pickAffectedPlayers) ⇒ [<code>Array.&lt;Player&gt;</code>](#HungryGames..Player) ℗
-        * [~makeBattleEvent(affectedUsers, numVictim, numAttacker, mention, id)](#HungryGames..makeBattleEvent) ⇒ [<code>Event</code>](#HungryGames..Event) ℗
+        * [~makeBattleEvent(affectedUsers, numVictim, numAttacker, mention, id, [useNicknames])](#HungryGames..makeBattleEvent) ⇒ [<code>Event</code>](#HungryGames..Event) ℗
         * [~weightedUserRand()](#HungryGames..weightedUserRand) ⇒ <code>number</code> ℗
         * [~probabilityEvent(eventPool, probabilityOpts, [recurse])](#HungryGames..probabilityEvent) ⇒ <code>number</code> ℗
-        * [~formatMultiNames(names, mention)](#HungryGames..formatMultiNames) ⇒ <code>string</code> ℗
+        * [~formatMultiNames(names, [format])](#HungryGames..formatMultiNames) ⇒ <code>string</code> ℗
         * [~makeMessageEvent(message, [id])](#HungryGames..makeMessageEvent) ⇒ [<code>Event</code>](#HungryGames..Event) ℗
-        * [~makeSingleEvent(message, affectedUsers, numVictim, numAttacker, mention, id, victimOutcome, attackerOutcome)](#HungryGames..makeSingleEvent) ⇒ <code>HungryGames~FinalEvent</code> ℗
+        * [~makeSingleEvent(message, affectedUsers, numVictim, numAttacker, mention, id, victimOutcome, attackerOutcome, [useNickname])](#HungryGames..makeSingleEvent) ⇒ <code>HungryGames~FinalEvent</code> ℗
         * [~getMiniIcons(users)](#HungryGames..getMiniIcons) ⇒ [<code>Array.&lt;UserIconUrl&gt;</code>](#HungryGames..UserIconUrl) ℗
         * [~printEvent(msg, id)](#HungryGames..printEvent) ℗
         * [~printDay(msg, id)](#HungryGames..printDay) ℗
@@ -1425,6 +1425,7 @@ Serializable container for data pertaining to a single user.
 | id | <code>string</code> | The id of the User this Player represents. |
 | name | <code>string</code> | The name of this Player. |
 | avatarURL | <code>string</code> | The URL to the discord avatar of the User. |
+| nickname | <code>string</code> | The nickname for this user usually assigned by the guild. If the user does not have a nickname, this will have the same value as `name`. |
 | living | <code>boolean</code> | Is the player still alive. |
 | bleeding | <code>number</code> | How many days has the player been wounded. |
 | rank | <code>number</code> | The current rank of the player in the game. |
@@ -1434,13 +1435,14 @@ Serializable container for data pertaining to a single user.
 
 <a name="new_HungryGames..Player_new"></a>
 
-#### new Player(id, username, avatarURL)
+#### new Player(id, username, avatarURL, [nickname])
 
-| Param | Type | Description |
-| --- | --- | --- |
-| id | <code>string</code> | The id of the user this object is representing. |
-| username | <code>string</code> | The name of the user to show in the game. |
-| avatarURL | <code>string</code> | URL to avatar to show for the user in the game. |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| id | <code>string</code> |  | The id of the user this object is representing. |
+| username | <code>string</code> |  | The name of the user to show in the game. |
+| avatarURL | <code>string</code> |  | URL to avatar to show for the user in the game. |
+| [nickname] | <code>string</code> | <code>null</code> | The nickname for this user usually assigned by the guild. If the user does not have a nickname, this will have the same value as `name`. |
 
 <a name="HungryGames..Team"></a>
 
@@ -1973,7 +1975,7 @@ id.
 
 <a name="HungryGames..makePlayer"></a>
 
-### HungryGames~makePlayer(user) ⇒ [<code>Player</code>](#HungryGames..Player) ℗
+### HungryGames~makePlayer(member) ⇒ [<code>Player</code>](#HungryGames..Player) ℗
 Create a Player from a given Disord.User.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
@@ -1982,7 +1984,7 @@ Create a Player from a given Disord.User.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| user | <code>Discord~User</code> | User to make a Player from. |
+| member | <code>Discord~User</code> \| <code>Discord~GuildMember</code> | User or GuildMember to make a Player from. |
 
 <a name="HungryGames..sendAtTime"></a>
 
@@ -2271,7 +2273,7 @@ by this event.
 
 <a name="HungryGames..makeBattleEvent"></a>
 
-### HungryGames~makeBattleEvent(affectedUsers, numVictim, numAttacker, mention, id) ⇒ [<code>Event</code>](#HungryGames..Event) ℗
+### HungryGames~makeBattleEvent(affectedUsers, numVictim, numAttacker, mention, id, [useNicknames]) ⇒ [<code>Event</code>](#HungryGames..Event) ℗
 Make an event that contains a battle between players before the main event
 message.
 
@@ -2279,13 +2281,14 @@ message.
 **Returns**: [<code>Event</code>](#HungryGames..Event) - The event that was created.  
 **Access**: private  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| affectedUsers | [<code>Array.&lt;Player&gt;</code>](#HungryGames..Player) | All of the players involved in the event. |
-| numVictim | <code>number</code> | The number of victims in this event. |
-| numAttacker | <code>number</code> | The number of attackers in this event. |
-| mention | <code>boolean</code> | Should every player be mentioned when their name comes up? |
-| id | <code>string</code> | The id of the guild that triggered this initially. |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| affectedUsers | [<code>Array.&lt;Player&gt;</code>](#HungryGames..Player) |  | All of the players involved in the event. |
+| numVictim | <code>number</code> |  | The number of victims in this event. |
+| numAttacker | <code>number</code> |  | The number of attackers in this event. |
+| mention | <code>boolean</code> |  | Should every player be mentioned when their name comes up? |
+| id | <code>string</code> |  | The id of the guild that triggered this initially. |
+| [useNicknames] | <code>boolean</code> | <code>false</code> | Should we use guild nicknames instead of usernames? |
 
 <a name="HungryGames..weightedUserRand"></a>
 
@@ -2313,17 +2316,17 @@ Produce a random event that using probabilities set in options.
 
 <a name="HungryGames..formatMultiNames"></a>
 
-### HungryGames~formatMultiNames(names, mention) ⇒ <code>string</code> ℗
+### HungryGames~formatMultiNames(names, [format]) ⇒ <code>string</code> ℗
 Format an array of users into names based on options and grammar rules.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
 **Returns**: <code>string</code> - The formatted string of names.  
 **Access**: private  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| names | [<code>Array.&lt;Player&gt;</code>](#HungryGames..Player) | An array of players to format the names of. |
-| mention | <code>boolean</code> | Should the players be mentioned or just show their name normally. |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| names | [<code>Array.&lt;Player&gt;</code>](#HungryGames..Player) |  | An array of players to format the names of. |
+| [format] | <code>string</code> | <code>&quot;&#x27;username&#x27;&quot;</code> | Setting of how to format the user's name. `username` will use their account name, `mention` will use their ID to format a mention tag, `nickname` will use their custom guild nickname. |
 
 <a name="HungryGames..makeMessageEvent"></a>
 
@@ -2341,7 +2344,7 @@ Make an event that doesn't affect any players and is just a plain message.
 
 <a name="HungryGames..makeSingleEvent"></a>
 
-### HungryGames~makeSingleEvent(message, affectedUsers, numVictim, numAttacker, mention, id, victimOutcome, attackerOutcome) ⇒ <code>HungryGames~FinalEvent</code> ℗
+### HungryGames~makeSingleEvent(message, affectedUsers, numVictim, numAttacker, mention, id, victimOutcome, attackerOutcome, [useNickname]) ⇒ <code>HungryGames~FinalEvent</code> ℗
 Format an event string based on specified users.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
@@ -2349,16 +2352,17 @@ Format an event string based on specified users.
 formatted ready for display.  
 **Access**: private  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| message | <code>string</code> | The message to show. |
-| affectedUsers | [<code>Array.&lt;Player&gt;</code>](#HungryGames..Player) | An array of all users affected by this event. |
-| numVictim | <code>number</code> | Number of victims in this event. |
-| numAttacker | <code>number</code> | Number of attackers in this event. |
-| mention | <code>boolean</code> | Should all users be mentioned when their name appears? |
-| id | <code>string</code> | The id of the guild this was initially triggered from. |
-| victimOutcome | <code>string</code> | The outcome of the victims from this event. |
-| attackerOutcome | <code>string</code> | The outcome of the attackers from this event. |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| message | <code>string</code> |  | The message to show. |
+| affectedUsers | [<code>Array.&lt;Player&gt;</code>](#HungryGames..Player) |  | An array of all users affected by this event. |
+| numVictim | <code>number</code> |  | Number of victims in this event. |
+| numAttacker | <code>number</code> |  | Number of attackers in this event. |
+| mention | <code>boolean</code> |  | Should all users be mentioned when their name appears? |
+| id | <code>string</code> |  | The id of the guild this was initially triggered from. |
+| victimOutcome | <code>string</code> |  | The outcome of the victims from this event. |
+| attackerOutcome | <code>string</code> |  | The outcome of the attackers from this event. |
+| [useNickname] | <code>boolean</code> | <code>false</code> | Use player nicknames instead of their username. |
 
 <a name="HungryGames..getMiniIcons"></a>
 
