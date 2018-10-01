@@ -504,11 +504,15 @@ function SpikeyBot() {
    *
    * @private
    * @param {string} game New message to set game to.
+   * @param {string} [type='WATCHING'] The type of activity.
    */
-  function updateGame(game) {
+  function updateGame(game, type) {
     client.user.setPresence({
-      activity:
-          {name: game, type: 'WATCHING', url: 'https://www.spikeybot.com'},
+      activity: {
+        name: game,
+        type: type || 'WATCHING',
+        url: 'https://www.spikeybot.com',
+      },
       status: (testInstance ? 'dnd' : 'online'),
     });
     // common.log('Changed game to "' + game + '"');
@@ -785,8 +789,25 @@ function SpikeyBot() {
             msg, 'I\'m sorry, but you are not allowed to do that. :(\n');
       } else {
         let game = msg.content.replace(msg.prefix + 'updategame ', '');
-        updateGame(game);
-        common.reply(msg, 'I changed my status to "' + game + '"!');
+        let first = game.split(' ')[0].toLowerCase();
+        let type = null;
+        switch (first) {
+          case 'watching':
+          case 'playing':
+          case 'streaming':
+          case 'listening':
+            type = first;
+            break;
+        }
+        if (type) {
+          updateGame(game.split(' ').slice(1).join(' '), type.toUpperCase());
+          common.reply(
+              msg, 'I changed my status to "' + type.toUpperCase() + ': ' +
+                  game.split(' ').slice(1).join(' ') + '".');
+        } else {
+          updateGame(game);
+          common.reply(msg, 'I changed my status to "' + game + '"!');
+        }
       }
     }
 
@@ -907,7 +928,7 @@ function SpikeyBot() {
    * @listens SpikeyBot~Command#reboot
    */
   function commandReboot(msg) {
-    if (trustedIds.includes(msg.author.id)) {
+    if (msg.author.id === common.spikeyId) {
       for (let i = 0; i < subModules.length; i++) {
         try {
           if (subModules[i] && subModules[i].save) subModules[i].save();

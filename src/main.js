@@ -156,7 +156,7 @@ function Main() {
    * @type {string}
    * @constant
    */
-  const introduction = '\nHello! My name is SpikeyBot.\nI was created by ' +
+  const introduction = '\nHello! My name is {username}.\nI was created by ' +
       'SpikeyRobot#9836, so if you wish to add any features, feel free to PM ' +
       'him! (Tip: Use **{prefix}pmspikey**)\n\nThe prefix for commands can ' +
       'be changed with `{prefix}changeprefix`.\nIf you\'d like to know what ' +
@@ -616,7 +616,9 @@ function Main() {
             'available channel: ' + guild.id);
         return;
       }
-      self.client.channels.get(channel).send(introduction);
+      self.client.channels.get(channel).send(
+          introduction.replaceAll('{prefix}', self.bot.getPrefix(guild))
+              .replaceAll('{username}', self.client.user.username));
     } catch (err) {
       self.error('Failed to send welcome to guild:' + guild.id);
       console.log(err);
@@ -1437,7 +1439,10 @@ function Main() {
    * @listens SpikeyBot~Command#pmMe
    */
   function commandPmMe(msg) {
-    msg.author.send(introduction.replaceAll('{prefix}', msg.prefix))
+    msg.author
+        .send(
+            introduction.replaceAll('{prefix}', msg.prefix)
+                .replaceAll('{username}', self.client.user.username))
         .then(() => {
           if (msg.guild !== null) {
             self.common.reply(msg, 'I sent you a message.', ':wink:');

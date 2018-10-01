@@ -913,6 +913,7 @@ Hunger Games simulator.
         * [~getOutcomeEmoji(outcome)](#HungryGames..getOutcomeEmoji) ⇒ <code>string</code> ℗
         * [~help(msg, id)](#HungryGames..help) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~commandStats(msg, id)](#HungryGames..commandStats) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+        * [~commandRig(msg, id)](#HungryGames..commandRig) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~nothing()](#HungryGames..nothing) ⇒ <code>string</code> ℗
         * [~getMessage(type)](#HungryGames..getMessage) ⇒ <code>string</code> ℗
         * [~find(id)](#HungryGames..find) ⇒ [<code>GuildGame</code>](#HungryGames..GuildGame) ℗
@@ -2757,6 +2758,19 @@ Send help message to DM and reply to server.
 ### HungryGames~commandStats(msg, id) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
 Replies to the user with stats about all the currently loaded games in this
 shard.
+
+**Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message that lead to this being called. |
+| id | <code>string</code> | The id of the guild this was triggered from. |
+
+<a name="HungryGames..commandRig"></a>
+
+### HungryGames~commandRig(msg, id) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+Replies to the user with an image saying "rigged". That is all.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
 **Access**: private  
@@ -4733,7 +4747,7 @@ Main class that manages the bot.
         * [~disabledcommandmessage](#SpikeyBot..disabledcommandmessage) : <code>string</code> ℗
         * [~command](#SpikeyBot..command) : [<code>Command</code>](#SpikeyBot..Command) ℗
         * [~isCmd(msg, cmd)](#SpikeyBot..isCmd) ⇒ <code>boolean</code> ℗
-        * [~updateGame(game)](#SpikeyBot..updateGame) ℗
+        * [~updateGame(game, [type])](#SpikeyBot..updateGame) ℗
         * [~onReady()](#SpikeyBot..onReady) ℗
         * [~onDisconnect(event)](#SpikeyBot..onDisconnect) ℗
         * [~onReconnecting()](#SpikeyBot..onReconnecting) ℗
@@ -5064,15 +5078,16 @@ Checks if given message is the given command.
 
 <a name="SpikeyBot..updateGame"></a>
 
-### SpikeyBot~updateGame(game) ℗
+### SpikeyBot~updateGame(game, [type]) ℗
 Changes the bot's status message.
 
 **Kind**: inner method of [<code>SpikeyBot</code>](#SpikeyBot)  
 **Access**: private  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| game | <code>string</code> | New message to set game to. |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| game | <code>string</code> |  | New message to set game to. |
+| [type] | <code>string</code> | <code>&quot;&#x27;WATCHING&#x27;&quot;</code> | The type of activity. |
 
 <a name="SpikeyBot..onReady"></a>
 

@@ -1117,7 +1117,7 @@ function HungryGames() {
           break;
         case 'save':
           self.save('async');
-          msg.channel.send('`Saving all data...`');
+          msg.channel.send('`Saving all data.`');
           break;
         case 'team':
         case 'teams':
@@ -1129,6 +1129,10 @@ function HungryGames() {
           break;
         case 'stats':
           commandStats(msg, id);
+          break;
+        case 'rig':
+        case 'rigged':
+          commandRig(msg, id);
           break;
         default:
           self.common.reply(
@@ -3392,9 +3396,13 @@ function HungryGames() {
     finalMessage =
         finalMessage
             .replaceAll(
-                '{victim}', formatMultiNames(affectedVictims, useNickname))
+                '{victim}',
+                formatMultiNames(
+                    affectedVictims, useNickname ? 'nickname' : 'username'))
             .replaceAll(
-                '{attacker}', formatMultiNames(affectedAttackers, useNickname));
+                '{attacker}',
+                formatMultiNames(
+                    affectedAttackers, useNickname ? 'nickname' : 'username'));
     if (finalMessage.indexOf('{dead}') > -1) {
       let deadUsers =
           find(id)
@@ -4751,6 +4759,7 @@ function HungryGames() {
         formTeams(id);
         break;
       case 'randomize':
+      case 'shuffle':
         randomizeTeams(msg, id);
         break;
       default:
@@ -6103,6 +6112,21 @@ function HungryGames() {
         msg, 'There are ' + self.getNumSimulating() +
             ' games currently simulating of ' + Object.keys(games).length +
             ' currently loaded.');
+  }
+
+  /**
+   * Replies to the user with an image saying "rigged". That is all.
+   *
+   * @private
+   * @type {HungryGames~hgCommandHandler}
+   * @param {Discord~Message} msg The message that lead to this being called.
+   * @param {string} id The id of the guild this was triggered from.
+   */
+  function commandRig(msg, id) {
+    let embed = new self.Discord.MessageEmbed();
+    embed.setThumbnail('https://discordemoji.com/assets/emoji/rigged.png');
+    embed.setColor([187, 26, 52]);
+    msg.channel.send(self.common.mention(msg), embed);
   }
 
   /**
