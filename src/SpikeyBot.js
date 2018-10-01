@@ -226,6 +226,27 @@ function SpikeyBot() {
   let initialized = false;
 
   /**
+   * The Interval in which we will save and purge data on all submodules. Begins
+   * after onReady.
+   * @see {@link SpikeyBot~onReady()}
+   * @see {@link SpikeyBot~saveFrequency}
+   *
+   * @private
+   * @type {Interval}
+   */
+  let saveInterval;
+  /**
+   * The frequency at which saveInterval will run.
+   * @see {@link SpikeyBot~saveInterval}
+   *
+   * @private
+   * @constant
+   * @default 30 Minutes
+   * @type {number}
+   */
+  const saveFrequency = 30 * 60 * 1000;
+
+  /**
    * Should we add a reaction to every message that Anthony sends. Overriden if
    * reboot.dat exists.
    *
@@ -538,8 +559,17 @@ function SpikeyBot() {
       }
     }
     let logChannel = client.channels.get(common.logChannel);
-    if (testInstance && logChannel) {
-      logChannel.send('Beginning in unit test mode (JS' + version + ')');
+    if (testInstance) {
+      client.users.fetch(common.spikeyId)
+          .then((u) => {
+            u.send('Beginning in unit test mode (JS' + version + ')');
+          })
+          .catch((err) => {
+            common.error('Failed to find SpikeyRobot\'s DMs');
+            logChannel.send(
+                'Beginning in unit test mode (JS' + version +
+                ') (FAILED TO FIND SpikeyRobot\'s DMs!)');
+          });
     } else if (logChannel && !isDev) {
       let additional = '';
       if (client.shard) {
@@ -598,6 +628,10 @@ function SpikeyBot() {
     if (!initialized) {
       loadGuildPrefixes(Array.from(client.guilds.array()));
     }
+    // Reset save interval
+    clearInterval(saveInterval);
+    saveInterval = setInterval(saveAll, saveFrequency);
+
     initialized = true;
     disconnectReason = 'Unknown reason for disconnect.';
   }
@@ -1065,7 +1099,7 @@ function SpikeyBot() {
         try {
           if (fs.statSync(__dirname + '/' + subModuleNames[i]).mtime <=
               subModules[i].loadTime) {
-            reloaded.push('(' + subModuleNames[i] + ': unchanged)');
+            // reloaded.push('(' + subModuleNames[i] + ': unchanged)');
             continue;
           }
         } catch (err) {
@@ -1074,7 +1108,7 @@ function SpikeyBot() {
               subModuleNames[i]);
           console.error(err);
           reloaded.push('(' + subModuleNames[i] + ': failed to stat)');
-          continue;
+          // continue;
         }
       }
       if (!noSchedule) {
@@ -1155,6 +1189,46 @@ function SpikeyBot() {
       console.error(err);
     }
   };
+
+  /**
+   * Trigger all submodules to save their data.
+   *
+   * @private
+   */
+  function saveAll() {
+    for (let i = 0; i < subModules.length; i++) {
+      if (typeof subModules[i].save === 'function') {
+        try {
+          subModules[i].save('async');
+        } catch (err) {
+          common.error('Saving failed for submodule ' + subModuleNames[i]);
+          console.error(err);
+        }
+      }
+    }
+  }
+
+  command.on('saveall', commandSaveAll);
+  /**
+   * Trigger all submodules to save their data.
+   * @see {@link SpikeyBot~saveAll()}
+   *
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens SpikeyBot~Command#saveAll
+   */
+  function commandSaveAll(msg) {
+    if (!trustedIds.includes(msg.author.id)) {
+      common.reply(
+          msg, 'LOL! Good try!',
+          'It appears SpikeyRobot doesn\'t trust you enough with this ' +
+              'command. Sorry!');
+      return;
+    }
+    saveAll();
+    msg.channel.send(common.mention(msg) + ' `Triggered data save`');
+  }
 
   command.on('update', commandUpdate);
   /**

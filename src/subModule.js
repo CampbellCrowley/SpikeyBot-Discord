@@ -207,9 +207,11 @@ function SubModule() {
   /**
    * Saves all data to files necessary for saving current state.
    *
+   * @param {string} [opt='sync'] Can be 'async', otherwise defaults to
+   * synchronous.
    * @abstract
    */
-  this.save = function() {};
+  this.save = function(opt = 'sync') {};
 
   /**
    * Check if this module is in a state that is ready to be unloaded. If false

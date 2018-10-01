@@ -397,7 +397,7 @@ Manages a Connect 4 game.
         * [.log(msg)](#SubModule+log)
         * [.error(msg)](#SubModule+error)
         * [.shutdown()](#SubModule+shutdown)
-        * *[.save()](#SubModule+save)*
+        * *[.save([opt])](#SubModule+save)*
         * *[.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>*
     * _inner_
         * [~maxReactAwaitTime](#Connect4..maxReactAwaitTime) : <code>number</code> ℗
@@ -644,10 +644,15 @@ Shutdown and disable this submodule. Removes all event listeners.
 **Access**: protected  
 <a name="SubModule+save"></a>
 
-### *connect4.save()*
+### *connect4.save([opt])*
 Saves all data to files necessary for saving current state.
 
 **Kind**: instance abstract method of [<code>Connect4</code>](#Connect4)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [opt] | <code>string</code> | <code>&quot;&#x27;sync&#x27;&quot;</code> | Can be 'async', otherwise defaults to synchronous. |
+
 <a name="SubModule+unloadable"></a>
 
 ### *connect4.unloadable() ⇒ <code>boolean</code>*
@@ -798,7 +803,7 @@ Hunger Games simulator.
         * [.log(msg)](#SubModule+log)
         * [.error(msg)](#SubModule+error)
         * [.shutdown()](#SubModule+shutdown)
-        * [.save()](#SubModule+save)
+        * [.save([opt])](#SubModule+save)
         * [.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>
     * _inner_
         * [~Player](#HungryGames..Player)
@@ -1397,11 +1402,16 @@ Shutdown and disable this submodule. Removes all event listeners.
 **Access**: protected  
 <a name="SubModule+save"></a>
 
-### hungryGames.save()
+### hungryGames.save([opt])
 Saves all data to files necessary for saving current state.
 
 **Kind**: instance method of [<code>HungryGames</code>](#HungryGames)  
 **Overrides**: [<code>save</code>](#SubModule+save)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [opt] | <code>string</code> | <code>&quot;&#x27;sync&#x27;&quot;</code> | Can be 'async', otherwise defaults to synchronous. |
+
 <a name="SubModule+unloadable"></a>
 
 ### hungryGames.unloadable() ⇒ <code>boolean</code>
@@ -2810,6 +2820,8 @@ disk at most once every `HungryGames~findDelay` milliseconds. Returns
 `null` if data could not be found, or an error occurred.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
+**Returns**: [<code>GuildGame</code>](#HungryGames..GuildGame) - The game data, or null if no game could be
+loaded.  
 **Access**: private  
 
 | Param | Type | Description |
@@ -3044,7 +3056,7 @@ Basic commands and features for the bot.
         * [.log(msg)](#SubModule+log)
         * [.error(msg)](#SubModule+error)
         * [.shutdown()](#SubModule+shutdown)
-        * [.save()](#SubModule+save)
+        * [.save([opt])](#SubModule+save)
         * *[.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>*
     * _inner_
         * [~version](#Main..version) : <code>string</code> ℗
@@ -3275,11 +3287,16 @@ Shutdown and disable this submodule. Removes all event listeners.
 **Access**: protected  
 <a name="SubModule+save"></a>
 
-### main.save()
+### main.save([opt])
 Saves all data to files necessary for saving current state.
 
 **Kind**: instance method of [<code>Main</code>](#Main)  
 **Overrides**: [<code>save</code>](#SubModule+save)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [opt] | <code>string</code> | <code>&quot;&#x27;sync&#x27;&quot;</code> | Can be 'async', otherwise defaults to synchronous. |
+
 <a name="SubModule+unloadable"></a>
 
 ### *main.unloadable() ⇒ <code>boolean</code>*
@@ -4036,7 +4053,7 @@ Music and audio related commands.
         * [.log(msg)](#SubModule+log)
         * [.error(msg)](#SubModule+error)
         * [.shutdown()](#SubModule+shutdown)
-        * *[.save()](#SubModule+save)*
+        * *[.save([opt])](#SubModule+save)*
         * [.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>
     * _static_
         * [.streamToOgg(input, file)](#Music.streamToOgg)
@@ -4239,10 +4256,15 @@ Shutdown and disable this submodule. Removes all event listeners.
 **Access**: protected  
 <a name="SubModule+save"></a>
 
-### *music.save()*
+### *music.save([opt])*
 Saves all data to files necessary for saving current state.
 
 **Kind**: instance abstract method of [<code>Music</code>](#Music)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [opt] | <code>string</code> | <code>&quot;&#x27;sync&#x27;&quot;</code> | Can be 'async', otherwise defaults to synchronous. |
+
 <a name="SubModule+unloadable"></a>
 
 ### music.unloadable() ⇒ <code>boolean</code>
@@ -4734,10 +4756,12 @@ Main class that manages the bot.
         * [~numShards](#SpikeyBot..numShards) : <code>number</code> ℗
         * [~botName](#SpikeyBot..botName) : <code>string</code> ℗
         * [~initialized](#SpikeyBot..initialized) : <code>boolean</code> ℗
+        * [~saveInterval](#SpikeyBot..saveInterval) : <code>Interval</code> ℗
         * [~reactToAnthony](#SpikeyBot..reactToAnthony) : <code>boolean</code> ℗
         * [~guildPrefixes](#SpikeyBot..guildPrefixes) : <code>Object.&lt;string&gt;</code> ℗
         * [~version](#SpikeyBot..version) : <code>string</code> ℗
         * [~testChannel](#SpikeyBot..testChannel) : <code>string</code> ℗
+        * [~saveFrequency](#SpikeyBot..saveFrequency) : <code>number</code> ℗
         * [~trustedIds](#SpikeyBot..trustedIds) : <code>Array.&lt;string&gt;</code> ℗
         * [~guildPrefixFile](#SpikeyBot..guildPrefixFile) : <code>string</code> ℗
         * [~guildCustomPrefixFile](#SpikeyBot..guildCustomPrefixFile) : <code>string</code> ℗
@@ -4759,6 +4783,8 @@ Main class that manages the bot.
         * [~commandReboot(msg)](#SpikeyBot..commandReboot) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandReload(msg)](#SpikeyBot..commandReload) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~reloadSubModules([toReload], [reloaded], [schedule])](#SpikeyBot..reloadSubModules) ⇒ <code>boolean</code> ℗
+        * [~saveAll()](#SpikeyBot..saveAll) ℗
+        * [~commandSaveAll(msg)](#SpikeyBot..commandSaveAll) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandUpdate(msg)](#SpikeyBot..commandUpdate) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~loadGuildPrefixes(guilds)](#SpikeyBot..loadGuildPrefixes) ℗
 
@@ -4969,6 +4995,19 @@ Has the bot been initialized already.
 **Kind**: inner property of [<code>SpikeyBot</code>](#SpikeyBot)  
 **Default**: <code>false</code>  
 **Access**: private  
+<a name="SpikeyBot..saveInterval"></a>
+
+### SpikeyBot~saveInterval : <code>Interval</code> ℗
+The Interval in which we will save and purge data on all submodules. Begins
+after onReady.
+
+**Kind**: inner property of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Access**: private  
+**See**
+
+- [SpikeyBot~onReady()](SpikeyBot~onReady())
+- [saveFrequency](#SpikeyBot..saveFrequency)
+
 <a name="SpikeyBot..reactToAnthony"></a>
 
 ### SpikeyBot~reactToAnthony : <code>boolean</code> ℗
@@ -5000,6 +5039,15 @@ The channel id for the channel to reserve for only unit testing in.
 **Kind**: inner constant of [<code>SpikeyBot</code>](#SpikeyBot)  
 **Default**: <code>&quot;439642818084995074&quot;</code>  
 **Access**: private  
+<a name="SpikeyBot..saveFrequency"></a>
+
+### SpikeyBot~saveFrequency : <code>number</code> ℗
+The frequency at which saveInterval will run.
+
+**Kind**: inner constant of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Default**: <code>30 Minutes</code>  
+**Access**: private  
+**See**: [saveInterval](#SpikeyBot..saveInterval)  
 <a name="SpikeyBot..trustedIds"></a>
 
 ### SpikeyBot~trustedIds : <code>Array.&lt;string&gt;</code> ℗
@@ -5220,6 +5268,26 @@ reloaded.
 | [reloaded] | <code>Array.&lt;string&gt;</code> |  | Reference to a variable to store output status information about outcomes of attempting to reload submodules. |
 | [schedule] | <code>boolean</code> | <code>true</code> | Automatically re-schedule reload for submodules if they are in an unloadable state. |
 
+<a name="SpikeyBot..saveAll"></a>
+
+### SpikeyBot~saveAll() ℗
+Trigger all submodules to save their data.
+
+**Kind**: inner method of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Access**: private  
+<a name="SpikeyBot..commandSaveAll"></a>
+
+### SpikeyBot~commandSaveAll(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Trigger all submodules to save their data.
+
+**Kind**: inner method of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Access**: private  
+**See**: [SpikeyBot~saveAll()](SpikeyBot~saveAll())  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
 <a name="SpikeyBot..commandUpdate"></a>
 
 ### SpikeyBot~commandUpdate(msg) : [<code>commandHandler</code>](#commandHandler) ℗
@@ -5273,7 +5341,7 @@ Base class for all Sub-Modules.
         * [.log(msg)](#SubModule+log)
         * [.error(msg)](#SubModule+error)
         * *[.shutdown()](#SubModule+shutdown)*
-        * *[.save()](#SubModule+save)*
+        * *[.save([opt])](#SubModule+save)*
         * *[.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>*
     * _static_
         * [.extend(child)](#SubModule.extend)
@@ -5437,10 +5505,15 @@ Shutdown and disable this submodule. Removes all event listeners.
 **Access**: protected  
 <a name="SubModule+save"></a>
 
-### *subModule.save()*
+### *subModule.save([opt])*
 Saves all data to files necessary for saving current state.
 
 **Kind**: instance abstract method of [<code>SubModule</code>](#SubModule)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [opt] | <code>string</code> | <code>&quot;&#x27;sync&#x27;&quot;</code> | Can be 'async', otherwise defaults to synchronous. |
+
 <a name="SubModule+unloadable"></a>
 
 ### *subModule.unloadable() ⇒ <code>boolean</code>*
@@ -5502,7 +5575,7 @@ Manages a tic-tac-toe game.
         * [.log(msg)](#SubModule+log)
         * [.error(msg)](#SubModule+error)
         * [.shutdown()](#SubModule+shutdown)
-        * *[.save()](#SubModule+save)*
+        * *[.save([opt])](#SubModule+save)*
         * *[.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>*
     * _inner_
         * [~maxReactAwaitTime](#TicTacToe..maxReactAwaitTime) : <code>number</code> ℗
@@ -5758,10 +5831,15 @@ Shutdown and disable this submodule. Removes all event listeners.
 **Access**: protected  
 <a name="SubModule+save"></a>
 
-### *ticTacToe.save()*
+### *ticTacToe.save([opt])*
 Saves all data to files necessary for saving current state.
 
 **Kind**: instance abstract method of [<code>TicTacToe</code>](#TicTacToe)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [opt] | <code>string</code> | <code>&quot;&#x27;sync&#x27;&quot;</code> | Can be 'async', otherwise defaults to synchronous. |
+
 <a name="SubModule+unloadable"></a>
 
 ### *ticTacToe.unloadable() ⇒ <code>boolean</code>*

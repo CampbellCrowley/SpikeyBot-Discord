@@ -492,16 +492,10 @@ function Main() {
    * Save all data to file.
    *
    * @override
-   * @param {string} [opt='sync'] Can be 'async', othwerwise defaults to
-   * synchronous.
+   * @inheritdoc
    */
   this.save = function(opt) {
     if (!self.initialized) return;
-    if (opt == 'async') {
-      self.log('Saving async', 'Main');
-    } else {
-      self.log('Saving sync', 'Main');
-    }
     timers.forEach(function(obj) {
       const dir = self.common.userSaveDir + obj.id + '/timers/';
       const filename = dir + obj.time + '.json';

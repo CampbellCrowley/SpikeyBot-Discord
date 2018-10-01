@@ -6189,7 +6189,8 @@ function HungryGames() {
    *
    * @private
    * @param {number|string} id The guild id to get the data for.
-   * @return {?HungryGames~GuildGame}
+   * @return {?HungryGames~GuildGame} The game data, or null if no game could be
+   * loaded.
    */
   function find(id) {
     if (games[id]) return games[id];
@@ -6300,16 +6301,12 @@ function HungryGames() {
       }
       return;
     }
-    if (opt == 'async') {
-      self.log('Saving async');
-    } else {
-      self.log('Saving sync');
-    }
     Object.entries(games).forEach(function(obj) {
       const id = obj[0];
       const data = obj[1];
       const dir = self.common.guildSaveDir + id + hgSaveDir;
       const filename = dir + saveFile;
+      const saveStartTime = Date.now();
       if (opt == 'async') {
         mkdirp(dir, function(err) {
           if (err) {
@@ -6321,6 +6318,9 @@ function HungryGames() {
             if (err2) {
               self.error('Failed to save HG data for ' + filename);
               console.error(err2);
+            } else if (findTimestamps[id] - saveStartTime < 0) {
+              delete games[id];
+              delete findTimestamps[id];
             }
           });
         });
