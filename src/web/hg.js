@@ -281,7 +281,7 @@ function HGWeb(hg) {
   };
 
   /**
-   * Send a message to the given socket inorming the client that the command
+   * Send a message to the given socket informing the client that the command
    * they attempted failed due to insufficient permission.
    *
    * @private
@@ -586,14 +586,15 @@ function HGWeb(hg) {
    */
   function fetchDay(userData, socket, gId, cb) {
     let hasPerm = true;
+    let g, m;
     if (!userData) {
       hasPerm = false;
     } else {
-      let g = hg.client.guilds.get(gId);
+      g = hg.client.guilds.get(gId);
       if (!g) {
         hasPerm = false;
       } else {
-        let m = g.members.get(userData.id);
+        m = g.members.get(userData.id);
         if (!m) {
           hasPerm = false;
         }
@@ -608,6 +609,13 @@ function HGWeb(hg) {
       if (typeof cb === 'function') cb('NO_GAME_IN_GUILD');
       socket.emit(
           'message', 'There doesn\'t appear to be a game on this server yet.');
+      return;
+    }
+
+    if (!g.channels.get(game.outputChannel)
+             .permissionsFor(m)
+             .has(hg.Discord.Permissions.FLAGS.VIEW_CHANNEL)) {
+      replyNoPerm(socket, 'fetchDay');
       return;
     }
 
