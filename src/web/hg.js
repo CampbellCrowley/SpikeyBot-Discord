@@ -322,7 +322,7 @@ function HGWeb(hg) {
     let g = hg.client.guilds.get(gId);
     if (!g) return false;
     let member = g.members.get(userData.id);
-    if (!member || !hg.checkMemberForRole(msg.member)) {
+    if (!member || !hg.checkMemberForRole(member)) {
       return false;
     }
     return true;
@@ -506,10 +506,10 @@ function HGWeb(hg) {
     if (!member || !hg.checkMemberForRole(member)) return;
     let m = g.members.get(mId);
     if (!m) return;
-    let member = makeMember(m);
+    let finalMember = makeMember(m);
 
     if (typeof cb === 'function') cb();
-    socket.emit('member', gId, mId, member);
+    socket.emit('member', gId, mId, finalMember);
   }
   this.fetchMember = fetchMember;
   /**
