@@ -463,6 +463,7 @@ function HGWeb(hg) {
         newG.iconURL = g.iconURL();
         newG.name = g.name;
         newG.id = g.id;
+        newG.ownerId = g.ownerID;
         newG.members = g.members.map((m) => {
           return m.id;
         });
