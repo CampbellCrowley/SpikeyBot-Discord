@@ -200,9 +200,11 @@ function HGWeb(hg) {
       func.apply(func, [args[0], socket].concat(args.slice(1)));
       if (forward) {
         Object.entries(siblingSockets).forEach((s) => {
-          s[1].emit('forwardedRequest', args[0], socket.id, (...res) => {
-            socket.emit(res);
-          }, func.name, args.slice(1));
+          s[1].emit(
+              'forwardedRequest', args[0], socket.id, func.name, args.slice(1),
+              (res) => {
+                socket.emit.apply(socket, res);
+              });
         });
       }
     }
@@ -235,7 +237,7 @@ function HGWeb(hg) {
       fetchGuilds(userData, {id: id}, cb);
     });
 
-    socket.on('forwardedRequest', (userData, sId, cb, func, ...args) => {
+    socket.on('forwardedRequest', (userData, sId, func, args, cb) => {
       if (!authenticated) return;
       let fakeSocket = {
         emit: function(...args) {
