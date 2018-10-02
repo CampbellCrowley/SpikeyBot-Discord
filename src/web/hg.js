@@ -2,6 +2,7 @@
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const http = require('http');
 const socketIo = require('socket.io');
+const auth = require('../../auth.js');
 
 /**
  * @classdesc Creates a web interface for managing the Hungry Games.
