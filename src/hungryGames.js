@@ -1151,8 +1151,19 @@ function HungryGames() {
    * @return {boolean} If the message author has the necessary role.
    */
   function checkForRole(msg) {
-    return msg.member.roles.find((r) => r.name == roleName);
+    return self.checkMemberForRole(msg.member);
   }
+  /**
+   * Check if GuildMember has the required role to run commands.
+   *
+   * @public
+   * @param {Discord~GuildMember} member Member to check permissions for.
+   * @return {boolean} If the member has the necessary role.
+   */
+  this.checkMemberForRole = function(member) {
+    return member.id == member.guild.ownerID ||
+        member.roles.find((r) => r.name == roleName);
+  };
 
   /**
    * Handler for a Hungry Games command.

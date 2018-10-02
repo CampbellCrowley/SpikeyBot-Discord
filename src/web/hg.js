@@ -322,7 +322,7 @@ function HGWeb(hg) {
     let g = hg.client.guilds.get(gId);
     if (!g) return false;
     let member = g.members.get(userData.id);
-    if (!member || !member.roles.find((r) => r.name == hg.roleName)) {
+    if (!member || !hg.checkMemberForRole(msg.member)) {
       return false;
     }
     return true;
@@ -344,7 +344,7 @@ function HGWeb(hg) {
     let g = hg.client.guilds.get(gId);
     if (!g) return false;
     let m = g.members.get(userData.id);
-    if (!m || !m.roles.find((r) => r.name == hg.roleName)) return false;
+    if (!m || !hg.checkMemberForRole(m)) return false;
 
     let channel = g.channels.get(cId);
     if (!channel) return false;
@@ -366,7 +366,7 @@ function HGWeb(hg) {
   function makeMember(m) {
     return {
       nickname: m.nickname,
-      hgRole: m.roles.find((r) => r.name == hg.roleName),
+      hgRole: hg.checkMemberForRole(m),
       roles: m.roles
                  .filter(() => {
                    return true;
@@ -501,8 +501,8 @@ function HGWeb(hg) {
     if (!userData) return;
     let g = hg.client.guilds.get(gId);
     if (!g) return;
-    let user = g.members.get(userData.id);
-    if (!user || !user.roles.find((r) => r.name == hg.roleName)) return;
+    let member = g.members.get(userData.id);
+    if (!member || !hg.checkMemberForRole(member)) return;
     let m = g.members.get(mId);
     if (!m) return;
     let member = makeMember(m);
@@ -528,7 +528,7 @@ function HGWeb(hg) {
     let g = hg.client.guilds.get(gId);
     if (!g) return;
     let member = g.members.get(userData.id);
-    if (!member || !member.roles.find((r) => r.name == hg.roleName)) return;
+    if (!member || !hg.checkMemberForRole(member)) return;
     let m = g.members.get(userData.id);
 
     let channel = g.channels.get(cId);

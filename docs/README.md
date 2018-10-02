@@ -778,6 +778,7 @@ Hunger Games simulator.
         * [.commit](#SubModule+commit) : <code>string</code>
         * [.loadTime](#SubModule+loadTime) : <code>number</code>
         * [.getGame(id)](#HungryGames+getGame) ⇒ [<code>GuildGame</code>](#HungryGames..GuildGame)
+        * [.checkMemberForRole(member)](#HungryGames+checkMemberForRole) ⇒ <code>boolean</code>
         * [.getDefaultEvents()](#HungryGames+getDefaultEvents) ⇒ <code>Object</code>
         * [.createGame(id)](#HungryGames+createGame)
         * [.resetGame(id, command)](#HungryGames+resetGame) ⇒ <code>string</code>
@@ -1060,6 +1061,19 @@ game in a guild.
 | Param | Type | Description |
 | --- | --- | --- |
 | id | <code>string</code> | The guild id to get the data for. |
+
+<a name="HungryGames+checkMemberForRole"></a>
+
+### hungryGames.checkMemberForRole(member) ⇒ <code>boolean</code>
+Check if GuildMember has the required role to run commands.
+
+**Kind**: instance method of [<code>HungryGames</code>](#HungryGames)  
+**Returns**: <code>boolean</code> - If the member has the necessary role.  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| member | <code>Discord~GuildMember</code> | Member to check permissions for. |
 
 <a name="HungryGames+getDefaultEvents"></a>
 
