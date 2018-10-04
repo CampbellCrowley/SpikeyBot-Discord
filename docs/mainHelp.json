@@ -81,7 +81,7 @@
             {
               "description": "Basic Usage",
               "command": "pmspikey You should totally add blockchain to the bot!",
-              "result": "The bot will send a direct message to @SpikeyRobot#9836 telling him to add your ridiculous feature idea."
+              "result": "The bot will send a direct message to @SpikeyRobot#0971 telling him to add your ridiculous feature idea."
             }
           ]
         },
