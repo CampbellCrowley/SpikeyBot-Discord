@@ -2424,7 +2424,7 @@ function HungryGames() {
                 msg, 'A stupid error happened :(', 'Try again with `' +
                     msg.prefix + self.postPrefix +
                     'next`. If this happens again please report this to ' +
-                    'SpikeyRobot#9836\n(Failed to find valid event for ' +
+                    'SpikeyRobot#0971\n(Failed to find valid event for ' +
                     'remaining players)');
           }
           return;
