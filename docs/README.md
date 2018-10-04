@@ -4789,6 +4789,7 @@ Main class that manages the bot.
         * [~onReady()](#SpikeyBot..onReady) ℗
         * [~onDisconnect(event)](#SpikeyBot..onDisconnect) ℗
         * [~onReconnecting()](#SpikeyBot..onReconnecting) ℗
+        * [~onError(err)](#SpikeyBot..onError) ℗
         * [~onMessage(msg)](#SpikeyBot..onMessage) ℗
         * [~commandToggleReact(msg)](#SpikeyBot..commandToggleReact) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandHelp(msg)](#SpikeyBot..commandHelp) : [<code>commandHandler</code>](#commandHandler) ℗
@@ -5178,6 +5179,18 @@ The bot has disconnected from Discord, and is reconnecting.
 
 **Kind**: inner method of [<code>SpikeyBot</code>](#SpikeyBot)  
 **Access**: private  
+<a name="SpikeyBot..onError"></a>
+
+### SpikeyBot~onError(err) ℗
+An error occurred with our websocket connection to Discord.
+
+**Kind**: inner method of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| err | <code>Discord~Error</code> | The websocket error object. |
+
 <a name="SpikeyBot..onMessage"></a>
 
 ### SpikeyBot~onMessage(msg) ℗

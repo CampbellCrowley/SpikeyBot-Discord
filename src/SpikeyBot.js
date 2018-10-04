@@ -663,6 +663,19 @@ function SpikeyBot() {
     common.error('Reconnecting to Discord!');
   }
 
+  client.on('error', onError);
+  /**
+   * An error occurred with our websocket connection to Discord.
+   *
+   * @private
+   * @param {Discord~Error} err The websocket error object.
+   * @listens Discord~Client#error
+   */
+  function onError(err) {
+    common.error('Websocket encountered an error!');
+    console.error(err);
+  }
+
   client.on('message', onMessage);
   /**
    * Handle a message sent.
