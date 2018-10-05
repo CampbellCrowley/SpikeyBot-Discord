@@ -791,7 +791,7 @@ Hunger Games simulator.
         * [.includeUsers(users, id)](#HungryGames+includeUsers) ⇒ <code>string</code>
         * [.setOption(id, option, value, [text])](#HungryGames+setOption) ⇒ <code>string</code>
         * [.editTeam(uId, gId, cmd, one, two)](#HungryGames+editTeam)
-        * [.makeAndAddEvent(id, type, message, numVictim, numAttacker, victimOutcome, attackerOutcome, victimKiller, attackerKiller)](#HungryGames+makeAndAddEvent) ⇒ <code>string</code>
+        * [.makeAndAddEvent(id, type, message, numVictim, numAttacker, victimOutcome, attackerOutcome, victimKiller, attackerKiller, vWeapon, aWeapon)](#HungryGames+makeAndAddEvent) ⇒ <code>string</code>
         * [.addEvent(id, type, event)](#HungryGames+addEvent) ⇒ <code>string</code>
         * [.addMajorEvent(id, type, data, [name])](#HungryGames+addMajorEvent) ⇒ <code>string</code>
         * [.editMajorEvent(id, type, search, data, [name], [newName])](#HungryGames+editMajorEvent) ⇒ <code>string</code>
@@ -1242,7 +1242,7 @@ Allows editing teams. Entry for all team actions.
 
 <a name="HungryGames+makeAndAddEvent"></a>
 
-### hungryGames.makeAndAddEvent(id, type, message, numVictim, numAttacker, victimOutcome, attackerOutcome, victimKiller, attackerKiller) ⇒ <code>string</code>
+### hungryGames.makeAndAddEvent(id, type, message, numVictim, numAttacker, victimOutcome, attackerOutcome, victimKiller, attackerKiller, vWeapon, aWeapon) ⇒ <code>string</code>
 Creates an event and adds it to the custom events for the given guild.
 
 **Kind**: instance method of [<code>HungryGames</code>](#HungryGames)  
@@ -1260,6 +1260,8 @@ Creates an event and adds it to the custom events for the given guild.
 | attackerOutcome | <code>string</code> | The outcome of the attackers due to this event. |
 | victimKiller | <code>boolean</code> | Do the victims kill anyone. |
 | attackerKiller | <code>boolean</code> | Do the attackers kill anyone. |
+| vWeapon | <code>Object</code> | The weapon information to give the victim. |
+| aWeapon | <code>Object</code> | The weapon information to give the attacker. |
 
 <a name="HungryGames+addEvent"></a>
 
@@ -1509,6 +1511,8 @@ Event that can happen in a game.
 | [action] | <code>string</code> | The action to format into a message if this is a weapon event. |
 | victim | <code>Object</code> | Information about the victims in this event. |
 | attacker | <code>Object</code> | Information about the attackers in this event. |
+| victim.weapon | <code>Object</code> | The weapon information to give to the player. |
+| attacker.weapon | <code>Object</code> | The weapon information to give to the player. |
 | battle | <code>boolean</code> | Is this event a battle event. |
 | state | <code>number</code> | The current state of printing the battle messages. |
 | attacks | [<code>Array.&lt;Event&gt;</code>](#HungryGames..Event) | The attacks in a battle to show before the message. |

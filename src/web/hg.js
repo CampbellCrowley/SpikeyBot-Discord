@@ -934,18 +934,22 @@ function HGWeb(hg) {
    * @param {string} oA Outcome of attackers.
    * @param {string} kV Do the victims kill.
    * @param {string} kA Do the attackers kill.
+   * @param {?Object} wV The weapon information for this event.
+   * @param {?Object} wA The weapon information for this event.
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete, or has failed.
    */
   function createEvent(
-      userData, socket, gId, type, message, nV, nA, oV, oA, kV, kA, cb) {
+      userData, socket, gId, type, message, nV, nA, oV, oA, kV, kA, wV, wA,
+      cb) {
     if (!checkPerm(userData, gId)) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
       replyNoPerm(socket, 'createEvent');
       return;
     }
-    let err = hg.makeAndAddEvent(gId, type, message, nV, nA, oV, oA, kV, kA);
+    let err =
+        hg.makeAndAddEvent(gId, type, message, nV, nA, oV, oA, kV, kA, wV, wA);
     if (err) {
       if (typeof cb === 'function') cb('ATTEMPT_FAILED');
       socket.emit('message', 'Failed to create event: ' + err);
@@ -970,17 +974,18 @@ function HGWeb(hg) {
    * @param {string} type The type of event.
    * @param {HungryGames~ArenaEvent|HungryGames~WeaponEvent} data The event
    * data.
+   * @param {?string} name The name of the weapon if this is a weapon event.
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete, or has failed.
    */
-  function createMajorEvent(userData, socket, gId, type, data, cb) {
+  function createMajorEvent(userData, socket, gId, type, data, name, cb) {
     if (!checkPerm(userData, gId)) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
       replyNoPerm(socket, 'createMajorEvent');
       return;
     }
-    let err = hg.addMajorEvent(gId, type, data);
+    let err = hg.addMajorEvent(gId, type, data, name);
     if (err) {
       if (typeof cb === 'function') cb('ATTEMPT_FAILED');
       socket.emit('message', 'Failed to create event: ' + err);

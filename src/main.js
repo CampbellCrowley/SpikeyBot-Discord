@@ -18,6 +18,7 @@ math.config({matrix: 'Array'});
  * @listens Discord~Client#guildCreate
  * @listens Discord~Client#guildDelete
  * @listens Discord~Client#guildBanAdd
+ * @listens Discord~Client#message
  * @listens SpikeyBot~Command#addMe
  * @listens SpikeyBot~Command#add
  * @listens SpikeyBot~Command#simplify
@@ -37,6 +38,9 @@ math.config({matrix: 'Array'});
  * @listens SpikeyBot~Command#thotPm
  * @listens SpikeyBot~Command#pmUser
  * @listens SpikeyBot~Command#flip
+ * @listens SpikeyBot~Command#coin
+ * @listens SpikeyBot~Command#flipcoin
+ * @listens SpikeyBot~Command#coinflip
  * @listens SpikeyBot~Command#purge
  * @listens SpikeyBot~Command#prune
  * @listens SpikeyBot~Command#fuckYou
@@ -257,7 +261,7 @@ function Main() {
     self.command.on('pmspikey', commandPmSpikey);
     self.command.on('thotpm', commandThotPm);
     self.command.on('pmuser', commandPmUser);
-    self.command.on('flip', commandFlip);
+    self.command.on(['flip', 'coin', 'coinflip', 'flipcoin'], commandFlip);
     self.command.on(['purge', 'prune'], commandPurge, true);
     self.command.on(['fuckyou', 'ban'], commandBan, true);
     self.command.on('smite', commandSmite, true);
@@ -460,7 +464,7 @@ function Main() {
     self.command.deleteEvent('pmspikey');
     self.command.deleteEvent('thotpm');
     self.command.deleteEvent('pmuser');
-    self.command.deleteEvent('flip');
+    self.command.deleteEvent(['flip', 'coin', 'coinflip', 'flipcoin']);
     self.command.deleteEvent(['purge', 'prune']);
     self.command.deleteEvent(['fuckyou', 'ban']);
     self.command.deleteEvent('smite');

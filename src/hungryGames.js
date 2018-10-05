@@ -1299,10 +1299,14 @@ function HungryGames() {
    * @property {string} message The message to show.
    * @property {string} [action] The action to format into a message if this is
    * a weapon event.
-   * @property {{count: number, outcome: string, killer: boolean}} victim
-   * Information about the victims in this event.
-   * @property {{count: number, outcome: string, killer: boolean}} attacker
-   * Information about the attackers in this event.
+   * @property {{count: number, outcome: string, killer: boolean, weapon:
+   * ?Object}} victim Information about the victims in this event.
+   * @property {{count: number, outcome: string, killer: boolean, weapon:
+   * ?Object}} attacker Information about the attackers in this event.
+   * @property {{name: string, count: number}} victim.weapon The weapon
+   * information to give to the player.
+   * @property {{name: string, count: number}} attacker.weapon The weapon
+   * information to give to the player.
    * @property {boolean} battle Is this event a battle event.
    * @property {number} state The current state of printing the battle messages.
    * @property {HungryGames~Event[]} attacks The attacks in a battle to show
@@ -1319,11 +1323,13 @@ function HungryGames() {
       count: numVictim,
       outcome: victimOutcome,
       killer: victimKiller,
+      weapon: null,
     };
     this.attacker = {
       count: numAttacker,
       outcome: attackerOutcome,
       killer: attackerKiller,
+      weapon: null,
     };
     this.battle = battle;
     this.state = state;
@@ -2384,7 +2390,8 @@ function HungryGames() {
         }
       }
 
-      let doBattle = !useWeapon && !doArenaEvent && userPool.length > 1 &&
+      let doBattle =
+          ((!useWeapon && !doArenaEvent) || !eventTry) && userPool.length > 1 &&
           (Math.random() < find(id).options.probabilityOfBattle ||
            find(id).currentGame.numAlive == 2) &&
           !validateEventRequirements(
@@ -2403,7 +2410,7 @@ function HungryGames() {
         eventTry = makeBattleEvent(
             affectedUsers, numVictim, numAttacker, find(id).options.mentionAll,
             id);
-      } else if (!useWeapon) {
+      } else if (!useWeapon || !eventTry) {
         eventTry = pickEvent(
             userPool, userEventPool, find(id).options,
             find(id).currentGame.numAlive, find(id).currentGame.teams,
@@ -2517,6 +2524,7 @@ function HungryGames() {
       };
 
       let weapon = eventTry.victim.weapon;
+      if (weapon && !weaponEventPool[weapon]) weapon = null;
       for (let i = 0; i < numVictim; i++) {
         let numKills = 0;
         if (eventTry.victim.killer) numKills = numAttacker;
@@ -2536,6 +2544,7 @@ function HungryGames() {
         }
       }
       weapon = eventTry.attacker.weapon;
+      if (weapon && !weaponEventPool[weapon]) weapon = null;
       for (let i = numVictim; i < numVictim + numAttacker; i++) {
         let numKills = 0;
         if (eventTry.attacker.killer) numKills = numVictim;
@@ -5248,19 +5257,29 @@ function HungryGames() {
    * event.
    * @param {boolean} victimKiller Do the victims kill anyone.
    * @param {boolean} attackerKiller Do the attackers kill anyone.
+   * @param {{name: string, count: number}} vWeapon The weapon information to
+   * give the victim.
+   * @param {{name: string, count: number}} aWeapon The weapon information to
+   * give the attacker.
    * @return {?string} Error message or null if no error.
    */
   this.makeAndAddEvent = function(
       id, type, message, numVictim, numAttacker, victimOutcome, attackerOutcome,
-      victimKiller, attackerKiller) {
+      victimKiller, attackerKiller, vWeapon = null, aWeapon = null) {
     if (type !== 'player' && type !== 'bloodbath') return 'Invalid Type';
     if (!find(id) || !find(id).customEvents) {
       return 'Invalid ID or no game.';
     }
-    return self.addEvent(
-        id, type, new Event(
-                      message, numVictim, numAttacker, victimOutcome,
-                      attackerOutcome, victimKiller, attackerKiller));
+    let newEvent = new Event(
+        message, numVictim, numAttacker, victimOutcome, attackerOutcome,
+        victimKiller, attackerKiller);
+    if (vWeapon) {
+      newEvent.victim.weapon = vWeapon;
+    }
+    if (aWeapon) {
+      newEvent.attacker.weapon = aWeapon;
+    }
+    return self.addEvent(id, type, newEvent);
   };
   /**
    * Adds a given event to the given guild's custom events.
@@ -5416,7 +5435,7 @@ function HungryGames() {
       }
       if (!search) return null;
       if (!data) {
-        delete find(id).customEvents[type][name];
+        delete find(id).customEvents[type][newName || name];
         return null;
       }
       if (search.name) match.name = data.name;
@@ -5435,7 +5454,7 @@ function HungryGames() {
         }
       }
       if (match.outcomes.length == 0) {
-        delete find(id).customEvents[type][name];
+        delete find(id).customEvents[type][newName || name];
       }
       return null;
     }
