@@ -2524,7 +2524,10 @@ function HungryGames() {
       };
 
       let weapon = eventTry.victim.weapon;
-      if (weapon && !weaponEventPool[weapon]) weapon = null;
+      if (weapon && !weaponEventPool[weapon.name]) {
+        weapon = null;
+        eventTry.victim.weapon = null;
+      }
       for (let i = 0; i < numVictim; i++) {
         let numKills = 0;
         if (eventTry.victim.killer) numKills = numAttacker;
@@ -2544,7 +2547,10 @@ function HungryGames() {
         }
       }
       weapon = eventTry.attacker.weapon;
-      if (weapon && !weaponEventPool[weapon]) weapon = null;
+      if (weapon && !weaponEventPool[weapon.name]) {
+        weapon = null;
+        eventTry.attacker.weapon = null;
+      }
       for (let i = numVictim; i < numVictim + numAttacker; i++) {
         let numKills = 0;
         if (eventTry.attacker.killer) numKills = numVictim;
