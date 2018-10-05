@@ -676,6 +676,36 @@ function SpikeyBot() {
     console.error(err);
   }
 
+  client.on('warn', onWarn);
+  /**
+   * A general warning was produced.
+   *
+   * @private
+   * @param {string} info The information.
+   * @listens Discord~Client#warn
+   */
+  function onWarn(info) {
+    common.log('Discord Warning: ' + info);
+  }
+
+  if (isDev) {
+    client.on('debug', onDebug);
+    /**
+     * A general debug message was produced.
+     *
+     * @private
+     * @param {string} info The information.
+     * @listens Discord~Client#debug
+     */
+    function onDebug(info) {
+      if (info.startsWith('[ws] [connection] Heartbeat acknowledged') ||
+          info.startsWith('[ws] [connection] Sending a heartbeat')) {
+        return;
+      }
+      common.log('Discord Debug: ' + info);
+    }
+  }
+
   client.on('message', onMessage);
   /**
    * Handle a message sent.
@@ -1209,6 +1239,7 @@ function SpikeyBot() {
    * @private
    */
   function saveAll() {
+    console.log('Saving All!');
     for (let i = 0; i < subModules.length; i++) {
       if (typeof subModules[i].save === 'function') {
         try {

@@ -4794,6 +4794,8 @@ Main class that manages the bot.
         * [~onDisconnect(event)](#SpikeyBot..onDisconnect) ℗
         * [~onReconnecting()](#SpikeyBot..onReconnecting) ℗
         * [~onError(err)](#SpikeyBot..onError) ℗
+        * [~onWarn(info)](#SpikeyBot..onWarn) ℗
+        * [~onDebug(info)](#SpikeyBot..onDebug) ℗
         * [~onMessage(msg)](#SpikeyBot..onMessage) ℗
         * [~commandToggleReact(msg)](#SpikeyBot..commandToggleReact) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandHelp(msg)](#SpikeyBot..commandHelp) : [<code>commandHandler</code>](#commandHandler) ℗
@@ -5194,6 +5196,30 @@ An error occurred with our websocket connection to Discord.
 | Param | Type | Description |
 | --- | --- | --- |
 | err | <code>Discord~Error</code> | The websocket error object. |
+
+<a name="SpikeyBot..onWarn"></a>
+
+### SpikeyBot~onWarn(info) ℗
+A general warning was produced.
+
+**Kind**: inner method of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| info | <code>string</code> | The information. |
+
+<a name="SpikeyBot..onDebug"></a>
+
+### SpikeyBot~onDebug(info) ℗
+A general debug message was produced.
+
+**Kind**: inner method of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| info | <code>string</code> | The information. |
 
 <a name="SpikeyBot..onMessage"></a>
 
