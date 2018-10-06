@@ -13,6 +13,7 @@
     "url": "https://github.com/CampbellCrowley/SpikeyBot-Discord"
   },
   "dependencies": {
+    "@google-cloud/text-to-speech": "^0.3.0",
     "algebra.js": "^0.2.6",
     "async": "^2.6.1",
     "dateformat": "^3.0.3",
@@ -53,8 +54,8 @@
     "test:main": "mocha --delay --grep \"START|Main Module|END\"",
     "run": "npm run kill; npm start",
     "run:rem": "npm run kill; npm run start:rem",
-    "start": "nodejs src/SpikeyBot.js --dev --shards ./web/proxy.js ./web/account.js ./hungryGames.js ./main.js ./ticTacToe.js ./connect4.js ./music.js &",
-    "start:rem": "nodejs src/SpikeyBot.js --dev --shards --botname rembot ./hungryGames.js ./main.js ./ticTacToe.js ./connect4.js ./music.js &",
+    "start": "nodejs src/SpikeyBot.js --dev --shards ./web/proxy.js ./web/account.js ./hungryGames.js ./main.js ./ticTacToe.js ./connect4.js ./music.js ./patreon.js ./tts.js &",
+    "start:rem": "nodejs src/SpikeyBot.js --dev --shards --botname rembot ./hungryGames.js ./main.js ./ticTacToe.js ./connect4.js ./music.js ./patreon.js ./tts.js &",
     "kill": "killall nodejs node; exit 0;",
     "docs": "npm run lint && bash .hooks/make-docs.sh",
     "docs:help": "nodejs src/lib/json2md.js docs/*.json",

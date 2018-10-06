@@ -20,6 +20,17 @@ function Patreon() {
   this.helpMessage = null;
 
   /**
+   * The filename in the user's directory of the file where the settings related
+   * to Patreon rewards are stored.
+   *
+   * @private
+   * @constant
+   * @default
+   * @type {string}
+   */
+  const patreonSettingsFilename = '/patreonSettings.json';
+
+  /**
    * Path to the file storing information about each patron tier rewards.
    *
    * @private
@@ -37,6 +48,29 @@ function Patreon() {
    * @type {Array.<{0: number, 1: string[]}>}
    */
   let patreonTiers = {};
+
+  /**
+   * File where the template for the Patreon settings is stored.
+   * @see {@link Patreon~patreonSettingsTemplate}
+   * @see {@link WebAccount~patreonSettingsTemplate}
+   *
+   * @private
+   * @constant
+   * @default
+   * @type {string}
+   */
+  const patreonSettingsTemplateFile = './save/patreonSettingTemplate.json';
+  /**
+   * The parsed data from {@link Patreon~patreonSettingsTemplateFile}. Data
+   * that outlines the available options that can be changed, and their possible
+   * values.
+   * @private
+   *
+   * @default
+   * @type {Object.<Object>}
+   */
+  let patreonSettingsTemplate = {};
+
 
   /**
    * Parse tiers from file.
@@ -67,6 +101,38 @@ function Patreon() {
       console.log('Patreon: Re-reading tier reward information from file');
     }
     updateTierPerms();
+  });
+
+  /**
+   * Parse template from file.
+   * @see {@link Patreon~patreonSettingsTemplate}
+   * @private
+   */
+  function updatePatreonSettingsTemplate() {
+    fs.readFile(patreonSettingsTemplateFile, (err, data) => {
+      if (err) {
+        self.error('Failed to read ' + patreonSettingsTemplateFile);
+        return;
+      }
+      try {
+        let parsed = JSON.parse(data);
+        if (!parsed) return;
+        patreonSettingsTemplate = parsed;
+      } catch (e) {
+        self.error('Failed to parse ' + patreonSettingsTemplateFile);
+        console.error(e);
+      }
+    });
+  }
+  updatePatreonSettingsTemplate();
+  fs.watchFile(patreonSettingsTemplateFile, (curr, prev) => {
+    if (curr.mtime == prev.mtime) return;
+    if (self.initialized) {
+      self.log('Re-reading Patreon setting template information from file');
+    } else {
+      console.log('Patreon: Re-reading setting template information from file');
+    }
+    updatePatreonSettingsTemplate();
   });
 
   /**
@@ -109,6 +175,7 @@ function Patreon() {
     self.command.deleteEvent('patreon');
 
     fs.unwatchFile(patreonTierPermFile);
+    fs.unwatchFile(patreonSettingsTemplateFile);
   };
 
   /**
@@ -205,9 +272,11 @@ function Patreon() {
    */
 
   /**
-   * The object to put into the {@link SpikeyBot} object. This contains all of
-   * the public data available through that interface. Data will be available
-   * after {@link Patreon.initialize} has been called, at `SpikeyBot.patreon`.
+   * @classdesc The object to put into the {@link SpikeyBot} object. This
+   * contains all of the public data available through that interface. Data will
+   * be available after {@link Patreon.initialize} has been called, at
+   * `SpikeyBot.patreon`.
+   * @class
    */
   function toExport() {};
 
@@ -384,6 +453,97 @@ function Patreon() {
       }
     }
     cb(null, {status: output, message: 'Success'});
+  };
+
+  /**
+   * Responds with the settings value for a user if they have permission for the
+   * setting, otherwise replies with the default value.
+   * @public
+   *
+   * @param {?number|string} uId The user id to check, or null to get the
+   * default value.
+   * @param {string} permString The permission to check with subvalues separated
+   * by spaces.
+   * @param {Patreon~basicCB} cb Callback with parameters for error and success
+   * values.
+   * @param {*} cb.data.status The setting's value.
+   */
+  toExport.getSettingValue = function(uId, permString, cb) {
+    const permVals = permString.split(' ');
+    const perm = permVals[0];
+    if (!patreonSettingsTemplate[perm]) {
+      cb('Invalid Permission', null);
+      return;
+    }
+    toExport.checkPerm(uId, perm, onCheckPerm);
+    /**
+     * After check for user perms, this will fetch either the default value, or
+     * the user's custom setting.
+     * @private
+     * @type {Patreon~basicCB}
+     * @param {?string} err The error string, or null if no error.
+     * @param {?{status: boolean, message: string}} info The returned data if
+     * there was no error.
+     */
+    function onCheckPerm(err, info) {
+      if (err || !info.status) {
+        fetchValue(patreonSettingsTemplate, permVals.concat(['default']), cb);
+      } else {
+        fs.readFile(
+            self.common.userSaveDir + uId + patreonSettingsFilename,
+            (err, data) => {
+              let parsed = {};
+              if (!err) {
+                try {
+                  parsed = JSON.parse(data);
+                } catch (e) {
+                  self.error(
+                      'Failed to parse user settings file: ' + uId +
+                      patreonSettingsFilename);
+                  console.error(e);
+                  cb('Internal Error', null);
+                  return;
+                }
+              }
+              fetchValue(parsed, permVals, onFetchedValue);
+            });
+      }
+    }
+    /**
+     * Searches an object for the given key values.
+     * @private
+     * @param {Object} obj The object to traverse.
+     * @param {string[]} keys The keys to step through.
+     * @param {Patreon~basicCB} myCb The callback with the final value.
+     */
+    function fetchValue(obj, keys, myCb) {
+      if (keys.length == 1) {
+        myCb(null, {status: obj[keys[0]], message: 'Success'});
+        return;
+      } else if (typeof obj[keys[0]] === 'undefined') {
+        myCb('Invalid Setting: ' + keys[1], null);
+        return;
+      } else {
+        fetchValue(obj[keys[0]], keys.slice(1), myCb);
+      }
+    }
+
+    /**
+     * After a user's setting value has been fetched, check if it has been
+     * set, if not then return the default.
+     * @private
+     * @type {Patreon~basicCB}
+     * @param {?string} err The error string, or null if no error.
+     * @param {?{status: *, message: string}} info The returned data if
+     * there was no error.
+     */
+    function onFetchedValue(err, info) {
+      if (err || typeof info.status === 'undefined') {
+        onCheckPerm(null, {status: null, message: 'User value unset'});
+      } else {
+        cb(null, info);
+      }
+    }
   };
 
   /**

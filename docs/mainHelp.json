@@ -591,6 +591,34 @@
           ]
         }
       ]
+    },
+    {
+      "title": "Patreon Stuff",
+      "rows": [
+        {
+          "command": "patreon",
+          "description": "Check your current Patreon status, or get information on how to become a patron.",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "patreon",
+              "result": ""
+            }
+          ]
+        },
+        {
+          "command": "tts",
+          "description": "Using Google's text-to-speech engine, make the bot say something in your voice channel.",
+          "aliases": "tts, speak",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "tts Hello World!",
+              "result": "The bot will join your voice channel and speak \"Hello World\""
+            }
+          ]
+        }
+      ]
     }
   ]
 }

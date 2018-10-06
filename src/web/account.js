@@ -101,7 +101,8 @@ function WebAccount() {
     if (self.initialized) {
       self.log('Re-reading Patreon setting template information from file');
     } else {
-      console.log('Patreon: Re-reading setting template information from file');
+      console.log(
+          'WebAccount: Re-reading setting template information from file');
     }
     updatePatreonSettingsTemplate();
   });

@@ -29,6 +29,9 @@ Patreon status of users.</p>
 <dt><a href="#TicTacToe">TicTacToe</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
 <dd><p>Manages a tic-tac-toe game.</p>
 </dd>
+<dt><a href="#TTS">TTS</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
+<dd><p>Adds text-to-speech support for voice channels.</p>
+</dd>
 <dt><a href="#FunTranslators">FunTranslators</a></dt>
 <dd><p>Converts text strings into different formats.</p>
 </dd>
@@ -4788,15 +4791,7 @@ Patreon status of users.
         * *[.save([opt])](#SubModule+save)*
         * *[.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>*
     * _inner_
-        * [~patreonTiers](#Patreon..patreonTiers) : <code>Array.&lt;{0: number, 1: Array.&lt;string&gt;}&gt;</code> ℗
-        * [~sqlCon](#Patreon..sqlCon) : <code>sql.ConnectionConfig</code> ℗
-        * [~patreonTierPermFile](#Patreon..patreonTierPermFile) : <code>string</code> ℗
-        * [~updateTierPerms()](#Patreon..updateTierPerms) ℗
-        * [~connectSQL()](#Patreon..connectSQL) ℗
-        * [~commandPatreon(msg)](#Patreon..commandPatreon) : [<code>commandHandler</code>](#commandHandler) ℗
-            * [~getPerms(err, data)](#Patreon..commandPatreon..getPerms) : [<code>basicCB</code>](#Patreon..basicCB) ℗
-            * [~onGetPerms(err, data)](#Patreon..commandPatreon..onGetPerms) : [<code>basicCB</code>](#Patreon..basicCB) ℗
-        * [~toExport()](#Patreon..toExport)
+        * [~toExport](#Patreon..toExport)
             * [.checkAllPerms(uId, cId, gId, perm, cb)](#Patreon..toExport.checkAllPerms)
             * [.getAllPerms(uId, cId, gId, cb)](#Patreon..toExport.getAllPerms)
                 * [~onGetOverrides(err, info)](#Patreon..toExport.getAllPerms..onGetOverrides) : [<code>basicCB</code>](#Patreon..basicCB) ℗
@@ -4805,6 +4800,22 @@ Patreon status of users.
             * [.checkPerm(uId, perm, cb)](#Patreon..toExport.checkPerm)
                 * [~checkPerm(err, data)](#Patreon..toExport.checkPerm..checkPerm) : [<code>basicCB</code>](#Patreon..basicCB) ℗
             * [.getLevelPerms(pledgeAmount, exclusive, cb)](#Patreon..toExport.getLevelPerms)
+            * [.getSettingValue(uId, permString, cb)](#Patreon..toExport.getSettingValue)
+                * [~onCheckPerm(err, info)](#Patreon..toExport.getSettingValue..onCheckPerm) : [<code>basicCB</code>](#Patreon..basicCB) ℗
+                * [~fetchValue(obj, keys, myCb)](#Patreon..toExport.getSettingValue..fetchValue) ℗
+                * [~onFetchedValue(err, info)](#Patreon..toExport.getSettingValue..onFetchedValue) : [<code>basicCB</code>](#Patreon..basicCB) ℗
+        * [~patreonTiers](#Patreon..patreonTiers) : <code>Array.&lt;{0: number, 1: Array.&lt;string&gt;}&gt;</code> ℗
+        * [~patreonSettingsTemplate](#Patreon..patreonSettingsTemplate) : <code>Object.&lt;Object&gt;</code> ℗
+        * [~sqlCon](#Patreon..sqlCon) : <code>sql.ConnectionConfig</code> ℗
+        * [~patreonSettingsFilename](#Patreon..patreonSettingsFilename) : <code>string</code> ℗
+        * [~patreonTierPermFile](#Patreon..patreonTierPermFile) : <code>string</code> ℗
+        * [~patreonSettingsTemplateFile](#Patreon..patreonSettingsTemplateFile) : <code>string</code> ℗
+        * [~updateTierPerms()](#Patreon..updateTierPerms) ℗
+        * [~updatePatreonSettingsTemplate()](#Patreon..updatePatreonSettingsTemplate) ℗
+        * [~connectSQL()](#Patreon..connectSQL) ℗
+        * [~commandPatreon(msg)](#Patreon..commandPatreon) : [<code>commandHandler</code>](#commandHandler) ℗
+            * [~getPerms(err, data)](#Patreon..commandPatreon..getPerms) : [<code>basicCB</code>](#Patreon..basicCB) ℗
+            * [~onGetPerms(err, data)](#Patreon..commandPatreon..onGetPerms) : [<code>basicCB</code>](#Patreon..basicCB) ℗
         * [~fetchPatreonRow(uId, cb)](#Patreon..fetchPatreonRow) ℗
             * [~receivedDiscordRow(err, rows)](#Patreon..fetchPatreonRow..receivedDiscordRow) ℗
             * [~receivedPatreonRow(err, rows)](#Patreon..fetchPatreonRow..receivedPatreonRow) ℗
@@ -4992,100 +5003,17 @@ putting the module into an uncontrollable state.
 **Kind**: instance abstract method of [<code>Patreon</code>](#Patreon)  
 **Returns**: <code>boolean</code> - True if can be unloaded, false if cannot.  
 **Access**: public  
-<a name="Patreon..patreonTiers"></a>
-
-### Patreon~patreonTiers : <code>Array.&lt;{0: number, 1: Array.&lt;string&gt;}&gt;</code> ℗
-The parsed data from file about patron tier rewards.
-
-**Kind**: inner property of [<code>Patreon</code>](#Patreon)  
-**Access**: private  
-**Defatult**:   
-**See**: [patreonTierPermFile](#Patreon..patreonTierPermFile)  
-<a name="Patreon..sqlCon"></a>
-
-### Patreon~sqlCon : <code>sql.ConnectionConfig</code> ℗
-The object describing the connection with the SQL server.
-
-**Kind**: inner property of [<code>Patreon</code>](#Patreon)  
-**Access**: private  
-<a name="Patreon..patreonTierPermFile"></a>
-
-### Patreon~patreonTierPermFile : <code>string</code> ℗
-Path to the file storing information about each patron tier rewards.
-
-**Kind**: inner constant of [<code>Patreon</code>](#Patreon)  
-**Default**: <code>&quot;./save/patreonTiers.json&quot;</code>  
-**Access**: private  
-<a name="Patreon..updateTierPerms"></a>
-
-### Patreon~updateTierPerms() ℗
-Parse tiers from file.
-
-**Kind**: inner method of [<code>Patreon</code>](#Patreon)  
-**Access**: private  
-**See**: [patreonTierPermFile](#Patreon..patreonTierPermFile)  
-<a name="Patreon..connectSQL"></a>
-
-### Patreon~connectSQL() ℗
-Create initial connection with sql server.
-
-**Kind**: inner method of [<code>Patreon</code>](#Patreon)  
-**Access**: private  
-<a name="Patreon..commandPatreon"></a>
-
-### Patreon~commandPatreon(msg) : [<code>commandHandler</code>](#commandHandler) ℗
-Shows the user's Patreon information to the user.
-
-**Kind**: inner method of [<code>Patreon</code>](#Patreon)  
-**Access**: private  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord~Message</code> | Message that triggered command. |
-
-
-* [~commandPatreon(msg)](#Patreon..commandPatreon) : [<code>commandHandler</code>](#commandHandler) ℗
-    * [~getPerms(err, data)](#Patreon..commandPatreon..getPerms) : [<code>basicCB</code>](#Patreon..basicCB) ℗
-    * [~onGetPerms(err, data)](#Patreon..commandPatreon..onGetPerms) : [<code>basicCB</code>](#Patreon..basicCB) ℗
-
-<a name="Patreon..commandPatreon..getPerms"></a>
-
-#### commandPatreon~getPerms(err, data) : [<code>basicCB</code>](#Patreon..basicCB) ℗
-Verifies that valid data was found, then fetches all permissions fot the
-user's pledge amount.
-
-**Kind**: inner method of [<code>commandPatreon</code>](#Patreon..commandPatreon)  
-**Access**: private  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| err | <code>string</code> | The error string, or null if no error. |
-| data | <code>Object</code> | The returned data if there was no error. |
-
-<a name="Patreon..commandPatreon..onGetPerms"></a>
-
-#### commandPatreon~onGetPerms(err, data) : [<code>basicCB</code>](#Patreon..basicCB) ℗
-Verifies that valid data was found, then fetches all permissions fot the
-user's pledge amount.
-
-**Kind**: inner method of [<code>commandPatreon</code>](#Patreon..commandPatreon)  
-**Access**: private  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| err | <code>string</code> | The error string, or null if no error. |
-| data | <code>Object</code> | The returned data if there was no error. |
-
 <a name="Patreon..toExport"></a>
 
-### Patreon~toExport()
-The object to put into the [SpikeyBot](#SpikeyBot) object. This contains all of
-the public data available through that interface. Data will be available
-after [Patreon.initialize](Patreon.initialize) has been called, at `SpikeyBot.patreon`.
+### Patreon~toExport
+The object to put into the [SpikeyBot](#SpikeyBot) object. This
+contains all of the public data available through that interface. Data will
+be available after [Patreon.initialize](Patreon.initialize) has been called, at
+`SpikeyBot.patreon`.
 
-**Kind**: inner method of [<code>Patreon</code>](#Patreon)  
+**Kind**: inner class of [<code>Patreon</code>](#Patreon)  
 
-* [~toExport()](#Patreon..toExport)
+* [~toExport](#Patreon..toExport)
     * [.checkAllPerms(uId, cId, gId, perm, cb)](#Patreon..toExport.checkAllPerms)
     * [.getAllPerms(uId, cId, gId, cb)](#Patreon..toExport.getAllPerms)
         * [~onGetOverrides(err, info)](#Patreon..toExport.getAllPerms..onGetOverrides) : [<code>basicCB</code>](#Patreon..basicCB) ℗
@@ -5094,6 +5022,10 @@ after [Patreon.initialize](Patreon.initialize) has been called, at `SpikeyBot.pa
     * [.checkPerm(uId, perm, cb)](#Patreon..toExport.checkPerm)
         * [~checkPerm(err, data)](#Patreon..toExport.checkPerm..checkPerm) : [<code>basicCB</code>](#Patreon..basicCB) ℗
     * [.getLevelPerms(pledgeAmount, exclusive, cb)](#Patreon..toExport.getLevelPerms)
+    * [.getSettingValue(uId, permString, cb)](#Patreon..toExport.getSettingValue)
+        * [~onCheckPerm(err, info)](#Patreon..toExport.getSettingValue..onCheckPerm) : [<code>basicCB</code>](#Patreon..basicCB) ℗
+        * [~fetchValue(obj, keys, myCb)](#Patreon..toExport.getSettingValue..fetchValue) ℗
+        * [~onFetchedValue(err, info)](#Patreon..toExport.getSettingValue..onFetchedValue) : [<code>basicCB</code>](#Patreon..basicCB) ℗
 
 <a name="Patreon..toExport.checkAllPerms"></a>
 
@@ -5220,6 +5152,194 @@ Responds with all permissions available at the given pledge amount.
 | exclusive | <code>boolean</code> | Only get the rewards received at the exact pledge amount. Does not show all tier rewards below the pledge amount. |
 | cb | [<code>basicCB</code>](#Patreon..basicCB) | Callback with parameters for error and success values. |
 | cb.data.status | <code>Array.&lt;string&gt;</code> | All of the permission strings. |
+
+<a name="Patreon..toExport.getSettingValue"></a>
+
+#### toExport.getSettingValue(uId, permString, cb)
+Responds with the settings value for a user if they have permission for the
+setting, otherwise replies with the default value.
+
+**Kind**: static method of [<code>toExport</code>](#Patreon..toExport)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| uId | <code>number</code> \| <code>string</code> | The user id to check, or null to get the default value. |
+| permString | <code>string</code> | The permission to check with subvalues separated by spaces. |
+| cb | [<code>basicCB</code>](#Patreon..basicCB) | Callback with parameters for error and success values. |
+| cb.data.status | <code>\*</code> | The setting's value. |
+
+
+* [.getSettingValue(uId, permString, cb)](#Patreon..toExport.getSettingValue)
+    * [~onCheckPerm(err, info)](#Patreon..toExport.getSettingValue..onCheckPerm) : [<code>basicCB</code>](#Patreon..basicCB) ℗
+    * [~fetchValue(obj, keys, myCb)](#Patreon..toExport.getSettingValue..fetchValue) ℗
+    * [~onFetchedValue(err, info)](#Patreon..toExport.getSettingValue..onFetchedValue) : [<code>basicCB</code>](#Patreon..basicCB) ℗
+
+<a name="Patreon..toExport.getSettingValue..onCheckPerm"></a>
+
+##### getSettingValue~onCheckPerm(err, info) : [<code>basicCB</code>](#Patreon..basicCB) ℗
+After check for user perms, this will fetch either the default value, or
+the user's custom setting.
+
+**Kind**: inner method of [<code>getSettingValue</code>](#Patreon..toExport.getSettingValue)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| err | <code>string</code> | The error string, or null if no error. |
+| info | <code>Object</code> | The returned data if there was no error. |
+
+<a name="Patreon..toExport.getSettingValue..fetchValue"></a>
+
+##### getSettingValue~fetchValue(obj, keys, myCb) ℗
+Searches an object for the given key values.
+
+**Kind**: inner method of [<code>getSettingValue</code>](#Patreon..toExport.getSettingValue)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| obj | <code>Object</code> | The object to traverse. |
+| keys | <code>Array.&lt;string&gt;</code> | The keys to step through. |
+| myCb | [<code>basicCB</code>](#Patreon..basicCB) | The callback with the final value. |
+
+<a name="Patreon..toExport.getSettingValue..onFetchedValue"></a>
+
+##### getSettingValue~onFetchedValue(err, info) : [<code>basicCB</code>](#Patreon..basicCB) ℗
+After a user's setting value has been fetched, check if it has been
+set, if not then return the default.
+
+**Kind**: inner method of [<code>getSettingValue</code>](#Patreon..toExport.getSettingValue)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| err | <code>string</code> | The error string, or null if no error. |
+| info | <code>Object</code> | The returned data if there was no error. |
+
+<a name="Patreon..patreonTiers"></a>
+
+### Patreon~patreonTiers : <code>Array.&lt;{0: number, 1: Array.&lt;string&gt;}&gt;</code> ℗
+The parsed data from file about patron tier rewards.
+
+**Kind**: inner property of [<code>Patreon</code>](#Patreon)  
+**Access**: private  
+**Defatult**:   
+**See**: [patreonTierPermFile](#Patreon..patreonTierPermFile)  
+<a name="Patreon..patreonSettingsTemplate"></a>
+
+### Patreon~patreonSettingsTemplate : <code>Object.&lt;Object&gt;</code> ℗
+The parsed data from [patreonSettingsTemplateFile](#Patreon..patreonSettingsTemplateFile). Data
+that outlines the available options that can be changed, and their possible
+values.
+
+**Kind**: inner property of [<code>Patreon</code>](#Patreon)  
+**Default**: <code>{}</code>  
+**Access**: private  
+<a name="Patreon..sqlCon"></a>
+
+### Patreon~sqlCon : <code>sql.ConnectionConfig</code> ℗
+The object describing the connection with the SQL server.
+
+**Kind**: inner property of [<code>Patreon</code>](#Patreon)  
+**Access**: private  
+<a name="Patreon..patreonSettingsFilename"></a>
+
+### Patreon~patreonSettingsFilename : <code>string</code> ℗
+The filename in the user's directory of the file where the settings related
+to Patreon rewards are stored.
+
+**Kind**: inner constant of [<code>Patreon</code>](#Patreon)  
+**Default**: <code>&quot;/patreonSettings.json&quot;</code>  
+**Access**: private  
+<a name="Patreon..patreonTierPermFile"></a>
+
+### Patreon~patreonTierPermFile : <code>string</code> ℗
+Path to the file storing information about each patron tier rewards.
+
+**Kind**: inner constant of [<code>Patreon</code>](#Patreon)  
+**Default**: <code>&quot;./save/patreonTiers.json&quot;</code>  
+**Access**: private  
+<a name="Patreon..patreonSettingsTemplateFile"></a>
+
+### Patreon~patreonSettingsTemplateFile : <code>string</code> ℗
+File where the template for the Patreon settings is stored.
+
+**Kind**: inner constant of [<code>Patreon</code>](#Patreon)  
+**Default**: <code>&quot;./save/patreonSettingTemplate.json&quot;</code>  
+**Access**: private  
+**See**
+
+- [patreonSettingsTemplate](#Patreon..patreonSettingsTemplate)
+- [patreonSettingsTemplate](#WebAccount..patreonSettingsTemplate)
+
+<a name="Patreon..updateTierPerms"></a>
+
+### Patreon~updateTierPerms() ℗
+Parse tiers from file.
+
+**Kind**: inner method of [<code>Patreon</code>](#Patreon)  
+**Access**: private  
+**See**: [patreonTierPermFile](#Patreon..patreonTierPermFile)  
+<a name="Patreon..updatePatreonSettingsTemplate"></a>
+
+### Patreon~updatePatreonSettingsTemplate() ℗
+Parse template from file.
+
+**Kind**: inner method of [<code>Patreon</code>](#Patreon)  
+**Access**: private  
+**See**: [patreonSettingsTemplate](#Patreon..patreonSettingsTemplate)  
+<a name="Patreon..connectSQL"></a>
+
+### Patreon~connectSQL() ℗
+Create initial connection with sql server.
+
+**Kind**: inner method of [<code>Patreon</code>](#Patreon)  
+**Access**: private  
+<a name="Patreon..commandPatreon"></a>
+
+### Patreon~commandPatreon(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Shows the user's Patreon information to the user.
+
+**Kind**: inner method of [<code>Patreon</code>](#Patreon)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+
+* [~commandPatreon(msg)](#Patreon..commandPatreon) : [<code>commandHandler</code>](#commandHandler) ℗
+    * [~getPerms(err, data)](#Patreon..commandPatreon..getPerms) : [<code>basicCB</code>](#Patreon..basicCB) ℗
+    * [~onGetPerms(err, data)](#Patreon..commandPatreon..onGetPerms) : [<code>basicCB</code>](#Patreon..basicCB) ℗
+
+<a name="Patreon..commandPatreon..getPerms"></a>
+
+#### commandPatreon~getPerms(err, data) : [<code>basicCB</code>](#Patreon..basicCB) ℗
+Verifies that valid data was found, then fetches all permissions fot the
+user's pledge amount.
+
+**Kind**: inner method of [<code>commandPatreon</code>](#Patreon..commandPatreon)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| err | <code>string</code> | The error string, or null if no error. |
+| data | <code>Object</code> | The returned data if there was no error. |
+
+<a name="Patreon..commandPatreon..onGetPerms"></a>
+
+#### commandPatreon~onGetPerms(err, data) : [<code>basicCB</code>](#Patreon..basicCB) ℗
+Verifies that valid data was found, then fetches all permissions fot the
+user's pledge amount.
+
+**Kind**: inner method of [<code>commandPatreon</code>](#Patreon..commandPatreon)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| err | <code>string</code> | The error string, or null if no error. |
+| data | <code>Object</code> | The returned data if there was no error. |
 
 <a name="Patreon..fetchPatreonRow"></a>
 
@@ -6518,6 +6638,307 @@ player 2 won, 3 if draw.
 | --- | --- | --- |
 | board | <code>Array.&lt;number&gt;</code> | Array of 9 numbers defining a board. 0 is nobody, 1 is player 1, 2 is player 2. |
 | latest | <code>number</code> | The index where the latest move occurred. |
+
+<a name="TTS"></a>
+
+## TTS ⇐ [<code>SubModule</code>](#SubModule)
+Adds text-to-speech support for voice channels.
+
+**Kind**: global class  
+**Extends**: [<code>SubModule</code>](#SubModule)  
+
+* [TTS](#TTS) ⇐ [<code>SubModule</code>](#SubModule)
+    * _instance_
+        * [.helpMessage](#SubModule+helpMessage) : <code>string</code> \| <code>Discord~MessageEmbed</code>
+        * [.prefix](#SubModule+prefix) : <code>string</code>
+        * [.myPrefix](#SubModule+myPrefix) : <code>string</code>
+        * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
+        * [.Discord](#SubModule+Discord) : <code>Discord</code>
+        * [.client](#SubModule+client) : <code>Discord~Client</code>
+        * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
+        * [.common](#SubModule+common) : [<code>Common</code>](#Common)
+        * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
+        * [.myName](#SubModule+myName) : <code>string</code>
+        * [.initialized](#SubModule+initialized) : <code>boolean</code>
+        * [.commit](#SubModule+commit) : <code>string</code>
+        * [.loadTime](#SubModule+loadTime) : <code>number</code>
+        * [.initialize()](#SubModule+initialize)
+        * [.begin(prefix, Discord, client, command, common, bot)](#SubModule+begin)
+        * [.end()](#SubModule+end)
+        * [.log(msg)](#SubModule+log)
+        * [.error(msg)](#SubModule+error)
+        * [.shutdown()](#SubModule+shutdown)
+        * *[.save([opt])](#SubModule+save)*
+        * *[.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>*
+    * _inner_
+        * [~ttsPermString](#TTS..ttsPermString) : <code>string</code> ℗
+        * [~commandTTS(msg)](#TTS..commandTTS) : [<code>commandHandler</code>](#commandHandler) ℗
+            * [~onGetPerms(err, info)](#TTS..commandTTS..onGetPerms) : [<code>basicCB</code>](#Patreon..basicCB) ℗
+            * [~onGetSettings(err, info)](#TTS..commandTTS..onGetSettings) : [<code>basicCB</code>](#Patreon..basicCB) ℗
+            * [~onJoinVoice(conn)](#TTS..commandTTS..onJoinVoice) ℗
+            * [~onSpeechResponse(err, res)](#TTS..commandTTS..onSpeechResponse) ℗
+
+<a name="SubModule+helpMessage"></a>
+
+### ttS.helpMessage : <code>string</code> \| <code>Discord~MessageEmbed</code>
+The help message to show the user in the main help message.
+
+**Kind**: instance property of [<code>TTS</code>](#TTS)  
+**Overrides**: [<code>helpMessage</code>](#SubModule+helpMessage)  
+<a name="SubModule+prefix"></a>
+
+### ttS.prefix : <code>string</code>
+The main prefix in use for this bot. Only available after begin() is
+called.
+
+**Kind**: instance property of [<code>TTS</code>](#TTS)  
+**Read only**: true  
+<a name="SubModule+myPrefix"></a>
+
+### ttS.myPrefix : <code>string</code>
+The prefix this submodule uses. Formed by prepending this.prefix to
+this.postPrefix. this.postPrefix must be defined before begin(), otherwise
+it is ignored.
+
+**Kind**: instance property of [<code>TTS</code>](#TTS)  
+**Read only**: true  
+<a name="SubModule+postPrefix"></a>
+
+### *ttS.postPrefix : <code>string</code>*
+The postfix for the global prefix for this subModule. Must be defined
+before begin(), otherwise it is ignored.
+
+**Kind**: instance abstract property of [<code>TTS</code>](#TTS)  
+**Default**: <code>&quot;&quot;</code>  
+<a name="SubModule+Discord"></a>
+
+### ttS.Discord : <code>Discord</code>
+The current Discord object instance of the bot.
+
+**Kind**: instance property of [<code>TTS</code>](#TTS)  
+<a name="SubModule+client"></a>
+
+### ttS.client : <code>Discord~Client</code>
+The current bot client.
+
+**Kind**: instance property of [<code>TTS</code>](#TTS)  
+<a name="SubModule+command"></a>
+
+### ttS.command : [<code>Command</code>](#SpikeyBot..Command)
+The command object for registering command listeners.
+
+**Kind**: instance property of [<code>TTS</code>](#TTS)  
+<a name="SubModule+common"></a>
+
+### ttS.common : [<code>Common</code>](#Common)
+The common object.
+
+**Kind**: instance property of [<code>TTS</code>](#TTS)  
+<a name="SubModule+bot"></a>
+
+### ttS.bot : [<code>SpikeyBot</code>](#SpikeyBot)
+The parent SpikeyBot instance.
+
+**Kind**: instance property of [<code>TTS</code>](#TTS)  
+<a name="SubModule+myName"></a>
+
+### ttS.myName : <code>string</code>
+The name of this submodule. Used for differentiating in the log. Should be
+defined before begin().
+
+**Kind**: instance property of [<code>TTS</code>](#TTS)  
+**Overrides**: [<code>myName</code>](#SubModule+myName)  
+**Access**: protected  
+<a name="SubModule+initialized"></a>
+
+### ttS.initialized : <code>boolean</code>
+Has this subModule been initialized yet (Has begin() been called).
+
+**Kind**: instance property of [<code>TTS</code>](#TTS)  
+**Default**: <code>false</code>  
+**Access**: protected  
+**Read only**: true  
+<a name="SubModule+commit"></a>
+
+### ttS.commit : <code>string</code>
+The commit at HEAD at the time this module was loaded. Essentially the
+version of this submodule.
+
+**Kind**: instance constant of [<code>TTS</code>](#TTS)  
+**Access**: public  
+<a name="SubModule+loadTime"></a>
+
+### ttS.loadTime : <code>number</code>
+The time at which this madule was loaded for use in checking if the module
+needs to be reloaded because the file has been modified since loading.
+
+**Kind**: instance constant of [<code>TTS</code>](#TTS)  
+**Access**: public  
+<a name="SubModule+initialize"></a>
+
+### ttS.initialize()
+The function called at the end of begin() for further initialization
+specific to the subModule. Must be defined before begin() is called.
+
+**Kind**: instance method of [<code>TTS</code>](#TTS)  
+**Overrides**: [<code>initialize</code>](#SubModule+initialize)  
+**Access**: protected  
+<a name="SubModule+begin"></a>
+
+### ttS.begin(prefix, Discord, client, command, common, bot)
+Initialize this submodule.
+
+**Kind**: instance method of [<code>TTS</code>](#TTS)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| prefix | <code>string</code> | The global prefix for this bot. |
+| Discord | <code>Discord</code> | The Discord object for the API library. |
+| client | <code>Discord~Client</code> | The client that represents this bot. |
+| command | [<code>Command</code>](#SpikeyBot..Command) | The command instance in which to register command listeners. |
+| common | [<code>Common</code>](#Common) | Class storing common functions. |
+| bot | [<code>SpikeyBot</code>](#SpikeyBot) | The parent SpikeyBot instance. |
+
+<a name="SubModule+end"></a>
+
+### ttS.end()
+Trigger subModule to shutdown and get ready for process terminating.
+
+**Kind**: instance method of [<code>TTS</code>](#TTS)  
+**Access**: public  
+<a name="SubModule+log"></a>
+
+### ttS.log(msg)
+Log using common.log, but automatically set name.
+
+**Kind**: instance method of [<code>TTS</code>](#TTS)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+error"></a>
+
+### ttS.error(msg)
+Log using common.error, but automatically set name.
+
+**Kind**: instance method of [<code>TTS</code>](#TTS)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+shutdown"></a>
+
+### ttS.shutdown()
+Shutdown and disable this submodule. Removes all event listeners.
+
+**Kind**: instance method of [<code>TTS</code>](#TTS)  
+**Overrides**: [<code>shutdown</code>](#SubModule+shutdown)  
+**Access**: protected  
+<a name="SubModule+save"></a>
+
+### *ttS.save([opt])*
+Saves all data to files necessary for saving current state.
+
+**Kind**: instance abstract method of [<code>TTS</code>](#TTS)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [opt] | <code>string</code> | <code>&quot;&#x27;sync&#x27;&quot;</code> | Can be 'async', otherwise defaults to synchronous. |
+
+<a name="SubModule+unloadable"></a>
+
+### *ttS.unloadable() ⇒ <code>boolean</code>*
+Check if this module is in a state that is ready to be unloaded. If false
+is returned, this module should not be unloaded and doing such may risk
+putting the module into an uncontrollable state.
+
+**Kind**: instance abstract method of [<code>TTS</code>](#TTS)  
+**Returns**: <code>boolean</code> - True if can be unloaded, false if cannot.  
+**Access**: public  
+<a name="TTS..ttsPermString"></a>
+
+### TTS~ttsPermString : <code>string</code> ℗
+The permission required to use TTS commands.
+
+**Kind**: inner constant of [<code>TTS</code>](#TTS)  
+**Default**: <code>&quot;tts:all&quot;</code>  
+**Access**: private  
+<a name="TTS..commandTTS"></a>
+
+### TTS~commandTTS(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Joins a user's voice channel and speaks the given message.
+
+**Kind**: inner method of [<code>TTS</code>](#TTS)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+
+* [~commandTTS(msg)](#TTS..commandTTS) : [<code>commandHandler</code>](#commandHandler) ℗
+    * [~onGetPerms(err, info)](#TTS..commandTTS..onGetPerms) : [<code>basicCB</code>](#Patreon..basicCB) ℗
+    * [~onGetSettings(err, info)](#TTS..commandTTS..onGetSettings) : [<code>basicCB</code>](#Patreon..basicCB) ℗
+    * [~onJoinVoice(conn)](#TTS..commandTTS..onJoinVoice) ℗
+    * [~onSpeechResponse(err, res)](#TTS..commandTTS..onSpeechResponse) ℗
+
+<a name="TTS..commandTTS..onGetPerms"></a>
+
+#### commandTTS~onGetPerms(err, info) : [<code>basicCB</code>](#Patreon..basicCB) ℗
+Callback for checking permissions for command.
+
+**Kind**: inner method of [<code>commandTTS</code>](#TTS..commandTTS)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| err | <code>string</code> | The error string, or null if no error. |
+| info | <code>Object</code> | The returned data if there was no error. |
+
+<a name="TTS..commandTTS..onGetSettings"></a>
+
+#### commandTTS~onGetSettings(err, info) : [<code>basicCB</code>](#Patreon..basicCB) ℗
+After checking if a user has permission for this command, send the
+request too Google with the user's settings.
+
+**Kind**: inner method of [<code>commandTTS</code>](#TTS..commandTTS)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| err | <code>string</code> | The error string, or null if no error. |
+| info | <code>Object</code> | The returned data if there was no error. |
+
+<a name="TTS..commandTTS..onJoinVoice"></a>
+
+#### commandTTS~onJoinVoice(conn) ℗
+Successfully joined a voice channel, now we can request audio data from
+Google.
+
+**Kind**: inner method of [<code>commandTTS</code>](#TTS..commandTTS)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| conn | <code>Discord~VoiceConnection</code> | The voice channel connection. |
+
+<a name="TTS..commandTTS..onSpeechResponse"></a>
+
+#### commandTTS~onSpeechResponse(err, res) ℗
+Response from Google with TTS audio data.
+
+**Kind**: inner method of [<code>commandTTS</code>](#TTS..commandTTS)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| err | <code>Error</code> | Errors in request. |
+| res | <code>Object</code> | Response. |
 
 <a name="FunTranslators"></a>
 

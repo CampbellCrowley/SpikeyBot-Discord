@@ -4,6 +4,11 @@
     "values": ["disabled", "leet", "mocking", "superscript", "smallcaps"],
     "default": "disabled"
   },
+  "tts:all": {
+    "type": "select",
+    "values": ["en-AU-F", "en-AU-M", "en-GB-F", "en-GB-M", "en-US-F", "en-US-M"],
+    "default": "en-AU-M"
+  },
   "hg:customize_stats": {
     "type": "object",
     "values": {

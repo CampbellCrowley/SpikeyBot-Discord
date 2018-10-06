@@ -1,6 +1,7 @@
 {
   "100": [
-    "hg:fun_translators"
+    "hg:fun_translators",
+    "tts:all"
   ],
   "500": [
     "hg:customize_stats"

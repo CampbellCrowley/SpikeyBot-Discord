@@ -47,6 +47,7 @@
 | ?hg pause | Stop autoplay at the end of the day. |  |
 | ?hg next | Simulate the next day of the Games! | next, nextday |
 
+## Patreon Stuff
 ## Admin Stuff
 ## Math Stuff
 ## Music Stuff
@@ -116,4 +117,10 @@ See [spikeybot.com](https://www.spikeybot.com/) for examples and more informatio
 | ?togglemute | Turn on or off automatically preventing a person from using @everyone if they spam it. |  |
 | ?togglebanmessages | Turn on or off sending a message when someone gets banned. |  |
 | ?changeprefix | Set a custom prefix for all commands on the current server. |  |
+
+
+| Command | Description | Aliases |
+| --- | --- | --- |
+| ?patreon | Check your current Patreon status, or get information on how to become a patron. |  |
+| ?tts | Using Google's text-to-speech engine, make the bot say something in your voice channel. | tts, speak |
 
