@@ -138,6 +138,11 @@ function TTS() {
      * @param {Discord~VoiceConnection} conn The voice channel connection.
      */
     function onJoinVoice(conn) {
+      if (msg.text.length <= 1) {
+        self.common.reply(
+            msg, 'Please specify what you want me to say after the command.');
+        return;
+      }
       vConn = conn;
       let thisRequest = Object.assign({}, ttsRequest);
       thisRequest.input.text = msg.text.slice(1);

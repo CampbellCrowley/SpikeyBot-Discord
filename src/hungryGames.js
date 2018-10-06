@@ -1556,6 +1556,7 @@ function HungryGames() {
    * @param {?string|number} gId The guild ID to fetch the settings for.
    */
   function fetchPatreonSettings(players, cId, gId) {
+    if (!self.bot.patreon) return;
     /**
      * After retreiving a player's permissions, fetch their settings for each.
      * @private
