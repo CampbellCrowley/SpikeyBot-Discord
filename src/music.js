@@ -139,8 +139,9 @@ function Music() {
    * @type {Discord~StreamOptions}
    * @default
    */
-  const streamOptions =
-      {passes: 2, fec: true, bitrate: 42, volume: 0.5, plp: 0.01};
+  const streamOptions = {
+    passes: 2, fec: true, /* bitrate: 42,*/ volume: 0.5, plp: 0.01,
+  };
 
   /** @inheritdoc */
   this.initialize = function() {

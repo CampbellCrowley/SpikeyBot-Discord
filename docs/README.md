@@ -16,6 +16,10 @@
 <dt><a href="#Music">Music</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
 <dd><p>Music and audio related commands.</p>
 </dd>
+<dt><a href="#Patreon">Patreon</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
+<dd><p>Modifies the SpikeyBot object with an interface for checking the
+Patreon status of users.</p>
+</dd>
 <dt><a href="#SpikeyBot">SpikeyBot</a></dt>
 <dd><p>Main class that manages the bot.</p>
 </dd>
@@ -24,6 +28,18 @@
 </dd>
 <dt><a href="#TicTacToe">TicTacToe</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
 <dd><p>Manages a tic-tac-toe game.</p>
+</dd>
+<dt><a href="#FunTranslators">FunTranslators</a></dt>
+<dd><p>Converts text strings into different formats.</p>
+</dd>
+<dt><a href="#WebAccount">WebAccount</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
+<dd><p>Manages the account webpage.</p>
+</dd>
+<dt><a href="#HGWeb">HGWeb</a></dt>
+<dd><p>Creates a web interface for managing the Hungry Games.</p>
+</dd>
+<dt><a href="#WebProxy">WebProxy</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
+<dd><p>Proxy for account authentication.</p>
 </dd>
 </dl>
 
@@ -813,7 +829,7 @@ Hunger Games simulator.
             * [new Team(id, name, players)](#new_HungryGames..Team_new)
         * [~Event](#HungryGames..Event)
             * [new Event(message, [numVictim], [numAttacker], [victimOutcome], [attackerOutcome], [victimKiller], [attackerKiller], [battle], [state], [attacks])](#new_HungryGames..Event_new)
-        * [~web](#HungryGames..web) : <code>HGWeb</code> ℗
+        * [~web](#HungryGames..web) : [<code>HGWeb</code>](#HGWeb) ℗
         * [~findTimestamps](#HungryGames..findTimestamps) : <code>Object.&lt;number&gt;</code> ℗
         * [~games](#HungryGames..games) : [<code>Object.&lt;GuildGame&gt;</code>](#HungryGames..GuildGame) ℗
         * [~messages](#HungryGames..messages) : <code>Object.&lt;Array.&lt;string&gt;&gt;</code> ℗
@@ -1537,7 +1553,7 @@ Event that can happen in a game.
 
 <a name="HungryGames..web"></a>
 
-### HungryGames~web : <code>HGWeb</code> ℗
+### HungryGames~web : [<code>HGWeb</code>](#HGWeb) ℗
 Instance of the web class that can control this instance.
 
 **Kind**: inner property of [<code>HungryGames</code>](#HungryGames)  
@@ -4351,7 +4367,7 @@ Options to pass into the stream dispatcher.
 [StreamOptions](https://discord.js.org/#/docs/main/master/typedef/StreamOptions)
 
 **Kind**: inner constant of [<code>Music</code>](#Music)  
-**Default**: <code>{&quot;passes&quot;:2,&quot;fec&quot;:true,&quot;bitrate&quot;:42,&quot;volume&quot;:0.5,&quot;plp&quot;:0.01}</code>  
+**Default**: <code>{&quot;passes&quot;:2,&quot;fec&quot;:true,&quot;volume&quot;:0.5,&quot;plp&quot;:0.01}</code>  
 **Access**: private  
 <a name="Music..mention"></a>
 
@@ -4738,6 +4754,530 @@ Information about a server's music and queue.
 | voice | <code>Discord~VoiceConnection</code> | The current voice connection audio is being streamed to. |
 | current | <code>Object</code> | The current broadcast information including thread, readable stream, and song information. |
 | interval | <code>Interval</code> | The interval for checking if we are done playing audio. |
+
+<a name="Patreon"></a>
+
+## Patreon ⇐ [<code>SubModule</code>](#SubModule)
+Modifies the SpikeyBot object with an interface for checking the
+Patreon status of users.
+
+**Kind**: global class  
+**Extends**: [<code>SubModule</code>](#SubModule)  
+
+* [Patreon](#Patreon) ⇐ [<code>SubModule</code>](#SubModule)
+    * _instance_
+        * [.helpMessage](#SubModule+helpMessage) : <code>string</code> \| <code>Discord~MessageEmbed</code>
+        * [.prefix](#SubModule+prefix) : <code>string</code>
+        * [.myPrefix](#SubModule+myPrefix) : <code>string</code>
+        * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
+        * [.Discord](#SubModule+Discord) : <code>Discord</code>
+        * [.client](#SubModule+client) : <code>Discord~Client</code>
+        * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
+        * [.common](#SubModule+common) : [<code>Common</code>](#Common)
+        * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
+        * [.myName](#SubModule+myName) : <code>string</code>
+        * [.initialized](#SubModule+initialized) : <code>boolean</code>
+        * [.commit](#SubModule+commit) : <code>string</code>
+        * [.loadTime](#SubModule+loadTime) : <code>number</code>
+        * [.initialize()](#SubModule+initialize)
+        * [.begin(prefix, Discord, client, command, common, bot)](#SubModule+begin)
+        * [.end()](#SubModule+end)
+        * [.log(msg)](#SubModule+log)
+        * [.error(msg)](#SubModule+error)
+        * [.shutdown()](#SubModule+shutdown)
+        * *[.save([opt])](#SubModule+save)*
+        * *[.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>*
+    * _inner_
+        * [~patreonTiers](#Patreon..patreonTiers) : <code>Array.&lt;{0: number, 1: Array.&lt;string&gt;}&gt;</code> ℗
+        * [~sqlCon](#Patreon..sqlCon) : <code>sql.ConnectionConfig</code> ℗
+        * [~patreonTierPermFile](#Patreon..patreonTierPermFile) : <code>string</code> ℗
+        * [~updateTierPerms()](#Patreon..updateTierPerms) ℗
+        * [~connectSQL()](#Patreon..connectSQL) ℗
+        * [~commandPatreon(msg)](#Patreon..commandPatreon) : [<code>commandHandler</code>](#commandHandler) ℗
+            * [~getPerms(err, data)](#Patreon..commandPatreon..getPerms) : [<code>basicCB</code>](#Patreon..basicCB) ℗
+            * [~onGetPerms(err, data)](#Patreon..commandPatreon..onGetPerms) : [<code>basicCB</code>](#Patreon..basicCB) ℗
+        * [~toExport()](#Patreon..toExport)
+            * [.checkAllPerms(uId, cId, gId, perm, cb)](#Patreon..toExport.checkAllPerms)
+            * [.getAllPerms(uId, cId, gId, cb)](#Patreon..toExport.getAllPerms)
+                * [~onGetOverrides(err, info)](#Patreon..toExport.getAllPerms..onGetOverrides) : [<code>basicCB</code>](#Patreon..basicCB) ℗
+                * [~getPerms(err, data)](#Patreon..toExport.getAllPerms..getPerms) : [<code>basicCB</code>](#Patreon..basicCB) ℗
+                * [~onGetPerms(err, data)](#Patreon..toExport.getAllPerms..onGetPerms) : [<code>basicCB</code>](#Patreon..basicCB) ℗
+            * [.checkPerm(uId, perm, cb)](#Patreon..toExport.checkPerm)
+                * [~checkPerm(err, data)](#Patreon..toExport.checkPerm..checkPerm) : [<code>basicCB</code>](#Patreon..basicCB) ℗
+            * [.getLevelPerms(pledgeAmount, exclusive, cb)](#Patreon..toExport.getLevelPerms)
+        * [~fetchPatreonRow(uId, cb)](#Patreon..fetchPatreonRow) ℗
+            * [~receivedDiscordRow(err, rows)](#Patreon..fetchPatreonRow..receivedDiscordRow) ℗
+            * [~receivedPatreonRow(err, rows)](#Patreon..fetchPatreonRow..receivedPatreonRow) ℗
+        * [~basicCB](#Patreon..basicCB) : <code>function</code>
+
+<a name="SubModule+helpMessage"></a>
+
+### patreon.helpMessage : <code>string</code> \| <code>Discord~MessageEmbed</code>
+The help message to show the user in the main help message.
+
+**Kind**: instance property of [<code>Patreon</code>](#Patreon)  
+**Overrides**: [<code>helpMessage</code>](#SubModule+helpMessage)  
+<a name="SubModule+prefix"></a>
+
+### patreon.prefix : <code>string</code>
+The main prefix in use for this bot. Only available after begin() is
+called.
+
+**Kind**: instance property of [<code>Patreon</code>](#Patreon)  
+**Read only**: true  
+<a name="SubModule+myPrefix"></a>
+
+### patreon.myPrefix : <code>string</code>
+The prefix this submodule uses. Formed by prepending this.prefix to
+this.postPrefix. this.postPrefix must be defined before begin(), otherwise
+it is ignored.
+
+**Kind**: instance property of [<code>Patreon</code>](#Patreon)  
+**Read only**: true  
+<a name="SubModule+postPrefix"></a>
+
+### *patreon.postPrefix : <code>string</code>*
+The postfix for the global prefix for this subModule. Must be defined
+before begin(), otherwise it is ignored.
+
+**Kind**: instance abstract property of [<code>Patreon</code>](#Patreon)  
+**Default**: <code>&quot;&quot;</code>  
+<a name="SubModule+Discord"></a>
+
+### patreon.Discord : <code>Discord</code>
+The current Discord object instance of the bot.
+
+**Kind**: instance property of [<code>Patreon</code>](#Patreon)  
+<a name="SubModule+client"></a>
+
+### patreon.client : <code>Discord~Client</code>
+The current bot client.
+
+**Kind**: instance property of [<code>Patreon</code>](#Patreon)  
+<a name="SubModule+command"></a>
+
+### patreon.command : [<code>Command</code>](#SpikeyBot..Command)
+The command object for registering command listeners.
+
+**Kind**: instance property of [<code>Patreon</code>](#Patreon)  
+<a name="SubModule+common"></a>
+
+### patreon.common : [<code>Common</code>](#Common)
+The common object.
+
+**Kind**: instance property of [<code>Patreon</code>](#Patreon)  
+<a name="SubModule+bot"></a>
+
+### patreon.bot : [<code>SpikeyBot</code>](#SpikeyBot)
+The parent SpikeyBot instance.
+
+**Kind**: instance property of [<code>Patreon</code>](#Patreon)  
+<a name="SubModule+myName"></a>
+
+### patreon.myName : <code>string</code>
+The name of this submodule. Used for differentiating in the log. Should be
+defined before begin().
+
+**Kind**: instance property of [<code>Patreon</code>](#Patreon)  
+**Overrides**: [<code>myName</code>](#SubModule+myName)  
+**Access**: protected  
+<a name="SubModule+initialized"></a>
+
+### patreon.initialized : <code>boolean</code>
+Has this subModule been initialized yet (Has begin() been called).
+
+**Kind**: instance property of [<code>Patreon</code>](#Patreon)  
+**Default**: <code>false</code>  
+**Access**: protected  
+**Read only**: true  
+<a name="SubModule+commit"></a>
+
+### patreon.commit : <code>string</code>
+The commit at HEAD at the time this module was loaded. Essentially the
+version of this submodule.
+
+**Kind**: instance constant of [<code>Patreon</code>](#Patreon)  
+**Access**: public  
+<a name="SubModule+loadTime"></a>
+
+### patreon.loadTime : <code>number</code>
+The time at which this madule was loaded for use in checking if the module
+needs to be reloaded because the file has been modified since loading.
+
+**Kind**: instance constant of [<code>Patreon</code>](#Patreon)  
+**Access**: public  
+<a name="SubModule+initialize"></a>
+
+### patreon.initialize()
+The function called at the end of begin() for further initialization
+specific to the subModule. Must be defined before begin() is called.
+
+**Kind**: instance method of [<code>Patreon</code>](#Patreon)  
+**Overrides**: [<code>initialize</code>](#SubModule+initialize)  
+**Access**: protected  
+<a name="SubModule+begin"></a>
+
+### patreon.begin(prefix, Discord, client, command, common, bot)
+Initialize this submodule.
+
+**Kind**: instance method of [<code>Patreon</code>](#Patreon)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| prefix | <code>string</code> | The global prefix for this bot. |
+| Discord | <code>Discord</code> | The Discord object for the API library. |
+| client | <code>Discord~Client</code> | The client that represents this bot. |
+| command | [<code>Command</code>](#SpikeyBot..Command) | The command instance in which to register command listeners. |
+| common | [<code>Common</code>](#Common) | Class storing common functions. |
+| bot | [<code>SpikeyBot</code>](#SpikeyBot) | The parent SpikeyBot instance. |
+
+<a name="SubModule+end"></a>
+
+### patreon.end()
+Trigger subModule to shutdown and get ready for process terminating.
+
+**Kind**: instance method of [<code>Patreon</code>](#Patreon)  
+**Access**: public  
+<a name="SubModule+log"></a>
+
+### patreon.log(msg)
+Log using common.log, but automatically set name.
+
+**Kind**: instance method of [<code>Patreon</code>](#Patreon)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+error"></a>
+
+### patreon.error(msg)
+Log using common.error, but automatically set name.
+
+**Kind**: instance method of [<code>Patreon</code>](#Patreon)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+shutdown"></a>
+
+### patreon.shutdown()
+Shutdown and disable this submodule. Removes all event listeners.
+
+**Kind**: instance method of [<code>Patreon</code>](#Patreon)  
+**Overrides**: [<code>shutdown</code>](#SubModule+shutdown)  
+**Access**: protected  
+<a name="SubModule+save"></a>
+
+### *patreon.save([opt])*
+Saves all data to files necessary for saving current state.
+
+**Kind**: instance abstract method of [<code>Patreon</code>](#Patreon)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [opt] | <code>string</code> | <code>&quot;&#x27;sync&#x27;&quot;</code> | Can be 'async', otherwise defaults to synchronous. |
+
+<a name="SubModule+unloadable"></a>
+
+### *patreon.unloadable() ⇒ <code>boolean</code>*
+Check if this module is in a state that is ready to be unloaded. If false
+is returned, this module should not be unloaded and doing such may risk
+putting the module into an uncontrollable state.
+
+**Kind**: instance abstract method of [<code>Patreon</code>](#Patreon)  
+**Returns**: <code>boolean</code> - True if can be unloaded, false if cannot.  
+**Access**: public  
+<a name="Patreon..patreonTiers"></a>
+
+### Patreon~patreonTiers : <code>Array.&lt;{0: number, 1: Array.&lt;string&gt;}&gt;</code> ℗
+The parsed data from file about patron tier rewards.
+
+**Kind**: inner property of [<code>Patreon</code>](#Patreon)  
+**Access**: private  
+**Defatult**:   
+**See**: [patreonTierPermFile](#Patreon..patreonTierPermFile)  
+<a name="Patreon..sqlCon"></a>
+
+### Patreon~sqlCon : <code>sql.ConnectionConfig</code> ℗
+The object describing the connection with the SQL server.
+
+**Kind**: inner property of [<code>Patreon</code>](#Patreon)  
+**Access**: private  
+<a name="Patreon..patreonTierPermFile"></a>
+
+### Patreon~patreonTierPermFile : <code>string</code> ℗
+Path to the file storing information about each patron tier rewards.
+
+**Kind**: inner constant of [<code>Patreon</code>](#Patreon)  
+**Default**: <code>&quot;./save/patreonTiers.json&quot;</code>  
+**Access**: private  
+<a name="Patreon..updateTierPerms"></a>
+
+### Patreon~updateTierPerms() ℗
+Parse tiers from file.
+
+**Kind**: inner method of [<code>Patreon</code>](#Patreon)  
+**Access**: private  
+**See**: [patreonTierPermFile](#Patreon..patreonTierPermFile)  
+<a name="Patreon..connectSQL"></a>
+
+### Patreon~connectSQL() ℗
+Create initial connection with sql server.
+
+**Kind**: inner method of [<code>Patreon</code>](#Patreon)  
+**Access**: private  
+<a name="Patreon..commandPatreon"></a>
+
+### Patreon~commandPatreon(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Shows the user's Patreon information to the user.
+
+**Kind**: inner method of [<code>Patreon</code>](#Patreon)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+
+* [~commandPatreon(msg)](#Patreon..commandPatreon) : [<code>commandHandler</code>](#commandHandler) ℗
+    * [~getPerms(err, data)](#Patreon..commandPatreon..getPerms) : [<code>basicCB</code>](#Patreon..basicCB) ℗
+    * [~onGetPerms(err, data)](#Patreon..commandPatreon..onGetPerms) : [<code>basicCB</code>](#Patreon..basicCB) ℗
+
+<a name="Patreon..commandPatreon..getPerms"></a>
+
+#### commandPatreon~getPerms(err, data) : [<code>basicCB</code>](#Patreon..basicCB) ℗
+Verifies that valid data was found, then fetches all permissions fot the
+user's pledge amount.
+
+**Kind**: inner method of [<code>commandPatreon</code>](#Patreon..commandPatreon)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| err | <code>string</code> | The error string, or null if no error. |
+| data | <code>Object</code> | The returned data if there was no error. |
+
+<a name="Patreon..commandPatreon..onGetPerms"></a>
+
+#### commandPatreon~onGetPerms(err, data) : [<code>basicCB</code>](#Patreon..basicCB) ℗
+Verifies that valid data was found, then fetches all permissions fot the
+user's pledge amount.
+
+**Kind**: inner method of [<code>commandPatreon</code>](#Patreon..commandPatreon)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| err | <code>string</code> | The error string, or null if no error. |
+| data | <code>Object</code> | The returned data if there was no error. |
+
+<a name="Patreon..toExport"></a>
+
+### Patreon~toExport()
+The object to put into the [SpikeyBot](#SpikeyBot) object. This contains all of
+the public data available through that interface. Data will be available
+after [Patreon.initialize](Patreon.initialize) has been called, at `SpikeyBot.patreon`.
+
+**Kind**: inner method of [<code>Patreon</code>](#Patreon)  
+
+* [~toExport()](#Patreon..toExport)
+    * [.checkAllPerms(uId, cId, gId, perm, cb)](#Patreon..toExport.checkAllPerms)
+    * [.getAllPerms(uId, cId, gId, cb)](#Patreon..toExport.getAllPerms)
+        * [~onGetOverrides(err, info)](#Patreon..toExport.getAllPerms..onGetOverrides) : [<code>basicCB</code>](#Patreon..basicCB) ℗
+        * [~getPerms(err, data)](#Patreon..toExport.getAllPerms..getPerms) : [<code>basicCB</code>](#Patreon..basicCB) ℗
+        * [~onGetPerms(err, data)](#Patreon..toExport.getAllPerms..onGetPerms) : [<code>basicCB</code>](#Patreon..basicCB) ℗
+    * [.checkPerm(uId, perm, cb)](#Patreon..toExport.checkPerm)
+        * [~checkPerm(err, data)](#Patreon..toExport.checkPerm..checkPerm) : [<code>basicCB</code>](#Patreon..basicCB) ℗
+    * [.getLevelPerms(pledgeAmount, exclusive, cb)](#Patreon..toExport.getLevelPerms)
+
+<a name="Patreon..toExport.checkAllPerms"></a>
+
+#### toExport.checkAllPerms(uId, cId, gId, perm, cb)
+Check that a user or channel or guild has permission for something. Checks
+overrides for each, and if the user does not have an override, the request
+is forwarded to [toExport.checkPerm](toExport.checkPerm).
+
+**Kind**: static method of [<code>toExport</code>](#Patreon..toExport)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| uId | <code>string</code> \| <code>number</code> | The Discord user ID to check. |
+| cId | <code>string</code> \| <code>number</code> | The Discord channel ID to check. |
+| gId | <code>string</code> \| <code>number</code> | The Discord guild ID to check. |
+| perm | <code>string</code> | The permission string to check against. Null to check for overrides only. |
+| cb | [<code>basicCB</code>](#Patreon..basicCB) | Callback with parameters for error and success values. |
+| cb.data.status | <code>boolean</code> | If the given IDs have permission. |
+
+<a name="Patreon..toExport.getAllPerms"></a>
+
+#### toExport.getAllPerms(uId, cId, gId, cb)
+Fetch all permissions for a given user, channel, or guild.
+
+**Kind**: static method of [<code>toExport</code>](#Patreon..toExport)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| uId | <code>string</code> \| <code>number</code> | The ID of the Discord user. |
+| cId | <code>string</code> \| <code>number</code> | The Discord channel ID. |
+| gId | <code>string</code> \| <code>number</code> | The Discord guild ID. |
+| cb | [<code>basicCB</code>](#Patreon..basicCB) | Callback once operation is complete. |
+
+
+* [.getAllPerms(uId, cId, gId, cb)](#Patreon..toExport.getAllPerms)
+    * [~onGetOverrides(err, info)](#Patreon..toExport.getAllPerms..onGetOverrides) : [<code>basicCB</code>](#Patreon..basicCB) ℗
+    * [~getPerms(err, data)](#Patreon..toExport.getAllPerms..getPerms) : [<code>basicCB</code>](#Patreon..basicCB) ℗
+    * [~onGetPerms(err, data)](#Patreon..toExport.getAllPerms..onGetPerms) : [<code>basicCB</code>](#Patreon..basicCB) ℗
+
+<a name="Patreon..toExport.getAllPerms..onGetOverrides"></a>
+
+##### getAllPerms~onGetOverrides(err, info) : [<code>basicCB</code>](#Patreon..basicCB) ℗
+Handle response from checking IDs for overrides.
+
+**Kind**: inner method of [<code>getAllPerms</code>](#Patreon..toExport.getAllPerms)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| err | <code>string</code> | The error string, or null if no error. |
+| info | <code>Object</code> | The returned data if there was no error. |
+
+<a name="Patreon..toExport.getAllPerms..getPerms"></a>
+
+##### getAllPerms~getPerms(err, data) : [<code>basicCB</code>](#Patreon..basicCB) ℗
+Verifies that valid data was found, then fetches all permissions fot the
+user's pledge amount.
+
+**Kind**: inner method of [<code>getAllPerms</code>](#Patreon..toExport.getAllPerms)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| err | <code>string</code> | The error string, or null if no error. |
+| data | <code>Object</code> | The returned data if there was no error. |
+
+<a name="Patreon..toExport.getAllPerms..onGetPerms"></a>
+
+##### getAllPerms~onGetPerms(err, data) : [<code>basicCB</code>](#Patreon..basicCB) ℗
+Verifies that valid data was found, then fetches all permissions fot the
+user's pledge amount.
+
+**Kind**: inner method of [<code>getAllPerms</code>](#Patreon..toExport.getAllPerms)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| err | <code>string</code> | The error string, or null if no error. |
+| data | <code>Object</code> | The returned data if there was no error. |
+
+<a name="Patreon..toExport.checkPerm"></a>
+
+#### toExport.checkPerm(uId, perm, cb)
+Check that a user has a specific permission. Permissions are defined in
+[patreonTierPermFile](#Patreon..patreonTierPermFile).
+
+**Kind**: static method of [<code>toExport</code>](#Patreon..toExport)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| uId | <code>string</code> \| <code>number</code> | The Discord user ID to check. |
+| perm | <code>string</code> | The permission string to check against. |
+| cb | [<code>basicCB</code>](#Patreon..basicCB) | Callback with parameters for error and success values. |
+| cb.data.status | <code>boolean</code> | If the user has permission. |
+
+<a name="Patreon..toExport.checkPerm..checkPerm"></a>
+
+##### checkPerm~checkPerm(err, data) : [<code>basicCB</code>](#Patreon..basicCB) ℗
+Checks the received data from the Patreon table against the given perm
+string.
+
+**Kind**: inner method of [<code>checkPerm</code>](#Patreon..toExport.checkPerm)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| err | <code>string</code> | The error string, or null if no error. |
+| data | <code>Object</code> | The returned data if there was no error. |
+
+<a name="Patreon..toExport.getLevelPerms"></a>
+
+#### toExport.getLevelPerms(pledgeAmount, exclusive, cb)
+Responds with all permissions available at the given pledge amount.
+
+**Kind**: static method of [<code>toExport</code>](#Patreon..toExport)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| pledgeAmount | <code>number</code> | The amount in cents that the user has pledged. |
+| exclusive | <code>boolean</code> | Only get the rewards received at the exact pledge amount. Does not show all tier rewards below the pledge amount. |
+| cb | [<code>basicCB</code>](#Patreon..basicCB) | Callback with parameters for error and success values. |
+| cb.data.status | <code>Array.&lt;string&gt;</code> | All of the permission strings. |
+
+<a name="Patreon..fetchPatreonRow"></a>
+
+### Patreon~fetchPatreonRow(uId, cb) ℗
+Get the Patreon information for a given Discord user.
+
+**Kind**: inner method of [<code>Patreon</code>](#Patreon)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| uId | <code>string</code> \| <code>number</code> | The Discord user ID to check. |
+| cb | [<code>basicCB</code>](#Patreon..basicCB) | Callback with parameters for error and success values. |
+| cb.data.status | <code>Object</code> | A single row if it was found. |
+
+
+* [~fetchPatreonRow(uId, cb)](#Patreon..fetchPatreonRow) ℗
+    * [~receivedDiscordRow(err, rows)](#Patreon..fetchPatreonRow..receivedDiscordRow) ℗
+    * [~receivedPatreonRow(err, rows)](#Patreon..fetchPatreonRow..receivedPatreonRow) ℗
+
+<a name="Patreon..fetchPatreonRow..receivedDiscordRow"></a>
+
+#### fetchPatreonRow~receivedDiscordRow(err, rows) ℗
+SQL query response callback for request to the Discord table.
+
+**Kind**: inner method of [<code>fetchPatreonRow</code>](#Patreon..fetchPatreonRow)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| err | <code>Error</code> | Errors during the query. |
+| rows | <code>Array</code> | The reqults of the query. |
+
+<a name="Patreon..fetchPatreonRow..receivedPatreonRow"></a>
+
+#### fetchPatreonRow~receivedPatreonRow(err, rows) ℗
+SQL query response callback for request to the Patreon table.
+
+**Kind**: inner method of [<code>fetchPatreonRow</code>](#Patreon..fetchPatreonRow)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| err | <code>Error</code> | Errors during the query. |
+| rows | <code>Array</code> | The reqults of the query. |
+
+<a name="Patreon..basicCB"></a>
+
+### Patreon~basicCB : <code>function</code>
+Basic callback function that has two parameters. One with error
+information, and the other with data if there was no error.
+
+**Kind**: inner typedef of [<code>Patreon</code>](#Patreon)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| err | <code>string</code> | The error string, or null if no error. |
+| data | <code>Object</code> | The returned data if there was no error. |
 
 <a name="SpikeyBot"></a>
 
@@ -5978,6 +6518,1462 @@ player 2 won, 3 if draw.
 | --- | --- | --- |
 | board | <code>Array.&lt;number&gt;</code> | Array of 9 numbers defining a board. 0 is nobody, 1 is player 1, 2 is player 2. |
 | latest | <code>number</code> | The index where the latest move occurred. |
+
+<a name="FunTranslators"></a>
+
+## FunTranslators
+Converts text strings into different formats.
+
+**Kind**: global class  
+
+* [FunTranslators](#FunTranslators)
+    * [.toLeetSpeak(input)](#FunTranslators+toLeetSpeak) ⇒ <code>string</code>
+    * [.toMockingFont(input)](#FunTranslators+toMockingFont) ⇒ <code>string</code>
+    * [.toSmallCaps(input)](#FunTranslators+toSmallCaps) ⇒ <code>string</code>
+    * [.toSuperScript(input)](#FunTranslators+toSuperScript) ⇒ <code>string</code>
+
+<a name="FunTranslators+toLeetSpeak"></a>
+
+### funTranslators.toLeetSpeak(input) ⇒ <code>string</code>
+Convert a string to Leet Speak (1337 5p34k).
+
+**Kind**: instance method of [<code>FunTranslators</code>](#FunTranslators)  
+**Returns**: <code>string</code> - The formatted string.  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| input | <code>string</code> | The string to convert. |
+
+<a name="FunTranslators+toMockingFont"></a>
+
+### funTranslators.toMockingFont(input) ⇒ <code>string</code>
+Convert a string to the SpongeBob mocking meme font (SpOngEBoB MoCKinG).
+
+**Kind**: instance method of [<code>FunTranslators</code>](#FunTranslators)  
+**Returns**: <code>string</code> - The formatted string.  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| input | <code>string</code> | The string to convert. |
+
+<a name="FunTranslators+toSmallCaps"></a>
+
+### funTranslators.toSmallCaps(input) ⇒ <code>string</code>
+Convert string to small caps (Hᴇʟʟᴏ Wᴏʀʟᴅ!).
+
+**Kind**: instance method of [<code>FunTranslators</code>](#FunTranslators)  
+**Returns**: <code>string</code> - The formatted string.  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| input | <code>string</code> | The string to convert. |
+
+<a name="FunTranslators+toSuperScript"></a>
+
+### funTranslators.toSuperScript(input) ⇒ <code>string</code>
+Convert string to superscript characters (ᴴᵉˡˡᵒ ᵂᵒʳˡᵈᵎ).
+
+**Kind**: instance method of [<code>FunTranslators</code>](#FunTranslators)  
+**Returns**: <code>string</code> - The formatted string.  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| input | <code>string</code> | The string to convert. |
+
+<a name="WebAccount"></a>
+
+## WebAccount ⇐ [<code>SubModule</code>](#SubModule)
+Manages the account webpage.
+
+**Kind**: global class  
+**Extends**: [<code>SubModule</code>](#SubModule)  
+
+* [WebAccount](#WebAccount) ⇐ [<code>SubModule</code>](#SubModule)
+    * _instance_
+        * [.helpMessage](#SubModule+helpMessage) : <code>string</code> \| <code>Discord~MessageEmbed</code>
+        * [.prefix](#SubModule+prefix) : <code>string</code>
+        * [.myPrefix](#SubModule+myPrefix) : <code>string</code>
+        * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
+        * [.Discord](#SubModule+Discord) : <code>Discord</code>
+        * [.client](#SubModule+client) : <code>Discord~Client</code>
+        * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
+        * [.common](#SubModule+common) : [<code>Common</code>](#Common)
+        * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
+        * *[.myName](#SubModule+myName) : <code>string</code>*
+        * [.initialized](#SubModule+initialized) : <code>boolean</code>
+        * [.commit](#SubModule+commit) : <code>string</code>
+        * [.loadTime](#SubModule+loadTime) : <code>number</code>
+        * [.shutdown([skipSave])](#WebAccount+shutdown)
+        * [.initialize()](#SubModule+initialize)
+        * [.begin(prefix, Discord, client, command, common, bot)](#SubModule+begin)
+        * [.end()](#SubModule+end)
+        * [.log(msg)](#SubModule+log)
+        * [.error(msg)](#SubModule+error)
+        * *[.save([opt])](#SubModule+save)*
+        * [.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>
+    * _inner_
+        * [~patreonSettingsTemplate](#WebAccount..patreonSettingsTemplate) : <code>Object.&lt;Object&gt;</code> ℗
+        * [~sqlCon](#WebAccount..sqlCon) : <code>sql.ConnectionConfig</code> ℗
+        * [~sockets](#WebAccount..sockets) : <code>Object.&lt;Socket&gt;</code> ℗
+        * [~patreonSettingsFilename](#WebAccount..patreonSettingsFilename) : <code>string</code> ℗
+        * [~patreonSettingsTemplateFile](#WebAccount..patreonSettingsTemplateFile) : <code>string</code> ℗
+        * [~updatePatreonSettingsTemplate()](#WebAccount..updatePatreonSettingsTemplate) ℗
+        * [~connectSQL()](#WebAccount..connectSQL) ℗
+        * [~handler(req, res)](#WebAccount..handler) ℗
+        * [~socketConnection(socket)](#WebAccount..socketConnection) ℗
+        * [~validatePatreonCode(code, userid, ip, cb)](#WebAccount..validatePatreonCode) ℗
+        * [~updateUserPatreonId(userid, userid, patreonid, cb)](#WebAccount..updateUserPatreonId)
+        * [~getPatreonSettings(userid, cb)](#WebAccount..getPatreonSettings) ℗
+        * [~changePatreonSetting(userid, setting, value, cb)](#WebAccount..changePatreonSetting) ℗
+
+<a name="SubModule+helpMessage"></a>
+
+### webAccount.helpMessage : <code>string</code> \| <code>Discord~MessageEmbed</code>
+The help message to show the user in the main help message.
+
+**Kind**: instance property of [<code>WebAccount</code>](#WebAccount)  
+<a name="SubModule+prefix"></a>
+
+### webAccount.prefix : <code>string</code>
+The main prefix in use for this bot. Only available after begin() is
+called.
+
+**Kind**: instance property of [<code>WebAccount</code>](#WebAccount)  
+**Read only**: true  
+<a name="SubModule+myPrefix"></a>
+
+### webAccount.myPrefix : <code>string</code>
+The prefix this submodule uses. Formed by prepending this.prefix to
+this.postPrefix. this.postPrefix must be defined before begin(), otherwise
+it is ignored.
+
+**Kind**: instance property of [<code>WebAccount</code>](#WebAccount)  
+**Read only**: true  
+<a name="SubModule+postPrefix"></a>
+
+### *webAccount.postPrefix : <code>string</code>*
+The postfix for the global prefix for this subModule. Must be defined
+before begin(), otherwise it is ignored.
+
+**Kind**: instance abstract property of [<code>WebAccount</code>](#WebAccount)  
+**Default**: <code>&quot;&quot;</code>  
+<a name="SubModule+Discord"></a>
+
+### webAccount.Discord : <code>Discord</code>
+The current Discord object instance of the bot.
+
+**Kind**: instance property of [<code>WebAccount</code>](#WebAccount)  
+<a name="SubModule+client"></a>
+
+### webAccount.client : <code>Discord~Client</code>
+The current bot client.
+
+**Kind**: instance property of [<code>WebAccount</code>](#WebAccount)  
+<a name="SubModule+command"></a>
+
+### webAccount.command : [<code>Command</code>](#SpikeyBot..Command)
+The command object for registering command listeners.
+
+**Kind**: instance property of [<code>WebAccount</code>](#WebAccount)  
+<a name="SubModule+common"></a>
+
+### webAccount.common : [<code>Common</code>](#Common)
+The common object.
+
+**Kind**: instance property of [<code>WebAccount</code>](#WebAccount)  
+<a name="SubModule+bot"></a>
+
+### webAccount.bot : [<code>SpikeyBot</code>](#SpikeyBot)
+The parent SpikeyBot instance.
+
+**Kind**: instance property of [<code>WebAccount</code>](#WebAccount)  
+<a name="SubModule+myName"></a>
+
+### *webAccount.myName : <code>string</code>*
+The name of this submodule. Used for differentiating in the log. Should be
+defined before begin().
+
+**Kind**: instance abstract property of [<code>WebAccount</code>](#WebAccount)  
+**Overrides**: [<code>myName</code>](#SubModule+myName)  
+**Access**: protected  
+<a name="SubModule+initialized"></a>
+
+### webAccount.initialized : <code>boolean</code>
+Has this subModule been initialized yet (Has begin() been called).
+
+**Kind**: instance property of [<code>WebAccount</code>](#WebAccount)  
+**Default**: <code>false</code>  
+**Access**: protected  
+**Read only**: true  
+<a name="SubModule+commit"></a>
+
+### webAccount.commit : <code>string</code>
+The commit at HEAD at the time this module was loaded. Essentially the
+version of this submodule.
+
+**Kind**: instance constant of [<code>WebAccount</code>](#WebAccount)  
+**Access**: public  
+<a name="SubModule+loadTime"></a>
+
+### webAccount.loadTime : <code>number</code>
+The time at which this madule was loaded for use in checking if the module
+needs to be reloaded because the file has been modified since loading.
+
+**Kind**: instance constant of [<code>WebAccount</code>](#WebAccount)  
+**Access**: public  
+<a name="WebAccount+shutdown"></a>
+
+### webAccount.shutdown([skipSave])
+Causes a full shutdown of all servers.
+
+**Kind**: instance method of [<code>WebAccount</code>](#WebAccount)  
+**Overrides**: [<code>shutdown</code>](#SubModule+shutdown)  
+**Access**: public  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [skipSave] | <code>boolean</code> | <code>false</code> | Skip writing data to file. |
+
+<a name="SubModule+initialize"></a>
+
+### webAccount.initialize()
+The function called at the end of begin() for further initialization
+specific to the subModule. Must be defined before begin() is called.
+
+**Kind**: instance method of [<code>WebAccount</code>](#WebAccount)  
+**Overrides**: [<code>initialize</code>](#SubModule+initialize)  
+**Access**: protected  
+<a name="SubModule+begin"></a>
+
+### webAccount.begin(prefix, Discord, client, command, common, bot)
+Initialize this submodule.
+
+**Kind**: instance method of [<code>WebAccount</code>](#WebAccount)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| prefix | <code>string</code> | The global prefix for this bot. |
+| Discord | <code>Discord</code> | The Discord object for the API library. |
+| client | <code>Discord~Client</code> | The client that represents this bot. |
+| command | [<code>Command</code>](#SpikeyBot..Command) | The command instance in which to register command listeners. |
+| common | [<code>Common</code>](#Common) | Class storing common functions. |
+| bot | [<code>SpikeyBot</code>](#SpikeyBot) | The parent SpikeyBot instance. |
+
+<a name="SubModule+end"></a>
+
+### webAccount.end()
+Trigger subModule to shutdown and get ready for process terminating.
+
+**Kind**: instance method of [<code>WebAccount</code>](#WebAccount)  
+**Access**: public  
+<a name="SubModule+log"></a>
+
+### webAccount.log(msg)
+Log using common.log, but automatically set name.
+
+**Kind**: instance method of [<code>WebAccount</code>](#WebAccount)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+error"></a>
+
+### webAccount.error(msg)
+Log using common.error, but automatically set name.
+
+**Kind**: instance method of [<code>WebAccount</code>](#WebAccount)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+save"></a>
+
+### *webAccount.save([opt])*
+Saves all data to files necessary for saving current state.
+
+**Kind**: instance abstract method of [<code>WebAccount</code>](#WebAccount)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [opt] | <code>string</code> | <code>&quot;&#x27;sync&#x27;&quot;</code> | Can be 'async', otherwise defaults to synchronous. |
+
+<a name="SubModule+unloadable"></a>
+
+### webAccount.unloadable() ⇒ <code>boolean</code>
+Check if this module is in a state that is ready to be unloaded. If false
+is returned, this module should not be unloaded and doing such may risk
+putting the module into an uncontrollable state.
+
+**Kind**: instance method of [<code>WebAccount</code>](#WebAccount)  
+**Overrides**: [<code>unloadable</code>](#SubModule+unloadable)  
+**Returns**: <code>boolean</code> - True if can be unloaded, false if cannot.  
+**Access**: public  
+<a name="WebAccount..patreonSettingsTemplate"></a>
+
+### WebAccount~patreonSettingsTemplate : <code>Object.&lt;Object&gt;</code> ℗
+The parsed data from [patreonSettingsTemplateFile](#WebAccount..patreonSettingsTemplateFile). Data
+that outlines the available options that can be changed, and their possible
+values.
+
+**Kind**: inner property of [<code>WebAccount</code>](#WebAccount)  
+**Default**: <code>{}</code>  
+**Access**: private  
+<a name="WebAccount..sqlCon"></a>
+
+### WebAccount~sqlCon : <code>sql.ConnectionConfig</code> ℗
+The object describing the connection with the SQL server.
+
+**Kind**: inner property of [<code>WebAccount</code>](#WebAccount)  
+**Access**: private  
+<a name="WebAccount..sockets"></a>
+
+### WebAccount~sockets : <code>Object.&lt;Socket&gt;</code> ℗
+Map of all currently connected sockets.
+
+**Kind**: inner property of [<code>WebAccount</code>](#WebAccount)  
+**Access**: private  
+<a name="WebAccount..patreonSettingsFilename"></a>
+
+### WebAccount~patreonSettingsFilename : <code>string</code> ℗
+The filename in the user's directory of the file where the settings related
+to Patreon rewards are stored.
+
+**Kind**: inner constant of [<code>WebAccount</code>](#WebAccount)  
+**Default**: <code>&quot;/patreonSettings.json&quot;</code>  
+**Access**: private  
+<a name="WebAccount..patreonSettingsTemplateFile"></a>
+
+### WebAccount~patreonSettingsTemplateFile : <code>string</code> ℗
+File where the template for the Patreon settings is stored.
+
+**Kind**: inner constant of [<code>WebAccount</code>](#WebAccount)  
+**Default**: <code>&quot;./save/patreonSettingTemplate.json&quot;</code>  
+**Access**: private  
+**See**: [patreonSettingsTemplate](#WebAccount..patreonSettingsTemplate)  
+<a name="WebAccount..updatePatreonSettingsTemplate"></a>
+
+### WebAccount~updatePatreonSettingsTemplate() ℗
+Parse template from file.
+
+**Kind**: inner method of [<code>WebAccount</code>](#WebAccount)  
+**Access**: private  
+**See**: [patreonSettingsTemplate](#WebAccount..patreonSettingsTemplate)  
+<a name="WebAccount..connectSQL"></a>
+
+### WebAccount~connectSQL() ℗
+Create initial connection with sql server.
+
+**Kind**: inner method of [<code>WebAccount</code>](#WebAccount)  
+**Access**: private  
+<a name="WebAccount..handler"></a>
+
+### WebAccount~handler(req, res) ℗
+Handler for all http requests. Should never be called.
+
+**Kind**: inner method of [<code>WebAccount</code>](#WebAccount)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| req | <code>http.IncomingMessage</code> | The client's request. |
+| res | <code>http.ServerResponse</code> | Our response to the client. |
+
+<a name="WebAccount..socketConnection"></a>
+
+### WebAccount~socketConnection(socket) ℗
+Handler for a new socket connecting.
+
+**Kind**: inner method of [<code>WebAccount</code>](#WebAccount)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| socket | <code>socketIo~Socket</code> | The socket.io socket that connected. |
+
+<a name="WebAccount..validatePatreonCode"></a>
+
+### WebAccount~validatePatreonCode(code, userid, ip, cb) ℗
+Validate a code received from the client, then use it to retrieve the user
+ID associated with it.
+
+**Kind**: inner method of [<code>WebAccount</code>](#WebAccount)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| code | <code>string</code> | The code received from Patreon OAuth2 flow. |
+| userid | <code>string</code> \| <code>number</code> | The Discord user ID associated with this code in order to link accounts. |
+| ip | <code>string</code> | The unique identifier for this connection for logging purposes. |
+| cb | <code>function</code> | Callback with a single parameter. The parameter is a string if there was an error, or null if no error. |
+
+<a name="WebAccount..updateUserPatreonId"></a>
+
+### WebAccount~updateUserPatreonId(userid, userid, patreonid, cb)
+Update our Discord table with the retrieved patreon account ID for the
+Discord user.
+
+**Kind**: inner method of [<code>WebAccount</code>](#WebAccount)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userid |  |  |
+| userid | <code>string</code> \| <code>number</code> | The Discord ID of the user to link to the patreonid. |
+| patreonid | <code>string</code> \| <code>number</code> | The Patreon id of the account to link to the Discord ID. |
+| cb | <code>function</code> | Callback with single argument that is string if error, or null if no error. |
+
+<a name="WebAccount..getPatreonSettings"></a>
+
+### WebAccount~getPatreonSettings(userid, cb) ℗
+Fetch a user's current patreon settings from file.
+
+**Kind**: inner method of [<code>WebAccount</code>](#WebAccount)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userid | <code>string</code> \| <code>number</code> | Thd Discord id of the user to lookup. |
+| cb | <code>function</code> | Callback with 2 parameters, the first is the error string or null if no error, the second will be the settings object if there is no error. |
+
+<a name="WebAccount..changePatreonSetting"></a>
+
+### WebAccount~changePatreonSetting(userid, setting, value, cb) ℗
+Change a user's setting that is related to Patreon rewards.
+
+**Kind**: inner method of [<code>WebAccount</code>](#WebAccount)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userid | <code>string</code> \| <code>number</code> | The Discord id of the user to change the setting for. |
+| setting | <code>string</code> | The name of the setting to change. |
+| value | <code>string</code> | The value to set the setting to. |
+| cb | <code>function</code> | Callback that is called once the operations are complete with a single parameter for errors, string if error, null if none. |
+
+<a name="HGWeb"></a>
+
+## HGWeb
+Creates a web interface for managing the Hungry Games.
+
+**Kind**: global class  
+
+* [HGWeb](#HGWeb)
+    * [new HGWeb(hg)](#new_HGWeb_new)
+    * _instance_
+        * [.shutdown([skipSave])](#HGWeb+shutdown)
+        * [.dayStateChange(gId)](#HGWeb+dayStateChange)
+    * _inner_
+        * [~sockets](#HGWeb..sockets) : <code>Object.&lt;Socket&gt;</code> ℗
+        * [~siblingSockets](#HGWeb..siblingSockets) : <code>Object.&lt;Socket&gt;</code> ℗
+        * [~startClient()](#HGWeb..startClient) ℗
+        * [~handler(req, res)](#HGWeb..handler) ℗
+        * [~socketConnection(socket)](#HGWeb..socketConnection) ℗
+            * [~callSocketFunction(func, args, [forward])](#HGWeb..socketConnection..callSocketFunction) ℗
+        * [~clientSocketConnection(socket)](#HGWeb..clientSocketConnection) ℗
+        * [~replyNoPerm(socket, cmd)](#HGWeb..replyNoPerm) ℗
+        * [~checkMyGuild(gId)](#HGWeb..checkMyGuild) ⇒ <code>boolean</code> ℗
+        * [~checkPerm(userData, gId)](#HGWeb..checkPerm) ⇒ <code>boolean</code> ℗
+        * [~checkChannelPerm(userData, gId, cId)](#HGWeb..checkChannelPerm) ⇒ <code>boolean</code> ℗
+        * [~makeMember(m)](#HGWeb..makeMember) ⇒ <code>Object</code> ℗
+        * [~fetchGuilds(userData, socket, [cb])](#HGWeb..fetchGuilds) : <code>HGWeb~SocketFunction</code> ℗
+            * [~done(guilds, [err], [response])](#HGWeb..fetchGuilds..done) ℗
+        * [~fetchMember(userData, socket, gId, mId, [cb])](#HGWeb..fetchMember) : <code>HGWeb~SocketFunction</code> ℗
+        * [~fetchChannel(userData, socket, gId, cId, [cb])](#HGWeb..fetchChannel) : <code>HGWeb~SocketFunction</code> ℗
+        * [~fetchGames(userData, socket, gId, [cb])](#HGWeb..fetchGames) : <code>HGWeb~SocketFunction</code> ℗
+        * [~fetchDay(userData, socket, gId, [cb])](#HGWeb..fetchDay) : <code>HGWeb~SocketFunction</code> ℗
+        * [~excludeMember(userData, socket, gId, mId, [cb])](#HGWeb..excludeMember) : <code>HGWeb~SocketFunction</code> ℗
+        * [~includeMember(userData, socket, gId, mId, [cb])](#HGWeb..includeMember) : <code>HGWeb~SocketFunction</code> ℗
+        * [~toggleOption(userData, socket, gId, option, value, extra, [cb])](#HGWeb..toggleOption) : <code>HGWeb~SocketFunction</code> ℗
+        * [~createGame(userData, socket, gId, [cb])](#HGWeb..createGame) : <code>HGWeb~SocketFunction</code> ℗
+        * [~resetGame(userData, socket, gId, cmd, [cb])](#HGWeb..resetGame) : <code>HGWeb~SocketFunction</code> ℗
+        * [~startGame(userData, socket, gId, cId, [cb])](#HGWeb..startGame) : <code>HGWeb~SocketFunction</code> ℗
+        * [~startAutoplay(userData, socket, gId, cId, [cb])](#HGWeb..startAutoplay) : <code>HGWeb~SocketFunction</code> ℗
+        * [~nextDay(userData, socket, gId, cId, [cb])](#HGWeb..nextDay) : <code>HGWeb~SocketFunction</code> ℗
+        * [~endGame(userData, socket, gId, [cb])](#HGWeb..endGame) : <code>HGWeb~SocketFunction</code> ℗
+        * [~pauseAutoplay(userData, socket, gId, [cb])](#HGWeb..pauseAutoplay) : <code>HGWeb~SocketFunction</code> ℗
+        * [~editTeam(userData, socket, gId, cmd, one, two, [cb])](#HGWeb..editTeam) : <code>HGWeb~SocketFunction</code> ℗
+        * [~createEvent(userData, socket, gId, type, message, nV, nA, oV, oA, kV, kA, wV, wA, [cb])](#HGWeb..createEvent) : <code>HGWeb~SocketFunction</code> ℗
+        * [~createMajorEvent(userData, socket, gId, type, data, name, [cb])](#HGWeb..createMajorEvent) : <code>HGWeb~SocketFunction</code> ℗
+        * [~editMajorEvent(userData, socket, gId, type, search, data, name, newName, [cb])](#HGWeb..editMajorEvent) : <code>HGWeb~SocketFunction</code> ℗
+        * [~removeEvent(userData, socket, gId, type, event, [cb])](#HGWeb..removeEvent) : <code>HGWeb~SocketFunction</code> ℗
+        * [~basicCB](#HGWeb..basicCB) : <code>function</code>
+
+<a name="new_HGWeb_new"></a>
+
+### new HGWeb(hg)
+
+| Param | Type | Description |
+| --- | --- | --- |
+| hg | [<code>HungryGames</code>](#HungryGames) | The hungry games object that we will be controlling. |
+
+<a name="HGWeb+shutdown"></a>
+
+### hgWeb.shutdown([skipSave])
+Causes a full shutdown of all servers.
+
+**Kind**: instance method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: public  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [skipSave] | <code>boolean</code> | <code>false</code> | Skip writing data to file. |
+
+<a name="HGWeb+dayStateChange"></a>
+
+### hgWeb.dayStateChange(gId)
+This gets fired whenever the day state of any game changes in the hungry
+games. This then notifies all clients that the state changed, if they care
+about the guild.
+
+**Kind**: instance method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| gId | <code>string</code> | Guild id of the state change. |
+
+<a name="HGWeb..sockets"></a>
+
+### HGWeb~sockets : <code>Object.&lt;Socket&gt;</code> ℗
+Map of all currently connected sockets.
+
+**Kind**: inner property of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+<a name="HGWeb..siblingSockets"></a>
+
+### HGWeb~siblingSockets : <code>Object.&lt;Socket&gt;</code> ℗
+Map of all sockets connected that are siblings.
+
+**Kind**: inner property of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+<a name="HGWeb..startClient"></a>
+
+### HGWeb~startClient() ℗
+Start a socketio client connection to the primary running server.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+<a name="HGWeb..handler"></a>
+
+### HGWeb~handler(req, res) ℗
+Handler for all http requests. Should never be called.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| req | <code>http.IncomingMessage</code> | The client's request. |
+| res | <code>http.ServerResponse</code> | Our response to the client. |
+
+<a name="HGWeb..socketConnection"></a>
+
+### HGWeb~socketConnection(socket) ℗
+Handler for a new socket connecting.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| socket | <code>socketIo~Socket</code> | The socket.io socket that connected. |
+
+<a name="HGWeb..socketConnection..callSocketFunction"></a>
+
+#### socketConnection~callSocketFunction(func, args, [forward]) ℗
+Calls the functions with added arguments, and copies the request to all
+sibling clients.
+
+**Kind**: inner method of [<code>socketConnection</code>](#HGWeb..socketConnection)  
+**Access**: private  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| func | <code>function</code> |  | The function to call. |
+| args | <code>Array.&lt;\*&gt;</code> |  | Array of arguments to send to function. |
+| [forward] | <code>boolean</code> | <code>true</code> | Forward this request directly to all siblings. |
+
+<a name="HGWeb..clientSocketConnection"></a>
+
+### HGWeb~clientSocketConnection(socket) ℗
+Handler for connecting as a client to the server.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| socket | <code>socketIo~Socket</code> | The socket.io socket that connected. |
+
+<a name="HGWeb..replyNoPerm"></a>
+
+### HGWeb~replyNoPerm(socket, cmd) ℗
+Send a message to the given socket informing the client that the command
+they attempted failed due to insufficient permission.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| socket | <code>Socket</code> | The socket.io socket to reply on. |
+| cmd | <code>string</code> | THe command the client attempted. |
+
+<a name="HGWeb..checkMyGuild"></a>
+
+### HGWeb~checkMyGuild(gId) ⇒ <code>boolean</code> ℗
+Checks if the current shard is responsible for the requested guild.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Returns**: <code>boolean</code> - True if this shard has this guild.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| gId | <code>number</code> \| <code>string</code> | The guild id to check. |
+
+<a name="HGWeb..checkPerm"></a>
+
+### HGWeb~checkPerm(userData, gId) ⇒ <code>boolean</code> ℗
+Check that the given user has permission to manage the games in the given
+guild.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Returns**: <code>boolean</code> - Whther the user has permission or not to manage the
+hungry games in the given guild.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>UserData</code> | The user to check. |
+| gId | <code>string</code> | The guild id to check against. |
+
+<a name="HGWeb..checkChannelPerm"></a>
+
+### HGWeb~checkChannelPerm(userData, gId, cId) ⇒ <code>boolean</code> ℗
+Check that the given user has permission to see and send messages in the
+given channel, as well as manage the games in the given guild.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Returns**: <code>boolean</code> - Whther the user has permission or not to manage the
+hungry games in the given guild and has permission to send messages in the
+given channel.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>UserData</code> | The user to check. |
+| gId | <code>string</code> | The guild id of the guild that contains the channel. |
+| cId | <code>string</code> | The channel id to check against. |
+
+<a name="HGWeb..makeMember"></a>
+
+### HGWeb~makeMember(m) ⇒ <code>Object</code> ℗
+Strips a Discord~GuildMember to only the necessary data that a client will
+need.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Returns**: <code>Object</code> - The minimal member.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| m | <code>Discord~GuildMember</code> | The guild member to strip the data from. |
+
+<a name="HGWeb..fetchGuilds"></a>
+
+### HGWeb~fetchGuilds(userData, socket, [cb]) : <code>HGWeb~SocketFunction</code> ℗
+Fetch all relevant data for all mutual guilds with the user and send it to
+the user.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
+
+<a name="HGWeb..fetchGuilds..done"></a>
+
+#### fetchGuilds~done(guilds, [err], [response]) ℗
+The callback for each response with the requested data. Replies to the
+user once all requests have replied.
+
+**Kind**: inner method of [<code>fetchGuilds</code>](#HGWeb..fetchGuilds)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| guilds | <code>string</code> \| <code>Object</code> | Either the guild data to send to the user, or 'guilds' if this is a reply from a sibling client. |
+| [err] | <code>string</code> | The error that occurred, or null if no error. |
+| [response] | <code>Object</code> | The guild data if `guilds` equals 'guilds'. |
+
+<a name="HGWeb..fetchMember"></a>
+
+### HGWeb~fetchMember(userData, socket, gId, mId, [cb]) : <code>HGWeb~SocketFunction</code> ℗
+Fetch data about a member of a guild.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| mId | <code>number</code> \| <code>string</code> | The member's id to lookup. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
+
+<a name="HGWeb..fetchChannel"></a>
+
+### HGWeb~fetchChannel(userData, socket, gId, cId, [cb]) : <code>HGWeb~SocketFunction</code> ℗
+Fetch data about a channel of a guild.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| cId | <code>number</code> \| <code>string</code> | The channel's id to lookup. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
+
+<a name="HGWeb..fetchGames"></a>
+
+### HGWeb~fetchGames(userData, socket, gId, [cb]) : <code>HGWeb~SocketFunction</code> ℗
+Fetch all game data within a guild.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.getGame}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
+
+<a name="HGWeb..fetchDay"></a>
+
+### HGWeb~fetchDay(userData, socket, gId, [cb]) : <code>HGWeb~SocketFunction</code> ℗
+Fetch the updated game's day information.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.getGame}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
+
+<a name="HGWeb..excludeMember"></a>
+
+### HGWeb~excludeMember(userData, socket, gId, mId, [cb]) : <code>HGWeb~SocketFunction</code> ℗
+Exclude a member from the Games.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.excludeUsers}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| mId | <code>number</code> \| <code>string</code> | The member id to exclude. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
+
+<a name="HGWeb..includeMember"></a>
+
+### HGWeb~includeMember(userData, socket, gId, mId, [cb]) : <code>HGWeb~SocketFunction</code> ℗
+Include a member in the Games.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.includeUsers}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| mId | <code>number</code> \| <code>string</code> | The member id to include. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
+
+<a name="HGWeb..toggleOption"></a>
+
+### HGWeb~toggleOption(userData, socket, gId, option, value, extra, [cb]) : <code>HGWeb~SocketFunction</code> ℗
+Toggle an option in the Games.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.setOption}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| option | <code>string</code> | The option to change. |
+| value | <code>string</code> \| <code>number</code> | The value to set option to. |
+| extra | <code>string</code> | The extra text if the option is in an object. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
+
+<a name="HGWeb..createGame"></a>
+
+### HGWeb~createGame(userData, socket, gId, [cb]) : <code>HGWeb~SocketFunction</code> ℗
+Create a Game.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.createGame}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
+
+<a name="HGWeb..resetGame"></a>
+
+### HGWeb~resetGame(userData, socket, gId, cmd, [cb]) : <code>HGWeb~SocketFunction</code> ℗
+Reset game data.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.resetGame}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| cmd | <code>string</code> | Command specifying what data to delete. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
+
+<a name="HGWeb..startGame"></a>
+
+### HGWeb~startGame(userData, socket, gId, cId, [cb]) : <code>HGWeb~SocketFunction</code> ℗
+Start the game.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.startGame}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| cId | <code>number</code> \| <code>string</code> | Channel to start the game in. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
+
+<a name="HGWeb..startAutoplay"></a>
+
+### HGWeb~startAutoplay(userData, socket, gId, cId, [cb]) : <code>HGWeb~SocketFunction</code> ℗
+Enable autoplay.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.startAutoplay}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| cId | <code>number</code> \| <code>string</code> | Channel to send the messages in. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
+
+<a name="HGWeb..nextDay"></a>
+
+### HGWeb~nextDay(userData, socket, gId, cId, [cb]) : <code>HGWeb~SocketFunction</code> ℗
+Start the next day.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.nextDay}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| cId | <code>number</code> \| <code>string</code> | Channel to send the messages in. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
+
+<a name="HGWeb..endGame"></a>
+
+### HGWeb~endGame(userData, socket, gId, [cb]) : <code>HGWeb~SocketFunction</code> ℗
+End the game.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.endGame}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
+
+<a name="HGWeb..pauseAutoplay"></a>
+
+### HGWeb~pauseAutoplay(userData, socket, gId, [cb]) : <code>HGWeb~SocketFunction</code> ℗
+Disable autoplay.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.pauseAutoplay}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
+
+<a name="HGWeb..editTeam"></a>
+
+### HGWeb~editTeam(userData, socket, gId, cmd, one, two, [cb]) : <code>HGWeb~SocketFunction</code> ℗
+Edit the teams.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.editTeam}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| cmd | <code>string</code> | The command to run. |
+| one | <code>string</code> | The first argument. |
+| two | <code>string</code> | The second argument. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
+
+<a name="HGWeb..createEvent"></a>
+
+### HGWeb~createEvent(userData, socket, gId, type, message, nV, nA, oV, oA, kV, kA, wV, wA, [cb]) : <code>HGWeb~SocketFunction</code> ℗
+Create a game event.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.createEvent}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| type | <code>string</code> | The type of event. |
+| message | <code>string</code> | The message of the event. |
+| nV | <code>string</code> | Number of victims. |
+| nA | <code>string</code> | Number of attackers. |
+| oV | <code>string</code> | Outcome of victims. |
+| oA | <code>string</code> | Outcome of attackers. |
+| kV | <code>string</code> | Do the victims kill. |
+| kA | <code>string</code> | Do the attackers kill. |
+| wV | <code>Object</code> | The weapon information for this event. |
+| wA | <code>Object</code> | The weapon information for this event. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
+
+<a name="HGWeb..createMajorEvent"></a>
+
+### HGWeb~createMajorEvent(userData, socket, gId, type, data, name, [cb]) : <code>HGWeb~SocketFunction</code> ℗
+Create a larger game event. Either Arena or Weapon at this point. If
+message or weapon name already exists, this will instead edit the event.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.addMajorEvent}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| type | <code>string</code> | The type of event. |
+| data | [<code>ArenaEvent</code>](#HungryGames..ArenaEvent) \| [<code>WeaponEvent</code>](#HungryGames..WeaponEvent) | The event data. |
+| name | <code>string</code> | The name of the weapon if this is a weapon event. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
+
+<a name="HGWeb..editMajorEvent"></a>
+
+### HGWeb~editMajorEvent(userData, socket, gId, type, search, data, name, newName, [cb]) : <code>HGWeb~SocketFunction</code> ℗
+Delete a larger game event. Either Arena or Weapon at this point.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.editMajorEvent}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| type | <code>string</code> | The type of event. |
+| search | [<code>ArenaEvent</code>](#HungryGames..ArenaEvent) \| [<code>WeaponEvent</code>](#HungryGames..WeaponEvent) | The event data to find to edit. |
+| data | [<code>ArenaEvent</code>](#HungryGames..ArenaEvent) \| [<code>WeaponEvent</code>](#HungryGames..WeaponEvent) | The event data to set the matched searches to. |
+| name | <code>string</code> | The internal name of the weapon to find. |
+| newName | <code>string</code> | The new internal name of the weapon. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
+
+<a name="HGWeb..removeEvent"></a>
+
+### HGWeb~removeEvent(userData, socket, gId, type, event, [cb]) : <code>HGWeb~SocketFunction</code> ℗
+Remove a game event.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: {HungryGames.removeEvent}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| type | <code>string</code> | The type of event. |
+| event | [<code>Event</code>](#HungryGames..Event) | The game event to remove. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
+
+<a name="HGWeb..basicCB"></a>
+
+### HGWeb~basicCB : <code>function</code>
+Basic callback with single argument. The argument is null if there is no
+error, or a string if there was an error.
+
+**Kind**: inner typedef of [<code>HGWeb</code>](#HGWeb)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| err | <code>string</code> | The error response. |
+
+<a name="WebProxy"></a>
+
+## WebProxy ⇐ [<code>SubModule</code>](#SubModule)
+Proxy for account authentication.
+
+**Kind**: global class  
+**Extends**: [<code>SubModule</code>](#SubModule)  
+
+* [WebProxy](#WebProxy) ⇐ [<code>SubModule</code>](#SubModule)
+    * _instance_
+        * [.helpMessage](#SubModule+helpMessage) : <code>string</code> \| <code>Discord~MessageEmbed</code>
+        * [.prefix](#SubModule+prefix) : <code>string</code>
+        * [.myPrefix](#SubModule+myPrefix) : <code>string</code>
+        * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
+        * [.Discord](#SubModule+Discord) : <code>Discord</code>
+        * [.client](#SubModule+client) : <code>Discord~Client</code>
+        * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
+        * [.common](#SubModule+common) : [<code>Common</code>](#Common)
+        * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
+        * *[.myName](#SubModule+myName) : <code>string</code>*
+        * [.initialized](#SubModule+initialized) : <code>boolean</code>
+        * [.commit](#SubModule+commit) : <code>string</code>
+        * [.loadTime](#SubModule+loadTime) : <code>number</code>
+        * [.shutdown([skipSave])](#WebProxy+shutdown)
+        * [.initialize()](#SubModule+initialize)
+        * [.begin(prefix, Discord, client, command, common, bot)](#SubModule+begin)
+        * [.end()](#SubModule+end)
+        * [.log(msg)](#SubModule+log)
+        * [.error(msg)](#SubModule+error)
+        * *[.save([opt])](#SubModule+save)*
+        * [.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>
+    * _inner_
+        * [~sqlCon](#WebProxy..sqlCon) : <code>sql.ConnectionConfig</code> ℗
+        * [~loginInfo](#WebProxy..loginInfo) : <code>Object.&lt;Object&gt;</code> ℗
+        * [~sockets](#WebProxy..sockets) : <code>Object.&lt;Socket&gt;</code> ℗
+        * [~tokenHost](#WebProxy..tokenHost) : <code>Object</code> ℗
+        * [~apiHost](#WebProxy..apiHost) : <code>Object</code> ℗
+        * [~connectSQL()](#WebProxy..connectSQL) ℗
+        * [~purgeSessions()](#WebProxy..purgeSessions) ℗
+        * [~handler(req, res)](#WebProxy..handler) ℗
+        * [~socketConnection(socket)](#WebProxy..socketConnection) ℗
+            * [~receivedLoginInfo(data)](#WebProxy..socketConnection..receivedLoginInfo) ℗
+        * [~fetchIdentity(loginInfo, cb)](#WebProxy..fetchIdentity) ℗
+        * [~apiRequest(loginInfo, path, cb)](#WebProxy..apiRequest) ℗
+        * [~discordRequest(data, cb, host)](#WebProxy..discordRequest) ℗
+        * [~makeRefreshTimeout(loginInfo, cb)](#WebProxy..makeRefreshTimeout) ℗
+        * [~refreshToken(refreshToken, cb)](#WebProxy..refreshToken) ℗
+        * [~authorizeRequest(code, cb)](#WebProxy..authorizeRequest) ℗
+
+<a name="SubModule+helpMessage"></a>
+
+### webProxy.helpMessage : <code>string</code> \| <code>Discord~MessageEmbed</code>
+The help message to show the user in the main help message.
+
+**Kind**: instance property of [<code>WebProxy</code>](#WebProxy)  
+<a name="SubModule+prefix"></a>
+
+### webProxy.prefix : <code>string</code>
+The main prefix in use for this bot. Only available after begin() is
+called.
+
+**Kind**: instance property of [<code>WebProxy</code>](#WebProxy)  
+**Read only**: true  
+<a name="SubModule+myPrefix"></a>
+
+### webProxy.myPrefix : <code>string</code>
+The prefix this submodule uses. Formed by prepending this.prefix to
+this.postPrefix. this.postPrefix must be defined before begin(), otherwise
+it is ignored.
+
+**Kind**: instance property of [<code>WebProxy</code>](#WebProxy)  
+**Read only**: true  
+<a name="SubModule+postPrefix"></a>
+
+### *webProxy.postPrefix : <code>string</code>*
+The postfix for the global prefix for this subModule. Must be defined
+before begin(), otherwise it is ignored.
+
+**Kind**: instance abstract property of [<code>WebProxy</code>](#WebProxy)  
+**Default**: <code>&quot;&quot;</code>  
+<a name="SubModule+Discord"></a>
+
+### webProxy.Discord : <code>Discord</code>
+The current Discord object instance of the bot.
+
+**Kind**: instance property of [<code>WebProxy</code>](#WebProxy)  
+<a name="SubModule+client"></a>
+
+### webProxy.client : <code>Discord~Client</code>
+The current bot client.
+
+**Kind**: instance property of [<code>WebProxy</code>](#WebProxy)  
+<a name="SubModule+command"></a>
+
+### webProxy.command : [<code>Command</code>](#SpikeyBot..Command)
+The command object for registering command listeners.
+
+**Kind**: instance property of [<code>WebProxy</code>](#WebProxy)  
+<a name="SubModule+common"></a>
+
+### webProxy.common : [<code>Common</code>](#Common)
+The common object.
+
+**Kind**: instance property of [<code>WebProxy</code>](#WebProxy)  
+<a name="SubModule+bot"></a>
+
+### webProxy.bot : [<code>SpikeyBot</code>](#SpikeyBot)
+The parent SpikeyBot instance.
+
+**Kind**: instance property of [<code>WebProxy</code>](#WebProxy)  
+<a name="SubModule+myName"></a>
+
+### *webProxy.myName : <code>string</code>*
+The name of this submodule. Used for differentiating in the log. Should be
+defined before begin().
+
+**Kind**: instance abstract property of [<code>WebProxy</code>](#WebProxy)  
+**Overrides**: [<code>myName</code>](#SubModule+myName)  
+**Access**: protected  
+<a name="SubModule+initialized"></a>
+
+### webProxy.initialized : <code>boolean</code>
+Has this subModule been initialized yet (Has begin() been called).
+
+**Kind**: instance property of [<code>WebProxy</code>](#WebProxy)  
+**Default**: <code>false</code>  
+**Access**: protected  
+**Read only**: true  
+<a name="SubModule+commit"></a>
+
+### webProxy.commit : <code>string</code>
+The commit at HEAD at the time this module was loaded. Essentially the
+version of this submodule.
+
+**Kind**: instance constant of [<code>WebProxy</code>](#WebProxy)  
+**Access**: public  
+<a name="SubModule+loadTime"></a>
+
+### webProxy.loadTime : <code>number</code>
+The time at which this madule was loaded for use in checking if the module
+needs to be reloaded because the file has been modified since loading.
+
+**Kind**: instance constant of [<code>WebProxy</code>](#WebProxy)  
+**Access**: public  
+<a name="WebProxy+shutdown"></a>
+
+### webProxy.shutdown([skipSave])
+Causes a full shutdown of all servers.
+
+**Kind**: instance method of [<code>WebProxy</code>](#WebProxy)  
+**Overrides**: [<code>shutdown</code>](#SubModule+shutdown)  
+**Access**: public  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [skipSave] | <code>boolean</code> | <code>false</code> | Skip writing data to file. |
+
+<a name="SubModule+initialize"></a>
+
+### webProxy.initialize()
+The function called at the end of begin() for further initialization
+specific to the subModule. Must be defined before begin() is called.
+
+**Kind**: instance method of [<code>WebProxy</code>](#WebProxy)  
+**Overrides**: [<code>initialize</code>](#SubModule+initialize)  
+**Access**: protected  
+<a name="SubModule+begin"></a>
+
+### webProxy.begin(prefix, Discord, client, command, common, bot)
+Initialize this submodule.
+
+**Kind**: instance method of [<code>WebProxy</code>](#WebProxy)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| prefix | <code>string</code> | The global prefix for this bot. |
+| Discord | <code>Discord</code> | The Discord object for the API library. |
+| client | <code>Discord~Client</code> | The client that represents this bot. |
+| command | [<code>Command</code>](#SpikeyBot..Command) | The command instance in which to register command listeners. |
+| common | [<code>Common</code>](#Common) | Class storing common functions. |
+| bot | [<code>SpikeyBot</code>](#SpikeyBot) | The parent SpikeyBot instance. |
+
+<a name="SubModule+end"></a>
+
+### webProxy.end()
+Trigger subModule to shutdown and get ready for process terminating.
+
+**Kind**: instance method of [<code>WebProxy</code>](#WebProxy)  
+**Access**: public  
+<a name="SubModule+log"></a>
+
+### webProxy.log(msg)
+Log using common.log, but automatically set name.
+
+**Kind**: instance method of [<code>WebProxy</code>](#WebProxy)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+error"></a>
+
+### webProxy.error(msg)
+Log using common.error, but automatically set name.
+
+**Kind**: instance method of [<code>WebProxy</code>](#WebProxy)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+save"></a>
+
+### *webProxy.save([opt])*
+Saves all data to files necessary for saving current state.
+
+**Kind**: instance abstract method of [<code>WebProxy</code>](#WebProxy)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [opt] | <code>string</code> | <code>&quot;&#x27;sync&#x27;&quot;</code> | Can be 'async', otherwise defaults to synchronous. |
+
+<a name="SubModule+unloadable"></a>
+
+### webProxy.unloadable() ⇒ <code>boolean</code>
+Check if this module is in a state that is ready to be unloaded. If false
+is returned, this module should not be unloaded and doing such may risk
+putting the module into an uncontrollable state.
+
+**Kind**: instance method of [<code>WebProxy</code>](#WebProxy)  
+**Overrides**: [<code>unloadable</code>](#SubModule+unloadable)  
+**Returns**: <code>boolean</code> - True if can be unloaded, false if cannot.  
+**Access**: public  
+<a name="WebProxy..sqlCon"></a>
+
+### WebProxy~sqlCon : <code>sql.ConnectionConfig</code> ℗
+The object describing the connection with the SQL server.
+
+**Kind**: inner property of [<code>WebProxy</code>](#WebProxy)  
+**Access**: private  
+<a name="WebProxy..loginInfo"></a>
+
+### WebProxy~loginInfo : <code>Object.&lt;Object&gt;</code> ℗
+Stores the tokens and associated data for all clients connected while data
+is valid.
+
+**Kind**: inner property of [<code>WebProxy</code>](#WebProxy)  
+**Access**: private  
+<a name="WebProxy..sockets"></a>
+
+### WebProxy~sockets : <code>Object.&lt;Socket&gt;</code> ℗
+Map of all currently connected sockets.
+
+**Kind**: inner property of [<code>WebProxy</code>](#WebProxy)  
+**Access**: private  
+<a name="WebProxy..tokenHost"></a>
+
+### WebProxy~tokenHost : <code>Object</code> ℗
+The url to send a received `code` to via `POST` to receive a user's
+tokens.
+
+**Kind**: inner constant of [<code>WebProxy</code>](#WebProxy)  
+**Default**: <code>{&quot;protocol&quot;:&quot;https:&quot;,&quot;host&quot;:&quot;discordapp.com&quot;,&quot;path&quot;:&quot;/api/oauth2/token&quot;,&quot;method&quot;:&quot;POST&quot;}</code>  
+**Access**: private  
+<a name="WebProxy..apiHost"></a>
+
+### WebProxy~apiHost : <code>Object</code> ℗
+The url to send a request to the discord api.
+
+**Kind**: inner constant of [<code>WebProxy</code>](#WebProxy)  
+**Default**: <code>{&quot;protocol&quot;:&quot;https:&quot;,&quot;host&quot;:&quot;discordapp.com&quot;,&quot;path&quot;:&quot;/api&quot;,&quot;method&quot;:&quot;GET&quot;}</code>  
+**Access**: private  
+<a name="WebProxy..connectSQL"></a>
+
+### WebProxy~connectSQL() ℗
+Create initial connection with sql server.
+
+**Kind**: inner method of [<code>WebProxy</code>](#WebProxy)  
+**Access**: private  
+<a name="WebProxy..purgeSessions"></a>
+
+### WebProxy~purgeSessions() ℗
+Purge stale data from loginInfo.
+
+**Kind**: inner method of [<code>WebProxy</code>](#WebProxy)  
+**Access**: private  
+<a name="WebProxy..handler"></a>
+
+### WebProxy~handler(req, res) ℗
+Handler for all http requests. Should never be called.
+
+**Kind**: inner method of [<code>WebProxy</code>](#WebProxy)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| req | <code>http.IncomingMessage</code> | The client's request. |
+| res | <code>http.ServerResponse</code> | Our response to the client. |
+
+<a name="WebProxy..socketConnection"></a>
+
+### WebProxy~socketConnection(socket) ℗
+Handler for a new socket connecting.
+
+**Kind**: inner method of [<code>WebProxy</code>](#WebProxy)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| socket | <code>socketIo~Socket</code> | The socket.io socket that connected. |
+
+<a name="WebProxy..socketConnection..receivedLoginInfo"></a>
+
+#### socketConnection~receivedLoginInfo(data) ℗
+Received the login credentials for user, lets store it for this
+session,
+and refresh the tokens when necessary.
+
+**Kind**: inner method of [<code>socketConnection</code>](#WebProxy..socketConnection)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| data | <code>Object</code> | User data. |
+
+<a name="WebProxy..fetchIdentity"></a>
+
+### WebProxy~fetchIdentity(loginInfo, cb) ℗
+Fetches the identity of the user we have the token of.
+
+**Kind**: inner method of [<code>WebProxy</code>](#WebProxy)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| loginInfo | <code>LoginInfo</code> | The credentials of the session user. |
+| cb | <code>singleCB</code> | The callback storing the user's data, or null if something went wrong. |
+
+<a name="WebProxy..apiRequest"></a>
+
+### WebProxy~apiRequest(loginInfo, path, cb) ℗
+Formats a request to the discord api at the given path.
+
+**Kind**: inner method of [<code>WebProxy</code>](#WebProxy)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| loginInfo | <code>LoginInfo</code> | The credentials of the user we are sending the request for. |
+| path | <code>string</code> | The path for the api request to send. |
+| cb | <code>basicCallback</code> | The response from the https request with error and data arguments. |
+
+<a name="WebProxy..discordRequest"></a>
+
+### WebProxy~discordRequest(data, cb, host) ℗
+Send a https request to discord.
+
+**Kind**: inner method of [<code>WebProxy</code>](#WebProxy)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| data | <code>Object</code> \| <code>string</code> | The data to send in the request. |
+| cb | <code>basicCallback</code> | Callback with error, and data arguments. |
+| host | <code>Object</code> | Request object to override the default with. |
+
+<a name="WebProxy..makeRefreshTimeout"></a>
+
+### WebProxy~makeRefreshTimeout(loginInfo, cb) ℗
+Refreshes the given token once it expires.
+
+**Kind**: inner method of [<code>WebProxy</code>](#WebProxy)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| loginInfo | <code>LoginInfo</code> | The credentials to refresh. |
+| cb | <code>singleCB</code> | The callback that is fired storing the new credentials once they are refreshed. |
+
+<a name="WebProxy..refreshToken"></a>
+
+### WebProxy~refreshToken(refreshToken, cb) ℗
+Request new credentials with refresh token from discord.
+
+**Kind**: inner method of [<code>WebProxy</code>](#WebProxy)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| refreshToken | <code>string</code> | The refresh token used for refreshing credentials. |
+| cb | <code>basicCallback</code> | The callback from the https request, with an error argument, and a data argument. |
+
+<a name="WebProxy..authorizeRequest"></a>
+
+### WebProxy~authorizeRequest(code, cb) ℗
+Authenticate with the discord server using a login code.
+
+**Kind**: inner method of [<code>WebProxy</code>](#WebProxy)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| code | <code>string</code> | The login code received from our client. |
+| cb | <code>basicCallback</code> | The response from the https request with error and data arguments. |
 
 <a name="unhandledRejection"></a>
 

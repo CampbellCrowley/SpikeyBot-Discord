@@ -6355,7 +6355,6 @@ function HungryGames() {
               self.error('Failed to save HG data for ' + filename);
               console.error(err2);
             } else if (findTimestamps[id] - saveStartTime < -15 * 60 * 1000) {
-              console.log('Purged', id, 'Async');
               delete games[id];
               delete findTimestamps[id];
             }
@@ -6377,7 +6376,6 @@ function HungryGames() {
           return;
         }
         if (findTimestamps[id] - Date.now() < -15 * 60 * 1000) {
-          console.log('Purged', id, 'Sync');
           delete games[id];
           delete findTimestamps[id];
         }

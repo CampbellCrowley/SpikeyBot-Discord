@@ -1,0 +1,35 @@
+{
+  "hg:fun_translators": {
+    "type": "select",
+    "values": ["disabled", "leet", "mocking", "superscript", "smallcaps"],
+    "default": "disabled"
+  },
+  "hg:customize_stats": {
+    "type": "object",
+    "values": {
+      "strength": {
+        "type": "number",
+        "range": { "min": 0, "max": 10 },
+        "default": 5
+      },
+      "intelligence": {
+        "type": "number",
+        "range": { "min": 0, "max": 10 },
+        "default": 5
+      }
+    }
+  },
+  "hg:personal_weapon": {
+    "type": "object",
+    "values": {
+      "weaponType": {
+        "type": "string",
+        "default": "knife"
+      },
+      "weaponName": {
+        "type": "string",
+        "default": "Stabby McStabson"
+      }
+    }
+  }
+}

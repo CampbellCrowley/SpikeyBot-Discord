@@ -2223,7 +2223,7 @@ function Main() {
           shardUptimes.join('\n');
       embed.addField('Shards', shardString, true);
 
-      embed.addField(
+      /* embed.addField(
           'This Shard Version',
           'Shard: ' + version + '\nCommit: ' + commit.slice(0, 7) +
               '\nDiscord.js: ' + (self.Discord.version || 'Unknown') + '\n' +
@@ -2232,7 +2232,7 @@ function Main() {
                     return el.name + ': ' + el.commit;
                   })
                   .join('\n'),
-          true);
+          true); */
 
       embed.setColor([0, 100, 255]);
 

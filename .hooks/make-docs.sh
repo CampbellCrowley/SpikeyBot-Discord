@@ -22,7 +22,7 @@ JSDOC="$GITROOT/docs/README.md"
 
 echo "[Commands Help](commands/)" > "$JSDOC"
 
-"$GITROOT/node_modules/.bin/jsdoc2md" src/*.js --private >> "$JSDOC"
+"$GITROOT/node_modules/.bin/jsdoc2md" src/*.js src/**/*.js --private >> "$JSDOC"
 if [[ "$?" != 0 ]]; then
   exit 1
 fi
