@@ -440,7 +440,7 @@ function WebAccount() {
       return;
     } else {
       function isInvalid(obj, s, value) {
-        let type = obj.valueType;
+        let type = obj.type;
         let valid = false;
         if (type === 'select') {
           for (let i = 0; i < obj.values.length; i++) {
@@ -462,7 +462,7 @@ function WebAccount() {
           return isInvalid(obj.values[s[0]], s.slice(1), value);
         }
         if (!valid) {
-          cb('Invalid Value');
+          cb('Invalid Value', {status: type || 'NOTYPE', message: value});
           return true;
         }
       }

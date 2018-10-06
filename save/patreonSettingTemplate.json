@@ -1,15 +1,18 @@
 {
   "hg:fun_translators": {
+    "title": "Hungry Games Message Translators",
     "type": "select",
     "values": ["disabled", "leet", "mocking", "superscript", "smallcaps"],
     "default": "disabled"
   },
   "tts:all": {
+    "title": "Text To Speech Language/Dialect",
     "type": "select",
     "values": ["en-AU-F", "en-AU-M", "en-GB-F", "en-GB-M", "en-US-F", "en-US-M"],
     "default": "en-AU-M"
   },
   "hg:customize_stats": {
+    "title": "Hungry Games Player Statistics",
     "type": "object",
     "values": {
       "strength": {
@@ -25,6 +28,7 @@
     }
   },
   "hg:personal_weapon": {
+    "title": "Hungry Games Personal Weapon",
     "type": "object",
     "values": {
       "weaponType": {

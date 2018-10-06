@@ -846,6 +846,7 @@ Hunger Games simulator.
         * [~defaultArenaEvents](#HungryGames..defaultArenaEvents) : [<code>Array.&lt;ArenaEvent&gt;</code>](#HungryGames..ArenaEvent) ℗
         * [~newEventMessages](#HungryGames..newEventMessages) : <code>Object.&lt;Discord~Message&gt;</code> ℗
         * [~optionMessages](#HungryGames..optionMessages) : <code>Object.&lt;Discord~Message&gt;</code> ℗
+        * [~patreonSettingKeys](#HungryGames..patreonSettingKeys) : <code>Array.&lt;string&gt;</code> ℗
         * [~oldSaveFile](#HungryGames..oldSaveFile) : <code>string</code> ℗
         * [~saveFile](#HungryGames..saveFile) : <code>string</code> ℗
         * [~hgSaveDir](#HungryGames..hgSaveDir) : <code>string</code> ℗
@@ -887,6 +888,9 @@ Hunger Games simulator.
         * [~makePlayer(member)](#HungryGames..makePlayer) ⇒ [<code>Player</code>](#HungryGames..Player) ℗
         * [~sendAtTime(channel, one, two, time)](#HungryGames..sendAtTime) ℗
         * [~createGame(msg, id, [silent])](#HungryGames..createGame) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+        * [~fetchPatreonSettings(players, cId, gId)](#HungryGames..fetchPatreonSettings) ℗
+            * [~onPermResponse(err, info, p)](#HungryGames..fetchPatreonSettings..onPermResponse) ℗
+            * [~onSettingResponse(err, info, p, setting)](#HungryGames..fetchPatreonSettings..onSettingResponse) ℗
         * [~getAllPlayers(members, excluded, bots, included, excludeByDefault)](#HungryGames..getAllPlayers) ⇒ [<code>Array.&lt;Player&gt;</code>](#HungryGames..Player) ℗
         * [~formTeams(id)](#HungryGames..formTeams) ℗
         * [~resetGame(msg, id)](#HungryGames..resetGame) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
@@ -1478,6 +1482,7 @@ Serializable container for data pertaining to a single user.
 | state | <code>string</code> | The current player state (normal, wounded, dead, zombie). |
 | kills | <code>number</code> | The number of players this player has caused to die. |
 | weapons | <code>Object.&lt;number&gt;</code> | The weapons the player currently has and how many of each. |
+| settings | <code>Object</code> | Custom settings for this user associated with the games. |
 
 <a name="new_HungryGames..Player_new"></a>
 
@@ -1668,6 +1673,14 @@ Messages I have sent showing current options.
 
 **Kind**: inner property of [<code>HungryGames</code>](#HungryGames)  
 **Default**: <code>{}</code>  
+**Access**: private  
+<a name="HungryGames..patreonSettingKeys"></a>
+
+### HungryGames~patreonSettingKeys : <code>Array.&lt;string&gt;</code> ℗
+The permission tags for all settings related to the Hungry Games.
+
+**Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
+**Default**: <code>[&quot;hg:fun_translators&quot;,&quot;hg:customize_stats&quot;,&quot;hg:personal_weapon&quot;]</code>  
 **Access**: private  
 <a name="HungryGames..oldSaveFile"></a>
 
@@ -2062,6 +2075,56 @@ Create a Hungry Games for a guild.
 | msg | <code>Discord~Message</code> |  | The message that lead to this being called. |
 | id | <code>string</code> |  | The id of the guild this was triggered from. |
 | [silent] | <code>boolean</code> | <code>false</code> | Should we suppress replies to message. |
+
+<a name="HungryGames..fetchPatreonSettings"></a>
+
+### HungryGames~fetchPatreonSettings(players, cId, gId) ℗
+Given an array of players, lookup the settings for each and update their
+data. This is asyncronous.
+
+**Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| players | [<code>Array.&lt;Player&gt;</code>](#HungryGames..Player) | The players to lookup and udpate. |
+| cId | <code>string</code> \| <code>number</code> | The channel ID to fetch the settings for. |
+| gId | <code>string</code> \| <code>number</code> | The guild ID to fetch the settings for. |
+
+
+* [~fetchPatreonSettings(players, cId, gId)](#HungryGames..fetchPatreonSettings) ℗
+    * [~onPermResponse(err, info, p)](#HungryGames..fetchPatreonSettings..onPermResponse) ℗
+    * [~onSettingResponse(err, info, p, setting)](#HungryGames..fetchPatreonSettings..onSettingResponse) ℗
+
+<a name="HungryGames..fetchPatreonSettings..onPermResponse"></a>
+
+#### fetchPatreonSettings~onPermResponse(err, info, p) ℗
+After retreiving a player's permissions, fetch their settings for each.
+
+**Kind**: inner method of [<code>fetchPatreonSettings</code>](#HungryGames..fetchPatreonSettings)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| err | <code>string</code> | Error string or null. |
+| info | <code>Object</code> | Permission information. |
+| p | <code>number</code> | Player object to update. |
+
+<a name="HungryGames..fetchPatreonSettings..onSettingResponse"></a>
+
+#### fetchPatreonSettings~onSettingResponse(err, info, p, setting) ℗
+After retreiving a player's settings, update their data with the relevant
+values.
+
+**Kind**: inner method of [<code>fetchPatreonSettings</code>](#HungryGames..fetchPatreonSettings)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| err | <code>string</code> | Error string or null. |
+| info | <code>Object</code> | Permission information. |
+| p | <code>number</code> | Player object to update. |
+| setting | <code>string</code> | The setting name to update. |
 
 <a name="HungryGames..getAllPlayers"></a>
 
@@ -6948,10 +7011,25 @@ Converts text strings into different formats.
 **Kind**: global class  
 
 * [FunTranslators](#FunTranslators)
+    * [.to(name, input)](#FunTranslators+to) ⇒ <code>string</code>
     * [.toLeetSpeak(input)](#FunTranslators+toLeetSpeak) ⇒ <code>string</code>
     * [.toMockingFont(input)](#FunTranslators+toMockingFont) ⇒ <code>string</code>
     * [.toSmallCaps(input)](#FunTranslators+toSmallCaps) ⇒ <code>string</code>
     * [.toSuperScript(input)](#FunTranslators+toSuperScript) ⇒ <code>string</code>
+
+<a name="FunTranslators+to"></a>
+
+### funTranslators.to(name, input) ⇒ <code>string</code>
+Convert a string to a format based on it's name.
+
+**Kind**: instance method of [<code>FunTranslators</code>](#FunTranslators)  
+**Returns**: <code>string</code> - The formatted string.  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | The name of the translator. |
+| input | <code>string</code> | The string to convert. |
 
 <a name="FunTranslators+toLeetSpeak"></a>
 

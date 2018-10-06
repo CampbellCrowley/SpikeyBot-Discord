@@ -6,6 +6,29 @@
  * @class
  */
 function FunTranslators() {
+  let self = this;
+  /**
+   * Convert a string to a format based on it's name.
+   * @public
+   *
+   * @param {string} name The name of the translator.
+   * @param {string} input The string to convert.
+   * @return {string} The formatted string.
+   */
+  this.to = function(name, input) {
+    switch(name) {
+      default:
+        return input;
+      case 'leet':
+        return self.toLeetSpeak(input);
+      case 'mocking':
+        return self.toMockingFont(input);
+      case 'smallcaps':
+        return self.toSmallCaps(input);
+      case 'superscript':
+        return self.toSuperScript(input);
+    }
+  };
   /**
    * Convert a string to Leet Speak (1337 5p34k).
    * @public

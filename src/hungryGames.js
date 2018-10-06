@@ -4,6 +4,7 @@ const fs = require('fs');
 const Jimp = require('jimp');
 const mkdirp = require('mkdirp'); // mkdir -p
 const rimraf = require('rimraf'); // rm -rf
+const funTranslator = require('./lib/funTranslators.js');
 require('./subModule.js')(HungryGames);  // Extends the SubModule class.
 
 /**
@@ -26,6 +27,17 @@ function HungryGames() {
 
   this.myName = 'HG';
   this.postPrefix = 'hg ';
+
+  /**
+   * The permission tags for all settings related to the Hungry Games.
+   *
+   * @private
+   * @constant
+   * @default
+   * @type {string[]}
+   */
+  const patreonSettingKeys =
+      ['hg:fun_translators', 'hg:customize_stats', 'hg:personal_weapon'];
 
   /**
    * The old file location for storing hg data in order to upgrade data to new
@@ -1221,6 +1233,8 @@ function HungryGames() {
    * die.
    * @property {Object.<number>} weapons The weapons the player currently has
    * and how many of each.
+   * @property {Object} settings Custom settings for this user associated with
+   * the games.
    */
   function Player(id, username, avatarURL, nickname = null) {
     // Replace backtick with Unicode 1FEF Greek Varia because it looks the same,
@@ -1247,6 +1261,8 @@ function HungryGames() {
     this.kills = 0;
     // Map of the weapons this user currently has, and how many of each.
     this.weapons = {};
+    // Custom settings for the games associated with this player.
+    this.settings = {};
   };
 
   /**
@@ -1518,6 +1534,7 @@ function HungryGames() {
       }
     }
     formTeams(id);
+    fetchPatreonSettings(find(id).currentGame.includedUsers);
   }
   /**
    * Create a Hungry Games for a guild.
@@ -1528,6 +1545,63 @@ function HungryGames() {
   this.createGame = function(id) {
     createGame(null, id, true);
   };
+
+  /**
+   * Given an array of players, lookup the settings for each and update their
+   * data. This is asyncronous.
+   * @private
+   *
+   * @param {HungryGames~Player[]} players The players to lookup and udpate.
+   * @param {?string|number} cId The channel ID to fetch the settings for.
+   * @param {?string|number} gId The guild ID to fetch the settings for.
+   */
+  function fetchPatreonSettings(players, cId, gId) {
+    /**
+     * After retreiving a player's permissions, fetch their settings for each.
+     * @private
+     * @param {?string} err Error string or null.
+     * @param {?{status: string[], message: string}} info Permission
+     * information.
+     * @param {number} p Player object to update.
+     */
+    function onPermResponse(err, info, p) {
+      if (err) return;
+      let values = info.status;
+      for (let i = 0; i < values.length; i++) {
+        if (!patreonSettingKeys.includes(values[i])) continue;
+        self.bot.patreon.getSettingValue(p.id, values[i], (function(p, v) {
+                                           return function(err, info) {
+                                             onSettingResponse(err, info, p, v);
+                                           };
+                                         })(p, values[i]));
+      }
+    }
+
+    /**
+     * After retreiving a player's settings, update their data with the relevant
+     * values.
+     * @private
+     * @param {?string} err Error string or null.
+     * @param {?{status: *, message: string}} info Permission information.
+     * @param {number} p Player object to update.
+     * @param {string} setting The setting name to update.
+     */
+    function onSettingResponse(err, info, p, setting) {
+      if (err) {
+        self.error(err);
+        return;
+      }
+      p.settings[setting] = info.status;
+    }
+
+    for (let i = 0; i < players.length; i++) {
+      self.bot.patreon.getAllPerms(players[i].id, cId, gId, (function(p) {
+                                     return function(err, info) {
+                                       onPermResponse(err, info, p);
+                                     };
+                                   })(players[i]));
+    }
+  }
 
   /**
    * Form an array of Player objects based on guild members, excluded members,
@@ -3405,9 +3479,14 @@ function HungryGames() {
       message, affectedUsers, numVictim, numAttacker, mention, id,
       victimOutcome, attackerOutcome, useNickname = false) {
     let mentionString = '';
-    if (mention) {
-      for (let i = 0; i < affectedUsers.length; i++) {
+    let translator = null;
+    for (let i = 0; i < affectedUsers.length; i++) {
+      if (mention) {
         mentionString += '<@' + affectedUsers[i].id + '>';
+      }
+      if (affectedUsers[i].settings['hg:fun_translators'] &&
+          affectedUsers[i].settings['hg:fun_translators'] !== 'disabled') {
+        translator = affectedUsers[i].settings['hg:fun_translators'];
       }
     }
     let affectedVictims = affectedUsers.splice(0, numVictim);
@@ -3451,6 +3530,8 @@ function HungryGames() {
                 .replaceAll('{dead}', formatMultiNames(deadUsers, false));
       }
     }
+    if (translator) console.log(translator);
+    finalMessage = funTranslator.to(translator, finalMessage);
     let finalIcons = getMiniIcons(affectedVictims.concat(affectedAttackers));
     return {
       message: finalMessage,
