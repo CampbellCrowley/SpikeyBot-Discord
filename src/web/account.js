@@ -278,7 +278,12 @@ function WebAccount() {
         cb('Not signed in.', null);
         return;
       }
-      self.bot.patreon.getAllPerms(userData.id, null, null, cb);
+      if (!self.bot.patreon) {
+        self.error('Patreon submodule has not been loaded!');
+        cb('Internal Error', null);
+      } else {
+        self.bot.patreon.getAllPerms(userData.id, null, null, cb);
+      }
     });
     socket.on('changeSetting', (userData, setting, value, cb) => {
       if (typeof cb !== 'function') cb = function() {};

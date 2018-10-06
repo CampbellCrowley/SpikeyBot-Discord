@@ -2064,11 +2064,12 @@ function HungryGames() {
             '"' + msg.prefix + self.postPrefix + 'next" for next day.');
       }
 
+      let mentions = self.common.mention(msg);
       if (find(id).options.mentionEveryoneAtStart) {
-        finalMessage.setDescription('@everyone');
+        mentions += '@everyone';
       }
 
-      msg.channel.send(self.common.mention(msg), finalMessage).catch((err) => {
+      msg.channel.send(mentions, finalMessage).catch((err) => {
         self.common.reply(
             msg, 'Game started!',
             'Discord rejected my normal message for some reason...');
@@ -2354,6 +2355,8 @@ function HungryGames() {
         (doArenaEvent ? find(id).options.arenaOutcomeProbs :
                         find(id).options.playerOutcomeProbs);
 
+    const nameFormat = find(id).options.useNicknames ? 'nickname' : 'username';
+
     while (userPool.length > 0) {
       let eventTry;
       let affectedUsers;
@@ -2421,7 +2424,7 @@ function HungryGames() {
               } else {
                 consumableName += 's';
               }
-              subMessage += formatMultiNames([userWithWeapon], false) +
+              subMessage += formatMultiNames([userWithWeapon], nameFormat) +
                   ' runs out of ' + consumableName + '.';
             } else if (consumed != 0) {
               let weaponName = chosenWeapon;
@@ -2436,7 +2439,7 @@ function HungryGames() {
               } else if (count != 1) {
                 consumableName += 's';
               }
-              subMessage += formatMultiNames([userWithWeapon], false) +
+              subMessage += formatMultiNames([userWithWeapon], nameFormat) +
                   ' lost ' + count + ' ' + consumableName + '.';
             }
 
@@ -2444,9 +2447,7 @@ function HungryGames() {
             if (numAttacker > 1 ||
                 (numAttacker == 1 &&
                  affectedUsers[numVictim].id != userWithWeapon.id)) {
-              owner = formatMultiNames(
-                          [userWithWeapon], find(id).options.mentionAll) +
-                  '\'s';
+              owner = formatMultiNames([userWithWeapon], nameFormat) + '\'s';
             }
             if (!eventTry.message) {
               let weaponName =
@@ -2676,8 +2677,8 @@ function HungryGames() {
                     return (count || 0) + ' ' + consumableName;
                   })
                   .join(', ');
-          subMessage += '\n' + formatMultiNames([user], false) + ' now has ' +
-              consumableList + '.';
+          subMessage += '\n' + formatMultiNames([user], nameFormat) +
+              ' now has ' + consumableList + '.';
         }
       }
       if (eventTry.victim.weapon) {
@@ -2709,8 +2710,8 @@ function HungryGames() {
                     return (count || 0) + ' ' + consumableName;
                   })
                   .join(', ');
-          subMessage += '\n' + formatMultiNames([user], false) + ' now has ' +
-              consumableList + '.';
+          subMessage += '\n' + formatMultiNames([user], nameFormat) +
+              ' now has ' + consumableList + '.';
         }
       }
 
@@ -3528,7 +3529,10 @@ function HungryGames() {
             finalMessage
                 .replace(
                     /\[D([^\|]*)\|([^\]]*)\]/g, numDead === 1 ? '$1' : '$2')
-                .replaceAll('{dead}', formatMultiNames(deadUsers, false));
+                .replaceAll(
+                    '{dead}',
+                    formatMultiNames(
+                        deadUsers, useNickname ? 'nickname' : 'username'));
       }
     }
     if (translator) console.log(translator);
