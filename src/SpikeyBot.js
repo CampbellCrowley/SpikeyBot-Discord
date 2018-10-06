@@ -1239,7 +1239,6 @@ function SpikeyBot() {
    * @private
    */
   function saveAll() {
-    console.log('Saving All!');
     for (let i = 0; i < subModules.length; i++) {
       if (typeof subModules[i].save === 'function') {
         try {
