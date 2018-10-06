@@ -112,11 +112,6 @@ const mainTests = [
   new Test('Ping command', '~ping', ['^My ping is']),
   new Test('Tic Tac Toe command', '~tictactoe', ['`Loading TicTacToe...`']),
   new Test('Connect 4 command', '~connect4', ['`Loading Connect 4...`']),
-  new Test('Patreon command', '~patreon', ['#noerr']),
-  new Test(
-      'TTS command', '~tts',
-      ['^<@422623712534200321>\n```\nOops! I wasn\'t able to do that for ' +
-       'you...']),
 ];
 const hgTests = [
   new Test('Reset All command', '~hg reset all', ['#noerr']),
