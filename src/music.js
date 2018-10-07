@@ -137,7 +137,7 @@ function Music() {
    * @constant
    */
   const ytdlOpts =
-      ['-f bestaudio/best', '--no-playlist', '--default-search=auto'];
+      ['-f', 'bestaudio/worst', '--no-playlist', '--default-search=auto'];
 
   /**
    * Options to pass into the stream dispatcher.
@@ -577,13 +577,14 @@ function Music() {
       stream.on('info', function(info) {
         progress({ytdlinfo: info});
       });
+      // youtube-dl npm module emits `end` and not `close`.
+      stream.on('end', function() {
+        progress({data: null});
+        done();
+      });
     }
     stream.on('data', function(chunk) {
       progress({data: chunk});
-    });
-    stream.on('end', function() {
-      progress({data: null});
-      done();
     });
     stream.on('close', function() {
       progress({data: null});

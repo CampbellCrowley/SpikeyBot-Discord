@@ -4436,7 +4436,7 @@ Special cases of requests to handle seperately.
 Options passed to youtube-dl for fetching videos.
 
 **Kind**: inner constant of [<code>Music</code>](#Music)  
-**Default**: <code>[&quot;-f bestaudio/best&quot;,&quot;--no-playlist&quot;,&quot;--default-search&#x3D;auto&quot;]</code>  
+**Default**: <code>[&quot;-f&quot;,&quot;bestaudio/worst&quot;,&quot;--no-playlist&quot;,&quot;--default-search&#x3D;auto&quot;]</code>  
 **Access**: private  
 <a name="Music..streamOptions"></a>
 
