@@ -1,6 +1,6 @@
 {
   "title": "Hungry Games!",
-  "description": "To use any of these commands you must have the \"{hgRole}\" role. Use https://www.spikeybot.com/hg/ if commands are too hard.",
+  "description": "To use any of these commands you must have the \"{hgRole}\" role or be the server owner. Use <a href=\"/hg/\">https://www.spikeybot.com/hg/</a> if commands are too hard.",
   "prefix": "hg ",
   "sections": [
     {
@@ -8,7 +8,7 @@
       "rows": [
         {
           "command": "create",
-          "description": "This will create a game with default settings if it doesn't exist already.",
+          "description": "This will create a game with default settings if it doesn't exist already. This is only required the first time, and after resetting all data.",
           "aliases": "create, c, new",
           "examples": [
             {
@@ -38,9 +38,9 @@
               "result": "The probability of resurrection will be set to 10%.<br>Notice: Option names are case sensitive, they must be written exactly as they appear in the list."
             },
             {
-              "description": "Change a String Option",
-              "command": "opt playerDeathRate veryhigh",
-              "result": "The probability of a player being killed or wounded will become very high.<br>Notice: Option names are case sensitive, they must be written exactly as they appear in the list."
+              "description": "Change a Object Option",
+              "command": "opt playerOutcomeProbs kill 50",
+              "result": "The relative probability of a player being killed will become 50.<br>Notice: Option names are case sensitive, they must be written exactly as they appear in the list."
             }
           ]
         },
@@ -56,12 +56,32 @@
             {
               "description": "Delete All Data",
               "command": "reset all",
-              "result": "Bot will delete all data about the games in this server. This cannot be undone."
+              "result": "Bot will delete <strong>all</strong> data about the games in this server. This cannot be undone.<br>(Includes custom game events. When I say <strong>all</strong>, I mean <strong>all</strong> data.)"
+            },
+            {
+              "description": "Delete Events Data",
+              "command": "reset events",
+              "result": "Bot will delete all custom events. This cannot be undone."
+            },
+            {
+              "description": "Delete Current Game Data",
+              "command": "reset current",
+              "result": "Bot will delete all data about the current game that may be paused. This should only be useful if data becomes corrupted."
             },
             {
               "description": "Reset Options",
               "command": "reset options",
               "result": "All options will be reset to their default values. This cannot be undone."
+            },
+            {
+              "description": "Reset Teams",
+              "command": "reset teams",
+              "result": "Bot will delete teams and automatically re-create them with the current settings."
+            },
+            {
+              "description": "Reset Included and Excluded Users",
+              "command": "reset users",
+              "result": "Bot will remove all users from both blacklist and whitelist and reset them with the current game settings."
             }
           ]
         }
@@ -175,6 +195,7 @@
         },
         {
           "command": "teams randomize",
+          "aliases": "randomize, shuffle",
           "description": "Randomize who is on what team.",
           "examples": [
             {
@@ -202,7 +223,7 @@
       "rows": [
         {
           "command": "events",
-          "description": "This will list all custom events that could happen in the game.",
+          "description": "This will list all custom events that could happen in the game. <a href=\"/hg/\">HG Webview</a> can be much easier to use.",
           "aliases": "events, event",
           "examples": [
             {
@@ -225,7 +246,7 @@
         },
         {
           "command": "events add 'message'",
-          "description": "Begins process of adding a custom event. Not all event types can be created yet due to the complications of making a UI.",
+          "description": "Begins process of adding a custom event. Not all event types can be created yet due to the complications of making a UI. <a href=\"/hg/\">HG Webview</a> can be much easier to use, and supports more types.",
           "aliases": "add, create",
           "examples": [
             {

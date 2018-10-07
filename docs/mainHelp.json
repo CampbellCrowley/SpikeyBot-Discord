@@ -58,7 +58,7 @@
             },
             {
               "description": "Mentioning",
-              "command": "createdate @SpikeyRobot",
+              "command": "joindate @SpikeyRobot",
               "result": "The bot will tell you the date SpikeyRobot joined the server where you sent the message, in the Los Angeles timezone."
             }
           ]
@@ -313,7 +313,7 @@
         {
           "command": "queue",
           "description": "View the songs currently in the queue.",
-          "aliases": "queue, playing",
+          "aliases": "q, queue, playing",
           "examples": [
             {
               "description": "Basic Usage",
