@@ -4,7 +4,7 @@
   ],
   "500": [
     "hg:customize_stats",
-    "hg:fun_translators",
+    "hg:fun_translators"
   ],
   "1000": [
     "hg:personal_weapon"
