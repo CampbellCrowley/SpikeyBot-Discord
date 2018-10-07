@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/CampbellCrowley/SpikeyBot-Discord.svg?branch=master)](https://travis-ci.com/CampbellCrowley/SpikeyBot-Discord)  
-[Website](https://www.spikeybot.com/)
+### [SpikeyBot.com](https://www.spikeybot.com/)
+### [Patreon](https://www.patreon.com/campbellcrowley/)
 
 # Commands
 ###### [Web Page with command help](https://www.spikeybot.com/) (also available from bot with `help` command)
@@ -16,6 +17,8 @@
 `add` `simplify` `solve` `evaluate` `derive` `graph`
 #### Admin
 `purge` `ban` `smite` `togglemute` `changeprefix` `togglebanmessages`
+### Patreon
+`patreon` `tts`
 
 ## Hungry Games
 #### Game
@@ -53,6 +56,7 @@
 - perms (Sends a message with the bitfields of all permissions, as well as the sender's and the bot's permissions for the guild and channel)
 - lookup (Finds information about a given ID)
 - sendto (Given a user or channel ID, the bot will send the message anonymously. Only Spikey can do this)
+- saveall (Trigger all submodules to save their data)
 
 # Events
 - Added to guild
@@ -74,7 +78,6 @@
     4) String is not an error
     5) Is an embed
     6) Correct number of messages
-  - Does not work if multiple instances of bot are running.
   - Does not check the content of embeds.
   - Need more thorough and flexible tests.
 - Linting
@@ -82,7 +85,7 @@
   - Eslint is run with pre-commit git hook.
 - Most code is moved into sub-modules for easier division and reloading.
   - Minimal mode only loads minimal features to allow for multiple bots to run without overlap.
-  - Music sub-module is expected to run in separate process to improve performance until better solution for music is made.
+  - Music sub-module downloads audio in a separate thread but is still managed by the main event loop.
   - Submodules are passed in via command line arguments.
     - Path relative to module should be given.
     - Must be valid for directly being passed into `require()`.
