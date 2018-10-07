@@ -592,12 +592,12 @@ function HGWeb(hg) {
     } else {
       g = hg.client.guilds.get(gId);
       if (!g) {
-        self.log('Attempted fetchDay with invalid guildID' + gId);
+        hg.log('Attempted fetchDay with invalid guildID' + gId);
         return;
       } else {
         m = g.members.get(userData.id);
         if (!m) {
-          self.log(
+          hg.log(
               'Attempted fetchDay, but unable to find member in guild' + gId +
               '@' + userData.id);
           return;
