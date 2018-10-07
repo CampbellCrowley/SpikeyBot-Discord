@@ -586,24 +586,23 @@ function HGWeb(hg) {
    * complete, or has failed.
    */
   function fetchDay(userData, socket, gId, cb) {
-    let hasPerm = true;
     let g, m;
     if (!userData) {
-      hasPerm = false;
+      return;
     } else {
       g = hg.client.guilds.get(gId);
       if (!g) {
-        hasPerm = false;
+        self.log('Attempted fetchDay with invalid guildID' + gId);
+        return;
       } else {
         m = g.members.get(userData.id);
         if (!m) {
-          hasPerm = false;
+          self.log(
+              'Attempted fetchDay, but unable to find member in guild' + gId +
+              '@' + userData.id);
+          return;
         }
       }
-    }
-    if (!hasPerm) {
-      replyNoPerm(socket, 'fetchDay');
-      return;
     }
     let game = hg.getGame(gId);
     if (!game || !game.currentGame || !game.currentGame.day) {

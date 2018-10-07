@@ -8,3 +8,4 @@ save/users/*
 save/hgWebClients.json
 save/webClients.json
 save/rigged-counter.txt
+gApiCredentials.json
