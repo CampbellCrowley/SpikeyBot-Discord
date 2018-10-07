@@ -563,8 +563,8 @@ function Patreon() {
      */
     function receivedDiscordRow(err, rows) {
       if (err) {
-        self.error('Failed to lookup user in Discord: ' + uId);
-        console.error(err);
+        /* self.error('Failed to lookup user in Discord: ' + uId);
+        console.error(err); */
         cb('Failed to find user in database.', null);
         return;
       }

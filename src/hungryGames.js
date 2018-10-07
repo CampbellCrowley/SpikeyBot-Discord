@@ -152,33 +152,6 @@ function HungryGames() {
   const fistBoth = './img/fist_both.png';
 
   /**
-   * The size of the icon to show for each event.
-   *
-   * @private
-   * @type {number}
-   * @constant
-   * @default
-   */
-  const iconSize = 64;
-  /**
-   * The size of the icon to show for each battle event.
-   *
-   * @private
-   * @type {number}
-   * @constant
-   * @default
-   */
-  const battleIconSize = 32;
-  /**
-   * The size of the user icons to show for the victors.
-   *
-   * @private
-   * @type {number}
-   * @constant
-   * @default
-   */
-  const victorIconSize = 80;
-  /**
    * The size of the icon to request from discord.
    *
    * @private
@@ -186,16 +159,7 @@ function HungryGames() {
    * @constant
    * @default
    */
-  const fetchSize = 64;
-  /**
-   * Pixels between each icon
-   *
-   * @private
-   * @type {number}
-   * @constant
-   * @default
-   */
-  const iconGap = 4;
+  const fetchSize = 128;
 
   /**
    * Role that a user must have in order to perform any commands.
@@ -360,11 +324,13 @@ function HungryGames() {
     },
     delayEvents: {
       value: 3500,
+      range: {min: 1000, max: 30000},
       time: true,
       comment: 'Delay in milliseconds between each event being printed.',
     },
     delayDays: {
       value: 7000,
+      range: {min: 1000, max: 129600000},  // 1.5 days
       time: true,
       comment: 'Delay in milliseconds between each day being printed.',
     },
@@ -399,6 +365,30 @@ function HungryGames() {
       comment:
           'Probability of each player using their weapon each day if they ' +
           'have one.',
+    },
+    eventAvatarSizes: {
+      value: {avatar: 64, underline: 4, gap: 4},
+      range: {min: 0, max: 512},
+      comment:
+          'The number of pixels each player\'s avatar will be tall and wide, ' +
+          'the underline status height, and the gap between each avatar. This' +
+          'is for all normal events and arena event messages.',
+    },
+    battleAvatarSizes: {
+      value: {avatar: 32, underline: 4, gap: 4},
+      range: {min: 0, max: 512},
+      comment:
+          'The number of pixels each player\'s avatar will be tall and wide, ' +
+          'the underline status height, and the gap between each avatar. This' +
+          'is for each battle turn.',
+    },
+    victorAvatarSizes: {
+      value: {avatar: 80, underline: 4, gap: 4},
+      range: {min: 0, max: 512},
+      comment:
+          'The number of pixels each player\'s avatar will be tall and wide, ' +
+          'the underline status height, and the gap between each avatar. This' +
+          ' is when announcing the winners of the game.',
     },
     disableOutput: {
       value: false,
@@ -1568,6 +1558,9 @@ function HungryGames() {
     function onPermResponse(err, info, p) {
       if (err) return;
       let values = info.status;
+      if (values.length > 0) {
+        p.settings['isPatron'] = true;
+      }
       for (let i = 0; i < values.length; i++) {
         if (!patreonSettingKeys.includes(values[i])) continue;
         self.bot.patreon.getSettingValue(p.id, values[i], (function(p, v) {
@@ -3596,7 +3589,10 @@ function HungryGames() {
       embed.addField(message[1], message[2]);
       embed.setColor([50, 0, 0]);
 
-      if (events[index].attacks[battleState].icons.length === 0) {
+      const avatarSizes = find(id).options.battleAvatarSizes;
+      const battleIconSize = avatarSizes.avatar;
+      if (battleIconSize === 0 ||
+          events[index].attacks[battleState].icons.length === 0) {
         // Send without image.
         if (!battleMessage[id]) {
           if (!find(id).options.disableOutput) {
@@ -3615,26 +3611,33 @@ function HungryGames() {
           battleMessage[id].edit(message[0], embed);
         }
       } else {
+        const iconGap = avatarSizes.gap;
+        const underlineSize = avatarSizes.underline;
+
         // Create image, then send.
         let finalImage = new Jimp(
             events[index].attacks[battleState].icons.length *
                     (battleIconSize + iconGap) -
                 iconGap,
-            battleIconSize + iconGap);
+            battleIconSize + underlineSize);
         let responses = 0;
         newImage = function(image, outcome, placement) {
           try {
-            image.resize(battleIconSize, battleIconSize);
-            if (outcome == 'dies') {
-              finalImage.blit(
-                  new Jimp(battleIconSize, iconGap, 0xFF0000FF),
-                  placement * (battleIconSize + iconGap), battleIconSize);
-            } else if (outcome == 'wounded') {
-              finalImage.blit(
-                  new Jimp(battleIconSize, iconGap, 0xFFFF00FF),
-                  placement * (battleIconSize + iconGap), battleIconSize);
+            if (battleIconSize > 0) {
+              image.resize(battleIconSize, battleIconSize);
+              if (underlineSize > 0) {
+                if (outcome == 'dies') {
+                  finalImage.blit(
+                      new Jimp(battleIconSize, underlineSize, 0xFF0000FF),
+                      placement * (battleIconSize + iconGap), battleIconSize);
+                } else if (outcome == 'wounded') {
+                  finalImage.blit(
+                      new Jimp(battleIconSize, underlineSize, 0xFFFF00FF),
+                      placement * (battleIconSize + iconGap), battleIconSize);
+                }
+              }
+              finalImage.blit(image, placement * (battleIconSize + iconGap), 0);
             }
-            finalImage.blit(image, placement * (battleIconSize + iconGap), 0);
           } catch (err) {
             console.error(err);
           }
@@ -3643,7 +3646,7 @@ function HungryGames() {
             finalImage.getBuffer(Jimp.MIME_PNG, function(err, out) {
               // Attach file, then send.
               embed.attachFiles(
-                  [new self.Discord.MessageAttachment(out, 'hgEvent.png')]);
+                  [new self.Discord.MessageAttachment(out, 'hgBattle.png')]);
               if (!find(id).options.disableOutput) {
                 msg.channel.send(message[0], embed)
                     .then((msg_) => {
@@ -3685,12 +3688,14 @@ function HungryGames() {
       events[index].state++;
     } else {
       delete battleMessage[id];
-      if (events[index].icons.length === 0) {
+      const avatarSizes = find(id).options.eventAvatarSizes;
+      const iconSize = avatarSizes.avatar;
+      if (iconSize == 0 || events[index].icons.length === 0) {
         if (!find(id).options.disableOutput) {
           msg.channel
               .send(
-                  events[index].message + '\n' +
-                  (events[index].subMessage || ''))
+                  (events[index].mentionString || '') + events[index].message +
+                  '\n' + (events[index].subMessage || ''))
               .catch((err) => {
                 self.error(
                     'Failed to send message without image: ' + msg.channel.id);
@@ -3698,6 +3703,8 @@ function HungryGames() {
               });
         }
       } else {
+        const iconGap = avatarSizes.gap;
+        const underlineSize = avatarSizes.underline;
         let embed = new self.Discord.MessageEmbed();
         if (events[index].subMessage) {
           // embed.addField('\u200B', events[index].subMessage, false);
@@ -3709,25 +3716,29 @@ function HungryGames() {
         embed.setColor([125, 0, 0]);
         let finalImage = new Jimp(
             events[index].icons.length * (iconSize + iconGap) - iconGap,
-            iconSize + iconGap);
+            iconSize + underlineSize);
         let responses = 0;
         newImage = function(image, outcome, placement) {
           try {
-            image.resize(iconSize, iconSize);
-            if (outcome == 'dies') {
-              finalImage.blit(
-                  new Jimp(iconSize, iconGap, 0xFF0000FF),
-                  placement * (iconSize + iconGap), iconSize);
-            } else if (outcome == 'wounded') {
-              finalImage.blit(
-                  new Jimp(iconSize, iconGap, 0xFFFF00FF),
-                  placement * (iconSize + iconGap), iconSize);
-            } else if (outcome == 'thrives') {
-              finalImage.blit(
-                  new Jimp(iconSize, iconGap, 0x00FF00FF),
-                  placement * (iconSize + iconGap), iconSize);
+            if (iconSize > 0) {
+              image.resize(iconSize, iconSize);
+              if (underlineSize > 0) {
+                if (outcome == 'dies') {
+                  finalImage.blit(
+                      new Jimp(iconSize, underlineSize, 0xFF0000FF),
+                      placement * (iconSize + iconGap), iconSize);
+                } else if (outcome == 'wounded') {
+                  finalImage.blit(
+                      new Jimp(iconSize, underlineSize, 0xFFFF00FF),
+                      placement * (iconSize + iconGap), iconSize);
+                } else if (outcome == 'thrives') {
+                  finalImage.blit(
+                      new Jimp(iconSize, underlineSize, 0x00FF00FF),
+                      placement * (iconSize + iconGap), iconSize);
+                }
+              }
+              finalImage.blit(image, placement * (iconSize + iconGap), 0);
             }
-            finalImage.blit(image, placement * (iconSize + iconGap), 0);
           } catch (err) {
             console.error(err);
           }
@@ -3735,7 +3746,7 @@ function HungryGames() {
           if (responses == events[index].icons.length) {
             finalImage.getBuffer(Jimp.MIME_PNG, function(err, out) {
               embed.attachFiles(
-                  [new self.Discord.MessageAttachment(out, 'hgBattle.png')]);
+                  [new self.Discord.MessageAttachment(out, 'hgEvent.png')]);
               if (!find(id).options.disableOutput) {
                 msg.channel.send(events[index].mentionString, embed)
                     .catch((err) => {
@@ -3983,59 +3994,73 @@ function HungryGames() {
                         })
                         .join(' ');
       }
-      let finalImage = new Jimp(
-          find(id).currentGame.teams[lastTeam].players.length *
-                  (victorIconSize + iconGap) -
-              iconGap,
-          victorIconSize + iconGap);
-      let responses = 0;
-      newImage = function(image, userId) {
-        try {
-          image.resize(victorIconSize, victorIconSize);
-          let user = find(id).currentGame.includedUsers.find(function(obj) {
-            return obj.id == userId;
-          });
-          let color = 0x0;
-          if (user && !user.living) {
-            color = 0xFF0000FF;
-          } else if (user && user.state == 'wounded') {
-            color = 0xFFFF00FF;
-          } else if (user) {
-            color = 0x00FF00FF;
+      const avatarSizes = find(id).options.victorAvatarSizes;
+      const victorIconSize = avatarSizes.avatar;
+      if (victorIconSize === 0) {
+        sendAtTime(msg.channel, winnerTag, finalMessage, sendTime);
+      } else {
+        const iconGap = avatarSizes.gap;
+        const underlineSize = avatarSizes.underline;
+        let finalImage = new Jimp(
+            find(id).currentGame.teams[lastTeam].players.length *
+                    (victorIconSize + iconGap) -
+                iconGap,
+            victorIconSize + underlineSize);
+        let responses = 0;
+        newImage = function(image, userId) {
+          try {
+            if (victorIconSize > 0) {
+              image.resize(victorIconSize, victorIconSize);
+              if (underlineSize > 0) {
+                let user =
+                    find(id).currentGame.includedUsers.find(function(obj) {
+                      return obj.id == userId;
+                    });
+                let color = 0x0;
+                if (user && !user.living) {
+                  color = 0xFF0000FF;
+                } else if (user && user.state == 'wounded') {
+                  color = 0xFFFF00FF;
+                } else if (user) {
+                  color = 0x00FF00FF;
+                }
+                finalImage.blit(
+                    new Jimp(victorIconSize, underlineSize, color),
+                    responses * (victorIconSize + iconGap), victorIconSize);
+              }
+              finalImage.blit(image, responses * (victorIconSize + iconGap), 0);
+            }
+          } catch (err) {
+            console.error(err);
           }
-          finalImage.blit(
-              new Jimp(victorIconSize, iconGap, color),
-              responses * (victorIconSize + iconGap), victorIconSize);
-          finalImage.blit(image, responses * (victorIconSize + iconGap), 0);
-        } catch (err) {
-          console.error(err);
-        }
-        responses++;
-        if (responses == find(id).currentGame.teams[lastTeam].players.length) {
-          finalImage.getBuffer(Jimp.MIME_PNG, function(err, out) {
-            finalMessage.attachFiles(
-                [new self.Discord.MessageAttachment(out, 'hgTeamVictor.png')]);
-            sendAtTime(msg.channel, winnerTag, finalMessage, sendTime);
-          });
-        }
-      };
-      find(id).currentGame.teams[lastTeam].players.forEach(function(player) {
-        player = find(id).currentGame.includedUsers.find(function(obj) {
-          return obj.id == player;
-        });
-        let icon = player.avatarURL;
-        let userId = player.id;
-        Jimp.read(icon)
-            .then(function(userId) {
-              return function(image) {
-                newImage(image, userId);
-              };
-            }(userId))
-            .catch(function(err) {
-              console.log(err);
-              responses++;
+          responses++;
+          if (responses ==
+              find(id).currentGame.teams[lastTeam].players.length) {
+            finalImage.getBuffer(Jimp.MIME_PNG, function(err, out) {
+              finalMessage.attachFiles([new self.Discord.MessageAttachment(
+                  out, 'hgTeamVictor.png')]);
+              sendAtTime(msg.channel, winnerTag, finalMessage, sendTime);
             });
-      });
+          }
+        };
+        find(id).currentGame.teams[lastTeam].players.forEach(function(player) {
+          player = find(id).currentGame.includedUsers.find(function(obj) {
+            return obj.id == player;
+          });
+          let icon = player.avatarURL;
+          let userId = player.id;
+          Jimp.read(icon)
+              .then(function(userId) {
+                return function(image) {
+                  newImage(image, userId);
+                };
+              }(userId))
+              .catch(function(err) {
+                console.log(err);
+                responses++;
+              });
+        });
+      }
     } else {
       self.client.setTimeout(function() {
         let winnerTag = '';
@@ -4653,13 +4678,17 @@ function HungryGames() {
    * @param {Array.<string|boolean|number>} values All keys leading to the final
    * value, as well as the final value.
    * @param {string} id The id of the guild this was triggered for.
+   * @param {{min: number, max: number}} [range] Allowable range for values that
+   * are numbers.
    * @return {string} Message saying what happened. Can be an error message.
    */
-  function changeObjectValue(obj, defaultObj, option, value, values, id) {
+  function changeObjectValue(
+      obj, defaultObj, option, value, values, id, range) {
     let type = typeof defaultObj[option];
     if (type !== 'undefined' &&
         typeof defaultObj[option].value !== 'undefined') {
       type = typeof defaultObj[option].value;
+      range = range || defaultObj[option].range;
     }
     if (type === 'number') {
       value = Number(value);
@@ -4667,9 +4696,14 @@ function HungryGames() {
         return 'That is not a valid value for ' + option +
             ', which requires a number. (Currently ' + obj[option] + ')';
       } else {
-        if ((option == 'delayDays' || option == 'delayEvents') && value < 500) {
-          value = 1000;
+        if (range) {
+          if (value < range.min) value = range.min;
+          if (value > range.max) value = range.max;
         }
+        /* if ((option == 'delayDays' || option == 'delayEvents') && value <
+        500) {
+          value = 1000;
+        } */
 
         let old = obj[option];
         obj[option] = value;
@@ -4714,7 +4748,7 @@ function HungryGames() {
       } else {
         return changeObjectValue(
             obj[option], defaultObj[option].value || defaultObj[option],
-            values[1], values[2], values.slice(3), id);
+            values[1], values[2], values.slice(3), id, range);
       }
     } else {
       return 'Changing the value of this option does not work yet. (' + option +

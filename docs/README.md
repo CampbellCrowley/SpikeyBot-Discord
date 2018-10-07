@@ -857,11 +857,7 @@ Hunger Games simulator.
         * [~fistLeft](#HungryGames..fistLeft) : <code>string</code> ℗
         * [~fistRight](#HungryGames..fistRight) : <code>string</code> ℗
         * [~fistBoth](#HungryGames..fistBoth) : <code>string</code> ℗
-        * [~iconSize](#HungryGames..iconSize) : <code>number</code> ℗
-        * [~battleIconSize](#HungryGames..battleIconSize) : <code>number</code> ℗
-        * [~victorIconSize](#HungryGames..victorIconSize) : <code>number</code> ℗
         * [~fetchSize](#HungryGames..fetchSize) : <code>number</code> ℗
-        * [~iconGap](#HungryGames..iconGap) : <code>number</code> ℗
         * [~roleName](#HungryGames..roleName) : <code>string</code> ℗
         * [~numEventsPerPage](#HungryGames..numEventsPerPage) : <code>number</code> ℗
         * [~maxReactAwaitTime](#HungryGames..maxReactAwaitTime) : <code>number</code> ℗
@@ -922,7 +918,7 @@ Hunger Games simulator.
         * [~listPlayers(msg, id)](#HungryGames..listPlayers) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~getName(guild, user)](#HungryGames..getName) ⇒ <code>string</code> ℗
         * [~toggleOpt(msg, id)](#HungryGames..toggleOpt) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
-        * [~changeObjectValue(obj, defaultObj, option, value, values, id)](#HungryGames..changeObjectValue) ⇒ <code>string</code> ℗
+        * [~changeObjectValue(obj, defaultObj, option, value, values, id, [range])](#HungryGames..changeObjectValue) ⇒ <code>string</code> ℗
         * [~showOpts(msg, options)](#HungryGames..showOpts) ℗
         * [~optChangeListener(msg_, options, index)](#HungryGames..optChangeListener) ℗
         * [~editTeam(msg, id, [silent])](#HungryGames..editTeam) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
@@ -1794,45 +1790,13 @@ The file path to read attacking both directions image.
 **Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
 **Default**: <code>&quot;./img/fist_both.png&quot;</code>  
 **Access**: private  
-<a name="HungryGames..iconSize"></a>
-
-### HungryGames~iconSize : <code>number</code> ℗
-The size of the icon to show for each event.
-
-**Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
-**Default**: <code>64</code>  
-**Access**: private  
-<a name="HungryGames..battleIconSize"></a>
-
-### HungryGames~battleIconSize : <code>number</code> ℗
-The size of the icon to show for each battle event.
-
-**Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
-**Default**: <code>32</code>  
-**Access**: private  
-<a name="HungryGames..victorIconSize"></a>
-
-### HungryGames~victorIconSize : <code>number</code> ℗
-The size of the user icons to show for the victors.
-
-**Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
-**Default**: <code>80</code>  
-**Access**: private  
 <a name="HungryGames..fetchSize"></a>
 
 ### HungryGames~fetchSize : <code>number</code> ℗
 The size of the icon to request from discord.
 
 **Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
-**Default**: <code>64</code>  
-**Access**: private  
-<a name="HungryGames..iconGap"></a>
-
-### HungryGames~iconGap : <code>number</code> ℗
-Pixels between each icon
-
-**Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
-**Default**: <code>4</code>  
+**Default**: <code>128</code>  
 **Access**: private  
 <a name="HungryGames..roleName"></a>
 
@@ -2598,7 +2562,7 @@ Change an option to a value that the user specifies.
 
 <a name="HungryGames..changeObjectValue"></a>
 
-### HungryGames~changeObjectValue(obj, defaultObj, option, value, values, id) ⇒ <code>string</code> ℗
+### HungryGames~changeObjectValue(obj, defaultObj, option, value, values, id, [range]) ⇒ <code>string</code> ℗
 Recurse through an object to change a certain child value based off a given
 array of words.
 
@@ -2614,6 +2578,7 @@ array of words.
 | value | <code>number</code> \| <code>boolean</code> \| <code>string</code> | The value to change to, or the next option key to check if we have not found an end to a branch yet. |
 | values | <code>Array.&lt;(string\|boolean\|number)&gt;</code> | All keys leading to the final value, as well as the final value. |
 | id | <code>string</code> | The id of the guild this was triggered for. |
+| [range] | <code>Object</code> | Allowable range for values that are numbers. |
 
 <a name="HungryGames..showOpts"></a>
 
