@@ -283,7 +283,19 @@
             {
               "description": "Basic Usage",
               "command": "join",
-              "result": "The bot will join the voice channel you are in. This may cause it to stop playing music, or skip the currently playing song."
+              "result": "The bot will join the voice channel you are in and continue playing music."
+            }
+          ]
+        },
+        {
+          "command": "follow",
+          "aliases": "follow, unfollow, stalk, stalkme",
+          "description": "When you change voice channels, the bot will follow you into your new channel and continue playing music.",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "follow",
+              "result": "The bot will start following you or stop following you."
             }
           ]
         },

@@ -74,10 +74,10 @@ function Music() {
    * actually playing the audio.
    * @property {?Discord~VoiceConnection} voice The current voice connection
    * audio is being streamed to.
+   * @property {?Discord~StreamDispatcher} dispatcher The Discord dispatcher for
+   * the current audio channel.
    * @property {?Object} current The current broadcast information including
    * thread, readable stream, and song information.
-   * @property {?Interval} interval The interval for checking if we are done
-   * playing audio.
    */
 
   /**
@@ -88,6 +88,15 @@ function Music() {
    * @type {Object.<Music~Broadcast>}
    */
   let broadcasts = {};
+
+  /**
+   * The current user IDs of the users to follow into new voice channels. This
+   * is mapped by guild id.
+   *
+   * @private
+   * @type {Object.<string>}
+   */
+  let follows = {};
 
   /**
    * Special cases of requests to handle seperately.
@@ -155,6 +164,8 @@ function Music() {
     self.command.on(['remove', 'dequeue'], commandRemove, true);
     self.command.on('lyrics', commandLyrics);
     self.command.on('record', commandRecord, true);
+    self.command.on(
+        ['follow', 'unfollow', 'stalk', 'stalkme'], commandFollow, true);
 
     self.command.on('kokomo', (msg) => {
       msg.content = msg.prefix + 'play kokomo';
@@ -192,6 +203,7 @@ function Music() {
     self.command.deleteEvent('vi');
     self.command.deleteEvent('airhorn');
     self.command.deleteEvent('rickroll');
+    self.command.deleteEvent('follow');
 
     self.client.removeListener('voiceStateUpdate', handleVoiceStateUpdate);
   };
@@ -213,6 +225,7 @@ function Music() {
   }
   /**
    * Replies to the author and channel of msg with the given message.
+   * @deprecated Use {@link Common.reply} instead.
    *
    * @private
    * @param {Discord~Message} msg Message to reply to.
@@ -221,8 +234,7 @@ function Music() {
    * @return {Promise} Promise of Discord~Message that we attempted to send.
    */
   function reply(msg, text, post) {
-    post = post || '';
-    return msg.channel.send(mention(msg) + '\n```\n' + text + '\n```' + post);
+    return self.common.reply(msg, text, post);
   }
 
   /**
@@ -235,11 +247,43 @@ function Music() {
    * @listens Discord~Client#voiceStateUpdate
    */
   function handleVoiceStateUpdate(oldState, newState) {
-    if (oldState.channel && oldState.channel.members &&
-        oldState.channel.members.size === 1 &&
-        oldState.channel.members.get(self.client.user.id)) {
-      self.log('Leaving voice channel because everyone left me to be alone :(');
-      oldState.channel.leave();
+    // User set to follow has changed channel.
+    if (follows[oldState.guild.id] == oldState.id && newState.channelID) {
+      newState.channel.join().catch(() => {});
+      return;
+    }
+    let broadcast = broadcasts[oldState.guild.id];
+    if (broadcast) {
+      if (oldState.channel && oldState.channel.members) {
+        if (oldState.channel.members.size === 1 &&
+            oldState.channel.members.get(self.client.user.id)) {
+          if (pauseBroadcast(broadcast)) {
+            if (broadcast.current.request &&
+                broadcast.current.request.channel) {
+              let prefix = self.bot.getPrefix(oldState.guild.id);
+              let followInst = '';
+              if (oldState.channelID && newState.channelID) {
+                followInst = '\n`' + prefix + 'join` to join your channel.';
+              }
+
+              self.common.reply(
+                  broadcast.current.request,
+                  'Music paused because everyone left me alone :(\nType `' +
+                      prefix + 'resume`, to unpause the music.' + followInst);
+            }
+          }
+        }
+      }
+      // If the bot changed channel, continue playing previous music.
+      if (oldState.id === self.client.user.id && broadcast.voice &&
+          broadcast.voice.channel.id != newState.channelID &&
+          oldState.channelID != newState.channelID && oldState.channelID &&
+          newState.channelID && newState.channel &&
+          newState.channel.connection) {
+        broadcast.voice = newState.channel.connection;
+        broadcast.dispatcher =
+            broadcast.voice.play(broadcast.broadcast, streamOptions);
+      }
     }
   }
 
@@ -248,20 +292,60 @@ function Music() {
    *
    * @private
    * @param {Object} info The info received from ytdl about the song.
+   * @param {Discord~StreamDispatcher} [dispatcher] The broadcast dispatcher
+   * that is currently broadcasting audio. If defined, this will be used to
+   * determine remaining play time.
    * @return {Discord~MessageEmbed} The formatted song info.
    */
-  function formatSongInfo(info) {
+  function formatSongInfo(info, dispatcher) {
+    let remaining = '';
+    let currentTime = '';
+    if (dispatcher) {
+      currentTime =
+          '[' + formatPlaytime(
+                    Math.round(
+                        (dispatcher.totalStreamTime - dispatcher.pausedTime) /
+                        1000)) +
+          '] / ';
+      remaining = ' (' + formatPlaytime(getRemainingSeconds(info, dispatcher)) +
+          ' left)';
+    }
     let output = new self.Discord.MessageEmbed();
     output.setDescription(
         info.title + '\nUploaded by ' + info.uploader + '\n[👍 ' +
         formNum(info.like_count) + ' 👎 ' + formNum(info.dislike_count) +
-        '][👁️ ' + formNum(info.view_count) + ']\n[' +
-        Math.floor(info._duration_raw / 60) + 'm ' + info._duration_raw % 60 +
-        's]');
+        '][👁️ ' + formNum(info.view_count) + ']\n' + currentTime + '[' +
+        formatPlaytime(info._duration_raw) + ']' + remaining);
     if (info.thumbnail) output.setThumbnail(info.thumbnail);
     output.setURL(info.webpage_url);
     output.setColor([50, 200, 255]);
     return output;
+  }
+
+  /**
+   * Get the remaining playtime in the given song info and broadcast.
+   *
+   * @private
+   * @param {Object} info The song info received from ytdl.
+   * @param {Discord~StreamDispatcher} dispatcher The dispatcher playing the
+   * song currently.
+   * @return {number} Number of seconds remaining in the song playtime.
+   */
+  function getRemainingSeconds(info, dispatcher) {
+    if (!dispatcher.totalStreamTime) return info._duration_raw;
+    return info._duration_raw -
+        Math.round((dispatcher.totalStreamTime - dispatcher.pausedTime) / 1000);
+  }
+
+  /**
+   * Format the given number of seconds into the playtime format.
+   *
+   * @private
+   * @param {number} seconds The duration in seconds.
+   * @return {string} The formatted string in minutes and seconds.
+   */
+  function formatPlaytime(seconds) {
+    return Math.floor(seconds / 60) + 'm ' + seconds % 60 + 's';
   }
   /**
    * Add commas between digits on large numbers.
@@ -416,23 +500,24 @@ function Music() {
     broadcast.voice.on('disconnect', () => {
       if (broadcast.current.readable) broadcast.current.readable.destroy();
       if (broadcast.current.thread) broadcast.current.thread.kill();
-      if (broadcast.interval) self.client.clearInterval(broadcast.interval);
     });
 
     // Setup readable stream for audio data.
     broadcast.current.readable = new Readable();
     broadcast.current.readable._read = function() {};
-    broadcast.broadcast =
-        broadcast.voice.play(broadcast.current.readable, streamOptions);
+    broadcast.broadcast = self.client.createVoiceBroadcast();
+    broadcast.broadcast.play(broadcast.current.readable);
+    broadcast.dispatcher =
+        broadcast.voice.play(broadcast.broadcast, streamOptions);
 
-    broadcast.broadcast.on('end', function() {
+    broadcast.broadcast.dispatcher.on('end', function() {
       endSong(broadcast);
     });
-    broadcast.broadcast.on('close', function() {
+    broadcast.broadcast.dispatcher.on('close', function() {
       endSong(broadcast);
     });
 
-    broadcast.broadcast.on('error', function(err) {
+    broadcast.dispatcher.on('error', function(err) {
       self.error('Error in starting broadcast');
       console.log(err);
       broadcast.current.request.channel.send(
@@ -558,7 +643,7 @@ function Music() {
   function commandPause(msg) {
     if (!broadcasts[msg.guild.id]) {
       self.common.reply(msg, 'Nothing is playing!');
-    } else if (!broadcasts[msg.guild.id].broadcast) {
+    } else if (!broadcasts[msg.guild.id].dispatcher) {
       self.common.reply(msg, 'Nothing is playing!');
     } else {
       if (pauseBroadcast(broadcasts[msg.guild.id])) {
@@ -579,10 +664,12 @@ function Music() {
    * already paused or nothing is playing.
    */
   function pauseBroadcast(broadcast) {
+    if (!broadcast) return false;
     if (!broadcast.broadcast) return false;
-    if (!broadcast.broadcast.pause) return false;
-    if (broadcast.broadcast.paused) return false;
-    broadcast.broadcast.pause(true);
+    if (!broadcast.broadcast.dispatcher) return false;
+    if (!broadcast.broadcast.dispatcher.pause) return false;
+    if (broadcast.broadcast.dispatcher.paused) return false;
+    broadcast.broadcast.dispatcher.pause(true);
     return true;
   }
 
@@ -597,13 +684,14 @@ function Music() {
   function commandResume(msg) {
     if (!broadcasts[msg.guild.id]) {
       self.common.reply(msg, 'Nothing is playing!');
-    } else if (!broadcasts[msg.guild.id].broadcast) {
+    } else if (!broadcasts[msg.guild.id].dispatcher) {
       self.common.reply(msg, 'Nothing is playing!');
     } else {
       if (resumeBroadcast(broadcasts[msg.guild.id])) {
         self.common.reply(msg, 'Music resumed.');
       } else {
-        self.common.reply(msg, 'Music was already playing!');
+        self.common.reply(
+            msg, 'I am unable to resume. I need music to play to somebody.');
       }
     }
   }
@@ -615,13 +703,20 @@ function Music() {
    * @param {Music~Broadcast} broadcast The object storing all relevant
    * information.
    * @return {boolean} If the music was actully resumed. False if the music is
-   * already playing or nothing is playing.
+   * already playing or nothing is playing or the bot is alone in a channel.
    */
   function resumeBroadcast(broadcast) {
+    if (!broadcast) return false;
     if (!broadcast.broadcast) return false;
-    if (!broadcast.broadcast.resume) return false;
-    if (!broadcast.broadcast.paused) return false;
-    broadcast.broadcast.resume();
+    if (!broadcast.broadcast.dispatcher) return false;
+    if (!broadcast.broadcast.dispatcher.resume) return false;
+    if (!broadcast.broadcast.dispatcher.paused) return false;
+    if (!broadcast.voice ||
+        (broadcast.voice.channel.members.size === 1 &&
+         broadcast.voice.channel.members.get(self.client.user.id))) {
+      return false;
+    }
+    broadcast.broadcast.dispatcher.resume();
     return true;
   }
 
@@ -651,7 +746,6 @@ function Music() {
           queue: [],
           skips: {},
           isPlaying: false,
-          broadcast: self.client.createVoiceBroadcast(),
         };
         enqueueSong(broadcasts[msg.guild.id], song, msg);
       } else {
@@ -706,8 +800,12 @@ function Music() {
   function commandLeave(msg) {
     msg.guild.members.fetch(self.client.user).then((me) => {
       if (me.voice.channel) {
+        let followMsg = follows[msg.guild.id] ?
+            'No longer following <@' + follows[msg.guild.id] + '>' :
+            null;
+        delete follows[msg.guild.id];
         me.voice.channel.leave();
-        reply(msg, 'Goodbye!');
+        reply(msg, 'Goodbye!', followMsg);
       } else {
         reply(msg, 'I\'m not playing anything.');
       }
@@ -748,7 +846,9 @@ function Music() {
       let embed;
       if (broadcasts[msg.guild.id].current) {
         if (broadcasts[msg.guild.id].current.info) {
-          embed = formatSongInfo(broadcasts[msg.guild.id].current.info);
+          embed = formatSongInfo(
+              broadcasts[msg.guild.id].current.info,
+              broadcasts[msg.guild.id].broadcast.dispatcher);
         } else {
           embed = new self.Discord.MessageEmbed();
           embed.setColor([50, 200, 255]);
@@ -759,17 +859,24 @@ function Music() {
         embed = new self.Discord.MessageEmbed();
       }
       if (broadcasts[msg.guild.id].queue.length > 0) {
+        let queueDuration = 0;
+        let queueExact = true;
+        let queueString = broadcasts[msg.guild.id]
+                              .queue
+                              .map(function(obj, index) {
+                                if (obj.info) {
+                                  queueDuration += obj.info._duration_raw;
+                                  return (index + 1) + ') ' + obj.info.title;
+                                } else {
+                                  queueExact = false;
+                                  return (index + 1) + ') ' + obj.song;
+                                }
+                              })
+                              .join('\n');
         embed.addField(
-            'Queue', broadcasts[msg.guild.id]
-                         .queue
-                         .map(function(obj, index) {
-                           if (obj.info) {
-                             return (index + 1) + ') ' + obj.info.title;
-                           } else {
-                             return (index + 1) + ') ' + obj.song;
-                           }
-                         })
-                         .join('\n'));
+            'Queue [' + (queueExact ? '' : '>') +
+                formatPlaytime(queueDuration) + ']',
+            queueString.substr(0, 1024));
       }
       msg.channel.send(embed);
     }
@@ -1070,6 +1177,38 @@ function Music() {
         .catch((err) => {
           reply(msg, 'I am unable to join your voice channel.', err.message);
         });
+  }
+
+  /**
+   * Follow a user as they change voice channels.
+   *
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg The message that triggered command.
+   * @listens SpikeyBot~Command#join
+   */
+  function commandFollow(msg) {
+    if (follows[msg.guild.id]) {
+      if (follows[msg.guild.id] == msg.member.id) {
+        delete follows[msg.guild.id];
+        self.common.reply(
+            msg, 'I will no longer follow you to new voice channels.');
+      } else {
+        self.common.reply(
+            msg, 'I will follow you into new voice channels.\nType ' +
+                self.bot.getPrefix(msg.guild.id) +
+                'follow to make me stop following you.',
+            'I will no longer follow <@' + follows[msg.guild.id] + '>');
+        follows[msg.guild.id] = memberId;
+      }
+    } else {
+      follows[msg.guild.id] = msg.member.id;
+      self.common.reply(
+          msg,
+          'When you change voice channels, I will follow you and continue ' +
+              'playing music.\nType ' + self.bot.getPrefix(msg.guild.id) +
+              'follow to make me stop following you.');
+    }
   }
 
   /**

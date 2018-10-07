@@ -3486,7 +3486,8 @@ function HungryGames() {
       if (mention) {
         mentionString += '<@' + affectedUsers[i].id + '>';
       }
-      if (affectedUsers[i].settings['hg:fun_translators'] &&
+      if (affectedUsers[i].settings &&
+          affectedUsers[i].settings['hg:fun_translators'] &&
           affectedUsers[i].settings['hg:fun_translators'] !== 'disabled') {
         translator = affectedUsers[i].settings['hg:fun_translators'];
       }

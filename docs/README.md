@@ -4159,15 +4159,18 @@ Music and audio related commands.
         * [.streamToOgg(input, file)](#Music.streamToOgg)
     * _inner_
         * [~broadcasts](#Music..broadcasts) : [<code>Object.&lt;Broadcast&gt;</code>](#Music..Broadcast) ℗
+        * [~follows](#Music..follows) : <code>Object.&lt;string&gt;</code> ℗
         * [~geniusClient](#Music..geniusClient) : <code>string</code> ℗
         * [~geniusRequest](#Music..geniusRequest) : <code>Object</code> ℗
         * [~special](#Music..special) : <code>Object.&lt;Object.&lt;{cmd: string, url: ?string, file: string}&gt;&gt;</code> ℗
         * [~ytdlOpts](#Music..ytdlOpts) : <code>Array.&lt;string&gt;</code> ℗
         * [~streamOptions](#Music..streamOptions) : <code>Discord~StreamOptions</code> ℗
         * [~mention(msg)](#Music..mention) ⇒ <code>string</code> ℗
-        * [~reply(msg, text, post)](#Music..reply) ⇒ <code>Promise</code> ℗
+        * ~~[~reply(msg, text, post)](#Music..reply) ⇒ <code>Promise</code> ℗~~
         * [~handleVoiceStateUpdate(oldState, newState)](#Music..handleVoiceStateUpdate) ℗
-        * [~formatSongInfo(info)](#Music..formatSongInfo) ⇒ <code>Discord~MessageEmbed</code> ℗
+        * [~formatSongInfo(info, [dispatcher])](#Music..formatSongInfo) ⇒ <code>Discord~MessageEmbed</code> ℗
+        * [~getRemainingSeconds(info, dispatcher)](#Music..getRemainingSeconds) ⇒ <code>number</code> ℗
+        * [~formatPlaytime(seconds)](#Music..formatPlaytime) ⇒ <code>string</code> ℗
         * [~formNum(num)](#Music..formNum) ⇒ <code>string</code> ℗
         * [~enqueueSong(broadcast, song, msg, info)](#Music..enqueueSong) ℗
         * [~startPlaying(broadcast)](#Music..startPlaying) ℗
@@ -4190,6 +4193,7 @@ Music and audio related commands.
         * [~fetchLyricsPage(msg, url, title, thumb)](#Music..fetchLyricsPage) ℗
         * [~stripLyrics(msg, content, title, url, thumb)](#Music..stripLyrics) ℗
         * [~commandRecord(msg)](#Music..commandRecord) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~commandFollow(msg)](#Music..commandFollow) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~formatDateTime(date)](#Music..formatDateTime) ⇒ <code>string</code> ℗
         * [~monthToShort(month)](#Music..monthToShort) ⇒ <code>string</code> ℗
         * [~Broadcast](#Music..Broadcast) : <code>Object</code>
@@ -4396,6 +4400,14 @@ Stored by guild id.
 
 **Kind**: inner property of [<code>Music</code>](#Music)  
 **Access**: private  
+<a name="Music..follows"></a>
+
+### Music~follows : <code>Object.&lt;string&gt;</code> ℗
+The current user IDs of the users to follow into new voice channels. This
+is mapped by guild id.
+
+**Kind**: inner property of [<code>Music</code>](#Music)  
+**Access**: private  
 <a name="Music..geniusClient"></a>
 
 ### Music~geniusClient : <code>string</code> ℗
@@ -4450,7 +4462,9 @@ Creates formatted string for mentioning the author of msg.
 
 <a name="Music..reply"></a>
 
-### Music~reply(msg, text, post) ⇒ <code>Promise</code> ℗
+### ~~Music~reply(msg, text, post) ⇒ <code>Promise</code> ℗~~
+***Deprecated***
+
 Replies to the author and channel of msg with the given message.
 
 **Kind**: inner method of [<code>Music</code>](#Music)  
@@ -4479,7 +4493,7 @@ and recordings to stop.
 
 <a name="Music..formatSongInfo"></a>
 
-### Music~formatSongInfo(info) ⇒ <code>Discord~MessageEmbed</code> ℗
+### Music~formatSongInfo(info, [dispatcher]) ⇒ <code>Discord~MessageEmbed</code> ℗
 Format the info response from ytdl into a human readable format.
 
 **Kind**: inner method of [<code>Music</code>](#Music)  
@@ -4489,6 +4503,34 @@ Format the info response from ytdl into a human readable format.
 | Param | Type | Description |
 | --- | --- | --- |
 | info | <code>Object</code> | The info received from ytdl about the song. |
+| [dispatcher] | <code>Discord~StreamDispatcher</code> | The broadcast dispatcher that is currently broadcasting audio. If defined, this will be used to determine remaining play time. |
+
+<a name="Music..getRemainingSeconds"></a>
+
+### Music~getRemainingSeconds(info, dispatcher) ⇒ <code>number</code> ℗
+Get the remaining playtime in the given song info and broadcast.
+
+**Kind**: inner method of [<code>Music</code>](#Music)  
+**Returns**: <code>number</code> - Number of seconds remaining in the song playtime.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| info | <code>Object</code> | The song info received from ytdl. |
+| dispatcher | <code>Discord~StreamDispatcher</code> | The dispatcher playing the song currently. |
+
+<a name="Music..formatPlaytime"></a>
+
+### Music~formatPlaytime(seconds) ⇒ <code>string</code> ℗
+Format the given number of seconds into the playtime format.
+
+**Kind**: inner method of [<code>Music</code>](#Music)  
+**Returns**: <code>string</code> - The formatted string in minutes and seconds.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| seconds | <code>number</code> | The duration in seconds. |
 
 <a name="Music..formNum"></a>
 
@@ -4639,7 +4681,7 @@ Cause the given broadcast to be resumed.
 
 **Kind**: inner method of [<code>Music</code>](#Music)  
 **Returns**: <code>boolean</code> - If the music was actully resumed. False if the music is
-already playing or nothing is playing.  
+already playing or nothing is playing or the bot is alone in a channel.  
 **Access**: private  
 
 | Param | Type | Description |
@@ -4777,6 +4819,18 @@ server.
 | --- | --- | --- |
 | msg | <code>Discord~Message</code> | The message that triggered the command. |
 
+<a name="Music..commandFollow"></a>
+
+### Music~commandFollow(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Follow a user as they change voice channels.
+
+**Kind**: inner method of [<code>Music</code>](#Music)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message that triggered command. |
+
 <a name="Music..formatDateTime"></a>
 
 ### Music~formatDateTime(date) ⇒ <code>string</code> ℗
@@ -4818,8 +4872,8 @@ Information about a server's music and queue.
 | isPlaying | <code>boolean</code> | Is audio currntly being streamed to the channel. |
 | broadcast | <code>Discord~VoiceBroadcast</code> | The Discord voice broadcast actually playing the audio. |
 | voice | <code>Discord~VoiceConnection</code> | The current voice connection audio is being streamed to. |
+| dispatcher | <code>Discord~StreamDispatcher</code> | The Discord dispatcher for the current audio channel. |
 | current | <code>Object</code> | The current broadcast information including thread, readable stream, and song information. |
-| interval | <code>Interval</code> | The interval for checking if we are done playing audio. |
 
 <a name="Patreon"></a>
 

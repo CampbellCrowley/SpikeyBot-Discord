@@ -90,6 +90,7 @@ See [spikeybot.com](https://www.spikeybot.com/) for examples and more informatio
 | --- | --- | --- |
 | ?play 'url or search' | Play a song in your current voice channel, or add a song to the queue. |  |
 | ?join | Join you in your voice channel. |  |
+| ?follow | When you change voice channels, the bot will follow you into your new channel and continue playing music. | follow, unfollow, stalk, stalkme |
 | ?stop | Stop playing music and leave the voice channel. | leave, stop, stfu |
 | ?skip | Skip the currently playing song. |  |
 | ?queue | View the songs currently in the queue. | q, queue, playing |
