@@ -1058,6 +1058,9 @@ function HungryGames() {
           includeUser(msg, id);
           break;
         case 'options':
+        case 'setting':
+        case 'settings':
+        case 'set':
         case 'option':
         case 'opt':
         case 'opts':

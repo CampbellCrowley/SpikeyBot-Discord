@@ -20,7 +20,7 @@
         {
           "command": "options 'option name' 'value'",
           "description": "List options if no name, or change the option if you give a name.",
-          "aliases": "options, option, opt, opts",
+          "aliases": "options, option, opt, opts, settings, setting, set",
           "examples": [
             {
               "description": "Show Current Options",
