@@ -183,7 +183,14 @@ function SpikeyBot() {
         common.log(
             'Received message from shard ' + shard.id + ': ' +
             JSON.stringify(msg));
-        if (msg === 'reboot hard') {
+        // @TODO: Differentiate between a forced reboot, and a scheduled reboot.
+        if (msg === 'reboot hard force') {
+          common.log('TRIGGERED HARD REBOOT!');
+          manager.shards.forEach((s) => {
+            s.process.kill('SIGHUP');
+          });
+          process.exit(-1);
+        } else if (msg === 'reboot hard') {
           common.log('TRIGGERED HARD REBOOT!');
           manager.shards.forEach((s) => {
             s.process.kill('SIGHUP');
@@ -1016,14 +1023,34 @@ function SpikeyBot() {
   /**
    * Trigger a reboot of the bot. Actually just gracefully shuts down, and
    * expects to be immediately restarted.
+   * @TODO: Support scheduled reload across multiple shards. Currently the bot
+   * waits for the shard at which the command was sent to be ready for reboot
+   * instead of all shard deciding on their own when they're ready to reboot.
+   * This will also need to check that we are obeying Discord's rebooting rate
+   * limits to help reduce downtime.
    *
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
+   * @param {boolean} [silent=false] Suppress reboot scheduling messages.
    * @listens SpikeyBot~Command#reboot
    */
-  function commandReboot(msg) {
+  function commandReboot(msg, silent) {
     if (msg.author.id === common.spikeyId) {
+      let force = msg.content.indexOf(' force') > -1;
+      if (!force) {
+        for (let i = 0; i < subModules.length; i++) {
+          if (subModules[i] && !subModules[i].unloadable()) {
+            if (!silent) {
+              common.reply(msg, 'Reboot scheduled');
+            }
+            setTimeout(function() {
+              commandReboot(msg, true);
+            }, 10000);
+            return;
+          }
+        }
+      }
       for (let i = 0; i < subModules.length; i++) {
         try {
           if (subModules[i] && subModules[i].save) subModules[i].save();
@@ -1038,12 +1065,16 @@ function SpikeyBot() {
           console.error(e);
         }
       }
-      const doHardReboot = msg.text.split(' ')[1] === 'hard';
+      const doHardReboot = msg.indexOf('hard') > -1;
       const reboot = function(hard) {
         if (!client.shard || !hard) {
           process.exit(-1);
         } else if (hard) {
-          client.shard.send('reboot hard');
+          if (force) {
+            client.shard.send('reboot hard force');
+          } else {
+            client.shard.send('reboot hard');
+          }
         } else {
           client.shard.respawnAll();
         }

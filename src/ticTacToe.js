@@ -23,6 +23,11 @@ function TicTacToe() {
     self.command.deleteEvent('tictactoe');
   };
 
+  /** @inheritdoc */
+  this.unloadable = function() {
+    return numGames === 0;
+  };
+
   /**
    * Maximum amount of time to wait for reactions to a message. Also becomes
    * maximum amount of time a game will run with no input, because controls will
@@ -57,6 +62,15 @@ function TicTacToe() {
     X: '❌',
     O: '⭕',
   };
+
+  /**
+   * The number of currently active games. Used to determine of submodule is
+   * unloadable.
+   * @private
+   * @type {number}
+   * @default
+   */
+  let numGames = 0;
 
   /**
    * Starts a tic tac toe game. If someone is mentioned it will start a game
@@ -167,6 +181,7 @@ function TicTacToe() {
                 ')',
             '`' + names[0] + '` is X\n`' + names[1] + '` is O', true);
       } else {
+        numGames--;
         embed.addField(
             '\u200B', '`' + names[0] + '` was X\n`' + names[1] + '` was O',
             true);
@@ -196,6 +211,7 @@ function TicTacToe() {
    * @param {Discord~TextChannel} channel The text channel to send messages.
    */
   this.createGame = function(players, channel) {
+    numGames++;
     channel.send('`Loading TicTacToe...`').then((msg) => {
       let game = new self.Game(players, msg);
       game.print();

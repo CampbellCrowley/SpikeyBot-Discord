@@ -664,6 +664,14 @@ function HungryGames() {
    */
   let optionMessages = {};
 
+  /**
+   * The last time the currently scheduled reaction event listeners are expected
+   * to end. Used for checking of submoduleis unloadable.
+   * @private
+   * @type {number}
+   */
+  let listenersEndTime = 0;
+
   // Read saved game data from disk.
   fs.readFile(oldSaveFile, function(err, data) {
     if (err) return;
@@ -959,7 +967,7 @@ function HungryGames() {
 
   /** @inheritdoc */
   this.unloadable = function() {
-    return self.getNumSimulating() === 0;
+    return self.getNumSimulating() === 0 && listenersEndTime < Date.now();
   };
 
   /**
@@ -4841,6 +4849,7 @@ function HungryGames() {
     msg_.react(emoji.arrow_left).then(() => {
       msg_.react(emoji.arrow_right);
     });
+    newReact(maxReactAwaitTime);
     msg_.awaitReactions(function(reaction, user) {
           if (user.id != self.client.user.id) {
             reaction.users.remove(user).catch(() => {});
@@ -5226,6 +5235,7 @@ function HungryGames() {
     const authId = msg.author.id;
     self.common.reply(msg, 'Loading...').then((msg_) => {
       newEventMessages[msg.id].myResponse = msg_;
+      newReact(maxReactAwaitTime);
       msg_.awaitReactions(function(reaction, user) {
             return (reaction.emoji.name == emoji.red_circle ||
                     reaction.emoji.name == emoji.trophy) &&
@@ -5677,6 +5687,7 @@ function HungryGames() {
 
     let num = 0;
     regLis = function() {
+      newReact(maxReactAwaitTime);
       msg.awaitReactions(function(reaction, user) {
            if (user.id != self.client.user.id) {
              reaction.users.remove(user).catch(() => {});
@@ -5741,6 +5752,7 @@ function HungryGames() {
         getOutcomeEmoji('dies') + 'Dies, ' + getOutcomeEmoji('wounded') +
         'Wounded, ' + getOutcomeEmoji('thrives') + 'Healed');
 
+    newReact(maxReactAwaitTime);
     msg.awaitReactions(function(reaction, user) {
          return (reaction.emoji.name == getOutcomeEmoji('thrives') ||
                  reaction.emoji.name == getOutcomeEmoji('wounded') ||
@@ -5796,6 +5808,7 @@ function HungryGames() {
   function createEventAttacker(msg, id, show, cb) {
     msg.edit(show);
 
+    newReact(maxReactAwaitTime);
     msg.awaitReactions(function(reaction, user) {
          return (reaction.emoji.name == emoji.white_check_mark ||
                  reaction.emoji.name == emoji.x) &&
@@ -5910,6 +5923,7 @@ function HungryGames() {
             msg, 'Which type of event is this?',
             emoji.red_circle + 'Bloodbath, ' + emoji.trophy + 'Normal.')
         .then((msg_) => {
+          newReact(maxReactAwaitTime);
           msg_.awaitReactions(function(reaction, user) {
                 return user.id == msg.author.id &&
                     (reaction.emoji.name == emoji.red_circle ||
@@ -6112,6 +6126,7 @@ function HungryGames() {
             .join('\n'));
 
     let callback = function(msg_) {
+      newReact(maxReactAwaitTime);
       msg_.awaitReactions(function(reaction, user) {
             if (user.id != self.client.user.id) {
               reaction.users.remove(user).catch(() => {});
@@ -6442,6 +6457,18 @@ function HungryGames() {
           value && typeof value === 'object' ? deepFreeze(value) : value;
     }
     return Object.freeze(object);
+  }
+
+  /**
+   * Update {@link HungryGames~listenersEndTime} because a new listener was
+   * registered with the given duration.
+   * @private
+   * @param {number} duration The length of time the listener will be active.
+   */
+  function newReact(duration) {
+    if (Date.now() + duration > listenersEndTime) {
+      listenersEndTime = Date.now() + duration;
+    }
   }
 
   // Util //

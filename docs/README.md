@@ -443,8 +443,9 @@ Manages a Connect 4 game.
         * [.error(msg)](#SubModule+error)
         * [.shutdown()](#SubModule+shutdown)
         * *[.save([opt])](#SubModule+save)*
-        * *[.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>*
+        * [.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>
     * _inner_
+        * [~numGames](#Connect4..numGames) : <code>number</code> ℗
         * [~maxReactAwaitTime](#Connect4..maxReactAwaitTime) : <code>number</code> ℗
         * [~numRows](#Connect4..numRows) : <code>number</code> ℗
         * [~numCols](#Connect4..numCols) : <code>number</code> ℗
@@ -700,14 +701,24 @@ Saves all data to files necessary for saving current state.
 
 <a name="SubModule+unloadable"></a>
 
-### *connect4.unloadable() ⇒ <code>boolean</code>*
+### connect4.unloadable() ⇒ <code>boolean</code>
 Check if this module is in a state that is ready to be unloaded. If false
 is returned, this module should not be unloaded and doing such may risk
 putting the module into an uncontrollable state.
 
-**Kind**: instance abstract method of [<code>Connect4</code>](#Connect4)  
+**Kind**: instance method of [<code>Connect4</code>](#Connect4)  
+**Overrides**: [<code>unloadable</code>](#SubModule+unloadable)  
 **Returns**: <code>boolean</code> - True if can be unloaded, false if cannot.  
 **Access**: public  
+<a name="Connect4..numGames"></a>
+
+### Connect4~numGames : <code>number</code> ℗
+The number of currently active games. Used to determine of submodule is
+unloadable.
+
+**Kind**: inner property of [<code>Connect4</code>](#Connect4)  
+**Default**: <code>0</code>  
+**Access**: private  
 <a name="Connect4..maxReactAwaitTime"></a>
 
 ### Connect4~maxReactAwaitTime : <code>number</code> ℗
@@ -872,6 +883,7 @@ Hunger Games simulator.
         * [~defaultArenaEvents](#HungryGames..defaultArenaEvents) : [<code>Array.&lt;ArenaEvent&gt;</code>](#HungryGames..ArenaEvent) ℗
         * [~newEventMessages](#HungryGames..newEventMessages) : <code>Object.&lt;Discord~Message&gt;</code> ℗
         * [~optionMessages](#HungryGames..optionMessages) : <code>Object.&lt;Discord~Message&gt;</code> ℗
+        * [~listenersEndTime](#HungryGames..listenersEndTime) : <code>number</code> ℗
         * [~patreonSettingKeys](#HungryGames..patreonSettingKeys) : <code>Array.&lt;string&gt;</code> ℗
         * [~oldSaveFile](#HungryGames..oldSaveFile) : <code>string</code> ℗
         * [~saveFile](#HungryGames..saveFile) : <code>string</code> ℗
@@ -970,6 +982,7 @@ Hunger Games simulator.
         * [~find(id)](#HungryGames..find) ⇒ [<code>GuildGame</code>](#HungryGames..GuildGame) ℗
         * [~calcColNum(numCols, statusList)](#HungryGames..calcColNum) ⇒ <code>number</code> ℗
         * [~deepFreeze(object)](#HungryGames..deepFreeze) ⇒ <code>Object</code> ℗
+        * [~newReact(duration)](#HungryGames..newReact) ℗
         * [~exit([code])](#HungryGames..exit) ℗
         * [~sigint()](#HungryGames..sigint) ℗
         * [~OutcomeProbabilities}](#HungryGames..OutcomeProbabilities}) : <code>Object</code>
@@ -1695,6 +1708,14 @@ Messages I have sent showing current options.
 
 **Kind**: inner property of [<code>HungryGames</code>](#HungryGames)  
 **Default**: <code>{}</code>  
+**Access**: private  
+<a name="HungryGames..listenersEndTime"></a>
+
+### HungryGames~listenersEndTime : <code>number</code> ℗
+The last time the currently scheduled reaction event listeners are expected
+to end. Used for checking of submoduleis unloadable.
+
+**Kind**: inner property of [<code>HungryGames</code>](#HungryGames)  
 **Access**: private  
 <a name="HungryGames..patreonSettingKeys"></a>
 
@@ -2950,6 +2971,19 @@ Recursively freeze all elements of an object.
 | Param | Type | Description |
 | --- | --- | --- |
 | object | <code>Object</code> | The object to deep freeze. |
+
+<a name="HungryGames..newReact"></a>
+
+### HungryGames~newReact(duration) ℗
+Update [listenersEndTime](#HungryGames..listenersEndTime) because a new listener was
+registered with the given duration.
+
+**Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| duration | <code>number</code> | The length of time the listener will be active. |
 
 <a name="HungryGames..exit"></a>
 
@@ -6033,7 +6067,7 @@ Main class that manages the bot.
         * [~commandHelp(msg)](#SpikeyBot..commandHelp) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandUpdateGame(msg)](#SpikeyBot..commandUpdateGame) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandChangePrefix(msg)](#SpikeyBot..commandChangePrefix) : [<code>commandHandler</code>](#commandHandler) ℗
-        * [~commandReboot(msg)](#SpikeyBot..commandReboot) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~commandReboot(msg, [silent])](#SpikeyBot..commandReboot) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandReload(msg)](#SpikeyBot..commandReload) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~reloadSubModules([toReload], [reloaded], [schedule])](#SpikeyBot..reloadSubModules) ⇒ <code>boolean</code> ℗
         * [~saveAll()](#SpikeyBot..saveAll) ℗
@@ -6516,16 +6550,22 @@ Change the custom prefix for the given guild.
 
 <a name="SpikeyBot..commandReboot"></a>
 
-### SpikeyBot~commandReboot(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+### SpikeyBot~commandReboot(msg, [silent]) : [<code>commandHandler</code>](#commandHandler) ℗
 Trigger a reboot of the bot. Actually just gracefully shuts down, and
 expects to be immediately restarted.
 
 **Kind**: inner method of [<code>SpikeyBot</code>](#SpikeyBot)  
 **Access**: private  
+**Todo:**: Support scheduled reload across multiple shards. Currently the bot
+waits for the shard at which the command was sent to be ready for reboot
+instead of all shard deciding on their own when they're ready to reboot.
+This will also need to check that we are obeying Discord's rebooting rate
+limits to help reduce downtime.  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord~Message</code> | Message that triggered command. |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| msg | <code>Discord~Message</code> |  | Message that triggered command. |
+| [silent] | <code>boolean</code> | <code>false</code> | Suppress reboot scheduling messages. |
 
 <a name="SpikeyBot..commandReload"></a>
 
@@ -6865,8 +6905,9 @@ Manages a tic-tac-toe game.
         * [.error(msg)](#SubModule+error)
         * [.shutdown()](#SubModule+shutdown)
         * *[.save([opt])](#SubModule+save)*
-        * *[.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>*
+        * [.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>
     * _inner_
+        * [~numGames](#TicTacToe..numGames) : <code>number</code> ℗
         * [~maxReactAwaitTime](#TicTacToe..maxReactAwaitTime) : <code>number</code> ℗
         * [~emoji](#TicTacToe..emoji) : <code>Object.&lt;string&gt;</code> ℗
         * [~commandTicTacToe(msg)](#TicTacToe..commandTicTacToe) : [<code>commandHandler</code>](#commandHandler) ℗
@@ -7131,14 +7172,24 @@ Saves all data to files necessary for saving current state.
 
 <a name="SubModule+unloadable"></a>
 
-### *ticTacToe.unloadable() ⇒ <code>boolean</code>*
+### ticTacToe.unloadable() ⇒ <code>boolean</code>
 Check if this module is in a state that is ready to be unloaded. If false
 is returned, this module should not be unloaded and doing such may risk
 putting the module into an uncontrollable state.
 
-**Kind**: instance abstract method of [<code>TicTacToe</code>](#TicTacToe)  
+**Kind**: instance method of [<code>TicTacToe</code>](#TicTacToe)  
+**Overrides**: [<code>unloadable</code>](#SubModule+unloadable)  
 **Returns**: <code>boolean</code> - True if can be unloaded, false if cannot.  
 **Access**: public  
+<a name="TicTacToe..numGames"></a>
+
+### TicTacToe~numGames : <code>number</code> ℗
+The number of currently active games. Used to determine of submodule is
+unloadable.
+
+**Kind**: inner property of [<code>TicTacToe</code>](#TicTacToe)  
+**Default**: <code>0</code>  
+**Access**: private  
 <a name="TicTacToe..maxReactAwaitTime"></a>
 
 ### TicTacToe~maxReactAwaitTime : <code>number</code> ℗
