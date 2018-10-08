@@ -1,4 +1,11 @@
 [Commands Help](commands/)
+## Modules
+
+<dl>
+<dt><a href="#module_lib/twemojiChecker">lib/twemojiChecker</a></dt>
+<dd></dd>
+</dl>
+
 ## Classes
 
 <dl>
@@ -19,6 +26,9 @@
 <dt><a href="#Patreon">Patreon</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
 <dd><p>Modifies the SpikeyBot object with an interface for checking the
 Patreon status of users.</p>
+</dd>
+<dt><a href="#Polling">Polling</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
+<dd><p>Controlls poll and vote commands.</p>
 </dd>
 <dt><a href="#SpikeyBot">SpikeyBot</a></dt>
 <dd><p>Main class that manages the bot.</p>
@@ -46,12 +56,25 @@ Patreon status of users.</p>
 </dd>
 </dl>
 
+## Constants
+
+<dl>
+<dt><a href="#re">re</a> : <code>RegExp</code> ℗</dt>
+<dd><p>RegExp based on emoji&#39;s official Unicode standards
+<a href="http://www.unicode.org/Public/UNIDATA/EmojiSources.txt">http://www.unicode.org/Public/UNIDATA/EmojiSources.txt</a>
+<a href="https://github.com/twitter/twemoji/blob/27fe654b2bed5331cf1730bb4fbba1efa40af626/2/twemoji.js#L228">https://github.com/twitter/twemoji/blob/27fe654b2bed5331cf1730bb4fbba1efa40af626/2/twemoji.js#L228</a></p>
+</dd>
+</dl>
+
 ## Functions
 
 <dl>
 <dt><a href="#unhandledRejection">unhandledRejection(reason, p)</a> ℗</dt>
 <dd><p>Handler for an unhandledRejection or uncaughtException, to prevent the bot
 from silently crashing without an error.</p>
+</dd>
+<dt><a href="#match">match(input)</a> ⇒ <code>Array.&lt;string&gt;</code></dt>
+<dd><p>Check a string for any emoji matches.</p>
 </dd>
 </dl>
 
@@ -63,6 +86,9 @@ from silently crashing without an error.</p>
 </dd>
 </dl>
 
+<a name="module_lib/twemojiChecker"></a>
+
+## lib/twemojiChecker
 <a name="Common"></a>
 
 ## Common
@@ -5481,6 +5507,456 @@ information, and the other with data if there was no error.
 | err | <code>string</code> | The error string, or null if no error. |
 | data | <code>Object</code> | The returned data if there was no error. |
 
+<a name="Polling"></a>
+
+## Polling ⇐ [<code>SubModule</code>](#SubModule)
+Controlls poll and vote commands.
+
+**Kind**: global class  
+**Extends**: [<code>SubModule</code>](#SubModule)  
+
+* [Polling](#Polling) ⇐ [<code>SubModule</code>](#SubModule)
+    * _instance_
+        * [.helpMessage](#SubModule+helpMessage) : <code>string</code> \| <code>Discord~MessageEmbed</code>
+        * [.prefix](#SubModule+prefix) : <code>string</code>
+        * [.myPrefix](#SubModule+myPrefix) : <code>string</code>
+        * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
+        * [.Discord](#SubModule+Discord) : <code>Discord</code>
+        * [.client](#SubModule+client) : <code>Discord~Client</code>
+        * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
+        * [.common](#SubModule+common) : [<code>Common</code>](#Common)
+        * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
+        * [.myName](#SubModule+myName) : <code>string</code>
+        * [.initialized](#SubModule+initialized) : <code>boolean</code>
+        * [.commit](#SubModule+commit) : <code>string</code>
+        * [.loadTime](#SubModule+loadTime) : <code>number</code>
+        * [.initialize()](#SubModule+initialize)
+        * [.begin(prefix, Discord, client, command, common, bot)](#SubModule+begin)
+        * [.end()](#SubModule+end)
+        * [.log(msg)](#SubModule+log)
+        * [.error(msg)](#SubModule+error)
+        * [.shutdown()](#SubModule+shutdown)
+        * [.save([opt])](#SubModule+save)
+        * *[.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>*
+    * _inner_
+        * [~Poll](#Polling..Poll) ℗
+            * [new Poll(request, message, options)](#new_Polling..Poll_new)
+            * [.request](#Polling..Poll+request) : <code>Discord~Message</code>
+            * [.message](#Polling..Poll+message) : <code>Discord~Message</code>
+            * [.title](#Polling..Poll+title) : <code>string</code>
+            * [.endTime](#Polling..Poll+endTime) : <code>number</code>
+            * [.emojis](#Polling..Poll+emojis) : <code>Array.&lt;string&gt;</code>
+            * [.choices](#Polling..Poll+choices) : <code>Array.&lt;string&gt;</code>
+            * [.timeout](#Polling..Poll+timeout) : <code>Timeout</code>
+        * [~currentPolls](#Polling..currentPolls) : [<code>Object.&lt;Poll&gt;</code>](#Polling..Poll) ℗
+        * [~guildSubDir](#Polling..guildSubDir) ℗
+        * [~saveFilename](#Polling..saveFilename) ℗
+        * [~defaultEmojis](#Polling..defaultEmojis) ℗
+        * [~parsePollString(string)](#Polling..parsePollString) ℗
+        * [~mkdirAndWrite(dir, filename, data)](#Polling..mkdirAndWrite) ℗
+        * [~mkdirAndWriteSync(dir, filename, data)](#Polling..mkdirAndWriteSync) ℗
+        * [~commandPoll(msg)](#Polling..commandPoll) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~addNextReaction(poll, [index])](#Polling..addNextReaction) ⇒ <code>function</code> ℗
+        * [~commandEndPoll(msg)](#Polling..commandEndPoll) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~endPoll(poll)](#Polling..endPoll) ⇒ <code>boolean</code> ℗
+
+<a name="SubModule+helpMessage"></a>
+
+### polling.helpMessage : <code>string</code> \| <code>Discord~MessageEmbed</code>
+The help message to show the user in the main help message.
+
+**Kind**: instance property of [<code>Polling</code>](#Polling)  
+**Overrides**: [<code>helpMessage</code>](#SubModule+helpMessage)  
+<a name="SubModule+prefix"></a>
+
+### polling.prefix : <code>string</code>
+The main prefix in use for this bot. Only available after begin() is
+called.
+
+**Kind**: instance property of [<code>Polling</code>](#Polling)  
+**Read only**: true  
+<a name="SubModule+myPrefix"></a>
+
+### polling.myPrefix : <code>string</code>
+The prefix this submodule uses. Formed by prepending this.prefix to
+this.postPrefix. this.postPrefix must be defined before begin(), otherwise
+it is ignored.
+
+**Kind**: instance property of [<code>Polling</code>](#Polling)  
+**Read only**: true  
+<a name="SubModule+postPrefix"></a>
+
+### *polling.postPrefix : <code>string</code>*
+The postfix for the global prefix for this subModule. Must be defined
+before begin(), otherwise it is ignored.
+
+**Kind**: instance abstract property of [<code>Polling</code>](#Polling)  
+**Default**: <code>&quot;&quot;</code>  
+<a name="SubModule+Discord"></a>
+
+### polling.Discord : <code>Discord</code>
+The current Discord object instance of the bot.
+
+**Kind**: instance property of [<code>Polling</code>](#Polling)  
+<a name="SubModule+client"></a>
+
+### polling.client : <code>Discord~Client</code>
+The current bot client.
+
+**Kind**: instance property of [<code>Polling</code>](#Polling)  
+<a name="SubModule+command"></a>
+
+### polling.command : [<code>Command</code>](#SpikeyBot..Command)
+The command object for registering command listeners.
+
+**Kind**: instance property of [<code>Polling</code>](#Polling)  
+<a name="SubModule+common"></a>
+
+### polling.common : [<code>Common</code>](#Common)
+The common object.
+
+**Kind**: instance property of [<code>Polling</code>](#Polling)  
+<a name="SubModule+bot"></a>
+
+### polling.bot : [<code>SpikeyBot</code>](#SpikeyBot)
+The parent SpikeyBot instance.
+
+**Kind**: instance property of [<code>Polling</code>](#Polling)  
+<a name="SubModule+myName"></a>
+
+### polling.myName : <code>string</code>
+The name of this submodule. Used for differentiating in the log. Should be
+defined before begin().
+
+**Kind**: instance property of [<code>Polling</code>](#Polling)  
+**Overrides**: [<code>myName</code>](#SubModule+myName)  
+**Access**: protected  
+<a name="SubModule+initialized"></a>
+
+### polling.initialized : <code>boolean</code>
+Has this subModule been initialized yet (Has begin() been called).
+
+**Kind**: instance property of [<code>Polling</code>](#Polling)  
+**Default**: <code>false</code>  
+**Access**: protected  
+**Read only**: true  
+<a name="SubModule+commit"></a>
+
+### polling.commit : <code>string</code>
+The commit at HEAD at the time this module was loaded. Essentially the
+version of this submodule.
+
+**Kind**: instance constant of [<code>Polling</code>](#Polling)  
+**Access**: public  
+<a name="SubModule+loadTime"></a>
+
+### polling.loadTime : <code>number</code>
+The time at which this madule was loaded for use in checking if the module
+needs to be reloaded because the file has been modified since loading.
+
+**Kind**: instance constant of [<code>Polling</code>](#Polling)  
+**Access**: public  
+<a name="SubModule+initialize"></a>
+
+### polling.initialize()
+The function called at the end of begin() for further initialization
+specific to the subModule. Must be defined before begin() is called.
+
+**Kind**: instance method of [<code>Polling</code>](#Polling)  
+**Overrides**: [<code>initialize</code>](#SubModule+initialize)  
+**Access**: protected  
+<a name="SubModule+begin"></a>
+
+### polling.begin(prefix, Discord, client, command, common, bot)
+Initialize this submodule.
+
+**Kind**: instance method of [<code>Polling</code>](#Polling)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| prefix | <code>string</code> | The global prefix for this bot. |
+| Discord | <code>Discord</code> | The Discord object for the API library. |
+| client | <code>Discord~Client</code> | The client that represents this bot. |
+| command | [<code>Command</code>](#SpikeyBot..Command) | The command instance in which to register command listeners. |
+| common | [<code>Common</code>](#Common) | Class storing common functions. |
+| bot | [<code>SpikeyBot</code>](#SpikeyBot) | The parent SpikeyBot instance. |
+
+<a name="SubModule+end"></a>
+
+### polling.end()
+Trigger subModule to shutdown and get ready for process terminating.
+
+**Kind**: instance method of [<code>Polling</code>](#Polling)  
+**Access**: public  
+<a name="SubModule+log"></a>
+
+### polling.log(msg)
+Log using common.log, but automatically set name.
+
+**Kind**: instance method of [<code>Polling</code>](#Polling)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+error"></a>
+
+### polling.error(msg)
+Log using common.error, but automatically set name.
+
+**Kind**: instance method of [<code>Polling</code>](#Polling)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+shutdown"></a>
+
+### polling.shutdown()
+Shutdown and disable this submodule. Removes all event listeners.
+
+**Kind**: instance method of [<code>Polling</code>](#Polling)  
+**Overrides**: [<code>shutdown</code>](#SubModule+shutdown)  
+**Access**: protected  
+<a name="SubModule+save"></a>
+
+### polling.save([opt])
+Saves all data to files necessary for saving current state.
+
+**Kind**: instance method of [<code>Polling</code>](#Polling)  
+**Overrides**: [<code>save</code>](#SubModule+save)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [opt] | <code>string</code> | <code>&quot;&#x27;sync&#x27;&quot;</code> | Can be 'async', otherwise defaults to synchronous. |
+
+<a name="SubModule+unloadable"></a>
+
+### *polling.unloadable() ⇒ <code>boolean</code>*
+Check if this module is in a state that is ready to be unloaded. If false
+is returned, this module should not be unloaded and doing such may risk
+putting the module into an uncontrollable state.
+
+**Kind**: instance abstract method of [<code>Polling</code>](#Polling)  
+**Returns**: <code>boolean</code> - True if can be unloaded, false if cannot.  
+**Access**: public  
+<a name="Polling..Poll"></a>
+
+### Polling~Poll ℗
+Stores data related to a single poll.
+
+**Kind**: inner class of [<code>Polling</code>](#Polling)  
+**Access**: private  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| request | <code>Discord~Message</code> | Reference to the Message object that caused this poll to begin. |
+| message | <code>Discord~Message</code> | Reference to the Message object with the reaction listener. |
+| title | <code>string</code> | The user defined text associated with this poll. |
+| endTime | <code>number</code> | The timestamp at which this poll is scheduled to end. |
+| emojis | <code>Array.&lt;string&gt;</code> | The emojis to add as reactions to use as buttons. |
+| choices | <code>Array.&lt;string&gt;</code> | The full string that came with the emoji if the user specified custom response options. |
+| timeout | <code>Array.&lt;string&gt;</code> | The scheduled timeout when this poll will end. |
+
+
+* [~Poll](#Polling..Poll) ℗
+    * [new Poll(request, message, options)](#new_Polling..Poll_new)
+    * [.request](#Polling..Poll+request) : <code>Discord~Message</code>
+    * [.message](#Polling..Poll+message) : <code>Discord~Message</code>
+    * [.title](#Polling..Poll+title) : <code>string</code>
+    * [.endTime](#Polling..Poll+endTime) : <code>number</code>
+    * [.emojis](#Polling..Poll+emojis) : <code>Array.&lt;string&gt;</code>
+    * [.choices](#Polling..Poll+choices) : <code>Array.&lt;string&gt;</code>
+    * [.timeout](#Polling..Poll+timeout) : <code>Timeout</code>
+
+<a name="new_Polling..Poll_new"></a>
+
+#### new Poll(request, message, options)
+
+| Param | Type | Description |
+| --- | --- | --- |
+| request | <code>Discord~Message</code> | The message that was sent that caused this poll to begin. |
+| message | <code>Discord~Message</code> | The message to watch for the results. |
+| options | <code>Polling~PollOptions</code> | The settings for this current poll. |
+
+<a name="Polling..Poll+request"></a>
+
+#### poll.request : <code>Discord~Message</code>
+Reference to the Message object that caused this poll to begin.
+
+**Kind**: instance property of [<code>Poll</code>](#Polling..Poll)  
+**Access**: public  
+<a name="Polling..Poll+message"></a>
+
+#### poll.message : <code>Discord~Message</code>
+Reference to the Message object with the reaction listener.
+
+**Kind**: instance property of [<code>Poll</code>](#Polling..Poll)  
+**Access**: public  
+<a name="Polling..Poll+title"></a>
+
+#### poll.title : <code>string</code>
+The user defined text associated with this poll.
+
+**Kind**: instance property of [<code>Poll</code>](#Polling..Poll)  
+**Access**: public  
+<a name="Polling..Poll+endTime"></a>
+
+#### poll.endTime : <code>number</code>
+The timestamp at which this poll is scheduled to end.
+
+**Kind**: instance property of [<code>Poll</code>](#Polling..Poll)  
+**Access**: public  
+<a name="Polling..Poll+emojis"></a>
+
+#### poll.emojis : <code>Array.&lt;string&gt;</code>
+The emojis to add as reactions to use as buttons.
+
+**Kind**: instance property of [<code>Poll</code>](#Polling..Poll)  
+**Access**: public  
+<a name="Polling..Poll+choices"></a>
+
+#### poll.choices : <code>Array.&lt;string&gt;</code>
+The full string that came with the emoji if the user specified custom
+response options.
+
+**Kind**: instance property of [<code>Poll</code>](#Polling..Poll)  
+**Access**: public  
+<a name="Polling..Poll+timeout"></a>
+
+#### poll.timeout : <code>Timeout</code>
+The scheduled timeout when this poll will end.
+
+**Kind**: instance property of [<code>Poll</code>](#Polling..Poll)  
+**Access**: public  
+<a name="Polling..currentPolls"></a>
+
+### Polling~currentPolls : [<code>Object.&lt;Poll&gt;</code>](#Polling..Poll) ℗
+Stores the currently cached data about all active polls. Organized by
+message id that is collecting the poll data.
+
+**Kind**: inner property of [<code>Polling</code>](#Polling)  
+**Access**: private  
+<a name="Polling..guildSubDir"></a>
+
+### Polling~guildSubDir ℗
+The subdirectory in the guild to store all member polls.
+
+**Kind**: inner constant of [<code>Polling</code>](#Polling)  
+**Default**: <code>/polls/</code>  
+**Access**: private  
+<a name="Polling..saveFilename"></a>
+
+### Polling~saveFilename ℗
+The filename in the member's subdirectory, in the guild's subdirectory, to
+save a poll's state.
+
+**Kind**: inner constant of [<code>Polling</code>](#Polling)  
+**Default**: <code>/save.json</code>  
+**Access**: private  
+<a name="Polling..defaultEmojis"></a>
+
+### Polling~defaultEmojis ℗
+The default reaction emojis to use for a poll.
+
+**Kind**: inner constant of [<code>Polling</code>](#Polling)  
+**Default**: <code>[&quot;👍&quot;,&quot;👎&quot;,&quot;🤷&quot;]</code>  
+**Access**: private  
+<a name="Polling..parsePollString"></a>
+
+### Polling~parsePollString(string) ℗
+Parse the saved poll data that has been read from file in JSON format.
+
+**Kind**: inner method of [<code>Polling</code>](#Polling)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| string | <code>string</code> | The file data. |
+
+<a name="Polling..mkdirAndWrite"></a>
+
+### Polling~mkdirAndWrite(dir, filename, data) ℗
+Asyncronously create a directory and write a file in the directory.
+
+**Kind**: inner method of [<code>Polling</code>](#Polling)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| dir | <code>string</code> | The file path to create and write the file to. |
+| filename | <code>string</code> | The file name of the file without the path. |
+| data | <code>string</code> | The data to write to the tile. |
+
+<a name="Polling..mkdirAndWriteSync"></a>
+
+### Polling~mkdirAndWriteSync(dir, filename, data) ℗
+Syncronously create a directory and write a file in the directory.
+
+**Kind**: inner method of [<code>Polling</code>](#Polling)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| dir | <code>string</code> | The file path to create and write the file to. |
+| filename | <code>string</code> | The file name of the file without the path. |
+| data | <code>string</code> | The data to write to the tile. |
+
+<a name="Polling..commandPoll"></a>
+
+### Polling~commandPoll(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Starts a poll.
+
+**Kind**: inner method of [<code>Polling</code>](#Polling)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Polling..addNextReaction"></a>
+
+### Polling~addNextReaction(poll, [index]) ⇒ <code>function</code> ℗
+Create a callback for adding all reactions to a message.
+
+**Kind**: inner method of [<code>Polling</code>](#Polling)  
+**Returns**: <code>function</code> - The callback to run on Promise completion.  
+**Access**: private  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| poll | [<code>Poll</code>](#Polling..Poll) |  | The poll object for adding reactions. |
+| [index] | <code>number</code> | <code>0</code> | The index of the emoji to add first. |
+
+<a name="Polling..commandEndPoll"></a>
+
+### Polling~commandEndPoll(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Ends a poll.
+
+**Kind**: inner method of [<code>Polling</code>](#Polling)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Polling..endPoll"></a>
+
+### Polling~endPoll(poll) ⇒ <code>boolean</code> ℗
+End a poll. Does not remove it from [currentPolls](#Polling..currentPolls).
+
+**Kind**: inner method of [<code>Polling</code>](#Polling)  
+**Returns**: <code>boolean</code> - Was the poll successfully ended.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| poll | [<code>Poll</code>](#Polling..Poll) | The poll to end. |
+
 <a name="SpikeyBot"></a>
 
 ## SpikeyBot
@@ -8493,6 +8969,15 @@ Authenticate with the discord server using a login code.
 | code | <code>string</code> | The login code received from our client. |
 | cb | <code>basicCallback</code> | The response from the https request with error and data arguments. |
 
+<a name="re"></a>
+
+## re : <code>RegExp</code> ℗
+RegExp based on emoji's official Unicode standards
+http://www.unicode.org/Public/UNIDATA/EmojiSources.txt
+https://github.com/twitter/twemoji/blob/27fe654b2bed5331cf1730bb4fbba1efa40af626/2/twemoji.js#L228
+
+**Kind**: global constant  
+**Access**: private  
 <a name="unhandledRejection"></a>
 
 ## unhandledRejection(reason, p) ℗
@@ -8506,6 +8991,19 @@ from silently crashing without an error.
 | --- | --- | --- |
 | reason | <code>Object</code> | Reason for rejection. |
 | p | <code>Promise</code> | The promise that caused the rejection. |
+
+<a name="match"></a>
+
+## match(input) ⇒ <code>Array.&lt;string&gt;</code>
+Check a string for any emoji matches.
+
+**Kind**: global function  
+**Returns**: <code>Array.&lt;string&gt;</code> - The matched return value.  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| input | <code>string</code> | The string to run the regex against. |
 
 <a name="commandHandler"></a>
 

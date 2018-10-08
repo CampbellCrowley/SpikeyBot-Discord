@@ -4,6 +4,7 @@ const Discord = require('discord.js');
 const fs = require('fs');
 const common = require('./common.js');
 const auth = require('../auth.js');
+const mkdirp = require('mkdirp');
 const childProcess = require('child_process');
 
 /**
@@ -952,39 +953,58 @@ function SpikeyBot() {
                           newData[botName] = newPrefix;
                           finalPrefix = JSON.stringify(newData);
                         }
-                        fs.writeFile(
-                            common.guildSaveDir + msg.guild.id +
-                                guildCustomPrefixFile,
-                            finalPrefix, function(err) {
-                              if (err) {
-                                common.error(
-                                    'Failed to save guild custom prefix! ' +
-                                    msg.guild.id + ' (' + botName + ': ' +
-                                    newPrefix + ')');
-                                console.error(err);
-                              } else {
-                                common.log(
-                                    'Guild ' + msg.guild.id +
-                                    ' updated prefix to ' + botName + ': ' +
-                                    newPrefix);
-                              }
-                            });
+                        mkdirp(common.guildSaveDir + msg.guild.id,
+                                 function(err) {
+                          if (err) {
+                            common.error(
+                                'Failed to create guild directory! ' +
+                                msg.guild.id + ' (' + newPrefix + ')');
+                            console.error(err);
+                            return;
+                          }
+                          fs.writeFile(
+                              common.guildSaveDir + msg.guild.id +
+                                  guildCustomPrefixFile,
+                              finalPrefix, function(err) {
+                                if (err) {
+                                  common.error(
+                                      'Failed to save guild custom prefix! ' +
+                                      msg.guild.id + ' (' + botName + ': ' +
+                                      newPrefix + ')');
+                                  console.error(err);
+                                } else {
+                                  common.log(
+                                      'Guild ' + msg.guild.id +
+                                      ' updated prefix to ' + botName + ': ' +
+                                      newPrefix);
+                                }
+                              });
+                        });
                       });
                 } else {
-                  fs.writeFile(
-                      common.guildSaveDir + msg.guild.id + guildPrefixFile,
-                      newPrefix, function(err) {
-                        if (err) {
-                          common.error(
-                              'Failed to save guild custom prefix! ' +
-                              msg.guild.id + ' (' + newPrefix + ')');
-                          console.error(err);
-                        } else {
-                          common.log(
-                              'Guild ' + msg.guild.id + ' updated prefix to ' +
-                              newPrefix);
-                        }
-                      });
+                  mkdirp(common.guildSaveDir + msg.guild.id, function(err) {
+                    if (err) {
+                      common.error(
+                          'Failed to create guild directory! ' + msg.guild.id +
+                          ' (' + newPrefix + ')');
+                      console.error(err);
+                      return;
+                    }
+                    fs.writeFile(
+                        common.guildSaveDir + msg.guild.id + guildPrefixFile,
+                        newPrefix, function(err) {
+                          if (err) {
+                            common.error(
+                                'Failed to save guild custom prefix! ' +
+                                msg.guild.id + ' (' + newPrefix + ')');
+                            console.error(err);
+                          } else {
+                            common.log(
+                                'Guild ' + msg.guild.id +
+                                ' updated prefix to ' + newPrefix);
+                          }
+                        });
+                  });
                 }
               });
             });

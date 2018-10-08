@@ -4410,6 +4410,9 @@ function HungryGames() {
    */
   this.includeUsers = function(users, id) {
     let response = '';
+    if (!find(id)) {
+      return 'No game';
+    }
     if (users === 'everyone') {
       users = find(id).excludedUsers.slice(0);
     } else if (typeof users === 'string') {
