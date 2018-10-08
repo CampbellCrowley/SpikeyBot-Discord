@@ -5556,6 +5556,7 @@ Controlls poll and vote commands.
         * [~mkdirAndWrite(dir, filename, data)](#Polling..mkdirAndWrite) ℗
         * [~mkdirAndWriteSync(dir, filename, data)](#Polling..mkdirAndWriteSync) ℗
         * [~commandPoll(msg)](#Polling..commandPoll) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~addListenersToPoll(poll, key)](#Polling..addListenersToPoll) ℗
         * [~addNextReaction(poll, [index])](#Polling..addNextReaction) ⇒ <code>function</code> ℗
         * [~commandEndPoll(msg)](#Polling..commandEndPoll) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~endPoll(poll)](#Polling..endPoll) ⇒ <code>boolean</code> ℗
@@ -5917,6 +5918,19 @@ Starts a poll.
 | Param | Type | Description |
 | --- | --- | --- |
 | msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Polling..addListenersToPoll"></a>
+
+### Polling~addListenersToPoll(poll, key) ℗
+Add timeout and possibly other listeners to a poll.
+
+**Kind**: inner method of [<code>Polling</code>](#Polling)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| poll | [<code>Poll</code>](#Polling..Poll) | The poll to register. |
+| key | <code>string</code> | The [currentPolls](#Polling..currentPolls) key to remove the poll from once the poll has ended. |
 
 <a name="Polling..addNextReaction"></a>
 

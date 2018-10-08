@@ -53,6 +53,7 @@
 ## Music Stuff
 ## Random Stuff
 ## Games Stuff
+## Polls and Voting Stuff
 ## General Stuff
 # Main Commands
 #### Here's the list of stuff I can do! PM SpikeyRobot (?pmspikey) feature requests!
@@ -72,6 +73,12 @@ See [spikeybot.com](https://www.spikeybot.com/) for examples and more informatio
 | ?ping | Want to know what my delay to the server is? I can tell you my ping! |  |
 | ?timer 'minutes' 'message...' | Set a timer for a certain number of seconds. The bot will DM you the message at the end. No options lists timers. |  |
 | ?stats | Displays statistics about the bot and the servers it's on. |  |
+
+
+| Command | Description | Aliases |
+| --- | --- | --- |
+| ?poll | Start a poll or vote in the chat. Each user may only have 1 poll at a time. | poll, vote |
+| ?endpoll | End a poll that you created. | endpoll, endvote |
 
 
 | Command | Description |

@@ -153,6 +153,45 @@
       ]
     },
     {
+      "title": "Polls and Voting Stuff",
+      "rows": [
+        {
+          "command": "poll",
+          "description": "Start a poll or vote in the chat. Each user may only have 1 poll at a time.",
+          "aliases": "poll, vote",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "poll Are pigs dirty?",
+              "result": "The bot will begin a poll to find out if pigs are dirty and add reactions for users to vote with by clicking.<br><img src=\"https://i.imgur.com/dTcufXF.png\">"
+            },
+            {
+              "description": "5 Minute Poll",
+              "command": "poll 5m Who wants a cheesburger?",
+              "result": "After 5 minutes, the bot will show the results from the poll, and delete the original poll. (Use 's' for seconds, 'm' for minutes, 'h' for hours, 'd' for days)"
+            },
+            {
+              "description": "Custom Response Options",
+              "command": "poll 1h Which emoji is the best? [💩 Poop is best][🍔 Cheeeezeburgerz][Fly away! ✈]",
+              "result": "💩, 🍔, and ✈ emojis and text will be used as poll options. Up to 25 custom options can be used. After 1 hour, the bot will end the poll. (Only the default unicode emojis are supported)"
+            }
+          ]
+        },
+        {
+          "command": "endpoll",
+          "description": "End a poll that you created.",
+          "aliases": "endpoll, endvote",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "endpoll",
+              "result": "Your current poll will be ended, and the results will be shown."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "title": "Games Stuff",
       "rows": [
         {

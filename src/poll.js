@@ -119,19 +119,7 @@ function Polling() {
               .then((message) => {
                 let poll = currentPolls[parsed.message.message] =
                     new Poll(request, message, parsed);
-                if (parsed.endTime) {
-                  let duration = parsed.endTime - Date.now();
-                  if (duration > 0) {
-                    poll.timeout = self.client.setTimeout(
-                        (function(poll, key) {
-                          return function() {
-                            endPoll(poll);
-                            delete currentPolls[key];
-                          };
-                        })(poll, parsed.message.message),
-                        duration);
-                  }
-                }
+                addListenersToPoll(poll, parsed.message.message);
               })
               .catch((err) => {
                 self.error(
@@ -389,9 +377,10 @@ function Polling() {
       }
     }
 
+    const endTime = duration ? Date.now() + duration : null;
     const options = {
       title: textString,
-      endTime: Date.now() + duration,
+      endTime: endTime,
       emojis: emojis,
       choices: choicesMatch,
     };
@@ -400,6 +389,23 @@ function Polling() {
       let poll = new Poll(msg, msg_, options);
       currentPolls[msg_.id] = poll;
 
+      addListenersToPoll(poll, msg_.id);
+
+      addNextReaction(poll)();
+    });
+  }
+
+  /**
+   * Add timeout and possibly other listeners to a poll.
+   * @private
+   *
+   * @param {Polling~Poll} poll The poll to register.
+   * @param {string} key The {@link Polling~currentPolls} key to remove the poll
+   * from once the poll has ended.
+   */
+  function addListenersToPoll(poll, key) {
+    if (poll.endTime) {
+      let duration = poll.endTime - Date.now();
       if (duration > 0) {
         poll.timeout = self.client.setTimeout(
             (function(poll, key) {
@@ -407,12 +413,10 @@ function Polling() {
                 endPoll(poll);
                 delete currentPolls[key];
               };
-            })(poll, msg_.id),
+            })(poll, key),
             duration);
       }
-
-      addNextReaction(poll)();
-    });
+    }
   }
 
   /**
@@ -480,7 +484,9 @@ function Polling() {
     embed.setDescription(
         self.common.mention(poll.request) + '\'s poll results');
 
-    if (!poll.endTime || Date.now() < poll.endTime) {
+    if (!poll.endTime) {
+      embed.setFooter('Poll ended manually');
+    } else if (Date.now() < poll.endTime) {
       embed.setFooter('Poll ended early');
     } else {
       embed.setFooter('Poll ended at time limit');
@@ -504,7 +510,16 @@ function Polling() {
                 ' with ' + max + ' votes.');
     }
 
-    poll.message.channel.send(embed);
+    poll.message.channel.send(embed)
+        .then(() => {
+          poll.message.delete().catch(() => {});
+        })
+        .catch((err) => {
+          self.error(
+              'Failed to send poll results to channel: ' +
+              poll.message.channel.id);
+          console.error(err);
+        });
     return true;
   }
 }
