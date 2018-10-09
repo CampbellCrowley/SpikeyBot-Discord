@@ -84,7 +84,10 @@ function WebStats() {
     host: 'discordbots.org',
     path: '/api/bots/{id}/stats',
     method: 'POST',
-    headers: {'Authorization': auth.discordBotsOrgToken},
+    headers: {
+      'Authorization': auth.discordBotsOrgToken,
+      'content-type': 'application/json'
+    },
   };
 
   /**
@@ -103,7 +106,7 @@ function WebStats() {
       res.end();
     } else {
       getStats((stats) => {
-        res.writeHead(200, {'content-type': 'text/json'});
+        res.writeHead(200, {'content-type': 'application/json'});
         res.end(JSON.stringify(stats));
       });
     }
@@ -135,24 +138,25 @@ function WebStats() {
     if (self.client.user.id !== '318552464356016131') return;
     getStats((values) => {
       if (self.client.shard) {
+        // @TODO: Update getStats to give the number of guilds each shard is on.
         sendRequest({
           server_count: values.numGuilds,
-          shards: values.numGuilds / values.numShards,
+          shards: [values.numGuilds / values.numShards],
           shard_id: values.reqShard,
           shard_count: values.numShards,
         });
       } else {
-          sendRequest({server_count: values.numGuilds});
+        sendRequest({server_count: values.numGuilds});
       }
     });
     /**
      * Send the request after we have fetched our stats.
      * @private
      */
-    function sendRequest(body) {
+    function sendRequest(data) {
       let host = apiHost;
       host.path = host.path.replace('{id}', self.client.user.id);
-      body = JSON.stringify(body);
+      let body = JSON.stringify(data);
       let req = https.request(host, (res) => {
         let content = '';
         res.on('data', (chunk) => {
