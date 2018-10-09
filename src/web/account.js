@@ -110,7 +110,9 @@ function WebAccount() {
 
   /** @inheritdoc */
   this.initialize = function() {
-    app.listen(self.common.isRelease ? 8014 : 8015);
+    setTimeout(() => {
+      app.listen(self.common.isRelease ? 8014 : 8015);
+    });
   };
 
   /**

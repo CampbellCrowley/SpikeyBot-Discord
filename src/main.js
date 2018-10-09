@@ -451,6 +451,7 @@ function Main() {
       self.client.getStats = getStats;
       /* eslint-enable no-unused-vars */
     }
+    self.bot.getStats = getAllStats;
   };
 
   /** @inheritdoc */
@@ -2149,12 +2150,67 @@ function Main() {
    * @listens SpikeyBot~Command#stats
    */
   function commandStats(msg) {
-    let numShards = 0;
-    let reqShard = 0;
-    if (self.client.shard) {
-      numShards = self.client.shard.count;
-      reqShard = self.client.shard.id;
-    }
+    self.bot.getStats((values) => {
+      let embed = new self.Discord.MessageEmbed();
+      embed.setTitle('SpikeyBot Stats');
+      embed.setDescription(
+          'These statistics are collected from the entire bot, ' +
+          'across all shards.');
+
+      const guildString = 'Number of guilds: ' + values.numGuilds +
+          '\nLargest Guild: ' + values.numLargestGuild +
+          ' members\nNumber of channels: ' + values.numChannels;
+      embed.addField('Guilds', guildString, true);
+
+      const userString = 'Number of users: ' + values.numUsers +
+          '\nNumber of users that are bots: ' + values.numBots +
+          '\nNumber of online users: ' + values.numUsersOnline;
+      embed.addField('Users', userString, true);
+
+      const actString = 'Number of activities people are doing: ' +
+          Object.keys(values.activities).length +
+          '\nMost popular activity:\n`' + values.largestActivity.name +
+          '`\n with ' + values.largestActivity.count + ' people.';
+      embed.addField('Activities/Games', actString, true);
+
+      const shardUptimes = values.uptimes.map((el, i) => {
+        return 'Shard #' + i + ' (' + values.versions[i] + ')\n- up ' + el;
+      });
+      const shardString = 'Number of shards: ' + values.numShards +
+          '\nThis guild/channel is in shard #' + values.reqShard + '\n' +
+          shardUptimes.join('\n');
+      embed.addField('Shards', shardString, true);
+
+      /* embed.addField(
+          'This Shard Version',
+          'Shard: ' + version + '\nCommit: ' + commit.slice(0, 7) +
+              '\nDiscord.js: ' + (self.Discord.version || 'Unknown') + '\n' +
+              self.bot.getSubmoduleCommits()
+                  .map((el) => {
+                    return el.name + ': ' + el.commit;
+                  })
+                  .join('\n'),
+          true); */
+
+      embed.setColor([0, 100, 255]);
+
+      msg.channel.send(self.common.mention(msg), embed);
+    });
+  }
+
+  /**
+   * Fetch the bot's stats from all shards, then combine the data. Public as
+   * SpikeyBot.getStats after SubModule.initialize.
+   * @private
+   * @param {function} cb One parameter that is guarunteed to have an array of
+   * stats objeccts.
+   */
+  function getAllStats(cb) {
+    /**
+     * The stats object that is the result of this function.
+     * @private
+     * @default
+     */
     let values = {
       numGuilds: 0,
       numLargestGuild: 0,
@@ -2166,7 +2222,13 @@ function Main() {
       activities: {},
       largestActivity: {name: 'Nothing', count: 0},
       versions: [],
+      numShards: 0,
+      reqShard: 0,
     };
+    if (self.client.shard) {
+      values.numShards = self.client.shard.count;
+      values.reqShard = self.client.shard.id;
+    }
     /**
      * Callback once all shards have replied with their stats.
      *
@@ -2200,51 +2262,7 @@ function Main() {
           }
         }
       }
-
-      let embed = new self.Discord.MessageEmbed();
-      embed.setTitle('SpikeyBot Stats');
-      embed.setDescription(
-          'These statistics are collected from the entire bot, ' +
-          'across all shards.');
-
-      const guildString = 'Number of guilds: ' + values.numGuilds +
-          '\nLargest Guild: ' + values.numLargestGuild +
-          ' members\nNumber of channels: ' + values.numChannels;
-      embed.addField('Guilds', guildString, true);
-
-      const userString = 'Number of users: ' + values.numUsers +
-          '\nNumber of users that are bots: ' + values.numBots +
-          '\nNumber of online users: ' + values.numUsersOnline;
-      embed.addField('Users', userString, true);
-
-      const actString = 'Number of activities people are doing: ' +
-          Object.keys(values.activities).length +
-          '\nMost popular activity:\n`' + values.largestActivity.name +
-          '`\n with ' + values.largestActivity.count + ' people.';
-      embed.addField('Activities/Games', actString, true);
-
-      const shardUptimes = values.uptimes.map((el, i) => {
-        return 'Shard #' + i + ' (' + values.versions[i] + ')\n- up ' + el;
-      });
-      const shardString = 'Number of shards: ' + numShards +
-          '\nThis guild/channel is in shard #' + reqShard + '\n' +
-          shardUptimes.join('\n');
-      embed.addField('Shards', shardString, true);
-
-      /* embed.addField(
-          'This Shard Version',
-          'Shard: ' + version + '\nCommit: ' + commit.slice(0, 7) +
-              '\nDiscord.js: ' + (self.Discord.version || 'Unknown') + '\n' +
-              self.bot.getSubmoduleCommits()
-                  .map((el) => {
-                    return el.name + ': ' + el.commit;
-                  })
-                  .join('\n'),
-          true); */
-
-      embed.setColor([0, 100, 255]);
-
-      msg.channel.send(self.common.mention(msg), embed);
+      cb(values);
     }
 
     if (self.client.shard) {
@@ -2254,7 +2272,7 @@ function Main() {
     }
   }
   /**
-   * Fetch our statistics about the bot.
+   * Fetch our statistics about the bot on this shard.
    *
    * @private
    * @return {Object} The statistics we collected.

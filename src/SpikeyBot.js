@@ -1204,16 +1204,18 @@ function SpikeyBot() {
         }
       }
       if (!noSchedule) {
-        if (!subModules[i].unloadable()) {
-          if (schedule) {
-            reloaded.push('(' + subModuleNames[i] + ': reload scheduled)');
-            setTimeout(function() {
-              reloadSubModules(subModuleNames[i]);
-            }, 10000);
-          } else {
-            reloaded.push('(' + subModuleNames[i] + ': not unloadable)');
+        if (subModules[i]) {
+          if (!subModules[i].unloadable()) {
+            if (schedule) {
+              reloaded.push('(' + subModuleNames[i] + ': reload scheduled)');
+              setTimeout(function() {
+                reloadSubModules(subModuleNames[i]);
+              }, 10000);
+            } else {
+              reloaded.push('(' + subModuleNames[i] + ': not unloadable)');
+            }
+            continue;
           }
-          continue;
         }
       }
       try {

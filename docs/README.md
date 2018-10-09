@@ -54,6 +54,10 @@ Patreon status of users.</p>
 <dt><a href="#WebProxy">WebProxy</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
 <dd><p>Proxy for account authentication.</p>
 </dd>
+<dt><a href="#WebStats">WebStats</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
+<dd><p>Handles sending the bot&#39;s stats to http client requests, and
+discordbots.org.</p>
+</dd>
 </dl>
 
 ## Constants
@@ -3242,7 +3246,9 @@ Basic commands and features for the bot.
         * [~commandPerms(msg)](#Main..commandPerms) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~prePad(num, digits)](#Main..prePad) ⇒ <code>string</code> ℗
         * [~commandStats(msg)](#Main..commandStats) : [<code>commandHandler</code>](#commandHandler) ℗
-            * [~statsResponse(res)](#Main..commandStats..statsResponse) ℗
+        * [~getAllStats(cb)](#Main..getAllStats) ℗
+            * [~values](#Main..getAllStats..values) ℗
+            * [~statsResponse(res)](#Main..getAllStats..statsResponse) ℗
         * [~getStats()](#Main..getStats) ⇒ <code>Object</code> ℗
         * [~commandLookup(msg)](#Main..commandLookup) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandSendTo(msg)](#Main..commandSendTo) : [<code>commandHandler</code>](#commandHandler) ℗
@@ -4082,12 +4088,38 @@ Send information about the bot.
 | --- | --- | --- |
 | msg | <code>Discord~Message</code> | Message that triggered command. |
 
-<a name="Main..commandStats..statsResponse"></a>
+<a name="Main..getAllStats"></a>
 
-#### commandStats~statsResponse(res) ℗
+### Main~getAllStats(cb) ℗
+Fetch the bot's stats from all shards, then combine the data. Public as
+SpikeyBot.getStats after SubModule.initialize.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| cb | <code>function</code> | One parameter that is guarunteed to have an array of stats objeccts. |
+
+
+* [~getAllStats(cb)](#Main..getAllStats) ℗
+    * [~values](#Main..getAllStats..values) ℗
+    * [~statsResponse(res)](#Main..getAllStats..statsResponse) ℗
+
+<a name="Main..getAllStats..values"></a>
+
+#### getAllStats~values ℗
+The stats object that is the result of this function.
+
+**Kind**: inner property of [<code>getAllStats</code>](#Main..getAllStats)  
+**Default**: <code>{&quot;numGuilds&quot;:0,&quot;numLargestGuild&quot;:0,&quot;numUsers&quot;:0,&quot;numBots&quot;:0,&quot;numUsersOnline&quot;:0,&quot;numChannels&quot;:0,&quot;uptimes&quot;:&quot;&quot;,&quot;activities&quot;:&quot;&quot;,&quot;largestActivity&quot;:&quot;&quot;,&quot;versions&quot;:&quot;&quot;,&quot;numShards&quot;:0,&quot;reqShard&quot;:0}</code>  
+**Access**: private  
+<a name="Main..getAllStats..statsResponse"></a>
+
+#### getAllStats~statsResponse(res) ℗
 Callback once all shards have replied with their stats.
 
-**Kind**: inner method of [<code>commandStats</code>](#Main..commandStats)  
+**Kind**: inner method of [<code>getAllStats</code>](#Main..getAllStats)  
 **Access**: private  
 
 | Param | Type | Description |
@@ -4097,7 +4129,7 @@ Callback once all shards have replied with their stats.
 <a name="Main..getStats"></a>
 
 ### Main~getStats() ⇒ <code>Object</code> ℗
-Fetch our statistics about the bot.
+Fetch our statistics about the bot on this shard.
 
 **Kind**: inner method of [<code>Main</code>](#Main)  
 **Returns**: <code>Object</code> - The statistics we collected.  
@@ -9048,6 +9080,319 @@ Authenticate with the discord server using a login code.
 | code | <code>string</code> | The login code received from our client. |
 | cb | <code>basicCallback</code> | The response from the https request with error and data arguments. |
 
+<a name="WebStats"></a>
+
+## WebStats ⇐ [<code>SubModule</code>](#SubModule)
+Handles sending the bot's stats to http client requests, and
+discordbots.org.
+
+**Kind**: global class  
+**Extends**: [<code>SubModule</code>](#SubModule)  
+
+* [WebStats](#WebStats) ⇐ [<code>SubModule</code>](#SubModule)
+    * _instance_
+        * [.helpMessage](#SubModule+helpMessage) : <code>string</code> \| <code>Discord~MessageEmbed</code>
+        * [.prefix](#SubModule+prefix) : <code>string</code>
+        * [.myPrefix](#SubModule+myPrefix) : <code>string</code>
+        * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
+        * [.Discord](#SubModule+Discord) : <code>Discord</code>
+        * [.client](#SubModule+client) : <code>Discord~Client</code>
+        * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
+        * [.common](#SubModule+common) : [<code>Common</code>](#Common)
+        * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
+        * *[.myName](#SubModule+myName) : <code>string</code>*
+        * [.initialized](#SubModule+initialized) : <code>boolean</code>
+        * [.commit](#SubModule+commit) : <code>string</code>
+        * [.loadTime](#SubModule+loadTime) : <code>number</code>
+        * [.initialize()](#SubModule+initialize)
+        * [.begin(prefix, Discord, client, command, common, bot)](#SubModule+begin)
+        * [.end()](#SubModule+end)
+        * [.log(msg)](#SubModule+log)
+        * [.error(msg)](#SubModule+error)
+        * [.shutdown()](#SubModule+shutdown)
+        * *[.save([opt])](#SubModule+save)*
+        * *[.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>*
+    * _inner_
+        * [~cachedTime](#WebStats..cachedTime) : <code>number</code> ℗
+        * [~cachedStats](#WebStats..cachedStats) : [<code>values</code>](#Main..getAllStats..values) ℗
+        * [~postTimeout](#WebStats..postTimeout) : <code>Timeout</code> ℗
+        * [~cachedLifespan](#WebStats..cachedLifespan) : <code>number</code> ℗
+        * [~postFrequency](#WebStats..postFrequency) : <code>number</code> ℗
+        * [~apiHost](#WebStats..apiHost) ℗
+        * [~handler(req, res)](#WebStats..handler) ℗
+        * [~getStats(cb)](#WebStats..getStats) ℗
+        * [~postUpdatedCount()](#WebStats..postUpdatedCount) ℗
+            * [~sendRequest()](#WebStats..postUpdatedCount..sendRequest) ℗
+
+<a name="SubModule+helpMessage"></a>
+
+### webStats.helpMessage : <code>string</code> \| <code>Discord~MessageEmbed</code>
+The help message to show the user in the main help message.
+
+**Kind**: instance property of [<code>WebStats</code>](#WebStats)  
+<a name="SubModule+prefix"></a>
+
+### webStats.prefix : <code>string</code>
+The main prefix in use for this bot. Only available after begin() is
+called.
+
+**Kind**: instance property of [<code>WebStats</code>](#WebStats)  
+**Read only**: true  
+<a name="SubModule+myPrefix"></a>
+
+### webStats.myPrefix : <code>string</code>
+The prefix this submodule uses. Formed by prepending this.prefix to
+this.postPrefix. this.postPrefix must be defined before begin(), otherwise
+it is ignored.
+
+**Kind**: instance property of [<code>WebStats</code>](#WebStats)  
+**Read only**: true  
+<a name="SubModule+postPrefix"></a>
+
+### *webStats.postPrefix : <code>string</code>*
+The postfix for the global prefix for this subModule. Must be defined
+before begin(), otherwise it is ignored.
+
+**Kind**: instance abstract property of [<code>WebStats</code>](#WebStats)  
+**Default**: <code>&quot;&quot;</code>  
+<a name="SubModule+Discord"></a>
+
+### webStats.Discord : <code>Discord</code>
+The current Discord object instance of the bot.
+
+**Kind**: instance property of [<code>WebStats</code>](#WebStats)  
+<a name="SubModule+client"></a>
+
+### webStats.client : <code>Discord~Client</code>
+The current bot client.
+
+**Kind**: instance property of [<code>WebStats</code>](#WebStats)  
+<a name="SubModule+command"></a>
+
+### webStats.command : [<code>Command</code>](#SpikeyBot..Command)
+The command object for registering command listeners.
+
+**Kind**: instance property of [<code>WebStats</code>](#WebStats)  
+<a name="SubModule+common"></a>
+
+### webStats.common : [<code>Common</code>](#Common)
+The common object.
+
+**Kind**: instance property of [<code>WebStats</code>](#WebStats)  
+<a name="SubModule+bot"></a>
+
+### webStats.bot : [<code>SpikeyBot</code>](#SpikeyBot)
+The parent SpikeyBot instance.
+
+**Kind**: instance property of [<code>WebStats</code>](#WebStats)  
+<a name="SubModule+myName"></a>
+
+### *webStats.myName : <code>string</code>*
+The name of this submodule. Used for differentiating in the log. Should be
+defined before begin().
+
+**Kind**: instance abstract property of [<code>WebStats</code>](#WebStats)  
+**Overrides**: [<code>myName</code>](#SubModule+myName)  
+**Access**: protected  
+<a name="SubModule+initialized"></a>
+
+### webStats.initialized : <code>boolean</code>
+Has this subModule been initialized yet (Has begin() been called).
+
+**Kind**: instance property of [<code>WebStats</code>](#WebStats)  
+**Default**: <code>false</code>  
+**Access**: protected  
+**Read only**: true  
+<a name="SubModule+commit"></a>
+
+### webStats.commit : <code>string</code>
+The commit at HEAD at the time this module was loaded. Essentially the
+version of this submodule.
+
+**Kind**: instance constant of [<code>WebStats</code>](#WebStats)  
+**Access**: public  
+<a name="SubModule+loadTime"></a>
+
+### webStats.loadTime : <code>number</code>
+The time at which this madule was loaded for use in checking if the module
+needs to be reloaded because the file has been modified since loading.
+
+**Kind**: instance constant of [<code>WebStats</code>](#WebStats)  
+**Access**: public  
+<a name="SubModule+initialize"></a>
+
+### webStats.initialize()
+The function called at the end of begin() for further initialization
+specific to the subModule. Must be defined before begin() is called.
+
+**Kind**: instance method of [<code>WebStats</code>](#WebStats)  
+**Overrides**: [<code>initialize</code>](#SubModule+initialize)  
+**Access**: protected  
+<a name="SubModule+begin"></a>
+
+### webStats.begin(prefix, Discord, client, command, common, bot)
+Initialize this submodule.
+
+**Kind**: instance method of [<code>WebStats</code>](#WebStats)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| prefix | <code>string</code> | The global prefix for this bot. |
+| Discord | <code>Discord</code> | The Discord object for the API library. |
+| client | <code>Discord~Client</code> | The client that represents this bot. |
+| command | [<code>Command</code>](#SpikeyBot..Command) | The command instance in which to register command listeners. |
+| common | [<code>Common</code>](#Common) | Class storing common functions. |
+| bot | [<code>SpikeyBot</code>](#SpikeyBot) | The parent SpikeyBot instance. |
+
+<a name="SubModule+end"></a>
+
+### webStats.end()
+Trigger subModule to shutdown and get ready for process terminating.
+
+**Kind**: instance method of [<code>WebStats</code>](#WebStats)  
+**Access**: public  
+<a name="SubModule+log"></a>
+
+### webStats.log(msg)
+Log using common.log, but automatically set name.
+
+**Kind**: instance method of [<code>WebStats</code>](#WebStats)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+error"></a>
+
+### webStats.error(msg)
+Log using common.error, but automatically set name.
+
+**Kind**: instance method of [<code>WebStats</code>](#WebStats)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+shutdown"></a>
+
+### webStats.shutdown()
+Shutdown and disable this submodule. Removes all event listeners.
+
+**Kind**: instance method of [<code>WebStats</code>](#WebStats)  
+**Overrides**: [<code>shutdown</code>](#SubModule+shutdown)  
+**Access**: protected  
+<a name="SubModule+save"></a>
+
+### *webStats.save([opt])*
+Saves all data to files necessary for saving current state.
+
+**Kind**: instance abstract method of [<code>WebStats</code>](#WebStats)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [opt] | <code>string</code> | <code>&quot;&#x27;sync&#x27;&quot;</code> | Can be 'async', otherwise defaults to synchronous. |
+
+<a name="SubModule+unloadable"></a>
+
+### *webStats.unloadable() ⇒ <code>boolean</code>*
+Check if this module is in a state that is ready to be unloaded. If false
+is returned, this module should not be unloaded and doing such may risk
+putting the module into an uncontrollable state.
+
+**Kind**: instance abstract method of [<code>WebStats</code>](#WebStats)  
+**Returns**: <code>boolean</code> - True if can be unloaded, false if cannot.  
+**Access**: public  
+<a name="WebStats..cachedTime"></a>
+
+### WebStats~cachedTime : <code>number</code> ℗
+The timestamp at which the stats were last requested.
+
+**Kind**: inner property of [<code>WebStats</code>](#WebStats)  
+**Default**: <code>0</code>  
+**Access**: private  
+<a name="WebStats..cachedStats"></a>
+
+### WebStats~cachedStats : [<code>values</code>](#Main..getAllStats..values) ℗
+The object storing the previously received stats values.
+
+**Kind**: inner property of [<code>WebStats</code>](#WebStats)  
+**Default**: <code>{}</code>  
+**Access**: private  
+<a name="WebStats..postTimeout"></a>
+
+### WebStats~postTimeout : <code>Timeout</code> ℗
+The next scheduled event at which to post our stats.
+
+**Kind**: inner property of [<code>WebStats</code>](#WebStats)  
+**Access**: private  
+<a name="WebStats..cachedLifespan"></a>
+
+### WebStats~cachedLifespan : <code>number</code> ℗
+The amount of time the cached data is considered fresh. Anything longer
+than this must be re-fetched.
+
+**Kind**: inner constant of [<code>WebStats</code>](#WebStats)  
+**Default**: <code>5 Minutes</code>  
+**Access**: private  
+<a name="WebStats..postFrequency"></a>
+
+### WebStats~postFrequency : <code>number</code> ℗
+The amount frequency at which we will post our stats to discordbots.org
+
+**Kind**: inner constant of [<code>WebStats</code>](#WebStats)  
+**Default**: <code>12 Hours</code>  
+**Access**: private  
+<a name="WebStats..apiHost"></a>
+
+### WebStats~apiHost ℗
+The request information for updating our server count on discordbots.org.
+
+**Kind**: inner constant of [<code>WebStats</code>](#WebStats)  
+**Default**: <code>{&quot;protocol&quot;:&quot;https:&quot;,&quot;host&quot;:&quot;discordbots.org&quot;,&quot;path&quot;:&quot;/api/bots/{id}/stats&quot;,&quot;method&quot;:&quot;POST&quot;,&quot;headers&quot;:&quot;&quot;}</code>  
+**Access**: private  
+<a name="WebStats..handler"></a>
+
+### WebStats~handler(req, res) ℗
+Handler for all http requests. Always replies to res with JSON encoded bot
+stats.
+
+**Kind**: inner method of [<code>WebStats</code>](#WebStats)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| req | <code>http.IncomingMessage</code> | The client's request. |
+| res | <code>http.ServerResponse</code> | Our response to the client. |
+
+<a name="WebStats..getStats"></a>
+
+### WebStats~getStats(cb) ℗
+Fetch the bot's stats.
+
+**Kind**: inner method of [<code>WebStats</code>](#WebStats)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| cb | <code>Object</code> | The bot's stats as an object. {@link Main~getAllStats~values} |
+
+<a name="WebStats..postUpdatedCount"></a>
+
+### WebStats~postUpdatedCount() ℗
+Send our latest guild count to discordbots.org via https post request.
+
+**Kind**: inner method of [<code>WebStats</code>](#WebStats)  
+**Access**: private  
+<a name="WebStats..postUpdatedCount..sendRequest"></a>
+
+#### postUpdatedCount~sendRequest() ℗
+Send the request after we have fetched our stats.
+
+**Kind**: inner method of [<code>postUpdatedCount</code>](#WebStats..postUpdatedCount)  
+**Access**: private  
 <a name="re"></a>
 
 ## re : <code>RegExp</code> ℗
