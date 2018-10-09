@@ -3586,7 +3586,7 @@ function HungryGames() {
   function printEvent(msg, id) {
     let index = find(id).currentGame.day.state - 2;
     let events = find(id).currentGame.day.events;
-    if (index == events.length) {
+    if (index >= events.length) {
       self.client.clearInterval(dayEventIntervals[id]);
       delete dayEventIntervals[id];
       printDay(msg, id);

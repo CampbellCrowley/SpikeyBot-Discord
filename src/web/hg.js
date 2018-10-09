@@ -265,6 +265,7 @@ function HGWeb(hg) {
     let keys = Object.keys(sockets);
     let game = hg.getGame(gId);
     let eventState = null;
+    if (!game) return;
     if (game.currentGame.day.events[game.currentGame.day.state - 2] &&
         game.currentGame.day.events[game.currentGame.day.state - 2].battle) {
       eventState =
@@ -592,7 +593,7 @@ function HGWeb(hg) {
     } else {
       g = hg.client.guilds.get(gId);
       if (!g) {
-        hg.log('Attempted fetchDay with invalid guildID' + gId);
+        // Request is probably fulfilled by another shard.
         return;
       } else {
         m = g.members.get(userData.id);

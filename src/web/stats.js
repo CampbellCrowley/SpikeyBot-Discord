@@ -24,7 +24,7 @@ function WebStats() {
       app.listen(self.common.isRelease ? 8016 : 8017);
     });
     postUpdatedCount();
-    self.client.setTimeout(postUpdatedCount, postFrequency);
+    postTimeout = self.client.setTimeout(postUpdatedCount, postFrequency);
   };
   /** @inheritdoc */
   this.shutdown = function(skipSave) {
@@ -137,6 +137,7 @@ function WebStats() {
    * @private
    */
   function postUpdatedCount() {
+    if (postTimeout) self.client.clearTimeout(postTimeout);
     if (self.client.user.id !== '318552464356016131') return;
     getStats((values) => {
       if (self.client.shard) {
@@ -165,7 +166,7 @@ function WebStats() {
           content += chunk;
         });
         res.on('end', () => {
-          self.client.setTimeout(postUpdatedCount, postFrequency);
+          postTimeout = self.client.setTimeout(postUpdatedCount, postFrequency);
           if (res.statusCode == 200) {
             self.log('Successfully posted guild count to discordbots.org');
           } else {

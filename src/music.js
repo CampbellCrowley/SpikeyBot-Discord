@@ -396,7 +396,6 @@ function Music() {
             }
           })
           .catch((err) => {
-            console.log(err);
             reply(msg, 'I am unable to join your voice channel.', err.message);
           });
     }
@@ -497,6 +496,7 @@ function Music() {
    */
   function makeBroadcast(broadcast) {
     // Setup voice connection listeners.
+    if (!broadcsat.voice) return;
     broadcast.voice.on('disconnect', () => {
       if (broadcast.current.readable) broadcast.current.readable.destroy();
       if (broadcast.current.thread) broadcast.current.thread.kill();
