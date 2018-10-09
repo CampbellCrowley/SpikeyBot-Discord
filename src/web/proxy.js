@@ -70,9 +70,9 @@ function WebProxy() {
   function connectSQL() {
     /* eslint-disable-next-line new-cap */
     sqlCon = new sql.createConnection({
-      user: 'discord',
-      password: 'sqliscool',
-      host: 'Campbell-Pi-2.local',
+      user: auth.sqlUsername,
+      password: auth.sqlPassword,
+      host: auth.sqlHost,
       database: 'appusers',
       port: 3306,
     });
