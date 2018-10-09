@@ -52,7 +52,7 @@
       }
     ]
   },
-  "explosives": {
+  "explosive": {
     "outcomes": [
       {
         "action": "blow[As|] up",
@@ -91,7 +91,7 @@
         "consumes": 1
       },
       {
-        "message": "{attacker} uses {owner} exposives as a chair.",
+        "message": "{attacker} uses {owner} explosives as a chair.",
         "attacker": { "count": "1", "outcome": "nothing" },
         "victim": { "count": "0", "outcome": "nothing" },
         "consumes": 0

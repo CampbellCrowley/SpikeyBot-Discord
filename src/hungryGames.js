@@ -3540,7 +3540,6 @@ function HungryGames() {
                         deadUsers, useNickname ? 'nickname' : 'username'));
       }
     }
-    if (translator) console.log(translator);
     finalMessage = funTranslator.to(translator, finalMessage);
     let finalIcons = getMiniIcons(affectedVictims.concat(affectedAttackers));
     return {
