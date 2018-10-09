@@ -57,6 +57,7 @@
 - lookup (Finds information about a given ID)
 - sendto (Given a user or channel ID, the bot will send the message anonymously. Only Spikey can do this)
 - saveall (Trigger all submodules to save their data)
+- thanks (Thanks the person that was mentioned, or says "You're welcome")
 
 # Events
 - Added to guild
