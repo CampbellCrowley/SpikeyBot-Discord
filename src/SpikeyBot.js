@@ -1065,7 +1065,7 @@ function SpikeyBot() {
           console.error(e);
         }
       }
-      const doHardReboot = msg.indexOf('hard') > -1;
+      const doHardReboot = msg.content.indexOf('hard') > -1;
       const reboot = function(hard) {
         if (!client.shard || !hard) {
           process.exit(-1);

@@ -3246,6 +3246,7 @@ Basic commands and features for the bot.
         * [~getStats()](#Main..getStats) ⇒ <code>Object</code> ℗
         * [~commandLookup(msg)](#Main..commandLookup) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandSendTo(msg)](#Main..commandSendTo) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~commandThankYou(msg)](#Main..commandThankYou) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~sigint()](#Main..sigint) ℗
         * [~Timer](#Main..Timer) : <code>Object</code>
 
@@ -4119,6 +4120,19 @@ Lookup an ID and give information about what it represents.
 Lookup an ID and send a message to the given channel or user without
 telling the recipient who sent the message. Only looks up cached users and
 channels on the same shard.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Main..commandThankYou"></a>
+
+### Main~commandThankYou(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Reply saying "you're welcome" unless another user was mentioned, then thank
+them instead.
 
 **Kind**: inner method of [<code>Main</code>](#Main)  
 **Access**: private  

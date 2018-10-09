@@ -57,9 +57,15 @@ math.config({matrix: 'Array'});
  * @listens SpikeyBot~Command#die
  * @listens SpikeyBot~Command#d
  * @listens SpikeyBot~Command#toggleMute
+ * @listens SpikeyBot~Command#toggleBanMessages
  * @listens SpikeyBot~Command#perms
- * @listens SpikeyBot~Commands#stats
- * @listens SpikeyBot~Commands#lookup
+ * @listens SpikeyBot~Command#stats
+ * @listens SpikeyBot~Command#lookup
+ * @listens SpikeyBot~Command#sendto
+ * @listens SpikeyBot~Command#thanks
+ * @listens SpikeyBot~Command#thx
+ * @listens SpikeyBot~Command#thank
+ * @listens SpikeyBot~Command#thankyou
  */
 function Main() {
   const self = this;
@@ -277,6 +283,7 @@ function Main() {
     self.command.on('lookup', commandLookup);
     self.command.on('togglebanmessages', commandToggleBanMessages, true);
     self.command.on('sendto', commandSendTo);
+    self.command.on(['thanks', 'thx', 'thankyou', 'thank'], commandThankYou);
 
     self.client.on('guildCreate', onGuildCreate);
     self.client.on('guildDelete', onGuildDelete);
@@ -480,6 +487,7 @@ function Main() {
     self.command.deleteEvent('lookup');
     self.command.deleteEvent('togglebanmessages');
     self.command.deleteEvent('sendto');
+    self.command.deleteEvent(['thanks', 'thx', 'thankyou', 'thank']);
 
     self.client.removeListener('guildCreate', onGuildCreate);
     self.client.removeListener('guildDelete', onGuildDelete);
@@ -2391,6 +2399,35 @@ function Main() {
           });
     } else {
       self.common.reply(msg, 'I am unable to find that user or channel. :(');
+    }
+  }
+
+  /**
+   * Reply saying "you're welcome" unless another user was mentioned, then thank
+   * them instead.
+   *
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens SpikeyBot~Command#thanks
+   * @listens SpikeyBot~Command#thank
+   * @listens SpikeyBot~Command#thx
+   * @listens SpikeyBot~Command#thankyou
+   */
+  function commandThankYou(msg) {
+    if (msg.mentions.members.size > 0) {
+      let mentions = msg.mentions.members.map((el) => {
+        return '`' + (el.nickname || el.user.username).replace(/`/g, '`') + '`';
+      });
+      let mentionString = mentions[0];
+      for (let i = 1; i < mentions.length; i++) {
+        mentionString += ', ';
+        if (i == mentions.length - 1) mentionString += 'and ';
+        mentionString += mentions[i];
+      }
+      msg.channel.send('Thanks ' + mentionString + '!');
+    } else {
+      msg.channel.send('You\'re welcome! 😀');
     }
   }
 
