@@ -2,6 +2,7 @@
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const fs = require('fs');
 const sql = require('mysql');
+const auth = require('../auth.js');
 require('./subModule.js')(Patreon); // Extends the SubModule class.
 
 /**
