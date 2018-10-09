@@ -104,10 +104,12 @@ function WebStats() {
     if (req.url.indexOf('/webhook') > -1) {
       res.writeHead(501);
       res.end();
+      self.common.log('Requested Webhook that doesn\'t exist yet.', ip);
     } else {
       getStats((stats) => {
         res.writeHead(200, {'content-type': 'application/json'});
         res.end(JSON.stringify(stats));
+        self.common.log('Sent stats.', ip);
       });
     }
   }
