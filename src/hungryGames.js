@@ -1575,10 +1575,10 @@ function HungryGames() {
       for (let i = 0; i < values.length; i++) {
         if (!patreonSettingKeys.includes(values[i])) continue;
         self.bot.patreon.getSettingValue(p.id, values[i], (function(p, v) {
-                                           return function(err, info) {
-                                             onSettingResponse(err, info, p, v);
-                                           };
-                                         })(p, values[i]));
+          return function(err, info) {
+            onSettingResponse(err, info, p, v);
+          };
+        })(p, values[i]));
       }
     }
 
@@ -1601,10 +1601,10 @@ function HungryGames() {
 
     for (let i = 0; i < players.length; i++) {
       self.bot.patreon.getAllPerms(players[i].id, cId, gId, (function(p) {
-                                     return function(err, info) {
-                                       onPermResponse(err, info, p);
-                                     };
-                                   })(players[i]));
+        return function(err, info) {
+          onPermResponse(err, info, p);
+        };
+      })(players[i]));
     }
   }
 
@@ -1637,7 +1637,7 @@ function HungryGames() {
             included.push(obj.user.id);
           }
         } else if (
-            included && excluded && included.includes(obj.user.id) &&
+          included && excluded && included.includes(obj.user.id) &&
             excluded.includes(obj.user.id)) {
           self.error(
               'User in both blacklist and whitelist: ' + obj.user.id +
@@ -1657,7 +1657,7 @@ function HungryGames() {
           }
         }
         return !(
-            (!bots && obj.user.bot) ||
+          (!bots && obj.user.bot) ||
             (excluded && excluded.includes(obj.user.id) ||
              (excludeByDefault && included &&
               !included.includes(obj.user.id))));
@@ -1713,8 +1713,8 @@ function HungryGames() {
         team.id = i;
         for (let j = 0; j < team.players.length; j++) {
           if (game.currentGame.includedUsers.findIndex(function(obj) {
-                return obj.id === team.players[j];
-              }) < 0) {
+            return obj.id === team.players[j];
+          }) < 0) {
             team.players.splice(j, 1);
             j--;
           } else {
@@ -1958,8 +1958,8 @@ function HungryGames() {
               self.postPrefix + 'next" for next day, or "' + msg.prefix +
               self.postPrefix + 'end" to abort)');
     } else if (
-        !msg.channel.permissionsFor(msg.guild.me)
-             .has(self.Discord.Permissions.FLAGS.ATTACH_FILES)) {
+      !msg.channel.permissionsFor(msg.guild.me)
+          .has(self.Discord.Permissions.FLAGS.ATTACH_FILES)) {
       self.common.reply(
           msg, 'Sorry, but I need permission to send images ' +
               'in this channel before I can start the games.\nPlease ensure ' +
@@ -2047,11 +2047,11 @@ function HungryGames() {
       }
       if (find(id).excludedUsers.length > 0) {
         let excludedList = find(id)
-                               .excludedUsers
-                               .map(function(obj) {
-                                 return getName(msg.guild, obj);
-                               })
-                               .join(', ');
+            .excludedUsers
+            .map(function(obj) {
+              return getName(msg.guild, obj);
+            })
+            .join(', ');
         let trimmedList = excludedList.substr(0, 512);
         if (excludedList != trimmedList) {
           excludedList = trimmedList.substr(0, 509) + '...';
@@ -2541,8 +2541,8 @@ function HungryGames() {
         }
         if (weapon) {
           if (typeof find(id)
-                  .currentGame.includedUsers[index]
-                  .weapons[weapon.name] === 'number') {
+              .currentGame.includedUsers[index]
+              .weapons[weapon.name] === 'number') {
             find(id).currentGame.includedUsers[index].weapons[weapon.name] +=
                 weapon.count;
           } else {
@@ -2550,8 +2550,8 @@ function HungryGames() {
                 weapon.count;
           }
           if (find(id)
-                  .currentGame.includedUsers[index]
-                  .weapons[weapon.name] === 0) {
+              .currentGame.includedUsers[index]
+              .weapons[weapon.name] === 0) {
             delete find(id)
                 .currentGame.includedUsers[index]
                 .weapons[weapon.name];
@@ -2964,8 +2964,8 @@ function HungryGames() {
 
           team.players.forEach(function(player) {
             if (userPool.findIndex(function(pool) {
-                  return pool.id == player && pool.living;
-                }) > -1) {
+              return pool.id == player && pool.living;
+            }) > -1) {
               numPool++;
             }
           });
@@ -3000,8 +3000,8 @@ function HungryGames() {
 
           team.players.forEach(function(player) {
             if (userPool.findIndex(function(pool) {
-                  return pool.id == player && pool.living;
-                }) > -1) {
+              return pool.id == player && pool.living;
+            }) > -1) {
               numPool++;
             }
           });
@@ -3089,7 +3089,7 @@ function HungryGames() {
       numVictim, numAttacker, userPool, numAlive, teams, options, victimsDie,
       attackersDie, weaponWielder) {
     if (!validateEventNumConstraint(
-            numVictim, numAttacker, userPool, numAlive)) {
+        numVictim, numAttacker, userPool, numAlive)) {
       return 'NUM_CONSTRAINT';
     }
     let failReason = validateEventTeamConstraint(
@@ -3099,8 +3099,8 @@ function HungryGames() {
       return 'TEAM_CONSTRAINT-' + failReason;
     }
     if (!validateEventVictorConstraint(
-            numVictim, numAttacker, numAlive, options, victimsDie,
-            attackersDie)) {
+        numVictim, numAttacker, numAlive, options, victimsDie,
+        attackersDie)) {
       return 'VICTOR_CONSTRAINT';
     }
     return null;
@@ -3305,19 +3305,19 @@ function HungryGames() {
       };
 
       healthText = affectedUsers
-                       .map(function(obj, index) {
-                         const health =
+          .map(function(obj, index) {
+            const health =
                              Math.max((maxHealth - userHealth[index]), 0);
-                         const prePost = health === 0 ? '~~' : '';
-                         return prePost + '`' +
+            const prePost = health === 0 ? '~~' : '';
+            return prePost + '`' +
                              (useNicknames ? (obj.nickname || obj.name) :
                                              obj.name) +
                              '`: ' + health + 'HP' + prePost;
-                       })
-                       .sort(function(a, b) {
-                         return a.id - b.id;
-                       })
-                       .join(', ');
+          })
+          .sort(function(a, b) {
+            return a.id - b.id;
+          })
+          .join(', ');
       let messageText = eventTry.message;
       if (duplicateCount > 0) {
         messageText += ' x' + (duplicateCount + 1);
@@ -3399,7 +3399,7 @@ function HungryGames() {
                    eventPool[i].victim.outcome == type)) {
         finalPool.push(i);
       } else if (
-          !type && eventPool[i].attacker.outcome == 'nothing' &&
+        !type && eventPool[i].attacker.outcome == 'nothing' &&
           eventPool[i].victim.outcome == 'nothing') {
         finalPool.push(i);
       }
@@ -3528,7 +3528,7 @@ function HungryGames() {
       let numDead = deadUsers.length;
       if (numDead === 0) {
         finalMessage = finalMessage.replaceAll('{dead}', 'an animal')
-                           .replace(/\[D([^\|]*)\|([^\]]*)\]/g, '$1');
+            .replace(/\[D([^\|]*)\|([^\]]*)\]/g, '$1');
       } else {
         finalMessage =
             finalMessage
@@ -3591,7 +3591,7 @@ function HungryGames() {
       delete dayEventIntervals[id];
       printDay(msg, id);
     } else if (
-        events[index].battle &&
+      events[index].battle &&
         events[index].state < events[index].attacks.length) {
       const battleState = events[index].state;
       let embed = new self.Discord.MessageEmbed();
@@ -3674,13 +3674,13 @@ function HungryGames() {
         };
         let numNonUser = 0;
         for (let i = 0; i < events[index].attacks[battleState].icons.length;
-             i++) {
+          i++) {
           let outcome = events[index].attacks[battleState].victim.outcome;
           if (!events[index].attacks[battleState].icons[i].id) {
             numNonUser++;
             outcome = 'nothing';
           } else if (
-              i >= events[index].attacks[battleState].numVictim + numNonUser) {
+            i >= events[index].attacks[battleState].numVictim + numNonUser) {
             outcome = events[index].attacks[battleState].attacker.outcome;
           }
           Jimp.read(events[index].attacks[battleState].icons[i].url)
@@ -3997,12 +3997,12 @@ function HungryGames() {
       let winnerTag = '';
       if (find(id).options.mentionVictor) {
         winnerTag = find(id)
-                        .currentGame.teams[lastTeam]
-                        .players
-                        .map(function(player) {
-                          return '<@' + player + '>';
-                        })
-                        .join(' ');
+            .currentGame.teams[lastTeam]
+            .players
+            .map(function(player) {
+              return '<@' + player + '>';
+            })
+            .join(' ');
       }
       const avatarSizes = find(id).options.victorAvatarSizes;
       const victorIconSize = avatarSizes.avatar;
@@ -4097,26 +4097,26 @@ function HungryGames() {
       let rankEmbed = new self.Discord.MessageEmbed();
       rankEmbed.setTitle('Final Ranks (kills)');
       let rankList = find(id)
-                         .currentGame.includedUsers
-                         .sort(function(a, b) {
-                           return a.rank - b.rank;
-                         })
-                         .map(function(obj) {
-                           let shortName;
-                           if (obj.nickname && find(id).options.useNicknames) {
-                             shortName = obj.nickname.substring(0, 16);
-                             if (shortName != obj.nickname) {
-                               shortName = shortName.substring(0, 13) + '...';
-                             }
-                           } else {
-                             shortName = obj.name.substring(0, 16);
-                             if (shortName != obj.name) {
-                               shortName = shortName.substring(0, 13) + '...';
-                             }
-                           }
-                           return obj.rank + ') ' + shortName +
+          .currentGame.includedUsers
+          .sort(function(a, b) {
+            return a.rank - b.rank;
+          })
+          .map(function(obj) {
+            let shortName;
+            if (obj.nickname && find(id).options.useNicknames) {
+              shortName = obj.nickname.substring(0, 16);
+              if (shortName != obj.nickname) {
+                shortName = shortName.substring(0, 13) + '...';
+              }
+            } else {
+              shortName = obj.name.substring(0, 16);
+              if (shortName != obj.name) {
+                shortName = shortName.substring(0, 13) + '...';
+              }
+            }
+            return obj.rank + ') ' + shortName +
                                (obj.kills > 0 ? ' (' + obj.kills + ')' : '');
-                         });
+          });
       if (rankList.length <= 20) {
         rankEmbed.setDescription(rankList.join('\n'));
       } else {
@@ -4221,9 +4221,9 @@ function HungryGames() {
           msg.channel.send('`Autoplaying...`')
               .then((msg) => {
                 msg.delete({
-                     timeout: find(id).options.delayDays - 1250,
-                     reason: 'I can do whatever I want!',
-                   })
+                  timeout: find(id).options.delayDays - 1250,
+                  reason: 'I can do whatever I want!',
+                })
                     .catch(() => {});
               })
               .catch(() => {});
@@ -4279,7 +4279,7 @@ function HungryGames() {
           msg, 'You must first create a game with "' + msg.prefix +
               self.postPrefix + 'create".');
     } else if (
-        msg.text.split(' ')[0] === 'everyone' ||
+      msg.text.split(' ')[0] === 'everyone' ||
         msg.text.split(' ')[0] === '@everyone') {
       const response = self.excludeUsers('everyone', id);
       if (find(id).currentGame.inProgress) {
@@ -4385,7 +4385,7 @@ function HungryGames() {
           msg, 'You must first create a game with "' + msg.prefix +
               self.postPrefix + 'create".');
     } else if (
-        msg.text.split(' ')[0] === 'everyone' ||
+      msg.text.split(' ')[0] === 'everyone' ||
         msg.text.split(' ')[0] === '@everyone') {
       const response = self.includeUsers('everyone', id);
       if (find(id).currentGame.inProgress) {
@@ -4459,8 +4459,8 @@ function HungryGames() {
           response += obj.username + ' skipped.\n';
         }
       } else if (!find(id).currentGame.includedUsers.find((u) => {
-                   return u.id === obj.id;
-                 })) {
+        return u.id === obj.id;
+      })) {
         find(id).currentGame.includedUsers.push(
             new Player(
                 obj.id, obj.username, obj.displayAvatarURL({format: 'png'}),
@@ -4581,11 +4581,11 @@ function HungryGames() {
     if (find(id) && find(id).excludedUsers &&
         find(id).excludedUsers.length > 0) {
       let excludedList = find(id)
-                             .excludedUsers
-                             .map(function(obj) {
-                               return getName(msg.guild, obj);
-                             })
-                             .join(', ');
+          .excludedUsers
+          .map(function(obj) {
+            return getName(msg.guild, obj);
+          })
+          .join(', ');
       let trimmedList = excludedList.substr(0, 512);
       if (excludedList != trimmedList) {
         excludedList = trimmedList.substr(0, 509) + '...';
@@ -4850,14 +4850,14 @@ function HungryGames() {
     });
     newReact(maxReactAwaitTime);
     msg_.awaitReactions(function(reaction, user) {
-          if (user.id != self.client.user.id) {
-            reaction.users.remove(user).catch(() => {});
-          }
-          return (reaction.emoji.name == emoji.arrow_right ||
+      if (user.id != self.client.user.id) {
+        reaction.users.remove(user).catch(() => {});
+      }
+      return (reaction.emoji.name == emoji.arrow_right ||
                   reaction.emoji.name == emoji.arrow_left) /* &&
             user.id == msg_.origAuth*/ &&
               user.id != self.client.user.id;
-        }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
+    }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
       if (reactions.size == 0) {
         msg_.reactions.removeAll().catch(() => {});
         delete optionMessages[msg_.id];
@@ -4979,12 +4979,12 @@ function HungryGames() {
         let tId = -1;
         let teamS = find(gId).currentGame.teams.find((t, i) => {
           if (t.players.find((p, j) => {
-                if (p == one) {
-                  pId = j;
-                  return true;
-                }
-                return false;
-              })) {
+            if (p == one) {
+              pId = j;
+              return true;
+            }
+            return false;
+          })) {
             tId = i;
             return true;
           }
@@ -4999,10 +4999,10 @@ function HungryGames() {
               find(gId)
                   .currentGame
                   .teams[find(gId).currentGame.teams.push(
-                             new Team(
-                                 find(gId).currentGame.teams.length, 'Team ' +
+                      new Team(
+                          find(gId).currentGame.teams.length, 'Team ' +
                                      (find(gId).currentGame.teams.length + 1),
-                                 [])) -
+                          [])) -
                          1];
         }
         teamD.players.push(teamS.players.splice(pId, 1)[0]);
@@ -5236,10 +5236,10 @@ function HungryGames() {
       newEventMessages[msg.id].myResponse = msg_;
       newReact(maxReactAwaitTime);
       msg_.awaitReactions(function(reaction, user) {
-            return (reaction.emoji.name == emoji.red_circle ||
+        return (reaction.emoji.name == emoji.red_circle ||
                     reaction.emoji.name == emoji.trophy) &&
                 user.id == authId;
-          }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
+      }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
         if (reactions.size == 0) {
           msg_.reactions.removeAll().catch(() => {});
           delete newEventMessages[msg.id];
@@ -5489,7 +5489,7 @@ function HungryGames() {
           let exists = false;
           let dEl = data.outcomes[i];
           for (let j = 0; j < find(id).customEvents[type][name].outcomes.length;
-               j++) {
+            j++) {
             let el = find(id).customEvents[type][name].outcomes[j];
             if (self.eventsEqual(el, dEl)) {
               exists = true;
@@ -5688,14 +5688,14 @@ function HungryGames() {
     regLis = function() {
       newReact(maxReactAwaitTime);
       msg.awaitReactions(function(reaction, user) {
-           if (user.id != self.client.user.id) {
-             reaction.users.remove(user).catch(() => {});
-           }
-           return (reaction.emoji.name == emoji.arrow_up ||
+        if (user.id != self.client.user.id) {
+          reaction.users.remove(user).catch(() => {});
+        }
+        return (reaction.emoji.name == emoji.arrow_up ||
                    reaction.emoji.name == emoji.arrow_down ||
                    reaction.emoji.name == emoji.white_check_mark) &&
                user.id == id;
-         }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
+      }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
         if (reactions.size == 0) {
           msg.reactions.removeAll().catch(() => {});
           return;
@@ -5753,12 +5753,12 @@ function HungryGames() {
 
     newReact(maxReactAwaitTime);
     msg.awaitReactions(function(reaction, user) {
-         return (reaction.emoji.name == getOutcomeEmoji('thrives') ||
+      return (reaction.emoji.name == getOutcomeEmoji('thrives') ||
                  reaction.emoji.name == getOutcomeEmoji('wounded') ||
                  reaction.emoji.name == getOutcomeEmoji('nothing') ||
                  reaction.emoji.name == getOutcomeEmoji('dies')) &&
              user.id == id;
-       }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
+    }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
       if (reactions.size == 0) {
         msg.reactions.removeAll().catch(() => {});
         return;
@@ -5809,10 +5809,10 @@ function HungryGames() {
 
     newReact(maxReactAwaitTime);
     msg.awaitReactions(function(reaction, user) {
-         return (reaction.emoji.name == emoji.white_check_mark ||
+      return (reaction.emoji.name == emoji.white_check_mark ||
                  reaction.emoji.name == emoji.x) &&
              user.id == id;
-       }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
+    }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
       if (reactions.size == 0) {
         msg.reactions.removeAll().catch(() => {});
         return;
@@ -5857,17 +5857,17 @@ function HungryGames() {
     }
     try {
       let single = makeSingleEvent(
-                       msg.text, players.slice(0), 1, 1, false, msg.guild.id,
-                       'nothing', 'nothing', find(id).options.useNicknames)
-                       .message;
+          msg.text, players.slice(0), 1, 1, false, msg.guild.id,
+          'nothing', 'nothing', find(id).options.useNicknames)
+          .message;
       let pluralOne = makeSingleEvent(
-                          msg.text, players.slice(0), 2, 1, false, msg.guild.id,
-                          'nothing', 'nothing', find(id).options.useNicknames)
-                          .message;
+          msg.text, players.slice(0), 2, 1, false, msg.guild.id,
+          'nothing', 'nothing', find(id).options.useNicknames)
+          .message;
       let pluralTwo = makeSingleEvent(
-                          msg.text, players.slice(0), 1, 2, false, msg.guild.id,
-                          'nothing', 'nothing', find(id).options.useNicknames)
-                          .message;
+          msg.text, players.slice(0), 1, 2, false, msg.guild.id,
+          'nothing', 'nothing', find(id).options.useNicknames)
+          .message;
       let pluralBoth =
           makeSingleEvent(
               msg.text, players.slice(0), 2, 2, false, msg.guild.id, 'nothing',
@@ -5924,10 +5924,10 @@ function HungryGames() {
         .then((msg_) => {
           newReact(maxReactAwaitTime);
           msg_.awaitReactions(function(reaction, user) {
-                return user.id == msg.author.id &&
+            return user.id == msg.author.id &&
                     (reaction.emoji.name == emoji.red_circle ||
                      reaction.emoji.name == emoji.trophy);
-              }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
+          }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
             if (reactions.size == 0) {
               msg_.reactions.removeAll().catch(()=>{});
               return;
@@ -6127,16 +6127,16 @@ function HungryGames() {
     let callback = function(msg_) {
       newReact(maxReactAwaitTime);
       msg_.awaitReactions(function(reaction, user) {
-            if (user.id != self.client.user.id) {
-              reaction.users.remove(user).catch(() => {});
-            }
-            return user.id == msg.author.id &&
+        if (user.id != self.client.user.id) {
+          reaction.users.remove(user).catch(() => {});
+        }
+        return user.id == msg.author.id &&
                 (reaction.emoji.name == emoji.arrow_right ||
                  reaction.emoji.name == emoji.arrow_left ||
                  reaction.emoji.name == emoji.arrow_double_right ||
                  reaction.emoji.name == emoji.arrow_double_left ||
                  reaction.emoji.name == emoji.arrows_counterclockwise);
-          }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
+      }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
         if (reactions.size == 0) {
           msg_.reactions.removeAll().catch(() => {});
           return;
@@ -6207,8 +6207,8 @@ function HungryGames() {
    */
   function formatEventString(arenaEvent, newline) {
     let message = arenaEvent.message.replaceAll('{attacker}', '`attacker`')
-                      .replaceAll('{victim}', '`victim`')
-                      .replaceAll('{dead}', '`dead`');
+        .replaceAll('{victim}', '`victim`')
+        .replaceAll('{dead}', '`dead`');
     if (newline) message += '\n    ';
     message += '(' + emoji.crossed_swords + ': ' +
         ('' + arenaEvent.attacker.count).replace('-', '>');
@@ -6433,8 +6433,8 @@ function HungryGames() {
     const quarterLength = Math.ceil(statusList.length / numCols);
     for (let i = 0; i < numCols; i++) {
       if (statusList.slice(quarterLength * i, quarterLength * (i + 1))
-              .join('\n')
-              .length > 1024) {
+          .join('\n')
+          .length > 1024) {
         return calcColNum(numCols + 1, statusList);
       }
     }

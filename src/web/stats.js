@@ -86,7 +86,7 @@ function WebStats() {
     method: 'POST',
     headers: {
       'Authorization': auth.discordBotsOrgToken,
-      'content-type': 'application/json'
+      'content-type': 'application/json',
     },
   };
 
@@ -155,6 +155,8 @@ function WebStats() {
     /**
      * Send the request after we have fetched our stats.
      * @private
+     * @param {{server_count: number, shards: number[], shard_id: number,
+     * shard_count: number}} data The data to send in our request.
      */
     function sendRequest(data) {
       let host = apiHost;

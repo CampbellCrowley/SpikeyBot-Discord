@@ -80,9 +80,9 @@ function SubModule() {
    * @type {string}
    */
   this.commit = require('child_process')
-                    .execSync('git rev-parse --short HEAD')
-                    .toString()
-                    .trim();
+      .execSync('git rev-parse --short HEAD')
+      .toString()
+      .trim();
 
   /**
    * The time at which this madule was loaded for use in checking if the module
@@ -233,8 +233,8 @@ function SubModule() {
  * @param {Object} child The child class to extend.
  */
 SubModule.extend = function(child) {
-    child.prototype = new SubModule();
-    child.prototype.constructor = child;
+  child.prototype = new SubModule();
+  child.prototype.constructor = child;
 };
 
 module.exports = SubModule.extend;

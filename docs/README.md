@@ -77,7 +77,7 @@ discordbots.org.</p>
 <dd><p>Handler for an unhandledRejection or uncaughtException, to prevent the bot
 from silently crashing without an error.</p>
 </dd>
-<dt><a href="#match">match(input)</a> ⇒ <code>Array.&lt;string&gt;</code></dt>
+<dt><a href="#match">match(input)</a> ⇒ <code>null</code> | <code>Array.&lt;string&gt;</code></dt>
 <dd><p>Check a string for any emoji matches.</p>
 </dd>
 </dl>
@@ -7731,9 +7731,12 @@ Manages the account webpage.
         * [~handler(req, res)](#WebAccount..handler) ℗
         * [~socketConnection(socket)](#WebAccount..socketConnection) ℗
         * [~validatePatreonCode(code, userid, ip, cb)](#WebAccount..validatePatreonCode) ℗
-        * [~updateUserPatreonId(userid, userid, patreonid, cb)](#WebAccount..updateUserPatreonId)
+        * [~updateUserPatreonId(userid, patreonid, cb)](#WebAccount..updateUserPatreonId) ℗
         * [~getPatreonSettings(userid, cb)](#WebAccount..getPatreonSettings) ℗
         * [~changePatreonSetting(userid, setting, value, cb)](#WebAccount..changePatreonSetting) ℗
+            * [~makeDirectory(err, data)](#WebAccount..changePatreonSetting..makeDirectory) ℗
+            * [~writeFile(err, file)](#WebAccount..changePatreonSetting..writeFile) ℗
+            * [~isInvalid(obj, s, value)](#WebAccount..changePatreonSetting..isInvalid) ⇒ <code>boolean</code> ℗
 
 <a name="SubModule+helpMessage"></a>
 
@@ -8022,15 +8025,15 @@ ID associated with it.
 
 <a name="WebAccount..updateUserPatreonId"></a>
 
-### WebAccount~updateUserPatreonId(userid, userid, patreonid, cb)
+### WebAccount~updateUserPatreonId(userid, patreonid, cb) ℗
 Update our Discord table with the retrieved patreon account ID for the
 Discord user.
 
 **Kind**: inner method of [<code>WebAccount</code>](#WebAccount)  
+**Access**: private  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| userid |  |  |
 | userid | <code>string</code> \| <code>number</code> | The Discord ID of the user to link to the patreonid. |
 | patreonid | <code>string</code> \| <code>number</code> | The Patreon id of the account to link to the Discord ID. |
 | cb | <code>function</code> | Callback with single argument that is string if error, or null if no error. |
@@ -8062,6 +8065,56 @@ Change a user's setting that is related to Patreon rewards.
 | setting | <code>string</code> | The name of the setting to change. |
 | value | <code>string</code> | The value to set the setting to. |
 | cb | <code>function</code> | Callback that is called once the operations are complete with a single parameter for errors, string if error, null if none. |
+
+
+* [~changePatreonSetting(userid, setting, value, cb)](#WebAccount..changePatreonSetting) ℗
+    * [~makeDirectory(err, data)](#WebAccount..changePatreonSetting..makeDirectory) ℗
+    * [~writeFile(err, file)](#WebAccount..changePatreonSetting..writeFile) ℗
+    * [~isInvalid(obj, s, value)](#WebAccount..changePatreonSetting..isInvalid) ⇒ <code>boolean</code> ℗
+
+<a name="WebAccount..changePatreonSetting..makeDirectory"></a>
+
+#### changePatreonSetting~makeDirectory(err, data) ℗
+Make the directory for writing the user's settings if it does not exist
+already.
+
+**Kind**: inner method of [<code>changePatreonSetting</code>](#WebAccount..changePatreonSetting)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| err | <code>Error</code> | The error in readin the existing file. |
+| data | <code>string</code> | The data read from the existing file if any. |
+
+<a name="WebAccount..changePatreonSetting..writeFile"></a>
+
+#### changePatreonSetting~writeFile(err, file) ℗
+Write the modified data to file.
+
+**Kind**: inner method of [<code>changePatreonSetting</code>](#WebAccount..changePatreonSetting)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| err | <code>Error</code> | The error in creating the directory. |
+| file | <code>string</code> | The current file data that was read. |
+
+<a name="WebAccount..changePatreonSetting..isInvalid"></a>
+
+#### changePatreonSetting~isInvalid(obj, s, value) ⇒ <code>boolean</code> ℗
+Checks that the setting that was requested to be changed is a valid
+setting to change.
+
+**Kind**: inner method of [<code>changePatreonSetting</code>](#WebAccount..changePatreonSetting)  
+**Returns**: <code>boolean</code> - True if the request was invalid in some way, or false
+if everything is fine.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| obj | <code>Object</code> | The template object to compare the request against. |
+| s | <code>Array.&lt;string&gt;</code> | The array of each setting key that was a part of the request. |
+| value | <code>string</code> \| <code>number</code> | The value to change the setting to. |
 
 <a name="HGWeb"></a>
 
@@ -9122,7 +9175,7 @@ discordbots.org.
         * [~handler(req, res)](#WebStats..handler) ℗
         * [~getStats(cb)](#WebStats..getStats) ℗
         * [~postUpdatedCount()](#WebStats..postUpdatedCount) ℗
-            * [~sendRequest()](#WebStats..postUpdatedCount..sendRequest) ℗
+            * [~sendRequest(data)](#WebStats..postUpdatedCount..sendRequest) ℗
 
 <a name="SubModule+helpMessage"></a>
 
@@ -9388,11 +9441,16 @@ Send our latest guild count to discordbots.org via https post request.
 **Access**: private  
 <a name="WebStats..postUpdatedCount..sendRequest"></a>
 
-#### postUpdatedCount~sendRequest() ℗
+#### postUpdatedCount~sendRequest(data) ℗
 Send the request after we have fetched our stats.
 
 **Kind**: inner method of [<code>postUpdatedCount</code>](#WebStats..postUpdatedCount)  
 **Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| data | <code>Object</code> | The data to send in our request. |
+
 <a name="re"></a>
 
 ## re : <code>RegExp</code> ℗
@@ -9418,11 +9476,11 @@ from silently crashing without an error.
 
 <a name="match"></a>
 
-## match(input) ⇒ <code>Array.&lt;string&gt;</code>
+## match(input) ⇒ <code>null</code> \| <code>Array.&lt;string&gt;</code>
 Check a string for any emoji matches.
 
 **Kind**: global function  
-**Returns**: <code>Array.&lt;string&gt;</code> - The matched return value.  
+**Returns**: <code>null</code> \| <code>Array.&lt;string&gt;</code> - The matched return value.  
 **Access**: public  
 
 | Param | Type | Description |

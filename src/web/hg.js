@@ -19,7 +19,7 @@ function HGWeb(hg) {
   let io = socketIo(app, {
     path: hg.common.isRelease ? '/www.spikeybot.com/socket.io/hg' :
                                 '/www.spikeybot.com/socket.io/dev/hg',
-    serveClient: false
+    serveClient: false,
   });
 
   app.on('error', function(err) {
@@ -203,7 +203,7 @@ function HGWeb(hg) {
           s[1].emit(
               'forwardedRequest', args[0], socket.id, func.name, args.slice(1),
               (res) => {
-                socket.emit.apply(socket, res);
+                socket.emit(...res);
               });
         });
       }
@@ -369,10 +369,10 @@ function HGWeb(hg) {
       nickname: m.nickname,
       hgRole: hg.checkMemberForRole(m),
       roles: m.roles
-                 .filter(() => {
-                   return true;
-                 })
-                 .array(),
+          .filter(() => {
+            return true;
+          })
+          .array(),
       color: m.displayColor,
       guild: {id: m.guild.id},
       user: {
@@ -454,10 +454,10 @@ function HGWeb(hg) {
 
     try {
       let guilds = hg.client.guilds
-                       .filter((obj) => {
-                         return obj.members.get(userData.id);
-                       })
-                       .array();
+          .filter((obj) => {
+            return obj.members.get(userData.id);
+          })
+          .array();
       let strippedGuilds = guilds.map((g) => {
         let member = g.members.get(userData.id);
         let newG = {};
@@ -469,13 +469,13 @@ function HGWeb(hg) {
           return m.id;
         });
         newG.channels = g.channels
-                            .filter((c) => {
-                              return c.permissionsFor(member).has(
-                                  hg.Discord.Permissions.FLAGS.VIEW_CHANNEL);
-                            })
-                            .map((c) => {
-                              return c.id;
-                            });
+            .filter((c) => {
+              return c.permissionsFor(member).has(
+                  hg.Discord.Permissions.FLAGS.VIEW_CHANNEL);
+            })
+            .map((c) => {
+              return c.id;
+            });
         newG.myself = makeMember(member);
         return newG;
       });
@@ -587,7 +587,7 @@ function HGWeb(hg) {
    * complete, or has failed.
    */
   function fetchDay(userData, socket, gId, cb) {
-    let g, m;
+    let g; let m;
     if (!userData) {
       return;
     } else {
@@ -614,8 +614,8 @@ function HGWeb(hg) {
     }
 
     if (!g.channels.get(game.outputChannel)
-             .permissionsFor(m)
-             .has(hg.Discord.Permissions.FLAGS.VIEW_CHANNEL)) {
+        .permissionsFor(m)
+        .has(hg.Discord.Permissions.FLAGS.VIEW_CHANNEL)) {
       replyNoPerm(socket, 'fetchDay');
       return;
     }

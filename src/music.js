@@ -303,8 +303,8 @@ function Music() {
     if (dispatcher) {
       currentTime =
           '[' + formatPlaytime(
-                    Math.round(
-                        (dispatcher.totalStreamTime - dispatcher.pausedTime) /
+              Math.round(
+                  (dispatcher.totalStreamTime - dispatcher.pausedTime) /
                         1000)) +
           '] / ';
       remaining = ' (' + formatPlaytime(getRemainingSeconds(info, dispatcher)) +
@@ -863,17 +863,17 @@ function Music() {
         let queueDuration = 0;
         let queueExact = true;
         let queueString = broadcasts[msg.guild.id]
-                              .queue
-                              .map(function(obj, index) {
-                                if (obj.info) {
-                                  queueDuration += obj.info._duration_raw;
-                                  return (index + 1) + ') ' + obj.info.title;
-                                } else {
-                                  queueExact = false;
-                                  return (index + 1) + ') ' + obj.song;
-                                }
-                              })
-                              .join('\n');
+            .queue
+            .map(function(obj, index) {
+              if (obj.info) {
+                queueDuration += obj.info._duration_raw;
+                return (index + 1) + ') ' + obj.info.title;
+              } else {
+                queueExact = false;
+                return (index + 1) + ') ' + obj.song;
+              }
+            })
+            .join('\n');
         embed.addField(
             'Queue [' + (queueExact ? '' : '>') +
                 formatPlaytime(queueDuration) + ']',
@@ -1120,7 +1120,7 @@ function Music() {
       return;
     }
     const filename = 'recordings/' + encodeURIComponent(
-                                         msg.member.voice.channel.id + '_' +
+        msg.member.voice.channel.id + '_' +
                                          formatDateTime(Date.now())) +
         '.ogg';
     const url = self.common.webURL + filename;

@@ -572,14 +572,14 @@ function Patreon() {
       if (!rows || rows.length != 1) {
         cb('User has not connected their Patreon ' +
                'account to their Discord account.',
-           null);
+        null);
         return;
       }
       const user = rows[0];
       if (!user.patreonId) {
         cb('User has not connected their Patreon ' +
                'account to their Discord account.',
-           null);
+        null);
         return;
       }
       const toSend = sqlCon.format(

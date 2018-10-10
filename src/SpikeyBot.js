@@ -149,7 +149,7 @@ function SpikeyBot() {
         i++;
       }
     } else if (
-        process.argv[i] === 'minimal' || process.argv[i] === 'onlymusic' ||
+      process.argv[i] === 'minimal' || process.argv[i] === 'onlymusic' ||
         process.argv[i] === '--minimal' || process.argv[i] === '--onlymusic') {
       minimal = true;
     } else if (process.argv[i] === 'test' || process.argv[i] === '--test') {
@@ -388,7 +388,7 @@ function SpikeyBot() {
           common.reply(msg, onlyservermessage);
           return true;
         } else if (
-            blacklist[cmd] && blacklist[cmd].lastIndexOf(msg.channel.id) > -1) {
+          blacklist[cmd] && blacklist[cmd].lastIndexOf(msg.channel.id) > -1) {
           common.reply(msg, disabledcommandmessage);
           return true;
         }
@@ -733,7 +733,7 @@ function SpikeyBot() {
       } else if (testMode && msg.author.id !== client.user.id) {
         return;
       } else if (
-          testMode && msg.author.id === client.user.id &&
+        testMode && msg.author.id === client.user.id &&
           msg.content === '~`END UNIT TESTS`~' &&
           msg.channel.id == testChannel) {
         testMode = false;
@@ -931,9 +931,9 @@ function SpikeyBot() {
             .then((msg_) => {
               msg_.react(confirmEmoji);
               msg_.awaitReactions((reaction, user) => {
-                    if (user.id !== msg.author.id) return false;
-                    return reaction.emoji.name == confirmEmoji;
-                  }, {max: 1, time: 60000}).then((reactions) => {
+                if (user.id !== msg.author.id) return false;
+                return reaction.emoji.name == confirmEmoji;
+              }, {max: 1, time: 60000}).then((reactions) => {
                 msg_.reactions.removeAll().catch(() => {});
                 if (reactions.size == 0) {
                   msg_.edit(
@@ -960,8 +960,17 @@ function SpikeyBot() {
                           newData[botName] = newPrefix;
                           finalPrefix = JSON.stringify(newData);
                         }
-                        mkdirp(common.guildSaveDir + msg.guild.id,
-                                 function(err) {
+                        mkdirp(
+                            common.guildSaveDir + msg.guild.id,
+                            writeBotNamePrefix);
+                        /**
+                         * Write the custom prefix to file after making the
+                         * directory. This is for bots not using the default
+                         * name.
+                         * @private
+                         * @param {Error} err
+                         */
+                        function writeBotNamePrefix(err) {
                           if (err) {
                             common.error(
                                 'Failed to create guild directory! ' +
@@ -986,7 +995,7 @@ function SpikeyBot() {
                                       newPrefix);
                                 }
                               });
-                        });
+                        }
                       });
                 } else {
                   mkdirp(common.guildSaveDir + msg.guild.id, function(err) {
@@ -1157,8 +1166,11 @@ function SpikeyBot() {
    */
   function reloadSubModules(toReload, reloaded, schedule) {
     if (!Array.isArray(reloaded)) reloaded = [];
-    if (!toReload) toReload = [];
-    else if (typeof toReload === 'string') toReload = [toReload];
+    if (!toReload) {
+      toReload = [];
+    } else if (typeof toReload === 'string') {
+      toReload = [toReload];
+    }
     if (typeof schedule === 'undefined') schedule = true;
 
     let error = false;
@@ -1167,14 +1179,14 @@ function SpikeyBot() {
 
     let numArg = 0;
     if (toReload.find(function(el) {
-          return '--force' == el;
-        })) {
+      return '--force' == el;
+    })) {
       force = true;
       numArg++;
     }
     if (toReload.find(function(el) {
-          return '--no-schedule' == el;
-        })) {
+      return '--no-schedule' == el;
+    })) {
       noSchedule = true;
       numArg++;
     }
@@ -1182,8 +1194,8 @@ function SpikeyBot() {
     for (let i = 0; i < subModules.length; i++) {
       if (toReload.length > numArg) {
         if (!toReload.find(function(el) {
-              return subModuleNames[i] == el;
-            })) {
+          return subModuleNames[i] == el;
+        })) {
           continue;
         }
       }
@@ -1267,16 +1279,16 @@ function SpikeyBot() {
                 'git diff-index --quiet ' + subModules[i].commit +
                 ' -- ./src/' + subModuleNames[i])
             .on('close', ((name) => {
-                  return (code, signal) => {
-                    if (code) {
-                      let out = [];
-                      reloadSubModules(name, out);
-                      if (out) common.log(out.join(' '));
-                    } else {
-                      common.log(name + ' unchanged (' + code + ')');
-                    }
-                  };
-                })(subModuleNames[i]));
+              return (code, signal) => {
+                if (code) {
+                  let out = [];
+                  reloadSubModules(name, out);
+                  if (out) common.log(out.join(' '));
+                } else {
+                  common.log(name + ' unchanged (' + code + ')');
+                }
+              };
+            })(subModuleNames[i]));
       }
     } catch (err) {
       common.error('Failed to reload updated submodules!');
@@ -1346,48 +1358,45 @@ function SpikeyBot() {
         'Triggered update: ' + __dirname + ' <-- DIR | CWD -->' +
         process.cwd());
     common.reply(msg, 'Updating from git...').then((msg_) => {
-      childProcess.exec(
-          'npm run update', function(err, stdout, stderr) {
-            if (!err) {
-              if (stdout && stdout !== 'null') console.log('STDOUT:', stdout);
-              if (stderr && stderr !== 'null') console.error('STDERR:', stderr);
-              client.reloadUpdatedSubmodules();
-              if (client.shard) {
-                client.shard.broadcastEval('this.reloadUpdatedSubmodules');
-              }
-              try {
-                childProcess.execSync(
-                    'git diff-index --quiet ' + version.split('#')[1] +
-                    ' -- ./src/' +
-                    module.filename.slice(
-                        __filename.lastIndexOf('/') + 1,
-                        module.filename.length));
-                msg_.edit(common.mention(msg) + ' Bot update complete!');
-              } catch (err) {
-                if (err.status === 1) {
-                  msg_.edit(
-                      common.mention(msg) +
-                      ' Bot update complete, but requires manual reboot.');
-                } else {
-                  common.error(
-                      'Checking for SpikeyBot.js changes failed: ' +
-                      err.status);
-                  console.error('STDOUT:', err.stdout);
-                  console.error('STDERR:', err.stderr);
-                  msg_.edit(
-                      common.mention(msg) +
-                      ' Bot update complete, but failed to check if ' +
-                      'reboot is necessary.');
-                }
-              }
+      childProcess.exec('npm run update', function(err, stdout, stderr) {
+        if (!err) {
+          if (stdout && stdout !== 'null') console.log('STDOUT:', stdout);
+          if (stderr && stderr !== 'null') console.error('STDERR:', stderr);
+          client.reloadUpdatedSubmodules();
+          if (client.shard) {
+            client.shard.broadcastEval('this.reloadUpdatedSubmodules');
+          }
+          try {
+            childProcess.execSync(
+                'git diff-index --quiet ' + version.split('#')[1] +
+                ' -- ./src/' +
+                module.filename.slice(
+                    __filename.lastIndexOf('/') + 1, module.filename.length));
+            msg_.edit(common.mention(msg) + ' Bot update complete!');
+          } catch (err) {
+            if (err.status === 1) {
+              msg_.edit(
+                  common.mention(msg) +
+                  ' Bot update complete, but requires manual reboot.');
             } else {
-              common.error('Failed to pull latest update.');
-              console.error(err);
-              if (stdout && stdout !== 'null') console.log('STDOUT:', stdout);
-              if (stderr && stderr !== 'null') console.error('STDERR:', stderr);
-              msg_.edit(common.mention(msg) + ' Bot update FAILED!');
+              common.error(
+                  'Checking for SpikeyBot.js changes failed: ' + err.status);
+              console.error('STDOUT:', err.stdout);
+              console.error('STDERR:', err.stderr);
+              msg_.edit(
+                  common.mention(msg) +
+                  ' Bot update complete, but failed to check if ' +
+                  'reboot is necessary.');
             }
-          });
+          }
+        } else {
+          common.error('Failed to pull latest update.');
+          console.error(err);
+          if (stdout && stdout !== 'null') console.log('STDOUT:', stdout);
+          if (stderr && stderr !== 'null') console.error('STDERR:', stderr);
+          msg_.edit(common.mention(msg) + ' Bot update FAILED!');
+        }
+      });
     });
   }
 

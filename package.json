@@ -13,22 +13,22 @@
     "url": "https://github.com/CampbellCrowley/SpikeyBot-Discord"
   },
   "dependencies": {
+    "@discordjs/uws": "^10.149.0",
     "@google-cloud/text-to-speech": "^0.3.0",
     "algebra.js": "^0.2.6",
     "async": "^2.6.1",
     "dateformat": "^3.0.3",
     "discord.js": "github:discordjs/discord.js",
-    "jimp": "^0.2.28",
-    "mathjs": "^4.4.2",
+    "jimp": "^0.5.3",
+    "mathjs": "^5.2.0",
     "mkdirp": "^0.5.1",
     "mysql": "^2.16.0",
-    "node-opus": "^0.2.9",
+    "node-opus": "^0.3.0",
     "ogg": "^1.2.5",
     "patreon": "^0.4.1",
     "rimraf": "^2.6.2",
     "socket.io": "^2.1.1",
     "threads": "^0.12.0",
-    "uws": "^9.148.0",
     "youtube-dl": "^1.12.2"
   },
   "contributors": [
@@ -39,15 +39,15 @@
   ],
   "devDependencies": {
     "chai": "^4.2.0",
-    "eslint": "^4.19.1",
-    "eslint-config-google": "^0.9.1",
+    "eslint": "^5.6.1",
+    "eslint-config-google": "^0.10.0",
     "jsdoc-to-markdown": "^4.0.1",
     "mocha": "^5.2.0"
   },
   "scripts": {
     "install": ".hooks/install-hooks.sh",
-    "lint": "eslint ./*.js ./**/*.js",
-    "lint:fix": "eslint ./*.js ./**/*.js --fix",
+    "lint": "eslint $(find ./ -iname '*.js' -not -path './node_modules/*' -not -iname '.eslintrc.js' -printf '%p ')",
+    "lint:fix": "eslint --fix $(find ./ -iname '*.js' -not -path './node_modules/*' -not -iname '.eslintrc.js' -printf '%p ')",
     "lintandtest": "npm run lint && npm run test",
     "test": "mocha --delay",
     "test:hg": "mocha --delay --grep \"START|Hungry Games|END\"",

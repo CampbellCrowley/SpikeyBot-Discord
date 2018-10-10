@@ -242,60 +242,60 @@ function TicTacToe() {
    */
   function addListener(msg, game) {
     msg.awaitReactions(function(reaction, user) {
-         if (user.id != self.client.user.id) reaction.users.remove(user);
-         else return false;
+      if (user.id != self.client.user.id) reaction.users.remove(user);
+      else return false;
 
-         if (game.turn == 1 && game.players.p1 &&
+      if (game.turn == 1 && game.players.p1 &&
              user.id != game.players.p1.id) {
-           return false;
-         }
-         if (game.turn == 2 && game.players.p2 &&
+        return false;
+      }
+      if (game.turn == 2 && game.players.p2 &&
              user.id != game.players.p2.id) {
-           return false;
-         }
-         for (let i = 0; i < 9; i++) {
-           if (emoji[i] == reaction.emoji.name) return true;
-         }
-         return false;
-       }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
-         if (reactions.size == 0) {
-           msg.reactions.removeAll();
-           msg.edit(
-               'Game timed out!\nThe game has ended because nobody made a ' +
+        return false;
+      }
+      for (let i = 0; i < 9; i++) {
+        if (emoji[i] == reaction.emoji.name) return true;
+      }
+      return false;
+    }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
+      if (reactions.size == 0) {
+        msg.reactions.removeAll();
+        msg.edit(
+            'Game timed out!\nThe game has ended because nobody made a ' +
                'move in too long!');
-           game.print(game.turn == 1 ? 2 : 1);
-           return;
-         }
-         if (!game.players.p1 && game.turn == 1) {
-           game.players.p1 = reactions.first().users.first(2)[1];
-         }
-         if (!game.players.p2 && game.turn == 2) {
-           game.players.p2 = reactions.first().users.first(2)[1];
-         }
-         reactions.first().users.remove(self.client.user);
+        game.print(game.turn == 1 ? 2 : 1);
+        return;
+      }
+      if (!game.players.p1 && game.turn == 1) {
+        game.players.p1 = reactions.first().users.first(2)[1];
+      }
+      if (!game.players.p2 && game.turn == 2) {
+        game.players.p2 = reactions.first().users.first(2)[1];
+      }
+      reactions.first().users.remove(self.client.user);
 
-         let move = -1;
-         const choice = reactions.first().emoji;
-         for (let i = 0; i < 9; i++) {
-           if (emoji[i] == choice.name && game.board[i] === 0) {
-             move = i;
-             break;
-           }
-         }
-         if (move == -1) {
-           addListener(msg, game);
-           return;
-         }
-         game.board[move] = game.turn;
-         let winner = checkWin(game.board, move);
-         if (winner != 0) {
-           msg.reactions.removeAll();
-         } else {
-           game.turn = game.turn === 1 ? 2 : 1;
-           addListener(msg, game);
-         }
-         game.print(winner);
-       });
+      let move = -1;
+      const choice = reactions.first().emoji;
+      for (let i = 0; i < 9; i++) {
+        if (emoji[i] == choice.name && game.board[i] === 0) {
+          move = i;
+          break;
+        }
+      }
+      if (move == -1) {
+        addListener(msg, game);
+        return;
+      }
+      game.board[move] = game.turn;
+      let winner = checkWin(game.board, move);
+      if (winner != 0) {
+        msg.reactions.removeAll();
+      } else {
+        game.turn = game.turn === 1 ? 2 : 1;
+        addListener(msg, game);
+      }
+      game.print(winner);
+    });
   }
   /**
    * Checks if the given board has a winner, or if the game is over.

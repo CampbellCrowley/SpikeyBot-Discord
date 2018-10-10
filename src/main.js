@@ -654,7 +654,7 @@ function Main() {
     if (user.id == self.client.id) return;
     if (disabledBanMessage[guild.id]) return;
     if (!guild.me.hasPermission(
-            self.Discord.Permissions.FLAGS.VIEW_AUDIT_LOG)) {
+        self.Discord.Permissions.FLAGS.VIEW_AUDIT_LOG)) {
       return;
     }
     let channel = '';
@@ -728,7 +728,7 @@ function Main() {
    */
   function commandToggleBanMessages(msg) {
     if (msg.member.hasPermission(
-            self.Discord.Permissions.FLAGS.ADMINISTRATOR)) {
+        self.Discord.Permissions.FLAGS.ADMINISTRATOR)) {
       if (disabledBanMessage[msg.guild.id]) {
         disabledBanMessage[msg.guild.id] = false;
         self.common.reply(
@@ -831,12 +831,12 @@ function Main() {
                 if (overwrites) {
                   if (channel.type == 'category') {
                     if (overwrites.deny.has(
-                            self.Discord.Permissions.FLAGS.MENTION_EVERYONE)) {
+                        self.Discord.Permissions.FLAGS.MENTION_EVERYONE)) {
                       return;
                     }
                   } else if (channel.type == 'text') {
                     if (overwrites.deny.has(
-                            self.Discord.Permissions.FLAGS.MENTION_EVERYONE)) {
+                        self.Discord.Permissions.FLAGS.MENTION_EVERYONE)) {
                       return;
                     }
                   }
@@ -965,9 +965,9 @@ function Main() {
    */
   function commandAdd(msg) {
     const splitstring = msg.text.replaceAll('-', ' -')
-                            .replaceAll('  ', ' ')
-                            .replaceAll('\\+', ' ')
-                            .split(' ');
+        .replaceAll('  ', ' ')
+        .replaceAll('\\+', ' ')
+        .split(' ');
     if (splitstring.join('').match(/[^0-9\-]/g)) {
       self.common.reply(
           msg,
@@ -1037,7 +1037,7 @@ function Main() {
       formula = split[1] + ' - (' + split[0] + ')';
     }
     let simplified = math.simplify(formula).toString();
-    return simplified.replace(/ \* ([A-Za-z])/g, '$1');
+    return simplified;
   }
 
   /**
@@ -1084,10 +1084,10 @@ function Main() {
       }
     }
     const outMessage = messages
-                           .map(function(obj, i) {
-                             return variables[i] + ' = ' + obj;
-                           })
-                           .join('\n');
+        .map(function(obj, i) {
+          return variables[i] + ' = ' + obj;
+        })
+        .join('\n');
     self.common.reply(
         msg, outMessage || 'Oops, something didn\'t work!', error);
   }
@@ -1299,7 +1299,7 @@ function Main() {
       if (Object.keys(sandbox).length !== 0) {
         embed.addField(
             'Global Variables', JSON.stringify(sandbox, null, 2)
-                                    .replace(/^(?:{)+|^(?:})|^(?:  )/gm, ''),
+                .replace(/^(?:{)+|^(?:})|^(?:  )/gm, ''),
             true);
       }
       if (stdexit) {
@@ -1556,7 +1556,7 @@ function Main() {
      */
     function sendPm(msg, user, message) {
       user.send(
-              user.tag + ' has asked me to send you this message:\n' + message)
+          user.tag + ' has asked me to send you this message:\n' + message)
           .then(() => {
             self.common.reply(
                 msg, 'Message sent to ' + user.tag, msg.author.tag +
@@ -1603,15 +1603,15 @@ function Main() {
    */
   function commandPurge(msg) {
     if (!msg.channel.permissionsFor(self.client.user)
-             .has(self.Discord.Permissions.FLAGS.MANAGE_MESSAGES)) {
+        .has(self.Discord.Permissions.FLAGS.MANAGE_MESSAGES)) {
       self.common.reply(
           msg,
           'I\'m sorry, but I don\'t have permission to delete messages in ' +
               'this channel.\nTo allow me to do this, please give me ' +
               'permission to Manage Messages.');
     } else if (
-        msg.channel.permissionsFor(msg.member)
-            .has(self.Discord.Permissions.FLAGS.MANAGE_MESSAGES)) {
+      msg.channel.permissionsFor(msg.member)
+          .has(self.Discord.Permissions.FLAGS.MANAGE_MESSAGES)) {
       let numString = msg.text.replace(/\<[^\>]*>|\s/g, '');
       let num = (numString * 1) + 1;
       if (numString.length === 0 || isNaN(num)) {
@@ -1767,19 +1767,19 @@ function Main() {
                   if (overwrites) {
                     if (channel.type == 'category') {
                       if (overwrites.deny.has(
-                              self.Discord.Permissions.FLAGS.SPEAK) &&
+                          self.Discord.Permissions.FLAGS.SPEAK) &&
                           overwrites.deny.has(
                               self.Discord.Permissions.FLAGS.SEND_MESSAGES)) {
                         return;
                       }
                     } else if (channel.type == 'voice') {
                       if (overwrites.deny.has(
-                              self.Discord.Permissions.FLAGS.SPEAK)) {
+                          self.Discord.Permissions.FLAGS.SPEAK)) {
                         return;
                       }
                     } else if (channel.type == 'text') {
                       if (overwrites.deny.has(
-                              self.Discord.Permissions.FLAGS.SEND_MESSAGES)) {
+                          self.Discord.Permissions.FLAGS.SEND_MESSAGES)) {
                         return;
                       }
                     }
@@ -2102,18 +2102,18 @@ function Main() {
     embed.addField(
         'Channel', '```css\n' +
             prePad(msg.channel.permissionsFor(msg.author).bitfield.toString(2),
-                   31) +
+                31) +
             ' You\n' +
             prePad(msg.channel.permissionsFor(self.client.user)
-                       .bitfield.toString(2),
-                   31) +
+                .bitfield.toString(2),
+            31) +
             ' Me```');
     embed.addField(
         'Guild', '```css\n' +
             prePad(msg.member.permissions.bitfield.toString(2), 31) + ' You\n' +
             prePad(msg.guild.member(self.client.user)
-                       .permissions.bitfield.toString(2),
-                   31) +
+                .permissions.bitfield.toString(2),
+            31) +
             ' Me```');
 
     let allPermPairs = Object.entries(self.Discord.Permissions.FLAGS);

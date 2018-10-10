@@ -2,7 +2,7 @@
 BasedOnStyle:  Google
 ---
 Language:        JavaScript
-AllowShortFunctionsOnASingleLine: Empty
+AllowShortFunctionsOnASingleLine: None
 ---
 Language:        Cpp
 # Force pointers to the type for C++.

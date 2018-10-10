@@ -57,12 +57,12 @@ function Polling() {
     self.client.guilds.forEach((g) => {
       const dir = self.common.guildSaveDir + g.id + guildSubDir;
       if (opt == 'async') {
-      rimraf(dir, (err) => {
-        if (err) {
-          self.error('Failed to clean old polls for guild: ' + g.id);
-          console.error(err);
-        }
-      });
+        rimraf(dir, (err) => {
+          if (err) {
+            self.error('Failed to clean old polls for guild: ' + g.id);
+            console.error(err);
+          }
+        });
       } else {
         try {
           rimraf.sync(dir);
@@ -144,20 +144,20 @@ function Polling() {
    * @param {string} data The data to write to the tile.
    */
   function mkdirAndWrite(dir, filename, data) {
-      mkdirp(dir, (err) => {
+    mkdirp(dir, (err) => {
+      if (err) {
+        self.error('Failed to mkdirp: ' + dir);
+        console.error(err);
+        return;
+      }
+      fs.writeFileSync(dir + filename, data, (err) => {
         if (err) {
-          self.error('Failed to mkdirp: ' + dir);
+          self.error('Failed to write: ' + dir + filename);
           console.error(err);
           return;
         }
-        fs.writeFileSync(dir + filename, data, (err) => {
-          if (err) {
-            self.error('Failed to write: ' + dir + filename);
-            console.error(err);
-            return;
-          }
-        });
       });
+    });
   }
   /**
    * Syncronously create a directory and write a file in the directory.
@@ -167,8 +167,8 @@ function Polling() {
    * @param {string} data The data to write to the tile.
    */
   function mkdirAndWriteSync(dir, filename, data) {
-      try {
-        mkdirp.sync(dir);
+    try {
+      mkdirp.sync(dir);
     } catch (err) {
       self.error('Failed to mkdirp: ' + dir);
       console.error(err);
@@ -295,9 +295,9 @@ function Polling() {
    */
   function commandPoll(msg) {
     if (Object.values(currentPolls).find((obj) => {
-          return obj.request.author.id === msg.author.id &&
+      return obj.request.author.id === msg.author.id &&
               obj.request.guild.id === msg.guild.id;
-        })) {
+    })) {
       self.common.reply(
           msg,
           'Sorry, you may only have one poll per server at a time.\nType ' +
@@ -492,21 +492,21 @@ function Polling() {
       embed.setFooter('Poll ended at time limit');
     }
 
-      let index = -1;
-      let max = 0;
-      reactions.forEach((r) => {
-        let i = poll.emojis.findIndex((e) => {
-          return e == r.emoji.name;
-        });
-        if (r.count - 1 > max) {
-          index = i;
-          max = r.count - 1;
-        }
-        embed.addField(poll.choices[i], r.count - 1, true);
+    let index = -1;
+    let max = 0;
+    reactions.forEach((r) => {
+      let i = poll.emojis.findIndex((e) => {
+        return e == r.emoji.name;
       });
-      if (index > -1) {
-        embed.addField(
-            'Top Choice', (poll.choices[index] || poll.emojis[index]) +
+      if (r.count - 1 > max) {
+        index = i;
+        max = r.count - 1;
+      }
+      embed.addField(poll.choices[i], r.count - 1, true);
+    });
+    if (index > -1) {
+      embed.addField(
+          'Top Choice', (poll.choices[index] || poll.emojis[index]) +
                 ' with ' + max + ' votes.');
     }
 

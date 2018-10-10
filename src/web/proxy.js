@@ -213,13 +213,13 @@ function WebProxy() {
       server = sIOClient('http://localhost:' + pathPorts[reqPath], {
         path: reqPath,
         extraHeaders:
-            {'x-forwarded-for': socket.handshake.headers['x-forwarded-for']}
+            {'x-forwarded-for': socket.handshake.headers['x-forwarded-for']},
       });
 
       // Add custom semi-wildcard listeners.
       let sonevent = server.onevent;
       server.onevent = function(packet) {
-        var args = packet.data || [];
+        let args = packet.data || [];
         if (server.listeners(args[0]).length) {
           sonevent.call(this, packet);
         } else {
@@ -229,20 +229,19 @@ function WebProxy() {
       };
       server.on('connect', () => {
         socket.on('*', (...args) => {
-          server.emit.apply(server, [args[0], userData].concat(args.slice(1)));
+          server.emit(...[args[0], userData].concat(args.slice(1)));
         });
       });
       server.on('*', (...args) => {
-        socket.emit.apply(socket, args);
+        socket.emit(...args);
       });
       server.on('disconnect', () => {
         socket.disconnect();
       });
-
     }
     let onevent = socket.onevent;
     socket.onevent = function(packet) {
-      var args = packet.data || [];
+      let args = packet.data || [];
       if (socket.listenerCount(args[0])) {
         onevent.call(this, packet);
       } else {

@@ -71,7 +71,7 @@ const mainTests = [
       'Add command', '~add 5 6 7', ['<@422623712534200321>\n```\n18\n\n```']),
   new Test(
       'Simplify command', '~simplify 5x=7y',
-      ['<@422623712534200321>\n```\n0 = 7y - 5x\n```']),
+      ['<@422623712534200321>\n```\n0 = 7 y - 5 * x\n```']),
   new Test(
       'Solve command', '~solve 5x=7y',
       ['<@422623712534200321>\n```\nx = 7/5y\ny = 5/7x\n```']),

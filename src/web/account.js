@@ -2,10 +2,8 @@
 // Author: Campbell Crowley (web@campbellcrowley.com)
 const fs = require('fs');
 const http = require('http');
-const https = require('https');
 const socketIo = require('socket.io');
 const sql = require('mysql');
-const dateFormat = require('dateformat');
 const auth = require('../../auth.js');
 const patreon = require('patreon');
 const mkdirp = require('mkdirp'); // mkdir -p
@@ -89,7 +87,7 @@ function WebAccount() {
         let parsed = JSON.parse(data);
         if (!parsed) return;
         patreonSettingsTemplate = parsed;
-      } catch(e) {
+      } catch (e) {
         self.error('Failed to parse ' + patreonSettingsTemplateFile);
         console.error(e);
       }
@@ -325,7 +323,7 @@ function WebAccount() {
         })
         .then(function(result) {
           let store = result.store;
-          let users = store.findAll('user').map(user => user.serialize());
+          let users = store.findAll('user').map((user) => user.serialize());
           if (!users || users.length < 1 || !users[0].data ||
               !users[0].data.id) {
             self.common.error('Failed to get patreonid', ip);
@@ -343,7 +341,7 @@ function WebAccount() {
   /**
    * Update our Discord table with the retrieved patreon account ID for the
    * Discord user.
-   * @param
+   * @private
    *
    * @param {string|number} userid The Discord ID of the user to link to the
    * patreonid.
@@ -403,9 +401,13 @@ function WebAccount() {
   function changePatreonSetting(userid, setting, value, cb) {
     const dirname = self.common.userSaveDir + userid;
     const filename = dirname + patreonSettingsFilename;
-    function readFile() {
-      fs.readFile(filename, makeDirectory);
-    }
+    /**
+     * Make the directory for writing the user's settings if it does not exist
+     * already.
+     * @private
+     * @param {Error} err The error in readin the existing file.
+     * @param {?string} data The data read from the existing file if any.
+     */
     function makeDirectory(err, data) {
       if (err) {
         mkdirp(dirname, function(err) {
@@ -415,6 +417,13 @@ function WebAccount() {
         writeFile(null, data);
       }
     }
+    /**
+     * Write the modified data to file.
+     * @private
+     *
+     * @param {Error} err The error in creating the directory.
+     * @param {?string} file The current file data that was read.
+     */
     function writeFile(err, file) {
       let parsed = {};
       if (file != null) {
@@ -446,6 +455,17 @@ function WebAccount() {
       cb('Invalid Setting');
       return;
     } else {
+      /**
+       * Checks that the setting that was requested to be changed is a valid
+       * setting to change.
+       * @private
+       * @param {Object} obj The template object to compare the request against.
+       * @param {string[]} s The array of each setting key that was a part of
+       * the request.
+       * @param {string|number} value The value to change the setting to.
+       * @return {boolean} True if the request was invalid in some way, or false
+       * if everything is fine.
+       */
       function isInvalid(obj, s, value) {
         let type = obj.type;
         let valid = false;
@@ -474,12 +494,12 @@ function WebAccount() {
         }
       }
       if (isInvalid(
-              patreonSettingsTemplate[setting], setting.split(' ').slice(1),
-              value)) {
+          patreonSettingsTemplate[setting], setting.split(' ').slice(1),
+          value)) {
         return;
       }
     }
-    readFile();
+    fs.readFile(filename, makeDirectory);
   }
 }
 
