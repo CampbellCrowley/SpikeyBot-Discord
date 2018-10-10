@@ -253,15 +253,16 @@ function Music() {
     if (follows[oldState.guild.id] == oldState.id && newState.channelID) {
       newState.channel.join().catch(() => {});
       return;
-    } else if (oldState.id === self.client.user.id && !newState.channel) {
-      self.error(
-          'Focibly ejected from voice channel: ' + oldState.guild.id + ' ' +
-          oldState.channelID);
-      delete broadcasts[oldState.guild.id];
-      return;
     }
     let broadcast = broadcasts[oldState.guild.id];
     if (broadcast) {
+      if (oldState.id === self.client.user.id && !newState.channel) {
+        self.error(
+            'Forcibly ejected from voice channel: ' + oldState.guild.id + ' ' +
+            oldState.channelID);
+        delete broadcasts[oldState.guild.id];
+        return;
+      }
       if (oldState.channel && oldState.channel.members) {
         if (oldState.channel.members.size === 1 &&
             oldState.channel.members.get(self.client.user.id)) {
