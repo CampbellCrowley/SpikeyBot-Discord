@@ -30,17 +30,17 @@
             {
               "description": "Change a Boolean Option",
               "command": "opt includeBots true",
-              "result": "Bots will be allowed in the games.<br>Notice: Option names are case sensitive, they must be written exactly as they appear in the list."
+              "result": "Bots will be allowed in the games."
             },
             {
               "description": "Change a Percentage Option",
               "command": "opt probabilityOfResurrect 0.1",
-              "result": "The probability of resurrection will be set to 10%.<br>Notice: Option names are case sensitive, they must be written exactly as they appear in the list."
+              "result": "The probability of resurrection will be set to 10%."
             },
             {
               "description": "Change a Object Option",
               "command": "opt playerOutcomeProbs kill 50",
-              "result": "The relative probability of a player being killed will become 50.<br>Notice: Option names are case sensitive, they must be written exactly as they appear in the list."
+              "result": "The relative probability of a player being killed will become 50."
             }
           ]
         },

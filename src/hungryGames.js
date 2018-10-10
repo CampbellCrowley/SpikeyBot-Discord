@@ -5,6 +5,7 @@ const Jimp = require('jimp');
 const mkdirp = require('mkdirp'); // mkdir -p
 const rimraf = require('rimraf'); // rm -rf
 const funTranslator = require('./lib/funTranslators.js');
+const FuzzySearch = require('fuzzy-search');
 require('./subModule.js')(HungryGames);  // Extends the SubModule class.
 
 /**
@@ -244,7 +245,7 @@ function HungryGames() {
       value: {kill: 70, wound: 10, thrive: 5, nothing: 15},
       comment:
           'Relative Probabilities of choosing an event with each outcome.' +
-          'This is for the special arena events.',
+          ' This is for the special arena events.',
     },
     arenaEvents: {
       value: true,
@@ -395,6 +396,8 @@ function HungryGames() {
       comment: 'Debugging purposes only! DO NOT ENABLE!',
     },
   };
+
+  const defaultOptSearcher = new FuzzySearch(Object.keys(defaultOptions));
   /**
    * Default options for a game.
    *
@@ -4667,13 +4670,16 @@ function HungryGames() {
       return 'You must end this game before changing settings. Use "' +
           self.bot.getPrefix(id) + self.postPrefix + 'end" to abort this game.';
     } else if (typeof defaultOptions[option] === 'undefined') {
-      return 'That is not a valid option to change! (' + option + ')\nUse `' +
-          self.bot.getPrefix(id) + self.postPrefix +
-          'options` to see all changeable options.';
-    } else {
-      return changeObjectValue(
-          find(id).options, defaultOptions, option, value, text.split(' '), id);
+      let searchedOption = defaultOptSearcher.search(option);
+      if (typeof defaultOptions[searchedOption] === 'undefined') {
+        return 'That is not a valid option to change! (' + option + ')\nUse `' +
+            self.bot.getPrefix(id) + self.postPrefix +
+            'options` to see all changeable options.';
+      }
+      option = searchedOption;
     }
+    return changeObjectValue(
+        find(id).options, defaultOptions, option, value, text.split(' '), id);
   };
 
   /**

@@ -19,6 +19,7 @@
     "async": "^2.6.1",
     "dateformat": "^3.0.3",
     "discord.js": "github:discordjs/discord.js",
+    "fuzzy-search": "^2.1.0",
     "jimp": "^0.5.3",
     "mathjs": "^5.2.0",
     "mkdirp": "^0.5.1",
