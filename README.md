@@ -7,6 +7,8 @@
 ## Main
 #### General
 `addme` `help` `say` `createdate` `joindate` `pmme` `pmspikey` `avatar` `ping` `timer` `stats`
+#### Polling
+`poll` `endpoll`
 #### Games
 `connect4` `tictactoe`
 #### Random
