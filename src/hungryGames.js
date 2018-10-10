@@ -6291,10 +6291,20 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function commandStats(msg, id) {
-    self.common.reply(
-        msg, 'There are ' + self.getNumSimulating() +
-            ' games currently simulating of ' + Object.keys(games).length +
-            ' currently loaded.');
+    let listenerBlockDuration = listenersEndTime - Date.now();
+    if (listenerBlockDuration <= 0) {
+      self.common.reply(
+          msg, 'There are ' + self.getNumSimulating() +
+              ' games currently simulating of ' + Object.keys(games).length +
+              ' currently loaded.');
+    } else {
+      self.common.reply(
+          msg, 'There are ' + self.getNumSimulating() +
+              ' games currently simulating of ' + Object.keys(games).length +
+              ' currently loaded.\nThe last listener will end in ' +
+              (Math.round(listenerBlockDuration / 100 / 60) / 10) +
+              ' minutes.');
+    }
   }
 
   /**

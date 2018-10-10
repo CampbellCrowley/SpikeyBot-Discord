@@ -4267,6 +4267,7 @@ Music and audio related commands.
         * [~commandFollow(msg)](#Music..commandFollow) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~formatDateTime(date)](#Music..formatDateTime) ⇒ <code>string</code> ℗
         * [~monthToShort(month)](#Music..monthToShort) ⇒ <code>string</code> ℗
+        * [~commandStats(msg)](#Music..commandStats) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~Broadcast](#Music..Broadcast) : <code>Object</code>
 
 <a name="SubModule+helpMessage"></a>
@@ -4927,6 +4928,18 @@ Convert the month number to a 3 letter string of the month's name.
 | Param | Type | Description |
 | --- | --- | --- |
 | month | <code>number</code> | The month number (1-12). |
+
+<a name="Music..commandStats"></a>
+
+### Music~commandStats(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Show statistics about current music broadcasts.
+
+**Kind**: inner method of [<code>Music</code>](#Music)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message that triggered command. |
 
 <a name="Music..Broadcast"></a>
 

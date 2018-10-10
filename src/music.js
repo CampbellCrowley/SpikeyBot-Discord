@@ -166,6 +166,7 @@ function Music() {
     self.command.on('record', commandRecord, true);
     self.command.on(
         ['follow', 'unfollow', 'stalk', 'stalkme'], commandFollow, true);
+    self.command.on('musicstats', commandStats);
 
     self.command.on('kokomo', (msg) => {
       msg.content = msg.prefix + 'play kokomo';
@@ -204,6 +205,7 @@ function Music() {
     self.command.deleteEvent('airhorn');
     self.command.deleteEvent('rickroll');
     self.command.deleteEvent('follow');
+    self.command.deleteEvent('musicstats');
 
     self.client.removeListener('voiceStateUpdate', handleVoiceStateUpdate);
   };
@@ -250,6 +252,12 @@ function Music() {
     // User set to follow has changed channel.
     if (follows[oldState.guild.id] == oldState.id && newState.channelID) {
       newState.channel.join().catch(() => {});
+      return;
+    } else if (oldState.id === self.client.user.id && !newState.channel) {
+      self.error(
+          'Focibly ejected from voice channel: ' + oldState.guild.id + ' ' +
+          oldState.channelID);
+      delete broadcasts[oldState.guild.id];
       return;
     }
     let broadcast = broadcasts[oldState.guild.id];
@@ -496,7 +504,7 @@ function Music() {
    */
   function makeBroadcast(broadcast) {
     // Setup voice connection listeners.
-    if (!broadcsat.voice) return;
+    if (!broadcast.voice) return;
     broadcast.voice.on('disconnect', () => {
       if (broadcast.current.readable) broadcast.current.readable.destroy();
       if (broadcast.current.thread) broadcast.current.thread.kill();
@@ -1240,7 +1248,48 @@ function Music() {
       'Nov', 'Dec',
     ][month];
   }
+
+  /**
+   * Show statistics about current music broadcasts.
+   *
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg The message that triggered command.
+   * @listens SpikeyBot~Command#musicstats
+   */
+  function commandStats(msg) {
+    let queueLength = 0;
+    let bList = Object.entries(broadcasts);
+
+    bList.forEach((el) => {
+      let qDuration = 0;
+      if (el[1].current && el[1].current.info) {
+        qDuration += el[1].current.info._duration_raw -
+            Math.round(
+                (el[1].broadcast.dispatcher.streamTime -
+                 el[1].broadcast.dispatcher.pausedTime) /
+                1000);
+      }
+      el[1].queue.forEach((q) => {
+        if (!q.info) return;
+        qDuration += q.info._duration_raw;
+      });
+      if (qDuration > queueLength) queueLength = qDuration;
+    });
+
+    if (queueLength) {
+      self.common.reply(
+          msg, 'I am currently playing music for ' + bList.length +
+              ' channels.\nThe longest queue has a length of ' +
+              formatPlaytime(queueLength) + '.');
+    } else {
+      self.common.reply(
+          msg,
+          'I am currently playing music for ' + bList.length + ' channels.');
+    }
+  }
 }
+
 /**
  * Coverts an incoming Opus stream to a ogg format and writes it to file.
  *
