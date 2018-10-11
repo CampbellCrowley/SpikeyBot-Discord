@@ -2239,7 +2239,10 @@ function HungryGames() {
    */
   function pauseAutoplay(msg, id) {
     if (!find(id)) {
-      createGame(msg, id);
+      self.common.reply(
+          msg, 'Not autoplaying. If you wish to autoplay, type "' + msg.prefix +
+              self.postPrefix + 'autoplay".');
+      return;
     }
     if (find(id).autoPlay) {
       msg.channel.send(
@@ -5956,7 +5959,9 @@ function HungryGames() {
    */
   function removeEvent(msg, id) {
     if (!find(id)) {
-      createGame(msg, id);
+      self.common.reply(
+          msg, 'You must first create an event in order to remove it.');
+      return;
     }
     const split = msg.text.split(' ');
 

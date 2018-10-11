@@ -188,32 +188,61 @@ const hgTests = [
       ['<@422623712534200321>\n```\nResetting ALL Hungry Games data for ' +
        'this server!\n```']),
   new Test('Events command', '~hg events', ['#embed']),
-  new Test('No data: List players', '~hg players', ['#embed']),
+  new Test(
+      'Reset All command', '~hg reset all',
+      ['<@422623712534200321>\n```\nThere is no data to reset. Start a new ' +
+       'game with "~hg create".\n```']),
+  new Test(
+      'No data: List players', '~hg players',
+      [
+        '<@422623712534200321>\n```\nCreated a Hungry Games with default ' +
+            'settings and all members included.\n```',
+        '#embed'
+      ]),
+  new Test(
+      'Reset All command', '~hg reset all',
+      ['<@422623712534200321>\n```\nResetting ALL Hungry Games data for ' +
+       'this server!\n```']),
   new Test(
       'No data: Exclude', '~hg exclude',
-      ['<@422623712534200321>\n```\nYou must first create a game with "~hg ' +
-       'create".\n```']),
+      [
+        '<@422623712534200321>\n```\nCreated a Hungry Games with default ' +
+            'settings and all members included.\n```',
+        '<@422623712534200321>\n```\nYou must mention people you wish for me ' +
+            'to exclude from the next game.\n```'
+      ]),
+  new Test(
+      'Reset All command', '~hg reset all',
+      ['<@422623712534200321>\n```\nResetting ALL Hungry Games data for ' +
+       'this server!\n```']),
   new Test(
       'No data: Include', '~hg include',
-      ['<@422623712534200321>\n```\nYou must first create a game with "~hg ' +
-       'create".\n```']),
+      [
+        '<@422623712534200321>\n```\nCreated a Hungry Games with default ' +
+            'settings and all members included.\n```',
+        '<@422623712534200321>\n```\nYou must mention people you wish for me ' +
+            'to include in the next game.\n```'
+      ]),
   new Test(
-      'No data: Event add', '~hg events add',
-      ['<@422623712534200321>\n```\nYou must first create a game with "~hg ' +
-       'create".\n```']),
-  new Test(
-      'No data: Event add',
-      '~hg events add someEvent {victim} {attacker} {dead} [Vs|p] [As|p]',
-      ['<@422623712534200321>\n```\nYou must first create a game with "~hg ' +
-       'create".\n```']),
+      'Reset All command', '~hg reset all',
+      ['<@422623712534200321>\n```\nResetting ALL Hungry Games data for ' +
+       'this server!\n```']),
   new Test(
       'No data: Event remove', '~hg events remove 0',
-      ['<@422623712534200321>\n```\nYou must first create a game with "~hg ' +
-       'create".\n```']),
+      ['<@422623712534200321>\n```\nYou must first create an event in order ' +
+       'to remove it.\n```']),
+  new Test(
+      'Reset All command', '~hg reset all',
+      ['<@422623712534200321>\n```\nThere is no data to reset. Start a new ' +
+       'game with "~hg create".\n```']),
   new Test(
       'No data: Pause autoplay', '~hg pause',
-      ['<@422623712534200321>\n```\nYou must first create a game with "~hg ' +
-       'create".\n```']),
+      [
+        '<@422623712534200321>\n```\nCreated a Hungry Games with default ' +
+            'settings and all members included.\n```',
+        '<@422623712534200321>\n```\nNot autoplaying. If you with to autoplay' +
+            ', type"~hg autoplay".\n```'
+      ]),
 ];
 
 let ready = false;
