@@ -4268,6 +4268,8 @@ Music and audio related commands.
         * [~formatDateTime(date)](#Music..formatDateTime) ⇒ <code>string</code> ℗
         * [~monthToShort(month)](#Music..monthToShort) ⇒ <code>string</code> ℗
         * [~commandStats(msg)](#Music..commandStats) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~commandVolume(msg)](#Music..commandVolume) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~changeVolume(broadcast, percentage)](#Music..changeVolume) ⇒ <code>boolean</code> ℗
         * [~Broadcast](#Music..Broadcast) : <code>Object</code>
 
 <a name="SubModule+helpMessage"></a>
@@ -4940,6 +4942,32 @@ Show statistics about current music broadcasts.
 | Param | Type | Description |
 | --- | --- | --- |
 | msg | <code>Discord~Message</code> | The message that triggered command. |
+
+<a name="Music..commandVolume"></a>
+
+### Music~commandVolume(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Change the volume of the current music stream.
+
+**Kind**: inner method of [<code>Music</code>](#Music)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message that triggered command. |
+
+<a name="Music..changeVolume"></a>
+
+### Music~changeVolume(broadcast, percentage) ⇒ <code>boolean</code> ℗
+Change the volume of the current broadcast.
+
+**Kind**: inner method of [<code>Music</code>](#Music)  
+**Returns**: <code>boolean</code> - True if success, false if something went wrong.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| broadcast | [<code>Broadcast</code>](#Music..Broadcast) | The objected storing the current broadcast information. |
+| percentage | <code>number</code> | The volume percentage to set to. 0.5 is half, 2 is double. |
 
 <a name="Music..Broadcast"></a>
 

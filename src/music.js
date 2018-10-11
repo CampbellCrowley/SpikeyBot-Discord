@@ -26,6 +26,12 @@ require('./subModule.js')(Music);
  * @listens SpikeyBot~Command#dequeue
  * @listens SpikeyBot~Command#lyrics
  * @listens SpikeyBot~Command#record
+ * @listens SpikeyBot~Command#follow
+ * @listens SpikeyBot~Command#unfollow
+ * @listens SpikeyBot~Command#stalk
+ * @listens SpikeyBot~Command#unstalk
+ * @listens SpikeyBot~Command#musicstats
+ * @listens SpikeyBot~Command#volume
  * @fires SpikeyBot~Command#stop
  */
 function Music() {
@@ -167,6 +173,7 @@ function Music() {
     self.command.on(
         ['follow', 'unfollow', 'stalk', 'stalkme'], commandFollow, true);
     self.command.on('musicstats', commandStats);
+    self.command.on(['volume', 'vol', 'v'], commandVolume, true);
 
     self.command.on('kokomo', (msg) => {
       msg.content = msg.prefix + 'play kokomo';
@@ -206,6 +213,7 @@ function Music() {
     self.command.deleteEvent('rickroll');
     self.command.deleteEvent('follow');
     self.command.deleteEvent('musicstats');
+    self.command.deleteEvent(['volume', 'vol', 'v']);
 
     self.client.removeListener('voiceStateUpdate', handleVoiceStateUpdate);
   };
@@ -1288,6 +1296,66 @@ function Music() {
           msg,
           'I am currently playing music for ' + bList.length + ' channels.');
     }
+  }
+
+  /**
+   * Change the volume of the current music stream.
+   *
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg The message that triggered command.
+   * @listens SpikeyBot~Command#volume
+   * @listens SpikeyBot~Command#vol
+   * @listens SpikeyBot~Command#v
+   */
+  function commandVolume(msg) {
+    if (!broadcasts[msg.guild.id]) {
+      self.common.reply(msg, 'Nothing is playing!');
+    } else if (!msg.text) {
+      self.common.reply(msg, 'Please specify a volume percentage.');
+    } else {
+      let newVol = msg.text.match(/[0-9]*\.?[0-9]+/);
+      if (!newVol) {
+        self.common.reply(
+            msg, 'Sorry, but I wasn\'t sure what volume to set to.');
+      } else {
+        if (newVol.indexOf('.') < 0) {
+          newVol /= 100;
+        }
+        if (changeVolume(newVol)) {
+          self.common.reply(msg, 'Changed volume to ' + (newVol * 100) + '%.');
+        } else {
+          self.common.reply(
+              msg, 'Oops! I wasn\'t able to change the volume to ' +
+                  (newVol * 100) + '%.');
+        }
+      }
+    }
+  }
+
+  /**
+   * Change the volume of the current broadcast.
+   *
+   * @private
+   * @param {Music~Broadcast} broadcast The objected storing the current
+   * broadcast information.
+   * @param {number} percentage The volume percentage to set to. 0.5 is half, 2
+   * is double.
+   * @return {boolean} True if success, false if something went wrong.
+   */
+  function changeVolume(broadcast, percentage) {
+    if (!broadcast) return false;
+    if (!broadcast.broadcast) return false;
+    if (!broadcast.broadcast.dispatcher) return false;
+    if (!broadcast.broadcast.dispatcher.setVolume) return false;
+    try {
+      broadcast.broadcast.dispatcher.setVolumeLogarithmic(percentage);
+    } catch (err) {
+      self.error('Failed to change volume to ' + percentage);
+      console.error(err);
+      return false;
+    }
+    return true;
   }
 }
 
