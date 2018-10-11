@@ -884,6 +884,7 @@ Hunger Games simulator.
         * [.addMajorEvent(id, type, data, [name])](#HungryGames+addMajorEvent) ⇒ <code>string</code>
         * [.editMajorEvent(id, type, search, data, [name], [newName])](#HungryGames+editMajorEvent) ⇒ <code>string</code>
         * [.removeEvent(id, type, event)](#HungryGames+removeEvent) ⇒ <code>string</code>
+        * [.toggleEvent(id, type, subCat, event, [value])](#HungryGames+toggleEvent) ⇒ <code>string</code>
         * [.eventsEqual(e1, e2)](#HungryGames+eventsEqual) ⇒ <code>boolean</code>
         * [.getNumSimulating()](#HungryGames+getNumSimulating) ⇒ <code>number</code>
         * [.initialize()](#SubModule+initialize)
@@ -998,6 +999,7 @@ Hunger Games simulator.
         * [~renameTeam(msg, id, [silent])](#HungryGames..renameTeam) ℗
         * [~randomizeTeams(msg, id)](#HungryGames..randomizeTeams) ℗
         * [~createEvent(msg, id)](#HungryGames..createEvent) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+        * [~commandToggleEvent(msg, id)](#HungryGames..commandToggleEvent) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler)
         * [~createEventNums(msg, id, show, cb)](#HungryGames..createEventNums) ℗
         * [~createEventOutcome(msg, id, show, cb)](#HungryGames..createEventOutcome) ℗
         * [~createEventAttacker(msg, id, show, cb)](#HungryGames..createEventAttacker) ℗
@@ -1421,6 +1423,23 @@ events. (Bloodbath or Player events)
 | id | <code>string</code> | The id of the guild to remove the event from. |
 | type | <code>string</code> | The type of event this is. |
 | event | [<code>Event</code>](#HungryGames..Event) | The event to search for. |
+
+<a name="HungryGames+toggleEvent"></a>
+
+### hungryGames.toggleEvent(id, type, subCat, event, [value]) ⇒ <code>string</code>
+Enable or disable an event without deleting it completely.
+
+**Kind**: instance method of [<code>HungryGames</code>](#HungryGames)  
+**Returns**: <code>string</code> - Error message or null if no error.  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| id | <code>number</code> \| <code>string</code> | The guild id that the event shall be toggled in. |
+| type | <code>string</code> | The type of event. 'bloodbath', 'player', 'weapon', or 'arena' |
+| subCat | <code>string</code> | The sub-category name of the event if there is one (Such as the weapon name, or arena event message). |
+| event | [<code>Event</code>](#HungryGames..Event) \| [<code>ArenaEvent</code>](#HungryGames..ArenaEvent) \| [<code>WeaponEvent</code>](#HungryGames..WeaponEvent) | The event to toggle. |
+| [value] | <code>boolean</code> | Set enabled to a value instead of toggling. |
 
 <a name="HungryGames+eventsEqual"></a>
 
@@ -2771,6 +2790,19 @@ Create a custom event for a guild.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
 **Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message that lead to this being called. |
+| id | <code>string</code> | The id of the guild this was triggered from. |
+
+<a name="HungryGames..commandToggleEvent"></a>
+
+### HungryGames~commandToggleEvent(msg, id) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler)
+Toggle events in the games.
+
+**Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
+**Todo:**: Write this. This is not implemented yet.  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -8257,6 +8289,7 @@ Creates a web interface for managing the Hungry Games.
         * [~createMajorEvent(userData, socket, gId, type, data, name, [cb])](#HGWeb..createMajorEvent) : <code>HGWeb~SocketFunction</code> ℗
         * [~editMajorEvent(userData, socket, gId, type, search, data, name, newName, [cb])](#HGWeb..editMajorEvent) : <code>HGWeb~SocketFunction</code> ℗
         * [~removeEvent(userData, socket, gId, type, event, [cb])](#HGWeb..removeEvent) : <code>HGWeb~SocketFunction</code> ℗
+        * [~toggleEvent(userData, socket, gId, type, subCat, event, value, [cb])](#HGWeb..toggleEvent) : <code>HGWeb~SocketFunction</code> ℗
         * [~basicCB](#HGWeb..basicCB) : <code>function</code>
 
 <a name="new_HGWeb_new"></a>
@@ -8510,7 +8543,7 @@ Fetch all game data within a guild.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
 **Access**: private  
-**See**: {HungryGames.getGame}  
+**See**: [HungryGames.getGame](HungryGames.getGame)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -8526,7 +8559,7 @@ Fetch the updated game's day information.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
 **Access**: private  
-**See**: {HungryGames.getGame}  
+**See**: [HungryGames.getGame](HungryGames.getGame)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -8542,7 +8575,7 @@ Exclude a member from the Games.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
 **Access**: private  
-**See**: {HungryGames.excludeUsers}  
+**See**: [HungryGames.excludeUsers](HungryGames.excludeUsers)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -8559,7 +8592,7 @@ Include a member in the Games.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
 **Access**: private  
-**See**: {HungryGames.includeUsers}  
+**See**: [HungryGames.includeUsers](HungryGames.includeUsers)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -8576,7 +8609,7 @@ Toggle an option in the Games.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
 **Access**: private  
-**See**: {HungryGames.setOption}  
+**See**: [HungryGames.setOption](HungryGames.setOption)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -8595,7 +8628,7 @@ Create a Game.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
 **Access**: private  
-**See**: {HungryGames.createGame}  
+**See**: [HungryGames.createGame](HungryGames.createGame)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -8611,7 +8644,7 @@ Reset game data.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
 **Access**: private  
-**See**: {HungryGames.resetGame}  
+**See**: [HungryGames.resetGame](HungryGames.resetGame)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -8628,7 +8661,7 @@ Start the game.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
 **Access**: private  
-**See**: {HungryGames.startGame}  
+**See**: [HungryGames.startGame](HungryGames.startGame)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -8645,7 +8678,7 @@ Enable autoplay.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
 **Access**: private  
-**See**: {HungryGames.startAutoplay}  
+**See**: [HungryGames.startAutoplay](HungryGames.startAutoplay)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -8662,7 +8695,7 @@ Start the next day.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
 **Access**: private  
-**See**: {HungryGames.nextDay}  
+**See**: [HungryGames.nextDay](HungryGames.nextDay)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -8679,7 +8712,7 @@ End the game.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
 **Access**: private  
-**See**: {HungryGames.endGame}  
+**See**: [HungryGames.endGame](HungryGames.endGame)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -8695,7 +8728,7 @@ Disable autoplay.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
 **Access**: private  
-**See**: {HungryGames.pauseAutoplay}  
+**See**: [HungryGames.pauseAutoplay](HungryGames.pauseAutoplay)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -8711,7 +8744,7 @@ Edit the teams.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
 **Access**: private  
-**See**: {HungryGames.editTeam}  
+**See**: [HungryGames.editTeam](HungryGames.editTeam)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -8730,7 +8763,7 @@ Create a game event.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
 **Access**: private  
-**See**: {HungryGames.createEvent}  
+**See**: [HungryGames.createEvent](HungryGames.createEvent)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -8757,7 +8790,7 @@ message or weapon name already exists, this will instead edit the event.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
 **Access**: private  
-**See**: {HungryGames.addMajorEvent}  
+**See**: [HungryGames.addMajorEvent](HungryGames.addMajorEvent)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -8776,7 +8809,7 @@ Delete a larger game event. Either Arena or Weapon at this point.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
 **Access**: private  
-**See**: {HungryGames.editMajorEvent}  
+**See**: [HungryGames.editMajorEvent](HungryGames.editMajorEvent)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -8797,7 +8830,7 @@ Remove a game event.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
 **Access**: private  
-**See**: {HungryGames.removeEvent}  
+**See**: [HungryGames.removeEvent](HungryGames.removeEvent)  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -8807,6 +8840,26 @@ Remove a game event.
 | type | <code>string</code> | The type of event. |
 | event | [<code>Event</code>](#HungryGames..Event) | The game event to remove. |
 | [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
+
+<a name="HGWeb..toggleEvent"></a>
+
+### HGWeb~toggleEvent(userData, socket, gId, type, subCat, event, value, [cb]) : <code>HGWeb~SocketFunction</code> ℗
+Enable or disable an event without deleting it.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: [HungryGames.toggleEvent](HungryGames.toggleEvent)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo-Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to run this command on. |
+| type | <code>string</code> | The type of event that we are toggling. |
+| subCat | <code>string</code> | The subcategory if necessary. |
+| event | [<code>Event</code>](#HungryGames..Event) \| [<code>ArenaEvent</code>](#HungryGames..ArenaEvent) \| [<code>WeaponEvent</code>](#HungryGames..WeaponEvent) | The event to toggle. |
+| value | <code>boolean</code> | Set the enabled value instead of toggling. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete. |
 
 <a name="HGWeb..basicCB"></a>
 

@@ -1125,6 +1125,11 @@ function HungryGames() {
               case 'delete':
                 removeEvent(msg, id);
                 break;
+              case 'toggle':
+              case 'enable':
+              case 'disable':
+                commandToggleEvent(msg, id);
+                break;
               default:
                 self.common.reply(
                     msg, 'I\'m sorry, but I don\'t know how to do that to an ' +
@@ -1545,6 +1550,7 @@ function HungryGames() {
       games[id] = {
         excludedUsers: [],
         includedUsers: [],
+        disabledEvents: {bloodbath: [], player: [], arena: [], weapon: []},
         customEvents: {bloodbath: [], player: [], arena: [], weapon: {}},
         currentGame: {
           name: msg.guild.name + '\'s Hungry Games',
@@ -2413,7 +2419,7 @@ function HungryGames() {
     }
 
     let weaponEventPool = Object.assign({}, weapons);
-    if (find(id).customEvents.weapon && find(id).customEvents.weapon) {
+    if (find(id).customEvents.weapon) {
       let entries = Object.entries(find(id).customEvents.weapon);
       for (let i = 0; i < entries.length; i++) {
         if (weaponEventPool[entries[i][0]]) {
@@ -5697,6 +5703,114 @@ function HungryGames() {
   };
 
   /**
+   * Toggle events in the games.
+   * @TODO: Write this. This is not implemented yet.
+   * @type {HungryGames~hgCommandHandler}
+   * @param {Discord~Message} msg The message that lead to this being called.
+   * @param {string} id The id of the guild this was triggered from.
+   */
+  function commandToggleEvent(msg, id) {
+    self.common.reply(msg, 'This command has not been implemented yet.');
+    // let error = self.toggleEvent(id, type, subCat, event, value);
+  }
+
+  /**
+   * Enable or disable an event without deleting it completely.
+   * @public
+   *
+   * @param {number|string} id The guild id that the event shall be toggled in.
+   * @param {string} type The type of event. 'bloodbath', 'player', 'weapon', or
+   * 'arena'
+   * @param {?string} subCat The sub-category name of the event if there is one
+   * (Such as the weapon name, or arena event message).
+   * @param {HungryGames~Event|HungryGames~ArenaEvent|HungryGames~WeaponEvent}
+   * event The event to toggle.
+   * @param {boolean} [value] Set enabled to a value instead of toggling.
+   * @return {?string} Error message or null if no error.
+   */
+  this.toggleEvent = function(id, type, subCat, event, value) {
+    if (!['bloodbath', 'arena', 'player', 'weapon'].includes(type)) {
+      return 'Invalid Type';
+    }
+    if (!find(id)) return 'Invalid ID or no game';
+    if (!find(id).disabledEvents) {
+      find(id).disabledEvents =
+          {bloodbath: [], player: [], arena: {}, weapon: {}};
+    }
+    let allEvents;
+    switch (type) {
+      case 'bloodbath':
+        allEvents =
+            defaultBloodbathEvents.concat(find(id).customEvents.bloodbath);
+        break;
+      case 'player':
+        allEvents = defaultPlayerEvents.concat(find(id).customEvents.player);
+        break;
+      case 'arena':
+        allEvents = defaultArenaEvents.concat(find(id).customEvents.arena);
+        break;
+      case 'weapon':
+        allEvents = Object.assign({}, weapons);
+        let entries = Object.entries(find(id).customEvents.weapon);
+        for (let i = 0; i < entries.length; i++) {
+          if (allEvents[entries[i][0]]) {
+            allEvents[entries[i][0]] =
+                allEvents[entries[i][0]].concat(entries[i][1]);
+          } else {
+            allEvents[entries[i][0]] = entries[i][1];
+          }
+        }
+        break;
+    }
+
+    let allDisabled = find(id).disabledEvents[type];
+
+    if (['weapon', 'arena'].includes(type)) {
+      if (!subCat) return 'Invalid Category';
+      if (type === 'weapon') allEvents = allEvents[subCat];
+      if (type === 'arena') {
+        allEvents = allEvents.find((el) => el.message === subCat);
+      }
+      if (!allEvents) return 'Invalid Category';
+      allEvents = allEvents.outcomes;
+      allDisabled = allDisabled[subCat];
+    }
+
+    let isValid = false;
+    let index;
+    for (let i = 0; i < allDisabled.length; i++) {
+      if (self.eventsEqual(allDisabled[i], event)) {
+        if (!value) {
+          value = false;
+          isValid = true;
+          index = i;
+        }
+        break;
+      }
+    }
+    if (!isValid && typeof value === 'undefined' || value) {
+      value = true;
+      isValid = true;
+    }
+    if (!isValid) return 'Already ' + value ? 'Enabled' : 'Disabled';
+
+    if (!value) {
+      isValid = false;
+      for (let i = 0; i < allEvents.length; i++) {
+        if (self.eventsEqual(allEvents[i], event)) {
+          isValid = true;
+          break;
+        }
+      }
+      if (!isValid) return 'Invalid Event';
+      allDisabled.push(event);
+    } else {
+      allDisabled.splice(index, 1);
+    }
+    return null;
+  };
+
+  /**
    * Checks if the two given events are equivalent.
    *
    * @param {HungryGames~Event} e1
@@ -5715,6 +5829,12 @@ function HungryGames() {
       if (v1.count != v2.count) return false;
       if (v1.outcome != v2.outcome) return false;
       if (!v1.killer != !v2.killer) return false;
+      if (v1.weapon && v2.weapon) {
+        if (v1.weapon.name != v2.weapon.name) return false;
+        if (v1.weapon.count != v2.weapon.count) return false;
+      } else if (!(!v1.weapon && !v2.weapon)) {
+        return false;
+      }
     } else if (!(!v1 && !v2)) {
       return false;
     }
@@ -5724,6 +5844,12 @@ function HungryGames() {
       if (a1.count != a2.count) return false;
       if (a1.outcome != a2.outcome) return false;
       if (!a1.killer != !a2.killer) return false;
+      if (a1.weapon && a2.weapon) {
+        if (a1.weapon.name != a2.weapon.name) return false;
+        if (a1.weapon.count != a2.weapon.count) return false;
+      } else if (!(!a1.weapon && !a2.weapon)) {
+        return false;
+      }
     } else if (!(!a1 && !a2)) {
       return false;
     }
