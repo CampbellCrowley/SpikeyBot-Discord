@@ -156,6 +156,28 @@ function Common() {
   };
 
   /**
+   * Format a log message to be logged. Prefixed with DBG.
+   *
+   * @param {string} message The message to display.
+   * @param {string} ip The IP address or unique identifier of the client that
+   * caused this event to happen.
+   * @param {number} [traceIncrease=0] Increase the distance up the stack to
+   * show the in the log.
+   */
+  this.logDebug = function(message, ip, traceIncrease = 0) {
+    if (self.isRelease) {
+      console.log(
+          'DBG:' + getTrace(traceIncrease) + self.updatePrefix(ip),
+          '\x1B[;' + mycolor + 'm' + message, '\x1B[1;0m');
+    } else {
+      console.log(
+          'DBG:' + getTrace(traceIncrease) + '\x1B[;' + mycolor + 'm' +
+              self.updatePrefix(ip),
+          message, '\x1B[1;0m');
+    }
+  };
+
+  /**
    * Format a log message to be logged.
    *
    * @param {string} message The message to display.
@@ -167,15 +189,38 @@ function Common() {
   this.log = function(message, ip, traceIncrease = 0) {
     if (self.isRelease) {
       console.log(
-          getTrace(traceIncrease) + self.updatePrefix(ip),
+          'INF:' + getTrace(traceIncrease) + self.updatePrefix(ip),
           '\x1B[;' + mycolor + 'm' + message, '\x1B[1;0m');
     } else {
       console.log(
-          getTrace(traceIncrease) + '\x1B[;' + mycolor + 'm' +
+          'INF:' + getTrace(traceIncrease) + '\x1B[;' + mycolor + 'm' +
               self.updatePrefix(ip),
           message, '\x1B[1;0m');
     }
   };
+
+  /**
+   * Format a log message to be logged. Prefixed with WRN.
+   *
+   * @param {string} message The message to display.
+   * @param {string} ip The IP address or unique identifier of the client that
+   * caused this event to happen.
+   * @param {number} [traceIncrease=0] Increase the distance up the stack to
+   * show the in the log.
+   */
+  this.logWarning = function(message, ip, traceIncrease = 0) {
+    if (self.isRelease) {
+      console.log(
+          'WRN:' + getTrace(traceIncrease) + self.updatePrefix(ip),
+          '\x1B[;' + mycolor + 'm' + message, '\x1B[1;0m');
+    } else {
+      console.log(
+          'WRN:' + getTrace(traceIncrease) + '\x1B[;' + mycolor + 'm' +
+              self.updatePrefix(ip),
+          message, '\x1B[1;0m');
+    }
+  };
+
   /**
    * Format an error message to be logged.
    *
@@ -187,8 +232,8 @@ function Common() {
    */
   this.error = function(message, ip, traceIncrease = 0) {
     console.log(
-        getTrace(traceIncrease) + '\x1B[;31m' + self.updatePrefix(ip), message,
-        '\x1B[1;0m');
+        'ERR:' + getTrace(traceIncrease) + '\x1B[;31m' + self.updatePrefix(ip),
+        message, '\x1B[1;0m');
   };
 
   /**
@@ -197,13 +242,15 @@ function Common() {
    *
    * @param {number} [traceIncrease=0] Increase the distance up the stack to
    * show the in the log.
-   * @return {string} Formatted string with length 20.
+   * @return {string} Formatted string with length 24.
    */
   function getTrace(traceIncrease = 0) {
     if (typeof traceIncrease !== 'number') traceIncrease = 0;
-    let func = __function(traceIncrease) + ':' + __line(traceIncrease);
+    // let func = __function(traceIncrease) + ':' + __line(traceIncrease);
+    let func = __filename(traceIncrease) + ':' + __line(traceIncrease);
     while (func.length < 20) func += ' ';
-    func = func.substr(func.length - 20, 20);
+    func = ('00000' + process.pid).slice(-5) + ' ' +
+        func.substr(func.length - 20, 20);
     return func;
   }
 
@@ -225,8 +272,19 @@ function Common() {
    * @param {number} [inc=0] Increase distance up the stack to return;
    * @return {string} Function name in call stack.
    */
-  function __function(inc = 0) {
+  /* function __function(inc = 0) {
     return __stack[3 + inc].getFunctionName();
+  } */
+
+  /**
+   * Gets the name of the file that called a log function.
+   *
+   * @private
+   * @param {number} [inc=0] Increase distance up the stack to return;
+   * @return {string} Filename in call stack.
+   */
+  function __filename(inc = 0) {
+    return __stack[3 + inc].getFileName();
   }
 }
 

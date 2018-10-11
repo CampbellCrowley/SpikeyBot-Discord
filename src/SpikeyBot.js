@@ -213,10 +213,13 @@ function SpikeyBot() {
         subModuleNames[i].startsWith('--')) {
       continue;
     }
+    process.stdout.write('Loading ' + subModuleNames[i]);
     try {
       subModules[i] = require(subModuleNames[i]);
+      process.stdout.write(': DONE\n');
     } catch (err) {
-      console.log(subModuleNames[i], err);
+      process.stdout.write(': ERROR\n');
+      console.error(subModuleNames[i], err);
     }
   }
 
@@ -1251,7 +1254,14 @@ function SpikeyBot() {
           console.log(err);
         }
         delete require.cache[require.resolve(subModuleNames[i])];
-        subModules[i] = require(subModuleNames[i]);
+        process.stdout.write('Loading ' + subModuleNames[i]);
+        try {
+          subModules[i] = require(subModuleNames[i]);
+          process.stdout.write(': DONE\n');
+        } catch (err) {
+          process.stdout.write(': ERROR\n');
+          throw (err);
+        }
         subModules[i].begin(
             defaultPrefix, Discord, client, command, common, self);
         reloaded.push(subModuleNames[i]);

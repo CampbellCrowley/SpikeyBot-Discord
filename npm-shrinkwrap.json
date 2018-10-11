@@ -1397,7 +1397,7 @@
       }
     },
     "discord.js": {
-      "version": "github:discordjs/discord.js#27d2ce7baf9a25d2e5eec76cd66b8ca14aabd5ee",
+      "version": "github:discordjs/discord.js#4491b7b42ae19ca81338736d811f3b12d493a5f3",
       "from": "github:discordjs/discord.js",
       "requires": {
         "form-data": "^2.3.2",

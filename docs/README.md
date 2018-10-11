@@ -111,7 +111,9 @@ from silently crashing without an error.</p>
         * [.padIp(str)](#Common+padIp) ⇒ <code>string</code>
         * [.getIPName(ip)](#Common+getIPName) ⇒ <code>string</code>
         * [.updatePrefix(ip)](#Common+updatePrefix) ⇒ <code>string</code>
+        * [.logDebug(message, ip, [traceIncrease])](#Common+logDebug)
         * [.log(message, ip, [traceIncrease])](#Common+log)
+        * [.logWarning(message, ip, [traceIncrease])](#Common+logWarning)
         * [.error(message, ip, [traceIncrease])](#Common+error)
         * [.mention(msg)](#Common+mention) ⇒ <code>string</code>
         * [.reply(msg, text, post)](#Common+reply) ⇒ <code>Promise</code>
@@ -130,7 +132,7 @@ from silently crashing without an error.</p>
         * [~app](#Common..app) : <code>string</code> ℗
         * [~getTrace([traceIncrease])](#Common..getTrace) ⇒ <code>string</code> ℗
         * [~__line([inc])](#Common..__line) ⇒ <code>number</code> ℗
-        * [~__function([inc])](#Common..__function) ⇒ <code>string</code> ℗
+        * [~__filename([inc])](#Common..__filename) ⇒ <code>string</code> ℗
 
 <a name="new_Common_new"></a>
 
@@ -230,10 +232,36 @@ message.
 | --- | --- | --- |
 | ip | <code>string</code> | The ip to include in the prefix. |
 
+<a name="Common+logDebug"></a>
+
+### common.logDebug(message, ip, [traceIncrease])
+Format a log message to be logged. Prefixed with DBG.
+
+**Kind**: instance method of [<code>Common</code>](#Common)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| message | <code>string</code> |  | The message to display. |
+| ip | <code>string</code> |  | The IP address or unique identifier of the client that caused this event to happen. |
+| [traceIncrease] | <code>number</code> | <code>0</code> | Increase the distance up the stack to show the in the log. |
+
 <a name="Common+log"></a>
 
 ### common.log(message, ip, [traceIncrease])
 Format a log message to be logged.
+
+**Kind**: instance method of [<code>Common</code>](#Common)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| message | <code>string</code> |  | The message to display. |
+| ip | <code>string</code> |  | The IP address or unique identifier of the client that caused this event to happen. |
+| [traceIncrease] | <code>number</code> | <code>0</code> | Increase the distance up the stack to show the in the log. |
+
+<a name="Common+logWarning"></a>
+
+### common.logWarning(message, ip, [traceIncrease])
+Format a log message to be logged. Prefixed with WRN.
 
 **Kind**: instance method of [<code>Common</code>](#Common)  
 
@@ -376,7 +404,7 @@ The script's filename to show in the log.
 Gets the name and line number of the current function stack.
 
 **Kind**: inner method of [<code>Common</code>](#Common)  
-**Returns**: <code>string</code> - Formatted string with length 20.  
+**Returns**: <code>string</code> - Formatted string with length 24.  
 **Access**: private  
 
 | Param | Type | Default | Description |
@@ -396,13 +424,13 @@ Gets the line number of the function that called a log function.
 | --- | --- | --- | --- |
 | [inc] | <code>number</code> | <code>0</code> | Increase distance up the stack to return; |
 
-<a name="Common..__function"></a>
+<a name="Common..__filename"></a>
 
-### Common~__function([inc]) ⇒ <code>string</code> ℗
-Gets the name of the function that called a log function.
+### Common~__filename([inc]) ⇒ <code>string</code> ℗
+Gets the name of the file that called a log function.
 
 **Kind**: inner method of [<code>Common</code>](#Common)  
-**Returns**: <code>string</code> - Function name in call stack.  
+**Returns**: <code>string</code> - Filename in call stack.  
 **Access**: private  
 
 | Param | Type | Default | Description |
