@@ -234,39 +234,46 @@ function HungryGames() {
       comment:
           'Relative probabilities of choosing an event with each outcome.' +
           ' This is for the bloodbath events.',
+      category: 'probabilities',
     },
     playerOutcomeProbs: {
       value: {kill: 22, wound: 4, thrive: 8, nothing: 66},
       comment:
           'Relative probabilities of choosing an event with each outcome.' +
           ' This is for normal daily events.',
+      category: 'probabilities',
     },
     arenaOutcomeProbs: {
       value: {kill: 70, wound: 10, thrive: 5, nothing: 15},
       comment:
           'Relative Probabilities of choosing an event with each outcome.' +
           ' This is for the special arena events.',
+      category: 'probabilities',
     },
     arenaEvents: {
       value: true,
       comment:
           'Are arena events possible. (Events like wolf mutts, or a volcano ' +
           'erupting.)',
+      category: 'probabilities',
     },
     resurrection: {
       value: false,
       comment: 'Can users be resurrected and placed back into the arena.',
+      category: 'features',
     },
     includeBots: {
       value: false,
       comment: 'Should bots be included in the games. If this is false, bots ' +
           'cannot be added manually.',
+      category: 'other',
     },
     excludeNewUsers: {
       value: false,
       comment: 'Should new users who join your server be excluded from the ' +
           'games by default. True will add all new users to the blacklist, ' +
           'false will put all new users into the next game automatically.',
+      category: 'other',
     },
     allowNoVictors: {
       value: true,
@@ -274,19 +281,23 @@ function HungryGames() {
           'Should it be possible to end a game without any winners. If true, ' +
           'it is possible for every player to die, causing the game to end ' +
           'with everyone dead. False forces at least one winner.',
+      category: 'features',
     },
     bleedDays: {
       value: 2,
       comment: 'Number of days a user can bleed before they can die.',
+      category: 'other',
     },
     battleHealth: {
       value: 5,
       comment: 'The amount of health each user gets for a battle.',
+      category: 'other',
     },
     teamSize: {
       value: 0,
       comment: 'Maximum size of teams when automatically forming teams. 0 to ' +
           'disable teams',
+      category: 'other',
     },
     teammatesCollaborate: {
       value: true,
@@ -294,78 +305,96 @@ function HungryGames() {
           'eachother, and there will only be 1 victor. If true, teammates ' +
           'cannot kill eachother, and the game ends when one TEAM is ' +
           'remaining, not one player.',
+      category: 'features',
     },
     useEnemyWeapon: {
       value: false,
       comment:
           'This will allow the attacker in an event to use the victim\'s ' +
           'weapon against them.',
+      category: 'features',
     },
     mentionVictor: {
       value: true,
       comment:
           'Should the victor of the game (can be team), be tagged/mentioned ' +
           'so they get notified?',
+      category: 'features',
     },
     mentionAll: {
       value: false,
       comment:
           'Should a user be mentioned every time something happens to them ' +
           'in the game?',
+      category: 'features',
     },
     mentionEveryoneAtStart: {
       value: false,
       comment: 'Should @everyone be mentioned when the game is started?',
+      category: 'features',
     },
     useNicknames: {
       value: false,
       comment: 'Should we use user\'s custom server nicknames instead of ' +
           'their account username? Names only change when a new game is ' +
           'created.',
+      category: 'features',
     },
     delayEvents: {
       value: 3500,
       range: {min: 1000, max: 30000},
       time: true,
       comment: 'Delay in milliseconds between each event being printed.',
+      category: 'other',
     },
     delayDays: {
       value: 7000,
       range: {min: 1000, max: 129600000},  // 1.5 days
       time: true,
       comment: 'Delay in milliseconds between each day being printed.',
+      category: 'other',
     },
     probabilityOfResurrect: {
       value: 0.33,
+      range: {min: 0, max: 1},
       percent: true,
       comment:
           'Probability each day that a dead player can be put back into the ' +
           'game.',
+      category: 'probabilities',
     },
     probabilityOfArenaEvent: {
       value: 0.25,
+      range: {min: 0, max: 1},
       percent: true,
       comment: 'Probability each day that an arena event will happen.',
+      category: 'probabilities',
     },
     probabilityOfBleedToDeath: {
       value: 0.5,
+      range: {min: 0, max: 1},
       percent: true,
       comment: 'Probability that after bleedDays a player will die. If they ' +
           'don\'t die, they will heal back to normal.',
+      category: 'probabilities',
     },
     probabilityOfBattle: {
       value: 0.05,
+      range: {min: 0, max: 1},
       percent: true,
       comment:
           'Probability of an event being replaced by a battle between two ' +
           'players.',
+      category: 'probabilities',
     },
     probabilityOfUseWeapon: {
       value: 0.75,
+      range: {min: 0, max: 1},
       percent: true,
       comment:
           'Probability of each player using their weapon each day if they ' +
           'have one.',
+      category: 'probabilities',
     },
     eventAvatarSizes: {
       value: {avatar: 64, underline: 4, gap: 4},
@@ -373,7 +402,8 @@ function HungryGames() {
       comment:
           'The number of pixels each player\'s avatar will be tall and wide, ' +
           'the underline status height, and the gap between each avatar. This' +
-          'is for all normal events and arena event messages.',
+          ' is for all normal events and arena event messages.',
+      category: 'other',
     },
     battleAvatarSizes: {
       value: {avatar: 32, underline: 4, gap: 4},
@@ -381,7 +411,8 @@ function HungryGames() {
       comment:
           'The number of pixels each player\'s avatar will be tall and wide, ' +
           'the underline status height, and the gap between each avatar. This' +
-          'is for each battle turn.',
+          ' is for each battle turn.',
+      category: 'other',
     },
     victorAvatarSizes: {
       value: {avatar: 80, underline: 4, gap: 4},
@@ -390,10 +421,13 @@ function HungryGames() {
           'The number of pixels each player\'s avatar will be tall and wide, ' +
           'the underline status height, and the gap between each avatar. This' +
           ' is when announcing the winners of the game.',
+      category: 'other',
     },
     disableOutput: {
       value: false,
-      comment: 'Debugging purposes only! DO NOT ENABLE!',
+      comment: 'Debugging purposes only. I mean, you can enable it, but it ma' +
+          'kes the games really boring. Up to you ¯\\_(ツ)_/¯',
+      category: 'other',
     },
   };
 
@@ -1459,8 +1493,10 @@ function HungryGames() {
    * @param {?Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
    * @param {boolean} [silent=false] Should we suppress replies to message.
+   * @param {function} [cb] Callback that fires once loading is complete. No
+   * parameters.
    */
-  function createGame(msg, id, silent) {
+  function createGame(msg, id, silent, cb) {
     if (!msg) {
       silent = true;
       msg = {};
@@ -1538,7 +1574,7 @@ function HungryGames() {
       }
     }
     formTeams(id);
-    fetchPatreonSettings(find(id).currentGame.includedUsers);
+    fetchPatreonSettings(find(id).currentGame.includedUsers, null, null, cb);
   }
   /**
    * Create a Hungry Games for a guild.
@@ -1558,9 +1594,16 @@ function HungryGames() {
    * @param {HungryGames~Player[]} players The players to lookup and udpate.
    * @param {?string|number} cId The channel ID to fetch the settings for.
    * @param {?string|number} gId The guild ID to fetch the settings for.
+   * @param {function} [cb] Calls this callback on completion. No parameters.
    */
-  function fetchPatreonSettings(players, cId, gId) {
-    if (!self.bot.patreon) return;
+  function fetchPatreonSettings(players, cId, gId, cb) {
+    if (!self.bot.patreon || players.length == 0) {
+      if (cb) cb();
+      return;
+    }
+    let permResponses = 0;
+    let settingRequests = 0;
+    let settingResponses = 0;
     /**
      * After retreiving a player's permissions, fetch their settings for each.
      * @private
@@ -1570,18 +1613,30 @@ function HungryGames() {
      * @param {number} p Player object to update.
      */
     function onPermResponse(err, info, p) {
-      if (err) return;
+      permResponses++;
+      if (err) {
+        if (permResponses === players.length &&
+            settingRequests === settingResponses && cb) {
+          cb();
+        }
+        return;
+      }
       let values = info.status;
       if (values.length > 0) {
         p.settings['isPatron'] = true;
       }
       for (let i = 0; i < values.length; i++) {
         if (!patreonSettingKeys.includes(values[i])) continue;
+        settingRequests++;
         self.bot.patreon.getSettingValue(p.id, values[i], (function(p, v) {
           return function(err, info) {
             onSettingResponse(err, info, p, v);
           };
         })(p, values[i]));
+      }
+      if (permResponses === players.length &&
+          settingRequests === settingResponses && cb) {
+        cb();
       }
     }
 
@@ -1595,11 +1650,16 @@ function HungryGames() {
      * @param {string} setting The setting name to update.
      */
     function onSettingResponse(err, info, p, setting) {
+      settingResponses++;
       if (err) {
         self.error(err);
-        return;
+      } else {
+        p.settings[setting] = info.status;
       }
-      p.settings[setting] = info.status;
+      if (permResponses === players.length &&
+          settingRequests === settingResponses && cb) {
+        cb();
+      }
     }
 
     for (let i = 0; i < players.length; i++) {
@@ -1968,7 +2028,16 @@ function HungryGames() {
               'in this channel before I can start the games.\nPlease ensure ' +
               'I have the "Attach Files" permission in this channel.');
     } else {
-      createGame(msg, id, true);
+      /**
+       * Once the game has finished loading all necessary data, start it if
+       * autoplay is enabled.
+       * @private
+       */
+      function loadingComplete() {
+        if (find(id).autoPlay) nextDay(msg, id);
+      }
+
+      createGame(msg, id, true, loadingComplete);
 
       let finalMessage = new self.Discord.MessageEmbed();
       finalMessage.setTitle(getMessage('gameStart'));
@@ -2087,9 +2156,6 @@ function HungryGames() {
       });
 
       find(id).currentGame.inProgress = true;
-      if (find(id).autoPlay) {
-        nextDay(msg, id);
-      }
     }
   }
   /**
@@ -2173,10 +2239,9 @@ function HungryGames() {
    */
   function pauseAutoplay(msg, id) {
     if (!find(id)) {
-      self.common.reply(
-          msg, 'You must first create a game with "' + msg.prefix +
-              self.postPrefix + 'create".');
-    } else if (find(id).autoPlay) {
+      createGame(msg, id);
+    }
+    if (find(id).autoPlay) {
       msg.channel.send(
           '<@' + msg.author.id +
           '> `Autoplay will stop at the end of the current day.`');
@@ -4278,12 +4343,11 @@ function HungryGames() {
    */
   function excludeUser(msg, id) {
     if (!find(id)) {
-      self.common.reply(
-          msg, 'You must first create a game with "' + msg.prefix +
-              self.postPrefix + 'create".');
-    } else if (
-      msg.text.split(' ')[0] === 'everyone' ||
-        msg.text.split(' ')[0] === '@everyone') {
+      createGame(msg, id);
+    }
+    const firstWord = msg.text.split(' ')[0];
+    const everyoneWords = ['everyone', '@everyone', 'all'];
+    if (everyoneWords.includes(firstWord)) {
       const response = self.excludeUsers('everyone', id);
       if (find(id).currentGame.inProgress) {
         self.common.reply(
@@ -4384,12 +4448,11 @@ function HungryGames() {
    */
   function includeUser(msg, id) {
     if (!find(id)) {
-      self.common.reply(
-          msg, 'You must first create a game with "' + msg.prefix +
-              self.postPrefix + 'create".');
-    } else if (
-      msg.text.split(' ')[0] === 'everyone' ||
-        msg.text.split(' ')[0] === '@everyone') {
+      createGame(msg, id);
+    }
+    const firstWord = msg.text.split(' ')[0];
+    const everyoneWords = ['everyone', '@everyone', 'all'];
+    if (everyoneWords.includes(firstWord)) {
       const response = self.includeUsers('everyone', id);
       if (find(id).currentGame.inProgress) {
         self.common.reply(
@@ -4498,6 +4561,9 @@ function HungryGames() {
     let finalMessage = new self.Discord.MessageEmbed();
     finalMessage.setTitle('List of currently tracked players');
     finalMessage.setColor(defaultColor);
+    if (!find(id)) {
+      createGame(msg, id);
+    }
     if (find(id) && find(id).currentGame &&
         find(id).currentGame.includedUsers) {
       let numUsers = find(id).currentGame.includedUsers.length;
@@ -4576,10 +4642,6 @@ function HungryGames() {
             'Included (' + numUsers + ')', statusList.join('\n') || 'Nobody...',
             false);
       }
-    } else {
-      finalMessage.setDescription(
-          'There don\'t appear to be any included players. Have you ' +
-          'created a game with "' + msg.prefix + self.postPrefix + 'create"?');
     }
     if (find(id) && find(id).excludedUsers &&
         find(id).excludedUsers.length > 0) {
@@ -4661,10 +4723,9 @@ function HungryGames() {
    */
   this.setOption = function(id, option, value, text = '') {
     if (!find(id) || !find(id).currentGame) {
-      return 'You must create a game first before editing settings! Use "' +
-          self.bot.getPrefix(id) + self.postPrefix +
-          'create" to create a game.';
-    } else if (typeof option === 'undefined' || option.length == 0) {
+      this.createGame(id);
+    }
+    if (typeof option === 'undefined' || option.length == 0) {
       return null;
     } else if (find(id).currentGame.inProgress) {
       return 'You must end this game before changing settings. Use "' +
@@ -5231,10 +5292,7 @@ function HungryGames() {
    */
   function createEvent(msg, id) {
     if (!find(id)) {
-      self.common.reply(
-          msg, 'You must first create a game with "' + msg.prefix +
-              self.postPrefix + 'create".');
-      return;
+      createGame(msg, id);
     }
     newEventMessages[msg.id] = msg;
     const authId = msg.author.id;
@@ -5898,10 +5956,7 @@ function HungryGames() {
    */
   function removeEvent(msg, id) {
     if (!find(id)) {
-      self.common.reply(
-          msg, 'You must first create a game with "' + msg.prefix +
-              self.postPrefix + 'create".');
-      return;
+      createGame(msg, id);
     }
     const split = msg.text.split(' ');
 

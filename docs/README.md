@@ -953,8 +953,8 @@ Hunger Games simulator.
         * [~checkPerms(msg, cb)](#HungryGames..checkPerms) ℗
         * [~makePlayer(member)](#HungryGames..makePlayer) ⇒ [<code>Player</code>](#HungryGames..Player) ℗
         * [~sendAtTime(channel, one, two, time)](#HungryGames..sendAtTime) ℗
-        * [~createGame(msg, id, [silent])](#HungryGames..createGame) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
-        * [~fetchPatreonSettings(players, cId, gId)](#HungryGames..fetchPatreonSettings) ℗
+        * [~createGame(msg, id, [silent], [cb])](#HungryGames..createGame) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+        * [~fetchPatreonSettings(players, cId, gId, [cb])](#HungryGames..fetchPatreonSettings) ℗
             * [~onPermResponse(err, info, p)](#HungryGames..fetchPatreonSettings..onPermResponse) ℗
             * [~onSettingResponse(err, info, p, setting)](#HungryGames..fetchPatreonSettings..onSettingResponse) ℗
         * [~getAllPlayers(members, excluded, bots, included, excludeByDefault)](#HungryGames..getAllPlayers) ⇒ [<code>Array.&lt;Player&gt;</code>](#HungryGames..Player) ℗
@@ -963,6 +963,7 @@ Hunger Games simulator.
         * [~showGameInfo(msg, id)](#HungryGames..showGameInfo) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~showGameEvents(msg, id)](#HungryGames..showGameEvents) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~startGame(msg, id)](#HungryGames..startGame) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+            * [~loadingComplete()](#HungryGames..startGame..loadingComplete) ℗
         * [~makeMessage(uId, gId, cId, msg)](#HungryGames..makeMessage) ⇒ <code>Object</code> ℗
         * [~pauseAutoplay(msg, id)](#HungryGames..pauseAutoplay) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~startAutoplay(msg, id)](#HungryGames..startAutoplay) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
@@ -2107,7 +2108,7 @@ Delay a message to send at the given time in milliseconds since epoch.
 
 <a name="HungryGames..createGame"></a>
 
-### HungryGames~createGame(msg, id, [silent]) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+### HungryGames~createGame(msg, id, [silent], [cb]) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
 Create a Hungry Games for a guild.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
@@ -2118,10 +2119,11 @@ Create a Hungry Games for a guild.
 | msg | <code>Discord~Message</code> |  | The message that lead to this being called. |
 | id | <code>string</code> |  | The id of the guild this was triggered from. |
 | [silent] | <code>boolean</code> | <code>false</code> | Should we suppress replies to message. |
+| [cb] | <code>function</code> |  | Callback that fires once loading is complete. No parameters. |
 
 <a name="HungryGames..fetchPatreonSettings"></a>
 
-### HungryGames~fetchPatreonSettings(players, cId, gId) ℗
+### HungryGames~fetchPatreonSettings(players, cId, gId, [cb]) ℗
 Given an array of players, lookup the settings for each and update their
 data. This is asyncronous.
 
@@ -2133,9 +2135,10 @@ data. This is asyncronous.
 | players | [<code>Array.&lt;Player&gt;</code>](#HungryGames..Player) | The players to lookup and udpate. |
 | cId | <code>string</code> \| <code>number</code> | The channel ID to fetch the settings for. |
 | gId | <code>string</code> \| <code>number</code> | The guild ID to fetch the settings for. |
+| [cb] | <code>function</code> | Calls this callback on completion. No parameters. |
 
 
-* [~fetchPatreonSettings(players, cId, gId)](#HungryGames..fetchPatreonSettings) ℗
+* [~fetchPatreonSettings(players, cId, gId, [cb])](#HungryGames..fetchPatreonSettings) ℗
     * [~onPermResponse(err, info, p)](#HungryGames..fetchPatreonSettings..onPermResponse) ℗
     * [~onSettingResponse(err, info, p, setting)](#HungryGames..fetchPatreonSettings..onSettingResponse) ℗
 
@@ -2252,6 +2255,14 @@ Start the games in the channel this was called from.
 | msg | <code>Discord~Message</code> | The message that lead to this being called. |
 | id | <code>string</code> | The id of the guild this was triggered from. |
 
+<a name="HungryGames..startGame..loadingComplete"></a>
+
+#### startGame~loadingComplete() ℗
+Once the game has finished loading all necessary data, start it if
+autoplay is enabled.
+
+**Kind**: inner method of [<code>startGame</code>](#HungryGames..startGame)  
+**Access**: private  
 <a name="HungryGames..makeMessage"></a>
 
 ### HungryGames~makeMessage(uId, gId, cId, msg) ⇒ <code>Object</code> ℗
