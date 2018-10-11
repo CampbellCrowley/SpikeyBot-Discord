@@ -1054,7 +1054,9 @@ function SpikeyBot() {
         for (let i = 0; i < subModules.length; i++) {
           if (subModules[i] && !subModules[i].unloadable()) {
             if (!silent) {
-              common.reply(msg, 'Reboot scheduled');
+              common.reply(
+                  msg,
+                  'Reboot scheduled. Waiting on at least ' + subModuleNames[i]);
             }
             setTimeout(function() {
               commandReboot(msg, true);
