@@ -2399,6 +2399,13 @@ function HungryGames() {
     if (find(id).currentGame.day.num === 0) {
       userEventPool =
           defaultBloodbathEvents.concat(find(id).customEvents.bloodbath);
+      if (find(id).disabledEvents && find(id).disabledEvents.bloodbath) {
+        userEventPool = userEventPool.filter((el) => {
+          return !find(id).disabledEvents.bloodbath.find((d) => {
+            return self.eventsEqual(d, el);
+          });
+        });
+      }
     } else {
       doArenaEvent = find(id).options.arenaEvents &&
           Math.random() < find(id).options.probabilityOfArenaEvent;
@@ -2412,9 +2419,25 @@ function HungryGames() {
         find(id).currentGame.day.events.push(
             makeMessageEvent('**___' + arenaEvent.message + '___**', id));
         userEventPool = arenaEvent.outcomes;
+        if (find(id).disabledEvents && find(id).disabledEvents.arena &&
+            find(id).disabledEvents.arena[arenaEvent.message]) {
+          userEventPool = userEventPool.filter((el) => {
+            return !find(id).disabledEvents.arena[arenaEvent.message].find(
+                (d) => {
+                  return self.eventsEqual(d, el);
+                });
+          });
+        }
       } else {
         userEventPool =
             defaultPlayerEvents.concat(find(id).customEvents.player);
+        if (find(id).disabledEvents && find(id).disabledEvents.player) {
+          userEventPool = userEventPool.filter((el) => {
+            return !find(id).disabledEvents.player.find((d) => {
+              return self.eventsEqual(d, el);
+            });
+          });
+        }
       }
     }
 
@@ -2423,10 +2446,22 @@ function HungryGames() {
       let entries = Object.entries(find(id).customEvents.weapon);
       for (let i = 0; i < entries.length; i++) {
         if (weaponEventPool[entries[i][0]]) {
-          weaponEventPool[entries[i][0]] =
-              weaponEventPool[entries[i][0]].concat(entries[i][1]);
+          weaponEventPool[entries[i][0]].outcomes =
+              weaponEventPool[entries[i][0]].outcomes.concat(
+                  entries[i][1].outcomes);
         } else {
-          weaponEventPool[entries[i][0]] = entries[i][1];
+          weaponEventPool[entries[i][0]] = {outcomes: entries[i][1].outcomes};
+        }
+
+        if (find(id).disabledEvents && find(id).disabledEvents.weapon &&
+            find(id).disabledEvents.weapon[entries[i][0]]) {
+          weaponEventPool[entries[i][0]].outcomes =
+              weaponEventPool[entries[i][0]].outcomes.filter((el) => {
+                return !find(id).disabledEvents.weapon[entries[i][0]].find(
+                    (d) => {
+                      return self.eventsEqual(d, el);
+                    });
+              });
         }
       }
     }
