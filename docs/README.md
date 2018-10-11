@@ -4298,6 +4298,7 @@ Music and audio related commands.
         * [~commandStats(msg)](#Music..commandStats) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandVolume(msg)](#Music..commandVolume) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~changeVolume(broadcast, percentage)](#Music..changeVolume) ⇒ <code>boolean</code> ℗
+        * [~getVolume(broadcast)](#Music..getVolume) ⇒ <code>number</code> ℗
         * [~Broadcast](#Music..Broadcast) : <code>Object</code>
 
 <a name="SubModule+helpMessage"></a>
@@ -4996,6 +4997,20 @@ Change the volume of the current broadcast.
 | --- | --- | --- |
 | broadcast | [<code>Broadcast</code>](#Music..Broadcast) | The objected storing the current broadcast information. |
 | percentage | <code>number</code> | The volume percentage to set to. 0.5 is half, 2 is double. |
+
+<a name="Music..getVolume"></a>
+
+### Music~getVolume(broadcast) ⇒ <code>number</code> ℗
+Get the volume of the current broadcast.
+
+**Kind**: inner method of [<code>Music</code>](#Music)  
+**Returns**: <code>number</code> - The logarithmic volume percentage. 0.5 is half, 2 is
+double. Null if error.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| broadcast | [<code>Broadcast</code>](#Music..Broadcast) | The objected storing the current broadcast information. |
 
 <a name="Music..Broadcast"></a>
 

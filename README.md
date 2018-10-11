@@ -14,7 +14,7 @@
 #### Random
 `flip` `roll`
 #### Music
-`play` `stop` `skip` `queue` `remove` `lyrics` `pause` `resume` `follow`
+`play` `stop` `skip` `queue` `remove` `lyrics` `pause` `resume` `follow` `volume`
 #### Math
 `add` `simplify` `solve` `evaluate` `derive` `graph`
 #### Admin

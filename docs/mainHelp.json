@@ -413,6 +413,28 @@
           ]
         },
         {
+          "command": "volume",
+          "description": "Change the volume of the current song.",
+          "aliases": "volume, vol, v",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "vol 50%",
+              "result": "The current song's volume will be set to 50%"
+            },
+            {
+              "description": "Use decimals",
+              "command": "vol 0.5",
+              "result": "The current song's volume will be set to 50%"
+            },
+            {
+              "description": "Get Volume",
+              "command": "vol",
+              "result": "The bot will tell you the current volume as a percentage."
+            }
+          ]
+        },
+        {
           "command": "lyrics 'song'",
           "description": "Search for song lyrics.",
           "examples": [

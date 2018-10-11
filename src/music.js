@@ -1312,17 +1312,20 @@ function Music() {
     if (!broadcasts[msg.guild.id]) {
       self.common.reply(msg, 'Nothing is playing!');
     } else if (!msg.text) {
-      self.common.reply(msg, 'Please specify a volume percentage.');
+      self.common.reply(
+          msg,
+          'Volume is at ' + (getVolume(broadcasts[msg.guild.id]) * 100) + '%',
+          'Specify a percentage to change the volume.');
     } else {
       let newVol = msg.text.match(/[0-9]*\.?[0-9]+/);
       if (!newVol) {
         self.common.reply(
-            msg, 'Sorry, but I wasn\'t sure what volume to set to.');
+            msg, 'Sorry, but I wasn\'t sure what volume to set to that.');
       } else {
-        if (newVol.indexOf('.') < 0) {
+        if ((newVol + '').indexOf('.') < 0) {
           newVol /= 100;
         }
-        if (changeVolume(newVol)) {
+        if (changeVolume(broadcasts[msg.guild.id], newVol)) {
           self.common.reply(msg, 'Changed volume to ' + (newVol * 100) + '%.');
         } else {
           self.common.reply(
@@ -1356,6 +1359,22 @@ function Music() {
       return false;
     }
     return true;
+  }
+
+  /**
+   * Get the volume of the current broadcast.
+   *
+   * @private
+   * @param {Music~Broadcast} broadcast The objected storing the current
+   * broadcast information.
+   * @return {?number} The logarithmic volume percentage. 0.5 is half, 2 is
+   * double. Null if error.
+   */
+  function getVolume(broadcast) {
+    if (!broadcast) return null;
+    if (!broadcast.broadcast) return null;
+    if (!broadcast.broadcast.dispatcher) return null;
+    return broadcast.broadcast.dispatcher.volumeLogarithmic;
   }
 }
 

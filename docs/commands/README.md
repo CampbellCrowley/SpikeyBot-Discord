@@ -104,6 +104,7 @@ See [spikeybot.com](https://www.spikeybot.com/) for examples and more informatio
 | ?remove 'index' | Remove a song with the given queue index from the queue. | remove, dequeue |
 | ?pause | Pause the currently playing music. |  |
 | ?resume | Resume the currently paused music. |  |
+| ?volume | Change the volume of the current song. | volume, vol, v |
 | ?lyrics 'song' | Search for song lyrics. |  |
 
 
