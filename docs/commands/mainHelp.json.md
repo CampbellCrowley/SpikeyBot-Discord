@@ -13,13 +13,13 @@ See [spikeybot.com](https://www.spikeybot.com/) for examples and more informatio
 
 | Command | Description | Aliases |
 | --- | --- | --- |
-| ?addme | I will send you a link to add me to your server! |  |
+| ?addme | I will send you a link to add me to your server! | addme, invite |
 | ?help | Send this message to you. |  |
 | ?say | Make me say something. |  |
 | ?createdate 'mention' | I will tell you the date you created your account! |  |
 | ?joindate 'mention' | I will tell you the date you joined the server you sent the message from! |  |
-| ?pmme | I will introduce myself to you! |  |
-| ?pmspikey 'message' | I will send SpikeyRobot (my creator) your message because you are too shy! |  |
+| ?pmme | I will introduce myself to you! | pmme, dmme |
+| ?pmspikey 'message' | I will send SpikeyRobot (my creator) your message because you are too shy! | pmspikey, dmspikey |
 | ?avatar 'mention' | Need a better look at your profile pic? I'll show you the original. | avatar, profile |
 | ?ping | Want to know what my delay to the server is? I can tell you my ping! |  |
 | ?timer 'minutes' 'message...' | Set a timer for a certain number of seconds. The bot will DM you the message at the end. No options lists timers. |  |

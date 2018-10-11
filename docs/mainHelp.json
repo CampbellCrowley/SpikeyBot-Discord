@@ -8,6 +8,7 @@
         {
           "command": "addme",
           "description": "I will send you a link to add me to your server!",
+          "aliases": "addme, invite",
           "examples": [
             {
               "description": "Basic Usage",
@@ -66,6 +67,7 @@
         {
           "command": "pmme",
           "description": "I will introduce myself to you!",
+          "aliases": "pmme, dmme",
           "examples": [
             {
               "description": "Basic Usage",
@@ -77,6 +79,7 @@
         {
           "command": "pmspikey 'message'",
           "description": "I will send SpikeyRobot (my creator) your message because you are too shy!",
+          "aliases": "pmspikey, dmspikey",
           "examples": [
             {
               "description": "Basic Usage",

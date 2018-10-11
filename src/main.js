@@ -20,6 +20,7 @@ math.config({matrix: 'Array'});
  * @listens Discord~Client#guildBanAdd
  * @listens Discord~Client#message
  * @listens SpikeyBot~Command#addMe
+ * @listens SpikeyBot~Command#invite
  * @listens SpikeyBot~Command#add
  * @listens SpikeyBot~Command#simplify
  * @listens SpikeyBot~Command#solve
@@ -34,7 +35,9 @@ math.config({matrix: 'Array'});
  * @listens SpikeyBot~Command#createDate
  * @listens SpikeyBot~Command#joinDate
  * @listens SpikeyBot~Command#pmMe
+ * @listens SpikeyBot~Command#dmMe
  * @listens SpikeyBot~Command#pmSpikey
+ * @listens SpikeyBot~Command#dmSpikey
  * @listens SpikeyBot~Command#thotPm
  * @listens SpikeyBot~Command#pmUser
  * @listens SpikeyBot~Command#flip
@@ -251,7 +254,7 @@ function Main() {
     smitePerms = self.Discord.Permissions.FLAGS.CONNECT |
         self.Discord.Permissions.FLAGS.VIEW_CHANNEL;
 
-    self.command.on('addme', commandAddMe);
+    self.command.on(['addme', 'invite'], commandAddMe);
     self.command.on('add', commandAdd);
     self.command.on('simplify', commandSimplify);
     self.command.on('solve', commandSolve);
@@ -263,8 +266,8 @@ function Main() {
     self.command.on('say', commandSay);
     self.command.on('createdate', commandCreateDate);
     self.command.on('joindate', commandJoinDate, true);
-    self.command.on('pmme', commandPmMe);
-    self.command.on('pmspikey', commandPmSpikey);
+    self.command.on(['pmme', 'dmme'], commandPmMe);
+    self.command.on(['pmspikey', 'dmspikey'], commandPmSpikey);
     self.command.on('thotpm', commandThotPm);
     self.command.on('pmuser', commandPmUser);
     self.command.on(['flip', 'coin', 'coinflip', 'flipcoin'], commandFlip);
@@ -456,7 +459,7 @@ function Main() {
 
   /** @inheritdoc */
   this.shutdown = function() {
-    self.command.deleteEvent('addme');
+    self.command.deleteEvent(['addme', 'invite']);
     self.command.deleteEvent('add');
     self.command.deleteEvent('simplify');
     self.command.deleteEvent('solve');
@@ -468,8 +471,8 @@ function Main() {
     self.command.deleteEvent('say');
     self.command.deleteEvent('createdate');
     self.command.deleteEvent('joindate');
-    self.command.deleteEvent('pmme');
-    self.command.deleteEvent('pmspikey');
+    self.command.deleteEvent(['pmme', 'dmme']);
+    self.command.deleteEvent(['pmspikey', 'dmspikey']);
     self.command.deleteEvent('thotpm');
     self.command.deleteEvent('pmuser');
     self.command.deleteEvent(['flip', 'coin', 'coinflip', 'flipcoin']);
@@ -950,6 +953,7 @@ function Main() {
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
    * @listens SpikeyBot~Command#addMe
+   * @listens SpikeyBot~Command#invite
    */
   function commandAddMe(msg) {
     self.common.reply(msg, addmessage, addLink);
@@ -1444,6 +1448,7 @@ function Main() {
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
    * @listens SpikeyBot~Command#pmMe
+   * @listens SpikeyBot~Command#dmMe
    */
   function commandPmMe(msg) {
     msg.author
@@ -1465,6 +1470,7 @@ function Main() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
+   * @listens SpikeyBot~Command#pmSpikey
    * @listens SpikeyBot~Command#pmSpikey
    */
   function commandPmSpikey(msg) {
