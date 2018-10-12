@@ -1550,7 +1550,7 @@ function HungryGames() {
       games[id] = {
         excludedUsers: [],
         includedUsers: [],
-        disabledEvents: {bloodbath: [], player: [], arena: [], weapon: []},
+        disabledEvents: {bloodbath: [], player: [], arena: {}, weapon: {}},
         customEvents: {bloodbath: [], player: [], arena: [], weapon: {}},
         currentGame: {
           name: msg.guild.name + '\'s Hungry Games',
@@ -5812,22 +5812,22 @@ function HungryGames() {
     }
 
     let isValid = false;
+    let isDisabled = false;
     let index;
     for (let i = 0; i < allDisabled.length; i++) {
       if (self.eventsEqual(allDisabled[i], event)) {
-        if (!value) {
-          value = false;
-          isValid = true;
-          index = i;
-        }
+        if (typeof value === 'undefined') value = true;
+        if (value) isValid = true;
+        isDisabled = true;
+        index = i;
         break;
       }
     }
-    if (!isValid && typeof value === 'undefined' || value) {
-      value = true;
+    if (!isDisabled && !value) {
+      value = false;
       isValid = true;
     }
-    if (!isValid) return 'Already ' + value ? 'Enabled' : 'Disabled';
+    if (!isValid) return 'Already ' + (value ? 'Enabled' : 'Disabled');
 
     if (!value) {
       isValid = false;

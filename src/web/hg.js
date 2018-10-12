@@ -1082,7 +1082,7 @@ function HGWeb(hg) {
       socket.emit('message', 'Failed to toggle event: ' + err);
     } else {
       if (typeof cb === 'function') cb();
-      socket.emit('message', 'Toggled event.');
+      // socket.emit('message', 'Toggled event.');
       // socket.emit('game', gId, hg.getGame(gId));
     }
   }
