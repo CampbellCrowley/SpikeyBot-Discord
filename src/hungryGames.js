@@ -2412,23 +2412,32 @@ function HungryGames() {
       if (doArenaEvent) {
         let arenaEventPool =
             defaultArenaEvents.concat(find(id).customEvents.arena);
-        let index = Math.floor(Math.random() * arenaEventPool.length);
-        arenaEvent = arenaEventPool[index];
-        find(id).currentGame.day.events.push(
-            makeMessageEvent(getMessage('eventStart'), id));
-        find(id).currentGame.day.events.push(
-            makeMessageEvent('**___' + arenaEvent.message + '___**', id));
-        userEventPool = arenaEvent.outcomes;
-        if (find(id).disabledEvents && find(id).disabledEvents.arena &&
-            find(id).disabledEvents.arena[arenaEvent.message]) {
-          userEventPool = userEventPool.filter((el) => {
-            return !find(id).disabledEvents.arena[arenaEvent.message].find(
-                (d) => {
-                  return self.eventsEqual(d, el);
-                });
-          });
-        }
-      } else {
+        do {
+          let index = Math.floor(Math.random() * arenaEventPool.length);
+          arenaEvent = arenaEventPool[index];
+          userEventPool = arenaEvent.outcomes;
+          if (find(id).disabledEvents && find(id).disabledEvents.arena &&
+              find(id).disabledEvents.arena[arenaEvent.message]) {
+            userEventPool = userEventPool.filter((el) => {
+              return !find(id).disabledEvents.arena[arenaEvent.message].find(
+                  (d) => {
+                    return self.eventsEqual(d, el);
+                  });
+            });
+          }
+          if (userEventPool.length == 0) {
+            arenaEventPool.splice(index, 1);
+          } else {
+            find(id).currentGame.day.events.push(
+                makeMessageEvent(getMessage('eventStart'), id));
+            find(id).currentGame.day.events.push(
+                makeMessageEvent('**___' + arenaEvent.message + '___**', id));
+            break;
+          }
+        } while (arenaEventPool.length > 0);
+        if (arenaEventPool.length == 0) doArenaEvent = false;
+      }
+      if (!doArenaEvent) {
         userEventPool =
             defaultPlayerEvents.concat(find(id).customEvents.player);
         if (find(id).disabledEvents && find(id).disabledEvents.player) {
@@ -2437,6 +2446,14 @@ function HungryGames() {
               return self.eventsEqual(d, el);
             });
           });
+        }
+        if (userEventPool.length == 0) {
+          self.common.reply(
+              msg,
+              'All player events have been disabled! Please enable events' +
+                  ' so that something can happen in the games!');
+          endGame(msg, id);
+          return;
         }
       }
     }
@@ -2504,7 +2521,7 @@ function HungryGames() {
 
         if (!weaponEventPool[chosenWeapon]) {
           useWeapon = false;
-          console.log('No event pool with weapon', chosenWeapon);
+          // console.log('No event pool with weapon', chosenWeapon);
         } else {
           eventTry = pickEvent(
               userPool, weaponEventPool[chosenWeapon].outcomes,
@@ -2512,9 +2529,9 @@ function HungryGames() {
               find(id).currentGame.teams, probOpts, userWithWeapon);
           if (!eventTry) {
             useWeapon = false;
-            self.error(
+            /* self.error(
                 'No event with weapon "' + chosenWeapon +
-                '" for available players ' + id);
+                '" for available players ' + id); */
           } else {
             numAttacker = eventTry.attacker.count;
             numVictim = eventTry.victim.count;
@@ -2620,11 +2637,15 @@ function HungryGames() {
             nextDay(msg, id, false);
           } else {
             self.common.reply(
-                msg, 'A stupid error happened :(', 'Try again with `' +
-                    msg.prefix + self.postPrefix +
-                    'next`. If this happens again please report this to ' +
-                    'SpikeyRobot#0971\n(Failed to find valid event for ' +
-                    'remaining players)');
+                msg, 'Oops! I wasn\'t able to find a valid event for the ' +
+                    'remaining players.\nThis is usually because too many ' +
+                    'events are disabled.\nIf you think this is a bug, ' +
+                    'please tell SpikeyRobot#0971',
+                'Try again with `' + msg.prefix + self.postPrefix +
+                    'next`.\n(Failed to find valid event for \'' +
+                    (doArenaEvent ? arenaEvent.message : 'player events') +
+                    '\' suitable for ' + userPool.length +
+                    ' remaining players)');
           }
           return;
         }
