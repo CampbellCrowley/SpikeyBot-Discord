@@ -47,6 +47,7 @@
 - hg debug (Dumps current guild's hungry games data into a file)
 - hg makemewin (Replies with a message telling the user their chances of winning have not increased)
 - hg makemelose (Replies with a message telling the user their chances of losing have not increased)
+- hg rigged (Replies with an image of the emoji that says "rigged")
 - vi (Alias for `play nice try vi`)
 - airhorn (Plays airhorn sound)
 - rickroll (Plays Rick Astley in voice channel)
