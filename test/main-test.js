@@ -237,12 +237,8 @@ const hgTests = [
        'game with "~hg create".\n```']),
   new Test(
       'No data: Pause autoplay', '~hg pause',
-      [
-        '<@422623712534200321>\n```\nCreated a Hungry Games with default ' +
-            'settings and all members included.\n```',
-        '<@422623712534200321>\n```\nNot autoplaying. If you with to autoplay' +
-            ', type"~hg autoplay".\n```'
-      ]),
+      ['<@422623712534200321>\n```\nNot autoplaying. If you with to autoplay' +
+       ', type"~hg autoplay".\n```']),
 ];
 
 let ready = false;
