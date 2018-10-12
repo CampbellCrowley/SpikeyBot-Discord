@@ -237,7 +237,7 @@ const hgTests = [
        'game with "~hg create".\n```']),
   new Test(
       'No data: Pause autoplay', '~hg pause',
-      ['<@422623712534200321>\n```\nNot autoplaying. If you with to autoplay' +
+      ['<@422623712534200321>\n```\nNot autoplaying. If you wish to autoplay' +
        ', type "~hg autoplay".\n```']),
 ];
 
