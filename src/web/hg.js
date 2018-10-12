@@ -489,6 +489,7 @@ function HGWeb(hg) {
       done();
     }
   }
+  this.fetchGuilds = fetchGuilds;
   /**
    * Fetch data about a member of a guild.
    *
@@ -514,6 +515,7 @@ function HGWeb(hg) {
     if (typeof cb === 'function') cb();
     socket.emit('member', gId, mId, finalMember);
   }
+  this.fetchMember = fetchMember;
   /**
    * Fetch data about a channel of a guild.
    *
@@ -551,6 +553,7 @@ function HGWeb(hg) {
     if (typeof cb === 'function') cb();
     socket.emit('channel', gId, cId, stripped);
   }
+  this.fetchChannel = fetchChannel;
   /**
    * Fetch all game data within a guild.
    * @see {@link HungryGames.getGame}
@@ -573,6 +576,7 @@ function HGWeb(hg) {
     if (typeof cb === 'function') cb();
     socket.emit('game', gId, hg.getGame(gId));
   }
+  this.fetchGames = fetchGames;
   /**
    * Fetch the updated game's day information.
    * @see {@link HungryGames.getGame}
@@ -623,6 +627,7 @@ function HGWeb(hg) {
     socket.emit(
         'day', gId, game.currentGame.day, game.currentGame.includedUsers);
   }
+  this.fetchDay = fetchDay;
   /**
    * Exclude a member from the Games.
    * @see {@link HungryGames.excludeUsers}
@@ -651,6 +656,7 @@ function HGWeb(hg) {
     if (typeof cb === 'function') cb();
     socket.emit('game', gId, hg.getGame(gId));
   }
+  this.excludeMember = excludeMember;
   /**
    * Include a member in the Games.
    * @see {@link HungryGames.includeUsers}
@@ -679,6 +685,7 @@ function HGWeb(hg) {
     if (typeof cb === 'function') cb();
     socket.emit('game', gId, hg.getGame(gId));
   }
+  this.includeMember = includeMember;
   /**
    * Toggle an option in the Games.
    * @see {@link HungryGames.setOption}
@@ -710,6 +717,7 @@ function HGWeb(hg) {
       }
     }
   }
+  this.toggleOption = toggleOption;
   /**
    * Create a Game.
    * @see {@link HungryGames.createGame}
@@ -734,6 +742,7 @@ function HGWeb(hg) {
     socket.emit('message', 'Game created');
     socket.emit('game', gId, hg.getGame(gId));
   }
+  this.createGame = createGame;
   /**
    * Reset game data.
    * @see {@link HungryGames.resetGame}
@@ -758,6 +767,7 @@ function HGWeb(hg) {
     socket.emit('message', hg.resetGame(gId, cmd));
     socket.emit('game', gId, hg.getGame(gId));
   }
+  this.resetGame = resetGame;
   /**
    * Start the game.
    * @see {@link HungryGames.startGame}
@@ -783,6 +793,7 @@ function HGWeb(hg) {
     socket.emit('message', 'Game started');
     socket.emit('game', gId, hg.getGame(gId));
   }
+  this.startGame = startGame;
   /**
    * Enable autoplay.
    * @see {@link HungryGames.startAutoplay}
@@ -808,6 +819,7 @@ function HGWeb(hg) {
     socket.emit('message', 'Autoplay enabled');
     socket.emit('game', gId, hg.getGame(gId));
   }
+  this.startAutoplay = startAutoplay;
   /**
    * Start the next day.
    * @see {@link HungryGames.nextDay}
@@ -832,6 +844,7 @@ function HGWeb(hg) {
     if (typeof cb === 'function') cb();
     socket.emit('message', 'Starting next day');
   }
+  this.nextDay = nextDay;
   /**
    * End the game.
    * @see {@link HungryGames.endGame}
@@ -856,6 +869,7 @@ function HGWeb(hg) {
     socket.emit('message', 'Game ended');
     socket.emit('game', gId, hg.getGame(gId));
   }
+  this.endGame = endGame;
   /**
    * Disable autoplay.
    * @see {@link HungryGames.pauseAutoplay}
@@ -880,6 +894,7 @@ function HGWeb(hg) {
     socket.emit('message', 'Autoplay paused');
     socket.emit('game', gId, hg.getGame(gId));
   }
+  this.pauseAutoplay = pauseAutoplay;
   /**
    * Edit the teams.
    * @see {@link HungryGames.editTeam}
@@ -904,6 +919,7 @@ function HGWeb(hg) {
     hg.editTeam(userData.id, gId, cmd, one, two);
     socket.emit('game', gId, hg.getGame(gId));
   }
+  this.editTeam = editTeam;
   /**
    * Create a game event.
    * @see {@link HungryGames.createEvent}
@@ -946,6 +962,7 @@ function HGWeb(hg) {
       socket.emit('game', gId, hg.getGame(gId));
     }
   }
+  this.createEvent = createEvent;
 
   /**
    * Create a larger game event. Either Arena or Weapon at this point. If
@@ -981,6 +998,7 @@ function HGWeb(hg) {
       socket.emit('game', gId, hg.getGame(gId));
     }
   }
+  this.createMajorEvent = createMajorEvent;
 
   /**
    * Delete a larger game event. Either Arena or Weapon at this point.
@@ -1019,6 +1037,7 @@ function HGWeb(hg) {
       socket.emit('game', gId, hg.getGame(gId));
     }
   }
+  this.editMajorEvent = editMajorEvent;
 
   /**
    * Remove a game event.
@@ -1051,6 +1070,7 @@ function HGWeb(hg) {
       socket.emit('game', gId, hg.getGame(gId));
     }
   }
+  this.removeEvent = removeEvent;
 
   /**
    * Enable or disable an event without deleting it.
@@ -1086,6 +1106,7 @@ function HGWeb(hg) {
       // socket.emit('game', gId, hg.getGame(gId));
     }
   }
+  this.toggleEvent = toggleEvent;
 
   hg.log('Init Web');
 }
