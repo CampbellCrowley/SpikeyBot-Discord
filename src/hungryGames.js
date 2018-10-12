@@ -2450,7 +2450,7 @@ function HungryGames() {
               weaponEventPool[entries[i][0]].outcomes.concat(
                   entries[i][1].outcomes);
         } else {
-          weaponEventPool[entries[i][0]] = {outcomes: entries[i][1].outcomes};
+          weaponEventPool[entries[i][0]] = entries[i][1];
         }
 
         if (find(id).disabledEvents && find(id).disabledEvents.weapon &&
@@ -5745,7 +5745,9 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function commandToggleEvent(msg, id) {
-    self.common.reply(msg, 'This command has not been implemented yet.');
+    self.common.reply(
+        msg, 'Sorry, this feature is only available on the website.',
+        'https://www.spikeybot.com/hg/');
     // let error = self.toggleEvent(id, type, subCat, event, value);
   }
 
@@ -5789,8 +5791,9 @@ function HungryGames() {
         let entries = Object.entries(find(id).customEvents.weapon);
         for (let i = 0; i < entries.length; i++) {
           if (allEvents[entries[i][0]]) {
-            allEvents[entries[i][0]] =
-                allEvents[entries[i][0]].concat(entries[i][1]);
+            allEvents[entries[i][0]].outcomes =
+                allEvents[entries[i][0]].outcomes.concat(
+                    entries[i][1].outcomes);
           } else {
             allEvents[entries[i][0]] = entries[i][1];
           }
@@ -5808,6 +5811,7 @@ function HungryGames() {
       }
       if (!allEvents) return 'Invalid Category';
       allEvents = allEvents.outcomes;
+      if (!allDisabled[subCat]) allDisabled[subCat] = [];
       allDisabled = allDisabled[subCat];
     }
 
