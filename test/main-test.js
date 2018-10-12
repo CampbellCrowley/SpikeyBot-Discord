@@ -238,7 +238,7 @@ const hgTests = [
   new Test(
       'No data: Pause autoplay', '~hg pause',
       ['<@422623712534200321>\n```\nNot autoplaying. If you with to autoplay' +
-       ', type"~hg autoplay".\n```']),
+       ', type "~hg autoplay".\n```']),
 ];
 
 let ready = false;
