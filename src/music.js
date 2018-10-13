@@ -1225,7 +1225,7 @@ function Music() {
                   self.bot.getPrefix(msg.guild.id) +
                   'follow to make me stop following you.',
               'I will no longer follow <@' + follows[msg.guild.id] + '>');
-          follows[msg.guild.id] = memberId;
+          follows[msg.guild.id] = target;
         }
       } else {
         follows[msg.guild.id] = target;
