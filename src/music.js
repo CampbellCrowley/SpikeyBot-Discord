@@ -1206,11 +1206,48 @@ function Music() {
    * @listens SpikeyBot~Command#join
    */
   function commandFollow(msg) {
+    if (msg.mentions.users.size > 0) {
+      let targetMember = msg.mentions.members.first();
+      let target = targetMember.id;
+      if (follows[msg.guild.id]) {
+        if (follows[msg.guild.id] === target) {
+          delete follows[msg.guild.id];
+          self.common.reply(
+              msg, 'I will no longer follow ' + targetMember.user.username +
+                  ' to new voice channels.');
+          if (targetMember.voice.channel) {
+            targetMember.voice.channel.join().catch(() => {});
+          }
+        } else {
+          self.common.reply(
+              msg, 'I will follow ' + targetMember.user.username +
+                  ' into new voice channels.\nType ' +
+                  self.bot.getPrefix(msg.guild.id) +
+                  'follow to make me stop following you.',
+              'I will no longer follow <@' + follows[msg.guild.id] + '>');
+          follows[msg.guild.id] = memberId;
+        }
+      } else {
+        follows[msg.guild.id] = target;
+        self.common.reply(
+            msg, 'When ' + targetMember.user.username +
+                ' changes voice channels, I will follow them and continue ' +
+                'playing music.\nType ' + self.bot.getPrefix(msg.guild.id) +
+                'follow to make me stop following you.');
+        if (targetMember.voice.channel) {
+          targetMember.voice.channel.join().catch(() => {});
+        }
+      }
+      return;
+    }
     if (follows[msg.guild.id]) {
       if (follows[msg.guild.id] == msg.member.id) {
         delete follows[msg.guild.id];
         self.common.reply(
             msg, 'I will no longer follow you to new voice channels.');
+        if (msg.member.voice.channel) {
+          msg.member.voice.channel.join().catch(() => {});
+        }
       } else {
         self.common.reply(
             msg, 'I will follow you into new voice channels.\nType ' +
@@ -1226,6 +1263,9 @@ function Music() {
           'When you change voice channels, I will follow you and continue ' +
               'playing music.\nType ' + self.bot.getPrefix(msg.guild.id) +
               'follow to make me stop following you.');
+      if (msg.member.voice.channel) {
+        msg.member.voice.channel.join().catch(() => {});
+      }
     }
   }
 
