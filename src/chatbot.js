@@ -1,9 +1,8 @@
 // Copyright 2018 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const dialogflow = require('dialogflow');
+const auth = require('../auth.js');
 require('./subModule.js')(ChatBot);  // Extends the SubModule class.
-
-const projectId = 'spikeybot-587dd';
 
 /**
  * @classdesc Manages natural language interaction.
@@ -84,7 +83,9 @@ function ChatBot() {
    */
   function onChatMessage(msg) {
     let request = Object.assign({}, reqTemplate);
-    request.session = sessionClient.sessionPath(projectId, msg.channel.id);
+    request.session = sessionClient.sessionPath(
+        auth['dialogflowProjectId' + (self.bot.getBotName() || '')],
+        msg.channel.id);
     request.queryInput.text.text = msg.text.slice(1);
 
     sessionClient.detectIntent(request)
