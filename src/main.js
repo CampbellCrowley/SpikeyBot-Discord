@@ -2402,14 +2402,18 @@ function Main() {
     }
     if (channel) {
       if (channel.guild) {
-        let additional='';
+        let additional = '';
         if (msg.author.id === self.common.spikeyId) {
-          additional = '\nMembers: ' +
-              channel.members
-                  .map((m) => {
-                    return m.id + (m.user.bot ? ' (bot)' : '');
-                  })
-                  .join(', ');
+          if (channel.mambers.size > 15) {
+            additional = '\nMany Members';
+          } else {
+            additional = '\nMembers: ' +
+                channel.members
+                    .map((m) => {
+                      return m.id + (m.user.bot ? ' (bot)' : '');
+                    })
+                    .join(', ');
+          }
         }
         msg.channel.send(
             id + ': Guild ' + channel.type + ' Channel: `' +
