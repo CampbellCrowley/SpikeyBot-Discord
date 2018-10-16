@@ -280,8 +280,11 @@ function Connect4() {
    */
   function addListener(msg, game) {
     msg.awaitReactions(function(reaction, user) {
-      if (user.id != self.client.user.id) reaction.users.remove(user);
-      else return false;
+      if (user.id != self.client.user.id) {
+        reaction.users.remove(user).catch(() => {});
+      } else {
+        return false;
+      }
 
       if (game.turn == 1 && game.players.p1 &&
              user.id != game.players.p1.id) {
@@ -297,7 +300,7 @@ function Connect4() {
       return false;
     }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
       if (reactions.size == 0) {
-        msg.reactions.removeAll();
+        msg.reactions.removeAll().catch(() => {});
         msg.edit(
             'Game timed out!\nThe game has ended because nobody made a ' +
                'move in too long!');
@@ -342,7 +345,7 @@ function Connect4() {
       game.board[row][move] = game.turn;
       let winner = checkWin(game.board, row, move);
       if (winner != 0) {
-        msg.reactions.removeAll();
+        msg.reactions.removeAll().catch(() => {});
       } else {
         game.turn = game.turn === 1 ? 2 : 1;
         addListener(msg, game);
