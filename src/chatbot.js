@@ -103,8 +103,6 @@ function ChatBot() {
             msg.content = cmd;
             if (!self.command.trigger(cmd.split(/ |\n/)[0], msg)) {
               self.log('Command "' + cmd + '" failed!');
-              msg.channel.send(
-                  'Oops! I wasn\'t able to do that for some reason...');
             }
           }
         })
