@@ -1,6 +1,5 @@
 // Copyright 2018 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
-process.env.GOOGLE_APPLICATION_CREDENTIALS = './gApiCredentials.json';
 const dialogflow = require('dialogflow');
 require('./subModule.js')(ChatBot);  // Extends the SubModule class.
 
@@ -22,6 +21,15 @@ function ChatBot() {
   this.initialize = function() {
     self.command.on('chat', onChatMessage);
     self.client.on('message', onMessage);
+
+    if (self.bot.getBotName()) {
+      process.env.GOOGLE_APPLICATION_CREDENTIALS =
+          './gApiCredentials-' + self.bot.getBotName() + '.json';
+    } else {
+      process.env.GOOGLE_APPLICATION_CREDENTIALS = './gApiCredentials.json';
+    }
+
+    sessionClient = new dialogflow.SessionsClient();
   };
   /** @inheritdoc */
   this.shutdown = function() {
@@ -35,7 +43,7 @@ function ChatBot() {
   this.save = function(opt) {
   };
 
-  const sessionClient = new dialogflow.SessionsClient();
+  let sessionClient;
 
   const reqTemplate = {
     session: 'default-session',

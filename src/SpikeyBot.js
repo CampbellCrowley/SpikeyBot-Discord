@@ -137,6 +137,19 @@ function SpikeyBot() {
    */
   let botName = null;
 
+  /**
+   * Getter for the bot's name. If name is null, it is most likely because there
+   * is no custom name and common.isRelease should be used instead.
+   * @see {@link SpikeyBot~botName}
+   *
+   * @public
+   * @return {?string} The bot's name or null if it has not been defined yet or
+   * there is no custom name.
+   */
+  this.getBotName = function() {
+    return botName;
+  };
+
   // Parse cli args.
   for (let i = 0; i < process.argv.length; i++) {
     if (process.argv[i] === 'dev' || process.argv[i] === '--dev') {

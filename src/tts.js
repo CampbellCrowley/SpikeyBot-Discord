@@ -1,11 +1,9 @@
 // Copyright 2018 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
-process.env.GOOGLE_APPLICATION_CREDENTIALS = './gApiCredentials.json';
 const Readable = require('stream').Readable;
 const tts = require('@google-cloud/text-to-speech');
 require('./subModule.js')(TTS); // Extends the SubModule class.
 
-const ttsClient = new tts.TextToSpeechClient();
 let ttsRequest = {
   input: {text: 'Hello world!'},
   voice: {languageCode: 'en-AU', ssmlGender: 'MALE'},
@@ -30,11 +28,21 @@ function TTS() {
   /** @inheritdoc */
   this.initialize = function() {
     self.command.on(['tts', 'speak'], commandTTS, true);
+
+    if (self.bot.getBotName()) {
+      process.env.GOOGLE_APPLICATION_CREDENTIALS =
+          './gApiCredentials-' + self.bot.getBotName() + '.json';
+    } else {
+      process.env.GOOGLE_APPLICATION_CREDENTIALS = './gApiCredentials.json';
+    }
+    ttsClient = new tts.TextToSpeechClient();
   };
   /** @inheritdoc */
   this.shutdown = function() {
     self.command.deleteEvent(['tts', 'speak']);
   };
+
+  let ttsClient;
 
   /**
    * The permission required to use TTS commands.

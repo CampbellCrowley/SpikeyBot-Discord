@@ -6436,6 +6436,7 @@ Main class that manages the bot.
 
 * [SpikeyBot](#SpikeyBot)
     * _instance_
+        * [.getBotName()](#SpikeyBot+getBotName) ⇒ <code>string</code>
         * [.getSubmoduleCommits()](#SpikeyBot+getSubmoduleCommits) ⇒ <code>Array.&lt;{name: string, commit: string}&gt;</code>
         * [.getPrefix(id)](#SpikeyBot+getPrefix) ⇒ <code>string</code>
     * _inner_
@@ -6496,6 +6497,17 @@ Main class that manages the bot.
         * [~commandUpdate(msg)](#SpikeyBot..commandUpdate) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~loadGuildPrefixes(guilds)](#SpikeyBot..loadGuildPrefixes) ℗
 
+<a name="SpikeyBot+getBotName"></a>
+
+### spikeyBot.getBotName() ⇒ <code>string</code>
+Getter for the bot's name. If name is null, it is most likely because there
+is no custom name and common.isRelease should be used instead.
+
+**Kind**: instance method of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Returns**: <code>string</code> - The bot's name or null if it has not been defined yet or
+there is no custom name.  
+**Access**: public  
+**See**: [botName](#SpikeyBot..botName)  
 <a name="SpikeyBot+getSubmoduleCommits"></a>
 
 ### spikeyBot.getSubmoduleCommits() ⇒ <code>Array.&lt;{name: string, commit: string}&gt;</code>
