@@ -68,10 +68,12 @@ function ChatBot() {
           } else {
             console.log(`  No intent matched.`);
           } */
-          msg.channel.send(result.fulfillmentText).catch((err) => {
-            self.error('Unable to reply to chat message: ' + msg.channel.id);
-            console.error(err);
-          });
+          if (result.fulfillmentText) {
+            msg.channel.send(result.fulfillmentText).catch((err) => {
+              self.error('Unable to reply to chat message: ' + msg.channel.id);
+              console.error(err);
+            });
+          }
           if (result.parameters.fields.command) {
             let cmd = result.parameters.fields.command.stringValue.replace(
                 /^command /, '');
