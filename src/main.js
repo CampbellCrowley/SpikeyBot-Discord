@@ -2032,7 +2032,7 @@ function Main() {
       let matchNum = 0;
       for (let i = 0; i < numbers.length; i++) {
         let el = numbers[i];
-        let match = el.match(/(\d*)([xXdD\*])(\d+)/);
+        let match = el.match(/(\d*)\s?([xXdD\*])\s?(\d+)/);
         if (!match) {
           let firstNum = el.match(/(\d+)/);
           if (!firstNum) {
