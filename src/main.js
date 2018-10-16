@@ -1897,19 +1897,26 @@ function Main() {
     if (msg.mentions.users.size !== 0) {
       user = msg.mentions.users.first();
     }
-    if (user.presence.activity) {
+    let p = user.presence;
+    if (p.activity) {
+      let finalString = p.activity.type + ': ' + p.activity.name + '(' +
+          p.activity.url + ')\nDetails: ' + (p.activity.details || 'none') +
+          ' (' +
+          (JSON.stringify(
+              (p.activity.party && p.activity.party.size) || 'No party')) +
+          ')';
+      if (p.assets) {
+        if (p.assets.largeText) {
+          finalString += '\n' + p.assets.largeText;
+        }
+        if (p.assets.smallText) {
+          finalString += '\n' + p.assets.smallText;
+        }
+      }
       self.common.reply(
-          msg, user.username + ': ' + user.presence.status,
-          user.presence.activity.type + ': ' + user.presence.activity.name +
-              '(' + user.presence.activity.url + ')\nDetails: ' +
-              (user.presence.activity.details || 'none') + ' (' +
-              ((user.activity.party && user.activity.party.size.join('/')) ||
-               'No party') +
-              ')');
+          msg, user.username + ': ' + p.status, finalString);
     } else {
-      self.common.reply(
-          msg, user.username + ': ' + user.presence.status,
-          user.presence.activity);
+      self.common.reply(msg, user.username + ': ' + p.status, p.activity);
     }
   }
 

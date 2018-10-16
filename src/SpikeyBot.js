@@ -696,7 +696,7 @@ function SpikeyBot() {
    * @listens Discord~Client#warn
    */
   function onWarn(info) {
-    common.log('Discord Warning: ' + info);
+    common.logWarning('Discord Warning: ' + info);
   }
 
   client.on('debug', onDebug);
@@ -712,7 +712,7 @@ function SpikeyBot() {
         info.startsWith('[ws] [connection] Sending a heartbeat')) {
       return;
     }
-    common.log('Discord Debug: ' + info);
+    common.logDebug('Discord Debug: ' + info);
   }
 
   client.on('message', onMessage);
@@ -787,9 +787,12 @@ function SpikeyBot() {
       }
       if (!command.trigger(msg.content.split(/ |\n/)[0], msg) &&
           msg.guild === null && !minimal && !testMode) {
-        msg.channel.send(
-            'Oops! I\'m not sure how to help with that! Type **help** for a ' +
-            'list of commands I know how to respond to.');
+        if (msg.content.split(/ |\n/)[0].indexOf('chat') < 0 &&
+            !command.trigger(msg.prefix + 'chat', msg)) {
+          msg.channel.send(
+              'Oops! I\'m not sure how to help with that! Type **help** for ' +
+              'a list of commands I know how to respond to.');
+        }
       }
     }
   }

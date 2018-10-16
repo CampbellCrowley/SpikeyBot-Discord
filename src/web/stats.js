@@ -21,10 +21,10 @@ function WebStats() {
   this.initialize = function() {
     app = http.createServer(handler);
     setTimeout(() => {
+      postUpdatedCount();
       app.listen(self.common.isRelease ? 8016 : 8017);
+      postTimeout = self.client.setTimeout(postUpdatedCount, postFrequency);
     });
-    postUpdatedCount();
-    postTimeout = self.client.setTimeout(postUpdatedCount, postFrequency);
   };
   /** @inheritdoc */
   this.shutdown = function(skipSave) {

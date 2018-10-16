@@ -9,6 +9,9 @@
 ## Classes
 
 <dl>
+<dt><a href="#ChatBot">ChatBot</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
+<dd><p>Manages natural language interaction.</p>
+</dd>
 <dt><a href="#Common">Common</a></dt>
 <dd></dd>
 <dt><a href="#Connect4">Connect4</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
@@ -58,6 +61,10 @@ Patreon status of users.</p>
 <dd><p>Handles sending the bot&#39;s stats to http client requests, and
 discordbots.org.</p>
 </dd>
+<dt><a href="#WebCommands">WebCommands</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
+<dd><p>Handles sending the bot&#39;s stats to http client requests, and
+discordbots.org.</p>
+</dd>
 </dl>
 
 ## Constants
@@ -93,6 +100,234 @@ from silently crashing without an error.</p>
 <a name="module_lib/twemojiChecker"></a>
 
 ## lib/twemojiChecker
+<a name="ChatBot"></a>
+
+## ChatBot ⇐ [<code>SubModule</code>](#SubModule)
+Manages natural language interaction.
+
+**Kind**: global class  
+**Extends**: [<code>SubModule</code>](#SubModule)  
+
+* [ChatBot](#ChatBot) ⇐ [<code>SubModule</code>](#SubModule)
+    * _instance_
+        * [.helpMessage](#SubModule+helpMessage) : <code>string</code> \| <code>Discord~MessageEmbed</code>
+        * [.prefix](#SubModule+prefix) : <code>string</code>
+        * [.myPrefix](#SubModule+myPrefix) : <code>string</code>
+        * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
+        * [.Discord](#SubModule+Discord) : <code>Discord</code>
+        * [.client](#SubModule+client) : <code>Discord~Client</code>
+        * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
+        * [.common](#SubModule+common) : [<code>Common</code>](#Common)
+        * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
+        * [.myName](#SubModule+myName) : <code>string</code>
+        * [.initialized](#SubModule+initialized) : <code>boolean</code>
+        * [.commit](#SubModule+commit) : <code>string</code>
+        * [.loadTime](#SubModule+loadTime) : <code>number</code>
+        * [.initialize()](#SubModule+initialize)
+        * [.begin(prefix, Discord, client, command, common, bot)](#SubModule+begin)
+        * [.end()](#SubModule+end)
+        * [.log(msg)](#SubModule+log)
+        * [.error(msg)](#SubModule+error)
+        * [.shutdown()](#SubModule+shutdown)
+        * [.save([opt])](#SubModule+save)
+        * *[.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>*
+    * _inner_
+        * [~onChatMessage(msg)](#ChatBot..onChatMessage) : [<code>commandHandler</code>](#commandHandler) ℗
+
+<a name="SubModule+helpMessage"></a>
+
+### chatBot.helpMessage : <code>string</code> \| <code>Discord~MessageEmbed</code>
+The help message to show the user in the main help message.
+
+**Kind**: instance property of [<code>ChatBot</code>](#ChatBot)  
+<a name="SubModule+prefix"></a>
+
+### chatBot.prefix : <code>string</code>
+The main prefix in use for this bot. Only available after begin() is
+called.
+
+**Kind**: instance property of [<code>ChatBot</code>](#ChatBot)  
+**Read only**: true  
+<a name="SubModule+myPrefix"></a>
+
+### chatBot.myPrefix : <code>string</code>
+The prefix this submodule uses. Formed by prepending this.prefix to
+this.postPrefix. this.postPrefix must be defined before begin(), otherwise
+it is ignored.
+
+**Kind**: instance property of [<code>ChatBot</code>](#ChatBot)  
+**Read only**: true  
+<a name="SubModule+postPrefix"></a>
+
+### *chatBot.postPrefix : <code>string</code>*
+The postfix for the global prefix for this subModule. Must be defined
+before begin(), otherwise it is ignored.
+
+**Kind**: instance abstract property of [<code>ChatBot</code>](#ChatBot)  
+**Default**: <code>&quot;&quot;</code>  
+<a name="SubModule+Discord"></a>
+
+### chatBot.Discord : <code>Discord</code>
+The current Discord object instance of the bot.
+
+**Kind**: instance property of [<code>ChatBot</code>](#ChatBot)  
+<a name="SubModule+client"></a>
+
+### chatBot.client : <code>Discord~Client</code>
+The current bot client.
+
+**Kind**: instance property of [<code>ChatBot</code>](#ChatBot)  
+<a name="SubModule+command"></a>
+
+### chatBot.command : [<code>Command</code>](#SpikeyBot..Command)
+The command object for registering command listeners.
+
+**Kind**: instance property of [<code>ChatBot</code>](#ChatBot)  
+<a name="SubModule+common"></a>
+
+### chatBot.common : [<code>Common</code>](#Common)
+The common object.
+
+**Kind**: instance property of [<code>ChatBot</code>](#ChatBot)  
+<a name="SubModule+bot"></a>
+
+### chatBot.bot : [<code>SpikeyBot</code>](#SpikeyBot)
+The parent SpikeyBot instance.
+
+**Kind**: instance property of [<code>ChatBot</code>](#ChatBot)  
+<a name="SubModule+myName"></a>
+
+### chatBot.myName : <code>string</code>
+The name of this submodule. Used for differentiating in the log. Should be
+defined before begin().
+
+**Kind**: instance property of [<code>ChatBot</code>](#ChatBot)  
+**Overrides**: [<code>myName</code>](#SubModule+myName)  
+**Access**: protected  
+<a name="SubModule+initialized"></a>
+
+### chatBot.initialized : <code>boolean</code>
+Has this subModule been initialized yet (Has begin() been called).
+
+**Kind**: instance property of [<code>ChatBot</code>](#ChatBot)  
+**Default**: <code>false</code>  
+**Access**: protected  
+**Read only**: true  
+<a name="SubModule+commit"></a>
+
+### chatBot.commit : <code>string</code>
+The commit at HEAD at the time this module was loaded. Essentially the
+version of this submodule.
+
+**Kind**: instance constant of [<code>ChatBot</code>](#ChatBot)  
+**Access**: public  
+<a name="SubModule+loadTime"></a>
+
+### chatBot.loadTime : <code>number</code>
+The time at which this madule was loaded for use in checking if the module
+needs to be reloaded because the file has been modified since loading.
+
+**Kind**: instance constant of [<code>ChatBot</code>](#ChatBot)  
+**Access**: public  
+<a name="SubModule+initialize"></a>
+
+### chatBot.initialize()
+The function called at the end of begin() for further initialization
+specific to the subModule. Must be defined before begin() is called.
+
+**Kind**: instance method of [<code>ChatBot</code>](#ChatBot)  
+**Overrides**: [<code>initialize</code>](#SubModule+initialize)  
+**Access**: protected  
+<a name="SubModule+begin"></a>
+
+### chatBot.begin(prefix, Discord, client, command, common, bot)
+Initialize this submodule.
+
+**Kind**: instance method of [<code>ChatBot</code>](#ChatBot)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| prefix | <code>string</code> | The global prefix for this bot. |
+| Discord | <code>Discord</code> | The Discord object for the API library. |
+| client | <code>Discord~Client</code> | The client that represents this bot. |
+| command | [<code>Command</code>](#SpikeyBot..Command) | The command instance in which to register command listeners. |
+| common | [<code>Common</code>](#Common) | Class storing common functions. |
+| bot | [<code>SpikeyBot</code>](#SpikeyBot) | The parent SpikeyBot instance. |
+
+<a name="SubModule+end"></a>
+
+### chatBot.end()
+Trigger subModule to shutdown and get ready for process terminating.
+
+**Kind**: instance method of [<code>ChatBot</code>](#ChatBot)  
+**Access**: public  
+<a name="SubModule+log"></a>
+
+### chatBot.log(msg)
+Log using common.log, but automatically set name.
+
+**Kind**: instance method of [<code>ChatBot</code>](#ChatBot)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+error"></a>
+
+### chatBot.error(msg)
+Log using common.error, but automatically set name.
+
+**Kind**: instance method of [<code>ChatBot</code>](#ChatBot)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+shutdown"></a>
+
+### chatBot.shutdown()
+Shutdown and disable this submodule. Removes all event listeners.
+
+**Kind**: instance method of [<code>ChatBot</code>](#ChatBot)  
+**Overrides**: [<code>shutdown</code>](#SubModule+shutdown)  
+**Access**: protected  
+<a name="SubModule+save"></a>
+
+### chatBot.save([opt])
+Saves all data to files necessary for saving current state.
+
+**Kind**: instance method of [<code>ChatBot</code>](#ChatBot)  
+**Overrides**: [<code>save</code>](#SubModule+save)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [opt] | <code>string</code> | <code>&quot;&#x27;sync&#x27;&quot;</code> | Can be 'async', otherwise defaults to synchronous. |
+
+<a name="SubModule+unloadable"></a>
+
+### *chatBot.unloadable() ⇒ <code>boolean</code>*
+Check if this module is in a state that is ready to be unloaded. If false
+is returned, this module should not be unloaded and doing such may risk
+putting the module into an uncontrollable state.
+
+**Kind**: instance abstract method of [<code>ChatBot</code>](#ChatBot)  
+**Returns**: <code>boolean</code> - True if can be unloaded, false if cannot.  
+**Access**: public  
+<a name="ChatBot..onChatMessage"></a>
+
+### ChatBot~onChatMessage(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Send message text content to dialogflow for handling.
+
+**Kind**: inner method of [<code>ChatBot</code>](#ChatBot)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
 <a name="Common"></a>
 
 ## Common
@@ -9598,6 +9833,235 @@ Send the request after we have fetched our stats.
 | Param | Type | Description |
 | --- | --- | --- |
 | data | <code>Object</code> | The data to send in our request. |
+
+<a name="WebCommands"></a>
+
+## WebCommands ⇐ [<code>SubModule</code>](#SubModule)
+Handles sending the bot's stats to http client requests, and
+discordbots.org.
+
+**Kind**: global class  
+**Extends**: [<code>SubModule</code>](#SubModule)  
+
+* [WebCommands](#WebCommands) ⇐ [<code>SubModule</code>](#SubModule)
+    * _instance_
+        * [.helpMessage](#SubModule+helpMessage) : <code>string</code> \| <code>Discord~MessageEmbed</code>
+        * [.prefix](#SubModule+prefix) : <code>string</code>
+        * [.myPrefix](#SubModule+myPrefix) : <code>string</code>
+        * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
+        * [.Discord](#SubModule+Discord) : <code>Discord</code>
+        * [.client](#SubModule+client) : <code>Discord~Client</code>
+        * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
+        * [.common](#SubModule+common) : [<code>Common</code>](#Common)
+        * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
+        * *[.myName](#SubModule+myName) : <code>string</code>*
+        * [.initialized](#SubModule+initialized) : <code>boolean</code>
+        * [.commit](#SubModule+commit) : <code>string</code>
+        * [.loadTime](#SubModule+loadTime) : <code>number</code>
+        * [.initialize()](#SubModule+initialize)
+        * [.begin(prefix, Discord, client, command, common, bot)](#SubModule+begin)
+        * [.end()](#SubModule+end)
+        * [.log(msg)](#SubModule+log)
+        * [.error(msg)](#SubModule+error)
+        * [.shutdown()](#SubModule+shutdown)
+        * *[.save([opt])](#SubModule+save)*
+        * *[.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>*
+    * _inner_
+        * [~handler(req, res)](#WebCommands..handler) ℗
+
+<a name="SubModule+helpMessage"></a>
+
+### webCommands.helpMessage : <code>string</code> \| <code>Discord~MessageEmbed</code>
+The help message to show the user in the main help message.
+
+**Kind**: instance property of [<code>WebCommands</code>](#WebCommands)  
+<a name="SubModule+prefix"></a>
+
+### webCommands.prefix : <code>string</code>
+The main prefix in use for this bot. Only available after begin() is
+called.
+
+**Kind**: instance property of [<code>WebCommands</code>](#WebCommands)  
+**Read only**: true  
+<a name="SubModule+myPrefix"></a>
+
+### webCommands.myPrefix : <code>string</code>
+The prefix this submodule uses. Formed by prepending this.prefix to
+this.postPrefix. this.postPrefix must be defined before begin(), otherwise
+it is ignored.
+
+**Kind**: instance property of [<code>WebCommands</code>](#WebCommands)  
+**Read only**: true  
+<a name="SubModule+postPrefix"></a>
+
+### *webCommands.postPrefix : <code>string</code>*
+The postfix for the global prefix for this subModule. Must be defined
+before begin(), otherwise it is ignored.
+
+**Kind**: instance abstract property of [<code>WebCommands</code>](#WebCommands)  
+**Default**: <code>&quot;&quot;</code>  
+<a name="SubModule+Discord"></a>
+
+### webCommands.Discord : <code>Discord</code>
+The current Discord object instance of the bot.
+
+**Kind**: instance property of [<code>WebCommands</code>](#WebCommands)  
+<a name="SubModule+client"></a>
+
+### webCommands.client : <code>Discord~Client</code>
+The current bot client.
+
+**Kind**: instance property of [<code>WebCommands</code>](#WebCommands)  
+<a name="SubModule+command"></a>
+
+### webCommands.command : [<code>Command</code>](#SpikeyBot..Command)
+The command object for registering command listeners.
+
+**Kind**: instance property of [<code>WebCommands</code>](#WebCommands)  
+<a name="SubModule+common"></a>
+
+### webCommands.common : [<code>Common</code>](#Common)
+The common object.
+
+**Kind**: instance property of [<code>WebCommands</code>](#WebCommands)  
+<a name="SubModule+bot"></a>
+
+### webCommands.bot : [<code>SpikeyBot</code>](#SpikeyBot)
+The parent SpikeyBot instance.
+
+**Kind**: instance property of [<code>WebCommands</code>](#WebCommands)  
+<a name="SubModule+myName"></a>
+
+### *webCommands.myName : <code>string</code>*
+The name of this submodule. Used for differentiating in the log. Should be
+defined before begin().
+
+**Kind**: instance abstract property of [<code>WebCommands</code>](#WebCommands)  
+**Overrides**: [<code>myName</code>](#SubModule+myName)  
+**Access**: protected  
+<a name="SubModule+initialized"></a>
+
+### webCommands.initialized : <code>boolean</code>
+Has this subModule been initialized yet (Has begin() been called).
+
+**Kind**: instance property of [<code>WebCommands</code>](#WebCommands)  
+**Default**: <code>false</code>  
+**Access**: protected  
+**Read only**: true  
+<a name="SubModule+commit"></a>
+
+### webCommands.commit : <code>string</code>
+The commit at HEAD at the time this module was loaded. Essentially the
+version of this submodule.
+
+**Kind**: instance constant of [<code>WebCommands</code>](#WebCommands)  
+**Access**: public  
+<a name="SubModule+loadTime"></a>
+
+### webCommands.loadTime : <code>number</code>
+The time at which this madule was loaded for use in checking if the module
+needs to be reloaded because the file has been modified since loading.
+
+**Kind**: instance constant of [<code>WebCommands</code>](#WebCommands)  
+**Access**: public  
+<a name="SubModule+initialize"></a>
+
+### webCommands.initialize()
+The function called at the end of begin() for further initialization
+specific to the subModule. Must be defined before begin() is called.
+
+**Kind**: instance method of [<code>WebCommands</code>](#WebCommands)  
+**Overrides**: [<code>initialize</code>](#SubModule+initialize)  
+**Access**: protected  
+<a name="SubModule+begin"></a>
+
+### webCommands.begin(prefix, Discord, client, command, common, bot)
+Initialize this submodule.
+
+**Kind**: instance method of [<code>WebCommands</code>](#WebCommands)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| prefix | <code>string</code> | The global prefix for this bot. |
+| Discord | <code>Discord</code> | The Discord object for the API library. |
+| client | <code>Discord~Client</code> | The client that represents this bot. |
+| command | [<code>Command</code>](#SpikeyBot..Command) | The command instance in which to register command listeners. |
+| common | [<code>Common</code>](#Common) | Class storing common functions. |
+| bot | [<code>SpikeyBot</code>](#SpikeyBot) | The parent SpikeyBot instance. |
+
+<a name="SubModule+end"></a>
+
+### webCommands.end()
+Trigger subModule to shutdown and get ready for process terminating.
+
+**Kind**: instance method of [<code>WebCommands</code>](#WebCommands)  
+**Access**: public  
+<a name="SubModule+log"></a>
+
+### webCommands.log(msg)
+Log using common.log, but automatically set name.
+
+**Kind**: instance method of [<code>WebCommands</code>](#WebCommands)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+error"></a>
+
+### webCommands.error(msg)
+Log using common.error, but automatically set name.
+
+**Kind**: instance method of [<code>WebCommands</code>](#WebCommands)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+shutdown"></a>
+
+### webCommands.shutdown()
+Shutdown and disable this submodule. Removes all event listeners.
+
+**Kind**: instance method of [<code>WebCommands</code>](#WebCommands)  
+**Overrides**: [<code>shutdown</code>](#SubModule+shutdown)  
+**Access**: protected  
+<a name="SubModule+save"></a>
+
+### *webCommands.save([opt])*
+Saves all data to files necessary for saving current state.
+
+**Kind**: instance abstract method of [<code>WebCommands</code>](#WebCommands)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [opt] | <code>string</code> | <code>&quot;&#x27;sync&#x27;&quot;</code> | Can be 'async', otherwise defaults to synchronous. |
+
+<a name="SubModule+unloadable"></a>
+
+### *webCommands.unloadable() ⇒ <code>boolean</code>*
+Check if this module is in a state that is ready to be unloaded. If false
+is returned, this module should not be unloaded and doing such may risk
+putting the module into an uncontrollable state.
+
+**Kind**: instance abstract method of [<code>WebCommands</code>](#WebCommands)  
+**Returns**: <code>boolean</code> - True if can be unloaded, false if cannot.  
+**Access**: public  
+<a name="WebCommands..handler"></a>
+
+### WebCommands~handler(req, res) ℗
+Handler for all http requests.
+
+**Kind**: inner method of [<code>WebCommands</code>](#WebCommands)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| req | <code>http.IncomingMessage</code> | The client's request. |
+| res | <code>http.ServerResponse</code> | Our response to the client. |
 
 <a name="re"></a>
 

@@ -62,6 +62,7 @@
 - saveall (Trigger all submodules to save their data)
 - thanks (Thanks the person that was mentioned, or says "You're welcome")
 - musicstats (Shows information about currently playing broadcasts)
+- chat (Forces the sent message to be sent to dialogflow instead of being treated as a normal command)
 
 # Events
 - Added to guild
