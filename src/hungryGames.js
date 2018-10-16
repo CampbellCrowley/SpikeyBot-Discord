@@ -1241,7 +1241,7 @@ function HungryGames() {
    * proper permissions to run command.
    */
   function checkPerms(msg, cb) {
-    if (checkForRole(msg)) {
+    if (['478983917546897408'].includes(msg.channel.id) || checkForRole(msg)) {
       const id = msg.guild.id;
       cb(msg, id);
     } else {
