@@ -2355,35 +2355,48 @@ function Main() {
         if (g.members.get(id)) guilds.push(g.id);
       });
       msg.channel.send(
-          id + ': User: `' + user.tag.replace(/`/g, '\\`') + '` has ' +
-          guilds.length + ' mutual guilds:\n```' + guilds.join(', ') + '```');
-    }
-    if (guild && !channel) {
-      msg.channel.send(
-          id + ': Guild: `' + guild.name.replace(/`/g, '\\`') + '` has ' +
-          guild.members.size + ' members.');
+          id + ': User: `' + user.tag.replace(/`/g, '\\`') + '`' +
+          (user.bot ? ' (bot)' : '') + ' has ' + guilds.length +
+          ' mutual guilds:\n```' + guilds.join(', ') + '```');
     }
     if (channel) {
       if (channel.guild) {
+        let additional='';
+        if (msg.author.id === self.common.spikeyId) {
+          additional = '\nMembers: ' +
+              channel.members
+                  .map((m) => {
+                    return m.id + (m.user.bot ? ' (bot)' : '');
+                  })
+                  .join(', ');
+        }
         msg.channel.send(
-            id + ': Guild Channel: `' + channel.name.replace(/`/g, '\\`') +
-            '` in guild `' + channel.guild.name.replace(/`/g, '\\`') + '` (' +
-            channel.guild.id + ')');
+            id + ': Guild ' + channel.type + ' Channel: `' +
+            channel.name.replace(/`/g, '\\`') + '` with ' +
+            channel.members.size + ' members, in guild `' +
+            channel.guild.name.replace(/`/g, '\\`') + '` (' + channel.guild.id +
+            ')' + additional);
       } else {
         msg.channel.send(
             id + ': Channel: `' + channel.name.replace(/`/g, '\\`') + '`');
       }
+    }
+    if (guild) {
+      msg.channel.send(
+          id + ': Guild: `' + guild.name.replace(/`/g, '\\`') + '` has ' +
+          guild.members.size + ' members.');
     }
 
     if (!user && !guild && !channel) {
       self.client.users.fetch(id)
           .then((user) => {
             msg.channel.send(
-                id + ': User: `' + user.tag.replace(/`/g, '\\`') + '`');
+                id + ': User: `' + user.tag.replace(/`/g, '\\`') + '`' +
+                (user.bot ? ' (bot)' : ''));
           })
           .catch((err) => {
             self.error('Failed to lookup id: ' + id);
-            console.error(err);
+            // console.error(err);
             msg.channel.send(id + ' Failed to be looked up.');
           });
     }

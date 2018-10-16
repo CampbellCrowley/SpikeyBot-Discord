@@ -1309,6 +1309,9 @@ function Music() {
   function commandStats(msg) {
     let queueLength = 0;
     let bList = Object.entries(broadcasts);
+    let longestChannel;
+    let isPaused;
+    let pauseTime;
 
     bList.forEach((el) => {
       let qDuration = 0;
@@ -1323,14 +1326,22 @@ function Music() {
         if (!q.info) return;
         qDuration += q.info._duration_raw;
       });
-      if (qDuration > queueLength) queueLength = qDuration;
+      if (qDuration > queueLength) {
+        queueLength = qDuration;
+        isPaused = el[1].broadcast.dispatcher.paused;
+        pauseTime = el[1].broadcast.dispatcher.pausedTime;
+        longestChannel = el[1].voice.channel.id;
+      }
     });
 
     if (queueLength) {
       self.common.reply(
           msg, 'I am currently playing music for ' + bList.length +
               ' channels.\nThe longest queue has a length of ' +
-              formatPlaytime(queueLength) + '.');
+              formatPlaytime(queueLength) + (isPaused ? ' (paused)' : '') + '.',
+          msg.author.id === self.common.spikeyId ?
+              (longestChannel + ' paused for ' + pauseTime) :
+              null);
     } else {
       self.common.reply(
           msg,
