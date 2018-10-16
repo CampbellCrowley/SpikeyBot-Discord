@@ -132,6 +132,7 @@ Manages natural language interaction.
         * [.save([opt])](#SubModule+save)
         * *[.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>*
     * _inner_
+        * [~onMessage(msg)](#ChatBot..onMessage) ℗
         * [~onChatMessage(msg)](#ChatBot..onChatMessage) : [<code>commandHandler</code>](#commandHandler) ℗
 
 <a name="SubModule+helpMessage"></a>
@@ -316,6 +317,18 @@ putting the module into an uncontrollable state.
 **Kind**: instance abstract method of [<code>ChatBot</code>](#ChatBot)  
 **Returns**: <code>boolean</code> - True if can be unloaded, false if cannot.  
 **Access**: public  
+<a name="ChatBot..onMessage"></a>
+
+### ChatBot~onMessage(msg) ℗
+Respond to messages where I've been mentioned.
+
+**Kind**: inner method of [<code>ChatBot</code>](#ChatBot)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message was sent. |
+
 <a name="ChatBot..onChatMessage"></a>
 
 ### ChatBot~onChatMessage(msg) : [<code>commandHandler</code>](#commandHandler) ℗

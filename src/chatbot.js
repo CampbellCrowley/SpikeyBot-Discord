@@ -10,6 +10,7 @@ const projectId = 'spikeybot-587dd';
  * @classdesc Manages natural language interaction.
  * @class
  * @augments SubModule
+ * @listens Discord#message
  * @listens SpikeyBot~Command#chat
  */
 function ChatBot() {
@@ -20,10 +21,12 @@ function ChatBot() {
   /** @inheritdoc */
   this.initialize = function() {
     self.command.on('chat', onChatMessage);
+    self.client.on('message', onMessage);
   };
   /** @inheritdoc */
   this.shutdown = function() {
     self.command.deleteEvent('chat');
+    self.client.removeListener('message', onMessage);
   };
   /**
    * @override
@@ -43,6 +46,25 @@ function ChatBot() {
       },
     },
   };
+
+  /**
+   * Respond to messages where I've been mentioned.
+   *
+   * @private
+   * @param {Discord~Message} msg Message was sent.
+   * @listens Discord#message
+   */
+  function onMessage(msg) {
+    if (!msg.author.bot && msg.guild &&
+        msg.mentions.users.get(self.client.user.id)) {
+      self.log(msg.channel.id + '@' + msg.author.id + ' ' + msg.content);
+      msg.prefix = self.bot.getPrefix(msg.guild);
+      msg.text = ' ' +
+          msg.content.replace(
+              new RegExp('\\<@\\!?' + self.client.user.id + '\\>', 'g'), '');
+      onChatMessage(msg);
+    }
+  }
 
   /**
    * Send message text content to dialogflow for handling.
@@ -76,9 +98,14 @@ function ChatBot() {
           }
           if (result.parameters.fields.command) {
             let cmd = result.parameters.fields.command.stringValue.replace(
-                /^command /, '');
-            msg.content = msg.prefix + cmd;
-            self.command.trigger(cmd, msg);
+                /^command /, msg.prefix);
+            self.log('Triggered command: ' + cmd);
+            msg.content = cmd;
+            if (!self.command.trigger(cmd.split(/ |\n/)[0], msg)) {
+              self.log('Command "' + cmd + '" failed!');
+              msg.channel.send(
+                  'Oops! I wasn\'t able to do that for some reason...');
+            }
           }
         })
         .catch((err) => {

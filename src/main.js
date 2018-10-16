@@ -1333,8 +1333,8 @@ function Main() {
    * @listens SpikeyBot~Command#timer
    */
   function commandTimer(msg) {
-    let split = msg.text.split(' ');
-    if (split[0] == msg.prefix + 'timer' || split[0] == msg.prefix + 'timers') {
+    let split = msg.content.split(' ').slice(1);
+    if (split.length == 0) {
       let num = 0;
       let messages =
           timers
@@ -1352,6 +1352,47 @@ function Main() {
       return;
     }
     let time = split.splice(0, 1);
+    let unit = split[0].toLowerCase();
+    switch (unit) {
+      case 's':
+      case 'sec':
+      case 'secs':
+      case 'second':
+      case 'seconds':
+        time /= 60;
+        split.splice(0, 1);
+        break;
+      case 'm':
+      case 'min':
+      case 'minute':
+      case 'minutes':
+        break;
+      case 'h':
+      case 'hr':
+      case 'hour':
+      case 'hours':
+        time *= 60;
+        split.splice(0, 1);
+        break;
+      case 'd':
+      case 'day':
+      case 'days':
+        time *= 60 * 24;
+        split.splice(0, 1);
+        break;
+      case 'w':
+      case 'week':
+      case 'week':
+        time *= 60 * 24 * 7;
+        split.splice(0, 1);
+        break;
+      case 'mon':
+      case 'month':
+      case 'months':
+        time *= 60 * 24 * 7 * 30;
+        split.splice(0, 1);
+        break;
+    }
     let origMessage = split.join(' ');
     let message = origMessage ||
         'Your timer for ' + time + ' minute' + (time == '1' ? '' : 's') +

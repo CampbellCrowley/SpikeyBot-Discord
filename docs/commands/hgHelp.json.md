@@ -4,7 +4,7 @@
 ## Player Settings
 ## Game Settings
 # Hungry Games!
-#### To use any of these commands you must have the "HG Creator" role or be the server owner. Use <a href="/hg/">https://www.spikeybot.com/hg/</a> if commands are too hard.
+#### To use any of these commands you must have the "HG Creator" role or be the server owner. Use https://www.spikeybot.com/hg/ if commands are too hard.
 ***
 
 | Command | Description | Aliases |
