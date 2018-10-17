@@ -67,8 +67,12 @@ function ChatBot() {
       self.log(msg.channel.id + '@' + msg.author.id + ' ' + msg.content);
       msg.prefix = self.bot.getPrefix(msg.guild);
       msg.text = ' ' +
-          msg.content.replace(
-              new RegExp('\\<@\\!?' + self.client.user.id + '\\>', 'g'), '');
+          msg.content
+              .replace(
+                  new RegExp(
+                      '\\s*\\<@\\!?' + self.client.user.id + '\\>\\s*', 'g'),
+                  ' ')
+              .trim();
       onChatMessage(msg);
     }
   }
