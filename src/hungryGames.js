@@ -1433,7 +1433,7 @@ function HungryGames() {
    * @return {HungryGames~Player} Player object created from User.
    */
   function makePlayer(member) {
-    let user = mamber.user || member;
+    let user = member.user || member;
     return new Player(
         user.id, user.username, user.displayAvatarURL({format: 'png'}),
         member.nickname);
