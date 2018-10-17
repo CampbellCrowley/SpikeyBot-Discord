@@ -1990,15 +1990,23 @@ function HungryGames() {
             '% heal.',
         file);
 
-    events = weapons;
+    events = Object.assign({}, weapons);
     if (find(id) && find(id).customEvents.weapon) {
-      events = events.concat(find(id).customEvents.weapon);
+      const keys = Object.keys(find(id).customEvents.weapon);
+      for (let i = 0; i < keys.length; i++) {
+        if (events[keys[i]]) {
+          events[keys[i]].outcomes = events[keys[i]].outcomes.concat(
+              find(id).customEvents.weapon[keys[i]].outcomes);
+        } else {
+          events[keys[i]] = find(id).customEvents.weapon[keys[i]];
+        }
+      }
     }
     file = new self.Discord.MessageAttachment();
     file.setFile(Buffer.from(JSON.stringify(events, null, 2)));
     file.setName('WeaponEvents.json');
     msg.channel.send(
-        'Weapon Events (' + Object.keys(events).length + ')', file);
+        'Weapon Events (' + Object.keys(events).length + ' weapons)', file);
 
     events = defaultArenaEvents;
     if (find(id) && find(id).customEvents.arena) {
