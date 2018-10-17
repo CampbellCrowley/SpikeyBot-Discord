@@ -6117,22 +6117,25 @@ function HungryGames() {
       cnt++;
     }
     try {
-      let single = makeSingleEvent(
-          msg.text, players.slice(0), 1, 1, false, msg.guild.id,
-          'nothing', 'nothing', find(id).options.useNicknames)
-          .message;
-      let pluralOne = makeSingleEvent(
-          msg.text, players.slice(0), 2, 1, false, msg.guild.id,
-          'nothing', 'nothing', find(id).options.useNicknames)
-          .message;
-      let pluralTwo = makeSingleEvent(
-          msg.text, players.slice(0), 1, 2, false, msg.guild.id,
-          'nothing', 'nothing', find(id).options.useNicknames)
-          .message;
+      let single =
+          makeSingleEvent(
+              msg.text, players.slice(0), 1, 1, false, msg.guild.id, 'nothing',
+              'nothing', find(msg.guild.id).options.useNicknames)
+              .message;
+      let pluralOne =
+          makeSingleEvent(
+              msg.text, players.slice(0), 2, 1, false, msg.guild.id, 'nothing',
+              'nothing', find(msg.guild.id).options.useNicknames)
+              .message;
+      let pluralTwo =
+          makeSingleEvent(
+              msg.text, players.slice(0), 1, 2, false, msg.guild.id, 'nothing',
+              'nothing', find(msg.guild.id).options.useNicknames)
+              .message;
       let pluralBoth =
           makeSingleEvent(
               msg.text, players.slice(0), 2, 2, false, msg.guild.id, 'nothing',
-              'nothing', find(id).options.useNicknames)
+              'nothing', find(msg.guild.id).options.useNicknames)
               .message;
       msg.myResponse.edit(
           helpMsg + single + '\n' + pluralOne + '\n' + pluralTwo + '\n' +

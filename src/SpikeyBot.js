@@ -193,7 +193,7 @@ function SpikeyBot() {
     manager.on('shardCreate', (shard) => {
       common.log('Launched shard ' + shard.id, 'ShardingManager');
       shard.on('message', (msg) => {
-        common.log(
+        common.logDebug(
             'Received message from shard ' + shard.id + ': ' +
             JSON.stringify(msg));
         // @TODO: Differentiate between a forced reboot, and a scheduled reboot.
