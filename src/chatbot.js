@@ -115,7 +115,7 @@ function ChatBot() {
             self.log('Triggered command: ' + cmd);
             msg.content = cmd;
             if (!self.command.trigger(cmd.split(/ |\n/)[0], msg)) {
-              self.log('Command "' + cmd + '" failed!');
+              self.warn('Command "' + cmd + '" failed!');
             }
           }
         })

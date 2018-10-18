@@ -127,6 +127,8 @@ Manages natural language interaction.
         * [.begin(prefix, Discord, client, command, common, bot)](#SubModule+begin)
         * [.end()](#SubModule+end)
         * [.log(msg)](#SubModule+log)
+        * [.debug(msg)](#SubModule+debug)
+        * [.warn(msg)](#SubModule+warn)
         * [.error(msg)](#SubModule+error)
         * [.shutdown()](#SubModule+shutdown)
         * [.save([opt])](#SubModule+save)
@@ -267,6 +269,30 @@ Trigger subModule to shutdown and get ready for process terminating.
 
 ### chatBot.log(msg)
 Log using common.log, but automatically set name.
+
+**Kind**: instance method of [<code>ChatBot</code>](#ChatBot)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+debug"></a>
+
+### chatBot.debug(msg)
+Log using common.logDebug, but automatically set name.
+
+**Kind**: instance method of [<code>ChatBot</code>](#ChatBot)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+warn"></a>
+
+### chatBot.warn(msg)
+Log using common.logWarning, but automatically set name.
 
 **Kind**: instance method of [<code>ChatBot</code>](#ChatBot)  
 **Access**: protected  
@@ -720,6 +746,8 @@ Manages a Connect 4 game.
         * [.begin(prefix, Discord, client, command, common, bot)](#SubModule+begin)
         * [.end()](#SubModule+end)
         * [.log(msg)](#SubModule+log)
+        * [.debug(msg)](#SubModule+debug)
+        * [.warn(msg)](#SubModule+warn)
         * [.error(msg)](#SubModule+error)
         * [.shutdown()](#SubModule+shutdown)
         * *[.save([opt])](#SubModule+save)*
@@ -948,6 +976,30 @@ Log using common.log, but automatically set name.
 | --- | --- | --- |
 | msg | <code>string</code> | The message to log. |
 
+<a name="SubModule+debug"></a>
+
+### connect4.debug(msg)
+Log using common.logDebug, but automatically set name.
+
+**Kind**: instance method of [<code>Connect4</code>](#Connect4)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+warn"></a>
+
+### connect4.warn(msg)
+Log using common.logWarning, but automatically set name.
+
+**Kind**: instance method of [<code>Connect4</code>](#Connect4)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
 <a name="SubModule+error"></a>
 
 ### connect4.error(msg)
@@ -1139,6 +1191,8 @@ Hunger Games simulator.
         * [.begin(prefix, Discord, client, command, common, bot)](#SubModule+begin)
         * [.end()](#SubModule+end)
         * [.log(msg)](#SubModule+log)
+        * [.debug(msg)](#SubModule+debug)
+        * [.warn(msg)](#SubModule+warn)
         * [.error(msg)](#SubModule+error)
         * [.shutdown()](#SubModule+shutdown)
         * [.save([opt])](#SubModule+save)
@@ -1754,6 +1808,30 @@ Log using common.log, but automatically set name.
 | --- | --- | --- |
 | msg | <code>string</code> | The message to log. |
 
+<a name="SubModule+debug"></a>
+
+### hungryGames.debug(msg)
+Log using common.logDebug, but automatically set name.
+
+**Kind**: instance method of [<code>HungryGames</code>](#HungryGames)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+warn"></a>
+
+### hungryGames.warn(msg)
+Log using common.logWarning, but automatically set name.
+
+**Kind**: instance method of [<code>HungryGames</code>](#HungryGames)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
 <a name="SubModule+error"></a>
 
 ### hungryGames.error(msg)
@@ -2167,7 +2245,7 @@ Number of events to show on a single page of events.
 Maximum amount of time to wait for reactions to a message.
 
 **Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
-**Default**: <code>15 Minutes</code>  
+**Default**: <code>5 Minutes</code>  
 **Access**: private  
 <a name="HungryGames..findDelay"></a>
 
@@ -3502,6 +3580,8 @@ Basic commands and features for the bot.
         * [.begin(prefix, Discord, client, command, common, bot)](#SubModule+begin)
         * [.end()](#SubModule+end)
         * [.log(msg)](#SubModule+log)
+        * [.debug(msg)](#SubModule+debug)
+        * [.warn(msg)](#SubModule+warn)
         * [.error(msg)](#SubModule+error)
         * [.shutdown()](#SubModule+shutdown)
         * [.save([opt])](#SubModule+save)
@@ -3708,6 +3788,30 @@ Trigger subModule to shutdown and get ready for process terminating.
 
 ### main.log(msg)
 Log using common.log, but automatically set name.
+
+**Kind**: instance method of [<code>Main</code>](#Main)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+debug"></a>
+
+### main.debug(msg)
+Log using common.logDebug, but automatically set name.
+
+**Kind**: instance method of [<code>Main</code>](#Main)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+warn"></a>
+
+### main.warn(msg)
+Log using common.logWarning, but automatically set name.
 
 **Kind**: instance method of [<code>Main</code>](#Main)  
 **Access**: protected  
@@ -4541,6 +4645,8 @@ Music and audio related commands.
         * [.begin(prefix, Discord, client, command, common, bot)](#SubModule+begin)
         * [.end()](#SubModule+end)
         * [.log(msg)](#SubModule+log)
+        * [.debug(msg)](#SubModule+debug)
+        * [.warn(msg)](#SubModule+warn)
         * [.error(msg)](#SubModule+error)
         * [.shutdown()](#SubModule+shutdown)
         * *[.save([opt])](#SubModule+save)*
@@ -4724,6 +4830,30 @@ Trigger subModule to shutdown and get ready for process terminating.
 
 ### music.log(msg)
 Log using common.log, but automatically set name.
+
+**Kind**: instance method of [<code>Music</code>](#Music)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+debug"></a>
+
+### music.debug(msg)
+Log using common.logDebug, but automatically set name.
+
+**Kind**: instance method of [<code>Music</code>](#Music)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+warn"></a>
+
+### music.warn(msg)
+Log using common.logWarning, but automatically set name.
 
 **Kind**: instance method of [<code>Music</code>](#Music)  
 **Access**: protected  
@@ -5349,6 +5479,8 @@ Patreon status of users.
         * [.begin(prefix, Discord, client, command, common, bot)](#SubModule+begin)
         * [.end()](#SubModule+end)
         * [.log(msg)](#SubModule+log)
+        * [.debug(msg)](#SubModule+debug)
+        * [.warn(msg)](#SubModule+warn)
         * [.error(msg)](#SubModule+error)
         * [.shutdown()](#SubModule+shutdown)
         * *[.save([opt])](#SubModule+save)*
@@ -5517,6 +5649,30 @@ Trigger subModule to shutdown and get ready for process terminating.
 
 ### patreon.log(msg)
 Log using common.log, but automatically set name.
+
+**Kind**: instance method of [<code>Patreon</code>](#Patreon)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+debug"></a>
+
+### patreon.debug(msg)
+Log using common.logDebug, but automatically set name.
+
+**Kind**: instance method of [<code>Patreon</code>](#Patreon)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+warn"></a>
+
+### patreon.warn(msg)
+Log using common.logWarning, but automatically set name.
 
 **Kind**: instance method of [<code>Patreon</code>](#Patreon)  
 **Access**: protected  
@@ -5991,6 +6147,8 @@ Controlls poll and vote commands.
         * [.begin(prefix, Discord, client, command, common, bot)](#SubModule+begin)
         * [.end()](#SubModule+end)
         * [.log(msg)](#SubModule+log)
+        * [.debug(msg)](#SubModule+debug)
+        * [.warn(msg)](#SubModule+warn)
         * [.error(msg)](#SubModule+error)
         * [.shutdown()](#SubModule+shutdown)
         * [.save([opt])](#SubModule+save)
@@ -6151,6 +6309,30 @@ Trigger subModule to shutdown and get ready for process terminating.
 
 ### polling.log(msg)
 Log using common.log, but automatically set name.
+
+**Kind**: instance method of [<code>Polling</code>](#Polling)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+debug"></a>
+
+### polling.debug(msg)
+Log using common.logDebug, but automatically set name.
+
+**Kind**: instance method of [<code>Polling</code>](#Polling)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+warn"></a>
+
+### polling.warn(msg)
+Log using common.logWarning, but automatically set name.
 
 **Kind**: instance method of [<code>Polling</code>](#Polling)  
 **Access**: protected  
@@ -7103,6 +7285,8 @@ Base class for all Sub-Modules.
         * [.begin(prefix, Discord, client, command, common, bot)](#SubModule+begin)
         * [.end()](#SubModule+end)
         * [.log(msg)](#SubModule+log)
+        * [.debug(msg)](#SubModule+debug)
+        * [.warn(msg)](#SubModule+warn)
         * [.error(msg)](#SubModule+error)
         * *[.shutdown()](#SubModule+shutdown)*
         * *[.save([opt])](#SubModule+save)*
@@ -7248,6 +7432,30 @@ Log using common.log, but automatically set name.
 | --- | --- | --- |
 | msg | <code>string</code> | The message to log. |
 
+<a name="SubModule+debug"></a>
+
+### subModule.debug(msg)
+Log using common.logDebug, but automatically set name.
+
+**Kind**: instance method of [<code>SubModule</code>](#SubModule)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+warn"></a>
+
+### subModule.warn(msg)
+Log using common.logWarning, but automatically set name.
+
+**Kind**: instance method of [<code>SubModule</code>](#SubModule)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
 <a name="SubModule+error"></a>
 
 ### subModule.error(msg)
@@ -7337,6 +7545,8 @@ Manages a tic-tac-toe game.
         * [.begin(prefix, Discord, client, command, common, bot)](#SubModule+begin)
         * [.end()](#SubModule+end)
         * [.log(msg)](#SubModule+log)
+        * [.debug(msg)](#SubModule+debug)
+        * [.warn(msg)](#SubModule+warn)
         * [.error(msg)](#SubModule+error)
         * [.shutdown()](#SubModule+shutdown)
         * *[.save([opt])](#SubModule+save)*
@@ -7574,6 +7784,30 @@ Log using common.log, but automatically set name.
 | --- | --- | --- |
 | msg | <code>string</code> | The message to log. |
 
+<a name="SubModule+debug"></a>
+
+### ticTacToe.debug(msg)
+Log using common.logDebug, but automatically set name.
+
+**Kind**: instance method of [<code>TicTacToe</code>](#TicTacToe)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+warn"></a>
+
+### ticTacToe.warn(msg)
+Log using common.logWarning, but automatically set name.
+
+**Kind**: instance method of [<code>TicTacToe</code>](#TicTacToe)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
 <a name="SubModule+error"></a>
 
 ### ticTacToe.error(msg)
@@ -7724,6 +7958,8 @@ Adds text-to-speech support for voice channels.
         * [.begin(prefix, Discord, client, command, common, bot)](#SubModule+begin)
         * [.end()](#SubModule+end)
         * [.log(msg)](#SubModule+log)
+        * [.debug(msg)](#SubModule+debug)
+        * [.warn(msg)](#SubModule+warn)
         * [.error(msg)](#SubModule+error)
         * [.shutdown()](#SubModule+shutdown)
         * *[.save([opt])](#SubModule+save)*
@@ -7869,6 +8105,30 @@ Trigger subModule to shutdown and get ready for process terminating.
 
 ### ttS.log(msg)
 Log using common.log, but automatically set name.
+
+**Kind**: instance method of [<code>TTS</code>](#TTS)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+debug"></a>
+
+### ttS.debug(msg)
+Log using common.logDebug, but automatically set name.
+
+**Kind**: instance method of [<code>TTS</code>](#TTS)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+warn"></a>
+
+### ttS.warn(msg)
+Log using common.logWarning, but automatically set name.
 
 **Kind**: instance method of [<code>TTS</code>](#TTS)  
 **Access**: protected  
@@ -8106,6 +8366,8 @@ Manages the account webpage.
         * [.begin(prefix, Discord, client, command, common, bot)](#SubModule+begin)
         * [.end()](#SubModule+end)
         * [.log(msg)](#SubModule+log)
+        * [.debug(msg)](#SubModule+debug)
+        * [.warn(msg)](#SubModule+warn)
         * [.error(msg)](#SubModule+error)
         * *[.save([opt])](#SubModule+save)*
         * [.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>
@@ -8272,6 +8534,30 @@ Trigger subModule to shutdown and get ready for process terminating.
 
 ### webAccount.log(msg)
 Log using common.log, but automatically set name.
+
+**Kind**: instance method of [<code>WebAccount</code>](#WebAccount)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+debug"></a>
+
+### webAccount.debug(msg)
+Log using common.logDebug, but automatically set name.
+
+**Kind**: instance method of [<code>WebAccount</code>](#WebAccount)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+warn"></a>
+
+### webAccount.warn(msg)
+Log using common.logWarning, but automatically set name.
 
 **Kind**: instance method of [<code>WebAccount</code>](#WebAccount)  
 **Access**: protected  
@@ -9163,6 +9449,8 @@ Proxy for account authentication.
         * [.begin(prefix, Discord, client, command, common, bot)](#SubModule+begin)
         * [.end()](#SubModule+end)
         * [.log(msg)](#SubModule+log)
+        * [.debug(msg)](#SubModule+debug)
+        * [.warn(msg)](#SubModule+warn)
         * [.error(msg)](#SubModule+error)
         * *[.save([opt])](#SubModule+save)*
         * [.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>
@@ -9329,6 +9617,30 @@ Trigger subModule to shutdown and get ready for process terminating.
 
 ### webProxy.log(msg)
 Log using common.log, but automatically set name.
+
+**Kind**: instance method of [<code>WebProxy</code>](#WebProxy)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+debug"></a>
+
+### webProxy.debug(msg)
+Log using common.logDebug, but automatically set name.
+
+**Kind**: instance method of [<code>WebProxy</code>](#WebProxy)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+warn"></a>
+
+### webProxy.warn(msg)
+Log using common.logWarning, but automatically set name.
 
 **Kind**: instance method of [<code>WebProxy</code>](#WebProxy)  
 **Access**: protected  
@@ -9571,6 +9883,8 @@ discordbots.org.
         * [.begin(prefix, Discord, client, command, common, bot)](#SubModule+begin)
         * [.end()](#SubModule+end)
         * [.log(msg)](#SubModule+log)
+        * [.debug(msg)](#SubModule+debug)
+        * [.warn(msg)](#SubModule+warn)
         * [.error(msg)](#SubModule+error)
         * [.shutdown()](#SubModule+shutdown)
         * *[.save([opt])](#SubModule+save)*
@@ -9719,6 +10033,30 @@ Trigger subModule to shutdown and get ready for process terminating.
 
 ### webStats.log(msg)
 Log using common.log, but automatically set name.
+
+**Kind**: instance method of [<code>WebStats</code>](#WebStats)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+debug"></a>
+
+### webStats.debug(msg)
+Log using common.logDebug, but automatically set name.
+
+**Kind**: instance method of [<code>WebStats</code>](#WebStats)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+warn"></a>
+
+### webStats.warn(msg)
+Log using common.logWarning, but automatically set name.
 
 **Kind**: instance method of [<code>WebStats</code>](#WebStats)  
 **Access**: protected  
@@ -9889,6 +10227,8 @@ discordbots.org.
         * [.begin(prefix, Discord, client, command, common, bot)](#SubModule+begin)
         * [.end()](#SubModule+end)
         * [.log(msg)](#SubModule+log)
+        * [.debug(msg)](#SubModule+debug)
+        * [.warn(msg)](#SubModule+warn)
         * [.error(msg)](#SubModule+error)
         * [.shutdown()](#SubModule+shutdown)
         * *[.save([opt])](#SubModule+save)*
@@ -10028,6 +10368,30 @@ Trigger subModule to shutdown and get ready for process terminating.
 
 ### webCommands.log(msg)
 Log using common.log, but automatically set name.
+
+**Kind**: instance method of [<code>WebCommands</code>](#WebCommands)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+debug"></a>
+
+### webCommands.debug(msg)
+Log using common.logDebug, but automatically set name.
+
+**Kind**: instance method of [<code>WebCommands</code>](#WebCommands)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+warn"></a>
+
+### webCommands.warn(msg)
+Log using common.logWarning, but automatically set name.
 
 **Kind**: instance method of [<code>WebCommands</code>](#WebCommands)  
 **Access**: protected  

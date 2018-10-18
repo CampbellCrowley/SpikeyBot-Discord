@@ -195,9 +195,9 @@ function HungryGames() {
    * @private
    * @type {number}
    * @constant
-   * @default 15 Minutes
+   * @default 5 Minutes
    */
-  const maxReactAwaitTime = 15 * 1000 * 60;  // 15 Minutes
+  const maxReactAwaitTime = 5 * 1000 * 60;  // 5 Minutes
 
   /**
    * Stores the guilds we have looked for their data recently and the timestamp
@@ -754,7 +754,7 @@ function HungryGames() {
   fs.watchFile(eventFile, function(curr, prev) {
     if (curr.mtime == prev.mtime) return;
     if (self.initialized) {
-      self.log('Re-reading default events from file');
+      self.debug('Re-reading default events from file');
     } else {
       console.log('HG: Re-reading default events from file');
     }
@@ -783,7 +783,7 @@ function HungryGames() {
   fs.watchFile(messageFile, function(curr, prev) {
     if (curr.mtime == prev.mtime) return;
     if (self.initialized) {
-      self.log('Re-reading messages from file');
+      self.debug('Re-reading messages from file');
     } else {
       console.log('HG: Re-reading messages from file');
     }
@@ -812,7 +812,7 @@ function HungryGames() {
   fs.watchFile(battleFile, function(curr, prev) {
     if (curr.mtime == prev.mtime) return;
     if (self.initialized) {
-      self.log('Re-reading battles from file');
+      self.debug('Re-reading battles from file');
     } else {
       console.log('HG: Re-reading battles from file');
     }
@@ -840,7 +840,7 @@ function HungryGames() {
   fs.watchFile(weaponsFile, function(curr, prev) {
     if (curr.mtime == prev.mtime) return;
     if (self.initialized) {
-      self.log('Re-reading default weapons from file');
+      self.debug('Re-reading default weapons from file');
     } else {
       console.log('HG: Re-reading default weapons from file');
     }
@@ -962,7 +962,8 @@ function HungryGames() {
         if (games[key].currentGame.day.state === 1) {
           games[key].currentGame.day.state = 0;
         }
-        self.log('Resuming game: ' + games[key].channel + ' ' + games[key].msg);
+        self.debug(
+            'Resuming game: ' + games[key].channel + ' ' + games[key].msg);
         self.client.channels.get(games[key].channel)
             .fetchMessage(games[key].msg)
             .then(function(key) {
@@ -6652,7 +6653,7 @@ function HungryGames() {
           fs.readFileSync(self.common.guildSaveDir + id + hgSaveDir + saveFile);
       try {
         games[id] = JSON.parse(tmp);
-        self.log('Loaded game from file ' + id);
+        self.debug('Loaded game from file ' + id);
       } catch (e2) {
         self.error('Failed to parse game data for guild ' + id);
         return null;
@@ -6784,6 +6785,7 @@ function HungryGames() {
             } else if (findTimestamps[id] - saveStartTime < -15 * 60 * 1000) {
               delete games[id];
               delete findTimestamps[id];
+              self.debug('Purged ' + id);
             }
           });
         });
@@ -6805,6 +6807,7 @@ function HungryGames() {
         if (findTimestamps[id] - Date.now() < -15 * 60 * 1000) {
           delete games[id];
           delete findTimestamps[id];
+          self.debug('Purged ' + id);
         }
       }
     });

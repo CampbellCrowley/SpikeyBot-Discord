@@ -299,31 +299,6 @@ function Main() {
     process.on('SIGHUP', sigint);
     process.on('SIGTERM', sigint);
 
-    fs.readFile('./save/timers.dat', function(err, file) {
-      if (err) return;
-      let parsed = JSON.parse(file);
-
-      for (let i in parsed.timers) {
-        if (parsed.timers[i] instanceof Object && parsed.timers[i].time) {
-          setTimer(parsed.timers[i]);
-        }
-      }
-      disabledAutoSmite = parsed.disabledAutoSmite || {};
-      self.client.riggedCounter = parsed.riggedCounterNum || 0;
-      fs.rename(
-          './save/timers.dat', './save/timers.dat.deleteme', function(err2) {
-            if (err2) {
-              self.error('Failed to rename ./save/timers.dat', 'Main');
-            } else {
-              self.log(
-                  'Updated data to new format. Renamed ./save/timers.dat to ' +
-                      './save.timers.deleteme',
-                  'Main');
-              self.save('async');
-            }
-          });
-    });
-
     if (!self.client.shard || self.client.shard.id == 0) {
       fs.readdir(self.common.userSaveDir, function(err, items) {
         if (err) return;

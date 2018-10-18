@@ -150,6 +150,21 @@ function SubModule() {
         this.common.log(msg, this.myName, 1);
       }
     };
+    this.debug = function(msg) {
+      if (this.client.shard) {
+        this.common.logDebug(msg, this.client.shard.id + ' ' + this.myName, 1);
+      } else {
+        this.common.logDebug(msg, this.myName, 1);
+      }
+    };
+    this.warn = function(msg) {
+      if (this.client.shard) {
+        this.common.logWarning(
+            msg, this.client.shard.id + ' ' + this.myName, 1);
+      } else {
+        this.common.logWarning(msg, this.myName, 1);
+      }
+    };
     this.error = function(msg) {
       if (this.client.shard) {
         this.common.error(msg, this.client.shard.id + ' ' + this.myName, 1);
@@ -159,7 +174,7 @@ function SubModule() {
     };
 
     if (this.initialized) return;
-    this.log(this.myName + ' Initialize...');
+    this.debug(this.myName + ' Initialize...');
     this.initialize();
     this.log(this.myName + ' Initialized');
     this.initialized = true;
@@ -184,6 +199,24 @@ function SubModule() {
    * @param {string} msg The message to log.
    */
   this.log = function(msg) {
+    console.log(msg);
+  };
+  /**
+   * Log using common.logDebug, but automatically set name.
+   *
+   * @protected
+   * @param {string} msg The message to log.
+   */
+  this.debug = function(msg) {
+    console.log(msg);
+  };
+  /**
+   * Log using common.logWarning, but automatically set name.
+   *
+   * @protected
+   * @param {string} msg The message to log.
+   */
+  this.warn = function(msg) {
     console.log(msg);
   };
   /**

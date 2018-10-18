@@ -971,10 +971,10 @@ function Music() {
         }
       });
       response.on('close', function() {
-        self.log('Genius request closed! ' + content.length);
+        self.warn('Genius request closed! ' + content.length);
       });
       response.on('error', function() {
-        self.log('Genius request errored! ' + content.length);
+        self.warn('Genius request errored! ' + content.length);
       });
     });
     req.end();
@@ -1015,10 +1015,10 @@ function Music() {
         }
       });
       response.on('close', function() {
-        self.log('Genius request closed! ' + content.length);
+        self.warn('Genius request closed! ' + content.length);
       });
       response.on('error', function() {
-        self.log('Genius request errored! ' + content.length);
+        self.warn('Genius request errored! ' + content.length);
       });
     });
     req.end();
@@ -1055,10 +1055,10 @@ function Music() {
         }
       });
       response.on('close', function() {
-        self.log('Genius request closed! ' + content.length);
+        self.warn('Genius request closed! ' + content.length);
       });
       response.on('error', function() {
-        self.log('Genius request errored! ' + content.length);
+        self.warn('Genius request errored! ' + content.length);
       });
     });
     req.end();

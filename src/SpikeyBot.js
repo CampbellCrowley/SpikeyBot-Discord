@@ -198,13 +198,13 @@ function SpikeyBot() {
             JSON.stringify(msg));
         // @TODO: Differentiate between a forced reboot, and a scheduled reboot.
         if (msg === 'reboot hard force') {
-          common.log('TRIGGERED HARD REBOOT!');
+          common.logWarning('TRIGGERED HARD REBOOT!');
           manager.shards.forEach((s) => {
             s.process.kill('SIGHUP');
           });
           process.exit(-1);
         } else if (msg === 'reboot hard') {
-          common.log('TRIGGERED HARD REBOOT!');
+          common.logWarning('TRIGGERED HARD REBOOT!');
           manager.shards.forEach((s) => {
             s.process.kill('SIGHUP');
           });
@@ -226,7 +226,8 @@ function SpikeyBot() {
         subModuleNames[i].startsWith('--')) {
       continue;
     }
-    process.stdout.write('Loading ' + subModuleNames[i]);
+    process.stdout.write(
+        'DBG:' + process.pid + ' Loading ' + subModuleNames[i]);
     try {
       subModules[i] = require(subModuleNames[i]);
       process.stdout.write(': DONE\n');
@@ -784,27 +785,36 @@ function SpikeyBot() {
     }
 
     if (isCmd(msg, '')) {
-      if (msg.content.match(/^\?+$/)) {
-        return;
-      }
-      if (!minimal) {
-        if (msg.guild !== null) {
-          common.log(
-              msg.channel.id + '@' + msg.author.id +
-              msg.content.replaceAll('\n', '\\n'));
-        } else {
-          common.log(
-              'PM: @' + msg.author.id + '@' + msg.author.tag +
-              msg.content.replaceAll('\n', '\\n'));
-        }
-      }
-      if (!command.trigger(msg.content.split(/ |\n/)[0], msg) &&
-          msg.guild === null && !minimal && !testMode) {
+      let commandSuccess = command.trigger(msg.content.split(/ |\n/)[0], msg);
+      if (!commandSuccess && msg.guild === null && !minimal && !testMode) {
         if (msg.content.split(/ |\n/)[0].indexOf('chat') < 0 &&
             !command.trigger(msg.prefix + 'chat', msg)) {
           msg.channel.send(
               'Oops! I\'m not sure how to help with that! Type **help** for ' +
               'a list of commands I know how to respond to.');
+        }
+      }
+      if (!minimal) {
+        if (msg.guild !== null) {
+          if (commandSuccess) {
+            common.log(
+                msg.channel.id + '@' + msg.author.id +
+                msg.content.replaceAll('\n', '\\n'));
+          } else {
+            common.logDebug(
+                msg.channel.id + '@' + msg.author.id +
+                msg.content.replaceAll('\n', '\\n'));
+          }
+        } else {
+          if (commandSuccess) {
+            common.log(
+                'PM: @' + msg.author.id + '@' + msg.author.tag +
+                msg.content.replaceAll('\n', '\\n'));
+          } else {
+            common.logDebug(
+                'PM: @' + msg.author.id + '@' + msg.author.tag +
+                msg.content.replaceAll('\n', '\\n'));
+          }
         }
       }
     }
@@ -1008,7 +1018,7 @@ function SpikeyBot() {
                                       newPrefix + ')');
                                   console.error(err);
                                 } else {
-                                  common.log(
+                                  common.logDebug(
                                       'Guild ' + msg.guild.id +
                                       ' updated prefix to ' + botName + ': ' +
                                       newPrefix);
@@ -1034,7 +1044,7 @@ function SpikeyBot() {
                                 msg.guild.id + ' (' + newPrefix + ')');
                             console.error(err);
                           } else {
-                            common.log(
+                            common.logDebug(
                                 'Guild ' + msg.guild.id +
                                 ' updated prefix to ' + newPrefix);
                           }
@@ -1272,7 +1282,8 @@ function SpikeyBot() {
           console.log(err);
         }
         delete require.cache[require.resolve(subModuleNames[i])];
-        process.stdout.write('Loading ' + subModuleNames[i]);
+        process.stdout.write(
+            'DBG:' + process.pid + ' Loading ' + subModuleNames[i]);
         try {
           subModules[i] = require(subModuleNames[i]);
           process.stdout.write(': DONE\n');
@@ -1313,7 +1324,7 @@ function SpikeyBot() {
                   reloadSubModules(name, out);
                   if (out) common.log(out.join(' '));
                 } else {
-                  common.log(name + ' unchanged (' + code + ')');
+                  common.logDebug(name + ' unchanged (' + code + ')');
                 }
               };
             })(subModuleNames[i]));
@@ -1330,6 +1341,7 @@ function SpikeyBot() {
    * @private
    */
   function saveAll() {
+    common.logDebug('Starting save on all submodules.');
     for (let i = 0; i < subModules.length; i++) {
       if (typeof subModules[i].save === 'function') {
         try {
@@ -1405,7 +1417,8 @@ function SpikeyBot() {
             if (err.status === 1) {
               msg_.edit(
                   common.mention(msg) +
-                  ' Bot update complete, but requires manual reboot.');
+                  ' Bot update complete, but requires manual reboot.\n' +
+                  err.message);
             } else {
               common.error(
                   'Checking for SpikeyBot.js changes failed: ' + err.status);
@@ -1484,7 +1497,7 @@ function SpikeyBot() {
         if (guilds.length > 0) {
           loadGuildPrefixes(guilds);
         } else {
-          common.log('Finished loading custom prefixes.');
+          common.logDebug('Finished loading custom prefixes.');
         }
       };
     };

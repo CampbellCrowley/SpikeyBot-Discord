@@ -97,7 +97,7 @@ function Patreon() {
   fs.watchFile(patreonTierPermFile, (curr, prev) => {
     if (curr.mtime == prev.mtime) return;
     if (self.initialized) {
-      self.log('Re-reading Patreon tier reward information from file');
+      self.debug('Re-reading Patreon tier reward information from file');
     } else {
       console.log('Patreon: Re-reading tier reward information from file');
     }
@@ -129,7 +129,7 @@ function Patreon() {
   fs.watchFile(patreonSettingsTemplateFile, (curr, prev) => {
     if (curr.mtime == prev.mtime) return;
     if (self.initialized) {
-      self.log('Re-reading Patreon setting template information from file');
+      self.debug('Re-reading Patreon setting template information from file');
     } else {
       console.log('Patreon: Re-reading setting template information from file');
     }
