@@ -1178,7 +1178,7 @@ Hunger Games simulator.
         * [.excludeUsers(users, id)](#HungryGames+excludeUsers) ⇒ <code>string</code>
         * [.includeUsers(users, id)](#HungryGames+includeUsers) ⇒ <code>string</code>
         * [.setOption(id, option, value, [text])](#HungryGames+setOption) ⇒ <code>string</code>
-        * [.editTeam(uId, gId, cmd, one, two)](#HungryGames+editTeam)
+        * [.editTeam(uId, gId, cmd, one, two)](#HungryGames+editTeam) ⇒ <code>string</code>
         * [.makeAndAddEvent(id, type, message, numVictim, numAttacker, victimOutcome, attackerOutcome, victimKiller, attackerKiller, vWeapon, aWeapon)](#HungryGames+makeAndAddEvent) ⇒ <code>string</code>
         * [.addEvent(id, type, event)](#HungryGames+addEvent) ⇒ <code>string</code>
         * [.addMajorEvent(id, type, data, [name])](#HungryGames+addMajorEvent) ⇒ <code>string</code>
@@ -1295,11 +1295,11 @@ Hunger Games simulator.
         * [~changeObjectValue(obj, defaultObj, option, value, values, id, [range])](#HungryGames..changeObjectValue) ⇒ <code>string</code> ℗
         * [~showOpts(msg, options)](#HungryGames..showOpts) ℗
         * [~optChangeListener(msg_, options, index)](#HungryGames..optChangeListener) ℗
-        * [~editTeam(msg, id, [silent])](#HungryGames..editTeam) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+        * [~editTeam(msg, id, [silent])](#HungryGames..editTeam) ⇒ <code>string</code> ℗
         * [~swapTeamUsers(msg, id)](#HungryGames..swapTeamUsers) ℗
         * [~moveTeamUser(msg, id)](#HungryGames..moveTeamUser) ℗
         * [~renameTeam(msg, id, [silent])](#HungryGames..renameTeam) ℗
-        * [~randomizeTeams(msg, id)](#HungryGames..randomizeTeams) ℗
+        * [~randomizeTeams(msg, id, [silent])](#HungryGames..randomizeTeams) ℗
         * [~createEvent(msg, id)](#HungryGames..createEvent) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~commandToggleEvent(msg, id)](#HungryGames..commandToggleEvent) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler)
         * [~createEventNums(msg, id, show, cb)](#HungryGames..createEventNums) ℗
@@ -1621,10 +1621,11 @@ the user the list of options instead.
 
 <a name="HungryGames+editTeam"></a>
 
-### hungryGames.editTeam(uId, gId, cmd, one, two)
+### hungryGames.editTeam(uId, gId, cmd, one, two) ⇒ <code>string</code>
 Allows editing teams. Entry for all team actions.
 
 **Kind**: instance method of [<code>HungryGames</code>](#HungryGames)  
+**Returns**: <code>string</code> - Error message or null if no error.  
 **Access**: public  
 
 | Param | Type | Description |
@@ -3044,10 +3045,11 @@ The callback for when the user chooses to change page of the options.
 
 <a name="HungryGames..editTeam"></a>
 
-### HungryGames~editTeam(msg, id, [silent]) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+### HungryGames~editTeam(msg, id, [silent]) ⇒ <code>string</code> ℗
 Entry for all team commands.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
+**Returns**: <code>string</code> - Error message or null if no error.  
 **Access**: private  
 
 | Param | Type | Default | Description |
@@ -3098,16 +3100,17 @@ Rename a team.
 
 <a name="HungryGames..randomizeTeams"></a>
 
-### HungryGames~randomizeTeams(msg, id) ℗
+### HungryGames~randomizeTeams(msg, id, [silent]) ℗
 Swap random users between teams.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
 **Access**: private  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord~Message</code> | The message that lead to this being called. |
-| id | <code>string</code> | The id of the guild this was triggered from. |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| msg | <code>Discord~Message</code> |  | The message that lead to this being called. |
+| id | <code>string</code> |  | The id of the guild this was triggered from. |
+| [silent] | <code>boolean</code> | <code>false</code> | If true, this will not attempt to send messages to the channel where the msg was sent.. |
 
 <a name="HungryGames..createEvent"></a>
 

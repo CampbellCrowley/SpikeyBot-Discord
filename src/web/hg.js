@@ -916,7 +916,8 @@ function HGWeb(hg) {
       replyNoPerm(socket, 'editTeam');
       return;
     }
-    hg.editTeam(userData.id, gId, cmd, one, two);
+    let message = hg.editTeam(userData.id, gId, cmd, one, two);
+    if (message) socket.emit('message', message);
     socket.emit('game', gId, hg.getGame(gId));
   }
   this.editTeam = editTeam;

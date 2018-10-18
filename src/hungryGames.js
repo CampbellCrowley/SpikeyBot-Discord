@@ -4802,9 +4802,10 @@ function HungryGames() {
     }
     if (typeof option === 'undefined' || option.length == 0) {
       return null;
-    } else if (find(id).currentGame.inProgress) {
-      return 'You must end this game before changing settings. Use "' +
-          self.bot.getPrefix(id) + self.postPrefix + 'end" to abort this game.';
+      /* } else if (find(id).currentGame.inProgress) {
+        return 'You must end this game before changing settings. Use "' +
+            self.bot.getPrefix(id) + self.postPrefix + 'end" to abort this
+        game.'; */
     } else if (typeof defaultOptions[option] === 'undefined') {
       let searchedOption = defaultOptSearcher.search(option);
       if (typeof defaultOptions[searchedOption] === 'undefined') {
@@ -5025,6 +5026,7 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    * @param {boolean} [silent=false] Should we disable replying to the given
    * message?
+   * @return {?string} Error message or null if no error.
    */
   function editTeam(msg, id, silent) {
     let split = msg.text.split(' ');
@@ -5032,19 +5034,22 @@ function HungryGames() {
       switch (split[0]) {
         case 'swap':
         case 'reset':
-          msg.channel.send(
-              self.common.mention(msg) +
-              ' `You must end the current game before editing teams.`');
-          return;
+          let message = 'You must end the current game before editing teams.';
+          if (!silent) {
+            msg.channel.send(self.common.mention(msg) + ' `' + message + '`');
+          }
+          return message;
       }
     }
     if (find(id).options.teamSize == 0) {
-      self.common.reply(
-          msg,
+      let message =
           'There are no teams to edit. If you wish to have teams, you can ' +
-              'set teamSize to the size of teams you wish to have.',
-          msg.prefix + self.postPrefix + 'opt teamSize 2');
-      return;
+          'set teamSize to the size of teams you wish to have.';
+      if (!silent) {
+        self.common.reply(
+            msg, message, msg.prefix + self.postPrefix + 'opt teamSize 2');
+      }
+      return message;
     }
     switch (split[0]) {
       case 'swap':
@@ -5063,7 +5068,7 @@ function HungryGames() {
         break;
       case 'randomize':
       case 'shuffle':
-        randomizeTeams(msg, id);
+        randomizeTeams(msg, id, silent);
         break;
       default:
         listPlayers(msg, id);
@@ -5081,6 +5086,7 @@ function HungryGames() {
    * if we're renaming a team.
    * @param {string} two The id of the user to swap, or the team id if we're
    * moving a player to a team.
+   * @return {?string} Error message or null if no error.
    */
   this.editTeam = function(uId, gId, cmd, one, two) {
     if (find(gId).currentGame.inProgress) {
@@ -5153,7 +5159,7 @@ function HungryGames() {
         }
         break;
       default:
-        editTeam(
+        return editTeam(
             makeMessage(
                 uId, gId, null, cmd + ' ' + (one || '') + ' ' + (two || '')),
             gId, true);
@@ -5333,11 +5339,13 @@ function HungryGames() {
    * @private
    * @param {Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
+   * @param {boolean} [silent=false] If true, this will not attempt to send
+   * messages to the channel where the msg was sent..
    */
-  function randomizeTeams(msg, id) {
+  function randomizeTeams(msg, id, silent) {
     let current = find(id).currentGame;
     if (current.teams.length == 0) {
-      self.common.reply(msg, 'There are no teams to randomize.');
+      if (!silent) self.common.reply(msg, 'There are no teams to randomize.');
       return;
     }
     for (let i = 0; i < current.includedUsers.length; i++) {
@@ -5353,7 +5361,7 @@ function HungryGames() {
           current.teams[teamId2].players[playerId2];
       current.teams[teamId2].players[playerId2] = intVal;
     }
-    self.common.reply(msg, 'Teams have been randomized!');
+    if (!silent) self.common.reply(msg, 'Teams have been randomized!');
   }
 
   // Game Events //
