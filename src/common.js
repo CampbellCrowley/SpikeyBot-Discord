@@ -89,20 +89,19 @@ function Common() {
         res[i] = ('000' + res[i]).slice(-3);
         res[i] = res[i].replace(':', '0');
       }
-      return res.join('.') + '                       ';
+      str = res.join('.');
     } else if (str.match(/:/g) || [] == 7) {
       let res = str.split(':');
       for (let i = 0; i < res.length; i++) {
         res[i] = ('0000' + res[i]).slice(-4);
         // res[i] = res[i].replace(':', '0');
       }
-      return res.join(':');
-    } else {
-      for (let i = str.length; i < 45; i++) {
-        str += ' ';
-      }
-      return str.substring(0, 45);
+      str = res.join(':');
     }
+    for (let i = str.length; i < 45; i++) {
+      str += ' ';
+    }
+    return str.substring(0, 45);
   };
 
   /**
