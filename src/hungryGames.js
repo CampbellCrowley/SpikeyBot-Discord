@@ -1634,11 +1634,12 @@ function HungryGames() {
       for (let i = 0; i < values.length; i++) {
         if (!patreonSettingKeys.includes(values[i])) continue;
         settingRequests++;
-        self.bot.patreon.getSettingValue(p.id, values[i], (function(p, v) {
-          return function(err, info) {
-            onSettingResponse(err, info, p, v);
-          };
-        })(p, values[i]));
+        self.bot.patreon.getSettingValue(
+            p.id, cId, gId, values[i], (function(p, v) {
+              return function(err, info) {
+                onSettingResponse(err, info, p, v);
+              };
+            })(p, values[i]));
       }
       if (permResponses === players.length &&
           settingRequests === settingResponses && cb) {

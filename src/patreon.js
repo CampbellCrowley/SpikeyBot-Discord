@@ -390,7 +390,7 @@ function Patreon() {
 
   /**
    * Check that a user has a specific permission. Permissions are defined in
-   * {@link Patreon~patreonTierPermFile}.
+   * {@link Patreon~patreonTierPermFile}. This does not check overrides.
    * @public
    *
    * @param {string|number} uId The Discord user ID to check.
@@ -463,20 +463,24 @@ function Patreon() {
    *
    * @param {?number|string} uId The user id to check, or null to get the
    * default value.
+   * @param {?number|string} cId The Discord channel id to check, or null to get
+   * the default value.
+   * @param {?number|string} gId The Discord guild id to check, or null to get
+   * the default value.
    * @param {string} permString The permission to check with subvalues separated
    * by spaces.
    * @param {Patreon~basicCB} cb Callback with parameters for error and success
    * values.
    * @param {*} cb.data.status The setting's value.
    */
-  toExport.getSettingValue = function(uId, permString, cb) {
+  toExport.getSettingValue = function(uId, cId, gId, permString, cb) {
     const permVals = permString.split(' ');
     const perm = permVals[0];
     if (!patreonSettingsTemplate[perm]) {
       cb('Invalid Permission', null);
       return;
     }
-    toExport.checkPerm(uId, perm, onCheckPerm);
+    toExport.checkAllPerms(uId, cId, gId, perm, onCheckPerm);
     /**
      * After check for user perms, this will fetch either the default value, or
      * the user's custom setting.

@@ -87,7 +87,8 @@ function TTS() {
         return;
       }
       self.bot.patreon.getSettingValue(
-          msg.author.id, ttsPermString, onGetSettings);
+          msg.author.id, msg.channel.id, msg.guild.id, ttsPermString,
+          onGetSettings);
     }
 
     let matchedSettings;

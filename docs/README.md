@@ -5363,7 +5363,7 @@ Patreon status of users.
             * [.checkPerm(uId, perm, cb)](#Patreon..toExport.checkPerm)
                 * [~checkPerm(err, data)](#Patreon..toExport.checkPerm..checkPerm) : [<code>basicCB</code>](#Patreon..basicCB) ℗
             * [.getLevelPerms(pledgeAmount, exclusive, cb)](#Patreon..toExport.getLevelPerms)
-            * [.getSettingValue(uId, permString, cb)](#Patreon..toExport.getSettingValue)
+            * [.getSettingValue(uId, cId, gId, permString, cb)](#Patreon..toExport.getSettingValue)
                 * [~onCheckPerm(err, info)](#Patreon..toExport.getSettingValue..onCheckPerm) : [<code>basicCB</code>](#Patreon..basicCB) ℗
                 * [~fetchValue(obj, keys, myCb)](#Patreon..toExport.getSettingValue..fetchValue) ℗
                 * [~onFetchedValue(err, info)](#Patreon..toExport.getSettingValue..onFetchedValue) : [<code>basicCB</code>](#Patreon..basicCB) ℗
@@ -5585,7 +5585,7 @@ be available after [Patreon.initialize](Patreon.initialize) has been called, at
     * [.checkPerm(uId, perm, cb)](#Patreon..toExport.checkPerm)
         * [~checkPerm(err, data)](#Patreon..toExport.checkPerm..checkPerm) : [<code>basicCB</code>](#Patreon..basicCB) ℗
     * [.getLevelPerms(pledgeAmount, exclusive, cb)](#Patreon..toExport.getLevelPerms)
-    * [.getSettingValue(uId, permString, cb)](#Patreon..toExport.getSettingValue)
+    * [.getSettingValue(uId, cId, gId, permString, cb)](#Patreon..toExport.getSettingValue)
         * [~onCheckPerm(err, info)](#Patreon..toExport.getSettingValue..onCheckPerm) : [<code>basicCB</code>](#Patreon..basicCB) ℗
         * [~fetchValue(obj, keys, myCb)](#Patreon..toExport.getSettingValue..fetchValue) ℗
         * [~onFetchedValue(err, info)](#Patreon..toExport.getSettingValue..onFetchedValue) : [<code>basicCB</code>](#Patreon..basicCB) ℗
@@ -5675,7 +5675,7 @@ user's pledge amount.
 
 #### toExport.checkPerm(uId, perm, cb)
 Check that a user has a specific permission. Permissions are defined in
-[patreonTierPermFile](#Patreon..patreonTierPermFile).
+[patreonTierPermFile](#Patreon..patreonTierPermFile). This does not check overrides.
 
 **Kind**: static method of [<code>toExport</code>](#Patreon..toExport)  
 **Access**: public  
@@ -5718,7 +5718,7 @@ Responds with all permissions available at the given pledge amount.
 
 <a name="Patreon..toExport.getSettingValue"></a>
 
-#### toExport.getSettingValue(uId, permString, cb)
+#### toExport.getSettingValue(uId, cId, gId, permString, cb)
 Responds with the settings value for a user if they have permission for the
 setting, otherwise replies with the default value.
 
@@ -5728,12 +5728,14 @@ setting, otherwise replies with the default value.
 | Param | Type | Description |
 | --- | --- | --- |
 | uId | <code>number</code> \| <code>string</code> | The user id to check, or null to get the default value. |
+| cId | <code>number</code> \| <code>string</code> | The Discord channel id to check, or null to get the default value. |
+| gId | <code>number</code> \| <code>string</code> | The Discord guild id to check, or null to get the default value. |
 | permString | <code>string</code> | The permission to check with subvalues separated by spaces. |
 | cb | [<code>basicCB</code>](#Patreon..basicCB) | Callback with parameters for error and success values. |
 | cb.data.status | <code>\*</code> | The setting's value. |
 
 
-* [.getSettingValue(uId, permString, cb)](#Patreon..toExport.getSettingValue)
+* [.getSettingValue(uId, cId, gId, permString, cb)](#Patreon..toExport.getSettingValue)
     * [~onCheckPerm(err, info)](#Patreon..toExport.getSettingValue..onCheckPerm) : [<code>basicCB</code>](#Patreon..basicCB) ℗
     * [~fetchValue(obj, keys, myCb)](#Patreon..toExport.getSettingValue..fetchValue) ℗
     * [~onFetchedValue(err, info)](#Patreon..toExport.getSettingValue..onFetchedValue) : [<code>basicCB</code>](#Patreon..basicCB) ℗
