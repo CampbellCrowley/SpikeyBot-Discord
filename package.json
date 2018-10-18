@@ -21,7 +21,7 @@
     "dialogflow": "^0.7.0",
     "discord.js": "github:discordjs/discord.js",
     "fuzzy-search": "^2.1.0",
-    "jimp": "^0.5.3",
+    "jimp": "^0.5.4",
     "mathjs": "^5.2.0",
     "mkdirp": "^0.5.1",
     "mysql": "^2.16.0",
@@ -41,7 +41,7 @@
   ],
   "devDependencies": {
     "chai": "^4.2.0",
-    "eslint": "^5.6.1",
+    "eslint": "^5.7.0",
     "eslint-config-google": "^0.10.0",
     "jsdoc-to-markdown": "^4.0.1",
     "mocha": "^5.2.0"
@@ -61,6 +61,6 @@
     "kill": "killall nodejs node; exit 0;",
     "docs": "npm run lint && bash .hooks/make-docs.sh",
     "docs:help": "nodejs src/lib/json2md.js docs/*.json",
-    "update": "git checkout -- ./npm-shrinkwrap.json && exec ssh-agent bash -c \"ssh-add ~/.ssh/sb_id_rsa_nopass && git pull && npm i && npm i youtube-dl && npm up\"; kill $SSH_AGENT_PID"
+    "update": "git checkout -- ./npm-shrinkwrap.json && exec ssh-agent bash -c \"ssh-add ~/.ssh/sb_id_rsa_nopass && git pull && npm i && npm i youtube-dl\"; kill $SSH_AGENT_PID"
   }
 }
