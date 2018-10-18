@@ -119,6 +119,7 @@
         {
           "command": "timer 'minutes' 'message...'",
           "description": "Set a timer for a certain number of seconds. The bot will DM you the message at the end. No options lists timers.",
+          "aliases": "timer, timers, remind, reminder, reminders",
           "examples": [
             {
               "description": "1 minute timer with message",
@@ -129,6 +130,11 @@
               "description": "60 minute timer with message",
               "command": "timer 60 It has been one hour!",
               "result": "After 1 hour, the bot will send you a direct message saying \"It has been one hour!\"."
+            },
+            {
+              "description": "2 day timer without message",
+              "command": "timer 2 days",
+              "result": "After 2 days, the bot will send you a direct message saying \"Your timer for 2880 minutes is over!\".\n(s = seconds, m = minutes, h = hours, d = days, w = weeks, mon = mon, or use the whole word for each)"
             },
             {
               "description": "20 minute timer without message",

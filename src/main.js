@@ -31,6 +31,9 @@ math.config({matrix: 'Array'});
  * @listens SpikeyBot~Command#js
  * @listens SpikeyBot~Command#timer
  * @listens SpikeyBot~Command#timers
+ * @listens SpikeyBot~Command#remind
+ * @listens SpikeyBot~Command#reminder
+ * @listens SpikeyBot~Command#reminders
  * @listens SpikeyBot~Command#say
  * @listens SpikeyBot~Command#createDate
  * @listens SpikeyBot~Command#joinDate
@@ -263,7 +266,8 @@ function Main() {
     self.command.on('graph', commandGraph);
     self.command.on('derive', commandDerive);
     self.command.on('js', commandJS);
-    self.command.on(['timer', 'timers'], commandTimer);
+    self.command.on(
+        ['timer', 'timers', 'remind', 'reminder', 'reminders'], commandTimer);
     self.command.on('say', commandSay);
     self.command.on('createdate', commandCreateDate);
     self.command.on('joindate', commandJoinDate, true);
@@ -444,7 +448,8 @@ function Main() {
     self.command.deleteEvent('graph');
     self.command.deleteEvent('derive');
     self.command.deleteEvent('js');
-    self.command.deleteEvent(['timer', 'timers']);
+    self.command.deleteEvent(
+        ['timer', 'timers', 'remind', 'reminder', 'reminders']);
     self.command.deleteEvent('say');
     self.command.deleteEvent('createdate');
     self.command.deleteEvent('joindate');
@@ -1309,6 +1314,10 @@ function Main() {
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
    * @listens SpikeyBot~Command#timer
+   * @listens SpikeyBot~Command#timers
+   * @listens SpikeyBot~Command#remind
+   * @listens SpikeyBot~Command#reminder
+   * @listens SpikeyBot~Command#reminders
    */
   function commandTimer(msg) {
     let split = msg.content.split(' ').slice(1);
@@ -1331,6 +1340,13 @@ function Main() {
     }
     let time = split.splice(0, 1);
     let unit = split[0].toLowerCase();
+    let skipSplice = false;
+    let matchUnit = (time + '').match(/(\d+)([a-zA-Z]+)\b/);
+    if (matchUnit) {
+      time = matchUnit[1];
+      unit = matchUnit[2];
+      skipSplice = true;
+    }
     switch (unit) {
       case 's':
       case 'sec':
@@ -1338,7 +1354,7 @@ function Main() {
       case 'second':
       case 'seconds':
         time /= 60;
-        split.splice(0, 1);
+        if (!skipSplice) split.splice(0, 1);
         break;
       case 'm':
       case 'min':
@@ -1350,25 +1366,25 @@ function Main() {
       case 'hour':
       case 'hours':
         time *= 60;
-        split.splice(0, 1);
+        if (!skipSplice) split.splice(0, 1);
         break;
       case 'd':
       case 'day':
       case 'days':
         time *= 60 * 24;
-        split.splice(0, 1);
+        if (!skipSplice) split.splice(0, 1);
         break;
       case 'w':
       case 'week':
       case 'week':
         time *= 60 * 24 * 7;
-        split.splice(0, 1);
+        if (!skipSplice) split.splice(0, 1);
         break;
       case 'mon':
       case 'month':
       case 'months':
         time *= 60 * 24 * 7 * 30;
-        split.splice(0, 1);
+        if (!skipSplice) split.splice(0, 1);
         break;
     }
     let origMessage = split.join(' ');
