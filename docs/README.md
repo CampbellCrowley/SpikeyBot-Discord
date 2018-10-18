@@ -6632,6 +6632,8 @@ Main class that manages the bot.
                 * [.deleteEvent(cmd)](#SpikeyBot..Command+deleteEvent)
                 * [.disable(cmd, channel)](#SpikeyBot..Command+disable)
                 * [.enable(cmd, channel)](#SpikeyBot..Command+enable)
+                * [.find(cmd, [msg])](#SpikeyBot..Command+find) ⇒ <code>function</code>
+                * [.validate(cmd, msg, [func])](#SpikeyBot..Command+validate) ⇒ <code>string</code>
             * _inner_
                 * [~cmds](#SpikeyBot..Command..cmds) : [<code>Object.&lt;commandHandler&gt;</code>](#commandHandler) ℗
                 * [~blacklist](#SpikeyBot..Command..blacklist) : <code>Object.&lt;Array.&lt;string&gt;&gt;</code> ℗
@@ -6725,6 +6727,8 @@ Get this guild's custom prefix. Returns the default prefix otherwise.
         * [.deleteEvent(cmd)](#SpikeyBot..Command+deleteEvent)
         * [.disable(cmd, channel)](#SpikeyBot..Command+disable)
         * [.enable(cmd, channel)](#SpikeyBot..Command+enable)
+        * [.find(cmd, [msg])](#SpikeyBot..Command+find) ⇒ <code>function</code>
+        * [.validate(cmd, msg, [func])](#SpikeyBot..Command+validate) ⇒ <code>string</code>
     * _inner_
         * [~cmds](#SpikeyBot..Command..cmds) : [<code>Object.&lt;commandHandler&gt;</code>](#commandHandler) ℗
         * [~blacklist](#SpikeyBot..Command..blacklist) : <code>Object.&lt;Array.&lt;string&gt;&gt;</code> ℗
@@ -6797,6 +6801,34 @@ Re-enable a command that was disabled previously.
 | --- | --- | --- |
 | cmd | <code>string</code> | Command to enable. |
 | channel | <code>string</code> | ID of channel to enable command for. |
+
+<a name="SpikeyBot..Command+find"></a>
+
+#### command.find(cmd, [msg]) ⇒ <code>function</code>
+Returns the callback function for the given event.
+
+**Kind**: instance method of [<code>Command</code>](#SpikeyBot..Command)  
+**Returns**: <code>function</code> - The event callback.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| cmd | <code>string</code> | Command to lookup. |
+| [msg] | <code>Discord~Message</code> | Message that is to trigger this command. Used for removing prefix from cmd if necessary. |
+
+<a name="SpikeyBot..Command+validate"></a>
+
+#### command.validate(cmd, msg, [func]) ⇒ <code>string</code>
+Checks that the given command can be run with the given context. Does not
+actually fire the event.
+
+**Kind**: instance method of [<code>Command</code>](#SpikeyBot..Command)  
+**Returns**: <code>string</code> - Message causing failure, or null if valid.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| cmd | <code>string</code> | The command to validate. |
+| msg | <code>Discord~Message</code> | The message that will fire the event. If null, checks for channel and guild specific changes will not be validated. |
+| [func] | [<code>commandHandler</code>](#commandHandler) | A command handler override to use for settings lookup. If this is not specified, the handler associated with cmd will be fetched. |
 
 <a name="SpikeyBot..Command..cmds"></a>
 

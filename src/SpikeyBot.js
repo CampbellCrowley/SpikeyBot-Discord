@@ -365,6 +365,7 @@ function SpikeyBot() {
    * @class
    */
   function Command() {
+    const myself = this;
     /**
      * The function to call when a command is triggered.
      *
@@ -398,20 +399,28 @@ function SpikeyBot() {
      * @return {boolean} True if command was handled by us.
      */
     this.trigger = function(cmd, msg) {
-      if (cmd.startsWith(msg.prefix)) cmd = cmd.replace(msg.prefix, '');
-      cmd = cmd.toLowerCase();
-      if (cmds[cmd]) {
-        if (cmds[cmd].validOnlyOnServer && msg.guild === null) {
+      let func = myself.find(cmd, msg);
+      if (func) {
+        if (cmd.startsWith(msg.prefix)) {
+          cmd = cmd.replace(msg.prefix, '');
+        }
+        let failure = myself.validate(cmd, msg, func);
+        if (failure === 'Guild Only') {
           common.reply(msg, onlyservermessage);
           return true;
-        } else if (
-          blacklist[cmd] && blacklist[cmd].lastIndexOf(msg.channel.id) > -1) {
+        } else if (failure === 'Disabled In Channel') {
           common.reply(msg, disabledcommandmessage);
           return true;
+        } else if (failure) {
+          common.reply(
+              msg, 'I am unable to attempt this command for an unknown reason.',
+              failure);
+          common.error('Comand failed: ' + cmd + ': ' + failure);
+          return false;
         }
         msg.text = msg.content.replace(msg.prefix + cmd, '');
         try {
-          cmds[cmd](msg);
+          func(msg);
         } catch (err) {
           common.error(cmd + ': FAILED');
           console.log(err);
@@ -436,6 +445,7 @@ function SpikeyBot() {
       }
       cb.validOnlyOnServer = onlyserver || false;
       if (typeof cmd === 'string') {
+        cmd = cmd.toLowerCase();
         if (cmds[cmd]) {
           common.error(
               'Attempted to register a second handler for event that already ' +
@@ -444,7 +454,7 @@ function SpikeyBot() {
           cmds[cmd] = cb;
         }
       } else if (Array.isArray(cmd)) {
-        for (let i = 0; i < cmd.length; i++) cmds[cmd[i]] = cb;
+        for (let i = 0; i < cmd.length; i++) myself.on(cmd[i], cb, onlyserver);
       } else {
         throw new Error('Event must be string or array of strings');
       }
@@ -521,6 +531,46 @@ function SpikeyBot() {
         common.error(
             'Requested enable for event that is not disabled! (' + cmd + ')');
       }
+    };
+
+    /**
+     * Returns the callback function for the given event.
+     *
+     * @param {string} cmd Command to lookup.
+     * @param {Discord~Message} [msg] Message that is to trigger this command.
+     * Used for removing prefix from cmd if necessary.
+     * @return {function} The event callback.
+     */
+    this.find = function(cmd, msg) {
+      if (msg && cmd.startsWith(msg.prefix)) cmd = cmd.replace(msg.prefix, '');
+      cmd = cmd.toLowerCase();
+      return cmds[cmd];
+    };
+
+    /**
+     * Checks that the given command can be run with the given context. Does not
+     * actually fire the event.
+     *
+     * @param {string} cmd The command to validate.
+     * @param {?Discord~Message} msg The message that will fire the event. If
+     * null, checks for channel and guild specific changes will not be
+     * validated.
+     * @param {commandHandler} [func] A command handler override to use for
+     * settings lookup. If this is not specified, the handler associated with
+     * cmd will be fetched.
+     * @return {?string} Message causing failure, or null if valid.
+     */
+    this.validate = function(cmd, msg, func) {
+      if (!func) func = myself.find(cmd, msg);
+      if (!func) return 'No Handler';
+      if (msg && func.validOnlyOnServer && msg.guild === null) {
+        return 'Guild Only';
+      }
+      if (msg && blacklist[cmd] &&
+          blacklist[cmd].lastIndexOf(msg.channel.id) > -1) {
+        return 'Disabled In Channel';
+      }
+      return null;
     };
   }
   /**
@@ -785,36 +835,37 @@ function SpikeyBot() {
     }
 
     if (isCmd(msg, '')) {
-      let commandSuccess = command.trigger(msg.content.split(/ |\n/)[0], msg);
+      let commandSuccess = command.validate(msg.content.split(/ |\n/)[0], msg);
+      if (!minimal) {
+        if (msg.guild !== null) {
+          if (!commandSuccess) {
+            common.log(
+                msg.channel.id + '@' + msg.author.id + ' ' +
+                msg.content.replaceAll('\n', '\\n'));
+          } else {
+            common.logDebug(
+                msg.channel.id + '@' + msg.author.id + ' ' + commandSuccess +
+                ' ' + msg.content.replaceAll('\n', '\\n'));
+          }
+        } else {
+          if (!commandSuccess) {
+            common.log(
+                'PM:' + msg.author.id + '@' + msg.author.tag + ' ' +
+                msg.content.replaceAll('\n', '\\n'));
+          } else {
+            common.logDebug(
+                'PM:' + msg.author.id + '@' + msg.author.tag + ' ' +
+                commandSuccess + ' ' + msg.content.replaceAll('\n', '\\n'));
+          }
+        }
+      }
+      commandSuccess = command.trigger(msg.content.split(/ |\n/)[0], msg);
       if (!commandSuccess && msg.guild === null && !minimal && !testMode) {
         if (msg.content.split(/ |\n/)[0].indexOf('chat') < 0 &&
             !command.trigger(msg.prefix + 'chat', msg)) {
           msg.channel.send(
               'Oops! I\'m not sure how to help with that! Type **help** for ' +
               'a list of commands I know how to respond to.');
-        }
-      }
-      if (!minimal) {
-        if (msg.guild !== null) {
-          if (commandSuccess) {
-            common.log(
-                msg.channel.id + '@' + msg.author.id +
-                msg.content.replaceAll('\n', '\\n'));
-          } else {
-            common.logDebug(
-                msg.channel.id + '@' + msg.author.id +
-                msg.content.replaceAll('\n', '\\n'));
-          }
-        } else {
-          if (commandSuccess) {
-            common.log(
-                'PM: @' + msg.author.id + '@' + msg.author.tag +
-                msg.content.replaceAll('\n', '\\n'));
-          } else {
-            common.logDebug(
-                'PM: @' + msg.author.id + '@' + msg.author.tag +
-                msg.content.replaceAll('\n', '\\n'));
-          }
         }
       }
     }
