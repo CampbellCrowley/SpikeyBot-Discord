@@ -227,7 +227,8 @@ function SpikeyBot() {
       continue;
     }
     process.stdout.write(
-        'DBG:' + process.pid + ' Loading ' + subModuleNames[i]);
+        'DBG:' + ('00000' + process.pid).slice(-5) + ' Loading ' +
+        subModuleNames[i]);
     try {
       subModules[i] = require(subModuleNames[i]);
       process.stdout.write(': DONE\n');
@@ -571,6 +572,15 @@ function SpikeyBot() {
         return 'Disabled In Channel';
       }
       return null;
+    };
+
+    /**
+     * Fetches a list of all currently registered commands.
+     *
+     * @return {string[]} Array of all registered commands.
+     */
+    this.getAllNames = function() {
+      return Object.keys(cmds);
     };
   }
   /**
@@ -1334,7 +1344,8 @@ function SpikeyBot() {
         }
         delete require.cache[require.resolve(subModuleNames[i])];
         process.stdout.write(
-            'DBG:' + process.pid + ' Loading ' + subModuleNames[i]);
+            'DBG:' + ('00000' + process.pid).slice(-5) + ' Loading ' +
+            subModuleNames[i]);
         try {
           subModules[i] = require(subModuleNames[i]);
           process.stdout.write(': DONE\n');

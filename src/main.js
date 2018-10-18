@@ -69,6 +69,7 @@ math.config({matrix: 'Array'});
  * @listens SpikeyBot~Command#thx
  * @listens SpikeyBot~Command#thank
  * @listens SpikeyBot~Command#thankyou
+ * @listens SpikeyBot~Command#listCommands
  */
 function Main() {
   const self = this;
@@ -287,6 +288,7 @@ function Main() {
     self.command.on('togglebanmessages', commandToggleBanMessages, true);
     self.command.on('sendto', commandSendTo);
     self.command.on(['thanks', 'thx', 'thankyou', 'thank'], commandThankYou);
+    self.command.on('listcommands', commandListCommands);
 
     self.client.on('guildCreate', onGuildCreate);
     self.client.on('guildDelete', onGuildDelete);
@@ -467,6 +469,7 @@ function Main() {
     self.command.deleteEvent('togglebanmessages');
     self.command.deleteEvent('sendto');
     self.command.deleteEvent(['thanks', 'thx', 'thankyou', 'thank']);
+    self.command.deleteEvent('listcommands');
 
     self.client.removeListener('guildCreate', onGuildCreate);
     self.client.removeListener('guildDelete', onGuildDelete);
@@ -2493,6 +2496,19 @@ function Main() {
     } else {
       msg.channel.send('You\'re welcome! 😀');
     }
+  }
+
+  /**
+   * Fetch all registered commands and send them to the user.
+   *
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens SpikeyBot~Command#listCommands
+   */
+  function commandListCommands(msg) {
+    let list = self.command.getAllNames().sort();
+    self.common.reply(msg, JSON.stringify(list), list.length);
   }
 
   /**

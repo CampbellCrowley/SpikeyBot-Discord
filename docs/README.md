@@ -3652,6 +3652,7 @@ Basic commands and features for the bot.
         * [~commandLookup(msg)](#Main..commandLookup) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandSendTo(msg)](#Main..commandSendTo) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandThankYou(msg)](#Main..commandThankYou) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~commandListCommands(msg)](#Main..commandListCommands) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~sigint()](#Main..sigint) ℗
         * [~Timer](#Main..Timer) : <code>Object</code>
 
@@ -4588,6 +4589,18 @@ channels on the same shard.
 ### Main~commandThankYou(msg) : [<code>commandHandler</code>](#commandHandler) ℗
 Reply saying "you're welcome" unless another user was mentioned, then thank
 them instead.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Main..commandListCommands"></a>
+
+### Main~commandListCommands(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Fetch all registered commands and send them to the user.
 
 **Kind**: inner method of [<code>Main</code>](#Main)  
 **Access**: private  
@@ -6634,6 +6647,7 @@ Main class that manages the bot.
                 * [.enable(cmd, channel)](#SpikeyBot..Command+enable)
                 * [.find(cmd, [msg])](#SpikeyBot..Command+find) ⇒ <code>function</code>
                 * [.validate(cmd, msg, [func])](#SpikeyBot..Command+validate) ⇒ <code>string</code>
+                * [.getAllNames()](#SpikeyBot..Command+getAllNames) ⇒ <code>Array.&lt;string&gt;</code>
             * _inner_
                 * [~cmds](#SpikeyBot..Command..cmds) : [<code>Object.&lt;commandHandler&gt;</code>](#commandHandler) ℗
                 * [~blacklist](#SpikeyBot..Command..blacklist) : <code>Object.&lt;Array.&lt;string&gt;&gt;</code> ℗
@@ -6729,6 +6743,7 @@ Get this guild's custom prefix. Returns the default prefix otherwise.
         * [.enable(cmd, channel)](#SpikeyBot..Command+enable)
         * [.find(cmd, [msg])](#SpikeyBot..Command+find) ⇒ <code>function</code>
         * [.validate(cmd, msg, [func])](#SpikeyBot..Command+validate) ⇒ <code>string</code>
+        * [.getAllNames()](#SpikeyBot..Command+getAllNames) ⇒ <code>Array.&lt;string&gt;</code>
     * _inner_
         * [~cmds](#SpikeyBot..Command..cmds) : [<code>Object.&lt;commandHandler&gt;</code>](#commandHandler) ℗
         * [~blacklist](#SpikeyBot..Command..blacklist) : <code>Object.&lt;Array.&lt;string&gt;&gt;</code> ℗
@@ -6830,6 +6845,13 @@ actually fire the event.
 | msg | <code>Discord~Message</code> | The message that will fire the event. If null, checks for channel and guild specific changes will not be validated. |
 | [func] | [<code>commandHandler</code>](#commandHandler) | A command handler override to use for settings lookup. If this is not specified, the handler associated with cmd will be fetched. |
 
+<a name="SpikeyBot..Command+getAllNames"></a>
+
+#### command.getAllNames() ⇒ <code>Array.&lt;string&gt;</code>
+Fetches a list of all currently registered commands.
+
+**Kind**: instance method of [<code>Command</code>](#SpikeyBot..Command)  
+**Returns**: <code>Array.&lt;string&gt;</code> - Array of all registered commands.  
 <a name="SpikeyBot..Command..cmds"></a>
 
 #### Command~cmds : [<code>Object.&lt;commandHandler&gt;</code>](#commandHandler) ℗
