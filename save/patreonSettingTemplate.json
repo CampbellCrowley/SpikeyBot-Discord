@@ -3,6 +3,7 @@
     "title": "Hungry Games Message Translators",
     "type": "select",
     "values": ["disabled", "leet", "mocking", "superscript", "smallcaps"],
+    "hrValues": ["Disabled", "1337 5p34k", "MoCKiNg", "ˢᵘᵖᵉʳˢᶜʳᶦᵖᵗ", "sᴍᴀʟʟᴄᴀᴘs"],
     "default": "disabled"
   },
   "tts:all": {
