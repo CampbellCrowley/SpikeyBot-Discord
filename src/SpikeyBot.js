@@ -543,6 +543,8 @@ function SpikeyBot() {
      * @return {function} The event callback.
      */
     this.find = function(cmd, msg) {
+      if (!cmd) cmd = msg.content.match(/^\S+/)[0];
+      if (!cmd) return;
       if (msg && cmd.startsWith(msg.prefix)) cmd = cmd.replace(msg.prefix, '');
       cmd = cmd.toLowerCase();
       return cmds[cmd];

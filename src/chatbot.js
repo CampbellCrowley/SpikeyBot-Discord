@@ -62,10 +62,11 @@ function ChatBot() {
    * @listens Discord#message
    */
   function onMessage(msg) {
+    msg.prefix = self.bot.getPrefix(msg.guild);
     if (!msg.author.bot && msg.guild &&
-        msg.mentions.users.get(self.client.user.id)) {
+        msg.mentions.users.get(self.client.user.id) &&
+        self.command.validate(msg.content.match(/^\S+/)[0], msg)) {
       self.log(msg.channel.id + '@' + msg.author.id + ' ' + msg.content);
-      msg.prefix = self.bot.getPrefix(msg.guild);
       msg.text = ' ' +
           msg.content
               .replace(
@@ -86,6 +87,7 @@ function ChatBot() {
    * @listens SpikeyBot~Command#chat
    */
   function onChatMessage(msg) {
+    if (!msg.text || msg.text.length < 2) return;
     let request = Object.assign({}, reqTemplate);
     request.session = sessionClient.sessionPath(
         auth['dialogflowProjectId' + (self.bot.getBotName() || '')],
