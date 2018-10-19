@@ -8862,6 +8862,7 @@ Creates a web interface for managing the Hungry Games.
     * [new HGWeb(hg)](#new_HGWeb_new)
     * _instance_
         * [.shutdown([skipSave])](#HGWeb+shutdown)
+        * [.getNumClients()](#HGWeb+getNumClients) ⇒ <code>number</code>
         * [.dayStateChange(gId)](#HGWeb+dayStateChange)
     * _inner_
         * [~sockets](#HGWeb..sockets) : <code>Object.&lt;Socket&gt;</code> ℗
@@ -8920,6 +8921,14 @@ Causes a full shutdown of all servers.
 | --- | --- | --- | --- |
 | [skipSave] | <code>boolean</code> | <code>false</code> | Skip writing data to file. |
 
+<a name="HGWeb+getNumClients"></a>
+
+### hgWeb.getNumClients() ⇒ <code>number</code>
+Returns the number of connected clients that are not siblings.
+
+**Kind**: instance method of [<code>HGWeb</code>](#HGWeb)  
+**Returns**: <code>number</code> - Number of sockets.  
+**Access**: public  
 <a name="HGWeb+dayStateChange"></a>
 
 ### hgWeb.dayStateChange(gId)

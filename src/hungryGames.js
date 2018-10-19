@@ -1005,7 +1005,8 @@ function HungryGames() {
 
   /** @inheritdoc */
   this.unloadable = function() {
-    return self.getNumSimulating() === 0 && listenersEndTime < Date.now();
+    return self.getNumSimulating() === 0 && listenersEndTime < Date.now() &&
+        (!web || web.getNumClients() == 0);
   };
 
   /**
@@ -6559,19 +6560,19 @@ function HungryGames() {
    */
   function commandStats(msg, id) {
     let listenerBlockDuration = listenersEndTime - Date.now();
-    if (listenerBlockDuration <= 0) {
-      self.common.reply(
-          msg, 'There are ' + self.getNumSimulating() +
-              ' games currently simulating of ' + Object.keys(games).length +
-              ' currently loaded.');
-    } else {
-      self.common.reply(
-          msg, 'There are ' + self.getNumSimulating() +
-              ' games currently simulating of ' + Object.keys(games).length +
-              ' currently loaded.\nThe last listener will end in ' +
-              (Math.round(listenerBlockDuration / 100 / 60) / 10) +
-              ' minutes.');
+    let message = 'There are ' + self.getNumSimulating() +
+        ' games currently simulating of ' + Object.keys(games).length +
+        ' currently loaded.';
+    if (listenerBlockDuration > 0) {
+      message += '\nThe last listener will end in ' +
+          (Math.round(listenerBlockDuration / 100 / 60) / 10) + ' minutes.';
     }
+    if (web) {
+      let numClients = web.getNumClients();
+      message += '\n' + numClients + ' web client' +
+          (numClients == 1 ? '' : 's') + ' connected.';
+    }
+    self.common.reply(msg, message);
   }
 
   /**

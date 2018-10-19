@@ -79,6 +79,16 @@ function HGWeb(hg) {
   let sockets = {};
 
   /**
+   * Returns the number of connected clients that are not siblings.
+   *
+   * @public
+   * @return {number} Number of sockets.
+   */
+  this.getNumClients = function() {
+    return Object.keys(sockets).length - Object.keys(siblingSockets).length;
+  };
+
+  /**
    * Map of all sockets connected that are siblings.
    *
    * @private
