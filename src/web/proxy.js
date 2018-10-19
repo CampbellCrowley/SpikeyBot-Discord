@@ -227,7 +227,7 @@ function WebProxy() {
     let session = crypto.randomBytes(512).toString('base64');
     let restoreAttempt = false;
 
-    self.common.log(
+    self.common.logDebug(
         'Socket connected (' + Object.keys(sockets).length + '): ' + ipName,
         socket.id);
     sockets[socket.id] = socket;
@@ -307,12 +307,15 @@ function WebProxy() {
                 userData = identity;
                 if (userData) {
                   socket.emit('authorized', null, userData);
+                  self.common.logDebug('Authorized ' + userData.id, socket.id);
                 } else {
                   socket.emit('authorized', 'Getting user data failed', null);
+                  self.common.logWarning('Failed to authorize', socket.id);
                 }
               });
             } else {
-              console.log('Refreshing token failed', sess);
+              self.warn('Refreshing token failed ' + sess);
+              console.error(err);
               socket.emit('authorized', 'Restore Failed', null);
             }
           });
@@ -321,14 +324,16 @@ function WebProxy() {
             userData = identity;
             if (userData) {
               socket.emit('authorized', null, userData);
+              self.common.logDebug('Authorized ' + userData.id, socket.id);
             } else {
               socket.emit('authorized', 'Getting user data failed', null);
+              self.common.logWarning('Failed to fetch identity', socket.id);
             }
           });
         }
       } else {
         delete currentSessions[sess];
-        console.log('Nothing to restore', sess);
+        self.common.logWarning('Nothing to restore ' + sess, socket.id);
         socket.emit('authorized', 'Restore Failed', null);
       }
     });
@@ -345,6 +350,11 @@ function WebProxy() {
           fetchIdentity(loginInfo[session], (identity) => {
             userData = identity;
             socket.emit('authorized', null, userData);
+            if (userData) {
+              self.common.logDebug('Authorized ' + userData.id, socket.id);
+            } else {
+              self.common.logWarning('Failed to authorize', socket.id);
+            }
           });
         }
       });
@@ -357,7 +367,7 @@ function WebProxy() {
     });
 
     socket.on('disconnect', () => {
-      self.common.log(
+      self.common.logDebug(
           'Socket disconnected (' + (Object.keys(sockets).length - 1) + '): ' +
               ipName,
           socket.id);
