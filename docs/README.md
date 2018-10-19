@@ -10578,6 +10578,6 @@ The current OAuth2 access information for a single session.
 | scope | <code>string</code> | The scopes that the access_token has access to. |
 | expires_at | <code>number</code> | The unix timestamp when the access_token expires. |
 | expiration_date | <code>number</code> | The unix timestamp when we consider the session to have expired, and the session is deleted. |
-| session | <code>string</code> | The 128 byte hex string that identifies this session to the client. |
+| session | <code>string</code> | The 512 byte base64 string that identifies this session to the client. |
 | refreshTimeout | <code>Timeout</code> | The current timeout registered for refreshing the access_token. |
 

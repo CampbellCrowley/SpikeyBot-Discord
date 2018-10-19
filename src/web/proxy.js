@@ -102,9 +102,9 @@ function WebProxy() {
    * expires.
    * @property {number} expiration_date The unix timestamp when we consider the
    * session to have expired, and the session is deleted.
-   * @property {string} session The 128 byte hex string that identifies this
+   * @property {string} session The 512 byte base64 string that identifies this
    * session to the client.
-   * @property {Timeout} refreshTimeout The current timeout registered for
+   * @property {?Timeout} refreshTimeout The current timeout registered for
    * refreshing the access_token.
    */
 
