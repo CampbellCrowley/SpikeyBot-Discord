@@ -95,6 +95,9 @@ from silently crashing without an error.</p>
 <dt><a href="#commandHandler">commandHandler</a> : <code>function</code></dt>
 <dd><p>The function to call when a command is triggered.</p>
 </dd>
+<dt><a href="#loginState">loginState</a></dt>
+<dd><p>The current OAuth2 access information for a single session.</p>
+</dd>
 </dl>
 
 <a name="module_lib/twemojiChecker"></a>
@@ -9513,7 +9516,7 @@ Proxy for account authentication.
         * [.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>
     * _inner_
         * [~sqlCon](#WebProxy..sqlCon) : <code>sql.ConnectionConfig</code> ℗
-        * [~loginInfo](#WebProxy..loginInfo) : <code>Object.&lt;Object&gt;</code> ℗
+        * [~loginInfo](#WebProxy..loginInfo) : [<code>Object.&lt;loginState&gt;</code>](#loginState) ℗
         * [~sockets](#WebProxy..sockets) : <code>Object.&lt;Socket&gt;</code> ℗
         * [~tokenHost](#WebProxy..tokenHost) : <code>Object</code> ℗
         * [~apiHost](#WebProxy..apiHost) : <code>Object</code> ℗
@@ -9749,9 +9752,9 @@ The object describing the connection with the SQL server.
 **Access**: private  
 <a name="WebProxy..loginInfo"></a>
 
-### WebProxy~loginInfo : <code>Object.&lt;Object&gt;</code> ℗
+### WebProxy~loginInfo : [<code>Object.&lt;loginState&gt;</code>](#loginState) ℗
 Stores the tokens and associated data for all clients connected while data
-is valid.
+is valid. Mapped by session id.
 
 **Kind**: inner property of [<code>WebProxy</code>](#WebProxy)  
 **Access**: private  
@@ -10557,4 +10560,24 @@ The function to call when a command is triggered.
 | Param | Type | Description |
 | --- | --- | --- |
 | msg | <code>Discord~Message</code> | The message sent in Discord. |
+
+<a name="loginState"></a>
+
+## loginState
+The current OAuth2 access information for a single session.
+
+**Kind**: global typedef  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| access_token | <code>string</code> | The current token for api requests. |
+| token_type | <code>string</code> | The type of token. (Usually 'Bearer') |
+| expires_in | <code>number</code> | Number of seconds after the token is authorized at which it becomes invalid. |
+| refresh_token | <code>string</code> | Token used to refresh the expired access_token. |
+| scope | <code>string</code> | The scopes that the access_token has access to. |
+| expires_at | <code>number</code> | The unix timestamp when the access_token expires. |
+| expiration_date | <code>number</code> | The unix timestamp when we consider the session to have expired, and the session is deleted. |
+| session | <code>string</code> | The 128 byte hex string that identifies this session to the client. |
+| refreshTimeout | <code>Timeout</code> | The current timeout registered for refreshing the access_token. |
 

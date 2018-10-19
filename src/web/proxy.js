@@ -88,11 +88,32 @@ function WebProxy() {
   let pathPorts = {};
 
   /**
+   * The current OAuth2 access information for a single session.
+   * @typedef loginState
+   *
+   * @property {string} access_token The current token for api requests.
+   * @property {string} token_type The type of token. (Usually 'Bearer')
+   * @property {number} expires_in Number of seconds after the token is
+   * authorized at which it becomes invalid.
+   * @property {string} refresh_token Token used to refresh the expired
+   * access_token.
+   * @property {string} scope The scopes that the access_token has access to.
+   * @property {number} expires_at The unix timestamp when the access_token
+   * expires.
+   * @property {number} expiration_date The unix timestamp when we consider the
+   * session to have expired, and the session is deleted.
+   * @property {string} session The 128 byte hex string that identifies this
+   * session to the client.
+   * @property {Timeout} refreshTimeout The current timeout registered for
+   * refreshing the access_token.
+   */
+
+  /**
    * Stores the tokens and associated data for all clients connected while data
-   * is valid.
+   * is valid. Mapped by session id.
    *
    * @private
-   * @type {Object.<Object>}
+   * @type {Object.<loginState>}
    */
   let loginInfo = {};
   let currentSessions = {};
@@ -152,6 +173,11 @@ function WebProxy() {
     if (app) app.close();
     clearInterval(purgeInterval);
     if (!skipSave) {
+      for (let i in loginInfo) {
+        if (loginInfo[i] && loginInfo[i].refreshTimeout) {
+          delete loginInfo[i].refreshTimeout;
+        }
+      }
       fs.writeFileSync('./save/webClients.json', JSON.stringify(loginInfo));
     }
   };
@@ -208,7 +234,7 @@ function WebProxy() {
     let server;
     if (!pathPorts[reqPath]) {
       self.common.error(
-          'Client requested uknown endpoint: ' + reqPath, socket.id);
+          'Client requested unknown endpoint: ' + reqPath, socket.id);
     } else {
       server = sIOClient('http://localhost:' + pathPorts[reqPath], {
         path: reqPath,
@@ -351,7 +377,7 @@ function WebProxy() {
     function receivedLoginInfo(data) {
       if (data) {
         data.expires_at = data.expires_in * 1000 + Date.now();
-        data.expiration_date = Date.now() + (1000 * 60 * 60 * 24 * 7);
+        data.expiration_date = Date.now() + (1000 * 60 * 60 * 24 * 30);
         data.session = session;
         loginInfo[session] = data;
         makeRefreshTimeout(loginInfo[session], receivedLoginInfo);
