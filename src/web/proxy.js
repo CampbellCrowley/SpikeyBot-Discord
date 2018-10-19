@@ -224,7 +224,7 @@ function WebProxy() {
     const reqPath = socket.handshake.url.split('?')[0];
 
     let userData = {};
-    let session = crypto.randomBytes(128).toString('hex');
+    let session = crypto.randomBytes(512).toString('base64');
     let restoreAttempt = false;
 
     self.common.log(
