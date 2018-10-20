@@ -45,7 +45,7 @@ function Patreon() {
    * @see {@link Patreon~patreonTierPermFile}
    *
    * @private
-   * @defatult
+   * @default
    * @type {Array.<{0: number, 1: string[]}>}
    */
   let patreonTiers = {};
@@ -189,7 +189,7 @@ function Patreon() {
    */
   function commandPatreon(msg) {
     /**
-     * Verifies that valid data was found, then fetches all permissions fot the
+     * Verifies that valid data was found, then fetches all permissions for the
      * user's pledge amount.
      * @private
      * @type {Patreon~basicCB}
@@ -238,7 +238,7 @@ function Patreon() {
       toExport.getLevelPerms(pledgeAmount, false, onGetPerms);
     }
     /**
-     * Verifies that valid data was found, then fetches all permissions fot the
+     * Verifies that valid data was found, then fetches all permissions for the
      * user's pledge amount.
      * @private
      * @type {Patreon~basicCB}
@@ -350,7 +350,7 @@ function Patreon() {
       }
     }
     /**
-     * Verifies that valid data was found, then fetches all permissions fot the
+     * Verifies that valid data was found, then fetches all permissions for the
      * user's pledge amount.
      * @private
      * @type {Patreon~basicCB}
@@ -371,7 +371,7 @@ function Patreon() {
       toExport.getLevelPerms(pledgeAmount, false, onGetPerms);
     }
     /**
-     * Verifies that valid data was found, then fetches all permissions fot the
+     * Verifies that valid data was found, then fetches all permissions for the
      * user's pledge amount.
      * @private
      * @type {Patreon~basicCB}
@@ -564,7 +564,7 @@ function Patreon() {
      * SQL query response callback for request to the Discord table.
      * @private
      * @param {Error} err Errors during the query.
-     * @param {Array} rows The reqults of the query.
+     * @param {Array} rows The results of the query.
      */
     function receivedDiscordRow(err, rows) {
       if (err) {
@@ -594,7 +594,7 @@ function Patreon() {
      * SQL query response callback for request to the Patreon table.
      * @private
      * @param {Error} err Errors during the query.
-     * @param {Array} rows The reqults of the query.
+     * @param {Array} rows The results of the query.
      */
     function receivedPatreonRow(err, rows) {
       if (err) {

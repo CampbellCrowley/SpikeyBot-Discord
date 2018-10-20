@@ -1411,6 +1411,9 @@ function HungryGames() {
    * @typedef {Object} HungryGames~ArenaEvent
    *
    * @property {string} message The message at the start of the arena event.
+   * @property {?{kill: number, wound: number, thrive: number, nothing: number}}
+   * outcomeProbs Overrides the global setting for arena event outcome
+   * probabilities for this event.
    * @property {HungryGames~Event[]} outcomes All possible events in this arena
    * event.
    */
@@ -2496,8 +2499,9 @@ function HungryGames() {
 
     const probOpts = find(id).currentGame.day.num === 0 ?
         find(id).options.bloodbathOutcomeProbs :
-        (doArenaEvent ? find(id).options.arenaOutcomeProbs :
-                        find(id).options.playerOutcomeProbs);
+        (doArenaEvent ?
+             (arenaEvent.outcomeProbs || find(id).options.arenaOutcomeProbs) :
+             find(id).options.playerOutcomeProbs);
 
     const nameFormat = find(id).options.useNicknames ? 'nickname' : 'username';
 
@@ -5618,7 +5622,7 @@ function HungryGames() {
       if (!data.message || data.message.length == 0) {
         return 'Event must have a message.';
       }
-      for (let i = 0; i< find(id).customEvents[type].length; i++) {
+      for (let i = 0; i < find(id).customEvents[type].length; i++) {
         if (find(id).customEvents[type][i].message === data.message) {
           find(id).customEvents[type][i] =
               Object.assign(find(id).customEvents[type][i], data);
@@ -5696,6 +5700,7 @@ function HungryGames() {
         return null;
       }
       if (search.message) match.message = data.message;
+      if (search.outcomeProbs) match.outcomeProbs = data.outcomeProbs;
       if (!search.outcomes || search.outcomes.length == 0) return null;
       for (let i = 0; i < match.outcomes.length; i++) {
         let one = match.outcomes[i];

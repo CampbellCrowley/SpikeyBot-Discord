@@ -1683,6 +1683,42 @@
           "victim": { "count": "2", "outcome": "dies" }
         }
       ]
+    },
+    {
+      "message": "A mysterious gas begins to pour into the arena, causing the tributes to relax.",
+      "outcomeProbs": {"kill": 5, "wound": 5, "thrive": 75, "nothing": 15},
+      "outcomes": [
+        {
+          "message": "{victim} inhale[Vs|] the gas.",
+          "attacker": { "count": "0", "outcome": "nothing" },
+          "victim": { "count": "-1", "outcome": "thrives" }
+        },
+        {
+          "message": "{victim} take[Vs a|] deep breath[V|s] and feel[Vs|] rejuvenated.",
+          "attacker": { "count": "0", "outcome": "nothing" },
+          "victim": { "count": "-1", "outcome": "thrives" }
+        },
+        {
+          "message": "{victim} feel[Vs|] their senses heighten, and they manage to find a weapon in the grass.",
+          "attacker": { "count": "0", "outcome": "nothing" },
+          "victim": { "count": "-1", "outcome": "thrives", "weapon": { "name": "toothbrush", "count": 1 } }
+        },
+        {
+          "message": "{attacker} and {victim} stop fighting for the moment after {attacker} agree[As|] to \"Chill out dude[A|s]...\".",
+          "attacker": { "count": "-1", "outcome": "nothing" },
+          "victim": { "count": "-1", "outcome": "nothing" }
+        },
+        {
+          "message": "{victim}'s blood pressure was too low and the gas kills them!",
+          "attacker": { "count": "0", "outcome": "nothing" },
+          "victim": { "count": "1", "outcome": "dies" }
+        },
+        {
+          "message": "{victim} use[Vs|] their clothing as a mask to avoid inhaling the gas.",
+          "attacker": { "count": "0", "outcome": "nothing" },
+          "victim": { "count": "-1", "outcome": "nothing" }
+        }
+      ]
     }
   ]
 }

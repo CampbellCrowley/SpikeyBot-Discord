@@ -3497,6 +3497,7 @@ An Arena event storing Events.
 | Name | Type | Description |
 | --- | --- | --- |
 | message | <code>string</code> | The message at the start of the arena event. |
+| outcomeProbs | <code>Object</code> | Overrides the global setting for arena event outcome probabilities for this event. |
 | outcomes | [<code>Array.&lt;Event&gt;</code>](#HungryGames..Event) | All possible events in this arena event. |
 
 <a name="HungryGames..WeaponEvent"></a>
@@ -5821,7 +5822,7 @@ Handle response from checking IDs for overrides.
 <a name="Patreon..toExport.getAllPerms..getPerms"></a>
 
 ##### getAllPerms~getPerms(err, data) : [<code>basicCB</code>](#Patreon..basicCB) ℗
-Verifies that valid data was found, then fetches all permissions fot the
+Verifies that valid data was found, then fetches all permissions for the
 user's pledge amount.
 
 **Kind**: inner method of [<code>getAllPerms</code>](#Patreon..toExport.getAllPerms)  
@@ -5835,7 +5836,7 @@ user's pledge amount.
 <a name="Patreon..toExport.getAllPerms..onGetPerms"></a>
 
 ##### getAllPerms~onGetPerms(err, data) : [<code>basicCB</code>](#Patreon..basicCB) ℗
-Verifies that valid data was found, then fetches all permissions fot the
+Verifies that valid data was found, then fetches all permissions for the
 user's pledge amount.
 
 **Kind**: inner method of [<code>getAllPerms</code>](#Patreon..toExport.getAllPerms)  
@@ -5963,8 +5964,8 @@ set, if not then return the default.
 The parsed data from file about patron tier rewards.
 
 **Kind**: inner property of [<code>Patreon</code>](#Patreon)  
+**Default**: <code>{}</code>  
 **Access**: private  
-**Defatult**:   
 **See**: [patreonTierPermFile](#Patreon..patreonTierPermFile)  
 <a name="Patreon..patreonSettingsTemplate"></a>
 
@@ -6056,7 +6057,7 @@ Shows the user's Patreon information to the user.
 <a name="Patreon..commandPatreon..getPerms"></a>
 
 #### commandPatreon~getPerms(err, data) : [<code>basicCB</code>](#Patreon..basicCB) ℗
-Verifies that valid data was found, then fetches all permissions fot the
+Verifies that valid data was found, then fetches all permissions for the
 user's pledge amount.
 
 **Kind**: inner method of [<code>commandPatreon</code>](#Patreon..commandPatreon)  
@@ -6070,7 +6071,7 @@ user's pledge amount.
 <a name="Patreon..commandPatreon..onGetPerms"></a>
 
 #### commandPatreon~onGetPerms(err, data) : [<code>basicCB</code>](#Patreon..basicCB) ℗
-Verifies that valid data was found, then fetches all permissions fot the
+Verifies that valid data was found, then fetches all permissions for the
 user's pledge amount.
 
 **Kind**: inner method of [<code>commandPatreon</code>](#Patreon..commandPatreon)  
@@ -6111,7 +6112,7 @@ SQL query response callback for request to the Discord table.
 | Param | Type | Description |
 | --- | --- | --- |
 | err | <code>Error</code> | Errors during the query. |
-| rows | <code>Array</code> | The reqults of the query. |
+| rows | <code>Array</code> | The results of the query. |
 
 <a name="Patreon..fetchPatreonRow..receivedPatreonRow"></a>
 
@@ -6124,7 +6125,7 @@ SQL query response callback for request to the Patreon table.
 | Param | Type | Description |
 | --- | --- | --- |
 | err | <code>Error</code> | Errors during the query. |
-| rows | <code>Array</code> | The reqults of the query. |
+| rows | <code>Array</code> | The results of the query. |
 
 <a name="Patreon..basicCB"></a>
 
