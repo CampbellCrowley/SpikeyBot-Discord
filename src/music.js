@@ -211,7 +211,7 @@ function Music() {
     self.command.deleteEvent('vi');
     self.command.deleteEvent('airhorn');
     self.command.deleteEvent('rickroll');
-    self.command.deleteEvent('follow');
+    self.command.deleteEvent(['follow', 'unfollow', 'stalk', 'stalkme']);
     self.command.deleteEvent('musicstats');
     self.command.deleteEvent(['volume', 'vol', 'v']);
 
@@ -514,10 +514,17 @@ function Music() {
   function makeBroadcast(broadcast) {
     // Setup voice connection listeners.
     if (!broadcast.voice) return;
-    broadcast.voice.on('disconnect', () => {
+    broadcast.voice.removeListener('disconnect', onDC);
+    broadcast.voice.on('disconnect', onDC);
+    /**
+     * Fires on when voice connection is disconnected. Cleans up anything that
+     * could be left behind.
+     * @private
+     */
+    function onDC() {
       if (broadcast.current.readable) broadcast.current.readable.destroy();
       if (broadcast.current.thread) broadcast.current.thread.kill();
-    });
+    }
 
     // Setup readable stream for audio data.
     broadcast.current.readable = new Readable();

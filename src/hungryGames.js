@@ -1615,6 +1615,27 @@ function HungryGames() {
     let permResponses = 0;
     let settingRequests = 0;
     let settingResponses = 0;
+
+    /**
+     * After retreiving whether the player is an actual patron (ignores
+     * overrides), then fetch permissions from them (uses overrides).
+     * @private
+     *
+     * @param {?string} err Error string or null.
+     * @param {?{status: string[], message: string}} info Permission
+     * information.
+     * @param {number} p Player object to update.
+     */
+    function onCheckPatron(err, info, p) {
+      if (!err) {
+        if (info.status) {
+          p.settings['isPatron'] = true;
+        }
+      }
+      self.bot.patreon.getAllPerms(p.id, cId, gId, function(err, info) {
+        onPermResponse(err, info, p);
+      });
+    }
     /**
      * After retreiving a player's permissions, fetch their settings for each.
      * @private
@@ -1633,9 +1654,6 @@ function HungryGames() {
         return;
       }
       let values = info.status;
-      if (values.length > 0) {
-        p.settings['isPatron'] = true;
-      }
       for (let i = 0; i < values.length; i++) {
         if (!patreonSettingKeys.includes(values[i])) continue;
         settingRequests++;
@@ -1675,9 +1693,9 @@ function HungryGames() {
     }
 
     for (let i = 0; i < players.length; i++) {
-      self.bot.patreon.getAllPerms(players[i].id, cId, gId, (function(p) {
+      self.bot.patreon.checkPerm(players[i].id, null, (function(p) {
         return function(err, info) {
-          onPermResponse(err, info, p);
+          onCheckPatron(err, info, p);
         };
       })(players[i]));
     }
@@ -2265,14 +2283,18 @@ function HungryGames() {
       return;
     }
     if (find(id).autoPlay) {
-      msg.channel.send(
-          '<@' + msg.author.id +
-          '> `Autoplay will stop at the end of the current day.`');
+      if (msg && msg.channel) {
+        msg.channel.send(
+            '<@' + msg.author.id +
+            '> `Autoplay will stop at the end of the current day.`');
+      }
       find(id).autoPlay = false;
     } else {
-      self.common.reply(
-          msg, 'Not autoplaying. If you wish to autoplay, type "' + msg.prefix +
-              self.postPrefix + 'autoplay".');
+      if (msg && msg.channel) {
+        self.common.reply(
+            msg, 'Not autoplaying. If you wish to autoplay, type "' +
+                msg.prefix + self.postPrefix + 'autoplay".');
+      }
     }
   }
   /**
@@ -3720,6 +3742,7 @@ function HungryGames() {
       return {
         url: obj.avatarURL.replace(/\?size=[0-9]*/, '') + '?size=' + fetchSize,
         id: obj.id,
+        isPatron: obj.settings && obj.settings.isPatron,
       };
     });
   }
@@ -3777,24 +3800,32 @@ function HungryGames() {
             events[index].attacks[battleState].icons.length *
                     (battleIconSize + iconGap) -
                 iconGap,
-            battleIconSize + underlineSize);
+            battleIconSize + underlineSize * 2);
         let responses = 0;
-        newImage = function(image, outcome, placement) {
+        newImage = function(image, outcome, placement, isPatron) {
           try {
             if (battleIconSize > 0) {
               image.resize(battleIconSize, battleIconSize);
               if (underlineSize > 0) {
+                if (isPatron) {
+                  finalImage.blit(
+                      new Jimp(battleIconSize, underlineSize, 0xF96854FF),
+                      placement * (battleIconSize + iconGap), 0);
+                }
                 if (outcome == 'dies') {
                   finalImage.blit(
                       new Jimp(battleIconSize, underlineSize, 0xFF0000FF),
-                      placement * (battleIconSize + iconGap), battleIconSize);
+                      placement * (battleIconSize + iconGap),
+                      battleIconSize + underlineSize);
                 } else if (outcome == 'wounded') {
                   finalImage.blit(
                       new Jimp(battleIconSize, underlineSize, 0xFFFF00FF),
-                      placement * (battleIconSize + iconGap), battleIconSize);
+                      placement * (battleIconSize + iconGap),
+                      battleIconSize + underlineSize);
                 }
               }
-              finalImage.blit(image, placement * (battleIconSize + iconGap), 0);
+              finalImage.blit(
+                  image, placement * (battleIconSize + iconGap), underlineSize);
             }
           } catch (err) {
             console.error(err);
@@ -3832,11 +3863,13 @@ function HungryGames() {
             outcome = events[index].attacks[battleState].attacker.outcome;
           }
           Jimp.read(events[index].attacks[battleState].icons[i].url)
-              .then(function(outcome, placement) {
-                return function(image) {
-                  newImage(image, outcome, placement);
-                };
-              }(outcome, i))
+              .then(
+                  function(outcome, placement, isPatron) {
+                    return function(image) {
+                      newImage(image, outcome, placement, isPatron);
+                    };
+                  }(outcome, i,
+                      events[index].attacks[battleState].icons[i].isPatron))
               .catch(function(err) {
                 console.log(err);
                 responses++;
@@ -3874,28 +3907,37 @@ function HungryGames() {
         embed.setColor([125, 0, 0]);
         let finalImage = new Jimp(
             events[index].icons.length * (iconSize + iconGap) - iconGap,
-            iconSize + underlineSize);
+            iconSize + underlineSize * 2);
         let responses = 0;
-        newImage = function(image, outcome, placement) {
+        newImage = function(image, outcome, placement, isPatron) {
           try {
             if (iconSize > 0) {
               image.resize(iconSize, iconSize);
               if (underlineSize > 0) {
+                if (isPatron) {
+                  finalImage.blit(
+                      new Jimp(iconSize, underlineSize, 0xF96854FF),
+                      placement * (iconSize + iconGap), 0);
+                }
                 if (outcome == 'dies') {
                   finalImage.blit(
                       new Jimp(iconSize, underlineSize, 0xFF0000FF),
-                      placement * (iconSize + iconGap), iconSize);
+                      placement * (iconSize + iconGap),
+                      iconSize + underlineSize);
                 } else if (outcome == 'wounded') {
                   finalImage.blit(
                       new Jimp(iconSize, underlineSize, 0xFFFF00FF),
-                      placement * (iconSize + iconGap), iconSize);
+                      placement * (iconSize + iconGap),
+                      iconSize + underlineSize);
                 } else if (outcome == 'thrives') {
                   finalImage.blit(
                       new Jimp(iconSize, underlineSize, 0x00FF00FF),
-                      placement * (iconSize + iconGap), iconSize);
+                      placement * (iconSize + iconGap),
+                      iconSize + underlineSize);
                 }
               }
-              finalImage.blit(image, placement * (iconSize + iconGap), 0);
+              finalImage.blit(
+                  image, placement * (iconSize + iconGap), underlineSize);
             }
           } catch (err) {
             console.error(err);
@@ -3927,11 +3969,13 @@ function HungryGames() {
             outcome = events[index].attacker.outcome;
           }
           Jimp.read(events[index].icons[i].url)
-              .then(function(outcome, placement) {
-                return function(image) {
-                  newImage(image, outcome, placement);
-                };
-              }(outcome, events[index].icons.length - i - 1))
+              .then(
+                  function(outcome, placement, isPatron) {
+                    return function(image) {
+                      newImage(image, outcome, placement, isPatron);
+                    };
+                  }(outcome, events[index].icons.length - i - 1,
+                      events[index].icons[i].isPatron))
               .catch(function(err) {
                 console.log(err);
                 responses++;
@@ -4182,11 +4226,17 @@ function HungryGames() {
                 } else if (user) {
                   color = 0x00FF00FF;
                 }
+                if (user.settings && user.settings.isPatron) {
+                  finalImage.blit(
+                      new Jimp(victorIconSize, underlineSize, 0xF96854FF),
+                      responses * (victorIconSize + iconGap), 0);
+                }
                 finalImage.blit(
                     new Jimp(victorIconSize, underlineSize, color),
                     responses * (victorIconSize + iconGap), victorIconSize);
               }
-              finalImage.blit(image, responses * (victorIconSize + iconGap), 0);
+              finalImage.blit(
+                  image, responses * (victorIconSize + iconGap), underlineSize);
             }
           } catch (err) {
             console.error(err);

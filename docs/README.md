@@ -1261,6 +1261,7 @@ Hunger Games simulator.
         * [~sendAtTime(channel, one, two, time)](#HungryGames..sendAtTime) ℗
         * [~createGame(msg, id, [silent], [cb])](#HungryGames..createGame) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~fetchPatreonSettings(players, cId, gId, [cb])](#HungryGames..fetchPatreonSettings) ℗
+            * [~onCheckPatron(err, info, p)](#HungryGames..fetchPatreonSettings..onCheckPatron) ℗
             * [~onPermResponse(err, info, p)](#HungryGames..fetchPatreonSettings..onPermResponse) ℗
             * [~onSettingResponse(err, info, p, setting)](#HungryGames..fetchPatreonSettings..onSettingResponse) ℗
         * [~getAllPlayers(members, excluded, bots, included, excludeByDefault)](#HungryGames..getAllPlayers) ⇒ [<code>Array.&lt;Player&gt;</code>](#HungryGames..Player) ℗
@@ -2488,8 +2489,24 @@ data. This is asyncronous.
 
 
 * [~fetchPatreonSettings(players, cId, gId, [cb])](#HungryGames..fetchPatreonSettings) ℗
+    * [~onCheckPatron(err, info, p)](#HungryGames..fetchPatreonSettings..onCheckPatron) ℗
     * [~onPermResponse(err, info, p)](#HungryGames..fetchPatreonSettings..onPermResponse) ℗
     * [~onSettingResponse(err, info, p, setting)](#HungryGames..fetchPatreonSettings..onSettingResponse) ℗
+
+<a name="HungryGames..fetchPatreonSettings..onCheckPatron"></a>
+
+#### fetchPatreonSettings~onCheckPatron(err, info, p) ℗
+After retreiving whether the player is an actual patron (ignores
+overrides), then fetch permissions from them (uses overrides).
+
+**Kind**: inner method of [<code>fetchPatreonSettings</code>](#HungryGames..fetchPatreonSettings)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| err | <code>string</code> | Error string or null. |
+| info | <code>Object</code> | Permission information. |
+| p | <code>number</code> | Player object to update. |
 
 <a name="HungryGames..fetchPatreonSettings..onPermResponse"></a>
 
@@ -4691,6 +4708,7 @@ Music and audio related commands.
         * [~enqueueSong(broadcast, song, msg, info)](#Music..enqueueSong) ℗
         * [~startPlaying(broadcast)](#Music..startPlaying) ℗
         * [~makeBroadcast(broadcast)](#Music..makeBroadcast) ℗
+            * [~onDC()](#Music..makeBroadcast..onDC) ℗
         * [~startStream(input, done, progress)](#Music..startStream) ℗
         * [~endSong(broadcast)](#Music..endSong) ℗
         * [~skipSong(broadcast)](#Music..skipSong) ℗
@@ -5130,6 +5148,14 @@ playing the audio.
 | --- | --- | --- |
 | broadcast | [<code>Broadcast</code>](#Music..Broadcast) | The object storing all relevant information. |
 
+<a name="Music..makeBroadcast..onDC"></a>
+
+#### makeBroadcast~onDC() ℗
+Fires on when voice connection is disconnected. Cleans up anything that
+could be left behind.
+
+**Kind**: inner method of [<code>makeBroadcast</code>](#Music..makeBroadcast)  
+**Access**: private  
 <a name="Music..startStream"></a>
 
 ### Music~startStream(input, done, progress) ℗

@@ -419,6 +419,10 @@ function Patreon() {
         cb(null, {status: false, message: 'User is not currently pledged.'});
         return;
       }
+      if (!perm) {
+        cb(null, {status: true, message: 'User is patron.'});
+        return;
+      }
       for (let i = 0; i < patreonTiers.length; i++) {
         for (let j = 0; j < patreonTiers[i][1].length; j++) {
           if (patreonTiers[i][1][j] == perm) {
