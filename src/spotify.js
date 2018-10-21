@@ -120,7 +120,6 @@ function Spotify() {
   function startMusic(msg, song) {
     msg.content = msg.prefix + 'play ' + song.name + ' by ' + song.artist +
         ' && seek ' + Math.round(song.progress / 1000);
-    console.log(msg.content);
     self.command.trigger('play', msg);
   }
 }
