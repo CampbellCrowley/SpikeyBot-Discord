@@ -2,11 +2,13 @@
 // Author: Campbell Crowley (web@campbellcrowley.com)
 const fs = require('fs');
 const http = require('http');
+const https = require('https');
 const socketIo = require('socket.io');
 const sql = require('mysql');
 const auth = require('../../auth.js');
 const patreon = require('patreon');
 const mkdirp = require('mkdirp'); // mkdir -p
+const querystring = require('querystring');
 
 const PATREON_CLIENT_ID = auth.patreonClientId;
 const PATREON_CLIENT_SECRET = auth.patreonClientSecret;
@@ -72,6 +74,26 @@ function WebAccount() {
    */
   let patreonSettingsTemplate = {};
 
+  const defaultSpotifyTokenReq = {
+    protocol: 'https:',
+    host: 'accounts.spotify.com',
+    path: '/api/token',
+    method: 'POST',
+    headers: {
+      'Authorization':
+          'Basic ' + (new Buffer(auth.spotifyId + ':' + auth.spotifySecret)
+              .toString('base64')),
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+  };
+
+  const defaultSpotifyUserReq = {
+    protocol: 'https:',
+    host: 'api.spotify.com',
+    path: '/v1/me',
+    method: 'GET',
+  };
+
   /**
    * Parse template from file.
    * @see {@link WebAccount~patreonSettingsTemplate}
@@ -110,8 +132,11 @@ function WebAccount() {
   this.initialize = function() {
     setTimeout(() => {
       app.listen(self.common.isRelease ? 8014 : 8015);
+      self.bot.accounts = toExport;
     });
   };
+
+  let toExport = {};
 
   /**
    * Causes a full shutdown of all servers.
@@ -128,6 +153,7 @@ function WebAccount() {
   this.unloadable = function() {
     return true;
   };
+
 
   /**
    * The object describing the connection with the SQL server.
@@ -207,40 +233,102 @@ function WebAccount() {
         cb('Not signed in.', null);
         return;
       }
-      const toSend = sqlCon.format(
-          'SELECT * FROM Discord WHERE id=? LIMIT 1', [userData.id]);
-      sqlCon.query(toSend, (err, rows) => {
-        if (err) {
-          self.error(err);
-          cb('Server Error', null);
-          return;
-        }
-        const toSend2 = sqlCon.format(
-            'SELECT * FROM Patreon WHERE id=? LIMIT 1', [rows[0].patreonId]);
-        sqlCon.query(toSend2, (err, rows2) => {
+      fetchDiscordSQL();
+      /**
+       * Fetch the Discord table data from our SQL server.
+       * @private
+       */
+      function fetchDiscordSQL() {
+        const toSend = sqlCon.format(
+            'SELECT * FROM Discord WHERE id=? LIMIT 1', [userData.id]);
+        sqlCon.query(toSend, (err, rows) => {
           if (err) {
             self.error(err);
             cb('Server Error', null);
             return;
           }
-          self.client.users.fetch(userData.id)
-              .then((user) => {
-                let data = rows[0];
-                data.username = user.username;
-                data.avatarURL = user.displayAvatarURL();
-                data.createdAt = user.createdAt;
-                data.discriminator = user.discriminator;
-                data.activity = user.presence.activity;
-                data.patreon = rows2[0];
-                cb(null, data);
-              })
-              .catch((err) => {
-                cb('Server Error', null);
-                self.error('Failed to fetch user data from discord.');
-                console.error(err);
-              });
+          fetchPatreonSQL((rows && rows[0]) || {});
         });
-      });
+      }
+      /**
+       * Fetch the Patreon info from our SQL server.
+       * @private
+       *
+       * @param {Object} data The data previously received to add the Patreon
+       * info onto.
+       */
+      function fetchPatreonSQL(data) {
+        if (!data.patreonId) {
+          fetchSpotifySQL(data);
+          return;
+        }
+        const toSend = sqlCon.format(
+            'SELECT * FROM Patreon WHERE id=? LIMIT 1', [data.patreonId]);
+        sqlCon.query(toSend, (err, rows) => {
+          if (err) {
+            self.error(err);
+            cb('Server Error', null);
+            return;
+          }
+          if (rows && rows.length > 0) {
+            data.patreon = rows[0];
+          }
+          fetchSpotifySQL(data);
+        });
+      }
+      /**
+       * Fetch the Spotify info from our SQL server.
+       * @private
+       *
+       * @param {Object} data The data previously received to add the Spotify
+       * info onto.
+       */
+      function fetchSpotifySQL(data) {
+        if (!data.spotifyId) {
+          fetchDiscordBot(data);
+          return;
+        }
+        const toSend = sqlCon.format(
+            'SELECT * FROM Spotify WHERE id=? LIMIT 1', [data.spotifyId]);
+        sqlCon.query(toSend, (err, rows) => {
+          if (err) {
+            self.error(err);
+            cb('Server Error', null);
+            return;
+          }
+          if (rows && rows.length > 0) {
+            data.spotify = {
+              id: rows[0].id,
+              haveToken: rows[0].access_token !== null,
+              name: rows[0].name,
+            };
+          }
+          fetchDiscordBot(data);
+        });
+      }
+      /**
+       * Fetch the Discord user information through the Discord bot API.
+       * @private
+       *
+       * @param {Object} data The data previously received to add the Discord
+       * user info onto, then send to the client.
+       */
+      function fetchDiscordBot(data) {
+        self.client.users.fetch(userData.id)
+            .then((user) => {
+              data.username = user.username;
+              data.avatarURL = user.displayAvatarURL();
+              data.createdAt = user.createdAt;
+              data.discriminator = user.discriminator;
+              data.activity = user.presence.activity;
+              cb(null, data);
+            })
+            .catch((err) => {
+              cb('Server Error', null);
+              self.error('Failed to fetch user data from discord.');
+              console.error(err);
+            });
+      }
     });
 
     socket.on('linkPatreon', (userData, code, cb) => {
@@ -258,6 +346,22 @@ function WebAccount() {
         return;
       }
       updateUserPatreonId(userData.id, null, cb);
+    });
+    socket.on('linkSpotify', (userData, code, cb) => {
+      if (typeof cb !== 'function') cb = function() {};
+      if (!userData) {
+        cb('Not signed in.', null);
+        return;
+      }
+      validateSpotifyCode(code, userData.id, socket.id, cb);
+    });
+    socket.on('unlinkSpotify', (userData, cb) => {
+      if (typeof cb !== 'function') cb = function() {};
+      if (!userData) {
+        cb('Not signed in.', null);
+        return;
+      }
+      updateUserSpotifyId(userData.id, null, cb);
     });
     socket.on('getSettingsTemplate', (userData, cb) => {
       if (typeof cb !== 'function') {
@@ -339,6 +443,139 @@ function WebAccount() {
         });
   }
   /**
+   * Validate a code received from the client, then use it to retrieve the user
+   * ID associated with it.
+   * @private
+   *
+   * @param {string} code The code received from Patreon OAuth2 flow.
+   * @param {string|number} userid The Discord user ID associated with this code
+   * in order to link accounts.
+   * @param {string} ip The unique identifier for this connection for logging
+   * purposes.
+   * @param {Function} cb Callback with a single parameter. The parameter is a
+   * string if there was an error, or null if no error.
+   */
+  function validateSpotifyCode(code, userid, ip, cb) {
+    let req = https.request(defaultSpotifyTokenReq, (res) => {
+      let content = '';
+      res.on('data', (chunk) => {
+        content += chunk;
+      });
+      res.on('end', () => {
+        if (res.statusCode == 200) {
+          handleSpotifyTokenResponse(userid, content, ip, cb);
+        } else {
+          self.common.error(content, ip);
+          cb('Internal Server Error');
+          return;
+        }
+      });
+    });
+    req.end(querystring.stringify({
+      code: code,
+      redirect_uri: redirectURL,
+      grant_type: 'authorization_code',
+    }));
+  }
+
+  /**
+   * Handle the response after successfully requesting the user's tokens.
+   * @private
+   *
+   * @param {string|number} userid Discord user id.
+   * @param {string} content The response from Spotify.
+   * @param {string} ip Unique identifier for the client that caused this to
+   * happen. Used for logging.
+   * @param {Function} cb Callback with single parameter, string if error, null
+   * if no error.
+   */
+  function handleSpotifyTokenResponse(userid, content, ip, cb) {
+    let parsed;
+    try {
+      parsed = JSON.parse(content);
+    } catch (err) {
+      cb('Internal Server Error');
+      self.common.error('Failed to parse token response from Spotify.', ip);
+      console.error(err);
+      return;
+    }
+    let vals = {
+      accessToken: parsed.access_token,
+      expiresIn: parsed.expires_in,
+      expiresAt: dateToSQL(Date.now() + parsed.expires_in * 1000),
+    };
+    if (parsed.refresh_token) {
+      vals.refreshToken = parsed.refresh_token;
+    }
+    let req = https.request(defaultSpotifyUserReq, (res) => {
+      let content = '';
+      res.on('data', (chunk) => {
+        content += chunk;
+      });
+      res.on('end', () => {
+        if (res.statusCode == 200) {
+          handleSpotifyUserResponse(userid, content, vals, ip, cb);
+        } else {
+          self.common.error(content, ip);
+          cb('Internal Server Error');
+          return;
+        }
+      });
+    });
+    req.setHeader('Authorization', 'Bearer ' + vals.accessToken);
+    req.end();
+  }
+
+  /**
+   * Handle the response after successfully requesting the user's basic account
+   * information.
+   * @private
+   *
+   * @param {string|number} userid Discord user id.
+   * @param {string} content The response from Spotify.
+   * @param {{accessToken: string, expiresIn: number, expiresAt: string,
+   * refreshToken: string}} vals The object storing user session information.
+   * @param {string} ip Unique identifier for the client that caused this to
+   * happen. Used for logging.
+   * @param {Function} cb Callback with single parameter, string if error, null
+   * if no error.
+   */
+  function handleSpotifyUserResponse(userid, content, vals, ip, cb) {
+    let parsed;
+    try {
+      parsed = JSON.parse(content);
+    } catch (err) {
+      self.common.error('Failed to parse user response from Spotify.', ip);
+      console.error(err);
+      cb('Internal Server Error');
+      return;
+    }
+    vals.id = parsed.id;
+    vals.name = parsed.display_name;
+    const toSend = sqlCon.format(
+        'INSERT INTO Spotify (id,name,accessToken,refreshToken,tokenExpiresAt' +
+            ') VALUES (?,?,?,?,?) ON DUPLICATE KEY UPDATE accessToken=?,token' +
+            'ExpiresAt=?',
+        [
+          vals.id,
+          vals.name,
+          vals.accessToken,
+          vals.refreshToken,
+          vals.expiresAt,
+          vals.accessToken,
+          vals.expiresAt,
+        ]);
+    sqlCon.query(toSend, (err, res) => {
+      if (err) {
+        self.common.error('Failed to update Spotify table with user data.', ip);
+        console.error(err);
+        cb('Internal Server Error');
+        return;
+      }
+      updateUserSpotifyId(userid, vals.id, cb);
+    });
+  }
+  /**
    * Update our Discord table with the retrieved patreon account ID for the
    * Discord user.
    * @private
@@ -362,6 +599,63 @@ function WebAccount() {
         cb(null);
       }
     });
+  }
+  /**
+   * Update our Discord table with the retrieved spotify account ID for the
+   * Discord user. Deletes row from Spotify table if the userId is falsey.
+   * @private
+   *
+   * @param {string|number} userid The Discord ID of the user to link to the
+   * patreonid.
+   * @param {string|number} spotifyid The Spotify id of the account to link to
+   * the Discord ID.
+   * @param {Function} cb Callback with single argument that is string if error,
+   * or null if no error.
+   */
+  function updateUserSpotifyId(userid, spotifyid, cb) {
+    if (!spotifyid) {
+      const toSendGet =
+          sqlCon.format('SELECT spotifyId FROM Discord WHERE id=?', [userid]);
+      sqlCon.query(toSendGet, (err, rows) => {
+        if (err) {
+          self.common.error('Failed to fetch spotifyId from Discord table.');
+          console.log(err);
+          cb('Internal Server Error');
+        } else {
+          const toSend2 = sqlCon.format(
+              'DELETE FROM Spotify WHERE id=?', [rows[0].spotifyId]);
+          sqlCon.query(toSend2, (err, rows) => {
+            if (err) {
+              self.common.error(
+                  'Failed to delete spotifyId from Spotify table.');
+              console.log(err);
+              cb('Internal Server Error');
+            } else {
+              setId();
+            }
+          });
+        }
+      });
+    } else {
+      setId();
+    }
+
+    /**
+     * Send request to sql server.
+     */
+    function setId() {
+      const toSend = sqlCon.format(
+          'UPDATE Discord SET spotifyId=? WHERE id=?', [spotifyid, userid]);
+      sqlCon.query(toSend, function(err, response) {
+        if (err) {
+          self.common.error('Failed to update spotifyId in Discord table.');
+          console.log(err);
+          cb('Internal Server Error');
+        } else {
+          cb(null);
+        }
+      });
+    }
   }
   /**
    * Fetch a user's current patreon settings from file.
@@ -500,6 +794,114 @@ function WebAccount() {
       }
     }
     fs.readFile(filename, makeDirectory);
+  }
+
+  /**
+   * Get a current access token for a given discord user to make a request to
+   * the Spotify API.
+   * @public
+   *
+   * @param {string|number} uId The Discord user id to get the token for.
+   * @param {Function} cb Callback with a single argument that is the token, or
+   * null if no token is available.
+   */
+  toExport.getSpotifyToken = function(uId, cb) {
+    let firstAttempt = true;
+    let sId;
+    const toSend = sqlCon.format(
+        'SELECT spotifyId FROM Discord WHERE id=? LIMIT 1', [uId]);
+    sqlCon.query(toSend, (err, rows) => {
+      if (err) {
+        self.error(err);
+        cb(null);
+        return;
+      }
+      if (rows[0]) {
+        fetchSpotifySQL(rows[0].spotifyId);
+      } else {
+        fetchSpotifySQL(null);
+      }
+    });
+    /**
+     * Request the user's Spotify info from our SQL server.
+     * @private
+     *
+     * @param {string} id The spotify ID of the user to fetch.
+     */
+    function fetchSpotifySQL(id) {
+      if (!id) {
+        cb(null);
+        return;
+      }
+      sId = id;
+      const toSend =
+          sqlCon.format('SELECT * FROM Spotify WHERE id=? LIMIT 1', [sId]);
+      sqlCon.query(toSend, (err, rows) => {
+        if (err) {
+          self.error(err);
+          cb(null);
+          return;
+        }
+        let expiresAt = new Date(rows[0].tokenExpiresAt);
+        if (Date.now() - expiresAt.getTime() > 0) {
+          refreshSpotifyToken(rows[0].refreshToken);
+        } else {
+          cb(rows[0].accessToken);
+        }
+      });
+    }
+    /**
+     * Use the user's refresh token to request a new access token. Only
+     * attempted once.
+     * @private
+     *
+     * @param {string} token The refresh token to use.
+     */
+    function refreshSpotifyToken(token) {
+      if (!firstAttempt || !token) {
+        cb(null);
+        return;
+      }
+      firstAttempt = false;
+      let req = https.request(defaultSpotifyTokenReq, (res) => {
+        let content = '';
+        res.on('data', (chunk) => {
+          content += chunk;
+        });
+        res.on('end', () => {
+          if (res.statusCode == 200) {
+            handleSpotifyTokenResponse(uId, content, null, (err) => {
+              if (err) {
+                cb(null);
+              } else {
+                fetchSpotifySQL(sId);
+              }
+            });
+          } else {
+            self.error(content);
+            cb(null);
+            return;
+          }
+        });
+      });
+      req.end(querystring.stringify({
+        refresh_token: token,
+        grant_type: 'refresh_token',
+      }));
+    }
+  };
+  /**
+   * Convert the given date into a format that SQL can understand.
+   * @private
+   * @param {*} date Something that `new Date()` can interpret.
+   * @return {string} Formatted Datetime string not including fractions of a
+   * second.
+   */
+  function dateToSQL(date) {
+    date = new Date(date);
+    return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' +
+        date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' +
+        date.getSeconds();
   }
 }
 

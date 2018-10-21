@@ -453,6 +453,22 @@
               "result": "The bot will fetch lyrics of \"Rap God\" by Eminem from Genius.com and send them to you in the chat."
             }
           ]
+        },
+        {
+          "command": "spotify 'mention'",
+          "description": "Attempt to lookup what the mentioned user is listening to on Spotify, and then play it. The account to lookup must have connected their account at <a href=\"https://www.spikeybot.com/account/\">spikeybot.com/account</a>.",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "spotify",
+              "result": "Play what you are listening to on Spotify, through the bot."
+            },
+            {
+              "description": "Basic Usage",
+              "command": "spotify @SpikeyRobot",
+              "result": "Play what SpikeyRobot is listening to on Spotify, through the bot."
+            }
+          ]
         }
       ]
     },

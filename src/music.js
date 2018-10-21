@@ -158,6 +158,7 @@ function Music() {
     fec: true,
     bitrate: 'auto',
     volume: 0.5,
+    plp: 0.01,
   };
 
   /** @inheritdoc */
@@ -336,6 +337,7 @@ function Music() {
 
   /**
    * Format the info response from ytdl into a human readable format.
+   * @TODO: Fix the playtime if audio seeking was used.
    *
    * @private
    * @param {Object} info The info received from ytdl about the song.
@@ -417,11 +419,13 @@ function Music() {
    * @param {Music~Broadcast} broadcast The broadcast storage container.
    * @param {string} song The song that was requested.
    * @param {Discord~Message} msg The message that requested the song.
-   * @param {Object} info The info from ytdl about the song.
+   * @param {Object} [info] The info from ytdl about the song.
+   * @param {number} [seek=0] The number of seconds into a song to start
+   * playing.
    * @fires SpikeyBot~Command#stop
    */
-  function enqueueSong(broadcast, song, msg, info) {
-    broadcast.queue.push({request: msg, song: song, info: info});
+  function enqueueSong(broadcast, song, msg, info, seek) {
+    broadcast.queue.push({request: msg, song: song, info: info, seek: seek});
     if (broadcast.voice && broadcast.voice.channel) {
       try {
         startPlaying(broadcast);
@@ -484,7 +488,7 @@ function Music() {
     }
     broadcast.isPlaying = true;
 
-    if (typeof broadcast.current.info !== 'undefined') {
+    if (broadcast.current.info) {
       let embed = formatSongInfo(broadcast.current.info);
       embed.setTitle(
           'Now playing [' + broadcast.queue.length + ' left in queue]');
@@ -554,12 +558,18 @@ function Music() {
     function onDC() {
       if (broadcast.current.readable) broadcast.current.readable.destroy();
       if (broadcast.current.thread) broadcast.current.thread.kill();
+      if (broadcast.dispatcher) broadcast.dispatcher.destroy();
+      if (broadcast.broadcast && broadcast.broadcast.dispatcher) {
+        broadcast.broadcast.dispatcher.destroy();
+      }
     }
 
     // Setup readable stream for audio data.
     broadcast.current.readable = new Readable();
     broadcast.current.readable._read = function() {};
     broadcast.broadcast = self.client.createVoiceBroadcast();
+    streamOptions.seek = broadcast.current.seek;
+
     broadcast.broadcast.play(broadcast.current.readable, streamOptions);
     broadcast.dispatcher =
         broadcast.voice.play(broadcast.broadcast, streamOptions);
@@ -788,11 +798,14 @@ function Music() {
       reply(msg, 'You aren\'t in a voice channel!');
     } else {
       let song = msg.text;
+      let seek = 0;
       if (!song.startsWith(' ')) {
         reply(msg, 'Please specify a song to play.');
         return;
       } else {
-        song = song.replace(' ', '');
+        seek = song.match(/&& seek\D*(\d+)\D*$/);
+        if (seek) seek = seek[1];
+        song = song.replace(/^\s|\s*&&\s*seek.*$/g, '');
       }
       if (!broadcasts[msg.guild.id]) {
         reply(msg, 'Loading ' + song + '\nPlease wait...')
@@ -802,7 +815,7 @@ function Music() {
           skips: {},
           isPlaying: false,
         };
-        enqueueSong(broadcasts[msg.guild.id], song, msg);
+        enqueueSong(broadcasts[msg.guild.id], song, msg, null, seek);
       } else {
         if (special[song]) {
           let embed = new self.Discord.MessageEmbed();
@@ -811,7 +824,7 @@ function Music() {
               (broadcasts[msg.guild.id].queue.length + 1) + ' in queue]');
           embed.setColor([50, 200, 255]);
           msg.channel.send(mention(msg), embed);
-          enqueueSong(broadcasts[msg.guild.id], song, msg);
+          enqueueSong(broadcasts[msg.guild.id], song, msg, null, seek);
         } else {
           let loadingMsg;
           reply(msg, 'Loading ' + song + '\nPlease wait...')
@@ -833,7 +846,7 @@ function Music() {
                     'Enqueuing ' + song + ' [' +
                     (broadcasts[msg.guild.id].queue.length + 1) + ' in queue]');
                 msg.channel.send(mention(msg), embed);
-                enqueueSong(broadcasts[msg.guild.id], song, msg, info);
+                enqueueSong(broadcasts[msg.guild.id], song, msg, info, seek);
               }
             }
             if (loadingMsg) loadingMsg.delete();

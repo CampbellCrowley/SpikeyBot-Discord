@@ -36,6 +36,10 @@ Patreon status of users.</p>
 <dt><a href="#SpikeyBot">SpikeyBot</a></dt>
 <dd><p>Main class that manages the bot.</p>
 </dd>
+<dt><a href="#Spotify">Spotify</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
+<dd><p>Attempts to play what a user is playing on Spotify, to a voice
+channel.</p>
+</dd>
 <dt><a href="#SubModule">SubModule</a></dt>
 <dd><p>Base class for all Sub-Modules.</p>
 </dd>
@@ -4705,7 +4709,7 @@ Music and audio related commands.
         * [~getRemainingSeconds(info, dispatcher)](#Music..getRemainingSeconds) ⇒ <code>number</code> ℗
         * [~formatPlaytime(seconds)](#Music..formatPlaytime) ⇒ <code>string</code> ℗
         * [~formNum(num)](#Music..formNum) ⇒ <code>string</code> ℗
-        * [~enqueueSong(broadcast, song, msg, info)](#Music..enqueueSong) ℗
+        * [~enqueueSong(broadcast, song, msg, [info], [seek])](#Music..enqueueSong) ℗
         * [~startPlaying(broadcast)](#Music..startPlaying) ℗
         * [~makeBroadcast(broadcast)](#Music..makeBroadcast) ℗
             * [~onDC()](#Music..makeBroadcast..onDC) ℗
@@ -5007,7 +5011,7 @@ Options to pass into the stream dispatcher.
 [StreamOptions](https://discord.js.org/#/docs/main/master/typedef/StreamOptions)
 
 **Kind**: inner constant of [<code>Music</code>](#Music)  
-**Default**: <code>{&quot;fec&quot;:true,&quot;bitrate&quot;:&quot;auto&quot;,&quot;volume&quot;:0.5}</code>  
+**Default**: <code>{&quot;fec&quot;:true,&quot;bitrate&quot;:&quot;auto&quot;,&quot;volume&quot;:0.5,&quot;plp&quot;:0.01}</code>  
 **Access**: private  
 <a name="Music..mention"></a>
 
@@ -5061,6 +5065,7 @@ Format the info response from ytdl into a human readable format.
 **Kind**: inner method of [<code>Music</code>](#Music)  
 **Returns**: <code>Discord~MessageEmbed</code> - The formatted song info.  
 **Access**: private  
+**Todo:**: Fix the playtime if audio seeking was used.  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -5109,19 +5114,20 @@ Add commas between digits on large numbers.
 
 <a name="Music..enqueueSong"></a>
 
-### Music~enqueueSong(broadcast, song, msg, info) ℗
+### Music~enqueueSong(broadcast, song, msg, [info], [seek]) ℗
 Add a song to the given broadcast's queue and start playing it not already.
 
 **Kind**: inner method of [<code>Music</code>](#Music)  
 **Emits**: <code>SpikeyBot~Command#event:stop</code>  
 **Access**: private  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| broadcast | [<code>Broadcast</code>](#Music..Broadcast) | The broadcast storage container. |
-| song | <code>string</code> | The song that was requested. |
-| msg | <code>Discord~Message</code> | The message that requested the song. |
-| info | <code>Object</code> | The info from ytdl about the song. |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| broadcast | [<code>Broadcast</code>](#Music..Broadcast) |  | The broadcast storage container. |
+| song | <code>string</code> |  | The song that was requested. |
+| msg | <code>Discord~Message</code> |  | The message that requested the song. |
+| [info] | <code>Object</code> |  | The info from ytdl about the song. |
+| [seek] | <code>number</code> | <code>0</code> | The number of seconds into a song to start playing. |
 
 <a name="Music..startPlaying"></a>
 
@@ -7346,6 +7352,277 @@ Load prefixes from file for the given guilds asynchronously.
 | --- | --- | --- |
 | guilds | <code>Array.&lt;Discord~Guild&gt;</code> | Array of guilds to fetch the custom prefixes of. |
 
+<a name="Spotify"></a>
+
+## Spotify ⇐ [<code>SubModule</code>](#SubModule)
+Attempts to play what a user is playing on Spotify, to a voice
+channel.
+
+**Kind**: global class  
+**Extends**: [<code>SubModule</code>](#SubModule)  
+**Emits**: <code>SpikeyBot~Command#event:play</code>  
+
+* [Spotify](#Spotify) ⇐ [<code>SubModule</code>](#SubModule)
+    * _instance_
+        * [.helpMessage](#SubModule+helpMessage) : <code>string</code> \| <code>Discord~MessageEmbed</code>
+        * [.prefix](#SubModule+prefix) : <code>string</code>
+        * [.myPrefix](#SubModule+myPrefix) : <code>string</code>
+        * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
+        * [.Discord](#SubModule+Discord) : <code>Discord</code>
+        * [.client](#SubModule+client) : <code>Discord~Client</code>
+        * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
+        * [.common](#SubModule+common) : [<code>Common</code>](#Common)
+        * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
+        * *[.myName](#SubModule+myName) : <code>string</code>*
+        * [.initialized](#SubModule+initialized) : <code>boolean</code>
+        * [.commit](#SubModule+commit) : <code>string</code>
+        * [.loadTime](#SubModule+loadTime) : <code>number</code>
+        * [.initialize()](#SubModule+initialize)
+        * [.begin(prefix, Discord, client, command, common, bot)](#SubModule+begin)
+        * [.end()](#SubModule+end)
+        * [.log(msg)](#SubModule+log)
+        * [.debug(msg)](#SubModule+debug)
+        * [.warn(msg)](#SubModule+warn)
+        * [.error(msg)](#SubModule+error)
+        * [.shutdown()](#SubModule+shutdown)
+        * *[.save([opt])](#SubModule+save)*
+        * [.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>
+    * _inner_
+        * [~commandSpotify(msg)](#Spotify..commandSpotify) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~startMusic(msg, song)](#Spotify..startMusic) ℗
+
+<a name="SubModule+helpMessage"></a>
+
+### spotify.helpMessage : <code>string</code> \| <code>Discord~MessageEmbed</code>
+The help message to show the user in the main help message.
+
+**Kind**: instance property of [<code>Spotify</code>](#Spotify)  
+<a name="SubModule+prefix"></a>
+
+### spotify.prefix : <code>string</code>
+The main prefix in use for this bot. Only available after begin() is
+called.
+
+**Kind**: instance property of [<code>Spotify</code>](#Spotify)  
+**Read only**: true  
+<a name="SubModule+myPrefix"></a>
+
+### spotify.myPrefix : <code>string</code>
+The prefix this submodule uses. Formed by prepending this.prefix to
+this.postPrefix. this.postPrefix must be defined before begin(), otherwise
+it is ignored.
+
+**Kind**: instance property of [<code>Spotify</code>](#Spotify)  
+**Read only**: true  
+<a name="SubModule+postPrefix"></a>
+
+### *spotify.postPrefix : <code>string</code>*
+The postfix for the global prefix for this subModule. Must be defined
+before begin(), otherwise it is ignored.
+
+**Kind**: instance abstract property of [<code>Spotify</code>](#Spotify)  
+**Default**: <code>&quot;&quot;</code>  
+<a name="SubModule+Discord"></a>
+
+### spotify.Discord : <code>Discord</code>
+The current Discord object instance of the bot.
+
+**Kind**: instance property of [<code>Spotify</code>](#Spotify)  
+<a name="SubModule+client"></a>
+
+### spotify.client : <code>Discord~Client</code>
+The current bot client.
+
+**Kind**: instance property of [<code>Spotify</code>](#Spotify)  
+<a name="SubModule+command"></a>
+
+### spotify.command : [<code>Command</code>](#SpikeyBot..Command)
+The command object for registering command listeners.
+
+**Kind**: instance property of [<code>Spotify</code>](#Spotify)  
+<a name="SubModule+common"></a>
+
+### spotify.common : [<code>Common</code>](#Common)
+The common object.
+
+**Kind**: instance property of [<code>Spotify</code>](#Spotify)  
+<a name="SubModule+bot"></a>
+
+### spotify.bot : [<code>SpikeyBot</code>](#SpikeyBot)
+The parent SpikeyBot instance.
+
+**Kind**: instance property of [<code>Spotify</code>](#Spotify)  
+<a name="SubModule+myName"></a>
+
+### *spotify.myName : <code>string</code>*
+The name of this submodule. Used for differentiating in the log. Should be
+defined before begin().
+
+**Kind**: instance abstract property of [<code>Spotify</code>](#Spotify)  
+**Overrides**: [<code>myName</code>](#SubModule+myName)  
+**Access**: protected  
+<a name="SubModule+initialized"></a>
+
+### spotify.initialized : <code>boolean</code>
+Has this subModule been initialized yet (Has begin() been called).
+
+**Kind**: instance property of [<code>Spotify</code>](#Spotify)  
+**Default**: <code>false</code>  
+**Access**: protected  
+**Read only**: true  
+<a name="SubModule+commit"></a>
+
+### spotify.commit : <code>string</code>
+The commit at HEAD at the time this module was loaded. Essentially the
+version of this submodule.
+
+**Kind**: instance constant of [<code>Spotify</code>](#Spotify)  
+**Access**: public  
+<a name="SubModule+loadTime"></a>
+
+### spotify.loadTime : <code>number</code>
+The time at which this madule was loaded for use in checking if the module
+needs to be reloaded because the file has been modified since loading.
+
+**Kind**: instance constant of [<code>Spotify</code>](#Spotify)  
+**Access**: public  
+<a name="SubModule+initialize"></a>
+
+### spotify.initialize()
+The function called at the end of begin() for further initialization
+specific to the subModule. Must be defined before begin() is called.
+
+**Kind**: instance method of [<code>Spotify</code>](#Spotify)  
+**Overrides**: [<code>initialize</code>](#SubModule+initialize)  
+**Access**: protected  
+<a name="SubModule+begin"></a>
+
+### spotify.begin(prefix, Discord, client, command, common, bot)
+Initialize this submodule.
+
+**Kind**: instance method of [<code>Spotify</code>](#Spotify)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| prefix | <code>string</code> | The global prefix for this bot. |
+| Discord | <code>Discord</code> | The Discord object for the API library. |
+| client | <code>Discord~Client</code> | The client that represents this bot. |
+| command | [<code>Command</code>](#SpikeyBot..Command) | The command instance in which to register command listeners. |
+| common | [<code>Common</code>](#Common) | Class storing common functions. |
+| bot | [<code>SpikeyBot</code>](#SpikeyBot) | The parent SpikeyBot instance. |
+
+<a name="SubModule+end"></a>
+
+### spotify.end()
+Trigger subModule to shutdown and get ready for process terminating.
+
+**Kind**: instance method of [<code>Spotify</code>](#Spotify)  
+**Access**: public  
+<a name="SubModule+log"></a>
+
+### spotify.log(msg)
+Log using common.log, but automatically set name.
+
+**Kind**: instance method of [<code>Spotify</code>](#Spotify)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+debug"></a>
+
+### spotify.debug(msg)
+Log using common.logDebug, but automatically set name.
+
+**Kind**: instance method of [<code>Spotify</code>](#Spotify)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+warn"></a>
+
+### spotify.warn(msg)
+Log using common.logWarning, but automatically set name.
+
+**Kind**: instance method of [<code>Spotify</code>](#Spotify)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+error"></a>
+
+### spotify.error(msg)
+Log using common.error, but automatically set name.
+
+**Kind**: instance method of [<code>Spotify</code>](#Spotify)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+shutdown"></a>
+
+### spotify.shutdown()
+Shutdown and disable this submodule. Removes all event listeners.
+
+**Kind**: instance method of [<code>Spotify</code>](#Spotify)  
+**Overrides**: [<code>shutdown</code>](#SubModule+shutdown)  
+**Access**: protected  
+<a name="SubModule+save"></a>
+
+### *spotify.save([opt])*
+Saves all data to files necessary for saving current state.
+
+**Kind**: instance abstract method of [<code>Spotify</code>](#Spotify)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [opt] | <code>string</code> | <code>&quot;&#x27;sync&#x27;&quot;</code> | Can be 'async', otherwise defaults to synchronous. |
+
+<a name="SubModule+unloadable"></a>
+
+### spotify.unloadable() ⇒ <code>boolean</code>
+Check if this module is in a state that is ready to be unloaded. If false
+is returned, this module should not be unloaded and doing such may risk
+putting the module into an uncontrollable state.
+
+**Kind**: instance method of [<code>Spotify</code>](#Spotify)  
+**Overrides**: [<code>unloadable</code>](#SubModule+unloadable)  
+**Returns**: <code>boolean</code> - True if can be unloaded, false if cannot.  
+**Access**: public  
+<a name="Spotify..commandSpotify"></a>
+
+### Spotify~commandSpotify(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Lookup what a user is listening to on Spotify, then attempt to play the
+song in the requester's voice channel.
+
+**Kind**: inner method of [<code>Spotify</code>](#Spotify)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message that triggered command. |
+
+<a name="Spotify..startMusic"></a>
+
+### Spotify~startMusic(msg, song) ℗
+Attempt to start playing the given song into a voice channel.
+
+**Kind**: inner method of [<code>Spotify</code>](#Spotify)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that caused this to happen, and to pass into [Command](#SpikeyBot..Command) as context. |
+| song | <code>Object</code> | The current song information. Name is song name, progress is progress into the song in milliseconds. |
+
 <a name="SubModule"></a>
 
 ## SubModule
@@ -8469,12 +8746,18 @@ Manages the account webpage.
         * [~handler(req, res)](#WebAccount..handler) ℗
         * [~socketConnection(socket)](#WebAccount..socketConnection) ℗
         * [~validatePatreonCode(code, userid, ip, cb)](#WebAccount..validatePatreonCode) ℗
+        * [~validateSpotifyCode(code, userid, ip, cb)](#WebAccount..validateSpotifyCode) ℗
+        * [~handleSpotifyTokenResponse(userid, content, ip, cb)](#WebAccount..handleSpotifyTokenResponse) ℗
+        * [~handleSpotifyUserResponse(userid, content, vals, ip, cb)](#WebAccount..handleSpotifyUserResponse) ℗
         * [~updateUserPatreonId(userid, patreonid, cb)](#WebAccount..updateUserPatreonId) ℗
+        * [~updateUserSpotifyId(userid, spotifyid, cb)](#WebAccount..updateUserSpotifyId) ℗
+            * [~setId()](#WebAccount..updateUserSpotifyId..setId)
         * [~getPatreonSettings(userid, cb)](#WebAccount..getPatreonSettings) ℗
         * [~changePatreonSetting(userid, setting, value, cb)](#WebAccount..changePatreonSetting) ℗
             * [~makeDirectory(err, data)](#WebAccount..changePatreonSetting..makeDirectory) ℗
             * [~writeFile(err, file)](#WebAccount..changePatreonSetting..writeFile) ℗
             * [~isInvalid(obj, s, value)](#WebAccount..changePatreonSetting..isInvalid) ⇒ <code>boolean</code> ℗
+        * [~dateToSQL(date)](#WebAccount..dateToSQL) ⇒ <code>string</code> ℗
 
 <a name="SubModule+helpMessage"></a>
 
@@ -8785,6 +9068,54 @@ ID associated with it.
 | ip | <code>string</code> | The unique identifier for this connection for logging purposes. |
 | cb | <code>function</code> | Callback with a single parameter. The parameter is a string if there was an error, or null if no error. |
 
+<a name="WebAccount..validateSpotifyCode"></a>
+
+### WebAccount~validateSpotifyCode(code, userid, ip, cb) ℗
+Validate a code received from the client, then use it to retrieve the user
+ID associated with it.
+
+**Kind**: inner method of [<code>WebAccount</code>](#WebAccount)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| code | <code>string</code> | The code received from Patreon OAuth2 flow. |
+| userid | <code>string</code> \| <code>number</code> | The Discord user ID associated with this code in order to link accounts. |
+| ip | <code>string</code> | The unique identifier for this connection for logging purposes. |
+| cb | <code>function</code> | Callback with a single parameter. The parameter is a string if there was an error, or null if no error. |
+
+<a name="WebAccount..handleSpotifyTokenResponse"></a>
+
+### WebAccount~handleSpotifyTokenResponse(userid, content, ip, cb) ℗
+Handle the response after successfully requesting the user's tokens.
+
+**Kind**: inner method of [<code>WebAccount</code>](#WebAccount)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userid | <code>string</code> \| <code>number</code> | Discord user id. |
+| content | <code>string</code> | The response from Spotify. |
+| ip | <code>string</code> | Unique identifier for the client that caused this to happen. Used for logging. |
+| cb | <code>function</code> | Callback with single parameter, string if error, null if no error. |
+
+<a name="WebAccount..handleSpotifyUserResponse"></a>
+
+### WebAccount~handleSpotifyUserResponse(userid, content, vals, ip, cb) ℗
+Handle the response after successfully requesting the user's basic account
+information.
+
+**Kind**: inner method of [<code>WebAccount</code>](#WebAccount)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userid | <code>string</code> \| <code>number</code> | Discord user id. |
+| content | <code>string</code> | The response from Spotify. |
+| vals | <code>Object</code> | The object storing user session information. |
+| ip | <code>string</code> | Unique identifier for the client that caused this to happen. Used for logging. |
+| cb | <code>function</code> | Callback with single parameter, string if error, null if no error. |
+
 <a name="WebAccount..updateUserPatreonId"></a>
 
 ### WebAccount~updateUserPatreonId(userid, patreonid, cb) ℗
@@ -8800,6 +9131,27 @@ Discord user.
 | patreonid | <code>string</code> \| <code>number</code> | The Patreon id of the account to link to the Discord ID. |
 | cb | <code>function</code> | Callback with single argument that is string if error, or null if no error. |
 
+<a name="WebAccount..updateUserSpotifyId"></a>
+
+### WebAccount~updateUserSpotifyId(userid, spotifyid, cb) ℗
+Update our Discord table with the retrieved spotify account ID for the
+Discord user. Deletes row from Spotify table if the userId is falsey.
+
+**Kind**: inner method of [<code>WebAccount</code>](#WebAccount)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userid | <code>string</code> \| <code>number</code> | The Discord ID of the user to link to the patreonid. |
+| spotifyid | <code>string</code> \| <code>number</code> | The Spotify id of the account to link to the Discord ID. |
+| cb | <code>function</code> | Callback with single argument that is string if error, or null if no error. |
+
+<a name="WebAccount..updateUserSpotifyId..setId"></a>
+
+#### updateUserSpotifyId~setId()
+Send request to sql server.
+
+**Kind**: inner method of [<code>updateUserSpotifyId</code>](#WebAccount..updateUserSpotifyId)  
 <a name="WebAccount..getPatreonSettings"></a>
 
 ### WebAccount~getPatreonSettings(userid, cb) ℗
@@ -8877,6 +9229,20 @@ if everything is fine.
 | obj | <code>Object</code> | The template object to compare the request against. |
 | s | <code>Array.&lt;string&gt;</code> | The array of each setting key that was a part of the request. |
 | value | <code>string</code> \| <code>number</code> | The value to change the setting to. |
+
+<a name="WebAccount..dateToSQL"></a>
+
+### WebAccount~dateToSQL(date) ⇒ <code>string</code> ℗
+Convert the given date into a format that SQL can understand.
+
+**Kind**: inner method of [<code>WebAccount</code>](#WebAccount)  
+**Returns**: <code>string</code> - Formatted Datetime string not including fractions of a
+second.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| date | <code>\*</code> | Something that `new Date()` can interpret. |
 
 <a name="HGWeb"></a>
 
