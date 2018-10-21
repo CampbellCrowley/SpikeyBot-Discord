@@ -209,10 +209,8 @@ function Spotify() {
    */
   function updateFollowingState(msg, userId, songInfo, start = false) {
     checkMusic();
-    console.log('Update');
     if (!start && !music.isSubjugated(msg)) {
       endFollow(msg);
-      console.log('NoUpdate');
       return;
     }
     if (!songInfo) {
@@ -231,7 +229,6 @@ function Spotify() {
           }
           return;
         }
-        console.log('Fetched songInfo');
         songInfo = song;
         makeTimeout();
       });
@@ -247,14 +244,15 @@ function Spotify() {
     function makeTimeout() {
       if (!start && !music.isSubjugated(msg)) {
         endFollow(msg);
-        console.log('Not subjugating');
         return;
       }
       music.clearQueue(msg);
       if (start) {
         music.subjugate(msg);
       }
-      if (songInfo) startMusic(msg, songInfo);
+      if (songInfo && (start || songInfo.progress < 60000)) {
+        startMusic(msg, songInfo);
+      }
       if (following[msg.guild.id] && following[msg.guild.id].timeout) {
         self.client.clearTimeout(following[msg.guild.id].timeout);
       }
@@ -265,13 +263,11 @@ function Spotify() {
       };
 
       if (!songInfo || songInfo.duration) {
-        console.log('Set TIMEOUT');
         let delay = songInfo ? (songInfo.duration - songInfo.progress) : 3000;
         following[msg.guild.id].timeout = self.client.setTimeout(function() {
           updateFollowingState(msg, userId);
         }, delay);
       } else {
-        console.log('Delaying for duration', !songInfo, songInfo.duration);
         following[msg.guild.id].timeout = self.client.setTimeout(function() {
           updateDuration(msg, userId);
         }, 1000);
@@ -325,7 +321,6 @@ function Spotify() {
   function startMusic(msg, song) {
     checkMusic();
     let seek = Math.round(song.progress / 1000 + (song.progress / 1000 / 5));
-    console.log('Starting:', song, seek);
     music.playSong(msg, song.name + ' by ' + song.artist, seek, true);
   }
 
