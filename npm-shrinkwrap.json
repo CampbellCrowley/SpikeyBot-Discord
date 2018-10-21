@@ -1,6 +1,6 @@
 {
   "name": "spikeybot-discord",
-  "version": "1.7.7",
+  "version": "1.7.8",
   "lockfileVersion": 1,
   "requires": true,
   "dependencies": {
@@ -1483,7 +1483,7 @@
       }
     },
     "discord.js": {
-      "version": "github:discordjs/discord.js#e189c1b728d8fd2742acc4d807e7559e807814fd",
+      "version": "github:discordjs/discord.js#01476de58250761ffe5eedc9ee6c9782576ca043",
       "from": "github:discordjs/discord.js",
       "requires": {
         "form-data": "^2.3.2",
@@ -2180,9 +2180,9 @@
       "integrity": "sha512-fWUzNiOnYa126vFAT6TFXd1mhJrvD8IqmQ9ilZPjkLYQfaRreBr5fIUoOpPlWtqaAG64nzoE7u5zSetifab9IA=="
     },
     "fraction.js": {
-      "version": "4.0.9",
-      "resolved": "https://registry.npmjs.org/fraction.js/-/fraction.js-4.0.9.tgz",
-      "integrity": "sha512-qP1sNwdrcA+Vs5TTvGETuaaUmz4Tm48V6Jc+8Oh/gqvkb1d42s99w5kvSrZkIATp/mz3rV4CTef6xINkCofu+A=="
+      "version": "4.0.10",
+      "resolved": "https://registry.npmjs.org/fraction.js/-/fraction.js-4.0.10.tgz",
+      "integrity": "sha512-MHkhk6ggCtwVhKR4pbF+aWrV+8cIVxyWhucESF/1NEcYDgRm4oze/2M09yGTGUQ3WQyZSdcoswJSThc2VGb+KQ=="
     },
     "fragment-cache": {
       "version": "0.2.1",
@@ -3570,14 +3570,14 @@
       "dev": true
     },
     "mathjs": {
-      "version": "5.2.0",
-      "resolved": "https://registry.npmjs.org/mathjs/-/mathjs-5.2.0.tgz",
-      "integrity": "sha512-TwiegJ/k9zXRhyYFjeuBB5Nmw+GXDq4pRC9bcRhRlq654DZLv4QAvp24l9dEk2G2QiU1PfzvP1dd/CCEqsMZ+w==",
+      "version": "5.2.1",
+      "resolved": "https://registry.npmjs.org/mathjs/-/mathjs-5.2.1.tgz",
+      "integrity": "sha512-l+imExQ09Jj6Mz/YX8LbCb3Q32kjvYq5HQmUhMonuwhSU3o5XKvcnW6T6OzXkD+xadH2/Qg4zXC1ejI1MYcJeg==",
       "requires": {
         "complex.js": "2.0.11",
         "decimal.js": "10.0.1",
         "escape-latex": "1.1.1",
-        "fraction.js": "4.0.9",
+        "fraction.js": "4.0.10",
         "javascript-natural-sort": "0.7.1",
         "seed-random": "2.2.0",
         "tiny-emitter": "2.0.2",
@@ -5204,7 +5204,7 @@
     },
     "through": {
       "version": "2.3.8",
-      "resolved": "http://registry.npmjs.org/through/-/through-2.3.8.tgz",
+      "resolved": "https://registry.npmjs.org/through/-/through-2.3.8.tgz",
       "integrity": "sha1-DdTJ/6q8NXlgsbckEV1+Doai4fU=",
       "dev": true
     },
@@ -5622,7 +5622,7 @@
     },
     "xmlbuilder": {
       "version": "9.0.7",
-      "resolved": "http://registry.npmjs.org/xmlbuilder/-/xmlbuilder-9.0.7.tgz",
+      "resolved": "https://registry.npmjs.org/xmlbuilder/-/xmlbuilder-9.0.7.tgz",
       "integrity": "sha1-Ey7mPS7FVlxVfiD0wi35rKaGsQ0="
     },
     "xmlcreate": {

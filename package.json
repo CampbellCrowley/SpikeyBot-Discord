@@ -22,7 +22,7 @@
     "discord.js": "github:discordjs/discord.js",
     "fuzzy-search": "^2.1.0",
     "jimp": "^0.5.4",
-    "mathjs": "^5.2.0",
+    "mathjs": "^5.2.1",
     "mkdirp": "^0.5.1",
     "mysql": "^2.16.0",
     "node-opus": "^0.3.0",
