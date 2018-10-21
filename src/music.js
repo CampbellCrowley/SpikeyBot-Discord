@@ -20,6 +20,7 @@ require('./subModule.js')(Music);
  * @listens SpikeyBot~Command#stop
  * @listens SpikeyBot~Command#stfu
  * @listens SpikeyBot~Command#skip
+ * @listens SpikeyBot~Command#q
  * @listens SpikeyBot~Command#queue
  * @listens SpikeyBot~Command#playing
  * @listens SpikeyBot~Command#remove
@@ -155,6 +156,7 @@ function Music() {
    * @default
    */
   const streamOptions = {
+    passes: 2,
     fec: true,
     bitrate: 'auto',
     volume: 0.5,
@@ -177,6 +179,7 @@ function Music() {
         ['follow', 'unfollow', 'stalk', 'stalkme'], commandFollow, true);
     self.command.on('musicstats', commandStats);
     self.command.on(['volume', 'vol', 'v'], commandVolume, true);
+    self.command.on(['clear', 'empty'], commandClearQueue, true);
 
     self.command.on('kokomo', (msg) => {
       msg.content = msg.prefix + 'play kokomo';
@@ -217,6 +220,7 @@ function Music() {
     self.command.deleteEvent(['follow', 'unfollow', 'stalk', 'stalkme']);
     self.command.deleteEvent('musicstats');
     self.command.deleteEvent(['volume', 'vol', 'v']);
+    self.command.deleteEvent(['clear', 'empty']);
 
     self.client.removeListener('voiceStateUpdate', handleVoiceStateUpdate);
 
@@ -305,7 +309,11 @@ function Music() {
       if (oldState.channel && oldState.channel.members) {
         if (oldState.channel.members.size === 1 &&
             oldState.channel.members.get(self.client.user.id)) {
-          if (pauseBroadcast(broadcast)) {
+          if (broadcast.subjugated) {
+            broadcast.voice.disconnect();
+            delete broadcasts[oldState.guild.id];
+            return;
+          } else if (pauseBroadcast(broadcast)) {
             if (broadcast.current.request &&
                 broadcast.current.request.channel) {
               let prefix = self.bot.getPrefix(oldState.guild.id);
@@ -337,26 +345,29 @@ function Music() {
 
   /**
    * Format the info response from ytdl into a human readable format.
-   * @TODO: Fix the playtime if audio seeking was used.
    *
    * @private
    * @param {Object} info The info received from ytdl about the song.
    * @param {Discord~StreamDispatcher} [dispatcher] The broadcast dispatcher
    * that is currently broadcasting audio. If defined, this will be used to
    * determine remaining play time.
+   * @param {number} [seek=0] The offset to add to totalStreamTime to correct
+   * for starting playback somewhere other than the beginning.
    * @return {Discord~MessageEmbed} The formatted song info.
    */
-  function formatSongInfo(info, dispatcher) {
+  function formatSongInfo(info, dispatcher, seek) {
+    if (!seek) seek = 0;
     let remaining = '';
     let currentTime = '';
     if (dispatcher) {
-      currentTime =
-          '[' + formatPlaytime(
-              Math.round(
-                  (dispatcher.totalStreamTime - dispatcher.pausedTime) /
-                        1000)) +
+      currentTime = '[' + formatPlaytime(
+          Math.round(
+              ((seek * 1000 + dispatcher.totalStreamTime) -
+                                   dispatcher.pausedTime) /
+                                  1000)) +
           '] / ';
-      remaining = ' (' + formatPlaytime(getRemainingSeconds(info, dispatcher)) +
+      remaining = ' (' +
+          formatPlaytime(getRemainingSeconds(info, dispatcher) - seek) +
           ' left)';
     }
     let output = new self.Discord.MessageEmbed();
@@ -385,6 +396,40 @@ function Music() {
     return info._duration_raw -
         Math.round((dispatcher.totalStreamTime - dispatcher.pausedTime) / 1000);
   }
+
+  /**
+   * Get the current progress into the song in the given context.
+   *
+   * @public
+   * @param {Discord~Message} msg The context to use to fetch the info.
+   * @return {?number} Time in seconds, or null if nothing is playing.
+   */
+  this.getProgress = function(msg) {
+    let broadcast = broadcasts[msg.guild.id];
+    if (!broadcast) return null;
+    if (!broadcast.broadcast) return null;
+    if (!broadcast.broadcast.dispatcher) return null;
+    return Math.round(
+        ((broadcast.broadcast.dispatcher.totalStreamTime || 0) -
+                (broadcast.broadcast.dispatcher.pausedTime || 0)) /
+               1000) +
+        (broadcast.current.seek || 0);
+  };
+
+  /**
+   * Get the song's length of the song playing in the given context.
+   *
+   * @public
+   * @param {Discord~Message} msg The context to use to fetch the info.
+   * @return {?number} Time in seconds, or null if nothing is playing.
+   */
+  this.getDuration = function(msg) {
+    let broadcast = broadcasts[msg.guild.id];
+    if (!broadcast) return null;
+    if (!broadcast.current) return null;
+    if (!broadcast.current.info) return null;
+    return broadcast.current.info._duration_raw;
+  };
 
   /**
    * Format the given number of seconds into the playtime format.
@@ -465,11 +510,13 @@ function Music() {
       return;
     }
     if (broadcast.queue.length === 0) {
-      self.client.setTimeout(function() {
-        broadcast.voice.disconnect();
-        delete broadcasts[broadcast.current.request.guild.id];
-      }, 500);
-      broadcast.current.request.channel.send('`Queue is empty!`');
+      if (!broadcast.subjugated) {
+        self.client.setTimeout(function() {
+          broadcast.voice.disconnect();
+          delete broadcasts[broadcast.current.request.guild.id];
+        }, 500);
+        broadcast.current.request.channel.send('`Queue is empty!`');
+      }
       return;
     }
     broadcast.isLoading = true;
@@ -489,10 +536,12 @@ function Music() {
     broadcast.isPlaying = true;
 
     if (broadcast.current.info) {
-      let embed = formatSongInfo(broadcast.current.info);
-      embed.setTitle(
-          'Now playing [' + broadcast.queue.length + ' left in queue]');
-      broadcast.current.request.channel.send(embed);
+      if (!broadcast.subjugated) {
+        let embed = formatSongInfo(broadcast.current.info);
+        embed.setTitle(
+            'Now playing [' + broadcast.queue.length + ' left in queue]');
+        broadcast.current.request.channel.send(embed);
+      }
       broadcast.current.oninfo = function(info) {
         broadcast.isLoading = false;
       };
@@ -500,12 +549,14 @@ function Music() {
       if (special[broadcast.current.song]) {
         if (!special[broadcast.current.song].url) {
           broadcast.isLoading = false;
-          let embed = new self.Discord.MessageEmbed();
-          embed.setTitle(
-              'Now playing [' + broadcast.queue.length + ' left in queue]');
-          embed.setColor([50, 200, 255]);
-          embed.setDescription(broadcast.current.song);
-          broadcast.current.request.channel.send(embed);
+          if (!broadcast.subjugated) {
+            let embed = new self.Discord.MessageEmbed();
+            embed.setTitle(
+                'Now playing [' + broadcast.queue.length + ' left in queue]');
+            embed.setColor([50, 200, 255]);
+            embed.setDescription(broadcast.current.song);
+            broadcast.current.request.channel.send(embed);
+          }
         } else {
           ytdl.getInfo(
               special[broadcast.current.song].url, ytdlOpts, (err, info) => {
@@ -517,11 +568,13 @@ function Music() {
                       'this song!```\n' + err.message.split('\n')[1]);
                 } else {
                   broadcast.current.info = info;
-                  let embed = formatSongInfo(broadcast.current.info);
-                  embed.setTitle(
-                      'Now playing [' + broadcast.queue.length +
-                      ' left in queue]');
-                  broadcast.current.request.channel.send(embed);
+                  if (!broadcast.subjugated) {
+                    let embed = formatSongInfo(broadcast.current.info);
+                    embed.setTitle(
+                        'Now playing [' + broadcast.queue.length +
+                        ' left in queue]');
+                    broadcast.current.request.channel.send(embed);
+                  }
                 }
               });
         }
@@ -529,10 +582,12 @@ function Music() {
         broadcast.current.oninfo = function(info) {
           broadcast.isLoading = false;
           broadcast.current.info = info;
-          let embed = formatSongInfo(broadcast.current.info);
-          embed.setTitle(
-              'Now playing [' + broadcast.queue.length + ' left in queue]');
-          broadcast.current.request.channel.send(embed);
+          if (!broadcast.subjugated) {
+            let embed = formatSongInfo(broadcast.current.info);
+            embed.setTitle(
+                'Now playing [' + broadcast.queue.length + ' left in queue]');
+            broadcast.current.request.channel.send(embed);
+          }
         };
       }
     }
@@ -680,6 +735,18 @@ function Music() {
   }
 
   /**
+   * Skip the current song with the given context.
+   *
+   * @public
+   * @param {Discord~Message} msg The context storing guild information for
+   * looking up.
+   */
+  this.skipSong = function(msg) {
+    if (!broadcasts[msg.guild.id]) return;
+    skipSong(broadcasts[msg.guild.id]);
+  };
+
+  /**
    * Join a voice channel that the user is in.
    *
    * @private
@@ -710,6 +777,9 @@ function Music() {
       self.common.reply(msg, 'Nothing is playing!');
     } else if (!broadcasts[msg.guild.id].dispatcher) {
       self.common.reply(msg, 'Nothing is playing!');
+    } else if (
+      broadcasts[msg.guild.id] && broadcasts[msg.guild.id].subjugated) {
+      reply(msg, 'Music is currently being controlled automatically.');
     } else {
       if (pauseBroadcast(broadcasts[msg.guild.id])) {
         self.common.reply(msg, 'Music paused.');
@@ -718,6 +788,17 @@ function Music() {
       }
     }
   }
+
+  /**
+   * Attempt to pause the current broadcast in a guild.
+   *
+   * @public
+   * @param {Discord~Message} msg The context to lookup guild info.
+   * @return {boolean} True if success, false if failed.
+   */
+  this.pause = function(msg) {
+    return pauseBroadcast(broadcasts[msg.guild.id]);
+  };
 
   /**
    * Cause the given broadcast to be paused.
@@ -751,6 +832,9 @@ function Music() {
       self.common.reply(msg, 'Nothing is playing!');
     } else if (!broadcasts[msg.guild.id].dispatcher) {
       self.common.reply(msg, 'Nothing is playing!');
+    } else if (
+      broadcasts[msg.guild.id] && broadcasts[msg.guild.id].subjugated) {
+      reply(msg, 'Music is currently being controlled automatically.');
     } else {
       if (resumeBroadcast(broadcasts[msg.guild.id])) {
         self.common.reply(msg, 'Music resumed.');
@@ -760,6 +844,17 @@ function Music() {
       }
     }
   }
+
+  /**
+   * Attempt to resume the current broadcast in a guild.
+   *
+   * @public
+   * @param {Discord~Message} msg The context to lookup guild info.
+   * @return {boolean} True if success, false if failed.
+   */
+  this.resume = function(msg) {
+    return resumeBroadcast(broadcasts[msg.guild.id]);
+  };
 
   /**
    * Cause the given broadcast to be resumed.
@@ -794,7 +889,9 @@ function Music() {
    * @listens SpikeyBot~Command#play
    */
   function commandPlay(msg) {
-    if (msg.member.voice.channel === null) {
+    if (broadcasts[msg.guild.id] && broadcasts[msg.guild.id].subjugated) {
+      reply(msg, 'Music is currently being controlled automatically.');
+    } else if (msg.member.voice.channel === null) {
       reply(msg, 'You aren\'t in a voice channel!');
     } else {
       let song = msg.text;
@@ -807,54 +904,127 @@ function Music() {
         if (seek) seek = seek[1];
         song = song.replace(/^\s|\s*&&\s*seek.*$/g, '');
       }
-      if (!broadcasts[msg.guild.id]) {
-        reply(msg, 'Loading ' + song + '\nPlease wait...')
-            .then((msg) => msg.delete(10000));
-        broadcasts[msg.guild.id] = {
-          queue: [],
-          skips: {},
-          isPlaying: false,
-        };
-        enqueueSong(broadcasts[msg.guild.id], song, msg, null, seek);
-      } else {
-        if (special[song]) {
+      self.playSong(msg, song, seek);
+    }
+  }
+
+  /**
+   * Start playing or enqueue the requested song.
+   *
+   * @public
+   * @param {Discord~Message} msg The message that triggered command, used for
+   * context.
+   * @param {string} song The song search criteria.
+   * @param {number} [seek] The time in seconds to seek to.
+   * @param {?boolean} [subjugate] Force all control be via external sources
+   * using public function calls. All queue control commands are disabled. Also
+   * suppresses most information messages that would otherwise be sent to the
+   * user. Null means leave as current value.
+   */
+  this.playSong = function(msg, song, seek, subjugate) {
+    if (!broadcasts[msg.guild.id]) {
+      if (!subjugate) {
+        self.common.reply(msg, 'Loading ' + song + '\nPlease wait...')
+            .then((msg) => msg.delete({timeout: 10000}));
+      }
+      broadcasts[msg.guild.id] = {
+        queue: [],
+        skips: {},
+        isPlaying: false,
+        subjugated: subjugate || false,
+      };
+      enqueueSong(broadcasts[msg.guild.id], song, msg, null, seek);
+    } else {
+      if (subjugate != null) {
+        broadcasts[msg.guild.id].subjugated = subjugate;
+      }
+      if (special[song]) {
+        if (!broadcasts[msg.guild.id].subjugated) {
           let embed = new self.Discord.MessageEmbed();
           embed.setTitle(
               'Enqueuing ' + song + ' [' +
               (broadcasts[msg.guild.id].queue.length + 1) + ' in queue]');
           embed.setColor([50, 200, 255]);
           msg.channel.send(mention(msg), embed);
-          enqueueSong(broadcasts[msg.guild.id], song, msg, null, seek);
-        } else {
-          let loadingMsg;
+        }
+        enqueueSong(broadcasts[msg.guild.id], song, msg, null, seek);
+      } else {
+        let loadingMsg;
+        if (!broadcasts[msg.guild.id].subjugated) {
           reply(msg, 'Loading ' + song + '\nPlease wait...')
               .then((msg) => loadingMsg = msg);
-          ytdl.getInfo(song, ytdlOpts, (err, info) => {
-            if (err) {
-              self.error(err.message.split('\n')[1]);
-              reply(
-                  msg,
-                  'Oops, something went wrong while searching for that song!',
-                  err.message.split('\n')[1]);
-            } else if (info._duration_raw === 0) {
-              reply(msg, 'Sorry, but I can\'t play live streams currently.');
-            } else {
-              if (broadcasts[msg.guild.id] &&
-                  broadcasts[msg.guild.id].isPlaying) {
+        }
+        ytdl.getInfo(song, ytdlOpts, (err, info) => {
+          if (err) {
+            self.error(err.message.split('\n')[1]);
+            reply(
+                msg,
+                'Oops, something went wrong while searching for that song!',
+                err.message.split('\n')[1]);
+          } else if (info._duration_raw === 0) {
+            reply(msg, 'Sorry, but I can\'t play live streams currently.');
+          } else {
+            if (broadcasts[msg.guild.id] &&
+                (broadcasts[msg.guild.id].isPlaying ||
+                 broadcasts[msg.guild.id].subjugated)) {
+              if (!broadcasts[msg.guild.id].subjugated) {
                 let embed = formatSongInfo(info);
                 embed.setTitle(
                     'Enqueuing ' + song + ' [' +
                     (broadcasts[msg.guild.id].queue.length + 1) + ' in queue]');
                 msg.channel.send(mention(msg), embed);
-                enqueueSong(broadcasts[msg.guild.id], song, msg, info, seek);
               }
+              enqueueSong(broadcasts[msg.guild.id], song, msg, info, seek);
             }
-            if (loadingMsg) loadingMsg.delete();
-          });
-        }
+          }
+          if (loadingMsg) loadingMsg.delete();
+        });
       }
     }
-  }
+  };
+
+  /**
+   * Release subjugation. Does not modify any current queue or playing
+   * information.
+   *
+   * @public
+   * @param {Discord~Message} msg The context to lookup the information.
+   */
+  this.release = function(msg) {
+    if (broadcasts[msg.guild.id]) {
+      broadcasts[msg.guild.id].subjugated = false;
+    }
+  };
+
+  /**
+   * Begin subjugation. Does not modify any current queue or playing
+   * information.
+   *
+   * @public
+   * @param {Discord~Message} msg The context to lookup the information.
+   */
+  this.subjugate = function(msg) {
+    if (broadcasts[msg.guild.id]) {
+      broadcasts[msg.guild.id].subjugated = true;
+    }
+  };
+
+  /**
+   * Check if music is being subjugated by another script.
+   *
+   * @public
+   * @param {Discord~Message} msg The context to lookup the information.
+   * @return {?boolean} Null if nothing is playing, true if subjugated, false if
+   * not subjugated.
+   */
+  this.isSubjugated = function(msg) {
+    if (broadcasts[msg.guild.id]) {
+      return broadcasts[msg.guild.id].subjugated;
+    } else {
+      return null;
+    }
+  };
+
   /**
    * Cause the bot to leave the voice channel and stop playing music.
    *
@@ -866,18 +1036,16 @@ function Music() {
    * @listens SpikeyBot~Command#stfu
    */
   function commandLeave(msg) {
-    msg.guild.members.fetch(self.client.user).then((me) => {
-      if (me.voice.channel) {
-        let followMsg = follows[msg.guild.id] ?
-            'No longer following <@' + follows[msg.guild.id] + '>' :
-            null;
-        delete follows[msg.guild.id];
-        me.voice.channel.leave();
-        reply(msg, 'Goodbye!', followMsg);
-      } else {
-        reply(msg, 'I\'m not playing anything.');
-      }
-    });
+    if (msg.guild.me.voice.channel) {
+      let followMsg = follows[msg.guild.id] ?
+          'No longer following <@' + follows[msg.guild.id] + '>' :
+          null;
+      delete follows[msg.guild.id];
+      msg.guild.me.voice.channel.leave();
+      reply(msg, 'Goodbye!', followMsg);
+    } else {
+      reply(msg, 'I\'m not playing anything.');
+    }
     delete broadcasts[msg.guild.id];
   }
   /**
@@ -891,6 +1059,9 @@ function Music() {
   function commandSkip(msg) {
     if (!broadcasts[msg.guild.id]) {
       reply(msg, 'I\'m not playing anything, I can\'t skip nothing!');
+    } else if (
+      broadcasts[msg.guild.id] && broadcasts[msg.guild.id].subjugated) {
+      reply(msg, 'Music is currently being controlled automatically.');
     } else {
       reply(msg, 'Skipping current song...');
       skipSong(broadcasts[msg.guild.id]);
@@ -902,6 +1073,7 @@ function Music() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg The message that triggered the command.
+   * @listens SpikeyBot~Command#q
    * @listens SpikeyBot~Command#queue
    * @listens SpikeyBot~Command#playing
    */
@@ -910,13 +1082,16 @@ function Music() {
       reply(
           msg, 'I\'m not playing anything. Use "' + msg.prefix +
               'play Kokomo" to start playing something!');
+    } else if (msg.text.trim().match(/^clear|^empty|^reset/)) {
+      commandClearQueue(msg);
     } else {
       let embed;
       if (broadcasts[msg.guild.id].current) {
         if (broadcasts[msg.guild.id].current.info) {
           embed = formatSongInfo(
               broadcasts[msg.guild.id].current.info,
-              broadcasts[msg.guild.id].broadcast.dispatcher);
+              broadcasts[msg.guild.id].broadcast.dispatcher,
+              broadcasts[msg.guild.id].current.seek);
         } else {
           embed = new self.Discord.MessageEmbed();
           embed.setColor([50, 200, 255]);
@@ -949,6 +1124,42 @@ function Music() {
       msg.channel.send(embed);
     }
   }
+
+  /**
+   * Removes all songs from the current queue except for the currently playing
+   * song.
+   * @private
+   *
+   * @type {commandHandler}
+   * @param {Discord~Message} msg The message that triggered the command.
+   * @listens SpikeyBot~Command#clear
+   * @listens SpikeyBot~Command#empty
+   */
+  function commandClearQueue(msg) {
+    if (broadcasts[msg.guild.id] && broadcasts[msg.guild.id].subjugated) {
+      reply(msg, 'Music is currently being controlled automatically.');
+    } else if (!broadcasts[msg.guild.id] ||
+        broadcasts[msg.guild.id].queue.length === 0) {
+      reply(
+          msg, 'The queue appears to be empty.\nI can\'t remove nothing ' +
+              'from nothing!');
+    } else {
+      self.clearQueue(msg);
+      reply(msg, 'All songs removed from queue.');
+    }
+  }
+
+  /**
+   * Empty a guild's current music queue.
+   * @public
+   *
+   * @param {Discord~Message} msg The context for looking up the guild queue to
+   * modify.
+   */
+  this.clearQueue = function(msg) {
+    if (!broadcasts[msg.guild.id]) return;
+    broadcasts[msg.guild.id].queue = [];
+  };
   /**
    * Remove a song from the queue.
    *
@@ -959,7 +1170,9 @@ function Music() {
    * @listens SpikeyBot~Command#dequeue
    */
   function commandRemove(msg) {
-    if (!broadcasts[msg.guild.id] ||
+    if (broadcasts[msg.guild.id] && broadcasts[msg.guild.id].subjugated) {
+      reply(msg, 'Music is currently being controlled automatically.');
+    } else if (!broadcasts[msg.guild.id] ||
         broadcasts[msg.guild.id].queue.length === 0) {
       reply(
           msg, 'The queue appears to be empty.\nI can\'t remove nothing ' +
@@ -969,9 +1182,13 @@ function Music() {
       if (!indexString.startsWith(' ')) {
         reply(
             msg,
-            'You must specify the index of the song to dequeue.\nYou can ' +
-                'view the queue with "' + msg.prefix + 'queue".');
+            'You must specify the index of the song to dequeue, or "all".\nYo' +
+                'u can view the queue with "' + msg.prefix + 'queue".');
       } else {
+        if (indexString.trim().startsWith(/all|everything/)) {
+          commandClearQueue(msg);
+          return;
+        }
         let index = Number(indexString.replace(' ', ''));
         if (typeof index !== 'number' || index <= 0 ||
             index > broadcasts[msg.guild.id].queue.length) {

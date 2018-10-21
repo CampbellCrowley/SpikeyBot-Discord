@@ -8,12 +8,21 @@ require('./subModule.js')(Spotify);
  * @class
  * @augments SubModule
  * @listens SpikeyBot~Command#spotify
- * @fires SpikeyBot~Command#play
  */
 function Spotify() {
   const self = this;
   this.myName = 'Spotify';
 
+  let music;
+
+  /**
+   * The request to send to spotify to fetch the currently playing information
+   * for a user.
+   * @private
+   * @default
+   * @constant
+   * @type {Object}
+   */
   const apiRequest = {
     protocol: 'https:',
     host: 'api.spotify.com',
@@ -24,15 +33,27 @@ function Spotify() {
   /** @inheritdoc */
   this.initialize = function() {
     self.command.on('spotify', commandSpotify, true);
+    checkMusic();
   };
   /** @inheritdoc */
   this.shutdown = function() {
     self.command.deleteEvent('spotify');
+    for (let i in following) {
+      if (following[i]) endFollow({guild: {id: i}});
+    }
   };
   /** @inheritdoc */
   this.unloadable = function() {
     return true;
   };
+
+  /**
+   * The current users we are monitoring the spotify status of, and some related
+   * information. Mapped by guild id.
+   * @private
+   * @type {Object}
+   */
+  let following = {};
 
   /**
    * Lookup what a user is listening to on Spotify, then attempt to play the
@@ -52,13 +73,76 @@ function Spotify() {
     if (msg.mentions.users.size > 0) {
       userId = msg.mentions.users.first().id;
     }
-    self.bot.accounts.getSpotifyToken(userId, (res) => {
-      if (!res) {
+    let subCmd = msg.text.trim().split(' ')[0];
+    let infoOnly = false;
+    switch (subCmd) {
+      case 'info':
+      case 'inf':
+      case 'playing':
+      case 'current':
+      case 'currently':
+      case 'status':
+      case 'stats':
+      case 'stat':
+        infoOnly = true;
+        break;
+    }
+    if (!infoOnly && music.isSubjugated(msg) && following[msg.guild.id]) {
+      endFollow(msg);
+      self.common.reply(msg, 'Stopped following Spotify.', '<@' + userId + '>');
+      if (userId == following[msg.guild.id].user) {
+        return;
+      }
+    }
+    getCurrentSong(userId, (err, song) => {
+      if (err) {
+        if (err == 'Unlinked') {
+          self.common.reply(
+              msg,
+              'Discord account is not linked to Spotify.\nPlease link account' +
+                  ' at spikeybot.com to use this command.',
+              'https://www.spikeybot.com/account/');
+        } else if (err == 'Bad Response') {
+          self.common.reply(
+              msg, 'Unable to get current Spotify status.',
+              'Bad response from Spotify');
+        } else if (err == 'Nothing Playing') {
+          self.common.reply(msg, 'Not listening to anything on Spotify.');
+        } else {
+          self.common.reply(msg, 'Unable to get current Spotify status.', err);
+        }
+        if (infoOnly || err != 'Nothing Playing') return;
+      }
+      if (infoOnly) {
+        self.common.reply(
+            msg, 'Song: ' + song.name + '\nArtist: ' + song.artist +
+                '\nAlbum: ' + song.album + '\nProgress: ' +
+                Math.round(song.progress / 1000) + ' seconds in of ' +
+                Math.round(song.duration / 1000) + ' seconds.\nCurrently ' +
+                (song.isPlaying ? 'playing' : 'paused'));
+      } else {
         self.common.reply(
             msg,
-            'Discord account is not linked to Spotify.\nPlease link account a' +
-                't spikeybot.com to use this command.',
-            'https://www.spikeybot.com/account/');
+            'Following Spotify music. Music control is now subjugated by ' +
+                'Spotify.\n(Please wait, seeking may take a while)',
+            '<@' + userId + '>');
+        updateFollowingState(msg, userId, song, true);
+        return;
+      }
+    });
+  }
+
+  /**
+   * Fetch the current playing song on spotify for the given discord user id.
+   *
+   * @private
+   * @param {string|number} userId The Discord user id to lookup.
+   * @param {Fucntion} cb Callback with err, and data parameters.
+   */
+  function getCurrentSong(userId, cb) {
+    self.bot.accounts.getSpotifyToken(userId, (res) => {
+      if (!res) {
+        cb('Unlinked');
         return;
       }
       let req = https.request(apiRequest, (res) => {
@@ -74,8 +158,11 @@ function Spotify() {
             } catch (err) {
               self.error('Failed to parse Spotify response: ' + userId);
               console.log(err, content);
-              self.common.reply(
-                  msg, 'Unable to get current Spotify status.', 'Bad Response');
+              cb('Bad Response');
+              return;
+            }
+            if (!parsed.item) {
+              cb('Nothing Playing');
               return;
             }
             let artists = (parsed.item.artists || [])
@@ -89,23 +176,141 @@ function Spotify() {
               album: parsed.item.album.name,
               progress: parsed.progress_ms,
               isPlaying: parsed.is_playing,
+              duration: parsed.duration_ms,
             };
-            startMusic(msg, songInfo);
+            cb(null, songInfo);
           } else if (res.statusCode == 204) {
-            self.common.reply(msg, 'Not listening to anything on Spotify.');
+            cb('Nothing Playing');
           } else {
             self.error(
                 'Unable to fetch spotify currently playing info for user: ' +
                 userId);
             console.error(content);
-            self.common.reply(
-                msg, 'Unable to get current Spotify status.', res.statusCode);
+            cb(res.statusCode || 'VERY SCARY ERROR');
           }
         });
       });
       req.setHeader('Authorization', 'Bearer ' + res);
       req.end();
     });
+  }
+
+  /**
+   * Check on the user's follow state and update the playing status to match.
+   * @private
+   *
+   * @param {Discord~Message} msg The message to use as context.
+   * @param {string|number} userId The discord user id that we are following.
+   * @param {Object} [songInfo] If song info is provided, this will not be
+   * fetched first. If it is not, the information will be fetched from Spotify
+   * first.
+   * @param {boolean} [start=false] Should we setup the player with our settings
+   * because this is the first run?
+   */
+  function updateFollowingState(msg, userId, songInfo, start = false) {
+    checkMusic();
+    console.log('Update');
+    if (!start && !music.isSubjugated(msg)) {
+      endFollow(msg);
+      console.log('NoUpdate');
+      return;
+    }
+    if (!songInfo) {
+      getCurrentSong(userId, (err, song) => {
+        if (err) {
+          if (err == 'Nothing Playing') {
+            if (!following[msg.guild.id]) {
+              following[msg.guild.id] = {};
+            }
+            following[msg.guild.id].timeout =
+                self.client.setTimeout(function() {
+                  updateFollowingState(msg, userId, null, true);
+                }, 3000);
+          } else {
+            self.error(err);
+          }
+          return;
+        }
+        console.log('Fetched songInfo');
+        songInfo = song;
+        makeTimeout();
+      });
+    } else {
+      makeTimeout();
+    }
+
+    /**
+     * Start playing the music, and create a timeout to check the status, or for
+     * the next song.
+     * @private
+     */
+    function makeTimeout() {
+      if (!start && !music.isSubjugated(msg)) {
+        endFollow(msg);
+        console.log('Not subjugating');
+        return;
+      }
+      music.clearQueue(msg);
+      if (start) {
+        music.subjugate(msg);
+      }
+      if (songInfo) startMusic(msg, songInfo);
+      if (following[msg.guild.id] && following[msg.guild.id].timeout) {
+        self.client.clearTimeout(following[msg.guild.id].timeout);
+      }
+      following[msg.guild.id] = {
+        user: userId,
+        song: songInfo,
+        lastUpdate: Date.now(),
+      };
+
+      if (!songInfo || songInfo.duration) {
+        console.log('Set TIMEOUT');
+        let delay = songInfo ? (songInfo.duration - songInfo.progress) : 3000;
+        following[msg.guild.id].timeout = self.client.setTimeout(function() {
+          updateFollowingState(msg, userId);
+        }, delay);
+      } else {
+        console.log('Delaying for duration', !songInfo, songInfo.duration);
+        following[msg.guild.id].timeout = self.client.setTimeout(function() {
+          updateDuration(msg, userId);
+        }, 1000);
+      }
+    }
+  }
+
+  /**
+   * Fetch the song's length from music because Spotify was unable to provide it
+   * for us.
+   * @private
+   *
+   * @param {Discord~Message} msg The context.
+   * @param {string|number} userId The user id we are following.
+   */
+  function updateDuration(msg, userId) {
+    checkMusic();
+    if (following[msg.guild.id] && following[msg.guild.id].timeout) {
+      self.client.clearTimeout(following[msg.guild.id].timeout);
+    }
+    if (!music.isSubjugated(msg)) {
+      endFollow(msg);
+      return;
+    }
+    let dur = music.getDuration(msg);
+    let prog = music.getProgress(msg);
+    if (dur != null && prog != null) {
+      following[msg.guild.id].song.duration = dur * 1000;
+      let f = following[msg.guild.id];
+
+      let delay = f.song.duration - f.song.progress;
+      following[msg.guild.id].timeout = self.client.setTimeout(function() {
+        updateFollowingState(msg, userId);
+      }, delay);
+    } else {
+      following[msg.guild.id].timeout = self.client.setTimeout(function() {
+        updateDuration(msg, userId);
+      }, 1000);
+    }
   }
 
   /**
@@ -118,9 +323,34 @@ function Spotify() {
    * milliseconds.
    */
   function startMusic(msg, song) {
-    msg.content = msg.prefix + 'play ' + song.name + ' by ' + song.artist +
-        ' && seek ' + Math.round(song.progress / 1000);
-    self.command.trigger('play', msg);
+    checkMusic();
+    let seek = Math.round(song.progress / 1000 + (song.progress / 1000 / 5));
+    console.log('Starting:', song, seek);
+    music.playSong(msg, song.name + ' by ' + song.artist, seek, true);
+  }
+
+  /**
+   * Update current reference to music submodule.
+   * @private
+   */
+  function checkMusic() {
+    if (!music || !music.initialized) {
+      music = self.bot.getSubmodule('./music.js');
+    }
+  }
+
+  /**
+   * Cleanup and delete data in order to stop following user.
+   * @private
+   * @param {Discord~Message} msg THe context to clear.
+   */
+  function endFollow(msg) {
+    if (following[msg.guild.id]) {
+      self.client.clearTimeout(following[msg.guild.id].timeout);
+    }
+    delete following[msg.guild.id];
+    checkMusic();
+    if (music) music.release(msg);
   }
 }
 module.exports = new Spotify();

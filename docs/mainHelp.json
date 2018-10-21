@@ -379,6 +379,11 @@
               "description": "Basic Usage",
               "command": "playing",
               "result": "Bot replies with a list of the current songs in the queue to play."
+            },
+            {
+              "description": "Remove all songs from queue",
+              "command": "queue clear",
+              "result": "All songs from the queue will be removed, except for the currently playing song."
             }
           ]
         },
@@ -396,6 +401,23 @@
               "description": "Dequeue the third song in the queue",
               "command": "remove 3",
               "result": "Removes the third song from the queue. Use the queue/playing command to find out which index to use."
+            },
+            {
+              "description": "Remove all songs",
+              "command": "remove all",
+              "result": "Removes all songs from the queue."
+            }
+          ]
+        },
+        {
+          "command": "clear",
+          "description": "Remove all songs from the current queue.",
+          "aliases": "clear, empty",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "clear",
+              "result": "Removes all songs from the queue except for the currently playing song."
             }
           ]
         },
@@ -456,7 +478,7 @@
         },
         {
           "command": "spotify 'mention'",
-          "description": "Attempt to lookup what the mentioned user is listening to on Spotify, and then play it. The account to lookup must have connected their account at <a href=\"https://www.spikeybot.com/account/\">spikeybot.com/account</a>.",
+          "description": "Attempt to lookup what the mentioned user is listening to on Spotify, and then play it. The account to lookup must have connected their account at https://www.spikeybot.com/account/.",
           "examples": [
             {
               "description": "Basic Usage",

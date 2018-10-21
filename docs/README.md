@@ -4682,6 +4682,16 @@ Music and audio related commands.
         * [.initialized](#SubModule+initialized) : <code>boolean</code>
         * [.commit](#SubModule+commit) : <code>string</code>
         * [.loadTime](#SubModule+loadTime) : <code>number</code>
+        * [.getProgress(msg)](#Music+getProgress) ⇒ <code>number</code>
+        * [.getDuration(msg)](#Music+getDuration) ⇒ <code>number</code>
+        * [.skipSong(msg)](#Music+skipSong)
+        * [.pause(msg)](#Music+pause) ⇒ <code>boolean</code>
+        * [.resume(msg)](#Music+resume) ⇒ <code>boolean</code>
+        * [.playSong(msg, song, [seek], [subjugate])](#Music+playSong)
+        * [.release(msg)](#Music+release)
+        * [.subjugate(msg)](#Music+subjugate)
+        * [.isSubjugated(msg)](#Music+isSubjugated) ⇒ <code>boolean</code>
+        * [.clearQueue(msg)](#Music+clearQueue)
         * [.initialize()](#SubModule+initialize)
         * [.begin(prefix, Discord, client, command, common, bot)](#SubModule+begin)
         * [.end()](#SubModule+end)
@@ -4705,7 +4715,7 @@ Music and audio related commands.
         * [~mention(msg)](#Music..mention) ⇒ <code>string</code> ℗
         * ~~[~reply(msg, text, post)](#Music..reply) ⇒ <code>Promise</code> ℗~~
         * [~handleVoiceStateUpdate(oldState, newState)](#Music..handleVoiceStateUpdate) ℗
-        * [~formatSongInfo(info, [dispatcher])](#Music..formatSongInfo) ⇒ <code>Discord~MessageEmbed</code> ℗
+        * [~formatSongInfo(info, [dispatcher], [seek])](#Music..formatSongInfo) ⇒ <code>Discord~MessageEmbed</code> ℗
         * [~getRemainingSeconds(info, dispatcher)](#Music..getRemainingSeconds) ⇒ <code>number</code> ℗
         * [~formatPlaytime(seconds)](#Music..formatPlaytime) ⇒ <code>string</code> ℗
         * [~formNum(num)](#Music..formNum) ⇒ <code>string</code> ℗
@@ -4725,6 +4735,7 @@ Music and audio related commands.
         * [~commandLeave(msg)](#Music..commandLeave) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandSkip(msg)](#Music..commandSkip) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandQueue(msg)](#Music..commandQueue) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~commandClearQueue(msg)](#Music..commandClearQueue) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandRemove(msg)](#Music..commandRemove) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandLyrics(msg)](#Music..commandLyrics) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~reqLyricsURL(msg, id)](#Music..reqLyricsURL) ℗
@@ -4835,6 +4846,137 @@ needs to be reloaded because the file has been modified since loading.
 
 **Kind**: instance constant of [<code>Music</code>](#Music)  
 **Access**: public  
+<a name="Music+getProgress"></a>
+
+### music.getProgress(msg) ⇒ <code>number</code>
+Get the current progress into the song in the given context.
+
+**Kind**: instance method of [<code>Music</code>](#Music)  
+**Returns**: <code>number</code> - Time in seconds, or null if nothing is playing.  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The context to use to fetch the info. |
+
+<a name="Music+getDuration"></a>
+
+### music.getDuration(msg) ⇒ <code>number</code>
+Get the song's length of the song playing in the given context.
+
+**Kind**: instance method of [<code>Music</code>](#Music)  
+**Returns**: <code>number</code> - Time in seconds, or null if nothing is playing.  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The context to use to fetch the info. |
+
+<a name="Music+skipSong"></a>
+
+### music.skipSong(msg)
+Skip the current song with the given context.
+
+**Kind**: instance method of [<code>Music</code>](#Music)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The context storing guild information for looking up. |
+
+<a name="Music+pause"></a>
+
+### music.pause(msg) ⇒ <code>boolean</code>
+Attempt to pause the current broadcast in a guild.
+
+**Kind**: instance method of [<code>Music</code>](#Music)  
+**Returns**: <code>boolean</code> - True if success, false if failed.  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The context to lookup guild info. |
+
+<a name="Music+resume"></a>
+
+### music.resume(msg) ⇒ <code>boolean</code>
+Attempt to resume the current broadcast in a guild.
+
+**Kind**: instance method of [<code>Music</code>](#Music)  
+**Returns**: <code>boolean</code> - True if success, false if failed.  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The context to lookup guild info. |
+
+<a name="Music+playSong"></a>
+
+### music.playSong(msg, song, [seek], [subjugate])
+Start playing or enqueue the requested song.
+
+**Kind**: instance method of [<code>Music</code>](#Music)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message that triggered command, used for context. |
+| song | <code>string</code> | The song search criteria. |
+| [seek] | <code>number</code> | The time in seconds to seek to. |
+| [subjugate] | <code>boolean</code> | Force all control be via external sources using public function calls. All queue control commands are disabled. Also suppresses most information messages that would otherwise be sent to the user. Null means leave as current value. |
+
+<a name="Music+release"></a>
+
+### music.release(msg)
+Release subjugation. Does not modify any current queue or playing
+information.
+
+**Kind**: instance method of [<code>Music</code>](#Music)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The context to lookup the information. |
+
+<a name="Music+subjugate"></a>
+
+### music.subjugate(msg)
+Begin subjugation. Does not modify any current queue or playing
+information.
+
+**Kind**: instance method of [<code>Music</code>](#Music)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The context to lookup the information. |
+
+<a name="Music+isSubjugated"></a>
+
+### music.isSubjugated(msg) ⇒ <code>boolean</code>
+Check if music is being subjugated by another script.
+
+**Kind**: instance method of [<code>Music</code>](#Music)  
+**Returns**: <code>boolean</code> - Null if nothing is playing, true if subjugated, false if
+not subjugated.  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The context to lookup the information. |
+
+<a name="Music+clearQueue"></a>
+
+### music.clearQueue(msg)
+Empty a guild's current music queue.
+
+**Kind**: instance method of [<code>Music</code>](#Music)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The context for looking up the guild queue to modify. |
+
 <a name="SubModule+initialize"></a>
 
 ### music.initialize()
@@ -5011,7 +5153,7 @@ Options to pass into the stream dispatcher.
 [StreamOptions](https://discord.js.org/#/docs/main/master/typedef/StreamOptions)
 
 **Kind**: inner constant of [<code>Music</code>](#Music)  
-**Default**: <code>{&quot;fec&quot;:true,&quot;bitrate&quot;:&quot;auto&quot;,&quot;volume&quot;:0.5,&quot;plp&quot;:0.01}</code>  
+**Default**: <code>{&quot;passes&quot;:2,&quot;fec&quot;:true,&quot;bitrate&quot;:&quot;auto&quot;,&quot;volume&quot;:0.5,&quot;plp&quot;:0.01}</code>  
 **Access**: private  
 <a name="Music..mention"></a>
 
@@ -5059,18 +5201,18 @@ and recordings to stop.
 
 <a name="Music..formatSongInfo"></a>
 
-### Music~formatSongInfo(info, [dispatcher]) ⇒ <code>Discord~MessageEmbed</code> ℗
+### Music~formatSongInfo(info, [dispatcher], [seek]) ⇒ <code>Discord~MessageEmbed</code> ℗
 Format the info response from ytdl into a human readable format.
 
 **Kind**: inner method of [<code>Music</code>](#Music)  
 **Returns**: <code>Discord~MessageEmbed</code> - The formatted song info.  
 **Access**: private  
-**Todo:**: Fix the playtime if audio seeking was used.  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| info | <code>Object</code> | The info received from ytdl about the song. |
-| [dispatcher] | <code>Discord~StreamDispatcher</code> | The broadcast dispatcher that is currently broadcasting audio. If defined, this will be used to determine remaining play time. |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| info | <code>Object</code> |  | The info received from ytdl about the song. |
+| [dispatcher] | <code>Discord~StreamDispatcher</code> |  | The broadcast dispatcher that is currently broadcasting audio. If defined, this will be used to determine remaining play time. |
+| [seek] | <code>number</code> | <code>0</code> | The offset to add to totalStreamTime to correct for starting playback somewhere other than the beginning. |
 
 <a name="Music..getRemainingSeconds"></a>
 
@@ -5304,6 +5446,19 @@ Skip the currently playing song and continue to the next in the queue.
 
 ### Music~commandQueue(msg) : [<code>commandHandler</code>](#commandHandler) ℗
 Show the user what is in the queue.
+
+**Kind**: inner method of [<code>Music</code>](#Music)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message that triggered the command. |
+
+<a name="Music..commandClearQueue"></a>
+
+### Music~commandClearQueue(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Removes all songs from the current queue except for the currently playing
+song.
 
 **Kind**: inner method of [<code>Music</code>](#Music)  
 **Access**: private  
@@ -6674,6 +6829,7 @@ Main class that manages the bot.
     * _instance_
         * [.getBotName()](#SpikeyBot+getBotName) ⇒ <code>string</code>
         * [.getSubmoduleCommits()](#SpikeyBot+getSubmoduleCommits) ⇒ <code>Array.&lt;{name: string, commit: string}&gt;</code>
+        * [.getSubmodule(name)](#SpikeyBot+getSubmodule) ⇒ [<code>SubModule</code>](#SubModule)
         * [.getPrefix(id)](#SpikeyBot+getPrefix) ⇒ <code>string</code>
     * _inner_
         * [~Command](#SpikeyBot..Command)
@@ -6754,6 +6910,18 @@ Get array of all submodule names and the commit they were last loaded from.
 
 **Kind**: instance method of [<code>SpikeyBot</code>](#SpikeyBot)  
 **Access**: public  
+<a name="SpikeyBot+getSubmodule"></a>
+
+### spikeyBot.getSubmodule(name) ⇒ [<code>SubModule</code>](#SubModule)
+Get a reference to a submodule with the given name.
+
+**Kind**: instance method of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | The name of the submodule. |
+
 <a name="SpikeyBot+getPrefix"></a>
 
 ### spikeyBot.getPrefix(id) ⇒ <code>string</code>
@@ -7360,7 +7528,6 @@ channel.
 
 **Kind**: global class  
 **Extends**: [<code>SubModule</code>](#SubModule)  
-**Emits**: <code>SpikeyBot~Command#event:play</code>  
 
 * [Spotify](#Spotify) ⇐ [<code>SubModule</code>](#SubModule)
     * _instance_
@@ -7388,8 +7555,16 @@ channel.
         * *[.save([opt])](#SubModule+save)*
         * [.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>
     * _inner_
+        * [~following](#Spotify..following) : <code>Object</code> ℗
+        * [~apiRequest](#Spotify..apiRequest) : <code>Object</code> ℗
         * [~commandSpotify(msg)](#Spotify..commandSpotify) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~getCurrentSong(userId, cb)](#Spotify..getCurrentSong) ℗
+        * [~updateFollowingState(msg, userId, [songInfo], [start])](#Spotify..updateFollowingState) ℗
+            * [~makeTimeout()](#Spotify..updateFollowingState..makeTimeout) ℗
+        * [~updateDuration(msg, userId)](#Spotify..updateDuration) ℗
         * [~startMusic(msg, song)](#Spotify..startMusic) ℗
+        * [~checkMusic()](#Spotify..checkMusic) ℗
+        * [~endFollow(msg)](#Spotify..endFollow) ℗
 
 <a name="SubModule+helpMessage"></a>
 
@@ -7597,6 +7772,23 @@ putting the module into an uncontrollable state.
 **Overrides**: [<code>unloadable</code>](#SubModule+unloadable)  
 **Returns**: <code>boolean</code> - True if can be unloaded, false if cannot.  
 **Access**: public  
+<a name="Spotify..following"></a>
+
+### Spotify~following : <code>Object</code> ℗
+The current users we are monitoring the spotify status of, and some related
+information. Mapped by guild id.
+
+**Kind**: inner property of [<code>Spotify</code>](#Spotify)  
+**Access**: private  
+<a name="Spotify..apiRequest"></a>
+
+### Spotify~apiRequest : <code>Object</code> ℗
+The request to send to spotify to fetch the currently playing information
+for a user.
+
+**Kind**: inner constant of [<code>Spotify</code>](#Spotify)  
+**Default**: <code>{&quot;protocol&quot;:&quot;https:&quot;,&quot;host&quot;:&quot;api.spotify.com&quot;,&quot;path&quot;:&quot;/v1/me/player/currently-playing&quot;,&quot;method&quot;:&quot;GET&quot;}</code>  
+**Access**: private  
 <a name="Spotify..commandSpotify"></a>
 
 ### Spotify~commandSpotify(msg) : [<code>commandHandler</code>](#commandHandler) ℗
@@ -7610,6 +7802,56 @@ song in the requester's voice channel.
 | --- | --- | --- |
 | msg | <code>Discord~Message</code> | The message that triggered command. |
 
+<a name="Spotify..getCurrentSong"></a>
+
+### Spotify~getCurrentSong(userId, cb) ℗
+Fetch the current playing song on spotify for the given discord user id.
+
+**Kind**: inner method of [<code>Spotify</code>](#Spotify)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userId | <code>string</code> \| <code>number</code> | The Discord user id to lookup. |
+| cb | <code>Fucntion</code> | Callback with err, and data parameters. |
+
+<a name="Spotify..updateFollowingState"></a>
+
+### Spotify~updateFollowingState(msg, userId, [songInfo], [start]) ℗
+Check on the user's follow state and update the playing status to match.
+
+**Kind**: inner method of [<code>Spotify</code>](#Spotify)  
+**Access**: private  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| msg | <code>Discord~Message</code> |  | The message to use as context. |
+| userId | <code>string</code> \| <code>number</code> |  | The discord user id that we are following. |
+| [songInfo] | <code>Object</code> |  | If song info is provided, this will not be fetched first. If it is not, the information will be fetched from Spotify first. |
+| [start] | <code>boolean</code> | <code>false</code> | Should we setup the player with our settings because this is the first run? |
+
+<a name="Spotify..updateFollowingState..makeTimeout"></a>
+
+#### updateFollowingState~makeTimeout() ℗
+Start playing the music, and create a timeout to check the status, or for
+the next song.
+
+**Kind**: inner method of [<code>updateFollowingState</code>](#Spotify..updateFollowingState)  
+**Access**: private  
+<a name="Spotify..updateDuration"></a>
+
+### Spotify~updateDuration(msg, userId) ℗
+Fetch the song's length from music because Spotify was unable to provide it
+for us.
+
+**Kind**: inner method of [<code>Spotify</code>](#Spotify)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The context. |
+| userId | <code>string</code> \| <code>number</code> | The user id we are following. |
+
 <a name="Spotify..startMusic"></a>
 
 ### Spotify~startMusic(msg, song) ℗
@@ -7622,6 +7864,25 @@ Attempt to start playing the given song into a voice channel.
 | --- | --- | --- |
 | msg | <code>Discord~Message</code> | Message that caused this to happen, and to pass into [Command](#SpikeyBot..Command) as context. |
 | song | <code>Object</code> | The current song information. Name is song name, progress is progress into the song in milliseconds. |
+
+<a name="Spotify..checkMusic"></a>
+
+### Spotify~checkMusic() ℗
+Update current reference to music submodule.
+
+**Kind**: inner method of [<code>Spotify</code>](#Spotify)  
+**Access**: private  
+<a name="Spotify..endFollow"></a>
+
+### Spotify~endFollow(msg) ℗
+Cleanup and delete data in order to stop following user.
+
+**Kind**: inner method of [<code>Spotify</code>](#Spotify)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | THe context to clear. |
 
 <a name="SubModule"></a>
 

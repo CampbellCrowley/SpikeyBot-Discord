@@ -2994,7 +2994,7 @@ function HungryGames() {
           getMessage('dayStart')
               .replaceAll('{}', find(id).currentGame.day.num));
     }
-    if (!find(id).autoPlay) {
+    if (!find(id).autoPlay && find(id).currentGame.day.num < 2) {
       embed.setFooter(
           'Tip: Use "' + msg.prefix + self.postPrefix +
           'autoplay" to automate the games.');

@@ -1522,6 +1522,17 @@ function SpikeyBot() {
   };
 
   /**
+   * Get a reference to a submodule with the given name.
+   *
+   * @public
+   * @param {string} name The name of the submodule.
+   * @return {?SubModule}
+   */
+  this.getSubmodule = function(name) {
+    return subModules[subModuleNames.findIndex((el) => el == name)];
+  };
+
+  /**
    * Get this guild's custom prefix. Returns the default prefix otherwise.
    * @public
    *
