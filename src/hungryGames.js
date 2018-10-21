@@ -5085,6 +5085,14 @@ function HungryGames() {
    */
   function editTeam(msg, id, silent) {
     let split = msg.text.split(' ');
+    if (!find(id) || !find(id).currentGame) {
+      let message = 'There isn\'t currently any game to edit.' +
+          ' Please create one first.';
+      if (!silent) {
+        msg.channel.send(self.common.mention(msg) + ' `' + message + '`');
+      }
+      return message;
+    }
     if (find(id).currentGame.inProgress) {
       switch (split[0]) {
         case 'swap':

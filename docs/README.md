@@ -5007,7 +5007,7 @@ Options to pass into the stream dispatcher.
 [StreamOptions](https://discord.js.org/#/docs/main/master/typedef/StreamOptions)
 
 **Kind**: inner constant of [<code>Music</code>](#Music)  
-**Default**: <code>{&quot;passes&quot;:2,&quot;fec&quot;:true,&quot;volume&quot;:0.5,&quot;plp&quot;:0.01}</code>  
+**Default**: <code>{&quot;fec&quot;:true,&quot;bitrate&quot;:&quot;auto&quot;,&quot;volume&quot;:0.5}</code>  
 **Access**: private  
 <a name="Music..mention"></a>
 

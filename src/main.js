@@ -2398,7 +2398,7 @@ function Main() {
       if (channel.guild) {
         let additional = '';
         if (msg.author.id === self.common.spikeyId) {
-          if (channel.mambers.size > 15) {
+          if (channel.members.size > 15) {
             additional = '\nMany Members';
           } else {
             additional = '\nMembers: ' +

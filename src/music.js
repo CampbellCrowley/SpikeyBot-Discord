@@ -155,7 +155,9 @@ function Music() {
    * @default
    */
   const streamOptions = {
-    passes: 2, fec: true, /* bitrate: 42,*/ volume: 0.5, plp: 0.01,
+    fec: true,
+    bitrate: 'auto',
+    volume: 0.5,
   };
 
   /** @inheritdoc */
@@ -216,11 +218,36 @@ function Music() {
     self.command.deleteEvent(['volume', 'vol', 'v']);
 
     self.client.removeListener('voiceStateUpdate', handleVoiceStateUpdate);
+
+    for (let b in broadcasts) {
+      if (broadcasts[b] && broadcasts[b].voice) {
+        try {
+          broadcasts[b].voice.disconnect();
+        } catch (err) {
+          self.error(
+              'Failed to disconenct from voice channel: ' +
+                  broadcasts[b].voice &&
+              broadcasts[b].voice.channel.id);
+          console.error(err);
+        }
+      }
+    }
   };
 
   /** @inheritdoc */
   this.unloadable = function() {
-    return Object.keys(broadcasts).length === 0;
+    // If a broadcast has been paused for more than 15 minutes, it is okay to
+    // reload this submodule.
+    let entries = Object.entries(broadcasts);
+    let numAlive = entries.length;
+    let now = Date.now();
+    for (let i = 0; i < entries.length; i++) {
+      let pauseTime = entries[i][1].broadcast.dispatcher.pausedSince;
+      if (pauseTime && now - pauseTime > 5 * 60 * 60 * 1000) {
+        numAlive--;
+      }
+    }
+    return numAlive <= 0;
   };
 
   /**
@@ -268,6 +295,9 @@ function Music() {
         self.error(
             'Forcibly ejected from voice channel: ' + oldState.guild.id + ' ' +
             oldState.channelID);
+        broadcast.request.channel.send(
+            '`I was forcibly ejected from the voice channel for an unknown ' +
+            'reason!`');
         delete broadcasts[oldState.guild.id];
         return;
       }
@@ -392,7 +422,7 @@ function Music() {
    */
   function enqueueSong(broadcast, song, msg, info) {
     broadcast.queue.push({request: msg, song: song, info: info});
-    if (broadcast.voice) {
+    if (broadcast.voice && broadcast.voice.channel) {
       try {
         startPlaying(broadcast);
       } catch (err) {
@@ -513,7 +543,7 @@ function Music() {
    */
   function makeBroadcast(broadcast) {
     // Setup voice connection listeners.
-    if (!broadcast.voice) return;
+    if (!broadcast.voice && broadcast.voice.channel) return;
     broadcast.voice.removeListener('disconnect', onDC);
     broadcast.voice.on('disconnect', onDC);
     /**
@@ -530,7 +560,7 @@ function Music() {
     broadcast.current.readable = new Readable();
     broadcast.current.readable._read = function() {};
     broadcast.broadcast = self.client.createVoiceBroadcast();
-    broadcast.broadcast.play(broadcast.current.readable);
+    broadcast.broadcast.play(broadcast.current.readable, streamOptions);
     broadcast.dispatcher =
         broadcast.voice.play(broadcast.broadcast, streamOptions);
 
