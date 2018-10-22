@@ -1227,7 +1227,6 @@ Hunger Games simulator.
         * [~optionMessages](#HungryGames..optionMessages) : <code>Object.&lt;Discord~Message&gt;</code> ℗
         * [~listenersEndTime](#HungryGames..listenersEndTime) : <code>number</code> ℗
         * [~patreonSettingKeys](#HungryGames..patreonSettingKeys) : <code>Array.&lt;string&gt;</code> ℗
-        * [~oldSaveFile](#HungryGames..oldSaveFile) : <code>string</code> ℗
         * [~saveFile](#HungryGames..saveFile) : <code>string</code> ℗
         * [~hgSaveDir](#HungryGames..hgSaveDir) : <code>string</code> ℗
         * [~eventFile](#HungryGames..eventFile) : <code>string</code> ℗
@@ -1242,7 +1241,7 @@ Hunger Games simulator.
         * [~numEventsPerPage](#HungryGames..numEventsPerPage) : <code>number</code> ℗
         * [~maxReactAwaitTime](#HungryGames..maxReactAwaitTime) : <code>number</code> ℗
         * [~findDelay](#HungryGames..findDelay) : <code>number</code> ℗
-        * [~defaultOptions](#HungryGames..defaultOptions) : <code>Object.&lt;{value: (string\|number\|boolean\|Object), values: ?Array.&lt;string&gt;, comment: string}&gt;</code> ℗
+        * [~defaultOptions](#HungryGames..defaultOptions) : <code>Object.&lt;{value: (string\|number\|boolean\|Object), values: ?Array.&lt;string&gt;, range: ?{min:number, max:number}, comment: string, category: string}&gt;</code> ℗
         * [~lotsOfDeathRate](#HungryGames..lotsOfDeathRate) : <code>number</code> ℗
         * [~littleDeathRate](#HungryGames..littleDeathRate) : <code>number</code> ℗
         * [~defaultColor](#HungryGames..defaultColor) : <code>Discord~ColorResolveable</code> ℗
@@ -1429,6 +1428,7 @@ Has this subModule been initialized yet (Has begin() been called).
 Role that a user must have in order to perform any commands.
 
 **Kind**: instance constant of [<code>HungryGames</code>](#HungryGames)  
+**Access**: public  
 <a name="HungryGames+defaultOptions"></a>
 
 ### hungryGames.defaultOptions : <code>Object.&lt;{value: (string\|number\|boolean), values: ?Array.&lt;string&gt;, comment: string}&gt;</code>
@@ -2112,21 +2112,6 @@ The permission tags for all settings related to the Hungry Games.
 **Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
 **Default**: <code>[&quot;hg:fun_translators&quot;,&quot;hg:customize_stats&quot;,&quot;hg:personal_weapon&quot;]</code>  
 **Access**: private  
-<a name="HungryGames..oldSaveFile"></a>
-
-### HungryGames~oldSaveFile : <code>string</code> ℗
-The old file location for storing hg data in order to upgrade data to new
-format.
-
-**Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
-**Default**: <code>&quot;./save/hg.json&quot;</code>  
-**Access**: private  
-**See**
-
-- [games](#HungryGames..games)
-- [saveFile](#HungryGames..saveFile)
-- [HungryGames~saveFileDir](HungryGames~saveFileDir)
-
 <a name="HungryGames..saveFile"></a>
 
 ### HungryGames~saveFile : <code>string</code> ℗
@@ -2266,7 +2251,7 @@ The delay after failing to find a guild's data to look for it again.
 **Access**: private  
 <a name="HungryGames..defaultOptions"></a>
 
-### HungryGames~defaultOptions : <code>Object.&lt;{value: (string\|number\|boolean\|Object), values: ?Array.&lt;string&gt;, comment: string}&gt;</code> ℗
+### HungryGames~defaultOptions : <code>Object.&lt;{value: (string\|number\|boolean\|Object), values: ?Array.&lt;string&gt;, range: ?{min:number, max:number}, comment: string, category: string}&gt;</code> ℗
 Default options for a game.
 
 **Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  

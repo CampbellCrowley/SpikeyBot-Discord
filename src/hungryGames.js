@@ -39,20 +39,6 @@ function HungryGames() {
    */
   const patreonSettingKeys =
       ['hg:fun_translators', 'hg:customize_stats', 'hg:personal_weapon'];
-
-  /**
-   * The old file location for storing hg data in order to upgrade data to new
-   * format.
-   * @see {@link HungryGames~games}
-   * @see {@link HungryGames~saveFile}
-   * @see {@link HungryGames~saveFileDir}
-   *
-   * @private
-   * @type {string}
-   * @constant
-   * @default
-   */
-  const oldSaveFile = './save/hg.json';
   /**
    * The file path to save current state for a specific guild relative to
    * Common~guildSaveDir.
@@ -174,6 +160,7 @@ function HungryGames() {
   /**
    * Role that a user must have in order to perform any commands.
    *
+   * @public
    * @type {string}
    * @constant
    */
@@ -224,7 +211,9 @@ function HungryGames() {
    * @type {Object.<{
    *     value: string|number|boolean|Object,
    *     values: ?string[],
-   *     comment: string
+   *     range: ?{min:number, max:number},
+   *     comment: string,
+   *     category: string
    *   }>}
    * @constant
    */
@@ -708,27 +697,6 @@ function HungryGames() {
    * @type {number}
    */
   let listenersEndTime = 0;
-
-  // Read saved game data from disk.
-  fs.readFile(oldSaveFile, function(err, data) {
-    if (err) return;
-    try {
-      games = JSON.parse(data);
-      self.save('async', true);
-      fs.rename(oldSaveFile, oldSaveFile + '.deleteme', function(err) {
-        if (err) {
-          console.error('Failed to rename old HG save file.', err);
-        } else {
-          console.log(
-              'Updated HG to new file system. Renamed ' + oldSaveFile + ' to ' +
-              oldSaveFile + '.deleteme');
-        }
-      });
-    } catch (e) {
-      console.error('Failed to parse legacy HG data.');
-    }
-    if (!games) games = {};
-  });
 
   /**
    * Parse all default events from file.
