@@ -117,8 +117,7 @@ function Spotify() {
         self.common.reply(
             msg, 'Song: ' + song.name + '\nArtist: ' + song.artist +
                 '\nAlbum: ' + song.album + '\nProgress: ' +
-                Math.round(song.progress / 1000) + ' seconds in of ' +
-                Math.round(song.duration / 1000) + ' seconds.\nCurrently ' +
+                Math.round(song.progress / 1000) + ' seconds in.\nCurrently ' +
                 (song.isPlaying ? 'playing' : 'paused'));
       } else {
         self.common.reply(
