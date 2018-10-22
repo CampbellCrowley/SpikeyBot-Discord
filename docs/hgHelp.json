@@ -45,7 +45,7 @@
           ]
         },
         {
-          "command": "reset 'all/current/events/options/teams'",
+          "command": "reset 'all/current/events/options/teams/users'",
           "description": "Delete data about the Games. Don't choose an option for more info.",
           "examples": [
             {

@@ -1999,11 +1999,14 @@ at which we looked. Used to reduce filesystem requests and blocking.
 <a name="HungryGames..games"></a>
 
 ### HungryGames~games : [<code>Object.&lt;GuildGame&gt;</code>](#HungryGames..GuildGame) ℗
-All currently tracked games.
+All currently tracked games. Mapped by guild ID. In most cases you should
+NOT reference this directly. Use [find](#HungryGames..find) to get the game
+object for a guild.
 
 **Kind**: inner property of [<code>HungryGames</code>](#HungryGames)  
 **Default**: <code>{}</code>  
 **Access**: private  
+**See**: [find](#HungryGames..find)  
 <a name="HungryGames..messages"></a>
 
 ### HungryGames~messages : <code>Object.&lt;Array.&lt;string&gt;&gt;</code> ℗
@@ -3443,6 +3446,8 @@ A singe instance of a game in a guild.
 
 | Name | Type | Description |
 | --- | --- | --- |
+| excludedUsers | <code>Array.&lt;string&gt;</code> | Array of user IDs that have been excluded from the games. |
+| includedUsers | <code>Array.&lt;string&gt;</code> | Array of user IDs that will be included in the next game to be created. |
 | options | <code>Object.&lt;(number\|boolean\|string\|Object)&gt;</code> | The game options. |
 | autoPlay | <code>boolean</code> | Is the game currently autoplaying. |
 | excludedUsers | <code>Array.&lt;string&gt;</code> | The ids of the users to exclude from the games. |

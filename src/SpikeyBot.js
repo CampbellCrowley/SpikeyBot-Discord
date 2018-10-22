@@ -999,7 +999,7 @@ function SpikeyBot() {
       const perms = msg.member.permissions;
       const confirmEmoji = '✅';
       const newPrefix = msg.text.slice(1);
-      if (!perms.has(Discord.Permissions.FLAGS.ADMINISTRATOR)) {
+      if (!perms.has(Discord.Permissions.FLAGS.MANAGE_GUILD)) {
         common.reply(
             msg, 'Sorry, but you must be a server administrator to set a ' +
                 'custom prefix.');
