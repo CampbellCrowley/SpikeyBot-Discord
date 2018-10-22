@@ -1339,7 +1339,7 @@ function Main() {
       return;
     }
     let time = split.splice(0, 1);
-    let unit = split[0].toLowerCase();
+    let unit = (split[0] || '').toLowerCase();
     let skipSplice = false;
     let matchUnit = (time + '').match(/(\d+)([a-zA-Z]+)\b/);
     if (matchUnit) {
