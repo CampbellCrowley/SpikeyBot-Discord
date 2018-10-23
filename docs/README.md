@@ -1500,7 +1500,7 @@ Create a Hungry Games for a guild.
 <a name="HungryGames+resetGame"></a>
 
 ### hungryGames.resetGame(id, command) ⇒ <code>string</code>
-Reset the speciefied category of data from a game.
+Reset the specified category of data from a game.
 
 **Kind**: instance method of [<code>HungryGames</code>](#HungryGames)  
 **Returns**: <code>string</code> - The message explaining what happened.  
@@ -2370,7 +2370,7 @@ Set all help messages once we know what prefix to use.
 <a name="HungryGames..handleMessageEdit"></a>
 
 ### HungryGames~handleMessageEdit(oldMsg, newMsg) ℗
-Hanlder for when the create event message is edited and we should update
+Handler for when the create event message is edited and we should update
 our message with the updated event.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
@@ -2423,7 +2423,7 @@ id.
 <a name="HungryGames..makePlayer"></a>
 
 ### HungryGames~makePlayer(member) ⇒ [<code>Player</code>](#HungryGames..Player) ℗
-Create a Player from a given Disord.User.
+Create a Player from a given Discord.User.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
 **Returns**: [<code>Player</code>](#HungryGames..Player) - Player object created from User.  
@@ -2467,14 +2467,14 @@ Create a Hungry Games for a guild.
 
 ### HungryGames~fetchPatreonSettings(players, cId, gId, [cb]) ℗
 Given an array of players, lookup the settings for each and update their
-data. This is asyncronous.
+data. This is asynchronous.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
 **Access**: private  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| players | [<code>Array.&lt;Player&gt;</code>](#HungryGames..Player) | The players to lookup and udpate. |
+| players | [<code>Array.&lt;Player&gt;</code>](#HungryGames..Player) | The players to lookup and update. |
 | cId | <code>string</code> \| <code>number</code> | The channel ID to fetch the settings for. |
 | gId | <code>string</code> \| <code>number</code> | The guild ID to fetch the settings for. |
 | [cb] | <code>function</code> | Calls this callback on completion. No parameters. |
@@ -2488,7 +2488,7 @@ data. This is asyncronous.
 <a name="HungryGames..fetchPatreonSettings..onCheckPatron"></a>
 
 #### fetchPatreonSettings~onCheckPatron(err, info, p) ℗
-After retreiving whether the player is an actual patron (ignores
+After retrieving whether the player is an actual patron (ignores
 overrides), then fetch permissions from them (uses overrides).
 
 **Kind**: inner method of [<code>fetchPatreonSettings</code>](#HungryGames..fetchPatreonSettings)  
@@ -2503,7 +2503,7 @@ overrides), then fetch permissions from them (uses overrides).
 <a name="HungryGames..fetchPatreonSettings..onPermResponse"></a>
 
 #### fetchPatreonSettings~onPermResponse(err, info, p) ℗
-After retreiving a player's permissions, fetch their settings for each.
+After retrieving a player's permissions, fetch their settings for each.
 
 **Kind**: inner method of [<code>fetchPatreonSettings</code>](#HungryGames..fetchPatreonSettings)  
 **Access**: private  
@@ -2517,7 +2517,7 @@ After retreiving a player's permissions, fetch their settings for each.
 <a name="HungryGames..fetchPatreonSettings..onSettingResponse"></a>
 
 #### fetchPatreonSettings~onSettingResponse(err, info, p, setting) ℗
-After retreiving a player's settings, update their data with the relevant
+After retrieving a player's settings, update their data with the relevant
 values.
 
 **Kind**: inner method of [<code>fetchPatreonSettings</code>](#HungryGames..fetchPatreonSettings)  
@@ -2700,7 +2700,7 @@ requirements, or null if something went wrong.
 <a name="HungryGames..validateEventTeamConstraint"></a>
 
 ### HungryGames~validateEventTeamConstraint(numVictim, numAttacker, userPool, teams, options, victimsDie, attackersDie, weaponWielder) ⇒ <code>string</code> ℗
-Ensure teammates don't attack eachother.
+Ensure teammates don't attack each other.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
 **Returns**: <code>string</code> - String describing failing check, or null of pass.  
@@ -3163,7 +3163,7 @@ created.
 | --- | --- | --- |
 | msg | <code>Discord~Message</code> | The message that lead to this being called. |
 | id | <code>string</code> | The id of the guild this was triggered from. |
-| show | <code>string</code> | The message to show explainig the number. |
+| show | <code>string</code> | The message to show explaining the number. |
 | cb | [<code>createEventNumCallback</code>](#HungryGames..createEventNumCallback) | The callback after the user has chosen a number. |
 
 <a name="HungryGames..createEventOutcome"></a>
@@ -3178,7 +3178,7 @@ Let the user choose what the outcome of an event will be.
 | --- | --- | --- |
 | msg | <code>Discord~Message</code> | The message that lead to this being called. |
 | id | <code>string</code> | The id of the guild this was triggered from. |
-| show | <code>string</code> | The message to show explainig the options. |
+| show | <code>string</code> | The message to show explaining the options. |
 | cb | [<code>createEventOutcomeCallback</code>](#HungryGames..createEventOutcomeCallback) | The callback after the user has chosen an outcome. |
 
 <a name="HungryGames..createEventAttacker"></a>
@@ -3193,7 +3193,7 @@ Let the user choose whether the event attackers and victims kill anyone.
 | --- | --- | --- |
 | msg | <code>Discord~Message</code> | The message that lead to this being called. |
 | id | <code>string</code> | The id of the guild this was triggered from. |
-| show | <code>string</code> | The message to show explainig the options. |
+| show | <code>string</code> | The message to show explaining the options. |
 | cb | [<code>createEventBooleanCallback</code>](#HungryGames..createEventBooleanCallback) | The callback after the user has chosen an outcome. |
 
 <a name="HungryGames..updateEventPreview"></a>
@@ -3367,7 +3367,7 @@ limited to 5, because we will run into the embed total character limit of
 https://discordapp.com/developers/docs/resources/channel#embed-limits)
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
-**Returns**: <code>number</code> - Number of colums the data shall be formatted as.  
+**Returns**: <code>number</code> - Number of columns the data shall be formatted as.  
 **Access**: private  
 
 | Param | Type | Description |
@@ -3481,7 +3481,7 @@ Handler for a Hungry Games command.
 | Param | Type | Description |
 | --- | --- | --- |
 | msg | <code>Discord~Message</code> | The message sent in Discord that triggered this command. |
-| id | <code>string</code> | The id of the guild this command was run on for convinience. |
+| id | <code>string</code> | The id of the guild this command was run on for convenience. |
 
 <a name="HungryGames..Battle"></a>
 
@@ -3522,7 +3522,7 @@ An Arena event storing Events.
 | Name | Type | Description |
 | --- | --- | --- |
 | [name] | <code>string</code> | Formattable name to use as the human readable weapon name. |
-| [consumable] | <code>string</code> | The formatable string for what to call this weapons consumable items. |
+| [consumable] | <code>string</code> | The formattable string for what to call this weapons consumable items. |
 | outcomes | [<code>Array.&lt;Event&gt;</code>](#HungryGames..Event) | All possible events in this weapon event. |
 
 <a name="HungryGames..UserIconUrl"></a>

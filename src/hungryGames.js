@@ -554,6 +554,10 @@ function HungryGames() {
    * A singe instance of a game in a guild.
    * @typedef {Object} HungryGames~GuildGame
    *
+   * @property {string[]} excludedUsers Array of user IDs that have been
+   * excluded from the games.
+   * @property {string[]} includedUsers Array of user IDs that will be included
+   * in the next game to be created.
    * @property {Object.<number|boolean|string|Object>} options The game options.
    * @property {boolean} autoPlay Is the game currently autoplaying.
    * @property {string[]} excludedUsers The ids of the users to exclude from the
@@ -584,7 +588,10 @@ function HungryGames() {
    */
 
   /**
-   * All currently tracked games.
+   * All currently tracked games. Mapped by guild ID. In most cases you should
+   * NOT reference this directly. Use {@link HungryGames~find} to get the game
+   * object for a guild.
+   * @see {@link HungryGames~find}
    *
    * @private
    * @type {Object.<HungryGames~GuildGame>}
@@ -901,50 +908,7 @@ function HungryGames() {
 
     self.client.on('messageUpdate', handleMessageEdit);
 
-    // TODO: Remove this loop since `games` will not be populated at this point.
     // TODO: Find a way to resume games with new file system.
-    for (let key in games) {
-      if (!games[key] instanceof Object) continue;
-      if (games[key].options) {
-        for (let opt in defaultOptions) {
-          if (!defaultOptions[opt] instanceof Object) continue;
-          if (typeof games[key].options[opt] !==
-              typeof defaultOptions[opt].value) {
-            games[key].options[opt] = defaultOptions[opt].value;
-          }
-        }
-        for (let opt in games[key].options) {
-          if (!games[key].options[opt] instanceof Object) continue;
-          if (typeof defaultOptions[opt] === 'undefined') {
-            delete games[key].options[opt];
-          }
-        }
-      }
-
-      if (games[key].currentGame && (games[key].currentGame.day.state > 0 ||
-                                     games[key].options.autoPlay) &&
-          games[key].currentGame.inProgress && games[key].channel &&
-          games[key].msg) {
-        // If the bot stopped while simulating a day, just start over and try
-        // again.
-        if (games[key].currentGame.day.state === 1) {
-          games[key].currentGame.day.state = 0;
-        }
-        self.debug(
-            'Resuming game: ' + games[key].channel + ' ' + games[key].msg);
-        self.client.channels.get(games[key].channel)
-            .fetchMessage(games[key].msg)
-            .then(function(key) {
-              return function(msg) {
-                nextDay(msg, key);
-              };
-            }(key))
-            .catch((err) => {
-              self.error('Failed to automatically resume games.');
-              console.log(err);
-            });
-      }
-    }
     try {
       Web = require('./web/hg.js');
       web = new Web(self);
@@ -990,7 +954,7 @@ function HungryGames() {
   };
 
   /**
-   * Hanlder for when the create event message is edited and we should update
+   * Handler for when the create event message is edited and we should update
    * our message with the updated event.
    *
    * @private
@@ -1197,7 +1161,7 @@ function HungryGames() {
    * @param {Discord~Message} msg The message sent in Discord that triggered
    * this command.
    * @param {string} id The id of the guild this command was run on for
-   * convinience.
+   * convenience.
    */
 
   /**
@@ -1391,14 +1355,14 @@ function HungryGames() {
    *
    * @property {string} [name] Formattable name to use as the human readable
    * weapon name.
-   * @property {string} [consumable] The formatable string for what to call this
-   * weapons consumable items.
+   * @property {string} [consumable] The formattable string for what to call
+   * this weapons consumable items.
    * @property {HungryGames~Event[]} outcomes All possible events in this weapon
    * event.
    */
 
   /**
-   * Create a Player from a given Disord.User.
+   * Create a Player from a given Discord.User.
    *
    * @private
    * @param {Discord~User|Discord~GuildMember} member User or GuildMember to
@@ -1567,10 +1531,10 @@ function HungryGames() {
 
   /**
    * Given an array of players, lookup the settings for each and update their
-   * data. This is asyncronous.
+   * data. This is asynchronous.
    * @private
    *
-   * @param {HungryGames~Player[]} players The players to lookup and udpate.
+   * @param {HungryGames~Player[]} players The players to lookup and update.
    * @param {?string|number} cId The channel ID to fetch the settings for.
    * @param {?string|number} gId The guild ID to fetch the settings for.
    * @param {function} [cb] Calls this callback on completion. No parameters.
@@ -1585,7 +1549,7 @@ function HungryGames() {
     let settingResponses = 0;
 
     /**
-     * After retreiving whether the player is an actual patron (ignores
+     * After retrieving whether the player is an actual patron (ignores
      * overrides), then fetch permissions from them (uses overrides).
      * @private
      *
@@ -1605,7 +1569,7 @@ function HungryGames() {
       });
     }
     /**
-     * After retreiving a player's permissions, fetch their settings for each.
+     * After retrieving a player's permissions, fetch their settings for each.
      * @private
      * @param {?string} err Error string or null.
      * @param {?{status: string[], message: string}} info Permission
@@ -1639,7 +1603,7 @@ function HungryGames() {
     }
 
     /**
-     * After retreiving a player's settings, update their data with the relevant
+     * After retrieving a player's settings, update their data with the relevant
      * values.
      * @private
      * @param {?string} err Error string or null.
@@ -1858,7 +1822,7 @@ function HungryGames() {
     self.common.reply(msg, self.resetGame(id, command));
   }
   /**
-   * Reset the speciefied category of data from a game.
+   * Reset the specified category of data from a game.
    *
    * @public
    * @param {string} id The id of the guild to modify.
@@ -3075,7 +3039,7 @@ function HungryGames() {
     return null;
   }
   /**
-   * Ensure teammates don't attack eachother.
+   * Ensure teammates don't attack each other.
    *
    * @private
    * @param {number} numVictim The number of victims in the event.
@@ -5980,7 +5944,7 @@ function HungryGames() {
    * @private
    * @param {Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
-   * @param {string} show The message to show explainig the number.
+   * @param {string} show The message to show explaining the number.
    * @param {HungryGames~createEventNumCallback} cb The callback after the user
    * has chosen a number.
    */
@@ -6044,7 +6008,7 @@ function HungryGames() {
    * @private
    * @param {Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
-   * @param {string} show The message to show explainig the options.
+   * @param {string} show The message to show explaining the options.
    * @param {HungryGames~createEventOutcomeCallback} cb The callback after the
    * user has chosen an outcome.
    */
@@ -6103,7 +6067,7 @@ function HungryGames() {
    * @private
    * @param {Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
-   * @param {string} show The message to show explainig the options.
+   * @param {string} show The message to show explaining the options.
    * @param {HungryGames~createEventBooleanCallback} cb The callback after the
    * user has chosen an outcome.
    */
@@ -6739,7 +6703,7 @@ function HungryGames() {
    *
    * @param {number} numCols Minimum number of columns.
    * @param {string[]} statusList List of text to check.
-   * @return {number} Number of colums the data shall be formatted as.
+   * @return {number} Number of columns the data shall be formatted as.
    */
   function calcColNum(numCols, statusList) {
     if (numCols === statusList.length) return numCols;
