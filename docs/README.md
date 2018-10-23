@@ -12,6 +12,10 @@
 <dt><a href="#ChatBot">ChatBot</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
 <dd><p>Manages natural language interaction.</p>
 </dd>
+<dt><a href="#CmdScheduling">CmdScheduling</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
+<dd><p>Provides interface for scheduling a specific time or interval for
+a command to be run.</p>
+</dd>
 <dt><a href="#Common">Common</a></dt>
 <dd></dd>
 <dt><a href="#Connect4">Connect4</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
@@ -373,6 +377,492 @@ Send message text content to dialogflow for handling.
 | Param | Type | Description |
 | --- | --- | --- |
 | msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="CmdScheduling"></a>
+
+## CmdScheduling ⇐ [<code>SubModule</code>](#SubModule)
+Provides interface for scheduling a specific time or interval for
+a command to be run.
+
+**Kind**: global class  
+**Extends**: [<code>SubModule</code>](#SubModule)  
+
+* [CmdScheduling](#CmdScheduling) ⇐ [<code>SubModule</code>](#SubModule)
+    * _instance_
+        * [.helpMessage](#SubModule+helpMessage) : <code>string</code> \| <code>Discord~MessageEmbed</code>
+        * [.prefix](#SubModule+prefix) : <code>string</code>
+        * [.myPrefix](#SubModule+myPrefix) : <code>string</code>
+        * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
+        * [.Discord](#SubModule+Discord) : <code>Discord</code>
+        * [.client](#SubModule+client) : <code>Discord~Client</code>
+        * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
+        * [.common](#SubModule+common) : [<code>Common</code>](#Common)
+        * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
+        * [.myName](#SubModule+myName) : <code>string</code>
+        * [.initialized](#SubModule+initialized) : <code>boolean</code>
+        * [.commit](#SubModule+commit) : <code>string</code>
+        * [.loadTime](#SubModule+loadTime) : <code>number</code>
+        * [.initialize()](#SubModule+initialize)
+        * [.begin(prefix, Discord, client, command, common, bot)](#SubModule+begin)
+        * [.end()](#SubModule+end)
+        * [.log(msg)](#SubModule+log)
+        * [.debug(msg)](#SubModule+debug)
+        * [.warn(msg)](#SubModule+warn)
+        * [.error(msg)](#SubModule+error)
+        * [.shutdown()](#SubModule+shutdown)
+        * [.save([opt])](#SubModule+save)
+        * *[.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>*
+    * _inner_
+        * [~ScheduledCommand](#CmdScheduling..ScheduledCommand) ℗
+            * [new ScheduledCommand(cmd, channel, message, time, repeatDelay)](#new_CmdScheduling..ScheduledCommand_new)
+            * _instance_
+                * [.go()](#CmdScheduling..ScheduledCommand+go)
+                * [.cancel()](#CmdScheduling..ScheduledCommand+cancel)
+                * [.setTimeout()](#CmdScheduling..ScheduledCommand+setTimeout)
+                * [.toJSON()](#CmdScheduling..ScheduledCommand+toJSON) ⇒ <code>Object</code>
+            * _inner_
+                * [~getReferences()](#CmdScheduling..ScheduledCommand..getReferences) ℗
+        * [~longInterval](#CmdScheduling..longInterval) : <code>Interval</code> ℗
+        * [~schedules](#CmdScheduling..schedules) : <code>Object.&lt;Array.&lt;ScheduledCommand&gt;&gt;</code> ℗
+        * [~maxTimeout](#CmdScheduling..maxTimeout) : <code>number</code> ℗
+        * [~saveSubDir](#CmdScheduling..saveSubDir) : <code>string</code> ℗
+        * [~idChars](#CmdScheduling..idChars) : <code>string</code> ℗
+        * [~embedColor](#CmdScheduling..embedColor) : <code>Array.&lt;number&gt;</code> ℗
+        * [~commandSchedule(msg)](#CmdScheduling..commandSchedule) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~sortGuildCommands(id)](#CmdScheduling..sortGuildCommands) ℗
+        * [~stringToMilliseconds(str)](#CmdScheduling..stringToMilliseconds) ⇒ <code>number</code> ℗
+        * [~replyWithSchedule(msg)](#CmdScheduling..replyWithSchedule) ℗
+        * [~cancelAndReply(msg)](#CmdScheduling..cancelAndReply) ℗
+        * [~reScheduleCommands()](#CmdScheduling..reScheduleCommands)
+        * [~formatDelay(msecs)](#CmdScheduling..formatDelay) ⇒ <code>string</code> ℗
+
+<a name="SubModule+helpMessage"></a>
+
+### cmdScheduling.helpMessage : <code>string</code> \| <code>Discord~MessageEmbed</code>
+The help message to show the user in the main help message.
+
+**Kind**: instance property of [<code>CmdScheduling</code>](#CmdScheduling)  
+<a name="SubModule+prefix"></a>
+
+### cmdScheduling.prefix : <code>string</code>
+The main prefix in use for this bot. Only available after begin() is
+called.
+
+**Kind**: instance property of [<code>CmdScheduling</code>](#CmdScheduling)  
+**Read only**: true  
+<a name="SubModule+myPrefix"></a>
+
+### cmdScheduling.myPrefix : <code>string</code>
+The prefix this submodule uses. Formed by prepending this.prefix to
+this.postPrefix. this.postPrefix must be defined before begin(), otherwise
+it is ignored.
+
+**Kind**: instance property of [<code>CmdScheduling</code>](#CmdScheduling)  
+**Read only**: true  
+<a name="SubModule+postPrefix"></a>
+
+### *cmdScheduling.postPrefix : <code>string</code>*
+The postfix for the global prefix for this subModule. Must be defined
+before begin(), otherwise it is ignored.
+
+**Kind**: instance abstract property of [<code>CmdScheduling</code>](#CmdScheduling)  
+**Default**: <code>&quot;&quot;</code>  
+<a name="SubModule+Discord"></a>
+
+### cmdScheduling.Discord : <code>Discord</code>
+The current Discord object instance of the bot.
+
+**Kind**: instance property of [<code>CmdScheduling</code>](#CmdScheduling)  
+<a name="SubModule+client"></a>
+
+### cmdScheduling.client : <code>Discord~Client</code>
+The current bot client.
+
+**Kind**: instance property of [<code>CmdScheduling</code>](#CmdScheduling)  
+<a name="SubModule+command"></a>
+
+### cmdScheduling.command : [<code>Command</code>](#SpikeyBot..Command)
+The command object for registering command listeners.
+
+**Kind**: instance property of [<code>CmdScheduling</code>](#CmdScheduling)  
+<a name="SubModule+common"></a>
+
+### cmdScheduling.common : [<code>Common</code>](#Common)
+The common object.
+
+**Kind**: instance property of [<code>CmdScheduling</code>](#CmdScheduling)  
+<a name="SubModule+bot"></a>
+
+### cmdScheduling.bot : [<code>SpikeyBot</code>](#SpikeyBot)
+The parent SpikeyBot instance.
+
+**Kind**: instance property of [<code>CmdScheduling</code>](#CmdScheduling)  
+<a name="SubModule+myName"></a>
+
+### cmdScheduling.myName : <code>string</code>
+The name of this submodule. Used for differentiating in the log. Should be
+defined before begin().
+
+**Kind**: instance property of [<code>CmdScheduling</code>](#CmdScheduling)  
+**Overrides**: [<code>myName</code>](#SubModule+myName)  
+**Access**: protected  
+<a name="SubModule+initialized"></a>
+
+### cmdScheduling.initialized : <code>boolean</code>
+Has this subModule been initialized yet (Has begin() been called).
+
+**Kind**: instance property of [<code>CmdScheduling</code>](#CmdScheduling)  
+**Default**: <code>false</code>  
+**Access**: protected  
+**Read only**: true  
+<a name="SubModule+commit"></a>
+
+### cmdScheduling.commit : <code>string</code>
+The commit at HEAD at the time this module was loaded. Essentially the
+version of this submodule.
+
+**Kind**: instance constant of [<code>CmdScheduling</code>](#CmdScheduling)  
+**Access**: public  
+<a name="SubModule+loadTime"></a>
+
+### cmdScheduling.loadTime : <code>number</code>
+The time at which this madule was loaded for use in checking if the module
+needs to be reloaded because the file has been modified since loading.
+
+**Kind**: instance constant of [<code>CmdScheduling</code>](#CmdScheduling)  
+**Access**: public  
+<a name="SubModule+initialize"></a>
+
+### cmdScheduling.initialize()
+The function called at the end of begin() for further initialization
+specific to the subModule. Must be defined before begin() is called.
+
+**Kind**: instance method of [<code>CmdScheduling</code>](#CmdScheduling)  
+**Overrides**: [<code>initialize</code>](#SubModule+initialize)  
+**Access**: protected  
+<a name="SubModule+begin"></a>
+
+### cmdScheduling.begin(prefix, Discord, client, command, common, bot)
+Initialize this submodule.
+
+**Kind**: instance method of [<code>CmdScheduling</code>](#CmdScheduling)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| prefix | <code>string</code> | The global prefix for this bot. |
+| Discord | <code>Discord</code> | The Discord object for the API library. |
+| client | <code>Discord~Client</code> | The client that represents this bot. |
+| command | [<code>Command</code>](#SpikeyBot..Command) | The command instance in which to register command listeners. |
+| common | [<code>Common</code>](#Common) | Class storing common functions. |
+| bot | [<code>SpikeyBot</code>](#SpikeyBot) | The parent SpikeyBot instance. |
+
+<a name="SubModule+end"></a>
+
+### cmdScheduling.end()
+Trigger subModule to shutdown and get ready for process terminating.
+
+**Kind**: instance method of [<code>CmdScheduling</code>](#CmdScheduling)  
+**Access**: public  
+<a name="SubModule+log"></a>
+
+### cmdScheduling.log(msg)
+Log using common.log, but automatically set name.
+
+**Kind**: instance method of [<code>CmdScheduling</code>](#CmdScheduling)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+debug"></a>
+
+### cmdScheduling.debug(msg)
+Log using common.logDebug, but automatically set name.
+
+**Kind**: instance method of [<code>CmdScheduling</code>](#CmdScheduling)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+warn"></a>
+
+### cmdScheduling.warn(msg)
+Log using common.logWarning, but automatically set name.
+
+**Kind**: instance method of [<code>CmdScheduling</code>](#CmdScheduling)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+error"></a>
+
+### cmdScheduling.error(msg)
+Log using common.error, but automatically set name.
+
+**Kind**: instance method of [<code>CmdScheduling</code>](#CmdScheduling)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+shutdown"></a>
+
+### cmdScheduling.shutdown()
+Shutdown and disable this submodule. Removes all event listeners.
+
+**Kind**: instance method of [<code>CmdScheduling</code>](#CmdScheduling)  
+**Overrides**: [<code>shutdown</code>](#SubModule+shutdown)  
+**Access**: protected  
+<a name="SubModule+save"></a>
+
+### cmdScheduling.save([opt])
+Saves all data to files necessary for saving current state.
+
+**Kind**: instance method of [<code>CmdScheduling</code>](#CmdScheduling)  
+**Overrides**: [<code>save</code>](#SubModule+save)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [opt] | <code>string</code> | <code>&quot;&#x27;sync&#x27;&quot;</code> | Can be 'async', otherwise defaults to synchronous. |
+
+<a name="SubModule+unloadable"></a>
+
+### *cmdScheduling.unloadable() ⇒ <code>boolean</code>*
+Check if this module is in a state that is ready to be unloaded. If false
+is returned, this module should not be unloaded and doing such may risk
+putting the module into an uncontrollable state.
+
+**Kind**: instance abstract method of [<code>CmdScheduling</code>](#CmdScheduling)  
+**Returns**: <code>boolean</code> - True if can be unloaded, false if cannot.  
+**Access**: public  
+<a name="CmdScheduling..ScheduledCommand"></a>
+
+### CmdScheduling~ScheduledCommand ℗
+Stores information about a specific command that is scheduled.
+
+**Kind**: inner class of [<code>CmdScheduling</code>](#CmdScheduling)  
+**Access**: private  
+**Properties**
+
+| Name | Type | Default | Description |
+| --- | --- | --- | --- |
+| cmd | <code>string</code> |  | The command to run. |
+| channel | <code>Discord~TextChannel</code> |  | The channel or channel ID of where to run the command. |
+| channelId | <code>string</code> \| <code>number</code> |  | The id of the channel where the message was  sent. |
+| message | <code>Discord~Message</code> |  | The message that created this scheduled command. |
+| messageId | <code>string</code> \| <code>number</code> |  | The id of the message sent. |
+| time | <code>number</code> |  | The Unix timestamp at which to run the command. |
+| [repeatDelay] | <code>number</code> | <code>0</code> | The delay in milliseconds at which to run the command again. 0 to not repeat. |
+| id | <code>string</code> |  | Random base 36, 3-character long id of this command. |
+| complete | <code>boolean</code> |  | True if the command has been run, and will not run again. |
+| timeout | <code>Timeout</code> |  | The current timeout registered to run the command. |
+
+
+* [~ScheduledCommand](#CmdScheduling..ScheduledCommand) ℗
+    * [new ScheduledCommand(cmd, channel, message, time, repeatDelay)](#new_CmdScheduling..ScheduledCommand_new)
+    * _instance_
+        * [.go()](#CmdScheduling..ScheduledCommand+go)
+        * [.cancel()](#CmdScheduling..ScheduledCommand+cancel)
+        * [.setTimeout()](#CmdScheduling..ScheduledCommand+setTimeout)
+        * [.toJSON()](#CmdScheduling..ScheduledCommand+toJSON) ⇒ <code>Object</code>
+    * _inner_
+        * [~getReferences()](#CmdScheduling..ScheduledCommand..getReferences) ℗
+
+<a name="new_CmdScheduling..ScheduledCommand_new"></a>
+
+#### new ScheduledCommand(cmd, channel, message, time, repeatDelay)
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| cmd | <code>string</code> \| <code>Object</code> |  | The command to run, or an object instance of this class (exported using toJSON, then parsed into an object). |
+| channel | <code>string</code> \| <code>number</code> \| <code>Discord~TextChannel</code> |  | The channel or channel ID of where to run the command. |
+| message | <code>string</code> \| <code>number</code> \| <code>Discord~Message</code> |  | The message or message ID that created this scheduled command. |
+| time | <code>number</code> |  | The Unix timestamp at which to run the command. |
+| repeatDelay | <code>number</code> | <code>0</code> | The delay in milliseconds at which to run the command again, or null if it does not repeat. |
+
+<a name="CmdScheduling..ScheduledCommand+go"></a>
+
+#### scheduledCommand.go()
+Trigger the command to be run immediately. Automatically fired at the
+scheduled time. Does not cancel the normally scheduled command.
+Re-schedules the command if the command should repeat.
+
+**Kind**: instance method of [<code>ScheduledCommand</code>](#CmdScheduling..ScheduledCommand)  
+**Access**: public  
+<a name="CmdScheduling..ScheduledCommand+cancel"></a>
+
+#### scheduledCommand.cancel()
+Cancel this command and remove Timeout.
+
+**Kind**: instance method of [<code>ScheduledCommand</code>](#CmdScheduling..ScheduledCommand)  
+**Access**: public  
+<a name="CmdScheduling..ScheduledCommand+setTimeout"></a>
+
+#### scheduledCommand.setTimeout()
+Schedule the Timeout event to call the command at the scheduled time.
+If
+the scheduled time to run the command is more than 2 weeks in the
+future,
+the command is not scheduled, and this function must be called
+manually
+(less than 2 weeks) before the scheduled time for the command to run.
+
+**Kind**: instance method of [<code>ScheduledCommand</code>](#CmdScheduling..ScheduledCommand)  
+**Access**: public  
+<a name="CmdScheduling..ScheduledCommand+toJSON"></a>
+
+#### scheduledCommand.toJSON() ⇒ <code>Object</code>
+Export the relevant data to recreate this object, as a JSON object.
+
+**Kind**: instance method of [<code>ScheduledCommand</code>](#CmdScheduling..ScheduledCommand)  
+**Returns**: <code>Object</code> - JSON formatted object.  
+**Access**: public  
+<a name="CmdScheduling..ScheduledCommand..getReferences"></a>
+
+#### ScheduledCommand~getReferences() ℗
+Update channel and message with their associated IDs.
+
+**Kind**: inner method of [<code>ScheduledCommand</code>](#CmdScheduling..ScheduledCommand)  
+**Access**: private  
+<a name="CmdScheduling..longInterval"></a>
+
+### CmdScheduling~longInterval : <code>Interval</code> ℗
+Interval that runs every maxTimeout milliseconds in order to re-schedule
+commands that were beyond the max timeout duration.
+
+**Kind**: inner property of [<code>CmdScheduling</code>](#CmdScheduling)  
+**Access**: private  
+<a name="CmdScheduling..schedules"></a>
+
+### CmdScheduling~schedules : <code>Object.&lt;Array.&lt;ScheduledCommand&gt;&gt;</code> ℗
+All of the currently loaded commands to run. Mapped by Guild ID, then
+sorted arrays by time to run next command.
+
+**Kind**: inner property of [<code>CmdScheduling</code>](#CmdScheduling)  
+**Access**: private  
+<a name="CmdScheduling..maxTimeout"></a>
+
+### CmdScheduling~maxTimeout : <code>number</code> ℗
+The maximum amount of time to set a Timeout for. The JS limit is 24 days
+(iirc), after which, Timeouts do not work properly.
+
+**Kind**: inner constant of [<code>CmdScheduling</code>](#CmdScheduling)  
+**Default**: <code>14 Days</code>  
+**Access**: private  
+<a name="CmdScheduling..saveSubDir"></a>
+
+### CmdScheduling~saveSubDir : <code>string</code> ℗
+The filename in the guild directory to save the scheduled commands.
+
+**Kind**: inner constant of [<code>CmdScheduling</code>](#CmdScheduling)  
+**Default**: <code>&quot;/scheduledCmds.json&quot;</code>  
+**Access**: private  
+<a name="CmdScheduling..idChars"></a>
+
+### CmdScheduling~idChars : <code>string</code> ℗
+The possible characters that can make up an ID of a scheduled command.
+
+**Kind**: inner constant of [<code>CmdScheduling</code>](#CmdScheduling)  
+**Default**: <code>&quot;0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;</code>  
+**Access**: private  
+<a name="CmdScheduling..embedColor"></a>
+
+### CmdScheduling~embedColor : <code>Array.&lt;number&gt;</code> ℗
+The color to use for embeds sent from this submodule.
+
+**Kind**: inner constant of [<code>CmdScheduling</code>](#CmdScheduling)  
+**Default**: <code>[50,255,255]</code>  
+**Access**: private  
+<a name="CmdScheduling..commandSchedule"></a>
+
+### CmdScheduling~commandSchedule(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Allow user to schedule command to be run, or view currently scheduled
+commands.
+
+**Kind**: inner method of [<code>CmdScheduling</code>](#CmdScheduling)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="CmdScheduling..sortGuildCommands"></a>
+
+### CmdScheduling~sortGuildCommands(id) ℗
+Sort all scheduled commands in a guild by the next time they will run.
+
+**Kind**: inner method of [<code>CmdScheduling</code>](#CmdScheduling)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| id | <code>string</code> \| <code>number</code> | The guild id of which to sort the commands. |
+
+<a name="CmdScheduling..stringToMilliseconds"></a>
+
+### CmdScheduling~stringToMilliseconds(str) ⇒ <code>number</code> ℗
+Given a user-inputted string, convert to a number of milliseconds. Input
+can be on most common time units up to a week.
+
+**Kind**: inner method of [<code>CmdScheduling</code>](#CmdScheduling)  
+**Returns**: <code>number</code> - Number of milliseconds parsed from string.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| str | <code>string</code> | The input string to parse. |
+
+<a name="CmdScheduling..replyWithSchedule"></a>
+
+### CmdScheduling~replyWithSchedule(msg) ℗
+Find all scheduled commands for a certain guild, and reply to the message
+with the list of commands.
+
+**Kind**: inner method of [<code>CmdScheduling</code>](#CmdScheduling)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message to reply to. |
+
+<a name="CmdScheduling..cancelAndReply"></a>
+
+### CmdScheduling~cancelAndReply(msg) ℗
+Find a scheduled command with the given ID, and remove it from commands to
+run.
+
+**Kind**: inner method of [<code>CmdScheduling</code>](#CmdScheduling)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message to reply to. |
+
+<a name="CmdScheduling..reScheduleCommands"></a>
+
+### CmdScheduling~reScheduleCommands()
+Reschedule all future commands that are beyond maxTimeout.
+
+**Kind**: inner method of [<code>CmdScheduling</code>](#CmdScheduling)  
+<a name="CmdScheduling..formatDelay"></a>
+
+### CmdScheduling~formatDelay(msecs) ⇒ <code>string</code> ℗
+Format a duration in milliseconds into a human readable string.
+
+**Kind**: inner method of [<code>CmdScheduling</code>](#CmdScheduling)  
+**Returns**: <code>string</code> - Formatted string.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msecs | <code>number</code> | Duration in milliseconds. |
 
 <a name="Common"></a>
 

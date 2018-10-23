@@ -149,6 +149,32 @@
           ]
         },
         {
+          "command": "schedule",
+          "description": "Schedule a command to be run after a certain amount of time.",
+          "examples": [
+            {
+              "description": "List Scheduled Commands",
+              "command": "schedule",
+              "result": "Currently scheduled commands will be listed, and who scheduled the command."
+            },
+            {
+              "description": "Schedule a command for 1 hour",
+              "command": "schedule 1h {prefix}say It has been one hour!",
+              "result": "After 1 hour, the bot will run the {prefix}say command in the channel that you ran your command."
+            },
+            {
+              "description": "Schedule a command in 2 hours, to repeat every week afterwards.",
+              "command": "schedule 2 hours repeat 1 week {prefix}hg autoplay",
+              "result": "In 2 hours, and for every week afterwards, {prefix}hg autoplay will be run."
+            },
+            {
+              "description": "Cancel a scheduled command",
+              "command": "schedule cancel xyz",
+              "result": "Cancel the scheduled command with the ID of xyz."
+            }
+          ]
+        },
+        {
           "command": "stats",
           "description": "Displays statistics about the bot and the servers it's on.",
           "examples": [

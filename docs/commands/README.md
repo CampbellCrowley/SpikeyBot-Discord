@@ -72,6 +72,7 @@ See [spikeybot.com](https://www.spikeybot.com/) for examples and more informatio
 | ?avatar 'mention' | Need a better look at your profile pic? I'll show you the original. | avatar, profile |
 | ?ping | Want to know what my delay to the server is? I can tell you my ping! |  |
 | ?timer 'minutes' 'message...' | Set a timer for a certain number of seconds. The bot will DM you the message at the end. No options lists timers. | timer, timers, remind, reminder, reminders |
+| ?schedule | Schedule a command to be run after a certain amount of time. |  |
 | ?stats | Displays statistics about the bot and the servers it's on. |  |
 
 

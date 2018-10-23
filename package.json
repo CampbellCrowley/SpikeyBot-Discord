@@ -1,6 +1,6 @@
 {
   "name": "spikeybot-discord",
-  "version": "1.7.8",
+  "version": "1.7.9",
   "description": "SpikeyBot",
   "homepage": "https://www.spikeybot.com/",
   "bugs": {
@@ -56,8 +56,8 @@
     "test:main": "mocha --delay --grep \"START|Main Module|END\"",
     "run": "npm run kill; npm start",
     "run:rem": "npm run kill; npm run start:rem",
-    "start": "nodejs src/SpikeyBot.js --dev --shards ./web/proxy.js ./web/account.js ./web/stats.js ./hungryGames.js ./main.js ./ticTacToe.js ./connect4.js ./music.js ./patreon.js ./tts.js ./poll.js ./chatbot.js ./web/webhooks.js ./spotify.js &",
-    "start:rem": "nodejs src/SpikeyBot.js --dev --shards --botname rembot ./hungryGames.js ./main.js ./ticTacToe.js ./connect4.js ./music.js ./patreon.js ./tts.js ./poll.js ./chatbot.js ./web/webhooks.js ./spotify.js &",
+    "start": "nodejs src/SpikeyBot.js --dev --shards ./web/proxy.js ./web/account.js ./web/stats.js ./hungryGames.js ./main.js ./ticTacToe.js ./connect4.js ./music.js ./patreon.js ./tts.js ./poll.js ./chatbot.js ./web/webhooks.js ./spotify.js ./cmdScheduling.js &",
+    "start:rem": "nodejs src/SpikeyBot.js --dev --shards --botname rembot ./hungryGames.js ./main.js ./ticTacToe.js ./connect4.js ./music.js ./patreon.js ./tts.js ./poll.js ./chatbot.js ./web/webhooks.js ./spotify.js ./cmdScheduling.js &",
     "kill": "killall nodejs node; exit 0;",
     "docs": "npm run lint && bash .hooks/make-docs.sh",
     "docs:help": "nodejs src/lib/json2md.js docs/*.json",
