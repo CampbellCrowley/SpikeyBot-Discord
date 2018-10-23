@@ -151,6 +151,7 @@
         {
           "command": "schedule",
           "description": "Schedule a command to be run after a certain amount of time.",
+          "aliases": "sch, sched, schedule, scheduled",
           "examples": [
             {
               "description": "List Scheduled Commands",
@@ -163,8 +164,18 @@
               "result": "After 1 hour, the bot will run the {prefix}say command in the channel that you ran your command."
             },
             {
+              "description": "Schedule a command for 1 hour",
+              "command": "schedule after 1 hour {prefix}say It has been one hour!",
+              "result": "After 1 hour, the bot will run the {prefix}say command in the channel that you ran your command."
+            },
+            {
               "description": "Schedule a command in 2 hours, to repeat every week afterwards.",
               "command": "schedule 2 hours repeat 1 week {prefix}hg autoplay",
+              "result": "In 2 hours, and for every week afterwards, {prefix}hg autoplay will be run."
+            },
+            {
+              "description": "Schedule a command in 2 hours, to repeat every week afterwards.",
+              "command": "schedule after 2 hours, repeat every 1 week {prefix}hg autoplay",
               "result": "In 2 hours, and for every week afterwards, {prefix}hg autoplay will be run."
             },
             {

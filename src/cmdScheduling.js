@@ -10,6 +10,9 @@ require('./subModule.js')(CmdScheduling);  // Extends the SubModule class.
  * @class
  * @augments SubModule
  * @listens SpikeyBot~Command#schedule
+ * @listens SpikeyBot~Command#sch
+ * @listens SpikeyBot~Command#sched
+ * @listens SpikeyBot~Command#scheduled
  */
 function CmdScheduling() {
   self = this;
@@ -19,7 +22,8 @@ function CmdScheduling() {
 
   /** @inheritdoc */
   this.initialize = function() {
-    self.command.on('schedule', commandSchedule, true);
+    self.command.on(
+        ['schedule', 'sch', 'sched', 'scheduled'], commandSchedule, true);
 
     self.client.guilds.forEach((g) => {
       fs.readFile(self.common.guildSaveDir + g.id + saveSubDir, (err, data) => {
@@ -31,6 +35,12 @@ function CmdScheduling() {
           for (let i = 0; i < parsed.length; i++) {
             schedules[g.id].push(new ScheduledCommand(parsed[i]));
           }
+          fs.unlink(self.common.guildSaveDir + g.id + saveSubDir, (err) => {
+            if (err) {
+              self.error('Failed to delete scheduled commands file: ' + g.id);
+              console.error(err);
+            }
+          });
         } catch (err) {
           self.error('Failed to parse data for guild commands: ' + g.id);
           console.error(err);
@@ -42,7 +52,7 @@ function CmdScheduling() {
   };
   /** @inheritdoc */
   this.shutdown = function() {
-    self.command.deleteEvent('schedule');
+    self.command.deleteEvent(['schedule', 'sch', 'sched', 'scheduled']);
     if (longInterval) self.client.clearInterval(longInterval);
     for (let i in schedules) {
       if (!schedules[i] || !schedules[i].length) continue;
@@ -245,6 +255,10 @@ function CmdScheduling() {
         self.error('Command triggered after being completed!', myself.id);
         return;
       }
+      myself.message.content = cmd;
+      self.debug(
+          'ScheduledCmd: ' + myself.message.channel.id + '@' +
+          myself.message.author.id + ' ' + myself.message.content);
       self.command.trigger(myself.cmd.split(/\s/)[0], myself.message);
       if (myself.time <= Date.now()) {
         self.client.clearTimeout(myself.timeout);
@@ -369,7 +383,6 @@ function CmdScheduling() {
       return;
     }
 
-    msg.content = cmd;
     let newCmd =
         new ScheduledCommand(cmd, msg.channel, msg, delay + Date.now(), repeat);
     if (!schedules[msg.guild.id]) {
@@ -386,10 +399,17 @@ function CmdScheduling() {
       if (!inserted) schedules[msg.guild.id].push(newCmd);
     }
 
-    self.common.reply(
-        msg, 'Scheduled command ID: ' + newCmd.id + ' created.\nRuns in ' +
-            formatDelay(delay) + '.',
-        repeat ? ('Repeats every ' + formatDelay(repeat)) : null);
+    let embed = new self.Discord.MessageEmbed();
+    embed.setTitle('Created Scheduled Command (' + newCmd.id + ')');
+    embed.setColor(embedColor);
+    let desc = 'Runs in ' + formatDelay(delay);
+    if (repeat) {
+      desc += '\nRepeats every ' + formatDelay(repeat);
+    }
+    embed.setDescription(desc);
+    embed.setFooter(cmd);
+
+    msg.channel.send(self.common.mention(msg), embed);
   }
 
   /**
@@ -433,7 +453,10 @@ function CmdScheduling() {
    */
   function stringToMilliseconds(str) {
     let sum = 0;
-    str = (str + '').replace(/\band\b/g, '').trim().toLowerCase();
+    str = (str + '')
+        .replace(/\b(and|repeat|every|after)\b/g, '')
+        .trim()
+        .toLowerCase();
 
     const reg = /([0-9\.]+)([^a-z]*)([a-z]*)/g;
     let res;
@@ -496,10 +519,10 @@ function CmdScheduling() {
       } else {
         let n = Date.now();
         list = list.map((el) => {
-          return el.id + ': In ' + ((el.time - n) / 1000 / 60 / 60) + ' hours' +
-              (el.repeatDelay ? (', repeats every ' +
-                                 (el.repeatDelay / 1000 / 60 / 60) + ' hours') :
-                                '') +
+          return el.id + ': In ' + formatDelay(el.time - n) +
+              (el.repeatDelay ?
+                   (', repeats every ' + formatDelay(el.repeatDelay)) :
+                   '') +
               ' by <@' + el.message.author.id + '>: ' + el.cmd;
         });
         embed.setDescription(list.join('\n'));
@@ -520,14 +543,15 @@ function CmdScheduling() {
    */
   function cancelAndReply(msg) {
     let embed = new self.Discord.MessageEmbed();
-    embed.setTitle('Cancelling Scheduled Command');
     embed.setColor(embedColor);
     let list = schedules[msg.guild.id];
     if (!list || list.length == 0) {
+      embed.setTitle('Cancelling Failed');
       embed.setDescription('There are no scheduled commands in this guild.');
     } else {
       let idSearch = msg.text.match(/\b(\w{3})\b/);
       if (!idSearch) {
+        embed.setTitle('Cancelling Failed');
         embed.setDescription('Please specify a scheduled command ID.');
       } else {
         idSearch = idSearch[1].toUpperCase();
@@ -541,9 +565,11 @@ function CmdScheduling() {
           }
         }
         if (!removed) {
+          embed.setTitle('Cancelling Failed');
           embed.setDescription(
               'Unable to find scheduled command with ID: ' + idSearch);
         } else {
+          embed.setTitle('Cancelling Succeeded');
           embed.setDescription(
               'Removed scheduled command ID: ' + idSearch + ', ' + removed.cmd);
         }
@@ -576,7 +602,36 @@ function CmdScheduling() {
    * @return {string} Formatted string.
    */
   function formatDelay(msecs) {
-    return Math.round(msecs / 10 / 60 / 60) / 100 + ' hours';
+    let output = '';
+    let unit = 7 * 24 * 60 * 60 * 1000;
+    if (msecs >= unit) {
+      let num = Math.floor(msecs / unit);
+      output += num + ' weeks, ';
+      msecs -= num * unit;
+    }
+    unit /= 7;
+    if (msecs >= unit) {
+      let num = Math.floor(msecs / unit);
+      output += num + ' days, ';
+      msecs -= num * unit;
+    }
+    unit /= 24;
+    if (msecs >= unit) {
+      let num = Math.floor(msecs / unit);
+      output += num + ' hours, ';
+      msecs -= num * unit;
+    }
+    unit /= 60;
+    if (msecs >= unit) {
+      let num = Math.floor(msecs / unit);
+      output += num + ' minutes, ';
+      msecs -= num * unit;
+    }
+    unit /= 60;
+    if (msecs >= unit) {
+      output += msecs / unit + ' seconds';
+    }
+    return output.replace(/,\s$/, '');
   }
 }
 module.exports = new CmdScheduling();
