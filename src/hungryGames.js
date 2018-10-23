@@ -908,7 +908,18 @@ function HungryGames() {
 
     self.client.on('messageUpdate', handleMessageEdit);
 
-    // TODO: Find a way to resume games with new file system.
+    self.client.guilds.forEach((g) => {
+      let game = find(g.id);
+      if (!game) return;
+
+      if (game.currentGame.day.state > 1) {
+        self.nextDay(game.author, g.id, game.outputChannel);
+      } else {
+        delete games[g.id];
+        delete findTimestamps[g.id];
+      }
+    });
+
     try {
       Web = require('./web/hg.js');
       web = new Web(self);
