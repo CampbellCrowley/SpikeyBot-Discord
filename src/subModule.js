@@ -174,10 +174,13 @@ function SubModule() {
     };
 
     if (this.initialized) return;
-    this.debug(this.myName + ' Initialize...');
-    this.initialize();
-    this.log(this.myName + ' Initialized');
-    this.initialized = true;
+    this.client.setTimeout(() => {
+      if (this.initialized) return;
+      this.debug(this.myName + ' Initialize...');
+      this.initialize();
+      this.log(this.myName + ' Initialized');
+      this.initialized = true;
+    });
   };
 
   /**

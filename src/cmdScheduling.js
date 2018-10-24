@@ -50,7 +50,10 @@ function CmdScheduling() {
 
     longInterval = self.client.setInterval(reScheduleCommands, maxTimeout);
   };
-  /** @inheritdoc */
+  /**
+   * @inheritdoc
+   * @fires CmdScheduling#shutdown
+   * */
   this.shutdown = function() {
     self.command.deleteEvent(['schedule', 'sch', 'sched', 'scheduled']);
     if (longInterval) self.client.clearInterval(longInterval);
@@ -58,6 +61,8 @@ function CmdScheduling() {
       if (!schedules[i] || !schedules[i].length) continue;
       schedules[i].forEach((el) => el.cancel());
     }
+    fireEvent('shutdown');
+    listeners = {};
   };
   /**
    * @override
@@ -153,11 +158,19 @@ function CmdScheduling() {
   const embedColor = [50, 255, 255];
 
   /**
+   * Currently registered event listeners, mapped by event name.
+   *
+   * @private
+   * @type {Object.<Array.<Function>>}
+   */
+  let listeners = {};
+
+  /**
    * All of the currently loaded commands to run. Mapped by Guild ID, then
    * sorted arrays by time to run next command.
    *
    * @private
-   * @type {Object.<Array.<ScheduledCommand>>}
+   * @type {Object.<Array.<CmdScheduling.ScheduledCommand>>}
    */
   let schedules = {};
 
@@ -165,7 +178,7 @@ function CmdScheduling() {
    * @classdesc Stores information about a specific command that is scheduled.
    * @class
    *
-   * @private
+   * @public
    * @param {string|Object} cmd The command to run, or an object instance of
    * this class (exported using toJSON, then parsed into an object).
    * @param {string|number|Discord~TextChannel} channel The channel or channel
@@ -322,6 +335,34 @@ function CmdScheduling() {
     getReferences();
     this.setTimeout();
   }
+  this.ScheduledCommand = ScheduledCommand;
+
+  /**
+   * Register a created {@link CmdScheduling.ScheduledCommand}.
+   * @public
+   * @fires CmdScheduling#commandRegistered
+   *
+   * @param {CmdScheduling.ScheduledCommand} sCmd The ScheduledCommand object to
+   * register.
+   */
+  function registerScheduledCommand(sCmd) {
+    let gId = sCmd.message.guild.id;
+    if (!schedules[gId]) {
+      schedules[gId] = [sCmd];
+    } else {
+      let inserted = false;
+      for (let i = 0; i < schedules[gId].length; i++) {
+        if (sCmd.time < schedules[gId][i].time) {
+          schedules[gId].splice(i, 0, sCmd);
+          inserted = true;
+          break;
+        }
+      }
+      if (!inserted) schedules[gId].push(sCmd);
+    }
+    fireEvent('commandRegistered', sCmd, sCmd.message.guild.id);
+  }
+  this.registerScheduledCommand = registerScheduledCommand;
 
   /**
    * Allow user to schedule command to be run, or view currently scheduled
@@ -336,7 +377,7 @@ function CmdScheduling() {
     if (!msg.text || !msg.text.trim()) {
       replyWithSchedule(msg);
       return;
-    } else if (msg.text.match(/\s*(cancel|remove|delete)/)) {
+    } else if (msg.text.match(/(cancel|remove|delete)/)) {
       cancelAndReply(msg);
       return;
     }
@@ -385,19 +426,8 @@ function CmdScheduling() {
 
     let newCmd =
         new ScheduledCommand(cmd, msg.channel, msg, delay + Date.now(), repeat);
-    if (!schedules[msg.guild.id]) {
-      schedules[msg.guild.id] = [newCmd];
-    } else {
-      let inserted = false;
-      for (let i = 0; i < schedules[msg.guild.id].length; i++) {
-        if (newCmd.time < schedules[msg.guild.id][i].time) {
-          schedules[msg.guild.id].splice(i, 0, newCmd);
-          inserted = true;
-          break;
-        }
-      }
-      if (!inserted) schedules[msg.guild.id].push(newCmd);
-    }
+
+    registerScheduledCommand(newCmd);
 
     let embed = new self.Discord.MessageEmbed();
     embed.setTitle('Created Scheduled Command (' + newCmd.id + ')');
@@ -461,42 +491,69 @@ function CmdScheduling() {
     const reg = /([0-9\.]+)([^a-z]*)([a-z]*)/g;
     let res;
     while ((res = reg.exec(str)) !== null) {
-      switch (res[3]) {
+      sum += numberToUnit(res[1], res[3]);
+    }
+    if (!sum && str) {
+      sum = numberToUnit(1, str);
+    }
+    /**
+     * Convert a number and a unit to the corresponding number of milliseconds.
+     * @private
+     * @param {number} num The number associated with the unit.
+     * @param {string} unit The current unit associated with the num.
+     * @return {number} The given number in milliseconds.
+     */
+    function numberToUnit(num, unit) {
+      switch (unit) {
         case 's':
         case 'sec':
         case 'second':
         case 'seconds':
-          sum += res[1] * 1000;
-          break;
+          return num * 1000;
         case 'm':
         case 'min':
         case 'minute':
         case 'minutes':
-        default:
-          sum += res[1] * 60 * 1000;
-          break;
+          return num * 60 * 1000;
         case 'h':
         case 'hr':
         case 'hour':
         case 'hours':
-          sum += res[1] * 60 * 60 * 1000;
-          break;
+          return num * 60 * 60 * 1000;
         case 'd':
         case 'dy':
         case 'day':
         case 'days':
-          sum += res[1] * 24 * 60 * 60 * 1000;
-          break;
+          return num * 24 * 60 * 60 * 1000;
         case 'w':
         case 'wk':
         case 'week':
         case 'weeks':
-          sum += res[1] * 7 * 24 * 60 * 60 * 1000;
-          break;
+          return num * 7 * 24 * 60 * 60 * 1000;
+        default:
+          return 0;
       }
     }
     return sum;
   }
+
+  /**
+   * Returns an array of references to scheduled commands in a guild.
+   * @public
+   *
+   * @param {string|number} gId The guild id of which to get the commands.
+   * @return {?CmdScheduling.ScheduledCommand[]} Null if none, or the array of
+   * ScheduledCommands.
+   */
+  function getScheduledCommandsInGuild(gId) {
+    let list = schedules[gId];
+    if (!list) return null;
+    list = list.filter((el) => !el.complete);
+    if (!list || list.length == 0) return null;
+    return list;
+  }
+  this.getScheduledCommandsInGuild = getScheduledCommandsInGuild;
+
 
   /**
    * Find all scheduled commands for a certain guild, and reply to the message
@@ -509,30 +566,53 @@ function CmdScheduling() {
     let embed = new self.Discord.MessageEmbed();
     embed.setTitle('Scheduled Commands');
     embed.setColor(embedColor);
-    let list = schedules[msg.guild.id];
-    if (!list || list.length == 0) {
+    let list = getScheduledCommandsInGuild(msg.guild.id);
+    if (!list) {
       embed.setDescription('No commands are scheduled.');
     } else {
-      list = list.filter((el) => !el.complete);
-      if (list.length == 0) {
-        embed.setDescription('No commands are scheduled.');
-      } else {
-        let n = Date.now();
-        list = list.map((el) => {
-          return el.id + ': In ' + formatDelay(el.time - n) +
-              (el.repeatDelay ?
-                   (', repeats every ' + formatDelay(el.repeatDelay)) :
-                   '') +
-              ' by <@' + el.message.author.id + '>: ' + el.cmd;
-        });
-        embed.setDescription(list.join('\n'));
-      }
+      let n = Date.now();
+      list = list.map((el) => {
+        return '**' + el.id + '**: In ' + formatDelay(el.time - n) +
+            (el.repeatDelay ?
+                 (', repeats every ' + formatDelay(el.repeatDelay)) :
+                 '') +
+            ' by <@' + el.message.author.id + '>: ' + el.cmd;
+      });
+      embed.setDescription(list.join('\n'));
     }
     msg.channel.send(self.common.mention(msg), embed).catch((err) => {
       self.error('Failed to send reply in channel: ' + msg.channel.id);
       console.error(err);
     });
   }
+
+  /**
+   * Cancel a scheduled command in a guild.
+   * @public
+   * @fires CmdScheduling#commandCancelled
+   *
+   * @param {string|number} gId The guild id of which to cancel the command.
+   * @param {string|number} cmdId The ID of the command to cancel.
+   * @return {?CmdScheduling.ScheduledCommand} Null if failed, or object that
+   * was cancelled.
+   */
+  function cancelCmd(gId, cmdId) {
+    let list = schedules[gId];
+    if (!list || list.length == 0) return null;
+    if (!cmdId) return null;
+    cmdId = (cmdId + '').toUpperCase();
+    for (let i = 0; i < list.length; i++) {
+      if (list[i].complete) continue;
+      if (list[i].id == cmdId) {
+        let removed = list.splice(i, 1)[0];
+        removed.cancel();
+        fireEvent('commandCancelled', removed.id, removed.message.guild.id);
+        return removed;
+      }
+    }
+    return null;
+  }
+  this.cancelCmd = cancelCmd;
 
   /**
    * Find a scheduled command with the given ID, and remove it from commands to
@@ -549,21 +629,13 @@ function CmdScheduling() {
       embed.setTitle('Cancelling Failed');
       embed.setDescription('There are no scheduled commands in this guild.');
     } else {
-      let idSearch = msg.text.match(/\b(\w{3})\b/);
+      let idSearch = msg.text.match(/(cancel|remove|delete)\W+(\w{3,})\b/);
       if (!idSearch) {
         embed.setTitle('Cancelling Failed');
         embed.setDescription('Please specify a scheduled command ID.');
       } else {
-        idSearch = idSearch[1].toUpperCase();
-        let removed;
-        for (let i = 0; i < list.length; i++) {
-          if (list[i].complete) continue;
-          if (list[i].id == idSearch) {
-            removed = list.splice(i, 1)[0];
-            removed.cancel();
-            break;
-          }
-        }
+        idSearch = idSearch[2];
+        let removed = cancelCmd(msg.guild.id, idSearch);
         if (!removed) {
           embed.setTitle('Cancelling Failed');
           embed.setDescription(
@@ -606,32 +678,87 @@ function CmdScheduling() {
     let unit = 7 * 24 * 60 * 60 * 1000;
     if (msecs >= unit) {
       let num = Math.floor(msecs / unit);
-      output += num + ' weeks, ';
+      output += num + ' week' + (num == 1 ? '' : 's') + ', ';
       msecs -= num * unit;
     }
     unit /= 7;
     if (msecs >= unit) {
       let num = Math.floor(msecs / unit);
-      output += num + ' days, ';
+      output += num + ' day' + (num == 1 ? '' : 's') + ', ';
       msecs -= num * unit;
     }
     unit /= 24;
     if (msecs >= unit) {
       let num = Math.floor(msecs / unit);
-      output += num + ' hours, ';
+      output += num + ' hour' + (num == 1 ? '' : 's') + ', ';
       msecs -= num * unit;
     }
     unit /= 60;
     if (msecs >= unit) {
       let num = Math.floor(msecs / unit);
-      output += num + ' minutes, ';
+      output += num + ' minute' + (num == 1 ? '' : 's') + ', ';
       msecs -= num * unit;
     }
     unit /= 60;
     if (msecs >= unit) {
-      output += msecs / unit + ' seconds';
+      let num = Math.round(msecs / unit);
+      output += num + ' second' + (num == 1 ? '' : 's') + '';
     }
     return output.replace(/,\s$/, '');
+  }
+
+  /**
+   * Register an event handler for the given name with the given handler.
+   * @public
+   * @param {string} name The event name to listen for.
+   * @param {Function} handler The function to call when the event is fired.
+   */
+  this.on = function(name, handler) {
+    if (typeof handler !== 'function') {
+      throw (new Error('Handler must be a function.'));
+    }
+    if (!listeners[name]) listeners[name] = [];
+    listeners[name].push(handler);
+  };
+
+  /**
+   * Remove an event handler for the given name.
+   * @public
+   * @param {string} name The event name to remove the handler for.
+   * @param {Function} [handler] THe specific handler to remove, or null for
+   * all.
+   */
+  this.removeListener = function(name, handler) {
+    if (!listeners[name]) return;
+    if (!handler) {
+      delete listeners[name];
+    } else {
+      for (let i = 0; i < listeners[name].length; i++) {
+        if (listeners[name][i] == handler) {
+          listeners[name].splice(i, 1);
+        }
+      }
+      if (listeners[name].length == 0) delete listeners[name];
+    }
+  };
+
+  /**
+   * Fires a given event with the associacted data.
+   *
+   * @private
+   * @param {string} name The name of the event to fire.
+   * @param {*} ...data The arguments to pass into the function calls.
+   */
+  function fireEvent(name, ...data) {
+    if (!listeners[name]) return;
+    for (let i = 0; i < listeners[name].length; i++) {
+      try {
+        listeners[name][i].apply(this, data);
+      } catch (err) {
+        self.error('Error in firing event: ' + name);
+        console.error(err);
+      }
+    }
   }
 }
 module.exports = new CmdScheduling();

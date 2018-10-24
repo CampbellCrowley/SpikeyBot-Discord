@@ -2097,7 +2097,8 @@ function HungryGames() {
             statusList.join('\n'), true);
       } else {
         finalMessage.addField(
-            'Included (' + numUsers + ')', statusList.join('\n'), false);
+            'Included (' + numUsers + ')', statusList.join('\n') || 'Nobody',
+            false);
       }
       if (find(id).excludedUsers.length > 0) {
         let excludedList = find(id)

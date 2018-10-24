@@ -130,10 +130,8 @@ function WebAccount() {
 
   /** @inheritdoc */
   this.initialize = function() {
-    setTimeout(() => {
-      app.listen(self.common.isRelease ? 8014 : 8015);
-      self.bot.accounts = toExport;
-    });
+    app.listen(self.common.isRelease ? 8014 : 8015);
+    self.bot.accounts = toExport;
   };
 
   let toExport = {};

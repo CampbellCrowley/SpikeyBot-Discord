@@ -16,15 +16,12 @@ function WebStats() {
 
   this.myName = 'Stats';
 
-  let app;
+  let app = http.createServer(handler);
   /** @inheritdoc */
   this.initialize = function() {
-    app = http.createServer(handler);
-    setTimeout(() => {
-      postUpdatedCount();
-      app.listen(self.common.isRelease ? 8016 : 8017);
-      postTimeout = self.client.setTimeout(postUpdatedCount, postFrequency);
-    });
+    postUpdatedCount();
+    app.listen(self.common.isRelease ? 8016 : 8017);
+    postTimeout = self.client.setTimeout(postUpdatedCount, postFrequency);
   };
   /** @inheritdoc */
   this.shutdown = function(skipSave) {
