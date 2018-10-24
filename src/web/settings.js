@@ -1,10 +1,7 @@
 // Copyright 2018 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (web@campbellcrowley.com)
-const fs = require('fs');
 const http = require('http');
-const https = require('https');
 const socketIo = require('socket.io');
-const mkdirp = require('mkdirp'); // mkdir -p
 
 require('../subModule.js')(WebSettings);  // Extends the SubModule class.
 
@@ -92,6 +89,10 @@ function WebSettings() {
    * Handle new CmdScheduling.ScheduledCommand being registered.
    * @private
    * @listens CmdScheduling#commandRegistered
+   *
+   * @param {CmdScheduling.ScheduledCommand} cmd The command that was scheduled.
+   * @param {string|number} gId The guild ID of which the command was scheduled
+   * in.
    */
   function handleCommandRegistered(cmd, gId) {
     for (let i in sockets) {
@@ -105,6 +106,9 @@ function WebSettings() {
    * Handle a CmdScheduling.ScheduledCommand being canceled.
    * @private
    * @listens CmdScheduling#commandCancelled
+   * @param {string} cmdId The ID of the command that was cancelled.
+   * @param {string|number} gId the ID of the guild the command was cancelled
+   * in.
    */
   function handleCommandCancelled(cmdId, gId) {
     for (let i in sockets) {
@@ -182,7 +186,8 @@ function WebSettings() {
         socket.handshake.address);
 
     self.common.log(
-        'Socket connected Settings (' + Object.keys(sockets).length + '): ' + ipName,
+        'Socket connected Settings (' + Object.keys(sockets).length + '): ' +
+            ipName,
         socket.id);
     sockets[socket.id] = socket;
 
@@ -283,12 +288,12 @@ function WebSettings() {
    * @param {Socket} socket The socket.io socket to reply on.
    * @param {string} cmd THe command the client attempted.
    */
-  function replyNoPerm(socket, cmd) {
+  /* function replyNoPerm(socket, cmd) {
     self.common.log('Attempted ' + cmd + ' without permission.', socket.id);
     socket.emit(
         'message', 'Failed to run command "' + cmd +
             '" because you don\'t have permission for this.');
-  }
+  }*/
 
   /**
    * Checks if the current shard is responsible for the requested guild.
@@ -297,10 +302,10 @@ function WebSettings() {
    * @param {number|string} gId The guild id to check.
    * @return {boolean} True if this shard has this guild.
    */
-  function checkMyGuild(gId) {
+  /* function checkMyGuild(gId) {
     let g = self.client.guilds.get(gId);
     return (g && true) || false;
-  }
+  }*/
 
   /**
    * Check that the given user has permission to manage the games in the given
@@ -312,16 +317,16 @@ function WebSettings() {
    * @return {boolean} Whther the user has permission or not to manage the
    * hungry games in the given guild.
    */
-  function checkPerm(userData, gId) {
+  /* function checkPerm(userData, gId) {
     if (!userData) return false;
     let g = self.client.guilds.get(gId);
     if (!g) return false;
     let member = g.members.get(userData.id);
-    if (!member /* || !self.checkMemberForRole(member)*/) {
+    if (!member) {
       return false;
     }
     return true;
-  }
+  }*/
   /**
    * Check that the given user has permission to see and send messages in the
    * given channel, as well as manage the games in the given guild.
@@ -334,12 +339,12 @@ function WebSettings() {
    * hungry games in the given guild and has permission to send messages in the
    * given channel.
    */
-  function checkChannelPerm(userData, gId, cId) {
+  /* function checkChannelPerm(userData, gId, cId) {
     if (!userData) return false;
     let g = self.client.guilds.get(gId);
     if (!g) return false;
     let m = g.members.get(userData.id);
-    if (!m /* || !self.checkMemberForRole(m)*/) return false;
+    if (!m) return false;
 
     let channel = g.channels.get(cId);
     if (!channel) return false;
@@ -348,7 +353,7 @@ function WebSettings() {
     if (!perms.has(self.Discord.Permissions.FLAGS.VIEW_CHANNEL)) return false;
     if (!perms.has(self.Discord.Permissions.FLAGS.SEND_MESSAGES)) return false;
     return true;
-  }
+  }*/
 
   /**
    * Strips a Discord~GuildMember to only the necessary data that a client will
@@ -485,6 +490,16 @@ function WebSettings() {
     }
   }
 
+  /**
+   * Client has requested all settings for all guilds for the connected user.
+   *
+   * @public
+   * @type {WebSettings~SocketFunction}
+   * @param {Object} userData The current user's session data.
+   * @param {socketIo~Socket} socket The socket connection to reply on.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete and has data, or has failed.
+   */
   function fetchSettings(userData, socket, cb) {
     if (typeof cb !== 'function') cb = function() {};
     if (!userData) {
@@ -501,6 +516,16 @@ function WebSettings() {
   }
   this.fetchSettings = fetchSettings;
 
+  /**
+   * Client has requested all scheduled commands for the connected user.
+   *
+   * @public
+   * @type {WebSettings~SocketFunction}
+   * @param {Object} userData The current user's session data.
+   * @param {socketIo~Socket} socket The socket connection to reply on.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete and has data, or has failed.
+   */
   function fetchScheduledCommands(userData, socket, cb) {
     if (typeof cb !== 'function') cb = function() {};
     if (!userData) {
@@ -530,5 +555,6 @@ function WebSettings() {
     });
     cb(sCmds);
   }
+  this.fetchScheduledCommands = fetchScheduledCommands;
 }
 module.exports = new WebSettings();

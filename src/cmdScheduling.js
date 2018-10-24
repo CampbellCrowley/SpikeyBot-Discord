@@ -542,8 +542,8 @@ function CmdScheduling() {
    * @public
    *
    * @param {string|number} gId The guild id of which to get the commands.
-   * @return {?CmdScheduling.ScheduledCommand[]} Null if none, or the array of
-   * ScheduledCommands.
+   * @return {null|CmdScheduling.ScheduledCommand[]} Null if none, or the array
+   * of ScheduledCommands.
    */
   function getScheduledCommandsInGuild(gId) {
     let list = schedules[gId];

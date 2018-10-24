@@ -65,6 +65,9 @@ channel.</p>
 <dt><a href="#WebProxy">WebProxy</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
 <dd><p>Proxy for account authentication.</p>
 </dd>
+<dt><a href="#WebSettings">WebSettings</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
+<dd><p>Manages changing settings for the bot from a website.</p>
+</dd>
 <dt><a href="#WebStats">WebStats</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
 <dd><p>Handles sending the bot&#39;s stats to http client requests, and
 discordbots.org.</p>
@@ -402,6 +405,8 @@ a command to be run.
         * [.initialized](#SubModule+initialized) : <code>boolean</code>
         * [.commit](#SubModule+commit) : <code>string</code>
         * [.loadTime](#SubModule+loadTime) : <code>number</code>
+        * [.on(name, handler)](#CmdScheduling+on)
+        * [.removeListener(name, [handler])](#CmdScheduling+removeListener)
         * [.initialize()](#SubModule+initialize)
         * [.begin(prefix, Discord, client, command, common, bot)](#SubModule+begin)
         * [.end()](#SubModule+end)
@@ -413,7 +418,7 @@ a command to be run.
         * [.save([opt])](#SubModule+save)
         * *[.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>*
     * _inner_
-        * [~ScheduledCommand](#CmdScheduling..ScheduledCommand) ℗
+        * [~ScheduledCommand](#CmdScheduling..ScheduledCommand)
             * [new ScheduledCommand(cmd, channel, message, time, repeatDelay)](#new_CmdScheduling..ScheduledCommand_new)
             * _instance_
                 * [.go()](#CmdScheduling..ScheduledCommand+go)
@@ -423,18 +428,24 @@ a command to be run.
             * _inner_
                 * [~getReferences()](#CmdScheduling..ScheduledCommand..getReferences) ℗
         * [~longInterval](#CmdScheduling..longInterval) : <code>Interval</code> ℗
-        * [~schedules](#CmdScheduling..schedules) : <code>Object.&lt;Array.&lt;ScheduledCommand&gt;&gt;</code> ℗
+        * [~listeners](#CmdScheduling..listeners) : <code>Object.&lt;Array.&lt;function()&gt;&gt;</code> ℗
+        * [~schedules](#CmdScheduling..schedules) : <code>Object.&lt;Array.&lt;CmdScheduling.ScheduledCommand&gt;&gt;</code> ℗
         * [~maxTimeout](#CmdScheduling..maxTimeout) : <code>number</code> ℗
         * [~saveSubDir](#CmdScheduling..saveSubDir) : <code>string</code> ℗
         * [~idChars](#CmdScheduling..idChars) : <code>string</code> ℗
         * [~embedColor](#CmdScheduling..embedColor) : <code>Array.&lt;number&gt;</code> ℗
+        * [~registerScheduledCommand(sCmd)](#CmdScheduling..registerScheduledCommand)
         * [~commandSchedule(msg)](#CmdScheduling..commandSchedule) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~sortGuildCommands(id)](#CmdScheduling..sortGuildCommands) ℗
         * [~stringToMilliseconds(str)](#CmdScheduling..stringToMilliseconds) ⇒ <code>number</code> ℗
+            * [~numberToUnit(num, unit)](#CmdScheduling..stringToMilliseconds..numberToUnit) ⇒ <code>number</code> ℗
+        * [~getScheduledCommandsInGuild(gId)](#CmdScheduling..getScheduledCommandsInGuild) ⇒ <code>null</code> \| <code>Array.&lt;CmdScheduling.ScheduledCommand&gt;</code>
         * [~replyWithSchedule(msg)](#CmdScheduling..replyWithSchedule) ℗
+        * [~cancelCmd(gId, cmdId)](#CmdScheduling..cancelCmd) ⇒ <code>CmdScheduling.ScheduledCommand</code>
         * [~cancelAndReply(msg)](#CmdScheduling..cancelAndReply) ℗
         * [~reScheduleCommands()](#CmdScheduling..reScheduleCommands)
         * [~formatDelay(msecs)](#CmdScheduling..formatDelay) ⇒ <code>string</code> ℗
+        * [~fireEvent(name)](#CmdScheduling..fireEvent) ℗
 
 <a name="SubModule+helpMessage"></a>
 
@@ -531,6 +542,32 @@ needs to be reloaded because the file has been modified since loading.
 
 **Kind**: instance constant of [<code>CmdScheduling</code>](#CmdScheduling)  
 **Access**: public  
+<a name="CmdScheduling+on"></a>
+
+### cmdScheduling.on(name, handler)
+Register an event handler for the given name with the given handler.
+
+**Kind**: instance method of [<code>CmdScheduling</code>](#CmdScheduling)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | The event name to listen for. |
+| handler | <code>function</code> | The function to call when the event is fired. |
+
+<a name="CmdScheduling+removeListener"></a>
+
+### cmdScheduling.removeListener(name, [handler])
+Remove an event handler for the given name.
+
+**Kind**: instance method of [<code>CmdScheduling</code>](#CmdScheduling)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | The event name to remove the handler for. |
+| [handler] | <code>function</code> | THe specific handler to remove, or null for all. |
+
 <a name="SubModule+initialize"></a>
 
 ### cmdScheduling.initialize()
@@ -644,11 +681,11 @@ putting the module into an uncontrollable state.
 **Access**: public  
 <a name="CmdScheduling..ScheduledCommand"></a>
 
-### CmdScheduling~ScheduledCommand ℗
+### CmdScheduling~ScheduledCommand
 Stores information about a specific command that is scheduled.
 
 **Kind**: inner class of [<code>CmdScheduling</code>](#CmdScheduling)  
-**Access**: private  
+**Access**: public  
 **Properties**
 
 | Name | Type | Default | Description |
@@ -665,7 +702,7 @@ Stores information about a specific command that is scheduled.
 | timeout | <code>Timeout</code> |  | The current timeout registered to run the command. |
 
 
-* [~ScheduledCommand](#CmdScheduling..ScheduledCommand) ℗
+* [~ScheduledCommand](#CmdScheduling..ScheduledCommand)
     * [new ScheduledCommand(cmd, channel, message, time, repeatDelay)](#new_CmdScheduling..ScheduledCommand_new)
     * _instance_
         * [.go()](#CmdScheduling..ScheduledCommand+go)
@@ -739,9 +776,16 @@ commands that were beyond the max timeout duration.
 
 **Kind**: inner property of [<code>CmdScheduling</code>](#CmdScheduling)  
 **Access**: private  
+<a name="CmdScheduling..listeners"></a>
+
+### CmdScheduling~listeners : <code>Object.&lt;Array.&lt;function()&gt;&gt;</code> ℗
+Currently registered event listeners, mapped by event name.
+
+**Kind**: inner property of [<code>CmdScheduling</code>](#CmdScheduling)  
+**Access**: private  
 <a name="CmdScheduling..schedules"></a>
 
-### CmdScheduling~schedules : <code>Object.&lt;Array.&lt;ScheduledCommand&gt;&gt;</code> ℗
+### CmdScheduling~schedules : <code>Object.&lt;Array.&lt;CmdScheduling.ScheduledCommand&gt;&gt;</code> ℗
 All of the currently loaded commands to run. Mapped by Guild ID, then
 sorted arrays by time to run next command.
 
@@ -780,6 +824,19 @@ The color to use for embeds sent from this submodule.
 **Kind**: inner constant of [<code>CmdScheduling</code>](#CmdScheduling)  
 **Default**: <code>[50,255,255]</code>  
 **Access**: private  
+<a name="CmdScheduling..registerScheduledCommand"></a>
+
+### CmdScheduling~registerScheduledCommand(sCmd)
+Register a created [CmdScheduling.ScheduledCommand](CmdScheduling.ScheduledCommand).
+
+**Kind**: inner method of [<code>CmdScheduling</code>](#CmdScheduling)  
+**Emits**: <code>CmdScheduling#event:commandRegistered</code>  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| sCmd | <code>CmdScheduling.ScheduledCommand</code> | The ScheduledCommand object to register. |
+
 <a name="CmdScheduling..commandSchedule"></a>
 
 ### CmdScheduling~commandSchedule(msg) : [<code>commandHandler</code>](#commandHandler) ℗
@@ -819,6 +876,34 @@ can be on most common time units up to a week.
 | --- | --- | --- |
 | str | <code>string</code> | The input string to parse. |
 
+<a name="CmdScheduling..stringToMilliseconds..numberToUnit"></a>
+
+#### stringToMilliseconds~numberToUnit(num, unit) ⇒ <code>number</code> ℗
+Convert a number and a unit to the corresponding number of milliseconds.
+
+**Kind**: inner method of [<code>stringToMilliseconds</code>](#CmdScheduling..stringToMilliseconds)  
+**Returns**: <code>number</code> - The given number in milliseconds.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| num | <code>number</code> | The number associated with the unit. |
+| unit | <code>string</code> | The current unit associated with the num. |
+
+<a name="CmdScheduling..getScheduledCommandsInGuild"></a>
+
+### CmdScheduling~getScheduledCommandsInGuild(gId) ⇒ <code>null</code> \| <code>Array.&lt;CmdScheduling.ScheduledCommand&gt;</code>
+Returns an array of references to scheduled commands in a guild.
+
+**Kind**: inner method of [<code>CmdScheduling</code>](#CmdScheduling)  
+**Returns**: <code>null</code> \| <code>Array.&lt;CmdScheduling.ScheduledCommand&gt;</code> - Null if none, or the array
+of ScheduledCommands.  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| gId | <code>string</code> \| <code>number</code> | The guild id of which to get the commands. |
+
 <a name="CmdScheduling..replyWithSchedule"></a>
 
 ### CmdScheduling~replyWithSchedule(msg) ℗
@@ -831,6 +916,22 @@ with the list of commands.
 | Param | Type | Description |
 | --- | --- | --- |
 | msg | <code>Discord~Message</code> | The message to reply to. |
+
+<a name="CmdScheduling..cancelCmd"></a>
+
+### CmdScheduling~cancelCmd(gId, cmdId) ⇒ <code>CmdScheduling.ScheduledCommand</code>
+Cancel a scheduled command in a guild.
+
+**Kind**: inner method of [<code>CmdScheduling</code>](#CmdScheduling)  
+**Returns**: <code>CmdScheduling.ScheduledCommand</code> - Null if failed, or object that
+was cancelled.  
+**Emits**: <code>CmdScheduling#event:commandCancelled</code>  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| gId | <code>string</code> \| <code>number</code> | The guild id of which to cancel the command. |
+| cmdId | <code>string</code> \| <code>number</code> | The ID of the command to cancel. |
 
 <a name="CmdScheduling..cancelAndReply"></a>
 
@@ -863,6 +964,19 @@ Format a duration in milliseconds into a human readable string.
 | Param | Type | Description |
 | --- | --- | --- |
 | msecs | <code>number</code> | Duration in milliseconds. |
+
+<a name="CmdScheduling..fireEvent"></a>
+
+### CmdScheduling~fireEvent(name) ℗
+Fires a given event with the associacted data.
+
+**Kind**: inner method of [<code>CmdScheduling</code>](#CmdScheduling)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | The name of the event to fire. |
+| ...data | <code>\*</code> | The arguments to pass into the function calls. |
 
 <a name="Common"></a>
 
@@ -11057,6 +11171,478 @@ Authenticate with the discord server using a login code.
 | --- | --- | --- |
 | code | <code>string</code> | The login code received from our client. |
 | cb | <code>basicCallback</code> | The response from the https request with error and data arguments. |
+
+<a name="WebSettings"></a>
+
+## WebSettings ⇐ [<code>SubModule</code>](#SubModule)
+Manages changing settings for the bot from a website.
+
+**Kind**: global class  
+**Extends**: [<code>SubModule</code>](#SubModule)  
+
+* [WebSettings](#WebSettings) ⇐ [<code>SubModule</code>](#SubModule)
+    * _instance_
+        * [.helpMessage](#SubModule+helpMessage) : <code>string</code> \| <code>Discord~MessageEmbed</code>
+        * [.prefix](#SubModule+prefix) : <code>string</code>
+        * [.myPrefix](#SubModule+myPrefix) : <code>string</code>
+        * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
+        * [.Discord](#SubModule+Discord) : <code>Discord</code>
+        * [.client](#SubModule+client) : <code>Discord~Client</code>
+        * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
+        * [.common](#SubModule+common) : [<code>Common</code>](#Common)
+        * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
+        * [.myName](#SubModule+myName) : <code>string</code>
+        * [.initialized](#SubModule+initialized) : <code>boolean</code>
+        * [.commit](#SubModule+commit) : <code>string</code>
+        * [.loadTime](#SubModule+loadTime) : <code>number</code>
+        * [.getNumClients()](#WebSettings+getNumClients) ⇒ <code>number</code>
+        * [.initialize()](#SubModule+initialize)
+        * [.begin(prefix, Discord, client, command, common, bot)](#SubModule+begin)
+        * [.end()](#SubModule+end)
+        * [.log(msg)](#SubModule+log)
+        * [.debug(msg)](#SubModule+debug)
+        * [.warn(msg)](#SubModule+warn)
+        * [.error(msg)](#SubModule+error)
+        * [.shutdown()](#SubModule+shutdown)
+        * *[.save([opt])](#SubModule+save)*
+        * *[.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>*
+    * _inner_
+        * [~cmdScheduler](#WebSettings..cmdScheduler) : [<code>CmdScheduling</code>](#CmdScheduling) ℗
+        * [~sockets](#WebSettings..sockets) : <code>Object.&lt;Socket&gt;</code> ℗
+        * [~siblingSockets](#WebSettings..siblingSockets) : <code>Object.&lt;Socket&gt;</code> ℗
+        * [~updateModuleReferences()](#WebSettings..updateModuleReferences) ℗
+        * [~handleShutdown()](#WebSettings..handleShutdown) ℗
+        * [~handleCommandRegistered(cmd, gId)](#WebSettings..handleCommandRegistered) ℗
+        * [~handleCommandCancelled(cmdId, gId)](#WebSettings..handleCommandCancelled) ℗
+        * [~startClient()](#WebSettings..startClient) ℗
+        * [~handler(req, res)](#WebSettings..handler) ℗
+        * [~socketConnection(socket)](#WebSettings..socketConnection) ℗
+            * [~callSocketFunction(func, args, [forward])](#WebSettings..socketConnection..callSocketFunction) ℗
+        * [~clientSocketConnection(socket)](#WebSettings..clientSocketConnection) ℗
+        * [~makeMember(m)](#WebSettings..makeMember) ⇒ <code>Object</code> ℗
+        * [~fetchGuilds(userData, socket, [cb])](#WebSettings..fetchGuilds) : <code>WebSettings~SocketFunction</code> ℗
+            * [~done(guilds, [err], [response])](#WebSettings..fetchGuilds..done) ℗
+        * [~fetchSettings(userData, socket, [cb])](#WebSettings..fetchSettings) : <code>WebSettings~SocketFunction</code>
+        * [~fetchScheduledCommands(userData, socket, [cb])](#WebSettings..fetchScheduledCommands) : <code>WebSettings~SocketFunction</code>
+        * [~basicCB](#WebSettings..basicCB) : <code>function</code>
+
+<a name="SubModule+helpMessage"></a>
+
+### webSettings.helpMessage : <code>string</code> \| <code>Discord~MessageEmbed</code>
+The help message to show the user in the main help message.
+
+**Kind**: instance property of [<code>WebSettings</code>](#WebSettings)  
+<a name="SubModule+prefix"></a>
+
+### webSettings.prefix : <code>string</code>
+The main prefix in use for this bot. Only available after begin() is
+called.
+
+**Kind**: instance property of [<code>WebSettings</code>](#WebSettings)  
+**Read only**: true  
+<a name="SubModule+myPrefix"></a>
+
+### webSettings.myPrefix : <code>string</code>
+The prefix this submodule uses. Formed by prepending this.prefix to
+this.postPrefix. this.postPrefix must be defined before begin(), otherwise
+it is ignored.
+
+**Kind**: instance property of [<code>WebSettings</code>](#WebSettings)  
+**Read only**: true  
+<a name="SubModule+postPrefix"></a>
+
+### *webSettings.postPrefix : <code>string</code>*
+The postfix for the global prefix for this subModule. Must be defined
+before begin(), otherwise it is ignored.
+
+**Kind**: instance abstract property of [<code>WebSettings</code>](#WebSettings)  
+**Default**: <code>&quot;&quot;</code>  
+<a name="SubModule+Discord"></a>
+
+### webSettings.Discord : <code>Discord</code>
+The current Discord object instance of the bot.
+
+**Kind**: instance property of [<code>WebSettings</code>](#WebSettings)  
+<a name="SubModule+client"></a>
+
+### webSettings.client : <code>Discord~Client</code>
+The current bot client.
+
+**Kind**: instance property of [<code>WebSettings</code>](#WebSettings)  
+<a name="SubModule+command"></a>
+
+### webSettings.command : [<code>Command</code>](#SpikeyBot..Command)
+The command object for registering command listeners.
+
+**Kind**: instance property of [<code>WebSettings</code>](#WebSettings)  
+<a name="SubModule+common"></a>
+
+### webSettings.common : [<code>Common</code>](#Common)
+The common object.
+
+**Kind**: instance property of [<code>WebSettings</code>](#WebSettings)  
+<a name="SubModule+bot"></a>
+
+### webSettings.bot : [<code>SpikeyBot</code>](#SpikeyBot)
+The parent SpikeyBot instance.
+
+**Kind**: instance property of [<code>WebSettings</code>](#WebSettings)  
+<a name="SubModule+myName"></a>
+
+### webSettings.myName : <code>string</code>
+The name of this submodule. Used for differentiating in the log. Should be
+defined before begin().
+
+**Kind**: instance property of [<code>WebSettings</code>](#WebSettings)  
+**Overrides**: [<code>myName</code>](#SubModule+myName)  
+**Access**: protected  
+<a name="SubModule+initialized"></a>
+
+### webSettings.initialized : <code>boolean</code>
+Has this subModule been initialized yet (Has begin() been called).
+
+**Kind**: instance property of [<code>WebSettings</code>](#WebSettings)  
+**Default**: <code>false</code>  
+**Access**: protected  
+**Read only**: true  
+<a name="SubModule+commit"></a>
+
+### webSettings.commit : <code>string</code>
+The commit at HEAD at the time this module was loaded. Essentially the
+version of this submodule.
+
+**Kind**: instance constant of [<code>WebSettings</code>](#WebSettings)  
+**Access**: public  
+<a name="SubModule+loadTime"></a>
+
+### webSettings.loadTime : <code>number</code>
+The time at which this madule was loaded for use in checking if the module
+needs to be reloaded because the file has been modified since loading.
+
+**Kind**: instance constant of [<code>WebSettings</code>](#WebSettings)  
+**Access**: public  
+<a name="WebSettings+getNumClients"></a>
+
+### webSettings.getNumClients() ⇒ <code>number</code>
+Returns the number of connected clients that are not siblings.
+
+**Kind**: instance method of [<code>WebSettings</code>](#WebSettings)  
+**Returns**: <code>number</code> - Number of sockets.  
+**Access**: public  
+<a name="SubModule+initialize"></a>
+
+### webSettings.initialize()
+The function called at the end of begin() for further initialization
+specific to the subModule. Must be defined before begin() is called.
+
+**Kind**: instance method of [<code>WebSettings</code>](#WebSettings)  
+**Overrides**: [<code>initialize</code>](#SubModule+initialize)  
+**Access**: protected  
+<a name="SubModule+begin"></a>
+
+### webSettings.begin(prefix, Discord, client, command, common, bot)
+Initialize this submodule.
+
+**Kind**: instance method of [<code>WebSettings</code>](#WebSettings)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| prefix | <code>string</code> | The global prefix for this bot. |
+| Discord | <code>Discord</code> | The Discord object for the API library. |
+| client | <code>Discord~Client</code> | The client that represents this bot. |
+| command | [<code>Command</code>](#SpikeyBot..Command) | The command instance in which to register command listeners. |
+| common | [<code>Common</code>](#Common) | Class storing common functions. |
+| bot | [<code>SpikeyBot</code>](#SpikeyBot) | The parent SpikeyBot instance. |
+
+<a name="SubModule+end"></a>
+
+### webSettings.end()
+Trigger subModule to shutdown and get ready for process terminating.
+
+**Kind**: instance method of [<code>WebSettings</code>](#WebSettings)  
+**Access**: public  
+<a name="SubModule+log"></a>
+
+### webSettings.log(msg)
+Log using common.log, but automatically set name.
+
+**Kind**: instance method of [<code>WebSettings</code>](#WebSettings)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+debug"></a>
+
+### webSettings.debug(msg)
+Log using common.logDebug, but automatically set name.
+
+**Kind**: instance method of [<code>WebSettings</code>](#WebSettings)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+warn"></a>
+
+### webSettings.warn(msg)
+Log using common.logWarning, but automatically set name.
+
+**Kind**: instance method of [<code>WebSettings</code>](#WebSettings)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+error"></a>
+
+### webSettings.error(msg)
+Log using common.error, but automatically set name.
+
+**Kind**: instance method of [<code>WebSettings</code>](#WebSettings)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+shutdown"></a>
+
+### webSettings.shutdown()
+Shutdown and disable this submodule. Removes all event listeners.
+
+**Kind**: instance method of [<code>WebSettings</code>](#WebSettings)  
+**Overrides**: [<code>shutdown</code>](#SubModule+shutdown)  
+**Access**: protected  
+<a name="SubModule+save"></a>
+
+### *webSettings.save([opt])*
+Saves all data to files necessary for saving current state.
+
+**Kind**: instance abstract method of [<code>WebSettings</code>](#WebSettings)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [opt] | <code>string</code> | <code>&quot;&#x27;sync&#x27;&quot;</code> | Can be 'async', otherwise defaults to synchronous. |
+
+<a name="SubModule+unloadable"></a>
+
+### *webSettings.unloadable() ⇒ <code>boolean</code>*
+Check if this module is in a state that is ready to be unloaded. If false
+is returned, this module should not be unloaded and doing such may risk
+putting the module into an uncontrollable state.
+
+**Kind**: instance abstract method of [<code>WebSettings</code>](#WebSettings)  
+**Returns**: <code>boolean</code> - True if can be unloaded, false if cannot.  
+**Access**: public  
+<a name="WebSettings..cmdScheduler"></a>
+
+### WebSettings~cmdScheduler : [<code>CmdScheduling</code>](#CmdScheduling) ℗
+Stores the current reference to the CmdScheduling subModule. Null if it
+doesn't exist.
+
+**Kind**: inner property of [<code>WebSettings</code>](#WebSettings)  
+**Access**: private  
+<a name="WebSettings..sockets"></a>
+
+### WebSettings~sockets : <code>Object.&lt;Socket&gt;</code> ℗
+Map of all currently connected sockets.
+
+**Kind**: inner property of [<code>WebSettings</code>](#WebSettings)  
+**Access**: private  
+<a name="WebSettings..siblingSockets"></a>
+
+### WebSettings~siblingSockets : <code>Object.&lt;Socket&gt;</code> ℗
+Map of all sockets connected that are siblings.
+
+**Kind**: inner property of [<code>WebSettings</code>](#WebSettings)  
+**Access**: private  
+<a name="WebSettings..updateModuleReferences"></a>
+
+### WebSettings~updateModuleReferences() ℗
+Update the references to the aplicable subModules.
+
+**Kind**: inner method of [<code>WebSettings</code>](#WebSettings)  
+**Access**: private  
+<a name="WebSettings..handleShutdown"></a>
+
+### WebSettings~handleShutdown() ℗
+Handle CmdScheduling shutting down.
+
+**Kind**: inner method of [<code>WebSettings</code>](#WebSettings)  
+**Access**: private  
+<a name="WebSettings..handleCommandRegistered"></a>
+
+### WebSettings~handleCommandRegistered(cmd, gId) ℗
+Handle new CmdScheduling.ScheduledCommand being registered.
+
+**Kind**: inner method of [<code>WebSettings</code>](#WebSettings)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| cmd | <code>CmdScheduling.ScheduledCommand</code> | The command that was scheduled. |
+| gId | <code>string</code> \| <code>number</code> | The guild ID of which the command was scheduled in. |
+
+<a name="WebSettings..handleCommandCancelled"></a>
+
+### WebSettings~handleCommandCancelled(cmdId, gId) ℗
+Handle a CmdScheduling.ScheduledCommand being canceled.
+
+**Kind**: inner method of [<code>WebSettings</code>](#WebSettings)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| cmdId | <code>string</code> | The ID of the command that was cancelled. |
+| gId | <code>string</code> \| <code>number</code> | the ID of the guild the command was cancelled in. |
+
+<a name="WebSettings..startClient"></a>
+
+### WebSettings~startClient() ℗
+Start a socketio client connection to the primary running server.
+
+**Kind**: inner method of [<code>WebSettings</code>](#WebSettings)  
+**Access**: private  
+<a name="WebSettings..handler"></a>
+
+### WebSettings~handler(req, res) ℗
+Handler for all http requests. Should never be called.
+
+**Kind**: inner method of [<code>WebSettings</code>](#WebSettings)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| req | <code>http.IncomingMessage</code> | The client's request. |
+| res | <code>http.ServerResponse</code> | Our response to the client. |
+
+<a name="WebSettings..socketConnection"></a>
+
+### WebSettings~socketConnection(socket) ℗
+Handler for a new socket connecting.
+
+**Kind**: inner method of [<code>WebSettings</code>](#WebSettings)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| socket | <code>socketIo~Socket</code> | The socket.io socket that connected. |
+
+<a name="WebSettings..socketConnection..callSocketFunction"></a>
+
+#### socketConnection~callSocketFunction(func, args, [forward]) ℗
+Calls the functions with added arguments, and copies the request to all
+sibling clients.
+
+**Kind**: inner method of [<code>socketConnection</code>](#WebSettings..socketConnection)  
+**Access**: private  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| func | <code>function</code> |  | The function to call. |
+| args | <code>Array.&lt;\*&gt;</code> |  | Array of arguments to send to function. |
+| [forward] | <code>boolean</code> | <code>true</code> | Forward this request directly to all siblings. |
+
+<a name="WebSettings..clientSocketConnection"></a>
+
+### WebSettings~clientSocketConnection(socket) ℗
+Handler for connecting as a client to the server.
+
+**Kind**: inner method of [<code>WebSettings</code>](#WebSettings)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| socket | <code>socketIo~Socket</code> | The socket.io socket that connected. |
+
+<a name="WebSettings..makeMember"></a>
+
+### WebSettings~makeMember(m) ⇒ <code>Object</code> ℗
+Strips a Discord~GuildMember to only the necessary data that a client will
+need.
+
+**Kind**: inner method of [<code>WebSettings</code>](#WebSettings)  
+**Returns**: <code>Object</code> - The minimal member.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| m | <code>Discord~GuildMember</code> | The guild member to strip the data from. |
+
+<a name="WebSettings..fetchGuilds"></a>
+
+### WebSettings~fetchGuilds(userData, socket, [cb]) : <code>WebSettings~SocketFunction</code> ℗
+Fetch all relevant data for all mutual guilds with the user and send it to
+the user.
+
+**Kind**: inner method of [<code>WebSettings</code>](#WebSettings)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
+
+<a name="WebSettings..fetchGuilds..done"></a>
+
+#### fetchGuilds~done(guilds, [err], [response]) ℗
+The callback for each response with the requested data. Replies to the
+user once all requests have replied.
+
+**Kind**: inner method of [<code>fetchGuilds</code>](#WebSettings..fetchGuilds)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| guilds | <code>string</code> \| <code>Object</code> | Either the guild data to send to the user, or 'guilds' if this is a reply from a sibling client. |
+| [err] | <code>string</code> | The error that occurred, or null if no error. |
+| [response] | <code>Object</code> | The guild data if `guilds` equals 'guilds'. |
+
+<a name="WebSettings..fetchSettings"></a>
+
+### WebSettings~fetchSettings(userData, socket, [cb]) : <code>WebSettings~SocketFunction</code>
+Client has requested all settings for all guilds for the connected user.
+
+**Kind**: inner method of [<code>WebSettings</code>](#WebSettings)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete and has data, or has failed. |
+
+<a name="WebSettings..fetchScheduledCommands"></a>
+
+### WebSettings~fetchScheduledCommands(userData, socket, [cb]) : <code>WebSettings~SocketFunction</code>
+Client has requested all scheduled commands for the connected user.
+
+**Kind**: inner method of [<code>WebSettings</code>](#WebSettings)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete and has data, or has failed. |
+
+<a name="WebSettings..basicCB"></a>
+
+### WebSettings~basicCB : <code>function</code>
+Basic callback with single argument. The argument is null if there is no
+error, or a string if there was an error.
+
+**Kind**: inner typedef of [<code>WebSettings</code>](#WebSettings)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| err | <code>string</code> | The error response. |
 
 <a name="WebStats"></a>
 
