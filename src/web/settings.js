@@ -371,6 +371,8 @@ function WebSettings() {
       guild: {id: m.guild.id},
       user: {
         username: m.user.username,
+        tag: m.user.tag,
+        discriminator: m.user.discriminator,
         avatarURL: m.user.displayAvatarURL(),
         id: m.user.id,
         bot: m.user.bot,
@@ -512,7 +514,19 @@ function WebSettings() {
     updateModuleReferences();
     guilds.forEach((g) => {
       let list = cmdScheduler.getScheduledCommandsInGuild(g.id);
-      if (list) sCmds[g.id] = list;
+      if (list && list.length > 0) {
+        sCmds[g.id] = list.map((el) => {
+          return {
+            id: el.id,
+            channel: el.channel.id,
+            cmd: el.cmd,
+            message: el.message.id,
+            repeatDelay: el.repeatDelay,
+            time: el.time,
+            member: makeMember(el.message.member),
+          };
+        });
+      }
     });
     cb(sCmds);
   }
