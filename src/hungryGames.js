@@ -2716,6 +2716,7 @@ function HungryGames() {
       restoreUser = function(i, k, w) {
         let index = effectUser(i, k, w);
         find(id).currentGame.includedUsers[index].state = 'normal';
+        find(id).currentGame.includedUsers[index].bleeding = 0;
       };
 
       let weapon = eventTry.victim.weapon;
