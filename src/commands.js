@@ -92,25 +92,25 @@ function Command() {
       }
       let failure = self.validate(cmd, msg, func);
       if (failure === 'Guild Only') {
-        common.reply(msg, onlyservermessage);
+        self.common.reply(msg, onlyservermessage);
         return true;
       } else if (failure === 'Disabled In Channel') {
-        common.reply(msg, disabledcommandmessage);
+        self.common.reply(msg, disabledcommandmessage);
         return true;
       } else if (failure) {
-        common.reply(
+        self.common.reply(
             msg, 'I am unable to attempt this command for an unknown reason.',
             failure);
-        common.error('Comand failed: ' + cmd + ': ' + failure);
+        self.common.error('Comand failed: ' + cmd + ': ' + failure);
         return false;
       }
       msg.text = msg.content.replace(msg.prefix + cmd, '');
       try {
         func(msg);
       } catch (err) {
-        common.error(cmd + ': FAILED');
+        self.common.error(cmd + ': FAILED');
         console.log(err);
-        common.reply(msg, 'An error occurred! Oh noes!');
+        self.common.reply(msg, 'An error occurred! Oh noes!');
       }
       return true;
     } else {
@@ -133,7 +133,7 @@ function Command() {
     if (typeof cmd === 'string') {
       cmd = cmd.toLowerCase();
       if (cmds[cmd]) {
-        common.error(
+        self.common.error(
             'Attempted to register a second handler for event that already ' +
             'exists! (' + cmd + ')');
       } else {
@@ -156,7 +156,7 @@ function Command() {
         delete cmds[cmd];
         delete blacklist[cmd];
       } else {
-        common.error(
+        self.common.error(
             'Requested deletion of event handler for event that was never ' +
             'registered! (' + cmd + ')');
       }
@@ -166,7 +166,7 @@ function Command() {
           delete cmds[cmd[i]];
           delete blacklist[cmd[i]];
         } else {
-          common.error(
+          self.common.error(
               'Requested deletion of event handler for event that was ' +
               'never registered! (' + cmd[i] + ')');
         }
@@ -193,7 +193,7 @@ function Command() {
         }
       }
     } else {
-      common.error(
+      self.common.error(
           'Requested disable for event that was never registered! (' + cmd +
           ')');
     }
@@ -210,11 +210,11 @@ function Command() {
       if (index > -1) {
         blacklist[cmd].splice(index, 1);
       } else {
-        common.error(
+        self.common.error(
             'Requested enable of event that is enabled! (' + cmd + ')');
       }
     } else {
-      common.error(
+      self.common.error(
           'Requested enable for event that is not disabled! (' + cmd + ')');
     }
   };
