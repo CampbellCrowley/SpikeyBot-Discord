@@ -23,6 +23,10 @@ function WebSettings() {
     setTimeout(updateModuleReferences, 100);
   };
   /** @inheritdoc */
+  this.unloadable = function() {
+    return self.getNumClients() == 0;
+  };
+  /** @inheritdoc */
   this.shutdown = function() {
     if (io) io.close();
     if (ioClient) ioClient.close();

@@ -7,7 +7,7 @@ require('./subModule.js')(Spotify);
  * channel.
  * @class
  * @augments SubModule
- * @listens SpikeyBot~Command#spotify
+ * @listens Command#spotify
  */
 function Spotify() {
   const self = this;
@@ -62,7 +62,7 @@ function Spotify() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg The message that triggered command.
-   * @listens SpikeyBot~Command#spotify
+   * @listens Command#spotify
    */
   function commandSpotify(msg) {
     if (!self.bot.accounts) {
@@ -312,7 +312,7 @@ function Spotify() {
    * Attempt to start playing the given song into a voice channel.
    * @private
    * @param {Discord~Message} msg Message that caused this to happen, and to
-   * pass into {@link SpikeyBot~Command} as context.
+   * pass into {@link Command} as context.
    * @param {{name: string, artist: string, progress: number}} song The current
    * song information. Name is song name, progress is progress into the song in
    * milliseconds.

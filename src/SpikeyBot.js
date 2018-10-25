@@ -29,12 +29,12 @@ process.on('uncaughtException', unhandledRejection);
  * @class
  * @listens Discord~Client#ready
  * @listens Discord~Client#message
- * @listens SpikeyBot~Command#toggleReact
- * @listens SpikeyBot~Command#help
- * @listens SpikeyBot~Command#updateGame
- * @listens SpikeyBot~Command#reboot
- * @listens SpikeyBot~Command#reload
- * @fires SpikeyBot~Command#*
+ * @listens Command#toggleReact
+ * @listens Command#help
+ * @listens Command#updateGame
+ * @listens Command#reboot
+ * @listens Command#reload
+ * @fires Command#*
  */
 function SpikeyBot() {
   const self = this;
@@ -72,12 +72,28 @@ function SpikeyBot() {
    */
   let testInstance = false;
   /**
+   * The filename of the Command submodule.
+   *
+   * @private
+   * @constant
+   * @default
+   * @type {string}
+   */
+  const commandFilename = './commands.js';
+  /**
+   * The current instance of Command.
+   *
+   * @private
+   * @type {Command}
+   */
+  let command;
+  /**
    * The list of all submodules to load.
    *
    * @private
    * @type {string[]}
    */
-  let subModuleNames = [];
+  let subModuleNames = [commandFilename];
   /**
    * Is this bot running in development mode.
    *
@@ -231,6 +247,9 @@ function SpikeyBot() {
         subModuleNames[i]);
     try {
       subModules[i] = require(subModuleNames[i]);
+      if (subModuleNames[i] == commandFilename) {
+        command = subModules[i];
+      }
       process.stdout.write(': DONE\n');
     } catch (err) {
       process.stdout.write(': ERROR\n');
@@ -341,258 +360,6 @@ function SpikeyBot() {
    */
   const blockedmessage =
       'I couldn\'t send you a message, you probably blocked me :(';
-  /**
-   * The message to send to the user if they attempt a server-only command in a
-   * non-server channel.
-   *
-   * @private
-   * @type {string}
-   * @constant
-   */
-  const onlyservermessage = 'This command only works in servers, sorry!';
-  /**
-   * The message to send to the user if the command they attempted is currently
-   * disabled in the channel.
-   *
-   * @private
-   * @type {string}
-   * @constant
-   */
-  const disabledcommandmessage =
-      'This command has been disabled in this channel.';
-
-  /**
-   * Command event triggering interface.
-   * @class
-   */
-  function Command() {
-    const myself = this;
-    /**
-     * The function to call when a command is triggered.
-     *
-     * @callback commandHandler
-     * @param {Discord~Message} msg The message sent in Discord.
-     */
-
-    /**
-     * All tracked commands with handlers.
-     *
-     * @private
-     * @type {Object.<commandHandler>}
-     */
-    let cmds = {};
-    /**
-     * List of disabled commands, and the channels they are disabled in.
-     *
-     * @private
-     * @type {Object.<string[]>}
-     */
-    let blacklist = {};
-
-    /**
-     * Trigger a command firing and call it's handler passing in msg as only
-     * argument.
-     *
-     * @param {string} cmd Array of strings or a string of the command to
-     * trigger.
-     * @param {Discord~Message} msg Message received from Discord to pass to
-     * handler.
-     * @return {boolean} True if command was handled by us.
-     */
-    this.trigger = function(cmd, msg) {
-      let func = myself.find(cmd, msg);
-      if (func) {
-        if (cmd.startsWith(msg.prefix)) {
-          cmd = cmd.replace(msg.prefix, '');
-        }
-        let failure = myself.validate(cmd, msg, func);
-        if (failure === 'Guild Only') {
-          common.reply(msg, onlyservermessage);
-          return true;
-        } else if (failure === 'Disabled In Channel') {
-          common.reply(msg, disabledcommandmessage);
-          return true;
-        } else if (failure) {
-          common.reply(
-              msg, 'I am unable to attempt this command for an unknown reason.',
-              failure);
-          common.error('Comand failed: ' + cmd + ': ' + failure);
-          return false;
-        }
-        msg.text = msg.content.replace(msg.prefix + cmd, '');
-        try {
-          func(msg);
-        } catch (err) {
-          common.error(cmd + ': FAILED');
-          console.log(err);
-          common.reply(msg, 'An error occurred! Oh noes!');
-        }
-        return true;
-      } else {
-        return false;
-      }
-    };
-    /**
-     * Registers a listener for a command.
-     *
-     * @param {string|string[]} cmd Command to listen for.
-     * @param {commandHandler} cb Function to call when command is triggered.
-     * @param {boolean} [onlyserver=false] Whether the command is only allowed
-     * on a server.
-     */
-    this.on = function(cmd, cb, onlyserver) {
-      if (typeof cb !== 'function') {
-        throw new Error('Event callback must be a function.');
-      }
-      cb.validOnlyOnServer = onlyserver || false;
-      if (typeof cmd === 'string') {
-        cmd = cmd.toLowerCase();
-        if (cmds[cmd]) {
-          common.error(
-              'Attempted to register a second handler for event that already ' +
-              'exists! (' + cmd + ')');
-        } else {
-          cmds[cmd] = cb;
-        }
-      } else if (Array.isArray(cmd)) {
-        for (let i = 0; i < cmd.length; i++) myself.on(cmd[i], cb, onlyserver);
-      } else {
-        throw new Error('Event must be string or array of strings');
-      }
-    };
-    /**
-     * Remove listener for a command.
-     *
-     * @param {string|string[]} cmd Command to remove listener for.
-     */
-    this.deleteEvent = function(cmd) {
-      if (typeof cmd === 'string') {
-        if (cmds[cmd]) {
-          delete cmds[cmd];
-          delete blacklist[cmd];
-        } else {
-          common.error(
-              'Requested deletion of event handler for event that was never ' +
-              'registered! (' + cmd + ')');
-        }
-      } else if (Array.isArray(cmd)) {
-        for (let i = 0; i < cmd.length; i++) {
-          if (cmds[cmd[i]]) {
-            delete cmds[cmd[i]];
-            delete blacklist[cmd[i]];
-          } else {
-            common.error(
-                'Requested deletion of event handler for event that was ' +
-                'never registered! (' + cmd[i] + ')');
-          }
-        }
-      } else {
-        throw new Error('Event must be string or array of strings');
-      }
-    };
-    /**
-     * Temporarily disables calling the handler for the given command in a
-     * certain
-     * Discord text channel.
-     *
-     * @param {string} cmd Command to disable.
-     * @param {string} channel ID of channel to disable command for.
-     */
-    this.disable = function(cmd, channel) {
-      if (cmds[cmd]) {
-        if (!blacklist[cmd] || blacklist[cmd].lastIndexOf(channel) == -1) {
-          if (!blacklist[cmd]) {
-            blacklist[cmd] = [channel];
-          } else {
-            blacklist[cmd].push(channel);
-          }
-        }
-      } else {
-        common.error(
-            'Requested disable for event that was never registered! (' + cmd +
-            ')');
-      }
-    };
-    /**
-     * Re-enable a command that was disabled previously.
-     *
-     * @param {string} cmd Command to enable.
-     * @param {string} channel ID of channel to enable command for.
-     */
-    this.enable = function(cmd, channel) {
-      if (blacklist[cmd]) {
-        let index = blacklist[cmd].lastIndexOf(channel);
-        if (index > -1) {
-          blacklist[cmd].splice(index, 1);
-        } else {
-          common.error(
-              'Requested enable of event that is enabled! (' + cmd + ')');
-        }
-      } else {
-        common.error(
-            'Requested enable for event that is not disabled! (' + cmd + ')');
-      }
-    };
-
-    /**
-     * Returns the callback function for the given event.
-     *
-     * @param {string} cmd Command to lookup.
-     * @param {Discord~Message} [msg] Message that is to trigger this command.
-     * Used for removing prefix from cmd if necessary.
-     * @return {function} The event callback.
-     */
-    this.find = function(cmd, msg) {
-      if (!cmd) cmd = msg.content.match(/^\S+/)[0];
-      if (!cmd) return;
-      if (msg && cmd.startsWith(msg.prefix)) cmd = cmd.replace(msg.prefix, '');
-      cmd = cmd.toLowerCase();
-      return cmds[cmd];
-    };
-
-    /**
-     * Checks that the given command can be run with the given context. Does not
-     * actually fire the event.
-     *
-     * @param {string} cmd The command to validate.
-     * @param {?Discord~Message} msg The message that will fire the event. If
-     * null, checks for channel and guild specific changes will not be
-     * validated.
-     * @param {commandHandler} [func] A command handler override to use for
-     * settings lookup. If this is not specified, the handler associated with
-     * cmd will be fetched.
-     * @return {?string} Message causing failure, or null if valid.
-     */
-    this.validate = function(cmd, msg, func) {
-      if (!func) func = myself.find(cmd, msg);
-      if (!func) return 'No Handler';
-      if (msg && func.validOnlyOnServer && msg.guild === null) {
-        return 'Guild Only';
-      }
-      if (msg && blacklist[cmd] &&
-          blacklist[cmd].lastIndexOf(msg.channel.id) > -1) {
-        return 'Disabled In Channel';
-      }
-      return null;
-    };
-
-    /**
-     * Fetches a list of all currently registered commands.
-     *
-     * @return {string[]} Array of all registered commands.
-     */
-    this.getAllNames = function() {
-      return Object.keys(cmds);
-    };
-  }
-  /**
-   * The current instance of Command.
-   *
-   * @private
-   * @type {SpikeyBot~Command}
-   * @constant
-   */
-  const command = new Command();
 
   /**
    * Checks if given message is the given command.
@@ -797,7 +564,7 @@ function SpikeyBot() {
    *
    * @private
    * @param {Discord~Message} msg Message that was sent in Discord.
-   * @fires SpikeyBot~Command
+   * @fires Command
    * @listens Discord~Client#message
    */
   function onMessage(msg) {
@@ -891,7 +658,7 @@ function SpikeyBot() {
      * @private
      * @type {commandHandler}
      * @param {Discord~Message} msg Message that triggered command.
-     * @listens SpikeyBot~Command#toggleReact
+     * @listens Command#toggleReact
      */
     function commandToggleReact(msg) {
       common.reply(
@@ -906,7 +673,7 @@ function SpikeyBot() {
      * @private
      * @type {commandHandler}
      * @param {Discord~Message} msg Message that triggered command.
-     * @listens SpikeyBot~Command#help
+     * @listens Command#help
      */
     function commandHelp(msg) {
       try {
@@ -956,7 +723,7 @@ function SpikeyBot() {
      * @private
      * @type {commandHandler}
      * @param {Discord~Message} msg Message that triggered command.
-     * @listens SpikeyBot~Command#updateGame
+     * @listens Command#updateGame
      */
     function commandUpdateGame(msg) {
       if (msg.author.id !== common.spikeyId) {
@@ -993,7 +760,7 @@ function SpikeyBot() {
      * @private
      * @type {commandHandler}
      * @param {Discord~Message} msg Message that triggered command.
-     * @listens SpikeyBot~Command#changePrefix
+     * @listens Command#changePrefix
      */
     function commandChangePrefix(msg) {
       const perms = msg.member.permissions;
@@ -1134,7 +901,7 @@ function SpikeyBot() {
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
    * @param {boolean} [silent=false] Suppress reboot scheduling messages.
-   * @listens SpikeyBot~Command#reboot
+   * @listens Command#reboot
    */
   function commandReboot(msg, silent) {
     if (msg.author.id === common.spikeyId) {
@@ -1216,7 +983,7 @@ function SpikeyBot() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#reload
+   * @listens Command#reload
    */
   function commandReload(msg) {
     if (trustedIds.includes(msg.author.id)) {
@@ -1325,6 +1092,7 @@ function SpikeyBot() {
         }
       }
       try {
+        let exported;
         try {
           if (subModules[i].save) {
             subModules[i].save();
@@ -1340,6 +1108,9 @@ function SpikeyBot() {
                 'Submodule ' + subModuleNames[i] +
                 ' does not have an end() function.');
           }
+          if (subModuleNames[i] == commandFilename) {
+            exported = subModules[i].export();
+          }
         } catch (err) {
           common.error('Error on unloading ' + subModuleNames[i]);
           console.log(err);
@@ -1354,6 +1125,10 @@ function SpikeyBot() {
         } catch (err) {
           process.stdout.write(': ERROR\n');
           throw (err);
+        }
+        if (subModuleNames[i] == commandFilename) {
+          subModules[i].import(exported);
+          command = subModules[i];
         }
         subModules[i].begin(
             defaultPrefix, Discord, client, command, common, self);
@@ -1426,7 +1201,7 @@ function SpikeyBot() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#saveAll
+   * @listens Command#saveAll
    */
   function commandSaveAll(msg) {
     if (!trustedIds.includes(msg.author.id)) {
@@ -1448,7 +1223,7 @@ function SpikeyBot() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#update
+   * @listens Command#update
    */
   function commandUpdate(msg) {
     if (!trustedIds.includes(msg.author.id)) {

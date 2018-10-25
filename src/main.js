@@ -19,60 +19,60 @@ math.config({matrix: 'Array'});
  * @listens Discord~Client#guildDelete
  * @listens Discord~Client#guildBanAdd
  * @listens Discord~Client#message
- * @listens SpikeyBot~Command#addMe
- * @listens SpikeyBot~Command#invite
- * @listens SpikeyBot~Command#add
- * @listens SpikeyBot~Command#simplify
- * @listens SpikeyBot~Command#solve
- * @listens SpikeyBot~Command#eval
- * @listens SpikeyBot~Command#evaluate
- * @listens SpikeyBot~Command#graph
- * @listens SpikeyBot~Command#derive
- * @listens SpikeyBot~Command#js
- * @listens SpikeyBot~Command#timer
- * @listens SpikeyBot~Command#timers
- * @listens SpikeyBot~Command#remind
- * @listens SpikeyBot~Command#reminder
- * @listens SpikeyBot~Command#reminders
- * @listens SpikeyBot~Command#say
- * @listens SpikeyBot~Command#createDate
- * @listens SpikeyBot~Command#joinDate
- * @listens SpikeyBot~Command#pmMe
- * @listens SpikeyBot~Command#dmMe
- * @listens SpikeyBot~Command#pmSpikey
- * @listens SpikeyBot~Command#dmSpikey
- * @listens SpikeyBot~Command#thotPm
- * @listens SpikeyBot~Command#pmUser
- * @listens SpikeyBot~Command#flip
- * @listens SpikeyBot~Command#coin
- * @listens SpikeyBot~Command#flipcoin
- * @listens SpikeyBot~Command#coinflip
- * @listens SpikeyBot~Command#purge
- * @listens SpikeyBot~Command#prune
- * @listens SpikeyBot~Command#fuckYou
- * @listens SpikeyBot~Command#ban
- * @listens SpikeyBot~Command#smite
- * @listens SpikeyBot~Command#profile
- * @listens SpikeyBot~Command#avatar
- * @listens SpikeyBot~Command#ping
- * @listens SpikeyBot~Command#uptime
- * @listens SpikeyBot~Command#game
- * @listens SpikeyBot~Command#version
- * @listens SpikeyBot~Command#roll
- * @listens SpikeyBot~Command#dice
- * @listens SpikeyBot~Command#die
- * @listens SpikeyBot~Command#d
- * @listens SpikeyBot~Command#toggleMute
- * @listens SpikeyBot~Command#toggleBanMessages
- * @listens SpikeyBot~Command#perms
- * @listens SpikeyBot~Command#stats
- * @listens SpikeyBot~Command#lookup
- * @listens SpikeyBot~Command#sendto
- * @listens SpikeyBot~Command#thanks
- * @listens SpikeyBot~Command#thx
- * @listens SpikeyBot~Command#thank
- * @listens SpikeyBot~Command#thankyou
- * @listens SpikeyBot~Command#listCommands
+ * @listens Command#addMe
+ * @listens Command#invite
+ * @listens Command#add
+ * @listens Command#simplify
+ * @listens Command#solve
+ * @listens Command#eval
+ * @listens Command#evaluate
+ * @listens Command#graph
+ * @listens Command#derive
+ * @listens Command#js
+ * @listens Command#timer
+ * @listens Command#timers
+ * @listens Command#remind
+ * @listens Command#reminder
+ * @listens Command#reminders
+ * @listens Command#say
+ * @listens Command#createDate
+ * @listens Command#joinDate
+ * @listens Command#pmMe
+ * @listens Command#dmMe
+ * @listens Command#pmSpikey
+ * @listens Command#dmSpikey
+ * @listens Command#thotPm
+ * @listens Command#pmUser
+ * @listens Command#flip
+ * @listens Command#coin
+ * @listens Command#flipcoin
+ * @listens Command#coinflip
+ * @listens Command#purge
+ * @listens Command#prune
+ * @listens Command#fuckYou
+ * @listens Command#ban
+ * @listens Command#smite
+ * @listens Command#profile
+ * @listens Command#avatar
+ * @listens Command#ping
+ * @listens Command#uptime
+ * @listens Command#game
+ * @listens Command#version
+ * @listens Command#roll
+ * @listens Command#dice
+ * @listens Command#die
+ * @listens Command#d
+ * @listens Command#toggleMute
+ * @listens Command#toggleBanMessages
+ * @listens Command#perms
+ * @listens Command#stats
+ * @listens Command#lookup
+ * @listens Command#sendto
+ * @listens Command#thanks
+ * @listens Command#thx
+ * @listens Command#thank
+ * @listens Command#thankyou
+ * @listens Command#listCommands
  */
 function Main() {
   const self = this;
@@ -685,7 +685,7 @@ function Main() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#toggleMute
+   * @listens Command#toggleMute
    */
   function commandToggleMute(msg) {
     if (msg.member.hasPermission(self.Discord.Permissions.FLAGS.MANAGE_ROLES)) {
@@ -710,7 +710,7 @@ function Main() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#toggleBanMessages
+   * @listens Command#toggleBanMessages
    */
   function commandToggleBanMessages(msg) {
     if (msg.member.hasPermission(
@@ -935,8 +935,8 @@ function Main() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#addMe
-   * @listens SpikeyBot~Command#invite
+   * @listens Command#addMe
+   * @listens Command#invite
    */
   function commandAddMe(msg) {
     self.common.reply(msg, addmessage, addLink);
@@ -948,7 +948,7 @@ function Main() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#add
+   * @listens Command#add
    */
   function commandAdd(msg) {
     const splitstring = msg.text.replaceAll('-', ' -')
@@ -999,7 +999,7 @@ function Main() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#simplify
+   * @listens Command#simplify
    */
   function commandSimplify(msg) {
     try {
@@ -1033,7 +1033,7 @@ function Main() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#solve
+   * @listens Command#solve
    */
   function commandSolve(msg) {
     if (msg.content.lastIndexOf('=') != msg.content.indexOf('=')) {
@@ -1084,8 +1084,8 @@ function Main() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#eval
-   * @listens SpikeyBot~Command#evaluate
+   * @listens Command#eval
+   * @listens Command#evaluate
    */
   function commandEvaluate(msg) {
     try {
@@ -1109,7 +1109,7 @@ function Main() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#graph
+   * @listens Command#graph
    */
   function commandGraph(msg) {
     const graphSize = 200;
@@ -1235,7 +1235,7 @@ function Main() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#derive
+   * @listens Command#derive
    */
   function commandDerive(msg) {
     try {
@@ -1258,7 +1258,7 @@ function Main() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#js
+   * @listens Command#js
    */
   function commandJS(msg) {
     try {
@@ -1313,11 +1313,11 @@ function Main() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#timer
-   * @listens SpikeyBot~Command#timers
-   * @listens SpikeyBot~Command#remind
-   * @listens SpikeyBot~Command#reminder
-   * @listens SpikeyBot~Command#reminders
+   * @listens Command#timer
+   * @listens Command#timers
+   * @listens Command#remind
+   * @listens Command#reminder
+   * @listens Command#reminders
    */
   function commandTimer(msg) {
     let split = msg.content.split(' ').slice(1);
@@ -1418,7 +1418,7 @@ function Main() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#say
+   * @listens Command#say
    */
   function commandSay(msg) {
     msg.delete().catch(() => {});
@@ -1442,7 +1442,7 @@ function Main() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#createDate
+   * @listens Command#createDate
    */
   function commandCreateDate(msg) {
     if (msg.mentions.users.size === 0) {
@@ -1463,7 +1463,7 @@ function Main() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#joinDate
+   * @listens Command#joinDate
    */
   function commandJoinDate(msg) {
     if (msg.mentions.users.size === 0) {
@@ -1482,8 +1482,8 @@ function Main() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#pmMe
-   * @listens SpikeyBot~Command#dmMe
+   * @listens Command#pmMe
+   * @listens Command#dmMe
    */
   function commandPmMe(msg) {
     msg.author
@@ -1505,8 +1505,8 @@ function Main() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#pmSpikey
-   * @listens SpikeyBot~Command#pmSpikey
+   * @listens Command#pmSpikey
+   * @listens Command#pmSpikey
    */
   function commandPmSpikey(msg) {
     self.client.users.fetch(self.common.spikeyId)
@@ -1531,7 +1531,7 @@ function Main() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#thotPm
+   * @listens Command#thotPm
    */
   function commandThotPm(msg) {
     if (msg.author.id == self.common.spikeyId ||
@@ -1551,7 +1551,7 @@ function Main() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#pmUser
+   * @listens Command#pmUser
    */
   function commandPmUser(msg) {
     const userString = (msg.text.split(' ')[1] || '').replace(/^@|^<@|>$/g, '');
@@ -1620,7 +1620,7 @@ function Main() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#flip
+   * @listens Command#flip
    */
   function commandFlip(msg) {
     let rand = Math.round(Math.random());
@@ -1640,7 +1640,7 @@ function Main() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#purge
+   * @listens Command#purge
    */
   function commandPurge(msg) {
     if (!msg.channel.permissionsFor(self.client.user)
@@ -1706,7 +1706,7 @@ function Main() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#ban
+   * @listens Command#ban
    */
   function commandBan(msg) {
     if (!msg.member.hasPermission(self.Discord.Permissions.FLAGS.BAN_MEMBERS)) {
@@ -1761,7 +1761,7 @@ function Main() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#smite
+   * @listens Command#smite
    */
   function commandSmite(msg) {
     if (msg.mentions.members.size === 0) {
@@ -1872,7 +1872,7 @@ function Main() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#avatar
+   * @listens Command#avatar
    */
   function commandAvatar(msg) {
     let embed = new self.Discord.MessageEmbed();
@@ -1893,7 +1893,7 @@ function Main() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#ping
+   * @listens Command#ping
    */
   function commandPing(msg) {
     self.common.reply(
@@ -1907,7 +1907,7 @@ function Main() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#uptime
+   * @listens Command#uptime
    */
   function commandUptime(msg) {
     let ut = self.client.uptime;
@@ -1925,7 +1925,7 @@ function Main() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#game
+   * @listens Command#game
    */
   function commandGame(msg) {
     let user = msg.author;
@@ -1961,7 +1961,7 @@ function Main() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#version
+   * @listens Command#version
    */
   function commandVersion(msg) {
     self.common.reply(
@@ -2010,10 +2010,10 @@ function Main() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#roll
-   * @listens SpikeyBot~Command#dice
-   * @listens SpikeyBot~Command#die
-   * @listens SpikeyBot~Command#d
+   * @listens Command#roll
+   * @listens Command#dice
+   * @listens Command#die
+   * @listens Command#d
    */
   function commandRollDie(msg) {
     let embed = new self.Discord.MessageEmbed();
@@ -2142,7 +2142,7 @@ function Main() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#perms
+   * @listens Command#perms
    */
   function commandPerms(msg) {
     let embed = new self.Discord.MessageEmbed();
@@ -2195,7 +2195,7 @@ function Main() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#stats
+   * @listens Command#stats
    */
   function commandStats(msg) {
     self.bot.getStats((values) => {
@@ -2375,7 +2375,7 @@ function Main() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#lookup
+   * @listens Command#lookup
    */
   function commandLookup(msg) {
     let id = msg.text.split(' ')[1];
@@ -2449,7 +2449,7 @@ function Main() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#sendto
+   * @listens Command#sendto
    */
   function commandSendTo(msg) {
     if (msg.author.id != self.common.spikeyId) return;
@@ -2492,10 +2492,10 @@ function Main() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#thanks
-   * @listens SpikeyBot~Command#thank
-   * @listens SpikeyBot~Command#thx
-   * @listens SpikeyBot~Command#thankyou
+   * @listens Command#thanks
+   * @listens Command#thank
+   * @listens Command#thx
+   * @listens Command#thankyou
    */
   function commandThankYou(msg) {
     if (msg.mentions.members.size > 0) {
@@ -2520,7 +2520,7 @@ function Main() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#listCommands
+   * @listens Command#listCommands
    */
   function commandListCommands(msg) {
     let list = self.command.getAllNames().sort();

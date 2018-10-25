@@ -10,10 +10,10 @@ require('./subModule.js')(Polling); // Extends the SubModule class.
  * @classdesc Controlls poll and vote commands.
  * @class
  * @augments SubModule
- * @listens SpikeyBot~Command#poll
- * @listens SpikeyBot~Command#vote
- * @listens SpikeyBot~Command#endpoll
- * @listens SpikeyBot~Command#endvote
+ * @listens Command#poll
+ * @listens Command#vote
+ * @listens Command#endpoll
+ * @listens Command#endvote
  */
 function Polling() {
   const self = this;
@@ -290,8 +290,8 @@ function Polling() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#poll
-   * @listens SpikeyBot~Command#vote
+   * @listens Command#poll
+   * @listens Command#vote
    */
   function commandPoll(msg) {
     if (Object.values(currentPolls).find((obj) => {
@@ -440,8 +440,8 @@ function Polling() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#endpoll
-   * @listens SpikeyBot~Command#endvote
+   * @listens Command#endpoll
+   * @listens Command#endvote
    */
   function commandEndPoll(msg) {
     let poll = Object.entries(currentPolls).find((obj) => {

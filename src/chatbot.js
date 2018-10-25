@@ -9,7 +9,7 @@ require('./subModule.js')(ChatBot);  // Extends the SubModule class.
  * @class
  * @augments SubModule
  * @listens Discord#message
- * @listens SpikeyBot~Command#chat
+ * @listens Command#chat
  */
 function ChatBot() {
   const self = this;
@@ -84,7 +84,7 @@ function ChatBot() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#chat
+   * @listens Command#chat
    */
   function onChatMessage(msg) {
     if (!msg.text || msg.text.length < 2) return;

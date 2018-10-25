@@ -14,8 +14,8 @@ let ttsRequest = {
  * @classdesc Adds text-to-speech support for voice channels.
  * @class
  * @augments SubModule
- * @listens SpikeyBot~Command#tts
- * @listens SpikeyBot~Command#speak
+ * @listens Command#tts
+ * @listens Command#speak
  */
 function TTS() {
   const self = this;
@@ -60,8 +60,8 @@ function TTS() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#tts
-   * @listens SpikeyBot~Command#speak
+   * @listens Command#tts
+   * @listens Command#speak
    */
   function commandTTS(msg) {
     self.bot.patreon.checkAllPerms(

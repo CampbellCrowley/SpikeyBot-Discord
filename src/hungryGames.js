@@ -12,7 +12,7 @@ require('./subModule.js')(HungryGames);  // Extends the SubModule class.
  * @classdesc Hunger Games simulator.
  * @class
  * @augments SubModule
- * @listens SpikeyBot~Command#hg
+ * @listens Command#hg
  */
 function HungryGames() {
   const self = this;
@@ -989,7 +989,7 @@ function HungryGames() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#hg
+   * @listens Command#hg
    */
   function handleCommand(msg) {
     if (msg.content == msg.prefix + self.postPrefix + 'help') {

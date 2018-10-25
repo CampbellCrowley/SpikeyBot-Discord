@@ -6,7 +6,7 @@ require('./subModule.js')(Connect4);  // Extends the SubModule class.
  * @classdesc Manages a Connect 4 game.
  * @class
  * @augments SubModule
- * @listens SpikeyBot~Command#connect4
+ * @listens Command#connect4
  */
 function Connect4() {
   const self = this;
@@ -100,7 +100,7 @@ function Connect4() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#connect4
+   * @listens Command#connect4
    */
   function commandConnect4(msg) {
     let players = {p1: msg.author, p2: null};

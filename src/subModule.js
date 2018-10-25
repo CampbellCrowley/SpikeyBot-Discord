@@ -54,7 +54,7 @@ function SubModule() {
   /**
    * The command object for registering command listeners.
    *
-   * @type {SpikeyBot~Command}
+   * @type {Command}
    */
   this.command;
   /**
@@ -129,7 +129,7 @@ function SubModule() {
    * @param {string} prefix The global prefix for this bot.
    * @param {Discord} Discord The Discord object for the API library.
    * @param {Discord~Client} client The client that represents this bot.
-   * @param {SpikeyBot~Command} command The command instance in which to
+   * @param {Command} command The command instance in which to
    * register command listeners.
    * @param {Common} common Class storing common functions.
    * @param {SpikeyBot} bot The parent SpikeyBot instance.

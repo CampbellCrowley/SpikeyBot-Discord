@@ -13,27 +13,27 @@ require('./subModule.js')(Music);
  * @class
  * @augments SubModule
  * @listens Discord~Client#voiceStateUpdate
- * @listens SpikeyBot~Command#play
- * @listens SpikeyBot~Command#pause
- * @listens SpikeyBot~Command#resume
- * @listens SpikeyBot~Command#leave
- * @listens SpikeyBot~Command#stop
- * @listens SpikeyBot~Command#stfu
- * @listens SpikeyBot~Command#skip
- * @listens SpikeyBot~Command#q
- * @listens SpikeyBot~Command#queue
- * @listens SpikeyBot~Command#playing
- * @listens SpikeyBot~Command#remove
- * @listens SpikeyBot~Command#dequeue
- * @listens SpikeyBot~Command#lyrics
- * @listens SpikeyBot~Command#record
- * @listens SpikeyBot~Command#follow
- * @listens SpikeyBot~Command#unfollow
- * @listens SpikeyBot~Command#stalk
- * @listens SpikeyBot~Command#unstalk
- * @listens SpikeyBot~Command#musicstats
- * @listens SpikeyBot~Command#volume
- * @fires SpikeyBot~Command#stop
+ * @listens Command#play
+ * @listens Command#pause
+ * @listens Command#resume
+ * @listens Command#leave
+ * @listens Command#stop
+ * @listens Command#stfu
+ * @listens Command#skip
+ * @listens Command#q
+ * @listens Command#queue
+ * @listens Command#playing
+ * @listens Command#remove
+ * @listens Command#dequeue
+ * @listens Command#lyrics
+ * @listens Command#record
+ * @listens Command#follow
+ * @listens Command#unfollow
+ * @listens Command#stalk
+ * @listens Command#unstalk
+ * @listens Command#musicstats
+ * @listens Command#volume
+ * @fires Command#stop
  */
 function Music() {
   const self = this;
@@ -467,7 +467,7 @@ function Music() {
    * @param {Object} [info] The info from ytdl about the song.
    * @param {number} [seek=0] The number of seconds into a song to start
    * playing.
-   * @fires SpikeyBot~Command#stop
+   * @fires Command#stop
    */
   function enqueueSong(broadcast, song, msg, info, seek) {
     broadcast.queue.push({request: msg, song: song, info: info, seek: seek});
@@ -752,7 +752,7 @@ function Music() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg The message that triggered command.
-   * @listens SpikeyBot~Command#join
+   * @listens Command#join
    */
   function commandJoin(msg) {
     if (msg.member.voice.channel === null) {
@@ -770,7 +770,7 @@ function Music() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg The message that triggered command.
-   * @listens SpikeyBot~Command#pause
+   * @listens Command#pause
    */
   function commandPause(msg) {
     if (!broadcasts[msg.guild.id]) {
@@ -825,7 +825,7 @@ function Music() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg The message that triggered command.
-   * @listens SpikeyBot~Command#resume
+   * @listens Command#resume
    */
   function commandResume(msg) {
     if (!broadcasts[msg.guild.id]) {
@@ -886,7 +886,7 @@ function Music() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg The message that triggered command.
-   * @listens SpikeyBot~Command#play
+   * @listens Command#play
    */
   function commandPlay(msg) {
     if (broadcasts[msg.guild.id] && broadcasts[msg.guild.id].subjugated) {
@@ -1031,9 +1031,9 @@ function Music() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg The message that triggered the command.
-   * @listens SpikeyBot~Command#leave
-   * @listens SpikeyBot~Command#stop
-   * @listens SpikeyBot~Command#stfu
+   * @listens Command#leave
+   * @listens Command#stop
+   * @listens Command#stfu
    */
   function commandLeave(msg) {
     if (msg.guild.me.voice.channel) {
@@ -1054,7 +1054,7 @@ function Music() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg The message that triggered the command.
-   * @listens SpikeyBot~Command#skip
+   * @listens Command#skip
    */
   function commandSkip(msg) {
     if (!broadcasts[msg.guild.id]) {
@@ -1073,9 +1073,9 @@ function Music() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg The message that triggered the command.
-   * @listens SpikeyBot~Command#q
-   * @listens SpikeyBot~Command#queue
-   * @listens SpikeyBot~Command#playing
+   * @listens Command#q
+   * @listens Command#queue
+   * @listens Command#playing
    */
   function commandQueue(msg) {
     if (!broadcasts[msg.guild.id]) {
@@ -1132,8 +1132,8 @@ function Music() {
    *
    * @type {commandHandler}
    * @param {Discord~Message} msg The message that triggered the command.
-   * @listens SpikeyBot~Command#clear
-   * @listens SpikeyBot~Command#empty
+   * @listens Command#clear
+   * @listens Command#empty
    */
   function commandClearQueue(msg) {
     if (broadcasts[msg.guild.id] && broadcasts[msg.guild.id].subjugated) {
@@ -1166,8 +1166,8 @@ function Music() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg The message that triggered the command.
-   * @listens SpikeyBot~Command#remove
-   * @listens SpikeyBot~Command#dequeue
+   * @listens Command#remove
+   * @listens Command#dequeue
    */
   function commandRemove(msg) {
     if (broadcasts[msg.guild.id] && broadcasts[msg.guild.id].subjugated) {
@@ -1206,7 +1206,7 @@ function Music() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg The message that triggered the command.
-   * @listens SpikeyBot~Command#lyrics
+   * @listens Command#lyrics
    */
   function commandLyrics(msg) {
     let song = msg.text;
@@ -1396,7 +1396,7 @@ function Music() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg The message that triggered the command.
-   * @listens SpikeyBot~Command#record
+   * @listens Command#record
    */
   function commandRecord(msg) {
     if (msg.member.voice.channel === null) {
@@ -1470,7 +1470,7 @@ function Music() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg The message that triggered command.
-   * @listens SpikeyBot~Command#join
+   * @listens Command#join
    */
   function commandFollow(msg) {
     if (msg.mentions.users.size > 0) {
@@ -1571,7 +1571,7 @@ function Music() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg The message that triggered command.
-   * @listens SpikeyBot~Command#musicstats
+   * @listens Command#musicstats
    */
   function commandStats(msg) {
     let queueLength = 0;
@@ -1622,9 +1622,9 @@ function Music() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg The message that triggered command.
-   * @listens SpikeyBot~Command#volume
-   * @listens SpikeyBot~Command#vol
-   * @listens SpikeyBot~Command#v
+   * @listens Command#volume
+   * @listens Command#vol
+   * @listens Command#v
    */
   function commandVolume(msg) {
     if (!broadcasts[msg.guild.id]) {

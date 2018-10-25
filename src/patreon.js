@@ -10,7 +10,7 @@ require('./subModule.js')(Patreon); // Extends the SubModule class.
  * Patreon status of users.
  * @class
  * @augments SubModule
- * @listens SpikeyBot~Command#patreon
+ * @listens Command#patreon
  */
 function Patreon() {
   const self = this;
@@ -185,7 +185,7 @@ function Patreon() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#patreon
+   * @listens Command#patreon
    */
   function commandPatreon(msg) {
     /**

@@ -16,6 +16,10 @@
 <dd><p>Provides interface for scheduling a specific time or interval for
 a command to be run.</p>
 </dd>
+<dt><a href="#Command">Command</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
+<dd><p>Manages the command event firing for all commands. This is not a
+normal submodule, and is treated differently in the SpikeyBot class.</p>
+</dd>
 <dt><a href="#Common">Common</a></dt>
 <dd></dd>
 <dt><a href="#Connect4">Connect4</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
@@ -130,7 +134,7 @@ Manages natural language interaction.
         * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
         * [.Discord](#SubModule+Discord) : <code>Discord</code>
         * [.client](#SubModule+client) : <code>Discord~Client</code>
-        * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
+        * [.command](#SubModule+command) : [<code>Command</code>](#Command)
         * [.common](#SubModule+common) : [<code>Common</code>](#Common)
         * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
         * [.myName](#SubModule+myName) : <code>string</code>
@@ -196,7 +200,7 @@ The current bot client.
 **Kind**: instance property of [<code>ChatBot</code>](#ChatBot)  
 <a name="SubModule+command"></a>
 
-### chatBot.command : [<code>Command</code>](#SpikeyBot..Command)
+### chatBot.command : [<code>Command</code>](#Command)
 The command object for registering command listeners.
 
 **Kind**: instance property of [<code>ChatBot</code>](#ChatBot)  
@@ -268,7 +272,7 @@ Initialize this submodule.
 | prefix | <code>string</code> | The global prefix for this bot. |
 | Discord | <code>Discord</code> | The Discord object for the API library. |
 | client | <code>Discord~Client</code> | The client that represents this bot. |
-| command | [<code>Command</code>](#SpikeyBot..Command) | The command instance in which to register command listeners. |
+| command | [<code>Command</code>](#Command) | The command instance in which to register command listeners. |
 | common | [<code>Common</code>](#Common) | Class storing common functions. |
 | bot | [<code>SpikeyBot</code>](#SpikeyBot) | The parent SpikeyBot instance. |
 
@@ -400,7 +404,7 @@ a command to be run.
         * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
         * [.Discord](#SubModule+Discord) : <code>Discord</code>
         * [.client](#SubModule+client) : <code>Discord~Client</code>
-        * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
+        * [.command](#SubModule+command) : [<code>Command</code>](#Command)
         * [.common](#SubModule+common) : [<code>Common</code>](#Common)
         * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
         * [.myName](#SubModule+myName) : <code>string</code>
@@ -513,7 +517,7 @@ The current bot client.
 **Kind**: instance property of [<code>CmdScheduling</code>](#CmdScheduling)  
 <a name="SubModule+command"></a>
 
-### cmdScheduling.command : [<code>Command</code>](#SpikeyBot..Command)
+### cmdScheduling.command : [<code>Command</code>](#Command)
 The command object for registering command listeners.
 
 **Kind**: instance property of [<code>CmdScheduling</code>](#CmdScheduling)  
@@ -629,7 +633,7 @@ Initialize this submodule.
 | prefix | <code>string</code> | The global prefix for this bot. |
 | Discord | <code>Discord</code> | The Discord object for the API library. |
 | client | <code>Discord~Client</code> | The client that represents this bot. |
-| command | [<code>Command</code>](#SpikeyBot..Command) | The command instance in which to register command listeners. |
+| command | [<code>Command</code>](#Command) | The command instance in which to register command listeners. |
 | common | [<code>Common</code>](#Common) | Class storing common functions. |
 | bot | [<code>SpikeyBot</code>](#SpikeyBot) | The parent SpikeyBot instance. |
 
@@ -1034,6 +1038,388 @@ Forms a Discord~Message similar object from given IDs.
 | cId | <code>string</code> | The id of the channel this message was 'sent' in. |
 | msg | <code>string</code> | The message content. |
 
+<a name="Command"></a>
+
+## Command ⇐ [<code>SubModule</code>](#SubModule)
+Manages the command event firing for all commands. This is not a
+normal submodule, and is treated differently in the SpikeyBot class.
+
+**Kind**: global class  
+**Extends**: [<code>SubModule</code>](#SubModule)  
+
+* [Command](#Command) ⇐ [<code>SubModule</code>](#SubModule)
+    * _instance_
+        * [.helpMessage](#SubModule+helpMessage) : <code>string</code> \| <code>Discord~MessageEmbed</code>
+        * [.prefix](#SubModule+prefix) : <code>string</code>
+        * [.myPrefix](#SubModule+myPrefix) : <code>string</code>
+        * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
+        * [.Discord](#SubModule+Discord) : <code>Discord</code>
+        * [.client](#SubModule+client) : <code>Discord~Client</code>
+        * [.command](#SubModule+command) : [<code>Command</code>](#Command)
+        * [.common](#SubModule+common) : [<code>Common</code>](#Common)
+        * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
+        * [.myName](#SubModule+myName) : <code>string</code>
+        * [.initialized](#SubModule+initialized) : <code>boolean</code>
+        * [.commit](#SubModule+commit) : <code>string</code>
+        * [.loadTime](#SubModule+loadTime) : <code>number</code>
+        * [.trigger(cmd, msg)](#Command+trigger) ⇒ <code>boolean</code>
+        * [.on(cmd, cb, [onlyserver])](#Command+on)
+        * [.deleteEvent(cmd)](#Command+deleteEvent)
+        * [.disable(cmd, channel)](#Command+disable)
+        * [.enable(cmd, channel)](#Command+enable)
+        * [.find(cmd, [msg])](#Command+find) ⇒ <code>function</code>
+        * [.validate(cmd, msg, [func])](#Command+validate) ⇒ <code>string</code>
+        * [.getAllNames()](#Command+getAllNames) ⇒ <code>Array.&lt;string&gt;</code>
+        * [.initialize()](#SubModule+initialize)
+        * [.begin(prefix, Discord, client, command, common, bot)](#SubModule+begin)
+        * [.end()](#SubModule+end)
+        * [.log(msg)](#SubModule+log)
+        * [.debug(msg)](#SubModule+debug)
+        * [.warn(msg)](#SubModule+warn)
+        * [.error(msg)](#SubModule+error)
+        * [.shutdown()](#SubModule+shutdown)
+        * *[.save([opt])](#SubModule+save)*
+        * *[.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>*
+    * _inner_
+        * [~cmds](#Command..cmds) : [<code>Object.&lt;commandHandler&gt;</code>](#commandHandler) ℗
+        * [~blacklist](#Command..blacklist) : <code>Object.&lt;Array.&lt;string&gt;&gt;</code> ℗
+        * [~onlyservermessage](#Command..onlyservermessage) : <code>string</code> ℗
+        * [~disabledcommandmessage](#Command..disabledcommandmessage) : <code>string</code> ℗
+
+<a name="SubModule+helpMessage"></a>
+
+### command.helpMessage : <code>string</code> \| <code>Discord~MessageEmbed</code>
+The help message to show the user in the main help message.
+
+**Kind**: instance property of [<code>Command</code>](#Command)  
+<a name="SubModule+prefix"></a>
+
+### command.prefix : <code>string</code>
+The main prefix in use for this bot. Only available after begin() is
+called.
+
+**Kind**: instance property of [<code>Command</code>](#Command)  
+**Read only**: true  
+<a name="SubModule+myPrefix"></a>
+
+### command.myPrefix : <code>string</code>
+The prefix this submodule uses. Formed by prepending this.prefix to
+this.postPrefix. this.postPrefix must be defined before begin(), otherwise
+it is ignored.
+
+**Kind**: instance property of [<code>Command</code>](#Command)  
+**Read only**: true  
+<a name="SubModule+postPrefix"></a>
+
+### *command.postPrefix : <code>string</code>*
+The postfix for the global prefix for this subModule. Must be defined
+before begin(), otherwise it is ignored.
+
+**Kind**: instance abstract property of [<code>Command</code>](#Command)  
+**Default**: <code>&quot;&quot;</code>  
+<a name="SubModule+Discord"></a>
+
+### command.Discord : <code>Discord</code>
+The current Discord object instance of the bot.
+
+**Kind**: instance property of [<code>Command</code>](#Command)  
+<a name="SubModule+client"></a>
+
+### command.client : <code>Discord~Client</code>
+The current bot client.
+
+**Kind**: instance property of [<code>Command</code>](#Command)  
+<a name="SubModule+command"></a>
+
+### command.command : [<code>Command</code>](#Command)
+The command object for registering command listeners.
+
+**Kind**: instance property of [<code>Command</code>](#Command)  
+<a name="SubModule+common"></a>
+
+### command.common : [<code>Common</code>](#Common)
+The common object.
+
+**Kind**: instance property of [<code>Command</code>](#Command)  
+<a name="SubModule+bot"></a>
+
+### command.bot : [<code>SpikeyBot</code>](#SpikeyBot)
+The parent SpikeyBot instance.
+
+**Kind**: instance property of [<code>Command</code>](#Command)  
+<a name="SubModule+myName"></a>
+
+### command.myName : <code>string</code>
+The name of this submodule. Used for differentiating in the log. Should be
+defined before begin().
+
+**Kind**: instance property of [<code>Command</code>](#Command)  
+**Overrides**: [<code>myName</code>](#SubModule+myName)  
+**Access**: protected  
+<a name="SubModule+initialized"></a>
+
+### command.initialized : <code>boolean</code>
+Has this subModule been initialized yet (Has begin() been called).
+
+**Kind**: instance property of [<code>Command</code>](#Command)  
+**Default**: <code>false</code>  
+**Access**: protected  
+**Read only**: true  
+<a name="SubModule+commit"></a>
+
+### command.commit : <code>string</code>
+The commit at HEAD at the time this module was loaded. Essentially the
+version of this submodule.
+
+**Kind**: instance constant of [<code>Command</code>](#Command)  
+**Access**: public  
+<a name="SubModule+loadTime"></a>
+
+### command.loadTime : <code>number</code>
+The time at which this madule was loaded for use in checking if the module
+needs to be reloaded because the file has been modified since loading.
+
+**Kind**: instance constant of [<code>Command</code>](#Command)  
+**Access**: public  
+<a name="Command+trigger"></a>
+
+### command.trigger(cmd, msg) ⇒ <code>boolean</code>
+Trigger a command firing and call it's handler passing in msg as only
+argument.
+
+**Kind**: instance method of [<code>Command</code>](#Command)  
+**Returns**: <code>boolean</code> - True if command was handled by us.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| cmd | <code>string</code> | Array of strings or a string of the command to trigger. |
+| msg | <code>Discord~Message</code> | Message received from Discord to pass to handler. |
+
+<a name="Command+on"></a>
+
+### command.on(cmd, cb, [onlyserver])
+Registers a listener for a command.
+
+**Kind**: instance method of [<code>Command</code>](#Command)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| cmd | <code>string</code> \| <code>Array.&lt;string&gt;</code> |  | Command to listen for. |
+| cb | [<code>commandHandler</code>](#commandHandler) |  | Function to call when command is triggered. |
+| [onlyserver] | <code>boolean</code> | <code>false</code> | Whether the command is only allowed on a server. |
+
+<a name="Command+deleteEvent"></a>
+
+### command.deleteEvent(cmd)
+Remove listener for a command.
+
+**Kind**: instance method of [<code>Command</code>](#Command)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| cmd | <code>string</code> \| <code>Array.&lt;string&gt;</code> | Command to remove listener for. |
+
+<a name="Command+disable"></a>
+
+### command.disable(cmd, channel)
+Temporarily disables calling the handler for the given command in a
+certain
+Discord text channel.
+
+**Kind**: instance method of [<code>Command</code>](#Command)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| cmd | <code>string</code> | Command to disable. |
+| channel | <code>string</code> | ID of channel to disable command for. |
+
+<a name="Command+enable"></a>
+
+### command.enable(cmd, channel)
+Re-enable a command that was disabled previously.
+
+**Kind**: instance method of [<code>Command</code>](#Command)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| cmd | <code>string</code> | Command to enable. |
+| channel | <code>string</code> | ID of channel to enable command for. |
+
+<a name="Command+find"></a>
+
+### command.find(cmd, [msg]) ⇒ <code>function</code>
+Returns the callback function for the given event.
+
+**Kind**: instance method of [<code>Command</code>](#Command)  
+**Returns**: <code>function</code> - The event callback.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| cmd | <code>string</code> | Command to lookup. |
+| [msg] | <code>Discord~Message</code> | Message that is to trigger this command. Used for removing prefix from cmd if necessary. |
+
+<a name="Command+validate"></a>
+
+### command.validate(cmd, msg, [func]) ⇒ <code>string</code>
+Checks that the given command can be run with the given context. Does not
+actually fire the event.
+
+**Kind**: instance method of [<code>Command</code>](#Command)  
+**Returns**: <code>string</code> - Message causing failure, or null if valid.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| cmd | <code>string</code> | The command to validate. |
+| msg | <code>Discord~Message</code> | The message that will fire the event. If null, checks for channel and guild specific changes will not be validated. |
+| [func] | [<code>commandHandler</code>](#commandHandler) | A command handler override to use for settings lookup. If this is not specified, the handler associated with cmd will be fetched. |
+
+<a name="Command+getAllNames"></a>
+
+### command.getAllNames() ⇒ <code>Array.&lt;string&gt;</code>
+Fetches a list of all currently registered commands.
+
+**Kind**: instance method of [<code>Command</code>](#Command)  
+**Returns**: <code>Array.&lt;string&gt;</code> - Array of all registered commands.  
+<a name="SubModule+initialize"></a>
+
+### command.initialize()
+The function called at the end of begin() for further initialization
+specific to the subModule. Must be defined before begin() is called.
+
+**Kind**: instance method of [<code>Command</code>](#Command)  
+**Overrides**: [<code>initialize</code>](#SubModule+initialize)  
+**Access**: protected  
+<a name="SubModule+begin"></a>
+
+### command.begin(prefix, Discord, client, command, common, bot)
+Initialize this submodule.
+
+**Kind**: instance method of [<code>Command</code>](#Command)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| prefix | <code>string</code> | The global prefix for this bot. |
+| Discord | <code>Discord</code> | The Discord object for the API library. |
+| client | <code>Discord~Client</code> | The client that represents this bot. |
+| command | [<code>Command</code>](#Command) | The command instance in which to register command listeners. |
+| common | [<code>Common</code>](#Common) | Class storing common functions. |
+| bot | [<code>SpikeyBot</code>](#SpikeyBot) | The parent SpikeyBot instance. |
+
+<a name="SubModule+end"></a>
+
+### command.end()
+Trigger subModule to shutdown and get ready for process terminating.
+
+**Kind**: instance method of [<code>Command</code>](#Command)  
+**Access**: public  
+<a name="SubModule+log"></a>
+
+### command.log(msg)
+Log using common.log, but automatically set name.
+
+**Kind**: instance method of [<code>Command</code>](#Command)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+debug"></a>
+
+### command.debug(msg)
+Log using common.logDebug, but automatically set name.
+
+**Kind**: instance method of [<code>Command</code>](#Command)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+warn"></a>
+
+### command.warn(msg)
+Log using common.logWarning, but automatically set name.
+
+**Kind**: instance method of [<code>Command</code>](#Command)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+error"></a>
+
+### command.error(msg)
+Log using common.error, but automatically set name.
+
+**Kind**: instance method of [<code>Command</code>](#Command)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+shutdown"></a>
+
+### command.shutdown()
+Shutdown and disable this submodule. Removes all event listeners.
+
+**Kind**: instance method of [<code>Command</code>](#Command)  
+**Overrides**: [<code>shutdown</code>](#SubModule+shutdown)  
+**Access**: protected  
+<a name="SubModule+save"></a>
+
+### *command.save([opt])*
+Saves all data to files necessary for saving current state.
+
+**Kind**: instance abstract method of [<code>Command</code>](#Command)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [opt] | <code>string</code> | <code>&quot;&#x27;sync&#x27;&quot;</code> | Can be 'async', otherwise defaults to synchronous. |
+
+<a name="SubModule+unloadable"></a>
+
+### *command.unloadable() ⇒ <code>boolean</code>*
+Check if this module is in a state that is ready to be unloaded. If false
+is returned, this module should not be unloaded and doing such may risk
+putting the module into an uncontrollable state.
+
+**Kind**: instance abstract method of [<code>Command</code>](#Command)  
+**Returns**: <code>boolean</code> - True if can be unloaded, false if cannot.  
+**Access**: public  
+<a name="Command..cmds"></a>
+
+### Command~cmds : [<code>Object.&lt;commandHandler&gt;</code>](#commandHandler) ℗
+All tracked commands with handlers.
+
+**Kind**: inner property of [<code>Command</code>](#Command)  
+**Access**: private  
+<a name="Command..blacklist"></a>
+
+### Command~blacklist : <code>Object.&lt;Array.&lt;string&gt;&gt;</code> ℗
+List of disabled commands, and the channels they are disabled in.
+
+**Kind**: inner property of [<code>Command</code>](#Command)  
+**Access**: private  
+<a name="Command..onlyservermessage"></a>
+
+### Command~onlyservermessage : <code>string</code> ℗
+The message to send to the user if they attempt a server-only command in a
+non-server channel.
+
+**Kind**: inner constant of [<code>Command</code>](#Command)  
+**Access**: private  
+<a name="Command..disabledcommandmessage"></a>
+
+### Command~disabledcommandmessage : <code>string</code> ℗
+The message to send to the user if the command they attempted is currently
+disabled in the channel.
+
+**Kind**: inner constant of [<code>Command</code>](#Command)  
+**Access**: private  
 <a name="Common"></a>
 
 ## Common
@@ -1401,7 +1787,7 @@ Manages a Connect 4 game.
         * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
         * [.Discord](#SubModule+Discord) : <code>Discord</code>
         * [.client](#SubModule+client) : <code>Discord~Client</code>
-        * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
+        * [.command](#SubModule+command) : [<code>Command</code>](#Command)
         * [.common](#SubModule+common) : [<code>Common</code>](#Common)
         * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
         * [.myName](#SubModule+myName) : <code>string</code>
@@ -1535,7 +1921,7 @@ The current bot client.
 **Kind**: instance property of [<code>Connect4</code>](#Connect4)  
 <a name="SubModule+command"></a>
 
-### connect4.command : [<code>Command</code>](#SpikeyBot..Command)
+### connect4.command : [<code>Command</code>](#Command)
 The command object for registering command listeners.
 
 **Kind**: instance property of [<code>Connect4</code>](#Connect4)  
@@ -1620,7 +2006,7 @@ Initialize this submodule.
 | prefix | <code>string</code> | The global prefix for this bot. |
 | Discord | <code>Discord</code> | The Discord object for the API library. |
 | client | <code>Discord~Client</code> | The client that represents this bot. |
-| command | [<code>Command</code>](#SpikeyBot..Command) | The command instance in which to register command listeners. |
+| command | [<code>Command</code>](#Command) | The command instance in which to register command listeners. |
 | common | [<code>Common</code>](#Common) | Class storing common functions. |
 | bot | [<code>SpikeyBot</code>](#SpikeyBot) | The parent SpikeyBot instance. |
 
@@ -1823,7 +2209,7 @@ Hunger Games simulator.
         * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
         * [.Discord](#SubModule+Discord) : <code>Discord</code>
         * [.client](#SubModule+client) : <code>Discord~Client</code>
-        * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
+        * [.command](#SubModule+command) : [<code>Command</code>](#Command)
         * [.common](#SubModule+common) : [<code>Common</code>](#Common)
         * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
         * *[.myName](#SubModule+myName) : <code>string</code>*
@@ -2048,7 +2434,7 @@ The current bot client.
 **Kind**: instance property of [<code>HungryGames</code>](#HungryGames)  
 <a name="SubModule+command"></a>
 
-### hungryGames.command : [<code>Command</code>](#SpikeyBot..Command)
+### hungryGames.command : [<code>Command</code>](#Command)
 The command object for registering command listeners.
 
 **Kind**: instance property of [<code>HungryGames</code>](#HungryGames)  
@@ -2454,7 +2840,7 @@ Initialize this submodule.
 | prefix | <code>string</code> | The global prefix for this bot. |
 | Discord | <code>Discord</code> | The Discord object for the API library. |
 | client | <code>Discord~Client</code> | The client that represents this bot. |
-| command | [<code>Command</code>](#SpikeyBot..Command) | The command instance in which to register command listeners. |
+| command | [<code>Command</code>](#Command) | The command instance in which to register command listeners. |
 | common | [<code>Common</code>](#Common) | Class storing common functions. |
 | bot | [<code>SpikeyBot</code>](#SpikeyBot) | The parent SpikeyBot instance. |
 
@@ -4247,7 +4633,7 @@ Basic commands and features for the bot.
         * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
         * [.Discord](#SubModule+Discord) : <code>Discord</code>
         * [.client](#SubModule+client) : <code>Discord~Client</code>
-        * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
+        * [.command](#SubModule+command) : [<code>Command</code>](#Command)
         * [.common](#SubModule+common) : [<code>Common</code>](#Common)
         * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
         * [.myName](#SubModule+myName) : <code>string</code>
@@ -4380,7 +4766,7 @@ The current bot client.
 **Kind**: instance property of [<code>Main</code>](#Main)  
 <a name="SubModule+command"></a>
 
-### main.command : [<code>Command</code>](#SpikeyBot..Command)
+### main.command : [<code>Command</code>](#Command)
 The command object for registering command listeners.
 
 **Kind**: instance property of [<code>Main</code>](#Main)  
@@ -4452,7 +4838,7 @@ Initialize this submodule.
 | prefix | <code>string</code> | The global prefix for this bot. |
 | Discord | <code>Discord</code> | The Discord object for the API library. |
 | client | <code>Discord~Client</code> | The client that represents this bot. |
-| command | [<code>Command</code>](#SpikeyBot..Command) | The command instance in which to register command listeners. |
+| command | [<code>Command</code>](#Command) | The command instance in which to register command listeners. |
 | common | [<code>Common</code>](#Common) | Class storing common functions. |
 | bot | [<code>SpikeyBot</code>](#SpikeyBot) | The parent SpikeyBot instance. |
 
@@ -5315,7 +5701,7 @@ Music and audio related commands.
 
 **Kind**: global class  
 **Extends**: [<code>SubModule</code>](#SubModule)  
-**Emits**: <code>SpikeyBot~Command#event:stop</code>  
+**Emits**: <code>Command#event:stop</code>  
 
 * [Music](#Music) ⇐ [<code>SubModule</code>](#SubModule)
     * _instance_
@@ -5325,7 +5711,7 @@ Music and audio related commands.
         * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
         * [.Discord](#SubModule+Discord) : <code>Discord</code>
         * [.client](#SubModule+client) : <code>Discord~Client</code>
-        * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
+        * [.command](#SubModule+command) : [<code>Command</code>](#Command)
         * [.common](#SubModule+common) : [<code>Common</code>](#Common)
         * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
         * *[.myName](#SubModule+myName) : <code>string</code>*
@@ -5446,7 +5832,7 @@ The current bot client.
 **Kind**: instance property of [<code>Music</code>](#Music)  
 <a name="SubModule+command"></a>
 
-### music.command : [<code>Command</code>](#SpikeyBot..Command)
+### music.command : [<code>Command</code>](#Command)
 The command object for registering command listeners.
 
 **Kind**: instance property of [<code>Music</code>](#Music)  
@@ -5649,7 +6035,7 @@ Initialize this submodule.
 | prefix | <code>string</code> | The global prefix for this bot. |
 | Discord | <code>Discord</code> | The Discord object for the API library. |
 | client | <code>Discord~Client</code> | The client that represents this bot. |
-| command | [<code>Command</code>](#SpikeyBot..Command) | The command instance in which to register command listeners. |
+| command | [<code>Command</code>](#Command) | The command instance in which to register command listeners. |
 | common | [<code>Common</code>](#Common) | Class storing common functions. |
 | bot | [<code>SpikeyBot</code>](#SpikeyBot) | The parent SpikeyBot instance. |
 
@@ -5910,7 +6296,7 @@ Add commas between digits on large numbers.
 Add a song to the given broadcast's queue and start playing it not already.
 
 **Kind**: inner method of [<code>Music</code>](#Music)  
-**Emits**: <code>SpikeyBot~Command#event:stop</code>  
+**Emits**: <code>Command#event:stop</code>  
 **Access**: private  
 
 | Param | Type | Default | Description |
@@ -6325,7 +6711,7 @@ Patreon status of users.
         * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
         * [.Discord](#SubModule+Discord) : <code>Discord</code>
         * [.client](#SubModule+client) : <code>Discord~Client</code>
-        * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
+        * [.command](#SubModule+command) : [<code>Command</code>](#Command)
         * [.common](#SubModule+common) : [<code>Common</code>](#Common)
         * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
         * [.myName](#SubModule+myName) : <code>string</code>
@@ -6419,7 +6805,7 @@ The current bot client.
 **Kind**: instance property of [<code>Patreon</code>](#Patreon)  
 <a name="SubModule+command"></a>
 
-### patreon.command : [<code>Command</code>](#SpikeyBot..Command)
+### patreon.command : [<code>Command</code>](#Command)
 The command object for registering command listeners.
 
 **Kind**: instance property of [<code>Patreon</code>](#Patreon)  
@@ -6491,7 +6877,7 @@ Initialize this submodule.
 | prefix | <code>string</code> | The global prefix for this bot. |
 | Discord | <code>Discord</code> | The Discord object for the API library. |
 | client | <code>Discord~Client</code> | The client that represents this bot. |
-| command | [<code>Command</code>](#SpikeyBot..Command) | The command instance in which to register command listeners. |
+| command | [<code>Command</code>](#Command) | The command instance in which to register command listeners. |
 | common | [<code>Common</code>](#Common) | Class storing common functions. |
 | bot | [<code>SpikeyBot</code>](#SpikeyBot) | The parent SpikeyBot instance. |
 
@@ -6993,7 +7379,7 @@ Controlls poll and vote commands.
         * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
         * [.Discord](#SubModule+Discord) : <code>Discord</code>
         * [.client](#SubModule+client) : <code>Discord~Client</code>
-        * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
+        * [.command](#SubModule+command) : [<code>Command</code>](#Command)
         * [.common](#SubModule+common) : [<code>Common</code>](#Common)
         * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
         * [.myName](#SubModule+myName) : <code>string</code>
@@ -7079,7 +7465,7 @@ The current bot client.
 **Kind**: instance property of [<code>Polling</code>](#Polling)  
 <a name="SubModule+command"></a>
 
-### polling.command : [<code>Command</code>](#SpikeyBot..Command)
+### polling.command : [<code>Command</code>](#Command)
 The command object for registering command listeners.
 
 **Kind**: instance property of [<code>Polling</code>](#Polling)  
@@ -7151,7 +7537,7 @@ Initialize this submodule.
 | prefix | <code>string</code> | The global prefix for this bot. |
 | Discord | <code>Discord</code> | The Discord object for the API library. |
 | client | <code>Discord~Client</code> | The client that represents this bot. |
-| command | [<code>Command</code>](#SpikeyBot..Command) | The command instance in which to register command listeners. |
+| command | [<code>Command</code>](#Command) | The command instance in which to register command listeners. |
 | common | [<code>Common</code>](#Common) | Class storing common functions. |
 | bot | [<code>SpikeyBot</code>](#SpikeyBot) | The parent SpikeyBot instance. |
 
@@ -7473,7 +7859,7 @@ End a poll. Does not remove it from [currentPolls](#Polling..currentPolls).
 Main class that manages the bot.
 
 **Kind**: global class  
-**Emits**: <code>SpikeyBot~Command#event:\*</code>  
+**Emits**: <code>Command#event:\*</code>  
 
 * [SpikeyBot](#SpikeyBot)
     * _instance_
@@ -7482,22 +7868,9 @@ Main class that manages the bot.
         * [.getSubmodule(name)](#SpikeyBot+getSubmodule) ⇒ [<code>SubModule</code>](#SubModule)
         * [.getPrefix(id)](#SpikeyBot+getPrefix) ⇒ <code>string</code>
     * _inner_
-        * [~Command](#SpikeyBot..Command)
-            * [new Command()](#new_SpikeyBot..Command_new)
-            * _instance_
-                * [.trigger(cmd, msg)](#SpikeyBot..Command+trigger) ⇒ <code>boolean</code>
-                * [.on(cmd, cb, [onlyserver])](#SpikeyBot..Command+on)
-                * [.deleteEvent(cmd)](#SpikeyBot..Command+deleteEvent)
-                * [.disable(cmd, channel)](#SpikeyBot..Command+disable)
-                * [.enable(cmd, channel)](#SpikeyBot..Command+enable)
-                * [.find(cmd, [msg])](#SpikeyBot..Command+find) ⇒ <code>function</code>
-                * [.validate(cmd, msg, [func])](#SpikeyBot..Command+validate) ⇒ <code>string</code>
-                * [.getAllNames()](#SpikeyBot..Command+getAllNames) ⇒ <code>Array.&lt;string&gt;</code>
-            * _inner_
-                * [~cmds](#SpikeyBot..Command..cmds) : [<code>Object.&lt;commandHandler&gt;</code>](#commandHandler) ℗
-                * [~blacklist](#SpikeyBot..Command..blacklist) : <code>Object.&lt;Array.&lt;string&gt;&gt;</code> ℗
         * [~testMode](#SpikeyBot..testMode) : <code>boolean</code> ℗
         * [~testInstance](#SpikeyBot..testInstance) : <code>boolean</code> ℗
+        * [~command](#SpikeyBot..command) : [<code>Command</code>](#Command) ℗
         * [~subModuleNames](#SpikeyBot..subModuleNames) : <code>Array.&lt;string&gt;</code> ℗
         * [~setDev](#SpikeyBot..setDev) : <code>boolean</code> ℗
         * [~minimal](#SpikeyBot..minimal) : <code>boolean</code> ℗
@@ -7512,15 +7885,13 @@ Main class that manages the bot.
         * [~guildPrefixes](#SpikeyBot..guildPrefixes) : <code>Object.&lt;string&gt;</code> ℗
         * [~version](#SpikeyBot..version) : <code>string</code> ℗
         * [~testChannel](#SpikeyBot..testChannel) : <code>string</code> ℗
+        * [~commandFilename](#SpikeyBot..commandFilename) : <code>string</code> ℗
         * [~saveFrequency](#SpikeyBot..saveFrequency) : <code>number</code> ℗
         * [~trustedIds](#SpikeyBot..trustedIds) : <code>Array.&lt;string&gt;</code> ℗
         * [~guildPrefixFile](#SpikeyBot..guildPrefixFile) : <code>string</code> ℗
         * [~guildCustomPrefixFile](#SpikeyBot..guildCustomPrefixFile) : <code>string</code> ℗
         * [~helpmessagereply](#SpikeyBot..helpmessagereply) : <code>string</code> ℗
         * [~blockedmessage](#SpikeyBot..blockedmessage) : <code>string</code> ℗
-        * [~onlyservermessage](#SpikeyBot..onlyservermessage) : <code>string</code> ℗
-        * [~disabledcommandmessage](#SpikeyBot..disabledcommandmessage) : <code>string</code> ℗
-        * [~command](#SpikeyBot..command) : [<code>Command</code>](#SpikeyBot..Command) ℗
         * [~isCmd(msg, cmd)](#SpikeyBot..isCmd) ⇒ <code>boolean</code> ℗
         * [~updateGame(game, [type])](#SpikeyBot..updateGame) ℗
         * [~onReady()](#SpikeyBot..onReady) ℗
@@ -7585,144 +7956,6 @@ Get this guild's custom prefix. Returns the default prefix otherwise.
 | --- | --- | --- |
 | id | <code>Discord~Guild</code> \| <code>string</code> \| <code>number</code> | The guild id or guild to lookup. |
 
-<a name="SpikeyBot..Command"></a>
-
-### SpikeyBot~Command
-**Kind**: inner class of [<code>SpikeyBot</code>](#SpikeyBot)  
-
-* [~Command](#SpikeyBot..Command)
-    * [new Command()](#new_SpikeyBot..Command_new)
-    * _instance_
-        * [.trigger(cmd, msg)](#SpikeyBot..Command+trigger) ⇒ <code>boolean</code>
-        * [.on(cmd, cb, [onlyserver])](#SpikeyBot..Command+on)
-        * [.deleteEvent(cmd)](#SpikeyBot..Command+deleteEvent)
-        * [.disable(cmd, channel)](#SpikeyBot..Command+disable)
-        * [.enable(cmd, channel)](#SpikeyBot..Command+enable)
-        * [.find(cmd, [msg])](#SpikeyBot..Command+find) ⇒ <code>function</code>
-        * [.validate(cmd, msg, [func])](#SpikeyBot..Command+validate) ⇒ <code>string</code>
-        * [.getAllNames()](#SpikeyBot..Command+getAllNames) ⇒ <code>Array.&lt;string&gt;</code>
-    * _inner_
-        * [~cmds](#SpikeyBot..Command..cmds) : [<code>Object.&lt;commandHandler&gt;</code>](#commandHandler) ℗
-        * [~blacklist](#SpikeyBot..Command..blacklist) : <code>Object.&lt;Array.&lt;string&gt;&gt;</code> ℗
-
-<a name="new_SpikeyBot..Command_new"></a>
-
-#### new Command()
-Command event triggering interface.
-
-<a name="SpikeyBot..Command+trigger"></a>
-
-#### command.trigger(cmd, msg) ⇒ <code>boolean</code>
-Trigger a command firing and call it's handler passing in msg as only
-argument.
-
-**Kind**: instance method of [<code>Command</code>](#SpikeyBot..Command)  
-**Returns**: <code>boolean</code> - True if command was handled by us.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| cmd | <code>string</code> | Array of strings or a string of the command to trigger. |
-| msg | <code>Discord~Message</code> | Message received from Discord to pass to handler. |
-
-<a name="SpikeyBot..Command+on"></a>
-
-#### command.on(cmd, cb, [onlyserver])
-Registers a listener for a command.
-
-**Kind**: instance method of [<code>Command</code>](#SpikeyBot..Command)  
-
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| cmd | <code>string</code> \| <code>Array.&lt;string&gt;</code> |  | Command to listen for. |
-| cb | [<code>commandHandler</code>](#commandHandler) |  | Function to call when command is triggered. |
-| [onlyserver] | <code>boolean</code> | <code>false</code> | Whether the command is only allowed on a server. |
-
-<a name="SpikeyBot..Command+deleteEvent"></a>
-
-#### command.deleteEvent(cmd)
-Remove listener for a command.
-
-**Kind**: instance method of [<code>Command</code>](#SpikeyBot..Command)  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| cmd | <code>string</code> \| <code>Array.&lt;string&gt;</code> | Command to remove listener for. |
-
-<a name="SpikeyBot..Command+disable"></a>
-
-#### command.disable(cmd, channel)
-Temporarily disables calling the handler for the given command in a
-certain
-Discord text channel.
-
-**Kind**: instance method of [<code>Command</code>](#SpikeyBot..Command)  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| cmd | <code>string</code> | Command to disable. |
-| channel | <code>string</code> | ID of channel to disable command for. |
-
-<a name="SpikeyBot..Command+enable"></a>
-
-#### command.enable(cmd, channel)
-Re-enable a command that was disabled previously.
-
-**Kind**: instance method of [<code>Command</code>](#SpikeyBot..Command)  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| cmd | <code>string</code> | Command to enable. |
-| channel | <code>string</code> | ID of channel to enable command for. |
-
-<a name="SpikeyBot..Command+find"></a>
-
-#### command.find(cmd, [msg]) ⇒ <code>function</code>
-Returns the callback function for the given event.
-
-**Kind**: instance method of [<code>Command</code>](#SpikeyBot..Command)  
-**Returns**: <code>function</code> - The event callback.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| cmd | <code>string</code> | Command to lookup. |
-| [msg] | <code>Discord~Message</code> | Message that is to trigger this command. Used for removing prefix from cmd if necessary. |
-
-<a name="SpikeyBot..Command+validate"></a>
-
-#### command.validate(cmd, msg, [func]) ⇒ <code>string</code>
-Checks that the given command can be run with the given context. Does not
-actually fire the event.
-
-**Kind**: instance method of [<code>Command</code>](#SpikeyBot..Command)  
-**Returns**: <code>string</code> - Message causing failure, or null if valid.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| cmd | <code>string</code> | The command to validate. |
-| msg | <code>Discord~Message</code> | The message that will fire the event. If null, checks for channel and guild specific changes will not be validated. |
-| [func] | [<code>commandHandler</code>](#commandHandler) | A command handler override to use for settings lookup. If this is not specified, the handler associated with cmd will be fetched. |
-
-<a name="SpikeyBot..Command+getAllNames"></a>
-
-#### command.getAllNames() ⇒ <code>Array.&lt;string&gt;</code>
-Fetches a list of all currently registered commands.
-
-**Kind**: instance method of [<code>Command</code>](#SpikeyBot..Command)  
-**Returns**: <code>Array.&lt;string&gt;</code> - Array of all registered commands.  
-<a name="SpikeyBot..Command..cmds"></a>
-
-#### Command~cmds : [<code>Object.&lt;commandHandler&gt;</code>](#commandHandler) ℗
-All tracked commands with handlers.
-
-**Kind**: inner property of [<code>Command</code>](#SpikeyBot..Command)  
-**Access**: private  
-<a name="SpikeyBot..Command..blacklist"></a>
-
-#### Command~blacklist : <code>Object.&lt;Array.&lt;string&gt;&gt;</code> ℗
-List of disabled commands, and the channels they are disabled in.
-
-**Kind**: inner property of [<code>Command</code>](#SpikeyBot..Command)  
-**Access**: private  
 <a name="SpikeyBot..testMode"></a>
 
 ### SpikeyBot~testMode : <code>boolean</code> ℗
@@ -7735,6 +7968,13 @@ Is the bot currently responding as a unit test.
 ### SpikeyBot~testInstance : <code>boolean</code> ℗
 Is the bot started with the intent of solely running a unit test. Reduces
 messages sent that are unnecessary.
+
+**Kind**: inner property of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Access**: private  
+<a name="SpikeyBot..command"></a>
+
+### SpikeyBot~command : [<code>Command</code>](#Command) ℗
+The current instance of Command.
 
 **Kind**: inner property of [<code>SpikeyBot</code>](#SpikeyBot)  
 **Access**: private  
@@ -7854,6 +8094,14 @@ The channel id for the channel to reserve for only unit testing in.
 **Kind**: inner constant of [<code>SpikeyBot</code>](#SpikeyBot)  
 **Default**: <code>&quot;439642818084995074&quot;</code>  
 **Access**: private  
+<a name="SpikeyBot..commandFilename"></a>
+
+### SpikeyBot~commandFilename : <code>string</code> ℗
+The filename of the Command submodule.
+
+**Kind**: inner constant of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Default**: <code>&quot;./commands.js&quot;</code>  
+**Access**: private  
 <a name="SpikeyBot..saveFrequency"></a>
 
 ### SpikeyBot~saveFrequency : <code>number</code> ℗
@@ -7899,29 +8147,6 @@ The message sent to the channel where the user asked for help.
 ### SpikeyBot~blockedmessage : <code>string</code> ℗
 The message sent to the channel where the user asked to be DM'd, but we
 were unable to deliver the DM.
-
-**Kind**: inner constant of [<code>SpikeyBot</code>](#SpikeyBot)  
-**Access**: private  
-<a name="SpikeyBot..onlyservermessage"></a>
-
-### SpikeyBot~onlyservermessage : <code>string</code> ℗
-The message to send to the user if they attempt a server-only command in a
-non-server channel.
-
-**Kind**: inner constant of [<code>SpikeyBot</code>](#SpikeyBot)  
-**Access**: private  
-<a name="SpikeyBot..disabledcommandmessage"></a>
-
-### SpikeyBot~disabledcommandmessage : <code>string</code> ℗
-The message to send to the user if the command they attempted is currently
-disabled in the channel.
-
-**Kind**: inner constant of [<code>SpikeyBot</code>](#SpikeyBot)  
-**Access**: private  
-<a name="SpikeyBot..command"></a>
-
-### SpikeyBot~command : [<code>Command</code>](#SpikeyBot..Command) ℗
-The current instance of Command.
 
 **Kind**: inner constant of [<code>SpikeyBot</code>](#SpikeyBot)  
 **Access**: private  
@@ -8021,7 +8246,7 @@ A general debug message was produced.
 Handle a message sent.
 
 **Kind**: inner method of [<code>SpikeyBot</code>](#SpikeyBot)  
-**Emits**: <code>SpikeyBot~event:Command</code>  
+**Emits**: <code>event:Command</code>  
 **Access**: private  
 
 | Param | Type | Description |
@@ -8187,7 +8412,7 @@ channel.
         * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
         * [.Discord](#SubModule+Discord) : <code>Discord</code>
         * [.client](#SubModule+client) : <code>Discord~Client</code>
-        * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
+        * [.command](#SubModule+command) : [<code>Command</code>](#Command)
         * [.common](#SubModule+common) : [<code>Common</code>](#Common)
         * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
         * *[.myName](#SubModule+myName) : <code>string</code>*
@@ -8261,7 +8486,7 @@ The current bot client.
 **Kind**: instance property of [<code>Spotify</code>](#Spotify)  
 <a name="SubModule+command"></a>
 
-### spotify.command : [<code>Command</code>](#SpikeyBot..Command)
+### spotify.command : [<code>Command</code>](#Command)
 The command object for registering command listeners.
 
 **Kind**: instance property of [<code>Spotify</code>](#Spotify)  
@@ -8333,7 +8558,7 @@ Initialize this submodule.
 | prefix | <code>string</code> | The global prefix for this bot. |
 | Discord | <code>Discord</code> | The Discord object for the API library. |
 | client | <code>Discord~Client</code> | The client that represents this bot. |
-| command | [<code>Command</code>](#SpikeyBot..Command) | The command instance in which to register command listeners. |
+| command | [<code>Command</code>](#Command) | The command instance in which to register command listeners. |
 | common | [<code>Common</code>](#Common) | Class storing common functions. |
 | bot | [<code>SpikeyBot</code>](#SpikeyBot) | The parent SpikeyBot instance. |
 
@@ -8512,7 +8737,7 @@ Attempt to start playing the given song into a voice channel.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| msg | <code>Discord~Message</code> | Message that caused this to happen, and to pass into [Command](#SpikeyBot..Command) as context. |
+| msg | <code>Discord~Message</code> | Message that caused this to happen, and to pass into [Command](#Command) as context. |
 | song | <code>Object</code> | The current song information. Name is song name, progress is progress into the song in milliseconds. |
 
 <a name="Spotify..checkMusic"></a>
@@ -8549,7 +8774,7 @@ Base class for all Sub-Modules.
         * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
         * [.Discord](#SubModule+Discord) : <code>Discord</code>
         * [.client](#SubModule+client) : <code>Discord~Client</code>
-        * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
+        * [.command](#SubModule+command) : [<code>Command</code>](#Command)
         * [.common](#SubModule+common) : [<code>Common</code>](#Common)
         * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
         * *[.myName](#SubModule+myName) : <code>string</code>*
@@ -8614,7 +8839,7 @@ The current bot client.
 **Kind**: instance property of [<code>SubModule</code>](#SubModule)  
 <a name="SubModule+command"></a>
 
-### subModule.command : [<code>Command</code>](#SpikeyBot..Command)
+### subModule.command : [<code>Command</code>](#Command)
 The command object for registering command listeners.
 
 **Kind**: instance property of [<code>SubModule</code>](#SubModule)  
@@ -8684,7 +8909,7 @@ Initialize this submodule.
 | prefix | <code>string</code> | The global prefix for this bot. |
 | Discord | <code>Discord</code> | The Discord object for the API library. |
 | client | <code>Discord~Client</code> | The client that represents this bot. |
-| command | [<code>Command</code>](#SpikeyBot..Command) | The command instance in which to register command listeners. |
+| command | [<code>Command</code>](#Command) | The command instance in which to register command listeners. |
 | common | [<code>Common</code>](#Common) | Class storing common functions. |
 | bot | [<code>SpikeyBot</code>](#SpikeyBot) | The parent SpikeyBot instance. |
 
@@ -8808,7 +9033,7 @@ Manages a tic-tac-toe game.
         * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
         * [.Discord](#SubModule+Discord) : <code>Discord</code>
         * [.client](#SubModule+client) : <code>Discord~Client</code>
-        * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
+        * [.command](#SubModule+command) : [<code>Command</code>](#Command)
         * [.common](#SubModule+common) : [<code>Common</code>](#Common)
         * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
         * [.myName](#SubModule+myName) : <code>string</code>
@@ -8951,7 +9176,7 @@ The current bot client.
 **Kind**: instance property of [<code>TicTacToe</code>](#TicTacToe)  
 <a name="SubModule+command"></a>
 
-### ticTacToe.command : [<code>Command</code>](#SpikeyBot..Command)
+### ticTacToe.command : [<code>Command</code>](#Command)
 The command object for registering command listeners.
 
 **Kind**: instance property of [<code>TicTacToe</code>](#TicTacToe)  
@@ -9036,7 +9261,7 @@ Initialize this submodule.
 | prefix | <code>string</code> | The global prefix for this bot. |
 | Discord | <code>Discord</code> | The Discord object for the API library. |
 | client | <code>Discord~Client</code> | The client that represents this bot. |
-| command | [<code>Command</code>](#SpikeyBot..Command) | The command instance in which to register command listeners. |
+| command | [<code>Command</code>](#Command) | The command instance in which to register command listeners. |
 | common | [<code>Common</code>](#Common) | Class storing common functions. |
 | bot | [<code>SpikeyBot</code>](#SpikeyBot) | The parent SpikeyBot instance. |
 
@@ -9222,7 +9447,7 @@ Adds text-to-speech support for voice channels.
         * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
         * [.Discord](#SubModule+Discord) : <code>Discord</code>
         * [.client](#SubModule+client) : <code>Discord~Client</code>
-        * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
+        * [.command](#SubModule+command) : [<code>Command</code>](#Command)
         * [.common](#SubModule+common) : [<code>Common</code>](#Common)
         * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
         * [.myName](#SubModule+myName) : <code>string</code>
@@ -9293,7 +9518,7 @@ The current bot client.
 **Kind**: instance property of [<code>TTS</code>](#TTS)  
 <a name="SubModule+command"></a>
 
-### ttS.command : [<code>Command</code>](#SpikeyBot..Command)
+### ttS.command : [<code>Command</code>](#Command)
 The command object for registering command listeners.
 
 **Kind**: instance property of [<code>TTS</code>](#TTS)  
@@ -9365,7 +9590,7 @@ Initialize this submodule.
 | prefix | <code>string</code> | The global prefix for this bot. |
 | Discord | <code>Discord</code> | The Discord object for the API library. |
 | client | <code>Discord~Client</code> | The client that represents this bot. |
-| command | [<code>Command</code>](#SpikeyBot..Command) | The command instance in which to register command listeners. |
+| command | [<code>Command</code>](#Command) | The command instance in which to register command listeners. |
 | common | [<code>Common</code>](#Common) | Class storing common functions. |
 | bot | [<code>SpikeyBot</code>](#SpikeyBot) | The parent SpikeyBot instance. |
 
@@ -9629,7 +9854,7 @@ Manages the account webpage.
         * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
         * [.Discord](#SubModule+Discord) : <code>Discord</code>
         * [.client](#SubModule+client) : <code>Discord~Client</code>
-        * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
+        * [.command](#SubModule+command) : [<code>Command</code>](#Command)
         * [.common](#SubModule+common) : [<code>Common</code>](#Common)
         * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
         * *[.myName](#SubModule+myName) : <code>string</code>*
@@ -9715,7 +9940,7 @@ The current bot client.
 **Kind**: instance property of [<code>WebAccount</code>](#WebAccount)  
 <a name="SubModule+command"></a>
 
-### webAccount.command : [<code>Command</code>](#SpikeyBot..Command)
+### webAccount.command : [<code>Command</code>](#Command)
 The command object for registering command listeners.
 
 **Kind**: instance property of [<code>WebAccount</code>](#WebAccount)  
@@ -9800,7 +10025,7 @@ Initialize this submodule.
 | prefix | <code>string</code> | The global prefix for this bot. |
 | Discord | <code>Discord</code> | The Discord object for the API library. |
 | client | <code>Discord~Client</code> | The client that represents this bot. |
-| command | [<code>Command</code>](#SpikeyBot..Command) | The command instance in which to register command listeners. |
+| command | [<code>Command</code>](#Command) | The command instance in which to register command listeners. |
 | common | [<code>Common</code>](#Common) | Class storing common functions. |
 | bot | [<code>SpikeyBot</code>](#SpikeyBot) | The parent SpikeyBot instance. |
 
@@ -10810,7 +11035,7 @@ Proxy for account authentication.
         * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
         * [.Discord](#SubModule+Discord) : <code>Discord</code>
         * [.client](#SubModule+client) : <code>Discord~Client</code>
-        * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
+        * [.command](#SubModule+command) : [<code>Command</code>](#Command)
         * [.common](#SubModule+common) : [<code>Common</code>](#Common)
         * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
         * *[.myName](#SubModule+myName) : <code>string</code>*
@@ -10890,7 +11115,7 @@ The current bot client.
 **Kind**: instance property of [<code>WebProxy</code>](#WebProxy)  
 <a name="SubModule+command"></a>
 
-### webProxy.command : [<code>Command</code>](#SpikeyBot..Command)
+### webProxy.command : [<code>Command</code>](#Command)
 The command object for registering command listeners.
 
 **Kind**: instance property of [<code>WebProxy</code>](#WebProxy)  
@@ -10975,7 +11200,7 @@ Initialize this submodule.
 | prefix | <code>string</code> | The global prefix for this bot. |
 | Discord | <code>Discord</code> | The Discord object for the API library. |
 | client | <code>Discord~Client</code> | The client that represents this bot. |
-| command | [<code>Command</code>](#SpikeyBot..Command) | The command instance in which to register command listeners. |
+| command | [<code>Command</code>](#Command) | The command instance in which to register command listeners. |
 | common | [<code>Common</code>](#Common) | Class storing common functions. |
 | bot | [<code>SpikeyBot</code>](#SpikeyBot) | The parent SpikeyBot instance. |
 
@@ -11244,7 +11469,7 @@ Manages changing settings for the bot from a website.
         * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
         * [.Discord](#SubModule+Discord) : <code>Discord</code>
         * [.client](#SubModule+client) : <code>Discord~Client</code>
-        * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
+        * [.command](#SubModule+command) : [<code>Command</code>](#Command)
         * [.common](#SubModule+common) : [<code>Common</code>](#Common)
         * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
         * [.myName](#SubModule+myName) : <code>string</code>
@@ -11261,7 +11486,7 @@ Manages changing settings for the bot from a website.
         * [.error(msg)](#SubModule+error)
         * [.shutdown()](#SubModule+shutdown)
         * *[.save([opt])](#SubModule+save)*
-        * *[.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>*
+        * [.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>
     * _inner_
         * [~cmdScheduler](#WebSettings..cmdScheduler) : [<code>CmdScheduling</code>](#CmdScheduling) ℗
         * [~sockets](#WebSettings..sockets) : <code>Object.&lt;Socket&gt;</code> ℗
@@ -11333,7 +11558,7 @@ The current bot client.
 **Kind**: instance property of [<code>WebSettings</code>](#WebSettings)  
 <a name="SubModule+command"></a>
 
-### webSettings.command : [<code>Command</code>](#SpikeyBot..Command)
+### webSettings.command : [<code>Command</code>](#Command)
 The command object for registering command listeners.
 
 **Kind**: instance property of [<code>WebSettings</code>](#WebSettings)  
@@ -11413,7 +11638,7 @@ Initialize this submodule.
 | prefix | <code>string</code> | The global prefix for this bot. |
 | Discord | <code>Discord</code> | The Discord object for the API library. |
 | client | <code>Discord~Client</code> | The client that represents this bot. |
-| command | [<code>Command</code>](#SpikeyBot..Command) | The command instance in which to register command listeners. |
+| command | [<code>Command</code>](#Command) | The command instance in which to register command listeners. |
 | common | [<code>Common</code>](#Common) | Class storing common functions. |
 | bot | [<code>SpikeyBot</code>](#SpikeyBot) | The parent SpikeyBot instance. |
 
@@ -11493,12 +11718,13 @@ Saves all data to files necessary for saving current state.
 
 <a name="SubModule+unloadable"></a>
 
-### *webSettings.unloadable() ⇒ <code>boolean</code>*
+### webSettings.unloadable() ⇒ <code>boolean</code>
 Check if this module is in a state that is ready to be unloaded. If false
 is returned, this module should not be unloaded and doing such may risk
 putting the module into an uncontrollable state.
 
-**Kind**: instance abstract method of [<code>WebSettings</code>](#WebSettings)  
+**Kind**: instance method of [<code>WebSettings</code>](#WebSettings)  
+**Overrides**: [<code>unloadable</code>](#SubModule+unloadable)  
 **Returns**: <code>boolean</code> - True if can be unloaded, false if cannot.  
 **Access**: public  
 <a name="WebSettings..cmdScheduler"></a>
@@ -11821,7 +12047,7 @@ discordbots.org.
         * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
         * [.Discord](#SubModule+Discord) : <code>Discord</code>
         * [.client](#SubModule+client) : <code>Discord~Client</code>
-        * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
+        * [.command](#SubModule+command) : [<code>Command</code>](#Command)
         * [.common](#SubModule+common) : [<code>Common</code>](#Common)
         * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
         * *[.myName](#SubModule+myName) : <code>string</code>*
@@ -11895,7 +12121,7 @@ The current bot client.
 **Kind**: instance property of [<code>WebStats</code>](#WebStats)  
 <a name="SubModule+command"></a>
 
-### webStats.command : [<code>Command</code>](#SpikeyBot..Command)
+### webStats.command : [<code>Command</code>](#Command)
 The command object for registering command listeners.
 
 **Kind**: instance property of [<code>WebStats</code>](#WebStats)  
@@ -11967,7 +12193,7 @@ Initialize this submodule.
 | prefix | <code>string</code> | The global prefix for this bot. |
 | Discord | <code>Discord</code> | The Discord object for the API library. |
 | client | <code>Discord~Client</code> | The client that represents this bot. |
-| command | [<code>Command</code>](#SpikeyBot..Command) | The command instance in which to register command listeners. |
+| command | [<code>Command</code>](#Command) | The command instance in which to register command listeners. |
 | common | [<code>Common</code>](#Common) | Class storing common functions. |
 | bot | [<code>SpikeyBot</code>](#SpikeyBot) | The parent SpikeyBot instance. |
 
@@ -12165,7 +12391,7 @@ discordbots.org.
         * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
         * [.Discord](#SubModule+Discord) : <code>Discord</code>
         * [.client](#SubModule+client) : <code>Discord~Client</code>
-        * [.command](#SubModule+command) : [<code>Command</code>](#SpikeyBot..Command)
+        * [.command](#SubModule+command) : [<code>Command</code>](#Command)
         * [.common](#SubModule+common) : [<code>Common</code>](#Common)
         * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
         * *[.myName](#SubModule+myName) : <code>string</code>*
@@ -12230,7 +12456,7 @@ The current bot client.
 **Kind**: instance property of [<code>WebCommands</code>](#WebCommands)  
 <a name="SubModule+command"></a>
 
-### webCommands.command : [<code>Command</code>](#SpikeyBot..Command)
+### webCommands.command : [<code>Command</code>](#Command)
 The command object for registering command listeners.
 
 **Kind**: instance property of [<code>WebCommands</code>](#WebCommands)  
@@ -12302,7 +12528,7 @@ Initialize this submodule.
 | prefix | <code>string</code> | The global prefix for this bot. |
 | Discord | <code>Discord</code> | The Discord object for the API library. |
 | client | <code>Discord~Client</code> | The client that represents this bot. |
-| command | [<code>Command</code>](#SpikeyBot..Command) | The command instance in which to register command listeners. |
+| command | [<code>Command</code>](#Command) | The command instance in which to register command listeners. |
 | common | [<code>Common</code>](#Common) | Class storing common functions. |
 | bot | [<code>SpikeyBot</code>](#SpikeyBot) | The parent SpikeyBot instance. |
 

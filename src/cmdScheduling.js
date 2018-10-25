@@ -9,10 +9,10 @@ require('./subModule.js')(CmdScheduling);  // Extends the SubModule class.
  * a command to be run.
  * @class
  * @augments SubModule
- * @listens SpikeyBot~Command#schedule
- * @listens SpikeyBot~Command#sch
- * @listens SpikeyBot~Command#sched
- * @listens SpikeyBot~Command#scheduled
+ * @listens Command#schedule
+ * @listens Command#sch
+ * @listens Command#sched
+ * @listens Command#scheduled
  */
 function CmdScheduling() {
   self = this;
@@ -436,7 +436,7 @@ function CmdScheduling() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#schedule
+   * @listens Command#schedule
    */
   function commandSchedule(msg) {
     if (!msg.text || !msg.text.trim()) {

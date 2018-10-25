@@ -6,7 +6,7 @@ require('./subModule.js')(TicTacToe);  // Extends the SubModule class.
  * @classdesc Manages a tic-tac-toe game.
  * @class
  * @augments SubModule
- * @listens SpikeyBot~Command#ticTacToe
+ * @listens Command#ticTacToe
  */
 function TicTacToe() {
   const self = this;
@@ -80,7 +80,7 @@ function TicTacToe() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens SpikeyBot~Command#ticTacToe
+   * @listens Command#ticTacToe
    */
   function commandTicTacToe(msg) {
     let players = {p1: msg.author, p2: null};
