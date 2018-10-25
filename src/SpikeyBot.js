@@ -1092,7 +1092,6 @@ function SpikeyBot() {
         }
       }
       try {
-        let exported;
         try {
           if (subModules[i].save) {
             subModules[i].save();
@@ -1108,12 +1107,13 @@ function SpikeyBot() {
                 'Submodule ' + subModuleNames[i] +
                 ' does not have an end() function.');
           }
-          if (subModuleNames[i] == commandFilename) {
-            exported = subModules[i].export();
-          }
         } catch (err) {
           common.error('Error on unloading ' + subModuleNames[i]);
           console.log(err);
+        }
+        let exported;
+        if (subModuleNames[i] == commandFilename) {
+          exported = subModules[i].export();
         }
         delete require.cache[require.resolve(subModuleNames[i])];
         process.stdout.write(
@@ -1124,9 +1124,21 @@ function SpikeyBot() {
           process.stdout.write(': DONE\n');
         } catch (err) {
           process.stdout.write(': ERROR\n');
+          if (subModuleNames[i] == commandFilename) {
+            if (!exported) {
+              self.error(
+                  'THIS IS A FATAL ERROR! ALL COMMANDS HAVE BEEN DISABLED!');
+              throw (new Error('COMMAND MANAGEMENT FAILED TO RELOAD'));
+            }
+          }
           throw (err);
         }
         if (subModuleNames[i] == commandFilename) {
+          if (!exported) {
+            self.error(
+                'THIS IS A FATAL ERROR! ALL COMMANDS HAVE BEEN DISABLED!');
+            throw (new Error('COMMAND MANAGEMENT FAILED TO RELOAD'));
+          }
           subModules[i].import(exported);
           command = subModules[i];
         }
