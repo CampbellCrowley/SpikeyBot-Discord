@@ -11275,6 +11275,7 @@ Manages changing settings for the bot from a website.
         * [~socketConnection(socket)](#WebSettings..socketConnection) ℗
             * [~callSocketFunction(func, args, [forward])](#WebSettings..socketConnection..callSocketFunction) ℗
         * [~clientSocketConnection(socket)](#WebSettings..clientSocketConnection) ℗
+        * [~checkMyGuild(gId)](#WebSettings..checkMyGuild) ⇒ <code>boolean</code> ℗
         * [~checkPerm(userData, gId)](#WebSettings..checkPerm) ⇒ <code>boolean</code> ℗
         * [~checkChannelPerm(userData, gId, cId)](#WebSettings..checkChannelPerm) ⇒ <code>boolean</code> ℗
         * [~makeMember(m)](#WebSettings..makeMember) ⇒ <code>Object</code> ℗
@@ -11621,6 +11622,19 @@ Handler for connecting as a client to the server.
 | Param | Type | Description |
 | --- | --- | --- |
 | socket | <code>socketIo~Socket</code> | The socket.io socket that connected. |
+
+<a name="WebSettings..checkMyGuild"></a>
+
+### WebSettings~checkMyGuild(gId) ⇒ <code>boolean</code> ℗
+Checks if the current shard is responsible for the requested guild.
+
+**Kind**: inner method of [<code>WebSettings</code>](#WebSettings)  
+**Returns**: <code>boolean</code> - True if this shard has this guild.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| gId | <code>number</code> \| <code>string</code> | The guild id to check. |
 
 <a name="WebSettings..checkPerm"></a>
 
