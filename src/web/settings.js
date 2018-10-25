@@ -1,6 +1,7 @@
 // Copyright 2018 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (web@campbellcrowley.com)
 const http = require('http');
+const auth = require('../../auth.js');
 const socketIo = require('socket.io');
 
 require('../subModule.js')(WebSettings);  // Extends the SubModule class.
