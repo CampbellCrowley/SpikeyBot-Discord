@@ -95,10 +95,18 @@ function WebSettings() {
    * in.
    */
   function handleCommandRegistered(cmd, gId) {
+    let toSend = {
+      id: cmd.id,
+      channel: cmd.channelId,
+      cmd: cmd.cmd,
+      repeatDelay: cmd.repeatDelay,
+      time: cmd.time,
+      member: makeMember(cmd.member),
+    };
     for (let i in sockets) {
       if (sockets[i] && sockets[i].cachedGuilds &&
           sockets[i].cachedGuilds.includes(gId)) {
-        sockets[i].emit('commandRegistered', cmd, gId);
+        sockets[i].emit('commandRegistered', toSend, gId);
       }
     }
   }
@@ -191,6 +199,8 @@ function WebSettings() {
         socket.id);
     sockets[socket.id] = socket;
 
+    socket.emit('time', Date.now());
+
     // @TODO: Replace this authentication with gpg key-pairs;
     socket.on('vaderIAmYourSon', (verification, cb) => {
       if (verification === auth.webSettingsSiblingVerification) {
@@ -204,11 +214,20 @@ function WebSettings() {
     socket.on('fetchGuilds', (...args) => {
       callSocketFunction(fetchGuilds, args, false);
     });
+    socket.on('fetchChannel', (...args) => {
+      callSocketFunction(fetchChannel, args);
+    });
     socket.on('fetchSettings', (...args) => {
       callSocketFunction(fetchSettings, args);
     });
     socket.on('fetchScheduledCommands', (...args) => {
       callSocketFunction(fetchScheduledCommands, args);
+    });
+    socket.on('cancelScheduledCommand', (...args) => {
+      callSocketFunction(cancelScheduledCommand, args);
+    });
+    socket.on('registerScheduledCommand', (...args) => {
+      callSocketFunction(registerScheduledCommand, args);
     });
 
     /**
@@ -317,7 +336,7 @@ function WebSettings() {
    * @return {boolean} Whther the user has permission or not to manage the
    * hungry games in the given guild.
    */
-  /* function checkPerm(userData, gId) {
+  function checkPerm(userData, gId) {
     if (!userData) return false;
     let g = self.client.guilds.get(gId);
     if (!g) return false;
@@ -326,7 +345,7 @@ function WebSettings() {
       return false;
     }
     return true;
-  }*/
+  }
   /**
    * Check that the given user has permission to see and send messages in the
    * given channel, as well as manage the games in the given guild.
@@ -339,7 +358,7 @@ function WebSettings() {
    * hungry games in the given guild and has permission to send messages in the
    * given channel.
    */
-  /* function checkChannelPerm(userData, gId, cId) {
+  function checkChannelPerm(userData, gId, cId) {
     if (!userData) return false;
     let g = self.client.guilds.get(gId);
     if (!g) return false;
@@ -353,7 +372,7 @@ function WebSettings() {
     if (!perms.has(self.Discord.Permissions.FLAGS.VIEW_CHANNEL)) return false;
     if (!perms.has(self.Discord.Permissions.FLAGS.SEND_MESSAGES)) return false;
     return true;
-  }*/
+  }
 
   /**
    * Strips a Discord~GuildMember to only the necessary data that a client will
@@ -364,9 +383,9 @@ function WebSettings() {
    * @return {Object} The minimal member.
    */
   function makeMember(m) {
+    if (!m) return null;
     return {
       nickname: m.nickname,
-      // hgRole: hg.checkMemberForRole(m),
       roles: m.roles
           .filter(() => {
             return true;
@@ -386,6 +405,40 @@ function WebSettings() {
     };
   }
 
+  /**
+   * Forms a Discord~Message similar object from given IDs.
+   *
+   * @private
+   * @param {string} uId The id of the user who wrote this message.
+   * @param {string} gId The id of the guild this message is in.
+   * @param {?string} cId The id of the channel this message was 'sent' in.
+   * @param {?string} msg The message content.
+   * @return {
+   *   {
+   *     author: Discord~User,
+   *     member: Discord~GuildMember,
+   *     guild: Discord~Guild,
+   *     channel: Discord~GuildChannel,
+   *     text: string,
+   *     content: string,
+   *     prefix: string
+   *   }
+   * } The created message-like object.
+   */
+  function makeMessage(uId, gId, cId, msg) {
+    let g = self.client.guilds.get(gId);
+    if (!g) return null;
+    if (!cId) return null;
+    return {
+      member: g.members.get(uId),
+      author: g.members.get(uId).user,
+      guild: g,
+      channel: g.channels.get(cId),
+      text: msg,
+      content: msg,
+      prefix: self.bot.getPrefix(gId),
+    };
+  }
 
   /**
    * Basic callback with single argument. The argument is null if there is no
@@ -491,6 +544,44 @@ function WebSettings() {
   }
 
   /**
+   * Client has requested data for a specific channel.
+   *
+   * @public
+   * @type {WebSettings~SocketFunction}
+   * @param {Object} userData The current user's session data.
+   * @param {socketIo~Socket} socket The socket connection to reply on.
+   * @param {number|string} gId The ID of the Discord guild where the channel
+   * is.
+   * @param {number|string} cId The ID of the Discord channel to fetch.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete and has data, or has failed.
+   */
+  function fetchChannel(userData, socket, gId, cId, cb) {
+    if (typeof cb !== 'function') cb = function() {};
+    if (!checkChannelPerm(userData, gId, cId)) {
+      if (!checkMyGuild(gId)) return;
+      replyNoPerm(socket, 'cancelScheduledCommand');
+      cb(null);
+      return;
+    }
+    let c = self.client.channels.get(cId);
+    let m = self.client.guilds.get(gId).members.get(userData.id);
+    let perms = c.permissionsFor(m);
+    let stripped = {
+      id: c.id,
+      permissions: perms,
+      name: c.name,
+      position: c.position,
+      type: c.type,
+    };
+    if (c.parent) {
+      stripped.parent = {position: c.parent.position};
+    }
+    cb(stripped);
+  }
+  this.fetchChannel = fetchChannel;
+
+  /**
    * Client has requested all settings for all guilds for the connected user.
    *
    * @public
@@ -545,10 +636,9 @@ function WebSettings() {
             id: el.id,
             channel: el.channel.id,
             cmd: el.cmd,
-            message: el.message.id,
             repeatDelay: el.repeatDelay,
             time: el.time,
-            member: makeMember(el.message.member),
+            member: makeMember(el.member),
           };
         });
       }
@@ -556,5 +646,102 @@ function WebSettings() {
     cb(sCmds);
   }
   this.fetchScheduledCommands = fetchScheduledCommands;
+
+  /**
+   * Client has requested that a scheduled command be cancelled.
+   *
+   * @public
+   * @type {WebSettings~SocketFunction}
+   * @param {Object} userData The current user's session data.
+   * @param {socketIo~Socket} socket The socket connection to reply on.
+   * @param {string|number} gId The id of the guild of which to cancel the
+   * command.
+   * @param {string} cmdId The ID of the command to cancel.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete, or has failed.
+   */
+  function cancelScheduledCommand(userData, socket, gId, cmdId, cb) {
+    if (!checkPerm(userData, gId)) {
+      if (!checkMyGuild(gId)) return;
+      replyNoPerm(socket, 'cancelScheduledCommand');
+      cb('Forbidden');
+      return;
+    }
+    updateModuleReferences();
+    cmdScheduler.cancelCmd(gId, cmdId);
+  }
+  this.cancelScheduledCommand = cancelScheduledCommand;
+
+  /**
+   * Client has created a new scheduled command.
+   *
+   * @public
+   * @type {WebSettings~SocketFunction}
+   * @param {Object} userData The current user's session data.
+   * @param {socketIo~Socket} socket The socket connection to reply on.
+   * @param {string|number} gId The id of the guild of which to add the
+   * command.
+   * @param {string} cmd The command data of which to make into a {@link
+   * CmdScheduling~ScheduledCommand} and register.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete, or has failed.
+   */
+  function registerScheduledCommand(userData, socket, gId, cmd, cb) {
+    if (!checkPerm(userData, gId)) {
+      if (!checkMyGuild(gId)) return;
+      replyNoPerm(socket, 'cancelScheduledCommand');
+      cb('Forbidden');
+      return;
+    }
+    if (!cmd || typeof cmd !== 'object') {
+      cb('Invalid Data');
+      return;
+    }
+    if (!cmd.time || cmd.time < Date.now()) {
+      cb('Time cannot be in past.');
+      return;
+    }
+    updateModuleReferences();
+    if (cmd.repeatDelay && cmd.repeatDelay < cmdScheduler.minRepeatDelay) {
+      cb('Repeat time is too soon.');
+      return;
+    }
+    let cId = self.client.channels.get(cmd.channel);
+    if (!cId) {
+      cb('Invalid Channel');
+      return;
+    }
+    cId = cId.id;
+    if (typeof cmd.cmd !== 'string') {
+      cb('Invalid Command');
+      return;
+    }
+
+    let msg = makeMessage(userData.id, gId, cId, cmd.cmd);
+
+    if (!msg) {
+      cb('Invalid Member');
+      return;
+    }
+
+    let invalid = self.command.validate(cmd.cmd.split(/\s/)[0], msg);
+    if (invalid) {
+      cb('Invalid Command');
+      return;
+    }
+
+    let newCmd = new cmdScheduler.ScheduledCommand({
+      cmd: cmd.cmd,
+      channel: msg.channel,
+      message: msg,
+      time: cmd.time,
+      repeatDelay: cmd.repeatDelay,
+      member: msg.member,
+    });
+
+    cmdScheduler.registerScheduledCommand(newCmd);
+    cb(null);
+  }
+  this.registerScheduledCommand = registerScheduledCommand;
 }
 module.exports = new WebSettings();

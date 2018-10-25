@@ -158,6 +158,28 @@ function CmdScheduling() {
   const embedColor = [50, 255, 255];
 
   /**
+   * Minimum allowable amount of time in milliseconds from when the scheduled
+   * command is registered to when it runs.
+   *
+   * @public
+   * @constant
+   * @default 10 Seconds
+   * @type {number}
+   */
+  this.minDelay = 10000;
+
+  /**
+   * Minimum allowable amount of time in milliseconds from when the scheduled
+   * command is run to when it run may run again.
+   *
+   * @public
+   * @constant
+   * @default 30 Seconds
+   * @type {number}
+   */
+  this.minRepeatDelay = 30000;
+
+  /**
    * Currently registered event listeners, mapped by event name.
    *
    * @private
@@ -194,8 +216,8 @@ function CmdScheduling() {
    * to run the command.
    * @property {string|number} channelId The id of the channel where the message
    * was  sent.
-   * @property {Discord~Message} message The message that created this scheduled
-   * command.
+   * @property {?Discord~Message} message The message that created this
+   * scheduled command, or null if the message was deleted.
    * @property {string|number} messageId The id of the message sent.
    * @property {number} time The Unix timestamp at which to run the command.
    * @property {number} [repeatDelay=0] The delay in milliseconds at which to
@@ -205,6 +227,8 @@ function CmdScheduling() {
    * run again.
    * @property {Timeout} timeout The current timeout registered to run the
    * command.
+   * @property {Discord~GuildMember} member The author of this ScheduledCommand.
+   * @property {string|number} memberId The id of the member.
    */
   function ScheduledCommand(cmd, channel, message, time, repeatDelay = 0) {
     let myself = this;
@@ -214,8 +238,13 @@ function CmdScheduling() {
       time = cmd.time;
       repeatDelay = cmd.repeatDelay;
       this.id = cmd.id;
+      this.member = cmd.member;
       cmd = cmd.cmd;
     } else {
+      this.member = message.member;
+      this.id = '';
+    }
+    if (!this.id || this.id.length < 3) {
       this.id = '';
       for (let i = 0; i < 3; i++) {
         this.id += idChars.charAt(Math.floor(Math.random() * idChars.length));
@@ -228,6 +257,7 @@ function CmdScheduling() {
     this.messageId = (message && message.id) || message;
     this.time = time;
     this.repeatDelay = repeatDelay;
+    this.memberId = (this.member && this.member.id) || this.member;
 
     this.complete = false;
 
@@ -237,20 +267,41 @@ function CmdScheduling() {
      * @private
      */
     function getReferences() {
-      if (typeof channel !== 'object') {
+      if (typeof myself.channel !== 'object') {
         myself.channel = self.client.channels.get(myself.channelId);
       }
-      if (typeof message !== 'object') {
+      if (typeof myself.message !== 'object') {
         myself.message = myself.channel.messages.get(myself.messageId);
         if (!myself.message) {
           myself.channel.messages.fetch(myself.messageId)
               .then((msg) => {
                 myself.message = msg;
+                myself.member = msg.member;
+                myself.memberId = msg.member.id;
+              })
+              .catch((err) => {
+                myself.message = makeMessage(
+                    myself.memberId, myself.channel.guild.id, myself.channelId,
+                    myself.cmd);
+                myself.member = myself.member;
+                myself.memberId = myself.member.id;
+              });
+        } else {
+          myself.member = myself.message.member;
+          myself.memberId = myself.message.member.id;
+        }
+      }
+      if (typeof myself.member !== 'object') {
+        myself.member = myself.channel.members.get(myself.memberId);
+        if (!myself.member) {
+          myself.channel.guild.members.fetch(myself.memberId)
+              .then((m) => {
+                myself.member = m;
               })
               .catch((err) => {
                 self.error(
-                    'Failed to find message with id: ' + myself.messageId +
-                    ' in channel: ' + myself.channelId);
+                    'Failed to find member with id: ' + myself.memberId +
+                    ' in guild: ' + myself.channel.guild.id);
                 console.error(err);
               });
         }
@@ -266,9 +317,18 @@ function CmdScheduling() {
     this.go = function() {
       if (myself.complete) {
         self.error('Command triggered after being completed!', myself.id);
+        self.client.clearTimeout(myself.timeout);
         return;
       }
-      myself.message.content = cmd;
+      if (!myself.channel) {
+        self.debug(
+            'ScheduledCmdFailed No Channel: ' + myself.message.channelId + '@' +
+            myself.memberId + ' ' + myself.cmd);
+        myself.complete = true;
+        self.client.clearTimeout(myself.timeout);
+        return;
+      }
+      myself.message.content = myself.cmd;
       self.debug(
           'ScheduledCmd: ' + myself.message.channel.id + '@' +
           myself.message.author.id + ' ' + myself.message.content);
@@ -296,8 +356,7 @@ function CmdScheduling() {
 
     /**
      * Schedule the Timeout event to call the command at the scheduled time.
-     * If
-     * the scheduled time to run the command is more than 2 weeks in the
+     * If the scheduled time to run the command is more than 2 weeks in the
      * future,
      * the command is not scheduled, and this function must be called
      * manually
@@ -327,8 +386,9 @@ function CmdScheduling() {
         time: myself.time,
         repeatDelay: myself.repeatDelay,
         id: myself.id,
-        channel: myself.channel.id,
-        message: myself.message.id,
+        channel: myself.channelId,
+        message: myself.messageId,
+        member: myself.memberId,
       };
     };
 
@@ -339,7 +399,7 @@ function CmdScheduling() {
 
   /**
    * Register a created {@link CmdScheduling.ScheduledCommand}.
-   * @public
+   * @private
    * @fires CmdScheduling#commandRegistered
    *
    * @param {CmdScheduling.ScheduledCommand} sCmd The ScheduledCommand object to
@@ -362,6 +422,11 @@ function CmdScheduling() {
     }
     fireEvent('commandRegistered', sCmd, sCmd.message.guild.id);
   }
+  /**
+   * Register a created {@link CmdScheduling.ScheduledCommand}.
+   * @public
+   * @see {@link CmdScheduling~registerScheduledCommand}
+   */
   this.registerScheduledCommand = registerScheduledCommand;
 
   /**
@@ -411,14 +476,14 @@ function CmdScheduling() {
 
     delay = stringToMilliseconds(delay);
 
-    if (delay < 10000) {
+    /* if (delay < self.minDelay) {
       self.common.reply(msg, 'Sorry, but delays must be more than 10 seconds.');
       return;
-    }
+    } */
 
     repeat = stringToMilliseconds(repeat);
 
-    if (repeat && repeat < 30000) {
+    if (repeat && repeat < self.minRepeatDelay) {
       self.common.reply(
           msg, 'Sorry, but repeat delays must be more than 30 seconds.');
       return;
@@ -580,6 +645,14 @@ function CmdScheduling() {
       });
       embed.setDescription(list.join('\n'));
     }
+    if (msg.author.id == self.common.spikeyId) {
+      let keys = Object.keys(schedules);
+      let total = 0;
+      keys.forEach((k) => {
+        total += Object.keys(schedules[k]).length;
+      });
+      embed.setFooter(total);
+    }
     msg.channel.send(self.common.mention(msg), embed).catch((err) => {
       self.error('Failed to send reply in channel: ' + msg.channel.id);
       console.error(err);
@@ -588,7 +661,7 @@ function CmdScheduling() {
 
   /**
    * Cancel a scheduled command in a guild.
-   * @public
+   * @private
    * @fires CmdScheduling#commandCancelled
    *
    * @param {string|number} gId The guild id of which to cancel the command.
@@ -612,6 +685,11 @@ function CmdScheduling() {
     }
     return null;
   }
+  /**
+   * Cancel a scheduled command in a guild.
+   * @public
+   * @see {@link CmdScheduling~cancelCmd}
+   */
   this.cancelCmd = cancelCmd;
 
   /**
@@ -759,6 +837,40 @@ function CmdScheduling() {
         console.error(err);
       }
     }
+  }
+  /**
+   * Forms a Discord~Message similar object from given IDs.
+   *
+   * @private
+   * @param {string} uId The id of the user who wrote this message.
+   * @param {string} gId The id of the guild this message is in.
+   * @param {?string} cId The id of the channel this message was 'sent' in.
+   * @param {?string} msg The message content.
+   * @return {
+   *   {
+   *     author: Discord~User,
+   *     member: Discord~GuildMember,
+   *     guild: Discord~Guild,
+   *     channel: Discord~GuildChannel,
+   *     text: string,
+   *     content: string,
+   *     prefix: string
+   *   }
+   * } The created message-like object.
+   */
+  function makeMessage(uId, gId, cId, msg) {
+    let g = self.client.guilds.get(gId);
+    if (!g) return null;
+    if (!cId) return null;
+    return {
+      member: g.members.get(uId),
+      author: g.members.get(uId).user,
+      guild: g,
+      channel: g.channels.get(cId),
+      text: msg,
+      content: msg,
+      prefix: self.bot.getPrefix(gId),
+    };
   }
 }
 module.exports = new CmdScheduling();

@@ -392,6 +392,8 @@ a command to be run.
 
 * [CmdScheduling](#CmdScheduling) ⇐ [<code>SubModule</code>](#SubModule)
     * _instance_
+        * [.registerScheduledCommand](#CmdScheduling+registerScheduledCommand)
+        * [.cancelCmd](#CmdScheduling+cancelCmd)
         * [.helpMessage](#SubModule+helpMessage) : <code>string</code> \| <code>Discord~MessageEmbed</code>
         * [.prefix](#SubModule+prefix) : <code>string</code>
         * [.myPrefix](#SubModule+myPrefix) : <code>string</code>
@@ -403,6 +405,8 @@ a command to be run.
         * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
         * [.myName](#SubModule+myName) : <code>string</code>
         * [.initialized](#SubModule+initialized) : <code>boolean</code>
+        * [.minDelay](#CmdScheduling+minDelay) : <code>number</code>
+        * [.minRepeatDelay](#CmdScheduling+minRepeatDelay) : <code>number</code>
         * [.commit](#SubModule+commit) : <code>string</code>
         * [.loadTime](#SubModule+loadTime) : <code>number</code>
         * [.on(name, handler)](#CmdScheduling+on)
@@ -434,19 +438,36 @@ a command to be run.
         * [~saveSubDir](#CmdScheduling..saveSubDir) : <code>string</code> ℗
         * [~idChars](#CmdScheduling..idChars) : <code>string</code> ℗
         * [~embedColor](#CmdScheduling..embedColor) : <code>Array.&lt;number&gt;</code> ℗
-        * [~registerScheduledCommand(sCmd)](#CmdScheduling..registerScheduledCommand)
+        * [~registerScheduledCommand(sCmd)](#CmdScheduling..registerScheduledCommand) ℗
         * [~commandSchedule(msg)](#CmdScheduling..commandSchedule) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~sortGuildCommands(id)](#CmdScheduling..sortGuildCommands) ℗
         * [~stringToMilliseconds(str)](#CmdScheduling..stringToMilliseconds) ⇒ <code>number</code> ℗
             * [~numberToUnit(num, unit)](#CmdScheduling..stringToMilliseconds..numberToUnit) ⇒ <code>number</code> ℗
         * [~getScheduledCommandsInGuild(gId)](#CmdScheduling..getScheduledCommandsInGuild) ⇒ <code>null</code> \| <code>Array.&lt;CmdScheduling.ScheduledCommand&gt;</code>
         * [~replyWithSchedule(msg)](#CmdScheduling..replyWithSchedule) ℗
-        * [~cancelCmd(gId, cmdId)](#CmdScheduling..cancelCmd) ⇒ <code>CmdScheduling.ScheduledCommand</code>
+        * [~cancelCmd(gId, cmdId)](#CmdScheduling..cancelCmd) ⇒ <code>CmdScheduling.ScheduledCommand</code> ℗
         * [~cancelAndReply(msg)](#CmdScheduling..cancelAndReply) ℗
         * [~reScheduleCommands()](#CmdScheduling..reScheduleCommands)
         * [~formatDelay(msecs)](#CmdScheduling..formatDelay) ⇒ <code>string</code> ℗
         * [~fireEvent(name)](#CmdScheduling..fireEvent) ℗
+        * [~makeMessage(uId, gId, cId, msg)](#CmdScheduling..makeMessage) ⇒ <code>Object</code> ℗
 
+<a name="CmdScheduling+registerScheduledCommand"></a>
+
+### cmdScheduling.registerScheduledCommand
+Register a created [CmdScheduling.ScheduledCommand](CmdScheduling.ScheduledCommand).
+
+**Kind**: instance property of [<code>CmdScheduling</code>](#CmdScheduling)  
+**Access**: public  
+**See**: [registerScheduledCommand](#CmdScheduling..registerScheduledCommand)  
+<a name="CmdScheduling+cancelCmd"></a>
+
+### cmdScheduling.cancelCmd
+Cancel a scheduled command in a guild.
+
+**Kind**: instance property of [<code>CmdScheduling</code>](#CmdScheduling)  
+**Access**: public  
+**See**: [cancelCmd](#CmdScheduling..cancelCmd)  
 <a name="SubModule+helpMessage"></a>
 
 ### cmdScheduling.helpMessage : <code>string</code> \| <code>Discord~MessageEmbed</code>
@@ -526,6 +547,24 @@ Has this subModule been initialized yet (Has begin() been called).
 **Default**: <code>false</code>  
 **Access**: protected  
 **Read only**: true  
+<a name="CmdScheduling+minDelay"></a>
+
+### cmdScheduling.minDelay : <code>number</code>
+Minimum allowable amount of time in milliseconds from when the scheduled
+command is registered to when it runs.
+
+**Kind**: instance constant of [<code>CmdScheduling</code>](#CmdScheduling)  
+**Default**: <code>10 Seconds</code>  
+**Access**: public  
+<a name="CmdScheduling+minRepeatDelay"></a>
+
+### cmdScheduling.minRepeatDelay : <code>number</code>
+Minimum allowable amount of time in milliseconds from when the scheduled
+command is run to when it run may run again.
+
+**Kind**: instance constant of [<code>CmdScheduling</code>](#CmdScheduling)  
+**Default**: <code>30 Seconds</code>  
+**Access**: public  
 <a name="SubModule+commit"></a>
 
 ### cmdScheduling.commit : <code>string</code>
@@ -693,13 +732,15 @@ Stores information about a specific command that is scheduled.
 | cmd | <code>string</code> |  | The command to run. |
 | channel | <code>Discord~TextChannel</code> |  | The channel or channel ID of where to run the command. |
 | channelId | <code>string</code> \| <code>number</code> |  | The id of the channel where the message was  sent. |
-| message | <code>Discord~Message</code> |  | The message that created this scheduled command. |
+| message | <code>Discord~Message</code> |  | The message that created this scheduled command, or null if the message was deleted. |
 | messageId | <code>string</code> \| <code>number</code> |  | The id of the message sent. |
 | time | <code>number</code> |  | The Unix timestamp at which to run the command. |
 | [repeatDelay] | <code>number</code> | <code>0</code> | The delay in milliseconds at which to run the command again. 0 to not repeat. |
 | id | <code>string</code> |  | Random base 36, 3-character long id of this command. |
 | complete | <code>boolean</code> |  | True if the command has been run, and will not run again. |
 | timeout | <code>Timeout</code> |  | The current timeout registered to run the command. |
+| member | <code>Discord~GuildMember</code> |  | The author of this ScheduledCommand. |
+| memberId | <code>string</code> \| <code>number</code> |  | The id of the member. |
 
 
 * [~ScheduledCommand](#CmdScheduling..ScheduledCommand)
@@ -744,8 +785,7 @@ Cancel this command and remove Timeout.
 
 #### scheduledCommand.setTimeout()
 Schedule the Timeout event to call the command at the scheduled time.
-If
-the scheduled time to run the command is more than 2 weeks in the
+If the scheduled time to run the command is more than 2 weeks in the
 future,
 the command is not scheduled, and this function must be called
 manually
@@ -826,12 +866,12 @@ The color to use for embeds sent from this submodule.
 **Access**: private  
 <a name="CmdScheduling..registerScheduledCommand"></a>
 
-### CmdScheduling~registerScheduledCommand(sCmd)
+### CmdScheduling~registerScheduledCommand(sCmd) ℗
 Register a created [CmdScheduling.ScheduledCommand](CmdScheduling.ScheduledCommand).
 
 **Kind**: inner method of [<code>CmdScheduling</code>](#CmdScheduling)  
 **Emits**: <code>CmdScheduling#event:commandRegistered</code>  
-**Access**: public  
+**Access**: private  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -919,14 +959,14 @@ with the list of commands.
 
 <a name="CmdScheduling..cancelCmd"></a>
 
-### CmdScheduling~cancelCmd(gId, cmdId) ⇒ <code>CmdScheduling.ScheduledCommand</code>
+### CmdScheduling~cancelCmd(gId, cmdId) ⇒ <code>CmdScheduling.ScheduledCommand</code> ℗
 Cancel a scheduled command in a guild.
 
 **Kind**: inner method of [<code>CmdScheduling</code>](#CmdScheduling)  
 **Returns**: <code>CmdScheduling.ScheduledCommand</code> - Null if failed, or object that
 was cancelled.  
 **Emits**: <code>CmdScheduling#event:commandCancelled</code>  
-**Access**: public  
+**Access**: private  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -977,6 +1017,22 @@ Fires a given event with the associacted data.
 | --- | --- | --- |
 | name | <code>string</code> | The name of the event to fire. |
 | ...data | <code>\*</code> | The arguments to pass into the function calls. |
+
+<a name="CmdScheduling..makeMessage"></a>
+
+### CmdScheduling~makeMessage(uId, gId, cId, msg) ⇒ <code>Object</code> ℗
+Forms a Discord~Message similar object from given IDs.
+
+**Kind**: inner method of [<code>CmdScheduling</code>](#CmdScheduling)  
+**Returns**: <code>Object</code> - The created message-like object.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| uId | <code>string</code> | The id of the user who wrote this message. |
+| gId | <code>string</code> | The id of the guild this message is in. |
+| cId | <code>string</code> | The id of the channel this message was 'sent' in. |
+| msg | <code>string</code> | The message content. |
 
 <a name="Common"></a>
 
@@ -11219,11 +11275,17 @@ Manages changing settings for the bot from a website.
         * [~socketConnection(socket)](#WebSettings..socketConnection) ℗
             * [~callSocketFunction(func, args, [forward])](#WebSettings..socketConnection..callSocketFunction) ℗
         * [~clientSocketConnection(socket)](#WebSettings..clientSocketConnection) ℗
+        * [~checkPerm(userData, gId)](#WebSettings..checkPerm) ⇒ <code>boolean</code> ℗
+        * [~checkChannelPerm(userData, gId, cId)](#WebSettings..checkChannelPerm) ⇒ <code>boolean</code> ℗
         * [~makeMember(m)](#WebSettings..makeMember) ⇒ <code>Object</code> ℗
+        * [~makeMessage(uId, gId, cId, msg)](#WebSettings..makeMessage) ⇒ <code>Object</code> ℗
         * [~fetchGuilds(userData, socket, [cb])](#WebSettings..fetchGuilds) : <code>WebSettings~SocketFunction</code> ℗
             * [~done(guilds, [err], [response])](#WebSettings..fetchGuilds..done) ℗
+        * [~fetchChannel(userData, socket, gId, cId, [cb])](#WebSettings..fetchChannel) : <code>WebSettings~SocketFunction</code>
         * [~fetchSettings(userData, socket, [cb])](#WebSettings..fetchSettings) : <code>WebSettings~SocketFunction</code>
         * [~fetchScheduledCommands(userData, socket, [cb])](#WebSettings..fetchScheduledCommands) : <code>WebSettings~SocketFunction</code>
+        * [~cancelScheduledCommand(userData, socket, gId, cmdId, [cb])](#WebSettings..cancelScheduledCommand) : <code>WebSettings~SocketFunction</code>
+        * [~registerScheduledCommand(userData, socket, gId, cmd, [cb])](#WebSettings..registerScheduledCommand) : <code>WebSettings~SocketFunction</code>
         * [~basicCB](#WebSettings..basicCB) : <code>function</code>
 
 <a name="SubModule+helpMessage"></a>
@@ -11560,6 +11622,40 @@ Handler for connecting as a client to the server.
 | --- | --- | --- |
 | socket | <code>socketIo~Socket</code> | The socket.io socket that connected. |
 
+<a name="WebSettings..checkPerm"></a>
+
+### WebSettings~checkPerm(userData, gId) ⇒ <code>boolean</code> ℗
+Check that the given user has permission to manage the games in the given
+guild.
+
+**Kind**: inner method of [<code>WebSettings</code>](#WebSettings)  
+**Returns**: <code>boolean</code> - Whther the user has permission or not to manage the
+hungry games in the given guild.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>UserData</code> | The user to check. |
+| gId | <code>string</code> | The guild id to check against. |
+
+<a name="WebSettings..checkChannelPerm"></a>
+
+### WebSettings~checkChannelPerm(userData, gId, cId) ⇒ <code>boolean</code> ℗
+Check that the given user has permission to see and send messages in the
+given channel, as well as manage the games in the given guild.
+
+**Kind**: inner method of [<code>WebSettings</code>](#WebSettings)  
+**Returns**: <code>boolean</code> - Whther the user has permission or not to manage the
+hungry games in the given guild and has permission to send messages in the
+given channel.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>UserData</code> | The user to check. |
+| gId | <code>string</code> | The guild id of the guild that contains the channel. |
+| cId | <code>string</code> | The channel id to check against. |
+
 <a name="WebSettings..makeMember"></a>
 
 ### WebSettings~makeMember(m) ⇒ <code>Object</code> ℗
@@ -11573,6 +11669,22 @@ need.
 | Param | Type | Description |
 | --- | --- | --- |
 | m | <code>Discord~GuildMember</code> | The guild member to strip the data from. |
+
+<a name="WebSettings..makeMessage"></a>
+
+### WebSettings~makeMessage(uId, gId, cId, msg) ⇒ <code>Object</code> ℗
+Forms a Discord~Message similar object from given IDs.
+
+**Kind**: inner method of [<code>WebSettings</code>](#WebSettings)  
+**Returns**: <code>Object</code> - The created message-like object.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| uId | <code>string</code> | The id of the user who wrote this message. |
+| gId | <code>string</code> | The id of the guild this message is in. |
+| cId | <code>string</code> | The id of the channel this message was 'sent' in. |
+| msg | <code>string</code> | The message content. |
 
 <a name="WebSettings..fetchGuilds"></a>
 
@@ -11604,6 +11716,22 @@ user once all requests have replied.
 | [err] | <code>string</code> | The error that occurred, or null if no error. |
 | [response] | <code>Object</code> | The guild data if `guilds` equals 'guilds'. |
 
+<a name="WebSettings..fetchChannel"></a>
+
+### WebSettings~fetchChannel(userData, socket, gId, cId, [cb]) : <code>WebSettings~SocketFunction</code>
+Client has requested data for a specific channel.
+
+**Kind**: inner method of [<code>WebSettings</code>](#WebSettings)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The ID of the Discord guild where the channel is. |
+| cId | <code>number</code> \| <code>string</code> | The ID of the Discord channel to fetch. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete and has data, or has failed. |
+
 <a name="WebSettings..fetchSettings"></a>
 
 ### WebSettings~fetchSettings(userData, socket, [cb]) : <code>WebSettings~SocketFunction</code>
@@ -11631,6 +11759,38 @@ Client has requested all scheduled commands for the connected user.
 | userData | <code>Object</code> | The current user's session data. |
 | socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
 | [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete and has data, or has failed. |
+
+<a name="WebSettings..cancelScheduledCommand"></a>
+
+### WebSettings~cancelScheduledCommand(userData, socket, gId, cmdId, [cb]) : <code>WebSettings~SocketFunction</code>
+Client has requested that a scheduled command be cancelled.
+
+**Kind**: inner method of [<code>WebSettings</code>](#WebSettings)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>string</code> \| <code>number</code> | The id of the guild of which to cancel the command. |
+| cmdId | <code>string</code> | The ID of the command to cancel. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
+
+<a name="WebSettings..registerScheduledCommand"></a>
+
+### WebSettings~registerScheduledCommand(userData, socket, gId, cmd, [cb]) : <code>WebSettings~SocketFunction</code>
+Client has created a new scheduled command.
+
+**Kind**: inner method of [<code>WebSettings</code>](#WebSettings)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>string</code> \| <code>number</code> | The id of the guild of which to add the command. |
+| cmd | <code>string</code> | The command data of which to make into a {@link CmdScheduling~ScheduledCommand} and register. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
 
 <a name="WebSettings..basicCB"></a>
 

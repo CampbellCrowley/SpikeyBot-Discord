@@ -1897,8 +1897,8 @@ function Main() {
    */
   function commandPing(msg) {
     self.common.reply(
-        msg, 'My ping is ' + msg.client.ping + 'ms',
-        '`' + JSON.stringify(msg.client.pings) + '`');
+        msg, 'My ping is ' + self.client.ping + 'ms',
+        '`' + JSON.stringify(self.client.pings) + '`');
   }
 
   /**
