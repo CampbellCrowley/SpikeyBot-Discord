@@ -211,7 +211,7 @@ function SpikeyBot() {
   };
 
   // Parse cli args.
-  for (let i = 3; i < process.argv.length; i++) {
+  for (let i = 2; i < process.argv.length; i++) {
     if (process.argv[i] === '--dev') {
       setDev = true;
     } else if (process.argv[i].startsWith('--botname')) {

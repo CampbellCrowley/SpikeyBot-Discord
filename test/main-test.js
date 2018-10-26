@@ -25,15 +25,8 @@ let bot = spawn(
     [
       'src/SpikeyBot.js',
       '--dev',
+      '--botname=test',
       '--test',
-      './web/proxy.js',
-      './main.js',
-      './music.js',
-      './hungryGames.js',
-      './ticTacToe.js',
-      './connect4.js',
-      './patreon.js',
-      './tts.js',
     ],
     spawnOpts);
 console.log("Spawned primary bot");

@@ -1,8 +1,23 @@
 {
+  "test": [
+    "./web/stats.js",
+    "./main.js",
+    "./music.js",
+    "./hungryGames.js",
+    "./ticTacToe.js",
+    "./connect4.js",
+    "./patreon.js",
+    "./poll.js",
+    "./web/webhooks.js",
+    "./spotify.js",
+    "./cmdScheduling.js"
+  ],
   "dev": [
     "./web/proxy.js",
     "./web/account.js",
     "./web/stats.js",
+    "./web/settings.js",
+    "./web/webhooks.js",
     "./hungryGames.js",
     "./main.js",
     "./ticTacToe.js",
@@ -12,7 +27,6 @@
     "./tts.js",
     "./poll.js",
     "./chatbot.js",
-    "./web/webhooks.js",
     "./spotify.js",
     "./cmdScheduling.js"
   ],
@@ -20,6 +34,7 @@
     "./web/proxy.js",
     "./web/account.js",
     "./web/stats.js",
+    "./web/settings.js",
     "./hungryGames.js",
     "./main.js",
     "./ticTacToe.js",
@@ -34,6 +49,8 @@
     "./cmdScheduling.js"
   ],
   "rembot": [
+    "./web/settings.js",
+    "./web/webhooks.js",
     "./hungryGames.js",
     "./main.js",
     "./ticTacToe.js",
@@ -43,7 +60,6 @@
     "./tts.js",
     "./poll.js",
     "./chatbot.js",
-    "./web/webhooks.js",
     "./spotify.js",
     "./cmdScheduling.js"
   ]
