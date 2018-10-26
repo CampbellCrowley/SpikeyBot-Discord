@@ -230,7 +230,7 @@ function SpikeyBot() {
       if (process.argv[i].indexOf('=') > -1) {
         numShards = process.argv[i].split('=')[1] * 1 || 0;
       }
-    } else {
+    } else if (i > 3) {
       throw new Error(`Unrecognized argument '${process.argv[i]}'`);
     }
   }
