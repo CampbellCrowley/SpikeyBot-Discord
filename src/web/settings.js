@@ -326,10 +326,10 @@ function WebSettings() {
    * @param {number|string} gId The guild id to check.
    * @return {boolean} True if this shard has this guild.
    */
-  /* function checkMyGuild(gId) {
+  function checkMyGuild(gId) {
     let g = self.client.guilds.get(gId);
     return (g && true) || false;
-  }*/
+  }
 
   /**
    * Check that the given user has permission to manage the games in the given
