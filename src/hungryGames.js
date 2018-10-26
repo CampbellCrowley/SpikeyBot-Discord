@@ -855,7 +855,8 @@ function HungryGames() {
    * @private
    */
   function setupHelp() {
-    self.helpMessage = '`' + self.myPrefix + 'help` for Hungry Games help.';
+    const prefix = self.bot.getPrefix() + self.postPrefix;
+    self.helpMessage = '`' + prefix + 'help` for Hungry Games help.';
     // Format help message into rich embed.
     let tmpHelp = new self.Discord.MessageEmbed();
     tmpHelp.setTitle(helpObject.title);
@@ -871,13 +872,11 @@ function HungryGames() {
               obj.rows
                   .map(function(row) {
                     if (typeof row === 'string') {
-                      return self.myPrefix +
-                          row.replaceAll('{prefix}', self.myPrefix);
+                      return prefix + row.replaceAll('{prefix}', prefix);
                     } else if (typeof row === 'object') {
-                      return self.myPrefix +
-                          row.command.replaceAll('{prefix}', self.myPrefix) +
-                          ' // ' +
-                          row.description.replaceAll('{prefix}', self.myPrefix);
+                      return prefix +
+                          row.command.replaceAll('{prefix}', prefix) + ' // ' +
+                          row.description.replaceAll('{prefix}', prefix);
                     }
                   })
                   .join('\n') +
@@ -4866,7 +4865,8 @@ function HungryGames() {
         obj[option] = value;
         if (option == 'teamSize' && value != 0) {
           return 'Set ' + option + ' to ' + obj[option] + ' from ' + old +
-              '\nTo reset teams to the correct size, type "' + self.myPrefix +
+              '\nTo reset teams to the correct size, type "' +
+              self.bot.getPrefix() + self.postPrefix +
               'teams reset".\nThis will delete all teams, and create ' +
               'new ones.';
         } else {

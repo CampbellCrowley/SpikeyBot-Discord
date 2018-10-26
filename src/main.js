@@ -375,10 +375,11 @@ function Main() {
 
     // Format help message into rich embed.
     let tmpHelp = new self.Discord.MessageEmbed();
-    tmpHelp.setTitle(helpObject.title.replaceAll('{prefix}', self.myPrefix));
+    tmpHelp.setTitle(
+        helpObject.title.replaceAll('{prefix}', self.bot.gerPrefix()));
     tmpHelp.setURL(self.common.webURL);
     tmpHelp.setDescription(
-        helpObject.description.replaceAll('{prefix}', self.myPrefix));
+        helpObject.description.replaceAll('{prefix}', self.bot.getPrefix()));
     helpObject.sections.forEach(function(obj) {
       let titleID = encodeURIComponent(obj.title);
       const titleURL = '[web](' + self.common.webURL + '#' + titleID + ')';
@@ -387,13 +388,15 @@ function Main() {
               obj.rows
                   .map(function(row) {
                     if (typeof row === 'string') {
-                      return self.myPrefix +
-                          row.replaceAll('{prefix}', self.myPrefix);
+                      return self.bot.getPrefix() +
+                          row.replaceAll('{prefix}', self.bot.getPrefix());
                     } else if (typeof row === 'object') {
-                      return self.myPrefix +
-                          row.command.replaceAll('{prefix}', self.myPrefix) +
+                      return self.bot.getPrefix() +
+                          row.command.replaceAll(
+                              '{prefix}', self.bot.getPrefix()) +
                           ' // ' +
-                          row.description.replaceAll('{prefix}', self.myPrefix);
+                          row.description.replaceAll(
+                              '{prefix}', self.bot.getPrefix());
                     }
                   })
                   .join('\n') +
@@ -401,7 +404,8 @@ function Main() {
           true);
     });
     tmpHelp.setFooter(
-        'Note: If a custom prefix is being used, replace `' + self.myPrefix +
+        'Note: If a custom prefix is being used, replace `' +
+        self.bot.getPrefix() +
         '` with the custom prefix.\nNote 2: Custom prefixes will not have a ' +
         'space after them.');
     self.helpMessage = tmpHelp;
