@@ -341,6 +341,8 @@ function SMLoader() {
       }
     } catch (err) {
       cb('Failed to Load');
+      self.error('Failed to load submodule: ' + name);
+      console.error(err);
       return;
     }
     try {
@@ -432,7 +434,7 @@ function SMLoader() {
             done();
             return;
           }
-          output.push(name + ': Success');
+          output.push(name + ': `Success`');
           done();
         });
       });

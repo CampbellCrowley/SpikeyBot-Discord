@@ -471,6 +471,15 @@ function HGWeb(hg) {
             return obj.members.get(userData.id);
           })
           .array();
+      // I had issues running both release bots on the same server and using the
+      // website. This should not be an issue for most users since I only
+      // support one of the bots on their server at a time, so this is a
+      // workaround for me.
+      if (hg.bot.getFullBotName() == 'rembot') {
+        guilds = guilds.filter((obj) => {
+          return obj.id != '420045052690169856';
+        });
+      }
       let strippedGuilds = guilds.map((g) => {
         let member = g.members.get(userData.id);
         let newG = {};

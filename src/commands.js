@@ -1,6 +1,6 @@
 // Copyright 2018 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
-
+const fs = require('fs');
 require('./mainModule.js')(Command); // Extends the MainModule class.
 
 /**
@@ -14,15 +14,83 @@ function Command() {
   /** @inheritdoc */
   this.myName = 'Command';
 
+  /** @inheritdoc */
+  this.initialize = function() {
+    self.client.guilds.forEach((g) => {
+      const dir = self.common.guildSaveDir + g.id;
+      const filename = dir + commandSettingsFile;
+      fs.readFile(filename, (err, data) => {
+        if (err) {
+          if (err.code == 'ENOENT') {
+            // File does not exist. No custom settings exist yet.
+            return;
+          }
+          self.error('Failed to read user settings for commands: ' + filename);
+          console.error(err);
+          return;
+        }
+        try {
+          let parsed = JSON.parse(data);
+          if (parsed) {
+            userSettings[g.id] = parsed;
+          }
+        } catch (e) {
+        }
+      });
+    });
+  };
+  /** @inheritdoc */
+  this.save = function(opt) {
+    Object.entries(userSettings).forEach((el) => {
+      const dir = self.common.guildSaveDir + el[0];
+      const filename = dir + commandSettingsFile;
+
+      if (opt == 'async') {
+        fs.mkdir(dir, (err) => {
+          if (err) {
+            self.error('Failed to make guild directory for saving: ' + dir);
+            console.error(err);
+            return;
+          }
+          fs.writeFile(filename, JSON.stringify(el[1]), (err) => {
+            if (err) {
+              self.error(
+                  'Failed to write command settings to file: ' + filename);
+              console.error(err);
+              return;
+            }
+          });
+        });
+      } else {
+        try {
+          fs.mkdirSync(dir);
+        } catch (err) {
+          self.error('Failed to make guild directory for saving: ' + dir);
+          console.error(err);
+          return;
+        }
+        try {
+          fs.writeFileSync(filename, JSON.stringify(el[1]));
+        } catch (err) {
+          self.error('Failed to write command settings to file: ' + filename);
+          console.error(err);
+          return;
+        }
+      }
+    });
+  };
+
+  /** @inheritdoc */
   this.import = function(data) {
     if (!data) return;
     cmds = data.cmds;
-    blacklist = data.blacklist;
+    internalBlacklist = data.internalBlacklist;
   };
+  /** @inheritdoc */
   this.export = function() {
     return {
       cmds: cmds,
-      blacklist: blacklist,
+      internalBlacklist: internalBlacklist,
     };
   };
 
@@ -46,7 +114,16 @@ function Command() {
    * @private
    * @type {Object.<string[]>}
    */
-  let blacklist = {};
+  let internalBlacklist = {};
+
+  /**
+   * Specific settings defined by users as restrictions on commands. Mapped by
+   * guild id, then by the command.
+   *
+   * @private
+   * @type {Object.<Object.<CommandSetting>>}
+   */
+  let userSettings = {};
 
   /**
    * The message to send to the user if they attempt a server-only command in a
@@ -57,16 +134,16 @@ function Command() {
    * @constant
    */
   const onlyservermessage = 'This command only works in servers, sorry!';
+
   /**
-   * The message to send to the user if the command they attempted is currently
-   * disabled in the channel.
+   * Filename in the guild's subdirectory where command settings are stored.
    *
    * @private
-   * @type {string}
    * @constant
+   * @default
+   * @type {string}
    */
-  const disabledcommandmessage =
-      'This command has been disabled in this channel.';
+  const commandSettingsFile = '/commandSettings.js';
 
   /**
    * Trigger a command firing and call it's handler passing in msg as only
@@ -89,20 +166,24 @@ function Command() {
         self.common.reply(msg, onlyservermessage);
         return true;
       } else if (failure === 'Disabled In Channel') {
-        self.common.reply(msg, disabledcommandmessage);
+        self.common.reply(
+            msg, 'This command has been disabled in this channel.');
+        return true;
+      } else if (failure == 'Disabled In Guild') {
+        self.common.reply(msg, 'This command has been disabled in this guild.');
         return true;
       } else if (failure) {
         self.common.reply(
             msg, 'I am unable to attempt this command for an unknown reason.',
             failure);
-        self.common.error('Comand failed: ' + cmd + ': ' + failure);
+        self.error('Comand failed: ' + cmd + ': ' + failure);
         return false;
       }
       msg.text = msg.content.replace(msg.prefix + cmd, '');
       try {
         func(msg);
       } catch (err) {
-        self.common.error(cmd + ': FAILED');
+        self.error(cmd + ': FAILED');
         console.log(err);
         self.common.reply(msg, 'An error occurred! Oh noes!');
       }
@@ -127,7 +208,7 @@ function Command() {
     if (typeof cmd === 'string') {
       cmd = cmd.toLowerCase();
       if (cmds[cmd]) {
-        self.common.error(
+        self.error(
             'Attempted to register a second handler for event that already ' +
             'exists! (' + cmd + ')');
       } else {
@@ -148,9 +229,9 @@ function Command() {
     if (typeof cmd === 'string') {
       if (cmds[cmd]) {
         delete cmds[cmd];
-        delete blacklist[cmd];
+        delete internalBlacklist[cmd];
       } else {
-        self.common.error(
+        self.error(
             'Requested deletion of event handler for event that was never ' +
             'registered! (' + cmd + ')');
       }
@@ -158,9 +239,9 @@ function Command() {
       for (let i = 0; i < cmd.length; i++) {
         if (cmds[cmd[i]]) {
           delete cmds[cmd[i]];
-          delete blacklist[cmd[i]];
+          delete internalBlacklist[cmd[i]];
         } else {
-          self.common.error(
+          self.error(
               'Requested deletion of event handler for event that was ' +
               'never registered! (' + cmd[i] + ')');
         }
@@ -171,23 +252,23 @@ function Command() {
   };
   /**
    * Temporarily disables calling the handler for the given command in a
-   * certain
-   * Discord text channel.
+   * certain Discord text channel or guild.
    *
    * @param {string} cmd Command to disable.
    * @param {string} channel ID of channel to disable command for.
    */
   this.disable = function(cmd, channel) {
     if (cmds[cmd]) {
-      if (!blacklist[cmd] || blacklist[cmd].lastIndexOf(channel) == -1) {
-        if (!blacklist[cmd]) {
-          blacklist[cmd] = [channel];
+      if (!internalBlacklist[cmd] ||
+          internalBlacklist[cmd].lastIndexOf(channel) == -1) {
+        if (!internalBlacklist[cmd]) {
+          internalBlacklist[cmd] = [channel];
         } else {
-          blacklist[cmd].push(channel);
+          internalBlacklist[cmd].push(channel);
         }
       }
     } else {
-      self.common.error(
+      self.error(
           'Requested disable for event that was never registered! (' + cmd +
           ')');
     }
@@ -199,16 +280,15 @@ function Command() {
    * @param {string} channel ID of channel to enable command for.
    */
   this.enable = function(cmd, channel) {
-    if (blacklist[cmd]) {
-      let index = blacklist[cmd].lastIndexOf(channel);
+    if (internalBlacklist[cmd]) {
+      let index = internalBlacklist[cmd].lastIndexOf(channel);
       if (index > -1) {
-        blacklist[cmd].splice(index, 1);
+        internalBlacklist[cmd].splice(index, 1);
       } else {
-        self.common.error(
-            'Requested enable of event that is enabled! (' + cmd + ')');
+        self.error('Requested enable of event that is enabled! (' + cmd + ')');
       }
     } else {
-      self.common.error(
+      self.error(
           'Requested enable for event that is not disabled! (' + cmd + ')');
     }
   };
@@ -248,9 +328,12 @@ function Command() {
     if (msg && func.validOnlyOnServer && msg.guild === null) {
       return 'Guild Only';
     }
-    if (msg && blacklist[cmd] &&
-        blacklist[cmd].lastIndexOf(msg.channel.id) > -1) {
-      return 'Disabled In Channel';
+    if (msg && internalBlacklist[cmd]) {
+      if (internalBlacklist[cmd].lastIndexOf(msg.channel.id) > -1) {
+        return 'Disabled In Channel';
+      } else if (internalBlacklist[cmd].lastIndexOf(msg.guild.id) > -1) {
+        return 'Disabled In Guild';
+      }
     }
     return null;
   };

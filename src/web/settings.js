@@ -24,7 +24,7 @@ function WebSettings() {
   };
   /** @inheritdoc */
   this.unloadable = function() {
-    return self.getNumClients() == 0;
+    return getNumClients() == 0;
   };
   /** @inheritdoc */
   this.shutdown = function() {
@@ -169,12 +169,12 @@ function WebSettings() {
   /**
    * Returns the number of connected clients that are not siblings.
    *
-   * @public
+   * @private
    * @return {number} Number of sockets.
    */
-  this.getNumClients = function() {
+  function getNumClients() {
     return Object.keys(sockets).length - Object.keys(siblingSockets).length;
-  };
+  }
 
   /**
    * Map of all sockets connected that are siblings.

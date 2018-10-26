@@ -89,25 +89,12 @@ discordbots.org.</p>
 </dd>
 </dl>
 
-## Constants
-
-<dl>
-<dt><a href="#re">re</a> : <code>RegExp</code> ℗</dt>
-<dd><p>RegExp based on emoji&#39;s official Unicode standards
-<a href="http://www.unicode.org/Public/UNIDATA/EmojiSources.txt">http://www.unicode.org/Public/UNIDATA/EmojiSources.txt</a>
-<a href="https://github.com/twitter/twemoji/blob/27fe654b2bed5331cf1730bb4fbba1efa40af626/2/twemoji.js#L228">https://github.com/twitter/twemoji/blob/27fe654b2bed5331cf1730bb4fbba1efa40af626/2/twemoji.js#L228</a></p>
-</dd>
-</dl>
-
 ## Functions
 
 <dl>
 <dt><a href="#unhandledRejection">unhandledRejection(reason, p)</a> ℗</dt>
 <dd><p>Handler for an unhandledRejection or uncaughtException, to prevent the bot
 from silently crashing without an error.</p>
-</dd>
-<dt><a href="#match">match(input)</a> ⇒ <code>null</code> | <code>Array.&lt;string&gt;</code></dt>
-<dd><p>Check a string for any emoji matches.</p>
 </dd>
 </dl>
 
@@ -125,6 +112,33 @@ from silently crashing without an error.</p>
 <a name="module_lib/twemojiChecker"></a>
 
 ## lib/twemojiChecker
+
+* [lib/twemojiChecker](#module_lib/twemojiChecker)
+    * [~re](#module_lib/twemojiChecker..re) : <code>RegExp</code> ℗
+    * [~match(input)](#module_lib/twemojiChecker..match) ⇒ <code>null</code> \| <code>Array.&lt;string&gt;</code>
+
+<a name="module_lib/twemojiChecker..re"></a>
+
+### lib/twemojiChecker~re : <code>RegExp</code> ℗
+RegExp based on emoji's official Unicode standards
+http://www.unicode.org/Public/UNIDATA/EmojiSources.txt
+https://github.com/twitter/twemoji/blob/27fe654b2bed5331cf1730bb4fbba1efa40af626/2/twemoji.js#L228
+
+**Kind**: inner constant of [<code>lib/twemojiChecker</code>](#module_lib/twemojiChecker)  
+**Access**: private  
+<a name="module_lib/twemojiChecker..match"></a>
+
+### lib/twemojiChecker~match(input) ⇒ <code>null</code> \| <code>Array.&lt;string&gt;</code>
+Check a string for any emoji matches.
+
+**Kind**: inner method of [<code>lib/twemojiChecker</code>](#module_lib/twemojiChecker)  
+**Returns**: <code>null</code> \| <code>Array.&lt;string&gt;</code> - The matched return value.  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| input | <code>string</code> | The string to run the regex against. |
+
 <a name="ChatBot"></a>
 
 ## ChatBot ⇐ [<code>SubModule</code>](#SubModule)
@@ -1035,10 +1049,10 @@ normal submodule, and is treated differently in the SpikeyBot class.
         * [.find(cmd, [msg])](#Command+find) ⇒ <code>function</code>
         * [.validate(cmd, msg, [func])](#Command+validate) ⇒ <code>string</code>
         * [.getAllNames()](#Command+getAllNames) ⇒ <code>Array.&lt;string&gt;</code>
-        * *[.import(data)](#MainModule+import)*
-        * *[.export()](#MainModule+export) ⇒ [<code>ModuleData</code>](#MainModule..ModuleData)*
+        * [.import(data)](#MainModule+import)
+        * [.export()](#MainModule+export) ⇒ [<code>ModuleData</code>](#MainModule..ModuleData)
         * *[.terminate()](#MainModule+terminate)*
-        * *[.initialize()](#SubModule+initialize)*
+        * [.initialize()](#SubModule+initialize)
         * [.begin(Discord, client, command, common, bot)](#SubModule+begin)
         * [.end()](#SubModule+end)
         * [.log(msg)](#SubModule+log)
@@ -1046,13 +1060,14 @@ normal submodule, and is treated differently in the SpikeyBot class.
         * [.warn(msg)](#SubModule+warn)
         * [.error(msg)](#SubModule+error)
         * *[.shutdown()](#SubModule+shutdown)*
-        * *[.save([opt])](#SubModule+save)*
+        * [.save([opt])](#SubModule+save)
         * *[.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>*
     * _inner_
         * [~cmds](#Command..cmds) : [<code>Object.&lt;commandHandler&gt;</code>](#commandHandler) ℗
-        * [~blacklist](#Command..blacklist) : <code>Object.&lt;Array.&lt;string&gt;&gt;</code> ℗
+        * [~internalBlacklist](#Command..internalBlacklist) : <code>Object.&lt;Array.&lt;string&gt;&gt;</code> ℗
+        * [~userSettings](#Command..userSettings) : <code>Object.&lt;Object.&lt;CommandSetting&gt;&gt;</code> ℗
         * [~onlyservermessage](#Command..onlyservermessage) : <code>string</code> ℗
-        * [~disabledcommandmessage](#Command..disabledcommandmessage) : <code>string</code> ℗
+        * [~commandSettingsFile](#Command..commandSettingsFile) : <code>string</code> ℗
 
 <a name="SubModule+helpMessage"></a>
 
@@ -1174,8 +1189,7 @@ Remove listener for a command.
 
 ### command.disable(cmd, channel)
 Temporarily disables calling the handler for the given command in a
-certain
-Discord text channel.
+certain Discord text channel or guild.
 
 **Kind**: instance method of [<code>Command</code>](#Command)  
 
@@ -1233,11 +1247,11 @@ Fetches a list of all currently registered commands.
 **Returns**: <code>Array.&lt;string&gt;</code> - Array of all registered commands.  
 <a name="MainModule+import"></a>
 
-### *command.import(data)*
+### command.import(data)
 Imports data from a previous instance of this class in order to maintain
 references to other objects and classes across reloads.
 
-**Kind**: instance abstract method of [<code>Command</code>](#Command)  
+**Kind**: instance method of [<code>Command</code>](#Command)  
 **Overrides**: [<code>import</code>](#MainModule+import)  
 **Access**: public  
 
@@ -1247,11 +1261,11 @@ references to other objects and classes across reloads.
 
 <a name="MainModule+export"></a>
 
-### *command.export() ⇒ [<code>ModuleData</code>](#MainModule..ModuleData)*
+### command.export() ⇒ [<code>ModuleData</code>](#MainModule..ModuleData)
 Export data required to maintain the bot across reloading this module.
 Expected to be returned directly to this.import once reloaded.
 
-**Kind**: instance abstract method of [<code>Command</code>](#Command)  
+**Kind**: instance method of [<code>Command</code>](#Command)  
 **Overrides**: [<code>export</code>](#MainModule+export)  
 **Returns**: [<code>ModuleData</code>](#MainModule..ModuleData) - The data to be exported  
 **Access**: public  
@@ -1266,11 +1280,12 @@ SubModules will be unloaded.
 **Access**: public  
 <a name="SubModule+initialize"></a>
 
-### *command.initialize()*
+### command.initialize()
 The function called at the end of begin() for further initialization
 specific to the subModule. Must be defined before begin() is called.
 
-**Kind**: instance abstract method of [<code>Command</code>](#Command)  
+**Kind**: instance method of [<code>Command</code>](#Command)  
+**Overrides**: [<code>initialize</code>](#SubModule+initialize)  
 **Access**: protected  
 <a name="SubModule+begin"></a>
 
@@ -1352,10 +1367,11 @@ Shutdown and disable this submodule. Removes all event listeners.
 **Access**: protected  
 <a name="SubModule+save"></a>
 
-### *command.save([opt])*
+### command.save([opt])
 Saves all data to files necessary for saving current state.
 
-**Kind**: instance abstract method of [<code>Command</code>](#Command)  
+**Kind**: instance method of [<code>Command</code>](#Command)  
+**Overrides**: [<code>save</code>](#SubModule+save)  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -1378,10 +1394,18 @@ All tracked commands with handlers.
 
 **Kind**: inner property of [<code>Command</code>](#Command)  
 **Access**: private  
-<a name="Command..blacklist"></a>
+<a name="Command..internalBlacklist"></a>
 
-### Command~blacklist : <code>Object.&lt;Array.&lt;string&gt;&gt;</code> ℗
+### Command~internalBlacklist : <code>Object.&lt;Array.&lt;string&gt;&gt;</code> ℗
 List of disabled commands, and the channels they are disabled in.
+
+**Kind**: inner property of [<code>Command</code>](#Command)  
+**Access**: private  
+<a name="Command..userSettings"></a>
+
+### Command~userSettings : <code>Object.&lt;Object.&lt;CommandSetting&gt;&gt;</code> ℗
+Specific settings defined by users as restrictions on commands. Mapped by
+guild id, then by the command.
 
 **Kind**: inner property of [<code>Command</code>](#Command)  
 **Access**: private  
@@ -1393,13 +1417,13 @@ non-server channel.
 
 **Kind**: inner constant of [<code>Command</code>](#Command)  
 **Access**: private  
-<a name="Command..disabledcommandmessage"></a>
+<a name="Command..commandSettingsFile"></a>
 
-### Command~disabledcommandmessage : <code>string</code> ℗
-The message to send to the user if the command they attempted is currently
-disabled in the channel.
+### Command~commandSettingsFile : <code>string</code> ℗
+Filename in the guild's subdirectory where command settings are stored.
 
 **Kind**: inner constant of [<code>Command</code>](#Command)  
+**Default**: <code>&quot;/commandSettings.js&quot;</code>  
 **Access**: private  
 <a name="Common"></a>
 
@@ -11992,7 +12016,6 @@ Manages changing settings for the bot from a website.
         * [.initialized](#SubModule+initialized) : <code>boolean</code>
         * [.commit](#SubModule+commit) : <code>string</code>
         * [.loadTime](#SubModule+loadTime) : <code>number</code>
-        * [.getNumClients()](#WebSettings+getNumClients) ⇒ <code>number</code>
         * [.initialize()](#SubModule+initialize)
         * [.begin(Discord, client, command, common, bot)](#SubModule+begin)
         * [.end()](#SubModule+end)
@@ -12013,6 +12036,7 @@ Manages changing settings for the bot from a website.
         * [~handleCommandCancelled(cmdId, gId)](#WebSettings..handleCommandCancelled) ℗
         * [~startClient()](#WebSettings..startClient) ℗
         * [~handler(req, res)](#WebSettings..handler) ℗
+        * [~getNumClients()](#WebSettings..getNumClients) ⇒ <code>number</code> ℗
         * [~socketConnection(socket)](#WebSettings..socketConnection) ℗
             * [~callSocketFunction(func, args, [forward])](#WebSettings..socketConnection..callSocketFunction) ℗
         * [~clientSocketConnection(socket)](#WebSettings..clientSocketConnection) ℗
@@ -12107,14 +12131,6 @@ The time at which this madule was loaded for use in checking if the module
 needs to be reloaded because the file has been modified since loading.
 
 **Kind**: instance constant of [<code>WebSettings</code>](#WebSettings)  
-**Access**: public  
-<a name="WebSettings+getNumClients"></a>
-
-### webSettings.getNumClients() ⇒ <code>number</code>
-Returns the number of connected clients that are not siblings.
-
-**Kind**: instance method of [<code>WebSettings</code>](#WebSettings)  
-**Returns**: <code>number</code> - Number of sockets.  
 **Access**: public  
 <a name="SubModule+initialize"></a>
 
@@ -12308,6 +12324,14 @@ Handler for all http requests. Should never be called.
 | req | <code>http.IncomingMessage</code> | The client's request. |
 | res | <code>http.ServerResponse</code> | Our response to the client. |
 
+<a name="WebSettings..getNumClients"></a>
+
+### WebSettings~getNumClients() ⇒ <code>number</code> ℗
+Returns the number of connected clients that are not siblings.
+
+**Kind**: inner method of [<code>WebSettings</code>](#WebSettings)  
+**Returns**: <code>number</code> - Number of sockets.  
+**Access**: private  
 <a name="WebSettings..socketConnection"></a>
 
 ### WebSettings~socketConnection(socket) ℗
@@ -13101,15 +13125,6 @@ Handler for all http requests.
 | req | <code>http.IncomingMessage</code> | The client's request. |
 | res | <code>http.ServerResponse</code> | Our response to the client. |
 
-<a name="re"></a>
-
-## re : <code>RegExp</code> ℗
-RegExp based on emoji's official Unicode standards
-http://www.unicode.org/Public/UNIDATA/EmojiSources.txt
-https://github.com/twitter/twemoji/blob/27fe654b2bed5331cf1730bb4fbba1efa40af626/2/twemoji.js#L228
-
-**Kind**: global constant  
-**Access**: private  
 <a name="unhandledRejection"></a>
 
 ## unhandledRejection(reason, p) ℗
@@ -13123,19 +13138,6 @@ from silently crashing without an error.
 | --- | --- | --- |
 | reason | <code>Object</code> | Reason for rejection. |
 | p | <code>Promise</code> | The promise that caused the rejection. |
-
-<a name="match"></a>
-
-## match(input) ⇒ <code>null</code> \| <code>Array.&lt;string&gt;</code>
-Check a string for any emoji matches.
-
-**Kind**: global function  
-**Returns**: <code>null</code> \| <code>Array.&lt;string&gt;</code> - The matched return value.  
-**Access**: public  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| input | <code>string</code> | The string to run the regex against. |
 
 <a name="commandHandler"></a>
 

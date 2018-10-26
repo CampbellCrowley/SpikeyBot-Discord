@@ -1,3 +1,4 @@
+/** @module lib/twemojiChecker */
 /**
  * RegExp based on emoji's official Unicode standards
  * http://www.unicode.org/Public/UNIDATA/EmojiSources.txt
@@ -19,7 +20,6 @@ function match(input) {
   return input.match(re);
 }
 
-/** @module lib/twemojiChecker */
 module.exports = {
   match: match,
 };

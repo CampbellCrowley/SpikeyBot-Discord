@@ -2329,9 +2329,6 @@ function HungryGames() {
     find(id).currentGame.day.state = 1;
     find(id).currentGame.day.num++;
     find(id).currentGame.day.events = [];
-    /* if (find(id).options.disableOutput) {
-      process.stdout.write(find(id).currentGame.day.num + ' ');
-    } */
 
     let deadPool = find(id).currentGame.includedUsers.filter(function(obj) {
       return !obj.living;
@@ -3823,7 +3820,7 @@ function HungryGames() {
       }
       events[index].state++;
     } else {
-      delete battleMessage[id];
+      // delete battleMessage[id];
       const avatarSizes = find(id).options.eventAvatarSizes;
       const iconSize = avatarSizes.avatar;
       if (iconSize == 0 || events[index].icons.length === 0) {
@@ -4356,7 +4353,7 @@ function HungryGames() {
     }
 
     find(id).currentGame.day.state = 0;
-    find(id).currentGame.day.events = [];
+    // find(id).currentGame.day.events = [];
 
     if (find(id).autoPlay) {
       if (!find(id).options.disableOutput) {
@@ -4402,7 +4399,7 @@ function HungryGames() {
       self.client.clearTimeout(autoPlayTimeout[id]);
       delete dayEventIntervals[id];
       delete autoPlayTimeout[id];
-      delete battleMessage[id];
+      // delete battleMessage[id];
       self.command.enable('say', find(id).outputChannel);
     }
   }
