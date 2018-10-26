@@ -376,7 +376,7 @@ function Main() {
     // Format help message into rich embed.
     let tmpHelp = new self.Discord.MessageEmbed();
     tmpHelp.setTitle(
-        helpObject.title.replaceAll('{prefix}', self.bot.gerPrefix()));
+        helpObject.title.replaceAll('{prefix}', self.bot.getPrefix()));
     tmpHelp.setURL(self.common.webURL);
     tmpHelp.setDescription(
         helpObject.description.replaceAll('{prefix}', self.bot.getPrefix()));
