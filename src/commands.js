@@ -1,27 +1,21 @@
 // Copyright 2018 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 
-require('./subModule.js')(Command); // Extends the SubModule class.
+require('./mainModule.js')(Command); // Extends the MainModule class.
 
 /**
  * @classdesc Manages the command event firing for all commands. This is not a
  * normal submodule, and is treated differently in the SpikeyBot class.
  * @class
- * @augments SubModule
+ * @augments MainModule
  */
 function Command() {
   const self = this;
   /** @inheritdoc */
   this.myName = 'Command';
 
-  /** @inheritdoc */
-  this.initialize = function() {
-  };
-  /** @inheritdoc */
-  this.shutdown = function() {
-  };
-
   this.import = function(data) {
+    if (!data) return;
     cmds = data.cmds;
     blacklist = data.blacklist;
   };

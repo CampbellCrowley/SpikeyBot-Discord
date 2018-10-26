@@ -13,24 +13,6 @@ function SubModule() {
   this.helpMessage = undefined;
 
   /**
-   * The main prefix in use for this bot. Only available after begin() is
-   * called.
-   *
-   * @readonly
-   * @type {string}
-   */
-  this.prefix;
-
-  /**
-   * The prefix this submodule uses. Formed by prepending this.prefix to
-   * this.postPrefix. this.postPrefix must be defined before begin(), otherwise
-   * it is ignored.
-   *
-   * @readonly
-   * @type {string}
-   */
-  this.myPrefix;
-  /**
    * The postfix for the global prefix for this subModule. Must be defined
    * before begin(), otherwise it is ignored.
    *
@@ -126,7 +108,6 @@ function SubModule() {
    * Initialize this submodule.
    *
    * @public
-   * @param {string} prefix The global prefix for this bot.
    * @param {Discord} Discord The Discord object for the API library.
    * @param {Discord~Client} client The client that represents this bot.
    * @param {Command} command The command instance in which to
@@ -134,9 +115,7 @@ function SubModule() {
    * @param {Common} common Class storing common functions.
    * @param {SpikeyBot} bot The parent SpikeyBot instance.
    */
-  this.begin = function(prefix, Discord, client, command, common, bot) {
-    this.prefix = prefix;
-    this.myPrefix = prefix + this.postPrefix;
+  this.begin = function(Discord, client, command, common, bot) {
     this.Discord = Discord;
     this.client = client;
     this.command = command;

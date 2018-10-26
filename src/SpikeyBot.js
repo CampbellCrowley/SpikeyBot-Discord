@@ -30,11 +30,9 @@ process.on('uncaughtException', unhandledRejection);
  * @listens Discord~Client#ready
  * @listens Discord~Client#message
  * @listens Command#toggleReact
- * @listens Command#help
  * @listens Command#updateGame
  * @listens Command#reboot
- * @listens Command#reload
- * @fires Command#*
+ * @listens Command#mainreload
  */
 function SpikeyBot() {
   const self = this;
@@ -71,8 +69,9 @@ function SpikeyBot() {
    * @type {boolean}
    */
   let testInstance = false;
+
   /**
-   * The filename of the Command submodule.
+   * The filename of the Command mainModule.
    *
    * @private
    * @constant
@@ -81,6 +80,15 @@ function SpikeyBot() {
    */
   const commandFilename = './commands.js';
   /**
+   * The filename of the SMLoader mainModule.
+   *
+   * @private
+   * @constant
+   * @default
+   * @type {string}
+   */
+  const smLoaderFilename = './smLoader.js';
+  /**
    * The current instance of Command.
    *
    * @private
@@ -88,12 +96,36 @@ function SpikeyBot() {
    */
   let command;
   /**
-   * The list of all submodules to load.
+   * The current instance of SMLoader.
+   *
+   * @private
+   * @type {SMLoader}
+   */
+  let smLoader;
+  /**
+   * Filename of which to load additional MainModule names. The file must be a
+   * valid JSON array of strings.
+   *
+   * @private
+   * @constant
+   * @default
+   * @type {string}
+   */
+  const mainModuleListFile = './mainModules.json';
+  /**
+   * The list of all mainModules to load. Always includes {@link
+   * SpikeyBot~commandFilename} and {@link SpikeyBot~smListFilename}. Additional
+   * mainModules can be loaded from {@link SpikeyBot~mainModuleListFile}.
    *
    * @private
    * @type {string[]}
    */
-  let subModuleNames = [commandFilename];
+  let mainModuleNames = [commandFilename, smLoaderFilename];
+  try {
+    mainModuleNames =
+        mainModuleNames.concat(JSON.parse(fs.readFileSync(mainModuleListFile)));
+  } catch (err) {
+  }
   /**
    * Is this bot running in development mode.
    *
@@ -110,12 +142,12 @@ function SpikeyBot() {
    */
   let minimal = false;
   /**
-   * Instances of sub-modules currently loaded.
+   * Instances of MainModules currently loaded.
    *
    * @private
-   * @type {SubModule[]}
+   * @type {MainModule[]}
    */
-  let subModules = [];
+  let mainModules = [];
   /**
    * Reason the bot was disconnected from Discord's servers.
    *
@@ -166,9 +198,21 @@ function SpikeyBot() {
     return botName;
   };
 
+  /**
+   * Getter for the bot's name. If botName is null, this will give either
+   * `release` or `dev`.
+   * @see {@link SpikeyBot~botName}
+   *
+   * @public
+   * @return {string} The bot's name.
+   */
+  this.getFullBotName = function() {
+    return botName || (isDev ? 'dev' : 'release');
+  };
+
   // Parse cli args.
-  for (let i = 0; i < process.argv.length; i++) {
-    if (process.argv[i] === 'dev' || process.argv[i] === '--dev') {
+  for (let i = 3; i < process.argv.length; i++) {
+    if (process.argv[i] === '--dev') {
       setDev = true;
     } else if (process.argv[i].startsWith('--botname')) {
       if (process.argv[i].indexOf('=') > -1) {
@@ -177,19 +221,17 @@ function SpikeyBot() {
         botName = process.argv[i + 1] || '';
         i++;
       }
-    } else if (
-      process.argv[i] === 'minimal' || process.argv[i] === 'onlymusic' ||
-        process.argv[i] === '--minimal' || process.argv[i] === '--onlymusic') {
+    } else if (process.argv[i] === '--minimal') {
       minimal = true;
-    } else if (process.argv[i] === 'test' || process.argv[i] === '--test') {
+    } else if (process.argv[i] === '--test') {
       testInstance = true;
     } else if (process.argv[i].startsWith('--shards')) {
       enableSharding = true;
       if (process.argv[i].indexOf('=') > -1) {
         numShards = process.argv[i].split('=')[1] * 1 || 0;
       }
-    } else if (i > 3 && typeof process.argv[i] === 'string') {
-      subModuleNames.push(process.argv[i]);
+    } else {
+      throw new Error(`Unrecognized argument '${process.argv[i]}'`);
     }
   }
 
@@ -236,24 +278,22 @@ function SpikeyBot() {
   const client = new Discord.Client();
 
 
-  // Attempt to load submodules.
-  for (let i = 0; i < subModuleNames.length; i++) {
-    if (typeof subModuleNames[i] !== 'string' ||
-        subModuleNames[i].startsWith('--')) {
-      continue;
-    }
+  // Attempt to load mainmodules.
+  for (let i = 0; i < mainModuleNames.length; i++) {
     process.stdout.write(
         'DBG:' + ('00000' + process.pid).slice(-5) + ' Loading ' +
-        subModuleNames[i]);
+        mainModuleNames[i]);
     try {
-      subModules[i] = require(subModuleNames[i]);
-      if (subModuleNames[i] == commandFilename) {
-        command = subModules[i];
+      mainModules[i] = require(mainModuleNames[i]);
+      if (mainModuleNames[i] == commandFilename) {
+        command = mainModules[i];
+      } else if (mainModuleNames[i] == smLoaderFilename) {
+        smLoader = mainModules[i];
       }
       process.stdout.write(': DONE\n');
     } catch (err) {
       process.stdout.write(': ERROR\n');
-      console.error(subModuleNames[i], err);
+      console.error(mainModuleNames[i], err);
     }
   }
 
@@ -271,8 +311,8 @@ function SpikeyBot() {
   let initialized = false;
 
   /**
-   * The Interval in which we will save and purge data on all submodules. Begins
-   * after onReady.
+   * The Interval in which we will save and purge data on all mainmodules.
+   * Begins after onReady.
    * @see {@link SpikeyBot~onReady()}
    * @see {@link SpikeyBot~saveFrequency}
    *
@@ -343,25 +383,6 @@ function SpikeyBot() {
   const guildCustomPrefixFile = '/prefixes.json';
 
   /**
-   * The message sent to the channel where the user asked for help.
-   *
-   * @private
-   * @type {string}
-   * @constant
-   */
-  const helpmessagereply = 'I sent you a DM with commands!';
-  /**
-   * The message sent to the channel where the user asked to be DM'd, but we
-   * were unable to deliver the DM.
-   *
-   * @private
-   * @type {string}
-   * @constant
-   */
-  const blockedmessage =
-      'I couldn\'t send you a message, you probably blocked me :(';
-
-  /**
    * Checks if given message is the given command.
    *
    * @private
@@ -390,7 +411,6 @@ function SpikeyBot() {
       },
       status: (testInstance ? 'dnd' : 'online'),
     });
-    // common.log('Changed game to "' + game + '"');
   }
 
   // BEGIN //
@@ -440,27 +460,27 @@ function SpikeyBot() {
           'I just rebooted (JS' + version + ') ' +
           (minimal ? 'MINIMAL' : 'FULL') + additional);
     }
-    // Initialize all submodules even if we have already initialized the bot,
+    // Initialize all mainmodules even if we have already initialized the bot,
     // because this will updated the reference to the current client if this was
     // changed during reconnection.
-    for (let i in subModules) {
-      if (!subModules[i] instanceof Object || !subModules[i].begin) continue;
+    // @TODO: This may be unnecessary to do more than once.
+    for (let i in mainModules) {
+      if (!mainModules[i] instanceof Object || !mainModules[i].begin) continue;
       try {
-        subModules[i].begin(
-            defaultPrefix, Discord, client, command, common, self);
+        mainModules[i].begin(Discord, client, command, common, self);
       } catch (err) {
         console.log(err);
         if (logChannel) {
-          logChannel.send('Failed to initialize ' + subModuleNames[i]);
+          // logChannel.send('Failed to initialize ' + mainModuleNames[i]);
         }
       }
     }
-    if (subModules.length != subModuleNames.length) {
-      common.error('Loaded submodules does not match modules to load.');
+    if (mainModules.length != mainModuleNames.length) {
+      common.error('Loaded mainmodules does not match modules to load.');
       if (logChannel) {
-        logChannel.send(
-            'Failed to compile a submodule. Check log for more info. ' +
-            'Previous initialization errors may be incorrect.');
+        /* logChannel.send(
+            'Failed to compile a mainmodule. Check log for more info. ' +
+            'Previous initialization errors may be incorrect.'); */
       }
     }
     if (!minimal && !initialized) {
@@ -666,56 +686,6 @@ function SpikeyBot() {
       reactToAnthony = !reactToAnthony;
     }
 
-    command.on('help', commandHelp);
-    /**
-     * Send help message to user who requested it.
-     *
-     * @private
-     * @type {commandHandler}
-     * @param {Discord~Message} msg Message that triggered command.
-     * @listens Command#help
-     */
-    function commandHelp(msg) {
-      try {
-        let error = false;
-        for (let i in subModules) {
-          if (subModules[i] instanceof Object && subModules[i].helpMessage) {
-            msg.author.send(subModules[i].helpMessage).catch((err) => {
-              if (msg.guild !== null && !error) {
-                error = true;
-                common
-                    .reply(
-                        msg, 'Oops! I wasn\'t able to send you the help!\n' +
-                            'Did you block me?',
-                        err.message)
-                    .catch(() => {});
-                common.error(
-                    'Failed to send help message in DM to user: ' +
-                    msg.author.id);
-                console.error(err);
-              }
-            });
-          }
-        }
-        if (msg.guild !== null) {
-          common
-              .reply(
-                  msg, helpmessagereply,
-                  'Tip: https://www.spikeybot.com also has more information.')
-              .catch((err) => {
-                common.error(
-                    'Unable to reply to help command in channel: ' +
-                    msg.channel.id);
-                console.log(err);
-              });
-        }
-      } catch (err) {
-        common.reply(msg, blockedmessage);
-        common.error('An error occured while sending help message!');
-        console.error(err);
-      }
-    }
-
     command.on('updategame', commandUpdateGame);
     /**
      * Change current status message.
@@ -907,12 +877,12 @@ function SpikeyBot() {
     if (msg.author.id === common.spikeyId) {
       let force = msg.content.indexOf(' force') > -1;
       if (!force) {
-        for (let i = 0; i < subModules.length; i++) {
-          if (subModules[i] && !subModules[i].unloadable()) {
+        for (let i = 0; i < mainModules.length; i++) {
+          if (mainModules[i] && !mainModules[i].unloadable()) {
             if (!silent) {
               common.reply(
-                  msg,
-                  'Reboot scheduled. Waiting on at least ' + subModuleNames[i]);
+                  msg, 'Reboot scheduled. Waiting on at least ' +
+                      mainModuleNames[i]);
             }
             setTimeout(function() {
               commandReboot(msg, true);
@@ -921,17 +891,25 @@ function SpikeyBot() {
           }
         }
       }
-      for (let i = 0; i < subModules.length; i++) {
+      for (let i = 0; i < mainModules.length; i++) {
         try {
-          if (subModules[i] && subModules[i].save) subModules[i].save();
+          if (mainModules[i] && mainModules[i].save) mainModules[i].save();
         } catch (e) {
-          common.error(subModuleNames[i] + ' failed to save on reboot.');
+          common.error(mainModuleNames[i] + ' failed to save on reboot.');
           console.error(e);
         }
         try {
-          if (subModules[i] && subModules[i].end) subModules[i].end();
+          if (mainModules[i] && mainModules[i].terminate) {
+            mainModules[i].terminate();
+          }
         } catch (e) {
-          common.error(subModuleNames[i] + ' failed to shutdown properly.');
+          common.error(mainModuleNames[i] + ' failed to terminate properly.');
+          console.error(e);
+        }
+        try {
+          if (mainModules[i] && mainModules[i].end) mainModules[i].end();
+        } catch (e) {
+          common.error(mainModuleNames[i] + ' failed to shutdown properly.');
           console.error(e);
         }
       }
@@ -976,9 +954,9 @@ function SpikeyBot() {
     }
   }
 
-  command.on('reload', commandReload);
+  command.on('mainreload', commandReload);
   /**
-   * Reload all sub modules by unloading then re-requiring.
+   * Reload all mainmodules by unloading then re-requiring.
    *
    * @private
    * @type {commandHandler}
@@ -989,8 +967,8 @@ function SpikeyBot() {
     if (trustedIds.includes(msg.author.id)) {
       let toReload = msg.text.split(' ').splice(1);
       let reloaded = [];
-      common.reply(msg, 'Reloading modules...').then((warnMessage) => {
-        if (reloadSubModules(toReload, reloaded)) {
+      common.reply(msg, 'Reloading main modules...').then((warnMessage) => {
+        if (reloadMainModules(toReload, reloaded)) {
           warnMessage.edit(
               '`Reload completed with errors.`\n' +
               (reloaded.join(' ') || 'NOTHING reloaded'));
@@ -1011,21 +989,21 @@ function SpikeyBot() {
   }
 
   /**
-   * Reloads submodules from file. Reloads all modules if `toReload` is not
+   * Reloads mainmodules from file. Reloads all modules if `toReload` is not
    * specified. `reloaded` will contain the list of messages describing which
-   * submodules were reloaded, or not.
+   * mainmodules were reloaded, or not.
    * @private
    *
-   * @param {?string|string[]} [toReload] Specify submodules to reload, or null
-   * to reload all submodules.
+   * @param {?string|string[]} [toReload] Specify mainmodules to reload, or null
+   * to reload all mainmodules.
    * @param {string[]} [reloaded] Reference to a variable to store output status
-   * information about outcomes of attempting to reload submodules.
+   * information about outcomes of attempting to reload mainmodules.
    * @param {boolean} [schedule=true] Automatically re-schedule reload for
-   * submodules if they are in an unloadable state.
-   * @return {boolean} True if something failed and not all submodules were
+   * mainmodules if they are in an unloadable state.
+   * @return {boolean} True if something failed and not all mainmodules were
    * reloaded.
    */
-  function reloadSubModules(toReload, reloaded, schedule) {
+  function reloadMainModules(toReload, reloaded, schedule) {
     if (!Array.isArray(reloaded)) reloaded = [];
     if (!toReload) {
       toReload = [];
@@ -1052,40 +1030,38 @@ function SpikeyBot() {
       numArg++;
     }
 
-    for (let i = 0; i < subModules.length; i++) {
+    for (let i = 0; i < mainModules.length; i++) {
       if (toReload.length > numArg) {
         if (!toReload.find(function(el) {
-          return subModuleNames[i] == el;
+          return mainModuleNames[i] == el;
         })) {
           continue;
         }
       }
       if (!force) {
         try {
-          if (fs.statSync(__dirname + '/' + subModuleNames[i]).mtime <=
-              subModules[i].loadTime) {
-            // reloaded.push('(' + subModuleNames[i] + ': unchanged)');
+          if (fs.statSync(__dirname + '/' + mainModuleNames[i]).mtime <=
+              mainModules[i].loadTime) {
             continue;
           }
         } catch (err) {
           common.error(
-              'Failed to stat submodule: ' + __dirname + '/' +
-              subModuleNames[i]);
+              'Failed to stat mainmodule: ' + __dirname + '/' +
+              mainModuleNames[i]);
           console.error(err);
-          reloaded.push('(' + subModuleNames[i] + ': failed to stat)');
-          // continue;
+          reloaded.push('(' + mainModuleNames[i] + ': failed to stat)');
         }
       }
       if (!noSchedule) {
-        if (subModules[i]) {
-          if (!subModules[i].unloadable()) {
+        if (mainModules[i]) {
+          if (!mainModules[i].unloadable()) {
             if (schedule) {
-              reloaded.push('(' + subModuleNames[i] + ': reload scheduled)');
+              reloaded.push('(' + mainModuleNames[i] + ': reload scheduled)');
               setTimeout(function() {
-                reloadSubModules(subModuleNames[i]);
+                reloadMainModules(mainModuleNames[i]);
               }, 10000);
             } else {
-              reloaded.push('(' + subModuleNames[i] + ': not unloadable)');
+              reloaded.push('(' + mainModuleNames[i] + ': not unloadable)');
             }
             continue;
           }
@@ -1093,61 +1069,52 @@ function SpikeyBot() {
       }
       try {
         try {
-          if (subModules[i].save) {
-            subModules[i].save();
+          if (mainModules[i].save) {
+            mainModules[i].save();
           } else {
             common.error(
-                'Submodule ' + subModuleNames[i] +
+                'Mainmodule ' + mainModuleNames[i] +
                 ' does not have a save() function.');
           }
-          if (subModules[i].end) {
-            subModules[i].end();
+          if (mainModules[i].end) {
+            mainModules[i].end();
           } else {
             common.error(
-                'Submodule ' + subModuleNames[i] +
+                'Mainmodule ' + mainModuleNames[i] +
                 ' does not have an end() function.');
           }
         } catch (err) {
-          common.error('Error on unloading ' + subModuleNames[i]);
+          common.error('Error on unloading ' + mainModuleNames[i]);
           console.log(err);
         }
-        let exported;
-        if (subModuleNames[i] == commandFilename) {
-          exported = subModules[i].export();
+        let exported = mainModules[i].export();
+        if (!exported) {
+          self.error(
+              'THIS IS POTENTIALLY A FATAL ERROR! FAILED TO EXPORT DATA ' +
+              'FROM A MAIN MODULE!');
         }
-        delete require.cache[require.resolve(subModuleNames[i])];
+        delete require.cache[require.resolve(mainModuleNames[i])];
         process.stdout.write(
             'DBG:' + ('00000' + process.pid).slice(-5) + ' Loading ' +
-            subModuleNames[i]);
+            mainModuleNames[i]);
         try {
-          subModules[i] = require(subModuleNames[i]);
+          mainModules[i] = require(mainModuleNames[i]);
           process.stdout.write(': DONE\n');
         } catch (err) {
           process.stdout.write(': ERROR\n');
-          if (subModuleNames[i] == commandFilename) {
-            if (!exported) {
-              self.error(
-                  'THIS IS A FATAL ERROR! ALL COMMANDS HAVE BEEN DISABLED!');
-              throw (new Error('COMMAND MANAGEMENT FAILED TO RELOAD'));
-            }
-          }
           throw (err);
         }
-        if (subModuleNames[i] == commandFilename) {
-          if (!exported) {
-            self.error(
-                'THIS IS A FATAL ERROR! ALL COMMANDS HAVE BEEN DISABLED!');
-            throw (new Error('COMMAND MANAGEMENT FAILED TO RELOAD'));
-          }
-          subModules[i].import(exported);
-          command = subModules[i];
+        mainModules[i].import(exported);
+        if (mainModuleNames[i] == commandFilename) {
+          command = mainModules[i];
+        } else if (mainModuleNames[i] == smLoaderFilename) {
+          smLoader = mainModules[i];
         }
-        subModules[i].begin(
-            defaultPrefix, Discord, client, command, common, self);
-        reloaded.push(subModuleNames[i]);
+        mainModules[i].begin(Discord, client, command, common, self);
+        reloaded.push(mainModuleNames[i]);
       } catch (err) {
         error = true;
-        common.error('Failed to reload ' + subModuleNames[i]);
+        common.error('Failed to reload ' + mainModuleNames[i]);
         console.log(err);
       }
     }
@@ -1155,50 +1122,18 @@ function SpikeyBot() {
   }
 
   /**
-   * Check current loaded submodule commit to last modified commit, and reload
-   * if the file has changed.
-   *
-   * @public
-   */
-  client.reloadUpdatedSubmodules = function() {
-    try {
-      common.log('Reloading updated submodules.');
-      for (let i = 0; i < subModules.length; i++) {
-        childProcess
-            .exec(
-                'git diff-index --quiet ' + subModules[i].commit +
-                ' -- ./src/' + subModuleNames[i])
-            .on('close', ((name) => {
-              return (code, signal) => {
-                if (code) {
-                  let out = [];
-                  reloadSubModules(name, out);
-                  if (out) common.log(out.join(' '));
-                } else {
-                  common.logDebug(name + ' unchanged (' + code + ')');
-                }
-              };
-            })(subModuleNames[i]));
-      }
-    } catch (err) {
-      common.error('Failed to reload updated submodules!');
-      console.error(err);
-    }
-  };
-
-  /**
-   * Trigger all submodules to save their data.
+   * Trigger all mainmodules to save their data.
    *
    * @private
    */
   function saveAll() {
-    common.logDebug('Starting save on all submodules.');
-    for (let i = 0; i < subModules.length; i++) {
-      if (typeof subModules[i].save === 'function') {
+    common.logDebug('Starting save on all mainModules.');
+    for (let i = 0; i < mainModules.length; i++) {
+      if (typeof mainModules[i].save === 'function') {
         try {
-          subModules[i].save('async');
+          mainModules[i].save('async');
         } catch (err) {
-          common.error('Saving failed for submodule ' + subModuleNames[i]);
+          common.error('Saving failed for mainModule ' + mainModuleNames[i]);
           console.error(err);
         }
       }
@@ -1207,7 +1142,7 @@ function SpikeyBot() {
 
   command.on('saveall', commandSaveAll);
   /**
-   * Trigger all submodules to save their data.
+   * Trigger all mainModules to save their data.
    * @see {@link SpikeyBot~saveAll()}
    *
    * @private
@@ -1253,9 +1188,9 @@ function SpikeyBot() {
         if (!err) {
           if (stdout && stdout !== 'null') console.log('STDOUT:', stdout);
           if (stderr && stderr !== 'null') console.error('STDERR:', stderr);
-          client.reloadUpdatedSubmodules();
+          client.reloadUpdatedMainModules();
           if (client.shard) {
-            client.shard.broadcastEval('this.reloadUpdatedSubmodules');
+            client.shard.broadcastEval('this.reloadUpdatedMainModules');
           }
           try {
             childProcess.execSync(
@@ -1293,30 +1228,42 @@ function SpikeyBot() {
   }
 
   /**
-   * Get array of all submodule names and the commit they were last loaded from.
+   * Check current loaded mainModule commit to last modified commit, and reload
+   * if the file has changed for all mainModules.
    *
    * @public
-   * @return {Array.<{name: string, commit: string}>}
    */
-  this.getSubmoduleCommits = function() {
-    return subModules
-        .map((el, i) => {
-          return {name: subModuleNames[i], commit: el.commit || 'Unknown'};
-        })
-        .filter((el) => {
-          return el.name && el.name.length > 0;
-        });
-  };
-
-  /**
-   * Get a reference to a submodule with the given name.
-   *
-   * @public
-   * @param {string} name The name of the submodule.
-   * @return {?SubModule}
-   */
-  this.getSubmodule = function(name) {
-    return subModules[subModuleNames.findIndex((el) => el == name)];
+  client.reloadUpdatedMainModules = function() {
+    let smReloaded = false;
+    try {
+      common.log('Reloading updated mainModules.');
+      for (let i = 0; i < mainModules.length; i++) {
+        childProcess
+            .exec(
+                'git diff-index --quiet ' + mainModules[i].commit +
+                ' -- ./src/' + mainModuleNames[i])
+            .on('close', ((name) => {
+              return (code, signal) => {
+                if (code) {
+                  let out = [];
+                  reloadMainModules(name, out);
+                  if (out) common.log(out.join(' '));
+                  if (name == smLoaderFilename) {
+                    smReloaded = true;
+                  }
+                } else {
+                  common.logDebug(name + ' unchanged (' + code + ')');
+                }
+              };
+            })(mainModuleNames[i]));
+      }
+    } catch (err) {
+      common.error('Failed to reload updated mainModules!');
+      console.error(err);
+    }
+    if (!smReloaded) {
+      smLoader.reload();
+    }
   };
 
   /**
