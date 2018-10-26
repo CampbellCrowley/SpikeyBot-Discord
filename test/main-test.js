@@ -306,7 +306,7 @@ function testMessageContent(msg) {
 }
 
 
-client.login(auth.dev);
+client.login(auth.test);
 client.on('message', testMessageContent);
 client.on('ready', () => {
   console.log("Test bot ready");
