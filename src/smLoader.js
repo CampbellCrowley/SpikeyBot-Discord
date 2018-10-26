@@ -378,7 +378,7 @@ function SMLoader() {
   this.reload = function(name, opts, cb) {
     if (typeof cb !== 'function') cb = function() {};
     if (typeof name === 'string') name = [name];
-    if (!name) name = goalSubModuleNames;
+    if (!name || name.length === 0) name = goalSubModuleNames;
     if (!Array.isArray(name) || name.length === 0) {
       cb([]);
       return;
@@ -463,13 +463,13 @@ function SMLoader() {
       let opts = {};
       toReload = toReload.filter((el) => {
         switch (el) {
-          case 'force':
+          case '--force':
             opts.force = true;
             return false;
-          case 'no-schedule':
+          case '--no-schedule':
             opts.ignoreUnloadable = true;
             return false;
-          case 'immediate':
+          case '--immediate':
             opts.schedule = false;
             return false;
           default:
@@ -479,7 +479,7 @@ function SMLoader() {
       self.common.reply(msg, 'Reloading modules...').then((warnMessage) => {
         self.reload(toReload, opts, (out) => {
           warnMessage.edit(
-              '`Reload complete.`\n' + (out.join(' ') || 'NOTHING reloaded'));
+              '`Reload complete.`\n' + (out.join('\n') || 'NOTHING reloaded'));
         });
       });
     } else {

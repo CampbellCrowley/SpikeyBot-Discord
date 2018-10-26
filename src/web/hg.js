@@ -928,7 +928,8 @@ function HGWeb(hg) {
     }
     let message = hg.editTeam(userData.id, gId, cmd, one, two);
     if (message) socket.emit('message', message);
-    socket.emit('game', gId, hg.getGame(gId));
+    if (typeof cb === 'function') cb();
+    // socket.emit('game', gId, hg.getGame(gId));
   }
   this.editTeam = editTeam;
   /**

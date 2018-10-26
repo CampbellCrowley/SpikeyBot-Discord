@@ -5122,6 +5122,7 @@ function HungryGames() {
           return t.players.find((p, i) => {
             if (p == two) {
               p2 = i;
+              return true;
             }
             return false;
           });
