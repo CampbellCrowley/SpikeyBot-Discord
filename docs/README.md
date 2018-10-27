@@ -1030,6 +1030,13 @@ normal submodule, and is treated differently in the SpikeyBot class.
 
 * [Command](#Command) ⇐ [<code>MainModule</code>](#MainModule)
     * _instance_
+        * [.aliases](#Command+aliases) : <code>Array.&lt;string&gt;</code>
+        * [.options](#Command+options) : [<code>CommandSetting</code>](#Command..CommandSetting)
+        * [.validOnlyInGuild](#Command+validOnlyInGuild) : <code>boolean</code>
+        * [.defaultDisabled](#Command+defaultDisabled)
+        * [.disabled](#Command+disabled) : <code>Object</code>
+        * [.enabled](#Command+enabled) : <code>Object</code>
+        * ~~[.deleteEvent](#Command+deleteEvent)~~
         * [.helpMessage](#SubModule+helpMessage) : <code>string</code> \| <code>Discord~MessageEmbed</code>
         * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
         * [.Discord](#SubModule+Discord) : <code>Discord</code>
@@ -1041,12 +1048,17 @@ normal submodule, and is treated differently in the SpikeyBot class.
         * [.initialized](#SubModule+initialized) : <code>boolean</code>
         * [.commit](#SubModule+commit) : <code>string</code>
         * [.loadTime](#SubModule+loadTime) : <code>number</code>
+        * [.getName()](#Command+getName) ⇒ <code>string</code>
+        * [.trigger(msg)](#Command+trigger)
+        * [.set(value, type, id, [id2])](#Command+set)
+        * [.isDisabled(msg)](#Command+isDisabled) ⇒ <code>boolean</code>
+            * [~findMatch(search, data)](#Command+isDisabled..findMatch) ⇒ <code>boolean</code> ℗
+        * [.toJSON()](#Command+toJSON) ⇒ <code>Object</code>
         * [.trigger(cmd, msg)](#Command+trigger) ⇒ <code>boolean</code>
-        * [.on(cmd, cb, [onlyserver])](#Command+on)
-        * [.deleteEvent(cmd)](#Command+deleteEvent)
-        * [.disable(cmd, channel)](#Command+disable)
+        * [.on(cmd, [cb], [onlyserver])](#Command+on)
+        * [.removeListener(cmd)](#Command+removeListener)
         * [.enable(cmd, channel)](#Command+enable)
-        * [.find(cmd, [msg])](#Command+find) ⇒ <code>function</code>
+        * [.find(cmd, [msg])](#Command+find) ⇒ [<code>SingleCommand</code>](#Command..SingleCommand)
         * [.validate(cmd, msg, [func])](#Command+validate) ⇒ <code>string</code>
         * [.getAllNames()](#Command+getAllNames) ⇒ <code>Array.&lt;string&gt;</code>
         * [.import(data)](#MainModule+import)
@@ -1064,11 +1076,69 @@ normal submodule, and is treated differently in the SpikeyBot class.
         * *[.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>*
     * _inner_
         * [~cmds](#Command..cmds) : [<code>Object.&lt;commandHandler&gt;</code>](#commandHandler) ℗
-        * [~internalBlacklist](#Command..internalBlacklist) : <code>Object.&lt;Array.&lt;string&gt;&gt;</code> ℗
         * [~userSettings](#Command..userSettings) : <code>Object.&lt;Object.&lt;CommandSetting&gt;&gt;</code> ℗
         * [~onlyservermessage](#Command..onlyservermessage) : <code>string</code> ℗
         * [~commandSettingsFile](#Command..commandSettingsFile) : <code>string</code> ℗
+        * [~SingleCommand(cmd, handler, [opts])](#Command..SingleCommand)
+        * [~CommandSetting([opts])](#Command..CommandSetting)
 
+<a name="Command+aliases"></a>
+
+### command.aliases : <code>Array.&lt;string&gt;</code>
+All versions of this command that may be used to trigger the same
+handler.
+
+**Kind**: instance property of [<code>Command</code>](#Command)  
+**Access**: public  
+<a name="Command+options"></a>
+
+### command.options : [<code>CommandSetting</code>](#Command..CommandSetting)
+The current options and settings for this command.
+
+**Kind**: instance property of [<code>Command</code>](#Command)  
+**Access**: public  
+<a name="Command+validOnlyInGuild"></a>
+
+### command.validOnlyInGuild : <code>boolean</code>
+If the command is only allowed to be used in guilds.
+
+**Kind**: instance property of [<code>Command</code>](#Command)  
+**Access**: public  
+<a name="Command+defaultDisabled"></a>
+
+### command.defaultDisabled
+Whether this command is disabled for all by default and requires them to
+be in the list of enabled IDs. If this is false, the command is enabled
+for everyone, unless they fall under the 'disabled' list.
+
+**Kind**: instance property of [<code>Command</code>](#Command)  
+<a name="Command+disabled"></a>
+
+### command.disabled : <code>Object</code>
+The IDs of all places where this command is currently disabled. Any ID
+will be mapped to a truthy value. Roles will be mapped to the guild ID
+and the role ID.
+
+**Kind**: instance property of [<code>Command</code>](#Command)  
+**Access**: public  
+<a name="Command+enabled"></a>
+
+### command.enabled : <code>Object</code>
+The IDs of all places where this command is currently enabled. Any ID
+will be mapped to a truthy value. Roles will be mapped to the guild ID
+and the role ID.
+
+**Kind**: instance property of [<code>Command</code>](#Command)  
+**Access**: public  
+<a name="Command+deleteEvent"></a>
+
+### ~~command.deleteEvent~~
+***Deprecated***
+
+Alias for [Command.removeListener](Command.removeListener)
+
+**Kind**: instance property of [<code>Command</code>](#Command)  
+**Access**: public  
 <a name="SubModule+helpMessage"></a>
 
 ### command.helpMessage : <code>string</code> \| <code>Discord~MessageEmbed</code>
@@ -1147,6 +1217,81 @@ needs to be reloaded because the file has been modified since loading.
 
 **Kind**: instance constant of [<code>Command</code>](#Command)  
 **Access**: public  
+<a name="Command+getName"></a>
+
+### command.getName() ⇒ <code>string</code>
+Get the primary key for this object. The first or only value passed in
+for `cmd`, and may be used to show the user the command that this object
+stores information about.
+
+**Kind**: instance method of [<code>Command</code>](#Command)  
+**Returns**: <code>string</code> - The command string.  
+**Access**: public  
+<a name="Command+trigger"></a>
+
+### command.trigger(msg)
+The function to call when this command has been triggered.
+
+**Kind**: instance method of [<code>Command</code>](#Command)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message that is triggering this command. |
+
+<a name="Command+set"></a>
+
+### command.set(value, type, id, [id2])
+Enable, disable, or neutralize this command for the associated guild,
+channel, user, or role.
+
+**Kind**: instance method of [<code>Command</code>](#Command)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| value | <code>string</code> | `enabled`|`disabled`|`default` Whether to set this ID to enabled, disabled, or to whatever the default value is. |
+| type | <code>string</code> | `guild`|`channel`|`user`|`role` The type of ID that is being given. |
+| id | <code>string</code> | The id to set the value to. |
+| [id2] | <code>string</code> | The guild ID if `type` is 'role', of where the role is created. |
+
+<a name="Command+isDisabled"></a>
+
+### command.isDisabled(msg) ⇒ <code>boolean</code>
+Check if this command is disabled with the given context.
+
+**Kind**: instance method of [<code>Command</code>](#Command)  
+**Returns**: <code>boolean</code> - Whether the command has been disabled for any reason.  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message with the current context of which to check if the command is disabled. |
+
+<a name="Command+isDisabled..findMatch"></a>
+
+#### isDisabled~findMatch(search, data) ⇒ <code>boolean</code> ℗
+Searches the given object against the reference data to see if they
+find any matching IDs.
+
+**Kind**: inner method of [<code>isDisabled</code>](#Command+isDisabled)  
+**Returns**: <code>boolean</code> - Returns if a match was found.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| search | <code>Command~CommandSetting.disabled</code> \| <code>Command~CommandSetting.enabled</code> | The search data. |
+| data | <code>Discord~Message</code> | The context to search for. |
+
+<a name="Command+toJSON"></a>
+
+### command.toJSON() ⇒ <code>Object</code>
+Creates a JSON formatted object with the necessary properties for
+re-creating this object.
+
+**Kind**: instance method of [<code>Command</code>](#Command)  
+**Returns**: <code>Object</code> - Object ready to be stringified for file saving.  
+**Access**: public  
 <a name="Command+trigger"></a>
 
 ### command.trigger(cmd, msg) ⇒ <code>boolean</code>
@@ -1163,60 +1308,52 @@ argument.
 
 <a name="Command+on"></a>
 
-### command.on(cmd, cb, [onlyserver])
+### command.on(cmd, [cb], [onlyserver])
 Registers a listener for a command.
 
 **Kind**: instance method of [<code>Command</code>](#Command)  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| cmd | <code>string</code> \| <code>Array.&lt;string&gt;</code> |  | Command to listen for. |
-| cb | [<code>commandHandler</code>](#commandHandler) |  | Function to call when command is triggered. |
+| cmd | <code>string</code> \| <code>Array.&lt;string&gt;</code> \| [<code>SingleCommand</code>](#Command..SingleCommand) |  | Command to listen for. |
+| [cb] | [<code>commandHandler</code>](#commandHandler) |  | Function to call when command is triggered. |
 | [onlyserver] | <code>boolean</code> | <code>false</code> | Whether the command is only allowed on a server. |
 
-<a name="Command+deleteEvent"></a>
+<a name="Command+removeListener"></a>
 
-### command.deleteEvent(cmd)
+### command.removeListener(cmd)
 Remove listener for a command.
 
 **Kind**: instance method of [<code>Command</code>](#Command)  
+**Access**: public  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| cmd | <code>string</code> \| <code>Array.&lt;string&gt;</code> | Command to remove listener for. |
-
-<a name="Command+disable"></a>
-
-### command.disable(cmd, channel)
-Temporarily disables calling the handler for the given command in a
-certain Discord text channel or guild.
-
-**Kind**: instance method of [<code>Command</code>](#Command)  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| cmd | <code>string</code> | Command to disable. |
-| channel | <code>string</code> | ID of channel to disable command for. |
+| cmd | <code>string</code> \| <code>Array.&lt;string&gt;</code> | Command or alias of command to remove listener for. |
 
 <a name="Command+enable"></a>
 
 ### command.enable(cmd, channel)
-Re-enable a command that was disabled previously.
+Re-enable a command that was disabled previously. This manages internal
+blocking, not user-defined settings. Changes made here do not persist
+accross reboots.
 
 **Kind**: instance method of [<code>Command</code>](#Command)  
+**Access**: public  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | cmd | <code>string</code> | Command to enable. |
-| channel | <code>string</code> | ID of channel to enable command for. |
+| channel | <code>string</code> | ID of channel or guild to enable command for. |
 
 <a name="Command+find"></a>
 
-### command.find(cmd, [msg]) ⇒ <code>function</code>
+### command.find(cmd, [msg]) ⇒ [<code>SingleCommand</code>](#Command..SingleCommand)
 Returns the callback function for the given event.
 
 **Kind**: instance method of [<code>Command</code>](#Command)  
-**Returns**: <code>function</code> - The event callback.  
+**Returns**: [<code>SingleCommand</code>](#Command..SingleCommand) - The single command object reference.  
+**Access**: public  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -1231,12 +1368,13 @@ actually fire the event.
 
 **Kind**: instance method of [<code>Command</code>](#Command)  
 **Returns**: <code>string</code> - Message causing failure, or null if valid.  
+**Access**: public  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | cmd | <code>string</code> | The command to validate. |
 | msg | <code>Discord~Message</code> | The message that will fire the event. If null, checks for channel and guild specific changes will not be validated. |
-| [func] | [<code>commandHandler</code>](#commandHandler) | A command handler override to use for settings lookup. If this is not specified, the handler associated with cmd will be fetched. |
+| [func] | [<code>SingleCommand</code>](#Command..SingleCommand) | A command handler override to use for settings lookup. If this is not specified, the handler associated with cmd will be fetched. |
 
 <a name="Command+getAllNames"></a>
 
@@ -1245,6 +1383,7 @@ Fetches a list of all currently registered commands.
 
 **Kind**: instance method of [<code>Command</code>](#Command)  
 **Returns**: <code>Array.&lt;string&gt;</code> - Array of all registered commands.  
+**Access**: public  
 <a name="MainModule+import"></a>
 
 ### command.import(data)
@@ -1394,13 +1533,6 @@ All tracked commands with handlers.
 
 **Kind**: inner property of [<code>Command</code>](#Command)  
 **Access**: private  
-<a name="Command..internalBlacklist"></a>
-
-### Command~internalBlacklist : <code>Object.&lt;Array.&lt;string&gt;&gt;</code> ℗
-List of disabled commands, and the channels they are disabled in.
-
-**Kind**: inner property of [<code>Command</code>](#Command)  
-**Access**: private  
 <a name="Command..userSettings"></a>
 
 ### Command~userSettings : <code>Object.&lt;Object.&lt;CommandSetting&gt;&gt;</code> ℗
@@ -1425,6 +1557,33 @@ Filename in the guild's subdirectory where command settings are stored.
 **Kind**: inner constant of [<code>Command</code>](#Command)  
 **Default**: <code>&quot;/commandSettings.js&quot;</code>  
 **Access**: private  
+<a name="Command..SingleCommand"></a>
+
+### Command~SingleCommand(cmd, handler, [opts])
+Object storing information about a single command, it's handler, and
+default options.
+
+**Kind**: inner method of [<code>Command</code>](#Command)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| cmd | <code>string</code> \| <code>Array.&lt;string&gt;</code> | All commands the handler will fire on. |
+| handler | <code>function</code> | The event handler when the command has been triggered. |
+| [opts] | <code>CommandSetting</code> | The options for this command. |
+
+<a name="Command..CommandSetting"></a>
+
+### Command~CommandSetting([opts])
+Stores all settings related to a command.
+
+**Kind**: inner method of [<code>Command</code>](#Command)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| [opts] | [<code>CommandSetting</code>](#Command..CommandSetting) | The options to set, or nothing for default values. |
+
 <a name="Common"></a>
 
 ## Common

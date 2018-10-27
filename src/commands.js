@@ -108,13 +108,274 @@ function Command() {
    * @type {Object.<commandHandler>}
    */
   let cmds = {};
+
   /**
-   * List of disabled commands, and the channels they are disabled in.
+   * Object storing information about a single command, it's handler, and
+   * default options.
+   * @public
    *
-   * @private
-   * @type {Object.<string[]>}
+   * @param {string|string[]} cmd All commands the handler will fire on.
+   * @param {Function} handler The event handler when the command has been
+   * triggered.
+   * @param {CommandSetting} [opts] The options for this command.
    */
-  let internalBlacklist = {};
+  function SingleCommand(cmd, handler, opts) {
+    const me = this;
+    if (typeof handler !== 'function') {
+      throw new Error('Command handler must be a function.');
+    }
+    if (typeof cmd === 'string') cmd = [cmd];
+    if (!Array.isArray(cmd)) {
+      throw new Error(
+          'Commands must be specified as a string, or array of strings.');
+    }
+
+    /**
+     * Get the primary key for this object. The first or only value passed in
+     * for `cmd`, and may be used to show the user the command that this object
+     * stores information about.
+     * @public
+     *
+     * @return {string} The command string.
+     */
+    this.getName = function() {
+      return me.aliases[0];
+    };
+    /**
+     * All versions of this command that may be used to trigger the same
+     * handler.
+     * @public
+     *
+     * @type {string[]}
+     */
+    this.aliases = cmd.map((el) => {
+      return el.toLowerCase();
+    });
+    /**
+     * The function to call when this command has been triggered.
+     * @public
+     *
+     * @param {Discord~Message} msg The message that is triggering this command.
+     */
+    this.trigger = function(msg) {
+      if (me.options.isDisabled(msg)) {
+        throw new Error('Attempted to trigger disabled command!');
+      }
+      handler(msg);
+    };
+    /**
+     * The current options and settings for this command.
+     * @public
+     * @type {Command~CommandSetting}
+     */
+    this.options = new CommandSetting(opts);
+  }
+  this.SingleCommand = SingleCommand;
+
+  /**
+   * Stores all settings related to a command.
+   * @public
+   *
+   * @param {Command~CommandSetting} [opts] The options to set, or nothing for
+   * default values.
+   */
+  function CommandSetting(opts) {
+    const me = this;
+    if (!opts) opts = {};
+    /**
+     * If the command is only allowed to be used in guilds.
+     * @public
+     * @type {boolean}
+     */
+    this.validOnlyInGuild = opts.validOnlyInGuild || false;
+    /**
+     * Whether this command is disabled for all by default and requires them to
+     * be in the list of enabled IDs. If this is false, the command is enabled
+     * for everyone, unless they fall under the 'disabled' list.
+     */
+    this.defaultDisabled = opts.defaultDisabled || false;
+    /**
+     * The IDs of all places where this command is currently disabled. Any ID
+     * will be mapped to a truthy value. Roles will be mapped to the guild ID
+     * and the role ID.
+     * @public
+     * @type {{
+     *    guilds: Object.<boolean>,
+     *    channels: Object.<boolean>,
+     *    users: Object.<boolean>,
+     *    roles: Object.<boolean>
+     * }}
+     */
+    this.disabled = opts.disabled || {};
+    if (typeof this.disabled.guilds !== 'object') {
+      this.disabled.guilds = {};
+    }
+    if (typeof this.disabled.channels !== 'object') {
+      this.disabled.channels = {};
+    }
+    if (typeof this.disabled.users !== 'object') {
+      this.disabled.users = {};
+    }
+    if (typeof this.disabled.roles !== 'object') {
+      this.disabled.roles = {};
+    }
+    /**
+     * The IDs of all places where this command is currently enabled. Any ID
+     * will be mapped to a truthy value. Roles will be mapped to the guild ID
+     * and the role ID.
+     * @public
+     * @type {{
+     *    guilds: Object.<boolean>,
+     *    channels: Object.<boolean>,
+     *    users: Object.<boolean>,
+     *    roles: Object.<boolean>
+     * }}
+     */
+    this.enabled = opts.enabled || {};
+    if (typeof this.enabled.guilds !== 'object') {
+      this.enabled.guilds = {};
+    }
+    if (typeof this.enabled.channels !== 'object') {
+      this.enabled.channels = {};
+    }
+    if (typeof this.enabled.users !== 'object') {
+      this.enabled.users = {};
+    }
+    if (typeof this.enabled.roles !== 'object') {
+      this.enabled.roles = {};
+    }
+
+    /**
+     * Enable, disable, or neutralize this command for the associated guild,
+     * channel, user, or role.
+     * @public
+     *
+     * @param {string} value `enabled`|`disabled`|`default` Whether to set this
+     * ID to enabled, disabled, or to whatever the default value is.
+     * @param {string} type `guild`|`channel`|`user`|`role` The type of ID that
+     * is being given.
+     * @param {string} id The id to set the value to.
+     * @param {string} [id2] The guild ID if `type` is 'role', of where the role
+     * is created.
+     */
+    this.set = function(value, type, id, id2) {
+      switch (value) {
+        case 'enabled':
+        case 'disabled':
+        case 'default':
+          break;
+        default:
+          throw new Error(
+              'Invalid value to set the command to \'' + value +
+              '\'. (Expected \'enabled\', \'disabled\', or \'default\'.)');
+      }
+      switch (type) {
+        case 'guild':
+          if (!id || !self.client.guilds.get(id)) {
+            throw new Error('Guild ID is invalid for id: ' + id);
+          }
+          if (value != 'enabled') delete me.enabled.guilds[id];
+          else me.enabled.guilds[id] = true;
+          if (value != 'disabled') delete me.disabled.guilds[id];
+          else me.disabled.guilds[id] = true;
+          return;
+        case 'channel':
+          if (!id || !self.client.channels.get(id)) {
+            throw new Error('Channel ID is invalid for id: ' + id);
+          }
+          if (value != 'enabled') delete me.enabled.channels[id];
+          else me.enabled.channels[id] = true;
+          if (value != 'disabled') delete me.disabled.channels[id];
+          else me.disabled.channels[id] = true;
+          return;
+        case 'user':
+          if (!id || !self.client.users.get(id)) {
+            throw new Error('User ID is invalid for id: ' + id);
+          }
+          if (value != 'enabled') delete me.enabled.users[id];
+          else me.enabled.users[id] = true;
+          if (value != 'disabled') delete me.disabled.users[id];
+          else me.disabled.users[id] = true;
+          return;
+        case 'role':
+          if (!id2 || !self.client.guilds.get(id2)) {
+            throw new Error('Guild ID is invalid for id2: ' + id2);
+          }
+          if (!id || !self.client.guilds.get(id2).roles.get(id)) {
+            throw new Error('Role ID is invalid for id: ' + id);
+          }
+          if (value != 'enabled') delete me.enabled.roles[id2 + '/' + id];
+          else me.enabled.roles[id2 + '/' + id] = true;
+          if (value != 'disabled') delete me.disabled.roles[id2 + '/' + id];
+          else me.disabled.roles[id2 + '/' + id] = true;
+          return;
+        default:
+          throw new Error(
+              'Invalid type to set command enabled/disabled status to \'' +
+              type +
+              '\'. (Expected \'guild\', \'channel\', \'user\', or \'role\'.)');
+      }
+    };
+
+    /**
+     * Check if this command is disabled with the given context.
+     * @public
+     *
+     * @param {Discord~Message} msg The message with the current context of
+     * which to check if the command is disabled.
+     * @return {boolean} Whether the command has been disabled for any reason.
+     */
+    this.isDisabled = function(msg) {
+      if (!msg) {
+        throw new Error('Checking for disabled requires a Discord~Message.');
+      }
+      if (!msg.guild && me.validOnlyInGuild) return false;
+      let disallow = me.defaultDisabled ? me.enabled : me.disabled;
+      let matched = findMatch(disallow, msg);
+      return (!matched && me.defaultDisabled) ||
+          (matched && !me.defaultDisabled);
+
+      /**
+       * Searches the given object against the reference data to see if they
+       * find any matching IDs.
+       * @private
+       *
+       * @param {Command~CommandSetting.disabled|Command~CommandSetting.enabled}
+       * search The search data.
+       * @param {Discord~Message} data The context to search for.
+       * @return {boolean} Returns if a match was found.
+       */
+      function findMatch(search, data) {
+        if (search.users[msg.author.id]) return true;
+        if (search.channels[msg.channel.id]) return true;
+        if (msg.guild) {
+          if (search.guilds[msg.guild.id]) return true;
+          if (msg.member.roles.find((r) => {
+            return saerch.roles[r];
+          })) {
+            return true;
+          }
+        }
+        return false;
+      }
+    };
+    /**
+     * Creates a JSON formatted object with the necessary properties for
+     * re-creating this object.
+     * @public
+     *
+     * @return {Object} Object ready to be stringified for file saving.
+     */
+    this.toJSON = function() {
+      return {
+        validOnlyInGuild: me.validOnlyInGuild,
+        defaultDisabled: me.defaultDisabled,
+        disabled: me.disabled,
+        enabled: me.enabled,
+      };
+    };
+  }
+  this.CommandSetting = CommandSetting;
 
   /**
    * Specific settings defined by users as restrictions on commands. Mapped by
@@ -165,12 +426,11 @@ function Command() {
       if (failure === 'Guild Only') {
         self.common.reply(msg, onlyservermessage);
         return true;
-      } else if (failure === 'Disabled In Channel') {
-        self.common.reply(
-            msg, 'This command has been disabled in this channel.');
+      } else if (failure === 'Disabled') {
+        self.common.reply(msg, 'This command has been temporarily disabled.');
         return true;
-      } else if (failure == 'Disabled In Guild') {
-        self.common.reply(msg, 'This command has been disabled in this guild.');
+      } else if (failure === 'User Disabled') {
+        self.common.reply(msg, 'This command has been disabled by a user.');
         return true;
       } else if (failure) {
         self.common.reply(
@@ -195,41 +455,43 @@ function Command() {
   /**
    * Registers a listener for a command.
    *
-   * @param {string|string[]} cmd Command to listen for.
-   * @param {commandHandler} cb Function to call when command is triggered.
+   * @param {string|string[]|Command~SingleCommand} cmd Command to listen for.
+   * @param {commandHandler} [cb] Function to call when command is triggered.
    * @param {boolean} [onlyserver=false] Whether the command is only allowed
    * on a server.
    */
   this.on = function(cmd, cb, onlyserver) {
-    if (typeof cb !== 'function') {
-      throw new Error('Event callback must be a function.');
+    // Legacy mapping.
+    if (!(cmd instanceof SingleCommand)) {
+      cmd = new SingleCommand(cmd, cb, {validOnlyInGuild: onlyserver});
     }
-    cb.validOnlyOnServer = onlyserver || false;
-    if (typeof cmd === 'string') {
-      cmd = cmd.toLowerCase();
-      if (cmds[cmd]) {
-        self.error(
-            'Attempted to register a second handler for event that already ' +
-            'exists! (' + cmd + ')');
-      } else {
-        cmds[cmd] = cb;
-      }
-    } else if (Array.isArray(cmd)) {
-      for (let i = 0; i < cmd.length; i++) self.on(cmd[i], cb, onlyserver);
+
+    let keys = Object.keys(cmds);
+    let duplicates = cmd.aliases.filter((el) => {
+      return keys.includes(el);
+    });
+    if (duplicates.length > 0) {
+      self.error(
+          'Attempted to register a second handler for event that already ' +
+          'exists! (' + duplicates.join(', ') + ')');
     } else {
-      throw new Error('Event must be string or array of strings');
+      cmds[cmd.getName()] = cmd;
     }
   };
   /**
    * Remove listener for a command.
+   * @public
    *
-   * @param {string|string[]} cmd Command to remove listener for.
+   * @param {string|string[]} cmd Command or alias of command to remove listener
+   * for.
    */
-  this.deleteEvent = function(cmd) {
+  this.removeListener = function(cmd) {
     if (typeof cmd === 'string') {
-      if (cmds[cmd]) {
-        delete cmds[cmd];
-        delete internalBlacklist[cmd];
+      let obj = Object.entries(cmds).find((el) => {
+        return el[1].aliases.includes(cmd);
+      });
+      if (obj) {
+        delete cmds[obj[0]];
       } else {
         self.error(
             'Requested deletion of event handler for event that was never ' +
@@ -237,47 +499,26 @@ function Command() {
       }
     } else if (Array.isArray(cmd)) {
       for (let i = 0; i < cmd.length; i++) {
-        if (cmds[cmd[i]]) {
-          delete cmds[cmd[i]];
-          delete internalBlacklist[cmd[i]];
-        } else {
-          self.error(
-              'Requested deletion of event handler for event that was ' +
-              'never registered! (' + cmd[i] + ')');
-        }
+        this.removeListener(cmd[i]);
       }
     } else {
       throw new Error('Event must be string or array of strings');
     }
   };
   /**
-   * Temporarily disables calling the handler for the given command in a
-   * certain Discord text channel or guild.
-   *
-   * @param {string} cmd Command to disable.
-   * @param {string} channel ID of channel to disable command for.
+   * Alias for {@link Command.removeListener}
+   * @deprecated
+   * @public
    */
-  this.disable = function(cmd, channel) {
-    if (cmds[cmd]) {
-      if (!internalBlacklist[cmd] ||
-          internalBlacklist[cmd].lastIndexOf(channel) == -1) {
-        if (!internalBlacklist[cmd]) {
-          internalBlacklist[cmd] = [channel];
-        } else {
-          internalBlacklist[cmd].push(channel);
-        }
-      }
-    } else {
-      self.error(
-          'Requested disable for event that was never registered! (' + cmd +
-          ')');
-    }
-  };
+  this.deleteEvent = this.removeListener;
   /**
-   * Re-enable a command that was disabled previously.
+   * Re-enable a command that was disabled previously. This manages internal
+   * blocking, not user-defined settings. Changes made here do not persist
+   * accross reboots.
+   * @public
    *
    * @param {string} cmd Command to enable.
-   * @param {string} channel ID of channel to enable command for.
+   * @param {string} channel ID of channel or guild to enable command for.
    */
   this.enable = function(cmd, channel) {
     if (internalBlacklist[cmd]) {
@@ -295,29 +536,33 @@ function Command() {
 
   /**
    * Returns the callback function for the given event.
+   * @public
    *
    * @param {string} cmd Command to lookup.
    * @param {Discord~Message} [msg] Message that is to trigger this command.
    * Used for removing prefix from cmd if necessary.
-   * @return {function} The event callback.
+   * @return {Command~SingleCommand} The single command object reference.
    */
   this.find = function(cmd, msg) {
     if (!cmd) cmd = msg.content.match(/^\S+/)[0];
     if (!cmd) return;
     if (msg && cmd.startsWith(msg.prefix)) cmd = cmd.replace(msg.prefix, '');
     cmd = cmd.toLowerCase();
-    return cmds[cmd];
+    return Object.values(cmds).find((el) => {
+      return el.aliases.includes(cmd);
+    });
   };
 
   /**
    * Checks that the given command can be run with the given context. Does not
    * actually fire the event.
+   * @public
    *
    * @param {string} cmd The command to validate.
    * @param {?Discord~Message} msg The message that will fire the event. If
    * null, checks for channel and guild specific changes will not be
    * validated.
-   * @param {commandHandler} [func] A command handler override to use for
+   * @param {Command~SingleCommand} [func] A command handler override to use for
    * settings lookup. If this is not specified, the handler associated with
    * cmd will be fetched.
    * @return {?string} Message causing failure, or null if valid.
@@ -325,14 +570,19 @@ function Command() {
   this.validate = function(cmd, msg, func) {
     if (!func) func = self.find(cmd, msg);
     if (!func) return 'No Handler';
-    if (msg && func.validOnlyOnServer && msg.guild === null) {
+    if (msg && func.options.validOnlyInGuild && msg.guild === null) {
       return 'Guild Only';
     }
-    if (msg && internalBlacklist[cmd]) {
-      if (internalBlacklist[cmd].lastIndexOf(msg.channel.id) > -1) {
-        return 'Disabled In Channel';
-      } else if (internalBlacklist[cmd].lastIndexOf(msg.guild.id) > -1) {
-        return 'Disabled In Guild';
+    if (msg) {
+      if (func.options.isDisabled(msg)) {
+        return 'Disabled';
+      }
+      let guildValues = userSettings[msg.guild.id];
+      if (guildValues) {
+        let commandValues = guildValues[func.getName()];
+        if (commandValues && commandValues.isDisabled(msg)) {
+          return 'User Disabled';
+        }
       }
     }
     return null;
@@ -340,6 +590,7 @@ function Command() {
 
   /**
    * Fetches a list of all currently registered commands.
+   * @public
    *
    * @return {string[]} Array of all registered commands.
    */

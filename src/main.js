@@ -207,7 +207,7 @@ function Main() {
    * @constant
    */
   const addLink = 'https://discordapp.com/oauth2/authorize?' +
-      '&client_id=318552464356016131&scope=bot';
+      '&client_id={id}&scope=bot';
   /**
    * All of the possible messages to show when using the ban command.
    *
@@ -943,7 +943,8 @@ function Main() {
    * @listens Command#invite
    */
   function commandAddMe(msg) {
-    self.common.reply(msg, addmessage, addLink);
+    self.common.reply(
+        msg, addmessage, addLink.replace(/\{id\}/g, self.client.user.id));
   }
 
   /**
