@@ -55,7 +55,7 @@ function CmdScheduling() {
    * @fires CmdScheduling#shutdown
    * */
   this.shutdown = function() {
-    self.command.deleteEvent(['schedule', 'sch', 'sched', 'scheduled']);
+    self.command.deleteEvent('schedule');
     if (longInterval) self.client.clearInterval(longInterval);
     for (let i in schedules) {
       if (!schedules[i] || !schedules[i].length) continue;

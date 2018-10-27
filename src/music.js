@@ -171,7 +171,7 @@ function Music() {
     self.command.on('resume', commandResume, true);
     self.command.on(['leave', 'stop', 'stfu'], commandLeave, true);
     self.command.on('skip', commandSkip, true);
-    self.command.on(['q', 'queue', 'playing'], commandQueue, true);
+    self.command.on(['queue', 'q', 'playing'], commandQueue, true);
     self.command.on(['remove', 'dequeue'], commandRemove, true);
     self.command.on('lyrics', commandLyrics);
     self.command.on('record', commandRecord, true);
@@ -207,20 +207,20 @@ function Music() {
     self.command.deleteEvent('play');
     self.command.deleteEvent('pause');
     self.command.deleteEvent('resume');
-    self.command.deleteEvent(['leave', 'stop', 'stfu']);
+    self.command.deleteEvent('leave');
     self.command.deleteEvent('skip');
-    self.command.deleteEvent(['q', 'queue', 'playing']);
-    self.command.deleteEvent(['remove', 'dequeue']);
+    self.command.deleteEvent('q');
+    self.command.deleteEvent('remove');
     self.command.deleteEvent('lyrics');
     self.command.deleteEvent('record');
     self.command.deleteEvent('kokomo');
     self.command.deleteEvent('vi');
     self.command.deleteEvent('airhorn');
     self.command.deleteEvent('rickroll');
-    self.command.deleteEvent(['follow', 'unfollow', 'stalk', 'stalkme']);
+    self.command.deleteEvent('follow');
     self.command.deleteEvent('musicstats');
-    self.command.deleteEvent(['volume', 'vol', 'v']);
-    self.command.deleteEvent(['clear', 'empty']);
+    self.command.deleteEvent('volume');
+    self.command.deleteEvent('clear');
 
     self.client.removeListener('voiceStateUpdate', handleVoiceStateUpdate);
 

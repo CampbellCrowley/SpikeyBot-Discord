@@ -1036,6 +1036,7 @@ normal submodule, and is treated differently in the SpikeyBot class.
         * [.defaultDisabled](#Command+defaultDisabled)
         * [.disabled](#Command+disabled) : <code>Object</code>
         * [.enabled](#Command+enabled) : <code>Object</code>
+        * [.permissions](#Command+permissions) : <code>number</code>
         * ~~[.deleteEvent](#Command+deleteEvent)~~
         * [.helpMessage](#SubModule+helpMessage) : <code>string</code> \| <code>Discord~MessageEmbed</code>
         * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
@@ -1051,13 +1052,12 @@ normal submodule, and is treated differently in the SpikeyBot class.
         * [.getName()](#Command+getName) ⇒ <code>string</code>
         * [.trigger(msg)](#Command+trigger)
         * [.set(value, type, id, [id2])](#Command+set)
-        * [.isDisabled(msg)](#Command+isDisabled) ⇒ <code>boolean</code>
-            * [~findMatch(search, data)](#Command+isDisabled..findMatch) ⇒ <code>boolean</code> ℗
+        * [.isDisabled(msg)](#Command+isDisabled) ⇒ <code>number</code>
+            * [~findMatch(search, data)](#Command+isDisabled..findMatch) ⇒ <code>number</code> ℗
         * [.toJSON()](#Command+toJSON) ⇒ <code>Object</code>
         * [.trigger(cmd, msg)](#Command+trigger) ⇒ <code>boolean</code>
         * [.on(cmd, [cb], [onlyserver])](#Command+on)
         * [.removeListener(cmd)](#Command+removeListener)
-        * [.enable(cmd, channel)](#Command+enable)
         * [.find(cmd, [msg])](#Command+find) ⇒ [<code>SingleCommand</code>](#Command..SingleCommand)
         * [.validate(cmd, msg, [func])](#Command+validate) ⇒ <code>string</code>
         * [.getAllNames()](#Command+getAllNames) ⇒ <code>Array.&lt;string&gt;</code>
@@ -1071,16 +1071,20 @@ normal submodule, and is treated differently in the SpikeyBot class.
         * [.debug(msg)](#SubModule+debug)
         * [.warn(msg)](#SubModule+warn)
         * [.error(msg)](#SubModule+error)
-        * *[.shutdown()](#SubModule+shutdown)*
+        * [.shutdown()](#SubModule+shutdown)
         * [.save([opt])](#SubModule+save)
         * *[.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>*
     * _inner_
-        * [~cmds](#Command..cmds) : [<code>Object.&lt;commandHandler&gt;</code>](#commandHandler) ℗
+        * [~cmds](#Command..cmds) : <code>Object.&lt;SingleCommand&gt;</code> ℗
         * [~userSettings](#Command..userSettings) : <code>Object.&lt;Object.&lt;CommandSetting&gt;&gt;</code> ℗
         * [~onlyservermessage](#Command..onlyservermessage) : <code>string</code> ℗
         * [~commandSettingsFile](#Command..commandSettingsFile) : <code>string</code> ℗
         * [~SingleCommand(cmd, handler, [opts])](#Command..SingleCommand)
         * [~CommandSetting([opts])](#Command..CommandSetting)
+        * [~commandDisable(msg)](#Command..commandDisable) : <code>Command~commandHandler</code> ℗
+        * [~commandEnable(msg)](#Command..commandEnable) : <code>Command~commandHandler</code> ℗
+        * [~commandShow(msg)](#Command..commandShow) : <code>Command~commandHandler</code> ℗
+        * [~commandReset(msg)](#Command..commandReset) : <code>Command~commandHandler</code> ℗
 
 <a name="Command+aliases"></a>
 
@@ -1117,18 +1121,31 @@ for everyone, unless they fall under the 'disabled' list.
 ### command.disabled : <code>Object</code>
 The IDs of all places where this command is currently disabled. Any ID
 will be mapped to a truthy value. Roles will be mapped to the guild ID
-and the role ID.
+and the role ID. Use [Command~CommandSetting.set](Command~CommandSetting.set) to change these
+values.
 
 **Kind**: instance property of [<code>Command</code>](#Command)  
 **Access**: public  
+**Read only**: true  
 <a name="Command+enabled"></a>
 
 ### command.enabled : <code>Object</code>
 The IDs of all places where this command is currently enabled. Any ID
 will be mapped to a truthy value. Roles will be mapped to the guild ID
-and the role ID.
+and the role ID. Use [Command~CommandSetting.set](Command~CommandSetting.set) to change these
+values.
 
 **Kind**: instance property of [<code>Command</code>](#Command)  
+**Access**: public  
+**Read only**: true  
+<a name="Command+permissions"></a>
+
+### command.permissions : <code>number</code>
+Bitfield representation of the required permissions for a user to have to
+run this command. Same bitfield used by Discord~Permissions.
+
+**Kind**: instance property of [<code>Command</code>](#Command)  
+**Default**: <code>0</code>  
 **Access**: public  
 <a name="Command+deleteEvent"></a>
 
@@ -1257,11 +1274,12 @@ channel, user, or role.
 
 <a name="Command+isDisabled"></a>
 
-### command.isDisabled(msg) ⇒ <code>boolean</code>
+### command.isDisabled(msg) ⇒ <code>number</code>
 Check if this command is disabled with the given context.
 
 **Kind**: instance method of [<code>Command</code>](#Command)  
-**Returns**: <code>boolean</code> - Whether the command has been disabled for any reason.  
+**Returns**: <code>number</code> - 0 if not disabled, 2 if disabled is specific to user, 1
+if disabled for any other reason.  
 **Access**: public  
 
 | Param | Type | Description |
@@ -1270,12 +1288,13 @@ Check if this command is disabled with the given context.
 
 <a name="Command+isDisabled..findMatch"></a>
 
-#### isDisabled~findMatch(search, data) ⇒ <code>boolean</code> ℗
+#### isDisabled~findMatch(search, data) ⇒ <code>number</code> ℗
 Searches the given object against the reference data to see if they
 find any matching IDs.
 
 **Kind**: inner method of [<code>isDisabled</code>](#Command+isDisabled)  
-**Returns**: <code>boolean</code> - Returns if a match was found.  
+**Returns**: <code>number</code> - 0 if not disabled, 2 if disabled is specific to user,
+1 if disabled for any other reason.  
 **Access**: private  
 
 | Param | Type | Description |
@@ -1330,21 +1349,6 @@ Remove listener for a command.
 | Param | Type | Description |
 | --- | --- | --- |
 | cmd | <code>string</code> \| <code>Array.&lt;string&gt;</code> | Command or alias of command to remove listener for. |
-
-<a name="Command+enable"></a>
-
-### command.enable(cmd, channel)
-Re-enable a command that was disabled previously. This manages internal
-blocking, not user-defined settings. Changes made here do not persist
-accross reboots.
-
-**Kind**: instance method of [<code>Command</code>](#Command)  
-**Access**: public  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| cmd | <code>string</code> | Command to enable. |
-| channel | <code>string</code> | ID of channel or guild to enable command for. |
 
 <a name="Command+find"></a>
 
@@ -1499,10 +1503,11 @@ Log using common.error, but automatically set name.
 
 <a name="SubModule+shutdown"></a>
 
-### *command.shutdown()*
+### command.shutdown()
 Shutdown and disable this submodule. Removes all event listeners.
 
-**Kind**: instance abstract method of [<code>Command</code>](#Command)  
+**Kind**: instance method of [<code>Command</code>](#Command)  
+**Overrides**: [<code>shutdown</code>](#SubModule+shutdown)  
 **Access**: protected  
 <a name="SubModule+save"></a>
 
@@ -1528,8 +1533,8 @@ putting the module into an uncontrollable state.
 **Access**: public  
 <a name="Command..cmds"></a>
 
-### Command~cmds : [<code>Object.&lt;commandHandler&gt;</code>](#commandHandler) ℗
-All tracked commands with handlers.
+### Command~cmds : <code>Object.&lt;SingleCommand&gt;</code> ℗
+All tracked commands mapped by command name.
 
 **Kind**: inner property of [<code>Command</code>](#Command)  
 **Access**: private  
@@ -1569,7 +1574,7 @@ default options.
 | Param | Type | Description |
 | --- | --- | --- |
 | cmd | <code>string</code> \| <code>Array.&lt;string&gt;</code> | All commands the handler will fire on. |
-| handler | <code>function</code> | The event handler when the command has been triggered. |
+| handler | [<code>commandHandler</code>](#commandHandler) | The event handler when the command has been triggered. |
 | [opts] | <code>CommandSetting</code> | The options for this command. |
 
 <a name="Command..CommandSetting"></a>
@@ -1583,6 +1588,54 @@ Stores all settings related to a command.
 | Param | Type | Description |
 | --- | --- | --- |
 | [opts] | [<code>CommandSetting</code>](#Command..CommandSetting) | The options to set, or nothing for default values. |
+
+<a name="Command..commandDisable"></a>
+
+### Command~commandDisable(msg) : <code>Command~commandHandler</code> ℗
+Allow user to disable a command.
+
+**Kind**: inner method of [<code>Command</code>](#Command)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message the user sent that triggered this. |
+
+<a name="Command..commandEnable"></a>
+
+### Command~commandEnable(msg) : <code>Command~commandHandler</code> ℗
+Allow user to enable a command.
+
+**Kind**: inner method of [<code>Command</code>](#Command)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message the user sent that triggered this. |
+
+<a name="Command..commandShow"></a>
+
+### Command~commandShow(msg) : <code>Command~commandHandler</code> ℗
+Show user the currently configured settings for commands.
+
+**Kind**: inner method of [<code>Command</code>](#Command)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message the user sent that triggered this. |
+
+<a name="Command..commandReset"></a>
+
+### Command~commandReset(msg) : <code>Command~commandHandler</code> ℗
+Reset all custom command settings to default.
+
+**Kind**: inner method of [<code>Command</code>](#Command)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message the user sent that triggered this. |
 
 <a name="Common"></a>
 
@@ -8713,7 +8766,6 @@ Main class that manages the bot.
         * [~botName](#SpikeyBot..botName) : <code>string</code> ℗
         * [~initialized](#SpikeyBot..initialized) : <code>boolean</code> ℗
         * [~saveInterval](#SpikeyBot..saveInterval) : <code>Interval</code> ℗
-        * [~reactToAnthony](#SpikeyBot..reactToAnthony) : <code>boolean</code> ℗
         * [~guildPrefixes](#SpikeyBot..guildPrefixes) : <code>Object.&lt;string&gt;</code> ℗
         * [~version](#SpikeyBot..version) : <code>string</code> ℗
         * [~testChannel](#SpikeyBot..testChannel) : <code>string</code> ℗
@@ -8733,7 +8785,6 @@ Main class that manages the bot.
         * [~onWarn(info)](#SpikeyBot..onWarn) ℗
         * [~onDebug(info)](#SpikeyBot..onDebug) ℗
         * [~onMessage(msg)](#SpikeyBot..onMessage) ℗
-        * [~commandToggleReact(msg)](#SpikeyBot..commandToggleReact) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandUpdateGame(msg)](#SpikeyBot..commandUpdateGame) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandChangePrefix(msg)](#SpikeyBot..commandChangePrefix) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandReboot(msg, [silent])](#SpikeyBot..commandReboot) : [<code>commandHandler</code>](#commandHandler) ℗
@@ -8894,14 +8945,6 @@ Begins after onReady.
 - [SpikeyBot~onReady()](SpikeyBot~onReady())
 - [saveFrequency](#SpikeyBot..saveFrequency)
 
-<a name="SpikeyBot..reactToAnthony"></a>
-
-### SpikeyBot~reactToAnthony : <code>boolean</code> ℗
-Should we add a reaction to every message that Anthony sends. Overriden if
-reboot.dat exists.
-
-**Kind**: inner property of [<code>SpikeyBot</code>](#SpikeyBot)  
-**Access**: private  
 <a name="SpikeyBot..guildPrefixes"></a>
 
 ### SpikeyBot~guildPrefixes : <code>Object.&lt;string&gt;</code> ℗
@@ -9085,18 +9128,6 @@ Handle a message sent.
 | Param | Type | Description |
 | --- | --- | --- |
 | msg | <code>Discord~Message</code> | Message that was sent in Discord. |
-
-<a name="SpikeyBot..commandToggleReact"></a>
-
-### SpikeyBot~commandToggleReact(msg) : [<code>commandHandler</code>](#commandHandler) ℗
-Toggle reactions to Anthony.
-
-**Kind**: inner method of [<code>SpikeyBot</code>](#SpikeyBot)  
-**Access**: private  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord~Message</code> | Message that triggered command. |
 
 <a name="SpikeyBot..commandUpdateGame"></a>
 

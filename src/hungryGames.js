@@ -2945,7 +2945,7 @@ function HungryGames() {
     if (!find(id).options.disableOutput) {
       msg.channel.send(embed);
     }
-    self.command.disable('say', msg.channel.id);
+    self.command.find('say').options.set('disabled', 'channel', msg.channel.id);
     find(id).outputChannel = msg.channel.id;
     dayEventIntervals[id] = self.client.setInterval(function() {
       if (web && web.dayStateChange) web.dayStateChange(id);
@@ -4376,7 +4376,8 @@ function HungryGames() {
         nextDay(msg, id);
       }
     } else {
-      self.command.enable('say', msg.channel.id);
+      self.command.find('say').options.set(
+          'default', 'channel', msg.channel.id);
     }
   }
   /**
@@ -4400,7 +4401,8 @@ function HungryGames() {
       delete dayEventIntervals[id];
       delete autoPlayTimeout[id];
       // delete battleMessage[id];
-      self.command.enable('say', find(id).outputChannel);
+      self.command.find('say').options.set(
+          'default', 'channel', find(id).outputChannel);
     }
   }
 

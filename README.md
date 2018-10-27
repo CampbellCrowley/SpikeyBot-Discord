@@ -18,7 +18,7 @@
 #### Math
 `add` `simplify` `solve` `evaluate` `derive` `graph`
 #### Admin
-`purge` `ban` `smite` `togglemute` `changeprefix` `togglebanmessages`
+`purge` `ban` `smite` `togglemute` `changeprefix` `togglebanmessages` `enable` `disable` `show` `reset`
 ### Patreon
 `patreon` `tts`
 
@@ -73,8 +73,6 @@
   - Sends a message to the top text channel introducing the bot.
 - User in guild is banned
   - Sends a message saying the user was banned and by whom.
-- Anthony sends a message
-  - Add the surprised emoji as a reaction (😮)
 
 ***
 

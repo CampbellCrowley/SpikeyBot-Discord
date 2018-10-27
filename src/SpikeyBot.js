@@ -18,7 +18,6 @@ const childProcess = require('child_process');
  * @listens Process#uncaughtException
  */
 function unhandledRejection(reason, p) {
-  // console.log('Unhandled Rejection at:\n', p /*, '\nreason:', reason*/);
   console.log(reason);
 }
 process.on('unhandledRejection', unhandledRejection);
@@ -29,9 +28,9 @@ process.on('uncaughtException', unhandledRejection);
  * @class
  * @listens Discord~Client#ready
  * @listens Discord~Client#message
- * @listens Command#toggleReact
  * @listens Command#updateGame
  * @listens Command#reboot
+ * @listens Command#update
  * @listens Command#mainreload
  */
 function SpikeyBot() {
@@ -285,6 +284,8 @@ function SpikeyBot() {
         mainModuleNames[i]);
     try {
       mainModules[i] = require(mainModuleNames[i]);
+      mainModules[i].modifiedTime =
+          fs.statSync(__dirname + '/' + mainModuleNames[i]).mtime;
       if (mainModuleNames[i] == commandFilename) {
         command = mainModules[i];
       } else if (mainModuleNames[i] == smLoaderFilename) {
@@ -330,15 +331,6 @@ function SpikeyBot() {
    * @type {number}
    */
   const saveFrequency = 30 * 60 * 1000;
-
-  /**
-   * Should we add a reaction to every message that Anthony sends. Overriden if
-   * reboot.dat exists.
-   *
-   * @private
-   * @type {boolean}
-   */
-  let reactToAnthony = true;
 
   /**
    * Discord IDs that are allowed to reboot the bot.
@@ -495,8 +487,6 @@ function SpikeyBot() {
               })
               .catch(() => {});
         }
-
-        if (msg.noReactToAnthony) reactToAnthony = false;
       });
     }
     if (!initialized) {
@@ -588,6 +578,8 @@ function SpikeyBot() {
    * @listens Discord~Client#message
    */
   function onMessage(msg) {
+    // Message was sent by Discord, not a user.
+    if (msg.system) return;
     if (testInstance) {
       if (!testMode && msg.author.id === client.user.id &&
           msg.channel.id == testChannel) {
@@ -612,25 +604,12 @@ function SpikeyBot() {
     // In unit test mode, only respond to messages in the test channel.
     if (testMode != (msg.channel.id == testChannel)) return;
 
-    if (!minimal && msg.content.endsWith(', I\'m Dad!')) {
-      msg.channel.send('Hi Dad, I\'m Spikey!');
-    }
     if (!testMode && msg.author.bot) return;
 
     msg.prefix = self.getPrefix(msg.guild);
 
-    // If message is equation we can graph.
-    const regexForm = new RegExp('^[yY]\\s*=');
-    if (msg.content.match(regexForm)) {
-      msg.content = msg.prefix + 'graph ' + msg.content;
-    }
-
     if (msg.guild === null && !msg.content.startsWith(msg.prefix)) {
       msg.content = msg.prefix + msg.content;
-    }
-
-    if (!minimal && reactToAnthony && msg.author.id == '174030717846552576') {
-      msg.react('😮');
     }
 
     if (isCmd(msg, '')) {
@@ -671,21 +650,6 @@ function SpikeyBot() {
   }
 
   if (!minimal) {
-    command.on('togglereact', commandToggleReact);
-    /**
-     * Toggle reactions to Anthony.
-     *
-     * @private
-     * @type {commandHandler}
-     * @param {Discord~Message} msg Message that triggered command.
-     * @listens Command#toggleReact
-     */
-    function commandToggleReact(msg) {
-      common.reply(
-          msg, 'Toggled reactions to Anthony to ' + !reactToAnthony + '. 😮');
-      reactToAnthony = !reactToAnthony;
-    }
-
     command.on('updategame', commandUpdateGame);
     /**
      * Change current status message.
@@ -935,7 +899,6 @@ function SpikeyBot() {
           let toSave = {
             id: msg.id,
             channel: {id: msg.channel.id},
-            noReactToAnthony: !reactToAnthony,
           };
           try {
             fs.writeFileSync('./save/reboot.dat', JSON.stringify(toSave));
@@ -1040,8 +1003,9 @@ function SpikeyBot() {
       }
       if (!force) {
         try {
-          if (fs.statSync(__dirname + '/' + mainModuleNames[i]).mtime <=
-              mainModules[i].loadTime) {
+          if (fs.statSync(__dirname + '/' + mainModuleNames[i]).mtime -
+                  mainModules[i].modifiedTime ==
+              0) {
             continue;
           }
         } catch (err) {
@@ -1099,6 +1063,8 @@ function SpikeyBot() {
             mainModuleNames[i]);
         try {
           mainModules[i] = require(mainModuleNames[i]);
+          mainModules[i].modifiedTime =
+              fs.statSync(__dirname + '/' + mainModuleNames[i]).mtime;
           process.stdout.write(': DONE\n');
         } catch (err) {
           process.stdout.write(': ERROR\n');

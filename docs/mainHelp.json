@@ -746,6 +746,66 @@
               "result": "After confirming, all commands must start with !#!. For example ```{prefix}ping``` would become ```!#!ping```."
             }
           ]
+        },
+        {
+          "command": "enable",
+          "description": "Enable a command that is currently disabled for a user, guild, channel, or role.",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "enable smite @Moderator",
+              "result": "This will give the users with the role of `Moderator` permission to use the smite command even if they do not have the Manage Roles permission."
+            },
+            {
+              "description": "Basic Usage",
+              "command": "enable hg #hunger-games @SpikeyRobot#0971",
+              "result": "All hg commands will be enabled for everybody in the #hunger-games channel, and SpikeyRobot will be able to use the hg commands in all channels."
+            }
+          ]
+        },
+        {
+          "command": "disable",
+          "description": "Disable a command that is currently enabled for a user, guild, channel, or role.",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "disable smite @Moderator",
+              "result": "This will prevent the users with the role of `Moderator` from using the smite command. Role permissions will still override this (ei if they have the Manage Roles permission, they may still use this command)."
+            },
+            {
+              "description": "Basic Usage",
+              "command": "disable hg #hunger-games @SpikeyRobot#0971",
+              "result": "hg Commands will no longer be allowed in the #hunger-games channel, and SpikeyRobot will no longer have permission to use the hg commands."
+            }
+          ]
+        },
+        {
+          "command": "show",
+          "description": "Show all current enabled and disabled command settings.",
+          "aliases": "show, enabled, disabled, showenabled, showdisabled",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "show",
+              "result": "A list of all custom setting values will be sent to you."
+            },
+            {
+              "description": "Specific Information",
+              "command": "show disabled",
+              "result": "Shows the current settings for the `disabled` command, even if the settings are default."
+            }
+          ]
+        },
+        {
+          "command": "reset",
+          "description": "Reset all enabled and disabled commands to default settings.",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "reset",
+              "result": "The bot wil confirm that you wish to do this, then delete all custom settings and reset them to default values."
+            }
+          ]
         }
       ]
     },

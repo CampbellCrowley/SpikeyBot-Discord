@@ -129,6 +129,10 @@ See [spikeybot.com](https://www.spikeybot.com/) for examples and more informatio
 | ?togglemute | Turn on or off automatically preventing a person from using @everyone if they spam it. |  |
 | ?togglebanmessages | Turn on or off sending a message when someone gets banned. |  |
 | ?changeprefix | Set a custom prefix for all commands on the current server. |  |
+| ?enable | Enable a command that is currently disabled for a user, guild, channel, or role. |  |
+| ?disable | Disable a command that is currently enabled for a user, guild, channel, or role. |  |
+| ?show | Show all current enabled and disabled command settings. | show, enabled, disabled, showenabled, showdisabled |
+| ?reset | Reset all enabled and disabled commands to default settings. |  |
 
 
 | Command | Description | Aliases |

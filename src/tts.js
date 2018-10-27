@@ -39,7 +39,7 @@ function TTS() {
   };
   /** @inheritdoc */
   this.shutdown = function() {
-    self.command.deleteEvent(['tts', 'speak']);
+    self.command.deleteEvent('tts');
   };
 
   let ttsClient;

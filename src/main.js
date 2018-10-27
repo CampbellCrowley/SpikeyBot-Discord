@@ -293,6 +293,7 @@ function Main() {
     self.command.on('sendto', commandSendTo);
     self.command.on(['thanks', 'thx', 'thankyou', 'thank'], commandThankYou);
     self.command.on('listcommands', commandListCommands);
+    self.command.on('togglereact', commandToggleReact);
 
     self.client.on('guildCreate', onGuildCreate);
     self.client.on('guildDelete', onGuildDelete);
@@ -444,41 +445,41 @@ function Main() {
 
   /** @inheritdoc */
   this.shutdown = function() {
-    self.command.deleteEvent(['addme', 'invite']);
-    self.command.deleteEvent('add');
-    self.command.deleteEvent('simplify');
-    self.command.deleteEvent('solve');
-    self.command.deleteEvent(['eval', 'evaluate']);
-    self.command.deleteEvent('graph');
-    self.command.deleteEvent('derive');
-    self.command.deleteEvent('js');
-    self.command.deleteEvent(
-        ['timer', 'timers', 'remind', 'reminder', 'reminders']);
-    self.command.deleteEvent('say');
-    self.command.deleteEvent('createdate');
-    self.command.deleteEvent('joindate');
-    self.command.deleteEvent(['pmme', 'dmme']);
-    self.command.deleteEvent(['pmspikey', 'dmspikey']);
-    self.command.deleteEvent('thotpm');
-    self.command.deleteEvent('pmuser');
-    self.command.deleteEvent(['flip', 'coin', 'coinflip', 'flipcoin']);
-    self.command.deleteEvent(['purge', 'prune']);
-    self.command.deleteEvent(['fuckyou', 'ban']);
-    self.command.deleteEvent('smite');
-    self.command.deleteEvent(['profile', 'avatar']);
-    self.command.deleteEvent('ping');
-    self.command.deleteEvent('uptime');
-    self.command.deleteEvent('game');
-    self.command.deleteEvent('version');
-    self.command.deleteEvent(['dice', 'die', 'roll', 'd']);
-    self.command.deleteEvent('togglemute');
-    self.command.deleteEvent('perms');
-    self.command.deleteEvent('stats');
-    self.command.deleteEvent('lookup');
-    self.command.deleteEvent('togglebanmessages');
-    self.command.deleteEvent('sendto');
-    self.command.deleteEvent(['thanks', 'thx', 'thankyou', 'thank']);
-    self.command.deleteEvent('listcommands');
+    self.command.removeListener('addme');
+    self.command.removeListener('add');
+    self.command.removeListener('simplify');
+    self.command.removeListener('solve');
+    self.command.removeListener('eval');
+    self.command.removeListener('graph');
+    self.command.removeListener('derive');
+    self.command.removeListener('js');
+    self.command.removeListener('timer');
+    self.command.removeListener('say');
+    self.command.removeListener('createdate');
+    self.command.removeListener('joindate');
+    self.command.removeListener('pmme');
+    self.command.removeListener('pmspikey');
+    self.command.removeListener('thotpm');
+    self.command.removeListener('pmuser');
+    self.command.removeListener('flip');
+    self.command.removeListener('purge');
+    self.command.removeListener('fuckyou');
+    self.command.removeListener('smite');
+    self.command.removeListener('profile');
+    self.command.removeListener('ping');
+    self.command.removeListener('uptime');
+    self.command.removeListener('game');
+    self.command.removeListener('version');
+    self.command.removeListener('dice');
+    self.command.removeListener('togglemute');
+    self.command.removeListener('perms');
+    self.command.removeListener('stats');
+    self.command.removeListener('lookup');
+    self.command.removeListener('togglebanmessages');
+    self.command.removeListener('sendto');
+    self.command.removeListener('thanks');
+    self.command.removeListener('listcommands');
+    self.command.removeListener('togglereact');
 
     self.client.removeListener('guildCreate', onGuildCreate);
     self.client.removeListener('guildDelete', onGuildDelete);
@@ -776,6 +777,10 @@ function Main() {
           }
         }
       }
+    }
+
+    if (msg.content.endsWith(', I\'m Dad!')) {
+      msg.channel.send('Hi Dad, I\'m Spikey!');
     }
 
     if (!disabledAutoSmite[msg.guild.id]) {

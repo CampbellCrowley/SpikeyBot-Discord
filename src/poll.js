@@ -45,8 +45,8 @@ function Polling() {
   };
   /** @inheritdoc */
   this.shutdown = function() {
-    self.command.deleteEvent(['poll', 'vote']);
-    self.command.deleteEvent(['endpoll', 'endvote']);
+    self.command.deleteEvent('poll');
+    self.command.deleteEvent('endpoll');
 
     Object.entries(currentPolls).forEach((p) => {
       if (p[1].timeout) self.client.clearTimeout(p[1].timeout);
