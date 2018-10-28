@@ -226,8 +226,8 @@ const hgTests = [
        'to remove it.\n```']),
   new Test(
       'Reset All command', '~hg reset all',
-      ['<@422623712534200321>\n```\nThere is no data to reset. Start a new ' +
-       'game with "~hg create".\n```']),
+      ['<@422623712534200321>\n```\nReset HG\n```There is no data to reset. ' +
+       'Start a new game with "~hg create".']),
   new Test(
       'No data: Pause autoplay', '~hg pause',
       ['<@422623712534200321>\n```\nNot autoplaying. If you wish to autoplay' +
