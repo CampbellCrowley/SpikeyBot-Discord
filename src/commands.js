@@ -646,12 +646,14 @@ function Command() {
       let isDisabledLocally = def;
       let bitfield = func.options.permissions;
 
-      let guildValues = userSettings[msg.guild.id];
-      if (guildValues) {
-        let commandValues = guildValues[func.getName()];
-        if (commandValues) {
-          isDisabledLocally = commandValues.isDisabled(msg);
-          bitfield = bitfield | commandValues.permissions;
+      if (msg.guild) {
+        let guildValues = userSettings[msg.guild.id];
+        if (guildValues) {
+          let commandValues = guildValues[func.getName()];
+          if (commandValues) {
+            isDisabledLocally = commandValues.isDisabled(msg);
+            bitfield = bitfield | commandValues.permissions;
+          }
         }
       }
 
