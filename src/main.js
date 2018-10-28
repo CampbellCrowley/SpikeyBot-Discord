@@ -73,6 +73,7 @@ math.config({matrix: 'Array'});
  * @listens Command#thank
  * @listens Command#thankyou
  * @listens Command#listCommands
+ * @listens Command#getPrefix
  */
 function Main() {
   const self = this;
@@ -313,6 +314,7 @@ function Main() {
     self.command.on('sendto', commandSendTo);
     self.command.on(['thanks', 'thx', 'thankyou', 'thank'], commandThankYou);
     self.command.on('listcommands', commandListCommands);
+    self.command.on('getPrefix', commandGetPrefix);
 
     self.client.on('guildCreate', onGuildCreate);
     self.client.on('guildDelete', onGuildDelete);
@@ -498,6 +500,7 @@ function Main() {
     self.command.removeListener('sendto');
     self.command.removeListener('thanks');
     self.command.removeListener('listcommands');
+    self.command.removeListener('getPrefix');
 
     self.client.removeListener('guildCreate', onGuildCreate);
     self.client.removeListener('guildDelete', onGuildDelete);
@@ -2529,6 +2532,22 @@ function Main() {
   function commandListCommands(msg) {
     let list = self.command.getAllNames().sort();
     self.common.reply(msg, JSON.stringify(list), list.length);
+  }
+
+  /**
+   * User has requested to view the current prefix for their guild. This is
+   * intended to be fired internally, usually through chatbot.js due to no other
+   * way to reference this if the user has forgotten the prefix.
+   * @private
+   *
+   * @type {Command~commandHandler}
+   * @param {Discord~Message} msg The message that triggered this command.
+   * @listens Command#getPrefix
+   */
+  function commandGetPrefix(msg) {
+    self.common.reply(
+        msg, 'The current prefix for this guild is',
+        self.bot.getPrefix(msg.guild));
   }
 
   /**

@@ -114,6 +114,16 @@ function ChatBot() {
           if (result.parameters.fields.command) {
             let cmd = result.parameters.fields.command.stringValue.replace(
                 /^command /, msg.prefix);
+            // Replace parameters in the command with the values matched by
+            // dialogflow.
+            Object.entries(result.parameters.fields).forEach((el) => {
+              if (el[0] == 'command') return;
+              cmd = cmd.replace(
+                  new RegExp(escapeRegExp('$' + el[0]), 'g'),
+                  el[1].stringValue);
+            });
+
+
             self.log('Triggered command: ' + cmd);
             msg.content = cmd;
             if (!self.command.trigger(cmd.split(/ |\n/)[0], msg)) {
@@ -124,6 +134,16 @@ function ChatBot() {
         .catch((err) => {
           console.error('ERROR:', err);
         });
+  }
+  /**
+   * Escape a given string to be passed into a regular expression.
+   * @private
+   *
+   * @param {string} str Input to escape.
+   * @return {string} Escaped string.
+   */
+  function escapeRegExp(str) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   }
 }
 module.exports = new ChatBot();

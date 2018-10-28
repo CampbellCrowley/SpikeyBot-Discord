@@ -173,6 +173,7 @@ Manages natural language interaction.
     * _inner_
         * [~onMessage(msg)](#ChatBot..onMessage) ℗
         * [~onChatMessage(msg)](#ChatBot..onChatMessage) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~escapeRegExp(str)](#ChatBot..escapeRegExp) ⇒ <code>string</code> ℗
 
 <a name="SubModule+helpMessage"></a>
 
@@ -385,6 +386,19 @@ Send message text content to dialogflow for handling.
 | Param | Type | Description |
 | --- | --- | --- |
 | msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="ChatBot..escapeRegExp"></a>
+
+### ChatBot~escapeRegExp(str) ⇒ <code>string</code> ℗
+Escape a given string to be passed into a regular expression.
+
+**Kind**: inner method of [<code>ChatBot</code>](#ChatBot)  
+**Returns**: <code>string</code> - Escaped string.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| str | <code>string</code> | Input to escape. |
 
 <a name="CmdScheduling"></a>
 
@@ -4884,6 +4898,7 @@ Basic commands and features for the bot.
         * [~commandSendTo(msg)](#Main..commandSendTo) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandThankYou(msg)](#Main..commandThankYou) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandListCommands(msg)](#Main..commandListCommands) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~commandGetPrefix(msg)](#Main..commandGetPrefix) : <code>Command~commandHandler</code> ℗
         * [~sigint()](#Main..sigint) ℗
         * [~Timer](#Main..Timer) : <code>Object</code>
 
@@ -5821,6 +5836,20 @@ Fetch all registered commands and send them to the user.
 | Param | Type | Description |
 | --- | --- | --- |
 | msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Main..commandGetPrefix"></a>
+
+### Main~commandGetPrefix(msg) : <code>Command~commandHandler</code> ℗
+User has requested to view the current prefix for their guild. This is
+intended to be fired internally, usually through chatbot.js due to no other
+way to reference this if the user has forgotten the prefix.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message that triggered this command. |
 
 <a name="Main..sigint"></a>
 
