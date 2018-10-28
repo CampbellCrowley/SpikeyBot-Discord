@@ -167,7 +167,7 @@ const hgTests = [
   new Test('Randomize teams', '~hg teams randomize', ['#noerr']),
   new Test(
       'Reset Options command', '~hg reset options',
-      ['<@422623712534200321>\n```\nResetting ALL options!\n```']),
+      ['<@422623712534200321>\n```\nReset HG\n```Resetting ALL options!']),
   new Test(
       'Enable no output mode', '~hg opt disableOutput true',
       [
@@ -178,13 +178,13 @@ const hgTests = [
   new Test('Run another game with no output', '~hg go', ['#noerr', '#embed']),
   new Test(
       'Reset All command', '~hg reset all',
-      ['<@422623712534200321>\n```\nResetting ALL Hungry Games data for ' +
-       'this server!\n```']),
+      ['<@422623712534200321>\n```\nReset HG\n```Resetting ALL Hungry Games ' +
+       'data for this server!']),
   new Test('Events command', '~hg events', ['#embed']),
   new Test(
       'Reset All command', '~hg reset all',
-      ['<@422623712534200321>\n```\nThere is no data to reset. Start a new ' +
-       'game with "~hg create".\n```']),
+      ['<@422623712534200321>\n```\nReset HG\n```There is no data to reset. ' +
+       'Start a new game with "~hg create".']),
   new Test(
       'No data: List players', '~hg players',
       [
@@ -194,8 +194,8 @@ const hgTests = [
       ]),
   new Test(
       'Reset All command', '~hg reset all',
-      ['<@422623712534200321>\n```\nResetting ALL Hungry Games data for ' +
-       'this server!\n```']),
+      ['<@422623712534200321>\n```\nReset HG\n```Resetting ALL Hungry Games ' +
+       'data for this server!']),
   new Test(
       'No data: Exclude', '~hg exclude',
       [
@@ -206,8 +206,8 @@ const hgTests = [
       ]),
   new Test(
       'Reset All command', '~hg reset all',
-      ['<@422623712534200321>\n```\nResetting ALL Hungry Games data for ' +
-       'this server!\n```']),
+      ['<@422623712534200321>\n```\nReset HG\n```Resetting ALL Hungry Games ' +
+       'data for this server!']),
   new Test(
       'No data: Include', '~hg include',
       [
@@ -218,8 +218,8 @@ const hgTests = [
       ]),
   new Test(
       'Reset All command', '~hg reset all',
-      ['<@422623712534200321>\n```\nResetting ALL Hungry Games data for ' +
-       'this server!\n```']),
+      ['<@422623712534200321>\n```\nReset HG\n```Resetting ALL Hungry Games ' +
+       'data for this server!']),
   new Test(
       'No data: Event remove', '~hg events remove 0',
       ['<@422623712534200321>\n```\nYou must first create an event in order ' +
