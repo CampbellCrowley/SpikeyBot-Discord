@@ -50,7 +50,6 @@
   ],
   "rembot": [
     "./web/settings.js",
-    "./web/webhooks.js",
     "./hungryGames.js",
     "./main.js",
     "./ticTacToe.js",

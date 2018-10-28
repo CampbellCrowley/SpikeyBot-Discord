@@ -480,8 +480,10 @@ function SMLoader() {
       });
       self.common.reply(msg, 'Reloading modules...').then((warnMessage) => {
         self.reload(toReload, opts, (out) => {
-          warnMessage.edit(
-              '`Reload complete.`\n' + (out.join('\n') || 'NOTHING reloaded'));
+          let embed = new self.Discord.MessageEmbed();
+          embed.setTitle('Reload complete.');
+          embed.setDescription(out.join('\n') || 'NOTHING reloaded');
+          warnMessage.edit(self.common.mention(msg), embed);
         });
       });
     } else {
@@ -545,8 +547,10 @@ function SMLoader() {
         function done() {
           numComplete++;
           if (numComplete < numTotal) return;
-          warnMessage.edit(
-              '`Unload complete.`\n' + (out.join(' ') || 'NOTHING unloaded'));
+          let embed = new self.Discord.MessageEmbed();
+          embed.setTitle('Unload complete.');
+          embed.setDescription(out.join(' ') || 'NOTHING unloaded');
+          warnMessage.edit(self.common.mention(msg), embed);
         }
         if (numTotal == 0) done();
       });
@@ -594,8 +598,10 @@ function SMLoader() {
         function done() {
           numComplete++;
           if (numComplete < numTotal) return;
-          warnMessage.edit(
-              '`Load complete.`\n' + (out.join(' ') || 'NOTHING loaded'));
+          let embed = new self.Discord.MessageEmbed();
+          embed.setTitle('Load complete.');
+          embed.setDescription(out.join(' ') || 'NOTHING loaded');
+          warnMessage.edit(self.common.mention(msg), embed);
         }
         if (numTotal == 0) done();
       });
