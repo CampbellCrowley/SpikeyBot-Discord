@@ -1216,6 +1216,51 @@
       "message": "{attacker} take[As|] one of {victim} arm[Vs|].",
       "attacker": { "count": "-1", "outcome": "nothing" },
       "victim": { "count": "-1", "outcome": "wounded" }
+    },
+    {
+      "message": "{attacker} kill[As|] {victim}!",
+      "victim": { "count": 1, "outcome": "dies" },
+      "attacker": { "count": 1, "outcome": "nothing", "killer": true }
+    },
+    {
+      "message": "{victim} is fat.",
+      "victim": { "count": -1, "outcome": "nothing" },
+      "attacker": { "count": 0, "outcome": "nothing" }
+    },
+    {
+      "message": "Hello world!",
+      "victim": { "count": "0", "outcome": "nothing" },
+      "attacker": { "count": "0", "outcome": "nothing" }
+    },
+    {
+      "message": "{victim} get[Vs|] scratched in the face by a cat!",
+      "victim": { "count": "-1", "outcome": "wounded" },
+      "attacker": { "count": "0", "outcome": "nothing" }
+    },
+    {
+      "message": "{victim} [Vis|are] delighted by the sight of a few cats, and end up getting scratched to death!",
+      "victim": { "count": "-1", "outcome": "dies" },
+      "attacker": { "count": "0", "outcome": "nothing" }
+    },
+    {
+      "message": "{victim} find[Vs|] a cute little doggo in the woods. The doggo ended up killing them.",
+      "victim": { "count": "-1", "outcome": "dies" },
+      "attacker": { "count": "0", "outcome": "nothing" }
+    },
+    {
+      "message": "{victim} [Vis|are] surrounded by a pack of hungry wolves, and [Vis|are] becomes their dinner.",
+      "victim": { "count": "-1", "outcome": "dies" },
+      "attacker": { "count": "0", "outcome": "nothing" }
+    },
+    {
+      "message": "{victim} befriend[Vs|] a chicken.",
+      "victim": { "count": "-1", "outcome": "nothing" },
+      "attacker": { "count": "0", "outcome": "nothing" }
+    },
+    {
+      "message": "Thousands of eyes watch {victim} as they walk into a cave.",
+      "victim": { "count": -1, "outcome": "nothing" },
+      "attacker": { "count": 0, "outcome": "nothing" }
     }
   ],
   "arena": [
