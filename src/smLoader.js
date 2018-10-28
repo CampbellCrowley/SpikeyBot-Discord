@@ -482,6 +482,7 @@ function SMLoader() {
         self.reload(toReload, opts, (out) => {
           let embed = new self.Discord.MessageEmbed();
           embed.setTitle('Reload complete.');
+          embed.setColor([255, 0, 255]);
           embed.setDescription(out.join('\n') || 'NOTHING reloaded');
           warnMessage.edit(self.common.mention(msg), embed);
         });
@@ -549,6 +550,7 @@ function SMLoader() {
           if (numComplete < numTotal) return;
           let embed = new self.Discord.MessageEmbed();
           embed.setTitle('Unload complete.');
+          embed.setColor([255, 0, 255]);
           embed.setDescription(out.join(' ') || 'NOTHING unloaded');
           warnMessage.edit(self.common.mention(msg), embed);
         }
@@ -600,6 +602,7 @@ function SMLoader() {
           if (numComplete < numTotal) return;
           let embed = new self.Discord.MessageEmbed();
           embed.setTitle('Load complete.');
+          embed.setColor([255, 0, 255]);
           embed.setDescription(out.join(' ') || 'NOTHING loaded');
           warnMessage.edit(self.common.mention(msg), embed);
         }
