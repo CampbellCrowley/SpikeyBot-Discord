@@ -1,6 +1,7 @@
 // Copyright 2018 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
-let dateFormat = require('dateformat');
+const dateFormat = require('dateformat');
+const Discord = require('discord.js');
 
 /**
  * Commonly required things. Helper functions and constants.
@@ -376,11 +377,16 @@ Common.userSaveDir = Common.prototype.userSaveDir;
 /**
  * Creates formatted string for mentioning the author of msg.
  *
- * @param {Discord~Message} msg Message to format a mention for the author of.
+ * @param {Discord~Message|Discord~UserResolvable} msg Message to format a
+ * mention for the author of.
  * @return {string} Formatted mention string.
  */
 Common.prototype.mention = function(msg) {
-  return `<@${msg.author.id}>`;
+  if (msg.author) {
+    return `<@${msg.author.id}>`;
+  } else if (msg.id) {
+    return `<@${msg.id}>`;
+  }
 };
 /**
  * Creates formatted string for mentioning the author of msg.
@@ -395,13 +401,20 @@ Common.mention = Common.prototype.mention;
  *
  * @param {Discord~Message} msg Message to reply to.
  * @param {string} text The main body of the message.
- * @param {string} post The footer of the message.
+ * @param {string} [post] The footer of the message.
  * @return {Promise} Promise of Discord~Message that we attempted to send.
  */
 Common.prototype.reply = function(msg, text, post) {
   if (!msg.channel || !msg.channel.send) return null;
-  return msg.channel.send(
-      Common.mention(msg) + '\n```\n' + text + '\n```' + (post || ''));
+  let embed = new Discord.MessageEmbed();
+  embed.setTitle(text);
+  embed.setColor([255, 0, 255]);
+  if (post) {
+    embed.setDescription(post);
+  }
+  return msg.channel.send(Common.mention(msg), embed);
+  /* return msg.channel.send(
+      Common.mention(msg) + '\n```\n' + text + '\n```' + (post || '')); */
 };
 /**
  * Replies to the author and channel of msg with the given message.

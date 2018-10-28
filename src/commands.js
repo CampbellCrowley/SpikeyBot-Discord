@@ -400,7 +400,6 @@ function Command() {
           (matched && !me.defaultDisabled));
 
       if (!isDisabled) return 0;
-      console.log(matched, me.enabled, msg.author.id);
       if (me.defaultDisabled) {
         return 1;
       } else {
@@ -514,19 +513,27 @@ function Command() {
             msg, 'An admin has prevented you from using this command.');
         return true;
       } else if (failure) {
-        self.common.reply(
-            msg, 'I am unable to attempt this command for ' +
-                'you due of an unknown reason.',
-            failure);
-        self.error('Comand failed: ' + cmd + ': ' + failure);
-        return false;
+        if (failure.startsWith('NoPerm:')) {
+          self.common.reply(
+              msg, 'You must have one of the following permissions ' +
+                  'to use this command:\n' +
+                  failure.substring(7, failure.length));
+          return true;
+        } else {
+          self.common.reply(
+              msg, 'I am unable to attempt this command for ' +
+                  'you due of an unknown reason.',
+              failure);
+          self.error('Comand failed: ' + cmd + ': ' + failure);
+          return true;
+        }
       }
       msg.text = msg.content.replace(msg.prefix + cmd, '');
       try {
         func.trigger(msg);
       } catch (err) {
         self.error(cmd + ': FAILED');
-        console.log(err);
+        console.error(err);
         self.common.reply(msg, 'An error occurred! Oh noes!');
       }
       return true;
@@ -637,12 +644,14 @@ function Command() {
       let def = func.options.defaultDisabled;
       let isDisabledGlobally = func.options.isDisabled(msg);
       let isDisabledLocally = def;
+      let bitfield = func.options.permissions;
 
       let guildValues = userSettings[msg.guild.id];
       if (guildValues) {
         let commandValues = guildValues[func.getName()];
         if (commandValues) {
           isDisabledLocally = commandValues.isDisabled(msg);
+          bitfield = bitfield | commandValues.permissions;
         }
       }
 
@@ -651,6 +660,9 @@ function Command() {
                                         'User Disabled';
       } else if (def && !isDisabledLocally) {
         return null;
+      } else if (bitfield && def && isDisabledLocally && isDisabledGlobally) {
+        return 'NoPerm:' +
+            new self.Discord.Permissions(bitfield).toArray().join(', ');
       } else if (isDisabledGlobally) {
         return isDisabledGlobally == 2 ? 'Disabled Individual' : 'Disabled';
       }

@@ -1660,7 +1660,7 @@ Reset all custom command settings to default.
         * [.logWarning(message, ip, [traceIncrease])](#Common+logWarning)
         * [.error(message, ip, [traceIncrease])](#Common+error)
         * [.mention(msg)](#Common+mention) ⇒ <code>string</code>
-        * [.reply(msg, text, post)](#Common+reply) ⇒ <code>Promise</code>
+        * [.reply(msg, text, [post])](#Common+reply) ⇒ <code>Promise</code>
     * _static_
         * [.mention](#Common.mention) ⇒ <code>string</code>
         * [.reply](#Common.reply) ⇒ <code>Promise</code>
@@ -1838,11 +1838,11 @@ Creates formatted string for mentioning the author of msg.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| msg | <code>Discord~Message</code> | Message to format a mention for the author of. |
+| msg | <code>Discord~Message</code> \| <code>Discord~UserResolvable</code> | Message to format a mention for the author of. |
 
 <a name="Common+reply"></a>
 
-### common.reply(msg, text, post) ⇒ <code>Promise</code>
+### common.reply(msg, text, [post]) ⇒ <code>Promise</code>
 Replies to the author and channel of msg with the given message.
 
 **Kind**: instance method of [<code>Common</code>](#Common)  
@@ -1852,7 +1852,7 @@ Replies to the author and channel of msg with the given message.
 | --- | --- | --- |
 | msg | <code>Discord~Message</code> | Message to reply to. |
 | text | <code>string</code> | The main body of the message. |
-| post | <code>string</code> | The footer of the message. |
+| [post] | <code>string</code> | The footer of the message. |
 
 <a name="Common.mention"></a>
 

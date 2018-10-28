@@ -258,6 +258,12 @@ function Main() {
     smitePerms = self.Discord.Permissions.FLAGS.CONNECT |
         self.Discord.Permissions.FLAGS.VIEW_CHANNEL;
 
+    const adminOnlyOpts = new self.command.CommandSetting({
+      validOnlyInGuild: true,
+      defaultDisabled: true,
+      permissions: self.Discord.Permissions.FLAGS.MANAGE_ROLES,
+    });
+
     self.command.on(['addme', 'invite'], commandAddMe);
     self.command.on('add', commandAdd);
     self.command.on('simplify', commandSimplify);
@@ -276,8 +282,18 @@ function Main() {
     self.command.on('thotpm', commandThotPm);
     self.command.on('pmuser', commandPmUser);
     self.command.on(['flip', 'coin', 'coinflip', 'flipcoin'], commandFlip);
-    self.command.on(['purge', 'prune'], commandPurge, true);
-    self.command.on(['fuckyou', 'ban'], commandBan, true);
+    self.command.on(
+        new self.command.SingleCommand(['purge', 'prune'], commandPurge, {
+          validOnlyInGuild: true,
+          defaultDisabled: true,
+          permissions: self.Discord.Permissions.FLAGS.MANAGE_MESSAGES,
+        }));
+    self.command.on(
+        new self.command.SingleCommand(['fuckyou', 'ban'], commandBan, {
+          validOnlyInGuild: true,
+          defaultDisabled: true,
+          permissions: self.Discord.Permissions.FLAGS.BAN_MEMBERS,
+        }));
     self.command.on('smite', commandSmite, true);
     self.command.on(['profile', 'avatar'], commandAvatar);
     self.command.on('ping', commandPing);
@@ -285,11 +301,15 @@ function Main() {
     self.command.on('game', commandGame);
     self.command.on('version', commandVersion);
     self.command.on(['dice', 'die', 'roll', 'd'], commandRollDie);
-    self.command.on('togglemute', commandToggleMute, true);
+    self.command.on(
+        new self.command.SingleCommand(
+            'togglemute', commandToggleMute, adminOnlyOpts));
     self.command.on('perms', commandPerms, true);
     self.command.on('stats', commandStats);
     self.command.on('lookup', commandLookup);
-    self.command.on('togglebanmessages', commandToggleBanMessages, true);
+    self.command.on(
+        new self.command.SingleCommand(
+            'togglebanmessages', commandToggleBanMessages, adminOnlyOpts));
     self.command.on('sendto', commandSendTo);
     self.command.on(['thanks', 'thx', 'thankyou', 'thank'], commandThankYou);
     self.command.on('listcommands', commandListCommands);
@@ -691,20 +711,14 @@ function Main() {
    * @listens Command#toggleMute
    */
   function commandToggleMute(msg) {
-    if (msg.member.hasPermission(self.Discord.Permissions.FLAGS.MANAGE_ROLES)) {
-      if (disabledAutoSmite[msg.guild.id]) {
-        disabledAutoSmite[msg.guild.id] = false;
-        self.common.reply(
-            msg, 'Enabled banning mentioning everyone automatically.');
-      } else {
-        disabledAutoSmite[msg.guild.id] = true;
-        self.common.reply(
-            msg, 'Disabled banning mentioning everyone automatically.');
-      }
-    } else {
+    if (disabledAutoSmite[msg.guild.id]) {
+      disabledAutoSmite[msg.guild.id] = false;
       self.common.reply(
-          msg,
-          'You must have permission to manage roles to toggle this setting.');
+          msg, 'Enabled banning mentioning everyone automatically.');
+    } else {
+      disabledAutoSmite[msg.guild.id] = true;
+      self.common.reply(
+          msg, 'Disabled banning mentioning everyone automatically.');
     }
   }
   /**
@@ -716,21 +730,14 @@ function Main() {
    * @listens Command#toggleBanMessages
    */
   function commandToggleBanMessages(msg) {
-    if (msg.member.hasPermission(
-        self.Discord.Permissions.FLAGS.ADMINISTRATOR)) {
-      if (disabledBanMessage[msg.guild.id]) {
-        disabledBanMessage[msg.guild.id] = false;
-        self.common.reply(
-            msg, 'Enabled showing a message when a user is banned.');
-      } else {
-        disabledBanMessage[msg.guild.id] = true;
-        self.common.reply(
-            msg, 'Disabled showing a message when a user is banned.');
-      }
-    } else {
+    if (disabledBanMessage[msg.guild.id]) {
+      disabledBanMessage[msg.guild.id] = false;
       self.common.reply(
-          msg,
-          'You must have the Administrator permission to toggle this setting.');
+          msg, 'Enabled showing a message when a user is banned.');
+    } else {
+      disabledBanMessage[msg.guild.id] = true;
+      self.common.reply(
+          msg, 'Disabled showing a message when a user is banned.');
     }
   }
   /**
@@ -1658,54 +1665,47 @@ function Main() {
           'I\'m sorry, but I don\'t have permission to delete messages in ' +
               'this channel.\nTo allow me to do this, please give me ' +
               'permission to Manage Messages.');
-    } else if (
-      msg.channel.permissionsFor(msg.member)
-          .has(self.Discord.Permissions.FLAGS.MANAGE_MESSAGES)) {
-      let numString = msg.text.replace(/\<[^\>]*>|\s/g, '');
-      let num = (numString * 1) + 1;
-      if (numString.length === 0 || isNaN(num)) {
-        self.common.reply(
-            msg,
-            'You must specify the number of messages to purge. (ex: ?purge 5)');
-      } else {
-        const limited = num > 101;
-        if (limited || num == 101) {
-          num = 100;
-        }
-        if (msg.mentions.users.size > 0) {
-          if (!limited) num--;
-          let toDelete = msg.channel.messages.filter(function(obj) {
-            return msg.mentions.users.find(function(mention) {
-              return obj.author.id === mention.id;
-            });
-          });
-          msg.channel.bulkDelete(toDelete.first(num)).then(() => {
-            self.common
-                .reply(
-                    msg, 'Deleted ' + num + ' messages by ' +
-                        msg.mentions.users
-                            .map(function(obj) {
-                              return obj.username;
-                            })
-                            .join(', '))
-                .then((msg_) => {
-                  msg_.delete({timeout: 5000});
-                });
-          });
-        } else {
-          msg.channel.bulkDelete(num).then(() => {
-            if (limited) {
-              self.common.reply(
-                  msg, 'Number of messages deleted limited to 100.');
-            }
-          });
-        }
-      }
-    } else {
+      return;
+    }
+    let numString = msg.text.replace(/\<[^\>]*>|\s/g, '');
+    let num = (numString * 1) + 1;
+    if (numString.length === 0 || isNaN(num)) {
       self.common.reply(
           msg,
-          'I\'m sorry, but you don\'t have permission to delete messages in ' +
-              'this channel.');
+          'You must specify the number of messages to purge. (ex: ?purge 5)');
+    } else {
+      const limited = num > 101;
+      if (limited || num == 101) {
+        num = 100;
+      }
+      if (msg.mentions.users.size > 0) {
+        if (!limited) num--;
+        let toDelete = msg.channel.messages.filter(function(obj) {
+          return msg.mentions.users.find(function(mention) {
+            return obj.author.id === mention.id;
+          });
+        });
+        msg.channel.bulkDelete(toDelete.first(num)).then(() => {
+          self.common
+              .reply(
+                  msg, 'Deleted ' + num + ' messages by ' +
+                      msg.mentions.users
+                          .map(function(obj) {
+                            return obj.username;
+                          })
+                          .join(', '))
+              .then((msg_) => {
+                msg_.delete({timeout: 5000});
+              });
+        });
+      } else {
+        msg.channel.bulkDelete(num).then(() => {
+          if (limited) {
+            self.common.reply(
+                msg, 'Number of messages deleted limited to 100.');
+          }
+        });
+      }
     }
   }
   /**
@@ -1717,11 +1717,7 @@ function Main() {
    * @listens Command#ban
    */
   function commandBan(msg) {
-    if (!msg.member.hasPermission(self.Discord.Permissions.FLAGS.BAN_MEMBERS)) {
-      self.common.reply(
-          msg, 'You don\'t have permission for that!\n(Filthy ' +
-              msg.member.roles.highest.name + ')');
-    } else if (msg.mentions.members.size === 0) {
+    if (msg.mentions.members.size === 0) {
       self.common.reply(
           msg, 'You must mention someone to ban after the command.');
     } else {
