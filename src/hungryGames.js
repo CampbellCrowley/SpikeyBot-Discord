@@ -1832,7 +1832,7 @@ function HungryGames() {
    */
   function resetGame(msg, id) {
     const command = msg.text.split(' ')[0];
-    self.common.reply(msg, self.resetGame(id, command));
+    self.common.reply(msg, 'Reset HG', self.resetGame(id, command));
   }
   /**
    * Reset the specified category of data from a game.
@@ -3808,7 +3808,7 @@ function HungryGames() {
             i >= events[index].attacks[battleState].numVictim + numNonUser) {
             outcome = events[index].attacks[battleState].attacker.outcome;
           }
-          Jimp.read(events[index].attacks[battleState].icons[i].url)
+          readImage(events[index].attacks[battleState].icons[i].url)
               .then(
                   function(outcome, placement, isPatron) {
                     return function(image) {
@@ -3817,6 +3817,7 @@ function HungryGames() {
                   }(outcome, i,
                       events[index].attacks[battleState].icons[i].isPatron))
               .catch(function(err) {
+                self.error('Failed to read image');
                 console.log(err);
                 responses++;
               });
@@ -3914,7 +3915,7 @@ function HungryGames() {
           } else if (i >= events[index].numVictim + numNonUser) {
             outcome = events[index].attacker.outcome;
           }
-          Jimp.read(events[index].icons[i].url)
+          readImage(events[index].icons[i].url)
               .then(
                   function(outcome, placement, isPatron) {
                     return function(image) {
@@ -3923,6 +3924,7 @@ function HungryGames() {
                   }(outcome, events[index].icons.length - i - 1,
                       events[index].icons[i].isPatron))
               .catch(function(err) {
+                self.error('Failed to read image');
                 console.log(err);
                 responses++;
               });
@@ -4203,13 +4205,14 @@ function HungryGames() {
           });
           let icon = player.avatarURL;
           let userId = player.id;
-          Jimp.read(icon)
+          readImage(icon)
               .then(function(userId) {
                 return function(image) {
                   newImage(image, userId);
                 };
               }(userId))
               .catch(function(err) {
+                self.error('Failed to read image');
                 console.log(err);
                 responses++;
               });
@@ -6772,6 +6775,74 @@ function HungryGames() {
   function newReact(duration) {
     if (Date.now() + duration > listenersEndTime) {
       listenersEndTime = Date.now() + duration;
+    }
+  }
+
+  /**
+   * Attempt to fetch an image from a URL. Checks if the file has been cached to
+   * the filesystem first.
+   * @private
+   *
+   * @param {string} url The url to fetch the image from.
+   * @return {Promise} Promise from JIMP with image data.
+   */
+  function readImage(url) {
+    let splitURL = url.match(/\/(avatars)\/(\d+)\/([^?&\/]+)/);
+    let filename;
+    let dir;
+    let fromCache = false;
+    if (splitURL && splitURL[1] == 'avatars') {
+      dir = self.common.userSaveDir + splitURL[2] + '/';
+      filename = dir + splitURL[3];
+    }
+    if (filename && fs.existsSync(filename)) {
+      fromCache = true;
+      return toJimp(filename);
+    }
+    return toJimp(url).then((image) => {
+      if (fromCache) return image;
+      if (filename) {
+        mkdirp(dir, (err) => {
+          if (err) {
+            self.error(
+                'Failed to create user directory to cache avatar: ' + dir);
+            console.error(err);
+            return;
+          }
+          image.getBuffer(Jimp.MIME_PNG, (err, buffer) => {
+            if (err) {
+              self.error(
+                  'Failed to convert image into buffer: ' + (filename || url));
+              console.error(err);
+              return;
+            }
+            fs.writeFile(filename, buffer, (err) => {
+              if (err) {
+                self.error('Failed to cache avatar: ' + filename);
+                console.error(err);
+              }
+            });
+          });
+        });
+      }
+      return image;
+    });
+    /**
+     * Send the request to Jimp to handle.
+     * @private
+     *
+     * @param {string} path Or path that Jimp can handle.
+     * @return {Promise} Promise from Jimp with image data.
+     */
+    function toJimp(path) {
+      return Jimp.read(path).catch((err) => {
+        if (fromCache) {
+          self.error('Failed to read from cache: ' + path);
+          console.error(err);
+          fromCache = false;
+          toJimp(url);
+        }
+      });
     }
   }
 

@@ -2574,6 +2574,8 @@ Hunger Games simulator.
         * [~calcColNum(numCols, statusList)](#HungryGames..calcColNum) ⇒ <code>number</code> ℗
         * [~deepFreeze(object)](#HungryGames..deepFreeze) ⇒ <code>Object</code> ℗
         * [~newReact(duration)](#HungryGames..newReact) ℗
+        * [~readImage(url)](#HungryGames..readImage) ⇒ <code>Promise</code> ℗
+            * [~toJimp(path)](#HungryGames..readImage..toJimp) ⇒ <code>Promise</code> ℗
         * [~exit([code])](#HungryGames..exit) ℗
         * [~sigint()](#HungryGames..sigint) ℗
         * [~OutcomeProbabilities}](#HungryGames..OutcomeProbabilities}) : <code>Object</code>
@@ -4629,6 +4631,33 @@ registered with the given duration.
 | Param | Type | Description |
 | --- | --- | --- |
 | duration | <code>number</code> | The length of time the listener will be active. |
+
+<a name="HungryGames..readImage"></a>
+
+### HungryGames~readImage(url) ⇒ <code>Promise</code> ℗
+Attempt to fetch an image from a URL. Checks if the file has been cached to
+the filesystem first.
+
+**Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
+**Returns**: <code>Promise</code> - Promise from JIMP with image data.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| url | <code>string</code> | The url to fetch the image from. |
+
+<a name="HungryGames..readImage..toJimp"></a>
+
+#### readImage~toJimp(path) ⇒ <code>Promise</code> ℗
+Send the request to Jimp to handle.
+
+**Kind**: inner method of [<code>readImage</code>](#HungryGames..readImage)  
+**Returns**: <code>Promise</code> - Promise from Jimp with image data.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| path | <code>string</code> | Or path that Jimp can handle. |
 
 <a name="HungryGames..exit"></a>
 
