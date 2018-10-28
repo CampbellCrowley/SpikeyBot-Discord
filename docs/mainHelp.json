@@ -743,7 +743,7 @@
             {
               "description": "Basic Usage",
               "command": "changeprefix !#!",
-              "result": "After confirming, all commands must start with !#!. For example ```{prefix}ping``` would become ```!#!ping```."
+              "result": "After confirming, all commands must start with !#!. For example ```{prefix}ping``` would become ```!#!ping```.<br>If you forget what the prefix is, just @SpikeyBot and ask what the prefix is. (@SpikeyBot what's the prefix?)"
             }
           ]
         },
