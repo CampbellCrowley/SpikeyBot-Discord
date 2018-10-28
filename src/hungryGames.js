@@ -311,10 +311,12 @@ function HungryGames() {
       category: 'features',
     },
     mentionAll: {
-      value: false,
+      values: ['disabled', 'all', 'death'],
+      value: 'disabled',
       comment:
           'Should a user be mentioned every time something happens to them ' +
-          'in the game?',
+          'in the game? (can be disabled, for all events, or for when the ' +
+          'user dies)',
       category: 'features',
     },
     mentionEveryoneAtStart: {
@@ -2909,8 +2911,8 @@ function HungryGames() {
       find(id).currentGame.day.events.push(
           makeSingleEvent(
               getMessage('bleedOut'), usersBleeding, usersBleeding.length, 0,
-              find(id).options.mentionAll, id, 'dies', 'nothing',
-              find(id).options.useNicknames));
+              find(id).options.mentionAll, id,
+              'dies', 'nothing', find(id).options.useNicknames));
     }
 
     let deathPercentage = 1 - (find(id).currentGame.numAlive / startingAlive);
@@ -3599,7 +3601,9 @@ function HungryGames() {
     let mentionString = '';
     let translator = null;
     for (let i = 0; i < affectedUsers.length; i++) {
-      if (mention) {
+      if (mention == 'all' ||
+          (mention == 'death' && (victimOutcome == 'dies' && i < numVictim) ||
+           (attackerOutcome == 'dies' && i >= numVictim))) {
         mentionString += '<@' + affectedUsers[i].id + '>';
       }
       if (affectedUsers[i].settings &&

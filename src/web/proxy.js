@@ -389,7 +389,7 @@ function WebProxy() {
         data.expires_at = data.expires_in * 1000 + Date.now();
         data.expiration_date = Date.now() + (1000 * 60 * 60 * 24 * 30);
         data.session = session;
-        loginInfo[session] = data;
+        loginInfo[session] = Object.assign(loginInfo[session] || {}, data);
         makeRefreshTimeout(loginInfo[session], receivedLoginInfo);
       }
     }
