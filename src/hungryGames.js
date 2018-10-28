@@ -4401,8 +4401,10 @@ function HungryGames() {
       delete dayEventIntervals[id];
       delete autoPlayTimeout[id];
       // delete battleMessage[id];
-      self.command.find('say').options.set(
-          'default', 'channel', find(id).outputChannel);
+      if (find(id).outputChannel) {
+        self.command.find('say').options.set(
+            'default', 'channel', find(id).outputChannel);
+      }
     }
   }
 

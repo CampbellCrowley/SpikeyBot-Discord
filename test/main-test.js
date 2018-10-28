@@ -75,10 +75,10 @@ const mainTests = [
       'Derive command', '~derive y=5x', ['<@422623712534200321>\n```\n5\n```']),
   new Test(
       'Add Me command', '~addme',
-      ['<@422623712534200321>\n```\nWant to add me to your server? Click ' +
+      ['^<@422623712534200321>\n```\nWant to add me to your server? Click ' +
        'this link:\n(You\'ll need to be signed into discord in your browser ' +
        'first)\n```https://discordapp.com/oauth2/authorize?&client_' +
-       'id=318552464356016131&scope=bot']),
+       'id=']),
   new Test(
       'Help command', '~help',
       [

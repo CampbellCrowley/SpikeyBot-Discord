@@ -293,7 +293,6 @@ function Main() {
     self.command.on('sendto', commandSendTo);
     self.command.on(['thanks', 'thx', 'thankyou', 'thank'], commandThankYou);
     self.command.on('listcommands', commandListCommands);
-    self.command.on('togglereact', commandToggleReact);
 
     self.client.on('guildCreate', onGuildCreate);
     self.client.on('guildDelete', onGuildDelete);
@@ -479,7 +478,6 @@ function Main() {
     self.command.removeListener('sendto');
     self.command.removeListener('thanks');
     self.command.removeListener('listcommands');
-    self.command.removeListener('togglereact');
 
     self.client.removeListener('guildCreate', onGuildCreate);
     self.client.removeListener('guildDelete', onGuildDelete);
