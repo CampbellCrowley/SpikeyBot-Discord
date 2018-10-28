@@ -4847,6 +4847,12 @@ function HungryGames() {
       type = typeof defaultObj[option].value;
       range = range || defaultObj[option].range;
     }
+    if (find(id).currentGame && find(id).currentGame.inProgress) {
+      if (option == 'teamSize' || option == 'includeBots') {
+        return 'Teams and included players cannot be modified during a game.' +
+            '\nYou must end the current game first to do this.';
+      }
+    }
     if (type === 'number') {
       value = Number(value);
       if (typeof value !== 'number') {
