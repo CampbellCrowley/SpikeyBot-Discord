@@ -1,6 +1,6 @@
 {
   "name": "spikeybot-discord",
-  "version": "1.7.8",
+  "version": "1.8.1",
   "lockfileVersion": 1,
   "requires": true,
   "dependencies": {
@@ -149,9 +149,9 @@
       }
     },
     "@jimp/plugin-color": {
-      "version": "0.5.4",
-      "resolved": "https://registry.npmjs.org/@jimp/plugin-color/-/plugin-color-0.5.4.tgz",
-      "integrity": "sha512-63bjkqj2N/QtaYwOwG1OctrIMTYmZl0eSh0+EFy28Y302wp1u606RD++rhHtOml4wP2R6VPzLmHCV9JxA+tgwA==",
+      "version": "0.5.5",
+      "resolved": "https://registry.npmjs.org/@jimp/plugin-color/-/plugin-color-0.5.5.tgz",
+      "integrity": "sha512-hWeOqNCmLguGYLhSvBrpfCvlijsMEVaLZAOod62s1rzWnujozyKOzm2eZe+W3To6mHbp5RGJNVrIwHBWMab4ug==",
       "requires": {
         "@jimp/utils": "^0.5.0",
         "core-js": "^2.5.7",
@@ -286,13 +286,13 @@
       }
     },
     "@jimp/plugins": {
-      "version": "0.5.4",
-      "resolved": "https://registry.npmjs.org/@jimp/plugins/-/plugins-0.5.4.tgz",
-      "integrity": "sha512-lVyxtO5rgrp4ghXHMPOpwogCTAfcNSHTG23oH5g4D2EDnfP+GnM/Zxpsjo8A4TE0jS+jgrnTLljDsalEZgA4QQ==",
+      "version": "0.5.5",
+      "resolved": "https://registry.npmjs.org/@jimp/plugins/-/plugins-0.5.5.tgz",
+      "integrity": "sha512-9oF6LbSM/K7YkFCcxaPaD8NUkL/ZY8vT8NIGfQ/NpX+tKQtcsLHcRavHpUC+M1xXShv/QGx9OdBV/jgiu82QYg==",
       "requires": {
         "@jimp/plugin-blit": "^0.5.4",
         "@jimp/plugin-blur": "^0.5.0",
-        "@jimp/plugin-color": "^0.5.4",
+        "@jimp/plugin-color": "^0.5.5",
         "@jimp/plugin-contain": "^0.5.4",
         "@jimp/plugin-cover": "^0.5.4",
         "@jimp/plugin-crop": "^0.5.4",
@@ -455,13 +455,10 @@
       "integrity": "sha1-8u4fMiipDurRJF+asZIusucdM2s="
     },
     "acorn-jsx": {
-      "version": "4.1.1",
-      "resolved": "https://registry.npmjs.org/acorn-jsx/-/acorn-jsx-4.1.1.tgz",
-      "integrity": "sha512-JY+iV6r+cO21KtntVvFkD+iqjtdpRUpGqKWgfkCdZq1R+kbreEl8EcdcJR4SmiIgsIQT33s6QzheQ9a275Q8xw==",
-      "dev": true,
-      "requires": {
-        "acorn": "^5.0.3"
-      }
+      "version": "5.0.0",
+      "resolved": "https://registry.npmjs.org/acorn-jsx/-/acorn-jsx-5.0.0.tgz",
+      "integrity": "sha512-XkB50fn0MURDyww9+UYL3c1yLbOBz0ZFvrdYlGB8l+Ije1oSC75qAqrzSPjYQbdnQUzhlUGNKuesryAv0gxZOg==",
+      "dev": true
     },
     "after": {
       "version": "0.8.2",
@@ -1483,7 +1480,7 @@
       }
     },
     "discord.js": {
-      "version": "github:discordjs/discord.js#01476de58250761ffe5eedc9ee6c9782576ca043",
+      "version": "github:discordjs/discord.js#b759fc415e89c1f3eb3523deb23c5b514968c845",
       "from": "github:discordjs/discord.js",
       "requires": {
         "form-data": "^2.3.2",
@@ -1703,9 +1700,9 @@
       "dev": true
     },
     "eslint": {
-      "version": "5.7.0",
-      "resolved": "https://registry.npmjs.org/eslint/-/eslint-5.7.0.tgz",
-      "integrity": "sha512-zYCeFQahsxffGl87U2aJ7DPyH8CbWgxBC213Y8+TCanhUTf2gEvfq3EKpHmEcozTLyPmGe9LZdMAwC/CpJBM5A==",
+      "version": "5.8.0",
+      "resolved": "https://registry.npmjs.org/eslint/-/eslint-5.8.0.tgz",
+      "integrity": "sha512-Zok6Bru3y2JprqTNm14mgQ15YQu/SMDkWdnmHfFg770DIUlmMFd/gqqzCHekxzjHZJxXv3tmTpH0C1icaYJsRQ==",
       "dev": true,
       "requires": {
         "@babel/code-frame": "^7.0.0",
@@ -1824,13 +1821,22 @@
       "dev": true
     },
     "espree": {
-      "version": "4.0.0",
-      "resolved": "https://registry.npmjs.org/espree/-/espree-4.0.0.tgz",
-      "integrity": "sha512-kapdTCt1bjmspxStVKX6huolXVV5ZfyZguY1lcfhVVZstce3bqxH9mcLzNn3/mlgW6wQ732+0fuG9v7h0ZQoKg==",
+      "version": "4.1.0",
+      "resolved": "https://registry.npmjs.org/espree/-/espree-4.1.0.tgz",
+      "integrity": "sha512-I5BycZW6FCVIub93TeVY1s7vjhP9CY6cXCznIRfiig7nRviKZYdRnj/sHEWC6A7WE9RDWOFq9+7OsWSYz8qv2w==",
       "dev": true,
       "requires": {
-        "acorn": "^5.6.0",
-        "acorn-jsx": "^4.1.1"
+        "acorn": "^6.0.2",
+        "acorn-jsx": "^5.0.0",
+        "eslint-visitor-keys": "^1.0.0"
+      },
+      "dependencies": {
+        "acorn": {
+          "version": "6.0.2",
+          "resolved": "https://registry.npmjs.org/acorn/-/acorn-6.0.2.tgz",
+          "integrity": "sha512-GXmKIvbrN3TV7aVqAzVFaMW8F8wzVX7voEBRO3bDA64+EX37YSayggRJP5Xig6HYHBkWKpFg9W5gg6orklubhg==",
+          "dev": true
+        }
       }
     },
     "esprima": {
@@ -3272,13 +3278,13 @@
       "integrity": "sha1-+eIwPUUH9tdDVac2ZNFED7Wg71k="
     },
     "jimp": {
-      "version": "0.5.4",
-      "resolved": "https://registry.npmjs.org/jimp/-/jimp-0.5.4.tgz",
-      "integrity": "sha512-GIyNJ0a/o8C8Npkpz0MbowxcqOJ+TUQwC3NxxmqvK8B6cWuyPXizVKH7S57hp7J8rniPAYMTRucuwLWVTBb5lw==",
+      "version": "0.5.6",
+      "resolved": "https://registry.npmjs.org/jimp/-/jimp-0.5.6.tgz",
+      "integrity": "sha512-H0nHTu6KgAgQzDxa38ew2dXbnRzKm1w5uEyhMIxqwCQVjwgarOjjkV/avbNLxfxRHAFaNp4rGIc/qm8P+uhX9A==",
       "requires": {
         "@babel/polyfill": "^7.0.0",
         "@jimp/custom": "^0.5.4",
-        "@jimp/plugins": "^0.5.4",
+        "@jimp/plugins": "^0.5.5",
         "@jimp/types": "^0.5.4",
         "core-js": "^2.5.7"
       }
@@ -3570,9 +3576,9 @@
       "dev": true
     },
     "mathjs": {
-      "version": "5.2.1",
-      "resolved": "https://registry.npmjs.org/mathjs/-/mathjs-5.2.1.tgz",
-      "integrity": "sha512-l+imExQ09Jj6Mz/YX8LbCb3Q32kjvYq5HQmUhMonuwhSU3o5XKvcnW6T6OzXkD+xadH2/Qg4zXC1ejI1MYcJeg==",
+      "version": "5.2.2",
+      "resolved": "https://registry.npmjs.org/mathjs/-/mathjs-5.2.2.tgz",
+      "integrity": "sha512-TG0ynGCMXuYE04Z5ODQRl1V7WVneRwzDLUh0k5qihyErpr6k5YbTc/JVkLHFvMe9fuJDvJM5nC1+pAyyE5pbxA==",
       "requires": {
         "complex.js": "2.0.11",
         "decimal.js": "10.0.1",
@@ -4131,13 +4137,13 @@
       "integrity": "sha1-Ywn04OX6kT7BxpMHrjZLSzd8nns="
     },
     "phin": {
-      "version": "2.9.2",
-      "resolved": "https://registry.npmjs.org/phin/-/phin-2.9.2.tgz",
-      "integrity": "sha512-j+UOz1qs+k8NlBRws2IF+Qd+YsVKcqIjvYPBEP9IpmhyvLvyN6GTuqsGbsqH3fIgHufqVqLQSttidIgshkgT7w=="
+      "version": "2.9.3",
+      "resolved": "https://registry.npmjs.org/phin/-/phin-2.9.3.tgz",
+      "integrity": "sha512-CzFr90qM24ju5f88quFC/6qohjC144rehe5n6DH900lgXmUe86+xCKc10ev56gRKC4/BkHUoG4uSiQgBiIXwDA=="
     },
     "pify": {
       "version": "2.3.0",
-      "resolved": "https://registry.npmjs.org/pify/-/pify-2.3.0.tgz",
+      "resolved": "http://registry.npmjs.org/pify/-/pify-2.3.0.tgz",
       "integrity": "sha1-7RQaasBDqEnqWISY59yosVMw6Qw=",
       "dev": true
     },
@@ -5204,7 +5210,7 @@
     },
     "through": {
       "version": "2.3.8",
-      "resolved": "https://registry.npmjs.org/through/-/through-2.3.8.tgz",
+      "resolved": "http://registry.npmjs.org/through/-/through-2.3.8.tgz",
       "integrity": "sha1-DdTJ/6q8NXlgsbckEV1+Doai4fU=",
       "dev": true
     },
@@ -5622,7 +5628,7 @@
     },
     "xmlbuilder": {
       "version": "9.0.7",
-      "resolved": "https://registry.npmjs.org/xmlbuilder/-/xmlbuilder-9.0.7.tgz",
+      "resolved": "http://registry.npmjs.org/xmlbuilder/-/xmlbuilder-9.0.7.tgz",
       "integrity": "sha1-Ey7mPS7FVlxVfiD0wi35rKaGsQ0="
     },
     "xmlcreate": {

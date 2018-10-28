@@ -21,8 +21,8 @@
     "dialogflow": "^0.7.0",
     "discord.js": "github:discordjs/discord.js",
     "fuzzy-search": "^2.1.0",
-    "jimp": "^0.5.4",
-    "mathjs": "^5.2.1",
+    "jimp": "^0.5.6",
+    "mathjs": "^5.2.2",
     "mkdirp": "^0.5.1",
     "mysql": "^2.16.0",
     "node-opus": "^0.3.0",
@@ -41,7 +41,7 @@
   ],
   "devDependencies": {
     "chai": "^4.2.0",
-    "eslint": "^5.7.0",
+    "eslint": "^5.8.0",
     "eslint-config-google": "^0.10.0",
     "jsdoc-to-markdown": "^4.0.1",
     "mocha": "^5.2.0"
