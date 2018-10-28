@@ -235,7 +235,7 @@ function SpikeyBot() {
   }
 
   const isDev = setDev;
-  common.begin(false, !isDev);
+  common.begin(testInstance, !isDev);
 
   if (enableSharding) {
     common.log(
@@ -483,7 +483,10 @@ function SpikeyBot() {
         if (channel) {
           channel.messages.fetch(msg.id)
               .then((msg_) => {
-                msg_.edit('`Reboot complete.`');
+                let embed = new Discord.MessageEmbed();
+                embed.setTitle('Reboot complete.');
+                embed.setColor([255, 0, 255]);
+                msg_.edit(embed);
               })
               .catch(() => {});
         }
@@ -932,15 +935,19 @@ function SpikeyBot() {
       let reloaded = [];
       common.reply(msg, 'Reloading main modules...').then((warnMessage) => {
         if (reloadMainModules(toReload, reloaded)) {
-          warnMessage.edit(
-              '`Reload completed with errors.`\n' +
-              (reloaded.join(' ') || 'NOTHING reloaded'));
+          let embed = new Discord.MessageEmbed();
+          embed.setTitle('Reload completed with errors.');
+          embed.setDescription(reloaded.join(' ') || 'NOTHING reloaded');
+          embed.setColor([255, 0, 255]);
+          warnMessage.edit(common.mention(msg), embed);
         } else if (minimal) {
           warnMessage.delete();
         } else {
-          warnMessage.edit(
-              '`Reload complete.`\n' +
-              (reloaded.join(' ') || 'NOTHING reloaded'));
+          let embed = new Discord.MessageEmbed();
+          embed.setTitle('Reload complete.');
+          embed.setDescription(reloaded.join(' ') || 'NOTHING reloaded');
+          embed.setColor([255, 0, 255]);
+          warnMessage.edit(common.mention(msg), embed);
         }
       });
     } else {
@@ -1164,22 +1171,29 @@ function SpikeyBot() {
                 ' -- ./src/' +
                 module.filename.slice(
                     __filename.lastIndexOf('/') + 1, module.filename.length));
-            msg_.edit(common.mention(msg) + ' Bot update complete!');
+            let embed = new Discord.MessageEmbed();
+            embed.setTitle('Bot update complete!');
+            embed.setColor([255, 0, 255]);
+            msg_.edit(common.mention(msg), embed);
           } catch (err) {
             if (err.status === 1) {
-              msg_.edit(
-                  common.mention(msg) +
-                  ' Bot update complete, but requires manual reboot.\n' +
-                  err.message);
+              let embed = new Discord.MessageEmbed();
+              embed.setTitle(
+                  'Bot update complete, but requires manual reboot.');
+              embed.setDescription(err.message);
+              embed.setColor([255, 0, 255]);
+              msg_.edit(common.mention(msg), embed);
             } else {
               common.error(
                   'Checking for SpikeyBot.js changes failed: ' + err.status);
               console.error('STDOUT:', err.stdout);
               console.error('STDERR:', err.stderr);
-              msg_.edit(
-                  common.mention(msg) +
-                  ' Bot update complete, but failed to check if ' +
+              let embed = new Discord.MessageEmbed();
+              embed.setTitle(
+                  'Bot update complete, but failed to check if ' +
                   'reboot is necessary.');
+              embed.setColor([255, 0, 255]);
+              msg_.edit(common.mention(msg), embed);
             }
           }
         } else {
@@ -1187,7 +1201,10 @@ function SpikeyBot() {
           console.error(err);
           if (stdout && stdout !== 'null') console.log('STDOUT:', stdout);
           if (stderr && stderr !== 'null') console.error('STDERR:', stderr);
-          msg_.edit(common.mention(msg) + ' Bot update FAILED!');
+          let embed = new Discord.MessageEmbed();
+          embed.setTitle('Bot update FAILED!');
+          embed.setColor([255, 0, 255]);
+          msg_.edit(common.mention(msg), embed);
         }
       });
     });

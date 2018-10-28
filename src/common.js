@@ -45,17 +45,22 @@ function Common() {
    * @type {boolean}
    */
   this.isRelease = false;
+  /**
+   * Whether this current instance is running as a unit test.
+   * @type {boolean}
+   */
+  this.isTest = false;
 
   /**
    * Initialize variables and settings for logging properly.
    *
-   * @param {*} _ Unused. Kept to match number of arguments with other versions
-   * of common.js.
+   * @param {boolean} isTest Is this running as a test.
    * @param {boolean} isRelease Is this a release version, or a development
    * version of the app running.
    */
-  this.begin = function(_, isRelease) {
+  this.begin = function(isTest, isRelease) {
     self.isRelease = isRelease || false;
+    self.isTest = isTest || false;
     switch (app) {
       case 'SpikeyBot.js':
         mycolor = 44;
@@ -237,6 +242,31 @@ function Common() {
   };
 
   /**
+   * Replies to the author and channel of msg with the given message.
+   *
+   * @param {Discord~Message} msg Message to reply to.
+   * @param {string} text The main body of the message.
+   * @param {string} [post] The footer of the message.
+   * @return {Promise} Promise of Discord~Message that we attempted to send.
+   */
+  this.reply = function(msg, text, post) {
+    if (!msg.channel || !msg.channel.send) return null;
+    if (self.isTest) {
+      return msg.channel.send(
+          Common.mention(msg) + '\n```\n' + text + '\n```' + (post || ''));
+    } else {
+      let embed = new Discord.MessageEmbed();
+      embed.setTitle(text);
+      embed.setColor([255, 0, 255]);
+      if (post) {
+        embed.setDescription(post);
+      }
+      return msg.channel.send(Common.mention(msg), embed);
+    }
+  };
+
+
+  /**
    * Gets the name and line number of the current function stack.
    * @private
    *
@@ -395,36 +425,6 @@ Common.prototype.mention = function(msg) {
  * @return {string} Formatted mention string.
  */
 Common.mention = Common.prototype.mention;
-
-/**
- * Replies to the author and channel of msg with the given message.
- *
- * @param {Discord~Message} msg Message to reply to.
- * @param {string} text The main body of the message.
- * @param {string} [post] The footer of the message.
- * @return {Promise} Promise of Discord~Message that we attempted to send.
- */
-Common.prototype.reply = function(msg, text, post) {
-  if (!msg.channel || !msg.channel.send) return null;
-  let embed = new Discord.MessageEmbed();
-  embed.setTitle(text);
-  embed.setColor([255, 0, 255]);
-  if (post) {
-    embed.setDescription(post);
-  }
-  return msg.channel.send(Common.mention(msg), embed);
-  /* return msg.channel.send(
-      Common.mention(msg) + '\n```\n' + text + '\n```' + (post || '')); */
-};
-/**
- * Replies to the author and channel of msg with the given message.
- *
- * @param {Discord~Message} msg Message to reply to.
- * @param {string} text The main body of the message.
- * @param {string} post The footer of the message.
- * @return {Promise} Promise of Discord~Message that we attempted to send.
- */
-Common.reply = Common.prototype.reply;
 
 
 /* eslint-disable-next-line no-extend-native */

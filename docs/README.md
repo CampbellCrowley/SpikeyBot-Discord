@@ -1646,12 +1646,13 @@ Reset all custom command settings to default.
     * [new Common()](#new_Common_new)
     * _instance_
         * [.isRelease](#Common+isRelease) : <code>boolean</code>
+        * [.isTest](#Common+isTest) : <code>boolean</code>
         * [.spikeyId](#Common+spikeyId) : <code>string</code>
         * [.logChannel](#Common+logChannel) : <code>string</code>
         * [.webURL](#Common+webURL) : <code>string</code>
         * [.guildSaveDir](#Common+guildSaveDir) : <code>string</code>
         * [.userSaveDir](#Common+userSaveDir) : <code>string</code>
-        * [.begin(_, isRelease)](#Common+begin)
+        * [.begin(isTest, isRelease)](#Common+begin)
         * [.padIp(str)](#Common+padIp) ⇒ <code>string</code>
         * [.getIPName(ip)](#Common+getIPName) ⇒ <code>string</code>
         * [.updatePrefix(ip)](#Common+updatePrefix) ⇒ <code>string</code>
@@ -1659,11 +1660,10 @@ Reset all custom command settings to default.
         * [.log(message, ip, [traceIncrease])](#Common+log)
         * [.logWarning(message, ip, [traceIncrease])](#Common+logWarning)
         * [.error(message, ip, [traceIncrease])](#Common+error)
-        * [.mention(msg)](#Common+mention) ⇒ <code>string</code>
         * [.reply(msg, text, [post])](#Common+reply) ⇒ <code>Promise</code>
+        * [.mention(msg)](#Common+mention) ⇒ <code>string</code>
     * _static_
         * [.mention](#Common.mention) ⇒ <code>string</code>
-        * [.reply](#Common.reply) ⇒ <code>Promise</code>
         * [.spikeyId](#Common.spikeyId) : <code>string</code>
         * [.logChannel](#Common.logChannel) : <code>string</code>
         * [.webURL](#Common.webURL) : <code>string</code>
@@ -1688,6 +1688,12 @@ Commonly required things. Helper functions and constants.
 ### common.isRelease : <code>boolean</code>
 Whether this should be shown as a release version, or a debug version in
 the log.
+
+**Kind**: instance property of [<code>Common</code>](#Common)  
+<a name="Common+isTest"></a>
+
+### common.isTest : <code>boolean</code>
+Whether this current instance is running as a unit test.
 
 **Kind**: instance property of [<code>Common</code>](#Common)  
 <a name="Common+spikeyId"></a>
@@ -1728,14 +1734,14 @@ users.
 **Default**: <code>&quot;./save/users/&quot;</code>  
 <a name="Common+begin"></a>
 
-### common.begin(_, isRelease)
+### common.begin(isTest, isRelease)
 Initialize variables and settings for logging properly.
 
 **Kind**: instance method of [<code>Common</code>](#Common)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| _ | <code>\*</code> | Unused. Kept to match number of arguments with other versions of common.js. |
+| isTest | <code>boolean</code> | Is this running as a test. |
 | isRelease | <code>boolean</code> | Is this a release version, or a development version of the app running. |
 
 <a name="Common+padIp"></a>
@@ -1828,18 +1834,6 @@ Format an error message to be logged.
 | ip | <code>string</code> |  | The IP address or unique identifier of the client that caused this event to happen. |
 | [traceIncrease] | <code>number</code> | <code>0</code> | Increase the distance up the stack to show the in the log. |
 
-<a name="Common+mention"></a>
-
-### common.mention(msg) ⇒ <code>string</code>
-Creates formatted string for mentioning the author of msg.
-
-**Kind**: instance method of [<code>Common</code>](#Common)  
-**Returns**: <code>string</code> - Formatted mention string.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord~Message</code> \| <code>Discord~UserResolvable</code> | Message to format a mention for the author of. |
-
 <a name="Common+reply"></a>
 
 ### common.reply(msg, text, [post]) ⇒ <code>Promise</code>
@@ -1854,6 +1848,18 @@ Replies to the author and channel of msg with the given message.
 | text | <code>string</code> | The main body of the message. |
 | [post] | <code>string</code> | The footer of the message. |
 
+<a name="Common+mention"></a>
+
+### common.mention(msg) ⇒ <code>string</code>
+Creates formatted string for mentioning the author of msg.
+
+**Kind**: instance method of [<code>Common</code>](#Common)  
+**Returns**: <code>string</code> - Formatted mention string.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> \| <code>Discord~UserResolvable</code> | Message to format a mention for the author of. |
+
 <a name="Common.mention"></a>
 
 ### Common.mention ⇒ <code>string</code>
@@ -1865,20 +1871,6 @@ Creates formatted string for mentioning the author of msg.
 | Param | Type | Description |
 | --- | --- | --- |
 | msg | <code>Discord~Message</code> | Message to format a mention for the author of. |
-
-<a name="Common.reply"></a>
-
-### Common.reply ⇒ <code>Promise</code>
-Replies to the author and channel of msg with the given message.
-
-**Kind**: static property of [<code>Common</code>](#Common)  
-**Returns**: <code>Promise</code> - Promise of Discord~Message that we attempted to send.  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord~Message</code> | Message to reply to. |
-| text | <code>string</code> | The main body of the message. |
-| post | <code>string</code> | The footer of the message. |
 
 <a name="Common.spikeyId"></a>
 
