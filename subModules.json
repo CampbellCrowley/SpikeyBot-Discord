@@ -1,6 +1,5 @@
 {
   "test": [
-    "./web/stats.js",
     "./main.js",
     "./music.js",
     "./hungryGames.js",
@@ -8,16 +7,12 @@
     "./connect4.js",
     "./patreon.js",
     "./poll.js",
-    "./web/webhooks.js",
     "./spotify.js",
-    "./cmdScheduling.js"
+    "./cmdScheduling.js",
+    "./web/stats.js",
+    "./web/webhooks.js"
   ],
   "dev": [
-    "./web/proxy.js",
-    "./web/account.js",
-    "./web/stats.js",
-    "./web/settings.js",
-    "./web/webhooks.js",
     "./hungryGames.js",
     "./main.js",
     "./ticTacToe.js",
@@ -28,13 +23,14 @@
     "./poll.js",
     "./chatbot.js",
     "./spotify.js",
-    "./cmdScheduling.js"
+    "./cmdScheduling.js",
+    "./web/proxy.js",
+    "./web/account.js",
+    "./web/stats.js",
+    "./web/settings.js",
+    "./web/webhooks.js"
   ],
   "release": [
-    "./web/proxy.js",
-    "./web/account.js",
-    "./web/stats.js",
-    "./web/settings.js",
     "./hungryGames.js",
     "./main.js",
     "./ticTacToe.js",
@@ -46,10 +42,13 @@
     "./chatbot.js",
     "./web/webhooks.js",
     "./spotify.js",
-    "./cmdScheduling.js"
+    "./cmdScheduling.js",
+    "./web/proxy.js",
+    "./web/account.js",
+    "./web/stats.js",
+    "./web/settings.js"
   ],
   "rembot": [
-    "./web/settings.js",
     "./hungryGames.js",
     "./main.js",
     "./ticTacToe.js",
@@ -60,6 +59,7 @@
     "./poll.js",
     "./chatbot.js",
     "./spotify.js",
-    "./cmdScheduling.js"
+    "./cmdScheduling.js",
+    "./web/settings.js"
   ]
 }
