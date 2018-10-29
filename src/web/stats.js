@@ -71,21 +71,33 @@ function WebStats() {
   let postTimeout;
 
   /**
-   * The request information for updating our server count on discordbots.org.
+   * The request information for updating our server count on bot list websites.
    * @private
    * @default
    * @constant
    */
-  const apiHost = {
-    protocol: 'https:',
-    host: 'discordbots.org',
-    path: '/api/bots/{id}/stats',
-    method: 'POST',
-    headers: {
-      'Authorization': auth.discordBotsOrgToken,
-      'content-type': 'application/json',
+  const apiHosts = [
+    {
+      protocol: 'https:',
+      host: 'discordbots.org',
+      path: '/api/bots/{id}/stats',
+      method: 'POST',
+      headers: {
+        'Authorization': auth.discordBotsOrgToken,
+        'content-type': 'application/json',
+      },
     },
-  };
+    {
+      protocol: 'https:',
+      host: 'bots.discord.pw',
+      path: '/api/bots/{id}/stats',
+      method: 'POST',
+      headers: {
+        'Authorization': auth.botsDiscordPwToken,
+        'content-type': 'application/json',
+      },
+    },
+  ];
 
   /**
    * Handler for all http requests. Always replies to res with JSON encoded bot
@@ -156,26 +168,29 @@ function WebStats() {
      * shard_count: number}} data The data to send in our request.
      */
     function sendRequest(data) {
-      let host = apiHost;
-      host.path = host.path.replace('{id}', self.client.user.id);
-      let body = JSON.stringify(data);
-      let req = https.request(host, (res) => {
-        let content = '';
-        res.on('data', (chunk) => {
-          content += chunk;
+      apiHosts.forEach((apiHost) => {
+        let host = apiHost;
+        host.path = host.path.replace('{id}', self.client.user.id);
+        let body = JSON.stringify(data);
+        let req = https.request(host, (res) => {
+          let content = '';
+          res.on('data', (chunk) => {
+            content += chunk;
+          });
+          res.on('end', () => {
+            postTimeout =
+                self.client.setTimeout(postUpdatedCount, postFrequency);
+            if (res.statusCode == 200) {
+              self.log('Successfully posted guild count to ' + apiHost.host);
+            } else {
+              self.error('Failed to post guild count to ' + apiHost.host);
+              console.error(host, body, content);
+            }
+          });
         });
-        res.on('end', () => {
-          postTimeout = self.client.setTimeout(postUpdatedCount, postFrequency);
-          if (res.statusCode == 200) {
-            self.log('Successfully posted guild count to discordbots.org');
-          } else {
-            self.error('Failed to post guild count to discordbots.org');
-            console.error(host, body, content);
-          }
-        });
+        req.end(body);
+        req.on('error', console.error);
       });
-      req.end(body);
-      req.on('error', console.error);
     }
   }
 }

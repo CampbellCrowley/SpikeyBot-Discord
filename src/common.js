@@ -256,10 +256,14 @@ function Common() {
           Common.mention(msg) + '\n```\n' + text + '\n```' + (post || ''));
     } else {
       let embed = new Discord.MessageEmbed();
-      embed.setTitle(text);
       embed.setColor([255, 0, 255]);
-      if (post) {
-        embed.setDescription(post);
+      if (text.length <= 256) {
+        embed.setTitle(text);
+        if (post) {
+          embed.setDescription(post);
+        }
+      } else {
+        embed.setDescription(text + (post ? '\n' + post : ''));
       }
       return msg.channel.send(Common.mention(msg), embed);
     }
