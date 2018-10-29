@@ -1046,6 +1046,7 @@ normal submodule, and is treated differently in the SpikeyBot class.
     * _instance_
         * [.aliases](#Command+aliases) : <code>Array.&lt;string&gt;</code>
         * [.options](#Command+options) : [<code>CommandSetting</code>](#Command..CommandSetting)
+        * [.myGuild](#Command+myGuild) : <code>string</code>
         * [.validOnlyInGuild](#Command+validOnlyInGuild) : <code>boolean</code>
         * [.defaultDisabled](#Command+defaultDisabled)
         * [.disabled](#Command+disabled) : <code>Object</code>
@@ -1069,12 +1070,17 @@ normal submodule, and is treated differently in the SpikeyBot class.
         * [.isDisabled(msg)](#Command+isDisabled) ⇒ <code>number</code>
             * [~findMatch(search, data)](#Command+isDisabled..findMatch) ⇒ <code>number</code> ℗
         * [.toJSON()](#Command+toJSON) ⇒ <code>Object</code>
+        * [.getUserSettings(gId)](#Command+getUserSettings) ⇒ <code>Object.&lt;CommandSetting&gt;</code>
+        * [.getDefaultSettings()](#Command+getDefaultSettings) ⇒ <code>Object.&lt;SingleCommand&gt;</code>
         * [.trigger(cmd, msg)](#Command+trigger) ⇒ <code>boolean</code>
         * [.on(cmd, [cb], [onlyserver])](#Command+on)
         * [.removeListener(cmd)](#Command+removeListener)
         * [.find(cmd, [msg])](#Command+find) ⇒ [<code>SingleCommand</code>](#Command..SingleCommand)
         * [.validate(cmd, msg, [func])](#Command+validate) ⇒ <code>string</code>
         * [.getAllNames()](#Command+getAllNames) ⇒ <code>Array.&lt;string&gt;</code>
+        * [.addEventListener(name, handler)](#Command+addEventListener)
+        * [.removeEventListener(name, handler)](#Command+removeEventListener)
+        * [.fire(name, args)](#Command+fire)
         * [.import(data)](#MainModule+import)
         * [.export()](#MainModule+export) ⇒ [<code>ModuleData</code>](#MainModule..ModuleData)
         * *[.terminate()](#MainModule+terminate)*
@@ -1089,6 +1095,7 @@ normal submodule, and is treated differently in the SpikeyBot class.
         * [.save([opt])](#SubModule+save)
         * *[.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>*
     * _inner_
+        * [~eventList](#Command..eventList)
         * [~cmds](#Command..cmds) : <code>Object.&lt;SingleCommand&gt;</code> ℗
         * [~userSettings](#Command..userSettings) : <code>Object.&lt;Object.&lt;CommandSetting&gt;&gt;</code> ℗
         * [~onlyservermessage](#Command..onlyservermessage) : <code>string</code> ℗
@@ -1112,6 +1119,14 @@ handler.
 
 ### command.options : [<code>CommandSetting</code>](#Command..CommandSetting)
 The current options and settings for this command.
+
+**Kind**: instance property of [<code>Command</code>](#Command)  
+**Access**: public  
+<a name="Command+myGuild"></a>
+
+### command.myGuild : <code>string</code>
+The guild ID of the guild is settings object is for, or null if this
+instance is not specific to a single guild.
 
 **Kind**: instance property of [<code>Command</code>](#Command)  
 **Access**: public  
@@ -1277,6 +1292,7 @@ Enable, disable, or neutralize this command for the associated guild,
 channel, user, or role.
 
 **Kind**: instance method of [<code>Command</code>](#Command)  
+**Emits**: <code>Command.events#event:settingsChanged</code>  
 **Access**: public  
 
 | Param | Type | Description |
@@ -1325,6 +1341,29 @@ re-creating this object.
 **Kind**: instance method of [<code>Command</code>](#Command)  
 **Returns**: <code>Object</code> - Object ready to be stringified for file saving.  
 **Access**: public  
+<a name="Command+getUserSettings"></a>
+
+### command.getUserSettings(gId) ⇒ <code>Object.&lt;CommandSetting&gt;</code>
+Fetch all user-defined settings for a guild.
+
+**Kind**: instance method of [<code>Command</code>](#Command)  
+**Returns**: <code>Object.&lt;CommandSetting&gt;</code> - The settings for the guild mapped by
+command name.  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| gId | <code>string</code> | THe guild id of which to fetch the settings. |
+
+<a name="Command+getDefaultSettings"></a>
+
+### command.getDefaultSettings() ⇒ <code>Object.&lt;SingleCommand&gt;</code>
+Fetch all commands and their default setting values.
+
+**Kind**: instance method of [<code>Command</code>](#Command)  
+**Returns**: <code>Object.&lt;SingleCommand&gt;</code> - All currently registered commands.  
+**Access**: public  
+**See**: [cmds](#Command..cmds)  
 <a name="Command+trigger"></a>
 
 ### command.trigger(cmd, msg) ⇒ <code>boolean</code>
@@ -1402,6 +1441,45 @@ Fetches a list of all currently registered commands.
 **Kind**: instance method of [<code>Command</code>](#Command)  
 **Returns**: <code>Array.&lt;string&gt;</code> - Array of all registered commands.  
 **Access**: public  
+<a name="Command+addEventListener"></a>
+
+### command.addEventListener(name, handler)
+Register an event listener.
+
+**Kind**: instance method of [<code>Command</code>](#Command)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | The name of the event to listen for. |
+| handler | <code>function</code> | The function to call when the event is fired. |
+
+<a name="Command+removeEventListener"></a>
+
+### command.removeEventListener(name, handler)
+Remove an event listener.
+
+**Kind**: instance method of [<code>Command</code>](#Command)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | The name of the event to listen for. |
+| handler | <code>function</code> | THe handler that is currently registered to listen on this event. |
+
+<a name="Command+fire"></a>
+
+### command.fire(name, args)
+Fire all handlers listening for an event.
+
+**Kind**: instance method of [<code>Command</code>](#Command)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>string</code> | The name of the event to fire. |
+| args | <code>\*</code> | The arguments to pass to the handlers. |
+
 <a name="MainModule+import"></a>
 
 ### command.import(data)
@@ -1545,6 +1623,12 @@ putting the module into an uncontrollable state.
 **Kind**: instance abstract method of [<code>Command</code>](#Command)  
 **Returns**: <code>boolean</code> - True if can be unloaded, false if cannot.  
 **Access**: public  
+<a name="Command..eventList"></a>
+
+### Command~eventList
+Currently registered event listeners for non-command events.
+
+**Kind**: inner property of [<code>Command</code>](#Command)  
 <a name="Command..cmds"></a>
 
 ### Command~cmds : <code>Object.&lt;SingleCommand&gt;</code> ℗
@@ -1645,6 +1729,7 @@ Show user the currently configured settings for commands.
 Reset all custom command settings to default.
 
 **Kind**: inner method of [<code>Command</code>](#Command)  
+**Emits**: <code>Command.events#event:settingsReset</code>  
 **Access**: private  
 
 | Param | Type | Description |
@@ -8800,6 +8885,7 @@ Main class that manages the bot.
     * _instance_
         * [.getBotName()](#SpikeyBot+getBotName) ⇒ <code>string</code>
         * [.getFullBotName()](#SpikeyBot+getFullBotName) ⇒ <code>string</code>
+        * [.changePrefix(gId, newPrefix)](#SpikeyBot+changePrefix)
         * [.getPrefix(id)](#SpikeyBot+getPrefix) ⇒ <code>string</code>
     * _inner_
         * [~testMode](#SpikeyBot..testMode) : <code>boolean</code> ℗
@@ -8866,6 +8952,19 @@ Getter for the bot's name. If botName is null, this will give either
 **Returns**: <code>string</code> - The bot's name.  
 **Access**: public  
 **See**: [botName](#SpikeyBot..botName)  
+<a name="SpikeyBot+changePrefix"></a>
+
+### spikeyBot.changePrefix(gId, newPrefix)
+Change the command prefix for the given guild.
+
+**Kind**: instance method of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| gId | <code>string</code> | The guild id of which to change the command prefix. |
+| newPrefix | <code>string</code> | The new prefix to set. |
+
 <a name="SpikeyBot+getPrefix"></a>
 
 ### spikeyBot.getPrefix(id) ⇒ <code>string</code>
@@ -12274,12 +12373,15 @@ Manages changing settings for the bot from a website.
         * [~handleShutdown()](#WebSettings..handleShutdown) ℗
         * [~handleCommandRegistered(cmd, gId)](#WebSettings..handleCommandRegistered) ℗
         * [~handleCommandCancelled(cmdId, gId)](#WebSettings..handleCommandCancelled) ℗
+        * [~handleSettingsChanged(gId, value, type, id, [id2])](#WebSettings..handleSettingsChanged) ℗
+        * [~handleSettingsReset(gId)](#WebSettings..handleSettingsReset) ℗
         * [~startClient()](#WebSettings..startClient) ℗
         * [~handler(req, res)](#WebSettings..handler) ℗
         * [~getNumClients()](#WebSettings..getNumClients) ⇒ <code>number</code> ℗
         * [~socketConnection(socket)](#WebSettings..socketConnection) ℗
             * [~callSocketFunction(func, args, [forward])](#WebSettings..socketConnection..callSocketFunction) ℗
         * [~clientSocketConnection(socket)](#WebSettings..clientSocketConnection) ℗
+        * [~replyNoPerm(socket, cmd)](#WebSettings..replyNoPerm) ℗
         * [~checkMyGuild(gId)](#WebSettings..checkMyGuild) ⇒ <code>boolean</code> ℗
         * [~checkPerm(userData, gId)](#WebSettings..checkPerm) ⇒ <code>boolean</code> ℗
         * [~checkChannelPerm(userData, gId, cId)](#WebSettings..checkChannelPerm) ⇒ <code>boolean</code> ℗
@@ -12292,6 +12394,7 @@ Manages changing settings for the bot from a website.
         * [~fetchScheduledCommands(userData, socket, [cb])](#WebSettings..fetchScheduledCommands) : <code>WebSettings~SocketFunction</code>
         * [~cancelScheduledCommand(userData, socket, gId, cmdId, [cb])](#WebSettings..cancelScheduledCommand) : <code>WebSettings~SocketFunction</code>
         * [~registerScheduledCommand(userData, socket, gId, cmd, [cb])](#WebSettings..registerScheduledCommand) : <code>WebSettings~SocketFunction</code>
+        * [~changePrefix(userData, socket, gId, prefix, [cb])](#WebSettings..changePrefix) : <code>WebSettings~SocketFunction</code>
         * [~basicCB](#WebSettings..basicCB) : <code>function</code>
 
 <a name="SubModule+helpMessage"></a>
@@ -12544,6 +12647,35 @@ Handle a CmdScheduling.ScheduledCommand being canceled.
 | cmdId | <code>string</code> | The ID of the command that was cancelled. |
 | gId | <code>string</code> \| <code>number</code> | the ID of the guild the command was cancelled in. |
 
+<a name="WebSettings..handleSettingsChanged"></a>
+
+### WebSettings~handleSettingsChanged(gId, value, type, id, [id2]) ℗
+Handle Command~CommandSetting value changed.
+
+**Kind**: inner method of [<code>WebSettings</code>](#WebSettings)  
+**Access**: private  
+**See**: [Command~CommandSetting.set](Command~CommandSetting.set)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| gId | <code>string</code> | the ID of the guild this setting was changed in, or null of not specific to a single guild. |
+| value | <code>string</code> |  |
+| type | <code>string</code> |  |
+| id | <code>string</code> |  |
+| [id2] | <code>string</code> |  |
+
+<a name="WebSettings..handleSettingsReset"></a>
+
+### WebSettings~handleSettingsReset(gId) ℗
+Handle Command~CommandSetting was deleted or reset in a guild.
+
+**Kind**: inner method of [<code>WebSettings</code>](#WebSettings)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| gId | <code>string</code> | The ID of the guild in which the settings were reset. |
+
 <a name="WebSettings..startClient"></a>
 
 ### WebSettings~startClient() ℗
@@ -12610,6 +12742,20 @@ Handler for connecting as a client to the server.
 | Param | Type | Description |
 | --- | --- | --- |
 | socket | <code>socketIo~Socket</code> | The socket.io socket that connected. |
+
+<a name="WebSettings..replyNoPerm"></a>
+
+### WebSettings~replyNoPerm(socket, cmd) ℗
+Send a message to the given socket informing the client that the command
+they attempted failed due to insufficient permission.
+
+**Kind**: inner method of [<code>WebSettings</code>](#WebSettings)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| socket | <code>Socket</code> | The socket.io socket to reply on. |
+| cmd | <code>string</code> | THe command the client attempted. |
 
 <a name="WebSettings..checkMyGuild"></a>
 
@@ -12792,6 +12938,22 @@ Client has created a new scheduled command.
 | socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
 | gId | <code>string</code> \| <code>number</code> | The id of the guild of which to add the command. |
 | cmd | <code>string</code> | The command data of which to make into a {@link CmdScheduling~ScheduledCommand} and register. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
+
+<a name="WebSettings..changePrefix"></a>
+
+### WebSettings~changePrefix(userData, socket, gId, prefix, [cb]) : <code>WebSettings~SocketFunction</code>
+Client has requested to change the command prefix for a guild.
+
+**Kind**: inner method of [<code>WebSettings</code>](#WebSettings)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>string</code> \| <code>number</code> | The id of the guild of which to change the prefix. |
+| prefix | <code>string</code> | The new prefix value to set. |
 | [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
 
 <a name="WebSettings..basicCB"></a>

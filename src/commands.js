@@ -117,11 +117,13 @@ function Command() {
   this.import = function(data) {
     if (!data) return;
     cmds = data.cmds;
+    eventList = data.events;
   };
   /** @inheritdoc */
   this.export = function() {
     return {
       cmds: cmds,
+      events: eventList,
     };
   };
 
@@ -131,6 +133,11 @@ function Command() {
    * @callback commandHandler
    * @param {Discord~Message} msg The message sent in Discord.
    */
+
+  /**
+   * Currently registered event listeners for non-command events.
+   */
+  let eventList = {};
 
   /**
    * All tracked commands mapped by command name.
@@ -210,6 +217,13 @@ function Command() {
   function CommandSetting(opts) {
     const me = this;
     if (!opts) opts = {};
+    /**
+     * The guild ID of the guild is settings object is for, or null if this
+     * instance is not specific to a single guild.
+     * @public
+     * @type {?string}
+     */
+    this.myGuild = opts.guildId || null;
     /**
      * If the command is only allowed to be used in guilds.
      * @public
@@ -293,6 +307,7 @@ function Command() {
      * Enable, disable, or neutralize this command for the associated guild,
      * channel, user, or role.
      * @public
+     * @fires Command.events#settingsChanged
      *
      * @param {string} value `enabled`|`disabled`|`default` Whether to set this
      * ID to enabled, disabled, or to whatever the default value is.
@@ -322,7 +337,7 @@ function Command() {
           else me.enabled.guilds[id] = true;
           if (value != 'disabled') delete me.disabled.guilds[id];
           else me.disabled.guilds[id] = true;
-          return;
+          break;
         case 'channel':
           if (!id || !self.client.channels.get(id)) {
             throw new Error('Channel ID is invalid for id: ' + id);
@@ -331,7 +346,7 @@ function Command() {
           else me.enabled.channels[id] = true;
           if (value != 'disabled') delete me.disabled.channels[id];
           else me.disabled.channels[id] = true;
-          return;
+          break;
         case 'user':
           if (!id || !self.client.users.get(id)) {
             throw new Error('User ID is invalid for id: ' + id);
@@ -340,7 +355,7 @@ function Command() {
           else me.enabled.users[id] = true;
           if (value != 'disabled') delete me.disabled.users[id];
           else me.disabled.users[id] = true;
-          return;
+          break;
         case 'role':
           if (!id2 || !self.client.guilds.get(id2)) {
             throw new Error('Guild ID is invalid for id2: ' + id2);
@@ -352,13 +367,14 @@ function Command() {
           else me.enabled.roles[id2 + '/' + id] = true;
           if (value != 'disabled') delete me.disabled.roles[id2 + '/' + id];
           else me.disabled.roles[id2 + '/' + id] = true;
-          return;
+          break;
         default:
           throw new Error(
               'Invalid type to set command enabled/disabled status to \'' +
               type +
               '\'. (Expected \'guild\', \'channel\', \'user\', or \'role\'.)');
       }
+      self.events.fire('settingsChanged', me.myGuild, value, type, id, id2);
     };
 
     /**
@@ -378,10 +394,15 @@ function Command() {
 
       let hasPerm = false;
       if (msg.guild) {
-        let perms = msg.channel.permissionsFor(msg.member).bitfield;
         // The command is disabled by default, but the GuildMember has a
-        // required
-        // permission to run this command, or is Admin, or is guild owner.
+        // required permission to run this command, or is Admin, or is guild
+        // owner.
+        let perms = 0;
+        if (msg.channel) {
+          perms = msg.channel.permissionsFor(msg.member).bitfield;
+        } else {
+          perms = msg.member.permissions.bitfield;
+        }
         hasPerm =
             ((perms & me.permissions) ||
              (perms & self.Discord.Permissions.FLAGS.ADMINISTRATOR) ||
@@ -419,7 +440,7 @@ function Command() {
        */
       function findMatch(search, data) {
         if (search.users[msg.author.id]) return 2;
-        if (search.channels[msg.channel.id]) return 1;
+        if (msg.channel && search.channels[msg.channel.id]) return 1;
         if (msg.guild) {
           if (search.guilds[msg.guild.id]) return 1;
           if (msg.member.roles.find((r) => {
@@ -458,6 +479,29 @@ function Command() {
    * @type {Object.<Object.<CommandSetting>>}
    */
   let userSettings = {};
+
+  /**
+   * Fetch all user-defined settings for a guild.
+   * @public
+   *
+   * @param {string} gId THe guild id of which to fetch the settings.
+   * @return {Object.<CommandSetting>} The settings for the guild mapped by
+   * command name.
+   */
+  this.getUserSettings = function(gId) {
+    return userSettings[gId];
+  };
+
+  /**
+   * Fetch all commands and their default setting values.
+   * @see {@link Command~cmds}
+   * @public
+   *
+   * @return {Object.<SingleCommand>} All currently registered commands.
+   */
+  this.getDefaultSettings = function() {
+    return cmds;
+  };
 
   /**
    * The message to send to the user if they attempt a server-only command in a
@@ -970,6 +1014,7 @@ function Command() {
    * Reset all custom command settings to default.
    * @private
    * @type {Command~commandHandler}
+   * @fires Command.events#settingsReset
    *
    * @param {Discord~Message} msg The message the user sent that triggered this.
    */
@@ -991,8 +1036,53 @@ function Command() {
             delete userSettings[msg.guild.id];
             self.common.reply(
                 msg, 'All settings for commands have been reset.');
+            self.events.fire('settingsReset', msg.guild.id);
           });
         });
   }
+
+  /**
+   * Register an event listener.
+   * @public
+   *
+   * @param {string} name The name of the event to listen for.
+   * @param {Function} handler The function to call when the event is fired.
+   */
+  this.addEventListener = function(name, handler) {
+    if (!eventList[name]) eventList[name] = [];
+    eventList[name].push(handler);
+  };
+  /**
+   * Remove an event listener.
+   * @public
+   *
+   * @param {string} name The name of the event to listen for.
+   * @param {Function} handler THe handler that is currently registered to
+   * listen on this event.
+   */
+  this.removeEventListener = function(name, handler) {
+    let handlers = eventList[name];
+    if (!handlers) return;
+    let index = handlers.findIndex((el) => {
+      return el == handler;
+    });
+    if (index < 0) return;
+    handlers.splice(index, 0);
+  };
+
+  /**
+   * Fire all handlers listening for an event.
+   * @public
+   *
+   * @param {string} name The name of the event to fire.
+   * @param {*} args The arguments to pass to the handlers.
+   */
+  this.fire = function(name, ...args) {
+    let handlers = eventList[name];
+    if (!handlers || handlers.length == 0) return;
+    handlers.forEach((h) => {
+      h.apply(h, args);
+    });
+  };
 }
 module.exports = new Command();

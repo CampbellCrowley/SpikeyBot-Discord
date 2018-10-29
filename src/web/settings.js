@@ -21,6 +21,9 @@ function WebSettings() {
   this.initialize = function() {
     app.listen(self.common.isRelease ? 8020 : 8021);
     setTimeout(updateModuleReferences, 100);
+
+    self.command.addEventListener('settingsChanged', handleSettingsChanged);
+    self.command.addEventListener('settingsReset', handleSettingsReset);
   };
   /** @inheritdoc */
   this.unloadable = function() {
@@ -35,6 +38,9 @@ function WebSettings() {
       cmdScheduler.removeListener('shutdown', handleShutdown);
       cmdScheduler.removeListener('commandRegistered', handleCommandRegistered);
       cmdScheduler.removeListener('commandCancelled', handleCommandCancelled);
+      self.command.removeEventListener(
+          'settingsChanged', handleSettingsChanged);
+      self.command.removeEventListener('settingsReset', handleSettingsReset);
     }
   };
 
@@ -128,6 +134,44 @@ function WebSettings() {
       if (sockets[i] && sockets[i].cachedGuilds &&
           sockets[i].cachedGuilds.includes(gId)) {
         sockets[i].emit('commandCancelled', cmdId, gId);
+      }
+    }
+  }
+
+  /**
+   * Handle Command~CommandSetting value changed.
+   * @private
+   * @listens Command.events#settingsChanged
+   * @see {@link Command~CommandSetting.set}
+   *
+   * @param {?string} gId the ID of the guild this setting was changed in, or
+   * null of not specific to a single guild.
+   * @param {string} value
+   * @param {string} type
+   * @param {string} id
+   * @param {string} [id2]
+   */
+  function handleSettingsChanged(gId, value, type, id, id2) {
+    for (let i in sockets) {
+      if (sockets[i] && sockets[i].cachedGuilds &&
+          (!gId || sockets[i].cachedGuilds.includes(gId))) {
+        sockets[i].emit('settingsChanged', gId, value, type, id, id2);
+      }
+    }
+  }
+
+  /**
+   * Handle Command~CommandSetting was deleted or reset in a guild.
+   * @private
+   * @listens Command.events#settingsReset
+   *
+   * @param {string} gId The ID of the guild in which the settings were reset.
+   */
+  function handleSettingsReset(gId) {
+    for (let i in sockets) {
+      if (sockets[i] && sockets[i].cachedGuilds &&
+          sockets[i].cachedGuilds.includes(gId)) {
+        sockets[i].emit('settingsReset', gId);
       }
     }
   }
@@ -234,6 +278,9 @@ function WebSettings() {
     socket.on('registerScheduledCommand', (...args) => {
       callSocketFunction(registerScheduledCommand, args);
     });
+    socket.on('changePrefix', (...args) => {
+      callSocketFunction(changePrefix, args);
+    });
 
     /**
      * Calls the functions with added arguments, and copies the request to all
@@ -312,12 +359,12 @@ function WebSettings() {
    * @param {Socket} socket The socket.io socket to reply on.
    * @param {string} cmd THe command the client attempted.
    */
-  /* function replyNoPerm(socket, cmd) {
+  function replyNoPerm(socket, cmd) {
     self.common.log('Attempted ' + cmd + ' without permission.', socket.id);
     socket.emit(
         'message', 'Failed to run command "' + cmd +
             '" because you don\'t have permission for this.');
-  }*/
+  }
 
   /**
    * Checks if the current shard is responsible for the requested guild.
@@ -433,7 +480,6 @@ function WebSettings() {
   function makeMessage(uId, gId, cId, msg) {
     let g = self.client.guilds.get(gId);
     if (!g) return null;
-    if (!cId) return null;
     return {
       member: g.members.get(uId),
       author: g.members.get(uId).user,
@@ -605,8 +651,14 @@ function WebSettings() {
     let guilds = self.client.guilds.filter((obj) => {
       return obj.members.get(userData.id);
     });
+    let cmdDefaults = self.command.getDefaultSettings();
     let settings = guilds.map((g) => {
-      return g.id;
+      return {
+        guild: g.id,
+        prefix: self.bot.getPrefix(g),
+        commandSettings: self.command.getUserSettings(g.id),
+        commandDefaults: cmdDefaults,
+      };
     });
     cb(settings);
   }
@@ -666,6 +718,7 @@ function WebSettings() {
    * complete, or has failed.
    */
   function cancelScheduledCommand(userData, socket, gId, cmdId, cb) {
+    if (typeof cb !== 'function') cb = function() {};
     if (!checkPerm(userData, gId)) {
       if (!checkMyGuild(gId)) return;
       replyNoPerm(socket, 'cancelScheduledCommand');
@@ -692,9 +745,10 @@ function WebSettings() {
    * complete, or has failed.
    */
   function registerScheduledCommand(userData, socket, gId, cmd, cb) {
+    if (typeof cb !== 'function') cb = function() {};
     if (!checkPerm(userData, gId)) {
       if (!checkMyGuild(gId)) return;
-      replyNoPerm(socket, 'cancelScheduledCommand');
+      replyNoPerm(socket, 'registerScheduledCommand');
       cb('Forbidden');
       return;
     }
@@ -748,5 +802,38 @@ function WebSettings() {
     cb(null);
   }
   this.registerScheduledCommand = registerScheduledCommand;
+
+  /**
+   * Client has requested to change the command prefix for a guild.
+   *
+   * @public
+   * @type {WebSettings~SocketFunction}
+   * @param {Object} userData The current user's session data.
+   * @param {socketIo~Socket} socket The socket connection to reply on.
+   * @param {string|number} gId The id of the guild of which to change the
+   * prefix.
+   * @param {string} prefix The new prefix value to set.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete, or has failed.
+   */
+  function changePrefix(userData, socket, gId, prefix, cb) {
+    if (typeof cb !== 'function') cb = function() {};
+    if (!checkPerm(userData, gId) ||
+        self.command.validate(
+            'changeprefix', makeMessage(userData.id, gId, null, prefix))) {
+      if (!checkMyGuild(gId)) return;
+      replyNoPerm(socket, 'changePrefix');
+      cb('Forbidden');
+      return;
+    }
+    try {
+      self.bot.changePrefix(gId, prefix);
+    } catch (err) {
+      cb('Internal Error');
+      return;
+    }
+    cb();
+  }
+  this.changePrefix = changePrefix;
 }
 module.exports = new WebSettings();

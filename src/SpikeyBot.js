@@ -690,7 +690,12 @@ function SpikeyBot() {
       }
     }
 
-    command.on('changeprefix', commandChangePrefix, true);
+    command.on(
+        new command.SingleCommand(['changeprefix'], commandChangePrefix, {
+          validOnlyInGuild: true,
+          defaultDisabled: true,
+          permissions: Discord.Permissions.FLAGS.MANAGE_GUILD,
+        }));
     /**
      * Change the custom prefix for the given guild.
      *
@@ -700,15 +705,9 @@ function SpikeyBot() {
      * @listens Command#changePrefix
      */
     function commandChangePrefix(msg) {
-      const perms = msg.member.permissions;
       const confirmEmoji = '✅';
       const newPrefix = msg.text.slice(1);
-      if (!perms.has(Discord.Permissions.FLAGS.MANAGE_GUILD)) {
-        common.reply(
-            msg, 'Sorry, but you must be a server administrator to set a ' +
-                'custom prefix.');
-        return;
-      } else if (newPrefix.length < 1) {
+      if (newPrefix.length < 1) {
         common.reply(msg, 'Please specify a new prefix after the command.');
       } else if (newPrefix.indexOf('`') > -1) {
         common.reply(
@@ -737,91 +736,95 @@ function SpikeyBot() {
                       'if you still wish to change the command prefix.');
                   return;
                 }
-                guildPrefixes[msg.guild.id] = newPrefix;
                 msg_.edit(
                     common.mention(msg) + ' Prefix changed to `' + newPrefix +
                     '`!');
-                if (botName) {
-                  fs.readFile(
-                      common.guildSaveDir + msg.guild.id +
-                          guildCustomPrefixFile,
-                      function(err, data) {
-                        let finalPrefix = newPrefix;
-                        if (data) {
-                          let parsed = JSON.parse(data);
-                          parsed[botName] = newPrefix;
-                          finalPrefix = JSON.stringify(parsed);
-                        } else {
-                          let newData = {};
-                          newData[botName] = newPrefix;
-                          finalPrefix = JSON.stringify(newData);
-                        }
-                        mkdirp(
-                            common.guildSaveDir + msg.guild.id,
-                            writeBotNamePrefix);
-                        /**
-                         * Write the custom prefix to file after making the
-                         * directory. This is for bots not using the default
-                         * name.
-                         * @private
-                         * @param {Error} err
-                         */
-                        function writeBotNamePrefix(err) {
-                          if (err) {
-                            common.error(
-                                'Failed to create guild directory! ' +
-                                msg.guild.id + ' (' + newPrefix + ')');
-                            console.error(err);
-                            return;
-                          }
-                          fs.writeFile(
-                              common.guildSaveDir + msg.guild.id +
-                                  guildCustomPrefixFile,
-                              finalPrefix, function(err) {
-                                if (err) {
-                                  common.error(
-                                      'Failed to save guild custom prefix! ' +
-                                      msg.guild.id + ' (' + botName + ': ' +
-                                      newPrefix + ')');
-                                  console.error(err);
-                                } else {
-                                  common.logDebug(
-                                      'Guild ' + msg.guild.id +
-                                      ' updated prefix to ' + botName + ': ' +
-                                      newPrefix);
-                                }
-                              });
-                        }
-                      });
-                } else {
-                  mkdirp(common.guildSaveDir + msg.guild.id, function(err) {
-                    if (err) {
-                      common.error(
-                          'Failed to create guild directory! ' + msg.guild.id +
-                          ' (' + newPrefix + ')');
-                      console.error(err);
-                      return;
-                    }
-                    fs.writeFile(
-                        common.guildSaveDir + msg.guild.id + guildPrefixFile,
-                        newPrefix, function(err) {
-                          if (err) {
-                            common.error(
-                                'Failed to save guild custom prefix! ' +
-                                msg.guild.id + ' (' + newPrefix + ')');
-                            console.error(err);
-                          } else {
-                            common.logDebug(
-                                'Guild ' + msg.guild.id +
-                                ' updated prefix to ' + newPrefix);
-                          }
-                        });
-                  });
-                }
               });
+              self.changePrefix(msg.guild.id, newPrefix);
             });
       }
     }
+    /**
+     * Change the command prefix for the given guild.
+     * @public
+     *
+     * @param {string} gId The guild id of which to change the command prefix.
+     * @param {string} newPrefix The new prefix to set.
+     */
+    this.changePrefix = function(gId, newPrefix) {
+      guildPrefixes[gId] = newPrefix;
+      if (botName) {
+        fs.readFile(
+            common.guildSaveDir + gId + guildCustomPrefixFile,
+            function(err, data) {
+              let finalPrefix = newPrefix;
+              if (data) {
+                let parsed = JSON.parse(data);
+                parsed[botName] = newPrefix;
+                finalPrefix = JSON.stringify(parsed);
+              } else {
+                let newData = {};
+                newData[botName] = newPrefix;
+                finalPrefix = JSON.stringify(newData);
+              }
+              mkdirp(common.guildSaveDir + gId, writeBotNamePrefix);
+              /**
+               * Write the custom prefix to file after making the
+               * directory. This is for bots not using the default
+               * name.
+               * @private
+               * @param {Error} err
+               */
+              function writeBotNamePrefix(err) {
+                if (err) {
+                  common.error(
+                      'Failed to create guild directory! ' + gId +
+                      ' (' + newPrefix + ')');
+                  console.error(err);
+                  return;
+                }
+                fs.writeFile(
+                    common.guildSaveDir + gId + guildCustomPrefixFile,
+                    finalPrefix, function(err) {
+                      if (err) {
+                        common.error(
+                            'Failed to save guild custom prefix! ' +
+                            gId + ' (' + botName + ': ' + newPrefix +
+                            ')');
+                        console.error(err);
+                      } else {
+                        common.logDebug(
+                            'Guild ' + gId + ' updated prefix to ' +
+                            botName + ': ' + newPrefix);
+                      }
+                    });
+              }
+            });
+      } else {
+        mkdirp(common.guildSaveDir + gId, function(err) {
+          if (err) {
+            common.error(
+                'Failed to create guild directory! ' + gId + ' (' + newPrefix +
+                ')');
+            console.error(err);
+            return;
+          }
+          fs.writeFile(
+              common.guildSaveDir + gId + guildPrefixFile, newPrefix,
+              function(err) {
+                if (err) {
+                  common.error(
+                      'Failed to save guild custom prefix! ' + gId + ' (' +
+                      newPrefix + ')');
+                  console.error(err);
+                } else {
+                  common.logDebug(
+                      'Guild ' + gId + ' updated prefix to ' + newPrefix);
+                }
+              });
+        });
+      }
+    };
   }
 
   command.on('reboot', commandReboot);

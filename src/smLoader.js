@@ -603,7 +603,7 @@ function SMLoader() {
           let embed = new self.Discord.MessageEmbed();
           embed.setTitle('Load complete.');
           embed.setColor([255, 0, 255]);
-          embed.setDescription(out.join(' ') || 'NOTHING loaded');
+          embed.setDescription(outs.join(' ') || 'NOTHING loaded');
           warnMessage.edit(self.common.mention(msg), embed);
         }
         if (numTotal == 0) done();
