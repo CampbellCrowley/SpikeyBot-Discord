@@ -285,10 +285,25 @@ function SMLoader() {
     let message;
     try {
       delete require.cache[require.resolve(name)];
-      subModuleNames.splice(subModuleNames.findIndex((el) => el == name), 1);
+      let index = subModuleNames.findIndex((el) => el == name);
+      if (index < 0) {
+        self.error(
+            'Failed to find submodule name in list of loaded submodules! ' +
+            name);
+        console.log(subModuleNames);
+      } else {
+        subModuleNames.splice(index, 1);
+      }
       if (opts.updateGoal) {
-        goalSubModuleNames.splice(
-            goalSubModuleNames.findIndex((el) => el == name), 1);
+        let goalIndex = goalSubModuleNames.findIndex((el) => el == name);
+        if (goalIndex < 0) {
+          self.error(
+              'Failed to find submodule name in list of goal submodules! ' +
+              name);
+          console.log(goalSubModuleNames);
+        } else {
+          goalSubModuleNames.splice(goalIndex, 1);
+        }
       }
       message = null;
     } catch (err) {
@@ -551,7 +566,7 @@ function SMLoader() {
           let embed = new self.Discord.MessageEmbed();
           embed.setTitle('Unload complete.');
           embed.setColor([255, 0, 255]);
-          embed.setDescription(out.join(' ') || 'NOTHING unloaded');
+          embed.setDescription(outs.join(' ') || 'NOTHING unloaded');
           warnMessage.edit(self.common.mention(msg), embed);
         }
         if (numTotal == 0) done();
@@ -574,13 +589,13 @@ function SMLoader() {
    */
   function commandLoad(msg) {
     if (trustedIds.includes(msg.author.id)) {
-      let toUnload = msg.text.split(' ').splice(1);
+      let toLoad = msg.text.split(' ').splice(1);
       self.common.reply(msg, 'Loading modules...').then((warnMessage) => {
-        const numTotal = toUnload.length;
+        const numTotal = toLoad.length;
         let numComplete = 0;
         let outs = [];
         for (let i = 0; i < numTotal; i++) {
-          loadSingle(toUnload[i]);
+          loadSingle(toLoad[i]);
         }
         /**
          * Begins actually loading a module.
@@ -588,7 +603,7 @@ function SMLoader() {
          * @param {string} name The name of the subModule.
          */
         function loadSingle(name) {
-          self.unload(name, null, (out) => {
+          self.load(name, null, (out) => {
             outs.push(name + ': ' + (out || 'Success'));
             done();
           });
