@@ -13083,7 +13083,7 @@ The amount frequency at which we will post our stats to discordbots.org
 The request information for updating our server count on bot list websites.
 
 **Kind**: inner constant of [<code>WebStats</code>](#WebStats)  
-**Default**: <code>[&quot;{\&quot;protocol\&quot;:\&quot;https:\&quot;,\&quot;host\&quot;:\&quot;discordbots.org\&quot;,\&quot;path\&quot;:\&quot;/api/bots/{id}/stats\&quot;,\&quot;method\&quot;:\&quot;POST\&quot;,\&quot;headers\&quot;:\&quot;\&quot;}&quot;,&quot;{\&quot;protocol\&quot;:\&quot;https:\&quot;,\&quot;host\&quot;:\&quot;bots.discord.pw\&quot;,\&quot;path\&quot;:\&quot;/api/bots/{id}/stats\&quot;,\&quot;method\&quot;:\&quot;POST\&quot;,\&quot;headers\&quot;:\&quot;\&quot;}&quot;]</code>  
+**Default**: <code>[&quot;{\&quot;protocol\&quot;:\&quot;https:\&quot;,\&quot;host\&quot;:\&quot;discordbots.org\&quot;,\&quot;path\&quot;:\&quot;/api/bots/{id}/stats\&quot;,\&quot;method\&quot;:\&quot;POST\&quot;,\&quot;headers\&quot;:\&quot;\&quot;}&quot;,&quot;{\&quot;protocol\&quot;:\&quot;https:\&quot;,\&quot;host\&quot;:\&quot;bots.discord.pw\&quot;,\&quot;path\&quot;:\&quot;/api/bots/{id}/stats\&quot;,\&quot;method\&quot;:\&quot;POST\&quot;,\&quot;headers\&quot;:\&quot;\&quot;}&quot;,&quot;{\&quot;protocol\&quot;:\&quot;https:\&quot;,\&quot;host\&quot;:\&quot;discordbotlist.com\&quot;,\&quot;path\&quot;:\&quot;/api/bots/{id}/stats\&quot;,\&quot;method\&quot;:\&quot;POST\&quot;,\&quot;headers\&quot;:\&quot;\&quot;}&quot;]</code>  
 **Access**: private  
 <a name="WebStats..handler"></a>
 

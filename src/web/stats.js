@@ -97,6 +97,16 @@ function WebStats() {
         'content-type': 'application/json',
       },
     },
+    {
+      protocol: 'https:',
+      host: 'discordbotlist.com',
+      path: '/api/bots/{id}/stats',
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bot ' + auth.discordBotListComToken,
+        'content-type': 'application/json',
+      },
+    },
   ];
 
   /**
@@ -153,6 +163,8 @@ function WebStats() {
         // @TODO: Update getStats to give the number of guilds each shard is on.
         sendRequest({
           server_count: values.numGuilds,
+          guilds: values.numGuilds,
+          users: values.numUsers,
           shards: [values.numGuilds / values.numShards],
           shard_id: values.reqShard,
           shard_count: values.numShards,
@@ -168,22 +180,25 @@ function WebStats() {
      * shard_count: number}} data The data to send in our request.
      */
     function sendRequest(data) {
+      let body = JSON.stringify(data);
       apiHosts.forEach((apiHost) => {
         let host = apiHost;
         host.path = host.path.replace('{id}', self.client.user.id);
-        let body = JSON.stringify(data);
         let req = https.request(host, (res) => {
           let content = '';
           res.on('data', (chunk) => {
             content += chunk;
           });
           res.on('end', () => {
+            if (postTimeout) self.client.clearTimeout(postTimeout);
             postTimeout =
                 self.client.setTimeout(postUpdatedCount, postFrequency);
-            if (res.statusCode == 200) {
+            if (res.statusCode == 200 || res.statusCode == 204) {
               self.log('Successfully posted guild count to ' + apiHost.host);
             } else {
-              self.error('Failed to post guild count to ' + apiHost.host);
+              self.error(
+                  'Failed to post guild count to ' + apiHost.host + ' (' +
+                  res.statusCode + ')');
               console.error(host, body, content);
             }
           });
