@@ -374,7 +374,7 @@ function Command() {
               type +
               '\'. (Expected \'guild\', \'channel\', \'user\', or \'role\'.)');
       }
-      self.events.fire('settingsChanged', me.myGuild, value, type, id, id2);
+      self.fire('settingsChanged', me.myGuild, value, type, id, id2);
     };
 
     /**
@@ -1036,7 +1036,7 @@ function Command() {
             delete userSettings[msg.guild.id];
             self.common.reply(
                 msg, 'All settings for commands have been reset.');
-            self.events.fire('settingsReset', msg.guild.id);
+            self.fire('settingsReset', msg.guild.id);
           });
         });
   }

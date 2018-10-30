@@ -314,7 +314,7 @@ function Main() {
     self.command.on('sendto', commandSendTo);
     self.command.on(['thanks', 'thx', 'thankyou', 'thank'], commandThankYou);
     self.command.on('listcommands', commandListCommands);
-    self.command.on('getPrefix', commandGetPrefix);
+    self.command.on('getprefix', commandGetPrefix);
 
     self.client.on('guildCreate', onGuildCreate);
     self.client.on('guildDelete', onGuildDelete);
@@ -500,7 +500,7 @@ function Main() {
     self.command.removeListener('sendto');
     self.command.removeListener('thanks');
     self.command.removeListener('listcommands');
-    self.command.removeListener('getPrefix');
+    self.command.removeListener('getprefix');
 
     self.client.removeListener('guildCreate', onGuildCreate);
     self.client.removeListener('guildDelete', onGuildDelete);
