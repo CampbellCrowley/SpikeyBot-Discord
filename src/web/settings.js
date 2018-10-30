@@ -344,7 +344,7 @@ function WebSettings() {
         id: sId,
       };
       if (!self[func]) {
-        self.common.error(func + ': is not a function.');
+        self.common.logDebug(func + ': is not a function.', sId);
       } else {
         self[func].apply(self[func], [userData, fakeSocket].concat(args));
       }
@@ -611,7 +611,7 @@ function WebSettings() {
     if (typeof cb !== 'function') cb = function() {};
     if (!checkChannelPerm(userData, gId, cId)) {
       if (!checkMyGuild(gId)) return;
-      replyNoPerm(socket, 'cancelScheduledCommand');
+      replyNoPerm(socket, 'fetchChannel');
       cb(null);
       return;
     }
