@@ -1688,19 +1688,24 @@ function Main() {
             return obj.author.id === mention.id;
           });
         });
-        msg.channel.bulkDelete(toDelete.first(num)).then(() => {
-          self.common
-              .reply(
-                  msg, 'Deleted ' + num + ' messages by ' +
-                      msg.mentions.users
-                          .map(function(obj) {
-                            return obj.username;
-                          })
-                          .join(', '))
-              .then((msg_) => {
-                msg_.delete({timeout: 5000});
-              });
-        });
+        msg.channel.bulkDelete(toDelete.first(num))
+            .then(() => {
+              self.common
+                  .reply(
+                      msg, 'Deleted ' + num + ' messages by ' +
+                          msg.mentions.users
+                              .map(function(obj) {
+                                return obj.username;
+                              })
+                              .join(', '))
+                  .then((msg_) => {
+                    msg_.delete({timeout: 5000});
+                  });
+            })
+            .catch((err) => {
+              self.common.reply(
+                  msg, 'Oops! Discord didn\'t like that...', err.message);
+            });
       } else {
         msg.channel.bulkDelete(num).then(() => {
           if (limited) {
