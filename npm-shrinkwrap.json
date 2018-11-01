@@ -1480,13 +1480,13 @@
       }
     },
     "discord.js": {
-      "version": "github:discordjs/discord.js#b759fc415e89c1f3eb3523deb23c5b514968c845",
+      "version": "github:discordjs/discord.js#4491b7b42ae19ca81338736d811f3b12d493a5f3",
       "from": "github:discordjs/discord.js",
       "requires": {
         "form-data": "^2.3.2",
         "node-fetch": "^2.1.2",
         "pako": "^1.0.0",
-        "prism-media": "github:amishshah/prism-media#1e336c9a20dd0928ef3bdc2075ab58d1521fb323",
+        "prism-media": "github:amishshah/prism-media#7146426e462bf91b39053de4cf8b78c72490cd54",
         "tweetnacl": "^1.0.0",
         "ws": "^6.0.0"
       }
@@ -4143,7 +4143,7 @@
     },
     "pify": {
       "version": "2.3.0",
-      "resolved": "http://registry.npmjs.org/pify/-/pify-2.3.0.tgz",
+      "resolved": "https://registry.npmjs.org/pify/-/pify-2.3.0.tgz",
       "integrity": "sha1-7RQaasBDqEnqWISY59yosVMw6Qw=",
       "dev": true
     },
@@ -4302,7 +4302,7 @@
       "dev": true
     },
     "prism-media": {
-      "version": "github:amishshah/prism-media#1e336c9a20dd0928ef3bdc2075ab58d1521fb323",
+      "version": "github:amishshah/prism-media#7146426e462bf91b39053de4cf8b78c72490cd54",
       "from": "github:amishshah/prism-media"
     },
     "process": {
@@ -5210,7 +5210,7 @@
     },
     "through": {
       "version": "2.3.8",
-      "resolved": "http://registry.npmjs.org/through/-/through-2.3.8.tgz",
+      "resolved": "https://registry.npmjs.org/through/-/through-2.3.8.tgz",
       "integrity": "sha1-DdTJ/6q8NXlgsbckEV1+Doai4fU=",
       "dev": true
     },
@@ -5628,7 +5628,7 @@
     },
     "xmlbuilder": {
       "version": "9.0.7",
-      "resolved": "http://registry.npmjs.org/xmlbuilder/-/xmlbuilder-9.0.7.tgz",
+      "resolved": "https://registry.npmjs.org/xmlbuilder/-/xmlbuilder-9.0.7.tgz",
       "integrity": "sha1-Ey7mPS7FVlxVfiD0wi35rKaGsQ0="
     },
     "xmlcreate": {
