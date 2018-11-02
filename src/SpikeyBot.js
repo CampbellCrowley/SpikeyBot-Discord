@@ -133,6 +133,12 @@ function SpikeyBot() {
    */
   let setDev = false;
   /**
+   * Is this bot managing backup status monitoring.
+   * @private
+   * @type {boolean}
+   */
+  let isBackup = false;
+  /**
    * Should this bot only load minimal features as to not overlap with multiple
    * instances.
    *
@@ -194,6 +200,7 @@ function SpikeyBot() {
    * there is no custom name.
    */
   this.getBotName = function() {
+    if (isBackup) return 'FALLBACK';
     return botName;
   };
 
@@ -206,6 +213,7 @@ function SpikeyBot() {
    * @return {string} The bot's name.
    */
   this.getFullBotName = function() {
+    if (isBackup) return 'FALLBACK';
     return botName || (isDev ? 'dev' : 'release');
   };
 
@@ -229,6 +237,8 @@ function SpikeyBot() {
       if (process.argv[i].indexOf('=') > -1) {
         numShards = process.argv[i].split('=')[1] * 1 || 0;
       }
+    } else if (process.argv[i] === '--backup') {
+      isBackup = true;
     } else if (i > 3) {
       throw new Error(`Unrecognized argument '${process.argv[i]}'`);
     }
@@ -401,7 +411,7 @@ function SpikeyBot() {
         type: type || 'WATCHING',
         url: 'https://www.spikeybot.com',
       },
-      status: (testInstance ? 'dnd' : 'online'),
+      status: (testInstance || isBackup ? 'dnd' : 'online'),
     });
   }
 
@@ -415,11 +425,13 @@ function SpikeyBot() {
    */
   function onReady() {
     common.log(`Logged in as ${client.user.tag} (${version})`);
-    if (!minimal) {
+    if (!minimal || isBackup) {
       if (testInstance) {
         updateGame('Running unit test...');
       } else if (isDev) {
         updateGame('Version: ' + version);
+      } else if (isBackup) {
+        updateGame('OFFLINE', 'PLAYING');
       } else {
         updateGame(defaultPrefix + 'help for help');
       }
@@ -436,7 +448,7 @@ function SpikeyBot() {
                 'Beginning in unit test mode (JS' + version +
                 ') (FAILED TO FIND SpikeyRobot\'s DMs!)');
           });
-    } else if (logChannel && !isDev) {
+    } else if (logChannel && !isDev && !isBackup) {
       let additional = '';
       if (client.shard) {
         additional +=
@@ -617,27 +629,25 @@ function SpikeyBot() {
 
     if (isCmd(msg, '')) {
       let commandSuccess = command.validate(msg.content.split(/ |\n/)[0], msg);
-      if (!minimal) {
-        if (msg.guild !== null) {
-          if (!commandSuccess) {
-            common.log(
-                msg.channel.id + '@' + msg.author.id + ' ' +
-                msg.content.replaceAll('\n', '\\n'));
-          } else {
-            common.logDebug(
-                msg.channel.id + '@' + msg.author.id + ' ' + commandSuccess +
-                ' ' + msg.content.replaceAll('\n', '\\n'));
-          }
+      if (msg.guild !== null) {
+        if (!commandSuccess) {
+          common.log(
+              msg.channel.id + '@' + msg.author.id + ' ' +
+              msg.content.replaceAll('\n', '\\n'));
         } else {
-          if (!commandSuccess) {
-            common.log(
-                'PM:' + msg.author.id + '@' + msg.author.tag + ' ' +
-                msg.content.replaceAll('\n', '\\n'));
-          } else {
-            common.logDebug(
-                'PM:' + msg.author.id + '@' + msg.author.tag + ' ' +
-                commandSuccess + ' ' + msg.content.replaceAll('\n', '\\n'));
-          }
+          common.logDebug(
+              msg.channel.id + '@' + msg.author.id + ' ' + commandSuccess +
+              ' ' + msg.content.replaceAll('\n', '\\n'));
+        }
+      } else {
+        if (!commandSuccess) {
+          common.log(
+              'PM:' + msg.author.id + '@' + msg.author.tag + ' ' +
+              msg.content.replaceAll('\n', '\\n'));
+        } else {
+          common.logDebug(
+              'PM:' + msg.author.id + '@' + msg.author.tag + ' ' +
+              commandSuccess + ' ' + msg.content.replaceAll('\n', '\\n'));
         }
       }
       commandSuccess = command.trigger(msg);
@@ -648,6 +658,14 @@ function SpikeyBot() {
               'Oops! I\'m not sure how to help with that! Type **help** for ' +
               'a list of commands I know how to respond to.');
         }
+      } else if (isBackup && msg.content.length > 3) {
+        common.reply(
+            msg,
+            'My main server is currently offline, settings may be temporarily' +
+                ' reset, and features may be temporarily broken.',
+            'Apologies for any inconvenience, this should be fixed soon.\n' +
+                'Join my Discord server for updates or just to chat: ' +
+                'https://discord.gg/ZbKfYSQ');
       }
     }
   }

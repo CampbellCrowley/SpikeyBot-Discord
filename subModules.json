@@ -61,5 +61,6 @@
     "./spotify.js",
     "./cmdScheduling.js",
     "./web/settings.js"
-  ]
+  ],
+  "FALLBACK": []
 }

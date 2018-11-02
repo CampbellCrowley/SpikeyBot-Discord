@@ -8936,6 +8936,7 @@ Main class that manages the bot.
         * [~smLoader](#SpikeyBot..smLoader) : [<code>SMLoader</code>](#SMLoader) ℗
         * [~mainModuleNames](#SpikeyBot..mainModuleNames) : <code>Array.&lt;string&gt;</code> ℗
         * [~setDev](#SpikeyBot..setDev) : <code>boolean</code> ℗
+        * [~isBackup](#SpikeyBot..isBackup) : <code>boolean</code> ℗
         * [~minimal](#SpikeyBot..minimal) : <code>boolean</code> ℗
         * [~mainModules](#SpikeyBot..mainModules) : [<code>Array.&lt;MainModule&gt;</code>](#MainModule) ℗
         * [~disconnectReason](#SpikeyBot..disconnectReason) : <code>string</code> ℗
@@ -9062,6 +9063,13 @@ mainModules can be loaded from [mainModuleListFile](#SpikeyBot..mainModuleListFi
 
 ### SpikeyBot~setDev : <code>boolean</code> ℗
 Is this bot running in development mode.
+
+**Kind**: inner property of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Access**: private  
+<a name="SpikeyBot..isBackup"></a>
+
+### SpikeyBot~isBackup : <code>boolean</code> ℗
+Is this bot managing backup status monitoring.
 
 **Kind**: inner property of [<code>SpikeyBot</code>](#SpikeyBot)  
 **Access**: private  
