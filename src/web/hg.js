@@ -337,7 +337,8 @@ function HGWeb(hg) {
     if (!userData) return false;
     let msg = makeMessage(userData.id, gId, cId, 'hg ' + cmd);
     if (!msg) return false;
-    if (hg.command.validate(makeMessage(userData.id, gId, null, 'hg ' + cmd))) {
+    if (hg.command.validate(
+        null, makeMessage(userData.id, gId, null, 'hg ' + cmd))) {
       return false;
     }
     return true;
@@ -514,13 +515,27 @@ function HGWeb(hg) {
       }
       let strippedGuilds = guilds.map((g) => {
         let dOpts = hg.command.getDefaultSettings()[g.id] || {};
-        dOpts = Object.fromEntries(Object.entries(dOpts).filter((el) => {
-          return el[1].getFullName().startsWith('hg');
-        }));
+        dOpts = Object.entries(dOpts)
+            .filter((el) => {
+              return el[1].getFullName().startsWith('hg');
+            })
+            .reduce(
+                (p, c) => {
+                  p[c[0]] = c[1];
+                  return p;
+                },
+                {});
         let uOpts = hg.command.getUserSettings(g.id) || {};
-        uOpts = Object.fromEntries(Object.entries(uOpts).filter((el) => {
-          return el[1].getFullName().startsWith('hg');
-        }));
+        uOpts = Object.entries(uOpts)
+            .filter((el) => {
+              return el[1].getFullName().startsWith('hg');
+            })
+            .reduce(
+                (p, c) => {
+                  p[c[0]] = c[1];
+                  return p;
+                },
+                {});
 
         let member = g.members.get(userData.id);
         let newG = {};
@@ -569,11 +584,8 @@ function HGWeb(hg) {
    * complete, or has failed.
    */
   function fetchMember(userData, socket, gId, mId, cb) {
-    if (!userData) return;
+    if (!checkPerm(userData, gId, null, 'players')) return;
     let g = hg.client.guilds.get(gId);
-    if (!g) return;
-    let member = g.members.get(userData.id);
-    if (!member || !hg.checkMemberForRole(member)) return;
     let m = g.members.get(mId);
     if (!m) return;
     let finalMember = makeMember(m);
@@ -595,18 +607,12 @@ function HGWeb(hg) {
    * complete, or has failed.
    */
   function fetchChannel(userData, socket, gId, cId, cb) {
-    if (!userData) return;
+    if (!checkChannelPerm(userData, gId, cId, '')) return;
     let g = hg.client.guilds.get(gId);
-    if (!g) return;
-    let member = g.members.get(userData.id);
-    if (!member || !hg.checkMemberForRole(member)) return;
     let m = g.members.get(userData.id);
-
     let channel = g.channels.get(cId);
-    if (!channel) return;
 
     let perms = channel.permissionsFor(m);
-    if (!perms.has(hg.Discord.Permissions.FLAGS.VIEW_CHANNEL)) return;
 
     let stripped = {};
     stripped.id = channel.id;
