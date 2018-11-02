@@ -629,25 +629,27 @@ function SpikeyBot() {
 
     if (isCmd(msg, '')) {
       let commandSuccess = command.validate(msg.content.split(/ |\n/)[0], msg);
-      if (msg.guild !== null) {
-        if (!commandSuccess) {
-          common.log(
-              msg.channel.id + '@' + msg.author.id + ' ' +
-              msg.content.replaceAll('\n', '\\n'));
+      if (!minimal || isBackup) {
+        if (msg.guild !== null) {
+          if (!commandSuccess) {
+            common.log(
+                msg.channel.id + '@' + msg.author.id + ' ' +
+                msg.content.replaceAll('\n', '\\n'));
+          } else {
+            common.logDebug(
+                msg.channel.id + '@' + msg.author.id + ' ' + commandSuccess +
+                ' ' + msg.content.replaceAll('\n', '\\n'));
+          }
         } else {
-          common.logDebug(
-              msg.channel.id + '@' + msg.author.id + ' ' + commandSuccess +
-              ' ' + msg.content.replaceAll('\n', '\\n'));
-        }
-      } else {
-        if (!commandSuccess) {
-          common.log(
-              'PM:' + msg.author.id + '@' + msg.author.tag + ' ' +
-              msg.content.replaceAll('\n', '\\n'));
-        } else {
-          common.logDebug(
-              'PM:' + msg.author.id + '@' + msg.author.tag + ' ' +
-              commandSuccess + ' ' + msg.content.replaceAll('\n', '\\n'));
+          if (!commandSuccess) {
+            common.log(
+                'PM:' + msg.author.id + '@' + msg.author.tag + ' ' +
+                msg.content.replaceAll('\n', '\\n'));
+          } else {
+            common.logDebug(
+                'PM:' + msg.author.id + '@' + msg.author.tag + ' ' +
+                commandSuccess + ' ' + msg.content.replaceAll('\n', '\\n'));
+          }
         }
       }
       commandSuccess = command.trigger(msg);
