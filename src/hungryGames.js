@@ -5238,7 +5238,7 @@ function HungryGames() {
    * @param {boolean} [silent=false] Disable replying to message.
    */
   function renameTeam(msg, id, silent) {
-    let split = msg.text.trim().split(' ');
+    let split = msg.text.trim().split(' ').slice(1);
     let message = split.slice(1).join(' ');
     let search = Number(split[0]);
     if (isNaN(search) && (!msg.mentions || msg.mentions.users.size == 0)) {
