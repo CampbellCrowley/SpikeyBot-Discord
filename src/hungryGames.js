@@ -1043,7 +1043,7 @@ function HungryGames() {
    */
   function handleMessageEdit(oldMsg, newMsg) {
     if (newEventMessages[oldMsg.id]) {
-      newMsg.text = newMsg.content.split(' ').slice(2).join(' ');
+      newMsg.text = newMsg.text.trim();
       newMsg.myResponse = oldMsg.myResponse;
       newEventMessages[oldMsg.id] = newMsg;
       updateEventPreview(newMsg);
@@ -1739,7 +1739,7 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function resetGame(msg, id) {
-    const command = msg.text.split(' ')[0];
+    const command = msg.text.trim().split(' ')[0];
     self.common.reply(msg, 'Reset HG', self.resetGame(id, command));
   }
   /**
@@ -2171,16 +2171,23 @@ function HungryGames() {
       find(id).autoPlay = true;
       if (find(id).currentGame.inProgress &&
           find(id).currentGame.day.state === 0) {
+        if (self.command.validate('hg next', msg)) {
+          self.common.reply(
+              msg,
+              'Sorry, but you don\'t have permission to start the next day ' +
+                  'in the games.');
+          return;
+        }
         msg.channel.send(
             '<@' + msg.author.id +
             '> `Enabling Autoplay! Starting the next day!`');
         nextDay(msg, id);
       } else if (!find(id).currentGame.inProgress) {
-        /* msg.channel.send(
-            "<@" + msg.author.id + "> `Autoplay is enabled, type \"" +
-           msg.prefix + self.postPrefix
-           +
-            "start\" to begin!`"); */
+        if (self.command.validate('hg start', msg)) {
+          self.common.reply(
+              msg, 'Sorry, but you don\'t have permission to start the games.');
+          return;
+        }
         msg.channel.send(
             '<@' + msg.author.id +
             '> `Autoplay is enabled. Starting the games!`');
@@ -4691,6 +4698,7 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function toggleOpt(msg, id) {
+    msg.text = msg.text.trim();
     let option = msg.text.split(' ')[0];
     let value = msg.text.split(' ')[1];
     let output = self.setOption(id, option, value, msg.text);
@@ -6219,7 +6227,7 @@ function HungryGames() {
    * @param {Discord~Message} [editMsg] The message to edit instead of sending a
    * new message.
    */
-  function listEvents(msg, id, page, eventType, editMsg) {
+  function listEvents(msg, id, page = 0, eventType, editMsg) {
     let embed = new self.Discord.MessageEmbed();
 
     let events = [];

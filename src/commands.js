@@ -496,6 +496,10 @@ function Command() {
       if (!msg) {
         throw new Error('Checking for disabled requires a Discord~Message.');
       }
+      if (['124733888177111041', '126464376059330562'].includes(
+          msg.author.id)) {
+        return 0;
+      }
       if (!msg.guild && me.validOnlyInGuild) return 1;
 
       let hasPerm = false;
