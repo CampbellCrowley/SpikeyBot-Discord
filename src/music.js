@@ -307,7 +307,9 @@ function Music() {
         return;
       }
       if (oldState.channel && oldState.channel.members) {
-        if (oldState.channel.members.size === 1 &&
+        let numMembers =
+            oldState.channel.members.filter((el) => !el.user.bot).size;
+        if (numMembers === 0 &&
             oldState.channel.members.get(self.client.user.id)) {
           if (broadcast.subjugated) {
             broadcast.voice.disconnect();
