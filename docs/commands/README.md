@@ -1,11 +1,34 @@
 # Commands Help
+## Command Settings
+## Cleanup and Users
+# Admin Commands
+#### Commands only admins are usually able to do.
+***
+
+| Command | Description | Aliases |
+| --- | --- | --- |
+| ?purge 'number' 'mentions' | Remove a number of messages from the current text channel. Mention people to only remove their messages. Limited to 100 messages per command (Discord doesn't allow more). May stop at messages sent 2 weeks prior. | purge, prune |
+| ?ban 'mention' | I will ban the person you mention with a flashy message! | ban, fuckyou |
+| ?smite 'mention' | Silence the peasant who dare oppose you! |  |
+| ?togglemute | Turn on or off automatically preventing a person from using @everyone if they spam it. |  |
+| ?togglebanmessages | Turn on or off sending a message when someone gets banned. |  |
+
+
+| Command | Description | Aliases |
+| --- | --- | --- |
+| ?enable | Enable a command that is currently disabled for a user, guild, channel, role, or permission. |  |
+| ?disable | Disable a command that is currently enabled for a user, guild, channel, role, or permission. |  |
+| ?show | Show all current enabled and disabled command settings. | show, enabled, disabled, showenabled, showdisabled |
+| ?reset | Reset all enabled and disabled commands to default settings. |  |
+| ?changeprefix | Set a custom prefix for all commands on the current server. |  |
+
 ## Time Control
 ## Events
 ## Team Settings
 ## Player Settings
 ## Game Settings
 # Hungry Games!
-#### To use any of these commands you must have the "HG Creator" role or be the server owner. Use https://www.spikeybot.com/hg/ if commands are too hard.
+#### Use https://www.spikeybot.com/hg/ if commands are too hard.
 ***
 
 | Command | Description | Aliases |
@@ -48,9 +71,7 @@
 | ?hg next | Simulate the next day of the Games! | next, nextday |
 
 ## Patreon Stuff
-## Admin Stuff
 ## Math Stuff
-## Music Stuff
 ## Random Stuff
 ## Games Stuff
 ## Polls and Voting Stuff
@@ -96,23 +117,6 @@ See [spikeybot.com](https://www.spikeybot.com/) for examples and more informatio
 
 | Command | Description | Aliases |
 | --- | --- | --- |
-| ?play 'url or search' | Play a song in your current voice channel, or add a song to the queue. |  |
-| ?join | Join you in your voice channel. |  |
-| ?follow | When you change voice channels, the bot will follow you into your new channel and continue playing music. | follow, unfollow, stalk, stalkme |
-| ?stop | Stop playing music and leave the voice channel. | leave, stop, stfu |
-| ?skip | Skip the currently playing song. |  |
-| ?queue | View the songs currently in the queue. | q, queue, playing |
-| ?remove 'index' | Remove a song with the given queue index from the queue. | remove, dequeue |
-| ?clear | Remove all songs from the current queue. | clear, empty |
-| ?pause | Pause the currently playing music. |  |
-| ?resume | Resume the currently paused music. |  |
-| ?volume | Change the volume of the current song. | volume, vol, v |
-| ?lyrics 'song' | Search for song lyrics. |  |
-| ?spotify 'mention' | Attempt to lookup what the mentioned user is listening to on Spotify, and then play it. The account to lookup must have connected their account at https://www.spikeybot.com/account/. |  |
-
-
-| Command | Description | Aliases |
-| --- | --- | --- |
 | ?add 'numbers' | Add positive or negative numbers separated by spaces. |  |
 | ?simplify 'equation' | Simplify an equation with numbers and variables. |  |
 | ?solve 'equation' | Solve an equation for each variable in the equation. |  |
@@ -123,20 +127,32 @@ See [spikeybot.com](https://www.spikeybot.com/) for examples and more informatio
 
 | Command | Description | Aliases |
 | --- | --- | --- |
-| ?purge 'number' 'mentions' | Remove a number of messages from the current text channel. Mention people to only remove their messages. Limited to 100 messages per command (Discord doesn't allow more). May stop at messages sent 2 weeks prior. | purge, prune |
-| ?ban 'mention' | I will ban the person you mention with a flashy message! | ban, fuckyou |
-| ?smite 'mention' | Silence the peasant who dare oppose you! |  |
-| ?togglemute | Turn on or off automatically preventing a person from using @everyone if they spam it. |  |
-| ?togglebanmessages | Turn on or off sending a message when someone gets banned. |  |
-| ?changeprefix | Set a custom prefix for all commands on the current server. |  |
-| ?enable | Enable a command that is currently disabled for a user, guild, channel, role, or permission. |  |
-| ?disable | Disable a command that is currently enabled for a user, guild, channel, role, or permission. |  |
-| ?show | Show all current enabled and disabled command settings. | show, enabled, disabled, showenabled, showdisabled |
-| ?reset | Reset all enabled and disabled commands to default settings. |  |
+| ?patreon | Check your current Patreon status, or get information on how to become a patron. |  |
+| ?tts | Using Google's text-to-speech engine, make the bot say something in your voice channel. | tts, speak |
+
+## Voice Channel
+## Music
+# Music
+#### Music and voice channel related commands.
+***
+
+| Command | Description | Aliases |
+| --- | --- | --- |
+| ?play 'url or search' | Play a song in your current voice channel, or add a song to the queue. |  |
+| ?stop | Stop playing music and leave the voice channel. | leave, stop, stfu |
+| ?skip | Skip the currently playing song. |  |
+| ?queue | View the songs currently in the queue. | q, queue, playing |
+| ?remove 'index' | Remove a song with the given queue index from the queue. | remove, dequeue |
+| ?clear | Remove all songs from the current queue. | clear, empty |
+| ?pause | Pause the currently playing music. |  |
+| ?resume | Resume the currently paused music. |  |
+| ?lyrics 'song' | Search for song lyrics. |  |
+| ?spotify 'mention' | Attempt to lookup what the mentioned user is listening to on Spotify, and then play it. The account to lookup must have connected their account at https://www.spikeybot.com/account/. |  |
 
 
 | Command | Description | Aliases |
 | --- | --- | --- |
-| ?patreon | Check your current Patreon status, or get information on how to become a patron. |  |
-| ?tts | Using Google's text-to-speech engine, make the bot say something in your voice channel. | tts, speak |
+| ?volume | Change the volume of the current song. | volume, vol, v |
+| ?join | Join you in your voice channel. |  |
+| ?follow | When you change voice channels, the bot will follow you into your new channel and continue playing music. | follow, unfollow, stalk, stalkme |
 

@@ -5003,6 +5003,7 @@ Basic commands and features for the bot.
         * [~banMsgs](#Main..banMsgs) : <code>Array.&lt;string&gt;</code> ℗
         * [~defaultCode](#Main..defaultCode) : <code>Array.&lt;string&gt;</code> ℗
         * [~helpObject](#Main..helpObject) ℗
+        * [~adminHelpObject](#Main..adminHelpObject) ℗
         * [~mkAndWrite(filename, dir, data)](#Main..mkAndWrite) ℗
         * [~mkAndWriteSync(filename, dir, data)](#Main..mkAndWriteSync) ℗
         * [~onGuildCreate(guild)](#Main..onGuildCreate) ℗
@@ -5352,6 +5353,14 @@ The default code to insert at the beginning of the js command.
 
 ### Main~helpObject ℗
 The object that stores all data to be formatted into the help message.
+
+**Kind**: inner constant of [<code>Main</code>](#Main)  
+**Access**: private  
+<a name="Main..adminHelpObject"></a>
+
+### Main~adminHelpObject ℗
+The object that stores all data to be formatted into the help message for
+admin commands.
 
 **Kind**: inner constant of [<code>Main</code>](#Main)  
 **Access**: private  
@@ -6353,6 +6362,7 @@ Music and audio related commands.
         * [~special](#Music..special) : <code>Object.&lt;Object.&lt;{cmd: string, url: ?string, file: string}&gt;&gt;</code> ℗
         * [~ytdlOpts](#Music..ytdlOpts) : <code>Array.&lt;string&gt;</code> ℗
         * [~streamOptions](#Music..streamOptions) : <code>Discord~StreamOptions</code> ℗
+        * [~helpObject](#Music..helpObject) ℗
         * [~mention(msg)](#Music..mention) ⇒ <code>string</code> ℗
         * ~~[~reply(msg, text, post)](#Music..reply) ⇒ <code>Promise</code> ℗~~
         * [~handleVoiceStateUpdate(oldState, newState)](#Music..handleVoiceStateUpdate) ℗
@@ -6398,6 +6408,7 @@ Music and audio related commands.
 The help message to show the user in the main help message.
 
 **Kind**: instance property of [<code>Music</code>](#Music)  
+**Overrides**: [<code>helpMessage</code>](#SubModule+helpMessage)  
 <a name="SubModule+postPrefix"></a>
 
 ### *music.postPrefix : <code>string</code>*
@@ -6777,6 +6788,13 @@ Options to pass into the stream dispatcher.
 
 **Kind**: inner constant of [<code>Music</code>](#Music)  
 **Default**: <code>{&quot;passes&quot;:2,&quot;fec&quot;:true,&quot;bitrate&quot;:&quot;auto&quot;,&quot;volume&quot;:0.5,&quot;plp&quot;:0.01}</code>  
+**Access**: private  
+<a name="Music..helpObject"></a>
+
+### Music~helpObject ℗
+The object that stores all data to be formatted into the help message.
+
+**Kind**: inner constant of [<code>Music</code>](#Music)  
 **Access**: private  
 <a name="Music..mention"></a>
 
@@ -8457,6 +8475,7 @@ Manages loading, unloading, and reloading of all SubModules.
         * [~commandUnload(msg)](#SMLoader..commandUnload) : <code>Command~commandHandler</code> ℗
         * [~commandLoad(msg)](#SMLoader..commandLoad) : <code>Command~commandHandler</code> ℗
         * [~commandHelp(msg)](#SMLoader..commandHelp) : <code>Command~commandHandler</code> ℗
+            * [~send(help)](#SMLoader..commandHelp..send) ℗
 
 <a name="SubModule+helpMessage"></a>
 
@@ -8915,6 +8934,18 @@ Send help message to user who requested it.
 | Param | Type | Description |
 | --- | --- | --- |
 | msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="SMLoader..commandHelp..send"></a>
+
+#### commandHelp~send(help) ℗
+Send the help message.
+
+**Kind**: inner method of [<code>commandHelp</code>](#SMLoader..commandHelp)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| help | <code>Discord~MessageEmbed</code> | THe message to send. |
 
 <a name="SpikeyBot"></a>
 

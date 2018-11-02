@@ -1,0 +1,206 @@
+{
+  "title": "Music",
+  "description": "Music and voice channel related commands.",
+  "sections": [
+    {
+      "title": "Music",
+      "rows": [
+        {
+          "command": "play 'url or search'",
+          "description": "Play a song in your current voice channel, or add a song to the queue.",
+          "examples": [
+            {
+              "description": "Search for a song",
+              "command": "play Something by The Beatles",
+              "result": "Joins the voice channel you are in, and starts playing the song \"Something\" by The Beatles. If a song is already playing, this one will be added to the queue."
+            },
+            {
+              "description": "Play a YouTube video from a URL",
+              "command": "play https://www.youtube.com/watch?v=HyHNuVaZJ-k",
+              "result": "Starts playing \"Feel Good Inc.\" by Gorillaz in your voice channel, or adds it to the queue of songs."
+            },
+            {
+              "description": "Play song/video from non-YouTube URL",
+              "command": "play https://soundcloud.com/uiceheidd/lucid-dreams-forget-me",
+              "result": "Will play or enqueue \"Lucid Dreams\" by Juice WRLD from SoundCloud. For a full list of all supported websites, see <a href=\"https://github.com/rg3/youtube-dl/blob/master/docs/supportedsites.md\">this</a> GitHub page."
+            }
+          ]
+        },
+        {
+          "command": "stop",
+          "description": "Stop playing music and leave the voice channel.",
+          "aliases": "leave, stop, stfu",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "leave",
+              "result": "The bot will leave the voice channel it is currently in and remove all songs from the queue."
+            }
+          ]
+        },
+        {
+          "command": "skip",
+          "description": "Skip the currently playing song.",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "skip",
+              "result": "The bot will skip the current song, and attempt to play the next song in the queue. If the queue is empty, this has the same effect as the stop command."
+            }
+          ]
+        },
+        {
+          "command": "queue",
+          "description": "View the songs currently in the queue.",
+          "aliases": "q, queue, playing",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "playing",
+              "result": "Bot replies with a list of the current songs in the queue to play."
+            },
+            {
+              "description": "Remove all songs from queue",
+              "command": "queue clear",
+              "result": "All songs from the queue will be removed, except for the currently playing song."
+            }
+          ]
+        },
+        {
+          "command": "remove 'index'",
+          "description": "Remove a song with the given queue index from the queue.",
+          "aliases": "remove, dequeue",
+          "examples": [
+            {
+              "description": "Remove the next song",
+              "command": "remove 1",
+              "result": "Removes the next song from the queue. Use the queue/playing command to find out which index to use."
+            },
+            {
+              "description": "Dequeue the third song in the queue",
+              "command": "remove 3",
+              "result": "Removes the third song from the queue. Use the queue/playing command to find out which index to use."
+            },
+            {
+              "description": "Remove all songs",
+              "command": "remove all",
+              "result": "Removes all songs from the queue."
+            }
+          ]
+        },
+        {
+          "command": "clear",
+          "description": "Remove all songs from the current queue.",
+          "aliases": "clear, empty",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "clear",
+              "result": "Removes all songs from the queue except for the currently playing song."
+            }
+          ]
+        },
+        {
+          "command": "pause",
+          "description": "Pause the currently playing music.",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "pause",
+              "result": ""
+            }
+          ]
+        },
+        {
+          "command": "resume",
+          "description": "Resume the currently paused music.",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "resume",
+              "result": ""
+            }
+          ]
+        },
+        {
+          "command": "lyrics 'song'",
+          "description": "Search for song lyrics.",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "lyrics Eminem Rap God",
+              "result": "The bot will fetch lyrics of \"Rap God\" by Eminem from Genius.com and send them to you in the chat."
+            }
+          ]
+        },
+        {
+          "command": "spotify 'mention'",
+          "description": "Attempt to lookup what the mentioned user is listening to on Spotify, and then play it. The account to lookup must have connected their account at https://www.spikeybot.com/account/.",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "spotify",
+              "result": "Play what you are listening to on Spotify, through the bot."
+            },
+            {
+              "description": "Basic Usage",
+              "command": "spotify @SpikeyRobot",
+              "result": "Play what SpikeyRobot is listening to on Spotify, through the bot."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Voice Channel",
+      "rows": [
+        {
+          "command": "volume",
+          "description": "Change the volume of the current song.",
+          "aliases": "volume, vol, v",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "vol 50%",
+              "result": "The current song's volume will be set to 50%"
+            },
+            {
+              "description": "Use decimals",
+              "command": "vol 0.5",
+              "result": "The current song's volume will be set to 50%"
+            },
+            {
+              "description": "Get Volume",
+              "command": "vol",
+              "result": "The bot will tell you the current volume as a percentage."
+            }
+          ]
+        },
+        {
+          "command": "join",
+          "description": "Join you in your voice channel.",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "join",
+              "result": "The bot will join the voice channel you are in and continue playing music."
+            }
+          ]
+        },
+        {
+          "command": "follow",
+          "aliases": "follow, unfollow, stalk, stalkme",
+          "description": "When you change voice channels, the bot will follow you into your new channel and continue playing music.",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "follow",
+              "result": "The bot will start following you or stop following you."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+

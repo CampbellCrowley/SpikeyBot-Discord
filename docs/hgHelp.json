@@ -1,6 +1,6 @@
 {
   "title": "Hungry Games!",
-  "description": "To use any of these commands you must have the \"{hgRole}\" role or be the server owner. Use https://www.spikeybot.com/hg/ if commands are too hard.",
+  "description": "Use https://www.spikeybot.com/hg/ if commands are too hard.",
   "prefix": "hg ",
   "sections": [
     {

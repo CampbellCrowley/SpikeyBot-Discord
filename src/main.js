@@ -253,6 +253,14 @@ function Main() {
    * @constant
    */
   const helpObject = JSON.parse(fs.readFileSync('./docs/mainHelp.json'));
+  /**
+   * The object that stores all data to be formatted into the help message for
+   * admin commands.
+   *
+   * @private
+   * @constant
+   */
+  const adminHelpObject = JSON.parse(fs.readFileSync('./docs/adminHelp.json'));
 
   /** @inheritdoc */
   this.initialize = function() {
@@ -431,6 +439,44 @@ function Main() {
         '` with the custom prefix.\nNote 2: Custom prefixes will not have a ' +
         'space after them.');
     self.helpMessage = tmpHelp;
+
+    // Format admin help message into rich embed.
+    let tmpAdminHelp = new self.Discord.MessageEmbed();
+    tmpAdminHelp.setTitle(
+        adminHelpObject.title.replaceAll('{prefix}', self.bot.getPrefix()));
+    tmpAdminHelp.setURL(self.common.webURL);
+    tmpAdminHelp.setDescription(
+        adminHelpObject.description.replaceAll(
+            '{prefix}', self.bot.getPrefix()));
+    adminHelpObject.sections.forEach(function(obj) {
+      let titleID = encodeURIComponent(obj.title);
+      const titleURL = '[web](' + self.common.webURL + '#' + titleID + ')';
+      tmpAdminHelp.addField(
+          obj.title, titleURL + '```js\n' +
+              obj.rows
+                  .map(function(row) {
+                    if (typeof row === 'string') {
+                      return self.bot.getPrefix() +
+                          row.replaceAll('{prefix}', self.bot.getPrefix());
+                    } else if (typeof row === 'object') {
+                      return self.bot.getPrefix() +
+                          row.command.replaceAll(
+                              '{prefix}', self.bot.getPrefix()) +
+                          ' // ' +
+                          row.description.replaceAll(
+                              '{prefix}', self.bot.getPrefix());
+                    }
+                  })
+                  .join('\n') +
+              '\n```',
+          true);
+    });
+    tmpAdminHelp.setFooter(
+        'Note: If a custom prefix is being used, replace `' +
+        self.bot.getPrefix() +
+        '` with the custom prefix.\nNote 2: Custom prefixes will not have a ' +
+        'space after them.');
+    self.helpMessage = [self.helpMessage, tmpAdminHelp];
 
     if (self.client.shard) {
       /* eslint-disable no-unused-vars */

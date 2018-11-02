@@ -164,6 +164,17 @@ function Music() {
   };
 
   /** @inheritdoc */
+  this.helpMessage = 'Loading...';
+
+  /**
+   * The object that stores all data to be formatted into the help message.
+   *
+   * @private
+   * @constant
+   */
+  const helpObject = JSON.parse(fs.readFileSync('./docs/musicHelp.json'));
+
+  /** @inheritdoc */
   this.initialize = function() {
     self.command.on('join', commandJoin, true);
     self.command.on('play', commandPlay, true);
@@ -199,6 +210,43 @@ function Music() {
     });
 
     self.client.on('voiceStateUpdate', handleVoiceStateUpdate);
+
+    // Format help message into rich embed.
+    let tmpHelp = new self.Discord.MessageEmbed();
+    tmpHelp.setTitle(
+        helpObject.title.replaceAll('{prefix}', self.bot.getPrefix()));
+    tmpHelp.setURL(self.common.webURL);
+    tmpHelp.setDescription(
+        helpObject.description.replaceAll('{prefix}', self.bot.getPrefix()));
+    helpObject.sections.forEach(function(obj) {
+      let titleID = encodeURIComponent(obj.title);
+      const titleURL = '[web](' + self.common.webURL + '#' + titleID + ')';
+      tmpHelp.addField(
+          obj.title, titleURL + '```js\n' +
+              obj.rows
+                  .map(function(row) {
+                    if (typeof row === 'string') {
+                      return self.bot.getPrefix() +
+                          row.replaceAll('{prefix}', self.bot.getPrefix());
+                    } else if (typeof row === 'object') {
+                      return self.bot.getPrefix() +
+                          row.command.replaceAll(
+                              '{prefix}', self.bot.getPrefix()) +
+                          ' // ' +
+                          row.description.replaceAll(
+                              '{prefix}', self.bot.getPrefix());
+                    }
+                  })
+                  .join('\n') +
+              '\n```',
+          true);
+    });
+    tmpHelp.setFooter(
+        'Note: If a custom prefix is being used, replace `' +
+        self.bot.getPrefix() +
+        '` with the custom prefix.\nNote 2: Custom prefixes will not have a ' +
+        'space after them.');
+    self.helpMessage = tmpHelp;
   };
 
   /** @inheritdoc */

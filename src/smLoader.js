@@ -642,24 +642,36 @@ function SMLoader() {
   function commandHelp(msg) {
     try {
       let error = false;
+      /**
+       * Send the help message.
+       * @private
+       * @param {Discord~MessageEmbed} help THe message to send.
+       */
+      function send(help) {
+        msg.author.send(help).catch((err) => {
+          if (msg.guild !== null && !error) {
+            error = true;
+            self.common
+                .reply(
+                    msg, 'Oops! I wasn\'t able to send you the help!\n' +
+                        'Did you block me?',
+                    err.message)
+                .catch(() => {});
+            self.error(
+                'Failed to send help message in DM to user: ' + msg.author.id +
+                ' ' + help.title);
+            console.error(err);
+          }
+        });
+      }
       for (let i in subModules) {
-        if (subModules[i] instanceof Object && subModules[i].helpMessage) {
-          msg.author.send(subModules[i].helpMessage).catch((err) => {
-            if (msg.guild !== null && !error) {
-              error = true;
-              self.common
-                  .reply(
-                      msg, 'Oops! I wasn\'t able to send you the help!\n' +
-                          'Did you block me?',
-                      err.message)
-                  .catch(() => {});
-              self.error(
-                  'Failed to send help message in DM to user: ' +
-                  msg.author.id);
-              console.error(err);
-            }
-          });
+        if (!(subModules[i] instanceof Object) || !subModules[i].helpMessage) {
+          continue;
         }
+        if (!Array.isArray(subModules[i].helpMessage)) {
+          subModules[i].helpMessage = [subModules[i].helpMessage];
+        }
+        subModules[i].helpMessage.forEach(send);
       }
       if (msg.guild !== null) {
         self.common

@@ -1,0 +1,167 @@
+{
+  "title": "Admin Commands",
+  "description": "Commands only admins are usually able to do.",
+  "sections": [
+    {
+      "title": "Cleanup and Users",
+      "rows": [
+        {
+          "command": "purge 'number' 'mentions'",
+          "description": "Remove a number of messages from the current text channel. Mention people to only remove their messages. Limited to 100 messages per command (Discord doesn't allow more). May stop at messages sent 2 weeks prior.",
+          "aliases": "purge, prune",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "purge 5",
+              "result": "The last 5 messages sent in the current channel will be deleted."
+            },
+            {
+              "description": "Delete Specific User's Messages",
+              "command": "purge 10 @SpikeyRobot",
+              "result": "The last 10 of SpikeyRobot's messages will be deleted from the current channel."
+            },
+            {
+              "description": "Delete Multiple Users' Messages",
+              "command": "purge 20 @SpikeyRobot @SpikeyBot",
+              "result": "The last 20 messages in the channel that were sent by either SpikeyRobot or SpikeyBot will be deleted."
+            }
+          ]
+        },
+        {
+          "command": "ban 'mention'",
+          "description": "I will ban the person you mention with a flashy message!",
+          "aliases": "ban, fuckyou",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "ban @SpikeyRobot",
+              "result": "SpikeyRobot will be banned from your server, and the bot will send a message in the chat saying goodbye."
+            },
+            {
+              "description": "Ban Multiple Users",
+              "command": "ban @SpikeyRobot @RoboSoupCan",
+              "result": "SpikeyRobot and RoboSoupCan will be banned from your server, and the bot will send a message in the chat saying goodbye."
+            }
+          ]
+        },
+        {
+          "command": "smite 'mention'",
+          "description": "Silence the peasant who dare oppose you!",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "smite @SpikeyRobot",
+              "result": "All of SpikeyRobot's roles will be removed, and he will be given the \"Smited\" role which will not allow him to send messages or talk in voice channels, but can still see and hear what is going on."
+            }
+          ]
+        },
+        {
+          "command": "togglemute",
+          "description": "Turn on or off automatically preventing a person from using @everyone if they spam it.",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "togglemute"
+            }
+          ]
+        },
+        {
+          "command": "togglebanmessages",
+          "description": "Turn on or off sending a message when someone gets banned.",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "togglebanmessages"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Command Settings",
+      "rows": [
+        {
+          "command": "enable",
+          "description": "Enable a command that is currently disabled for a user, guild, channel, role, or permission.",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "enable smite @Moderator",
+              "result": "This will give the users with the role of `Moderator` permission to use the smite command even if they do not have the Manage Roles permission."
+            },
+            {
+              "description": "Basic Usage",
+              "command": "enable ~hg go #hunger-games @SpikeyRobot#0971",
+              "result": "hg autoplay commands will be enabled for everybody in the #hunger-games channel, and SpikeyRobot will be able to use the hg autoplay commands in all channels."
+            },
+            {
+              "description": "Permissions",
+              "command": "enable purge SEND_MESSAGES",
+              "result": "Allow any user that can send a message in a channel, to also purge messages from the same channel. Permissions use Discord.js permission names. <a href=\"https://discord.js.org/#/docs/main/master/class/Permissions?scrollTo=s-FLAGS\">List of Permissions</a>"
+            }
+          ]
+        },
+        {
+          "command": "disable",
+          "description": "Disable a command that is currently enabled for a user, guild, channel, role, or permission.",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "disable smite @Moderator",
+              "result": "This will prevent the users with the role of `Moderator` from using the smite command. Role permissions will still override this (ei if they have the Manage Roles permission, they may still use this command)."
+            },
+            {
+              "description": "Basic Usage",
+              "command": "disable hg auto #hunger-games @SpikeyRobot#0971",
+              "result": "hg autoplay commands will no longer be allowed in the #hunger-games channel, and SpikeyRobot will no longer have permission to use the hg autoplay commands."
+            },
+            {
+              "description": "Permissions",
+              "command": "disable ban BAN_MEMBERS",
+              "result": "Don't allow users with BAN_MEMBERS permission to use this command anymore. Permissions use Discord.js permission names. <a href=\"https://discord.js.org/#/docs/main/master/class/Permissions?scrollTo=s-FLAGS\">List of Permissions</a>"
+            }
+          ]
+        },
+        {
+          "command": "show",
+          "description": "Show all current enabled and disabled command settings.",
+          "aliases": "show, enabled, disabled, showenabled, showdisabled",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "show",
+              "result": "A list of all custom setting values will be sent to you."
+            },
+            {
+              "description": "Specific Information",
+              "command": "show disabled",
+              "result": "Shows the current settings for the `disabled` command, even if the settings are default."
+            }
+          ]
+        },
+        {
+          "command": "reset",
+          "description": "Reset all enabled and disabled commands to default settings.",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "reset",
+              "result": "The bot wil confirm that you wish to do this, then delete all custom settings and reset them to default values."
+            }
+          ]
+        },
+        {
+          "command": "changeprefix",
+          "description": "Set a custom prefix for all commands on the current server.",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "changeprefix !#!",
+              "result": "After confirming, all commands must start with !#!. For example ```{prefix}ping``` would become ```!#!ping```.<br>If you forget what the prefix is, just @SpikeyBot and ask what the prefix is. (@SpikeyBot what's the prefix?)"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
