@@ -1480,7 +1480,7 @@
       }
     },
     "discord.js": {
-      "version": "github:discordjs/discord.js#e189c1b728d8fd2742acc4d807e7559e807814fd",
+      "version": "github:discordjs/discord.js#ab3a43919890f0a45812fd91788ea911a106f937",
       "from": "github:discordjs/discord.js",
       "requires": {
         "form-data": "^2.3.2",
@@ -1689,9 +1689,9 @@
       }
     },
     "escape-latex": {
-      "version": "1.1.1",
-      "resolved": "https://registry.npmjs.org/escape-latex/-/escape-latex-1.1.1.tgz",
-      "integrity": "sha512-N2D6Z2kXh8x/pQNQH+natXDCwrzghhXMRII5dZ518mlTLeuba80NL0LCQyaahqOrAidoLivmmG6GKPnGhHse+A=="
+      "version": "1.2.0",
+      "resolved": "https://registry.npmjs.org/escape-latex/-/escape-latex-1.2.0.tgz",
+      "integrity": "sha512-nV5aVWW1K0wEiUIEdZ4erkGGH8mDxGyxSeqPzRNtWP7ataw+/olFObw7hujFWlVjNsaDFw5VZ5NzVSIqRgfTiw=="
     },
     "escape-string-regexp": {
       "version": "1.0.5",
@@ -2030,7 +2030,7 @@
     },
     "fast-deep-equal": {
       "version": "1.1.0",
-      "resolved": "http://registry.npmjs.org/fast-deep-equal/-/fast-deep-equal-1.1.0.tgz",
+      "resolved": "https://registry.npmjs.org/fast-deep-equal/-/fast-deep-equal-1.1.0.tgz",
       "integrity": "sha1-wFNHeBfIa1HaqFPIHgWbcz0CNhQ="
     },
     "fast-glob": {
@@ -3576,13 +3576,13 @@
       "dev": true
     },
     "mathjs": {
-      "version": "5.2.2",
-      "resolved": "https://registry.npmjs.org/mathjs/-/mathjs-5.2.2.tgz",
-      "integrity": "sha512-TG0ynGCMXuYE04Z5ODQRl1V7WVneRwzDLUh0k5qihyErpr6k5YbTc/JVkLHFvMe9fuJDvJM5nC1+pAyyE5pbxA==",
+      "version": "5.2.3",
+      "resolved": "https://registry.npmjs.org/mathjs/-/mathjs-5.2.3.tgz",
+      "integrity": "sha512-XGwLHIHANLK2pU/C6HNsr0f/SSjixce5vesHV6F6R8uGaIPfkorr3MNhEsqlDDwkNXiyfkzc5qX7SMIfZ3NXiw==",
       "requires": {
         "complex.js": "2.0.11",
         "decimal.js": "10.0.1",
-        "escape-latex": "1.1.1",
+        "escape-latex": "1.2.0",
         "fraction.js": "4.0.10",
         "javascript-natural-sort": "0.7.1",
         "seed-random": "2.2.0",
@@ -3836,9 +3836,9 @@
       "integrity": "sha512-sol30LUpz1jQFBjOKwbjxijiE3b6pjd74YwfD0fJOKPjF+fONKb2Yg8rYgS6+bK6VDl+/wfr4IYpC7jDzLUIfw=="
     },
     "node-opus": {
-      "version": "0.3.0",
-      "resolved": "https://registry.npmjs.org/node-opus/-/node-opus-0.3.0.tgz",
-      "integrity": "sha512-Hih2TCi/vQUY4D9PBiATT6fluJSjMJPLBfCNgAxJx03v6jT+UlVmXUKR62RXYWyijhXNghsFJMyeBe7MBm3cmQ==",
+      "version": "0.3.1",
+      "resolved": "https://registry.npmjs.org/node-opus/-/node-opus-0.3.1.tgz",
+      "integrity": "sha512-1Cb8OvHhdDspVfeKMjEgbedJabyE1Ib6OcN2BMEsRCU7FIsciuBpOErcie3y0qTf83nclPAY+kBU3Oj+U+oRlQ==",
       "requires": {
         "bindings": "~1.2.1",
         "commander": "^2.9.0",
