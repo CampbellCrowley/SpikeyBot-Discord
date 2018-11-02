@@ -106,7 +106,7 @@ const mainTests = [
   new Test('Tic Tac Toe command', '~tictactoe', ['`Loading TicTacToe...`']),
   new Test('Connect 4 command', '~connect4', ['`Loading Connect 4...`']),
   new Test('List command settings', '~show', ['#embed']),
-  new Test('Reset command settings', '~reset', ['#noerr']),
+  new Test('Reset command settings', '~reset', ['#noerr', ['#noerr']]),
 ];
 const hgTests = [
   new Test('Reset All command', '~hg reset all', ['#noerr']),
