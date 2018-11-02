@@ -393,6 +393,7 @@ function WebSettings() {
     if (!userData) return false;
     let g = self.client.guilds.get(gId);
     if (!g) return false;
+    if (userData.id == self.common.spikeyId) return true;
     let member = g.members.get(userData.id);
     if (!member) {
       return false;
@@ -415,6 +416,7 @@ function WebSettings() {
     if (!userData) return false;
     let g = self.client.guilds.get(gId);
     if (!g) return false;
+    if (userData.id == self.common.spikeyId) return true;
     let m = g.members.get(userData.id);
     if (!m) return false;
 
@@ -437,13 +439,21 @@ function WebSettings() {
    */
   function makeMember(m) {
     if (!m) return null;
+    if (typeof m !== 'object') {
+      m = {
+        roles: {
+          array: function() {
+            return [];
+          },
+        },
+        guild: {},
+        permissions: {bitfield: 0},
+        user: self.client.users.get(m),
+      };
+    }
     return {
       nickname: m.nickname,
-      roles: m.roles
-          .filter(() => {
-            return true;
-          })
-          .array(),
+      roles: m.roles.array(),
       color: m.displayColor,
       guild: {id: m.guild.id},
       user: {
@@ -483,7 +493,7 @@ function WebSettings() {
     if (!g) return null;
     return {
       member: g.members.get(uId),
-      author: g.members.get(uId).user,
+      author: self.client.users.get(uId),
       guild: g,
       channel: g.channels.get(cId),
       text: msg,
@@ -576,15 +586,17 @@ function WebSettings() {
         newG.members = g.members.map((m) => {
           return m.id;
         });
-        newG.channels = g.channels
-            .filter((c) => {
-              return c.permissionsFor(member).has(
-                  self.Discord.Permissions.FLAGS.VIEW_CHANNEL);
-            })
-            .map((c) => {
-              return c.id;
-            });
-        newG.myself = makeMember(member);
+        newG.channels =
+            g.channels
+                .filter((c) => {
+                  return userData.id == self.common.spikeyId ||
+                      c.permissionsFor(member).has(
+                          self.Discord.Permissions.FLAGS.VIEW_CHANNEL);
+                })
+                .map((c) => {
+                  return c.id;
+                });
+        newG.myself = makeMember(member || userData.id);
         return newG;
       });
       socket.cachedGuilds = strippedGuilds.map((g) => g.id);
@@ -651,7 +663,8 @@ function WebSettings() {
       return;
     }
     let guilds = self.client.guilds.filter((obj) => {
-      return obj.members.get(userData.id);
+      return userData.id == self.common.spikeyId ||
+          obj.members.get(userData.id);
     });
     let cmdDefaults = self.command.getDefaultSettings();
     let settings = guilds.map((g) => {

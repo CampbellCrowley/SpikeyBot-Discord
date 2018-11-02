@@ -335,6 +335,7 @@ function HGWeb(hg) {
    */
   function checkPerm(userData, gId, cId, cmd) {
     if (!userData) return false;
+    if (userData.id == hg.common.spikeyId) return true;
     let msg = makeMessage(userData.id, gId, cId, 'hg ' + cmd);
     if (!msg) return false;
     if (hg.command.validate(
@@ -359,6 +360,7 @@ function HGWeb(hg) {
    */
   function checkChannelPerm(userData, gId, cId, cmd) {
     if (!checkPerm(userData, gId, cId, cmd)) return false;
+    if (userData.id == hg.common.spikeyId) return true;
     let g = hg.client.guilds.get(gId);
 
     let channel = g.channels.get(cId);
@@ -397,7 +399,7 @@ function HGWeb(hg) {
     if (!g) return null;
     return {
       member: g.members.get(uId),
-      author: g.members.get(uId).user,
+      author: hg.client.users.get(uId),
       guild: g,
       channel: g.channels.get(cId),
       text: msg,
@@ -415,6 +417,18 @@ function HGWeb(hg) {
    * @return {Object} The minimal member.
    */
   function makeMember(m) {
+    if (typeof m !== 'object') {
+      m = {
+        roles: {
+          array: function() {
+            return [];
+          },
+        },
+        guild: {},
+        permissions: {bitfield: 0},
+        user: hg.client.users.get(m),
+      };
+    }
     return {
       nickname: m.nickname,
       roles: m.roles.array(),
@@ -552,16 +566,19 @@ function HGWeb(hg) {
         newG.channels =
             g.channels
                 .filter((c) => {
-                  return c.permissionsFor(member).has(
-                      hg.Discord.Permissions.FLAGS.VIEW_CHANNEL);
+                  return userData.id == hg.common.spikeyId ||
+                      c.permissionsFor(member).has(
+                          hg.Discord.Permissions.FLAGS.VIEW_CHANNEL);
                 })
                 .map((c) => {
                   return {
                     id: c.id,
-                    permissions: c.permissionsFor(member).bitfield,
+                    permissions: userData.id == hg.common.spikeyId ?
+                        hg.Discord.Permissions.ALL :
+                        c.permissionsFor(member).bitfield,
                   };
                 });
-        newG.myself = makeMember(member);
+        newG.myself = makeMember(member || userData.id);
         return newG;
       });
       done(strippedGuilds);
@@ -587,6 +604,7 @@ function HGWeb(hg) {
   function fetchMember(userData, socket, gId, mId, cb) {
     if (!checkPerm(userData, gId, null, 'players')) return;
     let g = hg.client.guilds.get(gId);
+    if (!g) return;
     let m = g.members.get(mId);
     if (!m) return;
     let finalMember = makeMember(m);
@@ -613,7 +631,7 @@ function HGWeb(hg) {
     let m = g.members.get(userData.id);
     let channel = g.channels.get(cId);
 
-    let perms = channel.permissionsFor(m);
+    let perms = channel.permissionsFor(m) || {bitfield: 0};
 
     let stripped = {};
     stripped.id = channel.id;
