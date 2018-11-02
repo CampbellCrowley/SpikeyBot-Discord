@@ -332,7 +332,7 @@ function CmdScheduling() {
       self.debug(
           'ScheduledCmd: ' + myself.message.channel.id + '@' +
           myself.message.author.id + ' ' + myself.message.content);
-      self.command.trigger(myself.cmd.split(/\s/)[0], myself.message);
+      self.command.trigger(myself.message);
       if (myself.time <= Date.now()) {
         self.client.clearTimeout(myself.timeout);
         if (myself.repeatDelay > 0) {

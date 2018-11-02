@@ -183,19 +183,19 @@ function Music() {
 
     self.command.on('kokomo', (msg) => {
       msg.content = msg.prefix + 'play kokomo';
-      self.command.trigger('play', msg);
+      self.command.trigger(msg);
     });
     self.command.on('vi', (msg) => {
       msg.content = msg.prefix + 'play nice try vi';
-      self.command.trigger('play', msg);
+      self.command.trigger(msg);
     });
     self.command.on('airhorn', (msg) => {
       msg.content = msg.prefix + 'play airhorn';
-      self.command.trigger('play', msg);
+      self.command.trigger(msg);
     });
     self.command.on('rickroll', (msg) => {
       msg.content = msg.prefix + 'play rickroll';
-      self.command.trigger('play', msg);
+      self.command.trigger(msg);
     });
 
     self.client.on('voiceStateUpdate', handleVoiceStateUpdate);

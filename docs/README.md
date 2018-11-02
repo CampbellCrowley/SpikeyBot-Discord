@@ -1044,7 +1044,9 @@ normal submodule, and is treated differently in the SpikeyBot class.
 
 * [Command](#Command) ⇐ [<code>MainModule</code>](#MainModule)
     * _instance_
+        * [.parentName](#Command+parentName) : <code>string</code>
         * [.aliases](#Command+aliases) : <code>Array.&lt;string&gt;</code>
+        * [.subCmds](#Command+subCmds) : <code>Object.&lt;SingleCommand&gt;</code>
         * [.options](#Command+options) : [<code>CommandSetting</code>](#Command..CommandSetting)
         * [.myGuild](#Command+myGuild) : <code>string</code>
         * [.validOnlyInGuild](#Command+validOnlyInGuild) : <code>boolean</code>
@@ -1064,18 +1066,20 @@ normal submodule, and is treated differently in the SpikeyBot class.
         * [.initialized](#SubModule+initialized) : <code>boolean</code>
         * [.commit](#SubModule+commit) : <code>string</code>
         * [.loadTime](#SubModule+loadTime) : <code>number</code>
+        * [.getFullName()](#Command+getFullName) ⇒ <code>string</code>
         * [.getName()](#Command+getName) ⇒ <code>string</code>
         * [.trigger(msg)](#Command+trigger)
+        * [.getUserOptions()](#Command+getUserOptions) ⇒ <code>Object.&lt;CommandSetting&gt;</code>
         * [.set(value, type, id, [id2])](#Command+set)
         * [.isDisabled(msg)](#Command+isDisabled) ⇒ <code>number</code>
             * [~findMatch(search, data)](#Command+isDisabled..findMatch) ⇒ <code>number</code> ℗
         * [.toJSON()](#Command+toJSON) ⇒ <code>Object</code>
         * [.getUserSettings(gId)](#Command+getUserSettings) ⇒ <code>Object.&lt;CommandSetting&gt;</code>
         * [.getDefaultSettings()](#Command+getDefaultSettings) ⇒ <code>Object.&lt;SingleCommand&gt;</code>
-        * [.trigger(cmd, msg)](#Command+trigger) ⇒ <code>boolean</code>
+        * [.trigger(msg, [msg2])](#Command+trigger) ⇒ <code>boolean</code>
         * [.on(cmd, [cb], [onlyserver])](#Command+on)
         * [.removeListener(cmd)](#Command+removeListener)
-        * [.find(cmd, [msg])](#Command+find) ⇒ [<code>SingleCommand</code>](#Command..SingleCommand)
+        * [.find(override, msg, [setCmd])](#Command+find) ⇒ [<code>SingleCommand</code>](#Command..SingleCommand)
         * [.validate(cmd, msg, [func])](#Command+validate) ⇒ <code>string</code>
         * [.getAllNames()](#Command+getAllNames) ⇒ <code>Array.&lt;string&gt;</code>
         * [.addEventListener(name, handler)](#Command+addEventListener)
@@ -1100,18 +1104,34 @@ normal submodule, and is treated differently in the SpikeyBot class.
         * [~userSettings](#Command..userSettings) : <code>Object.&lt;Object.&lt;CommandSetting&gt;&gt;</code> ℗
         * [~onlyservermessage](#Command..onlyservermessage) : <code>string</code> ℗
         * [~commandSettingsFile](#Command..commandSettingsFile) : <code>string</code> ℗
-        * [~SingleCommand(cmd, handler, [opts])](#Command..SingleCommand)
+        * [~SingleCommand(cmd, handler, [opts], [subCmds])](#Command..SingleCommand)
         * [~CommandSetting([opts])](#Command..CommandSetting)
         * [~commandDisable(msg)](#Command..commandDisable) : <code>Command~commandHandler</code> ℗
         * [~commandEnable(msg)](#Command..commandEnable) : <code>Command~commandHandler</code> ℗
         * [~commandShow(msg)](#Command..commandShow) : <code>Command~commandHandler</code> ℗
         * [~commandReset(msg)](#Command..commandReset) : <code>Command~commandHandler</code> ℗
 
+<a name="Command+parentName"></a>
+
+### command.parentName : <code>string</code>
+The name of the parent command if this is a subcommand.
+
+**Kind**: instance property of [<code>Command</code>](#Command)  
+**Access**: public  
 <a name="Command+aliases"></a>
 
 ### command.aliases : <code>Array.&lt;string&gt;</code>
 All versions of this command that may be used to trigger the same
 handler.
+
+**Kind**: instance property of [<code>Command</code>](#Command)  
+**Access**: public  
+<a name="Command+subCmds"></a>
+
+### command.subCmds : <code>Object.&lt;SingleCommand&gt;</code>
+Sub commands for this single command. Triggered by commands separated by
+whitespace. Object mapped by subcommand name, similar to {@link
+Command~cmds}.
 
 **Kind**: instance property of [<code>Command</code>](#Command)  
 **Access**: public  
@@ -1263,6 +1283,14 @@ needs to be reloaded because the file has been modified since loading.
 
 **Kind**: instance constant of [<code>Command</code>](#Command)  
 **Access**: public  
+<a name="Command+getFullName"></a>
+
+### command.getFullName() ⇒ <code>string</code>
+Get the full name for this command including parent command
+
+**Kind**: instance method of [<code>Command</code>](#Command)  
+**Returns**: <code>string</code> - This command's name prefixed with the parent command's
+name.  
 <a name="Command+getName"></a>
 
 ### command.getName() ⇒ <code>string</code>
@@ -1285,6 +1313,16 @@ The function to call when this command has been triggered.
 | --- | --- | --- |
 | msg | <code>Discord~Message</code> | The message that is triggering this command. |
 
+<a name="Command+getUserOptions"></a>
+
+### command.getUserOptions() ⇒ <code>Object.&lt;CommandSetting&gt;</code>
+Fetches the user options for this command, taking into account this could
+be a subcommand.
+
+**Kind**: instance method of [<code>Command</code>](#Command)  
+**Returns**: <code>Object.&lt;CommandSetting&gt;</code> - The settings for this command or
+sub-command mapped by guild ids.  
+**Access**: public  
 <a name="Command+set"></a>
 
 ### command.set(value, type, id, [id2])
@@ -1366,7 +1404,7 @@ Fetch all commands and their default setting values.
 **See**: [cmds](#Command..cmds)  
 <a name="Command+trigger"></a>
 
-### command.trigger(cmd, msg) ⇒ <code>boolean</code>
+### command.trigger(msg, [msg2]) ⇒ <code>boolean</code>
 Trigger a command firing and call it's handler passing in msg as only
 argument.
 
@@ -1375,8 +1413,8 @@ argument.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| cmd | <code>string</code> | Array of strings or a string of the command to trigger. |
-| msg | <code>Discord~Message</code> | Message received from Discord to pass to handler. |
+| msg | <code>Discord~Message</code> \| <code>string</code> | Message received from Discord to pass to handler and to use to find the correct handler, OR a string to override the command to trigger from msg. |
+| [msg2] | <code>Discord~Message</code> | The message received from Discord if the first argument is a string. |
 
 <a name="Command+on"></a>
 
@@ -1405,17 +1443,19 @@ Remove listener for a command.
 
 <a name="Command+find"></a>
 
-### command.find(cmd, [msg]) ⇒ [<code>SingleCommand</code>](#Command..SingleCommand)
+### command.find(override, msg, [setCmd]) ⇒ [<code>SingleCommand</code>](#Command..SingleCommand)
 Returns the callback function for the given event.
 
 **Kind**: instance method of [<code>Command</code>](#Command)  
-**Returns**: [<code>SingleCommand</code>](#Command..SingleCommand) - The single command object reference.  
+**Returns**: [<code>SingleCommand</code>](#Command..SingleCommand) - The single command object reference, or
+null if it could not be found.  
 **Access**: public  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| cmd | <code>string</code> | Command to lookup. |
-| [msg] | <code>Discord~Message</code> | Message that is to trigger this command. Used for removing prefix from cmd if necessary. |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| override | <code>string</code> |  | Command to force search for, and ignore command that could be matched with msg. |
+| msg | <code>Discord~Message</code> |  | Message that is to trigger this command. This object will be updated with the command name that was found as msg.cmd. |
+| [setCmd] | <code>boolean</code> | <code>false</code> | Set the cmd variable in the msg object to match the found command. |
 
 <a name="Command+validate"></a>
 
@@ -1429,7 +1469,7 @@ actually fire the event.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| cmd | <code>string</code> | The command to validate. |
+| cmd | <code>string</code> | The command to validate. Null to use msg to find the command to validate. |
 | msg | <code>Discord~Message</code> | The message that will fire the event. If null, checks for channel and guild specific changes will not be validated. |
 | [func] | [<code>SingleCommand</code>](#Command..SingleCommand) | A command handler override to use for settings lookup. If this is not specified, the handler associated with cmd will be fetched. |
 
@@ -1658,11 +1698,11 @@ non-server channel.
 Filename in the guild's subdirectory where command settings are stored.
 
 **Kind**: inner constant of [<code>Command</code>](#Command)  
-**Default**: <code>&quot;/commandSettings.js&quot;</code>  
+**Default**: <code>&quot;/commandSettings.json&quot;</code>  
 **Access**: private  
 <a name="Command..SingleCommand"></a>
 
-### Command~SingleCommand(cmd, handler, [opts])
+### Command~SingleCommand(cmd, handler, [opts], [subCmds])
 Object storing information about a single command, it's handler, and
 default options.
 
@@ -1674,6 +1714,7 @@ default options.
 | cmd | <code>string</code> \| <code>Array.&lt;string&gt;</code> | All commands the handler will fire on. |
 | handler | [<code>commandHandler</code>](#commandHandler) | The event handler when the command has been triggered. |
 | [opts] | <code>CommandSetting</code> | The options for this command. |
+| [subCmds] | <code>SingleCommand</code> \| <code>Array.&lt;SingleCommand&gt;</code> | Sub commands that use this command as a fallback. Command names must be separated by white space in order to trigger the sub command. |
 
 <a name="Command..CommandSetting"></a>
 
@@ -2505,7 +2546,6 @@ Hunger Games simulator.
         * [.commit](#SubModule+commit) : <code>string</code>
         * [.loadTime](#SubModule+loadTime) : <code>number</code>
         * [.getGame(id)](#HungryGames+getGame) ⇒ [<code>GuildGame</code>](#HungryGames..GuildGame)
-        * [.checkMemberForRole(member)](#HungryGames+checkMemberForRole) ⇒ <code>boolean</code>
         * [.getDefaultEvents()](#HungryGames+getDefaultEvents) ⇒ <code>Object</code>
         * [.createGame(id)](#HungryGames+createGame)
         * [.resetGame(id, command)](#HungryGames+resetGame) ⇒ <code>string</code>
@@ -2589,9 +2629,9 @@ Hunger Games simulator.
         * [~updateWeapons()](#HungryGames..updateWeapons) ℗
         * [~setupHelp()](#HungryGames..setupHelp) ℗
         * [~handleMessageEdit(oldMsg, newMsg)](#HungryGames..handleMessageEdit) ℗
-        * [~handleCommand(msg)](#HungryGames..handleCommand) : [<code>commandHandler</code>](#commandHandler) ℗
-        * [~checkForRole(msg)](#HungryGames..checkForRole) ⇒ <code>boolean</code> ℗
-        * [~checkPerms(msg, cb)](#HungryGames..checkPerms) ℗
+        * [~mkCmd(cb)](#HungryGames..mkCmd) ⇒ <code>Command~commandHandler</code> ℗
+        * [~commandMakeMeWin(msg)](#HungryGames..commandMakeMeWin) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~commandMakeMeLose(msg)](#HungryGames..commandMakeMeLose) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~makePlayer(member)](#HungryGames..makePlayer) ⇒ [<code>Player</code>](#HungryGames..Player) ℗
         * [~sendAtTime(channel, one, two, time)](#HungryGames..sendAtTime) ℗
         * [~createGame(msg, id, [silent], [cb])](#HungryGames..createGame) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
@@ -2781,19 +2821,6 @@ game in a guild.
 | Param | Type | Description |
 | --- | --- | --- |
 | id | <code>string</code> | The guild id to get the data for. |
-
-<a name="HungryGames+checkMemberForRole"></a>
-
-### hungryGames.checkMemberForRole(member) ⇒ <code>boolean</code>
-Check if GuildMember has the required role to run commands.
-
-**Kind**: instance method of [<code>HungryGames</code>](#HungryGames)  
-**Returns**: <code>boolean</code> - If the member has the necessary role.  
-**Access**: public  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| member | <code>Discord~GuildMember</code> | Member to check permissions for. |
 
 <a name="HungryGames+getDefaultEvents"></a>
 
@@ -3697,10 +3724,26 @@ our message with the updated event.
 | oldMsg | <code>Discord~Message</code> | The message before being edited. |
 | newMsg | <code>Discord~Message</code> | The message after being edited. |
 
-<a name="HungryGames..handleCommand"></a>
+<a name="HungryGames..mkCmd"></a>
 
-### HungryGames~handleCommand(msg) : [<code>commandHandler</code>](#commandHandler) ℗
-Handle a command from a user and pass into relevant functions.
+### HungryGames~mkCmd(cb) ⇒ <code>Command~commandHandler</code> ℗
+Make a subcommand handler with the given callback function. This is a
+wrapper around existing functions.
+
+**Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
+**Returns**: <code>Command~commandHandler</code> - Subcommand initial handler that will fire
+when command is fired. Calls the passed callback handler with the mapped
+parameters.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| cb | [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) | Command handler when subcommand is triggered. |
+
+<a name="HungryGames..commandMakeMeWin"></a>
+
+### HungryGames~commandMakeMeWin(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Tell a user their chances of winning have not increased.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
 **Access**: private  
@@ -3709,32 +3752,17 @@ Handle a command from a user and pass into relevant functions.
 | --- | --- | --- |
 | msg | <code>Discord~Message</code> | Message that triggered command. |
 
-<a name="HungryGames..checkForRole"></a>
+<a name="HungryGames..commandMakeMeLose"></a>
 
-### HungryGames~checkForRole(msg) ⇒ <code>boolean</code> ℗
-Check if author of msg has the required role to run commands.
-
-**Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
-**Returns**: <code>boolean</code> - If the message author has the necessary role.  
-**Access**: private  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord~Message</code> | Message of the author to check for the role. |
-
-<a name="HungryGames..checkPerms"></a>
-
-### HungryGames~checkPerms(msg, cb) ℗
-Check if author of msg has permissions, then trigger callback with guild
-id.
+### HungryGames~commandMakeMeLose(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Tell a user their chances of losing have not increased.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
 **Access**: private  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| msg | <code>Discord~Message</code> | Message of the user to ensure has proper permissions. |
-| cb | [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) | Callback to call if user has proper permissions to run command. |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
 
 <a name="HungryGames..makePlayer"></a>
 
@@ -11304,8 +11332,9 @@ Creates a web interface for managing the Hungry Games.
         * [~clientSocketConnection(socket)](#HGWeb..clientSocketConnection) ℗
         * [~replyNoPerm(socket, cmd)](#HGWeb..replyNoPerm) ℗
         * [~checkMyGuild(gId)](#HGWeb..checkMyGuild) ⇒ <code>boolean</code> ℗
-        * [~checkPerm(userData, gId)](#HGWeb..checkPerm) ⇒ <code>boolean</code> ℗
-        * [~checkChannelPerm(userData, gId, cId)](#HGWeb..checkChannelPerm) ⇒ <code>boolean</code> ℗
+        * [~checkPerm(userData, gId, cId, cmd)](#HGWeb..checkPerm) ⇒ <code>boolean</code> ℗
+        * [~checkChannelPerm(userData, gId, cId, cmd)](#HGWeb..checkChannelPerm) ⇒ <code>boolean</code> ℗
+        * [~makeMessage(uId, gId, cId, msg)](#HGWeb..makeMessage) ⇒ <code>Object</code> ℗
         * [~makeMember(m)](#HGWeb..makeMember) ⇒ <code>Object</code> ℗
         * [~fetchGuilds(userData, socket, [cb])](#HGWeb..fetchGuilds) : <code>HGWeb~SocketFunction</code> ℗
             * [~done(guilds, [err], [response])](#HGWeb..fetchGuilds..done) ℗
@@ -11475,7 +11504,7 @@ Checks if the current shard is responsible for the requested guild.
 
 <a name="HGWeb..checkPerm"></a>
 
-### HGWeb~checkPerm(userData, gId) ⇒ <code>boolean</code> ℗
+### HGWeb~checkPerm(userData, gId, cId, cmd) ⇒ <code>boolean</code> ℗
 Check that the given user has permission to manage the games in the given
 guild.
 
@@ -11488,10 +11517,12 @@ hungry games in the given guild.
 | --- | --- | --- |
 | userData | <code>UserData</code> | The user to check. |
 | gId | <code>string</code> | The guild id to check against. |
+| cId | <code>string</code> | The channel id to check against. |
+| cmd | <code>string</code> | The command being attempted. |
 
 <a name="HGWeb..checkChannelPerm"></a>
 
-### HGWeb~checkChannelPerm(userData, gId, cId) ⇒ <code>boolean</code> ℗
+### HGWeb~checkChannelPerm(userData, gId, cId, cmd) ⇒ <code>boolean</code> ℗
 Check that the given user has permission to see and send messages in the
 given channel, as well as manage the games in the given guild.
 
@@ -11506,6 +11537,23 @@ given channel.
 | userData | <code>UserData</code> | The user to check. |
 | gId | <code>string</code> | The guild id of the guild that contains the channel. |
 | cId | <code>string</code> | The channel id to check against. |
+| cmd | <code>string</code> | The command being attempted to check permisisons for. |
+
+<a name="HGWeb..makeMessage"></a>
+
+### HGWeb~makeMessage(uId, gId, cId, msg) ⇒ <code>Object</code> ℗
+Forms a Discord~Message similar object from given IDs.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Returns**: <code>Object</code> - The created message-like object.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| uId | <code>string</code> | The id of the user who wrote this message. |
+| gId | <code>string</code> | The id of the guild this message is in. |
+| cId | <code>string</code> | The id of the channel this message was 'sent' in. |
+| msg | <code>string</code> | The message content. |
 
 <a name="HGWeb..makeMember"></a>
 

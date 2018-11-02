@@ -640,10 +640,10 @@ function SpikeyBot() {
           }
         }
       }
-      commandSuccess = command.trigger(msg.content.split(/ |\n/)[0], msg);
+      commandSuccess = command.trigger(msg);
       if (!commandSuccess && msg.guild === null && !minimal && !testMode) {
         if (msg.content.split(/ |\n/)[0].indexOf('chat') < 0 &&
-            !command.trigger(msg.prefix + 'chat', msg)) {
+            !command.trigger('chat', msg)) {
           msg.channel.send(
               'Oops! I\'m not sure how to help with that! Type **help** for ' +
               'a list of commands I know how to respond to.');

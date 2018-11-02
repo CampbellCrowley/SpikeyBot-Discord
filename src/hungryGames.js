@@ -895,15 +895,81 @@ function HungryGames() {
 
   /** @inheritdoc */
   this.initialize = function() {
-    self.command.on('hg', function(msg) {
-      try {
-        handleCommand(msg);
-      } catch (err) {
-        self.error('An error occured while perfoming command.');
-        console.log(err);
-        self.common.reply(msg, 'Oopsies! Something is broken!');
-      }
-    });
+    const cmdOpts = {
+      validOnlyInGuild: true,
+      defaultDisabled: true,
+      permissions: self.Discord.Permissions.FLAGS.MANAGE_ROLES |
+          self.Discord.Permissions.FLAGS.MANAGE_GUILD |
+          self.Discord.Permissions.FLAGS.MANAGE_CHANNELS,
+    };
+    let subCmds = [
+      new self.command.SingleCommand('help', help),
+      new self.command.SingleCommand('makemewin', commandMakeMeWin),
+      new self.command.SingleCommand('makemelose', commandMakeMeLose),
+      new self.command.SingleCommand(
+          ['create', 'c', 'new'], mkCmd(createGame), cmdOpts),
+      new self.command.SingleCommand(['reset'], mkCmd(resetGame), cmdOpts),
+      new self.command.SingleCommand(['debug'], mkCmd(showGameInfo), cmdOpts),
+      new self.command.SingleCommand(
+          ['debugevents'], mkCmd(showGameEvents), cmdOpts),
+      new self.command.SingleCommand(
+          ['exclude', 'remove', 'exc', 'ex'], mkCmd(excludeUser), cmdOpts),
+      new self.command.SingleCommand(
+          ['include', 'add', 'inc', 'in'], mkCmd(includeUser), cmdOpts),
+      new self.command.SingleCommand(
+          [
+            'options',
+            'setting',
+            'settings',
+            'set',
+            'option',
+            'opt',
+            'opts',
+          ],
+          mkCmd(toggleOpt), cmdOpts),
+      new self.command.SingleCommand(
+          ['events', 'event'], mkCmd(listEvents), cmdOpts,
+          [
+            new self.command.SingleCommand(
+                ['add', 'create'], mkCmd(createEvent), cmdOpts),
+            new self.command.SingleCommand(
+                ['remove', 'delete'], mkCmd(removeEvent), cmdOpts),
+            new self.command.SingleCommand(
+                ['toggle', 'enable', 'disable'], mkCmd(commandToggleEvent),
+                cmdOpts),
+          ]),
+      new self.command.SingleCommand(
+          ['players', 'player'], mkCmd(listPlayers), cmdOpts),
+      new self.command.SingleCommand(
+          ['start', 's', 'begin'], mkCmd(startGame), cmdOpts),
+      new self.command.SingleCommand(
+          ['pause', 'p'], mkCmd(pauseAutoplay), cmdOpts),
+      new self.command.SingleCommand(
+          ['autoplay', 'autostart', 'auto', 'resume', 'play', 'go'],
+          mkCmd(startAutoplay), cmdOpts),
+      new self.command.SingleCommand(
+          ['next', 'nextday'], mkCmd(nextDay), cmdOpts),
+      new self.command.SingleCommand(
+          ['end', 'abort', 'stop'], mkCmd(endGame), cmdOpts),
+      new self.command.SingleCommand(
+          ['save'],
+          function(msg) {
+            self.save('async');
+            msg.channel.send('`Saving all data.`');
+          },
+          cmdOpts),
+      new self.command.SingleCommand(
+          ['team', 'teams', 't'], mkCmd(editTeam), cmdOpts),
+      new self.command.SingleCommand(['stats'], mkCmd(commandStats), cmdOpts),
+      new self.command.SingleCommand(
+          ['rig', 'rigged'], mkCmd(commandRig), cmdOpts),
+    ];
+    self.command.on(
+        new self.command.SingleCommand('hg', function(msg) {
+          self.common.reply(
+              msg, 'Oh noes! I can\'t understand that! "' + msg.prefix +
+                  self.postPrefix + 'help" for help.');
+        }, null, subCmds));
 
     setupHelp();
 
@@ -985,187 +1051,50 @@ function HungryGames() {
   }
 
   /**
-   * Handle a command from a user and pass into relevant functions.
-   *
+   * Make a subcommand handler with the given callback function. This is a
+   * wrapper around existing functions.
    * @private
-   * @type {commandHandler}
-   * @param {Discord~Message} msg Message that triggered command.
-   * @listens Command#hg
+   * @param {HungryGames~hgCommandHandler} cb Command handler when subcommand is
+   * triggered.
+   * @return {Command~commandHandler} Subcommand initial handler that will fire
+   * when command is fired. Calls the passed callback handler with the mapped
+   * parameters.
    */
-  function handleCommand(msg) {
-    if (msg.content == msg.prefix + self.postPrefix + 'help') {
-      help(msg);
-      return;
-    } else if (msg.content.split(' ')[1] == 'makemewin') {
-      self.common.reply(
-          msg, 'Everyone\'s probability of winning has increased!');
-      return;
-    } else if (msg.content.split(' ')[1] == 'makemelose') {
-      self.common.reply(
-          msg,
-          'Your probability of losing has increased by ' + nothing() + '!');
-      return;
-    } else if (msg.guild === null) {
-      self.common.reply(msg, 'This command only works in servers, sorry!');
-      return;
-    }
-    checkPerms(msg, function(msg, id) {
-      let splitText = msg.content.split(' ').slice(1);
-      if (!splitText[0]) {
-        self.common.reply(msg, 'That isn\'t a command I understand.');
-        return;
-      }
-      let command = splitText[0].toLowerCase();
-      msg.text = splitText.slice(1).join(' ');
-
+  function mkCmd(cb) {
+    return function(msg) {
+      const id = msg.guild.id;
       if (find(id)) {
         find(id).channel = msg.channel.id;
         find(id).author = msg.author.id;
       }
-      switch (command) {
-        case 'create':
-        case 'c':
-        case 'new':
-          createGame(msg, id);
-          break;
-        case 'reset':
-          resetGame(msg, id);
-          break;
-        case 'debug':
-          showGameInfo(msg, id);
-          break;
-        case 'debugevents':
-          showGameEvents(msg, id);
-          break;
-        case 'exclude':
-        case 'remove':
-        case 'exc':
-        case 'ex':
-          excludeUser(msg, id);
-          break;
-        case 'include':
-        case 'add':
-        case 'inc':
-        case 'in':
-          includeUser(msg, id);
-          break;
-        case 'options':
-        case 'setting':
-        case 'settings':
-        case 'set':
-        case 'option':
-        case 'opt':
-        case 'opts':
-          toggleOpt(msg, id);
-          break;
-        case 'events':
-        case 'event':
-          if (!splitText[1]) {
-            listEvents(msg, id, 0);
-          } else {
-            switch (splitText[1].toLowerCase()) {
-              case 'add':
-              case 'create':
-                createEvent(msg, id);
-                break;
-              case 'remove':
-              case 'delete':
-                removeEvent(msg, id);
-                break;
-              case 'toggle':
-              case 'enable':
-              case 'disable':
-                commandToggleEvent(msg, id);
-                break;
-              default:
-                self.common.reply(
-                    msg, 'I\'m sorry, but I don\'t know how to do that to an ' +
-                        'event.');
-                break;
-            }
-          }
-          break;
-        case 'players':
-        case 'player':
-          listPlayers(msg, id);
-          break;
-        case 'start':
-        case 's':
-          startGame(msg, id);
-          break;
-        case 'pause':
-          pauseAutoplay(msg, id);
-          break;
-        case 'autoplay':
-        case 'autostart':
-        case 'auto':
-        case 'resume':
-        case 'play':
-        case 'go':
-          startAutoplay(msg, id);
-          break;
-        case 'next':
-        case 'nextday':
-          try {
-            nextDay(msg, id);
-          } catch (err) {
-            console.log(err);
-          }
-          break;
-        case 'end':
-        case 'abort':
-        case 'stop':
-          endGame(msg, id);
-          break;
-        case 'save':
-          self.save('async');
-          msg.channel.send('`Saving all data.`');
-          break;
-        case 'team':
-        case 'teams':
-        case 't':
-          editTeam(msg, id);
-          break;
-        case 'help':
-          help(msg, id);
-          break;
-        case 'stats':
-          commandStats(msg, id);
-          break;
-        case 'rig':
-        case 'rigged':
-          commandRig(msg, id);
-          break;
-        default:
-          self.common.reply(
-              msg, 'Oh noes! I can\'t understand that! "' + msg.prefix +
-                  self.postPrefix + 'help" for help.');
-          break;
-      }
-    });
+      cb(msg, id);
+    };
   }
 
   /**
-   * Check if author of msg has the required role to run commands.
+   * Tell a user their chances of winning have not increased.
    *
    * @private
-   * @param {Discord~Message} msg Message of the author to check for the role.
-   * @return {boolean} If the message author has the necessary role.
+   * @type {commandHandler}
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens Command#hg makemelose
    */
-  function checkForRole(msg) {
-    return self.checkMemberForRole(msg.member);
+  function commandMakeMeWin(msg) {
+    self.common.reply(msg, 'Everyone\'s probability of winning has increased!');
   }
+
   /**
-   * Check if GuildMember has the required role to run commands.
+   * Tell a user their chances of losing have not increased.
    *
-   * @public
-   * @param {Discord~GuildMember} member Member to check permissions for.
-   * @return {boolean} If the member has the necessary role.
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens Command#hg makemelose
    */
-  this.checkMemberForRole = function(member) {
-    return member.id == member.guild.ownerID ||
-        member.roles.find((r) => r.name == roleName);
-  };
+  function commandMakeMeLose(msg) {
+    self.common.reply(
+        msg, 'Your probability of losing has increased by ' + nothing() + '!');
+  }
 
   /**
    * Handler for a Hungry Games command.
@@ -1176,27 +1105,6 @@ function HungryGames() {
    * @param {string} id The id of the guild this command was run on for
    * convenience.
    */
-
-  /**
-   * Check if author of msg has permissions, then trigger callback with guild
-   * id.
-   *
-   * @private
-   * @param {Discord~Message} msg Message of the user to ensure has proper
-   * permissions.
-   * @param {HungryGames~hgCommandHandler} cb Callback to call if user has
-   * proper permissions to run command.
-   */
-  function checkPerms(msg, cb) {
-    if (['478983917546897408'].includes(msg.channel.id) || checkForRole(msg)) {
-      const id = msg.guild.id;
-      cb(msg, id);
-    } else {
-      self.common.reply(
-          msg, 'Ha! Nice try! I don\'t listen to people without the "' +
-              roleName + '" role!');
-    }
-  }
 
   /**
    * @classdesc Serializable container for data pertaining to a single user.
@@ -2947,7 +2855,8 @@ function HungryGames() {
     if (!find(id).options.disableOutput) {
       msg.channel.send(embed);
     }
-    self.command.find('say').options.set('disabled', 'channel', msg.channel.id);
+    self.command.find('say', msg)
+        .options.set('disabled', 'channel', msg.channel.id);
     find(id).outputChannel = msg.channel.id;
     dayEventIntervals[id] = self.client.setInterval(function() {
       if (web && web.dayStateChange) web.dayStateChange(id);
@@ -4383,8 +4292,8 @@ function HungryGames() {
         nextDay(msg, id);
       }
     } else {
-      self.command.find('say').options.set(
-          'default', 'channel', msg.channel.id);
+      self.command.find('say', msg)
+          .options.set('default', 'channel', msg.channel.id);
     }
   }
   /**
@@ -4409,8 +4318,8 @@ function HungryGames() {
       delete autoPlayTimeout[id];
       // delete battleMessage[id];
       if (find(id).outputChannel) {
-        self.command.find('say').options.set(
-            'default', 'channel', find(id).outputChannel);
+        self.command.find('say', msg)
+            .options.set('default', 'channel', find(id).outputChannel);
       }
     }
   }

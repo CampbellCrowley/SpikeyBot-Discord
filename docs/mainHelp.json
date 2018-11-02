@@ -758,8 +758,8 @@
             },
             {
               "description": "Basic Usage",
-              "command": "enable hg #hunger-games @SpikeyRobot#0971",
-              "result": "All hg commands will be enabled for everybody in the #hunger-games channel, and SpikeyRobot will be able to use the hg commands in all channels."
+              "command": "enable ~hg go #hunger-games @SpikeyRobot#0971",
+              "result": "hg autoplay commands will be enabled for everybody in the #hunger-games channel, and SpikeyRobot will be able to use the hg autoplay commands in all channels."
             }
           ]
         },
@@ -774,8 +774,8 @@
             },
             {
               "description": "Basic Usage",
-              "command": "disable hg #hunger-games @SpikeyRobot#0971",
-              "result": "hg Commands will no longer be allowed in the #hunger-games channel, and SpikeyRobot will no longer have permission to use the hg commands."
+              "command": "disable hg auto #hunger-games @SpikeyRobot#0971",
+              "result": "hg autoplay commands will no longer be allowed in the #hunger-games channel, and SpikeyRobot will no longer have permission to use the hg autoplay commands."
             }
           ]
         },

@@ -47,6 +47,8 @@ function Command() {
             }
           });
         } catch (e) {
+          self.error('Failed to parse command settings: ' + filename);
+          console.error(e);
         }
       });
     });
@@ -156,8 +158,11 @@ function Command() {
    * @param {commandHandler} handler The event handler when the command has been
    * triggered.
    * @param {CommandSetting} [opts] The options for this command.
+   * @param {SingleCommand|SingleCommand[]} [subCmds] Sub commands that use this
+   * command as a fallback. Command names must be separated by white space in
+   * order to trigger the sub command.
    */
-  function SingleCommand(cmd, handler, opts) {
+  function SingleCommand(cmd, handler, opts, subCmds) {
     const me = this;
     if (typeof handler !== 'function') {
       throw new Error('Command handler must be a function.');
@@ -167,6 +172,28 @@ function Command() {
       throw new Error(
           'Commands must be specified as a string, or array of strings.');
     }
+    if (subCmds && !Array.isArray(subCmds)) subCmds = [subCmds];
+    else if (!subCmds) subCmds = [];
+
+    /**
+     * The name of the parent command if this is a subcommand.
+     * @public
+     * @type {?string}
+     */
+    this.parentName = null;
+
+    /**
+     * Get the full name for this command including parent command
+     * @return {string} This command's name prefixed with the parent command's
+     * name.
+     */
+    this.getFullName = function() {
+      if (me.parentName) {
+        return me.parentName + ' ' + me.getName();
+      } else {
+        return me.getName();
+      }
+    };
 
     /**
      * Get the primary key for this object. The first or only value passed in
@@ -179,6 +206,7 @@ function Command() {
     this.getName = function() {
       return me.aliases[0];
     };
+
     /**
      * All versions of this command that may be used to trigger the same
      * handler.
@@ -189,6 +217,20 @@ function Command() {
     this.aliases = cmd.map((el) => {
       return el.toLowerCase();
     });
+
+    /**
+     * Sub commands for this single command. Triggered by commands separated by
+     * whitespace. Object mapped by subcommand name, similar to {@link
+     * Command~cmds}.
+     * @public
+     * @type {Object.<SingleCommand>}
+     */
+    this.subCmds = {};
+    for (let i = 0; i < subCmds.length; i++) {
+      subCmds[i].parentName = this.getFullName();
+      this.subCmds[subCmds[i].getName()] = subCmds[i];
+    }
+
     /**
      * The function to call when this command has been triggered.
      * @public
@@ -196,6 +238,23 @@ function Command() {
      * @param {Discord~Message} msg The message that is triggering this command.
      */
     this.trigger = function(msg) {
+      if (msg.cmd && msg.cmd != me.getFullName() && me.subCmds) {
+        let sub = msg.cmd.replace(me.getFullName() + ' ', '').split(' ')[0];
+        if (sub) {
+          let match = me.subCmds[sub];
+          if (!match) {
+            match = Object.values(me.subCmds).find((el) => {
+              return el.aliases.includes(sub);
+            });
+          }
+          if (match) {
+            msg.text =
+                msg.text.replace(new RegExp('^.*?' + me.getFullName()), '');
+            me.subCmds[sub].trigger(msg);
+            return;
+          }
+        }
+      }
       handler(msg);
     };
     /**
@@ -204,6 +263,25 @@ function Command() {
      * @type {Command~CommandSetting}
      */
     this.options = new CommandSetting(opts);
+    /**
+     * Fetches the user options for this command, taking into account this could
+     * be a subcommand.
+     * @public
+     * @return {Object.<CommandSetting>} The settings for this command or
+     * sub-command mapped by guild ids.
+     */
+    this.getUserOptions = function() {
+      const myName = me.getFullName();
+      return Object.fromEntries(
+          Object.entries(userSettings)
+              .map((el) => {
+                let settings = el[1][myName];
+                return [el[0], settings];
+              })
+              .filter((el) => {
+                return el[1];
+              }));
+    };
   }
   this.SingleCommand = SingleCommand;
 
@@ -521,25 +599,28 @@ function Command() {
    * @default
    * @type {string}
    */
-  const commandSettingsFile = '/commandSettings.js';
+  const commandSettingsFile = '/commandSettings.json';
 
   /**
    * Trigger a command firing and call it's handler passing in msg as only
    * argument.
    *
-   * @param {string} cmd Array of strings or a string of the command to
-   * trigger.
-   * @param {Discord~Message} msg Message received from Discord to pass to
-   * handler.
+   * @param {Discord~Message|string} msg Message received from Discord to pass
+   * to handler and to use to find the correct handler, OR a string to override
+   * the command to trigger from msg.
+   * @param {Discord~Message} [msg2] The message received from Discord if the
+   * first argument is a string.
    * @return {boolean} True if command was handled by us.
    */
-  this.trigger = function(cmd, msg) {
-    let func = self.find(cmd, msg);
+  this.trigger = function(msg, msg2) {
+    let override = null;
+    if (typeof msg === 'string') {
+      override = msg;
+      msg = msg2;
+    }
+    let func = self.find(override, msg, true);
     if (func) {
-      if (cmd.startsWith(msg.prefix)) {
-        cmd = cmd.replace(msg.prefix, '');
-      }
-      let failure = self.validate(cmd, msg, func);
+      let failure = self.validate(override, msg, func);
       if (failure === 'Guild Only') {
         self.common.reply(msg, onlyservermessage);
         return true;
@@ -568,15 +649,15 @@ function Command() {
               msg, 'I am unable to attempt this command for ' +
                   'you due of an unknown reason.',
               failure);
-          self.error('Comand failed: ' + cmd + ': ' + failure);
+          self.error('Comand failed: ' + msg.cmd + ': ' + failure);
           return true;
         }
       }
-      msg.text = msg.content.replace(msg.prefix + cmd, '');
+      msg.text = msg.content.replace(msg.prefix + msg.cmd, '');
       try {
         func.trigger(msg);
       } catch (err) {
-        self.error(cmd + ': FAILED');
+        self.error(msg.cmd + ': FAILED');
         console.error(err);
         self.common.reply(msg, 'An error occurred! Oh noes!');
       }
@@ -649,19 +730,42 @@ function Command() {
    * Returns the callback function for the given event.
    * @public
    *
-   * @param {string} cmd Command to lookup.
-   * @param {Discord~Message} [msg] Message that is to trigger this command.
-   * Used for removing prefix from cmd if necessary.
-   * @return {Command~SingleCommand} The single command object reference.
+   * @param {?string} override Command to force search for, and ignore command
+   * that could be matched with msg.
+   * @param {Discord~Message} msg Message that is to trigger this command. This
+   * object will be updated with the command name that was found as msg.cmd.
+   * @param {boolean} [setCmd=false] Set the cmd variable in the msg object to
+   * match the found command.
+   * @return {?Command~SingleCommand} The single command object reference, or
+   * null if it could not be found.
    */
-  this.find = function(cmd, msg) {
-    if (!cmd) cmd = msg.content.match(/^\S+/)[0];
-    if (!cmd) return;
-    if (msg && cmd.startsWith(msg.prefix)) cmd = cmd.replace(msg.prefix, '');
+  this.find = function(override, msg, setCmd = false) {
+    let split;
+    if (!cmd) {
+      split = msg.content.trim().split(/\s/);
+    } else {
+      split = cmd.trim().split(/\s/);
+    }
+    cmd = split.splice(0, 1)[0];
+    if (!cmd) return null;
+    if (cmd.startsWith(msg.prefix)) cmd = cmd.replace(msg.prefix, '');
     cmd = cmd.toLowerCase();
-    return Object.values(cmds).find((el) => {
+    let single = Object.values(cmds).find((el) => {
       return el.aliases.includes(cmd);
     });
+    if (setCmd) msg.cmd = cmd;
+    while (single && single.subCmds && split.length > 0) {
+      let sub = Object.values(single.subCmds).find((el) => {
+        return el.aliases.includes(split[0]);
+      });
+      if (sub) {
+        single = sub;
+        if (setCmd) msg.cmd += ' ' + split.splice(0, 1)[0];
+      } else {
+        break;
+      }
+    }
+    return single;
   };
 
   /**
@@ -669,7 +773,8 @@ function Command() {
    * actually fire the event.
    * @public
    *
-   * @param {string} cmd The command to validate.
+   * @param {?string} cmd The command to validate. Null to use msg to find the
+   * command to validate.
    * @param {?Discord~Message} msg The message that will fire the event. If
    * null, checks for channel and guild specific changes will not be
    * validated.
@@ -693,7 +798,7 @@ function Command() {
       if (msg.guild) {
         let guildValues = userSettings[msg.guild.id];
         if (guildValues) {
-          let commandValues = guildValues[func.getName()];
+          let commandValues = guildValues[func.getFullName()];
           if (commandValues) {
             isDisabledLocally = commandValues.isDisabled(msg);
             bitfield = bitfield | commandValues.permissions;
@@ -739,17 +844,23 @@ function Command() {
           msg, 'Please specify a command, and where to disable it.');
       return;
     }
-    let splitText = msg.text.trim().split(/[\s\n]/);
-    let cmd = self.find(splitText[0], msg);
+    let trimmedText =
+        msg.text.replace(self.Discord.MessageMentions.CHANNELS_PATTERN, '')
+            .replace(self.Discord.MessageMentions.USERS_PATTERN, '')
+            .replace(self.Discord.MessageMentions.ROLES_PATTERN)
+            .trim();
+    msg.content = trimmedText;
+    let cmd = self.find(null, msg);
     if (!cmd) {
       self.common.reply(
-          'I was unable to find that command. (`' + splitText[0] + '`)');
+          msg, 'I was unable to find that command. (`' + msg.text + '`)');
       return;
     }
-    let name = cmd.getName();
+    let name = cmd.getFullName();
     if (!userSettings[msg.guild.id]) userSettings[msg.guild.id] = {};
     if (!userSettings[msg.guild.id][name]) {
-      userSettings[msg.guild.id][name] = new CommandSetting();
+      userSettings[msg.guild.id][name] = new CommandSetting(cmd.options);
+      userSettings[msg.guild.id][name].myGuild = msg.guild.id;
     }
     let settings = userSettings[msg.guild.id][name];
     let disabledList = [];
@@ -774,45 +885,33 @@ function Command() {
       disabledList.push('Role: ' + r.name);
     });
 
-    splitText
-        .filter(
-            (el) => {
-              return !(
-                el.match(self.Discord.MessageMentions.CHANNELS_PATTERN) ||
-                  el.match(self.Discord.MessageMentions.USERS_PATTERN) ||
-                  el.match(self.Discord.MessageMentions.ROLES_PATTERN));
-            })
-        .join(' ')
-        .split(',')
-        .forEach(
-            (el) => {
-              let trimmed = el.trim().toLowerCase();
-              if (trimmed === 'guild' || trimmed === 'everyone' ||
-                  trimmed === 'all') {
-                settings.set('disabled', 'guild', msg.guild.id);
-                return;
-              }
-              let role = msg.guild.roles.find((r) => {
-                return r.name.toLowerCase() == trimmed;
-              });
-              if (role) {
-                if (settings.disabled.roles[role.guild.id + '/' + role.id]) {
-                  return;
-                }
-                settings.set('disabled', 'role', role.guild.id, rold.id);
-                disabledList.push('Role: ' + role.name);
-                return;
-              }
-              let user = msg.guild.members.find((m) => {
-                return m.user.tag.toLowerCase() == trimmed;
-              });
-              if (user) {
-                if (settings.disabled.user[user.id]) return;
-                settings.set('disabled', 'user', user.id);
-                disabledList.push('Member: ' + user.user.tag);
-                return;
-              }
-            });
+    trimmedText.split(/\s/).forEach((el) => {
+      let trimmed = el.trim().toLowerCase();
+      if (trimmed === 'guild' || trimmed === 'everyone' || trimmed === 'all') {
+        settings.set('disabled', 'guild', msg.guild.id);
+        return;
+      }
+      let role = msg.guild.roles.find((r) => {
+        return r.name.toLowerCase() == trimmed;
+      });
+      if (role) {
+        if (settings.disabled.roles[role.guild.id + '/' + role.id]) {
+          return;
+        }
+        settings.set('disabled', 'role', role.guild.id, rold.id);
+        disabledList.push('Role: ' + role.name);
+        return;
+      }
+      let user = msg.guild.members.find((m) => {
+        return m.user.tag.toLowerCase() == trimmed;
+      });
+      if (user) {
+        if (settings.disabled.user[user.id]) return;
+        settings.set('disabled', 'user', user.id);
+        disabledList.push('Member: ' + user.user.tag);
+        return;
+      }
+    });
     self.common.reply(
         msg, 'Disabled `' + name + '` for\n' +
             (disabledList.join('\n') || 'Nothing'));
@@ -830,79 +929,74 @@ function Command() {
           msg, 'Please specify a command, and where to enable it.');
       return;
     }
-    let splitText = msg.text.trim().split(/[\s\n]/);
-    let cmd = self.find(splitText[0], msg);
+    let trimmedText =
+        msg.text.replace(self.Discord.MessageMentions.CHANNELS_PATTERN, '')
+            .replace(self.Discord.MessageMentions.USERS_PATTERN, '')
+            .replace(self.Discord.MessageMentions.ROLES_PATTERN, '')
+            .trim();
+    msg.content = trimmedText;
+    let cmd = self.find(null, msg);
     if (!cmd) {
       self.common.reply(
-          'I was unable to find that command. (`' + splitText[0] + '`)');
+          msg, 'I was unable to find that command. (`' + trimmedText + '`)');
       return;
     }
-    let name = cmd.getName();
+    let name = cmd.getFullName();
     if (!userSettings[msg.guild.id]) userSettings[msg.guild.id] = {};
     if (!userSettings[msg.guild.id][name]) {
-      userSettings[msg.guild.id][name] = new CommandSetting();
+      userSettings[msg.guild.id][name] = new CommandSetting(cmd.options);
+      userSettings[msg.guild.id][name].myGuild = msg.guild.id;
     }
     let settings = userSettings[msg.guild.id][name];
     let enabledList = [];
     msg.mentions.channels.forEach((c) => {
       if (settings.enabled.channels[c.id]) return;
       settings.set(
-          cmd.options.defaultDisabled ? 'enabled' : 'default', 'channel', c.id);
+          cmd.options.defaultEnabled ? 'default' : 'enabled', 'channel',
+          c.id);
       enabledList.push(c.type + ' channel: ' + c.name);
     });
     msg.mentions.members.forEach((m) => {
       if (settings.enabled.users[m.id]) return;
       settings.set(
-          cmd.options.defaultDisabled ? 'enabled' : 'default', 'user', m.id);
+          cmd.options.defaultEnabled ? 'default' : 'enabled', 'user', m.id);
       enabledList.push('Member: ' + m.user.tag);
     });
     msg.mentions.roles.forEach((r) => {
       if (settings.enabled.roles[r.guild.id + '/' + r.id]) return;
       settings.set(
-          cmd.options.defaultDisabled ? 'enabled' : 'default', 'role',
+          cmd.options.defaultEnabled ? 'default' : 'enabled', 'role',
           r.guild.id, r.id);
       enabledList.push('Role: ' + r.name);
     });
 
-    splitText
-        .filter(
-            (el) => {
-              return !(
-                el.match(self.Discord.MessageMentions.CHANNELS_PATTERN) ||
-                  el.match(self.Discord.MessageMentions.USERS_PATTERN) ||
-                  el.match(self.Discord.MessageMentions.ROLES_PATTERN));
-            })
-        .join(' ')
-        .split(',')
-        .forEach(
-            (el) => {
-              let trimmed = el.trim().toLowerCase();
-              if (trimmed === 'guild' || trimmed === 'everyone' ||
-                  trimmed === 'all') {
-                settings.set('enabled', 'guild', msg.guild.id);
-                return;
-              }
-              let role = msg.guild.roles.find((r) => {
-                return r.name.toLowerCase() == trimmed;
-              });
-              if (role) {
-                if (settings.enabled.roles[role.guild.id + '/' + role.id]) {
-                  return;
-                }
-                settings.set('enabled', 'role', role.guild.id, rold.id);
-                enabledList.push('Role: ' + role.name);
-                return;
-              }
-              let user = msg.guild.members.find((m) => {
-                return m.user.tag.toLowerCase() == trimmed;
-              });
-              if (user) {
-                if (settings.enabled.user[user.id]) return;
-                settings.set('enabled', 'user', user.id);
-                enabledList.push('Member: ' + user.user.tag);
-                return;
-              }
-            });
+    trimmedText.split(/\s/).forEach((el) => {
+      let trimmed = el.trim().toLowerCase();
+      if (trimmed === 'guild' || trimmed === 'everyone' || trimmed === 'all') {
+        settings.set('enabled', 'guild', msg.guild.id);
+        return;
+      }
+      let role = msg.guild.roles.find((r) => {
+        return r.name.toLowerCase() == trimmed;
+      });
+      if (role) {
+        if (settings.enabled.roles[role.guild.id + '/' + role.id]) {
+          return;
+        }
+        settings.set('enabled', 'role', role.guild.id, rold.id);
+        enabledList.push('Role: ' + role.name);
+        return;
+      }
+      let user = msg.guild.members.find((m) => {
+        return m.user.tag.toLowerCase() == trimmed;
+      });
+      if (user) {
+        if (settings.enabled.user[user.id]) return;
+        settings.set('enabled', 'user', user.id);
+        enabledList.push('Member: ' + user.user.tag);
+        return;
+      }
+    });
     self.common.reply(
         msg, 'Enabled `' + name + '` for\n' +
             (enabledList.join('\n') || 'Nothing'));
@@ -917,12 +1011,27 @@ function Command() {
    */
   function commandShow(msg) {
     let commands;
-    if (msg.text && msg.text.trim()) {
+    if (!userSettings[msg.guild.id]) {
+      self.common.reply(
+          msg,
+          'No custom settings for commands have been created on this server.',
+          'All settings are using default values.');
+      return;
+    } else if (msg.text && msg.text.trim()) {
       let text = msg.text.trim().toLowerCase();
       if (text.startsWith(msg.prefix)) text = text.replace(msg.prefix, '');
       commands = userSettings[msg.guild.id];
       if (commands) {
-        commands = commands[text];
+        let origContent = msg.content;
+        msg.content = text;
+        let cmdObj = self.find(null, msg);
+        msg.content = origContent;
+
+        if (cmdObj) {
+          commands = commands[cmdObj.getFullName()];
+        } else {
+          commands = null;
+        }
       }
       if (!commands) {
         let found = Object.values(cmds).find((el) => {
@@ -945,10 +1054,6 @@ function Command() {
         return;
       }
       commands = [[text, commands]];
-    } else if (!userSettings[msg.guild.id]) {
-      self.common.reply(
-          msg, 'No custom settings for commands have been created.');
-      return;
     } else {
       commands = Object.entries(userSettings[msg.guild.id]).filter((el) => {
         if (el[1].defaultDisabled) {
@@ -963,19 +1068,23 @@ function Command() {
     let output = commands.map((el) => {
       let tmp = [];
       let obj;
-      if (cmds[el[0]].options.defaultDisabled) {
-        tmp.push(el[0] + ' Enabled with the following (disabled by default):');
+      let found = self.find(el[0], msg);
+      if (found.options.defaultDisabled) {
+        tmp.push(
+            '`' + el[0] +
+            '` Enabled with the following (disabled by default):');
         if (el[1].permissions) {
           tmp.push(
               new self.Discord
-                  .Permissions(
-                      el[1].permissions | cmds[el[0]].options.permissions)
+                  .Permissions(el[1].permissions | found.options.permissions)
                   .toArray()
                   .join(', '));
         }
         obj = el[1].enabled;
       } else {
-        tmp.push(el[0] + ' Disabled with the following (enabled by default):');
+        tmp.push(
+            '`' + el[0] +
+            '` Disabled with the following (enabled by default):');
         obj = el[1].disabled;
       }
       let channels = Object.keys(obj.channels);
