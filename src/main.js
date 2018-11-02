@@ -290,7 +290,7 @@ function Main() {
           permissions: self.Discord.Permissions.FLAGS.MANAGE_MESSAGES,
         }));
     self.command.on(
-        new self.command.SingleCommand(['fuckyou', 'ban'], commandBan, {
+        new self.command.SingleCommand(['ban', 'fuckyou'], commandBan, {
           validOnlyInGuild: true,
           defaultDisabled: true,
           permissions: self.Discord.Permissions.FLAGS.BAN_MEMBERS,
@@ -2181,6 +2181,8 @@ function Main() {
       return prePad(el[1].toString(2), 31) + ' ' + el[0];
     }).join('\n');
     embed.setDescription('```css\n' + formatted + '```');
+    embed.setFooter(
+        'To see permissions for each command type: `' + msg.prefix + 'show`');
 
     msg.channel.send(embed);
   }

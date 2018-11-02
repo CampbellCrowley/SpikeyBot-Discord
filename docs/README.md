@@ -1066,6 +1066,7 @@ normal submodule, and is treated differently in the SpikeyBot class.
         * [.initialized](#SubModule+initialized) : <code>boolean</code>
         * [.commit](#SubModule+commit) : <code>string</code>
         * [.loadTime](#SubModule+loadTime) : <code>number</code>
+        * [.updateParentName(to)](#Command+updateParentName)
         * [.getFullName()](#Command+getFullName) ⇒ <code>string</code>
         * [.getName()](#Command+getName) ⇒ <code>string</code>
         * [.trigger(msg)](#Command+trigger)
@@ -1079,7 +1080,7 @@ normal submodule, and is treated differently in the SpikeyBot class.
         * [.trigger(msg, [msg2])](#Command+trigger) ⇒ <code>boolean</code>
         * [.on(cmd, [cb], [onlyserver])](#Command+on)
         * [.removeListener(cmd)](#Command+removeListener)
-        * [.find(override, msg, [setCmd])](#Command+find) ⇒ [<code>SingleCommand</code>](#Command..SingleCommand)
+        * [.find(cmd, msg, [setCmd])](#Command+find) ⇒ [<code>SingleCommand</code>](#Command..SingleCommand)
         * [.validate(cmd, msg, [func])](#Command+validate) ⇒ <code>string</code>
         * [.getAllNames()](#Command+getAllNames) ⇒ <code>Array.&lt;string&gt;</code>
         * [.addEventListener(name, handler)](#Command+addEventListener)
@@ -1118,6 +1119,7 @@ The name of the parent command if this is a subcommand.
 
 **Kind**: instance property of [<code>Command</code>](#Command)  
 **Access**: public  
+**Read only**: true  
 <a name="Command+aliases"></a>
 
 ### command.aliases : <code>Array.&lt;string&gt;</code>
@@ -1283,6 +1285,18 @@ needs to be reloaded because the file has been modified since loading.
 
 **Kind**: instance constant of [<code>Command</code>](#Command)  
 **Access**: public  
+<a name="Command+updateParentName"></a>
+
+### command.updateParentName(to)
+Update the parent name for this command and all child commands.
+
+**Kind**: instance method of [<code>Command</code>](#Command)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| to | <code>string</code> | The parent name to set. |
+
 <a name="Command+getFullName"></a>
 
 ### command.getFullName() ⇒ <code>string</code>
@@ -1443,7 +1457,7 @@ Remove listener for a command.
 
 <a name="Command+find"></a>
 
-### command.find(override, msg, [setCmd]) ⇒ [<code>SingleCommand</code>](#Command..SingleCommand)
+### command.find(cmd, msg, [setCmd]) ⇒ [<code>SingleCommand</code>](#Command..SingleCommand)
 Returns the callback function for the given event.
 
 **Kind**: instance method of [<code>Command</code>](#Command)  
@@ -1453,7 +1467,7 @@ null if it could not be found.
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| override | <code>string</code> |  | Command to force search for, and ignore command that could be matched with msg. |
+| cmd | <code>string</code> |  | Command to force search for, and ignore command that could be matched with msg. |
 | msg | <code>Discord~Message</code> |  | Message that is to trigger this command. This object will be updated with the command name that was found as msg.cmd. |
 | [setCmd] | <code>boolean</code> | <code>false</code> | Set the cmd variable in the msg object to match the found command. |
 
