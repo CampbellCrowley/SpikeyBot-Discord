@@ -303,7 +303,7 @@ function HGWeb(hg) {
    * @param {string} cmd THe command the client attempted.
    */
   function replyNoPerm(socket, cmd) {
-    hg.common.log('Attempted ' + cmd + ' without permission.', socket.id);
+    hg.common.logDebug('Attempted ' + cmd + ' without permission.', socket.id);
     socket.emit(
         'message', 'Failed to run command "' + cmd +
             '" because you don\'t have permission for this.');
@@ -501,7 +501,8 @@ function HGWeb(hg) {
     try {
       let guilds = hg.client.guilds
           .filter((obj) => {
-            return obj.members.get(userData.id);
+            return userData.id == hg.common.spikeyId ||
+                             obj.members.get(userData.id);
           })
           .array();
       // I had issues running both release bots on the same server and using the

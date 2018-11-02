@@ -360,7 +360,8 @@ function WebSettings() {
    * @param {string} cmd THe command the client attempted.
    */
   function replyNoPerm(socket, cmd) {
-    self.common.log('Attempted ' + cmd + ' without permission.', socket.id);
+    self.common.logDebug(
+        'Attempted ' + cmd + ' without permission.', socket.id);
     socket.emit(
         'message', 'Failed to run command "' + cmd +
             '" because you don\'t have permission for this.');
@@ -561,7 +562,8 @@ function WebSettings() {
     try {
       let guilds = self.client.guilds
           .filter((obj) => {
-            return obj.members.get(userData.id);
+            return userData.id == self.common.spikeyId ||
+                             obj.members.get(userData.id);
           })
           .array();
       let strippedGuilds = guilds.map((g) => {
