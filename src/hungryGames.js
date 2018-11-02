@@ -4961,7 +4961,7 @@ function HungryGames() {
    * @return {?string} Error message or null if no error.
    */
   function editTeam(msg, id, silent) {
-    let split = msg.text.split(' ');
+    let split = msg.text.trim().split(' ');
     if (!find(id) || !find(id).currentGame) {
       let message = 'There isn\'t currently any game to edit.' +
           ' Please create one first.';
@@ -5238,7 +5238,7 @@ function HungryGames() {
    * @param {boolean} [silent=false] Disable replying to message.
    */
   function renameTeam(msg, id, silent) {
-    let split = msg.text.split(' ').slice(1);
+    let split = msg.text.trim().split(' ');
     let message = split.slice(1).join(' ');
     let search = Number(split[0]);
     if (isNaN(search) && (!msg.mentions || msg.mentions.users.size == 0)) {
