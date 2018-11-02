@@ -4344,7 +4344,7 @@ function HungryGames() {
     if (!find(id)) {
       createGame(msg, id);
     }
-    const firstWord = msg.text.split(' ')[0];
+    const firstWord = msg.text.trim().split(' ')[0];
     const everyoneWords = ['everyone', '@everyone', 'all'];
     if (everyoneWords.includes(firstWord)) {
       const response = self.excludeUsers('everyone', id);
@@ -4449,7 +4449,7 @@ function HungryGames() {
     if (!find(id)) {
       createGame(msg, id);
     }
-    const firstWord = msg.text.split(' ')[0];
+    const firstWord = msg.text.trim().split(' ')[0];
     const everyoneWords = ['everyone', '@everyone', 'all'];
     if (everyoneWords.includes(firstWord)) {
       const response = self.includeUsers('everyone', id);
