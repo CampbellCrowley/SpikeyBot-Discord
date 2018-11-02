@@ -91,13 +91,23 @@
             },
             {
               "description": "Basic Usage",
-              "command": "enable ~hg go #hunger-games @SpikeyRobot#0971",
+              "command": "enable {prefix}hg go #hunger-games @SpikeyRobot#0971",
               "result": "hg autoplay commands will be enabled for everybody in the #hunger-games channel, and SpikeyRobot will be able to use the hg autoplay commands in all channels."
             },
             {
               "description": "Permissions",
               "command": "enable purge SEND_MESSAGES",
               "result": "Allow any user that can send a message in a channel, to also purge messages from the same channel. Permissions use Discord.js permission names. <a href=\"https://discord.js.org/#/docs/main/master/class/Permissions?scrollTo=s-FLAGS\">List of Permissions</a>"
+            },
+            {
+              "description": "Wildcards",
+              "command": "enable hg * * @HG",
+              "result": "Allow all hg commands for users with the HG role. (Note: Each * matches one word in the command. `{prefix}hg *` would not match `{prefix}hg events add`, but does match `{prefix}hg events`)"
+            },
+            {
+              "description": "More Wildcards",
+              "command": "enable {prefix}toggle* @SpikeyRobot#0971",
+              "result": "Allow all commands that start with 'toggle' (togglemute, togglebanmessages) to SpikeyRobot."
             }
           ]
         },
@@ -119,6 +129,16 @@
               "description": "Permissions",
               "command": "disable ban BAN_MEMBERS",
               "result": "Don't allow users with BAN_MEMBERS permission to use this command anymore. Permissions use Discord.js permission names. <a href=\"https://discord.js.org/#/docs/main/master/class/Permissions?scrollTo=s-FLAGS\">List of Permissions</a>"
+            },
+            {
+              "description": "Wildcards",
+              "command": "disable hg * * @HG",
+              "result": "Block all hg commands for users with the HG role. (Note: Each * matches one word in the command. `{prefix}hg *` would not match `{prefix}hg events add`, but does match `{prefix}hg events`)"
+            },
+            {
+              "description": "More Wildcards",
+              "command": "disable {prefix}toggle* @SpikeyRobot#0971",
+              "result": "Block all commands that start with 'toggle' (togglemute, togglebanmessages) to SpikeyRobot."
             }
           ]
         },
@@ -147,6 +167,16 @@
               "description": "Basic Usage",
               "command": "reset",
               "result": "The bot wil confirm that you wish to do this, then delete all custom settings and reset them to default values."
+            },
+            {
+              "description": "Wildcards",
+              "command": "reset hg * *",
+              "result": "Reset all hg commands to default settings. (Note: Each * matches one word in the command. `{prefix}hg *` would not match `{prefix}hg events add`, but does match `{prefix}hg events`)"
+            },
+            {
+              "description": "More Wildcards",
+              "command": "reset {prefix}toggle*",
+              "result": "Reset all commands that start with 'toggle' (togglemute, togglebanmessages) to default settings."
             }
           ]
         },

@@ -1081,6 +1081,7 @@ normal submodule, and is treated differently in the SpikeyBot class.
         * [.on(cmd, [cb], [onlyserver])](#Command+on)
         * [.removeListener(cmd)](#Command+removeListener)
         * [.find(cmd, msg, [setCmd])](#Command+find) ⇒ [<code>SingleCommand</code>](#Command..SingleCommand)
+        * [.findAll(cmd, msg)](#Command+findAll) ⇒ [<code>Array.&lt;SingleCommand&gt;</code>](#Command..SingleCommand)
         * [.validate(cmd, msg, [func])](#Command+validate) ⇒ <code>string</code>
         * [.getAllNames()](#Command+getAllNames) ⇒ <code>Array.&lt;string&gt;</code>
         * [.addEventListener(name, handler)](#Command+addEventListener)
@@ -1470,6 +1471,22 @@ null if it could not be found.
 | cmd | <code>string</code> |  | Command to force search for, and ignore command that could be matched with msg. |
 | msg | <code>Discord~Message</code> |  | Message that is to trigger this command. This object will be updated with the command name that was found as msg.cmd. |
 | [setCmd] | <code>boolean</code> | <code>false</code> | Set the cmd variable in the msg object to match the found command. |
+
+<a name="Command+findAll"></a>
+
+### command.findAll(cmd, msg) ⇒ [<code>Array.&lt;SingleCommand&gt;</code>](#Command..SingleCommand)
+Returns all the callback functions for the given event with wildcards
+allowed.
+
+**Kind**: instance method of [<code>Command</code>](#Command)  
+**Returns**: [<code>Array.&lt;SingleCommand&gt;</code>](#Command..SingleCommand) - The command object references, or an
+empty array if it could not be found.  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| cmd | <code>string</code> | Command and subcommands to search for without guild prefixes. |
+| msg | <code>Discord~Message</code> | Message object to use to remove command prefix if it exist. |
 
 <a name="Command+validate"></a>
 
