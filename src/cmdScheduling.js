@@ -863,6 +863,7 @@ function CmdScheduling() {
     if (!g) return null;
     if (!cId) return null;
     return {
+      fabricated: true,
       member: g.members.get(uId),
       author: g.members.get(uId).user,
       guild: g,

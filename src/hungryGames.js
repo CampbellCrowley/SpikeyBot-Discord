@@ -2897,6 +2897,9 @@ function HungryGames() {
       let eventTry = eventPool[eventIndex];
       if (!eventTry) {
         self.error('Event at index ' + eventIndex + ' is invalid!');
+        if (fails.length < 3) {
+          console.error('Invalid Event:', eventTry);
+        }
         fails.push('Invalid Event');
         continue;
       }
@@ -2963,7 +2966,7 @@ function HungryGames() {
         'Failed to find suitable event for ' + userPool.length +
         ' players, from ' + eventPool.length + ' events with ' + numAlive +
         ' alive.');
-    console.error(fails);
+    // console.error(fails);
     return null;
   }
   /**

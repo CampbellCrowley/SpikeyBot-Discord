@@ -1486,10 +1486,9 @@ function Main() {
    */
   function commandSay(msg) {
     if (msg.delete) msg.delete().catch(() => {});
-    let content = msg.text;
-    if (content.indexOf(' ') === 0) content.replace(' ', '');
+    let content = msg.text.trim();
     msg.channel.send(content);
-    if (prevUserSayId != msg.author.id) {
+    if (msg.fabricated || prevUserSayId != msg.author.id) {
       prevUserSayId = msg.author.id;
       prevUserSayCnt = 0;
     }
