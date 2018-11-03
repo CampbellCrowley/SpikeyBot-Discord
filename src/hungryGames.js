@@ -2111,7 +2111,7 @@ function HungryGames() {
   function makeMessage(uId, gId, cId, msg) {
     let g = self.client.guilds.get(gId);
     if (!g) return null;
-    if (!cId && games[gId]) cId = games[gId].channel;
+    if (!cId && find(gId)) cId = find(gId).channel;
     return {
       author: g.members.get(uId),
       guild: g,

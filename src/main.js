@@ -1485,7 +1485,7 @@ function Main() {
    * @listens Command#say
    */
   function commandSay(msg) {
-    msg.delete().catch(() => {});
+    if (msg.delete) msg.delete().catch(() => {});
     let content = msg.text;
     if (content.indexOf(' ') === 0) content.replace(' ', '');
     msg.channel.send(content);
