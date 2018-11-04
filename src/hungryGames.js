@@ -1809,8 +1809,8 @@ function HungryGames() {
   function showGameInfo(msg, id) {
     let finalId = id;
     if (msg.author.id == self.common.spikeyId) {
-      if (msg.text.split(' ')[0]) {
-        finalId = msg.text.split(' ')[0];
+      if (msg.text.trim().split(' ')[0]) {
+        finalId = msg.text.trim().split(' ')[0];
       }
     }
     if (find(finalId)) {
@@ -6729,7 +6729,7 @@ function HungryGames() {
             console.error(err);
             return;
           }
-          image.getBuffer(Jimp.MIME_PNG, (err, buffer) => {
+          image.getBuffer(Jimp.MIME_AUTO, (err, buffer) => {
             if (err) {
               self.error(
                   'Failed to convert image into buffer: ' + (filename || url));
