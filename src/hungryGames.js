@@ -2300,6 +2300,13 @@ function HungryGames() {
           });
         });
       }
+      if (userEventPool.length == 0) {
+        self.common.reply(
+            msg, 'All bloodbath events have been disabled! Please enable ' +
+                'events so that something can happen in the games!');
+        endGame(msg, id);
+        return;
+      }
     } else {
       doArenaEvent = find(id).options.arenaEvents &&
           Math.random() < find(id).options.probabilityOfArenaEvent;

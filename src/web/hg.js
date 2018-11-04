@@ -543,7 +543,7 @@ function HGWeb(hg) {
         let uOpts = hg.command.getUserSettings(g.id) || {};
         uOpts = Object.entries(uOpts)
             .filter((el) => {
-              return el[1].getFullName().startsWith('hg');
+              return el[0].startsWith('hg');
             })
             .reduce(
                 (p, c) => {
