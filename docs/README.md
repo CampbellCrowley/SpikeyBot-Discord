@@ -58,6 +58,9 @@ channel.</p>
 <dt><a href="#SubModule">SubModule</a></dt>
 <dd><p>Base class for all Sub-Modules.</p>
 </dd>
+<dt><a href="#Test">Test</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
+<dd><p>For testing new stuff.</p>
+</dd>
 <dt><a href="#TicTacToe">TicTacToe</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
 <dd><p>Manages a tic-tac-toe game.</p>
 </dd>
@@ -10065,6 +10068,239 @@ Extends SubModule as the base class of a child.
 | Param | Type | Description |
 | --- | --- | --- |
 | child | <code>Object</code> | The child class to extend. |
+
+<a name="Test"></a>
+
+## Test ⇐ [<code>SubModule</code>](#SubModule)
+For testing new stuff.
+
+**Kind**: global class  
+**Extends**: [<code>SubModule</code>](#SubModule)  
+
+* [Test](#Test) ⇐ [<code>SubModule</code>](#SubModule)
+    * _instance_
+        * [.helpMessage](#SubModule+helpMessage) : <code>string</code> \| <code>Discord~MessageEmbed</code>
+        * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
+        * [.Discord](#SubModule+Discord) : <code>Discord</code>
+        * [.client](#SubModule+client) : <code>Discord~Client</code>
+        * [.command](#SubModule+command) : [<code>Command</code>](#Command)
+        * [.common](#SubModule+common) : [<code>Common</code>](#Common)
+        * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
+        * [.myName](#SubModule+myName) : <code>string</code>
+        * [.initialized](#SubModule+initialized) : <code>boolean</code>
+        * [.commit](#SubModule+commit) : <code>string</code>
+        * [.loadTime](#SubModule+loadTime) : <code>number</code>
+        * [.initialize()](#SubModule+initialize)
+        * [.begin(Discord, client, command, common, bot)](#SubModule+begin)
+        * [.end()](#SubModule+end)
+        * [.log(msg)](#SubModule+log)
+        * [.debug(msg)](#SubModule+debug)
+        * [.warn(msg)](#SubModule+warn)
+        * [.error(msg)](#SubModule+error)
+        * [.shutdown()](#SubModule+shutdown)
+        * *[.save([opt])](#SubModule+save)*
+        * *[.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>*
+    * _inner_
+        * [~commandTest(msg)](#Test..commandTest) : [<code>commandHandler</code>](#commandHandler) ℗
+
+<a name="SubModule+helpMessage"></a>
+
+### test.helpMessage : <code>string</code> \| <code>Discord~MessageEmbed</code>
+The help message to show the user in the main help message.
+
+**Kind**: instance property of [<code>Test</code>](#Test)  
+<a name="SubModule+postPrefix"></a>
+
+### *test.postPrefix : <code>string</code>*
+The postfix for the global prefix for this subModule. Must be defined
+before begin(), otherwise it is ignored.
+
+**Kind**: instance abstract property of [<code>Test</code>](#Test)  
+**Default**: <code>&quot;&quot;</code>  
+<a name="SubModule+Discord"></a>
+
+### test.Discord : <code>Discord</code>
+The current Discord object instance of the bot.
+
+**Kind**: instance property of [<code>Test</code>](#Test)  
+<a name="SubModule+client"></a>
+
+### test.client : <code>Discord~Client</code>
+The current bot client.
+
+**Kind**: instance property of [<code>Test</code>](#Test)  
+<a name="SubModule+command"></a>
+
+### test.command : [<code>Command</code>](#Command)
+The command object for registering command listeners.
+
+**Kind**: instance property of [<code>Test</code>](#Test)  
+<a name="SubModule+common"></a>
+
+### test.common : [<code>Common</code>](#Common)
+The common object.
+
+**Kind**: instance property of [<code>Test</code>](#Test)  
+<a name="SubModule+bot"></a>
+
+### test.bot : [<code>SpikeyBot</code>](#SpikeyBot)
+The parent SpikeyBot instance.
+
+**Kind**: instance property of [<code>Test</code>](#Test)  
+<a name="SubModule+myName"></a>
+
+### test.myName : <code>string</code>
+The name of this submodule. Used for differentiating in the log. Should be
+defined before begin().
+
+**Kind**: instance property of [<code>Test</code>](#Test)  
+**Overrides**: [<code>myName</code>](#SubModule+myName)  
+**Access**: protected  
+<a name="SubModule+initialized"></a>
+
+### test.initialized : <code>boolean</code>
+Has this subModule been initialized yet (Has begin() been called).
+
+**Kind**: instance property of [<code>Test</code>](#Test)  
+**Default**: <code>false</code>  
+**Access**: protected  
+**Read only**: true  
+<a name="SubModule+commit"></a>
+
+### test.commit : <code>string</code>
+The commit at HEAD at the time this module was loaded. Essentially the
+version of this submodule.
+
+**Kind**: instance constant of [<code>Test</code>](#Test)  
+**Access**: public  
+<a name="SubModule+loadTime"></a>
+
+### test.loadTime : <code>number</code>
+The time at which this madule was loaded for use in checking if the module
+needs to be reloaded because the file has been modified since loading.
+
+**Kind**: instance constant of [<code>Test</code>](#Test)  
+**Access**: public  
+<a name="SubModule+initialize"></a>
+
+### test.initialize()
+The function called at the end of begin() for further initialization
+specific to the subModule. Must be defined before begin() is called.
+
+**Kind**: instance method of [<code>Test</code>](#Test)  
+**Overrides**: [<code>initialize</code>](#SubModule+initialize)  
+**Access**: protected  
+<a name="SubModule+begin"></a>
+
+### test.begin(Discord, client, command, common, bot)
+Initialize this submodule.
+
+**Kind**: instance method of [<code>Test</code>](#Test)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| Discord | <code>Discord</code> | The Discord object for the API library. |
+| client | <code>Discord~Client</code> | The client that represents this bot. |
+| command | [<code>Command</code>](#Command) | The command instance in which to register command listeners. |
+| common | [<code>Common</code>](#Common) | Class storing common functions. |
+| bot | [<code>SpikeyBot</code>](#SpikeyBot) | The parent SpikeyBot instance. |
+
+<a name="SubModule+end"></a>
+
+### test.end()
+Trigger subModule to shutdown and get ready for process terminating.
+
+**Kind**: instance method of [<code>Test</code>](#Test)  
+**Access**: public  
+<a name="SubModule+log"></a>
+
+### test.log(msg)
+Log using common.log, but automatically set name.
+
+**Kind**: instance method of [<code>Test</code>](#Test)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+debug"></a>
+
+### test.debug(msg)
+Log using common.logDebug, but automatically set name.
+
+**Kind**: instance method of [<code>Test</code>](#Test)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+warn"></a>
+
+### test.warn(msg)
+Log using common.logWarning, but automatically set name.
+
+**Kind**: instance method of [<code>Test</code>](#Test)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+error"></a>
+
+### test.error(msg)
+Log using common.error, but automatically set name.
+
+**Kind**: instance method of [<code>Test</code>](#Test)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+shutdown"></a>
+
+### test.shutdown()
+Shutdown and disable this submodule. Removes all event listeners.
+
+**Kind**: instance method of [<code>Test</code>](#Test)  
+**Overrides**: [<code>shutdown</code>](#SubModule+shutdown)  
+**Access**: protected  
+<a name="SubModule+save"></a>
+
+### *test.save([opt])*
+Saves all data to files necessary for saving current state.
+
+**Kind**: instance abstract method of [<code>Test</code>](#Test)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [opt] | <code>string</code> | <code>&quot;&#x27;sync&#x27;&quot;</code> | Can be 'async', otherwise defaults to synchronous. |
+
+<a name="SubModule+unloadable"></a>
+
+### *test.unloadable() ⇒ <code>boolean</code>*
+Check if this module is in a state that is ready to be unloaded. If false
+is returned, this module should not be unloaded and doing such may risk
+putting the module into an uncontrollable state.
+
+**Kind**: instance abstract method of [<code>Test</code>](#Test)  
+**Returns**: <code>boolean</code> - True if can be unloaded, false if cannot.  
+**Access**: public  
+<a name="Test..commandTest"></a>
+
+### Test~commandTest(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Whatever is being tested.
+
+**Kind**: inner method of [<code>Test</code>](#Test)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
 
 <a name="TicTacToe"></a>
 

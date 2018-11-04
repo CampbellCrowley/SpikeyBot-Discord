@@ -6736,7 +6736,7 @@ function HungryGames() {
             console.error(err);
             return;
           }
-          image.getBuffer(Jimp.MIME_AUTO, (err, buffer) => {
+          image.getBuffer(Jimp.MIME_PNG, (err, buffer) => {
             if (err) {
               self.error(
                   'Failed to convert image into buffer: ' + (filename || url));
