@@ -697,7 +697,7 @@ function WebAccount() {
      * Make the directory for writing the user's settings if it does not exist
      * already.
      * @private
-     * @param {Error} err The error in readin the existing file.
+     * @param {?Error} err The error in readin the existing file.
      * @param {?string} data The data read from the existing file if any.
      */
     function makeDirectory(err, data) {
@@ -713,7 +713,7 @@ function WebAccount() {
      * Write the modified data to file.
      * @private
      *
-     * @param {Error} err The error in creating the directory.
+     * @param {?Error} err The error in creating the directory.
      * @param {?string} file The current file data that was read.
      */
     function writeFile(err, file) {

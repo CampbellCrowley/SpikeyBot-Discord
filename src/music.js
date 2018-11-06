@@ -1235,7 +1235,7 @@ function Music() {
             'You must specify the index of the song to dequeue, or "all".\nYo' +
                 'u can view the queue with "' + msg.prefix + 'queue".');
       } else {
-        if (indexString.trim().startsWith(/all|everything/)) {
+        if (indexString.trim().match(/^all|^everything/)) {
           commandClearQueue(msg);
           return;
         }

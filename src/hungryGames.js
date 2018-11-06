@@ -2113,7 +2113,8 @@ function HungryGames() {
     if (!g) return null;
     if (!cId && find(gId)) cId = find(gId).channel;
     return {
-      author: g.members.get(uId),
+      author: self.client.users.get(uId),
+      member: g.members.get(uId),
       guild: g,
       channel: g.channels.get(cId),
       text: msg,
