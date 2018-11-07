@@ -2701,11 +2701,15 @@ function HungryGames() {
       find(id).currentGame.day.events.push(
           makeMessageEvent(getMessage('eventEnd'), id));
     }
-    find(id).currentGame.forcedOutcomes =
-        find(id).currentGame.forcedOutcomes.filter((el) => {
-          self.forcePlayerState(el);
-          return el.persists;
-        });
+    if (!find(id).currentGame.forcedOutcomes) {
+      find(id).currentGame.forcedOutcomes = [];
+    } else {
+      find(id).currentGame.forcedOutcomes =
+          find(id).currentGame.forcedOutcomes.filter((el) => {
+            self.forcePlayerState(el);
+            return el.persists;
+          });
+    }
     let usersBleeding = [];
     let usersRecovered = [];
     find(id).currentGame.includedUsers.forEach(function(obj) {
