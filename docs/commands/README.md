@@ -22,6 +22,7 @@
 | ?reset | Reset all enabled and disabled commands to default settings. |  |
 | ?changeprefix | Set a custom prefix for all commands on the current server. |  |
 
+## Admin Control
 ## Time Control
 ## Events
 ## Team Settings
@@ -69,6 +70,13 @@
 | ?hg autoplay | Automatically continue to the next day after a day is over. | autoplay, auto, resume, play, go |
 | ?hg pause | Stop autoplay at the end of the day. |  |
 | ?hg next | Simulate the next day of the Games! | next, nextday |
+
+
+| Command | Description | Aliases |
+| --- | --- | --- |
+| ?hg kill | This will cause players to end the current or next day as dead. | kill, smite |
+| ?hg wound | This will cause players to end the current or next day as wounded. | wound, hurt, damage, stab, punch, slap, injure |
+| ?hg heal | This will cause players to end the current or next day as alive and fully healed. | heal, revive, thrive, resurrect, restore |
 
 ## Patreon Stuff
 ## Math Stuff

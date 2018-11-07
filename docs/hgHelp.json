@@ -331,6 +331,62 @@
           ]
         }
       ]
+    },
+    {
+      "title": "Admin Control",
+      "rows": [
+        {
+          "command": "kill",
+          "description": "This will cause players to end the current or next day as dead.",
+          "aliases": "kill, smite",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "kill @SpikeyRobot#0971",
+              "result": "A message will be added to the current day or the next day, that kills SpikeyRobot if he is not already dead."
+            },
+            {
+              "description": "Multiple Players",
+              "command": "kill @SpikeyRobot#0971 @SpikeyBot#4928",
+              "result": "A message will be added to the current day or the next day, that kills SpikeyRobot and SpikeyBot if they are not already dead."
+            }
+          ]
+        },
+        {
+          "command": "wound",
+          "description": "This will cause players to end the current or next day as wounded.",
+          "aliases": "wound, hurt, damage, stab, punch, slap, injure",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "wound @SpikeyRobot#0971",
+              "result": "A message will be added to the current day or the next day, that wounds SpikeyRobot if he is not already wounded."
+            },
+            {
+              "description": "Multiple Players",
+              "command": "wound @SpikeyRobot#0971 @SpikeyBot#4928",
+              "result": "A message will be added to the current day or the next day, that wounds SpikeyRobot and SpikeyBot if they are not already wounded."
+            }
+          ]
+        },
+        {
+          "command": "heal",
+          "description": "This will cause players to end the current or next day as alive and fully healed.",
+          "aliases": "heal, revive, thrive, resurrect, restore",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "heal @SpikeyRobot#0971",
+              "result": "A message will be added to the current day or the next day, that resurrects or heals SpikeyRobot if he is not already fully healed."
+            },
+            {
+              "description": "Multiple Players",
+              "command": "heal @SpikeyRobot#0971 @SpikeyBot#4928",
+              "result": "A message will be added to the current day or the next day, that heals SpikeyRobot and SpikeyBot if they are not already fully healed."
+            }
+          ]
+        }
+      ]
     }
   ]
 }
