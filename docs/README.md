@@ -11813,7 +11813,7 @@ Creates a web interface for managing the Hungry Games.
         * [~editMajorEvent(userData, socket, gId, type, search, data, name, newName, [cb])](#HGWeb..editMajorEvent) : <code>HGWeb~SocketFunction</code> ℗
         * [~removeEvent(userData, socket, gId, type, event, [cb])](#HGWeb..removeEvent) : <code>HGWeb~SocketFunction</code> ℗
         * [~toggleEvent(userData, socket, gId, type, subCat, event, value, [cb])](#HGWeb..toggleEvent) : <code>HGWeb~SocketFunction</code> ℗
-        * [~forcePlayerState(userData, socket, gId, list, state, text, [persists], [cb])](#HGWeb..forcePlayerState) : <code>HGWeb~SocketFunction</code> ℗
+        * [~forcePlayerState(userData, socket, gId, list, state, [text], [persists], [cb])](#HGWeb..forcePlayerState) : <code>HGWeb~SocketFunction</code> ℗
         * [~basicCB](#HGWeb..basicCB) : <code>function</code>
 
 <a name="new_HGWeb_new"></a>
@@ -12414,7 +12414,7 @@ Enable or disable an event without deleting it.
 
 <a name="HGWeb..forcePlayerState"></a>
 
-### HGWeb~forcePlayerState(userData, socket, gId, list, state, text, [persists], [cb]) : <code>HGWeb~SocketFunction</code> ℗
+### HGWeb~forcePlayerState(userData, socket, gId, list, state, [text], [persists], [cb]) : <code>HGWeb~SocketFunction</code> ℗
 Force a player in the game to end a day in a certain state.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
@@ -12428,7 +12428,7 @@ Force a player in the game to end a day in a certain state.
 | gId | <code>number</code> \| <code>string</code> | The guild id to run this command on. |
 | list | <code>Array.&lt;string&gt;</code> | The list of user IDs of the players to effect. |
 | state | <code>string</code> | The forced state. |
-| text | <code>string</code> | The message to show in the games as a result of this command. |
+| [text] | <code>string</code> | The message to show in the games as a result of this command. |
 | [persists] | <code>boolean</code> | Will this state be forced until the game ends. |
 | [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete. |
 

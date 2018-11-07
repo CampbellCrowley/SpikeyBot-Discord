@@ -1216,14 +1216,14 @@ function HGWeb(hg) {
    * @param {number|string} gId The guild id to run this command on.
    * @param {string[]} list The list of user IDs of the players to effect.
    * @param {string} state The forced state.
-   * @param {string} text The message to show in the games as a result of this
+   * @param {string} [text] The message to show in the games as a result of this
    * command.
    * @param {boolean} [persists] Will this state be forced until the game ends.
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete.
    */
   function forcePlayerState(
-      userData, socket, gId, list, state, text, persists) {
+      userData, socket, gId, list, state, text, persists, cb) {
     let cmdToCheck = state;
     switch (state) {
       case 'living':
@@ -1245,7 +1245,7 @@ function HGWeb(hg) {
     }
     socket.emit(
         'message', hg.forcePlayerState(gId, list, state, text, persists));
-    if (typeof cb === 'function') cb('ATTEMPT_FAILED');
+    if (typeof cb === 'function') cb();
   }
   this.forcePlayerState = forcePlayerState;
 

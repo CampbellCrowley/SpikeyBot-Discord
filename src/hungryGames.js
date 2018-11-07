@@ -6696,9 +6696,7 @@ function HungryGames() {
           msg, notInGame.tag + ' does not appear to be in the current game.');
       return;
     }
-    self.common.reply(
-        msg,
-        self.forcePlayerState(id, players, 'dead', getMessage('forcedDeath')));
+    self.common.reply(msg, self.forcePlayerState(id, players, 'dead'));
   }
 
   /**
@@ -6727,9 +6725,7 @@ function HungryGames() {
           msg, notInGame.tag + ' does not appear to be in the current game.');
       return;
     }
-    self.common.reply(
-        msg, self.forcePlayerState(
-            id, players, 'thriving', getMessage('forcedHeal')));
+    self.common.reply(msg, self.forcePlayerState(id, players, 'thriving'));
   }
 
   /**
@@ -6758,9 +6754,7 @@ function HungryGames() {
           msg, notInGame.tag + ' does not appear to be in the current game.');
       return;
     }
-    self.common.reply(
-        msg, self.forcePlayerState(
-            id, players, 'wounded', getMessage('forcedWound')));
+    self.common.reply(msg, self.forcePlayerState(id, players, 'wounded'));
   }
 
   /**
@@ -6792,7 +6786,6 @@ function HungryGames() {
     if (!find(id) || !find(id).currentGame) return 'No game has been created.';
     if (!Array.isArray(list) || list.length == 0) return 'No players given.';
     if (typeof state !== 'string') return 'No outcome given.';
-    if (typeof text !== 'string') return 'No message given.';
     list.forEach((p) => {
       if (find(id).currentGame.day.state > 0) {
         let player =
@@ -6816,6 +6809,19 @@ function HungryGames() {
           woundUser(id, player, 0, null);
         } else {
           return;
+        }
+        if (typeof text !== 'string' || text.length == 0) {
+          switch (state) {
+            case 'dead':
+              text = getMessage('forcedDeath');
+              break;
+            case 'thriving':
+              text = getMessage('forcedHeal');
+              break;
+            case 'wounded':
+              text = getMessage('forcedWound');
+              break;
+          }
         }
         let evt = makeSingleEvent(
             text, [player], 1, 0, find(id).options.mentionAll, id, outcome,
