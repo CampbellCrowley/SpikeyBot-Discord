@@ -532,7 +532,7 @@ function HGWeb(hg) {
         });
       }
       let strippedGuilds = guilds.map((g) => {
-        let dOpts = hg.command.getDefaultSettings()[g.id] || {};
+        let dOpts = hg.command.getDefaultSettings() || {};
         dOpts = Object.entries(dOpts)
             .filter((el) => {
               return el[1].getFullName().startsWith('hg');

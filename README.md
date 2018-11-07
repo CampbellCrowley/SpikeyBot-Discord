@@ -33,6 +33,8 @@
 `events` `debugevents` `add` `remove`
 #### Time Control
 `create` `start` `end` `autoplay` `pause` `next`
+#### Admin Control
+`kill` `heal` `wound`
 #### Other
 `help` `stats`
 
