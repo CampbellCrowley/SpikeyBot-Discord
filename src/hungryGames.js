@@ -5198,8 +5198,8 @@ function HungryGames() {
           });
         });
         if (!team1 || !team2) break;
-        let tmp = team1.players.splice(p1, 1);
-        team1.players.push(team2.players.splice(p2, 1));
+        let tmp = team1.players.splice(p1, 1)[0];
+        team1.players.push(team2.players.splice(p2, 1)[0]);
         team2.players.push(tmp);
         break;
       case 'move':
