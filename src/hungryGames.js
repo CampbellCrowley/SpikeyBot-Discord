@@ -246,11 +246,6 @@ function HungryGames() {
           'erupting.)',
       category: 'probabilities',
     },
-    resurrection: {
-      value: false,
-      comment: 'Can users be resurrected and placed back into the arena.',
-      category: 'features',
-    },
     includeBots: {
       value: false,
       comment: 'Should bots be included in the games. If this is false, bots ' +
@@ -344,15 +339,6 @@ function HungryGames() {
       time: true,
       comment: 'Delay in milliseconds between each day being printed.',
       category: 'other',
-    },
-    probabilityOfResurrect: {
-      value: 0.33,
-      range: {min: 0, max: 1},
-      percent: true,
-      comment:
-          'Probability each day that a dead player can be put back into the ' +
-          'game.',
-      category: 'probabilities',
     },
     probabilityOfArenaEvent: {
       value: 0.25,
@@ -2261,24 +2247,6 @@ function HungryGames() {
     find(id).currentGame.day.state = 1;
     find(id).currentGame.day.num++;
     find(id).currentGame.day.events = [];
-
-    let deadPool = find(id).currentGame.includedUsers.filter(function(obj) {
-      return !obj.living;
-    });
-    let resurrectProb = find(id).options.probabilityOfResurrect;
-    while (find(id).options.resurrection && Math.random() < resurrectProb &&
-           deadPool.length > 0) {
-      let resurrected =
-          deadPool.splice(Math.floor(Math.random() * deadPool.length), 1)[0];
-      reviveUser(id, resurrected, 0, null);
-      find(id).currentGame.day.events.push(
-          makeSingleEvent(
-              getMessage('resurrected'), [resurrected], 1, 0,
-              find(id).options.mentionAll, id, 'revived', 'nothing',
-              find(id).options.useNicknames));
-      resurrectProb -= 0.15;
-    }
-
 
     let userPool = find(id).currentGame.includedUsers.filter(function(obj) {
       return obj.living;
@@ -5057,8 +5025,7 @@ function HungryGames() {
     embed.setDescription('```js\n' + bodyFields[page].join('\n\n') + '```');
     embed.addField(
         'Simple Example',
-        msg.prefix + self.postPrefix + 'options probabilityOfResurrect 0.1',
-        true);
+        msg.prefix + self.postPrefix + 'options includeBots true', true);
     embed.addField(
         'Change Object Example',
         msg.prefix + self.postPrefix + 'options playerOutcomeProbs kill 23',
