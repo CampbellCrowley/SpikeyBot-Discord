@@ -2599,6 +2599,7 @@ Hunger Games simulator.
         * [.removeEvent(id, type, event)](#HungryGames+removeEvent) ⇒ <code>string</code>
         * [.toggleEvent(id, type, subCat, event, [value])](#HungryGames+toggleEvent) ⇒ <code>string</code>
         * [.eventsEqual(e1, e2)](#HungryGames+eventsEqual) ⇒ <code>boolean</code>
+        * [.forcePlayerState(id, list, state, text, [persists])](#HungryGames+forcePlayerState) ⇒ <code>string</code>
         * [.getNumSimulating()](#HungryGames+getNumSimulating) ⇒ <code>number</code>
         * [.initialize()](#SubModule+initialize)
         * [.begin(Discord, client, command, common, bot)](#SubModule+begin)
@@ -2684,12 +2685,17 @@ Hunger Games simulator.
         * [~pauseAutoplay(msg, id)](#HungryGames..pauseAutoplay) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~startAutoplay(msg, id)](#HungryGames..startAutoplay) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~nextDay(msg, id, [retry])](#HungryGames..nextDay) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
-        * [~pickEvent(userPool, eventPool, options, numAlive, teams, probOpts, weaponWielder)](#HungryGames..pickEvent) ⇒ [<code>Event</code>](#HungryGames..Event) ℗
+        * [~effectUser(id, affected, kills, [weapon])](#HungryGames..effectUser) ℗
+        * [~killUser(id, a, k, [w])](#HungryGames..killUser) ℗
+        * [~woundUser(id, a, k, [w])](#HungryGames..woundUser) ℗
+        * [~restoreUser(id, a, k, [w])](#HungryGames..restoreUser) ℗
+        * [~reviveUser(id, a, k, [w])](#HungryGames..reviveUser) ℗
+        * [~pickEvent(userPool, eventPool, options, numAlive, numTotal, teams, probOpts, weaponWielder)](#HungryGames..pickEvent) ⇒ [<code>Event</code>](#HungryGames..Event) ℗
         * [~validateEventTeamConstraint(numVictim, numAttacker, userPool, teams, options, victimsDie, attackersDie, weaponWielder)](#HungryGames..validateEventTeamConstraint) ⇒ <code>string</code> ℗
         * [~validateEventVictorConstraint(numVictim, numAttacker, numAlive, options, victimsDie, attackersDie)](#HungryGames..validateEventVictorConstraint) ⇒ <code>boolean</code> ℗
         * [~validateEventNumConstraint(numVictim, numAttacker, userPool, numAlive)](#HungryGames..validateEventNumConstraint) ⇒ <code>boolean</code> ℗
         * [~validateEventRequirements(numVictim, numAttacker, userPool, numAlive, teams, options, victimsDie, attackersDie, weaponWielder)](#HungryGames..validateEventRequirements) ⇒ <code>string</code> ℗
-        * [~pickAffectedPlayers(numVictim, numAttacker, options, userPool, teams, weaponWielder)](#HungryGames..pickAffectedPlayers) ⇒ [<code>Array.&lt;Player&gt;</code>](#HungryGames..Player) ℗
+        * [~pickAffectedPlayers(numVictim, numAttacker, victimOutcome, attackerOutcome, options, userPool, deadPool, teams, weaponWielder)](#HungryGames..pickAffectedPlayers) ⇒ [<code>Array.&lt;Player&gt;</code>](#HungryGames..Player) ℗
         * [~makeBattleEvent(affectedUsers, numVictim, numAttacker, mention, id, [useNicknames])](#HungryGames..makeBattleEvent) ⇒ [<code>Event</code>](#HungryGames..Event) ℗
         * [~weightedUserRand()](#HungryGames..weightedUserRand) ⇒ <code>number</code> ℗
         * [~probabilityEvent(eventPool, probabilityOpts, [recurse])](#HungryGames..probabilityEvent) ⇒ <code>number</code> ℗
@@ -2727,6 +2733,9 @@ Hunger Games simulator.
         * [~help(msg, id)](#HungryGames..help) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~commandStats(msg, id)](#HungryGames..commandStats) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~commandRig(msg, id)](#HungryGames..commandRig) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+        * [~commandKill(msg, id)](#HungryGames..commandKill) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+        * [~commandHeal(msg, id)](#HungryGames..commandHeal) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+        * [~commandWound(msg, id)](#HungryGames..commandWound) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~nothing()](#HungryGames..nothing) ⇒ <code>string</code> ℗
         * [~getMessage(type)](#HungryGames..getMessage) ⇒ <code>string</code> ℗
         * [~find(id)](#HungryGames..find) ⇒ [<code>GuildGame</code>](#HungryGames..GuildGame) ℗
@@ -3141,6 +3150,27 @@ Checks if the two given events are equivalent.
 | --- | --- |
 | e1 | [<code>Event</code>](#HungryGames..Event) | 
 | e2 | [<code>Event</code>](#HungryGames..Event) | 
+
+<a name="HungryGames+forcePlayerState"></a>
+
+### hungryGames.forcePlayerState(id, list, state, text, [persists]) ⇒ <code>string</code>
+Force a player to have a certain outcome in the current day being
+simulated, or the next day that will be simulated. This is acheived by
+adding a custom event in which the player will be affected after their
+normal event for the day.
+
+**Kind**: instance method of [<code>HungryGames</code>](#HungryGames)  
+**Returns**: <code>string</code> - The output message to tell the user of the outcome of the
+operation.  
+**Access**: public  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| id | <code>string</code> |  | The guild ID in which the users will be affected. |
+| list | <code>Array.&lt;string&gt;</code> |  | The array of player IDs of which to affect. |
+| state | <code>string</code> |  | The outcome to force the players to have been victims of by the end of the simulated day. ("living", "dead", "wounded", or "thriving"). |
+| text | <code>string</code> |  | Message to show when the user is affected. |
+| [persists] | <code>boolean</code> | <code>false</code> | Does this outcome persist to the end of the game, if false it only exists for the next day. |
 
 <a name="HungryGames+getNumSimulating"></a>
 
@@ -4055,9 +4085,84 @@ Simulate a single day then show events to users.
 | id | <code>string</code> |  | The id of the guild this was triggered from. |
 | [retry] | <code>boolean</code> | <code>true</code> | If we hit an error, should we retry before giving up. |
 
+<a name="HungryGames..effectUser"></a>
+
+### HungryGames~effectUser(id, affected, kills, [weapon]) ℗
+Base of all actions to perform on a player.
+
+**Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| id | <code>string</code> | The guild id of the game. |
+| affected | [<code>Player</code>](#HungryGames..Player) | The player to affect. |
+| kills | <code>number</code> | The number of kills the player gets in this action. |
+| [weapon] | <code>Array.&lt;HungryGames~Weapon&gt;</code> | The weapon being used if any. |
+
+<a name="HungryGames..killUser"></a>
+
+### HungryGames~killUser(id, a, k, [w]) ℗
+Kill the given player in the given guild game.
+
+**Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| id | <code>string</code> | The guild id of the game. |
+| a | [<code>Player</code>](#HungryGames..Player) | The player to affect. |
+| k | <code>number</code> | The number of kills the player gets in this action. |
+| [w] | <code>Array.&lt;HungryGames~Weapon&gt;</code> | The weapon being used if any. |
+
+<a name="HungryGames..woundUser"></a>
+
+### HungryGames~woundUser(id, a, k, [w]) ℗
+Wound the given player in the given guild game.
+
+**Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| id | <code>string</code> | The guild id of the game. |
+| a | [<code>Player</code>](#HungryGames..Player) | The player to affect. |
+| k | <code>number</code> | The number of kills the player gets in this action. |
+| [w] | <code>Array.&lt;HungryGames~Weapon&gt;</code> | The weapon being used if any. |
+
+<a name="HungryGames..restoreUser"></a>
+
+### HungryGames~restoreUser(id, a, k, [w]) ℗
+Heal the given player in the given guild game.
+
+**Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| id | <code>string</code> | The guild id of the game. |
+| a | [<code>Player</code>](#HungryGames..Player) | The player to affect. |
+| k | <code>number</code> | The number of kills the player gets in this action. |
+| [w] | <code>Array.&lt;HungryGames~Weapon&gt;</code> | The weapon being used if any. |
+
+<a name="HungryGames..reviveUser"></a>
+
+### HungryGames~reviveUser(id, a, k, [w]) ℗
+Revive the given player in the given guild game.
+
+**Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| id | <code>string</code> | The guild id of the game. |
+| a | [<code>Player</code>](#HungryGames..Player) | The player to affect. |
+| k | <code>number</code> | The number of kills the player gets in this action. |
+| [w] | <code>Array.&lt;HungryGames~Weapon&gt;</code> | The weapon being used if any. |
+
 <a name="HungryGames..pickEvent"></a>
 
-### HungryGames~pickEvent(userPool, eventPool, options, numAlive, teams, probOpts, weaponWielder) ⇒ [<code>Event</code>](#HungryGames..Event) ℗
+### HungryGames~pickEvent(userPool, eventPool, options, numAlive, numTotal, teams, probOpts, weaponWielder) ⇒ [<code>Event</code>](#HungryGames..Event) ℗
 Pick event that satisfies all requirements and settings.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
@@ -4071,6 +4176,7 @@ requirements, or null if something went wrong.
 | eventPool | [<code>Array.&lt;Event&gt;</code>](#HungryGames..Event) | Pool of all events available to choose at this time. |
 | options | <code>Object</code> | The options set in the current game. |
 | numAlive | <code>number</code> | Number of players in the game still alive. |
+| numTotal | <code>number</code> | Number of players in the game total. |
 | teams | [<code>Array.&lt;Team&gt;</code>](#HungryGames..Team) | Array of teams in this game. |
 | probOpts | <code>HungryGames~OutcomeProbabilities</code> | Death rate weights. |
 | weaponWielder | <code>Player</code> | A player that is using a weapon in this event, or null if no player is using a weapon. |
@@ -4155,7 +4261,7 @@ the current game.
 
 <a name="HungryGames..pickAffectedPlayers"></a>
 
-### HungryGames~pickAffectedPlayers(numVictim, numAttacker, options, userPool, teams, weaponWielder) ⇒ [<code>Array.&lt;Player&gt;</code>](#HungryGames..Player) ℗
+### HungryGames~pickAffectedPlayers(numVictim, numAttacker, victimOutcome, attackerOutcome, options, userPool, deadPool, teams, weaponWielder) ⇒ [<code>Array.&lt;Player&gt;</code>](#HungryGames..Player) ℗
 Pick the players to put into an event.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
@@ -4167,8 +4273,11 @@ by this event.
 | --- | --- | --- |
 | numVictim | <code>number</code> | Number of victims in this event. |
 | numAttacker | <code>number</code> | Number of attackers in this event. |
+| victimOutcome | <code>string</code> | Outcome of victims. If "revived", uses deadPool instead of uesrPool. |
+| attackerOutcome | <code>string</code> | Outcome of attackers. If "revived", uses deadPool instead of uesrPool. |
 | options | <code>Object</code> | Options for this game. |
 | userPool | [<code>Array.&lt;Player&gt;</code>](#HungryGames..Player) | Pool of all remaining players to put into an event. |
+| deadPool | [<code>Array.&lt;Player&gt;</code>](#HungryGames..Player) | Pool of all dead players that can be revived. |
 | teams | [<code>Array.&lt;Team&gt;</code>](#HungryGames..Team) | All teams in this game. |
 | weaponWielder | <code>Player</code> | A player that is using a weapon in this event, or null if no player is using a weapon. |
 
@@ -4696,6 +4805,45 @@ Replies to the user with an image saying "rigged". That is all.
 | msg | <code>Discord~Message</code> | The message that lead to this being called. |
 | id | <code>string</code> | The id of the guild this was triggered from. |
 
+<a name="HungryGames..commandKill"></a>
+
+### HungryGames~commandKill(msg, id) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+Allows the game creator to kill a player in the game.
+
+**Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message that lead to this being called. |
+| id | <code>string</code> | The id of the guild this was triggered from. |
+
+<a name="HungryGames..commandHeal"></a>
+
+### HungryGames~commandHeal(msg, id) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+Allows the game creator to heal or revive a player in the game.
+
+**Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message that lead to this being called. |
+| id | <code>string</code> | The id of the guild this was triggered from. |
+
+<a name="HungryGames..commandWound"></a>
+
+### HungryGames~commandWound(msg, id) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+Allows the game creator to wound a player in the game.
+
+**Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message that lead to this being called. |
+| id | <code>string</code> | The id of the guild this was triggered from. |
+
 <a name="HungryGames..nothing"></a>
 
 ### HungryGames~nothing() ⇒ <code>string</code> ℗
@@ -4873,6 +5021,7 @@ The container with current game state within a guild's game.
 | inProgress | <code>boolean</code> | Is the game currently in progress. |
 | includedUsers | [<code>Array.&lt;Player&gt;</code>](#HungryGames..Player) | Array of all users currently in the game. |
 | teams | [<code>Array.&lt;Team&gt;</code>](#HungryGames..Team) | All teams in the game. |
+| forcedOutcomes | <code>Array.&lt;Object&gt;</code> | List of outcomes and players to force before the end of the day. Does not affect the simulation, outcomes are forced by appending events at the end of the simulated day. |
 | ended | <code>boolean</code> | Has the game ended. |
 | day | <code>Object</code> | Information about the day that was simulated. |
 
@@ -11664,6 +11813,7 @@ Creates a web interface for managing the Hungry Games.
         * [~editMajorEvent(userData, socket, gId, type, search, data, name, newName, [cb])](#HGWeb..editMajorEvent) : <code>HGWeb~SocketFunction</code> ℗
         * [~removeEvent(userData, socket, gId, type, event, [cb])](#HGWeb..removeEvent) : <code>HGWeb~SocketFunction</code> ℗
         * [~toggleEvent(userData, socket, gId, type, subCat, event, value, [cb])](#HGWeb..toggleEvent) : <code>HGWeb~SocketFunction</code> ℗
+        * [~forcePlayerState(userData, socket, gId, list, state, text, [persists], [cb])](#HGWeb..forcePlayerState) : <code>HGWeb~SocketFunction</code> ℗
         * [~basicCB](#HGWeb..basicCB) : <code>function</code>
 
 <a name="new_HGWeb_new"></a>
@@ -12260,6 +12410,26 @@ Enable or disable an event without deleting it.
 | subCat | <code>string</code> | The subcategory if necessary. |
 | event | [<code>Event</code>](#HungryGames..Event) \| [<code>ArenaEvent</code>](#HungryGames..ArenaEvent) \| [<code>WeaponEvent</code>](#HungryGames..WeaponEvent) | The event to toggle. |
 | value | <code>boolean</code> | Set the enabled value instead of toggling. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete. |
+
+<a name="HGWeb..forcePlayerState"></a>
+
+### HGWeb~forcePlayerState(userData, socket, gId, list, state, text, [persists], [cb]) : <code>HGWeb~SocketFunction</code> ℗
+Force a player in the game to end a day in a certain state.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: [HungryGames.forcePlayerState](HungryGames.forcePlayerState)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo-Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to run this command on. |
+| list | <code>Array.&lt;string&gt;</code> | The list of user IDs of the players to effect. |
+| state | <code>string</code> | The forced state. |
+| text | <code>string</code> | The message to show in the games as a result of this command. |
+| [persists] | <code>boolean</code> | Will this state be forced until the game ends. |
 | [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete. |
 
 <a name="HGWeb..basicCB"></a>

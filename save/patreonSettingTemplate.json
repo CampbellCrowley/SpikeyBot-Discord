@@ -33,12 +33,19 @@
     "type": "object",
     "values": {
       "weaponType": {
-        "type": "string",
-        "default": "knife"
+        "type": "select",
+        "values": ["none", "grenade", "explosives", "alcohol", "slingshot",
+                   "gun", "bow", "knife", "throwingknives", "shovel", "mace",
+                   "sword", "hatchet", "toothbrush", "rope", "poison", "spear"],
+        "hrValues": ["None", "Grenade", "Explosives", "Alcohol", "Slingshot",
+                     "Gun", "Bow", "Knife", "Throwing Knives", "Shovel", "Mace",
+                     "Sword", "Hatchet", "Toothbrush", "Rope", "Poison",
+                     "Spear"],
+        "default": "none"
       },
       "weaponName": {
-        "type": "string",
-        "default": "Stabby McStabson"
+        "type": "text",
+        "default": ""
       }
     }
   }

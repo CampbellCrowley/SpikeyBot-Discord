@@ -197,6 +197,9 @@ function HGWeb(hg) {
     socket.on('toggleEvent', (...args) => {
       callSocketFunction(toggleEvent, args);
     });
+    socket.on('forcePlayerState', (...args) => {
+      callSocketFunction(forcePlayerState, args);
+    });
     // End Restricted Access \\
 
     /**
@@ -1201,6 +1204,50 @@ function HGWeb(hg) {
     }
   }
   this.toggleEvent = toggleEvent;
+
+  /**
+   * Force a player in the game to end a day in a certain state.
+   * @see {@link HungryGames.forcePlayerState}
+   *
+   * @private
+   * @type {HGWeb~SocketFunction}
+   * @param {Object} userData The current user's session data.
+   * @param {socketIo-Socket} socket The socket connection to reply on.
+   * @param {number|string} gId The guild id to run this command on.
+   * @param {string[]} list The list of user IDs of the players to effect.
+   * @param {string} state The forced state.
+   * @param {string} text The message to show in the games as a result of this
+   * command.
+   * @param {boolean} [persists] Will this state be forced until the game ends.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete.
+   */
+  function forcePlayerState(
+      userData, socket, gId, list, state, text, persists) {
+    let cmdToCheck = state;
+    switch (state) {
+      case 'living':
+      case 'thriving':
+        cmdToCheck = 'heal';
+        break;
+      case 'dead':
+        cmdToCheck = 'kill';
+        break;
+      case 'wounded':
+        cmdToCheck = 'hurt';
+        break;
+    }
+    if (!checkPerm(userData, gId, null, cmdToCheck)) {
+      if (!checkMyGuild(gId)) return;
+      if (typeof cb === 'function') cb('NO_PERM');
+      replyNoPerm(socket, 'removeEvent');
+      return;
+    }
+    socket.emit(
+        'message', hg.forcePlayerState(gId, list, state, text, persists));
+    if (typeof cb === 'function') cb('ATTEMPT_FAILED');
+  }
+  this.forcePlayerState = forcePlayerState;
 
   hg.log('Init Web');
 }

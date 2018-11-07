@@ -385,6 +385,7 @@ function WebProxy() {
      * @param {Object} data User data.
      */
     function receivedLoginInfo(data) {
+      console.log('DBG:00000 Received login info:', data);
       if (data) {
         data.expires_at = data.expires_in * 1000 + Date.now();
         data.expiration_date = Date.now() + (1000 * 60 * 60 * 24 * 30);
@@ -489,20 +490,28 @@ function WebProxy() {
    */
   function makeRefreshTimeout(loginInfo, cb) {
     clearTimeout(loginInfo.refreshTimeout);
-    loginInfo.refreshTimeout = setTimeout(function() {
-      refreshToken(loginInfo.refresh_token, (err, data) => {
-        let parsed;
-        if (!err) {
-          try {
-            parsed = JSON.parse(data);
-          } catch (err) {
-            self.error(
-                'Failed to parse request from discord token refresh: ' + err);
+    const maxDelay = 2 * 7 * 24 * 60 * 60 * 1000;
+    const delay = Date.now() - loginInfo.expires_at;
+    if (delay > maxDelay) {
+      loginInfo.refreshTimeout = setTimeout(function() {
+        makeRefreshTimeout(loginInfo, cb);
+      }, maxDelay);
+    } else {
+      loginInfo.refreshTimeout = setTimeout(function() {
+        refreshToken(loginInfo.refresh_token, (err, data) => {
+          let parsed;
+          if (!err) {
+            try {
+              parsed = JSON.parse(data);
+            } catch (err) {
+              self.error(
+                  'Failed to parse request from discord token refresh: ' + err);
+            }
           }
-        }
-        cb(parsed);
-      });
-    }, loginInfo.expires_in * 1000);
+          cb(parsed);
+        });
+      }, delay);
+    }
   }
 
   /**

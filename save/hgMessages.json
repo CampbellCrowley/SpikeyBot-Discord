@@ -149,5 +149,23 @@
     "The light fades from {victim}'s eyes.",
     "{victim} lose[Vs|] the will to live.",
     "{victim} [Vis|are] unable to hold onto life any longer, and die[Vs|]."
+  ],
+  "forcedDeath": [
+    "{victim} drop[Vs|] dead after the game makers pressed a button.",
+    "{victim} die[Vs|] when the game makers wished it so.",
+    "The game makers didn't like {victim}, so they kill them.",
+    "{victim} [Vis|are] killed by the game makers."
+  ],
+  "forcedHeal": [
+    "{victim} [Vis|are] miraculously healed after the game makers pressed a button.",
+    "{victim} [Vwas|were] heal[Ved|] when the game makers wished it so.",
+    "The game makers really missed {victim}, so they healed them.",
+    "{victim} [Vis|are] healed by the game makers."
+  ],
+  "forcedWound": [
+    "{victim} [Vis|are] mortally wounded after the game makers pressed a button.",
+    "{victim} hurt themsel[Vf|ves] when the game makers wished it so.",
+    "The game makers kinda didn't like {victim}, so they hurt them.",
+    "{victim} [Vis|are] wounded by the game makers."
   ]
 }

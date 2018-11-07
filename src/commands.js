@@ -509,7 +509,8 @@ function Command() {
         // owner.
         let perms = 0;
         if (msg.channel) {
-          perms = msg.channel.permissionsFor(msg.member).bitfield;
+          let permObj = msg.channel.permissionsFor(msg.member);
+          if (permObj) perms = permObj.bitfield;
         } else {
           perms = msg.member.permissions.bitfield;
         }

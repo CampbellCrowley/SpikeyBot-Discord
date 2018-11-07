@@ -219,21 +219,21 @@ function HungryGames() {
    */
   const defaultOptions = {
     bloodbathOutcomeProbs: {
-      value: {kill: 30, wound: 6, thrive: 8, nothing: 56},
+      value: {kill: 30, wound: 6, thrive: 8, revive: 0, nothing: 56},
       comment:
           'Relative probabilities of choosing an event with each outcome.' +
           ' This is for the bloodbath events.',
       category: 'probabilities',
     },
     playerOutcomeProbs: {
-      value: {kill: 22, wound: 4, thrive: 8, nothing: 66},
+      value: {kill: 22, wound: 4, thrive: 8, revive: 6, nothing: 60},
       comment:
           'Relative probabilities of choosing an event with each outcome.' +
           ' This is for normal daily events.',
       category: 'probabilities',
     },
     arenaOutcomeProbs: {
-      value: {kill: 70, wound: 10, thrive: 5, nothing: 15},
+      value: {kill: 64, wound: 10, thrive: 5, revive: 6, nothing: 15},
       comment:
           'Relative Probabilities of choosing an event with each outcome.' +
           ' This is for the special arena events.',
@@ -584,6 +584,9 @@ function HungryGames() {
    * @property {HungryGames~Player[]} includedUsers Array of all users currently
    * in the game.
    * @property {HungryGames~Team[]} teams All teams in the game.
+   * @property {Object[]} forcedOutcomes List of outcomes and players to force
+   * before the end of the day. Does not affect the simulation, outcomes are
+   * forced by appending events at the end of the simulated day.
    * @property {boolean} ended Has the game ended.
    * @property {{num: number, state: number, events: HungryGames~Event[]}} day
    * Information about the day that was simulated.
@@ -963,6 +966,14 @@ function HungryGames() {
       new self.command.SingleCommand(['stats'], mkCmd(commandStats), cmdOpts),
       new self.command.SingleCommand(
           ['rig', 'rigged'], mkCmd(commandRig), cmdOpts),
+      new self.command.SingleCommand(
+          ['kill', 'smite'], mkCmd(commandKill), cmdOpts),
+      new self.command.SingleCommand(
+          ['heal', 'revive', 'thrive', 'resurrect', 'restore'],
+          mkCmd(commandHeal), cmdOpts),
+      new self.command.SingleCommand(
+          ['wound', 'hurt', 'damage', 'stab', 'punch', 'slap', 'injure'],
+          mkCmd(commandWound), cmdOpts),
     ];
     self.command.on(
         new self.command.SingleCommand('hg', function(msg) {
@@ -1388,6 +1399,7 @@ function HungryGames() {
           find(id).options.excludeNewUsers);
       find(id).currentGame.numAlive =
           find(id).currentGame.includedUsers.length;
+      find(id).currentGame.forcedOutcomes = [];
     } else if (find(id)) {
       if (!silent) {
         self.common.reply(msg, 'Creating a new game with default settings.');
@@ -1401,6 +1413,7 @@ function HungryGames() {
             find(id).options.excludeNewUsers),
         ended: false,
         day: {num: -1, state: 0, events: []},
+        forcedOutcomes: [],
       };
       find(id).currentGame.numAlive =
           find(id).currentGame.includedUsers.length;
@@ -1416,6 +1429,7 @@ function HungryGames() {
           teams: [],
           ended: false,
           day: {num: -1, state: 0, events: []},
+          forcedOutcomes: [],
         },
         autoPlay: false,
       };
@@ -2256,30 +2270,12 @@ function HungryGames() {
            deadPool.length > 0) {
       let resurrected =
           deadPool.splice(Math.floor(Math.random() * deadPool.length), 1)[0];
-      resurrected.living = true;
-      resurrected.state = 'zombie';
-      find(id).currentGame.includedUsers.forEach(function(obj) {
-        if (!obj.living && obj.rank < resurrected.rank) obj.rank++;
-      });
-      resurrected.rank = 1;
-      find(id).currentGame.numAlive++;
+      reviveUser(id, resurrected, 0, null);
       find(id).currentGame.day.events.push(
           makeSingleEvent(
               getMessage('resurrected'), [resurrected], 1, 0,
-              find(id).options.mentionAll, id, 'thrives', 'nothing',
+              find(id).options.mentionAll, id, 'revived', 'nothing',
               find(id).options.useNicknames));
-      if (find(id).options.teamSize > 0) {
-        let team = find(id).currentGame.teams.find(function(obj) {
-          return obj.players.findIndex(function(obj) {
-            return resurrected.id == obj;
-          }) > -1;
-        });
-        team.numAlive++;
-        find(id).currentGame.teams.forEach(function(obj) {
-          if (obj.numAlive === 0 && obj.rank < team.rank) obj.rank++;
-        });
-        team.rank = 1;
-      }
       resurrectProb -= 0.15;
     }
 
@@ -2401,6 +2397,10 @@ function HungryGames() {
 
       let subMessage = '';
 
+      let deadPool = find(id).currentGame.includedUsers.filter(function(obj) {
+        return !obj.living;
+      });
+
       let userWithWeapon = null;
       if (!doArenaEvent) {
         let usersWithWeapon = [];
@@ -2429,6 +2429,7 @@ function HungryGames() {
           eventTry = pickEvent(
               userPool, weaponEventPool[chosenWeapon].outcomes,
               find(id).options, find(id).currentGame.numAlive,
+              find(id).currentGame.includedUsers.length,
               find(id).currentGame.teams, probOpts, userWithWeapon);
           if (!eventTry) {
             useWeapon = false;
@@ -2439,7 +2440,8 @@ function HungryGames() {
             numAttacker = eventTry.attacker.count;
             numVictim = eventTry.victim.count;
             affectedUsers = pickAffectedPlayers(
-                numVictim, numAttacker, find(id).options, userPool,
+                numVictim, numAttacker, eventTry.victim.outcome,
+                eventTry.attacker.outcome, find(id).options, userPool, deadPool,
                 find(id).currentGame.teams, userWithWeapon);
 
             let consumed = eventTry.consumes;
@@ -2517,16 +2519,17 @@ function HungryGames() {
             numVictim, numAttacker, userPool, find(id).currentGame.numAlive,
             find(id).currentGame.teams, find(id).options, true, false));
         affectedUsers = pickAffectedPlayers(
-            numVictim, numAttacker, find(id).options, userPool,
-            find(id).currentGame.teams);
+            numVictim, numAttacker, 'dies', 'nothing', find(id).options,
+            userPool, deadPool, find(id).currentGame.teams, null);
         eventTry = makeBattleEvent(
             affectedUsers, numVictim, numAttacker, find(id).options.mentionAll,
             id);
       } else if (!useWeapon || !eventTry) {
         eventTry = pickEvent(
             userPool, userEventPool, find(id).options,
-            find(id).currentGame.numAlive, find(id).currentGame.teams,
-            probOpts);
+            find(id).currentGame.numAlive,
+            find(id).currentGame.includedUsers.length,
+            find(id).currentGame.teams, probOpts);
         if (!eventTry) {
           self.error(
               'No event for ' + userPool.length + ' from ' +
@@ -2556,90 +2559,12 @@ function HungryGames() {
         numAttacker = eventTry.attacker.count;
         numVictim = eventTry.victim.count;
         affectedUsers = pickAffectedPlayers(
-            numVictim, numAttacker, find(id).options, userPool,
-            find(id).currentGame.teams);
+            numVictim, numAttacker, eventTry.victim.outcome,
+            eventTry.attacker.outcome, find(id).options, userPool, deadPool,
+            find(id).currentGame.teams, null);
       }
 
-      effectUser = function(i, kills, weapon) {
-        if (!affectedUsers[i] || typeof affectedUsers[i] === 'undefined') {
-          self.error(
-              'Affected users invalid index:' + i + '/' + affectedUsers.length);
-          console.log(affectedUsers);
-        }
-        let index =
-            find(id).currentGame.includedUsers.findIndex(function(obj) {
-              return obj.id == affectedUsers[i].id;
-            });
-        if (find(id).currentGame.includedUsers[index].state == 'wounded') {
-          find(id).currentGame.includedUsers[index].bleeding++;
-        } else {
-          find(id).currentGame.includedUsers[index].bleeding = 0;
-        }
-        if (weapon) {
-          if (typeof find(id)
-              .currentGame.includedUsers[index]
-              .weapons[weapon.name] === 'number') {
-            find(id).currentGame.includedUsers[index].weapons[weapon.name] +=
-                weapon.count;
-          } else {
-            find(id).currentGame.includedUsers[index].weapons[weapon.name] =
-                weapon.count;
-          }
-          if (find(id)
-              .currentGame.includedUsers[index]
-              .weapons[weapon.name] === 0) {
-            delete find(id)
-                .currentGame.includedUsers[index]
-                .weapons[weapon.name];
-          }
-        }
-        find(id).currentGame.includedUsers[index].kills += kills;
-        return index;
-      };
-
       let numKilled = 0;
-      killUser = function(i, k, w) {
-        numKilled++;
-        let index = effectUser(i, k, w);
-        find(id).currentGame.includedUsers[index].living = false;
-        find(id).currentGame.includedUsers[index].bleeding = 0;
-        find(id).currentGame.includedUsers[index].state = 'dead';
-        find(id).currentGame.includedUsers[index].weapons = {};
-        find(id).currentGame.includedUsers[index].rank =
-            find(id).currentGame.numAlive--;
-        if (find(id).options.teamSize > 0) {
-          let team = find(id).currentGame.teams.find(function(team) {
-            return team.players.findIndex(function(obj) {
-              return find(id).currentGame.includedUsers[index].id == obj;
-            }) > -1;
-          });
-          if (!team) {
-            console.log(
-                'FAILED TO FIND ADEQUATE TEAM FOR USER',
-                find(id).currentGame.includedUsers[index].id);
-          } else {
-            team.numAlive--;
-            if (team.numAlive === 0) {
-              let teamsLeft = 0;
-              find(id).currentGame.teams.forEach(function(obj) {
-                if (obj.numAlive > 0) teamsLeft++;
-              });
-              team.rank = teamsLeft + 1;
-            }
-          }
-        }
-      };
-
-      woundUser = function(i, k, w) {
-        let index = effectUser(i, k, w);
-        find(id).currentGame.includedUsers[index].state = 'wounded';
-      };
-      restoreUser = function(i, k, w) {
-        let index = effectUser(i, k, w);
-        find(id).currentGame.includedUsers[index].state = 'normal';
-        find(id).currentGame.includedUsers[index].bleeding = 0;
-      };
-
       let weapon = eventTry.victim.weapon;
       if (weapon && !weaponEventPool[weapon.name]) {
         weapon = null;
@@ -2648,19 +2573,29 @@ function HungryGames() {
       for (let i = 0; i < numVictim; i++) {
         let numKills = 0;
         if (eventTry.victim.killer) numKills = numAttacker;
+        let affected = affectedUsers[i];
         switch (eventTry.victim.outcome) {
           case 'dies':
-            killUser(i, numKills, weapon);
+            numKilled++;
+            killUser(id, affected, numKills, weapon);
             break;
           case 'wounded':
-            woundUser(i, numKills, weapon);
+            woundUser(id, affected, numKills, weapon);
             break;
           case 'thrives':
-            restoreUser(i, numKills, weapon);
+            restoreUser(id, affected, numKills, weapon);
+            break;
+          case 'revived':
+            reviveUser(id, affected, numKills, weapon);
             break;
           default:
-            effectUser(i, numKills, weapon);
+            effectUser(id, affected, numKills, weapon);
             break;
+        }
+        if (affected.state == 'wounded') {
+          affected.bleeding++;
+        } else {
+          affected.bleeding = 0;
         }
       }
       weapon = eventTry.attacker.weapon;
@@ -2671,19 +2606,29 @@ function HungryGames() {
       for (let i = numVictim; i < numVictim + numAttacker; i++) {
         let numKills = 0;
         if (eventTry.attacker.killer) numKills = numVictim;
+        let affected = affectedUsers[i];
         switch (eventTry.attacker.outcome) {
           case 'dies':
-            killUser(i, numKills, weapon);
+            numKilled++;
+            killUser(id, affected, numKills, weapon);
             break;
           case 'wounded':
-            woundUser(i, numKills, weapon);
+            woundUser(id, affected, numKills, weapon);
             break;
           case 'thrives':
-            restoreUser(i, numKills, weapon);
+            restoreUser(id, affected, numKills, weapon);
+            break;
+          case 'revived':
+            reviveUser(id, affected, numKills, weapon);
             break;
           default:
-            effectUser(i, numKills, weapon);
+            effectUser(id, affected, numKills, weapon);
             break;
+        }
+        if (affected.state == 'wounded') {
+          affected.bleeding++;
+        } else {
+          affected.bleeding = 0;
         }
       }
 
@@ -2788,6 +2733,11 @@ function HungryGames() {
       find(id).currentGame.day.events.push(
           makeMessageEvent(getMessage('eventEnd'), id));
     }
+    find(id).currentGame.forcedOutcomes =
+        find(id).currentGame.forcedOutcomes.filter((el) => {
+          self.forcePlayerState(el);
+          return el.persists;
+        });
     let usersBleeding = [];
     let usersRecovered = [];
     find(id).currentGame.includedUsers.forEach(function(obj) {
@@ -2878,6 +2828,127 @@ function HungryGames() {
       printEvent(msg, id);
     }, find(id).options.disableOutput ? 10 : find(id).options.delayEvents);
   }
+
+  /**
+   * Base of all actions to perform on a player.
+   * @private
+   *
+   * @param {string} id The guild id of the game.
+   * @param {HungryGames~Player} affected The player to affect.
+   * @param {number} kills The number of kills the player gets in this action.
+   * @param {HungryGames~Weapon[]} [weapon] The weapon being used if any.
+   */
+  function effectUser(id, affected, kills, weapon) {
+    if (weapon) {
+      if (typeof affected.weapons[weapon.name] === 'number') {
+        affected.weapons[weapon.name] += weapon.count;
+      } else {
+        affected.weapons[weapon.name] = weapon.count;
+      }
+      if (affected.weapons[weapon.name] === 0) {
+        delete affected.weapons[weapon.name];
+      }
+    }
+    affected.kills += kills;
+  }
+
+  /**
+   * Kill the given player in the given guild game.
+   * @private
+   *
+   * @param {string} id The guild id of the game.
+   * @param {HungryGames~Player} a The player to affect.
+   * @param {number} k The number of kills the player gets in this action.
+   * @param {HungryGames~Weapon[]} [w] The weapon being used if any.
+   */
+  function killUser(id, a, k, w) {
+    effectUser(id, a, k, w);
+    a.living = false;
+    a.bleeding = 0;
+    a.state = 'dead';
+    a.weapons = {};
+    a.rank = find(id).currentGame.numAlive--;
+    if (find(id).options.teamSize > 0) {
+      let team = find(id).currentGame.teams.find(function(team) {
+        return team.players.findIndex(function(obj) {
+          return a.id == obj;
+        }) > -1;
+      });
+      if (!team) {
+        console.log('FAILED TO FIND ADEQUATE TEAM FOR USER', a.id);
+      } else {
+        team.numAlive--;
+        if (team.numAlive === 0) {
+          let teamsLeft = 0;
+          find(id).currentGame.teams.forEach(function(obj) {
+            if (obj.numAlive > 0) teamsLeft++;
+          });
+          team.rank = teamsLeft + 1;
+        }
+      }
+    }
+  }
+
+  /**
+   * Wound the given player in the given guild game.
+   * @private
+   *
+   * @param {string} id The guild id of the game.
+   * @param {HungryGames~Player} a The player to affect.
+   * @param {number} k The number of kills the player gets in this action.
+   * @param {HungryGames~Weapon[]} [w] The weapon being used if any.
+   */
+  function woundUser(id, a, k, w) {
+    effectUser(id, a, k, w);
+    a.state = 'wounded';
+  }
+  /**
+   * Heal the given player in the given guild game.
+   * @private
+   *
+   * @param {string} id The guild id of the game.
+   * @param {HungryGames~Player} a The player to affect.
+   * @param {number} k The number of kills the player gets in this action.
+   * @param {HungryGames~Weapon[]} [w] The weapon being used if any.
+   */
+  function restoreUser(id, a, k, w) {
+    effectUser(id, a, k, w);
+    a.state = 'normal';
+    a.bleeding = 0;
+  }
+  /**
+   * Revive the given player in the given guild game.
+   * @private
+   *
+   * @param {string} id The guild id of the game.
+   * @param {HungryGames~Player} a The player to affect.
+   * @param {number} k The number of kills the player gets in this action.
+   * @param {HungryGames~Weapon[]} [w] The weapon being used if any.
+   */
+  function reviveUser(id, a, k, w) {
+    effectUser(id, a, k, w);
+    find(id).currentGame.numAlive++;
+    find(id).currentGame.includedUsers.forEach(function(obj) {
+      if (!obj.living && obj.rank < a.rank) obj.rank++;
+    });
+    if (find(id).options.teamSize > 0) {
+      let team = find(id).currentGame.teams.find(function(obj) {
+        return obj.players.findIndex(function(obj) {
+          return a.id == obj;
+        }) > -1;
+      });
+      team.numAlive++;
+      find(id).currentGame.teams.forEach(function(obj) {
+        if (obj.numAlive === 0 && obj.rank < team.rank) obj.rank++;
+      });
+      team.rank = 1;
+    }
+    a.state = 'zombie';
+    a.living = true;
+    a.bleeding = 0;
+    a.rank = 1;
+  }
+
   /**
    * Pick event that satisfies all requirements and settings.
    *
@@ -2888,6 +2959,7 @@ function HungryGames() {
    * choose at this time.
    * @param {Object} options The options set in the current game.
    * @param {number} numAlive Number of players in the game still alive.
+   * @param {number} numTotal Number of players in the game total.
    * @param {HungryGames~Team[]} teams Array of teams in this game.
    * @param {HungryGames~OutcomeProbabilities} probOpts Death rate weights.
    * @param {?Player} weaponWielder A player that is using a weapon in this
@@ -2896,7 +2968,8 @@ function HungryGames() {
    * requirements, or null if something went wrong.
    */
   function pickEvent(
-      userPool, eventPool, options, numAlive, teams, probOpts, weaponWielder) {
+      userPool, eventPool, options, numAlive, numTotal, teams, probOpts,
+      weaponWielder) {
     let fails = [];
     let loop = 0;
     while (loop < 100) {
@@ -2915,17 +2988,15 @@ function HungryGames() {
       let numAttacker = eventTry.attacker.count * 1;
       let numVictim = eventTry.victim.count * 1;
 
+      let victimRevived = eventTry.victim.outcome === 'revived';
+      let attackerRevived = eventTry.attacker.outcome === 'revived';
+
       let eventEffectsNumMin = 0;
-      if (numVictim < 0) {
-        eventEffectsNumMin -= numVictim;
-      } else {
-        eventEffectsNumMin += numVictim;
-      }
-      if (numAttacker < 0) {
-        eventEffectsNumMin -= numAttacker;
-      } else {
-        eventEffectsNumMin += numAttacker;
-      }
+      let eventRevivesNumMin = 0;
+      victimRevived ? (eventRevivesNumMin += Math.abs(numVictim)) :
+                      (eventEffectsNumMin += Math.abs(numVictim));
+      attackerRevived ? (eventRevivesNumMin += Math.abs(numAttacker)) :
+                        (eventEffectsNumMin += Math.abs(numAttacker));
 
       // If the chosen event requires more players than there are remaining,
       // pick a new event.
@@ -2935,6 +3006,13 @@ function HungryGames() {
             '): ' + eventIndex + ' V:' + eventTry.victim.count + ' A:' +
             eventTry.attacker.count + ' M:' + eventTry.message);
         continue;
+      } else if (eventRevivesNumMin > numTotal - numAlive) {
+        fails.push(
+            'Event too large (' + eventRevivesNumMin + ' > ' +
+            (numTotal - numAlive) + '): ' + eventIndex + ' V:' +
+            eventTry.victim.count + ' A:' + eventTry.attacker.count + ' M:' +
+            eventTry.message);
+        continue;
       }
 
       let multiAttacker = numAttacker < 0;
@@ -2942,19 +3020,34 @@ function HungryGames() {
       let attackerMin = -numAttacker;
       let victimMin = -numVictim;
       if (multiAttacker || multiVictim) {
-        do {
+        while (true) {
           if (multiAttacker) {
             numAttacker = weightedUserRand() + (attackerMin - 1);
           }
           if (multiVictim) {
             numVictim = weightedUserRand() + (victimMin - 1);
           }
-        } while (numAttacker + numVictim > userPool.length);
+          if (victimRevived && attackerRevived) {
+            if (numAttacker + numVictim <= numTotal - numAlive) break;
+          } else if (victimRevived) {
+            if (numAttacker <= userPool.length &&
+                numVictim <= numTotal - numAlive) {
+              break;
+            }
+          } else if (attackerRevived) {
+            if (numAttacker <= numTotal - numAlive &&
+                numVictim <= userPool.length) {
+              break;
+            }
+          } else if (numAttacker + numVictim <= userPool.length) {
+            break;
+          }
+        }
       }
 
       let failReason = validateEventRequirements(
-          numVictim, numAttacker, userPool, numAlive, teams, options,
-          eventTry.victim.outcome == 'dies',
+          victimRevived ? 0 : numVictim, attackerRevived ? 0 : numAttacker,
+          userPool, numAlive, teams, options, eventTry.victim.outcome == 'dies',
           eventTry.attacker.outcome == 'dies', weaponWielder);
       if (failReason) {
         fails.push(
@@ -2974,7 +3067,7 @@ function HungryGames() {
         'Failed to find suitable event for ' + userPool.length +
         ' players, from ' + eventPool.length + ' events with ' + numAlive +
         ' alive.');
-    // console.error(fails);
+    console.error(fails);
     return null;
   }
   /**
@@ -3152,9 +3245,15 @@ function HungryGames() {
    * @private
    * @param {number} numVictim Number of victims in this event.
    * @param {number} numAttacker Number of attackers in this event.
+   * @param {string} victimOutcome Outcome of victims. If "revived", uses
+   * deadPool instead of uesrPool.
+   * @param {string} attackerOutcome Outcome of attackers. If "revived", uses
+   * deadPool instead of uesrPool.
    * @param {Object} options Options for this game.
    * @param {HungryGames~Player[]} userPool Pool of all remaining players to put
    * into an event.
+   * @param {HungryGames~Player[]} deadPool Pool of all dead players that can be
+   * revived.
    * @param {HungryGames~Team[]} teams All teams in this game.
    * @param {?Player} weaponWielder A player that is using a weapon in this
    * event, or null if no player is using a weapon.
@@ -3162,8 +3261,11 @@ function HungryGames() {
    * by this event.
    */
   function pickAffectedPlayers(
-      numVictim, numAttacker, options, userPool, teams, weaponWielder) {
+      numVictim, numAttacker, victimOutcome, attackerOutcome, options, userPool,
+      deadPool, teams, weaponWielder) {
     let affectedUsers = [];
+    let victimRevived = victimOutcome === 'revived';
+    let attackerRevived = attackerOutcome === 'revived';
     if (options.teammatesCollaborate && options.teamSize > 0) {
       let isAttacker = false;
       let validTeam = teams.findIndex(function(team) {
@@ -3175,12 +3277,36 @@ function HungryGames() {
         }
 
         let canBeVictim = false;
-        if (numAttacker <= team.numPool &&
-            numVictim <= userPool.length - team.numPool) {
+        if (attackerRevived) {
+          if (numAttacker <= team.players.length - team.numAlive &&
+              numVictim <=
+                  (victimRevived ?
+                       deadPool.length - (team.players.length - team.numAlive) :
+                       userPool.length - team.numPool)) {
+            isAttacker = true;
+          }
+        } else if (
+          numAttacker <= team.numPool &&
+            numVictim <=
+                (victimRevived ?
+                     deadPool.length - (team.players.length - team.numAlive) :
+                     userPool.length - team.numPool)) {
           isAttacker = true;
         }
-        if (numVictim <= team.numPool &&
-            numAttacker <= userPool.length - team.numPool) {
+        if (victimRevived) {
+          if (numVictim <= team.players.length - team.numAlive &&
+              numAttacker <=
+                  (attackerRevived ?
+                       deadPool.length - (team.players.length - team.numAlive) :
+                       userPool.length - team.numPool)) {
+            canBeVictim = true;
+          }
+        } else if (
+          numVictim <= team.numPool &&
+            numAttacker <=
+                (attackerRevived ?
+                     deadPool.length - (team.players.length - team.numAlive) :
+                     userPool.length - team.numPool)) {
           canBeVictim = true;
         }
         if (!isAttacker && !canBeVictim) {
@@ -3191,8 +3317,8 @@ function HungryGames() {
         }
         return true;
       });
-      findMatching = function(match) {
-        return userPool.findIndex(function(pool) {
+      findMatching = function(match, mainPool) {
+        return mainPool.findIndex(function(pool) {
           let teamId = teams.findIndex(function(team) {
             return team.players.findIndex(function(player) {
               return player == pool.id;
@@ -3202,19 +3328,43 @@ function HungryGames() {
         });
       };
       for (let i = 0; i < numAttacker + numVictim; i++) {
-        let userIndex = findMatching(
-            (i < numVictim && !isAttacker) || (i >= numVictim && isAttacker));
-        affectedUsers.push(userPool.splice(userIndex, 1)[0]);
+        if (victimRevived && i < numVictim) {
+          let userIndex = findMatching(!isAttacker, deadPool);
+          affectedUsers.push(deadPool.splice(userIndex, 1)[0]);
+        } else if (attackerRevived && i >= numVictim) {
+          let userIndex = findMatching(isAttacker, deadPool);
+          affectedUsers.push(deadPool.splice(userIndex, 1)[0]);
+        } else {
+          let userIndex = findMatching(
+              (i < numVictim && !isAttacker) || (i >= numVictim && isAttacker),
+              userPool);
+          affectedUsers.push(userPool.splice(userIndex, 1)[0]);
+        }
+        if (!affectedUsers[i]) {
+          console.error(
+              'AFFECTED USER IS INVALID:', victimRevived, attackerRevived, i,
+              '/', numVictim, numAttacker, 'Pool:', userPool.length,
+              deadPool.length,
+              teams[validTeam].players.length - teams[validTeam].numAlive);
+        }
       }
     } else {
       let i = weaponWielder ? 1 : 0;
       for (i; i < numAttacker + numVictim; i++) {
-        let userIndex = Math.floor(Math.random() * userPool.length);
-        if (weaponWielder && weaponWielder.id == userPool[userIndex].id) {
-          i--;
-          continue;
+        if (i < numVictim && victimRevived) {
+          let userIndex = Math.floor(Math.random() * deadPool.length);
+          affectedUsers.push(deadPool.splice(userIndex, 1)[0]);
+        } else if (i >= numVictim && attackerRevived) {
+          let userIndex = Math.floor(Math.random() * deadPool.length);
+          affectedUsers.push(deadPool.splice(userIndex, 1)[0]);
+        } else {
+          let userIndex = Math.floor(Math.random() * userPool.length);
+          if (weaponWielder && weaponWielder.id == userPool[userIndex].id) {
+            i--;
+            continue;
+          }
+          affectedUsers.push(userPool.splice(userIndex, 1)[0]);
         }
-        affectedUsers.push(userPool.splice(userIndex, 1)[0]);
       }
       if (weaponWielder) {
         let wielderIndex = userPool.findIndex(function(u) {
@@ -3423,12 +3573,14 @@ function HungryGames() {
    */
   function probabilityEvent(eventPool, probabilityOpts, recurse = 0) {
     let probTotal = probabilityOpts.kill + probabilityOpts.wound +
-        probabilityOpts.thrive + probabilityOpts.nothing;
+        probabilityOpts.thrive + probabilityOpts.revive +
+        probabilityOpts.nothing;
 
     const value = Math.random() * probTotal;
 
     let type;
     if (value > (probTotal -= probabilityOpts.nothing)) type = null;
+    else if (value > (probTotal -= probabilityOpts.revive)) type = 'revived';
     else if (value > (probTotal -= probabilityOpts.thrive)) type = 'thrives';
     else if (value > (probTotal -= probabilityOpts.wound)) type = 'wounded';
     else type = 'dies';
@@ -3806,6 +3958,11 @@ function HungryGames() {
                 } else if (outcome == 'thrives') {
                   finalImage.blit(
                       new Jimp(iconSize, underlineSize, 0x00FF00FF),
+                      placement * (iconSize + iconGap),
+                      iconSize + underlineSize);
+                } else if (outcome == 'revived') {
+                  finalImage.blit(
+                      new Jimp(iconSize, underlineSize, 0x00FFFFFF),
                       placement * (iconSize + iconGap),
                       iconSize + underlineSize);
                 }
@@ -6543,6 +6700,179 @@ function HungryGames() {
   }
 
   /**
+   * Allows the game creator to kill a player in the game.
+   *
+   * @private
+   * @type {HungryGames~hgCommandHandler}
+   * @param {Discord~Message} msg The message that lead to this being called.
+   * @param {string} id The id of the guild this was triggered from.
+   */
+  function commandKill(msg, id) {
+    if (msg.mentions.users.size <= 0) {
+      self.common.reply(msg, 'Please specify a player in the games to kill.');
+      return;
+    }
+    if (!find(id)) createGame(msg, id);
+    let players = [];
+    let notInGame = msg.mentions.users.find((u) => {
+      players.push(u.id);
+      return !find(id).includedUsers.find((p) => {
+        return p.id == u.ud;
+      });
+    });
+    if (notInGame) {
+      self.common.reply(
+          msg, notInGame.tag + ' does not appear to be in the current game.');
+      return;
+    }
+    self.common.reply(
+        msg,
+        self.forcePlayerState(id, players, 'dead', getMessage('forcedDeath')));
+  }
+
+  /**
+   * Allows the game creator to heal or revive a player in the game.
+   *
+   * @private
+   * @type {HungryGames~hgCommandHandler}
+   * @param {Discord~Message} msg The message that lead to this being called.
+   * @param {string} id The id of the guild this was triggered from.
+   */
+  function commandHeal(msg, id) {
+    if (msg.mentions.users.size <= 0) {
+      self.common.reply(msg, 'Please specify a player in the games to heal.');
+      return;
+    }
+    if (!find(id)) createGame(msg, id);
+    let players = [];
+    let notInGame = msg.mentions.users.find((u) => {
+      players.push(u.id);
+      return !find(id).includedUsers.find((p) => {
+        return p.id == u.ud;
+      });
+    });
+    if (notInGame) {
+      self.common.reply(
+          msg, notInGame.tag + ' does not appear to be in the current game.');
+      return;
+    }
+    self.common.reply(
+        msg, self.forcePlayerState(
+            id, players, 'thriving', getMessage('forcedHeal')));
+  }
+
+  /**
+   * Allows the game creator to wound a player in the game.
+   *
+   * @private
+   * @type {HungryGames~hgCommandHandler}
+   * @param {Discord~Message} msg The message that lead to this being called.
+   * @param {string} id The id of the guild this was triggered from.
+   */
+  function commandWound(msg, id) {
+    if (msg.mentions.users.size <= 0) {
+      self.common.reply(msg, 'Please specify a player in the games to wound.');
+      return;
+    }
+    if (!find(id)) createGame(msg, id);
+    let players = [];
+    let notInGame = msg.mentions.users.find((u) => {
+      players.push(u.id);
+      return !find(id).includedUsers.find((p) => {
+        return p.id == u.ud;
+      });
+    });
+    if (notInGame) {
+      self.common.reply(
+          msg, notInGame.tag + ' does not appear to be in the current game.');
+      return;
+    }
+    self.common.reply(
+        msg, self.forcePlayerState(
+            id, players, 'wounded', getMessage('forcedWound')));
+  }
+
+  /**
+   * Force a player to have a certain outcome in the current day being
+   * simulated, or the next day that will be simulated. This is acheived by
+   * adding a custom event in which the player will be affected after their
+   * normal event for the day.
+   * @public
+   *
+   * @param {string} id The guild ID in which the users will be affected.
+   * @param {string[]} list The array of player IDs of which to affect.
+   * @param {string} state The outcome to force the players to have been
+   * victims of by the end of the simulated day. ("living", "dead", "wounded",
+   * or "thriving").
+   * @param {string} text Message to show when the user is affected.
+   * @param {boolean} [persists=false] Does this outcome persist to the end of
+   * the game, if false it only exists for the next day.
+   * @return {string} The output message to tell the user of the outcome of the
+   * operation.
+   */
+  this.forcePlayerState = function(id, list, state, text, persists = false) {
+    if (typeof id === 'object') {
+      persists = id.persists;
+      text = id.text;
+      state = id.state;
+      list = id.list;
+      id = id.id;
+    }
+    if (!find(id) || !find(id).currentGame) return 'No game has been created.';
+    if (!Array.isArray(list) || list.length == 0) return 'No players given.';
+    if (typeof state !== 'string') return 'No outcome given.';
+    if (typeof text !== 'string') return 'No message given.';
+    list.forEach((p) => {
+      if (find(id).currentGame.day.state > 0) {
+        let player =
+            find(id).currentGame.includedUsers.find((el) => el.id == p);
+        if (!player) return 'Unable to find player.';
+        let outcome;
+        if (player.living && state === 'dead') {
+          outcome = 'dies';
+          killUser(id, player, 0, null);
+        } else if (
+          !player.living && (state === 'living' || state === 'thriving')) {
+          outcome = 'revived';
+          reviveUser(id, player, 0, null);
+        } else if (player.state === 'wounded' && state === 'thriving') {
+          outcome = 'thrives';
+          restoreUser(id, player, 0, null);
+        } else if (
+          player.living && player.state !== 'wounded' &&
+            state === 'wounded') {
+          outcome = 'wounded';
+          woundUser(id, player, 0, null);
+        } else {
+          return;
+        }
+        let evt = makeSingleEvent(
+            text, [player], 1, 0, find(id).options.mentionAll, id, outcome,
+            'nothing', find(id).options.useNicknames);
+        let lastIndex = find(id).currentGame.day.state - 1;
+        for (let i = find(id).currentGame.day.events.length - 1; i > lastIndex;
+          i--) {
+          if (find(id).currentGame.day.events[i].icons.find(
+              (el) => el.id == p)) {
+            lastIndex = i + 1;
+            break;
+          }
+        }
+        find(id).currentGame.day.events.splice(lastIndex, 0, evt);
+      } else {
+        find(id).currentGame.forcedOutcomes.push({
+          id: id,
+          list: list,
+          state: state,
+          text: text,
+          persists: persists,
+        });
+      }
+    });
+    return 'Player(s) will be ' + state + ' by the end of the day.';
+  };
+
+  /**
    * Returns the number of games that are currently being shown to users.
    *
    * @public
@@ -6631,13 +6961,34 @@ function HungryGames() {
         if (!defaultOptions[opt] instanceof Object) continue;
         if (typeof games[id].options[opt] !==
             typeof defaultOptions[opt].value) {
-          games[id].options[opt] = defaultOptions[opt].value;
+          if (defaultOptions[opt].value instanceof Object) {
+            games[id].options[opt] =
+                Object.assign({}, defaultOptions[opt].value);
+          } else {
+            games[id].options[opt] = defaultOptions[opt].value;
+          }
+        } else if (defaultOptions[opt].value instanceof Object) {
+          let dKeys = Object.keys(defaultOptions[opt].value);
+          dKeys.forEach((el) => {
+            if (typeof games[id].options[opt][el] !==
+                typeof defaultOptions[opt].value[el]) {
+              games[id].options[opt][el] = defaultOptions[opt].value[el];
+            }
+          });
         }
       }
       for (let opt in games[id].options) {
         if (!games[id].options[opt] instanceof Object) continue;
         if (typeof defaultOptions[opt] === 'undefined') {
           delete games[id].options[opt];
+        } else if (games[id].options[opt].value instanceof Object) {
+          let keys = Object.keys(games[id].options[opt].value);
+          keys.forEach((el) => {
+            if (typeof games[id].options[opt][el] !==
+                typeof defaultOptions[opt].value[el]) {
+              delete games[id].options[opt][el];
+            }
+          });
         }
       }
     }

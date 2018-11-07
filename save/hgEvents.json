@@ -1261,6 +1261,21 @@
       "message": "Thousands of eyes watch {victim} as they walk into a cave.",
       "victim": { "count": -1, "outcome": "nothing" },
       "attacker": { "count": 0, "outcome": "nothing" }
+    },
+    {
+      "message": "{victim} ha[Vs|ve] returned from the dead and [Vwas|were] put back into the arena!",
+      "victim": { "count": -1, "outcome": "revived" },
+      "attacker": { "count": 0, "outcome": "nothing" }
+    },
+    {
+      "message": "{victim} ha[Vs|ve] been revived and [Vwas|were] put back into the arena!",
+      "victim": { "count": -1, "outcome": "revived" },
+      "attacker": { "count": 0, "outcome": "nothing" }
+    },
+    {
+      "message": "{victim} ha[Vs|ve] been resurrected and [Vwas|were] put back into the arena!",
+      "victim": { "count": -1, "outcome": "revived" },
+      "attacker": { "count": 0, "outcome": "nothing" }
     }
   ],
   "arena": [
