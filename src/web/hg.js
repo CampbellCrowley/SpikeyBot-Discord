@@ -631,6 +631,7 @@ function HGWeb(hg) {
   function fetchChannel(userData, socket, gId, cId, cb) {
     if (!checkChannelPerm(userData, gId, cId, '')) return;
     let g = hg.client.guilds.get(gId);
+    if (!g) return;
     let m = g.members.get(userData.id);
     let channel = g.channels.get(cId);
 
