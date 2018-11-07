@@ -121,7 +121,7 @@ function WebProxy() {
   try {
     loginInfo = JSON.parse(fs.readFileSync('./save/webClients.json') || {});
   } catch (err) {
-    console.log(err);
+    console.error(err);
     loginInfo = {};
   }
   let purgeInterval = setInterval(purgeSessions, 60 * 60 * 1000);
@@ -279,7 +279,7 @@ function WebProxy() {
     socket.on('restore', (sess) => {
       if (restoreAttempt /* || currentSessions[sess]*/) {
         socket.emit('authorized', 'Restore Failed', null);
-        console.log(restoreAttempt, sess);
+        console.error(restoreAttempt, sess);
         return;
       }
       currentSessions[sess] = true;
@@ -298,7 +298,7 @@ function WebProxy() {
                     'Failed to parse request from discord token refresh: ' +
                     err);
                 delete currentSessions[sess];
-                console.log('Parsing failed', sess);
+                console.error('Parsing failed', sess);
                 socket.emit('authorized', 'Restore Failed', null);
                 return;
               }
@@ -385,7 +385,6 @@ function WebProxy() {
      * @param {Object} data User data.
      */
     function receivedLoginInfo(data) {
-      console.log('DBG:00000 Received login info:', data);
       if (data) {
         data.expires_at = data.expires_in * 1000 + Date.now();
         data.expiration_date = Date.now() + (1000 * 60 * 60 * 24 * 30);
@@ -491,7 +490,7 @@ function WebProxy() {
   function makeRefreshTimeout(loginInfo, cb) {
     clearTimeout(loginInfo.refreshTimeout);
     const maxDelay = 2 * 7 * 24 * 60 * 60 * 1000;
-    const delay = Date.now() - loginInfo.expires_at;
+    const delay = loginInfo.expires_at - Date.now();
     if (delay > maxDelay) {
       loginInfo.refreshTimeout = setTimeout(function() {
         makeRefreshTimeout(loginInfo, cb);
