@@ -308,6 +308,7 @@ function Command() {
               {});
     };
   }
+  /** @see {@link Command~SingleCommand} */
   this.SingleCommand = SingleCommand;
 
   /**
@@ -582,6 +583,7 @@ function Command() {
       };
     };
   }
+  /** @see {@link Command~CommandSetting} */
   this.CommandSetting = CommandSetting;
 
   /**
