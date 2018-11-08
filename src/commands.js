@@ -153,8 +153,9 @@ function Command() {
   let cmds = {};
 
   /**
-   * Object storing information about a single command, it's handler, and
-   * default options.
+   * @classdesc Object storing information about a single command, it's handler,
+   * and default options.
+   * @class
    * @public
    *
    * @param {string|string[]} cmd All commands the handler will fire on.
@@ -310,7 +311,8 @@ function Command() {
   this.SingleCommand = SingleCommand;
 
   /**
-   * Stores all settings related to a command.
+   * @classdesc Stores all settings related to a command.
+   * @class
    * @public
    *
    * @param {Command~CommandSetting} [opts] The options to set, or nothing for
