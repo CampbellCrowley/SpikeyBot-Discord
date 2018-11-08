@@ -497,6 +497,7 @@ function WebProxy() {
       }, maxDelay);
     } else {
       loginInfo.refreshTimeout = setTimeout(function() {
+        self.debug('Refreshing token for session: ' + loginInfo.session);
         refreshToken(loginInfo.refresh_token, (err, data) => {
           let parsed;
           if (!err) {
