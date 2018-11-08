@@ -342,7 +342,7 @@ function WebProxy() {
       currentSessions[session] = true;
       authorizeRequest(code, (err, res) => {
         if (err) {
-          delete currentSessions[sess];
+          delete currentSessions[session];
           socket.emit('authorized', 'Probably a server error', null);
           console.error(err);
         } else {
