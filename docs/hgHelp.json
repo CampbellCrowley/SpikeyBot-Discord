@@ -10,6 +10,7 @@
           "command": "create",
           "description": "This will create a game with default settings if it doesn't exist already. This is only required the first time, and after resetting all data.",
           "aliases": "create, c, new",
+          "validOnlyInGuild": true,
           "examples": [
             {
               "description": "Basic Usage",
@@ -18,9 +19,10 @@
           ]
         },
         {
-          "command": "options 'option name' 'value'",
+          "command": "options",
           "description": "List options if no name, or change the option if you give a name.",
           "aliases": "options, option, opt, opts, settings, setting, set",
+          "validOnlyInGuild": true,
           "examples": [
             {
               "description": "Show Current Options",
@@ -45,8 +47,9 @@
           ]
         },
         {
-          "command": "reset 'all/current/events/options/teams/users'",
+          "command": "reset",
           "description": "Delete data about the Games. Don't choose an option for more info.",
+          "validOnlyInGuild": true,
           "examples": [
             {
               "description": "Show Reset Options",
@@ -94,6 +97,7 @@
           "command": "players",
           "description": "This will list all players I currently care about.",
           "aliases": "players, player",
+          "validOnlyInGuild": true,
           "examples": [
             {
               "description": "Basic Usage",
@@ -102,9 +106,10 @@
           ]
         },
         {
-          "command": "exclude 'mention'",
+          "command": "exclude",
           "description": "Prevent someone from being added to the next game.",
           "aliases": "exclude, remove, exc, ex",
+          "validOnlyInGuild": true,
           "examples": [
             {
               "description": "Exclude a Single User",
@@ -124,9 +129,10 @@
           ]
         },
         {
-          "command": "include 'mention'",
+          "command": "include",
           "description": "Add a person back into the next game.",
           "aliases": "include, add, inc, in",
+          "validOnlyInGuild": true,
           "examples": [
             {
               "description": "Include a Single User",
@@ -151,8 +157,9 @@
       "title": "Team Settings",
       "rows": [
         {
-          "command": "teams swap 'mention' 'mention'",
+          "command": "teams swap",
           "description": "This will swap two players to the other team.",
+          "validOnlyInGuild": true,
           "examples": [
             {
               "description": "Basic Usage",
@@ -162,8 +169,9 @@
           ]
         },
         {
-          "command": "teams move 'mention' 'id/mention'",
+          "command": "teams move",
           "description": "This will move the first player, to another team. (Ignores teamSize option)",
+          "validOnlyInGuild": true,
           "examples": [
             {
               "description": "Move Using ID",
@@ -178,8 +186,9 @@
           ]
         },
         {
-          "command": "teams rename 'id/mention' 'name...'",
+          "command": "teams rename",
           "description": "Rename a team. Specify its id, or mention someone on a team.",
+          "validOnlyInGuild": true,
           "examples": [
             {
               "description": "Rename Using ID",
@@ -197,6 +206,7 @@
           "command": "teams randomize",
           "aliases": "randomize, shuffle",
           "description": "Randomize who is on what team.",
+          "validOnlyInGuild": true,
           "examples": [
             {
               "description": "Basic Usage",
@@ -208,6 +218,7 @@
         {
           "command": "teams reset",
           "description": "Delete all teams and start over.",
+          "validOnlyInGuild": true,
           "examples": [
             {
               "description": "Basic Usage",
@@ -225,6 +236,7 @@
           "command": "events",
           "description": "This will list all custom events that could happen in the game. <a href=\"/hg/\">HG Webview</a> can be much easier to use.",
           "aliases": "events, event",
+          "validOnlyInGuild": true,
           "examples": [
             {
               "description": "Basic Usage",
@@ -236,6 +248,7 @@
         {
           "command": "debugevents",
           "description": "This will let you download all of the events and their data.",
+          "validOnlyInGuild": true,
           "examples": [
             {
               "description": "Basic Usage",
@@ -245,9 +258,10 @@
           ]
         },
         {
-          "command": "events add 'message'",
+          "command": "events add",
           "description": "Begins process of adding a custom event. Not all event types can be created yet due to the complications of making a UI. <a href=\"/hg/\">HG Webview</a> can be much easier to use, and supports more types.",
           "aliases": "add, create",
+          "validOnlyInGuild": true,
           "examples": [
             {
               "description": "Basic Usage",
@@ -260,6 +274,7 @@
           "command": "events remove 'number'",
           "description": "Remove a custom event. The number is the number shown in the list of events.",
           "aliases": "remove, delete",
+          "validOnlyInGuild": true,
           "examples": [
             {
               "description": "Basic Usage",
@@ -277,6 +292,7 @@
           "command": "start",
           "description": "This will start a game with your settings.",
           "aliases": "start, s",
+          "validOnlyInGuild": true,
           "examples": [
             {
               "description": "Basic Usage",
@@ -289,6 +305,7 @@
           "command": "end",
           "description": "This will end a game early.",
           "aliases": "end, abort, stop",
+          "validOnlyInGuild": true,
           "examples": [
             {
               "description": "Basic Usage",
@@ -300,6 +317,7 @@
           "command": "autoplay",
           "description": "Automatically continue to the next day after a day is over.",
           "aliases": "autoplay, auto, resume, play, go",
+          "validOnlyInGuild": true,
           "examples": [
             {
               "description": "Basic Usage",
@@ -311,6 +329,7 @@
         {
           "command": "pause",
           "description": "Stop autoplay at the end of the day.",
+          "validOnlyInGuild": true,
           "examples": [
             {
               "description": "Basic Usage",
@@ -323,6 +342,7 @@
           "command": "next",
           "description": "Simulate the next day of the Games!",
           "aliases": "next, nextday",
+          "validOnlyInGuild": true,
           "examples": [
             {
               "description": "Basic Usage",
@@ -339,6 +359,7 @@
           "command": "kill",
           "description": "This will cause players to end the current or next day as dead.",
           "aliases": "kill, smite",
+          "validOnlyInGuild": true,
           "examples": [
             {
               "description": "Basic Usage",
@@ -356,6 +377,7 @@
           "command": "wound",
           "description": "This will cause players to end the current or next day as wounded.",
           "aliases": "wound, hurt, damage, stab, punch, slap, injure",
+          "validOnlyInGuild": true,
           "examples": [
             {
               "description": "Basic Usage",
@@ -373,6 +395,7 @@
           "command": "heal",
           "description": "This will cause players to end the current or next day as alive and fully healed.",
           "aliases": "heal, revive, thrive, resurrect, restore",
+          "validOnlyInGuild": true,
           "examples": [
             {
               "description": "Basic Usage",

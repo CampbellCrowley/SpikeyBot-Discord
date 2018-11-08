@@ -6,16 +6,16 @@
 
 | Command | Description | Aliases |
 | --- | --- | --- |
-| ?play 'url or search' | Play a song in your current voice channel, or add a song to the queue. |  |
+| ?play | Play a song in your current voice channel, or add a song to the queue. |  |
 | ?stop | Stop playing music and leave the voice channel. | leave, stop, stfu |
 | ?skip | Skip the currently playing song. |  |
 | ?queue | View the songs currently in the queue. | q, queue, playing |
-| ?remove 'index' | Remove a song with the given queue index from the queue. | remove, dequeue |
+| ?remove | Remove a song with the given queue index from the queue. | remove, dequeue |
 | ?clear | Remove all songs from the current queue. | clear, empty |
 | ?pause | Pause the currently playing music. |  |
 | ?resume | Resume the currently paused music. |  |
-| ?lyrics 'song' | Search for song lyrics. |  |
-| ?spotify 'mention' | Attempt to lookup what the mentioned user is listening to on Spotify, and then play it. The account to lookup must have connected their account at https://www.spikeybot.com/account/. |  |
+| ?lyrics | Search for song lyrics. |  |
+| ?spotify | Attempt to lookup what the mentioned user is listening to on Spotify, and then play it. The account to lookup must have connected their account at https://www.spikeybot.com/account/. |  |
 
 
 | Command | Description | Aliases |

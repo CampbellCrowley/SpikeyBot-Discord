@@ -1,6 +1,6 @@
 {
   "title": "Main Commands",
-  "description": "Here's the list of stuff I can do! PM SpikeyRobot ({prefix}pmspikey) feature requests!\nSee [spikeybot.com](https://www.spikeybot.com/) for examples and more information.",
+  "description": "Here's the list of stuff I can do!\nPM SpikeyRobot ({prefix}pmspikey) or join [my Discord server](https://discord.gg/ZbKfYSQ) for questions or just to say hi!\nSee [spikeybot.com](https://www.spikeybot.com/) for examples and more information.\n",
   "sections": [
     {
       "title": "General Stuff",
@@ -33,7 +33,7 @@
           ]
         },
         {
-          "command": "createdate 'mention'",
+          "command": "createdate",
           "description": "I will tell you the date you created your account!",
           "examples": [
             {
@@ -49,8 +49,9 @@
           ]
         },
         {
-          "command": "joindate 'mention'",
+          "command": "joindate",
           "description": "I will tell you the date you joined the server you sent the message from!",
+          "validOnlyInGuild": false,
           "examples": [
             {
               "description": "Basic Usage",
@@ -77,7 +78,7 @@
           ]
         },
         {
-          "command": "pmspikey 'message'",
+          "command": "pmspikey",
           "description": "I will send SpikeyRobot (my creator) your message because you are too shy!",
           "aliases": "pmspikey, dmspikey",
           "examples": [
@@ -89,7 +90,7 @@
           ]
         },
         {
-          "command": "avatar 'mention'",
+          "command": "avatar",
           "description": "Need a better look at your profile pic? I'll show you the original.",
           "aliases": "avatar, profile",
           "examples": [
@@ -117,7 +118,7 @@
           ]
         },
         {
-          "command": "timer 'minutes' 'message...'",
+          "command": "timer",
           "description": "Set a timer for a certain number of seconds. The bot will DM you the message at the end. No options lists timers.",
           "aliases": "timer, timers, remind, reminder, reminders",
           "examples": [
@@ -205,6 +206,7 @@
           "command": "poll",
           "description": "Start a poll or vote in the chat. Each user may only have 1 poll at a time.",
           "aliases": "poll, vote",
+          "validOnlyInGuild": false,
           "examples": [
             {
               "description": "Basic Usage",
@@ -227,6 +229,7 @@
           "command": "endpoll",
           "description": "End a poll that you created.",
           "aliases": "endpoll, endvote",
+          "validOnlyInGuild": false,
           "examples": [
             {
               "description": "Basic Usage",
@@ -241,7 +244,7 @@
       "title": "Games Stuff",
       "rows": [
         {
-          "command": "tictactoe 'mention'",
+          "command": "tictactoe",
           "description": "Play a game of Tic Tac Toe with someone! (Mention someone to challenge them)",
           "examples": [
             {
@@ -257,7 +260,7 @@
           ]
         },
         {
-          "command": "connect4 'mention'",
+          "command": "connect4",
           "description": "Start a game of Connect 4 against someone! (Mention someone to challenge them)",
           "examples": [
             {
@@ -289,7 +292,7 @@
           ]
         },
         {
-          "command": "roll 'numbers...'",
+          "command": "roll",
           "description": "Roll dice with any number of sides. Separate multiple numbers with spaces to roll multiple dice.",
           "aliases": "roll, dice, die, d",
           "examples": [
@@ -341,7 +344,7 @@
       "title": "Math Stuff",
       "rows": [
         {
-          "command": "add 'numbers'",
+          "command": "add",
           "description": "Add positive or negative numbers separated by spaces.",
           "examples": [
             {
@@ -362,7 +365,7 @@
           ]
         },
         {
-          "command": "simplify 'equation'",
+          "command": "simplify",
           "description": "Simplify an equation with numbers and variables.",
           "examples": [
             {
@@ -383,7 +386,7 @@
           ]
         },
         {
-          "command": "solve 'equation'",
+          "command": "solve",
           "description": "Solve an equation for each variable in the equation.",
           "examples": [
             {
@@ -404,7 +407,7 @@
           ]
         },
         {
-          "command": "evaluate 'problem'",
+          "command": "evaluate",
           "description": "Solve a math problem, and convert units.",
           "aliases": "eval, evaluate",
           "examples": [
@@ -431,7 +434,7 @@
           ]
         },
         {
-          "command": "derive 'equation with x'",
+          "command": "derive",
           "description": "Find dy/dx of an equation.",
           "examples": [
             {
@@ -447,7 +450,7 @@
           ]
         },
         {
-          "command": "graph 'equation with x' '[xMin, xMax]' '[yMin, yMax]'",
+          "command": "graph",
           "description": "Graph an equation, Maxes and mins are all optional, but brackets are required.",
           "examples": [
             {
@@ -487,6 +490,7 @@
           "command": "tts",
           "description": "Using Google's text-to-speech engine, make the bot say something in your voice channel.",
           "aliases": "tts, speak",
+          "validOnlyInGuild": false,
           "examples": [
             {
               "description": "Basic Usage",

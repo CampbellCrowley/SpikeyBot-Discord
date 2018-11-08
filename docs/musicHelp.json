@@ -6,8 +6,9 @@
       "title": "Music",
       "rows": [
         {
-          "command": "play 'url or search'",
+          "command": "play",
           "description": "Play a song in your current voice channel, or add a song to the queue.",
+          "validOnlyInGuild": true,
           "examples": [
             {
               "description": "Search for a song",
@@ -30,6 +31,7 @@
           "command": "stop",
           "description": "Stop playing music and leave the voice channel.",
           "aliases": "leave, stop, stfu",
+          "validOnlyInGuild": true,
           "examples": [
             {
               "description": "Basic Usage",
@@ -41,6 +43,7 @@
         {
           "command": "skip",
           "description": "Skip the currently playing song.",
+          "validOnlyInGuild": true,
           "examples": [
             {
               "description": "Basic Usage",
@@ -53,6 +56,7 @@
           "command": "queue",
           "description": "View the songs currently in the queue.",
           "aliases": "q, queue, playing",
+          "validOnlyInGuild": true,
           "examples": [
             {
               "description": "Basic Usage",
@@ -67,9 +71,10 @@
           ]
         },
         {
-          "command": "remove 'index'",
+          "command": "remove",
           "description": "Remove a song with the given queue index from the queue.",
           "aliases": "remove, dequeue",
+          "validOnlyInGuild": true,
           "examples": [
             {
               "description": "Remove the next song",
@@ -92,6 +97,7 @@
           "command": "clear",
           "description": "Remove all songs from the current queue.",
           "aliases": "clear, empty",
+          "validOnlyInGuild": true,
           "examples": [
             {
               "description": "Basic Usage",
@@ -103,6 +109,7 @@
         {
           "command": "pause",
           "description": "Pause the currently playing music.",
+          "validOnlyInGuild": true,
           "examples": [
             {
               "description": "Basic Usage",
@@ -114,6 +121,7 @@
         {
           "command": "resume",
           "description": "Resume the currently paused music.",
+          "validOnlyInGuild": true,
           "examples": [
             {
               "description": "Basic Usage",
@@ -123,8 +131,9 @@
           ]
         },
         {
-          "command": "lyrics 'song'",
+          "command": "lyrics",
           "description": "Search for song lyrics.",
+          "validOnlyInGuild": false,
           "examples": [
             {
               "description": "Basic Usage",
@@ -134,8 +143,9 @@
           ]
         },
         {
-          "command": "spotify 'mention'",
+          "command": "spotify",
           "description": "Attempt to lookup what the mentioned user is listening to on Spotify, and then play it. The account to lookup must have connected their account at https://www.spikeybot.com/account/.",
+          "validOnlyInGuild": false,
           "examples": [
             {
               "description": "Basic Usage",
@@ -158,6 +168,7 @@
           "command": "volume",
           "description": "Change the volume of the current song.",
           "aliases": "volume, vol, v",
+          "validOnlyInGuild": false,
           "examples": [
             {
               "description": "Basic Usage",
@@ -179,6 +190,7 @@
         {
           "command": "join",
           "description": "Join you in your voice channel.",
+          "validOnlyInGuild": false,
           "examples": [
             {
               "description": "Basic Usage",
@@ -191,6 +203,7 @@
           "command": "follow",
           "aliases": "follow, unfollow, stalk, stalkme",
           "description": "When you change voice channels, the bot will follow you into your new channel and continue playing music.",
+          "validOnlyInGuild": false,
           "examples": [
             {
               "description": "Basic Usage",
