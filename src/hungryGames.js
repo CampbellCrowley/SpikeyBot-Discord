@@ -5334,7 +5334,7 @@ function HungryGames() {
         }) > -1;
       });
     } else {
-      teamId2 = msg.text.split(' ')[2] - 1;
+      teamId2 = msg.text.trim().split(' ')[1] - 1;
     }
     if (teamId1 < 0 || teamId2 < 0 || isNaN(teamId2)) {
       let extra = null;
@@ -6251,25 +6251,25 @@ function HungryGames() {
           msg, 'You must first create an event in order to remove it.');
       return;
     }
-    const split = msg.text.split(' ');
+    const split = msg.text.trim().split(' ');
 
-    if (split.length == 1) {
+    if (split.length == 0) {
       self.common.reply(
           msg, 'You must specify the number of the custom event you wish to ' +
               'remove.');
       return;
-    } else if (isNaN(split[1])) {
+    } else if (isNaN(split[0])) {
       self.common.reply(
           msg,
           'The number you specified, isn\'t a number, please pick a number.');
       return;
-    } else if (split[1] <= 0) {
+    } else if (split[0] <= 0) {
       self.common.reply(
           msg, 'The number you chose, is a bad number. I don\'t like it.');
       return;
     }
 
-    const num = split[1] - 1;
+    const num = split[0] - 1;
 
     self.common
         .reply(
