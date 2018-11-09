@@ -156,7 +156,7 @@ function Common() {
     }
     const formattedIP = self.getIPName(ip.replace('::ffff:', ''));
 
-    const date = dateFormat(new Date(), 'mm-dd hh:MM:ss');
+    const date = dateFormat(new Date(), 'mm-dd HH:MM:ss');
     return '[' + title + date + ' ' + formattedIP + ']:';
   };
 

@@ -7096,7 +7096,7 @@ function HungryGames() {
           self.error('Failed to read from cache: ' + path);
           console.error(err);
           fromCache = false;
-          toJimp(url);
+          return toJimp(url);
         }
       });
     }
