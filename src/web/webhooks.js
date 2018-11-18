@@ -42,7 +42,7 @@ function WebCommands() {
     let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress ||
         'ERROR';
     if (req.url.indexOf('/webhook') < 0) {
-      res.writeHead(500);
+      res.writeHead(501);
       res.end();
       self.common.log('Requested non-existent endpoint: ' + req.url, ip);
     } else if (req.method !== 'POST') {
