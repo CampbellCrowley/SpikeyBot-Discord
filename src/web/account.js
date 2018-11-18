@@ -130,7 +130,7 @@ function WebAccount() {
 
   /** @inheritdoc */
   this.initialize = function() {
-    app.listen(self.common.isRelease ? 8014 : 8015);
+    app.listen(self.common.isRelease ? 8014 : 8015, '127.0.0.1');
     self.bot.accounts = toExport;
   };
 

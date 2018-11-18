@@ -30,7 +30,7 @@ function HGWeb(hg) {
       console.error('HGWeb failed to bind to port for unknown reason.', err);
     }
   });
-  app.listen(hg.common.isRelease ? 8011 : 8013);
+  app.listen(hg.common.isRelease ? 8011 : 8013, '127.0.0.1');
 
   /**
    * Start a socketio client connection to the primary running server.

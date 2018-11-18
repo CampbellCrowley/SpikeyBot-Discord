@@ -19,7 +19,7 @@ function WebSettings() {
 
   /** @inheritdoc */
   this.initialize = function() {
-    app.listen(self.common.isRelease ? 8020 : 8021);
+    app.listen(self.common.isRelease ? 8020 : 8021, '127.0.0.1');
     setTimeout(updateModuleReferences, 100);
 
     self.command.addEventListener('settingsChanged', handleSettingsChanged);

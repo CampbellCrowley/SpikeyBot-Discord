@@ -160,7 +160,7 @@ function WebProxy() {
     pathPorts['/www.spikeybot.com/socket.io/account/'] = 8014;
     pathPorts['/www.spikeybot.com/socket.io/dev/control/'] = 8021;
     pathPorts['/www.spikeybot.com/socket.io/control/'] = 8020;
-    app.listen(self.common.isRelease ? 8010 : 8012);
+    app.listen(self.common.isRelease ? 8010 : 8012, '::');
   };
 
   /**
