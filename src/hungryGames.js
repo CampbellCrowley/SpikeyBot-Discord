@@ -3039,7 +3039,7 @@ function HungryGames() {
         'Failed to find suitable event for ' + userPool.length +
         ' players, from ' + eventPool.length + ' events with ' + numAlive +
         ' alive.');
-    console.error(fails);
+    // console.error(fails);
     return null;
   }
   /**

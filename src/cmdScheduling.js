@@ -329,6 +329,7 @@ function CmdScheduling() {
         return;
       }
       myself.message.content = myself.cmd;
+      myself.message.fabricated = true;
       self.debug(
           'ScheduledCmd: ' + myself.message.channel.id + '@' +
           myself.message.author.id + ' ' + myself.message.content);
