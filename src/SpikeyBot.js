@@ -519,10 +519,11 @@ function SpikeyBot() {
         () => {});
     req.on('error', () => {});
     req.end(JSON.stringify({
-      full: client.user.tag + ':' + client.user.id + ' JS' + version,
+      text: client.user.tag + ':' + client.user.id + ' JS' + version,
       tag: client.user.tag,
       id: client.user.id,
       guild_count: client.guilds.size,
+      shard_count: client.shard ? client.shard.count : '0',
       version: version,
     }));
     // Reset save interval

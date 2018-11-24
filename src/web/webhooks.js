@@ -64,7 +64,7 @@ function WebCommands() {
       res.end();
       self.common.log('Requested non-existent endpoint: ' + req.url, ip);
     } else if (req.headers.authorization !== basicAuth) {
-      self.error(
+      self.common.error(
           'Requested webhook with incorrect authorization header: ' +
               req.headers.authorization,
           ip);
