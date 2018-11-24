@@ -516,9 +516,7 @@ function SpikeyBot() {
             'Content-Type': 'application/json',
           },
         },
-        (res) => {
-          console.log(res.statusCode, res.response);
-        });
+        () => {});
     req.on('error', () => {});
     req.end(JSON.stringify({
       full: client.user.tag + ':' + client.user.id + ' JS' + version,
