@@ -320,10 +320,11 @@ function CmdScheduling() {
         self.client.clearTimeout(myself.timeout);
         return;
       }
-      if (!myself.channel) {
+      getReferences();
+      if (!myself.channel || !myself.channel.send) {
         self.debug(
-            'ScheduledCmdFailed No Channel: ' + myself.message.channelId + '@' +
-            myself.memberId + ' ' + myself.cmd);
+            'ScheduledCmdFailed No Channel: ' + myself.message.channel.id +
+            '@' + myself.memberId + ' ' + myself.cmd);
         myself.complete = true;
         self.client.clearTimeout(myself.timeout);
         return;
