@@ -334,7 +334,10 @@ function CmdScheduling() {
           'ScheduledCmd: ' + myself.message.channel.id + '@' +
           myself.message.author.id + ' ' + myself.message.content);
       self.command.trigger(myself.message);
-      if (myself.time <= Date.now()) {
+      // If the command was fired at the scheduled time, or if it was fired
+      // manually and the the scheduled time is in less than a second, then
+      // consider the scheduled command to have been completed.
+      if (myself.time - 1000 <= Date.now()) {
         self.client.clearTimeout(myself.timeout);
         if (myself.repeatDelay > 0) {
           myself.time += myself.repeatDelay;
@@ -356,11 +359,9 @@ function CmdScheduling() {
     };
 
     /**
-     * Schedule the Timeout event to call the command at the scheduled time.
-     * If the scheduled time to run the command is more than 2 weeks in the
-     * future,
-     * the command is not scheduled, and this function must be called
-     * manually
+     * Schedule the Timeout event to call the command at the scheduled time. If
+     * the scheduled time to run the command is more than 2 weeks in the future,
+     * the command is not scheduled, and this function must be called manually
      * (less than 2 weeks) before the scheduled time for the command to run.
      * @public
      */

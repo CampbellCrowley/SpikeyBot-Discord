@@ -783,11 +783,9 @@ Cancel this command and remove Timeout.
 <a name="CmdScheduling..ScheduledCommand+setTimeout"></a>
 
 #### scheduledCommand.setTimeout()
-Schedule the Timeout event to call the command at the scheduled time.
-If the scheduled time to run the command is more than 2 weeks in the
-future,
-the command is not scheduled, and this function must be called
-manually
+Schedule the Timeout event to call the command at the scheduled time. If
+the scheduled time to run the command is more than 2 weeks in the future,
+the command is not scheduled, and this function must be called manually
 (less than 2 weeks) before the scheduled time for the command to run.
 
 **Kind**: instance method of [<code>ScheduledCommand</code>](#CmdScheduling..ScheduledCommand)  
