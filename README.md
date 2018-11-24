@@ -1,45 +1,14 @@
 [![Build Status](https://travis-ci.org/CampbellCrowley/SpikeyBot-Discord.svg?branch=master)](https://travis-ci.com/CampbellCrowley/SpikeyBot-Discord)  
-### [SpikeyBot.com](https://www.spikeybot.com/)
-### [Patreon](https://www.patreon.com/campbellcrowley/)
+### Bot's website: [SpikeyBot.com](https://www.spikeybot.com/)
+### Support my development: [Patreon](https://www.patreon.com/campbellcrowley/)
+
 
 # Commands
-###### [Web Page with command help](https://www.spikeybot.com/) (also available from bot with `help` command)
-## Main
-#### General
-`addme` `help` `say` `createdate` `joindate` `pmme` `pmspikey` `avatar` `ping` `timer` `stats` `schedule`
-#### Polling
-`poll` `endpoll`
-#### Games
-`connect4` `tictactoe`
-#### Random
-`flip` `roll`
-#### Music
-`play` `stop` `skip` `queue` `remove` `lyrics` `pause` `resume` `follow` `volume` `spotify` `empty`
-#### Math
-`add` `simplify` `solve` `evaluate` `derive` `graph`
-#### Admin
-`purge` `ban` `smite` `togglemute` `changeprefix` `togglebanmessages` `enable` `disable` `show` `reset`
-### Patreon
-`patreon` `tts`
+###### [Web Page with most commands available on the bot's website](https://www.spikeybot.com/)
 
-## Hungry Games
-#### Game
-`create` `options` `reset`
-#### Players
-`players` `exclude` `include`
-#### Teams
-`swap` `move` `rename` `randomize` `reset`
-#### Events
-`events` `debugevents` `add` `remove`
-#### Time Control
-`create` `start` `end` `autoplay` `pause` `next`
-#### Admin Control
-`kill` `heal` `wound`
-#### Other
-`help` `stats`
-
-## Hidden
-- js (Run javascript code)
+## Hidden Commands
+### These commands are not included in the normal help page or `help` command because they are either easter-eggs, developer commands, or just not useful for most users.
+- js (Run sandboxed javascript code)
 - thotpm (Semi-anonymously have the bot DM someone. Only a couple people can use this command)
 - pmuser (Sends the specified user a pm from the bot, but tells the recipient who the sender was)
 - uptime (Amount of time the bot has been running)
@@ -71,13 +40,37 @@
 - listcommands (Lists all commands that are currently registered with SpikeyBot~Commands)
 - getprefix (Used by chatbot so users can ask the bot, by mentioning it, what the prefix is)
 
-# Events
+# Event Controlled
 - Added to guild
   - Sends a message to the top text channel introducing the bot.
 - User in guild is banned
   - Sends a message saying the user was banned and by whom.
+  - Disable with `togglebanmessages`.
 
 ***
+
+# Self-Hosting
+The bot is not designed to be easily hosted by others, but still may be done.  
+The below steps outline the minimum required to get the SpikeyBot to run.  
+1) Have a server/computer
+    - SB is developed and tested solely on Debian Stretch (amd64), but other OS's may work.
+2) Install [NodeJS](https://nodejs.org/)
+    - The bot is currently running on NodeJS [v8.12.0](https://nodejs.org/dist/v8.12.0/), but has been tested to work in [v10.13.0](https://nodejs.org/dist/v10.13.0/)
+3) Download source code
+    - Clone this repository `git clone https://github.com/CampbellCrowley/SpikeyBot-Discord.git` or click the green download button in GitHub.
+4) Install dependencies via NPM
+    - Current version of NPM used is `v6.4.1`, but almost any version should be fine.
+    - In the `SpikeyBot-Discord` directory, run `npm install`.
+5) Get a bot token from Discord
+    - A token for the bot that you are trying to run from [Discord](https://discordapp.com/developers/applications/) is required.
+    - DO NOT give this token to anybody. Keep it private. The token allows anyone to be your bot.
+6) Configure SpikeyBot
+    - Create `auth.js` in the `SpikeyBot-Discord/` directory with a line that says `exports.release = 'BOT_TOKEN';`, where `BOT_TOKEN` is the bot token from Discord.
+    - Modify `./subModules.json` `"release"` section to have the subModules you want.
+7) Run SpikeyBot
+    - Run `node src/SpikeyBot.js` in `SpikeyBot-Discord/` (working directory must be the project root).
+    - Errors about `gApiCredentials.json` missing can be suppressed by removing `./tts.js` and `./chatbot.js` from `./subModules.json` since these require special authentication from Google's API. (https://console.cloud.google.com/)
+    - All website related subModules will not work, and related errors can be suppressed by removing all subModules that start with `./web/` from `./subModules.json`.
 
 # Development
 - Unit tests exist
@@ -94,15 +87,19 @@
 - Linting
   - All commits are checked by eslint using Google defaults.
   - Eslint is run with pre-commit git hook.
-- Most code is moved into sub-modules for easier division and reloading.
+- Most code is moved into subModules for easier division and reloading.
   - Minimal mode only loads minimal features to allow for multiple bots to run without overlap.
-  - Music sub-module downloads audio in a separate thread but is still managed by the main event loop.
-  - Submodules are passed in via command line arguments.
-    - Path relative to module should be given.
+  - Music subModule downloads audio in a separate thread but is still managed by the main event loop.
+  - SubModules are stored in `./subModules.json`.
+    - Path relative to module should be given (Usually relative to `./src/`).
     - Must be valid for directly being passed into `require()`.
+  - MainModules are loaded automatically by `./src/SpikeyBot.js` and are required.
+    - SubModules are loaded by `./src/smLoader.js`.
+    - Commands are all managed by `./src/commands.js`.
+    - Additional MainModules can be loaded by placing them in `./mainModules.json`
 - Files
   - Most persistent data is saved to disk when bot shuts down.
-    - Hungry Games current state is saved and loaded. Resuming in-progress games is attempted, but untested.
+    - Hungry Games current state is saved and loaded.
       - Events and most messages are also read from file.
-    - Timers and reactToAnthony settings are saved.
+    - Timers settings are saved.
     - Music queues are *not* saved, but may continue playing after unloading submodule.
