@@ -332,7 +332,9 @@ function Common() {
 }
 
 /**
- * SpikeyRobot's Discord ID
+ * SpikeyRobot's Discord ID. If you are self-hosting SpikeyBot, change this to
+ * your account ID to be able to give yourself full access to all features of
+ * the bot.
  *
  * @type {string}
  * @constant

@@ -41,17 +41,28 @@ function WebCommands() {
   function handler(req, res) {
     let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress ||
         'ERROR';
-    if (req.url.indexOf('/webhook') < 0) {
-      res.writeHead(501);
-      res.end();
-      self.common.log('Requested non-existent endpoint: ' + req.url, ip);
-    } else if (req.method !== 'POST') {
+    if (req.method !== 'POST') {
       res.writeHead(405);
       res.end();
       self.common.log(
           'Requested endpoint with invalid method: ' + req.method + ' ' +
               req.url,
           ip);
+    } else if (req.url.indexOf('/webhook/botstart') > -1) {
+      self.common.logDebug('Bot start webhook request: ' + req.url, ip);
+      let content = '';
+      req.on('data', (chunk) => {
+        content += chunk;
+      });
+      req.on('end', () => {
+        self.debug('Bot start webhool content: ' + content);
+        res.writeHead(204);
+        res.end();
+      });
+    } else if (req.url.indexOf('/webhook') < 0) {
+      res.writeHead(501);
+      res.end();
+      self.common.log('Requested non-existent endpoint: ' + req.url, ip);
     } else if (req.headers.authorization !== basicAuth) {
       self.error(
           'Requested webhook with incorrect authorization header: ' +
@@ -66,7 +77,7 @@ function WebCommands() {
       });
       req.on('end', () => {
         console.log(content);
-        res.writeHead(200);
+        res.writeHead(204);
         res.end();
       });
     }

@@ -507,6 +507,26 @@ function SpikeyBot() {
     if (!initialized) {
       loadGuildPrefixes(Array.from(client.guilds.array()));
     }
+    let req = require('https').request(
+        {
+          method: 'POST',
+          hostname: 'www.spikeybot.com',
+          path: '/webhook/botstart',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+        (res) => {
+          console.log(res.statusCode, res.response);
+        });
+    req.on('error', () => {});
+    req.end(JSON.stringify({
+      full: client.user.tag + ':' + client.user.id + ' JS' + version,
+      tag: client.user.tag,
+      id: client.user.id,
+      guild_count: client.guilds.size,
+      version: version,
+    }));
     // Reset save interval
     clearInterval(saveInterval);
     saveInterval = setInterval(saveAll, saveFrequency);

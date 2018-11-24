@@ -1917,7 +1917,9 @@ Whether this current instance is running as a unit test.
 <a name="Common+spikeyId"></a>
 
 ### common.spikeyId : <code>string</code>
-SpikeyRobot's Discord ID
+SpikeyRobot's Discord ID. If you are self-hosting SpikeyBot, change this to
+your account ID to be able to give yourself full access to all features of
+the bot.
 
 **Kind**: instance constant of [<code>Common</code>](#Common)  
 <a name="Common+logChannel"></a>
