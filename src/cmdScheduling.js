@@ -334,7 +334,14 @@ function CmdScheduling() {
       self.debug(
           'ScheduledCmd: ' + myself.message.channel.id + '@' +
           myself.message.author.id + ' ' + myself.message.content);
-      self.command.trigger(myself.message);
+      try {
+        self.command.trigger(myself.message);
+      } catch (err) {
+        self.error(
+            'Failed to trigger ScheduledCmd: ' + myself.message.channel.id +
+            '@' + myself.message.author.id + ' ' + myself.message.content);
+        console.error(err);
+      }
       // If the command was fired at the scheduled time, or if it was fired
       // manually and the the scheduled time is in less than a second, then
       // consider the scheduled command to have been completed.
