@@ -976,8 +976,8 @@ function HungryGames() {
       let game = find(g.id);
       if (!game) return;
 
-      if (game.currentGame.day.state > 1 && game.currentGame.inProgress &&
-          !game.currentGame.ended) {
+      if (game.currentGame && game.currentGame.day.state > 1 &&
+          game.currentGame.inProgress && !game.currentGame.ended) {
         self.nextDay(game.author, g.id, game.outputChannel);
       } else {
         delete games[g.id];
