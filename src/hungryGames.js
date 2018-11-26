@@ -6858,7 +6858,7 @@ function HungryGames() {
   this.getNumSimulating = function() {
     const loadedEntries = Object.entries(games);
     const inProgress = loadedEntries.filter((game) => {
-      return game[1].currentGame.inProgress &&
+      return game[1].currentGame && game[1].currentGame.inProgress &&
           game[1].currentGame.day.state > 1;
     });
     return inProgress.length;
