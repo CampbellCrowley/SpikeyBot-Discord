@@ -818,11 +818,14 @@ function Main() {
         if (matchCount > 0) {
           // Disabled multple because people were spamming it.
           if (false && matchCount > 1) {
-            msg.channel.send(
-                '#' + (startCount + 1) + ' - ' +
-                (self.client.riggedCounter += matchCount));
+            msg.channel
+                .send(
+                    '#' + (startCount + 1) + ' - ' +
+                    (self.client.riggedCounter += matchCount))
+                .catch(() => {});
           } else {
-            msg.channel.send('#' + (self.client.riggedCounter += 1));
+            msg.channel.send('#' + (self.client.riggedCounter += 1))
+                .catch(() => {});
           }
           if (self.client.shard) {
             self.client.shard.broadcastEval(

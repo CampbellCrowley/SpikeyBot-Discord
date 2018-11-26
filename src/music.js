@@ -288,15 +288,33 @@ function Music() {
   };
 
   /** @inheritdoc */
+  this.save = function(opt) {
+    if (!self.initialized) return;
+    // Purge broadcasts that have been paused for more than 15 minutes.
+    let entries = Object.entries(broadcasts);
+    let now = Date.now();
+    for (let i = 0; i < entries.length; i++) {
+      let pauseTime = entries[i][1].broadcast.dispatcher.pausedSince;
+      if (pauseTime && now - pauseTime > 15 * 60 * 1000) {
+        self.debug(entries[i][0] + ' purged: ' + now - pauseTime);
+        if (entries[i][1].voice && entries[i][1].voice.disconnect) {
+          entries[i][1].voice.disconnect();
+        }
+        delete broadcasts[entries[i][0]];
+      }
+    }
+  };
+
+  /** @inheritdoc */
   this.unloadable = function() {
-    // If a broadcast has been paused for more than 15 minutes, it is okay to
+    // If a broadcast has been paused for more than 5 minutes, it is okay to
     // reload this submodule.
     let entries = Object.entries(broadcasts);
     let numAlive = entries.length;
     let now = Date.now();
     for (let i = 0; i < entries.length; i++) {
       let pauseTime = entries[i][1].broadcast.dispatcher.pausedSince;
-      if (pauseTime && now - pauseTime > 5 * 60 * 60 * 1000) {
+      if (pauseTime && now - pauseTime > 5 * 60 * 1000) {
         numAlive--;
       }
     }
@@ -360,7 +378,7 @@ function Music() {
         if (numMembers === 0 &&
             oldState.channel.members.get(self.client.user.id)) {
           if (broadcast.subjugated) {
-            broadcast.voice.disconnect();
+            if (broadcast.voice) broadcast.voice.disconnect();
             delete broadcasts[oldState.guild.id];
             return;
           } else if (pauseBroadcast(broadcast)) {
@@ -562,7 +580,7 @@ function Music() {
     if (broadcast.queue.length === 0) {
       if (!broadcast.subjugated) {
         self.client.setTimeout(function() {
-          broadcast.voice.disconnect();
+          if (broadcast.voice) broadcast.voice.disconnect();
           delete broadcasts[broadcast.current.request.guild.id];
         }, 500);
         broadcast.current.request.channel.send('`Queue is empty!`');
@@ -586,7 +604,7 @@ function Music() {
     broadcast.isPlaying = true;
 
     if (broadcast.current.info) {
-      if (!broadcast.subjugated) {
+      if (!broadcast.subjugated && broadcast.current.request) {
         let embed = formatSongInfo(broadcast.current.info);
         embed.setTitle(
             'Now playing [' + broadcast.queue.length + ' left in queue]');
@@ -599,7 +617,7 @@ function Music() {
       if (special[broadcast.current.song]) {
         if (!special[broadcast.current.song].url) {
           broadcast.isLoading = false;
-          if (!broadcast.subjugated) {
+          if (!broadcast.subjugated && broadcast.current.request) {
             let embed = new self.Discord.MessageEmbed();
             embed.setTitle(
                 'Now playing [' + broadcast.queue.length + ' left in queue]');
@@ -613,12 +631,14 @@ function Music() {
                 broadcast.isLoading = false;
                 if (err) {
                   self.error(err.message.split('\n')[1]);
-                  broadcast.current.request.channel.send(
-                      '```Oops, something went wrong while getting info for ' +
-                      'this song!```\n' + err.message.split('\n')[1]);
+                  if (broadcast.current.request) {
+                    broadcast.current.request.channel.send(
+                        '```Oops, something went wrong while getting info ' +
+                        'for this song!```\n' + err.message.split('\n')[1]);
+                  }
                 } else {
                   broadcast.current.info = info;
-                  if (!broadcast.subjugated) {
+                  if (!broadcast.subjugated && broadcast.current.request) {
                     let embed = formatSongInfo(broadcast.current.info);
                     embed.setTitle(
                         'Now playing [' + broadcast.queue.length +
@@ -632,7 +652,7 @@ function Music() {
         broadcast.current.oninfo = function(info) {
           broadcast.isLoading = false;
           broadcast.current.info = info;
-          if (!broadcast.subjugated) {
+          if (!broadcast.subjugated && broadcast.current.request) {
             let embed = formatSongInfo(broadcast.current.info);
             embed.setTitle(
                 'Now playing [' + broadcast.queue.length + ' left in queue]');
@@ -689,9 +709,11 @@ function Music() {
     broadcast.dispatcher.on('error', function(err) {
       self.error('Error in starting broadcast');
       console.log(err);
-      broadcast.current.request.channel.send(
-          '```An error occured while attempting to play ' +
-          broadcast.current.song + '.```');
+      if (broadcast.current.request) {
+        broadcast.current.request.channel.send(
+            '```An error occured while attempting to play ' +
+            broadcast.current.song + '.```');
+      }
       broadcast.isLoading = false;
       skipSong(broadcast);
     });
@@ -721,9 +743,11 @@ function Music() {
     broadcast.current.thread.on('error', function(err) {
       self.error('Error in thread');
       console.log(err);
-      broadcast.current.request.channel.send(
-          '```An error occured while attempting to play ' +
-          broadcast.current.song + '.```');
+      if (broadcast.current.request) {
+        broadcast.current.request.channel.send(
+            '```An error occured while attempting to play ' +
+            broadcast.current.song + '.```');
+      }
       broadcast.isLoading = false;
       skipSong(broadcast);
     });
@@ -1657,7 +1681,8 @@ function Music() {
               ' channels.\nThe longest queue has a length of ' +
               formatPlaytime(queueLength) + (isPaused ? ' (paused)' : '') + '.',
           msg.author.id === self.common.spikeyId ?
-              (longestChannel + ' paused for ' + pauseTime) :
+              (longestChannel + ' paused for ' + pauseTime + '(' +
+               formatPlaytime(pauseTime) + ')') :
               null);
     } else {
       self.common.reply(

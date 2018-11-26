@@ -239,7 +239,7 @@ function SpikeyBot() {
       }
     } else if (process.argv[i] === '--backup') {
       isBackup = true;
-    } else if (i > 3) {
+    } else {
       throw new Error(`Unrecognized argument '${process.argv[i]}'`);
     }
   }
@@ -253,7 +253,7 @@ function SpikeyBot() {
     const manager = new Discord.ShardingManager('./src/SpikeyBot.js', {
       token: setDev ? auth.dev : auth.release,
       totalShards: numShards || 'auto',
-      shardArgs: process.argv.filter((arg) => {
+      shardArgs: process.argv.slice(2).filter((arg) => {
         return !arg.startsWith('--shards');
       }),
     });

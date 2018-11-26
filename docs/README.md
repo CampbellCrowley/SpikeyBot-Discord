@@ -6563,7 +6563,7 @@ Music and audio related commands.
         * [.warn(msg)](#SubModule+warn)
         * [.error(msg)](#SubModule+error)
         * [.shutdown()](#SubModule+shutdown)
-        * *[.save([opt])](#SubModule+save)*
+        * [.save([opt])](#SubModule+save)
         * [.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>
     * _static_
         * [.streamToOgg(input, file)](#Music.streamToOgg)
@@ -6915,10 +6915,11 @@ Shutdown and disable this submodule. Removes all event listeners.
 **Access**: protected  
 <a name="SubModule+save"></a>
 
-### *music.save([opt])*
+### music.save([opt])
 Saves all data to files necessary for saving current state.
 
-**Kind**: instance abstract method of [<code>Music</code>](#Music)  
+**Kind**: instance method of [<code>Music</code>](#Music)  
+**Overrides**: [<code>save</code>](#SubModule+save)  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
