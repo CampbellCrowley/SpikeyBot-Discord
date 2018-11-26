@@ -6971,7 +6971,8 @@ function HungryGames() {
     }
     // If the bot stopped while simulating a day, just start over and try
     // again.
-    if (games[id].currentGame.day.state === 1) {
+    if (games[id] && games[id].currentGame && games[id].currentGame.day &&
+        games[id].currentGame.day.state === 1) {
       games[id].currentGame.day.state = 0;
     }
     return games[id];
