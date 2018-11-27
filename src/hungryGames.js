@@ -897,7 +897,8 @@ function HungryGames() {
       new self.command.SingleCommand('makemelose', commandMakeMeLose),
       new self.command.SingleCommand(
           ['create', 'c', 'new'], mkCmd(createGame), cmdOpts),
-      new self.command.SingleCommand(['reset'], mkCmd(resetGame), cmdOpts),
+      new self.command.SingleCommand(
+          ['reset', 'clear'], mkCmd(resetGame), cmdOpts),
       new self.command.SingleCommand(['debug'], mkCmd(showGameInfo), cmdOpts),
       new self.command.SingleCommand(
           ['debugevents'], mkCmd(showGameEvents), cmdOpts),
@@ -962,11 +963,17 @@ function HungryGames() {
           mkCmd(commandWound), cmdOpts),
     ];
     self.command.on(
-        new self.command.SingleCommand('hg', function(msg) {
-          self.common.reply(
-              msg, 'Oh noes! I can\'t understand that! "' + msg.prefix +
-                  self.postPrefix + 'help" for help.');
-        }, null, subCmds));
+        new self.command.SingleCommand(
+            [
+              'hg', 'hunger', 'hungry', 'hungergames', 'hungrygames',
+              'hungergame', 'hungrygame',
+            ],
+            function(msg) {
+              self.common.reply(
+                  msg, 'Oh noes! I can\'t understand that! "' + msg.prefix +
+                      self.postPrefix + 'help" for help.');
+            },
+            null, subCmds));
 
     setupHelp();
 
@@ -7111,8 +7118,7 @@ function HungryGames() {
    * @param {string} [opt='sync'] Can be 'async', otherwise defaults to
    * synchronous.
    * @param {boolean} [wait=false] If requested before subModule is
-   * initialized,
-   * keep trying until it is initialized.
+   * initialized, keep trying until it is initialized.
    */
   this.save = function(opt, wait) {
     if (!self.initialized) {

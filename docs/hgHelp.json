@@ -49,6 +49,7 @@
         {
           "command": "reset",
           "description": "Delete data about the Games. Don't choose an option for more info.",
+          "aliases": "reset, clear",
           "validOnlyInGuild": true,
           "examples": [
             {
