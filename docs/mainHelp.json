@@ -211,7 +211,7 @@
             {
               "description": "Basic Usage",
               "command": "poll Are pigs dirty?",
-              "result": "The bot will begin a poll to find out if pigs are dirty and add reactions for users to vote with by clicking.<br><img src=\"https://i.imgur.com/dTcufXF.png\">"
+              "result": "The bot will begin a poll to find out if pigs are dirty and add reactions for users to vote with by clicking.<br><img src=\"https://res.cloudinary.com/spikeybot/image/upload/v1543363872/dTcufXF.png\">"
             },
             {
               "description": "5 Minute Poll",
@@ -456,17 +456,17 @@
             {
               "description": "Basic Usage",
               "command": "graph x^2 - 5",
-              "result": "<img src=\"https://i.imgur.com/CI7UU9p.png\">"
+              "result": "<img src=\"https://res.cloudinary.com/spikeybot/image/upload/v1543363903/CI7UU9p.png\">"
             },
             {
               "description": "User Defined Graph Domain",
               "command": "graph sin(x / 10) [-40, 40]",
-              "result": "<img src=\"https://i.imgur.com/cAqBC7E.png\">"
+              "result": "<img src=\"https://res.cloudinary.com/spikeybot/image/upload/v1543363927/cAqBC7E.png\">"
             },
             {
               "description": "User Defined Graph Domain and Range",
               "command": "graph sin(x / 10) [-40, 40] [-2, 2]",
-              "result": "<img src=\"https://i.imgur.com/ZX9B7Ru.png\">"
+              "result": "<img src=\"https://res.cloudinary.com/spikeybot/image/upload/v1543363935/ZX9B7Ru.png\">"
             }
           ]
         }
