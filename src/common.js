@@ -256,7 +256,6 @@ function Common() {
           .send(Common.mention(msg) + '\n```\n' + text + '\n```' + (post || ''))
           .catch((err) => {
             self.error('Failed to send reply to channel: ' + msg.channel.id);
-            console.error(err);
             throw err;
           });
     } else {
@@ -272,7 +271,6 @@ function Common() {
       }
       return msg.channel.send(Common.mention(msg), embed).catch((err) => {
         self.error('Failed to send reply to channel: ' + msg.channel.id);
-        console.error(err);
         throw err;
       });
     }

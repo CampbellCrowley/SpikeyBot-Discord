@@ -707,7 +707,7 @@ function Music() {
     });
 
     broadcast.dispatcher.on('error', function(err) {
-      self.error('Error in starting broadcast');
+      self.error('Error in starting broadcast: ' + broadcast.current.song);
       console.log(err);
       if (broadcast.current.request) {
         broadcast.current.request.channel.send(
@@ -741,7 +741,7 @@ function Music() {
       broadcast.current.thread.kill();
     });
     broadcast.current.thread.on('error', function(err) {
-      self.error('Error in thread');
+      self.error('Error in thread: ' + broadcast.current.song);
       console.log(err);
       if (broadcast.current.request) {
         broadcast.current.request.channel.send(
