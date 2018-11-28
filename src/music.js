@@ -296,7 +296,7 @@ function Music() {
     for (let i = 0; i < entries.length; i++) {
       let pauseTime = entries[i][1].broadcast.dispatcher.pausedSince;
       if (pauseTime && now - pauseTime > 15 * 60 * 1000) {
-        self.debug(entries[i][0] + ' purged: ' + now - pauseTime);
+        self.debug(entries[i][0] + ' purged: ' + (now - pauseTime));
         if (entries[i][1].voice && entries[i][1].voice.disconnect) {
           entries[i][1].voice.disconnect();
         }
