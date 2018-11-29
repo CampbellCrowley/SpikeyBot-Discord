@@ -1490,7 +1490,7 @@ function Main() {
   function commandSay(msg) {
     if (msg.delete) msg.delete().catch(() => {});
     let content = msg.text.trim();
-    msg.channel.send(content);
+    msg.channel.send(content || '\u200B');
     if (msg.fabricated || prevUserSayId != msg.author.id) {
       prevUserSayId = msg.author.id;
       prevUserSayCnt = 0;
