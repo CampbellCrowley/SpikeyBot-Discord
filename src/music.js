@@ -673,7 +673,7 @@ function Music() {
    */
   function makeBroadcast(broadcast) {
     // Setup voice connection listeners.
-    if (!broadcast.voice && broadcast.voice.channel) return;
+    if (!broadcast.voice || !broadcast.voice.channel) return;
     broadcast.voice.removeListener('disconnect', onDC);
     broadcast.voice.on('disconnect', onDC);
     /**
