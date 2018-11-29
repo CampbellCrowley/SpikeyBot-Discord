@@ -1,6 +1,6 @@
 {
   "name": "spikeybot-discord",
-  "version": "1.8.2",
+  "version": "1.8.3",
   "lockfileVersion": 1,
   "requires": true,
   "dependencies": {
@@ -1475,7 +1475,7 @@
       }
     },
     "discord.js": {
-      "version": "github:discordjs/discord.js#e189c1b728d8fd2742acc4d807e7559e807814fd",
+      "version": "github:discordjs/discord.js#ab3a43919890f0a45812fd91788ea911a106f937",
       "from": "github:discordjs/discord.js",
       "requires": {
         "form-data": "^2.3.2",
@@ -1668,6 +1668,14 @@
         "base64-arraybuffer": "0.1.5",
         "blob": "0.0.4",
         "has-binary2": "~1.0.2"
+      }
+    },
+    "erlpack": {
+      "version": "github:discordapp/erlpack#674ebfd3439ba4b7ce616709821d27630f7cdc61",
+      "from": "github:discordapp/erlpack",
+      "requires": {
+        "bindings": "^1.2.1",
+        "nan": "^2.1.0"
       }
     },
     "es6-promise": {
@@ -3820,6 +3828,11 @@
       "integrity": "sha512-1nh45deeb5olNY7eX82BkPO7SSxR5SSYJiPTrTdFUVYwAl8CKMA5N9PjTYkHiRjisVcxcQ1HXdLhx2qxxJzLNQ==",
       "dev": true
     },
+    "node-addon-api": {
+      "version": "1.6.2",
+      "resolved": "https://registry.npmjs.org/node-addon-api/-/node-addon-api-1.6.2.tgz",
+      "integrity": "sha512-479Bjw9nTE5DdBSZZWprFryHGjUaQC31y1wHo19We/k0BZlrmhqQitWoUL0cD8+scljCbIUL+E58oRDEakdGGA=="
+    },
     "node-fetch": {
       "version": "2.2.0",
       "resolved": "https://registry.npmjs.org/node-fetch/-/node-fetch-2.2.0.tgz",
@@ -4915,6 +4928,14 @@
         }
       }
     },
+    "sodium": {
+      "version": "3.0.2",
+      "resolved": "https://registry.npmjs.org/sodium/-/sodium-3.0.2.tgz",
+      "integrity": "sha512-IsTwTJeoNBU97km3XkrbCGC/n/9aUQejgD3QPr2YY2gtbSPru3TI6nhCqgoez9Mv88frF9oVZS/jrXFbd6WXyA==",
+      "requires": {
+        "node-addon-api": "*"
+      }
+    },
     "sort-array": {
       "version": "2.0.0",
       "resolved": "https://registry.npmjs.org/sort-array/-/sort-array-2.0.0.tgz",
@@ -5676,6 +5697,14 @@
       "version": "2.2.3",
       "resolved": "https://registry.npmjs.org/zero-fill/-/zero-fill-2.2.3.tgz",
       "integrity": "sha1-o97wa6XjmuZEhQu0yirUEStIVek="
+    },
+    "zlib-sync": {
+      "version": "0.1.4",
+      "resolved": "https://registry.npmjs.org/zlib-sync/-/zlib-sync-0.1.4.tgz",
+      "integrity": "sha512-DRy+RONKzy/J6skNmq8ZBXtVAIoB4qbun+FCChlSlEvF7s9LJ0wzUXjVwl4tQ/jYT8V+LPzCg/sTcRj4E0g0fQ==",
+      "requires": {
+        "nan": "^2.8.0"
+      }
     }
   }
 }
