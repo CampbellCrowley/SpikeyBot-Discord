@@ -2,10 +2,10 @@
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const Discord = require('discord.js');
 const fs = require('fs');
-const common = require('./common.js');
 const auth = require('../auth.js');
 const mkdirp = require('mkdirp');
 const childProcess = require('child_process');
+// common.js is also required, but is managed within the SpikeyBot class.
 
 /**
  * Handler for an unhandledRejection or uncaughtException, to prevent the bot
@@ -245,7 +245,19 @@ function SpikeyBot() {
   }
 
   const isDev = setDev;
-  common.begin(testInstance, !isDev);
+
+  let common;
+  /**
+   * Delete cache and re-require common.js.
+   *
+   * @private
+   */
+  function reloadCommon() {
+    delete require.cache[require.resolve('./common.js')];
+    common = require('./common.js');
+    common.begin(testInstance, !isDev);
+  }
+  reloadCommon();
 
   if (enableSharding) {
     common.log(
@@ -1203,6 +1215,9 @@ function SpikeyBot() {
         if (!err) {
           if (stdout && stdout !== 'null') console.log('STDOUT:', stdout);
           if (stderr && stderr !== 'null') console.error('STDERR:', stderr);
+
+          reloadCommon();
+
           client.reloadUpdatedMainModules();
           if (client.shard) {
             client.shard.broadcastEval('this.reloadUpdatedMainModules');

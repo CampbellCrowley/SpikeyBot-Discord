@@ -31,7 +31,9 @@ function Common() {
    * @type {string}
    * @constant
    */
-  const app = process.argv[1].substring(process.argv[1].lastIndexOf('/') + 1);
+  const app = process.argv[1] ?
+      process.argv[1].substring(process.argv[1].lastIndexOf('/') + 1) :
+      '';
   /**
    * The final formatted filename for logging.
    * @private
@@ -462,6 +464,7 @@ Object.defineProperty(global, '__stack', {
     Error.prepareStackTrace = orig;
     return stack;
   },
+  configurable: true,
 });
 
 module.exports = new Common();

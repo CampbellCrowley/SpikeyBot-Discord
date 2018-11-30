@@ -9200,6 +9200,7 @@ Main class that manages the bot.
         * [~trustedIds](#SpikeyBot..trustedIds) : <code>Array.&lt;string&gt;</code> ℗
         * [~guildPrefixFile](#SpikeyBot..guildPrefixFile) : <code>string</code> ℗
         * [~guildCustomPrefixFile](#SpikeyBot..guildCustomPrefixFile) : <code>string</code> ℗
+        * [~reloadCommon()](#SpikeyBot..reloadCommon) ℗
         * [~isCmd(msg, cmd)](#SpikeyBot..isCmd) ⇒ <code>boolean</code> ℗
         * [~updateGame(game, [type])](#SpikeyBot..updateGame) ℗
         * [~onReady()](#SpikeyBot..onReady) ℗
@@ -9470,6 +9471,13 @@ bots with custom names.
 **Kind**: inner constant of [<code>SpikeyBot</code>](#SpikeyBot)  
 **Access**: private  
 **Defaut**:   
+<a name="SpikeyBot..reloadCommon"></a>
+
+### SpikeyBot~reloadCommon() ℗
+Delete cache and re-require common.js.
+
+**Kind**: inner method of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Access**: private  
 <a name="SpikeyBot..isCmd"></a>
 
 ### SpikeyBot~isCmd(msg, cmd) ⇒ <code>boolean</code> ℗
