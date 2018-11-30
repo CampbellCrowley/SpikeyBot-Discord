@@ -287,7 +287,7 @@ function WebProxy() {
       if (loginInfo[sess]) {
         session = sess;
         if (loginInfo[session].expires_at < Date.now()) {
-          refreshToken(loginInfo.refresh_token, (err, data) => {
+          refreshToken(loginInfo[session].refresh_token, (err, data) => {
             if (!err) {
               let parsed;
               try {
@@ -315,7 +315,7 @@ function WebProxy() {
               });
             } else {
               self.warn('Refreshing token failed ' + sess);
-              console.error(err);
+              console.error(err, loginInfo[session]);
               socket.emit('authorized', 'Restore Failed', null);
             }
           });
@@ -389,7 +389,15 @@ function WebProxy() {
         data.expires_at = data.expires_in * 1000 + Date.now();
         data.expiration_date = Date.now() + (1000 * 60 * 60 * 24 * 30);
         data.session = session;
+        if (loginInfo[session].refresh_token && !data.refresh_token) {
+          self.debug(
+              'New oauth data does not contain refresh token, but loginInfo ' +
+              'still contains a refresh token.');
+        }
         loginInfo[session] = Object.assign(loginInfo[session] || {}, data);
+        if (!loginInfo[session].refresh_token) {
+          self.debug('loginInfo did not have a refresh token.');
+        }
         makeRefreshTimeout(loginInfo[session], receivedLoginInfo);
       }
     }
@@ -518,17 +526,17 @@ function WebProxy() {
    * Request new credentials with refresh token from discord.
    *
    * @private
-   * @param {string} refreshToken The refresh token used for refreshing
+   * @param {string} refreshToken_ The refresh token used for refreshing
    * credentials.
    * @param {basicCallback} cb The callback from the https request, with an
    * error argument, and a data argument.
    */
-  function refreshToken(refreshToken, cb) {
+  function refreshToken(refreshToken_, cb) {
     const data = {
       client_id: clientId,
       client_secret: clientSecret,
       grant_type: 'refresh_token',
-      refresh_token: refreshToken,
+      refresh_token: refreshToken_,
       redirect_uri: 'https://www.spikeybot.com/redirect',
     };
     discordRequest(data, cb);
