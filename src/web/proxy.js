@@ -389,7 +389,8 @@ function WebProxy() {
         data.expires_at = data.expires_in * 1000 + Date.now();
         data.expiration_date = Date.now() + (1000 * 60 * 60 * 24 * 30);
         data.session = session;
-        if (loginInfo[session].refresh_token && !data.refresh_token) {
+        if (loginInfo[session] && loginInfo[session].refresh_token &&
+            !data.refresh_token) {
           self.debug(
               'New oauth data does not contain refresh token, but loginInfo ' +
               'still contains a refresh token.');
