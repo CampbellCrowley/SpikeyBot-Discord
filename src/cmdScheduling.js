@@ -322,12 +322,18 @@ function CmdScheduling() {
       }
       getReferences();
       if (!myself.channel || !myself.channel.send) {
-        self.debug(
-            'ScheduledCmdFailed No Channel: ' + myself.message.channel.id +
+        self.error(
+            'ScheduledCmdFailed No Channel: ' + myself.channel.id +
             '@' + myself.memberId + ' ' + myself.cmd);
         myself.complete = true;
         self.client.clearTimeout(myself.timeout);
         return;
+      } else if (!myself.message.channel || !myself.message.channel.send) {
+        self.warn(
+            'ScheduledCmdWarning No Message Channel: ' +
+            myself.channel.guild.id + '#' + myself.channel.id + '@' +
+            myself.memberId + ' ' + myself.cmd);
+        myself.message.channel = myself.channel;
       }
       myself.message.content = myself.cmd;
       myself.message.fabricated = true;
@@ -877,7 +883,7 @@ function CmdScheduling() {
       member: g.members.get(uId),
       author: g.members.get(uId).user,
       guild: g,
-      channel: g.channels.get(cId),
+      channel: self.client.channels.get(cId),
       text: msg,
       content: msg,
       prefix: self.bot.getPrefix(gId),
