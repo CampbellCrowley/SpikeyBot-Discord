@@ -64,6 +64,9 @@ channel.</p>
 <dt><a href="#TTS">TTS</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
 <dd><p>Adds text-to-speech support for voice channels.</p>
 </dd>
+<dt><a href="#Uno">Uno</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
+<dd><p>Manages an Uno game.</p>
+</dd>
 <dt><a href="#FunTranslators">FunTranslators</a></dt>
 <dd><p>Converts text strings into different formats.</p>
 </dd>
@@ -11006,6 +11009,508 @@ Response from Google with TTS audio data.
 | --- | --- | --- |
 | err | <code>Error</code> | Errors in request. |
 | res | <code>Object</code> | Response. |
+
+<a name="Uno"></a>
+
+## Uno ⇐ [<code>SubModule</code>](#SubModule)
+Manages an Uno game.
+
+**Kind**: global class  
+**Extends**: [<code>SubModule</code>](#SubModule)  
+
+* [Uno](#Uno) ⇐ [<code>SubModule</code>](#SubModule)
+    * _instance_
+        * [.Card](#Uno+Card)
+            * [new this.Card(face, color)](#new_Uno+Card_new)
+            * [.face](#Uno+Card+face) : <code>Uno.CardFace</code>
+            * [.color](#Uno+Card+color) : <code>Uno.Color</code>
+        * [.Game](#Uno+Game)
+            * [new this.Game(memberList, maker)](#new_Uno+Game_new)
+            * _instance_
+                * [.id](#Uno+Game+id) : <code>number</code>
+                * [.catChannel](#Uno+Game+catChannel) : <code>Discord~CategoryChannel</code>
+                * [.groupChannel](#Uno+Game+groupChannel) : <code>Discord~TextChannel</code>
+                * [.started](#Uno+Game+started) : <code>boolean</code>
+                * [.end()](#Uno+Game+end)
+                * [.addPlayer(p)](#Uno+Game+addPlayer)
+            * _inner_
+                * [~members](#Uno+Game..members) : <code>Object.&lt;Discord~GuildMember&gt;</code> ℗
+                * [~players](#Uno+Game..players) : <code>Array.&lt;Uno.Player&gt;</code> ℗
+        * [.helpMessage](#SubModule+helpMessage) : <code>string</code> \| <code>Discord~MessageEmbed</code>
+        * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
+        * [.Discord](#SubModule+Discord) : <code>Discord</code>
+        * [.client](#SubModule+client) : <code>Discord~Client</code>
+        * [.command](#SubModule+command) : [<code>Command</code>](#Command)
+        * [.common](#SubModule+common) : [<code>Common</code>](#Common)
+        * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
+        * [.myName](#SubModule+myName) : <code>string</code>
+        * [.initialized](#SubModule+initialized) : <code>boolean</code>
+        * [.Color](#Uno+Color) : <code>enum</code>
+        * [.CardFace](#Uno+CardFace) : <code>enum</code>
+        * [.commit](#SubModule+commit) : <code>string</code>
+        * [.loadTime](#SubModule+loadTime) : <code>number</code>
+        * [.Player(member, parent)](#Uno+Player)
+        * [.getHand()](#Uno+getHand) ⇒ <code>Array.&lt;Uno.Card&gt;</code>
+        * [.initialize()](#SubModule+initialize)
+        * [.begin(Discord, client, command, common, bot)](#SubModule+begin)
+        * [.end()](#SubModule+end)
+        * [.log(msg)](#SubModule+log)
+        * [.debug(msg)](#SubModule+debug)
+        * [.warn(msg)](#SubModule+warn)
+        * [.error(msg)](#SubModule+error)
+        * [.shutdown()](#SubModule+shutdown)
+        * *[.save([opt])](#SubModule+save)*
+        * [.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>
+    * _inner_
+        * [~numGames](#Uno..numGames) : <code>number</code> ℗
+        * [~pFlags](#Uno..pFlags) ℗
+        * [~games](#Uno..games) : <code>Object.&lt;Object.&lt;Uno.Game&gt;&gt;</code> ℗
+        * [~commandUno(msg)](#Uno..commandUno) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~commandEnd(msg)](#Uno..commandEnd) : [<code>commandHandler</code>](#commandHandler) ℗
+
+<a name="Uno+Card"></a>
+
+### uno.Card
+**Kind**: instance class of [<code>Uno</code>](#Uno)  
+**Access**: public  
+
+* [.Card](#Uno+Card)
+    * [new this.Card(face, color)](#new_Uno+Card_new)
+    * [.face](#Uno+Card+face) : <code>Uno.CardFace</code>
+    * [.color](#Uno+Card+color) : <code>Uno.Color</code>
+
+<a name="new_Uno+Card_new"></a>
+
+#### new this.Card(face, color)
+Class that stores the current information about a particular card. All
+cards with the same color and face value are represented here using the
+`count` attribute.
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| face | <code>CardFace</code> | The face value or type of card this is. |
+| color | <code>Color</code> | The color of this card. |
+
+<a name="Uno+Card+face"></a>
+
+#### card.face : <code>Uno.CardFace</code>
+The face value of this card.
+
+**Kind**: instance property of [<code>Card</code>](#Uno+Card)  
+**Access**: public  
+<a name="Uno+Card+color"></a>
+
+#### card.color : <code>Uno.Color</code>
+The color of this card.
+
+**Kind**: instance property of [<code>Card</code>](#Uno+Card)  
+**Access**: public  
+<a name="Uno+Game"></a>
+
+### uno.Game
+**Kind**: instance class of [<code>Uno</code>](#Uno)  
+**Access**: public  
+
+* [.Game](#Uno+Game)
+    * [new this.Game(memberList, maker)](#new_Uno+Game_new)
+    * _instance_
+        * [.id](#Uno+Game+id) : <code>number</code>
+        * [.catChannel](#Uno+Game+catChannel) : <code>Discord~CategoryChannel</code>
+        * [.groupChannel](#Uno+Game+groupChannel) : <code>Discord~TextChannel</code>
+        * [.started](#Uno+Game+started) : <code>boolean</code>
+        * [.end()](#Uno+Game+end)
+        * [.addPlayer(p)](#Uno+Game+addPlayer)
+    * _inner_
+        * [~members](#Uno+Game..members) : <code>Object.&lt;Discord~GuildMember&gt;</code> ℗
+        * [~players](#Uno+Game..players) : <code>Array.&lt;Uno.Player&gt;</code> ℗
+
+<a name="new_Uno+Game_new"></a>
+
+#### new this.Game(memberList, maker)
+Class that stores the current state of an Uno game.
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| memberList | <code>Array.&lt;Discord~GuildMember&gt;</code> | The players to initially add to this game. |
+| maker | <code>Discord~GuildMember</code> | The player who created the game and can change settings and manage users. |
+
+<a name="Uno+Game+id"></a>
+
+#### game.id : <code>number</code>
+The ID of this uno game. Should be unique per guild.
+
+**Kind**: instance property of [<code>Game</code>](#Uno+Game)  
+**Access**: public  
+**Read only**: true  
+<a name="Uno+Game+catChannel"></a>
+
+#### game.catChannel : <code>Discord~CategoryChannel</code>
+The category that stores all channels for this game. Null until it is
+created.
+
+**Kind**: instance property of [<code>Game</code>](#Uno+Game)  
+**Access**: public  
+<a name="Uno+Game+groupChannel"></a>
+
+#### game.groupChannel : <code>Discord~TextChannel</code>
+The channel that all players of this game can view and type in. Null
+until the channel is created.
+
+**Kind**: instance property of [<code>Game</code>](#Uno+Game)  
+**Access**: public  
+<a name="Uno+Game+started"></a>
+
+#### game.started : <code>boolean</code>
+Has this game been started.
+
+**Kind**: instance property of [<code>Game</code>](#Uno+Game)  
+**Default**: <code>false</code>  
+**Access**: public  
+**Read only**: true  
+<a name="Uno+Game+end"></a>
+
+#### game.end()
+Ends this game and deletes all created channels.
+
+**Kind**: instance method of [<code>Game</code>](#Uno+Game)  
+**Access**: public  
+<a name="Uno+Game+addPlayer"></a>
+
+#### game.addPlayer(p)
+Add the given guild member to the game.
+
+**Kind**: instance method of [<code>Game</code>](#Uno+Game)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| p | <code>Discord~GuildMember</code> | The member to add to the game. |
+
+<a name="Uno+Game..members"></a>
+
+#### Game~members : <code>Object.&lt;Discord~GuildMember&gt;</code> ℗
+The guild members in this game mapped by their ID.
+
+**Kind**: inner property of [<code>Game</code>](#Uno+Game)  
+**Access**: private  
+<a name="Uno+Game..players"></a>
+
+#### Game~players : <code>Array.&lt;Uno.Player&gt;</code> ℗
+The array of all player in the game in the order of their turn.
+
+**Kind**: inner property of [<code>Game</code>](#Uno+Game)  
+**Access**: private  
+<a name="SubModule+helpMessage"></a>
+
+### uno.helpMessage : <code>string</code> \| <code>Discord~MessageEmbed</code>
+The help message to show the user in the main help message.
+
+**Kind**: instance property of [<code>Uno</code>](#Uno)  
+<a name="SubModule+postPrefix"></a>
+
+### *uno.postPrefix : <code>string</code>*
+The postfix for the global prefix for this subModule. Must be defined
+before begin(), otherwise it is ignored.
+
+**Kind**: instance abstract property of [<code>Uno</code>](#Uno)  
+**Default**: <code>&quot;&quot;</code>  
+<a name="SubModule+Discord"></a>
+
+### uno.Discord : <code>Discord</code>
+The current Discord object instance of the bot.
+
+**Kind**: instance property of [<code>Uno</code>](#Uno)  
+<a name="SubModule+client"></a>
+
+### uno.client : <code>Discord~Client</code>
+The current bot client.
+
+**Kind**: instance property of [<code>Uno</code>](#Uno)  
+<a name="SubModule+command"></a>
+
+### uno.command : [<code>Command</code>](#Command)
+The command object for registering command listeners.
+
+**Kind**: instance property of [<code>Uno</code>](#Uno)  
+<a name="SubModule+common"></a>
+
+### uno.common : [<code>Common</code>](#Common)
+The common object.
+
+**Kind**: instance property of [<code>Uno</code>](#Uno)  
+<a name="SubModule+bot"></a>
+
+### uno.bot : [<code>SpikeyBot</code>](#SpikeyBot)
+The parent SpikeyBot instance.
+
+**Kind**: instance property of [<code>Uno</code>](#Uno)  
+<a name="SubModule+myName"></a>
+
+### uno.myName : <code>string</code>
+The name of this submodule. Used for differentiating in the log. Should be
+defined before begin().
+
+**Kind**: instance property of [<code>Uno</code>](#Uno)  
+**Overrides**: [<code>myName</code>](#SubModule+myName)  
+**Access**: protected  
+<a name="SubModule+initialized"></a>
+
+### uno.initialized : <code>boolean</code>
+Has this subModule been initialized yet (Has begin() been called).
+
+**Kind**: instance property of [<code>Uno</code>](#Uno)  
+**Default**: <code>false</code>  
+**Access**: protected  
+**Read only**: true  
+<a name="Uno+Color"></a>
+
+### uno.Color : <code>enum</code>
+Enum for card colors.
+
+**Kind**: instance enum of [<code>Uno</code>](#Uno)  
+**Default**: <code>{&quot;NONE&quot;:0,&quot;RED&quot;:1,&quot;BLUE&quot;:2,&quot;GREEN&quot;:3,&quot;YELLOW&quot;:4}</code>  
+**Access**: public  
+**Properties**
+
+| Name | Type | Default |
+| --- | --- | --- |
+| NONE | <code>number</code> | <code>0</code> | 
+| RED | <code>number</code> | <code>1</code> | 
+| BLUE | <code>number</code> | <code>2</code> | 
+| GREEN | <code>number</code> | <code>3</code> | 
+| YELLOW | <code>number</code> | <code>4</code> | 
+
+<a name="Uno+CardFace"></a>
+
+### uno.CardFace : <code>enum</code>
+Enum for card faces. The LSB is the card number, all following bits are a
+bitfield of card properties.
+
+0x010: The card is a wild card.
+0x020: The card skips the next player's turn.
+0x040: The card reverses play direction.
+0x080: The card causes the next player after the turn is over, to draw 2
+cards.
+0x100: The next player must draw 4 cards.
+
+**Kind**: instance enum of [<code>Uno</code>](#Uno)  
+**Default**: <code>{&quot;SKIP&quot;:42,&quot;DRAW_TWO&quot;:171,&quot;REVERSE&quot;:108,&quot;WILD&quot;:30,&quot;DRAW_FOUR&quot;:317,&quot;ZERO&quot;:0,&quot;ONE&quot;:1,&quot;TWO&quot;:2,&quot;THREE&quot;:3,&quot;FOUR&quot;:4,&quot;FIVE&quot;:5,&quot;SIX&quot;:6,&quot;SEVEN&quot;:7,&quot;EIGHT&quot;:8,&quot;NINE&quot;:9}</code>  
+**Access**: public  
+**Properties**
+
+| Name | Type | Default |
+| --- | --- | --- |
+| SKIP | <code>number</code> | <code>42</code> | 
+| DRAW_TWO | <code>number</code> | <code>171</code> | 
+| REVERSE | <code>number</code> | <code>108</code> | 
+| WILD | <code>number</code> | <code>30</code> | 
+| DRAW_FOUR | <code>number</code> | <code>317</code> | 
+| ZERO | <code>number</code> | <code>0</code> | 
+| ONE | <code>number</code> | <code>1</code> | 
+| TWO | <code>number</code> | <code>2</code> | 
+| THREE | <code>number</code> | <code>3</code> | 
+| FOUR | <code>number</code> | <code>4</code> | 
+| FIVE | <code>number</code> | <code>5</code> | 
+| SIX | <code>number</code> | <code>6</code> | 
+| SEVEN | <code>number</code> | <code>7</code> | 
+| EIGHT | <code>number</code> | <code>8</code> | 
+| NINE | <code>number</code> | <code>9</code> | 
+
+<a name="SubModule+commit"></a>
+
+### uno.commit : <code>string</code>
+The commit at HEAD at the time this module was loaded. Essentially the
+version of this submodule.
+
+**Kind**: instance constant of [<code>Uno</code>](#Uno)  
+**Access**: public  
+<a name="SubModule+loadTime"></a>
+
+### uno.loadTime : <code>number</code>
+The time at which this madule was loaded for use in checking if the module
+needs to be reloaded because the file has been modified since loading.
+
+**Kind**: instance constant of [<code>Uno</code>](#Uno)  
+**Access**: public  
+<a name="Uno+Player"></a>
+
+### uno.Player(member, parent)
+A single player in the game.
+
+**Kind**: instance method of [<code>Uno</code>](#Uno)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| member | <code>Discord~GuildMember</code> | The guild member this is based off of. |
+| parent | <code>Uno.Game</code> | The parent game this player will be in. |
+
+<a name="Uno+getHand"></a>
+
+### uno.getHand() ⇒ <code>Array.&lt;Uno.Card&gt;</code>
+A default hand of cards that the classic game starts with.
+
+**Kind**: instance method of [<code>Uno</code>](#Uno)  
+<a name="SubModule+initialize"></a>
+
+### uno.initialize()
+The function called at the end of begin() for further initialization
+specific to the subModule. Must be defined before begin() is called.
+
+**Kind**: instance method of [<code>Uno</code>](#Uno)  
+**Overrides**: [<code>initialize</code>](#SubModule+initialize)  
+**Access**: protected  
+<a name="SubModule+begin"></a>
+
+### uno.begin(Discord, client, command, common, bot)
+Initialize this submodule.
+
+**Kind**: instance method of [<code>Uno</code>](#Uno)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| Discord | <code>Discord</code> | The Discord object for the API library. |
+| client | <code>Discord~Client</code> | The client that represents this bot. |
+| command | [<code>Command</code>](#Command) | The command instance in which to register command listeners. |
+| common | [<code>Common</code>](#Common) | Class storing common functions. |
+| bot | [<code>SpikeyBot</code>](#SpikeyBot) | The parent SpikeyBot instance. |
+
+<a name="SubModule+end"></a>
+
+### uno.end()
+Trigger subModule to shutdown and get ready for process terminating.
+
+**Kind**: instance method of [<code>Uno</code>](#Uno)  
+**Access**: public  
+<a name="SubModule+log"></a>
+
+### uno.log(msg)
+Log using common.log, but automatically set name.
+
+**Kind**: instance method of [<code>Uno</code>](#Uno)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+debug"></a>
+
+### uno.debug(msg)
+Log using common.logDebug, but automatically set name.
+
+**Kind**: instance method of [<code>Uno</code>](#Uno)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+warn"></a>
+
+### uno.warn(msg)
+Log using common.logWarning, but automatically set name.
+
+**Kind**: instance method of [<code>Uno</code>](#Uno)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+error"></a>
+
+### uno.error(msg)
+Log using common.error, but automatically set name.
+
+**Kind**: instance method of [<code>Uno</code>](#Uno)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+shutdown"></a>
+
+### uno.shutdown()
+Shutdown and disable this submodule. Removes all event listeners.
+
+**Kind**: instance method of [<code>Uno</code>](#Uno)  
+**Overrides**: [<code>shutdown</code>](#SubModule+shutdown)  
+**Access**: protected  
+<a name="SubModule+save"></a>
+
+### *uno.save([opt])*
+Saves all data to files necessary for saving current state.
+
+**Kind**: instance abstract method of [<code>Uno</code>](#Uno)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [opt] | <code>string</code> | <code>&quot;&#x27;sync&#x27;&quot;</code> | Can be 'async', otherwise defaults to synchronous. |
+
+<a name="SubModule+unloadable"></a>
+
+### uno.unloadable() ⇒ <code>boolean</code>
+Check if this module is in a state that is ready to be unloaded. If false
+is returned, this module should not be unloaded and doing such may risk
+putting the module into an uncontrollable state.
+
+**Kind**: instance method of [<code>Uno</code>](#Uno)  
+**Overrides**: [<code>unloadable</code>](#SubModule+unloadable)  
+**Returns**: <code>boolean</code> - True if can be unloaded, false if cannot.  
+**Access**: public  
+<a name="Uno..numGames"></a>
+
+### Uno~numGames : <code>number</code> ℗
+The number of currently active games. Used to determine of submodule is
+unloadable.
+
+**Kind**: inner property of [<code>Uno</code>](#Uno)  
+**Default**: <code>0</code>  
+**Access**: private  
+<a name="Uno..pFlags"></a>
+
+### Uno~pFlags ℗
+self.Discord.Permissions.FLAGS
+
+**Kind**: inner property of [<code>Uno</code>](#Uno)  
+**Access**: private  
+<a name="Uno..games"></a>
+
+### Uno~games : <code>Object.&lt;Object.&lt;Uno.Game&gt;&gt;</code> ℗
+All games currently in progress mapped by guilds, then by the game ID.
+
+**Kind**: inner property of [<code>Uno</code>](#Uno)  
+**Access**: private  
+<a name="Uno..commandUno"></a>
+
+### Uno~commandUno(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Starts an Uno game. If someone is mentioned it will start a game
+between the message author and the mentioned person. Otherwise, waits for
+someone to play.
+
+**Kind**: inner method of [<code>Uno</code>](#Uno)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Uno..commandEnd"></a>
+
+### Uno~commandEnd(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Ends an Uno game.
+
+**Kind**: inner method of [<code>Uno</code>](#Uno)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
 
 <a name="FunTranslators"></a>
 
