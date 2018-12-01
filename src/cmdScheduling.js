@@ -320,6 +320,7 @@ function CmdScheduling() {
         self.client.clearTimeout(myself.timeout);
         return;
       }
+      const now = Date.now();
       getReferences();
       if (!myself.channel || !myself.channel.send) {
         self.error(
@@ -351,9 +352,10 @@ function CmdScheduling() {
       // If the command was fired at the scheduled time, or if it was fired
       // manually and the the scheduled time is in less than a second, then
       // consider the scheduled command to have been completed.
-      if (myself.time - 1000 <= Date.now()) {
+      if (myself.time - 1000 <= now) {
         self.client.clearTimeout(myself.timeout);
         if (myself.repeatDelay > 0) {
+          myself.complete = false;
           myself.time += myself.repeatDelay;
           sortGuildCommands(myself.message.guild.id);
           myself.setTimeout();
@@ -387,6 +389,9 @@ function CmdScheduling() {
         self.client.clearTimeout(myself.timeout);
         myself.timeout =
             self.client.setTimeout(myself.go, myself.time - Date.now());
+        self.debug(
+            'ScheduledCmd Scheduled: ' + myself.channelId + '@' +
+            myself.memberId + ' ' + myself.cmd);
       }
     };
 
