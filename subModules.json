@@ -28,7 +28,8 @@
     "./web/account.js",
     "./web/stats.js",
     "./web/settings.js",
-    "./web/webhooks.js"
+    "./web/webhooks.js",
+    "./uno.js"
   ],
   "release": [
     "./hungryGames.js",

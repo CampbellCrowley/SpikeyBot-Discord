@@ -15,17 +15,25 @@ function Uno() {
 
   /** @inheritdoc */
   this.initialize = function() {
+    pFlags = self.Discord.Permissions.FLAGS;
     self.command.on(
         new self.command.SingleCommand(
             ['uno', 'one'], commandUno, {validOnlyInGuild: true},
-            [new self.command.SingleCommand(
-                'end', commandEnd, {validOnlyInGuild: true})]));
-    pFlags = self.Discord.Permissions.FLAGS;
+            [new self.command.SingleCommand('endall', commandEndAll, {
+              validOnlyInGuild: true,
+              permissions: pFlags.MANAGE_CHANNELS,
+              defaultDisabled: true,
+            })]));
   };
 
   /** @inheritdoc */
   this.shutdown = function() {
     self.command.removeListener('uno');
+
+    let entries = Object.entries(games);
+    entries.forEach((el) => {
+      el[1].end();
+    });
   };
 
   /** @inheritdoc */
@@ -81,14 +89,14 @@ function Uno() {
   }
 
   /**
-   * Ends an Uno game.
+   * Ends all Uno games.
    *
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens Command#connect4
+   * @listens Command#uno_endall
    */
-  function commandEnd(msg) {
+  function commandEndAll(msg) {
     if (!msg.guild.me.hasPermission(pFlags.MANAGE_CHANNELS)) {
       self.common.reply(msg, 'I don\'t have permission to manage channels.');
       return;
@@ -255,7 +263,7 @@ function Uno() {
      * @private
      * @type {Uno.Card[]}
      */
-    // let discarded = self.getHand();
+    let discarded = self.getHand();
 
     /**
      * Has this game been started.
@@ -266,6 +274,36 @@ function Uno() {
      * @type {boolean}
      */
     this.started = false;
+
+    /**
+     * The current index of the player whose turn it is.
+     *
+     * @public
+     * @default
+     * @readonly
+     * @type {number}
+     */
+    this.turn = 0;
+
+    /**
+     * The current direction of play. Either 1 or -1.
+     *
+     * @public
+     * @readonly
+     * @default
+     * @type {number}
+     */
+    this.direction = 1;
+
+    /**
+     * The current Discord~MessageCollector that is listening to messages in the
+     * groupChannel.
+     *
+     * @private
+     * @default
+     * type {?Discord~MessageCollector}
+     */
+    let currentCollector = null;
 
     /**
      * Creates all channels for this game and currently added players.
@@ -279,7 +317,7 @@ function Uno() {
           {
             id: maker.guild.defaultRole,
             allow: 0,
-            deny: self.Discord.Permissions.FLAGS.VIEW_CHANNEL,
+            deny: pFlags.VIEW_CHANNEL | pFlags.SEND_MESSAGES,
             type: 'role',
           },
           {
@@ -317,9 +355,230 @@ function Uno() {
               for (let i = 0; i < memberList.length; i++) {
                 game.addPlayer(memberList[i]);
               }
+              finishSetup();
             });
       });
     })();
+
+    /**
+     * Begins listening for messages in the groupChannel that relate to the
+     * setup of the game, and sends a message to the group channel with game
+     * instructions.
+     *
+     * @private
+     */
+    function finishSetup() {
+      sendHelp().then(() => {
+        game.catChannel.overwritePermissions({
+          permissionOverwrites: [{
+            id: maker.guild.defaultRole,
+            allow: pFlags.VIEW_CHANNEL,
+            type: 'role',
+          }],
+        });
+      });
+      currentCollector = game.groupChannel.createMessageCollector((m) => {
+        if (m.author.id != maker.id) {
+          if (m.content.toLowerCase().startsWith('uno leave')) {
+            game.removePlayer(m.author.id);
+          }
+          return false;
+        }
+        if (m.content.toLowerCase().startsWith('uno')) {
+          let cmd = m.content.toLowerCase().split(' ')[1];
+          switch (cmd) {
+            case 'begin':
+            case 'start':
+              startGame();
+              return true;
+            case 'end':
+            case 'abort':
+            case 'stop':
+              game.end();
+              return true;
+            case 'players':
+              listPlayers();
+              return false;
+            case 'kick':
+              m.mentions.members.forEach((el) => {
+                game.removePlayer(el);
+              });
+              listPlayers();
+              return false;
+            case 'leave':
+              self.common.reply(
+                  m, 'As the game creator you cannot leave the game.\nIf' +
+                      ' you wish to end the game, use `uno end`.');
+              return false;
+          }
+          return false;
+        }
+      }, {max: 1});
+      currentCollector.on('end', () => {
+        currentCollector = null;
+      });
+    }
+
+    /**
+     * Send the list of current players in this game to the group channel.
+     */
+    function listPlayers() {
+      let embed = new self.Discord.MessageEmbed();
+      embed.setTitle('Current Players');
+      embed.setDescription(players.map((p) => p.name).join(', '));
+      game.groupChannel.send(embed);
+    }
+
+    /**
+     * Deal cards to all players, and start the game.
+     *
+     * @private
+     */
+    function startGame() {
+      const faces = Object.entries(self.CardFace);
+      const colors = Object.entries(self.Color);
+
+      game.catChannel.overwritePermissions({
+        permissionOverwrites: [{
+          id: maker.guild.defaultRole,
+          deny: pFlags.VIEW_CHANNEL,
+          type: 'role',
+          reason: 'The UNO game has started.',
+        }],
+      });
+
+      for (let i = 0; i < players.length; i++) {
+        players[i].hand = [];
+        for (let j = 0; j < 7; j++) {
+          players[i].hand.push(
+              discarded.splice(
+                  Math.floor(Math.random() * discarded.length), 1)[0]);
+        }
+        players[i].channel.send(
+            '`Your current hand:`\n' +
+            players[i]
+                .hand
+                .map((card) => {
+                  return colors.find((el) => {
+                    return el[1] & card.color;
+                  })[0] +
+                      ' ' + faces.find((el) => {
+                    return el[1] & card.face;
+                  })[0];
+                })
+                .join('\n'));
+      }
+
+      game.groupChannel.send('Cards have been dealt.');
+
+      game.started = true;
+
+      currentCollector = game.groupChannel.createMessageCollector((m) => {
+        if (m.author.id == maker.id &&
+            m.content.toLowerCase().startsWith('uno')) {
+          switch (m.content.toLowerCase().split(' ')[1]) {
+            case 'end':
+              game.end();
+              return true;
+            case 'kick':
+              m.mentions.members.forEach((el) => {
+                game.removePlayer(el);
+              });
+              listPlayers();
+              return false;
+          }
+        }
+        if (m.author.id != player[game.turn].id) return false;
+        if (m.content.toLowerCase().startsWith('uno')) {
+          let cmd = m.content.toLowerCase().split(' ')[1];
+          switch (cmd) {
+            case 'play':
+              return playCard(m.content.split(' ').slice(2).join(' '));
+            case 'leave':
+              game.removePlayer(m.author.id);
+              return false;
+          }
+          return false;
+        } else if (m.content.toLowerCase().startsWith('play')) {
+          return playCard(m.content.split(' ').slice(1).join(' '));
+        }
+      }, {max: 1});
+      currentCollector.on('end', () => {
+        currentCollector = null;
+      });
+    }
+
+    /**
+     * Sends the game help to the group channel.
+     *
+     * @private
+     * @return {Promise.<Discord~Message>}
+     */
+    function sendHelp() {
+      let embed = new self.Discord.MessageEmbed();
+      embed.setTitle('Welcome to UNO!');
+      embed.setAuthor(maker.user.tag);
+      embed.setDescription(
+          'Just type `UNO!` into this channel to call uno.\nTo play a card, ' +
+          'just type `play red 4` or `play y2` or `play draw 4` or something' +
+          ' like that.');
+      embed.addField(
+          'Current Rules',
+          'Original rules (non-point based) as described here: ' +
+              'https://www.unorules.com/');
+      embed.addField(
+          'Player Commands',
+          'If you do not wish to be in this game anymore, just type ' +
+              '`uno leave` in this channel, and you will be removed.');
+      if (!game.started) {
+        embed.addField(
+            'Lobby Settings',
+            'The creator of this game can use the following commands in this ' +
+                'channel.\n\nUse `invite @SpikeyRobot#0971` to add new people' +
+                ' to this game.\nType `kick @SpikeyRobot#0971` to remove them' +
+                ' from the game (Note: don\'t use the command prefix).\nType ' +
+                '`uno start` to start the game once you\'re ready!\n`uno end`' +
+                ' to end this game at any time.');
+      } else {
+        embed.addField(
+            'Lobby Settings',
+            'The creator of this game can use the following commands in this ' +
+                'channel.\n\n`uno end` to end this game at any time (this ' +
+                'deletes all Uno text channels).\n`kick @SpikeyRobot#0971` to' +
+                ' kick players (Careful! They cannot be added back!).');
+      }
+      return game.groupChannel.send(embed);
+    }
+
+    /**
+     * Called after a player's turn, to trigger the next player's turn.
+     *
+     * @private
+     */
+    function nextTurn() {
+      game.turn += game.direction;
+      if (game.turn < 0) game.turn = players.length - 2;
+      if (game.turn > players.length - 2) game.turn = 0;
+
+      game.groupChannel.send(
+          '`Next turn.` <@' + players[game.turn].id + '>\'s turn!');
+    }
+
+    /**
+     * Play a card for the current player.
+     *
+     * @private
+     * @param {string} text User inputted text to parse into a card to play.
+     * @return {boolean} True if the game has ended. False if the game should
+     * continue.
+     */
+    function playCard(text) {
+      if (!text || !text.trim()) {
+        game.groupChannel.send(
+            '`Please specify a card, that you have, to play.`');
+        return false;
+      }
+    }
 
     /**
      * Ends this game and deletes all created channels.
@@ -327,6 +586,7 @@ function Uno() {
      * @public
      */
     this.end = function() {
+      if (currentCollector) currentCollector.stop('Game has ended');
       if (game.groupChannel) {
         game.groupChannel.delete('The UNO game has ended.');
       }
@@ -353,7 +613,34 @@ function Uno() {
         memberList.push(p);
         return;
       }
+      if (p.bot) {
+        game.groupChannel.send(
+            p.user.tag +
+            ' could not be added to the game (Bots are not supported yet).');
+        return;
+      }
       players.push(new self.Player(p, game));
+    };
+
+    /**
+     * Remove the user with the given ID from the game.
+     * @public
+     *
+     * @param {string|number|Discord~GuildMember|Uno.Player} p The ID of the
+     * user to remove.
+     */
+    this.removePlayer = function(p) {
+      if (typeof p === 'object') p = p.id;
+      if (!p) return;
+      if (!players || !players.length || p.id == maker.id) return;
+
+      let index = players.findIndex((player) => player.id == p);
+      if (index > -1) {
+        players[index].remove();
+        if (game.turn == index) nextTurn();
+        game.discarded = game.discarded.concat(players[index].hand.splice(0));
+        players.splice(index, 1);
+      }
     };
   };
 
@@ -399,7 +686,27 @@ function Uno() {
       reason: 'An UNO game was started.',
     });
 
+    /**
+     * The Discord ID of this player.
+     * @public
+     * @readonly
+     * @type {string}
+     */
     this.id = member.id;
+    /**
+     * The name of this player.
+     * @public
+     * @readonly
+     * @type {string}
+     */
+    this.name = member.nickname || member.user.username;
+    /**
+     * The channel for this player's private messages for the game. Null until
+     * the channel is created.
+     * @public
+     * @readonly
+     * @type {?Discord~TextChannel}
+     */
     this.channel = null;
     member.guild.channels
         .create(
@@ -425,7 +732,23 @@ function Uno() {
                 'Failed to create text channel for ' + member.user.tag);
           }
         });
+    /**
+     * The current cards that this player has in their hand.
+     * @public
+     * @type {Uno.Card[]}
+     */
     this.hand = [];
+
+    /**
+     * Remove this player from a game. Deletes the player's text channel.
+     *
+     * @public
+     */
+    this.remove = function() {
+      if (player.channel) {
+        player.channel.delete('Player was removed from the UNO game.');
+      }
+    };
   };
 
   /**
@@ -436,64 +759,64 @@ function Uno() {
   this.getHand = function() {
     let c = self.Color;
     let f = self.CardFace;
-    /* eslint-disable no-multi-line */
+    /* eslint-disable no-multi-spaces */
     return [
-      new self.Card(f.ZERO, c.RED), new self.Card(f.ZERO, c.GREEN),
-      new self.Card(f.ZERO, c.YELLOW), new self.Card(f.ZERO, c.BLUE),
-      new self.Card(f.ONE, c.RED), new self.Card(f.ONE, c.RED),
-      new self.Card(f.ONE, c.GREEN), new self.Card(f.ONE, c.GREEN),
-      new self.Card(f.ONE, c.YELLOW), new self.Card(f.ONE, c.YELLOW),
-      new self.Card(f.ONE, c.BLUE), new self.Card(f.ONE, c.BLUE),
-      new self.Card(f.TWO, c.RED), new self.Card(f.TWO, c.RED),
-      new self.Card(f.TWO, c.GREEN), new self.Card(f.TWO, c.GREEN),
-      new self.Card(f.TWO, c.YELLOW), new self.Card(f.TWO, c.YELLOW),
-      new self.Card(f.TWO, c.BLUE), new self.Card(f.TWO, c.BLUE),
-      new self.Card(f.THREE, c.RED), new self.Card(f.THREE, c.RED),
-      new self.Card(f.THREE, c.GREEN), new self.Card(f.THREE, c.GREEN),
-      new self.Card(f.THREE, c.YELLOW), new self.Card(f.THREE, c.YELLOW),
-      new self.Card(f.THREE, c.BLUE), new self.Card(f.THREE, c.BLUE),
-      new self.Card(f.FOUR, c.RED), new self.Card(f.FOUR, c.RED),
-      new self.Card(f.FOUR, c.GREEN), new self.Card(f.FOUR, c.GREEN),
-      new self.Card(f.FOUR, c.YELLOW), new self.Card(f.FOUR, c.YELLOW),
-      new self.Card(f.FOUR, c.BLUE), new self.Card(f.FOUR, c.BLUE),
-      new self.Card(f.FIVE, c.RED), new self.Card(f.FIVE, c.RED),
-      new self.Card(f.FIVE, c.GREEN), new self.Card(f.FIVE, c.GREEN),
-      new self.Card(f.FIVE, c.YELLOW), new self.Card(f.FIVE, c.YELLOW),
-      new self.Card(f.FIVE, c.BLUE), new self.Card(f.FIVE, c.BLUE),
-      new self.Card(f.SIX, c.RED), new self.Card(f.SIX, c.RED),
-      new self.Card(f.SIX, c.GREEN), new self.Card(f.SIX, c.GREEN),
-      new self.Card(f.SIX, c.YELLOW), new self.Card(f.SIX, c.YELLOW),
-      new self.Card(f.SIX, c.BLUE), new self.Card(f.SIX, c.BLUE),
-      new self.Card(f.SEVEN, c.RED), new self.Card(f.SEVEN, c.RED),
-      new self.Card(f.SEVEN, c.GREEN), new self.Card(f.SEVEN, c.GREEN),
-      new self.Card(f.SEVEN, c.YELLOW), new self.Card(f.SEVEN, c.YELLOW),
-      new self.Card(f.SEVEN, c.BLUE), new self.Card(f.SEVEN, c.BLUE),
-      new self.Card(f.EIGHT, c.RED), new self.Card(f.EIGHT, c.RED),
-      new self.Card(f.EIGHT, c.GREEN), new self.Card(f.EIGHT, c.GREEN),
-      new self.Card(f.EIGHT, c.YELLOW), new self.Card(f.EIGHT, c.YELLOW),
-      new self.Card(f.EIGHT, c.BLUE), new self.Card(f.EIGHT, c.BLUE),
-      new self.Card(f.NINE, c.RED), new self.Card(f.NINE, c.RED),
-      new self.Card(f.NINE, c.GREEN), new self.Card(f.NINE, c.GREEN),
-      new self.Card(f.NINE, c.YELLOW), new self.Card(f.NINE, c.YELLOW),
-      new self.Card(f.NINE, c.BLUE), new self.Card(f.NINE, c.BLUE),
-      new self.Card(f.DRAW_TWO, c.RED), new self.Card(f.DRAW_TWO, c.RED),
-      new self.Card(f.DRAW_TWO, c.GREEN), new self.Card(f.DRAW_TWO, c.GREEN),
+      new self.Card(f.ZERO, c.RED),        new self.Card(f.ZERO, c.GREEN),
+      new self.Card(f.ZERO, c.YELLOW),     new self.Card(f.ZERO, c.BLUE),
+      new self.Card(f.ONE, c.RED),         new self.Card(f.ONE, c.RED),
+      new self.Card(f.ONE, c.GREEN),       new self.Card(f.ONE, c.GREEN),
+      new self.Card(f.ONE, c.YELLOW),      new self.Card(f.ONE, c.YELLOW),
+      new self.Card(f.ONE, c.BLUE),        new self.Card(f.ONE, c.BLUE),
+      new self.Card(f.TWO, c.RED),         new self.Card(f.TWO, c.RED),
+      new self.Card(f.TWO, c.GREEN),       new self.Card(f.TWO, c.GREEN),
+      new self.Card(f.TWO, c.YELLOW),      new self.Card(f.TWO, c.YELLOW),
+      new self.Card(f.TWO, c.BLUE),        new self.Card(f.TWO, c.BLUE),
+      new self.Card(f.THREE, c.RED),       new self.Card(f.THREE, c.RED),
+      new self.Card(f.THREE, c.GREEN),     new self.Card(f.THREE, c.GREEN),
+      new self.Card(f.THREE, c.YELLOW),    new self.Card(f.THREE, c.YELLOW),
+      new self.Card(f.THREE, c.BLUE),      new self.Card(f.THREE, c.BLUE),
+      new self.Card(f.FOUR, c.RED),        new self.Card(f.FOUR, c.RED),
+      new self.Card(f.FOUR, c.GREEN),      new self.Card(f.FOUR, c.GREEN),
+      new self.Card(f.FOUR, c.YELLOW),     new self.Card(f.FOUR, c.YELLOW),
+      new self.Card(f.FOUR, c.BLUE),       new self.Card(f.FOUR, c.BLUE),
+      new self.Card(f.FIVE, c.RED),        new self.Card(f.FIVE, c.RED),
+      new self.Card(f.FIVE, c.GREEN),      new self.Card(f.FIVE, c.GREEN),
+      new self.Card(f.FIVE, c.YELLOW),     new self.Card(f.FIVE, c.YELLOW),
+      new self.Card(f.FIVE, c.BLUE),       new self.Card(f.FIVE, c.BLUE),
+      new self.Card(f.SIX, c.RED),         new self.Card(f.SIX, c.RED),
+      new self.Card(f.SIX, c.GREEN),       new self.Card(f.SIX, c.GREEN),
+      new self.Card(f.SIX, c.YELLOW),      new self.Card(f.SIX, c.YELLOW),
+      new self.Card(f.SIX, c.BLUE),        new self.Card(f.SIX, c.BLUE),
+      new self.Card(f.SEVEN, c.RED),       new self.Card(f.SEVEN, c.RED),
+      new self.Card(f.SEVEN, c.GREEN),     new self.Card(f.SEVEN, c.GREEN),
+      new self.Card(f.SEVEN, c.YELLOW),    new self.Card(f.SEVEN, c.YELLOW),
+      new self.Card(f.SEVEN, c.BLUE),      new self.Card(f.SEVEN, c.BLUE),
+      new self.Card(f.EIGHT, c.RED),       new self.Card(f.EIGHT, c.RED),
+      new self.Card(f.EIGHT, c.GREEN),     new self.Card(f.EIGHT, c.GREEN),
+      new self.Card(f.EIGHT, c.YELLOW),    new self.Card(f.EIGHT, c.YELLOW),
+      new self.Card(f.EIGHT, c.BLUE),      new self.Card(f.EIGHT, c.BLUE),
+      new self.Card(f.NINE, c.RED),        new self.Card(f.NINE, c.RED),
+      new self.Card(f.NINE, c.GREEN),      new self.Card(f.NINE, c.GREEN),
+      new self.Card(f.NINE, c.YELLOW),     new self.Card(f.NINE, c.YELLOW),
+      new self.Card(f.NINE, c.BLUE),       new self.Card(f.NINE, c.BLUE),
+      new self.Card(f.DRAW_TWO, c.RED),    new self.Card(f.DRAW_TWO, c.RED),
+      new self.Card(f.DRAW_TWO, c.GREEN),  new self.Card(f.DRAW_TWO, c.GREEN),
       new self.Card(f.DRAW_TWO, c.YELLOW), new self.Card(f.DRAW_TWO, c.YELLOW),
-      new self.Card(f.DRAW_TWO, c.BLUE), new self.Card(f.DRAW_TWO, c.BLUE),
-      new self.Card(f.SKIP, c.RED), new self.Card(f.SKIP, c.RED),
-      new self.Card(f.SKIP, c.GREEN), new self.Card(f.SKIP, c.GREEN),
-      new self.Card(f.SKIP, c.YELLOW), new self.Card(f.SKIP, c.YELLOW),
-      new self.Card(f.SKIP, c.BLUE), new self.Card(f.SKIP, c.BLUE),
-      new self.Card(f.REVERSE, c.RED), new self.Card(f.REVERSE, c.RED),
-      new self.Card(f.REVERSE, c.GREEN), new self.Card(f.REVERSE, c.GREEN),
-      new self.Card(f.REVERSE, c.YELLOW), new self.Card(f.REVERSE, c.YELLOW),
-      new self.Card(f.REVERSE, c.BLUE), new self.Card(f.REVERSE, c.BLUE),
-      new self.Card(f.WILD, c.NONE), new self.Card(f.WILD, c.NONE),
-      new self.Card(f.WILD, c.NONE), new self.Card(f.WILD, c.NONE),
-      new self.Card(f.DRAW_FOUR, c.NONE), new self.Card(f.DRAW_FOUR, c.NONE),
-      new self.Card(f.DRAW_FOUR, c.NONE), new self.Card(f.DRAW_FOUR, c.NONE),
+      new self.Card(f.DRAW_TWO, c.BLUE),   new self.Card(f.DRAW_TWO, c.BLUE),
+      new self.Card(f.SKIP, c.RED),        new self.Card(f.SKIP, c.RED),
+      new self.Card(f.SKIP, c.GREEN),      new self.Card(f.SKIP, c.GREEN),
+      new self.Card(f.SKIP, c.YELLOW),     new self.Card(f.SKIP, c.YELLOW),
+      new self.Card(f.SKIP, c.BLUE),       new self.Card(f.SKIP, c.BLUE),
+      new self.Card(f.REVERSE, c.RED),     new self.Card(f.REVERSE, c.RED),
+      new self.Card(f.REVERSE, c.GREEN),   new self.Card(f.REVERSE, c.GREEN),
+      new self.Card(f.REVERSE, c.YELLOW),  new self.Card(f.REVERSE, c.YELLOW),
+      new self.Card(f.REVERSE, c.BLUE),    new self.Card(f.REVERSE, c.BLUE),
+      new self.Card(f.WILD, c.NONE),       new self.Card(f.WILD, c.NONE),
+      new self.Card(f.WILD, c.NONE),       new self.Card(f.WILD, c.NONE),
+      new self.Card(f.DRAW_FOUR, c.NONE),  new self.Card(f.DRAW_FOUR, c.NONE),
+      new self.Card(f.DRAW_FOUR, c.NONE),  new self.Card(f.DRAW_FOUR, c.NONE),
     ];
-    /* eslint-enable no-multi-line */
+    /* eslint-enable no-multi-spaces */
   };
 }
 

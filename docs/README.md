@@ -11031,11 +11031,26 @@ Manages an Uno game.
                 * [.catChannel](#Uno+Game+catChannel) : <code>Discord~CategoryChannel</code>
                 * [.groupChannel](#Uno+Game+groupChannel) : <code>Discord~TextChannel</code>
                 * [.started](#Uno+Game+started) : <code>boolean</code>
+                * [.turn](#Uno+Game+turn) : <code>number</code>
+                * [.direction](#Uno+Game+direction) : <code>number</code>
                 * [.end()](#Uno+Game+end)
                 * [.addPlayer(p)](#Uno+Game+addPlayer)
+                * [.removePlayer(p)](#Uno+Game+removePlayer)
             * _inner_
                 * [~members](#Uno+Game..members) : <code>Object.&lt;Discord~GuildMember&gt;</code> ℗
                 * [~players](#Uno+Game..players) : <code>Array.&lt;Uno.Player&gt;</code> ℗
+                * [~discarded](#Uno+Game..discarded) : <code>Array.&lt;Uno.Card&gt;</code> ℗
+                * [~currentCollector](#Uno+Game..currentCollector) ℗
+                * [~finishSetup()](#Uno+Game..finishSetup) ℗
+                * [~listPlayers()](#Uno+Game..listPlayers)
+                * [~startGame()](#Uno+Game..startGame) ℗
+                * [~sendHelp()](#Uno+Game..sendHelp) ⇒ <code>Promise.&lt;Discord~Message&gt;</code> ℗
+                * [~nextTurn()](#Uno+Game..nextTurn) ℗
+                * [~playCard(text)](#Uno+Game..playCard) ⇒ <code>boolean</code> ℗
+        * [.id](#Uno+id) : <code>string</code>
+        * [.name](#Uno+name) : <code>string</code>
+        * [.channel](#Uno+channel) : <code>Discord~TextChannel</code>
+        * [.hand](#Uno+hand) : <code>Array.&lt;Uno.Card&gt;</code>
         * [.helpMessage](#SubModule+helpMessage) : <code>string</code> \| <code>Discord~MessageEmbed</code>
         * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
         * [.Discord](#SubModule+Discord) : <code>Discord</code>
@@ -11050,6 +11065,7 @@ Manages an Uno game.
         * [.commit](#SubModule+commit) : <code>string</code>
         * [.loadTime](#SubModule+loadTime) : <code>number</code>
         * [.Player(member, parent)](#Uno+Player)
+        * [.remove()](#Uno+remove)
         * [.getHand()](#Uno+getHand) ⇒ <code>Array.&lt;Uno.Card&gt;</code>
         * [.initialize()](#SubModule+initialize)
         * [.begin(Discord, client, command, common, bot)](#SubModule+begin)
@@ -11066,7 +11082,7 @@ Manages an Uno game.
         * [~pFlags](#Uno..pFlags) ℗
         * [~games](#Uno..games) : <code>Object.&lt;Object.&lt;Uno.Game&gt;&gt;</code> ℗
         * [~commandUno(msg)](#Uno..commandUno) : [<code>commandHandler</code>](#commandHandler) ℗
-        * [~commandEnd(msg)](#Uno..commandEnd) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~commandEndAll(msg)](#Uno..commandEndAll) : [<code>commandHandler</code>](#commandHandler) ℗
 
 <a name="Uno+Card"></a>
 
@@ -11119,11 +11135,22 @@ The color of this card.
         * [.catChannel](#Uno+Game+catChannel) : <code>Discord~CategoryChannel</code>
         * [.groupChannel](#Uno+Game+groupChannel) : <code>Discord~TextChannel</code>
         * [.started](#Uno+Game+started) : <code>boolean</code>
+        * [.turn](#Uno+Game+turn) : <code>number</code>
+        * [.direction](#Uno+Game+direction) : <code>number</code>
         * [.end()](#Uno+Game+end)
         * [.addPlayer(p)](#Uno+Game+addPlayer)
+        * [.removePlayer(p)](#Uno+Game+removePlayer)
     * _inner_
         * [~members](#Uno+Game..members) : <code>Object.&lt;Discord~GuildMember&gt;</code> ℗
         * [~players](#Uno+Game..players) : <code>Array.&lt;Uno.Player&gt;</code> ℗
+        * [~discarded](#Uno+Game..discarded) : <code>Array.&lt;Uno.Card&gt;</code> ℗
+        * [~currentCollector](#Uno+Game..currentCollector) ℗
+        * [~finishSetup()](#Uno+Game..finishSetup) ℗
+        * [~listPlayers()](#Uno+Game..listPlayers)
+        * [~startGame()](#Uno+Game..startGame) ℗
+        * [~sendHelp()](#Uno+Game..sendHelp) ⇒ <code>Promise.&lt;Discord~Message&gt;</code> ℗
+        * [~nextTurn()](#Uno+Game..nextTurn) ℗
+        * [~playCard(text)](#Uno+Game..playCard) ⇒ <code>boolean</code> ℗
 
 <a name="new_Uno+Game_new"></a>
 
@@ -11169,6 +11196,24 @@ Has this game been started.
 **Default**: <code>false</code>  
 **Access**: public  
 **Read only**: true  
+<a name="Uno+Game+turn"></a>
+
+#### game.turn : <code>number</code>
+The current index of the player whose turn it is.
+
+**Kind**: instance property of [<code>Game</code>](#Uno+Game)  
+**Default**: <code>0</code>  
+**Access**: public  
+**Read only**: true  
+<a name="Uno+Game+direction"></a>
+
+#### game.direction : <code>number</code>
+The current direction of play. Either 1 or -1.
+
+**Kind**: instance property of [<code>Game</code>](#Uno+Game)  
+**Default**: <code>1</code>  
+**Access**: public  
+**Read only**: true  
 <a name="Uno+Game+end"></a>
 
 #### game.end()
@@ -11188,6 +11233,18 @@ Add the given guild member to the game.
 | --- | --- | --- |
 | p | <code>Discord~GuildMember</code> | The member to add to the game. |
 
+<a name="Uno+Game+removePlayer"></a>
+
+#### game.removePlayer(p)
+Remove the user with the given ID from the game.
+
+**Kind**: instance method of [<code>Game</code>](#Uno+Game)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| p | <code>string</code> \| <code>number</code> \| <code>Discord~GuildMember</code> \| <code>Uno.Player</code> | The ID of the user to remove. |
+
 <a name="Uno+Game..members"></a>
 
 #### Game~members : <code>Object.&lt;Discord~GuildMember&gt;</code> ℗
@@ -11202,6 +11259,104 @@ The array of all player in the game in the order of their turn.
 
 **Kind**: inner property of [<code>Game</code>](#Uno+Game)  
 **Access**: private  
+<a name="Uno+Game..discarded"></a>
+
+#### Game~discarded : <code>Array.&lt;Uno.Card&gt;</code> ℗
+All cards currently not in a player's hand.
+
+**Kind**: inner property of [<code>Game</code>](#Uno+Game)  
+**Access**: private  
+<a name="Uno+Game..currentCollector"></a>
+
+#### Game~currentCollector ℗
+The current Discord~MessageCollector that is listening to messages in the
+groupChannel.
+
+**Kind**: inner property of [<code>Game</code>](#Uno+Game)  
+**Default**: <code>type {?Discord~MessageCollector}</code>  
+**Access**: private  
+<a name="Uno+Game..finishSetup"></a>
+
+#### Game~finishSetup() ℗
+Begins listening for messages in the groupChannel that relate to the
+setup of the game, and sends a message to the group channel with game
+instructions.
+
+**Kind**: inner method of [<code>Game</code>](#Uno+Game)  
+**Access**: private  
+<a name="Uno+Game..listPlayers"></a>
+
+#### Game~listPlayers()
+Send the list of current players in this game to the group channel.
+
+**Kind**: inner method of [<code>Game</code>](#Uno+Game)  
+<a name="Uno+Game..startGame"></a>
+
+#### Game~startGame() ℗
+Deal cards to all players, and start the game.
+
+**Kind**: inner method of [<code>Game</code>](#Uno+Game)  
+**Access**: private  
+<a name="Uno+Game..sendHelp"></a>
+
+#### Game~sendHelp() ⇒ <code>Promise.&lt;Discord~Message&gt;</code> ℗
+Sends the game help to the group channel.
+
+**Kind**: inner method of [<code>Game</code>](#Uno+Game)  
+**Access**: private  
+<a name="Uno+Game..nextTurn"></a>
+
+#### Game~nextTurn() ℗
+Called after a player's turn, to trigger the next player's turn.
+
+**Kind**: inner method of [<code>Game</code>](#Uno+Game)  
+**Access**: private  
+<a name="Uno+Game..playCard"></a>
+
+#### Game~playCard(text) ⇒ <code>boolean</code> ℗
+Play a card for the current player.
+
+**Kind**: inner method of [<code>Game</code>](#Uno+Game)  
+**Returns**: <code>boolean</code> - True if the game has ended. False if the game should
+continue.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| text | <code>string</code> | User inputted text to parse into a card to play. |
+
+<a name="Uno+id"></a>
+
+### uno.id : <code>string</code>
+The Discord ID of this player.
+
+**Kind**: instance property of [<code>Uno</code>](#Uno)  
+**Access**: public  
+**Read only**: true  
+<a name="Uno+name"></a>
+
+### uno.name : <code>string</code>
+The name of this player.
+
+**Kind**: instance property of [<code>Uno</code>](#Uno)  
+**Access**: public  
+**Read only**: true  
+<a name="Uno+channel"></a>
+
+### uno.channel : <code>Discord~TextChannel</code>
+The channel for this player's private messages for the game. Null until
+the channel is created.
+
+**Kind**: instance property of [<code>Uno</code>](#Uno)  
+**Access**: public  
+**Read only**: true  
+<a name="Uno+hand"></a>
+
+### uno.hand : <code>Array.&lt;Uno.Card&gt;</code>
+The current cards that this player has in their hand.
+
+**Kind**: instance property of [<code>Uno</code>](#Uno)  
+**Access**: public  
 <a name="SubModule+helpMessage"></a>
 
 ### uno.helpMessage : <code>string</code> \| <code>Discord~MessageEmbed</code>
@@ -11347,6 +11502,13 @@ A single player in the game.
 | member | <code>Discord~GuildMember</code> | The guild member this is based off of. |
 | parent | <code>Uno.Game</code> | The parent game this player will be in. |
 
+<a name="Uno+remove"></a>
+
+### uno.remove()
+Remove this player from a game. Deletes the player's text channel.
+
+**Kind**: instance method of [<code>Uno</code>](#Uno)  
+**Access**: public  
 <a name="Uno+getHand"></a>
 
 ### uno.getHand() ⇒ <code>Array.&lt;Uno.Card&gt;</code>
@@ -11500,10 +11662,10 @@ someone to play.
 | --- | --- | --- |
 | msg | <code>Discord~Message</code> | Message that triggered command. |
 
-<a name="Uno..commandEnd"></a>
+<a name="Uno..commandEndAll"></a>
 
-### Uno~commandEnd(msg) : [<code>commandHandler</code>](#commandHandler) ℗
-Ends an Uno game.
+### Uno~commandEndAll(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Ends all Uno games.
 
 **Kind**: inner method of [<code>Uno</code>](#Uno)  
 **Access**: private  
