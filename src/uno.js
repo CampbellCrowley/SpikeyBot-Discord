@@ -278,22 +278,58 @@ function Uno() {
     /**
      * The current index of the player whose turn it is.
      *
-     * @public
+     * @private
      * @default
-     * @readonly
      * @type {number}
      */
-    this.turn = 0;
+    let turn = -1;
+
+    /**
+     * If we need to wait for the player to choose a color for a wild card.
+     *
+     * @private
+     * @default
+     * @type {boolean}
+     */
+    let waitingForColor = false;
+
+    /**
+     * The current number of cards a player will need to draw if they cannot
+     * stack another draw card.
+     *
+     * @private
+     * @type {number}
+     */
+    let drawCount = 0;
+
+    /**
+     * The card played by the previous player in the turn order. Will be null
+     * after a player has been skipped, since they did not play a card.
+     * @see {@link Uno.Game~topCard}
+     *
+     * @private
+     * @type {?Uno.Card}
+     */
+    let previousCard = null;
+
+    /**
+     * The current card on the top of the discard pile that will need to be
+     * matched by the next player to play a card.
+     * @see {@link Uno.Game~previousCard}
+     *
+     * @private
+     * @type {?Uno.Card}
+     */
+    let topCard = null;
 
     /**
      * The current direction of play. Either 1 or -1.
      *
-     * @public
-     * @readonly
+     * @private
      * @default
      * @type {number}
      */
-    this.direction = 1;
+    let direction = 1;
 
     /**
      * The current Discord~MessageCollector that is listening to messages in the
@@ -389,8 +425,16 @@ function Uno() {
           switch (cmd) {
             case 'begin':
             case 'start':
-              startGame();
-              return true;
+              if (players.length > 1) {
+                startGame();
+                return true;
+              } else {
+                self.common.reply(
+                    m,
+                    'You can\'t play by yourself! `invite` other players to' +
+                        ' join you first.');
+                return false;
+              }
             case 'end':
             case 'abort':
             case 'stop':
@@ -447,31 +491,20 @@ function Uno() {
         }],
       });
 
-      for (let i = 0; i < players.length; i++) {
-        players[i].hand = [];
-        for (let j = 0; j < 7; j++) {
-          players[i].hand.push(
-              discarded.splice(
-                  Math.floor(Math.random() * discarded.length), 1)[0]);
-        }
-        players[i].channel.send(
-            '`Your current hand:`\n' +
-            players[i]
-                .hand
-                .map((card) => {
-                  return colors.find((el) => {
-                    return el[1] & card.color;
-                  })[0] +
-                      ' ' + faces.find((el) => {
-                    return el[1] & card.face;
-                  })[0];
-                })
-                .join('\n'));
+      for (turn = 0; turn < players.length; turn++) {
+        players[turn].hand = [];
+        drawCards(7, true);
       }
 
-      game.groupChannel.send('Cards have been dealt.');
+      game.groupChannel.send('`Cards have been dealt.`');
 
+      turn = -1;
       game.started = true;
+
+      // Play the game's first card.
+      playCard();
+
+      nextTurn();
 
       currentCollector = game.groupChannel.createMessageCollector((m) => {
         if (m.author.id == maker.id &&
@@ -488,7 +521,7 @@ function Uno() {
               return false;
           }
         }
-        if (m.author.id != player[game.turn].id) return false;
+        if (m.author.id != player[turn].id) return false;
         if (m.content.toLowerCase().startsWith('uno')) {
           let cmd = m.content.toLowerCase().split(' ')[1];
           switch (cmd) {
@@ -556,28 +589,106 @@ function Uno() {
      * @private
      */
     function nextTurn() {
-      game.turn += game.direction;
-      if (game.turn < 0) game.turn = players.length - 2;
-      if (game.turn > players.length - 2) game.turn = 0;
+      turn += direction;
+      if (turn < 0) turn = players.length - 1;
+      if (turn > players.length - 1) turn = 0;
 
       game.groupChannel.send(
-          '`Next turn.` <@' + players[game.turn].id + '>\'s turn!');
+          '`Next turn.` <@' + players[turn].id + '>\'s turn!');
+    }
+
+    /**
+     * Cause the current player to draw cards from the discarded pile.
+     *
+     * @private
+     * @param {number} num The number of cards to draw.
+     * @param {boolean} [silent=false] Do not send a message to the group
+     * channel.
+     */
+    function drawCards(num, silent = false) {
+      for (let j = 0; j < 7; j++) {
+        players[turn].hand.push(
+            discarded.splice(
+                Math.floor(Math.random() * discarded.length), 1)[0]);
+      }
+      if (!silent) {
+        game.groupChannel.send(
+            '`' + players[turn].name + ' drew ' + num + ' card' +
+            (num == 1 ? '' : 's') + ' from the deck.');
+      }
+      players[turn].channel.send(
+          '`Your current hand:`\n' +
+          players[turn]
+              .hand
+              .map((card) => {
+                return colors.find((el) => {
+                  return el[1] & card.color;
+                })[0] +
+                    ' ' + faces.find((el) => {
+                  return el[1] & card.face;
+                })[0];
+              })
+              .join('\n'));
     }
 
     /**
      * Play a card for the current player.
      *
      * @private
-     * @param {string} text User inputted text to parse into a card to play.
+     * @param {?string} text User inputted text to parse into a card to play.
      * @return {boolean} True if the game has ended. False if the game should
      * continue.
      */
     function playCard(text) {
-      if (!text || !text.trim()) {
+      let selected = -1;
+      let hand = players[turn].hand;
+      if (turn == -1) {
+        // First card to be played. No restrictions, any card can be played.
+        selected = Math.floor(Math.random() * discarded.length);
+        hand = discarded;
+      } else if (players[turn].bot) {
+        let i = hand.length;
+        do {
+          selected = --i;
+        } while (selected >= 0 && !checkCard(hand[selected]));
+        if (selected < 0) {
+          drawCards(1);
+          nextTurn();
+          return false;
+        }
+      } else if (!text || !text.trim()) {
         game.groupChannel.send(
             '`Please specify a card, that you have, to play.`');
         return false;
+      } else {
+        let parsed = parseToCard(text);
+        if (parsed < 0) {
+          game.groupChannel.send('`I\'m not sure what card that is.`\n' + text);
+          return false;
+        }
+        selected = hand.findIndex((el) => {
+          return parsed.face == el.face && parsed.color == el.color;
+        });
+        if (selected < 0) {
+          game.groupChannel.send(
+              '`You don\'t have that card. Please play a card that you have, ' +
+              'or `draw` to draw a card from the deck.');
+          return false;
+        }
       }
+      return false;
+    }
+
+    /**
+     * Checks if the given card may be played next.
+     * @TODO: Implement this
+     *
+     * @private
+     * @param {Uno.Card} card The card to check.
+     * @return {boolean} True if can be played, false otherwise.
+     */
+    function checkCard(card) {
+      return true;
     }
 
     /**
@@ -613,7 +724,7 @@ function Uno() {
         memberList.push(p);
         return;
       }
-      if (p.bot) {
+      if (p.user.bot) {
         game.groupChannel.send(
             p.user.tag +
             ' could not be added to the game (Bots are not supported yet).');
@@ -637,9 +748,9 @@ function Uno() {
       let index = players.findIndex((player) => player.id == p);
       if (index > -1) {
         players[index].remove();
-        if (game.turn == index) nextTurn();
         game.discarded = game.discarded.concat(players[index].hand.splice(0));
         players.splice(index, 1);
+        if (turn == index) nextTurn();
       }
     };
   };
@@ -700,6 +811,15 @@ function Uno() {
      * @type {string}
      */
     this.name = member.nickname || member.user.username;
+    /**
+     * Whether this player is a bot or not.
+     *
+     * @public
+     * @readonly
+     * @type {boolean}
+     */
+    this.bot = member.user.bot;
+
     /**
      * The channel for this player's private messages for the game. Null until
      * the channel is created.
