@@ -128,6 +128,12 @@ function Uno() {
     GREEN: 3,
     YELLOW: 4,
   };
+  /**
+   * Color as entries.
+   *
+   * @private
+   */
+  const colorPairs = Object.entries(self.Color);
 
   /**
    * Enum for card faces. The LSB is the card number, all following bits are a
@@ -162,6 +168,13 @@ function Uno() {
     EIGHT: 8,
     NINE: 9,
   };
+  /**
+   * CardFace as entries.
+   *
+   * @private
+   */
+  const cardFacePairs = Object.entries(self.CardFace);
+
 
   /**
    * Class that stores the current information about a particular card. All
@@ -177,6 +190,7 @@ function Uno() {
     if (typeof face !== 'number') {
       throw new Error('Given value for card face is not a number!');
     }
+    const card = this;
     /**
      * The face value of this card.
      * @public
@@ -192,6 +206,28 @@ function Uno() {
      * @type {Uno.Color}
      */
     this.color = color;
+
+    /**
+     * The name of this card retreivable with `toString()`. Null until first
+     * `toString()` call.
+     *
+     * @private
+     * @type {?string}
+     */
+    let myName;
+
+    /**
+     * Stringifies the face and colors to their key names.
+     * @public
+     *
+     * @return {string} This card as a string.
+     */
+    this.toString = function() {
+      if (myName) return myName;
+      myName = colorPairs.find((el) => el[1] === card.color)[0] + ' ' +
+          cardFacePairs.find((el) => el[1] === card.face)[0];
+      return myName;
+    };
   };
 
   /**
@@ -479,9 +515,6 @@ function Uno() {
      * @private
      */
     function startGame() {
-      const faces = Object.entries(self.CardFace);
-      const colors = Object.entries(self.Color);
-
       game.catChannel.overwritePermissions({
         permissionOverwrites: [{
           id: maker.guild.defaultRole,
@@ -521,7 +554,7 @@ function Uno() {
               return false;
           }
         }
-        if (m.author.id != player[turn].id) return false;
+        if (turn < 0 || m.author.id != players[turn].id) return false;
         if (m.content.toLowerCase().startsWith('uno')) {
           let cmd = m.content.toLowerCase().split(' ')[1];
           switch (cmd) {
@@ -618,17 +651,7 @@ function Uno() {
       }
       players[turn].channel.send(
           '`Your current hand:`\n' +
-          players[turn]
-              .hand
-              .map((card) => {
-                return colors.find((el) => {
-                  return el[1] & card.color;
-                })[0] +
-                    ' ' + faces.find((el) => {
-                  return el[1] & card.face;
-                })[0];
-              })
-              .join('\n'));
+          players[turn].hand.map((card) => card.toString()).join('\n'));
     }
 
     /**
@@ -641,54 +664,74 @@ function Uno() {
      */
     function playCard(text) {
       let selected = -1;
-      let hand = players[turn].hand;
+      let hand;
       if (turn == -1) {
         // First card to be played. No restrictions, any card can be played.
         selected = Math.floor(Math.random() * discarded.length);
         hand = discarded;
-      } else if (players[turn].bot) {
-        let i = hand.length;
-        do {
-          selected = --i;
-        } while (selected >= 0 && !checkCard(hand[selected]));
-        if (selected < 0) {
-          drawCards(1);
-          nextTurn();
-          return false;
-        }
-      } else if (!text || !text.trim()) {
-        game.groupChannel.send(
-            '`Please specify a card, that you have, to play.`');
-        return false;
       } else {
-        let parsed = parseToCard(text);
-        if (parsed < 0) {
-          game.groupChannel.send('`I\'m not sure what card that is.`\n' + text);
-          return false;
-        }
-        selected = hand.findIndex((el) => {
-          return parsed.face == el.face && parsed.color == el.color;
-        });
-        if (selected < 0) {
+        hand = players[turn].hand;
+        if (players[turn].bot) {
+          let i = hand.length;
+          do {
+            selected = --i;
+          } while (selected >= 0 && !checkCard(hand[selected]));
+          if (selected < 0) {
+            drawCards(1);
+            nextTurn();
+            return false;
+          }
+        } else if (!text || !text.trim()) {
           game.groupChannel.send(
-              '`You don\'t have that card. Please play a card that you have, ' +
-              'or `draw` to draw a card from the deck.');
+              '`Please specify a card, that you have, to play.`');
           return false;
+        } else {
+          let parsed = parseToCard(text);
+          if (parsed < 0) {
+            game.groupChannel.send(
+                '`I\'m not sure what card that is.`\n' + text);
+            return false;
+          }
+          selected = hand.findIndex((el) => {
+            return parsed.face == el.face && parsed.color == el.color;
+          });
+          if (selected < 0) {
+            game.groupChannel.send(
+                '`You don\'t have that card. Please play a card that you have' +
+                ', or draw` to draw a card from the deck.');
+            return false;
+          }
         }
       }
+
+      game.groupChannel.send(hand[selected].toString());
       return false;
     }
 
     /**
+     * Parse a string of text to a playable card.
+     * @private
+     *
+     * @param {string} text The user-input to parse.
+     * @return {?Uno.Card} The matched card, or null if no match.
+     */
+    function parseToCard(text) {
+      return new self.Card(self.CardFace.DRAW_FOUR, self.Color.NONE);
+    }
+
+    /**
      * Checks if the given card may be played next.
-     * @TODO: Implement this
+     * @see {@link Uno.Game~topCard}
      *
      * @private
      * @param {Uno.Card} card The card to check.
+     * @param {Uno.Card} [card2] The card to check against. If not defined, the
+     * current topCard will be used.
      * @return {boolean} True if can be played, false otherwise.
      */
-    function checkCard(card) {
-      return true;
+    function checkCard(card, card2) {
+      card2 = card2 || topCard;
+      return (card.face & card2.face) || (card.color & card2.color);
     }
 
     /**
