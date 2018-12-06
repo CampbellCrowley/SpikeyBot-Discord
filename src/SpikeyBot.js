@@ -607,8 +607,12 @@ function SpikeyBot() {
    * @listens Discord~Client#debug
    */
   function onDebug(info) {
-    if (info.startsWith('[ws] [connection] Heartbeat acknowledged') ||
-        info.startsWith('[ws] [connection] Sending a heartbeat')) {
+    const hbRegex = new RegExp(
+        '^(\\[ws\\] \\[connection\\] Heartbeat acknowledged|' +
+        '\\[connection\\] \\[shard \\d\\] Sending a heartbeat|' +
+        '\\[connection\\] \\[shard \\d\\] Heartbeat acknowledged, latency of|' +
+        '\\[ws\\] \\[connection\\] Sending a heartbeat)');
+    if (info.match(hbRegex)) {
       return;
     }
     common.logDebug('Discord Debug: ' + info);
