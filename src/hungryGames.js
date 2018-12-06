@@ -1384,6 +1384,7 @@ function HungryGames() {
         self.common.reply(
             msg, 'Creating a new game with settings from the last game.');
       }
+      find(id).currentGame.name = msg.guild.name + '\'s Hungry Games';
       find(id).currentGame.ended = false;
       find(id).currentGame.day = {num: -1, state: 0, events: []};
       find(id).currentGame.includedUsers = getAllPlayers(
