@@ -10,7 +10,7 @@
 
 | Command | Description | Aliases |
 | --- | --- | --- |
-| ?hg create | This will create a game with default settings if it doesn't exist already. This is only required the first time, and after resetting all data. | create, c, new |
+| ?hg create | You shouldn't need to use this. But it will force a new game to be created, and update players for a new game. | create, c, new |
 | ?hg options | List options if no name, or change the option if you give a name. | options, option, opt, opts, settings, setting, set |
 | ?hg reset | Delete data about the Games. Don't choose an option for more info. | reset, clear |
 

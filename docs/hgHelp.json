@@ -8,7 +8,7 @@
       "rows": [
         {
           "command": "create",
-          "description": "This will create a game with default settings if it doesn't exist already. This is only required the first time, and after resetting all data.",
+          "description": "You shouldn't need to use this. But it will force a new game to be created, and update players for a new game.",
           "aliases": "create, c, new",
           "validOnlyInGuild": true,
           "examples": [
