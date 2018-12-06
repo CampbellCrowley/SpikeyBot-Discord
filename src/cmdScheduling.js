@@ -15,7 +15,7 @@ require('./subModule.js')(CmdScheduling);  // Extends the SubModule class.
  * @listens Command#scheduled
  */
 function CmdScheduling() {
-  self = this;
+  const self = this;
 
   /** @inheritdoc */
   this.myName = 'CmdScheduling';

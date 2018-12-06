@@ -14,7 +14,7 @@ const basicAuth = 'Basic ' +
  * @augments SubModule
  */
 function WebCommands() {
-  self = this;
+  const self = this;
 
   this.myName = 'Webhooks';
 
@@ -55,7 +55,7 @@ function WebCommands() {
         content += chunk;
       });
       req.on('end', () => {
-        self.debug('Bot start webhool content: ' + content);
+        self.debug('Bot start webhook content: ' + content);
         res.writeHead(204);
         res.end();
       });

@@ -12281,7 +12281,7 @@ Proxy for account authentication.
         * [.command](#SubModule+command) : [<code>Command</code>](#Command)
         * [.common](#SubModule+common) : [<code>Common</code>](#Common)
         * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
-        * *[.myName](#SubModule+myName) : <code>string</code>*
+        * [.myName](#SubModule+myName) : <code>string</code>
         * [.initialized](#SubModule+initialized) : <code>boolean</code>
         * [.commit](#SubModule+commit) : <code>string</code>
         * [.loadTime](#SubModule+loadTime) : <code>number</code>
@@ -12359,11 +12359,11 @@ The parent SpikeyBot instance.
 **Kind**: instance property of [<code>WebProxy</code>](#WebProxy)  
 <a name="SubModule+myName"></a>
 
-### *webProxy.myName : <code>string</code>*
+### webProxy.myName : <code>string</code>
 The name of this submodule. Used for differentiating in the log. Should be
 defined before begin().
 
-**Kind**: instance abstract property of [<code>WebProxy</code>](#WebProxy)  
+**Kind**: instance property of [<code>WebProxy</code>](#WebProxy)  
 **Overrides**: [<code>myName</code>](#SubModule+myName)  
 **Access**: protected  
 <a name="SubModule+initialized"></a>

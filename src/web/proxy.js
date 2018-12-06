@@ -23,6 +23,7 @@ require('../subModule.js')(WebProxy);  // Extends the SubModule class.
 function WebProxy() {
   self = this;
 
+  /** @inheritdoc */
   this.myName = 'Proxy';
 
   /**
