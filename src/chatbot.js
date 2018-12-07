@@ -65,7 +65,7 @@ function ChatBot() {
     msg.prefix = self.bot.getPrefix(msg.guild);
     if (!msg.author.bot && msg.guild &&
         msg.mentions.users.get(self.client.user.id) &&
-        self.command.validate(msg.content.match(/^\S+/)[0], msg)) {
+        !self.command.find(msg.content.match(/^\S+/)[0], msg)) {
       self.log(msg.channel.id + '@' + msg.author.id + ' ' + msg.content);
       msg.text = ' ' +
           msg.content
