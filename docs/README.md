@@ -3038,7 +3038,7 @@ multiple lines for a single user.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| users | <code>string</code> \| <code>Array.&lt;string&gt;</code> \| <code>Array.&lt;Discord~User&gt;</code> | The users to include, or 'everyone' to include all users. |
+| users | <code>string</code> \| <code>Array.&lt;string&gt;</code> \| <code>Array.&lt;Discord~User&gt;</code> | The users to include, 'everyone' to include all users, 'online' to include online users, 'offline', 'idle', or 'dnd' for respective users. |
 | id | <code>string</code> | The guild id to add the users to. |
 
 <a name="HungryGames+setOption"></a>

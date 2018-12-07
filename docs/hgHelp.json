@@ -126,6 +126,26 @@
               "description": "Exclude Everyone",
               "command": "exclude everyone",
               "result": "All users will be removed from the next games."
+            },
+            {
+              "description": "Exclude Online Users",
+              "command": "exclude online",
+              "result": "All users who are currenlty online will be added to the next games (Does not exclude idle or dnd)."
+            },
+            {
+              "description": "Exclude Offline Users",
+              "command": "exclude offline",
+              "result": "All offline users will be removed from the next games."
+            },
+            {
+              "description": "Exclude Idle",
+              "command": "exclude idle",
+              "result": "All users who are currenlty idle will be removed."
+            },
+            {
+              "description": "Exclude Do Not Disturb",
+              "command": "exclude dnd",
+              "result": "All users who are currenlty in DND will be removed."
             }
           ]
         },
@@ -149,6 +169,26 @@
               "description": "Include Everyone",
               "command": "include everyone",
               "result": "All users will be added to the next games."
+            },
+            {
+              "description": "Include Online Users",
+              "command": "include online",
+              "result": "All users who are currenlty online will be added to the next games (Does not include idle or dnd)."
+            },
+            {
+              "description": "Include Offline Users",
+              "command": "include offline",
+              "result": "All offline users will be added to the next games."
+            },
+            {
+              "description": "Include Idle",
+              "command": "include idle",
+              "result": "All users who are currenlty idle will be added."
+            },
+            {
+              "description": "Include Do Not Disturb",
+              "command": "include dnd",
+              "result": "All users who are currenlty in DND will be added."
             }
           ]
         }

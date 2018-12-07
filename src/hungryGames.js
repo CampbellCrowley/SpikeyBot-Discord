@@ -4492,25 +4492,48 @@ function HungryGames() {
     if (!find(id)) {
       createGame(msg, id);
     }
-    const firstWord = msg.text.trim().split(' ')[0];
-    const everyoneWords = ['everyone', '@everyone', 'all'];
-    if (everyoneWords.includes(firstWord)) {
-      const response = self.excludeUsers('everyone', id);
-      if (find(id).currentGame.inProgress) {
-        self.common.reply(
-            msg, 'Everyone will be removed from the next game.', response);
-      } else {
-        self.common.reply(
-            msg, 'Everyone has been removed from the games.', response);
-      }
+    let firstWord = msg.text.trim().split(' ')[0];
+    if (firstWord) firstWord = firstWord.toLowerCase();
+    const specialWords = {
+      everyone: ['everyone', '@everyone', 'all'],
+      online: ['online', 'here'],
+      offline: ['offline'],
+      idle: ['idle', 'away', 'snooze', 'snoozed'],
+      dnd: ['dnd', 'busy'],
+    };
+    let resPrefix = '';
+    let resPostfix = ' have been removed from the games.';
+    let response;
+    if (find(id).currentGame.inProgress) {
+      resPostfix = ' will be removed from the next game.';
+    }
+    if (specialWords.everyone.includes(firstWord)) {
+      response = self.excludeUsers('everyone', id);
+      resPrefix = 'All users';
+    } else if (specialWords.online.includes(firstWord)) {
+      response = self.excludeUsers('online', id);
+      resPrefix = 'All online users';
+    } else if (specialWords.offline.includes(firstWord)) {
+      response = self.excludeUsers('offline', id);
+      resPrefix = 'All offline users';
+    } else if (specialWords.idle.includes(firstWord)) {
+      response = self.excludeUsers('idle', id);
+      resPrefix = 'All idle users';
+    } else if (specialWords.dnd.includes(firstWord)) {
+      response = self.excludeUsers('dnd', id);
+      resPrefix = 'All DND users';
     } else if (msg.mentions.users.size == 0) {
       self.common.reply(
           msg,
           'You must mention people you wish for me to exclude from the next ' +
               'game.');
+      return;
     } else {
       self.common.reply(msg, self.excludeUsers(msg.mentions.users, id));
+      return;
     }
+
+    self.common.reply(msg, resPrefix + resPostfix, response);
   }
 
   /**
@@ -4525,12 +4548,29 @@ function HungryGames() {
    */
   this.excludeUsers = function(users, id) {
     let response = '';
-    if (users === 'everyone') {
-      users = find(id).currentGame.includedUsers.map(function(u) {
-        return u.id;
-      });
-    } else if (typeof users === 'string') {
-      return 'Invalid users';
+    if (!find(id)) {
+      return 'No game';
+    }
+    switch (users) {
+      case 'everyone':
+        users = find(id).includedUsers.slice(0);
+        break;
+      case 'online':
+      case 'offline':
+      case 'idle':
+      case 'dnd':
+        users = find(id)
+            .includedUsers
+            .map((u) => {
+              return self.client.users.get(u);
+            })
+            .filter((u) => {
+              if (!u) return false;
+              return u.presence.status === users;
+            });
+      default:
+        if (typeof users === 'string') return 'Invalid users';
+        break;
     }
     if (!Array.isArray(users)) {
       users = users.array();
@@ -4597,33 +4637,57 @@ function HungryGames() {
     if (!find(id)) {
       createGame(msg, id);
     }
-    const firstWord = msg.text.trim().split(' ')[0];
-    const everyoneWords = ['everyone', '@everyone', 'all'];
-    if (everyoneWords.includes(firstWord)) {
-      const response = self.includeUsers('everyone', id);
-      if (find(id).currentGame.inProgress) {
-        self.common.reply(
-            msg, 'Everyone will be added into the next game.', response);
-      } else {
-        self.common.reply(
-            msg, 'Everyone has been added to the games.', response);
-      }
+    let firstWord = msg.text.trim().split(' ')[0];
+    if (firstWord) firstWord = firstWord.toLowerCase();
+    const specialWords = {
+      everyone: ['everyone', '@everyone', 'all'],
+      online: ['online', 'here'],
+      offline: ['offline'],
+      idle: ['idle', 'away', 'snooze', 'snoozed'],
+      dnd: ['dnd', 'busy'],
+    };
+    let resPrefix = '';
+    let resPostfix = ' have been added to the games.';
+    let response;
+    if (find(id).currentGame.inProgress) {
+      resPostfix = ' will be added into the next game.';
+    }
+    if (specialWords.everyone.includes(firstWord)) {
+      response = self.includeUsers('everyone', id);
+      resPrefix = 'All users';
+    } else if (specialWords.online.includes(firstWord)) {
+      response = self.includeUsers('online', id);
+      resPrefix = 'All online users';
+    } else if (specialWords.offline.includes(firstWord)) {
+      response = self.includeUsers('offline', id);
+      resPrefix = 'All offline users';
+    } else if (specialWords.idle.includes(firstWord)) {
+      response = self.includeUsers('idle', id);
+      resPrefix = 'All idle users';
+    } else if (specialWords.dnd.includes(firstWord)) {
+      response = self.includeUsers('dnd', id);
+      resPrefix = 'All DND users';
     } else if (msg.mentions.users.size == 0) {
       self.common.reply(
           msg,
           'You must mention people you wish for me to include in the next ' +
               'game.');
+      return;
     } else {
       self.common.reply(msg, self.includeUsers(msg.mentions.users, id));
+      return;
     }
+
+    self.common.reply(msg, resPrefix + resPostfix, response);
   }
 
   /**
    * Adds a user back into the next game.
    *
    * @public
-   * @param {string|string[]|Discord~User[]} users The users to include, or
-   * 'everyone' to include all users.
+   * @param {string|string[]|Discord~User[]} users The users to include,
+   * 'everyone' to include all users, 'online' to include online users,
+   * 'offline', 'idle', or 'dnd' for respective users.
    * @param {string} id The guild id to add the users to.
    * @return {string} A string with the outcomes of each user. May have
    * multiple lines for a single user.
@@ -4633,10 +4697,26 @@ function HungryGames() {
     if (!find(id)) {
       return 'No game';
     }
-    if (users === 'everyone') {
-      users = find(id).excludedUsers.slice(0);
-    } else if (typeof users === 'string') {
-      return 'Invalid users';
+    switch (users) {
+      case 'everyone':
+        users = find(id).excludedUsers.slice(0);
+        break;
+      case 'online':
+      case 'offline':
+      case 'idle':
+      case 'dnd':
+        users = find(id)
+            .excludedUsers
+            .map((u) => {
+              return self.client.users.get(u);
+            })
+            .filter((u) => {
+              if (!u) return false;
+              return u.presence.status === users;
+            });
+      default:
+        if (typeof users === 'string') return 'Invalid users';
+        break;
     }
     if (!Array.isArray(users)) {
       users = users.array();
