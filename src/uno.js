@@ -132,12 +132,23 @@ function Uno() {
    * Color as entries.
    *
    * @private
+   * @constant
    */
   const colorPairs = Object.entries(self.Color);
 
   /**
-   * Enum for card faces. The LSB is the card number, all following bits are a
-   * bitfield of card properties.
+   * Regular expression search for acceptable colors. Case insensitive and
+   * global flags are set.
+   *
+   * @private
+   * @constant
+   * @type {RegExp}
+   */
+  const colorRegExp = new RegExp(colorPairs.map((el) => el[0]).join('|'), 'ig');
+
+  /**
+   * Enum for card faces. The least significant nibble is the card number, all
+   * following bits are a bitfield of card properties.
    *
    * 0x010: The card is a wild card.
    * 0x020: The card skips the next player's turn.
@@ -146,35 +157,56 @@ function Uno() {
    * cards.
    * 0x100: The next player must draw 4 cards.
    *
+   * EFFECT entries are NOT real card faces, just the bitfield represented with
+   * that effect.
+   *
    * @public
    * @constant
    * @default
    * @enum {number}
    */
   this.CardFace = {
+    SKIP_EFFECT: 0x020,
     SKIP: 0x02A,
+    DRAW_TWO_EFFECT: 0x080,
     DRAW_TWO: 0x0AB,
+    DRAW_2: 0x0AB,
+    REVERSE_EFFECT: 0x040,
     REVERSE: 0x06C,
+    WILD_EFFECT: 0x010,
     WILD: 0x01E,
+    DRAW_FOUR_EFFECT: 0x100,
     DRAW_FOUR: 0x13D,
-    ZERO: 0,
-    ONE: 1,
-    TWO: 2,
-    THREE: 3,
-    FOUR: 4,
-    FIVE: 5,
-    SIX: 6,
-    SEVEN: 7,
-    EIGHT: 8,
-    NINE: 9,
+    DRAW_4: 0x13D,
+    ZERO: 0, 0: 0,
+    ONE: 1, 1: 1,
+    TWO: 2, 2: 2,
+    THREE: 3, 3: 3,
+    FOUR: 4, 4: 4,
+    FIVE: 5, 5: 5,
+    SIX: 6, 6: 6,
+    SEVEN: 7, 7: 7,
+    EIGHT: 8, 8: 8,
+    NINE: 9, 9: 9,
   };
   /**
    * CardFace as entries.
    *
    * @private
    */
-  const cardFacePairs = Object.entries(self.CardFace);
+  const cardFacePairs =
+      Object.entries(self.CardFace).filter((el) => !el[0].endsWith('_EFFECT'));
 
+  /**
+   * Regular expression search for acceptable card faces. Case insensitive and
+   * global flags are set.
+   *
+   * @private
+   * @constant
+   * @type {RegExp}
+   */
+  const cardFaceRegExp = new RegExp(
+      cardFacePairs.map((el) => el[0].replace(/_/g, ' ')).join('|'), 'ig');
 
   /**
    * Class that stores the current information about a particular card. All
@@ -322,12 +354,13 @@ function Uno() {
 
     /**
      * If we need to wait for the player to choose a color for a wild card.
+     * `null` if not waiting, or a reference to the player we are waiting for.
      *
      * @private
      * @default
-     * @type {boolean}
+     * @type {Uno.Player}
      */
-    let waitingForColor = false;
+    let waitingForColor = -1;
 
     /**
      * The current number of cards a player will need to draw if they cannot
@@ -567,6 +600,9 @@ function Uno() {
           return false;
         } else if (m.content.toLowerCase().startsWith('play')) {
           return playCard(m.content.split(' ').slice(1).join(' '));
+        } else if (m.content.toLowerCase().startsWith('draw')) {
+          drawAndSkip();
+          return false;
         }
       }, {max: 1});
       currentCollector.on('end', () => {
@@ -586,12 +622,15 @@ function Uno() {
       embed.setAuthor(maker.user.tag);
       embed.setDescription(
           'Just type `UNO!` into this channel to call uno.\nTo play a card, ' +
-          'just type `play red 4` or `play y2` or `play draw 4` or something' +
-          ' like that.');
+          'just type `play red 4` or `play yellow two` or `play draw 4` or ' +
+          'something like that.');
       embed.addField(
           'Current Rules',
           'Original rules (non-point based) as described here: ' +
-              'https://www.unorules.com/');
+              'https://www.unorules.com/\nWith the following exceptions:\n' +
+              '1) Challenging a plus four card is not in this version,\n' +
+              '2) If you draw a card, you do not get to play it until your ' +
+              'next turn.');
       embed.addField(
           'Player Commands',
           'If you do not wish to be in this game anymore, just type ' +
@@ -622,12 +661,28 @@ function Uno() {
      * @private
      */
     function nextTurn() {
+      players[turn].channel.send(
+          '`Your current hand:`\n' +
+          players[turn].hand.map((card) => card.toString()).join('\n'));
+
       turn += direction;
       if (turn < 0) turn = players.length - 1;
       if (turn > players.length - 1) turn = 0;
-
       game.groupChannel.send(
           '`Next turn.` <@' + players[turn].id + '>\'s turn!');
+    }
+
+    /**
+     * Cause the current player to draw cards from the discarded pile, then skip
+     * their turn and continue to the next player.
+     *
+     * @private
+     * @param {number} [num=1] The number of cards to draw.
+     */
+    function drawAndSkip(num = 1) {
+      drawCards(num);
+      previousCard = null;
+      nextTurn();
     }
 
     /**
@@ -639,19 +694,31 @@ function Uno() {
      * channel.
      */
     function drawCards(num, silent = false) {
+      let drawn = [];
       for (let j = 0; j < 7; j++) {
-        players[turn].hand.push(
+        drawn.push(
             discarded.splice(
                 Math.floor(Math.random() * discarded.length), 1)[0]);
       }
+      players[turn].hand = drawn.concat(players[turn].hand).sort((a, b) => {
+        if (a.face == b.face) {
+          return a.color = b.color;
+        } else {
+          return a.face - b.face;
+        }
+      });
+
       if (!silent) {
         game.groupChannel.send(
             '`' + players[turn].name + ' drew ' + num + ' card' +
             (num == 1 ? '' : 's') + ' from the deck.');
+        players[turn].channel.send(
+            '`You drew:` ' + drawn.map((card) => card.toString()).join(', '));
+      } else {
+        players[turn].channel.send(
+            '`Your current hand:`\n' +
+            players[turn].hand.map((card) => card.toString()).join('\n'));
       }
-      players[turn].channel.send(
-          '`Your current hand:`\n' +
-          players[turn].hand.map((card) => card.toString()).join('\n'));
     }
 
     /**
@@ -677,8 +744,7 @@ function Uno() {
             selected = --i;
           } while (selected >= 0 && !checkCard(hand[selected]));
           if (selected < 0) {
-            drawCards(1);
-            nextTurn();
+            drawAndSkip();
             return false;
           }
         } else if (!text || !text.trim()) {
@@ -687,9 +753,13 @@ function Uno() {
           return false;
         } else {
           let parsed = parseToCard(text);
-          if (parsed < 0) {
+          if (!parsed) {
             game.groupChannel.send(
                 '`I\'m not sure what card that is.`\n' + text);
+            return false;
+          }
+          if (parsed.face != topCard.face || parsed.color !== topCard.color) {
+            game.groupChannel.send('`That\'s not a valid card to play.`');
             return false;
           }
           selected = hand.findIndex((el) => {
@@ -698,10 +768,34 @@ function Uno() {
           if (selected < 0) {
             game.groupChannel.send(
                 '`You don\'t have that card. Please play a card that you have' +
-                ', or draw` to draw a card from the deck.');
+                ', or \'draw\' to draw a card from the deck.');
             return false;
           }
         }
+      }
+
+      let card = hand[selected];
+
+      if (card.face & self.CardFace.REVERSE_EFFECT) {
+        direction *= -1;
+      }
+      if (card.face & self.CardFace.WILD_EFFECT && !card.color) {
+        waitingForColor = players[turn].id;
+      }
+      nextTurn();
+
+      if (card.face & self.CardFace.DRAW_TWO_EFFECT) {
+        drawCards(2);
+        previousCard = null;
+      }
+
+      if (card.face & self.CardFace.DRAW_FOUR_EFFECT) {
+        drawCards(4);
+        previousCard = null;
+      }
+
+      if (card.face & self.CardFace.SKIP_EFFECT) {
+        nextTurn();
       }
 
       game.groupChannel.send(hand[selected].toString());
@@ -716,7 +810,25 @@ function Uno() {
      * @return {?Uno.Card} The matched card, or null if no match.
      */
     function parseToCard(text) {
-      return new self.Card(self.CardFace.DRAW_FOUR, self.Color.NONE);
+      let colorMatch = text.match(colorRegExp);
+      let faceMatch = text.match(cardFaceRegExp);
+
+      if (!faceMatch) return null;
+      if (faceMatch.length != 1) return null;
+      faceMatch[0] = faceMatch[0].replace(/ /g, '_');
+
+      let color = self.Color.NONE;
+      if (colorMatch && colorMatch.length == 1) {
+        color = self.Color[colorMatch[0].toUpperCase()];
+      }
+      let face = self.CardFace[faceMatch[0].toUpperCase()];
+
+      // If not a wild card, and no color was chosen.
+      if (!(face & self.CardFace.WILD_EFFECT) && color == self.Color.NONE) {
+        return null;
+      }
+
+      return new self.Card(face, color);
     }
 
     /**
