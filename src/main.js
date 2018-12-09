@@ -2357,6 +2357,9 @@ function Main() {
       values.uptimes = new Array(res.length);
       values.versions = new Array(res.length);
 
+      let tempActs = {};
+      let tempOffline = {};
+
       for (let i = 0; i < res.length; i++) {
         values.numGuilds += res[i].numGuilds;
         values.shardGuilds[i] = res[i].numGuilds;
@@ -2371,20 +2374,27 @@ function Main() {
         values.versions[i] = res[i].version;
         let actVals = Object.entries(res[i].activities);
         for (let j = 0; j < actVals.length; j++) {
-          if (values.activities[actVals[j][0]]) {
-            values.activities[actVals[j][0]] +=
-                res[i].activities[actVals[j][0]];
+          if (tempActs[actVals[j][0]]) {
+            Object.assign(tempActs[actVals[j][0]], actVals[j][1]);
           } else {
-            values.activities[actVals[j][0]] = res[i].activities[actVals[j][0]];
-          }
-          if (values.activities[actVals[j][0]] > values.largestActivity.count) {
-            values.largestActivity = {
-              name: actVals[j][0],
-              count: values.activities[actVals[j][0]],
-            };
+            tempActs[actVals[j][0]] = actVals[j][1];
           }
         }
+        Object.assign(tempOffline, res[i].usersOffline);
         delays[i] = res[i].deltaString;
+      }
+      values.numUsersOnline = values.numUsers - Object.keys(tempOffline).length;
+      let tmpVals = Object.entries(tempActs);
+      for (let i = 0; i < tmpVals.length; i++) {
+        let count = Object.keys(tmpVals[i][1]).length;
+        values.activities[tmpVals[i][0]] = count;
+
+        if (count > values.largestActivity.count) {
+          values.largestActivity = {
+            name: tmpVals[i][0],
+            count: count,
+          };
+        }
       }
       values.fullDelta = Date.now() - startTime;
       self.debug(
@@ -2413,45 +2423,44 @@ function Main() {
       numUsers: 0,
       numMembers: 0,
       numBots: 0,
-      numUsersOnline: 0,
       numChannels: 0,
+      usersOffline: {},
       uptime: '0 days',
       activities: {},
       version: version + '#' + commit.slice(0, 7),
       shardId: (self.client.shard || {id: 0}).id,
     };
 
-    let iTime = Date.now();
     out.numGuilds = self.client.guilds.size;
     let maxNum = 0;
     let totalNum = 0;
-    out.numLargestGuild = self.client.guilds.forEach((g) => {
+
+    let iTime = Date.now();
+    self.client.guilds.forEach((g) => {
       maxNum = Math.max(g.memberCount, maxNum);
       totalNum += g.memberCount;
+
+      g.presences.forEach((p) => {
+        if (p.status === 'offline') {
+          out.usersOffline[p.userID] = 1;
+          return;
+        }
+        if (!p.activity || p.user.bot) return;
+        let name = p.activity.name;
+        if (!out.activities[name]) out.activities[name] = {};
+        out.activities[name][p.userID] = 1;
+      });
     });
+    let guildDelta = Date.now() - iTime;
     out.numMembers = totalNum;
     out.numLargestGuild = maxNum;
-    const guildDelta = Date.now() - iTime;
-
-    let numOnline = 0;
-    let activities = {};
 
     iTime = Date.now();
     self.client.users.forEach((u) => {
-      if (u.id != self.client.user.id) {
-        if (u.presence.activity && !u.bot) {
-          activities[u.presence.activity.name] =
-              (activities[u.presence.activity.name] || 0) + 1;
-        } else if (u.bot) {
-          out.numBots++;
-        }
-      }
-      if (u.presence.status !== 'offline') numOnline++;
+      if (u.bot) out.numBots++;
     });
     const userDelta = Date.now() - iTime;
 
-    out.activities = activities;
-    out.numUsersOnline = numOnline;
     out.numUsers = self.client.users.size;
     out.numChannels = self.client.channels.size;
 

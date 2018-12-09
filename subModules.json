@@ -49,7 +49,6 @@
     "./web/settings.js"
   ],
   "rembot": [
-    "./hungryGames.js",
     "./main.js",
     "./ticTacToe.js",
     "./connect4.js",
@@ -59,8 +58,8 @@
     "./poll.js",
     "./chatbot.js",
     "./spotify.js",
-    "./cmdScheduling.js",
-    "./web/settings.js"
+    "./web/settings.js",
+    "./hungryGames.js"
   ],
   "FALLBACK": []
 }
