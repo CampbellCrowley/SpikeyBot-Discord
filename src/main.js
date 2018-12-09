@@ -1957,9 +1957,13 @@ function Main() {
    * @listens Command#ping
    */
   function commandPing(msg) {
-    self.common.reply(
-        msg, 'My ping is ' + self.client.ping + 'ms',
-        '`' + JSON.stringify(self.client.pings) + '`');
+    if (self.client.ping) {
+      self.common.reply(
+          msg, 'My ping is ' + self.client.ping + 'ms',
+          '`' + JSON.stringify(self.client.pings) + '`');
+    } else {
+      self.common.reply(msg, 'My ping is ' + self.client.ws.ping + 'ms');
+    }
   }
 
   /**

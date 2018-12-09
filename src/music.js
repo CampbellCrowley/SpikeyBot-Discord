@@ -147,7 +147,8 @@ function Music() {
       ['-f', 'bestaudio/worst', '--no-playlist', '--default-search=auto'];
 
   /**
-   * Options to pass into the stream dispatcher.
+   * Options to pass into the primary stream dispatcher (The one in charge of
+   * volume control).
    * [StreamOptions](https://discord.js.org/#/docs/main/master/typedef/StreamOptions)
    *
    * @private
@@ -155,12 +156,31 @@ function Music() {
    * @type {Discord~StreamOptions}
    * @default
    */
-  const streamOptions = {
+  const primaryStreamOptions = {
+    passes: 1,
+    fec: true,
+    bitrate: 'auto',
+    volume: 0.5,
+    plp: 0.0,
+    highWaterMark: 1,
+  };
+  /**
+   * Options to pass into the secondary stream dispatcher (The one buffering for
+   * Discord).
+   * [StreamOptions](https://discord.js.org/#/docs/main/master/typedef/StreamOptions)
+   *
+   * @private
+   * @constant
+   * @type {Discord~StreamOptions}
+   * @default
+   */
+  const secondaryStreamOptions = {
     passes: 2,
     fec: true,
     bitrate: 'auto',
     volume: 0.5,
-    plp: 0.01,
+    plp: 0.05,
+    highWaterMark: 30,
   };
 
   /** @inheritdoc */
@@ -407,7 +427,7 @@ function Music() {
           newState.channel.connection) {
         broadcast.voice = newState.channel.connection;
         broadcast.dispatcher =
-            broadcast.voice.play(broadcast.broadcast, streamOptions);
+            broadcast.voice.play(broadcast.broadcast, secondaryStreamOptions);
       }
     }
   }
@@ -694,11 +714,11 @@ function Music() {
     broadcast.current.readable = new Readable();
     broadcast.current.readable._read = function() {};
     broadcast.broadcast = self.client.createVoiceBroadcast();
-    streamOptions.seek = broadcast.current.seek;
+    primaryStreamOptions.seek = broadcast.current.seek;
 
-    broadcast.broadcast.play(broadcast.current.readable, streamOptions);
+    broadcast.broadcast.play(broadcast.current.readable, primaryStreamOptions);
     broadcast.dispatcher =
-        broadcast.voice.play(broadcast.broadcast, streamOptions);
+        broadcast.voice.play(broadcast.broadcast, secondaryStreamOptions);
 
     broadcast.broadcast.dispatcher.on('end', function() {
       endSong(broadcast);

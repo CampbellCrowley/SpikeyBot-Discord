@@ -6574,7 +6574,8 @@ Music and audio related commands.
         * [~geniusRequest](#Music..geniusRequest) : <code>Object</code> ℗
         * [~special](#Music..special) : <code>Object.&lt;Object.&lt;{cmd: string, url: ?string, file: string}&gt;&gt;</code> ℗
         * [~ytdlOpts](#Music..ytdlOpts) : <code>Array.&lt;string&gt;</code> ℗
-        * [~streamOptions](#Music..streamOptions) : <code>Discord~StreamOptions</code> ℗
+        * [~primaryStreamOptions](#Music..primaryStreamOptions) : <code>Discord~StreamOptions</code> ℗
+        * [~secondaryStreamOptions](#Music..secondaryStreamOptions) : <code>Discord~StreamOptions</code> ℗
         * [~helpObject](#Music..helpObject) ℗
         * [~mention(msg)](#Music..mention) ⇒ <code>string</code> ℗
         * ~~[~reply(msg, text, post)](#Music..reply) ⇒ <code>Promise</code> ℗~~
@@ -6994,14 +6995,25 @@ Options passed to youtube-dl for fetching videos.
 **Kind**: inner constant of [<code>Music</code>](#Music)  
 **Default**: <code>[&quot;-f&quot;,&quot;bestaudio/worst&quot;,&quot;--no-playlist&quot;,&quot;--default-search&#x3D;auto&quot;]</code>  
 **Access**: private  
-<a name="Music..streamOptions"></a>
+<a name="Music..primaryStreamOptions"></a>
 
-### Music~streamOptions : <code>Discord~StreamOptions</code> ℗
-Options to pass into the stream dispatcher.
+### Music~primaryStreamOptions : <code>Discord~StreamOptions</code> ℗
+Options to pass into the primary stream dispatcher (The one in charge of
+volume control).
 [StreamOptions](https://discord.js.org/#/docs/main/master/typedef/StreamOptions)
 
 **Kind**: inner constant of [<code>Music</code>](#Music)  
-**Default**: <code>{&quot;passes&quot;:2,&quot;fec&quot;:true,&quot;bitrate&quot;:&quot;auto&quot;,&quot;volume&quot;:0.5,&quot;plp&quot;:0.01}</code>  
+**Default**: <code>{&quot;passes&quot;:1,&quot;fec&quot;:true,&quot;bitrate&quot;:&quot;auto&quot;,&quot;volume&quot;:0.5,&quot;plp&quot;:0,&quot;highWaterMark&quot;:1}</code>  
+**Access**: private  
+<a name="Music..secondaryStreamOptions"></a>
+
+### Music~secondaryStreamOptions : <code>Discord~StreamOptions</code> ℗
+Options to pass into the secondary stream dispatcher (The one buffering for
+Discord).
+[StreamOptions](https://discord.js.org/#/docs/main/master/typedef/StreamOptions)
+
+**Kind**: inner constant of [<code>Music</code>](#Music)  
+**Default**: <code>{&quot;passes&quot;:2,&quot;fec&quot;:true,&quot;bitrate&quot;:&quot;auto&quot;,&quot;volume&quot;:0.5,&quot;plp&quot;:0.05,&quot;highWaterMark&quot;:30}</code>  
 **Access**: private  
 <a name="Music..helpObject"></a>
 

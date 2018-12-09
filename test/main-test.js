@@ -286,6 +286,7 @@ function testMessageContent(msg) {
           .and.not.include('LOL!')
           .and.not.include('Oh no')
           .and.not.include(' error ')
+          .and.not.include('undefined')
           .and.not.include('Nice try!');
     } else if (currentTest.responses[currentTestPart] === '#embed') {
       expect(msg.embeds).to.be.lengthOf.above(0);
