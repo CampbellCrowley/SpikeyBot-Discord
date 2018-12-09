@@ -9474,7 +9474,7 @@ bots with custom names.
 <a name="SpikeyBot..reloadCommon"></a>
 
 ### SpikeyBot~reloadCommon() ℗
-Delete cache and re-require common.js.
+Delete cache and re-require common.js and auth.js.
 
 **Kind**: inner method of [<code>SpikeyBot</code>](#SpikeyBot)  
 **Access**: private  

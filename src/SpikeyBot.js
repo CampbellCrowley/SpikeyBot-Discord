@@ -2,9 +2,10 @@
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const Discord = require('discord.js');
 const fs = require('fs');
-const auth = require('../auth.js');
 const mkdirp = require('mkdirp');
 const childProcess = require('child_process');
+// Auth is not constant and will be reloaded with common.js.
+let auth = require('../auth.js');
 // common.js is also required, but is managed within the SpikeyBot class.
 
 /**
@@ -248,11 +249,13 @@ function SpikeyBot() {
 
   let common;
   /**
-   * Delete cache and re-require common.js.
+   * Delete cache and re-require common.js and auth.js.
    *
    * @private
    */
   function reloadCommon() {
+    delete require.cache[require.resolve('../auth.js')];
+    auth = require('../auth.js');
     delete require.cache[require.resolve('./common.js')];
     common = require('./common.js');
     common.begin(testInstance, !isDev);
