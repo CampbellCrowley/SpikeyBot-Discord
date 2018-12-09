@@ -72,7 +72,7 @@ function ChatBot() {
               .replace(
                   new RegExp(
                       '\\s*\\<@\\!?' + self.client.user.id + '\\>\\s*', 'g'),
-                  ' ')
+                  'SpikeyBot')
               .trim();
       onChatMessage(msg);
     }
@@ -93,9 +93,12 @@ function ChatBot() {
         auth['dialogflowProjectId' + (self.bot.getBotName() || '')],
         msg.channel.id);
     request.queryInput.text.text = msg.text.slice(1);
+    const startTime = Date.now();
 
     sessionClient.detectIntent(request)
         .then((responses) => {
+          self.debug(
+              'Dialogflow response delay: ' + (Date.now() - startTime) + 'ms');
           // console.log('Intent');
           const result = responses[0].queryResult;
           /* console.log(`  Query: ${result.queryText}`);
@@ -123,7 +126,6 @@ function ChatBot() {
                   el[1].stringValue);
             });
 
-
             self.log('Triggered command: ' + cmd);
             msg.content = cmd;
             if (!self.command.trigger(msg)) {
@@ -132,7 +134,11 @@ function ChatBot() {
           }
         })
         .catch((err) => {
+          self.debug(
+              'Dialogflow response delay: ' + (Date.now() - startTime) + 'ms');
+          self.error('Dialogflow failed request: ' + JSON.stringify(request));
           console.error('ERROR:', err);
+          msg.channel.send('Failed to contact DialogFlow: ' + err.details);
         });
   }
   /**
