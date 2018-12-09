@@ -72,7 +72,7 @@ function ChatBot() {
               .replace(
                   new RegExp(
                       '\\s*\\<@\\!?' + self.client.user.id + '\\>\\s*', 'g'),
-                  'SpikeyBot')
+                  self.client.user.username)
               .trim();
       onChatMessage(msg);
     }

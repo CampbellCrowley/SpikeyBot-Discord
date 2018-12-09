@@ -2381,7 +2381,7 @@ function Main() {
             };
           }
         }
-        delays[i] = res[i].delta;
+        delays[i] = res[i].deltaString;
       }
       values.fullDelta = Date.now() - startTime;
       self.debug(
@@ -2417,12 +2417,16 @@ function Main() {
       shardId: (self.client.shard || {id: 0}).id,
     };
 
+    let iTime = Date.now();
     out.numGuilds = self.client.guilds.size;
     let maxNum = 0;
     out.numLargestGuild = self.client.guilds.forEach((g) => {
       maxNum = Math.max(g.memberCount, maxNum);
     });
     out.numLargestGuild = maxNum;
+    const guildDelta = Date.now() - iTime;
+    iTime = Date.now();
+
     let onlineUsers = self.client.users.filter((u) => {
       if (u.id != self.client.user.id) {
         if (u.presence.activity && !u.bot) {
@@ -2442,10 +2446,13 @@ function Main() {
     out.numUsersOnline = onlineUsers.size;
     out.numUsers = self.client.users.size;
     out.numChannels = self.client.channels.size;
+    const userDelta = Date.now() - iTime;
+
     let ut = self.client.uptime;
     out.uptime = Math.floor(ut / 1000 / 60 / 60 / 24) + ' Days, ' +
         Math.floor(ut / 1000 / 60 / 60) % 24 + ' Hours';
     out.delta = Date.now() - startTime;
+    out.deltaString = 'A' + out.delta + 'G' + guildDelta + 'U' + userDelta;
     return out;
   }
 
