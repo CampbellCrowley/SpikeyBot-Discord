@@ -137,7 +137,9 @@ function WebStats() {
     } else {
       getStats((stats) => {
         res.writeHead(200, {'content-type': 'application/json'});
-        res.end(JSON.stringify(stats));
+        let filteredStats = Object.assign({}, stats);
+        filteredStats.activities = 'REDACTED';
+        res.end(JSON.stringify(filteredStats));
         self.common.log('Sent stats.', ip);
       });
     }
