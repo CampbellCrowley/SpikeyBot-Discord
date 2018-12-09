@@ -7,6 +7,7 @@ const vm = require('vm');
 const Jimp = require('jimp');
 const fs = require('fs');
 const mkdirp = require('mkdirp');
+const childProcess = require('child_process');
 require('./subModule.js')(Main); // Extends the SubModule class.
 
 math.config({matrix: 'Array'});
@@ -74,6 +75,7 @@ math.config({matrix: 'Array'});
  * @listens Command#thankyou
  * @listens Command#listCommands
  * @listens Command#getPrefix
+ * @listens Command#git
  */
 function Main() {
   const self = this;
@@ -323,6 +325,7 @@ function Main() {
     self.command.on(['thanks', 'thx', 'thankyou', 'thank'], commandThankYou);
     self.command.on('listcommands', commandListCommands);
     self.command.on('getprefix', commandGetPrefix);
+    self.command.on('git', commandGit);
 
     self.client.on('guildCreate', onGuildCreate);
     self.client.on('guildDelete', onGuildDelete);
@@ -547,6 +550,7 @@ function Main() {
     self.command.removeListener('thanks');
     self.command.removeListener('listcommands');
     self.command.removeListener('getprefix');
+    self.command.removeListener('git');
 
     self.client.removeListener('guildCreate', onGuildCreate);
     self.client.removeListener('guildDelete', onGuildDelete);
@@ -2648,6 +2652,43 @@ function Main() {
     self.common.reply(
         msg, 'The current prefix for this guild is',
         self.bot.getPrefix(msg.guild));
+  }
+
+  /**
+   * Get the graph of the last few git commits.
+   * @private
+   *
+   * @type {Command~commandHandler}
+   * @param {Discord~Message} msg The message that triggered this command.
+   * @listens Command#git
+   */
+  function commandGit(msg) {
+    if (msg.author.id === self.common.spikeyId && msg.text.length > 1) {
+      childProcess.exec(
+          'git' + msg.text, (err, stdout, stderr) => {
+            if (err) {
+              msg.channel.send(`<@${msg.author.id}> ${err.message}`);
+            } else {
+              stdout = stdout.toString().trim().substr(0, 1900);
+              let out = `<@${msg.author.id}> \`\`\`md\n${stdout}\`\`\``;
+              msg.channel.send(out);
+            }
+          });
+    } else {
+      childProcess.exec(
+          'git remote -v && echo "" && ' +
+              'git log --oneline --decorate=short --graph --all -20',
+          (err, stdout, stderr) => {
+            if (err) {
+              self.error('Failed to fetch the current git status.');
+              console.error(err);
+              self.common.reply(
+                  msg, 'Failed to get the current Git status.', err.message);
+            } else {
+              msg.channel.send(`<@${msg.author.id}> \`\`\`md\n${stdout}\`\`\``);
+            }
+          });
+    }
   }
 
   /**

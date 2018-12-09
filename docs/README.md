@@ -5269,6 +5269,7 @@ Basic commands and features for the bot.
         * [~commandThankYou(msg)](#Main..commandThankYou) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandListCommands(msg)](#Main..commandListCommands) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandGetPrefix(msg)](#Main..commandGetPrefix) : <code>Command~commandHandler</code> ℗
+        * [~commandGit(msg)](#Main..commandGit) : <code>Command~commandHandler</code> ℗
         * [~sigint()](#Main..sigint) ℗
         * [~Timer](#Main..Timer) : <code>Object</code>
 
@@ -6221,6 +6222,18 @@ Fetch all registered commands and send them to the user.
 User has requested to view the current prefix for their guild. This is
 intended to be fired internally, usually through chatbot.js due to no other
 way to reference this if the user has forgotten the prefix.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message that triggered this command. |
+
+<a name="Main..commandGit"></a>
+
+### Main~commandGit(msg) : <code>Command~commandHandler</code> ℗
+Get the graph of the last few git commits.
 
 **Kind**: inner method of [<code>Main</code>](#Main)  
 **Access**: private  
