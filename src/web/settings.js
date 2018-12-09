@@ -12,7 +12,7 @@ require('../subModule.js')(WebSettings);  // Extends the SubModule class.
  * @augments SubModule
  */
 function WebSettings() {
-  self = this;
+  const self = this;
 
   /** @inheritdoc */
   this.myName = 'WebSettings';

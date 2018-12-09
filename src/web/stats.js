@@ -12,7 +12,7 @@ require('../subModule.js')(WebStats); // Extends the SubModule class.
  * @augments SubModule
  */
 function WebStats() {
-  self = this;
+  const self = this;
 
   this.myName = 'Stats';
 
