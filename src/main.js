@@ -2427,26 +2427,25 @@ function Main() {
     const guildDelta = Date.now() - iTime;
     iTime = Date.now();
 
-    let onlineUsers = self.client.users.filter((u) => {
+    let numOnline = 0;
+    let activities = {};
+    self.client.users.forEach((u) => {
       if (u.id != self.client.user.id) {
         if (u.presence.activity && !u.bot) {
           let actName =
-              u.presence.activity.type + ': ' + u.presence.activity.name;
-          if (out.activities[actName]) {
-            out.activities[actName]++;
-          } else {
-            out.activities[actName] = 1;
-          }
+              `${u.presence.activity.type}: ${u.presence.activity.name}`;
+          activities[actName] = (activities[actName] || 0) + 1;
         } else if (u.bot) {
           out.numBots++;
         }
       }
-      return u.presence.status !== 'offline';
+      if (u.presence.status !== 'offline') numOnline++;
     });
-    out.numUsersOnline = onlineUsers.size;
+    out.activities = activities;
+    out.numUsersOnline = numOnline;
     out.numUsers = self.client.users.size;
-    out.numChannels = self.client.channels.size;
     const userDelta = Date.now() - iTime;
+    out.numChannels = self.client.channels.size;
 
     let ut = self.client.uptime;
     out.uptime = Math.floor(ut / 1000 / 60 / 60 / 24) + ' Days, ' +
