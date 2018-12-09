@@ -6142,7 +6142,7 @@ SpikeyBot.getStats after SubModule.initialize.
 The stats object that is the result of this function.
 
 **Kind**: inner property of [<code>getAllStats</code>](#Main..getAllStats)  
-**Default**: <code>{&quot;numGuilds&quot;:0,&quot;numLargestGuild&quot;:0,&quot;shardGuilds&quot;:&quot;&quot;,&quot;numUsers&quot;:0,&quot;numBots&quot;:0,&quot;numUsersOnline&quot;:0,&quot;numChannels&quot;:0,&quot;uptimes&quot;:&quot;&quot;,&quot;activities&quot;:&quot;&quot;,&quot;largestActivity&quot;:&quot;&quot;,&quot;versions&quot;:&quot;&quot;,&quot;numShards&quot;:0,&quot;reqShard&quot;:0,&quot;fullDelta&quot;:0}</code>  
+**Default**: <code>{&quot;numGuilds&quot;:0,&quot;numLargestGuild&quot;:0,&quot;shardGuilds&quot;:&quot;&quot;,&quot;numUsers&quot;:0,&quot;numMembers&quot;:0,&quot;numBots&quot;:0,&quot;numUsersOnline&quot;:0,&quot;numChannels&quot;:0,&quot;uptimes&quot;:&quot;&quot;,&quot;activities&quot;:&quot;&quot;,&quot;largestActivity&quot;:&quot;&quot;,&quot;versions&quot;:&quot;&quot;,&quot;numShards&quot;:0,&quot;reqShard&quot;:0,&quot;fullDelta&quot;:0}</code>  
 **Access**: private  
 <a name="Main..getAllStats..statsResponse"></a>
 

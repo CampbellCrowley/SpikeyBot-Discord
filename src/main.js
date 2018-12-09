@@ -2273,7 +2273,8 @@ function Main() {
           ' members\nNumber of channels: ' + values.numChannels;
       embed.addField('Guilds', guildString, true);
 
-      const userString = 'Number of users: ' + values.numUsers +
+      const userString = 'Number of users: ' + values.numMembers +
+          '\nNumber of cached users: ' + values.numUsers +
           '\nNumber of users that are bots: ' + values.numBots +
           '\nNumber of online users: ' + values.numUsersOnline;
       embed.addField('Users', userString, true);
@@ -2328,6 +2329,7 @@ function Main() {
       numLargestGuild: 0,
       shardGuilds: {},
       numUsers: 0,
+      numMembers: 0,
       numBots: 0,
       numUsersOnline: 0,
       numChannels: 0,
@@ -2361,6 +2363,7 @@ function Main() {
         values.numLargestGuild =
             Math.max(res[i].numLargestGuild, values.numLargestGuild);
         values.numUsers += res[i].numUsers;
+        values.numMembers += res[i].numMembers;
         values.numBots += res[i].numBots;
         values.numUsersOnline += res[i].numUsersOnline;
         values.numChannels += res[i].numChannels;
@@ -2408,6 +2411,7 @@ function Main() {
       numGuilds: 0,
       numLargestGuild: 0,
       numUsers: 0,
+      numMembers: 0,
       numBots: 0,
       numUsersOnline: 0,
       numChannels: 0,
@@ -2420,38 +2424,42 @@ function Main() {
     let iTime = Date.now();
     out.numGuilds = self.client.guilds.size;
     let maxNum = 0;
+    let totalNum = 0;
     out.numLargestGuild = self.client.guilds.forEach((g) => {
       maxNum = Math.max(g.memberCount, maxNum);
+      totalNum += g.memberCount;
     });
+    out.numMembers = totalNum;
     out.numLargestGuild = maxNum;
     const guildDelta = Date.now() - iTime;
-    iTime = Date.now();
 
     let numOnline = 0;
     let activities = {};
+
+    iTime = Date.now();
     self.client.users.forEach((u) => {
       if (u.id != self.client.user.id) {
         if (u.presence.activity && !u.bot) {
-          let actName =
-              `${u.presence.activity.type}: ${u.presence.activity.name}`;
-          activities[actName] = (activities[actName] || 0) + 1;
+          activities[u.presence.activity.name] =
+              (activities[u.presence.activity.name] || 0) + 1;
         } else if (u.bot) {
           out.numBots++;
         }
       }
       if (u.presence.status !== 'offline') numOnline++;
     });
+    const userDelta = Date.now() - iTime;
+
     out.activities = activities;
     out.numUsersOnline = numOnline;
     out.numUsers = self.client.users.size;
-    const userDelta = Date.now() - iTime;
     out.numChannels = self.client.channels.size;
 
     let ut = self.client.uptime;
     out.uptime = Math.floor(ut / 1000 / 60 / 60 / 24) + ' Days, ' +
         Math.floor(ut / 1000 / 60 / 60) % 24 + ' Hours';
     out.delta = Date.now() - startTime;
-    out.deltaString = 'A' + out.delta + 'G' + guildDelta + 'U' + userDelta;
+    out.deltaString = 'a' + out.delta + 'g' + guildDelta + 'u' + userDelta;
     return out;
   }
 
