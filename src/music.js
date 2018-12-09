@@ -387,10 +387,12 @@ function Music() {
         self.error(
             'Forcibly ejected from voice channel: ' + oldState.guild.id + ' ' +
             oldState.channelID);
-        broadcast.request.channel.send(
-            '`I was forcibly ejected from the voice channel for an unknown ' +
-            'reason!`');
         delete broadcasts[oldState.guild.id];
+        if (broadcast.request && broadcast.request.channel) {
+          broadcast.request.channel.send(
+              '`I was forcibly ejected from the voice channel for an unknown ' +
+              'reason!`');
+        }
         return;
       }
       if (oldState.channel && oldState.channel.members) {
