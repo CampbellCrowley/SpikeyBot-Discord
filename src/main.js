@@ -662,6 +662,7 @@ function Main() {
    */
   function onGuildCreate(guild) {
     self.log('ADDED TO NEW GUILD: ' + guild.id + ': ' + guild.name);
+    if (guild.memberCount > 100) return;
     let channel = '';
     let pos = -1;
     try {

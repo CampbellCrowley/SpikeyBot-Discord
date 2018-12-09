@@ -89,21 +89,31 @@ function WebStats() {
     },
     {
       protocol: 'https:',
-      host: 'bots.discord.pw',
-      path: '/api/bots/{id}/stats',
-      method: 'POST',
-      headers: {
-        'Authorization': auth.botsDiscordPwToken,
-        'content-type': 'application/json',
-      },
-    },
-    {
-      protocol: 'https:',
       host: 'discordbotlist.com',
       path: '/api/bots/{id}/stats',
       method: 'POST',
       headers: {
         'Authorization': 'Bot ' + auth.discordBotListComToken,
+        'content-type': 'application/json',
+      },
+    },
+    {
+      protocol: 'https:',
+      host: 'discord.bots.gg',
+      path: '/api/v1/bots/{id}/stats',
+      method: 'POST',
+      headers: {
+        'Authorization': auth.discordBotsGGToken,
+        'content-type': 'application/json',
+      },
+    },
+    {
+      protocol: 'https:',
+      host: 'bots.ondiscord.xyz',
+      path: '/bot-api/bots/{id}/guilds',
+      method: 'POST',
+      headers: {
+        'Authorization': auth.botsOnDiscordXYZKey,
         'content-type': 'application/json',
       },
     },
@@ -159,18 +169,26 @@ function WebStats() {
     if (postTimeout) self.client.clearTimeout(postTimeout);
     if (self.client.user.id !== '318552464356016131') return;
     getStats((values) => {
+      self.log('Current Guild Count: ' + values.numGuilds);
       if (self.client.shard) {
         // @TODO: Update getStats to give the number of guilds each shard is on.
         sendRequest({
           server_count: values.numGuilds,
           guilds: values.numGuilds,
+          guildCount: values.numGuilds,
           users: values.numUsers,
           shards: [values.numGuilds / values.numShards],
           shard_id: values.reqShard,
+          shardId: values.reqShard,
           shard_count: values.numShards,
+          shardCount: values.numShards,
         });
       } else {
-        sendRequest({server_count: values.numGuilds});
+        sendRequest({
+          server_count: values.numGuilds,
+          guilds: values.numGuilds,
+          guildCount: values.numGuilds,
+        });
       }
     });
     /**
