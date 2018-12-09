@@ -107,6 +107,7 @@ const mainTests = [
   new Test('Connect 4 command', '~connect4', ['`Loading Connect 4...`']),
   new Test('List command settings', '~show', ['#embed']),
   new Test('Reset command settings', '~reset', ['#noerr', '#noerr']),
+  new Test('Git command', '~git', ['^```']),
 ];
 const hgTests = [
   new Test('Reset All command', '~hg reset all', ['#noerr']),
