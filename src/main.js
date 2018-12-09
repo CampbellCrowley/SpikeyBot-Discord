@@ -2317,6 +2317,7 @@ function Main() {
    * stats objeccts.
    */
   function getAllStats(cb) {
+    const startTime = Date.now();
     /**
      * The stats object that is the result of this function.
      * @private
@@ -2325,6 +2326,7 @@ function Main() {
     let values = {
       numGuilds: 0,
       numLargestGuild: 0,
+      shardGuilds: {},
       numUsers: 0,
       numBots: 0,
       numUsersOnline: 0,
@@ -2335,6 +2337,7 @@ function Main() {
       versions: [],
       numShards: 0,
       reqShard: 0,
+      fullDelta: 0,
     };
     if (self.client.shard) {
       values.numShards = self.client.shard.count;
@@ -2347,16 +2350,22 @@ function Main() {
      * @param {Array.<Object>} res Array of each response object.
      */
     function statsResponse(res) {
+      const parseStart = Date.now();
+      let delays = new Array(res.length);
+      values.uptimes = new Array(res.length);
+      values.versions = new Array(res.length);
+
       for (let i = 0; i < res.length; i++) {
         values.numGuilds += res[i].numGuilds;
+        values.shardGuilds[i] = res[i].numGuilds;
         values.numLargestGuild =
             Math.max(res[i].numLargestGuild, values.numLargestGuild);
         values.numUsers += res[i].numUsers;
         values.numBots += res[i].numBots;
         values.numUsersOnline += res[i].numUsersOnline;
         values.numChannels += res[i].numChannels;
-        values.uptimes.push(res[i].uptime);
-        values.versions.push(res[i].version);
+        values.uptimes[i] = res[i].uptime;
+        values.versions[i] = res[i].version;
         let actVals = Object.entries(res[i].activities);
         for (let j = 0; j < actVals.length; j++) {
           if (values.activities[actVals[j][0]]) {
@@ -2372,7 +2381,12 @@ function Main() {
             };
           }
         }
+        delays[i] = res[i].delta;
       }
+      values.fullDelta = Date.now() - startTime;
+      self.debug(
+          'Full getStats() delta (ms): ' + values.fullDelta + ' Parse: ' +
+          (Date.now() - parseStart) + ' Shards: ' + JSON.stringify(delays));
       cb(values);
     }
 
@@ -2389,6 +2403,7 @@ function Main() {
    * @return {Object} The statistics we collected.
    */
   function getStats() {
+    const startTime = Date.now();
     let out = {
       numGuilds: 0,
       numLargestGuild: 0,
@@ -2399,12 +2414,13 @@ function Main() {
       uptime: '0 days',
       activities: {},
       version: version + '#' + commit.slice(0, 7),
+      shardId: (self.client.shard || {id: 0}).id,
     };
 
     out.numGuilds = self.client.guilds.size;
     let maxNum = 0;
     out.numLargestGuild = self.client.guilds.forEach((g) => {
-      maxNum = Math.max(g.members.size, maxNum);
+      maxNum = Math.max(g.memberCount, maxNum);
     });
     out.numLargestGuild = maxNum;
     let onlineUsers = self.client.users.filter((u) => {
@@ -2421,7 +2437,7 @@ function Main() {
           out.numBots++;
         }
       }
-      return u.presence.status === 'online';
+      return u.presence.status !== 'offline';
     });
     out.numUsersOnline = onlineUsers.size;
     out.numUsers = self.client.users.size;
@@ -2429,6 +2445,7 @@ function Main() {
     let ut = self.client.uptime;
     out.uptime = Math.floor(ut / 1000 / 60 / 60 / 24) + ' Days, ' +
         Math.floor(ut / 1000 / 60 / 60) % 24 + ' Hours';
+    out.delta = Date.now() - startTime;
     return out;
   }
 

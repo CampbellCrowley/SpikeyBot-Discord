@@ -171,13 +171,12 @@ function WebStats() {
     getStats((values) => {
       self.log('Current Guild Count: ' + values.numGuilds);
       if (self.client.shard) {
-        // @TODO: Update getStats to give the number of guilds each shard is on.
         sendRequest({
           server_count: values.numGuilds,
           guilds: values.numGuilds,
           guildCount: values.numGuilds,
           users: values.numUsers,
-          shards: [values.numGuilds / values.numShards],
+          shards: Object.values(values.shardGuilds),
           shard_id: values.reqShard,
           shardId: values.reqShard,
           shard_count: values.numShards,
