@@ -1212,13 +1212,11 @@ function Command() {
     let output = commands.map((el) => {
       let tmp = [];
       let obj;
-      let found = self.find(el[0], msg);
-      if (found.options.defaultDisabled) {
+      if (el[1].defaultDisabled) {
         tmp.push('`' + el[0] + '` requires:');
         if (el[1].permissions) {
           tmp.push(
-              new self.Discord
-                  .Permissions(el[1].permissions | found.options.permissions)
+              new self.Discord.Permissions(el[1].permissions)
                   .toArray()
                   .join(', '));
         }
