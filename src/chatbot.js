@@ -93,12 +93,16 @@ function ChatBot() {
         auth['dialogflowProjectId' + (self.bot.getBotName() || '')],
         msg.channel.id);
     request.queryInput.text.text = msg.text.slice(1);
+
+    msg.channel.startTyping();
+
     const startTime = Date.now();
 
     sessionClient.detectIntent(request)
         .then((responses) => {
           self.debug(
               'Dialogflow response delay: ' + (Date.now() - startTime) + 'ms');
+          msg.channel.stopTyping();
           // console.log('Intent');
           const result = responses[0].queryResult;
           /* console.log(`  Query: ${result.queryText}`);
@@ -138,6 +142,7 @@ function ChatBot() {
               'Dialogflow response delay: ' + (Date.now() - startTime) + 'ms');
           self.error('Dialogflow failed request: ' + JSON.stringify(request));
           console.error('ERROR:', err);
+          msg.channel.stopTyping();
           msg.channel.send('Failed to contact DialogFlow: ' + err.details);
         });
   }

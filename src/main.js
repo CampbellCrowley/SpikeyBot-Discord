@@ -2269,6 +2269,7 @@ function Main() {
    * @listens Command#stats
    */
   function commandStats(msg) {
+    msg.channel.startTyping();
     self.bot.getStats((values) => {
       let embed = new self.Discord.MessageEmbed();
       embed.setTitle('SpikeyBot Stats');
@@ -2314,6 +2315,7 @@ function Main() {
 
       embed.setColor([0, 100, 255]);
 
+      msg.channel.stopTyping();
       msg.channel.send(self.common.mention(msg), embed);
     });
   }
