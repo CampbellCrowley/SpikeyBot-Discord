@@ -990,7 +990,7 @@ function Command() {
       }
       if (self.Discord.Permissions.FLAGS[el]) {
         settings.forEach((s) => {
-          s.permissions = s.permissions | self.Discord.Permissions.FLAGS[el];
+          s.permissions = s.permissions & (~self.Discord.Permissions.FLAGS[el]);
         });
         disabledList.push('Permission: ' + el);
         return;
