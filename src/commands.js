@@ -885,11 +885,13 @@ function Command() {
             if (!commandValues.defaultDisabled) {
               return isDisabled == 2 ? 'User Disabled Individual' :
                                        'User Disabled';
-            } else if ( commandValues.permissions) {
+            } else if (commandValues.permissions) {
               return 'NoPerm:' +
                   new self.Discord.Permissions(commandValues.permissions)
                       .toArray()
                       .join(', ');
+            } else {
+              return 'User Disabled';
             }
           }
         }
@@ -905,6 +907,8 @@ function Command() {
       } else if (bitfield) {
         return 'NoPerm:' +
             new self.Discord.Permissions(bitfield).toArray().join(', ');
+      } else {
+        return 'Disabled';
       }
     }
     return null;
