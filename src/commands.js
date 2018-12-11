@@ -983,7 +983,8 @@ function Command() {
       let trimmed = el.trim().toLowerCase();
       if (trimmed === 'guild' || trimmed === 'everyone' || trimmed === 'all') {
         settings.forEach((s) => {
-          s.defaultdisabled = true;
+          s.defaultDisabled = true;
+          disabledList.push('Default is now DISABLED');
           // s.set('disabled', 'guild', msg.guild.id);
         });
         return;
@@ -1087,7 +1088,8 @@ function Command() {
       let trimmed = el.trim().toLowerCase();
       if (trimmed === 'guild' || trimmed === 'everyone' || trimmed === 'all') {
         settings.forEach((s) => {
-          s.defaultdisabled = false;
+          s.defaultDisabled = false;
+          disabledList.push('Default is now ENABLED');
           // s.set('enabled', 'guild', msg.guild.id);
         });
         return;
