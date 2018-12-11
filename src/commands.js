@@ -983,7 +983,7 @@ function Command() {
       let trimmed = el.trim().toLowerCase();
       if (trimmed === 'guild' || trimmed === 'everyone' || trimmed === 'all') {
         settings.forEach((s) => {
-          s.defaultdisabled = false;
+          s.defaultdisabled = true;
           // s.set('disabled', 'guild', msg.guild.id);
         });
         return;
