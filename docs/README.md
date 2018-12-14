@@ -12336,6 +12336,7 @@ Proxy for account authentication.
         * [~discordRequest(data, cb, host)](#WebProxy..discordRequest) ℗
         * [~makeRefreshTimeout(loginInfo, cb)](#WebProxy..makeRefreshTimeout) ℗
         * [~refreshToken(refreshToken_, cb)](#WebProxy..refreshToken) ℗
+        * [~revokeToken(token, cb)](#WebProxy..revokeToken) ℗
         * [~authorizeRequest(code, cb)](#WebProxy..authorizeRequest) ℗
 
 <a name="SubModule+helpMessage"></a>
@@ -12688,6 +12689,19 @@ Request new credentials with refresh token from discord.
 | Param | Type | Description |
 | --- | --- | --- |
 | refreshToken_ | <code>string</code> | The refresh token used for refreshing credentials. |
+| cb | <code>basicCallback</code> | The callback from the https request, with an error argument, and a data argument. |
+
+<a name="WebProxy..revokeToken"></a>
+
+### WebProxy~revokeToken(token, cb) ℗
+Revoke a current refresh token from discord.
+
+**Kind**: inner method of [<code>WebProxy</code>](#WebProxy)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| token | <code>string</code> | The refresh token to revoke. |
 | cb | <code>basicCallback</code> | The callback from the https request, with an error argument, and a data argument. |
 
 <a name="WebProxy..authorizeRequest"></a>

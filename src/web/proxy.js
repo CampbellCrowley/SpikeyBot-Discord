@@ -21,7 +21,7 @@ require('../subModule.js')(WebProxy);  // Extends the SubModule class.
  * @augments SubModule
  */
 function WebProxy() {
-  self = this;
+  const self = this;
 
   /** @inheritdoc */
   this.myName = 'Proxy';
@@ -287,7 +287,7 @@ function WebProxy() {
       restoreAttempt = true;
       if (loginInfo[sess]) {
         session = sess;
-        if (loginInfo[session].expires_at < Date.now()) {
+        if (true || loginInfo[session].expires_at < Date.now()) {
           refreshToken(loginInfo[session].refresh_token, (err, data) => {
             if (!err) {
               let parsed;
@@ -315,7 +315,7 @@ function WebProxy() {
                 }
               });
             } else {
-              self.warn('Refreshing token failed ' + sess);
+              self.warn('Refreshing token failed');
               console.error(err, loginInfo[session]);
               socket.emit('authorized', 'Restore Failed', null);
             }
@@ -362,9 +362,21 @@ function WebProxy() {
     });
 
     socket.on('logout', () => {
-      if (loginInfo[session]) clearTimeout(loginInfo[session].refreshTimeout);
-      delete loginInfo[session];
-      delete currentSessions[session];
+      if (loginInfo[session]) {
+        clearTimeout(loginInfo[session].refreshTimeout);
+        revokeToken(loginInfo[session].refresh_token, (err) => {
+          delete loginInfo[session];
+          delete currentSessions[session];
+          if (err) {
+            self.warn(
+                'Failed to revoke refresh token, but user has already ' +
+                    'signed out: ' + err,
+                socket.id);
+          }
+        });
+      } else {
+        delete currentSessions[session];
+      }
     });
 
     socket.on('disconnect', () => {
@@ -472,6 +484,7 @@ function WebProxy() {
       });
       response.on('end', function() {
         if (response.statusCode == 200) {
+          self.debug(content);
           cb(null, content);
         } else {
           self.error(response.statusCode + ': ' + content);
@@ -542,6 +555,24 @@ function WebProxy() {
       redirect_uri: 'https://www.spikeybot.com/redirect',
     };
     discordRequest(data, cb);
+  }
+
+  /**
+   * Revoke a current refresh token from discord.
+   *
+   * @private
+   * @param {string} token The refresh token to revoke.
+   * @param {basicCallback} cb The callback from the https request, with an
+   * error argument, and a data argument.
+   */
+  function revokeToken(token, cb) {
+    let host = Object.assign({}, tokenHost);
+    host.path += '/revoke';
+    const data = {
+      token_type_hint: 'refresh_token',
+      token: token,
+    };
+    discordRequest(data, cb, host);
   }
 
   /**
