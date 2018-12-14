@@ -334,6 +334,9 @@ function Music() {
     let numAlive = entries.length;
     let now = Date.now();
     for (let i = 0; i < entries.length; i++) {
+      if (!entries[i][1].broadcast || !entries[i][1].broadcast.dispatcher) {
+        continue;
+      }
       let pauseTime = entries[i][1].broadcast.dispatcher.pausedSince;
       if (pauseTime && now - pauseTime > 5 * 60 * 1000) {
         numAlive--;
