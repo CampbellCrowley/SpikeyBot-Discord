@@ -5352,8 +5352,8 @@ function HungryGames() {
               'eachother.');
       return;
     }
-    if (!find(gId) || !find(gId).currentGame) {
-      createGame(null, gId, true);
+    if (!find(id) || !find(id).currentGame) {
+      createGame(null, id, true);
     }
     let user1 = msg.mentions.users.first().id;
     let user2 = msg.mentions.users.first(2)[1].id;
@@ -5399,8 +5399,8 @@ function HungryGames() {
       self.common.reply(msg, 'You must at least mention one user to move.');
       return;
     }
-    if (!find(gId) || !find(gId).currentGame) {
-      createGame(null, gId, true);
+    if (!find(id) || !find(id).currentGame) {
+      createGame(null, id, true);
     }
     let user1 = msg.mentions.users.first().id;
     let teamId1 = 0;
@@ -5487,8 +5487,8 @@ function HungryGames() {
       return;
     }
     let teamId = search - 1;
-    if (!find(gId) || !find(gId).currentGame) {
-      createGame(null, gId, true);
+    if (!find(id) || !find(id).currentGame) {
+      createGame(null, id, true);
     }
     if (isNaN(search)) {
       teamId = find(id).currentGame.teams.findIndex(function(team) {
@@ -5524,8 +5524,8 @@ function HungryGames() {
    * messages to the channel where the msg was sent..
    */
   function randomizeTeams(msg, id, silent) {
-    if (!find(gId) || !find(gId).currentGame) {
-      createGame(null, gId, true);
+    if (!find(id) || !find(id).currentGame) {
+      createGame(null, id, true);
     }
     let current = find(id).currentGame;
     if (current.teams.length == 0) {
