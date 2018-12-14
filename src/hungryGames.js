@@ -1809,6 +1809,7 @@ function HungryGames() {
       } else if (command == 'users') {
         find(id).includedUsers = [];
         find(id).excludedUsers = [];
+        createGame(null, id, true);
         return 'Resetting ALL user data!';
       } else {
         return 'Please specify what data to reset.\nall {deletes all data ' +
@@ -4255,7 +4256,7 @@ function HungryGames() {
                 } else if (user) {
                   color = 0x00FF00FF;
                 }
-                if (user.settings && user.settings.isPatron) {
+                if (user && user.settings && user.settings.isPatron) {
                   finalImage.blit(
                       new Jimp(victorIconSize, underlineSize, 0xF96854FF),
                       responses * (victorIconSize + iconGap), 0);
@@ -4268,6 +4269,7 @@ function HungryGames() {
                   image, responses * (victorIconSize + iconGap), underlineSize);
             }
           } catch (err) {
+            self.warn('Failed to blit victor image');
             console.error(err);
           }
           responses++;
