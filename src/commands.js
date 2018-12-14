@@ -1219,7 +1219,7 @@ function Command() {
       let tmp = [];
       let obj;
       if (el[1].defaultDisabled) {
-        tmp.push('`' + el[0] + '` requires:');
+        tmp.push('`' + el[0] + '` allowed with:');
         if (el[1].permissions) {
           tmp.push(
               new self.Discord.Permissions(el[1].permissions)
