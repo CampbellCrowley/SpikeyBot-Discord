@@ -287,6 +287,8 @@ function WebProxy() {
       restoreAttempt = true;
       if (loginInfo[sess]) {
         session = sess;
+        // Temporarily refreshing the token on every restore. This seems to work
+        // fine, but I receive a 401 invalid_grant when I don't do this...
         if (true || loginInfo[session].expires_at < Date.now()) {
           refreshToken(loginInfo[session].refresh_token, (err, data) => {
             if (!err) {
@@ -484,7 +486,6 @@ function WebProxy() {
       });
       response.on('end', function() {
         if (response.statusCode == 200) {
-          self.debug(content);
           cb(null, content);
         } else {
           self.error(response.statusCode + ': ' + content);
