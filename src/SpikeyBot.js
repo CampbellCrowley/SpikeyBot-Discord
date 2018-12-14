@@ -275,6 +275,7 @@ function SpikeyBot() {
     manager.on('shardCreate', (shard) => {
       common.log('Launched shard ' + shard.id, 'ShardingManager');
       shard.on('message', (msg) => {
+        if (msg._eval) return;
         common.logDebug(
             'Received message from shard ' + shard.id + ': ' +
             JSON.stringify(msg));
