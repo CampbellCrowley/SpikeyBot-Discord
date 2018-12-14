@@ -266,7 +266,7 @@ function SpikeyBot() {
     common.log(
         'Sharding enabled with ' + (numShards || 'auto'), 'ShardingManager');
     const manager = new Discord.ShardingManager('./src/SpikeyBot.js', {
-      token: setDev ? auth.dev : auth.release,
+      token: (botName && auth[botName]) || (setDev ? auth.dev : auth.release),
       totalShards: numShards || 'auto',
       shardArgs: process.argv.slice(2).filter((arg) => {
         return !arg.startsWith('--shards');
@@ -300,7 +300,16 @@ function SpikeyBot() {
   }
 
   // If we are not managing shards, just start normally.
-  const client = new Discord.Client();
+  const client = new Discord.Client({
+    disabledEvents: ['TYPING_START'],
+    presence: {
+      status: 'dnd',
+      activity: {
+        name: 'Booting...',
+        type: 'PLAYING',
+      },
+    },
+  });
 
 
   // Attempt to load mainmodules.
