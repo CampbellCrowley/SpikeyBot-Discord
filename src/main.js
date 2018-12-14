@@ -1785,6 +1785,9 @@ function Main() {
       self.common.reply(
           msg, 'You must mention someone to ban after the command.');
     } else {
+      let reason =
+          msg.text.replace(self.Discord.MessageMentions.USERS_PATTERN, '')
+              .trim();
       msg.mentions.members.forEach(function(toBan) {
         if (msg.guild.ownerID !== msg.author.id &&
             msg.member.roles.highest.comparePositionTo(toBan.roles.highest) <=
@@ -1802,10 +1805,11 @@ function Main() {
                       '! I am not strong enough!');
             } else {
               let banMsg = banMsgs[Math.floor(Math.random() * banMsgs.length)];
-              toBan.ban({reason: banMsg})
+              toBan.ban({reason: reason || banMsg})
                   .then(() => {
-                    self.common.reply(
-                        msg, banMsg, 'Banned ' + toBan.user.username);
+                    self.common
+                        .reply(msg, banMsg, 'Banned ' + toBan.user.username)
+                        .catch(() => {});
                   })
                   .catch((err) => {
                     self.common.reply(
