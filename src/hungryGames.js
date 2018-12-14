@@ -1380,70 +1380,86 @@ function HungryGames() {
                 'with "' + msg.prefix + self.postPrefix + 'end".');
       }
       return;
-    } else if (find(id) && find(id).currentGame) {
-      if (!silent) {
-        self.common.reply(
-            msg, 'Creating a new game with settings from the last game.');
-      }
-      find(id).currentGame.name = msg.guild.name + '\'s Hungry Games';
-      find(id).currentGame.ended = false;
-      find(id).currentGame.day = {num: -1, state: 0, events: []};
-      find(id).currentGame.includedUsers = getAllPlayers(
-          msg.guild.members, find(id).excludedUsers,
-          find(id).options.includeBots, find(id).includedUsers,
-          find(id).options.excludeNewUsers);
-      find(id).currentGame.numAlive =
-          find(id).currentGame.includedUsers.length;
-      find(id).currentGame.forcedOutcomes = [];
-    } else if (find(id)) {
-      if (!silent) {
-        self.common.reply(msg, 'Creating a new game with default settings.');
-      }
-      find(id).currentGame = {
-        name: msg.guild.name + '\'s Hungry Games',
-        inProgress: false,
-        includedUsers: getAllPlayers(
-            msg.guild.members, find(id).excludedUsers,
-            find(id).options.includeBots, find(id).includedUsers,
-            find(id).options.excludeNewUsers),
-        ended: false,
-        day: {num: -1, state: 0, events: []},
-        forcedOutcomes: [],
-      };
-      find(id).currentGame.numAlive =
-          find(id).currentGame.includedUsers.length;
     } else {
-      games[id] = {
-        excludedUsers: [],
-        includedUsers: [],
-        disabledEvents: {bloodbath: [], player: [], arena: {}, weapon: {}},
-        customEvents: {bloodbath: [], player: [], arena: [], weapon: {}},
-        currentGame: {
-          name: msg.guild.name + '\'s Hungry Games',
-          inProgress: false,
-          teams: [],
-          ended: false,
-          day: {num: -1, state: 0, events: []},
-          forcedOutcomes: [],
-        },
-        autoPlay: false,
-      };
-      games[id].currentGame.includedUsers = getAllPlayers(
-          msg.guild.members, games[id].excludedUsers, false,
-          games[id].includedUsers, false);
-      find(id).currentGame.numAlive =
-          find(id).currentGame.includedUsers.length;
-      const optKeys = Object.keys(defaultOptions);
-      find(id).options = {};
-      for (let i in optKeys) {
-        if (typeof optKeys[i] !== 'string') continue;
-        find(id).options[optKeys[i]] = defaultOptions[optKeys[i]].value;
+      if (msg.guild.members.size < msg.guild.memberCount) {
+        // Ensure we have all guild members accounted for in future commands
+        // since we cant await here.
+        msg.guild.members.fetch();
       }
-      if (!silent) {
-        self.common.reply(
-            msg,
-            'Created a Hungry Games with default settings and all members ' +
-                'included.');
+      if (find(id)) {
+        find(id).includedUsers = find(id).includedUsers.filter((u) => {
+          return msg.guild.members.get(u);
+        });
+        find(id).excludedUsers = find(id).excludedUsers.filter((u) => {
+          return msg.guild.members.get(u);
+        });
+        if (find(id).currentGame) {
+          if (!silent) {
+            self.common.reply(
+                msg, 'Creating a new game with settings from the last game.');
+          }
+          find(id).currentGame.name = msg.guild.name + '\'s Hungry Games';
+          find(id).currentGame.ended = false;
+          find(id).currentGame.day = {num: -1, state: 0, events: []};
+          find(id).currentGame.includedUsers = getAllPlayers(
+              msg.guild.members, find(id).excludedUsers,
+              find(id).options.includeBots, find(id).includedUsers,
+              find(id).options.excludeNewUsers);
+          find(id).currentGame.numAlive =
+              find(id).currentGame.includedUsers.length;
+          find(id).currentGame.forcedOutcomes = [];
+        } else {
+          if (!silent) {
+            self.common.reply(
+                msg, 'Creating a new game with default settings.');
+          }
+          find(id).currentGame = {
+            name: msg.guild.name + '\'s Hungry Games',
+            inProgress: false,
+            includedUsers: getAllPlayers(
+                msg.guild.members, find(id).excludedUsers,
+                find(id).options.includeBots, find(id).includedUsers,
+                find(id).options.excludeNewUsers),
+            ended: false,
+            day: {num: -1, state: 0, events: []},
+            forcedOutcomes: [],
+          };
+          find(id).currentGame.numAlive =
+              find(id).currentGame.includedUsers.length;
+        }
+      } else {
+        games[id] = {
+          excludedUsers: [],
+          includedUsers: [],
+          disabledEvents: {bloodbath: [], player: [], arena: {}, weapon: {}},
+          customEvents: {bloodbath: [], player: [], arena: [], weapon: {}},
+          currentGame: {
+            name: msg.guild.name + '\'s Hungry Games',
+            inProgress: false,
+            teams: [],
+            ended: false,
+            day: {num: -1, state: 0, events: []},
+            forcedOutcomes: [],
+          },
+          autoPlay: false,
+        };
+        games[id].currentGame.includedUsers = getAllPlayers(
+            msg.guild.members, games[id].excludedUsers, false,
+            games[id].includedUsers, false);
+        find(id).currentGame.numAlive =
+            find(id).currentGame.includedUsers.length;
+        const optKeys = Object.keys(defaultOptions);
+        find(id).options = {};
+        for (let i in optKeys) {
+          if (typeof optKeys[i] !== 'string') continue;
+          find(id).options[optKeys[i]] = defaultOptions[optKeys[i]].value;
+        }
+        if (!silent) {
+          self.common.reply(
+              msg,
+              'Created a Hungry Games with default settings and all members ' +
+                  'included.');
+        }
       }
     }
     formTeams(id);
