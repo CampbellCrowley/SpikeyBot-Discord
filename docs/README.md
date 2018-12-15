@@ -11043,6 +11043,7 @@ Manages an Uno game.
                 * [~players](#Uno+Game..players) : <code>Array.&lt;Uno.Player&gt;</code> ℗
                 * [~discarded](#Uno+Game..discarded) : <code>Array.&lt;Uno.Card&gt;</code> ℗
                 * [~turn](#Uno+Game..turn) : <code>number</code> ℗
+                * [~previousTurn](#Uno+Game..previousTurn) : <code>number</code> ℗
                 * [~topCard](#Uno+Game..topCard) : <code>Uno.Card</code> ℗
                 * [~direction](#Uno+Game..direction) : <code>number</code> ℗
                 * [~currentCollector](#Uno+Game..currentCollector) ℗
@@ -11056,9 +11057,11 @@ Manages an Uno game.
                 * [~playCard(text)](#Uno+Game..playCard) ⇒ <code>boolean</code> ℗
                 * [~parseToCard(text)](#Uno+Game..parseToCard) ⇒ <code>Uno.Card</code> ℗
                 * [~checkCard(card, [card2])](#Uno+Game..checkCard) ⇒ <code>boolean</code> ℗
+                * [~callUno(caller)](#Uno+Game..callUno) ℗
         * [.id](#Uno+id) : <code>string</code>
         * [.name](#Uno+name) : <code>string</code>
         * [.bot](#Uno+bot) : <code>boolean</code>
+        * [.calledUno](#Uno+calledUno) : <code>boolean</code>
         * [.channel](#Uno+channel) : <code>Discord~TextChannel</code>
         * [.hand](#Uno+hand) : <code>Array.&lt;Uno.Card&gt;</code>
         * [.helpMessage](#SubModule+helpMessage) : <code>string</code> \| <code>Discord~MessageEmbed</code>
@@ -11090,6 +11093,7 @@ Manages an Uno game.
         * [~numGames](#Uno..numGames) : <code>number</code> ℗
         * [~pFlags](#Uno..pFlags) ℗
         * [~games](#Uno..games) : <code>Object.&lt;Object.&lt;Uno.Game&gt;&gt;</code> ℗
+        * [~unoText](#Uno..unoText) : <code>string</code> ℗
         * [~colorPairs](#Uno..colorPairs) ℗
         * [~colorRegExp](#Uno..colorRegExp) : <code>RegExp</code> ℗
         * [~cardFacePairs](#Uno..cardFacePairs) ℗
@@ -11176,6 +11180,7 @@ The name of this card retreivable with `toString()`. Null until first
         * [~players](#Uno+Game..players) : <code>Array.&lt;Uno.Player&gt;</code> ℗
         * [~discarded](#Uno+Game..discarded) : <code>Array.&lt;Uno.Card&gt;</code> ℗
         * [~turn](#Uno+Game..turn) : <code>number</code> ℗
+        * [~previousTurn](#Uno+Game..previousTurn) : <code>number</code> ℗
         * [~topCard](#Uno+Game..topCard) : <code>Uno.Card</code> ℗
         * [~direction](#Uno+Game..direction) : <code>number</code> ℗
         * [~currentCollector](#Uno+Game..currentCollector) ℗
@@ -11189,6 +11194,7 @@ The name of this card retreivable with `toString()`. Null until first
         * [~playCard(text)](#Uno+Game..playCard) ⇒ <code>boolean</code> ℗
         * [~parseToCard(text)](#Uno+Game..parseToCard) ⇒ <code>Uno.Card</code> ℗
         * [~checkCard(card, [card2])](#Uno+Game..checkCard) ⇒ <code>boolean</code> ℗
+        * [~callUno(caller)](#Uno+Game..callUno) ℗
 
 <a name="new_Uno+Game_new"></a>
 
@@ -11290,6 +11296,15 @@ All cards currently not in a player's hand.
 
 #### Game~turn : <code>number</code> ℗
 The current index of the player whose turn it is.
+
+**Kind**: inner property of [<code>Game</code>](#Uno+Game)  
+**Access**: private  
+<a name="Uno+Game..previousTurn"></a>
+
+#### Game~previousTurn : <code>number</code> ℗
+The index of the player whose turn it was previously. This is -1 if the
+current turn is the first turn of the game, and will otherwise be the
+previous player to play a card.
 
 **Kind**: inner property of [<code>Game</code>](#Uno+Game)  
 **Access**: private  
@@ -11428,6 +11443,20 @@ Checks if the given card may be played next.
 | card | <code>Uno.Card</code> | The card to check. |
 | [card2] | <code>Uno.Card</code> | The card to check against. If not defined, the current topCard will be used. |
 
+<a name="Uno+Game..callUno"></a>
+
+#### Game~callUno(caller) ℗
+A player has called Uno. To say that they are about to have one card,
+they now have one card after playing, or the previous person now has one
+card and did not call Uno.
+
+**Kind**: inner method of [<code>Game</code>](#Uno+Game)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| caller | <code>string</code> \| <code>number</code> | The user ID of the player who called Uno. |
+
 <a name="Uno+id"></a>
 
 ### uno.id : <code>string</code>
@@ -11453,6 +11482,14 @@ Whether this player is a bot or not.
 **Overrides**: [<code>bot</code>](#SubModule+bot)  
 **Access**: public  
 **Read only**: true  
+<a name="Uno+calledUno"></a>
+
+### uno.calledUno : <code>boolean</code>
+Whether this player has called uno recently.
+
+**Kind**: instance property of [<code>Uno</code>](#Uno)  
+**Default**: <code>false</code>  
+**Access**: public  
 <a name="Uno+channel"></a>
 
 ### uno.channel : <code>Discord~TextChannel</code>
@@ -11773,6 +11810,13 @@ self.Discord.Permissions.FLAGS
 All games currently in progress mapped by guilds, then by the game ID.
 
 **Kind**: inner property of [<code>Uno</code>](#Uno)  
+**Access**: private  
+<a name="Uno..unoText"></a>
+
+### Uno~unoText : <code>string</code> ℗
+ASCII art text to show when a player calls Uno.
+
+**Kind**: inner constant of [<code>Uno</code>](#Uno)  
 **Access**: private  
 <a name="Uno..colorPairs"></a>
 

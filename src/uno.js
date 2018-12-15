@@ -42,6 +42,22 @@ function Uno() {
   };
 
   /**
+   * ASCII art text to show when a player calls Uno.
+   * @private
+   * @constant
+   * @default
+   * @type {string}
+   */
+  const unoText = '888     888 888b    888  .d88888b.  888 \n' +
+      '888     888 8888b   888 d88P" "Y88b 888 \n' +
+      '888     888 88888b  888 888     888 888 \n' +
+      '888     888 888Y88b 888 888     888 888 \n' +
+      '888     888 888 Y88b888 888     888 888 \n' +
+      '888     888 888  Y88888 888     888 Y8P \n' +
+      'Y88b. .d88P 888   Y8888 Y88b. .d88P  "  \n' +
+      ' "Y88888P"  888    Y888  "Y88888P"  888 ';
+
+  /**
    * The number of currently active games. Used to determine of submodule is
    * unloadable.
    * @private
@@ -392,6 +408,16 @@ function Uno() {
     // let previousCard = null;
 
     /**
+     * The index of the player whose turn it was previously. This is -1 if the
+     * current turn is the first turn of the game, and will otherwise be the
+     * previous player to play a card.
+     *
+     * @private
+     * @type {number}
+     */
+    let previousTurn = -1;
+
+    /**
      * The current card on the top of the discard pile that will need to be
      * matched by the next player to play a card.
      * @see {@link Uno.Game~previousCard}
@@ -591,6 +617,11 @@ function Uno() {
       playCard();
 
       currentCollector = game.groupChannel.createMessageCollector((m) => {
+        // Check for Uno calls.
+        if (m.content.match(/^uno\W*$/i)) {
+          callUno(m.author.id);
+          return false;
+        }
         if (m.author.id == maker.id &&
             m.content.toLowerCase().startsWith('uno')) {
           switch (m.content.toLowerCase().split(' ')[1]) {
@@ -610,7 +641,13 @@ function Uno() {
           let cmd = m.content.toLowerCase().split(' ')[1];
           switch (cmd) {
             case 'play':
-              return playCard(m.content.split(' ').slice(2).join(' '));
+              if (playCard(m.content.split(' ').slice(2).join(' '))) {
+                setTimeout(finishSetup, 5000);
+                game.started = false;
+                return true;
+              } else {
+                return false;
+              }
             case 'leave':
               game.removePlayer(m.author.id);
               return false;
@@ -644,6 +681,7 @@ function Uno() {
       let embed = new self.Discord.MessageEmbed();
       embed.setTitle('Welcome to UNO!');
       embed.setAuthor(maker.user.tag);
+      embed.setColor([237, 21, 31]);
       embed.setDescription(
           'Just type `UNO!` into this channel to call uno.\nTo play a card, ' +
           'just type `play red 4` or `play yellow two` or `play draw 4` or ' +
@@ -666,17 +704,17 @@ function Uno() {
             'Lobby Settings',
             'The creator of this game can use the following commands in this ' +
                 'channel.\n\nUse `invite @SpikeyRobot#0971` to add new people' +
-                ' to this game.\nType `kick @SpikeyRobot#0971` to remove them' +
-                ' from the game (Note: don\'t use the command prefix).\nType ' +
-                '`uno start` to start the game once you\'re ready!\n`uno end`' +
-                ' to end this game at any time.');
+                ' to this game.\nType `uno kick @SpikeyRobot#0971` to remove ' +
+                'them from the game (Note: don\'t use the command prefix).\n' +
+                'Type `uno start` to start the game once you\'re ready!\n`uno' +
+                ' end` to end this game at any time.');
       } else {
         embed.addField(
             'Lobby Settings',
             'The creator of this game can use the following commands in this ' +
                 'channel.\n\n`uno end` to end this game at any time (this ' +
-                'deletes all Uno text channels).\n`kick @SpikeyRobot#0971` to' +
-                ' kick players (Careful! They cannot be added back!).');
+                'deletes all Uno text channels).\n`uno kick @SpikeyRobot#0971' +
+                '` to kick players (Careful! They cannot be added back!).');
       }
       return game.groupChannel.send(embed);
     }
@@ -704,7 +742,8 @@ function Uno() {
             '`Skipping` <@' + players[turn].id + '>\'s turn!');
       } else {
         game.groupChannel.send(
-            '`Next turn.` <@' + players[turn].id + '>\'s turn!');
+            '`Next turn.` <@' + players[turn].id + '>\'s turn! They have ' +
+            players[turn].hand.length + ' cards.');
       }
     }
 
@@ -758,6 +797,7 @@ function Uno() {
             '`Your current hand:`\n' +
             players[turn].hand.map((card) => card.toString()).join('\n'));
       }
+      players[turn].calledUno = false;
     }
 
     /**
@@ -849,7 +889,14 @@ function Uno() {
         game.groupChannel.send(`\`\`\`${card.toString()}\`\`\``);
       }
 
-      if (hand.length == 0) return true;
+      if (hand.length == 0) {
+        game.groupChannel.send(
+            '<@' + players[turn].id + '> `has no cards remaining!`\n```' +
+            players[turn].name + ' is the winner!```');
+        return true;
+      }
+
+      previousTurn = turn;
 
       if (card.face & self.CardFace.REVERSE_EFFECT) {
         direction *= -1;
@@ -920,6 +967,42 @@ function Uno() {
     }
 
     /**
+     * A player has called Uno. To say that they are about to have one card,
+     * they now have one card after playing, or the previous person now has one
+     * card and did not call Uno.
+     *
+     * @private
+     * @param {string|number} caller The user ID of the player who called Uno.
+     */
+    function callUno(caller) {
+      if (players[turn].id == caller && !players[turn].calledUno &&
+          players[turn].hand.length == 2) {
+        players[turn].calledUno = true;
+        let id = players[turn].id;
+        game.groupChannel.send(`<@${id}> called\`\`\`\n${unoText}\n\`\`\``);
+      }
+      if (previousTurn > -1) {
+        if (players[previousTurn].id == caller &&
+            !players[previousTurn].calledUno &&
+            players[previousTurn].hand.length == 1) {
+          players[previousTurn].calledUno = true;
+          let id = players[previousTurn].id;
+          game.groupChannel.send(`<@${id}> called\`\`\`\n${unoText}\n\`\`\``);
+        }
+        if (!players[previousTurn].calledUno &&
+            players[previousTurn].hand.length == 1) {
+          game.groupChannel.send(
+              '<@' + players[previousTurn].id +
+              '> `forgot to call "UNO!" and now must draw 2 cards!`');
+          let tmp = turn;
+          turn = previousTurn;
+          drawCards(2);
+          turn = tmp;
+        }
+      }
+    }
+
+    /**
      * Ends this game and deletes all created channels.
      *
      * @public
@@ -977,8 +1060,10 @@ function Uno() {
       let index = players.findIndex((player) => player.id == p);
       if (index > -1) {
         players[index].remove();
-        game.discarded = game.discarded.concat(players[index].hand.splice(0));
+        discarded = discarded.concat(players[index].hand.splice(0));
         players.splice(index, 1);
+        game.groupChannel.permissionOverwrites.get(p).delete(
+            'User removed from game');
         if (turn == index) nextTurn();
       }
     };
@@ -1048,6 +1133,15 @@ function Uno() {
      * @type {boolean}
      */
     this.bot = member.user.bot;
+
+    /**
+     * Whether this player has called uno recently.
+     *
+     * @public
+     * @type {boolean}
+     * @default
+     */
+    this.calledUno = false;
 
     /**
      * The channel for this player's private messages for the game. Null until
