@@ -387,8 +387,15 @@ function CmdScheduling() {
       }
       if (myself.time - Date.now() <= maxTimeout) {
         self.client.clearTimeout(myself.timeout);
-        myself.timeout =
-            self.client.setTimeout(myself.go, myself.time - Date.now());
+        try {
+          myself.timeout =
+              self.client.setTimeout(myself.go, myself.time - Date.now());
+        } catch (err) {
+          self.error(
+              'ScheduledCmd Failed: ' + myself.channelId + '@' +
+              myself.memberId + ' ' + myself.cmd);
+          return;
+        }
         self.debug(
             'ScheduledCmd Scheduled: ' + myself.channelId + '@' +
             myself.memberId + ' ' + myself.cmd);
