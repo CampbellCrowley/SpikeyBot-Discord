@@ -32,7 +32,7 @@ function Uno() {
 
     let entries = Object.entries(games);
     entries.forEach((el) => {
-      el[1].end();
+      if (typeof el[1].end === 'function') el[1].end();
     });
   };
 
@@ -108,7 +108,7 @@ function Uno() {
     }
     let list = Object.values(games[msg.guild.id]);
     list.forEach((g) => {
-      g.end();
+      if (typeof g.end == 'function') g.end();
     });
     delete games[msg.guild.id];
     self.common.reply(msg, 'All UNO games have been ended.');
@@ -255,9 +255,19 @@ function Uno() {
      * @return {string} This card as a string.
      */
     this.toString = function() {
-      if (myName) return myName;
-      myName = colorPairs.find((el) => el[1] === card.color)[0] + ' ' +
-          cardFacePairs.find((el) => el[1] === card.face)[0];
+      // Wild cards can change color, so we can't cache their name.
+      if (myName && !(card.face & self.CardFace.WILD_EFFECT)) return myName;
+      if (card.color == self.Color.NONE) {
+        myName = cardFacePairs.find((el) => el[1] == card.face)[0];
+      } else {
+        let colorName = colorPairs.find((el) => el[1] == card.color);
+        if (!colorName) {
+          console.log(card.color, 'not a valid color');
+        }
+        colorName = colorName[0];
+        myName =
+            colorName + ' ' + cardFacePairs.find((el) => el[1] == card.face)[0];
+      }
       return myName;
     };
   };
@@ -495,7 +505,7 @@ function Uno() {
             case 'begin':
             case 'start':
               if (players.length > 1) {
-                startGame();
+                setTimeout(startGame);
                 return true;
               } else {
                 self.common.reply(
@@ -511,6 +521,16 @@ function Uno() {
               return true;
             case 'players':
               listPlayers();
+              return false;
+            case 'invite':
+              if (m.mentions.members.size == 0) {
+                self.common.reply(m, 'Please mention users to invite.');
+              } else {
+                m.mentions.members.forEach((m) => {
+                  game.addPlayer(m);
+                });
+                self.common.reply(m, 'Players have been added to the game.');
+              }
               return false;
             case 'kick':
               m.mentions.members.forEach((el) => {
@@ -570,8 +590,6 @@ function Uno() {
       // Play the game's first card.
       playCard();
 
-      nextTurn();
-
       currentCollector = game.groupChannel.createMessageCollector((m) => {
         if (m.author.id == maker.id &&
             m.content.toLowerCase().startsWith('uno')) {
@@ -599,9 +617,15 @@ function Uno() {
           }
           return false;
         } else if (m.content.toLowerCase().startsWith('play')) {
-          return playCard(m.content.split(' ').slice(1).join(' '));
+          if (playCard(m.content.split(' ').slice(1).join(' '))) {
+            setTimeout(finishSetup, 5000);
+            return true;
+          } else {
+            return false;
+          }
         } else if (m.content.toLowerCase().startsWith('draw')) {
           drawAndSkip();
+          game.groupChannel.send(`\`\`\`${topCard.toString()}\`\`\``);
           return false;
         }
       }, {max: 1});
@@ -623,7 +647,9 @@ function Uno() {
       embed.setDescription(
           'Just type `UNO!` into this channel to call uno.\nTo play a card, ' +
           'just type `play red 4` or `play yellow two` or `play draw 4` or ' +
-          'something like that.');
+          'something like that.\nIf you play a wild card, you must say what ' +
+          'color it is when you play it (eg: `play wild red` or `play yellow ' +
+          'draw four`).');
       embed.addField(
           'Current Rules',
           'Original rules (non-point based) as described here: ' +
@@ -658,18 +684,28 @@ function Uno() {
     /**
      * Called after a player's turn, to trigger the next player's turn.
      *
+     * @param {boolean} [skip=false] True to add additional message saying this
+     * player is skipped. Also doesn't send the player their hand. True if this
+     * turn is intended to be skipped.
      * @private
      */
-    function nextTurn() {
-      players[turn].channel.send(
-          '`Your current hand:`\n' +
-          players[turn].hand.map((card) => card.toString()).join('\n'));
+    function nextTurn(skipped) {
+      if (turn > -1) {
+        players[turn].channel.send(
+            '`Your current hand:`\n' +
+            players[turn].hand.map((card) => card.toString()).join('\n'));
+      }
 
       turn += direction;
       if (turn < 0) turn = players.length - 1;
       if (turn > players.length - 1) turn = 0;
-      game.groupChannel.send(
-          '`Next turn.` <@' + players[turn].id + '>\'s turn!');
+      if (skipped) {
+        game.groupChannel.send(
+            '`Skipping` <@' + players[turn].id + '>\'s turn!');
+      } else {
+        game.groupChannel.send(
+            '`Next turn.` <@' + players[turn].id + '>\'s turn!');
+      }
     }
 
     /**
@@ -695,14 +731,17 @@ function Uno() {
      */
     function drawCards(num, silent = false) {
       let drawn = [];
-      for (let j = 0; j < 7; j++) {
-        drawn.push(
-            discarded.splice(
-                Math.floor(Math.random() * discarded.length), 1)[0]);
+      for (let j = 0; j < num; j++) {
+        let single = discarded.splice(
+            Math.floor(Math.random() * discarded.length), 1)[0];
+        if (single.face & self.CardFace.WILD_EFFECT) {
+          single.color = self.Color.NONE;
+        }
+        drawn.push(single);
       }
       players[turn].hand = drawn.concat(players[turn].hand).sort((a, b) => {
         if (a.face == b.face) {
-          return a.color = b.color;
+          return a.color - b.color;
         } else {
           return a.face - b.face;
         }
@@ -710,7 +749,7 @@ function Uno() {
 
       if (!silent) {
         game.groupChannel.send(
-            '`' + players[turn].name + ' drew ' + num + ' card' +
+            '`' + players[turn].name + '` drew ' + num + ' card' +
             (num == 1 ? '' : 's') + ' from the deck.');
         players[turn].channel.send(
             '`You drew:` ' + drawn.map((card) => card.toString()).join(', '));
@@ -732,10 +771,16 @@ function Uno() {
     function playCard(text) {
       let selected = -1;
       let hand;
+      let color;  // Used if a wild card was played.
       if (turn == -1) {
         // First card to be played. No restrictions, any card can be played.
         selected = Math.floor(Math.random() * discarded.length);
         hand = discarded;
+        if (hand[selected].face & self.CardFace.WILD_EFFECT) {
+          color =
+              colorPairs[Math.floor(Math.random() * (colorPairs.length - 1)) +
+                         1];
+        }
       } else {
         hand = players[turn].hand;
         if (players[turn].bot) {
@@ -758,31 +803,61 @@ function Uno() {
                 '`I\'m not sure what card that is.`\n' + text);
             return false;
           }
-          if (parsed.face != topCard.face || parsed.color !== topCard.color) {
+          if (parsed.face & self.CardFace.WILD_EFFECT){
+            if (parsed.color == self.Color.NONE) {
+              game.groupChannel.send(
+                  '`Please specify a color to make this card.`');
+              return false;
+            } else {
+              color = parsed.color;
+            }
+          }
+          if (!(parsed.face & topCard.face) &&
+              !(parsed.face & self.CardFace.WILD_EFFECT) &&
+              parsed.color != topCard.color) {
             game.groupChannel.send('`That\'s not a valid card to play.`');
             return false;
           }
           selected = hand.findIndex((el) => {
-            return parsed.face == el.face && parsed.color == el.color;
+            return parsed.face == el.face &&
+                (parsed.face & self.CardFace.WILD_EFFECT ||
+                 parsed.color == el.color);
           });
           if (selected < 0) {
             game.groupChannel.send(
-                '`You don\'t have that card. Please play a card that you have' +
-                ', or \'draw\' to draw a card from the deck.');
+                '`You don\'t have that card.` Please play a card that you ' +
+                'have, or \'draw\' to draw a card from the deck.');
             return false;
           }
         }
       }
 
-      let card = hand[selected];
+      let card = hand.splice(selected, 1)[0];
+      discarded.push(card);
+      topCard = card;
+      previousCard = card;
+
+      if (color) {
+        card.color = color;
+      }
+
+      if (turn > -1 && players[turn].hand.length > 0) {
+        game.groupChannel.send(
+            '`' + players[turn].name + '` has ' + players[turn].hand.length +
+            ' cards.```' + card.toString() + '```');
+      } else {
+        game.groupChannel.send(`\`\`\`${card.toString()}\`\`\``);
+      }
+
+      if (hand.length == 0) return true;
 
       if (card.face & self.CardFace.REVERSE_EFFECT) {
         direction *= -1;
       }
-      if (card.face & self.CardFace.WILD_EFFECT && !card.color) {
+      /* if (card.face & self.CardFace.WILD_EFFECT && !card.color) {
         waitingForColor = players[turn].id;
-      }
-      nextTurn();
+      } */
+      nextTurn(card.face & self.CardFace.SKIP_EFFECT);
 
       if (card.face & self.CardFace.DRAW_TWO_EFFECT) {
         drawCards(2);
@@ -797,8 +872,6 @@ function Uno() {
       if (card.face & self.CardFace.SKIP_EFFECT) {
         nextTurn();
       }
-
-      game.groupChannel.send(hand[selected].toString());
       return false;
     }
 
@@ -865,6 +938,7 @@ function Uno() {
           game.catChannel.children.size == (1 + players.length)) {
         game.catChannel.delete('The UNO game has ended.');
       }
+      delete games[maker.guild.id][game.id];
     };
 
     /**
