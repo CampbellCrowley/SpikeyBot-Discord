@@ -3679,8 +3679,9 @@ function HungryGames() {
     let translator = null;
     for (let i = 0; i < affectedUsers.length; i++) {
       if (mention == 'all' ||
-          (mention == 'death' && (victimOutcome == 'dies' && i < numVictim) ||
-           (attackerOutcome == 'dies' && i >= numVictim))) {
+          (mention == 'death' &&
+           ((victimOutcome == 'dies' && i < numVictim) ||
+            (attackerOutcome == 'dies' && i >= numVictim)))) {
         mentionString += '<@' + affectedUsers[i].id + '>';
       }
       if (affectedUsers[i].settings &&
