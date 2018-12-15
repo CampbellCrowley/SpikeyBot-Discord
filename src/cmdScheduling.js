@@ -143,7 +143,7 @@ function CmdScheduling() {
    * @private
    * @constant
    * @default
-   * @type {string};
+   * @type {string}
    */
   const idChars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 

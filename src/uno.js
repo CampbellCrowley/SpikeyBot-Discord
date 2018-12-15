@@ -301,6 +301,8 @@ function Uno() {
   this.Game = function(memberList, maker) {
     const game = this;
 
+    numGames++;
+
     if (!memberList || !memberList.length) {
       throw new Error('Member list must be an array of Discord.GuildMembers.');
     }
@@ -1022,6 +1024,7 @@ function Uno() {
         game.catChannel.delete('The UNO game has ended.');
       }
       delete games[maker.guild.id][game.id];
+      numGames--;
     };
 
     /**
