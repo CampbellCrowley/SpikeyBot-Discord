@@ -370,7 +370,7 @@ function Uno() {
      * @default
      * @type {Uno.Player}
      */
-    let waitingForColor = -1;
+    // let waitingForColor = -1;
 
     /**
      * The current number of cards a player will need to draw if they cannot
@@ -379,7 +379,7 @@ function Uno() {
      * @private
      * @type {number}
      */
-    let drawCount = 0;
+    // let drawCount = 0;
 
     /**
      * The card played by the previous player in the turn order. Will be null
@@ -389,7 +389,7 @@ function Uno() {
      * @private
      * @type {?Uno.Card}
      */
-    let previousCard = null;
+    // let previousCard = null;
 
     /**
      * The current card on the top of the discard pile that will need to be
@@ -689,7 +689,7 @@ function Uno() {
      * turn is intended to be skipped.
      * @private
      */
-    function nextTurn(skipped) {
+    function nextTurn(skip) {
       if (turn > -1) {
         players[turn].channel.send(
             '`Your current hand:`\n' +
@@ -699,7 +699,7 @@ function Uno() {
       turn += direction;
       if (turn < 0) turn = players.length - 1;
       if (turn > players.length - 1) turn = 0;
-      if (skipped) {
+      if (skip) {
         game.groupChannel.send(
             '`Skipping` <@' + players[turn].id + '>\'s turn!');
       } else {
@@ -717,7 +717,7 @@ function Uno() {
      */
     function drawAndSkip(num = 1) {
       drawCards(num);
-      previousCard = null;
+      // previousCard = null;
       nextTurn();
     }
 
@@ -803,7 +803,7 @@ function Uno() {
                 '`I\'m not sure what card that is.`\n' + text);
             return false;
           }
-          if (parsed.face & self.CardFace.WILD_EFFECT){
+          if (parsed.face & self.CardFace.WILD_EFFECT) {
             if (parsed.color == self.Color.NONE) {
               game.groupChannel.send(
                   '`Please specify a color to make this card.`');
@@ -812,9 +812,9 @@ function Uno() {
               color = parsed.color;
             }
           }
-          if (!(parsed.face & topCard.face) &&
-              !(parsed.face & self.CardFace.WILD_EFFECT) &&
-              parsed.color != topCard.color) {
+          if (!((parsed.face == topCard.face) ||
+                (parsed.face & self.CardFace.WILD_EFFECT ||
+                 parsed.color == topCard.color))) {
             game.groupChannel.send('`That\'s not a valid card to play.`');
             return false;
           }
@@ -835,7 +835,7 @@ function Uno() {
       let card = hand.splice(selected, 1)[0];
       discarded.push(card);
       topCard = card;
-      previousCard = card;
+      // previousCard = card;
 
       if (color) {
         card.color = color;
@@ -861,12 +861,12 @@ function Uno() {
 
       if (card.face & self.CardFace.DRAW_TWO_EFFECT) {
         drawCards(2);
-        previousCard = null;
+        // previousCard = null;
       }
 
       if (card.face & self.CardFace.DRAW_FOUR_EFFECT) {
         drawCards(4);
-        previousCard = null;
+        // previousCard = null;
       }
 
       if (card.face & self.CardFace.SKIP_EFFECT) {

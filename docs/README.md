@@ -11022,8 +11022,12 @@ Manages an Uno game.
     * _instance_
         * [.Card](#Uno+Card)
             * [new this.Card(face, color)](#new_Uno+Card_new)
-            * [.face](#Uno+Card+face) : <code>Uno.CardFace</code>
-            * [.color](#Uno+Card+color) : <code>Uno.Color</code>
+            * _instance_
+                * [.face](#Uno+Card+face) : <code>Uno.CardFace</code>
+                * [.color](#Uno+Card+color) : <code>Uno.Color</code>
+                * [.toString()](#Uno+Card+toString) ⇒ <code>string</code>
+            * _inner_
+                * [~myName](#Uno+Card..myName) : <code>string</code> ℗
         * [.Game](#Uno+Game)
             * [new this.Game(memberList, maker)](#new_Uno+Game_new)
             * _instance_
@@ -11031,8 +11035,6 @@ Manages an Uno game.
                 * [.catChannel](#Uno+Game+catChannel) : <code>Discord~CategoryChannel</code>
                 * [.groupChannel](#Uno+Game+groupChannel) : <code>Discord~TextChannel</code>
                 * [.started](#Uno+Game+started) : <code>boolean</code>
-                * [.turn](#Uno+Game+turn) : <code>number</code>
-                * [.direction](#Uno+Game+direction) : <code>number</code>
                 * [.end()](#Uno+Game+end)
                 * [.addPlayer(p)](#Uno+Game+addPlayer)
                 * [.removePlayer(p)](#Uno+Game+removePlayer)
@@ -11040,15 +11042,23 @@ Manages an Uno game.
                 * [~members](#Uno+Game..members) : <code>Object.&lt;Discord~GuildMember&gt;</code> ℗
                 * [~players](#Uno+Game..players) : <code>Array.&lt;Uno.Player&gt;</code> ℗
                 * [~discarded](#Uno+Game..discarded) : <code>Array.&lt;Uno.Card&gt;</code> ℗
+                * [~turn](#Uno+Game..turn) : <code>number</code> ℗
+                * [~topCard](#Uno+Game..topCard) : <code>Uno.Card</code> ℗
+                * [~direction](#Uno+Game..direction) : <code>number</code> ℗
                 * [~currentCollector](#Uno+Game..currentCollector) ℗
                 * [~finishSetup()](#Uno+Game..finishSetup) ℗
                 * [~listPlayers()](#Uno+Game..listPlayers)
                 * [~startGame()](#Uno+Game..startGame) ℗
                 * [~sendHelp()](#Uno+Game..sendHelp) ⇒ <code>Promise.&lt;Discord~Message&gt;</code> ℗
-                * [~nextTurn()](#Uno+Game..nextTurn) ℗
+                * [~nextTurn([skip])](#Uno+Game..nextTurn) ℗
+                * [~drawAndSkip([num])](#Uno+Game..drawAndSkip) ℗
+                * [~drawCards(num, [silent])](#Uno+Game..drawCards) ℗
                 * [~playCard(text)](#Uno+Game..playCard) ⇒ <code>boolean</code> ℗
+                * [~parseToCard(text)](#Uno+Game..parseToCard) ⇒ <code>Uno.Card</code> ℗
+                * [~checkCard(card, [card2])](#Uno+Game..checkCard) ⇒ <code>boolean</code> ℗
         * [.id](#Uno+id) : <code>string</code>
         * [.name](#Uno+name) : <code>string</code>
+        * [.bot](#Uno+bot) : <code>boolean</code>
         * [.channel](#Uno+channel) : <code>Discord~TextChannel</code>
         * [.hand](#Uno+hand) : <code>Array.&lt;Uno.Card&gt;</code>
         * [.helpMessage](#SubModule+helpMessage) : <code>string</code> \| <code>Discord~MessageEmbed</code>
@@ -11057,7 +11067,6 @@ Manages an Uno game.
         * [.client](#SubModule+client) : <code>Discord~Client</code>
         * [.command](#SubModule+command) : [<code>Command</code>](#Command)
         * [.common](#SubModule+common) : [<code>Common</code>](#Common)
-        * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
         * [.myName](#SubModule+myName) : <code>string</code>
         * [.initialized](#SubModule+initialized) : <code>boolean</code>
         * [.Color](#Uno+Color) : <code>enum</code>
@@ -11081,6 +11090,10 @@ Manages an Uno game.
         * [~numGames](#Uno..numGames) : <code>number</code> ℗
         * [~pFlags](#Uno..pFlags) ℗
         * [~games](#Uno..games) : <code>Object.&lt;Object.&lt;Uno.Game&gt;&gt;</code> ℗
+        * [~colorPairs](#Uno..colorPairs) ℗
+        * [~colorRegExp](#Uno..colorRegExp) : <code>RegExp</code> ℗
+        * [~cardFacePairs](#Uno..cardFacePairs) ℗
+        * [~cardFaceRegExp](#Uno..cardFaceRegExp) : <code>RegExp</code> ℗
         * [~commandUno(msg)](#Uno..commandUno) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandEndAll(msg)](#Uno..commandEndAll) : [<code>commandHandler</code>](#commandHandler) ℗
 
@@ -11092,8 +11105,12 @@ Manages an Uno game.
 
 * [.Card](#Uno+Card)
     * [new this.Card(face, color)](#new_Uno+Card_new)
-    * [.face](#Uno+Card+face) : <code>Uno.CardFace</code>
-    * [.color](#Uno+Card+color) : <code>Uno.Color</code>
+    * _instance_
+        * [.face](#Uno+Card+face) : <code>Uno.CardFace</code>
+        * [.color](#Uno+Card+color) : <code>Uno.Color</code>
+        * [.toString()](#Uno+Card+toString) ⇒ <code>string</code>
+    * _inner_
+        * [~myName](#Uno+Card..myName) : <code>string</code> ℗
 
 <a name="new_Uno+Card_new"></a>
 
@@ -11122,6 +11139,22 @@ The color of this card.
 
 **Kind**: instance property of [<code>Card</code>](#Uno+Card)  
 **Access**: public  
+<a name="Uno+Card+toString"></a>
+
+#### card.toString() ⇒ <code>string</code>
+Stringifies the face and colors to their key names.
+
+**Kind**: instance method of [<code>Card</code>](#Uno+Card)  
+**Returns**: <code>string</code> - This card as a string.  
+**Access**: public  
+<a name="Uno+Card..myName"></a>
+
+#### Card~myName : <code>string</code> ℗
+The name of this card retreivable with `toString()`. Null until first
+`toString()` call.
+
+**Kind**: inner property of [<code>Card</code>](#Uno+Card)  
+**Access**: private  
 <a name="Uno+Game"></a>
 
 ### uno.Game
@@ -11135,8 +11168,6 @@ The color of this card.
         * [.catChannel](#Uno+Game+catChannel) : <code>Discord~CategoryChannel</code>
         * [.groupChannel](#Uno+Game+groupChannel) : <code>Discord~TextChannel</code>
         * [.started](#Uno+Game+started) : <code>boolean</code>
-        * [.turn](#Uno+Game+turn) : <code>number</code>
-        * [.direction](#Uno+Game+direction) : <code>number</code>
         * [.end()](#Uno+Game+end)
         * [.addPlayer(p)](#Uno+Game+addPlayer)
         * [.removePlayer(p)](#Uno+Game+removePlayer)
@@ -11144,13 +11175,20 @@ The color of this card.
         * [~members](#Uno+Game..members) : <code>Object.&lt;Discord~GuildMember&gt;</code> ℗
         * [~players](#Uno+Game..players) : <code>Array.&lt;Uno.Player&gt;</code> ℗
         * [~discarded](#Uno+Game..discarded) : <code>Array.&lt;Uno.Card&gt;</code> ℗
+        * [~turn](#Uno+Game..turn) : <code>number</code> ℗
+        * [~topCard](#Uno+Game..topCard) : <code>Uno.Card</code> ℗
+        * [~direction](#Uno+Game..direction) : <code>number</code> ℗
         * [~currentCollector](#Uno+Game..currentCollector) ℗
         * [~finishSetup()](#Uno+Game..finishSetup) ℗
         * [~listPlayers()](#Uno+Game..listPlayers)
         * [~startGame()](#Uno+Game..startGame) ℗
         * [~sendHelp()](#Uno+Game..sendHelp) ⇒ <code>Promise.&lt;Discord~Message&gt;</code> ℗
-        * [~nextTurn()](#Uno+Game..nextTurn) ℗
+        * [~nextTurn([skip])](#Uno+Game..nextTurn) ℗
+        * [~drawAndSkip([num])](#Uno+Game..drawAndSkip) ℗
+        * [~drawCards(num, [silent])](#Uno+Game..drawCards) ℗
         * [~playCard(text)](#Uno+Game..playCard) ⇒ <code>boolean</code> ℗
+        * [~parseToCard(text)](#Uno+Game..parseToCard) ⇒ <code>Uno.Card</code> ℗
+        * [~checkCard(card, [card2])](#Uno+Game..checkCard) ⇒ <code>boolean</code> ℗
 
 <a name="new_Uno+Game_new"></a>
 
@@ -11194,24 +11232,6 @@ Has this game been started.
 
 **Kind**: instance property of [<code>Game</code>](#Uno+Game)  
 **Default**: <code>false</code>  
-**Access**: public  
-**Read only**: true  
-<a name="Uno+Game+turn"></a>
-
-#### game.turn : <code>number</code>
-The current index of the player whose turn it is.
-
-**Kind**: instance property of [<code>Game</code>](#Uno+Game)  
-**Default**: <code>0</code>  
-**Access**: public  
-**Read only**: true  
-<a name="Uno+Game+direction"></a>
-
-#### game.direction : <code>number</code>
-The current direction of play. Either 1 or -1.
-
-**Kind**: instance property of [<code>Game</code>](#Uno+Game)  
-**Default**: <code>1</code>  
 **Access**: public  
 **Read only**: true  
 <a name="Uno+Game+end"></a>
@@ -11266,6 +11286,30 @@ All cards currently not in a player's hand.
 
 **Kind**: inner property of [<code>Game</code>](#Uno+Game)  
 **Access**: private  
+<a name="Uno+Game..turn"></a>
+
+#### Game~turn : <code>number</code> ℗
+The current index of the player whose turn it is.
+
+**Kind**: inner property of [<code>Game</code>](#Uno+Game)  
+**Access**: private  
+<a name="Uno+Game..topCard"></a>
+
+#### Game~topCard : <code>Uno.Card</code> ℗
+The current card on the top of the discard pile that will need to be
+matched by the next player to play a card.
+
+**Kind**: inner property of [<code>Game</code>](#Uno+Game)  
+**Access**: private  
+**See**: [Uno.Game~previousCard](Uno.Game~previousCard)  
+<a name="Uno+Game..direction"></a>
+
+#### Game~direction : <code>number</code> ℗
+The current direction of play. Either 1 or -1.
+
+**Kind**: inner property of [<code>Game</code>](#Uno+Game)  
+**Default**: <code>1</code>  
+**Access**: private  
 <a name="Uno+Game..currentCollector"></a>
 
 #### Game~currentCollector ℗
@@ -11306,11 +11350,42 @@ Sends the game help to the group channel.
 **Access**: private  
 <a name="Uno+Game..nextTurn"></a>
 
-#### Game~nextTurn() ℗
+#### Game~nextTurn([skip]) ℗
 Called after a player's turn, to trigger the next player's turn.
 
 **Kind**: inner method of [<code>Game</code>](#Uno+Game)  
 **Access**: private  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [skip] | <code>boolean</code> | <code>false</code> | True to add additional message saying this player is skipped. Also doesn't send the player their hand. True if this turn is intended to be skipped. |
+
+<a name="Uno+Game..drawAndSkip"></a>
+
+#### Game~drawAndSkip([num]) ℗
+Cause the current player to draw cards from the discarded pile, then skip
+their turn and continue to the next player.
+
+**Kind**: inner method of [<code>Game</code>](#Uno+Game)  
+**Access**: private  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [num] | <code>number</code> | <code>1</code> | The number of cards to draw. |
+
+<a name="Uno+Game..drawCards"></a>
+
+#### Game~drawCards(num, [silent]) ℗
+Cause the current player to draw cards from the discarded pile.
+
+**Kind**: inner method of [<code>Game</code>](#Uno+Game)  
+**Access**: private  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| num | <code>number</code> |  | The number of cards to draw. |
+| [silent] | <code>boolean</code> | <code>false</code> | Do not send a message to the group channel. |
+
 <a name="Uno+Game..playCard"></a>
 
 #### Game~playCard(text) ⇒ <code>boolean</code> ℗
@@ -11324,6 +11399,34 @@ continue.
 | Param | Type | Description |
 | --- | --- | --- |
 | text | <code>string</code> | User inputted text to parse into a card to play. |
+
+<a name="Uno+Game..parseToCard"></a>
+
+#### Game~parseToCard(text) ⇒ <code>Uno.Card</code> ℗
+Parse a string of text to a playable card.
+
+**Kind**: inner method of [<code>Game</code>](#Uno+Game)  
+**Returns**: <code>Uno.Card</code> - The matched card, or null if no match.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| text | <code>string</code> | The user-input to parse. |
+
+<a name="Uno+Game..checkCard"></a>
+
+#### Game~checkCard(card, [card2]) ⇒ <code>boolean</code> ℗
+Checks if the given card may be played next.
+
+**Kind**: inner method of [<code>Game</code>](#Uno+Game)  
+**Returns**: <code>boolean</code> - True if can be played, false otherwise.  
+**Access**: private  
+**See**: [Uno.Game~topCard](Uno.Game~topCard)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| card | <code>Uno.Card</code> | The card to check. |
+| [card2] | <code>Uno.Card</code> | The card to check against. If not defined, the current topCard will be used. |
 
 <a name="Uno+id"></a>
 
@@ -11339,6 +11442,15 @@ The Discord ID of this player.
 The name of this player.
 
 **Kind**: instance property of [<code>Uno</code>](#Uno)  
+**Access**: public  
+**Read only**: true  
+<a name="Uno+bot"></a>
+
+### uno.bot : <code>boolean</code>
+Whether this player is a bot or not.
+
+**Kind**: instance property of [<code>Uno</code>](#Uno)  
+**Overrides**: [<code>bot</code>](#SubModule+bot)  
 **Access**: public  
 **Read only**: true  
 <a name="Uno+channel"></a>
@@ -11395,12 +11507,6 @@ The command object for registering command listeners.
 The common object.
 
 **Kind**: instance property of [<code>Uno</code>](#Uno)  
-<a name="SubModule+bot"></a>
-
-### uno.bot : [<code>SpikeyBot</code>](#SpikeyBot)
-The parent SpikeyBot instance.
-
-**Kind**: instance property of [<code>Uno</code>](#Uno)  
 <a name="SubModule+myName"></a>
 
 ### uno.myName : <code>string</code>
@@ -11440,8 +11546,8 @@ Enum for card colors.
 <a name="Uno+CardFace"></a>
 
 ### uno.CardFace : <code>enum</code>
-Enum for card faces. The LSB is the card number, all following bits are a
-bitfield of card properties.
+Enum for card faces. The least significant nibble is the card number, all
+following bits are a bitfield of card properties.
 
 0x010: The card is a wild card.
 0x020: The card skips the next player's turn.
@@ -11450,28 +11556,48 @@ bitfield of card properties.
 cards.
 0x100: The next player must draw 4 cards.
 
+EFFECT entries are NOT real card faces, just the bitfield represented with
+that effect.
+
 **Kind**: instance enum of [<code>Uno</code>](#Uno)  
-**Default**: <code>{&quot;SKIP&quot;:42,&quot;DRAW_TWO&quot;:171,&quot;REVERSE&quot;:108,&quot;WILD&quot;:30,&quot;DRAW_FOUR&quot;:317,&quot;ZERO&quot;:0,&quot;ONE&quot;:1,&quot;TWO&quot;:2,&quot;THREE&quot;:3,&quot;FOUR&quot;:4,&quot;FIVE&quot;:5,&quot;SIX&quot;:6,&quot;SEVEN&quot;:7,&quot;EIGHT&quot;:8,&quot;NINE&quot;:9}</code>  
+**Default**: <code>{&quot;SKIP_EFFECT&quot;:32,&quot;SKIP&quot;:42,&quot;DRAW_TWO_EFFECT&quot;:128,&quot;DRAW_TWO&quot;:171,&quot;DRAW_2&quot;:171,&quot;REVERSE_EFFECT&quot;:64,&quot;REVERSE&quot;:108,&quot;WILD_EFFECT&quot;:16,&quot;WILD&quot;:30,&quot;DRAW_FOUR_EFFECT&quot;:256,&quot;DRAW_FOUR&quot;:317,&quot;DRAW_4&quot;:317,&quot;ZERO&quot;:0,&quot;undefined&quot;:9,&quot;ONE&quot;:1,&quot;TWO&quot;:2,&quot;THREE&quot;:3,&quot;FOUR&quot;:4,&quot;FIVE&quot;:5,&quot;SIX&quot;:6,&quot;SEVEN&quot;:7,&quot;EIGHT&quot;:8,&quot;NINE&quot;:9}</code>  
 **Access**: public  
 **Properties**
 
 | Name | Type | Default |
 | --- | --- | --- |
+| SKIP_EFFECT | <code>number</code> | <code>32</code> | 
 | SKIP | <code>number</code> | <code>42</code> | 
+| DRAW_TWO_EFFECT | <code>number</code> | <code>128</code> | 
 | DRAW_TWO | <code>number</code> | <code>171</code> | 
+| DRAW_2 | <code>number</code> | <code>171</code> | 
+| REVERSE_EFFECT | <code>number</code> | <code>64</code> | 
 | REVERSE | <code>number</code> | <code>108</code> | 
+| WILD_EFFECT | <code>number</code> | <code>16</code> | 
 | WILD | <code>number</code> | <code>30</code> | 
+| DRAW_FOUR_EFFECT | <code>number</code> | <code>256</code> | 
 | DRAW_FOUR | <code>number</code> | <code>317</code> | 
+| DRAW_4 | <code>number</code> | <code>317</code> | 
 | ZERO | <code>number</code> | <code>0</code> | 
+| 0 | <code>number</code> | <code>0</code> | 
 | ONE | <code>number</code> | <code>1</code> | 
+| 1 | <code>number</code> | <code>1</code> | 
 | TWO | <code>number</code> | <code>2</code> | 
+| 2 | <code>number</code> | <code>2</code> | 
 | THREE | <code>number</code> | <code>3</code> | 
+| 3 | <code>number</code> | <code>3</code> | 
 | FOUR | <code>number</code> | <code>4</code> | 
+| 4 | <code>number</code> | <code>4</code> | 
 | FIVE | <code>number</code> | <code>5</code> | 
+| 5 | <code>number</code> | <code>5</code> | 
 | SIX | <code>number</code> | <code>6</code> | 
+| 6 | <code>number</code> | <code>6</code> | 
 | SEVEN | <code>number</code> | <code>7</code> | 
+| 7 | <code>number</code> | <code>7</code> | 
 | EIGHT | <code>number</code> | <code>8</code> | 
+| 8 | <code>number</code> | <code>8</code> | 
 | NINE | <code>number</code> | <code>9</code> | 
+| 9 | <code>number</code> | <code>9</code> | 
 
 <a name="SubModule+commit"></a>
 
@@ -11647,6 +11773,36 @@ self.Discord.Permissions.FLAGS
 All games currently in progress mapped by guilds, then by the game ID.
 
 **Kind**: inner property of [<code>Uno</code>](#Uno)  
+**Access**: private  
+<a name="Uno..colorPairs"></a>
+
+### Uno~colorPairs ℗
+Color as entries.
+
+**Kind**: inner constant of [<code>Uno</code>](#Uno)  
+**Access**: private  
+<a name="Uno..colorRegExp"></a>
+
+### Uno~colorRegExp : <code>RegExp</code> ℗
+Regular expression search for acceptable colors. Case insensitive and
+global flags are set.
+
+**Kind**: inner constant of [<code>Uno</code>](#Uno)  
+**Access**: private  
+<a name="Uno..cardFacePairs"></a>
+
+### Uno~cardFacePairs ℗
+CardFace as entries.
+
+**Kind**: inner constant of [<code>Uno</code>](#Uno)  
+**Access**: private  
+<a name="Uno..cardFaceRegExp"></a>
+
+### Uno~cardFaceRegExp : <code>RegExp</code> ℗
+Regular expression search for acceptable card faces. Case insensitive and
+global flags are set.
+
+**Kind**: inner constant of [<code>Uno</code>](#Uno)  
 **Access**: private  
 <a name="Uno..commandUno"></a>
 
