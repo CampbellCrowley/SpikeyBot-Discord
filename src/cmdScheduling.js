@@ -271,40 +271,31 @@ function CmdScheduling() {
         myself.channel = self.client.channels.get(myself.channelId);
       }
       if (typeof myself.message !== 'object') {
-        myself.message = myself.channel.messages.get(myself.messageId);
-        if (!myself.message) {
-          myself.channel.messages.fetch(myself.messageId)
-              .then((msg) => {
-                myself.message = msg;
-                myself.member = msg.member;
-                myself.memberId = msg.member.id;
-              })
-              .catch((err) => {
-                myself.message = makeMessage(
-                    myself.memberId, myself.channel.guild.id, myself.channelId,
-                    myself.cmd);
-                myself.member = myself.member;
-                myself.memberId = myself.member.id;
-              });
-        } else {
-          myself.member = myself.message.member;
-          myself.memberId = myself.message.member.id;
-        }
+        myself.channel.messages.fetch(myself.messageId)
+            .then((msg) => {
+              myself.message = msg;
+              myself.member = msg.member;
+              myself.memberId = msg.member.id;
+            })
+            .catch((err) => {
+              myself.message = makeMessage(
+                  myself.memberId, myself.channel.guild.id, myself.channelId,
+                  myself.cmd);
+              myself.member = myself.message.member;
+              myself.memberId = myself.member.id;
+            });
       }
       if (typeof myself.member !== 'object') {
-        myself.member = myself.channel.members.get(myself.memberId);
-        if (!myself.member) {
-          myself.channel.guild.members.fetch(myself.memberId)
-              .then((m) => {
-                myself.member = m;
-              })
-              .catch((err) => {
-                self.error(
-                    'Failed to find member with id: ' + myself.memberId +
-                    ' in guild: ' + myself.channel.guild.id);
-                console.error(err);
-              });
-        }
+        myself.channel.guild.members.fetch(myself.memberId)
+            .then((m) => {
+              myself.member = m;
+            })
+            .catch((err) => {
+              self.error(
+                  'Failed to find member with id: ' + myself.memberId +
+                  ' in guild: ' + myself.channel.guild.id);
+              console.error(err);
+            });
       }
     }
 
