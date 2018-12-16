@@ -188,7 +188,7 @@ function Uno() {
     DRAW_TWO: 0x0AB,
     DRAW_2: 0x0AB,
     REVERSE_EFFECT: 0x040,
-    REVERSE: 0x06C,
+    REVERSE: 0x04C,
     WILD_EFFECT: 0x010,
     WILD: 0x01E,
     DRAW_FOUR_EFFECT: 0x100,
@@ -273,16 +273,16 @@ function Uno() {
     this.toString = function() {
       // Wild cards can change color, so we can't cache their name.
       if (myName && !(card.face & self.CardFace.WILD_EFFECT)) return myName;
+      let face = formatCard(cardFacePairs.find((el) => el[1] == card.face)[0]);
       if (card.color == self.Color.NONE) {
-        myName = cardFacePairs.find((el) => el[1] == card.face)[0];
+        myName = face;
       } else {
         let colorName = colorPairs.find((el) => el[1] == card.color);
         if (!colorName) {
           console.log(card.color, 'not a valid color');
         }
-        colorName = colorName[0];
-        myName =
-            colorName + ' ' + cardFacePairs.find((el) => el[1] == card.face)[0];
+        colorName = formatCard(colorName[0]);
+        myName = colorName + ' ' + face;
       }
       return myName;
     };
@@ -460,7 +460,7 @@ function Uno() {
           {
             id: maker.guild.defaultRole,
             allow: 0,
-            deny: pFlags.VIEW_CHANNEL | pFlags.SEND_MESSAGES,
+            deny: pFlags.VIEW_CHANNEL,
             type: 'role',
           },
           {
@@ -523,12 +523,13 @@ function Uno() {
       currentCollector = game.groupChannel.createMessageCollector((m) => {
         if (m.author.id != maker.id) {
           if (m.content.toLowerCase().startsWith('uno leave')) {
+            self.log(m.channel.id + '@' + m.author.id + ' ' + m.content);
             game.removePlayer(m.author.id);
           }
           return false;
         }
         if (m.content.toLowerCase().startsWith('uno')) {
-          self.log(msg.content);
+          self.log(m.channel.id + '@' + m.author.id + ' ' + m.content);
           let cmd = m.content.toLowerCase().split(' ')[1];
           switch (cmd) {
             case 'begin':
@@ -627,7 +628,7 @@ function Uno() {
         }
         if (m.author.id == maker.id &&
             m.content.toLowerCase().startsWith('uno')) {
-          self.log(m.content);
+          self.log(m.channel.id + '@' + m.author.id + ' ' + m.content);
           switch (m.content.toLowerCase().split(' ')[1]) {
             case 'end':
               game.end();
@@ -642,7 +643,7 @@ function Uno() {
         }
         if (turn < 0 || m.author.id != players[turn].id) return false;
         if (m.content.toLowerCase().startsWith('uno')) {
-          self.log(m.content);
+          self.log(m.channel.id + '@' + m.author.id + ' ' + m.content);
           let cmd = m.content.toLowerCase().split(' ')[1];
           switch (cmd) {
             case 'play':
@@ -659,7 +660,7 @@ function Uno() {
           }
           return false;
         } else if (m.content.toLowerCase().startsWith('play')) {
-          self.log(m.content);
+          self.log(m.channel.id + '@' + m.author.id + ' ' + m.content);
           if (playCard(m.content.split(' ').slice(1).join(' '))) {
             setTimeout(finishSetup, 5000);
             return true;
@@ -667,7 +668,7 @@ function Uno() {
             return false;
           }
         } else if (m.content.toLowerCase().startsWith('draw')) {
-          self.log(m.content);
+          self.log(m.channel.id + '@' + m.author.id + ' ' + m.content);
           drawAndSkip();
           game.groupChannel.send(`\`\`\`${topCard.toString()}\`\`\``);
           return false;
@@ -905,13 +906,18 @@ function Uno() {
 
       previousTurn = turn;
 
+      let skipping = false;
       if (card.face & self.CardFace.REVERSE_EFFECT) {
         direction *= -1;
+        if (players.length == 2) {
+          skipping = true;
+        }
       }
       /* if (card.face & self.CardFace.WILD_EFFECT && !card.color) {
         waitingForColor = players[turn].id;
       } */
-      nextTurn(card.face & self.CardFace.SKIP_EFFECT);
+
+      nextTurn(skipping || card.face & self.CardFace.SKIP_EFFECT);
 
       if (card.face & self.CardFace.DRAW_TWO_EFFECT) {
         drawCards(2);
@@ -923,7 +929,7 @@ function Uno() {
         // previousCard = null;
       }
 
-      if (card.face & self.CardFace.SKIP_EFFECT) {
+      if (skipping || card.face & self.CardFace.SKIP_EFFECT) {
         nextTurn();
       }
       return false;
@@ -937,8 +943,9 @@ function Uno() {
      * @return {?Uno.Card} The matched card, or null if no match.
      */
     function parseToCard(text) {
-      let colorMatch = text.match(colorRegExp);
-      let faceMatch = text.match(cardFaceRegExp);
+      let replaced = text.replace(/_/g, ' ');
+      let colorMatch = replaced.match(colorRegExp);
+      let faceMatch = replaced.match(cardFaceRegExp);
 
       if (!faceMatch) return null;
       if (faceMatch.length != 1) return null;
@@ -1051,6 +1058,13 @@ function Uno() {
         return;
       }
       players.push(new self.Player(p, game));
+      game.groupChannel.overwritePermissions({
+        permissionOverwrites: [{
+          id: p.user.id,
+          allow: pFlags.VIEW_CHANNEL | pFlags.SEND_MESSAGES,
+        }],
+        reason: 'User added to game.',
+      });
     };
 
     /**
@@ -1070,8 +1084,8 @@ function Uno() {
         players[index].remove();
         discarded = discarded.concat(players[index].hand.splice(0));
         players.splice(index, 1);
-        game.groupChannel.permissionOverwrites.get(p).delete(
-            'User removed from game');
+        let perms = game.groupChannel.permissionOverwrites.get(p);
+        if (perms) perms.delete('User removed from game');
         if (turn == index) nextTurn();
       }
     };
@@ -1201,6 +1215,23 @@ function Uno() {
       }
     };
   };
+
+  /**
+   * Takes a string that is all caps with underscores and makes it more human
+   * readable.
+   *
+   * @private
+   * @param {string} txt The text to format.
+   * @return {string} The formatted text.
+   */
+  function formatCard(txt) {
+    return txt.replace(/_/g, ' ')
+        .split(' ')
+        .map((el) => {
+          return el.charAt(i).toUpperCase() + el.substring(1).toLowerCase();
+        })
+        .join(' ');
+  }
 
   /**
    * A default hand of cards that the classic game starts with.

@@ -244,6 +244,22 @@
       "title": "Games Stuff",
       "rows": [
         {
+          "command": "uno",
+          "description": "Start a game of UNO! in the server text channels.",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "uno",
+              "result": "Starts a game of UNO with you as the lobby host. Text channels are created for each player that is invited, and one for the lobby channel."
+            },
+            {
+              "description": "Mentioning",
+              "command": "uno @SpikeyRobot",
+              "result": "Starts UNO with @SpikeyRobot."
+            }
+          ]
+        },
+        {
           "command": "tictactoe",
           "description": "Play a game of Tic Tac Toe with someone! (Mention someone to challenge them)",
           "examples": [

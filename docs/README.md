@@ -11100,6 +11100,7 @@ Manages an Uno game.
         * [~cardFaceRegExp](#Uno..cardFaceRegExp) : <code>RegExp</code> ℗
         * [~commandUno(msg)](#Uno..commandUno) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandEndAll(msg)](#Uno..commandEndAll) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~formatCard(txt)](#Uno..formatCard) ⇒ <code>string</code> ℗
 
 <a name="Uno+Card"></a>
 
@@ -11597,7 +11598,7 @@ EFFECT entries are NOT real card faces, just the bitfield represented with
 that effect.
 
 **Kind**: instance enum of [<code>Uno</code>](#Uno)  
-**Default**: <code>{&quot;SKIP_EFFECT&quot;:32,&quot;SKIP&quot;:42,&quot;DRAW_TWO_EFFECT&quot;:128,&quot;DRAW_TWO&quot;:171,&quot;DRAW_2&quot;:171,&quot;REVERSE_EFFECT&quot;:64,&quot;REVERSE&quot;:108,&quot;WILD_EFFECT&quot;:16,&quot;WILD&quot;:30,&quot;DRAW_FOUR_EFFECT&quot;:256,&quot;DRAW_FOUR&quot;:317,&quot;DRAW_4&quot;:317,&quot;ZERO&quot;:0,&quot;undefined&quot;:9,&quot;ONE&quot;:1,&quot;TWO&quot;:2,&quot;THREE&quot;:3,&quot;FOUR&quot;:4,&quot;FIVE&quot;:5,&quot;SIX&quot;:6,&quot;SEVEN&quot;:7,&quot;EIGHT&quot;:8,&quot;NINE&quot;:9}</code>  
+**Default**: <code>{&quot;SKIP_EFFECT&quot;:32,&quot;SKIP&quot;:42,&quot;DRAW_TWO_EFFECT&quot;:128,&quot;DRAW_TWO&quot;:171,&quot;DRAW_2&quot;:171,&quot;REVERSE_EFFECT&quot;:64,&quot;REVERSE&quot;:76,&quot;WILD_EFFECT&quot;:16,&quot;WILD&quot;:30,&quot;DRAW_FOUR_EFFECT&quot;:256,&quot;DRAW_FOUR&quot;:317,&quot;DRAW_4&quot;:317,&quot;ZERO&quot;:0,&quot;undefined&quot;:9,&quot;ONE&quot;:1,&quot;TWO&quot;:2,&quot;THREE&quot;:3,&quot;FOUR&quot;:4,&quot;FIVE&quot;:5,&quot;SIX&quot;:6,&quot;SEVEN&quot;:7,&quot;EIGHT&quot;:8,&quot;NINE&quot;:9}</code>  
 **Access**: public  
 **Properties**
 
@@ -11609,7 +11610,7 @@ that effect.
 | DRAW_TWO | <code>number</code> | <code>171</code> | 
 | DRAW_2 | <code>number</code> | <code>171</code> | 
 | REVERSE_EFFECT | <code>number</code> | <code>64</code> | 
-| REVERSE | <code>number</code> | <code>108</code> | 
+| REVERSE | <code>number</code> | <code>76</code> | 
 | WILD_EFFECT | <code>number</code> | <code>16</code> | 
 | WILD | <code>number</code> | <code>30</code> | 
 | DRAW_FOUR_EFFECT | <code>number</code> | <code>256</code> | 
@@ -11873,6 +11874,20 @@ Ends all Uno games.
 | Param | Type | Description |
 | --- | --- | --- |
 | msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Uno..formatCard"></a>
+
+### Uno~formatCard(txt) ⇒ <code>string</code> ℗
+Takes a string that is all caps with underscores and makes it more human
+readable.
+
+**Kind**: inner method of [<code>Uno</code>](#Uno)  
+**Returns**: <code>string</code> - The formatted text.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| txt | <code>string</code> | The text to format. |
 
 <a name="FunTranslators"></a>
 
