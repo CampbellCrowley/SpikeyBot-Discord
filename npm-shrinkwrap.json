@@ -1466,14 +1466,13 @@
       }
     },
     "discord.js": {
-      "version": "github:discordjs/discord.js#42505b78c15306491ac3a605f86a3e010bc80958",
+      "version": "github:discordjs/discord.js#e189c1b728d8fd2742acc4d807e7559e807814fd",
       "from": "github:discordjs/discord.js",
       "requires": {
         "form-data": "^2.3.2",
         "node-fetch": "^2.1.2",
         "pako": "^1.0.0",
         "prism-media": "github:amishshah/prism-media#1e336c9a20dd0928ef3bdc2075ab58d1521fb323",
-        "setimmediate": "^1.0.5",
         "tweetnacl": "^1.0.0",
         "ws": "^6.0.0"
       }
@@ -4261,9 +4260,9 @@
       "integrity": "sha1-8FKijacOYYkX7wqKw0wa5aaChrM="
     },
     "psl": {
-      "version": "1.1.29",
-      "resolved": "https://registry.npmjs.org/psl/-/psl-1.1.29.tgz",
-      "integrity": "sha512-AeUmQ0oLN02flVHXWh9sSJF7mcdFq0ppid/JkErufc3hGIV/AMa8Fo9VgDo/cT2jFdOWoFvHp90qqBH54W+gjQ=="
+      "version": "1.1.31",
+      "resolved": "https://registry.npmjs.org/psl/-/psl-1.1.31.tgz",
+      "integrity": "sha512-/6pt4+C+T+wZUieKR620OpzN/LlnNKuWjy1iFLQ/UG35JqHlR/89MP1d96dUfkf6Dne3TuLQzOYEYshJ+Hx8mw=="
     },
     "punycode": {
       "version": "1.4.1",
@@ -4617,11 +4616,6 @@
           }
         }
       }
-    },
-    "setimmediate": {
-      "version": "1.0.5",
-      "resolved": "https://registry.npmjs.org/setimmediate/-/setimmediate-1.0.5.tgz",
-      "integrity": "sha1-KQy7Iy4waULX1+qbg3Mqt4VvgoU="
     },
     "shebang-command": {
       "version": "1.2.0",

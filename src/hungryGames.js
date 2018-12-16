@@ -1937,143 +1937,152 @@ function HungryGames() {
           msg, 'A game is already in progress! ("' + msg.prefix +
               self.postPrefix + 'next" for next day, or "' + msg.prefix +
               self.postPrefix + 'end" to abort)');
-    } else if (
-      !msg.channel.permissionsFor(msg.guild.me)
-          .has(self.Discord.Permissions.FLAGS.ATTACH_FILES)) {
-      self.common.reply(
-          msg, 'Sorry, but I need permission to send images ' +
-              'in this channel before I can start the games.\nPlease ensure ' +
-              'I have the "Attach Files" permission in this channel.');
     } else {
-      /**
-       * Once the game has finished loading all necessary data, start it if
-       * autoplay is enabled.
-       * @private
-       */
-      function loadingComplete() {
-        if (find(id).autoPlay) nextDay(msg, id);
-      }
-
-      createGame(msg, id, true, loadingComplete);
-
-      let finalMessage = new self.Discord.MessageEmbed();
-      finalMessage.setTitle(getMessage('gameStart'));
-      finalMessage.setColor(defaultColor);
-
-      let numUsers = find(id).currentGame.includedUsers.length;
-      if (find(id).options.teamSize > 0) {
-        find(id).currentGame.includedUsers.sort(function(a, b) {
-          let aTeam = find(id).currentGame.teams.findIndex(function(team) {
-            return team.players.findIndex(function(player) {
-              return player == a.id;
-            }) > -1;
-          });
-          let bTeam = find(id).currentGame.teams.findIndex(function(team) {
-            return team.players.findIndex(function(player) {
-              return player == b.id;
-            }) > -1;
-          });
-          if (aTeam == bTeam) {
-            return a.id - b.id;
-          } else {
-            return aTeam - bTeam;
-          }
-        });
-      }
-      let prevTeam = -1;
-      let statusList = find(id).currentGame.includedUsers.map(function(obj) {
-        let myTeam = -1;
-        if (find(id).options.teamSize > 0) {
-          myTeam = find(id).currentGame.teams.findIndex(function(team) {
-            return team.players.findIndex(function(player) {
-              return player == obj.id;
-            }) > -1;
-          });
-        }
-
-        let shortName;
-        if (obj.nickname && find(id).options.useNicknames) {
-          shortName = obj.nickname.substring(0, 16);
-          if (shortName != obj.nickname) {
-            shortName = shortName.substring(0, 13) + '...';
-          }
-        } else {
-          shortName = obj.name.substring(0, 16);
-          if (shortName != obj.name) {
-            shortName = shortName.substring(0, 13) + '...';
-          }
-        }
-
-        let prefix = '';
-        if (myTeam != prevTeam) {
-          prevTeam = myTeam;
-          prefix = '__' + find(id).currentGame.teams[myTeam].name + '__\n';
-        }
-
-        return prefix + '`' + shortName + '`';
-      });
-      if (find(id).options.teamSize == 0) {
-        statusList.sort();
-      }
-
-      const numCols = calcColNum(statusList.length > 10 ? 3 : 2, statusList);
-      if (statusList.length >= 3) {
-        const quarterLength = Math.ceil(statusList.length / numCols);
-        for (let i = 0; i < numCols - 1; i++) {
-          let thisMessage = statusList.splice(0, quarterLength).join('\n');
-          finalMessage.addField(
-              'Included (' + (i * quarterLength + 1) + '-' +
-                  ((i + 1) * quarterLength) + ')',
-              thisMessage, true);
-        }
-        finalMessage.addField(
-            'Included (' + ((numCols - 1) * quarterLength + 1) + '-' +
-                numUsers + ')',
-            statusList.join('\n'), true);
-      } else {
-        finalMessage.addField(
-            'Included (' + numUsers + ')', statusList.join('\n') || 'Nobody',
-            false);
-      }
-      if (find(id).excludedUsers.length > 0) {
-        let excludedList = find(id)
-            .excludedUsers
-            .map(function(obj) {
-              return getName(msg.guild, obj);
-            })
-            .join(', ');
-        let trimmedList = excludedList.substr(0, 512);
-        if (excludedList != trimmedList) {
-          excludedList = trimmedList.substr(0, 509) + '...';
-        } else {
-          excludedList = trimmedList;
-        }
-        finalMessage.addField(
-            'Excluded (' + find(id).excludedUsers.length + ')', excludedList,
-            false);
-      }
-
-      if (!find(id).autoPlay) {
-        finalMessage.setFooter(
-            '"' + msg.prefix + self.postPrefix + 'next" for next day.');
-      }
-
-      let mentions = self.common.mention(msg);
-      if (find(id).options.mentionEveryoneAtStart) {
-        mentions += '@everyone';
-      }
-
-      msg.channel.send(mentions, finalMessage).catch((err) => {
+      let myPerms = msg.channel.permissionsFor(self.client.user.id);
+      if (!myPerms ||
+          (!myPerms.has(self.Discord.Permissions.FLAGS.ATTACH_FILES) &&
+           !myPerms.has(self.Discord.Permissions.FLAGS.ADMINISTRATOR))) {
         self.common.reply(
-            msg, 'Game started!',
-            'Discord rejected my normal message for some reason...');
-        self.error(
-            'Failed to send start game message: ' + msg.channel.id +
-            ' (Cols: ' + numCols + ')');
-        console.error(err);
-      });
+            msg, 'Sorry, but I need permission to send images ' +
+                'in this channel before I can start the games.\nPlease ensure' +
+                ' I have the "Attach Files" permission in this channel.',
+            myPerms ? null :
+                      'This is probably an error, this should be fixed soon.');
+        if (!myPerms) {
+          self.error(
+              'Failed to fetch perms for myself. ' + (msg.guild.me && true));
+        }
+      } else {
+        /**
+         * Once the game has finished loading all necessary data, start it if
+         * autoplay is enabled.
+         * @private
+         */
+        function loadingComplete() {
+          if (find(id).autoPlay) nextDay(msg, id);
+        }
 
-      find(id).currentGame.inProgress = true;
+        createGame(msg, id, true, loadingComplete);
+
+        let finalMessage = new self.Discord.MessageEmbed();
+        finalMessage.setTitle(getMessage('gameStart'));
+        finalMessage.setColor(defaultColor);
+
+        let numUsers = find(id).currentGame.includedUsers.length;
+        if (find(id).options.teamSize > 0) {
+          find(id).currentGame.includedUsers.sort(function(a, b) {
+            let aTeam = find(id).currentGame.teams.findIndex(function(team) {
+              return team.players.findIndex(function(player) {
+                return player == a.id;
+              }) > -1;
+            });
+            let bTeam = find(id).currentGame.teams.findIndex(function(team) {
+              return team.players.findIndex(function(player) {
+                return player == b.id;
+              }) > -1;
+            });
+            if (aTeam == bTeam) {
+              return a.id - b.id;
+            } else {
+              return aTeam - bTeam;
+            }
+          });
+        }
+        let prevTeam = -1;
+        let statusList = find(id).currentGame.includedUsers.map(function(obj) {
+          let myTeam = -1;
+          if (find(id).options.teamSize > 0) {
+            myTeam = find(id).currentGame.teams.findIndex(function(team) {
+              return team.players.findIndex(function(player) {
+                return player == obj.id;
+              }) > -1;
+            });
+          }
+
+          let shortName;
+          if (obj.nickname && find(id).options.useNicknames) {
+            shortName = obj.nickname.substring(0, 16);
+            if (shortName != obj.nickname) {
+              shortName = shortName.substring(0, 13) + '...';
+            }
+          } else {
+            shortName = obj.name.substring(0, 16);
+            if (shortName != obj.name) {
+              shortName = shortName.substring(0, 13) + '...';
+            }
+          }
+
+          let prefix = '';
+          if (myTeam != prevTeam) {
+            prevTeam = myTeam;
+            prefix = '__' + find(id).currentGame.teams[myTeam].name + '__\n';
+          }
+
+          return prefix + '`' + shortName + '`';
+        });
+        if (find(id).options.teamSize == 0) {
+          statusList.sort();
+        }
+
+        const numCols = calcColNum(statusList.length > 10 ? 3 : 2, statusList);
+        if (statusList.length >= 3) {
+          const quarterLength = Math.ceil(statusList.length / numCols);
+          for (let i = 0; i < numCols - 1; i++) {
+            let thisMessage = statusList.splice(0, quarterLength).join('\n');
+            finalMessage.addField(
+                'Included (' + (i * quarterLength + 1) + '-' +
+                    ((i + 1) * quarterLength) + ')',
+                thisMessage, true);
+          }
+          finalMessage.addField(
+              'Included (' + ((numCols - 1) * quarterLength + 1) + '-' +
+                  numUsers + ')',
+              statusList.join('\n'), true);
+        } else {
+          finalMessage.addField(
+              'Included (' + numUsers + ')', statusList.join('\n') || 'Nobody',
+              false);
+        }
+        if (find(id).excludedUsers.length > 0) {
+          let excludedList = find(id)
+              .excludedUsers
+              .map(function(obj) {
+                return getName(msg.guild, obj);
+              })
+              .join(', ');
+          let trimmedList = excludedList.substr(0, 512);
+          if (excludedList != trimmedList) {
+            excludedList = trimmedList.substr(0, 509) + '...';
+          } else {
+            excludedList = trimmedList;
+          }
+          finalMessage.addField(
+              'Excluded (' + find(id).excludedUsers.length + ')', excludedList,
+              false);
+        }
+
+        if (!find(id).autoPlay) {
+          finalMessage.setFooter(
+              '"' + msg.prefix + self.postPrefix + 'next" for next day.');
+        }
+
+        let mentions = self.common.mention(msg);
+        if (find(id).options.mentionEveryoneAtStart) {
+          mentions += '@everyone';
+        }
+
+        msg.channel.send(mentions, finalMessage).catch((err) => {
+          self.common.reply(
+              msg, 'Game started!',
+              'Discord rejected my normal message for some reason...');
+          self.error(
+              'Failed to send start game message: ' + msg.channel.id +
+              ' (Cols: ' + numCols + ')');
+          console.error(err);
+        });
+
+        find(id).currentGame.inProgress = true;
+      }
     }
   }
   /**

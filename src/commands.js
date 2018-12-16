@@ -558,7 +558,7 @@ function Command() {
         if (msg.guild) {
           if (search.guilds[msg.guild.id]) return 1;
           if (msg.member.roles.find((r) => {
-            return search.roles[r.guild.id + '/' + r.id];
+            return search.roles[msg.guild.id + '/' + r.id];
           })) {
             return 2;
           }

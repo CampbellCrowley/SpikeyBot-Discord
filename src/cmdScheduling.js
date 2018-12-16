@@ -270,32 +270,46 @@ function CmdScheduling() {
       if (typeof myself.channel !== 'object') {
         myself.channel = self.client.channels.get(myself.channelId);
       }
-      if (typeof myself.message !== 'object') {
-        myself.channel.messages.fetch(myself.messageId)
-            .then((msg) => {
-              myself.message = msg;
-              myself.member = msg.member;
-              myself.memberId = msg.member.id;
-            })
-            .catch((err) => {
-              myself.message = makeMessage(
-                  myself.memberId, myself.channel.guild.id, myself.channelId,
-                  myself.cmd);
-              myself.member = myself.message.member;
-              myself.memberId = myself.member.id;
-            });
+      if (typeof myself.message !== 'object' || !myself.message.guild ||
+          !myself.message.guild.members || !myself.message.guild.channels) {
+        myself.message = myself.channel.messages.get(myself.messageId);
+        if (!myself.message) {
+          myself.channel.messages.fetch(myself.messageId)
+              .then((msg) => {
+                console.log('Fetched message', myself.cmd);
+                myself.message = msg;
+                myself.member = msg.member;
+                myself.memberId = msg.member.id;
+              })
+              .catch((err) => {
+                console.log('Making message', myself.cmd);
+                myself.message = makeMessage(
+                    myself.memberId, myself.channel.guild.id, myself.channelId,
+                    myself.cmd);
+                myself.member = myself.message.member;
+                myself.message.guild = myself.channel.guild;
+                myself.memberId = myself.member.id;
+              });
+        } else {
+          console.log('Got message', myself.cmd);
+          myself.member = myself.message.member;
+          myself.memberId = myself.message.member.id;
+        }
       }
       if (typeof myself.member !== 'object') {
-        myself.channel.guild.members.fetch(myself.memberId)
-            .then((m) => {
-              myself.member = m;
-            })
-            .catch((err) => {
-              self.error(
-                  'Failed to find member with id: ' + myself.memberId +
-                  ' in guild: ' + myself.channel.guild.id);
-              console.error(err);
-            });
+        myself.member = myself.channel.members.get(myself.memberId);
+        if (!myself.member) {
+          myself.channel.guild.members.fetch(myself.memberId)
+              .then((m) => {
+                myself.member = m;
+              })
+              .catch((err) => {
+                self.error(
+                    'Failed to find member with id: ' + myself.memberId +
+                    ' in guild: ' + myself.channel.guild.id);
+                console.error(err);
+              });
+        }
       }
     }
 
@@ -326,6 +340,14 @@ function CmdScheduling() {
             myself.channel.guild.id + '#' + myself.channel.id + '@' +
             myself.memberId + ' ' + myself.cmd);
         myself.message.channel = myself.channel;
+      }
+      if (!myself.message.guild.members ||
+          typeof myself.message.guild.members.get !== 'function') {
+        self.warn(
+            'ScheduledCmdFailed No Members Channel: ' +
+            myself.channel.guild.id + '#' + myself.channel.id + '@' +
+            myself.memberId + ' ' + myself.cmd);
+        return;
       }
       myself.message.content = myself.cmd;
       myself.message.fabricated = true;
@@ -867,6 +889,7 @@ function CmdScheduling() {
    * @param {?string} msg The message content.
    * @return {
    *   {
+   *     fabricated: boolean,
    *     author: Discord~User,
    *     member: Discord~GuildMember,
    *     guild: Discord~Guild,
@@ -878,9 +901,9 @@ function CmdScheduling() {
    * } The created message-like object.
    */
   function makeMessage(uId, gId, cId, msg) {
+    if (!cId) return null;
     let g = self.client.guilds.get(gId);
     if (!g) return null;
-    if (!cId) return null;
     return {
       fabricated: true,
       member: g.members.get(uId),
