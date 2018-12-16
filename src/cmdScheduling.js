@@ -252,12 +252,13 @@ function CmdScheduling() {
     }
     this.cmd = cmd;
     this.channel = channel;
-    this.channelId = (channel && channel.id) || channel;
+    this.channelId = typeof channel === 'object' ? channel.id : channel;
     this.message = message;
-    this.messageId = (message && message.id) || message;
+    this.messageId = typeof message === 'object' ? message.id : message;
     this.time = time;
     this.repeatDelay = repeatDelay;
-    this.memberId = (this.member && this.member.id) || this.member;
+    this.memberId =
+        typeof this.member === 'object' ? this.member.id : this.member;
 
     this.complete = false;
 
@@ -271,31 +272,41 @@ function CmdScheduling() {
         myself.channel = self.client.channels.get(myself.channelId);
       }
       if (typeof myself.message !== 'object') {
-        myself.channel.messages.fetch(myself.messageId)
-            .then((msg) => {
-              myself.message = msg;
-              myself.member = msg.member;
-              myself.memberId = msg.member.id;
-            })
-            .catch((err) => {
-              myself.message = makeMessage(
-                  myself.memberId, myself.channel.guild.id, myself.channelId,
-                  myself.cmd);
-              myself.member = myself.message.member;
-              myself.memberId = myself.member.id;
-            });
+        myself.message = myself.channel.messages.get(myself.messageId);
+        if (!myself.message) {
+          myself.channel.messages.fetch(myself.messageId)
+              .then((msg) => {
+                if (!msg) throw new Error();
+                myself.message = msg;
+                myself.member = msg.member;
+                myself.memberId = msg.member.id;
+              })
+              .catch((err) => {
+                myself.message = makeMessage(
+                    myself.memberId, myself.channel.guild.id, myself.channelId,
+                    myself.cmd);
+                myself.member = myself.message.member;
+                myself.memberId = myself.member.id;
+              });
+        } else {
+          myself.member = myself.message.member;
+          myself.memberId = myself.message.member.id;
+        }
       }
       if (typeof myself.member !== 'object') {
-        myself.channel.guild.members.fetch(myself.memberId)
-            .then((m) => {
-              myself.member = m;
-            })
-            .catch((err) => {
-              self.error(
-                  'Failed to find member with id: ' + myself.memberId +
-                  ' in guild: ' + myself.channel.guild.id);
-              console.error(err);
-            });
+        myself.member = myself.channel.members.get(myself.memberId);
+        if (!myself.member) {
+          myself.channel.guild.members.fetch(myself.memberId)
+              .then((m) => {
+                myself.member = m;
+              })
+              .catch((err) => {
+                self.error(
+                    'Failed to find member with id: ' + myself.memberId +
+                    ' in guild: ' + myself.channel.guild.id);
+                console.error(err);
+              });
+        }
       }
     }
 
@@ -320,12 +331,25 @@ function CmdScheduling() {
         myself.complete = true;
         self.client.clearTimeout(myself.timeout);
         return;
+      } else if (!myself.message) {
+        self.error(
+            'ScheduledCmdFailed No Message: ' + myself.channel.guild.id + '#' +
+            myself.channel.id + '@' + myself.memberId + ' ' + myself.cmd);
+        return;
       } else if (!myself.message.channel || !myself.message.channel.send) {
         self.warn(
             'ScheduledCmdWarning No Message Channel: ' +
             myself.channel.guild.id + '#' + myself.channel.id + '@' +
             myself.memberId + ' ' + myself.cmd);
         myself.message.channel = myself.channel;
+      }
+      if (!myself.message.guild.members ||
+          typeof myself.message.guild.members.get !== 'function') {
+        self.error(
+            'ScheduledCmdFailed No Members Channel: ' +
+            myself.channel.guild.id + '#' + myself.channel.id + '@' +
+            myself.memberId + ' ' + myself.cmd);
+        return;
       }
       myself.message.content = myself.cmd;
       myself.message.fabricated = true;
@@ -401,6 +425,7 @@ function CmdScheduling() {
      */
     this.toJSON = function() {
       return {
+        bot: self.client.user.id,
         cmd: myself.cmd,
         time: myself.time,
         repeatDelay: myself.repeatDelay,
@@ -863,10 +888,11 @@ function CmdScheduling() {
    * @private
    * @param {string} uId The id of the user who wrote this message.
    * @param {string} gId The id of the guild this message is in.
-   * @param {?string} cId The id of the channel this message was 'sent' in.
-   * @param {?string} msg The message content.
+   * @param {string} cId The id of the channel this message was 'sent' in.
+   * @param {string} msg The message content.
    * @return {
    *   {
+   *     fabricated: boolean,
    *     author: Discord~User,
    *     member: Discord~GuildMember,
    *     guild: Discord~Guild,
@@ -878,19 +904,19 @@ function CmdScheduling() {
    * } The created message-like object.
    */
   function makeMessage(uId, gId, cId, msg) {
+    if (!cId) return null;
     let g = self.client.guilds.get(gId);
     if (!g) return null;
-    if (!cId) return null;
-    return {
-      fabricated: true,
-      member: g.members.get(uId),
-      author: g.members.get(uId).user,
-      guild: g,
-      channel: self.client.channels.get(cId),
-      text: msg,
-      content: msg,
-      prefix: self.bot.getPrefix(gId),
-    };
+    let message = {};
+    message.fabricated = true;
+    message.member = g.members.get(uId);
+    message.author = g.members.get(uId).user;
+    message.guild = g;
+    message.channel = self.client.channels.get(cId);
+    message.text = msg;
+    message.content = msg;
+    message.prefix = self.bot.getPrefix(gId);
+    return message;
   }
 }
 module.exports = new CmdScheduling();
