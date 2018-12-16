@@ -252,12 +252,13 @@ function CmdScheduling() {
     }
     this.cmd = cmd;
     this.channel = channel;
-    this.channelId = (channel && channel.id) || channel;
+    this.channelId = typeof channel === 'object' ? channel.id : channel;
     this.message = message;
-    this.messageId = (message && message.id) || message;
+    this.messageId = typeof message === 'object' ? message.id : message;
     this.time = time;
     this.repeatDelay = repeatDelay;
-    this.memberId = (this.member && this.member.id) || this.member;
+    this.memberId =
+        typeof this.member === 'object' ? this.member.id : this.member;
 
     this.complete = false;
 
@@ -270,28 +271,24 @@ function CmdScheduling() {
       if (typeof myself.channel !== 'object') {
         myself.channel = self.client.channels.get(myself.channelId);
       }
-      if (typeof myself.message !== 'object' || !myself.message.guild ||
-          !myself.message.guild.members || !myself.message.guild.channels) {
+      if (typeof myself.message !== 'object') {
         myself.message = myself.channel.messages.get(myself.messageId);
         if (!myself.message) {
           myself.channel.messages.fetch(myself.messageId)
               .then((msg) => {
-                console.log('Fetched message', myself.cmd);
+                if (!msg) throw new Error();
                 myself.message = msg;
                 myself.member = msg.member;
                 myself.memberId = msg.member.id;
               })
               .catch((err) => {
-                console.log('Making message', myself.cmd);
                 myself.message = makeMessage(
                     myself.memberId, myself.channel.guild.id, myself.channelId,
                     myself.cmd);
                 myself.member = myself.message.member;
-                myself.message.guild = myself.channel.guild;
                 myself.memberId = myself.member.id;
               });
         } else {
-          console.log('Got message', myself.cmd);
           myself.member = myself.message.member;
           myself.memberId = myself.message.member.id;
         }
@@ -334,6 +331,11 @@ function CmdScheduling() {
         myself.complete = true;
         self.client.clearTimeout(myself.timeout);
         return;
+      } else if (!myself.message) {
+        self.error(
+            'ScheduledCmdFailed No Message: ' + myself.channel.guild.id + '#' +
+            myself.channel.id + '@' + myself.memberId + ' ' + myself.cmd);
+        return;
       } else if (!myself.message.channel || !myself.message.channel.send) {
         self.warn(
             'ScheduledCmdWarning No Message Channel: ' +
@@ -343,7 +345,7 @@ function CmdScheduling() {
       }
       if (!myself.message.guild.members ||
           typeof myself.message.guild.members.get !== 'function') {
-        self.warn(
+        self.error(
             'ScheduledCmdFailed No Members Channel: ' +
             myself.channel.guild.id + '#' + myself.channel.id + '@' +
             myself.memberId + ' ' + myself.cmd);
@@ -423,6 +425,7 @@ function CmdScheduling() {
      */
     this.toJSON = function() {
       return {
+        bot: self.client.user.id,
         cmd: myself.cmd,
         time: myself.time,
         repeatDelay: myself.repeatDelay,
@@ -885,8 +888,8 @@ function CmdScheduling() {
    * @private
    * @param {string} uId The id of the user who wrote this message.
    * @param {string} gId The id of the guild this message is in.
-   * @param {?string} cId The id of the channel this message was 'sent' in.
-   * @param {?string} msg The message content.
+   * @param {string} cId The id of the channel this message was 'sent' in.
+   * @param {string} msg The message content.
    * @return {
    *   {
    *     fabricated: boolean,
@@ -904,16 +907,16 @@ function CmdScheduling() {
     if (!cId) return null;
     let g = self.client.guilds.get(gId);
     if (!g) return null;
-    return {
-      fabricated: true,
-      member: g.members.get(uId),
-      author: g.members.get(uId).user,
-      guild: g,
-      channel: self.client.channels.get(cId),
-      text: msg,
-      content: msg,
-      prefix: self.bot.getPrefix(gId),
-    };
+    let message = {};
+    message.fabricated = true;
+    message.member = g.members.get(uId);
+    message.author = g.members.get(uId).user;
+    message.guild = g;
+    message.channel = self.client.channels.get(cId);
+    message.text = msg;
+    message.content = msg;
+    message.prefix = self.bot.getPrefix(gId);
+    return message;
   }
 }
 module.exports = new CmdScheduling();
