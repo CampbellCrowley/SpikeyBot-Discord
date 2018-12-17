@@ -823,7 +823,7 @@ function Main() {
         if (matchCount > 0) {
           self.debug(
               'Rigged count: ' + self.client.riggedCounter + ' + ' +
-              matchCount + ': ' + msg.content);
+              matchCount + ': ' + msg.content.replace(/\n/g, '\\n'));
           // Disabled multple because people were spamming it.
           if (false && matchCount > 1) {
             msg.channel
