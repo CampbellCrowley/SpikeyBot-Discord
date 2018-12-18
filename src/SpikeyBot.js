@@ -807,8 +807,8 @@ function SpikeyBot() {
                 msg_.edit(
                     common.mention(msg) + ' Prefix changed to `' + newPrefix +
                     '`!');
+                self.changePrefix(msg.guild.id, newPrefix);
               });
-              self.changePrefix(msg.guild.id, newPrefix);
             });
       }
     }
