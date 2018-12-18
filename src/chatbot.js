@@ -94,6 +94,11 @@ function ChatBot() {
         msg.channel.id);
     request.queryInput.text.text = msg.text.slice(1);
 
+    if (request.queryInput.text.text.length > 256) {
+      request.queryInput.text.text =
+          request.queryInput.text.text.substr(0, 256);
+    }
+
     msg.channel.startTyping();
 
     const startTime = Date.now();

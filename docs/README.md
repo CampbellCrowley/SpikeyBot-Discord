@@ -11050,6 +11050,7 @@ Manages an Uno game.
                 * [~finishSetup()](#Uno+Game..finishSetup) ℗
                 * [~listPlayers()](#Uno+Game..listPlayers)
                 * [~startGame()](#Uno+Game..startGame) ℗
+                * [~endGame()](#Uno+Game..endGame) ℗
                 * [~sendHelp()](#Uno+Game..sendHelp) ⇒ <code>Promise.&lt;Discord~Message&gt;</code> ℗
                 * [~nextTurn([skip])](#Uno+Game..nextTurn) ℗
                 * [~drawAndSkip([num])](#Uno+Game..drawAndSkip) ℗
@@ -11100,6 +11101,7 @@ Manages an Uno game.
         * [~cardFaceRegExp](#Uno..cardFaceRegExp) : <code>RegExp</code> ℗
         * [~commandUno(msg)](#Uno..commandUno) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandEndAll(msg)](#Uno..commandEndAll) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~getCardEmbed(hand)](#Uno..getCardEmbed) ⇒ <code>Discord~MessageEmbed</code> ℗
         * [~formatCard(txt)](#Uno..formatCard) ⇒ <code>string</code> ℗
 
 <a name="Uno+Card"></a>
@@ -11188,6 +11190,7 @@ The name of this card retreivable with `toString()`. Null until first
         * [~finishSetup()](#Uno+Game..finishSetup) ℗
         * [~listPlayers()](#Uno+Game..listPlayers)
         * [~startGame()](#Uno+Game..startGame) ℗
+        * [~endGame()](#Uno+Game..endGame) ℗
         * [~sendHelp()](#Uno+Game..sendHelp) ⇒ <code>Promise.&lt;Discord~Message&gt;</code> ℗
         * [~nextTurn([skip])](#Uno+Game..nextTurn) ℗
         * [~drawAndSkip([num])](#Uno+Game..drawAndSkip) ℗
@@ -11354,6 +11357,14 @@ Send the list of current players in this game to the group channel.
 
 #### Game~startGame() ℗
 Deal cards to all players, and start the game.
+
+**Kind**: inner method of [<code>Game</code>](#Uno+Game)  
+**Access**: private  
+<a name="Uno+Game..endGame"></a>
+
+#### Game~endGame() ℗
+Called after a game has been won by somebody. Clears all players of their
+cards, and resets the game to ready for next game state.
 
 **Kind**: inner method of [<code>Game</code>](#Uno+Game)  
 **Access**: private  
@@ -11874,6 +11885,19 @@ Ends all Uno games.
 | Param | Type | Description |
 | --- | --- | --- |
 | msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Uno..getCardEmbed"></a>
+
+### Uno~getCardEmbed(hand) ⇒ <code>Discord~MessageEmbed</code> ℗
+Format a hand of cards or a single card into Discord~MessageEmbed.
+
+**Kind**: inner method of [<code>Uno</code>](#Uno)  
+**Returns**: <code>Discord~MessageEmbed</code> - The MessageEmbed to send to the user.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| hand | <code>Uno~Card</code> \| <code>Array.&lt;Uno~Card&gt;</code> | The card or hand of cards to format. |
 
 <a name="Uno..formatCard"></a>
 

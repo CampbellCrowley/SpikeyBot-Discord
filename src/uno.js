@@ -279,6 +279,7 @@ function Uno() {
       } else {
         let colorName = colorPairs.find((el) => el[1] == card.color);
         if (!colorName) {
+          self.error('Unable to format card to string.');
           console.log(card.color, 'not a valid color');
         }
         colorName = formatCard(colorName[0]);
@@ -456,27 +457,27 @@ function Uno() {
     (function setupChannels() {
       let channelOpts = {
         topic: 'UNO! (ID:' + game.id + ')',
-        permissionOverwrites: [
-          {
-            id: maker.guild.defaultRole,
-            allow: 0,
-            deny: pFlags.VIEW_CHANNEL,
-            type: 'role',
-          },
-          {
-            id: self.client.user.id,
-            allow: pFlags.VIEW_CHANNEL | pFlags.SEND_MESSAGES,
-            deny: 0,
-            type: 'member',
-          },
-        ],
         type: 'category',
         reason: 'An UNO game was started by ' + maker.user.tag,
       };
 
+      let groupPerms = [
+        {
+          id: maker.guild.defaultRole,
+          allow: 0,
+          deny: pFlags.VIEW_CHANNEL | pFlags.SEND_MESSAGES,
+          type: 'role',
+        },
+        {
+          id: self.client.user.id,
+          allow: pFlags.VIEW_CHANNEL | pFlags.SEND_MESSAGES,
+          deny: 0,
+          type: 'member',
+        },
+      ];
       for (let i = 0; i < memberList.length; i++) {
         members[memberList[i].id] = memberList[i];
-        channelOpts.permissionOverwrites.push({
+        groupPerms.push({
           id: memberList[i].id,
           allow: pFlags.VIEW_CHANNEL | pFlags.SEND_MESSAGES,
           deny: 0,
@@ -491,6 +492,7 @@ function Uno() {
               topic: 'UNO! (ID:' + game.id + ')',
               type: 'text',
               reason: 'An UNO game was started by ' + maker.user.tag,
+              permissionOverwrites: groupPerms,
               parent: c,
             })
             .then((c) => {
@@ -512,13 +514,10 @@ function Uno() {
      */
     function finishSetup() {
       sendHelp().then(() => {
-        game.catChannel.overwritePermissions({
-          permissionOverwrites: [{
-            id: maker.guild.defaultRole,
-            allow: pFlags.VIEW_CHANNEL,
-            type: 'role',
-          }],
-        });
+        // This is disabled during testing as to not annoy others with
+        // random notifications.
+        /* game.groupChannel.permissionOverwrites.get(maker.guild.defaultRole)
+            .update({VIEW_CHANNEL: true}); */
       });
       currentCollector = game.groupChannel.createMessageCollector((m) => {
         if (m.author.id != maker.id) {
@@ -589,6 +588,7 @@ function Uno() {
       let embed = new self.Discord.MessageEmbed();
       embed.setTitle('Current Players');
       embed.setDescription(players.map((p) => p.name).join(', '));
+      embed.setColor('WHITE');
       game.groupChannel.send(embed);
     }
 
@@ -598,14 +598,11 @@ function Uno() {
      * @private
      */
     function startGame() {
-      game.catChannel.overwritePermissions({
-        permissionOverwrites: [{
-          id: maker.guild.defaultRole,
-          deny: pFlags.VIEW_CHANNEL,
-          type: 'role',
-          reason: 'The UNO game has started.',
-        }],
-      });
+      game.groupChannel.updateOverwrite(
+          maker.guild.defaultRole, {
+            VIEW_CHANNEL: false,
+          },
+          'UNO game has starte.');
 
       for (turn = 0; turn < players.length; turn++) {
         players[turn].hand = [];
@@ -648,8 +645,7 @@ function Uno() {
           switch (cmd) {
             case 'play':
               if (playCard(m.content.split(' ').slice(2).join(' '))) {
-                setTimeout(finishSetup, 5000);
-                game.started = false;
+                endGame();
                 return true;
               } else {
                 return false;
@@ -670,12 +666,27 @@ function Uno() {
         } else if (m.content.toLowerCase().startsWith('draw')) {
           self.log(m.channel.id + '@' + m.author.id + ' ' + m.content);
           drawAndSkip();
-          game.groupChannel.send(`\`\`\`${topCard.toString()}\`\`\``);
+          game.groupChannel.send(getCardEmbed(topCard));
           return false;
         }
       }, {max: 1});
       currentCollector.on('end', () => {
         currentCollector = null;
+      });
+    }
+
+    /**
+     * Called after a game has been won by somebody. Clears all players of their
+     * cards, and resets the game to ready for next game state.
+     *
+     * @private
+     */
+    function endGame() {
+      setTimeout(finishSetup, 5000);
+      game.started = false;
+      turn = -1;
+      players.forEach((p) => {
+        discarded = discarded.concat(p.hand.splice(0));
       });
     }
 
@@ -738,8 +749,7 @@ function Uno() {
     function nextTurn(skip) {
       if (turn > -1) {
         players[turn].channel.send(
-            '`Your current hand:`\n' +
-            players[turn].hand.map((card) => card.toString()).join('\n'));
+            '`Your current hand:`', getCardEmbed(players[turn].hand));
       }
 
       turn += direction;
@@ -802,8 +812,7 @@ function Uno() {
             '`You drew:` ' + drawn.map((card) => card.toString()).join(', '));
       } else {
         players[turn].channel.send(
-            '`Your current hand:`\n' +
-            players[turn].hand.map((card) => card.toString()).join('\n'));
+            '`Your current hand`', getCardEmbed(players[turn].hand));
       }
       players[turn].calledUno = false;
     }
@@ -892,9 +901,10 @@ function Uno() {
       if (turn > -1 && players[turn].hand.length > 0) {
         game.groupChannel.send(
             '`' + players[turn].name + '` has ' + players[turn].hand.length +
-            ' cards.```' + card.toString() + '```');
+                ' cards.',
+            getCardEmbed(card));
       } else {
-        game.groupChannel.send(`\`\`\`${card.toString()}\`\`\``);
+        game.groupChannel.send(getCardEmbed(card));
       }
 
       if (hand.length == 0) {
@@ -1058,13 +1068,12 @@ function Uno() {
         return;
       }
       players.push(new self.Player(p, game));
-      game.groupChannel.overwritePermissions({
-        permissionOverwrites: [{
-          id: p.user.id,
-          allow: pFlags.VIEW_CHANNEL | pFlags.SEND_MESSAGES,
-        }],
-        reason: 'User added to game.',
-      });
+      game.groupChannel.updateOverwrite(
+          p.user.id, {
+            VIEW_CHANNEL: true,
+            SEND_MESSAGES: true,
+          },
+          'User added to game.');
     };
 
     /**
@@ -1217,6 +1226,53 @@ function Uno() {
   };
 
   /**
+   * Format a hand of cards or a single card into Discord~MessageEmbed.
+   *
+   * @private
+   * @param {Uno~Card|Uno~Card[]} hand The card or hand of cards to format.
+   * @return {Discord~MessageEmbed} The MessageEmbed to send to the user.
+   */
+  function getCardEmbed(hand) {
+    let embed = new self.Discord.MessageEmbed();
+    let colors = {};
+    if (hand instanceof self.Card) hand = [hand];
+    hand.forEach((card) => {
+      if (!colors[card.color]) colors[card.color] = [card.toString()];
+      else colors[card.color].push(card.toString());
+    });
+
+    let noTitle = hand.length == 1;
+
+    colorPairs.forEach((c) => {
+      if (!colors[c[1]] || !c[1]) return;
+      colors[c[1]].sort();
+      let str = colors[c[1]].join('\n');
+      if (noTitle) {
+        embed.setTitle(str);
+      } else {
+        embed.addField(c[0], str, true);
+      }
+    });
+    if (colors[0]) {
+      colors[0].sort();
+      let str = colors[0].join('\n');
+      if (noTitle) {
+        embed.setTitle(str);
+      } else {
+        embed.addField('WILD', str, true);
+      }
+    } else if (hand.length == 1) {
+      if (hand[0].color == self.Color.YELLOW) {
+        embed.setColor('GOLD');
+      } else {
+        embed.setColor(colorPairs.find((el) => el[1] == hand[0].color)[0]);
+      }
+    }
+
+    return embed;
+  }
+
+  /**
    * Takes a string that is all caps with underscores and makes it more human
    * readable.
    *
@@ -1228,7 +1284,7 @@ function Uno() {
     return txt.replace(/_/g, ' ')
         .split(' ')
         .map((el) => {
-          return el.charAt(i).toUpperCase() + el.substring(1).toLowerCase();
+          return el.charAt(0).toUpperCase() + el.substring(1).toLowerCase();
         })
         .join(' ');
   }
