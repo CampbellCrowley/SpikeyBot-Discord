@@ -272,7 +272,9 @@ function Main() {
     const adminOnlyOpts = new self.command.CommandSetting({
       validOnlyInGuild: true,
       defaultDisabled: true,
-      permissions: self.Discord.Permissions.FLAGS.MANAGE_ROLES,
+      permissions: self.Discord.Permissions.FLAGS.MANAGE_ROLES |
+          self.Discord.Permissions.FLAGS.MANAGE_GUILD |
+          self.Discord.Permissions.FLAGS.BAN_MEMBERS,
     });
 
     self.command.on(['addme', 'invite'], commandAddMe);
