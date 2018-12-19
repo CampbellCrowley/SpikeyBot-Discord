@@ -836,7 +836,7 @@ function Uno() {
         if (hand[selected].face & self.CardFace.WILD_EFFECT) {
           color =
               colorPairs[Math.floor(Math.random() * (colorPairs.length - 1)) +
-                         1];
+                         1][0];
         }
       } else {
         hand = players[turn].hand;
@@ -848,6 +848,11 @@ function Uno() {
           if (selected < 0) {
             drawAndSkip();
             return false;
+          }
+          if (hand[selected].face & self.CardFace.WILD_EFFECT) {
+            color =
+                colorPairs[Math.floor(Math.random() * (colorPairs.length - 1)) +
+                           1][0];
           }
         } else if (!text || !text.trim()) {
           game.groupChannel.send(
@@ -872,7 +877,9 @@ function Uno() {
           if (!((parsed.face == topCard.face) ||
                 (parsed.face & self.CardFace.WILD_EFFECT ||
                  parsed.color == topCard.color))) {
-            game.groupChannel.send('`That\'s not a valid card to play.`');
+            game.groupChannel.send(
+                '`That\'s not a valid card to play. The current card is`',
+                getCardEmbed(topCard));
             return false;
           }
           selected = hand.findIndex((el) => {
