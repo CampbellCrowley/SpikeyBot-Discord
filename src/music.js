@@ -314,7 +314,10 @@ function Music() {
     let entries = Object.entries(broadcasts);
     let now = Date.now();
     for (let i = 0; i < entries.length; i++) {
-      if (!entries[i][1].broadcast) continue;
+      if (!entries[i][1].broadcast || !entries[i][1].broadcast.dispatcher) {
+        delete broadcasts[entries[i][0]];
+        continue;
+      }
       let pauseTime = entries[i][1].broadcast.dispatcher.pausedSince;
       if (pauseTime && now - pauseTime > 15 * 60 * 1000) {
         self.debug(entries[i][0] + ' purged: ' + (now - pauseTime));
