@@ -9246,6 +9246,7 @@ Main class that manages the bot.
         * [~enableSharding](#SpikeyBot..enableSharding) : <code>boolean</code> ℗
         * [~numShards](#SpikeyBot..numShards) : <code>number</code> ℗
         * [~botName](#SpikeyBot..botName) : <code>string</code> ℗
+        * [~delayBoot](#SpikeyBot..delayBoot) : <code>number</code> ℗
         * [~initialized](#SpikeyBot..initialized) : <code>boolean</code> ℗
         * [~saveInterval](#SpikeyBot..saveInterval) : <code>Interval</code> ℗
         * [~guildPrefixes](#SpikeyBot..guildPrefixes) : <code>Object.&lt;string&gt;</code> ℗
@@ -9259,6 +9260,7 @@ Main class that manages the bot.
         * [~guildPrefixFile](#SpikeyBot..guildPrefixFile) : <code>string</code> ℗
         * [~guildCustomPrefixFile](#SpikeyBot..guildCustomPrefixFile) : <code>string</code> ℗
         * [~reloadCommon()](#SpikeyBot..reloadCommon) ℗
+        * [~createShards()](#SpikeyBot..createShards) ℗
         * [~isCmd(msg, cmd)](#SpikeyBot..isCmd) ⇒ <code>boolean</code> ℗
         * [~updateGame(game, [type])](#SpikeyBot..updateGame) ℗
         * [~onReady()](#SpikeyBot..onReady) ℗
@@ -9277,6 +9279,7 @@ Main class that manages the bot.
         * [~commandSaveAll(msg)](#SpikeyBot..commandSaveAll) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandUpdate(msg)](#SpikeyBot..commandUpdate) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~loadGuildPrefixes(guilds)](#SpikeyBot..loadGuildPrefixes) ℗
+        * [~login()](#SpikeyBot..login) ℗
 
 <a name="SpikeyBot+getBotName"></a>
 
@@ -9427,6 +9430,17 @@ dev depending on the --dev flag.
 **Kind**: inner property of [<code>SpikeyBot</code>](#SpikeyBot)  
 **Default**: <code>null</code>  
 **Access**: private  
+<a name="SpikeyBot..delayBoot"></a>
+
+### SpikeyBot~delayBoot : <code>number</code> ℗
+Number of milliseconds to delay the call to client.login in order to
+prevent race conditions of multiple bots in the same directory. This is set
+with the `--delay` flag. `--delay` with no value will default to 5000
+milliseconds.
+
+**Kind**: inner property of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Default**: <code>0</code>  
+**Access**: private  
 <a name="SpikeyBot..initialized"></a>
 
 ### SpikeyBot~initialized : <code>boolean</code> ℗
@@ -9533,6 +9547,14 @@ bots with custom names.
 
 ### SpikeyBot~reloadCommon() ℗
 Delete cache and re-require common.js and auth.js.
+
+**Kind**: inner method of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Access**: private  
+<a name="SpikeyBot..createShards"></a>
+
+### SpikeyBot~createShards() ℗
+Create a ShardingManager and spawn shards. This shall only be called at
+most once, and `login()` shall not be called after this.
 
 **Kind**: inner method of [<code>SpikeyBot</code>](#SpikeyBot)  
 **Access**: private  
@@ -9757,6 +9779,13 @@ Load prefixes from file for the given guilds asynchronously.
 | --- | --- | --- |
 | guilds | <code>Array.&lt;Discord~Guild&gt;</code> | Array of guilds to fetch the custom prefixes of. |
 
+<a name="SpikeyBot..login"></a>
+
+### SpikeyBot~login() ℗
+Login to Discord. This shall only be called at most once.
+
+**Kind**: inner method of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Access**: private  
 <a name="Spotify"></a>
 
 ## Spotify ⇐ [<code>SubModule</code>](#SubModule)

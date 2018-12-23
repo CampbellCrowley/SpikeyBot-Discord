@@ -192,6 +192,18 @@ function SpikeyBot() {
   let botName = null;
 
   /**
+   * Number of milliseconds to delay the call to client.login in order to
+   * prevent race conditions of multiple bots in the same directory. This is set
+   * with the `--delay` flag. `--delay` with no value will default to 5000
+   * milliseconds.
+   *
+   * @private
+   * @default
+   * @type {number}
+   */
+  let delayBoot = 0;
+
+  /**
    * Getter for the bot's name. If name is null, it is most likely because there
    * is no custom name and common.isRelease should be used instead.
    * @see {@link SpikeyBot~botName}
@@ -240,6 +252,11 @@ function SpikeyBot() {
       }
     } else if (process.argv[i] === '--backup') {
       isBackup = true;
+    } else if (process.argv[i].startsWith('--delay')) {
+      delayBoot = 5000;
+      if (process.argv[i].indexOf('=') > -1) {
+        delayBoot = process.argv[i].split('=')[1] * 1 || 0;
+      }
     } else {
       throw new Error(`Unrecognized argument '${process.argv[i]}'`);
     }
@@ -262,14 +279,19 @@ function SpikeyBot() {
   }
   reloadCommon();
 
-  if (enableSharding) {
+  /**
+   * Create a ShardingManager and spawn shards. This shall only be called at
+   * most once, and `login()` shall not be called after this.
+   * @private
+   */
+  function createShards() {
     common.log(
         'Sharding enabled with ' + (numShards || 'auto'), 'ShardingManager');
     const manager = new Discord.ShardingManager('./src/SpikeyBot.js', {
       token: (botName && auth[botName]) || (setDev ? auth.dev : auth.release),
       totalShards: numShards || 'auto',
       shardArgs: process.argv.slice(2).filter((arg) => {
-        return !arg.startsWith('--shards');
+        return !arg.startsWith('--shards') && !arg.startsWith('--delay');
       }),
     });
     manager.on('shardCreate', (shard) => {
@@ -279,7 +301,8 @@ function SpikeyBot() {
         common.logDebug(
             'Received message from shard ' + shard.id + ': ' +
             JSON.stringify(msg));
-        // @TODO: Differentiate between a forced reboot, and a scheduled reboot.
+        // @TODO: Differentiate between a forced reboot, and a scheduled
+        // reboot.
         if (msg === 'reboot hard force') {
           common.logWarning('TRIGGERED HARD REBOOT!');
           manager.shards.forEach((s) => {
@@ -296,6 +319,14 @@ function SpikeyBot() {
       });
     });
     manager.spawn();
+  }
+
+  if (enableSharding) {
+    if (delayBoot) {
+      setTimeout(createShards, delayBoot);
+    } else {
+      createShards();
+    }
     return;
   }
 
@@ -1370,21 +1401,28 @@ function SpikeyBot() {
     fs.readFile(guildFile, onFileRead(id));
   }
 
-  // Dev:
-  // https://discordapp.com/oauth2/authorize?&client_id=422623712534200321&scope=bot
-  // Rel:
-  // https://discordapp.com/oauth2/authorize?&client_id=318552464356016131&scope=bot
-  if (botName) {
-    if (!auth[botName]) {
-      common.error('Failed to find auth entry for ' + botName);
-      process.exit(1);
-    } else {
-      client.login(auth[botName]);
-    }
-  } else if (isDev) {
-    client.login(auth.dev);
+  if (delayBoot > 0) {
+    setTimeout(login, delayBoot);
   } else {
-    client.login(auth.release);
+    login();
+  }
+  /**
+   * Login to Discord. This shall only be called at most once.
+   * @private
+   */
+  function login() {
+    if (botName) {
+      if (!auth[botName]) {
+        common.error('Failed to find auth entry for ' + botName);
+        process.exit(1);
+      } else {
+        client.login(auth[botName]);
+      }
+    } else if (isDev) {
+      client.login(auth.dev);
+    } else {
+      client.login(auth.release);
+    }
   }
 }
 
