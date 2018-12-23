@@ -47,6 +47,24 @@
           ]
         },
         {
+          "command": "rename",
+          "description": "Rename the game to your own custom name. The default is \"{SERVER NAME}'s Hungry Games\". The custom name must be 100 characters or fewer.",
+          "aliases": "rename, name",
+          "validOnlyInGuild": true,
+          "examples": [
+            {
+              "description": "Set a custom name.",
+              "command": "rename My Super Cool Game",
+              "result": "The name of the game will be changed to \"My Super Cool Game\""
+            },
+            {
+              "description": "Remove custom name.",
+              "command": "rename",
+              "result": "The game will return to using the server's name as the name of future games."
+            }
+          ]
+        },
+        {
           "command": "reset",
           "description": "Delete data about the Games. Don't choose an option for more info.",
           "aliases": "reset, clear",

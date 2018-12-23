@@ -961,6 +961,8 @@ function HungryGames() {
       new self.command.SingleCommand(
           ['wound', 'hurt', 'damage', 'stab', 'punch', 'slap', 'injure'],
           mkCmd(commandWound), cmdOpts),
+      new self.command.SingleCommand(
+          ['rename', 'name'], mkCmd(commandRename), cmdOpts),
     ];
     self.command.on(
         new self.command.SingleCommand(
@@ -1398,7 +1400,8 @@ function HungryGames() {
             self.common.reply(
                 msg, 'Creating a new game with settings from the last game.');
           }
-          find(id).currentGame.name = msg.guild.name + '\'s Hungry Games';
+          find(id).currentGame.name = find(id).currentGame.customName ||
+              (msg.guild.name + '\'s Hungry Games');
           find(id).currentGame.ended = false;
           find(id).currentGame.day = {num: -1, state: 0, events: []};
           find(id).currentGame.includedUsers = getAllPlayers(
@@ -6887,6 +6890,47 @@ function HungryGames() {
       return;
     }
     self.common.reply(msg, self.forcePlayerState(id, players, 'wounded'));
+  }
+
+  /**
+   * Rename the guild's game to the given custom name.
+   *
+   * @public
+   * @param {string|number} id The guild id of which to change the game's name.
+   * @param {string} name The custom name to change to. Must be 100 characters
+   * or fewer.
+   * @return {boolean} True if successful, false if failed. Failure is probably
+   * due to a game not existing or the name being longer than 100 characters.
+   */
+  this.renameGame = function(id, name) {
+    if (!find(id) || !find(id).currentGame) return false;
+    if (name.length > 100) return false;
+    find(id).currentGame.customName = name;
+    find(id).currentGame.name = name || self.client.guilds.get(id).name;
+    return true;
+  };
+
+  /**
+   * Rename a guild's game to a custom name.
+   *
+   * @private
+   * @type {HungryGames~hgCommandHandler}
+   * @param {Discord~Message} msg The message that lead to this being called.
+   * @param {string} id The id of the guild this was triggered from.
+   */
+  function commandRename(msg, id) {
+    if (!find(id) || !find(id).currentGame) {
+      createGame(null, id, true);
+    }
+    if (self.renameGame(id, msg.text.trim())) {
+      self.common.reply(
+          msg, 'Renamed game to',
+          msg.text.trim() || self.client.guilds.get(id).name);
+    } else {
+      self.common.reply(
+          msg, 'Oops! I couldn\'t change the name to that. Please ensure ' +
+              'it is fewer than 100 characters long.');
+    }
   }
 
   /**

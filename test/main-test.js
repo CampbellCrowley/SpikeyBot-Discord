@@ -179,6 +179,8 @@ const hgTests = [
   new Test('Run a game with no output', '~hg go', ['#noerr', '#embed']),
   new Test('Run another game with no output', '~hg go', ['#noerr', '#embed']),
   new Test('Run another game with no output', '~hg go', ['#noerr', '#embed']),
+  new Test('Rename game', '~hg rename My Cool Game', ['#noerr']),
+  new Test('Reset custom name of game', '~hg rename', ['#noerr']),
   new Test(
       'Reset All command', '~hg reset all',
       ['<@422623712534200321>\n```\nReset HG\n```Resetting ALL Hungry Games ' +

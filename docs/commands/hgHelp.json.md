@@ -12,6 +12,7 @@
 | --- | --- | --- |
 | ?hg create | You shouldn't need to use this. But it will force a new game to be created, and update players for a new game. | create, c, new |
 | ?hg options | List options if no name, or change the option if you give a name. | options, option, opt, opts, settings, setting, set |
+| ?hg rename | Rename the game to your own custom name. The default is "{SERVER NAME}'s Hungry Games". The custom name must be 100 characters or fewer. | rename, name |
 | ?hg reset | Delete data about the Games. Don't choose an option for more info. | reset, clear |
 
 

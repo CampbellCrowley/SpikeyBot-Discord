@@ -2646,6 +2646,7 @@ Hunger Games simulator.
         * [.removeEvent(id, type, event)](#HungryGames+removeEvent) ⇒ <code>string</code>
         * [.toggleEvent(id, type, subCat, event, [value])](#HungryGames+toggleEvent) ⇒ <code>string</code>
         * [.eventsEqual(e1, e2)](#HungryGames+eventsEqual) ⇒ <code>boolean</code>
+        * [.renameGame(id, name)](#HungryGames+renameGame) ⇒ <code>boolean</code>
         * [.forcePlayerState(id, list, state, text, [persists])](#HungryGames+forcePlayerState) ⇒ <code>string</code>
         * [.getNumSimulating()](#HungryGames+getNumSimulating) ⇒ <code>number</code>
         * [.initialize()](#SubModule+initialize)
@@ -2783,6 +2784,7 @@ Hunger Games simulator.
         * [~commandKill(msg, id)](#HungryGames..commandKill) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~commandHeal(msg, id)](#HungryGames..commandHeal) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~commandWound(msg, id)](#HungryGames..commandWound) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+        * [~commandRename(msg, id)](#HungryGames..commandRename) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~nothing()](#HungryGames..nothing) ⇒ <code>string</code> ℗
         * [~getMessage(type)](#HungryGames..getMessage) ⇒ <code>string</code> ℗
         * [~find(id)](#HungryGames..find) ⇒ [<code>GuildGame</code>](#HungryGames..GuildGame) ℗
@@ -3197,6 +3199,21 @@ Checks if the two given events are equivalent.
 | --- | --- |
 | e1 | [<code>Event</code>](#HungryGames..Event) | 
 | e2 | [<code>Event</code>](#HungryGames..Event) | 
+
+<a name="HungryGames+renameGame"></a>
+
+### hungryGames.renameGame(id, name) ⇒ <code>boolean</code>
+Rename the guild's game to the given custom name.
+
+**Kind**: instance method of [<code>HungryGames</code>](#HungryGames)  
+**Returns**: <code>boolean</code> - True if successful, false if failed. Failure is probably
+due to a game not existing or the name being longer than 100 characters.  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| id | <code>string</code> \| <code>number</code> | The guild id of which to change the game's name. |
+| name | <code>string</code> | The custom name to change to. Must be 100 characters or fewer. |
 
 <a name="HungryGames+forcePlayerState"></a>
 
@@ -4882,6 +4899,19 @@ Allows the game creator to heal or revive a player in the game.
 
 ### HungryGames~commandWound(msg, id) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
 Allows the game creator to wound a player in the game.
+
+**Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message that lead to this being called. |
+| id | <code>string</code> | The id of the guild this was triggered from. |
+
+<a name="HungryGames..commandRename"></a>
+
+### HungryGames~commandRename(msg, id) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+Rename a guild's game to a custom name.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
 **Access**: private  
