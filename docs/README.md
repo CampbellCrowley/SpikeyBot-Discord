@@ -1869,6 +1869,8 @@ Reset all custom command settings to default.
         * [.spikeyId](#Common+spikeyId) : <code>string</code>
         * [.logChannel](#Common+logChannel) : <code>string</code>
         * [.webURL](#Common+webURL) : <code>string</code>
+        * [.webPath](#Common+webPath) : <code>string</code>
+        * [.webHelp](#Common+webHelp) : <code>string</code>
         * [.guildSaveDir](#Common+guildSaveDir) : <code>string</code>
         * [.userSaveDir](#Common+userSaveDir) : <code>string</code>
         * [.begin(isTest, isRelease)](#Common+begin)
@@ -1886,6 +1888,8 @@ Reset all custom command settings to default.
         * [.spikeyId](#Common.spikeyId) : <code>string</code>
         * [.logChannel](#Common.logChannel) : <code>string</code>
         * [.webURL](#Common.webURL) : <code>string</code>
+        * [.webPath](#Common.webPath) : <code>string</code>
+        * [.webHelp](#Common.webHelp) : <code>string</code>
         * [.guildSaveDir](#Common.guildSaveDir) : <code>string</code>
         * [.userSaveDir](#Common.userSaveDir) : <code>string</code>
     * _inner_
@@ -1937,6 +1941,19 @@ The website base URL for pointing to for more help and documentation.
 
 **Kind**: instance constant of [<code>Common</code>](#Common)  
 **Default**: <code>&quot;https://www.spikeybot.com/&quot;</code>  
+<a name="Common+webPath"></a>
+
+### common.webPath : <code>string</code>
+The website path for more help and documentation.
+
+**Kind**: instance constant of [<code>Common</code>](#Common)  
+**Default**: <code>&quot;help/&quot;</code>  
+<a name="Common+webHelp"></a>
+
+### common.webHelp : <code>string</code>
+The website full URL for commands help page.
+
+**Kind**: instance constant of [<code>Common</code>](#Common)  
 <a name="Common+guildSaveDir"></a>
 
 ### common.guildSaveDir : <code>string</code>
@@ -2109,6 +2126,18 @@ The channel id for the channel to send general log messages to.
 
 ### Common.webURL : <code>string</code>
 The website base URL for pointing to for more help and documentation.
+
+**Kind**: static constant of [<code>Common</code>](#Common)  
+<a name="Common.webPath"></a>
+
+### Common.webPath : <code>string</code>
+The website path for more help and documentation.
+
+**Kind**: static constant of [<code>Common</code>](#Common)  
+<a name="Common.webHelp"></a>
+
+### Common.webHelp : <code>string</code>
+The website full URL for commands help page.
 
 **Kind**: static constant of [<code>Common</code>](#Common)  
 <a name="Common.guildSaveDir"></a>

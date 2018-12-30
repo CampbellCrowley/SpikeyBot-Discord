@@ -857,7 +857,7 @@ function HungryGames() {
         helpObject.description.replaceAll('{hgRole}', roleName));
     helpObject.sections.forEach(function(obj) {
       let titleID = encodeURIComponent(obj.title);
-      let titleURL = '[web](' + self.common.webURL + '#' + titleID + ')';
+      let titleURL = '[web](' + self.common.webHelp + '#' + titleID + ')';
       tmpHelp.addField(
           obj.title, titleURL + '```js\n' +
               obj.rows

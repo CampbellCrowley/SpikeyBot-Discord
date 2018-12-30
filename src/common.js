@@ -384,6 +384,38 @@ Common.prototype.webURL = 'https://www.spikeybot.com/';
 Common.webURL = Common.prototype.webURL;
 
 /**
+ * The website path for more help and documentation.
+ *
+ * @type {string}
+ * @constant
+ * @default
+ */
+Common.prototype.webPath = 'help/';
+/**
+ * The website path for more help and documentation.
+ *
+ * @type {string}
+ * @constant
+ */
+Common.webPath = Common.prototype.webPath;
+
+/**
+ * The website full URL for commands help page.
+ *
+ * @type {string}
+ * @constant
+ * @default
+ */
+Common.prototype.webHelp = Common.webURL + Common.webPath;
+/**
+ * The website full URL for commands help page.
+ *
+ * @type {string}
+ * @constant
+ */
+Common.webHelp = Common.prototype.webHelp;
+
+/**
  * The root file directory for finding saved data related to individual
  * guilds.
  *

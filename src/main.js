@@ -417,7 +417,7 @@ function Main() {
         helpObject.description.replaceAll('{prefix}', self.bot.getPrefix()));
     helpObject.sections.forEach(function(obj) {
       let titleID = encodeURIComponent(obj.title);
-      const titleURL = '[web](' + self.common.webURL + '#' + titleID + ')';
+      const titleURL = '[web](' + self.common.webHelp + '#' + titleID + ')';
       tmpHelp.addField(
           obj.title, titleURL + '```js\n' +
               obj.rows
@@ -455,7 +455,7 @@ function Main() {
             '{prefix}', self.bot.getPrefix()));
     adminHelpObject.sections.forEach(function(obj) {
       let titleID = encodeURIComponent(obj.title);
-      const titleURL = '[web](' + self.common.webURL + '#' + titleID + ')';
+      const titleURL = '[web](' + self.common.webHelp + '#' + titleID + ')';
       tmpAdminHelp.addField(
           obj.title, titleURL + '```js\n' +
               obj.rows
