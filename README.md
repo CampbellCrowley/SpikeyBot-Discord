@@ -17,6 +17,7 @@
 - game (Information about a user's current visible status)
 - hg save (Causes hungry games to save all data manually)
 - hg debug (Dumps current guild's hungry games data into a file)
+- hg debugevents (Dumps all currently loaded events for the guild into a JSON files for download)
 - hg makemewin (Replies with a message telling the user their chances of winning have not increased)
 - hg makemelose (Replies with a message telling the user their chances of losing have not increased)
 - hg rigged (Replies with an image of the emoji that says "rigged")

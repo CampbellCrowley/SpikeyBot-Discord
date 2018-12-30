@@ -1,6 +1,6 @@
 ## Voice Channel
 ## Music
-# Music
+# Music and Voice
 #### Music and voice channel related commands.
 ***
 

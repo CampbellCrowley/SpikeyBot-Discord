@@ -1,5 +1,5 @@
 {
-  "title": "Hungry Games!",
+  "title": "Hungry Games",
   "description": "Use https://www.spikeybot.com/hg/ if commands are too hard.",
   "prefix": "hg ",
   "sections": [
@@ -293,7 +293,7 @@
       "rows": [
         {
           "command": "events",
-          "description": "This will list all custom events that could happen in the game. <a href=\"/hg/\">HG Webview</a> can be much easier to use.",
+          "description": "This will list all custom events that could happen in the game. The HG Webview page can be much easier to use.",
           "aliases": "events, event",
           "validOnlyInGuild": true,
           "examples": [
@@ -305,20 +305,8 @@
           ]
         },
         {
-          "command": "debugevents",
-          "description": "This will let you download all of the events and their data.",
-          "validOnlyInGuild": true,
-          "examples": [
-            {
-              "description": "Basic Usage",
-              "command": "debugevents",
-              "result": "Multiple file downloads will be sent to you with some information about each file."
-            }
-          ]
-        },
-        {
           "command": "events add",
-          "description": "Begins process of adding a custom event. Not all event types can be created yet due to the complications of making a UI. <a href=\"/hg/\">HG Webview</a> can be much easier to use, and supports more types.",
+          "description": "Begins process of adding a custom event. Not all event types can be created yet due to the complications of making a UI. The HG Webview page can be much easier to use, and supports more types.",
           "aliases": "add, create",
           "validOnlyInGuild": true,
           "examples": [
@@ -330,7 +318,7 @@
           ]
         },
         {
-          "command": "events remove 'number'",
+          "command": "events remove",
           "description": "Remove a custom event. The number is the number shown in the list of events.",
           "aliases": "remove, delete",
           "validOnlyInGuild": true,

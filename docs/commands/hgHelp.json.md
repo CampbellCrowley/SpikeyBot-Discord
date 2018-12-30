@@ -4,7 +4,7 @@
 ## Team Settings
 ## Player Settings
 ## Game Settings
-# Hungry Games!
+# Hungry Games
 #### Use https://www.spikeybot.com/hg/ if commands are too hard.
 ***
 
@@ -34,10 +34,9 @@
 
 | Command | Description | Aliases |
 | --- | --- | --- |
-| ?hg events | This will list all custom events that could happen in the game. <a href="/hg/">HG Webview</a> can be much easier to use. | events, event |
-| ?hg debugevents | This will let you download all of the events and their data. |  |
-| ?hg events add | Begins process of adding a custom event. Not all event types can be created yet due to the complications of making a UI. <a href="/hg/">HG Webview</a> can be much easier to use, and supports more types. | add, create |
-| ?hg events remove 'number' | Remove a custom event. The number is the number shown in the list of events. | remove, delete |
+| ?hg events | This will list all custom events that could happen in the game. The HG Webview page can be much easier to use. | events, event |
+| ?hg events add | Begins process of adding a custom event. Not all event types can be created yet due to the complications of making a UI. The HG Webview page can be much easier to use, and supports more types. | add, create |
+| ?hg events remove | Remove a custom event. The number is the number shown in the list of events. | remove, delete |
 
 
 | Command | Description | Aliases |
