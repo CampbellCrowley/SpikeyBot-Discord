@@ -221,7 +221,7 @@
             {
               "description": "Custom Response Options",
               "command": "poll 1h Which emoji is the best? [💩 Poop is best][🍔 Cheeeezeburgerz][Fly away! ✈]",
-              "result": "💩, 🍔, and ✈ emojis and text will be used as poll options. Up to 25 custom options can be used. After 1 hour, the bot will end the poll. (Only the default unicode emojis are supported)"
+              "result": "💩, 🍔, and ✈ emojis and text will be used as poll options. Up to 25 custom options can be used. After 1 hour, the bot will end the poll. (Only the default unicode emojis are supported).<br><img src=\"https://res.cloudinary.com/spikeybot/image/upload/v1546212266/tQj7Yq2.png\">"
             }
           ]
         },

@@ -287,9 +287,11 @@ function WebProxy() {
       restoreAttempt = true;
       if (loginInfo[sess]) {
         session = sess;
-        // Temporarily refreshing the token on every restore. This seems to work
-        // fine, but I receive a 401 invalid_grant when I don't do this...
-        if (true || loginInfo[session].expires_at < Date.now()) {
+        // Temporarily refreshing the token on (nearly) every restore. This
+        // seems to work fine, but I receive a 401 invalid_grant when I don't do
+        // this...
+        if (loginInfo[session].expires_at - 6 * 24 * 60 * 60 * 1000 <
+            Date.now()) {
           refreshToken(loginInfo[session].refresh_token, (err, data) => {
             if (!err) {
               let parsed;
