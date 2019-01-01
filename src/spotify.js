@@ -90,7 +90,7 @@ function Spotify() {
     if (!infoOnly && music.isSubjugated(msg) && following[msg.guild.id]) {
       endFollow(msg);
       self.common.reply(msg, 'Stopped following Spotify.', '<@' + userId + '>');
-      if (userId == following[msg.guild.id].user) {
+      if (following[msg.guild.id] && userId == following[msg.guild.id].user) {
         return;
       }
     }
