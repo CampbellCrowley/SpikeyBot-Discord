@@ -2031,7 +2031,9 @@ function HungryGames() {
         if (statusList.length >= 3) {
           const quarterLength = Math.ceil(statusList.length / numCols);
           for (let i = 0; i < numCols - 1; i++) {
-            let thisMessage = statusList.splice(0, quarterLength).join('\n');
+            let thisMessage = statusList.splice(0, quarterLength)
+                .join('\n')
+                .substring(0, 1024);
             finalMessage.addField(
                 'Included (' + (i * quarterLength + 1) + '-' +
                     ((i + 1) * quarterLength) + ')',

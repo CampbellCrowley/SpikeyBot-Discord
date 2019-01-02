@@ -123,6 +123,10 @@ function ChatBot() {
               console.error(err);
             });
           }
+          if (result.parameters.fields.loopback) {
+            msg.text = result.parameters.fields.loopback.stringValue;
+            onChatMessage(msg);
+          }
           if (result.parameters.fields.command) {
             let cmd = result.parameters.fields.command.stringValue.replace(
                 /^command /, msg.prefix);
