@@ -2284,6 +2284,21 @@ function HungryGames() {
       }
       return;
     }
+    let myPerms = msg.channel.permissionsFor(self.client.user.id);
+    if (!myPerms ||
+        (!myPerms.has(self.Discord.Permissions.FLAGS.ATTACH_FILES) &&
+         !myPerms.has(self.Discord.Permissions.FLAGS.ADMINISTRATOR))) {
+      self.common.reply(
+          msg, 'Sorry, but I need permission to send images ' +
+              'in this channel before I can start the games.\nPlease ensure' +
+              ' I have the "Attach Files" permission in this channel.',
+          myPerms ? null :
+                    'This is probably a bug, this should be fixed soon.');
+      if (!myPerms) {
+        self.error(
+            'Failed to fetch perms for myself. ' + (msg.guild.me && true));
+      }
+    }
     find(id).currentGame.day.state = 1;
     find(id).currentGame.day.num++;
     find(id).currentGame.day.events = [];
