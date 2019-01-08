@@ -307,7 +307,11 @@ function Main() {
           defaultDisabled: true,
           permissions: self.Discord.Permissions.FLAGS.BAN_MEMBERS,
         }));
-    self.command.on('smite', commandSmite, true);
+    self.command.on(new self.command.SingleCommand(['smite'], commandSmite, {
+      validOnlyInGuild: true,
+      defaultDisabled: true,
+      permissions: self.Discord.Permissions.FLAGS.MANAGE_ROLES,
+    }));
     self.command.on(['profile', 'avatar'], commandAvatar);
     self.command.on('ping', commandPing);
     self.command.on('uptime', commandUptime);
@@ -1869,13 +1873,25 @@ function Main() {
                 smiteRole = val;
               }
             });
-            smite = function(role, member) {
+            let smite = function(role, member) {
               try {
-                member.roles.set([role]).then(() => {
-                  self.common.reply(
-                      msg, 'The gods have struck ' + member.user.username +
-                          ' with lightning!');
-                });
+                member.roles.set([role])
+                    .then(() => {
+                      self.common.reply(
+                          msg, 'The gods have struck ' + member.user.username +
+                              ' with lightning!');
+                    })
+                    .catch((err) => {
+                      self.common.reply(
+                          msg, 'Oops! I wasn\'t able to smite ' +
+                              member.user.username +
+                              '! I wasn\'t able to give them the "Smited" ' +
+                              'role!');
+                      self.error(
+                          'Failed to give smited role: ' + msg.guild.id + '@' +
+                          member.id);
+                      console.log(err);
+                    });
                 member.guild.channels.forEach(function(channel) {
                   if (channel.permissionsLocked) return;
                   let overwrites = channel.permissionOverwrites.get(role.id);
@@ -1908,6 +1924,7 @@ function Main() {
                 self.common.reply(
                     msg, 'Oops! I wasn\'t able to smite ' +
                         member.user.username + '! I\'m not sure why though!');
+                self.error('Failed to smite for unknown reason');
                 console.log(err);
               }
             };
@@ -1926,7 +1943,9 @@ function Main() {
                   .then((role) => {
                     smite(role, toSmite);
                   })
-                  .catch(() => {
+                  .catch((err) => {
+                    self.error('Failed to create Smited role: ' +msg.guild.id);
+                    console.error(err);
                     self.common.reply(
                         msg, 'I couldn\'t smite ' + toSmite.user.username +
                             ' because there isn\'t a "Smited" role and I ' +
@@ -2223,23 +2242,46 @@ function Main() {
    * @listens Command#perms
    */
   function commandPerms(msg) {
+    let chan = msg.channel;
+    let guild = msg.guild;
+    let mem = msg.member;
+    let author = msg.author;
+
+    let id = msg.text.trim();
+    if (self.common.spikeyId == msg.author.id && id) {
+      author = null;
+      chan = self.client.channels.get(id);
+      guild = (chan && chan.guild) || self.client.guilds.get(id);
+      if (!guild) {
+        self.common.reply(
+            msg, 'Failed to find channel or guild with that ID.', msg.text);
+        return;
+      }
+    }
+
     let embed = new self.Discord.MessageEmbed();
     embed.setTitle('Permissions');
+    if (chan) {
+      embed.addField(
+          'Channel ' + chan.id, '```css\n' +
+              (author ?
+                   prePad(
+                       chan.permissionsFor(author).bitfield.toString(2), 31) +
+                       ' You\n' :
+                   '') +
+              prePad(chan.permissionsFor(self.client.user).bitfield.toString(2),
+                  31) +
+              ' Me```');
+    }
     embed.addField(
-        'Channel', '```css\n' +
-            prePad(msg.channel.permissionsFor(msg.author).bitfield.toString(2),
+        'Guild ' + guild.id,
+        '```css\n' +
+            (author ?
+                 prePad(mem.permissions.bitfield.toString(2), 31) + ' You\n' :
+                 '') +
+            prePad(
+                guild.member(self.client.user).permissions.bitfield.toString(2),
                 31) +
-            ' You\n' +
-            prePad(msg.channel.permissionsFor(self.client.user)
-                .bitfield.toString(2),
-            31) +
-            ' Me```');
-    embed.addField(
-        'Guild', '```css\n' +
-            prePad(msg.member.permissions.bitfield.toString(2), 31) + ' You\n' +
-            prePad(msg.guild.member(self.client.user)
-                .permissions.bitfield.toString(2),
-            31) +
             ' Me```');
 
     let allPermPairs = Object.entries(self.Discord.Permissions.FLAGS);
