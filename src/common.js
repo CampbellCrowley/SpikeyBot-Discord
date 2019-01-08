@@ -253,7 +253,9 @@ function Common() {
    */
   this.reply = function(msg, text, post) {
     if (!msg.channel || !msg.channel.send) return null;
-    if (self.isTest) {
+    if (self.isTest ||
+        (msg.guild &&
+         !msg.guild.me.permissionsIn(msg.channel).has('EMBED_LINKS'))) {
       return msg.channel
           .send(Common.mention(msg) + '\n```\n' + text + '\n```' + (post || ''))
           .catch((err) => {
@@ -272,7 +274,7 @@ function Common() {
         embed.setDescription(text + (post ? '\n' + post : ''));
       }
       return msg.channel.send(Common.mention(msg), embed).catch((err) => {
-        self.error('Failed to send reply to channel: ' + msg.channel.id);
+        self.error('Failed to send embed reply to channel: ' + msg.channel.id);
         throw err;
       });
     }

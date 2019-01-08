@@ -1248,7 +1248,7 @@
       "attacker": { "count": "0", "outcome": "nothing" }
     },
     {
-      "message": "{victim} [Vis|are] surrounded by a pack of hungry wolves, and [Vis|are] becomes their dinner.",
+      "message": "{victim} [Vis|are] surrounded by a pack of hungry wolves, and become[Vs|] their dinner.",
       "victim": { "count": "-1", "outcome": "dies" },
       "attacker": { "count": "0", "outcome": "nothing" }
     },

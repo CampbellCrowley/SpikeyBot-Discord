@@ -3405,6 +3405,7 @@ Serializable container for data pertaining to a single user.
 | kills | <code>number</code> | The number of players this player has caused to die. |
 | weapons | <code>Object.&lt;number&gt;</code> | The weapons the player currently has and how many of each. |
 | settings | <code>Object</code> | Custom settings for this user associated with the games. |
+| dayOfDeath | <code>number</code> | The day at which the player last died in the game. Only a valid number if the player is currently dead. Otherwise a garbage value will be available. |
 
 <a name="new_HungryGames..Player_new"></a>
 
