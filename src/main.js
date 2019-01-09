@@ -1788,8 +1788,9 @@ function Main() {
    */
   function commandBan(msg) {
     if (msg.mentions.members.size === 0) {
-      self.common.reply(
-          msg, 'You must mention someone to ban after the command.');
+      self.common
+          .reply(msg, 'You must mention someone to ban after the command.')
+          .catch(() => {});
     } else {
       let reason =
           msg.text.replace(self.Discord.MessageMentions.USERS_PATTERN, '')
@@ -1798,17 +1799,21 @@ function Main() {
         if (msg.guild.ownerID !== msg.author.id &&
             msg.member.roles.highest.comparePositionTo(toBan.roles.highest) <=
                 0) {
-          self.common.reply(
-              msg, 'You can\'t ban ' + toBan.user.username +
-                  '! You are not stronger than them!');
+          self.common
+              .reply(
+                  msg, 'You can\'t ban ' + toBan.user.username +
+                      '! You are not stronger than them!')
+              .catch(() => {});
         } else {
           msg.guild.members.fetch(self.client.user).then((me) => {
             let myRole = me.roles.highest;
             if (toBan.roles.highest &&
                 myRole.comparePositionTo(toBan.roles.highest) <= 0) {
-              self.common.reply(
-                  msg, 'I can\'t ban ' + toBan.user.username +
-                      '! I am not strong enough!');
+              self.common
+                  .reply(
+                      msg, 'I can\'t ban ' + toBan.user.username +
+                          '! I am not strong enough!')
+                  .catch(() => {});
             } else {
               let banMsg = banMsgs[Math.floor(Math.random() * banMsgs.length)];
               toBan.ban({reason: reason || banMsg})
@@ -1818,10 +1823,12 @@ function Main() {
                         .catch(() => {});
                   })
                   .catch((err) => {
-                    self.common.reply(
-                        msg, 'Oops! I wasn\'t able to ban ' +
-                            toBan.user.username +
-                            '! I\'m not sure why though!');
+                    self.common
+                        .reply(
+                            msg, 'Oops! I wasn\'t able to ban ' +
+                                toBan.user.username +
+                                '! I\'m not sure why though!')
+                        .catch(() => {});
                     self.error('Failed to ban user.');
                     console.log(err);
                   });
