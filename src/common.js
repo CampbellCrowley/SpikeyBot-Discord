@@ -91,14 +91,16 @@ function Common() {
    * @return {string} The padded address.
    */
   this.padIp = function(str) {
-    if (str.match(/\./g) || [] == 3) {
+    let dM = str.match(/\./g);
+    let cM = str.match(/:/g);
+    if (dM && dM.length == 3) {
       let res = str.split('.');
       for (let i = 0; i < res.length; i++) {
         res[i] = ('000' + res[i]).slice(-3);
         res[i] = res[i].replace(':', '0');
       }
       str = res.join('.');
-    } else if (str.match(/:/g) || [] == 7) {
+    } else if (cM && cM.length == 7) {
       let res = str.split(':');
       for (let i = 0; i < res.length; i++) {
         res[i] = ('0000' + res[i]).slice(-4);
@@ -253,13 +255,15 @@ function Common() {
    */
   this.reply = function(msg, text, post) {
     if (!msg.channel || !msg.channel.send) return null;
+    const trace = getTrace(0);
     if (self.isTest ||
         (msg.guild &&
          !msg.guild.me.permissionsIn(msg.channel).has('EMBED_LINKS'))) {
       return msg.channel
           .send(Common.mention(msg) + '\n```\n' + text + '\n```' + (post || ''))
           .catch((err) => {
-            self.error('Failed to send reply to channel: ' + msg.channel.id);
+            self.error(
+                'Failed to send reply to channel: ' + msg.channel.id, trace);
             throw err;
           });
     } else {
@@ -274,7 +278,8 @@ function Common() {
         embed.setDescription(text + (post ? '\n' + post : ''));
       }
       return msg.channel.send(Common.mention(msg), embed).catch((err) => {
-        self.error('Failed to send embed reply to channel: ' + msg.channel.id);
+        self.error(
+            'Failed to send embed reply to channel: ' + msg.channel.id, trace);
         throw err;
       });
     }

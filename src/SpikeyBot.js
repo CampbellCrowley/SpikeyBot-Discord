@@ -1012,6 +1012,8 @@ function SpikeyBot() {
             console.log(err);
           }
           reboot(doHardReboot);
+        }).catch(() => {
+          reboot(doHardReboot);
         });
       }
     } else {
