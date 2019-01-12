@@ -698,7 +698,7 @@ function Uno() {
      */
     function sendHelp() {
       let embed = new self.Discord.MessageEmbed();
-      embed.setTitle('Welcome to UNO!');
+      embed.setTitle('Welcome to UNO! (Beta)');
       embed.setAuthor(maker.user.tag);
       embed.setColor([237, 21, 31]);
       embed.setDescription(
@@ -706,7 +706,7 @@ function Uno() {
           'just type `play red 4` or `play yellow two` or `play draw 4` or ' +
           'something like that.\nIf you play a wild card, you must say what ' +
           'color it is when you play it (eg: `play wild red` or `play yellow ' +
-          'draw four`).');
+          'draw four`).\n`draw` to draw a card.');
       embed.addField(
           'Current Rules',
           'Original rules (non-point based) as described here: ' +

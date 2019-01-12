@@ -35,7 +35,7 @@ See [spikeybot.com](https://www.spikeybot.com/) for examples and more informatio
 
 | Command | Description |
 | --- | --- |
-| ?uno | Start a game of UNO! in the server text channels. |
+| ?uno | Start a game of UNO! in the server text channels. (Sill in BETA. Sorry if it breaks.) |
 | ?tictactoe | Play a game of Tic Tac Toe with someone! (Mention someone to challenge them) |
 | ?connect4 | Start a game of Connect 4 against someone! (Mention someone to challenge them) |
 

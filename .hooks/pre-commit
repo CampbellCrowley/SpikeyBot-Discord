@@ -32,8 +32,8 @@ STAGED_DATA=$(git diff --cached --name-only --diff-filter=ACM | grep ".json$" | 
 # fi
 
 if [[ "$STAGED_SCRIPTS" != "" || "$STAGED_DATA" != "" ]]; then
-  echo "Linting"
-  npm run lint
+  echo "Linting: $STAGED_SCRIPTS"
+  npm run lintforcommit
   if [[ "$?" != 0 ]]; then
     exit 1
   fi

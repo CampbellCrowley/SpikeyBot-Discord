@@ -245,7 +245,7 @@
       "rows": [
         {
           "command": "uno",
-          "description": "Start a game of UNO! in the server text channels.",
+          "description": "Start a game of UNO! in the server text channels. (Sill in BETA. Sorry if it breaks.)",
           "examples": [
             {
               "description": "Basic Usage",

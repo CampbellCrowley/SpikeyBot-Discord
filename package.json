@@ -54,6 +54,7 @@
     "lint": "eslint $(find ./ -iname '*.js' -not -path './node_modules/*' -not -iname '.eslintrc.js' -printf '%p ')",
     "lint:fix": "eslint --fix $(find ./ -iname '*.js' -not -path './node_modules/*' -not -iname '.eslintrc.js' -printf '%p ')",
     "lintandtest": "npm run lint && npm run test",
+    "lintforcommit": "TOLINT=\"$(git diff --cached --name-only --diff-filter=ACM | grep \".js$\" | tr '\\n' ' ')\";if [ -z \"$TOLINT\" ]; then echo 'Nothing to lint'; else eslint \"$TOLINT\"; fi",
     "test": "mocha --delay",
     "test:hg": "mocha --delay --grep \"START|Hungry Games|END\"",
     "test:main": "mocha --delay --grep \"START|Main Module|END\"",
