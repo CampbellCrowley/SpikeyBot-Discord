@@ -23,7 +23,7 @@ function WebCommands() {
   this.initialize = function() {
     app = http.createServer(handler);
     setTimeout(() => {
-      app.listen(self.common.isRelease ? 8018 : 8019, '::');
+      app.listen(self.common.isRelease ? 8018 : 8019, '127.0.0.1');
     });
   };
   /** @inheritdoc */

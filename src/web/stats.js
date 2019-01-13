@@ -20,7 +20,7 @@ function WebStats() {
   /** @inheritdoc */
   this.initialize = function() {
     postUpdatedCount();
-    app.listen(self.common.isRelease ? 8016 : 8017, '::');
+    app.listen(self.common.isRelease ? 8016 : 8017, '127.0.0.1');
     postTimeout = self.client.setTimeout(postUpdatedCount, postFrequency);
   };
   /** @inheritdoc */
