@@ -4607,7 +4607,7 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function excludeUser(msg, id) {
-    if (!find(id)) {
+    if (!find(id) || !find(id).currentGame) {
       createGame(msg, id);
     }
     let firstWord = msg.text.trim().split(' ')[0];
@@ -4752,7 +4752,7 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function includeUser(msg, id) {
-    if (!find(id)) {
+    if (!find(id) || !find(id).currentGame) {
       createGame(msg, id);
     }
     let firstWord = msg.text.trim().split(' ')[0];

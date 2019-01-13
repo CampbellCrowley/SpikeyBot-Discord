@@ -2669,7 +2669,7 @@ function Main() {
    * @listens Command#thankyou
    */
   function commandThankYou(msg) {
-    if (msg.mentions.members.size > 0) {
+    if (msg.mentions.members && msg.mentions.members.size > 0) {
       let mentions = msg.mentions.members.map((el) => {
         return '`' + (el.nickname || el.user.username).replace(/`/g, '`') + '`';
       });
