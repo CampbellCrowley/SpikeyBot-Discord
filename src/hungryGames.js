@@ -274,6 +274,7 @@ function HungryGames() {
     },
     battleHealth: {
       value: 5,
+      ranve: {min: 1, max: 10},
       comment: 'The amount of health each user gets for a battle.',
       category: 'other',
     },
