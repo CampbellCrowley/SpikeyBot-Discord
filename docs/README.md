@@ -5182,7 +5182,6 @@ An Arena event storing Events.
 
 | Name | Type | Description |
 | --- | --- | --- |
-| [name] | <code>string</code> | Formattable name to use as the human readable weapon name. |
 | [consumable] | <code>string</code> | The formattable string for what to call this weapons consumable items. |
 | outcomes | [<code>Array.&lt;Event&gt;</code>](#HungryGames..Event) | All possible events in this weapon event. |
 

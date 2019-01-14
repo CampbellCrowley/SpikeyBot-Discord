@@ -1303,8 +1303,6 @@ function HungryGames() {
    * An Arena event storing Events.
    * @typedef {Object} HungryGames~WeaponEvent
    *
-   * @property {string} [name] Formattable name to use as the human readable
-   * weapon name.
    * @property {string} [consumable] The formattable string for what to call
    * this weapons consumable items.
    * @property {HungryGames~Event[]} outcomes All possible events in this weapon
@@ -2719,10 +2717,6 @@ function HungryGames() {
                       consumableName = weapons[weaponName].consumable.replace(
                           /\[C([^\|]*)\|([^\]]*)\]/g,
                           '$' + (count == 1 ? '1' : '2'));
-                    } else if (weapons[weaponName].name) {
-                      consumableName = weapons[weaponName].name.replace(
-                          /\[C([^\|]*)\|([^\]]*)\]/g,
-                          '$' + (count == 1 ? '1' : '2'));
                     } else if (count != 1) {
                       consumableName += 's';
                     }
@@ -2750,10 +2744,6 @@ function HungryGames() {
                     }
                     if (weapons[weaponName].consumable) {
                       consumableName = weapons[weaponName].consumable.replace(
-                          /\[C([^\|]*)\|([^\]]*)\]/g,
-                          '$' + (count == 1 ? '1' : '2'));
-                    } else if (weapons[weaponName].name) {
-                      consumableName = weapons[weaponName].name.replace(
                           /\[C([^\|]*)\|([^\]]*)\]/g,
                           '$' + (count == 1 ? '1' : '2'));
                     } else if (count != 1) {

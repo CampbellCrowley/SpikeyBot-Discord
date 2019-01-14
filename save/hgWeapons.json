@@ -328,7 +328,7 @@
     ]
   },
   "knife": {
-    "name": "kni[Cfe|ves]",
+    "consumable": "kni[Cfe|ves]",
     "outcomes": [
       {
         "message": "{attacker} break[As|] {owner} knife.",
@@ -381,7 +381,7 @@
     ]
   },
   "throwingknives": {
-    "name": "throwing kni[Cfe|ves]",
+    "consumable": "throwing kni[Cfe|ves]",
     "outcomes": [
       {
         "action": "throw[As|]",

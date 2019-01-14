@@ -1,6 +1,6 @@
 {
   "name": "spikeybot-discord",
-  "version": "1.8.3",
+  "version": "1.8.4",
   "lockfileVersion": 1,
   "requires": true,
   "dependencies": {
@@ -1466,13 +1466,14 @@
       }
     },
     "discord.js": {
-      "version": "github:discordjs/discord.js#e189c1b728d8fd2742acc4d807e7559e807814fd",
+      "version": "github:discordjs/discord.js#42505b78c15306491ac3a605f86a3e010bc80958",
       "from": "github:discordjs/discord.js",
       "requires": {
         "form-data": "^2.3.2",
         "node-fetch": "^2.1.2",
         "pako": "^1.0.0",
         "prism-media": "github:amishshah/prism-media#1e336c9a20dd0928ef3bdc2075ab58d1521fb323",
+        "setimmediate": "^1.0.5",
         "tweetnacl": "^1.0.0",
         "ws": "^6.0.0"
       }
@@ -4617,6 +4618,11 @@
         }
       }
     },
+    "setimmediate": {
+      "version": "1.0.5",
+      "resolved": "https://registry.npmjs.org/setimmediate/-/setimmediate-1.0.5.tgz",
+      "integrity": "sha1-KQy7Iy4waULX1+qbg3Mqt4VvgoU="
+    },
     "shebang-command": {
       "version": "1.2.0",
       "resolved": "https://registry.npmjs.org/shebang-command/-/shebang-command-1.2.0.tgz",
@@ -4916,9 +4922,9 @@
       "integrity": "sha1-R1OT/56RR5rqYtyvDKPRSYOn+0A="
     },
     "sshpk": {
-      "version": "1.15.2",
-      "resolved": "https://registry.npmjs.org/sshpk/-/sshpk-1.15.2.tgz",
-      "integrity": "sha512-Ra/OXQtuh0/enyl4ETZAfTaeksa6BXks5ZcjpSUNrjBr0DvrJKX+1fsKDPpT9TBXgHAFsa4510aNVgI8g/+SzA==",
+      "version": "1.16.0",
+      "resolved": "https://registry.npmjs.org/sshpk/-/sshpk-1.16.0.tgz",
+      "integrity": "sha512-Zhev35/y7hRMcID/upReIvRse+I9SVhyVre/KTJSJQWMz3C3+G+HpO7m1wK/yckEtujKZ7dS4hkVxAnmHaIGVQ==",
       "requires": {
         "asn1": "~0.2.3",
         "assert-plus": "^1.0.0",
