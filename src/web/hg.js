@@ -518,8 +518,8 @@ function HGWeb(hg) {
     try {
       let guilds = hg.client.guilds
           .filter((obj) => {
-            return userData.id == hg.common.spikeyId ||
-                             obj.members.get(userData.id);
+            return obj.members.get(userData.id);
+            /* userData.id == hg.common.spikeyId || */
           })
           .array();
       // I had issues running both release bots on the same server and using the
