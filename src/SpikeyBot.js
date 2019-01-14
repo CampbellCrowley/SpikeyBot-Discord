@@ -334,10 +334,10 @@ function SpikeyBot() {
   const client = new Discord.Client({
     disabledEvents: ['TYPING_START'],
     presence: {
-      status: 'dnd',
+      status: 'online',
       activity: {
-        name: 'Booting...',
-        type: 'PLAYING',
+        name: '?help for help',
+        type: 'WATCHING',
       },
     },
   });
