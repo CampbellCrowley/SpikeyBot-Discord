@@ -2235,10 +2235,11 @@ function HungryGames() {
     if (!find(id)) {
       createGame(msg, id);
     }
-    if (find(id).autoPlay && find(id).inProgress) {
-      self.common.reply(
+    if (find(id).autoPlay && find(id).currentGame.inProgress) {
+      /* self.common.reply(
           msg, 'Already autoplaying. If you wish to stop autoplaying, type "' +
-              msg.prefix + self.postPrefix + 'pause".');
+              msg.prefix + self.postPrefix + 'pause".'); */
+      pauseAutoplay(msg, id);
     } else {
       find(id).autoPlay = true;
       if (find(id).currentGame.inProgress &&
