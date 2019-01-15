@@ -4722,6 +4722,8 @@ function HungryGames() {
               response += obj.username + ' removed from included players.\n';
             }
             formTeams(id);
+          } else if (!find(id).options.includeBots && obj.bot) {
+            // Bots are already excluded.
           } else {
             response +=
                 'Failed to remove ' + obj.username + ' for an unknown reason.';
@@ -5308,8 +5310,9 @@ function HungryGames() {
     }
     if (find(id).currentGame.inProgress) {
       switch (split[0]) {
-        case 'swap':
-        case 'reset':
+        case 'rename':
+          break;
+        default:
           let message = 'You must end the current game before editing teams.';
           if (!silent) {
             msg.channel.send(self.common.mention(msg) + ' `' + message + '`');
@@ -5371,7 +5374,7 @@ function HungryGames() {
     if (find(gId).currentGame.inProgress) {
       switch (cmd) {
         case 'swap':
-        case 'reset':
+        case 'move':
           return;
       }
     }
@@ -5634,6 +5637,12 @@ function HungryGames() {
   function randomizeTeams(msg, id, silent) {
     if (!find(id) || !find(id).currentGame) {
       createGame(null, id, true);
+    }
+    if (find(id).currentGame.inProgress) {
+      if (!silent) {
+        self.common.reply(msg, 'Please end the current game to modify teams.');
+      }
+      return;
     }
     let current = find(id).currentGame;
     if (current.teams.length == 0) {
@@ -6899,7 +6908,7 @@ function HungryGames() {
     let players = [];
     let notInGame = msg.mentions.users.find((u) => {
       players.push(u.id);
-      return !find(id).includedUsers.find((p) => {
+      return !find(id).currentGame.includedUsers.find((p) => {
         return p.id == u.ud;
       });
     });
@@ -6928,7 +6937,7 @@ function HungryGames() {
     let players = [];
     let notInGame = msg.mentions.users.find((u) => {
       players.push(u.id);
-      return !find(id).includedUsers.find((p) => {
+      return !find(id).currentGame.includedUsers.find((p) => {
         return p.id == u.ud;
       });
     });
@@ -6957,7 +6966,7 @@ function HungryGames() {
     let players = [];
     let notInGame = msg.mentions.users.find((u) => {
       players.push(u.id);
-      return !find(id).includedUsers.find((p) => {
+      return !find(id).currentGame.includedUsers.find((p) => {
         return p.id == u.ud;
       });
     });
@@ -7311,7 +7320,7 @@ function HungryGames() {
     }
     return toJimp(url).then((image) => {
       if (fromCache) return image;
-      if (filename) {
+      if (filename && image) {
         mkdirp(dir, (err) => {
           if (err) {
             self.error(

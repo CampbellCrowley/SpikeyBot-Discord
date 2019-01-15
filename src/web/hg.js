@@ -213,6 +213,7 @@ function HGWeb(hg) {
      * siblings.
      */
     function callSocketFunction(func, args, forward = true) {
+      hg.common.logDebug(func.name + '(' + args.join(',') + ')', socket.id);
       func.apply(func, [args[0], socket].concat(args.slice(1)));
       if (forward) {
         Object.entries(siblingSockets).forEach((s) => {
