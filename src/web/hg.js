@@ -645,7 +645,7 @@ function HGWeb(hg) {
       cb(null);
       return;
     }
-    cb(stripGuilds([guild], userData));
+    cb(stripGuilds([guild], userData)[0]);
   }
   this.fetchGuild = fetchGuild;
   /**
