@@ -216,7 +216,14 @@ function HGWeb(hg) {
      * siblings.
      */
     function callSocketFunction(func, args, forward = true) {
-      hg.common.logDebug(func.name + '(' + args.join(',') + ')', socket.id);
+      let logArgs = args.map((el) => {
+        if (typeof el === 'function') {
+          return el.name + '()';
+        } else {
+          return el;
+        }
+      });
+      hg.common.logDebug(func.name + '(' + logArgs.join(',') + ')', socket.id);
       func.apply(func, [args[0], socket].concat(args.slice(1)));
       if (forward) {
         Object.entries(siblingSockets).forEach((s) => {
@@ -624,8 +631,12 @@ function HGWeb(hg) {
       if (typeof cb === 'function') cb('SIGNED_OUT');
       return;
     }
+    if (typeof cb !== 'function') {
+      hg.common.logWarning('Fetch Guild attempted without callback', 'HG Web');
+      return;
+    }
 
-    let guild = hg.client.get(gId);
+    let guild = hg.client.guilds.get(gId);
     if (!guild) {
       cb(null);
       return;
