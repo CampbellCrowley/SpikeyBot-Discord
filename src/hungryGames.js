@@ -7183,7 +7183,7 @@ function HungryGames() {
           fs.readFileSync(self.common.guildSaveDir + id + hgSaveDir + saveFile);
       try {
         games[id] = JSON.parse(tmp);
-        self.debug('Loaded game from file ' + id);
+        if (self.initialized) self.debug('Loaded game from file ' + id);
       } catch (e2) {
         self.error('Failed to parse game data for guild ' + id);
         return null;
