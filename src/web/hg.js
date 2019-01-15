@@ -137,6 +137,9 @@ function HGWeb(hg) {
     socket.on('fetchGuilds', (...args) => {
       callSocketFunction(fetchGuilds, args, false);
     });
+    socket.on('fetchGuild', (...args) => {
+      callSocketFunction(fetchGuild, args);
+    });
     socket.on('fetchMember', (...args) => {
       callSocketFunction(fetchMember, args);
     });
@@ -520,7 +523,6 @@ function HGWeb(hg) {
       let guilds = hg.client.guilds
           .filter((obj) => {
             return obj.members.get(userData.id);
-            /* userData.id == hg.common.spikeyId || */
           })
           .array();
       // I had issues running both release bots on the same server and using the
@@ -532,59 +534,7 @@ function HGWeb(hg) {
           return obj.id != '420045052690169856';
         });
       }
-      let strippedGuilds = guilds.map((g) => {
-        let dOpts = hg.command.getDefaultSettings() || {};
-        dOpts = Object.entries(dOpts)
-            .filter((el) => {
-              return el[1].getFullName().startsWith('hg');
-            })
-            .reduce(
-                (p, c) => {
-                  p[c[0]] = c[1];
-                  return p;
-                },
-                {});
-        let uOpts = hg.command.getUserSettings(g.id) || {};
-        uOpts = Object.entries(uOpts)
-            .filter((el) => {
-              return el[0].startsWith('hg');
-            })
-            .reduce(
-                (p, c) => {
-                  p[c[0]] = c[1];
-                  return p;
-                },
-                {});
-
-        let member = g.members.get(userData.id);
-        let newG = {};
-        newG.iconURL = g.iconURL();
-        newG.name = g.name;
-        newG.id = g.id;
-        newG.ownerId = g.ownerID;
-        newG.members = g.members.map((m) => {
-          return m.id;
-        });
-        newG.defaultSettings = dOpts;
-        newG.userSettings = uOpts;
-        newG.channels =
-            g.channels
-                .filter((c) => {
-                  return userData.id == hg.common.spikeyId ||
-                      c.permissionsFor(member).has(
-                          hg.Discord.Permissions.FLAGS.VIEW_CHANNEL);
-                })
-                .map((c) => {
-                  return {
-                    id: c.id,
-                    permissions: userData.id == hg.common.spikeyId ?
-                        hg.Discord.Permissions.ALL :
-                        c.permissionsFor(member).bitfield,
-                  };
-                });
-        newG.myself = makeMember(member || userData.id);
-        return newG;
-      });
+      let strippedGuilds = stripGuilds(guilds, userData);
       done(strippedGuilds);
     } catch (err) {
       hg.error(err);
@@ -593,6 +543,100 @@ function HGWeb(hg) {
     }
   }
   this.fetchGuilds = fetchGuilds;
+
+  /**
+   * Strip a Discord~Guild to the basic information the client will need.
+   * @private
+   * @param {Discord~Guild[]} guilds The array of guilds to strip.
+   * @param {Object} userData The current user's session data.
+   * @return {Object[]} The stripped guilds.
+   */
+  function stripGuilds(guilds, userData) {
+    return guilds.map((g) => {
+      let dOpts = hg.command.getDefaultSettings() || {};
+      dOpts = Object.entries(dOpts)
+          .filter((el) => {
+            return el[1].getFullName().startsWith('hg');
+          })
+          .reduce(
+              (p, c) => {
+                p[c[0]] = c[1];
+                return p;
+              },
+              {});
+      let uOpts = hg.command.getUserSettings(g.id) || {};
+      uOpts = Object.entries(uOpts)
+          .filter((el) => {
+            return el[0].startsWith('hg');
+          })
+          .reduce(
+              (p, c) => {
+                p[c[0]] = c[1];
+                return p;
+              },
+              {});
+
+      let member = g.members.get(userData.id);
+      let newG = {};
+      newG.iconURL = g.iconURL();
+      newG.name = g.name;
+      newG.id = g.id;
+      newG.ownerId = g.ownerID;
+      newG.members = g.members.map((m) => {
+        return m.id;
+      });
+      newG.defaultSettings = dOpts;
+      newG.userSettings = uOpts;
+      newG.channels = g.channels
+          .filter((c) => {
+            return userData.id == hg.common.spikeyId ||
+                                c.permissionsFor(member).has(
+                                    hg.Discord.Permissions.FLAGS.VIEW_CHANNEL);
+          })
+          .map((c) => {
+            return {
+              id: c.id,
+              permissions: userData.id == hg.common.spikeyId ?
+                                  hg.Discord.Permissions.ALL :
+                                  c.permissionsFor(member).bitfield,
+            };
+          });
+      newG.myself = makeMember(member || userData.id);
+      return newG;
+    });
+  }
+
+  /**
+   * Fetch all relevant data for a mutual guilds with the user and send it to
+   * the user.
+   *
+   * @private
+   * @type {HGWeb~SocketFunction}
+   * @param {Object} userData The current user's session data.
+   * @param {socketIo~Socket} socket The socket connection to reply on.
+   * @param {string|number} gId The ID of the guild that was requested.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete, or has failed.
+   */
+  function fetchGuild(userData, socket, gId, cb) {
+    if (!userData) {
+      hg.common.error('Fetch Guild without userData', 'HG Web');
+      if (typeof cb === 'function') cb('SIGNED_OUT');
+      return;
+    }
+
+    let guild = hg.client.get(gId);
+    if (!guild) {
+      cb(null);
+      return;
+    }
+    if (userData.id != hg.common.spikeyId && !guild.members.get(userData.id)) {
+      cb(null);
+      return;
+    }
+    cb(stripGuilds([guild], userData));
+  }
+  this.fetchGuild = fetchGuild;
   /**
    * Fetch data about a member of a guild.
    *

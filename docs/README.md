@@ -12632,6 +12632,8 @@ Creates a web interface for managing the Hungry Games.
         * [~makeMember(m)](#HGWeb..makeMember) ⇒ <code>Object</code> ℗
         * [~fetchGuilds(userData, socket, [cb])](#HGWeb..fetchGuilds) : <code>HGWeb~SocketFunction</code> ℗
             * [~done(guilds, [err], [response])](#HGWeb..fetchGuilds..done) ℗
+        * [~stripGuilds(guilds, userData)](#HGWeb..stripGuilds) ⇒ <code>Array.&lt;Object&gt;</code> ℗
+        * [~fetchGuild(userData, socket, gId, [cb])](#HGWeb..fetchGuild) : <code>HGWeb~SocketFunction</code> ℗
         * [~fetchMember(userData, socket, gId, mId, [cb])](#HGWeb..fetchMember) : <code>HGWeb~SocketFunction</code> ℗
         * [~fetchChannel(userData, socket, gId, cId, [cb])](#HGWeb..fetchChannel) : <code>HGWeb~SocketFunction</code> ℗
         * [~fetchGames(userData, socket, gId, [cb])](#HGWeb..fetchGames) : <code>HGWeb~SocketFunction</code> ℗
@@ -12893,6 +12895,36 @@ user once all requests have replied.
 | guilds | <code>string</code> \| <code>Object</code> | Either the guild data to send to the user, or 'guilds' if this is a reply from a sibling client. |
 | [err] | <code>string</code> | The error that occurred, or null if no error. |
 | [response] | <code>Object</code> | The guild data if `guilds` equals 'guilds'. |
+
+<a name="HGWeb..stripGuilds"></a>
+
+### HGWeb~stripGuilds(guilds, userData) ⇒ <code>Array.&lt;Object&gt;</code> ℗
+Strip a Discord~Guild to the basic information the client will need.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Returns**: <code>Array.&lt;Object&gt;</code> - The stripped guilds.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| guilds | <code>Array.&lt;Discord~Guild&gt;</code> | The array of guilds to strip. |
+| userData | <code>Object</code> | The current user's session data. |
+
+<a name="HGWeb..fetchGuild"></a>
+
+### HGWeb~fetchGuild(userData, socket, gId, [cb]) : <code>HGWeb~SocketFunction</code> ℗
+Fetch all relevant data for a mutual guilds with the user and send it to
+the user.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>string</code> \| <code>number</code> | The ID of the guild that was requested. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
 
 <a name="HGWeb..fetchMember"></a>
 
