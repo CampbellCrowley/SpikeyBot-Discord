@@ -216,14 +216,17 @@ function HGWeb(hg) {
      * siblings.
      */
     function callSocketFunction(func, args, forward = true) {
-      let logArgs = args.map((el) => {
-        if (typeof el === 'function') {
-          return el.name + '()';
-        } else {
-          return el;
-        }
-      });
-      hg.common.logDebug(func.name + '(' + logArgs.join(',') + ')', socket.id);
+      if (!['fetchMember', 'fetchChannel'].includes(func.name.toString())) {
+        let logArgs = args.map((el) => {
+          if (typeof el === 'function') {
+            return (el.name || 'anonymous') + '()';
+          } else {
+            return el;
+          }
+        });
+        hg.common.logDebug(
+            func.name + '(' + logArgs.join(',') + ')', socket.id);
+      }
       func.apply(func, [args[0], socket].concat(args.slice(1)));
       if (forward) {
         Object.entries(siblingSockets).forEach((s) => {
