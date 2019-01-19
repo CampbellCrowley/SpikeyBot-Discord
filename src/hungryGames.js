@@ -427,6 +427,7 @@ function HungryGames() {
   };
 
   const defaultOptSearcher = new FuzzySearch(Object.keys(defaultOptions));
+  let cmdSearcher;
   /**
    * Default options for a game.
    *
@@ -982,18 +983,44 @@ function HungryGames() {
       new self.command.SingleCommand(
           ['rename', 'name'], mkCmd(commandRename), cmdOpts),
     ];
-    self.command.on(
+    let hgCmd =
         new self.command.SingleCommand(
             [
-              'hg', 'hunger', 'hungry', 'hungergames', 'hungrygames',
-              'hungergame', 'hungrygame',
+              'hg',
+              'hunger',
+              'hungry',
+              'hungergames',
+              'hungrygames',
+              'hungergame',
+              'hungrygame',
             ],
             function(msg) {
+              if (cmdSearcher && msg.text && msg.text.length > 1) {
+                let toSearch = msg.text.trim().split(' ')[0];
+                let searched = cmdSearcher.search(toSearch);
+                if (searched && searched.length > 0) {
+                  if (searched.length > 1) {
+                    self.common.reply(
+                        msg, 'Hmm, did you mean one of the following commands?',
+                        searched
+                            .map((el) => {
+                              return msg.prefix + self.postPrefix + el;
+                            })
+                            .join('\n'));
+                  } else {
+                    self.common.reply(
+                        msg, 'Hmm, did you mean "' + msg.prefix +
+                            self.postPrefix + searched[0] + '"?');
+                  }
+                  return;
+                }
+              }
               self.common.reply(
                   msg, 'Oh noes! I can\'t understand that! "' + msg.prefix +
                       self.postPrefix + 'help" for help.');
             },
-            null, subCmds));
+            null, subCmds);
+    self.command.on(hgCmd);
 
     setupHelp();
 
@@ -1018,6 +1045,10 @@ function HungryGames() {
     } catch (err) {
       console.log(err);
     }
+    cmdSearcher = new FuzzySearch(
+        Object.values(hgCmd.subCmds)
+            .map((el) => el.aliases)
+            .reduce((a, c) => a.concat(c)));
   };
 
   /** @inheritdoc */
