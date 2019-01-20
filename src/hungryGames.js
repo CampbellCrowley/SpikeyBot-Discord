@@ -1510,8 +1510,12 @@ function HungryGames() {
         find(id).options = {};
         for (let i in optKeys) {
           if (typeof optKeys[i] !== 'string') continue;
-          find(id).options[optKeys[i]] =
-              Object.assign({}, defaultOptions[optKeys[i]].value);
+          if (typeof defaultOptions[optKeys[i]].value === 'object') {
+            find(id).options[optKeys[i]] =
+                Object.assign({}, defaultOptions[optKeys[i]].value);
+          } else {
+            find(id).options[optKeys[i]] = defaultOptions[optKeys[i]].value;
+          }
         }
         if (msg.guild.memberCount > 100) {
           find(id).options.showLivingPlayers = false;
