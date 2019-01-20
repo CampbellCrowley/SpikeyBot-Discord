@@ -275,6 +275,41 @@ function Command() {
           }
         }
       }
+      let uIds = msg.text.match(/\d{17,18}/g);
+      let uTags = msg.text.replace(/\d{17,18}/g, '')
+          .match(/([^@#:\s][^@#:]{0,30}[^@#:\s])(#\d{4})?/g);
+      msg.softMentions = {
+        users: new self.Discord.UserStore(self.client),
+        members: msg.guild ? new self.Discord.GuildMemberStore(msg.guild) :
+                             null,
+      };
+      if (uIds) {
+        uIds.forEach((el) => {
+          let u = self.client.users.get(el);
+          if (u) msg.softMentions.users.add(u);
+        });
+        if (msg.guild) {
+          uIds.forEach((el) => {
+            let m = msg.guild.members.get(el);
+            if (m) msg.softMentions.members.add(m);
+          });
+        }
+      }
+      if (uTags) {
+        uTags.forEach((el) => {
+          let u =
+              self.client.users.find((u) => u.username === el || u.tag === el);
+          if (u) msg.softMentions.users.add(u);
+        });
+        if (msg.guild) {
+          uTags.forEach((el) => {
+            let m = msg.guild.members.find(
+                (m) => m.user.username === el || m.tag === el ||
+                    m.nickname === el);
+            if (m) msg.softMentions.members.add(m);
+          });
+        }
+      }
       handler(msg);
     };
     /**
