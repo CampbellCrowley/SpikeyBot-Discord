@@ -217,7 +217,7 @@ function HungryGames() {
    *   }>}
    * @constant
    */
-  const defaultOptions = {
+  let defaultOptions = {
     bloodbathOutcomeProbs: {
       value: {kill: 30, wound: 6, thrive: 8, revive: 0, nothing: 56},
       comment:
@@ -425,6 +425,7 @@ function HungryGames() {
       category: 'other',
     },
   };
+  defaultOptions = deepFreeze(defaultOptions);
 
   const defaultOptSearcher = new FuzzySearch(Object.keys(defaultOptions));
   let cmdSearcher;
@@ -1509,7 +1510,8 @@ function HungryGames() {
         find(id).options = {};
         for (let i in optKeys) {
           if (typeof optKeys[i] !== 'string') continue;
-          find(id).options[optKeys[i]] = defaultOptions[optKeys[i]].value;
+          find(id).options[optKeys[i]] =
+              Object.assign({}, defaultOptions[optKeys[i]].value);
         }
         if (msg.guild.memberCount > 100) {
           find(id).options.showLivingPlayers = false;
@@ -2115,17 +2117,20 @@ function HungryGames() {
           false);
     }
     if (find(id).excludedUsers.length > 0) {
-      let excludedList = find(id)
-          .excludedUsers
-          .map(function(obj) {
-            return getName(msg.guild, obj);
-          })
-          .join(', ');
-      let trimmedList = excludedList.substr(0, 512);
-      if (excludedList != trimmedList) {
-        excludedList = trimmedList.substr(0, 509) + '...';
-      } else {
-        excludedList = trimmedList;
+      let excludedList = '\u200B';
+      if (find(id).excludedUsers.length < 20) {
+        excludedlist = find(id)
+            .excludedUsers
+            .map(function(obj) {
+              return getName(msg.guild, obj);
+            })
+            .join(', ');
+        let trimmedList = excludedList.substr(0, 512);
+        if (excludedList != trimmedList) {
+          excludedList = trimmedList.substr(0, 509) + '...';
+        } else {
+          excludedList = trimmedList;
+        }
       }
       finalMessage.addField(
           'Excluded (' + find(id).excludedUsers.length + ')', excludedList,
@@ -5024,17 +5029,20 @@ function HungryGames() {
     }
     if (find(id) && find(id).excludedUsers &&
         find(id).excludedUsers.length > 0) {
-      let excludedList = find(id)
-          .excludedUsers
-          .map(function(obj) {
-            return getName(msg.guild, obj);
-          })
-          .join(', ');
-      let trimmedList = excludedList.substr(0, 512);
-      if (excludedList != trimmedList) {
-        excludedList = trimmedList.substr(0, 509) + '...';
-      } else {
-        excludedList = trimmedList;
+      let excludedList = '\u200B';
+      if (find(id).excludedUsers.length < 20) {
+        excludedlist = find(id)
+            .excludedUsers
+            .map(function(obj) {
+              return getName(msg.guild, obj);
+            })
+            .join(', ');
+        let trimmedList = excludedList.substr(0, 512);
+        if (excludedList != trimmedList) {
+          excludedList = trimmedList.substr(0, 509) + '...';
+        } else {
+          excludedList = trimmedList;
+        }
       }
       finalMessage.addField(
           'Excluded (' + find(id).excludedUsers.length + ')', excludedList,
