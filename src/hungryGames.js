@@ -504,7 +504,9 @@ function HungryGames() {
     crossed_swords: '⚔',
     shield: '🛡',
     heart: '❤',
+    red_heart: '❤️',
     yellow_heart: '💛',
+    blue_heard: '💙',
     broken_heart: '💔',
     skull: '💀',
     negative_squared_cross_mark: '❎',
@@ -4233,6 +4235,12 @@ function HungryGames() {
               find(id).options.numDaysShowDeath;
         });
       }
+      let showDead = playersToShow.find((el) => !el.living);
+      let showWounded = playersToShow.find((el) => el.state == 'wounded');
+      finalMessage.setAuthor(
+          emoji.red_heart + 'Alive' +
+          (showWounded ? (', ' + emoji.yellow_heart + 'Wounded') : '') +
+          (showDead ? (', ' + emoji.skull + 'Dead') : ''));
       let showKills = false;
       let statusList = playersToShow.map(function(obj) {
         let myTeam = -1;
@@ -4288,7 +4296,9 @@ function HungryGames() {
               return -1;
             }
           }
-          return b - a;
+          if (a < b) return -1;
+          if (a > b) return 1;
+          return 0;
         });
       }
       if (statusList.length >= 3) {
@@ -6353,11 +6363,13 @@ function HungryGames() {
     msg.edit(
         show + '\n' + getOutcomeEmoji('nothing') + 'Nothing, ' +
         getOutcomeEmoji('dies') + 'Dies, ' + getOutcomeEmoji('wounded') +
-        'Wounded, ' + getOutcomeEmoji('thrives') + 'Healed');
+        'Wounded, ' + getOutcomeEmoji('thrives') + 'Healed, ' +
+        getOutcomeEmoji('revived') + 'Revived');
 
     newReact(maxReactAwaitTime);
     msg.awaitReactions(function(reaction, user) {
       return (reaction.emoji.name == getOutcomeEmoji('thrives') ||
+                 reaction.emoji.name == getOutcomeEmoji('revived') ||
                  reaction.emoji.name == getOutcomeEmoji('wounded') ||
                  reaction.emoji.name == getOutcomeEmoji('nothing') ||
                  reaction.emoji.name == getOutcomeEmoji('dies')) &&
@@ -6368,6 +6380,9 @@ function HungryGames() {
         return;
       }
       switch (reactions.first().emoji.name) {
+        case getOutcomeEmoji('revived'):
+          cb('revived');
+          return;
         case getOutcomeEmoji('thrives'):
           cb('thrives');
           return;
@@ -6851,6 +6866,8 @@ function HungryGames() {
         return emoji.yellow_heart;
       case 'thrives':
         return emoji.heart;
+      case 'revived':
+        return emoji.blue_heart;
       default:
         return emoji.question;
     }
