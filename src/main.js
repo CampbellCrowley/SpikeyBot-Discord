@@ -161,6 +161,14 @@ function Main() {
   let disabledBanMessage = {};
 
   /**
+   * The guilds that have disabled the rigged messages.
+   *
+   * @private
+   * @type {Object.<boolean>}
+   */
+  let disabledRiggedCounter = {};
+
+  /**
    * The guilds with auto-smite enabled, and members who have mentioned
    * @everyone, and the timestamps of these mentions.
    *
@@ -327,6 +335,9 @@ function Main() {
     self.command.on(
         new self.command.SingleCommand(
             'togglebanmessages', commandToggleBanMessages, adminOnlyOpts));
+    self.command.on(
+        new self.command.SingleCommand(
+            'togglerigged', commandToggleRiggedCounter, adminOnlyOpts));
     self.command.on('sendto', commandSendTo);
     self.command.on(['thanks', 'thx', 'thankyou', 'thank'], commandThankYou);
     self.command.on('listcommands', commandListCommands);
@@ -398,6 +409,7 @@ function Main() {
             }
             disabledAutoSmite[g.id] = parsed.disabledAutoSmite || false;
             disabledBanMessage[g.id] = parsed.disabledBanMessage || false;
+            disabledRiggedCounter[g.id] = parsed.disabledRiggedCounter || false;
           });
     });
 
@@ -592,6 +604,7 @@ function Main() {
       let obj = {
         disabledAutoSmite: disabledAutoSmite[g.id],
         disabledBanMessage: disabledBanMessage[g.id],
+        disabledRiggedCounter: disabledRiggedCounter[g.id],
       };
       if (opt == 'async') {
         mkAndWrite(filename, dir, JSON.stringify(obj));
@@ -800,6 +813,24 @@ function Main() {
           msg, 'Disabled showing a message when a user is banned.');
     }
   }
+
+  /**
+   * Toggles sending a message when a user says 'rigged'.
+   *
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens Command#toggleRigged
+   */
+  function commandToggleRiggedCounter(msg) {
+    if (disabledRiggedCounter[msg.guild.id]) {
+      disabledRiggedCounter[msg.guild.id] = false;
+      self.common.reply(msg, 'Enabled showing rigged counter.');
+    } else {
+      disabledRiggedCounter[msg.guild.id] = true;
+      self.common.reply(msg, 'Disabled showing rigged counter.');
+    }
+  }
   /**
    * Handle receiving a message for use on auto-muting users who spam @everyone.
    *
@@ -815,7 +846,7 @@ function Main() {
       let matchedRigged = msg.content.toLowerCase().replace(/\W/g, '').match(
           /r[^i]*i[^g]*g[^g]*g[^e]*e[^d]*d/g);
       if (matchedRigged) {
-        let startCount = self.client.riggedCounter;
+        // let startCount = self.client.riggedCounter;
         let matchCount = 0;
         for (let i = 0; i < matchedRigged.length; i++) {
           let check = matchedRigged[i].replace(/([\S])\1+/g, '$1');
@@ -831,16 +862,18 @@ function Main() {
               'Rigged count: ' + self.client.riggedCounter + ' + ' +
               matchCount + ': ' + msg.content.replace(/\n/g, '\\n'));
           // Disabled multple because people were spamming it.
-          if (false && matchCount > 1) {
+          /* if (false && matchCount > 1) {
             msg.channel
                 .send(
                     '#' + (startCount + 1) + ' - ' +
                     (self.client.riggedCounter += matchCount))
                 .catch(() => {});
-          } else {
-            msg.channel.send('#' + (self.client.riggedCounter += 1))
-                .catch(() => {});
+          } else { */
+          riggedCounter++;
+          if (!disabledRiggedCounter[msg.guild]) {
+            msg.channel.send('#' + self.client.riggedCounter).catch(() => {});
           }
+          // }
           if (self.client.shard) {
             self.client.shard.broadcastEval(
                 'this.updateRiggedCounter(' + self.client.riggedCounter + ',' +

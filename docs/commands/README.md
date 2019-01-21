@@ -12,6 +12,7 @@
 | ?smite | Silence the peasant who dare oppose you! |  |
 | ?togglemute | Turn on or off automatically preventing a person from using @everyone if they spam it. |  |
 | ?togglebanmessages | Turn on or off sending a message when someone gets banned. |  |
+| ?togglerigged | Turn on or off showing the number of times 'rigged' has been said. |  |
 
 
 | Command | Description | Aliases |

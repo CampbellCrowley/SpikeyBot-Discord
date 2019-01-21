@@ -79,6 +79,17 @@
               "command": "togglebanmessages"
             }
           ]
+        },
+        {
+          "command": "togglerigged",
+          "description": "Turn on or off showing the number of times 'rigged' has been said.",
+          "validOnlyInGuild": true,
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "togglerigged"
+            }
+          ]
         }
       ]
     },

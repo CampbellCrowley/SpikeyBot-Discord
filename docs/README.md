@@ -5270,6 +5270,7 @@ Basic commands and features for the bot.
         * [~timers](#Main..timers) : [<code>Array.&lt;Timer&gt;</code>](#Main..Timer) ℗
         * [~disabledAutoSmite](#Main..disabledAutoSmite) : <code>Object.&lt;boolean&gt;</code> ℗
         * [~disabledBanMessage](#Main..disabledBanMessage) : <code>Object.&lt;boolean&gt;</code> ℗
+        * [~disabledRiggedCounter](#Main..disabledRiggedCounter) : <code>Object.&lt;boolean&gt;</code> ℗
         * [~mentionAccumulator](#Main..mentionAccumulator) : <code>Object.&lt;Object.&lt;string&gt;&gt;</code> ℗
         * [~introduction](#Main..introduction) : <code>string</code> ℗
         * [~blockedmessage](#Main..blockedmessage) : <code>string</code> ℗
@@ -5286,6 +5287,7 @@ Basic commands and features for the bot.
         * [~onGuildBanAdd(guild, user)](#Main..onGuildBanAdd) ℗
         * [~commandToggleMute(msg)](#Main..commandToggleMute) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandToggleBanMessages(msg)](#Main..commandToggleBanMessages) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~commandToggleRiggedCounter(msg)](#Main..commandToggleRiggedCounter) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~onMessage(msg)](#Main..onMessage) ℗
         * [~checkSimilarity(s1, s2)](#Main..checkSimilarity) ⇒ <code>number</code> ℗
         * [~editDistance(s1, s2)](#Main..editDistance) ⇒ <code>number</code> ℗
@@ -5574,6 +5576,13 @@ All guilds that have disabled sending messages when someone is banned.
 
 **Kind**: inner property of [<code>Main</code>](#Main)  
 **Access**: private  
+<a name="Main..disabledRiggedCounter"></a>
+
+### Main~disabledRiggedCounter : <code>Object.&lt;boolean&gt;</code> ℗
+The guilds that have disabled the rigged messages.
+
+**Kind**: inner property of [<code>Main</code>](#Main)  
+**Access**: private  
 <a name="Main..mentionAccumulator"></a>
 
 ### Main~mentionAccumulator : <code>Object.&lt;Object.&lt;string&gt;&gt;</code> ℗
@@ -5725,6 +5734,18 @@ Toggles auto-muting a user for using @everyone too much.
 
 ### Main~commandToggleBanMessages(msg) : [<code>commandHandler</code>](#commandHandler) ℗
 Toggles sending a message when a user is banned from a guild.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Main..commandToggleRiggedCounter"></a>
+
+### Main~commandToggleRiggedCounter(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Toggles sending a message when a user says 'rigged'.
 
 **Kind**: inner method of [<code>Main</code>](#Main)  
 **Access**: private  
