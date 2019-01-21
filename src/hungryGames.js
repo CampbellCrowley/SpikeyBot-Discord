@@ -12,6 +12,7 @@ require('./subModule.js')(HungryGames);  // Extends the SubModule class.
  * @classdesc Hunger Games simulator.
  * @class
  * @augments SubModule
+ * @listens Discord~Client#guildDelete
  * @listens Command#hg
  */
 function HungryGames() {
@@ -1028,6 +1029,7 @@ function HungryGames() {
     setupHelp();
 
     self.client.on('messageUpdate', handleMessageEdit);
+    self.client.on('guildDelete', onGuildDelete);
 
     self.client.guilds.forEach((g) => {
       let game = find(g.id);
@@ -1058,6 +1060,7 @@ function HungryGames() {
   this.shutdown = function() {
     self.command.deleteEvent('hg');
     self.client.removeListener('messageUpdate', handleMessageEdit);
+    self.client.removeListener('guildDelete', onGuildDelete);
     process.removeListener('exit', exit);
     process.removeListener('SIGINT', sigint);
     process.removeListener('SIGHUP', sigint);
@@ -1106,6 +1109,21 @@ function HungryGames() {
       newEventMessages[oldMsg.id] = newMsg;
       updateEventPreview(newMsg);
     }
+  }
+
+  /**
+   * Handle being removed from a guild.
+   *
+   * @private
+   * @param {Discord~Guild} guild The guild that we just left.
+   * @listens Discord~Client#guildDelete
+   */
+  function onGuildDelete(guild) {
+    if (!find(guild.id) || !find(guild.id).currentGame ||
+        !find(guild.id).currentGame.inProgress) {
+      return;
+    }
+    endGame(null, guild.id, true);
   }
 
   /**
@@ -4617,12 +4635,13 @@ function HungryGames() {
    * @type {HungryGames~hgCommandHandler}
    * @param {Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
+   * @param {boolean} [silent=false] Prevent sending messages.
    */
-  function endGame(msg, id) {
+  function endGame(msg, id, silent = false) {
     if (!find(id) || !find(id).currentGame.inProgress) {
-      self.common.reply(msg, 'There isn\'t a game in progress.');
+      if (!silent) self.common.reply(msg, 'There isn\'t a game in progress.');
     } else {
-      self.common.reply(msg, 'The game has ended!');
+      if (!silent) self.common.reply(msg, 'The game has ended!');
       find(id).currentGame.inProgress = false;
       find(id).currentGame.ended = true;
       find(id).autoPlay = false;

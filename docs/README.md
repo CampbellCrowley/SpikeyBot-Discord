@@ -2796,6 +2796,7 @@ Hunger Games simulator.
         * [~updateWeapons()](#HungryGames..updateWeapons) ℗
         * [~setupHelp()](#HungryGames..setupHelp) ℗
         * [~handleMessageEdit(oldMsg, newMsg)](#HungryGames..handleMessageEdit) ℗
+        * [~onGuildDelete(guild)](#HungryGames..onGuildDelete) ℗
         * [~mkCmd(cb)](#HungryGames..mkCmd) ⇒ <code>Command~commandHandler</code> ℗
         * [~commandMakeMeWin(msg)](#HungryGames..commandMakeMeWin) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandMakeMeLose(msg)](#HungryGames..commandMakeMeLose) : [<code>commandHandler</code>](#commandHandler) ℗
@@ -2837,7 +2838,7 @@ Hunger Games simulator.
         * [~getMiniIcons(users)](#HungryGames..getMiniIcons) ⇒ [<code>Array.&lt;UserIconUrl&gt;</code>](#HungryGames..UserIconUrl) ℗
         * [~printEvent(msg, id)](#HungryGames..printEvent) ℗
         * [~printDay(msg, id)](#HungryGames..printDay) ℗
-        * [~endGame(msg, id)](#HungryGames..endGame) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+        * [~endGame(msg, id, [silent])](#HungryGames..endGame) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~excludeUser(msg, id)](#HungryGames..excludeUser) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~includeUser(msg, id)](#HungryGames..includeUser) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~listPlayers(msg, id)](#HungryGames..listPlayers) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
@@ -3937,6 +3938,18 @@ our message with the updated event.
 | oldMsg | <code>Discord~Message</code> | The message before being edited. |
 | newMsg | <code>Discord~Message</code> | The message after being edited. |
 
+<a name="HungryGames..onGuildDelete"></a>
+
+### HungryGames~onGuildDelete(guild) ℗
+Handle being removed from a guild.
+
+**Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| guild | <code>Discord~Guild</code> | The guild that we just left. |
+
 <a name="HungryGames..mkCmd"></a>
 
 ### HungryGames~mkCmd(cb) ⇒ <code>Command~commandHandler</code> ℗
@@ -4566,16 +4579,17 @@ Trigger the end of a day and print summary/outcome at the end of the day.
 
 <a name="HungryGames..endGame"></a>
 
-### HungryGames~endGame(msg, id) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+### HungryGames~endGame(msg, id, [silent]) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
 End a game early.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
 **Access**: private  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord~Message</code> | The message that lead to this being called. |
-| id | <code>string</code> | The id of the guild this was triggered from. |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| msg | <code>Discord~Message</code> |  | The message that lead to this being called. |
+| id | <code>string</code> |  | The id of the guild this was triggered from. |
+| [silent] | <code>boolean</code> | <code>false</code> | Prevent sending messages. |
 
 <a name="HungryGames..excludeUser"></a>
 
