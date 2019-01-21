@@ -870,7 +870,7 @@ function Main() {
                 .catch(() => {});
           } else { */
           self.client.riggedCounter++;
-          if (!disabledRiggedCounter[msg.guild]) {
+          if (!disabledRiggedCounter[msg.guild.id]) {
             msg.channel.send('#' + self.client.riggedCounter).catch(() => {});
           }
           // }
