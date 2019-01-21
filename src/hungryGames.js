@@ -6985,7 +6985,7 @@ function HungryGames() {
     }
     if (!find(id)) createGame(msg, id);
     let players = [];
-    let notInGame = msg.mentions.users.find((u) => {
+    let notInGame = !msg.mentions.users.find((u) => {
       players.push(u.id);
       return !find(id).currentGame.includedUsers.find((p) => {
         return p.id == u.ud;
@@ -7014,7 +7014,7 @@ function HungryGames() {
     }
     if (!find(id)) createGame(msg, id);
     let players = [];
-    let notInGame = msg.mentions.users.find((u) => {
+    let notInGame = !msg.mentions.users.find((u) => {
       players.push(u.id);
       return !find(id).currentGame.includedUsers.find((p) => {
         return p.id == u.ud;
@@ -7043,7 +7043,7 @@ function HungryGames() {
     }
     if (!find(id)) createGame(msg, id);
     let players = [];
-    let notInGame = msg.mentions.users.find((u) => {
+    let notInGame = !msg.mentions.users.find((u) => {
       players.push(u.id);
       return !find(id).currentGame.includedUsers.find((p) => {
         return p.id == u.ud;
