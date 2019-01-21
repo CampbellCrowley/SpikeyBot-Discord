@@ -493,15 +493,19 @@ function SMLoader() {
             return true;
         }
       });
-      self.common.reply(msg, 'Reloading modules...').then((warnMessage) => {
-        self.reload(toReload, opts, (out) => {
-          let embed = new self.Discord.MessageEmbed();
-          embed.setTitle('Reload complete.');
-          embed.setColor([255, 0, 255]);
-          embed.setDescription(out.join('\n') || 'NOTHING reloaded');
-          warnMessage.edit(self.common.mention(msg), embed);
-        });
-      });
+      self.common
+          .reply(
+              msg, 'Reloading modules... (waiting until users ' +
+                  'won\'t notice interruption)')
+          .then((warnMessage) => {
+            self.reload(toReload, opts, (out) => {
+              let embed = new self.Discord.MessageEmbed();
+              embed.setTitle('Reload complete.');
+              embed.setColor([255, 0, 255]);
+              embed.setDescription(out.join('\n') || 'NOTHING reloaded');
+              warnMessage.edit(self.common.mention(msg), embed);
+            });
+          });
     } else {
       self.common.reply(
           msg, 'LOL! Good try!',
