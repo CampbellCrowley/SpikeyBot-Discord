@@ -174,8 +174,12 @@ Manages natural language interaction.
         * [.save([opt])](#SubModule+save)
         * *[.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>*
     * _inner_
+        * [~disabledChatBot](#ChatBot..disabledChatBot) : <code>Object.&lt;boolean&gt;</code> ℗
+        * [~mkAndWrite(filename, dir, data)](#ChatBot..mkAndWrite) ℗
+        * [~mkAndWriteSync(filename, dir, data)](#ChatBot..mkAndWriteSync) ℗
         * [~onMessage(msg)](#ChatBot..onMessage) ℗
         * [~onChatMessage(msg)](#ChatBot..onChatMessage) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~commandToggleChatBot(msg)](#ChatBot..commandToggleChatBot) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~escapeRegExp(str)](#ChatBot..escapeRegExp) ⇒ <code>string</code> ℗
 
 <a name="SubModule+helpMessage"></a>
@@ -366,6 +370,45 @@ putting the module into an uncontrollable state.
 **Kind**: instance abstract method of [<code>ChatBot</code>](#ChatBot)  
 **Returns**: <code>boolean</code> - True if can be unloaded, false if cannot.  
 **Access**: public  
+<a name="ChatBot..disabledChatBot"></a>
+
+### ChatBot~disabledChatBot : <code>Object.&lt;boolean&gt;</code> ℗
+The guilds that have disabled the chatbot feature.
+
+**Kind**: inner property of [<code>ChatBot</code>](#ChatBot)  
+**Access**: private  
+<a name="ChatBot..mkAndWrite"></a>
+
+### ChatBot~mkAndWrite(filename, dir, data) ℗
+Write data to a file and make sure the directory exists or create it if it
+doesn't. Async
+
+**Kind**: inner method of [<code>ChatBot</code>](#ChatBot)  
+**Access**: private  
+**See**: [mkAndWriteSync](#Main..mkAndWriteSync)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| filename | <code>string</code> | The name of the file including the directory. |
+| dir | <code>string</code> | The directory path without the file's name. |
+| data | <code>string</code> | The data to write to the file. |
+
+<a name="ChatBot..mkAndWriteSync"></a>
+
+### ChatBot~mkAndWriteSync(filename, dir, data) ℗
+Write data to a file and make sure the directory exists or create it if it
+doesn't. Synchronous
+
+**Kind**: inner method of [<code>ChatBot</code>](#ChatBot)  
+**Access**: private  
+**See**: [mkAndWrite](#Main..mkAndWrite)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| filename | <code>string</code> | The name of the file including the directory. |
+| dir | <code>string</code> | The directory path without the file's name. |
+| data | <code>string</code> | The data to write to the file. |
+
 <a name="ChatBot..onMessage"></a>
 
 ### ChatBot~onMessage(msg) ℗
@@ -382,6 +425,18 @@ Respond to messages where I've been mentioned.
 
 ### ChatBot~onChatMessage(msg) : [<code>commandHandler</code>](#commandHandler) ℗
 Send message text content to dialogflow for handling.
+
+**Kind**: inner method of [<code>ChatBot</code>](#ChatBot)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="ChatBot..commandToggleChatBot"></a>
+
+### ChatBot~commandToggleChatBot(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Toggles the chatbot feature on a guild.
 
 **Kind**: inner method of [<code>ChatBot</code>](#ChatBot)  
 **Access**: private  

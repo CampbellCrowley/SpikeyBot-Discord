@@ -12,6 +12,7 @@
 | ?togglemute | Turn on or off automatically preventing a person from using @everyone if they spam it. |  |
 | ?togglebanmessages | Turn on or off sending a message when someone gets banned. |  |
 | ?togglerigged | Turn on or off showing the number of times 'rigged' has been said. |  |
+| ?togglechatbot | Turn on or off the Chatbot features (@'ing the bot causing it to reply). |  |
 
 
 | Command | Description | Aliases |

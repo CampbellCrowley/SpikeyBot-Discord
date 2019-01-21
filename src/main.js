@@ -65,6 +65,7 @@ math.config({matrix: 'Array'});
  * @listens Command#d
  * @listens Command#toggleMute
  * @listens Command#toggleBanMessages
+ * @listens Command#toggleRigged
  * @listens Command#perms
  * @listens Command#stats
  * @listens Command#lookup

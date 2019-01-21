@@ -90,6 +90,17 @@
               "command": "togglerigged"
             }
           ]
+        },
+        {
+          "command": "togglechatbot",
+          "description": "Turn on or off the Chatbot features (@'ing the bot causing it to reply).",
+          "validOnlyInGuild": true,
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "togglechatbot"
+            }
+          ]
         }
       ]
     },
