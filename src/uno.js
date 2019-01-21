@@ -522,13 +522,13 @@ function Uno() {
       currentCollector = game.groupChannel.createMessageCollector((m) => {
         if (m.author.id != maker.id) {
           if (m.content.toLowerCase().startsWith('uno leave')) {
-            self.log(m.channel.id + '@' + m.author.id + ' ' + m.content);
+            self.debug(m.channel.id + '@' + m.author.id + ' ' + m.content);
             game.removePlayer(m.author.id);
           }
           return false;
         }
         if (m.content.toLowerCase().startsWith('uno')) {
-          self.log(m.channel.id + '@' + m.author.id + ' ' + m.content);
+          self.debug(m.channel.id + '@' + m.author.id + ' ' + m.content);
           let cmd = m.content.toLowerCase().split(' ')[1];
           switch (cmd) {
             case 'begin':
@@ -625,7 +625,7 @@ function Uno() {
         }
         if (m.author.id == maker.id &&
             m.content.toLowerCase().startsWith('uno')) {
-          self.log(m.channel.id + '@' + m.author.id + ' ' + m.content);
+          self.debug(m.channel.id + '@' + m.author.id + ' ' + m.content);
           switch (m.content.toLowerCase().split(' ')[1]) {
             case 'end':
               game.end();
@@ -640,7 +640,7 @@ function Uno() {
         }
         if (turn < 0 || m.author.id != players[turn].id) return false;
         if (m.content.toLowerCase().startsWith('uno')) {
-          self.log(m.channel.id + '@' + m.author.id + ' ' + m.content);
+          self.debug(m.channel.id + '@' + m.author.id + ' ' + m.content);
           let cmd = m.content.toLowerCase().split(' ')[1];
           switch (cmd) {
             case 'play':
@@ -656,7 +656,7 @@ function Uno() {
           }
           return false;
         } else if (m.content.toLowerCase().startsWith('play')) {
-          self.log(m.channel.id + '@' + m.author.id + ' ' + m.content);
+          self.debug(m.channel.id + '@' + m.author.id + ' ' + m.content);
           if (playCard(m.content.split(' ').slice(1).join(' '))) {
             setTimeout(finishSetup, 5000);
             return true;
@@ -664,7 +664,7 @@ function Uno() {
             return false;
           }
         } else if (m.content.toLowerCase().startsWith('draw')) {
-          self.log(m.channel.id + '@' + m.author.id + ' ' + m.content);
+          self.debug(m.channel.id + '@' + m.author.id + ' ' + m.content);
           drawAndSkip();
           game.groupChannel.send(getCardEmbed(topCard));
           return false;
