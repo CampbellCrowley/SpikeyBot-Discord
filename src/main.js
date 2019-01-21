@@ -564,6 +564,7 @@ function Main() {
     self.command.removeListener('stats');
     self.command.removeListener('lookup');
     self.command.removeListener('togglebanmessages');
+    self.command.removeListener('togglerigged');
     self.command.removeListener('sendto');
     self.command.removeListener('thanks');
     self.command.removeListener('listcommands');
