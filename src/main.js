@@ -1712,7 +1712,8 @@ function Main() {
      */
     function sendPm(msg, user, message) {
       user.send(
-          user.tag + ' has asked me to send you this message:\n' + message)
+          msg.author.tag + ' has asked me to send you this message:\n' +
+              message)
           .then(() => {
             self.common.reply(
                 msg, 'Message sent to ' + user.tag, msg.author.tag +
