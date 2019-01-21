@@ -7273,6 +7273,11 @@ function HungryGames() {
       return null;
     }
 
+    if (games[id].legacyEvents) {
+      games[id].customEvents = games[id].legacyEvents;
+      delete games[id].legacyEvents;
+    }
+
     // Flush default and stale options.
     if (games[id].options) {
       for (let opt in defaultOptions) {
