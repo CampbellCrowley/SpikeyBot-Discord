@@ -869,7 +869,7 @@ function Main() {
                     (self.client.riggedCounter += matchCount))
                 .catch(() => {});
           } else { */
-          riggedCounter++;
+          self.client.riggedCounter++;
           if (!disabledRiggedCounter[msg.guild]) {
             msg.channel.send('#' + self.client.riggedCounter).catch(() => {});
           }
