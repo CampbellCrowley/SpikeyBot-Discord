@@ -1624,6 +1624,12 @@ function Main() {
    * @listens Command#pmSpikey
    */
   function commandPmSpikey(msg) {
+    if (!msg.text || msg.text.trim().length == 0) {
+      self.common.reply(
+          msg, 'Please write a message to send after the command.',
+          msg.prefix + 'pmspikey The bot is on fire!');
+      return;
+    }
     self.client.users.fetch(self.common.spikeyId)
         .then((user) => {
           user.send(msg.author.id + ': ' + msg.author.tag + ': ' + msg.content)
