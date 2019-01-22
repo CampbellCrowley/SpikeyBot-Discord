@@ -43,9 +43,9 @@
 | --- | --- | --- |
 | ?hg start | This will start a game with your settings. | start, s |
 | ?hg end | This will end a game early. | end, abort, stop |
-| ?hg autoplay | Automatically continue to the next day after a day is over. | autoplay, auto, resume, play, go |
-| ?hg pause | Stop autoplay at the end of the day. |  |
-| ?hg next | Simulate the next day of the Games! | next, nextday |
+| ?hg autoplay | Automatically continue to the next day after a day is over. | autoplay, auto, play, go |
+| ?hg pause | Pause the game and immediately stop sending messages without ending the game entirely. |  |
+| ?hg next | Simulate the next day of the Games! | next, nextday, resume |
 
 
 | Command | Description | Aliases |

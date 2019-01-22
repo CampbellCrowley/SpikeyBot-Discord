@@ -363,7 +363,7 @@
         {
           "command": "autoplay",
           "description": "Automatically continue to the next day after a day is over.",
-          "aliases": "autoplay, auto, resume, play, go",
+          "aliases": "autoplay, auto, play, go",
           "validOnlyInGuild": true,
           "examples": [
             {
@@ -375,20 +375,20 @@
         },
         {
           "command": "pause",
-          "description": "Stop autoplay at the end of the day.",
+          "description": "Pause the game and immediately stop sending messages without ending the game entirely.",
           "validOnlyInGuild": true,
           "examples": [
             {
               "description": "Basic Usage",
               "command": "pause",
-              "result": "Autoplay is disabled but the rest of the day will still be sent before pausing."
+              "result": "The current day will be paused and can then be resumed with `hg resume` or `hg next`."
             }
           ]
         },
         {
           "command": "next",
           "description": "Simulate the next day of the Games!",
-          "aliases": "next, nextday",
+          "aliases": "next, nextday, resume",
           "validOnlyInGuild": true,
           "examples": [
             {

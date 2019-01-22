@@ -2718,6 +2718,7 @@ Hunger Games simulator.
         * [.startAutoplay(uId, gId, cId)](#HungryGames+startAutoplay)
         * [.endGame(uId, gId)](#HungryGames+endGame)
         * [.pauseAutoplay(uId, gId)](#HungryGames+pauseAutoplay)
+        * [.pauseGame(id)](#HungryGames+pauseGame) ⇒ <code>string</code>
         * [.nextDay(uId, gId, cId)](#HungryGames+nextDay)
         * [.excludeUsers(users, id)](#HungryGames+excludeUsers) ⇒ <code>string</code>
         * [.includeUsers(users, id)](#HungryGames+includeUsers) ⇒ <code>string</code>
@@ -2817,6 +2818,7 @@ Hunger Games simulator.
         * [~makeMessage(uId, gId, cId, msg)](#HungryGames..makeMessage) ⇒ <code>Object</code> ℗
         * [~pauseAutoplay(msg, id)](#HungryGames..pauseAutoplay) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~startAutoplay(msg, id)](#HungryGames..startAutoplay) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+        * [~pauseGame(msg, id)](#HungryGames..pauseGame) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~nextDay(msg, id, [retry])](#HungryGames..nextDay) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~effectUser(id, affected, kills, [weapon])](#HungryGames..effectUser) ℗
         * [~killUser(id, a, k, [w])](#HungryGames..killUser) ℗
@@ -3085,6 +3087,19 @@ Pause autoplay in the given guild as the given user.
 | --- | --- | --- |
 | uId | <code>string</code> | The id of the user who trigged autoplay to end. |
 | gId | <code>string</code> | The id of the guild to end autoplay. |
+
+<a name="HungryGames+pauseGame"></a>
+
+### hungryGames.pauseGame(id) ⇒ <code>string</code>
+Pause the game in by clearing the current interval.
+
+**Kind**: instance method of [<code>HungryGames</code>](#HungryGames)  
+**Returns**: <code>string</code> - User information of the outcome of this command.  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| id | <code>string</code> | The id of the guild to pause in. |
 
 <a name="HungryGames+nextDay"></a>
 
@@ -4224,6 +4239,20 @@ Stop autoplaying.
 
 ### HungryGames~startAutoplay(msg, id) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
 Start autoplaying.
+
+**Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message that lead to this being called. |
+| id | <code>string</code> | The id of the guild this was triggered from. |
+
+<a name="HungryGames..pauseGame"></a>
+
+### HungryGames~pauseGame(msg, id) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+Stop the game in the middle of the day until resumed. Just clears the
+interval for the game.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
 **Access**: private  

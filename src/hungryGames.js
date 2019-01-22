@@ -261,7 +261,7 @@ function HungryGames() {
       category: 'other',
     },
     allowNoVictors: {
-      value: true,
+      value: false,
       comment:
           'Should it be possible to end a game without any winners. If true, ' +
           'it is possible for every player to die, causing the game to end ' +
@@ -955,13 +955,12 @@ function HungryGames() {
           ['players', 'player'], mkCmd(listPlayers), cmdOpts),
       new self.command.SingleCommand(
           ['start', 's', 'begin'], mkCmd(startGame), cmdOpts),
+      new self.command.SingleCommand(['pause', 'p'], mkCmd(pauseGame), cmdOpts),
       new self.command.SingleCommand(
-          ['pause', 'p'], mkCmd(pauseAutoplay), cmdOpts),
+          ['autoplay', 'autostart', 'auto', 'play', 'go'], mkCmd(startAutoplay),
+          cmdOpts),
       new self.command.SingleCommand(
-          ['autoplay', 'autostart', 'auto', 'resume', 'play', 'go'],
-          mkCmd(startAutoplay), cmdOpts),
-      new self.command.SingleCommand(
-          ['next', 'nextday'], mkCmd(nextDay), cmdOpts),
+          ['next', 'nextday', 'resume', 'continue'], mkCmd(nextDay), cmdOpts),
       new self.command.SingleCommand(
           ['end', 'abort', 'stop'], mkCmd(endGame), cmdOpts),
       new self.command.SingleCommand(
@@ -1036,7 +1035,8 @@ function HungryGames() {
       if (!game) return;
 
       if (game.currentGame && game.currentGame.day.state > 1 &&
-          game.currentGame.inProgress && !game.currentGame.ended) {
+          game.currentGame.inProgress && !game.currentGame.ended &&
+          !game.currentGame.isPaused) {
         self.nextDay(game.author, g.id, game.outputChannel);
       } else {
         delete games[g.id];
@@ -2053,7 +2053,7 @@ function HungryGames() {
      * @private
      */
     function loadingComplete() {
-      if (find(id).autoPlay) nextDay(msg, id);
+      if (find(id).autoPlay && !find(id).currentGame.isPaused) nextDay(msg, id);
     }
 
     createGame(msg, id, true, loadingComplete);
@@ -2296,10 +2296,13 @@ function HungryGames() {
       createGame(msg, id);
     }
     if (find(id).autoPlay && find(id).currentGame.inProgress) {
-      /* self.common.reply(
-          msg, 'Already autoplaying. If you wish to stop autoplaying, type "' +
-              msg.prefix + self.postPrefix + 'pause".'); */
-      pauseAutoplay(msg, id);
+      if (find(id).currentGame.isPaused) {
+        self.common.reply(
+            msg, 'Autoplay is already enabled.', 'To resume the game, use `' +
+                msg.prefix + self.postPrefix + 'resume`.');
+      } else {
+        pauseAutoplay(msg, id);
+      }
     } else {
       find(id).autoPlay = true;
       if (find(id).currentGame.inProgress &&
@@ -2318,17 +2321,59 @@ function HungryGames() {
       } else if (!find(id).currentGame.inProgress) {
         if (self.command.validate('hg start', msg)) {
           self.common.reply(
-              msg, 'Sorry, but you don\'t have permission to start the games.');
+              msg, 'Sorry, but you don\'t have permission to start the games.',
+              'hg start');
           return;
         }
         msg.channel.send(
             '<@' + msg.author.id +
             '> `Autoplay is enabled. Starting the games!`');
         startGame(msg, id);
+      } else if (find(id).currentGame.isPaused) {
+        self.common.reply(
+            msg, 'Enabling Autoplay',
+            'Resume game with `' + msg.prefix + self.postPrefix + 'resume`.');
       } else {
         msg.channel.send('<@' + msg.author.id + '> `Enabling autoplay!`');
       }
     }
+  }
+
+  /**
+   * Pause the game in by clearing the current interval.
+   *
+   * @public
+   * @param {string} id The id of the guild to pause in.
+   * @return {string} User information of the outcome of this command.
+   */
+  this.pauseGame = function(id) {
+    if (!find(id) || !find(id).currentGame ||
+        !find(id).currentGame.inProgress) {
+      return 'Failed: There isn\'t currently a game in progress.';
+    }
+    if (find(id).currentGame.isPaused) {
+      return 'Failed: Game is already paused.';
+    }
+    if (!dayEventIntervals[id]) {
+      return 'Failed: Unable to pause game for unknown reason.';
+    }
+    self.client.clearInterval(dayEventIntervals[id]);
+    delete dayEventIntervals[id];
+    find(id).currentGame.isPaused = true;
+    return 'Success';
+  };
+
+  /**
+   * Stop the game in the middle of the day until resumed. Just clears the
+   * interval for the game.
+   *
+   * @private
+   * @type {HungryGames~hgCommandHandler}
+   * @param {Discord~Message} msg The message that lead to this being called.
+   * @param {string} id The id of the guild this was triggered from.
+   */
+  function pauseGame(msg, id) {
+    self.common.reply(msg, 'Game Pausing', self.pauseGame(id));
   }
 
   /**
@@ -2370,6 +2415,8 @@ function HungryGames() {
             'I think I\'m already simulating... if this isn\'t true this ' +
                 'game has crashed and you must end the game.');
       } else {
+        find(id).currentGame.isPaused = false;
+        printEvent(msg, id);
         dayEventIntervals[id] = self.client.setInterval(function() {
           printEvent(msg, id);
         }, find(id).options.disableOutput ? 10 : find(id).options.delayEvents);
@@ -2945,6 +2992,7 @@ function HungryGames() {
     self.command.find('say', msg)
         .options.set('disabled', 'channel', msg.channel.id);
     find(id).outputChannel = msg.channel.id;
+    find(id).currentGame.isPaused = false;
     dayEventIntervals[id] = self.client.setInterval(function() {
       if (web && web.dayStateChange) web.dayStateChange(id);
       printEvent(msg, id);
@@ -4603,7 +4651,7 @@ function HungryGames() {
     find(id).currentGame.day.state = 0;
     // find(id).currentGame.day.events = [];
 
-    if (find(id).autoPlay) {
+    if (find(id).autoPlay && !find(id).currentGame.isPaused) {
       if (!find(id).options.disableOutput) {
         self.client.setTimeout(function() {
           msg.channel.send('`Autoplaying...`')
@@ -4643,6 +4691,7 @@ function HungryGames() {
     } else {
       if (!silent) self.common.reply(msg, 'The game has ended!');
       find(id).currentGame.inProgress = false;
+      find(id).currentGame.isPaused = false;
       find(id).currentGame.ended = true;
       find(id).autoPlay = false;
       self.client.clearInterval(dayEventIntervals[id]);
@@ -7200,7 +7249,7 @@ function HungryGames() {
     const loadedEntries = Object.entries(games);
     const inProgress = loadedEntries.filter((game) => {
       return game[1].currentGame && game[1].currentGame.inProgress &&
-          game[1].currentGame.day.state > 1;
+          game[1].currentGame.day.state > 1 && !game[1].currentGame.isPaused;
     });
     return inProgress.length;
   };
