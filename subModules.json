@@ -47,7 +47,8 @@
     "./web/proxy.js",
     "./web/account.js",
     "./web/stats.js",
-    "./web/settings.js"
+    "./web/settings.js",
+    "./uno.js"
   ],
   "rembot": [
     "./main.js",
@@ -60,7 +61,8 @@
     "./chatbot.js",
     "./spotify.js",
     "./web/settings.js",
-    "./hungryGames.js"
+    "./hungryGames.js",
+    "./uno.js"
   ],
   "FALLBACK": []
 }
