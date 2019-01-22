@@ -235,8 +235,8 @@ const hgTests = [
        'Start a new game with "~hg create".']),
   new Test(
       'No data: Pause autoplay', '~hg pause',
-      ['<@422623712534200321>\n```\nNot autoplaying. If you wish to autoplay' +
-       ', type "~hg autoplay".\n```']),
+      ['<@422623712534200321>\n```\nGame Pausing\n```Failed: There isn\'t ' +
+       'currently a game in progress.']),
 ];
 
 let ready = false;
