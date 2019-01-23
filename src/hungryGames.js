@@ -1123,7 +1123,7 @@ function HungryGames() {
         !find(guild.id).currentGame.inProgress) {
       return;
     }
-    endGame(null, guild.id, true);
+    self.endGame(null, guild.id, true);
   }
 
   /**
@@ -4672,8 +4672,12 @@ function HungryGames() {
         nextDay(msg, id);
       }
     } else {
-      self.command.find('say', msg)
-          .options.set('default', 'channel', msg.channel.id);
+      try {
+        self.command.find('say', msg)
+            .options.set('default', 'channel', msg.channel.id);
+      } catch (err) {
+        self.error(err);
+      }
     }
   }
   /**
