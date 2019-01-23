@@ -1377,6 +1377,7 @@ function Main() {
    * @listens Command#js
    */
   function commandJS(msg) {
+    if (msg.author.id !== self.common.spikeyId) return;
     try {
       let sandbox = {__stdout: [], __stderr: []};
 
