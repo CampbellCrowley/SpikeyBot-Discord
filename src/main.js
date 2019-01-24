@@ -3,7 +3,6 @@
 const dateFormat = require('dateformat');
 const math = require('mathjs');
 const algebra = require('algebra.js');
-const vm = require('vm');
 const Jimp = require('jimp');
 const fs = require('fs');
 const mkdirp = require('mkdirp');
@@ -29,7 +28,6 @@ math.config({matrix: 'Array'});
  * @listens Command#evaluate
  * @listens Command#graph
  * @listens Command#derive
- * @listens Command#js
  * @listens Command#timer
  * @listens Command#timers
  * @listens Command#remind
@@ -241,18 +239,6 @@ function Main() {
     'Everyone rejoice! The world has been eradicated of one more person that ' +
         'no one liked anyways.',
   ];
-  /**
-   * The default code to insert at the beginning of the js command.
-   *
-   * @private
-   * @type {string[]}
-   * @constant
-   */
-  const defaultCode =
-      '((cb)=>{console.log=((w)=>{return (...a)=>{w.apply(console,a);cb.apply' +
-      '(null,a);};})(console.log);})((v)=>{__stdout.push(v);});((cb)=>{consol' +
-      'e.error=((w)=>{return (...a)=>{w.apply(console,a);cb.apply(null,a);};}' +
-      ')(console.error);})((v)=>{__stderr.push(v);});\n';
 
   /** @inheritdoc */
   this.helpMessage = 'Loading...';
@@ -293,7 +279,6 @@ function Main() {
     self.command.on(['eval', 'evaluate'], commandEvaluate);
     self.command.on('graph', commandGraph);
     self.command.on('derive', commandDerive);
-    self.command.on('js', commandJS);
     self.command.on(
         ['timer', 'timers', 'remind', 'reminder', 'reminders'], commandTimer);
     self.command.on('say', commandSay);
@@ -541,7 +526,6 @@ function Main() {
     self.command.removeListener('eval');
     self.command.removeListener('graph');
     self.command.removeListener('derive');
-    self.command.removeListener('js');
     self.command.removeListener('timer');
     self.command.removeListener('say');
     self.command.removeListener('createdate');
@@ -1365,61 +1349,6 @@ function Main() {
       self.common.reply(msg, simplified);
     } catch (err) {
       self.common.reply(msg, err.message);
-    }
-  }
-
-  /**
-   * Run javascript code in VM, then show user outcome.
-   *
-   * @private
-   * @type {commandHandler}
-   * @param {Discord~Message} msg Message that triggered command.
-   * @listens Command#js
-   */
-  function commandJS(msg) {
-    if (msg.author.id !== self.common.spikeyId) return;
-    try {
-      let sandbox = {__stdout: [], __stderr: []};
-
-      let code = defaultCode + msg.text;
-      let stdexit = vm.runInNewContext(
-          code, sandbox, {filename: 'Line', timeout: '100', lineOffset: -1});
-      let stdout = sandbox.__stdout;
-      let stderr = sandbox.__stderr;
-      delete sandbox.__stdout;
-      delete sandbox.__stderr;
-      let embed = new self.Discord.MessageEmbed();
-      embed.setColor([0, 255, 255]);
-      if (stdout.length > 0) {
-        embed.addField(
-            'console.log', JSON.stringify(stdout, null, 2).substr(0, 1000),
-            true);
-      }
-      if (stderr.length > 0) {
-        embed.addField(
-            'console.error', JSON.stringify(stderr, null, 2).substr(0, 1000),
-            true);
-      }
-      if (Object.keys(sandbox).length !== 0) {
-        embed.addField(
-            'Global Variables', JSON.stringify(sandbox, null, 2)
-                .replace(/^(?:{)+|^(?:})|^(?:  )/gm, ''),
-            true);
-      }
-      if (stdexit) {
-        embed.addField(
-            'Returned Value', JSON.stringify(stdexit, null, 2).substr(0, 1000),
-            true);
-      }
-      msg.channel.send(self.common.mention(msg), embed);
-    } catch (err) {
-      if (err.message == 'Script execution timed out.') {
-        self.common.reply(
-            msg, 'Oops! Your script was running for too long.',
-            '(100 milliseconds is the longest a script may run.)');
-      } else {
-        self.common.reply(msg, err.stack.split('\n').splice(0, 6).join('\n'));
-      }
     }
   }
 

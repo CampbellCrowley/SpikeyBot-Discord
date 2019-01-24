@@ -45,6 +45,9 @@ Patreon status of users.</p>
 <dt><a href="#Polling">Polling</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
 <dd><p>Controlls poll and vote commands.</p>
 </dd>
+<dt><a href="#Sandbox">Sandbox</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
+<dd><p>Creates a safe environment to run untrusted scripts.</p>
+</dd>
 <dt><a href="#SMLoader">SMLoader</a> ⇐ <code><a href="#MainModule">MainModule</a></code></dt>
 <dd><p>Manages loading, unloading, and reloading of all SubModules.</p>
 </dd>
@@ -5375,7 +5378,6 @@ Basic commands and features for the bot.
         * [~addmessage](#Main..addmessage) : <code>string</code> ℗
         * [~addLink](#Main..addLink) : <code>string</code> ℗
         * [~banMsgs](#Main..banMsgs) : <code>Array.&lt;string&gt;</code> ℗
-        * [~defaultCode](#Main..defaultCode) : <code>Array.&lt;string&gt;</code> ℗
         * [~helpObject](#Main..helpObject) ℗
         * [~adminHelpObject](#Main..adminHelpObject) ℗
         * [~mkAndWrite(filename, dir, data)](#Main..mkAndWrite) ℗
@@ -5397,7 +5399,6 @@ Basic commands and features for the bot.
         * [~commandEvaluate(msg)](#Main..commandEvaluate) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandGraph(msg)](#Main..commandGraph) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandDerive(msg)](#Main..commandDerive) : [<code>commandHandler</code>](#commandHandler) ℗
-        * [~commandJS(msg)](#Main..commandJS) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandTimer(msg)](#Main..commandTimer) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandSay(msg)](#Main..commandSay) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandCreateDate(msg)](#Main..commandCreateDate) : [<code>commandHandler</code>](#commandHandler) ℗
@@ -5725,13 +5726,6 @@ All of the possible messages to show when using the ban command.
 
 **Kind**: inner constant of [<code>Main</code>](#Main)  
 **Access**: private  
-<a name="Main..defaultCode"></a>
-
-### Main~defaultCode : <code>Array.&lt;string&gt;</code> ℗
-The default code to insert at the beginning of the js command.
-
-**Kind**: inner constant of [<code>Main</code>](#Main)  
-**Access**: private  
 <a name="Main..helpObject"></a>
 
 ### Main~helpObject ℗
@@ -5980,18 +5974,6 @@ based off values.
 
 ### Main~commandDerive(msg) : [<code>commandHandler</code>](#commandHandler) ℗
 Take the derivative of a given equation in terms of dy/dx.
-
-**Kind**: inner method of [<code>Main</code>](#Main)  
-**Access**: private  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| msg | <code>Discord~Message</code> | Message that triggered command. |
-
-<a name="Main..commandJS"></a>
-
-### Main~commandJS(msg) : [<code>commandHandler</code>](#commandHandler) ℗
-Run javascript code in VM, then show user outcome.
 
 **Kind**: inner method of [<code>Main</code>](#Main)  
 **Access**: private  
@@ -8837,6 +8819,282 @@ End a poll. Does not remove it from [currentPolls](#Polling..currentPolls).
 | Param | Type | Description |
 | --- | --- | --- |
 | poll | [<code>Poll</code>](#Polling..Poll) | The poll to end. |
+
+<a name="Sandbox"></a>
+
+## Sandbox ⇐ [<code>SubModule</code>](#SubModule)
+Creates a safe environment to run untrusted scripts.
+
+**Kind**: global class  
+**Extends**: [<code>SubModule</code>](#SubModule)  
+
+* [Sandbox](#Sandbox) ⇐ [<code>SubModule</code>](#SubModule)
+    * _instance_
+        * [.helpMessage](#SubModule+helpMessage) : <code>string</code> \| <code>Discord~MessageEmbed</code>
+        * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
+        * [.Discord](#SubModule+Discord) : <code>Discord</code>
+        * [.client](#SubModule+client) : <code>Discord~Client</code>
+        * [.command](#SubModule+command) : [<code>Command</code>](#Command)
+        * [.common](#SubModule+common) : [<code>Common</code>](#Common)
+        * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
+        * [.myName](#SubModule+myName) : <code>string</code>
+        * [.initialized](#SubModule+initialized) : <code>boolean</code>
+        * [.commit](#SubModule+commit) : <code>string</code>
+        * [.loadTime](#SubModule+loadTime) : <code>number</code>
+        * [.initialize()](#SubModule+initialize)
+        * [.begin(Discord, client, command, common, bot)](#SubModule+begin)
+        * [.end()](#SubModule+end)
+        * [.log(msg)](#SubModule+log)
+        * [.debug(msg)](#SubModule+debug)
+        * [.warn(msg)](#SubModule+warn)
+        * [.error(msg)](#SubModule+error)
+        * [.shutdown()](#SubModule+shutdown)
+        * *[.save([opt])](#SubModule+save)*
+        * *[.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>*
+    * _inner_
+        * [~execArgs](#Sandbox..execArgs) : <code>Object</code> ℗
+        * [~sandboxCommand](#Sandbox..sandboxCommand) : <code>string</code> ℗
+        * [~jsCommand](#Sandbox..jsCommand) : <code>string</code> ℗
+        * [~commandJS(msg)](#Sandbox..commandJS) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~scriptEnd(msg, err, stdout, stderr)](#Sandbox..scriptEnd) ℗
+
+<a name="SubModule+helpMessage"></a>
+
+### sandbox.helpMessage : <code>string</code> \| <code>Discord~MessageEmbed</code>
+The help message to show the user in the main help message.
+
+**Kind**: instance property of [<code>Sandbox</code>](#Sandbox)  
+<a name="SubModule+postPrefix"></a>
+
+### *sandbox.postPrefix : <code>string</code>*
+The postfix for the global prefix for this subModule. Must be defined
+before begin(), otherwise it is ignored.
+
+**Kind**: instance abstract property of [<code>Sandbox</code>](#Sandbox)  
+**Default**: <code>&quot;&quot;</code>  
+<a name="SubModule+Discord"></a>
+
+### sandbox.Discord : <code>Discord</code>
+The current Discord object instance of the bot.
+
+**Kind**: instance property of [<code>Sandbox</code>](#Sandbox)  
+<a name="SubModule+client"></a>
+
+### sandbox.client : <code>Discord~Client</code>
+The current bot client.
+
+**Kind**: instance property of [<code>Sandbox</code>](#Sandbox)  
+<a name="SubModule+command"></a>
+
+### sandbox.command : [<code>Command</code>](#Command)
+The command object for registering command listeners.
+
+**Kind**: instance property of [<code>Sandbox</code>](#Sandbox)  
+<a name="SubModule+common"></a>
+
+### sandbox.common : [<code>Common</code>](#Common)
+The common object.
+
+**Kind**: instance property of [<code>Sandbox</code>](#Sandbox)  
+<a name="SubModule+bot"></a>
+
+### sandbox.bot : [<code>SpikeyBot</code>](#SpikeyBot)
+The parent SpikeyBot instance.
+
+**Kind**: instance property of [<code>Sandbox</code>](#Sandbox)  
+<a name="SubModule+myName"></a>
+
+### sandbox.myName : <code>string</code>
+The name of this submodule. Used for differentiating in the log. Should be
+defined before begin().
+
+**Kind**: instance property of [<code>Sandbox</code>](#Sandbox)  
+**Overrides**: [<code>myName</code>](#SubModule+myName)  
+**Access**: protected  
+<a name="SubModule+initialized"></a>
+
+### sandbox.initialized : <code>boolean</code>
+Has this subModule been initialized yet (Has begin() been called).
+
+**Kind**: instance property of [<code>Sandbox</code>](#Sandbox)  
+**Default**: <code>false</code>  
+**Access**: protected  
+**Read only**: true  
+<a name="SubModule+commit"></a>
+
+### sandbox.commit : <code>string</code>
+The commit at HEAD at the time this module was loaded. Essentially the
+version of this submodule.
+
+**Kind**: instance constant of [<code>Sandbox</code>](#Sandbox)  
+**Access**: public  
+<a name="SubModule+loadTime"></a>
+
+### sandbox.loadTime : <code>number</code>
+The time at which this madule was loaded for use in checking if the module
+needs to be reloaded because the file has been modified since loading.
+
+**Kind**: instance constant of [<code>Sandbox</code>](#Sandbox)  
+**Access**: public  
+<a name="SubModule+initialize"></a>
+
+### sandbox.initialize()
+The function called at the end of begin() for further initialization
+specific to the subModule. Must be defined before begin() is called.
+
+**Kind**: instance method of [<code>Sandbox</code>](#Sandbox)  
+**Overrides**: [<code>initialize</code>](#SubModule+initialize)  
+**Access**: protected  
+<a name="SubModule+begin"></a>
+
+### sandbox.begin(Discord, client, command, common, bot)
+Initialize this submodule.
+
+**Kind**: instance method of [<code>Sandbox</code>](#Sandbox)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| Discord | <code>Discord</code> | The Discord object for the API library. |
+| client | <code>Discord~Client</code> | The client that represents this bot. |
+| command | [<code>Command</code>](#Command) | The command instance in which to register command listeners. |
+| common | [<code>Common</code>](#Common) | Class storing common functions. |
+| bot | [<code>SpikeyBot</code>](#SpikeyBot) | The parent SpikeyBot instance. |
+
+<a name="SubModule+end"></a>
+
+### sandbox.end()
+Trigger subModule to shutdown and get ready for process terminating.
+
+**Kind**: instance method of [<code>Sandbox</code>](#Sandbox)  
+**Access**: public  
+<a name="SubModule+log"></a>
+
+### sandbox.log(msg)
+Log using common.log, but automatically set name.
+
+**Kind**: instance method of [<code>Sandbox</code>](#Sandbox)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+debug"></a>
+
+### sandbox.debug(msg)
+Log using common.logDebug, but automatically set name.
+
+**Kind**: instance method of [<code>Sandbox</code>](#Sandbox)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+warn"></a>
+
+### sandbox.warn(msg)
+Log using common.logWarning, but automatically set name.
+
+**Kind**: instance method of [<code>Sandbox</code>](#Sandbox)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+error"></a>
+
+### sandbox.error(msg)
+Log using common.error, but automatically set name.
+
+**Kind**: instance method of [<code>Sandbox</code>](#Sandbox)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+shutdown"></a>
+
+### sandbox.shutdown()
+Shutdown and disable this submodule. Removes all event listeners.
+
+**Kind**: instance method of [<code>Sandbox</code>](#Sandbox)  
+**Overrides**: [<code>shutdown</code>](#SubModule+shutdown)  
+**Access**: protected  
+<a name="SubModule+save"></a>
+
+### *sandbox.save([opt])*
+Saves all data to files necessary for saving current state.
+
+**Kind**: instance abstract method of [<code>Sandbox</code>](#Sandbox)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [opt] | <code>string</code> | <code>&quot;&#x27;sync&#x27;&quot;</code> | Can be 'async', otherwise defaults to synchronous. |
+
+<a name="SubModule+unloadable"></a>
+
+### *sandbox.unloadable() ⇒ <code>boolean</code>*
+Check if this module is in a state that is ready to be unloaded. If false
+is returned, this module should not be unloaded and doing such may risk
+putting the module into an uncontrollable state.
+
+**Kind**: instance abstract method of [<code>Sandbox</code>](#Sandbox)  
+**Returns**: <code>boolean</code> - True if can be unloaded, false if cannot.  
+**Access**: public  
+<a name="Sandbox..execArgs"></a>
+
+### Sandbox~execArgs : <code>Object</code> ℗
+Arguments to pass into child_process.exec.
+
+**Kind**: inner constant of [<code>Sandbox</code>](#Sandbox)  
+**Default**: <code>{&quot;timeout&quot;:35000,&quot;maxBuffer&quot;:&quot;&quot;}</code>  
+**Access**: private  
+<a name="Sandbox..sandboxCommand"></a>
+
+### Sandbox~sandboxCommand : <code>string</code> ℗
+Command to execute to start a sandbox.
+
+**Kind**: inner constant of [<code>Sandbox</code>](#Sandbox)  
+**Default**: <code>&quot;firejail --profile&#x3D;./src/lib/sandbox.profile -- &quot;</code>  
+**Access**: private  
+<a name="Sandbox..jsCommand"></a>
+
+### Sandbox~jsCommand : <code>string</code> ℗
+The command to run in the sandbox to run JavaScript.
+
+**Kind**: inner constant of [<code>Sandbox</code>](#Sandbox)  
+**Default**: <code>&quot;SBnode&quot;</code>  
+**Access**: private  
+<a name="Sandbox..commandJS"></a>
+
+### Sandbox~commandJS(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Run JavaScript code in a sandbox, then show user outcome.
+
+**Kind**: inner method of [<code>Sandbox</code>](#Sandbox)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Sandbox..scriptEnd"></a>
+
+### Sandbox~scriptEnd(msg, err, stdout, stderr) ℗
+Callback when script user's program has finished executing.
+
+**Kind**: inner method of [<code>Sandbox</code>](#Sandbox)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The Discord message that triggered the initial execution. |
+| err | <code>Error</code> |  |
+| stdout | <code>string</code> \| <code>Buffer</code> |  |
+| stderr | <code>string</code> \| <code>Buffer</code> |  |
 
 <a name="SMLoader"></a>
 
