@@ -29,6 +29,7 @@ function Sandbox() {
   const execArgs = {
     timeout: 35000,  // 5 second leniency for sandbox.
     maxBuffer: 2 * 1024,
+    env: {},
   };
 
   /**

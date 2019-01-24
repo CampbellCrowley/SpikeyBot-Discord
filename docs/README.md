@@ -9051,7 +9051,7 @@ putting the module into an uncontrollable state.
 Arguments to pass into child_process.exec.
 
 **Kind**: inner constant of [<code>Sandbox</code>](#Sandbox)  
-**Default**: <code>{&quot;timeout&quot;:35000,&quot;maxBuffer&quot;:&quot;&quot;}</code>  
+**Default**: <code>{&quot;timeout&quot;:35000,&quot;maxBuffer&quot;:&quot;&quot;,&quot;env&quot;:&quot;&quot;}</code>  
 **Access**: private  
 <a name="Sandbox..sandboxCommand"></a>
 

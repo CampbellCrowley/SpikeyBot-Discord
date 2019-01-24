@@ -12,6 +12,7 @@ disable-mnt
 ipc-namespace
 hostname sandbox
 shell none
+env DISCORD_TOKEN="REDACTED"
 
 nice 39
 
