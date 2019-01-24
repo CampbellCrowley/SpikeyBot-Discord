@@ -177,7 +177,7 @@ function WebStats() {
           server_count: values.numGuilds,
           guilds: values.numGuilds,
           guildCount: values.numGuilds,
-          users: values.numUsers,
+          users: values.numMembers,
           shards: Object.values(values.shardGuilds),
           shard_id: values.reqShard,
           shardId: values.reqShard,
