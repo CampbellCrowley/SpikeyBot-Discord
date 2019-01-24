@@ -9,7 +9,7 @@
 ## Hidden Commands
 ### These commands are not included in the normal help page or `help` command because they are either easter-eggs, developer commands, or just not useful for most users.
 - git (Get the git commit log, or run a git command)
-- js (Run sandboxed javascript code. Only Spikey can do this (for now?))
+- js (Run sandboxed javascript code)
 - thotpm (Semi-anonymously have the bot DM someone. Only a couple people can use this command)
 - pmuser (Sends the specified user a pm from the bot, but tells the recipient who the sender was)
 - uptime (Amount of time the bot has been running)
