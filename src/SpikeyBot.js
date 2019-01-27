@@ -13,14 +13,12 @@ let auth = require('../auth.js');
  * from silently crashing without an error.
  *
  * @private
- * @param {Object} reason Reason for rejection.
- * @param {Promise} p The promise that caused the rejection.
+ * @param {...*} args All information to log.
  * @listens Process#unhandledRejection
  * @listens Process#uncaughtException
  */
-function unhandledRejection(reason, p) {
-  console.log(reason);
-  if (p) console.log(p);
+function unhandledRejection(...args) {
+  console.log(...args);
 }
 process.on('unhandledRejection', unhandledRejection);
 process.on('uncaughtException', unhandledRejection);
@@ -126,8 +124,9 @@ function SpikeyBot() {
     mainModuleNames =
         mainModuleNames.concat(JSON.parse(fs.readFileSync(mainModuleListFile)));
   } catch (err) {
-    if (err.code === 'ENOENT') return;
-    console.error(err);
+    if (err.code !== 'ENOENT') {
+      console.error(err);
+    }
   }
   /**
    * Is this bot running in development mode.

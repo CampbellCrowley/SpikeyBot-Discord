@@ -312,7 +312,7 @@ function Common() {
    * @return {number} Line number of call in stack.
    */
   function __line(inc = 0) {
-    return __stack[3 + inc].getLineNumber();
+    return __stack()[3 + inc].getLineNumber();
   }
 
   /**
@@ -323,7 +323,7 @@ function Common() {
    * @return {string} Function name in call stack.
    */
   /* function __function(inc = 0) {
-    return __stack[3 + inc].getFunctionName();
+    return __stack()[3 + inc].getFunctionName();
   } */
 
   /**
@@ -334,7 +334,7 @@ function Common() {
    * @return {string} Filename in call stack.
    */
   function __filename(inc = 0) {
-    return __stack[3 + inc].getFileName();
+    return __stack()[3 + inc].getFileName();
   }
 }
 

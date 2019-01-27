@@ -101,7 +101,7 @@ discordbots.org.</p>
 <dt><a href="#__stack">__stack()</a> ⇒ <code>Stack</code> ℗</dt>
 <dd><p>Gets the stack trace of the current function call.</p>
 </dd>
-<dt><a href="#unhandledRejection">unhandledRejection(reason, p)</a> ℗</dt>
+<dt><a href="#unhandledRejection">unhandledRejection(...args)</a> ℗</dt>
 <dd><p>Handler for an unhandledRejection or uncaughtException, to prevent the bot
 from silently crashing without an error.</p>
 </dd>
@@ -15355,7 +15355,7 @@ Gets the stack trace of the current function call.
 **Access**: private  
 <a name="unhandledRejection"></a>
 
-## unhandledRejection(reason, p) ℗
+## unhandledRejection(...args) ℗
 Handler for an unhandledRejection or uncaughtException, to prevent the bot
 from silently crashing without an error.
 
@@ -15364,8 +15364,7 @@ from silently crashing without an error.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| reason | <code>Object</code> | Reason for rejection. |
-| p | <code>Promise</code> | The promise that caused the rejection. |
+| ...args | <code>\*</code> | All information to log. |
 
 <a name="commandHandler"></a>
 
