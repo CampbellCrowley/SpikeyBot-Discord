@@ -386,16 +386,17 @@ function WebSettings() {
    * @private
    * @param {UserData} userData The user to check.
    * @param {string} gId The guild id to check against.
-   * @return {boolean} Whther the user has permission or not to manage the
+   * @param {?string} cId The channel id to check against.
+   * @param {string} cmd The command being attempted.
+   * @return {boolean} Whether the user has permission or not to manage the
    * hungry games in the given guild.
    */
-  function checkPerm(userData, gId) {
+  function checkPerm(userData, gId, cId, cmd) {
     if (!userData) return false;
-    let g = self.client.guilds.get(gId);
-    if (!g) return false;
     if (userData.id == self.common.spikeyId) return true;
-    let member = g.members.get(userData.id);
-    if (!member) {
+    let msg = makeMessage(userData.id, gId, cId, cmd);
+    if (!msg) return false;
+    if (self.command.validate(null, makeMessage(userData.id, gId, null, cmd))) {
       return false;
     }
     return true;
@@ -408,7 +409,7 @@ function WebSettings() {
    * @param {UserData} userData The user to check.
    * @param {string} gId The guild id of the guild that contains the channel.
    * @param {string} cId The channel id to check against.
-   * @return {boolean} Whther the user has permission or not to manage the
+   * @return {boolean} Whether the user has permission or not to manage the
    * hungry games in the given guild and has permission to send messages in the
    * given channel.
    */
@@ -734,7 +735,7 @@ function WebSettings() {
    */
   function cancelScheduledCommand(userData, socket, gId, cmdId, cb) {
     if (typeof cb !== 'function') cb = function() {};
-    if (!checkPerm(userData, gId)) {
+    if (!checkPerm(userData, gId, null, 'schedule')) {
       if (!checkMyGuild(gId)) return;
       replyNoPerm(socket, 'cancelScheduledCommand');
       cb('Forbidden');
@@ -754,15 +755,15 @@ function WebSettings() {
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {string|number} gId The id of the guild of which to add the
    * command.
-   * @param {string} cmd The command data of which to make into a {@link
+   * @param {Object} cmd The command data of which to make into a {@link
    * CmdScheduling~ScheduledCommand} and register.
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete, or has failed.
    */
   function registerScheduledCommand(userData, socket, gId, cmd, cb) {
     if (typeof cb !== 'function') cb = function() {};
-    if (!checkPerm(userData, gId)) {
-      if (!checkMyGuild(gId)) return;
+    if (!checkMyGuild(gId)) return;
+    if (!checkPerm(userData, gId, cmd && cmd.channel, 'schedule')) {
       replyNoPerm(socket, 'registerScheduledCommand');
       cb('Forbidden');
       return;
@@ -833,9 +834,7 @@ function WebSettings() {
    */
   function changePrefix(userData, socket, gId, prefix, cb) {
     if (typeof cb !== 'function') cb = function() {};
-    if (!checkPerm(userData, gId) ||
-        self.command.validate(
-            'changeprefix', makeMessage(userData.id, gId, null, prefix))) {
+    if (!checkPerm(userData, gId, null, 'changeprefix')) {
       if (!checkMyGuild(gId)) return;
       replyNoPerm(socket, 'changePrefix');
       cb('Forbidden');

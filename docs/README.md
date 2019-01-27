@@ -14185,7 +14185,7 @@ Manages changing settings for the bot from a website.
         * [~clientSocketConnection(socket)](#WebSettings..clientSocketConnection) ℗
         * [~replyNoPerm(socket, cmd)](#WebSettings..replyNoPerm) ℗
         * [~checkMyGuild(gId)](#WebSettings..checkMyGuild) ⇒ <code>boolean</code> ℗
-        * [~checkPerm(userData, gId)](#WebSettings..checkPerm) ⇒ <code>boolean</code> ℗
+        * [~checkPerm(userData, gId, cId, cmd)](#WebSettings..checkPerm) ⇒ <code>boolean</code> ℗
         * [~checkChannelPerm(userData, gId, cId)](#WebSettings..checkChannelPerm) ⇒ <code>boolean</code> ℗
         * [~makeMember(m)](#WebSettings..makeMember) ⇒ <code>Object</code> ℗
         * [~makeMessage(uId, gId, cId, msg)](#WebSettings..makeMessage) ⇒ <code>Object</code> ℗
@@ -14574,12 +14574,12 @@ Checks if the current shard is responsible for the requested guild.
 
 <a name="WebSettings..checkPerm"></a>
 
-### WebSettings~checkPerm(userData, gId) ⇒ <code>boolean</code> ℗
+### WebSettings~checkPerm(userData, gId, cId, cmd) ⇒ <code>boolean</code> ℗
 Check that the given user has permission to manage the games in the given
 guild.
 
 **Kind**: inner method of [<code>WebSettings</code>](#WebSettings)  
-**Returns**: <code>boolean</code> - Whther the user has permission or not to manage the
+**Returns**: <code>boolean</code> - Whether the user has permission or not to manage the
 hungry games in the given guild.  
 **Access**: private  
 
@@ -14587,6 +14587,8 @@ hungry games in the given guild.
 | --- | --- | --- |
 | userData | <code>UserData</code> | The user to check. |
 | gId | <code>string</code> | The guild id to check against. |
+| cId | <code>string</code> | The channel id to check against. |
+| cmd | <code>string</code> | The command being attempted. |
 
 <a name="WebSettings..checkChannelPerm"></a>
 
@@ -14595,7 +14597,7 @@ Check that the given user has permission to see and send messages in the
 given channel, as well as manage the games in the given guild.
 
 **Kind**: inner method of [<code>WebSettings</code>](#WebSettings)  
-**Returns**: <code>boolean</code> - Whther the user has permission or not to manage the
+**Returns**: <code>boolean</code> - Whether the user has permission or not to manage the
 hungry games in the given guild and has permission to send messages in the
 given channel.  
 **Access**: private  
@@ -14739,7 +14741,7 @@ Client has created a new scheduled command.
 | userData | <code>Object</code> | The current user's session data. |
 | socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
 | gId | <code>string</code> \| <code>number</code> | The id of the guild of which to add the command. |
-| cmd | <code>string</code> | The command data of which to make into a {@link CmdScheduling~ScheduledCommand} and register. |
+| cmd | <code>Object</code> | The command data of which to make into a {@link CmdScheduling~ScheduledCommand} and register. |
 | [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
 
 <a name="WebSettings..changePrefix"></a>
