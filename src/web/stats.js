@@ -134,13 +134,26 @@ function WebStats() {
       res.writeHead(501);
       res.end();
       self.common.log('Requested Webhook that doesn\'t exist yet.', ip);
+    } else if (req.url.indexOf('/stats/shield') == 0) {
+      getStats((stats) => {
+        res.writeHead(200, {'content-type': 'application/json'});
+        const filteredStats = {
+          schemaVersion: 1,
+          label: 'servers',
+          message: stats.numGuilds,
+          color: 'purple',
+          cacheSeconds: Math.floor(cachedLifespan / 1000),
+        };
+        res.end(JSON.stringify(filteredStats));
+        self.common.log('Sent stats: ' + req.url, ip);
+      });
     } else {
       getStats((stats) => {
         res.writeHead(200, {'content-type': 'application/json'});
         const filteredStats = Object.assign({}, stats);
         filteredStats.activities = 'REDACTED';
         res.end(JSON.stringify(filteredStats));
-        self.common.log('Sent stats.', ip);
+        self.common.log('Sent stats: ' + req.url, ip);
       });
     }
   }
