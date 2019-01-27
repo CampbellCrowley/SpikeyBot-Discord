@@ -516,6 +516,7 @@ a command to be run.
         * [~saveSubDir](#CmdScheduling..saveSubDir) : <code>string</code> ℗
         * [~idChars](#CmdScheduling..idChars) : <code>string</code> ℗
         * [~embedColor](#CmdScheduling..embedColor) : <code>Array.&lt;number&gt;</code> ℗
+        * [~writeSaveData(i, data, [opt])](#CmdScheduling..writeSaveData) ℗
         * [~registerScheduledCommand(sCmd)](#CmdScheduling..registerScheduledCommand) ℗
         * [~commandSchedule(msg)](#CmdScheduling..commandSchedule) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~sortGuildCommands(id)](#CmdScheduling..sortGuildCommands) ℗
@@ -790,6 +791,7 @@ Stores information about a specific command that is scheduled.
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
 | cmd | <code>string</code> |  | The command to run. |
+| bot | <code>number</code> \| <code>string</code> |  | The ID of the bot instantiating this command. |
 | channel | <code>Discord~TextChannel</code> |  | The channel or channel ID of where to run the command. |
 | channelId | <code>string</code> \| <code>number</code> |  | The id of the channel where the message was  sent. |
 | message | <code>Discord~Message</code> |  | The message that created this scheduled command, or null if the message was deleted. |
@@ -922,6 +924,20 @@ The color to use for embeds sent from this submodule.
 **Kind**: inner constant of [<code>CmdScheduling</code>](#CmdScheduling)  
 **Default**: <code>[50,255,255]</code>  
 **Access**: private  
+<a name="CmdScheduling..writeSaveData"></a>
+
+### CmdScheduling~writeSaveData(i, data, [opt]) ℗
+Write save data for a guild.
+
+**Kind**: inner method of [<code>CmdScheduling</code>](#CmdScheduling)  
+**Access**: private  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| i | <code>string</code> \| <code>number</code> |  | The guild ID. |
+| data | <code>Object</code> |  | The data to write. |
+| [opt] | <code>string</code> | <code>&quot;&#x27;sync&#x27;&quot;</code> | See [save](save). |
+
 <a name="CmdScheduling..registerScheduledCommand"></a>
 
 ### CmdScheduling~registerScheduledCommand(sCmd) ℗

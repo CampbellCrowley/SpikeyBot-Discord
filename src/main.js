@@ -1469,7 +1469,12 @@ function Main() {
   function commandSay(msg) {
     if (msg.delete) msg.delete().catch(() => {});
     let content = msg.text.trim();
-    msg.channel.send(content || '\u200B');
+    msg.channel.send(content || '\u200B').catch((err) => {
+      self.warn(
+          'Failed to send message in channel: ' + msg.channel.id + ': ' +
+          content);
+      console.error(err);
+    });
     if (msg.fabricated || prevUserSayId != msg.author.id) {
       prevUserSayId = msg.author.id;
       prevUserSayCnt = 0;

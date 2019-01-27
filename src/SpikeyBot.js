@@ -20,6 +20,7 @@ let auth = require('../auth.js');
  */
 function unhandledRejection(reason, p) {
   console.log(reason);
+  if (p) console.log(p);
 }
 process.on('unhandledRejection', unhandledRejection);
 process.on('uncaughtException', unhandledRejection);

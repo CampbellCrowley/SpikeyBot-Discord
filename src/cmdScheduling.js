@@ -22,25 +22,38 @@ function CmdScheduling() {
 
   /** @inheritdoc */
   this.initialize = function() {
+    const adminOnlyOpts = new self.command.CommandSetting({
+      validOnlyInGuild: true,
+      defaultDisabled: true,
+      permissions: self.Discord.Permissions.FLAGS.MANAGE_ROLES |
+          self.Discord.Permissions.FLAGS.MANAGE_GUILD |
+          self.Discord.Permissions.FLAGS.BAN_MEMBERS,
+    });
     self.command.on(
-        ['schedule', 'sch', 'sched', 'scheduled'], commandSchedule, true);
+        new self.command.SingleCommand(
+            ['schedule', 'sch', 'sched', 'scheduled'], commandSchedule,
+            adminOnlyOpts));
 
+    const now = Date.now();
     self.client.guilds.forEach((g) => {
       fs.readFile(self.common.guildSaveDir + g.id + saveSubDir, (err, data) => {
-        if (err) return;
+        if (err && err.code == 'ENOENT') return;
+        if (err) {
+          self.warn('Failed to load scheduled command: ' + g.id);
+          return;
+        }
         try {
           let parsed = JSON.parse(data);
-          if (!parsed || parsed.length == 0) return;
+          if (!parsed || parsed.length == 0) {
+            self.warn('Failed to parse scheduled commands: ' + g.id);
+            return;
+          }
           if (!schedules[g.id]) schedules[g.id] = [];
           for (let i = 0; i < parsed.length; i++) {
+            if (parsed[i].bot != self.client.user.id) continue;
+            if (parsed[i].time < now) continue;
             schedules[g.id].push(new ScheduledCommand(parsed[i]));
           }
-          fs.unlink(self.common.guildSaveDir + g.id + saveSubDir, (err) => {
-            if (err) {
-              self.error('Failed to delete scheduled commands file: ' + g.id);
-              console.error(err);
-            }
-          });
         } catch (err) {
           self.error('Failed to parse data for guild commands: ' + g.id);
           console.error(err);
@@ -71,41 +84,74 @@ function CmdScheduling() {
   this.save = function(opt) {
     for (let i in schedules) {
       if (!schedules[i] || !schedules[i].length) continue;
-      let dir = self.common.guildSaveDir + i;
-      let filename = dir + saveSubDir;
       schedules[i] = schedules[i].filter((el) => !el.complete);
-      let data = JSON.stringify(schedules[i].map((el) => el.toJSON()));
-      if (opt === 'async') {
-        mkdirp(dir, (err) => {
-          if (err) {
-            self.error('Failed to make directory: ' + dir);
-            console.log(err);
-            return;
+      let data = schedules[i].map((el) => el.toJSON());
+      writeSaveData(i, data, opt);
+    }
+  };
+
+  /**
+   * Write save data for a guild.
+   * @private
+   *
+   * @param {string|number} i The guild ID.
+   * @param {Object} data The data to write.
+   * @param {string} [opt='sync'] See {@link save}.
+   */
+  function writeSaveData(i, data, opt) {
+    let dir = self.common.guildSaveDir + i;
+    let filename = dir + saveSubDir;
+    if (opt === 'async') {
+      mkdirp(dir, (err) => {
+        if (err) {
+          self.error('Failed to make directory: ' + dir);
+          console.log(err);
+          return;
+        }
+        fs.readFile(filename, (err, rec) => {
+          if (!err && rec) {
+            try {
+              let parsed = JSON.parse(rec);
+              if (parsed && parsed.length > 0) {
+                data = rec.filter((el) => el.bot != self.client.user.id)
+                    .concat(data);
+              }
+            } catch (e) {
+            }
           }
-          fs.writeFile(filename, data, (err) => {
+          let finalData = JSON.stringify(data);
+          fs.writeFile(filename, finalData, (err) => {
             if (err) {
               self.error('Failed to write file: ' + filename);
               console.error(err);
             }
           });
         });
-      } else {
-        try {
-          mkdirp.sync(dir);
-        } catch (err) {
-          self.error('Failed to make directory: ' + dir);
-          console.log(err);
-          continue;
+      });
+    } else {
+      try {
+        mkdirp.sync(dir);
+      } catch (err) {
+        self.error('Failed to make directory: ' + dir);
+        console.log(err);
+        return;
+      }
+      try {
+        let rec = fs.readFileSync(filename);
+        let parsed = JSON.parse(rec);
+        if (parsed && parsed.length > 0) {
+          data = rec.filter((el) => el.bot != self.client.user.id).concat(data);
         }
-        try {
-          fs.writeFileSync(filename, data);
-        } catch (err) {
-          self.error('Failed to write file: ' + filename);
-          console.error(err);
-        }
+      } catch (err) {
+      }
+      try {
+        fs.writeFileSync(filename, JSON.stringify(data));
+      } catch (err) {
+        self.error('Failed to write file: ' + filename);
+        console.error(err);
       }
     }
-  };
+  }
 
   /**
    * Interval that runs every maxTimeout milliseconds in order to re-schedule
@@ -212,6 +258,7 @@ function CmdScheduling() {
    * command again, or null if it does not repeat.
    *
    * @property {string} cmd The command to run.
+   * @property {number|string} bot The ID of the bot instantiating this command.
    * @property {Discord~TextChannel} channel The channel or channel ID of where
    * to run the command.
    * @property {string|number} channelId The id of the channel where the message
@@ -260,6 +307,7 @@ function CmdScheduling() {
     this.memberId =
         typeof this.member === 'object' ? this.member.id : this.member;
 
+    this.bot = self.client.user.id;
     this.complete = false;
 
     /**
@@ -270,6 +318,13 @@ function CmdScheduling() {
     function getReferences() {
       if (typeof myself.channel !== 'object') {
         myself.channel = self.client.channels.get(myself.channelId);
+      }
+      if (typeof myself.channel !== 'object') {
+        self.debug(
+            'Cancelling command due to channel not existing: ' +
+            myself.channelId + '@' + myself.memberId + ': ' + myself.cmd);
+        myself.cancel();
+        return;
       }
       if (typeof myself.message !== 'object') {
         myself.message = myself.channel.messages.get(myself.messageId);
@@ -546,6 +601,8 @@ function CmdScheduling() {
       desc += '\nRepeats every ' + formatDelay(repeat);
     }
     embed.setDescription(desc);
+    embed.addField(
+        'To cancel:', `\`${msg.prefix}sch cancel ${newCmd.id}\``, true);
     embed.setFooter(cmd);
 
     msg.channel.send(self.common.mention(msg), embed);
