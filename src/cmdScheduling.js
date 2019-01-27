@@ -43,7 +43,7 @@ function CmdScheduling() {
           return;
         }
         try {
-          let parsed = JSON.parse(data);
+          const parsed = JSON.parse(data);
           if (!parsed || parsed.length == 0) {
             self.warn('Failed to parse scheduled commands: ' + g.id);
             return;
@@ -70,7 +70,7 @@ function CmdScheduling() {
   this.shutdown = function() {
     self.command.deleteEvent('schedule');
     if (longInterval) self.client.clearInterval(longInterval);
-    for (let i in schedules) {
+    for (const i in schedules) {
       if (!schedules[i] || !schedules[i].length) continue;
       schedules[i].forEach((el) => el.cancel());
     }
@@ -82,10 +82,10 @@ function CmdScheduling() {
    * @inheritdoc
    */
   this.save = function(opt) {
-    for (let i in schedules) {
+    for (const i in schedules) {
       if (!schedules[i] || !schedules[i].length) continue;
       schedules[i] = schedules[i].filter((el) => !el.complete);
-      let data = schedules[i].map((el) => el.toJSON());
+      const data = schedules[i].map((el) => el.toJSON());
       writeSaveData(i, data, opt);
     }
   };
@@ -99,8 +99,8 @@ function CmdScheduling() {
    * @param {string} [opt='sync'] See {@link save}.
    */
   function writeSaveData(i, data, opt) {
-    let dir = self.common.guildSaveDir + i;
-    let filename = dir + saveSubDir;
+    const dir = self.common.guildSaveDir + i;
+    const filename = dir + saveSubDir;
     if (opt === 'async') {
       mkdirp(dir, (err) => {
         if (err) {
@@ -111,7 +111,7 @@ function CmdScheduling() {
         fs.readFile(filename, (err, rec) => {
           if (!err && rec) {
             try {
-              let parsed = JSON.parse(rec);
+              const parsed = JSON.parse(rec);
               if (parsed && parsed.length > 0) {
                 data = rec.filter((el) => el.bot != self.client.user.id)
                     .concat(data);
@@ -119,7 +119,7 @@ function CmdScheduling() {
             } catch (e) {
             }
           }
-          let finalData = JSON.stringify(data);
+          const finalData = JSON.stringify(data);
           fs.writeFile(filename, finalData, (err) => {
             if (err) {
               self.error('Failed to write file: ' + filename);
@@ -137,8 +137,8 @@ function CmdScheduling() {
         return;
       }
       try {
-        let rec = fs.readFileSync(filename);
-        let parsed = JSON.parse(rec);
+        const rec = fs.readFileSync(filename);
+        const parsed = JSON.parse(rec);
         if (parsed && parsed.length > 0) {
           data = rec.filter((el) => el.bot != self.client.user.id).concat(data);
         }
@@ -240,7 +240,7 @@ function CmdScheduling() {
    * @private
    * @type {Object.<Array.<CmdScheduling.ScheduledCommand>>}
    */
-  let schedules = {};
+  const schedules = {};
 
   /**
    * @classdesc Stores information about a specific command that is scheduled.
@@ -278,7 +278,7 @@ function CmdScheduling() {
    * @property {string|number} memberId The id of the member.
    */
   function ScheduledCommand(cmd, channel, message, time, repeatDelay = 0) {
-    let myself = this;
+    const myself = this;
     if (typeof cmd === 'object') {
       channel = cmd.channel;
       message = cmd.message;
@@ -505,7 +505,7 @@ function CmdScheduling() {
    * register.
    */
   function registerScheduledCommand(sCmd) {
-    let gId = sCmd.message.guild.id;
+    const gId = sCmd.message.guild.id;
     if (!schedules[gId]) {
       schedules[gId] = [sCmd];
     } else {
@@ -546,7 +546,7 @@ function CmdScheduling() {
       return;
     }
 
-    let splitCmd = msg.text.trim().split(msg.prefix);
+    const splitCmd = msg.text.trim().split(msg.prefix);
     if (!splitCmd || splitCmd.length < 2 || splitCmd[0].trim().length == 0) {
       self.common.reply(
           msg,
@@ -556,10 +556,10 @@ function CmdScheduling() {
     }
 
     let delay = splitCmd.splice(0, 1)[0];
-    let cmd = msg.prefix + splitCmd.join(msg.prefix);
+    const cmd = msg.prefix + splitCmd.join(msg.prefix);
     let repeat = 0;
 
-    let invalid = self.command.validate(cmd.split(/\s/)[0], msg);
+    const invalid = self.command.validate(cmd.split(/\s/)[0], msg);
     if (invalid) {
       self.common.reply(
           msg, 'That command doesn\'t seem to be a usable command.\n' + cmd,
@@ -568,7 +568,7 @@ function CmdScheduling() {
     }
 
     if (delay.match(/every|repeat/)) {
-      let splitTimes = delay.match(/^(.*?)(every|repeat)(.*)$/);
+      const splitTimes = delay.match(/^(.*?)(every|repeat)(.*)$/);
       delay = splitTimes[1];
       repeat = splitTimes[3];
     }
@@ -588,12 +588,12 @@ function CmdScheduling() {
       return;
     }
 
-    let newCmd =
+    const newCmd =
         new ScheduledCommand(cmd, msg.channel, msg, delay + Date.now(), repeat);
 
     registerScheduledCommand(newCmd);
 
-    let embed = new self.Discord.MessageEmbed();
+    const embed = new self.Discord.MessageEmbed();
     embed.setTitle('Created Scheduled Command (' + newCmd.id + ')');
     embed.setColor(embedColor);
     let desc = 'Runs in ' + formatDelay(delay);
@@ -615,7 +615,7 @@ function CmdScheduling() {
    * @param {string|number} id The guild id of which to sort the commands.
    */
   function sortGuildCommands(id) {
-    let c = schedules[id];
+    const c = schedules[id];
     if (!c) return;
 
     let unsorted = true;
@@ -729,14 +729,14 @@ function CmdScheduling() {
    * @param {Discord~Message} msg The message to reply to.
    */
   function replyWithSchedule(msg) {
-    let embed = new self.Discord.MessageEmbed();
+    const embed = new self.Discord.MessageEmbed();
     embed.setTitle('Scheduled Commands');
     embed.setColor(embedColor);
     let list = getScheduledCommandsInGuild(msg.guild.id);
     if (!list) {
       embed.setDescription('No commands are scheduled.');
     } else {
-      let n = Date.now();
+      const n = Date.now();
       list = list.map((el) => {
         return '**' + el.id + '**: In ' + formatDelay(el.time - n) +
             (el.repeatDelay ?
@@ -747,7 +747,7 @@ function CmdScheduling() {
       embed.setDescription(list.join('\n'));
     }
     if (msg.author.id == self.common.spikeyId) {
-      let keys = Object.keys(schedules);
+      const keys = Object.keys(schedules);
       let total = 0;
       keys.forEach((k) => {
         total += Object.keys(schedules[k]).length;
@@ -771,14 +771,14 @@ function CmdScheduling() {
    * was cancelled.
    */
   function cancelCmd(gId, cmdId) {
-    let list = schedules[gId];
+    const list = schedules[gId];
     if (!list || list.length == 0) return null;
     if (!cmdId) return null;
     cmdId = (cmdId + '').toUpperCase();
     for (let i = 0; i < list.length; i++) {
       if (list[i].complete) continue;
       if (list[i].id == cmdId) {
-        let removed = list.splice(i, 1)[0];
+        const removed = list.splice(i, 1)[0];
         removed.cancel();
         fireEvent('commandCancelled', removed.id, removed.message.guild.id);
         return removed;
@@ -801,9 +801,9 @@ function CmdScheduling() {
    * @param {Discord~Message} msg The message to reply to.
    */
   function cancelAndReply(msg) {
-    let embed = new self.Discord.MessageEmbed();
+    const embed = new self.Discord.MessageEmbed();
     embed.setColor(embedColor);
-    let list = schedules[msg.guild.id];
+    const list = schedules[msg.guild.id];
     if (!list || list.length == 0) {
       embed.setTitle('Cancelling Failed');
       embed.setDescription('There are no scheduled commands in this guild.');
@@ -814,7 +814,7 @@ function CmdScheduling() {
         embed.setDescription('Please specify a scheduled command ID.');
       } else {
         idSearch = idSearch[2];
-        let removed = cancelCmd(msg.guild.id, idSearch);
+        const removed = cancelCmd(msg.guild.id, idSearch);
         if (!removed) {
           embed.setTitle('Cancelling Failed');
           embed.setDescription(
@@ -837,7 +837,7 @@ function CmdScheduling() {
    * Reschedule all future commands that are beyond maxTimeout.
    */
   function reScheduleCommands() {
-    for (let g in schedules) {
+    for (const g in schedules) {
       if (!schedules[g] || !schedules[g].length) continue;
       for (let i = 0; i < schedules[g].length; i++) {
         schedules[g][i].setTimeout();
@@ -856,31 +856,31 @@ function CmdScheduling() {
     let output = '';
     let unit = 7 * 24 * 60 * 60 * 1000;
     if (msecs >= unit) {
-      let num = Math.floor(msecs / unit);
+      const num = Math.floor(msecs / unit);
       output += num + ' week' + (num == 1 ? '' : 's') + ', ';
       msecs -= num * unit;
     }
     unit /= 7;
     if (msecs >= unit) {
-      let num = Math.floor(msecs / unit);
+      const num = Math.floor(msecs / unit);
       output += num + ' day' + (num == 1 ? '' : 's') + ', ';
       msecs -= num * unit;
     }
     unit /= 24;
     if (msecs >= unit) {
-      let num = Math.floor(msecs / unit);
+      const num = Math.floor(msecs / unit);
       output += num + ' hour' + (num == 1 ? '' : 's') + ', ';
       msecs -= num * unit;
     }
     unit /= 60;
     if (msecs >= unit) {
-      let num = Math.floor(msecs / unit);
+      const num = Math.floor(msecs / unit);
       output += num + ' minute' + (num == 1 ? '' : 's') + ', ';
       msecs -= num * unit;
     }
     unit /= 60;
     if (msecs >= unit) {
-      let num = Math.round(msecs / unit);
+      const num = Math.round(msecs / unit);
       output += num + ' second' + (num == 1 ? '' : 's') + '';
     }
     return output.replace(/,\s$/, '');
@@ -962,9 +962,9 @@ function CmdScheduling() {
    */
   function makeMessage(uId, gId, cId, msg) {
     if (!cId) return null;
-    let g = self.client.guilds.get(gId);
+    const g = self.client.guilds.get(gId);
     if (!g) return null;
-    let message = {};
+    const message = {};
     message.fabricated = true;
     message.member = g.members.get(uId);
     message.author = g.members.get(uId).user;

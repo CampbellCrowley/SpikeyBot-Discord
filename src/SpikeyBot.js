@@ -154,7 +154,7 @@ function SpikeyBot() {
    * @private
    * @type {MainModule[]}
    */
-  let mainModules = [];
+  const mainModules = [];
   /**
    * Reason the bot was disconnected from Discord's servers.
    *
@@ -418,7 +418,7 @@ function SpikeyBot() {
    * @private
    * @type {Object.<string>}
    */
-  let guildPrefixes = {};
+  const guildPrefixes = {};
 
   /**
    * The path in the guild's subdirectory where we store custom prefixes.
@@ -493,7 +493,7 @@ function SpikeyBot() {
         updateGame(defaultPrefix + 'help for help');
       }
     }
-    let logChannel = client.channels.get(common.logChannel);
+    const logChannel = client.channels.get(common.logChannel);
     if (testInstance) {
       client.users.fetch(common.spikeyId)
           .then((u) => {
@@ -525,7 +525,7 @@ function SpikeyBot() {
     // because this will updated the reference to the current client if this was
     // changed during reconnection.
     // @TODO: This may be unnecessary to do more than once.
-    for (let i in mainModules) {
+    for (const i in mainModules) {
       if (!mainModules[i] instanceof Object || !mainModules[i].begin) continue;
       try {
         mainModules[i].begin(Discord, client, command, common, self);
@@ -547,12 +547,12 @@ function SpikeyBot() {
     if (!minimal && !initialized) {
       fs.readFile('./save/reboot.dat', function(err, file) {
         if (err) return;
-        let msg = JSON.parse(file);
-        let channel = client.channels.get(msg.channel.id);
+        const msg = JSON.parse(file);
+        const channel = client.channels.get(msg.channel.id);
         if (channel) {
           channel.messages.fetch(msg.id)
               .then((msg_) => {
-                let embed = new Discord.MessageEmbed();
+                const embed = new Discord.MessageEmbed();
                 embed.setTitle('Reboot complete.');
                 embed.setColor([255, 0, 255]);
                 msg_.edit(embed);
@@ -564,7 +564,7 @@ function SpikeyBot() {
     if (!initialized) {
       loadGuildPrefixes(Array.from(client.guilds.array()));
     }
-    let req = require('https').request(
+    const req = require('https').request(
         {
           method: 'POST',
           hostname: 'www.spikeybot.com',
@@ -767,8 +767,8 @@ function SpikeyBot() {
         common.reply(
             msg, 'I\'m sorry, but you are not allowed to do that. :(\n');
       } else {
-        let game = msg.content.replace(msg.prefix + 'updategame ', '');
-        let first = game.split(' ')[0].toLowerCase();
+        const game = msg.content.replace(msg.prefix + 'updategame ', '');
+        const first = game.split(' ')[0].toLowerCase();
         let type = null;
         switch (first) {
           case 'watching':
@@ -859,11 +859,11 @@ function SpikeyBot() {
             function(err, data) {
               let finalPrefix = newPrefix;
               if (data) {
-                let parsed = JSON.parse(data);
+                const parsed = JSON.parse(data);
                 parsed[botName] = newPrefix;
                 finalPrefix = JSON.stringify(parsed);
               } else {
-                let newData = {};
+                const newData = {};
                 newData[botName] = newPrefix;
                 finalPrefix = JSON.stringify(newData);
               }
@@ -945,7 +945,7 @@ function SpikeyBot() {
    */
   function commandReboot(msg, silent) {
     if (msg.author.id === common.spikeyId) {
-      let force = msg.content.indexOf(' force') > -1;
+      const force = msg.content.indexOf(' force') > -1;
       if (!force) {
         for (let i = 0; i < mainModules.length; i++) {
           if (mainModules[i] && !mainModules[i].unloadable()) {
@@ -1002,7 +1002,7 @@ function SpikeyBot() {
       } else {
         const extra = doHardReboot ? ' (HARD)' : '';
         common.reply(msg, 'Rebooting...' + extra).then((msg) => {
-          let toSave = {
+          const toSave = {
             id: msg.id,
             channel: {id: msg.channel.id},
           };
@@ -1036,11 +1036,11 @@ function SpikeyBot() {
    */
   function commandReload(msg) {
     if (trustedIds.includes(msg.author.id)) {
-      let toReload = msg.text.split(' ').splice(1);
-      let reloaded = [];
+      const toReload = msg.text.split(' ').splice(1);
+      const reloaded = [];
       common.reply(msg, 'Reloading main modules...').then((warnMessage) => {
         if (reloadMainModules(toReload, reloaded)) {
-          let embed = new Discord.MessageEmbed();
+          const embed = new Discord.MessageEmbed();
           embed.setTitle('Reload completed with errors.');
           embed.setDescription(reloaded.join(' ') || 'NOTHING reloaded');
           embed.setColor([255, 0, 255]);
@@ -1048,7 +1048,7 @@ function SpikeyBot() {
         } else if (minimal) {
           warnMessage.delete();
         } else {
-          let embed = new Discord.MessageEmbed();
+          const embed = new Discord.MessageEmbed();
           embed.setTitle('Reload complete.');
           embed.setDescription(reloaded.join(' ') || 'NOTHING reloaded');
           embed.setColor([255, 0, 255]);
@@ -1163,7 +1163,7 @@ function SpikeyBot() {
           common.error('Error on unloading ' + mainModuleNames[i]);
           console.log(err);
         }
-        let exported = mainModules[i].export();
+        const exported = mainModules[i].export();
         if (!exported) {
           self.error(
               'THIS IS POTENTIALLY A FATAL ERROR! FAILED TO EXPORT DATA ' +
@@ -1279,13 +1279,13 @@ function SpikeyBot() {
                 ' -- ./src/' +
                 module.filename.slice(
                     __filename.lastIndexOf('/') + 1, module.filename.length));
-            let embed = new Discord.MessageEmbed();
+            const embed = new Discord.MessageEmbed();
             embed.setTitle('Bot update complete!');
             embed.setColor([255, 0, 255]);
             msg_.edit(common.mention(msg), embed);
           } catch (err) {
             if (err.status === 1) {
-              let embed = new Discord.MessageEmbed();
+              const embed = new Discord.MessageEmbed();
               embed.setTitle(
                   'Bot update complete, but requires manual reboot.');
               embed.setDescription(err.message);
@@ -1296,7 +1296,7 @@ function SpikeyBot() {
                   'Checking for SpikeyBot.js changes failed: ' + err.status);
               console.error('STDOUT:', err.stdout);
               console.error('STDERR:', err.stderr);
-              let embed = new Discord.MessageEmbed();
+              const embed = new Discord.MessageEmbed();
               embed.setTitle(
                   'Bot update complete, but failed to check if ' +
                   'reboot is necessary.');
@@ -1309,7 +1309,7 @@ function SpikeyBot() {
           console.error(err);
           if (stdout && stdout !== 'null') console.log('STDOUT:', stdout);
           if (stderr && stderr !== 'null') console.error('STDERR:', stderr);
-          let embed = new Discord.MessageEmbed();
+          const embed = new Discord.MessageEmbed();
           embed.setTitle('Bot update FAILED!');
           embed.setColor([255, 0, 255]);
           msg_.edit(common.mention(msg), embed);
@@ -1336,7 +1336,7 @@ function SpikeyBot() {
             .on('close', ((name) => {
               return (code, signal) => {
                 if (code) {
-                  let out = [];
+                  const out = [];
                   reloadMainModules(name, out);
                   if (out) common.log(out.join(' '));
                   if (name == smLoaderFilename) {

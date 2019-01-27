@@ -16,7 +16,7 @@ function WebStats() {
 
   this.myName = 'Stats';
 
-  let app = http.createServer(handler);
+  const app = http.createServer(handler);
   /** @inheritdoc */
   this.initialize = function() {
     postUpdatedCount();
@@ -128,7 +128,7 @@ function WebStats() {
    * @param {http.ServerResponse} res Our response to the client.
    */
   function handler(req, res) {
-    let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress ||
+    const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress ||
         'ERROR';
     if (req.url.indexOf('/webhook') > -1) {
       res.writeHead(501);
@@ -137,7 +137,7 @@ function WebStats() {
     } else {
       getStats((stats) => {
         res.writeHead(200, {'content-type': 'application/json'});
-        let filteredStats = Object.assign({}, stats);
+        const filteredStats = Object.assign({}, stats);
         filteredStats.activities = 'REDACTED';
         res.end(JSON.stringify(filteredStats));
         self.common.log('Sent stats.', ip);
@@ -199,11 +199,11 @@ function WebStats() {
      * shard_count: number}} data The data to send in our request.
      */
     function sendRequest(data) {
-      let body = JSON.stringify(data);
+      const body = JSON.stringify(data);
       apiHosts.forEach((apiHost) => {
-        let host = apiHost;
+        const host = apiHost;
         host.path = host.path.replace('{id}', self.client.user.id);
-        let req = https.request(host, (res) => {
+        const req = https.request(host, (res) => {
           let content = '';
           res.on('data', (chunk) => {
             content += chunk;

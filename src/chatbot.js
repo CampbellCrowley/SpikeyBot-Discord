@@ -23,7 +23,7 @@ function ChatBot() {
    * @private
    * @type {Object.<boolean>}
    */
-  let disabledChatBot = {};
+  const disabledChatBot = {};
 
   /** @inheritdoc */
   this.initialize = function() {
@@ -79,7 +79,7 @@ function ChatBot() {
     self.client.guilds.forEach(function(g) {
       const dir = self.common.guildSaveDir + g.id;
       const filename = dir + '/chatbot-config.json';
-      let obj = {
+      const obj = {
         disabledChatBot: disabledChatBot[g.id],
       };
       if (opt == 'async') {
@@ -191,7 +191,7 @@ function ChatBot() {
   function onChatMessage(msg) {
     if (msg.guild && disabledChatBot[msg.guild.id]) return;
     if (!msg.text || msg.text.length < 2) return;
-    let request = Object.assign({}, reqTemplate);
+    const request = Object.assign({}, reqTemplate);
     request.session = sessionClient.sessionPath(
         auth['dialogflowProjectId' + (self.bot.getBotName() || '')],
         msg.channel.id);

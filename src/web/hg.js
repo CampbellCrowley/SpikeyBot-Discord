@@ -15,8 +15,8 @@ function HGWeb(hg) {
 
   let ioClient;
 
-  let app = http.createServer(handler);
-  let io = socketIo(app, {
+  const app = http.createServer(handler);
+  const io = socketIo(app, {
     path: hg.common.isRelease ? '/www.spikeybot.com/socket.io/hg' :
                                 '/www.spikeybot.com/socket.io/dev/hg',
     serveClient: false,
@@ -76,7 +76,7 @@ function HGWeb(hg) {
    * @private
    * @type {Object.<Socket>}
    */
-  let sockets = {};
+  const sockets = {};
 
   /**
    * Returns the number of connected clients that are not siblings.
@@ -94,7 +94,7 @@ function HGWeb(hg) {
    * @private
    * @type {Object.<Socket>}
    */
-  let siblingSockets = {};
+  const siblingSockets = {};
 
   io.on('connection', socketConnection);
   /**
@@ -217,7 +217,7 @@ function HGWeb(hg) {
      */
     function callSocketFunction(func, args, forward = true) {
       if (!['fetchMember', 'fetchChannel'].includes(func.name.toString())) {
-        let logArgs = args.map((el) => {
+        const logArgs = args.map((el) => {
           if (typeof el === 'function') {
             return (el.name || 'anonymous') + '()';
           } else {
@@ -269,7 +269,7 @@ function HGWeb(hg) {
 
     socket.on('forwardedRequest', (userData, sId, func, args, cb) => {
       if (!authenticated) return;
-      let fakeSocket = {
+      const fakeSocket = {
         emit: function(...args) {
           if (typeof cb == 'function') cb(args);
         },
@@ -292,8 +292,8 @@ function HGWeb(hg) {
    * @param {string} gId Guild id of the state change.
    */
   this.dayStateChange = function(gId) {
-    let keys = Object.keys(sockets);
-    let game = hg.getGame(gId);
+    const keys = Object.keys(sockets);
+    const game = hg.getGame(gId);
     let eventState = null;
     if (!game) return;
     if (game.currentGame.day.events[game.currentGame.day.state - 2] &&
@@ -301,7 +301,7 @@ function HGWeb(hg) {
       eventState =
           game.currentGame.day.events[game.currentGame.day.state - 2].state;
     }
-    for (let i in keys) {
+    for (const i in keys) {
       if (!sockets[keys[i]].cachedGuilds) continue;
       if (sockets[keys[i]].cachedGuilds.find((g) => g === gId)) {
         sockets[keys[i]].emit(
@@ -334,7 +334,7 @@ function HGWeb(hg) {
    * @return {boolean} True if this shard has this guild.
    */
   function checkMyGuild(gId) {
-    let g = hg.client.guilds.get(gId);
+    const g = hg.client.guilds.get(gId);
     return (g && true) || false;
   }
 
@@ -353,7 +353,7 @@ function HGWeb(hg) {
   function checkPerm(userData, gId, cId, cmd) {
     if (!userData) return false;
     if (userData.id == hg.common.spikeyId) return true;
-    let msg = makeMessage(userData.id, gId, cId, 'hg ' + cmd);
+    const msg = makeMessage(userData.id, gId, cId, 'hg ' + cmd);
     if (!msg) return false;
     if (hg.command.validate(
         null, makeMessage(userData.id, gId, null, 'hg ' + cmd))) {
@@ -378,14 +378,14 @@ function HGWeb(hg) {
   function checkChannelPerm(userData, gId, cId, cmd) {
     if (!checkPerm(userData, gId, cId, cmd)) return false;
     if (userData.id == hg.common.spikeyId) return true;
-    let g = hg.client.guilds.get(gId);
+    const g = hg.client.guilds.get(gId);
 
-    let channel = g.channels.get(cId);
+    const channel = g.channels.get(cId);
     if (!channel) return false;
 
-    let m = g.members.get(userData.id);
+    const m = g.members.get(userData.id);
 
-    let perms = channel.permissionsFor(m);
+    const perms = channel.permissionsFor(m);
     if (!perms.has(hg.Discord.Permissions.FLAGS.VIEW_CHANNEL)) return false;
     if (!perms.has(hg.Discord.Permissions.FLAGS.SEND_MESSAGES)) return false;
     return true;
@@ -412,7 +412,7 @@ function HGWeb(hg) {
    * } The created message-like object.
    */
   function makeMessage(uId, gId, cId, msg) {
-    let g = hg.client.guilds.get(gId);
+    const g = hg.client.guilds.get(gId);
     if (!g) return null;
     return {
       member: g.members.get(uId),
@@ -494,7 +494,7 @@ function HGWeb(hg) {
     } else {
       const numReplies = (Object.entries(siblingSockets).length || 0);
       let replied = 0;
-      let guildBuffer = {};
+      const guildBuffer = {};
       /**
        * The callback for each response with the requested data. Replies to the
        * user once all requests have replied.
@@ -544,7 +544,7 @@ function HGWeb(hg) {
           return obj.id != '420045052690169856';
         });
       }
-      let strippedGuilds = stripGuilds(guilds, userData);
+      const strippedGuilds = stripGuilds(guilds, userData);
       done(strippedGuilds);
     } catch (err) {
       hg.error(err);
@@ -586,8 +586,8 @@ function HGWeb(hg) {
               },
               {});
 
-      let member = g.members.get(userData.id);
-      let newG = {};
+      const member = g.members.get(userData.id);
+      const newG = {};
       newG.iconURL = g.iconURL();
       newG.name = g.name;
       newG.id = g.id;
@@ -639,7 +639,7 @@ function HGWeb(hg) {
       return;
     }
 
-    let guild = hg.client.guilds.get(gId);
+    const guild = hg.client.guilds.get(gId);
     if (!guild) {
       cb(null);
       return;
@@ -665,11 +665,11 @@ function HGWeb(hg) {
    */
   function fetchMember(userData, socket, gId, mId, cb) {
     if (!checkPerm(userData, gId, null, 'players')) return;
-    let g = hg.client.guilds.get(gId);
+    const g = hg.client.guilds.get(gId);
     if (!g) return;
-    let m = g.members.get(mId);
+    const m = g.members.get(mId);
     if (!m) return;
-    let finalMember = makeMember(m);
+    const finalMember = makeMember(m);
 
     if (typeof cb === 'function') cb();
     socket.emit('member', gId, mId, finalMember);
@@ -689,14 +689,14 @@ function HGWeb(hg) {
    */
   function fetchChannel(userData, socket, gId, cId, cb) {
     if (!checkChannelPerm(userData, gId, cId, '')) return;
-    let g = hg.client.guilds.get(gId);
+    const g = hg.client.guilds.get(gId);
     if (!g) return;
-    let m = g.members.get(userData.id);
-    let channel = g.channels.get(cId);
+    const m = g.members.get(userData.id);
+    const channel = g.channels.get(cId);
 
-    let perms = channel.permissionsFor(m) || {bitfield: 0};
+    const perms = channel.permissionsFor(m) || {bitfield: 0};
 
-    let stripped = {};
+    const stripped = {};
     stripped.id = channel.id;
     stripped.permissions = perms.bitfield;
     stripped.name = channel.name;
@@ -763,7 +763,7 @@ function HGWeb(hg) {
         }
       }
     }
-    let game = hg.getGame(gId);
+    const game = hg.getGame(gId);
     if (!game || !game.currentGame || !game.currentGame.day) {
       if (typeof cb === 'function') cb('NO_GAME_IN_GUILD');
       socket.emit(
@@ -1071,7 +1071,7 @@ function HGWeb(hg) {
       replyNoPerm(socket, 'editTeam');
       return;
     }
-    let message = hg.editTeam(userData.id, gId, cmd, one, two);
+    const message = hg.editTeam(userData.id, gId, cmd, one, two);
     if (message) socket.emit('message', message);
     if (typeof cb === 'function') cb();
     // socket.emit('game', gId, hg.getGame(gId));
@@ -1108,7 +1108,7 @@ function HGWeb(hg) {
       replyNoPerm(socket, 'createEvent');
       return;
     }
-    let err =
+    const err =
         hg.makeAndAddEvent(gId, type, message, nV, nA, oV, oA, kV, kA, wV, wA);
     if (err) {
       if (typeof cb === 'function') cb('ATTEMPT_FAILED');
@@ -1145,7 +1145,7 @@ function HGWeb(hg) {
       replyNoPerm(socket, 'createMajorEvent');
       return;
     }
-    let err = hg.addMajorEvent(gId, type, data, name);
+    const err = hg.addMajorEvent(gId, type, data, name);
     if (err) {
       if (typeof cb === 'function') cb('ATTEMPT_FAILED');
       socket.emit('message', 'Failed to create event: ' + err);
@@ -1184,7 +1184,7 @@ function HGWeb(hg) {
       replyNoPerm(socket, 'removeMajorEvent');
       return;
     }
-    let err = hg.editMajorEvent(gId, type, search, data, name, newName);
+    const err = hg.editMajorEvent(gId, type, search, data, name, newName);
     if (err) {
       if (typeof cb === 'function') cb('ATTEMPT_FAILED');
       socket.emit('message', 'Failed to edit event: ' + err);
@@ -1217,7 +1217,7 @@ function HGWeb(hg) {
       replyNoPerm(socket, 'removeEvent');
       return;
     }
-    let err = hg.removeEvent(gId, type, event);
+    const err = hg.removeEvent(gId, type, event);
     if (err) {
       if (typeof cb === 'function') cb('ATTEMPT_FAILED');
       socket.emit('message', 'Failed to remove event: ' + err);
@@ -1253,7 +1253,7 @@ function HGWeb(hg) {
       replyNoPerm(socket, 'removeEvent');
       return;
     }
-    let err = hg.toggleEvent(gId, type, subCat, event, value);
+    const err = hg.toggleEvent(gId, type, subCat, event, value);
     if (err) {
       if (typeof cb === 'function') cb('ATTEMPT_FAILED');
       socket.emit('message', 'Failed to toggle event: ' + err);

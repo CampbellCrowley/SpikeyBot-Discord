@@ -38,7 +38,7 @@ function Spotify() {
   /** @inheritdoc */
   this.shutdown = function() {
     self.command.deleteEvent('spotify');
-    for (let i in following) {
+    for (const i in following) {
       if (following[i]) endFollow({guild: {id: i}});
     }
   };
@@ -53,7 +53,7 @@ function Spotify() {
    * @private
    * @type {Object}
    */
-  let following = {};
+  const following = {};
 
   /**
    * Lookup what a user is listening to on Spotify, then attempt to play the
@@ -73,7 +73,7 @@ function Spotify() {
     if (msg.mentions.users.size > 0) {
       userId = msg.mentions.users.first().id;
     }
-    let subCmd = msg.text.trim().split(' ')[0];
+    const subCmd = msg.text.trim().split(' ')[0];
     let infoOnly = false;
     switch (subCmd) {
       case 'info':
@@ -144,7 +144,7 @@ function Spotify() {
         cb('Unlinked');
         return;
       }
-      let req = https.request(apiRequest, (res) => {
+      const req = https.request(apiRequest, (res) => {
         let content = '';
         res.on('data', (chunk) => {
           content += chunk;
@@ -164,12 +164,12 @@ function Spotify() {
               cb('Nothing Playing');
               return;
             }
-            let artists = (parsed.item.artists || [])
+            const artists = (parsed.item.artists || [])
                 .map((a) => {
                   return a.name;
                 })
                 .join(', ');
-            let songInfo = {
+            const songInfo = {
               name: parsed.item.name,
               artist: artists,
               album: parsed.item.album.name,
@@ -262,7 +262,7 @@ function Spotify() {
       };
 
       if (!songInfo || songInfo.duration) {
-        let delay = songInfo ? (songInfo.duration - songInfo.progress) : 3000;
+        const delay = songInfo ? (songInfo.duration - songInfo.progress) : 3000;
         following[msg.guild.id].timeout = self.client.setTimeout(function() {
           updateFollowingState(msg, userId);
         }, delay);
@@ -291,13 +291,13 @@ function Spotify() {
       endFollow(msg);
       return;
     }
-    let dur = music.getDuration(msg);
-    let prog = music.getProgress(msg);
+    const dur = music.getDuration(msg);
+    const prog = music.getProgress(msg);
     if (dur != null && prog != null) {
       following[msg.guild.id].song.duration = dur * 1000;
-      let f = following[msg.guild.id];
+      const f = following[msg.guild.id];
 
-      let delay = f.song.duration - f.song.progress;
+      const delay = f.song.duration - f.song.progress;
       following[msg.guild.id].timeout = self.client.setTimeout(function() {
         updateFollowingState(msg, userId);
       }, delay);
@@ -319,7 +319,7 @@ function Spotify() {
    */
   function startMusic(msg, song) {
     checkMusic();
-    let seek = Math.round(song.progress / 1000 + (song.progress / 1000 / 5));
+    const seek = Math.round(song.progress / 1000 + (song.progress / 1000 / 5));
     music.playSong(msg, song.name + ' by ' + song.artist, seek, true);
   }
 

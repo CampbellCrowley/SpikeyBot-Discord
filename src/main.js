@@ -149,7 +149,7 @@ function Main() {
    * @private
    * @type {Object.<boolean>}
    */
-  let disabledAutoSmite = {};
+  const disabledAutoSmite = {};
 
   /**
    * All guilds that have disabled sending messages when someone is banned.
@@ -157,7 +157,7 @@ function Main() {
    * @private
    * @type {Object.<boolean>}
    */
-  let disabledBanMessage = {};
+  const disabledBanMessage = {};
 
   /**
    * The guilds that have disabled the rigged messages.
@@ -165,7 +165,7 @@ function Main() {
    * @private
    * @type {Object.<boolean>}
    */
-  let disabledRiggedCounter = {};
+  const disabledRiggedCounter = {};
 
   /**
    * The guilds with auto-smite enabled, and members who have mentioned
@@ -174,7 +174,7 @@ function Main() {
    * @private
    * @type {Object.<Object.<string>>}
    */
-  let mentionAccumulator = {};
+  const mentionAccumulator = {};
 
   /**
    * The introduction message the bots sends when pmme is used.
@@ -405,20 +405,20 @@ function Main() {
         console.log(err);
         return;
       }
-      let tmp = file * 1;
+      const tmp = file * 1;
       if (!isNaN(tmp)) self.client.riggedCounter = tmp;
       else console.log(tmp, 'is not a number');
     });
 
     // Format help message into rich embed.
-    let tmpHelp = new self.Discord.MessageEmbed();
+    const tmpHelp = new self.Discord.MessageEmbed();
     tmpHelp.setTitle(
         helpObject.title.replaceAll('{prefix}', self.bot.getPrefix()));
     tmpHelp.setURL(self.common.webURL);
     tmpHelp.setDescription(
         helpObject.description.replaceAll('{prefix}', self.bot.getPrefix()));
     helpObject.sections.forEach(function(obj) {
-      let titleID = encodeURIComponent(obj.title);
+      const titleID = encodeURIComponent(obj.title);
       const titleURL = '[web](' + self.common.webHelp + '#' + titleID + ')';
       tmpHelp.addField(
           obj.title, titleURL + '```js\n' +
@@ -448,7 +448,7 @@ function Main() {
     self.helpMessage = tmpHelp;
 
     // Format admin help message into rich embed.
-    let tmpAdminHelp = new self.Discord.MessageEmbed();
+    const tmpAdminHelp = new self.Discord.MessageEmbed();
     tmpAdminHelp.setTitle(
         adminHelpObject.title.replaceAll('{prefix}', self.bot.getPrefix()));
     tmpAdminHelp.setURL(self.common.webURL);
@@ -456,7 +456,7 @@ function Main() {
         adminHelpObject.description.replaceAll(
             '{prefix}', self.bot.getPrefix()));
     adminHelpObject.sections.forEach(function(obj) {
-      let titleID = encodeURIComponent(obj.title);
+      const titleID = encodeURIComponent(obj.title);
       const titleURL = '[web](' + self.common.webHelp + '#' + titleID + ')';
       tmpAdminHelp.addField(
           obj.title, titleURL + '```js\n' +
@@ -587,7 +587,7 @@ function Main() {
     self.client.guilds.forEach(function(g) {
       const dir = self.common.guildSaveDir + g.id;
       const filename = dir + '/main-config.json';
-      let obj = {
+      const obj = {
         disabledAutoSmite: disabledAutoSmite[g.id],
         disabledBanMessage: disabledBanMessage[g.id],
         disabledRiggedCounter: disabledRiggedCounter[g.id],
@@ -677,7 +677,7 @@ function Main() {
     try {
       guild.channels.forEach(function(val, key) {
         if (val.type == 'text') {
-          let perms = val.permissionsFor(self.client.user);
+          const perms = val.permissionsFor(self.client.user);
           if ((pos == -1 || val.position < pos) && perms &&
               perms.has(self.Discord.Permissions.FLAGS.SEND_MESSAGES)) {
             pos = val.position;
@@ -829,15 +829,15 @@ function Main() {
     if (msg.author.id != self.client.user.id &&
         msg.author.id != self.common.spikeyId) {
       let riggedSimilarity = 0;
-      let matchedRigged = msg.content.toLowerCase().replace(/\W/g, '').match(
+      const matchedRigged = msg.content.toLowerCase().replace(/\W/g, '').match(
           /r[^i]*i[^g]*g[^g]*g[^e]*e[^d]*d/g);
       if (matchedRigged) {
         // let startCount = self.client.riggedCounter;
         let matchCount = 0;
         for (let i = 0; i < matchedRigged.length; i++) {
-          let check = matchedRigged[i].replace(/([\S])\1+/g, '$1');
+          const check = matchedRigged[i].replace(/([\S])\1+/g, '$1');
           riggedSimilarity = checkSimilarity('riged', check);
-          let similarityCheck = riggedSimilarity > 0.6667 &&
+          const similarityCheck = riggedSimilarity > 0.6667 &&
               riggedSimilarity > checkSimilarity('trigered', check);
           if (similarityCheck) {
             matchCount++;
@@ -884,9 +884,9 @@ function Main() {
         mentionAccumulator[msg.guild.id][msg.author.id].push(
             msg.createdTimestamp);
 
-        let timestamps = mentionAccumulator[msg.guild.id][msg.author.id];
+        const timestamps = mentionAccumulator[msg.guild.id][msg.author.id];
         let count = 0;
-        let now = Date.now();
+        const now = Date.now();
         for (let i = timestamps.length - 1; i >= 0; i--) {
           if (now - timestamps[i] < 2 * 60 * 1000) {
             count++;
@@ -897,7 +897,7 @@ function Main() {
         if (count == 3) {
           let hasMuteRole = false;
           let muteRole;
-          let toMute = msg.member;
+          const toMute = msg.member;
           msg.guild.roles.forEach(function(val, key) {
             if (val.name == 'MentionAbuser') {
               hasMuteRole = true;
@@ -912,7 +912,7 @@ function Main() {
               });
               member.guild.channels.forEach(function(channel) {
                 if (channel.permissionsLocked) return;
-                let overwrites = channel.permissionOverwrites.get(role.id);
+                const overwrites = channel.permissionOverwrites.get(role.id);
                 if (overwrites) {
                   if (channel.type == 'category') {
                     if (overwrites.deny.has(
@@ -987,7 +987,7 @@ function Main() {
       longer = s2;
       shorter = s1;
     }
-    let longerLength = longer.length;
+    const longerLength = longer.length;
     if (longerLength == 0) {
       return 1.0;
     }
@@ -1006,7 +1006,7 @@ function Main() {
     s1 = s1.toLowerCase();
     s2 = s2.toLowerCase();
 
-    let costs = [];
+    const costs = [];
     for (let i = 0; i <= s1.length; i++) {
       let lastValue = i;
       for (let j = 0; j <= s2.length; j++) {
@@ -1066,7 +1066,7 @@ function Main() {
     }
     let number = 0;
     let numNonNumber = 0;
-    for (let i in splitstring) {
+    for (const i in splitstring) {
       if (typeof(splitstring[i] * 1) !== 'number') {
         numNonNumber++;
       } else {
@@ -1103,9 +1103,9 @@ function Main() {
    */
   function commandSimplify(msg) {
     try {
-      let formula = msg.text;
-      let simplified = simplify(formula);
-      let hasVar = simplified.match(/[A-Za-z]/);
+      const formula = msg.text;
+      const simplified = simplify(formula);
+      const hasVar = simplified.match(/[A-Za-z]/);
       self.common.reply(msg, (hasVar ? '0 = ' : '') + simplified);
     } catch (err) {
       self.common.reply(msg, err.message);
@@ -1120,10 +1120,10 @@ function Main() {
    */
   function simplify(formula) {
     if (formula.indexOf('=') > -1) {
-      let split = formula.split('=');
+      const split = formula.split('=');
       formula = split[1] + ' - (' + split[0] + ')';
     }
-    let simplified = math.simplify(formula).toString();
+    const simplified = math.simplify(formula).toString();
     return simplified;
   }
 
@@ -1154,7 +1154,7 @@ function Main() {
       return;
     }
     let error = '';
-    let messages = [];
+    const messages = [];
     for (let i = 0; i < variables.length; i++) {
       let parsed;
       try {
@@ -1191,7 +1191,7 @@ function Main() {
     try {
       let formula = msg.text;
       if (formula.indexOf('=') > -1) {
-        let split = formula.split('=');
+        const split = formula.split('=');
         formula = split[1] + ' - (' + split[0] + ')';
       }
       let simplified = math.eval(formula).toString();
@@ -1221,12 +1221,12 @@ function Main() {
     let domainMax;
     let rangeMin;
     let rangeMax;
-    let cmd = msg.text;
+    const cmd = msg.text;
     let expression = cmd.replace(/\[.*\]|\n/gm, '');
     try {
-      let expr = math.compile(expression);
-      let domainTemp = cmd.match(/\[([^,]*),([^\]]*)\]/m);
-      let rangeTemp = cmd.match(/\[[^\]]*\][^\[]*\[([^,]*),([^\]]*)\]/m);
+      const expr = math.compile(expression);
+      const domainTemp = cmd.match(/\[([^,]*),([^\]]*)\]/m);
+      const rangeTemp = cmd.match(/\[[^\]]*\][^\[]*\[([^,]*),([^\]]*)\]/m);
       if (domainTemp !== null && domainTemp.length == 3) {
         domainMin = math.eval(domainTemp[1]);
         domainMax = math.eval(domainTemp[2]);
@@ -1246,10 +1246,10 @@ function Main() {
       try {
         let formula = expression;
         if (formula.indexOf('=') > -1) {
-          let split = formula.split('=');
+          const split = formula.split('=');
           formula = split[1] + ' - (' + split[0] + ')';
         }
-        let exprSlope = math.derivative(formula, 'x');
+        const exprSlope = math.derivative(formula, 'x');
         ypVal = xVal.map(function(x) {
           return exprSlope.eval({x: x});
         });
@@ -1264,7 +1264,7 @@ function Main() {
       self.common.reply(msg, err.message);
       return;
     }
-    let finalImage = new Jimp(graphSize, graphSize, 0xFFFFFFFF);
+    const finalImage = new Jimp(graphSize, graphSize, 0xFFFFFFFF);
     let minY = 0;
     let maxY = 0;
     if (typeof rangeMin === 'undefined') {
@@ -1278,14 +1278,14 @@ function Main() {
       minY = rangeMin;
       maxY = rangeMax;
     }
-    let zeroY = Math.round(-minY / (maxY - minY) * graphSize);
-    let zeroX = Math.round(-domainMin / (domainMax - domainMin) * graphSize);
+    const zeroY = Math.round(-minY / (maxY - minY) * graphSize);
+    const zeroX = Math.round(-domainMin / (domainMax - domainMin) * graphSize);
     finalImage.blit(new Jimp(dotSize, graphSize, 0xDDDDDDFF), zeroX, 0);
     finalImage.blit(
         new Jimp(graphSize, dotSize, 0xDDDDDDFF), 0, graphSize - zeroY);
 
     let lastSlope;
-    let turningPoints = [];
+    const turningPoints = [];
     for (let i = 0; i < xVal.length; i++) {
       const y =
           graphSize - Math.round((yVal[i] - minY) / (maxY - minY) * graphSize);
@@ -1302,14 +1302,14 @@ function Main() {
       finalImage.blit(
           new Jimp(mySize, mySize, myColor), i / xVal.length * graphSize, y);
     }
-    let expMatch = expression.match(/^\s?[yY]\s*=(.*)/);
+    const expMatch = expression.match(/^\s?[yY]\s*=(.*)/);
     if (!expMatch) {
       expression = 'y = ' + simplify(expression);
     } else {
       expression = 'y = ' + simplify(expMatch[1]);
     }
     finalImage.getBuffer(Jimp.MIME_PNG, function(err, out) {
-      let embed = new self.Discord.MessageEmbed();
+      const embed = new self.Discord.MessageEmbed();
       embed.setTitle('Graph of ' + expression);
       embed.setDescription(
           'Plot Domain: [' + domainMin + ', ' + domainMax + ']\nPlot Range: [' +
@@ -1341,7 +1341,7 @@ function Main() {
     try {
       let formula = msg.text;
       if (formula.indexOf('=') > -1) {
-        let split = formula.split('=');
+        const split = formula.split('=');
         formula = split[1] + ' - (' + split[0] + ')';
       }
       let simplified = math.derivative(formula, 'x').toString();
@@ -1366,10 +1366,10 @@ function Main() {
    * @listens Command#reminders
    */
   function commandTimer(msg) {
-    let split = msg.content.split(' ').slice(1);
+    const split = msg.content.split(' ').slice(1);
     if (split.length == 0) {
       let num = 0;
-      let messages =
+      const messages =
           timers
               .filter(function(obj) {
                 return obj.id == msg.author.id;
@@ -1387,7 +1387,7 @@ function Main() {
     let time = split.splice(0, 1);
     let unit = (split[0] || '').toLowerCase();
     let skipSplice = false;
-    let matchUnit = (time + '').match(/(\d+)([a-zA-Z]+)\b/);
+    const matchUnit = (time + '').match(/(\d+)([a-zA-Z]+)\b/);
     if (matchUnit) {
       time = matchUnit[1];
       unit = matchUnit[2];
@@ -1433,8 +1433,8 @@ function Main() {
         if (!skipSplice) split.splice(0, 1);
         break;
     }
-    let origMessage = split.join(' ');
-    let message = origMessage ||
+    const origMessage = split.join(' ');
+    const message = origMessage ||
         'Your timer for ' + time + ' minute' + (time == '1' ? '' : 's') +
             ' is over!';
 
@@ -1468,7 +1468,7 @@ function Main() {
    */
   function commandSay(msg) {
     if (msg.delete) msg.delete().catch(() => {});
-    let content = msg.text.trim();
+    const content = msg.text.trim();
     msg.channel.send(content || '\u200B').catch((err) => {
       self.warn(
           'Failed to send message in channel: ' + msg.channel.id + ': ' +
@@ -1631,7 +1631,7 @@ function Main() {
      * @private
      */
     function lookupByName() {
-      let userObject = self.client.users.find((user) => {
+      const userObject = self.client.users.find((user) => {
         return user.tag.toLowerCase() == userString.toLowerCase();
       });
       if (userObject) {
@@ -1680,14 +1680,14 @@ function Main() {
    * @listens Command#flip
    */
   function commandFlip(msg) {
-    let rand = Math.round(Math.random());
+    const rand = Math.round(Math.random());
     let url = 'https://www.campbellcrowley.com/heads.png';
     let text = 'Heads!';
     if (rand) {
       url = 'https://www.campbellcrowley.com/tails.png';
       text = 'Tails!';
     }
-    let embed = new self.Discord.MessageEmbed({title: text});
+    const embed = new self.Discord.MessageEmbed({title: text});
     embed.setImage(url);
     msg.channel.send(embed);
   }
@@ -1709,7 +1709,7 @@ function Main() {
               'permission to Manage Messages.');
       return;
     }
-    let numString = msg.text.replace(/\<[^\>]*>|\s/g, '');
+    const numString = msg.text.replace(/\<[^\>]*>|\s/g, '');
     let num = (numString * 1) + 1;
     if (numString.length === 0 || isNaN(num)) {
       self.common.reply(
@@ -1722,7 +1722,7 @@ function Main() {
       }
       if (msg.mentions.users.size > 0) {
         if (!limited) num--;
-        let toDelete = msg.channel.messages.filter(function(obj) {
+        const toDelete = msg.channel.messages.filter(function(obj) {
           return msg.mentions.users.find(function(mention) {
             return obj.author.id === mention.id;
           });
@@ -1769,7 +1769,7 @@ function Main() {
           .reply(msg, 'You must mention someone to ban after the command.')
           .catch(() => {});
     } else {
-      let reason =
+      const reason =
           msg.text.replace(self.Discord.MessageMentions.USERS_PATTERN, '')
               .trim();
       msg.mentions.members.forEach(function(toBan) {
@@ -1783,7 +1783,7 @@ function Main() {
               .catch(() => {});
         } else {
           msg.guild.members.fetch(self.client.user).then((me) => {
-            let myRole = me.roles.highest;
+            const myRole = me.roles.highest;
             if (toBan.roles.highest &&
                 myRole.comparePositionTo(toBan.roles.highest) <= 0) {
               self.common
@@ -1792,7 +1792,8 @@ function Main() {
                           '! I am not strong enough!')
                   .catch(() => {});
             } else {
-              let banMsg = banMsgs[Math.floor(Math.random() * banMsgs.length)];
+              const banMsg =
+                  banMsgs[Math.floor(Math.random() * banMsgs.length)];
               toBan.ban({reason: reason || banMsg})
                   .then(() => {
                     self.common
@@ -1830,7 +1831,7 @@ function Main() {
       self.common.reply(
           msg, 'You must mention someone to ban after the command.');
     } else {
-      let toSmite = msg.mentions.members.first();
+      const toSmite = msg.mentions.members.first();
       if (msg.guild.ownerID !== msg.author.id &&
           msg.member.roles.highest.comparePositionTo(toSmite.roles.highest) <=
               0) {
@@ -1840,7 +1841,7 @@ function Main() {
             'Your role is not higher than theirs.');
       } else {
         msg.guild.members.fetch(self.client.user).then((me) => {
-          let myRole = me.roles.highest;
+          const myRole = me.roles.highest;
           if (toSmite.roles.highest &&
               self.Discord.Role.comparePositions(
                   myRole, toSmite.roles.highest) <= 0) {
@@ -1857,7 +1858,7 @@ function Main() {
                 smiteRole = val;
               }
             });
-            let smite = function(role, member) {
+            const smite = function(role, member) {
               try {
                 member.roles.set([role])
                     .then(() => {
@@ -1878,7 +1879,7 @@ function Main() {
                     });
                 member.guild.channels.forEach(function(channel) {
                   if (channel.permissionsLocked) return;
-                  let overwrites = channel.permissionOverwrites.get(role.id);
+                  const overwrites = channel.permissionOverwrites.get(role.id);
                   if (overwrites) {
                     if (channel.type == 'category') {
                       if (overwrites.deny.has(
@@ -1952,7 +1953,7 @@ function Main() {
    * @listens Command#avatar
    */
   function commandAvatar(msg) {
-    let embed = new self.Discord.MessageEmbed();
+    const embed = new self.Discord.MessageEmbed();
     if (msg.mentions.users.size > 0) {
       embed.setDescription(
           msg.mentions.users.first().username + '\'s profile picture');
@@ -1991,8 +1992,8 @@ function Main() {
    * @listens Command#uptime
    */
   function commandUptime(msg) {
-    let ut = self.client.uptime;
-    let formattedUptime = Math.floor(ut / 1000 / 60 / 60 / 24) + ' Days, ' +
+    const ut = self.client.uptime;
+    const formattedUptime = Math.floor(ut / 1000 / 60 / 60 / 24) + ' Days, ' +
         Math.floor(ut / 1000 / 60 / 60) % 24 + ' Hours, ' +
         Math.floor(ut / 1000 / 60) % 60 + ' Minutes, ' +
         Math.floor((ut / 1000) % 60) + ' Seconds.';
@@ -2013,7 +2014,7 @@ function Main() {
     if (msg.mentions.users.size !== 0) {
       user = msg.mentions.users.first();
     }
-    let p = user.presence;
+    const p = user.presence;
     if (p.activity) {
       let finalString = p.activity.type + ': ' + p.activity.name + '(' +
           p.activity.url + ')\nDetails: ' + (p.activity.details || 'none') +
@@ -2097,7 +2098,7 @@ function Main() {
    * @listens Command#d
    */
   function commandRollDie(msg) {
-    let embed = new self.Discord.MessageEmbed();
+    const embed = new self.Discord.MessageEmbed();
 
     let numbers = msg.text.split(/\s+/).splice(1);
     let allSame = true;
@@ -2106,10 +2107,10 @@ function Main() {
     } else {
       let matchNum = 0;
       for (let i = 0; i < numbers.length; i++) {
-        let el = numbers[i];
-        let match = el.match(/(\d*)([xXdD\*])(\d+)/);
+        const el = numbers[i];
+        const match = el.match(/(\d*)([xXdD\*])(\d+)/);
         if (!match) {
-          let firstNum = el.match(/(\d+)/);
+          const firstNum = el.match(/(\d+)/);
           if (!firstNum) {
             numbers.splice(i, 1);
             i--;
@@ -2123,7 +2124,7 @@ function Main() {
           }
         } else {
           if (match[2].toLowerCase() == 'd') {
-            let temp = match[3];
+            const temp = match[3];
             match[3] = match[1];
             match[1] = temp;
           }
@@ -2149,7 +2150,7 @@ function Main() {
       return;
     }
 
-    let outcomes = [];
+    const outcomes = [];
     numbers.forEach((el, i) => {
       outcomes[i] = Math.ceil(Math.random() * el);
     });
@@ -2168,7 +2169,7 @@ function Main() {
       let sum = 0;
       let max = 0;
       let min = outcomes[0];
-      let outList = outcomes.slice(0);
+      const outList = outcomes.slice(0);
       numbers.forEach((el, i) => {
         sum += outcomes[i];
         max = Math.max(max, outcomes[i]);
@@ -2187,7 +2188,7 @@ function Main() {
       let sum = 0;
       let max = 0;
       let min = outcomes[0];
-      let outList = numbers.map((el, i) => {
+      const outList = numbers.map((el, i) => {
         sum += outcomes[i];
         max = Math.max(max, outcomes[i]);
         min = Math.min(min, outcomes[i]);
@@ -2228,10 +2229,10 @@ function Main() {
   function commandPerms(msg) {
     let chan = msg.channel;
     let guild = msg.guild;
-    let mem = msg.member;
+    const mem = msg.member;
     let author = msg.author;
 
-    let id = msg.text.trim();
+    const id = msg.text.trim();
     if (self.common.spikeyId == msg.author.id && id) {
       author = null;
       chan = self.client.channels.get(id);
@@ -2243,7 +2244,7 @@ function Main() {
       }
     }
 
-    let embed = new self.Discord.MessageEmbed();
+    const embed = new self.Discord.MessageEmbed();
     embed.setTitle('Permissions');
     if (chan) {
       embed.addField(
@@ -2268,8 +2269,8 @@ function Main() {
                 31) +
             ' Me```');
 
-    let allPermPairs = Object.entries(self.Discord.Permissions.FLAGS);
-    let formatted = allPermPairs.map((el) => {
+    const allPermPairs = Object.entries(self.Discord.Permissions.FLAGS);
+    const formatted = allPermPairs.map((el) => {
       return prePad(el[1].toString(2), 31) + ' ' + el[0];
     }).join('\n');
     embed.setDescription('```css\n' + formatted + '```');
@@ -2306,7 +2307,7 @@ function Main() {
   function commandStats(msg) {
     msg.channel.startTyping();
     self.bot.getStats((values) => {
-      let embed = new self.Discord.MessageEmbed();
+      const embed = new self.Discord.MessageEmbed();
       embed.setTitle('SpikeyBot Stats');
       embed.setDescription(
           'These statistics are collected from the entire bot, ' +
@@ -2369,7 +2370,7 @@ function Main() {
      * @private
      * @default
      */
-    let values = {
+    const values = {
       numGuilds: 0,
       numLargestGuild: 0,
       shardGuilds: {},
@@ -2398,12 +2399,12 @@ function Main() {
      */
     function statsResponse(res) {
       const parseStart = Date.now();
-      let delays = new Array(res.length);
+      const delays = new Array(res.length);
       values.uptimes = new Array(res.length);
       values.versions = new Array(res.length);
 
-      let tempActs = {};
-      let tempOffline = {};
+      const tempActs = {};
+      const tempOffline = {};
 
       for (let i = 0; i < res.length; i++) {
         values.numGuilds += res[i].numGuilds;
@@ -2417,7 +2418,7 @@ function Main() {
         values.numChannels += res[i].numChannels;
         values.uptimes[i] = res[i].uptime;
         values.versions[i] = res[i].version;
-        let actVals = Object.entries(res[i].activities);
+        const actVals = Object.entries(res[i].activities);
         for (let j = 0; j < actVals.length; j++) {
           if (tempActs[actVals[j][0]]) {
             Object.assign(tempActs[actVals[j][0]], actVals[j][1]);
@@ -2429,9 +2430,9 @@ function Main() {
         delays[i] = res[i].deltaString;
       }
       values.numUsersOnline = values.numUsers - Object.keys(tempOffline).length;
-      let tmpVals = Object.entries(tempActs);
+      const tmpVals = Object.entries(tempActs);
       for (let i = 0; i < tmpVals.length; i++) {
-        let count = Object.keys(tmpVals[i][1]).length;
+        const count = Object.keys(tmpVals[i][1]).length;
         values.activities[tmpVals[i][0]] = count;
 
         if (count > values.largestActivity.count) {
@@ -2462,7 +2463,7 @@ function Main() {
    */
   function getStats() {
     const startTime = Date.now();
-    let out = {
+    const out = {
       numGuilds: 0,
       numLargestGuild: 0,
       numUsers: 0,
@@ -2491,12 +2492,12 @@ function Main() {
           return;
         }
         if (!p.activity || p.user.bot) return;
-        let name = p.activity.name;
+        const name = p.activity.name;
         if (!out.activities[name]) out.activities[name] = {};
         out.activities[name][p.userID] = 1;
       });
     });
-    let guildDelta = Date.now() - iTime;
+    const guildDelta = Date.now() - iTime;
     out.numMembers = totalNum;
     out.numLargestGuild = maxNum;
 
@@ -2509,7 +2510,7 @@ function Main() {
     out.numUsers = self.client.users.size;
     out.numChannels = self.client.channels.size;
 
-    let ut = self.client.uptime;
+    const ut = self.client.uptime;
     out.uptime = Math.floor(ut / 1000 / 60 / 60 / 24) + ' Days, ' +
         Math.floor(ut / 1000 / 60 / 60) % 24 + ' Hours';
     out.delta = Date.now() - startTime;
@@ -2526,14 +2527,14 @@ function Main() {
    * @listens Command#lookup
    */
   function commandLookup(msg) {
-    let id = msg.text.split(' ')[1];
+    const id = msg.text.split(' ')[1];
 
-    let user = self.client.users.get(id);
-    let guild = self.client.guilds.get(id);
-    let channel = self.client.channels.get(id);
+    const user = self.client.users.get(id);
+    const guild = self.client.guilds.get(id);
+    const channel = self.client.channels.get(id);
 
     if (user) {
-      let guilds = [];
+      const guilds = [];
       self.client.guilds.forEach((g) => {
         if (g.members.get(id)) guilds.push(g.id);
       });
@@ -2606,8 +2607,8 @@ function Main() {
       self.common.reply(msg, 'Please specify a channel and a message.');
       return;
     }
-    let channel = self.client.channels.get(idString);
-    let user = self.client.users.get(idString);
+    const channel = self.client.channels.get(idString);
+    const user = self.client.users.get(idString);
     if (channel) {
       channel.send(msg.text.split(' ').slice(2).join(' '))
           .then(() => {
@@ -2647,7 +2648,7 @@ function Main() {
    */
   function commandThankYou(msg) {
     if (msg.mentions.members && msg.mentions.members.size > 0) {
-      let mentions = msg.mentions.members.map((el) => {
+      const mentions = msg.mentions.members.map((el) => {
         return '`' + (el.nickname || el.user.username).replace(/`/g, '`') + '`';
       });
       let mentionString = mentions[0];
@@ -2671,7 +2672,7 @@ function Main() {
    * @listens Command#listCommands
    */
   function commandListCommands(msg) {
-    let list = self.command.getAllNames().sort();
+    const list = self.command.getAllNames().sort();
     self.common.reply(msg, JSON.stringify(list), list.length);
   }
 
@@ -2707,7 +2708,7 @@ function Main() {
               msg.channel.send(`<@${msg.author.id}> ${err.message}`);
             } else {
               stdout = stdout.toString().trim().substr(0, 1900);
-              let out = `<@${msg.author.id}> \`\`\`md\n${stdout}\`\`\``;
+              const out = `<@${msg.author.id}> \`\`\`md\n${stdout}\`\`\``;
               msg.channel.send(out);
             }
           });

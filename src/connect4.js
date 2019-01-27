@@ -103,7 +103,7 @@ function Connect4() {
    * @listens Command#connect4
    */
   function commandConnect4(msg) {
-    let players = {p1: msg.author, p2: null};
+    const players = {p1: msg.author, p2: null};
     if (msg.mentions.users.size > 0) {
       players.p2 = msg.mentions.users.first();
     }
@@ -156,8 +156,8 @@ function Connect4() {
      * done, 1 is player 1, 2 is player 2, 3 is draw.
      */
     this.print = function(winner = 0) {
-      let embed = new self.Discord.MessageEmbed();
-      let names = ['Nobody', 'Nobody'];
+      const embed = new self.Discord.MessageEmbed();
+      const names = ['Nobody', 'Nobody'];
       let gameFull = true;
       if (this.players.p1) {
         names[0] = this.players.p1.username;
@@ -251,7 +251,7 @@ function Connect4() {
   this.createGame = function(players, channel) {
     numGames++;
     channel.send('`Loading Connect 4...`').then((msg) => {
-      let game = new self.Game(players, msg);
+      const game = new self.Game(players, msg);
       game.print();
       addReactions(msg);
       addListener(msg, game);
@@ -308,11 +308,11 @@ function Connect4() {
         return;
       }
       if (!game.players.p1 && game.turn == 1) {
-        let reactUsers = reactions.first().users.first(2);
+        const reactUsers = reactions.first().users.first(2);
         game.players.p1 = reactUsers[1] || reactUsers[0];
       }
       if (!game.players.p2 && game.turn == 2) {
-        let reactUsers = reactions.first().users.first(2);
+        const reactUsers = reactions.first().users.first(2);
         game.players.p2 = reactUsers[1] || reactUsers[0];
       }
 
@@ -343,7 +343,7 @@ function Connect4() {
       }
       row--;
       game.board[row][move] = game.turn;
-      let winner = checkWin(game.board, row, move);
+      const winner = checkWin(game.board, row, move);
       if (winner != 0) {
         msg.reactions.removeAll().catch(() => {});
       } else {
@@ -364,7 +364,7 @@ function Connect4() {
    * player 2 won, 3 if draw.
    */
   function checkWin(board, latestR, latestC) {
-    let player = board[latestR][latestC];
+    const player = board[latestR][latestC];
     // Column
     let count = 0;
     for (let r = latestR - 3; r <= latestR + 3 && r < numRows; r++) {

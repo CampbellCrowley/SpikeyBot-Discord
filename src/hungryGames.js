@@ -194,7 +194,7 @@ function HungryGames() {
    * @private
    * @type {Object.<number>}
    */
-  let findTimestamps = {};
+  const findTimestamps = {};
   /**
    * The delay after failing to find a guild's data to look for it again.
    *
@@ -611,7 +611,7 @@ function HungryGames() {
    * @type {Object.<HungryGames~GuildGame>}
    * @default
    */
-  let games = {};
+  const games = {};
   /**
    * All messages to show for games. Parsed from file.
    * @see {@link HungryGames~messageFile}
@@ -642,7 +642,7 @@ function HungryGames() {
    * @type {Object.<number>}
    * @default
    */
-  let dayEventIntervals = {};
+  const dayEventIntervals = {};
   /**
    * The timeout to continue autoplaying after the day ends. Used for cancelling
    * if user ends the game between days.
@@ -651,7 +651,7 @@ function HungryGames() {
    * @type {Object.<number>}
    * @default
    */
-  let autoPlayTimeout = {};
+  const autoPlayTimeout = {};
   /**
    * Storage of battle messages to edit the content of on the next update.
    *
@@ -659,7 +659,7 @@ function HungryGames() {
    * @type {Object.<Discord~Message>}
    * @default
    */
-  let battleMessage = {};
+  const battleMessage = {};
   /**
    * All weapons and their respective actions. Parsed from file.
    * @see {@link HungryGames~weaponsFile}
@@ -701,7 +701,7 @@ function HungryGames() {
    * @type {Object.<Discord~Message>}
    * @default
    */
-  let newEventMessages = {};
+  const newEventMessages = {};
   /**
    * Messages I have sent showing current options.
    *
@@ -709,7 +709,7 @@ function HungryGames() {
    * @type {Object.<Discord~Message>}
    * @default
    */
-  let optionMessages = {};
+  const optionMessages = {};
 
   /**
    * The last time the currently scheduled reaction event listeners are expected
@@ -728,7 +728,7 @@ function HungryGames() {
     fs.readFile(eventFile, function(err, data) {
       if (err) return;
       try {
-        let parsed = JSON.parse(data);
+        const parsed = JSON.parse(data);
         if (parsed) {
           defaultBloodbathEvents = deepFreeze(parsed['bloodbath']);
           defaultPlayerEvents = deepFreeze(parsed['player']);
@@ -759,7 +759,7 @@ function HungryGames() {
     fs.readFile(messageFile, function(err, data) {
       if (err) return;
       try {
-        let parsed = JSON.parse(data);
+        const parsed = JSON.parse(data);
         if (parsed) {
           messages = deepFreeze(parsed);
         }
@@ -788,7 +788,7 @@ function HungryGames() {
     fs.readFile(battleFile, function(err, data) {
       if (err) return;
       try {
-        let parsed = JSON.parse(data);
+        const parsed = JSON.parse(data);
         if (parsed) {
           battles = deepFreeze(parsed);
         }
@@ -816,7 +816,7 @@ function HungryGames() {
     fs.readFile(weaponsFile, function(err, data) {
       if (err) return;
       try {
-        let parsed = JSON.parse(data);
+        const parsed = JSON.parse(data);
         if (parsed) {
           weapons = deepFreeze(parsed);
         }
@@ -872,15 +872,15 @@ function HungryGames() {
     const prefix = self.bot.getPrefix() + self.postPrefix;
     self.helpMessage = '`' + prefix + 'help` for Hungry Games help.';
     // Format help message into rich embed.
-    let tmpHelp = new self.Discord.MessageEmbed();
+    const tmpHelp = new self.Discord.MessageEmbed();
     tmpHelp.setTitle(helpObject.title);
     tmpHelp.setURL(
         self.common.webURL + '#' + encodeURIComponent(helpObject.title));
     tmpHelp.setDescription(
         helpObject.description.replaceAll('{hgRole}', roleName));
     helpObject.sections.forEach(function(obj) {
-      let titleID = encodeURIComponent(obj.title);
-      let titleURL = '[web](' + self.common.webHelp + '#' + titleID + ')';
+      const titleID = encodeURIComponent(obj.title);
+      const titleURL = '[web](' + self.common.webHelp + '#' + titleID + ')';
       tmpHelp.addField(
           obj.title, titleURL + '```js\n' +
               obj.rows
@@ -914,7 +914,7 @@ function HungryGames() {
           self.Discord.Permissions.FLAGS.MANAGE_GUILD |
           self.Discord.Permissions.FLAGS.MANAGE_CHANNELS,
     };
-    let subCmds = [
+    const subCmds = [
       new self.command.SingleCommand('help', help),
       new self.command.SingleCommand('makemewin', commandMakeMeWin),
       new self.command.SingleCommand('makemelose', commandMakeMeLose),
@@ -986,7 +986,7 @@ function HungryGames() {
       new self.command.SingleCommand(
           ['rename', 'name'], mkCmd(commandRename), cmdOpts),
     ];
-    let hgCmd =
+    const hgCmd =
         new self.command.SingleCommand(
             [
               'hg',
@@ -999,8 +999,8 @@ function HungryGames() {
             ],
             function(msg) {
               if (cmdSearcher && msg.text && msg.text.length > 1) {
-                let toSearch = msg.text.trim().split(' ')[0];
-                let searched = cmdSearcher.search(toSearch);
+                const toSearch = msg.text.trim().split(' ')[0];
+                const searched = cmdSearcher.search(toSearch);
                 if (searched && searched.length > 0) {
                   if (searched.length > 1) {
                     self.common.reply(
@@ -1031,7 +1031,7 @@ function HungryGames() {
     self.client.on('guildDelete', onGuildDelete);
 
     self.client.guilds.forEach((g) => {
-      let game = find(g.id);
+      const game = find(g.id);
       if (!game) return;
 
       if (game.currentGame && game.currentGame.day.state > 1 &&
@@ -1370,7 +1370,7 @@ function HungryGames() {
    * @return {HungryGames~Player} Player object created from User.
    */
   function makePlayer(member) {
-    let user = member.user || member;
+    const user = member.user || member;
     return new Player(
         user.id, user.username, user.displayAvatarURL({format: 'png'}),
         member.nickname);
@@ -1526,7 +1526,7 @@ function HungryGames() {
             find(id).currentGame.includedUsers.length;
         const optKeys = Object.keys(defaultOptions);
         find(id).options = {};
-        for (let i in optKeys) {
+        for (const i in optKeys) {
           if (typeof optKeys[i] !== 'string') continue;
           if (typeof defaultOptions[optKeys[i]].value === 'object') {
             find(id).options[optKeys[i]] =
@@ -1616,7 +1616,7 @@ function HungryGames() {
         }
         return;
       }
-      let values = info.status;
+      const values = info.status;
       for (let i = 0; i < values.length; i++) {
         if (!patreonSettingKeys.includes(values[i])) continue;
         settingRequests++;
@@ -1734,7 +1734,7 @@ function HungryGames() {
    * @param {string} id Id of guild where this was triggered from.
    */
   function formTeams(id) {
-    let game = find(id);
+    const game = find(id);
     if (game.options.teamSize < 0) game.options.teamSize = 0;
     if (game.options.teamSize == 0) {
       game.currentGame.teams = [];
@@ -1743,8 +1743,9 @@ function HungryGames() {
 
     let corruptTeam = false;
 
-    let teamSize = game.options.teamSize;
-    let numTeams = Math.ceil(game.currentGame.includedUsers.length / teamSize);
+    const teamSize = game.options.teamSize;
+    const numTeams =
+        Math.ceil(game.currentGame.includedUsers.length / teamSize);
     // If teams already exist, update them. Otherwise, create new teams.
     if (game.currentGame.teams && game.currentGame.teams.length > 0) {
       game.currentGame.teams.forEach(function(obj) {
@@ -1762,10 +1763,10 @@ function HungryGames() {
       game.currentGame.teams.sort(function(a, b) {
         return a.id - b.id;
       });
-      let notIncluded = game.currentGame.includedUsers.slice(0);
+      const notIncluded = game.currentGame.includedUsers.slice(0);
       // Remove players from teams if they are no longer included in game.
       for (let i = 0; i < game.currentGame.teams.length; i++) {
-        let team = game.currentGame.teams[i];
+        const team = game.currentGame.teams[i];
         team.id = i;
         for (let j = 0; j < team.players.length; j++) {
           if (game.currentGame.includedUsers.findIndex(function(obj) {
@@ -1790,7 +1791,7 @@ function HungryGames() {
       for (let i = 0; i < notIncluded.length; i++) {
         let found = false;
         for (let j = 0; j < game.currentGame.teams.length; j++) {
-          let team = game.currentGame.teams[j];
+          const team = game.currentGame.teams[j];
           if (team.players.length < teamSize) {
             team.players.push(notIncluded[i].id);
             found = true;
@@ -1882,7 +1883,7 @@ function HungryGames() {
       } else if (command == 'options') {
         const optKeys = Object.keys(defaultOptions);
         find(id).options = {};
-        for (let i in optKeys) {
+        for (const i in optKeys) {
           if (typeof optKeys[i] !== 'string') continue;
           find(id).options[optKeys[i]] = defaultOptions[optKeys[i]].value;
         }
@@ -1925,7 +1926,7 @@ function HungryGames() {
       }
     }
     if (find(finalId)) {
-      let file = new self.Discord.MessageAttachment();
+      const file = new self.Discord.MessageAttachment();
       file.setFile(Buffer.from(JSON.stringify(find(finalId), null, 2)));
       file.setName('HG-' + finalId + '.json');
       msg.channel.send('HG Data for guild ' + finalId, file);
@@ -2023,7 +2024,7 @@ function HungryGames() {
               self.postPrefix + 'end" to abort)');
       return;
     }
-    let myPerms = msg.channel.permissionsFor(self.client.user.id);
+    const myPerms = msg.channel.permissionsFor(self.client.user.id);
     if (!myPerms ||
         (!myPerms.has(self.Discord.Permissions.FLAGS.ATTACH_FILES) &&
          !myPerms.has(self.Discord.Permissions.FLAGS.ADMINISTRATOR))) {
@@ -2058,19 +2059,19 @@ function HungryGames() {
 
     createGame(msg, id, true, loadingComplete);
 
-    let finalMessage = new self.Discord.MessageEmbed();
+    const finalMessage = new self.Discord.MessageEmbed();
     finalMessage.setTitle(getMessage('gameStart'));
     finalMessage.setColor(defaultColor);
 
-    let numUsers = find(id).currentGame.includedUsers.length;
+    const numUsers = find(id).currentGame.includedUsers.length;
     if (find(id).options.teamSize > 0) {
       find(id).currentGame.includedUsers.sort(function(a, b) {
-        let aTeam = find(id).currentGame.teams.findIndex(function(team) {
+        const aTeam = find(id).currentGame.teams.findIndex(function(team) {
           return team.players.findIndex(function(player) {
             return player == a.id;
           }) > -1;
         });
-        let bTeam = find(id).currentGame.teams.findIndex(function(team) {
+        const bTeam = find(id).currentGame.teams.findIndex(function(team) {
           return team.players.findIndex(function(player) {
             return player == b.id;
           }) > -1;
@@ -2083,7 +2084,7 @@ function HungryGames() {
       });
     }
     let prevTeam = -1;
-    let statusList = find(id).currentGame.includedUsers.map(function(obj) {
+    const statusList = find(id).currentGame.includedUsers.map(function(obj) {
       let myTeam = -1;
       if (find(id).options.teamSize > 0) {
         myTeam = find(id).currentGame.teams.findIndex(function(team) {
@@ -2122,7 +2123,7 @@ function HungryGames() {
     if (statusList.length >= 3) {
       const quarterLength = Math.ceil(statusList.length / numCols);
       for (let i = 0; i < numCols - 1; i++) {
-        let thisMessage =
+        const thisMessage =
             statusList.splice(0, quarterLength).join('\n').substring(0, 1024);
         finalMessage.addField(
             'Included (' + (i * quarterLength + 1) + '-' +
@@ -2147,7 +2148,7 @@ function HungryGames() {
               return getName(msg.guild, obj);
             })
             .join(', ');
-        let trimmedList = excludedList.substr(0, 512);
+        const trimmedList = excludedList.substr(0, 512);
         if (excludedList != trimmedList) {
           excludedList = trimmedList.substr(0, 509) + '...';
         } else {
@@ -2240,7 +2241,7 @@ function HungryGames() {
    * } The created message-like object.
    */
   function makeMessage(uId, gId, cId, msg) {
-    let g = self.client.guilds.get(gId);
+    const g = self.client.guilds.get(gId);
     if (!g) return null;
     if (!cId && find(gId)) cId = find(gId).channel;
     return {
@@ -2423,7 +2424,7 @@ function HungryGames() {
       }
       return;
     }
-    let myPerms = msg.channel.permissionsFor(self.client.user.id);
+    const myPerms = msg.channel.permissionsFor(self.client.user.id);
     if (!myPerms ||
         (!myPerms.has(self.Discord.Permissions.FLAGS.ATTACH_FILES) &&
          !myPerms.has(self.Discord.Permissions.FLAGS.ADMINISTRATOR))) {
@@ -2451,10 +2452,10 @@ function HungryGames() {
     find(id).currentGame.day.num++;
     find(id).currentGame.day.events = [];
 
-    let userPool = find(id).currentGame.includedUsers.filter(function(obj) {
+    const userPool = find(id).currentGame.includedUsers.filter(function(obj) {
       return obj.living;
     });
-    let startingAlive = userPool.length;
+    const startingAlive = userPool.length;
     let userEventPool;
     let doArenaEvent = false;
     let arenaEvent;
@@ -2480,10 +2481,10 @@ function HungryGames() {
       doArenaEvent = find(id).options.arenaEvents &&
           Math.random() < find(id).options.probabilityOfArenaEvent;
       if (doArenaEvent) {
-        let arenaEventPool =
+        const arenaEventPool =
             defaultArenaEvents.concat(find(id).customEvents.arena);
         do {
-          let index = Math.floor(Math.random() * arenaEventPool.length);
+          const index = Math.floor(Math.random() * arenaEventPool.length);
           arenaEvent = arenaEventPool[index];
           userEventPool = arenaEvent.outcomes;
           if (find(id).disabledEvents && find(id).disabledEvents.arena &&
@@ -2528,9 +2529,9 @@ function HungryGames() {
       }
     }
 
-    let weaponEventPool = Object.assign({}, weapons);
+    const weaponEventPool = Object.assign({}, weapons);
     if (find(id).customEvents.weapon) {
-      let entries = Object.entries(find(id).customEvents.weapon);
+      const entries = Object.entries(find(id).customEvents.weapon);
       for (let i = 0; i < entries.length; i++) {
         if (weaponEventPool[entries[i][0]]) {
           weaponEventPool[entries[i][0]].outcomes =
@@ -2569,13 +2570,13 @@ function HungryGames() {
 
       let subMessage = '';
 
-      let deadPool = find(id).currentGame.includedUsers.filter(function(obj) {
+      const deadPool = find(id).currentGame.includedUsers.filter(function(obj) {
         return !obj.living;
       });
 
       let userWithWeapon = null;
       if (!doArenaEvent) {
-        let usersWithWeapon = [];
+        const usersWithWeapon = [];
         for (let i = 0; i < userPool.length; i++) {
           if (userPool[i].weapons &&
               Object.keys(userPool[i].weapons).length > 0) {
@@ -2590,8 +2591,8 @@ function HungryGames() {
       let useWeapon = userWithWeapon &&
           Math.random() < find(id).options.probabilityOfUseWeapon;
       if (useWeapon) {
-        let userWeapons = Object.keys(userWithWeapon.weapons);
-        let chosenWeapon =
+        const userWeapons = Object.keys(userWithWeapon.weapons);
+        const chosenWeapon =
             userWeapons[Math.floor(Math.random() * userWeapons.length)];
 
         if (!weaponEventPool[chosenWeapon]) {
@@ -2623,7 +2624,7 @@ function HungryGames() {
             if (userWithWeapon.weapons[chosenWeapon] <= 0) {
               delete userWithWeapon.weapons[chosenWeapon];
 
-              let weaponName = chosenWeapon;
+              const weaponName = chosenWeapon;
               let consumableName = weaponName;
               if (weapons[weaponName].consumable) {
                 consumableName = weapons[weaponName].consumable.replace(
@@ -2637,9 +2638,9 @@ function HungryGames() {
               subMessage += formatMultiNames([userWithWeapon], nameFormat) +
                   ' runs out of ' + consumableName + '.';
             } else if (consumed != 0) {
-              let weaponName = chosenWeapon;
+              const weaponName = chosenWeapon;
               let consumableName = weaponName;
-              let count = consumed;
+              const count = consumed;
               if (weapons[weaponName].consumable) {
                 consumableName = weapons[weaponName].consumable.replace(
                     /\[C([^\|]*)\|([^\]]*)\]/g, (count == 1 ? '$1' : '$2'));
@@ -2660,7 +2661,7 @@ function HungryGames() {
               owner = formatMultiNames([userWithWeapon], nameFormat) + '\'s';
             }
             if (!eventTry.message) {
-              let weaponName =
+              const weaponName =
                   weaponEventPool[chosenWeapon].name || chosenWeapon;
               eventTry.message =
                   weapons.message
@@ -2676,7 +2677,7 @@ function HungryGames() {
         }
       }
 
-      let doBattle =
+      const doBattle =
           ((!useWeapon && !doArenaEvent) || !eventTry) && userPool.length > 1 &&
           (Math.random() < find(id).options.probabilityOfBattle ||
            find(id).currentGame.numAlive == 2) &&
@@ -2745,7 +2746,7 @@ function HungryGames() {
       for (let i = 0; i < numVictim; i++) {
         let numKills = 0;
         if (eventTry.victim.killer) numKills = numAttacker;
-        let affected = affectedUsers[i];
+        const affected = affectedUsers[i];
         switch (eventTry.victim.outcome) {
           case 'dies':
             numKilled++;
@@ -2778,7 +2779,7 @@ function HungryGames() {
       for (let i = numVictim; i < numVictim + numAttacker; i++) {
         let numKills = 0;
         if (eventTry.attacker.killer) numKills = numVictim;
-        let affected = affectedUsers[i];
+        const affected = affectedUsers[i];
         switch (eventTry.attacker.outcome) {
           case 'dies':
             numKilled++;
@@ -2808,14 +2809,14 @@ function HungryGames() {
 
       if (eventTry.attacker.weapon) {
         for (let i = 0; i < numAttacker; i++) {
-          let user = affectedUsers[numVictim + i];
-          let consumableList =
+          const user = affectedUsers[numVictim + i];
+          const consumableList =
               Object
                   .entries(user.weapons || {[eventTry.attacker.weapon.name]: 0})
                   .map(function(el) {
-                    let weaponName = el[0];
+                    const weaponName = el[0];
                     let consumableName = weaponName;
-                    let count = el[1];
+                    const count = el[1];
                     if (!weapons[weaponName]) {
                       self.error('Failed to find weapon: ' + weaponName);
                       return '(Unknown weapon ' + weaponName +
@@ -2837,14 +2838,14 @@ function HungryGames() {
       }
       if (eventTry.victim.weapon) {
         for (let i = 0; i < numVictim; i++) {
-          let user = affectedUsers[i];
-          let consumableList =
+          const user = affectedUsers[i];
+          const consumableList =
               Object
                   .entries(user.weapons || {[eventTry.attacker.weapon.name]: 0})
                   .map(function(el) {
-                    let weaponName = el[0];
+                    const weaponName = el[0];
                     let consumableName = weaponName;
-                    let count = el[1];
+                    const count = el[1];
                     if (!weapons[weaponName]) {
                       self.error('Failed to find weapon: ' + weaponName);
                       return '(Unknown weapon ' + weaponName +
@@ -2906,8 +2907,8 @@ function HungryGames() {
             return el.persists;
           });
     }
-    let usersBleeding = [];
-    let usersRecovered = [];
+    const usersBleeding = [];
+    const usersRecovered = [];
     find(id).currentGame.includedUsers.forEach(function(obj) {
       if (obj.bleeding > 0 && obj.bleeding >= find(id).options.bleedDays &&
           obj.living) {
@@ -2921,7 +2922,7 @@ function HungryGames() {
           obj.rank = find(id).currentGame.numAlive--;
           obj.dayOfDeath = find(id).currentGame.day.num;
           if (find(id).options.teamSize > 0) {
-            let team = find(id).currentGame.teams.find(function(team) {
+            const team = find(id).currentGame.teams.find(function(team) {
               return team.players.findIndex(function(player) {
                 return obj.id == player;
               }) > -1;
@@ -2957,7 +2958,7 @@ function HungryGames() {
               'dies', 'nothing', find(id).options.useNicknames));
     }
 
-    let deathPercentage = 1 - (find(id).currentGame.numAlive / startingAlive);
+    const deathPercentage = 1 - (find(id).currentGame.numAlive / startingAlive);
     if (deathPercentage > lotsOfDeathRate) {
       find(id).currentGame.day.events.splice(
           0, 0, makeMessageEvent(getMessage('lotsOfDeath'), id));
@@ -2972,7 +2973,7 @@ function HungryGames() {
     // Signal ready to display events.
     if (web && web.dayStateChange) web.dayStateChange(id);
     find(id).currentGame.day.state = 2;
-    let embed = new self.Discord.MessageEmbed();
+    const embed = new self.Discord.MessageEmbed();
     if (find(id).currentGame.day.num === 0) {
       embed.setTitle(getMessage('bloodbathStart'));
     } else {
@@ -3040,7 +3041,7 @@ function HungryGames() {
     a.rank = find(id).currentGame.numAlive--;
     a.dayOfDeath = find(id).currentGame.day.num;
     if (find(id).options.teamSize > 0) {
-      let team = find(id).currentGame.teams.find(function(team) {
+      const team = find(id).currentGame.teams.find(function(team) {
         return team.players.findIndex(function(obj) {
           return a.id == obj;
         }) > -1;
@@ -3103,7 +3104,7 @@ function HungryGames() {
       if (!obj.living && obj.rank < a.rank) obj.rank++;
     });
     if (find(id).options.teamSize > 0) {
-      let team = find(id).currentGame.teams.find(function(obj) {
+      const team = find(id).currentGame.teams.find(function(obj) {
         return obj.players.findIndex(function(obj) {
           return a.id == obj;
         }) > -1;
@@ -3141,12 +3142,12 @@ function HungryGames() {
   function pickEvent(
       userPool, eventPool, options, numAlive, numTotal, teams, probOpts,
       weaponWielder) {
-    let fails = [];
+    const fails = [];
     let loop = 0;
     while (loop < 100) {
       loop++;
-      let eventIndex = probabilityEvent(eventPool, probOpts);
-      let eventTry = eventPool[eventIndex];
+      const eventIndex = probabilityEvent(eventPool, probOpts);
+      const eventTry = eventPool[eventIndex];
       if (!eventTry) {
         self.error('Event at index ' + eventIndex + ' is invalid!');
         if (fails.length < 3) {
@@ -3159,8 +3160,8 @@ function HungryGames() {
       let numAttacker = eventTry.attacker.count * 1;
       let numVictim = eventTry.victim.count * 1;
 
-      let victimRevived = eventTry.victim.outcome === 'revived';
-      let attackerRevived = eventTry.attacker.outcome === 'revived';
+      const victimRevived = eventTry.victim.outcome === 'revived';
+      const attackerRevived = eventTry.attacker.outcome === 'revived';
 
       let eventEffectsNumMin = 0;
       let eventRevivesNumMin = 0;
@@ -3186,10 +3187,10 @@ function HungryGames() {
         continue;
       }
 
-      let multiAttacker = numAttacker < 0;
-      let multiVictim = numVictim < 0;
-      let attackerMin = -numAttacker;
-      let victimMin = -numVictim;
+      const multiAttacker = numAttacker < 0;
+      const multiVictim = numVictim < 0;
+      const attackerMin = -numAttacker;
+      const victimMin = -numVictim;
       if (multiAttacker || multiVictim) {
         while (true) {
           if (multiAttacker) {
@@ -3216,7 +3217,7 @@ function HungryGames() {
         }
       }
 
-      let failReason = validateEventRequirements(
+      const failReason = validateEventRequirements(
           victimRevived ? 0 : numVictim, attackerRevived ? 0 : numAttacker,
           userPool, numAlive, teams, options, eventTry.victim.outcome == 'dies',
           eventTry.attacker.outcome == 'dies', weaponWielder);
@@ -3227,7 +3228,7 @@ function HungryGames() {
         continue;
       }
 
-      let finalEvent = JSON.parse(JSON.stringify(eventPool[eventIndex]));
+      const finalEvent = JSON.parse(JSON.stringify(eventPool[eventIndex]));
 
       finalEvent.attacker.count = numAttacker;
       finalEvent.victim.count = numVictim;
@@ -3264,7 +3265,7 @@ function HungryGames() {
       if (weaponWielder) {
         let numTeams = 0;
         for (let i = 0; i < teams.length; i++) {
-          let team = teams[i];
+          const team = teams[i];
           let numPool = 0;
 
           team.players.forEach(function(player) {
@@ -3283,7 +3284,7 @@ function HungryGames() {
             return 'TEAM_WEAPON_NO_OPPONENT';
           }
         }
-        let attackerTeam = teams.find(function(team) {
+        const attackerTeam = teams.find(function(team) {
           return team.players.findIndex(function(p) {
             return p === weaponWielder.id;
           }) > -1;
@@ -3300,7 +3301,7 @@ function HungryGames() {
         let largestTeam = {index: 0, size: 0};
         let numTeams = 0;
         for (let i = 0; i < teams.length; i++) {
-          let team = teams[i];
+          const team = teams[i];
           let numPool = 0;
 
           team.players.forEach(function(player) {
@@ -3397,7 +3398,7 @@ function HungryGames() {
         numVictim, numAttacker, userPool, numAlive)) {
       return 'NUM_CONSTRAINT';
     }
-    let failReason = validateEventTeamConstraint(
+    const failReason = validateEventTeamConstraint(
         numVictim, numAttacker, userPool, teams, options, victimsDie,
         attackersDie, weaponWielder);
     if (failReason) {
@@ -3434,12 +3435,12 @@ function HungryGames() {
   function pickAffectedPlayers(
       numVictim, numAttacker, victimOutcome, attackerOutcome, options, userPool,
       deadPool, teams, weaponWielder) {
-    let affectedUsers = [];
-    let victimRevived = victimOutcome === 'revived';
-    let attackerRevived = attackerOutcome === 'revived';
+    const affectedUsers = [];
+    const victimRevived = victimOutcome === 'revived';
+    const attackerRevived = attackerOutcome === 'revived';
     if (options.teammatesCollaborate && options.teamSize > 0) {
       let isAttacker = false;
-      let validTeam = teams.findIndex(function(team) {
+      const validTeam = teams.findIndex(function(team) {
         if (weaponWielder) {
           isAttacker = options.useEnemyWeapon ? (Math.random() > 0.5) : true;
           return team.players.findIndex(function(p) {
@@ -3490,7 +3491,7 @@ function HungryGames() {
       });
       findMatching = function(match, mainPool) {
         return mainPool.findIndex(function(pool) {
-          let teamId = teams.findIndex(function(team) {
+          const teamId = teams.findIndex(function(team) {
             return team.players.findIndex(function(player) {
               return player == pool.id;
             }) > -1;
@@ -3500,13 +3501,13 @@ function HungryGames() {
       };
       for (let i = 0; i < numAttacker + numVictim; i++) {
         if (victimRevived && i < numVictim) {
-          let userIndex = findMatching(!isAttacker, deadPool);
+          const userIndex = findMatching(!isAttacker, deadPool);
           affectedUsers.push(deadPool.splice(userIndex, 1)[0]);
         } else if (attackerRevived && i >= numVictim) {
-          let userIndex = findMatching(isAttacker, deadPool);
+          const userIndex = findMatching(isAttacker, deadPool);
           affectedUsers.push(deadPool.splice(userIndex, 1)[0]);
         } else {
-          let userIndex = findMatching(
+          const userIndex = findMatching(
               (i < numVictim && !isAttacker) || (i >= numVictim && isAttacker),
               userPool);
           affectedUsers.push(userPool.splice(userIndex, 1)[0]);
@@ -3523,13 +3524,13 @@ function HungryGames() {
       let i = weaponWielder ? 1 : 0;
       for (i; i < numAttacker + numVictim; i++) {
         if (i < numVictim && victimRevived) {
-          let userIndex = Math.floor(Math.random() * deadPool.length);
+          const userIndex = Math.floor(Math.random() * deadPool.length);
           affectedUsers.push(deadPool.splice(userIndex, 1)[0]);
         } else if (i >= numVictim && attackerRevived) {
-          let userIndex = Math.floor(Math.random() * deadPool.length);
+          const userIndex = Math.floor(Math.random() * deadPool.length);
           affectedUsers.push(deadPool.splice(userIndex, 1)[0]);
         } else {
-          let userIndex = Math.floor(Math.random() * userPool.length);
+          const userIndex = Math.floor(Math.random() * userPool.length);
           if (weaponWielder && weaponWielder.id == userPool[userIndex].id) {
             i--;
             continue;
@@ -3538,7 +3539,7 @@ function HungryGames() {
         }
       }
       if (weaponWielder) {
-        let wielderIndex = userPool.findIndex(function(u) {
+        const wielderIndex = userPool.findIndex(function(u) {
           return u.id == weaponWielder.id;
         });
         affectedUsers.push(userPool.splice(wielderIndex, 1)[0]);
@@ -3566,7 +3567,7 @@ function HungryGames() {
       affectedUsers, numVictim, numAttacker, mention, id, useNicknames) {
     const outcomeMessage =
         battles.outcomes[Math.floor(Math.random() * battles.outcomes.length)];
-    let finalEvent = makeSingleEvent(
+    const finalEvent = makeSingleEvent(
         outcomeMessage, affectedUsers.slice(0), numVictim, numAttacker, mention,
         id, 'dies', 'nothing', useNicknames);
     finalEvent.attacker.killer = true;
@@ -3574,7 +3575,7 @@ function HungryGames() {
     finalEvent.state = 0;
     finalEvent.attacks = [];
 
-    let userHealth = new Array(affectedUsers.length).fill(0);
+    const userHealth = new Array(affectedUsers.length).fill(0);
     const maxHealth = find(id).options.battleHealth * 1;
     let numAlive = numVictim;
     let duplicateCount = 0;
@@ -3606,8 +3607,8 @@ function HungryGames() {
       if (loop > 1000) {
         throw new Error('INFINITE LOOP');
       }
-      let eventIndex = Math.floor(Math.random() * battles.attacks.length);
-      let eventTry = battles.attacks[eventIndex];
+      const eventIndex = Math.floor(Math.random() * battles.attacks.length);
+      const eventTry = battles.attacks[eventIndex];
       const attackerEventDamage = eventTry.attacker.damage * 1;
       const victimEventDamage = eventTry.victim.damage * 1;
 
@@ -3685,7 +3686,7 @@ function HungryGames() {
         messageText += ' x' + (duplicateCount + 1);
       }
 
-      let newEvent = makeSingleEvent(
+      const newEvent = makeSingleEvent(
           battleString + '\n' + messageText + '\n' + healthText,
           [
             affectedUsers[flipRoles ? attackerIndex : victimIndex],
@@ -3719,8 +3720,8 @@ function HungryGames() {
    */
   function weightedUserRand() {
     let sum = 0;
-    let r = Math.random();
-    for (let i in multiEventUserDistribution) {
+    const r = Math.random();
+    for (const i in multiEventUserDistribution) {
       if (typeof multiEventUserDistribution[i] !== 'number') {
         throw new Error(
             'Invalid value for multiEventUserDistribution:' +
@@ -3756,7 +3757,7 @@ function HungryGames() {
     else if (value > (probTotal -= probabilityOpts.wound)) type = 'wounded';
     else type = 'dies';
 
-    let finalPool = [];
+    const finalPool = [];
 
     for (let i = 0; i < eventPool.length; i++) {
       if (type && (eventPool[i].attacker.outcome == type ||
@@ -3863,8 +3864,8 @@ function HungryGames() {
         translator = affectedUsers[i].settings['hg:fun_translators'];
       }
     }
-    let affectedVictims = affectedUsers.splice(0, numVictim);
-    let affectedAttackers = affectedUsers.splice(0, numAttacker);
+    const affectedVictims = affectedUsers.splice(0, numVictim);
+    const affectedAttackers = affectedUsers.splice(0, numAttacker);
     let finalMessage = message;
     finalMessage = finalMessage.replace(
         /\[V([^\|]*)\|([^\]]*)\]/g,
@@ -3883,7 +3884,7 @@ function HungryGames() {
                 formatMultiNames(
                     affectedAttackers, useNickname ? 'nickname' : 'username'));
     if (finalMessage.indexOf('{dead}') > -1) {
-      let deadUsers =
+      const deadUsers =
           find(id)
               .currentGame.includedUsers
               .filter(function(obj) {
@@ -3892,7 +3893,7 @@ function HungryGames() {
                 });
               })
               .slice(0, weightedUserRand());
-      let numDead = deadUsers.length;
+      const numDead = deadUsers.length;
       if (numDead === 0) {
         finalMessage = finalMessage.replaceAll('{dead}', 'an animal')
             .replace(/\[D([^\|]*)\|([^\]]*)\]/g, '$1');
@@ -3908,7 +3909,7 @@ function HungryGames() {
       }
     }
     finalMessage = funTranslator.to(translator, finalMessage);
-    let finalIcons = getMiniIcons(affectedVictims.concat(affectedAttackers));
+    const finalIcons = getMiniIcons(affectedVictims.concat(affectedAttackers));
     return {
       message: finalMessage,
       icons: finalIcons,
@@ -3952,8 +3953,8 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function printEvent(msg, id) {
-    let index = find(id).currentGame.day.state - 2;
-    let events = find(id).currentGame.day.events;
+    const index = find(id).currentGame.day.state - 2;
+    const events = find(id).currentGame.day.events;
     if (index >= events.length) {
       self.client.clearInterval(dayEventIntervals[id]);
       delete dayEventIntervals[id];
@@ -3962,7 +3963,7 @@ function HungryGames() {
       events[index].battle &&
         events[index].state < events[index].attacks.length) {
       const battleState = events[index].state;
-      let embed = new self.Discord.MessageEmbed();
+      const embed = new self.Discord.MessageEmbed();
       const message = events[index].attacks[battleState].message.split('\n');
       embed.addField(message[1], message[2]);
       embed.setColor([50, 0, 0]);
@@ -3993,7 +3994,7 @@ function HungryGames() {
         const underlineSize = avatarSizes.underline;
 
         // Create image, then send.
-        let finalImage = new Jimp(
+        const finalImage = new Jimp(
             events[index].attacks[battleState].icons.length *
                     (battleIconSize + iconGap) -
                 iconGap,
@@ -4094,7 +4095,7 @@ function HungryGames() {
       } else {
         const iconGap = avatarSizes.gap;
         const underlineSize = avatarSizes.underline;
-        let embed = new self.Discord.MessageEmbed();
+        const embed = new self.Discord.MessageEmbed();
         if (events[index].subMessage) {
           // embed.addField('\u200B', events[index].subMessage, false);
           embed.setDescription(
@@ -4103,7 +4104,7 @@ function HungryGames() {
           embed.setDescription(events[index].message);
         }
         embed.setColor([125, 0, 0]);
-        let finalImage = new Jimp(
+        const finalImage = new Jimp(
             events[index].icons.length * (iconSize + iconGap) - iconGap,
             iconSize + underlineSize * 2);
         let responses = 0;
@@ -4228,10 +4229,10 @@ function HungryGames() {
       self.error('Realtime alive count is incorrect!');
     }
 
-    let finalMessage = new self.Discord.MessageEmbed();
+    const finalMessage = new self.Discord.MessageEmbed();
     finalMessage.setColor(defaultColor);
     if (find(id).options.teammatesCollaborate && numTeams == 1) {
-      let teamName = find(id).currentGame.teams[lastTeam].name;
+      const teamName = find(id).currentGame.teams[lastTeam].name;
       finalMessage.setTitle(
           '\n' + teamName + ' has won ' + find(id).currentGame.name + '!');
       let teamPlayerList =
@@ -4239,9 +4240,10 @@ function HungryGames() {
               .currentGame.teams[lastTeam]
               .players
               .map(function(player) {
-                let p = find(id).currentGame.includedUsers.find(function(user) {
-                  return user.id == player;
-                });
+                const p =
+                    find(id).currentGame.includedUsers.find(function(user) {
+                      return user.id == player;
+                    });
                 if (find(id).options.useNicknames) {
                   return p.nickname || p.name;
                 } else {
@@ -4257,8 +4259,8 @@ function HungryGames() {
       find(id).currentGame.ended = true;
       find(id).autoPlay = false;
     } else if (numAlive == 1) {
-      let p = find(id).currentGame.includedUsers[lastIndex];
-      let winnerName =
+      const p = find(id).currentGame.includedUsers[lastIndex];
+      const winnerName =
           find(id).options.useNicknames ? (p.nickname || p.name) : p.name;
       let teamName = '';
       if (find(id).options.teamSize > 0) {
@@ -4282,12 +4284,12 @@ function HungryGames() {
     } else {
       if (find(id).options.teamSize > 0) {
         find(id).currentGame.includedUsers.sort(function(a, b) {
-          let aTeam = find(id).currentGame.teams.findIndex(function(team) {
+          const aTeam = find(id).currentGame.teams.findIndex(function(team) {
             return team.players.findIndex(function(player) {
               return player == a.id;
             }) > -1;
           });
-          let bTeam = find(id).currentGame.teams.findIndex(function(team) {
+          const bTeam = find(id).currentGame.teams.findIndex(function(team) {
             return team.players.findIndex(function(player) {
               return player == b.id;
             }) > -1;
@@ -4310,14 +4312,14 @@ function HungryGames() {
               find(id).options.numDaysShowDeath;
         });
       }
-      let showDead = playersToShow.find((el) => !el.living);
-      let showWounded = playersToShow.find((el) => el.state == 'wounded');
+      const showDead = playersToShow.find((el) => !el.living);
+      const showWounded = playersToShow.find((el) => el.state == 'wounded');
       finalMessage.setAuthor(
           emoji.red_heart + 'Alive' +
           (showWounded ? (', ' + emoji.yellow_heart + 'Wounded') : '') +
           (showDead ? (', ' + emoji.skull + 'Dead') : ''));
       let showKills = false;
-      let statusList = playersToShow.map(function(obj) {
+      const statusList = playersToShow.map(function(obj) {
         let myTeam = -1;
         if (find(id).options.teamSize > 0) {
           myTeam = find(id).currentGame.teams.findIndex(function(team) {
@@ -4381,7 +4383,7 @@ function HungryGames() {
 
         const quarterLength = Math.ceil(statusList.length / numCols);
         for (let i = 0; i < numCols - 1; i++) {
-          let thisMessage =
+          const thisMessage =
               statusList.splice(0, quarterLength).join('\n').slice(0, 1025);
           finalMessage.addField(
               (i * quarterLength + 1) + '-' + ((i + 1) * quarterLength),
@@ -4402,7 +4404,7 @@ function HungryGames() {
       }
     }
     if (!find(id).currentGame.ended) {
-      let embed = new self.Discord.MessageEmbed();
+      const embed = new self.Discord.MessageEmbed();
       if (find(id).currentGame.day.num == 0) {
         embed.setTitle(getMessage('bloodbathEnd'));
       } else {
@@ -4420,7 +4422,7 @@ function HungryGames() {
     }
 
     if (numTeams == 1) {
-      let sendTime =
+      const sendTime =
           Date.now() + (find(id).options.delayDays > 2000 ? 1000 : 0);
       let winnerTag = '';
       if (find(id).options.mentionVictor) {
@@ -4439,7 +4441,7 @@ function HungryGames() {
       } else {
         const iconGap = avatarSizes.gap;
         const underlineSize = avatarSizes.underline;
-        let finalImage = new Jimp(
+        const finalImage = new Jimp(
             find(id).currentGame.teams[lastTeam].players.length *
                     (victorIconSize + iconGap) -
                 iconGap,
@@ -4450,7 +4452,7 @@ function HungryGames() {
             if (victorIconSize > 0) {
               image.resize(victorIconSize, victorIconSize);
               if (underlineSize > 0) {
-                let user =
+                const user =
                     find(id).currentGame.includedUsers.find(function(obj) {
                       return obj.id == userId;
                     });
@@ -4492,8 +4494,8 @@ function HungryGames() {
           player = find(id).currentGame.includedUsers.find(function(obj) {
             return obj.id == player;
           });
-          let icon = player.avatarURL;
-          let userId = player.id;
+          const icon = player.avatarURL;
+          const userId = player.id;
           readImage(icon)
               .then(function(userId) {
                 return function(image) {
@@ -4530,9 +4532,9 @@ function HungryGames() {
     }
 
     if (find(id).currentGame.ended) {
-      let rankEmbed = new self.Discord.MessageEmbed();
+      const rankEmbed = new self.Discord.MessageEmbed();
       rankEmbed.setTitle('Final Ranks (kills)');
-      let rankList = find(id)
+      const rankList = find(id)
           .currentGame.includedUsers
           .sort(function(a, b) {
             return a.rank - b.rank;
@@ -4556,9 +4558,9 @@ function HungryGames() {
       if (rankList.length <= 20) {
         rankEmbed.setDescription(rankList.join('\n'));
       } else {
-        let thirdLength = Math.floor(rankList.length / 3);
+        const thirdLength = Math.floor(rankList.length / 3);
         for (let i = 0; i < 2; i++) {
-          let thisMessage =
+          const thisMessage =
               rankList.splice(0, thirdLength).join('\n').slice(0, 1025);
           rankEmbed.addField(i + 1, thisMessage, true);
         }
@@ -4574,15 +4576,15 @@ function HungryGames() {
         }, 5000);
       }
       if (find(id).options.teamSize > 0) {
-        let teamRankEmbed = new self.Discord.MessageEmbed();
+        const teamRankEmbed = new self.Discord.MessageEmbed();
         teamRankEmbed.setTitle('Final Team Ranks');
         find(id).currentGame.includedUsers.sort(function(a, b) {
-          let aTeam = find(id).currentGame.teams.find(function(team) {
+          const aTeam = find(id).currentGame.teams.find(function(team) {
             return team.players.findIndex(function(player) {
               return player == a.id;
             }) > -1;
           });
-          let bTeam = find(id).currentGame.teams.find(function(team) {
+          const bTeam = find(id).currentGame.teams.find(function(team) {
             return team.players.findIndex(function(player) {
               return player == b.id;
             }) > -1;
@@ -4594,42 +4596,43 @@ function HungryGames() {
           }
         });
         let prevTeam = -1;
-        let statusList = find(id).currentGame.includedUsers.map(function(obj) {
-          let myTeam = -1;
-          myTeam = find(id).currentGame.teams.findIndex(function(team) {
-            return team.players.findIndex(function(player) {
-              return player == obj.id;
-            }) > -1;
-          });
-          let shortName;
-          if (obj.nickname && find(id).options.useNicknames) {
-            shortName = obj.nickname.substring(0, 16);
-            if (shortName != obj.nickname) {
-              shortName = shortName.substring(0, 13) + '...';
-            }
-          } else {
-            shortName = obj.name.substring(0, 16);
-            if (shortName != obj.name) {
-              shortName = shortName.substring(0, 13) + '...';
-            }
-          }
+        const statusList =
+            find(id).currentGame.includedUsers.map(function(obj) {
+              let myTeam = -1;
+              myTeam = find(id).currentGame.teams.findIndex(function(team) {
+                return team.players.findIndex(function(player) {
+                  return player == obj.id;
+                }) > -1;
+              });
+              let shortName;
+              if (obj.nickname && find(id).options.useNicknames) {
+                shortName = obj.nickname.substring(0, 16);
+                if (shortName != obj.nickname) {
+                  shortName = shortName.substring(0, 13) + '...';
+                }
+              } else {
+                shortName = obj.name.substring(0, 16);
+                if (shortName != obj.name) {
+                  shortName = shortName.substring(0, 13) + '...';
+                }
+              }
 
-          let prefix = '';
-          if (myTeam != prevTeam) {
-            prevTeam = myTeam;
-            prefix = find(id).currentGame.teams[myTeam].rank + ') __' +
-                find(id).currentGame.teams[myTeam].name + '__\n';
-          }
+              let prefix = '';
+              if (myTeam != prevTeam) {
+                prevTeam = myTeam;
+                prefix = find(id).currentGame.teams[myTeam].rank + ') __' +
+                    find(id).currentGame.teams[myTeam].name + '__\n';
+              }
 
-          return prefix + '`' + shortName + '`';
-        });
+              return prefix + '`' + shortName + '`';
+            });
         if (statusList.length >= 3) {
           const numCols =
               calcColNum(statusList.length > 10 ? 3 : 2, statusList);
 
           const quarterLength = Math.ceil(statusList.length / numCols);
           for (let i = 0; i < numCols - 1; i++) {
-            let thisMessage = statusList.splice(0, quarterLength).join('\n');
+            const thisMessage = statusList.splice(0, quarterLength).join('\n');
             teamRankEmbed.addField(i + 1, thisMessage, true);
           }
           teamRankEmbed.addField(numCols, statusList.join('\n'), true);
@@ -4826,7 +4829,7 @@ function HungryGames() {
           response += obj.username + ' added to blacklist.\n';
         }
         if (!find(id).includedUsers) find(id).includedUsers = [];
-        let includeIndex = find(id).includedUsers.indexOf(obj.id);
+        const includeIndex = find(id).includedUsers.indexOf(obj.id);
         if (includeIndex >= 0) {
           if (!onlyError) {
             response += obj.username + ' removed from whitelist.\n';
@@ -4834,7 +4837,7 @@ function HungryGames() {
           find(id).includedUsers.splice(includeIndex, 1);
         }
         if (!find(id).currentGame.inProgress) {
-          let index =
+          const index =
               find(id).currentGame.includedUsers.findIndex(function(el) {
                 return el.id == obj.id;
               });
@@ -4967,7 +4970,7 @@ function HungryGames() {
         response += obj.username + ' is a bot, but bots are disabled.\n';
         return;
       }
-      let excludeIndex = find(id).excludedUsers.indexOf(obj.id);
+      const excludeIndex = find(id).excludedUsers.indexOf(obj.id);
       if (excludeIndex >= 0) {
         if (!onlyError) {
           response += obj.username + ' removed from blacklist.\n';
@@ -5018,7 +5021,7 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function listPlayers(msg, id) {
-    let finalMessage = new self.Discord.MessageEmbed();
+    const finalMessage = new self.Discord.MessageEmbed();
     finalMessage.setTitle('List of currently tracked players');
     finalMessage.setColor(defaultColor);
     if (!find(id)) {
@@ -5026,15 +5029,15 @@ function HungryGames() {
     }
     if (find(id) && find(id).currentGame &&
         find(id).currentGame.includedUsers) {
-      let numUsers = find(id).currentGame.includedUsers.length;
+      const numUsers = find(id).currentGame.includedUsers.length;
       if (find(id).options.teamSize > 0) {
         find(id).currentGame.includedUsers.sort(function(a, b) {
-          let aTeam = find(id).currentGame.teams.findIndex(function(team) {
+          const aTeam = find(id).currentGame.teams.findIndex(function(team) {
             return team.players.findIndex(function(player) {
               return player == a.id;
             }) > -1;
           });
-          let bTeam = find(id).currentGame.teams.findIndex(function(team) {
+          const bTeam = find(id).currentGame.teams.findIndex(function(team) {
             return team.players.findIndex(function(player) {
               return player == b.id;
             }) > -1;
@@ -5047,7 +5050,7 @@ function HungryGames() {
         });
       }
       let prevTeam = -1;
-      let statusList = find(id).currentGame.includedUsers.map(function(obj) {
+      const statusList = find(id).currentGame.includedUsers.map(function(obj) {
         let myTeam = -1;
         if (find(id).options.teamSize > 0) {
           myTeam = find(id).currentGame.teams.findIndex(function(team) {
@@ -5086,7 +5089,7 @@ function HungryGames() {
 
         const quarterLength = Math.ceil(statusList.length / numCols);
         for (let i = 0; i < numCols - 1; i++) {
-          let thisMessage =
+          const thisMessage =
               statusList.splice(0, quarterLength).join('\n').substr(0, 1024);
           finalMessage.addField(
               'Included (' + (i * quarterLength + 1) + '-' +
@@ -5113,7 +5116,7 @@ function HungryGames() {
               return getName(msg.guild, obj);
             })
             .join(', ');
-        let trimmedList = excludedList.substr(0, 512);
+        const trimmedList = excludedList.substr(0, 512);
         if (excludedList != trimmedList) {
           excludedList = trimmedList.substr(0, 509) + '...';
         } else {
@@ -5163,9 +5166,9 @@ function HungryGames() {
    */
   function toggleOpt(msg, id) {
     msg.text = msg.text.trim();
-    let option = msg.text.split(' ')[0];
-    let value = msg.text.split(' ')[1];
-    let output = self.setOption(id, option, value, msg.text);
+    const option = msg.text.split(' ')[0];
+    const value = msg.text.split(' ')[1];
+    const output = self.setOption(id, option, value, msg.text);
     if (!output) {
       showOpts(msg, find(id).options);
     } else {
@@ -5196,7 +5199,7 @@ function HungryGames() {
             self.bot.getPrefix(id) + self.postPrefix + 'end" to abort this
         game.'; */
     } else if (typeof defaultOptions[option] === 'undefined') {
-      let searchedOption = defaultOptSearcher.search(option);
+      const searchedOption = defaultOptSearcher.search(option);
       if (typeof defaultOptions[searchedOption] === 'undefined') {
         return 'That is not a valid option to change! (' + option + ')\nUse `' +
             self.bot.getPrefix(id) + self.postPrefix +
@@ -5256,7 +5259,7 @@ function HungryGames() {
           value = 1000;
         } */
 
-        let old = obj[option];
+        const old = obj[option];
         obj[option] = value;
         if (option == 'teamSize' && value != 0) {
           return 'Set ' + option + ' to ' + obj[option] + ' from ' + old +
@@ -5274,7 +5277,7 @@ function HungryGames() {
         return 'That is not a valid value for ' + option +
             ', which requires true or false. (Currently ' + obj[option] + ')';
       } else {
-        let old = obj[option];
+        const old = obj[option];
         obj[option] = value;
         if (option == 'includeBots') {
           createGame(null, id, true);
@@ -5289,7 +5292,7 @@ function HungryGames() {
             JSON.stringify(defaultObj[option].values) + '. (Currently ' +
             obj[option] + ')';
       } else {
-        let old = obj[option];
+        const old = obj[option];
         obj[option] = value;
         return 'Set ' + option + ' to ' + obj[option] + ' from ' + old;
       }
@@ -5319,9 +5322,9 @@ function HungryGames() {
   function showOpts(msg, options) {
     const entries = Object.entries(options);
 
-    let bodyList = entries.map(function(obj) {
-      let key = obj[0];
-      let val = obj[1];
+    const bodyList = entries.map(function(obj) {
+      const key = obj[0];
+      const val = obj[1];
 
       return key + ': ' + JSON.stringify(val) + ' (default: ' +
           JSON.stringify(defaultOptions[key].value) + ')\n' +
@@ -5329,9 +5332,9 @@ function HungryGames() {
     });
 
     let totalLength = 0;
-    let bodyFields = [[]];
+    const bodyFields = [[]];
     let fieldIndex = 0;
-    for (let i in bodyList) {
+    for (const i in bodyList) {
       if (!bodyList[i] instanceof Object) continue;
       if (bodyList[i].length + totalLength > 1500) {
         fieldIndex++;
@@ -5347,7 +5350,7 @@ function HungryGames() {
     if (page < 0) page = 0;
     if (page >= bodyFields.length) page = bodyFields.length - 1;
 
-    let embed = new self.Discord.MessageEmbed();
+    const embed = new self.Discord.MessageEmbed();
     embed.setTitle('Current Options');
     embed.setFooter('Page ' + (page + 1) + ' of ' + (bodyFields.length));
     embed.setDescription('```js\n' + bodyFields[page].join('\n\n') + '```');
@@ -5401,7 +5404,7 @@ function HungryGames() {
         delete optionMessages[msg_.id];
         return;
       }
-      let name = reactions.first().emoji.name;
+      const name = reactions.first().emoji.name;
       if (name == emoji.arrow_right) {
         msg_.optId++;
       } else if (name == emoji.arrow_left) {
@@ -5424,9 +5427,9 @@ function HungryGames() {
    * @return {?string} Error message or null if no error.
    */
   function editTeam(msg, id, silent) {
-    let split = msg.text.trim().split(' ');
+    const split = msg.text.trim().split(' ');
     if (!find(id) || !find(id).currentGame) {
-      let message = 'There isn\'t currently any game to edit.' +
+      const message = 'There isn\'t currently any game to edit.' +
           ' Please create one first.';
       if (!silent) {
         msg.channel.send(self.common.mention(msg) + ' `' + message + '`');
@@ -5438,7 +5441,7 @@ function HungryGames() {
         case 'rename':
           break;
         default:
-          let message = 'You must end the current game before editing teams.';
+          const message = 'You must end the current game before editing teams.';
           if (!silent) {
             msg.channel.send(self.common.mention(msg) + ' `' + message + '`');
           }
@@ -5446,7 +5449,7 @@ function HungryGames() {
       }
     }
     if (find(id).options.teamSize == 0) {
-      let message =
+      const message =
           'There are no teams to edit. If you wish to have teams, you can ' +
           'set teamSize to the size of teams you wish to have.';
       if (!silent) {
@@ -5506,7 +5509,7 @@ function HungryGames() {
     switch (cmd) {
       case 'swap':
         let p1 = -1;
-        let team1 = find(gId).currentGame.teams.find((t) => {
+        const team1 = find(gId).currentGame.teams.find((t) => {
           return t.players.find((p, i) => {
             if (p == one) {
               p1 = i;
@@ -5516,7 +5519,7 @@ function HungryGames() {
           });
         });
         let p2 = -1;
-        let team2 = find(gId).currentGame.teams.find((t) => {
+        const team2 = find(gId).currentGame.teams.find((t) => {
           return t.players.find((p, i) => {
             if (p == two) {
               p2 = i;
@@ -5526,14 +5529,14 @@ function HungryGames() {
           });
         });
         if (!team1 || !team2) break;
-        let tmp = team1.players.splice(p1, 1)[0];
+        const tmp = team1.players.splice(p1, 1)[0];
         team1.players.push(team2.players.splice(p2, 1)[0]);
         team2.players.push(tmp);
         break;
       case 'move':
         let pId = -1;
         let tId = -1;
-        let teamS = find(gId).currentGame.teams.find((t, i) => {
+        const teamS = find(gId).currentGame.teams.find((t, i) => {
           if (t.players.find((p, j) => {
             if (p == one) {
               pId = j;
@@ -5591,21 +5594,21 @@ function HungryGames() {
     if (!find(id) || !find(id).currentGame) {
       createGame(null, id, true);
     }
-    let user1 = msg.mentions.users.first().id;
-    let user2 = msg.mentions.users.first(2)[1].id;
+    const user1 = msg.mentions.users.first().id;
+    const user2 = msg.mentions.users.first(2)[1].id;
     let teamId1 = 0;
     let playerId1 = 0;
     let teamId2 = 0;
     let playerId2 = 0;
     teamId1 = find(id).currentGame.teams.findIndex(function(team) {
-      let index = team.players.findIndex(function(player) {
+      const index = team.players.findIndex(function(player) {
         return player == user1;
       });
       if (index > -1) playerId1 = index;
       return index > -1;
     });
     teamId2 = find(id).currentGame.teams.findIndex(function(team) {
-      let index = team.players.findIndex(function(player) {
+      const index = team.players.findIndex(function(player) {
         return player == user2;
       });
       if (index > -1) playerId2 = index;
@@ -5615,7 +5618,7 @@ function HungryGames() {
       self.common.reply(msg, 'Please ensure both users are on a team.');
       return;
     }
-    let intVal = find(id).currentGame.teams[teamId1].players[playerId1];
+    const intVal = find(id).currentGame.teams[teamId1].players[playerId1];
     find(id).currentGame.teams[teamId1].players[playerId1] =
         find(id).currentGame.teams[teamId2].players[playerId2];
 
@@ -5647,7 +5650,7 @@ function HungryGames() {
       user2 = msg.mentions.users.first(2)[1].id;
 
       if (msg.text.indexOf(user2) < msg.text.indexOf(user1)) {
-        let intVal = user1;
+        const intVal = user1;
         user1 = user2;
         user2 = intVal;
       }
@@ -5655,7 +5658,7 @@ function HungryGames() {
 
     let teamId2 = 0;
     teamId1 = find(id).currentGame.teams.findIndex(function(team) {
-      let index = team.players.findIndex(function(player) {
+      const index = team.players.findIndex(function(player) {
         return player == user1;
       });
       if (index > -1) playerId1 = index;
@@ -5711,9 +5714,9 @@ function HungryGames() {
    * @param {boolean} [silent=false] Disable replying to message.
    */
   function renameTeam(msg, id, silent) {
-    let split = msg.text.trim().split(' ').slice(1);
+    const split = msg.text.trim().split(' ').slice(1);
     let message = split.slice(1).join(' ');
-    let search = Number(split[0]);
+    const search = Number(split[0]);
     if (isNaN(search) && (!msg.mentions || msg.mentions.users.size == 0)) {
       if (!silent) {
         self.common.reply(
@@ -5769,20 +5772,20 @@ function HungryGames() {
       }
       return;
     }
-    let current = find(id).currentGame;
+    const current = find(id).currentGame;
     if (current.teams.length == 0) {
       if (!silent) self.common.reply(msg, 'There are no teams to randomize.');
       return;
     }
     for (let i = 0; i < current.includedUsers.length; i++) {
-      let teamId1 = Math.floor(Math.random() * current.teams.length);
-      let playerId1 =
+      const teamId1 = Math.floor(Math.random() * current.teams.length);
+      const playerId1 =
           Math.floor(Math.random() * current.teams[teamId1].players.length);
-      let teamId2 = Math.floor(Math.random() * current.teams.length);
-      let playerId2 =
+      const teamId2 = Math.floor(Math.random() * current.teams.length);
+      const playerId2 =
           Math.floor(Math.random() * current.teams[teamId2].players.length);
 
-      let intVal = current.teams[teamId1].players[playerId1];
+      const intVal = current.teams[teamId1].players[playerId1];
       current.teams[teamId1].players[playerId1] =
           current.teams[teamId2].players[playerId2];
       current.teams[teamId2].players[playerId2] = intVal;
@@ -5928,7 +5931,7 @@ function HungryGames() {
           };
           finish = function() {
             msg_.delete().catch(() => {});
-            let error = self.makeAndAddEvent(
+            const error = self.makeAndAddEvent(
                 id, eventType, message, numVictim, numAttacker, victimOutcome,
                 attackerOutcome, victimKiller, attackerKiller);
             if (error) {
@@ -5985,7 +5988,7 @@ function HungryGames() {
     if (!find(id) || !find(id).customEvents) {
       return 'Invalid ID or no game.';
     }
-    let newEvent = new Event(
+    const newEvent = new Event(
         message, numVictim, numAttacker, victimOutcome, attackerOutcome,
         victimKiller, attackerKiller);
     if (vWeapon) {
@@ -6013,7 +6016,7 @@ function HungryGames() {
     if (!event.message || event.message.length == 0) {
       return 'Event must have a message.';
     }
-    for (let i in find(id).customEvents[type]) {
+    for (const i in find(id).customEvents[type]) {
       if (self.eventsEqual(event, find(id).customEvents[type][i])) {
         return 'Event already exists!';
       }
@@ -6060,10 +6063,10 @@ function HungryGames() {
         }
         for (let i = 0; i < data.outcomes.length; i++) {
           let exists = false;
-          let dEl = data.outcomes[i];
+          const dEl = data.outcomes[i];
           for (let j = 0; j < find(id).customEvents[type][name].outcomes.length;
             j++) {
-            let el = find(id).customEvents[type][name].outcomes[j];
+            const el = find(id).customEvents[type][name].outcomes[j];
             if (self.eventsEqual(el, dEl)) {
               exists = true;
               break;
@@ -6103,7 +6106,7 @@ function HungryGames() {
     if (!find(id) || !find(id).customEvents) {
       return 'Invalid ID or no game.';
     }
-    let list = find(id).customEvents[type];
+    const list = find(id).customEvents[type];
     if (type === 'arena') {
       let match;
       let matchId = -1;
@@ -6126,7 +6129,7 @@ function HungryGames() {
       for (let i = 0; i < match.outcomes.length; i++) {
         let one = match.outcomes[i];
         for (let j = 0; j < search.outcomes.length; j++) {
-          let two = search.outcomes[j];
+          const two = search.outcomes[j];
           if (self.eventsEqual(one, two)) {
             if (data.outcomes && data.outcomes[j]) {
               one = data.outcomes[j];
@@ -6193,8 +6196,8 @@ function HungryGames() {
     if (!find(id) || !find(id).customEvents) {
       return 'Invalid ID or no game.';
     }
-    let list = find(id).customEvents[type];
-    for (let i in list) {
+    const list = find(id).customEvents[type];
+    for (const i in list) {
       if (self.eventsEqual(list[i], event)) {
         list.splice(i, 1);
         return null;
@@ -6254,7 +6257,7 @@ function HungryGames() {
         break;
       case 'weapon':
         allEvents = Object.assign({}, weapons);
-        let entries = Object.entries(find(id).customEvents.weapon);
+        const entries = Object.entries(find(id).customEvents.weapon);
         for (let i = 0; i < entries.length; i++) {
           if (allEvents[entries[i][0]]) {
             allEvents[entries[i][0]].outcomes =
@@ -6328,8 +6331,8 @@ function HungryGames() {
     if (e1.action != e2.action) return false;
     if (e1.consumes != e2.consumes) return false;
     if (!e1.battle != !e2.battle) return false;
-    let v1 = e1.victim;
-    let v2 = e2.victim;
+    const v1 = e1.victim;
+    const v2 = e2.victim;
     if (v1 && v2) {
       if (v1.count != v2.count) return false;
       if (v1.outcome != v2.outcome) return false;
@@ -6343,8 +6346,8 @@ function HungryGames() {
     } else if (!(!v1 && !v2)) {
       return false;
     }
-    let a1 = e1.attacker;
-    let a2 = e2.attacker;
+    const a1 = e1.attacker;
+    const a2 = e2.attacker;
     if (a1 && a2) {
       if (a1.count != a2.count) return false;
       if (a1.outcome != a2.outcome) return false;
@@ -6398,7 +6401,7 @@ function HungryGames() {
           msg.reactions.removeAll().catch(() => {});
           return;
         }
-        let name = reactions.first().emoji.name;
+        const name = reactions.first().emoji.name;
         if (name == emoji.arrow_up) {
           num++;
         } else if (name == emoji.arrow_down) {
@@ -6541,40 +6544,40 @@ function HungryGames() {
    */
   function updateEventPreview(msg) {
     msg.text = msg.text.split(' ').slice(1).join(' ');
-    let helpMsg =
+    const helpMsg =
         '```\nEdit your message until you are happy with the below outcomes, ' +
         'then click the type of event.\n\nReplace names with "{victim}" or ' +
         '"{attacker}" (with brackets).\n\nUse "[Vsinglular|plural]" or ' +
         '"[Asingular|plural]" to put "singular" if there\'s only one person, ' +
         'or "plural" if there are more\n (A for attacker, V for victim).\n```';
-    let finalOptionsHelp =
+    const finalOptionsHelp =
         emoji.red_circle + 'Bloodbath event, ' + emoji.trophy + 'Normal event.';
-    let users = msg.guild.members.random(4);
-    let players = [];
+    const users = msg.guild.members.random(4);
+    const players = [];
     let cnt = 0;
     for (let i = 0; cnt < 4; i++) {
-      let nextUser = users[i % users.length];
+      const nextUser = users[i % users.length];
       if (typeof nextUser === 'undefined') continue;
       players.push(makePlayer(nextUser.user));
       cnt++;
     }
     try {
-      let single =
+      const single =
           makeSingleEvent(
               msg.text, players.slice(0), 1, 1, false, msg.guild.id, 'nothing',
               'nothing', find(msg.guild.id).options.useNicknames)
               .message;
-      let pluralOne =
+      const pluralOne =
           makeSingleEvent(
               msg.text, players.slice(0), 2, 1, false, msg.guild.id, 'nothing',
               'nothing', find(msg.guild.id).options.useNicknames)
               .message;
-      let pluralTwo =
+      const pluralTwo =
           makeSingleEvent(
               msg.text, players.slice(0), 1, 2, false, msg.guild.id, 'nothing',
               'nothing', find(msg.guild.id).options.useNicknames)
               .message;
-      let pluralBoth =
+      const pluralBoth =
           makeSingleEvent(
               msg.text, players.slice(0), 2, 2, false, msg.guild.id, 'nothing',
               'nothing', find(msg.guild.id).options.useNicknames)
@@ -6718,7 +6721,7 @@ function HungryGames() {
    * new message.
    */
   function listEvents(msg, id, page = 0, eventType, editMsg) {
-    let embed = new self.Discord.MessageEmbed();
+    const embed = new self.Discord.MessageEmbed();
 
     let events = [];
     let numCustomEvents = 0;
@@ -6829,7 +6832,7 @@ function HungryGames() {
             })
             .join('\n'));
 
-    let callback = function(msg_) {
+    const callback = function(msg_) {
       newReact(maxReactAwaitTime);
       msg_.awaitReactions(function(reaction, user) {
         if (user.id != self.client.user.id) {
@@ -6872,7 +6875,7 @@ function HungryGames() {
         }
       });
 
-      let myReactions = msg_.reactions.filter(function(obj) {
+      const myReactions = msg_.reactions.filter(function(obj) {
         return obj.me;
       });
       if (!myReactions.find((r) => r.name == emoji.arrow_right) ||
@@ -6992,7 +6995,7 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function commandStats(msg, id) {
-    let listenerBlockDuration = listenersEndTime - Date.now();
+    const listenerBlockDuration = listenersEndTime - Date.now();
     let message = 'There are ' + self.getNumSimulating() +
         ' games currently simulating of ' + Object.keys(games).length +
         ' currently loaded.';
@@ -7001,7 +7004,7 @@ function HungryGames() {
           (Math.round(listenerBlockDuration / 100 / 60) / 10) + ' minutes.';
     }
     if (web) {
-      let numClients = web.getNumClients();
+      const numClients = web.getNumClients();
       message += '\n' + numClients + ' web client' +
           (numClients == 1 ? '' : 's') + ' connected.';
     }
@@ -7017,7 +7020,7 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function commandRig(msg, id) {
-    let embed = new self.Discord.MessageEmbed();
+    const embed = new self.Discord.MessageEmbed();
     embed.setThumbnail('https://discordemoji.com/assets/emoji/rigged.png');
     embed.setColor([187, 26, 52]);
     msg.channel.send(self.common.mention(msg), embed);
@@ -7037,8 +7040,8 @@ function HungryGames() {
       return;
     }
     if (!find(id)) createGame(msg, id);
-    let players = [];
-    let notInGame = !msg.mentions.users.find((u) => {
+    const players = [];
+    const notInGame = !msg.mentions.users.find((u) => {
       players.push(u.id);
       return !find(id).currentGame.includedUsers.find((p) => {
         return p.id == u.ud;
@@ -7066,8 +7069,8 @@ function HungryGames() {
       return;
     }
     if (!find(id)) createGame(msg, id);
-    let players = [];
-    let notInGame = !msg.mentions.users.find((u) => {
+    const players = [];
+    const notInGame = !msg.mentions.users.find((u) => {
       players.push(u.id);
       return !find(id).currentGame.includedUsers.find((p) => {
         return p.id == u.ud;
@@ -7095,8 +7098,8 @@ function HungryGames() {
       return;
     }
     if (!find(id)) createGame(msg, id);
-    let players = [];
-    let notInGame = !msg.mentions.users.find((u) => {
+    const players = [];
+    const notInGame = !msg.mentions.users.find((u) => {
       players.push(u.id);
       return !find(id).currentGame.includedUsers.find((p) => {
         return p.id == u.ud;
@@ -7182,7 +7185,7 @@ function HungryGames() {
     if (typeof state !== 'string') return 'No outcome given.';
     list.forEach((p) => {
       if (find(id).currentGame.day.state > 0) {
-        let player =
+        const player =
             find(id).currentGame.includedUsers.find((el) => el.id == p);
         if (!player) return 'Unable to find player.';
         let outcome;
@@ -7217,7 +7220,7 @@ function HungryGames() {
               break;
           }
         }
-        let evt = makeSingleEvent(
+        const evt = makeSingleEvent(
             text, [player], 1, 0, find(id).options.mentionAll, id, outcome,
             'nothing', find(id).options.useNicknames);
         let lastIndex = find(id).currentGame.day.state - 1;
@@ -7311,7 +7314,7 @@ function HungryGames() {
     if (Date.now() - findTimestamps[id] < findDelay) return null;
     findTimestamps[id] = Date.now();
     try {
-      let tmp =
+      const tmp =
           fs.readFileSync(self.common.guildSaveDir + id + hgSaveDir + saveFile);
       try {
         games[id] = JSON.parse(tmp);
@@ -7333,7 +7336,7 @@ function HungryGames() {
 
     // Flush default and stale options.
     if (games[id].options) {
-      for (let opt in defaultOptions) {
+      for (const opt in defaultOptions) {
         if (!defaultOptions[opt] instanceof Object) continue;
         if (typeof games[id].options[opt] !==
             typeof defaultOptions[opt].value) {
@@ -7344,7 +7347,7 @@ function HungryGames() {
             games[id].options[opt] = defaultOptions[opt].value;
           }
         } else if (defaultOptions[opt].value instanceof Object) {
-          let dKeys = Object.keys(defaultOptions[opt].value);
+          const dKeys = Object.keys(defaultOptions[opt].value);
           dKeys.forEach((el) => {
             if (typeof games[id].options[opt][el] !==
                 typeof defaultOptions[opt].value[el]) {
@@ -7353,12 +7356,12 @@ function HungryGames() {
           });
         }
       }
-      for (let opt in games[id].options) {
+      for (const opt in games[id].options) {
         if (!games[id].options[opt] instanceof Object) continue;
         if (typeof defaultOptions[opt] === 'undefined') {
           delete games[id].options[opt];
         } else if (games[id].options[opt].value instanceof Object) {
-          let keys = Object.keys(games[id].options[opt].value);
+          const keys = Object.keys(games[id].options[opt].value);
           keys.forEach((el) => {
             if (typeof games[id].options[opt][el] !==
                 typeof defaultOptions[opt].value[el]) {
@@ -7413,9 +7416,9 @@ function HungryGames() {
    * @return {Object} The frozen object.
    */
   function deepFreeze(object) {
-    let propNames = Object.getOwnPropertyNames(object);
-    for (let name of propNames) {
-      let value = object[name];
+    const propNames = Object.getOwnPropertyNames(object);
+    for (const name of propNames) {
+      const value = object[name];
       object[name] =
           value && typeof value === 'object' ? deepFreeze(value) : value;
     }
@@ -7443,7 +7446,7 @@ function HungryGames() {
    * @return {Promise} Promise from JIMP with image data.
    */
   function readImage(url) {
-    let splitURL = url.match(/\/(avatars)\/(\d+)\/([^?&\/]+)/);
+    const splitURL = url.match(/\/(avatars)\/(\d+)\/([^?&\/]+)/);
     let filename;
     let dir;
     let fromCache = false;

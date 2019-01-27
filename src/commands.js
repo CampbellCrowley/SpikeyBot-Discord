@@ -30,7 +30,7 @@ function Command() {
           return;
         }
         try {
-          let parsed = JSON.parse(data);
+          const parsed = JSON.parse(data);
           if (parsed) {
             if (!userSettings[g.id]) userSettings[g.id] = {};
             Object.entries(parsed).forEach((el) => {
@@ -194,8 +194,8 @@ function Command() {
      */
     this.updateParentName = function(to) {
       me.parentName = to;
-      let fullName = me.getFullName();
-      for (let i in me.subCmds) {
+      const fullName = me.getFullName();
+      for (const i in me.subCmds) {
         if (me.subCmds[i].updateParentName) {
           me.subCmds[i].updateParentName(fullName);
         }
@@ -259,7 +259,7 @@ function Command() {
      */
     this.trigger = function(msg) {
       if (msg.cmd && msg.cmd != me.getFullName() && me.subCmds) {
-        let sub = msg.cmd.replace(me.getFullName() + ' ', '').split(' ')[0];
+        const sub = msg.cmd.replace(me.getFullName() + ' ', '').split(' ')[0];
         if (sub) {
           let match = me.subCmds[sub];
           if (!match) {
@@ -275,8 +275,8 @@ function Command() {
           }
         }
       }
-      let uIds = msg.text.match(/\d{17,18}/g);
-      let uTags = msg.text.replace(/\d{17,18}/g, '')
+      const uIds = msg.text.match(/\d{17,18}/g);
+      const uTags = msg.text.replace(/\d{17,18}/g, '')
           .match(/([^@#:\s][^@#:]{0,30}[^@#:\s])(#\d{4})?/g);
       msg.softMentions = {
         users: new self.Discord.UserStore(self.client),
@@ -285,25 +285,25 @@ function Command() {
       };
       if (uIds) {
         uIds.forEach((el) => {
-          let u = self.client.users.get(el);
+          const u = self.client.users.get(el);
           if (u) msg.softMentions.users.add(u);
         });
         if (msg.guild) {
           uIds.forEach((el) => {
-            let m = msg.guild.members.get(el);
+            const m = msg.guild.members.get(el);
             if (m) msg.softMentions.members.add(m);
           });
         }
       }
       if (uTags) {
         uTags.forEach((el) => {
-          let u =
+          const u =
               self.client.users.find((u) => u.username === el || u.tag === el);
           if (u) msg.softMentions.users.add(u);
         });
         if (msg.guild) {
           uTags.forEach((el) => {
-            let m = msg.guild.members.find(
+            const m = msg.guild.members.find(
                 (m) => m.user.username === el || m.tag === el ||
                     m.nickname === el);
             if (m) msg.softMentions.members.add(m);
@@ -329,7 +329,7 @@ function Command() {
       const myName = me.getFullName();
       return Object.entries(userSettings)
           .map((el) => {
-            let settings = el[1][myName];
+            const settings = el[1][myName];
             return [el[0], settings];
           })
           .filter((el) => {
@@ -547,7 +547,7 @@ function Command() {
         // owner.
         let perms = 0;
         if (msg.channel) {
-          let permObj = msg.channel.permissionsFor(msg.member);
+          const permObj = msg.channel.permissionsFor(msg.member);
           if (permObj) perms = permObj.bitfield;
         } else {
           perms = msg.member.permissions.bitfield;
@@ -559,9 +559,9 @@ function Command() {
         hasPerm = (hasPerm && true) || false;
       }
 
-      let disallow = me.defaultDisabled ? me.enabled : me.disabled;
-      let matched = findMatch(disallow, msg);
-      let isDisabled = (
+      const disallow = me.defaultDisabled ? me.enabled : me.disabled;
+      const matched = findMatch(disallow, msg);
+      const isDisabled = (
         // Command is disabled by default, and context does not explicitly
         // enable the command.
         ((!matched && !hasPerm) && me.defaultDisabled) ||
@@ -628,7 +628,7 @@ function Command() {
    * @private
    * @type {Object.<Object.<CommandSetting>>}
    */
-  let userSettings = {};
+  const userSettings = {};
 
   /**
    * Fetch all user-defined settings for a guild.
@@ -690,9 +690,9 @@ function Command() {
       override = msg;
       msg = msg2;
     }
-    let func = self.find(override, msg, true);
+    const func = self.find(override, msg, true);
     if (func) {
-      let failure = self.validate(override, msg, func);
+      const failure = self.validate(override, msg, func);
       if (failure === 'Guild Only') {
         self.common.reply(msg, onlyservermessage);
         return true;
@@ -752,8 +752,8 @@ function Command() {
       cmd = new SingleCommand(cmd, cb, {validOnlyInGuild: onlyserver});
     }
 
-    let keys = Object.keys(cmds);
-    let duplicates = cmd.aliases.filter((el) => {
+    const keys = Object.keys(cmds);
+    const duplicates = cmd.aliases.filter((el) => {
       return keys.includes(el);
     });
     if (duplicates.length > 0) {
@@ -773,7 +773,7 @@ function Command() {
    */
   this.removeListener = function(cmd) {
     if (typeof cmd === 'string') {
-      let obj = Object.entries(cmds).find((el) => {
+      const obj = Object.entries(cmds).find((el) => {
         return el[1].aliases.includes(cmd);
       });
       if (obj) {
@@ -827,7 +827,7 @@ function Command() {
     });
     if (setCmd) msg.cmd = cmd;
     while (single && single.subCmds && split.length > 0) {
-      let sub = Object.values(single.subCmds).find((el) => {
+      const sub = Object.values(single.subCmds).find((el) => {
         return el.aliases.includes(split[0]);
       });
       if (sub) {
@@ -855,30 +855,30 @@ function Command() {
   this.findAll = function(cmd, msg) {
     if (typeof cmd !== 'string') return [];
     if (msg && cmd.startsWith(msg.prefix)) cmd = cmd.replace(msg.prefix, '');
-    let split = cmd.trim().split(/\s/);
-    let output = [];
+    const split = cmd.trim().split(/\s/);
+    const output = [];
 
     (function iterate(list, search) {
       if (!search || search.length == 0) return;
-      let cmd = search[0].toLowerCase();
+      const cmd = search[0].toLowerCase();
       if (cmd.indexOf('*') < 0) {
-        let single = list.find((el) => {
+        const single = list.find((el) => {
           return el.aliases.includes(cmd);
         });
         if (single) {
           output.push(single);
-          let vals = Object.values(single.subCmds);
+          const vals = Object.values(single.subCmds);
           if (vals.length > 0) iterate(vals, search.slice(1));
           return;
         }
       } else {
-        let regex = new RegExp(cmd.replace(/\*/g, '.*'), 'g');
+        const regex = new RegExp(cmd.replace(/\*/g, '.*'), 'g');
         list.forEach((el) => {
           if (el.aliases.find((alias) => {
             return alias.match(regex);
           })) {
             output.push(el);
-            let vals = Object.values(el.subCmds);
+            const vals = Object.values(el.subCmds);
             if (vals.length > 0) iterate(vals, search.slice(1));
           }
         });
@@ -911,11 +911,11 @@ function Command() {
     }
     if (msg) {
       if (msg.guild) {
-        let guildValues = userSettings[msg.guild.id];
+        const guildValues = userSettings[msg.guild.id];
         if (guildValues) {
-          let commandValues = guildValues[func.getFullName()];
+          const commandValues = guildValues[func.getFullName()];
           if (commandValues) {
-            let isDisabled = commandValues.isDisabled(msg);
+            const isDisabled = commandValues.isDisabled(msg);
             if (!isDisabled) return null;
             if (!commandValues.defaultDisabled) {
               return isDisabled == 2 ? 'User Disabled Individual' :
@@ -932,9 +932,9 @@ function Command() {
         }
       }
 
-      let def = func.options.defaultDisabled;
-      let isDisabled = func.options.isDisabled(msg);
-      let bitfield = func.options.permissions;
+      const def = func.options.defaultDisabled;
+      const isDisabled = func.options.isDisabled(msg);
+      const bitfield = func.options.permissions;
 
       if (!isDisabled) return null;
       if (!def) {
@@ -972,20 +972,20 @@ function Command() {
           msg, 'Please specify a command, and where to disable it.');
       return;
     }
-    let trimmedText =
+    const trimmedText =
         msg.text.replace(self.Discord.MessageMentions.CHANNELS_PATTERN, '')
             .replace(self.Discord.MessageMentions.USERS_PATTERN, '')
             .replace(self.Discord.MessageMentions.ROLES_PATTERN, '')
             .trim();
-    let list = self.findAll(trimmedText, msg);
+    const list = self.findAll(trimmedText, msg);
     if (!list.length) {
       self.common.reply(
           msg, 'I was unable to find that command. (`' + trimmedText + '`)');
       return;
     }
-    let settings = [];
+    const settings = [];
     list.forEach((cmd) => {
-      let name = cmd.getFullName();
+      const name = cmd.getFullName();
       if (!userSettings[msg.guild.id]) userSettings[msg.guild.id] = {};
       if (!userSettings[msg.guild.id][name]) {
         userSettings[msg.guild.id][name] = new CommandSetting(cmd.options);
@@ -993,7 +993,7 @@ function Command() {
       }
       settings.push(userSettings[msg.guild.id][name]);
     });
-    let disabledList = [];
+    const disabledList = [];
     msg.mentions.channels.forEach((c) => {
       settings.forEach((s) => {
         if (s.disabled.channels[c.id]) return;
@@ -1019,7 +1019,7 @@ function Command() {
     });
 
     trimmedText.split(/\s/).forEach((el) => {
-      let trimmed = el.trim().toLowerCase();
+      const trimmed = el.trim().toLowerCase();
       if (trimmed === 'guild' || trimmed === 'everyone' || trimmed === 'all') {
         settings.forEach((s) => {
           s.defaultDisabled = true;
@@ -1035,7 +1035,7 @@ function Command() {
         disabledList.push('Permission: ' + el);
         return;
       }
-      let role = msg.guild.roles.find((r) => {
+      const role = msg.guild.roles.find((r) => {
         return r.name.toLowerCase() == trimmed;
       });
       if (role) {
@@ -1048,7 +1048,7 @@ function Command() {
         disabledList.push('Role: ' + role.name);
         return;
       }
-      let user = msg.guild.members.find((m) => {
+      const user = msg.guild.members.find((m) => {
         return m.user.tag.toLowerCase() == trimmed;
       });
       if (user) {
@@ -1060,7 +1060,7 @@ function Command() {
         return;
       }
     });
-    let nameList = list.map((el) => '`' + el.getFullName() + '`').join(', ');
+    const nameList = list.map((el) => '`' + el.getFullName() + '`').join(', ');
     self.common.reply(
         msg, 'Disabled\n' + (disabledList.join('\n') || 'Nothing'),
         'For ' + nameList);
@@ -1078,20 +1078,20 @@ function Command() {
           msg, 'Please specify a command, and where to enable it.');
       return;
     }
-    let trimmedText =
+    const trimmedText =
         msg.text.replace(self.Discord.MessageMentions.CHANNELS_PATTERN, '')
             .replace(self.Discord.MessageMentions.USERS_PATTERN, '')
             .replace(self.Discord.MessageMentions.ROLES_PATTERN, '')
             .trim();
-    let list = self.findAll(trimmedText, msg);
+    const list = self.findAll(trimmedText, msg);
     if (!list.length) {
       self.common.reply(
           msg, 'I was unable to find that command. (`' + trimmedText + '`)');
       return;
     }
-    let settings = [];
+    const settings = [];
     list.forEach((cmd) => {
-      let name = cmd.getFullName();
+      const name = cmd.getFullName();
       if (!userSettings[msg.guild.id]) userSettings[msg.guild.id] = {};
       if (!userSettings[msg.guild.id][name]) {
         userSettings[msg.guild.id][name] = new CommandSetting(cmd.options);
@@ -1099,7 +1099,7 @@ function Command() {
       }
       settings.push(userSettings[msg.guild.id][name]);
     });
-    let enabledList = [];
+    const enabledList = [];
     msg.mentions.channels.forEach((c) => {
       settings.forEach((s) => {
         if (s.enabled.channels[c.id]) return;
@@ -1124,7 +1124,7 @@ function Command() {
     });
 
     trimmedText.split(/\s/).forEach((el) => {
-      let trimmed = el.trim().toLowerCase();
+      const trimmed = el.trim().toLowerCase();
       if (trimmed === 'guild' || trimmed === 'everyone' || trimmed === 'all') {
         settings.forEach((s) => {
           s.defaultDisabled = false;
@@ -1140,7 +1140,7 @@ function Command() {
         enabledList.push('Permission: ' + el);
         return;
       }
-      let role = msg.guild.roles.find((r) => {
+      const role = msg.guild.roles.find((r) => {
         return r.name.toLowerCase() == trimmed;
       });
       if (role) {
@@ -1153,7 +1153,7 @@ function Command() {
         enabledList.push('Role: ' + role.name);
         return;
       }
-      let user = msg.guild.members.find((m) => {
+      const user = msg.guild.members.find((m) => {
         return m.user.tag.toLowerCase() == trimmed;
       });
       if (user) {
@@ -1165,7 +1165,7 @@ function Command() {
         return;
       }
     });
-    let nameList = list.map((el) => '`' + el.getFullName() + '`').join(', ');
+    const nameList = list.map((el) => '`' + el.getFullName() + '`').join(', ');
     self.common.reply(
         msg, 'Enabled\n' + (enabledList.join('\n') || 'Nothing'),
         'For ' + nameList);
@@ -1185,9 +1185,9 @@ function Command() {
       if (text.startsWith(msg.prefix)) text = text.replace(msg.prefix, '');
       commands = userSettings[msg.guild.id];
       if (commands) {
-        let origContent = msg.content;
+        const origContent = msg.content;
         msg.content = text;
-        let cmdObj = self.find(null, msg);
+        const cmdObj = self.find(null, msg);
         msg.content = origContent;
 
         if (cmdObj) {
@@ -1200,7 +1200,7 @@ function Command() {
         }
       }
       if (!commands) {
-        let found = Object.values(cmds).find((el) => {
+        const found = Object.values(cmds).find((el) => {
           return el.aliases.includes(text);
         });
         if (!found) {
@@ -1221,22 +1221,22 @@ function Command() {
       }
       commands = [[text, commands]];
     } else {
-      let defaultValues = Object.values(self.getDefaultSettings());
-      let defaultEntries = [];
+      const defaultValues = Object.values(self.getDefaultSettings());
+      const defaultEntries = [];
       (function addSubCmds(vals) {
         vals.forEach((el) => {
           defaultEntries.push([el.getFullName(), el.options]);
-          let sCmds = Object.values(el.subCmds);
+          const sCmds = Object.values(el.subCmds);
           if (sCmds.length > 0) addSubCmds(sCmds);
         });
       })(defaultValues);
-      let defaultOpts = defaultEntries.reduce(
+      const defaultOpts = defaultEntries.reduce(
           (p, c) => {
             p[c[0]] = c[1];
             return p;
           },
           {});
-      let finalVals = Object.assign(defaultOpts, userSettings[msg.guild.id]);
+      const finalVals = Object.assign(defaultOpts, userSettings[msg.guild.id]);
 
       commands = Object.entries(finalVals).filter((el) => {
         if (el[1].defaultDisabled) {
@@ -1250,8 +1250,8 @@ function Command() {
         }
       });
     }
-    let output = commands.map((el) => {
-      let tmp = [];
+    const output = commands.map((el) => {
+      const tmp = [];
       let obj;
       if (el[1].defaultDisabled) {
         tmp.push('`' + el[0] + '` allowed with:');
@@ -1266,25 +1266,25 @@ function Command() {
         tmp.push('`' + el[0] + '` blocked for:');
         obj = el[1].disabled;
       }
-      let channels = Object.keys(obj.channels);
+      const channels = Object.keys(obj.channels);
       if (channels.length) {
-        let list = channels.map((c) => {
+        const list = channels.map((c) => {
           if (!msg.guild.channels.get(c)) return '';
           return '#' + msg.guild.channels.get(c).name;
         });
         tmp.push('Channels: ' + list.join(', '));
       }
-      let users = Object.keys(obj.users);
+      const users = Object.keys(obj.users);
       if (users.length) {
-        let list = users.map((u) => {
+        const list = users.map((u) => {
           if (!msg.guild.members.get(u)) return '';
           return msg.guild.members.get(u).user.tag;
         });
         tmp.push('Members: ' + list.join(', '));
       }
-      let roles = Object.keys(obj.roles);
+      const roles = Object.keys(obj.roles);
       if (roles.length) {
-        let list = roles.map((r) => {
+        const list = roles.map((r) => {
           r = r.split('/')[1];
           if (!msg.guild.roles.get(r)) return '';
           return msg.guild.roles.get(r).name;
@@ -1297,11 +1297,11 @@ function Command() {
     }).filter((el) => {
       return el;
     });
-    let finalSplits = [];
+    const finalSplits = [];
     (function splitOutput(num) {
-      let splitLength = Math.ceil(output.length / num);
+      const splitLength = Math.ceil(output.length / num);
       for (let i = 0; i < num; i++) {
-        let section = output.slice(splitLength * i, splitLength * (i + 1))
+        const section = output.slice(splitLength * i, splitLength * (i + 1))
             .join('\n')
             .length;
         if (section > 1024) {
@@ -1320,7 +1320,7 @@ function Command() {
           msg, 'I wasn\'t able to fit all settings into a message.');
       return;
     }
-    let embed = new self.Discord.MessageEmbed();
+    const embed = new self.Discord.MessageEmbed();
     embed.setColor([255, 0, 255]);
     embed.setTitle('Command Permissions');
     for (let i = 0; i < finalSplits.length; i++) {
@@ -1364,7 +1364,7 @@ function Command() {
           });
     } else if (msg.text.indexOf('*') < 0) {
       msg.content = msg.text;
-      let cmd = self.find(null, msg);
+      const cmd = self.find(null, msg);
       if (!cmd || !userSettings[msg.guild.id] ||
           !userSettings[msg.guild.id][cmd.getFullName()]) {
         self.common.reply(
@@ -1396,14 +1396,14 @@ function Command() {
             });
           });
     } else {
-      let cmd = self.findAll(msg.text, msg);
+      const cmd = self.findAll(msg.text, msg);
       if (cmd.length == 0) {
         self.common.reply(
             msg, 'I couldn\'t find any commands to reset that match what' +
                 ' you asked for.');
         return;
       }
-      let nameList = cmd.map((el) => '`' + el.getFullName() + '`').join(', ');
+      const nameList = cmd.map((el) => '`' + el.getFullName() + '`').join(', ');
       self.common
           .reply(
               msg, 'Are you sure you wish to reset settings for all of the ' +
@@ -1450,9 +1450,9 @@ function Command() {
    * listen on this event.
    */
   this.removeEventListener = function(name, handler) {
-    let handlers = eventList[name];
+    const handlers = eventList[name];
     if (!handlers) return;
-    let index = handlers.findIndex((el) => {
+    const index = handlers.findIndex((el) => {
       return el == handler;
     });
     if (index < 0) return;
@@ -1467,7 +1467,7 @@ function Command() {
    * @param {*} args The arguments to pass to the handlers.
    */
   this.fire = function(name, ...args) {
-    let handlers = eventList[name];
+    const handlers = eventList[name];
     if (!handlers || handlers.length == 0) return;
     handlers.forEach((h) => {
       h.apply(h, args);

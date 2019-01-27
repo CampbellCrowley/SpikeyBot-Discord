@@ -1,9 +1,9 @@
 // Copyright 2018 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
-let emojiChecker = require('./lib/twemojiChcker.js');
-let fs = require('fs');
-let mkdirp = require('mkdirp');
-let rimraf = require('rimraf');
+const emojiChecker = require('./lib/twemojiChcker.js');
+const fs = require('fs');
+const mkdirp = require('mkdirp');
+const rimraf = require('rimraf');
 require('./subModule.js')(Polling); // Extends the SubModule class.
 
 /**
@@ -72,12 +72,12 @@ function Polling() {
         }
       }
     });
-    let polls = Object.entries(currentPolls);
+    const polls = Object.entries(currentPolls);
     for (let i = 0; i < polls.length; i++) {
       const dir = self.common.guildSaveDir + polls[i][1].request.guild.id +
           guildSubDir + polls[i][1].request.author.id;
       const filename = saveFilename;
-      let temp = Object.assign({}, polls[i][1]);
+      const temp = Object.assign({}, polls[i][1]);
       temp.request = {
         channel: temp.request.channel.id,
         message: temp.request.id,
@@ -87,7 +87,7 @@ function Polling() {
         message: temp.message.id,
       };
       delete temp.timeout;
-      let pollString = JSON.stringify(temp);
+      const pollString = JSON.stringify(temp);
       if (opt === 'async') {
         mkdirAndWrite(dir, filename, pollString);
       } else {
@@ -117,7 +117,7 @@ function Polling() {
           self.client.channels.get(parsed.message.channel)
               .messages.fetch(parsed.message.message)
               .then((message) => {
-                let poll = currentPolls[parsed.message.message] =
+                const poll = currentPolls[parsed.message.message] =
                     new Poll(request, message, parsed);
                 addListenersToPoll(poll, parsed.message.message);
               })
@@ -214,7 +214,7 @@ function Polling() {
    * @private
    * @type {Object.<Polling~Poll>}
    */
-  let currentPolls = {};
+  const currentPolls = {};
 
   /**
    * @classdesc Stores data related to a single poll.
@@ -305,7 +305,7 @@ function Polling() {
               'endpoll to end your current poll.');
       return;
     }
-    let choicesMatch = msg.text.match(/\[[^\]]*\]/g);
+    const choicesMatch = msg.text.match(/\[[^\]]*\]/g);
     let textString = msg.text;
     if (choicesMatch) {
       choicesMatch.forEach((el) => {
@@ -313,7 +313,7 @@ function Polling() {
       });
     }
     textString = textString.trim();
-    let durationMatch = textString.match(/^(\d+)(\w)(.*)/);
+    const durationMatch = textString.match(/^(\d+)(\w)(.*)/);
 
     let duration = 0;
     let timeUnit = 'infinite';
@@ -340,7 +340,7 @@ function Polling() {
       textString = durationMatch[3];
     }
 
-    let embed = new self.Discord.MessageEmbed();
+    const embed = new self.Discord.MessageEmbed();
     if (textString) {
       embed.setTitle(textString);
     }
@@ -361,7 +361,7 @@ function Polling() {
       choicesMatch.forEach((el, i, obj) => {
         if (error) return;
         el = obj[i] = el.replace(/^\[|\]$/g, '');
-        let matchedEmoji = emojiChecker.match(el);
+        const matchedEmoji = emojiChecker.match(el);
         if (!matchedEmoji) {
           error = i + 1;
           return;
@@ -386,7 +386,7 @@ function Polling() {
     };
 
     msg.channel.send(embed).then((msg_) => {
-      let poll = new Poll(msg, msg_, options);
+      const poll = new Poll(msg, msg_, options);
       currentPolls[msg_.id] = poll;
 
       addListenersToPoll(poll, msg_.id);
@@ -405,7 +405,7 @@ function Polling() {
    */
   function addListenersToPoll(poll, key) {
     if (poll.endTime) {
-      let duration = poll.endTime - Date.now();
+      const duration = poll.endTime - Date.now();
       if (duration > 0) {
         poll.timeout = self.client.setTimeout(
             (function(poll, key) {
@@ -475,11 +475,11 @@ function Polling() {
       self.client.clearTimeout(poll.timeout);
       poll.timeout = null;
     }
-    let reactions = poll.message.reactions.filter((reaction) => {
+    const reactions = poll.message.reactions.filter((reaction) => {
       return poll.emojis.concat(reaction.emoji.name);
     });
 
-    let embed = new self.Discord.MessageEmbed();
+    const embed = new self.Discord.MessageEmbed();
     if (poll.title) embed.setTitle(poll.title);
     embed.setDescription(
         self.common.mention(poll.request) + '\'s poll results');
@@ -495,7 +495,7 @@ function Polling() {
     let index = -1;
     let max = 0;
     reactions.forEach((r) => {
-      let i = poll.emojis.findIndex((e) => {
+      const i = poll.emojis.findIndex((e) => {
         return e == r.emoji.name;
       });
       if (r.count - 1 > max) {

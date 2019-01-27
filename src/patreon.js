@@ -85,7 +85,7 @@ function Patreon() {
         return;
       }
       try {
-        let parsed = JSON.parse(data);
+        const parsed = JSON.parse(data);
         if (!parsed) return;
         patreonTiers = Object.entries(parsed);
       } catch (e) {
@@ -116,7 +116,7 @@ function Patreon() {
         return;
       }
       try {
-        let parsed = JSON.parse(data);
+        const parsed = JSON.parse(data);
         if (!parsed) return;
         patreonSettingsTemplate = parsed;
       } catch (e) {
@@ -254,7 +254,7 @@ function Patreon() {
             err);
         return;
       }
-      let permString = data.status.join(', ');
+      const permString = data.status.join(', ');
       self.common.reply(
           msg, 'Thank you for supporting SpikeyRobot!\n' +
               'Here are your current rewards: ' + permString,

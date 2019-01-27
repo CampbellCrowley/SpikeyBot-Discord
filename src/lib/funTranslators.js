@@ -6,7 +6,7 @@
  * @class
  */
 function FunTranslators() {
-  let self = this;
+  const self = this;
   /**
    * Convert a string to a format based on it's name.
    * @public
@@ -70,9 +70,9 @@ function FunTranslators() {
    * @return {string} The formatted string.
    */
   this.toMockingFont = function(input) {
-    let output = input.toLowerCase().split('');
+    const output = input.toLowerCase().split('');
     for (let i = 0; i < output.length / 2; i++) {
-      let rand = Math.floor(Math.random() * output.length);
+      const rand = Math.floor(Math.random() * output.length);
       output[rand] = output[rand].toUpperCase();
     }
     return output.join('');

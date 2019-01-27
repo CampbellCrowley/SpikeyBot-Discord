@@ -1,7 +1,7 @@
 // Copyright 2018 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 /* eslint-disable require-jsdoc, guard-for-in */
-let fs = require('fs');
+const fs = require('fs');
 
 const tags = {
   '{hgRole}': 'HG Creator',
@@ -12,7 +12,7 @@ const keys = Object.keys(tags).map(function(el) {
 });
 const regex = new RegExp(keys.join('|'), 'g');
 
-for (let i in process.argv) {
+for (const i in process.argv) {
   if (i < 2) continue;
   convertFile(process.argv[i]);
 }
@@ -39,7 +39,7 @@ function convertFile(filename) {
 
 function objToMd(file) {
   let text = '';
-  let prefix = '?' + (file.prefix || '');
+  const prefix = '?' + (file.prefix || '');
   if (file.title) {
     text += '# ' + repTags(file.title) + '\n';
   }
@@ -47,8 +47,8 @@ function objToMd(file) {
     text += '#### ' + repTags(file.description) + '\n';
   }
   text += '***\n';
-  for (let i in file.sections) {
-    let sec = file.sections[i];
+  for (const i in file.sections) {
+    const sec = file.sections[i];
     if (sec.title) {
       text = '## ' + repTags(sec.title) + '\n' + text;
     }
@@ -61,7 +61,7 @@ function objToMd(file) {
         '\n| Command | Description |' + (hasAliases ? ' Aliases |\n' : '\n');
     text += '| --- | --- |' + (hasAliases ? ' --- |\n' : '\n');
 
-    for (let r in sec.rows) {
+    for (const r in sec.rows) {
       let row = ['', '', ''];
       if (typeof sec.rows[r] === 'string') {
         row = repTags(sec.rows[r]).split('//');

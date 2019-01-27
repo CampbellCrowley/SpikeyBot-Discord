@@ -30,7 +30,7 @@ function Uno() {
   this.shutdown = function() {
     self.command.removeListener('uno');
 
-    let entries = Object.entries(games);
+    const entries = Object.entries(games);
     entries.forEach((el) => {
       if (typeof el[1].end === 'function') el[1].end();
     });
@@ -77,7 +77,7 @@ function Uno() {
    * @private
    * @type {Object.<Object.<Uno.Game>>}
    */
-  let games = {};
+  const games = {};
 
   /**
    * Starts an Uno game. If someone is mentioned it will start a game
@@ -98,8 +98,8 @@ function Uno() {
       return;
     }
     if (games[msg.guild.id]) {
-      let entries = Object.values(games[msg.guild.id]);
-      let g = entries.find((el) => el.getPlayers().includes(msg.author.id));
+      const entries = Object.values(games[msg.guild.id]);
+      const g = entries.find((el) => el.getPlayers().includes(msg.author.id));
       if (g) {
         if (g.groupChannel.id == msg.channel.id) {
           return;
@@ -112,7 +112,7 @@ function Uno() {
     }
     self.common.reply(msg, 'Creating a game of UNO.');
     if (!games[msg.guild.id]) games[msg.guild.id] = {};
-    let newGame = new self.Game(
+    const newGame = new self.Game(
         (msg.mentions.members.array() || []).concat([msg.member]), msg.member);
     games[msg.guild.id][newGame.id] = newGame;
   }
@@ -135,7 +135,7 @@ function Uno() {
           msg, 'There are no UNO games in progress in this server.');
       return;
     }
-    let list = Object.values(games[msg.guild.id]);
+    const list = Object.values(games[msg.guild.id]);
     list.forEach((g) => {
       if (typeof g.end == 'function') g.end();
     });
@@ -286,7 +286,8 @@ function Uno() {
     this.toString = function() {
       // Wild cards can change color, so we can't cache their name.
       if (myName && !(card.face & self.CardFace.WILD_EFFECT)) return myName;
-      let face = formatCard(cardFacePairs.find((el) => el[1] == card.face)[0]);
+      const face =
+          formatCard(cardFacePairs.find((el) => el[1] == card.face)[0]);
       if (card.color == self.Color.NONE) {
         myName = face;
       } else {
@@ -329,7 +330,7 @@ function Uno() {
      * @private
      * @type {Object.<Discord~GuildMember>}
      */
-    let members = {};
+    const members = {};
 
     do {
       /**
@@ -348,7 +349,7 @@ function Uno() {
      * @private
      * @type {Uno.Player[]}
      */
-    let players = [];
+    const players = [];
 
     /**
      * The category that stores all channels for this game. Null until it is
@@ -468,13 +469,13 @@ function Uno() {
      * @private
      */
     (function setupChannels() {
-      let channelOpts = {
+      const channelOpts = {
         topic: 'UNO! (ID:' + game.id + ')',
         type: 'category',
         reason: 'An UNO game was started by ' + maker.user.tag,
       };
 
-      let groupPerms = [
+      const groupPerms = [
         {
           id: maker.guild.defaultRole,
           allow: 0,
@@ -533,7 +534,7 @@ function Uno() {
             .update({VIEW_CHANNEL: true}); */
       });
       currentCollector = game.groupChannel.createMessageCollector((m) => {
-        let prefix = self.bot.getPrefix(m.guild);
+        const prefix = self.bot.getPrefix(m.guild);
         if (m.content.startsWith(prefix)) {
           m.content = m.content.replace(prefix, '');
         }
@@ -546,7 +547,7 @@ function Uno() {
         }
         if (m.content.toLowerCase().startsWith('uno')) {
           self.debug(m.channel.id + '@' + m.author.id + ' ' + m.content);
-          let cmd = m.content.toLowerCase().split(' ')[1];
+          const cmd = m.content.toLowerCase().split(' ')[1];
           switch (cmd) {
             case 'begin':
             case 'start':
@@ -602,7 +603,7 @@ function Uno() {
      * Send the list of current players in this game to the group channel.
      */
     function listPlayers() {
-      let embed = new self.Discord.MessageEmbed();
+      const embed = new self.Discord.MessageEmbed();
       embed.setTitle('Current Players');
       embed.setDescription(players.map((p) => p.name).join(', '));
       embed.setColor('WHITE');
@@ -635,7 +636,7 @@ function Uno() {
       playCard();
 
       currentCollector = game.groupChannel.createMessageCollector((m) => {
-        let prefix = self.bot.getPrefix(m.guild);
+        const prefix = self.bot.getPrefix(m.guild);
         if (m.content.startsWith(prefix)) {
           m.content = m.content.replace(prefix, '');
         }
@@ -662,7 +663,7 @@ function Uno() {
         if (turn < 0 || m.author.id != players[turn].id) return false;
         if (m.content.toLowerCase().startsWith('uno')) {
           self.debug(m.channel.id + '@' + m.author.id + ' ' + m.content);
-          let cmd = m.content.toLowerCase().split(' ')[1];
+          const cmd = m.content.toLowerCase().split(' ')[1];
           switch (cmd) {
             case 'play':
               if (playCard(m.content.split(' ').slice(2).join(' '))) {
@@ -718,7 +719,7 @@ function Uno() {
      * @return {Promise.<Discord~Message>}
      */
     function sendHelp() {
-      let embed = new self.Discord.MessageEmbed();
+      const embed = new self.Discord.MessageEmbed();
       embed.setTitle('Welcome to UNO! (Beta)');
       embed.setAuthor(maker.user.tag);
       embed.setColor([237, 21, 31]);
@@ -808,10 +809,10 @@ function Uno() {
      * channel.
      */
     function drawCards(num, silent = false) {
-      let drawn = [];
+      const drawn = [];
       for (let j = 0; j < num; j++) {
         if (discarded.length == 0) break;
-        let single = discarded.splice(
+        const single = discarded.splice(
             Math.floor(Math.random() * discarded.length), 1)[0];
         if (single.face & self.CardFace.WILD_EFFECT) {
           single.color = self.Color.NONE;
@@ -881,7 +882,7 @@ function Uno() {
               '`Please specify a card, that you have, to play.`');
           return false;
         } else {
-          let parsed = parseToCard(text);
+          const parsed = parseToCard(text);
           if (!parsed) {
             game.groupChannel.send(
                 '`I\'m not sure what card that is.`\n' + text);
@@ -918,7 +919,7 @@ function Uno() {
         }
       }
 
-      let card = hand.splice(selected, 1)[0];
+      const card = hand.splice(selected, 1)[0];
       if (topCard) {
         discarded.push(topCard);
       }
@@ -984,9 +985,9 @@ function Uno() {
      * @return {?Uno.Card} The matched card, or null if no match.
      */
     function parseToCard(text) {
-      let replaced = text.replace(/_/g, ' ');
-      let colorMatch = replaced.match(colorRegExp);
-      let faceMatch = replaced.match(cardFaceRegExp);
+      const replaced = text.replace(/_/g, ' ');
+      const colorMatch = replaced.match(colorRegExp);
+      const faceMatch = replaced.match(cardFaceRegExp);
 
       if (!faceMatch) return null;
       if (faceMatch.length != 1) return null;
@@ -996,7 +997,7 @@ function Uno() {
       if (colorMatch && colorMatch.length == 1) {
         color = self.Color[colorMatch[0].toUpperCase()];
       }
-      let face = self.CardFace[faceMatch[0].toUpperCase()];
+      const face = self.CardFace[faceMatch[0].toUpperCase()];
 
       // If not a wild card, and no color was chosen.
       if (!(face & self.CardFace.WILD_EFFECT) && color == self.Color.NONE) {
@@ -1033,7 +1034,7 @@ function Uno() {
       if (players[turn].id == caller && !players[turn].calledUno &&
           players[turn].hand.length == 2) {
         players[turn].calledUno = true;
-        let id = players[turn].id;
+        const id = players[turn].id;
         game.groupChannel.send(`<@${id}> called\`\`\`\n${unoText}\n\`\`\``);
       }
       if (previousTurn > -1) {
@@ -1041,7 +1042,7 @@ function Uno() {
             !players[previousTurn].calledUno &&
             players[previousTurn].hand.length == 1) {
           players[previousTurn].calledUno = true;
-          let id = players[previousTurn].id;
+          const id = players[previousTurn].id;
           game.groupChannel.send(`<@${id}> called\`\`\`\n${unoText}\n\`\`\``);
         }
         if (!players[previousTurn].calledUno &&
@@ -1049,7 +1050,7 @@ function Uno() {
           game.groupChannel.send(
               '<@' + players[previousTurn].id +
               '> `forgot to call "UNO!" and now must draw 2 cards!`');
-          let tmp = turn;
+          const tmp = turn;
           turn = previousTurn;
           drawCards(2);
           turn = tmp;
@@ -1119,12 +1120,12 @@ function Uno() {
       if (!p) return;
       if (!players || !players.length || p.id == maker.id) return;
 
-      let index = players.findIndex((player) => player.id == p);
+      const index = players.findIndex((player) => player.id == p);
       if (index > -1) {
         players[index].remove();
         discarded = discarded.concat(players[index].hand.splice(0));
         players.splice(index, 1);
-        let perms = game.groupChannel.permissionOverwrites.get(p);
+        const perms = game.groupChannel.permissionOverwrites.get(p);
         if (perms) perms.delete('User removed from game');
         if (turn == index) nextTurn();
       }
@@ -1156,7 +1157,7 @@ function Uno() {
       throw new Error('A new player must be based off of a GuildMember.');
     }
 
-    let permOverwrites = [
+    const permOverwrites = [
       {
         id: member.guild.defaultRole,
         allow: 0,
@@ -1177,7 +1178,7 @@ function Uno() {
       },
     ];
 
-    let channelOpts = Object.assign({
+    const channelOpts = Object.assign({
       topic: (member.nickname || member.user.username) + '\'s UNO cards.',
       parent: parent.catChannel,
       permissionOverwrites: permOverwrites,
@@ -1276,20 +1277,20 @@ function Uno() {
    * @return {Discord~MessageEmbed} The MessageEmbed to send to the user.
    */
   function getCardEmbed(hand) {
-    let embed = new self.Discord.MessageEmbed();
-    let colors = {};
+    const embed = new self.Discord.MessageEmbed();
+    const colors = {};
     if (hand instanceof self.Card) hand = [hand];
     hand.forEach((card) => {
       if (!colors[card.color]) colors[card.color] = [card.toString()];
       else colors[card.color].push(card.toString());
     });
 
-    let noTitle = hand.length == 1;
+    const noTitle = hand.length == 1;
 
     colorPairs.forEach((c) => {
       if (!colors[c[1]] || !c[1]) return;
       colors[c[1]].sort();
-      let str = colors[c[1]].join('\n');
+      const str = colors[c[1]].join('\n');
       if (noTitle) {
         embed.setTitle(str);
       } else {
@@ -1298,7 +1299,7 @@ function Uno() {
     });
     if (colors[0]) {
       colors[0].sort();
-      let str = colors[0].join('\n');
+      const str = colors[0].join('\n');
       if (noTitle) {
         embed.setTitle(str);
       } else {
@@ -1338,8 +1339,8 @@ function Uno() {
    * @return {Uno.Card[]}
    */
   this.getHand = function() {
-    let c = self.Color;
-    let f = self.CardFace;
+    const c = self.Color;
+    const f = self.CardFace;
     /* eslint-disable no-multi-spaces */
     return [
       new self.Card(f.ZERO, c.RED),        new self.Card(f.ZERO, c.GREEN),

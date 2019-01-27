@@ -378,7 +378,7 @@ putting the module into an uncontrollable state.
 ### ChatBot~disabledChatBot : <code>Object.&lt;boolean&gt;</code> ℗
 The guilds that have disabled the chatbot feature.
 
-**Kind**: inner property of [<code>ChatBot</code>](#ChatBot)  
+**Kind**: inner constant of [<code>ChatBot</code>](#ChatBot)  
 **Access**: private  
 <a name="ChatBot..mkAndWrite"></a>
 
@@ -511,11 +511,11 @@ a command to be run.
                 * [~getReferences()](#CmdScheduling..ScheduledCommand..getReferences) ℗
         * [~longInterval](#CmdScheduling..longInterval) : <code>Interval</code> ℗
         * [~listeners](#CmdScheduling..listeners) : <code>Object.&lt;Array.&lt;function()&gt;&gt;</code> ℗
-        * [~schedules](#CmdScheduling..schedules) : <code>Object.&lt;Array.&lt;CmdScheduling.ScheduledCommand&gt;&gt;</code> ℗
         * [~maxTimeout](#CmdScheduling..maxTimeout) : <code>number</code> ℗
         * [~saveSubDir](#CmdScheduling..saveSubDir) : <code>string</code> ℗
         * [~idChars](#CmdScheduling..idChars) : <code>string</code> ℗
         * [~embedColor](#CmdScheduling..embedColor) : <code>Array.&lt;number&gt;</code> ℗
+        * [~schedules](#CmdScheduling..schedules) : <code>Object.&lt;Array.&lt;CmdScheduling.ScheduledCommand&gt;&gt;</code> ℗
         * [~writeSaveData(i, data, [opt])](#CmdScheduling..writeSaveData) ℗
         * [~registerScheduledCommand(sCmd)](#CmdScheduling..registerScheduledCommand) ℗
         * [~commandSchedule(msg)](#CmdScheduling..commandSchedule) : [<code>commandHandler</code>](#commandHandler) ℗
@@ -883,14 +883,6 @@ Currently registered event listeners, mapped by event name.
 
 **Kind**: inner property of [<code>CmdScheduling</code>](#CmdScheduling)  
 **Access**: private  
-<a name="CmdScheduling..schedules"></a>
-
-### CmdScheduling~schedules : <code>Object.&lt;Array.&lt;CmdScheduling.ScheduledCommand&gt;&gt;</code> ℗
-All of the currently loaded commands to run. Mapped by Guild ID, then
-sorted arrays by time to run next command.
-
-**Kind**: inner property of [<code>CmdScheduling</code>](#CmdScheduling)  
-**Access**: private  
 <a name="CmdScheduling..maxTimeout"></a>
 
 ### CmdScheduling~maxTimeout : <code>number</code> ℗
@@ -923,6 +915,14 @@ The color to use for embeds sent from this submodule.
 
 **Kind**: inner constant of [<code>CmdScheduling</code>](#CmdScheduling)  
 **Default**: <code>[50,255,255]</code>  
+**Access**: private  
+<a name="CmdScheduling..schedules"></a>
+
+### CmdScheduling~schedules : <code>Object.&lt;Array.&lt;CmdScheduling.ScheduledCommand&gt;&gt;</code> ℗
+All of the currently loaded commands to run. Mapped by Guild ID, then
+sorted arrays by time to run next command.
+
+**Kind**: inner constant of [<code>CmdScheduling</code>](#CmdScheduling)  
 **Access**: private  
 <a name="CmdScheduling..writeSaveData"></a>
 
@@ -1863,7 +1863,7 @@ All tracked commands mapped by command name.
 Specific settings defined by users as restrictions on commands. Mapped by
 guild id, then by the command.
 
-**Kind**: inner property of [<code>Command</code>](#Command)  
+**Kind**: inner constant of [<code>Command</code>](#Command)  
 **Access**: private  
 <a name="Command..onlyservermessage"></a>
 
@@ -2771,19 +2771,12 @@ Hunger Games simulator.
         * [~Event](#HungryGames..Event)
             * [new Event(message, [numVictim], [numAttacker], [victimOutcome], [attackerOutcome], [victimKiller], [attackerKiller], [battle], [state], [attacks])](#new_HungryGames..Event_new)
         * [~web](#HungryGames..web) : [<code>HGWeb</code>](#HGWeb) ℗
-        * [~findTimestamps](#HungryGames..findTimestamps) : <code>Object.&lt;number&gt;</code> ℗
-        * [~games](#HungryGames..games) : [<code>Object.&lt;GuildGame&gt;</code>](#HungryGames..GuildGame) ℗
         * [~messages](#HungryGames..messages) : <code>Object.&lt;Array.&lt;string&gt;&gt;</code> ℗
         * [~battles](#HungryGames..battles) : <code>Object</code> ℗
-        * [~dayEventIntervals](#HungryGames..dayEventIntervals) : <code>Object.&lt;number&gt;</code> ℗
-        * [~autoPlayTimeout](#HungryGames..autoPlayTimeout) : <code>Object.&lt;number&gt;</code> ℗
-        * [~battleMessage](#HungryGames..battleMessage) : <code>Object.&lt;Discord~Message&gt;</code> ℗
         * [~weapons](#HungryGames..weapons) : [<code>Object.&lt;WeaponEvent&gt;</code>](#HungryGames..WeaponEvent) ℗
         * [~defaultBloodbathEvents](#HungryGames..defaultBloodbathEvents) : [<code>Array.&lt;Event&gt;</code>](#HungryGames..Event) ℗
         * [~defaultPlayerEvents](#HungryGames..defaultPlayerEvents) : [<code>Array.&lt;Event&gt;</code>](#HungryGames..Event) ℗
         * [~defaultArenaEvents](#HungryGames..defaultArenaEvents) : [<code>Array.&lt;ArenaEvent&gt;</code>](#HungryGames..ArenaEvent) ℗
-        * [~newEventMessages](#HungryGames..newEventMessages) : <code>Object.&lt;Discord~Message&gt;</code> ℗
-        * [~optionMessages](#HungryGames..optionMessages) : <code>Object.&lt;Discord~Message&gt;</code> ℗
         * [~listenersEndTime](#HungryGames..listenersEndTime) : <code>number</code> ℗
         * [~patreonSettingKeys](#HungryGames..patreonSettingKeys) : <code>Array.&lt;string&gt;</code> ℗
         * [~saveFile](#HungryGames..saveFile) : <code>string</code> ℗
@@ -2799,6 +2792,7 @@ Hunger Games simulator.
         * [~roleName](#HungryGames..roleName) : <code>string</code> ℗
         * [~numEventsPerPage](#HungryGames..numEventsPerPage) : <code>number</code> ℗
         * [~maxReactAwaitTime](#HungryGames..maxReactAwaitTime) : <code>number</code> ℗
+        * [~findTimestamps](#HungryGames..findTimestamps) : <code>Object.&lt;number&gt;</code> ℗
         * [~findDelay](#HungryGames..findDelay) : <code>number</code> ℗
         * [~defaultOptions](#HungryGames..defaultOptions) : <code>Object.&lt;{value: (string\|number\|boolean\|Object), values: ?Array.&lt;string&gt;, range: ?{min:number, max:number}, comment: string, category: string}&gt;</code> ℗
         * [~lotsOfDeathRate](#HungryGames..lotsOfDeathRate) : <code>number</code> ℗
@@ -2807,6 +2801,12 @@ Hunger Games simulator.
         * [~emoji](#HungryGames..emoji) : <code>Object.&lt;string&gt;</code> ℗
         * [~alph](#HungryGames..alph) : <code>string</code> ℗
         * [~multiEventUserDistribution](#HungryGames..multiEventUserDistribution) : <code>Object</code> ℗
+        * [~games](#HungryGames..games) : [<code>Object.&lt;GuildGame&gt;</code>](#HungryGames..GuildGame) ℗
+        * [~dayEventIntervals](#HungryGames..dayEventIntervals) : <code>Object.&lt;number&gt;</code> ℗
+        * [~autoPlayTimeout](#HungryGames..autoPlayTimeout) : <code>Object.&lt;number&gt;</code> ℗
+        * [~battleMessage](#HungryGames..battleMessage) : <code>Object.&lt;Discord~Message&gt;</code> ℗
+        * [~newEventMessages](#HungryGames..newEventMessages) : <code>Object.&lt;Discord~Message&gt;</code> ℗
+        * [~optionMessages](#HungryGames..optionMessages) : <code>Object.&lt;Discord~Message&gt;</code> ℗
         * [~helpmessagereply](#HungryGames..helpmessagereply) : <code>string</code> ℗
         * [~blockedmessage](#HungryGames..blockedmessage) : <code>string</code> ℗
         * [~helpObject](#HungryGames..helpObject) ℗
@@ -3579,25 +3579,6 @@ Instance of the web class that can control this instance.
 
 **Kind**: inner property of [<code>HungryGames</code>](#HungryGames)  
 **Access**: private  
-<a name="HungryGames..findTimestamps"></a>
-
-### HungryGames~findTimestamps : <code>Object.&lt;number&gt;</code> ℗
-Stores the guilds we have looked for their data recently and the timestamp
-at which we looked. Used to reduce filesystem requests and blocking.
-
-**Kind**: inner property of [<code>HungryGames</code>](#HungryGames)  
-**Access**: private  
-<a name="HungryGames..games"></a>
-
-### HungryGames~games : [<code>Object.&lt;GuildGame&gt;</code>](#HungryGames..GuildGame) ℗
-All currently tracked games. Mapped by guild ID. In most cases you should
-NOT reference this directly. Use [find](#HungryGames..find) to get the game
-object for a guild.
-
-**Kind**: inner property of [<code>HungryGames</code>](#HungryGames)  
-**Default**: <code>{}</code>  
-**Access**: private  
-**See**: [find](#HungryGames..find)  
 <a name="HungryGames..messages"></a>
 
 ### HungryGames~messages : <code>Object.&lt;Array.&lt;string&gt;&gt;</code> ℗
@@ -3615,31 +3596,6 @@ All attacks and outcomes for battles.
 **Kind**: inner property of [<code>HungryGames</code>](#HungryGames)  
 **Access**: private  
 **See**: [battleFile](#HungryGames..battleFile)  
-<a name="HungryGames..dayEventIntervals"></a>
-
-### HungryGames~dayEventIntervals : <code>Object.&lt;number&gt;</code> ℗
-All intervals for printing events.
-
-**Kind**: inner property of [<code>HungryGames</code>](#HungryGames)  
-**Default**: <code>{}</code>  
-**Access**: private  
-<a name="HungryGames..autoPlayTimeout"></a>
-
-### HungryGames~autoPlayTimeout : <code>Object.&lt;number&gt;</code> ℗
-The timeout to continue autoplaying after the day ends. Used for cancelling
-if user ends the game between days.
-
-**Kind**: inner property of [<code>HungryGames</code>](#HungryGames)  
-**Default**: <code>{}</code>  
-**Access**: private  
-<a name="HungryGames..battleMessage"></a>
-
-### HungryGames~battleMessage : <code>Object.&lt;Discord~Message&gt;</code> ℗
-Storage of battle messages to edit the content of on the next update.
-
-**Kind**: inner property of [<code>HungryGames</code>](#HungryGames)  
-**Default**: <code>{}</code>  
-**Access**: private  
 <a name="HungryGames..weapons"></a>
 
 ### HungryGames~weapons : [<code>Object.&lt;WeaponEvent&gt;</code>](#HungryGames..WeaponEvent) ℗
@@ -3673,23 +3629,6 @@ Default parsed arena events.
 **Kind**: inner property of [<code>HungryGames</code>](#HungryGames)  
 **Access**: private  
 **See**: [eventFile](#HungryGames..eventFile)  
-<a name="HungryGames..newEventMessages"></a>
-
-### HungryGames~newEventMessages : <code>Object.&lt;Discord~Message&gt;</code> ℗
-Messages that the user sent with a new event to add, for storage while
-getting the rest of the information about the event.
-
-**Kind**: inner property of [<code>HungryGames</code>](#HungryGames)  
-**Default**: <code>{}</code>  
-**Access**: private  
-<a name="HungryGames..optionMessages"></a>
-
-### HungryGames~optionMessages : <code>Object.&lt;Discord~Message&gt;</code> ℗
-Messages I have sent showing current options.
-
-**Kind**: inner property of [<code>HungryGames</code>](#HungryGames)  
-**Default**: <code>{}</code>  
-**Access**: private  
 <a name="HungryGames..listenersEndTime"></a>
 
 ### HungryGames~listenersEndTime : <code>number</code> ℗
@@ -3835,6 +3774,14 @@ Maximum amount of time to wait for reactions to a message.
 **Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
 **Default**: <code>5 Minutes</code>  
 **Access**: private  
+<a name="HungryGames..findTimestamps"></a>
+
+### HungryGames~findTimestamps : <code>Object.&lt;number&gt;</code> ℗
+Stores the guilds we have looked for their data recently and the timestamp
+at which we looked. Used to reduce filesystem requests and blocking.
+
+**Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
+**Access**: private  
 <a name="HungryGames..findDelay"></a>
 
 ### HungryGames~findDelay : <code>number</code> ℗
@@ -3899,6 +3846,59 @@ to 1.0
 
 **Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
 **Default**: <code>{&quot;undefined&quot;:0.0005}</code>  
+**Access**: private  
+<a name="HungryGames..games"></a>
+
+### HungryGames~games : [<code>Object.&lt;GuildGame&gt;</code>](#HungryGames..GuildGame) ℗
+All currently tracked games. Mapped by guild ID. In most cases you should
+NOT reference this directly. Use [find](#HungryGames..find) to get the game
+object for a guild.
+
+**Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
+**Default**: <code>{}</code>  
+**Access**: private  
+**See**: [find](#HungryGames..find)  
+<a name="HungryGames..dayEventIntervals"></a>
+
+### HungryGames~dayEventIntervals : <code>Object.&lt;number&gt;</code> ℗
+All intervals for printing events.
+
+**Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
+**Default**: <code>{}</code>  
+**Access**: private  
+<a name="HungryGames..autoPlayTimeout"></a>
+
+### HungryGames~autoPlayTimeout : <code>Object.&lt;number&gt;</code> ℗
+The timeout to continue autoplaying after the day ends. Used for cancelling
+if user ends the game between days.
+
+**Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
+**Default**: <code>{}</code>  
+**Access**: private  
+<a name="HungryGames..battleMessage"></a>
+
+### HungryGames~battleMessage : <code>Object.&lt;Discord~Message&gt;</code> ℗
+Storage of battle messages to edit the content of on the next update.
+
+**Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
+**Default**: <code>{}</code>  
+**Access**: private  
+<a name="HungryGames..newEventMessages"></a>
+
+### HungryGames~newEventMessages : <code>Object.&lt;Discord~Message&gt;</code> ℗
+Messages that the user sent with a new event to add, for storage while
+getting the rest of the information about the event.
+
+**Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
+**Default**: <code>{}</code>  
+**Access**: private  
+<a name="HungryGames..optionMessages"></a>
+
+### HungryGames~optionMessages : <code>Object.&lt;Discord~Message&gt;</code> ℗
+Messages I have sent showing current options.
+
+**Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
+**Default**: <code>{}</code>  
 **Access**: private  
 <a name="HungryGames..helpmessagereply"></a>
 
@@ -5682,28 +5682,28 @@ Array of all timers currently set.
 ### Main~disabledAutoSmite : <code>Object.&lt;boolean&gt;</code> ℗
 All guilds that have disabled the auto-smite feature.
 
-**Kind**: inner property of [<code>Main</code>](#Main)  
+**Kind**: inner constant of [<code>Main</code>](#Main)  
 **Access**: private  
 <a name="Main..disabledBanMessage"></a>
 
 ### Main~disabledBanMessage : <code>Object.&lt;boolean&gt;</code> ℗
 All guilds that have disabled sending messages when someone is banned.
 
-**Kind**: inner property of [<code>Main</code>](#Main)  
+**Kind**: inner constant of [<code>Main</code>](#Main)  
 **Access**: private  
 <a name="Main..disabledRiggedCounter"></a>
 
 ### Main~disabledRiggedCounter : <code>Object.&lt;boolean&gt;</code> ℗
 The guilds that have disabled the rigged messages.
 
-**Kind**: inner property of [<code>Main</code>](#Main)  
+**Kind**: inner constant of [<code>Main</code>](#Main)  
 **Access**: private  
 <a name="Main..mentionAccumulator"></a>
 
 ### Main~mentionAccumulator : <code>Object.&lt;Object.&lt;string&gt;&gt;</code> ℗
 The guilds with auto-smite enabled, and members who have mentioned
 
-**Kind**: inner property of [<code>Main</code>](#Main)  
+**Kind**: inner constant of [<code>Main</code>](#Main)  
 **Access**: private  
 **Everyone,**: and the timestamps of these mentions.  
 <a name="Main..introduction"></a>
@@ -6321,7 +6321,7 @@ SpikeyBot.getStats after SubModule.initialize.
 #### getAllStats~values ℗
 The stats object that is the result of this function.
 
-**Kind**: inner property of [<code>getAllStats</code>](#Main..getAllStats)  
+**Kind**: inner constant of [<code>getAllStats</code>](#Main..getAllStats)  
 **Default**: <code>{&quot;numGuilds&quot;:0,&quot;numLargestGuild&quot;:0,&quot;shardGuilds&quot;:&quot;&quot;,&quot;numUsers&quot;:0,&quot;numMembers&quot;:0,&quot;numBots&quot;:0,&quot;numUsersOnline&quot;:0,&quot;numChannels&quot;:0,&quot;uptimes&quot;:&quot;&quot;,&quot;activities&quot;:&quot;&quot;,&quot;largestActivity&quot;:&quot;&quot;,&quot;versions&quot;:&quot;&quot;,&quot;numShards&quot;:0,&quot;reqShard&quot;:0,&quot;fullDelta&quot;:0}</code>  
 **Access**: private  
 <a name="Main..getAllStats..statsResponse"></a>
@@ -6760,10 +6760,10 @@ Music and audio related commands.
     * _static_
         * [.streamToOgg(input, file)](#Music.streamToOgg)
     * _inner_
-        * [~broadcasts](#Music..broadcasts) : [<code>Object.&lt;Broadcast&gt;</code>](#Music..Broadcast) ℗
-        * [~follows](#Music..follows) : <code>Object.&lt;string&gt;</code> ℗
         * [~geniusClient](#Music..geniusClient) : <code>string</code> ℗
         * [~geniusRequest](#Music..geniusRequest) : <code>Object</code> ℗
+        * [~broadcasts](#Music..broadcasts) : [<code>Object.&lt;Broadcast&gt;</code>](#Music..Broadcast) ℗
+        * [~follows](#Music..follows) : <code>Object.&lt;string&gt;</code> ℗
         * [~special](#Music..special) : <code>Object.&lt;Object.&lt;{cmd: string, url: ?string, file: string}&gt;&gt;</code> ℗
         * [~ytdlOpts](#Music..ytdlOpts) : <code>Array.&lt;string&gt;</code> ℗
         * [~primaryStreamOptions](#Music..primaryStreamOptions) : <code>Discord~StreamOptions</code> ℗
@@ -7141,22 +7141,6 @@ Coverts an incoming Opus stream to a ogg format and writes it to file.
 | input | <code>ReadableStream</code> | The opus stream from Discord. |
 | file | <code>WritableStream</code> | The file stream we are writing to. |
 
-<a name="Music..broadcasts"></a>
-
-### Music~broadcasts : [<code>Object.&lt;Broadcast&gt;</code>](#Music..Broadcast) ℗
-All current audio broadcasts to voice channels. Stores all relavent data.
-Stored by guild id.
-
-**Kind**: inner property of [<code>Music</code>](#Music)  
-**Access**: private  
-<a name="Music..follows"></a>
-
-### Music~follows : <code>Object.&lt;string&gt;</code> ℗
-The current user IDs of the users to follow into new voice channels. This
-is mapped by guild id.
-
-**Kind**: inner property of [<code>Music</code>](#Music)  
-**Access**: private  
 <a name="Music..geniusClient"></a>
 
 ### Music~geniusClient : <code>string</code> ℗
@@ -7171,6 +7155,22 @@ The request headers to send to genius.
 
 **Kind**: inner constant of [<code>Music</code>](#Music)  
 **Default**: <code>{&quot;hostname&quot;:&quot;api.genius.com&quot;,&quot;path&quot;:&quot;/search/&quot;,&quot;headers&quot;:&quot;&quot;,&quot;method&quot;:&quot;GET&quot;}</code>  
+**Access**: private  
+<a name="Music..broadcasts"></a>
+
+### Music~broadcasts : [<code>Object.&lt;Broadcast&gt;</code>](#Music..Broadcast) ℗
+All current audio broadcasts to voice channels. Stores all relavent data.
+Stored by guild id.
+
+**Kind**: inner constant of [<code>Music</code>](#Music)  
+**Access**: private  
+<a name="Music..follows"></a>
+
+### Music~follows : <code>Object.&lt;string&gt;</code> ℗
+The current user IDs of the users to follow into new voice channels. This
+is mapped by guild id.
+
+**Kind**: inner constant of [<code>Music</code>](#Music)  
 **Access**: private  
 <a name="Music..special"></a>
 
@@ -7192,7 +7192,8 @@ Options passed to youtube-dl for fetching videos.
 ### Music~primaryStreamOptions : <code>Discord~StreamOptions</code> ℗
 Options to pass into the primary stream dispatcher (The one in charge of
 volume control).
-[StreamOptions](https://discord.js.org/#/docs/main/master/typedef/StreamOptions)
+[StreamOptions](
+https://discord.js.org/#/docs/main/master/typedef/StreamOptions)
 
 **Kind**: inner constant of [<code>Music</code>](#Music)  
 **Default**: <code>{&quot;passes&quot;:1,&quot;fec&quot;:true,&quot;bitrate&quot;:&quot;auto&quot;,&quot;volume&quot;:0.5,&quot;plp&quot;:0,&quot;highWaterMark&quot;:1}</code>  
@@ -7202,7 +7203,8 @@ volume control).
 ### Music~secondaryStreamOptions : <code>Discord~StreamOptions</code> ℗
 Options to pass into the secondary stream dispatcher (The one buffering for
 Discord).
-[StreamOptions](https://discord.js.org/#/docs/main/master/typedef/StreamOptions)
+[StreamOptions](
+https://discord.js.org/#/docs/main/master/typedef/StreamOptions)
 
 **Kind**: inner constant of [<code>Music</code>](#Music)  
 **Default**: <code>{&quot;passes&quot;:2,&quot;fec&quot;:true,&quot;bitrate&quot;:&quot;auto&quot;,&quot;volume&quot;:0.5,&quot;plp&quot;:0.05,&quot;highWaterMark&quot;:30}</code>  
@@ -8407,10 +8409,10 @@ Controlls poll and vote commands.
             * [.emojis](#Polling..Poll+emojis) : <code>Array.&lt;string&gt;</code>
             * [.choices](#Polling..Poll+choices) : <code>Array.&lt;string&gt;</code>
             * [.timeout](#Polling..Poll+timeout) : <code>Timeout</code>
-        * [~currentPolls](#Polling..currentPolls) : [<code>Object.&lt;Poll&gt;</code>](#Polling..Poll) ℗
         * [~guildSubDir](#Polling..guildSubDir) ℗
         * [~saveFilename](#Polling..saveFilename) ℗
         * [~defaultEmojis](#Polling..defaultEmojis) ℗
+        * [~currentPolls](#Polling..currentPolls) : [<code>Object.&lt;Poll&gt;</code>](#Polling..Poll) ℗
         * [~parsePollString(string)](#Polling..parsePollString) ℗
         * [~mkdirAndWrite(dir, filename, data)](#Polling..mkdirAndWrite) ℗
         * [~mkdirAndWriteSync(dir, filename, data)](#Polling..mkdirAndWriteSync) ℗
@@ -8699,14 +8701,6 @@ The scheduled timeout when this poll will end.
 
 **Kind**: instance property of [<code>Poll</code>](#Polling..Poll)  
 **Access**: public  
-<a name="Polling..currentPolls"></a>
-
-### Polling~currentPolls : [<code>Object.&lt;Poll&gt;</code>](#Polling..Poll) ℗
-Stores the currently cached data about all active polls. Organized by
-message id that is collecting the poll data.
-
-**Kind**: inner property of [<code>Polling</code>](#Polling)  
-**Access**: private  
 <a name="Polling..guildSubDir"></a>
 
 ### Polling~guildSubDir ℗
@@ -8731,6 +8725,14 @@ The default reaction emojis to use for a poll.
 
 **Kind**: inner constant of [<code>Polling</code>](#Polling)  
 **Default**: <code>[&quot;👍&quot;,&quot;👎&quot;,&quot;🤷&quot;]</code>  
+**Access**: private  
+<a name="Polling..currentPolls"></a>
+
+### Polling~currentPolls : [<code>Object.&lt;Poll&gt;</code>](#Polling..Poll) ℗
+Stores the currently cached data about all active polls. Organized by
+message id that is collecting the poll data.
+
+**Kind**: inner constant of [<code>Polling</code>](#Polling)  
 **Access**: private  
 <a name="Polling..parsePollString"></a>
 
@@ -9152,16 +9154,16 @@ Manages loading, unloading, and reloading of all SubModules.
         * [.save([opt])](#SubModule+save)
         * [.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>
     * _inner_
+        * [~subModuleNames](#SMLoader..subModuleNames) : <code>Array.&lt;string&gt;</code> ℗
+        * [~goalSubModuleNames](#SMLoader..goalSubModuleNames) : <code>null</code> \| <code>Array.&lt;string&gt;</code> ℗
+        * [~subModules](#SMLoader..subModules) : [<code>Object.&lt;SubModule&gt;</code>](#SubModule) ℗
         * [~toAssign](#SMLoader..toAssign) : <code>Class</code> ℗
             * [.bot.getSubmoduleCommits()](#SMLoader..toAssign.bot.getSubmoduleCommits) ⇒ <code>Array.&lt;{name: string, commit: string}&gt;</code>
             * [.bot.getSubmodule(name)](#SMLoader..toAssign.bot.getSubmodule) ⇒ [<code>SubModule</code>](#SubModule)
             * [.client.reloadUpdatedSubModules()](#SMLoader..toAssign.client.reloadUpdatedSubModules)
-        * [~subModuleNames](#SMLoader..subModuleNames) : <code>Array.&lt;string&gt;</code> ℗
-        * [~goalSubModuleNames](#SMLoader..goalSubModuleNames) : <code>null</code> \| <code>Array.&lt;string&gt;</code> ℗
-        * [~subModules](#SMLoader..subModules) : [<code>Object.&lt;SubModule&gt;</code>](#SubModule) ℗
+        * [~smListFilename](#SMLoader..smListFilename) : <code>string</code> ℗
         * [~unloadTimeouts](#SMLoader..unloadTimeouts) : <code>Object.&lt;Timeout&gt;</code> ℗
         * [~unloadCallbacks](#SMLoader..unloadCallbacks) : <code>Object.&lt;Array.&lt;function()&gt;&gt;</code> ℗
-        * [~smListFilename](#SMLoader..smListFilename) : <code>string</code> ℗
         * [~trustedIds](#SMLoader..trustedIds) : <code>Array.&lt;string&gt;</code> ℗
         * [~helpmessagereply](#SMLoader..helpmessagereply) : <code>string</code> ℗
         * [~blockedmessage](#SMLoader..blockedmessage) : <code>string</code> ℗
@@ -9471,13 +9473,36 @@ putting the module into an uncontrollable state.
 **Overrides**: [<code>unloadable</code>](#SubModule+unloadable)  
 **Returns**: <code>boolean</code> - True if can be unloaded, false if cannot.  
 **Access**: public  
+<a name="SMLoader..subModuleNames"></a>
+
+### SMLoader~subModuleNames : <code>Array.&lt;string&gt;</code> ℗
+The list of all submodule names currently loaded.
+
+**Kind**: inner property of [<code>SMLoader</code>](#SMLoader)  
+**Access**: private  
+<a name="SMLoader..goalSubModuleNames"></a>
+
+### SMLoader~goalSubModuleNames : <code>null</code> \| <code>Array.&lt;string&gt;</code> ℗
+The list of all submodules that we are intended to have loaded currently.
+This should reflect the file at [SMloader~smListFilename](SMloader~smListFilename). Null means
+the data is not available, and no action should be taken.
+
+**Kind**: inner property of [<code>SMLoader</code>](#SMLoader)  
+**Access**: private  
+<a name="SMLoader..subModules"></a>
+
+### SMLoader~subModules : [<code>Object.&lt;SubModule&gt;</code>](#SubModule) ℗
+Instances of SubModules currently loaded mapped by their name.
+
+**Kind**: inner property of [<code>SMLoader</code>](#SMLoader)  
+**Access**: private  
 <a name="SMLoader..toAssign"></a>
 
 ### SMLoader~toAssign : <code>Class</code> ℗
 Properties to merge into other objects. `bot` is merged into self.bot,
 `client` is merged into self.client.
 
-**Kind**: inner property of [<code>SMLoader</code>](#SMLoader)  
+**Kind**: inner constant of [<code>SMLoader</code>](#SMLoader)  
 **Access**: private  
 
 * [~toAssign](#SMLoader..toAssign) : <code>Class</code> ℗
@@ -9512,45 +9537,6 @@ if the file has changed.
 
 **Kind**: static method of [<code>toAssign</code>](#SMLoader..toAssign)  
 **Access**: public  
-<a name="SMLoader..subModuleNames"></a>
-
-### SMLoader~subModuleNames : <code>Array.&lt;string&gt;</code> ℗
-The list of all submodule names currently loaded.
-
-**Kind**: inner property of [<code>SMLoader</code>](#SMLoader)  
-**Access**: private  
-<a name="SMLoader..goalSubModuleNames"></a>
-
-### SMLoader~goalSubModuleNames : <code>null</code> \| <code>Array.&lt;string&gt;</code> ℗
-The list of all submodules that we are intended to have loaded currently.
-This should reflect the file at [SMloader~smListFilename](SMloader~smListFilename). Null means
-the data is not available, and no action should be taken.
-
-**Kind**: inner property of [<code>SMLoader</code>](#SMLoader)  
-**Access**: private  
-<a name="SMLoader..subModules"></a>
-
-### SMLoader~subModules : [<code>Object.&lt;SubModule&gt;</code>](#SubModule) ℗
-Instances of SubModules currently loaded mapped by their name.
-
-**Kind**: inner property of [<code>SMLoader</code>](#SMLoader)  
-**Access**: private  
-<a name="SMLoader..unloadTimeouts"></a>
-
-### SMLoader~unloadTimeouts : <code>Object.&lt;Timeout&gt;</code> ℗
-Timeouts for retrying to unload submodules that are currently not in an
-unloadable state. Mapped by name of submodule.
-
-**Kind**: inner property of [<code>SMLoader</code>](#SMLoader)  
-**Access**: private  
-<a name="SMLoader..unloadCallbacks"></a>
-
-### SMLoader~unloadCallbacks : <code>Object.&lt;Array.&lt;function()&gt;&gt;</code> ℗
-Callbacks for when a scheduled module to unload, has been unloaded. Mapped
-by name of subModule, then array of all callbacks.
-
-**Kind**: inner property of [<code>SMLoader</code>](#SMLoader)  
-**Access**: private  
 <a name="SMLoader..smListFilename"></a>
 
 ### SMLoader~smListFilename : <code>string</code> ℗
@@ -9559,6 +9545,22 @@ The filename storing the list of all SubModules to load.
 **Kind**: inner constant of [<code>SMLoader</code>](#SMLoader)  
 **Access**: private  
 **Defualt**:   
+<a name="SMLoader..unloadTimeouts"></a>
+
+### SMLoader~unloadTimeouts : <code>Object.&lt;Timeout&gt;</code> ℗
+Timeouts for retrying to unload submodules that are currently not in an
+unloadable state. Mapped by name of submodule.
+
+**Kind**: inner constant of [<code>SMLoader</code>](#SMLoader)  
+**Access**: private  
+<a name="SMLoader..unloadCallbacks"></a>
+
+### SMLoader~unloadCallbacks : <code>Object.&lt;Array.&lt;function()&gt;&gt;</code> ℗
+Callbacks for when a scheduled module to unload, has been unloaded. Mapped
+by name of subModule, then array of all callbacks.
+
+**Kind**: inner constant of [<code>SMLoader</code>](#SMLoader)  
+**Access**: private  
 <a name="SMLoader..trustedIds"></a>
 
 ### SMLoader~trustedIds : <code>Array.&lt;string&gt;</code> ℗
@@ -9663,7 +9665,6 @@ Main class that manages the bot.
         * [~setDev](#SpikeyBot..setDev) : <code>boolean</code> ℗
         * [~isBackup](#SpikeyBot..isBackup) : <code>boolean</code> ℗
         * [~minimal](#SpikeyBot..minimal) : <code>boolean</code> ℗
-        * [~mainModules](#SpikeyBot..mainModules) : [<code>Array.&lt;MainModule&gt;</code>](#MainModule) ℗
         * [~disconnectReason](#SpikeyBot..disconnectReason) : <code>string</code> ℗
         * [~enableSharding](#SpikeyBot..enableSharding) : <code>boolean</code> ℗
         * [~numShards](#SpikeyBot..numShards) : <code>number</code> ℗
@@ -9671,14 +9672,15 @@ Main class that manages the bot.
         * [~delayBoot](#SpikeyBot..delayBoot) : <code>number</code> ℗
         * [~initialized](#SpikeyBot..initialized) : <code>boolean</code> ℗
         * [~saveInterval](#SpikeyBot..saveInterval) : <code>Interval</code> ℗
-        * [~guildPrefixes](#SpikeyBot..guildPrefixes) : <code>Object.&lt;string&gt;</code> ℗
         * [~version](#SpikeyBot..version) : <code>string</code> ℗
         * [~testChannel](#SpikeyBot..testChannel) : <code>string</code> ℗
         * [~commandFilename](#SpikeyBot..commandFilename) : <code>string</code> ℗
         * [~smLoaderFilename](#SpikeyBot..smLoaderFilename) : <code>string</code> ℗
         * [~mainModuleListFile](#SpikeyBot..mainModuleListFile) : <code>string</code> ℗
+        * [~mainModules](#SpikeyBot..mainModules) : [<code>Array.&lt;MainModule&gt;</code>](#MainModule) ℗
         * [~saveFrequency](#SpikeyBot..saveFrequency) : <code>number</code> ℗
         * [~trustedIds](#SpikeyBot..trustedIds) : <code>Array.&lt;string&gt;</code> ℗
+        * [~guildPrefixes](#SpikeyBot..guildPrefixes) : <code>Object.&lt;string&gt;</code> ℗
         * [~guildPrefixFile](#SpikeyBot..guildPrefixFile) : <code>string</code> ℗
         * [~guildCustomPrefixFile](#SpikeyBot..guildCustomPrefixFile) : <code>string</code> ℗
         * [~reloadCommon()](#SpikeyBot..reloadCommon) ℗
@@ -9810,13 +9812,6 @@ instances.
 
 **Kind**: inner property of [<code>SpikeyBot</code>](#SpikeyBot)  
 **Access**: private  
-<a name="SpikeyBot..mainModules"></a>
-
-### SpikeyBot~mainModules : [<code>Array.&lt;MainModule&gt;</code>](#MainModule) ℗
-Instances of MainModules currently loaded.
-
-**Kind**: inner property of [<code>SpikeyBot</code>](#SpikeyBot)  
-**Access**: private  
 <a name="SpikeyBot..disconnectReason"></a>
 
 ### SpikeyBot~disconnectReason : <code>string</code> ℗
@@ -9884,14 +9879,6 @@ Begins after onReady.
 - [SpikeyBot~onReady()](SpikeyBot~onReady())
 - [saveFrequency](#SpikeyBot..saveFrequency)
 
-<a name="SpikeyBot..guildPrefixes"></a>
-
-### SpikeyBot~guildPrefixes : <code>Object.&lt;string&gt;</code> ℗
-Cache of all loaded guild's command prefixes. Populated asyncronously after
-client ready event.
-
-**Kind**: inner property of [<code>SpikeyBot</code>](#SpikeyBot)  
-**Access**: private  
 <a name="SpikeyBot..version"></a>
 
 ### SpikeyBot~version : <code>string</code> ℗
@@ -9932,6 +9919,13 @@ valid JSON array of strings.
 **Kind**: inner constant of [<code>SpikeyBot</code>](#SpikeyBot)  
 **Default**: <code>&quot;./mainModules.json&quot;</code>  
 **Access**: private  
+<a name="SpikeyBot..mainModules"></a>
+
+### SpikeyBot~mainModules : [<code>Array.&lt;MainModule&gt;</code>](#MainModule) ℗
+Instances of MainModules currently loaded.
+
+**Kind**: inner constant of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Access**: private  
 <a name="SpikeyBot..saveFrequency"></a>
 
 ### SpikeyBot~saveFrequency : <code>number</code> ℗
@@ -9945,6 +9939,14 @@ The frequency at which saveInterval will run.
 
 ### SpikeyBot~trustedIds : <code>Array.&lt;string&gt;</code> ℗
 Discord IDs that are allowed to reboot the bot.
+
+**Kind**: inner constant of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Access**: private  
+<a name="SpikeyBot..guildPrefixes"></a>
+
+### SpikeyBot~guildPrefixes : <code>Object.&lt;string&gt;</code> ℗
+Cache of all loaded guild's command prefixes. Populated asyncronously after
+client ready event.
 
 **Kind**: inner constant of [<code>SpikeyBot</code>](#SpikeyBot)  
 **Access**: private  
@@ -10241,8 +10243,8 @@ channel.
         * *[.save([opt])](#SubModule+save)*
         * [.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>
     * _inner_
-        * [~following](#Spotify..following) : <code>Object</code> ℗
         * [~apiRequest](#Spotify..apiRequest) : <code>Object</code> ℗
+        * [~following](#Spotify..following) : <code>Object</code> ℗
         * [~commandSpotify(msg)](#Spotify..commandSpotify) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~getCurrentSong(userId, cb)](#Spotify..getCurrentSong) ℗
         * [~updateFollowingState(msg, userId, [songInfo], [start])](#Spotify..updateFollowingState) ℗
@@ -10440,14 +10442,6 @@ putting the module into an uncontrollable state.
 **Overrides**: [<code>unloadable</code>](#SubModule+unloadable)  
 **Returns**: <code>boolean</code> - True if can be unloaded, false if cannot.  
 **Access**: public  
-<a name="Spotify..following"></a>
-
-### Spotify~following : <code>Object</code> ℗
-The current users we are monitoring the spotify status of, and some related
-information. Mapped by guild id.
-
-**Kind**: inner property of [<code>Spotify</code>](#Spotify)  
-**Access**: private  
 <a name="Spotify..apiRequest"></a>
 
 ### Spotify~apiRequest : <code>Object</code> ℗
@@ -10456,6 +10450,14 @@ for a user.
 
 **Kind**: inner constant of [<code>Spotify</code>](#Spotify)  
 **Default**: <code>{&quot;protocol&quot;:&quot;https:&quot;,&quot;host&quot;:&quot;api.spotify.com&quot;,&quot;path&quot;:&quot;/v1/me/player/currently-playing&quot;,&quot;method&quot;:&quot;GET&quot;}</code>  
+**Access**: private  
+<a name="Spotify..following"></a>
+
+### Spotify~following : <code>Object</code> ℗
+The current users we are monitoring the spotify status of, and some related
+information. Mapped by guild id.
+
+**Kind**: inner constant of [<code>Spotify</code>](#Spotify)  
 **Access**: private  
 <a name="Spotify..commandSpotify"></a>
 
@@ -11521,14 +11523,14 @@ Manages an Uno game.
                 * [.removePlayer(p)](#Uno+Game+removePlayer)
                 * [.getPlayers()](#Uno+Game+getPlayers) ⇒ <code>Array.&lt;string&gt;</code> \| <code>Array.&lt;number&gt;</code>
             * _inner_
-                * [~members](#Uno+Game..members) : <code>Object.&lt;Discord~GuildMember&gt;</code> ℗
-                * [~players](#Uno+Game..players) : <code>Array.&lt;Uno.Player&gt;</code> ℗
                 * [~discarded](#Uno+Game..discarded) : <code>Array.&lt;Uno.Card&gt;</code> ℗
                 * [~turn](#Uno+Game..turn) : <code>number</code> ℗
                 * [~previousTurn](#Uno+Game..previousTurn) : <code>number</code> ℗
                 * [~topCard](#Uno+Game..topCard) : <code>Uno.Card</code> ℗
                 * [~direction](#Uno+Game..direction) : <code>number</code> ℗
                 * [~currentCollector](#Uno+Game..currentCollector) ℗
+                * [~members](#Uno+Game..members) : <code>Object.&lt;Discord~GuildMember&gt;</code> ℗
+                * [~players](#Uno+Game..players) : <code>Array.&lt;Uno.Player&gt;</code> ℗
                 * [~finishSetup()](#Uno+Game..finishSetup) ℗
                 * [~listPlayers()](#Uno+Game..listPlayers)
                 * [~startGame()](#Uno+Game..startGame) ℗
@@ -11575,8 +11577,8 @@ Manages an Uno game.
     * _inner_
         * [~numGames](#Uno..numGames) : <code>number</code> ℗
         * [~pFlags](#Uno..pFlags) ℗
-        * [~games](#Uno..games) : <code>Object.&lt;Object.&lt;Uno.Game&gt;&gt;</code> ℗
         * [~unoText](#Uno..unoText) : <code>string</code> ℗
+        * [~games](#Uno..games) : <code>Object.&lt;Object.&lt;Uno.Game&gt;&gt;</code> ℗
         * [~colorPairs](#Uno..colorPairs) ℗
         * [~colorRegExp](#Uno..colorRegExp) : <code>RegExp</code> ℗
         * [~cardFacePairs](#Uno..cardFacePairs) ℗
@@ -11662,14 +11664,14 @@ The name of this card retreivable with `toString()`. Null until first
         * [.removePlayer(p)](#Uno+Game+removePlayer)
         * [.getPlayers()](#Uno+Game+getPlayers) ⇒ <code>Array.&lt;string&gt;</code> \| <code>Array.&lt;number&gt;</code>
     * _inner_
-        * [~members](#Uno+Game..members) : <code>Object.&lt;Discord~GuildMember&gt;</code> ℗
-        * [~players](#Uno+Game..players) : <code>Array.&lt;Uno.Player&gt;</code> ℗
         * [~discarded](#Uno+Game..discarded) : <code>Array.&lt;Uno.Card&gt;</code> ℗
         * [~turn](#Uno+Game..turn) : <code>number</code> ℗
         * [~previousTurn](#Uno+Game..previousTurn) : <code>number</code> ℗
         * [~topCard](#Uno+Game..topCard) : <code>Uno.Card</code> ℗
         * [~direction](#Uno+Game..direction) : <code>number</code> ℗
         * [~currentCollector](#Uno+Game..currentCollector) ℗
+        * [~members](#Uno+Game..members) : <code>Object.&lt;Discord~GuildMember&gt;</code> ℗
+        * [~players](#Uno+Game..players) : <code>Array.&lt;Uno.Player&gt;</code> ℗
         * [~finishSetup()](#Uno+Game..finishSetup) ℗
         * [~listPlayers()](#Uno+Game..listPlayers)
         * [~startGame()](#Uno+Game..startGame) ℗
@@ -11766,20 +11768,6 @@ Returns the list of all players currently in this game.
 **Kind**: instance method of [<code>Game</code>](#Uno+Game)  
 **Returns**: <code>Array.&lt;string&gt;</code> \| <code>Array.&lt;number&gt;</code> - Array of player IDs. Type is number-like.  
 **Access**: public  
-<a name="Uno+Game..members"></a>
-
-#### Game~members : <code>Object.&lt;Discord~GuildMember&gt;</code> ℗
-The guild members in this game mapped by their ID.
-
-**Kind**: inner property of [<code>Game</code>](#Uno+Game)  
-**Access**: private  
-<a name="Uno+Game..players"></a>
-
-#### Game~players : <code>Array.&lt;Uno.Player&gt;</code> ℗
-The array of all player in the game in the order of their turn.
-
-**Kind**: inner property of [<code>Game</code>](#Uno+Game)  
-**Access**: private  
 <a name="Uno+Game..discarded"></a>
 
 #### Game~discarded : <code>Array.&lt;Uno.Card&gt;</code> ℗
@@ -11828,6 +11816,20 @@ groupChannel.
 
 **Kind**: inner property of [<code>Game</code>](#Uno+Game)  
 **Default**: <code>type {?Discord~MessageCollector}</code>  
+**Access**: private  
+<a name="Uno+Game..members"></a>
+
+#### Game~members : <code>Object.&lt;Discord~GuildMember&gt;</code> ℗
+The guild members in this game mapped by their ID.
+
+**Kind**: inner constant of [<code>Game</code>](#Uno+Game)  
+**Access**: private  
+<a name="Uno+Game..players"></a>
+
+#### Game~players : <code>Array.&lt;Uno.Player&gt;</code> ℗
+The array of all player in the game in the order of their turn.
+
+**Kind**: inner constant of [<code>Game</code>](#Uno+Game)  
 **Access**: private  
 <a name="Uno+Game..finishSetup"></a>
 
@@ -12307,17 +12309,17 @@ self.Discord.Permissions.FLAGS
 
 **Kind**: inner property of [<code>Uno</code>](#Uno)  
 **Access**: private  
-<a name="Uno..games"></a>
-
-### Uno~games : <code>Object.&lt;Object.&lt;Uno.Game&gt;&gt;</code> ℗
-All games currently in progress mapped by guilds, then by the game ID.
-
-**Kind**: inner property of [<code>Uno</code>](#Uno)  
-**Access**: private  
 <a name="Uno..unoText"></a>
 
 ### Uno~unoText : <code>string</code> ℗
 ASCII art text to show when a player calls Uno.
+
+**Kind**: inner constant of [<code>Uno</code>](#Uno)  
+**Access**: private  
+<a name="Uno..games"></a>
+
+### Uno~games : <code>Object.&lt;Object.&lt;Uno.Game&gt;&gt;</code> ℗
+All games currently in progress mapped by guilds, then by the game ID.
 
 **Kind**: inner constant of [<code>Uno</code>](#Uno)  
 **Access**: private  
@@ -12518,9 +12520,9 @@ Manages the account webpage.
     * _inner_
         * [~patreonSettingsTemplate](#WebAccount..patreonSettingsTemplate) : <code>Object.&lt;Object&gt;</code> ℗
         * [~sqlCon](#WebAccount..sqlCon) : <code>sql.ConnectionConfig</code> ℗
-        * [~sockets](#WebAccount..sockets) : <code>Object.&lt;Socket&gt;</code> ℗
         * [~patreonSettingsFilename](#WebAccount..patreonSettingsFilename) : <code>string</code> ℗
         * [~patreonSettingsTemplateFile](#WebAccount..patreonSettingsTemplateFile) : <code>string</code> ℗
+        * [~sockets](#WebAccount..sockets) : <code>Object.&lt;Socket&gt;</code> ℗
         * [~updatePatreonSettingsTemplate()](#WebAccount..updatePatreonSettingsTemplate) ℗
         * [~connectSQL()](#WebAccount..connectSQL) ℗
         * [~handler(req, res)](#WebAccount..handler) ℗
@@ -12749,13 +12751,6 @@ The object describing the connection with the SQL server.
 
 **Kind**: inner property of [<code>WebAccount</code>](#WebAccount)  
 **Access**: private  
-<a name="WebAccount..sockets"></a>
-
-### WebAccount~sockets : <code>Object.&lt;Socket&gt;</code> ℗
-Map of all currently connected sockets.
-
-**Kind**: inner property of [<code>WebAccount</code>](#WebAccount)  
-**Access**: private  
 <a name="WebAccount..patreonSettingsFilename"></a>
 
 ### WebAccount~patreonSettingsFilename : <code>string</code> ℗
@@ -12774,6 +12769,13 @@ File where the template for the Patreon settings is stored.
 **Default**: <code>&quot;./save/patreonSettingTemplate.json&quot;</code>  
 **Access**: private  
 **See**: [patreonSettingsTemplate](#WebAccount..patreonSettingsTemplate)  
+<a name="WebAccount..sockets"></a>
+
+### WebAccount~sockets : <code>Object.&lt;Socket&gt;</code> ℗
+Map of all currently connected sockets.
+
+**Kind**: inner constant of [<code>WebAccount</code>](#WebAccount)  
+**Access**: private  
 <a name="WebAccount..updatePatreonSettingsTemplate"></a>
 
 ### WebAccount~updatePatreonSettingsTemplate() ℗
@@ -13107,14 +13109,14 @@ about the guild.
 ### HGWeb~sockets : <code>Object.&lt;Socket&gt;</code> ℗
 Map of all currently connected sockets.
 
-**Kind**: inner property of [<code>HGWeb</code>](#HGWeb)  
+**Kind**: inner constant of [<code>HGWeb</code>](#HGWeb)  
 **Access**: private  
 <a name="HGWeb..siblingSockets"></a>
 
 ### HGWeb~siblingSockets : <code>Object.&lt;Socket&gt;</code> ℗
 Map of all sockets connected that are siblings.
 
-**Kind**: inner property of [<code>HGWeb</code>](#HGWeb)  
+**Kind**: inner constant of [<code>HGWeb</code>](#HGWeb)  
 **Access**: private  
 <a name="HGWeb..startClient"></a>
 
@@ -13752,9 +13754,9 @@ Proxy for account authentication.
     * _inner_
         * [~sqlCon](#WebProxy..sqlCon) : <code>sql.ConnectionConfig</code> ℗
         * [~loginInfo](#WebProxy..loginInfo) : [<code>Object.&lt;loginState&gt;</code>](#loginState) ℗
-        * [~sockets](#WebProxy..sockets) : <code>Object.&lt;Socket&gt;</code> ℗
         * [~tokenHost](#WebProxy..tokenHost) : <code>Object</code> ℗
         * [~apiHost](#WebProxy..apiHost) : <code>Object</code> ℗
+        * [~sockets](#WebProxy..sockets) : <code>Object.&lt;Socket&gt;</code> ℗
         * [~connectSQL()](#WebProxy..connectSQL) ℗
         * [~purgeSessions()](#WebProxy..purgeSessions) ℗
         * [~handler(req, res)](#WebProxy..handler) ℗
@@ -13976,13 +13978,6 @@ is valid. Mapped by session id.
 
 **Kind**: inner property of [<code>WebProxy</code>](#WebProxy)  
 **Access**: private  
-<a name="WebProxy..sockets"></a>
-
-### WebProxy~sockets : <code>Object.&lt;Socket&gt;</code> ℗
-Map of all currently connected sockets.
-
-**Kind**: inner property of [<code>WebProxy</code>](#WebProxy)  
-**Access**: private  
 <a name="WebProxy..tokenHost"></a>
 
 ### WebProxy~tokenHost : <code>Object</code> ℗
@@ -13999,6 +13994,13 @@ The url to send a request to the discord api.
 
 **Kind**: inner constant of [<code>WebProxy</code>](#WebProxy)  
 **Default**: <code>{&quot;protocol&quot;:&quot;https:&quot;,&quot;host&quot;:&quot;discordapp.com&quot;,&quot;path&quot;:&quot;/api&quot;,&quot;method&quot;:&quot;GET&quot;}</code>  
+**Access**: private  
+<a name="WebProxy..sockets"></a>
+
+### WebProxy~sockets : <code>Object.&lt;Socket&gt;</code> ℗
+Map of all currently connected sockets.
+
+**Kind**: inner constant of [<code>WebProxy</code>](#WebProxy)  
 **Access**: private  
 <a name="WebProxy..connectSQL"></a>
 
@@ -14410,14 +14412,14 @@ doesn't exist.
 ### WebSettings~sockets : <code>Object.&lt;Socket&gt;</code> ℗
 Map of all currently connected sockets.
 
-**Kind**: inner property of [<code>WebSettings</code>](#WebSettings)  
+**Kind**: inner constant of [<code>WebSettings</code>](#WebSettings)  
 **Access**: private  
 <a name="WebSettings..siblingSockets"></a>
 
 ### WebSettings~siblingSockets : <code>Object.&lt;Socket&gt;</code> ℗
 Map of all sockets connected that are siblings.
 
-**Kind**: inner property of [<code>WebSettings</code>](#WebSettings)  
+**Kind**: inner constant of [<code>WebSettings</code>](#WebSettings)  
 **Access**: private  
 <a name="WebSettings..updateModuleReferences"></a>
 

@@ -60,7 +60,7 @@ function Sandbox() {
   function commandJS(msg) {
     const cmd = `${sandboxCommand}${jsCommand}`;
     msg.channel.startTyping();
-    let p = childProcess.exec(cmd, execArgs, (...args) => {
+    const p = childProcess.exec(cmd, execArgs, (...args) => {
       scriptEnd(msg, ...args);
     });
     p.stdin.write(msg.text);
@@ -98,7 +98,7 @@ function Sandbox() {
       self.debug('STDOUT: ' + stdout);
       return;
     }
-    let embed = new self.Discord.MessageEmbed();
+    const embed = new self.Discord.MessageEmbed();
     embed.setColor([0, 255, 255]);
     if (stdout.length > 0) {
       if (stdout.indexOf('\\n') != stdout.lastIndexOf('\\n')) {

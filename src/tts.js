@@ -4,7 +4,7 @@ const Readable = require('stream').Readable;
 const tts = require('@google-cloud/text-to-speech');
 require('./subModule.js')(TTS); // Extends the SubModule class.
 
-let ttsRequest = {
+const ttsRequest = {
   input: {text: 'Hello world!'},
   voice: {languageCode: 'en-AU', ssmlGender: 'MALE'},
   audioConfig: {audioEncoding: 'OGG_OPUS'},
@@ -153,7 +153,7 @@ function TTS() {
         return;
       }
       vConn = conn;
-      let thisRequest = Object.assign({}, ttsRequest);
+      const thisRequest = Object.assign({}, ttsRequest);
       thisRequest.input.text = msg.text.slice(1);
       thisRequest.voice.languageCode = matchedSettings[1];
       thisRequest.voice.ssmlGender =
@@ -178,7 +178,7 @@ function TTS() {
       self.common.reply(
           msg, 'Saying "' + msg.text.slice(1) + '" in ' +
               msg.member.voice.channel.name);
-      let readable = new Readable();
+      const readable = new Readable();
       readable._read = function() {};
       vConn.play(readable);
       readable.push(res.audioContent);

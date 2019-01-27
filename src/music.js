@@ -94,7 +94,7 @@ function Music() {
    * @private
    * @type {Object.<Music~Broadcast>}
    */
-  let broadcasts = {};
+  const broadcasts = {};
 
   /**
    * The current user IDs of the users to follow into new voice channels. This
@@ -103,7 +103,7 @@ function Music() {
    * @private
    * @type {Object.<string>}
    */
-  let follows = {};
+  const follows = {};
 
   /**
    * Special cases of requests to handle seperately.
@@ -149,7 +149,8 @@ function Music() {
   /**
    * Options to pass into the primary stream dispatcher (The one in charge of
    * volume control).
-   * [StreamOptions](https://discord.js.org/#/docs/main/master/typedef/StreamOptions)
+   * [StreamOptions](
+   * https://discord.js.org/#/docs/main/master/typedef/StreamOptions)
    *
    * @private
    * @constant
@@ -167,7 +168,8 @@ function Music() {
   /**
    * Options to pass into the secondary stream dispatcher (The one buffering for
    * Discord).
-   * [StreamOptions](https://discord.js.org/#/docs/main/master/typedef/StreamOptions)
+   * [StreamOptions](
+   * https://discord.js.org/#/docs/main/master/typedef/StreamOptions)
    *
    * @private
    * @constant
@@ -232,14 +234,14 @@ function Music() {
     self.client.on('voiceStateUpdate', handleVoiceStateUpdate);
 
     // Format help message into rich embed.
-    let tmpHelp = new self.Discord.MessageEmbed();
+    const tmpHelp = new self.Discord.MessageEmbed();
     tmpHelp.setTitle(
         helpObject.title.replaceAll('{prefix}', self.bot.getPrefix()));
     tmpHelp.setURL(self.common.webURL);
     tmpHelp.setDescription(
         helpObject.description.replaceAll('{prefix}', self.bot.getPrefix()));
     helpObject.sections.forEach(function(obj) {
-      let titleID = encodeURIComponent(obj.title);
+      const titleID = encodeURIComponent(obj.title);
       const titleURL = '[web](' + self.common.webHelp + '#' + titleID + ')';
       tmpHelp.addField(
           obj.title, titleURL + '```js\n' +
@@ -292,7 +294,7 @@ function Music() {
 
     self.client.removeListener('voiceStateUpdate', handleVoiceStateUpdate);
 
-    for (let b in broadcasts) {
+    for (const b in broadcasts) {
       if (broadcasts[b] && broadcasts[b].voice) {
         try {
           broadcasts[b].voice.disconnect();
@@ -311,14 +313,14 @@ function Music() {
   this.save = function(opt) {
     if (!self.initialized) return;
     // Purge broadcasts that have been paused for more than 15 minutes.
-    let entries = Object.entries(broadcasts);
-    let now = Date.now();
+    const entries = Object.entries(broadcasts);
+    const now = Date.now();
     for (let i = 0; i < entries.length; i++) {
       if (!entries[i][1].broadcast || !entries[i][1].broadcast.dispatcher) {
         delete broadcasts[entries[i][0]];
         continue;
       }
-      let pauseTime = entries[i][1].broadcast.dispatcher.pausedSince;
+      const pauseTime = entries[i][1].broadcast.dispatcher.pausedSince;
       if (pauseTime && now - pauseTime > 15 * 60 * 1000) {
         self.debug(entries[i][0] + ' purged: ' + (now - pauseTime));
         if (entries[i][1].voice && entries[i][1].voice.disconnect) {
@@ -333,14 +335,14 @@ function Music() {
   this.unloadable = function() {
     // If a broadcast has been paused for more than 5 minutes, it is okay to
     // reload this submodule.
-    let entries = Object.entries(broadcasts);
+    const entries = Object.entries(broadcasts);
     let numAlive = entries.length;
-    let now = Date.now();
+    const now = Date.now();
     for (let i = 0; i < entries.length; i++) {
       if (!entries[i][1].broadcast || !entries[i][1].broadcast.dispatcher) {
         continue;
       }
-      let pauseTime = entries[i][1].broadcast.dispatcher.pausedSince;
+      const pauseTime = entries[i][1].broadcast.dispatcher.pausedSince;
       if (pauseTime && now - pauseTime > 5 * 60 * 1000) {
         numAlive--;
       }
@@ -387,7 +389,7 @@ function Music() {
       newState.channel.join().catch(() => {});
       return;
     }
-    let broadcast = broadcasts[oldState.guild.id];
+    const broadcast = broadcasts[oldState.guild.id];
     if (broadcast) {
       if (oldState.id === self.client.user.id && !newState.channel) {
         self.error(
@@ -402,7 +404,7 @@ function Music() {
         return;
       }
       if (oldState.channel && oldState.channel.members) {
-        let numMembers =
+        const numMembers =
             oldState.channel.members.filter((el) => !el.user.bot).size;
         if (numMembers === 0 &&
             oldState.channel.members.get(self.client.user.id)) {
@@ -413,7 +415,7 @@ function Music() {
           } else if (pauseBroadcast(broadcast)) {
             if (broadcast.current.request &&
                 broadcast.current.request.channel) {
-              let prefix = self.bot.getPrefix(oldState.guild.id);
+              const prefix = self.bot.getPrefix(oldState.guild.id);
               let followInst = '';
               if (oldState.channelID && newState.channelID) {
                 followInst = '\n`' + prefix + 'join` to join your channel.';
@@ -467,7 +469,7 @@ function Music() {
           formatPlaytime(getRemainingSeconds(info, dispatcher) - seek) +
           ' left)';
     }
-    let output = new self.Discord.MessageEmbed();
+    const output = new self.Discord.MessageEmbed();
     output.setDescription(
         info.title + '\nUploaded by ' + info.uploader + '\n[👍 ' +
         formNum(info.like_count) + ' 👎 ' + formNum(info.dislike_count) +
@@ -502,7 +504,7 @@ function Music() {
    * @return {?number} Time in seconds, or null if nothing is playing.
    */
   this.getProgress = function(msg) {
-    let broadcast = broadcasts[msg.guild.id];
+    const broadcast = broadcasts[msg.guild.id];
     if (!broadcast) return null;
     if (!broadcast.broadcast) return null;
     if (!broadcast.broadcast.dispatcher) return null;
@@ -521,7 +523,7 @@ function Music() {
    * @return {?number} Time in seconds, or null if nothing is playing.
    */
   this.getDuration = function(msg) {
-    let broadcast = broadcasts[msg.guild.id];
+    const broadcast = broadcasts[msg.guild.id];
     if (!broadcast) return null;
     if (!broadcast.current) return null;
     if (!broadcast.current.info) return null;
@@ -546,8 +548,8 @@ function Music() {
    * @return {string} The formatted number.
    */
   function formNum(num) {
-    let numString = (num + '');
-    let tmpString = [];
+    const numString = (num + '');
+    const tmpString = [];
     for (let i = 0; i < numString.length; i++) {
       if (i > 0 && i % 3 === 0) tmpString.push(',');
       tmpString.push(numString.substr(-i - 1, 1));
@@ -634,7 +636,7 @@ function Music() {
 
     if (broadcast.current.info) {
       if (!broadcast.subjugated && broadcast.current.request) {
-        let embed = formatSongInfo(broadcast.current.info);
+        const embed = formatSongInfo(broadcast.current.info);
         embed.setTitle(
             'Now playing [' + broadcast.queue.length + ' left in queue]');
         broadcast.current.request.channel.send(embed);
@@ -647,7 +649,7 @@ function Music() {
         if (!special[broadcast.current.song].url) {
           broadcast.isLoading = false;
           if (!broadcast.subjugated && broadcast.current.request) {
-            let embed = new self.Discord.MessageEmbed();
+            const embed = new self.Discord.MessageEmbed();
             embed.setTitle(
                 'Now playing [' + broadcast.queue.length + ' left in queue]');
             embed.setColor([50, 200, 255]);
@@ -668,7 +670,7 @@ function Music() {
                 } else {
                   broadcast.current.info = info;
                   if (!broadcast.subjugated && broadcast.current.request) {
-                    let embed = formatSongInfo(broadcast.current.info);
+                    const embed = formatSongInfo(broadcast.current.info);
                     embed.setTitle(
                         'Now playing [' + broadcast.queue.length +
                         ' left in queue]');
@@ -682,7 +684,7 @@ function Music() {
           broadcast.isLoading = false;
           broadcast.current.info = info;
           if (!broadcast.subjugated && broadcast.current.request) {
-            let embed = formatSongInfo(broadcast.current.info);
+            const embed = formatSongInfo(broadcast.current.info);
             embed.setTitle(
                 'Now playing [' + broadcast.queue.length + ' left in queue]');
             broadcast.current.request.channel.send(embed);
@@ -748,7 +750,7 @@ function Music() {
     });
 
     // Spawn thread for starting audio stream.
-    let input = {
+    const input = {
       song: broadcast.current.song,
       special: special,
       ytdlOpts: ytdlOpts,
@@ -1043,7 +1045,7 @@ function Music() {
       }
       if (special[song]) {
         if (!broadcasts[msg.guild.id].subjugated) {
-          let embed = new self.Discord.MessageEmbed();
+          const embed = new self.Discord.MessageEmbed();
           embed.setTitle(
               'Enqueuing ' + song + ' [' +
               (broadcasts[msg.guild.id].queue.length + 1) + ' in queue]');
@@ -1071,7 +1073,7 @@ function Music() {
                 (broadcasts[msg.guild.id].isPlaying ||
                  broadcasts[msg.guild.id].subjugated)) {
               if (!broadcasts[msg.guild.id].subjugated) {
-                let embed = formatSongInfo(info);
+                const embed = formatSongInfo(info);
                 embed.setTitle(
                     'Enqueuing ' + song + ' [' +
                     (broadcasts[msg.guild.id].queue.length + 1) + ' in queue]');
@@ -1140,7 +1142,7 @@ function Music() {
    */
   function commandLeave(msg) {
     if (msg.guild.me.voice.channel) {
-      let followMsg = follows[msg.guild.id] ?
+      const followMsg = follows[msg.guild.id] ?
           'No longer following <@' + follows[msg.guild.id] + '>' :
           null;
       delete follows[msg.guild.id];
@@ -1207,7 +1209,7 @@ function Music() {
       if (broadcasts[msg.guild.id].queue.length > 0) {
         let queueDuration = 0;
         let queueExact = true;
-        let queueString = broadcasts[msg.guild.id]
+        const queueString = broadcasts[msg.guild.id]
             .queue
             .map(function(obj, index) {
               if (obj.info) {
@@ -1281,7 +1283,7 @@ function Music() {
           msg, 'The queue appears to be empty.\nI can\'t remove nothing ' +
               'from nothing!');
     } else {
-      let indexString = msg.text;
+      const indexString = msg.text;
       if (!indexString.startsWith(' ')) {
         reply(
             msg,
@@ -1292,12 +1294,13 @@ function Music() {
           commandClearQueue(msg);
           return;
         }
-        let index = Number(indexString.replace(' ', ''));
+        const index = Number(indexString.replace(' ', ''));
         if (typeof index !== 'number' || index <= 0 ||
             index > broadcasts[msg.guild.id].queue.length) {
           reply(msg, 'That is not a valid index!');
         } else {
-          let removed = broadcasts[msg.guild.id].queue.splice(index - 1, 1)[0];
+          const removed =
+              broadcasts[msg.guild.id].queue.splice(index - 1, 1)[0];
           reply(msg, 'Dequeued #' + index + ': ' + removed.info.title);
         }
       }
@@ -1318,16 +1321,16 @@ function Music() {
       return;
     }
     song = song.replace(' ', '');
-    let thisReq = geniusRequest;
+    const thisReq = geniusRequest;
     thisReq.path = '/search?q=' + encodeURIComponent(song);
-    let req = https.request(thisReq, function(response) {
+    const req = https.request(thisReq, function(response) {
       let content = '';
       response.on('data', function(chunk) {
         content += chunk;
       });
       response.on('end', function() {
         if (response.statusCode == 200) {
-          let parsed = JSON.parse(content);
+          const parsed = JSON.parse(content);
           if (parsed.response.hits.length === 0) {
             reply(msg, '`Failed to find lyrics. No matches found.`');
           } else {
@@ -1364,16 +1367,16 @@ function Music() {
    * @param {string} id The id of the first song in the search results.
    */
   function reqLyricsURL(msg, id) {
-    let thisReq = geniusRequest;
+    const thisReq = geniusRequest;
     thisReq.path = '/songs/' + id + '?text_format=plain';
-    let req = https.request(thisReq, function(response) {
+    const req = https.request(thisReq, function(response) {
       let content = '';
       response.on('data', function(chunk) {
         content += chunk;
       });
       response.on('end', function() {
         if (response.statusCode == 200) {
-          let parsed = JSON.parse(content);
+          const parsed = JSON.parse(content);
           fetchLyricsPage(
               msg, parsed.response.song.url, parsed.response.song.full_title,
               parsed.response.song.song_art_image_thumbnail_url);
@@ -1407,9 +1410,9 @@ function Music() {
    * later.
    */
   function fetchLyricsPage(msg, url, title, thumb) {
-    let URL = url.match(/https:\/\/([^\/]*)(.*)/);
+    const URL = url.match(/https:\/\/([^\/]*)(.*)/);
     const thisReq = {hostname: URL[1], path: URL[2], method: 'GET'};
-    let req = https.request(thisReq, function(response) {
+    const req = https.request(thisReq, function(response) {
       let content = '';
       response.on('data', function(chunk) {
         content += chunk;
@@ -1451,25 +1454,25 @@ function Music() {
    */
   function stripLyrics(msg, content, title, url, thumb) {
     try {
-      let body = content.match(/<!--sse-->([\s\S]*?)<!--\/sse-->/gm)[1];
-      let lyrics = [];
+      const body = content.match(/<!--sse-->([\s\S]*?)<!--\/sse-->/gm)[1];
+      const lyrics = [];
       let matches = [];
       const regex = /<a[^>]*>([^<]*)<\/a>/gm;
       while (matches = regex.exec(body)) {
         lyrics.push(matches[1]);
       }
-      let splitLyrics =
+      const splitLyrics =
           lyrics.join('\n').match(/(\[[^\]]*\][^\[]*)/gm).slice(1);
-      let embed = new self.Discord.MessageEmbed();
+      const embed = new self.Discord.MessageEmbed();
       if (title) embed.setTitle(title);
       if (url) embed.setURL(url);
       if (thumb) embed.setThumbnail(thumb);
       let numFields = 0;
       for (let i = 0; numFields < 25 && i < splitLyrics.length; i++) {
-        let splitLine = splitLyrics[i].match(/\[([^\]]*)\]\n([^]*)/m);
+        const splitLine = splitLyrics[i].match(/\[([^\]]*)\]\n([^]*)/m);
         if (!splitLine) continue;
-        let secTitle = splitLine[1].substr(0, 256);
-        let secBody = splitLine[2];
+        const secTitle = splitLine[1].substr(0, 256);
+        const secBody = splitLine[2];
         for (let j = 0; numFields < 25 && j * 1024 < secBody.length; j++) {
           embed.addField(
               j === 0 ? secTitle : (secTitle + ' continued...').substr(0, 256),
@@ -1526,8 +1529,8 @@ function Music() {
                   .join(', '),
           url);
     }
-    let streams = {};
-    let file = fs.createWriteStream(filename);
+    const streams = {};
+    const file = fs.createWriteStream(filename);
     file.on('close', () => {
       msg.channel.send('Saved to ' + url);
     });
@@ -1536,7 +1539,7 @@ function Music() {
           (msg.mentions.users.size > 0 && !msg.mentions.users.get(user.id))) {
         return;
       }
-      let stream =
+      const stream =
           receiver.createStream(msg.author, {end: 'manual', mode: 'pcm'});
       streams[user.id] = stream;
       // stream.pipe(file);
@@ -1551,7 +1554,7 @@ function Music() {
           // play sound for 0.1s before being able to receive audio.
           conn.play('./sounds/plink.ogg');
           self.client.setTimeout(() => {
-            let receiver = conn.receiver;
+            const receiver = conn.receiver;
             msg.member.voice.channel.members.forEach(function(member) {
               listen(member.user, receiver, conn);
             });
@@ -1577,8 +1580,8 @@ function Music() {
    */
   function commandFollow(msg) {
     if (msg.mentions.users.size > 0) {
-      let targetMember = msg.mentions.members.first();
-      let target = targetMember.id;
+      const targetMember = msg.mentions.members.first();
+      const target = targetMember.id;
       if (follows[msg.guild.id]) {
         if (follows[msg.guild.id] === target) {
           delete follows[msg.guild.id];
@@ -1678,7 +1681,7 @@ function Music() {
    */
   function commandStats(msg) {
     let queueLength = 0;
-    let bList = Object.entries(broadcasts);
+    const bList = Object.entries(broadcasts);
     let longestChannel;
     let isPaused;
     let pauseTime;

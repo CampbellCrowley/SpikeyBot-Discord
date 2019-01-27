@@ -29,7 +29,7 @@ function SMLoader() {
   };
   /** @inheritdoc */
   this.terminate = function() {
-    for (let i in subModules) {
+    for (const i in subModules) {
       if (subModules[i] && subModules[i].end) {
         subModules[i].end();
       }
@@ -53,7 +53,7 @@ function SMLoader() {
         return;
       }
       try {
-        let parsed = JSON.parse(data);
+        const parsed = JSON.parse(data);
         if (!parsed) {
           self.error('Empty list of subModules from file: ' + smListFilename);
           return;
@@ -79,8 +79,8 @@ function SMLoader() {
     self.command.deleteEvent('load');
     self.command.deleteEvent('help');
 
-    let data = fs.readFileSync(smListFilename);
-    let parsed = JSON.parse(data);
+    const data = fs.readFileSync(smListFilename);
+    const parsed = JSON.parse(data);
     parsed[self.bot.getFullBotName()] = goalSubModuleNames;
     fs.writeFileSync(smListFilename, JSON.stringify(parsed, null, 2));
   };
@@ -92,7 +92,7 @@ function SMLoader() {
   };
   /** @inheritdoc */
   this.save = function(...args) {
-    for (let i in subModules) {
+    for (const i in subModules) {
       if (subModules[i] && subModules[i].save) {
         subModules[i].save.apply(null, args);
       }
@@ -106,7 +106,7 @@ function SMLoader() {
    * @private
    * @type {Class}
    */
-  let toAssign = {bot: {}, client: {}};
+  const toAssign = {bot: {}, client: {}};
 
   /**
    * The filename storing the list of all SubModules to load.
@@ -149,7 +149,7 @@ function SMLoader() {
    * @private
    * @type {Object.<Timeout>}
    */
-  let unloadTimeouts = {};
+  const unloadTimeouts = {};
 
   /**
    * Callbacks for when a scheduled module to unload, has been unloaded. Mapped
@@ -158,7 +158,7 @@ function SMLoader() {
    * @private
    * @type {Object.<Array.<Function>>}
    */
-  let unloadCallbacks = {};
+  const unloadCallbacks = {};
 
   /**
    * Discord IDs that are allowed to reboot the bot.
@@ -237,9 +237,9 @@ function SMLoader() {
       if (opts.schedule == null) opts.schedule = true;
       if (opts.updateGoal == null) opts.updateGoal = true;
     }
-    let sm = subModules[name];
+    const sm = subModules[name];
     if (!sm) {
-      let nameIndex = subModuleNames.findIndex((el) => el == name);
+      const nameIndex = subModuleNames.findIndex((el) => el == name);
       if (nameIndex >= 0) {
         self.error(
             'Unloaded module still exists in list of names!' +
@@ -285,7 +285,7 @@ function SMLoader() {
     let message;
     try {
       delete require.cache[require.resolve(name)];
-      let index = subModuleNames.findIndex((el) => el == name);
+      const index = subModuleNames.findIndex((el) => el == name);
       if (index < 0) {
         self.error(
             'Failed to find submodule name in list of loaded submodules! ' +
@@ -295,7 +295,7 @@ function SMLoader() {
         subModuleNames.splice(index, 1);
       }
       if (opts.updateGoal) {
-        let goalIndex = goalSubModuleNames.findIndex((el) => el == name);
+        const goalIndex = goalSubModuleNames.findIndex((el) => el == name);
         if (goalIndex < 0) {
           self.error(
               'Failed to find submodule name in list of goal submodules! ' +
@@ -409,11 +409,11 @@ function SMLoader() {
 
     const numTotal = name.length;
     let numComplete = 0;
-    let output = [];
+    const output = [];
     for (let i = 0; i < numTotal; i++) {
       if (!opts.force && subModules[name[i]]) {
         try {
-          let mtime = fs.statSync(__dirname + '/' + name[i]).mtime;
+          const mtime = fs.statSync(__dirname + '/' + name[i]).mtime;
           // For some reason, directly comparing these two for equality does not
           // work.
           if (mtime - subModules[name[i]].modifiedTime == 0) {
@@ -477,7 +477,7 @@ function SMLoader() {
   function commandReload(msg) {
     if (trustedIds.includes(msg.author.id)) {
       let toReload = msg.text.split(' ').splice(1);
-      let opts = {};
+      const opts = {};
       toReload = toReload.filter((el) => {
         switch (el) {
           case '--force':
@@ -499,7 +499,7 @@ function SMLoader() {
                   'won\'t notice interruption)')
           .then((warnMessage) => {
             self.reload(toReload, opts, (out) => {
-              let embed = new self.Discord.MessageEmbed();
+              const embed = new self.Discord.MessageEmbed();
               embed.setTitle('Reload complete.');
               embed.setColor([255, 0, 255]);
               embed.setDescription(out.join('\n') || 'NOTHING reloaded');
@@ -524,8 +524,8 @@ function SMLoader() {
    */
   function commandUnload(msg) {
     if (trustedIds.includes(msg.author.id)) {
-      let toUnload = msg.text.split(' ').splice(1);
-      let opts = {};
+      const toUnload = msg.text.split(' ').splice(1);
+      const opts = {};
       toReload = toUnload.filter((el) => {
         switch (el) {
           case 'force':
@@ -544,7 +544,7 @@ function SMLoader() {
       self.common.reply(msg, 'Unloading modules...').then((warnMessage) => {
         const numTotal = toUnload.length;
         let numComplete = 0;
-        let outs = [];
+        const outs = [];
         for (let i = 0; i < numTotal; i++) {
           unloadSingle(toUnload[i]);
         }
@@ -567,7 +567,7 @@ function SMLoader() {
         function done() {
           numComplete++;
           if (numComplete < numTotal) return;
-          let embed = new self.Discord.MessageEmbed();
+          const embed = new self.Discord.MessageEmbed();
           embed.setTitle('Unload complete.');
           embed.setColor([255, 0, 255]);
           embed.setDescription(outs.join(' ') || 'NOTHING unloaded');
@@ -593,11 +593,11 @@ function SMLoader() {
    */
   function commandLoad(msg) {
     if (trustedIds.includes(msg.author.id)) {
-      let toLoad = msg.text.split(' ').splice(1);
+      const toLoad = msg.text.split(' ').splice(1);
       self.common.reply(msg, 'Loading modules...').then((warnMessage) => {
         const numTotal = toLoad.length;
         let numComplete = 0;
-        let outs = [];
+        const outs = [];
         for (let i = 0; i < numTotal; i++) {
           loadSingle(toLoad[i]);
         }
@@ -619,7 +619,7 @@ function SMLoader() {
         function done() {
           numComplete++;
           if (numComplete < numTotal) return;
-          let embed = new self.Discord.MessageEmbed();
+          const embed = new self.Discord.MessageEmbed();
           embed.setTitle('Load complete.');
           embed.setColor([255, 0, 255]);
           embed.setDescription(outs.join(' ') || 'NOTHING loaded');
@@ -668,7 +668,7 @@ function SMLoader() {
           }
         });
       }
-      for (let i in subModules) {
+      for (const i in subModules) {
         if (!(subModules[i] instanceof Object) || !subModules[i].helpMessage) {
           continue;
         }

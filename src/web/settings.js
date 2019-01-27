@@ -45,8 +45,8 @@ function WebSettings() {
   };
 
   let ioClient;
-  let app = http.createServer(handler);
-  let io = socketIo(
+  const app = http.createServer(handler);
+  const io = socketIo(
       app, {path: '/www.spikeybot.com/socket.io/', serveClient: false});
 
   app.on('error', function(err) {
@@ -106,7 +106,7 @@ function WebSettings() {
    * in.
    */
   function handleCommandRegistered(cmd, gId) {
-    let toSend = {
+    const toSend = {
       id: cmd.id,
       channel: cmd.channelId,
       cmd: cmd.cmd,
@@ -114,7 +114,7 @@ function WebSettings() {
       time: cmd.time,
       member: makeMember(cmd.member),
     };
-    for (let i in sockets) {
+    for (const i in sockets) {
       if (sockets[i] && sockets[i].cachedGuilds &&
           sockets[i].cachedGuilds.includes(gId)) {
         sockets[i].emit('commandRegistered', toSend, gId);
@@ -130,7 +130,7 @@ function WebSettings() {
    * in.
    */
   function handleCommandCancelled(cmdId, gId) {
-    for (let i in sockets) {
+    for (const i in sockets) {
       if (sockets[i] && sockets[i].cachedGuilds &&
           sockets[i].cachedGuilds.includes(gId)) {
         sockets[i].emit('commandCancelled', cmdId, gId);
@@ -152,7 +152,7 @@ function WebSettings() {
    * @param {string} [id2]
    */
   function handleSettingsChanged(gId, value, type, id, id2) {
-    for (let i in sockets) {
+    for (const i in sockets) {
       if (sockets[i] && sockets[i].cachedGuilds &&
           (!gId || sockets[i].cachedGuilds.includes(gId))) {
         sockets[i].emit('settingsChanged', gId, value, type, id, id2);
@@ -168,7 +168,7 @@ function WebSettings() {
    * @param {string} gId The ID of the guild in which the settings were reset.
    */
   function handleSettingsReset(gId) {
-    for (let i in sockets) {
+    for (const i in sockets) {
       if (sockets[i] && sockets[i].cachedGuilds &&
           sockets[i].cachedGuilds.includes(gId)) {
         sockets[i].emit('settingsReset', gId);
@@ -208,7 +208,7 @@ function WebSettings() {
    * @private
    * @type {Object.<Socket>}
    */
-  let sockets = {};
+  const sockets = {};
 
   /**
    * Returns the number of connected clients that are not siblings.
@@ -226,7 +226,7 @@ function WebSettings() {
    * @private
    * @type {Object.<Socket>}
    */
-  let siblingSockets = {};
+  const siblingSockets = {};
 
   io.on('connection', socketConnection);
   /**
@@ -337,7 +337,7 @@ function WebSettings() {
 
     socket.on('forwardedRequest', (userData, sId, func, args, cb) => {
       if (!authenticated) return;
-      let fakeSocket = {
+      const fakeSocket = {
         emit: function(...args) {
           if (typeof cb == 'function') cb(args);
         },
@@ -375,7 +375,7 @@ function WebSettings() {
    * @return {boolean} True if this shard has this guild.
    */
   function checkMyGuild(gId) {
-    let g = self.client.guilds.get(gId);
+    const g = self.client.guilds.get(gId);
     return (g && true) || false;
   }
 
@@ -394,7 +394,7 @@ function WebSettings() {
   function checkPerm(userData, gId, cId, cmd) {
     if (!userData) return false;
     if (userData.id == self.common.spikeyId) return true;
-    let msg = makeMessage(userData.id, gId, cId, cmd);
+    const msg = makeMessage(userData.id, gId, cId, cmd);
     if (!msg) return false;
     if (self.command.validate(null, makeMessage(userData.id, gId, null, cmd))) {
       return false;
@@ -415,16 +415,16 @@ function WebSettings() {
    */
   function checkChannelPerm(userData, gId, cId) {
     if (!userData) return false;
-    let g = self.client.guilds.get(gId);
+    const g = self.client.guilds.get(gId);
     if (!g) return false;
     if (userData.id == self.common.spikeyId) return true;
-    let m = g.members.get(userData.id);
+    const m = g.members.get(userData.id);
     if (!m) return false;
 
-    let channel = g.channels.get(cId);
+    const channel = g.channels.get(cId);
     if (!channel) return false;
 
-    let perms = channel.permissionsFor(m);
+    const perms = channel.permissionsFor(m);
     if (!perms.has(self.Discord.Permissions.FLAGS.VIEW_CHANNEL)) return false;
     if (!perms.has(self.Discord.Permissions.FLAGS.SEND_MESSAGES)) return false;
     return true;
@@ -490,7 +490,7 @@ function WebSettings() {
    * } The created message-like object.
    */
   function makeMessage(uId, gId, cId, msg) {
-    let g = self.client.guilds.get(gId);
+    const g = self.client.guilds.get(gId);
     if (!g) return null;
     return {
       member: g.members.get(uId),
@@ -535,7 +535,7 @@ function WebSettings() {
     } else {
       const numReplies = (Object.entries(siblingSockets).length || 0);
       let replied = 0;
-      let guildBuffer = {};
+      const guildBuffer = {};
       /**
        * The callback for each response with the requested data. Replies to the
        * user once all requests have replied.
@@ -571,15 +571,15 @@ function WebSettings() {
     }
 
     try {
-      let guilds = self.client.guilds
+      const guilds = self.client.guilds
           .filter((obj) => {
             return userData.id == self.common.spikeyId ||
                              obj.members.get(userData.id);
           })
           .array();
-      let strippedGuilds = guilds.map((g) => {
-        let member = g.members.get(userData.id);
-        let newG = {};
+      const strippedGuilds = guilds.map((g) => {
+        const member = g.members.get(userData.id);
+        const newG = {};
         newG.iconURL = g.iconURL();
         newG.name = g.name;
         newG.id = g.id;
@@ -630,10 +630,10 @@ function WebSettings() {
       cb(null);
       return;
     }
-    let c = self.client.channels.get(cId);
-    let m = self.client.guilds.get(gId).members.get(userData.id);
-    let perms = c.permissionsFor(m);
-    let stripped = {
+    const c = self.client.channels.get(cId);
+    const m = self.client.guilds.get(gId).members.get(userData.id);
+    const perms = c.permissionsFor(m);
+    const stripped = {
       id: c.id,
       permissions: perms,
       name: c.name,
@@ -663,12 +663,12 @@ function WebSettings() {
       cb('Not signed in.', null);
       return;
     }
-    let guilds = self.client.guilds.filter((obj) => {
+    const guilds = self.client.guilds.filter((obj) => {
       return userData.id == self.common.spikeyId ||
           obj.members.get(userData.id);
     });
-    let cmdDefaults = self.command.getDefaultSettings();
-    let settings = guilds.map((g) => {
+    const cmdDefaults = self.command.getDefaultSettings();
+    const settings = guilds.map((g) => {
       return {
         guild: g.id,
         prefix: self.bot.getPrefix(g),
@@ -696,17 +696,17 @@ function WebSettings() {
       cb('Not signed in.', null);
       return;
     }
-    let guilds = self.client.guilds.filter((obj) => {
+    const guilds = self.client.guilds.filter((obj) => {
       return obj.members.get(userData.id);
     });
-    let sCmds = {};
+    const sCmds = {};
     updateModuleReferences();
     if (!cmdScheduler) {
       self.warn('Failed to get reference to CmdScheduler!');
       return;
     }
     guilds.forEach((g) => {
-      let list = cmdScheduler.getScheduledCommandsInGuild(g.id);
+      const list = cmdScheduler.getScheduledCommandsInGuild(g.id);
       if (list && list.length > 0) {
         sCmds[g.id] = list.map((el) => {
           return {
@@ -796,20 +796,20 @@ function WebSettings() {
       return;
     }
 
-    let msg = makeMessage(userData.id, gId, cId, cmd.cmd);
+    const msg = makeMessage(userData.id, gId, cId, cmd.cmd);
 
     if (!msg) {
       cb('Invalid Member');
       return;
     }
 
-    let invalid = self.command.validate(cmd.cmd.split(/\s/)[0], msg);
+    const invalid = self.command.validate(cmd.cmd.split(/\s/)[0], msg);
     if (invalid) {
       cb('Invalid Command');
       return;
     }
 
-    let newCmd = new cmdScheduler.ScheduledCommand({
+    const newCmd = new cmdScheduler.ScheduledCommand({
       cmd: cmd.cmd,
       channel: msg.channel,
       message: msg,

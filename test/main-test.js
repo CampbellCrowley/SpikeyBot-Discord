@@ -1,9 +1,9 @@
-let expect = require('chai').expect;
-let Discord = require('discord.js');
-let client = new Discord.Client();
+const expect = require('chai').expect;
+const Discord = require('discord.js');
+const client = new Discord.Client();
 let spawn = require('child_process').spawn;
-let fs = require('fs');
-let auth = require('../auth.js');
+const fs = require('fs');
+const auth = require('../auth.js');
 
 /* eslint-disable */
 var oldSpawn = spawn;

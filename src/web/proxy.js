@@ -86,7 +86,7 @@ function WebProxy() {
   }
   connectSQL();
 
-  let pathPorts = {};
+  const pathPorts = {};
 
   /**
    * The current OAuth2 access information for a single session.
@@ -117,7 +117,7 @@ function WebProxy() {
    * @type {Object.<loginState>}
    */
   let loginInfo = {};
-  let currentSessions = {};
+  const currentSessions = {};
 
   try {
     loginInfo = JSON.parse(fs.readFileSync('./save/webClients.json') || {});
@@ -125,7 +125,7 @@ function WebProxy() {
     console.error(err);
     loginInfo = {};
   }
-  let purgeInterval = setInterval(purgeSessions, 60 * 60 * 1000);
+  const purgeInterval = setInterval(purgeSessions, 60 * 60 * 1000);
 
   /**
    * Purge stale data from loginInfo.
@@ -133,15 +133,15 @@ function WebProxy() {
    * @private
    */
   function purgeSessions() {
-    let keys = Object.keys(loginInfo);
+    const keys = Object.keys(loginInfo);
     const now = Date.now();
-    for (let i in keys) {
+    for (const i in keys) {
       if (loginInfo[keys[i]].expiration_date < now) delete loginInfo[keys[i]];
     }
   }
 
-  let app = http.createServer(handler);
-  let io = socketIo(
+  const app = http.createServer(handler);
+  const io = socketIo(
       app, {path: '/www.spikeybot.com/socket.io/', serveClient: false});
 
   app.on('error', function(err) {
@@ -174,7 +174,7 @@ function WebProxy() {
     if (app) app.close();
     clearInterval(purgeInterval);
     if (!skipSave) {
-      for (let i in loginInfo) {
+      for (const i in loginInfo) {
         if (loginInfo[i] && loginInfo[i].refreshTimeout) {
           delete loginInfo[i].refreshTimeout;
         }
@@ -206,7 +206,7 @@ function WebProxy() {
    * @private
    * @type {Object.<Socket>}
    */
-  let sockets = {};
+  const sockets = {};
 
   io.on('connection', socketConnection);
   /**
@@ -244,9 +244,9 @@ function WebProxy() {
       });
 
       // Add custom semi-wildcard listeners.
-      let sonevent = server.onevent;
+      const sonevent = server.onevent;
       server.onevent = function(packet) {
-        let args = packet.data || [];
+        const args = packet.data || [];
         if (server.listeners(args[0]).length) {
           sonevent.call(this, packet);
         } else {
@@ -266,9 +266,9 @@ function WebProxy() {
         socket.disconnect();
       });
     }
-    let onevent = socket.onevent;
+    const onevent = socket.onevent;
     socket.onevent = function(packet) {
-      let args = packet.data || [];
+      const args = packet.data || [];
       if (socket.listenerCount(args[0])) {
         onevent.call(this, packet);
       } else {
@@ -431,7 +431,7 @@ function WebProxy() {
   function fetchIdentity(loginInfo, cb) {
     apiRequest(loginInfo, '/users/@me', (err, data) => {
       if (!err) {
-        let parsed = JSON.parse(data);
+        const parsed = JSON.parse(data);
         parsed.session = {
           id: loginInfo.session,
           expiration_date: loginInfo.expiration_date,
@@ -463,7 +463,7 @@ function WebProxy() {
    * and data arguments.
    */
   function apiRequest(loginInfo, path, cb) {
-    let host = apiHost;
+    const host = apiHost;
     host.path = '/api' + path;
     host.headers = {
       'Authorization': loginInfo.token_type + ' ' + loginInfo.access_token,
@@ -481,7 +481,7 @@ function WebProxy() {
    */
   function discordRequest(data, cb, host) {
     host = host || tokenHost;
-    let req = https.request(host, (response) => {
+    const req = https.request(host, (response) => {
       let content = '';
       response.on('data', function(chunk) {
         content += chunk;
@@ -569,7 +569,7 @@ function WebProxy() {
    * error argument, and a data argument.
    */
   function revokeToken(token, cb) {
-    let host = Object.assign({}, tokenHost);
+    const host = Object.assign({}, tokenHost);
     host.path += '/revoke';
     const data = {
       token_type_hint: 'refresh_token',

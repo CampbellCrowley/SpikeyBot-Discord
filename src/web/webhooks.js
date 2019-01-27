@@ -39,7 +39,7 @@ function WebCommands() {
    * @param {http.ServerResponse} res Our response to the client.
    */
   function handler(req, res) {
-    let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress ||
+    const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress ||
         'ERROR';
     if (req.method !== 'POST') {
       res.writeHead(405);

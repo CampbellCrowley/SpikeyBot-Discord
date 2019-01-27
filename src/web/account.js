@@ -14,8 +14,8 @@ const PATREON_CLIENT_ID = auth.patreonClientId;
 const PATREON_CLIENT_SECRET = auth.patreonClientSecret;
 const redirectURL = 'https://www.spikeybot.com/redirect/';
 
-let patreonAPI = patreon.patreon;
-let patreonOAuthClient =
+const patreonAPI = patreon.patreon;
+const patreonOAuthClient =
     patreon.oauth(PATREON_CLIENT_ID, PATREON_CLIENT_SECRET);
 
 require('../subModule.js')(WebAccount);  // Extends the SubModule class.
@@ -30,8 +30,8 @@ function WebAccount() {
   self = this;
   this.myName = 'WebAccount';
 
-  let app = http.createServer(handler);
-  let io = socketIo(
+  const app = http.createServer(handler);
+  const io = socketIo(
       app, {path: '/www.spikeybot.com/socket.io/', serveClient: false});
 
   app.on('error', function(err) {
@@ -106,7 +106,7 @@ function WebAccount() {
         return;
       }
       try {
-        let parsed = JSON.parse(data);
+        const parsed = JSON.parse(data);
         if (!parsed) return;
         patreonSettingsTemplate = parsed;
       } catch (e) {
@@ -134,7 +134,7 @@ function WebAccount() {
     self.bot.accounts = toExport;
   };
 
-  let toExport = {};
+  const toExport = {};
 
   /**
    * Causes a full shutdown of all servers.
@@ -201,7 +201,7 @@ function WebAccount() {
    * @private
    * @type {Object.<Socket>}
    */
-  let sockets = {};
+  const sockets = {};
 
   io.on('connection', socketConnection);
   /**
@@ -420,12 +420,12 @@ function WebAccount() {
   function validatePatreonCode(code, userid, ip, cb) {
     patreonOAuthClient.getTokens(code, redirectURL)
         .then(function(tokensResponse) {
-          let patreonAPIClient = patreonAPI(tokensResponse.access_token);
+          const patreonAPIClient = patreonAPI(tokensResponse.access_token);
           return patreonAPIClient('/current_user');
         })
         .then(function(result) {
-          let store = result.store;
-          let users = store.findAll('user').map((user) => user.serialize());
+          const store = result.store;
+          const users = store.findAll('user').map((user) => user.serialize());
           if (!users || users.length < 1 || !users[0].data ||
               !users[0].data.id) {
             self.common.error('Failed to get patreonid', ip);
@@ -454,7 +454,7 @@ function WebAccount() {
    * string if there was an error, or null if no error.
    */
   function validateSpotifyCode(code, userid, ip, cb) {
-    let req = https.request(defaultSpotifyTokenReq, (res) => {
+    const req = https.request(defaultSpotifyTokenReq, (res) => {
       let content = '';
       res.on('data', (chunk) => {
         content += chunk;
@@ -497,7 +497,7 @@ function WebAccount() {
       console.error(err);
       return;
     }
-    let vals = {
+    const vals = {
       accessToken: parsed.access_token,
       expiresIn: parsed.expires_in,
       expiresAt: dateToSQL(Date.now() + parsed.expires_in * 1000),
@@ -505,7 +505,7 @@ function WebAccount() {
     if (parsed.refresh_token) {
       vals.refreshToken = parsed.refresh_token;
     }
-    let req = https.request(defaultSpotifyUserReq, (res) => {
+    const req = https.request(defaultSpotifyUserReq, (res) => {
       let content = '';
       res.on('data', (chunk) => {
         content += chunk;
@@ -759,7 +759,7 @@ function WebAccount() {
        * if everything is fine.
        */
       function isInvalid(obj, s, value) {
-        let type = obj.type;
+        const type = obj.type;
         let valid = false;
         if (type === 'select') {
           for (let i = 0; i < obj.values.length; i++) {
@@ -840,7 +840,7 @@ function WebAccount() {
           cb(null);
           return;
         }
-        let expiresAt = new Date(rows[0].tokenExpiresAt);
+        const expiresAt = new Date(rows[0].tokenExpiresAt);
         if (Date.now() - expiresAt.getTime() > 0) {
           refreshSpotifyToken(rows[0].refreshToken);
         } else {
@@ -861,7 +861,7 @@ function WebAccount() {
         return;
       }
       firstAttempt = false;
-      let req = https.request(defaultSpotifyTokenReq, (res) => {
+      const req = https.request(defaultSpotifyTokenReq, (res) => {
         let content = '';
         res.on('data', (chunk) => {
           content += chunk;

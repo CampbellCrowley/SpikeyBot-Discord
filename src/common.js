@@ -91,17 +91,17 @@ function Common() {
    * @return {string} The padded address.
    */
   this.padIp = function(str) {
-    let dM = str.match(/\./g);
-    let cM = str.match(/:/g);
+    const dM = str.match(/\./g);
+    const cM = str.match(/:/g);
     if (dM && dM.length == 3) {
-      let res = str.split('.');
+      const res = str.split('.');
       for (let i = 0; i < res.length; i++) {
         res[i] = ('000' + res[i]).slice(-3);
         res[i] = res[i].replace(':', '0');
       }
       str = res.join('.');
     } else if (cM && cM.length == 7) {
-      let res = str.split(':');
+      const res = str.split(':');
       for (let i = 0; i < res.length; i++) {
         res[i] = ('0000' + res[i]).slice(-4);
         // res[i] = res[i].replace(':', '0');
@@ -267,7 +267,7 @@ function Common() {
             throw err;
           });
     } else {
-      let embed = new Discord.MessageEmbed();
+      const embed = new Discord.MessageEmbed();
       embed.setColor([255, 0, 255]);
       if (text.length <= 256) {
         embed.setTitle(text);
@@ -483,7 +483,7 @@ Common.mention = Common.prototype.mention;
 
 /* eslint-disable-next-line no-extend-native */
 String.prototype.replaceAll = function(search, replacement) {
-  let target = this;
+  const target = this;
   return target.replace(new RegExp(search, 'g'), replacement);
 };
 
@@ -492,14 +492,14 @@ String.prototype.replaceAll = function(search, replacement) {
  */
 Object.defineProperty(global, '__stack', {
   get: function() {
-    let orig = Error.prepareStackTrace;
+    const orig = Error.prepareStackTrace;
     Error.prepareStackTrace = function(_, stack) {
       return stack;
     };
-    let err = new Error();
+    const err = new Error();
     /* eslint-disable-next-line no-caller */
     Error.captureStackTrace(err, arguments.callee);
-    let stack = err.stack;
+    const stack = err.stack;
     Error.prepareStackTrace = orig;
     return stack;
   },

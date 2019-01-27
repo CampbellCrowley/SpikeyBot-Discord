@@ -83,7 +83,7 @@ function TicTacToe() {
    * @listens Command#ticTacToe
    */
   function commandTicTacToe(msg) {
-    let players = {p1: msg.author, p2: null};
+    const players = {p1: msg.author, p2: null};
     if (msg.mentions.users.size > 0) {
       players.p2 = msg.mentions.users.first();
     }
@@ -142,8 +142,8 @@ function TicTacToe() {
      * done, 1 is player 1, 2 is player 2, 3 is draw.
      */
     this.print = function(winner = 0) {
-      let embed = new self.Discord.MessageEmbed();
-      let names = ['Nobody', 'Nobody'];
+      const embed = new self.Discord.MessageEmbed();
+      const names = ['Nobody', 'Nobody'];
       let gameFull = true;
       if (this.players.p1) {
         names[0] = this.players.p1.username;
@@ -160,7 +160,7 @@ function TicTacToe() {
         embed.setDescription('To join the game, just make a move!');
       }
 
-      let finalBoard = boardString.replace(/\{(.)\}/g, function(match, num) {
+      const finalBoard = boardString.replace(/\{(.)\}/g, function(match, num) {
         switch (game.board[num]) {
           case 1:
             if (winner > 0 && winner != 1) return ' x ';
@@ -213,7 +213,7 @@ function TicTacToe() {
   this.createGame = function(players, channel) {
     numGames++;
     channel.send('`Loading TicTacToe...`').then((msg) => {
-      let game = new self.Game(players, msg);
+      const game = new self.Game(players, msg);
       game.print();
       addReactions(msg);
       addListener(msg, game);
@@ -290,7 +290,7 @@ function TicTacToe() {
         return;
       }
       game.board[move] = game.turn;
-      let winner = checkWin(game.board, move);
+      const winner = checkWin(game.board, move);
       if (winner != 0) {
         msg.reactions.removeAll().catch(() => {});
       } else {
@@ -310,14 +310,14 @@ function TicTacToe() {
    * player 2 won, 3 if draw.
    */
   function checkWin(board, latest) {
-    let player = board[latest];
+    const player = board[latest];
     // Column
     for (let i = 1; i < 3; i++) {
       if (board[(i * 3) % 9] != player) break;
       if (i == 2) return player;
     }
     // Row
-    let row = Math.floor(latest / 3) * 3;
+    const row = Math.floor(latest / 3) * 3;
     for (let i = 1; i < 3; i++) {
       if (board[(i + latest - row) % 3 + row] != player) break;
       if (i == 2) return player;
