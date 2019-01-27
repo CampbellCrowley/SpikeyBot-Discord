@@ -139,8 +139,8 @@ function WebStats() {
         res.writeHead(200, {'content-type': 'application/json'});
         const filteredStats = {
           schemaVersion: 1,
-          label: 'servers',
-          message: stats.numGuilds,
+          label: 'SpikeyBot Servers',
+          message: stats.numGuilds + '',
           color: 'purple',
           cacheSeconds: Math.floor(cachedLifespan / 1000),
         };
