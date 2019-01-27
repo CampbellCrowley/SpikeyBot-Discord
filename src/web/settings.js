@@ -701,6 +701,10 @@ function WebSettings() {
     });
     let sCmds = {};
     updateModuleReferences();
+    if (!cmdScheduler) {
+      self.warn('Failed to get reference to CmdScheduler!');
+      return;
+    }
     guilds.forEach((g) => {
       let list = cmdScheduler.getScheduledCommandsInGuild(g.id);
       if (list && list.length > 0) {
