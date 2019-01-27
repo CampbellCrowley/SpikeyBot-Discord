@@ -97,6 +97,19 @@ function Uno() {
               'UNO.');
       return;
     }
+    if (games[msg.guild.id]) {
+      let entries = Object.values(games[msg.guild.id]);
+      let g = entries.find((el) => el.getPlayers().includes(msg.author.id));
+      if (g) {
+        if (g.groupChannel.id == msg.channel.id) {
+          return;
+        }
+        self.common.reply(
+            msg, 'You appear to already be in a game. ' +
+                'You may only be in one game at a time.');
+        return;
+      }
+    }
     self.common.reply(msg, 'Creating a game of UNO.');
     if (!games[msg.guild.id]) games[msg.guild.id] = {};
     let newGame = new self.Game(
@@ -127,7 +140,7 @@ function Uno() {
       if (typeof g.end == 'function') g.end();
     });
     delete games[msg.guild.id];
-    self.common.reply(msg, 'All UNO games have been ended.');
+    self.common.reply(msg, 'All UNO games have been ended.').catch(() => {});
   }
 
   /**
@@ -520,6 +533,10 @@ function Uno() {
             .update({VIEW_CHANNEL: true}); */
       });
       currentCollector = game.groupChannel.createMessageCollector((m) => {
+        let prefix = self.bot.getPrefix(m.guild);
+        if (m.content.startsWith(prefix)) {
+          m.content = m.content.replace(prefix, '');
+        }
         if (m.author.id != maker.id) {
           if (m.content.toLowerCase().startsWith('uno leave')) {
             self.debug(m.channel.id + '@' + m.author.id + ' ' + m.content);
@@ -618,6 +635,10 @@ function Uno() {
       playCard();
 
       currentCollector = game.groupChannel.createMessageCollector((m) => {
+        let prefix = self.bot.getPrefix(m.guild);
+        if (m.content.startsWith(prefix)) {
+          m.content = m.content.replace(prefix, '');
+        }
         // Check for Uno calls.
         if (m.content.match(/^uno\W*$/i)) {
           callUno(m.author.id);
@@ -789,6 +810,7 @@ function Uno() {
     function drawCards(num, silent = false) {
       let drawn = [];
       for (let j = 0; j < num; j++) {
+        if (discarded.length == 0) break;
         let single = discarded.splice(
             Math.floor(Math.random() * discarded.length), 1)[0];
         if (single.face & self.CardFace.WILD_EFFECT) {
@@ -897,7 +919,9 @@ function Uno() {
       }
 
       let card = hand.splice(selected, 1)[0];
-      discarded.push(card);
+      if (topCard) {
+        discarded.push(topCard);
+      }
       topCard = card;
       // previousCard = card;
 
@@ -1104,6 +1128,18 @@ function Uno() {
         if (perms) perms.delete('User removed from game');
         if (turn == index) nextTurn();
       }
+    };
+
+    /**
+     * Returns the list of all players currently in this game.
+     * @public
+     *
+     * @return {string[]|number[]} Array of player IDs. Type is number-like.
+     */
+    this.getPlayers = function() {
+      return players.map((el) => {
+        return el.id;
+      });
     };
   };
 

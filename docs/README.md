@@ -11519,6 +11519,7 @@ Manages an Uno game.
                 * [.end()](#Uno+Game+end)
                 * [.addPlayer(p)](#Uno+Game+addPlayer)
                 * [.removePlayer(p)](#Uno+Game+removePlayer)
+                * [.getPlayers()](#Uno+Game+getPlayers) ⇒ <code>Array.&lt;string&gt;</code> \| <code>Array.&lt;number&gt;</code>
             * _inner_
                 * [~members](#Uno+Game..members) : <code>Object.&lt;Discord~GuildMember&gt;</code> ℗
                 * [~players](#Uno+Game..players) : <code>Array.&lt;Uno.Player&gt;</code> ℗
@@ -11659,6 +11660,7 @@ The name of this card retreivable with `toString()`. Null until first
         * [.end()](#Uno+Game+end)
         * [.addPlayer(p)](#Uno+Game+addPlayer)
         * [.removePlayer(p)](#Uno+Game+removePlayer)
+        * [.getPlayers()](#Uno+Game+getPlayers) ⇒ <code>Array.&lt;string&gt;</code> \| <code>Array.&lt;number&gt;</code>
     * _inner_
         * [~members](#Uno+Game..members) : <code>Object.&lt;Discord~GuildMember&gt;</code> ℗
         * [~players](#Uno+Game..players) : <code>Array.&lt;Uno.Player&gt;</code> ℗
@@ -11756,6 +11758,14 @@ Remove the user with the given ID from the game.
 | --- | --- | --- |
 | p | <code>string</code> \| <code>number</code> \| <code>Discord~GuildMember</code> \| <code>Uno.Player</code> | The ID of the user to remove. |
 
+<a name="Uno+Game+getPlayers"></a>
+
+#### game.getPlayers() ⇒ <code>Array.&lt;string&gt;</code> \| <code>Array.&lt;number&gt;</code>
+Returns the list of all players currently in this game.
+
+**Kind**: instance method of [<code>Game</code>](#Uno+Game)  
+**Returns**: <code>Array.&lt;string&gt;</code> \| <code>Array.&lt;number&gt;</code> - Array of player IDs. Type is number-like.  
+**Access**: public  
 <a name="Uno+Game..members"></a>
 
 #### Game~members : <code>Object.&lt;Discord~GuildMember&gt;</code> ℗
