@@ -1863,6 +1863,10 @@ function HungryGames() {
    */
   this.resetGame = function(id, command) {
     if (find(id)) {
+      if (find(id).currentGame && find(id).currentGame.inProgress) {
+        return 'A game is currently in progress. Please end it before ' +
+            'reseting game data.';
+      }
       if (command == 'all') {
         delete games[id];
         rimraf(self.common.guildSaveDir + id + hgSaveDir, function(err) {
