@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.org/CampbellCrowley/SpikeyBot-Discord.svg?branch=master)](https://travis-ci.com/CampbellCrowley/SpikeyBot-Discord)  
+[![Discord Support Server](https://discordapp.com/api/guilds/420045052690169856/embed.png)](https://discord.gg/ZbKfYSQ) [![Build Status](https://travis-ci.org/CampbellCrowley/SpikeyBot-Discord.svg?branch=master)](https://travis-ci.com/CampbellCrowley/SpikeyBot-Discord) [![Dependencies Status](https://david-dm.org/CampbellCrowley/SpikeyBot-Discord.svg)](https://david-dm.org/CampbellCrowley/SpikeyBot-Discord) [![Patreon](https://img.shields.io/badge/donate-patreon-F96854.svg)](https://www.patreon.com/CampbellCrowley/)
+  
 ### Bot's website: [SpikeyBot.com](https://www.spikeybot.com/)
 ### Support my development: [Patreon](https://www.patreon.com/campbellcrowley/)
 
