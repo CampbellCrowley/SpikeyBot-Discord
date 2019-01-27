@@ -1242,7 +1242,7 @@ function HungryGames() {
     this.settings = {};
     // The day when the player died.
     this.dayOfDeath = -1;
-  };
+  }
 
   /**
    * @classdesc Serializable container for data about a team in a game.
@@ -1268,7 +1268,7 @@ function HungryGames() {
     this.rank = 1;
     // Number of players still alive on this team.
     this.numAlive = players.length;
-  };
+  }
   this.Team = Team;
 
   /**
@@ -2142,7 +2142,7 @@ function HungryGames() {
     if (find(id).excludedUsers.length > 0) {
       let excludedList = '\u200B';
       if (find(id).excludedUsers.length < 20) {
-        excludedlist = find(id)
+        excludedList = find(id)
             .excludedUsers
             .map(function(obj) {
               return getName(msg.guild, obj);
@@ -2628,10 +2628,10 @@ function HungryGames() {
               let consumableName = weaponName;
               if (weapons[weaponName].consumable) {
                 consumableName = weapons[weaponName].consumable.replace(
-                    /\[C([^\|]*)\|([^\]]*)\]/g, '$2');
+                    /\[C([^|]*)\|([^\]]*)\]/g, '$2');
               } else if (weapons[weaponName].name) {
                 consumableName = weapons[weaponName].name.replace(
-                    /\[C([^\|]*)\|([^\]]*)\]/g, '$2');
+                    /\[C([^|]*)\|([^\]]*)\]/g, '$2');
               } else {
                 consumableName += 's';
               }
@@ -2643,10 +2643,10 @@ function HungryGames() {
               const count = consumed;
               if (weapons[weaponName].consumable) {
                 consumableName = weapons[weaponName].consumable.replace(
-                    /\[C([^\|]*)\|([^\]]*)\]/g, (count == 1 ? '$1' : '$2'));
+                    /\[C([^|]*)\|([^\]]*)\]/g, (count == 1 ? '$1' : '$2'));
               } else if (weapons[weaponName].name) {
                 consumableName = weapons[weaponName].name.replace(
-                    /\[C([^\|]*)\|([^\]]*)\]/g, (count == 1 ? '$1' : '$2'));
+                    /\[C([^|]*)\|([^\]]*)\]/g, (count == 1 ? '$1' : '$2'));
               } else if (count != 1) {
                 consumableName += 's';
               }
@@ -2668,7 +2668,7 @@ function HungryGames() {
                       .replaceAll('{weapon}', owner + ' ' + weaponName)
                       .replaceAll('{action}', eventTry.action)
                       .replace(
-                          /\[C([^\|]*)\|([^\]]*)\]/g,
+                          /\[C([^|]*)\|([^\]]*)\]/g,
                           (consumed == 1 ? '$1' : '$2'));
             } else {
               eventTry.message = eventTry.message.replaceAll('{owner}', owner);
@@ -2824,7 +2824,7 @@ function HungryGames() {
                     }
                     if (weapons[weaponName].consumable) {
                       consumableName = weapons[weaponName].consumable.replace(
-                          /\[C([^\|]*)\|([^\]]*)\]/g,
+                          /\[C([^|]*)\|([^\]]*)\]/g,
                           '$' + (count == 1 ? '1' : '2'));
                     } else if (count != 1) {
                       consumableName += 's';
@@ -2853,7 +2853,7 @@ function HungryGames() {
                     }
                     if (weapons[weaponName].consumable) {
                       consumableName = weapons[weaponName].consumable.replace(
-                          /\[C([^\|]*)\|([^\]]*)\]/g,
+                          /\[C([^|]*)\|([^\]]*)\]/g,
                           '$' + (count == 1 ? '1' : '2'));
                     } else if (count != 1) {
                       consumableName += 's';
@@ -3489,7 +3489,7 @@ function HungryGames() {
         }
         return true;
       });
-      findMatching = function(match, mainPool) {
+      const findMatching = function(match, mainPool) {
         return mainPool.findIndex(function(pool) {
           const teamId = teams.findIndex(function(team) {
             return team.players.findIndex(function(player) {
@@ -3868,10 +3868,10 @@ function HungryGames() {
     const affectedAttackers = affectedUsers.splice(0, numAttacker);
     let finalMessage = message;
     finalMessage = finalMessage.replace(
-        /\[V([^\|]*)\|([^\]]*)\]/g,
+        /\[V([^|]*)\|([^\]]*)\]/g,
         '$' + (affectedVictims.length > 1 ? '2' : '1'));
     finalMessage = finalMessage.replace(
-        /\[A([^\|]*)\|([^\]]*)\]/g,
+        /\[A([^|]*)\|([^\]]*)\]/g,
         '$' + (affectedAttackers.length > 1 ? '2' : '1'));
     finalMessage =
         finalMessage
@@ -3896,12 +3896,11 @@ function HungryGames() {
       const numDead = deadUsers.length;
       if (numDead === 0) {
         finalMessage = finalMessage.replaceAll('{dead}', 'an animal')
-            .replace(/\[D([^\|]*)\|([^\]]*)\]/g, '$1');
+            .replace(/\[D([^|]*)\|([^\]]*)\]/g, '$1');
       } else {
         finalMessage =
             finalMessage
-                .replace(
-                    /\[D([^\|]*)\|([^\]]*)\]/g, numDead === 1 ? '$1' : '$2')
+                .replace(/\[D([^|]*)\|([^\]]*)\]/g, numDead === 1 ? '$1' : '$2')
                 .replaceAll(
                     '{dead}',
                     formatMultiNames(
@@ -4000,7 +3999,7 @@ function HungryGames() {
                 iconGap,
             battleIconSize + underlineSize * 2);
         let responses = 0;
-        newImage = function(image, outcome, placement, isPatron) {
+        const newImage = function(image, outcome, placement, isPatron) {
           try {
             if (battleIconSize > 0) {
               image.resize(battleIconSize, battleIconSize);
@@ -4108,7 +4107,7 @@ function HungryGames() {
             events[index].icons.length * (iconSize + iconGap) - iconGap,
             iconSize + underlineSize * 2);
         let responses = 0;
-        newImage = function(image, outcome, placement, isPatron) {
+        const newImage = function(image, outcome, placement, isPatron) {
           try {
             if (iconSize > 0) {
               image.resize(iconSize, iconSize);
@@ -4447,7 +4446,7 @@ function HungryGames() {
                 iconGap,
             victorIconSize + underlineSize);
         let responses = 0;
-        newImage = function(image, userId) {
+        const newImage = function(image, userId) {
           try {
             if (victorIconSize > 0) {
               image.resize(victorIconSize, victorIconSize);
@@ -4802,6 +4801,7 @@ function HungryGames() {
               if (!u) return false;
               return u.presence.status === users;
             });
+        break;
       default:
         if (typeof users === 'string') return 'Invalid users';
         break;
@@ -4950,6 +4950,7 @@ function HungryGames() {
               if (!u) return false;
               return u.presence.status === users;
             });
+        break;
       default:
         if (typeof users === 'string') return 'Invalid users';
         break;
@@ -5110,7 +5111,7 @@ function HungryGames() {
         find(id).excludedUsers.length > 0) {
       let excludedList = '\u200B';
       if (find(id).excludedUsers.length < 20) {
-        excludedlist = find(id)
+        excludedList = find(id)
             .excludedUsers
             .map(function(obj) {
               return getName(msg.guild, obj);
@@ -5335,7 +5336,7 @@ function HungryGames() {
     const bodyFields = [[]];
     let fieldIndex = 0;
     for (const i in bodyList) {
-      if (!bodyList[i] instanceof Object) continue;
+      if (!(bodyList[i] instanceof Object)) continue;
       if (bodyList[i].length + totalLength > 1500) {
         fieldIndex++;
         totalLength = 0;
@@ -5440,12 +5441,13 @@ function HungryGames() {
       switch (split[0]) {
         case 'rename':
           break;
-        default:
+        default: {
           const message = 'You must end the current game before editing teams.';
           if (!silent) {
             msg.channel.send(self.common.mention(msg) + ' `' + message + '`');
           }
           return message;
+        }
       }
     }
     if (find(id).options.teamSize == 0) {
@@ -5507,7 +5509,7 @@ function HungryGames() {
       }
     }
     switch (cmd) {
-      case 'swap':
+      case 'swap': {
         let p1 = -1;
         const team1 = find(gId).currentGame.teams.find((t) => {
           return t.players.find((p, i) => {
@@ -5533,7 +5535,8 @@ function HungryGames() {
         team1.players.push(team2.players.splice(p2, 1)[0]);
         team2.players.push(tmp);
         break;
-      case 'move':
+      }
+      case 'move': {
         let pId = -1;
         let tId = -1;
         const teamS = find(gId).currentGame.teams.find((t, i) => {
@@ -5569,12 +5572,12 @@ function HungryGames() {
           find(gId).currentGame.teams.splice(tId, 1);
         }
         break;
+      }
       default:
         return editTeam(
             makeMessage(
                 uId, gId, null, cmd + ' ' + (one || '') + ' ' + (two || '')),
             gId, true);
-        break;
     }
   };
   /**
@@ -5834,7 +5837,7 @@ function HungryGames() {
           let attackerOutcome = 'nothing';
           let victimKiller = false;
           let attackerKiller = false;
-          getAttackNum = function() {
+          const getAttackNum = function() {
             createEventNums(
                 msg_, authId,
                 '`How many attackers may be in this event? (-1 means at ' +
@@ -5849,7 +5852,7 @@ function HungryGames() {
                   msg_.delete().catch(() => {});
                 });
           };
-          getVictimNum = function() {
+          const getVictimNum = function() {
             createEventNums(
                 msg_, authId,
                 '`How many victims may be in this event? (-1 means at least ' +
@@ -5864,7 +5867,7 @@ function HungryGames() {
                   msg_.delete().catch(() => {});
                 });
           };
-          getAttackOutcome = function() {
+          const getAttackOutcome = function() {
             if (numAttacker == 0) {
               getVictimOutcome();
             } else {
@@ -5881,7 +5884,7 @@ function HungryGames() {
                   });
             }
           };
-          getVictimOutcome = function() {
+          const getVictimOutcome = function() {
             if (numVictim == 0) {
               getIsAttackerKiller();
             } else {
@@ -5898,7 +5901,7 @@ function HungryGames() {
                   });
             }
           };
-          getIsAttackerKiller = function() {
+          const getIsAttackerKiller = function() {
             if (numAttacker == 0) {
               getIsVictimKiller();
             } else {
@@ -5916,7 +5919,7 @@ function HungryGames() {
                   });
             }
           };
-          getIsVictimKiller = function() {
+          const getIsVictimKiller = function() {
             if (numVictim == 0) {
               finish();
             } else {
@@ -5929,7 +5932,7 @@ function HungryGames() {
                   });
             }
           };
-          finish = function() {
+          const finish = function() {
             msg_.delete().catch(() => {});
             const error = self.makeAndAddEvent(
                 id, eventType, message, numVictim, numAttacker, victimOutcome,
@@ -6255,7 +6258,7 @@ function HungryGames() {
       case 'arena':
         allEvents = defaultArenaEvents.concat(find(id).customEvents.arena);
         break;
-      case 'weapon':
+      case 'weapon': {
         allEvents = Object.assign({}, weapons);
         const entries = Object.entries(find(id).customEvents.weapon);
         for (let i = 0; i < entries.length; i++) {
@@ -6268,6 +6271,7 @@ function HungryGames() {
           }
         }
         break;
+      }
     }
 
     let allDisabled = find(id).disabledEvents[type];
@@ -6386,7 +6390,7 @@ function HungryGames() {
     msg.edit(show + '\nNo people');
 
     let num = 0;
-    regLis = function() {
+    const regLis = function() {
       newReact(maxReactAwaitTime);
       msg.awaitReactions(function(reaction, user) {
         if (user.id != self.client.user.id) {
@@ -7337,7 +7341,7 @@ function HungryGames() {
     // Flush default and stale options.
     if (games[id].options) {
       for (const opt in defaultOptions) {
-        if (!defaultOptions[opt] instanceof Object) continue;
+        if (!(defaultOptions[opt] instanceof Object)) continue;
         if (typeof games[id].options[opt] !==
             typeof defaultOptions[opt].value) {
           if (defaultOptions[opt].value instanceof Object) {
@@ -7357,7 +7361,7 @@ function HungryGames() {
         }
       }
       for (const opt in games[id].options) {
-        if (!games[id].options[opt] instanceof Object) continue;
+        if (!(games[id].options[opt] instanceof Object)) continue;
         if (typeof defaultOptions[opt] === 'undefined') {
           delete games[id].options[opt];
         } else if (games[id].options[opt].value instanceof Object) {
@@ -7446,7 +7450,7 @@ function HungryGames() {
    * @return {Promise} Promise from JIMP with image data.
    */
   function readImage(url) {
-    const splitURL = url.match(/\/(avatars)\/(\d+)\/([^?&\/]+)/);
+    const splitURL = url.match(/\/(avatars)\/(\d+)\/([^?&/]+)/);
     let filename;
     let dir;
     let fromCache = false;
@@ -7620,6 +7624,8 @@ function HungryGames() {
     try {
       self.end();
     } catch (err) {
+      self.error('END failed on exit');
+      console.error(err);
     }
     process.removeListener('exit', exit);
     process.exit();

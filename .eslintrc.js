@@ -1,8 +1,15 @@
 module.exports = {
-  // "extends": ["eslint:recommended", "google"],
-  "extends": "google",
+  "extends": ["eslint:recommended", "google"],
+  // "extends": "google",
   "env": {"node": true, "es6": true},
   "rules": {
+    "no-console": "off",
+    "no-constant-condition": [
+      "error",
+      {
+        "checkLoops": false,
+      },
+    ],
     "no-multi-spaces": [
       "error",
       {

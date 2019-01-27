@@ -117,6 +117,7 @@ function CmdScheduling() {
                     .concat(data);
               }
             } catch (e) {
+              // No data exists.
             }
           }
           const finalData = JSON.stringify(data);
@@ -143,6 +144,7 @@ function CmdScheduling() {
           data = rec.filter((el) => el.bot != self.client.user.id).concat(data);
         }
       } catch (err) {
+        // No data exists.
       }
       try {
         fs.writeFileSync(filename, JSON.stringify(data));
@@ -654,7 +656,7 @@ function CmdScheduling() {
         .trim()
         .toLowerCase();
 
-    const reg = /([0-9\.]+)([^a-z]*)([a-z]*)/g;
+    const reg = /([0-9.]+)([^a-z]*)([a-z]*)/g;
     let res;
     while ((res = reg.exec(str)) !== null) {
       sum += numberToUnit(res[1], res[3]);

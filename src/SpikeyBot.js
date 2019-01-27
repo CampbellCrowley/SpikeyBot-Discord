@@ -126,6 +126,8 @@ function SpikeyBot() {
     mainModuleNames =
         mainModuleNames.concat(JSON.parse(fs.readFileSync(mainModuleListFile)));
   } catch (err) {
+    if (err.code === 'ENOENT') return;
+    console.error(err);
   }
   /**
    * Is this bot running in development mode.
@@ -526,7 +528,9 @@ function SpikeyBot() {
     // changed during reconnection.
     // @TODO: This may be unnecessary to do more than once.
     for (const i in mainModules) {
-      if (!mainModules[i] instanceof Object || !mainModules[i].begin) continue;
+      if (!(mainModules[i] instanceof Object) || !mainModules[i].begin) {
+        continue;
+      }
       try {
         mainModules[i].begin(Discord, client, command, common, self);
       } catch (err) {
@@ -754,41 +758,6 @@ function SpikeyBot() {
 
   if (!minimal) {
     command.on('updategame', commandUpdateGame);
-    /**
-     * Change current status message.
-     *
-     * @private
-     * @type {commandHandler}
-     * @param {Discord~Message} msg Message that triggered command.
-     * @listens Command#updateGame
-     */
-    function commandUpdateGame(msg) {
-      if (msg.author.id !== common.spikeyId) {
-        common.reply(
-            msg, 'I\'m sorry, but you are not allowed to do that. :(\n');
-      } else {
-        const game = msg.content.replace(msg.prefix + 'updategame ', '');
-        const first = game.split(' ')[0].toLowerCase();
-        let type = null;
-        switch (first) {
-          case 'watching':
-          case 'playing':
-          case 'streaming':
-          case 'listening':
-            type = first;
-            break;
-        }
-        if (type) {
-          updateGame(game.split(' ').slice(1).join(' '), type.toUpperCase());
-          common.reply(
-              msg, 'I changed my status to "' + type.toUpperCase() + ': ' +
-                  game.split(' ').slice(1).join(' ') + '".');
-        } else {
-          updateGame(game);
-          common.reply(msg, 'I changed my status to "' + game + '"!');
-        }
-      }
-    }
 
     command.on(
         new command.SingleCommand(['changeprefix'], commandChangePrefix, {
@@ -796,54 +765,6 @@ function SpikeyBot() {
           defaultDisabled: true,
           permissions: Discord.Permissions.FLAGS.MANAGE_GUILD,
         }));
-    /**
-     * Change the custom prefix for the given guild.
-     *
-     * @private
-     * @type {commandHandler}
-     * @param {Discord~Message} msg Message that triggered command.
-     * @listens Command#changePrefix
-     */
-    function commandChangePrefix(msg) {
-      const confirmEmoji = '✅';
-      const newPrefix = msg.text.slice(1);
-      if (newPrefix.length < 1) {
-        common.reply(msg, 'Please specify a new prefix after the command.');
-      } else if (newPrefix.indexOf('`') > -1) {
-        common.reply(
-            msg,
-            'Sorry, but custom prefixes may not contain the `\\`` character.');
-      } else if (newPrefix.match(/\s/)) {
-        common.reply(
-            msg, 'Sorry, but custom prefixes may not contain any whitespace.');
-      } else {
-        msg.channel
-            .send(
-                common.mention(msg) +
-                ' Are you sure you wish to change the command prefix for ' +
-                'this server from `' + self.getPrefix(msg.guild.id) + '` to `' +
-                newPrefix + '`?')
-            .then((msg_) => {
-              msg_.react(confirmEmoji);
-              msg_.awaitReactions((reaction, user) => {
-                if (user.id !== msg.author.id) return false;
-                return reaction.emoji.name == confirmEmoji;
-              }, {max: 1, time: 60000}).then((reactions) => {
-                msg_.reactions.removeAll().catch(() => {});
-                if (reactions.size == 0) {
-                  msg_.edit(
-                      'Changing custom prefix timed out. Enter command again ' +
-                      'if you still wish to change the command prefix.');
-                  return;
-                }
-                msg_.edit(
-                    common.mention(msg) + ' Prefix changed to `' + newPrefix +
-                    '`!');
-                self.changePrefix(msg.guild.id, newPrefix);
-              });
-            });
-      }
-    }
     /**
      * Change the command prefix for the given guild.
      * @public
@@ -925,6 +846,88 @@ function SpikeyBot() {
         });
       }
     };
+  }
+  /**
+   * Change current status message.
+   *
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens Command#updateGame
+   */
+  function commandUpdateGame(msg) {
+    if (msg.author.id !== common.spikeyId) {
+      common.reply(msg, 'I\'m sorry, but you are not allowed to do that. :(\n');
+    } else {
+      const game = msg.content.replace(msg.prefix + 'updategame ', '');
+      const first = game.split(' ')[0].toLowerCase();
+      let type = null;
+      switch (first) {
+        case 'watching':
+        case 'playing':
+        case 'streaming':
+        case 'listening':
+          type = first;
+          break;
+      }
+      if (type) {
+        updateGame(game.split(' ').slice(1).join(' '), type.toUpperCase());
+        common.reply(
+            msg, 'I changed my status to "' + type.toUpperCase() + ': ' +
+                game.split(' ').slice(1).join(' ') + '".');
+      } else {
+        updateGame(game);
+        common.reply(msg, 'I changed my status to "' + game + '"!');
+      }
+    }
+  }
+  /**
+   * Change the custom prefix for the given guild.
+   *
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens Command#changePrefix
+   */
+  function commandChangePrefix(msg) {
+    const confirmEmoji = '✅';
+    const newPrefix = msg.text.slice(1);
+    if (newPrefix.length < 1) {
+      common.reply(msg, 'Please specify a new prefix after the command.');
+    } else if (newPrefix.indexOf('`') > -1) {
+      common.reply(
+          msg,
+          'Sorry, but custom prefixes may not contain the `\\`` character.');
+    } else if (newPrefix.match(/\s/)) {
+      common.reply(
+          msg, 'Sorry, but custom prefixes may not contain any whitespace.');
+    } else {
+      msg.channel
+          .send(
+              common.mention(msg) +
+              ' Are you sure you wish to change the command prefix for ' +
+              'this server from `' + self.getPrefix(msg.guild.id) + '` to `' +
+              newPrefix + '`?')
+          .then((msg_) => {
+            msg_.react(confirmEmoji);
+            msg_.awaitReactions((reaction, user) => {
+              if (user.id !== msg.author.id) return false;
+              return reaction.emoji.name == confirmEmoji;
+            }, {max: 1, time: 60000}).then((reactions) => {
+              msg_.reactions.removeAll().catch(() => {});
+              if (reactions.size == 0) {
+                msg_.edit(
+                    'Changing custom prefix timed out. Enter command again ' +
+                    'if you still wish to change the command prefix.');
+                return;
+              }
+              msg_.edit(
+                  common.mention(msg) + ' Prefix changed to `' + newPrefix +
+                  '`!');
+              self.changePrefix(msg.guild.id, newPrefix);
+            });
+          });
+    }
   }
 
   command.on('reboot', commandReboot);

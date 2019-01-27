@@ -489,21 +489,20 @@ String.prototype.replaceAll = function(search, replacement) {
 
 /**
  * Gets the stack trace of the current function call.
+ * @private
+ * @return {Stack}
  */
-Object.defineProperty(global, '__stack', {
-  get: function() {
-    const orig = Error.prepareStackTrace;
-    Error.prepareStackTrace = function(_, stack) {
-      return stack;
-    };
-    const err = new Error();
-    /* eslint-disable-next-line no-caller */
-    Error.captureStackTrace(err, arguments.callee);
-    const stack = err.stack;
-    Error.prepareStackTrace = orig;
+function __stack() {
+  const orig = Error.prepareStackTrace;
+  Error.prepareStackTrace = function(_, stack) {
     return stack;
-  },
-  configurable: true,
-});
+  };
+  const err = new Error();
+  /* eslint-disable-next-line no-caller */
+  Error.captureStackTrace(err, arguments.callee);
+  const stack = err.stack;
+  Error.prepareStackTrace = orig;
+  return stack;
+}
 
 module.exports = new Common();

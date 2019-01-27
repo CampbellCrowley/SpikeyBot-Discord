@@ -98,6 +98,9 @@ discordbots.org.</p>
 ## Functions
 
 <dl>
+<dt><a href="#__stack">__stack()</a> ⇒ <code>Stack</code> ℗</dt>
+<dd><p>Gets the stack trace of the current function call.</p>
+</dd>
 <dt><a href="#unhandledRejection">unhandledRejection(reason, p)</a> ℗</dt>
 <dd><p>Handler for an unhandledRejection or uncaughtException, to prevent the bot
 from silently crashing without an error.</p>
@@ -12537,8 +12540,8 @@ Manages the account webpage.
         * [~getPatreonSettings(userid, cb)](#WebAccount..getPatreonSettings) ℗
         * [~changePatreonSetting(userid, setting, value, cb)](#WebAccount..changePatreonSetting) ℗
             * [~makeDirectory(err, data)](#WebAccount..changePatreonSetting..makeDirectory) ℗
-            * [~writeFile(err, file)](#WebAccount..changePatreonSetting..writeFile) ℗
             * [~isInvalid(obj, s, value)](#WebAccount..changePatreonSetting..isInvalid) ⇒ <code>boolean</code> ℗
+            * [~writeFile(err, file)](#WebAccount..changePatreonSetting..writeFile) ℗
         * [~dateToSQL(date)](#WebAccount..dateToSQL) ⇒ <code>string</code> ℗
 
 <a name="SubModule+helpMessage"></a>
@@ -12947,8 +12950,8 @@ Change a user's setting that is related to Patreon rewards.
 
 * [~changePatreonSetting(userid, setting, value, cb)](#WebAccount..changePatreonSetting) ℗
     * [~makeDirectory(err, data)](#WebAccount..changePatreonSetting..makeDirectory) ℗
-    * [~writeFile(err, file)](#WebAccount..changePatreonSetting..writeFile) ℗
     * [~isInvalid(obj, s, value)](#WebAccount..changePatreonSetting..isInvalid) ⇒ <code>boolean</code> ℗
+    * [~writeFile(err, file)](#WebAccount..changePatreonSetting..writeFile) ℗
 
 <a name="WebAccount..changePatreonSetting..makeDirectory"></a>
 
@@ -12963,19 +12966,6 @@ already.
 | --- | --- | --- |
 | err | <code>Error</code> | The error in readin the existing file. |
 | data | <code>string</code> | The data read from the existing file if any. |
-
-<a name="WebAccount..changePatreonSetting..writeFile"></a>
-
-#### changePatreonSetting~writeFile(err, file) ℗
-Write the modified data to file.
-
-**Kind**: inner method of [<code>changePatreonSetting</code>](#WebAccount..changePatreonSetting)  
-**Access**: private  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| err | <code>Error</code> | The error in creating the directory. |
-| file | <code>string</code> | The current file data that was read. |
 
 <a name="WebAccount..changePatreonSetting..isInvalid"></a>
 
@@ -12993,6 +12983,19 @@ if everything is fine.
 | obj | <code>Object</code> | The template object to compare the request against. |
 | s | <code>Array.&lt;string&gt;</code> | The array of each setting key that was a part of the request. |
 | value | <code>string</code> \| <code>number</code> | The value to change the setting to. |
+
+<a name="WebAccount..changePatreonSetting..writeFile"></a>
+
+#### changePatreonSetting~writeFile(err, file) ℗
+Write the modified data to file.
+
+**Kind**: inner method of [<code>changePatreonSetting</code>](#WebAccount..changePatreonSetting)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| err | <code>Error</code> | The error in creating the directory. |
+| file | <code>string</code> | The current file data that was read. |
 
 <a name="WebAccount..dateToSQL"></a>
 
@@ -15343,6 +15346,13 @@ Handler for all http requests.
 | req | <code>http.IncomingMessage</code> | The client's request. |
 | res | <code>http.ServerResponse</code> | Our response to the client. |
 
+<a name="__stack"></a>
+
+## __stack() ⇒ <code>Stack</code> ℗
+Gets the stack trace of the current function call.
+
+**Kind**: global function  
+**Access**: private  
 <a name="unhandledRejection"></a>
 
 ## unhandledRejection(reason, p) ℗

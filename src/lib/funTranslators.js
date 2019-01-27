@@ -37,7 +37,7 @@ function FunTranslators() {
    * @return {string} The formatted string.
    */
   this.toLeetSpeak = function(input) {
-    output = input.replace(/cker(s?)\b/g, 'xor$1');
+    let output = input.replace(/cker(s?)\b/g, 'xor$1');
     output = output.replace(/ate/g, '8');
     output = output.replace(/and/g, '&');
     output = output.replace(/[lL]|[eE]|[aA]|[sS]|[gG]|[tT]|[oO]/g, (m) => {
@@ -233,8 +233,6 @@ function FunTranslators() {
       '=': '⁼',
       '(': '⁽',
       ')': '⁾',
-      'q': 'ᵠ',
-      'Q': 'ᵠ',
       '?': 'ˀ',
       '!': 'ᵎ',
     };

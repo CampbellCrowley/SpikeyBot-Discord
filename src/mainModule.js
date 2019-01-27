@@ -58,4 +58,4 @@ MainModule.extend = function(child) {
   child.prototype.constructor = child;
 };
 
-module.exports = MainModule.extend; ;
+module.exports = MainModule.extend;

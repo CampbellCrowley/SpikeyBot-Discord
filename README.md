@@ -5,7 +5,7 @@
 
 
 # Commands
-###### [Web Page with most commands available on the bot's website](https://www.spikeybot.com/)
+###### [Web Page with most commands available on the bot's website](https://www.spikeybot.com/help/)
 
 ## Hidden Commands
 ### These commands are not included in the normal help page or `help` command because they are either easter-eggs, developer commands, or just not useful for most users.

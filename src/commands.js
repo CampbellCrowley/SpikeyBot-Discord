@@ -1130,7 +1130,7 @@ function Command() {
           s.defaultDisabled = false;
           // s.set('enabled', 'guild', msg.guild.id);
         });
-        disabledList.push('Default is now ENABLED');
+        enabledList.push('Default is now ENABLED');
         return;
       }
       if (self.Discord.Permissions.FLAGS[el]) {

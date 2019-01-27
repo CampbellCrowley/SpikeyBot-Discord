@@ -904,7 +904,7 @@ function Main() {
               muteRole = val;
             }
           });
-          mute = function(role, member) {
+          const mute = function(role, member) {
             try {
               member.roles.add(role).then(() => {
                 self.common.reply(
@@ -1055,13 +1055,13 @@ function Main() {
         .replaceAll('  ', ' ')
         .replaceAll('\\+', ' ')
         .split(' ');
-    if (splitstring.join('').match(/[^0-9\-]/g)) {
+    if (splitstring.join('').match(/[^0-9-]/g)) {
       self.common.reply(
           msg,
           'This command only adds and subtracts numbers. Use "' + msg.prefix +
               'solve" or "' + msg.prefix + 'simplify" for more complex math.',
           'The following characters are not allowed: ' +
-              JSON.stringify(splitstring.join('').match(/[^0-9\-]/g).join('')));
+              JSON.stringify(splitstring.join('').match(/[^0-9-]/g).join('')));
       return;
     }
     let number = 0;
@@ -1226,7 +1226,7 @@ function Main() {
     try {
       const expr = math.compile(expression);
       const domainTemp = cmd.match(/\[([^,]*),([^\]]*)\]/m);
-      const rangeTemp = cmd.match(/\[[^\]]*\][^\[]*\[([^,]*),([^\]]*)\]/m);
+      const rangeTemp = cmd.match(/\[[^\]]*\][^[]*\[([^,]*),([^\]]*)\]/m);
       if (domainTemp !== null && domainTemp.length == 3) {
         domainMin = math.eval(domainTemp[1]);
         domainMax = math.eval(domainTemp[2]);
@@ -1291,7 +1291,7 @@ function Main() {
           graphSize - Math.round((yVal[i] - minY) / (maxY - minY) * graphSize);
       if (y >= graphSize || y < 0) continue;
       let myColor = 0x000000FF;
-      mySize = dotSize;
+      let mySize = dotSize;
       if ((lastSlope < 0 && ypVal[i] >= 0) ||
           (lastSlope > 0 && ypVal[i] <= 0)) {
         myColor = 0xFF0000FF;
@@ -1421,7 +1421,6 @@ function Main() {
         if (!skipSplice) split.splice(0, 1);
         break;
       case 'w':
-      case 'week':
       case 'week':
         time *= 60 * 24 * 7;
         if (!skipSplice) split.splice(0, 1);
@@ -1667,7 +1666,7 @@ function Main() {
                 err.message);
             self.error(
                 'Failed to send pm to user: ' + user.username + ' ' + user.id);
-            comon.error(err);
+            self.comon.error(err);
           });
     }
   }
@@ -1709,7 +1708,7 @@ function Main() {
               'permission to Manage Messages.');
       return;
     }
-    const numString = msg.text.replace(/\<[^\>]*>|\s/g, '');
+    const numString = msg.text.replace(/<[^>]*>|\s/g, '');
     let num = (numString * 1) + 1;
     if (numString.length === 0 || isNaN(num)) {
       self.common.reply(
@@ -2108,7 +2107,7 @@ function Main() {
       let matchNum = 0;
       for (let i = 0; i < numbers.length; i++) {
         const el = numbers[i];
-        const match = el.match(/(\d*)([xXdD\*])(\d+)/);
+        const match = el.match(/(\d*)([xXdD*])(\d+)/);
         if (!match) {
           const firstNum = el.match(/(\d+)/);
           if (!firstNum) {

@@ -1410,7 +1410,7 @@ function Music() {
    * later.
    */
   function fetchLyricsPage(msg, url, title, thumb) {
-    const URL = url.match(/https:\/\/([^\/]*)(.*)/);
+    const URL = url.match(/https:\/\/([^/]*)(.*)/);
     const thisReq = {hostname: URL[1], path: URL[2], method: 'GET'};
     const req = https.request(thisReq, function(response) {
       let content = '';
@@ -1462,7 +1462,7 @@ function Music() {
         lyrics.push(matches[1]);
       }
       const splitLyrics =
-          lyrics.join('\n').match(/(\[[^\]]*\][^\[]*)/gm).slice(1);
+          lyrics.join('\n').match(/(\[[^\]]*\][^[]*)/gm).slice(1);
       const embed = new self.Discord.MessageEmbed();
       if (title) embed.setTitle(title);
       if (url) embed.setURL(url);
@@ -1534,7 +1534,7 @@ function Music() {
     file.on('close', () => {
       msg.channel.send('Saved to ' + url);
     });
-    listen = function(user, receiver, conn) {
+    const listen = function(user, receiver, conn) {
       if (streams[user.id] ||
           (msg.mentions.users.size > 0 && !msg.mentions.users.get(user.id))) {
         return;
@@ -1627,7 +1627,7 @@ function Music() {
                 self.bot.getPrefix(msg.guild.id) +
                 'follow to make me stop following you.',
             'I will no longer follow <@' + follows[msg.guild.id] + '>');
-        follows[msg.guild.id] = memberId;
+        follows[msg.guild.id] = msg.author.id;
       }
     } else {
       follows[msg.guild.id] = msg.member.id;

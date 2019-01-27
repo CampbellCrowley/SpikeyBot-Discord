@@ -27,7 +27,7 @@ require('../subModule.js')(WebAccount);  // Extends the SubModule class.
  * @augments SubModule
  */
 function WebAccount() {
-  self = this;
+  const self = this;
   this.myName = 'WebAccount';
 
   const app = http.createServer(handler);
@@ -710,6 +710,44 @@ function WebAccount() {
       }
     }
     /**
+     * Checks that the setting that was requested to be changed is a valid
+     * setting to change.
+     * @private
+     * @param {Object} obj The template object to compare the request against.
+     * @param {string[]} s The array of each setting key that was a part of
+     * the request.
+     * @param {string|number} value The value to change the setting to.
+     * @return {boolean} True if the request was invalid in some way, or false
+     * if everything is fine.
+     */
+    function isInvalid(obj, s, value) {
+      const type = obj.type;
+      let valid = false;
+      if (type === 'select') {
+        for (let i = 0; i < obj.values.length; i++) {
+          if (obj.values[i] == value) {
+            valid = true;
+            break;
+          }
+        }
+      } else if (type === 'number') {
+        if (!isNaN(Number(value))) valid = true;
+        if (valid && obj.range) {
+          if (value < obj.range.min || value > obj.range.max) {
+            valid = false;
+          }
+        }
+      } else if (type === 'string') {
+        valid = true;
+      } else if (type === 'object') {
+        return isInvalid(obj.values[s[0]], s.slice(1), value);
+      }
+      if (!valid) {
+        cb('Invalid Value', {status: type || 'NOTYPE', message: value});
+        return true;
+      }
+    }
+    /**
      * Write the modified data to file.
      * @private
      *
@@ -747,44 +785,6 @@ function WebAccount() {
       cb('Invalid Setting');
       return;
     } else {
-      /**
-       * Checks that the setting that was requested to be changed is a valid
-       * setting to change.
-       * @private
-       * @param {Object} obj The template object to compare the request against.
-       * @param {string[]} s The array of each setting key that was a part of
-       * the request.
-       * @param {string|number} value The value to change the setting to.
-       * @return {boolean} True if the request was invalid in some way, or false
-       * if everything is fine.
-       */
-      function isInvalid(obj, s, value) {
-        const type = obj.type;
-        let valid = false;
-        if (type === 'select') {
-          for (let i = 0; i < obj.values.length; i++) {
-            if (obj.values[i] == value) {
-              valid = true;
-              break;
-            }
-          }
-        } else if (type === 'number') {
-          if (!isNaN(Number(value))) valid = true;
-          if (valid && obj.range) {
-            if (value < obj.range.min || value > obj.range.max) {
-              valid = false;
-            }
-          }
-        } else if (type === 'string') {
-          valid = true;
-        } else if (type === 'object') {
-          return isInvalid(obj.values[s[0]], s.slice(1), value);
-        }
-        if (!valid) {
-          cb('Invalid Value', {status: type || 'NOTYPE', message: value});
-          return true;
-        }
-      }
       if (isInvalid(
           patreonSettingsTemplate[setting], setting.split(' ').slice(1),
           value)) {

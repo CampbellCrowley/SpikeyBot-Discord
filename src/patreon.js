@@ -279,7 +279,7 @@ function Patreon() {
    * `SpikeyBot.patreon`.
    * @class
    */
-  function toExport() {};
+  function toExport() {}
 
   /**
    * Check that a user or channel or guild has permission for something. Checks

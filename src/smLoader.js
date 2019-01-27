@@ -524,9 +524,9 @@ function SMLoader() {
    */
   function commandUnload(msg) {
     if (trustedIds.includes(msg.author.id)) {
-      const toUnload = msg.text.split(' ').splice(1);
+      let toUnload = msg.text.split(' ').splice(1);
       const opts = {};
-      toReload = toUnload.filter((el) => {
+      toUnload = toUnload.filter((el) => {
         switch (el) {
           case 'force':
             opts.force = true;
@@ -644,30 +644,30 @@ function SMLoader() {
    * @listens Command#help
    */
   function commandHelp(msg) {
+    let error = false;
+    /**
+     * Send the help message.
+     * @private
+     * @param {Discord~MessageEmbed} help THe message to send.
+     */
+    function send(help) {
+      msg.author.send(help).catch((err) => {
+        if (msg.guild !== null && !error) {
+          error = true;
+          self.common
+              .reply(
+                  msg, 'Oops! I wasn\'t able to send you the help!\n' +
+                      'Did you block me?',
+                  err.message)
+              .catch(() => {});
+          self.error(
+              'Failed to send help message in DM to user: ' + msg.author.id +
+              ' ' + help.title);
+          console.error(err);
+        }
+      });
+    }
     try {
-      let error = false;
-      /**
-       * Send the help message.
-       * @private
-       * @param {Discord~MessageEmbed} help THe message to send.
-       */
-      function send(help) {
-        msg.author.send(help).catch((err) => {
-          if (msg.guild !== null && !error) {
-            error = true;
-            self.common
-                .reply(
-                    msg, 'Oops! I wasn\'t able to send you the help!\n' +
-                        'Did you block me?',
-                    err.message)
-                .catch(() => {});
-            self.error(
-                'Failed to send help message in DM to user: ' + msg.author.id +
-                ' ' + help.title);
-            console.error(err);
-          }
-        });
-      }
       for (const i in subModules) {
         if (!(subModules[i] instanceof Object) || !subModules[i].helpMessage) {
           continue;
