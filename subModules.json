@@ -48,7 +48,8 @@
     "./web/account.js",
     "./web/stats.js",
     "./web/settings.js",
-    "./uno.js"
+    "./uno.js",
+    "./cmdScheduling.js"
   ],
   "rembot": [
     "./main.js",
@@ -62,7 +63,8 @@
     "./spotify.js",
     "./web/settings.js",
     "./hungryGames.js",
-    "./uno.js"
+    "./uno.js",
+    "./cmdScheduling.js"
   ],
   "FALLBACK": []
 }
