@@ -297,15 +297,18 @@ function Command() {
       }
       if (uTags) {
         uTags.forEach((el) => {
-          const u =
-              self.client.users.find((u) => u.username === el || u.tag === el);
+          const u = self.client.users.find(
+              (u) => u.username.toLowerCase() === el.toLowerCase() ||
+                  u.tag.toLowerCase() === el.toLowerCase());
           if (u) msg.softMentions.users.add(u);
         });
         if (msg.guild) {
           uTags.forEach((el) => {
             const m = msg.guild.members.find(
-                (m) => m.user.username === el || m.tag === el ||
-                    m.nickname === el);
+                (m) => m.user.username.toLowerCase() === el.toLowerCase() ||
+                    m.user.tag.toLowerCase() === el.toLowerCase() ||
+                    (m.nickname &&
+                     m.nickname.toLowerCase() === el.toLowerCase()));
             if (m) msg.softMentions.members.add(m);
           });
         }

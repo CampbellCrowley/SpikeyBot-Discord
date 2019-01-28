@@ -4759,14 +4759,16 @@ function HungryGames() {
     } else if (specialWords.dnd.includes(firstWord)) {
       response = self.excludeUsers('dnd', id);
       resPrefix = 'All DND users';
-    } else if (msg.mentions.users.size == 0) {
+    } else if (msg.mentions.users.size + msg.softMentions.users.size == 0) {
       self.common.reply(
           msg,
           'You must mention people you wish for me to exclude from the next ' +
               'game.');
       return;
     } else {
-      self.common.reply(msg, self.excludeUsers(msg.mentions.users, id));
+      self.common.reply(
+          msg, self.excludeUsers(
+              msg.mentions.users.concat(msg.softMentions.users), id));
       return;
     }
 
@@ -4907,14 +4909,16 @@ function HungryGames() {
     } else if (specialWords.dnd.includes(firstWord)) {
       response = self.includeUsers('dnd', id);
       resPrefix = 'All DND users';
-    } else if (msg.mentions.users.size == 0) {
+    } else if (msg.mentions.users.size + msg.softMentions.users.size == 0) {
       self.common.reply(
           msg,
           'You must mention people you wish for me to include in the next ' +
               'game.');
       return;
     } else {
-      self.common.reply(msg, self.includeUsers(msg.mentions.users, id));
+      self.common.reply(
+          msg, self.includeUsers(
+              msg.mentions.users.concat(msg.softMentions.users), id));
       return;
     }
 
@@ -5591,7 +5595,7 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function swapTeamUsers(msg, id) {
-    if (msg.mentions.users.size != 2) {
+    if (msg.mentions.users.size + msg.softMentions.users.size != 2) {
       self.common.reply(
           msg, 'Swapping requires mentioning 2 users to swap teams with ' +
               'eachother.');
@@ -5600,8 +5604,9 @@ function HungryGames() {
     if (!find(id) || !find(id).currentGame) {
       createGame(null, id, true);
     }
-    const user1 = msg.mentions.users.first().id;
-    const user2 = msg.mentions.users.first(2)[1].id;
+    const mentions = msg.mentions.users.concat(msg.softMentions.users);
+    const user1 = mentions.first().id;
+    const user2 = mentions.first(2)[1].id;
     let teamId1 = 0;
     let playerId1 = 0;
     let teamId2 = 0;
@@ -5640,20 +5645,21 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function moveTeamUser(msg, id) {
-    if (msg.mentions.users.size < 1) {
+    const mentions = msg.mentions.users.concat(msg.softMentions.users);
+    if (mentions.size < 1) {
       self.common.reply(msg, 'You must at least mention one user to move.');
       return;
     }
     if (!find(id) || !find(id).currentGame) {
       createGame(null, id, true);
     }
-    let user1 = msg.mentions.users.first().id;
+    let user1 = mentions.first().id;
     let teamId1 = 0;
     let playerId1 = 0;
 
     let user2 = 0;
-    if (msg.mentions.users.size >= 2) {
-      user2 = msg.mentions.users.first(2)[1].id;
+    if (mentions.size >= 2) {
+      user2 = mentions.first(2)[1].id;
 
       if (msg.text.indexOf(user2) < msg.text.indexOf(user1)) {
         const intVal = user1;
@@ -5723,7 +5729,8 @@ function HungryGames() {
     const split = msg.text.trim().split(' ').slice(1);
     let message = split.slice(1).join(' ');
     const search = Number(split[0]);
-    if (isNaN(search) && (!msg.mentions || msg.mentions.users.size == 0)) {
+    const mentions = msg.mentions.users.concat(msg.softMentions.users);
+    if (isNaN(search) && (mentions.size == 0)) {
       if (!silent) {
         self.common.reply(
             msg, 'Please specify a team id, or mention someone on a team, in ' +
@@ -5738,7 +5745,7 @@ function HungryGames() {
     if (isNaN(search)) {
       teamId = find(id).currentGame.teams.findIndex(function(team) {
         return team.players.findIndex(function(player) {
-          return player == msg.mentions.users.first().id;
+          return player == mentions.first().id;
         }) > -1;
       });
     }
@@ -7042,13 +7049,14 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function commandKill(msg, id) {
-    if (msg.mentions.users.size <= 0) {
+    const mentions = msg.mentions.users.concat(msg.softMentions.users);
+    if (mentions.size <= 0) {
       self.common.reply(msg, 'Please specify a player in the games to kill.');
       return;
     }
     if (!find(id)) createGame(msg, id);
     const players = [];
-    const notInGame = !msg.mentions.users.find((u) => {
+    const notInGame = !mentions.find((u) => {
       players.push(u.id);
       return !find(id).currentGame.includedUsers.find((p) => {
         return p.id == u.ud;
@@ -7071,13 +7079,14 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function commandHeal(msg, id) {
-    if (msg.mentions.users.size <= 0) {
+    const mentions = msg.mentions.users.concat(msg.softMentions.users);
+    if (mentions.size <= 0) {
       self.common.reply(msg, 'Please specify a player in the games to heal.');
       return;
     }
     if (!find(id)) createGame(msg, id);
     const players = [];
-    const notInGame = !msg.mentions.users.find((u) => {
+    const notInGame = !mentions.find((u) => {
       players.push(u.id);
       return !find(id).currentGame.includedUsers.find((p) => {
         return p.id == u.ud;
@@ -7100,13 +7109,14 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function commandWound(msg, id) {
-    if (msg.mentions.users.size <= 0) {
+    const mentions = msg.mentions.users.concat(msg.softMentions.users);
+    if (mentions.size <= 0) {
       self.common.reply(msg, 'Please specify a player in the games to wound.');
       return;
     }
     if (!find(id)) createGame(msg, id);
     const players = [];
-    const notInGame = !msg.mentions.users.find((u) => {
+    const notInGame = !mentions.find((u) => {
       players.push(u.id);
       return !find(id).currentGame.includedUsers.find((p) => {
         return p.id == u.ud;

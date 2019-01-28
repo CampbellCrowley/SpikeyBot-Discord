@@ -2276,7 +2276,7 @@ Gets the name and line number of the current function stack.
 
 <a name="Common..__line"></a>
 
-### Common~\_\_line([inc]) ⇒ <code>number</code> ℗
+### Common~__line([inc]) ⇒ <code>number</code> ℗
 Gets the line number of the function that called a log function.
 
 **Kind**: inner method of [<code>Common</code>](#Common)  
@@ -2289,7 +2289,7 @@ Gets the line number of the function that called a log function.
 
 <a name="Common..__filename"></a>
 
-### Common~\_\_filename([inc]) ⇒ <code>string</code> ℗
+### Common~__filename([inc]) ⇒ <code>string</code> ℗
 Gets the name of the file that called a log function.
 
 **Kind**: inner method of [<code>Common</code>](#Common)  
@@ -15362,7 +15362,7 @@ Handler for all http requests.
 
 <a name="__stack"></a>
 
-## \_\_stack() ⇒ <code>Stack</code> ℗
+## __stack() ⇒ <code>Stack</code> ℗
 Gets the stack trace of the current function call.
 
 **Kind**: global function  
