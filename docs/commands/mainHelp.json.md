@@ -1,9 +1,9 @@
-## Patreon Stuff
-## Math Stuff
-## Random Stuff
-## Games Stuff
-## Polls and Voting Stuff
-## General Stuff
+## Patreon
+## Math
+## Random
+## Games
+## Polls and Voting
+## General
 # Main Commands
 #### Here's the list of stuff I can do!
 PM SpikeyRobot (?pmspikey) or join [my Discord server](https://discord.gg/ZbKfYSQ) for questions or just to say hi!

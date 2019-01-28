@@ -80,12 +80,12 @@
 | ?hg wound | This will cause players to end the current or next day as wounded. | wound, hurt, damage, stab, punch, slap, injure |
 | ?hg heal | This will cause players to end the current or next day as alive and fully healed. | heal, revive, thrive, resurrect, restore |
 
-## Patreon Stuff
-## Math Stuff
-## Random Stuff
-## Games Stuff
-## Polls and Voting Stuff
-## General Stuff
+## Patreon
+## Math
+## Random
+## Games
+## Polls and Voting
+## General
 # Main Commands
 #### Here's the list of stuff I can do!
 PM SpikeyRobot (?pmspikey) or join [my Discord server](https://discord.gg/ZbKfYSQ) for questions or just to say hi!

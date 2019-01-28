@@ -3,7 +3,7 @@
   "description": "Here's the list of stuff I can do!\nPM SpikeyRobot ({prefix}pmspikey) or join [my Discord server](https://discord.gg/ZbKfYSQ) for questions or just to say hi!\nSee [spikeybot.com](https://www.spikeybot.com/) for examples and more information.\n",
   "sections": [
     {
-      "title": "General Stuff",
+      "title": "General",
       "rows": [
         {
           "command": "addme",
@@ -200,7 +200,7 @@
       ]
     },
     {
-      "title": "Polls and Voting Stuff",
+      "title": "Polls and Voting",
       "rows": [
         {
           "command": "poll",
@@ -241,7 +241,7 @@
       ]
     },
     {
-      "title": "Games Stuff",
+      "title": "Games",
       "rows": [
         {
           "command": "uno",
@@ -294,7 +294,7 @@
       ]
     },
     {
-      "title": "Random Stuff",
+      "title": "Random",
       "rows": [
         {
           "command": "flip",
@@ -357,7 +357,7 @@
       ]
     },
     {
-      "title": "Math Stuff",
+      "title": "Math",
       "rows": [
         {
           "command": "add",
@@ -489,7 +489,7 @@
       ]
     },
     {
-      "title": "Patreon Stuff",
+      "title": "Patreon",
       "rows": [
         {
           "command": "patreon",
