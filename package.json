@@ -60,11 +60,11 @@
     "test:main": "mocha --delay --grep \"START|Main Module|END\"",
     "run": "npm run kill; npm start",
     "run:rem": "npm run kill; npm run start:rem",
-    "start": "nodejs src/SpikeyBot.js --dev --shards &",
-    "start:rem": "nodejs src/SpikeyBot.js --dev --shards --botname rembot &",
+    "start": "node src/SpikeyBot.js --dev --shards &",
+    "start:rem": "node src/SpikeyBot.js --dev --shards --botname rembot &",
     "kill": "killall nodejs node; exit 0;",
     "docs": "npm run lint && bash .hooks/make-docs.sh",
-    "docs:help": "nodejs src/lib/json2md.js docs/*.json",
+    "docs:help": "node src/lib/json2md.js docs/*.json",
     "update": "git checkout -- ./npm-shrinkwrap.json ./package.json && exec ssh-agent bash -c \"ssh-add ~/.ssh/sb_id_rsa_nopass && git pull && npm i && npm i youtube-dl\"; kill $SSH_AGENT_PID"
   }
 }

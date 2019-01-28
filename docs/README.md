@@ -2276,7 +2276,7 @@ Gets the name and line number of the current function stack.
 
 <a name="Common..__line"></a>
 
-### Common~__line([inc]) ⇒ <code>number</code> ℗
+### Common~\_\_line([inc]) ⇒ <code>number</code> ℗
 Gets the line number of the function that called a log function.
 
 **Kind**: inner method of [<code>Common</code>](#Common)  
@@ -2289,7 +2289,7 @@ Gets the line number of the function that called a log function.
 
 <a name="Common..__filename"></a>
 
-### Common~__filename([inc]) ⇒ <code>string</code> ℗
+### Common~\_\_filename([inc]) ⇒ <code>string</code> ℗
 Gets the name of the file that called a log function.
 
 **Kind**: inner method of [<code>Common</code>](#Common)  
@@ -9696,6 +9696,7 @@ Main class that manages the bot.
         * [~onError(err)](#SpikeyBot..onError) ℗
         * [~onWarn(info)](#SpikeyBot..onWarn) ℗
         * [~onDebug(info)](#SpikeyBot..onDebug) ℗
+        * [~onPresenceUpdate(oldMem, newMem)](#SpikeyBot..onPresenceUpdate) ℗
         * [~onMessage(msg)](#SpikeyBot..onMessage) ℗
         * [~commandUpdateGame(msg)](#SpikeyBot..commandUpdateGame) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandChangePrefix(msg)](#SpikeyBot..commandChangePrefix) : [<code>commandHandler</code>](#commandHandler) ℗
@@ -10074,6 +10075,19 @@ A general debug message was produced.
 | Param | Type | Description |
 | --- | --- | --- |
 | info | <code>string</code> | The information. |
+
+<a name="SpikeyBot..onPresenceUpdate"></a>
+
+### SpikeyBot~onPresenceUpdate(oldMem, newMem) ℗
+Attempt to detect when the main bot goes offline by the presence changing.
+
+**Kind**: inner method of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| oldMem | <code>Discord~GuildMember</code> | Member before presence update. |
+| newMem | <code>Discord~GuildMember</code> | Member after presence update. |
 
 <a name="SpikeyBot..onMessage"></a>
 
@@ -15348,7 +15362,7 @@ Handler for all http requests.
 
 <a name="__stack"></a>
 
-## __stack() ⇒ <code>Stack</code> ℗
+## \_\_stack() ⇒ <code>Stack</code> ℗
 Gets the stack trace of the current function call.
 
 **Kind**: global function  

@@ -334,7 +334,42 @@ function SpikeyBot() {
 
   // If we are not managing shards, just start normally.
   const client = new Discord.Client({
-    disabledEvents: ['TYPING_START'],
+    disabledEvents: isBackup ?
+        [
+          'GUILD_CREATE',
+          'GUILD_DELETE',
+          'GUILD_UPDATE',
+          'GUILD_MEMBER_ADD',
+          'GUILD_MEMBER_REMOVE',
+          'GUILD_MEMBER_UPDATE',
+          'GUILD_MEMBERS_CHUNK',
+          'GUILD_INTEGRATIONS_UPDATE',
+          'GUILD_ROLE_CREATE',
+          'GUILD_ROLE_DELETE',
+          'GUILD_ROLE_UPDATE',
+          'GUILD_BAN_ADD',
+          'GUILD_BAN_REMOVE',
+          'CHANNEL_CREATE',
+          'CHANNEL_DELETE',
+          'CHANNEL_UPDATE',
+          'CHANNEL_PINS_UPDATE',
+          'MESSAGE_CREATE',
+          'MESSAGE_DELETE',
+          'MESSAGE_UPDATE',
+          'MESSAGE_DELETE_BULK',
+          'MESSAGE_REACTION_ADD',
+          'MESSAGE_REACTION_REMOVE',
+          'MESSAGE_REACTION_REMOVE_ALL',
+          'USER_UPDATE',
+          'USER_NOTE_UPDATE',
+          'USER_SETTINGS_UPDATE',
+          /* 'PRESENCE_UPDATE', */
+          'VOICE_STATE_UPDATE',
+          'TYPING_START',
+          'VOICE_SERVER_UPDATE',
+          'WEBHOOKS_UPDATE',
+        ] :
+        ['TYPING_START'],
     presence: {
       status: 'online',
       activity: {
@@ -345,25 +380,30 @@ function SpikeyBot() {
   });
 
 
-  // Attempt to load mainmodules.
-  for (let i = 0; i < mainModuleNames.length; i++) {
-    process.stdout.write(
-        'DBG:' + ('00000' + process.pid).slice(-5) + ' Loading ' +
-        mainModuleNames[i]);
-    try {
-      mainModules[i] = require(mainModuleNames[i]);
-      mainModules[i].modifiedTime =
-          fs.statSync(__dirname + '/' + mainModuleNames[i]).mtime;
-      if (mainModuleNames[i] == commandFilename) {
-        command = mainModules[i];
-      } else if (mainModuleNames[i] == smLoaderFilename) {
-        smLoader = mainModules[i];
+  if (!isBackup) {
+    // Attempt to load mainmodules.
+    for (let i = 0; i < mainModuleNames.length; i++) {
+      process.stdout.write(
+          'DBG:' + ('00000' + process.pid).slice(-5) + ' Loading ' +
+          mainModuleNames[i]);
+      try {
+        mainModules[i] = require(mainModuleNames[i]);
+        mainModules[i].modifiedTime =
+            fs.statSync(__dirname + '/' + mainModuleNames[i]).mtime;
+        if (mainModuleNames[i] == commandFilename) {
+          command = mainModules[i];
+        } else if (mainModuleNames[i] == smLoaderFilename) {
+          smLoader = mainModules[i];
+        }
+        process.stdout.write(': DONE\n');
+      } catch (err) {
+        process.stdout.write(': ERROR\n');
+        console.error(mainModuleNames[i], err);
       }
-      process.stdout.write(': DONE\n');
-    } catch (err) {
-      process.stdout.write(': ERROR\n');
-      console.error(mainModuleNames[i], err);
     }
+  } else {
+    mainModuleNames = [];
+    mainModules.splice(0);
   }
 
   const defaultPrefix = isDev ? '~' : '?';
@@ -522,50 +562,52 @@ function SpikeyBot() {
           'I just rebooted (JS' + version + ') ' +
           (minimal ? 'MINIMAL' : 'FULL') + additional);
     }
-    // Initialize all mainmodules even if we have already initialized the bot,
-    // because this will updated the reference to the current client if this was
-    // changed during reconnection.
-    // @TODO: This may be unnecessary to do more than once.
-    for (const i in mainModules) {
-      if (!(mainModules[i] instanceof Object) || !mainModules[i].begin) {
-        continue;
+    if (!isBackup) {
+      // Initialize all mainmodules even if we have already initialized the bot,
+      // because this will updated the reference to the current client if this
+      // was changed during reconnection.
+      // @TODO: This may be unnecessary to do more than once.
+      for (const i in mainModules) {
+        if (!(mainModules[i] instanceof Object) || !mainModules[i].begin) {
+          continue;
+        }
+        try {
+          mainModules[i].begin(Discord, client, command, common, self);
+        } catch (err) {
+          console.log(err);
+          if (logChannel) {
+            // logChannel.send('Failed to initialize ' + mainModuleNames[i]);
+          }
+        }
       }
-      try {
-        mainModules[i].begin(Discord, client, command, common, self);
-      } catch (err) {
-        console.log(err);
+      if (mainModules.length != mainModuleNames.length) {
+        common.error('Loaded mainmodules does not match modules to load.');
         if (logChannel) {
-          // logChannel.send('Failed to initialize ' + mainModuleNames[i]);
+          /* logChannel.send(
+              'Failed to compile a mainmodule. Check log for more info. ' +
+              'Previous initialization errors may be incorrect.'); */
         }
       }
-    }
-    if (mainModules.length != mainModuleNames.length) {
-      common.error('Loaded mainmodules does not match modules to load.');
-      if (logChannel) {
-        /* logChannel.send(
-            'Failed to compile a mainmodule. Check log for more info. ' +
-            'Previous initialization errors may be incorrect.'); */
+      if (!minimal && !initialized) {
+        fs.readFile('./save/reboot.dat', function(err, file) {
+          if (err) return;
+          const msg = JSON.parse(file);
+          const channel = client.channels.get(msg.channel.id);
+          if (channel) {
+            channel.messages.fetch(msg.id)
+                .then((msg_) => {
+                  const embed = new Discord.MessageEmbed();
+                  embed.setTitle('Reboot complete.');
+                  embed.setColor([255, 0, 255]);
+                  msg_.edit(embed);
+                })
+                .catch(() => {});
+          }
+        });
       }
-    }
-    if (!minimal && !initialized) {
-      fs.readFile('./save/reboot.dat', function(err, file) {
-        if (err) return;
-        const msg = JSON.parse(file);
-        const channel = client.channels.get(msg.channel.id);
-        if (channel) {
-          channel.messages.fetch(msg.id)
-              .then((msg_) => {
-                const embed = new Discord.MessageEmbed();
-                embed.setTitle('Reboot complete.');
-                embed.setColor([255, 0, 255]);
-                msg_.edit(embed);
-              })
-              .catch(() => {});
-        }
-      });
-    }
-    if (!initialized) {
-      loadGuildPrefixes(Array.from(client.guilds.array()));
+      if (!initialized) {
+        loadGuildPrefixes(Array.from(client.guilds.array()));
+      }
     }
     const req = require('https').request(
         {
@@ -666,7 +708,27 @@ function SpikeyBot() {
     common.logDebug('Discord Debug: ' + info);
   }
 
-  client.on('message', onMessage);
+  if (isBackup) {
+    client.on('presenceUpdate', onPresenceUpdate);
+  }
+  /**
+   * Attempt to detect when the main bot goes offline by the presence changing.
+   *
+   * @private
+   * @param {Discord~GuildMember} oldMem Member before presence update.
+   * @param {Discord~GuildMember} newMem Member after presence update.
+   */
+  function onPresenceUpdate(oldMem, newMem) {
+    if (oldMem.id !== self.client.user.id) return;
+    common.log(
+        'Presence updated: ' + newMem.presence.status + ': ' +
+        (newMem.presence.activity && newMem.presence.activity.name ||
+         'NoActivity'));
+  }
+
+  if (!isBackup) {
+    client.on('message', onMessage);
+  }
   /**
    * Handle a message sent.
    *
@@ -743,7 +805,7 @@ function SpikeyBot() {
               'Oops! I\'m not sure how to help with that! Type **help** for ' +
               'a list of commands I know how to respond to.');
         }
-      } else if (isBackup && msg.content.length > 3) {
+      } /* else if (isBackup && msg.content.length > 3) {
         common.reply(
             msg,
             'My main server is currently offline, settings may be temporarily' +
@@ -751,11 +813,11 @@ function SpikeyBot() {
             'Apologies for any inconvenience, this should be fixed soon.\n' +
                 'Join my Discord server for updates or just to chat: ' +
                 'https://discord.gg/ZbKfYSQ');
-      }
+      } */
     }
   }
 
-  if (!minimal) {
+  if (!minimal && !isBackup) {
     command.on('updategame', commandUpdateGame);
 
     command.on(
@@ -929,7 +991,9 @@ function SpikeyBot() {
     }
   }
 
-  command.on('reboot', commandReboot);
+  if (!isBackup) {
+    command.on('reboot', commandReboot);
+  }
   /**
    * Trigger a reboot of the bot. Actually just gracefully shuts down, and
    * expects to be immediately restarted.
@@ -1027,7 +1091,9 @@ function SpikeyBot() {
     }
   }
 
-  command.on('mainreload', commandReload);
+  if (!isBackup) {
+    command.on('mainreload', commandReload);
+  }
   /**
    * Reload all mainmodules by unloading then re-requiring.
    *
@@ -1220,7 +1286,9 @@ function SpikeyBot() {
     }
   }
 
-  command.on('saveall', commandSaveAll);
+  if (!isBackup) {
+    command.on('saveall', commandSaveAll);
+  }
   /**
    * Trigger all mainModules to save their data.
    * @see {@link SpikeyBot~saveAll()}
@@ -1242,7 +1310,9 @@ function SpikeyBot() {
     msg.channel.send(common.mention(msg) + ' `Triggered data save`');
   }
 
-  command.on('update', commandUpdate);
+  if (!isBackup) {
+    command.on('update', commandUpdate);
+  }
   /**
    * Trigger fetching the latest version of the bot from git, then tell all
    * shards to reload the changes.
