@@ -142,8 +142,10 @@ const hgTests = [
        'SpikeyRobot removed from whitelist.\nSpikeyRobot removed from ' +
        'included players.\n\n```']),
   new Test(
-      'Reset Users command', '~hg reset users',
-      ['<@422623712534200321>\n```\nReset HG\n```Resetting ALL users!']),
+      'Include player nomention', '~hg include SpikeyRobot',
+      ['<@422623712534200321>\n```\nSpikeyRobot removed from blacklist.\n' +
+       'SpikeyRobot added to whitelist.\nSpikeyRobot added to included ' +
+       'players.\n\n```']),
   new Test(
       'Exclude player', '~hg exclude <@124733888177111041>',
       ['<@422623712534200321>\n```\nSpikeyRobot added to blacklist.\n' +
@@ -154,14 +156,6 @@ const hgTests = [
       'Exclude player already excluded', '~hg exclude <@124733888177111041>',
       ['<@422623712534200321>\n```\nSpikeyRobot is already excluded. ' +
        'Create a new game to reset players.\n\n```']),
-  new Test(
-      'Include player nomention', '~hg include SpikeyRobot',
-      ['<@422623712534200321>\n```\nSpikeyRobot removed from blacklist.\n' +
-       'SpikeyRobot added to whitelist.\nSpikeyRobot added to included ' +
-       'players.\n\n```']),
-  new Test(
-      'Reset Users command', '~hg reset users',
-      ['<@422623712534200321>\n```\nReset HG\n```Resetting ALL users!']),
   new Test(
       'Include player', '~hg include <@124733888177111041>',
       ['<@422623712534200321>\n```\nSpikeyRobot removed from blacklist.\n' +
