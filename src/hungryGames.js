@@ -5339,12 +5339,11 @@ function HungryGames() {
     let totalLength = 0;
     const bodyFields = [[]];
     let fieldIndex = 0;
-    for (const i in bodyList) {
-      if (!(bodyList[i] instanceof Object)) continue;
+    for (let i = 0; i < bodyList.length; i++) {
       if (bodyList[i].length + totalLength > 1500) {
         fieldIndex++;
         totalLength = 0;
-        bodyFields[fieldIndex] = [];
+        bodyFields.push([]);
       }
       totalLength += bodyList[i].length;
       bodyFields[fieldIndex].push(bodyList[i]);
@@ -6023,7 +6022,7 @@ function HungryGames() {
     if (!event.message || event.message.length == 0) {
       return 'Event must have a message.';
     }
-    for (const i in find(id).customEvents[type]) {
+    for (let i = 0; i < find(id).customEvents[type].length; i++) {
       if (self.eventsEqual(event, find(id).customEvents[type][i])) {
         return 'Event already exists!';
       }
@@ -6204,7 +6203,7 @@ function HungryGames() {
       return 'Invalid ID or no game.';
     }
     const list = find(id).customEvents[type];
-    for (const i in list) {
+    for (let i = 0; i < list.length; i++) {
       if (self.eventsEqual(list[i], event)) {
         list.splice(i, 1);
         return null;
