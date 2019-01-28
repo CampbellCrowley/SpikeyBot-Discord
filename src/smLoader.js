@@ -211,6 +211,10 @@ function SMLoader() {
    * @return {?SubModule}
    */
   toAssign.bot.getSubmodule = function(name) {
+    if (!subModules[name]) {
+      self.warn('Attempted to lookup submodule that is not loaded: ' + name);
+      return null;
+    }
     return subModules[name];
   };
 
