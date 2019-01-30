@@ -2969,7 +2969,6 @@ Hunger Games simulator.
         * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
         * *[.myName](#SubModule+myName) : <code>string</code>*
         * [.initialized](#SubModule+initialized) : <code>boolean</code>
-        * [.roleName](#HungryGames+roleName) : <code>string</code>
         * [.defaultOptions](#HungryGames+defaultOptions) : <code>Object.&lt;{value: (string\|number\|boolean), values: ?Array.&lt;string&gt;, comment: string}&gt;</code>
         * [.commit](#SubModule+commit) : <code>string</code>
         * [.loadTime](#SubModule+loadTime) : <code>number</code>
@@ -3033,7 +3032,6 @@ Hunger Games simulator.
         * [~fistRight](#HungryGames..fistRight) : <code>string</code> ℗
         * [~fistBoth](#HungryGames..fistBoth) : <code>string</code> ℗
         * [~fetchSize](#HungryGames..fetchSize) : <code>number</code> ℗
-        * [~roleName](#HungryGames..roleName) : <code>string</code> ℗
         * [~numEventsPerPage](#HungryGames..numEventsPerPage) : <code>number</code> ℗
         * [~maxReactAwaitTime](#HungryGames..maxReactAwaitTime) : <code>number</code> ℗
         * [~findTimestamps](#HungryGames..findTimestamps) : <code>Object.&lt;number&gt;</code> ℗
@@ -3221,13 +3219,6 @@ Has this subModule been initialized yet (Has begin() been called).
 **Default**: <code>false</code>  
 **Access**: protected  
 **Read only**: true  
-<a name="HungryGames+roleName"></a>
-
-### hungryGames.roleName : <code>string</code>
-Role that a user must have in order to perform any commands.
-
-**Kind**: instance constant of [<code>HungryGames</code>](#HungryGames)  
-**Access**: public  
 <a name="HungryGames+defaultOptions"></a>
 
 ### hungryGames.defaultOptions : <code>Object.&lt;{value: (string\|number\|boolean), values: ?Array.&lt;string&gt;, comment: string}&gt;</code>
@@ -3993,14 +3984,6 @@ The size of the icon to request from discord.
 
 **Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
 **Default**: <code>128</code>  
-**Access**: private  
-<a name="HungryGames..roleName"></a>
-
-### HungryGames~roleName : <code>string</code> ℗
-Role that a user must have in order to perform any commands.
-
-**Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
-**Default**: <code>&quot;HG Creator&quot;</code>  
 **Access**: private  
 <a name="HungryGames..numEventsPerPage"></a>
 
