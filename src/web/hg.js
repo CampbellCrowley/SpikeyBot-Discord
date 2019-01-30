@@ -457,6 +457,9 @@ function HGWeb(hg) {
         avatarURL: m.user.displayAvatarURL(),
         id: m.user.id,
         bot: m.user.bot,
+        // m.user.descriminator seems to be broken and always returns
+        // `undefined`.
+        descriminator: m.user.tag.match(/#(\d{4})$/)[1],
       },
       joinedTimestamp: m.joinedTimestamp,
     };

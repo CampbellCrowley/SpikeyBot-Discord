@@ -25,6 +25,10 @@ normal submodule, and is treated differently in the SpikeyBot class.</p>
 <dt><a href="#Connect4">Connect4</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
 <dd><p>Manages a Connect 4 game.</p>
 </dd>
+<dt><a href="#DevCmds">DevCmds</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
+<dd><p>Runs unsafe scripts for development purposes. DO NOT LOAD ON
+RELEASE VERSIONS.</p>
+</dd>
 <dt><a href="#HungryGames">HungryGames</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
 <dd><p>Hunger Games simulator.</p>
 </dd>
@@ -44,6 +48,9 @@ Patreon status of users.</p>
 </dd>
 <dt><a href="#Polling">Polling</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
 <dd><p>Controlls poll and vote commands.</p>
+</dd>
+<dt><a href="#RoleManager">RoleManager</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
+<dd><p>Manges advanced role controls and features.</p>
 </dd>
 <dt><a href="#Sandbox">Sandbox</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
 <dd><p>Creates a safe environment to run untrusted scripts.</p>
@@ -2276,7 +2283,7 @@ Gets the name and line number of the current function stack.
 
 <a name="Common..__line"></a>
 
-### Common~__line([inc]) ⇒ <code>number</code> ℗
+### Common~\_\_line([inc]) ⇒ <code>number</code> ℗
 Gets the line number of the function that called a log function.
 
 **Kind**: inner method of [<code>Common</code>](#Common)  
@@ -2289,7 +2296,7 @@ Gets the line number of the function that called a log function.
 
 <a name="Common..__filename"></a>
 
-### Common~__filename([inc]) ⇒ <code>string</code> ℗
+### Common~\_\_filename([inc]) ⇒ <code>string</code> ℗
 Gets the name of the file that called a log function.
 
 **Kind**: inner method of [<code>Common</code>](#Common)  
@@ -2708,6 +2715,240 @@ player 2 won, 3 if draw.
 | board | <code>Array.&lt;number&gt;</code> | Array of 9 numbers defining a board. 0 is nobody, 1 is player 1, 2 is player 2. |
 | latestR | <code>number</code> | The row index where the latest move occurred. |
 | latestC | <code>number</code> | The column index where the latest move occurred. |
+
+<a name="DevCmds"></a>
+
+## DevCmds ⇐ [<code>SubModule</code>](#SubModule)
+Runs unsafe scripts for development purposes. DO NOT LOAD ON
+RELEASE VERSIONS.
+
+**Kind**: global class  
+**Extends**: [<code>SubModule</code>](#SubModule)  
+
+* [DevCmds](#DevCmds) ⇐ [<code>SubModule</code>](#SubModule)
+    * _instance_
+        * [.helpMessage](#SubModule+helpMessage) : <code>string</code> \| <code>Discord~MessageEmbed</code>
+        * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
+        * [.Discord](#SubModule+Discord) : <code>Discord</code>
+        * [.client](#SubModule+client) : <code>Discord~Client</code>
+        * [.command](#SubModule+command) : [<code>Command</code>](#Command)
+        * [.common](#SubModule+common) : [<code>Common</code>](#Common)
+        * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
+        * [.myName](#SubModule+myName) : <code>string</code>
+        * [.initialized](#SubModule+initialized) : <code>boolean</code>
+        * [.commit](#SubModule+commit) : <code>string</code>
+        * [.loadTime](#SubModule+loadTime) : <code>number</code>
+        * [.initialize()](#SubModule+initialize)
+        * [.begin(Discord, client, command, common, bot)](#SubModule+begin)
+        * [.end()](#SubModule+end)
+        * [.log(msg)](#SubModule+log)
+        * [.debug(msg)](#SubModule+debug)
+        * [.warn(msg)](#SubModule+warn)
+        * [.error(msg)](#SubModule+error)
+        * [.shutdown()](#SubModule+shutdown)
+        * *[.save([opt])](#SubModule+save)*
+        * *[.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>*
+    * _inner_
+        * [~commandRun(msg)](#DevCmds..commandRun) : <code>Command~commandHandler</code> ℗
+
+<a name="SubModule+helpMessage"></a>
+
+### devCmds.helpMessage : <code>string</code> \| <code>Discord~MessageEmbed</code>
+The help message to show the user in the main help message.
+
+**Kind**: instance property of [<code>DevCmds</code>](#DevCmds)  
+<a name="SubModule+postPrefix"></a>
+
+### *devCmds.postPrefix : <code>string</code>*
+The postfix for the global prefix for this subModule. Must be defined
+before begin(), otherwise it is ignored.
+
+**Kind**: instance abstract property of [<code>DevCmds</code>](#DevCmds)  
+**Default**: <code>&quot;&quot;</code>  
+<a name="SubModule+Discord"></a>
+
+### devCmds.Discord : <code>Discord</code>
+The current Discord object instance of the bot.
+
+**Kind**: instance property of [<code>DevCmds</code>](#DevCmds)  
+<a name="SubModule+client"></a>
+
+### devCmds.client : <code>Discord~Client</code>
+The current bot client.
+
+**Kind**: instance property of [<code>DevCmds</code>](#DevCmds)  
+<a name="SubModule+command"></a>
+
+### devCmds.command : [<code>Command</code>](#Command)
+The command object for registering command listeners.
+
+**Kind**: instance property of [<code>DevCmds</code>](#DevCmds)  
+<a name="SubModule+common"></a>
+
+### devCmds.common : [<code>Common</code>](#Common)
+The common object.
+
+**Kind**: instance property of [<code>DevCmds</code>](#DevCmds)  
+<a name="SubModule+bot"></a>
+
+### devCmds.bot : [<code>SpikeyBot</code>](#SpikeyBot)
+The parent SpikeyBot instance.
+
+**Kind**: instance property of [<code>DevCmds</code>](#DevCmds)  
+<a name="SubModule+myName"></a>
+
+### devCmds.myName : <code>string</code>
+The name of this submodule. Used for differentiating in the log. Should be
+defined before begin().
+
+**Kind**: instance property of [<code>DevCmds</code>](#DevCmds)  
+**Overrides**: [<code>myName</code>](#SubModule+myName)  
+**Access**: protected  
+<a name="SubModule+initialized"></a>
+
+### devCmds.initialized : <code>boolean</code>
+Has this subModule been initialized yet (Has begin() been called).
+
+**Kind**: instance property of [<code>DevCmds</code>](#DevCmds)  
+**Default**: <code>false</code>  
+**Access**: protected  
+**Read only**: true  
+<a name="SubModule+commit"></a>
+
+### devCmds.commit : <code>string</code>
+The commit at HEAD at the time this module was loaded. Essentially the
+version of this submodule.
+
+**Kind**: instance constant of [<code>DevCmds</code>](#DevCmds)  
+**Access**: public  
+<a name="SubModule+loadTime"></a>
+
+### devCmds.loadTime : <code>number</code>
+The time at which this madule was loaded for use in checking if the module
+needs to be reloaded because the file has been modified since loading.
+
+**Kind**: instance constant of [<code>DevCmds</code>](#DevCmds)  
+**Access**: public  
+<a name="SubModule+initialize"></a>
+
+### devCmds.initialize()
+The function called at the end of begin() for further initialization
+specific to the subModule. Must be defined before begin() is called.
+
+**Kind**: instance method of [<code>DevCmds</code>](#DevCmds)  
+**Overrides**: [<code>initialize</code>](#SubModule+initialize)  
+**Access**: protected  
+<a name="SubModule+begin"></a>
+
+### devCmds.begin(Discord, client, command, common, bot)
+Initialize this submodule.
+
+**Kind**: instance method of [<code>DevCmds</code>](#DevCmds)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| Discord | <code>Discord</code> | The Discord object for the API library. |
+| client | <code>Discord~Client</code> | The client that represents this bot. |
+| command | [<code>Command</code>](#Command) | The command instance in which to register command listeners. |
+| common | [<code>Common</code>](#Common) | Class storing common functions. |
+| bot | [<code>SpikeyBot</code>](#SpikeyBot) | The parent SpikeyBot instance. |
+
+<a name="SubModule+end"></a>
+
+### devCmds.end()
+Trigger subModule to shutdown and get ready for process terminating.
+
+**Kind**: instance method of [<code>DevCmds</code>](#DevCmds)  
+**Access**: public  
+<a name="SubModule+log"></a>
+
+### devCmds.log(msg)
+Log using common.log, but automatically set name.
+
+**Kind**: instance method of [<code>DevCmds</code>](#DevCmds)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+debug"></a>
+
+### devCmds.debug(msg)
+Log using common.logDebug, but automatically set name.
+
+**Kind**: instance method of [<code>DevCmds</code>](#DevCmds)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+warn"></a>
+
+### devCmds.warn(msg)
+Log using common.logWarning, but automatically set name.
+
+**Kind**: instance method of [<code>DevCmds</code>](#DevCmds)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+error"></a>
+
+### devCmds.error(msg)
+Log using common.error, but automatically set name.
+
+**Kind**: instance method of [<code>DevCmds</code>](#DevCmds)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+shutdown"></a>
+
+### devCmds.shutdown()
+Shutdown and disable this submodule. Removes all event listeners.
+
+**Kind**: instance method of [<code>DevCmds</code>](#DevCmds)  
+**Overrides**: [<code>shutdown</code>](#SubModule+shutdown)  
+**Access**: protected  
+<a name="SubModule+save"></a>
+
+### *devCmds.save([opt])*
+Saves all data to files necessary for saving current state.
+
+**Kind**: instance abstract method of [<code>DevCmds</code>](#DevCmds)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [opt] | <code>string</code> | <code>&quot;&#x27;sync&#x27;&quot;</code> | Can be 'async', otherwise defaults to synchronous. |
+
+<a name="SubModule+unloadable"></a>
+
+### *devCmds.unloadable() ⇒ <code>boolean</code>*
+Check if this module is in a state that is ready to be unloaded. If false
+is returned, this module should not be unloaded and doing such may risk
+putting the module into an uncontrollable state.
+
+**Kind**: instance abstract method of [<code>DevCmds</code>](#DevCmds)  
+**Returns**: <code>boolean</code> - True if can be unloaded, false if cannot.  
+**Access**: public  
+<a name="DevCmds..commandRun"></a>
+
+### DevCmds~commandRun(msg) : <code>Command~commandHandler</code> ℗
+Run code as the bot. EXTREMELY UNSAFE!
+
+**Kind**: inner method of [<code>DevCmds</code>](#DevCmds)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message that triggered this command. |
 
 <a name="HungryGames"></a>
 
@@ -5452,6 +5693,7 @@ Basic commands and features for the bot.
         * [~commandListCommands(msg)](#Main..commandListCommands) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandGetPrefix(msg)](#Main..commandGetPrefix) : <code>Command~commandHandler</code> ℗
         * [~commandGit(msg)](#Main..commandGit) : <code>Command~commandHandler</code> ℗
+        * [~commandWhoAmI(msg)](#Main..commandWhoAmI) : <code>Command~commandHandler</code> ℗
         * [~sigint()](#Main..sigint) ℗
         * [~Timer](#Main..Timer) : <code>Object</code>
 
@@ -6416,6 +6658,18 @@ way to reference this if the user has forgotten the prefix.
 
 ### Main~commandGit(msg) : <code>Command~commandHandler</code> ℗
 Get the graph of the last few git commits.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message that triggered this command. |
+
+<a name="Main..commandWhoAmI"></a>
+
+### Main~commandWhoAmI(msg) : <code>Command~commandHandler</code> ℗
+Tell the user who they are.
 
 **Kind**: inner method of [<code>Main</code>](#Main)  
 **Access**: private  
@@ -8841,6 +9095,225 @@ End a poll. Does not remove it from [currentPolls](#Polling..currentPolls).
 | --- | --- | --- |
 | poll | [<code>Poll</code>](#Polling..Poll) | The poll to end. |
 
+<a name="RoleManager"></a>
+
+## RoleManager ⇐ [<code>SubModule</code>](#SubModule)
+Manges advanced role controls and features.
+
+**Kind**: global class  
+**Extends**: [<code>SubModule</code>](#SubModule)  
+
+* [RoleManager](#RoleManager) ⇐ [<code>SubModule</code>](#SubModule)
+    * [.helpMessage](#SubModule+helpMessage) : <code>string</code> \| <code>Discord~MessageEmbed</code>
+    * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
+    * [.Discord](#SubModule+Discord) : <code>Discord</code>
+    * [.client](#SubModule+client) : <code>Discord~Client</code>
+    * [.command](#SubModule+command) : [<code>Command</code>](#Command)
+    * [.common](#SubModule+common) : [<code>Common</code>](#Common)
+    * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
+    * [.myName](#SubModule+myName) : <code>string</code>
+    * [.initialized](#SubModule+initialized) : <code>boolean</code>
+    * [.commit](#SubModule+commit) : <code>string</code>
+    * [.loadTime](#SubModule+loadTime) : <code>number</code>
+    * [.initialize()](#SubModule+initialize)
+    * [.begin(Discord, client, command, common, bot)](#SubModule+begin)
+    * [.end()](#SubModule+end)
+    * [.log(msg)](#SubModule+log)
+    * [.debug(msg)](#SubModule+debug)
+    * [.warn(msg)](#SubModule+warn)
+    * [.error(msg)](#SubModule+error)
+    * [.shutdown()](#SubModule+shutdown)
+    * [.save([opt])](#SubModule+save)
+    * *[.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>*
+
+<a name="SubModule+helpMessage"></a>
+
+### roleManager.helpMessage : <code>string</code> \| <code>Discord~MessageEmbed</code>
+The help message to show the user in the main help message.
+
+**Kind**: instance property of [<code>RoleManager</code>](#RoleManager)  
+<a name="SubModule+postPrefix"></a>
+
+### *roleManager.postPrefix : <code>string</code>*
+The postfix for the global prefix for this subModule. Must be defined
+before begin(), otherwise it is ignored.
+
+**Kind**: instance abstract property of [<code>RoleManager</code>](#RoleManager)  
+**Default**: <code>&quot;&quot;</code>  
+<a name="SubModule+Discord"></a>
+
+### roleManager.Discord : <code>Discord</code>
+The current Discord object instance of the bot.
+
+**Kind**: instance property of [<code>RoleManager</code>](#RoleManager)  
+<a name="SubModule+client"></a>
+
+### roleManager.client : <code>Discord~Client</code>
+The current bot client.
+
+**Kind**: instance property of [<code>RoleManager</code>](#RoleManager)  
+<a name="SubModule+command"></a>
+
+### roleManager.command : [<code>Command</code>](#Command)
+The command object for registering command listeners.
+
+**Kind**: instance property of [<code>RoleManager</code>](#RoleManager)  
+<a name="SubModule+common"></a>
+
+### roleManager.common : [<code>Common</code>](#Common)
+The common object.
+
+**Kind**: instance property of [<code>RoleManager</code>](#RoleManager)  
+<a name="SubModule+bot"></a>
+
+### roleManager.bot : [<code>SpikeyBot</code>](#SpikeyBot)
+The parent SpikeyBot instance.
+
+**Kind**: instance property of [<code>RoleManager</code>](#RoleManager)  
+<a name="SubModule+myName"></a>
+
+### roleManager.myName : <code>string</code>
+The name of this submodule. Used for differentiating in the log. Should be
+defined before begin().
+
+**Kind**: instance property of [<code>RoleManager</code>](#RoleManager)  
+**Overrides**: [<code>myName</code>](#SubModule+myName)  
+**Access**: protected  
+<a name="SubModule+initialized"></a>
+
+### roleManager.initialized : <code>boolean</code>
+Has this subModule been initialized yet (Has begin() been called).
+
+**Kind**: instance property of [<code>RoleManager</code>](#RoleManager)  
+**Default**: <code>false</code>  
+**Access**: protected  
+**Read only**: true  
+<a name="SubModule+commit"></a>
+
+### roleManager.commit : <code>string</code>
+The commit at HEAD at the time this module was loaded. Essentially the
+version of this submodule.
+
+**Kind**: instance constant of [<code>RoleManager</code>](#RoleManager)  
+**Access**: public  
+<a name="SubModule+loadTime"></a>
+
+### roleManager.loadTime : <code>number</code>
+The time at which this madule was loaded for use in checking if the module
+needs to be reloaded because the file has been modified since loading.
+
+**Kind**: instance constant of [<code>RoleManager</code>](#RoleManager)  
+**Access**: public  
+<a name="SubModule+initialize"></a>
+
+### roleManager.initialize()
+The function called at the end of begin() for further initialization
+specific to the subModule. Must be defined before begin() is called.
+
+**Kind**: instance method of [<code>RoleManager</code>](#RoleManager)  
+**Overrides**: [<code>initialize</code>](#SubModule+initialize)  
+**Access**: protected  
+<a name="SubModule+begin"></a>
+
+### roleManager.begin(Discord, client, command, common, bot)
+Initialize this submodule.
+
+**Kind**: instance method of [<code>RoleManager</code>](#RoleManager)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| Discord | <code>Discord</code> | The Discord object for the API library. |
+| client | <code>Discord~Client</code> | The client that represents this bot. |
+| command | [<code>Command</code>](#Command) | The command instance in which to register command listeners. |
+| common | [<code>Common</code>](#Common) | Class storing common functions. |
+| bot | [<code>SpikeyBot</code>](#SpikeyBot) | The parent SpikeyBot instance. |
+
+<a name="SubModule+end"></a>
+
+### roleManager.end()
+Trigger subModule to shutdown and get ready for process terminating.
+
+**Kind**: instance method of [<code>RoleManager</code>](#RoleManager)  
+**Access**: public  
+<a name="SubModule+log"></a>
+
+### roleManager.log(msg)
+Log using common.log, but automatically set name.
+
+**Kind**: instance method of [<code>RoleManager</code>](#RoleManager)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+debug"></a>
+
+### roleManager.debug(msg)
+Log using common.logDebug, but automatically set name.
+
+**Kind**: instance method of [<code>RoleManager</code>](#RoleManager)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+warn"></a>
+
+### roleManager.warn(msg)
+Log using common.logWarning, but automatically set name.
+
+**Kind**: instance method of [<code>RoleManager</code>](#RoleManager)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+error"></a>
+
+### roleManager.error(msg)
+Log using common.error, but automatically set name.
+
+**Kind**: instance method of [<code>RoleManager</code>](#RoleManager)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+shutdown"></a>
+
+### roleManager.shutdown()
+Shutdown and disable this submodule. Removes all event listeners.
+
+**Kind**: instance method of [<code>RoleManager</code>](#RoleManager)  
+**Overrides**: [<code>shutdown</code>](#SubModule+shutdown)  
+**Access**: protected  
+<a name="SubModule+save"></a>
+
+### roleManager.save([opt])
+Saves all data to files necessary for saving current state.
+
+**Kind**: instance method of [<code>RoleManager</code>](#RoleManager)  
+**Overrides**: [<code>save</code>](#SubModule+save)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [opt] | <code>string</code> | <code>&quot;&#x27;sync&#x27;&quot;</code> | Can be 'async', otherwise defaults to synchronous. |
+
+<a name="SubModule+unloadable"></a>
+
+### *roleManager.unloadable() ⇒ <code>boolean</code>*
+Check if this module is in a state that is ready to be unloaded. If false
+is returned, this module should not be unloaded and doing such may risk
+putting the module into an uncontrollable state.
+
+**Kind**: instance abstract method of [<code>RoleManager</code>](#RoleManager)  
+**Returns**: <code>boolean</code> - True if can be unloaded, false if cannot.  
+**Access**: public  
 <a name="Sandbox"></a>
 
 ## Sandbox ⇐ [<code>SubModule</code>](#SubModule)
@@ -15362,7 +15835,7 @@ Handler for all http requests.
 
 <a name="__stack"></a>
 
-## __stack() ⇒ <code>Stack</code> ℗
+## \_\_stack() ⇒ <code>Stack</code> ℗
 Gets the stack trace of the current function call.
 
 **Kind**: global function  
