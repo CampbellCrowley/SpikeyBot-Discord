@@ -7341,8 +7341,10 @@ function HungryGames() {
         return null;
       }
     } catch (e) {
-      // File probably doesn't exist.
-      // TODO: Log if something goes wrong other than file not existing.
+      if (e.code !== 'ENOENT') {
+        self.debug('Failed to load game data for guild:' + id);
+        console.error(e);
+      }
       return null;
     }
 

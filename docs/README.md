@@ -9127,10 +9127,16 @@ Manges advanced role controls and features.
         * [.save([opt])](#SubModule+save)
         * *[.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>*
     * _inner_
+        * [~cmdRoleAdd](#RoleManager..cmdRoleAdd) : [<code>SingleCommand</code>](#Command..SingleCommand) ℗
+        * [~cmdRoleRemove](#RoleManager..cmdRoleRemove) : [<code>SingleCommand</code>](#Command..SingleCommand) ℗
+        * [~guildPerms](#RoleManager..guildPerms) : <code>Object.&lt;Object.&lt;Object.&lt;boolean&gt;&gt;&gt;</code> ℗
+        * [~findDelay](#RoleManager..findDelay) : <code>number</code> ℗
+        * [~saveFile](#RoleManager..saveFile) : <code>string</code> ℗
         * [~commandRole(msg)](#RoleManager..commandRole) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandRoleManage(msg)](#RoleManager..commandRoleManage) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandRoleAdd(msg)](#RoleManager..commandRoleAdd) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandRoleRemove(msg)](#RoleManager..commandRoleRemove) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~find(id)](#RoleManager..find) ⇒ <code>Object</code> ℗
 
 <a name="SubModule+helpMessage"></a>
 
@@ -9320,6 +9326,46 @@ putting the module into an uncontrollable state.
 **Kind**: instance abstract method of [<code>RoleManager</code>](#RoleManager)  
 **Returns**: <code>boolean</code> - True if can be unloaded, false if cannot.  
 **Access**: public  
+<a name="RoleManager..cmdRoleAdd"></a>
+
+### RoleManager~cmdRoleAdd : [<code>SingleCommand</code>](#Command..SingleCommand) ℗
+The SingleCommand storing permissions for adding roles.
+
+**Kind**: inner property of [<code>RoleManager</code>](#RoleManager)  
+**Access**: private  
+<a name="RoleManager..cmdRoleRemove"></a>
+
+### RoleManager~cmdRoleRemove : [<code>SingleCommand</code>](#Command..SingleCommand) ℗
+The SingleCommand storing permissions for removing roles.
+
+**Kind**: inner property of [<code>RoleManager</code>](#RoleManager)  
+**Access**: private  
+<a name="RoleManager..guildPerms"></a>
+
+### RoleManager~guildPerms : <code>Object.&lt;Object.&lt;Object.&lt;boolean&gt;&gt;&gt;</code> ℗
+The roles that each user is allowed to give. Mapped by guild id, then user
+id, then role id. Cached. Use [find](#RoleManager..find) to access the data.
+
+**Kind**: inner constant of [<code>RoleManager</code>](#RoleManager)  
+**Access**: private  
+<a name="RoleManager..findDelay"></a>
+
+### RoleManager~findDelay : <code>number</code> ℗
+The delay after failing to find a guild's data to look for it again.
+
+**Kind**: inner constant of [<code>RoleManager</code>](#RoleManager)  
+**Default**: <code>15 Seconds</code>  
+**Access**: private  
+<a name="RoleManager..saveFile"></a>
+
+### RoleManager~saveFile : <code>string</code> ℗
+The file path to save current state for a specific guild relative to
+Common~guildSaveDir.
+
+**Kind**: inner constant of [<code>RoleManager</code>](#RoleManager)  
+**Default**: <code>&quot;/rolePerms.json&quot;</code>  
+**Access**: private  
+**See**: [Common~guildSaveDir](Common~guildSaveDir)  
 <a name="RoleManager..commandRole"></a>
 
 ### RoleManager~commandRole(msg) : [<code>commandHandler</code>](#commandHandler) ℗
@@ -9327,7 +9373,6 @@ Manage the basic fallback for the role command.
 
 **Kind**: inner method of [<code>RoleManager</code>](#RoleManager)  
 **Access**: private  
-**Todo:**: Implement.  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -9371,6 +9416,22 @@ Handle the user attempting to remove a role.
 | Param | Type | Description |
 | --- | --- | --- |
 | msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="RoleManager..find"></a>
+
+### RoleManager~find(id) ⇒ <code>Object</code> ℗
+Returns a guild's data. Returns cached version if that exists, or searches
+the file system for saved data. Data will only be checked from disk at most
+once every `RoleManager~findDelay` milliseconds. Returns `null` if data
+could not be found, or an error occurred.
+
+**Kind**: inner method of [<code>RoleManager</code>](#RoleManager)  
+**Returns**: <code>Object</code> - The role data, or null if no data could be loaded.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| id | <code>number</code> \| <code>string</code> | The guild id to get the data for. |
 
 <a name="Sandbox"></a>
 
