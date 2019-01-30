@@ -9104,27 +9104,33 @@ Manges advanced role controls and features.
 **Extends**: [<code>SubModule</code>](#SubModule)  
 
 * [RoleManager](#RoleManager) ⇐ [<code>SubModule</code>](#SubModule)
-    * [.helpMessage](#SubModule+helpMessage) : <code>string</code> \| <code>Discord~MessageEmbed</code>
-    * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
-    * [.Discord](#SubModule+Discord) : <code>Discord</code>
-    * [.client](#SubModule+client) : <code>Discord~Client</code>
-    * [.command](#SubModule+command) : [<code>Command</code>](#Command)
-    * [.common](#SubModule+common) : [<code>Common</code>](#Common)
-    * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
-    * [.myName](#SubModule+myName) : <code>string</code>
-    * [.initialized](#SubModule+initialized) : <code>boolean</code>
-    * [.commit](#SubModule+commit) : <code>string</code>
-    * [.loadTime](#SubModule+loadTime) : <code>number</code>
-    * [.initialize()](#SubModule+initialize)
-    * [.begin(Discord, client, command, common, bot)](#SubModule+begin)
-    * [.end()](#SubModule+end)
-    * [.log(msg)](#SubModule+log)
-    * [.debug(msg)](#SubModule+debug)
-    * [.warn(msg)](#SubModule+warn)
-    * [.error(msg)](#SubModule+error)
-    * [.shutdown()](#SubModule+shutdown)
-    * [.save([opt])](#SubModule+save)
-    * *[.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>*
+    * _instance_
+        * [.helpMessage](#SubModule+helpMessage) : <code>string</code> \| <code>Discord~MessageEmbed</code>
+        * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
+        * [.Discord](#SubModule+Discord) : <code>Discord</code>
+        * [.client](#SubModule+client) : <code>Discord~Client</code>
+        * [.command](#SubModule+command) : [<code>Command</code>](#Command)
+        * [.common](#SubModule+common) : [<code>Common</code>](#Common)
+        * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
+        * [.myName](#SubModule+myName) : <code>string</code>
+        * [.initialized](#SubModule+initialized) : <code>boolean</code>
+        * [.commit](#SubModule+commit) : <code>string</code>
+        * [.loadTime](#SubModule+loadTime) : <code>number</code>
+        * [.initialize()](#SubModule+initialize)
+        * [.begin(Discord, client, command, common, bot)](#SubModule+begin)
+        * [.end()](#SubModule+end)
+        * [.log(msg)](#SubModule+log)
+        * [.debug(msg)](#SubModule+debug)
+        * [.warn(msg)](#SubModule+warn)
+        * [.error(msg)](#SubModule+error)
+        * [.shutdown()](#SubModule+shutdown)
+        * [.save([opt])](#SubModule+save)
+        * *[.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>*
+    * _inner_
+        * [~commandRole(msg)](#RoleManager..commandRole) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~commandRoleManage(msg)](#RoleManager..commandRoleManage) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~commandRoleAdd(msg)](#RoleManager..commandRoleAdd) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~commandRoleRemove(msg)](#RoleManager..commandRoleRemove) : [<code>commandHandler</code>](#commandHandler) ℗
 
 <a name="SubModule+helpMessage"></a>
 
@@ -9314,6 +9320,58 @@ putting the module into an uncontrollable state.
 **Kind**: instance abstract method of [<code>RoleManager</code>](#RoleManager)  
 **Returns**: <code>boolean</code> - True if can be unloaded, false if cannot.  
 **Access**: public  
+<a name="RoleManager..commandRole"></a>
+
+### RoleManager~commandRole(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Manage the basic fallback for the role command.
+
+**Kind**: inner method of [<code>RoleManager</code>](#RoleManager)  
+**Access**: private  
+**Todo:**: Implement.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="RoleManager..commandRoleManage"></a>
+
+### RoleManager~commandRoleManage(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Handle the user configuring permissions.
+
+**Kind**: inner method of [<code>RoleManager</code>](#RoleManager)  
+**Access**: private  
+**Todo:**: Implement.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="RoleManager..commandRoleAdd"></a>
+
+### RoleManager~commandRoleAdd(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Handle the user attempting to add a role.
+
+**Kind**: inner method of [<code>RoleManager</code>](#RoleManager)  
+**Access**: private  
+**Todo:**: Implement.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="RoleManager..commandRoleRemove"></a>
+
+### RoleManager~commandRoleRemove(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Handle the user attempting to remove a role.
+
+**Kind**: inner method of [<code>RoleManager</code>](#RoleManager)  
+**Access**: private  
+**Todo:**: Implement.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
 <a name="Sandbox"></a>
 
 ## Sandbox ⇐ [<code>SubModule</code>](#SubModule)
