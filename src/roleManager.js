@@ -1,5 +1,7 @@
 // Copyright 2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
+const fs = require('fs');
+const mkdirp = require('mkdirp');
 
 require('./subModule.js')(RoleManager);  // Extends the SubModule class.
 
@@ -16,6 +18,29 @@ function RoleManager() {
   this.myName = 'ChatBot';
   /** @inheritdoc */
   this.initialize = function() {
+    cmdRoleAdd = new self.command.SingleCommand(
+        [
+          'add',
+          'give',
+        ],
+        commandRoleAdd, new self.command.CommandSetting({
+          validOnlyInGuild: true,
+          defaultDisabled: true,
+          permissions: self.Discord.Permissions.FLAGS.MANAGE_ROLES |
+              self.Discord.Permissions.FLAGS.MANAGE_GUILD,
+        }));
+    cmdRoleRemove = new self.command.SingleCommand(
+        [
+          'remove',
+          'delete',
+          'take',
+        ],
+        commandRoleRemove, new self.command.CommandSetting({
+          validOnlyInGuild: true,
+          defaultDisabled: true,
+          permissions: self.Discord.Permissions.FLAGS.MANAGE_ROLES |
+              self.Discord.Permissions.FLAGS.MANAGE_GUILD,
+        }));
     self.command.on(
         new self.command.SingleCommand(
             ['role', 'roles'], commandRole, new self.command.CommandSetting({
@@ -45,29 +70,8 @@ function RoleManager() {
                 permissions: self.Discord.Permissions.FLAGS.MANAGE_ROLES |
                     self.Discord.Permissions.FLAGS.MANAGE_GUILD,
               })),
-          new self.command.SingleCommand(
-              [
-                'add',
-                'give',
-              ],
-              commandRoleAdd, new self.command.CommandSetting({
-                validOnlyInGuild: true,
-                defaultDisabled: true,
-                permissions: self.Discord.Permissions.FLAGS.MANAGE_ROLES |
-                    self.Discord.Permissions.FLAGS.MANAGE_GUILD,
-              })),
-          new self.command.SingleCommand(
-              [
-                'remove',
-                'delete',
-                'take',
-              ],
-              commandRoleRemove, new self.command.CommandSetting({
-                validOnlyInGuild: true,
-                defaultDisabled: true,
-                permissions: self.Discord.Permissions.FLAGS.MANAGE_ROLES |
-                    self.Discord.Permissions.FLAGS.MANAGE_GUILD,
-              })),
+          cmdRoleAdd,
+          cmdRoleRemove,
         ]);
   };
 
@@ -80,11 +84,101 @@ function RoleManager() {
    * @inheritdoc
    */
   this.save = function(opt) {
+    Object.entries(guildPerms).forEach((el) => {
+      const id = el[0];
+      const data = el[1];
+      const dir = self.common.guildSaveDir + id;
+      const filename = dir + saveFile;
+      const saveStartTime = Date.now();
+      if (opt == 'async') {
+        mkdirp(dir, function(err) {
+          if (err) {
+            self.error('Failed to create directory for ' + dir);
+            console.error(err);
+            return;
+          }
+          fs.writeFile(filename, JSON.stringify(data), function(err2) {
+            if (err2) {
+              self.error('Failed to save HG data for ' + filename);
+              console.error(err2);
+            } else if (
+              el[1].accessTimestamp - saveStartTime < -15 * 60 * 1000) {
+              delete guildPerms[id];
+              self.debug('Purged ' + id);
+            }
+          });
+        });
+      } else {
+        try {
+          mkdirp.sync(dir);
+        } catch (err) {
+          self.error('Failed to create directory for ' + dir);
+          console.error(err);
+          return;
+        }
+        try {
+          fs.writeFileSync(filename, JSON.stringify(data));
+        } catch (err) {
+          self.error('Failed to save role data for ' + filename);
+          console.error(err);
+          return;
+        }
+        if (el[1].accessTimestamp - Date.now() < -15 * 60 * 1000) {
+          delete guildPerms[id];
+          self.debug('Purged ' + id);
+        }
+      }
+    });
   };
 
   /**
+   * The SingleCommand storing permissions for adding roles.
+   * @private
+   *
+   * @type {Command~SingleCommand}
+   */
+  let cmdRoleAdd;
+  /**
+   * The SingleCommand storing permissions for removing roles.
+   * @private
+   *
+   * @type {Command~SingleCommand}
+   */
+  let cmdRoleRemove;
+
+  /**
+   * The roles that each user is allowed to give. Mapped by guild id, then user
+   * id, then role id. Cached. Use {@link RoleManager~find} to access the data.
+   * @private
+   *
+   * @type {Object.<Object.<Object.<boolean>>>}
+   */
+  const guildPerms = {};
+
+  /**
+   * The delay after failing to find a guild's data to look for it again.
+   *
+   * @private
+   * @type {number}
+   * @constant
+   * @default 15 Seconds
+   */
+  const findDelay = 15000;
+
+  /**
+   * The file path to save current state for a specific guild relative to
+   * Common~guildSaveDir.
+   * @see {@link Common~guildSaveDir}
+   *
+   * @private
+   * @type {string}
+   * @constant
+   * @default
+   */
+  const saveFile = '/rolePerms.json';
+
+  /**
    * Manage the basic fallback for the role command.
-   * @TODO: Implement.
    *
    * @private
    * @type {commandHandler}
@@ -92,7 +186,8 @@ function RoleManager() {
    * @listens Command#role
    */
   function commandRole(msg) {
-
+    self.common.reply(
+        msg, 'Please specify an action.', '(Ex: Add, remove, manage, etc.');
   }
   /**
    * Handle the user configuring permissions.
@@ -104,7 +199,7 @@ function RoleManager() {
    * @listens Command#roleManage
    */
   function commandRoleManage(msg) {
-
+    find(msg.guild.id); // Suppress no-unused-var for this commit.
   }
 
   /**
@@ -130,6 +225,39 @@ function RoleManager() {
    */
   function commandRoleRemove(msg) {
 
+  }
+
+  /**
+   * Returns a guild's data. Returns cached version if that exists, or searches
+   * the file system for saved data. Data will only be checked from disk at most
+   * once every `RoleManager~findDelay` milliseconds. Returns `null` if data
+   * could not be found, or an error occurred.
+   *
+   * @private
+   * @param {number|string} id The guild id to get the data for.
+   * @return {?Object} The role data, or null if no data could be loaded.
+   */
+  function find(id) {
+    if (guildPerms[id]) return guildPerms[id];
+    if (Date.now() - guildPerms[id].accessTimestamp < findDelay) return null;
+    guildPerms[id].accessTimestamp = Date.now();
+    try {
+      const tmp = fs.readFileSync(self.common.guildSaveDir + id + saveFile);
+      try {
+        guildPerms[id] = JSON.parse(tmp);
+        if (self.initialized) self.debug('Loaded roles from file ' + id);
+      } catch (e2) {
+        self.error('Failed to parse roles data for guild ' + id);
+        return null;
+      }
+    } catch (e) {
+      if (e.code !== 'ENOENT') {
+        self.debug('Failed to load role data for guild:' + id);
+        console.error(e);
+      }
+      return null;
+    }
+    return guildPerms[id];
   }
 }
 
