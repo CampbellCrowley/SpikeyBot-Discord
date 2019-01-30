@@ -174,6 +174,7 @@ function Common() {
    * show the in the log.
    */
   this.logDebug = function(message, ip, traceIncrease = 0) {
+    message = ('' + message).replace(/\n/g, '\\n');
     if (self.isRelease) {
       console.log(
           'DBG:' + getTrace(traceIncrease) + self.updatePrefix(ip),
@@ -196,6 +197,7 @@ function Common() {
    * show the in the log.
    */
   this.log = function(message, ip, traceIncrease = 0) {
+    message = ('' + message).replace(/\n/g, '\\n');
     if (self.isRelease) {
       console.log(
           'INF:' + getTrace(traceIncrease) + self.updatePrefix(ip),
@@ -218,6 +220,7 @@ function Common() {
    * show the in the log.
    */
   this.logWarning = function(message, ip, traceIncrease = 0) {
+    message = ('' + message).replace(/\n/g, '\\n');
     if (self.isRelease) {
       console.log(
           'WRN:' + getTrace(traceIncrease) + self.updatePrefix(ip),
@@ -240,6 +243,7 @@ function Common() {
    * show the in the log.
    */
   this.error = function(message, ip, traceIncrease = 0) {
+    message = ('' + message).replace(/\n/g, '\\n');
     console.log(
         'ERR:' + getTrace(traceIncrease) + '\x1B[;31m' + self.updatePrefix(ip),
         message, '\x1B[1;0m');
