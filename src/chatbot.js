@@ -221,10 +221,12 @@ function ChatBot() {
             console.log(`  No intent matched.`);
           } */
           if (result.fulfillmentText) {
-            msg.channel.send(result.fulfillmentText).catch((err) => {
-              self.error('Unable to reply to chat message: ' + msg.channel.id);
-              console.error(err);
-            });
+            msg.channel.send(result.fulfillmentText.replace(/\\n/, '\n'))
+                .catch((err) => {
+                  self.error(
+                      'Unable to reply to chat message: ' + msg.channel.id);
+                  console.error(err);
+                });
           }
           if (result.parameters.fields.loopback) {
             msg.text = result.parameters.fields.loopback.stringValue;
