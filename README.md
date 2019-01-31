@@ -49,6 +49,8 @@
 - chat (Forces the sent message to be sent to dialogflow instead of being treated as a normal command)
 - listcommands (Lists all commands that are currently registered with SpikeyBot~Commands)
 - getprefix (Used by chatbot so users can ask the bot, by mentioning it, what the prefix is)
+- whoami (Replies with the user's username, and full tag from different sources)
+- gettime (Replies with the server's timezone and time, as well as GMT)
 
 # Event Controlled
 - Added to guild

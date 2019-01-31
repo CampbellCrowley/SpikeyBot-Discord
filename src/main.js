@@ -76,6 +76,7 @@ math.config({matrix: 'Array'});
  * @listens Command#getPrefix
  * @listens Command#git
  * @listens Command#whoami
+ * @listens Command#gettime
  */
 function Main() {
   const self = this;
@@ -331,6 +332,7 @@ function Main() {
     self.command.on('getprefix', commandGetPrefix);
     self.command.on('git', commandGit);
     self.command.on('whoami', commandWhoAmI);
+    self.command.on('gettime', commandGetTime);
 
     self.client.on('guildCreate', onGuildCreate);
     self.client.on('guildDelete', onGuildDelete);
@@ -558,6 +560,7 @@ function Main() {
     self.command.removeListener('getprefix');
     self.command.removeListener('git');
     self.command.removeListener('whoami');
+    self.command.removeListener('gettime');
 
     self.client.removeListener('guildCreate', onGuildCreate);
     self.client.removeListener('guildDelete', onGuildDelete);
@@ -2744,6 +2747,23 @@ function Main() {
         msg, msg.author.username, msg.author.username + '#' +
             msg.author.descriminator + ' / ' + msg.author.tag + ' (' +
             msg.member.nickname + ')');
+  }
+
+  /**
+   * Reply with server time and GMT.
+   * @private
+   *
+   * @type {Command~commandHandler}
+   * @param {Discord~Message} msg The message that triggered this command.
+   * @listens Command#gettime
+   */
+  function commandGetTime(msg) {
+    const now = new Date();
+    const nowPST = dateFormat(now, 'default');
+    const tz = dateFormat(now, 'Z');
+    const nowGMT = dateFormat(now, 'GMT:ddd mmm dd yyyy HH:MM:ss');
+    self.common.reply(
+        msg, `Server Time: ${tz}`, `${tz}: ${nowPST}\nGMT: ${nowGMT}`);
   }
 
   /**

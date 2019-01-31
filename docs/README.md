@@ -5677,6 +5677,7 @@ Basic commands and features for the bot.
         * [~commandGetPrefix(msg)](#Main..commandGetPrefix) : <code>Command~commandHandler</code> ℗
         * [~commandGit(msg)](#Main..commandGit) : <code>Command~commandHandler</code> ℗
         * [~commandWhoAmI(msg)](#Main..commandWhoAmI) : <code>Command~commandHandler</code> ℗
+        * [~commandGetTime(msg)](#Main..commandGetTime) : <code>Command~commandHandler</code> ℗
         * [~sigint()](#Main..sigint) ℗
         * [~Timer](#Main..Timer) : <code>Object</code>
 
@@ -6653,6 +6654,18 @@ Get the graph of the last few git commits.
 
 ### Main~commandWhoAmI(msg) : <code>Command~commandHandler</code> ℗
 Tell the user who they are.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message that triggered this command. |
+
+<a name="Main..commandGetTime"></a>
+
+### Main~commandGetTime(msg) : <code>Command~commandHandler</code> ℗
+Reply with server time and GMT.
 
 **Kind**: inner method of [<code>Main</code>](#Main)  
 **Access**: private  
