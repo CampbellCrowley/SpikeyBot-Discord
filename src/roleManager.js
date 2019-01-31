@@ -199,7 +199,31 @@ function RoleManager() {
    * @listens Command#roleManage
    */
   function commandRoleManage(msg) {
-    find(msg.guild.id); // Suppress no-unused-var for this commit.
+    let text = '';
+    let roles = [];
+    let users = [];
+    if (msg.text && msg.text.length > 0) {
+      const gRoleRegex = self.Discord.MessageMentions.ROLES_PATTERN;
+      const sRoleRegex = new RegExp(gRoleRegex.source);
+      const gUserRegex = self.Discord.MessageMentions.USERS_PATTERN;
+      const sUserRegex = new RegExp(gUserRegex.source);
+      const sRegex = new RegExp(gRoleRegex.source + '|' + gUserRegex);
+      const gRegex = new RegExp(gRoleRegex.source + '|' + gUserRegex, 'g');
+      roles = msg.text.match(gRoleRegex);
+      users = msg.text.match(gUserRegex);
+      text = msg.text.replace(self.Discord.MessageMentions.ROLES_PATTERN, '')
+          .replace(/\s+/g, ' ');
+    } else {
+      self.common.reply(
+          msg,
+          'Please specify a role or user to modify, and an action to perform.');
+      return;
+    }
+    if (text) {
+      text.split(/\s/).forEach((el) => {
+        const str = el.toLowerCase();
+      });
+    }
   }
 
   /**

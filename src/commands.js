@@ -275,8 +275,8 @@ function Command() {
           }
         }
       }
-      const uIds = msg.text.match(/\d{17,18}/g);
-      const uTags = msg.text.replace(/\d{17,18}/g, '')
+      const uIds = msg.text.match(/\d{17,19}/g);
+      const uTags = msg.text.replace(/\d{17,19}/g, '')
           .match(/([^@#:\s][^@#:]{0,30}[^@#:\s])(#\d{4})?/g);
       msg.softMentions = {
         users: new self.Discord.UserStore(self.client),

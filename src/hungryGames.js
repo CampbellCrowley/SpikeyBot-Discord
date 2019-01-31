@@ -3130,14 +3130,19 @@ function HungryGames() {
     let loop = 0;
     while (loop < 100) {
       loop++;
+      if (eventPool) eventPool = eventPool.filter((el) => el);
+      if (!eventPool || eventPool.length == 0) {
+        fails.push('No Events');
+        break;
+      }
       const eventIndex = probabilityEvent(eventPool, probOpts);
       const eventTry = eventPool[eventIndex];
       if (!eventTry) {
-        self.error('Event at index ' + eventIndex + ' is invalid!');
         if (fails.length < 3) {
           console.error('Invalid Event:', eventTry);
         }
         fails.push('Invalid Event');
+        eventPool.splice(eventIndex, 1);
         continue;
       }
 
