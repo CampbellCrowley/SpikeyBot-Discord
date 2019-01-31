@@ -108,6 +108,8 @@ const mainTests = [
   new Test('List command settings', '~show', ['#embed']),
   new Test('Reset command settings', '~reset', ['#noerr', '#noerr']),
   new Test('Git command', '~git', ['^```']),
+  new Test('Who am I', '~whoami', ['^Bot']),
+  new Test('What time is it', '~gettime', ['#noerr']),
 ];
 const hgTests = [
   new Test('Reset All command', '~hg reset all', ['#noerr']),
