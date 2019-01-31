@@ -221,7 +221,7 @@ function ChatBot() {
             console.log(`  No intent matched.`);
           } */
           if (result.fulfillmentText) {
-            msg.channel.send(result.fulfillmentText.replace(/\\n/, '\n'))
+            msg.channel.send(result.fulfillmentText.replace(/\\n/g, '\n'))
                 .catch((err) => {
                   self.error(
                       'Unable to reply to chat message: ' + msg.channel.id);
