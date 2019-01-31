@@ -51,7 +51,12 @@ function CmdScheduling() {
           if (!schedules[g.id]) schedules[g.id] = [];
           for (let i = 0; i < parsed.length; i++) {
             if (parsed[i].bot != self.client.user.id) continue;
-            if (parsed[i].time < now) continue;
+            if (parsed[i].time < now) {
+              while (parsed[i].repeatDelay > 0 &&
+                     parsed[i].time < now - parsed[i].repeatDelay) {
+                parsed[i].time += parsed[i].repeatDelay;
+              }
+            }
             schedules[g.id].push(new ScheduledCommand(parsed[i]));
           }
         } catch (err) {
