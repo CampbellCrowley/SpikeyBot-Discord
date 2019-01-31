@@ -213,6 +213,14 @@ function ChatBot() {
           msg.channel.stopTyping();
           // console.log('Intent');
           const result = responses[0].queryResult;
+          if (result.parameters.fields.thing) {
+            console.log(result.parameters.fields.thing.listValue.values);
+            const list = result.parameters.fields.thing.listValue.values;
+            const chosen =
+                list[Math.floor(list.length * Math.random())].stringValue;
+            result.fulfillmentText =
+                result.fulfillmentText.replace(/~thing/g, chosen);
+          }
           /* console.log(`  Query: ${result.queryText}`);
           console.log(`  Response: ${result.fulfillmentText}`);
           if (result.intent) {
