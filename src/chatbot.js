@@ -214,7 +214,6 @@ function ChatBot() {
           // console.log('Intent');
           const result = responses[0].queryResult;
           if (result.parameters.fields.thing) {
-            console.log(result.parameters.fields.thing.listValue.values);
             const list = result.parameters.fields.thing.listValue.values;
             const chosen =
                 list[Math.floor(list.length * Math.random())].stringValue;

@@ -16,7 +16,7 @@ require('./subModule.js')(RoleManager);  // Extends the SubModule class.
 function RoleManager() {
   const self = this;
   /** @inheritdoc */
-  this.myName = 'ChatBot';
+  this.myName = 'Role Manager';
   /** @inheritdoc */
   this.initialize = function() {
     cmdRoleAdd = new self.command.SingleCommand(
@@ -203,23 +203,36 @@ function RoleManager() {
     let text = '';
     let roles = [];
     let users = [];
-    if (msg.text && msg.text.length > 0) {
-      const gRoleRegex = self.Discord.MessageMentions.ROLES_PATTERN;
-      const sRoleRegex = new RegExp(gRoleRegex.source);
-      const gUserRegex = self.Discord.MessageMentions.USERS_PATTERN;
-      const sUserRegex = new RegExp(gUserRegex.source);
-      const sRegex = new RegExp(gRoleRegex.source + '|' + gUserRegex);
-      const gRegex = new RegExp(gRoleRegex.source + '|' + gUserRegex, 'g');
-      roles = msg.text.match(gRoleRegex);
-      users = msg.text.match(gUserRegex);
-      text = msg.text.replace(self.Discord.MessageMentions.ROLES_PATTERN, '')
-          .replace(/\s+/g, ' ');
-    } else {
+    if (!msg.text || msg.text.length == 0) {
       self.common.reply(
           msg,
-          'Please specify a role or user to modify, and an action to perform.');
+          'Please specify a role or user to modify, and an action to perform.',
+          '`' + msg.prefix + 'role manage @Trusted allow @Role1 @Role2`');
       return;
     }
+    const giveActions = ['allow', 'grant', 'give', 'permit'];
+    const takeActions = ['deny', 'revoke', 'take', 'remove'];
+    const actions = giveActions.concat(takeActions);
+    const gRoleRegex = self.Discord.MessageMentions.ROLES_PATTERN;
+    const sRoleRegex = new RegExp(gRoleRegex.source);
+    const gUserRegex = self.Discord.MessageMentions.USERS_PATTERN;
+    const sUserRegex = new RegExp(gUserRegex.source);
+    const sRegex = new RegExp(gRoleRegex.source + '|' + gUserRegex);
+    const gRegex = new RegExp(gRoleRegex.source + '|' + gUserRegex, 'g');
+    const cmdRegex = new RegExp(
+        '(' + sRegex.source + ')\s*(' + actions.join('|') + ')\s*' +
+        sRoleRegex.source);
+    if (!msg.text.match(cmdRegex)) {
+      self.common.reply(
+          msg,
+          'Please specify a role or user to modify, and an action to perform.',
+          '`' + msg.prefix + 'role manage @Trusted allow @Role1 @Role2`');
+      return;
+    }
+    roles = msg.text.match(gRoleRegex);
+    users = msg.text.match(gUserRegex);
+    text = msg.text.replace(self.Discord.MessageMentions.ROLES_PATTERN, '')
+               .replace(/\s+/g, ' ');
     if (text) {
       text.split(/\s/).forEach((el) => {
         const str = el.toLowerCase();
