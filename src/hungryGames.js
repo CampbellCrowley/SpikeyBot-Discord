@@ -2236,6 +2236,12 @@ function HungryGames() {
       text: msg,
       content: msg,
       prefix: self.bot.getPrefix(gId),
+      mentions: {
+        channels: new self.Discord.Collection(),
+        members: new self.Discord.Collection(),
+        roles: new self.Discord.Collection(),
+        users: new self.Discord.Collection(),
+      },
     };
   }
   /**
