@@ -222,7 +222,8 @@ function RoleManager() {
     const cmdRegex = new RegExp(
         '(' + sRegex.source + ')\s*(' + actions.join('|') + ')\s*' +
         sRoleRegex.source);
-    if (!msg.text.match(cmdRegex)) {
+    const cmdMatch = msg.text.match(cmdRegex);
+    if (!cmdMatch) {
       self.common.reply(
           msg,
           'Please specify a role or user to modify, and an action to perform.',

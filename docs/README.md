@@ -3094,7 +3094,7 @@ Hunger Games simulator.
         * [~pickAffectedPlayers(numVictim, numAttacker, victimOutcome, attackerOutcome, options, userPool, deadPool, teams, weaponWielder)](#HungryGames..pickAffectedPlayers) ⇒ [<code>Array.&lt;Player&gt;</code>](#HungryGames..Player) ℗
         * [~makeBattleEvent(affectedUsers, numVictim, numAttacker, mention, id, [useNicknames])](#HungryGames..makeBattleEvent) ⇒ [<code>Event</code>](#HungryGames..Event) ℗
         * [~weightedUserRand()](#HungryGames..weightedUserRand) ⇒ <code>number</code> ℗
-        * [~probabilityEvent(eventPool, probabilityOpts, [recurse])](#HungryGames..probabilityEvent) ⇒ <code>number</code> ℗
+        * [~probabilityEvent(eventPool, probabilityOpts, [customWeight], [recurse])](#HungryGames..probabilityEvent) ⇒ <code>number</code> ℗
         * [~formatMultiNames(names, [format])](#HungryGames..formatMultiNames) ⇒ <code>string</code> ℗
         * [~makeMessageEvent(message, [id])](#HungryGames..makeMessageEvent) ⇒ [<code>Event</code>](#HungryGames..Event) ℗
         * [~makeSingleEvent(message, affectedUsers, numVictim, numAttacker, mention, id, victimOutcome, attackerOutcome, [useNickname])](#HungryGames..makeSingleEvent) ⇒ <code>HungryGames~FinalEvent</code> ℗
@@ -3777,18 +3777,19 @@ Event that can happen in a game.
 **Kind**: inner class of [<code>HungryGames</code>](#HungryGames)  
 **Properties**
 
-| Name | Type | Description |
-| --- | --- | --- |
-| message | <code>string</code> | The message to show. |
-| [action] | <code>string</code> | The action to format into a message if this is a weapon event. |
-| victim | <code>Object</code> | Information about the victims in this event. |
-| attacker | <code>Object</code> | Information about the attackers in this event. |
-| victim.weapon | <code>Object</code> | The weapon information to give to the player. |
-| attacker.weapon | <code>Object</code> | The weapon information to give to the player. |
-| battle | <code>boolean</code> | Is this event a battle event. |
-| state | <code>number</code> | The current state of printing the battle messages. |
-| attacks | [<code>Array.&lt;Event&gt;</code>](#HungryGames..Event) | The attacks in a battle to show before the message. |
-| [consumes] | <code>number</code> \| <code>string</code> | Amount of consumables used if this is a weapon event. |
+| Name | Type | Default | Description |
+| --- | --- | --- | --- |
+| message | <code>string</code> |  | The message to show. |
+| [action] | <code>string</code> |  | The action to format into a message if this is a weapon event. |
+| victim | <code>Object</code> |  | Information about the victims in this event. |
+| attacker | <code>Object</code> |  | Information about the attackers in this event. |
+| victim.weapon | <code>Object</code> |  | The weapon information to give to the player. |
+| attacker.weapon | <code>Object</code> |  | The weapon information to give to the player. |
+| battle | <code>boolean</code> |  | Is this event a battle event. |
+| state | <code>number</code> |  | The current state of printing the battle messages. |
+| attacks | [<code>Array.&lt;Event&gt;</code>](#HungryGames..Event) |  | The attacks in a battle to show before the message. |
+| [consumes] | <code>number</code> \| <code>string</code> |  | Amount of consumables used if this is a weapon event. |
+| [custom] | <code>boolean</code> | <code>true</code> | If the event is created by the user. |
 
 <a name="new_HungryGames..Event_new"></a>
 
@@ -4748,7 +4749,7 @@ Produce a random number that is weighted by multiEventUserDistribution.
 **See**: [multiEventUserDistribution](#HungryGames..multiEventUserDistribution)  
 <a name="HungryGames..probabilityEvent"></a>
 
-### HungryGames~probabilityEvent(eventPool, probabilityOpts, [recurse]) ⇒ <code>number</code> ℗
+### HungryGames~probabilityEvent(eventPool, probabilityOpts, [customWeight], [recurse]) ⇒ <code>number</code> ℗
 Produce a random event that using probabilities set in options.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
@@ -4759,6 +4760,7 @@ Produce a random event that using probabilities set in options.
 | --- | --- | --- | --- |
 | eventPool | [<code>Array.&lt;Event&gt;</code>](#HungryGames..Event) |  | The pool of all events to consider. |
 | probabilityOpts | <code>Object</code> |  | The probabilities of each type of event being used. |
+| [customWeight] | <code>number</code> | <code>1</code> | The weight of custom events. |
 | [recurse] | <code>number</code> | <code>0</code> | The current recursive depth. |
 
 <a name="HungryGames..formatMultiNames"></a>

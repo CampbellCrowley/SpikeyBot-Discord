@@ -401,6 +401,14 @@ function HungryGames() {
           'wounded or dead players.',
       category: 'other',
     },
+    customEventWeight: {
+      value: 2,
+      range: {min: 0, max: 1000},
+      comment:
+          'The relative weight of custom events. 2 means custom events are ' +
+          'twice as likely to be chosen.',
+      category: 'probabilities',
+    },
     disableOutput: {
       value: false,
       comment: 'Debugging purposes only. I mean, you can enable it, but it ma' +
@@ -1288,6 +1296,7 @@ function HungryGames() {
    * before the message.
    * @property {number|string} [consumes] Amount of consumables used if this is
    * a weapon event.
+   * @property {boolean} [custom=true] If the event is created by the user.
    */
   function Event(
       message, numVictim = 0, numAttacker = 0, victimOutcome = 'nothing',
@@ -1309,6 +1318,7 @@ function HungryGames() {
     this.battle = battle;
     this.state = state;
     this.attacks = attacks;
+    this.custom = true;
   }
   this.Event = Event;
 
@@ -3141,7 +3151,8 @@ function HungryGames() {
         fails.push('No Events');
         break;
       }
-      const eventIndex = probabilityEvent(eventPool, probOpts);
+      const eventIndex =
+          probabilityEvent(eventPool, probOpts, options.customEventWeight);
       const eventTry = eventPool[eventIndex];
       if (!eventTry) {
         if (fails.length < 3) {
@@ -3735,10 +3746,12 @@ function HungryGames() {
    * @param {HungryGames~Event[]} eventPool The pool of all events to consider.
    * @param {{kill: number, wound: number, thrive: number, nothing: number}}
    * probabilityOpts The probabilities of each type of event being used.
+   * @param {number} [customWeight=1] The weight of custom events.
    * @param {number} [recurse=0] The current recursive depth.
    * @return {number} The index of the event that was chosen.
    */
-  function probabilityEvent(eventPool, probabilityOpts, recurse = 0) {
+  function probabilityEvent(
+      eventPool, probabilityOpts, customWeight = 1, recurse = 0) {
     let probTotal = probabilityOpts.kill + probabilityOpts.wound +
         probabilityOpts.thrive + probabilityOpts.revive +
         probabilityOpts.nothing;
@@ -3766,7 +3779,8 @@ function HungryGames() {
     }
     if (finalPool.length == 0) {
       if (recurse < 10) {
-        return probabilityEvent(eventPool, probabilityOpts, recurse + 1);
+        return probabilityEvent(
+            eventPool, probabilityOpts, customWeight, recurse + 1);
       } else {
         self.error(
             'Failed to find event with probabilities: ' +
@@ -3775,7 +3789,19 @@ function HungryGames() {
         return Math.floor(Math.random() * eventPool.length);
       }
     } else {
-      return finalPool[Math.floor(Math.random() * finalPool.length)];
+      let total = finalPool.length;
+      if (customWeight != 1) {
+        finalPool.forEach((el) => {
+          if (eventPool[el].custom) total += customWeight - 1;
+        });
+      }
+      const pick = Math.random() * total;
+      return finalPool.find((el) => {
+        total -= eventPool[el].custom ? customWeight : 1;
+        if (total < pick) return true;
+        return false;
+      });
+      // return finalPool[Math.floor(Math.random() * finalPool.length)];
     }
   }
   /**
@@ -5831,137 +5857,195 @@ function HungryGames() {
         }
         const message = newEventMessages[msg.id].text;
         msg_.delete().catch(() => {});
-        msg.channel.send('Loading...').then(function(msg_) {
-          let numVictim = 0;
-          let numAttacker = 0;
-          let victimOutcome = 'nothing';
-          let attackerOutcome = 'nothing';
-          let victimKiller = false;
-          let attackerKiller = false;
-          const getAttackNum = function() {
-            createEventNums(
-                msg_, authId,
-                '`How many attackers may be in this event? (-1 means at ' +
-                    'least 1, -2 at least 2)`',
-                (num) => {
-                  numAttacker = num;
-                  // msg_.reactions.removeAll();
-                  msg_.channel.send('Loading...').then((msg) => {
-                    msg_ = msg;
-                    getVictimNum();
-                  });
-                  msg_.delete().catch(() => {});
-                });
-          };
-          const getVictimNum = function() {
-            createEventNums(
-                msg_, authId,
-                '`How many victims may be in this event? (-1 means at least ' +
-                    '1, -2 at least 2)`',
-                (num) => {
-                  numVictim = num;
-                  // msg_.reactions.removeAll();
-                  msg_.channel.send('Loading...').then((msg) => {
-                    msg_ = msg;
-                    getAttackOutcome();
-                  });
-                  msg_.delete().catch(() => {});
-                });
-          };
-          const getAttackOutcome = function() {
-            if (numAttacker == 0) {
-              getVictimOutcome();
-            } else {
-              createEventOutcome(
-                  msg_, authId, '`What is the outcome of the attackers?`',
-                  function(outcome) {
-                    attackerOutcome = outcome;
-                    // msg_.reactions.removeAll();
-                    msg_.channel.send('Loading...').then((msg) => {
-                      msg_ = msg;
-                      getVictimOutcome();
+        msg.channel.send('Loading...')
+            .then(function(msg_) {
+              let numVictim = 0;
+              let numAttacker = 0;
+              let victimOutcome = 'nothing';
+              let attackerOutcome = 'nothing';
+              let victimKiller = false;
+              let attackerKiller = false;
+              const getAttackNum = function() {
+                createEventNums(
+                    msg_, authId,
+                    '`How many attackers may be in this event? (-1 means at ' +
+                        'least 1, -2 at least 2)`',
+                    (num) => {
+                      numAttacker = num;
+                      // msg_.reactions.removeAll();
+                      msg_.channel.send('Loading...').then((msg) => {
+                        msg_ = msg;
+                        getVictimNum();
+                      });
+                      msg_.delete().catch(() => {});
                     });
-                    msg_.delete().catch(() => {});
-                  });
-            }
-          };
-          const getVictimOutcome = function() {
-            if (numVictim == 0) {
-              getIsAttackerKiller();
-            } else {
-              createEventOutcome(
-                  msg_, authId, '`What is the outcome of the victims?`',
-                  function(outcome) {
-                    victimOutcome = outcome;
-                    // msg_.reactions.removeAll();
-                    msg_.channel.send('Loading...').then((msg) => {
-                      msg_ = msg;
-                      getIsAttackerKiller();
+              };
+              const getVictimNum = function() {
+                createEventNums(
+                    msg_, authId,
+                    '`How many victims may be in this event? (-1 means at ' +
+                        'least 1, -2 at least 2)`',
+                    (num) => {
+                      numVictim = num;
+                      // msg_.reactions.removeAll();
+                      msg_.channel.send('Loading...')
+                          .then((msg) => {
+                            msg_ = msg;
+                            getAttackOutcome();
+                          })
+                          .catch((err) => {
+                            self.error(
+                                'Failed to send message to create event: ' +
+                                msg_.channel.id);
+                            console.error(err);
+                          });
+                      msg_.delete().catch(() => {});
                     });
-                    msg_.delete().catch(() => {});
-                  });
-            }
-          };
-          const getIsAttackerKiller = function() {
-            if (numAttacker == 0) {
-              getIsVictimKiller();
-            } else {
-              createEventAttacker(
-                  msg_, authId,
-                  '`Do the attacker(s) kill someone in this event?`',
-                  function(outcome) {
-                    attackerKiller = outcome;
-                    // msg_.reactions.removeAll();
-                    msg_.channel.send('Loading...').then((msg) => {
-                      msg_ = msg;
-                      getIsVictimKiller();
-                    });
-                    msg_.delete().catch(() => {});
-                  });
-            }
-          };
-          const getIsVictimKiller = function() {
-            if (numVictim == 0) {
-              finish();
-            } else {
-              createEventAttacker(
-                  msg_, authId,
-                  '`Do the victim(s) kill someone in this event?`',
-                  function(outcome) {
-                    victimKiller = outcome;
-                    finish();
-                  });
-            }
-          };
-          const finish = function() {
-            msg_.delete().catch(() => {});
-            const error = self.makeAndAddEvent(
-                id, eventType, message, numVictim, numAttacker, victimOutcome,
-                attackerOutcome, victimKiller, attackerKiller);
-            if (error) {
-              msg.channel.send(
-                  '`Failed to create event!`\n' + eventType + ' event\n' +
-                  error);
-            } else {
-              msg.channel.send(
-                  '`Event created!`\n' +
-                  formatEventString(
-                      new Event(
-                          message, numVictim, numAttacker, victimOutcome,
-                          attackerOutcome, victimKiller, attackerKiller)) +
-                  '\n' + eventType + ' event');
-            }
-          };
+              };
+              const getAttackOutcome = function() {
+                if (numAttacker == 0) {
+                  getVictimOutcome();
+                } else {
+                  createEventOutcome(
+                      msg_, authId, '`What is the outcome of the attackers?`',
+                      function(outcome) {
+                        attackerOutcome = outcome;
+                        // msg_.reactions.removeAll();
+                        msg_.channel.send('Loading...')
+                            .then((msg) => {
+                              msg_ = msg;
+                              getVictimOutcome();
+                            })
+                            .catch((err) => {
+                              self.error(
+                                  'Failed to send message to create event: ' +
+                                  msg_.channel.id);
+                              console.error(err);
+                            });
+                        msg_.delete().catch(() => {});
+                      });
+                }
+              };
+              const getVictimOutcome = function() {
+                if (numVictim == 0) {
+                  getIsAttackerKiller();
+                } else {
+                  createEventOutcome(
+                      msg_, authId, '`What is the outcome of the victims?`',
+                      function(outcome) {
+                        victimOutcome = outcome;
+                        // msg_.reactions.removeAll();
+                        msg_.channel.send('Loading...')
+                            .then((msg) => {
+                              msg_ = msg;
+                              getIsAttackerKiller();
+                            })
+                            .catch((err) => {
+                              self.error(
+                                  'Failed to send message to create event: ' +
+                                  msg_.channel.id);
+                              console.error(err);
+                            });
+                        msg_.delete().catch(() => {});
+                      });
+                }
+              };
+              const getIsAttackerKiller = function() {
+                if (numAttacker == 0) {
+                  getIsVictimKiller();
+                } else {
+                  createEventAttacker(
+                      msg_, authId,
+                      '`Do the attacker(s) kill someone in this event?`',
+                      function(outcome) {
+                        attackerKiller = outcome;
+                        // msg_.reactions.removeAll();
+                        msg_.channel.send('Loading...')
+                            .then((msg) => {
+                              msg_ = msg;
+                              getIsVictimKiller();
+                            })
+                            .catch((err) => {
+                              self.error(
+                                  'Failed to send message to create event: ' +
+                                  msg_.channel.id);
+                              console.error(err);
+                            });
+                        msg_.delete().catch(() => {});
+                      });
+                }
+              };
+              const getIsVictimKiller = function() {
+                if (numVictim == 0) {
+                  finish();
+                } else {
+                  createEventAttacker(
+                      msg_, authId,
+                      '`Do the victim(s) kill someone in this event?`',
+                      function(outcome) {
+                        victimKiller = outcome;
+                        finish();
+                      });
+                }
+              };
+              const finish = function() {
+                msg_.delete().catch(() => {});
+                const error = self.makeAndAddEvent(
+                    id, eventType, message, numVictim, numAttacker,
+                    victimOutcome, attackerOutcome, victimKiller,
+                    attackerKiller);
+                if (error) {
+                  msg.channel
+                      .send(
+                          '`Failed to create event!`\n' + eventType +
+                          ' event\n' + error)
+                      .catch(
+                          (err) => {
+                            self.error(
+                                'Failed to send message to create event: ' +
+                                msg_.channel.id);
+                            console.error(err);
+                          });
+                } else {
+                  msg.channel
+                      .send(
+                          '`Event created!`\n' +
+                          formatEventString(
+                              new Event(
+                                  message, numVictim, numAttacker,
+                                  victimOutcome, attackerOutcome, victimKiller,
+                                  attackerKiller)) +
+                          '\n' + eventType + ' event')
+                      .catch(
+                          (err) => {
+                            self.error(
+                                'Failed to send message to create event: ' +
+                                msg_.channel.id);
+                            console.error(err);
+                          });
+                }
+              };
 
-          getAttackNum();
-        });
+              getAttackNum();
+            })
+            .catch((err) => {
+              self.error(
+                  'Failed to send message to create events: ' + msg.channel.id);
+              console.error(err);
+            });
         delete newEventMessages[msg.id];
       });
-      msg_.react(emoji.red_circle).then(() => {
-        msg_.react(emoji.trophy);
-      });
+      msg_.react(emoji.red_circle)
+          .then(() => {
+            msg_.react(emoji.trophy);
+          })
+          .catch((err) => {
+            self.error(
+                'Failed to add reactions to create events: ' + msg_.channel.id);
+            console.error(err);
+          });
       updateEventPreview(newEventMessages[msg.id]);
-    });
+    }).catch(() => {});
   }
 
   /**
@@ -7381,6 +7465,17 @@ function HungryGames() {
         }
       }
     }
+
+    // Force custom events to have custom event flag. (This is here due to
+    // updating from previous version without custom event flag).
+    if (games[id].customEvents) {
+      for (const cat of Object.values(games[id].customEvents)) {
+        for (const evt of Object.values(cat)) {
+          if (typeof evt === 'object') evt.custom = true;
+        }
+      }
+    }
+
     // If the bot stopped while simulating a day, just start over and try
     // again.
     if (games[id] && games[id].currentGame && games[id].currentGame.day &&
