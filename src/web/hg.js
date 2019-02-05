@@ -806,13 +806,14 @@ function HGWeb(hg) {
       replyNoPerm(socket, 'excludeMember');
       return;
     }
-    if (mId === 'everyone') {
+    if (mId === 'everyone' || mId === 'online' || mId == 'offline' ||
+        mId == 'dnd' || mId == 'idle') {
       socket.emit('message', hg.excludeUsers(mId, gId));
     } else {
       socket.emit('message', hg.excludeUsers([mId], gId));
     }
     if (typeof cb === 'function') cb();
-    socket.emit('game', gId, hg.getGame(gId));
+    // socket.emit('game', gId, hg.getGame(gId));
   }
   this.excludeMember = excludeMember;
   /**
@@ -835,13 +836,14 @@ function HGWeb(hg) {
       replyNoPerm(socket, 'includeMember');
       return;
     }
-    if (mId === 'everyone') {
+    if (mId === 'everyone' || mId === 'online' || mId == 'offline' ||
+        mId == 'dnd' || mId == 'idle') {
       socket.emit('message', hg.includeUsers(mId, gId));
     } else {
       socket.emit('message', hg.includeUsers([mId], gId));
     }
     if (typeof cb === 'function') cb();
-    socket.emit('game', gId, hg.getGame(gId));
+    // socket.emit('game', gId, hg.getGame(gId));
   }
   this.includeMember = includeMember;
   /**
