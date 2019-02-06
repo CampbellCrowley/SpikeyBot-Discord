@@ -190,6 +190,10 @@ function ChatBot() {
    */
   function onChatMessage(msg) {
     if (msg.guild && disabledChatBot[msg.guild.id]) return;
+    const perms = msg.channel.permissionsFor(self.client.user);
+    if (perms && !perms.has(self.Discord.Permissions.FLAGS.SEND_MESSAGES)) {
+      return;
+    }
     if (!msg.text || msg.text.length < 2) return;
     const request = Object.assign({}, reqTemplate);
     request.session = sessionClient.sessionPath(
@@ -202,7 +206,7 @@ function ChatBot() {
           request.queryInput.text.text.substr(0, 256);
     }
 
-    msg.channel.startTyping();
+    msg.channel.startTyping().catch(() => {});
 
     const startTime = Date.now();
 

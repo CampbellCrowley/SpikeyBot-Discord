@@ -255,14 +255,25 @@ function Common() {
    * @param {Discord~Message} msg Message to reply to.
    * @param {string} text The main body of the message.
    * @param {string} [post] The footer of the message.
-   * @return {Promise} Promise of Discord~Message that we attempted to send.
+   * @return {?Promise} Promise of Discord~Message that we attempted to send, or
+   * null if error occurred before attempting to send.
    */
   this.reply = function(msg, text, post) {
-    if (!msg.channel || !msg.channel.send) return null;
+    if (!msg.channel || !msg.channel.send || !msg.channel.permissionsFor) {
+      return null;
+    }
     const trace = getTrace(0);
-    if (self.isTest ||
-        (msg.guild &&
-         !msg.guild.me.permissionsIn(msg.channel).has('EMBED_LINKS'))) {
+    const perms = msg.channel.permissionsFor(msg.client.user);
+    if (perms && !perms.has('SEND_MESSAGES')) {
+      self.logDebug(
+          'Failed to send reply to channel ' + msg.channel.id +
+              ' due to lack of perms.',
+          trace);
+      return new Promise((resolve, reject) => {
+        reject(new Error('No Perms'));
+      });
+    }
+    if (self.isTest || (perms && !perms.has('EMBED_LINKS'))) {
       return msg.channel
           .send(Common.mention(msg) + '\n```\n' + text + '\n```' + (post || ''))
           .catch((err) => {

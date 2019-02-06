@@ -18,7 +18,12 @@ let auth = require('../auth.js');
  * @listens Process#uncaughtException
  */
 function unhandledRejection(...args) {
-  console.log(...args);
+  if (args[0] && args[0].name == 'DiscordAPIError') {
+    const e = args[0];
+    console.log(`${e.name}: ${e.message} ${e.code} (${e.path})`);
+  } else {
+    console.log(...args);
+  }
 }
 process.on('unhandledRejection', unhandledRejection);
 process.on('uncaughtException', unhandledRejection);

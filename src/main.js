@@ -1751,12 +1751,17 @@ function Main() {
                   msg, 'Oops! Discord didn\'t like that...', err.message);
             });
       } else {
-        msg.channel.bulkDelete(num).then(() => {
-          if (limited) {
-            self.common.reply(
-                msg, 'Number of messages deleted limited to 100.');
-          }
-        });
+        msg.channel.bulkDelete(num)
+            .then(() => {
+              if (limited) {
+                self.common.reply(
+                    msg, 'Number of messages deleted limited to 100.');
+              }
+            })
+            .catch((err) => {
+              self.common.reply(
+                  msg, 'Oops! Discord didn\'t like that...', err.message);
+            });
       }
     }
   }

@@ -2206,7 +2206,7 @@ function HungryGames() {
    * @param {string} gId The id of the guild to end the games in.
    */
   this.endGame = function(uId, gId) {
-    endGame(makeMessage(uId, gId, null), gId);
+    endGame(makeMessage(uId, gId, null), gId, true);
   };
   /**
    * Pause autoplay in the given guild as the given user.
@@ -4716,7 +4716,6 @@ function HungryGames() {
     if (!find(id) || !find(id).currentGame.inProgress) {
       if (!silent) self.common.reply(msg, 'There isn\'t a game in progress.');
     } else {
-      if (!silent) self.common.reply(msg, 'The game has ended!');
       find(id).currentGame.inProgress = false;
       find(id).currentGame.isPaused = false;
       find(id).currentGame.ended = true;
@@ -4726,6 +4725,7 @@ function HungryGames() {
       delete dayEventIntervals[id];
       delete autoPlayTimeout[id];
       // delete battleMessage[id];
+      if (!silent) self.common.reply(msg, 'The game has ended!');
       if (find(id).outputChannel) {
         self.command.find('say', msg)
             .options.set('default', 'channel', find(id).outputChannel);

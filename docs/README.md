@@ -2162,7 +2162,8 @@ Format an error message to be logged.
 Replies to the author and channel of msg with the given message.
 
 **Kind**: instance method of [<code>Common</code>](#Common)  
-**Returns**: <code>Promise</code> - Promise of Discord~Message that we attempted to send.  
+**Returns**: <code>Promise</code> - Promise of Discord~Message that we attempted to send, or
+null if error occurred before attempting to send.  
 
 | Param | Type | Description |
 | --- | --- | --- |
