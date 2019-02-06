@@ -344,8 +344,12 @@ function CmdScheduling() {
                 myself.memberId = msg.member.id;
               })
               .catch((err) => {
+                self.debug(
+                    'Failed to find message: ' + myself.channelId + '@' +
+                    myself.memberId + ' ' + myself.messageId + ': ' +
+                    myself.cmd);
                 myself.message = makeMessage(
-                    myself.memberId, myself.channel.guild.id, myself.channelId,
+                    myself.memberId, myself.channel.guild.id, myself.channel.id,
                     myself.cmd);
                 myself.member = myself.message.member;
                 myself.memberId = myself.member.id;
@@ -749,7 +753,7 @@ function CmdScheduling() {
             (el.repeatDelay ?
                  (', repeats every ' + formatDelay(el.repeatDelay)) :
                  '') +
-            ' by <@' + el.message.author.id + '>: ' + el.cmd;
+            (el.message && ' by <@' + el.message.author.id + '>: ') + el.cmd;
       });
       embed.setDescription(list.join('\n'));
     }
