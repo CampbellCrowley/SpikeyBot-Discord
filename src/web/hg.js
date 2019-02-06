@@ -898,8 +898,11 @@ function HGWeb(hg) {
       return;
     }
     hg.createGame(gId);
-    if (typeof cb === 'function') cb();
-    socket.emit('message', 'Game created');
+    if (typeof cb === 'function') {
+      cb();
+    } else {
+      socket.emit('message', 'Game created');
+    }
     socket.emit('game', gId, hg.getGame(gId));
   }
   this.createGame = createGame;

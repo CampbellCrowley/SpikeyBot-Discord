@@ -30,7 +30,8 @@
     "./web/settings.js",
     "./web/webhooks.js",
     "./uno.js",
-    "./dev.js"
+    "./dev.js",
+    "./roleManager.js"
   ],
   "release": [
     "./hungryGames.js",
