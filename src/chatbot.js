@@ -190,7 +190,9 @@ function ChatBot() {
    */
   function onChatMessage(msg) {
     if (msg.guild && disabledChatBot[msg.guild.id]) return;
-    const perms = msg.channel.permissionsFor(self.client.user);
+    const perms =
+        (msg.channel.permissionsFor &&
+         msg.channel.permissionsFor(self.client.user));
     if (perms && !perms.has(self.Discord.Permissions.FLAGS.SEND_MESSAGES)) {
       return;
     }
