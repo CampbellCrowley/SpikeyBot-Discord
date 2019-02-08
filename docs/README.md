@@ -3041,6 +3041,7 @@ Hunger Games simulator.
         * [~lotsOfDeathRate](#HungryGames..lotsOfDeathRate) : <code>number</code> ℗
         * [~littleDeathRate](#HungryGames..littleDeathRate) : <code>number</code> ℗
         * [~defaultColor](#HungryGames..defaultColor) : <code>Discord~ColorResolveable</code> ℗
+        * [~patreonColor](#HungryGames..patreonColor) : <code>number</code> ℗
         * [~emoji](#HungryGames..emoji) : <code>Object.&lt;string&gt;</code> ℗
         * [~alph](#HungryGames..alph) : <code>string</code> ℗
         * [~multiEventUserDistribution](#HungryGames..multiEventUserDistribution) : <code>Object</code> ℗
@@ -3880,7 +3881,7 @@ to end. Used for checking of submoduleis unloadable.
 The permission tags for all settings related to the Hungry Games.
 
 **Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
-**Default**: <code>[&quot;hg:fun_translators&quot;,&quot;hg:customize_stats&quot;,&quot;hg:personal_weapon&quot;]</code>  
+**Default**: <code>[&quot;hg:fun_translators&quot;,&quot;hg:bar_color&quot;,&quot;hg:customize_stats&quot;,&quot;hg:personal_weapon&quot;]</code>  
 **Access**: private  
 <a name="HungryGames..saveFile"></a>
 
@@ -4051,6 +4052,14 @@ Default color to choose for embedded messages.
 
 **Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
 **Default**: <code>[200,125,0]</code>  
+**Access**: private  
+<a name="HungryGames..patreonColor"></a>
+
+### HungryGames~patreonColor : <code>number</code> ℗
+Color to put above patrons avatars. RGBA Hex (0xRRGGBBAA).
+
+**Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
+**Default**: <code>4184364287</code>  
 **Access**: private  
 <a name="HungryGames..emoji"></a>
 

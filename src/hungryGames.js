@@ -38,8 +38,12 @@ function HungryGames() {
    * @default
    * @type {string[]}
    */
-  const patreonSettingKeys =
-      ['hg:fun_translators', 'hg:customize_stats', 'hg:personal_weapon'];
+  const patreonSettingKeys = [
+    'hg:fun_translators',
+    'hg:bar_color',
+    'hg:customize_stats',
+    'hg:personal_weapon',
+  ];
   /**
    * The file path to save current state for a specific guild relative to
    * Common~guildSaveDir.
@@ -462,6 +466,16 @@ function HungryGames() {
    * @default
    */
   const defaultColor = [200, 125, 0];
+
+  /**
+   * Color to put above patrons avatars. RGBA Hex (0xRRGGBBAA).
+   *
+   * @private
+   * @type {number}
+   * @constant
+   * @default
+   */
+  const patreonColor = 0xF96854FF;
 
   /**
    * Helper object of emoji characters mapped to names.
@@ -1637,7 +1651,25 @@ function HungryGames() {
       if (err) {
         self.error(err);
       } else {
-        p.settings[setting] = info.status;
+        if (setting == 'hg:bar_color') {
+          let color;
+          if (info.status.match(/^0x[0-9A-Fa-f]{8}$/)) {
+            color = info.status * 1;
+          } else if (info.status.match(/^0x[0-9A-Fa-f]{6}$/)) {
+            // Color requires alpha value, but given is just rgb. Shift rgb,
+            // then set alpha.
+            color = ((info.status * 1) << 8) | 0xFF;
+          } else {
+            if (p.settings.isPatron) {
+              color = patreonColor;
+            } else {
+              color = 0x0;
+            }
+          }
+          p.settings[setting] = color;
+        } else {
+          p.settings[setting] = info.status;
+        }
       }
       if (permResponses === players.length &&
           settingRequests === settingResponses && cb) {
@@ -3960,7 +3992,7 @@ function HungryGames() {
       return {
         url: obj.avatarURL.replace(/\?size=[0-9]*/, '') + '?size=' + fetchSize,
         id: obj.id,
-        isPatron: obj.settings && obj.settings.isPatron,
+        settings: obj.settings,
       };
     });
   }
@@ -4020,14 +4052,14 @@ function HungryGames() {
                 iconGap,
             battleIconSize + underlineSize * 2);
         let responses = 0;
-        const newImage = function(image, outcome, placement, isPatron) {
+        const newImage = function(image, outcome, placement, barColor) {
           try {
             if (battleIconSize > 0) {
               image.resize(battleIconSize, battleIconSize);
               if (underlineSize > 0) {
-                if (isPatron) {
+                if (typeof barColor === 'number') {
                   finalImage.blit(
-                      new Jimp(battleIconSize, underlineSize, 0xF96854FF),
+                      new Jimp(battleIconSize, underlineSize, barColor),
                       placement * (battleIconSize + iconGap), 0);
                 }
                 if (outcome == 'dies') {
@@ -4082,12 +4114,14 @@ function HungryGames() {
           }
           readImage(events[index].attacks[battleState].icons[i].url)
               .then(
-                  function(outcome, placement, isPatron) {
+                  function(outcome, placement, settings) {
                     return function(image) {
-                      newImage(image, outcome, placement, isPatron);
+                      newImage(
+                          image, outcome, placement,
+                          settings && settings['hg:bar_color']);
                     };
                   }(outcome, i,
-                      events[index].attacks[battleState].icons[i].isPatron))
+                      events[index].attacks[battleState].icons[i].settings))
               .catch(function(err) {
                 self.error('Failed to read image');
                 console.log(err);
@@ -4128,14 +4162,14 @@ function HungryGames() {
             events[index].icons.length * (iconSize + iconGap) - iconGap,
             iconSize + underlineSize * 2);
         let responses = 0;
-        const newImage = function(image, outcome, placement, isPatron) {
+        const newImage = function(image, outcome, placement, barColor) {
           try {
             if (iconSize > 0) {
               image.resize(iconSize, iconSize);
               if (underlineSize > 0) {
-                if (isPatron) {
+                if (typeof barColor === 'number') {
                   finalImage.blit(
-                      new Jimp(iconSize, underlineSize, 0xF96854FF),
+                      new Jimp(iconSize, underlineSize, barColor),
                       placement * (iconSize + iconGap), 0);
                 }
                 if (outcome == 'dies') {
@@ -4194,12 +4228,14 @@ function HungryGames() {
           }
           readImage(events[index].icons[i].url)
               .then(
-                  function(outcome, placement, isPatron) {
+                  function(outcome, placement, settings) {
                     return function(image) {
-                      newImage(image, outcome, placement, isPatron);
+                      newImage(
+                          image, outcome, placement,
+                          settings && settings['hg:bar_color']);
                     };
                   }(outcome, events[index].icons.length - i - 1,
-                      events[index].icons[i].isPatron))
+                      events[index].icons[i].settings))
               .catch(function(err) {
                 self.error('Failed to read image');
                 console.log(err);
@@ -4484,9 +4520,12 @@ function HungryGames() {
                 } else if (user) {
                   color = 0x00FF00FF;
                 }
-                if (user && user.settings && user.settings.isPatron) {
+                if (user && user.settings &&
+                    typeof user.settings['hg:bar_color'] === 'number') {
                   finalImage.blit(
-                      new Jimp(victorIconSize, underlineSize, 0xF96854FF),
+                      new Jimp(
+                          victorIconSize, underlineSize,
+                          user.settings['hg:bar_color']),
                       responses * (victorIconSize + iconGap), 0);
                 }
                 finalImage.blit(

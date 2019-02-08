@@ -12,6 +12,11 @@
     "values": ["en-AU-F", "en-AU-M", "en-GB-F", "en-GB-M", "en-US-F", "en-US-M"],
     "default": "en-AU-M"
   },
+  "hg:bar_color": {
+    "title": "Hungry Games Avatar Bar Color",
+    "type": "color",
+    "default": "0x100000000"
+  },
   "hg:customize_stats": {
     "title": "Hungry Games Player Statistics",
     "type": "object",
