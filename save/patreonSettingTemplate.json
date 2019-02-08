@@ -1,11 +1,4 @@
 {
-  "hg:fun_translators": {
-    "title": "Hungry Games Message Translators",
-    "type": "select",
-    "values": ["disabled", "leet", "mocking", "superscript", "smallcaps"],
-    "hrValues": ["Disabled", "1337 5p34k", "MoCKiNg", "ˢᵘᵖᵉʳˢᶜʳᶦᵖᵗ", "sᴍᴀʟʟᴄᴀᴘs"],
-    "default": "disabled"
-  },
   "tts:all": {
     "title": "Text To Speech Language/Dialect",
     "type": "select",
@@ -16,6 +9,13 @@
     "title": "Hungry Games Avatar Bar Color",
     "type": "color",
     "default": "0x100000000"
+  },
+  "hg:fun_translators": {
+    "title": "Hungry Games Message Translators",
+    "type": "select",
+    "values": ["disabled", "leet", "mocking", "superscript", "smallcaps"],
+    "hrValues": ["Disabled", "1337 5p34k", "MoCKiNg", "ˢᵘᵖᵉʳˢᶜʳᶦᵖᵗ", "sᴍᴀʟʟᴄᴀᴘs"],
+    "default": "disabled"
   },
   "hg:customize_stats": {
     "title": "Hungry Games Player Statistics",
