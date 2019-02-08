@@ -4754,6 +4754,7 @@ function HungryGames() {
       offline: ['offline'],
       idle: ['idle', 'away', 'snooze', 'snoozed'],
       dnd: ['dnd', 'busy'],
+      bots: ['bot', 'bots'],
     };
     let resPrefix = '';
     let resPostfix = ' have been removed from the games.';
@@ -4776,6 +4777,10 @@ function HungryGames() {
     } else if (specialWords.dnd.includes(firstWord)) {
       response = self.excludeUsers('dnd', id);
       resPrefix = 'All DND users';
+    } else if (specialWords.bots.includes(firstWord)) {
+      response = self.setOption(id, 'includeBots', false);
+      resPrefix = 'Bots';
+      resPostfix = ' are now blocked from the games.';
     } else if (msg.mentions.users.size + msg.softMentions.users.size == 0) {
       self.common.reply(
           msg,
@@ -4904,6 +4909,7 @@ function HungryGames() {
       offline: ['offline'],
       idle: ['idle', 'away', 'snooze', 'snoozed'],
       dnd: ['dnd', 'busy'],
+      bots: ['bot', 'bots'],
     };
     let resPrefix = '';
     let resPostfix = ' have been added to the games.';
@@ -4926,6 +4932,10 @@ function HungryGames() {
     } else if (specialWords.dnd.includes(firstWord)) {
       response = self.includeUsers('dnd', id);
       resPrefix = 'All DND users';
+    } else if (specialWords.bots.includes(firstWord)) {
+      response = self.setOption(id, 'includeBots', true);
+      resPrefix = 'Bots';
+      resPostfix = ' can now be added to the games.';
     } else if (msg.mentions.users.size + msg.softMentions.users.size == 0) {
       self.common.reply(
           msg,
@@ -5220,10 +5230,6 @@ function HungryGames() {
     }
     if (typeof option === 'undefined' || option.length == 0) {
       return null;
-      /* } else if (find(id).currentGame.inProgress) {
-        return 'You must end this game before changing settings. Use "' +
-            self.bot.getPrefix(id) + self.postPrefix + 'end" to abort this
-        game.'; */
     } else if (typeof defaultOptions[option] === 'undefined') {
       const searchedOption = defaultOptSearcher.search(option);
       if (typeof defaultOptions[searchedOption] === 'undefined') {
