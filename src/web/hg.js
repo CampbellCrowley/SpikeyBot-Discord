@@ -806,14 +806,14 @@ function HGWeb(hg) {
       replyNoPerm(socket, 'excludeMember');
       return;
     }
+    let out;
     if (mId === 'everyone' || mId === 'online' || mId == 'offline' ||
         mId == 'dnd' || mId == 'idle') {
-      socket.emit('message', hg.excludeUsers(mId, gId));
+      out = hg.excludeUsers(mId, gId);
     } else {
-      socket.emit('message', hg.excludeUsers([mId], gId));
+      out = hg.excludeUsers([mId], gId);
     }
-    if (typeof cb === 'function') cb();
-    // socket.emit('game', gId, hg.getGame(gId));
+    if (typeof cb === 'function') cb(out);
   }
   this.excludeMember = excludeMember;
   /**
@@ -836,13 +836,14 @@ function HGWeb(hg) {
       replyNoPerm(socket, 'includeMember');
       return;
     }
+    let out;
     if (mId === 'everyone' || mId === 'online' || mId == 'offline' ||
         mId == 'dnd' || mId == 'idle') {
-      socket.emit('message', hg.includeUsers(mId, gId));
+      out = hg.includeUsers(mId, gId);
     } else {
-      socket.emit('message', hg.includeUsers([mId], gId));
+      out = hg.includeUsers([mId], gId);
     }
-    if (typeof cb === 'function') cb();
+    if (typeof cb === 'function') cb(out);
     // socket.emit('game', gId, hg.getGame(gId));
   }
   this.includeMember = includeMember;
