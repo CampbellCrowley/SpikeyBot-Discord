@@ -36,8 +36,8 @@
             },
             {
               "description": "Change a Percentage Option",
-              "command": "opt probabilityOfResurrect 0.1",
-              "result": "The probability of resurrection will be set to 10%."
+              "command": "opt probabilityOfArenaEvent 0.1",
+              "result": "The probability of an arena event will be set to 10%."
             },
             {
               "description": "Change a Object Option",
