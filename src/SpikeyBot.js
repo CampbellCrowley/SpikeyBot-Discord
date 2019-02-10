@@ -708,6 +708,8 @@ function SpikeyBot() {
         '^(\\[ws\\] \\[connection\\] Heartbeat acknowledged|' +
         '\\[connection\\] \\[shard \\d\\] Sending a heartbeat|' +
         '\\[connection\\] \\[shard \\d\\] Heartbeat acknowledged, latency of|' +
+        '\\[Shard \\d+\\] Sending a heartbeat|' +
+        '\\[Shard \\d+\\] Heartbeat acknowledged, latency of|' +
         '\\[ws\\] \\[connection\\] Sending a heartbeat)');
     if (info.match(hbRegex)) {
       return;
