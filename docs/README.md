@@ -9475,7 +9475,11 @@ Creates a safe environment to run untrusted scripts.
         * [~execArgs](#Sandbox..execArgs) : <code>Object</code> ℗
         * [~sandboxCommand](#Sandbox..sandboxCommand) : <code>string</code> ℗
         * [~jsCommand](#Sandbox..jsCommand) : <code>string</code> ℗
+        * [~pyCommand](#Sandbox..pyCommand) : <code>string</code> ℗
+        * [~py3Command](#Sandbox..py3Command) : <code>string</code> ℗
         * [~commandJS(msg)](#Sandbox..commandJS) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~commandPython(msg)](#Sandbox..commandPython) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~commandPython3(msg)](#Sandbox..commandPython3) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~scriptEnd(msg, err, stdout, stderr)](#Sandbox..scriptEnd) ℗
 
 <a name="SubModule+helpMessage"></a>
@@ -9689,10 +9693,50 @@ The command to run in the sandbox to run JavaScript.
 **Kind**: inner constant of [<code>Sandbox</code>](#Sandbox)  
 **Default**: <code>&quot;SBnode&quot;</code>  
 **Access**: private  
+<a name="Sandbox..pyCommand"></a>
+
+### Sandbox~pyCommand : <code>string</code> ℗
+The command to run in the sandbox to run Python2.7.
+
+**Kind**: inner constant of [<code>Sandbox</code>](#Sandbox)  
+**Default**: <code>&quot;SBpython&quot;</code>  
+**Access**: private  
+<a name="Sandbox..py3Command"></a>
+
+### Sandbox~py3Command : <code>string</code> ℗
+The command to run in the sandbox to run Python3.
+
+**Kind**: inner constant of [<code>Sandbox</code>](#Sandbox)  
+**Default**: <code>&quot;SBpython3&quot;</code>  
+**Access**: private  
 <a name="Sandbox..commandJS"></a>
 
 ### Sandbox~commandJS(msg) : [<code>commandHandler</code>](#commandHandler) ℗
 Run JavaScript code in a sandbox, then show user outcome.
+
+**Kind**: inner method of [<code>Sandbox</code>](#Sandbox)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Sandbox..commandPython"></a>
+
+### Sandbox~commandPython(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Run Python2.7 code in a sandbox, then show user outcome.
+
+**Kind**: inner method of [<code>Sandbox</code>](#Sandbox)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Sandbox..commandPython3"></a>
+
+### Sandbox~commandPython3(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Run Python3 code in a sandbox, then show user outcome.
 
 **Kind**: inner method of [<code>Sandbox</code>](#Sandbox)  
 **Access**: private  

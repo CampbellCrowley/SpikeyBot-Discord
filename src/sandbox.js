@@ -13,10 +13,14 @@ function Sandbox() {
   /** @inheritdoc */
   this.initialize = function() {
     self.command.on('js', commandJS);
+    self.command.on(['py', 'python'], commandPython);
+    self.command.on(['py3', 'python3'], commandPython3);
   };
   /** @inheritdoc */
   this.shutdown = function() {
     self.command.removeListener('js');
+    self.command.removeListener('py');
+    self.command.removeListener('py3');
   };
 
   /**
@@ -48,6 +52,22 @@ function Sandbox() {
    * @type {string}
    */
   const jsCommand = 'SBnode';
+  /**
+   * The command to run in the sandbox to run Python2.7.
+   * @private
+   * @default
+   * @constant
+   * @type {string}
+   */
+  const pyCommand = 'SBpython';
+  /**
+   * The command to run in the sandbox to run Python3.
+   * @private
+   * @default
+   * @constant
+   * @type {string}
+   */
+  const py3Command = 'SBpython3';
 
   /**
    * Run JavaScript code in a sandbox, then show user outcome.
@@ -59,6 +79,42 @@ function Sandbox() {
    */
   function commandJS(msg) {
     const cmd = `${sandboxCommand}${jsCommand}`;
+    msg.channel.startTyping();
+    const p = childProcess.exec(cmd, execArgs, (...args) => {
+      scriptEnd(msg, ...args);
+    });
+    p.stdin.write(msg.text);
+    p.stdin.end();
+  }
+
+  /**
+   * Run Python2.7 code in a sandbox, then show user outcome.
+   *
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens Command#py
+   */
+  function commandPython(msg) {
+    const cmd = `${sandboxCommand}${pyCommand}`;
+    msg.channel.startTyping();
+    const p = childProcess.exec(cmd, execArgs, (...args) => {
+      scriptEnd(msg, ...args);
+    });
+    p.stdin.write(msg.text);
+    p.stdin.end();
+  }
+
+  /**
+   * Run Python3 code in a sandbox, then show user outcome.
+   *
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens Command#py
+   */
+  function commandPython3(msg) {
+    const cmd = `${sandboxCommand}${py3Command}`;
     msg.channel.startTyping();
     const p = childProcess.exec(cmd, execArgs, (...args) => {
       scriptEnd(msg, ...args);
