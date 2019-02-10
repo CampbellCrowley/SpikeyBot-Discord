@@ -21,6 +21,8 @@ function unhandledRejection(...args) {
   if (args[0] && args[0].name == 'DiscordAPIError') {
     const e = args[0];
     console.log(`${e.name}: ${e.message} ${e.code} (${e.path})`);
+  } else if (args[0] && args[0].message == 'No Perms') {
+    console.log(args[0]);
   } else {
     console.log(...args);
   }

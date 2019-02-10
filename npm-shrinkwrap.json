@@ -417,9 +417,9 @@
       }
     },
     "acorn": {
-      "version": "6.0.7",
-      "resolved": "https://registry.npmjs.org/acorn/-/acorn-6.0.7.tgz",
-      "integrity": "sha512-HNJNgE60C9eOTgn974Tlp3dpLZdUr+SoxxDwPaY9J/kDNOLQTkaDgwBUXAF4SSsrAwD9RpdxuHK/EbuF+W9Ahw==",
+      "version": "6.1.0",
+      "resolved": "https://registry.npmjs.org/acorn/-/acorn-6.1.0.tgz",
+      "integrity": "sha512-MW/FjM+IvU9CgBzjO3UIPCE2pyEwUsoFl+VGdczOPEdxfGFjuKny/gN54mOuX7Qxmb9Rg9MCn2oKiSUeW+pjrw==",
       "dev": true
     },
     "acorn-jsx": {
@@ -1155,7 +1155,7 @@
       "dev": true
     },
     "discord.js": {
-      "version": "github:discordjs/discord.js#f826c9c75e976a8dca3fb4c88c130a1e12147a80",
+      "version": "github:discordjs/discord.js#aab3523fb5b60d21d20cbf2be01c32bdf21aa8ae",
       "from": "github:discordjs/discord.js",
       "requires": {
         "form-data": "^2.3.2",
