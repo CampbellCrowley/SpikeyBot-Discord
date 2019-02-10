@@ -1,9 +1,8 @@
 # Commands Help
-## Command Settings
-## Cleanup and Users
 # Admin Commands
 #### Commands only admins are usually able to do.
 ***
+## Cleanup and Users
 
 | Command | Description | Aliases |
 | --- | --- | --- |
@@ -15,6 +14,7 @@
 | ?togglerigged | Turn on or off showing the number of times 'rigged' has been said. |  |
 | ?togglechatbot | Turn on or off the Chatbot features (@'ing the bot causing it to reply). |  |
 
+## Command Settings
 
 | Command | Description | Aliases |
 | --- | --- | --- |
@@ -24,15 +24,10 @@
 | ?reset | Reset all enabled and disabled commands to default settings. |  |
 | ?changeprefix | Set a custom prefix for all commands on the current server. |  |
 
-## Admin Control
-## Time Control
-## Events
-## Team Settings
-## Player Settings
-## Game Settings
 # Hungry Games
 #### Use https://www.spikeybot.com/hg/ if commands are too hard.
 ***
+## Game Settings
 
 | Command | Description | Aliases |
 | --- | --- | --- |
@@ -41,6 +36,7 @@
 | ?hg rename | Rename the game to your own custom name. The default is "{SERVER NAME}'s Hungry Games". The custom name must be 100 characters or fewer. | rename, name |
 | ?hg reset | Delete data about the Games. Don't choose an option for more info. | reset, clear |
 
+## Player Settings
 
 | Command | Description | Aliases |
 | --- | --- | --- |
@@ -48,6 +44,7 @@
 | ?hg exclude | Prevent someone from being added to the next game. | exclude, remove, exc, ex |
 | ?hg include | Add a person back into the next game. | include, add, inc, in |
 
+## Team Settings
 
 | Command | Description | Aliases |
 | --- | --- | --- |
@@ -57,6 +54,7 @@
 | ?hg teams randomize | Randomize who is on what team. | randomize, shuffle |
 | ?hg teams reset | Delete all teams and start over. |  |
 
+## Events
 
 | Command | Description | Aliases |
 | --- | --- | --- |
@@ -64,6 +62,7 @@
 | ?hg events add | Begins process of adding a custom event. Not all event types can be created yet due to the complications of making a UI. The HG Webview page can be much easier to use, and supports more types. | add, create |
 | ?hg events remove | Remove a custom event. The number is the number shown in the list of events. | remove, delete |
 
+## Time Control
 
 | Command | Description | Aliases |
 | --- | --- | --- |
@@ -73,6 +72,7 @@
 | ?hg pause | Pause the game and immediately stop sending messages without ending the game entirely. |  |
 | ?hg next | Simulate the next day of the Games! | next, nextday, resume |
 
+## Admin Control
 
 | Command | Description | Aliases |
 | --- | --- | --- |
@@ -80,18 +80,13 @@
 | ?hg wound | This will cause players to end the current or next day as wounded. | wound, hurt, damage, stab, punch, slap, injure |
 | ?hg heal | This will cause players to end the current or next day as alive and fully healed. | heal, revive, thrive, resurrect, restore |
 
-## Patreon
-## Math
-## Random
-## Games
-## Polls and Voting
-## General
 # Main Commands
 #### Here's the list of stuff I can do!
 PM SpikeyRobot (?pmspikey) or join [my Discord server](https://discord.gg/ZbKfYSQ) for questions or just to say hi!
 See [spikeybot.com](https://www.spikeybot.com/) for examples and more information.
 
 ***
+## General
 
 | Command | Description | Aliases |
 | --- | --- | --- |
@@ -108,12 +103,14 @@ See [spikeybot.com](https://www.spikeybot.com/) for examples and more informatio
 | ?schedule | Schedule a command to be run after a certain amount of time. | sch, sched, schedule, scheduled |
 | ?stats | Displays statistics about the bot and the servers it's on. |  |
 
+## Polls and Voting
 
 | Command | Description | Aliases |
 | --- | --- | --- |
 | ?poll | Start a poll or vote in the chat. Each user may only have 1 poll at a time. | poll, vote |
 | ?endpoll | End a poll that you created. | endpoll, endvote |
 
+## Games
 
 | Command | Description |
 | --- | --- |
@@ -121,12 +118,14 @@ See [spikeybot.com](https://www.spikeybot.com/) for examples and more informatio
 | ?tictactoe | Play a game of Tic Tac Toe with someone! (Mention someone to challenge them) |
 | ?connect4 | Start a game of Connect 4 against someone! (Mention someone to challenge them) |
 
+## Random
 
 | Command | Description | Aliases |
 | --- | --- | --- |
 | ?flip | I have an unlimited supply of coins! I will flip one for you! |  |
 | ?roll | Roll dice with any number of sides. Separate multiple numbers with spaces to roll multiple dice. | roll, dice, die, d |
 
+## Math
 
 | Command | Description | Aliases |
 | --- | --- | --- |
@@ -137,17 +136,17 @@ See [spikeybot.com](https://www.spikeybot.com/) for examples and more informatio
 | ?derive | Find dy/dx of an equation. |  |
 | ?graph | Graph an equation, Maxes and mins are all optional, but brackets are required. |  |
 
+## Patreon
 
 | Command | Description | Aliases |
 | --- | --- | --- |
 | ?patreon | Check your current Patreon status, or get information on how to become a patron. |  |
 | ?tts | Using Google's text-to-speech engine, make the bot say something in your voice channel. | tts, speak |
 
-## Voice Channel
-## Music
 # Music and Voice
 #### Music and voice channel related commands.
 ***
+## Music
 
 | Command | Description | Aliases |
 | --- | --- | --- |
@@ -162,6 +161,7 @@ See [spikeybot.com](https://www.spikeybot.com/) for examples and more informatio
 | ?lyrics | Search for song lyrics. |  |
 | ?spotify | Attempt to lookup what the mentioned user is listening to on Spotify, and then play it. The account to lookup must have connected their account at https://www.spikeybot.com/account/. |  |
 
+## Voice Channel
 
 | Command | Description | Aliases |
 | --- | --- | --- |

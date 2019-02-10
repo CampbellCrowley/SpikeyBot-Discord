@@ -1,8 +1,7 @@
-## Voice Channel
-## Music
 # Music and Voice
 #### Music and voice channel related commands.
 ***
+## Music
 
 | Command | Description | Aliases |
 | --- | --- | --- |
@@ -17,6 +16,7 @@
 | ?lyrics | Search for song lyrics. |  |
 | ?spotify | Attempt to lookup what the mentioned user is listening to on Spotify, and then play it. The account to lookup must have connected their account at https://www.spikeybot.com/account/. |  |
 
+## Voice Channel
 
 | Command | Description | Aliases |
 | --- | --- | --- |

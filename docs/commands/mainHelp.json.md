@@ -1,15 +1,10 @@
-## Patreon
-## Math
-## Random
-## Games
-## Polls and Voting
-## General
 # Main Commands
 #### Here's the list of stuff I can do!
 PM SpikeyRobot (?pmspikey) or join [my Discord server](https://discord.gg/ZbKfYSQ) for questions or just to say hi!
 See [spikeybot.com](https://www.spikeybot.com/) for examples and more information.
 
 ***
+## General
 
 | Command | Description | Aliases |
 | --- | --- | --- |
@@ -26,12 +21,14 @@ See [spikeybot.com](https://www.spikeybot.com/) for examples and more informatio
 | ?schedule | Schedule a command to be run after a certain amount of time. | sch, sched, schedule, scheduled |
 | ?stats | Displays statistics about the bot and the servers it's on. |  |
 
+## Polls and Voting
 
 | Command | Description | Aliases |
 | --- | --- | --- |
 | ?poll | Start a poll or vote in the chat. Each user may only have 1 poll at a time. | poll, vote |
 | ?endpoll | End a poll that you created. | endpoll, endvote |
 
+## Games
 
 | Command | Description |
 | --- | --- |
@@ -39,12 +36,14 @@ See [spikeybot.com](https://www.spikeybot.com/) for examples and more informatio
 | ?tictactoe | Play a game of Tic Tac Toe with someone! (Mention someone to challenge them) |
 | ?connect4 | Start a game of Connect 4 against someone! (Mention someone to challenge them) |
 
+## Random
 
 | Command | Description | Aliases |
 | --- | --- | --- |
 | ?flip | I have an unlimited supply of coins! I will flip one for you! |  |
 | ?roll | Roll dice with any number of sides. Separate multiple numbers with spaces to roll multiple dice. | roll, dice, die, d |
 
+## Math
 
 | Command | Description | Aliases |
 | --- | --- | --- |
@@ -55,6 +54,7 @@ See [spikeybot.com](https://www.spikeybot.com/) for examples and more informatio
 | ?derive | Find dy/dx of an equation. |  |
 | ?graph | Graph an equation, Maxes and mins are all optional, but brackets are required. |  |
 
+## Patreon
 
 | Command | Description | Aliases |
 | --- | --- | --- |

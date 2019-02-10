@@ -1,8 +1,7 @@
-## Command Settings
-## Cleanup and Users
 # Admin Commands
 #### Commands only admins are usually able to do.
 ***
+## Cleanup and Users
 
 | Command | Description | Aliases |
 | --- | --- | --- |
@@ -14,6 +13,7 @@
 | ?togglerigged | Turn on or off showing the number of times 'rigged' has been said. |  |
 | ?togglechatbot | Turn on or off the Chatbot features (@'ing the bot causing it to reply). |  |
 
+## Command Settings
 
 | Command | Description | Aliases |
 | --- | --- | --- |

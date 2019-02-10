@@ -1,12 +1,7 @@
-## Admin Control
-## Time Control
-## Events
-## Team Settings
-## Player Settings
-## Game Settings
 # Hungry Games
 #### Use https://www.spikeybot.com/hg/ if commands are too hard.
 ***
+## Game Settings
 
 | Command | Description | Aliases |
 | --- | --- | --- |
@@ -15,6 +10,7 @@
 | ?hg rename | Rename the game to your own custom name. The default is "{SERVER NAME}'s Hungry Games". The custom name must be 100 characters or fewer. | rename, name |
 | ?hg reset | Delete data about the Games. Don't choose an option for more info. | reset, clear |
 
+## Player Settings
 
 | Command | Description | Aliases |
 | --- | --- | --- |
@@ -22,6 +18,7 @@
 | ?hg exclude | Prevent someone from being added to the next game. | exclude, remove, exc, ex |
 | ?hg include | Add a person back into the next game. | include, add, inc, in |
 
+## Team Settings
 
 | Command | Description | Aliases |
 | --- | --- | --- |
@@ -31,6 +28,7 @@
 | ?hg teams randomize | Randomize who is on what team. | randomize, shuffle |
 | ?hg teams reset | Delete all teams and start over. |  |
 
+## Events
 
 | Command | Description | Aliases |
 | --- | --- | --- |
@@ -38,6 +36,7 @@
 | ?hg events add | Begins process of adding a custom event. Not all event types can be created yet due to the complications of making a UI. The HG Webview page can be much easier to use, and supports more types. | add, create |
 | ?hg events remove | Remove a custom event. The number is the number shown in the list of events. | remove, delete |
 
+## Time Control
 
 | Command | Description | Aliases |
 | --- | --- | --- |
@@ -47,6 +46,7 @@
 | ?hg pause | Pause the game and immediately stop sending messages without ending the game entirely. |  |
 | ?hg next | Simulate the next day of the Games! | next, nextday, resume |
 
+## Admin Control
 
 | Command | Description | Aliases |
 | --- | --- | --- |

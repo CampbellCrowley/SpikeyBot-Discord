@@ -50,7 +50,7 @@ function objToMd(file) {
   for (const i in file.sections) {
     const sec = file.sections[i];
     if (sec.title) {
-      text = '## ' + repTags(sec.title) + '\n' + text;
+      text += '## ' + repTags(sec.title) + '\n';
     }
 
     const hasAliases = sec.rows.find(function(row) {
