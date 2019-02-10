@@ -8,8 +8,7 @@ const basicAuth = 'Basic ' +
     (auth.commandUsername + ':' + auth.commandPassword).toString('base64');
 
 /**
- * @classdesc Handles sending the bot's stats to http client requests, and
- * discordbots.org.
+ * @classdesc Handles receiving webhooks requests from external services.
  * @class
  * @augments SubModule
  */

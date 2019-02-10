@@ -97,8 +97,7 @@ channel.</p>
 discordbots.org.</p>
 </dd>
 <dt><a href="#WebCommands">WebCommands</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
-<dd><p>Handles sending the bot&#39;s stats to http client requests, and
-discordbots.org.</p>
+<dd><p>Handles receiving webhooks requests from external services.</p>
 </dd>
 </dl>
 
@@ -15728,8 +15727,7 @@ Send the request after we have fetched our stats.
 <a name="WebCommands"></a>
 
 ## WebCommands ⇐ [<code>SubModule</code>](#SubModule)
-Handles sending the bot's stats to http client requests, and
-discordbots.org.
+Handles receiving webhooks requests from external services.
 
 **Kind**: global class  
 **Extends**: [<code>SubModule</code>](#SubModule)  
