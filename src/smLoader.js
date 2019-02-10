@@ -684,7 +684,8 @@ function SMLoader() {
         self.common
             .reply(
                 msg, helpmessagereply,
-                'Tip: https://www.spikeybot.com also has more information.')
+                'Tip: https://www.spikeybot.com/help/ also has more ' +
+                    'information.')
             .catch((err) => {
               self.error(
                   'Unable to reply to help command in channel: ' +
