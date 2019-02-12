@@ -1356,9 +1356,7 @@ function Command() {
       const tmp = [];
       let obj;
       if (el[1].defaultDisabled) {
-        tmp.push(
-            '`' + el[0] + (el[1].options.isMuted ? '#' : '') +
-            '` allowed with:');
+        tmp.push('`' + el[0] + (el[1].isMuted ? '#' : '') + '` allowed with:');
         if (el[1].permissions) {
           tmp.push(
               new self.Discord.Permissions(el[1].permissions)
@@ -1367,9 +1365,7 @@ function Command() {
         }
         obj = el[1].enabled;
       } else {
-        tmp.push(
-            '`' + el[0] + (el[1].options.isMuted ? '#' : '') +
-            '` blocked for:');
+        tmp.push('`' + el[0] + (el[1].isMuted ? '#' : '') + '` blocked for:');
         obj = el[1].disabled;
       }
       const channels = Object.keys(obj.channels);
