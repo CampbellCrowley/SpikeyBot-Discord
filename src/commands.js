@@ -823,7 +823,7 @@ function Command() {
     }
     cmd = split.splice(0, 1)[0];
     if (!cmd) return null;
-    if (cmd.startsWith(msg.prefix)) cmd = cmd.replace(msg.prefix, '');
+    if (msg && cmd.startsWith(msg.prefix)) cmd = cmd.replace(msg.prefix, '');
     cmd = cmd.toLowerCase();
     let single = Object.values(cmds).find((el) => {
       return el.aliases.includes(cmd);
