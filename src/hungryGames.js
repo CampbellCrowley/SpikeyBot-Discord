@@ -2434,19 +2434,31 @@ function HungryGames() {
   function nextDay(msg, id, retry = true) {
     if (!find(id) || !find(id).currentGame ||
         !find(id).currentGame.inProgress) {
-      self.common.reply(
-          msg, 'You must start a game first! Use "' + msg.prefix +
-              self.postPrefix + 'start" to start a game!');
+      self.common
+          .reply(
+              msg, 'You must start a game first! Use "' + msg.prefix +
+                  self.postPrefix + 'start" to start a game!')
+          .catch((err) => {
+            self.error('Failed to tell user to start game: ' + err.message);
+            if (err.message != 'No Perms') console.error(err);
+          });
       return;
     }
     if (find(id).currentGame.day.state !== 0) {
       if (dayEventIntervals[id]) {
         self.common.reply(msg, 'Already simulating day.');
       } else if (find(id).currentGame.day.state == 1) {
-        self.common.reply(
-            msg,
-            'I think I\'m already simulating... if this isn\'t true this ' +
-                'game has crashed and you must end the game.');
+        self.common
+            .reply(
+                msg,
+                'I think I\'m already simulating... if this isn\'t true this ' +
+                    'game has crashed and you must end the game.')
+            .catch((err) => {
+              self.error(
+                  'Failed to tell user day is already in progress: ' +
+                  err.message);
+              if (err.message != 'No Perms') console.error(err);
+            });
       } else {
         find(id).currentGame.isPaused = false;
         printEvent(msg, id);
