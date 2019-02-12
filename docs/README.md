@@ -1187,6 +1187,7 @@ normal submodule, and is treated differently in the SpikeyBot class.
             * [.disabled](#Command..CommandSetting+disabled) : <code>Object</code>
             * [.enabled](#Command..CommandSetting+enabled) : <code>Object</code>
             * [.permissions](#Command..CommandSetting+permissions) : <code>number</code>
+            * [.isMuted](#Command..CommandSetting+isMuted) : <code>boolean</code> ℗
             * [.set(value, type, id, [id2])](#Command..CommandSetting+set)
             * [.isDisabled(msg)](#Command..CommandSetting+isDisabled) ⇒ <code>number</code>
                 * [~findMatch(search, data)](#Command..CommandSetting+isDisabled..findMatch) ⇒ <code>number</code> ℗
@@ -1198,6 +1199,8 @@ normal submodule, and is treated differently in the SpikeyBot class.
         * [~commandSettingsFile](#Command..commandSettingsFile) : <code>string</code> ℗
         * [~commandDisable(msg)](#Command..commandDisable) : <code>Command~commandHandler</code> ℗
         * [~commandEnable(msg)](#Command..commandEnable) : <code>Command~commandHandler</code> ℗
+        * [~commandBlockCmd(msg)](#Command..commandBlockCmd) : <code>Command~commandHandler</code> ℗
+        * [~commandAllowCmd(msg)](#Command..commandAllowCmd) : <code>Command~commandHandler</code> ℗
         * [~commandShow(msg)](#Command..commandShow) : <code>Command~commandHandler</code> ℗
         * [~commandReset(msg)](#Command..commandReset) : <code>Command~commandHandler</code> ℗
 
@@ -1730,6 +1733,7 @@ Stores all settings related to a command.
     * [.disabled](#Command..CommandSetting+disabled) : <code>Object</code>
     * [.enabled](#Command..CommandSetting+enabled) : <code>Object</code>
     * [.permissions](#Command..CommandSetting+permissions) : <code>number</code>
+    * [.isMuted](#Command..CommandSetting+isMuted) : <code>boolean</code> ℗
     * [.set(value, type, id, [id2])](#Command..CommandSetting+set)
     * [.isDisabled(msg)](#Command..CommandSetting+isDisabled) ⇒ <code>number</code>
         * [~findMatch(search, data)](#Command..CommandSetting+isDisabled..findMatch) ⇒ <code>number</code> ℗
@@ -1797,6 +1801,14 @@ run this command. Same bitfield used by Discord~Permissions.
 **Kind**: instance property of [<code>CommandSetting</code>](#Command..CommandSetting)  
 **Default**: <code>0</code>  
 **Access**: public  
+<a name="Command..CommandSetting+isMuted"></a>
+
+#### commandSetting.isMuted : <code>boolean</code> ℗
+Will this command be completely silenced so that no output will be sent.
+Only applicable when command is disabled.
+
+**Kind**: instance property of [<code>CommandSetting</code>](#Command..CommandSetting)  
+**Access**: private  
 <a name="Command..CommandSetting+set"></a>
 
 #### commandSetting.set(value, type, id, [id2])
@@ -1906,6 +1918,30 @@ Allow user to disable a command.
 
 ### Command~commandEnable(msg) : <code>Command~commandHandler</code> ℗
 Allow user to enable a command.
+
+**Kind**: inner method of [<code>Command</code>](#Command)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message the user sent that triggered this. |
+
+<a name="Command..commandBlockCmd"></a>
+
+### Command~commandBlockCmd(msg) : <code>Command~commandHandler</code> ℗
+Allow user to mute a command.
+
+**Kind**: inner method of [<code>Command</code>](#Command)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message the user sent that triggered this. |
+
+<a name="Command..commandAllowCmd"></a>
+
+### Command~commandAllowCmd(msg) : <code>Command~commandHandler</code> ℗
+Allow user to unmute a command.
 
 **Kind**: inner method of [<code>Command</code>](#Command)  
 **Access**: private  

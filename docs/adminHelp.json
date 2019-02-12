@@ -172,6 +172,52 @@
           ]
         },
         {
+          "command": "mutecmd",
+          "description": "Hide messages that tell users they don't have permission to use a command.",
+          "aliases": "mutecmd, blockcmd, supresscmd",
+          "validOnlyInGuild": true,
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "mutecmd say",
+              "result": "When a user who does not have permission to use the say command attempts to use this command, the bot will completely ignore them and not provide any error message informing the user that they lack the required permissions."
+            },
+            {
+              "description": "Multiple commands",
+              "command": "mutecmd hg start",
+              "result": "Command matching works the same way as `enable` and `disable` commands. This will mute both `hg` and `hg start` commands."
+            },
+            {
+              "description": "All commands",
+              "command": "mutecmd * * *",
+              "result": "Wildcards work the same way as `enable` and `disable` commands. This will mute all commands."
+            }
+          ]
+        },
+        {
+          "command": "unmutecmd",
+          "description": "Un-hide messages that tell users they don't have permission to use a command.",
+          "aliases": "unmutecmd, allowcmd",
+          "validOnlyInGuild": true,
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "unmutecmd say",
+              "result": "When a user who does not have permission to use the say command attempts to use this command, the bot will provide an error message informing the user that they lack the required permissions."
+            },
+            {
+              "description": "Multiple commands",
+              "command": "unmutecmd hg start",
+              "result": "Command matching works the same way as `enable` and `disable` commands. This will unmute both `hg` and `hg start` commands."
+            },
+            {
+              "description": "All commands",
+              "command": "unmutecmd * * *",
+              "result": "Wildcards work the same way as `enable` and `disable` commands. This will unmute all commands."
+            }
+          ]
+        },
+        {
           "command": "show",
           "description": "Show all current enabled and disabled command settings.",
           "aliases": "show, enabled, disabled, showenabled, showdisabled",

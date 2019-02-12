@@ -62,6 +62,13 @@ function Command() {
     self.on(new SingleCommand(['enable'], commandEnable, cmdSettings));
     self.on(
         new SingleCommand(
+            ['mutecmd', 'blockcmd', 'suppresscmd'], commandBlockCmd,
+            cmdSettings));
+    self.on(
+        new SingleCommand(
+            ['unmutecmd', 'allowcmd'], commandAllowCmd, cmdSettings));
+    self.on(
+        new SingleCommand(
             [
               'show', 'enabled', 'disabled', 'showenabled', 'showdisabled',
               'settings', 'commands', 'permissions',
@@ -71,7 +78,8 @@ function Command() {
   };
   /** @inheritdoc */
   this.shutdown = function() {
-    self.removeListener(['disable', 'enable', 'show', 'reset']);
+    self.removeListener(
+        ['disable', 'enable', 'show', 'reset', 'mutecmd', 'allowcmd']);
   };
   /** @inheritdoc */
   this.save = function(opt) {
@@ -451,6 +459,15 @@ function Command() {
     }
 
     /**
+     * Will this command be completely silenced so that no output will be sent.
+     * Only applicable when command is disabled.
+     * @private
+     * @type {boolean}
+     * @default
+     */
+    this.isMuted = opts.isMuted || false;
+
+    /**
      * Enable, disable, or neutralize this command for the associated guild,
      * channel, user, or role.
      * @public
@@ -613,11 +630,13 @@ function Command() {
      */
     this.toJSON = function() {
       return {
+        guildId: me.myGuild,
         validOnlyInGuild: me.validOnlyInGuild,
         defaultDisabled: me.defaultDisabled,
         disabled: me.disabled,
         enabled: me.enabled,
         permissions: me.permissions,
+        isMuted: me.isMuted,
       };
     };
   }
@@ -696,21 +715,26 @@ function Command() {
     const func = self.find(override, msg, true);
     if (func) {
       const failure = self.validate(override, msg, func);
-      if (failure === 'Guild Only') {
+      if (failure && failure.endsWith('Muted')) {
+        return true;
+      } else if (failure === 'Guild Only') {
         self.common.reply(msg, onlyservermessage);
         return true;
       } else if (failure === 'Disabled') {
-        self.common.reply(msg, 'This command has not been enabled for you.');
+        self.common.reply(
+            msg, 'This command has not been enabled for you here.');
         return true;
       } else if (failure === 'Disabled Individual') {
-        self.common.reply(msg, 'You do not have permission for this command.');
+        self.common.reply(
+            msg, 'You do not have permission for this command here.');
         return true;
       } else if (failure === 'User Disabled') {
-        self.common.reply(msg, 'This command has been disabled by an admin.');
+        self.common.reply(
+            msg, 'This command has been disabled by an admin here.');
         return true;
       } else if (failure === 'User Disabled Individual') {
         self.common.reply(
-            msg, 'An admin has prevented you from using this command.');
+            msg, 'An admin has prevented you from using this command here.');
         return true;
       } else if (failure) {
         if (failure.startsWith('NoPerm:')) {
@@ -920,16 +944,19 @@ function Command() {
           if (commandValues) {
             const isDisabled = commandValues.isDisabled(msg);
             if (!isDisabled) return null;
+            const suffix = commandValues.isMuted ? ' Muted' : '';
             if (!commandValues.defaultDisabled) {
-              return isDisabled == 2 ? 'User Disabled Individual' :
-                                       'User Disabled';
+              return (isDisabled == 2 ? 'User Disabled Individual' :
+                                        'User Disabled') +
+                  suffix;
             } else if (commandValues.permissions) {
               return 'NoPerm:' +
                   new self.Discord.Permissions(commandValues.permissions)
                       .toArray()
-                      .join(', ');
+                      .join(', ') +
+                  suffix;
             } else {
-              return 'User Disabled';
+              return 'User Disabled' + suffix;
             }
           }
         }
@@ -940,13 +967,15 @@ function Command() {
       const bitfield = func.options.permissions;
 
       if (!isDisabled) return null;
+      const suffix = func.options.isMuted ? ' Muted' : '';
       if (!def) {
-        return isDisabled == 2 ? 'Disabled Individual' : 'Disabled';
+        return (isDisabled == 2 ? 'Disabled Individual' : 'Disabled') + suffix;
       } else if (bitfield) {
         return 'NoPerm:' +
-            new self.Discord.Permissions(bitfield).toArray().join(', ');
+            new self.Discord.Permissions(bitfield).toArray().join(', ') +
+            suffix;
       } else {
-        return 'Disabled';
+        return 'Disabled' + suffix;
       }
     }
     return null;
@@ -1175,6 +1204,76 @@ function Command() {
   }
 
   /**
+   * Allow user to mute a command.
+   * @private
+   * @type {Command~commandHandler}
+   *
+   * @param {Discord~Message} msg The message the user sent that triggered this.
+   */
+  function commandBlockCmd(msg) {
+    if (!msg.text || !msg.text.trim()) {
+      self.common.reply(
+          msg,
+          'Please specify a command.\nThis will suppress errors when a user ' +
+              'attempts a command when they don\' have permission to use it.');
+      return;
+    }
+    const trimmedText = msg.text.trim();
+    const list = self.findAll(trimmedText, msg);
+    if (!list.length) {
+      self.common.reply(
+          msg, 'I was unable to find that command. (`' + trimmedText + '`)');
+      return;
+    }
+    const nameList = list.map((cmd) => {
+      const name = cmd.getFullName();
+      if (!userSettings[msg.guild.id]) userSettings[msg.guild.id] = {};
+      if (!userSettings[msg.guild.id][name]) {
+        userSettings[msg.guild.id][name] = new CommandSetting(cmd.options);
+        userSettings[msg.guild.id][name].myGuild = msg.guild.id;
+      }
+      userSettings[msg.guild.id][name].isMuted = true;
+      return `\`${name}\``;
+    });
+    self.common.reply(msg, 'Muted', nameList.join(', '));
+  }
+
+  /**
+   * Allow user to unmute a command.
+   * @private
+   * @type {Command~commandHandler}
+   *
+   * @param {Discord~Message} msg The message the user sent that triggered this.
+   */
+  function commandAllowCmd(msg) {
+    if (!msg.text || !msg.text.trim()) {
+      self.common.reply(
+          msg,
+          'Please specify a command.\nThis will show errors when a user ' +
+              'attempts a command when they don\' have permission to use it.');
+      return;
+    }
+    const trimmedText = msg.text.trim();
+    const list = self.findAll(trimmedText, msg);
+    if (!list.length) {
+      self.common.reply(
+          msg, 'I was unable to find that command. (`' + trimmedText + '`)');
+      return;
+    }
+    const nameList = list.map((cmd) => {
+      const name = cmd.getFullName();
+      if (!userSettings[msg.guild.id]) userSettings[msg.guild.id] = {};
+      if (!userSettings[msg.guild.id][name]) {
+        userSettings[msg.guild.id][name] = new CommandSetting(cmd.options);
+        userSettings[msg.guild.id][name].myGuild = msg.guild.id;
+      }
+      userSettings[msg.guild.id][name].isMuted = false;
+      return `\`${name}\``;
+    });
+    self.common.reply(msg, 'Unmuted', nameList.join(', '));
+  }
+
+  /**
    * Show user the currently configured settings for commands.
    * @private
    * @type {Command~commandHandler}
@@ -1257,7 +1356,9 @@ function Command() {
       const tmp = [];
       let obj;
       if (el[1].defaultDisabled) {
-        tmp.push('`' + el[0] + '` allowed with:');
+        tmp.push(
+            '`' + el[0] + (el[1].options.isMuted ? '#' : '') +
+            '` allowed with:');
         if (el[1].permissions) {
           tmp.push(
               new self.Discord.Permissions(el[1].permissions)
@@ -1266,7 +1367,9 @@ function Command() {
         }
         obj = el[1].enabled;
       } else {
-        tmp.push('`' + el[0] + '` blocked for:');
+        tmp.push(
+            '`' + el[0] + (el[1].options.isMuted ? '#' : '') +
+            '` blocked for:');
         obj = el[1].disabled;
       }
       const channels = Object.keys(obj.channels);
@@ -1333,6 +1436,7 @@ function Command() {
         'Reset values to default with ' + msg.prefix +
         'reset\nChange values with ' + msg.prefix + 'enable or ' + msg.prefix +
         'disable');
+    embed.setFooter('A # denotes command is muted on error.');
     msg.channel.send(self.common.mention(msg), embed);
   }
   /**
