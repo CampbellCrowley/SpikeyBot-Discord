@@ -1686,10 +1686,10 @@ function Main() {
    */
   function commandFlip(msg) {
     const rand = Math.round(Math.random());
-    let url = 'https://www.campbellcrowley.com/heads.png';
+    let url = 'https://www.spikeybot.com/heads.png';
     let text = 'Heads!';
     if (rand) {
-      url = 'https://www.campbellcrowley.com/tails.png';
+      url = 'https://www.spikeybot.com/tails.png';
       text = 'Tails!';
     }
     const embed = new self.Discord.MessageEmbed({title: text});
