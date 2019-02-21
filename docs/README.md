@@ -3096,6 +3096,7 @@ Hunger Games simulator.
         * [~setupHelp()](#HungryGames..setupHelp) ℗
         * [~handleMessageEdit(oldMsg, newMsg)](#HungryGames..handleMessageEdit) ℗
         * [~onGuildDelete(guild)](#HungryGames..onGuildDelete) ℗
+        * [~onChannelDelete()](#HungryGames..onChannelDelete)
         * [~mkCmd(cb)](#HungryGames..mkCmd) ⇒ <code>Command~commandHandler</code> ℗
         * [~commandMakeMeWin(msg)](#HungryGames..commandMakeMeWin) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandMakeMeLose(msg)](#HungryGames..commandMakeMeLose) : [<code>commandHandler</code>](#commandHandler) ℗
@@ -4257,6 +4258,12 @@ Handle being removed from a guild.
 | --- | --- | --- |
 | guild | <code>Discord~Guild</code> | The guild that we just left. |
 
+<a name="HungryGames..onChannelDelete"></a>
+
+### HungryGames~onChannelDelete()
+Handle a channel being deleted. Cleans up games that may be in progress in these channels.
+
+**Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
 <a name="HungryGames..mkCmd"></a>
 
 ### HungryGames~mkCmd(cb) ⇒ <code>Command~commandHandler</code> ℗
@@ -10352,6 +10359,7 @@ Main class that manages the bot.
         * [~numShards](#SpikeyBot..numShards) : <code>number</code> ℗
         * [~botName](#SpikeyBot..botName) : <code>string</code> ℗
         * [~delayBoot](#SpikeyBot..delayBoot) : <code>number</code> ℗
+        * [~inspectShard](#SpikeyBot..inspectShard) : <code>number</code> ℗
         * [~initialized](#SpikeyBot..initialized) : <code>boolean</code> ℗
         * [~saveInterval](#SpikeyBot..saveInterval) : <code>Interval</code> ℗
         * [~version](#SpikeyBot..version) : <code>string</code> ℗
@@ -10540,6 +10548,16 @@ milliseconds.
 
 **Kind**: inner property of [<code>SpikeyBot</code>](#SpikeyBot)  
 **Default**: <code>0</code>  
+**Access**: private  
+<a name="SpikeyBot..inspectShard"></a>
+
+### SpikeyBot~inspectShard : <code>number</code> ℗
+Enable inspecting/profiling for a shard to launch. Set via cli falgs. -1 to
+disable. (Currently only supports enabling. the `--inspect` flag will be
+sent to all shards that are started. This is due to limitations of
+Discord~ShardingManager)
+
+**Kind**: inner property of [<code>SpikeyBot</code>](#SpikeyBot)  
 **Access**: private  
 <a name="SpikeyBot..initialized"></a>
 

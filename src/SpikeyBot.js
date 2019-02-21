@@ -213,6 +213,18 @@ function SpikeyBot() {
   let delayBoot = 0;
 
   /**
+   * Enable inspecting/profiling for a shard to launch. Set via cli falgs. -1 to
+   * disable. (Currently only supports enabling. the `--inspect` flag will be
+   * sent to all shards that are started. This is due to limitations of
+   * Discord~ShardingManager)
+   *
+   * @private
+   * @default
+   * @type {number}
+   */
+  let inspectShard = -1;
+
+  /**
    * Getter for the bot's name. If name is null, it is most likely because there
    * is no custom name and common.isRelease should be used instead.
    * @see {@link SpikeyBot~botName}
@@ -266,6 +278,11 @@ function SpikeyBot() {
       if (process.argv[i].indexOf('=') > -1) {
         delayBoot = process.argv[i].split('=')[1] * 1 || 0;
       }
+    } else if (process.argv[i].startsWith('--inspect')) {
+      inspectShard = 0;
+      if (process.argv[i].indexOf('=') > -1) {
+        inspectShard = process.argv[i].split('=')[1] * 1 || 0;
+      }
     } else {
       throw new Error(`Unrecognized argument '${process.argv[i]}'`);
     }
@@ -302,6 +319,7 @@ function SpikeyBot() {
       shardArgs: process.argv.slice(2).filter((arg) => {
         return !arg.startsWith('--shards') && !arg.startsWith('--delay');
       }),
+      execArgv: inspectShard > -1 ? ['--inspect'] : [],
     });
     manager.on('shardCreate', (shard) => {
       common.log('Launched shard ' + shard.id, 'ShardingManager');
