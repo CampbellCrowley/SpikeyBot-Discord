@@ -3096,7 +3096,7 @@ Hunger Games simulator.
         * [~setupHelp()](#HungryGames..setupHelp) ℗
         * [~handleMessageEdit(oldMsg, newMsg)](#HungryGames..handleMessageEdit) ℗
         * [~onGuildDelete(guild)](#HungryGames..onGuildDelete) ℗
-        * [~onChannelDelete()](#HungryGames..onChannelDelete)
+        * [~onChannelDelete(channel)](#HungryGames..onChannelDelete) ℗
         * [~mkCmd(cb)](#HungryGames..mkCmd) ⇒ <code>Command~commandHandler</code> ℗
         * [~commandMakeMeWin(msg)](#HungryGames..commandMakeMeWin) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandMakeMeLose(msg)](#HungryGames..commandMakeMeLose) : [<code>commandHandler</code>](#commandHandler) ℗
@@ -4260,10 +4260,17 @@ Handle being removed from a guild.
 
 <a name="HungryGames..onChannelDelete"></a>
 
-### HungryGames~onChannelDelete()
-Handle a channel being deleted. Cleans up games that may be in progress in these channels.
+### HungryGames~onChannelDelete(channel) ℗
+Handle a channel being deleted. Cleans up games that may be in progress in
+these channels.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| channel | <code>Discord~DMChannel</code> \| <code>Discord~GuildChannel</code> | The channel that was deleted. |
+
 <a name="HungryGames..mkCmd"></a>
 
 ### HungryGames~mkCmd(cb) ⇒ <code>Command~commandHandler</code> ℗

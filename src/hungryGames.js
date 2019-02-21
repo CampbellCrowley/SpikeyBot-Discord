@@ -13,6 +13,7 @@ require('./subModule.js')(HungryGames);  // Extends the SubModule class.
  * @class
  * @augments SubModule
  * @listens Discord~Client#guildDelete
+ * @listens Discord~Client#channelDelete
  * @listens Command#hg
  */
 function HungryGames() {
@@ -1031,6 +1032,7 @@ function HungryGames() {
 
     self.client.on('messageUpdate', handleMessageEdit);
     self.client.on('guildDelete', onGuildDelete);
+    self.client.on('channelDelete', onChannelDelete);
 
     self.client.guilds.forEach((g) => {
       const game = find(g.id);
@@ -1063,6 +1065,7 @@ function HungryGames() {
     self.command.deleteEvent('hg');
     self.client.removeListener('messageUpdate', handleMessageEdit);
     self.client.removeListener('guildDelete', onGuildDelete);
+    self.client.removeListener('channelDelete', onChannelDelete);
     process.removeListener('exit', exit);
     process.removeListener('SIGINT', sigint);
     process.removeListener('SIGHUP', sigint);
@@ -1126,6 +1129,21 @@ function HungryGames() {
       return;
     }
     self.endGame(null, guild.id, true);
+  }
+
+  /**
+   * Handle a channel being deleted. Cleans up games that may be in progress in
+   * these channels.
+   *
+   * @private
+   * @param {Discord~DMChannel|Discord~GuildChannel} channel The channel that
+   * was deleted.
+   * @listens Discord~Client#channelDelete
+   */
+  function onChannelDelete(channel) {
+    if (!channel.guild) return;
+    if (!games[channel.guild.id]) return;
+    self.pauseGame(channel.guild.id);
   }
 
   /**
