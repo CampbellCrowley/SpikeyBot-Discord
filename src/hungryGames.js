@@ -2,6 +2,7 @@
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const fs = require('fs');
 const Jimp = require('jimp');
+const crypto = require('crypto');
 const mkdirp = require('mkdirp'); // mkdir -p
 const rimraf = require('rimraf'); // rm -rf
 const funTranslator = require('./lib/funTranslators.js');
@@ -574,6 +575,9 @@ function HungryGames() {
    * excluded from the games.
    * @property {string[]} includedUsers Array of user IDs that will be included
    * in the next game to be created.
+   * @property {NPC[]} includedNPCs Array of NPC objects to include in the game.
+   * @property {NPC[]} excludedNPCs Array of NPC objects to exclude from the
+   * game.
    * @property {Object.<number|boolean|string|Object>} options The game options.
    * @property {boolean} autoPlay Is the game currently autoplaying.
    * @property {string[]} excludedUsers The ids of the users to exclude from the
@@ -955,6 +959,18 @@ function HungryGames() {
                 cmdOpts),
           ]),
       new self.command.SingleCommand(
+          ['npc', 'ai', 'npcs', 'ais', 'bots', 'bot'], mkCmd(listNPCs), cmdOpts,
+          [
+            new self.command.SingleCommand(
+                ['add', 'create'], mkCmd(createNPC), cmdOpts),
+            new self.command.SingleCommand(
+                ['remove', 'delete'], mkCmd(removeNPC), cmdOpts),
+            new self.command.SingleCommand(
+                ['include', 'inc', 'in'], mkCmd(includeNPC), cmdOpts),
+            new self.command.SingleCommand(
+                ['exclude', 'exc', 'ex'], mkCmd(excludeNPC), cmdOpts),
+          ]),
+      new self.command.SingleCommand(
           ['players', 'player'], mkCmd(listPlayers), cmdOpts),
       new self.command.SingleCommand(
           ['start', 's', 'begin'], mkCmd(startGame), cmdOpts),
@@ -1265,6 +1281,25 @@ function HungryGames() {
   }
 
   /**
+   * @classdesc A player object representing a non-player. It makes sense I
+   * promise. This represents a Player in the game, that is not attached to a
+   * real account. Serializable.
+   * @class
+   * @augments Player
+   *
+   * @param {string} username The username to show for this NPC.
+   * @param {string} avatarURL The URL (or fake URL) of the image to use as the
+   * player's avatar.
+   */
+  function NPC(username, avatarURL) {
+    Player.call(
+        this, 'NPC' + crypto.randomBytes(32).toString('base64'), this.id,
+        avatarURL);
+    this.isNPC = true;
+    self.debug('Created NPC ' + this.id);
+  }
+
+  /**
    * @classdesc Serializable container for data about a team in a game.
    * @class
    *
@@ -1502,7 +1537,7 @@ function HungryGames() {
           find(id).currentGame.includedUsers = getAllPlayers(
               msg.guild.members, find(id).excludedUsers,
               find(id).options.includeBots, find(id).includedUsers,
-              find(id).options.excludeNewUsers);
+              find(id).options.excludeNewUsers, find(id).includedNPCs);
           find(id).currentGame.numAlive =
               find(id).currentGame.includedUsers.length;
           find(id).currentGame.forcedOutcomes = [];
@@ -1517,7 +1552,7 @@ function HungryGames() {
             includedUsers: getAllPlayers(
                 msg.guild.members, find(id).excludedUsers,
                 find(id).options.includeBots, find(id).includedUsers,
-                find(id).options.excludeNewUsers),
+                find(id).options.excludeNewUsers, find(id).includedNPCs),
             ended: false,
             day: {num: -1, state: 0, events: []},
             forcedOutcomes: [],
@@ -1529,6 +1564,8 @@ function HungryGames() {
         games[id] = {
           excludedUsers: [],
           includedUsers: [],
+          excludedNPCs: [],
+          includedNPCs: [],
           disabledEvents: {bloodbath: [], player: [], arena: {}, weapon: {}},
           customEvents: {bloodbath: [], player: [], arena: [], weapon: {}},
           currentGame: {
@@ -1718,12 +1755,15 @@ function HungryGames() {
    * the games. Used if excludeByDefault is true.
    * @param {boolean} excludeByDefault Should new users be excluded from the
    * game by default?
+   * @param {NPC[]} [includedNPCs=[]] NPCs to include as players.
    * @return {HungryGames~Player[]} Array of players to include in the games.
    */
-  function getAllPlayers(members, excluded, bots, included, excludeByDefault) {
+  function getAllPlayers(
+      members, excluded, bots, included, excludeByDefault, includedNPCs = []) {
     let finalMembers = [];
     if (!bots || Array.isArray(excluded)) {
       finalMembers = members.filter(function(obj) {
+        if (obj.isNPC) return false;
         if (included && excluded &&
             !included.includes(obj.user.id) &&
             !excluded.includes(obj.user.id)) {
@@ -1760,11 +1800,16 @@ function HungryGames() {
       });
     }
     if (finalMembers.length == 0) finalMembers = members.slice();
-    return finalMembers.map((obj) => {
+    finalMembers = finalMembers.map((obj) => {
       return new Player(
           obj.id, obj.user.username, obj.user.displayAvatarURL({format: 'png'}),
           obj.nickname);
     });
+    if (includedNPCs && includedNPCs.length > 0) {
+      finalMembers =
+          finalMembers.concat(JSON.parse(JSON.stringify(includedNPCs)));
+    }
+    return finalMembers;
   }
   /**
    * Add users to teams, and remove excluded users from teams. Deletes empty
@@ -7122,6 +7167,63 @@ function HungryGames() {
       default:
         return emoji.question;
     }
+  }
+
+  /**
+   * List all currently created NPCs.
+   *
+   * @private
+   * @type {HungryGames~hgCommandHandler}
+   * @param {Discord~Message} msg The message that lead to this being called.
+   * @param {string} id The id of the guild this was triggered from.
+   */
+  function listNPCs(msg, id) {
+  }
+
+  /**
+   * Create a new NPC.
+   *
+   * @private
+   * @type {HungryGames~hgCommandHandler}
+   * @param {Discord~Message} msg The message that lead to this being called.
+   * @param {string} id The id of the guild this was triggered from.
+   */
+  function createNPC(msg, id) {
+  }
+
+  /**
+   * Delete an NPC.
+   *
+   * @private
+   * @type {HungryGames~hgCommandHandler}
+   * @param {Discord~Message} msg The message that lead to this being called.
+   * @param {string} id The id of the guild this was triggered from.
+   */
+  function removeNPC(msg, id) {
+  }
+
+  /**
+   * Include an NPC in the game.
+   * @TODO: This should be an alias for the normal player exclude command.
+   *
+   * @private
+   * @type {HungryGames~hgCommandHandler}
+   * @param {Discord~Message} msg The message that lead to this being called.
+   * @param {string} id The id of the guild this was triggered from.
+   */
+  function includeNPC(msg, id) {
+  }
+
+  /**
+   * Exclude an NPC from the game.
+   * @TODO: This should be an alias for the normal player exclude command.
+   *
+   * @private
+   * @type {HungryGames~hgCommandHandler}
+   * @param {Discord~Message} msg The message that lead to this being called.
+   * @param {string} id The id of the guild this was triggered from.
+   */
+  function excludeNPC(msg, id) {
   }
 
   /**
