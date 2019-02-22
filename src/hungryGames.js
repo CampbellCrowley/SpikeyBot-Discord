@@ -193,6 +193,20 @@ function HungryGames() {
    */
   const findDelay = 15000;
 
+
+  /**
+   * Regex to match all URLs in a string.
+   *
+   * @private
+   * @type {RegExp}
+   * @constant
+   * @default
+   */
+  const urlRegex = new RegExp(
+      '(http(s)?:\\/\\/.)?(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]' +
+          '{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)(?![^<]*>)',
+      'g');
+
   /**
    * Default options for a game.
    *
@@ -1178,6 +1192,25 @@ function HungryGames() {
       if (find(id)) {
         find(id).channel = msg.channel.id;
         find(id).author = msg.author.id;
+        if (!find(id).includedNPCs) find(id).includedNPCs = [];
+        if (!find(id).excludedNPCs) find(id).excludedNPCs = [];
+        const allNPCs = find(id).includedNPCs.concat(find(id).excludedUsers);
+        const npcSearch = new FuzzySearch(
+            allNPCs.map((el) => el.id)
+                .concat(allNPCs.map((el) => el.username)));
+        const match = npcSearch.search(msg.text);
+        const npcArray =
+            match.map((el) => {
+              return allNPCs.find((npc) => {
+                return npc.id == el || npc.username == el;
+              });
+            }) ||
+            [];
+        const mentionedNPCs = {};
+        npcArray.forEach((el) => {
+          if (!mentionedNPCs[el.id]) mentionedNPCs[el.id] = el;
+        });
+        msg.softMentions.users = msg.softMentions.users.concat(mentionedNPCs);
       }
       cb(msg, id);
     };
@@ -1290,14 +1323,30 @@ function HungryGames() {
    * @param {string} username The username to show for this NPC.
    * @param {string} avatarURL The URL (or fake URL) of the image to use as the
    * player's avatar.
+   * @param {string} [id] Id to assign, If a valid ID is not provided, a random
+   * ID will be generated.
    */
-  function NPC(username, avatarURL) {
-    Player.call(
-        this, 'NPC' + crypto.randomBytes(32).toString('base64'), this.id,
-        avatarURL);
+  function NPC(username, avatarURL, id) {
+    if (typeof id !== 'string' || !id.startsWith('NPC')) {
+      id = this.createID();
+    }
+    Player.call(this, id, username, avatarURL);
     this.isNPC = true;
     self.debug('Created NPC ' + this.id);
   }
+  /**
+   * Generate a userID for an NPC.
+   * @static
+   * @return {string}
+   */
+  NPC.prototype.createID = function() {
+    return `NPC${crypto.randomBytes(8).toString('base64')}`;
+  };
+  /**
+   * @inheritdoc
+   * @public
+   */
+  this.NPC = NPC;
 
   /**
    * @classdesc Serializable container for data about a team in a game.
@@ -1806,8 +1855,9 @@ function HungryGames() {
           obj.nickname);
     });
     if (includedNPCs && includedNPCs.length > 0) {
-      finalMembers =
-          finalMembers.concat(JSON.parse(JSON.stringify(includedNPCs)));
+      finalMembers = finalMembers.concat(includedNPCs.map((obj) => {
+        return new NPC(obj.username, obj.avatarURL, obj.id);
+      }));
     }
     return finalMembers;
   }
@@ -3925,7 +3975,7 @@ function HungryGames() {
   function formatMultiNames(names, format = 'username') {
     let output = '';
     for (let i = 0; i < names.length; i++) {
-      if (format === 'mention') {
+      if (format === 'mention' && !names[i].isNPC) {
         output += '<@' + names[i].id + '>';
       } else if (format === 'nickname') {
         output += '`' + (names[i].nickname || names[i].name) + '`';
@@ -3980,7 +4030,7 @@ function HungryGames() {
     let mentionString = '';
     let translator = null;
     for (let i = 0; i < affectedUsers.length; i++) {
-      if (mention == 'all' ||
+      if (!affectedUsers.isNPC && mention == 'all' ||
           (mention == 'death' &&
            ((victimOutcome == 'dies' && i < numVictim) ||
             (attackerOutcome == 'dies' && i >= numVictim)))) {
@@ -4559,7 +4609,7 @@ function HungryGames() {
       if (find(id).options.mentionVictor) {
         winnerTag = find(id)
             .currentGame.teams[lastTeam]
-            .players
+            .players.filter((player) => !player.startsWith('NPC'))
             .map(function(player) {
               return '<@' + player + '>';
             })
@@ -4647,7 +4697,7 @@ function HungryGames() {
       self.client.setTimeout(function() {
         let winnerTag = '';
         if (numAlive == 1) {
-          if (find(id).options.mentionVictor) {
+          if (find(id).options.mentionVictor && !lastId.startsWith('NPC')) {
             winnerTag = '<@' + lastId + '>';
           }
           if (find(id).options.disableOutput) return;
@@ -4926,6 +4976,8 @@ function HungryGames() {
     if (!find(id)) {
       return 'No game';
     }
+    if (!find(id).excludedNPCs) find(id).excludedNPCs = [];
+    if (!find(id).includedNPCs) find(id).includedNPCs = [];
     switch (users) {
       case 'everyone':
         users = find(id).includedUsers.slice(0);
@@ -4954,7 +5006,15 @@ function HungryGames() {
     const onlyError = users.length > 2;
     users.forEach(function(obj) {
       if (typeof obj === 'string') {
-        obj = self.client.users.get(obj);
+        if (obj.startsWith('NPC')) {
+          obj = find(id).includedNPCs.find((el) => el.id == obj);
+          if (!obj && find(id).excludedNPCs.find((el) => el.id == obj)) {
+            response += obj.username + ' is already excluded.\n';
+            return;
+          }
+        } else {
+          obj = self.client.users.get(obj);
+        }
         if (!obj) {
           response += obj + ' is not a valid id.\n';
           return;
@@ -4966,17 +5026,31 @@ function HungryGames() {
               ' is already excluded. Create a new game to reset players.\n';
         }
       } else {
-        find(id).excludedUsers.push(obj.id);
-        if (!onlyError) {
-          response += obj.username + ' added to blacklist.\n';
-        }
-        if (!find(id).includedUsers) find(id).includedUsers = [];
-        const includeIndex = find(id).includedUsers.indexOf(obj.id);
-        if (includeIndex >= 0) {
+        if (obj.isNPC) {
+          find(id).excludedNPCs.push(obj.id);
           if (!onlyError) {
-            response += obj.username + ' removed from whitelist.\n';
+            response += obj.username + ' added to blacklist.\n';
           }
-          find(id).includedUsers.splice(includeIndex, 1);
+          const includeIndex = find(id).includedNPCs.indexOf(obj.id);
+          if (includeIndex >= 0) {
+            if (!onlyError) {
+              response += obj.username + ' removed from whitelist.\n';
+            }
+            find(id).includedNPCs.splice(includeIndex, 1);
+          }
+        } else {
+          find(id).excludedUsers.push(obj.id);
+          if (!onlyError) {
+            response += obj.username + ' added to blacklist.\n';
+          }
+          if (!find(id).includedUsers) find(id).includedUsers = [];
+          const includeIndex = find(id).includedUsers.indexOf(obj.id);
+          if (includeIndex >= 0) {
+            if (!onlyError) {
+              response += obj.username + ' removed from whitelist.\n';
+            }
+            find(id).includedUsers.splice(includeIndex, 1);
+          }
         }
         if (!find(id).currentGame.inProgress) {
           const index =
@@ -5082,6 +5156,8 @@ function HungryGames() {
     if (!find(id)) {
       return 'No game';
     }
+    if (!find(id).excludedNPCs) find(id).excludedNPCs = [];
+    if (!find(id).includedNPCs) find(id).includedNPCs = [];
     switch (users) {
       case 'everyone':
         users = find(id).excludedUsers.slice(0);
@@ -5110,7 +5186,15 @@ function HungryGames() {
     const onlyError = users.length > 2;
     users.forEach(function(obj) {
       if (typeof obj === 'string') {
-        obj = self.client.users.get(obj);
+        if (obj.startsWith('NPC')) {
+          obj = find(id).excludedNPCs.find((el) => el.id == obj);
+          if (!obj && find(id).includedNPCs.find((el) => el.id == obj)) {
+            response += obj.username + ' is already included.\n';
+            return;
+          }
+        } else {
+          obj = self.client.users.get(obj);
+        }
         if (!obj) {
           response += obj + ' is not a valid id.\n';
           return;
@@ -5120,17 +5204,33 @@ function HungryGames() {
         response += obj.username + ' is a bot, but bots are disabled.\n';
         return;
       }
-      const excludeIndex = find(id).excludedUsers.indexOf(obj.id);
-      if (excludeIndex >= 0) {
-        if (!onlyError) {
-          response += obj.username + ' removed from blacklist.\n';
+      if (obj.isNPC) {
+        const excludeIndex = find(id).excludedNPCs.indexOf(obj.id);
+        if (excludeIndex >= 0) {
+          if (!onlyError) {
+            response += obj.username + ' removed from blacklist.\n';
+          }
+          find(id).excludedNPCs.splice(excludeIndex, 1);
         }
-        find(id).excludedUsers.splice(excludeIndex, 1);
-      }
-      if (!find(id).includedUsers.includes(obj.id)) {
-        find(id).includedUsers.push(obj.id);
-        if (!onlyError) {
-          response += obj.username + ' added to whitelist.\n';
+        if (!find(id).includedNPCs.includes(obj.id)) {
+          find(id).includedNPCs.push(obj.id);
+          if (!onlyError) {
+            response += obj.username + ' added to whitelist.\n';
+          }
+        }
+      } else {
+        const excludeIndex = find(id).excludedUsers.indexOf(obj.id);
+        if (excludeIndex >= 0) {
+          if (!onlyError) {
+            response += obj.username + ' removed from blacklist.\n';
+          }
+          find(id).excludedUsers.splice(excludeIndex, 1);
+        }
+        if (!find(id).includedUsers.includes(obj.id)) {
+          find(id).includedUsers.push(obj.id);
+          if (!onlyError) {
+            response += obj.username + ' added to whitelist.\n';
+          }
         }
       }
       if (find(id).currentGame.inProgress) {
@@ -7189,7 +7289,38 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function createNPC(msg, id) {
+    /**
+     * Fetch the avatar the user has requested. Prioritizes attachments, then
+     * URLs, otherwise returns.
+     * @private
+     */
+    function fetchAvatar() {
+
+    }
+    function onGetAvatar(image) {
+
+    }
+    function sendConfirmation(username, image) {
+
+    }
+    function onConfirm(username, image) {
+
+    }
   }
+
+  /**
+   * Create an NPC in a guild.
+   *
+   * @public
+   * @param {string|number} gId The guild ID to add the NPC to.
+   * @param {string} username The name of the NPC.
+   * @param {string} avatar The URL path to the avatar. Must be valid URL to
+   * this server. (ex:
+   * https://www.spikeybot.com/avatars/318552464356016131/avatar1.png)
+   */
+  this.createNPC = function(gId, username, avatar) {
+
+  };
 
   /**
    * Delete an NPC.
@@ -7204,7 +7335,6 @@ function HungryGames() {
 
   /**
    * Include an NPC in the game.
-   * @TODO: This should be an alias for the normal player exclude command.
    *
    * @private
    * @type {HungryGames~hgCommandHandler}
@@ -7212,11 +7342,11 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function includeNPC(msg, id) {
+    includeUser(msg, id);
   }
 
   /**
    * Exclude an NPC from the game.
-   * @TODO: This should be an alias for the normal player exclude command.
    *
    * @private
    * @type {HungryGames~hgCommandHandler}
@@ -7224,6 +7354,7 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function excludeNPC(msg, id) {
+    excludeUser(msg, id);
   }
 
   /**
@@ -7733,7 +7864,7 @@ function HungryGames() {
     let dir;
     let fromCache = false;
     if (splitURL && splitURL[1] == 'avatars') {
-      dir = self.common.userSaveDir + splitURL[2] + '/';
+      dir = self.common.userSaveDir + 'avatars/' + splitURL[2] + '/';
       filename = dir + splitURL[3];
     }
     if (filename && fs.existsSync(filename)) {
