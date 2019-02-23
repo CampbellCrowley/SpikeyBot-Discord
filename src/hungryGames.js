@@ -8221,7 +8221,7 @@ function HungryGames() {
     let filename;
     let dir;
     if (typeof url === 'string') {
-      const splitURL = url.match(/\/(avatars)\/(\d+)\/([^?&/]+)/);
+      const splitURL = url.match(/\/(avatars)\/(\w+)\/([^?&/]+)/);
       if (splitURL && splitURL[1] == 'avatars') {
         dir = self.common.userSaveDir + 'avatars/' + splitURL[2] + '/';
         filename = dir + splitURL[3];
