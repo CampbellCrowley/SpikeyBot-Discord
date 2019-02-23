@@ -33,6 +33,15 @@ function HungryGames() {
 
   this.myName = 'HG';
   this.postPrefix = 'hg ';
+  /**
+   * The maximum number of bytes allowed to be received from a client in an
+   * image upload.
+   * @public
+   * @type {number}
+   * @constant
+   * @default 8000000 (8MB)
+   */
+  this.maxBytes = 8000000;
 
   /**
    * The permission tags for all settings related to the Hungry Games.
@@ -7378,7 +7387,6 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function createNPC(msg, id) {
-    const maxBytes = 50 * 1000 * 1000;  // 50 MB
     let username;
     fetchAvatar();
     /**
@@ -7438,13 +7446,15 @@ function HungryGames() {
       if (!supported.includes(type)) {
         incoming.destroy();
         self.common.reply(msg, 'The provided filetype is not supported.', type);
+        msg.channel.stopTyping();
         return;
-      } else if (!cl || cl > maxBytes) {
+      } else if (!cl || cl > self.maxBytes) {
         incoming.destroy();
         self.common.reply(
             msg, 'Please ensure the image is not larger than ' +
-                (maxBytes / 1000 / 1000) + 'MB.',
-            (cl / 1000 / 1000) + 'MB');
+                (self.maxBytes / 1000 / 1000) + 'MB.',
+            Math.round(cl / 1000 / 100) / 10 + 'MB');
+        msg.channel.stopTyping();
         return;
       }
       const data = [];
@@ -7452,12 +7462,13 @@ function HungryGames() {
       incoming.on('data', (chunk) => {
         data.push(chunk);
         reqBytes += chunk.length;
-        if (reqBytes > maxBytes) {
+        if (reqBytes > self.maxBytes) {
           incoming.destroy();
           self.common.reply(
               msg, 'Please ensure the image is not larger than ' +
-                  (maxBytes / 1000 / 1000) + 'MB.',
+                  (self.maxBytes / 1000 / 1000) + 'MB.',
               (cl / 1000 / 1000) + 'MB');
+          msg.channel.stopTyping();
         }
       });
       incoming.on('end', () => {
@@ -7627,6 +7638,11 @@ function HungryGames() {
         .replace(/\s{2,}/g, ' ')
         .substring(0, 32);
   }
+  /**
+   * @inheritdoc
+   * @public
+   */
+  this.formatUsername = formatUsername;
 
   /**
    * Delete an NPC.

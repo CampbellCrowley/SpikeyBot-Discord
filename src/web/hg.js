@@ -3,6 +3,7 @@
 const http = require('http');
 const socketIo = require('socket.io');
 const auth = require('../../auth.js');
+const crypto = require('crypto');
 
 /**
  * @classdesc Creates a web interface for managing the Hungry Games.
@@ -14,6 +15,12 @@ function HGWeb(hg) {
   const self = this;
 
   let ioClient;
+  /**
+   * Buffer storing all current image uploads and their associated meta-data.
+   * @private
+   * @type {Object}
+   */
+  const imageBuffer = {};
 
   const app = http.createServer(handler);
   const io = socketIo(app, {
@@ -182,6 +189,9 @@ function HGWeb(hg) {
     socket.on('pauseAutoplay', (...args) => {
       callSocketFunction(pauseAutoplay, args);
     });
+    socket.on('pauseGame', (...args) => {
+      callSocketFunction(pauseGame, args);
+    });
     socket.on('editTeam', (...args) => {
       callSocketFunction(editTeam, args);
     });
@@ -203,6 +213,12 @@ function HGWeb(hg) {
     socket.on('forcePlayerState', (...args) => {
       callSocketFunction(forcePlayerState, args);
     });
+    socket.on('imageChunk', (...args) => {
+      callSocketFunction(imageChunk, args);
+    });
+    socket.on('imageInfo', (...args) => {
+      callSocketFunction(imageInfo, args);
+    });
     // End Restricted Access \\
 
     /**
@@ -216,7 +232,8 @@ function HGWeb(hg) {
      * siblings.
      */
     function callSocketFunction(func, args, forward = true) {
-      if (!['fetchMember', 'fetchChannel'].includes(func.name.toString())) {
+      const noLog = ['fetchMember', 'fetchChannel', 'imageChunk'];
+      if (!noLog.includes(func.name.toString())) {
         const logArgs = args.map((el) => {
           if (typeof el === 'function') {
             return (el.name || 'anonymous') + '()';
@@ -463,6 +480,37 @@ function HGWeb(hg) {
       },
       joinedTimestamp: m.joinedTimestamp,
     };
+  }
+
+  /**
+   * Cancel and clean up a current image upload.
+   * @private
+   * @param {string} iId Image upload ID to purge and abort.
+   */
+  function cancelImageUpload(iId) {
+    if (!imageBuffer[iId]) return;
+    clearTimeout(imageBuffer[iId].timeout);
+    delete imageBuffer[iId];
+  }
+
+  /**
+   * Create an upload ID and buffer for a client to send to. Automatically
+   * cancelled after 60 seconds.
+   * @private
+   * @param {string} uId The user ID that started this upload.
+   * @return {Object} The metadata storing object.
+   */
+  function beginImageUpload(uId) {
+    let id;
+    do {
+      id = `${crypto.randomBytes(8).toString('hex').toUpperCase()}`;
+    } while (imageBuffer[id]);
+    imageBuffer[id] =
+        {receivedBytes: 0, buffer: [], startTime: Date.now(), id: id, uId: uId};
+    imageBuffer[id].timeout = setTimeout(function() {
+      cancelImageUpload(id);
+    }, 60000);
+    return imageBuffer[id];
   }
 
   /**
@@ -1047,7 +1095,7 @@ function HGWeb(hg) {
    * complete, or has failed.
    */
   function pauseAutoplay(userData, socket, gId, cb) {
-    if (!checkPerm(userData, gId, null, 'pause')) {
+    if (!checkPerm(userData, gId, null, 'autoplay')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
       replyNoPerm(socket, 'pauseAutoplay');
@@ -1059,6 +1107,31 @@ function HGWeb(hg) {
     socket.emit('game', gId, hg.getGame(gId));
   }
   this.pauseAutoplay = pauseAutoplay;
+  /**
+   * Pause game.
+   * @see {@link HungryGames.pauseGame}
+   *
+   * @private
+   * @type {HGWeb~SocketFunction}
+   * @param {Object} userData The current user's session data.
+   * @param {socketIo~Socket} socket The socket connection to reply on.
+   * @param {number|string} gId The guild id to look at.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete, or has failed.
+   */
+  function pauseGame(userData, socket, gId, cb) {
+    if (!checkPerm(userData, gId, null, 'pause')) {
+      if (!checkMyGuild(gId)) return;
+      if (typeof cb === 'function') cb('NO_PERM');
+      replyNoPerm(socket, 'pauseGame');
+      return;
+    }
+    const error = hg.pauseGame(gId);
+    if (typeof cb === 'function') cb(error);
+    if (error !== 'Success') socket.emit('message', error);
+    socket.emit('game', gId, hg.getGame(gId));
+  }
+  this.pauseGame = pauseGame;
   /**
    * Edit the teams.
    * @see {@link HungryGames.editTeam}
@@ -1317,6 +1390,136 @@ function HGWeb(hg) {
     if (typeof cb === 'function') cb();
   }
   this.forcePlayerState = forcePlayerState;
+  /**
+   * Handle receiving image data for avatar uploading.
+   *
+   * @private
+   * @type {HGWeb~SocketFunction}
+   * @param {Object} userData The current user's session data.
+   * @param {socketIo~Socket} socket The socket connection to reply on.
+   * @param {number|string} gId The guild id to look at.
+   * @param {string} iId The image ID that is being uploaded.
+   * @param {string} chunkId Id of the chunk being received.
+   * @param {?Buffer} chunk Chunk of data received, or null if all data has been
+   * sent.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete, or has failed.
+   */
+  function imageChunk(userData, socket, gId, iId, chunkId, chunk, cb) {
+    const meta = imageBuffer[iId];
+    if (!meta) {
+      if (!checkMyGuild(gId)) return;
+      if (typeof cb === 'function') cb('NO_PERM');
+      replyNoPerm(socket, 'imageChunk');
+      return;
+    }
+    if (meta.uId != userData.id) {
+      if (!checkMyGuild(gId)) return;
+      if (typeof cb === 'function') cb('NO_PERM');
+      replyNoPerm(socket, 'imageChunk');
+      return;
+    }
+    if (meta.type == 'NPC') {
+      if (!checkPerm(userData, gId, null, 'ai create')) {
+        if (!checkMyGuild(gId)) return;
+        if (typeof cb === 'function') cb('NO_PERM');
+        replyNoPerm(socket, 'imageChunk');
+        return;
+      }
+    }
+
+    if (chunk) {
+      chunk = Buffer.from(chunk);
+      meta.receivedBytes += chunk.length;
+      if (isNaN(chunkId * 1)) {
+        cancelImageUpload(iId);
+        if (typeof cb === 'function') cb('Malformed Data');
+        return;
+      } else if (meta.receivedBytes > hg.maxBytes) {
+        cancelImageUpload(iId);
+        if (typeof cb === 'function') cb('Data Overflow');
+        return;
+      }
+      meta.buffer[chunkId] = chunk;
+      if (typeof cb === 'function') cb(chunkId);
+      return;
+    }
+
+    if (meta.type == 'NPC') {
+      const npcId = hg.NPC.createID();
+      const p = hg.NPC.saveAvatar(Buffer.from(meta.buffer), npcId);
+      if (!p) {
+        cancelImageUpload(iId);
+        if (typeof cb === 'function') cb('Malformed Data');
+        return;
+      }
+      p.then((url) => {
+        const error = hg.createNPC(gId, meta.username, url, npcId);
+        if (error) socket.emit('message', error);
+        socket.emit('game', gId, hg.getGame(gId));
+        cancelImageUpload(iId);
+        if (typeof cb === 'function') cb();
+      }).catch((err) => {
+        cancelImageUpload(iId);
+        if (typeof cb === 'function') cb('Malformed Data');
+        hg.error('Error while saving avatar from web: ' + err);
+        console.error(err);
+      });
+    } else {
+      if (typeof cb === 'function') cb();
+      cancelImageUpload(iId);
+    }
+  }
+  this.imageChunk = imageChunk;
+  /**
+   * Handle client requesting to begin image upload.
+   *
+   * @private
+   * @type {HGWeb~SocketFunction}
+   * @param {Object} userData The current user's session data.
+   * @param {socketIo~Socket} socket The socket connection to reply on.
+   * @param {number|string} gId The guild id to look at.
+   * @param {Object} meta Metadata to associate with this upload.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete, or has failed. If succeeded, an upload ID will be passed as the
+   * second parameter. Any error will be the first parameter.
+   */
+  function imageInfo(userData, socket, gId, meta, cb) {
+    if (!meta || typeof meta.type !== 'string' ||
+        isNaN(meta.contentLength * 1)) {
+      if (typeof cb === 'function') cb('Malformed Data');
+      return;
+    }
+    if (meta.type === 'NPC') {
+      if (meta.contentLength > hg.maxBytes) {
+        if (typeof cb === 'function') cb('Excessive Payload');
+        return;
+      }
+      if (typeof meta.username !== 'string') {
+        if (typeof cb === 'function') cb('Malformed Data');
+        return;
+      }
+      meta.username = hg.formatUsername(meta.username);
+      if (meta.username.length < 2) {
+        if (typeof cb === 'function') cb('Malformed Data');
+        return;
+      }
+
+      if (!checkPerm(userData, gId, null, 'ai create')) {
+        if (!checkMyGuild(gId)) return;
+        if (typeof cb === 'function') cb('NO_PERM');
+        replyNoPerm(socket, 'imageInfo');
+        return;
+      }
+
+      const buf = beginImageUpload(userData.id);
+      buf.username = meta.username;
+      if (typeof cb === 'function') cb(null, buf.id);
+    } else {
+      if (typeof cb === 'function') cb('NO_PERM');
+    }
+  }
+  this.imageInfo = imageInfo;
 
   hg.log('Init Web');
 }

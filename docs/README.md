@@ -2997,6 +2997,7 @@ Hunger Games simulator.
 * [HungryGames](#HungryGames) ⇐ [<code>SubModule</code>](#SubModule)
     * _instance_
         * [.NPC](#HungryGames+NPC)
+        * [.formatUsername](#HungryGames+formatUsername)
         * [.helpMessage](#SubModule+helpMessage) : <code>string</code> \| <code>Discord~MessageEmbed</code>
         * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
         * [.Discord](#SubModule+Discord) : <code>Discord</code>
@@ -3006,6 +3007,7 @@ Hunger Games simulator.
         * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
         * *[.myName](#SubModule+myName) : <code>string</code>*
         * [.initialized](#SubModule+initialized) : <code>boolean</code>
+        * [.maxBytes](#HungryGames+maxBytes) : <code>number</code>
         * [.defaultOptions](#HungryGames+defaultOptions) : <code>Object.&lt;{value: (string\|number\|boolean), values: ?Array.&lt;string&gt;, comment: string}&gt;</code>
         * [.commit](#SubModule+commit) : <code>string</code>
         * [.loadTime](#SubModule+loadTime) : <code>number</code>
@@ -3217,6 +3219,11 @@ Hunger Games simulator.
 ### hungryGames.NPC
 **Kind**: instance property of [<code>HungryGames</code>](#HungryGames)  
 **Access**: public  
+<a name="HungryGames+formatUsername"></a>
+
+### hungryGames.formatUsername
+**Kind**: instance property of [<code>HungryGames</code>](#HungryGames)  
+**Access**: public  
 <a name="SubModule+helpMessage"></a>
 
 ### hungryGames.helpMessage : <code>string</code> \| <code>Discord~MessageEmbed</code>
@@ -3281,6 +3288,15 @@ Has this subModule been initialized yet (Has begin() been called).
 **Default**: <code>false</code>  
 **Access**: protected  
 **Read only**: true  
+<a name="HungryGames+maxBytes"></a>
+
+### hungryGames.maxBytes : <code>number</code>
+The maximum number of bytes allowed to be received from a client in an
+image upload.
+
+**Kind**: instance constant of [<code>HungryGames</code>](#HungryGames)  
+**Default**: <code>8000000 (8MB)</code>  
+**Access**: public  
 <a name="HungryGames+defaultOptions"></a>
 
 ### hungryGames.defaultOptions : <code>Object.&lt;{value: (string\|number\|boolean), values: ?Array.&lt;string&gt;, comment: string}&gt;</code>
@@ -13998,6 +14014,7 @@ Creates a web interface for managing the Hungry Games.
         * [.getNumClients()](#HGWeb+getNumClients) ⇒ <code>number</code>
         * [.dayStateChange(gId)](#HGWeb+dayStateChange)
     * _inner_
+        * [~imageBuffer](#HGWeb..imageBuffer) : <code>Object</code> ℗
         * [~sockets](#HGWeb..sockets) : <code>Object.&lt;Socket&gt;</code> ℗
         * [~siblingSockets](#HGWeb..siblingSockets) : <code>Object.&lt;Socket&gt;</code> ℗
         * [~startClient()](#HGWeb..startClient) ℗
@@ -14011,6 +14028,8 @@ Creates a web interface for managing the Hungry Games.
         * [~checkChannelPerm(userData, gId, cId, cmd)](#HGWeb..checkChannelPerm) ⇒ <code>boolean</code> ℗
         * [~makeMessage(uId, gId, cId, msg)](#HGWeb..makeMessage) ⇒ <code>Object</code> ℗
         * [~makeMember(m)](#HGWeb..makeMember) ⇒ <code>Object</code> ℗
+        * [~cancelImageUpload(iId)](#HGWeb..cancelImageUpload) ℗
+        * [~beginImageUpload(uId)](#HGWeb..beginImageUpload) ⇒ <code>Object</code> ℗
         * [~fetchGuilds(userData, socket, [cb])](#HGWeb..fetchGuilds) : <code>HGWeb~SocketFunction</code> ℗
             * [~done(guilds, [err], [response])](#HGWeb..fetchGuilds..done) ℗
         * [~stripGuilds(guilds, userData)](#HGWeb..stripGuilds) ⇒ <code>Array.&lt;Object&gt;</code> ℗
@@ -14029,6 +14048,7 @@ Creates a web interface for managing the Hungry Games.
         * [~nextDay(userData, socket, gId, cId, [cb])](#HGWeb..nextDay) : <code>HGWeb~SocketFunction</code> ℗
         * [~endGame(userData, socket, gId, [cb])](#HGWeb..endGame) : <code>HGWeb~SocketFunction</code> ℗
         * [~pauseAutoplay(userData, socket, gId, [cb])](#HGWeb..pauseAutoplay) : <code>HGWeb~SocketFunction</code> ℗
+        * [~pauseGame(userData, socket, gId, [cb])](#HGWeb..pauseGame) : <code>HGWeb~SocketFunction</code> ℗
         * [~editTeam(userData, socket, gId, cmd, one, two, [cb])](#HGWeb..editTeam) : <code>HGWeb~SocketFunction</code> ℗
         * [~createEvent(userData, socket, gId, type, message, nV, nA, oV, oA, kV, kA, wV, wA, [cb])](#HGWeb..createEvent) : <code>HGWeb~SocketFunction</code> ℗
         * [~createMajorEvent(userData, socket, gId, type, data, name, [cb])](#HGWeb..createMajorEvent) : <code>HGWeb~SocketFunction</code> ℗
@@ -14036,6 +14056,8 @@ Creates a web interface for managing the Hungry Games.
         * [~removeEvent(userData, socket, gId, type, event, [cb])](#HGWeb..removeEvent) : <code>HGWeb~SocketFunction</code> ℗
         * [~toggleEvent(userData, socket, gId, type, subCat, event, value, [cb])](#HGWeb..toggleEvent) : <code>HGWeb~SocketFunction</code> ℗
         * [~forcePlayerState(userData, socket, gId, list, state, [text], [persists], [cb])](#HGWeb..forcePlayerState) : <code>HGWeb~SocketFunction</code> ℗
+        * [~imageChunk(userData, socket, gId, iId, chunkId, chunk, [cb])](#HGWeb..imageChunk) : <code>HGWeb~SocketFunction</code> ℗
+        * [~imageInfo(userData, socket, gId, meta, [cb])](#HGWeb..imageInfo) : <code>HGWeb~SocketFunction</code> ℗
         * [~basicCB](#HGWeb..basicCB) : <code>function</code>
 
 <a name="new_HGWeb_new"></a>
@@ -14080,6 +14102,13 @@ about the guild.
 | --- | --- | --- |
 | gId | <code>string</code> | Guild id of the state change. |
 
+<a name="HGWeb..imageBuffer"></a>
+
+### HGWeb~imageBuffer : <code>Object</code> ℗
+Buffer storing all current image uploads and their associated meta-data.
+
+**Kind**: inner constant of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
 <a name="HGWeb..sockets"></a>
 
 ### HGWeb~sockets : <code>Object.&lt;Socket&gt;</code> ℗
@@ -14246,6 +14275,32 @@ need.
 | Param | Type | Description |
 | --- | --- | --- |
 | m | <code>Discord~GuildMember</code> | The guild member to strip the data from. |
+
+<a name="HGWeb..cancelImageUpload"></a>
+
+### HGWeb~cancelImageUpload(iId) ℗
+Cancel and clean up a current image upload.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| iId | <code>string</code> | Image upload ID to purge and abort. |
+
+<a name="HGWeb..beginImageUpload"></a>
+
+### HGWeb~beginImageUpload(uId) ⇒ <code>Object</code> ℗
+Create an upload ID and buffer for a client to send to. Automatically
+cancelled after 60 seconds.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Returns**: <code>Object</code> - The metadata storing object.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| uId | <code>string</code> | The user ID that started this upload. |
 
 <a name="HGWeb..fetchGuilds"></a>
 
@@ -14540,6 +14595,22 @@ Disable autoplay.
 | gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
 | [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
 
+<a name="HGWeb..pauseGame"></a>
+
+### HGWeb~pauseGame(userData, socket, gId, [cb]) : <code>HGWeb~SocketFunction</code> ℗
+Pause game.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: [HungryGames.pauseGame](HungryGames.pauseGame)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
+
 <a name="HGWeb..editTeam"></a>
 
 ### HGWeb~editTeam(userData, socket, gId, cmd, one, two, [cb]) : <code>HGWeb~SocketFunction</code> ℗
@@ -14683,6 +14754,40 @@ Force a player in the game to end a day in a certain state.
 | [text] | <code>string</code> | The message to show in the games as a result of this command. |
 | [persists] | <code>boolean</code> | Will this state be forced until the game ends. |
 | [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete. |
+
+<a name="HGWeb..imageChunk"></a>
+
+### HGWeb~imageChunk(userData, socket, gId, iId, chunkId, chunk, [cb]) : <code>HGWeb~SocketFunction</code> ℗
+Handle receiving image data for avatar uploading.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| iId | <code>string</code> | The image ID that is being uploaded. |
+| chunkId | <code>string</code> | Id of the chunk being received. |
+| chunk | <code>Buffer</code> | Chunk of data received, or null if all data has been sent. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. |
+
+<a name="HGWeb..imageInfo"></a>
+
+### HGWeb~imageInfo(userData, socket, gId, meta, [cb]) : <code>HGWeb~SocketFunction</code> ℗
+Handle client requesting to begin image upload.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo~Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to look at. |
+| meta | <code>Object</code> | Metadata to associate with this upload. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete, or has failed. If succeeded, an upload ID will be passed as the second parameter. Any error will be the first parameter. |
 
 <a name="HGWeb..basicCB"></a>
 
