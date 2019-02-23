@@ -1986,10 +1986,12 @@ function Main() {
   function commandPing(msg) {
     if (self.client.ping) {
       self.common.reply(
-          msg, 'My ping is ' + self.client.ping + 'ms',
+          msg, 'My ping is ' + Math.round(self.client.ping * 10) / 10 + 'ms',
           '`' + JSON.stringify(self.client.pings) + '`');
     } else {
-      self.common.reply(msg, 'My ping is ' + self.client.ws.ping + 'ms');
+      self.common.reply(
+          msg,
+          'My ping is ' + Math.round(self.client.ws.ping * 10) / 10 + 'ms');
     }
   }
 
