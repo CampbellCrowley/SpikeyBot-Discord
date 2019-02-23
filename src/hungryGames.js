@@ -4991,6 +4991,7 @@ function HungryGames() {
       idle: ['idle', 'away', 'snooze', 'snoozed'],
       dnd: ['dnd', 'busy'],
       bots: ['bot', 'bots'],
+      npcs: ['npc', 'npcs', 'ai', 'ais'],
     };
     let resPrefix = '';
     let resPostfix = ' have been removed from the games.';
@@ -5013,6 +5014,9 @@ function HungryGames() {
     } else if (specialWords.dnd.includes(firstWord)) {
       response = self.excludeUsers('dnd', id);
       resPrefix = 'All DND users';
+    } else if (specialWords.npcs.includes(firstWord)) {
+      response = self.excludeUsers(find(id).includedNPCs, id);
+      resPrefix = 'All NPCs';
     } else if (specialWords.bots.includes(firstWord)) {
       response = self.setOption(id, 'includeBots', false);
       resPrefix = 'Bots';
@@ -5171,6 +5175,7 @@ function HungryGames() {
       idle: ['idle', 'away', 'snooze', 'snoozed'],
       dnd: ['dnd', 'busy'],
       bots: ['bot', 'bots'],
+      npcs: ['npc', 'npcs', 'ai', 'ais'],
     };
     let resPrefix = '';
     let resPostfix = ' have been added to the games.';
@@ -5193,6 +5198,9 @@ function HungryGames() {
     } else if (specialWords.dnd.includes(firstWord)) {
       response = self.includeUsers('dnd', id);
       resPrefix = 'All DND users';
+    } else if (specialWords.npcs.includes(firstWord)) {
+      response = self.includeUsers(find(id).excludedNPCs, id);
+      resPrefix = 'All NCPs';
     } else if (specialWords.bots.includes(firstWord)) {
       response = self.setOption(id, 'includeBots', true);
       resPrefix = 'Bots';
