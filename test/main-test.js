@@ -243,7 +243,8 @@ const hgTests = [
        'currently a game in progress.']),
   new Test(
       'Create NPC',
-      '~hg npc create TESTNPC https://www.spikeybot.com/SBIcon-128x128.png',
+      '~hg npc create TESTNPC https://cdn.discordapp.com/embed/avatars/1.png' +
+          '?size=128',
       ['#embed', '^<@422623712534200321>\n```\nCreatedNPC: TESTNPC\n```']),
   new Test('Exclude NPC', '~hg npc exclude TESTNPC', ['#noerr']),
   new Test('Include NPC', '~hg npc include TESTNPC', ['#noerr']),
