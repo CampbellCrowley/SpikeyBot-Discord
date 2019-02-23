@@ -3096,7 +3096,6 @@ Hunger Games simulator.
         * [~setupHelp()](#HungryGames..setupHelp) ℗
         * [~handleMessageEdit(oldMsg, newMsg)](#HungryGames..handleMessageEdit) ℗
         * [~onGuildDelete(guild)](#HungryGames..onGuildDelete) ℗
-        * [~onChannelDelete()](#HungryGames..onChannelDelete)
         * [~mkCmd(cb)](#HungryGames..mkCmd) ⇒ <code>Command~commandHandler</code> ℗
         * [~commandMakeMeWin(msg)](#HungryGames..commandMakeMeWin) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandMakeMeLose(msg)](#HungryGames..commandMakeMeLose) : [<code>commandHandler</code>](#commandHandler) ℗
@@ -4258,12 +4257,6 @@ Handle being removed from a guild.
 | --- | --- | --- |
 | guild | <code>Discord~Guild</code> | The guild that we just left. |
 
-<a name="HungryGames..onChannelDelete"></a>
-
-### HungryGames~onChannelDelete()
-Handle a channel being deleted. Cleans up games that may be in progress in these channels.
-
-**Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
 <a name="HungryGames..mkCmd"></a>
 
 ### HungryGames~mkCmd(cb) ⇒ <code>Command~commandHandler</code> ℗
