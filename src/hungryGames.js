@@ -2,6 +2,8 @@
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const fs = require('fs');
 const Jimp = require('jimp');
+const http = require('http');
+const https = require('https');
 const crypto = require('crypto');
 const mkdirp = require('mkdirp'); // mkdir -p
 const rimraf = require('rimraf'); // rm -rf
@@ -1210,7 +1212,8 @@ function HungryGames() {
         npcArray.forEach((el) => {
           if (!mentionedNPCs[el.id]) mentionedNPCs[el.id] = el;
         });
-        msg.softMentions.users = msg.softMentions.users.concat(mentionedNPCs);
+        msg.softMentions.users =
+            msg.softMentions.users.concat(Object.entries(mentionedNPCs));
       }
       cb(msg, id);
     };
@@ -1327,8 +1330,8 @@ function HungryGames() {
    * ID will be generated.
    */
   function NPC(username, avatarURL, id) {
-    if (typeof id !== 'string' || !id.startsWith('NPC')) {
-      id = this.createID();
+    if (typeof id !== 'string' || !NPC.checkID(id)) {
+      id = NPC.createID();
     }
     Player.call(this, id, username, avatarURL);
     this.isNPC = true;
@@ -1336,11 +1339,65 @@ function HungryGames() {
   }
   /**
    * Generate a userID for an NPC.
-   * @static
+   * @public
    * @return {string}
    */
-  NPC.prototype.createID = function() {
-    return `NPC${crypto.randomBytes(8).toString('base64')}`;
+  NPC.createID = function() {
+    return `NPC${crypto.randomBytes(8).toString('hex').toUpperCase()}`;
+  };
+  /**
+   * Check if the given ID is a valid NPC ID.
+   * @public
+   *
+   * @param {string} id The ID to validate.
+   * @return {boolean}
+   */
+  NPC.checkID = function(id) {
+    return typeof id === 'string' &&
+        (id.match(/^NPC[A-F0-9]+$/) && true || false);
+  };
+  /**
+   * Save an image for an NPC. Does NOT limit download sizes.
+   * @public
+   *
+   * @param {string|Jimp|Buffer} avatar Any image, URL or file path to
+   * fetch the avatar from. Anything supported by Jimp.
+   * @param {string} id The NPC id to save the avatar to.
+   * @return {?Promise} Promise if successful will have the public URL where the
+   * avatar is available. Null if error.
+   */
+  NPC.saveAvatar = function(avatar, id) {
+    if (!NPC.checkID(id)) return null;
+    return readImage(avatar).then((image) => {
+      if (!image) throw new Error('Failed to fetch NPC avatar.');
+      const dir = self.common.userSaveDir + 'avatars/' + id + '/';
+      const imgName = Date.now() + '.png';
+      const filename = dir + imgName;
+      const url = self.common.webURL +
+          (self.common.isRelease ? 'avatars/' : 'dev/avatars/') + id + '/' +
+          imgName;
+      mkdirp(dir, (err) => {
+        if (err) {
+          self.error('Failed to create NPC directory to cache avatar: ' + dir);
+          console.error(err);
+          return;
+        }
+        image.getBuffer(Jimp.MIME_PNG, (err, buffer) => {
+          if (err) {
+            self.error('Failed to convert image into buffer: ' + avatar);
+            console.error(err);
+            return;
+          }
+          fs.writeFile(filename, buffer, (err) => {
+            if (err) {
+              self.error('Failed to cache NPC avatar: ' + filename);
+              console.error(err);
+            }
+          });
+        });
+      });
+      return url;
+    });
   };
   /**
    * @inheritdoc
@@ -7289,22 +7346,214 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function createNPC(msg, id) {
+    const maxBytes = 50 * 1000 * 1000;  // 50 MB
+    let username;
+    fetchAvatar();
     /**
      * Fetch the avatar the user has requested. Prioritizes attachments, then
      * URLs, otherwise returns.
      * @private
      */
     function fetchAvatar() {
+      let url;
+      if (msg.attachments.size == 1) {
+        const a = msg.attachments.first();
+        url = a.proxyURL || a.url;
+      } else if (msg.attachments.size == 0) {
+        url = msg.text.match(urlRegex);
+        if (url) url = url[0];
+      }
+      if (typeof url !== 'string' || url.length == 0) {
+        self.common.reply(
+            msg, 'Hmm, you didn\'t give me an image to use as an avatar.');
+      } else {
+        username = formatUsername(msg.text, url);
+        if (username.length < 2) {
+          self.common.reply(msg, 'Please specify a valid username.', username);
+          return;
+        }
 
+        let request = https.request;
+        if (url.startsWith('http://')) request = http.request;
+
+        const req = request(url, onIncoming);
+        req.on('error', (err) => {
+          self.error('Failed to fetch image: ' + url);
+          console.error(err);
+        });
+        req.end();
+
+        msg.channel.startTyping();
+      }
     }
-    function onGetAvatar(image) {
 
+    /**
+     * Remove url from username, and format to rules similar to Discord.
+     * @private
+     *
+     * @param {string} u The username.
+     * @param {string} url The url to remove from u.
+     * @return {string} Formatted username.
+     */
+    function formatUsername(u, url) {
+      return u.replace(url, '')
+          .replace(/^\s+|\s+$|@|#|:|```/g, '')
+          .replace(/\s{2,}/g, ' ')
+          .substring(0, 32);
     }
-    function sendConfirmation(username, image) {
-
+    /**
+     * Fired on the 'response' http revent.
+     * @private
+     *
+     * @param {http.IncomingMessage} incoming
+     */
+    function onIncoming(incoming) {
+      const cl = incoming.headers['content-length'];
+      const type = incoming.headers['content-type'];
+      const supported = [
+        'image/jpeg',
+        'image/png',
+        'image/bmp',
+        'image/tiff',
+        'image/gif',
+      ];
+      self.debug('MIME: ' + type + ', CL: ' + cl);
+      if (!supported.includes(type)) {
+        incoming.destroy();
+        self.common.reply(msg, 'The provided filetype is not supported.', type);
+        return;
+      } else if (!cl || cl > maxBytes) {
+        incoming.destroy();
+        self.common.reply(
+            msg, 'Please ensure the image is not larger than ' +
+                (maxBytes / 1000 / 1000) + 'MB.',
+            (cl / 1000 / 1000) + 'MB');
+        return;
+      }
+      const data = [];
+      let reqBytes = 0;
+      incoming.on('data', (chunk) => {
+        data.push(chunk);
+        reqBytes += chunk.length;
+        if (reqBytes > maxBytes) {
+          incoming.destroy();
+          self.common.reply(
+              msg, 'Please ensure the image is not larger than ' +
+                  (maxBytes / 1000 / 1000) + 'MB.',
+              (cl / 1000 / 1000) + 'MB');
+        }
+      });
+      incoming.on('end', () => {
+        onGetAvatar(Buffer.concat(data));
+      });
     }
-    function onConfirm(username, image) {
-
+    /**
+     * Once image has been received, convert to Jimp.
+     * @private
+     *
+     * @param {Buffer} buffer The image as a Buffer.
+     */
+    function onGetAvatar(buffer) {
+      Jimp.read(buffer)
+          .then((image) => {
+            if (!image) throw new Error('Invalid Data');
+            let size = 128;
+            if (find(id) && find(id).options &&
+                find(id).options.eventAvatarSizes) {
+              size = find(id).options.eventAvatarSizes.avatar;
+            }
+            image.resize(size, size);
+            image.getBuffer(Jimp.MIME_PNG, (err, out) => {
+              if (err) throw err;
+              sendConfirmation(image, out);
+            });
+          })
+          .catch((err) => {
+            self.common.reply(
+                msg, 'I wasn\'t able to convert that file into an image.',
+                err.message);
+            msg.channel.stopTyping();
+            self.error('Failed to convert buffer to image.');
+            console.error(err);
+          });
+    }
+    /**
+     * Show a confirmation message to the user with the username and avatar.
+     * @private
+     *
+     * @param {Jimp} image The Jimp image for internal use.
+     * @param {Buffer} buffer The Buffer the image buffer for showing.
+     */
+    function sendConfirmation(image, buffer) {
+      msg.channel.stopTyping();
+      const embed = new self.Discord.MessageEmbed();
+      embed.setTitle('Confirm NPC Creation');
+      embed.setAuthor(username);
+      embed.setDescription(
+          'Click the ' + emoji.white_check_mark + ' reaction to confirm, ' +
+          emoji.x + ' to cancel.');
+      embed.attachFiles(
+          [new self.Discord.MessageAttachment(buffer, username + '.png')]);
+      msg.channel.send(embed)
+          .then((msg_) => {
+            msg_.react(emoji.white_check_mark).then(() => {
+              msg_.react(emoji.x);
+            });
+            msg_.awaitReactions((reaction, user) => {
+              return user.id == msg.author.id &&
+                      (reaction.emoji.name == emoji.white_check_mark ||
+                       reaction.emoji.name == emoji.x);
+            }, {max: 1, time: maxReactAwaitTime}).then((reactions) => {
+              embed.setDescription('');
+              if (reactions.size == 0) {
+                msg_.reactions.removeAll().catch(() => {});
+                embed.setFooter('Timed out');
+                msg_.edit(embed);
+              } else if (
+                reactions.first().emoji.name == emoji.white_check_mark) {
+                msg_.reactions.removeAll().catch(() => {});
+                embed.setFooter('Confirmed');
+                msg_.edit(embed);
+                onConfirm(image);
+              } else {
+                msg_.reactions.removeAll().catch(() => {});
+                embed.setFooter('Cancelled');
+                msg_.edit(embed);
+              }
+            });
+          })
+          .catch((err) => {
+            self.error('Failed to send NPC confirmation: ' + msg.channel.id);
+            console.error(err);
+          });
+    }
+    /**
+     * Once user has confirmed adding NPC.
+     * @private
+     *
+     * @param {Jimp} image The image to save to file for this NPC.
+     */
+    function onConfirm(image) {
+      const id = NPC.createID();
+      const p = NPC.saveAvatar(image, id);
+      if (!p) {
+        self.common.reply(
+            msg, 'Oops, something went wrong while creating that NPC...',
+            'This should not happen D:');
+        return;
+      } else {
+        p.then((url) => {
+          const error = self.createNPC(msg.guild.id, username, url);
+          if (error) {
+            self.common.reply(msg, 'Failed to create NPC', error);
+          } else {
+            self.common.reply(msg, 'Created NPC: ' + username, id);
+          }
+        }).catch((err) => {
+          self.error('Failed to create NPC.');
+          console.log(err);
+        });
+      }
     }
   }
 
@@ -7316,10 +7565,14 @@ function HungryGames() {
    * @param {string} username The name of the NPC.
    * @param {string} avatar The URL path to the avatar. Must be valid URL to
    * this server. (ex:
-   * https://www.spikeybot.com/avatars/318552464356016131/avatar1.png)
+   * https://www.spikeybot.com/avatars/NPCBBBADEF031F83638/avatar1.png)
+   * @return {?string} Error message or null if no error.
    */
   this.createNPC = function(gId, username, avatar) {
-
+    if (typeof avatar !== 'string' ||
+        !avatar.match(/\/avatars\/NPC[A-F0-9]+\/\w+\.png/)) {
+      return 'Invalid Avatar URL.';
+    }
   };
 
   /**
@@ -7855,21 +8108,24 @@ function HungryGames() {
    * the filesystem first.
    * @private
    *
-   * @param {string} url The url to fetch the image from.
+   * @param {string|Jimp|Buffer} url The url to fetch the image from, or
+   * anything Jimp supports.
    * @return {Promise} Promise from JIMP with image data.
    */
   function readImage(url) {
-    const splitURL = url.match(/\/(avatars)\/(\d+)\/([^?&/]+)/);
+    let fromCache = false;
     let filename;
     let dir;
-    let fromCache = false;
-    if (splitURL && splitURL[1] == 'avatars') {
-      dir = self.common.userSaveDir + 'avatars/' + splitURL[2] + '/';
-      filename = dir + splitURL[3];
-    }
-    if (filename && fs.existsSync(filename)) {
-      fromCache = true;
-      return toJimp(filename);
+    if (typeof url === 'string') {
+      const splitURL = url.match(/\/(avatars)\/(\d+)\/([^?&/]+)/);
+      if (splitURL && splitURL[1] == 'avatars') {
+        dir = self.common.userSaveDir + 'avatars/' + splitURL[2] + '/';
+        filename = dir + splitURL[3];
+      }
+      if (filename && fs.existsSync(filename)) {
+        fromCache = true;
+        return toJimp(filename);
+      }
     }
     return toJimp(url).then((image) => {
       if (fromCache) return image;

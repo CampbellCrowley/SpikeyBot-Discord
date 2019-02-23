@@ -2996,6 +2996,7 @@ Hunger Games simulator.
 
 * [HungryGames](#HungryGames) ⇐ [<code>SubModule</code>](#SubModule)
     * _instance_
+        * [.NPC](#HungryGames+NPC)
         * [.helpMessage](#SubModule+helpMessage) : <code>string</code> \| <code>Discord~MessageEmbed</code>
         * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
         * [.Discord](#SubModule+Discord) : <code>Discord</code>
@@ -3029,6 +3030,7 @@ Hunger Games simulator.
         * [.removeEvent(id, type, event)](#HungryGames+removeEvent) ⇒ <code>string</code>
         * [.toggleEvent(id, type, subCat, event, [value])](#HungryGames+toggleEvent) ⇒ <code>string</code>
         * [.eventsEqual(e1, e2)](#HungryGames+eventsEqual) ⇒ <code>boolean</code>
+        * [.createNPC(gId, username, avatar)](#HungryGames+createNPC) ⇒ <code>string</code>
         * [.renameGame(id, name)](#HungryGames+renameGame) ⇒ <code>boolean</code>
         * [.forcePlayerState(id, list, state, text, [persists])](#HungryGames+forcePlayerState) ⇒ <code>string</code>
         * [.getNumSimulating()](#HungryGames+getNumSimulating) ⇒ <code>number</code>
@@ -3045,6 +3047,11 @@ Hunger Games simulator.
     * _inner_
         * [~Player](#HungryGames..Player)
             * [new Player(id, username, avatarURL, [nickname])](#new_HungryGames..Player_new)
+        * [~NPC](#HungryGames..NPC) ⇐ <code>Player</code>
+            * [new NPC(username, avatarURL, [id])](#new_HungryGames..NPC_new)
+            * [.createID()](#HungryGames..NPC.createID) ⇒ <code>string</code>
+            * [.checkID(id)](#HungryGames..NPC.checkID) ⇒ <code>boolean</code>
+            * [.saveAvatar(avatar, id)](#HungryGames..NPC.saveAvatar) ⇒ <code>Promise</code>
         * [~Team](#HungryGames..Team)
             * [new Team(id, name, players)](#new_HungryGames..Team_new)
         * [~Event](#HungryGames..Event)
@@ -3072,6 +3079,7 @@ Hunger Games simulator.
         * [~maxReactAwaitTime](#HungryGames..maxReactAwaitTime) : <code>number</code> ℗
         * [~findTimestamps](#HungryGames..findTimestamps) : <code>Object.&lt;number&gt;</code> ℗
         * [~findDelay](#HungryGames..findDelay) : <code>number</code> ℗
+        * [~urlRegex](#HungryGames..urlRegex) : <code>RegExp</code> ℗
         * [~defaultOptions](#HungryGames..defaultOptions) : <code>Object.&lt;{value: (string\|number\|boolean\|Object), values: ?Array.&lt;string&gt;, range: ?{min:number, max:number}, comment: string, category: string}&gt;</code> ℗
         * [~lotsOfDeathRate](#HungryGames..lotsOfDeathRate) : <code>number</code> ℗
         * [~littleDeathRate](#HungryGames..littleDeathRate) : <code>number</code> ℗
@@ -3107,7 +3115,7 @@ Hunger Games simulator.
             * [~onCheckPatron(err, info, p)](#HungryGames..fetchPatreonSettings..onCheckPatron) ℗
             * [~onPermResponse(err, info, p)](#HungryGames..fetchPatreonSettings..onPermResponse) ℗
             * [~onSettingResponse(err, info, p, setting)](#HungryGames..fetchPatreonSettings..onSettingResponse) ℗
-        * [~getAllPlayers(members, excluded, bots, included, excludeByDefault)](#HungryGames..getAllPlayers) ⇒ [<code>Array.&lt;Player&gt;</code>](#HungryGames..Player) ℗
+        * [~getAllPlayers(members, excluded, bots, included, excludeByDefault, [includedNPCs])](#HungryGames..getAllPlayers) ⇒ [<code>Array.&lt;Player&gt;</code>](#HungryGames..Player) ℗
         * [~formTeams(id)](#HungryGames..formTeams) ℗
         * [~resetGame(msg, id)](#HungryGames..resetGame) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~showGameInfo(msg, id)](#HungryGames..showGameInfo) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
@@ -3164,6 +3172,17 @@ Hunger Games simulator.
         * [~listEvents(msg, id, [page], [eventType], [editMsg])](#HungryGames..listEvents) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~formatEventString(arenaEvent, [newline])](#HungryGames..formatEventString) ⇒ <code>string</code> ℗
         * [~getOutcomeEmoji(outcome)](#HungryGames..getOutcomeEmoji) ⇒ <code>string</code> ℗
+        * [~listNPCs(msg, id)](#HungryGames..listNPCs) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+        * [~createNPC(msg, id)](#HungryGames..createNPC) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+            * [~fetchAvatar()](#HungryGames..createNPC..fetchAvatar) ℗
+            * [~formatUsername(u, url)](#HungryGames..createNPC..formatUsername) ⇒ <code>string</code> ℗
+            * [~onIncoming(incoming)](#HungryGames..createNPC..onIncoming) ℗
+            * [~onGetAvatar(buffer)](#HungryGames..createNPC..onGetAvatar) ℗
+            * [~sendConfirmation(image, buffer)](#HungryGames..createNPC..sendConfirmation) ℗
+            * [~onConfirm(image)](#HungryGames..createNPC..onConfirm) ℗
+        * [~removeNPC(msg, id)](#HungryGames..removeNPC) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+        * [~includeNPC(msg, id)](#HungryGames..includeNPC) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+        * [~excludeNPC(msg, id)](#HungryGames..excludeNPC) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~help(msg, id)](#HungryGames..help) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~commandStats(msg, id)](#HungryGames..commandStats) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~commandRig(msg, id)](#HungryGames..commandRig) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
@@ -3193,6 +3212,11 @@ Hunger Games simulator.
         * [~createEventOutcomeCallback](#HungryGames..createEventOutcomeCallback) : <code>function</code>
         * [~createEventBooleanCallback](#HungryGames..createEventBooleanCallback) : <code>function</code>
 
+<a name="HungryGames+NPC"></a>
+
+### hungryGames.NPC
+**Kind**: instance property of [<code>HungryGames</code>](#HungryGames)  
+**Access**: public  
 <a name="SubModule+helpMessage"></a>
 
 ### hungryGames.helpMessage : <code>string</code> \| <code>Discord~MessageEmbed</code>
@@ -3592,6 +3616,21 @@ Checks if the two given events are equivalent.
 | e1 | [<code>Event</code>](#HungryGames..Event) | 
 | e2 | [<code>Event</code>](#HungryGames..Event) | 
 
+<a name="HungryGames+createNPC"></a>
+
+### hungryGames.createNPC(gId, username, avatar) ⇒ <code>string</code>
+Create an NPC in a guild.
+
+**Kind**: instance method of [<code>HungryGames</code>](#HungryGames)  
+**Returns**: <code>string</code> - Error message or null if no error.  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| gId | <code>string</code> \| <code>number</code> | The guild ID to add the NPC to. |
+| username | <code>string</code> | The name of the NPC. |
+| avatar | <code>string</code> | The URL path to the avatar. Must be valid URL to this server. (ex: https://www.spikeybot.com/avatars/NPCBBBADEF031F83638/avatar1.png) |
+
 <a name="HungryGames+renameGame"></a>
 
 ### hungryGames.renameGame(id, name) ⇒ <code>boolean</code>
@@ -3780,6 +3819,66 @@ Serializable container for data pertaining to a single user.
 | username | <code>string</code> |  | The name of the user to show in the game. |
 | avatarURL | <code>string</code> |  | URL to avatar to show for the user in the game. |
 | [nickname] | <code>string</code> | <code>null</code> | The nickname for this user usually assigned by the guild. If the user does not have a nickname, this will have the same value as `name`. |
+
+<a name="HungryGames..NPC"></a>
+
+### HungryGames~NPC ⇐ <code>Player</code>
+A player object representing a non-player. It makes sense I
+promise. This represents a Player in the game, that is not attached to a
+real account. Serializable.
+
+**Kind**: inner class of [<code>HungryGames</code>](#HungryGames)  
+**Extends**: <code>Player</code>  
+
+* [~NPC](#HungryGames..NPC) ⇐ <code>Player</code>
+    * [new NPC(username, avatarURL, [id])](#new_HungryGames..NPC_new)
+    * [.createID()](#HungryGames..NPC.createID) ⇒ <code>string</code>
+    * [.checkID(id)](#HungryGames..NPC.checkID) ⇒ <code>boolean</code>
+    * [.saveAvatar(avatar, id)](#HungryGames..NPC.saveAvatar) ⇒ <code>Promise</code>
+
+<a name="new_HungryGames..NPC_new"></a>
+
+#### new NPC(username, avatarURL, [id])
+
+| Param | Type | Description |
+| --- | --- | --- |
+| username | <code>string</code> | The username to show for this NPC. |
+| avatarURL | <code>string</code> | The URL (or fake URL) of the image to use as the player's avatar. |
+| [id] | <code>string</code> | Id to assign, If a valid ID is not provided, a random ID will be generated. |
+
+<a name="HungryGames..NPC.createID"></a>
+
+#### NPC.createID() ⇒ <code>string</code>
+Generate a userID for an NPC.
+
+**Kind**: static method of [<code>NPC</code>](#HungryGames..NPC)  
+**Access**: public  
+<a name="HungryGames..NPC.checkID"></a>
+
+#### NPC.checkID(id) ⇒ <code>boolean</code>
+Check if the given ID is a valid NPC ID.
+
+**Kind**: static method of [<code>NPC</code>](#HungryGames..NPC)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| id | <code>string</code> | The ID to validate. |
+
+<a name="HungryGames..NPC.saveAvatar"></a>
+
+#### NPC.saveAvatar(avatar, id) ⇒ <code>Promise</code>
+Save an image for an NPC. Does NOT limit download sizes.
+
+**Kind**: static method of [<code>NPC</code>](#HungryGames..NPC)  
+**Returns**: <code>Promise</code> - Promise if successful will have the public URL where the
+avatar is available. Null if error.  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| avatar | <code>string</code> \| <code>Jimp</code> \| <code>Buffer</code> | Any image, URL or file path to fetch the avatar from. Anything supported by Jimp. |
+| id | <code>string</code> | The NPC id to save the avatar to. |
 
 <a name="HungryGames..Team"></a>
 
@@ -4055,6 +4154,13 @@ The delay after failing to find a guild's data to look for it again.
 
 **Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
 **Default**: <code>15 Seconds</code>  
+**Access**: private  
+<a name="HungryGames..urlRegex"></a>
+
+### HungryGames~urlRegex : <code>RegExp</code> ℗
+Regex to match all URLs in a string.
+
+**Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
 **Access**: private  
 <a name="HungryGames..defaultOptions"></a>
 
@@ -4423,7 +4529,7 @@ values.
 
 <a name="HungryGames..getAllPlayers"></a>
 
-### HungryGames~getAllPlayers(members, excluded, bots, included, excludeByDefault) ⇒ [<code>Array.&lt;Player&gt;</code>](#HungryGames..Player) ℗
+### HungryGames~getAllPlayers(members, excluded, bots, included, excludeByDefault, [includedNPCs]) ⇒ [<code>Array.&lt;Player&gt;</code>](#HungryGames..Player) ℗
 Form an array of Player objects based on guild members, excluded members,
 and whether to include bots.
 
@@ -4431,13 +4537,14 @@ and whether to include bots.
 **Returns**: [<code>Array.&lt;Player&gt;</code>](#HungryGames..Player) - Array of players to include in the games.  
 **Access**: private  
 
-| Param | Type | Description |
-| --- | --- | --- |
-| members | <code>Discord~Collection.&lt;Discord~GuildMember&gt;</code> | All members in guild. |
-| excluded | <code>Array.&lt;string&gt;</code> | Array of ids of users that should not be included in the games. |
-| bots | <code>boolean</code> | Should bots be included in the games. |
-| included | <code>Array.&lt;string&gt;</code> | Array of ids of users that should be included in the games. Used if excludeByDefault is true. |
-| excludeByDefault | <code>boolean</code> | Should new users be excluded from the game by default? |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| members | <code>Discord~Collection.&lt;Discord~GuildMember&gt;</code> |  | All members in guild. |
+| excluded | <code>Array.&lt;string&gt;</code> |  | Array of ids of users that should not be included in the games. |
+| bots | <code>boolean</code> |  | Should bots be included in the games. |
+| included | <code>Array.&lt;string&gt;</code> |  | Array of ids of users that should be included in the games. Used if excludeByDefault is true. |
+| excludeByDefault | <code>boolean</code> |  | Should new users be excluded from the game by default? |
+| [includedNPCs] | <code>Array.&lt;NPC&gt;</code> | <code>[]</code> | NPCs to include as players. |
 
 <a name="HungryGames..formTeams"></a>
 
@@ -5264,6 +5371,151 @@ Get the emoji for a specific outcome of an event.
 | --- | --- | --- |
 | outcome | <code>string</code> | The outcome to get the emoji of. |
 
+<a name="HungryGames..listNPCs"></a>
+
+### HungryGames~listNPCs(msg, id) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+List all currently created NPCs.
+
+**Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message that lead to this being called. |
+| id | <code>string</code> | The id of the guild this was triggered from. |
+
+<a name="HungryGames..createNPC"></a>
+
+### HungryGames~createNPC(msg, id) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+Create a new NPC.
+
+**Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message that lead to this being called. |
+| id | <code>string</code> | The id of the guild this was triggered from. |
+
+
+* [~createNPC(msg, id)](#HungryGames..createNPC) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+    * [~fetchAvatar()](#HungryGames..createNPC..fetchAvatar) ℗
+    * [~formatUsername(u, url)](#HungryGames..createNPC..formatUsername) ⇒ <code>string</code> ℗
+    * [~onIncoming(incoming)](#HungryGames..createNPC..onIncoming) ℗
+    * [~onGetAvatar(buffer)](#HungryGames..createNPC..onGetAvatar) ℗
+    * [~sendConfirmation(image, buffer)](#HungryGames..createNPC..sendConfirmation) ℗
+    * [~onConfirm(image)](#HungryGames..createNPC..onConfirm) ℗
+
+<a name="HungryGames..createNPC..fetchAvatar"></a>
+
+#### createNPC~fetchAvatar() ℗
+Fetch the avatar the user has requested. Prioritizes attachments, then
+URLs, otherwise returns.
+
+**Kind**: inner method of [<code>createNPC</code>](#HungryGames..createNPC)  
+**Access**: private  
+<a name="HungryGames..createNPC..formatUsername"></a>
+
+#### createNPC~formatUsername(u, url) ⇒ <code>string</code> ℗
+Remove url from username, and format to rules similar to Discord.
+
+**Kind**: inner method of [<code>createNPC</code>](#HungryGames..createNPC)  
+**Returns**: <code>string</code> - Formatted username.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| u | <code>string</code> | The username. |
+| url | <code>string</code> | The url to remove from u. |
+
+<a name="HungryGames..createNPC..onIncoming"></a>
+
+#### createNPC~onIncoming(incoming) ℗
+Fired on the 'response' http revent.
+
+**Kind**: inner method of [<code>createNPC</code>](#HungryGames..createNPC)  
+**Access**: private  
+
+| Param | Type |
+| --- | --- |
+| incoming | <code>http.IncomingMessage</code> | 
+
+<a name="HungryGames..createNPC..onGetAvatar"></a>
+
+#### createNPC~onGetAvatar(buffer) ℗
+Once image has been received, convert to Jimp.
+
+**Kind**: inner method of [<code>createNPC</code>](#HungryGames..createNPC)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| buffer | <code>Buffer</code> | The image as a Buffer. |
+
+<a name="HungryGames..createNPC..sendConfirmation"></a>
+
+#### createNPC~sendConfirmation(image, buffer) ℗
+Show a confirmation message to the user with the username and avatar.
+
+**Kind**: inner method of [<code>createNPC</code>](#HungryGames..createNPC)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| image | <code>Jimp</code> | The Jimp image for internal use. |
+| buffer | <code>Buffer</code> | The Buffer the image buffer for showing. |
+
+<a name="HungryGames..createNPC..onConfirm"></a>
+
+#### createNPC~onConfirm(image) ℗
+Once user has confirmed adding NPC.
+
+**Kind**: inner method of [<code>createNPC</code>](#HungryGames..createNPC)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| image | <code>Jimp</code> | The image to save to file for this NPC. |
+
+<a name="HungryGames..removeNPC"></a>
+
+### HungryGames~removeNPC(msg, id) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+Delete an NPC.
+
+**Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message that lead to this being called. |
+| id | <code>string</code> | The id of the guild this was triggered from. |
+
+<a name="HungryGames..includeNPC"></a>
+
+### HungryGames~includeNPC(msg, id) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+Include an NPC in the game.
+
+**Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message that lead to this being called. |
+| id | <code>string</code> | The id of the guild this was triggered from. |
+
+<a name="HungryGames..excludeNPC"></a>
+
+### HungryGames~excludeNPC(msg, id) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+Exclude an NPC from the game.
+
+**Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | The message that lead to this being called. |
+| id | <code>string</code> | The id of the guild this was triggered from. |
+
 <a name="HungryGames..help"></a>
 
 ### HungryGames~help(msg, id) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
@@ -5451,7 +5703,7 @@ the filesystem first.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| url | <code>string</code> | The url to fetch the image from. |
+| url | <code>string</code> \| <code>Jimp</code> \| <code>Buffer</code> | The url to fetch the image from, or anything Jimp supports. |
 
 <a name="HungryGames..readImage..toJimp"></a>
 
@@ -5513,6 +5765,8 @@ A singe instance of a game in a guild.
 | --- | --- | --- |
 | excludedUsers | <code>Array.&lt;string&gt;</code> | Array of user IDs that have been excluded from the games. |
 | includedUsers | <code>Array.&lt;string&gt;</code> | Array of user IDs that will be included in the next game to be created. |
+| includedNPCs | <code>Array.&lt;NPC&gt;</code> | Array of NPC objects to include in the game. |
+| excludedNPCs | <code>Array.&lt;NPC&gt;</code> | Array of NPC objects to exclude from the game. |
 | options | <code>Object.&lt;(number\|boolean\|string\|Object)&gt;</code> | The game options. |
 | autoPlay | <code>boolean</code> | Is the game currently autoplaying. |
 | excludedUsers | <code>Array.&lt;string&gt;</code> | The ids of the users to exclude from the games. |
