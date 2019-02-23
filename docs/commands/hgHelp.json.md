@@ -14,7 +14,7 @@
 
 | Command | Description | Aliases |
 | --- | --- | --- |
-| ?hg players | This will list all players I currently care about. | players, player |
+| ?hg players | This will list all players I currently care about. | players, player, list |
 | ?hg exclude | Prevent someone from being added to the next game. | exclude, remove, exc, ex |
 | ?hg include | Add a person back into the next game. | include, add, inc, in |
 

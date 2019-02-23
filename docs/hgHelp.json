@@ -115,7 +115,7 @@
         {
           "command": "players",
           "description": "This will list all players I currently care about.",
-          "aliases": "players, player",
+          "aliases": "players, player, list",
           "validOnlyInGuild": true,
           "examples": [
             {

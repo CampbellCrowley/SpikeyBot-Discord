@@ -987,7 +987,7 @@ function HungryGames() {
                 ['exclude', 'exc', 'ex'], mkCmd(excludeNPC), cmdOpts),
           ]),
       new self.command.SingleCommand(
-          ['players', 'player'], mkCmd(listPlayers), cmdOpts),
+          ['players', 'player', 'list'], mkCmd(listPlayers), cmdOpts),
       new self.command.SingleCommand(
           ['start', 's', 'begin'], mkCmd(startGame), cmdOpts),
       new self.command.SingleCommand(['pause', 'p'], mkCmd(pauseGame), cmdOpts),
@@ -1192,28 +1192,34 @@ function HungryGames() {
     return function(msg) {
       const id = msg.guild.id;
       if (find(id)) {
-        find(id).channel = msg.channel.id;
-        find(id).author = msg.author.id;
-        if (!find(id).includedNPCs) find(id).includedNPCs = [];
-        if (!find(id).excludedNPCs) find(id).excludedNPCs = [];
-        const allNPCs = find(id).includedNPCs.concat(find(id).excludedUsers);
-        const npcSearch = new FuzzySearch(
-            allNPCs.map((el) => el.id)
-                .concat(allNPCs.map((el) => el.username)));
-        const match = npcSearch.search(msg.text);
-        const npcArray =
-            match.map((el) => {
+        const text = msg.text.trim();
+        if (text.length > 0) {
+          find(id).channel = msg.channel.id;
+          find(id).author = msg.author.id;
+          if (!find(id).includedNPCs) find(id).includedNPCs = [];
+          if (!find(id).excludedNPCs) find(id).excludedNPCs = [];
+          const allNPCs = find(id).includedNPCs.concat(find(id).excludedNPCs);
+          const searchable =
+              allNPCs.map((el) => el.id).concat(allNPCs.map((el) => el.name));
+          const npcSearch = new FuzzySearch(searchable);
+          try {
+            const match = npcSearch.search(text);
+            const npcArray = match.map((el) => {
               return allNPCs.find((npc) => {
-                return npc.id == el || npc.username == el;
+                return npc.id == el || npc.name == el;
               });
             }) ||
-            [];
-        const mentionedNPCs = {};
-        npcArray.forEach((el) => {
-          if (!mentionedNPCs[el.id]) mentionedNPCs[el.id] = el;
-        });
-        msg.softMentions.users =
-            msg.softMentions.users.concat(Object.entries(mentionedNPCs));
+                [];
+            const mentionedNPCs = {};
+            npcArray.forEach((el) => {
+              if (el && !mentionedNPCs[el.id]) mentionedNPCs[el.id] = el;
+            });
+            msg.softMentions.users =
+                msg.softMentions.users.concat(Object.entries(mentionedNPCs));
+          } catch (err) {
+            console.error(err);
+          }
+        }
       }
       cb(msg, id);
     };
@@ -1300,7 +1306,7 @@ function HungryGames() {
     this.nickname = nickname || username;
     // If this user is still alive.
     this.living = true;
-    // If this user is will die at the end of the day.
+    // How many days the players has been wounded.
     this.bleeding = 0;
     // The rank at which this user died.
     this.rank = 1;
@@ -1335,7 +1341,6 @@ function HungryGames() {
     }
     Player.call(this, id, username, avatarURL);
     this.isNPC = true;
-    self.debug('Created NPC ' + this.id);
   }
   /**
    * Generate a userID for an NPC.
@@ -1343,7 +1348,11 @@ function HungryGames() {
    * @return {string}
    */
   NPC.createID = function() {
-    return `NPC${crypto.randomBytes(8).toString('hex').toUpperCase()}`;
+    let id;
+    do {
+      id = `NPC${crypto.randomBytes(8).toString('hex').toUpperCase()}`;
+    } while (fs.existsSync(self.common.userSaveDir + 'avatars/' + id));
+    return id;
   };
   /**
    * Check if the given ID is a valid NPC ID.
@@ -1913,7 +1922,7 @@ function HungryGames() {
     });
     if (includedNPCs && includedNPCs.length > 0) {
       finalMembers = finalMembers.concat(includedNPCs.map((obj) => {
-        return new NPC(obj.username, obj.avatarURL, obj.id);
+        return new NPC(obj.name, obj.avatarURL, obj.id);
       }));
     }
     return finalMembers;
@@ -2093,13 +2102,18 @@ function HungryGames() {
         find(id).excludedUsers = [];
         createGame(null, id, true);
         return 'Resetting ALL user data!';
+      } else if (command == 'npcs') {
+        find(id).includedNPCs = [];
+        find(id).excludedNPCs = [];
+        createGame(null, id, true);
+        return 'Resetting ALL NPC data!';
       } else {
         return 'Please specify what data to reset.\nall {deletes all data ' +
             'for this server},\nevents {deletes all custom events},\n' +
             'current {deletes all data about the current game},\noptions ' +
             '{resets all options to default values},\nteams {delete all ' +
             'teams and creates new ones},\nusers {delete data about where to ' +
-            'put users when creating a new game}.';
+            'put users when creating a new game},\nnpcs {delete all NPCS}.';
       }
     } else {
       return 'There is no data to reset. Start a new game with "' +
@@ -5329,16 +5343,19 @@ function HungryGames() {
    */
   function listPlayers(msg, id) {
     const finalMessage = new self.Discord.MessageEmbed();
-    finalMessage.setTitle('List of currently tracked players');
+    finalMessage.setTitle('List of players');
+    finalMessage.setDescription(
+        'To refresh: ' + msg.prefix + self.postPrefix + 'create');
     finalMessage.setColor(defaultColor);
     if (!find(id)) {
       createGame(msg, id);
     }
     if (find(id) && find(id).currentGame &&
         find(id).currentGame.includedUsers) {
-      const numUsers = find(id).currentGame.includedUsers.length;
+      const iUsers = find(id).currentGame.includedUsers;
+      const numUsers = iUsers.length;
       if (find(id).options.teamSize > 0) {
-        find(id).currentGame.includedUsers.sort(function(a, b) {
+        iUsers.sort(function(a, b) {
           const aTeam = find(id).currentGame.teams.findIndex(function(team) {
             return team.players.findIndex(function(player) {
               return player == a.id;
@@ -5357,7 +5374,7 @@ function HungryGames() {
         });
       }
       let prevTeam = -1;
-      const statusList = find(id).currentGame.includedUsers.map(function(obj) {
+      const statusList = iUsers.map(function(obj) {
         let myTeam = -1;
         if (find(id).options.teamSize > 0) {
           myTeam = find(id).currentGame.teams.findIndex(function(team) {
@@ -5384,6 +5401,8 @@ function HungryGames() {
         if (myTeam != prevTeam) {
           prevTeam = myTeam;
           prefix = '__' + find(id).currentGame.teams[myTeam].name + '__\n';
+        } else if (obj.isNPC) {
+          prefix = '*';
         }
 
         return prefix + '`' + shortName + '`';
@@ -5415,10 +5434,10 @@ function HungryGames() {
     }
     if (find(id) && find(id).excludedUsers &&
         find(id).excludedUsers.length > 0) {
+      const eUsers = find(id).excludedUsers.concat(find(id).excludedNPCs);
       let excludedList = '\u200B';
-      if (find(id).excludedUsers.length < 20) {
-        excludedList = find(id)
-            .excludedUsers
+      if (eUsers.length < 20) {
+        excludedList = eUsers
             .map(function(obj) {
               return getName(msg.guild, obj);
             })
@@ -5431,8 +5450,7 @@ function HungryGames() {
         }
       }
       finalMessage.addField(
-          'Excluded (' + find(id).excludedUsers.length + ')', excludedList,
-          false);
+          'Excluded (' + eUsers.length + ')', excludedList, false);
     }
     msg.channel.send(self.common.mention(msg), finalMessage).catch((err) => {
       self.common.reply(
@@ -7327,7 +7345,8 @@ function HungryGames() {
   }
 
   /**
-   * List all currently created NPCs.
+   * List all currently created NPCs. Alias for listPlayers right now.
+   * @TODO: List only NPCs.
    *
    * @private
    * @type {HungryGames~hgCommandHandler}
@@ -7335,6 +7354,7 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function listNPCs(msg, id) {
+    listPlayers(msg, id);
   }
 
   /**
@@ -7385,21 +7405,6 @@ function HungryGames() {
 
         msg.channel.startTyping();
       }
-    }
-
-    /**
-     * Remove url from username, and format to rules similar to Discord.
-     * @private
-     *
-     * @param {string} u The username.
-     * @param {string} url The url to remove from u.
-     * @return {string} Formatted username.
-     */
-    function formatUsername(u, url) {
-      return u.replace(url, '')
-          .replace(/^\s+|\s+$|@|#|:|```/g, '')
-          .replace(/\s{2,}/g, ' ')
-          .substring(0, 32);
     }
     /**
      * Fired on the 'response' http revent.
@@ -7462,8 +7467,9 @@ function HungryGames() {
                 find(id).options.eventAvatarSizes) {
               size = find(id).options.eventAvatarSizes.avatar;
             }
-            image.resize(size, size);
-            image.getBuffer(Jimp.MIME_PNG, (err, out) => {
+            const copy = new Jimp(image);
+            copy.resize(size, size);
+            copy.getBuffer(Jimp.MIME_PNG, (err, out) => {
               if (err) throw err;
               sendConfirmation(image, out);
             });
@@ -7499,6 +7505,7 @@ function HungryGames() {
             msg_.react(emoji.white_check_mark).then(() => {
               msg_.react(emoji.x);
             });
+            newReact(maxReactAwaitTime);
             msg_.awaitReactions((reaction, user) => {
               return user.id == msg.author.id &&
                       (reaction.emoji.name == emoji.white_check_mark ||
@@ -7543,7 +7550,7 @@ function HungryGames() {
         return;
       } else {
         p.then((url) => {
-          const error = self.createNPC(msg.guild.id, username, url);
+          const error = self.createNPC(msg.guild.id, username, url, id);
           if (error) {
             self.common.reply(msg, 'Failed to create NPC', error);
           } else {
@@ -7566,14 +7573,48 @@ function HungryGames() {
    * @param {string} avatar The URL path to the avatar. Must be valid URL to
    * this server. (ex:
    * https://www.spikeybot.com/avatars/NPCBBBADEF031F83638/avatar1.png)
+   * @param {string} id The NPC ID of this NPC. Must match the ID in the avatar
+   * URL.
    * @return {?string} Error message or null if no error.
    */
-  this.createNPC = function(gId, username, avatar) {
-    if (typeof avatar !== 'string' ||
-        !avatar.match(/\/avatars\/NPC[A-F0-9]+\/\w+\.png/)) {
-      return 'Invalid Avatar URL.';
+  this.createNPC = function(gId, username, avatar, id) {
+    if (typeof avatar !== 'string') return 'Invalid Avatar URL.';
+    const splitURL = avatar.match(/\/avatars\/(NPC[A-F0-9]+)\/\w+\.png/);
+    if (!splitURL) return 'Invalid Avatar URL.';
+    const urlID = splitURL[1];
+
+    if (!NPC.checkID(id)) {
+      return 'Invalid NPC ID.';
+    } else if (urlID !== id) {
+      return 'ID does not match avatar ID.';
     }
+
+    const npc = new NPC(formatUsername(username), avatar, id);
+
+    if (!find(gId)) self.createGame(gId);
+    if (!find(gId).includedNPCs) find(gId).includedNPCs = [];
+    find(gId).includedNPCs.push(npc);
+
+    if (!find(gId).currentGame.inProgress) self.createGame(gId);
+
+    return null;
   };
+
+  /**
+   * Remove url from username, and format to rules similar to Discord.
+   * @private
+   *
+   * @param {string} u The username.
+   * @param {string|RegExp} [remove] A substring or RegExp to remove.
+   * @return {string} Formatted username.
+   */
+  function formatUsername(u, remove) {
+    if (!remove) remove = /a^/;  // Match nothing by default.
+    return u.replace(remove, '')
+        .replace(/^\s+|\s+$|@|#|:|```/g, '')
+        .replace(/\s{2,}/g, ' ')
+        .substring(0, 32);
+  }
 
   /**
    * Delete an NPC.
@@ -7584,6 +7625,41 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function removeNPC(msg, id) {
+    const mentions = msg.softMentions.users.filter((el) => el.isNPC);
+    if (mentions.size == 0) {
+      if (msg.text && msg.text.length > 1) {
+        self.common.reply(msg, 'I wasn\'t able to find that NPC.');
+      } else {
+        self.common.reply(msg, 'Please specify an NPC to delete.');
+      }
+      return;
+    }
+    const toDelete = mentions.first();
+    const incIndex =
+        find(id).includedNPCs.findIndex((el) => el.id == toDelete.id);
+    const excIndex =
+        find(id).excludedNPCs.findIndex((el) => el.id == toDelete.id);
+
+    if (incIndex > -1) {
+      find(id).includedNPCs.splice(incIndex, 1);
+    } else if (excIndex > -1) {
+      find(id).excludedNPCs.splice(excIndex, 1);
+    } else {
+      self.common.reply(
+          msg, 'Oops, I was only half able to find that NPC.',
+          'Something is broken...');
+      self.error('NPC HALF DISCOVERED :O ' + toDelete.id);
+      return;
+    }
+
+    if (!find(id).currentGame.inProgress) self.createGame(id);
+
+    const embed = new self.Discord.MessageEmbed();
+    embed.setTitle('Deleted NPC');
+    embed.setDescription(toDelete.name);
+    embed.setFooter(toDelete.id);
+    embed.setThumbnail(toDelete.avatarURL);
+    msg.channel.send(embed);
   }
 
   /**

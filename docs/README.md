@@ -3030,7 +3030,7 @@ Hunger Games simulator.
         * [.removeEvent(id, type, event)](#HungryGames+removeEvent) ⇒ <code>string</code>
         * [.toggleEvent(id, type, subCat, event, [value])](#HungryGames+toggleEvent) ⇒ <code>string</code>
         * [.eventsEqual(e1, e2)](#HungryGames+eventsEqual) ⇒ <code>boolean</code>
-        * [.createNPC(gId, username, avatar)](#HungryGames+createNPC) ⇒ <code>string</code>
+        * [.createNPC(gId, username, avatar, id)](#HungryGames+createNPC) ⇒ <code>string</code>
         * [.renameGame(id, name)](#HungryGames+renameGame) ⇒ <code>boolean</code>
         * [.forcePlayerState(id, list, state, text, [persists])](#HungryGames+forcePlayerState) ⇒ <code>string</code>
         * [.getNumSimulating()](#HungryGames+getNumSimulating) ⇒ <code>number</code>
@@ -3175,11 +3175,11 @@ Hunger Games simulator.
         * [~listNPCs(msg, id)](#HungryGames..listNPCs) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~createNPC(msg, id)](#HungryGames..createNPC) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
             * [~fetchAvatar()](#HungryGames..createNPC..fetchAvatar) ℗
-            * [~formatUsername(u, url)](#HungryGames..createNPC..formatUsername) ⇒ <code>string</code> ℗
             * [~onIncoming(incoming)](#HungryGames..createNPC..onIncoming) ℗
             * [~onGetAvatar(buffer)](#HungryGames..createNPC..onGetAvatar) ℗
             * [~sendConfirmation(image, buffer)](#HungryGames..createNPC..sendConfirmation) ℗
             * [~onConfirm(image)](#HungryGames..createNPC..onConfirm) ℗
+        * [~formatUsername(u, [remove])](#HungryGames..formatUsername) ⇒ <code>string</code> ℗
         * [~removeNPC(msg, id)](#HungryGames..removeNPC) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~includeNPC(msg, id)](#HungryGames..includeNPC) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
         * [~excludeNPC(msg, id)](#HungryGames..excludeNPC) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
@@ -3618,7 +3618,7 @@ Checks if the two given events are equivalent.
 
 <a name="HungryGames+createNPC"></a>
 
-### hungryGames.createNPC(gId, username, avatar) ⇒ <code>string</code>
+### hungryGames.createNPC(gId, username, avatar, id) ⇒ <code>string</code>
 Create an NPC in a guild.
 
 **Kind**: instance method of [<code>HungryGames</code>](#HungryGames)  
@@ -3630,6 +3630,7 @@ Create an NPC in a guild.
 | gId | <code>string</code> \| <code>number</code> | The guild ID to add the NPC to. |
 | username | <code>string</code> | The name of the NPC. |
 | avatar | <code>string</code> | The URL path to the avatar. Must be valid URL to this server. (ex: https://www.spikeybot.com/avatars/NPCBBBADEF031F83638/avatar1.png) |
+| id | <code>string</code> | The NPC ID of this NPC. Must match the ID in the avatar URL. |
 
 <a name="HungryGames+renameGame"></a>
 
@@ -5374,10 +5375,11 @@ Get the emoji for a specific outcome of an event.
 <a name="HungryGames..listNPCs"></a>
 
 ### HungryGames~listNPCs(msg, id) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
-List all currently created NPCs.
+List all currently created NPCs. Alias for listPlayers right now.
 
 **Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
 **Access**: private  
+**Todo:**: List only NPCs.  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -5400,7 +5402,6 @@ Create a new NPC.
 
 * [~createNPC(msg, id)](#HungryGames..createNPC) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
     * [~fetchAvatar()](#HungryGames..createNPC..fetchAvatar) ℗
-    * [~formatUsername(u, url)](#HungryGames..createNPC..formatUsername) ⇒ <code>string</code> ℗
     * [~onIncoming(incoming)](#HungryGames..createNPC..onIncoming) ℗
     * [~onGetAvatar(buffer)](#HungryGames..createNPC..onGetAvatar) ℗
     * [~sendConfirmation(image, buffer)](#HungryGames..createNPC..sendConfirmation) ℗
@@ -5414,20 +5415,6 @@ URLs, otherwise returns.
 
 **Kind**: inner method of [<code>createNPC</code>](#HungryGames..createNPC)  
 **Access**: private  
-<a name="HungryGames..createNPC..formatUsername"></a>
-
-#### createNPC~formatUsername(u, url) ⇒ <code>string</code> ℗
-Remove url from username, and format to rules similar to Discord.
-
-**Kind**: inner method of [<code>createNPC</code>](#HungryGames..createNPC)  
-**Returns**: <code>string</code> - Formatted username.  
-**Access**: private  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| u | <code>string</code> | The username. |
-| url | <code>string</code> | The url to remove from u. |
-
 <a name="HungryGames..createNPC..onIncoming"></a>
 
 #### createNPC~onIncoming(incoming) ℗
@@ -5476,6 +5463,20 @@ Once user has confirmed adding NPC.
 | Param | Type | Description |
 | --- | --- | --- |
 | image | <code>Jimp</code> | The image to save to file for this NPC. |
+
+<a name="HungryGames..formatUsername"></a>
+
+### HungryGames~formatUsername(u, [remove]) ⇒ <code>string</code> ℗
+Remove url from username, and format to rules similar to Discord.
+
+**Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
+**Returns**: <code>string</code> - Formatted username.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| u | <code>string</code> | The username. |
+| [remove] | <code>string</code> \| <code>RegExp</code> | A substring or RegExp to remove. |
 
 <a name="HungryGames..removeNPC"></a>
 
