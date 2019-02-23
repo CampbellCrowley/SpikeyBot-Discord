@@ -1341,6 +1341,7 @@ function HungryGames() {
     }
     Player.call(this, id, username, avatarURL);
     this.isNPC = true;
+    this.username = this.name;
   }
   /**
    * Generate a userID for an NPC.
@@ -5080,7 +5081,7 @@ function HungryGames() {
         if (obj.startsWith('NPC')) {
           obj = find(id).includedNPCs.find((el) => el.id == obj);
           if (!obj && find(id).excludedNPCs.find((el) => el.id == obj)) {
-            response += obj.username + ' is already excluded.\n';
+            response += obj.name + ' is already excluded.\n';
             return;
           }
         } else {
@@ -5098,11 +5099,12 @@ function HungryGames() {
         }
       } else {
         if (obj.isNPC) {
-          find(id).excludedNPCs.push(obj.id);
+          find(id).excludedNPCs.push(obj);
           if (!onlyError) {
             response += obj.username + ' added to blacklist.\n';
           }
-          const includeIndex = find(id).includedNPCs.indexOf(obj.id);
+          const includeIndex =
+              find(id).includedNPCs.findIndex((el) => el.id == obj.id);
           if (includeIndex >= 0) {
             if (!onlyError) {
               response += obj.username + ' removed from whitelist.\n';
@@ -5276,15 +5278,16 @@ function HungryGames() {
         return;
       }
       if (obj.isNPC) {
-        const excludeIndex = find(id).excludedNPCs.indexOf(obj.id);
+        const excludeIndex =
+            find(id).excludedNPCs.findIndex((el) => el.id == obj.id);
         if (excludeIndex >= 0) {
           if (!onlyError) {
             response += obj.username + ' removed from blacklist.\n';
           }
           find(id).excludedNPCs.splice(excludeIndex, 1);
         }
-        if (!find(id).includedNPCs.includes(obj.id)) {
-          find(id).includedNPCs.push(obj.id);
+        if (!find(id).includedNPCs.find((el) => el.id == obj.id)) {
+          find(id).includedNPCs.push(obj);
           if (!onlyError) {
             response += obj.username + ' added to whitelist.\n';
           }
@@ -5313,7 +5316,8 @@ function HungryGames() {
       })) {
         find(id).currentGame.includedUsers.push(
             new Player(
-                obj.id, obj.username, obj.displayAvatarURL({format: 'png'}),
+                obj.id, obj.username,
+                obj.avatarURL || obj.displayAvatarURL({format: 'png'}),
                 obj.nickname));
         if (!onlyError) {
           response += obj.username + ' added to included players.\n';

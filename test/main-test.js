@@ -245,7 +245,7 @@ const hgTests = [
       'Create NPC',
       '~hg npc create TESTNPC https://cdn.discordapp.com/embed/avatars/1.png' +
           '?size=128',
-      ['#embed', '^<@422623712534200321>\n```\nCreatedNPC: TESTNPC\n```']),
+      ['#embed', '^<@422623712534200321>\n```\nCreated NPC: TESTNPC\n```']),
   new Test('Exclude NPC', '~hg npc exclude TESTNPC', ['#noerr']),
   new Test('Include NPC', '~hg npc include TESTNPC', ['#noerr']),
   new Test('Delete NPC', '~hg npc delete TESTNPC', ['#embed']),
