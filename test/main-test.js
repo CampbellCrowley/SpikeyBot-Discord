@@ -241,6 +241,13 @@ const hgTests = [
       'No data: Pause autoplay', '~hg pause',
       ['<@422623712534200321>\n```\nGame Pausing\n```Failed: There isn\'t ' +
        'currently a game in progress.']),
+  new Test(
+      'Create NPC',
+      '~hg npc create TESTNPC https://www.spikeybot.com/SBIcon-128x128.png',
+      ['#embed', '^<@422623712534200321>\n```\nCreatedNPC: TESTNPC\n```']),
+  new Test('Exclude NPC', '~hg npc exclude TESTNPC', ['#noerr']),
+  new Test('Include NPC', '~hg npc include TESTNPC', ['#noerr']),
+  new Test('Delete NPC', '~hg npc delete TESTNPC', ['#embed']),
 ];
 
 let ready = false;

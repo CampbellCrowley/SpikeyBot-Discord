@@ -18,6 +18,16 @@
 | ?hg exclude | Prevent someone from being added to the next game. | exclude, remove, exc, ex |
 | ?hg include | Add a person back into the next game. | include, add, inc, in |
 
+## NPC Settings
+
+| Command | Description | Aliases |
+| --- | --- | --- |
+| ?hg npcs | This will list all players I currently care about. | npc, ai, npcs, ais, bots, bot |
+| ?hg npc exclude | Prevent an NPC from being added to the next game. | exclude, exc, ex |
+| ?hg npc include | Allow an NPC to be added to the next game. | include, inc, in |
+| ?hg npc create | Create an NPC. | create, add |
+| ?hg npc delete | Delete an NPC. | delete, remove |
+
 ## Team Settings
 
 | Command | Description | Aliases |

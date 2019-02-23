@@ -213,6 +213,95 @@
       ]
     },
     {
+      "title": "NPC Settings",
+      "rows": [
+        {
+          "command": "npcs",
+          "description": "This will list all players I currently care about.",
+          "aliases": "npc, ai, npcs, ais, bots, bot",
+          "validOnlyInGuild": true,
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "npcs"
+            }
+          ]
+        },
+        {
+          "command": "npc exclude",
+          "description": "Prevent an NPC from being added to the next game.",
+          "aliases": "exclude, exc, ex",
+          "validOnlyInGuild": true,
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "npc exclude MyCoolNPC",
+              "result": "The NPC named 'MyCoolNPC' will be removed from future games."
+            },
+            {
+              "description": "NPC ID",
+              "command": "npc exclude NPC707EE794C7D42049",
+              "result": "An NPC with the same ID will not be included in future games."
+            }
+          ]
+        },
+        {
+          "command": "npc include",
+          "description": "Allow an NPC to be added to the next game.",
+          "aliases": "include, inc, in",
+          "validOnlyInGuild": true,
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "npc include MyCoolNPC",
+              "result": "The NPC named 'MyCoolNPC' will be added into future games."
+            },
+            {
+              "description": "NPC ID",
+              "command": "npc include NPC707EE794C7D42049",
+              "result": "An NPC with the same ID will be included in future games."
+            }
+          ]
+        },
+        {
+          "command": "npc create",
+          "description": "Create an NPC.",
+          "aliases": "create, add",
+          "validOnlyInGuild": true,
+          "examples": [
+            {
+              "description": "Create with image URL",
+              "command": "npc create SB 2 https://www.spikeybot.com/SBIcon-128x128.png",
+              "result": "The NPC named 'SB 2' will be created using the image downloaded from spikeybot.com."
+            },
+            {
+              "description": "Create with uploaded image",
+              "command": "npc create New Best Friend",
+              "result": "The NPC named 'New Best Friend' will be created using an image attached to the message. The command is the 'Description' part when uploading an image to Discord."
+            }
+          ]
+        },
+        {
+          "command": "npc delete",
+          "description": "Delete an NPC.",
+          "aliases": "delete, remove",
+          "validOnlyInGuild": true,
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "npc delete MyCoolNPC",
+              "result": "The NPC named 'MyCoolNPC' will be deleted without confirmation. If there are multiple NPCs named MyCoolNPC, the bot will pick one at random. To avoid deleting the wrong one, use the NPC's ID instead."
+            },
+            {
+              "description": "Delete an NPC using its ID",
+              "command": "npc delete NPC707EE794C7D42049",
+              "result": "The NPC with the same ID will be deleted without confirmation."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "title": "Team Settings",
       "rows": [
         {
