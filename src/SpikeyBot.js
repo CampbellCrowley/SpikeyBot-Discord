@@ -571,21 +571,6 @@ function SpikeyBot() {
                 'Beginning in unit test mode (JS' + version +
                 ') (FAILED TO FIND SpikeyRobot\'s DMs!)');
           });
-    } else if (logChannel && !isDev && !isBackup) {
-      let additional = '';
-      if (client.shard) {
-        additional +=
-            ' Shard: ' + client.shard.id + ' of ' + client.shard.count;
-      }
-      if (disconnectReason) {
-        additional += ' after disconnecting from Discord!\n' + disconnectReason;
-        disconnectReason = null;
-      } else if (!initialized) {
-        additional += ' from cold stop.';
-      }
-      logChannel.send(
-          'I just rebooted (JS' + version + ') ' +
-          (minimal ? 'MINIMAL' : 'FULL') + additional);
     }
     if (!isBackup) {
       // Initialize all mainmodules even if we have already initialized the bot,
@@ -617,6 +602,20 @@ function SpikeyBot() {
         fs.readFile('./save/reboot.dat', function(err, file) {
           if (err) return;
           const msg = JSON.parse(file);
+          const crashed = !msg.running;
+          if (crashed) {
+            common.logWarning(
+                'Either the previous instance crashed, or another instance of' +
+                ' this bot is already running. Neither of these options ' +
+                'should happen.');
+          }
+          msg.running = true;
+          fs.writeFile('./save/reboot.dat', JSON.stringify(msg), function(err) {
+            if (err) {
+              common.error('Failed to set file state to running.');
+              console.error(err);
+            }
+          });
           const channel = client.channels.get(msg.channel.id);
           if (channel) {
             channel.messages.fetch(msg.id)
@@ -627,6 +626,25 @@ function SpikeyBot() {
                   msg_.edit(embed);
                 })
                 .catch(() => {});
+          }
+          if (logChannel && !isDev && !testInstance) {
+            let additional = '';
+            if (client.shard) {
+              additional +=
+                  ' Shard: ' + client.shard.id + ' of ' + client.shard.count;
+            }
+            if (crashed) {
+              additional += ' due to rapid unscheduled dissassembly!';
+            } else if (disconnectReason) {
+              additional +=
+                  ' after disconnecting from Discord!\n' + disconnectReason;
+              disconnectReason = null;
+            } else if (!initialized) {
+              additional += ' from cold stop.';
+            }
+            logChannel.send(
+                'I just rebooted (JS' + version + ') ' +
+                (minimal ? 'MINIMAL' : 'FULL') + additional);
           }
         });
       }
@@ -1098,6 +1116,7 @@ function SpikeyBot() {
           const toSave = {
             id: msg.id,
             channel: {id: msg.channel.id},
+            running: false,
           };
           try {
             fs.writeFileSync('./save/reboot.dat', JSON.stringify(toSave));
