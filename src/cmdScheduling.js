@@ -87,6 +87,19 @@ function CmdScheduling() {
    * @inheritdoc
    */
   this.save = function(opt) {
+    self.client.guilds.forEach((g) => {
+      const dir = self.common.guildSaveDir + g.id;
+      const filename = dir + saveSubDir;
+      if (opt === 'async') {
+        fs.unlink(filename, () => {});
+      } else {
+        try {
+          fs.unlinkSync(filename);
+        } catch (err) {
+          // Meh.
+        }
+      }
+    });
     for (const i in schedules) {
       if (!schedules[i] || !schedules[i].length) continue;
       schedules[i] = schedules[i].filter((el) => !el.complete);
