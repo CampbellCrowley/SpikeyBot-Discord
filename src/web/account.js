@@ -81,7 +81,7 @@ function WebAccount() {
     method: 'POST',
     headers: {
       'Authorization':
-          'Basic ' + (new Buffer(auth.spotifyId + ':' + auth.spotifySecret)
+          'Basic ' + (Buffer.from(auth.spotifyId + ':' + auth.spotifySecret)
               .toString('base64')),
       'Content-Type': 'application/x-www-form-urlencoded',
     },
