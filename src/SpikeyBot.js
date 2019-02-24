@@ -602,7 +602,7 @@ function SpikeyBot() {
         fs.readFile('./save/reboot.dat', function(err, file) {
           if (err) return;
           const msg = JSON.parse(file);
-          const crashed = !msg.running;
+          const crashed = msg.running;
           if (crashed) {
             common.logWarning(
                 'Either the previous instance crashed, or another instance of' +
