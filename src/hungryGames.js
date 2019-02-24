@@ -6154,7 +6154,7 @@ function HungryGames() {
     }
     newEventMessages[msg.id] = msg;
     const authId = msg.author.id;
-    self.common.reply(msg, 'Loading...').then((msg_) => {
+    msg.channel.send('`Loading...`').then((msg_) => {
       newEventMessages[msg.id].myResponse = msg_;
       newReact(maxReactAwaitTime);
       msg_.awaitReactions(function(reaction, user) {
@@ -6173,7 +6173,7 @@ function HungryGames() {
         }
         const message = newEventMessages[msg.id].text;
         msg_.delete().catch(() => {});
-        msg.channel.send('Loading...')
+        msg.channel.send('`Loading...`')
             .then(function(msg_) {
               let numVictim = 0;
               let numAttacker = 0;
@@ -6952,7 +6952,7 @@ function HungryGames() {
     const helpMsg =
         '```\nEdit your message until you are happy with the below outcomes, ' +
         'then click the type of event.\n\nReplace names with "{victim}" or ' +
-        '"{attacker}" (with brackets).\n\nUse "[Vsinglular|plural]" or ' +
+        '"{attacker}" (with brackets).\n\nUse "[Vsingular|plural]" or ' +
         '"[Asingular|plural]" to put "singular" if there\'s only one person, ' +
         'or "plural" if there are more\n (A for attacker, V for victim).\n```';
     const finalOptionsHelp =
