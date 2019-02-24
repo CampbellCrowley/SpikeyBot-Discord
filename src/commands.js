@@ -37,15 +37,6 @@ function Command() {
               userSettings[g.id][el[0]] = new CommandSetting(el[1]);
             });
           }
-          fs.unlink(filename, (err) => {
-            if (err) {
-              self.error(
-                  'Failed to delete command settings file after reading: ' +
-                  filename);
-              console.error(err);
-              return;
-            }
-          });
         } catch (e) {
           self.error('Failed to parse command settings: ' + filename);
           console.error(e);
