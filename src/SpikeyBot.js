@@ -638,7 +638,7 @@ function SpikeyBot() {
             } else if (disconnectReason) {
               additional +=
                   ' after disconnecting from Discord!\n' + disconnectReason;
-              disconnectReason = null;
+              disconnectReason = 'Unknown reason for disconnect.';
             } else if (!initialized) {
               additional += ' from cold stop.';
             }
@@ -676,7 +676,6 @@ function SpikeyBot() {
     saveInterval = setInterval(saveAll, saveFrequency);
 
     initialized = true;
-    disconnectReason = 'Unknown reason for disconnect.';
   }
 
   client.on('disconnect', onDisconnect);
