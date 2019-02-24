@@ -29,7 +29,11 @@ function Polling() {
     self.client.guilds.forEach((g) => {
       const dir = self.common.guildSaveDir + g.id + guildSubDir;
       fs.readdir(dir, (err, files) => {
-        if (err) return;
+        if (err) {
+          self.error('Failed to read directory: ' + dir);
+          console.error(err);
+          return;
+        }
         files.forEach((folder) => {
           fs.readFile(dir + folder + saveFilename, (err, data) => {
             if (err) {
