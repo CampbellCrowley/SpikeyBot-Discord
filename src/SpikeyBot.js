@@ -705,54 +705,6 @@ function SpikeyBot() {
     common.error('Reconnecting to Discord!');
   }
 
-  client.on('error', onError);
-  /**
-   * An error occurred with our websocket connection to Discord.
-   *
-   * @private
-   * @param {Discord~Error} err The websocket error object.
-   * @listens Discord~Client#error
-   */
-  function onError(err) {
-    common.error('Websocket encountered an error!');
-    console.error(err);
-  }
-
-  client.on('warn', onWarn);
-  /**
-   * A general warning was produced.
-   *
-   * @private
-   * @param {string} info The information.
-   * @listens Discord~Client#warn
-   */
-  function onWarn(info) {
-    common.logWarning('Discord Warning: ' + info);
-  }
-
-  client.on('debug', onDebug);
-  /**
-   * A general debug message was produced.
-   *
-   * @private
-   * @param {string} info The information.
-   * @listens Discord~Client#debug
-   */
-  function onDebug(info) {
-    const hbRegex = new RegExp(
-        '^(\\[ws\\] \\[connection\\] Heartbeat acknowledged|' +
-        '\\[connection\\] \\[shard \\d\\] Sending a heartbeat|' +
-        '\\[connection\\] \\[shard \\d\\] Heartbeat acknowledged, latency of|' +
-        '\\[Shard \\d+\\] Sending a heartbeat|' +
-        '\\[Shard \\d+\\] Heartbeat acknowledged, latency of|' +
-        '\\[ws\\] \\[connection\\] Sending a heartbeat|' +
-        '\\[VOICE)');
-    if (info.match(hbRegex)) {
-      return;
-    }
-    common.logDebug('Discord Debug: ' + info);
-  }
-
   if (isBackup) {
     client.on('presenceUpdate', onPresenceUpdate);
   }

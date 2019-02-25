@@ -5957,6 +5957,9 @@ Basic commands and features for the bot.
         * [~adminHelpObject](#Main..adminHelpObject) ℗
         * [~mkAndWrite(filename, dir, data)](#Main..mkAndWrite) ℗
         * [~mkAndWriteSync(filename, dir, data)](#Main..mkAndWriteSync) ℗
+        * [~onDebug(info)](#Main..onDebug) ℗
+        * [~onWarn(info)](#Main..onWarn) ℗
+        * [~onError(err)](#Main..onError) ℗
         * [~onGuildCreate(guild)](#Main..onGuildCreate) ℗
         * [~onGuildDelete(guild)](#Main..onGuildDelete) ℗
         * [~onGuildBanAdd(guild, user)](#Main..onGuildBanAdd) ℗
@@ -6349,6 +6352,42 @@ doesn't. Synchronous
 | filename | <code>string</code> | The name of the file including the directory. |
 | dir | <code>string</code> | The directory path without the file's name. |
 | data | <code>string</code> | The data to write to the file. |
+
+<a name="Main..onDebug"></a>
+
+### Main~onDebug(info) ℗
+A general debug message was produced.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| info | <code>string</code> | The information. |
+
+<a name="Main..onWarn"></a>
+
+### Main~onWarn(info) ℗
+A general warning was produced.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| info | <code>string</code> | The information. |
+
+<a name="Main..onError"></a>
+
+### Main~onError(err) ℗
+An error occurred with our websocket connection to Discord.
+
+**Kind**: inner method of [<code>Main</code>](#Main)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| err | <code>Discord~Error</code> | The websocket error object. |
 
 <a name="Main..onGuildCreate"></a>
 
@@ -10658,9 +10697,6 @@ Main class that manages the bot.
         * [~onReady()](#SpikeyBot..onReady) ℗
         * [~onDisconnect(event)](#SpikeyBot..onDisconnect) ℗
         * [~onReconnecting()](#SpikeyBot..onReconnecting) ℗
-        * [~onError(err)](#SpikeyBot..onError) ℗
-        * [~onWarn(info)](#SpikeyBot..onWarn) ℗
-        * [~onDebug(info)](#SpikeyBot..onDebug) ℗
         * [~onPresenceUpdate(oldMem, newMem)](#SpikeyBot..onPresenceUpdate) ℗
         * [~onMessage(msg)](#SpikeyBot..onMessage) ℗
         * [~commandUpdateGame(msg)](#SpikeyBot..commandUpdateGame) : [<code>commandHandler</code>](#commandHandler) ℗
@@ -11015,42 +11051,6 @@ The bot has disconnected from Discord, and is reconnecting.
 
 **Kind**: inner method of [<code>SpikeyBot</code>](#SpikeyBot)  
 **Access**: private  
-<a name="SpikeyBot..onError"></a>
-
-### SpikeyBot~onError(err) ℗
-An error occurred with our websocket connection to Discord.
-
-**Kind**: inner method of [<code>SpikeyBot</code>](#SpikeyBot)  
-**Access**: private  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| err | <code>Discord~Error</code> | The websocket error object. |
-
-<a name="SpikeyBot..onWarn"></a>
-
-### SpikeyBot~onWarn(info) ℗
-A general warning was produced.
-
-**Kind**: inner method of [<code>SpikeyBot</code>](#SpikeyBot)  
-**Access**: private  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| info | <code>string</code> | The information. |
-
-<a name="SpikeyBot..onDebug"></a>
-
-### SpikeyBot~onDebug(info) ℗
-A general debug message was produced.
-
-**Kind**: inner method of [<code>SpikeyBot</code>](#SpikeyBot)  
-**Access**: private  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| info | <code>string</code> | The information. |
-
 <a name="SpikeyBot..onPresenceUpdate"></a>
 
 ### SpikeyBot~onPresenceUpdate(oldMem, newMem) ℗

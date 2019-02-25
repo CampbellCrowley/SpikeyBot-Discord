@@ -334,6 +334,10 @@ function Main() {
     self.command.on('whoami', commandWhoAmI);
     self.command.on('gettime', commandGetTime);
 
+
+    self.client.on('debug', onDebug);
+    self.client.on('warn', onWarn);
+    self.client.on('error', onError);
     self.client.on('guildCreate', onGuildCreate);
     self.client.on('guildDelete', onGuildDelete);
     self.client.on('guildBanAdd', onGuildBanAdd);
@@ -562,6 +566,9 @@ function Main() {
     self.command.removeListener('whoami');
     self.command.removeListener('gettime');
 
+    self.client.removeListener('debug', onDebug);
+    self.client.removeListener('warn', onWarn);
+    self.client.removeListener('error', onError);
     self.client.removeListener('guildCreate', onGuildCreate);
     self.client.removeListener('guildDelete', onGuildDelete);
     self.client.removeListener('guildBanAdd', onGuildBanAdd);
@@ -666,6 +673,51 @@ function Main() {
       console.error(err);
       return;
     }
+  }
+
+  /**
+   * A general debug message was produced.
+   *
+   * @private
+   * @param {string} info The information.
+   * @listens Discord~Client#debug
+   */
+  function onDebug(info) {
+    const hbRegex = new RegExp(
+        '^(\\[ws\\] \\[connection\\] Heartbeat acknowledged|' +
+        '\\[connection\\] \\[shard \\d\\] Sending a heartbeat|' +
+        '\\[connection\\] \\[shard \\d\\] Heartbeat acknowledged, latency of|' +
+        '\\[Shard \\d+\\] Sending a heartbeat|' +
+        '\\[Shard \\d+\\] Heartbeat acknowledged, latency of|' +
+        '\\[ws\\] \\[connection\\] Sending a heartbeat|' +
+        '\\[VOICE)');
+    if (info.match(hbRegex)) {
+      return;
+    }
+    self.common.logDebug('Discord Debug: ' + info);
+  }
+
+  /**
+   * A general warning was produced.
+   *
+   * @private
+   * @param {string} info The information.
+   * @listens Discord~Client#warn
+   */
+  function onWarn(info) {
+    self.common.logWarning('Discord Warning: ' + info);
+  }
+
+  /**
+   * An error occurred with our websocket connection to Discord.
+   *
+   * @private
+   * @param {Discord~Error} err The websocket error object.
+   * @listens Discord~Client#error
+   */
+  function onError(err) {
+    self.common.error('Websocket encountered an error!');
+    console.error(err);
   }
 
   /**
