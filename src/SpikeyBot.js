@@ -745,7 +745,8 @@ function SpikeyBot() {
         '\\[connection\\] \\[shard \\d\\] Heartbeat acknowledged, latency of|' +
         '\\[Shard \\d+\\] Sending a heartbeat|' +
         '\\[Shard \\d+\\] Heartbeat acknowledged, latency of|' +
-        '\\[ws\\] \\[connection\\] Sending a heartbeat)');
+        '\\[ws\\] \\[connection\\] Sending a heartbeat|' +
+        '\\[VOICE)');
     if (info.match(hbRegex)) {
       return;
     }
