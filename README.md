@@ -2,7 +2,7 @@
 [![Server Count](https://img.shields.io/badge/endpoint.svg?url=https://www.spikeybot.com/stats/shield)](https://www.spikeybot.com)
 [![Discord Support Server](https://discordapp.com/api/guilds/420045052690169856/embed.png)](https://discord.gg/ZbKfYSQ)
 [![Build Status](https://travis-ci.org/CampbellCrowley/SpikeyBot-Discord.svg?branch=master)](https://travis-ci.com/CampbellCrowley/SpikeyBot-Discord)
-<!-- [![SpikeyBot Version](https://img.shields.io/github/package-json/v/CampbellCrowley/SpikeyBot-Discord.svg)](https://github.com/CampbellCrowley/SpikeyBot-Discord) -->
+[![SpikeyBot Version](https://img.shields.io/github/package-json/v/CampbellCrowley/SpikeyBot-Discord.svg)](https://github.com/CampbellCrowley/SpikeyBot-Discord)
 [![Dependencies Status](https://david-dm.org/CampbellCrowley/SpikeyBot-Discord.svg)](https://david-dm.org/CampbellCrowley/SpikeyBot-Discord)
 [![Last Commit](https://img.shields.io/github/last-commit/CampbellCrowley/SpikeyBot-Discord.svg)](https://github.com/CampbellCrowley/SpikeyBot-Discord)
 [![Patreon](https://img.shields.io/badge/donate-patreon-F96854.svg)](https://www.patreon.com/CampbellCrowley)
