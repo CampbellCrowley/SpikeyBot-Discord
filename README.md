@@ -74,7 +74,7 @@ The below steps outline the minimum required to get the SpikeyBot to run.
 3) Download source code
     - Clone this repository `git clone https://github.com/CampbellCrowley/SpikeyBot-Discord.git` or click the green download button in GitHub.
 4) Install dependencies via NPM
-    - Current version of NPM used is `v6.4.1`, but almost any version should be fine.
+    - Current version of NPM used is `v6.8.0`, but almost any version should be fine.
     - In the `SpikeyBot-Discord` directory, run `npm install`.
 5) Get a bot token from Discord
     - A token for the bot that you are trying to run from [Discord](https://discordapp.com/developers/applications/) is required.
