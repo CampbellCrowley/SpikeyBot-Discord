@@ -148,7 +148,7 @@
             {
               "description": "Exclude Online Users",
               "command": "exclude online",
-              "result": "All users who are currenlty online will be added to the next games (Does not exclude idle or dnd)."
+              "result": "All users who are currently online will be added to the next games (Does not exclude idle or dnd)."
             },
             {
               "description": "Exclude Offline Users",
@@ -158,12 +158,17 @@
             {
               "description": "Exclude Idle",
               "command": "exclude idle",
-              "result": "All users who are currenlty idle will be removed."
+              "result": "All users who are currently idle will be removed."
             },
             {
               "description": "Exclude Do Not Disturb",
               "command": "exclude dnd",
-              "result": "All users who are currenlty in DND will be removed."
+              "result": "All users who are currently in DND will be removed."
+            },
+            {
+              "description": "Exclude NPCs",
+              "command": "exclude npcs",
+              "result": "All NPCs who are currently included will be removed."
             }
           ]
         },
@@ -191,7 +196,7 @@
             {
               "description": "Include Online Users",
               "command": "include online",
-              "result": "All users who are currenlty online will be added to the next games (Does not include idle or dnd)."
+              "result": "All users who are currently online will be added to the next games (Does not include idle or dnd)."
             },
             {
               "description": "Include Offline Users",
@@ -201,12 +206,17 @@
             {
               "description": "Include Idle",
               "command": "include idle",
-              "result": "All users who are currenlty idle will be added."
+              "result": "All users who are currently idle will be added."
             },
             {
               "description": "Include Do Not Disturb",
               "command": "include dnd",
-              "result": "All users who are currenlty in DND will be added."
+              "result": "All users who are currently in DND will be added."
+            },
+            {
+              "description": "Include NPCs",
+              "command": "include npcs",
+              "result": "All NPCs who are currently excluded will be added."
             }
           ]
         }
