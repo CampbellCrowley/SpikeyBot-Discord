@@ -4757,11 +4757,11 @@ function HungryGames() {
           }
         };
         find(id).currentGame.teams[lastTeam].players.forEach(function(player) {
-          player = find(id).currentGame.includedUsers.find(function(obj) {
+          const p = find(id).currentGame.includedUsers.find(function(obj) {
             return obj.id == player;
           });
-          const icon = player.avatarURL;
-          const userId = player.id;
+          const icon = p.avatarURL;
+          const userId = p.id;
           readImage(icon)
               .then(function(userId) {
                 return function(image) {
