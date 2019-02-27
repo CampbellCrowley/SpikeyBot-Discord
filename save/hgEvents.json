@@ -271,6 +271,11 @@
       "victim": { "count": "0", "outcome": "nothing" }
     },
     {
+      "message": "{attacker} find[As a|] machete[A|s] in the cornucopia.",
+      "attacker": { "count": "-1", "outcome": "nothing", "weapon": { "name": "machete", "count": 1 } },
+      "victim": { "count": "0", "outcome": "nothing" }
+    },
+    {
       "message": "{victim} [Vis|are] unable to convince {attacker} not to kill them.",
       "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
@@ -1273,6 +1278,41 @@
       "attacker": { "count": 0, "outcome": "nothing" }
     },
     {
+      "message": "{victim} ha[Vs a|ve] heart attack[V|s]!",
+      "victim": { "count": -1, "outcome": "dies" },
+      "attacker": { "count": 0, "outcome": "nothing" }
+    },
+    {
+      "message": "{victim} ha[Vs a|ve] heart attack[V|s] but {attacker} always wanted to try CPR, and manage[As|] to revive them!",
+      "victim": { "count": -1, "outcome": "wounded" },
+      "attacker": { "count": -1, "outcome": "nothing" }
+    },
+    {
+      "message": "An intense and bloody battle ends with {attacker} killing {victim}.",
+      "victim": { "count": -1, "outcome": "dies" },
+      "attacker": { "count": -1, "outcome": "nothing", "killer": true }
+    },
+    {
+      "message": "After {victim} [Vis|are] knocked down, {attacker} put[As|] [Va |]spear[V|s] through their abdomen.",
+      "victim": { "count": -1, "outcome": "dies" },
+      "attacker": { "count": -1, "outcome": "nothing", "killer": true }
+    },
+    {
+      "message": "{victim} makes {attacker} mad, and in a fit of rage, {attacker} snaps {victim}'s neck!",
+      "victim": { "count": 1, "outcome": "dies" },
+      "attacker": { "count": 1, "outcome": "nothing", "killer": true }
+    },
+    {
+      "message": "{victim} [Vis|are] tied down by {attacker}, and [Vis|are] left to die.",
+      "victim": { "count": -1, "outcome": "dies" },
+      "attacker": { "count": -1, "outcome": "nothing", "killer": true }
+    },
+    {
+      "message": "{victim} [Vis|are] suffocated in the dirt by {attacker}.",
+      "victim": { "count": -1, "outcome": "dies" },
+      "attacker": { "count": -1, "outcome": "nothing", "killer": true }
+    },
+    {
       "message": "{victim} ha[Vs|ve] been resurrected and [Vwas|were] put back into the arena!",
       "victim": { "count": -1, "outcome": "revived" },
       "attacker": { "count": 0, "outcome": "nothing" }
@@ -1746,7 +1786,7 @@
     },
     {
       "message": "A mysterious gas begins to pour into the arena, causing the tributes to relax.",
-      "outcomeProbs": {"kill": 5, "wound": 5, "thrive": 75, "nothing": 15},
+      "outcomeProbs": {"kill": 15, "wound": 15, "thrive": 55, "nothing": 15},
       "outcomes": [
         {
           "message": "{victim} inhale[Vs|] the gas.",

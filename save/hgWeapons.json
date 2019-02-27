@@ -45,6 +45,12 @@
         "consumes": 1
       },
       {
+        "message": "{attacker} force[Vs|] [Aa |]grenade[A|s] into {victim}'s mouth, then pull the pin!",
+        "attacker": { "count": "-1", "outcome": "nothing" },
+        "victim": { "count": "1", "outcome": "nothing" },
+        "consumes": 1
+      },
+      {
         "message": "{attacker} blow[As|] themsel[Af|ves] up with {owner} grenade!",
         "attacker": { "count": "-1", "outcome": "dies" },
         "victim": { "count": "0", "outcome": "nothing" },
@@ -367,13 +373,96 @@
         "consumes": 0
       },
       {
-        "message": "{victim} steal[Vs|] [Aa |]knife[A|s] from {attacker}!",
+        "message": "{attacker} pin[As|] {victim} to the ground, then slowly push {owner} knife into their heart while listening to them scream.",
+        "attacker": { "count": "-1", "outcome": "nothing" },
+        "victim": { "count": "-1", "outcome": "dies" },
+        "consumes": 0
+      },
+      {
+        "message": "{victim} steal[Vs|] [Aa |]kni[Afe|ves] from {attacker}!",
         "attacker": { "count": "1", "outcome": "nothing" },
         "victim": { "count": "1", "outcome": "nothing", "weapon": { "name": "knife", "count": 1 } },
         "consumes": 1
       },
       {
         "message": "{attacker} get[As|] {victim} infected with {owner} knife, but doesn't kill them.",
+        "attacker": { "count": "-1", "outcome": "nothing" },
+        "victim": { "count": "-1", "outcome": "wounded" },
+        "consumes": 0
+      }
+    ]
+  },
+  "machete": {
+    "consumable": "machete[C|s]",
+    "outcomes": [
+      {
+        "message": "{attacker} break[As|] {owner} machete.",
+        "attacker": { "count": "-1", "outcome": "nothing" },
+        "victim": { "count": "0", "outcome": "nothing" },
+        "consumes": 1
+      },
+      {
+        "action": "slice[As|]",
+        "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+        "victim": { "count": "-1", "outcome": "dies" },
+        "consumes": 0
+      },
+      {
+        "action": "slice[As|] the throat[V|s] of",
+        "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+        "victim": { "count": "-1", "outcome": "dies" },
+        "consumes": 0
+      },
+      {
+        "action": "slice[As|] the arm[V|s] of",
+        "attacker": { "count": "-1", "outcome": "nothing" },
+        "victim": { "count": "-1", "outcome": "wounded" },
+        "consumes": 0
+      },
+      {
+        "message": "{attacker} leave[As|] {owner} machete[V|s] in {victim}'s back[V|s].",
+        "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+        "victim": { "count": "-1", "outcome": "dies" },
+        "consumes": "V"
+      },
+      {
+        "message": "{attacker} sharpen[As|] {owner} machete.",
+        "attacker": { "count": "-1", "outcome": "nothing" },
+        "victim": { "count": "0", "outcome": "nothing" },
+        "consumes": 0
+      },
+      {
+        "message": "{attacker} use {owner} machete to cut {victim}'s arms off!",
+        "attacker": { "count": "-1", "outcome": "nothing" },
+        "victim": { "count": "-1", "outcome": "dies" },
+        "consumes": 0
+      },
+      {
+        "message": "{attacker} use {owner} machete to cut {victim}'s legs off!",
+        "attacker": { "count": "-1", "outcome": "nothing" },
+        "victim": { "count": "-1", "outcome": "dies" },
+        "consumes": 0
+      },
+      {
+        "message": "{attacker} sharpen[As|] {owner} machete into an even sharper blade.",
+        "attacker": { "count": "-1", "outcome": "nothing" },
+        "victim": { "count": "0", "outcome": "nothing" },
+        "consumes": 0
+      },
+      {
+        "message": "{victim} steal[Vs|] [Aa |]machete[A|s] from {attacker}!",
+        "attacker": { "count": "1", "outcome": "nothing" },
+        "victim": { "count": "1", "outcome": "nothing", "weapon": { "name": "machete", "count": 1 } },
+        "consumes": 1
+      },
+      {
+        "message": "{attacker} slice[Vs|] {victim}'s throat open with {owner} machete!",
+        "attacker": { "count": "-1", "outcome": "nothing" },
+        "victim": { "count": "1", "outcome": "dies" },
+        "consumes": 0
+      },
+      {
+        "message": "{attacker} get[As|] {victim} infected with {owner} machete, but doesn't kill them.",
         "attacker": { "count": "-1", "outcome": "nothing" },
         "victim": { "count": "-1", "outcome": "wounded" },
         "consumes": 0
@@ -417,6 +506,12 @@
         "message": "{attacker} sharpen[As|] {owner} knives.",
         "attacker": { "count": "-1", "outcome": "nothing" },
         "victim": { "count": "0", "outcome": "nothing" },
+        "consumes": 0
+      },
+      {
+        "message": "{attacker} pin[As|] {victim}'s arms to a tree before putting {owner} throwing knife between their eyes.",
+        "attacker": { "count": "-1", "outcome": "nothing" },
+        "victim": { "count": "-1", "outcome": "victim" },
         "consumes": 0
       },
       {
@@ -518,6 +613,12 @@
         "consumes": 0
       },
       {
+        "message": "{victim}'s head[V|s] explode[Vs|] as {attacker} wielding {owner} mace appears where their head used to be.",
+        "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+        "victim": { "count": "-1", "outcome": "dies" },
+        "consumes": 0
+      },
+      {
         "action": "kill[As|]",
         "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
         "victim": { "count": "-1", "outcome": "dies" },
@@ -573,6 +674,12 @@
         "message": "{attacker} slowly pushes {owner} sword into {victim}'s chest and watches the light fade from their eyes.",
         "attacker": { "count": "1", "outcome": "thrives", "killer": true },
         "victim": { "count": "1", "outcome": "dies" },
+        "consumes": 0
+      },
+      {
+        "message": "{victim} look[Vs|] down to see a sword through their chest.",
+        "attacker": { "count": "1", "outcome": "nothing", "killer": true },
+        "victim": { "count": "-1", "outcome": "dies" },
         "consumes": 0
       },
       {
@@ -651,6 +758,12 @@
         "consumes": "V"
       },
       {
+        "message": "{victim} tr[Aies|y] to pull the toothbrush out of their throat that {attacker} put there, but bleeds out instead.",
+        "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+        "victim": { "count": "-1", "outcome": "dies" },
+        "consumes": "V"
+      },
+      {
         "message": "{victim} steal[As|] {attacker}'s toothbrush.",
         "attacker": { "count": "1", "outcome": "nothing" },
         "victim": { "count": "1", "outcome": "nothing", "weapon": { "name": "toothbrush", "count": 1 } },
@@ -683,6 +796,12 @@
         "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
         "victim": { "count": "-1", "outcome": "dies" },
         "consumes": 0
+      },
+      {
+        "message": "{attacker} bind[As|] {victim}'s arms and legs with {owner} rope, then make[As|] them walk the plank.",
+        "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+        "victim": { "count": "-1", "outcome": "dies" },
+        "consumes": "V"
       },
       {
         "message": "{victim} steal[Vs|] [Aa |]rope[A|s] from {attacker}!",
@@ -769,6 +888,12 @@
         "message": "{victim} steal[Vs|] [Aa |]spear[A|s] from {attacker}!",
         "attacker": { "count": "1", "outcome": "nothing" },
         "victim": { "count": "1", "outcome": "nothing", "weapon": { "name": "spear", "count": 1 } },
+        "consumes": 1
+      },
+      {
+        "message": "{attacker} stick[Vs|] [Aa |]spear[A|s] through {victim} and hang[As|] them from a tree trunk!",
+        "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
+        "victim": { "count": "-1", "outcome": "dies" },
         "consumes": 1
       },
       {
