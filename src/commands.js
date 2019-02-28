@@ -293,20 +293,24 @@ function Command() {
         }
       }
       if (msg.guild) {
-        msg.guild.users.forEach((el) => {
-          if (msg.text.indexOf(el.username.toLocaleLowerCase()) > -1 ||
-              msg.text.indexOf(el.tag.toLocaleLowerCase()) > -1) {
-            msg.softMentions.users.add(el);
-          }
-        });
-        msg.guild.members.forEach((el) => {
-          if (msg.text.indexOf(el.user.username.toLocaleLowerCase()) > -1 ||
-              msg.text.indexOf(el.user.tag.toLocaleLowerCase()) > -1 ||
-              (el.nickname &&
-               msg.text.indexOf(el.nickname.toLocaleLowerCase()) > -1)) {
-            msg.softMentions.members.add(el);
-          }
-        });
+        if (msg.guild.users) {
+          msg.guild.users.forEach((el) => {
+            if (msg.text.indexOf(el.username.toLocaleLowerCase()) > -1 ||
+                msg.text.indexOf(el.tag.toLocaleLowerCase()) > -1) {
+              msg.softMentions.users.add(el);
+            }
+          });
+        }
+        if (msg.guild.members) {
+          msg.guild.members.forEach((el) => {
+            if (msg.text.indexOf(el.user.username.toLocaleLowerCase()) > -1 ||
+                msg.text.indexOf(el.user.tag.toLocaleLowerCase()) > -1 ||
+                (el.nickname &&
+                 msg.text.indexOf(el.nickname.toLocaleLowerCase()) > -1)) {
+              msg.softMentions.members.add(el);
+            }
+          });
+        }
       }
       handler(msg);
     };
