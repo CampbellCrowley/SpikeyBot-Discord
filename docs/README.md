@@ -3033,6 +3033,7 @@ Hunger Games simulator.
         * [.toggleEvent(id, type, subCat, event, [value])](#HungryGames+toggleEvent) ⇒ <code>string</code>
         * [.eventsEqual(e1, e2)](#HungryGames+eventsEqual) ⇒ <code>boolean</code>
         * [.createNPC(gId, username, avatar, id)](#HungryGames+createNPC) ⇒ <code>string</code>
+        * [.removeNPC(gId, npc)](#HungryGames+removeNPC) ⇒ <code>string</code> \| <code>Discord~MessageEmbed</code>
         * [.renameGame(id, name)](#HungryGames+renameGame) ⇒ <code>boolean</code>
         * [.forcePlayerState(id, list, state, text, [persists])](#HungryGames+forcePlayerState) ⇒ <code>string</code>
         * [.getNumSimulating()](#HungryGames+getNumSimulating) ⇒ <code>number</code>
@@ -3647,6 +3648,21 @@ Create an NPC in a guild.
 | username | <code>string</code> | The name of the NPC. |
 | avatar | <code>string</code> | The URL path to the avatar. Must be valid URL to this server. (ex: https://www.spikeybot.com/avatars/NPCBBBADEF031F83638/avatar1.png) |
 | id | <code>string</code> | The NPC ID of this NPC. Must match the ID in the avatar URL. |
+
+<a name="HungryGames+removeNPC"></a>
+
+### hungryGames.removeNPC(gId, npc) ⇒ <code>string</code> \| <code>Discord~MessageEmbed</code>
+Delete an NPC from a guild.
+
+**Kind**: instance method of [<code>HungryGames</code>](#HungryGames)  
+**Returns**: <code>string</code> \| <code>Discord~MessageEmbed</code> - String if error, MessageEmbed to send
+if success.  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| gId | <code>string</code> | Guild id of which to remove npc. |
+| npc | <code>string</code> | ID of npc to delete. |
 
 <a name="HungryGames+renameGame"></a>
 
@@ -14057,6 +14073,7 @@ Creates a web interface for managing the Hungry Games.
         * [~toggleEvent(userData, socket, gId, type, subCat, event, value, [cb])](#HGWeb..toggleEvent) : <code>HGWeb~SocketFunction</code> ℗
         * [~forcePlayerState(userData, socket, gId, list, state, [text], [persists], [cb])](#HGWeb..forcePlayerState) : <code>HGWeb~SocketFunction</code> ℗
         * [~renameGame(userData, socket, gId, name, [cb])](#HGWeb..renameGame) : <code>HGWeb~SocketFunction</code> ℗
+        * [~removeNPC(userData, socket, gId, npcId, [cb])](#HGWeb..removeNPC) : <code>HGWeb~SocketFunction</code> ℗
         * [~imageChunk(userData, socket, gId, iId, chunkId, chunk, [cb])](#HGWeb..imageChunk) : <code>HGWeb~SocketFunction</code> ℗
         * [~imageInfo(userData, socket, gId, meta, [cb])](#HGWeb..imageInfo) : <code>HGWeb~SocketFunction</code> ℗
         * [~basicCB](#HGWeb..basicCB) : <code>function</code>
@@ -14771,6 +14788,23 @@ Rename the guild's game.
 | socket | <code>socketIo-Socket</code> | The socket connection to reply on. |
 | gId | <code>number</code> \| <code>string</code> | The guild id to run this command on. |
 | name | <code>string</code> | The name to change the game to. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete. |
+
+<a name="HGWeb..removeNPC"></a>
+
+### HGWeb~removeNPC(userData, socket, gId, npcId, [cb]) : <code>HGWeb~SocketFunction</code> ℗
+Remove an NPC from a game.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: [HungryGames.removeNPC](HungryGames.removeNPC)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo-Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to run this command on. |
+| npcId | <code>string</code> | The ID of the NPC to remove. |
 | [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete. |
 
 <a name="HGWeb..imageChunk"></a>

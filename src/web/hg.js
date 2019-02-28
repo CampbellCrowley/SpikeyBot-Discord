@@ -216,6 +216,9 @@ function HGWeb(hg) {
     socket.on('renameGame', (...args) => {
       callSocketFunction(renameGame, args);
     });
+    socket.on('removeNPC', (...args) => {
+      callSocketFunction(removeNPC, args);
+    });
     socket.on('imageChunk', (...args) => {
       callSocketFunction(imageChunk, args);
     });
@@ -1424,6 +1427,33 @@ function HGWeb(hg) {
     }
   }
   this.renameGame = renameGame;
+
+  /**
+   * Remove an NPC from a game.
+   * @see {@link HungryGames.removeNPC}
+   *
+   * @private
+   * @type {HGWeb~SocketFunction}
+   * @param {Object} userData The current user's session data.
+   * @param {socketIo-Socket} socket The socket connection to reply on.
+   * @param {number|string} gId The guild id to run this command on.
+   * @param {string} npcId The ID of the NPC to remove.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete.
+   */
+  function removeNPC(userData, socket, gId, npcId, cb) {
+    if (!checkPerm(userData, gId, null, 'ai remove')) {
+      if (!checkMyGuild(gId)) return;
+      if (typeof cb === 'function') cb('NO_PERM');
+      replyNoPerm(socket, 'removeNPC');
+      return;
+    }
+    const error = hg.removeNPC(gId, npcId);
+    if (typeof cb === 'function') {
+      cb(typeof error === 'string' ? error : null);
+    }
+  }
+  this.removeNPC = removeNPC;
 
   /**
    * Handle receiving image data for avatar uploading.

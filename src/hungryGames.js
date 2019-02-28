@@ -7664,32 +7664,46 @@ function HungryGames() {
       return;
     }
     const toDelete = mentions.first();
-    const incIndex =
-        find(id).includedNPCs.findIndex((el) => el.id == toDelete.id);
-    const excIndex =
-        find(id).excludedNPCs.findIndex((el) => el.id == toDelete.id);
-
-    if (incIndex > -1) {
-      find(id).includedNPCs.splice(incIndex, 1);
-    } else if (excIndex > -1) {
-      find(id).excludedNPCs.splice(excIndex, 1);
+    const success = self.removeNPC(id, toDelete.id);
+    if (typeof success === 'string') {
+      self.common.reply(msg, success);
     } else {
-      self.common.reply(
-          msg, 'Oops, I was only half able to find that NPC.',
-          'Something is broken...');
-      self.error('NPC HALF DISCOVERED :O ' + toDelete.id);
-      return;
+      msg.channel.send(success);
+    }
+  }
+  /**
+   * Delete an NPC from a guild.
+   * @public
+   *
+   * @param {string} gId Guild id of which to remove npc.
+   * @param {string} npc ID of npc to delete.
+   * @return {string|Discord~MessageEmbed} String if error, MessageEmbed to send
+   * if success.
+   */
+  this.removeNPC = function(gId, npc) {
+    const incIndex = find(gId).includedNPCs.findIndex((el) => el.id == npc);
+    const excIndex = find(gId).excludedNPCs.findIndex((el) => el.id == npc);
+
+    let toDelete;
+    if (incIndex > -1) {
+      toDelete = find(gId).includedNPCs.splice(incIndex, 1)[0];
+    } else if (excIndex > -1) {
+      toDelete = find(gId).excludedNPCs.splice(excIndex, 1)[0];
+    } else {
+      self.error('NPC HALF DISCOVERED :O ' + npc);
+      return 'Oops, I was only half able to find that NPC. ' +
+          'Something is broken...';
     }
 
-    if (!find(id).currentGame.inProgress) self.createGame(id);
+    if (!find(gId).currentGame.inProgress) self.createGame(gId);
 
     const embed = new self.Discord.MessageEmbed();
     embed.setTitle('Deleted NPC');
     embed.setDescription(toDelete.name);
     embed.setFooter(toDelete.id);
     embed.setThumbnail(toDelete.avatarURL);
-    msg.channel.send(embed);
-  }
+    return embed;
+  };
 
   /**
    * Include an NPC in the game.
