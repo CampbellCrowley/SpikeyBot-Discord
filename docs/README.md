@@ -10990,7 +10990,7 @@ Instances of MainModules currently loaded.
 The frequency at which saveInterval will run.
 
 **Kind**: inner constant of [<code>SpikeyBot</code>](#SpikeyBot)  
-**Default**: <code>30 Minutes</code>  
+**Default**: <code>5 Minutes</code>  
 **Access**: private  
 **See**: [saveInterval](#SpikeyBot..saveInterval)  
 <a name="SpikeyBot..trustedIds"></a>

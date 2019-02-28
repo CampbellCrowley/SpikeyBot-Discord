@@ -462,10 +462,10 @@ function SpikeyBot() {
    *
    * @private
    * @constant
-   * @default 30 Minutes
+   * @default 5 Minutes
    * @type {number}
    */
-  const saveFrequency = 30 * 60 * 1000;
+  const saveFrequency = 5 * 60 * 1000;
 
   /**
    * Discord IDs that are allowed to reboot the bot.
