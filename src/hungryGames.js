@@ -7885,7 +7885,8 @@ function HungryGames() {
     if (!find(id) || !find(id).currentGame) return false;
     if (name.length > 100) return false;
     find(id).currentGame.customName = name;
-    find(id).currentGame.name = name || self.client.guilds.get(id).name;
+    find(id).currentGame.name =
+        name || (self.client.guilds.get(id).name + '\'s Hungry Games');
     return true;
   };
 

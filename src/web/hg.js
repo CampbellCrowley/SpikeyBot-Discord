@@ -213,6 +213,9 @@ function HGWeb(hg) {
     socket.on('forcePlayerState', (...args) => {
       callSocketFunction(forcePlayerState, args);
     });
+    socket.on('renameGame', (...args) => {
+      callSocketFunction(renameGame, args);
+    });
     socket.on('imageChunk', (...args) => {
       callSocketFunction(imageChunk, args);
     });
@@ -1382,7 +1385,7 @@ function HGWeb(hg) {
     if (!checkPerm(userData, gId, null, cmdToCheck)) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, 'removeEvent');
+      replyNoPerm(socket, 'forcePlayerState');
       return;
     }
     socket.emit(
@@ -1390,6 +1393,38 @@ function HGWeb(hg) {
     if (typeof cb === 'function') cb();
   }
   this.forcePlayerState = forcePlayerState;
+
+  /**
+   * Rename the guild's game.
+   * @see {@link HungryGames.renameGame}
+   *
+   * @private
+   * @type {HGWeb~SocketFunction}
+   * @param {Object} userData The current user's session data.
+   * @param {socketIo-Socket} socket The socket connection to reply on.
+   * @param {number|string} gId The guild id to run this command on.
+   * @param {string} name The name to change the game to.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete.
+   */
+  function renameGame(userData, socket, gId, name, cb) {
+    if (!checkPerm(userData, gId, null, 'rename')) {
+      if (!checkMyGuild(gId)) return;
+      if (typeof cb === 'function') cb('NO_PERM');
+      replyNoPerm(socket, 'renameGame');
+      return;
+    }
+    hg.renameGame(gId, name);
+    if (typeof cb === 'function') {
+      let name = null;
+      let game = hg.getGame(gId);
+      if (game) game = game.currentGame;
+      if (game) name = game.name;
+      cb(name);
+    }
+  }
+  this.renameGame = renameGame;
+
   /**
    * Handle receiving image data for avatar uploading.
    *
@@ -1424,8 +1459,14 @@ function HGWeb(hg) {
         if (!checkMyGuild(gId)) return;
         if (typeof cb === 'function') cb('NO_PERM');
         replyNoPerm(socket, 'imageChunk');
+        cancelImageUpload(iId);
         return;
       }
+    } else {
+      hg.common.logWarning(
+          'Unknown image type attempted to be uploaded: ' + meta.type,
+          socket.id);
+      cancelImageUpload(iId);
     }
 
     if (chunk) {
@@ -1447,7 +1488,7 @@ function HGWeb(hg) {
 
     if (meta.type == 'NPC') {
       const npcId = hg.NPC.createID();
-      const p = hg.NPC.saveAvatar(Buffer.from(meta.buffer), npcId);
+      const p = hg.NPC.saveAvatar(Buffer.concat(meta.buffer), npcId);
       if (!p) {
         cancelImageUpload(iId);
         if (typeof cb === 'function') cb('Malformed Data');
@@ -1459,13 +1500,20 @@ function HGWeb(hg) {
         socket.emit('game', gId, hg.getGame(gId));
         cancelImageUpload(iId);
         if (typeof cb === 'function') cb();
+        hg.common.logDebug(
+            'NPC Created from upload with URL: ' + url, socket.id);
       }).catch((err) => {
         cancelImageUpload(iId);
         if (typeof cb === 'function') cb('Malformed Data');
-        hg.error('Error while saving avatar from web: ' + err);
-        console.error(err);
+        /* hg.common.error(
+            'Error while saving avatar from web: ' + err, socket.id);
+        console.error(err); */
       });
     } else {
+      hg.common.logWarning(
+          'Unknown upload type completed. Data is being deleted. (' +
+              meta.type + ')',
+          socket.id);
       if (typeof cb === 'function') cb();
       cancelImageUpload(iId);
     }
@@ -1514,6 +1562,7 @@ function HGWeb(hg) {
 
       const buf = beginImageUpload(userData.id);
       buf.username = meta.username;
+      buf.type = meta.type;
       if (typeof cb === 'function') cb(null, buf.id);
     } else {
       if (typeof cb === 'function') cb('NO_PERM');

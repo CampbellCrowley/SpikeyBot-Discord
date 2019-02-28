@@ -14056,6 +14056,7 @@ Creates a web interface for managing the Hungry Games.
         * [~removeEvent(userData, socket, gId, type, event, [cb])](#HGWeb..removeEvent) : <code>HGWeb~SocketFunction</code> ℗
         * [~toggleEvent(userData, socket, gId, type, subCat, event, value, [cb])](#HGWeb..toggleEvent) : <code>HGWeb~SocketFunction</code> ℗
         * [~forcePlayerState(userData, socket, gId, list, state, [text], [persists], [cb])](#HGWeb..forcePlayerState) : <code>HGWeb~SocketFunction</code> ℗
+        * [~renameGame(userData, socket, gId, name, [cb])](#HGWeb..renameGame) : <code>HGWeb~SocketFunction</code> ℗
         * [~imageChunk(userData, socket, gId, iId, chunkId, chunk, [cb])](#HGWeb..imageChunk) : <code>HGWeb~SocketFunction</code> ℗
         * [~imageInfo(userData, socket, gId, meta, [cb])](#HGWeb..imageInfo) : <code>HGWeb~SocketFunction</code> ℗
         * [~basicCB](#HGWeb..basicCB) : <code>function</code>
@@ -14753,6 +14754,23 @@ Force a player in the game to end a day in a certain state.
 | state | <code>string</code> | The forced state. |
 | [text] | <code>string</code> | The message to show in the games as a result of this command. |
 | [persists] | <code>boolean</code> | Will this state be forced until the game ends. |
+| [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete. |
+
+<a name="HGWeb..renameGame"></a>
+
+### HGWeb~renameGame(userData, socket, gId, name, [cb]) : <code>HGWeb~SocketFunction</code> ℗
+Rename the guild's game.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+**See**: [HungryGames.renameGame](HungryGames.renameGame)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userData | <code>Object</code> | The current user's session data. |
+| socket | <code>socketIo-Socket</code> | The socket connection to reply on. |
+| gId | <code>number</code> \| <code>string</code> | The guild id to run this command on. |
+| name | <code>string</code> | The name to change the game to. |
 | [cb] | <code>basicCB</code> | Callback that fires once the requested action is complete. |
 
 <a name="HGWeb..imageChunk"></a>
