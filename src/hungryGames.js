@@ -2473,6 +2473,10 @@ function HungryGames() {
       text: msg,
       content: msg,
       prefix: self.bot.getPrefix(gId),
+      softMentions: {
+        members: new self.Discord.Collection(),
+        users: new self.Discord.Collection(),
+      },
       mentions: {
         channels: new self.Discord.Collection(),
         members: new self.Discord.Collection(),
