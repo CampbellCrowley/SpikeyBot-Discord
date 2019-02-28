@@ -275,8 +275,6 @@ function Command() {
         }
       }
       const uIds = msg.text.match(/\d{17,19}/g);
-      const uTags = msg.text.replace(/\d{17,19}/g, '')
-          .match(/([^@#:\s][^@#:]{0,30}[^@#:\s])(#\d{4})?/g);
       msg.softMentions = {
         users: new self.Discord.UserStore(self.client),
         members: msg.guild ? new self.Discord.GuildMemberStore(msg.guild) :
@@ -294,23 +292,21 @@ function Command() {
           });
         }
       }
-      if (uTags) {
-        uTags.forEach((el) => {
-          const u = self.client.users.find(
-              (u) => u.username.toLowerCase() === el.toLowerCase() ||
-                  u.tag.toLowerCase() === el.toLowerCase());
-          if (u) msg.softMentions.users.add(u);
+      if (msg.guild) {
+        msg.guild.users.forEach((el) => {
+          if (msg.text.indexOf(el.username.toLocaleLowerCase()) > -1 ||
+              msg.text.indexOf(el.tag.toLocaleLowerCase()) > -1) {
+            msg.softMentions.users.add(el);
+          }
         });
-        if (msg.guild) {
-          uTags.forEach((el) => {
-            const m = msg.guild.members.find(
-                (m) => m.user.username.toLowerCase() === el.toLowerCase() ||
-                    m.user.tag.toLowerCase() === el.toLowerCase() ||
-                    (m.nickname &&
-                     m.nickname.toLowerCase() === el.toLowerCase()));
-            if (m) msg.softMentions.members.add(m);
-          });
-        }
+        msg.guild.members.forEach((el) => {
+          if (msg.text.indexOf(el.user.username.toLocaleLowerCase()) > -1 ||
+              msg.text.indexOf(el.user.tag.toLocaleLowerCase()) > -1 ||
+              (el.nickname &&
+               msg.text.indexOf(el.nickname.toLocaleLowerCase()) > -1)) {
+            msg.softMentions.members.add(el);
+          }
+        });
       }
       handler(msg);
     };
