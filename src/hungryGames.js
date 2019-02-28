@@ -1201,33 +1201,41 @@ function HungryGames() {
     return function(msg) {
       const id = msg.guild.id;
       if (find(id)) {
-        const text = msg.text.trim();
+        let text = msg.text.trim().toLocaleLowerCase();
         if (text.length > 0) {
           find(id).channel = msg.channel.id;
           find(id).author = msg.author.id;
-          if (!find(id).includedNPCs) find(id).includedNPCs = [];
-          if (!find(id).excludedNPCs) find(id).excludedNPCs = [];
-          const allNPCs = find(id).includedNPCs.concat(find(id).excludedNPCs);
-          const searchable =
-              allNPCs.map((el) => el.id).concat(allNPCs.map((el) => el.name));
-          const npcSearch = new FuzzySearch(searchable);
-          try {
-            const match = npcSearch.search(text);
-            const npcArray = match.map((el) => {
-              return allNPCs.find((npc) => {
-                return npc.id == el || npc.name == el;
-              });
-            }) ||
-                [];
-            const mentionedNPCs = {};
-            npcArray.forEach((el) => {
-              if (el && !mentionedNPCs[el.id]) mentionedNPCs[el.id] = el;
+          if (find(id).includedNPCs) {
+            find(id).includedNPCs.sort((a, b) => {
+              return b.username.length - a.username.length;
             });
-            msg.softMentions.users =
-                msg.softMentions.users.concat(Object.entries(mentionedNPCs));
-          } catch (err) {
-            console.error(err);
+            find(id).includedNPCs.forEach((el) => {
+              if (text.indexOf(el.username.toLocaleLowerCase()) > -1) {
+                // text = text.replace(el.username.toLocaleLowerCase(), '');
+                msg.softMentions.users.add(el);
+              } else if (text.indexOf(el.id.toLocaleLowerCase()) > -1) {
+                text = text.replace(el.id.toLocaleLowerCase(), '');
+                msg.softMentions.users.add(el);
+              }
+            });
           }
+          if (find(id).excludedNPCs) {
+            find(id).excludedNPCs.sort((a, b) => {
+              return b.username.length - a.username.length;
+            });
+            find(id).excludedNPCs.forEach((el) => {
+              if (text.indexOf(el.username.toLocaleLowerCase()) > -1) {
+                // text = text.replace(el.username.toLocaleLowerCase(), '');
+                msg.softMentions.users.add(el);
+              } else if (text.indexOf(el.id.toLocaleLowerCase()) > -1) {
+                text = text.replace(el.id.toLocaleLowerCase(), '');
+                msg.softMentions.users.add(el);
+              }
+            });
+          }
+          /* console.log(
+              msg.softNoMatch, msg.softMentions.users.map((el) => el.username));
+             */
         }
       }
       cb(msg, id);
