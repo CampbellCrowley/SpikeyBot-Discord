@@ -2730,7 +2730,7 @@ function HungryGames() {
         return;
       }
     } else {
-      doArenaEvent = find(id).options.arenaEvents &&
+      doArenaEvent = startingAlive > 2 && find(id).options.arenaEvents &&
           Math.random() < find(id).options.probabilityOfArenaEvent;
       if (doArenaEvent) {
         const arenaEventPool =
