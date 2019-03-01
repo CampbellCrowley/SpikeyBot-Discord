@@ -1870,7 +1870,7 @@ function Main() {
                                 '! I\'m not sure why though!')
                         .catch(() => {});
                     self.error('Failed to ban user.');
-                    console.log(err);
+                    console.error(err);
                   });
             }
           });

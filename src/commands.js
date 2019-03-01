@@ -275,8 +275,6 @@ function Command() {
         }
       }
       const uIds = msg.text.match(/\d{17,19}/g);
-      const uTags = msg.text.replace(/\d{17,19}/g, '')
-          .match(/([^@#:\s][^@#:]{0,30}[^@#:\s])(#\d{4})?/g);
       msg.softMentions = {
         users: new self.Discord.UserStore(self.client),
         members: msg.guild ? new self.Discord.GuildMemberStore(msg.guild) :
@@ -294,23 +292,24 @@ function Command() {
           });
         }
       }
-      if (uTags) {
-        uTags.forEach((el) => {
-          const u = self.client.users.find(
-              (u) => u.username.toLowerCase() === el.toLowerCase() ||
-                  u.tag.toLowerCase() === el.toLowerCase());
-          if (u) msg.softMentions.users.add(u);
+      if (msg.guild) {
+        const sT = msg.text.toLocaleLowerCase();
+        msg.guild.members.forEach((el) => {
+          if (sT.indexOf(el.user.username.toLocaleLowerCase()) > -1) {
+            // sT = sT.replace(el.user.username.toLocaleLowerCase(), '');
+            msg.softMentions.members.add(el);
+            msg.softMentions.users.add(el.user);
+          } else if (sT.indexOf(el.user.tag.toLocaleLowerCase()) > -1) {
+            // sT = sT.replace(el.user.tag.toLocaleLowerCase(), '');
+            msg.softMentions.members.add(el);
+            msg.softMentions.users.add(el.user);
+          } else if (
+            el.nickname && sT.indexOf(el.nickname.toLocaleLowerCase()) > -1) {
+            // sT = sT.replace(el.nickname.toLocaleLowerCase(), '');
+            msg.softMentions.members.add(el);
+            msg.softMentions.users.add(el.user);
+          }
         });
-        if (msg.guild) {
-          uTags.forEach((el) => {
-            const m = msg.guild.members.find(
-                (m) => m.user.username.toLowerCase() === el.toLowerCase() ||
-                    m.user.tag.toLowerCase() === el.toLowerCase() ||
-                    (m.nickname &&
-                     m.nickname.toLowerCase() === el.toLowerCase()));
-            if (m) msg.softMentions.members.add(m);
-          });
-        }
       }
       handler(msg);
     };

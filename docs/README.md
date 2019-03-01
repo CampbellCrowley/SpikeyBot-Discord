@@ -2001,8 +2001,10 @@ Reset all custom command settings to default.
         * [.logWarning(message, ip, [traceIncrease])](#Common+logWarning)
         * [.error(message, ip, [traceIncrease])](#Common+error)
         * [.reply(msg, text, [post])](#Common+reply) ⇒ <code>Promise</code>
+        * [.fmtDAPIErr(e)](#Common+fmtDAPIErr) ⇒ <code>string</code>
         * [.mention(msg)](#Common+mention) ⇒ <code>string</code>
     * _static_
+        * [.fmtDAPIErr](#Common.fmtDAPIErr) ⇒ <code>string</code>
         * [.mention](#Common.mention) ⇒ <code>string</code>
         * [.spikeyId](#Common.spikeyId) : <code>string</code>
         * [.logChannel](#Common.logChannel) : <code>string</code>
@@ -2046,6 +2048,7 @@ your account ID to be able to give yourself full access to all features of
 the bot.
 
 **Kind**: instance constant of [<code>Common</code>](#Common)  
+**Default**: <code>&quot;124733888177111041&quot;</code>  
 <a name="Common+logChannel"></a>
 
 ### common.logChannel : <code>string</code>
@@ -2206,6 +2209,18 @@ null if error occurred before attempting to send.
 | text | <code>string</code> | The main body of the message. |
 | [post] | <code>string</code> | The footer of the message. |
 
+<a name="Common+fmtDAPIErr"></a>
+
+### common.fmtDAPIErr(e) ⇒ <code>string</code>
+Format a Discord API error.
+
+**Kind**: instance method of [<code>Common</code>](#Common)  
+**Returns**: <code>string</code> - Error formatted as single line string.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| e | <code>Discord~DiscordAPIError</code> | DiscordAPIError to format into a string. |
+
 <a name="Common+mention"></a>
 
 ### common.mention(msg) ⇒ <code>string</code>
@@ -2217,6 +2232,18 @@ Creates formatted string for mentioning the author of msg.
 | Param | Type | Description |
 | --- | --- | --- |
 | msg | <code>Discord~Message</code> \| <code>Discord~UserResolvable</code> | Message to format a mention for the author of. |
+
+<a name="Common.fmtDAPIErr"></a>
+
+### Common.fmtDAPIErr ⇒ <code>string</code>
+Format a Discord API error.
+
+**Kind**: static property of [<code>Common</code>](#Common)  
+**Returns**: <code>string</code> - Error formatted as single line string.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| e | <code>Discord~DiscordAPIError</code> | DiscordAPIError to format into a string. |
 
 <a name="Common.mention"></a>
 
@@ -10963,7 +10990,7 @@ Instances of MainModules currently loaded.
 The frequency at which saveInterval will run.
 
 **Kind**: inner constant of [<code>SpikeyBot</code>](#SpikeyBot)  
-**Default**: <code>30 Minutes</code>  
+**Default**: <code>5 Minutes</code>  
 **Access**: private  
 **See**: [saveInterval](#SpikeyBot..saveInterval)  
 <a name="SpikeyBot..trustedIds"></a>

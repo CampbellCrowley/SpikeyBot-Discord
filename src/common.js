@@ -1,4 +1,4 @@
-// Copyright 2018 Campbell Crowley. All rights reserved.
+// Copyright 2018-2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const dateFormat = require('dateformat');
 const Discord = require('discord.js');
@@ -359,6 +359,7 @@ function Common() {
  * the bot.
  *
  * @type {string}
+ * @default
  * @constant
  */
 Common.prototype.spikeyId = '124733888177111041';
@@ -370,6 +371,25 @@ Common.prototype.spikeyId = '124733888177111041';
  * @constant
  */
 Common.spikeyId = Common.prototype.spikeyId;
+
+/**
+ * Format a Discord API error.
+ *
+ * @param {Discord~DiscordAPIError} e DiscordAPIError to format into a string.
+ * @return {string} Error formatted as single line string.
+ */
+Common.prototype.fmtDAPIErr = function(e) {
+  return `ERR:${process.pid} ${e.name}: ${e.message}` +
+      ` ${e.method} ${e.code} (${e.path})`;
+};
+
+/**
+ * Format a Discord API error.
+ *
+ * @param {Discord~DiscordAPIError} e DiscordAPIError to format into a string.
+ * @return {string} Error formatted as single line string.
+ */
+Common.fmtDAPIErr = Common.prototype.fmtDAPIErr;
 
 /**
  * The channel id for the channel to send general log messages to.
@@ -519,5 +539,16 @@ function __stack() {
   Error.prepareStackTrace = orig;
   return stack;
 }
+
+const oldErr = console.error;
+/**
+ * Augment console.error to reformat DiscordAPIErrors to be more pretty.
+ */
+console.error = function(...args) {
+  if (args.length == 1 && (args[0] instanceof Discord.DiscordAPIError)) {
+    args[0] = Common.fmtDAPIErr(args[0]);
+  }
+  oldErr(...args);
+};
 
 module.exports = new Common();

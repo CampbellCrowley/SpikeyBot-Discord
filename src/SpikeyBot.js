@@ -1,4 +1,4 @@
-// Copyright 2018 Campbell Crowley. All rights reserved.
+// Copyright 2018-2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const Discord = require('discord.js');
 const fs = require('fs');
@@ -20,11 +20,13 @@ let auth = require('../auth.js');
 function unhandledRejection(...args) {
   if (args[0] && args[0].name == 'DiscordAPIError') {
     const e = args[0];
-    console.log(`${e.name}: ${e.message} ${e.code} (${e.path})`);
+    const str = `ERR:${process.pid} Uncaught ${e.name}: ${e.message} ` +
+        `${e.method} ${e.code} (${e.path})`;
+    console.log(str);
   } else if (args[0] && args[0].message == 'No Perms') {
-    console.log(args[0]);
+    console.log(`ERR:${process.pid}`, args[0]);
   } else {
-    console.log(...args);
+    console.log(`ERR:${process.pid}`, ...args);
   }
 }
 process.on('unhandledRejection', unhandledRejection);
@@ -472,10 +474,10 @@ function SpikeyBot() {
    *
    * @private
    * @constant
-   * @default 30 Minutes
+   * @default 5 Minutes
    * @type {number}
    */
-  const saveFrequency = 30 * 60 * 1000;
+  const saveFrequency = 5 * 60 * 1000;
 
   /**
    * Discord IDs that are allowed to reboot the bot.

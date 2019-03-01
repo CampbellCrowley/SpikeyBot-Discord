@@ -253,10 +253,19 @@ function HGWeb(hg) {
       func.apply(func, [args[0], socket].concat(args.slice(1)));
       if (forward) {
         Object.entries(siblingSockets).forEach((s) => {
+          let cb;
+          if (typeof args[args.length-1] === 'function') {
+            cb = args[args.length - 1];
+            args[args.length - 1] = {_function: true};
+          }
           s[1].emit(
               'forwardedRequest', args[0], socket.id, func.name, args.slice(1),
               (res) => {
-                socket.emit(...res);
+                if (res._forward) socket.emit(...res.data);
+                if (res._callback &&
+                    typeof args[args.length - 1] === 'function') {
+                  cb(...res.data);
+                }
               });
         });
       }
@@ -294,10 +303,15 @@ function HGWeb(hg) {
       if (!authenticated) return;
       const fakeSocket = {
         emit: function(...args) {
-          if (typeof cb == 'function') cb(args);
+          if (typeof cb == 'function') cb({_forward: true, data: args});
         },
         id: sId,
       };
+      if (args[args.length-1]._function) {
+        args[args.length - 1] = function(...a) {
+          if (typeof cb === 'function') cb({_callback: true, data: a});
+        };
+      }
       if (!self[func]) {
         hg.common.error(func + ': is not a function.');
       } else {
