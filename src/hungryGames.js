@@ -1387,8 +1387,8 @@ function HungryGames() {
    * Save an image for an NPC. Does NOT limit download sizes.
    * @public
    *
-   * @param {string|Jimp|Buffer} avatar Any image, URL or file path to
-   * fetch the avatar from. Anything supported by Jimp.
+   * @param {string|Jimp|Buffer} avatar Any image, URL or file path to fetch the
+   * avatar from. Anything supported by Jimp.
    * @param {string} id The NPC id to save the avatar to.
    * @return {?Promise} Promise if successful will have the public URL where the
    * avatar is available. Null if error.
@@ -1409,6 +1409,7 @@ function HungryGames() {
           console.error(err);
           return;
         }
+        image.resize(fetchSize, fetchSize);
         image.getBuffer(Jimp.MIME_PNG, (err, buffer) => {
           if (err) {
             self.error('Failed to convert image into buffer: ' + avatar);
@@ -2348,7 +2349,7 @@ function HungryGames() {
     }
 
     const numCols = calcColNum(statusList.length > 10 ? 3 : 2, statusList);
-    if (statusList.length >= 3) {
+    if (statusList.length >= 5) {
       const quarterLength = Math.ceil(statusList.length / numCols);
       for (let i = 0; i < numCols - 1; i++) {
         const thisMessage =
@@ -4653,7 +4654,7 @@ function HungryGames() {
           return 0;
         });
       }
-      if (statusList.length >= 3) {
+      if (statusList.length >= 5) {
         const numCols = calcColNum(statusList.length > 10 ? 3 : 2, statusList);
 
         const quarterLength = Math.ceil(statusList.length / numCols);
@@ -4665,8 +4666,7 @@ function HungryGames() {
               thisMessage, true);
         }
         finalMessage.addField(
-            ((numCols - 1) * quarterLength + 1) + '-' +
-                ((numCols) * quarterLength),
+            ((numCols - 1) * quarterLength + 1) + '-' + statusList.length,
             statusList.join('\n').slice(0, 1025), true);
       } else {
         finalMessage.setDescription(statusList.join('\n') || '...');
@@ -4904,7 +4904,7 @@ function HungryGames() {
 
               return prefix + '`' + shortName + '`';
             });
-        if (statusList.length >= 3) {
+        if (statusList.length >= 5) {
           const numCols =
               calcColNum(statusList.length > 10 ? 3 : 2, statusList);
 
@@ -5452,7 +5452,7 @@ function HungryGames() {
       if (find(id).options.teamSize == 0) {
         statusList.sort();
       }
-      if (statusList.length >= 3) {
+      if (statusList.length >= 5) {
         const numCols = calcColNum(statusList.length > 10 ? 3 : 2, statusList);
 
         const quarterLength = Math.ceil(statusList.length / numCols);
@@ -7396,7 +7396,106 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function listNPCs(msg, id) {
-    listPlayers(msg, id);
+    let specific =
+        msg.softMentions.users.find((el) => el.id.startsWith('NPC'));
+    /**
+     * Function to pass into Array.map to format NPCs into strings for this
+     * list.
+     * @private
+     * @param {NPC} obj NPC object to format as a string.
+     * @return {string} Name as a string.
+     */
+    function mapFunc(obj) {
+      let shortName;
+      shortName = obj.name.substring(0, 16);
+      if (shortName != obj.name) {
+        shortName = shortName.substring(0, 13) + '...';
+      }
+      return '`' + shortName + '`';
+    }
+
+
+    const iNPCs = find(id).includedNPCs || [];
+    const eNPCs = find(id).excludedNPCs || [];
+    if (specific) {
+      specific = iNPCs.concat(eNPCs).find((el) => el.id == specific.id);
+      const embed = new self.Discord.MessageEmbed();
+      embed.setTitle('NPC Info');
+      embed.setDescription(specific.name);
+      embed.setFooter(specific.id);
+      embed.setThumbnail(specific.avatarURL);
+      msg.channel.send(self.common.mention(msg), embed).catch((err) => {
+        self.error('Failed to send NPC info message: ' + msg.channel.id);
+        console.error(err);
+      });
+    } else if (msg.text && !['show', 'list'].includes(msg.text.trim())) {
+      self.common.reply(
+          msg, 'I\'m not sure which NPC that is.', msg.text + '\nUse `' +
+              msg.prefix + self.postPrefix +
+              'npc list` to show all current NPCs.');
+    } else {
+      const finalMessage = new self.Discord.MessageEmbed();
+      finalMessage.setTitle('List of NPCs');
+      finalMessage.setColor(defaultColor);
+      if (!find(id)) {
+        createGame(msg, id);
+      }
+      let iList = [];
+      let eList = [];
+      if (iNPCs.length > 0) iList = iNPCs.map(mapFunc).sort();
+      if (eNPCs.length > 0) eList = eNPCs.map(mapFunc).sort();
+
+      const numINPCs = iList.length;
+      const numENPCs = eList.length;
+      if (iList.length >= 5) {
+        const numCols = calcColNum(iList.length > 10 ? 3 : 2, iList);
+
+        const quarterLength = Math.ceil(iList.length / numCols);
+        for (let i = 0; i < numCols - 1; i++) {
+          const thisMessage =
+              iList.splice(0, quarterLength).join('\n').substr(0, 1024);
+          finalMessage.addField(
+              'Included (' + (i * quarterLength + 1) + '-' +
+                  ((i + 1) * quarterLength) + ')',
+              thisMessage, true);
+        }
+        finalMessage.addField(
+            'Included (' + ((numCols - 1) * quarterLength + 1) + '-' +
+                numINPCs + ')',
+            iList.join('\n').substr(0, 1024), true);
+      } else {
+        finalMessage.addField(
+            'Included (' + numINPCs + ')', iList.join('\n') || 'None.', false);
+      }
+      if (eList.length >= 5) {
+        const numCols = calcColNum(eList.length > 10 ? 3 : 2, eList);
+
+        const quarterLength = Math.ceil(eList.length / numCols);
+        for (let i = 0; i < numCols - 1; i++) {
+          const thisMessage =
+              eList.splice(0, quarterLength).join('\n').substr(0, 1024);
+          finalMessage.addField(
+              'Excluded (' + (i * quarterLength + 1) + '-' +
+                  ((i + 1) * quarterLength) + ')',
+              thisMessage, true);
+        }
+        finalMessage.addField(
+            'Excluded (' + ((numCols - 1) * quarterLength + 1) + '-' +
+                numENPCs + ')',
+            eList.join('\n').substr(0, 1024), true);
+      } else {
+        finalMessage.addField(
+            'Excluded (' + numENPCs + ')', eList.join('\n') || 'None.', false);
+      }
+      msg.channel.send(self.common.mention(msg), finalMessage).catch((err) => {
+        self.common.reply(
+            msg, 'Oops, Discord rejected my message for some reason...',
+            'This is possibly because there are too many NPCs in the games ' +
+                'to show in this list.');
+        self.error('Failed to send list of NPCs message: ' + msg.channel.id);
+        console.error(err);
+      });
+    }
   }
 
   /**

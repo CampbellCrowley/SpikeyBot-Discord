@@ -233,7 +233,13 @@
           "examples": [
             {
               "description": "Basic Usage",
-              "command": "npcs"
+              "command": "npcs",
+              "result": "All currently created NPCs will be listed."
+            },
+            {
+              "description": "More Info",
+              "command": "npc That One Cool NPC I Have",
+              "result": "All known information about \"THat One Cool NPC I Have\" will be shown. NPC ID can also be used instead of name."
             }
           ]
         },

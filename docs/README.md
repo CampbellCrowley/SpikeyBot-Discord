@@ -3203,6 +3203,7 @@ Hunger Games simulator.
         * [~formatEventString(arenaEvent, [newline])](#HungryGames..formatEventString) ⇒ <code>string</code> ℗
         * [~getOutcomeEmoji(outcome)](#HungryGames..getOutcomeEmoji) ⇒ <code>string</code> ℗
         * [~listNPCs(msg, id)](#HungryGames..listNPCs) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
+            * [~mapFunc(obj)](#HungryGames..listNPCs..mapFunc) ⇒ <code>string</code> ℗
         * [~createNPC(msg, id)](#HungryGames..createNPC) : [<code>hgCommandHandler</code>](#HungryGames..hgCommandHandler) ℗
             * [~fetchAvatar()](#HungryGames..createNPC..fetchAvatar) ℗
             * [~onIncoming(incoming)](#HungryGames..createNPC..onIncoming) ℗
@@ -5444,6 +5445,20 @@ List all currently created NPCs. Alias for listPlayers right now.
 | --- | --- | --- |
 | msg | <code>Discord~Message</code> | The message that lead to this being called. |
 | id | <code>string</code> | The id of the guild this was triggered from. |
+
+<a name="HungryGames..listNPCs..mapFunc"></a>
+
+#### listNPCs~mapFunc(obj) ⇒ <code>string</code> ℗
+Function to pass into Array.map to format NPCs into strings for this
+list.
+
+**Kind**: inner method of [<code>listNPCs</code>](#HungryGames..listNPCs)  
+**Returns**: <code>string</code> - Name as a string.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| obj | <code>NPC</code> | NPC object to format as a string. |
 
 <a name="HungryGames..createNPC"></a>
 
