@@ -357,51 +357,63 @@ function SpikeyBot() {
     return;
   }
 
+  let disabledEvents = ['TYPING_START'];
+  let defaultPresence = {
+    status: 'online',
+    activity: {
+      name: '?help for help',
+      type: 'WATCHING',
+    },
+  };
+  if (isBackup) {
+    defaultPresence = {
+      status: 'dnd',
+      /* activity: {
+        name: 'OFFLINE',
+        type: 'PLAYING',
+      }, */
+    };
+    disabledEvents = [
+      // 'GUILD_CREATE',
+      // 'GUILD_DELETE',
+      'GUILD_UPDATE',
+      'GUILD_MEMBER_ADD',
+      'GUILD_MEMBER_REMOVE',
+      'GUILD_MEMBER_UPDATE',
+      'GUILD_MEMBERS_CHUNK',
+      'GUILD_INTEGRATIONS_UPDATE',
+      'GUILD_ROLE_CREATE',
+      'GUILD_ROLE_DELETE',
+      'GUILD_ROLE_UPDATE',
+      'GUILD_BAN_ADD',
+      'GUILD_BAN_REMOVE',
+      // 'CHANNEL_CREATE',
+      // 'CHANNEL_DELETE',
+      // 'CHANNEL_UPDATE',
+      'CHANNEL_PINS_UPDATE',
+      'MESSAGE_CREATE',
+      'MESSAGE_DELETE',
+      'MESSAGE_UPDATE',
+      'MESSAGE_DELETE_BULK',
+      'MESSAGE_REACTION_ADD',
+      'MESSAGE_REACTION_REMOVE',
+      'MESSAGE_REACTION_REMOVE_ALL',
+      // 'USER_UPDATE',
+      'USER_NOTE_UPDATE',
+      'USER_SETTINGS_UPDATE',
+      /* 'PRESENCE_UPDATE', */
+      'VOICE_STATE_UPDATE',
+      'TYPING_START',
+      'VOICE_SERVER_UPDATE',
+      'WEBHOOKS_UPDATE',
+    ];
+  }
+
+
   // If we are not managing shards, just start normally.
   const client = new Discord.Client({
-    disabledEvents: isBackup ?
-        [
-          'GUILD_CREATE',
-          'GUILD_DELETE',
-          'GUILD_UPDATE',
-          'GUILD_MEMBER_ADD',
-          'GUILD_MEMBER_REMOVE',
-          'GUILD_MEMBER_UPDATE',
-          'GUILD_MEMBERS_CHUNK',
-          'GUILD_INTEGRATIONS_UPDATE',
-          'GUILD_ROLE_CREATE',
-          'GUILD_ROLE_DELETE',
-          'GUILD_ROLE_UPDATE',
-          'GUILD_BAN_ADD',
-          'GUILD_BAN_REMOVE',
-          'CHANNEL_CREATE',
-          'CHANNEL_DELETE',
-          'CHANNEL_UPDATE',
-          'CHANNEL_PINS_UPDATE',
-          'MESSAGE_CREATE',
-          'MESSAGE_DELETE',
-          'MESSAGE_UPDATE',
-          'MESSAGE_DELETE_BULK',
-          'MESSAGE_REACTION_ADD',
-          'MESSAGE_REACTION_REMOVE',
-          'MESSAGE_REACTION_REMOVE_ALL',
-          'USER_UPDATE',
-          'USER_NOTE_UPDATE',
-          'USER_SETTINGS_UPDATE',
-          /* 'PRESENCE_UPDATE', */
-          'VOICE_STATE_UPDATE',
-          'TYPING_START',
-          'VOICE_SERVER_UPDATE',
-          'WEBHOOKS_UPDATE',
-        ] :
-        ['TYPING_START'],
-    presence: {
-      status: 'online',
-      activity: {
-        name: '?help for help',
-        type: 'WATCHING',
-      },
-    },
+    disabledEvents: disabledEvents,
+    presence: defaultPresence,
   });
 
 
@@ -534,7 +546,7 @@ function SpikeyBot() {
         type: type || 'WATCHING',
         url: 'https://www.spikeybot.com',
       },
-      status: (testInstance || isBackup ? 'dnd' : 'online'),
+      status: ((testInstance || isBackup) ? 'dnd' : 'online'),
     });
   }
 
@@ -554,7 +566,7 @@ function SpikeyBot() {
       } else if (isDev) {
         updateGame('Version: ' + version);
       } else if (isBackup) {
-        updateGame('OFFLINE', 'PLAYING');
+        // updateGame('OFFLINE', 'PLAYING');
       } else {
         updateGame(defaultPrefix + 'help for help');
       }
@@ -716,7 +728,7 @@ function SpikeyBot() {
    * @param {Discord~GuildMember} newMem Member after presence update.
    */
   function onPresenceUpdate(oldMem, newMem) {
-    if (oldMem.id !== self.client.user.id) return;
+    if (oldMem.id !== client.user.id) return;
     common.log(
         'Presence updated: ' + newMem.presence.status + ': ' +
         (newMem.presence.activity && newMem.presence.activity.name ||
