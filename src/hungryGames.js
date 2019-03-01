@@ -5435,8 +5435,9 @@ function HungryGames() {
         if (myTeam != prevTeam) {
           prevTeam = myTeam;
           prefix = '__' + find(id).currentGame.teams[myTeam].name + '__\n';
-        } else if (obj.isNPC) {
-          prefix = '*';
+        }
+        if (obj.isNPC) {
+          prefix += '*';
         }
 
         return prefix + '`' + shortName + '`';
