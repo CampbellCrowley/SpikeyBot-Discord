@@ -7666,7 +7666,8 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function removeNPC(msg, id) {
-    const mentions = msg.softMentions.users.filter((el) => el.isNPC);
+    const mentions =
+        msg.softMentions.users.filter((el) => el.id.startsWith('NPC'));
     if (mentions.size == 0) {
       if (msg.text && msg.text.length > 1) {
         self.common.reply(msg, 'I wasn\'t able to find that NPC.');
