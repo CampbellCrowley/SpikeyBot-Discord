@@ -4004,6 +4004,12 @@ function HungryGames() {
    */
   function probabilityEvent(
       eventPool, probabilityOpts, customWeight = 1, recurse = 0) {
+    if (isNaN(probabilityOpts.kill * 1)) probabilityOpts.kill = 0;
+    if (isNaN(probabilityOpts.nothing * 1)) probabilityOpts.nothing = 0;
+    if (isNaN(probabilityOpts.revive * 1)) probabilityOpts.revive = 0;
+    if (isNaN(probabilityOpts.thrive * 1)) probabilityOpts.thrive = 0;
+    if (isNaN(probabilityOpts.wound * 1)) probabilityOpts.wound = 0;
+
     let probTotal = probabilityOpts.kill + probabilityOpts.wound +
         probabilityOpts.thrive + probabilityOpts.revive +
         probabilityOpts.nothing;
