@@ -5037,7 +5037,7 @@ function HungryGames() {
       response = self.excludeUsers('dnd', id);
       resPrefix = 'All DND users';
     } else if (specialWords.npcs.includes(firstWord)) {
-      response = self.excludeUsers(find(id).includedNPCs, id);
+      response = self.excludeUsers(find(id).includedNPCs.slice(0), id);
       resPrefix = 'All NPCs';
     } else if (specialWords.bots.includes(firstWord)) {
       response = self.setOption(id, 'includeBots', false);
@@ -5173,7 +5173,8 @@ function HungryGames() {
         }
       }
     });
-    return response || 'Succeeded without errors.';
+    return response ||
+        ('Succeeded without errors (' + users.length + ' excluded)');
   };
 
   /**
@@ -5221,7 +5222,7 @@ function HungryGames() {
       response = self.includeUsers('dnd', id);
       resPrefix = 'All DND users';
     } else if (specialWords.npcs.includes(firstWord)) {
-      response = self.includeUsers(find(id).excludedNPCs, id);
+      response = self.includeUsers(find(id).excludedNPCs.slice(0), id);
       resPrefix = 'All NCPs';
     } else if (specialWords.bots.includes(firstWord)) {
       response = self.setOption(id, 'includeBots', true);
@@ -5344,11 +5345,16 @@ function HungryGames() {
       } else if (!find(id).currentGame.includedUsers.find((u) => {
         return u.id === obj.id;
       })) {
-        find(id).currentGame.includedUsers.push(
-            new Player(
-                obj.id, obj.username,
-                obj.avatarURL || obj.displayAvatarURL({format: 'png'}),
-                obj.nickname));
+        if (obj.isNPC) {
+          find(id).currentGame.includedUsers.push(
+              new NPC(obj.name, obj.avatarURL, obj.id));
+        } else {
+          find(id).currentGame.includedUsers.push(
+              new Player(
+                  obj.id, obj.username,
+                  obj.avatarURL || obj.displayAvatarURL({format: 'png'}),
+                  obj.nickname));
+        }
         if (!onlyError) {
           response += obj.username + ' added to included players.\n';
         }
@@ -5364,7 +5370,8 @@ function HungryGames() {
           'Players were skipped because a game is currently in progress. ' +
           'Players cannot be added to a game while it\'s in progress.';
     }
-    return response || 'Succeeded without errors';
+    return response ||
+        ('Succeeded without errors (' + users.length + ' included)');
   };
 
   /**
