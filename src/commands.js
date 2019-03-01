@@ -292,7 +292,7 @@ function Command() {
           });
         }
       }
-      if (msg.guild) {
+      if (msg.guild && msg.guild.members) {
         const sT = msg.text.toLocaleLowerCase();
         msg.guild.members.forEach((el) => {
           if (sT.indexOf(el.user.username.toLocaleLowerCase()) > -1) {
