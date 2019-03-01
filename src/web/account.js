@@ -739,6 +739,9 @@ function WebAccount() {
         }
       } else if (type === 'string') {
         valid = true;
+      } else if (type === 'color') {
+        valid =
+            typeof value === 'string' && value.match(/^0x[0-9a-fA-f]{6,9}$/);
       } else if (type === 'object') {
         return isInvalid(obj.values[s[0]], s.slice(1), value);
       }
