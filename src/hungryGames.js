@@ -5447,7 +5447,12 @@ function HungryGames() {
         let prefix = '';
         if (myTeam != prevTeam) {
           prevTeam = myTeam;
-          prefix = '__' + find(id).currentGame.teams[myTeam].name + '__\n';
+          const t = find(id).currentGame.teams[myTeam];
+          if (t.name != 'Team ' + (t.id + 1)) {
+            prefix = (t.id + 1) + ' __' + t.name + '__\n';
+          } else {
+            prefix = '__' + t.name + '__\n';
+          }
         }
         if (obj.isNPC) {
           prefix += '*';
