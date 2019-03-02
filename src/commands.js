@@ -845,11 +845,11 @@ function Command() {
     if (setCmd) msg.cmd = cmd;
     while (single && single.subCmds && split.length > 0) {
       const sub = Object.values(single.subCmds).find((el) => {
-        return el.aliases.includes(split[0]);
+        return el.aliases.includes(split[0].toLowerCase());
       });
       if (sub) {
         single = sub;
-        if (setCmd) msg.cmd += ' ' + split.splice(0, 1)[0];
+        if (setCmd) msg.cmd += ' ' + split.splice(0, 1)[0].toLowerCase();
       } else {
         break;
       }
