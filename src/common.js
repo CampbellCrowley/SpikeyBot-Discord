@@ -259,11 +259,12 @@ function Common() {
    * null if error occurred before attempting to send.
    */
   this.reply = function(msg, text, post) {
-    if (!msg.channel || !msg.channel.send || !msg.channel.permissionsFor) {
+    if (!msg.channel || !msg.channel.send) {
       return null;
     }
     const trace = getTrace(0);
-    const perms = msg.channel.permissionsFor(msg.client.user);
+    const perms = msg.channel.permissionsFor &&
+        msg.channel.permissionsFor(msg.client.user);
     if (perms && !perms.has('SEND_MESSAGES')) {
       self.logDebug(
           'Failed to send reply to channel ' + msg.channel.id +
