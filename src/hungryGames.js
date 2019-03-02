@@ -299,11 +299,14 @@ function HungryGames() {
       category: 'other',
     },
     teammatesCollaborate: {
-      value: true,
-      comment: 'Will teammates work together. If false, teammates can kill ' +
-          'eachother, and there will only be 1 victor. If true, teammates ' +
-          'cannot kill eachother, and the game ends when one TEAM is ' +
-          'remaining, not one player.',
+      values: ['disabled', 'always', 'untilend'],
+      value: 'always',
+      comment: 'Will teammates work together. If disabled, teammates can kill' +
+          ' eachother, and there will only be 1 victor. If enabled, teammates' +
+          ' cannot kill eachother, and the game ends when one TEAM is ' +
+          'remaining, not one player. Untilend means teammates work together ' +
+          'until the end of the game, this means only there will be only 1 ' +
+          'victor.',
       category: 'features',
     },
     useEnemyWeapon: {
@@ -3519,7 +3522,13 @@ function HungryGames() {
   function validateEventTeamConstraint(
       numVictim, numAttacker, userPool, teams, options, victimsDie,
       attackersDie, weaponWielder) {
-    if (options.teammatesCollaborate && options.teamSize > 0) {
+    let numTeams = 0;
+    teams.forEach((el) => {
+      if (el.numAlive > 0) numTeams++;
+    });
+    const collab = options.teammatesCollaborate == 'always' ||
+        (options.teammatesCollaborate == 'untilend' && numTeams > 1);
+    if (collab && options.teamSize > 0) {
       if (weaponWielder) {
         let numTeams = 0;
         for (let i = 0; i < teams.length; i++) {
@@ -3696,7 +3705,15 @@ function HungryGames() {
     const affectedUsers = [];
     const victimRevived = victimOutcome === 'revived';
     const attackerRevived = attackerOutcome === 'revived';
-    if (options.teammatesCollaborate && options.teamSize > 0) {
+
+    let numTeams = 0;
+    teams.forEach((el) => {
+      if (el.numAlive > 0) numTeams++;
+    });
+    const collab = options.teammatesCollaborate == 'always' ||
+        (options.teammatesCollaborate == 'untilend' && numTeams > 1);
+
+    if (collab && options.teamSize > 0) {
       let isAttacker = false;
       const validTeam = teams.findIndex(function(team) {
         if (weaponWielder) {
@@ -4513,7 +4530,10 @@ function HungryGames() {
 
     const finalMessage = new self.Discord.MessageEmbed();
     finalMessage.setColor(defaultColor);
-    if (find(id).options.teammatesCollaborate && numTeams == 1) {
+
+    const collab = find(id).options.teammatesCollaborate == 'always' ||
+        (find(id).options.teammatesCollaborate == 'untilend' && numTeams > 1);
+    if (collab && numTeams == 1) {
       const teamName = find(id).currentGame.teams[lastTeam].name;
       finalMessage.setTitle(
           '\n' + teamName + ' has won ' + find(id).currentGame.name + '!');
@@ -5646,6 +5666,7 @@ function HungryGames() {
         }
       }
     } else if (type === 'boolean') {
+      value = value.toLowerCase();
       if (value === 'true' || value === 'false') value = value === 'true';
       if (typeof value !== 'boolean') {
         return 'That is not a valid value for ' + option +
@@ -5660,6 +5681,7 @@ function HungryGames() {
         return 'Set ' + option + ' to ' + obj[option] + ' from ' + old;
       }
     } else if (type === 'string') {
+      value = value.toLowerCase();
       if (defaultObj[option].values.lastIndexOf(value) < 0) {
         return 'That is not a valid value for ' + option +
             ', which requires one of the following: ' +
