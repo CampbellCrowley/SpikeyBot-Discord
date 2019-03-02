@@ -280,7 +280,7 @@ function WebProxy() {
     socket.on('restore', (sess) => {
       if (restoreAttempt /* || currentSessions[sess]*/) {
         socket.emit('authorized', 'Restore Failed', null);
-        console.error(restoreAttempt, sess);
+        // console.error(restoreAttempt, sess);
         return;
       }
       currentSessions[sess] = true;
@@ -491,7 +491,7 @@ function WebProxy() {
           cb(null, content);
         } else {
           self.error(response.statusCode + ': ' + content);
-          console.log(host, data);
+          console.error(host, data);
           cb(response.statusCode + ' from discord');
         }
       });
@@ -502,7 +502,7 @@ function WebProxy() {
     } else {
       req.end();
     }
-    req.on('error', console.log);
+    req.on('error', console.error);
   }
 
   /**
