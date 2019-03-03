@@ -25,6 +25,9 @@ normal submodule, and is treated differently in the SpikeyBot class.</p>
 <dt><a href="#Connect4">Connect4</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
 <dd><p>Manages a Connect 4 game.</p>
 </dd>
+<dt><a href="#Define">Define</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
+<dd><p>Handles defining word commands.</p>
+</dd>
 <dt><a href="#DevCmds">DevCmds</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
 <dd><p>Runs unsafe scripts for development purposes. DO NOT LOAD ON
 RELEASE VERSIONS.</p>
@@ -50,7 +53,7 @@ Patreon status of users.</p>
 <dd><p>Controlls poll and vote commands.</p>
 </dd>
 <dt><a href="#RoleManager">RoleManager</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
-<dd><p>Manges advanced role controls and features.</p>
+<dd><p>Manages advanced role controls and features.</p>
 </dd>
 <dt><a href="#Sandbox">Sandbox</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
 <dd><p>Creates a safe environment to run untrusted scripts.</p>
@@ -2778,6 +2781,290 @@ player 2 won, 3 if draw.
 | board | <code>Array.&lt;number&gt;</code> | Array of 9 numbers defining a board. 0 is nobody, 1 is player 1, 2 is player 2. |
 | latestR | <code>number</code> | The row index where the latest move occurred. |
 | latestC | <code>number</code> | The column index where the latest move occurred. |
+
+<a name="Define"></a>
+
+## Define ⇐ [<code>SubModule</code>](#SubModule)
+Handles defining word commands.
+
+**Kind**: global class  
+**Extends**: [<code>SubModule</code>](#SubModule)  
+
+* [Define](#Define) ⇐ [<code>SubModule</code>](#SubModule)
+    * _instance_
+        * [.helpMessage](#SubModule+helpMessage) : <code>string</code> \| <code>Discord~MessageEmbed</code>
+        * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
+        * [.Discord](#SubModule+Discord) : <code>Discord</code>
+        * [.client](#SubModule+client) : <code>Discord~Client</code>
+        * [.command](#SubModule+command) : [<code>Command</code>](#Command)
+        * [.common](#SubModule+common) : [<code>Common</code>](#Common)
+        * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
+        * [.myName](#SubModule+myName) : <code>string</code>
+        * [.initialized](#SubModule+initialized) : <code>boolean</code>
+        * [.commit](#SubModule+commit) : <code>string</code>
+        * [.loadTime](#SubModule+loadTime) : <code>number</code>
+        * [.initialize()](#SubModule+initialize)
+        * [.begin(Discord, client, command, common, bot)](#SubModule+begin)
+        * [.end()](#SubModule+end)
+        * [.log(msg)](#SubModule+log)
+        * [.debug(msg)](#SubModule+debug)
+        * [.warn(msg)](#SubModule+warn)
+        * [.error(msg)](#SubModule+error)
+        * [.shutdown()](#SubModule+shutdown)
+        * *[.save([opt])](#SubModule+save)*
+        * *[.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>*
+    * _inner_
+        * [~reqURL](#Define..reqURL) : <code>string</code> ℗
+        * [~commandDefine(msg)](#Define..commandDefine) : [<code>commandHandler</code>](#commandHandler) ℗
+        * [~replyDef(msg, data)](#Define..replyDef) ℗
+        * [~formatSingle(el)](#Define..formatSingle) ⇒ <code>string</code> ℗
+        * [~fUp(s)](#Define..fUp) ⇒ <code>string</code> ℗
+
+<a name="SubModule+helpMessage"></a>
+
+### define.helpMessage : <code>string</code> \| <code>Discord~MessageEmbed</code>
+The help message to show the user in the main help message.
+
+**Kind**: instance property of [<code>Define</code>](#Define)  
+<a name="SubModule+postPrefix"></a>
+
+### *define.postPrefix : <code>string</code>*
+The postfix for the global prefix for this subModule. Must be defined
+before begin(), otherwise it is ignored.
+
+**Kind**: instance abstract property of [<code>Define</code>](#Define)  
+**Default**: <code>&quot;&quot;</code>  
+<a name="SubModule+Discord"></a>
+
+### define.Discord : <code>Discord</code>
+The current Discord object instance of the bot.
+
+**Kind**: instance property of [<code>Define</code>](#Define)  
+<a name="SubModule+client"></a>
+
+### define.client : <code>Discord~Client</code>
+The current bot client.
+
+**Kind**: instance property of [<code>Define</code>](#Define)  
+<a name="SubModule+command"></a>
+
+### define.command : [<code>Command</code>](#Command)
+The command object for registering command listeners.
+
+**Kind**: instance property of [<code>Define</code>](#Define)  
+<a name="SubModule+common"></a>
+
+### define.common : [<code>Common</code>](#Common)
+The common object.
+
+**Kind**: instance property of [<code>Define</code>](#Define)  
+<a name="SubModule+bot"></a>
+
+### define.bot : [<code>SpikeyBot</code>](#SpikeyBot)
+The parent SpikeyBot instance.
+
+**Kind**: instance property of [<code>Define</code>](#Define)  
+<a name="SubModule+myName"></a>
+
+### define.myName : <code>string</code>
+The name of this submodule. Used for differentiating in the log. Should be
+defined before begin().
+
+**Kind**: instance property of [<code>Define</code>](#Define)  
+**Overrides**: [<code>myName</code>](#SubModule+myName)  
+**Access**: protected  
+<a name="SubModule+initialized"></a>
+
+### define.initialized : <code>boolean</code>
+Has this subModule been initialized yet (Has begin() been called).
+
+**Kind**: instance property of [<code>Define</code>](#Define)  
+**Default**: <code>false</code>  
+**Access**: protected  
+**Read only**: true  
+<a name="SubModule+commit"></a>
+
+### define.commit : <code>string</code>
+The commit at HEAD at the time this module was loaded. Essentially the
+version of this submodule.
+
+**Kind**: instance constant of [<code>Define</code>](#Define)  
+**Access**: public  
+<a name="SubModule+loadTime"></a>
+
+### define.loadTime : <code>number</code>
+The time at which this madule was loaded for use in checking if the module
+needs to be reloaded because the file has been modified since loading.
+
+**Kind**: instance constant of [<code>Define</code>](#Define)  
+**Access**: public  
+<a name="SubModule+initialize"></a>
+
+### define.initialize()
+The function called at the end of begin() for further initialization
+specific to the subModule. Must be defined before begin() is called.
+
+**Kind**: instance method of [<code>Define</code>](#Define)  
+**Overrides**: [<code>initialize</code>](#SubModule+initialize)  
+**Access**: protected  
+<a name="SubModule+begin"></a>
+
+### define.begin(Discord, client, command, common, bot)
+Initialize this submodule.
+
+**Kind**: instance method of [<code>Define</code>](#Define)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| Discord | <code>Discord</code> | The Discord object for the API library. |
+| client | <code>Discord~Client</code> | The client that represents this bot. |
+| command | [<code>Command</code>](#Command) | The command instance in which to register command listeners. |
+| common | [<code>Common</code>](#Common) | Class storing common functions. |
+| bot | [<code>SpikeyBot</code>](#SpikeyBot) | The parent SpikeyBot instance. |
+
+<a name="SubModule+end"></a>
+
+### define.end()
+Trigger subModule to shutdown and get ready for process terminating.
+
+**Kind**: instance method of [<code>Define</code>](#Define)  
+**Access**: public  
+<a name="SubModule+log"></a>
+
+### define.log(msg)
+Log using common.log, but automatically set name.
+
+**Kind**: instance method of [<code>Define</code>](#Define)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+debug"></a>
+
+### define.debug(msg)
+Log using common.logDebug, but automatically set name.
+
+**Kind**: instance method of [<code>Define</code>](#Define)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+warn"></a>
+
+### define.warn(msg)
+Log using common.logWarning, but automatically set name.
+
+**Kind**: instance method of [<code>Define</code>](#Define)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+error"></a>
+
+### define.error(msg)
+Log using common.error, but automatically set name.
+
+**Kind**: instance method of [<code>Define</code>](#Define)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+shutdown"></a>
+
+### define.shutdown()
+Shutdown and disable this submodule. Removes all event listeners.
+
+**Kind**: instance method of [<code>Define</code>](#Define)  
+**Overrides**: [<code>shutdown</code>](#SubModule+shutdown)  
+**Access**: protected  
+<a name="SubModule+save"></a>
+
+### *define.save([opt])*
+Saves all data to files necessary for saving current state.
+
+**Kind**: instance abstract method of [<code>Define</code>](#Define)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [opt] | <code>string</code> | <code>&quot;&#x27;sync&#x27;&quot;</code> | Can be 'async', otherwise defaults to synchronous. |
+
+<a name="SubModule+unloadable"></a>
+
+### *define.unloadable() ⇒ <code>boolean</code>*
+Check if this module is in a state that is ready to be unloaded. If false
+is returned, this module should not be unloaded and doing such may risk
+putting the module into an uncontrollable state.
+
+**Kind**: instance abstract method of [<code>Define</code>](#Define)  
+**Returns**: <code>boolean</code> - True if can be unloaded, false if cannot.  
+**Access**: public  
+<a name="Define..reqURL"></a>
+
+### Define~reqURL : <code>string</code> ℗
+Base url to request from api.
+
+**Kind**: inner constant of [<code>Define</code>](#Define)  
+**Default**: <code>&quot;https://wordsapiv1.p.rapidapi.com/words/&quot;</code>  
+**Access**: private  
+<a name="Define..commandDefine"></a>
+
+### Define~commandDefine(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Handle the user asking for a definition.
+
+**Kind**: inner method of [<code>Define</code>](#Define)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
+
+<a name="Define..replyDef"></a>
+
+### Define~replyDef(msg, data) ℗
+Format a Discord message reply from the given data.
+
+**Kind**: inner method of [<code>Define</code>](#Define)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message to reply to. |
+| data | <code>Object</code> | Parsed reply from words api. |
+
+<a name="Define..formatSingle"></a>
+
+### Define~formatSingle(el) ⇒ <code>string</code> ℗
+Format a single definition to string format.
+
+**Kind**: inner method of [<code>Define</code>](#Define)  
+**Returns**: <code>string</code> - Formatted string.  
+**Access**: private  
+
+| Param | Type |
+| --- | --- |
+| el | <code>Object</code> | 
+
+<a name="Define..fUp"></a>
+
+### Define~fUp(s) ⇒ <code>string</code> ℗
+Capitalize first character of string, and lowercase the rest.
+
+**Kind**: inner method of [<code>Define</code>](#Define)  
+**Returns**: <code>string</code> - Output.  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| s | <code>string</code> | Input. |
 
 <a name="DevCmds"></a>
 
@@ -9523,7 +9810,7 @@ End a poll. Does not remove it from [currentPolls](#Polling..currentPolls).
 <a name="RoleManager"></a>
 
 ## RoleManager ⇐ [<code>SubModule</code>](#SubModule)
-Manges advanced role controls and features.
+Manages advanced role controls and features.
 
 **Kind**: global class  
 **Extends**: [<code>SubModule</code>](#SubModule)  

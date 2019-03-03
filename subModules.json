@@ -32,7 +32,8 @@
     "./uno.js",
     "./dev.js",
     "./roleManager.js",
-    "./sandbox.js"
+    "./sandbox.js",
+    "./define.js"
   ],
   "release": [
     "./hungryGames.js",
@@ -53,7 +54,8 @@
     "./web/settings.js",
     "./uno.js",
     "./cmdScheduling.js",
-    "./sandbox.js"
+    "./sandbox.js",
+    "./define.js"
   ],
   "rembot": [
     "./main.js",
@@ -68,7 +70,8 @@
     "./hungryGames.js",
     "./uno.js",
     "./cmdScheduling.js",
-    "./sandbox.js"
+    "./sandbox.js",
+    "./define.js"
   ],
   "FALLBACK": []
 }

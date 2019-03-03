@@ -7,7 +7,7 @@ const mkdirp = require('mkdirp');
 require('./subModule.js')(RoleManager);  // Extends the SubModule class.
 
 /**
- * @classdesc Manges advanced role controls and features.
+ * @classdesc Manages advanced role controls and features.
  * @class
  * @augments SubModule
  * @listens Discord#message

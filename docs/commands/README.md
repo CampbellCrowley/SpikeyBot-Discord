@@ -148,6 +148,12 @@ See [spikeybot.com](https://www.spikeybot.com/) for examples and more informatio
 | ?derive | Find dy/dx of an equation. |  |
 | ?graph | Graph an equation, Maxes and mins are all optional, but brackets are required. |  |
 
+## Words
+
+| Command | Description | Aliases |
+| --- | --- | --- |
+| ?define | Lookup the definition to a word. | define, def, definition |
+
 ## Patreon
 
 | Command | Description | Aliases |
