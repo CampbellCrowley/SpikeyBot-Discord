@@ -137,7 +137,7 @@ function Define() {
   function formatSingle(el) {
     let res = '';
     if (el.definition) {
-      res += `__${fUp(el.definition)}.__\n`;
+      res += `__${fUp(el.definition)}__\n`;
     }
     if (el.synonyms) {
       res += el.synonyms.join(', ') + '\n';
