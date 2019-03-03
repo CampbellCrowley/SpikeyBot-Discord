@@ -1759,11 +1759,17 @@ function Main() {
   function commandPurge(msg) {
     if (!msg.channel.permissionsFor(self.client.user)
         .has(self.Discord.Permissions.FLAGS.MANAGE_MESSAGES)) {
-      self.common.reply(
-          msg,
-          'I\'m sorry, but I don\'t have permission to delete messages in ' +
-              'this channel.\nTo allow me to do this, please give me ' +
-              'permission to Manage Messages.');
+      self.common
+          .reply(
+              msg,
+              'I\'m sorry, but I don\'t have permission to delete messages ' +
+                  'in this channel.\nTo allow me to do this, please give me ' +
+                  'permission to Manage Messages.')
+          .catch((err) => {
+            self.warn(
+                'Unable to reply to user without perms attemping purge: ' +
+                msg.channel);
+          });
       return;
     }
     const numString = msg.text.replace(/<[^>]*>|\s/g, '');
