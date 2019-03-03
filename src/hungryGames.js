@@ -5666,7 +5666,7 @@ function HungryGames() {
         }
       }
     } else if (type === 'boolean') {
-      value = value.toLowerCase();
+      if (typeof value === 'string') value = value.toLowerCase();
       if (value === 'true' || value === 'false') value = value === 'true';
       if (typeof value !== 'boolean') {
         return 'That is not a valid value for ' + option +
