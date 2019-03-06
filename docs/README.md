@@ -87,7 +87,8 @@ channel.</p>
 <dd><p>Manages the account webpage.</p>
 </dd>
 <dt><a href="#HGWeb">HGWeb</a></dt>
-<dd><p>Creates a web interface for managing the Hungry Games.</p>
+<dd><p>Creates a web interface for managing the Hungry Games. Expects
+../hungryGames.js is loaded or will be loaded.</p>
 </dd>
 <dt><a href="#WebProxy">WebProxy</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
 <dd><p>Proxy for account authentication.</p>
@@ -3351,6 +3352,8 @@ Hunger Games simulator.
         * [.renameGame(id, name)](#HungryGames+renameGame) ⇒ <code>boolean</code>
         * [.forcePlayerState(id, list, state, text, [persists])](#HungryGames+forcePlayerState) ⇒ <code>string</code>
         * [.getNumSimulating()](#HungryGames+getNumSimulating) ⇒ <code>number</code>
+        * [.on(evt, handler)](#HungryGames+on)
+        * [.removeListener(evt, handler)](#HungryGames+removeListener)
         * [.initialize()](#SubModule+initialize)
         * [.begin(Discord, client, command, common, bot)](#SubModule+begin)
         * [.end()](#SubModule+end)
@@ -3373,7 +3376,6 @@ Hunger Games simulator.
             * [new Team(id, name, players)](#new_HungryGames..Team_new)
         * [~Event](#HungryGames..Event)
             * [new Event(message, [numVictim], [numAttacker], [victimOutcome], [attackerOutcome], [victimKiller], [attackerKiller], [battle], [state], [attacks])](#new_HungryGames..Event_new)
-        * [~web](#HungryGames..web) : [<code>HGWeb</code>](#HGWeb) ℗
         * [~messages](#HungryGames..messages) : <code>Object.&lt;Array.&lt;string&gt;&gt;</code> ℗
         * [~battles](#HungryGames..battles) : <code>Object</code> ℗
         * [~weapons](#HungryGames..weapons) : [<code>Object.&lt;WeaponEvent&gt;</code>](#HungryGames..WeaponEvent) ℗
@@ -3381,6 +3383,7 @@ Hunger Games simulator.
         * [~defaultPlayerEvents](#HungryGames..defaultPlayerEvents) : [<code>Array.&lt;Event&gt;</code>](#HungryGames..Event) ℗
         * [~defaultArenaEvents](#HungryGames..defaultArenaEvents) : [<code>Array.&lt;ArenaEvent&gt;</code>](#HungryGames..ArenaEvent) ℗
         * [~listenersEndTime](#HungryGames..listenersEndTime) : <code>number</code> ℗
+        * [~webSM](#HungryGames..webSM) : <code>string</code> ℗
         * [~patreonSettingKeys](#HungryGames..patreonSettingKeys) : <code>Array.&lt;string&gt;</code> ℗
         * [~saveFile](#HungryGames..saveFile) : <code>string</code> ℗
         * [~hgSaveDir](#HungryGames..hgSaveDir) : <code>string</code> ℗
@@ -3411,6 +3414,7 @@ Hunger Games simulator.
         * [~battleMessage](#HungryGames..battleMessage) : <code>Object.&lt;Discord~Message&gt;</code> ℗
         * [~newEventMessages](#HungryGames..newEventMessages) : <code>Object.&lt;Discord~Message&gt;</code> ℗
         * [~optionMessages](#HungryGames..optionMessages) : <code>Object.&lt;Discord~Message&gt;</code> ℗
+        * [~eventHandlers](#HungryGames..eventHandlers) : <code>Object.&lt;Array.&lt;function()&gt;&gt;</code> ℗
         * [~helpmessagereply](#HungryGames..helpmessagereply) : <code>string</code> ℗
         * [~blockedmessage](#HungryGames..blockedmessage) : <code>string</code> ℗
         * [~helpObject](#HungryGames..helpObject) ℗
@@ -3516,6 +3520,7 @@ Hunger Games simulator.
         * [~newReact(duration)](#HungryGames..newReact) ℗
         * [~readImage(url)](#HungryGames..readImage) ⇒ <code>Promise</code> ℗
             * [~toJimp(path)](#HungryGames..readImage..toJimp) ⇒ <code>Promise</code> ℗
+        * [~fire(evt, ...args)](#HungryGames..fire) ℗
         * [~exit([code])](#HungryGames..exit) ℗
         * [~sigint()](#HungryGames..sigint) ℗
         * [~OutcomeProbabilities}](#HungryGames..OutcomeProbabilities}) : <code>Object</code>
@@ -4023,6 +4028,33 @@ Returns the number of games that are currently being shown to users.
 **Kind**: instance method of [<code>HungryGames</code>](#HungryGames)  
 **Returns**: <code>number</code> - Number of games simulating.  
 **Access**: public  
+<a name="HungryGames+on"></a>
+
+### hungryGames.on(evt, handler)
+Register an event listener. Handlers are called in order they are
+registered. Earlier events can modify event data.
+
+**Kind**: instance method of [<code>HungryGames</code>](#HungryGames)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| evt | <code>string</code> | The name of the event to listen for. |
+| handler | <code>function</code> | The function to call when the event is fired. |
+
+<a name="HungryGames+removeListener"></a>
+
+### hungryGames.removeListener(evt, handler)
+Remove an event listener;
+
+**Kind**: instance method of [<code>HungryGames</code>](#HungryGames)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| evt | <code>string</code> | The name of the event that was being listened for. |
+| handler | <code>function</code> | The currently registered handler. |
+
 <a name="SubModule+initialize"></a>
 
 ### hungryGames.initialize()
@@ -4293,13 +4325,6 @@ Event that can happen in a game.
 | [state] | <code>number</code> | <code>0</code> | State of event if there are multiple attacks before the event. |
 | [attacks] | [<code>Array.&lt;Event&gt;</code>](#HungryGames..Event) | <code>[]</code> | Array of attacks that take place before the event. |
 
-<a name="HungryGames..web"></a>
-
-### HungryGames~web : [<code>HGWeb</code>](#HGWeb) ℗
-Instance of the web class that can control this instance.
-
-**Kind**: inner property of [<code>HungryGames</code>](#HungryGames)  
-**Access**: private  
 <a name="HungryGames..messages"></a>
 
 ### HungryGames~messages : <code>Object.&lt;Array.&lt;string&gt;&gt;</code> ℗
@@ -4357,6 +4382,14 @@ The last time the currently scheduled reaction event listeners are expected
 to end. Used for checking of submoduleis unloadable.
 
 **Kind**: inner property of [<code>HungryGames</code>](#HungryGames)  
+**Access**: private  
+<a name="HungryGames..webSM"></a>
+
+### HungryGames~webSM : <code>string</code> ℗
+Name of the HG Web submodule for lookup.
+
+**Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
+**Default**: <code>&quot;./web/hg.js&quot;</code>  
 **Access**: private  
 <a name="HungryGames..patreonSettingKeys"></a>
 
@@ -4627,6 +4660,13 @@ Messages I have sent showing current options.
 
 **Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
 **Default**: <code>{}</code>  
+**Access**: private  
+<a name="HungryGames..eventHandlers"></a>
+
+### HungryGames~eventHandlers : <code>Object.&lt;Array.&lt;function()&gt;&gt;</code> ℗
+All registered event handlers.
+
+**Kind**: inner constant of [<code>HungryGames</code>](#HungryGames)  
 **Access**: private  
 <a name="HungryGames..helpmessagereply"></a>
 
@@ -6079,6 +6119,19 @@ Send the request to Jimp to handle.
 | Param | Type | Description |
 | --- | --- | --- |
 | path | <code>string</code> | Or path that Jimp can handle. |
+
+<a name="HungryGames..fire"></a>
+
+### HungryGames~fire(evt, ...args) ℗
+Fire an event on all listeners.
+
+**Kind**: inner method of [<code>HungryGames</code>](#HungryGames)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| evt | <code>string</code> | The event to fire. |
+| ...args | <code>\*</code> | Arguments for the event. |
 
 <a name="HungryGames..exit"></a>
 
@@ -14364,25 +14417,28 @@ second.
 <a name="HGWeb"></a>
 
 ## HGWeb
-Creates a web interface for managing the Hungry Games.
+Creates a web interface for managing the Hungry Games. Expects
+../hungryGames.js is loaded or will be loaded.
 
 **Kind**: global class  
 
 * [HGWeb](#HGWeb)
-    * [new HGWeb(hg)](#new_HGWeb_new)
     * _instance_
+        * [.initialize()](#HGWeb+initialize)
         * [.shutdown([skipSave])](#HGWeb+shutdown)
         * [.getNumClients()](#HGWeb+getNumClients) ⇒ <code>number</code>
-        * [.dayStateChange(gId)](#HGWeb+dayStateChange)
     * _inner_
         * [~imageBuffer](#HGWeb..imageBuffer) : <code>Object</code> ℗
         * [~sockets](#HGWeb..sockets) : <code>Object.&lt;Socket&gt;</code> ℗
         * [~siblingSockets](#HGWeb..siblingSockets) : <code>Object.&lt;Socket&gt;</code> ℗
         * [~startClient()](#HGWeb..startClient) ℗
+        * [~hg()](#HGWeb..hg) ⇒ [<code>HungryGames</code>](#HungryGames) ℗
+        * [~unlinkHG()](#HGWeb..unlinkHG) ℗
         * [~handler(req, res)](#HGWeb..handler) ℗
         * [~socketConnection(socket)](#HGWeb..socketConnection) ℗
             * [~callSocketFunction(func, args, [forward])](#HGWeb..socketConnection..callSocketFunction) ℗
         * [~clientSocketConnection(socket)](#HGWeb..clientSocketConnection) ℗
+        * [~dayStateChange(hg, gId)](#HGWeb..dayStateChange) ℗
         * [~replyNoPerm(socket, cmd)](#HGWeb..replyNoPerm) ℗
         * [~checkMyGuild(gId)](#HGWeb..checkMyGuild) ⇒ <code>boolean</code> ℗
         * [~checkPerm(userData, gId, cId, cmd)](#HGWeb..checkPerm) ⇒ <code>boolean</code> ℗
@@ -14423,14 +14479,10 @@ Creates a web interface for managing the Hungry Games.
         * [~imageInfo(userData, socket, gId, meta, [cb])](#HGWeb..imageInfo) : <code>HGWeb~SocketFunction</code> ℗
         * [~basicCB](#HGWeb..basicCB) : <code>function</code>
 
-<a name="new_HGWeb_new"></a>
+<a name="HGWeb+initialize"></a>
 
-### new HGWeb(hg)
-
-| Param | Type | Description |
-| --- | --- | --- |
-| hg | [<code>HungryGames</code>](#HungryGames) | The hungry games object that we will be controlling. |
-
+### hgWeb.initialize()
+**Kind**: instance method of [<code>HGWeb</code>](#HGWeb)  
 <a name="HGWeb+shutdown"></a>
 
 ### hgWeb.shutdown([skipSave])
@@ -14451,20 +14503,6 @@ Returns the number of connected clients that are not siblings.
 **Kind**: instance method of [<code>HGWeb</code>](#HGWeb)  
 **Returns**: <code>number</code> - Number of sockets.  
 **Access**: public  
-<a name="HGWeb+dayStateChange"></a>
-
-### hgWeb.dayStateChange(gId)
-This gets fired whenever the day state of any game changes in the hungry
-games. This then notifies all clients that the state changed, if they care
-about the guild.
-
-**Kind**: instance method of [<code>HGWeb</code>](#HGWeb)  
-**Access**: public  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| gId | <code>string</code> | Guild id of the state change. |
-
 <a name="HGWeb..imageBuffer"></a>
 
 ### HGWeb~imageBuffer : <code>Object</code> ℗
@@ -14490,6 +14528,21 @@ Map of all sockets connected that are siblings.
 
 ### HGWeb~startClient() ℗
 Start a socketio client connection to the primary running server.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+<a name="HGWeb..hg"></a>
+
+### HGWeb~hg() ⇒ [<code>HungryGames</code>](#HungryGames) ℗
+Update the reference to HungryGames.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Returns**: [<code>HungryGames</code>](#HungryGames) - Reference to the currently loaded HungryGames object.  
+**Access**: private  
+<a name="HGWeb..unlinkHG"></a>
+
+### HGWeb~unlinkHG() ℗
+Unregister all event handlers from `hg_`.
 
 **Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
 **Access**: private  
@@ -14544,6 +14597,21 @@ Handler for connecting as a client to the server.
 | Param | Type | Description |
 | --- | --- | --- |
 | socket | <code>socketIo~Socket</code> | The socket.io socket that connected. |
+
+<a name="HGWeb..dayStateChange"></a>
+
+### HGWeb~dayStateChange(hg, gId) ℗
+This gets fired whenever the day state of any game changes in the hungry
+games. This then notifies all clients that the state changed, if they care
+about the guild.
+
+**Kind**: inner method of [<code>HGWeb</code>](#HGWeb)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| hg | [<code>HungryGames</code>](#HungryGames) | HG object firing the event. |
+| gId | <code>string</code> | Guild id of the state change. |
 
 <a name="HGWeb..replyNoPerm"></a>
 

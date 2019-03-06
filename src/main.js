@@ -240,6 +240,7 @@ function Main() {
     'Between you and me, I didn\'t like them anyways.',
     'Everyone rejoice! The world has been eradicated of one more person that ' +
         'no one liked anyways.',
+    'The ban hammer has spoken!',
   ];
 
   /** @inheritdoc */

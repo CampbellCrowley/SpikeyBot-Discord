@@ -33,7 +33,8 @@
     "./dev.js",
     "./roleManager.js",
     "./sandbox.js",
-    "./define.js"
+    "./define.js",
+    "./web/hg.js"
   ],
   "release": [
     "./hungryGames.js",

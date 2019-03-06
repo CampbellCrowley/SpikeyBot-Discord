@@ -369,6 +369,7 @@ function SMLoader() {
     } catch (err) {
       self.error('Failed to initialize submodule: ' + name);
       console.error(err);
+      delete require.cache[require.resolve(name)];
       cb('Failed to Initialize');
       return;
     }

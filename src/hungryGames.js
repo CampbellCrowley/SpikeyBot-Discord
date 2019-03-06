@@ -1,4 +1,4 @@
-// Copyright 2018 Campbell Crowley. All rights reserved.
+// Copyright 2018-2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const fs = require('fs');
 const Jimp = require('jimp');
@@ -22,14 +22,14 @@ require('./subModule.js')(HungryGames);  // Extends the SubModule class.
 function HungryGames() {
   const self = this;
 
-  let Web;
   /**
-   * Instance of the web class that can control this instance.
-   *
+   * Name of the HG Web submodule for lookup.
    * @private
-   * @type {HGWeb}
+   * @constant
+   * @default
+   * @type {string}
    */
-  let web;
+  const webSM = './web/hg.js';
 
   this.myName = 'HG';
   this.postPrefix = 'hg ';
@@ -757,6 +757,13 @@ function HungryGames() {
   let listenersEndTime = 0;
 
   /**
+   * All registered event handlers.
+   * @private
+   * @type {Object.<Array.<Function>>}
+   */
+  const eventHandlers = {};
+
+  /**
    * Parse all default events from file.
    *
    * @private
@@ -1092,12 +1099,6 @@ function HungryGames() {
       }
     });
 
-    try {
-      Web = require('./web/hg.js');
-      web = new Web(self);
-    } catch (err) {
-      console.log(err);
-    }
     cmdSearcher = new FuzzySearch(
         Object.values(hgCmd.subCmds)
             .map((el) => el.aliases)
@@ -1114,9 +1115,9 @@ function HungryGames() {
     process.removeListener('SIGINT', sigint);
     process.removeListener('SIGHUP', sigint);
     process.removeListener('SIGTERM', sigint);
-    if (web) web.shutdown();
-    web = null;
-    delete require.cache[require.resolve('./web/hg.js')];
+    fire('shutdown');
+
+    Object.keys(eventHandlers).forEach((el) => delete eventHandlers[el]);
 
     fs.unwatchFile(eventFile);
     fs.unwatchFile(messageFile);
@@ -1126,8 +1127,9 @@ function HungryGames() {
 
   /** @inheritdoc */
   this.unloadable = function() {
+    const web = self.bot.getSubmodule(webSM);
     return self.getNumSimulating() === 0 && listenersEndTime < Date.now() &&
-        (!web || web.getNumClients() == 0);
+        (!web || !web.getNumClients || web.getNumClients() == 0);
   };
 
   /**
@@ -3226,7 +3228,7 @@ function HungryGames() {
     }
 
     // Signal ready to display events.
-    if (web && web.dayStateChange) web.dayStateChange(id);
+    fire('dayStateChange', id);
     find(id).currentGame.day.state = 2;
     const embed = new self.Discord.MessageEmbed();
     if (find(id).currentGame.day.num === 0) {
@@ -3250,7 +3252,7 @@ function HungryGames() {
     find(id).outputChannel = msg.channel.id;
     find(id).currentGame.isPaused = false;
     dayEventIntervals[id] = self.client.setInterval(function() {
-      if (web && web.dayStateChange) web.dayStateChange(id);
+      fire('dayStateChange', id);
       printEvent(msg, id);
     }, find(id).options.disableOutput ? 10 : find(id).options.delayEvents);
   }
@@ -7925,6 +7927,7 @@ function HungryGames() {
       message += '\nThe last listener will end in ' +
           (Math.round(listenerBlockDuration / 100 / 60) / 10) + ' minutes.';
     }
+    const web = self.bot.getSubmodule(webSM);
     if (web) {
       const numClients = web.getNumClients();
       message += '\n' + numClients + ' web client' +
@@ -8513,6 +8516,48 @@ function HungryGames() {
       }
     });
   };
+
+  /**
+   * Register an event listener. Handlers are called in order they are
+   * registered. Earlier events can modify event data.
+   * @public
+   * @param {string} evt The name of the event to listen for.
+   * @param {Function} handler The function to call when the event is fired.
+   */
+  this.on = function(evt, handler) {
+    if (!eventHandlers[evt]) eventHandlers[evt] = [];
+    eventHandlers[evt].push(handler);
+  };
+
+  /**
+   * Remove an event listener;
+   * @public
+   * @param {string} evt The name of the event that was being listened for.
+   * @param {Function} handler The currently registered handler.
+   */
+  this.removeListener = function(evt, handler) {
+    if (!eventHandlers[evt]) return;
+    const i = eventHandlers[evt].findIndex((el) => el === handler);
+    if (i > -1) eventHandlers[evt].splice(i, 1);
+  };
+
+  /**
+   * Fire an event on all listeners.
+   * @private
+   * @param {string} evt The event to fire.
+   * @param {...*} args Arguments for the event.
+   */
+  function fire(evt, ...args) {
+    if (!eventHandlers[evt]) return;
+    eventHandlers[evt].forEach((el) => {
+      try {
+        el(self, ...args);
+      } catch (err) {
+        self.error('Caught error during event firing: ' + evt);
+        console.error(err);
+      }
+    });
+  }
 
   /**
    * Catch process exiting so we can save if necessary, and remove other
