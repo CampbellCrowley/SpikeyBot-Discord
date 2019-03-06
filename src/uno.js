@@ -295,6 +295,10 @@ function Uno() {
         if (!colorName) {
           self.error('Unable to format card to string.');
           console.log(card.color, 'not a valid color');
+          colorName = colorPairs.find((el) => el[0] == card.color);
+          if (colorName) {
+            card.color = colorName[1];
+          }
         }
         colorName = formatCard(colorName[0]);
         myName = colorName + ' ' + face;
