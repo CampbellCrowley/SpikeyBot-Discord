@@ -67,7 +67,6 @@
     "./poll.js",
     "./chatbot.js",
     "./spotify.js",
-    "./hungryGames.js",
     "./uno.js",
     "./cmdScheduling.js",
     "./sandbox.js",
