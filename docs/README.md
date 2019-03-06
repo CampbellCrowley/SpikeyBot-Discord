@@ -9828,6 +9828,7 @@ Manages advanced role controls and features.
         * [.initialized](#SubModule+initialized) : <code>boolean</code>
         * [.commit](#SubModule+commit) : <code>string</code>
         * [.loadTime](#SubModule+loadTime) : <code>number</code>
+        * [.giveRole(guild, member, role)](#RoleManager+giveRole) ⇒ <code>string</code>
         * [.initialize()](#SubModule+initialize)
         * [.begin(Discord, client, command, common, bot)](#SubModule+begin)
         * [.end()](#SubModule+end)
@@ -9928,6 +9929,21 @@ needs to be reloaded because the file has been modified since loading.
 
 **Kind**: instance constant of [<code>RoleManager</code>](#RoleManager)  
 **Access**: public  
+<a name="RoleManager+giveRole"></a>
+
+### roleManager.giveRole(guild, member, role) ⇒ <code>string</code>
+Give a guild member a role.
+
+**Kind**: instance method of [<code>RoleManager</code>](#RoleManager)  
+**Returns**: <code>string</code> - Null if success, string if error.  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| guild | <code>string</code> \| <code>number</code> \| <code>Discord~Guild</code> | Guild object, or ID. |
+| member | <code>string</code> \| <code>number</code> \| <code>Discord~GuildMember</code> | Guild Member object, ID or name (username, nickname or tag) to lookup. |
+| role | <code>string</code> \| <code>number</code> \| <code>Discord~Role</code> | Guild Role object, ID or name to lookup. |
+
 <a name="SubModule+initialize"></a>
 
 ### roleManager.initialize()

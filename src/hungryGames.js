@@ -4722,7 +4722,7 @@ function HungryGames() {
       if (!find(id).options.disableOutput) msg.channel.send(embed);
     }
 
-    if (numTeams == 1) {
+    if (collab && numTeams == 1) {
       const sendTime =
           Date.now() + (find(id).options.delayDays > 2000 ? 1000 : 0);
       let winnerTag = '';

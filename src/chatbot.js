@@ -1,4 +1,4 @@
-// Copyright 2018 Campbell Crowley. All rights reserved.
+// Copyright 2018-2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const dialogflow = require('dialogflow');
 const auth = require('../auth.js');

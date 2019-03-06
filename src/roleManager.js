@@ -242,6 +242,21 @@ function RoleManager() {
   }
 
   /**
+   * Give a guild member a role.
+   * @public
+   *
+   * @param {string|number|Discord~Guild} guild Guild object, or ID.
+   * @param {string|number|Discord~GuildMember} member Guild Member object, ID
+   * or name (username, nickname or tag) to lookup.
+   * @param {string|number|Discord~Role} role Guild Role object, ID or name to
+   * lookup.
+   * @return {?string} Null if success, string if error.
+   */
+  this.giveRole = function(guild, member, role) {
+
+  };
+
+  /**
    * Handle the user attempting to add a role.
    * @TODO: Implement.
    *
