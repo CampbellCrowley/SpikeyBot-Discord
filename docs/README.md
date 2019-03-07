@@ -11122,6 +11122,7 @@ Main class that manages the bot.
         * [~commandSaveAll(msg)](#SpikeyBot..commandSaveAll) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~commandUpdate(msg)](#SpikeyBot..commandUpdate) : [<code>commandHandler</code>](#commandHandler) ℗
         * [~loadGuildPrefixes(guilds)](#SpikeyBot..loadGuildPrefixes) ℗
+        * [~exit(...info)](#SpikeyBot..exit) ℗
         * [~login()](#SpikeyBot..login) ℗
 
 <a name="SpikeyBot+getBotName"></a>
@@ -11608,6 +11609,19 @@ Load prefixes from file for the given guilds asynchronously.
 | Param | Type | Description |
 | --- | --- | --- |
 | guilds | <code>Array.&lt;Discord~Guild&gt;</code> | Array of guilds to fetch the custom prefixes of. |
+
+<a name="SpikeyBot..exit"></a>
+
+### SpikeyBot~exit(...info) ℗
+Trigger a graceful shutdown with process signals. Does not trigger shutdown
+if exit is -1.
+
+**Kind**: inner method of [<code>SpikeyBot</code>](#SpikeyBot)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| ...info | <code>\*</code> | Information about the signal. |
 
 <a name="SpikeyBot..login"></a>
 

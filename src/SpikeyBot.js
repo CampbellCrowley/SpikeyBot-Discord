@@ -1021,12 +1021,12 @@ function SpikeyBot() {
    * @listens Command#reboot
    */
   function commandReboot(msg, silent) {
-    if (msg.author.id === common.spikeyId) {
-      const force = msg.content.indexOf(' force') > -1;
+    if ((!msg && silent) || msg.author.id === common.spikeyId) {
+      const force = (msg || {content: ''}).content.indexOf(' force') > -1;
       if (!force) {
         for (let i = 0; i < mainModules.length; i++) {
           if (mainModules[i] && !mainModules[i].unloadable()) {
-            if (!silent) {
+            if (!silent && msg) {
               common.reply(
                   msg, 'Reboot scheduled. Waiting on at least ' +
                       mainModuleNames[i]);
@@ -1060,7 +1060,7 @@ function SpikeyBot() {
           console.error(e);
         }
       }
-      const doHardReboot = msg.content.indexOf('hard') > -1;
+      const doHardReboot = (msg || {content: ''}).content.indexOf('hard') > -1;
       const reboot = function(hard) {
         if (!client.shard || !hard) {
           process.exit(-1);
@@ -1078,24 +1078,30 @@ function SpikeyBot() {
         reboot(doHardReboot);
       } else {
         const extra = doHardReboot ? ' (HARD)' : '';
-        common.reply(msg, 'Rebooting...' + extra).then((msg) => {
-          const toSave = {
-            id: msg.id,
-            channel: {id: msg.channel.id},
-            running: false,
-          };
-          try {
-            fs.writeFileSync('./save/reboot.dat', JSON.stringify(toSave));
-          } catch (err) {
-            common.error('Failed to save reboot.dat');
-            console.log(err);
-          }
+        const toSave = {
+          id: (msg || {}).id,
+          channel: {id: (msg || {channel: {}}).channel.id},
+          running: false,
+        };
+        try {
+          fs.writeFileSync('./save/reboot.dat', JSON.stringify(toSave));
+        } catch (err) {
+          common.error('Failed to save reboot.dat');
+          console.log(err);
+        }
+        if (msg) {
+          common.reply(msg, 'Rebooting...' + extra)
+              .then((msg) => {
+                reboot(doHardReboot);
+              })
+              .catch(() => {
+                reboot(doHardReboot);
+              });
+        } else {
           reboot(doHardReboot);
-        }).catch(() => {
-          reboot(doHardReboot);
-        });
+        }
       }
-    } else {
+    } else if (msg) {
       common.reply(
           msg, 'LOL! Good try!',
           'It appears SpikeyRobot doesn\'t trust you enough with this ' +
@@ -1112,7 +1118,7 @@ function SpikeyBot() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens Command#reload
+   * @listens Command#mainreload
    */
   function commandReload(msg) {
     if (trustedIds.includes(msg.author.id)) {
@@ -1492,6 +1498,30 @@ function SpikeyBot() {
     setTimeout(login, delayBoot);
   } else {
     login();
+  }
+
+  process.on('SIGINT', exit);
+  process.on('SIGHUP', exit);
+  process.on('SIGTERM', exit);
+  process.on('exit', exit);
+
+  /**
+   * Trigger a graceful shutdown with process signals. Does not trigger shutdown
+   * if exit is -1.
+   * @private
+   *
+   * @param {...*} info Information about the signal.
+   *
+   * @listens SIGINT
+   * @listens SIGHUP
+   * @listens SIGTERM
+   * @listens process#exit
+   */
+  function exit(...info) {
+    common.logWarning('Caught exit! (' + info.join(' ') + ')');
+    if (info[0] != -1) {
+      commandReboot(null, true);
+    }
   }
   /**
    * Login to Discord. This shall only be called at most once.
