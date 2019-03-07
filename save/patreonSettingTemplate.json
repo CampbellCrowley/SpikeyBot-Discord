@@ -2,7 +2,9 @@
   "tts:all": {
     "title": "Text To Speech Language/Dialect",
     "type": "select",
-    "values": ["en-AU-F", "en-AU-M", "en-GB-F", "en-GB-M", "en-US-F", "en-US-M"],
+    "values": ["en-AU-F", "en-AU-M", "en-GB-F", "en-GB-M", "en-US-F", "en-US-M",
+               "ja-JP-F","pt-BR-F", "pt-BR-M", "pt-PT-F", "pt-PT-M", "es-ES-F",
+               "ko-KR-F", "ko-KR-M", "ru-RU-F", "ru-RU-M"],
     "default": "en-AU-M"
   },
   "hg:bar_color": {
