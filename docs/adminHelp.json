@@ -220,7 +220,7 @@
         {
           "command": "show",
           "description": "Show all current enabled and disabled command settings.",
-          "aliases": "show, enabled, disabled, showenabled, showdisabled",
+          "aliases": "show, enabled, disabled, showenabled, showdisabled, settings, permissions",
           "validOnlyInGuild": true,
           "examples": [
             {

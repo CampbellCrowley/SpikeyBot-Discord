@@ -19,7 +19,8 @@
         },
         {
           "command": "help",
-          "description": "Send this message to you."
+          "description": "Send this message to you.",
+          "aliases": "help, commands"
         },
         {
           "command": "say",

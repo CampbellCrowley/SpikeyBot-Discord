@@ -21,7 +21,7 @@
 | ?disable | Disable a command that is currently enabled for a user, guild, channel, role, or permission. |  |
 | ?mutecmd | Hide messages that tell users they don't have permission to use a command. | mutecmd, blockcmd, supresscmd |
 | ?unmutecmd | Un-hide messages that tell users they don't have permission to use a command. | unmutecmd, allowcmd |
-| ?show | Show all current enabled and disabled command settings. | show, enabled, disabled, showenabled, showdisabled |
+| ?show | Show all current enabled and disabled command settings. | show, enabled, disabled, showenabled, showdisabled, settings, permissions |
 | ?reset | Reset all enabled and disabled commands to default settings. |  |
 | ?changeprefix | Set a custom prefix for all commands on the current server. |  |
 

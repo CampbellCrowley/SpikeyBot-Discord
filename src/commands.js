@@ -61,8 +61,13 @@ function Command() {
     self.on(
         new SingleCommand(
             [
-              'show', 'enabled', 'disabled', 'showenabled', 'showdisabled',
-              'settings', 'commands', 'permissions',
+              'show',
+              'enabled',
+              'disabled',
+              'showenabled',
+              'showdisabled',
+              'settings',
+              'permissions',
             ],
             commandShow, cmdSettings));
     self.on(new SingleCommand(['reset'], commandReset, cmdSettings));

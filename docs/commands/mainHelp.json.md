@@ -9,7 +9,7 @@ See [spikeybot.com](https://www.spikeybot.com/) for examples and more informatio
 | Command | Description | Aliases |
 | --- | --- | --- |
 | ?addme | I will send you a link to add me to your server! | addme, invite |
-| ?help | Send this message to you. |  |
+| ?help | Send this message to you. | help, commands |
 | ?say | Make me say something. |  |
 | ?createdate | I will tell you the date you created your account! |  |
 | ?joindate | I will tell you the date you joined the server you sent the message from! |  |

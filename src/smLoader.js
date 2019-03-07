@@ -40,7 +40,8 @@ function SMLoader() {
     self.command.on('reload', commandReload);
     self.command.on('unload', commandUnload);
     self.command.on('load', commandLoad);
-    self.command.on('help', commandHelp);
+    self.command.on(
+        new self.command.SingleCommand(['help', 'commands'], commandHelp));
 
     Object.assign(self.bot, toAssign.bot);
     Object.assign(self.client, toAssign.client);
