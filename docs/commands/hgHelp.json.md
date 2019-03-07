@@ -1,6 +1,16 @@
 # Hungry Games
 #### Use https://www.spikeybot.com/hg/ if commands are too hard.
 ***
+## Time Control
+
+| Command | Description | Aliases |
+| --- | --- | --- |
+| ?hg auto | Automatically start the game and continue until the game is completely over. | autoplay, auto, play, go |
+| ?hg pause | Pause the game and immediately stop sending messages without ending the game entirely. |  |
+| ?hg start | This will start a game with your settings, but waits until you tell it to start the bloodbath. | start, s |
+| ?hg end | This will end a game early. | end, abort, stop |
+| ?hg next | Simulate the next day of the Games! | next, nextday, resume |
+
 ## Game Settings
 
 | Command | Description | Aliases |
@@ -45,16 +55,6 @@
 | ?hg events | This will list all custom events that could happen in the game. The HG Webview page can be much easier to use. | events, event |
 | ?hg events add | Begins process of adding a custom event. Not all event types can be created yet due to the complications of making a UI. The HG Webview page can be much easier to use, and supports more types. | add, create |
 | ?hg events remove | Remove a custom event. The number is the number shown in the list of events. | remove, delete |
-
-## Time Control
-
-| Command | Description | Aliases |
-| --- | --- | --- |
-| ?hg start | This will start a game with your settings. | start, s |
-| ?hg end | This will end a game early. | end, abort, stop |
-| ?hg autoplay | Automatically continue to the next day after a day is over. | autoplay, auto, play, go |
-| ?hg pause | Pause the game and immediately stop sending messages without ending the game entirely. |  |
-| ?hg next | Simulate the next day of the Games! | next, nextday, resume |
 
 ## Admin Control
 

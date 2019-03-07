@@ -4,6 +4,74 @@
   "prefix": "hg ",
   "sections": [
     {
+      "title": "Time Control",
+      "rows": [
+        {
+          "command": "auto",
+          "description": "Automatically start the game and continue until the game is completely over.",
+          "aliases": "autoplay, auto, play, go",
+          "validOnlyInGuild": true,
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "go",
+              "result": "Autoplay is enabled, if a game is not in progress, it will be created and started."
+            }
+          ]
+        },
+        {
+          "command": "pause",
+          "description": "Pause the game and immediately stop sending messages without ending the game entirely.",
+          "validOnlyInGuild": true,
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "pause",
+              "result": "The current day will be paused and can then be resumed with `hg resume` or `hg next`."
+            }
+          ]
+        },
+        {
+          "command": "start",
+          "description": "This will start a game with your settings, but waits until you tell it to start the bloodbath.",
+          "aliases": "start, s",
+          "validOnlyInGuild": true,
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "start",
+              "result": "If you use Autoplay, this isn't necessary. Starts the game, but doesn't start the first day automatically."
+            }
+          ]
+        },
+        {
+          "command": "end",
+          "description": "This will end a game early.",
+          "aliases": "end, abort, stop",
+          "validOnlyInGuild": true,
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "end",
+              "result": "The game will be aborted, and completely stopped and cannot be restarted."
+            }
+          ]
+        },
+        {
+          "command": "next",
+          "description": "Simulate the next day of the Games!",
+          "aliases": "next, nextday, resume",
+          "validOnlyInGuild": true,
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "next"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "title": "Game Settings",
       "rows": [
         {
@@ -432,73 +500,6 @@
               "description": "Basic Usage",
               "command": "event delete 10",
               "result": "Start to delete custom event #10, click the reactions to choose which type of event this was."
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "title": "Time Control",
-      "rows": [
-        {
-          "command": "start",
-          "description": "This will start a game with your settings.",
-          "aliases": "start, s",
-          "validOnlyInGuild": true,
-          "examples": [
-            {
-              "description": "Basic Usage",
-              "command": "start",
-              "result": "If you use Autoplay, this isn't necessary."
-            }
-          ]
-        },
-        {
-          "command": "end",
-          "description": "This will end a game early.",
-          "aliases": "end, abort, stop",
-          "validOnlyInGuild": true,
-          "examples": [
-            {
-              "description": "Basic Usage",
-              "command": "end"
-            }
-          ]
-        },
-        {
-          "command": "autoplay",
-          "description": "Automatically continue to the next day after a day is over.",
-          "aliases": "autoplay, auto, play, go",
-          "validOnlyInGuild": true,
-          "examples": [
-            {
-              "description": "Basic Usage",
-              "command": "go",
-              "result": "Autoplay is enabled, if a game is not in progress, it will be created and started."
-            }
-          ]
-        },
-        {
-          "command": "pause",
-          "description": "Pause the game and immediately stop sending messages without ending the game entirely.",
-          "validOnlyInGuild": true,
-          "examples": [
-            {
-              "description": "Basic Usage",
-              "command": "pause",
-              "result": "The current day will be paused and can then be resumed with `hg resume` or `hg next`."
-            }
-          ]
-        },
-        {
-          "command": "next",
-          "description": "Simulate the next day of the Games!",
-          "aliases": "next, nextday, resume",
-          "validOnlyInGuild": true,
-          "examples": [
-            {
-              "description": "Basic Usage",
-              "command": "next"
             }
           ]
         }
