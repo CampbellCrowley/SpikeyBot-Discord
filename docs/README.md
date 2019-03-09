@@ -6349,7 +6349,6 @@ Basic commands and features for the bot.
         * [~introduction](#Main..introduction) : <code>string</code> ℗
         * [~blockedmessage](#Main..blockedmessage) : <code>string</code> ℗
         * [~addmessage](#Main..addmessage) : <code>string</code> ℗
-        * [~addLink](#Main..addLink) : <code>string</code> ℗
         * [~banMsgs](#Main..banMsgs) : <code>Array.&lt;string&gt;</code> ℗
         * [~helpObject](#Main..helpObject) ℗
         * [~adminHelpObject](#Main..adminHelpObject) ℗
@@ -6687,13 +6686,6 @@ were unable to deliver the DM.
 
 ### Main~addmessage : <code>string</code> ℗
 The message with instructions of how to add the bot to a server.
-
-**Kind**: inner constant of [<code>Main</code>](#Main)  
-**Access**: private  
-<a name="Main..addLink"></a>
-
-### Main~addLink : <code>string</code> ℗
-The URL that adds the bot to a new server.
 
 **Kind**: inner constant of [<code>Main</code>](#Main)  
 **Access**: private  

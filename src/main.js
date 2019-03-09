@@ -209,17 +209,8 @@ function Main() {
    * @constant
    */
   const addmessage =
-      'Want to add me to your server? Click this link:\n(You\'ll need to be ' +
-      'signed into discord in your browser first)';
-  /**
-   * The URL that adds the bot to a new server.
-   *
-   * @private
-   * @type {string}
-   * @constant
-   */
-  const addLink = 'https://discordapp.com/oauth2/authorize?' +
-      '&client_id={id}&scope=bot';
+      'Want me on your server or want to join my server?\nMy website has the' +
+      ' links for you: <https://www.spikeybot.com>.';
   /**
    * All of the possible messages to show when using the ban command.
    *
@@ -1097,8 +1088,7 @@ function Main() {
    * @listens Command#invite
    */
   function commandAddMe(msg) {
-    self.common.reply(
-        msg, addmessage, addLink.replace(/\{id\}/g, self.client.user.id));
+    self.common.reply(msg, addmessage);
   }
 
   /**
