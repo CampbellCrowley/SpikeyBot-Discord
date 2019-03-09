@@ -168,14 +168,16 @@ function ChatBot() {
     if (!msg.author.bot && msg.guild &&
         msg.mentions.users.get(self.client.user.id) &&
         !self.command.find(msg.content.match(/^\S+/)[0], msg)) {
-      self.log(msg.channel.id + '@' + msg.author.id + ' ' + msg.content);
-      msg.text = ' ' +
+      const withoutMe =
           msg.content
               .replace(
-                  new RegExp(
-                      '\\s*\\<@\\!?' + self.client.user.id + '\\>\\s*', 'g'),
-                  ` ${self.client.user.username} `)
+                  new RegExp('\\s*<@!?' + self.client.user.id + '>\\s*'), '')
               .trim();
+      if (!withoutMe || withoutMe.length < 2) {
+        return;
+      }
+      self.log(msg.channel.id + '@' + msg.author.id + ' ' + msg.content);
+      msg.text = ' ' + msg.cleanContent.trim();
       onChatMessage(msg);
     }
   }
