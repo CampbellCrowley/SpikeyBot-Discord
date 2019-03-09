@@ -75,10 +75,9 @@ const mainTests = [
       'Derive command', '~derive y=5x', ['<@422623712534200321>\n```\n5\n```']),
   new Test(
       'Add Me command', '~addme',
-      ['^<@422623712534200321>\n```\nWant to add me to your server? Click ' +
-       'this link:\n(You\'ll need to be signed into discord in your browser ' +
-       'first)\n```https://discordapp.com/oauth2/authorize?&client_' +
-       'id=']),
+      ['<@422623712534200321>\n```\nWant me on your server or want to join ' +
+       'my server?\nMy website has the links for you: ' +
+       '<https://www.spikeybot.com>.\n```']),
   new Test(
       'Help command', '~help',
       [
