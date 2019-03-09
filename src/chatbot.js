@@ -177,7 +177,15 @@ function ChatBot() {
         return;
       }
       self.log(msg.channel.id + '@' + msg.author.id + ' ' + msg.content);
-      msg.text = ' ' + msg.cleanContent.trim();
+      msg.text = ' ' +
+          msg.cleanContent
+              .replace(
+                  new RegExp(
+                      '@' +
+                          (msg.guild.me.nickname || self.client.user.username),
+                      'g'),
+                  'SpikeyBot')
+              .trim();
       onChatMessage(msg);
     }
   }
