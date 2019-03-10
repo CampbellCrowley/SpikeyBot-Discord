@@ -115,7 +115,13 @@ function RoleColors() {
           .then((r) => {
             r.setColor(color);
             target.roles.add(r).then((m) => {
-              self.common.reply(msg, 'Updated color.', colorString);
+              const embed = new self.Discord.MessageEmbed();
+              embed.setColor(color);
+              embed.setTitle('Updated color.');
+              embed.setDescription(colorString);
+              msg.channel.send(embed).catch(() => {
+                self.common.reply(msg, 'Updated color.', colorString);
+              });
             });
           })
           .catch((err) => {
@@ -126,7 +132,13 @@ function RoleColors() {
       role.setColor(color)
           .then((r) => {
             target.roles.add(r).then((m) => {
-              self.common.reply(msg, 'Updated color.', colorString);
+              const embed = new self.Discord.MessageEmbed();
+              embed.setColor(color);
+              embed.setTitle('Updated color.');
+              embed.setDescription(colorString);
+              msg.channel.send(embed).catch(() => {
+                self.common.reply(msg, 'Updated color.', colorString);
+              });
             });
           })
           .catch((err) => {
