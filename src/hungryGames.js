@@ -2538,7 +2538,7 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function startAutoplay(msg, id) {
-    if (!find(id)) {
+    if (!find(id) || !find(id).currentGame) {
       createGame(msg, id);
     }
     if (find(id).autoPlay && find(id).currentGame.inProgress) {
