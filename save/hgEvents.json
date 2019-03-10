@@ -162,7 +162,7 @@
     },
     {
       "message": "{attacker} kicks {victim} between [Vthe|their] legs for a bottle of water!",
-      "attacker": { "count": "1", "outcome": "thrives" },
+      "attacker": { "count": "1", "outcome": "nothing" },
       "victim": { "count": "-1", "outcome": "wounded" }
     },
     {
@@ -504,17 +504,17 @@
     },
     {
       "message": "{attacker} listen[As|] to music on a radio they found.",
-      "attacker": { "count": "-1", "outcome": "thrives" },
+      "attacker": { "count": "-1", "outcome": "nothing" },
       "victim": { "count": "0", "outcome": "nothing" }
     },
     {
       "message": "{attacker} get[As|] a laptop from a sponsor.",
-      "attacker": { "count": "-1", "outcome": "thrives" },
+      "attacker": { "count": "-1", "outcome": "nothing" },
       "victim": { "count": "0", "outcome": "nothing" }
     },
     {
       "message": "{attacker} stab[As|] {victim} to death!",
-      "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
+      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
@@ -540,7 +540,7 @@
     {
       "message": "{attacker} sneak[As|] up on {victim}, but {victim} is actually a ninja and manages to kill {attacker}!",
       "attacker": { "count": "-1", "outcome": "dies" },
-      "victim": { "count": "1", "outcome": "thrives", "killer": true }
+      "victim": { "count": "1", "outcome": "nothing", "killer": true }
     },
     {
       "message": "{attacker} hides in the bushes and stalks their prey...",
@@ -694,7 +694,7 @@
     },
     {
       "message": "{victim} sprains their ankle while running from {attacker}, allowing {attacker} to catch up and finish off {victim}.",
-      "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
+      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
       "victim": { "count": "1", "outcome": "dies" }
     },
     {
@@ -764,12 +764,12 @@
     },
     {
       "message": "{victim} scream[Vs|] for help, and get[Vs|] a knife to the back because of it.",
-      "attacker": { "count": "1", "outcome": "thrives", "killer": true },
+      "attacker": { "count": "1", "outcome": "nothing", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{victim} scream[Vs|] for help, but it's already too late, {attacker} ha[As|ve] already fired their crossbow[A|s].",
-      "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
+      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
@@ -784,7 +784,7 @@
     },
     {
       "message": "{attacker} cook[As|] {victim} for dinner.",
-      "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
+      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
@@ -844,7 +844,7 @@
     },
     {
       "message": "{victim} let[Vs|] {attacker} into their shelter, and {victim} [Vis|are] killed.",
-      "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
+      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
@@ -864,7 +864,7 @@
     },
     {
       "message": "{attacker} put[As|] {victim} out of their misery.",
-      "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
+      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
       "victim": { "count": "1", "outcome": "dies" }
     },
     {
@@ -874,17 +874,17 @@
     },
     {
       "message": "{attacker} drown[As|] {victim}.",
-      "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
+      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{attacker} strangle[As|] {victim} after a fist fight.",
-      "attacker": { "count": "1", "outcome": "thrives", "killer": true },
+      "attacker": { "count": "1", "outcome": "nothing", "killer": true },
       "victim": { "count": "1", "outcome": "dies" }
     },
     {
       "message": "{attacker} sneaks up on {victim} and snaps {victim}'s neck from behind.",
-      "attacker": { "count": "1", "outcome": "thrives", "killer": true },
+      "attacker": { "count": "1", "outcome": "nothing", "killer": true },
       "victim": { "count": "1", "outcome": "dies" }
     },
     {
@@ -904,7 +904,7 @@
     },
     {
       "message": "{attacker} stabs {victim} in the back with a stick.",
-      "attacker": { "count": "1", "outcome": "thrives", "killer": true },
+      "attacker": { "count": "1", "outcome": "nothing", "killer": true },
       "victim": { "count": "1", "outcome": "dies" }
     },
     {
@@ -919,12 +919,12 @@
     },
     {
       "message": "{attacker}'s trap kills {victim}.",
-      "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
+      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{attacker} kill[As|] {victim} in their sleep.",
-      "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
+      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
@@ -934,7 +934,7 @@
     },
     {
       "message": "{attacker} force[As|] {victim} to kill themsel[Vf|ves].",
-      "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
+      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
@@ -964,7 +964,7 @@
     },
     {
       "message": "{attacker} ambush[Aes|] and kill[As|] {victim}.",
-      "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
+      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
@@ -983,11 +983,6 @@
       "victim": { "count": "-1", "outcome": "thrives" }
     },
     {
-      "message": "{victim} returns to the cornucopia and finds medical supplies.",
-      "attacker": { "count": "0", "outcome": "nothing" },
-      "victim": { "count": "-1", "outcome": "thrives" }
-    },
-    {
       "message": "{victim} get[Vs|] stung by a deadly bee.",
       "attacker": { "count": "0", "outcome": "nothing" },
       "victim": { "count": "-1", "outcome": "wounded" }
@@ -999,7 +994,7 @@
     },
     {
       "message": "{attacker} carves {victim}'s eyes out before finishing them off.",
-      "attacker": { "count": "1", "outcome": "thrives", "killer": true },
+      "attacker": { "count": "1", "outcome": "nothing", "killer": true },
       "victim": { "count": "1", "outcome": "dies" }
     },
     {
@@ -1009,7 +1004,7 @@
     },
     {
       "message": "{attacker} stalk[As|] {victim} for the day before slitting their throat[V|s].",
-      "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
+      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
@@ -1023,13 +1018,18 @@
       "victim": { "count": "5", "outcome": "dies" }
     },
     {
+      "message": "{attacker} form a pentagram around {victim}'s body, and Satan kills the 5 of them in order to revive {victim}!",
+      "victim": { "count": 1, "outcome": "revived" },
+      "attacker": { "count": 5, "outcome": "dies" }
+    },
+    {
       "message": "{attacker} makes {victim} laugh while eating, and {victim} chokes to death on their food.",
-      "attacker": { "count": "1", "outcome": "thrives", "killer": true},
+      "attacker": { "count": "1", "outcome": "nothing", "killer": true},
       "victim": { "count": "1", "outcome": "dies" }
     },
     {
       "message": "{attacker} drop[As|] [Va |]rock[V|s] from a tree onto {victim}, killing them.",
-      "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
+      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
@@ -1069,7 +1069,7 @@
     },
     {
       "message": "{attacker} jump[As|] onto {victim} from a tree and kill[As|] them.",
-      "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
+      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
@@ -1134,12 +1134,12 @@
     },
     {
       "message": "{victim} stop[Vs|] to smell the flowers, and {attacker} stab[As|] them in the back.",
-      "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
+      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{victim} mistake[Vs|] {attacker} for [Aa |]friend[A|s], and end[Vs|] up dead.",
-      "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
+      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
@@ -1149,7 +1149,7 @@
     },
     {
       "message": "{victim} investigate[Vs|] a light in the forest, but {attacker} slit[As|] their throat[V|s] before they can see its source.",
-      "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
+      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
@@ -1159,12 +1159,12 @@
     },
     {
       "message": "{attacker} corner[As|] {victim} in a cave before killing them.",
-      "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
+      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
       "message": "{victim} run[Vs|] into a cave to escape {attacker}, but end[Vs|] up trapped and [Vis|are] killed.",
-      "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
+      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
@@ -1184,7 +1184,7 @@
     },
     {
       "message": "{victim} [Vis|are] choked to death by {attacker}.",
-      "attacker": { "count": "-1", "outcome": "thrives", "killer": true },
+      "attacker": { "count": "-1", "outcome": "nothing", "killer": true },
       "victim": { "count": "-1", "outcome": "dies" }
     },
     {
@@ -1311,6 +1311,155 @@
       "message": "{victim} [Vis|are] suffocated in the dirt by {attacker}.",
       "victim": { "count": -1, "outcome": "dies" },
       "attacker": { "count": -1, "outcome": "nothing", "killer": true }
+    },
+    {
+      "message": "{victim}'s life force is sucked out by {attacker} so that {attacker} can live again!",
+      "victim": { "count": 1, "outcome": "dies" },
+      "attacker": { "count": 1, "outcome": "revived", "killer": true }
+    },
+    {
+      "message": "{victim} doesn't feel so good!",
+      "victim": { "count": 1, "outcome": "dies" },
+      "attacker": { "count": 0, "outcome": "nothing" },
+      "_reference": "Avengers: Infinity War"
+    },
+    {
+      "message": "{attacker} lets {victim} know they believe in destiny.",
+      "victim": { "count": 1, "outcome": "dies" },
+      "attacker": { "count": 1, "outcome": "nothing", "killer": true },
+      "_reference": "RWBY"
+    },
+    {
+      "message": "While {victim} are wondering why they're here, {attacker} kills them.",
+      "victim": { "count": 2, "outcome": "dies" },
+      "attacker": { "count": 1, "outcome": "nothing", "killer": true },
+      "_reference": "Red Vs. Blue"
+    },
+    {
+      "message": "{victim} wonder[Vs|] what in Sam Hell is a puma, then it bites them.",
+      "victim": { "count": -1, "outcome": "dies" },
+      "attacker": { "count": 0, "outcome": "nothing" },
+      "_reference": "Red Vs. Blue"
+    },
+    {
+      "message": "{attacker} rejects your reality and substitutes their own, consequently they end up dead.",
+      "victim": { "count": -1, "outcome": "dies" },
+      "attacker": { "count": 0, "outcome": "nothing" },
+      "_reference": "Mythbusters / The Dungeonmaster"
+    },
+    {
+      "message": "{victim} make[Vs|] a girl a promise they know they can't keep.",
+      "victim": { "count": -1, "outcome": "nothing" },
+      "attacker": { "count": 0, "outcome": "nothing" },
+      "_reference": "Halo 2/3/4"
+    },
+    {
+      "message": "Crazy fool! Why do you always jump? One of these days, {victim}, you're gonna land on somethin' as stubborn as you are!",
+      "victim": { "count": 1, "outcome": "wounded" },
+      "attacker": { "count": 0, "outcome": "nothing" },
+      "_reference": "Halo 3"
+    },
+    {
+      "message": "{victim} receive[Vd|] an \"unsatisfactory\" mark on their official testing report, then died.",
+      "victim": { "count": -1, "outcome": "dies" },
+      "attacker": { "count": 0, "outcome": "nothing" },
+      "_reference": "Portal"
+    },
+    {
+      "message": "{victim} didn't realize {attacker} [Awas|were] doing Science and [Awas|were] still alive.",
+      "victim": { "count": -1, "outcome": "dies" },
+      "attacker": { "count": -1, "outcome": "nothing", "killer": true },
+      "_reference": "Portal"
+    },
+    {
+      "message": "{victim} got mad and made life take the lemons back. \"I don't want your damn lemons!\"",
+      "victim": { "count": -1, "outcome": "nothing" },
+      "attacker": { "count": 0, "outcome": "nothing" },
+      "_reference": "Portal 2"
+    },
+    {
+      "message": "Oh, it's {victim}, it's been a long time. How have you been? I've been really busy being dead. You know, after you murdered me.",
+      "victim": { "count": -1, "outcome": "nothing" },
+      "attacker": { "count": 0, "outcome": "nothing" },
+      "_reference": "Portal 2"
+    },
+    {
+      "message": "Well, it looks like we won't be working together. No regrets, {victim}...",
+      "victim": { "count": -1, "outcome": "dies" },
+      "attacker": { "count": 0, "outcome": "nothing" },
+      "_reference": "Half Life"
+    },
+    {
+      "message": "{attacker} [Ais|are] afraid they can't open the pod bay doors, thus {victim} die[Vs|] in the void.",
+      "victim": { "count": -1, "outcome": "dies" },
+      "attacker": { "count": -1, "outcome": "nothing", "killer": true },
+      "_reference": "2001 A Space Odyssey"
+    },
+    {
+      "message": "{attacker} found {victim}'s lack of faith disturbing!",
+      "victim": { "count": -1, "outcome": "dies" },
+      "attacker": { "count": -1, "outcome": "nothing", "killer": true },
+      "_reference": "Star Wars: Episode IV - A New Hope"
+    },
+    {
+      "message": "{victim} told {attacker} the odds!",
+      "victim": { "count": -1, "outcome": "dies" },
+      "attacker": { "count": -1, "outcome": "nothing", "killer": true },
+      "_reference": "Star Wars: Episode V - The Empire Strikes Back"
+    },
+    {
+      "message": "{victim} find[Vs|] power! Unlimited power! And it electrocutes them.",
+      "victim": { "count": -1, "outcome": "dies" },
+      "attacker": { "count": 0, "outcome": "nothing" },
+      "_reference": "Star Wars: Episode III - Revenge of the Sith"
+    },
+    {
+      "message": "{victim} die[Vs|] of dysentery.",
+      "victim": { "count": -1, "outcome": "dies" },
+      "attacker": { "count": 0, "outcome": "nothing" },
+      "_reference": "Oregon Trail"
+    },
+    {
+      "message": "{attacker}, kill {victim}, would you kindly?",
+      "victim": { "count": -1, "outcome": "dies" },
+      "attacker": { "count": -1, "outcome": "nothing", "killer": true },
+      "_reference": "Bioshock"
+    },
+    {
+      "message": "{attacker} stood in the ashes of a trillion dead souls, and asked the ghosts if honor matters. The silence was their answer.",
+      "victim": { "count": 0, "outcome": "nothing" },
+      "attacker": { "count": -1, "outcome": "nothing" },
+      "_reference": "Mass Effect 3"
+    },
+    {
+      "message": "{attacker} came to kick ass and chew bubblegum... and they're all outta gum.",
+      "victim": { "count": 0, "outcome": "nothing" },
+      "attacker": { "count": -1, "outcome": "nothing" },
+      "_reference": "Duke Nukem"
+    },
+    {
+      "message": "{attacker} had the courage to walk into the Darkness, and the strength to kill {victim} in the Light.",
+      "victim": { "count": -1, "outcome": "dies" },
+      "attacker": { "count": -1, "outcome": "nothing", "killer": true },
+      "_reference": "Destiny"
+    },
+    {
+      "message": "It's dangerous to go alone, take this!",
+      "victim": { "count": 0, "outcome": "nothing" },
+      "attacker": { "count": -1, "outcome": "nothing", "weapon": { "name": "sword", "count": 1 } },
+      "_reference": "The Legend of Zelda"
+    },
+    {
+      "message": "{victim} endure[Vs|], and survives.",
+      "victim": { "count": -1, "outcome": "thrives" },
+      "attacker": { "count": 0, "outcome": "nothing" },
+      "_reference": "The Last of Us"
+    },
+    {
+      "message": "Grass grows, birds fly, sun shines, and brother, {attacker} kill[As|] {victim}.",
+      "victim": { "count": -1, "outcome": "dies" },
+      "attacker": { "count": -1, "outcome": "nothing", "killer": true },
+      "_reference": "Team Fortress 2"
     },
     {
       "message": "{victim} ha[Vs|ve] been resurrected and [Vwas|were] put back into the arena!",
@@ -1812,6 +1961,11 @@
           "message": "{victim}'s blood pressure was too low and the gas kills them!",
           "attacker": { "count": "0", "outcome": "nothing" },
           "victim": { "count": "1", "outcome": "dies" }
+        },
+        {
+          "message": "{victim} feel[Vs|] light headed.",
+          "attacker": { "count": "0", "outcome": "nothing" },
+          "victim": { "count": "-1", "outcome": "wounded" }
         },
         {
           "message": "{victim} use[Vs|] their clothing as a mask to avoid inhaling the gas.",
