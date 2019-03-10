@@ -2883,12 +2883,16 @@ function HungryGames() {
 
               const weaponName = chosenWeapon;
               let consumableName = weaponName;
-              if (weapons[weaponName].consumable) {
-                consumableName = weapons[weaponName].consumable.replace(
-                    /\[C([^|]*)\|([^\]]*)\]/g, '$2');
-              } else if (weapons[weaponName].name) {
-                consumableName = weapons[weaponName].name.replace(
-                    /\[C([^|]*)\|([^\]]*)\]/g, '$2');
+              if (weapons[weaponName]) {
+                if (weapons[weaponName].consumable) {
+                  consumableName = weapons[weaponName].consumable.replace(
+                      /\[C([^|]*)\|([^\]]*)\]/g, '$2');
+                } else if (weapons[weaponName].name) {
+                  consumableName = weapons[weaponName].name.replace(
+                      /\[C([^|]*)\|([^\]]*)\]/g, '$2');
+                } else {
+                  consumableName += 's';
+                }
               } else {
                 consumableName += 's';
               }
