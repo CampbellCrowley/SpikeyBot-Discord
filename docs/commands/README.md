@@ -9,6 +9,7 @@
 | ?purge | Remove a number of messages from the current text channel. Mention people to only remove their messages. Limited to 100 messages per command (Discord doesn't allow more). May stop at messages sent 2 weeks prior. | purge, prune |
 | ?ban | I will ban the person you mention with a flashy message! | ban, fuckyou |
 | ?smite | Silence the peasant who dare oppose you! |  |
+| ?color | Change the color of a member, or allow them to change their own color. This command isn't very intelligent and may not work well with existing role colors. |  |
 | ?togglemute | Turn on or off automatically preventing a person from using @everyone if they spam it. |  |
 | ?togglebanmessages | Turn on or off sending a message when someone gets banned. |  |
 | ?togglerigged | Turn on or off showing the number of times 'rigged' has been said. |  |

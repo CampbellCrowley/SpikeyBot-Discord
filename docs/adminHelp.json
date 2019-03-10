@@ -59,6 +59,33 @@
           ]
         },
         {
+          "command": "color",
+          "description": "Change the color of a member, or allow them to change their own color. This command isn't very intelligent and may not work well with existing role colors.",
+          "validOnlyInGuild": true,
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "color @SpikeyRobot Red",
+              "result": "SpikeyRobot will be given a role (no permissions) that is colored red. The role will be SpikeyRobot's account ID, and must not be changed. This command requires the MANAGE_ROLES permission no matter what."
+            },
+            {
+              "description": "Self Usage",
+              "command": "color random",
+              "result": "This will change your role to a random color. This does not require the MANAGE_ROLES permission, and uses the `enable` and `disable` command permissions."
+            },
+            {
+              "description": "Hex Colors",
+              "command": "color #FF0088",
+              "result": "The matching hex color will be applied."
+            },
+            {
+              "description": "RGB Colors",
+              "command": "color 255 0 128",
+              "result": "The matching RGB color will be applied."
+            }
+          ]
+        },
+        {
           "command": "togglemute",
           "description": "Turn on or off automatically preventing a person from using @everyone if they spam it.",
           "validOnlyInGuild": true,

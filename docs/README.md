@@ -52,6 +52,10 @@ Patreon status of users.</p>
 <dt><a href="#Polling">Polling</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
 <dd><p>Controlls poll and vote commands.</p>
 </dd>
+<dt><a href="#RoleColors">RoleColors</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
+<dd><p>Allows users to change their name color by giving them a role with
+a color.</p>
+</dd>
 <dt><a href="#RoleManager">RoleManager</a> ⇐ <code><a href="#SubModule">SubModule</a></code></dt>
 <dd><p>Manages advanced role controls and features.</p>
 </dd>
@@ -9851,6 +9855,242 @@ End a poll. Does not remove it from [currentPolls](#Polling..currentPolls).
 | Param | Type | Description |
 | --- | --- | --- |
 | poll | [<code>Poll</code>](#Polling..Poll) | The poll to end. |
+
+<a name="RoleColors"></a>
+
+## RoleColors ⇐ [<code>SubModule</code>](#SubModule)
+Allows users to change their name color by giving them a role with
+a color.
+
+**Kind**: global class  
+**Extends**: [<code>SubModule</code>](#SubModule)  
+
+* [RoleColors](#RoleColors) ⇐ [<code>SubModule</code>](#SubModule)
+    * _instance_
+        * [.helpMessage](#SubModule+helpMessage) : <code>string</code> \| <code>Discord~MessageEmbed</code>
+        * *[.postPrefix](#SubModule+postPrefix) : <code>string</code>*
+        * [.Discord](#SubModule+Discord) : <code>Discord</code>
+        * [.client](#SubModule+client) : <code>Discord~Client</code>
+        * [.command](#SubModule+command) : [<code>Command</code>](#Command)
+        * [.common](#SubModule+common) : [<code>Common</code>](#Common)
+        * [.bot](#SubModule+bot) : [<code>SpikeyBot</code>](#SpikeyBot)
+        * [.myName](#SubModule+myName) : <code>string</code>
+        * [.initialized](#SubModule+initialized) : <code>boolean</code>
+        * [.commit](#SubModule+commit) : <code>string</code>
+        * [.loadTime](#SubModule+loadTime) : <code>number</code>
+        * [.initialize()](#SubModule+initialize)
+        * [.begin(Discord, client, command, common, bot)](#SubModule+begin)
+        * [.end()](#SubModule+end)
+        * [.log(msg)](#SubModule+log)
+        * [.debug(msg)](#SubModule+debug)
+        * [.warn(msg)](#SubModule+warn)
+        * [.error(msg)](#SubModule+error)
+        * [.shutdown()](#SubModule+shutdown)
+        * *[.save([opt])](#SubModule+save)*
+        * *[.unloadable()](#SubModule+unloadable) ⇒ <code>boolean</code>*
+    * _inner_
+        * [~commandColor(msg)](#RoleColors..commandColor) : [<code>commandHandler</code>](#commandHandler) ℗
+
+<a name="SubModule+helpMessage"></a>
+
+### roleColors.helpMessage : <code>string</code> \| <code>Discord~MessageEmbed</code>
+The help message to show the user in the main help message.
+
+**Kind**: instance property of [<code>RoleColors</code>](#RoleColors)  
+<a name="SubModule+postPrefix"></a>
+
+### *roleColors.postPrefix : <code>string</code>*
+The postfix for the global prefix for this subModule. Must be defined
+before begin(), otherwise it is ignored.
+
+**Kind**: instance abstract property of [<code>RoleColors</code>](#RoleColors)  
+**Default**: <code>&quot;&quot;</code>  
+<a name="SubModule+Discord"></a>
+
+### roleColors.Discord : <code>Discord</code>
+The current Discord object instance of the bot.
+
+**Kind**: instance property of [<code>RoleColors</code>](#RoleColors)  
+<a name="SubModule+client"></a>
+
+### roleColors.client : <code>Discord~Client</code>
+The current bot client.
+
+**Kind**: instance property of [<code>RoleColors</code>](#RoleColors)  
+<a name="SubModule+command"></a>
+
+### roleColors.command : [<code>Command</code>](#Command)
+The command object for registering command listeners.
+
+**Kind**: instance property of [<code>RoleColors</code>](#RoleColors)  
+<a name="SubModule+common"></a>
+
+### roleColors.common : [<code>Common</code>](#Common)
+The common object.
+
+**Kind**: instance property of [<code>RoleColors</code>](#RoleColors)  
+<a name="SubModule+bot"></a>
+
+### roleColors.bot : [<code>SpikeyBot</code>](#SpikeyBot)
+The parent SpikeyBot instance.
+
+**Kind**: instance property of [<code>RoleColors</code>](#RoleColors)  
+<a name="SubModule+myName"></a>
+
+### roleColors.myName : <code>string</code>
+The name of this submodule. Used for differentiating in the log. Should be
+defined before begin().
+
+**Kind**: instance property of [<code>RoleColors</code>](#RoleColors)  
+**Overrides**: [<code>myName</code>](#SubModule+myName)  
+**Access**: protected  
+<a name="SubModule+initialized"></a>
+
+### roleColors.initialized : <code>boolean</code>
+Has this subModule been initialized yet (Has begin() been called).
+
+**Kind**: instance property of [<code>RoleColors</code>](#RoleColors)  
+**Default**: <code>false</code>  
+**Access**: protected  
+**Read only**: true  
+<a name="SubModule+commit"></a>
+
+### roleColors.commit : <code>string</code>
+The commit at HEAD at the time this module was loaded. Essentially the
+version of this submodule.
+
+**Kind**: instance constant of [<code>RoleColors</code>](#RoleColors)  
+**Access**: public  
+<a name="SubModule+loadTime"></a>
+
+### roleColors.loadTime : <code>number</code>
+The time at which this madule was loaded for use in checking if the module
+needs to be reloaded because the file has been modified since loading.
+
+**Kind**: instance constant of [<code>RoleColors</code>](#RoleColors)  
+**Access**: public  
+<a name="SubModule+initialize"></a>
+
+### roleColors.initialize()
+The function called at the end of begin() for further initialization
+specific to the subModule. Must be defined before begin() is called.
+
+**Kind**: instance method of [<code>RoleColors</code>](#RoleColors)  
+**Overrides**: [<code>initialize</code>](#SubModule+initialize)  
+**Access**: protected  
+<a name="SubModule+begin"></a>
+
+### roleColors.begin(Discord, client, command, common, bot)
+Initialize this submodule.
+
+**Kind**: instance method of [<code>RoleColors</code>](#RoleColors)  
+**Access**: public  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| Discord | <code>Discord</code> | The Discord object for the API library. |
+| client | <code>Discord~Client</code> | The client that represents this bot. |
+| command | [<code>Command</code>](#Command) | The command instance in which to register command listeners. |
+| common | [<code>Common</code>](#Common) | Class storing common functions. |
+| bot | [<code>SpikeyBot</code>](#SpikeyBot) | The parent SpikeyBot instance. |
+
+<a name="SubModule+end"></a>
+
+### roleColors.end()
+Trigger subModule to shutdown and get ready for process terminating.
+
+**Kind**: instance method of [<code>RoleColors</code>](#RoleColors)  
+**Access**: public  
+<a name="SubModule+log"></a>
+
+### roleColors.log(msg)
+Log using common.log, but automatically set name.
+
+**Kind**: instance method of [<code>RoleColors</code>](#RoleColors)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+debug"></a>
+
+### roleColors.debug(msg)
+Log using common.logDebug, but automatically set name.
+
+**Kind**: instance method of [<code>RoleColors</code>](#RoleColors)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+warn"></a>
+
+### roleColors.warn(msg)
+Log using common.logWarning, but automatically set name.
+
+**Kind**: instance method of [<code>RoleColors</code>](#RoleColors)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+error"></a>
+
+### roleColors.error(msg)
+Log using common.error, but automatically set name.
+
+**Kind**: instance method of [<code>RoleColors</code>](#RoleColors)  
+**Access**: protected  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>string</code> | The message to log. |
+
+<a name="SubModule+shutdown"></a>
+
+### roleColors.shutdown()
+Shutdown and disable this submodule. Removes all event listeners.
+
+**Kind**: instance method of [<code>RoleColors</code>](#RoleColors)  
+**Overrides**: [<code>shutdown</code>](#SubModule+shutdown)  
+**Access**: protected  
+<a name="SubModule+save"></a>
+
+### *roleColors.save([opt])*
+Saves all data to files necessary for saving current state.
+
+**Kind**: instance abstract method of [<code>RoleColors</code>](#RoleColors)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [opt] | <code>string</code> | <code>&quot;&#x27;sync&#x27;&quot;</code> | Can be 'async', otherwise defaults to synchronous. |
+
+<a name="SubModule+unloadable"></a>
+
+### *roleColors.unloadable() ⇒ <code>boolean</code>*
+Check if this module is in a state that is ready to be unloaded. If false
+is returned, this module should not be unloaded and doing such may risk
+putting the module into an uncontrollable state.
+
+**Kind**: instance abstract method of [<code>RoleColors</code>](#RoleColors)  
+**Returns**: <code>boolean</code> - True if can be unloaded, false if cannot.  
+**Access**: public  
+<a name="RoleColors..commandColor"></a>
+
+### RoleColors~commandColor(msg) : [<code>commandHandler</code>](#commandHandler) ℗
+Allow a user to set their name color. This isn't very smart, and doesn't
+check for correct position in hierarchy, but will try not to create
+multiple roles for one person.
+
+**Kind**: inner method of [<code>RoleColors</code>](#RoleColors)  
+**Access**: private  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| msg | <code>Discord~Message</code> | Message that triggered command. |
 
 <a name="RoleManager"></a>
 
