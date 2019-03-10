@@ -109,6 +109,9 @@ const mainTests = [
   new Test('Git command', '~git', ['^```']),
   new Test('Who am I', '~whoami', ['^Bot']),
   new Test('What time is it', '~gettime', ['#noerr']),
+  new Test('Color command hex', '~color #0F8D1C', ['#noerr']),
+  new Test('Color command rgb', '~color 255 0 255', ['#noerr']),
+  new Test('Color command name', '~color default', ['#noerr']),
 ];
 const hgTests = [
   new Test('Reset All command', '~hg reset all', ['#noerr']),

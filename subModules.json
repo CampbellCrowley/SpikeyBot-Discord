@@ -10,7 +10,8 @@
     "./spotify.js",
     "./cmdScheduling.js",
     "./web/stats.js",
-    "./web/webhooks.js"
+    "./web/webhooks.js",
+    "./roleColors.js"
   ],
   "dev": [
     "./main.js",
@@ -34,7 +35,8 @@
     "./roleManager.js",
     "./sandbox.js",
     "./define.js",
-    "./web/hg.js"
+    "./web/hg.js",
+    "./roleColors.js"
   ],
   "release": [
     "./hungryGames.js",
@@ -56,7 +58,8 @@
     "./uno.js",
     "./cmdScheduling.js",
     "./sandbox.js",
-    "./define.js"
+    "./define.js",
+    "./roleColors.js"
   ],
   "rembot": [
     "./main.js",
@@ -71,7 +74,8 @@
     "./uno.js",
     "./cmdScheduling.js",
     "./sandbox.js",
-    "./define.js"
+    "./define.js",
+    "./roleColors.js"
   ],
   "FALLBACK": []
 }
