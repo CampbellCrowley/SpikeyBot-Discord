@@ -18,15 +18,16 @@ let auth = require('../auth.js');
  * @listens Process#uncaughtException
  */
 function unhandledRejection(...args) {
+  const pid = ('00000' + process.pid).slice(-5);
   if (args[0] && args[0].name == 'DiscordAPIError') {
     const e = args[0];
-    const str = `ERR:${process.pid} Uncaught ${e.name}: ${e.message} ` +
+    const str = `ERR:${pid} Uncaught ${e.name}: ${e.message} ` +
         `${e.method} ${e.code} (${e.path})`;
     console.log(str);
   } else if (args[0] && args[0].message == 'No Perms') {
-    console.log(`ERR:${process.pid}`, args[0]);
+    console.log(`ERR:${pid}`, args[0]);
   } else {
-    console.log(`ERR:${process.pid}`, ...args);
+    console.log(`ERR:${pid}`, ...args);
   }
 }
 process.on('unhandledRejection', unhandledRejection);
