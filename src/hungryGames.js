@@ -4027,15 +4027,22 @@ function HungryGames() {
    */
   function probabilityEvent(
       eventPool, probabilityOpts, customWeight = 1, recurse = 0) {
-    if (isNaN(probabilityOpts.kill * 1)) probabilityOpts.kill = 0;
-    if (isNaN(probabilityOpts.nothing * 1)) probabilityOpts.nothing = 0;
-    if (isNaN(probabilityOpts.revive * 1)) probabilityOpts.revive = 0;
-    if (isNaN(probabilityOpts.thrive * 1)) probabilityOpts.thrive = 0;
-    if (isNaN(probabilityOpts.wound * 1)) probabilityOpts.wound = 0;
-
-    let probTotal = probabilityOpts.kill + probabilityOpts.wound +
-        probabilityOpts.thrive + probabilityOpts.revive +
-        probabilityOpts.nothing;
+    let probTotal = 0;
+    if (typeof probabilityOpts.kill === 'number') {
+      probTotal += probabilityOpts.kill;
+    }
+    if (typeof probabilityOpts.nothing === 'number') {
+      probTotal += probabilityOpts.nothing;
+    }
+    if (typeof probabilityOpts.revive === 'number') {
+      probTotal += probabilityOpts.revive;
+    }
+    if (typeof probabilityOpts.thrive === 'number') {
+      probTotal += probabilityOpts.thrive;
+    }
+    if (typeof probabilityOpts.wound === 'number') {
+      probTotal += probabilityOpts.wound;
+    }
 
     const value = Math.random() * probTotal;
 
