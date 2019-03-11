@@ -39,20 +39,74 @@
     "title": "Hungry Games Personal Weapon",
     "type": "object",
     "values": {
-      "weaponType": {
-        "type": "select",
-        "values": ["none", "grenade", "explosives", "alcohol", "slingshot",
-                   "gun", "bow", "knife", "throwingknives", "shovel", "mace",
-                   "sword", "hatchet", "toothbrush", "rope", "poison", "spear"],
-        "hrValues": ["None", "Grenade", "Explosives", "Alcohol", "Slingshot",
-                     "Gun", "Bow", "Knife", "Throwing Knives", "Shovel", "Mace",
-                     "Sword", "Hatchet", "Toothbrush", "Rope", "Poison",
-                     "Spear"],
-        "default": "none"
-      },
       "weaponName": {
         "type": "text",
         "default": ""
+      },
+      "weaponActions": {
+        "type": "object",
+        "values": {
+          "blow[As|] up": {
+            "title": "Blow up",
+            "type": "boolean",
+            "default": "false"
+          },
+          "kill[As|]": {
+            "title": "Kill",
+            "type": "boolean",
+            "default": "false"
+          },
+          "miss[Aes|]": {
+            "title": "Miss",
+            "type": "boolean",
+            "default": "false"
+          },
+          "miss[Aes|] their shot at": {
+            "title": "Miss your shot",
+            "type": "boolean",
+            "default": "false"
+          },
+          "shoot[As|]": {
+            "title": "Shoot",
+            "type": "boolean",
+            "default": "false"
+          },
+          "stab[As|]": {
+            "title": "Stab",
+            "type": "boolean",
+            "default": "false"
+          },
+          "slice[As|]": {
+            "title": "Slice",
+            "type": "boolean",
+            "default": "false"
+          },
+          "strangle[As|]": {
+            "title": "Strangle",
+            "type": "boolean",
+            "default": "false"
+          },
+          "cut[As|]": {
+            "title": "Cut",
+            "type": "boolean",
+            "default": "false"
+          },
+          "poison[As|]": {
+            "title": "Poison",
+            "type": "boolean",
+            "default": "false"
+          },
+          "skewer[As|]": {
+            "title": "Skewer",
+            "type": "boolean",
+            "default": "false"
+          },
+          "wound[As|]": {
+            "title": "Wound",
+            "type": "boolean",
+            "default": "false"
+          }
+        }
       }
     }
   }

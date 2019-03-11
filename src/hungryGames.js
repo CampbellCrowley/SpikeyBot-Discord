@@ -4696,7 +4696,8 @@ function HungryGames() {
       if (statusList.length >= 5) {
         const numCols = calcColNum(statusList.length > 10 ? 3 : 2, statusList);
 
-        const quarterLength = Math.ceil(statusList.length / numCols);
+        const numTotal = statusList.length;
+        const quarterLength = Math.ceil(numTotal / numCols);
         for (let i = 0; i < numCols - 1; i++) {
           const thisMessage =
               statusList.splice(0, quarterLength).join('\n').slice(0, 1025);
@@ -4705,7 +4706,7 @@ function HungryGames() {
               thisMessage, true);
         }
         finalMessage.addField(
-            ((numCols - 1) * quarterLength + 1) + '-' + statusList.length,
+            ((numCols - 1) * quarterLength + 1) + '-' + numTotal,
             statusList.join('\n').slice(0, 1025), true);
       } else {
         finalMessage.setDescription(statusList.join('\n') || '...');
