@@ -1609,7 +1609,8 @@ function Main() {
   function commandPmSpikey(msg) {
     if (!msg.text || msg.text.trim().length == 0) {
       self.common.reply(
-          msg, 'Please write a message to send after the command.',
+          msg, 'Please write a message to send after the command.\n' +
+              'Reminder: this will send the message to my creator.',
           msg.prefix + 'pmspikey The bot is on fire!');
       return;
     }
