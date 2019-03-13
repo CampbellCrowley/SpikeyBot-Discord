@@ -8,6 +8,7 @@ require('./subModule.js')(DevCmds);  // Extends the SubModule class.
  * RELEASE VERSIONS.
  * @class
  * @augments SubModule
+ * @listens Discord~Client#message
  * @listens Command#run
  */
 function DevCmds() {
@@ -17,11 +18,13 @@ function DevCmds() {
   /** @inheritdoc */
   this.initialize = function() {
     self.command.on(new self.command.SingleCommand(['run'], commandRun));
+    self.client.on('message', onMessage);
   };
 
   /** @inheritdoc */
   this.shutdown = function() {
     self.command.deleteEvent('run');
+    self.client.removeListener('message', onMessage);
   };
 
   /**
@@ -41,6 +44,19 @@ function DevCmds() {
       res = err;
     }
     self.common.reply(msg, res || typeof res);
+  }
+
+  /**
+   * Handle receiving a message. Only adds reactions in the #feature-ideas
+   * channel.
+   *
+   * @private
+   * @param {Discord~Message} msg The message that was sent.
+   * @listens Discord~Client#message
+   */
+  function onMessage(msg) {
+    if (msg.channel.id != '554105419417518103') return;
+    msg.react('👍');
   }
 }
 
