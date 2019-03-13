@@ -75,6 +75,7 @@
     "./cmdScheduling.js",
     "./sandbox.js",
     "./define.js",
+    "./hungryGames.js",
     "./roleColors.js"
   ],
   "FALLBACK": []
