@@ -800,6 +800,8 @@ function WebAccount() {
   function changePatreonSetting(userid, setting, value, cb) {
     const dirname = self.common.userSaveDir + userid;
     const filename = dirname + patreonSettingsFilename;
+    const split = setting.split(' ');
+    setting = split[0];
     /**
      * Make the directory for writing the user's settings if it does not exist
      * already.
@@ -884,7 +886,18 @@ function WebAccount() {
           return;
         }
       }
-      parsed[setting] = value;
+      if (split.length > 1) {
+        if (!parsed[setting]) parsed[setting] = {};
+        let obj = parsed[setting];
+        while (split.length > 2) {
+          const next = split.splice(1, 1)[0];
+          if (!obj[next]) obj[next] = {};
+          obj = obj[next];
+        }
+        obj[split[1]] = value;
+      } else {
+        parsed[setting] = value;
+      }
 
       fs.writeFile(filename, JSON.stringify(parsed), (err) => {
         if (!err) {
@@ -901,9 +914,7 @@ function WebAccount() {
       cb('Invalid Setting');
       return;
     } else {
-      if (isInvalid(
-          patreonSettingsTemplate[setting], setting.split(' ').slice(1),
-          value)) {
+      if (isInvalid(patreonSettingsTemplate[setting], split.slice(1), value)) {
         return;
       }
     }

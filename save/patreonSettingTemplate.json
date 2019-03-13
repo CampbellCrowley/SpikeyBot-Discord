@@ -39,29 +39,36 @@
     "title": "Hungry Games Personal Weapon",
     "type": "object",
     "values": {
+      "weaponEnabled": {
+        "title": "Use Weapon",
+        "type": "boolean",
+        "default": "false"
+      },
       "weaponName": {
+        "title": "Weapon Name",
         "type": "text",
-        "default": ""
+        "default": "Patron's Rage"
       },
       "weaponActions": {
+        "title": "Weapon Actions",
         "type": "object",
         "values": {
-          "blow[As|] up": {
+          "blow[As|]_up": {
             "title": "Blow up",
             "type": "boolean",
-            "default": "false"
+            "default": "true"
           },
           "kill[As|]": {
             "title": "Kill",
             "type": "boolean",
-            "default": "false"
+            "default": "true"
           },
           "miss[Aes|]": {
             "title": "Miss",
             "type": "boolean",
             "default": "false"
           },
-          "miss[Aes|] their shot at": {
+          "miss[Aes|]_their_shot_at": {
             "title": "Miss your shot",
             "type": "boolean",
             "default": "false"
@@ -74,22 +81,22 @@
           "stab[As|]": {
             "title": "Stab",
             "type": "boolean",
-            "default": "false"
+            "default": "true"
           },
           "slice[As|]": {
             "title": "Slice",
             "type": "boolean",
-            "default": "false"
+            "default": "true"
           },
           "strangle[As|]": {
             "title": "Strangle",
             "type": "boolean",
-            "default": "false"
+            "default": "true"
           },
           "cut[As|]": {
             "title": "Cut",
             "type": "boolean",
-            "default": "false"
+            "default": "true"
           },
           "poison[As|]": {
             "title": "Poison",
@@ -104,7 +111,7 @@
           "wound[As|]": {
             "title": "Wound",
             "type": "boolean",
-            "default": "false"
+            "default": "true"
           }
         }
       }
