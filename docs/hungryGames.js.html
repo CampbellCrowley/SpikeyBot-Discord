@@ -1026,9 +1026,11 @@ function HungryGames() {
     const tmpHelp = new self.Discord.MessageEmbed();
     tmpHelp.setTitle(helpObject.title);
     tmpHelp.setURL(
-        self.common.webURL + '#' + encodeURIComponent(helpObject.title));
+        self.common.webURL + '#' +
+        encodeURIComponent(helpObject.title.replace(/\s/g, '_')));
     helpObject.sections.forEach(function(obj) {
-      const titleID = encodeURIComponent(obj.title);
+      const titleID =
+          encodeURIComponent(self.postPrefix + obj.title.replace(/\s/g, '_'));
       const titleURL = '[web](' + self.common.webHelp + '#' + titleID + ')';
       tmpHelp.addField(
           obj.title, titleURL + '```js\n' +
