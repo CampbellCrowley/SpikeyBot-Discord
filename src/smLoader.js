@@ -309,9 +309,10 @@ function SMLoader() {
           goalSubModuleNames.splice(goalIndex, 1);
         }
       }
+      delete subModules[name];
       message = null;
     } catch (err) {
-      self.error('Failed to clearing: ' + name);
+      self.error('Failed to clear: ' + name);
       console.log(err);
       message = 'Failed to Unload';
     }

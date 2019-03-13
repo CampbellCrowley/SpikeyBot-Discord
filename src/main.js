@@ -418,7 +418,7 @@ function Main() {
     tmpHelp.setDescription(
         helpObject.description.replaceAll('{prefix}', self.bot.getPrefix()));
     helpObject.sections.forEach(function(obj) {
-      const titleID = encodeURIComponent(obj.title);
+      const titleID = encodeURIComponent(obj.title.replace(/\s/g, '_'));
       const titleURL = '[web](' + self.common.webHelp + '#' + titleID + ')';
       tmpHelp.addField(
           obj.title, titleURL + '```js\n' +
@@ -456,7 +456,7 @@ function Main() {
         adminHelpObject.description.replaceAll(
             '{prefix}', self.bot.getPrefix()));
     adminHelpObject.sections.forEach(function(obj) {
-      const titleID = encodeURIComponent(obj.title);
+      const titleID = encodeURIComponent(obj.title.replace(/\s/g, '_'));
       const titleURL = '[web](' + self.common.webHelp + '#' + titleID + ')';
       tmpAdminHelp.addField(
           obj.title, titleURL + '```js\n' +
@@ -1609,7 +1609,8 @@ function Main() {
   function commandPmSpikey(msg) {
     if (!msg.text || msg.text.trim().length == 0) {
       self.common.reply(
-          msg, 'Please write a message to send after the command.',
+          msg, 'Please write a message to send after the command.\n' +
+              'Reminder: this will send the message to my creator.',
           msg.prefix + 'pmspikey The bot is on fire!');
       return;
     }

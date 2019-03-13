@@ -55,6 +55,7 @@
     "./web/account.js",
     "./web/stats.js",
     "./web/settings.js",
+    "./web/hg.js",
     "./uno.js",
     "./cmdScheduling.js",
     "./sandbox.js",
