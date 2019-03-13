@@ -742,12 +742,18 @@ function WebAccount() {
       } else if (type === 'color') {
         valid =
             typeof value === 'string' && value.match(/^0x[0-9a-fA-f]{6,9}$/);
+      } else if (type === 'boolean') {
+        valid = typeof value === 'boolean' ||
+            (typeof value === 'string' && (value.toLowerCase() === 'false' ||
+                                           value.toLowerCase() === 'true'));
       } else if (type === 'object') {
         return isInvalid(obj.values[s[0]], s.slice(1), value);
       }
       if (!valid) {
         cb('Invalid Value', {status: type || 'NOTYPE', message: value});
         return true;
+      } else {
+        return false;
       }
     }
     /**

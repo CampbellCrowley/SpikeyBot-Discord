@@ -3416,6 +3416,11 @@
         "test-value": "^3.0.0"
       }
     },
+    "jsdoc-template": {
+      "version": "github:braintree/jsdoc-template#ec0e3c0ec95de6b4e928af3285bbf69aac2f25b6",
+      "from": "github:braintree/jsdoc-template",
+      "dev": true
+    },
     "jsdoc-to-markdown": {
       "version": "4.0.1",
       "resolved": "https://registry.npmjs.org/jsdoc-to-markdown/-/jsdoc-to-markdown-4.0.1.tgz",

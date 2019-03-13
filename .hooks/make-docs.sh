@@ -18,7 +18,7 @@ for FILE in $CMDDIR*.md; do
 done
 
 echo "Creating md files from jsdoc"
-JSDOC="$GITROOT/docs/README.md"
+JSDOC="$GITROOT/docs/md/README.md"
 
 echo "[Commands Help](commands/)" > "$JSDOC"
 
@@ -26,6 +26,9 @@ echo "[Commands Help](commands/)" > "$JSDOC"
 if [[ "$?" != 0 ]]; then
   exit 1
 fi
+
+echo "Creating html files from jsdoc"
+"$GITROOT/node_modules/.bin/jsdoc" -c "$GITROOT/.hooks/jsdoc.conf.js"
 
 rm -rf /tmp/jsdoc-api/
 rm -rf /tmp/dmd/
