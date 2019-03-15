@@ -47,7 +47,7 @@
       {
         "message": "{attacker} force[Vs|] [Aa |]grenade[A|s] into {victim}'s mouth, then pull the pin!",
         "attacker": { "count": "-1", "outcome": "nothing" },
-        "victim": { "count": "1", "outcome": "nothing" },
+        "victim": { "count": "1", "outcome": "dies" },
         "consumes": 1
       },
       {
