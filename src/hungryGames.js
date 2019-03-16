@@ -2261,9 +2261,7 @@ function HungryGames() {
       return;
     }
     const myPerms = msg.channel.permissionsFor(self.client.user.id);
-    if (!myPerms ||
-        (!myPerms.has(self.Discord.Permissions.FLAGS.ATTACH_FILES) &&
-         !myPerms.has(self.Discord.Permissions.FLAGS.ADMINISTRATOR))) {
+    if (!myPerms || !myPerms.has(self.Discord.Permissions.FLAGS.ATTACH_FILES)) {
       self.common.reply(
           msg, 'Sorry, but I need permission to send images ' +
               'in this channel before I can start the games.\nPlease ensure' +
@@ -2275,13 +2273,13 @@ function HungryGames() {
             'Failed to fetch perms for myself. ' + (msg.guild.me && true));
       }
       return;
-    } else if (
-      !myPerms.has(self.Discord.Permissions.FLAGS.EMBED_LINKS) &&
-        !myPerms.has(self.Discord.Permissions.FLAGS.ADMINISTRATOR)) {
+    } else if (!myPerms.has(self.Discord.Permissions.FLAGS.EMBED_LINKS)) {
       self.common.reply(
           msg, 'Sorry, but I need permission to embed messages ' +
               'in this channel before I can start the games.\nPlease ensure' +
               ' I have the "Embed Links" permission in this channel.');
+      return;
+    } else if (!myPerms.has(self.Discord.Permissions.FLAGS.SEND_MESSAGES)) {
       return;
     }
     /**
