@@ -2553,9 +2553,7 @@ function HungryGames() {
       find(id).autoPlay = true;
       if (find(id).currentGame.inProgress &&
           find(id).currentGame.day.state === 0) {
-        const nextPerm = self.command.validate(msg.prefix + 'hg next', msg);
-        if (nextPerm) {
-          self.error(nextPerm);
+        if (self.command.validate(msg.prefix + 'hg next', msg)) {
           self.common.reply(
               msg,
               'Sorry, but you don\'t have permission to start the next day ' +
@@ -5027,7 +5025,7 @@ function HungryGames() {
       // delete battleMessage[id];
       if (!silent) self.common.reply(msg, 'The game has ended!');
       if (find(id).outputChannel &&
-          self.client.channels.find(find(id).outputChannel)) {
+          self.client.channels.get(find(id).outputChannel)) {
         try {
           self.command.find('say', msg)
               .options.set('default', 'channel', find(id).outputChannel);
