@@ -2555,7 +2555,9 @@ function HungryGames() {
       find(id).autoPlay = true;
       if (find(id).currentGame.inProgress &&
           find(id).currentGame.day.state === 0) {
-        if (self.command.validate('hg next', msg)) {
+        const nextPerm = self.command.validate(msg.prefix + 'hg next', msg);
+        if (nextPerm) {
+          self.error(nextPerm);
           self.common.reply(
               msg,
               'Sorry, but you don\'t have permission to start the next day ' +
@@ -2567,7 +2569,7 @@ function HungryGames() {
             '> `Enabling Autoplay! Starting the next day!`');
         nextDay(msg, id);
       } else if (!find(id).currentGame.inProgress) {
-        if (self.command.validate('hg start', msg)) {
+        if (self.command.validate(msg.prefix + 'hg start', msg)) {
           self.common.reply(
               msg, 'Sorry, but you don\'t have permission to start the games.',
               'hg start');
