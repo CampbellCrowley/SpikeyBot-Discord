@@ -599,14 +599,15 @@ function WebSettings() {
   function makeMessage(uId, gId, cId, msg) {
     const g = self.client.guilds.get(gId);
     if (!g) return null;
+    const prefix = self.bot.getPrefix(gId);
     return {
       member: g.members.get(uId),
       author: self.client.users.get(uId),
       guild: g,
       channel: g.channels.get(cId),
       text: msg,
-      content: msg,
-      prefix: self.bot.getPrefix(gId),
+      content: `${prefix}${msg}`,
+      prefix: prefix,
     };
   }
 

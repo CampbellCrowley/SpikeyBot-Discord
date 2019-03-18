@@ -1301,7 +1301,14 @@ function Command() {
           return el.aliases.includes(text);
         });
         if (!found) {
-          self.common.reply(msg, 'That is not a valid command to lookup.');
+          if (msg.prefix != self.bot.getPrefix()) {
+            self.common.reply(
+                msg, 'That is not a valid command to lookup.',
+                'You are using a custom prefix, please include it before the ' +
+                    'command to lookup.');
+          } else {
+            self.common.reply(msg, 'That is not a valid command to lookup.');
+          }
         } else {
           let output = 'That command is using default settings.\n' +
               (found.options.defaultDisabled ? 'Disabled' : 'Enabled') +
@@ -1394,41 +1401,45 @@ function Command() {
     }).filter((el) => {
       return el;
     });
-    const finalSplits = [];
-    (function splitOutput(num) {
-      const splitLength = Math.ceil(output.length / num);
-      for (let i = 0; i < num; i++) {
-        const section = output.slice(splitLength * i, splitLength * (i + 1))
-            .join('\n')
-            .length;
-        if (section > 1024) {
-          if (num > 25) return;
-          splitOutput(num + 1);
-          return;
+    if (output.length > 5800) {
+      self.common.reply(msg, 'Please specify a command to lookup.');
+    } else {
+      const finalSplits = [];
+      (function splitOutput(num) {
+        const splitLength = Math.ceil(output.length / num);
+        for (let i = 0; i < num; i++) {
+          const section = output.slice(splitLength * i, splitLength * (i + 1))
+              .join('\n')
+              .length;
+          if (section > 1024) {
+            if (num > 25) return;
+            splitOutput(num + 1);
+            return;
+          }
         }
+        for (let i = 1; i < num; i++) {
+          finalSplits.push(output.splice(0, splitLength).join('\n'));
+        }
+        finalSplits.push(output.splice(0).join('\n'));
+      })(1);
+      if (finalSplits.length == 0) {
+        self.common.reply(
+            msg, 'I wasn\'t able to fit all settings into a message.');
+        return;
       }
-      for (let i = 1; i < num; i++) {
-        finalSplits.push(output.splice(0, splitLength).join('\n'));
+      const embed = new self.Discord.MessageEmbed();
+      embed.setColor([255, 0, 255]);
+      embed.setTitle('Command Permissions');
+      for (let i = 0; i < finalSplits.length; i++) {
+        embed.addField('\u200B', finalSplits[i], true);
       }
-      finalSplits.push(output.splice(0).join('\n'));
-    })(1);
-    if (finalSplits.length == 0) {
-      self.common.reply(
-          msg, 'I wasn\'t able to fit all settings into a message.');
-      return;
+      embed.setDescription(
+          'Reset values to default with ' + msg.prefix +
+          'reset\nChange values with ' + msg.prefix + 'enable or ' +
+          msg.prefix + 'disable');
+      embed.setFooter('A # denotes command is muted on error.');
+      msg.channel.send(self.common.mention(msg), embed);
     }
-    const embed = new self.Discord.MessageEmbed();
-    embed.setColor([255, 0, 255]);
-    embed.setTitle('Command Permissions');
-    for (let i = 0; i < finalSplits.length; i++) {
-      embed.addField('\u200B', finalSplits[i], true);
-    }
-    embed.setDescription(
-        'Reset values to default with ' + msg.prefix +
-        'reset\nChange values with ' + msg.prefix + 'enable or ' + msg.prefix +
-        'disable');
-    embed.setFooter('A # denotes command is muted on error.');
-    msg.channel.send(self.common.mention(msg), embed);
   }
   /**
    * Reset all custom command settings to default.

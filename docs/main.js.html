@@ -215,7 +215,7 @@ function Main() {
       console.log(e);
     }
   });
-  require('child_process').exec('git rev-parse HEAD', (err, stdout) => {
+  childProcess.exec('git rev-parse HEAD', (err, stdout) => {
     commit = stdout.toString().trim();
   });
 
