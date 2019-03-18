@@ -1386,7 +1386,9 @@ function Command() {
     let commands;
     if (msg.text &amp;&amp; msg.text.trim()) {
       let text = msg.text.trim().toLowerCase();
-      if (text.startsWith(msg.prefix)) text = text.replace(msg.prefix, '');
+      if (msg.prefix == 'hg') {
+      }
+      // if (text.startsWith(msg.prefix)) text = text.replace(msg.prefix, '');
       commands = userSettings[msg.guild.id];
       if (commands) {
         const origContent = msg.content;

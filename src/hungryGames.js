@@ -4623,8 +4623,9 @@ function HungryGames() {
         playersToShow = playersToShow.filter((el) => {
           if (!find(id).options.showLivingPlayers && el.living) return false;
           return el.living || el.state == 'wounded' ||
-              find(id).currentGame.day.num - el.dayOfDeath <
-              find(id).options.numDaysShowDeath;
+              (find(id).options.numDaysShowDeath >= 0 &&
+               find(id).currentGame.day.num - el.dayOfDeath <
+                   find(id).options.numDaysShowDeath);
         });
       }
       const showDead = playersToShow.find((el) => !el.living);
