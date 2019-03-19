@@ -542,7 +542,7 @@ function HungryGames() {
     heart: '❤',
     red_heart: '❤️',
     yellow_heart: '💛',
-    blue_heard: '💙',
+    blue_heart: '💙',
     broken_heart: '💔',
     skull: '💀',
     negative_squared_cross_mark: '❎',
