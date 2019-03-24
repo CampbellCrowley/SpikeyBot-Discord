@@ -1343,8 +1343,8 @@
     },
     {
       "message": "{attacker} rejects your reality and substitutes their own, consequently they end up dead.",
-      "victim": { "count": -1, "outcome": "dies" },
-      "attacker": { "count": 0, "outcome": "nothing" },
+      "victim": { "count": 0, "outcome": "nothing" },
+      "attacker": { "count": -1, "outcome": "dies" },
       "_reference": "Mythbusters / The Dungeonmaster"
     },
     {
