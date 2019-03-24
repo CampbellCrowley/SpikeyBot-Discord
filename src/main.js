@@ -682,6 +682,8 @@ function Main() {
         '\\[Shard \\d+\\] Sending a heartbeat|' +
         '\\[Shard \\d+\\] Heartbeat acknowledged, latency of|' +
         '\\[ws\\] \\[connection\\] Sending a heartbeat|' +
+        '\\[WS => Shard \\d+\\] Sending a heartbeat|' +
+        '\\[WS => Shard \\d+\\] Heartbeat acknowledged|' +
         '\\[VOICE)');
     if (info.match(hbRegex)) {
       return;
