@@ -2454,6 +2454,7 @@ function Main() {
     if (self.client.shard) {
       values.numShards = self.client.shard.count;
       values.reqShard = self.client.shard.id;
+      if (Array.isArray(values.reqShard)) values.reqShard = values.reqShard[0];
     }
     /**
      * Callback once all shards have replied with their stats.
