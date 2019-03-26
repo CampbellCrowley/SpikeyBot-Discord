@@ -288,8 +288,9 @@ function ChatBot() {
           msg.cleanContent
               .replace(
                   new RegExp(
-                      '@' +
-                          (msg.guild.me.nickname || self.client.user.username),
+                      '@' + escapeRegExp(
+                          msg.guild.me.nickname ||
+                                self.client.user.username),
                       'g'),
                   'SpikeyBot')
               .trim();
