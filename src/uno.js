@@ -80,6 +80,15 @@ function Uno() {
   const games = {};
 
   /**
+   * Delay for NPC to play their card.
+   * @private
+   * @type number
+   * @default
+   * @constant
+   */
+  const npcDelay = 5000;
+
+  /**
    * Starts an Uno game. If someone is mentioned it will start a game
    * between the message author and the mentioned person. Otherwise, waits for
    * someone to play.
@@ -176,15 +185,19 @@ function Uno() {
   const colorRegExp = new RegExp(colorPairs.map((el) => el[0]).join('|'), 'ig');
 
   /**
-   * Enum for card faces. The least significant nibble is the card number, all
-   * following bits are a bitfield of card properties.
+   * Enum for card faces. The two least significant nibbles are the card face.
+   * The most significant used nibbles are for card effects (designated by the
+   * EFFECT_MASK).
    *
-   * 0x010: The card is a wild card.
-   * 0x020: The card skips the next player's turn.
-   * 0x040: The card reverses play direction.
-   * 0x080: The card causes the next player after the turn is over, to draw 2
+   * BASE_MASK is the bitwise not of EFFECT_MASK, except on only the nibbles
+   * that are less significant than EFFECT_MASK.
+   *
+   * 0x01000: The card is a wild card.
+   * 0x02000: The card skips the next player's turn.
+   * 0x04000: The card reverses play direction.
+   * 0x08000: The card causes the next player after the turn is over, to draw 2
    * cards.
-   * 0x100: The next player must draw 4 cards.
+   * 0x10000: The next player must draw 4 cards.
    *
    * EFFECT entries are NOT real card faces, just the bitfield represented with
    * that effect.
@@ -195,28 +208,32 @@ function Uno() {
    * @enum {number}
    */
   this.CardFace = {
-    SKIP_EFFECT: 0x020,
-    SKIP: 0x02A,
-    DRAW_TWO_EFFECT: 0x080,
-    DRAW_TWO: 0x0AB,
-    DRAW_2: 0x0AB,
-    REVERSE_EFFECT: 0x040,
-    REVERSE: 0x04C,
-    WILD_EFFECT: 0x010,
-    WILD: 0x01E,
-    DRAW_FOUR_EFFECT: 0x100,
-    DRAW_FOUR: 0x13D,
-    DRAW_4: 0x13D,
-    ZERO: 0, 0: 0,
-    ONE: 1, 1: 1,
-    TWO: 2, 2: 2,
-    THREE: 3, 3: 3,
-    FOUR: 4, 4: 4,
-    FIVE: 5, 5: 5,
-    SIX: 6, 6: 6,
-    SEVEN: 7, 7: 7,
-    EIGHT: 8, 8: 8,
-    NINE: 9, 9: 9,
+    // Card Face Effects Bases
+    EFFECT_MASK: 0xFF000,
+    BASE_MASK: 0x00FFF,
+    WILD_EFFECT: 0x01000,
+    SKIP_EFFECT: 0x02000,
+    REVERSE_EFFECT: 0x04000,
+    DRAW_TWO_EFFECT: 0x08000,
+    DRAW_FOUR_EFFECT: 0x10000,
+    // Card Faces
+    SKIP: 0x02010,
+    DRAW_TWO: 0x0A020,
+    DRAW_2: 0x0A020,
+    REVERSE: 0x04030,
+    WILD: 0x01040,
+    DRAW_FOUR: 0x13050,
+    DRAW_4: 0x13050,
+    ZERO: 0x0, 0: 0x0,
+    ONE: 0x1, 1: 0x1,
+    TWO: 0x2, 2: 0x2,
+    THREE: 0x3, 3: 0x3,
+    FOUR: 0x4, 4: 0x4,
+    FIVE: 0x5, 5: 0x5,
+    SIX: 0x6, 6: 0x6,
+    SEVEN: 0x7, 7: 0x7,
+    EIGHT: 0x8, 8: 0x8,
+    NINE: 0x9, 9: 0x9,
   };
   /**
    * CardFace as entries.
@@ -294,6 +311,7 @@ function Uno() {
         let colorName = colorPairs.find((el) => el[1] == card.color);
         if (!colorName) {
           self.error('Unable to format card to string.');
+          console.log(card);
           console.log(card.color, 'not a valid color');
           colorName = colorPairs.find((el) => el[0] == card.color);
           if (colorName) {
@@ -351,7 +369,7 @@ function Uno() {
      * The array of all player in the game in the order of their turn.
      *
      * @private
-     * @type {Uno.Player[]}
+     * @type {Array.<Uno.Player|Uno.NPC>}
      */
     const players = [];
 
@@ -544,13 +562,13 @@ function Uno() {
         }
         if (m.author.id != maker.id) {
           if (m.content.toLowerCase().startsWith('uno leave')) {
-            self.debug(m.channel.id + '@' + m.author.id + ' ' + m.content);
+            // self.debug(m.channel.id + '@' + m.author.id + ' ' + m.content);
             game.removePlayer(m.author.id);
           }
           return false;
         }
         if (m.content.toLowerCase().startsWith('uno')) {
-          self.debug(m.channel.id + '@' + m.author.id + ' ' + m.content);
+          // self.debug(m.channel.id + '@' + m.author.id + ' ' + m.content);
           const cmd = m.content.toLowerCase().split(' ')[1];
           switch (cmd) {
             case 'begin':
@@ -651,7 +669,7 @@ function Uno() {
         }
         if (m.author.id == maker.id &&
             m.content.toLowerCase().startsWith('uno')) {
-          self.debug(m.channel.id + '@' + m.author.id + ' ' + m.content);
+          // self.debug(m.channel.id + '@' + m.author.id + ' ' + m.content);
           switch (m.content.toLowerCase().split(' ')[1]) {
             case 'end':
               game.end();
@@ -666,7 +684,7 @@ function Uno() {
         }
         if (turn < 0 || m.author.id != players[turn].id) return false;
         if (m.content.toLowerCase().startsWith('uno')) {
-          self.debug(m.channel.id + '@' + m.author.id + ' ' + m.content);
+          // self.debug(m.channel.id + '@' + m.author.id + ' ' + m.content);
           const cmd = m.content.toLowerCase().split(' ')[1];
           switch (cmd) {
             case 'play':
@@ -682,15 +700,15 @@ function Uno() {
           }
           return false;
         } else if (m.content.toLowerCase().startsWith('play')) {
-          self.debug(m.channel.id + '@' + m.author.id + ' ' + m.content);
+          // self.debug(m.channel.id + '@' + m.author.id + ' ' + m.content);
           if (playCard(m.content.split(' ').slice(1).join(' '))) {
-            setTimeout(finishSetup, 5000);
+            endGame();
             return true;
           } else {
             return false;
           }
         } else if (m.content.toLowerCase().startsWith('draw')) {
-          self.debug(m.channel.id + '@' + m.author.id + ' ' + m.content);
+          // self.debug(m.channel.id + '@' + m.author.id + ' ' + m.content);
           drawAndSkip();
           game.groupChannel.send(getCardEmbed(topCard));
           return false;
@@ -759,7 +777,8 @@ function Uno() {
             'The creator of this game can use the following commands in this ' +
                 'channel.\n\n`uno end` to end this game at any time (this ' +
                 'deletes all Uno text channels).\n`uno kick @SpikeyRobot#0971' +
-                '` to kick players (Careful! They cannot be added back!).');
+                '` to kick players (Careful! They cannot be added back during' +
+                ' the game!).');
       }
       return game.groupChannel.send(embed);
     }
@@ -773,21 +792,23 @@ function Uno() {
      * @private
      */
     function nextTurn(skip) {
-      if (turn > -1) {
+      if (turn > -1 && !players[turn].bot) {
         players[turn].channel.send(
             '`Your current hand:`', getCardEmbed(players[turn].hand));
       }
 
+      if (turn == -1) turn = Math.floor(Math.random() * players.length);
       turn += direction;
       if (turn < 0) turn = players.length - 1;
       if (turn > players.length - 1) turn = 0;
       if (skip) {
         game.groupChannel.send(
-            '`Skipping` <@' + players[turn].id + '>\'s turn!');
+            '`Skipping` ' + players[turn].mention + '\'s turn!');
       } else {
         game.groupChannel.send(
-            '`Next turn.` <@' + players[turn].id + '>\'s turn! They have ' +
+            '`Next turn.` ' + players[turn].mention + '\'s turn! They have ' +
             players[turn].hand.length + ' cards.');
+        if (players[turn].bot) setTimeout(playCard, npcDelay);
       }
     }
 
@@ -835,11 +856,15 @@ function Uno() {
         game.groupChannel.send(
             '`' + players[turn].name + '` drew ' + num + ' card' +
             (num == 1 ? '' : 's') + ' from the deck.');
-        players[turn].channel.send(
-            '`You drew:` ' + drawn.map((card) => card.toString()).join(', '));
+        if (!players[turn].bot) {
+          players[turn].channel.send(
+              '`You drew:` ' + drawn.map((card) => card.toString()).join(', '));
+        }
       } else {
-        players[turn].channel.send(
-            '`Your current hand`', getCardEmbed(players[turn].hand));
+        if (!players[turn].bot) {
+          players[turn].channel.send(
+              '`Your current hand`', getCardEmbed(players[turn].hand));
+        }
       }
       players[turn].calledUno = false;
     }
@@ -863,12 +888,15 @@ function Uno() {
         if (hand[selected].face & self.CardFace.WILD_EFFECT) {
           color =
               colorPairs[Math.floor(Math.random() * (colorPairs.length - 1)) +
-                         1][0];
+                         1][1];
         }
       } else {
         hand = players[turn].hand;
         if (players[turn].bot) {
           let i = hand.length;
+          // @TODO: Make picking cards smarter or more random. Hand is sorted by
+          // default so this causes very weighted results in cards that are
+          // played.
           do {
             selected = --i;
           } while (selected >= 0 && !checkCard(hand[selected]));
@@ -879,7 +907,15 @@ function Uno() {
           if (hand[selected].face & self.CardFace.WILD_EFFECT) {
             color =
                 colorPairs[Math.floor(Math.random() * (colorPairs.length - 1)) +
-                           1][0];
+                           1][1];
+          }
+          if (hand.length == 2) {
+            if (Math.random() <= players[turn].probCallUno) {
+              const myId = players[turn].id;
+              setTimeout(function() {
+                callUno(myId);
+              }, players[turn].delayCallUno);
+            }
           }
         } else if (!text || !text.trim()) {
           game.groupChannel.send(
@@ -945,8 +981,9 @@ function Uno() {
 
       if (hand.length == 0) {
         game.groupChannel.send(
-            '<@' + players[turn].id + '> `has no cards remaining!`\n```' +
+            players[turn].mention + ' `has no cards remaining!`\n```' +
             players[turn].name + ' is the winner!```');
+        if (players[turn].bot) endGame();
         return true;
       }
 
@@ -1022,8 +1059,12 @@ function Uno() {
      * @return {boolean} True if can be played, false otherwise.
      */
     function checkCard(card, card2) {
+      if (card.face & self.CardFace.WILD_EFFECT) return true;
       card2 = card2 || topCard;
-      return (card.face & card2.face) || (card.color & card2.color);
+      const cardFace = card.face & self.CardFace.BASE_MASK;
+      const card2Face = card2.face & self.CardFace.BASE_MASK;
+
+      return (cardFace == card2Face) || (card.color == card2.color);
     }
 
     /**
@@ -1038,22 +1079,22 @@ function Uno() {
       if (players[turn].id == caller && !players[turn].calledUno &&
           players[turn].hand.length == 2) {
         players[turn].calledUno = true;
-        const id = players[turn].id;
-        game.groupChannel.send(`<@${id}> called\`\`\`\n${unoText}\n\`\`\``);
+        const mention = players[turn].mention;
+        game.groupChannel.send(`${mention} called\`\`\`\n${unoText}\n\`\`\``);
       }
       if (previousTurn > -1) {
         if (players[previousTurn].id == caller &&
             !players[previousTurn].calledUno &&
             players[previousTurn].hand.length == 1) {
           players[previousTurn].calledUno = true;
-          const id = players[previousTurn].id;
-          game.groupChannel.send(`<@${id}> called\`\`\`\n${unoText}\n\`\`\``);
+          const mention = players[previousTurn].mention;
+          game.groupChannel.send(`${mention} called\`\`\`\n${unoText}\n\`\`\``);
         }
         if (!players[previousTurn].calledUno &&
             players[previousTurn].hand.length == 1) {
           game.groupChannel.send(
-              '<@' + players[previousTurn].id +
-              '> `forgot to call "UNO!" and now must draw 2 cards!`');
+              players[previousTurn].mention +
+              ' `forgot to call "UNO!" and now must draw 2 cards!`');
           const tmp = turn;
           turn = previousTurn;
           drawCards(2);
@@ -1077,8 +1118,7 @@ function Uno() {
           if (p.channel) p.channel.delete('The UNO game has ended.');
         });
       }
-      if (game.catChannel &&
-          game.catChannel.children.size == (1 + players.length)) {
+      if (game.catChannel) {
         game.catChannel.delete('The UNO game has ended.');
       }
       delete games[maker.guild.id][game.id];
@@ -1098,18 +1138,17 @@ function Uno() {
         return;
       }
       if (p.user.bot) {
-        game.groupChannel.send(
-            p.user.tag +
-            ' could not be added to the game (Bots are not supported yet).');
-        return;
+        players.push(
+            new self.NPC(p.nickname || p.user.username, game, {id: p.id}));
+      } else {
+        players.push(new self.Player(p, game));
       }
-      players.push(new self.Player(p, game));
       game.groupChannel.updateOverwrite(
           p.user.id, {
             VIEW_CHANNEL: true,
             SEND_MESSAGES: true,
           },
-          'User added to game.');
+          'Player added to game.');
     };
 
     /**
@@ -1205,13 +1244,22 @@ function Uno() {
      */
     this.name = member.nickname || member.user.username;
     /**
-     * Whether this player is a bot or not.
+     * String for mentioning this user in chat.
      *
      * @public
      * @readonly
+     * @type {string}
+     */
+    this.mention = `<@${this.id}>`;
+    /**
+     * Whether this player is a bot or not. Must be false. Use Uno.NPC for bots.
+     *
+     * @public
+     * @readonly
+     * @default false
      * @type {boolean}
      */
-    this.bot = member.user.bot;
+    this.bot = false;
 
     /**
      * Whether this player has called uno recently.
@@ -1238,8 +1286,8 @@ function Uno() {
         .then((channel) => {
           player.channel = channel;
           channel.send(
-              '<@' + member.id +
-              '> You have been added to this game of Uno!\n\nThis channel ' +
+              player.mention +
+              ' You have been added to this game of Uno!\n\nThis channel ' +
               'will show you the cards you currently have in your hand once ' +
               'the game starts.\n\nUse <#' + parent.groupChannel.id +
               '> to play your cards and talk to other players!');
@@ -1271,6 +1319,92 @@ function Uno() {
         player.channel.delete('Player was removed from the UNO game.');
       }
     };
+  };
+
+  /**
+   * A single non-player character in the game. This is the same as a normal
+   * player, except they are not given a text channel, and their actions are
+   * controlled by us.
+   *
+   * @public
+   * @param {string} name The display name of this NPC.
+   * @param {Uno.Game} parent The parent game this player will be in.
+   * @param {NPCOpts} [options] Optional options for this NPC.
+   */
+  this.NPC = function(name, parent, options) {
+    if (typeof options !== 'object') options = {};
+    /**
+     * The ID of this npc. Must be uniqueness is not enforced, but is required.
+     * @public
+     * @readonly
+     * @type {string}
+     */
+    this.id = options.id || `NPC${name}`;
+    /**
+     * The name of this player.
+     * @public
+     * @readonly
+     * @type {string}
+     */
+    this.name = name;
+    /**
+     * String for mentioning this user in chat.
+     *
+     * @public
+     * @readonly
+     * @type {string}
+     */
+    this.mention = `\`${this.name}\``;
+    /**
+     * Whether this player is a bot or not. Always true.
+     *
+     * @public
+     * @readonly
+     * @default true
+     * @type {boolean}
+     */
+    this.bot = true;
+
+    /**
+     * Whether this player has called uno recently.
+     *
+     * @public
+     * @type {boolean}
+     * @default
+     */
+    this.calledUno = false;
+    /**
+     * The current cards that this player has in their hand.
+     *
+     * @public
+     * @type {Uno.Card[]}
+     */
+    this.hand = [];
+
+    /**
+     * Probability this NPC will call uno when necessary.
+     *
+     * @public
+     * @type {number}
+     * @default 0.5
+     */
+    this.probCallUno = options.probCallUno || 0.5;
+
+    /**
+     * Delay before calling uno if this NPC is going to call it. (Milliseconds)
+     *
+     * @public
+     * @type {number}
+     * @default 3000
+     */
+    this.delayCallUno = options.delayCallUno || 3000;
+
+    /**
+     * Remove this player from a game. Cleans up references if any exist.
+     *
+     * @public
+     */
+    this.remove = function() {};
   };
 
   /**
