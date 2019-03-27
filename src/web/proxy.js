@@ -294,7 +294,10 @@ function WebProxy() {
     const reqPath = socket.handshake.url.split('?')[0];
 
     let userData = {};
-    let session = crypto.randomBytes(512).toString('base64');
+    let session;
+    do {
+      session = crypto.randomBytes(512).toString('base64');
+    } while (loginInfo[session]);
     let restoreAttempt = false;
     /**
      * A number representing how abusive the client is being. This is the
@@ -488,8 +491,9 @@ function WebProxy() {
     function logout() {
       if (loginInfo[session]) {
         clearTimeout(loginInfo[session].refreshTimeout);
-        revokeToken(loginInfo[session].refresh_token, (err) => {
-          delete loginInfo[session];
+        const token = loginInfo[session].refresh_token;
+        delete loginInfo[session];
+        revokeToken(token, (err) => {
           delete currentSessions[session];
           if (err) {
             self.warn(
@@ -564,8 +568,22 @@ function WebProxy() {
       if (percent <= 0.75) {
         return 0;
       } else if (percent <= 1) {
+        socket.emit('rateLimit', {
+          limit: limit,
+          current: rateHistory[group],
+          request: cmd,
+          group: group,
+          level: 1,
+        });
         return 1;
       } else if (percent <= 1.25) {
+        socket.emit('rateLimit', {
+          limit: limit,
+          current: rateHistory[group],
+          request: cmd,
+          group: group,
+          level: 2,
+        });
         return 2;
       } else {
         return 3;
@@ -724,6 +742,8 @@ function WebProxy() {
     const host = Object.assign({}, tokenHost);
     host.path += '/revoke';
     const data = {
+      client_id: clientId,
+      client_secret: clientSecret,
       token_type_hint: 'refresh_token',
       token: token,
     };
