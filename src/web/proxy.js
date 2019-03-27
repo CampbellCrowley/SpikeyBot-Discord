@@ -556,7 +556,7 @@ function WebProxy() {
       for (let i = 0; i < history.length; i++) {
         const group = rateLimits.commands[history[i].cmd] || 'global';
         const limits = rateLimits.groups[group] || rateLimits.groups['global'];
-        if (now - history[i].time > limits.delta) {
+        if (now - history[i].time > limits.delta * 1000) {
           rateHistory[group]--;
           history.splice(i, 1);
           i--;
