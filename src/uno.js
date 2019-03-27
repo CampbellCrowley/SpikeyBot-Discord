@@ -18,21 +18,26 @@ function Uno() {
     pFlags = self.Discord.Permissions.FLAGS;
     self.command.on(
         new self.command.SingleCommand(
-            ['uno', 'one'], commandUno, {validOnlyInGuild: true},
-            [new self.command.SingleCommand('endall', commandEndAll, {
-              validOnlyInGuild: true,
-              permissions: pFlags.MANAGE_CHANNELS,
-              defaultDisabled: true,
-            })]));
+            ['uno', 'one'], commandUno, {validOnlyInGuild: true}, [
+              new self.command.SingleCommand('endall', commandEndAll, {
+                validOnlyInGuild: true,
+                permissions: pFlags.MANAGE_CHANNELS,
+                defaultDisabled: true,
+              }),
+              new self.command.SingleCommand('stats', commandStats),
+            ]));
   };
 
   /** @inheritdoc */
   this.shutdown = function() {
     self.command.removeListener('uno');
 
-    const entries = Object.entries(games);
-    entries.forEach((el) => {
-      if (typeof el[1].end === 'function') el[1].end();
+    const list = Object.values(games);
+    list.forEach((el) => {
+      const list = Object.values(el);
+      list.forEach((el) => {
+        if (typeof el.end === 'function') el.end();
+      });
     });
   };
 
@@ -152,6 +157,38 @@ function Uno() {
     self.common.reply(msg, 'All UNO games have been ended.').catch(() => {});
   }
 
+  /**
+   * Sends information about current uno games.
+   *
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens Command#uno_stats
+   */
+  function commandStats(msg) {
+    if (msg.author.id == self.common.spikeyId && numGames > 0) {
+      let lastInteractTimestamp = 0;
+      let lastCreatedTimestamp = 0;
+      const list = Object.values(games);
+      list.forEach((el) => {
+        const list = Object.values(el);
+        list.forEach((el) => {
+          lastInteractTimestamp =
+              Math.max(el.lastInteractTimestamp, lastInteractTimestamp);
+          lastCreatedTimestamp =
+              Math.max(el.createTimestamp, lastCreatedTimestamp);
+        });
+      });
+      self.common.reply(
+          msg, 'There are currently ' + numGames + ' games.',
+          'Last Interaction: ' +
+              Math.round((Date.now() - lastInteractTimestamp) / 60000) +
+              'm\nLast Created: ' +
+              Math.round((Date.now() - lastCreatedTimestamp) / 60000) + 'm');
+    } else {
+      self.common.reply(msg, 'There are currently ' + numGames + ' games.');
+    }
+  }
   /**
    * Enum for card colors.
    * @public
@@ -409,6 +446,26 @@ function Uno() {
     this.started = false;
 
     /**
+     * The timestamp at which this game was first created.
+     *
+     * @public
+     * @readonly
+     * @constant
+     * @type {number}
+     */
+    this.createTimestamp = Date.now();
+
+    /**
+     * The timestamp at which this game was last interacted with.
+     *
+     * @public
+     * @readonly
+     * @constant
+     * @type {number}
+     */
+    this.lastInteractTimestamp = Date.now();
+
+    /**
      * The current index of the player whose turn it is.
      *
      * @private
@@ -568,6 +625,7 @@ function Uno() {
           return false;
         }
         if (m.content.toLowerCase().startsWith('uno')) {
+          game.lastInteractTimestamp = Date.now();
           // self.debug(m.channel.id + '@' + m.author.id + ' ' + m.content);
           const cmd = m.content.toLowerCase().split(' ')[1];
           switch (cmd) {
@@ -664,11 +722,13 @@ function Uno() {
         }
         // Check for Uno calls.
         if (m.content.match(/^uno\W*$/i)) {
+          game.lastInteractTimestamp = Date.now();
           callUno(m.author.id);
           return false;
         }
         if (m.author.id == maker.id &&
             m.content.toLowerCase().startsWith('uno')) {
+          game.lastInteractTimestamp = Date.now();
           // self.debug(m.channel.id + '@' + m.author.id + ' ' + m.content);
           switch (m.content.toLowerCase().split(' ')[1]) {
             case 'end':
@@ -684,6 +744,7 @@ function Uno() {
         }
         if (turn < 0 || m.author.id != players[turn].id) return false;
         if (m.content.toLowerCase().startsWith('uno')) {
+          game.lastInteractTimestamp = Date.now();
           // self.debug(m.channel.id + '@' + m.author.id + ' ' + m.content);
           const cmd = m.content.toLowerCase().split(' ')[1];
           switch (cmd) {
@@ -700,6 +761,7 @@ function Uno() {
           }
           return false;
         } else if (m.content.toLowerCase().startsWith('play')) {
+          game.lastInteractTimestamp = Date.now();
           // self.debug(m.channel.id + '@' + m.author.id + ' ' + m.content);
           if (playCard(m.content.split(' ').slice(1).join(' '))) {
             endGame();
@@ -708,6 +770,7 @@ function Uno() {
             return false;
           }
         } else if (m.content.toLowerCase().startsWith('draw')) {
+          game.lastInteractTimestamp = Date.now();
           // self.debug(m.channel.id + '@' + m.author.id + ' ' + m.content);
           drawAndSkip();
           game.groupChannel.send(getCardEmbed(topCard));
