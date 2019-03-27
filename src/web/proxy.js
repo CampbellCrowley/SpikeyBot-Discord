@@ -119,6 +119,64 @@ function WebProxy() {
   let loginInfo = {};
   const currentSessions = {};
 
+  /**
+   * File storing website rate limit specifications.
+   * @private
+   * @type {string}
+   */
+  const rateLimitFile = './save/webRateLimits.json';
+
+  /**
+   * Object storing parsed rate limit info from {@link rateLimitFile}.
+   *
+   * @private
+   * @type {Object}
+   * @default
+   */
+  let rateLimits = {
+    commands: {
+      'restore': 'auth',
+      'authorize': 'auth',
+    },
+    groups: {
+      auth: {num: 1, delta: 2},
+    },
+    global: {
+      num: 2,
+      delta: 2,
+    },
+  };
+
+  /**
+   * Parse rate limits from file.
+   * @private
+   */
+  function updateRateLimits() {
+    fs.readFile(rateLimitFile, (err, data) => {
+      if (err) {
+        self.error('Failed to read ' + rateLimitFile);
+        return;
+      }
+      try {
+        const parsed = JSON.parse(data);
+        if (!parsed) return;
+        rateLimits = parsed;
+      } catch (e) {
+        console.error(e);
+      }
+    });
+  }
+  updateRateLimits();
+  fs.watchFile(rateLimitFile, (curr, prev) => {
+    if (curr.mtime == prev.mtime) return;
+    if (self.initialized) {
+      self.debug('Re-reading rate limits from file');
+    } else {
+      console.log('WebProxy: Re-reading rate limits from file');
+    }
+    updateRateLimits();
+  });
+
   try {
     loginInfo = JSON.parse(fs.readFileSync('./save/webClients.json') || {});
   } catch (err) {
@@ -167,19 +225,30 @@ function WebProxy() {
   /**
    * Causes a full shutdown of all servers.
    * @public
-   * @param {boolean} [skipSave=false] Skip writing data to file.
    */
-  this.shutdown = function(skipSave) {
+  this.shutdown = function() {
     if (io) io.close();
     if (app) app.close();
     clearInterval(purgeInterval);
-    if (!skipSave) {
-      for (const i in loginInfo) {
-        if (loginInfo[i] && loginInfo[i].refreshTimeout) {
-          delete loginInfo[i].refreshTimeout;
-        }
-      }
-      fs.writeFileSync('./save/webClients.json', JSON.stringify(loginInfo));
+    fs.unwatchFile(rateLimitFile);
+  };
+
+  /** @inheritdoc */
+  this.save = function(opt) {
+    const toSave = {};
+    for (const i in loginInfo) {
+      if (!loginInfo[i]) continue;
+      toSave[i] = Object.assign({}, loginInfo[i]);
+      if (toSave[i].refreshTimeout) delete toSave[i].refreshTimeout;
+    }
+    if (opt === 'async') {
+      fs.writeFile('./save/webClients.json', JSON.stringify(toSave), (err) => {
+        if (!err) return;
+        self.error('Failed to write webClients.json');
+        console.error(err);
+      });
+    } else {
+      fs.writeFileSync('./save/webClients.json', JSON.stringify(toSave));
     }
   };
 
@@ -227,6 +296,36 @@ function WebProxy() {
     let userData = {};
     let session = crypto.randomBytes(512).toString('base64');
     let restoreAttempt = false;
+    /**
+     * A number representing how abusive the client is being. This is the
+     * previous calculated value.
+     *
+     * At different levels we will react to messages differently.
+     * Level 0: All requests will be handled normally.
+     * Level 1: Requests will be handled normally, with an additional warning.
+     * Level 2: All request will receive a http 429 equivalent reply.
+     * Level 3: All requests are ignored and no response will be provided.
+     *
+     * @private
+     * @type {number}
+     * @default
+     */
+    let rateLevel = 0;
+    /**
+     * All requests from the client that are still relevant to a rate limit
+     * group.
+     *
+     * @private
+     * @type {Array.<{time: number, cmd: string}>}
+     */
+    const history = [];
+    /**
+     * The historic quantities for each rate limit group.
+     *
+     * @private
+     * @type {Object.<number>}
+     */
+    const rateHistory = {};
 
     self.common.logDebug(
         'Socket connected (' + Object.keys(sockets).length + '): ' + ipName,
@@ -236,6 +335,7 @@ function WebProxy() {
     if (!pathPorts[reqPath]) {
       self.common.error(
           'Client requested unknown endpoint: ' + reqPath, socket.id);
+      socket.disconnect();
     } else {
       server = sIOClient('http://localhost:' + pathPorts[reqPath], {
         path: reqPath,
@@ -269,6 +369,8 @@ function WebProxy() {
     const onevent = socket.onevent;
     socket.onevent = function(packet) {
       const args = packet.data || [];
+      rateLevel = updateRateLevel(args[0]);
+      if (rateLevel > 1) return;
       if (socket.listenerCount(args[0])) {
         onevent.call(this, packet);
       } else {
@@ -302,7 +404,6 @@ function WebProxy() {
                 self.error(
                     'Failed to parse request from discord token refresh: ' +
                     err);
-                delete currentSessions[sess];
                 console.error('Parsing failed', sess);
                 socket.emit('authorized', 'Restore Failed', null);
                 return;
@@ -316,6 +417,7 @@ function WebProxy() {
                 } else {
                   socket.emit('authorized', 'Getting user data failed', null);
                   self.common.logWarning('Failed to authorize', socket.id);
+                  logout();
                 }
               });
             } else {
@@ -333,11 +435,11 @@ function WebProxy() {
             } else {
               socket.emit('authorized', 'Getting user data failed', null);
               self.common.logWarning('Failed to fetch identity', socket.id);
+              logout();
             }
           });
         }
       } else {
-        delete currentSessions[sess];
         self.common.logWarning('Nothing to restore ' + sess, socket.id);
         socket.emit('authorized', 'Restore Failed', null);
       }
@@ -347,9 +449,9 @@ function WebProxy() {
       currentSessions[session] = true;
       authorizeRequest(code, (err, res) => {
         if (err) {
-          delete currentSessions[session];
-          socket.emit('authorized', 'Probably a server error', null);
+          socket.emit('authorized', 'Failed to authorize', null);
           console.error(err);
+          logout();
         } else {
           receivedLoginInfo(JSON.parse(res));
           fetchIdentity(loginInfo[session], (identity) => {
@@ -359,13 +461,31 @@ function WebProxy() {
               self.common.logDebug('Authorized ' + userData.id, socket.id);
             } else {
               self.common.logWarning('Failed to authorize', socket.id);
+              logout();
             }
           });
         }
       });
     });
 
-    socket.on('logout', () => {
+    socket.on('logout', logout);
+
+    socket.on('disconnect', () => {
+      self.common.logDebug(
+          'Socket disconnected (' + (Object.keys(sockets).length - 1) + '): ' +
+              ipName,
+          socket.id);
+      if (loginInfo[session]) clearTimeout(loginInfo[session].refreshTimeout);
+      delete sockets[socket.id];
+      if (server) server.close();
+    });
+
+    /**
+     * Cause the current user session to logout.
+     *
+     * @private
+     */
+    function logout() {
       if (loginInfo[session]) {
         clearTimeout(loginInfo[session].refreshTimeout);
         revokeToken(loginInfo[session].refresh_token, (err) => {
@@ -381,22 +501,12 @@ function WebProxy() {
       } else {
         delete currentSessions[session];
       }
-    });
-
-    socket.on('disconnect', () => {
-      self.common.logDebug(
-          'Socket disconnected (' + (Object.keys(sockets).length - 1) + '): ' +
-              ipName,
-          socket.id);
-      if (loginInfo[session]) clearTimeout(loginInfo[session].refreshTimeout);
-      delete sockets[socket.id];
-      if (server) server.close();
-    });
+      socket.disconnect();
+    }
 
     /**
      * Received the login credentials for user, lets store it for this
-     * session,
-     * and refresh the tokens when necessary.
+     * session, and refresh the tokens when necessary.
      *
      * @private
      * @param {Object} data User data.
@@ -417,6 +527,48 @@ function WebProxy() {
           self.debug('loginInfo did not have a refresh token.');
         }
         makeRefreshTimeout(loginInfo[session], receivedLoginInfo);
+      }
+    }
+
+    /**
+     * Check if this current connection or user is being rate limited.
+     * @see {@link rateLevel}
+     *
+     * Level 0: <75% of limit.
+     * Level 1: >75% <100%
+     * Level 2: >100% <125%
+     * Level 3: >125%
+     *
+     * @private
+     * @param {string} [cmd] The command being attempted. Otherwise uses global
+     * rate limits.
+     * @return {number} Current rate level for the given command.
+     */
+    function updateRateLevel(cmd) {
+      const now = Date.now();
+      const group = rateLimits.commands[cmd] || 'global';
+      if (!rateHistory[group]) rateHistory[group] = 0;
+      rateHistory[group]++;
+      for (let i = 0; i < history.length; i++) {
+        const group = rateLimits.commands[history[i].cmd] || 'global';
+        const limits = rateLimits.groups[group] || rateLimits.groups['global'];
+        if (now - history[i].time > limits.delta) {
+          rateHistory[group]--;
+          history.splice(i, 1);
+          i--;
+        }
+      }
+      history.push({time: now, cmd: cmd});
+      const limit = rateLimits.groups[group].num;
+      const percent = rateHistory[group] / limit;
+      if (percent <= 0.75) {
+        return 0;
+      } else if (percent <= 1) {
+        return 1;
+      } else if (percent <= 1.25) {
+        return 2;
+      } else {
+        return 3;
       }
     }
   }

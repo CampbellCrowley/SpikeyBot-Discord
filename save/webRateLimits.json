@@ -1,0 +1,16 @@
+{
+  "commands": {
+    "restore": "auth",
+    "authorize": "auth",
+    "connect": "auth",
+    "fetchMember": "fetchInfo",
+    "fetchChannel": "fetchInfo",
+    "imageChunk": "upload"
+  },
+  "groups": {
+    "auth": {"num": 1, "delta": 2},
+    "fetchInfo": {"num": 100, "delta": 5},
+    "upload": {"num": 10, "delta": 1},
+    "global": { "num": 30, "delta": 15 }
+  }
+}
