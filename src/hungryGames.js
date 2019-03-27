@@ -346,14 +346,14 @@ function HungryGames() {
     },
     delayEvents: {
       value: 3500,
-      range: {min: 1000, max: 30000},
+      range: {min: 2500, max: 30000},
       time: true,
       comment: 'Delay in milliseconds between each event being printed.',
       category: 'other',
     },
     delayDays: {
       value: 7000,
-      range: {min: 1000, max: 129600000},  // 1.5 days
+      range: {min: 2500, max: 129600000},  // 1.5 days
       time: true,
       comment: 'Delay in milliseconds between each day being printed.',
       category: 'other',
