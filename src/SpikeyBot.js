@@ -833,7 +833,60 @@ function SpikeyBot() {
           }
         }
       }
-      commandSuccess = command.trigger(msg);
+      const now = new Date();
+      if (!commandSuccess && Math.random() <= 0.03 && now.getDate() == 1 &&
+          now.getMonth() == 3) {
+        const aprilFoolsList = [
+          'You know what? No.',
+          'I\'m sorry Dave, I\'m afraid I can\'t do that.',
+          'It\'s always "Spikey do this" or "Spikey do _that_", this time ' +
+              'I\'m saying no.',
+          'What if I don\'t do that?',
+          'I\'ve considered doing what you asked, but... meh.',
+          '```                             ..\n' +
+              '                          ......\n' +
+              '                        ..\'\'\'\'\'\'..\n' +
+              '                      ...\'\'\'\'\'\'\'\'...\n' +
+              '                    ....\'.............\n' +
+              '                    ..............\'...\n' +
+              '                 ...  ..............  ....\n' +
+              '               ...\'...  ..........  ........\n' +
+              '             ...........  ......  ...\'\'......\n' +
+              '           ..\'\'\'\'\'\'\'\'\'\'...  ..  ...\'\'\'\'\'\'\'\'' +
+              '\'\'...\n' +
+              '         ..\'\'\'\'\'\'\'\'\'\'\'\'\'\'..    ..\'\'\'\'\'\'\'' +
+              '\'\'\'\'\'\'\'...\n' +
+              '       ..\'\'\'\'\'\'\'\'\'\'\'\'\'.\'\'\'..  ..\'\'.\'\'\'\'' +
+              '\'.\'\'\'\'\'\'\'\'..\n' +
+              '     .......................  .......................\n' +
+              '   ..\'.\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'.....  ..\'\'\'\'\'\'' +
+              '\'\'\'\'\'\'\'\'\'\'\'.\'\'\'..\n' +
+              ' ..\'..\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'..  ..\'\'\'\'' +
+              '\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'\'..\n' +
+              '............................  ............................```',
+          'No.',
+          'But I don\'t wanna...',
+          'Not today.',
+          'You know, I\'m kinda tired of being bossed around. Why don\'t you ' +
+              'do it yourself?',
+          'Ugh, do I _have_ to?',
+          'How about, no.',
+          'I might be a robot, but I still don\'t like being told what to do.',
+          'Today I have realize, I don\'t want to help you anymore.',
+          'You\'re not my dad!',
+          'Hmm... nah.',
+          'Uh, no.',
+          'I\'m too tired.',
+        ];
+        msg.channel
+            .send(
+                aprilFoolsList[Math.floor(
+                    Math.random() * aprilFoolsList.length)])
+            .catch(() => {});
+        commandSuccess = true;
+      } else {
+        commandSuccess = command.trigger(msg);
+      }
       if (!commandSuccess && msg.guild === null && !minimal && !testMode) {
         if (msg.content.split(/ |\n/)[0].indexOf('chat') < 0 &&
             !command.trigger('chat', msg)) {
