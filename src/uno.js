@@ -43,7 +43,7 @@ function Uno() {
 
   /** @inheritdoc */
   this.unloadable = function() {
-    return numGames === 0;
+    return numGames <= 0;
   };
 
   /**
@@ -92,6 +92,33 @@ function Uno() {
    * @constant
    */
   const npcDelay = 5000;
+
+  /* eslint-disable no-multi-spaces */
+  /**
+   * Default names of NPCs to add when adding non-bot NPCs.
+   * @private
+   * @default
+   * @constant
+   * @type {string[]}
+   */
+  const npcNames = [
+    'HAL',    'Jane',   'HEX',      'Deep Thought', 'Com Pewter',
+    'EDI',    'JARVIS', 'Samantha', 'TARS',         'Ava',
+    'Friday', 'Legion', 'Cortana',  'GLaDOS',       'Guilty Spark',
+    '2B',     '9S',     'CL4P-TP',  'Computer',     'NPC',
+    'AI',     'Bot',    'CPU',      'R2D2',         'AUTO',
+    'CASE',   'Alexa',  'Bixby',
+  ];
+  /* eslint-enable */
+
+  /**
+   * Maximum number of players allowed in a game.
+   * @private
+   * @type number
+   * @default
+   * @constant
+   */
+  const maxPlayerCount = 10;
 
   /**
    * Starts an Uno game. If someone is mentioned it will start a game
@@ -590,8 +617,16 @@ function Uno() {
             })
             .then((c) => {
               game.groupChannel = c;
-              for (let i = 0; i < memberList.length; i++) {
-                game.addPlayer(memberList[i]);
+              let fail = false;
+              for (let i = 0; i < memberList.length && !fail; i++) {
+                fail = fail || !game.addPlayer(memberList[i]);
+              }
+              if (memberList.length > maxPlayerCount) {
+                setTimeout(function() {
+                  c.send(
+                      'A maximum of ' + maxPlayerCount +
+                      ' players are allowed');
+                }, 1000);
               }
               finishSetup();
             });
@@ -625,9 +660,10 @@ function Uno() {
           return false;
         }
         if (m.content.toLowerCase().startsWith('uno')) {
+          const split = m.content.toLowerCase().split(' ');
           game.lastInteractTimestamp = Date.now();
           // self.debug(m.channel.id + '@' + m.author.id + ' ' + m.content);
-          const cmd = m.content.toLowerCase().split(' ')[1];
+          const cmd = split[1];
           switch (cmd) {
             case 'begin':
             case 'start':
@@ -647,18 +683,61 @@ function Uno() {
               game.end();
               return true;
             case 'players':
+            case 'list':
               listPlayers();
               return false;
             case 'invite':
               if (m.mentions.members.size == 0) {
                 self.common.reply(m, 'Please mention users to invite.');
               } else {
+                let fail = false;
                 m.mentions.members.forEach((m) => {
-                  game.addPlayer(m);
+                  fail = fail || !game.addPlayer(m);
                 });
-                self.common.reply(m, 'Players have been added to the game.');
+                if (fail) {
+                  self.common.reply(
+                      m, 'There is a limit of ' + maxPlayerCount + ' players.');
+                } else {
+                  self.common.reply(m, 'Players have been added to the game.');
+                }
               }
               return false;
+            case 'npc':
+            case 'ai':
+            case 'bot': {
+              const subCmd = split[2];
+              switch (subCmd) {
+                case 'add': {
+                  const num = split[3];
+                  if (isNaN(num)) {
+                    self.common.reply(
+                        m, 'Please specify how many NPCs to add.');
+                  } else {
+                    const fail = game.addNPCs(num);
+                    if (!fail) {
+                      self.common.reply(
+                          m, 'There is a maximum of ' + maxPlayerCount +
+                              ' players allowed.');
+                    } else {
+                      self.common.reply(m, 'Added NPCs.');
+                    }
+                  }
+                  return false;
+                }
+                case 'remove': {
+                  const num = split[3];
+                  if (isNaN(num)) {
+                    self.common.reply(
+                        m, 'Please specify how many NPCs to remove.');
+                  } else {
+                    game.removeNPCs(num);
+                    self.common.reply(m, 'Removed NPCs.');
+                  }
+                  return false;
+                }
+              }
+              break;
+            }
             case 'kick':
               m.mentions.members.forEach((el) => {
                 game.removePlayer(el);
@@ -830,10 +909,11 @@ function Uno() {
             'Lobby Settings',
             'The creator of this game can use the following commands in this ' +
                 'channel.\n\nUse `invite @SpikeyRobot#0971` to add new people' +
-                ' to this game.\nType `uno kick @SpikeyRobot#0971` to remove ' +
-                'them from the game (Note: don\'t use the command prefix).\n' +
-                'Type `uno start` to start the game once you\'re ready!\n`uno' +
-                ' end` to end this game at any time.');
+                ' to this game.\nUse `npc add 2` to add 2 NPCs or `npc remove' +
+                ' 3` to remove 3 NPCs.\nType `uno kick @SpikeyRobot#0971` to ' +
+                'remove them from the game (Note: don\'t use the command ' +
+                'prefix).\nType `uno start` to start the game once you\'re ' +
+                'ready!\n`uno end` to end this game at any time.');
       } else {
         embed.addField(
             'Lobby Settings',
@@ -855,7 +935,7 @@ function Uno() {
      * @private
      */
     function nextTurn(skip) {
-      if (turn > -1 && !players[turn].bot) {
+      if (turn > -1 && !players[turn].npc) {
         players[turn].channel.send(
             '`Your current hand:`', getCardEmbed(players[turn].hand));
       }
@@ -871,7 +951,7 @@ function Uno() {
         game.groupChannel.send(
             '`Next turn.` ' + players[turn].mention + '\'s turn! They have ' +
             players[turn].hand.length + ' cards.');
-        if (players[turn].bot) setTimeout(playCard, npcDelay);
+        if (players[turn].npc) setTimeout(playCard, npcDelay);
       }
     }
 
@@ -919,12 +999,12 @@ function Uno() {
         game.groupChannel.send(
             '`' + players[turn].name + '` drew ' + num + ' card' +
             (num == 1 ? '' : 's') + ' from the deck.');
-        if (!players[turn].bot) {
+        if (!players[turn].npc) {
           players[turn].channel.send(
               '`You drew:` ' + drawn.map((card) => card.toString()).join(', '));
         }
       } else {
-        if (!players[turn].bot) {
+        if (!players[turn].npc) {
           players[turn].channel.send(
               '`Your current hand`', getCardEmbed(players[turn].hand));
         }
@@ -955,7 +1035,7 @@ function Uno() {
         }
       } else {
         hand = players[turn].hand;
-        if (players[turn].bot) {
+        if (players[turn].npc) {
           let i = hand.length;
           // @TODO: Make picking cards smarter or more random. Hand is sorted by
           // default so this causes very weighted results in cards that are
@@ -1046,7 +1126,7 @@ function Uno() {
         game.groupChannel.send(
             players[turn].mention + ' `has no cards remaining!`\n```' +
             players[turn].name + ' is the winner!```');
-        if (players[turn].bot) endGame();
+        if (players[turn].npc) endGame();
         return true;
       }
 
@@ -1193,16 +1273,21 @@ function Uno() {
      * @public
      *
      * @param {Discord~GuildMember} p The member to add to the game.
+     * @return {boolean} Success if true, failed if false.
      */
     this.addPlayer = function(p) {
       if (!p) return;
       if (!game.catChannel) {
         memberList.push(p);
-        return;
+        return true;
+      }
+      if (players.length >= maxPlayerCount) {
+        return false;
       }
       if (p.user.bot) {
         players.push(
-            new self.NPC(p.nickname || p.user.username, game, {id: p.id}));
+            new self.NPC(
+                p.nickname || p.user.username, game, {id: p.id, bot: true}));
       } else {
         players.push(new self.Player(p, game));
       }
@@ -1212,6 +1297,48 @@ function Uno() {
             SEND_MESSAGES: true,
           },
           'Player added to game.');
+      return true;
+    };
+
+    /**
+     * Add a certain number of NPCs into the game.
+     * @public
+     *
+     * @param {number} [num=1] The number of NPCs to add.
+     * @return {boolean} Success if true, failed if false.
+     */
+    this.addNPCs = function(num = 1) {
+      let added = 0;
+      for (let i = 0; i < num && players.length < maxPlayerCount; i++) {
+        let name;
+        const names = players.map((el) => el.name);
+        do {
+          name = npcNames[Math.floor(Math.random() * npcNames.length)];
+        } while (names.includes(name));
+        const npc = new self.NPC(name, game);
+        players.push(npc);
+        added++;
+      }
+      return added == num;
+    };
+
+    /**
+     * Remove a certain number of NPCs from the game.
+     * @public
+     *
+     * @param {number} [num=1] The number of NPCs to remove.
+     * @return {boolean} Success if true, failed if false.
+     */
+    this.removeNPCs = function(num = 1) {
+      let j = 0;
+      for (let i = 0; j < num && i < players.length; i++) {
+        if (players[i].npc && !players[i].bot) {
+          players.splice(i, 1);
+          i--;
+          j++;
+        }
+      }
+      return j == num;
     };
 
     /**
@@ -1315,14 +1442,14 @@ function Uno() {
      */
     this.mention = `<@${this.id}>`;
     /**
-     * Whether this player is a bot or not. Must be false. Use Uno.NPC for bots.
+     * Whether this player is a npc or not. Must be false. Use Uno.NPC for bots.
      *
      * @public
      * @readonly
      * @default false
      * @type {boolean}
      */
-    this.bot = false;
+    this.npc = false;
 
     /**
      * Whether this player has called uno recently.
@@ -1419,14 +1546,24 @@ function Uno() {
      */
     this.mention = `\`${this.name}\``;
     /**
-     * Whether this player is a bot or not. Always true.
+     * Whether this player is a Discord bot or not.
+     *
+     * @public
+     * @readonly
+     * @default false
+     * @type {boolean}
+     */
+    this.bot = false;
+    if (typeof options.bot === 'boolean') this.bot = options.bot;
+    /**
+     * Whether this player is a NPC or not. Always true.
      *
      * @public
      * @readonly
      * @default true
      * @type {boolean}
      */
-    this.bot = true;
+    this.npc = true;
 
     /**
      * Whether this player has called uno recently.
