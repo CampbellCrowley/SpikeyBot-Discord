@@ -411,8 +411,9 @@ function Uno() {
    *
    * @private
    */
-  const cardFacePairs =
-      Object.entries(self.CardFace).filter((el) => !el[0].endsWith('_EFFECT'));
+  const cardFacePairs = Object.entries(self.CardFace).filter((el) => {
+    return !el[0].endsWith('_EFFECT') &amp;&amp; !el[0].endsWith('_MASK');
+  });
 
   /**
    * Regular expression search for acceptable card faces. Case insensitive and
@@ -1094,13 +1095,16 @@ function Uno() {
         }
         drawn.push(single);
       }
-      players[turn].hand = drawn.concat(players[turn].hand).sort((a, b) => {
-        if (a.face == b.face) {
-          return a.color - b.color;
-        } else {
-          return a.face - b.face;
-        }
-      });
+      players[turn].hand = drawn.concat(players[turn].hand);
+      if (!players[turn].npc) {
+        players[turn].hand = players[turn].hand.sort((a, b) => {
+          if (a.face == b.face) {
+            return a.color - b.color;
+          } else {
+            return a.face - b.face;
+          }
+        });
+      }
 
       if (!silent) {
         game.groupChannel.send(
@@ -1144,9 +1148,8 @@ function Uno() {
         hand = players[turn].hand;
         if (players[turn].npc) {
           let i = hand.length;
-          // @TODO: Make picking cards smarter or more random. Hand is sorted by
-          // default so this causes very weighted results in cards that are
-          // played.
+          // Cards are in order of how they were drawn from the deck. This
+          // prioritizes the oldest cards first.
           do {
             selected = --i;
           } while (selected >= 0 &amp;&amp; !checkCard(hand[selected]));
