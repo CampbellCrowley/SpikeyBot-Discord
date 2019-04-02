@@ -180,7 +180,7 @@ function WebProxy() {
   try {
     loginInfo = JSON.parse(fs.readFileSync('./save/webClients.json') || {});
   } catch (err) {
-    console.error(err);
+    if (err.code !== 'ENOENT') console.error(err);
     loginInfo = {};
   }
   const purgeInterval = setInterval(purgeSessions, 60 * 60 * 1000);
@@ -308,6 +308,7 @@ function WebProxy() {
      * Level 1: Requests will be handled normally, with an additional warning.
      * Level 2: All request will receive a http 429 equivalent reply.
      * Level 3: All requests are ignored and no response will be provided.
+     * Level 4: The connection will be closed immediately.
      *
      * @private
      * @type {number}
@@ -541,7 +542,8 @@ function WebProxy() {
      * Level 0: <75% of limit.
      * Level 1: >75% <100%
      * Level 2: >100% <125%
-     * Level 3: >125%
+     * Level 3: >125% <200%
+     * Level 4: >200%
      *
      * @private
      * @param {string} [cmd] The command being attempted. Otherwise uses global
@@ -585,8 +587,11 @@ function WebProxy() {
           level: 2,
         });
         return 2;
-      } else {
+      } else if (percent <= 2) {
         return 3;
+      } else {
+        logout();
+        return 4;
       }
     }
   }
