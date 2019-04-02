@@ -644,25 +644,24 @@ function HGWeb() {
     }
 
     try {
-      let guilds = self.client.guilds
-          .filter((obj) => {
-            return obj.members.get(userData.id);
-          })
-          .array();
-      // I had issues running both release bots on the same server and using the
-      // website. This should not be an issue for most users since I only
-      // support one of the bots on their server at a time, so this is a
-      // workaround for me.
-      if (self.bot.getFullBotName() == 'rembot') {
-        guilds = guilds.filter((obj) => {
-          return obj.id != '420045052690169856';
+      let guilds = [];
+      if (userData.guilds && userData.guilds.length > 0) {
+        userData.guilds.forEach((el) => {
+          const g = self.client.guilds.get(el.id);
+          if (!g) return;
+          guilds.push(g);
         });
+      } else {
+        guilds = self.client.guilds
+            .filter((obj) => {
+              return obj.members.get(userData.id);
+            })
+            .array();
       }
       const strippedGuilds = stripGuilds(guilds, userData);
       done(strippedGuilds);
     } catch (err) {
       self.error(err);
-      // socket.emit('guilds', 'Failed', null);
       done();
     }
   }

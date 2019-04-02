@@ -103,7 +103,7 @@ function WebProxy() {
    * expires.
    * @property {number} expiration_date The unix timestamp when we consider the
    * session to have expired, and the session is deleted.
-   * @property {string} session The 512 byte base64 string that identifies this
+   * @property {string} session The 64 byte base64 string that identifies this
    * session to the client.
    * @property {?Timeout} refreshTimeout The current timeout registered for
    * refreshing the access_token.
@@ -194,7 +194,10 @@ function WebProxy() {
     const keys = Object.keys(loginInfo);
     const now = Date.now();
     for (const i in keys) {
-      if (loginInfo[keys[i]].expiration_date < now) delete loginInfo[keys[i]];
+      if (loginInfo[keys[i]].expiration_date < now) {
+        clearTimeout(loginInfo[keys[i]].refreshTimeout);
+        delete loginInfo[keys[i]];
+      }
     }
   }
 
@@ -296,7 +299,7 @@ function WebProxy() {
     let userData = {};
     let session;
     do {
-      session = crypto.randomBytes(512).toString('base64');
+      session = crypto.randomBytes(64).toString('base64');
     } while (loginInfo[session]);
     let restoreAttempt = false;
     /**
@@ -620,6 +623,31 @@ function WebProxy() {
             self.error(err);
           }
         });
+        if (loginInfo.scope && loginInfo.scope.indexOf('guilds') > -1) {
+          fetchGuilds(loginInfo, (data) => {
+            parsed.guilds = data;
+            cb(parsed);
+          });
+        } else {
+          cb(parsed);
+        }
+      } else {
+        cb(null);
+      }
+    });
+  }
+  /**
+   * Fetches the guild information of the user we have the token of.
+   *
+   * @private
+   * @param {LoginInfo} loginInfo The credentials of the session user.
+   * @param {singleCB} cb The callback storing the user's data, or null if
+   * something went wrong.
+   */
+  function fetchGuilds(loginInfo, cb) {
+    apiRequest(loginInfo, '/users/@me/guilds', (err, data) => {
+      if (!err) {
+        const parsed = JSON.parse(data);
         cb(parsed);
       } else {
         cb(null);
@@ -639,9 +667,9 @@ function WebProxy() {
    */
   function apiRequest(loginInfo, path, cb) {
     const host = apiHost;
-    host.path = '/api' + path;
+    host.path = `/api${path}`;
     host.headers = {
-      'Authorization': loginInfo.token_type + ' ' + loginInfo.access_token,
+      'Authorization': `${loginInfo.token_type} ${loginInfo.access_token}`,
     };
     discordRequest('', cb, host);
   }
