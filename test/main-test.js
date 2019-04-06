@@ -142,19 +142,13 @@ const hgTests = [
       ]),
   new Test(
       'Exclude player nomention', '~hg exclude SpikeyRobot',
-      ['<@422623712534200321>\n```\nSpikeyRobot added to blacklist.\n' +
-       'SpikeyRobot removed from whitelist.\nSpikeyRobot removed from ' +
-       'included players.\n\n```']),
+      ['<@422623712534200321>\n```\nSpikeyRobot added to blacklist.\n\n```']),
   new Test(
       'Include player nomention', '~hg include SpikeyRobot',
-      ['<@422623712534200321>\n```\nSpikeyRobot removed from blacklist.\n' +
-       'SpikeyRobot added to whitelist.\nSpikeyRobot added to included ' +
-       'players.\n\n```']),
+      ['<@422623712534200321>\n```\nSpikeyRobot added to whitelist.\n\n```']),
   new Test(
       'Exclude player', '~hg exclude <@124733888177111041>',
-      ['<@422623712534200321>\n```\nSpikeyRobot added to blacklist.\n' +
-       'SpikeyRobot removed from whitelist.\nSpikeyRobot removed from ' +
-       'included players.\n\n```']),
+      ['<@422623712534200321>\n```\nSpikeyRobot added to blacklist.\n\n```']),
   new Test('List teams and check excluded', '~hg players', ['#embed']),
   new Test(
       'Exclude player already excluded', '~hg exclude <@124733888177111041>',
@@ -162,9 +156,7 @@ const hgTests = [
        'Create a new game to reset players.\n\n```']),
   new Test(
       'Include player', '~hg include <@124733888177111041>',
-      ['<@422623712534200321>\n```\nSpikeyRobot removed from blacklist.\n' +
-       'SpikeyRobot added to whitelist.\nSpikeyRobot added to included ' +
-       'players.\n\n```']),
+      ['<@422623712534200321>\n```\nSpikeyRobot added to whitelist.\n\n```']),
   new Test(
       'Include player already included', '~hg include <@124733888177111041>',
       ['<@422623712534200321>\n```\nSpikeyRobot is already included.\n\n```']),
@@ -212,7 +204,7 @@ const hgTests = [
       [
         '<@422623712534200321>\n```\nCreated a Hungry Games with default ' +
             'settings and all members included.\n```',
-        '<@422623712534200321>\n```\nYou must mention people you wish for me ' +
+        '<@422623712534200321>\n```\nYou must specify who you wish for me ' +
             'to exclude from the next game.\n```'
       ]),
   new Test(
@@ -224,7 +216,7 @@ const hgTests = [
       [
         '<@422623712534200321>\n```\nCreated a Hungry Games with default ' +
             'settings and all members included.\n```',
-        '<@422623712534200321>\n```\nYou must mention people you wish for me ' +
+        '<@422623712534200321>\n```\nYou must specify who you wish for me ' +
             'to include in the next game.\n```'
       ]),
   new Test(
