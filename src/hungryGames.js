@@ -569,7 +569,7 @@ function HungryGames() {
    * to 1.0
    *
    * @private
-   * @type {Object}
+   * @type {Object.<number>}
    * @constant
    * @default
    */
@@ -1041,6 +1041,9 @@ function HungryGames() {
           mkCmd(commandWound), cmdOpts),
       new self.command.SingleCommand(
           ['rename', 'name'], mkCmd(commandRename), cmdOpts),
+      new self.command.SingleCommand(
+          ['react', 'reaction', 'emote', 'emoji'], mkCmd(commandReactJoin),
+          cmdOpts),
     ];
     const hgCmd =
         new self.command.SingleCommand(
@@ -2282,13 +2285,28 @@ function HungryGames() {
     } else if (!myPerms.has(self.Discord.Permissions.FLAGS.SEND_MESSAGES)) {
       return;
     }
+    if (find(id) && find(id).reactMessage) {
+      self.endReactJoinMessage(id, (err, info) => {
+        if (err) {
+          self.error(`${err}: ${id}`);
+          self.common.reply('React Join Failed', err);
+        } else {
+          startGame(msg, id);
+        }
+      });
+      return;
+    }
     /**
      * Once the game has finished loading all necessary data, start it if
      * autoplay is enabled.
      * @private
      */
     function loadingComplete() {
-      if (find(id).autoPlay && !find(id).currentGame.isPaused) nextDay(msg, id);
+      self.client.setTimeout(() => {
+        if (find(id).autoPlay && !find(id).currentGame.isPaused) {
+          nextDay(msg, id);
+        }
+      });
     }
 
     createGame(msg, id, true, loadingComplete);
@@ -3248,7 +3266,7 @@ function HungryGames() {
           'autoplay" to automate the games.');
     }
     embed.setColor(defaultColor);
-    if (!find(id).options.disableOutput) {
+    if (!find(id) || !find(id).options.disableOutput) {
       msg.channel.send(embed);
     }
     self.command.find('say', msg)
@@ -4267,6 +4285,10 @@ function HungryGames() {
       self.client.clearInterval(dayEventIntervals[id]);
       delete dayEventIntervals[id];
       printDay(msg, id);
+    } else if (!events[index]) {
+      self.warn(
+          'Failed to find event for index ' + index + '/' + events.length +
+          ' even though it should exist: ' + id);
     } else if (
       events[index].battle &&
         events[index].state < events[index].attacks.length) {
@@ -5098,7 +5120,7 @@ function HungryGames() {
         0) {
       self.common.reply(
           msg,
-          'You must mention people you wish for me to exclude from the next ' +
+          'You must specify who you wish for me to exclude from the next ' +
               'game.');
       return;
     } else {
@@ -5136,7 +5158,8 @@ function HungryGames() {
     if (!find(id).includedNPCs) find(id).includedNPCs = [];
     switch (users) {
       case 'everyone':
-        users = find(id).includedUsers.slice(0);
+        users = find(id).includedUsers.slice(0).concat(
+            find(id).includedNPCs.slice(0));
         break;
       case 'online':
       case 'offline':
@@ -5159,6 +5182,7 @@ function HungryGames() {
     if (!Array.isArray(users)) {
       users = users.array();
     }
+    users = users.filter((el) => el);
     const onlyError = users.length > 2;
     users.forEach(function(obj) {
       if (typeof obj === 'string') {
@@ -5190,9 +5214,9 @@ function HungryGames() {
           const includeIndex =
               find(id).includedNPCs.findIndex((el) => el.id == obj.id);
           if (includeIndex >= 0) {
-            if (!onlyError) {
+            /* if (!onlyError) {
               response += obj.username + ' removed from whitelist.\n';
-            }
+            } */
             find(id).includedNPCs.splice(includeIndex, 1);
           }
         } else {
@@ -5203,9 +5227,9 @@ function HungryGames() {
           if (!find(id).includedUsers) find(id).includedUsers = [];
           const includeIndex = find(id).includedUsers.indexOf(obj.id);
           if (includeIndex >= 0) {
-            if (!onlyError) {
+            /* if (!onlyError) {
               response += obj.username + ' removed from whitelist.\n';
-            }
+            } */
             find(id).includedUsers.splice(includeIndex, 1);
           }
         }
@@ -5216,9 +5240,9 @@ function HungryGames() {
               });
           if (index >= 0) {
             find(id).currentGame.includedUsers.splice(index, 1);
-            if (!onlyError) {
+            /* if (!onlyError) {
               response += obj.username + ' removed from included players.\n';
-            }
+            } */
             formTeams(id);
           } else if (!find(id).options.includeBots && obj.bot) {
             // Bots are already excluded.
@@ -5292,8 +5316,7 @@ function HungryGames() {
         0) {
       self.common.reply(
           msg,
-          'You must mention people you wish for me to include in the next ' +
-              'game.');
+          'You must specify who you wish for me to include in the next game.');
       return;
     } else {
       const mentionedRoleUsers = new self.Discord.UserStore(
@@ -5331,7 +5354,8 @@ function HungryGames() {
     if (!find(id).includedNPCs) find(id).includedNPCs = [];
     switch (users) {
       case 'everyone':
-        users = find(id).excludedUsers.slice(0);
+        users = find(id).excludedUsers.slice(0).concat(
+            find(id).excludedNPCs.slice(0));
         break;
       case 'online':
       case 'offline':
@@ -5354,6 +5378,7 @@ function HungryGames() {
     if (!Array.isArray(users)) {
       users = users.array();
     }
+    users = users.filter((el) => el);
     const onlyError = users.length > 2;
     users.forEach(function(obj) {
       if (typeof obj === 'string') {
@@ -5379,9 +5404,9 @@ function HungryGames() {
         const excludeIndex =
             find(id).excludedNPCs.findIndex((el) => el.id == obj.id);
         if (excludeIndex >= 0) {
-          if (!onlyError) {
+          /* if (!onlyError) {
             response += obj.username + ' removed from blacklist.\n';
-          }
+          } */
           find(id).excludedNPCs.splice(excludeIndex, 1);
         }
         if (!find(id).includedNPCs.find((el) => el.id == obj.id)) {
@@ -5393,9 +5418,9 @@ function HungryGames() {
       } else {
         const excludeIndex = find(id).excludedUsers.indexOf(obj.id);
         if (excludeIndex >= 0) {
-          if (!onlyError) {
+          /* if (!onlyError) {
             response += obj.username + ' removed from blacklist.\n';
-          }
+          } */
           find(id).excludedUsers.splice(excludeIndex, 1);
         }
         if (!find(id).includedUsers.includes(obj.id)) {
@@ -5422,9 +5447,9 @@ function HungryGames() {
                   obj.avatarURL || obj.displayAvatarURL({format: 'png'}),
                   obj.nickname));
         }
-        if (!onlyError) {
+        /* if (!onlyError) {
           response += obj.username + ' added to included players.\n';
-        }
+        } */
         formTeams(id);
       } else {
         if (!onlyError) {
@@ -5681,7 +5706,7 @@ function HungryGames() {
     }
     if (type === 'number') {
       value = Number(value);
-      if (typeof value !== 'number') {
+      if (typeof value !== 'number' || isNaN(value)) {
         return 'That is not a valid value for ' + option +
             ', which requires a number. (Currently ' + obj[option] + ')';
       } else {
@@ -8121,6 +8146,103 @@ function HungryGames() {
               'it is fewer than 100 characters long.');
     }
   }
+
+  /**
+   * Start or stop allowing users to enter in to a game by clicking on a
+   * reaction to a message.
+   *
+   * @private
+   * @type {HungryGames~hgCommandHandler}
+   * @param {Discord~Message} msg The message that lead to this being called.
+   * @param {string} id The id of the guild this was triggered from.
+   */
+  function commandReactJoin(msg, id) {
+    if (!find(id) || !find(id).currentGame) {
+      createGame(null, id, true);
+    }
+    if (find(id).reactMessage) {
+      self.endReactJoinMessage(id, (err, info) => {
+        if (err) {
+          self.error(err);
+          self.common.reply(msg, 'Reaction Join Failed', err);
+        } else {
+          self.common.reply(msg, 'Reaction Join', info);
+        }
+      });
+    } else {
+      self.createReactJoinMessage(msg.channel);
+    }
+  }
+
+  /**
+   * Send a message with a reaction for users to click on. records message id
+   * and channel id in game data.
+   *
+   * @public
+   * @param {Discord~TextChannel|string} channel The channel in the guild to
+   * send the message, or the ID of the channel.
+   */
+  this.createReactJoinMessage = function(channel) {
+    if (typeof channel === 'string') {
+      channel = self.client.channels.get(channel);
+    }
+    if (!channel || !channel.guild || !channel.guild.id ||
+        !find(channel.guild.id)) {
+      return;
+    }
+    const embed = new self.Discord.MessageEmbed();
+    embed.setColor(defaultColor);
+    embed.setTitle(`React with any emoji to join!`);
+    embed.setDescription(
+        'If you have reacted, you will be included in the next `' +
+        find(channel.guild.id).currentGame.name + '`');
+    channel.send(embed).then((msg) => {
+      find(channel.guild.id).reactMessage = {id: msg.id, channel: channel.id};
+      msg.react(emoji.crossed_swords).catch(() => {});
+    });
+  };
+
+  /**
+   * End the reaction join and update the included users to only include those
+   * who reacted to the message.
+   *
+   * @public
+   * @param {string} id The guild id of which to end the react join.
+   * @param {function} [cb] Callback once this is complete. First parameter is a
+   * string if error, null otherwise, the second is a string with info if
+   * success or null otherwise.
+   */
+  this.endReactJoinMessage = function(id, cb) {
+    if (typeof cb !== 'function') cb = function() {};
+    if (!find(id) || !find(id).reactMessage || !find(id).reactMessage.id ||
+        !find(id).reactMessage.channel) {
+      cb('Unable to find message with reactions. ' +
+         'Was a join via react started?');
+      return;
+    }
+
+    self.client.guilds.get(id)
+        .channels.get(find(id).reactMessage.channel)
+        .messages.fetch(find(id).reactMessage.id)
+        .then((msg) => {
+          const reactions = new self.Discord.Collection().concat(
+              ...msg.reactions.map((el) => {
+                return el.users.filter((u) => u.id != self.client.user.id);
+              })).array();
+          self.excludeUsers('everyone', id);
+          find(id).reactMessage = null;
+          msg.edit('`Ended`').catch(() => {});
+          if (!reactions || reactions.length == 0) {
+            cb(null, 'No users reacted.');
+          } else {
+            cb(null, self.includeUsers(reactions, id));
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+          cb('Unable to find message with reactions. Was it deleted?');
+        });
+  };
 
   /**
    * Force a player to have a certain outcome in the current day being

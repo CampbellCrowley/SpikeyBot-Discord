@@ -287,6 +287,24 @@
               "result": "All NPCs who are currently excluded will be added."
             }
           ]
+        },
+        {
+          "command": "react",
+          "description": "Allow players to join a game by adding reactions to a message.",
+          "aliases": "react, reaction, emote, emoji",
+          "validOnlyInGuild": true,
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "react",
+              "result": "A message will be sent, and those who add a reaction to it, will be included in the next game. Everyone else is excluded."
+            },
+            {
+              "description": "Ending Reactions",
+              "command": "react",
+              "result": "There are 2 ways to end the reaction message. Type the command again, or just start the game."
+            }
+          ]
         }
       ]
     },
