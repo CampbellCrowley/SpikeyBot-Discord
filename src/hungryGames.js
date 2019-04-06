@@ -5092,16 +5092,25 @@ function HungryGames() {
       response = self.setOption(id, 'includeBots', false);
       resPrefix = 'Bots';
       resPostfix = ' are now blocked from the games.';
-    } else if (msg.mentions.users.size + msg.softMentions.users.size == 0) {
+    } else if (
+      msg.mentions.users.size + msg.softMentions.users.size +
+            msg.mentions.roles.size + msg.softMentions.roles.size ==
+        0) {
       self.common.reply(
           msg,
           'You must mention people you wish for me to exclude from the next ' +
               'game.');
       return;
     } else {
-      self.common.reply(
-          msg, self.excludeUsers(
-              msg.mentions.users.concat(msg.softMentions.users), id));
+      const mentionedRoleUsers = new self.Discord.UserStore(
+          self.client,
+          ...msg.mentions.roles.map((r) => r.members.map((m) => m.user)));
+      const softRoleUsers = new self.Discord.UserStore(
+          self.client,
+          ...msg.softMentions.roles.map((r) => r.members.map((m) => m.user)));
+      const mentions = msg.mentions.users.concat(msg.softMentions.users)
+          .concat(mentionedRoleUsers.concat(softRoleUsers));
+      self.common.reply(msg, self.excludeUsers(mentions, id));
       return;
     }
 
@@ -5277,16 +5286,25 @@ function HungryGames() {
       response = self.setOption(id, 'includeBots', true);
       resPrefix = 'Bots';
       resPostfix = ' can now be added to the games.';
-    } else if (msg.mentions.users.size + msg.softMentions.users.size == 0) {
+    } else if (
+      msg.mentions.users.size + msg.softMentions.users.size +
+            msg.mentions.roles.size + msg.softMentions.roles.size ==
+        0) {
       self.common.reply(
           msg,
           'You must mention people you wish for me to include in the next ' +
               'game.');
       return;
     } else {
-      self.common.reply(
-          msg, self.includeUsers(
-              msg.mentions.users.concat(msg.softMentions.users), id));
+      const mentionedRoleUsers = new self.Discord.UserStore(
+          self.client,
+          ...msg.mentions.roles.map((r) => r.members.map((m) => m.user)));
+      const softRoleUsers = new self.Discord.UserStore(
+          self.client,
+          ...msg.softMentions.roles.map((r) => r.members.map((m) => m.user)));
+      const mentions = msg.mentions.users.concat(msg.softMentions.users)
+          .concat(mentionedRoleUsers.concat(softRoleUsers));
+      self.common.reply(msg, self.includeUsers(mentions, id));
       return;
     }
 

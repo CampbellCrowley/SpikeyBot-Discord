@@ -1,4 +1,4 @@
-// Copyright 2018 Campbell Crowley. All rights reserved.
+// Copyright 2018-2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const fs = require('fs');
 require('./mainModule.js')(Command); // Extends the MainModule class.
@@ -284,6 +284,7 @@ function Command() {
         users: new self.Discord.UserStore(self.client),
         members: msg.guild ? new self.Discord.GuildMemberStore(msg.guild) :
                              null,
+        roles: msg.guild ? new self.Discord.RoleStore(msg.guild) : null,
       };
       if (uIds) {
         uIds.forEach((el) => {
@@ -295,26 +296,41 @@ function Command() {
             const m = msg.guild.members.get(el);
             if (m) msg.softMentions.members.add(m);
           });
+          uIds.forEach((el) => {
+            const m = msg.guild.roles.get(el);
+            if (m) msg.softMentions.roles.add(m);
+          });
         }
       }
-      if (msg.guild && msg.guild.members) {
+      if (msg.guild) {
         const sT = msg.text.toLocaleLowerCase();
-        msg.guild.members.forEach((el) => {
-          if (sT.indexOf(el.user.username.toLocaleLowerCase()) > -1) {
-            // sT = sT.replace(el.user.username.toLocaleLowerCase(), '');
-            msg.softMentions.members.add(el);
-            msg.softMentions.users.add(el.user);
-          } else if (sT.indexOf(el.user.tag.toLocaleLowerCase()) > -1) {
-            // sT = sT.replace(el.user.tag.toLocaleLowerCase(), '');
-            msg.softMentions.members.add(el);
-            msg.softMentions.users.add(el.user);
-          } else if (
-            el.nickname && sT.indexOf(el.nickname.toLocaleLowerCase()) > -1) {
-            // sT = sT.replace(el.nickname.toLocaleLowerCase(), '');
-            msg.softMentions.members.add(el);
-            msg.softMentions.users.add(el.user);
-          }
-        });
+        if (msg.guild.members) {
+          msg.guild.members.forEach((el) => {
+            if (sT.indexOf(el.user.username.toLocaleLowerCase()) > -1) {
+              // sT = sT.replace(el.user.username.toLocaleLowerCase(), '');
+              msg.softMentions.members.add(el);
+              msg.softMentions.users.add(el.user);
+            } else if (sT.indexOf(el.user.tag.toLocaleLowerCase()) > -1) {
+              // sT = sT.replace(el.user.tag.toLocaleLowerCase(), '');
+              msg.softMentions.members.add(el);
+              msg.softMentions.users.add(el.user);
+            } else if (
+              el.nickname &&
+                sT.indexOf(el.nickname.toLocaleLowerCase()) > -1) {
+              // sT = sT.replace(el.nickname.toLocaleLowerCase(), '');
+              msg.softMentions.members.add(el);
+              msg.softMentions.users.add(el.user);
+            }
+          });
+        }
+        if (msg.guild.roles) {
+          msg.guild.roles.forEach((el) => {
+            if (sT.indexOf(el.name.toLocaleLowerCase()) > -1) {
+              // sT = sT.replace(el.role.name.toLocaleLowerCase(), '');
+              msg.softMentions.roles.add(el);
+            }
+          });
+        }
       }
       handler(msg);
     };
