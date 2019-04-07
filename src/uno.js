@@ -739,12 +739,20 @@ function Uno() {
               }
               break;
             }
-            case 'kick':
+            case 'kick': {
+              let bad = false;
               m.mentions.members.forEach((el) => {
-                game.removePlayer(el);
+                if (el.id != maker.id) game.removePlayer(el);
+                else bad = true;
               });
+              if (bad) {
+                self.common.reply(
+                    m, 'As the game creator you cannot leave the game.\nIf' +
+                        ' you wish to end the game, use `uno end`.');
+              }
               listPlayers();
               return false;
+            }
             case 'leave':
               self.common.reply(
                   m, 'As the game creator you cannot leave the game.\nIf' +
@@ -814,12 +822,20 @@ function Uno() {
             case 'end':
               game.end();
               return true;
-            case 'kick':
+            case 'kick': {
+              let bad = false;
               m.mentions.members.forEach((el) => {
-                game.removePlayer(el);
+                if (el.id != maker.id) game.removePlayer(el);
+                else bad = true;
               });
+              if (bad) {
+                self.common.reply(
+                    m, 'As the game creator you cannot leave the game.\nIf' +
+                        ' you wish to end the game, use `uno end`.');
+              }
               listPlayers();
               return false;
+            }
           }
         }
         if (turn < 0 || m.author.id != players[turn].id) return false;
