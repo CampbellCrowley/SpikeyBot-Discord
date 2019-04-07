@@ -423,7 +423,7 @@ function SMLoader() {
           // For some reason, directly comparing these two for equality does not
           // work.
           if (mtime - subModules[name[i]].modifiedTime == 0) {
-            output.push(name[i] + ': Unchanged');
+            output.push(`~~${name[i]}~~`);
             done();
             continue;
           }
