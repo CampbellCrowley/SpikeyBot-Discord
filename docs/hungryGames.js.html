@@ -1219,6 +1219,14 @@ function HungryGames() {
 
   /** @inheritdoc */
   this.shutdown = function() {
+    Object.entries(autoPlayTimeout).forEach((el) => {
+      self.client.clearTimeout(el[1]);
+      delete autoPlayTimeout[el[0]];
+    });
+    Object.entries(dayEventIntervals).forEach((el) => {
+      self.client.clearInterval(el[1]);
+      delete dayEventIntervals[el[0]];
+    });
     self.command.deleteEvent('hg');
     self.client.removeListener('messageUpdate', handleMessageEdit);
     self.client.removeListener('guildDelete', onGuildDelete);
