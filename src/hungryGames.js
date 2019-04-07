@@ -1672,10 +1672,14 @@ function HungryGames() {
       }
       if (find(id)) {
         find(id).includedUsers = find(id).includedUsers.filter((u) => {
-          return msg.guild.members.get(u);
+          const m = msg.guild.members.get(u);
+          if (m && m.partial) m.fetch();
+          return m;
         });
         find(id).excludedUsers = find(id).excludedUsers.filter((u) => {
-          return msg.guild.members.get(u);
+          const m = msg.guild.members.get(u);
+          if (m && m.partial) m.fetch();
+          return m;
         });
         if (find(id).currentGame) {
           if (!silent) {
@@ -8229,27 +8233,52 @@ function HungryGames() {
       return;
     }
 
+    let numTotal = 0;
+    let numDone = 0;
+    let msg;
     self.client.guilds.get(id)
         .channels.get(find(id).reactMessage.channel)
         .messages.fetch(find(id).reactMessage.id)
-        .then((msg) => {
-          const reactions = new self.Discord.Collection().concat(
-              ...msg.reactions.map((el) => {
-                return el.users.filter((u) => u.id != self.client.user.id);
-              })).array();
-          self.excludeUsers('everyone', id);
-          find(id).reactMessage = null;
-          msg.edit('`Ended`').catch(() => {});
-          if (!reactions || reactions.length == 0) {
-            cb(null, 'No users reacted.');
-          } else {
-            cb(null, self.includeUsers(reactions, id));
-          }
+        .then((m) => {
+          msg = m;
+          msg.reactions.map((el) => {
+            numTotal += el.count;
+            return el.users.fetch().then(usersFetched).catch((err) => {
+              self.error('Failed to fetch user reactions: ' + msg.channel.id);
+              console.error(err);
+              usersFetched([]);
+            });
+          });
         })
         .catch((err) => {
           console.error(err);
           cb('Unable to find message with reactions. Was it deleted?');
         });
+    let list = new self.Discord.Collection();
+    /**
+     * Adds fetched user reactions to buffer until all are received, then ends
+     * react join.
+     * @private
+     * @param {Discord.Collection.<User>|Discord.User[]} reactionUsers Array of
+     * users for a single reaction.
+     */
+    function usersFetched(reactionUsers) {
+      if (reactionUsers && reactionUsers.length > 0) {
+        list = list.concat(reactionUsers);
+      }
+      if (numTotal != numDone) {
+        numDone++;
+        return;
+      }
+      self.excludeUsers('everyone', id);
+      find(id).reactMessage = null;
+      msg.edit('`Ended`').catch(() => {});
+      if (list.length == 0) {
+        cb(null, 'No users reacted.');
+      } else {
+        cb(null, self.includeUsers(list, id));
+      }
+    }
   };
 
   /**

@@ -151,7 +151,9 @@ function Uno() {
         return;
       }
     }
-    self.common.reply(msg, 'Creating a game of UNO.');
+    self.common.reply(
+        msg, 'Creating a game of UNO.',
+        'Please be aware, Uno is still in BETA and has many known bugs.');
     if (!games[msg.guild.id]) games[msg.guild.id] = {};
     const newGame = new self.Game(
         (msg.mentions.members.array() || []).concat([msg.member]), msg.member);
@@ -648,6 +650,12 @@ function Uno() {
         /* game.groupChannel.permissionOverwrites.get(maker.guild.defaultRole)
             .update({VIEW_CHANNEL: true}); */
       });
+      if (currentCollector) {
+        currentCollector.stop(
+            'Previous collector failed to end before setup finish.');
+        // This is normal after a bot wins the game since it does not properly
+        // end the previous collector.
+      }
       currentCollector = game.groupChannel.createMessageCollector((m) => {
         const prefix = self.bot.getPrefix(m.guild);
         if (m.content.startsWith(prefix)) {
@@ -803,6 +811,11 @@ function Uno() {
       // Play the game's first card.
       playCard();
 
+      if (currentCollector) {
+        currentCollector.stop(
+            'Previous collector failed to end before game start.');
+        self.warn('Ending previous collector that should not exist.');
+      }
       currentCollector = game.groupChannel.createMessageCollector((m) => {
         const prefix = self.bot.getPrefix(m.guild);
         if (m.content.startsWith(prefix)) {
@@ -926,8 +939,8 @@ function Uno() {
             'Lobby Settings',
             'The creator of this game can use the following commands in this ' +
                 'channel.\n\nUse `invite @SpikeyRobot#0971` to add new people' +
-                ' to this game.\nUse `uno npc add 2` to add 2 NPCs or `npc ' +
-                'remove 3` to remove 3 NPCs.\nType `uno kick ' +
+                ' to this game.\nUse `uno npc add 2` to add 2 NPCs or `uno ' +
+                'npc remove 3` to remove 3 NPCs.\nType `uno kick ' +
                 '@SpikeyRobot#0971` to remove them from the game (Note: ' +
                 'don\'t use the command prefix).\nType `uno start` to start ' +
                 'the game once you\'re ready!\n`uno end` to end this game at ' +
@@ -1057,6 +1070,15 @@ function Uno() {
       } else {
         hand = players[turn].hand;
         if (players[turn].npc) {
+          if (previousTurn > -1 && !players[previousTurn].calledUno &&
+              players[previousTurn].hand.length == 1 &&
+              Math.random() < players[turn].probCallUno) {
+            callUno(players[turn].id);
+            setTimeout(function() {
+              playCard(text);
+            }, npcDelay);
+            return;
+          }
           let i = hand.length;
           // Cards are in order of how they were drawn from the deck. This
           // prioritizes the oldest cards first.
@@ -1068,9 +1090,17 @@ function Uno() {
             return false;
           }
           if (hand[selected].face & self.CardFace.WILD_EFFECT) {
-            color =
+            const handColors = [];
+            hand.forEach((el) => {
+              if (el.color != self.Color.NONE &&
+                  !handColors.includes(el.color)) {
+                handColors.push(el.color);
+              }
+            });
+            color = handColors.length == 0 ?
                 colorPairs[Math.floor(Math.random() * (colorPairs.length - 1)) +
-                           1][1];
+                           1][1] :
+                handColors[Math.floor(Math.random() * handColors.length)];
           }
           if (hand.length == 2) {
             if (Math.random() <= players[turn].probCallUno) {
