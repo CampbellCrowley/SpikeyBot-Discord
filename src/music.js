@@ -1,4 +1,4 @@
-// Copyright 2018 Campbell Crowley. All rights reserved.
+// Copyright 2018-2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const ytdl = require('youtube-dl'); // Music thread uses separate require.
 const fs = require('fs'); // Music thread uses separate require.
@@ -409,7 +409,10 @@ function Music() {
         if (numMembers === 0 &&
             oldState.channel.members.get(self.client.user.id)) {
           if (broadcast.subjugated) {
-            if (broadcast.voice) broadcast.voice.disconnect();
+            if (broadcast.voice) {
+              broadcast.voice.disconnect();
+              if (broadcast.voice) broadcast.voice.removeAllListeners();
+            }
             delete broadcasts[oldState.guild.id];
             return;
           } else if (pauseBroadcast(broadcast)) {
@@ -435,6 +438,7 @@ function Music() {
           oldState.channelID != newState.channelID && oldState.channelID &&
           newState.channelID && newState.channel &&
           newState.channel.connection) {
+        if (broadcast.voice) broadcast.voice.removeAllListeners();
         broadcast.voice = newState.channel.connection;
         broadcast.dispatcher =
             broadcast.voice.play(broadcast.broadcast, secondaryStreamOptions);
@@ -581,6 +585,7 @@ function Music() {
     } else {
       msg.member.voice.channel.join()
           .then((conn) => {
+            if (broadcast.voice) broadcast.voice.removeAllListeners();
             broadcast.voice = conn;
             try {
               startPlaying(broadcast);
@@ -611,7 +616,10 @@ function Music() {
     if (broadcast.queue.length === 0) {
       if (!broadcast.subjugated) {
         self.client.setTimeout(function() {
-          if (broadcast.voice) broadcast.voice.disconnect();
+          if (broadcast.voice) {
+            broadcast.voice.disconnect();
+            if (broadcast.voice) broadcast.voice.removeAllListeners();
+          }
           delete broadcasts[broadcast.current.request.guild.id];
         }, 500);
         broadcast.current.request.channel.send('`Queue is empty!`');
