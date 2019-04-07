@@ -136,7 +136,7 @@
       </svg>
     </a>
     <h4 class="name" id="Poll">
-      <span class="type-signature">(private) </span>new Poll<span class="signature">(request, message, options)</span><span class="type-signature"></span>
+      <span class="type-signature">(private) </span>new Poll<span class="signature">(author, message, options)</span><span class="type-signature"></span>
     </h4>
   </span>
 
@@ -174,14 +174,14 @@
     
       <tr>
         
-          <td class="name"><code>request</code></td>
+          <td class="name"><code>author</code></td>
         
 
         <td class="type">
           
             
     <span class="param-type">
-      Discord~Message
+      string
     </span>
 
     
@@ -195,8 +195,7 @@
         
 
         <td class="description last">
-          The message that was sent that caused this
-poll to begin.
+          ID of the user who started this poll.
           
         </td>
       </tr>
@@ -295,14 +294,14 @@ poll to begin.
 
     <tr>
       
-        <td class="name"><code>request</code></td>
+        <td class="name"><code>author</code></td>
       
 
       <td class="type">
         
           
     <span class="param-type">
-      Discord~Message
+      string
     </span>
 
     
@@ -322,8 +321,7 @@ poll to begin.
         
 
         <td class="description last">
-          Reference to the Message object that
-caused this poll to begin.
+          ID of the user who started this poll.
           </td>
     </tr>
 
@@ -581,7 +579,7 @@ the user specified custom response options.
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="poll.js.html">poll.js</a>, <a href="poll.js.html#line247">line 247</a>
+          <a href="poll.js.html">poll.js</a>, <a href="poll.js.html#line234">line 234</a>
         </li>
       </ul>
     </dd>
@@ -623,6 +621,73 @@ the user specified custom response options.
     
         <h3 class="subsection-title">Members</h3>
 
+        
+            
+
+<h4 class="name" id="author">
+  <span class="type-signature"></span>author<span class="type-signature"> :string</span>
+</h4>
+
+
+
+
+  <div class="description">
+    ID of the user who started this poll.
+  </div>
+
+
+
+
+<dl class="details">
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source">
+      <ul class="dummy">
+        <li>
+          <a href="poll.js.html">poll.js</a>, <a href="poll.js.html#line240">line 240</a>
+        </li>
+      </ul>
+    </dd>
+  
+
+  
+
+  
+
+  
+</dl>
+
+
+
+
+
+
+          
         
             
 
@@ -672,7 +737,7 @@ response options.
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="poll.js.html">poll.js</a>, <a href="poll.js.html#line284">line 284</a>
+          <a href="poll.js.html">poll.js</a>, <a href="poll.js.html#line271">line 271</a>
         </li>
       </ul>
     </dd>
@@ -739,7 +804,7 @@ response options.
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="poll.js.html">poll.js</a>, <a href="poll.js.html#line277">line 277</a>
+          <a href="poll.js.html">poll.js</a>, <a href="poll.js.html#line264">line 264</a>
         </li>
       </ul>
     </dd>
@@ -806,7 +871,7 @@ response options.
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="poll.js.html">poll.js</a>, <a href="poll.js.html#line271">line 271</a>
+          <a href="poll.js.html">poll.js</a>, <a href="poll.js.html#line258">line 258</a>
         </li>
       </ul>
     </dd>
@@ -873,74 +938,7 @@ response options.
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="poll.js.html">poll.js</a>, <a href="poll.js.html#line259">line 259</a>
-        </li>
-      </ul>
-    </dd>
-  
-
-  
-
-  
-
-  
-</dl>
-
-
-
-
-
-
-          
-        
-            
-
-<h4 class="name" id="request">
-  <span class="type-signature"></span>request<span class="type-signature"> :Discord~Message</span>
-</h4>
-
-
-
-
-  <div class="description">
-    Reference to the Message object that caused this poll to begin.
-  </div>
-
-
-
-
-<dl class="details">
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source">
-      <ul class="dummy">
-        <li>
-          <a href="poll.js.html">poll.js</a>, <a href="poll.js.html#line253">line 253</a>
+          <a href="poll.js.html">poll.js</a>, <a href="poll.js.html#line246">line 246</a>
         </li>
       </ul>
     </dd>
@@ -1007,7 +1005,7 @@ response options.
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="poll.js.html">poll.js</a>, <a href="poll.js.html#line290">line 290</a>
+          <a href="poll.js.html">poll.js</a>, <a href="poll.js.html#line277">line 277</a>
         </li>
       </ul>
     </dd>
@@ -1074,7 +1072,7 @@ response options.
     <dd class="tag-source">
       <ul class="dummy">
         <li>
-          <a href="poll.js.html">poll.js</a>, <a href="poll.js.html#line265">line 265</a>
+          <a href="poll.js.html">poll.js</a>, <a href="poll.js.html#line252">line 252</a>
         </li>
       </ul>
     </dd>

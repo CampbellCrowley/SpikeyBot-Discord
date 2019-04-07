@@ -1139,7 +1139,18 @@ function SpikeyBot() {
         }
       }
       const doHardReboot = (msg || {content: ''}).content.indexOf('hard') > -1;
-      const reboot = function(hard) {
+      const reboot = function(hard, msg_) {
+        const toSave = {
+          id: (msg_ || {}).id,
+          channel: {id: (msg_ || {channel: {}}).channel.id},
+          running: false,
+        };
+        try {
+          fs.writeFileSync('./save/reboot.dat', JSON.stringify(toSave));
+        } catch (err) {
+          common.error('Failed to save reboot.dat');
+          console.log(err);
+        }
         if (!client.shard || !hard) {
           process.exit(-1);
         } else if (hard) {
@@ -1156,21 +1167,10 @@ function SpikeyBot() {
         reboot(doHardReboot);
       } else {
         const extra = doHardReboot ? ' (HARD)' : '';
-        const toSave = {
-          id: (msg || {}).id,
-          channel: {id: (msg || {channel: {}}).channel.id},
-          running: false,
-        };
-        try {
-          fs.writeFileSync('./save/reboot.dat', JSON.stringify(toSave));
-        } catch (err) {
-          common.error('Failed to save reboot.dat');
-          console.log(err);
-        }
         if (msg) {
           common.reply(msg, 'Rebooting...' + extra)
-              .then((msg) => {
-                reboot(doHardReboot);
+              .then((msg_) => {
+                reboot(doHardReboot, msg_);
               })
               .catch(() => {
                 reboot(doHardReboot);
