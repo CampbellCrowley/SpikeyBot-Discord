@@ -113,11 +113,9 @@ function Polling() {
       return;
     }
 
-    console.log(parsed);
     self.client.channels.get(parsed.message.channel)
         .messages.fetch(parsed.message.message)
         .then((message) => {
-          console.log('Message fetched');
           const poll =
               (currentPolls[parsed.message.message] =
                    new Poll(parsed.author, message, parsed));
