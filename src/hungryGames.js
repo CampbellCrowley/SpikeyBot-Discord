@@ -8241,14 +8241,18 @@ function HungryGames() {
         .messages.fetch(find(id).reactMessage.id)
         .then((m) => {
           msg = m;
-          msg.reactions.map((el) => {
-            numTotal += el.count;
-            return el.users.fetch().then(usersFetched).catch((err) => {
-              self.error('Failed to fetch user reactions: ' + msg.channel.id);
-              console.error(err);
-              usersFetched([]);
+          if (!msg.reactions || msg.reactions.size == 0) {
+            usersFetched([]);
+          } else {
+            msg.reactions.forEach((el) => {
+              numTotal += el.count;
+              el.users.fetch().then(usersFetched).catch((err) => {
+                self.error('Failed to fetch user reactions: ' + msg.channel.id);
+                console.error(err);
+                usersFetched([]);
+              });
             });
-          });
+          }
         })
         .catch((err) => {
           console.error(err);
@@ -8263,13 +8267,13 @@ function HungryGames() {
      * users for a single reaction.
      */
     function usersFetched(reactionUsers) {
-      if (reactionUsers && reactionUsers.length > 0) {
-        list = list.concat(reactionUsers);
+      if (reactionUsers &&
+          (reactionUsers.length > 0 || reactionUsers.size > 0)) {
+        list = list.concat(
+            reactionUsers.filter((el) => el.id != self.client.user.id));
+        numDone += reactionUsers.length || reactionUsers.size;
       }
-      if (numTotal != numDone) {
-        numDone++;
-        return;
-      }
+      if (numTotal != numDone) return;
       self.excludeUsers('everyone', id);
       find(id).reactMessage = null;
       msg.edit('`Ended`').catch(() => {});
