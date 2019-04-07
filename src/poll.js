@@ -1,4 +1,4 @@
-// Copyright 2018 Campbell Crowley. All rights reserved.
+// Copyright 2018-2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const emojiChecker = require('./lib/twemojiChcker.js');
 const fs = require('fs');
@@ -80,14 +80,10 @@ function Polling() {
     });
     const polls = Object.entries(currentPolls);
     for (let i = 0; i < polls.length; i++) {
-      const dir = self.common.guildSaveDir + polls[i][1].request.guild.id +
-          guildSubDir + polls[i][1].request.author.id;
+      const dir = self.common.guildSaveDir + polls[i][1].message.guild.id +
+          guildSubDir + polls[i][1].author;
       const filename = saveFilename;
       const temp = Object.assign({}, polls[i][1]);
-      temp.request = {
-        channel: temp.request.channel.id,
-        message: temp.request.id,
-      };
       temp.message = {
         channel: temp.message.channel.id,
         message: temp.message.id,
@@ -117,27 +113,20 @@ function Polling() {
       return;
     }
 
-    self.client.channels.get(parsed.request.channel)
-        .messages.fetch(parsed.request.message)
-        .then((request) => {
-          self.client.channels.get(parsed.message.channel)
-              .messages.fetch(parsed.message.message)
-              .then((message) => {
-                const poll = currentPolls[parsed.message.message] =
-                    new Poll(request, message, parsed);
-                addListenersToPoll(poll, parsed.message.message);
-              })
-              .catch((err) => {
-                self.error(
-                    'Failed to find message: ' + parsed.message.message +
-                    ' in ' + parsed.message.channel);
-                console.error(err);
-              });
+    console.log(parsed);
+    self.client.channels.get(parsed.message.channel)
+        .messages.fetch(parsed.message.message)
+        .then((message) => {
+          console.log('Message fetched');
+          const poll =
+              (currentPolls[parsed.message.message] =
+                   new Poll(parsed.author, message, parsed));
+          addListenersToPoll(poll, parsed.message.message);
         })
         .catch((err) => {
           self.error(
-              'Failed to find request: ' + parsed.request.message + ' in ' +
-              parsed.request.channel);
+              'Failed to find message: ' + parsed.message.message + ' in ' +
+              parsed.message.channel);
           console.error(err);
         });
   }
@@ -227,12 +216,10 @@ function Polling() {
    * @class
    * @private
    *
-   * @param {Discord~Message} request The message that was sent that caused this
-   * poll to begin.
+   * @param {string} author ID of the user who started this poll.
    * @param {Discord~Message} message The message to watch for the results.
    * @param {Polling~PollOptions} options The settings for this current poll.
-   * @property {Discord~Message} request Reference to the Message object that
-   * caused this poll to begin.
+   * @property {string} author ID of the user who started this poll.
    * @property {Discord~Message} message Reference to the Message object with
    * the reaction listener.
    * @property {string} title The user defined text associated with this poll.
@@ -244,13 +231,13 @@ function Polling() {
    * the user specified custom response options.
    * @property {string[]} timeout The scheduled timeout when this poll will end.
    */
-  function Poll(request, message, options) {
+  function Poll(author, message, options) {
     /**
-     * Reference to the Message object that caused this poll to begin.
+     * ID of the user who started this poll.
      * @public
-     * @type {Discord~Message}
+     * @type {string}
      */
-    this.request = request;
+    this.author = author;
     /**
      * Reference to the Message object with the reaction listener.
      * @public
@@ -301,8 +288,8 @@ function Polling() {
    */
   function commandPoll(msg) {
     if (Object.values(currentPolls).find((obj) => {
-      return obj.request.author.id === msg.author.id &&
-              obj.request.guild.id === msg.guild.id;
+      return obj.author === msg.author.id &&
+              obj.message.guild.id === msg.guild.id;
     })) {
       self.common.reply(
           msg,
@@ -392,7 +379,7 @@ function Polling() {
     };
 
     msg.channel.send(embed).then((msg_) => {
-      const poll = new Poll(msg, msg_, options);
+      const poll = new Poll(msg.author.id, msg_, options);
       currentPolls[msg_.id] = poll;
 
       addListenersToPoll(poll, msg_.id);
@@ -451,8 +438,8 @@ function Polling() {
    */
   function commandEndPoll(msg) {
     let poll = Object.entries(currentPolls).find((obj) => {
-      return obj[1].request.author.id === msg.author.id &&
-          obj[1].request.guild.id === msg.guild.id;
+      return obj[1].author === msg.author.id &&
+          obj[1].message.guild.id === msg.guild.id;
     });
     let key;
     if (poll) {
@@ -474,7 +461,7 @@ function Polling() {
    * @return {boolean} Was the poll successfully ended.
    */
   function endPoll(poll) {
-    if (!poll || !poll.message || !poll.request) {
+    if (!poll || !poll.message || !poll.author) {
       return false;
     }
     if (poll.timeout) {
@@ -487,8 +474,7 @@ function Polling() {
 
     const embed = new self.Discord.MessageEmbed();
     if (poll.title) embed.setTitle(poll.title);
-    embed.setDescription(
-        self.common.mention(poll.request) + '\'s poll results');
+    embed.setDescription(`<@${poll.author}>'s poll results`);
 
     if (!poll.endTime) {
       embed.setFooter('Poll ended manually');
