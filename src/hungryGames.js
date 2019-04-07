@@ -4294,9 +4294,9 @@ function HungryGames() {
       delete dayEventIntervals[id];
       printDay(msg, id);
     } else if (!events[index]) {
-      self.warn(
+      /* self.warn(
           'Failed to find event for index ' + index + '/' + events.length +
-          ' even though it should exist: ' + id);
+          ' even though it should exist: ' + id); */
     } else if (
       events[index].battle &&
         events[index].state < events[index].attacks.length) {
