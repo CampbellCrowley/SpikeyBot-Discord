@@ -374,6 +374,27 @@ Common.prototype.spikeyId = '124733888177111041';
 Common.spikeyId = Common.prototype.spikeyId;
 
 /**
+ * Discord IDs that are allowed to reboot the bot, and are overall trusted
+ * individuals/accounts.
+ *
+ * @type {string[]}
+ * @constant
+ */
+Common.prototype.trustedIds = [
+  Common.spikeyId,       // Me
+  '126464376059330562',  // Rohan
+  '479294447184773130',  // DV0RAK
+];
+/**
+ * Trusted IDs.
+ * @see {@link Common.prototype.trustedIds}
+ *
+ * @constant
+ * @type {string[]}
+ */
+Common.trustedIds = Common.prototype.trustedIds;
+
+/**
  * Format a Discord API error.
  *
  * @param {Discord~DiscordAPIError} e DiscordAPIError to format into a string.

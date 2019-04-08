@@ -124,14 +124,16 @@ function SubModule() {
 
     this.log = function(msg) {
       if (this.client.shard) {
-        this.common.log(msg, this.client.shard.id + ' ' + this.myName, 1);
+        this.common.log(
+            msg, `${this.client.shard.ids.join(' ')} ${this.myName}`, 1);
       } else {
         this.common.log(msg, this.myName, 1);
       }
     };
     this.debug = function(msg) {
       if (this.client.shard) {
-        this.common.logDebug(msg, this.client.shard.id + ' ' + this.myName, 1);
+        this.common.logDebug(
+            msg, `${this.client.shard.ids.join(' ')} ${this.myName}`, 1);
       } else {
         this.common.logDebug(msg, this.myName, 1);
       }
@@ -139,14 +141,15 @@ function SubModule() {
     this.warn = function(msg) {
       if (this.client.shard) {
         this.common.logWarning(
-            msg, this.client.shard.id + ' ' + this.myName, 1);
+            msg, `${this.client.shard.ids.join(' ')} ${this.myName}`, 1);
       } else {
         this.common.logWarning(msg, this.myName, 1);
       }
     };
     this.error = function(msg) {
       if (this.client.shard) {
-        this.common.error(msg, this.client.shard.id + ' ' + this.myName, 1);
+        this.common.error(
+            msg, `${this.client.shard.ids.join(' ')} ${this.myName}`, 1);
       } else {
         this.common.error(msg, this.myName, 1);
       }

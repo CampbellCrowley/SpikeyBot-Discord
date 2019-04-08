@@ -27,7 +27,8 @@ function unhandledRejection(...args) {
   } else if (args[0] && args[0].message == 'No Perms') {
     console.log(`ERR:${pid}`, args[0]);
   } else {
-    console.log(`ERR:${pid}`, ...args);
+    // console.log(`ERR:${pid}`, ...args);
+    console.log(`ERR:${pid}`, args[0]);
   }
 }
 process.on('unhandledRejection', unhandledRejection);
@@ -64,7 +65,6 @@ EventEmitter.prototype.on = addListener;
  * @listens Discord~Client#message
  * @listens Command#updateGame
  * @listens Command#reboot
- * @listens Command#update
  * @listens Command#mainreload
  */
 function SpikeyBot() {
@@ -121,6 +121,17 @@ function SpikeyBot() {
    * @type {string}
    */
   const smLoaderFilename = './smLoader.js';
+  /**
+   * Filename without file extension where information about the bot rebooting
+   * is stored.
+   * @see {@link fullRebootFilename}
+   *
+   * @private
+   * @constant
+   * @default
+   * @type {string}
+   */
+  const rebootFilename = './save/reboot';
   /**
    * The current instance of Command.
    *
@@ -321,16 +332,16 @@ function SpikeyBot() {
   /**
    * Delete cache and re-require common.js and auth.js.
    *
-   * @private
+   * @public
    */
-  function reloadCommon() {
+  this.reloadCommon = function() {
     delete require.cache[require.resolve('../auth.js')];
     auth = require('../auth.js');
     delete require.cache[require.resolve('./common.js')];
     common = require('./common.js');
     common.begin(testInstance, !isDev);
-  }
-  reloadCommon();
+  };
+  self.reloadCommon();
 
   /**
    * Create a ShardingManager and spawn shards. This shall only be called at
@@ -443,6 +454,19 @@ function SpikeyBot() {
     presence: defaultPresence,
   });
 
+  /**
+   * The full filename where information about the bot rebooting is stored.
+   * @see {@link rebootFilename}
+   *
+   * @private
+   * @constant
+   * @default
+   * @type {string}
+   */
+  const fullRebootFilename = client.shard ?
+      `${rebootFilename}-${client.shard.ids[0]}.json` :
+      `${rebootFilename}.json`;
+
 
   if (!isBackup) {
     // Attempt to load mainmodules.
@@ -503,18 +527,6 @@ function SpikeyBot() {
    * @type {number}
    */
   const saveFrequency = 5 * 60 * 1000;
-
-  /**
-   * Discord IDs that are allowed to reboot the bot.
-   *
-   * @private
-   * @type {string[]}
-   * @constant
-   */
-  const trustedIds = [
-    common.spikeyId,       // Me
-    '126464376059330562',  // Rohan
-  ];
 
   /**
    * Cache of all loaded guild's command prefixes. Populated asyncronously after
@@ -638,26 +650,33 @@ function SpikeyBot() {
         }
       }
       if (!minimal && !initialized) {
-        fs.readFile('./save/reboot.dat', function(err, file) {
-          if (err) return;
-          const msg = JSON.parse(file);
-          const crashed = msg.running;
+        fs.readFile(fullRebootFilename, function(err, file) {
+          if (err) {
+            if (err.code !== 'ENOENT') {
+              self.error(`Failed to read ${fullRebootFilename}`);
+              console.error(err);
+            }
+            return;
+          }
+          const parsed = JSON.parse(file);
+          const crashed = parsed.running;
           if (crashed) {
             common.logWarning(
                 'Either the previous instance crashed, or another instance of' +
                 ' this bot is already running. Neither of these options ' +
                 'should happen.');
           }
-          msg.running = true;
-          fs.writeFile('./save/reboot.dat', JSON.stringify(msg), function(err) {
-            if (err) {
-              common.error('Failed to set file state to running.');
-              console.error(err);
-            }
-          });
-          const channel = client.channels.get(msg.channel.id);
+          parsed.running = true;
+          fs.writeFile(
+              fullRebootFilename, JSON.stringify(parsed), function(err) {
+                if (err) {
+                  common.error('Failed to set file state to running.');
+                  console.error(err);
+                }
+              });
+          const channel = client.channels.get(parsed.channel.id);
           if (channel) {
-            channel.messages.fetch(msg.id)
+            channel.messages.fetch(parsed.id)
                 .then((msg_) => {
                   const embed = new Discord.MessageEmbed();
                   embed.setTitle('Reboot complete.');
@@ -669,8 +688,8 @@ function SpikeyBot() {
           if (logChannel && !isDev && !testInstance) {
             let additional = '';
             if (client.shard) {
-              additional +=
-                  ' Shard: ' + client.shard.id + ' of ' + client.shard.count;
+              additional += ' Shard: ' + client.shard.ids.join(' ') + ' of ' +
+                  client.shard.count;
             }
             if (crashed) {
               additional += ' due to rapid unscheduled dissassembly!';
@@ -1099,6 +1118,40 @@ function SpikeyBot() {
    * @listens Command#reboot
    */
   function commandReboot(msg, silent) {
+    /**
+     * Actually do the reboot process. Send kill signals and save the reboot
+     * information file.
+     *
+     * @private
+     * @param {boolean} force Is this reboot forced.
+     * @param {boolean} hard Is this a hard reboot.
+     * @param {Discord~Message} [msg_] Our message sent informing user of
+     * reboot status.
+     */
+    function reboot(force, hard, msg_) {
+      const toSave = {
+        id: (msg_ || {}).id,
+        channel: {id: (msg_ || {channel: {}}).channel.id},
+        running: false,
+      };
+      try {
+        fs.writeFileSync(fullRebootFilename, JSON.stringify(toSave));
+      } catch (err) {
+        common.error(`Failed to save ${fullRebootFilename}`);
+        console.log(err);
+      }
+      if (!client.shard || !hard) {
+        process.exit(-1);
+      } else if (hard) {
+        if (force) {
+          client.shard.send('reboot hard force');
+        } else {
+          client.shard.send('reboot hard');
+        }
+      } else {
+        client.shard.respawnAll();
+      }
+    }
     if ((!msg && silent) || msg.author.id === common.spikeyId) {
       const force = (msg || {content: ''}).content.indexOf(' force') > -1;
       if (!force) {
@@ -1139,44 +1192,20 @@ function SpikeyBot() {
         }
       }
       const doHardReboot = (msg || {content: ''}).content.indexOf('hard') > -1;
-      const reboot = function(hard, msg_) {
-        const toSave = {
-          id: (msg_ || {}).id,
-          channel: {id: (msg_ || {channel: {}}).channel.id},
-          running: false,
-        };
-        try {
-          fs.writeFileSync('./save/reboot.dat', JSON.stringify(toSave));
-        } catch (err) {
-          common.error('Failed to save reboot.dat');
-          console.log(err);
-        }
-        if (!client.shard || !hard) {
-          process.exit(-1);
-        } else if (hard) {
-          if (force) {
-            client.shard.send('reboot hard force');
-          } else {
-            client.shard.send('reboot hard');
-          }
-        } else {
-          client.shard.respawnAll();
-        }
-      };
       if (minimal) {
-        reboot(doHardReboot);
+        reboot(force, doHardReboot);
       } else {
         const extra = doHardReboot ? ' (HARD)' : '';
         if (msg) {
           common.reply(msg, 'Rebooting...' + extra)
               .then((msg_) => {
-                reboot(doHardReboot, msg_);
+                reboot(force, doHardReboot, msg_);
               })
               .catch(() => {
-                reboot(doHardReboot);
+                reboot(force, doHardReboot);
               });
         } else {
-          reboot(doHardReboot);
+          reboot(force, doHardReboot);
         }
       }
     } else if (msg) {
@@ -1199,7 +1228,7 @@ function SpikeyBot() {
    * @listens Command#mainreload
    */
   function commandReload(msg) {
-    if (trustedIds.includes(msg.author.id)) {
+    if (common.trustedIds.includes(msg.author.id)) {
       const toReload = msg.text.split(' ').splice(1);
       const reloaded = [];
       common.reply(msg, 'Reloading main modules...').then((warnMessage) => {
@@ -1395,7 +1424,7 @@ function SpikeyBot() {
    * @listens Command#saveAll
    */
   function commandSaveAll(msg) {
-    if (!trustedIds.includes(msg.author.id)) {
+    if (!common.trustedIds.includes(msg.author.id)) {
       common.reply(
           msg, 'LOL! Good try!',
           'It appears SpikeyRobot doesn\'t trust you enough with this ' +
@@ -1404,86 +1433,6 @@ function SpikeyBot() {
     }
     saveAll();
     msg.channel.send(common.mention(msg) + ' `Triggered data save`');
-  }
-
-  if (!isBackup) {
-    command.on('update', commandUpdate);
-  }
-  /**
-   * Trigger fetching the latest version of the bot from git, then tell all
-   * shards to reload the changes.
-   *
-   * @private
-   * @type {commandHandler}
-   * @param {Discord~Message} msg Message that triggered command.
-   * @listens Command#update
-   */
-  function commandUpdate(msg) {
-    if (!trustedIds.includes(msg.author.id)) {
-      common.reply(
-          msg, 'LOL! Good try!',
-          'It appears SpikeyRobot doesn\'t trust you enough with this ' +
-              'command. Sorry!');
-      return;
-    }
-    common.log(
-        'Triggered update: ' + __dirname + ' <-- DIR | CWD -->' +
-        process.cwd());
-    common.reply(msg, 'Updating from git...').then((msg_) => {
-      childProcess.exec('npm run update', function(err, stdout, stderr) {
-        if (!err) {
-          if (stdout && stdout !== 'null') console.log('STDOUT:', stdout);
-          if (stderr && stderr !== 'null') console.error('STDERR:', stderr);
-
-          reloadCommon();
-
-          client.reloadUpdatedMainModules();
-          if (client.shard) {
-            client.shard.broadcastEval('this.reloadUpdatedMainModules');
-          }
-          try {
-            childProcess.execSync(
-                'git diff-index --quiet ' + version.split('#')[1] +
-                ' -- ./src/' +
-                module.filename.slice(
-                    __filename.lastIndexOf('/') + 1, module.filename.length));
-            const embed = new Discord.MessageEmbed();
-            embed.setTitle('Bot update complete!');
-            embed.setColor([255, 0, 255]);
-            msg_.edit(common.mention(msg), embed);
-          } catch (err) {
-            if (err.status === 1) {
-              const embed = new Discord.MessageEmbed();
-              embed.setTitle(
-                  'Bot update complete, but requires manual reboot.');
-              embed.setDescription(err.message);
-              embed.setColor([255, 0, 255]);
-              msg_.edit(common.mention(msg), embed);
-            } else {
-              common.error(
-                  'Checking for SpikeyBot.js changes failed: ' + err.status);
-              console.error('STDOUT:', err.stdout);
-              console.error('STDERR:', err.stderr);
-              const embed = new Discord.MessageEmbed();
-              embed.setTitle(
-                  'Bot update complete, but failed to check if ' +
-                  'reboot is necessary.');
-              embed.setColor([255, 0, 255]);
-              msg_.edit(common.mention(msg), embed);
-            }
-          }
-        } else {
-          common.error('Failed to pull latest update.');
-          console.error(err);
-          if (stdout && stdout !== 'null') console.log('STDOUT:', stdout);
-          if (stderr && stderr !== 'null') console.error('STDERR:', stderr);
-          const embed = new Discord.MessageEmbed();
-          embed.setTitle('Bot update FAILED!');
-          embed.setColor([255, 0, 255]);
-          msg_.edit(common.mention(msg), embed);
-        }
-      });
-    });
   }
 
   /**

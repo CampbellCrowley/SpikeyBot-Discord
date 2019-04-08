@@ -19,11 +19,11 @@
     "async": "^2.6.2",
     "dateformat": "^3.0.3",
     "dialogflow": "^0.8.2",
-    "discord.js": "github:discordjs/discord.js#cd8747c06899ce938addac13f893921c3fb7f902",
+    "discord.js": "github:discordjs/discord.js#00eb7e325a4bbc41faa7411a26c3c82cf60d83c1",
     "erlpack": "github:discordapp/erlpack#674ebfd3439ba4b7ce616709821d27630f7cdc61",
     "fuzzy-search": "^3.0.1",
-    "jimp": "^0.6.0",
-    "mathjs": "^5.7.0",
+    "jimp": "^0.6.1",
+    "mathjs": "^5.8.0",
     "mkdirp": "^0.5.1",
     "mysql": "^2.16.0",
     "node-opus": "^0.3.1",
@@ -33,7 +33,7 @@
     "socket.io": "^2.2.0",
     "sodium": "^3.0.2",
     "threads": "^0.12.1",
-    "youtube-dl": "^1.12.2",
+    "youtube-dl": "^1.13.1",
     "zlib-sync": "^0.1.4"
   },
   "contributors": [
@@ -45,11 +45,11 @@
   "devDependencies": {
     "acorn": "^6.1.1",
     "chai": "^4.2.0",
-    "eslint": "^5.15.3",
+    "eslint": "^5.16.0",
     "eslint-config-google": "^0.12.0",
     "jsdoc": "^3.5.5",
     "jsdoc-template": "github:braintree/jsdoc-template",
-    "mocha": "^6.1.0"
+    "mocha": "^6.1.1"
   },
   "scripts": {
     "install": ".hooks/install-hooks.sh",
