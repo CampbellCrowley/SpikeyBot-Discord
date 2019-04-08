@@ -53,6 +53,13 @@ function HungryGames() {
   const Player = tmpRequire('./hg/Player.js');
   const Team = tmpRequire('./hg/Team.js');
   const Event = tmpRequire('./hg/Event.js');
+  /* eslint-disable no-unused-vars */
+  const ArenaEvent = tmpRequire('./hg/ArenaEvent.js');
+  const WeaponEvent = tmpRequire('./hg/WeaponEvent.js');
+  const GuildGame = tmpRequire('./hg/GuildGame.js');
+  const Game = tmpRequire('./hg/Game.js');
+  const OutcomeProbabilities = tmpRequire('./hg/OutcomeProbabilities.js');
+  /* eslint-enable no-unused-vars */
 
   /**
    * The maximum number of bytes allowed to be received from a client in an
@@ -605,60 +612,6 @@ function HungryGames() {
     8: 0.0005,
     9: 0.0005,
   };
-
-  /**
-   * Probabilities for each choosing an event with each type of outcome.
-   * @typedef {Object} HungryGames~OutcomeProbabilities}
-   *
-   * @property {number} kill Relative probability of events that can kill.
-   * @property {number} wound Relative probability of events that can wound.
-   * @property {number} thrive Relative probability of events that can heal.
-   * @property {number} revive Relative probability of events that can revive.
-   * @property {number} nothing Relative probability of events that do nothing.
-   */
-
-  /**
-   * A singe instance of a game in a guild.
-   * @typedef {Object} HungryGames~GuildGame
-   *
-   * @property {string[]} excludedUsers Array of user IDs that have been
-   * excluded from the games.
-   * @property {string[]} includedUsers Array of user IDs that will be included
-   * in the next game to be created.
-   * @property {NPC[]} includedNPCs Array of NPC objects to include in the game.
-   * @property {NPC[]} excludedNPCs Array of NPC objects to exclude from the
-   * game.
-   * @property {Object.<number|boolean|string|Object>} options The game options.
-   * @property {boolean} autoPlay Is the game currently autoplaying.
-   * @property {string[]} excludedUsers The ids of the users to exclude from the
-   * games.
-   * @property {
-   *   {
-   *     bloodbath: HungryGames~Event[],
-   *     player: HungryGames~Event[],
-   *     weapon: HungryGames~WeaponEvent[],
-   *     arena: HungryGames~ArenaEvent[]
-   *   }
-   * } customEvents All custom events for the guild.
-   * @property {HungryGames~Game} currentGame The current game in the guild.
-   */
-
-  /**
-   * The container with current game state within a guild's game.
-   * @typedef {Object} HungryGames~Game
-   *
-   * @property {string} name The name of this game.
-   * @property {boolean} inProgress Is the game currently in progress.
-   * @property {HungryGames~Player[]} includedUsers Array of all users currently
-   * in the game.
-   * @property {HungryGames~Team[]} teams All teams in the game.
-   * @property {Object[]} forcedOutcomes List of outcomes and players to force
-   * before the end of the day. Does not affect the simulation, outcomes are
-   * forced by appending events at the end of the simulated day.
-   * @property {boolean} ended Has the game ended.
-   * @property {{num: number, state: number, events: HungryGames~Event[]}} day
-   * Information about the day that was simulated.
-   */
 
   /**
    * All currently tracked games. Mapped by guild ID. In most cases you should
@@ -1512,74 +1465,44 @@ function HungryGames() {
             self.common.reply(
                 msg, 'Creating a new game with settings from the last game.');
           }
-          find(id).currentGame.name = find(id).currentGame.customName ||
-              (msg.guild.name + '\'s Hungry Games');
-          find(id).currentGame.ended = false;
-          find(id).currentGame.day = {num: -1, state: 0, events: []};
-          find(id).currentGame.includedUsers = getAllPlayers(
-              msg.guild.members, find(id).excludedUsers,
-              find(id).options.includeBots, find(id).includedUsers,
-              find(id).options.excludeNewUsers, find(id).includedNPCs);
-          find(id).currentGame.numAlive =
-              find(id).currentGame.includedUsers.length;
-          find(id).currentGame.forcedOutcomes = [];
+          find(id).currentGame = new Game(
+              find(id).currentGame.customName ||
+                  (msg.guild.name + '\'s Hungry Games'),
+              getAllPlayers(
+                  msg.guild.members, find(id).excludedUsers,
+                  find(id).options.includeBots, find(id).includedUsers,
+                  find(id).options.excludeNewUsers, find(id).includedNPCs));
         } else {
           if (!silent) {
             self.common.reply(
                 msg, 'Creating a new game with default settings.');
           }
-          find(id).currentGame = {
-            name: msg.guild.name + '\'s Hungry Games',
-            inProgress: false,
-            includedUsers: getAllPlayers(
-                msg.guild.members, find(id).excludedUsers,
-                find(id).options.includeBots, find(id).includedUsers,
-                find(id).options.excludeNewUsers, find(id).includedNPCs),
-            ended: false,
-            day: {num: -1, state: 0, events: []},
-            forcedOutcomes: [],
-          };
-          find(id).currentGame.numAlive =
-              find(id).currentGame.includedUsers.length;
+          find(id).currentGame = new Game(
+              `${msg.guild.name}'s Hungry Games`,
+              getAllPlayers(
+                  msg.guild.members, find(id).excludedUsers,
+                  find(id).options.includeBots, find(id).includedUsers,
+                  find(id).options.excludeNewUsers, find(id).includedNPCs));
         }
       } else {
-        games[id] = {
-          excludedUsers: [],
-          includedUsers: [],
-          excludedNPCs: [],
-          includedNPCs: [],
-          disabledEvents: {bloodbath: [], player: [], arena: {}, weapon: {}},
-          customEvents: {bloodbath: [], player: [], arena: [], weapon: {}},
-          currentGame: {
-            name: msg.guild.name + '\'s Hungry Games',
-            inProgress: false,
-            teams: [],
-            ended: false,
-            day: {num: -1, state: 0, events: []},
-            forcedOutcomes: [],
-          },
-          autoPlay: false,
-        };
-        games[id].currentGame.includedUsers = getAllPlayers(
-            msg.guild.members, games[id].excludedUsers, false,
-            games[id].includedUsers, false);
-        find(id).currentGame.numAlive =
-            find(id).currentGame.includedUsers.length;
         const optKeys = Object.keys(defaultOptions);
-        find(id).options = {};
+        const opts = {};
         for (const i in optKeys) {
           if (typeof optKeys[i] !== 'string') continue;
           if (typeof defaultOptions[optKeys[i]].value === 'object') {
-            find(id).options[optKeys[i]] =
+            opts[optKeys[i]] =
                 Object.assign({}, defaultOptions[optKeys[i]].value);
           } else {
-            find(id).options[optKeys[i]] = defaultOptions[optKeys[i]].value;
+            opts[optKeys[i]] = defaultOptions[optKeys[i]].value;
           }
         }
         if (msg.guild.memberCount > 100) {
-          find(id).options.showLivingPlayers = false;
-          find(id).options.numDaysShowDeath = 1;
+          opts.excludeNewUsers = true;
         }
+        games[id] = new GuildGame(
+            opts, `${msg.guild.name}'s Hungry Games`,
+            getAllPlayers(msg.guild.members, [], false, [], false));
+
         if (!silent) {
           self.common.reply(
               msg,
@@ -2206,7 +2129,13 @@ function HungryGames() {
       return prefix + '`' + shortName + '`';
     });
     if (find(id).options.teamSize == 0) {
-      statusList.sort();
+      statusList.sort((a, b) => {
+        a = a.toLocaleLowerCase();
+        b = b.toLocaleLowerCase();
+        if (a < b) return -1;
+        if (a > b) return 1;
+        return 0;
+      });
     }
 
     const numCols = calcColNum(statusList.length > 10 ? 3 : 2, statusList);
@@ -5385,7 +5314,13 @@ function HungryGames() {
         return prefix + '`' + shortName + '`';
       });
       if (find(id).options.teamSize == 0) {
-        statusList.sort();
+        statusList.sort((a, b) => {
+          a = a.toLocaleLowerCase();
+          b = b.toLocaleLowerCase();
+          if (a < b) return -1;
+          if (a > b) return 1;
+          return 0;
+        });
       }
       if (statusList.length >= 5) {
         const numCols = calcColNum(statusList.length > 10 ? 3 : 2, statusList);

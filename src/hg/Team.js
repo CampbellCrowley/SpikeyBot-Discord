@@ -3,7 +3,7 @@
 
 /**
  * @classdesc Serializable container for data about a team in a game.
- * @class
+ * @class HungryGames~Team
  *
  * @param {string|number} id The id unique to a guild for this team.
  * @param {string} name The name of this team.

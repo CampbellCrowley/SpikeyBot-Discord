@@ -1,11 +1,12 @@
 module.exports = {
   opts: {
     destination: './docs/',
+    encoding: 'utf8',
     recurse: true,
     access: 'all',
     private: true,
     readme: './docs/README.md',
-    template: './node_modules/jsdoc-template',
+    // template: './node_modules/jsdoc-template',
   },
   source: {
     include: [
@@ -17,6 +18,7 @@ module.exports = {
   },
   templates: {
     referenceTitle: 'SpikeyBot-Discord',
+    disableSort: false,
     collapse: true,
     resources: {
       'Discord': 'https://discord.gg/u6U2WRD',

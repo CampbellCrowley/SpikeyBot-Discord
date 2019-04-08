@@ -3,7 +3,7 @@
 
 /**
  * @classdesc Event that can happen in a game.
- * @class
+ * @class HungryGames~Event
  *
  * @param {string} message The message to show.
  * @param {number} [numVictim=0] The number of victims in this event.
@@ -64,32 +64,32 @@ function Event(
 }
 
 /**
- * A single battle in an Event.
- * @typedef {Object} HungryGames~Battle
+ * @classdesc A single battle in an Event.
+ * @class HungryGames~Event~Battle
  *
- * @property {string} message The message of this battle event.
- * @property {{damage: number}} attacker The damage done to the attacker.
- * @property {{damage: number}} victim The damage done to the victim.
+ * @param {string} message The message of this battle event.
+ * @param {number} attacker The damage done to the attacker.
+ * @param {number} victim The damage done to the victim.
  */
-/**
- * An Arena event storing Events.
- * @typedef {Object} HungryGames~ArenaEvent
- *
- * @property {string} message The message at the start of the arena event.
- * @property {?{kill: number, wound: number, thrive: number, nothing: number}}
- * outcomeProbs Overrides the global setting for arena event outcome
- * probabilities for this event.
- * @property {HungryGames~Event[]} outcomes All possible events in this arena
- * event.
- */
-/**
- * An Arena event storing Events.
- * @typedef {Object} HungryGames~WeaponEvent
- *
- * @property {string} [consumable] The formattable string for what to call this
- * weapons consumable items.
- * @property {HungryGames~Event[]} outcomes All possible events in this weapon
- * event.
- */
+Event.Battle = function(message, attacker, victim) {
+  /**
+   * Message of this battle event.
+   * @public
+   * @type {string}
+   */
+  this.message = message;
+  /**
+   * Information about attacker.
+   * @public
+   * @type {{damage: number}}
+   */
+  this.attacker = {damage: attacker};
+  /**
+   * Information about victim.
+   * @public
+   * @type {{damage: number}}
+   */
+  this.victim = {damage: victim};
+};
 
 module.exports = Event;

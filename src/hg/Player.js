@@ -3,7 +3,7 @@
 
 /**
  * @classdesc Serializable container for data pertaining to a single user.
- * @class
+ * @class HungryGames~Player
  *
  * @param {string} id The id of the user this object is representing.
  * @param {string} username The name of the user to show in the game.
