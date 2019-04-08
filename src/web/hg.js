@@ -1,4 +1,4 @@
-// Copyright 2018 Campbell Crowley. All rights reserved.
+// Copyright 2018-2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const http = require('http');
 const socketIo = require('socket.io');
@@ -615,8 +615,7 @@ function HGWeb() {
        *
        * @private
        * @param {string|Object} guilds Either the guild data to send to the
-       * user,
-       * or 'guilds' if this is a reply from a sibling client.
+       * user, or 'guilds' if this is a reply from a sibling client.
        * @param {?string} [err] The error that occurred, or null if no error.
        * @param {Object} [response] The guild data if `guilds` equals 'guilds'.
        */
