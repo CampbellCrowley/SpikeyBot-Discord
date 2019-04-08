@@ -24,22 +24,21 @@ function WebCommands() {
     setTimeout(() => {
       app.listen(self.common.isRelease ? 8018 : 8019, '127.0.0.1');
     });
+    app.on('error', function(err) {
+      if (err.code === 'EADDRINUSE') {
+        self.warn(
+            'Webhooks failed to bind to port because it is in use. (' +
+            err.port + ')');
+        self.shutdown(true);
+      } else {
+        self.error('Webhooks failed to bind to port for unknown reason.', err);
+      }
+    });
   };
   /** @inheritdoc */
   this.shutdown = function(skipSave) {
     if (app) app.close();
   };
-
-  app.on('error', function(err) {
-    if (err.code === 'EADDRINUSE') {
-      self.warn(
-          'Webhooks failed to bind to port because it is in use. (' + err.port +
-          ')');
-      self.shutdown(true);
-    } else {
-      self.error('Webhooks failed to bind to port for unknown reason.', err);
-    }
-  });
 
   /**
    * Handler for all http requests.
