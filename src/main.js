@@ -77,6 +77,7 @@ math.config({matrix: 'Array'});
  * @listens Command#git
  * @listens Command#whoami
  * @listens Command#gettime
+ * @listens Command#update
  */
 function Main() {
   const self = this;
@@ -325,6 +326,7 @@ function Main() {
     self.command.on('git', commandGit);
     self.command.on('whoami', commandWhoAmI);
     self.command.on('gettime', commandGetTime);
+    self.command.on('update', commandUpdate);
 
 
     self.client.on('debug', onDebug);
@@ -341,7 +343,7 @@ function Main() {
     process.on('SIGHUP', sigint);
     process.on('SIGTERM', sigint);
 
-    if (!self.client.shard || self.client.shard.id == 0) {
+    if (!self.client.shard || self.client.shard.ids[0] == 0) {
       fs.readdir(self.common.userSaveDir, function(err, items) {
         if (err) return;
         for (let i = 0; i < items.length; i++) {
@@ -557,6 +559,7 @@ function Main() {
     self.command.removeListener('git');
     self.command.removeListener('whoami');
     self.command.removeListener('gettime');
+    self.command.removeListener('update');
 
     self.client.removeListener('debug', onDebug);
     self.client.removeListener('warn', onWarn);
@@ -603,7 +606,7 @@ function Main() {
         mkAndWriteSync(filename, dir, JSON.stringify(obj));
       }
     });
-    if (!self.client.shard || self.client.shard.id == 0) {
+    if (!self.client.shard || self.client.shard.ids[0] == 0) {
       const dir = './save/';
       const filename = dir + 'rigged-counter.txt';
       if (opt == 'async') {
@@ -2455,7 +2458,7 @@ function Main() {
     };
     if (self.client.shard) {
       values.numShards = self.client.shard.count;
-      values.reqShard = self.client.shard.id;
+      values.reqShard = self.client.shard.ids[0];
       if (Array.isArray(values.reqShard)) values.reqShard = values.reqShard[0];
     }
     /**
@@ -2826,6 +2829,85 @@ function Main() {
     const nowGMT = dateFormat(now, 'GMT:ddd mmm dd yyyy HH:MM:ss');
     self.common.reply(
         msg, `Server Time: ${tz}`, `${tz}: ${nowPST}\nGMT: ${nowGMT}`);
+  }
+
+  /**
+   * Trigger fetching the latest version of the bot from git, then tell all
+   * shards to reload the changes.
+   *
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens Command#update
+   */
+  function commandUpdate(msg) {
+    if (!self.common.trustedIds.includes(msg.author.id)) {
+      self.common.reply(
+          msg, 'LOL! Good try!',
+          'It appears SpikeyRobot doesn\'t trust you enough with this ' +
+              'command. Sorry!');
+      return;
+    }
+    self.log(
+        `Triggered update: ${__dirname} <-- DIR | CWD -->${process.cwd()}`);
+    self.common.reply(msg, 'Updating from git...').then((msg_) => {
+      childProcess.exec('npm run update', function(err, stdout, stderr) {
+        if (!err) {
+          if (stdout && stdout !== 'null') console.log('STDOUT:', stdout);
+          if (stderr && stderr !== 'null') console.error('STDERR:', stderr);
+
+          const noReload = msg.content.indexOf('--noreload') > -1;
+          if (!noReload) {
+            self.bot.reloadCommon();
+            self.client.reloadUpdatedMainModules();
+            if (self.client.shard) {
+              self.client.shard.broadcastEval('this.reloadUpdatedMainModules');
+            }
+          }
+          try {
+            childProcess.execSync(
+                'git diff-index --quiet ' + version.split('#')[1] +
+                ' -- ./src/' +
+                module.filename.slice(
+                    __filename.lastIndexOf('/') + 1, module.filename.length));
+            const embed = new self.Discord.MessageEmbed();
+            embed.setTitle('Bot update complete!');
+            embed.setColor([255, 0, 255]);
+            if (noReload) embed.setDescription('Modules not reloaded.');
+            msg_.edit(self.common.mention(msg), embed);
+          } catch (err) {
+            if (err.status === 1) {
+              const embed = new self.Discord.MessageEmbed();
+              embed.setTitle(
+                  'Bot update complete, but requires manual reboot.');
+              embed.setDescription(err.message);
+              embed.setColor([255, 0, 255]);
+              msg_.edit(self.common.mention(msg), embed);
+            } else {
+              self.error(
+                  'Checking for SpikeyBot.js changes failed: ' + err.status);
+              console.error('STDOUT:', err.stdout);
+              console.error('STDERR:', err.stderr);
+              const embed = new self.Discord.MessageEmbed();
+              embed.setTitle(
+                  'Bot update complete, but failed to check if ' +
+                  'reboot is necessary.');
+              embed.setColor([255, 0, 255]);
+              msg_.edit(self.common.mention(msg), embed);
+            }
+          }
+        } else {
+          self.error('Failed to pull latest update.');
+          console.error(err);
+          if (stdout && stdout !== 'null') console.log('STDOUT:', stdout);
+          if (stderr && stderr !== 'null') console.error('STDERR:', stderr);
+          const embed = new self.Discord.MessageEmbed();
+          embed.setTitle('Bot update FAILED!');
+          embed.setColor([255, 0, 255]);
+          msg_.edit(self.common.mention(msg), embed);
+        }
+      });
+    });
   }
 
   /**

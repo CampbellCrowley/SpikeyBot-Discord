@@ -33,6 +33,34 @@ function HungryGames() {
 
   this.myName = 'HG';
   this.postPrefix = 'hg ';
+
+  /**
+   * Wrapper for normal `require()` but also deletes cache reference to object
+   * both before and after requiring. This forces the object to be updated in
+   * the future.
+   *
+   * @private
+   * @param {string} name Name of module to require.
+   * @return {Object} The required module.
+   */
+  function tmpRequire(name) {
+    delete require.cache[require.resolve(name)];
+    const obj = require(name);
+    delete require.cache[require.resolve(name)];
+    return obj;
+  }
+
+  const Player = tmpRequire('./hg/Player.js');
+  const Team = tmpRequire('./hg/Team.js');
+  const Event = tmpRequire('./hg/Event.js');
+  /* eslint-disable no-unused-vars */
+  const ArenaEvent = tmpRequire('./hg/ArenaEvent.js');
+  const WeaponEvent = tmpRequire('./hg/WeaponEvent.js');
+  const GuildGame = tmpRequire('./hg/GuildGame.js');
+  const Game = tmpRequire('./hg/Game.js');
+  const OutcomeProbabilities = tmpRequire('./hg/OutcomeProbabilities.js');
+  /* eslint-enable no-unused-vars */
+
   /**
    * The maximum number of bytes allowed to be received from a client in an
    * image upload.
@@ -584,59 +612,6 @@ function HungryGames() {
     8: 0.0005,
     9: 0.0005,
   };
-
-  /**
-   * Probabilities for each choosing an event with each type of outcome.
-   * @typedef {Object} HungryGames~OutcomeProbabilities}
-   *
-   * @property {number} kill Relative probability of events that can kill.
-   * @property {number} wound Relative probability of events that can wound.
-   * @property {number} thrive Relative probability of events that can heal.
-   * @property {number} nothing Relative probability of events that do nothing.
-   */
-
-  /**
-   * A singe instance of a game in a guild.
-   * @typedef {Object} HungryGames~GuildGame
-   *
-   * @property {string[]} excludedUsers Array of user IDs that have been
-   * excluded from the games.
-   * @property {string[]} includedUsers Array of user IDs that will be included
-   * in the next game to be created.
-   * @property {NPC[]} includedNPCs Array of NPC objects to include in the game.
-   * @property {NPC[]} excludedNPCs Array of NPC objects to exclude from the
-   * game.
-   * @property {Object.<number|boolean|string|Object>} options The game options.
-   * @property {boolean} autoPlay Is the game currently autoplaying.
-   * @property {string[]} excludedUsers The ids of the users to exclude from the
-   * games.
-   * @property {
-   *   {
-   *     bloodbath: HungryGames~Event[],
-   *     player: HungryGames~Event[],
-   *     weapon: HungryGames~WeaponEvent[],
-   *     arena: HungryGames~ArenaEvent[]
-   *   }
-   * } customEvents All custom events for the guild.
-   * @property {HungryGames~Game} currentGame The current game in the guild.
-   */
-
-  /**
-   * The container with current game state within a guild's game.
-   * @typedef {Object} HungryGames~Game
-   *
-   * @property {string} name The name of this game.
-   * @property {boolean} inProgress Is the game currently in progress.
-   * @property {HungryGames~Player[]} includedUsers Array of all users currently
-   * in the game.
-   * @property {HungryGames~Team[]} teams All teams in the game.
-   * @property {Object[]} forcedOutcomes List of outcomes and players to force
-   * before the end of the day. Does not affect the simulation, outcomes are
-   * forced by appending events at the end of the simulated day.
-   * @property {boolean} ended Has the game ended.
-   * @property {{num: number, state: number, events: HungryGames~Event[]}} day
-   * Information about the day that was simulated.
-   */
 
   /**
    * All currently tracked games. Mapped by guild ID. In most cases you should
@@ -1296,68 +1271,6 @@ function HungryGames() {
    */
 
   /**
-   * @classdesc Serializable container for data pertaining to a single user.
-   * @class
-   *
-   * @param {string} id The id of the user this object is representing.
-   * @param {string} username The name of the user to show in the game.
-   * @param {string} avatarURL URL to avatar to show for the user in the game.
-   * @param {?string} [nickname=null] The nickname for this user usually
-   * assigned by the guild. If the user does not have a nickname, this will have
-   * the same value as `name`.
-   * @property {string} id The id of the User this Player represents.
-   * @property {string} name The name of this Player.
-   * @property {string} avatarURL The URL to the discord avatar of the User.
-   * @property {string} nickname The nickname for this user usually assigned by
-   * the guild. If the user does not have a nickname, this will have the same
-   * value as `name`.
-   * @property {boolean} living Is the player still alive.
-   * @property {number} bleeding How many days has the player been wounded.
-   * @property {number} rank The current rank of the player in the game.
-   * @property {string} state The current player state (normal, wounded, dead,
-   * zombie).
-   * @property {number} kills The number of players this player has caused to
-   * die.
-   * @property {Object.<number>} weapons The weapons the player currently has
-   * and how many of each.
-   * @property {Object} settings Custom settings for this user associated with
-   * the games.
-   * @property {number} dayOfDeath The day at which the player last died in the
-   * game. Only a valid number if the player is currently dead. Otherwise a
-   * garbage value will be available.
-   */
-  function Player(id, username, avatarURL, nickname = null) {
-    // Replace backtick with Unicode 1FEF Greek Varia because it looks the same,
-    // but it wont ruin formatting.
-    username = username.replaceAll('`', '`');
-    if (typeof nickname === 'string') nickname = nickname.replaceAll('`', '`');
-    // User id.
-    this.id = id;
-    // Username.
-    this.name = username;
-    // URL TO user's current avatar.
-    this.avatarURL = avatarURL;
-    // Nickname for this user.
-    this.nickname = nickname || username;
-    // If this user is still alive.
-    this.living = true;
-    // How many days the players has been wounded.
-    this.bleeding = 0;
-    // The rank at which this user died.
-    this.rank = 1;
-    // Health state.
-    this.state = 'normal';
-    // Number of kills this user has for the game.
-    this.kills = 0;
-    // Map of the weapons this user currently has, and how many of each.
-    this.weapons = {};
-    // Custom settings for the games associated with this player.
-    this.settings = {};
-    // The day when the player died.
-    this.dayOfDeath = -1;
-  }
-
-  /**
    * @classdesc A player object representing a non-player. It makes sense I
    * promise. This represents a Player in the game, that is not attached to a
    * real account. Serializable.
@@ -1450,140 +1363,6 @@ function HungryGames() {
    * @public
    */
   this.NPC = NPC;
-
-  /**
-   * @classdesc Serializable container for data about a team in a game.
-   * @class
-   *
-   * @param {string|number} id The id unique to a guild for this team.
-   * @param {string} name The name of this team.
-   * @param {string[]} players Array of player ids on the team.
-   * @property {string} id The unique id unique to a guild for this team.
-   * @property {string} name The name of this team.
-   * @property {string[]} players Array of player ids on the team.
-   * @property {number} rank The current team rank.
-   * @property {number} numAlive The number of players on the team still alive.
-   */
-  function Team(id, name, players) {
-    // The identifier for this team unique to the server.
-    this.id = id;
-    // The name of the team to show users.
-    this.name = name.slice(0, 101);
-    // The array of player ids on this team.
-    this.players = players;
-    // The final rank this team placed once the final member has died.
-    this.rank = 1;
-    // Number of players still alive on this team.
-    this.numAlive = players.length;
-  }
-  this.Team = Team;
-
-  /**
-   * @classdesc Event that can happen in a game.
-   * @class
-   *
-   * @param {string} message The message to show.
-   * @param {number} [numVictim=0] The number of victims in this event.
-   * @param {number} [numAttacker=0] The number of attackers in this event.
-   * @param {string} [victimOutcome=nothing] The outcome of the victims from
-   * this event.
-   * @param {string} [attackerOutcome=nothing] The outcome of the attackers
-   * from this event.
-   * @param {boolean} [victimKiller=false] Do the victims kill anyone in this
-   * event. Used for calculating kill count.
-   * @param {boolean} [attackerKiller=false] Do the attackers kill anyone in
-   * this event. Used for calculating kill count.
-   * @param {boolean} [battle] Is this event a battle?
-   * @param {number} [state=0] State of event if there are multiple attacks
-   * before the event.
-   * @param {HungryGames~Event[]} [attacks=[]] Array of attacks that take place
-   * before the event.
-   * @property {string} message The message to show.
-   * @property {string} [action] The action to format into a message if this is
-   * a weapon event.
-   * @property {{count: number, outcome: string, killer: boolean, weapon:
-   * ?Object}} victim Information about the victims in this event.
-   * @property {{count: number, outcome: string, killer: boolean, weapon:
-   * ?Object}} attacker Information about the attackers in this event.
-   * @property {{name: string, count: number}} victim.weapon The weapon
-   * information to give to the player.
-   * @property {{name: string, count: number}} attacker.weapon The weapon
-   * information to give to the player.
-   * @property {boolean} battle Is this event a battle event.
-   * @property {number} state The current state of printing the battle messages.
-   * @property {HungryGames~Event[]} attacks The attacks in a battle to show
-   * before the message.
-   * @property {number|string} [consumes] Amount of consumables used if this is
-   * a weapon event.
-   * @property {boolean} [custom=true] If the event is created by the user.
-   */
-  function Event(
-      message, numVictim = 0, numAttacker = 0, victimOutcome = 'nothing',
-      attackerOutcome = 'nothing', victimKiller = false, attackerKiller = false,
-      battle = false, state = 0, attacks = []) {
-    this.message = message;
-    this.victim = {
-      count: numVictim,
-      outcome: victimOutcome,
-      killer: victimKiller,
-      weapon: null,
-    };
-    this.attacker = {
-      count: numAttacker,
-      outcome: attackerOutcome,
-      killer: attackerKiller,
-      weapon: null,
-    };
-    this.battle = battle;
-    this.state = state;
-    this.attacks = attacks;
-    this.custom = true;
-  }
-  this.Event = Event;
-
-  /**
-   * A single battle in an Event.
-   * @typedef {Object} HungryGames~Battle
-   *
-   * @property {string} message The message of this battle event.
-   * @property {{damage: number}} attacker The damage done to the attacker.
-   * @property {{damage: number}} victim The damage done to the victim.
-   */
-  /**
-   * An Arena event storing Events.
-   * @typedef {Object} HungryGames~ArenaEvent
-   *
-   * @property {string} message The message at the start of the arena event.
-   * @property {?{kill: number, wound: number, thrive: number, nothing: number}}
-   * outcomeProbs Overrides the global setting for arena event outcome
-   * probabilities for this event.
-   * @property {HungryGames~Event[]} outcomes All possible events in this arena
-   * event.
-   */
-  /**
-   * An Arena event storing Events.
-   * @typedef {Object} HungryGames~WeaponEvent
-   *
-   * @property {string} [consumable] The formattable string for what to call
-   * this weapons consumable items.
-   * @property {HungryGames~Event[]} outcomes All possible events in this weapon
-   * event.
-   */
-
-  /**
-   * Create a Player from a given Discord.User.
-   *
-   * @private
-   * @param {Discord~User|Discord~GuildMember} member User or GuildMember to
-   * make a Player from.
-   * @return {HungryGames~Player} Player object created from User.
-   */
-  function makePlayer(member) {
-    const user = member.user || member;
-    return new Player(
-        user.id, user.username, user.displayAvatarURL({format: 'png'}),
-        member.nickname);
-  }
 
   /**
    * Delay a message to send at the given time in milliseconds since epoch.
@@ -1686,74 +1465,44 @@ function HungryGames() {
             self.common.reply(
                 msg, 'Creating a new game with settings from the last game.');
           }
-          find(id).currentGame.name = find(id).currentGame.customName ||
-              (msg.guild.name + '\'s Hungry Games');
-          find(id).currentGame.ended = false;
-          find(id).currentGame.day = {num: -1, state: 0, events: []};
-          find(id).currentGame.includedUsers = getAllPlayers(
-              msg.guild.members, find(id).excludedUsers,
-              find(id).options.includeBots, find(id).includedUsers,
-              find(id).options.excludeNewUsers, find(id).includedNPCs);
-          find(id).currentGame.numAlive =
-              find(id).currentGame.includedUsers.length;
-          find(id).currentGame.forcedOutcomes = [];
+          find(id).currentGame = new Game(
+              find(id).currentGame.customName ||
+                  (msg.guild.name + '\'s Hungry Games'),
+              getAllPlayers(
+                  msg.guild.members, find(id).excludedUsers,
+                  find(id).options.includeBots, find(id).includedUsers,
+                  find(id).options.excludeNewUsers, find(id).includedNPCs));
         } else {
           if (!silent) {
             self.common.reply(
                 msg, 'Creating a new game with default settings.');
           }
-          find(id).currentGame = {
-            name: msg.guild.name + '\'s Hungry Games',
-            inProgress: false,
-            includedUsers: getAllPlayers(
-                msg.guild.members, find(id).excludedUsers,
-                find(id).options.includeBots, find(id).includedUsers,
-                find(id).options.excludeNewUsers, find(id).includedNPCs),
-            ended: false,
-            day: {num: -1, state: 0, events: []},
-            forcedOutcomes: [],
-          };
-          find(id).currentGame.numAlive =
-              find(id).currentGame.includedUsers.length;
+          find(id).currentGame = new Game(
+              `${msg.guild.name}'s Hungry Games`,
+              getAllPlayers(
+                  msg.guild.members, find(id).excludedUsers,
+                  find(id).options.includeBots, find(id).includedUsers,
+                  find(id).options.excludeNewUsers, find(id).includedNPCs));
         }
       } else {
-        games[id] = {
-          excludedUsers: [],
-          includedUsers: [],
-          excludedNPCs: [],
-          includedNPCs: [],
-          disabledEvents: {bloodbath: [], player: [], arena: {}, weapon: {}},
-          customEvents: {bloodbath: [], player: [], arena: [], weapon: {}},
-          currentGame: {
-            name: msg.guild.name + '\'s Hungry Games',
-            inProgress: false,
-            teams: [],
-            ended: false,
-            day: {num: -1, state: 0, events: []},
-            forcedOutcomes: [],
-          },
-          autoPlay: false,
-        };
-        games[id].currentGame.includedUsers = getAllPlayers(
-            msg.guild.members, games[id].excludedUsers, false,
-            games[id].includedUsers, false);
-        find(id).currentGame.numAlive =
-            find(id).currentGame.includedUsers.length;
         const optKeys = Object.keys(defaultOptions);
-        find(id).options = {};
+        const opts = {};
         for (const i in optKeys) {
           if (typeof optKeys[i] !== 'string') continue;
           if (typeof defaultOptions[optKeys[i]].value === 'object') {
-            find(id).options[optKeys[i]] =
+            opts[optKeys[i]] =
                 Object.assign({}, defaultOptions[optKeys[i]].value);
           } else {
-            find(id).options[optKeys[i]] = defaultOptions[optKeys[i]].value;
+            opts[optKeys[i]] = defaultOptions[optKeys[i]].value;
           }
         }
         if (msg.guild.memberCount > 100) {
-          find(id).options.showLivingPlayers = false;
-          find(id).options.numDaysShowDeath = 1;
+          opts.excludeNewUsers = true;
         }
+        games[id] = new GuildGame(
+            opts, `${msg.guild.name}'s Hungry Games`,
+            getAllPlayers(msg.guild.members, [], false, [], false));
+
         if (!silent) {
           self.common.reply(
               msg,
@@ -2380,7 +2129,13 @@ function HungryGames() {
       return prefix + '`' + shortName + '`';
     });
     if (find(id).options.teamSize == 0) {
-      statusList.sort();
+      statusList.sort((a, b) => {
+        a = a.toLocaleLowerCase();
+        b = b.toLocaleLowerCase();
+        if (a < b) return -1;
+        if (a > b) return 1;
+        return 0;
+      });
     }
 
     const numCols = calcColNum(statusList.length > 10 ? 3 : 2, statusList);
@@ -5559,7 +5314,13 @@ function HungryGames() {
         return prefix + '`' + shortName + '`';
       });
       if (find(id).options.teamSize == 0) {
-        statusList.sort();
+        statusList.sort((a, b) => {
+          a = a.toLocaleLowerCase();
+          b = b.toLocaleLowerCase();
+          if (a < b) return -1;
+          if (a > b) return 1;
+          return 0;
+        });
       }
       if (statusList.length >= 5) {
         const numCols = calcColNum(statusList.length > 10 ? 3 : 2, statusList);
@@ -7095,7 +6856,7 @@ function HungryGames() {
     for (let i = 0; cnt < 4; i++) {
       const nextUser = users[i % users.length];
       if (typeof nextUser === 'undefined') continue;
-      players.push(makePlayer(nextUser.user));
+      players.push(Player.from(nextUser.user));
       cnt++;
     }
     try {
@@ -7647,7 +7408,15 @@ function HungryGames() {
         let request = https.request;
         if (url.startsWith('http://')) request = http.request;
 
-        const req = request(url, onIncoming);
+        let req;
+        try {
+          req = request(url, onIncoming);
+        } catch (err) {
+          self.warn('Failed to request npc avatar: ' + url);
+          // console.error(err);
+          self.common.reply(msg, err.message);
+          return;
+        }
         req.on('error', (err) => {
           self.error('Failed to fetch image: ' + url);
           console.error(err);

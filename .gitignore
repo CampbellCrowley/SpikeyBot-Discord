@@ -1,6 +1,7 @@
 node_modules/
 recordings/
-reboot.dat
+save/reboot.json
+save/reboot-*.json
 *.log
 auth.js
 save/guilds/*

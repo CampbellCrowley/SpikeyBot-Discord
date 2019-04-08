@@ -36,10 +36,12 @@ function WebAccount() {
 
   app.on('error', function(err) {
     if (err.code === 'EADDRINUSE') {
-      self.error('Accounts failed to bind to port because it is in use.');
+      self.warn(
+          'Accounts failed to bind to port because it is in use. (' + err.port +
+          ')');
       self.shutdown(true);
     } else {
-      console.error('Account failed to bind to port for unknown reason.', err);
+      self.error('Account failed to bind to port for unknown reason.', err);
     }
   });
 
