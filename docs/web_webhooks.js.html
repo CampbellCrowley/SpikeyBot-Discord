@@ -137,6 +137,17 @@ function WebCommands() {
     if (app) app.close();
   };
 
+  app.on('error', function(err) {
+    if (err.code === 'EADDRINUSE') {
+      self.warn(
+          'Webhooks failed to bind to port because it is in use. (' + err.port +
+          ')');
+      self.shutdown(true);
+    } else {
+      self.error('Webhooks failed to bind to port for unknown reason.', err);
+    }
+  });
+
   /**
    * Handler for all http requests.
    *

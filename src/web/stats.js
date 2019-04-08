@@ -29,6 +29,17 @@ function WebStats() {
     if (postTimeout) self.client.clearTimeout(postTimeout);
   };
 
+  app.on('error', function(err) {
+    if (err.code === 'EADDRINUSE') {
+      self.warn(
+          'Stats failed to bind to port because it is in use. (' + err.port +
+          ')');
+      self.shutdown(true);
+    } else {
+      self.error('Webhooks failed to bind to port for unknown reason.', err);
+    }
+  });
+
   /**
    * The timestamp at which the stats were last requested.
    * @private

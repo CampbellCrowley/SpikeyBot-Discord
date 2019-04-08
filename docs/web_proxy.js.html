@@ -315,9 +315,11 @@ function WebProxy() {
   app.on('error', function(err) {
     if (err.code === 'EADDRINUSE') {
       self.shutdown(true);
-      console.error('Proxy failed to bind to port because it is in use.', err);
+      self.warn(
+          'Proxy failed to bind to port because it is in use. (' + err.port +
+          ')');
     } else {
-      console.error('Proxy failed to bind to port for unknown reason.', err);
+      self.error('Proxy failed to bind to port for unknown reason.', err);
     }
   });
 

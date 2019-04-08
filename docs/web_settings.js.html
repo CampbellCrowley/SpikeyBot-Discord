@@ -158,7 +158,7 @@ function WebSettings() {
 
   app.on('error', function(err) {
     if (err.code === 'EADDRINUSE') {
-      self.error(
+      self.warn(
           'Settings failed to bind to port because it is in use. (' + err.port +
           ')');
       startClient();

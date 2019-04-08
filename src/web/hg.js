@@ -34,7 +34,7 @@ function HGWeb() {
       self.shutdown(true);
       startClient();
     } else {
-      console.error('HGWeb failed to bind to port for unknown reason.', err);
+      self.error('HGWeb failed to bind to port for unknown reason.', err);
     }
   });
 

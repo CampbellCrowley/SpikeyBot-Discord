@@ -681,9 +681,14 @@ function SpikeyBot() {
                   const embed = new Discord.MessageEmbed();
                   embed.setTitle('Reboot complete.');
                   embed.setColor([255, 0, 255]);
-                  msg_.edit(embed);
+                  return msg_.edit(embed);
                 })
-                .catch(() => {});
+                .catch((err) => {
+                  common.error('Failed to edit reboot message.');
+                  console.error(err);
+                });
+          } else {
+            common.error('Failed to find channel: ' + parsed.channel.id);
           }
           if (logChannel && !isDev && !testInstance) {
             let additional = '';
