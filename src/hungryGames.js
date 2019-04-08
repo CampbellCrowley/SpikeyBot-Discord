@@ -8256,6 +8256,7 @@ function HungryGames() {
         })
         .catch((err) => {
           console.error(err);
+          find(id).reactMessage = null;
           cb('Unable to find message with reactions. Was it deleted?');
         });
     let list = new self.Discord.Collection();
