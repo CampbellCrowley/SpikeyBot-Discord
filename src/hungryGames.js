@@ -7647,7 +7647,15 @@ function HungryGames() {
         let request = https.request;
         if (url.startsWith('http://')) request = http.request;
 
-        const req = request(url, onIncoming);
+        let req;
+        try {
+          req = request(url, onIncoming);
+        } catch (err) {
+          self.warn('Failed to request npc avatar: ' + url);
+          // console.error(err);
+          self.common.reply(msg, err.message);
+          return;
+        }
         req.on('error', (err) => {
           self.error('Failed to fetch image: ' + url);
           console.error(err);
