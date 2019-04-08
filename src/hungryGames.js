@@ -1626,7 +1626,7 @@ function HungryGames() {
               color = 0x0;
             }
           }
-          p.settings[setting] = color;
+          p.settings[setting] = color >>> 0;
         } else {
           p.settings[setting] = info.status;
         }
