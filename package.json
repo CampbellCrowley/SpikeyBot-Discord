@@ -59,6 +59,7 @@
     "lintforcommit": "TOLINT=\"$(git diff --cached --name-only --diff-filter=ACM | grep \".js$\" | grep -v eslintrc.js | grep -v \"^docs/\" | tr '\\n' ' ')\";if [ -z \"$TOLINT\" ]; then echo 'Nothing to lint'; else eslint $TOLINT; fi",
     "test": "mocha --delay",
     "test:hg": "mocha --delay --grep \"START|Hungry Games|END\"",
+    "test:hg:npc": "mocha --delay --grep \"START|NPC|END\"",
     "test:main": "mocha --delay --grep \"START|Main Module|END\"",
     "run": "npm start",
     "run:rem": "npm run start:rem",
