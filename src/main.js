@@ -343,7 +343,8 @@ function Main() {
     process.on('SIGHUP', sigint);
     process.on('SIGTERM', sigint);
 
-    if (!self.client.shard || self.client.shard.ids[0] == 0) {
+    if (!self.client.shard || !self.client.shard.ids ||
+        self.client.shard.ids[0] == 0) {
       fs.readdir(self.common.userSaveDir, function(err, items) {
         if (err) return;
         for (let i = 0; i < items.length; i++) {
