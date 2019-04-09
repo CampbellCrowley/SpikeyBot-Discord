@@ -6,9 +6,10 @@
 [![Dependencies Status](https://david-dm.org/CampbellCrowley/SpikeyBot-Discord.svg)](https://david-dm.org/CampbellCrowley/SpikeyBot-Discord)
 [![Last Commit](https://img.shields.io/github/last-commit/CampbellCrowley/SpikeyBot-Discord.svg)](https://github.com/CampbellCrowley/SpikeyBot-Discord)
 [![Patreon](https://img.shields.io/badge/donate-patreon-F96854.svg)](https://www.patreon.com/CampbellCrowley)
+[![PayPal](https://img.shields.io/badge/donate-paypal-0070BA.svg)](https://www.paypal.me/SpikeyBot)
   
 ### Bot's website: [SpikeyBot.com](https://www.spikeybot.com/)
-### Support my development: [Patreon](https://www.patreon.com/campbellcrowley/)
+### Support my development: [Patreon](https://www.patreon.com/campbellcrowley/) [PayPal](https://www.paypal.me/spikeybot)
 
 
 # Commands
