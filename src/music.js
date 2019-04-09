@@ -735,7 +735,7 @@ function Music() {
     // Setup readable stream for audio data.
     broadcast.current.readable = new Readable();
     broadcast.current.readable._read = function() {};
-    broadcast.broadcast = self.client.createVoiceBroadcast();
+    broadcast.broadcast = self.client.voice.createBroadcast();
     primaryStreamOptions.seek = broadcast.current.seek;
 
     broadcast.broadcast.play(broadcast.current.readable, primaryStreamOptions);
