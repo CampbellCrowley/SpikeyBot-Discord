@@ -712,7 +712,11 @@ function Music() {
   function makeBroadcast(broadcast) {
     // Setup voice connection listeners.
     if (!broadcast.voice || !broadcast.voice.channel) return;
-    broadcast.voice.removeListener('disconnect', onDC);
+
+    // This isn't normally a good idea, but there are no other disconnect
+    // listeners on this voice connection ever so this will work fine until that
+    // changes.
+    broadcast.voice.removeAllListeners('disconnect');
     broadcast.voice.on('disconnect', onDC);
     /**
      * Fires on when voice connection is disconnected. Cleans up anything that
