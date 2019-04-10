@@ -5756,6 +5756,14 @@ function HungryGames() {
      * @param {http.IncomingMessage} incoming
      */
     function onIncoming(incoming) {
+      if (incoming.statusCode != 200 ) {
+        incoming.destroy();
+        self.common.reply(
+            msg, 'Hmm, that link doesn\'t appear to work.',
+            'Status code: ' + incoming.statusCode);
+        msg.channel.stopTyping();
+        return;
+      }
       const cl = incoming.headers['content-length'];
       const type = incoming.headers['content-type'];
       const supported = [
@@ -5768,10 +5776,20 @@ function HungryGames() {
       self.debug('MIME: ' + type + ', CL: ' + cl);
       if (!supported.includes(type)) {
         incoming.destroy();
-        self.common.reply(msg, 'The provided filetype is not supported.', type);
+        self.common.reply(
+            msg, 'The provided filetype is not supported.',
+            type || 'unknown filetype');
         msg.channel.stopTyping();
         return;
-      } else if (!cl || cl > self.maxBytes) {
+      } else if (!cl) {
+        incoming.destroy();
+        self.common.reply(
+            msg, 'Please ensure the image is not larger than ' +
+                (self.maxBytes / 1000 / 1000) + 'MB.',
+            'Unable to determine download size.');
+        msg.channel.stopTyping();
+        return;
+      } else if (cl > self.maxBytes) {
         incoming.destroy();
         self.common.reply(
             msg, 'Please ensure the image is not larger than ' +
@@ -5790,7 +5808,7 @@ function HungryGames() {
           self.common.reply(
               msg, 'Please ensure the image is not larger than ' +
                   (self.maxBytes / 1000 / 1000) + 'MB.',
-              (cl / 1000 / 1000) + 'MB');
+              '>' + (Math.round(reqBytes / 1000 / 100) / 10) + 'MB');
           msg.channel.stopTyping();
         }
       });
