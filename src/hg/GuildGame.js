@@ -109,6 +109,17 @@ function GuildGame(
    */
   this.customEvents =
       customEvents || {bloodbath: [], player: [], arena: [], weapon: {}};
+
+  // Force custom events to have custom event flag. (This is here due to
+  // updating from previous version without custom event flag).
+  if (this.customEvents) {
+    for (const cat of Object.values(this.customEvents)) {
+      for (const evt of Object.values(cat)) {
+        if (typeof evt === 'object') evt.custom = true;
+      }
+    }
+  }
+
   /**
    * Current game information.
    * @public
@@ -132,6 +143,30 @@ function GuildGame(
    */
   this.disabledEvents =
       disabledEvents || {bloodbath: [], player: [], arena: {}, weapon: {}};
+
+  /**
+   * The channel id a command was last sent from that affected this guild game.
+   * @public
+   * @type {?string}
+   * @default
+   */
+  this.channel = null;
+  /**
+   * The id of the user that last sent a command which interacted with this
+   * guild game.
+   * @public
+   * @type {?string}
+   * @default
+   */
+  this.author = null;
+
+  /**
+   * The channel id where the game messages are currently being sent in.
+   * @public
+   * @type {?string}
+   * @default
+   */
+  this.outputChannel = null;
 
   /**
    * Message ID of the message to fetch reactions from for join via react.
@@ -232,5 +267,27 @@ function GuildGame(
     return `Player(s) will be ${state} by the end of the day.`;
   };
 }
+
+/**
+ * Create a GuildGame from data parsed from file. Similar to copy constructor.
+ * @public
+ * @param {Object} data GuildGame like object.
+ * @return {HungryGames~GuildGame}
+ */
+GuildGame.from = function(data) {
+  const game = new GuildGame(
+      data.id, data.options, data.name, data.includedUsers, data.excludedUsers,
+      data.includedNPCs, data.excludedNPCs, data.customEvents,
+      data.disabledEvents);
+  game.autoPlay = data.autoPlay || false;
+  game.reactMessage = data.reactMessage || null;
+  game.channel = data.channel || null;
+  game.author = data.author || null;
+  game.outputChannel = data.outputChannel || null;
+  if (data.currentGame) {
+    game.currentGame = Game.from(data.currentGame);
+  }
+  return game;
+};
 
 module.exports = GuildGame;

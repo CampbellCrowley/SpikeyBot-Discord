@@ -46,20 +46,21 @@ function HungryGames() {
     return require(name);
   }
 
-  const GuildGame = tmpRequire('./hg/GuildGame.js');
-  const Game = tmpRequire('./hg/Game.js');
-  const Player = tmpRequire('./hg/Player.js');
-  const UserIconUrl = tmpRequire('./hg/UserIconUrl.js');
-  const Team = tmpRequire('./hg/Team.js');
-  const Event = tmpRequire('./hg/Event.js');
-  const Messages = tmpRequire('./hg/Messages.js');
   /* eslint-disable no-unused-vars */
   const FinalEvent = tmpRequire('./hg/FinalEvent.js');
   const ArenaEvent = tmpRequire('./hg/ArenaEvent.js');
   const WeaponEvent = tmpRequire('./hg/WeaponEvent.js');
   const Battle = tmpRequire('./hg/Battle.js');
   const OutcomeProbabilities = tmpRequire('./hg/OutcomeProbabilities.js');
+  const Day = tmpRequire('./hg/Day.js');
   /* eslint-enable no-unused-vars */
+  const Messages = tmpRequire('./hg/Messages.js');
+  const UserIconUrl = tmpRequire('./hg/UserIconUrl.js');
+  const Player = tmpRequire('./hg/Player.js');
+  const Team = tmpRequire('./hg/Team.js');
+  const Game = tmpRequire('./hg/Game.js');
+  const Event = tmpRequire('./hg/Event.js');
+  const GuildGame = tmpRequire('./hg/GuildGame.js');
   const Simulator = tmpRequire('./hg/Simulator.js');
 
   /**
@@ -1169,9 +1170,32 @@ function HungryGames() {
       id = NPC.createID();
     }
     Player.call(this, id, username, avatarURL);
+    /**
+     * Always true.
+     * @public
+     * @default
+     * @constant
+     * @type {boolean}
+     */
     this.isNPC = true;
+    /**
+     * Equivalent to `this.name` for compatibility.
+     * @public
+     * @type {string}
+     */
     this.username = this.name;
   }
+  /**
+   * Create an NPC from an Object. Similar to copy-constructor.
+   * @public
+   * @param {Object} data NPC like Object.
+   * @return {HungryGames~NPC} Copied NPC.
+   */
+  NPC.from = function(data) {
+    const npc = new NPC(data.username, data.avatarURL, data.id);
+    Object.assign(npc, Player.from(data));
+    return npc;
+  };
   /**
    * Generate a userID for an NPC.
    * @public
@@ -6469,10 +6493,8 @@ function HungryGames() {
       return null;
     }
 
-    if (games[id].legacyEvents) {
-      games[id].customEvents = games[id].legacyEvents;
-      delete games[id].legacyEvents;
-    }
+    games[id] = GuildGame.from(games[id]);
+    games[id].id = id;
 
     // Flush default and stale options.
     if (games[id].options) {
@@ -6508,16 +6530,6 @@ function HungryGames() {
               delete games[id].options[opt][el];
             }
           });
-        }
-      }
-    }
-
-    // Force custom events to have custom event flag. (This is here due to
-    // updating from previous version without custom event flag).
-    if (games[id].customEvents) {
-      for (const cat of Object.values(games[id].customEvents)) {
-        for (const evt of Object.values(cat)) {
-          if (typeof evt === 'object') evt.custom = true;
         }
       }
     }

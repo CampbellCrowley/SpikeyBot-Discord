@@ -1,5 +1,6 @@
 // Copyright 2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
+const Discord = require('discord.js');
 
 /**
  * @classdesc Serializable container for data pertaining to a single user.
@@ -42,7 +43,7 @@ function Player(id, username, avatarURL, nickname = null) {
   // Username.
   this.name = username;
   // URL TO user's current avatar.
-  this.avatarURL = avatarURL;
+  this.avatarURL = avatarURL || '';
   // Nickname for this user.
   this.nickname = nickname || username;
   // If this user is still alive.
@@ -64,18 +65,38 @@ function Player(id, username, avatarURL, nickname = null) {
 }
 
 /**
- * Create a Player from a given Discord.User.
+ * Create a Player from a given Discord.User or Player-like Object. Can be used
+ * as a copy-constructor.
  *
  * @private
- * @param {Discord~User|Discord~GuildMember} member User or GuildMember to
- * make a Player from.
- * @return {HungryGames~Player} Player object created from User.
+ * @param {Discord~User|Discord~GuildMember|Object} member Object, User or
+ * GuildMember to make a Player from.
+ * @return {HungryGames~Player} Player object created.
  */
 Player.from = function(member) {
-  const user = member.user || member;
-  return new Player(
-      user.id, user.username, user.displayAvatarURL({format: 'png'}),
-      member.nickname);
+  let player;
+  if (typeof member === 'string') {
+    player = new Player(member, member);
+  } else {
+    const isDiscord = (member instanceof Discord.GuildMember) ||
+        (member instanceof Discord.User);
+    const user = isDiscord ? member.user || member : member;
+    const avatar =
+        isDiscord ? user.displayAvatarURL({format: 'png'}) : user.avatarURL;
+    const name = isDiscord ? user.username : member.name;
+    player = new Player(user.id, name, avatar, member.nickname);
+    if (!isDiscord) {
+      player.living = member.living || true;
+      player.bleeding = member.bleeding || 0;
+      player.rank = member.rank || 1;
+      player.state = member.state || 'normal';
+      player.kills = member.kills || 9;
+      player.weapons = member.weapons || {};
+      player.settings = member.settings || {};
+      player.dayOfDeath = member.dayOfDeath || -1;
+    }
+  }
+  return player;
 };
 
 module.exports = Player;

@@ -1,6 +1,7 @@
 // Copyright 2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const Day = require('./Day.js');
+const Player = require('./Player.js');
 
 /**
  * @classdesc The container with current game state within a guild's game.
@@ -69,5 +70,23 @@ function Game(name, includedUsers) {
    */
   this.numAlive = this.includedUsers.length;
 }
+
+/**
+ * Create a new Game from an object. Similar to a copy constructor.
+ * @public
+ * @param {Object} data Game like object to copy.
+ * @return {HungryGames~Game} Created Game object.
+ */
+Game.from = function(data) {
+  const game = new Game(data.name, data.includedUsers);
+  game.inProgress = data.inProgress || false;
+  game.teams = data.teams || [];
+  game.forcedOutcomes = data.forcedOutcomes || [];
+  game.ended = data.ended || false;
+  game.day = Day.from(data.day);
+  game.includedUsers = game.includedUsers.map((el) => Player.from(el));
+  game.numAlive = data.numAlive || game.includedUsers.length;
+  return game;
+};
 
 module.exports = Game;

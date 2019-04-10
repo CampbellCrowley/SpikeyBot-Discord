@@ -1450,8 +1450,11 @@ function HGWeb() {
       replyNoPerm(socket, 'forcePlayerState');
       return;
     }
+    const game = hg().getGame(gId);
+    if (!game) return;
     socket.emit(
-        'message', hg().forcePlayerState(gId, list, state, text, persists));
+        'message',
+        hg().getGame(gId).forcePlayerState(gId, list, state, text, persists));
     if (typeof cb === 'function') cb();
   }
   this.forcePlayerState = forcePlayerState;
