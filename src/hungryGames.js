@@ -7,7 +7,6 @@ const https = require('https');
 const crypto = require('crypto');
 const mkdirp = require('mkdirp'); // mkdir -p
 const rimraf = require('rimraf'); // rm -rf
-const funTranslator = require('./lib/funTranslators.js');
 const FuzzySearch = require('fuzzy-search');
 require('./subModule.js')(HungryGames);  // Extends the SubModule class.
 
@@ -36,8 +35,7 @@ function HungryGames() {
 
   /**
    * Wrapper for normal `require()` but also deletes cache reference to object
-   * both before and after requiring. This forces the object to be updated in
-   * the future.
+   * before requiring. This forces the object to be updated in the future.
    *
    * @private
    * @param {string} name Name of module to require.
@@ -45,21 +43,31 @@ function HungryGames() {
    */
   function tmpRequire(name) {
     delete require.cache[require.resolve(name)];
-    const obj = require(name);
-    delete require.cache[require.resolve(name)];
-    return obj;
+    return require(name);
   }
 
-  const Player = tmpRequire('./hg/Player.js');
-  const Team = tmpRequire('./hg/Team.js');
-  const Event = tmpRequire('./hg/Event.js');
-  /* eslint-disable no-unused-vars */
-  const ArenaEvent = tmpRequire('./hg/ArenaEvent.js');
-  const WeaponEvent = tmpRequire('./hg/WeaponEvent.js');
   const GuildGame = tmpRequire('./hg/GuildGame.js');
   const Game = tmpRequire('./hg/Game.js');
+  const Player = tmpRequire('./hg/Player.js');
+  const UserIconUrl = tmpRequire('./hg/UserIconUrl.js');
+  const Team = tmpRequire('./hg/Team.js');
+  const Event = tmpRequire('./hg/Event.js');
+  const Messages = tmpRequire('./hg/Messages.js');
+  /* eslint-disable no-unused-vars */
+  const FinalEvent = tmpRequire('./hg/FinalEvent.js');
+  const ArenaEvent = tmpRequire('./hg/ArenaEvent.js');
+  const WeaponEvent = tmpRequire('./hg/WeaponEvent.js');
+  const Battle = tmpRequire('./hg/Battle.js');
   const OutcomeProbabilities = tmpRequire('./hg/OutcomeProbabilities.js');
   /* eslint-enable no-unused-vars */
+  const Simulator = tmpRequire('./hg/Simulator.js');
+
+  /**
+   * Current {@link HungryGames~Messages} instance.
+   * @public
+   * @type {HungryGames~Messages}
+   */
+  this.messages = new Messages();
 
   /**
    * The maximum number of bytes allowed to be received from a client in an
@@ -126,16 +134,6 @@ function HungryGames() {
    */
   const eventFile = './save/hgEvents.json';
   /**
-   * The file path to read messages.
-   * @see {@link HungryGames~messages}
-   *
-   * @private
-   * @type {string}
-   * @constant
-   * @default
-   */
-  const messageFile = './save/hgMessages.json';
-  /**
    * The file path to read battle events.
    * @see {@link HungryGames~battles}
    *
@@ -156,43 +154,6 @@ function HungryGames() {
    */
   const weaponsFile = './save/hgWeapons.json';
 
-  /**
-   * The file path to read attacking left image.
-   *
-   * @private
-   * @type {string}
-   * @constant
-   * @default
-   */
-  const fistLeft = './img/fist_left.png';
-  /**
-   * The file path to read attacking right image.
-   *
-   * @private
-   * @type {string}
-   * @constant
-   * @default
-   */
-  const fistRight = './img/fist_right.png';
-  /**
-   * The file path to read attacking both directions image.
-   *
-   * @private
-   * @type {string}
-   * @constant
-   * @default
-   */
-  const fistBoth = './img/fist_both.png';
-
-  /**
-   * The size of the icon to request from discord.
-   *
-   * @private
-   * @type {number}
-   * @constant
-   * @default
-   */
-  const fetchSize = 128;
 
   /**
    * Number of events to show on a single page of events.
@@ -495,27 +456,6 @@ function HungryGames() {
   this.defaultOptions = defaultOptions;
 
   /**
-   * If a larger percentage of people die in one day than this value, then show
-   * a relevant message.
-   *
-   * @private
-   * @type {number}
-   * @constant
-   * @default
-   */
-  const lotsOfDeathRate = 0.75;
-  /**
-   * If a lower percentage of people die in one day than this value, then show a
-   * relevant message.
-   *
-   * @private
-   * @type {number}
-   * @constant
-   * @default
-   */
-  const littleDeathRate = 0.15;
-
-  /**
    * Default color to choose for embedded messages.
    *
    * @private
@@ -593,27 +533,6 @@ function HungryGames() {
   const alph = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
   /**
-   * Probability of each amount of people being chosen for an event. Must total
-   * to 1.0
-   *
-   * @private
-   * @type {Object.<number>}
-   * @constant
-   * @default
-   */
-  const multiEventUserDistribution = {
-    1: 0.66,
-    2: 0.259,
-    3: 0.03,
-    4: 0.02,
-    5: 0.01,
-    6: 0.015,
-    7: 0.005,
-    8: 0.0005,
-    9: 0.0005,
-  };
-
-  /**
    * All currently tracked games. Mapped by guild ID. In most cases you should
    * NOT reference this directly. Use {@link HungryGames~find} to get the game
    * object for a guild.
@@ -624,15 +543,6 @@ function HungryGames() {
    * @default
    */
   const games = {};
-  /**
-   * All messages to show for games. Parsed from file.
-   * @see {@link HungryGames~messageFile}
-   *
-   * @private
-   * @type {Object.<string[]>}
-   * @default
-   */
-  let messages = {};
   /**
    * All attacks and outcomes for battles.
    * @see {@link HungryGames~battleFile}
@@ -767,35 +677,6 @@ function HungryGames() {
       console.log('HG: Re-reading default events from file');
     }
     updateEvents();
-  });
-
-  /**
-   * Parse all messages from file.
-   *
-   * @private
-   */
-  function updateMessages() {
-    fs.readFile(messageFile, function(err, data) {
-      if (err) return;
-      try {
-        const parsed = JSON.parse(data);
-        if (parsed) {
-          messages = deepFreeze(parsed);
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    });
-  }
-  updateMessages();
-  fs.watchFile(messageFile, function(curr, prev) {
-    if (curr.mtime == prev.mtime) return;
-    if (self.initialized) {
-      self.debug('Re-reading messages from file');
-    } else {
-      console.log('HG: Re-reading messages from file');
-    }
-    updateMessages();
   });
 
   /**
@@ -1107,8 +988,8 @@ function HungryGames() {
 
     Object.keys(eventHandlers).forEach((el) => delete eventHandlers[el]);
 
+    self.messages.shutdown();
     fs.unwatchFile(eventFile);
-    fs.unwatchFile(messageFile);
     fs.unwatchFile(battleFile);
     fs.unwatchFile(weaponsFile);
   };
@@ -1340,7 +1221,7 @@ function HungryGames() {
           console.error(err);
           return;
         }
-        image.resize(fetchSize, fetchSize);
+        image.resize(UserIconUrl.fetchSize, UserIconUrl.fetchSize);
         image.getBuffer(Jimp.MIME_PNG, (err, buffer) => {
           if (err) {
             self.error('Failed to convert image into buffer: ' + avatar);
@@ -1412,6 +1293,24 @@ function HungryGames() {
       weapon: weapons,
       arena: defaultArenaEvents,
     };
+  };
+  /**
+   * Returns the object storing all default {@link HungryGames~Battle}s parsed
+   * from file.
+   * @public
+   * @return {HungryGames~Battle[]}
+   */
+  this.getDefaultBattles = function() {
+    return battles;
+  };
+  /**
+   * Returns the object storing all default {@link HungryGames~Weapon}s parsed
+   * from file.
+   * @public
+   * @return {HungryGames~Weapon[]}
+   */
+  this.getDefaultWeapons = function() {
+    return weapons;
   };
 
   // Create //
@@ -1500,7 +1399,7 @@ function HungryGames() {
           opts.excludeNewUsers = true;
         }
         games[id] = new GuildGame(
-            opts, `${msg.guild.name}'s Hungry Games`,
+            id, opts, `${msg.guild.name}'s Hungry Games`,
             getAllPlayers(msg.guild.members, [], false, [], false));
 
         if (!silent) {
@@ -2073,7 +1972,7 @@ function HungryGames() {
     createGame(msg, id, true, loadingComplete);
 
     const finalMessage = new self.Discord.MessageEmbed();
-    finalMessage.setTitle(getMessage('gameStart'));
+    finalMessage.setTitle(self.messages.get('gameStart'));
     finalMessage.setColor(defaultColor);
 
     const numUsers = find(id).currentGame.includedUsers.length;
@@ -2227,11 +2126,16 @@ function HungryGames() {
    * End the games in the given guild as the given user.
    *
    * @public
-   * @param {string} uId The id of the user who trigged the games to end.
+   * @param {string|Discord~Message} uId The id of the user who trigged the
+   * games to end, or a Discord message sent by the user who triggered this.
    * @param {string} gId The id of the guild to end the games in.
    */
   this.endGame = function(uId, gId) {
-    endGame(makeMessage(uId, gId, null), gId, true);
+    if (typeof uId === 'object') {
+      endGame(uId, gId);
+    } else {
+      endGame(makeMessage(uId, gId, null), gId, true);
+    }
   };
   /**
    * Pause autoplay in the given guild as the given user.
@@ -2275,6 +2179,7 @@ function HungryGames() {
       softMentions: {
         members: new self.Discord.Collection(),
         users: new self.Discord.Collection(),
+        roles: new self.Discord.Collection(),
       },
       mentions: {
         channels: new self.Discord.Collection(),
@@ -2490,1553 +2395,37 @@ function HungryGames() {
               ' I have the "Embed Links" permission in this channel.');
       return;
     }
-    find(id).currentGame.day.state = 1;
-    find(id).currentGame.day.num++;
-    find(id).currentGame.day.events = [];
-
-    const userPool = find(id).currentGame.includedUsers.filter(function(obj) {
-      return obj.living;
-    });
-    const startingAlive = userPool.length;
-    let userEventPool;
-    let doArenaEvent = false;
-    let arenaEvent;
-
-    if (find(id).currentGame.day.num === 0) {
-      userEventPool =
-          defaultBloodbathEvents.concat(find(id).customEvents.bloodbath);
-      if (find(id).disabledEvents && find(id).disabledEvents.bloodbath) {
-        userEventPool = userEventPool.filter((el) => {
-          return !find(id).disabledEvents.bloodbath.find((d) => {
-            return self.eventsEqual(d, el);
-          });
-        });
-      }
-      if (userEventPool.length == 0) {
-        self.common.reply(
-            msg, 'All bloodbath events have been disabled! Please enable ' +
-                'events so that something can happen in the games!');
-        endGame(msg, id);
-        return;
-      }
-    } else {
-      doArenaEvent = startingAlive > 2 && find(id).options.arenaEvents &&
-          Math.random() < find(id).options.probabilityOfArenaEvent;
-      if (doArenaEvent) {
-        const arenaEventPool =
-            defaultArenaEvents.concat(find(id).customEvents.arena);
-        do {
-          const index = Math.floor(Math.random() * arenaEventPool.length);
-          arenaEvent = arenaEventPool[index];
-          userEventPool = arenaEvent.outcomes;
-          if (find(id).disabledEvents && find(id).disabledEvents.arena &&
-              find(id).disabledEvents.arena[arenaEvent.message]) {
-            userEventPool = userEventPool.filter((el) => {
-              return !find(id).disabledEvents.arena[arenaEvent.message].find(
-                  (d) => {
-                    return self.eventsEqual(d, el);
-                  });
-            });
-          }
-          if (userEventPool.length == 0) {
-            arenaEventPool.splice(index, 1);
-          } else {
-            find(id).currentGame.day.events.push(
-                makeMessageEvent(getMessage('eventStart'), id));
-            find(id).currentGame.day.events.push(
-                makeMessageEvent('**___' + arenaEvent.message + '___**', id));
-            break;
-          }
-        } while (arenaEventPool.length > 0);
-        if (arenaEventPool.length == 0) doArenaEvent = false;
-      }
-      if (!doArenaEvent) {
-        userEventPool =
-            defaultPlayerEvents.concat(find(id).customEvents.player);
-        if (find(id).disabledEvents && find(id).disabledEvents.player) {
-          userEventPool = userEventPool.filter((el) => {
-            return !find(id).disabledEvents.player.find((d) => {
-              return self.eventsEqual(d, el);
-            });
-          });
-        }
-        if (userEventPool.length == 0) {
-          self.common.reply(
-              msg,
-              'All player events have been disabled! Please enable events' +
-                  ' so that something can happen in the games!');
-          endGame(msg, id);
-          return;
-        }
-      }
-    }
-
-    const weaponEventPool = Object.assign({}, weapons);
-    if (find(id).customEvents.weapon) {
-      const entries = Object.entries(find(id).customEvents.weapon);
-      for (let i = 0; i < entries.length; i++) {
-        if (weaponEventPool[entries[i][0]]) {
-          weaponEventPool[entries[i][0]].outcomes =
-              weaponEventPool[entries[i][0]].outcomes.concat(
-                  entries[i][1].outcomes);
-        } else {
-          weaponEventPool[entries[i][0]] = entries[i][1];
-        }
-
-        if (find(id).disabledEvents && find(id).disabledEvents.weapon &&
-            find(id).disabledEvents.weapon[entries[i][0]]) {
-          weaponEventPool[entries[i][0]].outcomes =
-              weaponEventPool[entries[i][0]].outcomes.filter((el) => {
-                return !find(id).disabledEvents.weapon[entries[i][0]].find(
-                    (d) => {
-                      return self.eventsEqual(d, el);
-                    });
-              });
-        }
-      }
-    }
-
-    const probOpts = find(id).currentGame.day.num === 0 ?
-        find(id).options.bloodbathOutcomeProbs :
-        (doArenaEvent ?
-             (arenaEvent.outcomeProbs || find(id).options.arenaOutcomeProbs) :
-             find(id).options.playerOutcomeProbs);
-
-    const nameFormat = find(id).options.useNicknames ? 'nickname' : 'username';
-
-    while (userPool.length > 0) {
-      let eventTry;
-      let affectedUsers;
-      let numAttacker;
-      let numVictim;
-
-      let subMessage = '';
-
-      const deadPool = find(id).currentGame.includedUsers.filter(function(obj) {
-        return !obj.living;
-      });
-
-      let userWithWeapon = null;
-      if (!doArenaEvent) {
-        const usersWithWeapon = [];
-        for (let i = 0; i < userPool.length; i++) {
-          if (userPool[i].weapons &&
-              Object.keys(userPool[i].weapons).length > 0) {
-            usersWithWeapon.push(userPool[i]);
-          }
-        }
-        if (usersWithWeapon.length > 0) {
-          userWithWeapon = usersWithWeapon[Math.floor(
-              Math.random() * usersWithWeapon.length)];
-        }
-      }
-      let useWeapon = userWithWeapon &&
-          Math.random() < find(id).options.probabilityOfUseWeapon;
-      if (useWeapon) {
-        const userWeapons = Object.keys(userWithWeapon.weapons);
-        const chosenWeapon =
-            userWeapons[Math.floor(Math.random() * userWeapons.length)];
-
-        if (!weaponEventPool[chosenWeapon]) {
-          useWeapon = false;
-          // console.log('No event pool with weapon', chosenWeapon);
-        } else {
-          eventTry = pickEvent(
-              userPool, weaponEventPool[chosenWeapon].outcomes,
-              find(id).options, find(id).currentGame.numAlive,
-              find(id).currentGame.includedUsers.length,
-              find(id).currentGame.teams, probOpts, userWithWeapon);
-          if (!eventTry) {
-            useWeapon = false;
-            /* self.error(
-                'No event with weapon "' + chosenWeapon +
-                '" for available players ' + id); */
-          } else {
-            numAttacker = eventTry.attacker.count;
-            numVictim = eventTry.victim.count;
-            affectedUsers = pickAffectedPlayers(
-                numVictim, numAttacker, eventTry.victim.outcome,
-                eventTry.attacker.outcome, find(id).options, userPool, deadPool,
-                find(id).currentGame.teams, userWithWeapon);
-
-            let consumed = eventTry.consumes;
-            if (consumed == 'V') consumed = numVictim;
-            else if (consumed == 'A') consumed = numAttacker;
-            userWithWeapon.weapons[chosenWeapon] -= consumed;
-            if (userWithWeapon.weapons[chosenWeapon] <= 0) {
-              delete userWithWeapon.weapons[chosenWeapon];
-
-              const weaponName = chosenWeapon;
-              let consumableName = weaponName;
-              if (weapons[weaponName]) {
-                if (weapons[weaponName].consumable) {
-                  consumableName = weapons[weaponName].consumable.replace(
-                      /\[C([^|]*)\|([^\]]*)\]/g, '$2');
-                } else if (weapons[weaponName].name) {
-                  consumableName = weapons[weaponName].name.replace(
-                      /\[C([^|]*)\|([^\]]*)\]/g, '$2');
-                } else {
-                  consumableName += 's';
-                }
-              } else {
-                consumableName += 's';
-              }
-              subMessage += formatMultiNames([userWithWeapon], nameFormat) +
-                  ' runs out of ' + consumableName + '.';
-            } else if (consumed != 0) {
-              const weaponName = chosenWeapon;
-              let consumableName = weaponName;
-              const count = consumed;
-              if (weapons[weaponName].consumable) {
-                consumableName = weapons[weaponName].consumable.replace(
-                    /\[C([^|]*)\|([^\]]*)\]/g, (count == 1 ? '$1' : '$2'));
-              } else if (weapons[weaponName].name) {
-                consumableName = weapons[weaponName].name.replace(
-                    /\[C([^|]*)\|([^\]]*)\]/g, (count == 1 ? '$1' : '$2'));
-              } else if (count != 1) {
-                consumableName += 's';
-              }
-              subMessage += formatMultiNames([userWithWeapon], nameFormat) +
-                  ' lost ' + count + ' ' + consumableName + '.';
-            }
-
-            let owner = 'their';
-            if (numAttacker > 1 ||
-                (numAttacker == 1 &&
-                 affectedUsers[numVictim].id != userWithWeapon.id)) {
-              owner = formatMultiNames([userWithWeapon], nameFormat) + '\'s';
-            }
-            if (!eventTry.message) {
-              const weaponName =
-                  weaponEventPool[chosenWeapon].name || chosenWeapon;
-              eventTry.message =
-                  weapons.message
-                      .replaceAll('{weapon}', owner + ' ' + weaponName)
-                      .replaceAll('{action}', eventTry.action)
-                      .replace(
-                          /\[C([^|]*)\|([^\]]*)\]/g,
-                          (consumed == 1 ? '$1' : '$2'));
-            } else {
-              eventTry.message = eventTry.message.replaceAll('{owner}', owner);
-            }
-          }
-        }
-      }
-
-      const doBattle =
-          ((!useWeapon && !doArenaEvent) || !eventTry) && userPool.length > 1 &&
-          (Math.random() < find(id).options.probabilityOfBattle ||
-           find(id).currentGame.numAlive == 2) &&
-          !validateEventRequirements(
-              1, 1, userPool, find(id).currentGame.numAlive,
-              find(id).currentGame.teams, find(id).options, true, false);
-      if (doBattle) {
-        do {
-          numAttacker = weightedUserRand();
-          numVictim = weightedUserRand();
-        } while (validateEventRequirements(
-            numVictim, numAttacker, userPool, find(id).currentGame.numAlive,
-            find(id).currentGame.teams, find(id).options, true, false));
-        affectedUsers = pickAffectedPlayers(
-            numVictim, numAttacker, 'dies', 'nothing', find(id).options,
-            userPool, deadPool, find(id).currentGame.teams, null);
-        eventTry = makeBattleEvent(
-            affectedUsers, numVictim, numAttacker, find(id).options.mentionAll,
-            id);
-      } else if (!useWeapon || !eventTry) {
-        eventTry = pickEvent(
-            userPool, userEventPool, find(id).options,
-            find(id).currentGame.numAlive,
-            find(id).currentGame.includedUsers.length,
-            find(id).currentGame.teams, probOpts);
-        if (!eventTry) {
-          self.error(
-              'No event for ' + userPool.length + ' from ' +
-              userEventPool.length + ' events. No weapon, Arena Event: ' +
-              (doArenaEvent ? arenaEvent.message : 'No') + ', Day: ' +
-              find(id).currentGame.day.num + ' Guild: ' + id + ' Retrying: ' +
-              retry);
-          find(id).currentGame.day.state = 0;
-          find(id).currentGame.day.num--;
-          if (retry) {
-            nextDay(msg, id, false);
-          } else {
-            self.common.reply(
-                msg, 'Oops! I wasn\'t able to find a valid event for the ' +
-                    'remaining players.\nThis is usually because too many ' +
-                    'events are disabled.\nIf you think this is a bug, ' +
-                    'please tell SpikeyRobot#0971',
-                'Try again with `' + msg.prefix + self.postPrefix +
-                    'next`.\n(Failed to find valid event for \'' +
-                    (doArenaEvent ? arenaEvent.message : 'player events') +
-                    '\' suitable for ' + userPool.length +
-                    ' remaining players)');
-          }
-          return;
-        }
-
-        numAttacker = eventTry.attacker.count;
-        numVictim = eventTry.victim.count;
-        affectedUsers = pickAffectedPlayers(
-            numVictim, numAttacker, eventTry.victim.outcome,
-            eventTry.attacker.outcome, find(id).options, userPool, deadPool,
-            find(id).currentGame.teams, null);
-      }
-
-      let numKilled = 0;
-      let weapon = eventTry.victim.weapon;
-      if (weapon && !weaponEventPool[weapon.name]) {
-        weapon = null;
-        eventTry.victim.weapon = null;
-      }
-      for (let i = 0; i < numVictim; i++) {
-        let numKills = 0;
-        if (eventTry.victim.killer) numKills = numAttacker;
-        const affected = affectedUsers[i];
-        switch (eventTry.victim.outcome) {
-          case 'dies':
-            numKilled++;
-            killUser(id, affected, numKills, weapon);
-            break;
-          case 'wounded':
-            woundUser(id, affected, numKills, weapon);
-            break;
-          case 'thrives':
-            restoreUser(id, affected, numKills, weapon);
-            break;
-          case 'revived':
-            reviveUser(id, affected, numKills, weapon);
-            break;
-          default:
-            effectUser(id, affected, numKills, weapon);
-            break;
-        }
-        if (affected.state == 'wounded') {
-          affected.bleeding++;
-        } else {
-          affected.bleeding = 0;
-        }
-      }
-      weapon = eventTry.attacker.weapon;
-      if (weapon && !weaponEventPool[weapon.name]) {
-        weapon = null;
-        eventTry.attacker.weapon = null;
-      }
-      for (let i = numVictim; i < numVictim + numAttacker; i++) {
-        let numKills = 0;
-        if (eventTry.attacker.killer) numKills = numVictim;
-        const affected = affectedUsers[i];
-        switch (eventTry.attacker.outcome) {
-          case 'dies':
-            numKilled++;
-            killUser(id, affected, numKills, weapon);
-            break;
-          case 'wounded':
-            woundUser(id, affected, numKills, weapon);
-            break;
-          case 'thrives':
-            restoreUser(id, affected, numKills, weapon);
-            break;
-          case 'revived':
-            reviveUser(id, affected, numKills, weapon);
-            break;
-          default:
-            effectUser(id, affected, numKills, weapon);
-            break;
-        }
-        if (affected.state == 'wounded') {
-          affected.bleeding++;
-        } else {
-          affected.bleeding = 0;
-        }
-      }
-
-      let finalEvent = eventTry;
-
-      if (eventTry.attacker.weapon) {
-        for (let i = 0; i < numAttacker; i++) {
-          const user = affectedUsers[numVictim + i];
-          const consumableList =
-              Object
-                  .entries(user.weapons || {[eventTry.attacker.weapon.name]: 0})
-                  .map(function(el) {
-                    const weaponName = el[0];
-                    let consumableName = weaponName;
-                    const count = el[1];
-                    if (!weapons[weaponName]) {
-                      self.error('Failed to find weapon: ' + weaponName);
-                      return '(Unknown weapon ' + weaponName +
-                          '. This is a bug.)';
-                    }
-                    if (weapons[weaponName].consumable) {
-                      consumableName = weapons[weaponName].consumable.replace(
-                          /\[C([^|]*)\|([^\]]*)\]/g,
-                          '$' + (count == 1 ? '1' : '2'));
-                    } else if (count != 1) {
-                      consumableName += 's';
-                    }
-                    return (count || 0) + ' ' + consumableName;
-                  })
-                  .join(', ');
-          subMessage += '\n' + formatMultiNames([user], nameFormat) +
-              ' now has ' + consumableList + '.';
-        }
-      }
-      if (eventTry.victim.weapon) {
-        for (let i = 0; i < numVictim; i++) {
-          const user = affectedUsers[i];
-          const consumableList =
-              Object
-                  .entries(user.weapons || {[eventTry.attacker.weapon.name]: 0})
-                  .map(function(el) {
-                    const weaponName = el[0];
-                    let consumableName = weaponName;
-                    const count = el[1];
-                    if (!weapons[weaponName]) {
-                      self.error('Failed to find weapon: ' + weaponName);
-                      return '(Unknown weapon ' + weaponName +
-                          '. This is a bug.)';
-                    }
-                    if (weapons[weaponName].consumable) {
-                      consumableName = weapons[weaponName].consumable.replace(
-                          /\[C([^|]*)\|([^\]]*)\]/g,
-                          '$' + (count == 1 ? '1' : '2'));
-                    } else if (count != 1) {
-                      consumableName += 's';
-                    }
-                    return (count || 0) + ' ' + consumableName;
-                  })
-                  .join(', ');
-          subMessage += '\n' + formatMultiNames([user], nameFormat) +
-              ' now has ' + consumableList + '.';
-        }
-      }
-
-      if (doBattle) {
-        affectedUsers = [];
-      } else {
-        finalEvent = makeSingleEvent(
-            eventTry.message, affectedUsers, numVictim, numAttacker,
-            find(id).options.mentionAll, id, eventTry.victim.outcome,
-            eventTry.attacker.outcome, find(id).options.useNicknames);
-        finalEvent.subMessage = subMessage;
-      }
-      /* if (eventTry.attacker.killer && eventTry.victim.killer) {
-        finalEvent.icons.splice(numVictim, 0, {url: fistBoth});
-      } else if (eventTry.attacker.killer) {
-        finalEvent.icons.splice(numVictim, 0, {url: fistRight});
-      } else if (eventTry.victim.killer) {
-        finalEvent.icons.splice(numVictim, 0, {url: fistLeft});
-      } */
-      find(id).currentGame.day.events.push(finalEvent);
-
-      if (affectedUsers.length !== 0) {
-        console.log('Affected users remain! ' + affectedUsers.length);
-      }
-
-      if (numKilled > 4) {
-        find(id).currentGame.day.events.push(
-            makeMessageEvent(getMessage('slaughter'), id));
-      }
-    }
-
-    if (doArenaEvent) {
-      find(id).currentGame.day.events.push(
-          makeMessageEvent(getMessage('eventEnd'), id));
-    }
-    if (!find(id).currentGame.forcedOutcomes) {
-      find(id).currentGame.forcedOutcomes = [];
-    } else {
-      find(id).currentGame.forcedOutcomes =
-          find(id).currentGame.forcedOutcomes.filter((el) => {
-            self.forcePlayerState(el);
-            return el.persists;
-          });
-    }
-    const usersBleeding = [];
-    const usersRecovered = [];
-    find(id).currentGame.includedUsers.forEach(function(obj) {
-      if (obj.bleeding > 0 && obj.bleeding >= find(id).options.bleedDays &&
-          obj.living) {
-        if (Math.random() < find(id).options.probabilityOfBleedToDeath &&
-            (find(id).options.allowNoVictors ||
-             find(id).currentGame.numAlive > 1)) {
-          usersBleeding.push(obj);
-          obj.living = false;
-          obj.bleeding = 0;
-          obj.state = 'dead';
-          obj.rank = find(id).currentGame.numAlive--;
-          obj.dayOfDeath = find(id).currentGame.day.num;
-          if (find(id).options.teamSize > 0) {
-            const team = find(id).currentGame.teams.find(function(team) {
-              return team.players.findIndex(function(player) {
-                return obj.id == player;
-              }) > -1;
-            });
-            team.numAlive--;
-            if (team.numAlive === 0) {
-              let teamsLeft = 0;
-              find(id).currentGame.teams.forEach(function(obj) {
-                if (obj.numAlive > 0) teamsLeft++;
-              });
-              team.rank = teamsLeft + 1;
-            }
-          }
-        } else {
-          usersRecovered.push(obj);
-          obj.bleeding = 0;
-          obj.state = 'normal';
-        }
-      }
-    });
-    if (usersRecovered.length > 0) {
-      find(id).currentGame.day.events.push(
-          makeSingleEvent(
-              getMessage('patchWounds'), usersRecovered, usersRecovered.length,
-              0, find(id).options.mentionAll, id, 'thrives', 'nothing',
-              find(id).options.useNicknames));
-    }
-    if (usersBleeding.length > 0) {
-      find(id).currentGame.day.events.push(
-          makeSingleEvent(
-              getMessage('bleedOut'), usersBleeding, usersBleeding.length, 0,
-              find(id).options.mentionAll, id,
-              'dies', 'nothing', find(id).options.useNicknames));
-    }
-
-    const deathPercentage = 1 - (find(id).currentGame.numAlive / startingAlive);
-    if (deathPercentage > lotsOfDeathRate) {
-      find(id).currentGame.day.events.splice(
-          0, 0, makeMessageEvent(getMessage('lotsOfDeath'), id));
-    } else if (deathPercentage === 0) {
-      find(id).currentGame.day.events.push(
-          makeMessageEvent(getMessage('noDeath'), id));
-    } else if (deathPercentage < littleDeathRate) {
-      find(id).currentGame.day.events.splice(
-          0, 0, makeMessageEvent(getMessage('littleDeath'), id));
-    }
-
-    // Signal ready to display events.
-    fire('dayStateChange', id);
-    find(id).currentGame.day.state = 2;
-    const embed = new self.Discord.MessageEmbed();
-    if (find(id).currentGame.day.num === 0) {
-      embed.setTitle(getMessage('bloodbathStart'));
-    } else {
-      embed.setTitle(
-          getMessage('dayStart')
-              .replaceAll('{}', find(id).currentGame.day.num));
-    }
-    if (!find(id).autoPlay && find(id).currentGame.day.num < 2) {
-      embed.setFooter(
-          'Tip: Use "' + msg.prefix + self.postPrefix +
-          'autoplay" to automate the games.');
-    }
-    embed.setColor(defaultColor);
-    if (!find(id) || !find(id).options.disableOutput) {
-      msg.channel.send(embed);
-    }
-    self.command.find('say', msg)
-        .options.set('disabled', 'channel', msg.channel.id);
-    find(id).outputChannel = msg.channel.id;
-    find(id).currentGame.isPaused = false;
-    dayEventIntervals[id] = self.client.setInterval(function() {
+    const sim = new Simulator(find(id), self, msg);
+    sim.go((err) => {
+      // Signal ready to display events.
       fire('dayStateChange', id);
-      printEvent(msg, id);
-    }, find(id).options.disableOutput ? 10 : find(id).options.delayEvents);
-  }
-
-  /**
-   * Base of all actions to perform on a player.
-   * @private
-   *
-   * @param {string} id The guild id of the game.
-   * @param {HungryGames~Player} affected The player to affect.
-   * @param {number} kills The number of kills the player gets in this action.
-   * @param {HungryGames~Weapon[]} [weapon] The weapon being used if any.
-   */
-  function effectUser(id, affected, kills, weapon) {
-    if (weapon) {
-      if (typeof affected.weapons[weapon.name] === 'number') {
-        affected.weapons[weapon.name] += weapon.count;
+      find(id).currentGame.day.state = 2;
+      const embed = new self.Discord.MessageEmbed();
+      if (find(id).currentGame.day.num === 0) {
+        embed.setTitle(self.messages.get('bloodbathStart'));
       } else {
-        affected.weapons[weapon.name] = weapon.count;
+        embed.setTitle(
+            self.messages.get('dayStart')
+                .replaceAll('{}', find(id).currentGame.day.num));
       }
-      if (affected.weapons[weapon.name] === 0) {
-        delete affected.weapons[weapon.name];
+      if (!find(id).autoPlay && find(id).currentGame.day.num < 2) {
+        embed.setFooter(
+            'Tip: Use "' + msg.prefix + self.postPrefix +
+            'autoplay" to automate the games.');
       }
-    }
-    affected.kills += kills;
-  }
-
-  /**
-   * Kill the given player in the given guild game.
-   * @private
-   *
-   * @param {string} id The guild id of the game.
-   * @param {HungryGames~Player} a The player to affect.
-   * @param {number} k The number of kills the player gets in this action.
-   * @param {HungryGames~Weapon[]} [w] The weapon being used if any.
-   */
-  function killUser(id, a, k, w) {
-    effectUser(id, a, k, w);
-    a.living = false;
-    a.bleeding = 0;
-    a.state = 'dead';
-    a.weapons = {};
-    a.rank = find(id).currentGame.numAlive--;
-    a.dayOfDeath = find(id).currentGame.day.num;
-    if (find(id).options.teamSize > 0) {
-      const team = find(id).currentGame.teams.find(function(team) {
-        return team.players.findIndex(function(obj) {
-          return a.id == obj;
-        }) > -1;
-      });
-      if (!team) {
-        console.log('FAILED TO FIND ADEQUATE TEAM FOR USER', a.id);
-      } else {
-        team.numAlive--;
-        if (team.numAlive === 0) {
-          let teamsLeft = 0;
-          find(id).currentGame.teams.forEach(function(obj) {
-            if (obj.numAlive > 0) teamsLeft++;
-          });
-          team.rank = teamsLeft + 1;
-        }
+      embed.setColor(defaultColor);
+      if (!find(id) || !find(id).options.disableOutput) {
+        msg.channel.send(embed);
       }
-    }
-  }
-
-  /**
-   * Wound the given player in the given guild game.
-   * @private
-   *
-   * @param {string} id The guild id of the game.
-   * @param {HungryGames~Player} a The player to affect.
-   * @param {number} k The number of kills the player gets in this action.
-   * @param {HungryGames~Weapon[]} [w] The weapon being used if any.
-   */
-  function woundUser(id, a, k, w) {
-    effectUser(id, a, k, w);
-    a.state = 'wounded';
-  }
-  /**
-   * Heal the given player in the given guild game.
-   * @private
-   *
-   * @param {string} id The guild id of the game.
-   * @param {HungryGames~Player} a The player to affect.
-   * @param {number} k The number of kills the player gets in this action.
-   * @param {HungryGames~Weapon[]} [w] The weapon being used if any.
-   */
-  function restoreUser(id, a, k, w) {
-    effectUser(id, a, k, w);
-    a.state = 'normal';
-    a.bleeding = 0;
-  }
-  /**
-   * Revive the given player in the given guild game.
-   * @private
-   *
-   * @param {string} id The guild id of the game.
-   * @param {HungryGames~Player} a The player to affect.
-   * @param {number} k The number of kills the player gets in this action.
-   * @param {HungryGames~Weapon[]} [w] The weapon being used if any.
-   */
-  function reviveUser(id, a, k, w) {
-    effectUser(id, a, k, w);
-    find(id).currentGame.numAlive++;
-    find(id).currentGame.includedUsers.forEach(function(obj) {
-      if (!obj.living && obj.rank < a.rank) obj.rank++;
-    });
-    if (find(id).options.teamSize > 0) {
-      const team = find(id).currentGame.teams.find(function(obj) {
-        return obj.players.findIndex(function(obj) {
-          return a.id == obj;
-        }) > -1;
-      });
-      team.numAlive++;
-      find(id).currentGame.teams.forEach(function(obj) {
-        if (obj.numAlive === 0 && obj.rank < team.rank) obj.rank++;
-      });
-      team.rank = 1;
-    }
-    a.state = 'zombie';
-    a.living = true;
-    a.bleeding = 0;
-    a.rank = 1;
-  }
-
-  /**
-   * Pick event that satisfies all requirements and settings.
-   *
-   * @private
-   * @param {HungryGames~Player[]} userPool Pool of players left to chose from
-   * in this day.
-   * @param {HungryGames~Event[]} eventPool Pool of all events available to
-   * choose at this time.
-   * @param {Object} options The options set in the current game.
-   * @param {number} numAlive Number of players in the game still alive.
-   * @param {number} numTotal Number of players in the game total.
-   * @param {HungryGames~Team[]} teams Array of teams in this game.
-   * @param {HungryGames~OutcomeProbabilities} probOpts Death rate weights.
-   * @param {?Player} weaponWielder A player that is using a weapon in this
-   * event, or null if no player is using a weapon.
-   * @return {?HungryGames~Event} The chosen event that satisfies all
-   * requirements, or null if something went wrong.
-   */
-  function pickEvent(
-      userPool, eventPool, options, numAlive, numTotal, teams, probOpts,
-      weaponWielder) {
-    const fails = [];
-    let loop = 0;
-    while (loop < 100) {
-      loop++;
-      if (eventPool) eventPool = eventPool.filter((el) => el);
-      if (!eventPool || eventPool.length == 0) {
-        fails.push('No Events');
-        break;
-      }
-      const eventIndex =
-          probabilityEvent(eventPool, probOpts, options.customEventWeight);
-      const eventTry = eventPool[eventIndex];
-      if (!eventTry) {
-        if (fails.length < 3) {
-          console.error('Invalid Event:', eventTry);
-        }
-        fails.push('Invalid Event');
-        eventPool.splice(eventIndex, 1);
-        continue;
-      }
-
-      let numAttacker = eventTry.attacker.count * 1;
-      let numVictim = eventTry.victim.count * 1;
-
-      const victimRevived = eventTry.victim.outcome === 'revived';
-      const attackerRevived = eventTry.attacker.outcome === 'revived';
-
-      let eventEffectsNumMin = 0;
-      let eventRevivesNumMin = 0;
-      victimRevived ? (eventRevivesNumMin += Math.abs(numVictim)) :
-                      (eventEffectsNumMin += Math.abs(numVictim));
-      attackerRevived ? (eventRevivesNumMin += Math.abs(numAttacker)) :
-                        (eventEffectsNumMin += Math.abs(numAttacker));
-
-      // If the chosen event requires more players than there are remaining,
-      // pick a new event.
-      if (eventEffectsNumMin > userPool.length) {
-        fails.push(
-            'Event too large (' + eventEffectsNumMin + ' > ' + userPool.length +
-            '): ' + eventIndex + ' V:' + eventTry.victim.count + ' A:' +
-            eventTry.attacker.count + ' M:' + eventTry.message);
-        continue;
-      } else if (eventRevivesNumMin > numTotal - numAlive) {
-        fails.push(
-            'Event too large (' + eventRevivesNumMin + ' > ' +
-            (numTotal - numAlive) + '): ' + eventIndex + ' V:' +
-            eventTry.victim.count + ' A:' + eventTry.attacker.count + ' M:' +
-            eventTry.message);
-        continue;
-      }
-
-      const multiAttacker = numAttacker < 0;
-      const multiVictim = numVictim < 0;
-      const attackerMin = -numAttacker;
-      const victimMin = -numVictim;
-      if (multiAttacker || multiVictim) {
-        while (true) {
-          if (multiAttacker) {
-            numAttacker = weightedUserRand() + (attackerMin - 1);
-          }
-          if (multiVictim) {
-            numVictim = weightedUserRand() + (victimMin - 1);
-          }
-          if (victimRevived && attackerRevived) {
-            if (numAttacker + numVictim <= numTotal - numAlive) break;
-          } else if (victimRevived) {
-            if (numAttacker <= userPool.length &&
-                numVictim <= numTotal - numAlive) {
-              break;
-            }
-          } else if (attackerRevived) {
-            if (numAttacker <= numTotal - numAlive &&
-                numVictim <= userPool.length) {
-              break;
-            }
-          } else if (numAttacker + numVictim <= userPool.length) {
-            break;
-          }
-        }
-      }
-
-      const failReason = validateEventRequirements(
-          victimRevived ? 0 : numVictim, attackerRevived ? 0 : numAttacker,
-          userPool, numAlive, teams, options, eventTry.victim.outcome == 'dies',
-          eventTry.attacker.outcome == 'dies', weaponWielder);
-      if (failReason) {
-        fails.push(
-            'Fails event requirement validation: ' + eventIndex + ' ' +
-            failReason);
-        continue;
-      }
-
-      const finalEvent = JSON.parse(JSON.stringify(eventPool[eventIndex]));
-
-      finalEvent.attacker.count = numAttacker;
-      finalEvent.victim.count = numVictim;
-
-      return finalEvent;
-    }
-    self.error(
-        'Failed to find suitable event for ' + userPool.length +
-        ' players, from ' + eventPool.length + ' events with ' + numAlive +
-        ' alive.');
-    // console.error(fails);
-    return null;
-  }
-  /**
-   * Ensure teammates don't attack each other.
-   *
-   * @private
-   * @param {number} numVictim The number of victims in the event.
-   * @param {number} numAttacker The number of attackers in the event.
-   * @param {HungryGames~Player[]} userPool Pool of all remaining players to put
-   * into an event.
-   * @param {HungryGames~Team[]} teams All teams in this game.
-   * @param {Object} options Options for this game.
-   * @param {boolean} victimsDie Do the victims die in this event?
-   * @param {boolean} attackersDie Do the attackers die in this event?
-   * @param {?Player} weaponWielder A player that is using a weapon in this
-   * event, or null if no player is using a weapon.
-   * @return {?string} String describing failing check, or null of pass.
-   */
-  function validateEventTeamConstraint(
-      numVictim, numAttacker, userPool, teams, options, victimsDie,
-      attackersDie, weaponWielder) {
-    let numTeams = 0;
-    teams.forEach((el) => {
-      if (el.numAlive > 0) numTeams++;
-    });
-    const collab = options.teammatesCollaborate == 'always' ||
-        (options.teammatesCollaborate == 'untilend' && numTeams > 1);
-    if (collab && options.teamSize > 0) {
-      if (weaponWielder) {
-        let numTeams = 0;
-        for (let i = 0; i < teams.length; i++) {
-          const team = teams[i];
-          let numPool = 0;
-
-          team.players.forEach(function(player) {
-            if (userPool.findIndex(function(pool) {
-              return pool.id == player && pool.living;
-            }) > -1) {
-              numPool++;
-            }
-          });
-
-          team.numPool = numPool;
-          if (numPool > 0) numTeams++;
-        }
-        if (numTeams < 2) {
-          if (attackersDie || victimsDie) {
-            return 'TEAM_WEAPON_NO_OPPONENT';
-          }
-        }
-        const attackerTeam = teams.find(function(team) {
-          return team.players.findIndex(function(p) {
-            return p === weaponWielder.id;
-          }) > -1;
-        });
-        if (!attackerTeam) {
-          self.error(weaponWielder.id + ' not on any team');
-          return 'TEAM_WEAPON_NO_TEAM';
-        }
-        return !(numAttacker <= attackerTeam.numPool &&
-                 numVictim <= userPool.length - attackerTeam.numPool) &&
-            'TEAM_WEAPON_TOO_LARGE' ||
-            null;
-      } else {
-        let largestTeam = {index: 0, size: 0};
-        let numTeams = 0;
-        for (let i = 0; i < teams.length; i++) {
-          const team = teams[i];
-          let numPool = 0;
-
-          team.players.forEach(function(player) {
-            if (userPool.findIndex(function(pool) {
-              return pool.id == player && pool.living;
-            }) > -1) {
-              numPool++;
-            }
-          });
-
-          team.numPool = numPool;
-          if (numPool > largestTeam.size) {
-            largestTeam = {index: i, size: numPool};
-          }
-          if (numPool > 0) numTeams++;
-        }
-        if (numTeams < 2) {
-          if (attackersDie || victimsDie) {
-            return 'TEAM_NO_OPPONENT';
-          }
-        }
-        return !((numAttacker <= largestTeam.size &&
-                  numVictim <= userPool.length - largestTeam.size) ||
-                 (numVictim <= largestTeam.size &&
-                  numAttacker <= userPool.length - largestTeam.size)) &&
-            'TEAM_TOO_LARGE' ||
-            null;
-      }
-    }
-    return null;
-  }
-  /**
-   * Ensure the event we choose will not force all players to be dead.
-   *
-   * @private
-   * @param {number} numVictim Number of victims in this event.
-   * @param {number} numAttacker Number of attackers in this event.
-   * @param {number} numAlive Total number of living players left in the game.
-   * @param {Object} options The options set for this game.
-   * @param {boolean} victimsDie Do the victims die in this event?
-   * @param {boolean} attackersDie Do the attackers die in this event?
-   * @return {boolean} Will this event follow current options set about number
-   * of victors required.
-   */
-  function validateEventVictorConstraint(
-      numVictim, numAttacker, numAlive, options, victimsDie, attackersDie) {
-    if (!options.allowNoVictors) {
-      let numRemaining = numAlive;
-      if (victimsDie) numRemaining -= numVictim;
-      if (attackersDie) numRemaining -= numAttacker;
-      return numRemaining >= 1;
-    }
-    return true;
-  }
-  /**
-   * Ensure the number of users in an event is mathematically possible.
-   *
-   * @private
-   * @param {number} numVictim Number of victims in this event.
-   * @param {number} numAttacker Number of attackers in this event.
-   * @param {HungryGames~Player[]} userPool Pool of all remaining players to put
-   * into an event.
-   * @param {number} numAlive Total number of living players left in the game.
-   * @return {boolean} If the event requires a number of players that is valid
-   * from the number of players left to choose from.
-   */
-  function validateEventNumConstraint(
-      numVictim, numAttacker, userPool, numAlive) {
-    return numVictim + numAttacker <= userPool.length &&
-        numVictim + numAttacker <= numAlive;
-  }
-  /**
-   * Ensure the event chosen meets all requirements for actually being used in
-   * the current game.
-   *
-   * @private
-   * @param {number} numVictim Number of victims in this event.
-   * @param {number} numAttacker Number of attackers in this event.
-   * @param {HungryGames~Player[]} userPool Pool of all remaining players to put
-   * into an event.
-   * @param {number} numAlive Total number of living players left in the game.
-   * @param {HungryGames~Team[]} teams All teams in this game.
-   * @param {Object} options The options set for this game.
-   * @param {boolean} victimsDie Do the victims die in this event?
-   * @param {boolean} attackersDie Do the attackers die in this event?
-   * @param {?Player} weaponWielder A player that is using a weapon in this
-   * event, or null if no player is using a weapon.
-   * @return {?string} String of failing constraint check, or null if passes.
-   */
-  function validateEventRequirements(
-      numVictim, numAttacker, userPool, numAlive, teams, options, victimsDie,
-      attackersDie, weaponWielder) {
-    if (!validateEventNumConstraint(
-        numVictim, numAttacker, userPool, numAlive)) {
-      return 'NUM_CONSTRAINT';
-    }
-    const failReason = validateEventTeamConstraint(
-        numVictim, numAttacker, userPool, teams, options, victimsDie,
-        attackersDie, weaponWielder);
-    if (failReason) {
-      return 'TEAM_CONSTRAINT-' + failReason;
-    }
-    if (!validateEventVictorConstraint(
-        numVictim, numAttacker, numAlive, options, victimsDie,
-        attackersDie)) {
-      return 'VICTOR_CONSTRAINT';
-    }
-    return null;
-  }
-  /**
-   * Pick the players to put into an event.
-   *
-   * @private
-   * @param {number} numVictim Number of victims in this event.
-   * @param {number} numAttacker Number of attackers in this event.
-   * @param {string} victimOutcome Outcome of victims. If "revived", uses
-   * deadPool instead of uesrPool.
-   * @param {string} attackerOutcome Outcome of attackers. If "revived", uses
-   * deadPool instead of uesrPool.
-   * @param {Object} options Options for this game.
-   * @param {HungryGames~Player[]} userPool Pool of all remaining players to put
-   * into an event.
-   * @param {HungryGames~Player[]} deadPool Pool of all dead players that can be
-   * revived.
-   * @param {HungryGames~Team[]} teams All teams in this game.
-   * @param {?Player} weaponWielder A player that is using a weapon in this
-   * event, or null if no player is using a weapon.
-   * @return {HungryGames~Player[]} Array of all players that will be affected
-   * by this event.
-   */
-  function pickAffectedPlayers(
-      numVictim, numAttacker, victimOutcome, attackerOutcome, options, userPool,
-      deadPool, teams, weaponWielder) {
-    const affectedUsers = [];
-    const victimRevived = victimOutcome === 'revived';
-    const attackerRevived = attackerOutcome === 'revived';
-
-    let numTeams = 0;
-    teams.forEach((el) => {
-      if (el.numAlive > 0) numTeams++;
-    });
-    const collab = options.teammatesCollaborate == 'always' ||
-        (options.teammatesCollaborate == 'untilend' && numTeams > 1);
-
-    if (collab && options.teamSize > 0) {
-      let isAttacker = false;
-      const validTeam = teams.findIndex(function(team) {
-        if (weaponWielder) {
-          isAttacker = options.useEnemyWeapon ? (Math.random() > 0.5) : true;
-          return team.players.findIndex(function(p) {
-            return p === weaponWielder.id;
-          }) > -1;
-        }
-
-        let canBeVictim = false;
-        if (attackerRevived) {
-          if (numAttacker <= team.players.length - team.numAlive &&
-              numVictim <=
-                  (victimRevived ?
-                       deadPool.length - (team.players.length - team.numAlive) :
-                       userPool.length - team.numPool)) {
-            isAttacker = true;
-          }
-        } else if (
-          numAttacker <= team.numPool &&
-            numVictim <=
-                (victimRevived ?
-                     deadPool.length - (team.players.length - team.numAlive) :
-                     userPool.length - team.numPool)) {
-          isAttacker = true;
-        }
-        if (victimRevived) {
-          if (numVictim <= team.players.length - team.numAlive &&
-              numAttacker <=
-                  (attackerRevived ?
-                       deadPool.length - (team.players.length - team.numAlive) :
-                       userPool.length - team.numPool)) {
-            canBeVictim = true;
-          }
-        } else if (
-          numVictim <= team.numPool &&
-            numAttacker <=
-                (attackerRevived ?
-                     deadPool.length - (team.players.length - team.numAlive) :
-                     userPool.length - team.numPool)) {
-          canBeVictim = true;
-        }
-        if (!isAttacker && !canBeVictim) {
-          return false;
-        }
-        if (isAttacker && canBeVictim) {
-          isAttacker = Math.random() > 0.5;
-        }
-        return true;
-      });
-      const findMatching = function(match, mainPool) {
-        return mainPool.findIndex(function(pool) {
-          const teamId = teams.findIndex(function(team) {
-            return team.players.findIndex(function(player) {
-              return player == pool.id;
-            }) > -1;
-          });
-          return match ? (teamId == validTeam) : (teamId != validTeam);
-        });
-      };
-      for (let i = 0; i < numAttacker + numVictim; i++) {
-        if (victimRevived && i < numVictim) {
-          const userIndex = findMatching(!isAttacker, deadPool);
-          affectedUsers.push(deadPool.splice(userIndex, 1)[0]);
-        } else if (attackerRevived && i >= numVictim) {
-          const userIndex = findMatching(isAttacker, deadPool);
-          affectedUsers.push(deadPool.splice(userIndex, 1)[0]);
-        } else {
-          const userIndex = findMatching(
-              (i < numVictim && !isAttacker) || (i >= numVictim && isAttacker),
-              userPool);
-          affectedUsers.push(userPool.splice(userIndex, 1)[0]);
-        }
-        if (!affectedUsers[i]) {
-          console.error(
-              'AFFECTED USER IS INVALID:', victimRevived, attackerRevived, i,
-              '/', numVictim, numAttacker, 'Pool:', userPool.length,
-              deadPool.length,
-              teams[validTeam].players.length - teams[validTeam].numAlive);
-        }
-      }
-    } else {
-      let i = weaponWielder ? 1 : 0;
-      for (i; i < numAttacker + numVictim; i++) {
-        if (i < numVictim && victimRevived) {
-          const userIndex = Math.floor(Math.random() * deadPool.length);
-          affectedUsers.push(deadPool.splice(userIndex, 1)[0]);
-        } else if (i >= numVictim && attackerRevived) {
-          const userIndex = Math.floor(Math.random() * deadPool.length);
-          affectedUsers.push(deadPool.splice(userIndex, 1)[0]);
-        } else {
-          const userIndex = Math.floor(Math.random() * userPool.length);
-          if (weaponWielder && weaponWielder.id == userPool[userIndex].id) {
-            i--;
-            continue;
-          }
-          affectedUsers.push(userPool.splice(userIndex, 1)[0]);
-        }
-      }
-      if (weaponWielder) {
-        const wielderIndex = userPool.findIndex(function(u) {
-          return u.id == weaponWielder.id;
-        });
-        affectedUsers.push(userPool.splice(wielderIndex, 1)[0]);
-      }
-    }
-    return affectedUsers;
-  }
-  /**
-   * Make an event that contains a battle between players before the main event
-   * message.
-   *
-   * @private
-   * @param {HungryGames~Player[]} affectedUsers All of the players involved in
-   * the event.
-   * @param {number} numVictim The number of victims in this event.
-   * @param {number} numAttacker The number of attackers in this event.
-   * @param {boolean} mention Should every player be mentioned when their name
-   * comes up?
-   * @param {string} id The id of the guild that triggered this initially.
-   * @param {boolean} [useNicknames=false] Should we use guild nicknames instead
-   * of usernames?
-   * @return {HungryGames~Event} The event that was created.
-   */
-  function makeBattleEvent(
-      affectedUsers, numVictim, numAttacker, mention, id, useNicknames) {
-    const outcomeMessage =
-        battles.outcomes[Math.floor(Math.random() * battles.outcomes.length)];
-    const finalEvent = makeSingleEvent(
-        outcomeMessage, affectedUsers.slice(0), numVictim, numAttacker, mention,
-        id, 'dies', 'nothing', useNicknames);
-    finalEvent.attacker.killer = true;
-    finalEvent.battle = true;
-    finalEvent.state = 0;
-    finalEvent.attacks = [];
-
-    const userHealth = new Array(affectedUsers.length).fill(0);
-    const maxHealth = find(id).options.battleHealth * 1;
-    let numAlive = numVictim;
-    let duplicateCount = 0;
-    let lastAttack = {index: 0, attacker: 0, victim: 0, flipRoles: false};
-
-    const startMessage =
-        battles.starts[Math.floor(Math.random() * battles.starts.length)];
-    const battleString = '**A battle has broken out!**';
-    let healthText =
-        affectedUsers
-            .map(function(obj, index) {
-              return '`' +
-                  (useNicknames ? (obj.nickname || obj.name) : obj.name) +
-                  '`: ' + Math.max((maxHealth - userHealth[index]), 0) + 'HP';
-            })
-            .sort(function(a, b) {
-              return a.id - b.id;
-            })
-            .join(', ');
-    finalEvent.attacks.push(
-        makeSingleEvent(
-            battleString + '\n' + startMessage + '\n' + healthText,
-            affectedUsers.slice(0), numVictim, numAttacker, false, id,
-            'nothing', 'nothing', useNicknames));
-
-    let loop = 0;
-    do {
-      loop++;
-      if (loop > 1000) {
-        throw new Error('INFINITE LOOP');
-      }
-      const eventIndex = Math.floor(Math.random() * battles.attacks.length);
-      const eventTry = battles.attacks[eventIndex];
-      const attackerEventDamage = eventTry.attacker.damage * 1;
-      const victimEventDamage = eventTry.victim.damage * 1;
-
-      const flipRoles = Math.random() > 0.5;
-      const attackerIndex = Math.floor(Math.random() * numAttacker) + numVictim;
-
-      if (loop == 999) {
-        console.log(
-            'Failed to find valid event for battle!\n', eventTry, flipRoles,
-            userHealth, '\nAttacker:', attackerIndex, '\nUsers:',
-            affectedUsers.length, '\nAlive:', numAlive, '\nFINAL:', finalEvent);
-      }
-
-      if ((!flipRoles &&
-           userHealth[attackerIndex] + attackerEventDamage >= maxHealth) ||
-          (flipRoles &&
-           userHealth[attackerIndex] + victimEventDamage >= maxHealth)) {
-        continue;
-      }
-
-      let victimIndex = Math.floor(Math.random() * numAlive);
-
-      let count = 0;
-      for (let i = 0; i < numVictim; i++) {
-        if (userHealth[i] < maxHealth) count++;
-        if (count == victimIndex + 1) {
-          victimIndex = i;
-          break;
-        }
-      }
-
-      const victimDamage =
-          (flipRoles ? attackerEventDamage : victimEventDamage);
-      const attackerDamage =
-          (!flipRoles ? attackerEventDamage : victimEventDamage);
-
-      userHealth[victimIndex] += victimDamage;
-      userHealth[attackerIndex] += attackerDamage;
-
-      if (userHealth[victimIndex] >= maxHealth) {
-        numAlive--;
-      }
-
-      if (lastAttack.index == eventIndex &&
-          lastAttack.attacker == attackerIndex &&
-          lastAttack.victim == victimIndex &&
-          lastAttack.flipRoles == flipRoles) {
-        duplicateCount++;
-      } else {
-        duplicateCount = 0;
-      }
-      lastAttack = {
-        index: eventIndex,
-        attacker: attackerIndex,
-        victim: victimIndex,
-        flipRoles: flipRoles,
-      };
-
-      healthText = affectedUsers
-          .map(function(obj, index) {
-            const health =
-                             Math.max((maxHealth - userHealth[index]), 0);
-            const prePost = health === 0 ? '~~' : '';
-            return prePost + '`' +
-                             (useNicknames ? (obj.nickname || obj.name) :
-                                             obj.name) +
-                             '`: ' + health + 'HP' + prePost;
-          })
-          .sort(function(a, b) {
-            return a.id - b.id;
-          })
-          .join(', ');
-      let messageText = eventTry.message;
-      if (duplicateCount > 0) {
-        messageText += ' x' + (duplicateCount + 1);
-      }
-
-      const newEvent = makeSingleEvent(
-          battleString + '\n' + messageText + '\n' + healthText,
-          [
-            affectedUsers[flipRoles ? attackerIndex : victimIndex],
-            affectedUsers[flipRoles ? victimIndex : attackerIndex],
-          ],
-          1, 1, false, id,
-          !flipRoles && userHealth[victimIndex] >= maxHealth ? 'dies' :
-                                                               'nothing',
-          flipRoles && userHealth[victimIndex] >= maxHealth ? 'dies' :
-                                                              'nothing',
-          useNicknames);
-
-      if (victimDamage && attackerDamage) {
-        newEvent.icons.splice(1, 0, {url: fistBoth});
-      } else if (attackerDamage) {
-        newEvent.icons.splice(1, 0, {url: flipRoles ? fistLeft : fistRight});
-      } else if (victimDamage) {
-        newEvent.icons.splice(1, 0, {url: flipRoles ? fistRight : fistLeft});
-      }
-
-      finalEvent.attacks.push(newEvent);
-    } while (numAlive > 0);
-    return finalEvent;
-  }
-  /**
-   * Produce a random number that is weighted by multiEventUserDistribution.
-   * @see {@link HungryGames~multiEventUserDistribution}
-   *
-   * @private
-   * @return {number} The weighted number outcome.
-   */
-  function weightedUserRand() {
-    let sum = 0;
-    const r = Math.random();
-    for (const i in multiEventUserDistribution) {
-      if (typeof multiEventUserDistribution[i] !== 'number') {
-        throw new Error(
-            'Invalid value for multiEventUserDistribution:' +
-            multiEventUserDistribution[i]);
-      } else {
-        sum += multiEventUserDistribution[i];
-        if (r <= sum) return i * 1;
-      }
-    }
-  }
-
-  /**
-   * Produce a random event that using probabilities set in options.
-   *
-   * @private
-   * @param {HungryGames~Event[]} eventPool The pool of all events to consider.
-   * @param {{kill: number, wound: number, thrive: number, nothing: number}}
-   * probabilityOpts The probabilities of each type of event being used.
-   * @param {number} [customWeight=1] The weight of custom events.
-   * @param {number} [recurse=0] The current recursive depth.
-   * @return {number} The index of the event that was chosen.
-   */
-  function probabilityEvent(
-      eventPool, probabilityOpts, customWeight = 1, recurse = 0) {
-    let probTotal = 0;
-    if (typeof probabilityOpts.kill === 'number') {
-      probTotal += probabilityOpts.kill;
-    }
-    if (typeof probabilityOpts.nothing === 'number') {
-      probTotal += probabilityOpts.nothing;
-    }
-    if (typeof probabilityOpts.revive === 'number') {
-      probTotal += probabilityOpts.revive;
-    }
-    if (typeof probabilityOpts.thrive === 'number') {
-      probTotal += probabilityOpts.thrive;
-    }
-    if (typeof probabilityOpts.wound === 'number') {
-      probTotal += probabilityOpts.wound;
-    }
-
-    const value = Math.random() * probTotal;
-
-    let type;
-    if (value > (probTotal -= probabilityOpts.nothing)) type = null;
-    else if (value > (probTotal -= probabilityOpts.revive)) type = 'revived';
-    else if (value > (probTotal -= probabilityOpts.thrive)) type = 'thrives';
-    else if (value > (probTotal -= probabilityOpts.wound)) type = 'wounded';
-    else type = 'dies';
-
-    const finalPool = [];
-
-    for (let i = 0; i < eventPool.length; i++) {
-      if (type && (eventPool[i].attacker.outcome == type ||
-                   eventPool[i].victim.outcome == type)) {
-        finalPool.push(i);
-      } else if (
-        !type && eventPool[i].attacker.outcome == 'nothing' &&
-          eventPool[i].victim.outcome == 'nothing') {
-        finalPool.push(i);
-      }
-    }
-    if (finalPool.length == 0) {
-      if (recurse < 10) {
-        return probabilityEvent(
-            eventPool, probabilityOpts, customWeight, recurse + 1);
-      } else {
-        self.error(
-            'Failed to find event with probabilities: ' +
-            JSON.stringify(probabilityOpts) + ' from ' + eventPool.length +
-            ' events.');
-        return Math.floor(Math.random() * eventPool.length);
-      }
-    } else {
-      let total = finalPool.length;
-      if (customWeight != 1) {
-        finalPool.forEach((el) => {
-          if (eventPool[el].custom) total += customWeight - 1;
-        });
-      }
-      const pick = Math.random() * total;
-      return finalPool.find((el) => {
-        total -= eventPool[el].custom ? customWeight : 1;
-        if (total < pick) return true;
-        return false;
-      });
-      // return finalPool[Math.floor(Math.random() * finalPool.length)];
-    }
-  }
-  /**
-   * Format an array of users into names based on options and grammar rules.
-   *
-   * @private
-   * @param {HungryGames~Player[]} names An array of players to format the names
-   * of.
-   * @param {string} [format='username'] Setting of how to format the user's
-   * name. `username` will use their account name, `mention` will use their ID
-   * to format a mention tag, `nickname` will use their custom guild nickname.
-   * @return {string} The formatted string of names.
-   */
-  function formatMultiNames(names, format = 'username') {
-    let output = '';
-    for (let i = 0; i < names.length; i++) {
-      if (format === 'mention' && !names[i].isNPC) {
-        output += '<@' + names[i].id + '>';
-      } else if (format === 'nickname') {
-        output += '`' + (names[i].nickname || names[i].name) + '`';
-      } else {
-        output += '`' + names[i].name + '`';
-      }
-
-      if (i == names.length - 2) {
-        output += ', and ';
-      } else if (i != names.length - 1) {
-        output += ', ';
-      }
-    }
-    return output;
-  }
-  /**
-   * Make an event that doesn't affect any players and is just a plain message.
-   *
-   * @private
-   * @param {string} message The message to show.
-   * @param {string} [id] The id of the guild that initially triggered this.
-   * Required only if the given message contains '{dead}'.
-   * @return {HungryGames~Event} The event that was created.
-   */
-  function makeMessageEvent(message, id) {
-    return makeSingleEvent(
-        message, [], 0, 0, false, id, 'nothing', 'nothing', false);
-  }
-  /**
-   * Format an event string based on specified users.
-   *
-   * @private
-   * @param {string} message The message to show.
-   * @param {HungryGames~Player[]} affectedUsers An array of all users affected
-   * by this event.
-   * @param {number} numVictim Number of victims in this event.
-   * @param {number} numAttacker Number of attackers in this event.
-   * @param {boolean} mention Should all users be mentioned when their name
-   * appears?
-   * @param {string} id The id of the guild this was initially triggered from.
-   * @param {string} victimOutcome The outcome of the victims from this event.
-   * @param {string} attackerOutcome The outcome of the attackers from this
-   * event.
-   * @param {boolean} [useNickname=false] Use player nicknames instead of their
-   * username.
-   * @return {HungryGames~FinalEvent} The final event that was created and
-   * formatted ready for display.
-   */
-  function makeSingleEvent(
-      message, affectedUsers, numVictim, numAttacker, mention, id,
-      victimOutcome, attackerOutcome, useNickname = false) {
-    let mentionString = '';
-    let translator = null;
-    for (let i = 0; i < affectedUsers.length; i++) {
-      if (!affectedUsers.isNPC && mention == 'all' ||
-          (mention == 'death' &&
-           ((victimOutcome == 'dies' && i < numVictim) ||
-            (attackerOutcome == 'dies' && i >= numVictim)))) {
-        mentionString += '<@' + affectedUsers[i].id + '>';
-      }
-      if (affectedUsers[i].settings &&
-          affectedUsers[i].settings['hg:fun_translators'] &&
-          affectedUsers[i].settings['hg:fun_translators'] !== 'disabled') {
-        translator = affectedUsers[i].settings['hg:fun_translators'];
-      }
-    }
-    const affectedVictims = affectedUsers.splice(0, numVictim);
-    const affectedAttackers = affectedUsers.splice(0, numAttacker);
-    let finalMessage = message;
-    finalMessage = finalMessage.replace(
-        /\[V([^|]*)\|([^\]]*)\]/g,
-        '$' + (affectedVictims.length > 1 ? '2' : '1'));
-    finalMessage = finalMessage.replace(
-        /\[A([^|]*)\|([^\]]*)\]/g,
-        '$' + (affectedAttackers.length > 1 ? '2' : '1'));
-    finalMessage =
-        finalMessage
-            .replaceAll(
-                '{victim}',
-                formatMultiNames(
-                    affectedVictims, useNickname ? 'nickname' : 'username'))
-            .replaceAll(
-                '{attacker}',
-                formatMultiNames(
-                    affectedAttackers, useNickname ? 'nickname' : 'username'));
-    if (finalMessage.indexOf('{dead}') > -1) {
-      const deadUsers =
-          find(id)
-              .currentGame.includedUsers
-              .filter(function(obj) {
-                return !obj.living && !affectedUsers.find(function(u) {
-                  return u.id == obj.id;
-                });
-              })
-              .slice(0, weightedUserRand());
-      const numDead = deadUsers.length;
-      if (numDead === 0) {
-        finalMessage = finalMessage.replaceAll('{dead}', 'an animal')
-            .replace(/\[D([^|]*)\|([^\]]*)\]/g, '$1');
-      } else {
-        finalMessage =
-            finalMessage
-                .replace(/\[D([^|]*)\|([^\]]*)\]/g, numDead === 1 ? '$1' : '$2')
-                .replaceAll(
-                    '{dead}',
-                    formatMultiNames(
-                        deadUsers, useNickname ? 'nickname' : 'username'));
-      }
-    }
-    finalMessage = funTranslator.to(translator, finalMessage);
-    const finalIcons = getMiniIcons(affectedVictims.concat(affectedAttackers));
-    return {
-      message: finalMessage,
-      icons: finalIcons,
-      numVictim: numVictim,
-      victim: {outcome: victimOutcome},
-      attacker: {outcome: attackerOutcome},
-      mentionString: mentionString,
-    };
-  }
-
-  /**
-   * Container for a user's avatar at icon size, with their id.
-   * @typedef {Object} HungryGames~UserIconUrl
-   *
-   * @property {string} url Url of icon.
-   * @property {string} id Id of the user the icon belongs to.
-   */
-  /**
-   * Get an array of icons urls from an array of users.
-   *
-   * @private
-   * @param {HungryGames~Player[]} users Array of users to process.
-   * @return {HungryGames~UserIconUrl[]} The user ids and urls for all users
-   * avatars.
-   */
-  function getMiniIcons(users) {
-    return users.map(function(obj) {
-      return {
-        url: obj.avatarURL.replace(/\?size=[0-9]*/, '') + '?size=' + fetchSize,
-        id: obj.id,
-        settings: obj.settings,
-      };
+      find(id).outputChannel = msg.channel.id;
+      find(id).currentGame.isPaused = false;
+      dayEventIntervals[id] = self.client.setInterval(function() {
+        fire('dayStateChange', id);
+        printEvent(msg, id);
+      }, find(id).options.disableOutput ? 10 : find(id).options.delayEvents);
     });
   }
+
   /**
    * Print an event string to the channel and add images, or if no events
    * remain, trigger end of day.
@@ -4503,7 +2892,7 @@ function HungryGames() {
       }
       if (numWholeTeams == 1) {
         finalMessage.setFooter(
-            getMessage('teamRemaining')
+            self.messages.get('teamRemaining')
                 .replaceAll(
                     '{}', find(id).currentGame.teams[lastWholeTeam].name));
       }
@@ -4511,10 +2900,10 @@ function HungryGames() {
     if (!find(id).currentGame.ended) {
       const embed = new self.Discord.MessageEmbed();
       if (find(id).currentGame.day.num == 0) {
-        embed.setTitle(getMessage('bloodbathEnd'));
+        embed.setTitle(self.messages.get('bloodbathEnd'));
       } else {
         embed.setTitle(
-            getMessage('dayEnd')
+            self.messages.get('dayEnd')
                 .replaceAll('{day}', find(id).currentGame.day.num)
                 .replaceAll('{alive}', numAlive));
       }
@@ -4782,13 +3171,6 @@ function HungryGames() {
       } else {
         nextDay(msg, id);
       }
-    } else {
-      try {
-        self.command.find('say', msg)
-            .options.set('default', 'channel', msg.channel.id);
-      } catch (err) {
-        self.error(err);
-      }
     }
   }
   /**
@@ -4814,18 +3196,6 @@ function HungryGames() {
       delete autoPlayTimeout[id];
       // delete battleMessage[id];
       if (!silent) self.common.reply(msg, 'The game has ended!');
-      if (find(id).outputChannel &&
-          self.client.channels.get(find(id).outputChannel)) {
-        try {
-          self.command.find('say', msg)
-              .options.set('default', 'channel', find(id).outputChannel);
-        } catch (err) {
-          self.error(
-              'Failed to reset say comand settings in channel: ' +
-              find(id).outputChannel);
-          console.error(err);
-        }
-      }
     }
   }
 
@@ -6314,7 +4684,7 @@ function HungryGames() {
       return 'Event must have a message.';
     }
     for (let i = 0; i < find(id).customEvents[type].length; i++) {
-      if (self.eventsEqual(event, find(id).customEvents[type][i])) {
+      if (Event.eventsEqual(event, find(id).customEvents[type][i])) {
         return 'Event already exists!';
       }
     }
@@ -6364,7 +4734,7 @@ function HungryGames() {
           for (let j = 0; j < find(id).customEvents[type][name].outcomes.length;
             j++) {
             const el = find(id).customEvents[type][name].outcomes[j];
-            if (self.eventsEqual(el, dEl)) {
+            if (Event.eventsEqual(el, dEl)) {
               exists = true;
               break;
             }
@@ -6427,7 +4797,7 @@ function HungryGames() {
         let one = match.outcomes[i];
         for (let j = 0; j < search.outcomes.length; j++) {
           const two = search.outcomes[j];
-          if (self.eventsEqual(one, two)) {
+          if (Event.eventsEqual(one, two)) {
             if (data.outcomes && data.outcomes[j]) {
               one = data.outcomes[j];
             } else {
@@ -6459,7 +4829,7 @@ function HungryGames() {
       if (!search.outcomes || search.outcomes.length == 0) return null;
       for (let i = 0; i < search.outcomes.length; i++) {
         for (let j = 0; j < match.outcomes.length; j++) {
-          if (self.eventsEqual(search.outcomes[i], match.outcomes[j])) {
+          if (Event.eventsEqual(search.outcomes[i], match.outcomes[j])) {
             if (!data.outcomes || !data.outcomes[i]) {
               match.outcomes.splice(j, 1);
             } else {
@@ -6495,7 +4865,7 @@ function HungryGames() {
     }
     const list = find(id).customEvents[type];
     for (let i = 0; i < list.length; i++) {
-      if (self.eventsEqual(list[i], event)) {
+      if (Event.eventsEqual(list[i], event)) {
         list.splice(i, 1);
         return null;
       }
@@ -6586,7 +4956,7 @@ function HungryGames() {
     let isDisabled = false;
     let index;
     for (let i = 0; i < allDisabled.length; i++) {
-      if (self.eventsEqual(allDisabled[i], event)) {
+      if (Event.eventsEqual(allDisabled[i], event)) {
         if (typeof value === 'undefined') value = true;
         if (value) isValid = true;
         isDisabled = true;
@@ -6603,7 +4973,7 @@ function HungryGames() {
     if (!value) {
       isValid = false;
       for (let i = 0; i < allEvents.length; i++) {
-        if (self.eventsEqual(allEvents[i], event)) {
+        if (Event.eventsEqual(allEvents[i], event)) {
           isValid = true;
           break;
         }
@@ -6614,52 +4984,6 @@ function HungryGames() {
       allDisabled.splice(index, 1);
     }
     return null;
-  };
-
-  /**
-   * Checks if the two given events are equivalent.
-   *
-   * @param {HungryGames~Event} e1
-   * @param {HungryGames~Event} e2
-   * @return {boolean}
-   */
-  this.eventsEqual = function(e1, e2) {
-    if (!e1 || !e2) return false;
-    if (e1.message != e2.message) return false;
-    if (e1.action != e2.action) return false;
-    if (e1.consumes != e2.consumes) return false;
-    if (!e1.battle != !e2.battle) return false;
-    const v1 = e1.victim;
-    const v2 = e2.victim;
-    if (v1 && v2) {
-      if (v1.count != v2.count) return false;
-      if (v1.outcome != v2.outcome) return false;
-      if (!v1.killer != !v2.killer) return false;
-      if (v1.weapon && v2.weapon) {
-        if (v1.weapon.name != v2.weapon.name) return false;
-        if (v1.weapon.count != v2.weapon.count) return false;
-      } else if (!(!v1.weapon && !v2.weapon)) {
-        return false;
-      }
-    } else if (!(!v1 && !v2)) {
-      return false;
-    }
-    const a1 = e1.attacker;
-    const a2 = e2.attacker;
-    if (a1 && a2) {
-      if (a1.count != a2.count) return false;
-      if (a1.outcome != a2.outcome) return false;
-      if (!a1.killer != !a2.killer) return false;
-      if (a1.weapon && a2.weapon) {
-        if (a1.weapon.name != a2.weapon.name) return false;
-        if (a1.weapon.count != a2.weapon.count) return false;
-      } else if (!(!a1.weapon && !a2.weapon)) {
-        return false;
-      }
-    } else if (!(!a1 && !a2)) {
-      return false;
-    }
-    return true;
   };
 
   /**
@@ -6860,26 +5184,26 @@ function HungryGames() {
       cnt++;
     }
     try {
-      const single =
-          makeSingleEvent(
-              msg.text, players.slice(0), 1, 1, false, msg.guild.id, 'nothing',
-              'nothing', find(msg.guild.id).options.useNicknames)
-              .message;
-      const pluralOne =
-          makeSingleEvent(
-              msg.text, players.slice(0), 2, 1, false, msg.guild.id, 'nothing',
-              'nothing', find(msg.guild.id).options.useNicknames)
-              .message;
-      const pluralTwo =
-          makeSingleEvent(
-              msg.text, players.slice(0), 1, 2, false, msg.guild.id, 'nothing',
-              'nothing', find(msg.guild.id).options.useNicknames)
-              .message;
-      const pluralBoth =
-          makeSingleEvent(
-              msg.text, players.slice(0), 2, 2, false, msg.guild.id, 'nothing',
-              'nothing', find(msg.guild.id).options.useNicknames)
-              .message;
+      const single = Event
+          .finalize(
+              msg.text, players.slice(0), 1, 1, 'nothing',
+              'nothing', find(msg.guild.id))
+          .message;
+      const pluralOne = Event
+          .finalize(
+              msg.text, players.slice(0), 2, 1, 'nothing',
+              'nothing', find(msg.guild.id))
+          .message;
+      const pluralTwo = Event
+          .finalize(
+              msg.text, players.slice(0), 1, 2, 'nothing',
+              'nothing', find(msg.guild.id))
+          .message;
+      const pluralBoth = Event
+          .finalize(
+              msg.text, players.slice(0), 2, 2, 'nothing',
+              'nothing', find(msg.guild.id))
+          .message;
       msg.myResponse.edit(
           helpMsg + single + '\n' + pluralOne + '\n' + pluralTwo + '\n' +
           pluralBoth +
@@ -7259,8 +5583,7 @@ function HungryGames() {
   }
 
   /**
-   * List all currently created NPCs. Alias for listPlayers right now.
-   * @TODO: List only NPCs.
+   * List all currently created NPCs.
    *
    * @private
    * @type {HungryGames~hgCommandHandler}
@@ -7823,7 +6146,8 @@ function HungryGames() {
           msg, notInGame.tag + ' does not appear to be in the current game.');
       return;
     }
-    self.common.reply(msg, self.forcePlayerState(id, players, 'dead'));
+    self.common.reply(
+        msg, find(id).forcePlayerState(players, 'dead', self.messages));
   }
 
   /**
@@ -7853,7 +6177,8 @@ function HungryGames() {
           msg, notInGame.tag + ' does not appear to be in the current game.');
       return;
     }
-    self.common.reply(msg, self.forcePlayerState(id, players, 'thriving'));
+    self.common.reply(
+        msg, find(id).forcePlayerState(players, 'thriving', self.messages));
   }
 
   /**
@@ -7883,7 +6208,8 @@ function HungryGames() {
           msg, notInGame.tag + ' does not appear to be in the current game.');
       return;
     }
-    self.common.reply(msg, self.forcePlayerState(id, players, 'wounded'));
+    self.common.reply(
+        msg, find(id).forcePlayerState(players, 'wounded', self.messages));
   }
 
   /**
@@ -8056,98 +6382,6 @@ function HungryGames() {
   };
 
   /**
-   * Force a player to have a certain outcome in the current day being
-   * simulated, or the next day that will be simulated. This is acheived by
-   * adding a custom event in which the player will be affected after their
-   * normal event for the day.
-   * @public
-   *
-   * @param {string} id The guild ID in which the users will be affected.
-   * @param {string[]} list The array of player IDs of which to affect.
-   * @param {string} state The outcome to force the players to have been
-   * victims of by the end of the simulated day. ("living", "dead", "wounded",
-   * or "thriving").
-   * @param {string} text Message to show when the user is affected.
-   * @param {boolean} [persists=false] Does this outcome persist to the end of
-   * the game, if false it only exists for the next day.
-   * @return {string} The output message to tell the user of the outcome of the
-   * operation.
-   */
-  this.forcePlayerState = function(id, list, state, text, persists = false) {
-    if (typeof id === 'object') {
-      persists = id.persists;
-      text = id.text;
-      state = id.state;
-      list = id.list;
-      id = id.id;
-    }
-    if (!find(id) || !find(id).currentGame) return 'No game has been created.';
-    if (!Array.isArray(list) || list.length == 0) return 'No players given.';
-    if (typeof state !== 'string') return 'No outcome given.';
-    list.forEach((p) => {
-      if (find(id).currentGame.day.state > 0) {
-        const player =
-            find(id).currentGame.includedUsers.find((el) => el.id == p);
-        if (!player) return 'Unable to find player.';
-        let outcome;
-        if (player.living && state === 'dead') {
-          outcome = 'dies';
-          killUser(id, player, 0, null);
-        } else if (
-          !player.living && (state === 'living' || state === 'thriving')) {
-          outcome = 'revived';
-          reviveUser(id, player, 0, null);
-        } else if (player.state === 'wounded' && state === 'thriving') {
-          outcome = 'thrives';
-          restoreUser(id, player, 0, null);
-        } else if (
-          player.living && player.state !== 'wounded' &&
-            state === 'wounded') {
-          outcome = 'wounded';
-          woundUser(id, player, 0, null);
-        } else {
-          return;
-        }
-        if (typeof text !== 'string' || text.length == 0) {
-          switch (state) {
-            case 'dead':
-              text = getMessage('forcedDeath');
-              break;
-            case 'thriving':
-              text = getMessage('forcedHeal');
-              break;
-            case 'wounded':
-              text = getMessage('forcedWound');
-              break;
-          }
-        }
-        const evt = makeSingleEvent(
-            text, [player], 1, 0, find(id).options.mentionAll, id, outcome,
-            'nothing', find(id).options.useNicknames);
-        let lastIndex = find(id).currentGame.day.state - 1;
-        for (let i = find(id).currentGame.day.events.length - 1; i > lastIndex;
-          i--) {
-          if (find(id).currentGame.day.events[i].icons.find(
-              (el) => el.id == p)) {
-            lastIndex = i + 1;
-            break;
-          }
-        }
-        find(id).currentGame.day.events.splice(lastIndex, 0, evt);
-      } else {
-        find(id).currentGame.forcedOutcomes.push({
-          id: id,
-          list: list,
-          state: state,
-          text: text,
-          persists: persists,
-        });
-      }
-    });
-    return 'Player(s) will be ' + state + ' by the end of the day.';
-  };
-
-  /**
    * Returns the number of games that are currently being shown to users.
    *
    * @public
@@ -8182,21 +6416,6 @@ function HungryGames() {
       emoji.x,
     ];
     return nothings[Math.floor(Math.random() * nothings.length)];
-  }
-
-  /**
-   * Get a random message of a given type from hgMessages.json.
-   *
-   * @private
-   * @param {string} type The message type to get.
-   * @return {string} A random message of the given type.
-   */
-  function getMessage(type) {
-    const list = messages[type];
-    if (!list) return 'badtype';
-    const length = list.length;
-    if (length == 0) return 'nomessage';
-    return list[Math.floor(Math.random() * length)];
   }
 
   /**
