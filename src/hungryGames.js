@@ -1471,7 +1471,8 @@ function HungryGames() {
               getAllPlayers(
                   msg.guild.members, find(id).excludedUsers,
                   find(id).options.includeBots, find(id).includedUsers,
-                  find(id).options.excludeNewUsers, find(id).includedNPCs));
+                  find(id).options.excludeNewUsers, find(id).includedNPCs),
+              find(id).currentGame.teams);
         } else {
           if (!silent) {
             self.common.reply(
@@ -1482,7 +1483,8 @@ function HungryGames() {
               getAllPlayers(
                   msg.guild.members, find(id).excludedUsers,
                   find(id).options.includeBots, find(id).includedUsers,
-                  find(id).options.excludeNewUsers, find(id).includedNPCs));
+                  find(id).options.excludeNewUsers, find(id).includedNPCs),
+              find(id).currentGame.teams);
         }
       } else {
         const optKeys = Object.keys(defaultOptions);

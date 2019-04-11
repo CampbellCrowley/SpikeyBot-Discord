@@ -9,8 +9,9 @@ const Day = require('./Day.js');
  * @param {string} [name] The name of this game.
  * @param {HungryGames~Player[]} [includedUsers] Array of user players that are
  * included in this game.
+ * @param {HungryGames~Team[]} [teams] Array of teams that players are on.
  */
-function Game(name, includedUsers) {
+function Game(name, includedUsers, teams) {
   /**
    * The name of this game.
    * @public
@@ -36,9 +37,9 @@ function Game(name, includedUsers) {
    * All teams in the game.
    * @public
    * @type {HungryGames~Team[]}
-   * @default
+   * @default []
    */
-  this.teams = [];
+  this.teams = teams || [];
   /**
    * List of outcomes and players to force before the end of the day. Does not
    * affect the simulation, outcomes are forced by appending events at the end
