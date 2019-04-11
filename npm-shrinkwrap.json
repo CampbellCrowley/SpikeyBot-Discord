@@ -1,6 +1,6 @@
 {
   "name": "spikeybot-discord",
-  "version": "1.9.1",
+  "version": "1.9.2",
   "lockfileVersion": 1,
   "requires": true,
   "dependencies": {
@@ -645,9 +645,9 @@
       "integrity": "sha512-gaqbzQPqOoamawKg0LGVd7SzLgXS+JH61oWprSLH+P+abTczqJbhTR8CmJ2u9/bUYNmHTGJx/UEmn6doAvvuig=="
     },
     "bluebird": {
-      "version": "3.5.3",
-      "resolved": "https://registry.npmjs.org/bluebird/-/bluebird-3.5.3.tgz",
-      "integrity": "sha512-/qKPUQlaW1OyR51WeCPBvRnAlnZFUJkCSG5HzGnuIqhgyJtF+T94lFnn33eiazjRm2LAHVy2guNnaq48X9SJuw==",
+      "version": "3.5.4",
+      "resolved": "https://registry.npmjs.org/bluebird/-/bluebird-3.5.4.tgz",
+      "integrity": "sha512-FG+nFEZChJrbQ9tIccIfZJBz3J7mLrAhxakAbnrJWn8d7aKOC+LWifa0G+p4ZqKp4y13T7juYvdhq9NzKdsrjw==",
       "dev": true
     },
     "bmp-js": {
@@ -850,6 +850,12 @@
       "version": "2.15.1",
       "resolved": "https://registry.npmjs.org/commander/-/commander-2.15.1.tgz",
       "integrity": "sha512-VlfT9F3V0v+jr4yxPc5gg9s62/fIVWsd2Bk2iD435um1NlGMYdVCq+MjcXnhYq2icNOizHr1kK+5TI6H0Hy0ag=="
+    },
+    "comment-parser": {
+      "version": "0.5.4",
+      "resolved": "https://registry.npmjs.org/comment-parser/-/comment-parser-0.5.4.tgz",
+      "integrity": "sha512-0h7W6Y1Kb6zKQMJqdX41C5qf9ITCVIsD2qP2RaqDF3GFkXFrmuAuv5zUOuo19YzyC9scjBNpqzuaRQ2Sy5pxMQ==",
+      "dev": true
     },
     "complex.js": {
       "version": "2.0.11",
@@ -1250,6 +1256,17 @@
       "resolved": "https://registry.npmjs.org/eslint-config-google/-/eslint-config-google-0.12.0.tgz",
       "integrity": "sha512-SHDM3nIRCJBACjf8c/H6FvCwRmKbphESNl3gJFBNbw4KYDLCONB3ABYLXDGF+iaVP9XSTND/Q5/PuGoFkp4xbg==",
       "dev": true
+    },
+    "eslint-plugin-jsdoc": {
+      "version": "4.8.3",
+      "resolved": "https://registry.npmjs.org/eslint-plugin-jsdoc/-/eslint-plugin-jsdoc-4.8.3.tgz",
+      "integrity": "sha512-lKOaphUUzv0qKJrAdEwQGEWcNN2Foae5W111u1ASKQeliyJkKXCVxia0dakATuI/s2ojr6Q3FVzWwT6uE1icBg==",
+      "dev": true,
+      "requires": {
+        "comment-parser": "^0.5.4",
+        "jsdoctypeparser": "3.1.0",
+        "lodash": "^4.17.11"
+      }
     },
     "eslint-scope": {
       "version": "4.0.3",
@@ -2524,6 +2541,12 @@
       "from": "github:braintree/jsdoc-template",
       "dev": true
     },
+    "jsdoctypeparser": {
+      "version": "3.1.0",
+      "resolved": "https://registry.npmjs.org/jsdoctypeparser/-/jsdoctypeparser-3.1.0.tgz",
+      "integrity": "sha512-JNbkKpDFqbYjg+IU3FNo7qjX7Opy7CwjHywT32zgAcz/d4lX6Umn5jOHVETUdnNNgGrMk0nEx1gvP0F4M0hzlQ==",
+      "dev": true
+    },
     "json-bigint": {
       "version": "0.3.0",
       "resolved": "https://registry.npmjs.org/json-bigint/-/json-bigint-0.3.0.tgz",
@@ -2727,9 +2750,9 @@
       "dev": true
     },
     "mathjs": {
-      "version": "5.8.0",
-      "resolved": "https://registry.npmjs.org/mathjs/-/mathjs-5.8.0.tgz",
-      "integrity": "sha512-hFHcxpG9IwNKP50NLg8PUnYSWUUotyJs1HAn9GTosJ6Q9LBNd2owSB/DvFm9vG88IkhGlo8evE+aiAzBweVK6A==",
+      "version": "5.9.0",
+      "resolved": "https://registry.npmjs.org/mathjs/-/mathjs-5.9.0.tgz",
+      "integrity": "sha512-f1xmJklkTCr48y023cFy/ZSoVzOfgHp1gutvebi/Vv5RLly6j8G9T2/XHkfXewZKcwPDbhBkFEYljaCjudxulQ==",
       "requires": {
         "complex.js": "2.0.11",
         "decimal.js": "10.1.1",
@@ -2814,9 +2837,9 @@
       }
     },
     "mocha": {
-      "version": "6.1.1",
-      "resolved": "https://registry.npmjs.org/mocha/-/mocha-6.1.1.tgz",
-      "integrity": "sha512-ayfr68s4kyDnCU0hjkTk5Z8J8dqr1iPUuVjmd+dLFgaGKOPlgx1XrOGn5k3H1LlXNnLBb8voZMYMKxchiA4Ujg==",
+      "version": "6.1.2",
+      "resolved": "https://registry.npmjs.org/mocha/-/mocha-6.1.2.tgz",
+      "integrity": "sha512-BgD2/RozoSC3uQK5R0isDcxjqaWw2n5HWdk8njYUyZf2NC79ErO5FtYVX52+rfqGoEgMfJf4fuG0IWh2TMzFoA==",
       "dev": true,
       "requires": {
         "ansi-colors": "3.2.3",
