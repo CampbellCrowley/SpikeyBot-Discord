@@ -2423,7 +2423,6 @@ function HungryGames() {
     sim.go((err) => {
       // Signal ready to display events.
       fire('dayStateChange', id);
-      find(id).currentGame.day.state = 2;
       const embed = new self.Discord.MessageEmbed();
       if (find(id).currentGame.day.num === 0) {
         embed.setTitle(self.messages.get('bloodbathStart'));
@@ -4704,7 +4703,7 @@ function HungryGames() {
     if (!find(id) || !find(id).customEvents) {
       return 'Invalid ID or no game.';
     }
-    if (!event.message || event.message.length == 0) {
+    if (typeof event.message !== 'string' || event.message.length == 0) {
       return 'Event must have a message.';
     }
     for (let i = 0; i < find(id).customEvents[type].length; i++) {
@@ -5283,7 +5282,7 @@ function HungryGames() {
                      reaction.emoji.name == emoji.trophy);
           }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
             if (reactions.size == 0) {
-              msg_.reactions.removeAll().catch(()=>{});
+              msg_.reactions.removeAll().catch(() => {});
               return;
             }
             let eventType = 'player';

@@ -26,45 +26,84 @@ const funTranslator = require('../lib/funTranslators.js');
  * before the event.
  * @param {HungryGames~Event[]} [attacks=[]] Array of attacks that take place
  * before the event.
- * @property {string} message The message to show.
- * @property {string} [action] The action to format into a message if this is a
- * weapon event.
- * @property {{count: number, outcome: string, killer: boolean, weapon:
- * ?Object}} victim Information about the victims in this event.
- * @property {{count: number, outcome: string, killer: boolean, weapon:
- * ?Object}} attacker Information about the attackers in this event.
- * @property {{name: string, count: number}} victim.weapon The weapon
- * information to give to the player.
- * @property {{name: string, count: number}} attacker.weapon The weapon
- * information to give to the player.
- * @property {boolean} battle Is this event a battle event.
- * @property {number} state The current state of printing the battle messages.
- * @property {HungryGames~Event[]} attacks The attacks in a battle to show
- * before the message.
- * @property {number|string} [consumes] Amount of consumables used if this is a
- * weapon event.
- * @property {boolean} [custom=true] If the event is created by the user.
  */
 function Event(
     message, numVictim = 0, numAttacker = 0, victimOutcome = 'nothing',
     attackerOutcome = 'nothing', victimKiller = false, attackerKiller = false,
     battle = false, state = 0, attacks = []) {
+  /**
+   * The message to show.
+   * @public
+   * @type {string}
+   */
   this.message = message;
+  /**
+   * The action to format into a message if this is a weapon event.
+   * @public
+   * @type {?string}
+   * @default
+   */
+  this.action = null;
+  /**
+   * Information about the victims in this event.
+   * @public
+   * @type {{count: number, outcome: string, killer: boolean, weapon: ?Object}}
+   * @property {?{name: string, count: number}} weapon The weapon information to
+   * give to the player.
+   */
   this.victim = {
     count: numVictim,
     outcome: victimOutcome,
     killer: victimKiller,
     weapon: null,
   };
+  /**
+   * Information about the attackers in this event.
+   * @public
+   * @type {{count: number, outcome: string, killer: boolean, weapon: ?Object}}
+   * @property {?{name: string, count: number}} weapon The weapon information to
+   * give to the player.
+   */
   this.attacker = {
     count: numAttacker,
     outcome: attackerOutcome,
     killer: attackerKiller,
     weapon: null,
   };
+  /**
+   * Is this event a battle event.
+   * @public
+   * @type {boolean}
+   * @default false
+   */
   this.battle = battle;
+  /**
+   * The current state of printing the battle messages.
+   * @public
+   * @type {number}
+   * @default 0
+   */
   this.state = state;
+  /**
+   * The attacks in a battle to show before the message.
+   * @public
+   * @type {HungryGames~Event[]}
+   * @default []
+   */
   this.attacks = attacks;
+  /**
+   * Amount of consumables used if this is a weapon event.
+   * @public
+   * @type {?number|string}
+   * @default
+   */
+  this.consumes = null;
+  /**
+   * If the event is created by the user.
+   * @public
+   * @type {boolean}
+   * @default
+   */
   this.custom = true;
 }
 /**
@@ -100,7 +139,7 @@ Event.finalizeSimple = function(message, game) {
 Event.finalize = function(
     message, affectedUsers, numVictim, numAttacker, victimOutcome,
     attackerOutcome, game) {
-  const useNickname = game.options.useNicknames;
+  const useNickname = game.options.useNicknames ? 'nickname' : 'username';
   const mention = game.options.mentionAll;
   let mentionString = '';
   let translator = null;
@@ -109,7 +148,7 @@ Event.finalize = function(
         (mention == 'death' &&
          ((victimOutcome == 'dies' && i < numVictim) ||
           (attackerOutcome == 'dies' && i >= numVictim)))) {
-      mentionString += '<@' + affectedUsers[i].id + '>';
+      mentionString += `<@${affectedUsers[i].id}>`;
     }
     if (affectedUsers[i].settings &&
         affectedUsers[i].settings['hg:fun_translators'] &&
@@ -126,16 +165,13 @@ Event.finalize = function(
   finalMessage = finalMessage.replace(
       /\[A([^|]*)\|([^\]]*)\]/g,
       '$' + (affectedAttackers.length > 1 ? '2' : '1'));
-  finalMessage =
-      finalMessage
-          .replaceAll(
-              '{victim}',
-              Grammar.formatMultiNames(
-                  affectedVictims, useNickname ? 'nickname' : 'username'))
-          .replaceAll(
-              '{attacker}',
-              Grammar.formatMultiNames(
-                  affectedAttackers, useNickname ? 'nickname' : 'username'));
+  finalMessage = finalMessage
+      .replace(
+          /\{victim\}/g,
+          Grammar.formatMultiNames(affectedVictims, useNickname))
+      .replaceAll(
+          /\{attacker\}/g, Grammar.formatMultiNames(
+              affectedAttackers, useNickname));
   if (finalMessage.indexOf('{dead}') > -1) {
     const deadUsers =
         game.currentGame.includedUsers
@@ -154,9 +190,7 @@ Event.finalize = function(
           finalMessage
               .replace(/\[D([^|]*)\|([^\]]*)\]/g, numDead === 1 ? '$1' : '$2')
               .replaceAll(
-                  '{dead}',
-                  Grammar.formatMultiNames(
-                      deadUsers, useNickname ? 'nickname' : 'username'));
+                  '{dead}', Grammar.formatMultiNames(deadUsers, useNickname));
     }
   }
   finalMessage = funTranslator.to(translator, finalMessage);

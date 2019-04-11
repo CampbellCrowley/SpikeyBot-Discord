@@ -116,6 +116,13 @@ Simulator.prototype.go = function(cb, retry = true) {
   const userPool = this.game.currentGame.includedUsers.filter((obj) => {
     return obj.living;
   });
+  // Shuffle user order because games may have been rigged :thonk:.
+  for (let i = 0; i < userPool.length; i++) {
+    const index = Math.floor(Math.random() * (userPool.length - i)) + i;
+    const tmp = userPool[i];
+    userPool[i] = userPool[index];
+    userPool[index] = tmp;
+  }
   const startingAlive = userPool.length;
   let userEventPool;
   let doArenaEvent = false;
@@ -652,9 +659,9 @@ Simulator.prototype.go = function(cb, retry = true) {
         0, 0,
         Event.finalizeSimple(this.hg.messages.get('littleDeath'), this.game));
   }
+  this.game.currentGame.day.state = 2;
   cb();
 };
-
 
 /**
  * Produce a random number that is weighted by multiEventUserDistribution.

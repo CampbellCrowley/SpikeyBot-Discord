@@ -96,7 +96,6 @@ function HGWeb() {
   /**
    * Causes a full shutdown of all servers.
    * @public
-   * @param {boolean} [skipSave=false] Skip writing data to file.
    */
   this.shutdown = function() {
     if (io) io.close();
@@ -1040,9 +1039,9 @@ function HGWeb() {
       replyNoPerm(socket, 'resetGame');
       return;
     }
-    if (typeof cb === 'function') cb();
     socket.emit('message', hg().resetGame(gId, cmd));
     socket.emit('game', gId, hg().getGame(gId));
+    if (typeof cb === 'function') cb();
   }
   this.resetGame = resetGame;
   /**
