@@ -98,6 +98,7 @@ function WebAccount() {
 
   /**
    * Parse template from file.
+   *
    * @see {@link WebAccount~patreonSettingsTemplate}
    * @private
    */
@@ -140,6 +141,7 @@ function WebAccount() {
 
   /**
    * Causes a full shutdown of all servers.
+   *
    * @public
    * @param {boolean} [skipSave=false] Skip writing data to file.
    */
@@ -236,6 +238,7 @@ function WebAccount() {
       fetchDiscordSQL();
       /**
        * Fetch the Discord table data from our SQL server.
+       *
        * @private
        */
       function fetchDiscordSQL() {
@@ -252,6 +255,7 @@ function WebAccount() {
       }
       /**
        * Fetch the Patreon info from our SQL server.
+       *
        * @private
        *
        * @param {Object} data The data previously received to add the Patreon
@@ -278,6 +282,7 @@ function WebAccount() {
       }
       /**
        * Fetch the Spotify info from our SQL server.
+       *
        * @private
        *
        * @param {Object} data The data previously received to add the Spotify
@@ -308,6 +313,7 @@ function WebAccount() {
       }
       /**
        * Fetch the Discord user information through the Discord bot API.
+       *
        * @private
        *
        * @param {Object} data The data previously received to add the Discord
@@ -409,6 +415,7 @@ function WebAccount() {
   /**
    * Validate a code received from the client, then use it to retrieve the user
    * ID associated with it.
+   *
    * @private
    *
    * @param {string} code The code received from Patreon OAuth2 flow.
@@ -445,6 +452,7 @@ function WebAccount() {
   /**
    * Validate a code received from the client, then use it to retrieve the user
    * ID associated with it.
+   *
    * @private
    *
    * @param {string} code The code received from Patreon OAuth2 flow.
@@ -480,6 +488,7 @@ function WebAccount() {
 
   /**
    * Handle the response after successfully requesting the user's tokens.
+   *
    * @private
    *
    * @param {string|number} userid Discord user id.
@@ -535,6 +544,56 @@ function WebAccount() {
    * @param {string} content The response from Spotify.
    * @param {{accessToken: string, expiresIn: number, expiresAt: string,
    * refreshToken: string}} vals The object storing user session information.
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
    * @param {string} ip Unique identifier for the client that caused this to
    * happen. Used for logging.
    * @param {Function} cb Callback with single parameter, string if error, null
@@ -578,6 +637,7 @@ function WebAccount() {
   /**
    * Update our Discord table with the retrieved patreon account ID for the
    * Discord user.
+   *
    * @private
    *
    * @param {string|number} userid The Discord ID of the user to link to the
@@ -603,6 +663,7 @@ function WebAccount() {
   /**
    * Update our Discord table with the retrieved spotify account ID for the
    * Discord user. Deletes row from Spotify table if the userId is falsey.
+   *
    * @private
    *
    * @param {string|number} userid The Discord ID of the user to link to the
@@ -659,6 +720,7 @@ function WebAccount() {
   }
   /**
    * Fetch a user's current patreon settings from file.
+   *
    * @private
    *
    * @param {string|number} userid Thd Discord id of the user to lookup.
@@ -683,6 +745,7 @@ function WebAccount() {
   }
   /**
    * Change a user's setting that is related to Patreon rewards.
+   *
    * @private
    *
    * @param {string|number} userid The Discord id of the user to change the
@@ -700,6 +763,7 @@ function WebAccount() {
     /**
      * Make the directory for writing the user's settings if it does not exist
      * already.
+     *
      * @private
      * @param {?Error} err The error in readin the existing file.
      * @param {?string} data The data read from the existing file if any.
@@ -716,12 +780,13 @@ function WebAccount() {
     /**
      * Checks that the setting that was requested to be changed is a valid
      * setting to change.
+     *
      * @private
      * @param {Object} obj The template object to compare the request against.
      * @param {string[]} s The array of each setting key that was a part of
      * the request.
      * @param {string|number} value The value to change the setting to.
-     * @return {boolean} True if the request was invalid in some way, or false
+     * @returns {boolean} True if the request was invalid in some way, or false
      * if everything is fine.
      */
     function isInvalid(obj, s, value) {
@@ -762,6 +827,7 @@ function WebAccount() {
     }
     /**
      * Write the modified data to file.
+     *
      * @private
      *
      * @param {?Error} err The error in creating the directory.
@@ -819,6 +885,7 @@ function WebAccount() {
   /**
    * Get a current access token for a given discord user to make a request to
    * the Spotify API.
+   *
    * @public
    *
    * @param {string|number} uId The Discord user id to get the token for.
@@ -844,6 +911,7 @@ function WebAccount() {
     });
     /**
      * Request the user's Spotify info from our SQL server.
+     *
      * @private
      *
      * @param {string} id The spotify ID of the user to fetch.
@@ -873,6 +941,7 @@ function WebAccount() {
     /**
      * Use the user's refresh token to request a new access token. Only
      * attempted once.
+     *
      * @private
      *
      * @param {string} token The refresh token to use.
@@ -912,9 +981,10 @@ function WebAccount() {
   };
   /**
    * Convert the given date into a format that SQL can understand.
+   *
    * @private
    * @param {*} date Something that `new Date()` can interpret.
-   * @return {string} Formatted Datetime string not including fractions of a
+   * @returns {string} Formatted Datetime string not including fractions of a
    * second.
    */
   function dateToSQL(date) {

@@ -92,7 +92,8 @@ function ChatBot() {
 
   /**
    * Write data to a file and make sure the directory exists or create it if it
-   * doesn't. Async
+   * doesn't. Async.
+   *
    * @see {@link Main~mkAndWriteSync}
    *
    * @private
@@ -118,7 +119,8 @@ function ChatBot() {
   }
   /**
    * Write data to a file and make sure the directory exists or create it if it
-   * doesn't. Synchronous
+   * doesn't. Synchronous.
+   *
    * @see {@link Main~mkAndWrite}
    *
    * @private
@@ -305,10 +307,11 @@ function ChatBot() {
 
   /**
    * Escape a given string to be passed into a regular expression.
+   *
    * @private
    *
    * @param {string} str Input to escape.
-   * @return {string} Escaped string.
+   * @returns {string} Escaped string.
    */
   function escapeRegExp(str) {
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');

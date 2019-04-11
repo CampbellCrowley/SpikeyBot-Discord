@@ -56,7 +56,7 @@ UserIconUrl.fetchSize = 128;
  * @public
  * @param {HungryGames~Player[]|HungryGames~Player} users Array of users to
  * process, or single user. Output will always be an array.
- * @return {HungryGames~UserIconUrl[]} The user ids and urls for all users
+ * @returns {HungryGames~UserIconUrl[]} The user ids and urls for all users
  * avatars.
  */
 UserIconUrl.from = function(users) {

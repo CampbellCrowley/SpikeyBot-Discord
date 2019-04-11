@@ -38,9 +38,10 @@ function Day(num, events) {
 
 /**
  * Create a Day from an Object. Similar to copy-constructor.
+ *
  * @public
  * @param {Object} data Day like Object.
- * @return {HungryGames~Day} Created Day.
+ * @returns {HungryGames~Day} Created Day.
  */
 Day.from = function(data) {
   const day = new Day(data.num, data.events);

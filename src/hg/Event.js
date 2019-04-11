@@ -28,8 +28,8 @@ class Event {
    * @param {boolean} [battle] Is this event a battle?
    * @param {number} [state=0] State of event if there are multiple attacks
    * before the event.
-   * @param {Event[]} [attacks=[]] Array of attacks that take place before the
-   * event.
+   * @param {HungryGames~Event[]} [attacks=[]] Array of attacks that take place
+   * before the event.
    */
   constructor(
       message, numVictim = 0, numAttacker = 0, victimOutcome = 'nothing',
@@ -54,8 +54,7 @@ class Event {
      * @type {{count: number, outcome: string, killer: boolean, weapon:
      * ?Object}}
      * @property {?{name: string, count: number}} weapon The weapon information
-     * to
-     * give to the player.
+     * to give to the player.
      */
     this.victim = {
       count: numVictim,

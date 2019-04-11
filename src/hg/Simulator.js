@@ -102,7 +102,7 @@ Simulator.prototype.setMessage = function(msg) {
 /**
  * Simulate a day with the current GuildGame.
  *
- * @param {function} cb Callback that always fires on completion. The only
+ * @param {Function} cb Callback that always fires on completion. The only
  * parameter is a possible error string, null if no error.
  * @param {boolean} [retry=true] Whether to try again if there is an error.
  */
@@ -665,10 +665,11 @@ Simulator.prototype.go = function(cb, retry = true) {
 
 /**
  * Produce a random number that is weighted by multiEventUserDistribution.
+ *
  * @see {@link multiEventUserDistribution}
  *
  * @public
- * @return {number} The weighted number outcome.
+ * @returns {number} The weighted number outcome.
  */
 Simulator.weightedUserRand = function() {
   let sum = 0;
@@ -704,7 +705,7 @@ Simulator.prototype.weightedUserRand = Simulator.weightedUserRand;
  * @param {HungryGames~Team[]} teams All teams in this game.
  * @param {?Player} weaponWielder A player that is using a weapon in this event,
  * or null if no player is using a weapon.
- * @return {HungryGames~Player[]} Array of all players that will be affected by
+ * @returns {HungryGames~Player[]} Array of all players that will be affected by
  * this event.
  */
 function pickAffectedPlayers(
@@ -831,6 +832,7 @@ function pickAffectedPlayers(
 }
 /**
  * Base of all actions to perform on a player.
+ *
  * @private
  *
  * @param {HungryGames~GuildGame} game Current GuildGame being affected.
@@ -854,6 +856,7 @@ function effectUser(game, affected, kills, weapon) {
 
 /**
  * Kill the given player in the given guild game.
+ *
  * @private
  *
  * @param {HungryGames~GuildGame} game Current GuildGame being affected.
@@ -892,6 +895,7 @@ function killUser(game, a, k, w) {
 
 /**
  * Wound the given player in the given guild game.
+ *
  * @private
  *
  * @param {HungryGames~GuildGame} game Current GuildGame being affected.
@@ -905,6 +909,7 @@ function woundUser(game, a, k, w) {
 }
 /**
  * Heal the given player in the given guild game.
+ *
  * @private
  *
  * @param {HungryGames~GuildGame} game Current GuildGame being affected.
@@ -919,6 +924,7 @@ function restoreUser(game, a, k, w) {
 }
 /**
  * Revive the given player in the given guild game.
+ *
  * @private
  *
  * @param {HungryGames~GuildGame} game Current GuildGame being affected.
@@ -965,7 +971,7 @@ function reviveUser(game, a, k, w) {
  * @param {HungryGames~OutcomeProbabilities} probOpts Death rate weights.
  * @param {?Player} weaponWielder A player that is using a weapon in this
  * event, or null if no player is using a weapon.
- * @return {?HungryGames~Event} The chosen event that satisfies all
+ * @returns {?HungryGames~Event} The chosen event that satisfies all
  * requirements, or null if something went wrong.
  */
 function pickEvent(
@@ -1091,7 +1097,7 @@ function pickEvent(
  * @param {boolean} attackersDie Do the attackers die in this event?
  * @param {?Player} weaponWielder A player that is using a weapon in this
  * event, or null if no player is using a weapon.
- * @return {?string} String describing failing check, or null of pass.
+ * @returns {?string} String describing failing check, or null of pass.
  */
 function validateEventTeamConstraint(
     numVictim, numAttacker, userPool, teams, options, victimsDie, attackersDie,
@@ -1184,7 +1190,7 @@ function validateEventTeamConstraint(
  * @param {Object} options The options set for this game.
  * @param {boolean} victimsDie Do the victims die in this event?
  * @param {boolean} attackersDie Do the attackers die in this event?
- * @return {boolean} Will this event follow current options set about number
+ * @returns {boolean} Will this event follow current options set about number
  * of victors required.
  */
 function validateEventVictorConstraint(
@@ -1206,7 +1212,7 @@ function validateEventVictorConstraint(
  * @param {HungryGames~Player[]} userPool Pool of all remaining players to put
  * into an event.
  * @param {number} numAlive Total number of living players left in the game.
- * @return {boolean} If the event requires a number of players that is valid
+ * @returns {boolean} If the event requires a number of players that is valid
  * from the number of players left to choose from.
  */
 function validateEventNumConstraint(
@@ -1230,7 +1236,7 @@ function validateEventNumConstraint(
  * @param {boolean} attackersDie Do the attackers die in this event?
  * @param {?Player} weaponWielder A player that is using a weapon in this
  * event, or null if no player is using a weapon.
- * @return {?string} String of failing constraint check, or null if passes.
+ * @returns {?string} String of failing constraint check, or null if passes.
  */
 function validateEventRequirements(
     numVictim, numAttacker, userPool, numAlive, teams, options, victimsDie,
@@ -1261,7 +1267,7 @@ function validateEventRequirements(
  * probabilityOpts The probabilities of each type of event being used.
  * @param {number} [customWeight=1] The weight of custom events.
  * @param {number} [recurse=0] The current recursive depth.
- * @return {number} The index of the event that was chosen.
+ * @returns {number} The index of the event that was chosen.
  */
 function probabilityEvent(
     eventPool, probabilityOpts, customWeight = 1, recurse = 0) {

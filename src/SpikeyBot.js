@@ -265,10 +265,11 @@ function SpikeyBot() {
   /**
    * Getter for the bot's name. If name is null, it is most likely because there
    * is no custom name and common.isRelease should be used instead.
+   *
    * @see {@link SpikeyBot~botName}
    *
    * @public
-   * @return {?string} The bot's name or null if it has not been defined yet or
+   * @returns {?string} The bot's name or null if it has not been defined yet or
    * there is no custom name.
    */
   this.getBotName = function() {
@@ -279,10 +280,11 @@ function SpikeyBot() {
   /**
    * Getter for the bot's name. If botName is null, this will give either
    * `release` or `dev`.
+   *
    * @see {@link SpikeyBot~botName}
    *
    * @public
-   * @return {string} The bot's name.
+   * @returns {string} The bot's name.
    */
   this.getFullBotName = function() {
     if (isBackup) return 'FALLBACK';
@@ -346,6 +348,7 @@ function SpikeyBot() {
   /**
    * Create a ShardingManager and spawn shards. This shall only be called at
    * most once, and `login()` shall not be called after this.
+   *
    * @private
    */
   function createShards() {
@@ -566,7 +569,7 @@ function SpikeyBot() {
    * given
    * command.
    * @param {string} cmd Command to check if the message is this command.
-   * @return {boolean} True if msg is the given command.
+   * @returns {boolean} True if msg is the given command.
    */
   function isCmd(msg, cmd) {
     return msg.content.startsWith(msg.prefix + cmd);
@@ -941,6 +944,7 @@ function SpikeyBot() {
         }));
     /**
      * Change the command prefix for the given guild.
+     *
      * @public
      *
      * @param {string} gId The guild id of which to change the command prefix.
@@ -967,6 +971,7 @@ function SpikeyBot() {
                * Write the custom prefix to file after making the
                * directory. This is for bots not using the default
                * name.
+               *
                * @private
                * @param {Error} err
                */
@@ -1110,6 +1115,7 @@ function SpikeyBot() {
   /**
    * Trigger a reboot of the bot. Actually just gracefully shuts down, and
    * expects to be immediately restarted.
+   *
    * @TODO: Support scheduled reload across multiple shards. Currently the bot
    * waits for the shard at which the command was sent to be ready for reboot
    * instead of all shard deciding on their own when they're ready to reboot.
@@ -1265,6 +1271,7 @@ function SpikeyBot() {
    * Reloads mainmodules from file. Reloads all modules if `toReload` is not
    * specified. `reloaded` will contain the list of messages describing which
    * mainmodules were reloaded, or not.
+   *
    * @private
    *
    * @param {?string|string[]} [toReload] Specify mainmodules to reload, or null
@@ -1273,7 +1280,7 @@ function SpikeyBot() {
    * information about outcomes of attempting to reload mainmodules.
    * @param {boolean} [schedule=true] Automatically re-schedule reload for
    * mainmodules if they are in an unloadable state.
-   * @return {boolean} True if something failed and not all mainmodules were
+   * @returns {boolean} True if something failed and not all mainmodules were
    * reloaded.
    */
   function reloadMainModules(toReload, reloaded, schedule) {
@@ -1421,6 +1428,7 @@ function SpikeyBot() {
   }
   /**
    * Trigger all mainModules to save their data.
+   *
    * @see {@link SpikeyBot~saveAll()}
    *
    * @private
@@ -1481,10 +1489,11 @@ function SpikeyBot() {
 
   /**
    * Get this guild's custom prefix. Returns the default prefix otherwise.
+   *
    * @public
    *
    * @param {?Discord~Guild|string|number} id The guild id or guild to lookup.
-   * @return {string} The prefix for all commands in the given guild.
+   * @returns {string} The prefix for all commands in the given guild.
    */
   this.getPrefix = function(id) {
     if (!id) return defaultPrefix;
@@ -1494,6 +1503,7 @@ function SpikeyBot() {
 
   /**
    * Load prefixes from file for the given guilds asynchronously.
+   *
    * @private
    *
    * @param {Discord~Guild[]} guilds Array of guilds to fetch the custom
@@ -1540,6 +1550,7 @@ function SpikeyBot() {
   /**
    * Trigger a graceful shutdown with process signals. Does not trigger shutdown
    * if exit is -1.
+   *
    * @private
    *
    * @param {...*} info Information about the signal.
@@ -1557,6 +1568,7 @@ function SpikeyBot() {
   }
   /**
    * Login to Discord. This shall only be called at most once.
+   *
    * @private
    */
   function login() {

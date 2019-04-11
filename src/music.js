@@ -355,20 +355,21 @@ function Music() {
    *
    * @private
    * @param {Discord~Message} msg Message to format a mention for the author of.
-   * @return {string} Formatted mention string.
+   * @returns {string} Formatted mention string.
    */
   function mention(msg) {
     return `<@${msg.author.id}>`;
   }
   /**
    * Replies to the author and channel of msg with the given message.
+   *
    * @deprecated Use {@link Common.reply} instead.
    *
    * @private
    * @param {Discord~Message} msg Message to reply to.
    * @param {string} text The main body of the message.
    * @param {string} post The footer of the message.
-   * @return {Promise} Promise of Discord~Message that we attempted to send.
+   * @returns {Promise} Promise of Discord~Message that we attempted to send.
    */
   function reply(msg, text, post) {
     return self.common.reply(msg, text, post);
@@ -456,7 +457,7 @@ function Music() {
    * determine remaining play time.
    * @param {number} [seek=0] The offset to add to totalStreamTime to correct
    * for starting playback somewhere other than the beginning.
-   * @return {Discord~MessageEmbed} The formatted song info.
+   * @returns {Discord~MessageEmbed} The formatted song info.
    */
   function formatSongInfo(info, dispatcher, seek) {
     if (!seek) seek = 0;
@@ -492,7 +493,7 @@ function Music() {
    * @param {Object} info The song info received from ytdl.
    * @param {Discord~StreamDispatcher} dispatcher The dispatcher playing the
    * song currently.
-   * @return {number} Number of seconds remaining in the song playtime.
+   * @returns {number} Number of seconds remaining in the song playtime.
    */
   function getRemainingSeconds(info, dispatcher) {
     if (!dispatcher.totalStreamTime) return info._duration_raw;
@@ -505,7 +506,7 @@ function Music() {
    *
    * @public
    * @param {Discord~Message} msg The context to use to fetch the info.
-   * @return {?number} Time in seconds, or null if nothing is playing.
+   * @returns {?number} Time in seconds, or null if nothing is playing.
    */
   this.getProgress = function(msg) {
     const broadcast = broadcasts[msg.guild.id];
@@ -524,7 +525,7 @@ function Music() {
    *
    * @public
    * @param {Discord~Message} msg The context to use to fetch the info.
-   * @return {?number} Time in seconds, or null if nothing is playing.
+   * @returns {?number} Time in seconds, or null if nothing is playing.
    */
   this.getDuration = function(msg) {
     const broadcast = broadcasts[msg.guild.id];
@@ -539,7 +540,7 @@ function Music() {
    *
    * @private
    * @param {number} seconds The duration in seconds.
-   * @return {string} The formatted string in minutes and seconds.
+   * @returns {string} The formatted string in minutes and seconds.
    */
   function formatPlaytime(seconds) {
     return Math.floor(seconds / 60) + 'm ' + seconds % 60 + 's';
@@ -549,7 +550,7 @@ function Music() {
    *
    * @private
    * @param {number|string} num The number to format.
-   * @return {string} The formatted number.
+   * @returns {string} The formatted number.
    */
   function formNum(num) {
     const numString = (num + '');
@@ -721,6 +722,7 @@ function Music() {
     /**
      * Fires on when voice connection is disconnected. Cleans up anything that
      * could be left behind.
+     *
      * @private
      */
     function onDC() {
@@ -801,8 +803,8 @@ function Music() {
    *
    * @private
    * @param {Object} input Input vars.
-   * @param {function} done Done callback.
-   * @param {function} progress Progress callback.
+   * @param {Function} done Done callback.
+   * @param {Function} progress Progress callback.
    */
   function startStream(input, done, progress) {
     let stream;
@@ -911,7 +913,7 @@ function Music() {
    *
    * @public
    * @param {Discord~Message} msg The context to lookup guild info.
-   * @return {boolean} True if success, false if failed.
+   * @returns {boolean} True if success, false if failed.
    */
   this.pause = function(msg) {
     return pauseBroadcast(broadcasts[msg.guild.id]);
@@ -923,7 +925,7 @@ function Music() {
    * @private
    * @param {Music~Broadcast} broadcast The object storing all relevant
    * information.
-   * @return {boolean} If the music was actully paused. False if the music is
+   * @returns {boolean} If the music was actully paused. False if the music is
    * already paused or nothing is playing.
    */
   function pauseBroadcast(broadcast) {
@@ -967,7 +969,7 @@ function Music() {
    *
    * @public
    * @param {Discord~Message} msg The context to lookup guild info.
-   * @return {boolean} True if success, false if failed.
+   * @returns {boolean} True if success, false if failed.
    */
   this.resume = function(msg) {
     return resumeBroadcast(broadcasts[msg.guild.id]);
@@ -979,7 +981,7 @@ function Music() {
    * @private
    * @param {Music~Broadcast} broadcast The object storing all relevant
    * information.
-   * @return {boolean} If the music was actully resumed. False if the music is
+   * @returns {boolean} If the music was actully resumed. False if the music is
    * already playing or nothing is playing or the bot is alone in a channel.
    */
   function resumeBroadcast(broadcast) {
@@ -1131,8 +1133,8 @@ function Music() {
    *
    * @public
    * @param {Discord~Message} msg The context to lookup the information.
-   * @return {?boolean} Null if nothing is playing, true if subjugated, false if
-   * not subjugated.
+   * @returns {?boolean} Null if nothing is playing, true if subjugated, false
+   * if not subjugated.
    */
   this.isSubjugated = function(msg) {
     if (broadcasts[msg.guild.id]) {
@@ -1245,6 +1247,7 @@ function Music() {
   /**
    * Removes all songs from the current queue except for the currently playing
    * song.
+   *
    * @private
    *
    * @type {commandHandler}
@@ -1268,6 +1271,7 @@ function Music() {
 
   /**
    * Empty a guild's current music queue.
+   *
    * @public
    *
    * @param {Discord~Message} msg The context for looking up the guild queue to
@@ -1659,7 +1663,7 @@ function Music() {
    *
    * @private
    * @param {?Date|number|string} date The date that Date() can accept.
-   * @return {string} The formatted datetime.
+   * @returns {string} The formatted datetime.
    */
   function formatDateTime(date) {
     const d = new Date(date);
@@ -1674,7 +1678,7 @@ function Music() {
    *
    * @private
    * @param {number} month The month number (1-12).
-   * @return {string} The 3 character string.
+   * @returns {string} The 3 character string.
    */
   function monthToShort(month) {
     return [
@@ -1781,7 +1785,7 @@ function Music() {
    * broadcast information.
    * @param {number} percentage The volume percentage to set to. 0.5 is half, 2
    * is double.
-   * @return {boolean} True if success, false if something went wrong.
+   * @returns {boolean} True if success, false if something went wrong.
    */
   function changeVolume(broadcast, percentage) {
     if (!broadcast) return false;
@@ -1804,7 +1808,7 @@ function Music() {
    * @private
    * @param {Music~Broadcast} broadcast The objected storing the current
    * broadcast information.
-   * @return {?number} The logarithmic volume percentage. 0.5 is half, 2 is
+   * @returns {?number} The logarithmic volume percentage. 0.5 is half, 2 is
    * double. Null if error.
    */
   function getVolume(broadcast) {

@@ -177,10 +177,16 @@ function GuildGame(
   this.reactMessage = null;
 
   /**
+   * Interval
+   */
+  let dayEventInterval = null;
+
+  /**
    * Force a player to have a certain outcome in the current day being
    * simulated, or the next day that will be simulated. This is acheived by
    * adding a custom event in which the player will be affected after their
    * normal event for the day.
+   *
    * @public
    *
    * @param {string[]} list The array of player IDs of which to affect.
@@ -192,7 +198,7 @@ function GuildGame(
    * @param {string} [text] Message to show when the user is affected.
    * @param {boolean} [persists=false] Does this outcome persist to the end of
    * the game, if false it only exists for the next day.
-   * @return {string} The output message to tell the user of the outcome of the
+   * @returns {string} The output message to tell the user of the outcome of the
    * operation.
    */
   this.forcePlayerState = function(
@@ -266,13 +272,25 @@ function GuildGame(
     });
     return `Player(s) will be ${state} by the end of the day.`;
   };
+
+  this.end = function() {
+    this.currentGame.inProgress = false;
+    this.currentGame.isPaused = false;
+    this.currentGame.ended = true;
+    this.autoPlay = false;
+    clearInterval(dayEventInterval);
+    clearTimeout(autoPlayTimeout);
+    dayEventInterval = null;
+    autoPlayTimeout = null;
+  };
 }
 
 /**
  * Create a GuildGame from data parsed from file. Similar to copy constructor.
+ *
  * @public
  * @param {Object} data GuildGame like object.
- * @return {HungryGames~GuildGame}
+ * @returns {HungryGames~GuildGame}
  */
 GuildGame.from = function(data) {
   const game = new GuildGame(

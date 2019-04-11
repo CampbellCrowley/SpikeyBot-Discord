@@ -171,9 +171,10 @@ function WebStats() {
 
   /**
    * Fetch the bot's stats.
+   *
    * @private
    * @param {Object} cb The bot's stats as an object. {@link
-   * Main~getAllStats~values}
+   * Main~getAllStats~values}.
    */
   function getStats(cb) {
     if (cachedTime + cachedLifespan < Date.now()) {
@@ -189,6 +190,7 @@ function WebStats() {
 
   /**
    * Send our latest guild count to discordbots.org via https post request.
+   *
    * @private
    */
   function postUpdatedCount() {
@@ -218,6 +220,7 @@ function WebStats() {
     });
     /**
      * Send the request after we have fetched our stats.
+     *
      * @private
      * @param {{server_count: number, shards: number[], shard_id: number,
      * shard_count: number}} data The data to send in our request.

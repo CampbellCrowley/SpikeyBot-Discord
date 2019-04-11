@@ -33,7 +33,7 @@ module.exports = {
       },
     ],
     "valid-jsdoc": [
-      "error",
+      "warn",
       {
         "prefer": {
           "return": "returns",

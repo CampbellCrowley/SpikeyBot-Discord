@@ -74,7 +74,7 @@ function Battle(message, attacker, victim) {
  * for settings checking and fetching non-affected users.
  * @param {HungryGames~Battle[]} battles Array of all possible battle events to
  * choose from.
- * @return {HungryGames~Event} The event that was created.
+ * @returns {HungryGames~Event} The event that was created.
  */
 Battle.finalize = function(
     affectedUsers, numVictim, numAttacker, mention, game, battles) {

@@ -196,7 +196,7 @@ function SMLoader() {
    * Get array of all submodule names and the commit they were last loaded from.
    *
    * @public
-   * @return {Array.<{name: string, commit: string}>}
+   * @returns {Array.<{name: string, commit: string}>}
    */
   toAssign.bot.getSubmoduleCommits = function() {
     return subModuleNames.map((el) => {
@@ -209,7 +209,7 @@ function SMLoader() {
    *
    * @public
    * @param {string} name The name of the submodule.
-   * @return {?SubModule}
+   * @returns {?SubModule}
    */
   toAssign.bot.getSubmodule = function(name) {
     if (!subModules[name]) {
@@ -220,6 +220,7 @@ function SMLoader() {
 
   /**
    * Unloads submodules that is currently loaded.
+   *
    * @public
    *
    * @param {string} name Specify submodule to unload. If it is already
@@ -325,6 +326,7 @@ function SMLoader() {
   };
   /**
    * Loads submodules from file.
+   *
    * @public
    *
    * @param {string} name Specify submodule to load. If it is already loaded,
@@ -397,6 +399,56 @@ function SMLoader() {
    * @param {Function} [cb] Callback to fire once the operation is complete.
    * Single parameter has array of strings of status of each module attempted to
    * be reloaded.
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
    */
   this.reload = function(name, opts, cb) {
     if (typeof cb !== 'function') cb = function() {};
@@ -438,6 +490,7 @@ function SMLoader() {
     }
     /**
      * Actually trigger the reload process for a single submodule.
+     *
      * @private
      *
      * @param {string} name The submodule name to reload.
@@ -463,6 +516,7 @@ function SMLoader() {
     /**
      * Called when a submodule's reload process is completed. Fires main
      * callback once all submodules reloads have been completed.
+     *
      * @private
      */
     function done() {
@@ -556,6 +610,7 @@ function SMLoader() {
         }
         /**
          * Begins actually loading a module.
+         *
          * @private
          *
          * @param {string} name The name of the module.
@@ -568,6 +623,7 @@ function SMLoader() {
         }
         /**
          * Triggered on each completed action.
+         *
          * @private
          */
         function done() {
@@ -609,6 +665,7 @@ function SMLoader() {
         }
         /**
          * Begins actually loading a module.
+         *
          * @private
          * @param {string} name The name of the subModule.
          */
@@ -620,6 +677,7 @@ function SMLoader() {
         }
         /**
          * Triggered on each completed action.
+         *
          * @private
          */
         function done() {
@@ -653,6 +711,7 @@ function SMLoader() {
     let error = false;
     /**
      * Send the help message.
+     *
      * @private
      * @param {Discord~MessageEmbed} help THe message to send.
      */

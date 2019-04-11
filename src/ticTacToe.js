@@ -92,6 +92,7 @@ function TicTacToe() {
 
   /**
    * Class that stores the current state of a tic tac toe game.
+   *
    * @class
    *
    * @public
@@ -306,7 +307,7 @@ function TicTacToe() {
    * @param {number[]} board Array of 9 numbers defining a board. 0 is nobody, 1
    * is player 1, 2 is player 2.
    * @param {number} latest The index where the latest move occurred.
-   * @return {number} Returns 0 if game is not over, 1 if player 1 won, 2 if
+   * @returns {number} Returns 0 if game is not over, 1 if player 1 won, 2 if
    * player 2 won, 3 if draw.
    */
   function checkWin(board, latest) {

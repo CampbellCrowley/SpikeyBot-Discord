@@ -11,10 +11,11 @@ const re = /(?:\ud83d[\udc68\udc69])(?:\ud83c[\udffb-\udfff])?\u200d(?:\u2695\uf
 
 /**
  * Check a string for any emoji matches.
+ *
  * @public
  *
  * @param {string} input The string to run the regex against.
- * @return {null|string[]} The matched return value.
+ * @returns {null|string[]} The matched return value.
  */
 function match(input) {
   return input.match(re);

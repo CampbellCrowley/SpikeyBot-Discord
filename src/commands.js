@@ -193,6 +193,7 @@ function Command() {
 
     /**
      * Update the parent name for this command and all child commands.
+     *
      * @public
      * @param {string} to The parent name to set.
      */
@@ -207,8 +208,9 @@ function Command() {
     };
 
     /**
-     * Get the full name for this command including parent command
-     * @return {string} This command's name prefixed with the parent command's
+     * Get the full name for this command including parent command.
+     *
+     * @returns {string} This command's name prefixed with the parent command's
      * name.
      */
     this.getFullName = function() {
@@ -223,9 +225,10 @@ function Command() {
      * Get the primary key for this object. The first or only value passed in
      * for `cmd`, and may be used to show the user the command that this object
      * stores information about.
+     *
      * @public
      *
-     * @return {string} The command string.
+     * @returns {string} The command string.
      */
     this.getName = function() {
       return me.aliases[0];
@@ -257,6 +260,7 @@ function Command() {
 
     /**
      * The function to call when this command has been triggered.
+     *
      * @public
      *
      * @param {Discord~Message} msg The message that is triggering this command.
@@ -343,8 +347,9 @@ function Command() {
     /**
      * Fetches the user options for this command, taking into account this could
      * be a subcommand.
+     *
      * @public
-     * @return {Object.<CommandSetting>} The settings for this command or
+     * @returns {Object.<CommandSetting>} The settings for this command or
      * sub-command mapped by guild ids.
      */
     this.getUserOptions = function() {
@@ -481,6 +486,7 @@ function Command() {
     /**
      * Enable, disable, or neutralize this command for the associated guild,
      * channel, user, or role.
+     *
      * @public
      * @fires Command.events#settingsChanged
      *
@@ -554,11 +560,12 @@ function Command() {
 
     /**
      * Check if this command is disabled with the given context.
+     *
      * @public
      *
      * @param {Discord~Message} msg The message with the current context of
      * which to check if the command is disabled.
-     * @return {number} 0 if not disabled, 2 if disabled is specific to user, 1
+     * @returns {number} 0 if not disabled, 2 if disabled is specific to user, 1
      * if disabled for any other reason.
      */
     this.isDisabled = function(msg) {
@@ -610,12 +617,13 @@ function Command() {
       /**
        * Searches the given object against the reference data to see if they
        * find any matching IDs.
+       *
        * @private
        *
        * @param {Command~CommandSetting.disabled|Command~CommandSetting.enabled}
        * search The search data.
        * @param {Discord~Message} data The context to search for.
-       * @return {number} 0 if not disabled, 2 if disabled is specific to user,
+       * @returns {number} 0 if not disabled, 2 if disabled is specific to user,
        * 1 if disabled for any other reason.
        */
       function findMatch(search, data) {
@@ -635,9 +643,10 @@ function Command() {
     /**
      * Creates a JSON formatted object with the necessary properties for
      * re-creating this object.
+     *
      * @public
      *
-     * @return {Object} Object ready to be stringified for file saving.
+     * @returns {Object} Object ready to be stringified for file saving.
      */
     this.toJSON = function() {
       return {
@@ -665,10 +674,11 @@ function Command() {
 
   /**
    * Fetch all user-defined settings for a guild.
+   *
    * @public
    *
    * @param {string} gId THe guild id of which to fetch the settings.
-   * @return {Object.<CommandSetting>} The settings for the guild mapped by
+   * @returns {Object.<CommandSetting>} The settings for the guild mapped by
    * command name.
    */
   this.getUserSettings = function(gId) {
@@ -677,10 +687,11 @@ function Command() {
 
   /**
    * Fetch all commands and their default setting values.
+   *
    * @see {@link Command~cmds}
    * @public
    *
-   * @return {Object.<SingleCommand>} All currently registered commands.
+   * @returns {Object.<SingleCommand>} All currently registered commands.
    */
   this.getDefaultSettings = function() {
     return cmds;
@@ -715,7 +726,7 @@ function Command() {
    * the command to trigger from msg.
    * @param {Discord~Message} [msg2] The message received from Discord if the
    * first argument is a string.
-   * @return {boolean} True if command was handled by us.
+   * @returns {boolean} True if command was handled by us.
    */
   this.trigger = function(msg, msg2) {
     let override = null;
@@ -804,6 +815,7 @@ function Command() {
   };
   /**
    * Remove listener for a command.
+   *
    * @public
    *
    * @param {string|string[]} cmd Command or alias of command to remove listener
@@ -838,6 +850,7 @@ function Command() {
 
   /**
    * Returns the callback function for the given event.
+   *
    * @public
    *
    * @param {?string} cmd Command to force search for, and ignore command that
@@ -846,7 +859,7 @@ function Command() {
    * object will be updated with the command name that was found as msg.cmd.
    * @param {boolean} [setCmd=false] Set the cmd variable in the msg object to
    * match the found command.
-   * @return {?Command~SingleCommand} The single command object reference, or
+   * @returns {?Command~SingleCommand} The single command object reference, or
    * null if it could not be found.
    */
   this.find = function(cmd, msg, setCmd = false) {
@@ -881,13 +894,14 @@ function Command() {
   /**
    * Returns all the callback functions for the given event with wildcards
    * allowed.
+   *
    * @public
    *
    * @param {string} cmd Command and subcommands to search for without guild
    * prefixes.
    * @param {Discord~Message} msg Message object to use to remove command prefix
    * if it exist.
-   * @return {Command~SingleCommand[]} The command object references, or an
+   * @returns {Command~SingleCommand[]} The command object references, or an
    * empty array if it could not be found.
    */
   this.findAll = function(cmd, msg) {
@@ -929,6 +943,7 @@ function Command() {
   /**
    * Checks that the given command can be run with the given context. Does not
    * actually fire the event.
+   *
    * @public
    *
    * @param {?string} cmd The command to validate. Null to use msg to find the
@@ -939,7 +954,7 @@ function Command() {
    * @param {Command~SingleCommand} [func] A command handler override to use for
    * settings lookup. If this is not specified, the handler associated with
    * cmd will be fetched.
-   * @return {?string} Message causing failure, or null if valid.
+   * @returns {?string} Message causing failure, or null if valid.
    */
   this.validate = function(cmd, msg, func) {
     if (!func) func = self.find(cmd, msg);
@@ -994,9 +1009,10 @@ function Command() {
 
   /**
    * Fetches a list of all currently registered commands.
+   *
    * @public
    *
-   * @return {string[]} Array of all registered commands.
+   * @returns {string[]} Array of all registered commands.
    */
   this.getAllNames = function() {
     return Object.keys(cmds);
@@ -1004,6 +1020,7 @@ function Command() {
 
   /**
    * Allow user to disable a command.
+   *
    * @private
    * @type {Command~commandHandler}
    *
@@ -1110,6 +1127,7 @@ function Command() {
   }
   /**
    * Allow user to enable a command.
+   *
    * @private
    * @type {Command~commandHandler}
    *
@@ -1216,6 +1234,7 @@ function Command() {
 
   /**
    * Allow user to mute a command.
+   *
    * @private
    * @type {Command~commandHandler}
    *
@@ -1251,6 +1270,7 @@ function Command() {
 
   /**
    * Allow user to unmute a command.
+   *
    * @private
    * @type {Command~commandHandler}
    *
@@ -1286,6 +1306,7 @@ function Command() {
 
   /**
    * Show user the currently configured settings for commands.
+   *
    * @private
    * @type {Command~commandHandler}
    *
@@ -1459,6 +1480,7 @@ function Command() {
   }
   /**
    * Reset all custom command settings to default.
+   *
    * @private
    * @type {Command~commandHandler}
    * @fires Command.events#settingsReset
@@ -1557,6 +1579,7 @@ function Command() {
 
   /**
    * Register an event listener.
+   *
    * @public
    *
    * @param {string} name The name of the event to listen for.
@@ -1568,6 +1591,7 @@ function Command() {
   };
   /**
    * Remove an event listener.
+   *
    * @public
    *
    * @param {string} name The name of the event to listen for.
@@ -1586,6 +1610,7 @@ function Command() {
 
   /**
    * Fire all handlers listening for an event.
+   *
    * @public
    *
    * @param {string} name The name of the event to fire.

@@ -8,17 +8,17 @@ const crypto = require('crypto');
 const mkdirp = require('mkdirp'); // mkdir -p
 const rimraf = require('rimraf'); // rm -rf
 const FuzzySearch = require('fuzzy-search');
-require('./subModule.js')(HungryGames);  // Extends the SubModule class.
+require('./subModule.js')(HG);  // Extends the SubModule class.
 
 /**
- * @classdesc Hunger Games simulator.
+ * @classdesc Hunger Games simulator subModule.
  * @class
  * @augments SubModule
  * @listens Discord~Client#guildDelete
  * @listens Discord~Client#channelDelete
  * @listens Command#hg
  */
-function HungryGames() {
+function HG() {
   const self = this;
 
   /**
@@ -33,42 +33,8 @@ function HungryGames() {
   this.myName = 'HG';
   this.postPrefix = 'hg ';
 
-  /**
-   * Wrapper for normal `require()` but also deletes cache reference to object
-   * before requiring. This forces the object to be updated in the future.
-   *
-   * @private
-   * @param {string} name Name of module to require.
-   * @return {Object} The required module.
-   */
-  function tmpRequire(name) {
-    delete require.cache[require.resolve(name)];
-    return require(name);
-  }
-
-  /* eslint-disable no-unused-vars */
-  const FinalEvent = tmpRequire('./hg/FinalEvent.js');
-  const ArenaEvent = tmpRequire('./hg/ArenaEvent.js');
-  const WeaponEvent = tmpRequire('./hg/WeaponEvent.js');
-  const Battle = tmpRequire('./hg/Battle.js');
-  const OutcomeProbabilities = tmpRequire('./hg/OutcomeProbabilities.js');
-  const Day = tmpRequire('./hg/Day.js');
-  /* eslint-enable no-unused-vars */
-  const Messages = tmpRequire('./hg/Messages.js');
-  const UserIconUrl = tmpRequire('./hg/UserIconUrl.js');
-  const Player = tmpRequire('./hg/Player.js');
-  const Team = tmpRequire('./hg/Team.js');
-  const Game = tmpRequire('./hg/Game.js');
-  const Event = tmpRequire('./hg/Event.js');
-  const GuildGame = tmpRequire('./hg/GuildGame.js');
-  const Simulator = tmpRequire('./hg/Simulator.js');
-
-  /**
-   * Current {@link HungryGames~Messages} instance.
-   * @public
-   * @type {HungryGames~Messages}
-   */
-  this.messages = new Messages();
+  delete require.cache[require.resolve('./hg/HungryGames.js')];
+  const hg = require('./hg/HungryGames.js');
 
   /**
    * The maximum number of bytes allowed to be received from a client in an
@@ -155,7 +121,6 @@ function HungryGames() {
    */
   const weaponsFile = './save/hgWeapons.json';
 
-
   /**
    * Number of events to show on a single page of events.
    *
@@ -194,7 +159,6 @@ function HungryGames() {
    */
   const findDelay = 15000;
 
-
   /**
    * Regex to match all URLs in a string.
    *
@@ -212,235 +176,10 @@ function HungryGames() {
    * Default options for a game.
    *
    * @private
-   * @type {Object.<{
-   *     value: string|number|boolean|Object,
-   *     values: ?string[],
-   *     range: ?{min:number, max:number},
-   *     comment: string,
-   *     category: string
-   *   }>}
+   * @type {HungryGames~DefaultOptions}
    * @constant
    */
-  let defaultOptions = {
-    bloodbathOutcomeProbs: {
-      value: {kill: 30, wound: 6, thrive: 8, revive: 0, nothing: 56},
-      comment:
-          'Relative probabilities of choosing an event with each outcome.' +
-          ' This is for the bloodbath events.',
-      category: 'probabilities',
-    },
-    playerOutcomeProbs: {
-      value: {kill: 22, wound: 4, thrive: 8, revive: 6, nothing: 60},
-      comment:
-          'Relative probabilities of choosing an event with each outcome.' +
-          ' This is for normal daily events.',
-      category: 'probabilities',
-    },
-    arenaOutcomeProbs: {
-      value: {kill: 64, wound: 10, thrive: 5, revive: 6, nothing: 15},
-      comment:
-          'Relative Probabilities of choosing an event with each outcome.' +
-          ' This is for the special arena events.',
-      category: 'probabilities',
-    },
-    arenaEvents: {
-      value: true,
-      comment:
-          'Are arena events possible. (Events like wolf mutts, or a volcano ' +
-          'erupting.)',
-      category: 'probabilities',
-    },
-    includeBots: {
-      value: false,
-      comment: 'Should bots be included in the games. If this is false, bots ' +
-          'cannot be added manually.',
-      category: 'other',
-    },
-    excludeNewUsers: {
-      value: false,
-      comment: 'Should new users who join your server be excluded from the ' +
-          'games by default. True will add all new users to the blacklist, ' +
-          'false will put all new users into the next game automatically.',
-      category: 'other',
-    },
-    allowNoVictors: {
-      value: false,
-      comment:
-          'Should it be possible to end a game without any winners. If true, ' +
-          'it is possible for every player to die, causing the game to end ' +
-          'with everyone dead. False forces at least one winner.',
-      category: 'features',
-    },
-    bleedDays: {
-      value: 2,
-      comment: 'Number of days a user can bleed before they can die.',
-      category: 'other',
-    },
-    battleHealth: {
-      value: 5,
-      ranve: {min: 1, max: 10},
-      comment: 'The amount of health each user gets for a battle.',
-      category: 'other',
-    },
-    teamSize: {
-      value: 0,
-      comment: 'Maximum size of teams when automatically forming teams. 0 to ' +
-          'disable teams',
-      category: 'other',
-    },
-    teammatesCollaborate: {
-      values: ['disabled', 'always', 'untilend'],
-      value: 'always',
-      comment: 'Will teammates work together. If disabled, teammates can kill' +
-          ' eachother, and there will only be 1 victor. If enabled, teammates' +
-          ' cannot kill eachother, and the game ends when one TEAM is ' +
-          'remaining, not one player. Untilend means teammates work together ' +
-          'until the end of the game, this means only there will be only 1 ' +
-          'victor.',
-      category: 'features',
-    },
-    useEnemyWeapon: {
-      value: false,
-      comment:
-          'This will allow the attacker in an event to use the victim\'s ' +
-          'weapon against them.',
-      category: 'features',
-    },
-    mentionVictor: {
-      value: false,
-      comment:
-          'Should the victor of the game (can be team), be tagged/mentioned ' +
-          'so they get notified?',
-      category: 'features',
-    },
-    mentionAll: {
-      values: ['disabled', 'all', 'death'],
-      value: 'disabled',
-      comment:
-          'Should a user be mentioned every time something happens to them ' +
-          'in the game? (can be disabled, for all events, or for when the ' +
-          'user dies)',
-      category: 'features',
-    },
-    mentionEveryoneAtStart: {
-      value: false,
-      comment: 'Should @everyone be mentioned when the game is started?',
-      category: 'features',
-    },
-    useNicknames: {
-      value: false,
-      comment: 'Should we use user\'s custom server nicknames instead of ' +
-          'their account username? Names only change when a new game is ' +
-          'created.',
-      category: 'features',
-    },
-    delayEvents: {
-      value: 3500,
-      range: {min: 2500, max: 30000},
-      time: true,
-      comment: 'Delay in milliseconds between each event being printed.',
-      category: 'other',
-    },
-    delayDays: {
-      value: 7000,
-      range: {min: 2500, max: 129600000},  // 1.5 days
-      time: true,
-      comment: 'Delay in milliseconds between each day being printed.',
-      category: 'other',
-    },
-    probabilityOfArenaEvent: {
-      value: 0.25,
-      range: {min: 0, max: 1},
-      percent: true,
-      comment: 'Probability each day that an arena event will happen.',
-      category: 'probabilities',
-    },
-    probabilityOfBleedToDeath: {
-      value: 0.5,
-      range: {min: 0, max: 1},
-      percent: true,
-      comment: 'Probability that after bleedDays a player will die. If they ' +
-          'don\'t die, they will heal back to normal.',
-      category: 'probabilities',
-    },
-    probabilityOfBattle: {
-      value: 0.05,
-      range: {min: 0, max: 1},
-      percent: true,
-      comment:
-          'Probability of an event being replaced by a battle between two ' +
-          'players.',
-      category: 'probabilities',
-    },
-    probabilityOfUseWeapon: {
-      value: 0.75,
-      range: {min: 0, max: 1},
-      percent: true,
-      comment:
-          'Probability of each player using their weapon each day if they ' +
-          'have one.',
-      category: 'probabilities',
-    },
-    eventAvatarSizes: {
-      value: {avatar: 64, underline: 4, gap: 4},
-      range: {min: 0, max: 512},
-      comment:
-          'The number of pixels each player\'s avatar will be tall and wide, ' +
-          'the underline status height, and the gap between each avatar. This' +
-          ' is for all normal events and arena event messages.',
-      category: 'other',
-    },
-    battleAvatarSizes: {
-      value: {avatar: 32, underline: 4, gap: 4},
-      range: {min: 0, max: 512},
-      comment:
-          'The number of pixels each player\'s avatar will be tall and wide, ' +
-          'the underline status height, and the gap between each avatar. This' +
-          ' is for each battle turn.',
-      category: 'other',
-    },
-    victorAvatarSizes: {
-      value: {avatar: 80, underline: 4, gap: 4},
-      range: {min: 0, max: 512},
-      comment:
-          'The number of pixels each player\'s avatar will be tall and wide, ' +
-          'the underline status height, and the gap between each avatar. This' +
-          ' is when announcing the winners of the game.',
-      category: 'other',
-    },
-    numDaysShowDeath: {
-      value: -1,
-      range: {min: -1, max: 100},
-      comment:
-          'The number of days after a player has died to show them as dead in' +
-          ' the status list after each day. -1 will always show dead players.' +
-          ' 0 will never show dead players. 1 will only show them for the day' +
-          ' they died. 2 will show them for 2 days.',
-      category: 'other',
-    },
-    showLivingPlayers: {
-      value: true,
-      comment:
-          'Include the living players in the status updates. Instead of only ' +
-          'wounded or dead players.',
-      category: 'other',
-    },
-    customEventWeight: {
-      value: 2,
-      range: {min: 0, max: 1000},
-      comment:
-          'The relative weight of custom events. 2 means custom events are ' +
-          'twice as likely to be chosen.',
-      category: 'probabilities',
-    },
-    disableOutput: {
-      value: false,
-      comment: 'Debugging purposes only. I mean, you can enable it, but it ma' +
-          'kes the games really boring. Up to you ¯\\_(ツ)_/¯',
-      category: 'other',
-    },
-  };
-  defaultOptions = deepFreeze(defaultOptions);
+  const defaultOptions = hg.defaultOptions;
 
   const defaultOptSearcher = new FuzzySearch(Object.keys(defaultOptions));
   let cmdSearcher;
@@ -1003,18 +742,6 @@ function HungryGames() {
   };
 
   /**
-   * Returns a reference to the current games object for a given guild.
-   *
-   * @public
-   * @param {string} id The guild id to get the data for.
-   * @return {?HungryGames~GuildGame} The current object storing all data about
-   * game in a guild.
-   */
-  this.getGame = function(id) {
-    return find(id);
-  };
-
-  /**
    * Handler for when the create event message is edited and we should update
    * our message with the updated event.
    *
@@ -1040,8 +767,8 @@ function HungryGames() {
    * @listens Discord~Client#guildDelete
    */
   function onGuildDelete(guild) {
-    if (!find(guild.id) || !find(guild.id).currentGame ||
-        !find(guild.id).currentGame.inProgress) {
+    if (!hg.getGame(guild.id) || !hg.getGame(guild.id).currentGame ||
+        !hg.getGame(guild.id).currentGame.inProgress) {
       return;
     }
     self.endGame(null, guild.id, true);
@@ -1065,10 +792,11 @@ function HungryGames() {
   /**
    * Make a subcommand handler with the given callback function. This is a
    * wrapper around existing functions.
+   *
    * @private
    * @param {HungryGames~hgCommandHandler} cb Command handler when subcommand is
    * triggered.
-   * @return {Command~commandHandler} Subcommand initial handler that will fire
+   * @returns {Command~commandHandler} Subcommand initial handler that will fire
    * when command is fired. Calls the passed callback handler with the mapped
    * parameters.
    */
@@ -1187,9 +915,10 @@ function HungryGames() {
   }
   /**
    * Create an NPC from an Object. Similar to copy-constructor.
+   *
    * @public
    * @param {Object} data NPC like Object.
-   * @return {HungryGames~NPC} Copied NPC.
+   * @returns {HungryGames~NPC} Copied NPC.
    */
   NPC.from = function(data) {
     const npc = new NPC(data.username, data.avatarURL, data.id);
@@ -1198,8 +927,9 @@ function HungryGames() {
   };
   /**
    * Generate a userID for an NPC.
+   *
    * @public
-   * @return {string}
+   * @returns {string}
    */
   NPC.createID = function() {
     let id;
@@ -1210,10 +940,10 @@ function HungryGames() {
   };
   /**
    * Check if the given ID is a valid NPC ID.
-   * @public
    *
+   * @public
    * @param {string} id The ID to validate.
-   * @return {boolean}
+   * @returns {boolean}
    */
   NPC.checkID = function(id) {
     return typeof id === 'string' &&
@@ -1221,13 +951,13 @@ function HungryGames() {
   };
   /**
    * Save an image for an NPC. Does NOT limit download sizes.
-   * @public
    *
+   * @public
    * @param {string|Jimp|Buffer} avatar Any image, URL or file path to fetch the
    * avatar from. Anything supported by Jimp.
    * @param {string} id The NPC id to save the avatar to.
-   * @return {?Promise} Promise if successful will have the public URL where the
-   * avatar is available. Null if error.
+   * @returns {?Promise} Promise if successful will have the public URL where
+   * the avatar is available. Null if error.
    */
   NPC.saveAvatar = function(avatar, id) {
     if (!NPC.checkID(id)) return null;
@@ -1308,7 +1038,7 @@ function HungryGames() {
    * Returns an object storing all of the default events for the games.
    *
    * @public
-   * @return {{bloodbath: Object, player: Object, arena: Object}}
+   * @returns {{bloodbath: Object, player: Object, arena: Object}}
    */
   this.getDefaultEvents = function() {
     return {
@@ -1321,8 +1051,9 @@ function HungryGames() {
   /**
    * Returns the object storing all default {@link HungryGames~Battle}s parsed
    * from file.
+   *
    * @public
-   * @return {HungryGames~Battle[]}
+   * @returns {HungryGames~Battle[]}
    */
   this.getDefaultBattles = function() {
     return battles;
@@ -1330,8 +1061,9 @@ function HungryGames() {
   /**
    * Returns the object storing all default {@link HungryGames~Weapon}s parsed
    * from file.
+   *
    * @public
-   * @return {HungryGames~Weapon[]}
+   * @returns {HungryGames~Weapon[]}
    */
   this.getDefaultWeapons = function() {
     return weapons;
@@ -1346,7 +1078,7 @@ function HungryGames() {
    * @param {?Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
    * @param {boolean} [silent=false] Should we suppress replies to message.
-   * @param {function} [cb] Callback that fires once loading is complete. No
+   * @param {Function} [cb] Callback that fires once loading is complete. No
    * parameters.
    */
   function createGame(msg, id, silent, cb) {
@@ -1450,12 +1182,13 @@ function HungryGames() {
   /**
    * Given an array of players, lookup the settings for each and update their
    * data. This is asynchronous.
+   *
    * @private
    *
    * @param {HungryGames~Player[]} players The players to lookup and update.
    * @param {?string|number} cId The channel ID to fetch the settings for.
    * @param {?string|number} gId The guild ID to fetch the settings for.
-   * @param {function} [cb] Calls this callback on completion. No parameters.
+   * @param {Function} [cb] Calls this callback on completion. No parameters.
    */
   function fetchPatreonSettings(players, cId, gId, cb) {
     if (!self.bot.patreon || players.length == 0) {
@@ -1469,6 +1202,7 @@ function HungryGames() {
     /**
      * After retrieving whether the player is an actual patron (ignores
      * overrides), then fetch permissions from them (uses overrides).
+     *
      * @private
      *
      * @param {?string} err Error string or null.
@@ -1488,6 +1222,7 @@ function HungryGames() {
     }
     /**
      * After retrieving a player's permissions, fetch their settings for each.
+     *
      * @private
      * @param {?string} err Error string or null.
      * @param {?{status: string[], message: string}} info Permission
@@ -1523,6 +1258,7 @@ function HungryGames() {
     /**
      * After retrieving a player's settings, update their data with the relevant
      * values.
+     *
      * @private
      * @param {?string} err Error string or null.
      * @param {?{status: *, message: string}} info Permission information.
@@ -1584,7 +1320,7 @@ function HungryGames() {
    * @param {boolean} excludeByDefault Should new users be excluded from the
    * game by default?
    * @param {NPC[]} [includedNPCs=[]] NPCs to include as players.
-   * @return {HungryGames~Player[]} Array of players to include in the games.
+   * @returns {HungryGames~Player[]} Array of players to include in the games.
    */
   function getAllPlayers(
       members, excluded, bots, included, excludeByDefault, includedNPCs = []) {
@@ -1773,7 +1509,7 @@ function HungryGames() {
    * @public
    * @param {string} id The id of the guild to modify.
    * @param {string} command The category of data to reset.
-   * @return {string} The message explaining what happened.
+   * @returns {string} The message explaining what happened.
    */
   this.resetGame = function(id, command) {
     if (find(id)) {
@@ -1983,6 +1719,7 @@ function HungryGames() {
     /**
      * Once the game has finished loading all necessary data, start it if
      * autoplay is enabled.
+     *
      * @private
      */
     function loadingComplete() {
@@ -2179,7 +1916,7 @@ function HungryGames() {
    * @param {string} gId The id of the guild this message is in.
    * @param {?string} cId The id of the channel this message was 'sent' in.
    * @param {?string} msg The message content.
-   * @return {
+   * @returns {
    *   {
    *     author: Discord~Member,
    *     guild: Discord~Guild,
@@ -2304,7 +2041,7 @@ function HungryGames() {
    *
    * @public
    * @param {string} id The id of the guild to pause in.
-   * @return {string} User information of the outcome of this command.
+   * @returns {string} User information of the outcome of this command.
    */
   this.pauseGame = function(id) {
     if (!find(id) || !find(id).currentGame ||
@@ -3206,18 +2943,11 @@ function HungryGames() {
    * @param {boolean} [silent=false] Prevent sending messages.
    */
   function endGame(msg, id, silent = false) {
-    if (!find(id) || !find(id).currentGame.inProgress) {
+    const game = hg.getGame(id);
+    if (!game || !game.currentGame.inProgress) {
       if (!silent) self.common.reply(msg, 'There isn\'t a game in progress.');
     } else {
-      find(id).currentGame.inProgress = false;
-      find(id).currentGame.isPaused = false;
-      find(id).currentGame.ended = true;
-      find(id).autoPlay = false;
-      self.client.clearInterval(dayEventIntervals[id]);
-      self.client.clearTimeout(autoPlayTimeout[id]);
-      delete dayEventIntervals[id];
-      delete autoPlayTimeout[id];
-      // delete battleMessage[id];
+      game.end();
       if (!silent) self.common.reply(msg, 'The game has ended!');
     }
   }
@@ -3306,7 +3036,7 @@ function HungryGames() {
    * @param {string|string[]|Discord~User[]} users The users to exclude, or
    * 'everyone' to exclude everyone.
    * @param {string} id The guild id to remove the users from.
-   * @return {string} A string with the outcomes of each user. May have
+   * @returns {string} A string with the outcomes of each user. May have
    * multiple lines for a single user.
    */
   this.excludeUsers = function(users, id) {
@@ -3502,7 +3232,7 @@ function HungryGames() {
    * 'everyone' to include all users, 'online' to include online users,
    * 'offline', 'idle', or 'dnd' for respective users.
    * @param {string} id The guild id to add the users to.
-   * @return {string} A string with the outcomes of each user. May have
+   * @returns {string} A string with the outcomes of each user. May have
    * multiple lines for a single user.
    */
   this.includeUsers = function(users, id) {
@@ -3774,7 +3504,7 @@ function HungryGames() {
    * @private
    * @param {Discord~Guild} guild The guild to look for the user in.
    * @param {string} user The id of the user to find the name of.
-   * @return {string} The user's name or id if name was unable to be found.
+   * @returns {string} The user's name or id if name was unable to be found.
    */
   function getName(guild, user) {
     let name = '';
@@ -3815,7 +3545,7 @@ function HungryGames() {
    * @param {string} [text=''] The original message sent without the command
    * prefix in the case we are changing the value of an object and require all
    * user inputted data.
-   * @return {string} A message saying what happened, or null if we should show
+   * @returns {string} A message saying what happened, or null if we should show
    * the user the list of options instead.
    */
   this.setOption = function(id, option, value, text = '') {
@@ -3854,7 +3584,7 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered for.
    * @param {{min: number, max: number}} [range] Allowable range for values that
    * are numbers.
-   * @return {string} Message saying what happened. Can be an error message.
+   * @returns {string} Message saying what happened. Can be an error message.
    */
   function changeObjectValue(
       obj, defaultObj, option, value, values, id, range) {
@@ -4051,7 +3781,7 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    * @param {boolean} [silent=false] Should we disable replying to the given
    * message?
-   * @return {?string} Error message or null if no error.
+   * @returns {?string} Error message or null if no error.
    */
   function editTeam(msg, id, silent) {
     const split = msg.text.trim().split(' ');
@@ -4121,7 +3851,7 @@ function HungryGames() {
    * if we're renaming a team.
    * @param {string} two The id of the user to swap, or the team id if we're
    * moving a player to a team.
-   * @return {?string} Error message or null if no error.
+   * @returns {?string} Error message or null if no error.
    */
   this.editTeam = function(uId, gId, cmd, one, two) {
     if (!find(gId) || !find(gId).currentGame) {
@@ -4669,7 +4399,7 @@ function HungryGames() {
    * give the victim.
    * @param {{name: string, count: number}} aWeapon The weapon information to
    * give the attacker.
-   * @return {?string} Error message or null if no error.
+   * @returns {?string} Error message or null if no error.
    */
   this.makeAndAddEvent = function(
       id, type, message, numVictim, numAttacker, victimOutcome, attackerOutcome,
@@ -4696,7 +4426,7 @@ function HungryGames() {
    * @param {string} id The id of the guild to add the event to.
    * @param {string} type The type of event this is.
    * @param {HungryGames~Event} event The event to add.
-   * @return {?string} Error message or null if no error.
+   * @returns {?string} Error message or null if no error.
    */
   this.addEvent = function(id, type, event) {
     if (type !== 'bloodbath' && type !== 'player') return 'Invalid Type';
@@ -4725,7 +4455,7 @@ function HungryGames() {
    * @param {HungryGames~ArenaEvent|HungryGames~WeaponEvent} data The event
    * data.
    * @param {string} [name] The internal name of the weapon being added.
-   * @return {?string} Error message or null if no error.
+   * @returns {?string} Error message or null if no error.
    */
   this.addMajorEvent = function(id, type, data, name) {
     if (type !== 'arena' && type !== 'weapon') return 'Invalid Type';
@@ -4776,7 +4506,7 @@ function HungryGames() {
   /**
    * Searches custom events for the given one, then edits it with the given
    * data. If the data is null besides required data for finding the major
-   * event, the major event gets deleted. (Arena or Weapon events)
+   * event, the major event gets deleted. (Arena or Weapon events).
    *
    * @public
    * @param {string} id The id of the guild to remove the event from.
@@ -4789,7 +4519,7 @@ function HungryGames() {
    * the arena event to edit.
    * @param {string} [newName] The new name of the weapon that was found with
    * `name`.
-   * @return {?string} Error message or null if no error.
+   * @returns {?string} Error message or null if no error.
    */
   this.editMajorEvent = function(id, type, search, data, name, newName) {
     if (type !== 'arena' && type !== 'weapon') return 'Invalid Type';
@@ -4873,13 +4603,13 @@ function HungryGames() {
 
   /**
    * Searches custom events for the given one, then removes it from the custom
-   * events. (Bloodbath or Player events)
+   * events. (Bloodbath or Player events).
    *
    * @public
    * @param {string} id The id of the guild to remove the event from.
    * @param {string} type The type of event this is.
    * @param {HungryGames~Event} event The event to search for.
-   * @return {?string} Error message or null if no error.
+   * @returns {?string} Error message or null if no error.
    */
   this.removeEvent = function(id, type, event) {
     if (type !== 'bloodbath' && type !== 'player') return 'Invalid Type';
@@ -4898,6 +4628,7 @@ function HungryGames() {
 
   /**
    * Toggle events in the games.
+   *
    * @TODO: Write this. This is not implemented yet.
    * @type {HungryGames~hgCommandHandler}
    * @param {Discord~Message} msg The message that lead to this being called.
@@ -4912,17 +4643,18 @@ function HungryGames() {
 
   /**
    * Enable or disable an event without deleting it completely.
+   *
    * @public
    *
    * @param {number|string} id The guild id that the event shall be toggled in.
    * @param {string} type The type of event. 'bloodbath', 'player', 'weapon', or
-   * 'arena'
+   * 'arena'.
    * @param {?string} subCat The sub-category name of the event if there is one
    * (Such as the weapon name, or arena event message).
    * @param {HungryGames~Event|HungryGames~ArenaEvent|HungryGames~WeaponEvent}
    * event The event to toggle.
    * @param {boolean} [value] Set enabled to a value instead of toggling.
-   * @return {?string} Error message or null if no error.
+   * @returns {?string} Error message or null if no error.
    */
   this.toggleEvent = function(id, type, subCat, event, value) {
     if (!['bloodbath', 'arena', 'player', 'weapon'].includes(type)) {
@@ -5556,7 +5288,7 @@ function HungryGames() {
    * @param {HungryGames~Event|string} arenaEvent The event to format.
    * @param {boolean} [newline=false] If a new line should be inserted for
    * better formatting.
-   * @return {string} The formatted message with emojis.
+   * @returns {string} The formatted message with emojis.
    */
   function formatEventString(arenaEvent, newline) {
     let message = arenaEvent.message.replaceAll('{attacker}', '`attacker`')
@@ -5586,7 +5318,7 @@ function HungryGames() {
    *
    * @private
    * @param {string} outcome The outcome to get the emoji of.
-   * @return {string} The emoji.
+   * @returns {string} The emoji.
    */
   function getOutcomeEmoji(outcome) {
     switch (outcome) {
@@ -5619,9 +5351,10 @@ function HungryGames() {
     /**
      * Function to pass into Array.map to format NPCs into strings for this
      * list.
+     *
      * @private
      * @param {NPC} obj NPC object to format as a string.
-     * @return {string} Name as a string.
+     * @returns {string} Name as a string.
      */
     function mapFunc(obj) {
       let shortName;
@@ -5730,6 +5463,7 @@ function HungryGames() {
     /**
      * Fetch the avatar the user has requested. Prioritizes attachments, then
      * URLs, otherwise returns.
+     *
      * @private
      */
     function fetchAvatar() {
@@ -5774,6 +5508,7 @@ function HungryGames() {
     }
     /**
      * Fired on the 'response' http revent.
+     *
      * @private
      *
      * @param {http.IncomingMessage} incoming
@@ -5841,6 +5576,7 @@ function HungryGames() {
     }
     /**
      * Once image has been received, convert to Jimp.
+     *
      * @private
      *
      * @param {Buffer} buffer The image as a Buffer.
@@ -5872,6 +5608,7 @@ function HungryGames() {
     }
     /**
      * Show a confirmation message to the user with the username and avatar.
+     *
      * @private
      *
      * @param {Jimp} image The Jimp image for internal use.
@@ -5923,6 +5660,7 @@ function HungryGames() {
     }
     /**
      * Once user has confirmed adding NPC.
+     *
      * @private
      *
      * @param {Jimp} image The image to save to file for this NPC.
@@ -5959,10 +5697,10 @@ function HungryGames() {
    * @param {string} username The name of the NPC.
    * @param {string} avatar The URL path to the avatar. Must be valid URL to
    * this server. (ex:
-   * https://www.spikeybot.com/avatars/NPCBBBADEF031F83638/avatar1.png)
+   * https://www.spikeybot.com/avatars/NPCBBBADEF031F83638/avatar1.png).
    * @param {string} id The NPC ID of this NPC. Must match the ID in the avatar
    * URL.
-   * @return {?string} Error message or null if no error.
+   * @returns {?string} Error message or null if no error.
    */
   this.createNPC = function(gId, username, avatar, id) {
     if (typeof avatar !== 'string') return 'Invalid Avatar URL.';
@@ -5989,11 +5727,12 @@ function HungryGames() {
 
   /**
    * Remove url from username, and format to rules similar to Discord.
+   *
    * @private
    *
    * @param {string} u The username.
    * @param {string|RegExp} [remove] A substring or RegExp to remove.
-   * @return {string} Formatted username.
+   * @returns {string} Formatted username.
    */
   function formatUsername(u, remove) {
     if (!remove) remove = /a^/;  // Match nothing by default.
@@ -6037,12 +5776,13 @@ function HungryGames() {
   }
   /**
    * Delete an NPC from a guild.
+   *
    * @public
    *
    * @param {string} gId Guild id of which to remove npc.
    * @param {string} npc ID of npc to delete.
-   * @return {string|Discord~MessageEmbed} String if error, MessageEmbed to send
-   * if success.
+   * @returns {string|Discord~MessageEmbed} String if error, MessageEmbed to
+   * send if success.
    */
   this.removeNPC = function(gId, npc) {
     const incIndex = find(gId).includedNPCs.findIndex((el) => el.id == npc);
@@ -6260,7 +6000,7 @@ function HungryGames() {
    * @param {string|number} id The guild id of which to change the game's name.
    * @param {string} name The custom name to change to. Must be 100 characters
    * or fewer.
-   * @return {boolean} True if successful, false if failed. Failure is probably
+   * @returns {boolean} True if successful, false if failed. Failure is probably
    * due to a game not existing or the name being longer than 100 characters.
    */
   this.renameGame = function(id, name) {
@@ -6323,7 +6063,7 @@ function HungryGames() {
   }
 
   /**
-   * Send a message with a reaction for users to click on. records message id
+   * Send a message with a reaction for users to click on. Records message id
    * and channel id in game data.
    *
    * @public
@@ -6356,7 +6096,7 @@ function HungryGames() {
    *
    * @public
    * @param {string} id The guild id of which to end the react join.
-   * @param {function} [cb] Callback once this is complete. First parameter is a
+   * @param {Function} [cb] Callback once this is complete. First parameter is a
    * string if error, null otherwise, the second is a string with info if
    * success or null otherwise.
    */
@@ -6399,6 +6139,7 @@ function HungryGames() {
     /**
      * Adds fetched user reactions to buffer until all are received, then ends
      * react join.
+     *
      * @private
      * @param {Discord.Collection.<User>|Discord.User[]} reactionUsers Array of
      * users for a single reaction.
@@ -6426,7 +6167,7 @@ function HungryGames() {
    * Returns the number of games that are currently being shown to users.
    *
    * @public
-   * @return {number} Number of games simulating.
+   * @returns {number} Number of games simulating.
    */
   this.getNumSimulating = function() {
     const loadedEntries = Object.entries(games);
@@ -6441,7 +6182,7 @@ function HungryGames() {
    * Get a random word that means "nothing".
    *
    * @private
-   * @return {string} A word meaning "nothing".
+   * @returns {string} A word meaning "nothing".
    */
   function nothing() {
     const nothings = [
@@ -6467,8 +6208,8 @@ function HungryGames() {
    *
    * @private
    * @param {number|string} id The guild id to get the data for.
-   * @return {?HungryGames~GuildGame} The game data, or null if no game could be
-   * loaded.
+   * @returns {?HungryGames~GuildGame} The game data, or null if no game could
+   * be loaded.
    */
   function find(id) {
     if (games[id]) return games[id];
@@ -6548,12 +6289,13 @@ function HungryGames() {
    * limited to 5, because we will run into the embed total character limit of
    * 6000 if we add any more.
    * [Discord API Docs](
-   * https://discordapp.com/developers/docs/resources/channel#embed-limits)
+   * https://discordapp.com/developers/docs/resources/channel#embed-limits).
+   *
    * @private
    *
    * @param {number} numCols Minimum number of columns.
    * @param {string[]} statusList List of text to check.
-   * @return {number} Number of columns the data shall be formatted as.
+   * @returns {number} Number of columns the data shall be formatted as.
    */
   function calcColNum(numCols, statusList) {
     if (numCols === statusList.length) return numCols;
@@ -6575,7 +6317,7 @@ function HungryGames() {
    *
    * @private
    * @param {Object} object The object to deep freeze.
-   * @return {Object} The frozen object.
+   * @returns {Object} The frozen object.
    */
   function deepFreeze(object) {
     const propNames = Object.getOwnPropertyNames(object);
@@ -6590,6 +6332,7 @@ function HungryGames() {
   /**
    * Update {@link HungryGames~listenersEndTime} because a new listener was
    * registered with the given duration.
+   *
    * @private
    * @param {number} duration The length of time the listener will be active.
    */
@@ -6602,11 +6345,12 @@ function HungryGames() {
   /**
    * Attempt to fetch an image from a URL. Checks if the file has been cached to
    * the filesystem first.
+   *
    * @private
    *
    * @param {string|Jimp|Buffer} url The url to fetch the image from, or
    * anything Jimp supports.
-   * @return {Promise} Promise from JIMP with image data.
+   * @returns {Promise} Promise from JIMP with image data.
    */
   function readImage(url) {
     let fromCache = false;
@@ -6653,10 +6397,11 @@ function HungryGames() {
     });
     /**
      * Send the request to Jimp to handle.
+     *
      * @private
      *
      * @param {string} path Or path that Jimp can handle.
-     * @return {Promise} Promise from Jimp with image data.
+     * @returns {Promise} Promise from Jimp with image data.
      */
     function toJimp(path) {
       return Jimp.read(path).catch((err) => {
@@ -6740,6 +6485,7 @@ function HungryGames() {
   /**
    * Register an event listener. Handlers are called in order they are
    * registered. Earlier events can modify event data.
+   *
    * @public
    * @param {string} evt The name of the event to listen for.
    * @param {Function} handler The function to call when the event is fired.
@@ -6750,7 +6496,8 @@ function HungryGames() {
   };
 
   /**
-   * Remove an event listener;
+   * Remove an event listener;.
+   *
    * @public
    * @param {string} evt The name of the event that was being listened for.
    * @param {Function} handler The currently registered handler.
@@ -6763,6 +6510,7 @@ function HungryGames() {
 
   /**
    * Fire an event on all listeners.
+   *
    * @private
    * @param {string} evt The event to fire.
    * @param {...*} args Arguments for the event.
@@ -6841,4 +6589,4 @@ function HungryGames() {
   process.on('SIGTERM', sigint);
 }
 
-module.exports = new HungryGames();
+module.exports = new HG();

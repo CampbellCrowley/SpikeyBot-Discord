@@ -620,7 +620,8 @@ function Main() {
 
   /**
    * Write data to a file and make sure the directory exists or create it if it
-   * doesn't. Async
+   * doesn't. Async.
+   *
    * @see {@link Main~mkAndWriteSync}
    *
    * @private
@@ -646,7 +647,8 @@ function Main() {
   }
   /**
    * Write data to a file and make sure the directory exists or create it if it
-   * doesn't. Synchronous
+   * doesn't. Synchronous.
+   *
    * @see {@link Main~mkAndWrite}
    *
    * @private
@@ -1036,7 +1038,7 @@ function Main() {
    * @private
    * @param {string} s1
    * @param {string} s2
-   * @return {number}
+   * @returns {number}
    */
   function checkSimilarity(s1, s2) {
     let longer = s1;
@@ -1058,7 +1060,7 @@ function Main() {
    * @private
    * @param {string} s1
    * @param {string} s2
-   * @return {number}
+   * @returns {number}
    */
   function editDistance(s1, s2) {
     s1 = s1.toLowerCase();
@@ -1173,7 +1175,7 @@ function Main() {
    *
    * @private
    * @param {string} formula The formula to attempt to simplify.
-   * @return {string} Simplified formula.
+   * @returns {string} Simplified formula.
    */
   function simplify(formula) {
     if (formula.indexOf('=') > -1) {
@@ -1685,6 +1687,7 @@ function Main() {
         });
     /**
      * Lookup a user by their tag name.
+     *
      * @private
      */
     function lookupByName() {
@@ -2356,7 +2359,7 @@ function Main() {
    * @param {string|number} num The number to pad with zeroes.
    * @param {number} digits The minimum number of digits to make the output
    * have.
-   * @return {string} The padded string.
+   * @returns {string} The padded string.
    */
   function prePad(num, digits) {
     let str = num + '';
@@ -2429,8 +2432,9 @@ function Main() {
   /**
    * Fetch the bot's stats from all shards, then combine the data. Public as
    * SpikeyBot.getStats after SubModule.initialize.
+   *
    * @private
-   * @param {function} cb One parameter that is guarunteed to have an array of
+   * @param {Function} cb One parameter that is guarunteed to have an array of
    * stats objeccts.
    */
   function getAllStats(cb) {
@@ -2530,7 +2534,7 @@ function Main() {
    * Fetch our statistics about the bot on this shard.
    *
    * @private
-   * @return {Object} The statistics we collected.
+   * @returns {Object} The statistics we collected.
    */
   function getStats() {
     const startTime = Date.now();
@@ -2751,6 +2755,7 @@ function Main() {
    * User has requested to view the current prefix for their guild. This is
    * intended to be fired internally, usually through chatbot.js due to no other
    * way to reference this if the user has forgotten the prefix.
+   *
    * @private
    *
    * @type {Command~commandHandler}
@@ -2765,6 +2770,7 @@ function Main() {
 
   /**
    * Get the graph of the last few git commits.
+   *
    * @private
    *
    * @type {Command~commandHandler}
@@ -2802,6 +2808,7 @@ function Main() {
 
   /**
    * Tell the user who they are.
+   *
    * @private
    *
    * @type {Command~commandHandler}
@@ -2817,6 +2824,7 @@ function Main() {
 
   /**
    * Reply with server time and GMT.
+   *
    * @private
    *
    * @type {Command~commandHandler}

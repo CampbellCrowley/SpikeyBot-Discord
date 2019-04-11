@@ -91,6 +91,7 @@ function Define() {
 
   /**
    * Format a Discord message reply from the given data.
+   *
    * @private
    * @param {Discord~Message} msg Message to reply to.
    * @param {Object} data Parsed reply from words api.
@@ -125,6 +126,7 @@ function Define() {
 
   /**
    * Format a single definition to string format.
+   *
    * @private
    * @param {{
    *   definition: string,
@@ -132,7 +134,7 @@ function Define() {
    *   examples: Array.<string>,
    *   synonyms: Array.<string>
    * }} el
-   * @return {string} Formatted string.
+   * @returns {string} Formatted string.
    */
   function formatSingle(el) {
     let res = '';
@@ -154,9 +156,10 @@ function Define() {
 
   /**
    * Capitalize first character of string, and lowercase the rest.
+   *
    * @private
    * @param {string} s Input.
-   * @return {string} Output.
+   * @returns {string} Output.
    */
   function fUp(s) {
     return s[0].toLocaleUpperCase() + s.slice(1).toLocaleLowerCase();

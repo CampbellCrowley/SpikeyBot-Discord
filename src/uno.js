@@ -325,6 +325,7 @@ function Uno() {
    * Class that stores the current information about a particular card. All
    * cards with the same color and face value are represented here using the
    * `count` attribute.
+   *
    * @class
    *
    * @public
@@ -363,9 +364,10 @@ function Uno() {
 
     /**
      * Stringifies the face and colors to their key names.
+     *
      * @public
      *
-     * @return {string} This card as a string.
+     * @returns {string} This card as a string.
      */
     this.toString = function() {
       // Wild cards can change color, so we can't cache their name.
@@ -394,6 +396,7 @@ function Uno() {
 
   /**
    * Class that stores the current state of an Uno game.
+   *
    * @class
    *
    * @public
@@ -910,7 +913,7 @@ function Uno() {
      * Sends the game help to the group channel.
      *
      * @private
-     * @return {Promise.<Discord~Message>}
+     * @returns {Promise.<Discord~Message>}
      */
     function sendHelp() {
       const embed = new self.Discord.MessageEmbed();
@@ -1051,7 +1054,7 @@ function Uno() {
      *
      * @private
      * @param {?string} text User inputted text to parse into a card to play.
-     * @return {boolean} True if the game has ended. False if the game should
+     * @returns {boolean} True if the game has ended. False if the game should
      * continue.
      */
     function playCard(text) {
@@ -1213,10 +1216,11 @@ function Uno() {
 
     /**
      * Parse a string of text to a playable card.
+     *
      * @private
      *
      * @param {string} text The user-input to parse.
-     * @return {?Uno.Card} The matched card, or null if no match.
+     * @returns {?Uno.Card} The matched card, or null if no match.
      */
     function parseToCard(text) {
       const replaced = text.replace(/_/g, ' ');
@@ -1243,13 +1247,14 @@ function Uno() {
 
     /**
      * Checks if the given card may be played next.
+     *
      * @see {@link Uno.Game~topCard}
      *
      * @private
      * @param {Uno.Card} card The card to check.
      * @param {Uno.Card} [card2] The card to check against. If not defined, the
      * current topCard will be used.
-     * @return {boolean} True if can be played, false otherwise.
+     * @returns {boolean} True if can be played, false otherwise.
      */
     function checkCard(card, card2) {
       if (card.face & self.CardFace.WILD_EFFECT) return true;
@@ -1320,10 +1325,11 @@ function Uno() {
 
     /**
      * Add the given guild member to the game.
+     *
      * @public
      *
      * @param {Discord~GuildMember} p The member to add to the game.
-     * @return {boolean} Success if true, failed if false.
+     * @returns {boolean} Success if true, failed if false.
      */
     this.addPlayer = function(p) {
       if (!p) return;
@@ -1352,10 +1358,11 @@ function Uno() {
 
     /**
      * Add a certain number of NPCs into the game.
+     *
      * @public
      *
      * @param {number} [num=1] The number of NPCs to add.
-     * @return {boolean} Success if true, failed if false.
+     * @returns {boolean} Success if true, failed if false.
      */
     this.addNPCs = function(num = 1) {
       let added = 0;
@@ -1374,10 +1381,11 @@ function Uno() {
 
     /**
      * Remove a certain number of NPCs from the game.
+     *
      * @public
      *
      * @param {number} [num=1] The number of NPCs to remove.
-     * @return {boolean} Success if true, failed if false.
+     * @returns {boolean} Success if true, failed if false.
      */
     this.removeNPCs = function(num = 1) {
       let j = 0;
@@ -1393,6 +1401,7 @@ function Uno() {
 
     /**
      * Remove the user with the given ID from the game.
+     *
      * @public
      *
      * @param {string|number|Discord~GuildMember|Uno.Player} p The ID of the
@@ -1416,9 +1425,10 @@ function Uno() {
 
     /**
      * Returns the list of all players currently in this game.
+     *
      * @public
      *
-     * @return {string[]|number[]} Array of player IDs. Type is number-like.
+     * @returns {string[]|number[]} Array of player IDs. Type is number-like.
      */
     this.getPlayers = function() {
       return players.map((el) => {
@@ -1662,7 +1672,7 @@ function Uno() {
    *
    * @private
    * @param {Uno~Card|Uno~Card[]} hand The card or hand of cards to format.
-   * @return {Discord~MessageEmbed} The MessageEmbed to send to the user.
+   * @returns {Discord~MessageEmbed} The MessageEmbed to send to the user.
    */
   function getCardEmbed(hand) {
     const embed = new self.Discord.MessageEmbed();
@@ -1710,7 +1720,7 @@ function Uno() {
    *
    * @private
    * @param {string} txt The text to format.
-   * @return {string} The formatted text.
+   * @returns {string} The formatted text.
    */
   function formatCard(txt) {
     return txt.replace(/_/g, ' ')
@@ -1724,7 +1734,7 @@ function Uno() {
   /**
    * A default hand of cards that the classic game starts with.
    *
-   * @return {Uno.Card[]}
+   * @returns {Uno.Card[]}
    */
   this.getHand = function() {
     const c = self.Color;

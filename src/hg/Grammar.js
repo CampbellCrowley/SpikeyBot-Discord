@@ -15,7 +15,7 @@ function Grammar() {}
  * @param {string} [format='username'] Setting of how to format the user's name.
  * `username` will use their account name, `mention` will use their ID to format
  * a mention tag, `nickname` will use their custom guild nickname.
- * @return {string} The formatted string of names.
+ * @returns {string} The formatted string of names.
  */
 Grammar.formatMultiNames = function(names, format = 'username') {
   let output = '';

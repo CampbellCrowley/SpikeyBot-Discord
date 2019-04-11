@@ -73,9 +73,10 @@ function Game(name, includedUsers) {
 
 /**
  * Create a new Game from an object. Similar to a copy constructor.
+ *
  * @public
  * @param {Object} data Game like object to copy.
- * @return {HungryGames~Game} Created Game object.
+ * @returns {HungryGames~Game} Created Game object.
  */
 Game.from = function(data) {
   const game = new Game(data.name, data.includedUsers);

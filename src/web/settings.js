@@ -71,6 +71,7 @@ function WebSettings() {
 
   /**
    * Update the references to the aplicable subModules.
+   *
    * @private
    */
   function updateModuleReferences() {
@@ -89,6 +90,7 @@ function WebSettings() {
 
   /**
    * Handle CmdScheduling shutting down.
+   *
    * @private
    * @listens CmdScheduling#shutdown
    */
@@ -98,6 +100,7 @@ function WebSettings() {
   }
   /**
    * Handle new CmdScheduling.ScheduledCommand being registered.
+   *
    * @private
    * @listens CmdScheduling#commandRegistered
    *
@@ -123,10 +126,11 @@ function WebSettings() {
   }
   /**
    * Handle a CmdScheduling.ScheduledCommand being canceled.
+   *
    * @private
    * @listens CmdScheduling#commandCancelled
    * @param {string} cmdId The ID of the command that was cancelled.
-   * @param {string|number} gId the ID of the guild the command was cancelled
+   * @param {string|number} gId The ID of the guild the command was cancelled
    * in.
    */
   function handleCommandCancelled(cmdId, gId) {
@@ -140,11 +144,12 @@ function WebSettings() {
 
   /**
    * Handle Command~CommandSetting value changed.
+   *
    * @private
    * @listens Command.events#settingsChanged
    * @see {@link Command~CommandSetting.set}
    *
-   * @param {?string} gId the ID of the guild this setting was changed in, or
+   * @param {?string} gId The ID of the guild this setting was changed in, or
    * null of not specific to a single guild.
    * @param {string} value
    * @param {string} type
@@ -162,6 +167,7 @@ function WebSettings() {
 
   /**
    * Handle Command~CommandSetting was deleted or reset in a guild.
+   *
    * @private
    * @listens Command.events#settingsReset
    *
@@ -214,7 +220,7 @@ function WebSettings() {
    * Returns the number of connected clients that are not siblings.
    *
    * @private
-   * @return {number} Number of sockets.
+   * @returns {number} Number of sockets.
    */
   function getNumClients() {
     return Object.keys(sockets).length - Object.keys(siblingSockets).length;
@@ -372,7 +378,7 @@ function WebSettings() {
    *
    * @private
    * @param {number|string} gId The guild id to check.
-   * @return {boolean} True if this shard has this guild.
+   * @returns {boolean} True if this shard has this guild.
    */
   function checkMyGuild(gId) {
     const g = self.client.guilds.get(gId);
@@ -388,7 +394,7 @@ function WebSettings() {
    * @param {string} gId The guild id to check against.
    * @param {?string} cId The channel id to check against.
    * @param {string} cmd The command being attempted.
-   * @return {boolean} Whether the user has permission or not to manage the
+   * @returns {boolean} Whether the user has permission or not to manage the
    * hungry games in the given guild.
    */
   function checkPerm(userData, gId, cId, cmd) {
@@ -409,7 +415,7 @@ function WebSettings() {
    * @param {UserData} userData The user to check.
    * @param {string} gId The guild id of the guild that contains the channel.
    * @param {string} cId The channel id to check against.
-   * @return {boolean} Whether the user has permission or not to manage the
+   * @returns {boolean} Whether the user has permission or not to manage the
    * hungry games in the given guild and has permission to send messages in the
    * given channel.
    */
@@ -436,7 +442,7 @@ function WebSettings() {
    *
    * @private
    * @param {Discord~GuildMember} m The guild member to strip the data from.
-   * @return {Object} The minimal member.
+   * @returns {Object} The minimal member.
    */
   function makeMember(m) {
     if (!m) return null;
@@ -477,7 +483,7 @@ function WebSettings() {
    * @param {string} gId The id of the guild this message is in.
    * @param {?string} cId The id of the channel this message was 'sent' in.
    * @param {?string} msg The message content.
-   * @return {
+   * @returns {
    *   {
    *     author: Discord~User,
    *     member: Discord~GuildMember,

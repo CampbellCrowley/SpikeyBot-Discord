@@ -75,6 +75,7 @@ function Patreon() {
 
   /**
    * Parse tiers from file.
+   *
    * @see {@link Patreon~patreonTierPermFile}
    * @private
    */
@@ -106,6 +107,7 @@ function Patreon() {
 
   /**
    * Parse template from file.
+   *
    * @see {@link Patreon~patreonSettingsTemplate}
    * @private
    */
@@ -191,6 +193,7 @@ function Patreon() {
     /**
      * Verifies that valid data was found, then fetches all permissions for the
      * user's pledge amount.
+     *
      * @private
      * @type {Patreon~basicCB}
      * @param {?string} err The error string, or null if no error.
@@ -240,6 +243,7 @@ function Patreon() {
     /**
      * Verifies that valid data was found, then fetches all permissions for the
      * user's pledge amount.
+     *
      * @private
      * @type {Patreon~basicCB}
      * @param {?string} err The error string, or null if no error.
@@ -285,6 +289,7 @@ function Patreon() {
    * Check that a user or channel or guild has permission for something. Checks
    * overrides for each, and if the user does not have an override, the request
    * is forwarded to {@link toExport.checkPerm}.
+   *
    * @public
    *
    * @param {?string|number} uId The Discord user ID to check.
@@ -334,6 +339,7 @@ function Patreon() {
     toExport.checkAllPerms(uId, cId, gId, null, onGetOverrides);
     /**
      * Handle response from checking IDs for overrides.
+     *
      * @private
      * @type {Patreon~basicCB}
      * @param {?string} err The error string, or null if no error.
@@ -352,6 +358,7 @@ function Patreon() {
     /**
      * Verifies that valid data was found, then fetches all permissions for the
      * user's pledge amount.
+     *
      * @private
      * @type {Patreon~basicCB}
      * @param {?string} err The error string, or null if no error.
@@ -373,6 +380,7 @@ function Patreon() {
     /**
      * Verifies that valid data was found, then fetches all permissions for the
      * user's pledge amount.
+     *
      * @private
      * @type {Patreon~basicCB}
      * @param {?string} err The error string, or null if no error.
@@ -391,6 +399,7 @@ function Patreon() {
   /**
    * Check that a user has a specific permission. Permissions are defined in
    * {@link Patreon~patreonTierPermFile}. This does not check overrides.
+   *
    * @public
    *
    * @param {string|number} uId The Discord user ID to check.
@@ -403,6 +412,7 @@ function Patreon() {
     /**
      * Checks the received data from the Patreon table against the given perm
      * string.
+     *
      * @private
      * @type {Patreon~basicCB}
      * @param {?string} err The error string, or null if no error.
@@ -440,6 +450,7 @@ function Patreon() {
 
   /**
    * Responds with all permissions available at the given pledge amount.
+   *
    * @public
    *
    * @param {number} pledgeAmount The amount in cents that the user has pledged.
@@ -463,6 +474,7 @@ function Patreon() {
   /**
    * Responds with the settings value for a user if they have permission for the
    * setting, otherwise replies with the default value.
+   *
    * @public
    *
    * @param {?number|string} uId The user id to check, or null to get the
@@ -488,6 +500,7 @@ function Patreon() {
     /**
      * After check for user perms, this will fetch either the default value, or
      * the user's custom setting.
+     *
      * @private
      * @type {Patreon~basicCB}
      * @param {?string} err The error string, or null if no error.
@@ -520,6 +533,7 @@ function Patreon() {
     }
     /**
      * Searches an object for the given key values.
+     *
      * @private
      * @param {Object} obj The object to traverse.
      * @param {string[]} keys The keys to step through.
@@ -540,6 +554,7 @@ function Patreon() {
     /**
      * After a user's setting value has been fetched, check if it has been
      * set, if not then return the default.
+     *
      * @private
      * @type {Patreon~basicCB}
      * @param {?string} err The error string, or null if no error.
@@ -557,6 +572,7 @@ function Patreon() {
 
   /**
    * Get the Patreon information for a given Discord user.
+   *
    * @private
    * @param {string|number} uId The Discord user ID to check.
    * @param {Patreon~basicCB} cb Callback with parameters for error and success
@@ -566,6 +582,7 @@ function Patreon() {
   function fetchPatreonRow(uId, cb) {
     /**
      * SQL query response callback for request to the Discord table.
+     *
      * @private
      * @param {Error} err Errors during the query.
      * @param {Array} rows The results of the query.
@@ -596,6 +613,7 @@ function Patreon() {
     }
     /**
      * SQL query response callback for request to the Patreon table.
+     *
      * @private
      * @param {Error} err Errors during the query.
      * @param {Array} rows The results of the query.

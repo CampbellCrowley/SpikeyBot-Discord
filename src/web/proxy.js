@@ -149,6 +149,7 @@ function WebProxy() {
 
   /**
    * Parse rate limits from file.
+   *
    * @private
    */
   function updateRateLimits() {
@@ -229,6 +230,7 @@ function WebProxy() {
 
   /**
    * Causes a full shutdown of all servers.
+   *
    * @public
    */
   this.shutdown = function() {
@@ -542,6 +544,7 @@ function WebProxy() {
 
     /**
      * Check if this current connection or user is being rate limited.
+     *
      * @see {@link rateLevel}
      *
      * Level 0: <75% of limit.
@@ -553,7 +556,7 @@ function WebProxy() {
      * @private
      * @param {string} [cmd] The command being attempted. Otherwise uses global
      * rate limits.
-     * @return {number} Current rate level for the given command.
+     * @returns {number} Current rate level for the given command.
      */
     function updateRateLevel(cmd) {
       const now = Date.now();

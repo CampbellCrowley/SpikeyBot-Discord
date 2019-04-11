@@ -71,7 +71,7 @@ function Player(id, username, avatarURL, nickname = null) {
  * @private
  * @param {Discord~User|Discord~GuildMember|Object} member Object, User or
  * GuildMember to make a Player from.
- * @return {HungryGames~Player} Player object created.
+ * @returns {HungryGames~Player} Player object created.
  */
 Player.from = function(member) {
   let player;

@@ -56,9 +56,10 @@ function HGWeb() {
 
   /**
    * Update the reference to HungryGames.
-   * @private
    *
-   * @return {HungryGames} Reference to the currently loaded HungryGames object.
+   * @private
+   * @returns {HungryGames} Reference to the currently loaded HungryGames
+   * object.
    */
   function hg() {
     const prev = hg_;
@@ -74,6 +75,7 @@ function HGWeb() {
 
   /**
    * Unregister all event handlers from `hg_`.
+   *
    * @private
    */
   function unlinkHG() {
@@ -95,6 +97,7 @@ function HGWeb() {
 
   /**
    * Causes a full shutdown of all servers.
+   *
    * @public
    */
   this.shutdown = function() {
@@ -128,7 +131,7 @@ function HGWeb() {
    * Returns the number of connected clients that are not siblings.
    *
    * @public
-   * @return {number} Number of sockets.
+   * @returns {number} Number of sockets.
    */
   this.getNumClients = function() {
     return Object.keys(sockets).length - Object.keys(siblingSockets).length;
@@ -409,7 +412,7 @@ function HGWeb() {
    *
    * @private
    * @param {number|string} gId The guild id to check.
-   * @return {boolean} True if this shard has this guild.
+   * @returns {boolean} True if this shard has this guild.
    */
   function checkMyGuild(gId) {
     const g = self.client.guilds.get(gId);
@@ -425,7 +428,7 @@ function HGWeb() {
    * @param {string} gId The guild id to check against.
    * @param {?string} cId The channel id to check against.
    * @param {string} cmd The command being attempted.
-   * @return {boolean} Whther the user has permission or not to manage the
+   * @returns {boolean} Whther the user has permission or not to manage the
    * hungry games in the given guild.
    */
   function checkPerm(userData, gId, cId, cmd) {
@@ -449,7 +452,7 @@ function HGWeb() {
    * @param {string} gId The guild id of the guild that contains the channel.
    * @param {string} cId The channel id to check against.
    * @param {string} cmd The command being attempted to check permisisons for.
-   * @return {boolean} Whther the user has permission or not to manage the
+   * @returns {boolean} Whther the user has permission or not to manage the
    * hungry games in the given guild and has permission to send messages in the
    * given channel.
    */
@@ -477,7 +480,7 @@ function HGWeb() {
    * @param {string} gId The id of the guild this message is in.
    * @param {?string} cId The id of the channel this message was 'sent' in.
    * @param {?string} msg The message content.
-   * @return {
+   * @returns {
    *   {
    *     author: Discord~User,
    *     member: Discord~GuildMember,
@@ -510,7 +513,7 @@ function HGWeb() {
    *
    * @private
    * @param {Discord~GuildMember} m The guild member to strip the data from.
-   * @return {Object} The minimal member.
+   * @returns {Object} The minimal member.
    */
   function makeMember(m) {
     if (typeof m !== 'object') {
@@ -546,6 +549,7 @@ function HGWeb() {
 
   /**
    * Cancel and clean up a current image upload.
+   *
    * @private
    * @param {string} iId Image upload ID to purge and abort.
    */
@@ -558,9 +562,10 @@ function HGWeb() {
   /**
    * Create an upload ID and buffer for a client to send to. Automatically
    * cancelled after 60 seconds.
+   *
    * @private
    * @param {string} uId The user ID that started this upload.
-   * @return {Object} The metadata storing object.
+   * @returns {Object} The metadata storing object.
    */
   function beginImageUpload(uId) {
     let id;
@@ -667,10 +672,11 @@ function HGWeb() {
 
   /**
    * Strip a Discord~Guild to the basic information the client will need.
+   *
    * @private
    * @param {Discord~Guild[]} guilds The array of guilds to strip.
    * @param {Object} userData The current user's session data.
-   * @return {Object[]} The stripped guilds.
+   * @returns {Object[]} The stripped guilds.
    */
   function stripGuilds(guilds, userData) {
     return guilds.map((g) => {
@@ -824,6 +830,7 @@ function HGWeb() {
   this.fetchChannel = fetchChannel;
   /**
    * Fetch all game data within a guild.
+   *
    * @see {@link HungryGames.getGame}
    *
    * @private
@@ -848,6 +855,7 @@ function HGWeb() {
   this.fetchGames = fetchGames;
   /**
    * Fetch the updated game's day information.
+   *
    * @see {@link HungryGames.getGame}
    *
    * @private
@@ -900,6 +908,7 @@ function HGWeb() {
   this.fetchDay = fetchDay;
   /**
    * Exclude a member from the Games.
+   *
    * @see {@link HungryGames.excludeUsers}
    *
    * @private
@@ -930,6 +939,7 @@ function HGWeb() {
   this.excludeMember = excludeMember;
   /**
    * Include a member in the Games.
+   *
    * @see {@link HungryGames.includeUsers}
    *
    * @private
@@ -961,6 +971,7 @@ function HGWeb() {
   this.includeMember = includeMember;
   /**
    * Toggle an option in the Games.
+   *
    * @see {@link HungryGames.setOption}
    *
    * @private
@@ -993,6 +1004,7 @@ function HGWeb() {
   this.toggleOption = toggleOption;
   /**
    * Create a Game.
+   *
    * @see {@link HungryGames.createGame}
    *
    * @private
@@ -1021,6 +1033,7 @@ function HGWeb() {
   this.createGame = createGame;
   /**
    * Reset game data.
+   *
    * @see {@link HungryGames.resetGame}
    *
    * @private
@@ -1046,6 +1059,7 @@ function HGWeb() {
   this.resetGame = resetGame;
   /**
    * Start the game.
+   *
    * @see {@link HungryGames.startGame}
    *
    * @private
@@ -1072,6 +1086,7 @@ function HGWeb() {
   this.startGame = startGame;
   /**
    * Enable autoplay.
+   *
    * @see {@link HungryGames.startAutoplay}
    *
    * @private
@@ -1098,6 +1113,7 @@ function HGWeb() {
   this.startAutoplay = startAutoplay;
   /**
    * Start the next day.
+   *
    * @see {@link HungryGames.nextDay}
    *
    * @private
@@ -1123,6 +1139,7 @@ function HGWeb() {
   this.nextDay = nextDay;
   /**
    * End the game.
+   *
    * @see {@link HungryGames.endGame}
    *
    * @private
@@ -1148,6 +1165,7 @@ function HGWeb() {
   this.endGame = endGame;
   /**
    * Disable autoplay.
+   *
    * @see {@link HungryGames.pauseAutoplay}
    *
    * @private
@@ -1173,6 +1191,7 @@ function HGWeb() {
   this.pauseAutoplay = pauseAutoplay;
   /**
    * Pause game.
+   *
    * @see {@link HungryGames.pauseGame}
    *
    * @private
@@ -1198,6 +1217,7 @@ function HGWeb() {
   this.pauseGame = pauseGame;
   /**
    * Edit the teams.
+   *
    * @see {@link HungryGames.editTeam}
    *
    * @private
@@ -1225,6 +1245,7 @@ function HGWeb() {
   this.editTeam = editTeam;
   /**
    * Create a game event.
+   *
    * @see {@link HungryGames.createEvent}
    *
    * @private
@@ -1270,6 +1291,7 @@ function HGWeb() {
   /**
    * Create a larger game event. Either Arena or Weapon at this point. If
    * message or weapon name already exists, this will instead edit the event.
+   *
    * @see {@link HungryGames.addMajorEvent}
    *
    * @private
@@ -1305,6 +1327,7 @@ function HGWeb() {
 
   /**
    * Delete a larger game event. Either Arena or Weapon at this point.
+   *
    * @see {@link HungryGames.editMajorEvent}
    *
    * @private
@@ -1344,6 +1367,7 @@ function HGWeb() {
 
   /**
    * Remove a game event.
+   *
    * @see {@link HungryGames.removeEvent}
    *
    * @private
@@ -1377,6 +1401,7 @@ function HGWeb() {
 
   /**
    * Enable or disable an event without deleting it.
+   *
    * @see {@link HungryGames.toggleEvent}
    *
    * @private
@@ -1413,6 +1438,7 @@ function HGWeb() {
 
   /**
    * Force a player in the game to end a day in a certain state.
+   *
    * @see {@link HungryGames.forcePlayerState}
    *
    * @private
@@ -1460,6 +1486,7 @@ function HGWeb() {
 
   /**
    * Rename the guild's game.
+   *
    * @see {@link HungryGames.renameGame}
    *
    * @private
@@ -1491,6 +1518,7 @@ function HGWeb() {
 
   /**
    * Remove an NPC from a game.
+   *
    * @see {@link HungryGames.removeNPC}
    *
    * @private

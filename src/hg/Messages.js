@@ -55,7 +55,7 @@ function Messages() {
    *
    * @public
    * @param {string} type The message type to get.
-   * @return {string} A random message of the given type.
+   * @returns {string} A random message of the given type.
    */
   this.get = function(type) {
     const list = messages[type];

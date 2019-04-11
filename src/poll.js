@@ -100,6 +100,7 @@ function Polling() {
 
   /**
    * Parse the saved poll data that has been read from file in JSON format.
+   *
    * @private
    * @param {string} string The file data.
    */
@@ -131,6 +132,7 @@ function Polling() {
 
   /**
    * Asyncronously create a directory and write a file in the directory.
+   *
    * @private
    * @param {string} dir The file path to create and write the file to.
    * @param {string} filename The file name of the file without the path.
@@ -154,6 +156,7 @@ function Polling() {
   }
   /**
    * Syncronously create a directory and write a file in the directory.
+   *
    * @private
    * @param {string} dir The file path to create and write the file to.
    * @param {string} filename The file name of the file without the path.
@@ -388,6 +391,7 @@ function Polling() {
 
   /**
    * Add timeout and possibly other listeners to a poll.
+   *
    * @private
    *
    * @param {Polling~Poll} poll The poll to register.
@@ -412,10 +416,11 @@ function Polling() {
 
   /**
    * Create a callback for adding all reactions to a message.
+   *
    * @private
    * @param {Polling~Poll} poll The poll object for adding reactions.
    * @param {number} [index=0] The index of the emoji to add first.
-   * @return {function} The callback to run on Promise completion.
+   * @returns {Function} The callback to run on Promise completion.
    */
   function addNextReaction(poll, index = 0) {
     return function() {
@@ -454,9 +459,10 @@ function Polling() {
 
   /**
    * End a poll. Does not remove it from {@link Polling~currentPolls}.
+   *
    * @private
    * @param {Polling~Poll} poll The poll to end.
-   * @return {boolean} Was the poll successfully ended.
+   * @returns {boolean} Was the poll successfully ended.
    */
   function endPoll(poll) {
     if (!poll || !poll.message || !poll.author) {
