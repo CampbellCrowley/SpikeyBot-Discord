@@ -33,8 +33,10 @@ function HG() {
   this.myName = 'HG';
   this.postPrefix = 'hg ';
 
-  delete require.cache[require.resolve('./hg/HungryGames.js')];
-  const hg = require('./hg/HungryGames.js');
+  const hgPath = './hg/HungryGames.js';
+  delete require.cache[require.resolve(hgPath)];
+  const HungryGames = require(hgPath);
+  const hg = new HungryGames(self);
 
   /**
    * The maximum number of bytes allowed to be received from a client in an
@@ -60,34 +62,6 @@ function HG() {
     'hg:customize_stats',
     'hg:personal_weapon',
   ];
-  /**
-   * The file path to save current state for a specific guild relative to
-   * Common~guildSaveDir.
-   * @see {@link Common~guildSaveDir}
-   * @see {@link HungryGames~games}
-   * @see {@link HungryGames~saveFileDir}
-   * @see {@link HungryGames~hgSaveDir}
-   *
-   * @private
-   * @type {string}
-   * @constant
-   * @default
-   */
-  const saveFile = 'game.json';
-  /**
-   * The file directory for finding saved data related to the hungry games data
-   * of individual guilds.
-   * @see {@link Common~guildSaveDir}
-   * @see {@link HungryGames~games}
-   * @see {@link HungryGames~saveFile}
-   * @see {@link HungryGames~saveFileDir}
-   *
-   * @private
-   * @type {string}
-   * @constant
-   * @default
-   */
-  const hgSaveDir = '/hg/';
   /**
    * The file path to read default events.
    * @see {@link HungryGames~defaultPlayerEvents}
@@ -142,24 +116,6 @@ function HG() {
   const maxReactAwaitTime = 5 * 1000 * 60;  // 5 Minutes
 
   /**
-   * Stores the guilds we have looked for their data recently and the timestamp
-   * at which we looked. Used to reduce filesystem requests and blocking.
-   *
-   * @private
-   * @type {Object.<number>}
-   */
-  const findTimestamps = {};
-  /**
-   * The delay after failing to find a guild's data to look for it again.
-   *
-   * @private
-   * @type {number}
-   * @constant
-   * @default 15 Seconds
-   */
-  const findDelay = 15000;
-
-  /**
    * Regex to match all URLs in a string.
    *
    * @private
@@ -181,7 +137,7 @@ function HG() {
    */
   const defaultOptions = hg.defaultOptions;
 
-  const defaultOptSearcher = new FuzzySearch(Object.keys(defaultOptions));
+  const defaultOptSearcher = new FuzzySearch(defaultOptions.keys);
   let cmdSearcher;
   /**
    * Default options for a game.
@@ -272,17 +228,6 @@ function HG() {
    */
   const alph = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-  /**
-   * All currently tracked games. Mapped by guild ID. In most cases you should
-   * NOT reference this directly. Use {@link HungryGames~find} to get the game
-   * object for a guild.
-   * @see {@link HungryGames~find}
-   *
-   * @private
-   * @type {Object.<HungryGames~GuildGame>}
-   * @default
-   */
-  const games = {};
   /**
    * All attacks and outcomes for battles.
    * @see {@link HungryGames~battleFile}
@@ -402,6 +347,9 @@ function HG() {
           defaultBloodbathEvents = deepFreeze(parsed['bloodbath']);
           defaultPlayerEvents = deepFreeze(parsed['player']);
           defaultArenaEvents = deepFreeze(parsed['arena']);
+          hg.setDefaultBloodbathEvents(defaultBloodbathEvents);
+          hg.setDefaultPlayerEvents(defaultPlayerEvents);
+          hg.setDefaultArenaEvents(defaultArenaEvents);
         }
       } catch (err) {
         console.log(err);
@@ -431,6 +379,7 @@ function HG() {
         const parsed = JSON.parse(data);
         if (parsed) {
           battles = deepFreeze(parsed);
+          hg.setDefaultBattles(battles);
         }
       } catch (err) {
         console.log(err);
@@ -459,6 +408,7 @@ function HG() {
         const parsed = JSON.parse(data);
         if (parsed) {
           weapons = deepFreeze(parsed);
+          hg.setDefaultWeapons(weapons);
         }
       } catch (err) {
         console.log(err);
@@ -687,7 +637,7 @@ function HG() {
     self.client.on('channelDelete', onChannelDelete);
 
     self.client.guilds.forEach((g) => {
-      const game = find(g.id);
+      const game = hg.getGame(g.id);
       if (!game) return;
 
       if (game.currentGame && game.currentGame.day.state > 1 &&
@@ -695,8 +645,8 @@ function HG() {
           !game.currentGame.isPaused) {
         self.nextDay(game.author, g.id, game.outputChannel);
       } else {
-        delete games[g.id];
-        delete findTimestamps[g.id];
+        delete hg._games[g.id];
+        delete hg._findTimestamps[g.id];
       }
     });
 
@@ -6198,89 +6148,6 @@ function HG() {
       emoji.x,
     ];
     return nothings[Math.floor(Math.random() * nothings.length)];
-  }
-
-  /**
-   * Returns a guild's game data. Returns cached version if that exists, or
-   * searches the file system for saved data. Data will only be checked from
-   * disk at most once every `HungryGames~findDelay` milliseconds. Returns
-   * `null` if data could not be found, or an error occurred.
-   *
-   * @private
-   * @param {number|string} id The guild id to get the data for.
-   * @returns {?HungryGames~GuildGame} The game data, or null if no game could
-   * be loaded.
-   */
-  function find(id) {
-    if (games[id]) return games[id];
-    if (Date.now() - findTimestamps[id] < findDelay) return null;
-    findTimestamps[id] = Date.now();
-    try {
-      const tmp =
-          fs.readFileSync(self.common.guildSaveDir + id + hgSaveDir + saveFile);
-      try {
-        games[id] = JSON.parse(tmp);
-        if (self.initialized) self.debug('Loaded game from file ' + id);
-      } catch (e2) {
-        self.error('Failed to parse game data for guild ' + id);
-        return null;
-      }
-    } catch (e) {
-      if (e.code !== 'ENOENT') {
-        self.debug('Failed to load game data for guild:' + id);
-        console.error(e);
-      }
-      return null;
-    }
-
-    games[id] = GuildGame.from(games[id]);
-    games[id].id = id;
-
-    // Flush default and stale options.
-    if (games[id].options) {
-      for (const opt in defaultOptions) {
-        if (!(defaultOptions[opt] instanceof Object)) continue;
-        if (typeof games[id].options[opt] !==
-            typeof defaultOptions[opt].value) {
-          if (defaultOptions[opt].value instanceof Object) {
-            games[id].options[opt] =
-                Object.assign({}, defaultOptions[opt].value);
-          } else {
-            games[id].options[opt] = defaultOptions[opt].value;
-          }
-        } else if (defaultOptions[opt].value instanceof Object) {
-          const dKeys = Object.keys(defaultOptions[opt].value);
-          dKeys.forEach((el) => {
-            if (typeof games[id].options[opt][el] !==
-                typeof defaultOptions[opt].value[el]) {
-              games[id].options[opt][el] = defaultOptions[opt].value[el];
-            }
-          });
-        }
-      }
-      for (const opt in games[id].options) {
-        if (!(games[id].options[opt] instanceof Object)) continue;
-        if (typeof defaultOptions[opt] === 'undefined') {
-          delete games[id].options[opt];
-        } else if (games[id].options[opt].value instanceof Object) {
-          const keys = Object.keys(games[id].options[opt].value);
-          keys.forEach((el) => {
-            if (typeof games[id].options[opt][el] !==
-                typeof defaultOptions[opt].value[el]) {
-              delete games[id].options[opt][el];
-            }
-          });
-        }
-      }
-    }
-
-    // If the bot stopped while simulating a day, just start over and try
-    // again.
-    if (games[id] && games[id].currentGame && games[id].currentGame.day &&
-        games[id].currentGame.day.state === 1) {
-      games[id].currentGame.day.state = 0;
-    }
-    return games[id];
   }
 
   /**
