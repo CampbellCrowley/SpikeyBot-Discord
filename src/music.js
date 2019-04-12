@@ -163,7 +163,7 @@ function Music() {
     bitrate: 'auto',
     volume: 0.5,
     plp: 0.0,
-    highWaterMark: 1,
+    highWaterMark: 5,
   };
   /**
    * Options to pass into the secondary stream dispatcher (The one buffering for
@@ -177,12 +177,12 @@ function Music() {
    * @default
    */
   const secondaryStreamOptions = {
-    passes: 2,
+    passes: 1,
     fec: true,
     bitrate: 'auto',
     volume: 0.5,
     plp: 0.05,
-    highWaterMark: 30,
+    highWaterMark: 1000,
   };
 
   /** @inheritdoc */
