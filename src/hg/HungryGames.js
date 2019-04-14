@@ -1,58 +1,35 @@
 // Copyright 2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const fs = require('fs');
+const mkdirp = require('mkdirp'); // mkdir -p
+const rimraf = require('rimraf'); // rm -rf
 
 /**
  * Contains a Hunger Games style simulation.
  */
 class HungryGames {
   /**
+   * @description HungryGames constructor. Currently requires a valid SubModule
+   * as a parent.
    * @TODO: Remove reliance on SubModule.
    * @param {SubModule} parent Parent submodule used to hook logging into.
    */
   constructor(parent) {
     this._parent = parent;
     /**
-     * Wrapper for normal `require()` but also deletes cache reference to object
-     * before requiring. This forces the object to be updated in the future.
-     *
-     * @private
-     * @param {string} name Name of module to require.
-     * @returns {Object} The required module.
-     */
-    const tmpRequire = function(name) {
-      delete require.cache[require.resolve(name)];
-      return require(name);
-    };
-    this.FinalEvent = tmpRequire('./FinalEvent.js');
-    this.ArenaEvent = tmpRequire('./ArenaEvent.js');
-    this.WeaponEvent = tmpRequire('./WeaponEvent.js');
-    this.Battle = tmpRequire('./Battle.js');
-    this.OutcomeProbabilities = tmpRequire('./OutcomeProbabilities.js');
-    this.Day = tmpRequire('./Day.js');
-    this.Messages = tmpRequire('./Messages.js');
-    this.UserIconUrl = tmpRequire('./UserIconUrl.js');
-    this.Player = tmpRequire('./Player.js');
-    this.Team = tmpRequire('./Team.js');
-    this.Game = tmpRequire('./Game.js');
-    this.Event = tmpRequire('./Event.js');
-    this.GuildGame = tmpRequire('./GuildGame.js');
-    this.Simulator = tmpRequire('./Simulator.js');
-    this.DefaultOptions = tmpRequire('./DefaultOptions.js');
-    /**
      * Current {@link HungryGames~Messages} instance.
      * @public
      * @type {HungryGames~Messages}
      * @constant
      */
-    this.messages = new this.Messages();
+    this.messages = new HungryGames.Messages();
     /**
      * Default game options.
      * @public
      * @type {HungryGames~DefaultOptions}
      * @constant
      */
-    this.defaultOptions = new this.DefaultOptions();
+    this.defaultOptions = new HungryGames.DefaultOptions();
     /**
      * All currently tracked games. Mapped by guild ID. In most cases you should
      * NOT reference this directly. Use {@link HungryGames.getGame} to get the
@@ -62,6 +39,7 @@ class HungryGames {
      * @private
      * @type {Object.<HungryGames~GuildGame>}
      * @default
+     * @constant
      */
     this._games = {};
     /**
@@ -71,6 +49,7 @@ class HungryGames {
      *
      * @private
      * @type {Object.<number>}
+     * @constant
      */
     this._findTimestamps = {};
     /**
@@ -115,6 +94,7 @@ class HungryGames {
      *
      * @private
      * @type {HungryGames~Event[]}
+     * @default
      */
     this._defaultBloodbathEvents = [];
     /**
@@ -122,6 +102,7 @@ class HungryGames {
      *
      * @private
      * @type {HungryGames~Event[]}
+     * @default
      */
     this._defaultPlayerEvents = [];
     /**
@@ -129,6 +110,7 @@ class HungryGames {
      *
      * @private
      * @type {HungryGames~ArenaEvent[]}
+     * @default
      */
     this._defaultArenaEvents = [];
     /**
@@ -136,6 +118,7 @@ class HungryGames {
      *
      * @private
      * @type {HungryGames~Battle[]}
+     * @default
      */
     this._defaultBattles = [];
     /**
@@ -143,6 +126,7 @@ class HungryGames {
      *
      * @private
      * @type {HungryGames~Weapon[]}
+     * @default
      */
     this._defaultWeapons = [];
   }
@@ -173,7 +157,7 @@ class HungryGames {
    * @returns {string} Save dir path.
    */
   get hgSaveDir() {
-    return this.hgSaveDir;
+    return this._hgSaveDir;
   }
 
   /**
@@ -241,6 +225,198 @@ class HungryGames {
   }
 
   /**
+   * @description Create a new GuildGame.
+   * @public
+   * @param {Discord~Guild|string} guild Guild object, or ID to create a game
+   * for.
+   * @returns {HungryGames~GuildGame} The created GuildGame.
+   */
+  create(guild) {
+    if (!(guild instanceof this._parent.Discord.Guild)) {
+      guild = this._parent.client.guilds.get(guild);
+    }
+    const optKeys = this.defaultOptions.keys;
+    const opts = {};
+    for (const key of optKeys) {
+      if (typeof key !== 'string') continue;
+      if (typeof this.defaultOptions[key].value === 'object') {
+        opts[key] = Object.assign({}, this.defaultOptions[key].value);
+      } else {
+        opts[key] = this.defaultOptions[key].value;
+      }
+    }
+    if (guild.memberCount > 100) {
+      opts.excludeNewUsers = true;
+    }
+    return this._games[guild.id] = new HungryGames.GuildGame(
+        guild.id, opts, `${guild.name}'s Hungry Games`,
+        this.getAllPlayers(guild.members, [], false, [], false));
+  }
+
+  /**
+   * @description Create a new Game for a guild, and refresh the player lists.
+   * @public
+   * @param {Discord~Guild|string} guild Guild object, or ID to refresh a game
+   * for.
+   * @returns {?HungryGames~GuildGame} The GuildGame of which the Game was
+   * updated, or null if unable to refresh.
+   */
+  refresh(guild) {
+    if (!(guild instanceof this._parent.Discord.Guild)) {
+      guild = this._parent.client.guilds.get(guild);
+    }
+    const game = this.getGame(guild.id);
+    if (!game) {
+      return null;
+    }
+    const name = (game.currentGame && game.currentGame.customName) ||
+        (`${guild.name}'s Hungry Games`);
+    const teams = game.currentGame && game.currentGame.teams;
+    game.currentGame = new HungryGames.Game(
+        name, this.getAllPlayers(
+            guild.members, game.excludedUsers, game.options.includeBots,
+            game.includedUsers, game.options.excludeNewUsers,
+            game.includedNPCs),
+        teams);
+  }
+
+  /**
+   * Form an array of Player objects based on guild members, excluded members,
+   * and whether to include bots.
+   *
+   * @public
+   * @param {Discord~Collection<Discord~GuildMember>} members All members in
+   * guild.
+   * @param {string[]} excluded Array of ids of users that should not be
+   * included in the games.
+   * @param {boolean} bots Should bots be included in the games.
+   * @param {string[]} included Array of ids of users that should be included in
+   * the games. Used if excludeByDefault is true.
+   * @param {boolean} excludeByDefault Should new users be excluded from the
+   * game by default?
+   * @param {NPC[]} [includedNPCs=[]] NPCs to include as players.
+   * @returns {HungryGames~Player[]} Array of players to include in the games.
+   */
+  getAllPlayers(
+      members, excluded, bots, included, excludeByDefault, includedNPCs = []) {
+    let finalMembers = [];
+    if (!bots || Array.isArray(excluded)) {
+      finalMembers = members.filter((obj) => {
+        if (obj.isNPC) return false;
+        if (included && excluded &&
+            !included.includes(obj.user.id) &&
+            !excluded.includes(obj.user.id)) {
+          if (excludeByDefault) {
+            excluded.push(obj.user.id);
+          } else {
+            included.push(obj.user.id);
+          }
+        } else if (
+          included && excluded && included.includes(obj.user.id) &&
+            excluded.includes(obj.user.id)) {
+          this._parent.error(
+              'User in both blacklist and whitelist: ' + obj.user.id +
+              ' Guild: ' + obj.guild.id);
+          if (excludeByDefault) {
+            included.splice(
+                included.findIndex((el) => {
+                  return el == obj.user.id;
+                }),
+                1);
+          } else {
+            excluded.splice(
+                excluded.findIndex((el) => {
+                  return el == obj.user.id;
+                }),
+                1);
+          }
+        }
+        return !(
+          (!bots && obj.user.bot) ||
+            (excluded && excluded.includes(obj.user.id) ||
+             (excludeByDefault && included &&
+              !included.includes(obj.user.id))));
+      });
+    }
+    if (finalMembers.length == 0) finalMembers = members.slice();
+    finalMembers = finalMembers.map((obj) => {
+      return new HungryGames.Player(
+          obj.id, obj.user.username, obj.user.displayAvatarURL({format: 'png'}),
+          obj.nickname);
+    });
+    if (includedNPCs && includedNPCs.length > 0) {
+      finalMembers = finalMembers.concat(includedNPCs.map((obj) => {
+        return new HungryGames.NPC(obj.name, obj.avatarURL, obj.id);
+      }));
+    }
+    return finalMembers;
+  }
+
+  /**
+   * Reset the specified category of data from a game.
+   *
+   * @public
+   * @param {string} id The id of the guild to modify.
+   * @param {string} command The category of data to reset.
+   * @returns {string} The message explaining what happened.
+   */
+  resetGame(id, command) {
+    const game = this.getGame(id);
+    if (!game) {
+      return 'There is no data to reset.';
+    }
+    if (game.currentGame && game.currentGame.inProgress) {
+      return 'A game is currently in progress. Please end it before ' +
+          'reseting game data.';
+    }
+    if (command == 'all') {
+      delete this._games[id];
+      rimraf(this._parent.common.guildSaveDir + id + this.hgSaveDir, (err) => {
+        if (!err) return;
+        this._parent.error(
+            'Failed to delete directory: ' + this._parent.common.guildSaveDir +
+            id + this.hgSaveDir);
+        console.error(err);
+      });
+      return 'Resetting ALL Hungry Games data for this server!';
+    } else if (command == 'events') {
+      game.customEvents = {bloodbath: [], player: [], arena: [], weapon: {}};
+      return 'Resetting ALL Hungry Games events for this server!';
+    } else if (command == 'current') {
+      game.currentGame = null;
+      return 'Resetting ALL data for current game!';
+    } else if (command == 'options') {
+      const optKeys = this.defaultOptions.keys;
+      game.options = {};
+      for (const key of optKeys) {
+        game.options[key] = this.defaultOptions[key].value;
+      }
+      return 'Resetting ALL options!';
+    } else if (command == 'teams') {
+      game.currentGame.teams = [];
+      game.formTeams();
+      return 'Resetting ALL teams!';
+    } else if (command == 'users') {
+      game.includedUsers = [];
+      game.excludedUsers = [];
+      this.refresh(id);
+      return 'Resetting ALL user data!';
+    } else if (command == 'npcs') {
+      game.includedNPCs = [];
+      game.excludedNPCs = [];
+      this.refresh(id);
+      return 'Resetting ALL NPC data!';
+    } else {
+      return 'Please specify what data to reset.\nall {deletes all data ' +
+          'for this server},\nevents {deletes all custom events},\n' +
+          'current {deletes all data about the current game},\noptions ' +
+          '{resets all options to default values},\nteams {delete all ' +
+          'teams and creates new ones},\nusers {delete data about where to ' +
+          'put users when creating a new game},\nnpcs {delete all NPCS}.';
+    }
+  }
+
+  /**
    * @description Returns a guild's game data. Returns cached version if that
    * exists, or searches the file system for saved data. Data will only be
    * checked from disk at most once every `HungryGames~findDelay` milliseconds.
@@ -274,12 +450,17 @@ class HungryGames {
       return null;
     }
 
-    this._games[id] = this.GuildGame.from(this._games[id]);
-    this._games[id].id = id;
+    try {
+      this._games[id] = HungryGames.GuildGame.from(this._games[id]);
+      this._games[id].id = id;
+    } catch (err) {
+      this._parent.error('Failed to parse game data for guild ' + id);
+      return null;
+    }
 
     // Flush default and stale options.
     if (this._games[id].options) {
-      for (const opt in this.defaultOptions) {
+      for (const opt in this.defaultOptions.keys) {
         if (!(this.defaultOptions[opt] instanceof Object)) continue;
         if (typeof this._games[id].options[opt] !==
             typeof this.defaultOptions[opt].value) {
@@ -325,6 +506,100 @@ class HungryGames {
     }
     return this._games[id];
   }
+  /**
+   * @description Save all HG related data to file. Purges old data from memory
+   * as well.
+   * @public
+   * @param {string} [opt='sync'] Can be 'async', otherwise defaults to
+   * synchronous.
+   */
+  save(opt) {
+    Object.entries(this._games).forEach((obj) => {
+      const id = obj[0];
+      const data = obj[1].serializable;
+      const dir = this._parent.common.guildSaveDir + id + this.hgSaveDir;
+      const filename = dir + this.saveFile;
+      const saveStartTime = Date.now();
+      if (opt == 'async') {
+        mkdirp(dir, (err) => {
+          if (err) {
+            this._parent.error('Failed to create directory for ' + dir);
+            console.error(err);
+            return;
+          }
+          fs.writeFile(filename, JSON.stringify(data), (err2) => {
+            if (err2) {
+              this._parent.error('Failed to save HG data for ' + filename);
+              console.error(err2);
+            } else if (
+              this._findTimestamps[id] - saveStartTime < -15 * 60 * 1000) {
+              delete this._games[id];
+              delete this._findTimestamps[id];
+              this._parent.debug('Purged ' + id);
+            }
+          });
+        });
+      } else {
+        try {
+          mkdirp.sync(dir);
+        } catch (err) {
+          this._parent.error('Failed to create directory for ' + dir);
+          console.error(err);
+          return;
+        }
+        try {
+          fs.writeFileSync(filename, JSON.stringify(data));
+        } catch (err) {
+          this._parent.error('Failed to save HG data for ' + filename);
+          console.error(err);
+          return;
+        }
+        if (this._findTimestamps[id] - Date.now() < -15 * 60 * 1000) {
+          delete this._games[id];
+          delete this._findTimestamps[id];
+          this._parent.debug('Purged ' + id);
+        }
+      }
+    });
+  }
+  /**
+   * @description End all event listeners, intervals, and timeouts to prepare
+   * for a full stop.
+   * @public
+   */
+  shutdown() {
+    Object.values(this._games).forEach((el) => {
+      el.clearIntervals();
+    });
+    this.messages.shutdown();
+  }
 }
+/**
+ * @description Wrapper for normal `require()` but also deletes cache reference
+ * to object before requiring. This forces the object to be updated.
+ *
+ * @private
+ * @param {string} name Name of module to require.
+ * @returns {Object} The required module.
+ */
+function tmpRequire(name) {
+  delete require.cache[require.resolve(name)];
+  return require(name);
+}
+HungryGames.FinalEvent = tmpRequire('./FinalEvent.js');
+HungryGames.ArenaEvent = tmpRequire('./ArenaEvent.js');
+HungryGames.WeaponEvent = tmpRequire('./WeaponEvent.js');
+HungryGames.Battle = tmpRequire('./Battle.js');
+HungryGames.OutcomeProbabilities = tmpRequire('./OutcomeProbabilities.js');
+HungryGames.Day = tmpRequire('./Day.js');
+HungryGames.Messages = tmpRequire('./Messages.js');
+HungryGames.UserIconUrl = tmpRequire('./UserIconUrl.js');
+HungryGames.Player = tmpRequire('./Player.js');
+HungryGames.Team = tmpRequire('./Team.js');
+HungryGames.Game = tmpRequire('./Game.js');
+HungryGames.Event = tmpRequire('./Event.js');
+HungryGames.GuildGame = tmpRequire('./GuildGame.js');
+HungryGames.Simulator = tmpRequire('./Simulator.js');
+HungryGames.DefaultOptions = tmpRequire('./DefaultOptions.js');
 
 module.exports = HungryGames;

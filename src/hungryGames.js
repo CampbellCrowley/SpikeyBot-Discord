@@ -6,7 +6,6 @@ const http = require('http');
 const https = require('https');
 const crypto = require('crypto');
 const mkdirp = require('mkdirp'); // mkdir -p
-const rimraf = require('rimraf'); // rm -rf
 const FuzzySearch = require('fuzzy-search');
 require('./subModule.js')(HG);  // Extends the SubModule class.
 
@@ -251,15 +250,6 @@ function HG() {
    */
   const dayEventIntervals = {};
   /**
-   * The timeout to continue autoplaying after the day ends. Used for cancelling
-   * if user ends the game between days.
-   *
-   * @private
-   * @type {Object.<number>}
-   * @default
-   */
-  const autoPlayTimeout = {};
-  /**
    * Storage of battle messages to edit the content of on the next update.
    *
    * @private
@@ -334,7 +324,7 @@ function HG() {
   const eventHandlers = {};
 
   /**
-   * Parse all default events from file.
+   * @description Parse all default events from file.
    *
    * @private
    */
@@ -368,7 +358,7 @@ function HG() {
   });
 
   /**
-   * Parse all battles from file.
+   * @description Parse all battles from file.
    *
    * @private
    */
@@ -397,7 +387,7 @@ function HG() {
     updateBattles();
   });
   /**
-   * Parse all weapons events from file.
+   * @description Parse all weapons events from file.
    *
    * @private
    */
@@ -427,7 +417,7 @@ function HG() {
   });
 
   /**
-   * Reply to help on a server.
+   * @description Reply to help on a server.
    *
    * @private
    * @type {string}
@@ -435,7 +425,7 @@ function HG() {
    */
   const helpmessagereply = 'I sent you a DM with commands!';
   /**
-   * Reply if unable to send message via DM.
+   * @description Reply if unable to send message via DM.
    *
    * @private
    * @type {string}
@@ -444,7 +434,8 @@ function HG() {
   const blockedmessage =
       'I couldn\'t send you a message, you probably blocked me :(';
   /**
-   * The object that stores all data to be formatted into the help message.
+   * @description The object that stores all data to be formatted into the help
+   * message.
    *
    * @private
    * @constant
@@ -454,7 +445,7 @@ function HG() {
   this.helpMessage = 'Module loading...';
 
   /**
-   * Set all help messages once we know what prefix to use.
+   * @description Set all help messages once we know what prefix to use.
    *
    * @private
    */
@@ -658,14 +649,6 @@ function HG() {
 
   /** @inheritdoc */
   this.shutdown = function() {
-    Object.entries(autoPlayTimeout).forEach((el) => {
-      self.client.clearTimeout(el[1]);
-      delete autoPlayTimeout[el[0]];
-    });
-    Object.entries(dayEventIntervals).forEach((el) => {
-      self.client.clearInterval(el[1]);
-      delete dayEventIntervals[el[0]];
-    });
     self.command.deleteEvent('hg');
     self.client.removeListener('messageUpdate', handleMessageEdit);
     self.client.removeListener('guildDelete', onGuildDelete);
@@ -678,10 +661,11 @@ function HG() {
 
     Object.keys(eventHandlers).forEach((el) => delete eventHandlers[el]);
 
-    self.messages.shutdown();
     fs.unwatchFile(eventFile);
     fs.unwatchFile(battleFile);
     fs.unwatchFile(weaponsFile);
+
+    hg.shutdown();
   };
 
   /** @inheritdoc */
@@ -692,8 +676,8 @@ function HG() {
   };
 
   /**
-   * Handler for when the create event message is edited and we should update
-   * our message with the updated event.
+   * @description Handler for when the create event message is edited and we
+   * should update our message with the updated event.
    *
    * @private
    * @param {Discord~Message} oldMsg The message before being edited.
@@ -710,7 +694,7 @@ function HG() {
   }
 
   /**
-   * Handle being removed from a guild.
+   * @description Handle being removed from a guild.
    *
    * @private
    * @param {Discord~Guild} guild The guild that we just left.
@@ -725,8 +709,8 @@ function HG() {
   }
 
   /**
-   * Handle a channel being deleted. Cleans up games that may be in progress in
-   * these channels.
+   * @description Handle a channel being deleted. Cleans up games that may be in
+   * progress in these channels.
    *
    * @private
    * @param {Discord~DMChannel|Discord~GuildChannel} channel The channel that
@@ -735,7 +719,7 @@ function HG() {
    */
   function onChannelDelete(channel) {
     if (!channel.guild) return;
-    if (!games[channel.guild.id]) return;
+    if (!hg._games[channel.guild.id]) return;
     self.pauseGame(channel.guild.id);
   }
 
@@ -753,16 +737,16 @@ function HG() {
   function mkCmd(cb) {
     return function(msg) {
       const id = msg.guild.id;
-      if (find(id)) {
+      if (hg.getGame(id)) {
         let text = msg.text.trim().toLocaleLowerCase();
         if (text.length > 0) {
-          find(id).channel = msg.channel.id;
-          find(id).author = msg.author.id;
-          if (find(id).includedNPCs) {
-            find(id).includedNPCs.sort((a, b) => {
+          hg.getGame(id).channel = msg.channel.id;
+          hg.getGame(id).author = msg.author.id;
+          if (hg.getGame(id).includedNPCs) {
+            hg.getGame(id).includedNPCs.sort((a, b) => {
               return b.username.length - a.username.length;
             });
-            find(id).includedNPCs.forEach((el) => {
+            hg.getGame(id).includedNPCs.forEach((el) => {
               if (text.indexOf(el.username.toLocaleLowerCase()) > -1) {
                 // text = text.replace(el.username.toLocaleLowerCase(), '');
                 msg.softMentions.users.add(el);
@@ -772,11 +756,11 @@ function HG() {
               }
             });
           }
-          if (find(id).excludedNPCs) {
-            find(id).excludedNPCs.sort((a, b) => {
+          if (hg.getGame(id).excludedNPCs) {
+            hg.getGame(id).excludedNPCs.sort((a, b) => {
               return b.username.length - a.username.length;
             });
-            find(id).excludedNPCs.forEach((el) => {
+            hg.getGame(id).excludedNPCs.forEach((el) => {
               if (text.indexOf(el.username.toLocaleLowerCase()) > -1) {
                 // text = text.replace(el.username.toLocaleLowerCase(), '');
                 msg.softMentions.users.add(el);
@@ -1038,8 +1022,8 @@ function HG() {
         guild: self.client.guilds.get(id),
       };
     }
-    if (find(id) && find(id).currentGame &&
-        find(id).currentGame.inProgress) {
+    if (hg.getGame(id) && hg.getGame(id).currentGame &&
+        hg.getGame(id).currentGame.inProgress) {
       if (!silent) {
         self.common.reply(
             msg,
@@ -1049,75 +1033,36 @@ function HG() {
       }
       return;
     } else {
-      if (msg.guild.members.size < msg.guild.memberCount) {
-        // Ensure we have all guild members accounted for in future commands
-        // since we cant await here.
-        msg.guild.members.fetch();
-      }
-      if (find(id)) {
-        find(id).includedUsers = find(id).includedUsers.filter((u) => {
-          const m = msg.guild.members.get(u);
-          if (m && m.partial) m.fetch();
-          return m;
-        });
-        find(id).excludedUsers = find(id).excludedUsers.filter((u) => {
-          const m = msg.guild.members.get(u);
-          if (m && m.partial) m.fetch();
-          return m;
-        });
-        if (find(id).currentGame) {
-          if (!silent) {
-            self.common.reply(
-                msg, 'Creating a new game with settings from the last game.');
-          }
-          find(id).currentGame = new Game(
-              find(id).currentGame.customName ||
-                  (msg.guild.name + '\'s Hungry Games'),
-              getAllPlayers(
-                  msg.guild.members, find(id).excludedUsers,
-                  find(id).options.includeBots, find(id).includedUsers,
-                  find(id).options.excludeNewUsers, find(id).includedNPCs));
-        } else {
-          if (!silent) {
-            self.common.reply(
-                msg, 'Creating a new game with default settings.');
-          }
-          find(id).currentGame = new Game(
-              `${msg.guild.name}'s Hungry Games`,
-              getAllPlayers(
-                  msg.guild.members, find(id).excludedUsers,
-                  find(id).options.includeBots, find(id).includedUsers,
-                  find(id).options.excludeNewUsers, find(id).includedNPCs));
+      if (hg.getGame(id)) {
+        hg.getGame(id).includedUsers =
+            hg.getGame(id).includedUsers.filter((u) => {
+              const m = msg.guild.members.get(u);
+              if (m && m.partial) m.fetch();
+              return m;
+            });
+        hg.getGame(id).excludedUsers =
+            hg.getGame(id).excludedUsers.filter((u) => {
+              const m = msg.guild.members.get(u);
+              if (m && m.partial) m.fetch();
+              return m;
+            });
+        if (!silent) {
+          self.common.reply(msg, 'Refreshing current game.');
         }
+        hg.refresh(msg.guild);
       } else {
-        const optKeys = Object.keys(defaultOptions);
-        const opts = {};
-        for (const i in optKeys) {
-          if (typeof optKeys[i] !== 'string') continue;
-          if (typeof defaultOptions[optKeys[i]].value === 'object') {
-            opts[optKeys[i]] =
-                Object.assign({}, defaultOptions[optKeys[i]].value);
-          } else {
-            opts[optKeys[i]] = defaultOptions[optKeys[i]].value;
-          }
-        }
-        if (msg.guild.memberCount > 100) {
-          opts.excludeNewUsers = true;
-        }
-        games[id] = new GuildGame(
-            id, opts, `${msg.guild.name}'s Hungry Games`,
-            getAllPlayers(msg.guild.members, [], false, [], false));
-
         if (!silent) {
           self.common.reply(
               msg,
               'Created a Hungry Games with default settings and all members ' +
                   'included.');
         }
+        hg.create(msg.guild);
       }
     }
-    formTeams(id);
-    fetchPatreonSettings(find(id).currentGame.includedUsers, null, null, cb);
+    hg.getGame(id).formTeams();
+    fetchPatreonSettings(
+        hg.getGame(id).currentGame.includedUsers, null, null, cb);
   }
   /**
    * Create a Hungry Games for a guild.
@@ -1256,192 +1201,6 @@ function HG() {
   }
 
   /**
-   * Form an array of Player objects based on guild members, excluded members,
-   * and whether to include bots.
-   *
-   * @private
-   * @param {Discord~Collection<Discord~GuildMember>} members All members in
-   * guild.
-   * @param {string[]} excluded Array of ids of users that should not be
-   * included in the games.
-   * @param {boolean} bots Should bots be included in the games.
-   * @param {string[]} included Array of ids of users that should be included in
-   * the games. Used if excludeByDefault is true.
-   * @param {boolean} excludeByDefault Should new users be excluded from the
-   * game by default?
-   * @param {NPC[]} [includedNPCs=[]] NPCs to include as players.
-   * @returns {HungryGames~Player[]} Array of players to include in the games.
-   */
-  function getAllPlayers(
-      members, excluded, bots, included, excludeByDefault, includedNPCs = []) {
-    let finalMembers = [];
-    if (!bots || Array.isArray(excluded)) {
-      finalMembers = members.filter(function(obj) {
-        if (obj.isNPC) return false;
-        if (included && excluded &&
-            !included.includes(obj.user.id) &&
-            !excluded.includes(obj.user.id)) {
-          if (excludeByDefault) {
-            excluded.push(obj.user.id);
-          } else {
-            included.push(obj.user.id);
-          }
-        } else if (
-          included && excluded && included.includes(obj.user.id) &&
-            excluded.includes(obj.user.id)) {
-          self.error(
-              'User in both blacklist and whitelist: ' + obj.user.id +
-              ' Guild: ' + obj.guild.id);
-          if (excludeByDefault) {
-            included.splice(
-                included.findIndex((el) => {
-                  return el == obj.user.id;
-                }),
-                1);
-          } else {
-            excluded.splice(
-                excluded.findIndex((el) => {
-                  return el == obj.user.id;
-                }),
-                1);
-          }
-        }
-        return !(
-          (!bots && obj.user.bot) ||
-            (excluded && excluded.includes(obj.user.id) ||
-             (excludeByDefault && included &&
-              !included.includes(obj.user.id))));
-      });
-    }
-    if (finalMembers.length == 0) finalMembers = members.slice();
-    finalMembers = finalMembers.map((obj) => {
-      return new Player(
-          obj.id, obj.user.username, obj.user.displayAvatarURL({format: 'png'}),
-          obj.nickname);
-    });
-    if (includedNPCs && includedNPCs.length > 0) {
-      finalMembers = finalMembers.concat(includedNPCs.map((obj) => {
-        return new NPC(obj.name, obj.avatarURL, obj.id);
-      }));
-    }
-    return finalMembers;
-  }
-  /**
-   * Add users to teams, and remove excluded users from teams. Deletes empty
-   * teams, and adds teams once all teams have teamSize of players.
-   *
-   * @private
-   * @param {string} id Id of guild where this was triggered from.
-   */
-  function formTeams(id) {
-    const game = find(id);
-    if (game.options.teamSize < 0) game.options.teamSize = 0;
-    if (game.options.teamSize == 0) {
-      game.currentGame.teams = [];
-      return;
-    }
-
-    let corruptTeam = false;
-
-    const teamSize = game.options.teamSize;
-    const numTeams =
-        Math.ceil(game.currentGame.includedUsers.length / teamSize);
-    // If teams already exist, update them. Otherwise, create new teams.
-    if (game.currentGame.teams && game.currentGame.teams.length > 0) {
-      game.currentGame.teams.forEach(function(obj) {
-        obj.players.forEach(function(p) {
-          if (typeof p !== 'string' && typeof p !== 'number') {
-            corruptTeam = true;
-            self.error(
-                '(PreTeamForm) Player in team is invalid: ' + typeof p +
-                ' in team ' + obj.id + ' guild: ' + id + ' players: ' +
-                JSON.stringify(obj.players));
-          }
-        });
-      });
-
-      game.currentGame.teams.sort(function(a, b) {
-        return a.id - b.id;
-      });
-      const notIncluded = game.currentGame.includedUsers.slice(0);
-      // Remove players from teams if they are no longer included in game.
-      for (let i = 0; i < game.currentGame.teams.length; i++) {
-        const team = game.currentGame.teams[i];
-        team.id = i;
-        for (let j = 0; j < team.players.length; j++) {
-          if (game.currentGame.includedUsers.findIndex(function(obj) {
-            return obj.id === team.players[j];
-          }) < 0) {
-            team.players.splice(j, 1);
-            j--;
-          } else {
-            notIncluded.splice(
-                notIncluded.findIndex(function(obj) {
-                  return obj.id === team.players[j];
-                }),
-                1);
-          }
-        }
-        if (team.players.length == 0) {
-          game.currentGame.teams.splice(i, 1);
-          i--;
-        }
-      }
-      // Add players who are not on a team, to a team.
-      for (let i = 0; i < notIncluded.length; i++) {
-        let found = false;
-        for (let j = 0; j < game.currentGame.teams.length; j++) {
-          const team = game.currentGame.teams[j];
-          if (team.players.length < teamSize) {
-            team.players.push(notIncluded[i].id);
-            found = true;
-            break;
-          }
-        }
-        if (found) continue;
-        // Add a team if all existing teams are full.
-        game.currentGame.teams[game.currentGame.teams.length] = new Team(
-            game.currentGame.teams.length,
-            'Team ' + (game.currentGame.teams.length + 1), [notIncluded[i].id]);
-      }
-    } else {
-      // Create all teams for players.
-      game.currentGame.teams = [];
-      for (let i = 0; i < numTeams; i++) {
-        game.currentGame.teams[i] = new Team(
-            i, 'Team ' + (i + 1),
-            game.currentGame.includedUsers
-                .slice(i * teamSize, i * teamSize + teamSize)
-                .map(function(obj) {
-                  return obj.id;
-                }));
-      }
-    }
-    // Reset team data.
-    game.currentGame.teams.forEach(function(obj) {
-      obj.numAlive = obj.players.length;
-      obj.rank = 1;
-      obj.players.forEach(function(p) {
-        if (typeof p !== 'string' && typeof p !== 'number') {
-          corruptTeam = true;
-          self.error(
-              '(PostTeamForm) Player in team is invalid: ' + typeof p +
-              ' in team ' + obj.id + ' guild: ' + id + ' players: ' +
-              JSON.stringify(obj.players));
-        }
-      });
-    });
-
-    if (corruptTeam) {
-      self.client.channels.get(game.channel)
-          .send(
-              '<@' + game.author +
-              '>\n```\nTeams appeared to be corrupted, teams may have been ' +
-              'rearranged.\n```\nThis error has been reported and is being ' +
-              'looked into.');
-    }
-  }
-  /**
    * Reset data that the user specifies.
    *
    * @private
@@ -1451,74 +1210,8 @@ function HG() {
    */
   function resetGame(msg, id) {
     const command = msg.text.trim().split(' ')[0];
-    self.common.reply(msg, 'Reset HG', self.resetGame(id, command));
+    self.common.reply(msg, 'Reset HG', hg.resetGame(id, command));
   }
-  /**
-   * Reset the specified category of data from a game.
-   *
-   * @public
-   * @param {string} id The id of the guild to modify.
-   * @param {string} command The category of data to reset.
-   * @returns {string} The message explaining what happened.
-   */
-  this.resetGame = function(id, command) {
-    if (find(id)) {
-      if (find(id).currentGame && find(id).currentGame.inProgress) {
-        return 'A game is currently in progress. Please end it before ' +
-            'reseting game data.';
-      }
-      if (command == 'all') {
-        delete games[id];
-        rimraf(self.common.guildSaveDir + id + hgSaveDir, function(err) {
-          if (!err) return;
-          self.error(
-              'Failed to delete directory: ' + self.common.guildSaveDir + id +
-              hgSaveDir);
-          console.error(err);
-        });
-        return 'Resetting ALL Hungry Games data for this server!';
-      } else if (command == 'events') {
-        find(id).customEvents =
-            {bloodbath: [], player: [], arena: [], weapon: {}};
-        return 'Resetting ALL Hungry Games events for this server!';
-      } else if (command == 'current') {
-        delete find(id).currentGame;
-        return 'Resetting ALL data for current game!';
-      } else if (command == 'options') {
-        const optKeys = Object.keys(defaultOptions);
-        find(id).options = {};
-        for (const i in optKeys) {
-          if (typeof optKeys[i] !== 'string') continue;
-          find(id).options[optKeys[i]] = defaultOptions[optKeys[i]].value;
-        }
-        return 'Resetting ALL options!';
-      } else if (command == 'teams') {
-        find(id).currentGame.teams = [];
-        formTeams(id);
-        return 'Resetting ALL teams!';
-      } else if (command == 'users') {
-        find(id).includedUsers = [];
-        find(id).excludedUsers = [];
-        createGame(null, id, true);
-        return 'Resetting ALL user data!';
-      } else if (command == 'npcs') {
-        find(id).includedNPCs = [];
-        find(id).excludedNPCs = [];
-        createGame(null, id, true);
-        return 'Resetting ALL NPC data!';
-      } else {
-        return 'Please specify what data to reset.\nall {deletes all data ' +
-            'for this server},\nevents {deletes all custom events},\n' +
-            'current {deletes all data about the current game},\noptions ' +
-            '{resets all options to default values},\nteams {delete all ' +
-            'teams and creates new ones},\nusers {delete data about where to ' +
-            'put users when creating a new game},\nnpcs {delete all NPCS}.';
-      }
-    } else {
-      return 'There is no data to reset. Start a new game with "' +
-          self.bot.getPrefix(id) + self.postPrefix + 'create".';
-    }
-  };
   /**
    * Send all of the game data about the current server to the chat.
    *
@@ -1534,11 +1227,12 @@ function HG() {
         finalId = msg.text.trim().split(' ')[0];
       }
     }
-    if (find(finalId)) {
+    const game = hg.getGame(finalId);
+    if (game) {
       const file = new self.Discord.MessageAttachment();
-      file.setFile(Buffer.from(JSON.stringify(find(finalId), null, 2)));
-      file.setName('HG-' + finalId + '.json');
-      msg.channel.send('HG Data for guild ' + finalId, file);
+      file.setFile(Buffer.from(JSON.stringify(game.serializable, null, 2)));
+      file.setName(`HG-${finalId}.json`);
+      msg.channel.send(`HG Data for guild ${finalId}`, file);
     } else {
       self.common.reply(msg, 'No game created', finalId);
     }
@@ -1553,8 +1247,9 @@ function HG() {
    */
   function showGameEvents(msg, id) {
     let events = defaultBloodbathEvents;
-    if (find(id) && find(id).customEvents.bloodbath) {
-      events = events.concat(find(id).customEvents.bloodbath);
+    const game = hg.getGame(id);
+    if (game && game.customEvents.bloodbath) {
+      events = events.concat(game.customEvents.bloodbath);
     }
     let file = new self.Discord.MessageAttachment();
     file.setFile(Buffer.from(JSON.stringify(events, null, 2)));
@@ -1571,8 +1266,8 @@ function HG() {
         file);
 
     events = defaultPlayerEvents;
-    if (find(id) && find(id).customEvents.player) {
-      events = events.concat(find(id).customEvents.player);
+    if (game && game.customEvents.player) {
+      events = events.concat(game.customEvents.player);
     }
     file = new self.Discord.MessageAttachment();
     file.setFile(Buffer.from(JSON.stringify(events, null, 2)));
@@ -1589,14 +1284,14 @@ function HG() {
         file);
 
     events = Object.assign({}, weapons);
-    if (find(id) && find(id).customEvents.weapon) {
-      const keys = Object.keys(find(id).customEvents.weapon);
+    if (game && game.customEvents.weapon) {
+      const keys = Object.keys(game.customEvents.weapon);
       for (let i = 0; i < keys.length; i++) {
         if (events[keys[i]]) {
           events[keys[i]].outcomes = events[keys[i]].outcomes.concat(
-              find(id).customEvents.weapon[keys[i]].outcomes);
+              game.customEvents.weapon[keys[i]].outcomes);
         } else {
-          events[keys[i]] = find(id).customEvents.weapon[keys[i]];
+          events[keys[i]] = game.customEvents.weapon[keys[i]];
         }
       }
     }
@@ -1607,8 +1302,8 @@ function HG() {
         'Weapon Events (' + Object.keys(events).length + ' weapons)', file);
 
     events = defaultArenaEvents;
-    if (find(id) && find(id).customEvents.arena) {
-      events = events.concat(find(id).customEvents.arena);
+    if (hg.getGame(id) && hg.getGame(id).customEvents.arena) {
+      events = events.concat(hg.getGame(id).customEvents.arena);
     }
     file = new self.Discord.MessageAttachment();
     file.setFile(Buffer.from(JSON.stringify(events, null, 2)));
@@ -1626,7 +1321,8 @@ function HG() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function startGame(msg, id) {
-    if (find(id) && find(id).currentGame && find(id).currentGame.inProgress) {
+    const game = hg.getGame(id);
+    if (game && game.currentGame && game.currentGame.inProgress) {
       self.common.reply(
           msg, 'A game is already in progress! ("' + msg.prefix +
               self.postPrefix + 'next" for next day, or "' + msg.prefix +
@@ -1655,7 +1351,7 @@ function HG() {
     } else if (!myPerms.has(self.Discord.Permissions.FLAGS.SEND_MESSAGES)) {
       return;
     }
-    if (find(id) && find(id).reactMessage) {
+    if (game && game.reactMessage) {
       self.endReactJoinMessage(id, (err, info) => {
         if (err) {
           self.error(`${err}: ${id}`);
@@ -1674,7 +1370,7 @@ function HG() {
      */
     function loadingComplete() {
       self.client.setTimeout(() => {
-        if (find(id).autoPlay && !find(id).currentGame.isPaused) {
+        if (hg.getGame(id).autoPlay && !hg.getGame(id).currentGame.isPaused) {
           nextDay(msg, id);
         }
       });
@@ -1683,18 +1379,18 @@ function HG() {
     createGame(msg, id, true, loadingComplete);
 
     const finalMessage = new self.Discord.MessageEmbed();
-    finalMessage.setTitle(self.messages.get('gameStart'));
+    finalMessage.setTitle(hg.messages.get('gameStart'));
     finalMessage.setColor(defaultColor);
 
-    const numUsers = find(id).currentGame.includedUsers.length;
-    if (find(id).options.teamSize > 0) {
-      find(id).currentGame.includedUsers.sort(function(a, b) {
-        const aTeam = find(id).currentGame.teams.findIndex(function(team) {
+    const numUsers = game.currentGame.includedUsers.length;
+    if (game.options.teamSize > 0) {
+      game.currentGame.includedUsers.sort(function(a, b) {
+        const aTeam = game.currentGame.teams.findIndex(function(team) {
           return team.players.findIndex(function(player) {
             return player == a.id;
           }) > -1;
         });
-        const bTeam = find(id).currentGame.teams.findIndex(function(team) {
+        const bTeam = game.currentGame.teams.findIndex(function(team) {
           return team.players.findIndex(function(player) {
             return player == b.id;
           }) > -1;
@@ -1707,10 +1403,10 @@ function HG() {
       });
     }
     let prevTeam = -1;
-    const statusList = find(id).currentGame.includedUsers.map(function(obj) {
+    const statusList = game.currentGame.includedUsers.map(function(obj) {
       let myTeam = -1;
-      if (find(id).options.teamSize > 0) {
-        myTeam = find(id).currentGame.teams.findIndex(function(team) {
+      if (game.options.teamSize > 0) {
+        myTeam = game.currentGame.teams.findIndex(function(team) {
           return team.players.findIndex(function(player) {
             return player == obj.id;
           }) > -1;
@@ -1718,7 +1414,7 @@ function HG() {
       }
 
       let shortName;
-      if (obj.nickname && find(id).options.useNicknames) {
+      if (obj.nickname && game.options.useNicknames) {
         shortName = obj.nickname.substring(0, 16);
         if (shortName != obj.nickname) {
           shortName = shortName.substring(0, 13) + '...';
@@ -1733,12 +1429,12 @@ function HG() {
       let prefix = '';
       if (myTeam != prevTeam) {
         prevTeam = myTeam;
-        prefix = '__' + find(id).currentGame.teams[myTeam].name + '__\n';
+        prefix = `__${game.currentGame.teams[myTeam].name}__\n`;
       }
 
-      return prefix + '`' + shortName + '`';
+      return `${prefix}\`${shortName}\``;
     });
-    if (find(id).options.teamSize == 0) {
+    if (game.options.teamSize == 0) {
       statusList.sort((a, b) => {
         a = a.toLocaleLowerCase();
         b = b.toLocaleLowerCase();
@@ -1760,23 +1456,17 @@ function HG() {
             thisMessage, true);
       }
       finalMessage.addField(
-          'Included (' + ((numCols - 1) * quarterLength + 1) + '-' + numUsers +
-              ')',
+          `Included (${(numCols - 1) * quarterLength + 1}-${numUsers})`,
           statusList.join('\n'), true);
     } else {
       finalMessage.addField(
-          'Included (' + numUsers + ')', statusList.join('\n') || 'Nobody',
-          false);
+          `Included (${numUsers})`, statusList.join('\n') || 'Nobody', false);
     }
-    if (find(id).excludedUsers.length > 0) {
+    if (game.excludedUsers.length > 0) {
       let excludedList = '\u200B';
-      if (find(id).excludedUsers.length < 20) {
-        excludedList = find(id)
-            .excludedUsers
-            .map(function(obj) {
-              return getName(msg.guild, obj);
-            })
-            .join(', ');
+      if (game.excludedUsers.length < 20) {
+        excludedList =
+            game.excludedUsers.map((obj) => getName(msg.guild, obj)).join(', ');
         const trimmedList = excludedList.substr(0, 512);
         if (excludedList != trimmedList) {
           excludedList = trimmedList.substr(0, 509) + '...';
@@ -1785,17 +1475,16 @@ function HG() {
         }
       }
       finalMessage.addField(
-          'Excluded (' + find(id).excludedUsers.length + ')', excludedList,
-          false);
+          `Excluded (${game.excludedUsers.length})`, excludedList, false);
     }
 
-    if (!find(id).autoPlay) {
+    if (!game.autoPlay) {
       finalMessage.setFooter(
-          '"' + msg.prefix + self.postPrefix + 'next" for next day.');
+          `"${msg.prefix}${self.postPrefix}next" for next day.`);
     }
 
     let mentions = self.common.mention(msg);
-    if (find(id).options.mentionEveryoneAtStart) {
+    if (game.options.mentionEveryoneAtStart) {
       mentions += '@everyone';
     }
 
@@ -1809,7 +1498,7 @@ function HG() {
       console.error(err);
     });
 
-    find(id).currentGame.inProgress = true;
+    game.currentGame.inProgress = true;
   }
   /**
    * Start the games in the given channel and guild by the given user.
@@ -1877,7 +1566,7 @@ function HG() {
   function makeMessage(uId, gId, cId, msg) {
     const g = self.client.guilds.get(gId);
     if (!g) return null;
-    if (!cId && find(gId)) cId = find(gId).channel;
+    if (!cId && hg.getGame(gId)) cId = hg.getGame(gId).channel;
     return {
       author: self.client.users.get(uId),
       client: self.client,
@@ -1909,19 +1598,19 @@ function HG() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function pauseAutoplay(msg, id) {
-    if (!find(id)) {
+    if (!hg.getGame(id)) {
       self.common.reply(
           msg, 'Not autoplaying. If you wish to autoplay, type "' + msg.prefix +
               self.postPrefix + 'autoplay".');
       return;
     }
-    if (find(id).autoPlay) {
+    if (hg.getGame(id).autoPlay) {
       if (msg && msg.channel) {
         msg.channel.send(
             '<@' + msg.author.id +
             '> `Autoplay will stop at the end of the current day.`');
       }
-      find(id).autoPlay = false;
+      hg.getGame(id).autoPlay = false;
     } else {
       if (msg && msg.channel) {
         self.common.reply(
@@ -1939,11 +1628,11 @@ function HG() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function startAutoplay(msg, id) {
-    if (!find(id) || !find(id).currentGame) {
+    if (!hg.getGame(id) || !hg.getGame(id).currentGame) {
       createGame(msg, id);
     }
-    if (find(id).autoPlay && find(id).currentGame.inProgress) {
-      if (find(id).currentGame.isPaused) {
+    if (hg.getGame(id).autoPlay && hg.getGame(id).currentGame.inProgress) {
+      if (hg.getGame(id).currentGame.isPaused) {
         self.common.reply(
             msg, 'Autoplay is already enabled.', 'To resume the game, use `' +
                 msg.prefix + self.postPrefix + 'resume`.');
@@ -1951,9 +1640,9 @@ function HG() {
         pauseAutoplay(msg, id);
       }
     } else {
-      find(id).autoPlay = true;
-      if (find(id).currentGame.inProgress &&
-          find(id).currentGame.day.state === 0) {
+      hg.getGame(id).autoPlay = true;
+      if (hg.getGame(id).currentGame.inProgress &&
+          hg.getGame(id).currentGame.day.state === 0) {
         if (self.command.validate(msg.prefix + 'hg next', msg)) {
           self.common.reply(
               msg,
@@ -1965,7 +1654,7 @@ function HG() {
             '<@' + msg.author.id +
             '> `Enabling Autoplay! Starting the next day!`');
         nextDay(msg, id);
-      } else if (!find(id).currentGame.inProgress) {
+      } else if (!hg.getGame(id).currentGame.inProgress) {
         if (self.command.validate(msg.prefix + 'hg start', msg)) {
           self.common.reply(
               msg, 'Sorry, but you don\'t have permission to start the games.',
@@ -1976,7 +1665,7 @@ function HG() {
             '<@' + msg.author.id +
             '> `Autoplay is enabled. Starting the games!`');
         startGame(msg, id);
-      } else if (find(id).currentGame.isPaused) {
+      } else if (hg.getGame(id).currentGame.isPaused) {
         self.common.reply(
             msg, 'Enabling Autoplay',
             'Resume game with `' + msg.prefix + self.postPrefix + 'resume`.');
@@ -1994,11 +1683,11 @@ function HG() {
    * @returns {string} User information of the outcome of this command.
    */
   this.pauseGame = function(id) {
-    if (!find(id) || !find(id).currentGame ||
-        !find(id).currentGame.inProgress) {
+    if (!hg.getGame(id) || !hg.getGame(id).currentGame ||
+        !hg.getGame(id).currentGame.inProgress) {
       return 'Failed: There isn\'t currently a game in progress.';
     }
-    if (find(id).currentGame.isPaused) {
+    if (hg.getGame(id).currentGame.isPaused) {
       return 'Failed: Game is already paused.';
     }
     if (!dayEventIntervals[id]) {
@@ -2006,7 +1695,7 @@ function HG() {
     }
     self.client.clearInterval(dayEventIntervals[id]);
     delete dayEventIntervals[id];
-    find(id).currentGame.isPaused = true;
+    hg.getGame(id).currentGame.isPaused = true;
     return 'Success';
   };
 
@@ -2046,8 +1735,9 @@ function HG() {
    * giving up.
    */
   function nextDay(msg, id, retry = true) {
-    if (!find(id) || !find(id).currentGame ||
-        !find(id).currentGame.inProgress) {
+    const game = hg.getGame(id);
+    if (!game || !game.currentGame ||
+        !game.currentGame.inProgress) {
       self.common
           .reply(
               msg, 'You must start a game first! Use "' + msg.prefix +
@@ -2058,10 +1748,10 @@ function HG() {
           });
       return;
     }
-    if (find(id).currentGame.day.state !== 0) {
+    if (game.currentGame.day.state !== 0) {
       if (dayEventIntervals[id]) {
         self.common.reply(msg, 'Already simulating day.');
-      } else if (find(id).currentGame.day.state == 1) {
+      } else if (game.currentGame.day.state == 1) {
         self.common
             .reply(
                 msg,
@@ -2074,11 +1764,9 @@ function HG() {
               if (err.message != 'No Perms') console.error(err);
             });
       } else {
-        find(id).currentGame.isPaused = false;
+        game.currentGame.isPaused = false;
         printEvent(msg, id);
-        dayEventIntervals[id] = self.client.setInterval(function() {
-          printEvent(msg, id);
-        }, find(id).options.disableOutput ? 10 : find(id).options.delayEvents);
+        game.createInterval(dayStateModified);
       }
       return;
     }
@@ -2106,34 +1794,59 @@ function HG() {
               ' I have the "Embed Links" permission in this channel.');
       return;
     }
-    const sim = new Simulator(find(id), self, msg);
+    const sim = new HungryGames.Simulator(game, hg, msg);
     sim.go((err) => {
       // Signal ready to display events.
       fire('dayStateChange', id);
       const embed = new self.Discord.MessageEmbed();
-      if (find(id).currentGame.day.num === 0) {
-        embed.setTitle(self.messages.get('bloodbathStart'));
+      if (game.currentGame.day.num === 0) {
+        embed.setTitle(hg.messages.get('bloodbathStart'));
       } else {
         embed.setTitle(
-            self.messages.get('dayStart')
-                .replaceAll('{}', find(id).currentGame.day.num));
+            hg.messages.get('dayStart')
+                .replaceAll('{}', game.currentGame.day.num));
       }
-      if (!find(id).autoPlay && find(id).currentGame.day.num < 2) {
+      if (!game.autoPlay && game.currentGame.day.num < 2) {
         embed.setFooter(
             'Tip: Use "' + msg.prefix + self.postPrefix +
             'autoplay" to automate the games.');
       }
       embed.setColor(defaultColor);
-      if (!find(id) || !find(id).options.disableOutput) {
+      if (!game || !game.options.disableOutput) {
         msg.channel.send(embed);
       }
-      find(id).outputChannel = msg.channel.id;
-      find(id).currentGame.isPaused = false;
-      dayEventIntervals[id] = self.client.setInterval(function() {
+      game.outputChannel = msg.channel.id;
+      game.currentGame.isPaused = false;
+      game.createInterval(dayStateModified);
+    });
+    /**
+     * @description Callback for every time the game state is modified.
+     * @private
+     * @type {HungryGames~GuildGame~StateUpdateCB}
+     * @param {boolean} dayComplete Has the day ended.
+     * @param {boolean} doSim If next day should be simulated and started.
+     */
+    function dayStateModified(dayComplete, doSim) {
+      if (doSim) {
+        nextDay(msg, id);
+      } else if (dayComplete) {
+        printDay(msg, id);
+        self.client.setTimeout(() => {
+          msg.channel.send('`Autoplaying...`')
+              .then((msg) => {
+                msg.delete({
+                  timeout: hg.getGame(id).options.delayDays - 1250,
+                  reason: 'I can do whatever I want!',
+                })
+                    .catch(() => {});
+              })
+              .catch(() => {});
+        }, (hg.getGame(id).options.delayDays > 2000 ? 1200 : 100));
+      } else {
         fire('dayStateChange', id);
         printEvent(msg, id);
-      }, find(id).options.disableOutput ? 10 : find(id).options.delayEvents);
-    });
+      }
+    }
   }
 
   /**
@@ -2145,11 +1858,9 @@ function HG() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function printEvent(msg, id) {
-    const index = find(id).currentGame.day.state - 2;
-    const events = find(id).currentGame.day.events;
+    const index = hg.getGame(id).currentGame.day.state - 2;
+    const events = hg.getGame(id).currentGame.day.events;
     if (index >= events.length) {
-      self.client.clearInterval(dayEventIntervals[id]);
-      delete dayEventIntervals[id];
       printDay(msg, id);
     } else if (!events[index]) {
       /* self.warn(
@@ -2164,13 +1875,13 @@ function HG() {
       embed.addField(message[1], message[2]);
       embed.setColor([50, 0, 0]);
 
-      const avatarSizes = find(id).options.battleAvatarSizes;
+      const avatarSizes = hg.getGame(id).options.battleAvatarSizes;
       const battleIconSize = avatarSizes.avatar;
       if (battleIconSize === 0 ||
           events[index].attacks[battleState].icons.length === 0) {
         // Send without image.
         if (!battleMessage[id]) {
-          if (!find(id).options.disableOutput) {
+          if (!hg.getGame(id).options.disableOutput) {
             msg.channel.send(message[0], embed)
                 .then((msg_) => {
                   battleMessage[id] = msg_;
@@ -2230,7 +1941,7 @@ function HG() {
               // Attach file, then send.
               embed.attachFiles(
                   [new self.Discord.MessageAttachment(out, 'hgBattle.png')]);
-              if (!find(id).options.disableOutput) {
+              if (!hg.getGame(id).options.disableOutput) {
                 msg.channel.send(message[0], embed)
                     .then((msg_) => {
                       battleMessage[id] = msg_;
@@ -2276,10 +1987,10 @@ function HG() {
       events[index].state++;
     } else {
       // delete battleMessage[id];
-      const avatarSizes = find(id).options.eventAvatarSizes;
+      const avatarSizes = hg.getGame(id).options.eventAvatarSizes;
       const iconSize = avatarSizes.avatar;
       if (iconSize == 0 || events[index].icons.length === 0) {
-        if (!find(id).options.disableOutput) {
+        if (!hg.getGame(id).options.disableOutput) {
           msg.channel
               .send(
                   (events[index].mentionString || '') + events[index].message +
@@ -2349,7 +2060,7 @@ function HG() {
             finalImage.getBuffer(Jimp.MIME_PNG, function(err, out) {
               embed.attachFiles(
                   [new self.Discord.MessageAttachment(out, 'hgEvent.png')]);
-              if (!find(id).options.disableOutput) {
+              if (!hg.getGame(id).options.disableOutput) {
                 msg.channel.send(events[index].mentionString, embed)
                     .catch((err) => {
                       self.error(
@@ -2387,7 +2098,7 @@ function HG() {
               });
         }
       }
-      find(id).currentGame.day.state++;
+      hg.getGame(id).currentGame.day.state++;
     }
   }
   /**
@@ -2405,15 +2116,17 @@ function HG() {
     let lastTeam = 0;
     let numWholeTeams = 0;
     let lastWholeTeam = 0;
-    find(id).currentGame.includedUsers.forEach(function(el, i) {
+    const game = hg.getGame(id);
+    const current = game.currentGame;
+    current.includedUsers.forEach((el, i) => {
       if (el.living) {
         numAlive++;
         lastIndex = i;
         lastId = el.id;
       }
     });
-    if (find(id).options.teamSize > 0) {
-      find(id).currentGame.teams.forEach(function(team, index) {
+    if (game.options.teamSize > 0) {
+      current.teams.forEach(function(team, index) {
         if (team.numAlive > 0) {
           numTeams++;
           lastTeam = index;
@@ -2425,75 +2138,71 @@ function HG() {
       });
     }
 
-    if (find(id).currentGame.numAlive != numAlive) {
-      self.error('Realtime alive count is incorrect!');
+    if (current.numAlive != numAlive) {
+      self.warn(
+          'Realtime alive count is incorrect! ' + current.numAlive + ' vs ' +
+          numAlive);
     }
 
     const finalMessage = new self.Discord.MessageEmbed();
     finalMessage.setColor(defaultColor);
 
-    const collab = find(id).options.teammatesCollaborate == 'always' ||
-        (find(id).options.teammatesCollaborate == 'untilend' && numTeams > 1);
+    const collab = game.options.teammatesCollaborate == 'always' ||
+        (game.options.teammatesCollaborate == 'untilend' &&
+         numTeams > 1);
     if (collab && numTeams == 1) {
-      const teamName = find(id).currentGame.teams[lastTeam].name;
-      finalMessage.setTitle(
-          '\n' + teamName + ' has won ' + find(id).currentGame.name + '!');
-      let teamPlayerList =
-          find(id)
-              .currentGame.teams[lastTeam]
-              .players
-              .map(function(player) {
-                const p =
-                    find(id).currentGame.includedUsers.find(function(user) {
-                      return user.id == player;
-                    });
-                if (find(id).options.useNicknames) {
-                  return p.nickname || p.name;
-                } else {
-                  return p.name;
-                }
-              })
-              .join(', ');
+      const teamName = current.teams[lastTeam].name;
+      finalMessage.setTitle(`${teamName} has won ${current.name}!`);
+      let teamPlayerList = current.teams[lastTeam]
+          .players
+          .map((player) => {
+            const p = current.includedUsers.find((user) => {
+              return user.id == player;
+            });
+            if (game.options.useNicknames) {
+              return p.nickname || p.name;
+            } else {
+              return p.name;
+            }
+          })
+          .join(', ');
       if (teamPlayerList.length > 1024) {
-        teamPlayerList = teamPlayerList.substring(0, 1021) + '...';
+        teamPlayerList = `${teamPlayerList.substring(0, 1021)}...`;
       }
       finalMessage.setDescription(teamPlayerList);
-      find(id).currentGame.inProgress = false;
-      find(id).currentGame.ended = true;
-      find(id).autoPlay = false;
+      current.inProgress = false;
+      current.ended = true;
+      game.autoPlay = false;
     } else if (numAlive == 1) {
-      const p = find(id).currentGame.includedUsers[lastIndex];
+      const p = current.includedUsers[lastIndex];
       const winnerName =
-          find(id).options.useNicknames ? (p.nickname || p.name) : p.name;
+          game.options.useNicknames ? (p.nickname || p.name) : p.name;
       let teamName = '';
-      if (find(id).options.teamSize > 0) {
-        teamName = '(' + find(id).currentGame.teams[lastTeam].name + ') ';
+      if (game.options.teamSize > 0) {
+        teamName = `(${current.teams[lastTeam].name}) `;
       }
       finalMessage.setTitle(
-          '\n`' + winnerName + teamName + '` has won ' +
-          find(id).currentGame.name + '!');
-      finalMessage.setThumbnail(
-          find(id).currentGame.includedUsers[lastIndex].avatarURL);
-      find(id).currentGame.inProgress = false;
-      find(id).currentGame.ended = true;
-      find(id).autoPlay = false;
+          `\`${winnerName}${teamName}\` has won ${current.name}!`);
+      finalMessage.setThumbnail(current.includedUsers[lastIndex].avatarURL);
+      current.inProgress = false;
+      current.ended = true;
+      game.autoPlay = false;
     } else if (numAlive < 1) {
       finalMessage.setTitle(
-          '\nEveryone has died in ' + find(id).currentGame.name +
-          '!\nThere are no winners!');
-      find(id).currentGame.inProgress = false;
-      find(id).currentGame.ended = true;
-      find(id).autoPlay = false;
+          `Everyone has died in ${current.name}!\nThere are no winners!`);
+      current.inProgress = false;
+      current.ended = true;
+      game.autoPlay = false;
     } else {
-      if (find(id).options.teamSize > 0) {
-        find(id).currentGame.includedUsers.sort(function(a, b) {
-          const aTeam = find(id).currentGame.teams.findIndex(function(team) {
-            return team.players.findIndex(function(player) {
+      if (game.options.teamSize > 0) {
+        current.includedUsers.sort((a, b) => {
+          const aTeam = current.teams.findIndex((team) => {
+            return team.players.findIndex((player) => {
               return player == a.id;
             }) > -1;
           });
-          const bTeam = find(id).currentGame.teams.findIndex(function(team) {
-            return team.players.findIndex(function(player) {
+          const bTeam = current.teams.findIndex((team) => {
+            return team.players.findIndex((player) => {
               return player == b.id;
             }) > -1;
           });
@@ -2505,29 +2214,30 @@ function HG() {
         });
       }
       let prevTeam = -1;
-      let playersToShow = find(id).currentGame.includedUsers;
-      if (find(id).options.numDaysShowDeath >= 0 ||
-          !find(id).options.showLivingPlayers) {
+      let playersToShow = current.includedUsers;
+      if (game.options.numDaysShowDeath >= 0 ||
+          !game.options.showLivingPlayers) {
         playersToShow = playersToShow.filter((el) => {
-          if (!find(id).options.showLivingPlayers && el.living) return false;
+          if (!game.options.showLivingPlayers && el.living) {
+            return false;
+          }
           return el.living || el.state == 'wounded' ||
-              (find(id).options.numDaysShowDeath >= 0 &&
-               find(id).currentGame.day.num - el.dayOfDeath <
-                   find(id).options.numDaysShowDeath);
+              (game.options.numDaysShowDeath >= 0 &&
+               current.day.num - el.dayOfDeath < game.options.numDaysShowDeath);
         });
       }
       const showDead = playersToShow.find((el) => !el.living);
       const showWounded = playersToShow.find((el) => el.state == 'wounded');
       finalMessage.setAuthor(
           emoji.red_heart + 'Alive' +
-          (showWounded ? (', ' + emoji.yellow_heart + 'Wounded') : '') +
-          (showDead ? (', ' + emoji.skull + 'Dead') : ''));
+          (showWounded ? (`, ${emoji.yellow_heart}Wounded`) : '') +
+          (showDead ? (`, ${emoji.skull}Dead`) : ''));
       let showKills = false;
       const statusList = playersToShow.map(function(obj) {
         let myTeam = -1;
-        if (find(id).options.teamSize > 0) {
-          myTeam = find(id).currentGame.teams.findIndex(function(team) {
-            return team.players.findIndex(function(player) {
+        if (game.options.teamSize > 0) {
+          myTeam = current.teams.findIndex((team) => {
+            return team.players.findIndex((player) => {
               return player == obj.id;
             }) > -1;
           });
@@ -2542,22 +2252,22 @@ function HG() {
         }
 
         let shortName;
-        if (obj.nickname && find(id).options.useNicknames) {
+        if (obj.nickname && game.options.useNicknames) {
           shortName = obj.nickname.substring(0, 16);
           if (shortName != obj.nickname) {
-            shortName = shortName.substring(0, 13) + '...';
+            shortName = `${shortName.substring(0, 13)}...`;
           }
         } else {
           shortName = obj.name.substring(0, 16);
           if (shortName != obj.name) {
-            shortName = shortName.substring(0, 13) + '...';
+            shortName = `${shortName.substring(0, 13)}...`;
           }
         }
 
         let prefix = '';
         if (myTeam != prevTeam) {
           prevTeam = myTeam;
-          prefix = '__' + find(id).currentGame.teams[myTeam].name + '__\n';
+          prefix = `__${current.teams[myTeam].name}__\n`;
         }
 
         showKills = showKills || obj.kills > 0;
@@ -2565,8 +2275,8 @@ function HG() {
         return prefix + symbol + '`' + shortName + '`' +
             (obj.kills > 0 ? '(' + obj.kills + ')' : '');
       });
-      finalMessage.setTitle('Status update!' + (showKills ? ' (kills)' : ''));
-      if (find(id).options.teamSize == 0) {
+      finalMessage.setTitle(`Status update!${showKills ? ' (kills)' : ''}`);
+      if (game.options.teamSize == 0) {
         statusList.sort((a, b) => {
           if (a.startsWith(emoji.skull)) {
             if (!b.startsWith(emoji.skull)) {
@@ -2591,54 +2301,47 @@ function HG() {
           const thisMessage =
               statusList.splice(0, quarterLength).join('\n').slice(0, 1025);
           finalMessage.addField(
-              (i * quarterLength + 1) + '-' + ((i + 1) * quarterLength),
+              `${i * quarterLength + 1}-${(i + 1) * quarterLength}`,
               thisMessage, true);
         }
         finalMessage.addField(
-            ((numCols - 1) * quarterLength + 1) + '-' + numTotal,
+            `${(numCols - 1) * quarterLength + 1}-${numTotal}`,
             statusList.join('\n').slice(0, 1025), true);
       } else {
         finalMessage.setDescription(statusList.join('\n') || '...');
       }
       if (numWholeTeams == 1) {
         finalMessage.setFooter(
-            self.messages.get('teamRemaining')
-                .replaceAll(
-                    '{}', find(id).currentGame.teams[lastWholeTeam].name));
+            hg.messages.get('teamRemaining')
+                .replaceAll('{}', current.teams[lastWholeTeam].name));
       }
     }
-    if (!find(id).currentGame.ended) {
+    if (!current.ended) {
       const embed = new self.Discord.MessageEmbed();
-      if (find(id).currentGame.day.num == 0) {
-        embed.setTitle(self.messages.get('bloodbathEnd'));
+      if (current.day.num == 0) {
+        embed.setTitle(hg.messages.get('bloodbathEnd'));
       } else {
         embed.setTitle(
-            self.messages.get('dayEnd')
-                .replaceAll('{day}', find(id).currentGame.day.num)
+            hg.messages.get('dayEnd')
+                .replaceAll('{day}', current.day.num)
                 .replaceAll('{alive}', numAlive));
       }
-      if (!find(id).autoPlay) {
-        embed.setFooter(
-            '"' + msg.prefix + self.postPrefix + 'next" for next day.');
+      if (!game.autoPlay) {
+        embed.setFooter(`"${msg.prefix}${self.postPrefix}next" for next day.`);
       }
       embed.setColor(defaultColor);
-      if (!find(id).options.disableOutput) msg.channel.send(embed);
+      if (!game.options.disableOutput) msg.channel.send(embed);
     }
 
     if (collab && numTeams == 1) {
-      const sendTime =
-          Date.now() + (find(id).options.delayDays > 2000 ? 1000 : 0);
+      const sendTime = Date.now() + (game.options.delayDays > 2000 ? 1000 : 0);
       let winnerTag = '';
-      if (find(id).options.mentionVictor) {
-        winnerTag = find(id)
-            .currentGame.teams[lastTeam]
+      if (game.options.mentionVictor) {
+        winnerTag = current.teams[lastTeam]
             .players.filter((player) => !player.startsWith('NPC'))
-            .map(function(player) {
-              return '<@' + player + '>';
-            })
-            .join(' ');
+            .map((player) => `<@${player}>`).join(' ');
       }
-      const avatarSizes = find(id).options.victorAvatarSizes;
+      const avatarSizes = game.options.victorAvatarSizes;
       const victorIconSize = avatarSizes.avatar;
       if (victorIconSize === 0) {
         sendAtTime(msg.channel, winnerTag, finalMessage, sendTime);
@@ -2646,7 +2349,7 @@ function HG() {
         const iconGap = avatarSizes.gap;
         const underlineSize = avatarSizes.underline;
         const finalImage = new Jimp(
-            find(id).currentGame.teams[lastTeam].players.length *
+            current.teams[lastTeam].players.length *
                     (victorIconSize + iconGap) -
                 iconGap,
             victorIconSize + underlineSize);
@@ -2657,9 +2360,7 @@ function HG() {
               image.resize(victorIconSize, victorIconSize);
               if (underlineSize > 0) {
                 const user =
-                    find(id).currentGame.includedUsers.find(function(obj) {
-                      return obj.id == userId;
-                    });
+                    current.includedUsers.find((obj) => obj.id == userId);
                 let color = 0x0;
                 if (user && !user.living) {
                   color = 0xFF0000FF;
@@ -2688,8 +2389,7 @@ function HG() {
             console.error(err);
           }
           responses++;
-          if (responses ==
-              find(id).currentGame.teams[lastTeam].players.length) {
+          if (responses == current.teams[lastTeam].players.length) {
             finalImage.getBuffer(Jimp.MIME_PNG, function(err, out) {
               finalMessage.attachFiles([new self.Discord.MessageAttachment(
                   out, 'hgTeamVictor.png')]);
@@ -2697,70 +2397,66 @@ function HG() {
             });
           }
         };
-        find(id).currentGame.teams[lastTeam].players.forEach(function(player) {
-          const p = find(id).currentGame.includedUsers.find(function(obj) {
-            return obj.id == player;
-          });
-          const icon = p.avatarURL;
-          const userId = p.id;
-          readImage(icon)
-              .then(function(userId) {
-                return function(image) {
-                  newImage(image, userId);
-                };
-              }(userId))
-              .catch(function(err) {
-                self.error('Failed to read image');
-                console.log(err);
-                responses++;
-              });
-        });
+        current.teams[lastTeam].players.forEach(
+            (player) => {
+              const p = current.includedUsers.find((obj) => obj.id == player);
+              const icon = p.avatarURL;
+              const userId = p.id;
+              readImage(icon)
+                  .then(function(userId) {
+                    return function(image) {
+                      newImage(image, userId);
+                    };
+                  }(userId))
+                  .catch((err) => {
+                    self.error('Failed to read image');
+                    console.log(err);
+                    responses++;
+                  });
+            });
       }
     } else {
-      self.client.setTimeout(function() {
+      self.client.setTimeout(() => {
         let winnerTag = '';
         if (numAlive == 1) {
-          if (find(id).options.mentionVictor && !lastId.startsWith('NPC')) {
-            winnerTag = '<@' + lastId + '>';
+          if (hg.getGame(id).options.mentionVictor &&
+              !lastId.startsWith('NPC')) {
+            winnerTag = `<@${lastId}>`;
           }
-          if (find(id).options.disableOutput) return;
+          if (hg.getGame(id).options.disableOutput) return;
           msg.channel.send(winnerTag, finalMessage).catch((err) => {
             self.error('Failed to send solo winner message: ' + msg.channel.id);
             console.error(err);
           });
         } else {
-          if (find(id).options.disableOutput) return;
+          if (hg.getGame(id).options.disableOutput) return;
           msg.channel.send(winnerTag, finalMessage).catch((err) => {
             self.error('Failed to send winner message: ' + msg.channel.id);
             console.error(err);
           });
         }
-      }, (find(id).options.delayDays > 2000 ? 1000 : 0));
+      }, (game.options.delayDays > 2000 ? 1000 : 0));
     }
 
-    if (find(id).currentGame.ended) {
+    if (current.ended) {
       const rankEmbed = new self.Discord.MessageEmbed();
       rankEmbed.setTitle('Final Ranks (kills)');
-      const rankList = find(id)
-          .currentGame.includedUsers
-          .sort(function(a, b) {
-            return a.rank - b.rank;
-          })
-          .map(function(obj) {
+      const rankList =
+          current.includedUsers.sort((a, b) => a.rank - b.rank).map((obj) => {
             let shortName;
-            if (obj.nickname && find(id).options.useNicknames) {
+            if (obj.nickname && game.options.useNicknames) {
               shortName = obj.nickname.substring(0, 16);
               if (shortName != obj.nickname) {
-                shortName = shortName.substring(0, 13) + '...';
+                shortName = `${shortName.substring(0, 13)}...`;
               }
             } else {
               shortName = obj.name.substring(0, 16);
               if (shortName != obj.name) {
-                shortName = shortName.substring(0, 13) + '...';
+                shortName = `${shortName.substring(0, 13)}...`;
               }
             }
             return obj.rank + ') ' + shortName +
-                               (obj.kills > 0 ? ' (' + obj.kills + ')' : '');
+                (obj.kills > 0 ? ' (' + obj.kills + ')' : '');
           });
       if (rankList.length <= 20) {
         rankEmbed.setDescription(rankList.join('\n'));
@@ -2774,25 +2470,25 @@ function HG() {
         rankEmbed.addField(3, rankList.join('\n').slice(0, 1025), true);
       }
       rankEmbed.setColor(defaultColor);
-      if (!find(id).options.disableOutput) {
+      if (!game.options.disableOutput) {
         self.client.setTimeout(function() {
           msg.channel.send(rankEmbed).catch((err) => {
-            self.error('Failed to send ranks message: ' + msg.channel.id);
+            self.error(`Failed to send ranks message: ${msg.channel.id}`);
             console.error(err);
           });
         }, 5000);
       }
-      if (find(id).options.teamSize > 0) {
+      if (game.options.teamSize > 0) {
         const teamRankEmbed = new self.Discord.MessageEmbed();
         teamRankEmbed.setTitle('Final Team Ranks');
-        find(id).currentGame.includedUsers.sort(function(a, b) {
-          const aTeam = find(id).currentGame.teams.find(function(team) {
-            return team.players.findIndex(function(player) {
+        current.includedUsers.sort((a, b) => {
+          const aTeam = current.teams.find((team) => {
+            return team.players.findIndex((player) => {
               return player == a.id;
             }) > -1;
           });
-          const bTeam = find(id).currentGame.teams.find(function(team) {
-            return team.players.findIndex(function(player) {
+          const bTeam = current.teams.find((team) => {
+            return team.players.findIndex((player) => {
               return player == b.id;
             }) > -1;
           });
@@ -2804,15 +2500,15 @@ function HG() {
         });
         let prevTeam = -1;
         const statusList =
-            find(id).currentGame.includedUsers.map(function(obj) {
+            current.includedUsers.map((obj) => {
               let myTeam = -1;
-              myTeam = find(id).currentGame.teams.findIndex(function(team) {
-                return team.players.findIndex(function(player) {
+              myTeam = current.teams.findIndex((team) => {
+                return team.players.findIndex((player) => {
                   return player == obj.id;
                 }) > -1;
               });
               let shortName;
-              if (obj.nickname && find(id).options.useNicknames) {
+              if (obj.nickname && game.options.useNicknames) {
                 shortName = obj.nickname.substring(0, 16);
                 if (shortName != obj.nickname) {
                   shortName = shortName.substring(0, 13) + '...';
@@ -2827,11 +2523,11 @@ function HG() {
               let prefix = '';
               if (myTeam != prevTeam) {
                 prevTeam = myTeam;
-                prefix = find(id).currentGame.teams[myTeam].rank + ') __' +
-                    find(id).currentGame.teams[myTeam].name + '__\n';
+                prefix = current.teams[myTeam].rank + ') __' +
+                    current.teams[myTeam].name + '__\n';
               }
 
-              return prefix + '`' + shortName + '`';
+              return `${prefix}\`${shortName}\``;
             });
         if (statusList.length >= 5) {
           const numCols =
@@ -2847,39 +2543,14 @@ function HG() {
           teamRankEmbed.setDescription(statusList.join('\n'));
         }
         teamRankEmbed.setColor(defaultColor);
-        if (!find(id).options.disableOutput) {
-          self.client.setTimeout(function() {
+        if (!game.options.disableOutput) {
+          self.client.setTimeout(() => {
             msg.channel.send(teamRankEmbed).catch((err) => {
               self.error('Failed to send final team ranks: ' + msg.channel.id);
               console.error(err);
             });
           }, 8000);
         }
-      }
-    }
-
-    find(id).currentGame.day.state = 0;
-    // find(id).currentGame.day.events = [];
-
-    if (find(id).autoPlay && !find(id).currentGame.isPaused) {
-      if (!find(id).options.disableOutput) {
-        self.client.setTimeout(function() {
-          msg.channel.send('`Autoplaying...`')
-              .then((msg) => {
-                msg.delete({
-                  timeout: find(id).options.delayDays - 1250,
-                  reason: 'I can do whatever I want!',
-                })
-                    .catch(() => {});
-              })
-              .catch(() => {});
-        }, (find(id).options.delayDays > 2000 ? 1200 : 100));
-        autoPlayTimeout[id] = self.client.setTimeout(function() {
-          delete autoPlayTimeout[id];
-          nextDay(msg, id);
-        }, find(id).options.delayDays);
-      } else {
-        nextDay(msg, id);
       }
     }
   }
@@ -2912,7 +2583,7 @@ function HG() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function excludeUser(msg, id) {
-    if (!find(id) || !find(id).currentGame) {
+    if (!hg.getGame(id) || !hg.getGame(id).currentGame) {
       createGame(msg, id);
     }
     let firstWord = msg.text.trim().split(' ')[0];
@@ -2929,7 +2600,7 @@ function HG() {
     let resPrefix = '';
     let resPostfix = ' have been removed from the games.';
     let response;
-    if (find(id).currentGame.inProgress) {
+    if (hg.getGame(id).currentGame.inProgress) {
       resPostfix = ' will be removed from the next game.';
     }
     if (specialWords.everyone.includes(firstWord)) {
@@ -2948,7 +2619,7 @@ function HG() {
       response = self.excludeUsers('dnd', id);
       resPrefix = 'All DND users';
     } else if (specialWords.npcs.includes(firstWord)) {
-      response = self.excludeUsers(find(id).includedNPCs.slice(0), id);
+      response = self.excludeUsers(hg.getGame(id).includedNPCs.slice(0), id);
       resPrefix = 'All NPCs';
     } else if (specialWords.bots.includes(firstWord)) {
       response = self.setOption(id, 'includeBots', false);
@@ -2991,21 +2662,21 @@ function HG() {
    */
   this.excludeUsers = function(users, id) {
     let response = '';
-    if (!find(id)) {
+    if (!hg.getGame(id)) {
       return 'No game';
     }
-    if (!find(id).excludedNPCs) find(id).excludedNPCs = [];
-    if (!find(id).includedNPCs) find(id).includedNPCs = [];
+    if (!hg.getGame(id).excludedNPCs) hg.getGame(id).excludedNPCs = [];
+    if (!hg.getGame(id).includedNPCs) hg.getGame(id).includedNPCs = [];
     switch (users) {
       case 'everyone':
-        users = find(id).includedUsers.slice(0).concat(
-            find(id).includedNPCs.slice(0));
+        users = hg.getGame(id).includedUsers.slice(0).concat(
+            hg.getGame(id).includedNPCs.slice(0));
         break;
       case 'online':
       case 'offline':
       case 'idle':
       case 'dnd':
-        users = find(id)
+        users = hg.getGame(id)
             .includedUsers
             .map((u) => {
               return self.client.users.get(u);
@@ -3027,8 +2698,8 @@ function HG() {
     users.forEach(function(obj) {
       if (typeof obj === 'string') {
         if (obj.startsWith('NPC')) {
-          obj = find(id).includedNPCs.find((el) => el.id == obj);
-          if (!obj && find(id).excludedNPCs.find((el) => el.id == obj)) {
+          obj = hg.getGame(id).includedNPCs.find((el) => el.id == obj);
+          if (!obj && hg.getGame(id).excludedNPCs.find((el) => el.id == obj)) {
             response += obj.name + ' is already excluded.\n';
             return;
           }
@@ -3040,51 +2711,51 @@ function HG() {
           return;
         }
       }
-      if (find(id).excludedUsers.includes(obj.id)) {
+      if (hg.getGame(id).excludedUsers.includes(obj.id)) {
         if (!onlyError) {
           response += obj.username +
               ' is already excluded. Create a new game to reset players.\n';
         }
       } else {
         if (obj.isNPC) {
-          find(id).excludedNPCs.push(obj);
+          hg.getGame(id).excludedNPCs.push(obj);
           if (!onlyError) {
             response += obj.username + ' added to blacklist.\n';
           }
           const includeIndex =
-              find(id).includedNPCs.findIndex((el) => el.id == obj.id);
+              hg.getGame(id).includedNPCs.findIndex((el) => el.id == obj.id);
           if (includeIndex >= 0) {
             /* if (!onlyError) {
               response += obj.username + ' removed from whitelist.\n';
             } */
-            find(id).includedNPCs.splice(includeIndex, 1);
+            hg.getGame(id).includedNPCs.splice(includeIndex, 1);
           }
         } else {
-          find(id).excludedUsers.push(obj.id);
+          hg.getGame(id).excludedUsers.push(obj.id);
           if (!onlyError) {
             response += obj.username + ' added to blacklist.\n';
           }
-          if (!find(id).includedUsers) find(id).includedUsers = [];
-          const includeIndex = find(id).includedUsers.indexOf(obj.id);
+          if (!hg.getGame(id).includedUsers) hg.getGame(id).includedUsers = [];
+          const includeIndex = hg.getGame(id).includedUsers.indexOf(obj.id);
           if (includeIndex >= 0) {
             /* if (!onlyError) {
               response += obj.username + ' removed from whitelist.\n';
             } */
-            find(id).includedUsers.splice(includeIndex, 1);
+            hg.getGame(id).includedUsers.splice(includeIndex, 1);
           }
         }
-        if (!find(id).currentGame.inProgress) {
+        if (!hg.getGame(id).currentGame.inProgress) {
           const index =
-              find(id).currentGame.includedUsers.findIndex(function(el) {
+              hg.getGame(id).currentGame.includedUsers.findIndex(function(el) {
                 return el.id == obj.id;
               });
           if (index >= 0) {
-            find(id).currentGame.includedUsers.splice(index, 1);
+            hg.getGame(id).currentGame.includedUsers.splice(index, 1);
             /* if (!onlyError) {
               response += obj.username + ' removed from included players.\n';
             } */
             formTeams(id);
-          } else if (!find(id).options.includeBots && obj.bot) {
+          } else if (!hg.getGame(id).options.includeBots && obj.bot) {
             // Bots are already excluded.
           } else {
             response +=
@@ -3108,7 +2779,7 @@ function HG() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function includeUser(msg, id) {
-    if (!find(id) || !find(id).currentGame) {
+    if (!hg.getGame(id) || !hg.getGame(id).currentGame) {
       createGame(msg, id);
     }
     let firstWord = msg.text.trim().split(' ')[0];
@@ -3125,7 +2796,7 @@ function HG() {
     let resPrefix = '';
     let resPostfix = ' have been added to the games.';
     let response;
-    if (find(id).currentGame.inProgress) {
+    if (hg.getGame(id).currentGame.inProgress) {
       resPostfix = ' will be added into the next game.';
     }
     if (specialWords.everyone.includes(firstWord)) {
@@ -3144,7 +2815,7 @@ function HG() {
       response = self.includeUsers('dnd', id);
       resPrefix = 'All DND users';
     } else if (specialWords.npcs.includes(firstWord)) {
-      response = self.includeUsers(find(id).excludedNPCs.slice(0), id);
+      response = self.includeUsers(hg.getGame(id).excludedNPCs.slice(0), id);
       resPrefix = 'All NCPs';
     } else if (specialWords.bots.includes(firstWord)) {
       response = self.setOption(id, 'includeBots', true);
@@ -3187,21 +2858,21 @@ function HG() {
    */
   this.includeUsers = function(users, id) {
     let response = '';
-    if (!find(id)) {
+    if (!hg.getGame(id)) {
       return 'No game';
     }
-    if (!find(id).excludedNPCs) find(id).excludedNPCs = [];
-    if (!find(id).includedNPCs) find(id).includedNPCs = [];
+    if (!hg.getGame(id).excludedNPCs) hg.getGame(id).excludedNPCs = [];
+    if (!hg.getGame(id).includedNPCs) hg.getGame(id).includedNPCs = [];
     switch (users) {
       case 'everyone':
-        users = find(id).excludedUsers.slice(0).concat(
-            find(id).excludedNPCs.slice(0));
+        users = hg.getGame(id).excludedUsers.slice(0).concat(
+            hg.getGame(id).excludedNPCs.slice(0));
         break;
       case 'online':
       case 'offline':
       case 'idle':
       case 'dnd':
-        users = find(id)
+        users = hg.getGame(id)
             .excludedUsers
             .map((u) => {
               return self.client.users.get(u);
@@ -3223,8 +2894,8 @@ function HG() {
     users.forEach(function(obj) {
       if (typeof obj === 'string') {
         if (obj.startsWith('NPC')) {
-          obj = find(id).excludedNPCs.find((el) => el.id == obj);
-          if (!obj && find(id).includedNPCs.find((el) => el.id == obj)) {
+          obj = hg.getGame(id).excludedNPCs.find((el) => el.id == obj);
+          if (!obj && hg.getGame(id).includedNPCs.find((el) => el.id == obj)) {
             response += obj.username + ' is already included.\n';
             return;
           }
@@ -3236,52 +2907,52 @@ function HG() {
           return;
         }
       }
-      if (!find(id).options.includeBots && obj.bot) {
+      if (!hg.getGame(id).options.includeBots && obj.bot) {
         response += obj.username + ' is a bot, but bots are disabled.\n';
         return;
       }
       if (obj.isNPC) {
         const excludeIndex =
-            find(id).excludedNPCs.findIndex((el) => el.id == obj.id);
+            hg.getGame(id).excludedNPCs.findIndex((el) => el.id == obj.id);
         if (excludeIndex >= 0) {
           /* if (!onlyError) {
             response += obj.username + ' removed from blacklist.\n';
           } */
-          find(id).excludedNPCs.splice(excludeIndex, 1);
+          hg.getGame(id).excludedNPCs.splice(excludeIndex, 1);
         }
-        if (!find(id).includedNPCs.find((el) => el.id == obj.id)) {
-          find(id).includedNPCs.push(obj);
+        if (!hg.getGame(id).includedNPCs.find((el) => el.id == obj.id)) {
+          hg.getGame(id).includedNPCs.push(obj);
           if (!onlyError) {
             response += obj.username + ' added to whitelist.\n';
           }
         }
       } else {
-        const excludeIndex = find(id).excludedUsers.indexOf(obj.id);
+        const excludeIndex = hg.getGame(id).excludedUsers.indexOf(obj.id);
         if (excludeIndex >= 0) {
           /* if (!onlyError) {
             response += obj.username + ' removed from blacklist.\n';
           } */
-          find(id).excludedUsers.splice(excludeIndex, 1);
+          hg.getGame(id).excludedUsers.splice(excludeIndex, 1);
         }
-        if (!find(id).includedUsers.includes(obj.id)) {
-          find(id).includedUsers.push(obj.id);
+        if (!hg.getGame(id).includedUsers.includes(obj.id)) {
+          hg.getGame(id).includedUsers.push(obj.id);
           if (!onlyError) {
             response += obj.username + ' added to whitelist.\n';
           }
         }
       }
-      if (find(id).currentGame.inProgress) {
+      if (hg.getGame(id).currentGame.inProgress) {
         if (!onlyError) {
           response += obj.username + ' skipped.\n';
         }
-      } else if (!find(id).currentGame.includedUsers.find((u) => {
+      } else if (!hg.getGame(id).currentGame.includedUsers.find((u) => {
         return u.id === obj.id;
       })) {
         if (obj.isNPC) {
-          find(id).currentGame.includedUsers.push(
+          hg.getGame(id).currentGame.includedUsers.push(
               new NPC(obj.name, obj.avatarURL, obj.id));
         } else {
-          find(id).currentGame.includedUsers.push(
+          hg.getGame(id).currentGame.includedUsers.push(
               new Player(
                   obj.id, obj.username,
                   obj.avatarURL || obj.displayAvatarURL({format: 'png'}),
@@ -3297,7 +2968,7 @@ function HG() {
         }
       }
     });
-    if (find(id).currentGame.inProgress) {
+    if (hg.getGame(id).currentGame.inProgress) {
       response +=
           'Players were skipped because a game is currently in progress. ' +
           'Players cannot be added to a game while it\'s in progress.';
@@ -3320,21 +2991,21 @@ function HG() {
     finalMessage.setDescription(
         'To refresh: ' + msg.prefix + self.postPrefix + 'create');
     finalMessage.setColor(defaultColor);
-    if (!find(id)) {
+    if (!hg.getGame(id)) {
       createGame(msg, id);
     }
-    if (find(id) && find(id).currentGame &&
-        find(id).currentGame.includedUsers) {
-      const iUsers = find(id).currentGame.includedUsers;
+    if (hg.getGame(id) && hg.getGame(id).currentGame &&
+        hg.getGame(id).currentGame.includedUsers) {
+      const iUsers = hg.getGame(id).currentGame.includedUsers;
       const numUsers = iUsers.length;
-      if (find(id).options.teamSize > 0) {
+      if (hg.getGame(id).options.teamSize > 0) {
         iUsers.sort(function(a, b) {
-          const aTeam = find(id).currentGame.teams.findIndex(function(team) {
+          const aTeam = hg.getGame(id).currentGame.teams.findIndex(function(team) {
             return team.players.findIndex(function(player) {
               return player == a.id;
             }) > -1;
           });
-          const bTeam = find(id).currentGame.teams.findIndex(function(team) {
+          const bTeam = hg.getGame(id).currentGame.teams.findIndex(function(team) {
             return team.players.findIndex(function(player) {
               return player == b.id;
             }) > -1;
@@ -3349,8 +3020,8 @@ function HG() {
       let prevTeam = -1;
       const statusList = iUsers.map(function(obj) {
         let myTeam = -1;
-        if (find(id).options.teamSize > 0) {
-          myTeam = find(id).currentGame.teams.findIndex(function(team) {
+        if (hg.getGame(id).options.teamSize > 0) {
+          myTeam = hg.getGame(id).currentGame.teams.findIndex(function(team) {
             return team.players.findIndex(function(player) {
               return player == obj.id;
             }) > -1;
@@ -3358,7 +3029,7 @@ function HG() {
         }
 
         let shortName;
-        if (obj.nickname && find(id).options.useNicknames) {
+        if (obj.nickname && hg.getGame(id).options.useNicknames) {
           shortName = obj.nickname.substring(0, 16);
           if (shortName != obj.nickname) {
             shortName = shortName.substring(0, 13) + '...';
@@ -3373,7 +3044,7 @@ function HG() {
         let prefix = '';
         if (myTeam != prevTeam) {
           prevTeam = myTeam;
-          const t = find(id).currentGame.teams[myTeam];
+          const t = hg.getGame(id).currentGame.teams[myTeam];
           if (t.name != 'Team ' + (t.id + 1)) {
             prefix = (t.id + 1) + ' __' + t.name + '__\n';
           } else {
@@ -3386,7 +3057,7 @@ function HG() {
 
         return prefix + '`' + shortName + '`';
       });
-      if (find(id).options.teamSize == 0) {
+      if (hg.getGame(id).options.teamSize == 0) {
         statusList.sort((a, b) => {
           a = a.toLocaleLowerCase();
           b = b.toLocaleLowerCase();
@@ -3417,9 +3088,10 @@ function HG() {
             false);
       }
     }
-    if (find(id) && find(id).excludedUsers &&
-        find(id).excludedUsers.length > 0) {
-      const eUsers = find(id).excludedUsers.concat(find(id).excludedNPCs);
+    if (hg.getGame(id) && hg.getGame(id).excludedUsers &&
+        hg.getGame(id).excludedUsers.length > 0) {
+      const eUsers =
+          hg.getGame(id).excludedUsers.concat(hg.getGame(id).excludedNPCs);
       let excludedList = '\u200B';
       if (eUsers.length < 20) {
         excludedList = eUsers
@@ -3480,7 +3152,7 @@ function HG() {
     const value = msg.text.split(' ')[1];
     const output = self.setOption(id, option, value, msg.text);
     if (!output) {
-      showOpts(msg, find(id).options);
+      showOpts(msg, hg.getGame(id).options);
     } else {
       self.common.reply(msg, output);
     }
@@ -3499,12 +3171,13 @@ function HG() {
    * the user the list of options instead.
    */
   this.setOption = function(id, option, value, text = '') {
-    if (!find(id) || !find(id).currentGame) {
+    if (!hg.getGame(id) || !hg.getGame(id).currentGame) {
       this.createGame(id);
     }
     if (typeof option === 'undefined' || option.length == 0) {
       return null;
-    } else if (typeof defaultOptions[option] === 'undefined') {
+    } else if (
+      option[0] === '_' || typeof defaultOptions[option] === 'undefined') {
       const searchedOption = defaultOptSearcher.search(option);
       if (typeof defaultOptions[searchedOption] === 'undefined') {
         return 'That is not a valid option to change! (' + option + ')\nUse `' +
@@ -3514,7 +3187,8 @@ function HG() {
       option = searchedOption;
     }
     return changeObjectValue(
-        find(id).options, defaultOptions, option, value, text.split(' '), id);
+        hg.getGame(id).options, defaultOptions, option, value, text.split(' '),
+        id);
   };
 
   /**
@@ -3544,7 +3218,7 @@ function HG() {
       type = typeof defaultObj[option].value;
       range = range || defaultObj[option].range;
     }
-    if (find(id).currentGame && find(id).currentGame.inProgress) {
+    if (hg.getGame(id).currentGame && hg.getGame(id).currentGame.inProgress) {
       if (option == 'teamSize' || option == 'includeBots') {
         return 'Teams and included players cannot be modified during a game.' +
             '\nYou must end the current game first to do this.';
@@ -3735,7 +3409,7 @@ function HG() {
    */
   function editTeam(msg, id, silent) {
     const split = msg.text.trim().split(' ');
-    if (!find(id) || !find(id).currentGame) {
+    if (!hg.getGame(id) || !hg.getGame(id).currentGame) {
       const message = 'There isn\'t currently any game to edit.' +
           ' Please create one first.';
       if (!silent) {
@@ -3743,7 +3417,7 @@ function HG() {
       }
       return message;
     }
-    if (find(id).currentGame.inProgress) {
+    if (hg.getGame(id).currentGame.inProgress) {
       switch (split[0]) {
         case 'rename':
           break;
@@ -3756,7 +3430,7 @@ function HG() {
         }
       }
     }
-    if (find(id).options.teamSize == 0) {
+    if (hg.getGame(id).options.teamSize == 0) {
       const message =
           'There are no teams to edit. If you wish to have teams, you can ' +
           'set teamSize to the size of teams you wish to have.';
@@ -3778,7 +3452,7 @@ function HG() {
         break;
       case 'reset':
         if (!silent) self.common.reply(msg, 'Resetting ALL teams!');
-        find(id).currentGame.teams = [];
+        hg.getGame(id).currentGame.teams = [];
         formTeams(id);
         break;
       case 'randomize':
@@ -3791,7 +3465,7 @@ function HG() {
     }
   }
   /**
-   * Allows editing teams. Entry for all team actions.
+   * @description Allows editing teams. Entry for all team actions.
    *
    * @public
    * @param {string} uId The id of the user is running the action.
@@ -3804,10 +3478,10 @@ function HG() {
    * @returns {?string} Error message or null if no error.
    */
   this.editTeam = function(uId, gId, cmd, one, two) {
-    if (!find(gId) || !find(gId).currentGame) {
+    if (!hg.getGame(gId) || !hg.getGame(gId).currentGame) {
       createGame(null, gId, true);
     }
-    if (find(gId).currentGame.inProgress) {
+    if (hg.getGame(gId).currentGame.inProgress) {
       switch (cmd) {
         case 'swap':
         case 'move':
@@ -3817,7 +3491,7 @@ function HG() {
     switch (cmd) {
       case 'swap': {
         let p1 = -1;
-        const team1 = find(gId).currentGame.teams.find((t) => {
+        const team1 = hg.getGame(gId).currentGame.teams.find((t) => {
           return t.players.find((p, i) => {
             if (p == one) {
               p1 = i;
@@ -3827,7 +3501,7 @@ function HG() {
           });
         });
         let p2 = -1;
-        const team2 = find(gId).currentGame.teams.find((t) => {
+        const team2 = hg.getGame(gId).currentGame.teams.find((t) => {
           return t.players.find((p, i) => {
             if (p == two) {
               p2 = i;
@@ -3845,7 +3519,7 @@ function HG() {
       case 'move': {
         let pId = -1;
         let tId = -1;
-        const teamS = find(gId).currentGame.teams.find((t, i) => {
+        const teamS = hg.getGame(gId).currentGame.teams.find((t, i) => {
           if (t.players.find((p, j) => {
             if (p == one) {
               pId = j;
@@ -3858,24 +3532,22 @@ function HG() {
           }
           return false;
         });
-        let teamD = find(gId).currentGame.teams.find((t) => {
+        let teamD = hg.getGame(gId).currentGame.teams.find((t) => {
           return t.id == two;
         });
         if (!teamS) break;
         if (!teamD) {
+          const current = hg.getGame(gId).currentGame;
           teamD =
-              find(gId)
-                  .currentGame
-                  .teams[find(gId).currentGame.teams.push(
-                      new Team(
-                          find(gId).currentGame.teams.length, 'Team ' +
-                                     (find(gId).currentGame.teams.length + 1),
-                          [])) -
-                         1];
+              current.teams[current.teams.push(
+                  new Team(
+                      current.teams.length,
+                      'Team ' + (current.teams.length + 1), [])) -
+                            1];
         }
         teamD.players.push(teamS.players.splice(pId, 1)[0]);
         if (teamS.players.length === 0) {
-          find(gId).currentGame.teams.splice(tId, 1);
+          hg.getGame(gId).currentGame.teams.splice(tId, 1);
         }
         break;
       }
@@ -3900,7 +3572,7 @@ function HG() {
               'eachother.');
       return;
     }
-    if (!find(id) || !find(id).currentGame) {
+    if (!hg.getGame(id) || !hg.getGame(id).currentGame) {
       createGame(null, id, true);
     }
     const mentions = msg.mentions.users.concat(msg.softMentions.users);
@@ -3910,14 +3582,14 @@ function HG() {
     let playerId1 = 0;
     let teamId2 = 0;
     let playerId2 = 0;
-    teamId1 = find(id).currentGame.teams.findIndex(function(team) {
+    teamId1 = hg.getGame(id).currentGame.teams.findIndex(function(team) {
       const index = team.players.findIndex(function(player) {
         return player == user1;
       });
       if (index > -1) playerId1 = index;
       return index > -1;
     });
-    teamId2 = find(id).currentGame.teams.findIndex(function(team) {
+    teamId2 = hg.getGame(id).currentGame.teams.findIndex(function(team) {
       const index = team.players.findIndex(function(player) {
         return player == user2;
       });
@@ -3928,11 +3600,11 @@ function HG() {
       self.common.reply(msg, 'Please ensure both users are on a team.');
       return;
     }
-    const intVal = find(id).currentGame.teams[teamId1].players[playerId1];
-    find(id).currentGame.teams[teamId1].players[playerId1] =
-        find(id).currentGame.teams[teamId2].players[playerId2];
+    const intVal = hg.getGame(id).currentGame.teams[teamId1].players[playerId1];
+    hg.getGame(id).currentGame.teams[teamId1].players[playerId1] =
+        hg.getGame(id).currentGame.teams[teamId2].players[playerId2];
 
-    find(id).currentGame.teams[teamId2].players[playerId2] = intVal;
+    hg.getGame(id).currentGame.teams[teamId2].players[playerId2] = intVal;
 
     self.common.reply(msg, 'Swapped players!');
   }
@@ -3949,7 +3621,7 @@ function HG() {
       self.common.reply(msg, 'You must at least mention one user to move.');
       return;
     }
-    if (!find(id) || !find(id).currentGame) {
+    if (!hg.getGame(id) || !hg.getGame(id).currentGame) {
       createGame(null, id, true);
     }
     let user1 = mentions.first().id;
@@ -3968,7 +3640,7 @@ function HG() {
     }
 
     let teamId2 = 0;
-    teamId1 = find(id).currentGame.teams.findIndex(function(team) {
+    teamId1 = hg.getGame(id).currentGame.teams.findIndex(function(team) {
       const index = team.players.findIndex(function(player) {
         return player == user1;
       });
@@ -3976,7 +3648,7 @@ function HG() {
       return index > -1;
     });
     if (user2 > 0) {
-      teamId2 = find(id).currentGame.teams.findIndex(function(team) {
+      teamId2 = hg.getGame(id).currentGame.teams.findIndex(function(team) {
         return team.players.findIndex(function(player) {
           return player == user2;
         }) > -1;
@@ -3997,23 +3669,23 @@ function HG() {
           extra);
       return;
     }
-    if (teamId2 >= find(id).currentGame.teams.length) {
-      find(id).currentGame.teams.push(
+    if (teamId2 >= hg.getGame(id).currentGame.teams.length) {
+      hg.getGame(id).currentGame.teams.push(
           new Team(
-              find(id).currentGame.teams.length,
-              'Team ' + (find(id).currentGame.teams.length + 1), []));
-      teamId2 = find(id).currentGame.teams.length - 1;
+              hg.getGame(id).currentGame.teams.length,
+              'Team ' + (hg.getGame(id).currentGame.teams.length + 1), []));
+      teamId2 = hg.getGame(id).currentGame.teams.length - 1;
     }
     self.common.reply(
         msg, 'Moving `' + self.client.users.get(user1).username + '` from ' +
-            find(id).currentGame.teams[teamId1].name + ' to ' +
-            find(id).currentGame.teams[teamId2].name);
+            hg.getGame(id).currentGame.teams[teamId1].name + ' to ' +
+            hg.getGame(id).currentGame.teams[teamId2].name);
 
-    find(id).currentGame.teams[teamId2].players.push(
-        find(id).currentGame.teams[teamId1].players.splice(playerId1, 1)[0]);
+    hg.getGame(id).currentGame.teams[teamId2].players.push(
+        hg.getGame(id).currentGame.teams[teamId1].players.splice(playerId1, 1)[0]);
 
-    if (find(id).currentGame.teams[teamId1].players.length == 0) {
-      find(id).currentGame.teams.splice(teamId1, 1);
+    if (hg.getGame(id).currentGame.teams[teamId1].players.length == 0) {
+      hg.getGame(id).currentGame.teams.splice(teamId1, 1);
     }
   }
   /**
@@ -4038,31 +3710,31 @@ function HG() {
       return;
     }
     let teamId = search - 1;
-    if (!find(id) || !find(id).currentGame) {
+    if (!hg.getGame(id) || !hg.getGame(id).currentGame) {
       createGame(null, id, true);
     }
     if (isNaN(search)) {
-      teamId = find(id).currentGame.teams.findIndex(function(team) {
+      teamId = hg.getGame(id).currentGame.teams.findIndex(function(team) {
         return team.players.findIndex(function(player) {
           return player == mentions.first().id;
         }) > -1;
       });
     }
-    if (teamId < 0 || teamId >= find(id).currentGame.teams.length) {
+    if (teamId < 0 || teamId >= hg.getGame(id).currentGame.teams.length) {
       if (!silent) {
         self.common.reply(
             msg, 'Please specify a valid team id. (0 - ' +
-                (find(id).currentGame.teams.length - 1) + ')');
+                (hg.getGame(id).currentGame.teams.length - 1) + ')');
       }
       return;
     }
     message = message.slice(0, 101);
     if (!silent) {
       self.common.reply(
-          msg, 'Renaming "' + find(id).currentGame.teams[teamId].name +
+          msg, 'Renaming "' + hg.getGame(id).currentGame.teams[teamId].name +
               '" to "' + message + '"');
     }
-    find(id).currentGame.teams[teamId].name = message;
+    hg.getGame(id).currentGame.teams[teamId].name = message;
   }
 
   /**
@@ -4075,16 +3747,16 @@ function HG() {
    * messages to the channel where the msg was sent..
    */
   function randomizeTeams(msg, id, silent) {
-    if (!find(id) || !find(id).currentGame) {
+    if (!hg.getGame(id) || !hg.getGame(id).currentGame) {
       createGame(null, id, true);
     }
-    if (find(id).currentGame.inProgress) {
+    if (hg.getGame(id).currentGame.inProgress) {
       if (!silent) {
         self.common.reply(msg, 'Please end the current game to modify teams.');
       }
       return;
     }
-    const current = find(id).currentGame;
+    const current = hg.getGame(id).currentGame;
     if (current.teams.length == 0) {
       if (!silent) self.common.reply(msg, 'There are no teams to randomize.');
       return;
@@ -4115,7 +3787,7 @@ function HG() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function createEvent(msg, id) {
-    if (!find(id)) {
+    if (!hg.getGame(id)) {
       createGame(msg, id);
     }
     newEventMessages[msg.id] = msg;
@@ -4355,7 +4027,7 @@ function HG() {
       id, type, message, numVictim, numAttacker, victimOutcome, attackerOutcome,
       victimKiller, attackerKiller, vWeapon = null, aWeapon = null) {
     if (type !== 'player' && type !== 'bloodbath') return 'Invalid Type';
-    if (!find(id) || !find(id).customEvents) {
+    if (!hg.getGame(id) || !hg.getGame(id).customEvents) {
       return 'Invalid ID or no game.';
     }
     const newEvent = new Event(
@@ -4380,18 +4052,18 @@ function HG() {
    */
   this.addEvent = function(id, type, event) {
     if (type !== 'bloodbath' && type !== 'player') return 'Invalid Type';
-    if (!find(id) || !find(id).customEvents) {
+    if (!hg.getGame(id) || !hg.getGame(id).customEvents) {
       return 'Invalid ID or no game.';
     }
     if (typeof event.message !== 'string' || event.message.length == 0) {
       return 'Event must have a message.';
     }
-    for (let i = 0; i < find(id).customEvents[type].length; i++) {
-      if (Event.eventsEqual(event, find(id).customEvents[type][i])) {
+    for (let i = 0; i < hg.getGame(id).customEvents[type].length; i++) {
+      if (Event.eventsEqual(event, hg.getGame(id).customEvents[type][i])) {
         return 'Event already exists!';
       }
     }
-    find(id).customEvents[type].push(event);
+    hg.getGame(id).customEvents[type].push(event);
     return null;
   };
 
@@ -4409,44 +4081,44 @@ function HG() {
    */
   this.addMajorEvent = function(id, type, data, name) {
     if (type !== 'arena' && type !== 'weapon') return 'Invalid Type';
-    if (!find(id) || !find(id).customEvents) {
+    if (!hg.getGame(id) || !hg.getGame(id).customEvents) {
       return 'Invalid ID or no game.';
     }
     if (type === 'arena') {
       if (!data.message || data.message.length == 0) {
         return 'Event must have a message.';
       }
-      for (let i = 0; i < find(id).customEvents[type].length; i++) {
-        if (find(id).customEvents[type][i].message === data.message) {
-          find(id).customEvents[type][i] =
-              Object.assign(find(id).customEvents[type][i], data);
+      for (let i = 0; i < hg.getGame(id).customEvents[type].length; i++) {
+        if (hg.getGame(id).customEvents[type][i].message === data.message) {
+          hg.getGame(id).customEvents[type][i] =
+              Object.assign(hg.getGame(id).customEvents[type][i], data);
           return null;
         }
       }
-      find(id).customEvents[type].push(data);
+      hg.getGame(id).customEvents[type].push(data);
       return null;
     } else if (type === 'weapon') {
-      if (find(id).customEvents[type][name]) {
-        if (data.name) find(id).customEvents[type][name].name = data.name;
+      if (hg.getGame(id).customEvents[type][name]) {
+        if (data.name) hg.getGame(id).customEvents[type][name].name = data.name;
         if (data.consumable) {
-          find(id).customEvents[type][name].consumable = data.consumable;
+          hg.getGame(id).customEvents[type][name].consumable = data.consumable;
         }
         for (let i = 0; i < data.outcomes.length; i++) {
           let exists = false;
           const dEl = data.outcomes[i];
-          for (let j = 0; j < find(id).customEvents[type][name].outcomes.length;
+          for (let j = 0; j < hg.getGame(id).customEvents[type][name].outcomes.length;
             j++) {
-            const el = find(id).customEvents[type][name].outcomes[j];
+            const el = hg.getGame(id).customEvents[type][name].outcomes[j];
             if (Event.eventsEqual(el, dEl)) {
               exists = true;
               break;
             }
           }
           if (exists) continue;
-          find(id).customEvents[type][name].outcomes.push(data.outcomes[i]);
+          hg.getGame(id).customEvents[type][name].outcomes.push(data.outcomes[i]);
         }
       } else {
-        find(id).customEvents[type][name] = data;
+        hg.getGame(id).customEvents[type][name] = data;
       }
       return null;
     }
@@ -4473,10 +4145,10 @@ function HG() {
    */
   this.editMajorEvent = function(id, type, search, data, name, newName) {
     if (type !== 'arena' && type !== 'weapon') return 'Invalid Type';
-    if (!find(id) || !find(id).customEvents) {
+    if (!hg.getGame(id) || !hg.getGame(id).customEvents) {
       return 'Invalid ID or no game.';
     }
-    const list = find(id).customEvents[type];
+    const list = hg.getGame(id).customEvents[type];
     if (type === 'arena') {
       let match;
       let matchId = -1;
@@ -4490,7 +4162,7 @@ function HG() {
       if (!match) return 'Failed to find event to edit.';
 
       if (!data) {
-        find(id).customEvents[type].splice(matchId, 1);
+        hg.getGame(id).customEvents[type].splice(matchId, 1);
         return null;
       }
       if (search.message) match.message = data.message;
@@ -4512,19 +4184,19 @@ function HG() {
         }
       }
       if (match.outcomes.length == 0) {
-        find(id).customEvents[type].splice(matchId, 1);
+        hg.getGame(id).customEvents[type].splice(matchId, 1);
       }
       return null;
     } else if (type === 'weapon') {
-      let match = find(id).customEvents[type][name];
+      let match = hg.getGame(id).customEvents[type][name];
       if (!match) return 'Failed to find weapon to edit.';
       if (newName) {
-        match = find(id).customEvents[type][newName] = Object.assign({}, match);
-        delete find(id).customEvents[type][name];
+        match = hg.getGame(id).customEvents[type][newName] = Object.assign({}, match);
+        delete hg.getGame(id).customEvents[type][name];
       }
       if (!search) return null;
       if (!data) {
-        delete find(id).customEvents[type][newName || name];
+        delete hg.getGame(id).customEvents[type][newName || name];
         return null;
       }
       if (search.name) match.name = data.name;
@@ -4543,7 +4215,7 @@ function HG() {
         }
       }
       if (match.outcomes.length == 0) {
-        delete find(id).customEvents[type][newName || name];
+        delete hg.getGame(id).customEvents[type][newName || name];
       }
       return null;
     }
@@ -4563,10 +4235,10 @@ function HG() {
    */
   this.removeEvent = function(id, type, event) {
     if (type !== 'bloodbath' && type !== 'player') return 'Invalid Type';
-    if (!find(id) || !find(id).customEvents) {
+    if (!hg.getGame(id) || !hg.getGame(id).customEvents) {
       return 'Invalid ID or no game.';
     }
-    const list = find(id).customEvents[type];
+    const list = hg.getGame(id).customEvents[type];
     for (let i = 0; i < list.length; i++) {
       if (Event.eventsEqual(list[i], event)) {
         list.splice(i, 1);
@@ -4610,26 +4282,28 @@ function HG() {
     if (!['bloodbath', 'arena', 'player', 'weapon'].includes(type)) {
       return 'Invalid Type';
     }
-    if (!find(id)) return 'Invalid ID or no game';
-    if (!find(id).disabledEvents) {
-      find(id).disabledEvents =
+    if (!hg.getGame(id)) return 'Invalid ID or no game';
+    if (!hg.getGame(id).disabledEvents) {
+      hg.getGame(id).disabledEvents =
           {bloodbath: [], player: [], arena: {}, weapon: {}};
     }
     let allEvents;
     switch (type) {
       case 'bloodbath':
-        allEvents =
-            defaultBloodbathEvents.concat(find(id).customEvents.bloodbath);
+        allEvents = defaultBloodbathEvents.concat(
+            hg.getGame(id).customEvents.bloodbath);
         break;
       case 'player':
-        allEvents = defaultPlayerEvents.concat(find(id).customEvents.player);
+        allEvents =
+            defaultPlayerEvents.concat(hg.getGame(id).customEvents.player);
         break;
       case 'arena':
-        allEvents = defaultArenaEvents.concat(find(id).customEvents.arena);
+        allEvents =
+            defaultArenaEvents.concat(hg.getGame(id).customEvents.arena);
         break;
       case 'weapon': {
         allEvents = Object.assign({}, weapons);
-        const entries = Object.entries(find(id).customEvents.weapon);
+        const entries = Object.entries(hg.getGame(id).customEvents.weapon);
         for (let i = 0; i < entries.length; i++) {
           if (allEvents[entries[i][0]]) {
             allEvents[entries[i][0]].outcomes =
@@ -4643,7 +4317,7 @@ function HG() {
       }
     }
 
-    let allDisabled = find(id).disabledEvents[type];
+    let allDisabled = hg.getGame(id).disabledEvents[type];
 
     if (['weapon', 'arena'].includes(type)) {
       if (!subCat) return 'Invalid Category';
@@ -4892,22 +4566,22 @@ function HG() {
       const single = Event
           .finalize(
               msg.text, players.slice(0), 1, 1, 'nothing',
-              'nothing', find(msg.guild.id))
+              'nothing', hg.getGame(msg.guild.id))
           .message;
       const pluralOne = Event
           .finalize(
               msg.text, players.slice(0), 2, 1, 'nothing',
-              'nothing', find(msg.guild.id))
+              'nothing', hg.getGame(msg.guild.id))
           .message;
       const pluralTwo = Event
           .finalize(
               msg.text, players.slice(0), 1, 2, 'nothing',
-              'nothing', find(msg.guild.id))
+              'nothing', hg.getGame(msg.guild.id))
           .message;
       const pluralBoth = Event
           .finalize(
               msg.text, players.slice(0), 2, 2, 'nothing',
-              'nothing', find(msg.guild.id))
+              'nothing', hg.getGame(msg.guild.id))
           .message;
       msg.myResponse.edit(
           helpMsg + single + '\n' + pluralOne + '\n' + pluralTwo + '\n' +
@@ -4927,7 +4601,7 @@ function HG() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function removeEvent(msg, id) {
-    if (!find(id)) {
+    if (!hg.getGame(id)) {
       self.common.reply(
           msg, 'You must first create an event in order to remove it.');
       return;
@@ -4973,20 +4647,20 @@ function HG() {
             }
 
             if (eventType == 'player') {
-              if (num >= find(id).customEvents.player.length) {
+              if (num >= hg.getGame(id).customEvents.player.length) {
                 self.common.reply(
                     msg,
                     'That number is a really big scary number. Try a smaller ' +
                         'one.');
                 msg_.delete().catch(() => {});
               } else {
-                const removed = find(id).customEvents.player.splice(num, 1)[0];
+                const removed = hg.getGame(id).customEvents.player.splice(num, 1)[0];
                 self.common.reply(
                     msg, 'Removed event.', formatEventString(removed, true));
                 msg_.delete().catch(() => {});
               }
             } else {
-              if (num >= find(id).customEvents.bloodbath.length) {
+              if (num >= hg.getGame(id).customEvents.bloodbath.length) {
                 self.common.reply(
                     msg,
                     'That number is a really big scary number. Try a smaller ' +
@@ -4994,7 +4668,7 @@ function HG() {
                 msg_.delete().catch(() => {});
               } else {
                 const removed =
-                    find(id).customEvents.bloodbath.splice(num, 1)[0];
+                    hg.getGame(id).customEvents.bloodbath.splice(num, 1)[0];
                 self.common.reply(
                     msg, 'Removed event.', formatEventString(removed, true));
                 msg_.delete().catch(() => {});
@@ -5055,9 +4729,9 @@ function HG() {
     let title;
     if (!eventType) eventType = 'player';
     if (eventType == 'player') {
-      if (find(id) && find(id).customEvents.player) {
-        events = JSON.parse(JSON.stringify(find(id).customEvents.player));
-        numCustomEvents = find(id).customEvents.player.length;
+      if (hg.getGame(id) && hg.getGame(id).customEvents.player) {
+        events = JSON.parse(JSON.stringify(hg.getGame(id).customEvents.player));
+        numCustomEvents = hg.getGame(id).customEvents.player.length;
       }
       events.push(
           new Event(emoji.arrow_up + 'Custom | Default' + emoji.arrow_down));
@@ -5066,9 +4740,9 @@ function HG() {
       fetchStats(events);
       embed.setColor([0, 255, 0]);
     } else if (eventType == 'bloodbath') {
-      if (find(id) && find(id).customEvents.bloodbath) {
-        events = JSON.parse(JSON.stringify(find(id).customEvents.bloodbath));
-        numCustomEvents = find(id).customEvents.bloodbath.length;
+      if (hg.getGame(id) && hg.getGame(id).customEvents.bloodbath) {
+        events = JSON.parse(JSON.stringify(hg.getGame(id).customEvents.bloodbath));
+        numCustomEvents = hg.getGame(id).customEvents.bloodbath.length;
       }
       events.push(
           new Event(emoji.arrow_up + 'Custom | Default' + emoji.arrow_down));
@@ -5078,9 +4752,9 @@ function HG() {
       fetchStats(events);
       embed.setColor([255, 0, 0]);
     } else if (eventType == 'arena') {
-      if (find(id) && find(id).customEvents.arena) {
-        events = JSON.parse(JSON.stringify(find(id).customEvents.arena));
-        numCustomEvents = find(id).customEvents.arena.length;
+      if (hg.getGame(id) && hg.getGame(id).customEvents.arena) {
+        events = JSON.parse(JSON.stringify(hg.getGame(id).customEvents.arena));
+        numCustomEvents = hg.getGame(id).customEvents.arena.length;
       }
       if (numCustomEvents == 0 && page <= 0) {
         page = 1;
@@ -5316,8 +4990,8 @@ function HG() {
     }
 
 
-    const iNPCs = find(id).includedNPCs || [];
-    const eNPCs = find(id).excludedNPCs || [];
+    const iNPCs = hg.getGame(id).includedNPCs || [];
+    const eNPCs = hg.getGame(id).excludedNPCs || [];
     if (specific) {
       specific = iNPCs.concat(eNPCs).find((el) => el.id == specific.id);
       const embed = new self.Discord.MessageEmbed();
@@ -5338,7 +5012,7 @@ function HG() {
       const finalMessage = new self.Discord.MessageEmbed();
       finalMessage.setTitle('List of NPCs');
       finalMessage.setColor(defaultColor);
-      if (!find(id)) {
+      if (!hg.getGame(id)) {
         createGame(msg, id);
       }
       let iList = [];
@@ -5536,9 +5210,9 @@ function HG() {
           .then((image) => {
             if (!image) throw new Error('Invalid Data');
             let size = 128;
-            if (find(id) && find(id).options &&
-                find(id).options.eventAvatarSizes) {
-              size = find(id).options.eventAvatarSizes.avatar;
+            if (hg.getGame(id) && hg.getGame(id).options &&
+                hg.getGame(id).options.eventAvatarSizes) {
+              size = hg.getGame(id).options.eventAvatarSizes.avatar;
             }
             const copy = new Jimp(image);
             copy.resize(size, size);
@@ -5666,11 +5340,11 @@ function HG() {
 
     const npc = new NPC(formatUsername(username), avatar, id);
 
-    if (!find(gId)) self.createGame(gId);
-    if (!find(gId).includedNPCs) find(gId).includedNPCs = [];
-    find(gId).includedNPCs.push(npc);
+    if (!hg.getGame(gId)) self.createGame(gId);
+    if (!hg.getGame(gId).includedNPCs) hg.getGame(gId).includedNPCs = [];
+    hg.getGame(gId).includedNPCs.push(npc);
 
-    if (!find(gId).currentGame.inProgress) self.createGame(gId);
+    if (!hg.getGame(gId).currentGame.inProgress) self.createGame(gId);
 
     return null;
   };
@@ -5735,21 +5409,23 @@ function HG() {
    * send if success.
    */
   this.removeNPC = function(gId, npc) {
-    const incIndex = find(gId).includedNPCs.findIndex((el) => el.id == npc);
-    const excIndex = find(gId).excludedNPCs.findIndex((el) => el.id == npc);
+    const incIndex =
+        hg.getGame(gId).includedNPCs.findIndex((el) => el.id == npc);
+    const excIndex =
+        hg.getGame(gId).excludedNPCs.findIndex((el) => el.id == npc);
 
     let toDelete;
     if (incIndex > -1) {
-      toDelete = find(gId).includedNPCs.splice(incIndex, 1)[0];
+      toDelete = hg.getGame(gId).includedNPCs.splice(incIndex, 1)[0];
     } else if (excIndex > -1) {
-      toDelete = find(gId).excludedNPCs.splice(excIndex, 1)[0];
+      toDelete = hg.getGame(gId).excludedNPCs.splice(excIndex, 1)[0];
     } else {
       self.error('NPC HALF DISCOVERED :O ' + npc);
       return 'Oops, I was only half able to find that NPC. ' +
           'Something is broken...';
     }
 
-    if (!find(gId).currentGame.inProgress) self.createGame(gId);
+    if (!hg.getGame(gId).currentGame.inProgress) self.createGame(gId);
 
     const embed = new self.Discord.MessageEmbed();
     embed.setTitle('Deleted NPC');
@@ -5760,7 +5436,7 @@ function HG() {
   };
 
   /**
-   * Include an NPC in the game.
+   * @description Include an NPC in the game.
    *
    * @private
    * @type {HungryGames~hgCommandHandler}
@@ -5772,7 +5448,7 @@ function HG() {
   }
 
   /**
-   * Exclude an NPC from the game.
+   * @description Exclude an NPC from the game.
    *
    * @private
    * @type {HungryGames~hgCommandHandler}
@@ -5784,7 +5460,7 @@ function HG() {
   }
 
   /**
-   * Send help message to DM and reply to server.
+   * @description Send help message to DM and reply to server.
    *
    * @private
    * @type {HungryGames~hgCommandHandler}
@@ -5809,8 +5485,8 @@ function HG() {
   }
 
   /**
-   * Replies to the user with stats about all the currently loaded games in this
-   * shard.
+   * @description Replies to the user with stats about all the currently loaded
+   * games in this shard.
    *
    * @private
    * @type {HungryGames~hgCommandHandler}
@@ -5820,7 +5496,7 @@ function HG() {
   function commandStats(msg, id) {
     const listenerBlockDuration = listenersEndTime - Date.now();
     let message = 'There are ' + self.getNumSimulating() +
-        ' games currently simulating of ' + Object.keys(games).length +
+        ' games currently simulating of ' + Object.keys(hg._games).length +
         ' currently loaded.';
     if (listenerBlockDuration > 0) {
       message += '\nThe last listener will end in ' +
@@ -5836,7 +5512,8 @@ function HG() {
   }
 
   /**
-   * Replies to the user with an image saying "rigged". That is all.
+   * @description Replies to the user with an image saying "rigged". That is
+   * all.
    *
    * @private
    * @type {HungryGames~hgCommandHandler}
@@ -5851,7 +5528,7 @@ function HG() {
   }
 
   /**
-   * Allows the game creator to kill a player in the game.
+   * @description Allows the game creator to kill a player in the game.
    *
    * @private
    * @type {HungryGames~hgCommandHandler}
@@ -5864,11 +5541,11 @@ function HG() {
       self.common.reply(msg, 'Please specify a player in the games to kill.');
       return;
     }
-    if (!find(id)) createGame(msg, id);
+    if (!hg.getGame(id)) createGame(msg, id);
     const players = [];
     const notInGame = !mentions.find((u) => {
       players.push(u.id);
-      return !find(id).currentGame.includedUsers.find((p) => {
+      return !hg.getGame(id).currentGame.includedUsers.find((p) => {
         return p.id == u.ud;
       });
     });
@@ -5878,11 +5555,12 @@ function HG() {
       return;
     }
     self.common.reply(
-        msg, find(id).forcePlayerState(players, 'dead', self.messages));
+        msg, hg.getGame(id).forcePlayerState(players, 'dead', hg.messages));
   }
 
   /**
-   * Allows the game creator to heal or revive a player in the game.
+   * @description Allows the game creator to heal or revive a player in the
+   * game.
    *
    * @private
    * @type {HungryGames~hgCommandHandler}
@@ -5895,11 +5573,11 @@ function HG() {
       self.common.reply(msg, 'Please specify a player in the games to heal.');
       return;
     }
-    if (!find(id)) createGame(msg, id);
+    if (!hg.getGame(id)) createGame(msg, id);
     const players = [];
     const notInGame = !mentions.find((u) => {
       players.push(u.id);
-      return !find(id).currentGame.includedUsers.find((p) => {
+      return !hg.getGame(id).currentGame.includedUsers.find((p) => {
         return p.id == u.ud;
       });
     });
@@ -5909,11 +5587,11 @@ function HG() {
       return;
     }
     self.common.reply(
-        msg, find(id).forcePlayerState(players, 'thriving', self.messages));
+        msg, hg.getGame(id).forcePlayerState(players, 'thriving', hg.messages));
   }
 
   /**
-   * Allows the game creator to wound a player in the game.
+   * @description Allows the game creator to wound a player in the game.
    *
    * @private
    * @type {HungryGames~hgCommandHandler}
@@ -5926,11 +5604,11 @@ function HG() {
       self.common.reply(msg, 'Please specify a player in the games to wound.');
       return;
     }
-    if (!find(id)) createGame(msg, id);
+    if (!hg.getGame(id)) createGame(msg, id);
     const players = [];
     const notInGame = !mentions.find((u) => {
       players.push(u.id);
-      return !find(id).currentGame.includedUsers.find((p) => {
+      return !hg.getGame(id).currentGame.includedUsers.find((p) => {
         return p.id == u.ud;
       });
     });
@@ -5940,11 +5618,11 @@ function HG() {
       return;
     }
     self.common.reply(
-        msg, find(id).forcePlayerState(players, 'wounded', self.messages));
+        msg, hg.getGame(id).forcePlayerState(players, 'wounded', hg.messages));
   }
 
   /**
-   * Rename the guild's game to the given custom name.
+   * @description Rename the guild's game to the given custom name.
    *
    * @public
    * @param {string|number} id The guild id of which to change the game's name.
@@ -5954,16 +5632,16 @@ function HG() {
    * due to a game not existing or the name being longer than 100 characters.
    */
   this.renameGame = function(id, name) {
-    if (!find(id) || !find(id).currentGame) return false;
+    if (!hg.getGame(id) || !hg.getGame(id).currentGame) return false;
     if (name.length > 100) return false;
-    find(id).currentGame.customName = name;
-    find(id).currentGame.name =
+    hg.getGame(id).currentGame.customName = name;
+    hg.getGame(id).currentGame.name =
         name || (self.client.guilds.get(id).name + '\'s Hungry Games');
     return true;
   };
 
   /**
-   * Rename a guild's game to a custom name.
+   * @description Rename a guild's game to a custom name.
    *
    * @private
    * @type {HungryGames~hgCommandHandler}
@@ -5971,7 +5649,7 @@ function HG() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function commandRename(msg, id) {
-    if (!find(id) || !find(id).currentGame) {
+    if (!hg.getGame(id) || !hg.getGame(id).currentGame) {
       createGame(null, id, true);
     }
     if (self.renameGame(id, msg.text.trim())) {
@@ -5986,8 +5664,8 @@ function HG() {
   }
 
   /**
-   * Start or stop allowing users to enter in to a game by clicking on a
-   * reaction to a message.
+   * @description Start or stop allowing users to enter in to a game by clicking
+   * on a reaction to a message.
    *
    * @private
    * @type {HungryGames~hgCommandHandler}
@@ -5995,10 +5673,10 @@ function HG() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function commandReactJoin(msg, id) {
-    if (!find(id) || !find(id).currentGame) {
+    if (!hg.getGame(id) || !hg.getGame(id).currentGame) {
       createGame(null, id, true);
     }
-    if (find(id).reactMessage) {
+    if (hg.getGame(id).reactMessage) {
       self.endReactJoinMessage(id, (err, info) => {
         if (err) {
           self.error(err);
@@ -6013,8 +5691,8 @@ function HG() {
   }
 
   /**
-   * Send a message with a reaction for users to click on. Records message id
-   * and channel id in game data.
+   * @description Send a message with a reaction for users to click on. Records
+   * message id and channel id in game data.
    *
    * @public
    * @param {Discord~TextChannel|string} channel The channel in the guild to
@@ -6025,7 +5703,7 @@ function HG() {
       channel = self.client.channels.get(channel);
     }
     if (!channel || !channel.guild || !channel.guild.id ||
-        !find(channel.guild.id)) {
+        !hg.getGame(channel.guild.id)) {
       return;
     }
     const embed = new self.Discord.MessageEmbed();
@@ -6033,16 +5711,19 @@ function HG() {
     embed.setTitle(`React with any emoji to join!`);
     embed.setDescription(
         'If you have reacted, you will be included in the next `' +
-        find(channel.guild.id).currentGame.name + '`');
+        hg.getGame(channel.guild.id).currentGame.name + '`');
     channel.send(embed).then((msg) => {
-      find(channel.guild.id).reactMessage = {id: msg.id, channel: channel.id};
+      hg.getGame(channel.guild.id).reactMessage = {
+        id: msg.id,
+        channel: channel.id,
+      };
       msg.react(emoji.crossed_swords).catch(() => {});
     });
   };
 
   /**
-   * End the reaction join and update the included users to only include those
-   * who reacted to the message.
+   * @description End the reaction join and update the included users to only
+   * include those who reacted to the message.
    *
    * @public
    * @param {string} id The guild id of which to end the react join.
@@ -6052,8 +5733,9 @@ function HG() {
    */
   this.endReactJoinMessage = function(id, cb) {
     if (typeof cb !== 'function') cb = function() {};
-    if (!find(id) || !find(id).reactMessage || !find(id).reactMessage.id ||
-        !find(id).reactMessage.channel) {
+    if (!hg.getGame(id) || !hg.getGame(id).reactMessage ||
+        !hg.getGame(id).reactMessage.id ||
+        !hg.getGame(id).reactMessage.channel) {
       cb('Unable to find message with reactions. ' +
          'Was a join via react started?');
       return;
@@ -6063,8 +5745,8 @@ function HG() {
     let numDone = 0;
     let msg;
     self.client.guilds.get(id)
-        .channels.get(find(id).reactMessage.channel)
-        .messages.fetch(find(id).reactMessage.id)
+        .channels.get(hg.getGame(id).reactMessage.channel)
+        .messages.fetch(hg.getGame(id).reactMessage.id)
         .then((m) => {
           msg = m;
           if (!msg.reactions || msg.reactions.size == 0) {
@@ -6082,13 +5764,13 @@ function HG() {
         })
         .catch((err) => {
           console.error(err);
-          find(id).reactMessage = null;
+          hg.getGame(id).reactMessage = null;
           cb('Unable to find message with reactions. Was it deleted?');
         });
     let list = new self.Discord.Collection();
     /**
-     * Adds fetched user reactions to buffer until all are received, then ends
-     * react join.
+     * @description Adds fetched user reactions to buffer until all are
+     * received, then ends react join.
      *
      * @private
      * @param {Discord.Collection.<User>|Discord.User[]} reactionUsers Array of
@@ -6103,7 +5785,7 @@ function HG() {
       }
       if (numTotal != numDone) return;
       self.excludeUsers('everyone', id);
-      find(id).reactMessage = null;
+      hg.getGame(id).reactMessage = null;
       msg.edit('`Ended`').catch(() => {});
       if (list.length == 0) {
         cb(null, 'No users reacted.');
@@ -6114,13 +5796,14 @@ function HG() {
   };
 
   /**
-   * Returns the number of games that are currently being shown to users.
+   * @description Returns the number of games that are currently being shown to
+   * users.
    *
    * @public
    * @returns {number} Number of games simulating.
    */
   this.getNumSimulating = function() {
-    const loadedEntries = Object.entries(games);
+    const loadedEntries = Object.entries(hg._games);
     const inProgress = loadedEntries.filter((game) => {
       return game[1].currentGame && game[1].currentGame.inProgress &&
           game[1].currentGame.day.state > 1 && !game[1].currentGame.isPaused;
@@ -6129,7 +5812,7 @@ function HG() {
   };
 
   /**
-   * Get a random word that means "nothing".
+   * @description Get a random word that means "nothing".
    *
    * @private
    * @returns {string} A word meaning "nothing".
@@ -6301,57 +5984,12 @@ function HG() {
       }
       return;
     }
-    Object.entries(games).forEach(function(obj) {
-      const id = obj[0];
-      const data = obj[1];
-      const dir = self.common.guildSaveDir + id + hgSaveDir;
-      const filename = dir + saveFile;
-      const saveStartTime = Date.now();
-      if (opt == 'async') {
-        mkdirp(dir, function(err) {
-          if (err) {
-            self.error('Failed to create directory for ' + dir);
-            console.error(err);
-            return;
-          }
-          fs.writeFile(filename, JSON.stringify(data), function(err2) {
-            if (err2) {
-              self.error('Failed to save HG data for ' + filename);
-              console.error(err2);
-            } else if (findTimestamps[id] - saveStartTime < -15 * 60 * 1000) {
-              delete games[id];
-              delete findTimestamps[id];
-              self.debug('Purged ' + id);
-            }
-          });
-        });
-      } else {
-        try {
-          mkdirp.sync(dir);
-        } catch (err) {
-          self.error('Failed to create directory for ' + dir);
-          console.error(err);
-          return;
-        }
-        try {
-          fs.writeFileSync(filename, JSON.stringify(data));
-        } catch (err) {
-          self.error('Failed to save HG data for ' + filename);
-          console.error(err);
-          return;
-        }
-        if (findTimestamps[id] - Date.now() < -15 * 60 * 1000) {
-          delete games[id];
-          delete findTimestamps[id];
-          self.debug('Purged ' + id);
-        }
-      }
-    });
+    hg.save(opt);
   };
 
   /**
-   * Register an event listener. Handlers are called in order they are
-   * registered. Earlier events can modify event data.
+   * @description Register an event listener. Handlers are called in order they
+   * are registered. Earlier events can modify event data.
    *
    * @public
    * @param {string} evt The name of the event to listen for.

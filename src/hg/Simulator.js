@@ -60,139 +60,83 @@ const lotsOfDeathRate = 0.75;
 const littleDeathRate = 0.15;
 
 /**
- * @classdesc Manages HG day simulation.
- * @class HungryGames~Simulator
- *
- * @param {HungryGames~GuildGame} game The GuildGame to simulate.
- * @param {HungryGames} hg Parent game manager for logging and SubModule
- * references.
- * @param {Discord~Message} [msg] Message to reply to if necessary.
+ * @description Manages HG day simulation.
+ * @memberof HungryGames
+ * @inner
  */
-function Simulator(game, hg, msg) {
-  this.setGame(game);
-  this.setParent(hg);
-  this.setMessage(msg);
-}
-
-/**
- * Change the GuildGame to simulate.
- *
- * @param {HungryGames~GuildGame} game The new GuildGame.
- */
-Simulator.prototype.setGame = function(game) {
-  this.game = game;
-};
-/**
- * Update the reference to the parent {@link HungryGames}.
- *
- * @param {HungryGames} hg New parent reference.
- */
-Simulator.prototype.setParent = function(hg) {
-  this.hg = hg;
-};
-/**
- * Update the message to reply to.
- *
- * @param {Discord~Message} msg New message to reference.
- */
-Simulator.prototype.setMessage = function(msg) {
-  this.msg = msg;
-};
-
-/**
- * Simulate a day with the current GuildGame.
- *
- * @param {Function} cb Callback that always fires on completion. The only
- * parameter is a possible error string, null if no error.
- * @param {boolean} [retry=true] Whether to try again if there is an error.
- */
-Simulator.prototype.go = function(cb, retry = true) {
-  this.game.currentGame.day.state = 1;
-  this.game.currentGame.day.num++;
-  this.game.currentGame.day.events = [];
-
-  const id = this.game.id;
-
-  const userPool = this.game.currentGame.includedUsers.filter((obj) => {
-    return obj.living;
-  });
-  // Shuffle user order because games may have been rigged :thonk:.
-  for (let i = 0; i < userPool.length; i++) {
-    const index = Math.floor(Math.random() * (userPool.length - i)) + i;
-    const tmp = userPool[i];
-    userPool[i] = userPool[index];
-    userPool[index] = tmp;
+class Simulator {
+  /**
+   * @description Create a simulator instance.
+   * @param {HungryGames~GuildGame} game The GuildGame to simulate.
+   * @param {HungryGames} hg Parent game manager for logging and SubModule
+   * references.
+   * @param {Discord~Message} [msg] Message to reply to if necessary.
+   */
+  constructor(game, hg, msg) {
+    this.setGame(game);
+    this.setParent(hg);
+    this.setMessage(msg);
   }
-  const startingAlive = userPool.length;
-  let userEventPool;
-  let doArenaEvent = false;
-  let arenaEvent;
+  /**
+   * @description Change the GuildGame to simulate.
+   *
+   * @param {HungryGames~GuildGame} game The new GuildGame.
+   */
+  setGame(game) {
+    this.game = game;
+  }
+  /**
+   * @description Update the reference to the parent {@link HungryGames}.
+   *
+   * @param {HungryGames} hg New parent reference.
+   */
+  setParent(hg) {
+    this.hg = hg;
+  }
+  /**
+   * @description Update the message to reply to.
+   *
+   * @param {Discord~Message} msg New message to reference.
+   */
+  setMessage(msg) {
+    this.msg = msg;
+  }
+  /**
+   * @description Simulate a day with the current GuildGame.
+   *
+   * @param {Function} cb Callback that always fires on completion. The only
+   * parameter is a possible error string, null if no error.
+   * @param {boolean} [retry=true] Whether to try again if there is an error.
+   */
+  go(cb, retry = true) {
+    this.game.currentGame.day.state = 1;
+    this.game.currentGame.day.num++;
+    this.game.currentGame.day.events = [];
 
-  const defaultEvents = this.hg.getDefaultEvents();
+    const id = this.game.id;
 
-  if (this.game.currentGame.day.num === 0) {
-    userEventPool =
-        defaultEvents.bloodbath.concat(this.game.customEvents.bloodbath);
-    if (this.game.disabledEvents && this.game.disabledEvents.bloodbath) {
-      userEventPool = userEventPool.filter((el) => {
-        return !this.game.disabledEvents.bloodbath.find((d) => {
-          return this.hg.eventsEqual(d, el);
-        });
-      });
+    const userPool = this.game.currentGame.includedUsers.filter((obj) => {
+      return obj.living;
+    });
+    // Shuffle user order because games may have been rigged :thonk:.
+    for (let i = 0; i < userPool.length; i++) {
+      const index = Math.floor(Math.random() * (userPool.length - i)) + i;
+      const tmp = userPool[i];
+      userPool[i] = userPool[index];
+      userPool[index] = tmp;
     }
-    if (userEventPool.length == 0) {
-      if (this.msg) {
-        this.hg.common.reply(
-            this.msg,
-            'All bloodbath events have been disabled! Please enable ' +
-                'events so that something can happen in the games!');
-        this.hg.endGame(this.msg, id);
-      } else {
-        this.hg.endGame(null, id);
-      }
-      cb('No Bloodbath Events');
-      return;
-    }
-  } else {
-    doArenaEvent = startingAlive > 2 && this.game.options.arenaEvents &&
-        Math.random() < this.game.options.probabilityOfArenaEvent;
-    if (doArenaEvent) {
-      const arenaEventPool =
-          defaultEvents.arena.concat(this.game.customEvents.arena);
-      do {
-        const index = Math.floor(Math.random() * arenaEventPool.length);
-        arenaEvent = arenaEventPool[index];
-        userEventPool = arenaEvent.outcomes;
-        if (this.game.disabledEvents && this.game.disabledEvents.arena &&
-            this.game.disabledEvents.arena[arenaEvent.message]) {
-          userEventPool = userEventPool.filter((el) => {
-            return !this.game.disabledEvents.arena[arenaEvent.message].find(
-                (d) => {
-                  return Event.eventsEqual(d, el);
-                });
-          });
-        }
-        if (userEventPool.length == 0) {
-          arenaEventPool.splice(index, 1);
-        } else {
-          this.game.currentGame.day.events.push(
-              Event.finalizeSimple(
-                  this.hg.messages.get('eventStart'), this.game));
-          this.game.currentGame.day.events.push(
-              Event.finalizeSimple(
-                  '**___' + arenaEvent.message + '___**', this.game));
-          break;
-        }
-      } while (arenaEventPool.length > 0);
-      if (arenaEventPool.length == 0) doArenaEvent = false;
-    }
-    if (!doArenaEvent) {
-      userEventPool =
-          defaultEvents.player.concat(this.game.customEvents.player);
-      if (this.game.disabledEvents && this.game.disabledEvents.player) {
+    const startingAlive = userPool.length;
+    let userEventPool;
+    let doArenaEvent = false;
+    let arenaEvent;
+
+    if (this.game.currentGame.day.num === 0) {
+      userEventPool = this.hg._defaultBloodbathEvents.concat(
+          this.game.customEvents.bloodbath);
+      if (this.game.disabledEvents && this.game.disabledEvents.bloodbath) {
         userEventPool = userEventPool.filter((el) => {
-          return !this.game.disabledEvents.player.find((d) => {
-            return Event.equal(d, el);
+          return !this.game.disabledEvents.bloodbath.find((d) => {
+            return this.hg.eventsEqual(d, el);
           });
         });
       }
@@ -200,468 +144,532 @@ Simulator.prototype.go = function(cb, retry = true) {
         if (this.msg) {
           this.hg.common.reply(
               this.msg,
-              'All player events have been disabled! Please enable events' +
-                  ' so that something can happen in the games!');
+              'All bloodbath events have been disabled! Please enable ' +
+                  'events so that something can happen in the games!');
           this.hg.endGame(this.msg, id);
         } else {
           this.hg.endGame(null, id);
         }
-        cb('No Player Events');
+        cb('No Bloodbath Events');
         return;
       }
-    }
-  }
-
-  const weapons = this.hg.getDefaultWeapons();
-  const weaponEventPool = Object.assign({}, weapons);
-  if (this.game.customEvents.weapon) {
-    const entries = Object.entries(this.game.customEvents.weapon);
-    for (let i = 0; i < entries.length; i++) {
-      if (weaponEventPool[entries[i][0]]) {
-        weaponEventPool[entries[i][0]].outcomes =
-            weaponEventPool[entries[i][0]].outcomes.concat(
-                entries[i][1].outcomes);
-      } else {
-        weaponEventPool[entries[i][0]] = entries[i][1];
-      }
-
-      if (this.game.disabledEvents && this.game.disabledEvents.weapon &&
-          this.game.disabledEvents.weapon[entries[i][0]]) {
-        weaponEventPool[entries[i][0]].outcomes =
-            weaponEventPool[entries[i][0]].outcomes.filter((el) => {
-              return !this.game.disabledEvents.weapon[entries[i][0]].find(
+    } else {
+      doArenaEvent = startingAlive > 2 && this.game.options.arenaEvents &&
+          Math.random() < this.game.options.probabilityOfArenaEvent;
+      if (doArenaEvent) {
+        const arenaEventPool =
+            this.hg._defaultArenaEvents.concat(this.game.customEvents.arena);
+        do {
+          const index = Math.floor(Math.random() * arenaEventPool.length);
+          arenaEvent = arenaEventPool[index];
+          userEventPool = arenaEvent.outcomes;
+          if (this.game.disabledEvents && this.game.disabledEvents.arena &&
+              this.game.disabledEvents.arena[arenaEvent.message]) {
+            userEventPool = userEventPool.filter((el) => {
+              return !this.game.disabledEvents.arena[arenaEvent.message].find(
                   (d) => {
-                    return Event.equal(d, el);
+                    return Event.eventsEqual(d, el);
                   });
             });
+          }
+          if (userEventPool.length == 0) {
+            arenaEventPool.splice(index, 1);
+          } else {
+            this.game.currentGame.day.events.push(
+                Event.finalizeSimple(
+                    this.hg.messages.get('eventStart'), this.game));
+            this.game.currentGame.day.events.push(
+                Event.finalizeSimple(
+                    '**___' + arenaEvent.message + '___**', this.game));
+            break;
+          }
+        } while (arenaEventPool.length > 0);
+        if (arenaEventPool.length == 0) doArenaEvent = false;
       }
-    }
-  }
-
-  const probOpts = this.game.currentGame.day.num === 0 ?
-      this.game.options.bloodbathOutcomeProbs :
-      (doArenaEvent ?
-           (arenaEvent.outcomeProbs || this.game.options.arenaOutcomeProbs) :
-           this.game.options.playerOutcomeProbs);
-
-  const nameFormat = this.game.options.useNicknames ? 'nickname' : 'username';
-
-  while (userPool.length > 0) {
-    let eventTry;
-    let affectedUsers;
-    let numAttacker;
-    let numVictim;
-
-    let subMessage = '';
-
-    const deadPool = this.game.currentGame.includedUsers.filter((obj) => {
-      return !obj.living;
-    });
-
-    let userWithWeapon = null;
-    if (!doArenaEvent) {
-      const usersWithWeapon = [];
-      for (let i = 0; i < userPool.length; i++) {
-        if (userPool[i].weapons &&
-            Object.keys(userPool[i].weapons).length > 0) {
-          usersWithWeapon.push(userPool[i]);
+      if (!doArenaEvent) {
+        userEventPool =
+            this.hg._defaultPlayerEvents.concat(this.game.customEvents.player);
+        if (this.game.disabledEvents && this.game.disabledEvents.player) {
+          userEventPool = userEventPool.filter((el) => {
+            return !this.game.disabledEvents.player.find((d) => {
+              return Event.equal(d, el);
+            });
+          });
+        }
+        if (userEventPool.length == 0) {
+          if (this.msg) {
+            this.hg.common.reply(
+                this.msg,
+                'All player events have been disabled! Please enable events' +
+                    ' so that something can happen in the games!');
+            this.hg.endGame(this.msg, id);
+          } else {
+            this.hg.endGame(null, id);
+          }
+          cb('No Player Events');
+          return;
         }
       }
-      if (usersWithWeapon.length > 0) {
-        userWithWeapon =
-            usersWithWeapon[Math.floor(Math.random() * usersWithWeapon.length)];
+    }
+
+    const weapons = this.hg._defaultWeapons;
+    const weaponEventPool = Object.assign({}, weapons);
+    if (this.game.customEvents.weapon) {
+      const entries = Object.entries(this.game.customEvents.weapon);
+      for (let i = 0; i < entries.length; i++) {
+        if (weaponEventPool[entries[i][0]]) {
+          weaponEventPool[entries[i][0]].outcomes =
+              weaponEventPool[entries[i][0]].outcomes.concat(
+                  entries[i][1].outcomes);
+        } else {
+          weaponEventPool[entries[i][0]] = entries[i][1];
+        }
+
+        if (this.game.disabledEvents && this.game.disabledEvents.weapon &&
+            this.game.disabledEvents.weapon[entries[i][0]]) {
+          weaponEventPool[entries[i][0]].outcomes =
+              weaponEventPool[entries[i][0]].outcomes.filter((el) => {
+                return !this.game.disabledEvents.weapon[entries[i][0]].find(
+                    (d) => {
+                      return Event.equal(d, el);
+                    });
+              });
+        }
       }
     }
-    let useWeapon = userWithWeapon &&
-        Math.random() < this.game.options.probabilityOfUseWeapon;
-    if (useWeapon) {
-      const userWeapons = Object.keys(userWithWeapon.weapons);
-      const chosenWeapon =
-          userWeapons[Math.floor(Math.random() * userWeapons.length)];
 
-      if (!weaponEventPool[chosenWeapon]) {
-        useWeapon = false;
-        // console.log('No event pool with weapon', chosenWeapon);
-      } else {
-        eventTry = pickEvent(
-            userPool, weaponEventPool[chosenWeapon].outcomes, this.game.options,
-            this.game.currentGame.numAlive,
-            this.game.currentGame.includedUsers.length,
-            this.game.currentGame.teams, probOpts, userWithWeapon);
-        if (!eventTry) {
-          useWeapon = false;
-          /* self.error(
-              'No event with weapon "' + chosenWeapon +
-              '" for available players ' + id); */
-        } else {
-          numAttacker = eventTry.attacker.count;
-          numVictim = eventTry.victim.count;
-          affectedUsers = pickAffectedPlayers(
-              numVictim, numAttacker, eventTry.victim.outcome,
-              eventTry.attacker.outcome, this.game.options, userPool, deadPool,
-              this.game.currentGame.teams, userWithWeapon);
+    const probOpts = this.game.currentGame.day.num === 0 ?
+        this.game.options.bloodbathOutcomeProbs :
+        (doArenaEvent ?
+             (arenaEvent.outcomeProbs || this.game.options.arenaOutcomeProbs) :
+             this.game.options.playerOutcomeProbs);
 
-          let consumed = eventTry.consumes;
-          if (consumed == 'V') {
-            consumed = numVictim;
-          } else if (consumed == 'A') {
-            consumed = numAttacker;
+    const nameFormat = this.game.options.useNicknames ? 'nickname' : 'username';
+
+    while (userPool.length > 0) {
+      let eventTry;
+      let affectedUsers;
+      let numAttacker;
+      let numVictim;
+
+      let subMessage = '';
+
+      const deadPool = this.game.currentGame.includedUsers.filter((obj) => {
+        return !obj.living;
+      });
+
+      let userWithWeapon = null;
+      if (!doArenaEvent) {
+        const usersWithWeapon = [];
+        for (let i = 0; i < userPool.length; i++) {
+          if (userPool[i].weapons &&
+              Object.keys(userPool[i].weapons).length > 0) {
+            usersWithWeapon.push(userPool[i]);
           }
-          userWithWeapon.weapons[chosenWeapon] -= consumed;
-          if (userWithWeapon.weapons[chosenWeapon] <= 0) {
-            delete userWithWeapon.weapons[chosenWeapon];
+        }
+        if (usersWithWeapon.length > 0) {
+          userWithWeapon = usersWithWeapon[Math.floor(
+              Math.random() * usersWithWeapon.length)];
+        }
+      }
+      let useWeapon = userWithWeapon &&
+          Math.random() < this.game.options.probabilityOfUseWeapon;
+      if (useWeapon) {
+        const userWeapons = Object.keys(userWithWeapon.weapons);
+        const chosenWeapon =
+            userWeapons[Math.floor(Math.random() * userWeapons.length)];
 
-            const weaponName = chosenWeapon;
-            let consumableName = weaponName;
-            if (weapons[weaponName]) {
-              if (weapons[weaponName].consumable) {
-                consumableName = weapons[weaponName].consumable.replace(
-                    /\[C([^|]*)\|([^\]]*)\]/g, '$2');
-              } else if (weapons[weaponName].name) {
-                consumableName = weapons[weaponName].name.replace(
-                    /\[C([^|]*)\|([^\]]*)\]/g, '$2');
+        if (!weaponEventPool[chosenWeapon]) {
+          useWeapon = false;
+          // console.log('No event pool with weapon', chosenWeapon);
+        } else {
+          eventTry = pickEvent(
+              userPool, weaponEventPool[chosenWeapon].outcomes,
+              this.game.options, this.game.currentGame.numAlive,
+              this.game.currentGame.includedUsers.length,
+              this.game.currentGame.teams, probOpts, userWithWeapon);
+          if (!eventTry) {
+            useWeapon = false;
+            /* self.error(
+                'No event with weapon "' + chosenWeapon +
+                '" for available players ' + id); */
+          } else {
+            numAttacker = eventTry.attacker.count;
+            numVictim = eventTry.victim.count;
+            affectedUsers = pickAffectedPlayers(
+                numVictim, numAttacker, eventTry.victim.outcome,
+                eventTry.attacker.outcome, this.game.options, userPool,
+                deadPool, this.game.currentGame.teams, userWithWeapon);
+
+            let consumed = eventTry.consumes;
+            if (consumed == 'V') {
+              consumed = numVictim;
+            } else if (consumed == 'A') {
+              consumed = numAttacker;
+            }
+            userWithWeapon.weapons[chosenWeapon] -= consumed;
+            if (userWithWeapon.weapons[chosenWeapon] <= 0) {
+              delete userWithWeapon.weapons[chosenWeapon];
+
+              const weaponName = chosenWeapon;
+              let consumableName = weaponName;
+              if (weapons[weaponName]) {
+                if (weapons[weaponName].consumable) {
+                  consumableName = weapons[weaponName].consumable.replace(
+                      /\[C([^|]*)\|([^\]]*)\]/g, '$2');
+                } else if (weapons[weaponName].name) {
+                  consumableName = weapons[weaponName].name.replace(
+                      /\[C([^|]*)\|([^\]]*)\]/g, '$2');
+                } else {
+                  consumableName += 's';
+                }
               } else {
                 consumableName += 's';
               }
+              subMessage +=
+                  Grammar.formatMultiNames([userWithWeapon], nameFormat) +
+                  ' runs out of ' + consumableName + '.';
+            } else if (consumed != 0) {
+              const weaponName = chosenWeapon;
+              let consumableName = weaponName;
+              const count = consumed;
+              if (weapons[weaponName].consumable) {
+                consumableName = weapons[weaponName].consumable.replace(
+                    /\[C([^|]*)\|([^\]]*)\]/g, (count == 1 ? '$1' : '$2'));
+              } else if (weapons[weaponName].name) {
+                consumableName = weapons[weaponName].name.replace(
+                    /\[C([^|]*)\|([^\]]*)\]/g, (count == 1 ? '$1' : '$2'));
+              } else if (count != 1) {
+                consumableName += 's';
+              }
+              subMessage +=
+                  Grammar.formatMultiNames([userWithWeapon], nameFormat) +
+                  ' lost ' + count + ' ' + consumableName + '.';
+            }
+
+            let owner = 'their';
+            if (numAttacker > 1 ||
+                (numAttacker == 1 &&
+                 affectedUsers[numVictim].id != userWithWeapon.id)) {
+              owner = Grammar.formatMultiNames([userWithWeapon], nameFormat) +
+                  '\'s';
+            }
+            if (!eventTry.message) {
+              const weaponName =
+                  weaponEventPool[chosenWeapon].name || chosenWeapon;
+              eventTry.message =
+                  weapons.message
+                      .replaceAll('{weapon}', owner + ' ' + weaponName)
+                      .replaceAll('{action}', eventTry.action)
+                      .replace(
+                          /\[C([^|]*)\|([^\]]*)\]/g,
+                          (consumed == 1 ? '$1' : '$2'));
             } else {
-              consumableName += 's';
+              eventTry.message = eventTry.message.replaceAll('{owner}', owner);
             }
-            subMessage +=
-                Grammar.formatMultiNames([userWithWeapon], nameFormat) +
-                ' runs out of ' + consumableName + '.';
-          } else if (consumed != 0) {
-            const weaponName = chosenWeapon;
-            let consumableName = weaponName;
-            const count = consumed;
-            if (weapons[weaponName].consumable) {
-              consumableName = weapons[weaponName].consumable.replace(
-                  /\[C([^|]*)\|([^\]]*)\]/g, (count == 1 ? '$1' : '$2'));
-            } else if (weapons[weaponName].name) {
-              consumableName = weapons[weaponName].name.replace(
-                  /\[C([^|]*)\|([^\]]*)\]/g, (count == 1 ? '$1' : '$2'));
-            } else if (count != 1) {
-              consumableName += 's';
-            }
-            subMessage +=
-                Grammar.formatMultiNames([userWithWeapon], nameFormat) +
-                ' lost ' + count + ' ' + consumableName + '.';
           }
+        }
+      }
 
-          let owner = 'their';
-          if (numAttacker > 1 ||
-              (numAttacker == 1 &&
-               affectedUsers[numVictim].id != userWithWeapon.id)) {
-            owner =
-                Grammar.formatMultiNames([userWithWeapon], nameFormat) + '\'s';
-          }
-          if (!eventTry.message) {
-            const weaponName =
-                weaponEventPool[chosenWeapon].name || chosenWeapon;
-            eventTry.message =
-                weapons.message.replaceAll('{weapon}', owner + ' ' + weaponName)
-                    .replaceAll('{action}', eventTry.action)
-                    .replace(
-                        /\[C([^|]*)\|([^\]]*)\]/g,
-                        (consumed == 1 ? '$1' : '$2'));
+      const doBattle =
+          ((!useWeapon && !doArenaEvent) || !eventTry) && userPool.length > 1 &&
+          (Math.random() < this.game.options.probabilityOfBattle ||
+           this.game.currentGame.numAlive == 2) &&
+          !validateEventRequirements(
+              1, 1, userPool, this.game.currentGame.numAlive,
+              this.game.currentGame.teams, this.game.options, true, false);
+      if (doBattle) {
+        do {
+          numAttacker = Simulator.weightedUserRand();
+          numVictim = Simulator.weightedUserRand();
+        } while (validateEventRequirements(
+            numVictim, numAttacker, userPool, this.game.currentGame.numAlive,
+            this.game.currentGame.teams, this.game.options, true, false));
+        affectedUsers = pickAffectedPlayers(
+            numVictim, numAttacker, 'dies', 'nothing', this.game.options,
+            userPool, deadPool, this.game.currentGame.teams, null);
+        eventTry = Battle.finalize(
+            affectedUsers, numVictim, numAttacker, this.game.options.mentionAll,
+            this.game, this.hg._defaultBattles);
+      } else if (!useWeapon || !eventTry) {
+        eventTry = pickEvent(
+            userPool, userEventPool, this.game.options,
+            this.game.currentGame.numAlive,
+            this.game.currentGame.includedUsers.length,
+            this.game.currentGame.teams, probOpts);
+        if (!eventTry) {
+          this.hg.error(
+              'No event for ' + userPool.length + ' from ' +
+              userEventPool.length + ' events. No weapon, Arena Event: ' +
+              (doArenaEvent ? arenaEvent.message : 'No') + ', Day: ' +
+              this.game.currentGame.day.num + ' Guild: ' + id + ' Retrying: ' +
+              retry);
+          this.game.currentGame.day.state = 0;
+          this.game.currentGame.day.num--;
+          if (retry) {
+            this.go(cb, false);
           } else {
-            eventTry.message = eventTry.message.replaceAll('{owner}', owner);
+            this.hg.common.reply(
+                this.msg,
+                'Oops! I wasn\'t able to find a valid event for the ' +
+                    'remaining players.\nThis is usually because too many ' +
+                    'events are disabled.\nIf you think this is a bug, ' +
+                    'please tell SpikeyRobot#0971',
+                'Try again with `' + this.msg.prefix + this.hg.postPrefix +
+                    'next`.\n(Failed to find valid event for \'' +
+                    (doArenaEvent ? arenaEvent.message : 'player events') +
+                    '\' suitable for ' + userPool.length +
+                    ' remaining players)');
           }
+          cb('Bad Configuration');
+          return;
         }
-      }
-    }
 
-    const doBattle =
-        ((!useWeapon && !doArenaEvent) || !eventTry) && userPool.length > 1 &&
-        (Math.random() < this.game.options.probabilityOfBattle ||
-         this.game.currentGame.numAlive == 2) &&
-        !validateEventRequirements(
-            1, 1, userPool, this.game.currentGame.numAlive,
-            this.game.currentGame.teams, this.game.options, true, false);
-    if (doBattle) {
-      do {
-        numAttacker = Simulator.weightedUserRand();
-        numVictim = Simulator.weightedUserRand();
-      } while (validateEventRequirements(
-          numVictim, numAttacker, userPool, this.game.currentGame.numAlive,
-          this.game.currentGame.teams, this.game.options, true, false));
-      affectedUsers = pickAffectedPlayers(
-          numVictim, numAttacker, 'dies', 'nothing', this.game.options,
-          userPool, deadPool, this.game.currentGame.teams, null);
-      eventTry = Battle.finalize(
-          affectedUsers, numVictim, numAttacker, this.game.options.mentionAll,
-          this.game, this.hg.getDefaultBattles());
-    } else if (!useWeapon || !eventTry) {
-      eventTry = pickEvent(
-          userPool, userEventPool, this.game.options,
-          this.game.currentGame.numAlive,
-          this.game.currentGame.includedUsers.length,
-          this.game.currentGame.teams, probOpts);
-      if (!eventTry) {
-        this.hg.error(
-            'No event for ' + userPool.length + ' from ' +
-            userEventPool.length + ' events. No weapon, Arena Event: ' +
-            (doArenaEvent ? arenaEvent.message : 'No') + ', Day: ' +
-            this.game.currentGame.day.num + ' Guild: ' + id + ' Retrying: ' +
-            retry);
-        this.game.currentGame.day.state = 0;
-        this.game.currentGame.day.num--;
-        if (retry) {
-          this.go(cb, false);
-        } else {
-          this.hg.common.reply(
-              this.msg, 'Oops! I wasn\'t able to find a valid event for the ' +
-                  'remaining players.\nThis is usually because too many ' +
-                  'events are disabled.\nIf you think this is a bug, ' +
-                  'please tell SpikeyRobot#0971',
-              'Try again with `' + this.msg.prefix + this.hg.postPrefix +
-                  'next`.\n(Failed to find valid event for \'' +
-                  (doArenaEvent ? arenaEvent.message : 'player events') +
-                  '\' suitable for ' + userPool.length + ' remaining players)');
-        }
-        cb('Bad Configuration');
-        return;
+        numAttacker = eventTry.attacker.count;
+        numVictim = eventTry.victim.count;
+        affectedUsers = pickAffectedPlayers(
+            numVictim, numAttacker, eventTry.victim.outcome,
+            eventTry.attacker.outcome, this.game.options, userPool, deadPool,
+            this.game.currentGame.teams, null);
       }
 
-      numAttacker = eventTry.attacker.count;
-      numVictim = eventTry.victim.count;
-      affectedUsers = pickAffectedPlayers(
-          numVictim, numAttacker, eventTry.victim.outcome,
-          eventTry.attacker.outcome, this.game.options, userPool, deadPool,
-          this.game.currentGame.teams, null);
-    }
-
-    let numKilled = 0;
-    let weapon = eventTry.victim.weapon;
-    if (weapon && !weaponEventPool[weapon.name]) {
-      weapon = null;
-      eventTry.victim.weapon = null;
-    }
-    for (let i = 0; i < numVictim; i++) {
-      let numKills = 0;
-      if (eventTry.victim.killer) numKills = numAttacker;
-      const affected = affectedUsers[i];
-      switch (eventTry.victim.outcome) {
-        case 'dies':
-          numKilled++;
-          killUser(this.game, affected, numKills, weapon);
-          break;
-        case 'wounded':
-          woundUser(this.game, affected, numKills, weapon);
-          break;
-        case 'thrives':
-          restoreUser(this.game, affected, numKills, weapon);
-          break;
-        case 'revived':
-          reviveUser(this.game, affected, numKills, weapon);
-          break;
-        default:
-          effectUser(this.game, affected, numKills, weapon);
-          break;
+      let numKilled = 0;
+      let weapon = eventTry.victim.weapon;
+      if (weapon && !weaponEventPool[weapon.name]) {
+        weapon = null;
+        eventTry.victim.weapon = null;
       }
-      if (affected.state == 'wounded') {
-        affected.bleeding++;
-      } else {
-        affected.bleeding = 0;
-      }
-    }
-    weapon = eventTry.attacker.weapon;
-    if (weapon && !weaponEventPool[weapon.name]) {
-      weapon = null;
-      eventTry.attacker.weapon = null;
-    }
-    for (let i = numVictim; i < numVictim + numAttacker; i++) {
-      let numKills = 0;
-      if (eventTry.attacker.killer) numKills = numVictim;
-      const affected = affectedUsers[i];
-      switch (eventTry.attacker.outcome) {
-        case 'dies':
-          numKilled++;
-          killUser(this.game, affected, numKills, weapon);
-          break;
-        case 'wounded':
-          woundUser(this.game, affected, numKills, weapon);
-          break;
-        case 'thrives':
-          restoreUser(this.game, affected, numKills, weapon);
-          break;
-        case 'revived':
-          reviveUser(this.game, affected, numKills, weapon);
-          break;
-        default:
-          effectUser(this.game, affected, numKills, weapon);
-          break;
-      }
-      if (affected.state == 'wounded') {
-        affected.bleeding++;
-      } else {
-        affected.bleeding = 0;
-      }
-    }
-
-    let finalEvent = eventTry;
-
-    if (eventTry.attacker.weapon) {
-      for (let i = 0; i < numAttacker; i++) {
-        const user = affectedUsers[numVictim + i];
-        const consumableList =
-            Object.entries(user.weapons || {[eventTry.attacker.weapon.name]: 0})
-                .map((el) => {
-                  const weaponName = el[0];
-                  let consumableName = weaponName;
-                  const count = el[1];
-                  if (!weapons[weaponName]) {
-                    this.hg.error('Failed to find weapon: ' + weaponName);
-                    return '(Unknown weapon ' + weaponName +
-                        '. This is a bug.)';
-                  }
-                  if (weapons[weaponName].consumable) {
-                    consumableName = weapons[weaponName].consumable.replace(
-                        /\[C([^|]*)\|([^\]]*)\]/g,
-                        '$' + (count == 1 ? '1' : '2'));
-                  } else if (count != 1) {
-                    consumableName += 's';
-                  }
-                  return (count || 0) + ' ' + consumableName;
-                })
-                .join(', ');
-        subMessage += '\n' + Grammar.formatMultiNames([user], nameFormat) +
-            ' now has ' + consumableList + '.';
-      }
-    }
-    if (eventTry.victim.weapon) {
       for (let i = 0; i < numVictim; i++) {
-        const user = affectedUsers[i];
-        const consumableList =
-            Object.entries(user.weapons || {[eventTry.attacker.weapon.name]: 0})
-                .map((el) => {
-                  const weaponName = el[0];
-                  let consumableName = weaponName;
-                  const count = el[1];
-                  if (!weapons[weaponName]) {
-                    this.hg.error('Failed to find weapon: ' + weaponName);
-                    return '(Unknown weapon ' + weaponName +
-                        '. This is a bug.)';
-                  }
-                  if (weapons[weaponName].consumable) {
-                    consumableName = weapons[weaponName].consumable.replace(
-                        /\[C([^|]*)\|([^\]]*)\]/g,
-                        '$' + (count == 1 ? '1' : '2'));
-                  } else if (count != 1) {
-                    consumableName += 's';
-                  }
-                  return (count || 0) + ' ' + consumableName;
-                })
-                .join(', ');
-        subMessage += '\n' + Grammar.formatMultiNames([user], nameFormat) +
-            ' now has ' + consumableList + '.';
-      }
-    }
-
-    if (doBattle) {
-      affectedUsers = [];
-    } else {
-      finalEvent = Event.finalize(
-          eventTry.message, affectedUsers, numVictim, numAttacker,
-          eventTry.victim.outcome, eventTry.attacker.outcome, this.game);
-      finalEvent.subMessage = subMessage;
-    }
-    /* if (eventTry.attacker.killer && eventTry.victim.killer) {
-      finalEvent.icons.splice(numVictim, 0, {url: fistBoth});
-    } else if (eventTry.attacker.killer) {
-      finalEvent.icons.splice(numVictim, 0, {url: fistRight});
-    } else if (eventTry.victim.killer) {
-      finalEvent.icons.splice(numVictim, 0, {url: fistLeft});
-    } */
-    this.game.currentGame.day.events.push(finalEvent);
-
-    if (affectedUsers.length !== 0) {
-      console.log('Affected users remain! ' + affectedUsers.length);
-    }
-
-    if (numKilled > 4) {
-      this.game.currentGame.day.events.push(
-          Event.finalizeSimple(this.hg.messages.get('slaughter'), this.game));
-    }
-  }
-
-  if (doArenaEvent) {
-    this.game.currentGame.day.events.push(
-        Event.finalizeSimple(this.hg.messages.get('eventEnd'), this.game));
-  }
-  if (!this.game.currentGame.forcedOutcomes) {
-    this.game.currentGame.forcedOutcomes = [];
-  } else {
-    this.game.currentGame.forcedOutcomes =
-        this.game.currentGame.forcedOutcomes.filter((el) => {
-          this.game.forcePlayerState(el, this.hg.messages);
-          return el.persists;
-        });
-  }
-  const usersBleeding = [];
-  const usersRecovered = [];
-  this.game.currentGame.includedUsers.forEach((obj) => {
-    if (obj.bleeding > 0 && obj.bleeding >= this.game.options.bleedDays &&
-        obj.living) {
-      if (Math.random() < this.game.options.probabilityOfBleedToDeath &&
-          (this.game.options.allowNoVictors ||
-           this.game.currentGame.numAlive > 1)) {
-        usersBleeding.push(obj);
-        obj.living = false;
-        obj.bleeding = 0;
-        obj.state = 'dead';
-        obj.rank = this.game.currentGame.numAlive--;
-        obj.dayOfDeath = this.game.currentGame.day.num;
-        if (this.game.options.teamSize > 0) {
-          const team = this.game.currentGame.teams.find((team) => {
-            return team.players.findIndex((player) => {
-              return obj.id == player;
-            }) > -1;
-          });
-          team.numAlive--;
-          if (team.numAlive === 0) {
-            let teamsLeft = 0;
-            this.game.currentGame.teams.forEach((obj) => {
-              if (obj.numAlive > 0) teamsLeft++;
-            });
-            team.rank = teamsLeft + 1;
-          }
+        let numKills = 0;
+        if (eventTry.victim.killer) numKills = numAttacker;
+        const affected = affectedUsers[i];
+        switch (eventTry.victim.outcome) {
+          case 'dies':
+            numKilled++;
+            killUser(this.game, affected, numKills, weapon);
+            break;
+          case 'wounded':
+            woundUser(this.game, affected, numKills, weapon);
+            break;
+          case 'thrives':
+            restoreUser(this.game, affected, numKills, weapon);
+            break;
+          case 'revived':
+            reviveUser(this.game, affected, numKills, weapon);
+            break;
+          default:
+            effectUser(this.game, affected, numKills, weapon);
+            break;
         }
+        if (affected.state == 'wounded') {
+          affected.bleeding++;
+        } else {
+          affected.bleeding = 0;
+        }
+      }
+      weapon = eventTry.attacker.weapon;
+      if (weapon && !weaponEventPool[weapon.name]) {
+        weapon = null;
+        eventTry.attacker.weapon = null;
+      }
+      for (let i = numVictim; i < numVictim + numAttacker; i++) {
+        let numKills = 0;
+        if (eventTry.attacker.killer) numKills = numVictim;
+        const affected = affectedUsers[i];
+        switch (eventTry.attacker.outcome) {
+          case 'dies':
+            numKilled++;
+            killUser(this.game, affected, numKills, weapon);
+            break;
+          case 'wounded':
+            woundUser(this.game, affected, numKills, weapon);
+            break;
+          case 'thrives':
+            restoreUser(this.game, affected, numKills, weapon);
+            break;
+          case 'revived':
+            reviveUser(this.game, affected, numKills, weapon);
+            break;
+          default:
+            effectUser(this.game, affected, numKills, weapon);
+            break;
+        }
+        if (affected.state == 'wounded') {
+          affected.bleeding++;
+        } else {
+          affected.bleeding = 0;
+        }
+      }
+
+      let finalEvent = eventTry;
+
+      if (eventTry.attacker.weapon) {
+        for (let i = 0; i < numAttacker; i++) {
+          const user = affectedUsers[numVictim + i];
+          const consumableList =
+              Object
+                  .entries(user.weapons || {[eventTry.attacker.weapon.name]: 0})
+                  .map((el) => {
+                    const weaponName = el[0];
+                    let consumableName = weaponName;
+                    const count = el[1];
+                    if (!weapons[weaponName]) {
+                      this.hg.error('Failed to find weapon: ' + weaponName);
+                      return '(Unknown weapon ' + weaponName +
+                          '. This is a bug.)';
+                    }
+                    if (weapons[weaponName].consumable) {
+                      consumableName = weapons[weaponName].consumable.replace(
+                          /\[C([^|]*)\|([^\]]*)\]/g,
+                          '$' + (count == 1 ? '1' : '2'));
+                    } else if (count != 1) {
+                      consumableName += 's';
+                    }
+                    return (count || 0) + ' ' + consumableName;
+                  })
+                  .join(', ');
+          subMessage += '\n' + Grammar.formatMultiNames([user], nameFormat) +
+              ' now has ' + consumableList + '.';
+        }
+      }
+      if (eventTry.victim.weapon) {
+        for (let i = 0; i < numVictim; i++) {
+          const user = affectedUsers[i];
+          const consumableList =
+              Object
+                  .entries(user.weapons || {[eventTry.attacker.weapon.name]: 0})
+                  .map((el) => {
+                    const weaponName = el[0];
+                    let consumableName = weaponName;
+                    const count = el[1];
+                    if (!weapons[weaponName]) {
+                      this.hg.error('Failed to find weapon: ' + weaponName);
+                      return '(Unknown weapon ' + weaponName +
+                          '. This is a bug.)';
+                    }
+                    if (weapons[weaponName].consumable) {
+                      consumableName = weapons[weaponName].consumable.replace(
+                          /\[C([^|]*)\|([^\]]*)\]/g,
+                          '$' + (count == 1 ? '1' : '2'));
+                    } else if (count != 1) {
+                      consumableName += 's';
+                    }
+                    return (count || 0) + ' ' + consumableName;
+                  })
+                  .join(', ');
+          subMessage += '\n' + Grammar.formatMultiNames([user], nameFormat) +
+              ' now has ' + consumableList + '.';
+        }
+      }
+
+      if (doBattle) {
+        affectedUsers = [];
       } else {
-        usersRecovered.push(obj);
-        obj.bleeding = 0;
-        obj.state = 'normal';
+        finalEvent = Event.finalize(
+            eventTry.message, affectedUsers, numVictim, numAttacker,
+            eventTry.victim.outcome, eventTry.attacker.outcome, this.game);
+        finalEvent.subMessage = subMessage;
+      }
+      /* if (eventTry.attacker.killer && eventTry.victim.killer) {
+        finalEvent.icons.splice(numVictim, 0, {url: fistBoth});
+      } else if (eventTry.attacker.killer) {
+        finalEvent.icons.splice(numVictim, 0, {url: fistRight});
+      } else if (eventTry.victim.killer) {
+        finalEvent.icons.splice(numVictim, 0, {url: fistLeft});
+      } */
+      this.game.currentGame.day.events.push(finalEvent);
+
+      if (affectedUsers.length !== 0) {
+        console.log('Affected users remain! ' + affectedUsers.length);
+      }
+
+      if (numKilled > 4) {
+        this.game.currentGame.day.events.push(
+            Event.finalizeSimple(this.hg.messages.get('slaughter'), this.game));
       }
     }
-  });
-  if (usersRecovered.length > 0) {
-    this.game.currentGame.day.events.push(
-        Event.finalize(
-            this.hg.messages.get('patchWounds'), usersRecovered,
-            usersRecovered.length, 0, 'thrives', 'nothing', this.game));
-  }
-  if (usersBleeding.length > 0) {
-    this.game.currentGame.day.events.push(
-        Event.finalize(
-            this.hg.messages.get('bleedOut'), usersBleeding,
-            usersBleeding.length, 0, 'dies', 'nothing', this.game));
-  }
 
-  const deathPercentage = 1 - (this.game.currentGame.numAlive / startingAlive);
-  if (deathPercentage > lotsOfDeathRate) {
-    this.game.currentGame.day.events.splice(
-        0, 0,
-        Event.finalizeSimple(this.hg.messages.get('lotsOfDeath'), this.game));
-  } else if (deathPercentage === 0) {
-    this.game.currentGame.day.events.push(
-        Event.finalizeSimple(this.hg.messages.get('noDeath'), this.game));
-  } else if (deathPercentage < littleDeathRate) {
-    this.game.currentGame.day.events.splice(
-        0, 0,
-        Event.finalizeSimple(this.hg.messages.get('littleDeath'), this.game));
+    if (doArenaEvent) {
+      this.game.currentGame.day.events.push(
+          Event.finalizeSimple(this.hg.messages.get('eventEnd'), this.game));
+    }
+    if (!this.game.currentGame.forcedOutcomes) {
+      this.game.currentGame.forcedOutcomes = [];
+    } else {
+      this.game.currentGame.forcedOutcomes =
+          this.game.currentGame.forcedOutcomes.filter((el) => {
+            this.game.forcePlayerState(el, this.hg.messages);
+            return el.persists;
+          });
+    }
+    const usersBleeding = [];
+    const usersRecovered = [];
+    this.game.currentGame.includedUsers.forEach((obj) => {
+      if (obj.bleeding > 0 && obj.bleeding >= this.game.options.bleedDays &&
+          obj.living) {
+        if (Math.random() < this.game.options.probabilityOfBleedToDeath &&
+            (this.game.options.allowNoVictors ||
+             this.game.currentGame.numAlive > 1)) {
+          usersBleeding.push(obj);
+          obj.living = false;
+          obj.bleeding = 0;
+          obj.state = 'dead';
+          obj.rank = this.game.currentGame.numAlive--;
+          obj.dayOfDeath = this.game.currentGame.day.num;
+          if (this.game.options.teamSize > 0) {
+            const team = this.game.currentGame.teams.find((team) => {
+              return team.players.findIndex((player) => {
+                return obj.id == player;
+              }) > -1;
+            });
+            team.numAlive--;
+            if (team.numAlive === 0) {
+              let teamsLeft = 0;
+              this.game.currentGame.teams.forEach((obj) => {
+                if (obj.numAlive > 0) teamsLeft++;
+              });
+              team.rank = teamsLeft + 1;
+            }
+          }
+        } else {
+          usersRecovered.push(obj);
+          obj.bleeding = 0;
+          obj.state = 'normal';
+        }
+      }
+    });
+    if (usersRecovered.length > 0) {
+      this.game.currentGame.day.events.push(
+          Event.finalize(
+              this.hg.messages.get('patchWounds'), usersRecovered,
+              usersRecovered.length, 0, 'thrives', 'nothing', this.game));
+    }
+    if (usersBleeding.length > 0) {
+      this.game.currentGame.day.events.push(
+          Event.finalize(
+              this.hg.messages.get('bleedOut'), usersBleeding,
+              usersBleeding.length, 0, 'dies', 'nothing', this.game));
+    }
+
+    const deathPercentage =
+        1 - (this.game.currentGame.numAlive / startingAlive);
+    if (deathPercentage > lotsOfDeathRate) {
+      this.game.currentGame.day.events.splice(
+          0, 0,
+          Event.finalizeSimple(this.hg.messages.get('lotsOfDeath'), this.game));
+    } else if (deathPercentage === 0) {
+      this.game.currentGame.day.events.push(
+          Event.finalizeSimple(this.hg.messages.get('noDeath'), this.game));
+    } else if (deathPercentage < littleDeathRate) {
+      this.game.currentGame.day.events.splice(
+          0, 0,
+          Event.finalizeSimple(this.hg.messages.get('littleDeath'), this.game));
+    }
+    this.game.currentGame.day.state = 2;
+    cb();
   }
-  this.game.currentGame.day.state = 2;
-  cb();
-};
+}
+
 
 /**
  * Produce a random number that is weighted by multiEventUserDistribution.
