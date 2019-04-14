@@ -3038,8 +3038,6 @@ function HungryGames() {
     if (!find(id) || !find(id).options.disableOutput) {
       msg.channel.send(embed);
     }
-    self.command.find('say', msg)
-        .options.set('disabled', 'channel', msg.channel.id);
     find(id).outputChannel = msg.channel.id;
     find(id).currentGame.isPaused = false;
     dayEventIntervals[id] = self.client.setInterval(function() {
@@ -4784,13 +4782,6 @@ function HungryGames() {
       } else {
         nextDay(msg, id);
       }
-    } else {
-      try {
-        self.command.find('say', msg)
-            .options.set('default', 'channel', msg.channel.id);
-      } catch (err) {
-        self.error(err);
-      }
     }
   }
   /**
@@ -4816,18 +4807,6 @@ function HungryGames() {
       delete autoPlayTimeout[id];
       // delete battleMessage[id];
       if (!silent) self.common.reply(msg, 'The game has ended!');
-      if (find(id).outputChannel &&
-          self.client.channels.get(find(id).outputChannel)) {
-        try {
-          self.command.find('say', msg)
-              .options.set('default', 'channel', find(id).outputChannel);
-        } catch (err) {
-          self.error(
-              'Failed to reset say comand settings in channel: ' +
-              find(id).outputChannel);
-          console.error(err);
-        }
-      }
     }
   }
 
