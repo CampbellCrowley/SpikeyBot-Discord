@@ -30,188 +30,366 @@
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const Game = require('./Game.js');
 const Event = require('./Event.js');
+const Team = require('./Team.js');
 
 /**
- * @classdesc A single instance of a game in a guild.
- * @class HungryGames~GuildGame
- *
- * @param {string} id Guild id of the Guild that this object is for.
- * @param {Object.&lt;number|boolean|string|Object>} options The game options.
- * @param {string} [name] Name of this game to be passed to the Game object.
- * @param {string[]|HungryGames~Player[]} [includedUsers] Array of user IDs that
- * will be included in the next game, or array of Players to include.
- * @param {string[]} [excludedUsers] Array of user IDs that have been
- * excluded from the games.
- * @param {HungryGames~NPC[]} [includedNPCs] Array of NPC objects to include in
- * the game.
- * @param {HungryGames~NPC[]} [excludedNPCs] Array of NPC objects to exclude
- * from the game.
- * @param {
- *   {
- *     bloodbath: HungryGames~Event[],
- *     player: HungryGames~Event[],
- *     weapon: Object.&lt;HungryGames~WeaponEvent>,
- *     arena: HungryGames~ArenaEvent[]
- *   }
- * } [customEvents] All custom events for the guild.
- * @param {
- *   {
- *     bloodbath: HungryGames~Event[],
- *     player: HungryGames~Event[],
- *     weapon: Object.&lt;Array.&lt;HungryGames~Event>>,
- *     arena: Object.&lt;Array.&lt;HungryGames~Event>>
- *   }
- * } [disabledEvents] All disabled events for the guild.
+ * A single instance of a game in a guild.
+ * @memberof HungryGames
+ * @inner
  */
-function GuildGame(
-    id, options, name, includedUsers, excludedUsers, includedNPCs, excludedNPCs,
-    customEvents, disabledEvents) {
+class GuildGame {
   /**
-   * The ID of the Guild this is for.
-   * @public
-   * @type {string}
+   * @description Create a game instance for a single guild.
+   * @param {string} id Guild id of the Guild that this object is for.
+   * @param {Object.&lt;number|boolean|string|Object>} options The game options.
+   * @param {string} [name] Name of this game to be passed to the Game object.
+   * @param {string[]|HungryGames~Player[]} [includedUsers] Array of user IDs
+   * that will be included in the next game, or array of Players to include.
+   * @param {string[]} [excludedUsers] Array of user IDs that have been
+   * excluded from the games.
+   * @param {HungryGames~NPC[]} [includedNPCs] Array of NPC objects to include
+   * in the game.
+   * @param {HungryGames~NPC[]} [excludedNPCs] Array of NPC objects to exclude
+   * from the game.
+   * @param {{
+   * bloodbath: HungryGames~Event[],
+   * player: HungryGames~Event[],
+   * weapon: Object.&lt;HungryGames~WeaponEvent>,
+   * arena: HungryGames~ArenaEvent[]
+   * }} [customEvents] All custom events for the guild.
+   * @param {{
+   * bloodbath: HungryGames~Event[],
+   * player: HungryGames~Event[],
+   * weapon: Object.&lt;Array.&lt;HungryGames~Event>>,
+   * arena: Object.&lt;Array.&lt;HungryGames~Event>>
+   * }} [disabledEvents] All disabled events for the guild.
    */
-  this.id = id;
-  /**
-   * Array of user IDs that will be included in the next game.
-   * @public
-   * @type {string[]}
-   * @default []
-   */
-  this.includedUsers = [];
-  if (Array.isArray(includedUsers)) {
-    for (let i = 0; i &lt; includedUsers.length; i++) {
-      if (typeof includedUsers[i] === 'string') {
-        this.includedUsers.push(includedUsers.splice(i, 1)[0]);
-      } else {
-        this.includedUsers.push(includedUsers[i].id);
+  constructor(
+      id, options, name, includedUsers, excludedUsers, includedNPCs,
+      excludedNPCs, customEvents, disabledEvents) {
+    this.step = this.step.bind(this);
+    /**
+     * The ID of the Guild this is for.
+     * @public
+     * @type {string}
+     */
+    this.id = id;
+    /**
+     * Array of user IDs that will be included in the next game.
+     * @public
+     * @type {string[]}
+     * @default []
+     */
+    this.includedUsers = [];
+    if (Array.isArray(includedUsers)) {
+      for (let i = 0; i &lt; includedUsers.length; i++) {
+        if (typeof includedUsers[i] === 'string') {
+          this.includedUsers.push(includedUsers.splice(i, 1)[0]);
+        } else {
+          this.includedUsers.push(includedUsers[i].id);
+        }
       }
     }
-  }
-  /**
-   * Array of user IDs that will be excluded from the next game.
-   * @public
-   * @type {string[]}
-   * @default []
-   */
-  this.excludedUsers = excludedUsers || [];
-  /**
-   * Array of NPCs that will be included in the game.
-   * @public
-   * @type {HungryGames~NPC[]}
-   * @default []
-   */
-  this.includedNPCs = includedNPCs || [];
-  /**
-   * Array of NPCs that will be excluded from the game.
-   * @public
-   * @type {HungryGames~NPC[]}
-   * @default []
-   */
-  this.excludedNPCs = excludedNPCs || [];
-  /**
-   * Game options.
-   * @public
-   * @type {Object}
-   */
-  this.options = options;
-  /**
-   * Is this game autoplaying?
-   * @public
-   * @type {boolean}
-   * @default false
-   */
-  this.autoPlay = false;
-  /**
-   * All custom events for the guild.
-   * @public
-   * @type {
-   *   {
-   *     bloodbath: HungryGames~Event[],
-   *     player: HungryGames~Event[],
-   *     weapon: Object.&lt;HungryGames~WeaponEvent>,
-   *     arena: HungryGames~ArenaEvent[]
-   *   }
-   * }
-   * @default {{bloodbath: [], player: [], arena: [], weapon: {}}}
-   */
-  this.customEvents =
-      customEvents || {bloodbath: [], player: [], arena: [], weapon: {}};
+    /**
+     * Array of user IDs that will be excluded from the next game.
+     * @public
+     * @type {string[]}
+     * @default []
+     */
+    this.excludedUsers = excludedUsers || [];
+    /**
+     * Array of NPCs that will be included in the game.
+     * @public
+     * @type {HungryGames~NPC[]}
+     * @default []
+     */
+    this.includedNPCs = includedNPCs || [];
+    /**
+     * Array of NPCs that will be excluded from the game.
+     * @public
+     * @type {HungryGames~NPC[]}
+     * @default []
+     */
+    this.excludedNPCs = excludedNPCs || [];
+    /**
+     * Game options.
+     * @public
+     * @type {Object}
+     */
+    this.options = options;
+    /**
+     * Is this game autoplaying?
+     * @public
+     * @type {boolean}
+     * @default false
+     */
+    this.autoPlay = false;
+    /**
+     * Is this game automatically stepping, or are steps controlled manually.
+     * @private
+     * @type {boolean}
+     * @default false
+     */
+    this._autoStep = false;
+    /**
+     * All custom events for the guild.
+     * @public
+     * @type {
+     *   {
+     *     bloodbath: HungryGames~Event[],
+     *     player: HungryGames~Event[],
+     *     weapon: Object.&lt;HungryGames~WeaponEvent>,
+     *     arena: HungryGames~ArenaEvent[]
+     *   }
+     * }
+     * @default {{bloodbath: [], player: [], arena: [], weapon: {}}}
+     */
+    this.customEvents =
+        customEvents || {bloodbath: [], player: [], arena: [], weapon: {}};
 
-  // Force custom events to have custom event flag. (This is here due to
-  // updating from previous version without custom event flag).
-  if (this.customEvents) {
-    for (const cat of Object.values(this.customEvents)) {
-      for (const evt of Object.values(cat)) {
-        if (typeof evt === 'object') evt.custom = true;
+    // Force custom events to have custom event flag. (This is here due to
+    // updating from previous version without custom event flag).
+    if (this.customEvents) {
+      for (const cat of Object.values(this.customEvents)) {
+        for (const evt of Object.values(cat)) {
+          if (typeof evt === 'object') evt.custom = true;
+        }
       }
     }
+
+    /**
+     * Current game information.
+     * @public
+     * @type {HungryGames~Game}
+     * @default
+     */
+    this.currentGame = new Game(name, includedUsers);
+    /**
+     * Disabled event information. These events are not allowed to show up in
+     * the game.
+     * @public
+     * @type {
+     *   {
+     *     bloodbath: HungryGames~Event[],
+     *     player: HungryGames~Event[],
+     *     weapon: Object.&lt;Array.&lt;HungryGames~Event>>,
+     *     arena: Object.&lt;Array.&lt;HungryGames~Event>>
+     *   }
+     * }
+     * @default {{bloodbath: [], player: [], arena: {}, weapon: {}}}
+     */
+    this.disabledEvents =
+        disabledEvents || {bloodbath: [], player: [], arena: {}, weapon: {}};
+
+    /**
+     * The channel id a command was last sent from that affected this guild
+     * game.
+     * @public
+     * @type {?string}
+     * @default
+     */
+    this.channel = null;
+    /**
+     * The id of the user that last sent a command which interacted with this
+     * guild game.
+     * @public
+     * @type {?string}
+     * @default
+     */
+    this.author = null;
+
+    /**
+     * The channel id where the game messages are currently being sent in.
+     * @public
+     * @type {?string}
+     * @default
+     */
+    this.outputChannel = null;
+
+    /**
+     * Message ID of the message to fetch reactions from for join via react.
+     * @public
+     * @type {?{id: string, channel: string}}
+     * @default
+     */
+    this.reactMessage = null;
+
+    /**
+     * Interval for day events.
+     * @private
+     * @type {?Timeout}
+     * @default
+     */
+    this._dayEventInterval = null;
+    /**
+     * The timeout to continue autoplaying after the day ends. Used for
+     * cancelling if user ends the game between days.
+     *
+     * @private
+     * @type {?Timeout}
+     * @default
+     */
+    this._autoPlayTimeout = null;
+
+    /**
+     * Function to call when state is modified.
+     * @private
+     * @type {?HungryGames~GuildGame~StateUpdateCB}
+     * @default
+     */
+    this._stateUpdateCallback = null;
   }
 
   /**
-   * Current game information.
+   * @description Get a serializable version of this class instance. Strips all
+   * private variables, and all functions. Assumes all public variables are
+   * serializable if they aren't a function.
    * @public
-   * @type {HungryGames~Game}
-   * @default
+   * @returns {Object} Serializable version of this instance.
    */
-  this.currentGame = new Game(name, includedUsers);
-  /**
-   * Disabled event information. These events are not allowed to show up in the
-   * game.
-   * @public
-   * @type {
-   *   {
-   *     bloodbath: HungryGames~Event[],
-   *     player: HungryGames~Event[],
-   *     weapon: Object.&lt;Array.&lt;HungryGames~Event>>,
-   *     arena: Object.&lt;Array.&lt;HungryGames~Event>>
-   *   }
-   * }
-   * @default {{bloodbath: [], player: [], arena: {}, weapon: {}}}
-   */
-  this.disabledEvents =
-      disabledEvents || {bloodbath: [], player: [], arena: {}, weapon: {}};
+  get serializable() {
+    const all = Object.entries(Object.getOwnPropertyDescriptors(this));
+    const output = {};
+    for (const one of all) {
+      if (typeof one[1].value === 'function' || one[0].startsWith('_')) {
+        continue;
+      }
+      output[one[0]] = one[1].value;
+    }
+    return output;
+  }
 
   /**
-   * The channel id a command was last sent from that affected this guild game.
-   * @public
-   * @type {?string}
-   * @default
+   * @description Callback to fire when game state is about to be modified.
+   * @callback HungryGames~GuildGame~StateUpdateCB
+   * @param {boolean} dayComplete True if this update is after a day has ended,
+   * false if the state is still during a day.
+   * @param {boolean} doSim True if the next day should be simulated and
+   * started.
    */
-  this.channel = null;
-  /**
-   * The id of the user that last sent a command which interacted with this
-   * guild game.
-   * @public
-   * @type {?string}
-   * @default
-   */
-  this.author = null;
 
   /**
-   * The channel id where the game messages are currently being sent in.
+   * @description Add users to teams, and remove excluded users from teams.
+   * Deletes empty teams, and adds teams once all teams have teamSize of
+   * players.
+   *
    * @public
-   * @type {?string}
-   * @default
+   * @returns {?string} Null if success, string if error.
    */
-  this.outputChannel = null;
+  formTeams() {
+    if (this.options.teamSize &lt; 0) this.options.teamSize = 0;
+    if (this.options.teamSize == 0) {
+      this.currentGame.teams = [];
+      return;
+    }
+
+    let corruptTeam = false;
+
+    const teamSize = this.options.teamSize;
+    const numTeams =
+        Math.ceil(this.currentGame.includedUsers.length / teamSize);
+    // If teams already exist, update them. Otherwise, create new teams.
+    if (this.currentGame.teams &amp;&amp; this.currentGame.teams.length > 0) {
+      this.currentGame.teams.forEach((obj) => {
+        obj.players.forEach((p) => {
+          if (typeof p !== 'string' &amp;&amp; typeof p !== 'number') {
+            corruptTeam = true;
+            console.error(
+                '(PreTeamForm) Player in team is invalid: ' + typeof p +
+                ' in team ' + obj.id + ' guild: ' + this.id + ' players: ' +
+                JSON.stringify(obj.players));
+          }
+        });
+      });
+
+      this.currentGame.teams.sort((a, b) => {
+        return a.id - b.id;
+      });
+      const notIncluded = this.currentGame.includedUsers.slice(0);
+      // Remove players from teams if they are no longer included in game.
+      for (let i = 0; i &lt; this.currentGame.teams.length; i++) {
+        const team = this.currentGame.teams[i];
+        team.id = i;
+        for (let j = 0; j &lt; team.players.length; j++) {
+          if (this.currentGame.includedUsers.findIndex((obj) => {
+            return obj.id === team.players[j];
+          }) &lt; 0) {
+            team.players.splice(j, 1);
+            j--;
+          } else {
+            notIncluded.splice(
+                notIncluded.findIndex((obj) => {
+                  return obj.id === team.players[j];
+                }),
+                1);
+          }
+        }
+        if (team.players.length == 0) {
+          this.currentGame.teams.splice(i, 1);
+          i--;
+        }
+      }
+      // Add players who are not on a team, to a team.
+      for (let i = 0; i &lt; notIncluded.length; i++) {
+        let found = false;
+        for (let j = 0; j &lt; this.currentGame.teams.length; j++) {
+          const team = this.currentGame.teams[j];
+          if (team.players.length &lt; teamSize) {
+            team.players.push(notIncluded[i].id);
+            found = true;
+            break;
+          }
+        }
+        if (found) continue;
+        // Add a team if all existing teams are full.
+        this.currentGame.teams[this.currentGame.teams.length] = new Team(
+            this.currentGame.teams.length,
+            'Team ' + (this.currentGame.teams.length + 1), [notIncluded[i].id]);
+      }
+    } else {
+      // Create all teams for players.
+      this.currentGame.teams = [];
+      for (let i = 0; i &lt; numTeams; i++) {
+        this.currentGame.teams[i] = new Team(
+            i, 'Team ' + (i + 1),
+            this.currentGame.includedUsers
+                .slice(i * teamSize, i * teamSize + teamSize)
+                .map((obj) => {
+                  return obj.id;
+                }));
+      }
+    }
+    // Reset team data.
+    this.currentGame.teams.forEach((obj) => {
+      obj.numAlive = obj.players.length;
+      obj.rank = 1;
+      obj.players.forEach((p) => {
+        if (typeof p !== 'string' &amp;&amp; typeof p !== 'number') {
+          corruptTeam = true;
+          console.error(
+              '(PostTeamForm) Player in team is invalid: ' + typeof p +
+              ' in team ' + obj.id + ' guild: ' + this.id + ' players: ' +
+              JSON.stringify(obj.players));
+        }
+      });
+    });
+
+    if (corruptTeam) {
+      return 'Teams appeared to be corrupted, teams may have been ' +
+          'rearranged.\nThis error has been reported and is being ' +
+          'looked into.';
+    }
+    return null;
+  }
+
 
   /**
-   * Message ID of the message to fetch reactions from for join via react.
-   * @public
-   * @type {?{id: string, channel: string}}
-   * @default
-   */
-  this.reactMessage = null;
-
-  /**
-   * Force a player to have a certain outcome in the current day being
-   * simulated, or the next day that will be simulated. This is acheived by
-   * adding a custom event in which the player will be affected after their
+   * @description Force a player to have a certain outcome in the current day
+   * being simulated, or the next day that will be simulated. This is acheived
+   * by adding a custom event in which the player will be affected after their
    * normal event for the day.
    *
    * @public
-   *
    * @param {string[]} list The array of player IDs of which to affect.
    * @param {string} state The outcome to force the players to have been
    * victims of by the end of the simulated day. ("living", "dead", "wounded",
@@ -224,8 +402,7 @@ function GuildGame(
    * @returns {string} The output message to tell the user of the outcome of the
    * operation.
    */
-  this.forcePlayerState = function(
-      list, state, messages, text, persists = false) {
+  forcePlayerState(list, state, messages, text, persists = false) {
     if (typeof list === 'object') {
       persists = list.persists;
       messages = state;
@@ -294,15 +471,105 @@ function GuildGame(
       }
     });
     return `Player(s) will be ${state} by the end of the day.`;
-  };
+  }
+
+  /**
+   * @description Force this current game to end immediately.
+   * @public
+   */
+  end() {
+    this.currentGame.inProgress = false;
+    this.currentGame.isPaused = false;
+    this.currentGame.ended = true;
+    this.autoPlay = false;
+    this._autoStep = false;
+    clearInterval(this._dayEventInterval);
+    clearTimeout(this._autoPlayTimeout);
+    this._dayEventInterval = null;
+    this._autoPlayTimeout = null;
+  }
+  /**
+   * @description Clear all timeouts and intervals.
+   * @public
+   */
+  clearIntervals() {
+    if (this._dayEventInterval) {
+      clearInterval(this._dayEventInterval);
+      this._dayEventInterval = null;
+    }
+    if (this._autoPlayTimeout) {
+      clearInterval(this._autoPlayTimeout);
+      this._autoPlayTimeout = null;
+    }
+    this._autoStep = false;
+  }
+  /**
+   * @description Create an interval for this guild. Calls the callback every
+   * time the game state is about to be modified. State is updated immediately
+   * after the callback completes. This also sets `_autoStep` to true.
+   * @public
+   * @param {HungryGames~GuildGame~StateUpdateCB} cb Callback to fire on the
+   * interval.
+   */
+  createInterval(cb) {
+    if (typeof cb !== 'function') {
+      throw new Error('Callback must be a function');
+    }
+    if (this._dayEventInterval) {
+      throw new Error(
+          'Attempted to register second listener for existing interval.');
+    }
+    this._autoStep = true;
+    this._stateUpdateCallback = cb;
+    const delay = this.options.disableOutput ? 10 : this.options.delayEvents;
+    this._dayEventInterval = setInterval(this.step, delay);
+  }
+
+  /**
+   * @description Progress to the next game state. Calls `_stateUpdateCallback`
+   * prior to any action, if it's set.
+   * @public
+   */
+  step() {
+    const day = this.currentGame.day;
+    const index = day.state - 2;
+    const dayOver = index >= day.events.length;
+    if (typeof this._stateUpdateCallback === 'function') {
+      this._stateUpdateCallback(dayOver, index &lt; 0);
+    }
+    if (this._autoPlayTimeout) {
+      clearTimeout(this._autoPlayTimeout);
+      this._autoPlayTimeout = null;
+    }
+    if (dayOver) {
+      if (this._dayEventInterval) {
+        clearInterval(this._dayEventInterval);
+        this._dayEventInterval = null;
+      }
+      if (this.autoPlay &amp;&amp; this._autoStep &amp;&amp; !this.currentGame.isPaused) {
+        const delay = this.options.disableOutput ? 10 : this.options.delayDays;
+        this._autoPlayTimeout = setTimeout(this.step, delay);
+      }
+      day.state = 0;
+    } else if (index &lt; 0) {
+      return;
+    } else if (
+      day.events[index].battle &amp;&amp;
+        day.events[index].state &lt; day.events[index].attacks.length) {
+      day.events[index].state++;
+    } else {
+      day.state++;
+    }
+  }
 }
 
 /**
- * Create a GuildGame from data parsed from file. Similar to copy constructor.
+ * @description Create a GuildGame from data parsed from file. Similar to copy
+ * constructor.
  *
  * @public
  * @param {Object} data GuildGame like object.
- * @returns {HungryGames~GuildGame}
+ * @returns {HungryGames~GuildGame} Created GuildGame.
  */
 GuildGame.from = function(data) {
   const game = new GuildGame(
@@ -331,13 +598,13 @@ module.exports = GuildGame;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_twemojiChecker.html">lib/twemojiChecker</a></li></ul><h3>Classes</h3><ul><li><a href="ChatBot.html">ChatBot</a></li><li><a href="CmdScheduling.html">CmdScheduling</a></li><li><a href="CmdScheduling-ScheduledCommand.html">CmdScheduling~ScheduledCommand</a></li><li><a href="Command.html">Command</a></li><li><a href="Command-CommandSetting.html">Command~CommandSetting</a></li><li><a href="Command-SingleCommand.html">Command~SingleCommand</a></li><li><a href="Common.html">Common</a></li><li><a href="Connect4.html">Connect4</a></li><li><a href="Connect4_Game.html">Connect4#Game</a></li><li><a href="Define.html">Define</a></li><li><a href="DevCmds.html">DevCmds</a></li><li><a href="FunTranslators.html">FunTranslators</a></li><li><a href="HGWeb.html">HGWeb</a></li><li><a href="HungryGames.html">HungryGames</a></li><li><a href="HungryGames-ArenaEvent.html">HungryGames~ArenaEvent</a></li><li><a href="HungryGames-Battle.html">HungryGames~Battle</a></li><li><a href="HungryGames-Day.html">HungryGames~Day</a></li><li><a href="HungryGames-Event.html">HungryGames~Event</a></li><li><a href="HungryGames-FinalEvent.html">HungryGames~FinalEvent</a></li><li><a href="HungryGames-ForcedOutcome.html">HungryGames~ForcedOutcome</a></li><li><a href="HungryGames-Game.html">HungryGames~Game</a></li><li><a href="HungryGames-Grammar.html">HungryGames~Grammar</a></li><li><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></li><li><a href="HungryGames-Messages.html">HungryGames~Messages</a></li><li><a href="HungryGames-NPC.html">HungryGames~NPC</a></li><li><a href="HungryGames-OutcomeProbabilities.html">HungryGames~OutcomeProbabilities</a></li><li><a href="HungryGames-Player.html">HungryGames~Player</a></li><li><a href="HungryGames-Simulator.html">HungryGames~Simulator</a></li><li><a href="HungryGames-Team.html">HungryGames~Team</a></li><li><a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a></li><li><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></li><li><a href="Main.html">Main</a></li><li><a href="MainModule.html">MainModule</a></li><li><a href="Music.html">Music</a></li><li><a href="Patreon.html">Patreon</a></li><li><a href="Patreon-toExport.html">Patreon~toExport</a></li><li><a href="Polling.html">Polling</a></li><li><a href="Polling-Poll.html">Polling~Poll</a></li><li><a href="RoleColors.html">RoleColors</a></li><li><a href="RoleManager.html">RoleManager</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="SMLoader.html">SMLoader</a></li><li><a href="SpikeyBot.html">SpikeyBot</a></li><li><a href="Spotify.html">Spotify</a></li><li><a href="SubModule.html">SubModule</a></li><li><a href="TicTacToe.html">TicTacToe</a></li><li><a href="TicTacToe_Game.html">TicTacToe#Game</a></li><li><a href="TTS.html">TTS</a></li><li><a href="Uno.html">Uno</a></li><li><a href="Uno_Card.html">Uno#Card</a></li><li><a href="Uno_Game.html">Uno#Game</a></li><li><a href="WebAccount.html">WebAccount</a></li><li><a href="WebCommands.html">WebCommands</a></li><li><a href="WebProxy.html">WebProxy</a></li><li><a href="WebSettings.html">WebSettings</a></li><li><a href="WebStats.html">WebStats</a></li></ul><h3>Global</h3><ul><li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#attacker">attacker</a></li><li><a href="global.html#author">author</a></li><li><a href="global.html#autoPlay">autoPlay</a></li><li><a href="global.html#channel">channel</a></li><li><a href="global.html#consumable">consumable</a></li><li><a href="global.html#currentGame">currentGame</a></li><li><a href="global.html#customEvents">customEvents</a></li><li><a href="global.html#day">day</a></li><li><a href="global.html#disabledEvents">disabledEvents</a></li><li><a href="global.html#effectUser">effectUser</a></li><li><a href="global.html#ended">ended</a></li><li><a href="global.html#events">events</a></li><li><a href="global.html#excludedNPCs">excludedNPCs</a></li><li><a href="global.html#excludedUsers">excludedUsers</a></li><li><a href="global.html#fetchSize">fetchSize</a></li><li><a href="global.html#fistBoth">fistBoth</a></li><li><a href="global.html#fistLeft">fistLeft</a></li><li><a href="global.html#fistRight">fistRight</a></li><li><a href="global.html#forcedOutcomes">forcedOutcomes</a></li><li><a href="global.html#forcePlayerState">forcePlayerState</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#icons">icons</a></li><li><a href="global.html#id">id</a></li><li><a href="global.html#includedNPCs">includedNPCs</a></li><li><a href="global.html#includedUsers">includedUsers</a></li><li><a href="global.html#inProgress">inProgress</a></li><li><a href="global.html#kill">kill</a></li><li><a href="global.html#killUser">killUser</a></li><li><a href="global.html#list">list</a></li><li><a href="global.html#littleDeathRate">littleDeathRate</a></li><li><a href="global.html#lotsOfDeathRate">lotsOfDeathRate</a></li><li><a href="global.html#mentionString">mentionString</a></li><li><a href="global.html#message">message</a></li><li><a href="global.html#messageFile">messageFile</a></li><li><a href="global.html#messages">messages</a></li><li><a href="global.html#multiEventUserDistribution">multiEventUserDistribution</a></li><li><a href="global.html#name">name</a></li><li><a href="global.html#nothing">nothing</a></li><li><a href="global.html#num">num</a></li><li><a href="global.html#numAlive">numAlive</a></li><li><a href="global.html#numVictim">numVictim</a></li><li><a href="global.html#options">options</a></li><li><a href="global.html#outcomeProbs">outcomeProbs</a></li><li><a href="global.html#outcomes">outcomes</a></li><li><a href="global.html#outputChannel">outputChannel</a></li><li><a href="global.html#persists">persists</a></li><li><a href="global.html#pickAffectedPlayers">pickAffectedPlayers</a></li><li><a href="global.html#pickEvent">pickEvent</a></li><li><a href="global.html#probabilityEvent">probabilityEvent</a></li><li><a href="global.html#reactMessage">reactMessage</a></li><li><a href="global.html#restoreUser">restoreUser</a></li><li><a href="global.html#revive">revive</a></li><li><a href="global.html#reviveUser">reviveUser</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#settings">settings</a></li><li><a href="global.html#shutdown">shutdown</a></li><li><a href="global.html#state">state</a></li><li><a href="global.html#teams">teams</a></li><li><a href="global.html#text">text</a></li><li><a href="global.html#thrive">thrive</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li><li><a href="global.html#url">url</a></li><li><a href="global.html#validateEventNumConstraint">validateEventNumConstraint</a></li><li><a href="global.html#validateEventRequirements">validateEventRequirements</a></li><li><a href="global.html#validateEventTeamConstraint">validateEventTeamConstraint</a></li><li><a href="global.html#validateEventVictorConstraint">validateEventVictorConstraint</a></li><li><a href="global.html#victim">victim</a></li><li><a href="global.html#wound">wound</a></li><li><a href="global.html#woundUser">woundUser</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_twemojiChecker.html">lib/twemojiChecker</a></li></ul><h3>Classes</h3><ul><li><a href="ChatBot.html">ChatBot</a></li><li><a href="CmdScheduling.html">CmdScheduling</a></li><li><a href="CmdScheduling-ScheduledCommand.html">CmdScheduling~ScheduledCommand</a></li><li><a href="Command.html">Command</a></li><li><a href="Command-CommandSetting.html">Command~CommandSetting</a></li><li><a href="Command-SingleCommand.html">Command~SingleCommand</a></li><li><a href="Common.html">Common</a></li><li><a href="Connect4.html">Connect4</a></li><li><a href="Connect4_Game.html">Connect4#Game</a></li><li><a href="DefaultOptions-BooleanOption.html">DefaultOptions~BooleanOption</a></li><li><a href="DefaultOptions-NumberOption.html">DefaultOptions~NumberOption</a></li><li><a href="DefaultOptions-ObjectOption.html">DefaultOptions~ObjectOption</a></li><li><a href="DefaultOptions-SelectOption.html">DefaultOptions~SelectOption</a></li><li><a href="Define.html">Define</a></li><li><a href="DevCmds.html">DevCmds</a></li><li><a href="FunTranslators.html">FunTranslators</a></li><li><a href="HG.html">HG</a></li><li><a href="HGWeb.html">HGWeb</a></li><li><a href="HG-NPC.html">HG~NPC</a></li><li><a href="HungryGames.html">HungryGames</a></li><li><a href="HungryGames-ArenaEvent.html">HungryGames~ArenaEvent</a></li><li><a href="HungryGames-Battle.html">HungryGames~Battle</a></li><li><a href="HungryGames-Day.html">HungryGames~Day</a></li><li><a href="HungryGames-DefaultOptions.html">HungryGames~DefaultOptions</a></li><li><a href="HungryGames-DefaultOptions-Option.html">HungryGames~DefaultOptions~Option</a></li><li><a href="HungryGames-Event.html">HungryGames~Event</a></li><li><a href="HungryGames-FinalEvent.html">HungryGames~FinalEvent</a></li><li><a href="HungryGames-ForcedOutcome.html">HungryGames~ForcedOutcome</a></li><li><a href="HungryGames-Game.html">HungryGames~Game</a></li><li><a href="HungryGames-Grammar.html">HungryGames~Grammar</a></li><li><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></li><li><a href="HungryGames-Messages.html">HungryGames~Messages</a></li><li><a href="HungryGames-OutcomeProbabilities.html">HungryGames~OutcomeProbabilities</a></li><li><a href="HungryGames-Player.html">HungryGames~Player</a></li><li><a href="HungryGames-Simulator.html">HungryGames~Simulator</a></li><li><a href="HungryGames-Team.html">HungryGames~Team</a></li><li><a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a></li><li><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></li><li><a href="Main.html">Main</a></li><li><a href="MainModule.html">MainModule</a></li><li><a href="Music.html">Music</a></li><li><a href="Patreon.html">Patreon</a></li><li><a href="Patreon-toExport.html">Patreon~toExport</a></li><li><a href="Polling.html">Polling</a></li><li><a href="Polling-Poll.html">Polling~Poll</a></li><li><a href="RoleColors.html">RoleColors</a></li><li><a href="RoleManager.html">RoleManager</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="SMLoader.html">SMLoader</a></li><li><a href="SpikeyBot.html">SpikeyBot</a></li><li><a href="Spotify.html">Spotify</a></li><li><a href="SubModule.html">SubModule</a></li><li><a href="TicTacToe.html">TicTacToe</a></li><li><a href="TicTacToe_Game.html">TicTacToe#Game</a></li><li><a href="TTS.html">TTS</a></li><li><a href="Uno.html">Uno</a></li><li><a href="Uno_Card.html">Uno#Card</a></li><li><a href="Uno_Game.html">Uno#Game</a></li><li><a href="WebAccount.html">WebAccount</a></li><li><a href="WebCommands.html">WebCommands</a></li><li><a href="WebProxy.html">WebProxy</a></li><li><a href="WebSettings.html">WebSettings</a></li><li><a href="WebStats.html">WebStats</a></li></ul><h3>Global</h3><ul><li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#attacker">attacker</a></li><li><a href="global.html#consumable">consumable</a></li><li><a href="global.html#effectUser">effectUser</a></li><li><a href="global.html#events">events</a></li><li><a href="global.html#fetchSize">fetchSize</a></li><li><a href="global.html#fistBoth">fistBoth</a></li><li><a href="global.html#fistLeft">fistLeft</a></li><li><a href="global.html#fistRight">fistRight</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#icons">icons</a></li><li><a href="global.html#id">id</a></li><li><a href="global.html#kill">kill</a></li><li><a href="global.html#killUser">killUser</a></li><li><a href="global.html#list">list</a></li><li><a href="global.html#littleDeathRate">littleDeathRate</a></li><li><a href="global.html#lotsOfDeathRate">lotsOfDeathRate</a></li><li><a href="global.html#mentionString">mentionString</a></li><li><a href="global.html#message">message</a></li><li><a href="global.html#messageFile">messageFile</a></li><li><a href="global.html#messages">messages</a></li><li><a href="global.html#multiEventUserDistribution">multiEventUserDistribution</a></li><li><a href="global.html#nothing">nothing</a></li><li><a href="global.html#num">num</a></li><li><a href="global.html#numVictim">numVictim</a></li><li><a href="global.html#outcomeProbs">outcomeProbs</a></li><li><a href="global.html#outcomes">outcomes</a></li><li><a href="global.html#persists">persists</a></li><li><a href="global.html#pickAffectedPlayers">pickAffectedPlayers</a></li><li><a href="global.html#pickEvent">pickEvent</a></li><li><a href="global.html#probabilityEvent">probabilityEvent</a></li><li><a href="global.html#restoreUser">restoreUser</a></li><li><a href="global.html#revive">revive</a></li><li><a href="global.html#reviveUser">reviveUser</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#settings">settings</a></li><li><a href="global.html#shutdown">shutdown</a></li><li><a href="global.html#state">state</a></li><li><a href="global.html#text">text</a></li><li><a href="global.html#thrive">thrive</a></li><li><a href="global.html#tmpRequire">tmpRequire</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li><li><a href="global.html#url">url</a></li><li><a href="global.html#validateEventNumConstraint">validateEventNumConstraint</a></li><li><a href="global.html#validateEventRequirements">validateEventRequirements</a></li><li><a href="global.html#validateEventTeamConstraint">validateEventTeamConstraint</a></li><li><a href="global.html#validateEventVictorConstraint">validateEventVictorConstraint</a></li><li><a href="global.html#victim">victim</a></li><li><a href="global.html#wound">wound</a></li><li><a href="global.html#woundUser">woundUser</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Apr 11 2019 14:21:42 GMT-0700 (Pacific Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Apr 15 2019 16:59:28 GMT-0700 (Pacific Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>

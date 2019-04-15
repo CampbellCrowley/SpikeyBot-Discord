@@ -449,6 +449,16 @@ function SMLoader() {
    *
    *
    *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
    */
   this.reload = function(name, opts, cb) {
     if (typeof cb !== 'function') cb = function() {};

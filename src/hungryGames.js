@@ -831,7 +831,7 @@ function HG() {
     if (typeof id !== 'string' || !NPC.checkID(id)) {
       id = NPC.createID();
     }
-    Player.call(this, id, username, avatarURL);
+    HungryGames.Player.call(this, id, username, avatarURL);
     /**
      * Always true.
      * @public
@@ -856,14 +856,14 @@ function HG() {
    */
   NPC.from = function(data) {
     const npc = new NPC(data.username, data.avatarURL, data.id);
-    Object.assign(npc, Player.from(data));
+    Object.assign(npc, HungryGames.Player.from(data));
     return npc;
   };
   /**
    * Generate a userID for an NPC.
    *
    * @public
-   * @returns {string}
+   * @returns {string} Generated ID.
    */
   NPC.createID = function() {
     let id;
@@ -877,7 +877,7 @@ function HG() {
    *
    * @public
    * @param {string} id The ID to validate.
-   * @returns {boolean}
+   * @returns {boolean} True if ID is a valid ID for an NPC.
    */
   NPC.checkID = function(id) {
     return typeof id === 'string' &&
@@ -909,7 +909,8 @@ function HG() {
           console.error(err);
           return;
         }
-        image.resize(UserIconUrl.fetchSize, UserIconUrl.fetchSize);
+        const fetchSize = HungryGames.UserIconUrl.fetchSize;
+        image.resize(fetchSize, fetchSize);
         image.getBuffer(Jimp.MIME_PNG, (err, buffer) => {
           if (err) {
             self.error('Failed to convert image into buffer: ' + avatar);
@@ -934,23 +935,24 @@ function HG() {
   this.NPC = NPC;
 
   /**
-   * Delay a message to send at the given time in milliseconds since epoch.
+   * @description Delay a message to send at the given time in milliseconds
+   * since epoch.
    *
    * @private
    * @param {Discord~TextChannel} channel The channel to send the message in.
    * @param {
-   *          Discord~StringResolvable|
-   *          Discord~MessageOptions|
-   *          Discord~MessageEmbed|
-   *          Discord~MessageAttachment|
-   *          Discord~MessageAttachment[]
+   * Discord~StringResolvable|
+   * Discord~MessageOptions|
+   * Discord~MessageEmbed|
+   * Discord~MessageAttachment|
+   * Discord~MessageAttachment[]
    * } one The message to send.
    * @param {
-   *          Discord~StringResolvable|
-   *          Discord~MessageOptions|
-   *          Discord~MessageEmbed|
-   *          Discord~MessageAttachment|
-   *          Discord~MessageAttachment[]
+   * Discord~StringResolvable|
+   * Discord~MessageOptions|
+   * Discord~MessageEmbed|
+   * Discord~MessageAttachment|
+   * Discord~MessageAttachment[]
    * } two The message to send.
    * @param {number} time The time to send the message in milliseconds since
    * epoch.
@@ -969,10 +971,12 @@ function HG() {
   }
 
   /**
-   * Returns an object storing all of the default events for the games.
+   * @description Returns an object storing all of the default events for the
+   * games.
    *
    * @public
-   * @returns {{bloodbath: Object, player: Object, arena: Object}}
+   * @returns {{bloodbath: Object, player: Object, arena: Object}} Object
+   * storing default events.
    */
   this.getDefaultEvents = function() {
     return {
@@ -983,21 +987,21 @@ function HG() {
     };
   };
   /**
-   * Returns the object storing all default {@link HungryGames~Battle}s parsed
-   * from file.
+   * @description Returns the object storing all default {@link
+   * HungryGames~Battle}s parsed from file.
    *
    * @public
-   * @returns {HungryGames~Battle[]}
+   * @returns {HungryGames~Battle[]} Array of all default battle events.
    */
   this.getDefaultBattles = function() {
     return battles;
   };
   /**
-   * Returns the object storing all default {@link HungryGames~Weapon}s parsed
-   * from file.
+   * @description Returns the object storing all default {@link
+   * HungryGames~Weapon}s parsed from file.
    *
    * @public
-   * @returns {HungryGames~Weapon[]}
+   * @returns {HungryGames~Weapon[]} Array of all default weapons.
    */
   this.getDefaultWeapons = function() {
     return weapons;
@@ -2754,7 +2758,7 @@ function HG() {
             /* if (!onlyError) {
               response += obj.username + ' removed from included players.\n';
             } */
-            formTeams(id);
+            hg.getGame(id).formTeams(id);
           } else if (!hg.getGame(id).options.includeBots && obj.bot) {
             // Bots are already excluded.
           } else {
@@ -2953,7 +2957,7 @@ function HG() {
               new NPC(obj.name, obj.avatarURL, obj.id));
         } else {
           hg.getGame(id).currentGame.includedUsers.push(
-              new Player(
+              new HungryGames.Player(
                   obj.id, obj.username,
                   obj.avatarURL || obj.displayAvatarURL({format: 'png'}),
                   obj.nickname));
@@ -2961,7 +2965,7 @@ function HG() {
         /* if (!onlyError) {
           response += obj.username + ' added to included players.\n';
         } */
-        formTeams(id);
+        hg.getGame(id).formTeams(id);
       } else {
         if (!onlyError) {
           response += obj.username + ' is already included.\n';
@@ -3000,16 +3004,18 @@ function HG() {
       const numUsers = iUsers.length;
       if (hg.getGame(id).options.teamSize > 0) {
         iUsers.sort(function(a, b) {
-          const aTeam = hg.getGame(id).currentGame.teams.findIndex(function(team) {
-            return team.players.findIndex(function(player) {
-              return player == a.id;
-            }) > -1;
-          });
-          const bTeam = hg.getGame(id).currentGame.teams.findIndex(function(team) {
-            return team.players.findIndex(function(player) {
-              return player == b.id;
-            }) > -1;
-          });
+          const aTeam =
+              hg.getGame(id).currentGame.teams.findIndex(function(team) {
+                return team.players.findIndex(function(player) {
+                  return player == a.id;
+                }) > -1;
+              });
+          const bTeam =
+              hg.getGame(id).currentGame.teams.findIndex(function(team) {
+                return team.players.findIndex(function(player) {
+                  return player == b.id;
+                }) > -1;
+              });
           if (aTeam == bTeam) {
             return a.id - b.id;
           } else {
@@ -3453,7 +3459,7 @@ function HG() {
       case 'reset':
         if (!silent) self.common.reply(msg, 'Resetting ALL teams!');
         hg.getGame(id).currentGame.teams = [];
-        formTeams(id);
+        hg.getGame(id).formTeams(id);
         break;
       case 'randomize':
       case 'shuffle':
@@ -3540,7 +3546,7 @@ function HG() {
           const current = hg.getGame(gId).currentGame;
           teamD =
               current.teams[current.teams.push(
-                  new Team(
+                  new HungryGames.Team(
                       current.teams.length,
                       'Team ' + (current.teams.length + 1), [])) -
                             1];
@@ -3671,7 +3677,7 @@ function HG() {
     }
     if (teamId2 >= hg.getGame(id).currentGame.teams.length) {
       hg.getGame(id).currentGame.teams.push(
-          new Team(
+          new HungryGames.Team(
               hg.getGame(id).currentGame.teams.length,
               'Team ' + (hg.getGame(id).currentGame.teams.length + 1), []));
       teamId2 = hg.getGame(id).currentGame.teams.length - 1;
@@ -3682,7 +3688,8 @@ function HG() {
             hg.getGame(id).currentGame.teams[teamId2].name);
 
     hg.getGame(id).currentGame.teams[teamId2].players.push(
-        hg.getGame(id).currentGame.teams[teamId1].players.splice(playerId1, 1)[0]);
+        hg.getGame(id).currentGame.teams[teamId1].players.splice(
+            playerId1, 1)[0]);
 
     if (hg.getGame(id).currentGame.teams[teamId1].players.length == 0) {
       hg.getGame(id).currentGame.teams.splice(teamId1, 1);
@@ -3965,7 +3972,7 @@ function HG() {
                       .send(
                           '`Event created!`\n' +
                           formatEventString(
-                              new Event(
+                              new HungryGames.Event(
                                   message, numVictim, numAttacker,
                                   victimOutcome, attackerOutcome, victimKiller,
                                   attackerKiller)) +
@@ -4030,7 +4037,7 @@ function HG() {
     if (!hg.getGame(id) || !hg.getGame(id).customEvents) {
       return 'Invalid ID or no game.';
     }
-    const newEvent = new Event(
+    const newEvent = new HungryGames.Event(
         message, numVictim, numAttacker, victimOutcome, attackerOutcome,
         victimKiller, attackerKiller);
     if (vWeapon) {
@@ -4059,7 +4066,8 @@ function HG() {
       return 'Event must have a message.';
     }
     for (let i = 0; i < hg.getGame(id).customEvents[type].length; i++) {
-      if (Event.eventsEqual(event, hg.getGame(id).customEvents[type][i])) {
+      if (HungryGames.Event.equal(
+          event, hg.getGame(id).customEvents[type][i])) {
         return 'Event already exists!';
       }
     }
@@ -4106,16 +4114,17 @@ function HG() {
         for (let i = 0; i < data.outcomes.length; i++) {
           let exists = false;
           const dEl = data.outcomes[i];
-          for (let j = 0; j < hg.getGame(id).customEvents[type][name].outcomes.length;
-            j++) {
+          for (let j = 0;
+            j < hg.getGame(id).customEvents[type][name].outcomes.length; j++) {
             const el = hg.getGame(id).customEvents[type][name].outcomes[j];
-            if (Event.eventsEqual(el, dEl)) {
+            if (HungryGames.Event.eventsEqual(el, dEl)) {
               exists = true;
               break;
             }
           }
           if (exists) continue;
-          hg.getGame(id).customEvents[type][name].outcomes.push(data.outcomes[i]);
+          hg.getGame(id).customEvents[type][name].outcomes.push(
+              data.outcomes[i]);
         }
       } else {
         hg.getGame(id).customEvents[type][name] = data;
@@ -4172,7 +4181,7 @@ function HG() {
         let one = match.outcomes[i];
         for (let j = 0; j < search.outcomes.length; j++) {
           const two = search.outcomes[j];
-          if (Event.eventsEqual(one, two)) {
+          if (HungryGames.Event.eventsEqual(one, two)) {
             if (data.outcomes && data.outcomes[j]) {
               one = data.outcomes[j];
             } else {
@@ -4191,7 +4200,8 @@ function HG() {
       let match = hg.getGame(id).customEvents[type][name];
       if (!match) return 'Failed to find weapon to edit.';
       if (newName) {
-        match = hg.getGame(id).customEvents[type][newName] = Object.assign({}, match);
+        match = hg.getGame(id).customEvents[type][newName] =
+            Object.assign({}, match);
         delete hg.getGame(id).customEvents[type][name];
       }
       if (!search) return null;
@@ -4204,7 +4214,8 @@ function HG() {
       if (!search.outcomes || search.outcomes.length == 0) return null;
       for (let i = 0; i < search.outcomes.length; i++) {
         for (let j = 0; j < match.outcomes.length; j++) {
-          if (Event.eventsEqual(search.outcomes[i], match.outcomes[j])) {
+          if (HungryGames.Event.eventsEqual(
+              search.outcomes[i], match.outcomes[j])) {
             if (!data.outcomes || !data.outcomes[i]) {
               match.outcomes.splice(j, 1);
             } else {
@@ -4240,7 +4251,7 @@ function HG() {
     }
     const list = hg.getGame(id).customEvents[type];
     for (let i = 0; i < list.length; i++) {
-      if (Event.eventsEqual(list[i], event)) {
+      if (HungryGames.Event.eventsEqual(list[i], event)) {
         list.splice(i, 1);
         return null;
       }
@@ -4335,7 +4346,7 @@ function HG() {
     let isDisabled = false;
     let index;
     for (let i = 0; i < allDisabled.length; i++) {
-      if (Event.eventsEqual(allDisabled[i], event)) {
+      if (HungryGames.Event.eventsEqual(allDisabled[i], event)) {
         if (typeof value === 'undefined') value = true;
         if (value) isValid = true;
         isDisabled = true;
@@ -4352,7 +4363,7 @@ function HG() {
     if (!value) {
       isValid = false;
       for (let i = 0; i < allEvents.length; i++) {
-        if (Event.eventsEqual(allEvents[i], event)) {
+        if (HungryGames.Event.eventsEqual(allEvents[i], event)) {
           isValid = true;
           break;
         }
@@ -4559,26 +4570,26 @@ function HG() {
     for (let i = 0; cnt < 4; i++) {
       const nextUser = users[i % users.length];
       if (typeof nextUser === 'undefined') continue;
-      players.push(Player.from(nextUser.user));
+      players.push(HungryGames.Player.from(nextUser.user));
       cnt++;
     }
     try {
-      const single = Event
+      const single = HungryGames.Event
           .finalize(
               msg.text, players.slice(0), 1, 1, 'nothing',
               'nothing', hg.getGame(msg.guild.id))
           .message;
-      const pluralOne = Event
+      const pluralOne = HungryGames.Event
           .finalize(
               msg.text, players.slice(0), 2, 1, 'nothing',
               'nothing', hg.getGame(msg.guild.id))
           .message;
-      const pluralTwo = Event
+      const pluralTwo = HungryGames.Event
           .finalize(
               msg.text, players.slice(0), 1, 2, 'nothing',
               'nothing', hg.getGame(msg.guild.id))
           .message;
-      const pluralBoth = Event
+      const pluralBoth = HungryGames.Event
           .finalize(
               msg.text, players.slice(0), 2, 2, 'nothing',
               'nothing', hg.getGame(msg.guild.id))
@@ -4654,7 +4665,8 @@ function HG() {
                         'one.');
                 msg_.delete().catch(() => {});
               } else {
-                const removed = hg.getGame(id).customEvents.player.splice(num, 1)[0];
+                const removed =
+                    hg.getGame(id).customEvents.player.splice(num, 1)[0];
                 self.common.reply(
                     msg, 'Removed event.', formatEventString(removed, true));
                 msg_.delete().catch(() => {});
@@ -4734,18 +4746,21 @@ function HG() {
         numCustomEvents = hg.getGame(id).customEvents.player.length;
       }
       events.push(
-          new Event(emoji.arrow_up + 'Custom | Default' + emoji.arrow_down));
+          new HungryGames.Event(
+              emoji.arrow_up + 'Custom | Default' + emoji.arrow_down));
       events = events.concat(JSON.parse(JSON.stringify(defaultPlayerEvents)));
       title = 'Player';
       fetchStats(events);
       embed.setColor([0, 255, 0]);
     } else if (eventType == 'bloodbath') {
       if (hg.getGame(id) && hg.getGame(id).customEvents.bloodbath) {
-        events = JSON.parse(JSON.stringify(hg.getGame(id).customEvents.bloodbath));
+        events =
+            JSON.parse(JSON.stringify(hg.getGame(id).customEvents.bloodbath));
         numCustomEvents = hg.getGame(id).customEvents.bloodbath.length;
       }
       events.push(
-          new Event(emoji.arrow_up + 'Custom | Default' + emoji.arrow_down));
+          new HungryGames.Event(
+              emoji.arrow_up + 'Custom | Default' + emoji.arrow_down));
       events =
           events.concat(JSON.parse(JSON.stringify(defaultBloodbathEvents)));
       title = 'Bloodbath';
@@ -4760,7 +4775,8 @@ function HG() {
         page = 1;
       }
       events.push(
-          new Event(emoji.arrow_up + 'Custom | Default' + emoji.arrow_down));
+          new HungryGames.Event(
+              emoji.arrow_up + 'Custom | Default' + emoji.arrow_down));
       events = events.concat(JSON.parse(JSON.stringify(defaultArenaEvents)));
 
       events = events.map(function(obj, i) {
@@ -4782,7 +4798,7 @@ function HG() {
                   })
                   .join('\n');
 
-          return new Event(eventMessage);
+          return new HungryGames.Event(eventMessage);
         } else {
           obj.message = '**___' + obj.message + '___**';
           return obj;
@@ -5135,7 +5151,7 @@ function HG() {
      *
      * @private
      *
-     * @param {http.IncomingMessage} incoming
+     * @param {http.IncomingMessage} incoming Response object.
      */
     function onIncoming(incoming) {
       if (incoming.statusCode != 200 ) {

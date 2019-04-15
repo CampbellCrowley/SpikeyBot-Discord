@@ -34,19 +34,18 @@ const http = require('http');
 const https = require('https');
 const crypto = require('crypto');
 const mkdirp = require('mkdirp'); // mkdir -p
-const rimraf = require('rimraf'); // rm -rf
 const FuzzySearch = require('fuzzy-search');
-require('./subModule.js')(HungryGames);  // Extends the SubModule class.
+require('./subModule.js')(HG);  // Extends the SubModule class.
 
 /**
- * @classdesc Hunger Games simulator.
+ * @classdesc Hunger Games simulator subModule.
  * @class
  * @augments SubModule
  * @listens Discord~Client#guildDelete
  * @listens Discord~Client#channelDelete
  * @listens Command#hg
  */
-function HungryGames() {
+function HG() {
   const self = this;
 
   /**
@@ -61,42 +60,10 @@ function HungryGames() {
   this.myName = 'HG';
   this.postPrefix = 'hg ';
 
-  /**
-   * Wrapper for normal `require()` but also deletes cache reference to object
-   * before requiring. This forces the object to be updated in the future.
-   *
-   * @private
-   * @param {string} name Name of module to require.
-   * @returns {Object} The required module.
-   */
-  function tmpRequire(name) {
-    delete require.cache[require.resolve(name)];
-    return require(name);
-  }
-
-  /* eslint-disable no-unused-vars */
-  const FinalEvent = tmpRequire('./hg/FinalEvent.js');
-  const ArenaEvent = tmpRequire('./hg/ArenaEvent.js');
-  const WeaponEvent = tmpRequire('./hg/WeaponEvent.js');
-  const Battle = tmpRequire('./hg/Battle.js');
-  const OutcomeProbabilities = tmpRequire('./hg/OutcomeProbabilities.js');
-  const Day = tmpRequire('./hg/Day.js');
-  /* eslint-enable no-unused-vars */
-  const Messages = tmpRequire('./hg/Messages.js');
-  const UserIconUrl = tmpRequire('./hg/UserIconUrl.js');
-  const Player = tmpRequire('./hg/Player.js');
-  const Team = tmpRequire('./hg/Team.js');
-  const Game = tmpRequire('./hg/Game.js');
-  const Event = tmpRequire('./hg/Event.js');
-  const GuildGame = tmpRequire('./hg/GuildGame.js');
-  const Simulator = tmpRequire('./hg/Simulator.js');
-
-  /**
-   * Current {@link HungryGames~Messages} instance.
-   * @public
-   * @type {HungryGames~Messages}
-   */
-  this.messages = new Messages();
+  const hgPath = './hg/HungryGames.js';
+  delete require.cache[require.resolve(hgPath)];
+  const HungryGames = require(hgPath);
+  const hg = new HungryGames(self);
 
   /**
    * The maximum number of bytes allowed to be received from a client in an
@@ -122,34 +89,6 @@ function HungryGames() {
     'hg:customize_stats',
     'hg:personal_weapon',
   ];
-  /**
-   * The file path to save current state for a specific guild relative to
-   * Common~guildSaveDir.
-   * @see {@link Common~guildSaveDir}
-   * @see {@link HungryGames~games}
-   * @see {@link HungryGames~saveFileDir}
-   * @see {@link HungryGames~hgSaveDir}
-   *
-   * @private
-   * @type {string}
-   * @constant
-   * @default
-   */
-  const saveFile = 'game.json';
-  /**
-   * The file directory for finding saved data related to the hungry games data
-   * of individual guilds.
-   * @see {@link Common~guildSaveDir}
-   * @see {@link HungryGames~games}
-   * @see {@link HungryGames~saveFile}
-   * @see {@link HungryGames~saveFileDir}
-   *
-   * @private
-   * @type {string}
-   * @constant
-   * @default
-   */
-  const hgSaveDir = '/hg/';
   /**
    * The file path to read default events.
    * @see {@link HungryGames~defaultPlayerEvents}
@@ -183,7 +122,6 @@ function HungryGames() {
    */
   const weaponsFile = './save/hgWeapons.json';
 
-
   /**
    * Number of events to show on a single page of events.
    *
@@ -205,25 +143,6 @@ function HungryGames() {
   const maxReactAwaitTime = 5 * 1000 * 60;  // 5 Minutes
 
   /**
-   * Stores the guilds we have looked for their data recently and the timestamp
-   * at which we looked. Used to reduce filesystem requests and blocking.
-   *
-   * @private
-   * @type {Object.&lt;number>}
-   */
-  const findTimestamps = {};
-  /**
-   * The delay after failing to find a guild's data to look for it again.
-   *
-   * @private
-   * @type {number}
-   * @constant
-   * @default 15 Seconds
-   */
-  const findDelay = 15000;
-
-
-  /**
    * Regex to match all URLs in a string.
    *
    * @private
@@ -240,237 +159,12 @@ function HungryGames() {
    * Default options for a game.
    *
    * @private
-   * @type {Object.&lt;{
-   *     value: string|number|boolean|Object,
-   *     values: ?string[],
-   *     range: ?{min:number, max:number},
-   *     comment: string,
-   *     category: string
-   *   }>}
+   * @type {HungryGames~DefaultOptions}
    * @constant
    */
-  let defaultOptions = {
-    bloodbathOutcomeProbs: {
-      value: {kill: 30, wound: 6, thrive: 8, revive: 0, nothing: 56},
-      comment:
-          'Relative probabilities of choosing an event with each outcome.' +
-          ' This is for the bloodbath events.',
-      category: 'probabilities',
-    },
-    playerOutcomeProbs: {
-      value: {kill: 22, wound: 4, thrive: 8, revive: 6, nothing: 60},
-      comment:
-          'Relative probabilities of choosing an event with each outcome.' +
-          ' This is for normal daily events.',
-      category: 'probabilities',
-    },
-    arenaOutcomeProbs: {
-      value: {kill: 64, wound: 10, thrive: 5, revive: 6, nothing: 15},
-      comment:
-          'Relative Probabilities of choosing an event with each outcome.' +
-          ' This is for the special arena events.',
-      category: 'probabilities',
-    },
-    arenaEvents: {
-      value: true,
-      comment:
-          'Are arena events possible. (Events like wolf mutts, or a volcano ' +
-          'erupting.)',
-      category: 'probabilities',
-    },
-    includeBots: {
-      value: false,
-      comment: 'Should bots be included in the games. If this is false, bots ' +
-          'cannot be added manually.',
-      category: 'other',
-    },
-    excludeNewUsers: {
-      value: false,
-      comment: 'Should new users who join your server be excluded from the ' +
-          'games by default. True will add all new users to the blacklist, ' +
-          'false will put all new users into the next game automatically.',
-      category: 'other',
-    },
-    allowNoVictors: {
-      value: false,
-      comment:
-          'Should it be possible to end a game without any winners. If true, ' +
-          'it is possible for every player to die, causing the game to end ' +
-          'with everyone dead. False forces at least one winner.',
-      category: 'features',
-    },
-    bleedDays: {
-      value: 2,
-      comment: 'Number of days a user can bleed before they can die.',
-      category: 'other',
-    },
-    battleHealth: {
-      value: 5,
-      ranve: {min: 1, max: 10},
-      comment: 'The amount of health each user gets for a battle.',
-      category: 'other',
-    },
-    teamSize: {
-      value: 0,
-      comment: 'Maximum size of teams when automatically forming teams. 0 to ' +
-          'disable teams',
-      category: 'other',
-    },
-    teammatesCollaborate: {
-      values: ['disabled', 'always', 'untilend'],
-      value: 'always',
-      comment: 'Will teammates work together. If disabled, teammates can kill' +
-          ' eachother, and there will only be 1 victor. If enabled, teammates' +
-          ' cannot kill eachother, and the game ends when one TEAM is ' +
-          'remaining, not one player. Untilend means teammates work together ' +
-          'until the end of the game, this means only there will be only 1 ' +
-          'victor.',
-      category: 'features',
-    },
-    useEnemyWeapon: {
-      value: false,
-      comment:
-          'This will allow the attacker in an event to use the victim\'s ' +
-          'weapon against them.',
-      category: 'features',
-    },
-    mentionVictor: {
-      value: false,
-      comment:
-          'Should the victor of the game (can be team), be tagged/mentioned ' +
-          'so they get notified?',
-      category: 'features',
-    },
-    mentionAll: {
-      values: ['disabled', 'all', 'death'],
-      value: 'disabled',
-      comment:
-          'Should a user be mentioned every time something happens to them ' +
-          'in the game? (can be disabled, for all events, or for when the ' +
-          'user dies)',
-      category: 'features',
-    },
-    mentionEveryoneAtStart: {
-      value: false,
-      comment: 'Should @everyone be mentioned when the game is started?',
-      category: 'features',
-    },
-    useNicknames: {
-      value: false,
-      comment: 'Should we use user\'s custom server nicknames instead of ' +
-          'their account username? Names only change when a new game is ' +
-          'created.',
-      category: 'features',
-    },
-    delayEvents: {
-      value: 3500,
-      range: {min: 2500, max: 30000},
-      time: true,
-      comment: 'Delay in milliseconds between each event being printed.',
-      category: 'other',
-    },
-    delayDays: {
-      value: 7000,
-      range: {min: 2500, max: 129600000},  // 1.5 days
-      time: true,
-      comment: 'Delay in milliseconds between each day being printed.',
-      category: 'other',
-    },
-    probabilityOfArenaEvent: {
-      value: 0.25,
-      range: {min: 0, max: 1},
-      percent: true,
-      comment: 'Probability each day that an arena event will happen.',
-      category: 'probabilities',
-    },
-    probabilityOfBleedToDeath: {
-      value: 0.5,
-      range: {min: 0, max: 1},
-      percent: true,
-      comment: 'Probability that after bleedDays a player will die. If they ' +
-          'don\'t die, they will heal back to normal.',
-      category: 'probabilities',
-    },
-    probabilityOfBattle: {
-      value: 0.05,
-      range: {min: 0, max: 1},
-      percent: true,
-      comment:
-          'Probability of an event being replaced by a battle between two ' +
-          'players.',
-      category: 'probabilities',
-    },
-    probabilityOfUseWeapon: {
-      value: 0.75,
-      range: {min: 0, max: 1},
-      percent: true,
-      comment:
-          'Probability of each player using their weapon each day if they ' +
-          'have one.',
-      category: 'probabilities',
-    },
-    eventAvatarSizes: {
-      value: {avatar: 64, underline: 4, gap: 4},
-      range: {min: 0, max: 512},
-      comment:
-          'The number of pixels each player\'s avatar will be tall and wide, ' +
-          'the underline status height, and the gap between each avatar. This' +
-          ' is for all normal events and arena event messages.',
-      category: 'other',
-    },
-    battleAvatarSizes: {
-      value: {avatar: 32, underline: 4, gap: 4},
-      range: {min: 0, max: 512},
-      comment:
-          'The number of pixels each player\'s avatar will be tall and wide, ' +
-          'the underline status height, and the gap between each avatar. This' +
-          ' is for each battle turn.',
-      category: 'other',
-    },
-    victorAvatarSizes: {
-      value: {avatar: 80, underline: 4, gap: 4},
-      range: {min: 0, max: 512},
-      comment:
-          'The number of pixels each player\'s avatar will be tall and wide, ' +
-          'the underline status height, and the gap between each avatar. This' +
-          ' is when announcing the winners of the game.',
-      category: 'other',
-    },
-    numDaysShowDeath: {
-      value: -1,
-      range: {min: -1, max: 100},
-      comment:
-          'The number of days after a player has died to show them as dead in' +
-          ' the status list after each day. -1 will always show dead players.' +
-          ' 0 will never show dead players. 1 will only show them for the day' +
-          ' they died. 2 will show them for 2 days.',
-      category: 'other',
-    },
-    showLivingPlayers: {
-      value: true,
-      comment:
-          'Include the living players in the status updates. Instead of only ' +
-          'wounded or dead players.',
-      category: 'other',
-    },
-    customEventWeight: {
-      value: 2,
-      range: {min: 0, max: 1000},
-      comment:
-          'The relative weight of custom events. 2 means custom events are ' +
-          'twice as likely to be chosen.',
-      category: 'probabilities',
-    },
-    disableOutput: {
-      value: false,
-      comment: 'Debugging purposes only. I mean, you can enable it, but it ma' +
-          'kes the games really boring. Up to you ¯\\_(ツ)_/¯',
-      category: 'other',
-    },
-  };
-  defaultOptions = deepFreeze(defaultOptions);
+  const defaultOptions = hg.defaultOptions;
 
-  const defaultOptSearcher = new FuzzySearch(Object.keys(defaultOptions));
+  const defaultOptSearcher = new FuzzySearch(defaultOptions.keys);
   let cmdSearcher;
   /**
    * Default options for a game.
@@ -562,17 +256,6 @@ function HungryGames() {
   const alph = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
   /**
-   * All currently tracked games. Mapped by guild ID. In most cases you should
-   * NOT reference this directly. Use {@link HungryGames~find} to get the game
-   * object for a guild.
-   * @see {@link HungryGames~find}
-   *
-   * @private
-   * @type {Object.&lt;HungryGames~GuildGame>}
-   * @default
-   */
-  const games = {};
-  /**
    * All attacks and outcomes for battles.
    * @see {@link HungryGames~battleFile}
    *
@@ -594,15 +277,6 @@ function HungryGames() {
    * @default
    */
   const dayEventIntervals = {};
-  /**
-   * The timeout to continue autoplaying after the day ends. Used for cancelling
-   * if user ends the game between days.
-   *
-   * @private
-   * @type {Object.&lt;number>}
-   * @default
-   */
-  const autoPlayTimeout = {};
   /**
    * Storage of battle messages to edit the content of on the next update.
    *
@@ -678,7 +352,7 @@ function HungryGames() {
   const eventHandlers = {};
 
   /**
-   * Parse all default events from file.
+   * @description Parse all default events from file.
    *
    * @private
    */
@@ -691,6 +365,9 @@ function HungryGames() {
           defaultBloodbathEvents = deepFreeze(parsed['bloodbath']);
           defaultPlayerEvents = deepFreeze(parsed['player']);
           defaultArenaEvents = deepFreeze(parsed['arena']);
+          hg.setDefaultBloodbathEvents(defaultBloodbathEvents);
+          hg.setDefaultPlayerEvents(defaultPlayerEvents);
+          hg.setDefaultArenaEvents(defaultArenaEvents);
         }
       } catch (err) {
         console.log(err);
@@ -709,7 +386,7 @@ function HungryGames() {
   });
 
   /**
-   * Parse all battles from file.
+   * @description Parse all battles from file.
    *
    * @private
    */
@@ -720,6 +397,7 @@ function HungryGames() {
         const parsed = JSON.parse(data);
         if (parsed) {
           battles = deepFreeze(parsed);
+          hg.setDefaultBattles(battles);
         }
       } catch (err) {
         console.log(err);
@@ -737,7 +415,7 @@ function HungryGames() {
     updateBattles();
   });
   /**
-   * Parse all weapons events from file.
+   * @description Parse all weapons events from file.
    *
    * @private
    */
@@ -748,6 +426,7 @@ function HungryGames() {
         const parsed = JSON.parse(data);
         if (parsed) {
           weapons = deepFreeze(parsed);
+          hg.setDefaultWeapons(weapons);
         }
       } catch (err) {
         console.log(err);
@@ -766,7 +445,7 @@ function HungryGames() {
   });
 
   /**
-   * Reply to help on a server.
+   * @description Reply to help on a server.
    *
    * @private
    * @type {string}
@@ -774,7 +453,7 @@ function HungryGames() {
    */
   const helpmessagereply = 'I sent you a DM with commands!';
   /**
-   * Reply if unable to send message via DM.
+   * @description Reply if unable to send message via DM.
    *
    * @private
    * @type {string}
@@ -783,7 +462,8 @@ function HungryGames() {
   const blockedmessage =
       'I couldn\'t send you a message, you probably blocked me :(';
   /**
-   * The object that stores all data to be formatted into the help message.
+   * @description The object that stores all data to be formatted into the help
+   * message.
    *
    * @private
    * @constant
@@ -793,7 +473,7 @@ function HungryGames() {
   this.helpMessage = 'Module loading...';
 
   /**
-   * Set all help messages once we know what prefix to use.
+   * @description Set all help messages once we know what prefix to use.
    *
    * @private
    */
@@ -976,7 +656,7 @@ function HungryGames() {
     self.client.on('channelDelete', onChannelDelete);
 
     self.client.guilds.forEach((g) => {
-      const game = find(g.id);
+      const game = hg.getGame(g.id);
       if (!game) return;
 
       if (game.currentGame &amp;&amp; game.currentGame.day.state > 1 &amp;&amp;
@@ -984,8 +664,8 @@ function HungryGames() {
           !game.currentGame.isPaused) {
         self.nextDay(game.author, g.id, game.outputChannel);
       } else {
-        delete games[g.id];
-        delete findTimestamps[g.id];
+        delete hg._games[g.id];
+        delete hg._findTimestamps[g.id];
       }
     });
 
@@ -997,14 +677,6 @@ function HungryGames() {
 
   /** @inheritdoc */
   this.shutdown = function() {
-    Object.entries(autoPlayTimeout).forEach((el) => {
-      self.client.clearTimeout(el[1]);
-      delete autoPlayTimeout[el[0]];
-    });
-    Object.entries(dayEventIntervals).forEach((el) => {
-      self.client.clearInterval(el[1]);
-      delete dayEventIntervals[el[0]];
-    });
     self.command.deleteEvent('hg');
     self.client.removeListener('messageUpdate', handleMessageEdit);
     self.client.removeListener('guildDelete', onGuildDelete);
@@ -1017,10 +689,11 @@ function HungryGames() {
 
     Object.keys(eventHandlers).forEach((el) => delete eventHandlers[el]);
 
-    self.messages.shutdown();
     fs.unwatchFile(eventFile);
     fs.unwatchFile(battleFile);
     fs.unwatchFile(weaponsFile);
+
+    hg.shutdown();
   };
 
   /** @inheritdoc */
@@ -1031,20 +704,8 @@ function HungryGames() {
   };
 
   /**
-   * Returns a reference to the current games object for a given guild.
-   *
-   * @public
-   * @param {string} id The guild id to get the data for.
-   * @returns {?HungryGames~GuildGame} The current object storing all data about
-   * game in a guild.
-   */
-  this.getGame = function(id) {
-    return find(id);
-  };
-
-  /**
-   * Handler for when the create event message is edited and we should update
-   * our message with the updated event.
+   * @description Handler for when the create event message is edited and we
+   * should update our message with the updated event.
    *
    * @private
    * @param {Discord~Message} oldMsg The message before being edited.
@@ -1061,23 +722,23 @@ function HungryGames() {
   }
 
   /**
-   * Handle being removed from a guild.
+   * @description Handle being removed from a guild.
    *
    * @private
    * @param {Discord~Guild} guild The guild that we just left.
    * @listens Discord~Client#guildDelete
    */
   function onGuildDelete(guild) {
-    if (!find(guild.id) || !find(guild.id).currentGame ||
-        !find(guild.id).currentGame.inProgress) {
+    if (!hg.getGame(guild.id) || !hg.getGame(guild.id).currentGame ||
+        !hg.getGame(guild.id).currentGame.inProgress) {
       return;
     }
     self.endGame(null, guild.id, true);
   }
 
   /**
-   * Handle a channel being deleted. Cleans up games that may be in progress in
-   * these channels.
+   * @description Handle a channel being deleted. Cleans up games that may be in
+   * progress in these channels.
    *
    * @private
    * @param {Discord~DMChannel|Discord~GuildChannel} channel The channel that
@@ -1086,7 +747,7 @@ function HungryGames() {
    */
   function onChannelDelete(channel) {
     if (!channel.guild) return;
-    if (!games[channel.guild.id]) return;
+    if (!hg._games[channel.guild.id]) return;
     self.pauseGame(channel.guild.id);
   }
 
@@ -1104,16 +765,16 @@ function HungryGames() {
   function mkCmd(cb) {
     return function(msg) {
       const id = msg.guild.id;
-      if (find(id)) {
+      if (hg.getGame(id)) {
         let text = msg.text.trim().toLocaleLowerCase();
         if (text.length > 0) {
-          find(id).channel = msg.channel.id;
-          find(id).author = msg.author.id;
-          if (find(id).includedNPCs) {
-            find(id).includedNPCs.sort((a, b) => {
+          hg.getGame(id).channel = msg.channel.id;
+          hg.getGame(id).author = msg.author.id;
+          if (hg.getGame(id).includedNPCs) {
+            hg.getGame(id).includedNPCs.sort((a, b) => {
               return b.username.length - a.username.length;
             });
-            find(id).includedNPCs.forEach((el) => {
+            hg.getGame(id).includedNPCs.forEach((el) => {
               if (text.indexOf(el.username.toLocaleLowerCase()) > -1) {
                 // text = text.replace(el.username.toLocaleLowerCase(), '');
                 msg.softMentions.users.add(el);
@@ -1123,11 +784,11 @@ function HungryGames() {
               }
             });
           }
-          if (find(id).excludedNPCs) {
-            find(id).excludedNPCs.sort((a, b) => {
+          if (hg.getGame(id).excludedNPCs) {
+            hg.getGame(id).excludedNPCs.sort((a, b) => {
               return b.username.length - a.username.length;
             });
-            find(id).excludedNPCs.forEach((el) => {
+            hg.getGame(id).excludedNPCs.forEach((el) => {
               if (text.indexOf(el.username.toLocaleLowerCase()) > -1) {
                 // text = text.replace(el.username.toLocaleLowerCase(), '');
                 msg.softMentions.users.add(el);
@@ -1198,7 +859,7 @@ function HungryGames() {
     if (typeof id !== 'string' || !NPC.checkID(id)) {
       id = NPC.createID();
     }
-    Player.call(this, id, username, avatarURL);
+    HungryGames.Player.call(this, id, username, avatarURL);
     /**
      * Always true.
      * @public
@@ -1223,14 +884,14 @@ function HungryGames() {
    */
   NPC.from = function(data) {
     const npc = new NPC(data.username, data.avatarURL, data.id);
-    Object.assign(npc, Player.from(data));
+    Object.assign(npc, HungryGames.Player.from(data));
     return npc;
   };
   /**
    * Generate a userID for an NPC.
    *
    * @public
-   * @returns {string}
+   * @returns {string} Generated ID.
    */
   NPC.createID = function() {
     let id;
@@ -1244,7 +905,7 @@ function HungryGames() {
    *
    * @public
    * @param {string} id The ID to validate.
-   * @returns {boolean}
+   * @returns {boolean} True if ID is a valid ID for an NPC.
    */
   NPC.checkID = function(id) {
     return typeof id === 'string' &amp;&amp;
@@ -1276,7 +937,8 @@ function HungryGames() {
           console.error(err);
           return;
         }
-        image.resize(UserIconUrl.fetchSize, UserIconUrl.fetchSize);
+        const fetchSize = HungryGames.UserIconUrl.fetchSize;
+        image.resize(fetchSize, fetchSize);
         image.getBuffer(Jimp.MIME_PNG, (err, buffer) => {
           if (err) {
             self.error('Failed to convert image into buffer: ' + avatar);
@@ -1301,23 +963,24 @@ function HungryGames() {
   this.NPC = NPC;
 
   /**
-   * Delay a message to send at the given time in milliseconds since epoch.
+   * @description Delay a message to send at the given time in milliseconds
+   * since epoch.
    *
    * @private
    * @param {Discord~TextChannel} channel The channel to send the message in.
    * @param {
-   *          Discord~StringResolvable|
-   *          Discord~MessageOptions|
-   *          Discord~MessageEmbed|
-   *          Discord~MessageAttachment|
-   *          Discord~MessageAttachment[]
+   * Discord~StringResolvable|
+   * Discord~MessageOptions|
+   * Discord~MessageEmbed|
+   * Discord~MessageAttachment|
+   * Discord~MessageAttachment[]
    * } one The message to send.
    * @param {
-   *          Discord~StringResolvable|
-   *          Discord~MessageOptions|
-   *          Discord~MessageEmbed|
-   *          Discord~MessageAttachment|
-   *          Discord~MessageAttachment[]
+   * Discord~StringResolvable|
+   * Discord~MessageOptions|
+   * Discord~MessageEmbed|
+   * Discord~MessageAttachment|
+   * Discord~MessageAttachment[]
    * } two The message to send.
    * @param {number} time The time to send the message in milliseconds since
    * epoch.
@@ -1336,10 +999,12 @@ function HungryGames() {
   }
 
   /**
-   * Returns an object storing all of the default events for the games.
+   * @description Returns an object storing all of the default events for the
+   * games.
    *
    * @public
-   * @returns {{bloodbath: Object, player: Object, arena: Object}}
+   * @returns {{bloodbath: Object, player: Object, arena: Object}} Object
+   * storing default events.
    */
   this.getDefaultEvents = function() {
     return {
@@ -1350,21 +1015,21 @@ function HungryGames() {
     };
   };
   /**
-   * Returns the object storing all default {@link HungryGames~Battle}s parsed
-   * from file.
+   * @description Returns the object storing all default {@link
+   * HungryGames~Battle}s parsed from file.
    *
    * @public
-   * @returns {HungryGames~Battle[]}
+   * @returns {HungryGames~Battle[]} Array of all default battle events.
    */
   this.getDefaultBattles = function() {
     return battles;
   };
   /**
-   * Returns the object storing all default {@link HungryGames~Weapon}s parsed
-   * from file.
+   * @description Returns the object storing all default {@link
+   * HungryGames~Weapon}s parsed from file.
    *
    * @public
-   * @returns {HungryGames~Weapon[]}
+   * @returns {HungryGames~Weapon[]} Array of all default weapons.
    */
   this.getDefaultWeapons = function() {
     return weapons;
@@ -1389,8 +1054,8 @@ function HungryGames() {
         guild: self.client.guilds.get(id),
       };
     }
-    if (find(id) &amp;&amp; find(id).currentGame &amp;&amp;
-        find(id).currentGame.inProgress) {
+    if (hg.getGame(id) &amp;&amp; hg.getGame(id).currentGame &amp;&amp;
+        hg.getGame(id).currentGame.inProgress) {
       if (!silent) {
         self.common.reply(
             msg,
@@ -1400,75 +1065,36 @@ function HungryGames() {
       }
       return;
     } else {
-      if (msg.guild.members.size &lt; msg.guild.memberCount) {
-        // Ensure we have all guild members accounted for in future commands
-        // since we cant await here.
-        msg.guild.members.fetch();
-      }
-      if (find(id)) {
-        find(id).includedUsers = find(id).includedUsers.filter((u) => {
-          const m = msg.guild.members.get(u);
-          if (m &amp;&amp; m.partial) m.fetch();
-          return m;
-        });
-        find(id).excludedUsers = find(id).excludedUsers.filter((u) => {
-          const m = msg.guild.members.get(u);
-          if (m &amp;&amp; m.partial) m.fetch();
-          return m;
-        });
-        if (find(id).currentGame) {
-          if (!silent) {
-            self.common.reply(
-                msg, 'Creating a new game with settings from the last game.');
-          }
-          find(id).currentGame = new Game(
-              find(id).currentGame.customName ||
-                  (msg.guild.name + '\'s Hungry Games'),
-              getAllPlayers(
-                  msg.guild.members, find(id).excludedUsers,
-                  find(id).options.includeBots, find(id).includedUsers,
-                  find(id).options.excludeNewUsers, find(id).includedNPCs));
-        } else {
-          if (!silent) {
-            self.common.reply(
-                msg, 'Creating a new game with default settings.');
-          }
-          find(id).currentGame = new Game(
-              `${msg.guild.name}'s Hungry Games`,
-              getAllPlayers(
-                  msg.guild.members, find(id).excludedUsers,
-                  find(id).options.includeBots, find(id).includedUsers,
-                  find(id).options.excludeNewUsers, find(id).includedNPCs));
+      if (hg.getGame(id)) {
+        hg.getGame(id).includedUsers =
+            hg.getGame(id).includedUsers.filter((u) => {
+              const m = msg.guild.members.get(u);
+              if (m &amp;&amp; m.partial) m.fetch();
+              return m;
+            });
+        hg.getGame(id).excludedUsers =
+            hg.getGame(id).excludedUsers.filter((u) => {
+              const m = msg.guild.members.get(u);
+              if (m &amp;&amp; m.partial) m.fetch();
+              return m;
+            });
+        if (!silent) {
+          self.common.reply(msg, 'Refreshing current game.');
         }
+        hg.refresh(msg.guild);
       } else {
-        const optKeys = Object.keys(defaultOptions);
-        const opts = {};
-        for (const i in optKeys) {
-          if (typeof optKeys[i] !== 'string') continue;
-          if (typeof defaultOptions[optKeys[i]].value === 'object') {
-            opts[optKeys[i]] =
-                Object.assign({}, defaultOptions[optKeys[i]].value);
-          } else {
-            opts[optKeys[i]] = defaultOptions[optKeys[i]].value;
-          }
-        }
-        if (msg.guild.memberCount > 100) {
-          opts.excludeNewUsers = true;
-        }
-        games[id] = new GuildGame(
-            id, opts, `${msg.guild.name}'s Hungry Games`,
-            getAllPlayers(msg.guild.members, [], false, [], false));
-
         if (!silent) {
           self.common.reply(
               msg,
               'Created a Hungry Games with default settings and all members ' +
                   'included.');
         }
+        hg.create(msg.guild);
       }
     }
-    formTeams(id);
-    fetchPatreonSettings(find(id).currentGame.includedUsers, null, null, cb);
+    hg.getGame(id).formTeams();
+    fetchPatreonSettings(
+        hg.getGame(id).currentGame.includedUsers, null, null, cb);
   }
   /**
    * Create a Hungry Games for a guild.
@@ -1607,192 +1233,6 @@ function HungryGames() {
   }
 
   /**
-   * Form an array of Player objects based on guild members, excluded members,
-   * and whether to include bots.
-   *
-   * @private
-   * @param {Discord~Collection&lt;Discord~GuildMember>} members All members in
-   * guild.
-   * @param {string[]} excluded Array of ids of users that should not be
-   * included in the games.
-   * @param {boolean} bots Should bots be included in the games.
-   * @param {string[]} included Array of ids of users that should be included in
-   * the games. Used if excludeByDefault is true.
-   * @param {boolean} excludeByDefault Should new users be excluded from the
-   * game by default?
-   * @param {NPC[]} [includedNPCs=[]] NPCs to include as players.
-   * @returns {HungryGames~Player[]} Array of players to include in the games.
-   */
-  function getAllPlayers(
-      members, excluded, bots, included, excludeByDefault, includedNPCs = []) {
-    let finalMembers = [];
-    if (!bots || Array.isArray(excluded)) {
-      finalMembers = members.filter(function(obj) {
-        if (obj.isNPC) return false;
-        if (included &amp;&amp; excluded &amp;&amp;
-            !included.includes(obj.user.id) &amp;&amp;
-            !excluded.includes(obj.user.id)) {
-          if (excludeByDefault) {
-            excluded.push(obj.user.id);
-          } else {
-            included.push(obj.user.id);
-          }
-        } else if (
-          included &amp;&amp; excluded &amp;&amp; included.includes(obj.user.id) &amp;&amp;
-            excluded.includes(obj.user.id)) {
-          self.error(
-              'User in both blacklist and whitelist: ' + obj.user.id +
-              ' Guild: ' + obj.guild.id);
-          if (excludeByDefault) {
-            included.splice(
-                included.findIndex((el) => {
-                  return el == obj.user.id;
-                }),
-                1);
-          } else {
-            excluded.splice(
-                excluded.findIndex((el) => {
-                  return el == obj.user.id;
-                }),
-                1);
-          }
-        }
-        return !(
-          (!bots &amp;&amp; obj.user.bot) ||
-            (excluded &amp;&amp; excluded.includes(obj.user.id) ||
-             (excludeByDefault &amp;&amp; included &amp;&amp;
-              !included.includes(obj.user.id))));
-      });
-    }
-    if (finalMembers.length == 0) finalMembers = members.slice();
-    finalMembers = finalMembers.map((obj) => {
-      return new Player(
-          obj.id, obj.user.username, obj.user.displayAvatarURL({format: 'png'}),
-          obj.nickname);
-    });
-    if (includedNPCs &amp;&amp; includedNPCs.length > 0) {
-      finalMembers = finalMembers.concat(includedNPCs.map((obj) => {
-        return new NPC(obj.name, obj.avatarURL, obj.id);
-      }));
-    }
-    return finalMembers;
-  }
-  /**
-   * Add users to teams, and remove excluded users from teams. Deletes empty
-   * teams, and adds teams once all teams have teamSize of players.
-   *
-   * @private
-   * @param {string} id Id of guild where this was triggered from.
-   */
-  function formTeams(id) {
-    const game = find(id);
-    if (game.options.teamSize &lt; 0) game.options.teamSize = 0;
-    if (game.options.teamSize == 0) {
-      game.currentGame.teams = [];
-      return;
-    }
-
-    let corruptTeam = false;
-
-    const teamSize = game.options.teamSize;
-    const numTeams =
-        Math.ceil(game.currentGame.includedUsers.length / teamSize);
-    // If teams already exist, update them. Otherwise, create new teams.
-    if (game.currentGame.teams &amp;&amp; game.currentGame.teams.length > 0) {
-      game.currentGame.teams.forEach(function(obj) {
-        obj.players.forEach(function(p) {
-          if (typeof p !== 'string' &amp;&amp; typeof p !== 'number') {
-            corruptTeam = true;
-            self.error(
-                '(PreTeamForm) Player in team is invalid: ' + typeof p +
-                ' in team ' + obj.id + ' guild: ' + id + ' players: ' +
-                JSON.stringify(obj.players));
-          }
-        });
-      });
-
-      game.currentGame.teams.sort(function(a, b) {
-        return a.id - b.id;
-      });
-      const notIncluded = game.currentGame.includedUsers.slice(0);
-      // Remove players from teams if they are no longer included in game.
-      for (let i = 0; i &lt; game.currentGame.teams.length; i++) {
-        const team = game.currentGame.teams[i];
-        team.id = i;
-        for (let j = 0; j &lt; team.players.length; j++) {
-          if (game.currentGame.includedUsers.findIndex(function(obj) {
-            return obj.id === team.players[j];
-          }) &lt; 0) {
-            team.players.splice(j, 1);
-            j--;
-          } else {
-            notIncluded.splice(
-                notIncluded.findIndex(function(obj) {
-                  return obj.id === team.players[j];
-                }),
-                1);
-          }
-        }
-        if (team.players.length == 0) {
-          game.currentGame.teams.splice(i, 1);
-          i--;
-        }
-      }
-      // Add players who are not on a team, to a team.
-      for (let i = 0; i &lt; notIncluded.length; i++) {
-        let found = false;
-        for (let j = 0; j &lt; game.currentGame.teams.length; j++) {
-          const team = game.currentGame.teams[j];
-          if (team.players.length &lt; teamSize) {
-            team.players.push(notIncluded[i].id);
-            found = true;
-            break;
-          }
-        }
-        if (found) continue;
-        // Add a team if all existing teams are full.
-        game.currentGame.teams[game.currentGame.teams.length] = new Team(
-            game.currentGame.teams.length,
-            'Team ' + (game.currentGame.teams.length + 1), [notIncluded[i].id]);
-      }
-    } else {
-      // Create all teams for players.
-      game.currentGame.teams = [];
-      for (let i = 0; i &lt; numTeams; i++) {
-        game.currentGame.teams[i] = new Team(
-            i, 'Team ' + (i + 1),
-            game.currentGame.includedUsers
-                .slice(i * teamSize, i * teamSize + teamSize)
-                .map(function(obj) {
-                  return obj.id;
-                }));
-      }
-    }
-    // Reset team data.
-    game.currentGame.teams.forEach(function(obj) {
-      obj.numAlive = obj.players.length;
-      obj.rank = 1;
-      obj.players.forEach(function(p) {
-        if (typeof p !== 'string' &amp;&amp; typeof p !== 'number') {
-          corruptTeam = true;
-          self.error(
-              '(PostTeamForm) Player in team is invalid: ' + typeof p +
-              ' in team ' + obj.id + ' guild: ' + id + ' players: ' +
-              JSON.stringify(obj.players));
-        }
-      });
-    });
-
-    if (corruptTeam) {
-      self.client.channels.get(game.channel)
-          .send(
-              '&lt;@' + game.author +
-              '>\n```\nTeams appeared to be corrupted, teams may have been ' +
-              'rearranged.\n```\nThis error has been reported and is being ' +
-              'looked into.');
-    }
-  }
-  /**
    * Reset data that the user specifies.
    *
    * @private
@@ -1802,74 +1242,8 @@ function HungryGames() {
    */
   function resetGame(msg, id) {
     const command = msg.text.trim().split(' ')[0];
-    self.common.reply(msg, 'Reset HG', self.resetGame(id, command));
+    self.common.reply(msg, 'Reset HG', hg.resetGame(id, command));
   }
-  /**
-   * Reset the specified category of data from a game.
-   *
-   * @public
-   * @param {string} id The id of the guild to modify.
-   * @param {string} command The category of data to reset.
-   * @returns {string} The message explaining what happened.
-   */
-  this.resetGame = function(id, command) {
-    if (find(id)) {
-      if (find(id).currentGame &amp;&amp; find(id).currentGame.inProgress) {
-        return 'A game is currently in progress. Please end it before ' +
-            'reseting game data.';
-      }
-      if (command == 'all') {
-        delete games[id];
-        rimraf(self.common.guildSaveDir + id + hgSaveDir, function(err) {
-          if (!err) return;
-          self.error(
-              'Failed to delete directory: ' + self.common.guildSaveDir + id +
-              hgSaveDir);
-          console.error(err);
-        });
-        return 'Resetting ALL Hungry Games data for this server!';
-      } else if (command == 'events') {
-        find(id).customEvents =
-            {bloodbath: [], player: [], arena: [], weapon: {}};
-        return 'Resetting ALL Hungry Games events for this server!';
-      } else if (command == 'current') {
-        delete find(id).currentGame;
-        return 'Resetting ALL data for current game!';
-      } else if (command == 'options') {
-        const optKeys = Object.keys(defaultOptions);
-        find(id).options = {};
-        for (const i in optKeys) {
-          if (typeof optKeys[i] !== 'string') continue;
-          find(id).options[optKeys[i]] = defaultOptions[optKeys[i]].value;
-        }
-        return 'Resetting ALL options!';
-      } else if (command == 'teams') {
-        find(id).currentGame.teams = [];
-        formTeams(id);
-        return 'Resetting ALL teams!';
-      } else if (command == 'users') {
-        find(id).includedUsers = [];
-        find(id).excludedUsers = [];
-        createGame(null, id, true);
-        return 'Resetting ALL user data!';
-      } else if (command == 'npcs') {
-        find(id).includedNPCs = [];
-        find(id).excludedNPCs = [];
-        createGame(null, id, true);
-        return 'Resetting ALL NPC data!';
-      } else {
-        return 'Please specify what data to reset.\nall {deletes all data ' +
-            'for this server},\nevents {deletes all custom events},\n' +
-            'current {deletes all data about the current game},\noptions ' +
-            '{resets all options to default values},\nteams {delete all ' +
-            'teams and creates new ones},\nusers {delete data about where to ' +
-            'put users when creating a new game},\nnpcs {delete all NPCS}.';
-      }
-    } else {
-      return 'There is no data to reset. Start a new game with "' +
-          self.bot.getPrefix(id) + self.postPrefix + 'create".';
-    }
-  };
   /**
    * Send all of the game data about the current server to the chat.
    *
@@ -1885,11 +1259,12 @@ function HungryGames() {
         finalId = msg.text.trim().split(' ')[0];
       }
     }
-    if (find(finalId)) {
+    const game = hg.getGame(finalId);
+    if (game) {
       const file = new self.Discord.MessageAttachment();
-      file.setFile(Buffer.from(JSON.stringify(find(finalId), null, 2)));
-      file.setName('HG-' + finalId + '.json');
-      msg.channel.send('HG Data for guild ' + finalId, file);
+      file.setFile(Buffer.from(JSON.stringify(game.serializable, null, 2)));
+      file.setName(`HG-${finalId}.json`);
+      msg.channel.send(`HG Data for guild ${finalId}`, file);
     } else {
       self.common.reply(msg, 'No game created', finalId);
     }
@@ -1904,8 +1279,9 @@ function HungryGames() {
    */
   function showGameEvents(msg, id) {
     let events = defaultBloodbathEvents;
-    if (find(id) &amp;&amp; find(id).customEvents.bloodbath) {
-      events = events.concat(find(id).customEvents.bloodbath);
+    const game = hg.getGame(id);
+    if (game &amp;&amp; game.customEvents.bloodbath) {
+      events = events.concat(game.customEvents.bloodbath);
     }
     let file = new self.Discord.MessageAttachment();
     file.setFile(Buffer.from(JSON.stringify(events, null, 2)));
@@ -1922,8 +1298,8 @@ function HungryGames() {
         file);
 
     events = defaultPlayerEvents;
-    if (find(id) &amp;&amp; find(id).customEvents.player) {
-      events = events.concat(find(id).customEvents.player);
+    if (game &amp;&amp; game.customEvents.player) {
+      events = events.concat(game.customEvents.player);
     }
     file = new self.Discord.MessageAttachment();
     file.setFile(Buffer.from(JSON.stringify(events, null, 2)));
@@ -1940,14 +1316,14 @@ function HungryGames() {
         file);
 
     events = Object.assign({}, weapons);
-    if (find(id) &amp;&amp; find(id).customEvents.weapon) {
-      const keys = Object.keys(find(id).customEvents.weapon);
+    if (game &amp;&amp; game.customEvents.weapon) {
+      const keys = Object.keys(game.customEvents.weapon);
       for (let i = 0; i &lt; keys.length; i++) {
         if (events[keys[i]]) {
           events[keys[i]].outcomes = events[keys[i]].outcomes.concat(
-              find(id).customEvents.weapon[keys[i]].outcomes);
+              game.customEvents.weapon[keys[i]].outcomes);
         } else {
-          events[keys[i]] = find(id).customEvents.weapon[keys[i]];
+          events[keys[i]] = game.customEvents.weapon[keys[i]];
         }
       }
     }
@@ -1958,8 +1334,8 @@ function HungryGames() {
         'Weapon Events (' + Object.keys(events).length + ' weapons)', file);
 
     events = defaultArenaEvents;
-    if (find(id) &amp;&amp; find(id).customEvents.arena) {
-      events = events.concat(find(id).customEvents.arena);
+    if (hg.getGame(id) &amp;&amp; hg.getGame(id).customEvents.arena) {
+      events = events.concat(hg.getGame(id).customEvents.arena);
     }
     file = new self.Discord.MessageAttachment();
     file.setFile(Buffer.from(JSON.stringify(events, null, 2)));
@@ -1977,7 +1353,8 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function startGame(msg, id) {
-    if (find(id) &amp;&amp; find(id).currentGame &amp;&amp; find(id).currentGame.inProgress) {
+    const game = hg.getGame(id);
+    if (game &amp;&amp; game.currentGame &amp;&amp; game.currentGame.inProgress) {
       self.common.reply(
           msg, 'A game is already in progress! ("' + msg.prefix +
               self.postPrefix + 'next" for next day, or "' + msg.prefix +
@@ -2006,7 +1383,7 @@ function HungryGames() {
     } else if (!myPerms.has(self.Discord.Permissions.FLAGS.SEND_MESSAGES)) {
       return;
     }
-    if (find(id) &amp;&amp; find(id).reactMessage) {
+    if (game &amp;&amp; game.reactMessage) {
       self.endReactJoinMessage(id, (err, info) => {
         if (err) {
           self.error(`${err}: ${id}`);
@@ -2025,7 +1402,7 @@ function HungryGames() {
      */
     function loadingComplete() {
       self.client.setTimeout(() => {
-        if (find(id).autoPlay &amp;&amp; !find(id).currentGame.isPaused) {
+        if (hg.getGame(id).autoPlay &amp;&amp; !hg.getGame(id).currentGame.isPaused) {
           nextDay(msg, id);
         }
       });
@@ -2034,18 +1411,18 @@ function HungryGames() {
     createGame(msg, id, true, loadingComplete);
 
     const finalMessage = new self.Discord.MessageEmbed();
-    finalMessage.setTitle(self.messages.get('gameStart'));
+    finalMessage.setTitle(hg.messages.get('gameStart'));
     finalMessage.setColor(defaultColor);
 
-    const numUsers = find(id).currentGame.includedUsers.length;
-    if (find(id).options.teamSize > 0) {
-      find(id).currentGame.includedUsers.sort(function(a, b) {
-        const aTeam = find(id).currentGame.teams.findIndex(function(team) {
+    const numUsers = game.currentGame.includedUsers.length;
+    if (game.options.teamSize > 0) {
+      game.currentGame.includedUsers.sort(function(a, b) {
+        const aTeam = game.currentGame.teams.findIndex(function(team) {
           return team.players.findIndex(function(player) {
             return player == a.id;
           }) > -1;
         });
-        const bTeam = find(id).currentGame.teams.findIndex(function(team) {
+        const bTeam = game.currentGame.teams.findIndex(function(team) {
           return team.players.findIndex(function(player) {
             return player == b.id;
           }) > -1;
@@ -2058,10 +1435,10 @@ function HungryGames() {
       });
     }
     let prevTeam = -1;
-    const statusList = find(id).currentGame.includedUsers.map(function(obj) {
+    const statusList = game.currentGame.includedUsers.map(function(obj) {
       let myTeam = -1;
-      if (find(id).options.teamSize > 0) {
-        myTeam = find(id).currentGame.teams.findIndex(function(team) {
+      if (game.options.teamSize > 0) {
+        myTeam = game.currentGame.teams.findIndex(function(team) {
           return team.players.findIndex(function(player) {
             return player == obj.id;
           }) > -1;
@@ -2069,7 +1446,7 @@ function HungryGames() {
       }
 
       let shortName;
-      if (obj.nickname &amp;&amp; find(id).options.useNicknames) {
+      if (obj.nickname &amp;&amp; game.options.useNicknames) {
         shortName = obj.nickname.substring(0, 16);
         if (shortName != obj.nickname) {
           shortName = shortName.substring(0, 13) + '...';
@@ -2084,12 +1461,12 @@ function HungryGames() {
       let prefix = '';
       if (myTeam != prevTeam) {
         prevTeam = myTeam;
-        prefix = '__' + find(id).currentGame.teams[myTeam].name + '__\n';
+        prefix = `__${game.currentGame.teams[myTeam].name}__\n`;
       }
 
-      return prefix + '`' + shortName + '`';
+      return `${prefix}\`${shortName}\``;
     });
-    if (find(id).options.teamSize == 0) {
+    if (game.options.teamSize == 0) {
       statusList.sort((a, b) => {
         a = a.toLocaleLowerCase();
         b = b.toLocaleLowerCase();
@@ -2111,23 +1488,17 @@ function HungryGames() {
             thisMessage, true);
       }
       finalMessage.addField(
-          'Included (' + ((numCols - 1) * quarterLength + 1) + '-' + numUsers +
-              ')',
+          `Included (${(numCols - 1) * quarterLength + 1}-${numUsers})`,
           statusList.join('\n'), true);
     } else {
       finalMessage.addField(
-          'Included (' + numUsers + ')', statusList.join('\n') || 'Nobody',
-          false);
+          `Included (${numUsers})`, statusList.join('\n') || 'Nobody', false);
     }
-    if (find(id).excludedUsers.length > 0) {
+    if (game.excludedUsers.length > 0) {
       let excludedList = '\u200B';
-      if (find(id).excludedUsers.length &lt; 20) {
-        excludedList = find(id)
-            .excludedUsers
-            .map(function(obj) {
-              return getName(msg.guild, obj);
-            })
-            .join(', ');
+      if (game.excludedUsers.length &lt; 20) {
+        excludedList =
+            game.excludedUsers.map((obj) => getName(msg.guild, obj)).join(', ');
         const trimmedList = excludedList.substr(0, 512);
         if (excludedList != trimmedList) {
           excludedList = trimmedList.substr(0, 509) + '...';
@@ -2136,17 +1507,16 @@ function HungryGames() {
         }
       }
       finalMessage.addField(
-          'Excluded (' + find(id).excludedUsers.length + ')', excludedList,
-          false);
+          `Excluded (${game.excludedUsers.length})`, excludedList, false);
     }
 
-    if (!find(id).autoPlay) {
+    if (!game.autoPlay) {
       finalMessage.setFooter(
-          '"' + msg.prefix + self.postPrefix + 'next" for next day.');
+          `"${msg.prefix}${self.postPrefix}next" for next day.`);
     }
 
     let mentions = self.common.mention(msg);
-    if (find(id).options.mentionEveryoneAtStart) {
+    if (game.options.mentionEveryoneAtStart) {
       mentions += '@everyone';
     }
 
@@ -2160,7 +1530,7 @@ function HungryGames() {
       console.error(err);
     });
 
-    find(id).currentGame.inProgress = true;
+    game.currentGame.inProgress = true;
   }
   /**
    * Start the games in the given channel and guild by the given user.
@@ -2228,7 +1598,7 @@ function HungryGames() {
   function makeMessage(uId, gId, cId, msg) {
     const g = self.client.guilds.get(gId);
     if (!g) return null;
-    if (!cId &amp;&amp; find(gId)) cId = find(gId).channel;
+    if (!cId &amp;&amp; hg.getGame(gId)) cId = hg.getGame(gId).channel;
     return {
       author: self.client.users.get(uId),
       client: self.client,
@@ -2260,19 +1630,19 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function pauseAutoplay(msg, id) {
-    if (!find(id)) {
+    if (!hg.getGame(id)) {
       self.common.reply(
           msg, 'Not autoplaying. If you wish to autoplay, type "' + msg.prefix +
               self.postPrefix + 'autoplay".');
       return;
     }
-    if (find(id).autoPlay) {
+    if (hg.getGame(id).autoPlay) {
       if (msg &amp;&amp; msg.channel) {
         msg.channel.send(
             '&lt;@' + msg.author.id +
             '> `Autoplay will stop at the end of the current day.`');
       }
-      find(id).autoPlay = false;
+      hg.getGame(id).autoPlay = false;
     } else {
       if (msg &amp;&amp; msg.channel) {
         self.common.reply(
@@ -2290,11 +1660,11 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function startAutoplay(msg, id) {
-    if (!find(id) || !find(id).currentGame) {
+    if (!hg.getGame(id) || !hg.getGame(id).currentGame) {
       createGame(msg, id);
     }
-    if (find(id).autoPlay &amp;&amp; find(id).currentGame.inProgress) {
-      if (find(id).currentGame.isPaused) {
+    if (hg.getGame(id).autoPlay &amp;&amp; hg.getGame(id).currentGame.inProgress) {
+      if (hg.getGame(id).currentGame.isPaused) {
         self.common.reply(
             msg, 'Autoplay is already enabled.', 'To resume the game, use `' +
                 msg.prefix + self.postPrefix + 'resume`.');
@@ -2302,9 +1672,9 @@ function HungryGames() {
         pauseAutoplay(msg, id);
       }
     } else {
-      find(id).autoPlay = true;
-      if (find(id).currentGame.inProgress &amp;&amp;
-          find(id).currentGame.day.state === 0) {
+      hg.getGame(id).autoPlay = true;
+      if (hg.getGame(id).currentGame.inProgress &amp;&amp;
+          hg.getGame(id).currentGame.day.state === 0) {
         if (self.command.validate(msg.prefix + 'hg next', msg)) {
           self.common.reply(
               msg,
@@ -2316,7 +1686,7 @@ function HungryGames() {
             '&lt;@' + msg.author.id +
             '> `Enabling Autoplay! Starting the next day!`');
         nextDay(msg, id);
-      } else if (!find(id).currentGame.inProgress) {
+      } else if (!hg.getGame(id).currentGame.inProgress) {
         if (self.command.validate(msg.prefix + 'hg start', msg)) {
           self.common.reply(
               msg, 'Sorry, but you don\'t have permission to start the games.',
@@ -2327,7 +1697,7 @@ function HungryGames() {
             '&lt;@' + msg.author.id +
             '> `Autoplay is enabled. Starting the games!`');
         startGame(msg, id);
-      } else if (find(id).currentGame.isPaused) {
+      } else if (hg.getGame(id).currentGame.isPaused) {
         self.common.reply(
             msg, 'Enabling Autoplay',
             'Resume game with `' + msg.prefix + self.postPrefix + 'resume`.');
@@ -2345,11 +1715,11 @@ function HungryGames() {
    * @returns {string} User information of the outcome of this command.
    */
   this.pauseGame = function(id) {
-    if (!find(id) || !find(id).currentGame ||
-        !find(id).currentGame.inProgress) {
+    if (!hg.getGame(id) || !hg.getGame(id).currentGame ||
+        !hg.getGame(id).currentGame.inProgress) {
       return 'Failed: There isn\'t currently a game in progress.';
     }
-    if (find(id).currentGame.isPaused) {
+    if (hg.getGame(id).currentGame.isPaused) {
       return 'Failed: Game is already paused.';
     }
     if (!dayEventIntervals[id]) {
@@ -2357,7 +1727,7 @@ function HungryGames() {
     }
     self.client.clearInterval(dayEventIntervals[id]);
     delete dayEventIntervals[id];
-    find(id).currentGame.isPaused = true;
+    hg.getGame(id).currentGame.isPaused = true;
     return 'Success';
   };
 
@@ -2397,8 +1767,9 @@ function HungryGames() {
    * giving up.
    */
   function nextDay(msg, id, retry = true) {
-    if (!find(id) || !find(id).currentGame ||
-        !find(id).currentGame.inProgress) {
+    const game = hg.getGame(id);
+    if (!game || !game.currentGame ||
+        !game.currentGame.inProgress) {
       self.common
           .reply(
               msg, 'You must start a game first! Use "' + msg.prefix +
@@ -2409,10 +1780,10 @@ function HungryGames() {
           });
       return;
     }
-    if (find(id).currentGame.day.state !== 0) {
+    if (game.currentGame.day.state !== 0) {
       if (dayEventIntervals[id]) {
         self.common.reply(msg, 'Already simulating day.');
-      } else if (find(id).currentGame.day.state == 1) {
+      } else if (game.currentGame.day.state == 1) {
         self.common
             .reply(
                 msg,
@@ -2425,11 +1796,9 @@ function HungryGames() {
               if (err.message != 'No Perms') console.error(err);
             });
       } else {
-        find(id).currentGame.isPaused = false;
+        game.currentGame.isPaused = false;
         printEvent(msg, id);
-        dayEventIntervals[id] = self.client.setInterval(function() {
-          printEvent(msg, id);
-        }, find(id).options.disableOutput ? 10 : find(id).options.delayEvents);
+        game.createInterval(dayStateModified);
       }
       return;
     }
@@ -2457,34 +1826,59 @@ function HungryGames() {
               ' I have the "Embed Links" permission in this channel.');
       return;
     }
-    const sim = new Simulator(find(id), self, msg);
+    const sim = new HungryGames.Simulator(game, hg, msg);
     sim.go((err) => {
       // Signal ready to display events.
       fire('dayStateChange', id);
       const embed = new self.Discord.MessageEmbed();
-      if (find(id).currentGame.day.num === 0) {
-        embed.setTitle(self.messages.get('bloodbathStart'));
+      if (game.currentGame.day.num === 0) {
+        embed.setTitle(hg.messages.get('bloodbathStart'));
       } else {
         embed.setTitle(
-            self.messages.get('dayStart')
-                .replaceAll('{}', find(id).currentGame.day.num));
+            hg.messages.get('dayStart')
+                .replaceAll('{}', game.currentGame.day.num));
       }
-      if (!find(id).autoPlay &amp;&amp; find(id).currentGame.day.num &lt; 2) {
+      if (!game.autoPlay &amp;&amp; game.currentGame.day.num &lt; 2) {
         embed.setFooter(
             'Tip: Use "' + msg.prefix + self.postPrefix +
             'autoplay" to automate the games.');
       }
       embed.setColor(defaultColor);
-      if (!find(id) || !find(id).options.disableOutput) {
+      if (!game || !game.options.disableOutput) {
         msg.channel.send(embed);
       }
-      find(id).outputChannel = msg.channel.id;
-      find(id).currentGame.isPaused = false;
-      dayEventIntervals[id] = self.client.setInterval(function() {
+      game.outputChannel = msg.channel.id;
+      game.currentGame.isPaused = false;
+      game.createInterval(dayStateModified);
+    });
+    /**
+     * @description Callback for every time the game state is modified.
+     * @private
+     * @type {HungryGames~GuildGame~StateUpdateCB}
+     * @param {boolean} dayComplete Has the day ended.
+     * @param {boolean} doSim If next day should be simulated and started.
+     */
+    function dayStateModified(dayComplete, doSim) {
+      if (doSim) {
+        nextDay(msg, id);
+      } else if (dayComplete) {
+        printDay(msg, id);
+        self.client.setTimeout(() => {
+          msg.channel.send('`Autoplaying...`')
+              .then((msg) => {
+                msg.delete({
+                  timeout: hg.getGame(id).options.delayDays - 1250,
+                  reason: 'I can do whatever I want!',
+                })
+                    .catch(() => {});
+              })
+              .catch(() => {});
+        }, (hg.getGame(id).options.delayDays > 2000 ? 1200 : 100));
+      } else {
         fire('dayStateChange', id);
         printEvent(msg, id);
-      }, find(id).options.disableOutput ? 10 : find(id).options.delayEvents);
-    });
+      }
+    }
   }
 
   /**
@@ -2496,11 +1890,9 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function printEvent(msg, id) {
-    const index = find(id).currentGame.day.state - 2;
-    const events = find(id).currentGame.day.events;
+    const index = hg.getGame(id).currentGame.day.state - 2;
+    const events = hg.getGame(id).currentGame.day.events;
     if (index >= events.length) {
-      self.client.clearInterval(dayEventIntervals[id]);
-      delete dayEventIntervals[id];
       printDay(msg, id);
     } else if (!events[index]) {
       /* self.warn(
@@ -2515,13 +1907,13 @@ function HungryGames() {
       embed.addField(message[1], message[2]);
       embed.setColor([50, 0, 0]);
 
-      const avatarSizes = find(id).options.battleAvatarSizes;
+      const avatarSizes = hg.getGame(id).options.battleAvatarSizes;
       const battleIconSize = avatarSizes.avatar;
       if (battleIconSize === 0 ||
           events[index].attacks[battleState].icons.length === 0) {
         // Send without image.
         if (!battleMessage[id]) {
-          if (!find(id).options.disableOutput) {
+          if (!hg.getGame(id).options.disableOutput) {
             msg.channel.send(message[0], embed)
                 .then((msg_) => {
                   battleMessage[id] = msg_;
@@ -2581,7 +1973,7 @@ function HungryGames() {
               // Attach file, then send.
               embed.attachFiles(
                   [new self.Discord.MessageAttachment(out, 'hgBattle.png')]);
-              if (!find(id).options.disableOutput) {
+              if (!hg.getGame(id).options.disableOutput) {
                 msg.channel.send(message[0], embed)
                     .then((msg_) => {
                       battleMessage[id] = msg_;
@@ -2627,10 +2019,10 @@ function HungryGames() {
       events[index].state++;
     } else {
       // delete battleMessage[id];
-      const avatarSizes = find(id).options.eventAvatarSizes;
+      const avatarSizes = hg.getGame(id).options.eventAvatarSizes;
       const iconSize = avatarSizes.avatar;
       if (iconSize == 0 || events[index].icons.length === 0) {
-        if (!find(id).options.disableOutput) {
+        if (!hg.getGame(id).options.disableOutput) {
           msg.channel
               .send(
                   (events[index].mentionString || '') + events[index].message +
@@ -2700,7 +2092,7 @@ function HungryGames() {
             finalImage.getBuffer(Jimp.MIME_PNG, function(err, out) {
               embed.attachFiles(
                   [new self.Discord.MessageAttachment(out, 'hgEvent.png')]);
-              if (!find(id).options.disableOutput) {
+              if (!hg.getGame(id).options.disableOutput) {
                 msg.channel.send(events[index].mentionString, embed)
                     .catch((err) => {
                       self.error(
@@ -2738,7 +2130,7 @@ function HungryGames() {
               });
         }
       }
-      find(id).currentGame.day.state++;
+      hg.getGame(id).currentGame.day.state++;
     }
   }
   /**
@@ -2756,15 +2148,17 @@ function HungryGames() {
     let lastTeam = 0;
     let numWholeTeams = 0;
     let lastWholeTeam = 0;
-    find(id).currentGame.includedUsers.forEach(function(el, i) {
+    const game = hg.getGame(id);
+    const current = game.currentGame;
+    current.includedUsers.forEach((el, i) => {
       if (el.living) {
         numAlive++;
         lastIndex = i;
         lastId = el.id;
       }
     });
-    if (find(id).options.teamSize > 0) {
-      find(id).currentGame.teams.forEach(function(team, index) {
+    if (game.options.teamSize > 0) {
+      current.teams.forEach(function(team, index) {
         if (team.numAlive > 0) {
           numTeams++;
           lastTeam = index;
@@ -2776,75 +2170,71 @@ function HungryGames() {
       });
     }
 
-    if (find(id).currentGame.numAlive != numAlive) {
-      self.error('Realtime alive count is incorrect!');
+    if (current.numAlive != numAlive) {
+      self.warn(
+          'Realtime alive count is incorrect! ' + current.numAlive + ' vs ' +
+          numAlive);
     }
 
     const finalMessage = new self.Discord.MessageEmbed();
     finalMessage.setColor(defaultColor);
 
-    const collab = find(id).options.teammatesCollaborate == 'always' ||
-        (find(id).options.teammatesCollaborate == 'untilend' &amp;&amp; numTeams > 1);
+    const collab = game.options.teammatesCollaborate == 'always' ||
+        (game.options.teammatesCollaborate == 'untilend' &amp;&amp;
+         numTeams > 1);
     if (collab &amp;&amp; numTeams == 1) {
-      const teamName = find(id).currentGame.teams[lastTeam].name;
-      finalMessage.setTitle(
-          '\n' + teamName + ' has won ' + find(id).currentGame.name + '!');
-      let teamPlayerList =
-          find(id)
-              .currentGame.teams[lastTeam]
-              .players
-              .map(function(player) {
-                const p =
-                    find(id).currentGame.includedUsers.find(function(user) {
-                      return user.id == player;
-                    });
-                if (find(id).options.useNicknames) {
-                  return p.nickname || p.name;
-                } else {
-                  return p.name;
-                }
-              })
-              .join(', ');
+      const teamName = current.teams[lastTeam].name;
+      finalMessage.setTitle(`${teamName} has won ${current.name}!`);
+      let teamPlayerList = current.teams[lastTeam]
+          .players
+          .map((player) => {
+            const p = current.includedUsers.find((user) => {
+              return user.id == player;
+            });
+            if (game.options.useNicknames) {
+              return p.nickname || p.name;
+            } else {
+              return p.name;
+            }
+          })
+          .join(', ');
       if (teamPlayerList.length > 1024) {
-        teamPlayerList = teamPlayerList.substring(0, 1021) + '...';
+        teamPlayerList = `${teamPlayerList.substring(0, 1021)}...`;
       }
       finalMessage.setDescription(teamPlayerList);
-      find(id).currentGame.inProgress = false;
-      find(id).currentGame.ended = true;
-      find(id).autoPlay = false;
+      current.inProgress = false;
+      current.ended = true;
+      game.autoPlay = false;
     } else if (numAlive == 1) {
-      const p = find(id).currentGame.includedUsers[lastIndex];
+      const p = current.includedUsers[lastIndex];
       const winnerName =
-          find(id).options.useNicknames ? (p.nickname || p.name) : p.name;
+          game.options.useNicknames ? (p.nickname || p.name) : p.name;
       let teamName = '';
-      if (find(id).options.teamSize > 0) {
-        teamName = '(' + find(id).currentGame.teams[lastTeam].name + ') ';
+      if (game.options.teamSize > 0) {
+        teamName = `(${current.teams[lastTeam].name}) `;
       }
       finalMessage.setTitle(
-          '\n`' + winnerName + teamName + '` has won ' +
-          find(id).currentGame.name + '!');
-      finalMessage.setThumbnail(
-          find(id).currentGame.includedUsers[lastIndex].avatarURL);
-      find(id).currentGame.inProgress = false;
-      find(id).currentGame.ended = true;
-      find(id).autoPlay = false;
+          `\`${winnerName}${teamName}\` has won ${current.name}!`);
+      finalMessage.setThumbnail(current.includedUsers[lastIndex].avatarURL);
+      current.inProgress = false;
+      current.ended = true;
+      game.autoPlay = false;
     } else if (numAlive &lt; 1) {
       finalMessage.setTitle(
-          '\nEveryone has died in ' + find(id).currentGame.name +
-          '!\nThere are no winners!');
-      find(id).currentGame.inProgress = false;
-      find(id).currentGame.ended = true;
-      find(id).autoPlay = false;
+          `Everyone has died in ${current.name}!\nThere are no winners!`);
+      current.inProgress = false;
+      current.ended = true;
+      game.autoPlay = false;
     } else {
-      if (find(id).options.teamSize > 0) {
-        find(id).currentGame.includedUsers.sort(function(a, b) {
-          const aTeam = find(id).currentGame.teams.findIndex(function(team) {
-            return team.players.findIndex(function(player) {
+      if (game.options.teamSize > 0) {
+        current.includedUsers.sort((a, b) => {
+          const aTeam = current.teams.findIndex((team) => {
+            return team.players.findIndex((player) => {
               return player == a.id;
             }) > -1;
           });
-          const bTeam = find(id).currentGame.teams.findIndex(function(team) {
-            return team.players.findIndex(function(player) {
+          const bTeam = current.teams.findIndex((team) => {
+            return team.players.findIndex((player) => {
               return player == b.id;
             }) > -1;
           });
@@ -2856,29 +2246,30 @@ function HungryGames() {
         });
       }
       let prevTeam = -1;
-      let playersToShow = find(id).currentGame.includedUsers;
-      if (find(id).options.numDaysShowDeath >= 0 ||
-          !find(id).options.showLivingPlayers) {
+      let playersToShow = current.includedUsers;
+      if (game.options.numDaysShowDeath >= 0 ||
+          !game.options.showLivingPlayers) {
         playersToShow = playersToShow.filter((el) => {
-          if (!find(id).options.showLivingPlayers &amp;&amp; el.living) return false;
+          if (!game.options.showLivingPlayers &amp;&amp; el.living) {
+            return false;
+          }
           return el.living || el.state == 'wounded' ||
-              (find(id).options.numDaysShowDeath >= 0 &amp;&amp;
-               find(id).currentGame.day.num - el.dayOfDeath &lt;
-                   find(id).options.numDaysShowDeath);
+              (game.options.numDaysShowDeath >= 0 &amp;&amp;
+               current.day.num - el.dayOfDeath &lt; game.options.numDaysShowDeath);
         });
       }
       const showDead = playersToShow.find((el) => !el.living);
       const showWounded = playersToShow.find((el) => el.state == 'wounded');
       finalMessage.setAuthor(
           emoji.red_heart + 'Alive' +
-          (showWounded ? (', ' + emoji.yellow_heart + 'Wounded') : '') +
-          (showDead ? (', ' + emoji.skull + 'Dead') : ''));
+          (showWounded ? (`, ${emoji.yellow_heart}Wounded`) : '') +
+          (showDead ? (`, ${emoji.skull}Dead`) : ''));
       let showKills = false;
       const statusList = playersToShow.map(function(obj) {
         let myTeam = -1;
-        if (find(id).options.teamSize > 0) {
-          myTeam = find(id).currentGame.teams.findIndex(function(team) {
-            return team.players.findIndex(function(player) {
+        if (game.options.teamSize > 0) {
+          myTeam = current.teams.findIndex((team) => {
+            return team.players.findIndex((player) => {
               return player == obj.id;
             }) > -1;
           });
@@ -2893,22 +2284,22 @@ function HungryGames() {
         }
 
         let shortName;
-        if (obj.nickname &amp;&amp; find(id).options.useNicknames) {
+        if (obj.nickname &amp;&amp; game.options.useNicknames) {
           shortName = obj.nickname.substring(0, 16);
           if (shortName != obj.nickname) {
-            shortName = shortName.substring(0, 13) + '...';
+            shortName = `${shortName.substring(0, 13)}...`;
           }
         } else {
           shortName = obj.name.substring(0, 16);
           if (shortName != obj.name) {
-            shortName = shortName.substring(0, 13) + '...';
+            shortName = `${shortName.substring(0, 13)}...`;
           }
         }
 
         let prefix = '';
         if (myTeam != prevTeam) {
           prevTeam = myTeam;
-          prefix = '__' + find(id).currentGame.teams[myTeam].name + '__\n';
+          prefix = `__${current.teams[myTeam].name}__\n`;
         }
 
         showKills = showKills || obj.kills > 0;
@@ -2916,8 +2307,8 @@ function HungryGames() {
         return prefix + symbol + '`' + shortName + '`' +
             (obj.kills > 0 ? '(' + obj.kills + ')' : '');
       });
-      finalMessage.setTitle('Status update!' + (showKills ? ' (kills)' : ''));
-      if (find(id).options.teamSize == 0) {
+      finalMessage.setTitle(`Status update!${showKills ? ' (kills)' : ''}`);
+      if (game.options.teamSize == 0) {
         statusList.sort((a, b) => {
           if (a.startsWith(emoji.skull)) {
             if (!b.startsWith(emoji.skull)) {
@@ -2942,54 +2333,47 @@ function HungryGames() {
           const thisMessage =
               statusList.splice(0, quarterLength).join('\n').slice(0, 1025);
           finalMessage.addField(
-              (i * quarterLength + 1) + '-' + ((i + 1) * quarterLength),
+              `${i * quarterLength + 1}-${(i + 1) * quarterLength}`,
               thisMessage, true);
         }
         finalMessage.addField(
-            ((numCols - 1) * quarterLength + 1) + '-' + numTotal,
+            `${(numCols - 1) * quarterLength + 1}-${numTotal}`,
             statusList.join('\n').slice(0, 1025), true);
       } else {
         finalMessage.setDescription(statusList.join('\n') || '...');
       }
       if (numWholeTeams == 1) {
         finalMessage.setFooter(
-            self.messages.get('teamRemaining')
-                .replaceAll(
-                    '{}', find(id).currentGame.teams[lastWholeTeam].name));
+            hg.messages.get('teamRemaining')
+                .replaceAll('{}', current.teams[lastWholeTeam].name));
       }
     }
-    if (!find(id).currentGame.ended) {
+    if (!current.ended) {
       const embed = new self.Discord.MessageEmbed();
-      if (find(id).currentGame.day.num == 0) {
-        embed.setTitle(self.messages.get('bloodbathEnd'));
+      if (current.day.num == 0) {
+        embed.setTitle(hg.messages.get('bloodbathEnd'));
       } else {
         embed.setTitle(
-            self.messages.get('dayEnd')
-                .replaceAll('{day}', find(id).currentGame.day.num)
+            hg.messages.get('dayEnd')
+                .replaceAll('{day}', current.day.num)
                 .replaceAll('{alive}', numAlive));
       }
-      if (!find(id).autoPlay) {
-        embed.setFooter(
-            '"' + msg.prefix + self.postPrefix + 'next" for next day.');
+      if (!game.autoPlay) {
+        embed.setFooter(`"${msg.prefix}${self.postPrefix}next" for next day.`);
       }
       embed.setColor(defaultColor);
-      if (!find(id).options.disableOutput) msg.channel.send(embed);
+      if (!game.options.disableOutput) msg.channel.send(embed);
     }
 
     if (collab &amp;&amp; numTeams == 1) {
-      const sendTime =
-          Date.now() + (find(id).options.delayDays > 2000 ? 1000 : 0);
+      const sendTime = Date.now() + (game.options.delayDays > 2000 ? 1000 : 0);
       let winnerTag = '';
-      if (find(id).options.mentionVictor) {
-        winnerTag = find(id)
-            .currentGame.teams[lastTeam]
+      if (game.options.mentionVictor) {
+        winnerTag = current.teams[lastTeam]
             .players.filter((player) => !player.startsWith('NPC'))
-            .map(function(player) {
-              return '&lt;@' + player + '>';
-            })
-            .join(' ');
+            .map((player) => `&lt;@${player}>`).join(' ');
       }
-      const avatarSizes = find(id).options.victorAvatarSizes;
+      const avatarSizes = game.options.victorAvatarSizes;
       const victorIconSize = avatarSizes.avatar;
       if (victorIconSize === 0) {
         sendAtTime(msg.channel, winnerTag, finalMessage, sendTime);
@@ -2997,7 +2381,7 @@ function HungryGames() {
         const iconGap = avatarSizes.gap;
         const underlineSize = avatarSizes.underline;
         const finalImage = new Jimp(
-            find(id).currentGame.teams[lastTeam].players.length *
+            current.teams[lastTeam].players.length *
                     (victorIconSize + iconGap) -
                 iconGap,
             victorIconSize + underlineSize);
@@ -3008,9 +2392,7 @@ function HungryGames() {
               image.resize(victorIconSize, victorIconSize);
               if (underlineSize > 0) {
                 const user =
-                    find(id).currentGame.includedUsers.find(function(obj) {
-                      return obj.id == userId;
-                    });
+                    current.includedUsers.find((obj) => obj.id == userId);
                 let color = 0x0;
                 if (user &amp;&amp; !user.living) {
                   color = 0xFF0000FF;
@@ -3039,8 +2421,7 @@ function HungryGames() {
             console.error(err);
           }
           responses++;
-          if (responses ==
-              find(id).currentGame.teams[lastTeam].players.length) {
+          if (responses == current.teams[lastTeam].players.length) {
             finalImage.getBuffer(Jimp.MIME_PNG, function(err, out) {
               finalMessage.attachFiles([new self.Discord.MessageAttachment(
                   out, 'hgTeamVictor.png')]);
@@ -3048,70 +2429,66 @@ function HungryGames() {
             });
           }
         };
-        find(id).currentGame.teams[lastTeam].players.forEach(function(player) {
-          const p = find(id).currentGame.includedUsers.find(function(obj) {
-            return obj.id == player;
-          });
-          const icon = p.avatarURL;
-          const userId = p.id;
-          readImage(icon)
-              .then(function(userId) {
-                return function(image) {
-                  newImage(image, userId);
-                };
-              }(userId))
-              .catch(function(err) {
-                self.error('Failed to read image');
-                console.log(err);
-                responses++;
-              });
-        });
+        current.teams[lastTeam].players.forEach(
+            (player) => {
+              const p = current.includedUsers.find((obj) => obj.id == player);
+              const icon = p.avatarURL;
+              const userId = p.id;
+              readImage(icon)
+                  .then(function(userId) {
+                    return function(image) {
+                      newImage(image, userId);
+                    };
+                  }(userId))
+                  .catch((err) => {
+                    self.error('Failed to read image');
+                    console.log(err);
+                    responses++;
+                  });
+            });
       }
     } else {
-      self.client.setTimeout(function() {
+      self.client.setTimeout(() => {
         let winnerTag = '';
         if (numAlive == 1) {
-          if (find(id).options.mentionVictor &amp;&amp; !lastId.startsWith('NPC')) {
-            winnerTag = '&lt;@' + lastId + '>';
+          if (hg.getGame(id).options.mentionVictor &amp;&amp;
+              !lastId.startsWith('NPC')) {
+            winnerTag = `&lt;@${lastId}>`;
           }
-          if (find(id).options.disableOutput) return;
+          if (hg.getGame(id).options.disableOutput) return;
           msg.channel.send(winnerTag, finalMessage).catch((err) => {
             self.error('Failed to send solo winner message: ' + msg.channel.id);
             console.error(err);
           });
         } else {
-          if (find(id).options.disableOutput) return;
+          if (hg.getGame(id).options.disableOutput) return;
           msg.channel.send(winnerTag, finalMessage).catch((err) => {
             self.error('Failed to send winner message: ' + msg.channel.id);
             console.error(err);
           });
         }
-      }, (find(id).options.delayDays > 2000 ? 1000 : 0));
+      }, (game.options.delayDays > 2000 ? 1000 : 0));
     }
 
-    if (find(id).currentGame.ended) {
+    if (current.ended) {
       const rankEmbed = new self.Discord.MessageEmbed();
       rankEmbed.setTitle('Final Ranks (kills)');
-      const rankList = find(id)
-          .currentGame.includedUsers
-          .sort(function(a, b) {
-            return a.rank - b.rank;
-          })
-          .map(function(obj) {
+      const rankList =
+          current.includedUsers.sort((a, b) => a.rank - b.rank).map((obj) => {
             let shortName;
-            if (obj.nickname &amp;&amp; find(id).options.useNicknames) {
+            if (obj.nickname &amp;&amp; game.options.useNicknames) {
               shortName = obj.nickname.substring(0, 16);
               if (shortName != obj.nickname) {
-                shortName = shortName.substring(0, 13) + '...';
+                shortName = `${shortName.substring(0, 13)}...`;
               }
             } else {
               shortName = obj.name.substring(0, 16);
               if (shortName != obj.name) {
-                shortName = shortName.substring(0, 13) + '...';
+                shortName = `${shortName.substring(0, 13)}...`;
               }
             }
             return obj.rank + ') ' + shortName +
-                               (obj.kills > 0 ? ' (' + obj.kills + ')' : '');
+                (obj.kills > 0 ? ' (' + obj.kills + ')' : '');
           });
       if (rankList.length &lt;= 20) {
         rankEmbed.setDescription(rankList.join('\n'));
@@ -3125,25 +2502,25 @@ function HungryGames() {
         rankEmbed.addField(3, rankList.join('\n').slice(0, 1025), true);
       }
       rankEmbed.setColor(defaultColor);
-      if (!find(id).options.disableOutput) {
+      if (!game.options.disableOutput) {
         self.client.setTimeout(function() {
           msg.channel.send(rankEmbed).catch((err) => {
-            self.error('Failed to send ranks message: ' + msg.channel.id);
+            self.error(`Failed to send ranks message: ${msg.channel.id}`);
             console.error(err);
           });
         }, 5000);
       }
-      if (find(id).options.teamSize > 0) {
+      if (game.options.teamSize > 0) {
         const teamRankEmbed = new self.Discord.MessageEmbed();
         teamRankEmbed.setTitle('Final Team Ranks');
-        find(id).currentGame.includedUsers.sort(function(a, b) {
-          const aTeam = find(id).currentGame.teams.find(function(team) {
-            return team.players.findIndex(function(player) {
+        current.includedUsers.sort((a, b) => {
+          const aTeam = current.teams.find((team) => {
+            return team.players.findIndex((player) => {
               return player == a.id;
             }) > -1;
           });
-          const bTeam = find(id).currentGame.teams.find(function(team) {
-            return team.players.findIndex(function(player) {
+          const bTeam = current.teams.find((team) => {
+            return team.players.findIndex((player) => {
               return player == b.id;
             }) > -1;
           });
@@ -3155,15 +2532,15 @@ function HungryGames() {
         });
         let prevTeam = -1;
         const statusList =
-            find(id).currentGame.includedUsers.map(function(obj) {
+            current.includedUsers.map((obj) => {
               let myTeam = -1;
-              myTeam = find(id).currentGame.teams.findIndex(function(team) {
-                return team.players.findIndex(function(player) {
+              myTeam = current.teams.findIndex((team) => {
+                return team.players.findIndex((player) => {
                   return player == obj.id;
                 }) > -1;
               });
               let shortName;
-              if (obj.nickname &amp;&amp; find(id).options.useNicknames) {
+              if (obj.nickname &amp;&amp; game.options.useNicknames) {
                 shortName = obj.nickname.substring(0, 16);
                 if (shortName != obj.nickname) {
                   shortName = shortName.substring(0, 13) + '...';
@@ -3178,11 +2555,11 @@ function HungryGames() {
               let prefix = '';
               if (myTeam != prevTeam) {
                 prevTeam = myTeam;
-                prefix = find(id).currentGame.teams[myTeam].rank + ') __' +
-                    find(id).currentGame.teams[myTeam].name + '__\n';
+                prefix = current.teams[myTeam].rank + ') __' +
+                    current.teams[myTeam].name + '__\n';
               }
 
-              return prefix + '`' + shortName + '`';
+              return `${prefix}\`${shortName}\``;
             });
         if (statusList.length >= 5) {
           const numCols =
@@ -3198,39 +2575,14 @@ function HungryGames() {
           teamRankEmbed.setDescription(statusList.join('\n'));
         }
         teamRankEmbed.setColor(defaultColor);
-        if (!find(id).options.disableOutput) {
-          self.client.setTimeout(function() {
+        if (!game.options.disableOutput) {
+          self.client.setTimeout(() => {
             msg.channel.send(teamRankEmbed).catch((err) => {
               self.error('Failed to send final team ranks: ' + msg.channel.id);
               console.error(err);
             });
           }, 8000);
         }
-      }
-    }
-
-    find(id).currentGame.day.state = 0;
-    // find(id).currentGame.day.events = [];
-
-    if (find(id).autoPlay &amp;&amp; !find(id).currentGame.isPaused) {
-      if (!find(id).options.disableOutput) {
-        self.client.setTimeout(function() {
-          msg.channel.send('`Autoplaying...`')
-              .then((msg) => {
-                msg.delete({
-                  timeout: find(id).options.delayDays - 1250,
-                  reason: 'I can do whatever I want!',
-                })
-                    .catch(() => {});
-              })
-              .catch(() => {});
-        }, (find(id).options.delayDays > 2000 ? 1200 : 100));
-        autoPlayTimeout[id] = self.client.setTimeout(function() {
-          delete autoPlayTimeout[id];
-          nextDay(msg, id);
-        }, find(id).options.delayDays);
-      } else {
-        nextDay(msg, id);
       }
     }
   }
@@ -3244,18 +2596,11 @@ function HungryGames() {
    * @param {boolean} [silent=false] Prevent sending messages.
    */
   function endGame(msg, id, silent = false) {
-    if (!find(id) || !find(id).currentGame.inProgress) {
+    const game = hg.getGame(id);
+    if (!game || !game.currentGame.inProgress) {
       if (!silent) self.common.reply(msg, 'There isn\'t a game in progress.');
     } else {
-      find(id).currentGame.inProgress = false;
-      find(id).currentGame.isPaused = false;
-      find(id).currentGame.ended = true;
-      find(id).autoPlay = false;
-      self.client.clearInterval(dayEventIntervals[id]);
-      self.client.clearTimeout(autoPlayTimeout[id]);
-      delete dayEventIntervals[id];
-      delete autoPlayTimeout[id];
-      // delete battleMessage[id];
+      game.end();
       if (!silent) self.common.reply(msg, 'The game has ended!');
     }
   }
@@ -3270,7 +2615,7 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function excludeUser(msg, id) {
-    if (!find(id) || !find(id).currentGame) {
+    if (!hg.getGame(id) || !hg.getGame(id).currentGame) {
       createGame(msg, id);
     }
     let firstWord = msg.text.trim().split(' ')[0];
@@ -3287,7 +2632,7 @@ function HungryGames() {
     let resPrefix = '';
     let resPostfix = ' have been removed from the games.';
     let response;
-    if (find(id).currentGame.inProgress) {
+    if (hg.getGame(id).currentGame.inProgress) {
       resPostfix = ' will be removed from the next game.';
     }
     if (specialWords.everyone.includes(firstWord)) {
@@ -3306,7 +2651,7 @@ function HungryGames() {
       response = self.excludeUsers('dnd', id);
       resPrefix = 'All DND users';
     } else if (specialWords.npcs.includes(firstWord)) {
-      response = self.excludeUsers(find(id).includedNPCs.slice(0), id);
+      response = self.excludeUsers(hg.getGame(id).includedNPCs.slice(0), id);
       resPrefix = 'All NPCs';
     } else if (specialWords.bots.includes(firstWord)) {
       response = self.setOption(id, 'includeBots', false);
@@ -3349,21 +2694,21 @@ function HungryGames() {
    */
   this.excludeUsers = function(users, id) {
     let response = '';
-    if (!find(id)) {
+    if (!hg.getGame(id)) {
       return 'No game';
     }
-    if (!find(id).excludedNPCs) find(id).excludedNPCs = [];
-    if (!find(id).includedNPCs) find(id).includedNPCs = [];
+    if (!hg.getGame(id).excludedNPCs) hg.getGame(id).excludedNPCs = [];
+    if (!hg.getGame(id).includedNPCs) hg.getGame(id).includedNPCs = [];
     switch (users) {
       case 'everyone':
-        users = find(id).includedUsers.slice(0).concat(
-            find(id).includedNPCs.slice(0));
+        users = hg.getGame(id).includedUsers.slice(0).concat(
+            hg.getGame(id).includedNPCs.slice(0));
         break;
       case 'online':
       case 'offline':
       case 'idle':
       case 'dnd':
-        users = find(id)
+        users = hg.getGame(id)
             .includedUsers
             .map((u) => {
               return self.client.users.get(u);
@@ -3385,8 +2730,8 @@ function HungryGames() {
     users.forEach(function(obj) {
       if (typeof obj === 'string') {
         if (obj.startsWith('NPC')) {
-          obj = find(id).includedNPCs.find((el) => el.id == obj);
-          if (!obj &amp;&amp; find(id).excludedNPCs.find((el) => el.id == obj)) {
+          obj = hg.getGame(id).includedNPCs.find((el) => el.id == obj);
+          if (!obj &amp;&amp; hg.getGame(id).excludedNPCs.find((el) => el.id == obj)) {
             response += obj.name + ' is already excluded.\n';
             return;
           }
@@ -3398,51 +2743,51 @@ function HungryGames() {
           return;
         }
       }
-      if (find(id).excludedUsers.includes(obj.id)) {
+      if (hg.getGame(id).excludedUsers.includes(obj.id)) {
         if (!onlyError) {
           response += obj.username +
               ' is already excluded. Create a new game to reset players.\n';
         }
       } else {
         if (obj.isNPC) {
-          find(id).excludedNPCs.push(obj);
+          hg.getGame(id).excludedNPCs.push(obj);
           if (!onlyError) {
             response += obj.username + ' added to blacklist.\n';
           }
           const includeIndex =
-              find(id).includedNPCs.findIndex((el) => el.id == obj.id);
+              hg.getGame(id).includedNPCs.findIndex((el) => el.id == obj.id);
           if (includeIndex >= 0) {
             /* if (!onlyError) {
               response += obj.username + ' removed from whitelist.\n';
             } */
-            find(id).includedNPCs.splice(includeIndex, 1);
+            hg.getGame(id).includedNPCs.splice(includeIndex, 1);
           }
         } else {
-          find(id).excludedUsers.push(obj.id);
+          hg.getGame(id).excludedUsers.push(obj.id);
           if (!onlyError) {
             response += obj.username + ' added to blacklist.\n';
           }
-          if (!find(id).includedUsers) find(id).includedUsers = [];
-          const includeIndex = find(id).includedUsers.indexOf(obj.id);
+          if (!hg.getGame(id).includedUsers) hg.getGame(id).includedUsers = [];
+          const includeIndex = hg.getGame(id).includedUsers.indexOf(obj.id);
           if (includeIndex >= 0) {
             /* if (!onlyError) {
               response += obj.username + ' removed from whitelist.\n';
             } */
-            find(id).includedUsers.splice(includeIndex, 1);
+            hg.getGame(id).includedUsers.splice(includeIndex, 1);
           }
         }
-        if (!find(id).currentGame.inProgress) {
+        if (!hg.getGame(id).currentGame.inProgress) {
           const index =
-              find(id).currentGame.includedUsers.findIndex(function(el) {
+              hg.getGame(id).currentGame.includedUsers.findIndex(function(el) {
                 return el.id == obj.id;
               });
           if (index >= 0) {
-            find(id).currentGame.includedUsers.splice(index, 1);
+            hg.getGame(id).currentGame.includedUsers.splice(index, 1);
             /* if (!onlyError) {
               response += obj.username + ' removed from included players.\n';
             } */
-            formTeams(id);
-          } else if (!find(id).options.includeBots &amp;&amp; obj.bot) {
+            hg.getGame(id).formTeams(id);
+          } else if (!hg.getGame(id).options.includeBots &amp;&amp; obj.bot) {
             // Bots are already excluded.
           } else {
             response +=
@@ -3466,7 +2811,7 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function includeUser(msg, id) {
-    if (!find(id) || !find(id).currentGame) {
+    if (!hg.getGame(id) || !hg.getGame(id).currentGame) {
       createGame(msg, id);
     }
     let firstWord = msg.text.trim().split(' ')[0];
@@ -3483,7 +2828,7 @@ function HungryGames() {
     let resPrefix = '';
     let resPostfix = ' have been added to the games.';
     let response;
-    if (find(id).currentGame.inProgress) {
+    if (hg.getGame(id).currentGame.inProgress) {
       resPostfix = ' will be added into the next game.';
     }
     if (specialWords.everyone.includes(firstWord)) {
@@ -3502,7 +2847,7 @@ function HungryGames() {
       response = self.includeUsers('dnd', id);
       resPrefix = 'All DND users';
     } else if (specialWords.npcs.includes(firstWord)) {
-      response = self.includeUsers(find(id).excludedNPCs.slice(0), id);
+      response = self.includeUsers(hg.getGame(id).excludedNPCs.slice(0), id);
       resPrefix = 'All NCPs';
     } else if (specialWords.bots.includes(firstWord)) {
       response = self.setOption(id, 'includeBots', true);
@@ -3545,21 +2890,21 @@ function HungryGames() {
    */
   this.includeUsers = function(users, id) {
     let response = '';
-    if (!find(id)) {
+    if (!hg.getGame(id)) {
       return 'No game';
     }
-    if (!find(id).excludedNPCs) find(id).excludedNPCs = [];
-    if (!find(id).includedNPCs) find(id).includedNPCs = [];
+    if (!hg.getGame(id).excludedNPCs) hg.getGame(id).excludedNPCs = [];
+    if (!hg.getGame(id).includedNPCs) hg.getGame(id).includedNPCs = [];
     switch (users) {
       case 'everyone':
-        users = find(id).excludedUsers.slice(0).concat(
-            find(id).excludedNPCs.slice(0));
+        users = hg.getGame(id).excludedUsers.slice(0).concat(
+            hg.getGame(id).excludedNPCs.slice(0));
         break;
       case 'online':
       case 'offline':
       case 'idle':
       case 'dnd':
-        users = find(id)
+        users = hg.getGame(id)
             .excludedUsers
             .map((u) => {
               return self.client.users.get(u);
@@ -3581,8 +2926,8 @@ function HungryGames() {
     users.forEach(function(obj) {
       if (typeof obj === 'string') {
         if (obj.startsWith('NPC')) {
-          obj = find(id).excludedNPCs.find((el) => el.id == obj);
-          if (!obj &amp;&amp; find(id).includedNPCs.find((el) => el.id == obj)) {
+          obj = hg.getGame(id).excludedNPCs.find((el) => el.id == obj);
+          if (!obj &amp;&amp; hg.getGame(id).includedNPCs.find((el) => el.id == obj)) {
             response += obj.username + ' is already included.\n';
             return;
           }
@@ -3594,53 +2939,53 @@ function HungryGames() {
           return;
         }
       }
-      if (!find(id).options.includeBots &amp;&amp; obj.bot) {
+      if (!hg.getGame(id).options.includeBots &amp;&amp; obj.bot) {
         response += obj.username + ' is a bot, but bots are disabled.\n';
         return;
       }
       if (obj.isNPC) {
         const excludeIndex =
-            find(id).excludedNPCs.findIndex((el) => el.id == obj.id);
+            hg.getGame(id).excludedNPCs.findIndex((el) => el.id == obj.id);
         if (excludeIndex >= 0) {
           /* if (!onlyError) {
             response += obj.username + ' removed from blacklist.\n';
           } */
-          find(id).excludedNPCs.splice(excludeIndex, 1);
+          hg.getGame(id).excludedNPCs.splice(excludeIndex, 1);
         }
-        if (!find(id).includedNPCs.find((el) => el.id == obj.id)) {
-          find(id).includedNPCs.push(obj);
+        if (!hg.getGame(id).includedNPCs.find((el) => el.id == obj.id)) {
+          hg.getGame(id).includedNPCs.push(obj);
           if (!onlyError) {
             response += obj.username + ' added to whitelist.\n';
           }
         }
       } else {
-        const excludeIndex = find(id).excludedUsers.indexOf(obj.id);
+        const excludeIndex = hg.getGame(id).excludedUsers.indexOf(obj.id);
         if (excludeIndex >= 0) {
           /* if (!onlyError) {
             response += obj.username + ' removed from blacklist.\n';
           } */
-          find(id).excludedUsers.splice(excludeIndex, 1);
+          hg.getGame(id).excludedUsers.splice(excludeIndex, 1);
         }
-        if (!find(id).includedUsers.includes(obj.id)) {
-          find(id).includedUsers.push(obj.id);
+        if (!hg.getGame(id).includedUsers.includes(obj.id)) {
+          hg.getGame(id).includedUsers.push(obj.id);
           if (!onlyError) {
             response += obj.username + ' added to whitelist.\n';
           }
         }
       }
-      if (find(id).currentGame.inProgress) {
+      if (hg.getGame(id).currentGame.inProgress) {
         if (!onlyError) {
           response += obj.username + ' skipped.\n';
         }
-      } else if (!find(id).currentGame.includedUsers.find((u) => {
+      } else if (!hg.getGame(id).currentGame.includedUsers.find((u) => {
         return u.id === obj.id;
       })) {
         if (obj.isNPC) {
-          find(id).currentGame.includedUsers.push(
+          hg.getGame(id).currentGame.includedUsers.push(
               new NPC(obj.name, obj.avatarURL, obj.id));
         } else {
-          find(id).currentGame.includedUsers.push(
-              new Player(
+          hg.getGame(id).currentGame.includedUsers.push(
+              new HungryGames.Player(
                   obj.id, obj.username,
                   obj.avatarURL || obj.displayAvatarURL({format: 'png'}),
                   obj.nickname));
@@ -3648,14 +2993,14 @@ function HungryGames() {
         /* if (!onlyError) {
           response += obj.username + ' added to included players.\n';
         } */
-        formTeams(id);
+        hg.getGame(id).formTeams(id);
       } else {
         if (!onlyError) {
           response += obj.username + ' is already included.\n';
         }
       }
     });
-    if (find(id).currentGame.inProgress) {
+    if (hg.getGame(id).currentGame.inProgress) {
       response +=
           'Players were skipped because a game is currently in progress. ' +
           'Players cannot be added to a game while it\'s in progress.';
@@ -3678,25 +3023,27 @@ function HungryGames() {
     finalMessage.setDescription(
         'To refresh: ' + msg.prefix + self.postPrefix + 'create');
     finalMessage.setColor(defaultColor);
-    if (!find(id)) {
+    if (!hg.getGame(id)) {
       createGame(msg, id);
     }
-    if (find(id) &amp;&amp; find(id).currentGame &amp;&amp;
-        find(id).currentGame.includedUsers) {
-      const iUsers = find(id).currentGame.includedUsers;
+    if (hg.getGame(id) &amp;&amp; hg.getGame(id).currentGame &amp;&amp;
+        hg.getGame(id).currentGame.includedUsers) {
+      const iUsers = hg.getGame(id).currentGame.includedUsers;
       const numUsers = iUsers.length;
-      if (find(id).options.teamSize > 0) {
+      if (hg.getGame(id).options.teamSize > 0) {
         iUsers.sort(function(a, b) {
-          const aTeam = find(id).currentGame.teams.findIndex(function(team) {
-            return team.players.findIndex(function(player) {
-              return player == a.id;
-            }) > -1;
-          });
-          const bTeam = find(id).currentGame.teams.findIndex(function(team) {
-            return team.players.findIndex(function(player) {
-              return player == b.id;
-            }) > -1;
-          });
+          const aTeam =
+              hg.getGame(id).currentGame.teams.findIndex(function(team) {
+                return team.players.findIndex(function(player) {
+                  return player == a.id;
+                }) > -1;
+              });
+          const bTeam =
+              hg.getGame(id).currentGame.teams.findIndex(function(team) {
+                return team.players.findIndex(function(player) {
+                  return player == b.id;
+                }) > -1;
+              });
           if (aTeam == bTeam) {
             return a.id - b.id;
           } else {
@@ -3707,8 +3054,8 @@ function HungryGames() {
       let prevTeam = -1;
       const statusList = iUsers.map(function(obj) {
         let myTeam = -1;
-        if (find(id).options.teamSize > 0) {
-          myTeam = find(id).currentGame.teams.findIndex(function(team) {
+        if (hg.getGame(id).options.teamSize > 0) {
+          myTeam = hg.getGame(id).currentGame.teams.findIndex(function(team) {
             return team.players.findIndex(function(player) {
               return player == obj.id;
             }) > -1;
@@ -3716,7 +3063,7 @@ function HungryGames() {
         }
 
         let shortName;
-        if (obj.nickname &amp;&amp; find(id).options.useNicknames) {
+        if (obj.nickname &amp;&amp; hg.getGame(id).options.useNicknames) {
           shortName = obj.nickname.substring(0, 16);
           if (shortName != obj.nickname) {
             shortName = shortName.substring(0, 13) + '...';
@@ -3731,7 +3078,7 @@ function HungryGames() {
         let prefix = '';
         if (myTeam != prevTeam) {
           prevTeam = myTeam;
-          const t = find(id).currentGame.teams[myTeam];
+          const t = hg.getGame(id).currentGame.teams[myTeam];
           if (t.name != 'Team ' + (t.id + 1)) {
             prefix = (t.id + 1) + ' __' + t.name + '__\n';
           } else {
@@ -3744,7 +3091,7 @@ function HungryGames() {
 
         return prefix + '`' + shortName + '`';
       });
-      if (find(id).options.teamSize == 0) {
+      if (hg.getGame(id).options.teamSize == 0) {
         statusList.sort((a, b) => {
           a = a.toLocaleLowerCase();
           b = b.toLocaleLowerCase();
@@ -3775,9 +3122,10 @@ function HungryGames() {
             false);
       }
     }
-    if (find(id) &amp;&amp; find(id).excludedUsers &amp;&amp;
-        find(id).excludedUsers.length > 0) {
-      const eUsers = find(id).excludedUsers.concat(find(id).excludedNPCs);
+    if (hg.getGame(id) &amp;&amp; hg.getGame(id).excludedUsers &amp;&amp;
+        hg.getGame(id).excludedUsers.length > 0) {
+      const eUsers =
+          hg.getGame(id).excludedUsers.concat(hg.getGame(id).excludedNPCs);
       let excludedList = '\u200B';
       if (eUsers.length &lt; 20) {
         excludedList = eUsers
@@ -3838,7 +3186,7 @@ function HungryGames() {
     const value = msg.text.split(' ')[1];
     const output = self.setOption(id, option, value, msg.text);
     if (!output) {
-      showOpts(msg, find(id).options);
+      showOpts(msg, hg.getGame(id).options);
     } else {
       self.common.reply(msg, output);
     }
@@ -3857,12 +3205,13 @@ function HungryGames() {
    * the user the list of options instead.
    */
   this.setOption = function(id, option, value, text = '') {
-    if (!find(id) || !find(id).currentGame) {
+    if (!hg.getGame(id) || !hg.getGame(id).currentGame) {
       this.createGame(id);
     }
     if (typeof option === 'undefined' || option.length == 0) {
       return null;
-    } else if (typeof defaultOptions[option] === 'undefined') {
+    } else if (
+      option[0] === '_' || typeof defaultOptions[option] === 'undefined') {
       const searchedOption = defaultOptSearcher.search(option);
       if (typeof defaultOptions[searchedOption] === 'undefined') {
         return 'That is not a valid option to change! (' + option + ')\nUse `' +
@@ -3872,7 +3221,8 @@ function HungryGames() {
       option = searchedOption;
     }
     return changeObjectValue(
-        find(id).options, defaultOptions, option, value, text.split(' '), id);
+        hg.getGame(id).options, defaultOptions, option, value, text.split(' '),
+        id);
   };
 
   /**
@@ -3902,7 +3252,7 @@ function HungryGames() {
       type = typeof defaultObj[option].value;
       range = range || defaultObj[option].range;
     }
-    if (find(id).currentGame &amp;&amp; find(id).currentGame.inProgress) {
+    if (hg.getGame(id).currentGame &amp;&amp; hg.getGame(id).currentGame.inProgress) {
       if (option == 'teamSize' || option == 'includeBots') {
         return 'Teams and included players cannot be modified during a game.' +
             '\nYou must end the current game first to do this.';
@@ -4093,7 +3443,7 @@ function HungryGames() {
    */
   function editTeam(msg, id, silent) {
     const split = msg.text.trim().split(' ');
-    if (!find(id) || !find(id).currentGame) {
+    if (!hg.getGame(id) || !hg.getGame(id).currentGame) {
       const message = 'There isn\'t currently any game to edit.' +
           ' Please create one first.';
       if (!silent) {
@@ -4101,7 +3451,7 @@ function HungryGames() {
       }
       return message;
     }
-    if (find(id).currentGame.inProgress) {
+    if (hg.getGame(id).currentGame.inProgress) {
       switch (split[0]) {
         case 'rename':
           break;
@@ -4114,7 +3464,7 @@ function HungryGames() {
         }
       }
     }
-    if (find(id).options.teamSize == 0) {
+    if (hg.getGame(id).options.teamSize == 0) {
       const message =
           'There are no teams to edit. If you wish to have teams, you can ' +
           'set teamSize to the size of teams you wish to have.';
@@ -4136,8 +3486,8 @@ function HungryGames() {
         break;
       case 'reset':
         if (!silent) self.common.reply(msg, 'Resetting ALL teams!');
-        find(id).currentGame.teams = [];
-        formTeams(id);
+        hg.getGame(id).currentGame.teams = [];
+        hg.getGame(id).formTeams(id);
         break;
       case 'randomize':
       case 'shuffle':
@@ -4149,7 +3499,7 @@ function HungryGames() {
     }
   }
   /**
-   * Allows editing teams. Entry for all team actions.
+   * @description Allows editing teams. Entry for all team actions.
    *
    * @public
    * @param {string} uId The id of the user is running the action.
@@ -4162,10 +3512,10 @@ function HungryGames() {
    * @returns {?string} Error message or null if no error.
    */
   this.editTeam = function(uId, gId, cmd, one, two) {
-    if (!find(gId) || !find(gId).currentGame) {
+    if (!hg.getGame(gId) || !hg.getGame(gId).currentGame) {
       createGame(null, gId, true);
     }
-    if (find(gId).currentGame.inProgress) {
+    if (hg.getGame(gId).currentGame.inProgress) {
       switch (cmd) {
         case 'swap':
         case 'move':
@@ -4175,7 +3525,7 @@ function HungryGames() {
     switch (cmd) {
       case 'swap': {
         let p1 = -1;
-        const team1 = find(gId).currentGame.teams.find((t) => {
+        const team1 = hg.getGame(gId).currentGame.teams.find((t) => {
           return t.players.find((p, i) => {
             if (p == one) {
               p1 = i;
@@ -4185,7 +3535,7 @@ function HungryGames() {
           });
         });
         let p2 = -1;
-        const team2 = find(gId).currentGame.teams.find((t) => {
+        const team2 = hg.getGame(gId).currentGame.teams.find((t) => {
           return t.players.find((p, i) => {
             if (p == two) {
               p2 = i;
@@ -4203,7 +3553,7 @@ function HungryGames() {
       case 'move': {
         let pId = -1;
         let tId = -1;
-        const teamS = find(gId).currentGame.teams.find((t, i) => {
+        const teamS = hg.getGame(gId).currentGame.teams.find((t, i) => {
           if (t.players.find((p, j) => {
             if (p == one) {
               pId = j;
@@ -4216,24 +3566,22 @@ function HungryGames() {
           }
           return false;
         });
-        let teamD = find(gId).currentGame.teams.find((t) => {
+        let teamD = hg.getGame(gId).currentGame.teams.find((t) => {
           return t.id == two;
         });
         if (!teamS) break;
         if (!teamD) {
+          const current = hg.getGame(gId).currentGame;
           teamD =
-              find(gId)
-                  .currentGame
-                  .teams[find(gId).currentGame.teams.push(
-                      new Team(
-                          find(gId).currentGame.teams.length, 'Team ' +
-                                     (find(gId).currentGame.teams.length + 1),
-                          [])) -
-                         1];
+              current.teams[current.teams.push(
+                  new HungryGames.Team(
+                      current.teams.length,
+                      'Team ' + (current.teams.length + 1), [])) -
+                            1];
         }
         teamD.players.push(teamS.players.splice(pId, 1)[0]);
         if (teamS.players.length === 0) {
-          find(gId).currentGame.teams.splice(tId, 1);
+          hg.getGame(gId).currentGame.teams.splice(tId, 1);
         }
         break;
       }
@@ -4258,7 +3606,7 @@ function HungryGames() {
               'eachother.');
       return;
     }
-    if (!find(id) || !find(id).currentGame) {
+    if (!hg.getGame(id) || !hg.getGame(id).currentGame) {
       createGame(null, id, true);
     }
     const mentions = msg.mentions.users.concat(msg.softMentions.users);
@@ -4268,14 +3616,14 @@ function HungryGames() {
     let playerId1 = 0;
     let teamId2 = 0;
     let playerId2 = 0;
-    teamId1 = find(id).currentGame.teams.findIndex(function(team) {
+    teamId1 = hg.getGame(id).currentGame.teams.findIndex(function(team) {
       const index = team.players.findIndex(function(player) {
         return player == user1;
       });
       if (index > -1) playerId1 = index;
       return index > -1;
     });
-    teamId2 = find(id).currentGame.teams.findIndex(function(team) {
+    teamId2 = hg.getGame(id).currentGame.teams.findIndex(function(team) {
       const index = team.players.findIndex(function(player) {
         return player == user2;
       });
@@ -4286,11 +3634,11 @@ function HungryGames() {
       self.common.reply(msg, 'Please ensure both users are on a team.');
       return;
     }
-    const intVal = find(id).currentGame.teams[teamId1].players[playerId1];
-    find(id).currentGame.teams[teamId1].players[playerId1] =
-        find(id).currentGame.teams[teamId2].players[playerId2];
+    const intVal = hg.getGame(id).currentGame.teams[teamId1].players[playerId1];
+    hg.getGame(id).currentGame.teams[teamId1].players[playerId1] =
+        hg.getGame(id).currentGame.teams[teamId2].players[playerId2];
 
-    find(id).currentGame.teams[teamId2].players[playerId2] = intVal;
+    hg.getGame(id).currentGame.teams[teamId2].players[playerId2] = intVal;
 
     self.common.reply(msg, 'Swapped players!');
   }
@@ -4307,7 +3655,7 @@ function HungryGames() {
       self.common.reply(msg, 'You must at least mention one user to move.');
       return;
     }
-    if (!find(id) || !find(id).currentGame) {
+    if (!hg.getGame(id) || !hg.getGame(id).currentGame) {
       createGame(null, id, true);
     }
     let user1 = mentions.first().id;
@@ -4326,7 +3674,7 @@ function HungryGames() {
     }
 
     let teamId2 = 0;
-    teamId1 = find(id).currentGame.teams.findIndex(function(team) {
+    teamId1 = hg.getGame(id).currentGame.teams.findIndex(function(team) {
       const index = team.players.findIndex(function(player) {
         return player == user1;
       });
@@ -4334,7 +3682,7 @@ function HungryGames() {
       return index > -1;
     });
     if (user2 > 0) {
-      teamId2 = find(id).currentGame.teams.findIndex(function(team) {
+      teamId2 = hg.getGame(id).currentGame.teams.findIndex(function(team) {
         return team.players.findIndex(function(player) {
           return player == user2;
         }) > -1;
@@ -4355,23 +3703,24 @@ function HungryGames() {
           extra);
       return;
     }
-    if (teamId2 >= find(id).currentGame.teams.length) {
-      find(id).currentGame.teams.push(
-          new Team(
-              find(id).currentGame.teams.length,
-              'Team ' + (find(id).currentGame.teams.length + 1), []));
-      teamId2 = find(id).currentGame.teams.length - 1;
+    if (teamId2 >= hg.getGame(id).currentGame.teams.length) {
+      hg.getGame(id).currentGame.teams.push(
+          new HungryGames.Team(
+              hg.getGame(id).currentGame.teams.length,
+              'Team ' + (hg.getGame(id).currentGame.teams.length + 1), []));
+      teamId2 = hg.getGame(id).currentGame.teams.length - 1;
     }
     self.common.reply(
         msg, 'Moving `' + self.client.users.get(user1).username + '` from ' +
-            find(id).currentGame.teams[teamId1].name + ' to ' +
-            find(id).currentGame.teams[teamId2].name);
+            hg.getGame(id).currentGame.teams[teamId1].name + ' to ' +
+            hg.getGame(id).currentGame.teams[teamId2].name);
 
-    find(id).currentGame.teams[teamId2].players.push(
-        find(id).currentGame.teams[teamId1].players.splice(playerId1, 1)[0]);
+    hg.getGame(id).currentGame.teams[teamId2].players.push(
+        hg.getGame(id).currentGame.teams[teamId1].players.splice(
+            playerId1, 1)[0]);
 
-    if (find(id).currentGame.teams[teamId1].players.length == 0) {
-      find(id).currentGame.teams.splice(teamId1, 1);
+    if (hg.getGame(id).currentGame.teams[teamId1].players.length == 0) {
+      hg.getGame(id).currentGame.teams.splice(teamId1, 1);
     }
   }
   /**
@@ -4396,31 +3745,31 @@ function HungryGames() {
       return;
     }
     let teamId = search - 1;
-    if (!find(id) || !find(id).currentGame) {
+    if (!hg.getGame(id) || !hg.getGame(id).currentGame) {
       createGame(null, id, true);
     }
     if (isNaN(search)) {
-      teamId = find(id).currentGame.teams.findIndex(function(team) {
+      teamId = hg.getGame(id).currentGame.teams.findIndex(function(team) {
         return team.players.findIndex(function(player) {
           return player == mentions.first().id;
         }) > -1;
       });
     }
-    if (teamId &lt; 0 || teamId >= find(id).currentGame.teams.length) {
+    if (teamId &lt; 0 || teamId >= hg.getGame(id).currentGame.teams.length) {
       if (!silent) {
         self.common.reply(
             msg, 'Please specify a valid team id. (0 - ' +
-                (find(id).currentGame.teams.length - 1) + ')');
+                (hg.getGame(id).currentGame.teams.length - 1) + ')');
       }
       return;
     }
     message = message.slice(0, 101);
     if (!silent) {
       self.common.reply(
-          msg, 'Renaming "' + find(id).currentGame.teams[teamId].name +
+          msg, 'Renaming "' + hg.getGame(id).currentGame.teams[teamId].name +
               '" to "' + message + '"');
     }
-    find(id).currentGame.teams[teamId].name = message;
+    hg.getGame(id).currentGame.teams[teamId].name = message;
   }
 
   /**
@@ -4433,16 +3782,16 @@ function HungryGames() {
    * messages to the channel where the msg was sent..
    */
   function randomizeTeams(msg, id, silent) {
-    if (!find(id) || !find(id).currentGame) {
+    if (!hg.getGame(id) || !hg.getGame(id).currentGame) {
       createGame(null, id, true);
     }
-    if (find(id).currentGame.inProgress) {
+    if (hg.getGame(id).currentGame.inProgress) {
       if (!silent) {
         self.common.reply(msg, 'Please end the current game to modify teams.');
       }
       return;
     }
-    const current = find(id).currentGame;
+    const current = hg.getGame(id).currentGame;
     if (current.teams.length == 0) {
       if (!silent) self.common.reply(msg, 'There are no teams to randomize.');
       return;
@@ -4473,7 +3822,7 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function createEvent(msg, id) {
-    if (!find(id)) {
+    if (!hg.getGame(id)) {
       createGame(msg, id);
     }
     newEventMessages[msg.id] = msg;
@@ -4651,7 +4000,7 @@ function HungryGames() {
                       .send(
                           '`Event created!`\n' +
                           formatEventString(
-                              new Event(
+                              new HungryGames.Event(
                                   message, numVictim, numAttacker,
                                   victimOutcome, attackerOutcome, victimKiller,
                                   attackerKiller)) +
@@ -4713,10 +4062,10 @@ function HungryGames() {
       id, type, message, numVictim, numAttacker, victimOutcome, attackerOutcome,
       victimKiller, attackerKiller, vWeapon = null, aWeapon = null) {
     if (type !== 'player' &amp;&amp; type !== 'bloodbath') return 'Invalid Type';
-    if (!find(id) || !find(id).customEvents) {
+    if (!hg.getGame(id) || !hg.getGame(id).customEvents) {
       return 'Invalid ID or no game.';
     }
-    const newEvent = new Event(
+    const newEvent = new HungryGames.Event(
         message, numVictim, numAttacker, victimOutcome, attackerOutcome,
         victimKiller, attackerKiller);
     if (vWeapon) {
@@ -4738,18 +4087,19 @@ function HungryGames() {
    */
   this.addEvent = function(id, type, event) {
     if (type !== 'bloodbath' &amp;&amp; type !== 'player') return 'Invalid Type';
-    if (!find(id) || !find(id).customEvents) {
+    if (!hg.getGame(id) || !hg.getGame(id).customEvents) {
       return 'Invalid ID or no game.';
     }
     if (typeof event.message !== 'string' || event.message.length == 0) {
       return 'Event must have a message.';
     }
-    for (let i = 0; i &lt; find(id).customEvents[type].length; i++) {
-      if (Event.eventsEqual(event, find(id).customEvents[type][i])) {
+    for (let i = 0; i &lt; hg.getGame(id).customEvents[type].length; i++) {
+      if (HungryGames.Event.equal(
+          event, hg.getGame(id).customEvents[type][i])) {
         return 'Event already exists!';
       }
     }
-    find(id).customEvents[type].push(event);
+    hg.getGame(id).customEvents[type].push(event);
     return null;
   };
 
@@ -4767,44 +4117,45 @@ function HungryGames() {
    */
   this.addMajorEvent = function(id, type, data, name) {
     if (type !== 'arena' &amp;&amp; type !== 'weapon') return 'Invalid Type';
-    if (!find(id) || !find(id).customEvents) {
+    if (!hg.getGame(id) || !hg.getGame(id).customEvents) {
       return 'Invalid ID or no game.';
     }
     if (type === 'arena') {
       if (!data.message || data.message.length == 0) {
         return 'Event must have a message.';
       }
-      for (let i = 0; i &lt; find(id).customEvents[type].length; i++) {
-        if (find(id).customEvents[type][i].message === data.message) {
-          find(id).customEvents[type][i] =
-              Object.assign(find(id).customEvents[type][i], data);
+      for (let i = 0; i &lt; hg.getGame(id).customEvents[type].length; i++) {
+        if (hg.getGame(id).customEvents[type][i].message === data.message) {
+          hg.getGame(id).customEvents[type][i] =
+              Object.assign(hg.getGame(id).customEvents[type][i], data);
           return null;
         }
       }
-      find(id).customEvents[type].push(data);
+      hg.getGame(id).customEvents[type].push(data);
       return null;
     } else if (type === 'weapon') {
-      if (find(id).customEvents[type][name]) {
-        if (data.name) find(id).customEvents[type][name].name = data.name;
+      if (hg.getGame(id).customEvents[type][name]) {
+        if (data.name) hg.getGame(id).customEvents[type][name].name = data.name;
         if (data.consumable) {
-          find(id).customEvents[type][name].consumable = data.consumable;
+          hg.getGame(id).customEvents[type][name].consumable = data.consumable;
         }
         for (let i = 0; i &lt; data.outcomes.length; i++) {
           let exists = false;
           const dEl = data.outcomes[i];
-          for (let j = 0; j &lt; find(id).customEvents[type][name].outcomes.length;
-            j++) {
-            const el = find(id).customEvents[type][name].outcomes[j];
-            if (Event.eventsEqual(el, dEl)) {
+          for (let j = 0;
+            j &lt; hg.getGame(id).customEvents[type][name].outcomes.length; j++) {
+            const el = hg.getGame(id).customEvents[type][name].outcomes[j];
+            if (HungryGames.Event.eventsEqual(el, dEl)) {
               exists = true;
               break;
             }
           }
           if (exists) continue;
-          find(id).customEvents[type][name].outcomes.push(data.outcomes[i]);
+          hg.getGame(id).customEvents[type][name].outcomes.push(
+              data.outcomes[i]);
         }
       } else {
-        find(id).customEvents[type][name] = data;
+        hg.getGame(id).customEvents[type][name] = data;
       }
       return null;
     }
@@ -4831,10 +4182,10 @@ function HungryGames() {
    */
   this.editMajorEvent = function(id, type, search, data, name, newName) {
     if (type !== 'arena' &amp;&amp; type !== 'weapon') return 'Invalid Type';
-    if (!find(id) || !find(id).customEvents) {
+    if (!hg.getGame(id) || !hg.getGame(id).customEvents) {
       return 'Invalid ID or no game.';
     }
-    const list = find(id).customEvents[type];
+    const list = hg.getGame(id).customEvents[type];
     if (type === 'arena') {
       let match;
       let matchId = -1;
@@ -4848,7 +4199,7 @@ function HungryGames() {
       if (!match) return 'Failed to find event to edit.';
 
       if (!data) {
-        find(id).customEvents[type].splice(matchId, 1);
+        hg.getGame(id).customEvents[type].splice(matchId, 1);
         return null;
       }
       if (search.message) match.message = data.message;
@@ -4858,7 +4209,7 @@ function HungryGames() {
         let one = match.outcomes[i];
         for (let j = 0; j &lt; search.outcomes.length; j++) {
           const two = search.outcomes[j];
-          if (Event.eventsEqual(one, two)) {
+          if (HungryGames.Event.eventsEqual(one, two)) {
             if (data.outcomes &amp;&amp; data.outcomes[j]) {
               one = data.outcomes[j];
             } else {
@@ -4870,19 +4221,20 @@ function HungryGames() {
         }
       }
       if (match.outcomes.length == 0) {
-        find(id).customEvents[type].splice(matchId, 1);
+        hg.getGame(id).customEvents[type].splice(matchId, 1);
       }
       return null;
     } else if (type === 'weapon') {
-      let match = find(id).customEvents[type][name];
+      let match = hg.getGame(id).customEvents[type][name];
       if (!match) return 'Failed to find weapon to edit.';
       if (newName) {
-        match = find(id).customEvents[type][newName] = Object.assign({}, match);
-        delete find(id).customEvents[type][name];
+        match = hg.getGame(id).customEvents[type][newName] =
+            Object.assign({}, match);
+        delete hg.getGame(id).customEvents[type][name];
       }
       if (!search) return null;
       if (!data) {
-        delete find(id).customEvents[type][newName || name];
+        delete hg.getGame(id).customEvents[type][newName || name];
         return null;
       }
       if (search.name) match.name = data.name;
@@ -4890,7 +4242,8 @@ function HungryGames() {
       if (!search.outcomes || search.outcomes.length == 0) return null;
       for (let i = 0; i &lt; search.outcomes.length; i++) {
         for (let j = 0; j &lt; match.outcomes.length; j++) {
-          if (Event.eventsEqual(search.outcomes[i], match.outcomes[j])) {
+          if (HungryGames.Event.eventsEqual(
+              search.outcomes[i], match.outcomes[j])) {
             if (!data.outcomes || !data.outcomes[i]) {
               match.outcomes.splice(j, 1);
             } else {
@@ -4901,7 +4254,7 @@ function HungryGames() {
         }
       }
       if (match.outcomes.length == 0) {
-        delete find(id).customEvents[type][newName || name];
+        delete hg.getGame(id).customEvents[type][newName || name];
       }
       return null;
     }
@@ -4921,12 +4274,12 @@ function HungryGames() {
    */
   this.removeEvent = function(id, type, event) {
     if (type !== 'bloodbath' &amp;&amp; type !== 'player') return 'Invalid Type';
-    if (!find(id) || !find(id).customEvents) {
+    if (!hg.getGame(id) || !hg.getGame(id).customEvents) {
       return 'Invalid ID or no game.';
     }
-    const list = find(id).customEvents[type];
+    const list = hg.getGame(id).customEvents[type];
     for (let i = 0; i &lt; list.length; i++) {
-      if (Event.eventsEqual(list[i], event)) {
+      if (HungryGames.Event.eventsEqual(list[i], event)) {
         list.splice(i, 1);
         return null;
       }
@@ -4968,26 +4321,28 @@ function HungryGames() {
     if (!['bloodbath', 'arena', 'player', 'weapon'].includes(type)) {
       return 'Invalid Type';
     }
-    if (!find(id)) return 'Invalid ID or no game';
-    if (!find(id).disabledEvents) {
-      find(id).disabledEvents =
+    if (!hg.getGame(id)) return 'Invalid ID or no game';
+    if (!hg.getGame(id).disabledEvents) {
+      hg.getGame(id).disabledEvents =
           {bloodbath: [], player: [], arena: {}, weapon: {}};
     }
     let allEvents;
     switch (type) {
       case 'bloodbath':
-        allEvents =
-            defaultBloodbathEvents.concat(find(id).customEvents.bloodbath);
+        allEvents = defaultBloodbathEvents.concat(
+            hg.getGame(id).customEvents.bloodbath);
         break;
       case 'player':
-        allEvents = defaultPlayerEvents.concat(find(id).customEvents.player);
+        allEvents =
+            defaultPlayerEvents.concat(hg.getGame(id).customEvents.player);
         break;
       case 'arena':
-        allEvents = defaultArenaEvents.concat(find(id).customEvents.arena);
+        allEvents =
+            defaultArenaEvents.concat(hg.getGame(id).customEvents.arena);
         break;
       case 'weapon': {
         allEvents = Object.assign({}, weapons);
-        const entries = Object.entries(find(id).customEvents.weapon);
+        const entries = Object.entries(hg.getGame(id).customEvents.weapon);
         for (let i = 0; i &lt; entries.length; i++) {
           if (allEvents[entries[i][0]]) {
             allEvents[entries[i][0]].outcomes =
@@ -5001,7 +4356,7 @@ function HungryGames() {
       }
     }
 
-    let allDisabled = find(id).disabledEvents[type];
+    let allDisabled = hg.getGame(id).disabledEvents[type];
 
     if (['weapon', 'arena'].includes(type)) {
       if (!subCat) return 'Invalid Category';
@@ -5019,7 +4374,7 @@ function HungryGames() {
     let isDisabled = false;
     let index;
     for (let i = 0; i &lt; allDisabled.length; i++) {
-      if (Event.eventsEqual(allDisabled[i], event)) {
+      if (HungryGames.Event.eventsEqual(allDisabled[i], event)) {
         if (typeof value === 'undefined') value = true;
         if (value) isValid = true;
         isDisabled = true;
@@ -5036,7 +4391,7 @@ function HungryGames() {
     if (!value) {
       isValid = false;
       for (let i = 0; i &lt; allEvents.length; i++) {
-        if (Event.eventsEqual(allEvents[i], event)) {
+        if (HungryGames.Event.eventsEqual(allEvents[i], event)) {
           isValid = true;
           break;
         }
@@ -5243,29 +4598,29 @@ function HungryGames() {
     for (let i = 0; cnt &lt; 4; i++) {
       const nextUser = users[i % users.length];
       if (typeof nextUser === 'undefined') continue;
-      players.push(Player.from(nextUser.user));
+      players.push(HungryGames.Player.from(nextUser.user));
       cnt++;
     }
     try {
-      const single = Event
+      const single = HungryGames.Event
           .finalize(
               msg.text, players.slice(0), 1, 1, 'nothing',
-              'nothing', find(msg.guild.id))
+              'nothing', hg.getGame(msg.guild.id))
           .message;
-      const pluralOne = Event
+      const pluralOne = HungryGames.Event
           .finalize(
               msg.text, players.slice(0), 2, 1, 'nothing',
-              'nothing', find(msg.guild.id))
+              'nothing', hg.getGame(msg.guild.id))
           .message;
-      const pluralTwo = Event
+      const pluralTwo = HungryGames.Event
           .finalize(
               msg.text, players.slice(0), 1, 2, 'nothing',
-              'nothing', find(msg.guild.id))
+              'nothing', hg.getGame(msg.guild.id))
           .message;
-      const pluralBoth = Event
+      const pluralBoth = HungryGames.Event
           .finalize(
               msg.text, players.slice(0), 2, 2, 'nothing',
-              'nothing', find(msg.guild.id))
+              'nothing', hg.getGame(msg.guild.id))
           .message;
       msg.myResponse.edit(
           helpMsg + single + '\n' + pluralOne + '\n' + pluralTwo + '\n' +
@@ -5285,7 +4640,7 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function removeEvent(msg, id) {
-    if (!find(id)) {
+    if (!hg.getGame(id)) {
       self.common.reply(
           msg, 'You must first create an event in order to remove it.');
       return;
@@ -5331,20 +4686,7 @@ function HungryGames() {
             }
 
             if (eventType == 'player') {
-              if (num >= find(id).customEvents.player.length) {
-                self.common.reply(
-                    msg,
-                    'That number is a really big scary number. Try a smaller ' +
-                        'one.');
-                msg_.delete().catch(() => {});
-              } else {
-                const removed = find(id).customEvents.player.splice(num, 1)[0];
-                self.common.reply(
-                    msg, 'Removed event.', formatEventString(removed, true));
-                msg_.delete().catch(() => {});
-              }
-            } else {
-              if (num >= find(id).customEvents.bloodbath.length) {
+              if (num >= hg.getGame(id).customEvents.player.length) {
                 self.common.reply(
                     msg,
                     'That number is a really big scary number. Try a smaller ' +
@@ -5352,7 +4694,21 @@ function HungryGames() {
                 msg_.delete().catch(() => {});
               } else {
                 const removed =
-                    find(id).customEvents.bloodbath.splice(num, 1)[0];
+                    hg.getGame(id).customEvents.player.splice(num, 1)[0];
+                self.common.reply(
+                    msg, 'Removed event.', formatEventString(removed, true));
+                msg_.delete().catch(() => {});
+              }
+            } else {
+              if (num >= hg.getGame(id).customEvents.bloodbath.length) {
+                self.common.reply(
+                    msg,
+                    'That number is a really big scary number. Try a smaller ' +
+                        'one.');
+                msg_.delete().catch(() => {});
+              } else {
+                const removed =
+                    hg.getGame(id).customEvents.bloodbath.splice(num, 1)[0];
                 self.common.reply(
                     msg, 'Removed event.', formatEventString(removed, true));
                 msg_.delete().catch(() => {});
@@ -5413,38 +4769,42 @@ function HungryGames() {
     let title;
     if (!eventType) eventType = 'player';
     if (eventType == 'player') {
-      if (find(id) &amp;&amp; find(id).customEvents.player) {
-        events = JSON.parse(JSON.stringify(find(id).customEvents.player));
-        numCustomEvents = find(id).customEvents.player.length;
+      if (hg.getGame(id) &amp;&amp; hg.getGame(id).customEvents.player) {
+        events = JSON.parse(JSON.stringify(hg.getGame(id).customEvents.player));
+        numCustomEvents = hg.getGame(id).customEvents.player.length;
       }
       events.push(
-          new Event(emoji.arrow_up + 'Custom | Default' + emoji.arrow_down));
+          new HungryGames.Event(
+              emoji.arrow_up + 'Custom | Default' + emoji.arrow_down));
       events = events.concat(JSON.parse(JSON.stringify(defaultPlayerEvents)));
       title = 'Player';
       fetchStats(events);
       embed.setColor([0, 255, 0]);
     } else if (eventType == 'bloodbath') {
-      if (find(id) &amp;&amp; find(id).customEvents.bloodbath) {
-        events = JSON.parse(JSON.stringify(find(id).customEvents.bloodbath));
-        numCustomEvents = find(id).customEvents.bloodbath.length;
+      if (hg.getGame(id) &amp;&amp; hg.getGame(id).customEvents.bloodbath) {
+        events =
+            JSON.parse(JSON.stringify(hg.getGame(id).customEvents.bloodbath));
+        numCustomEvents = hg.getGame(id).customEvents.bloodbath.length;
       }
       events.push(
-          new Event(emoji.arrow_up + 'Custom | Default' + emoji.arrow_down));
+          new HungryGames.Event(
+              emoji.arrow_up + 'Custom | Default' + emoji.arrow_down));
       events =
           events.concat(JSON.parse(JSON.stringify(defaultBloodbathEvents)));
       title = 'Bloodbath';
       fetchStats(events);
       embed.setColor([255, 0, 0]);
     } else if (eventType == 'arena') {
-      if (find(id) &amp;&amp; find(id).customEvents.arena) {
-        events = JSON.parse(JSON.stringify(find(id).customEvents.arena));
-        numCustomEvents = find(id).customEvents.arena.length;
+      if (hg.getGame(id) &amp;&amp; hg.getGame(id).customEvents.arena) {
+        events = JSON.parse(JSON.stringify(hg.getGame(id).customEvents.arena));
+        numCustomEvents = hg.getGame(id).customEvents.arena.length;
       }
       if (numCustomEvents == 0 &amp;&amp; page &lt;= 0) {
         page = 1;
       }
       events.push(
-          new Event(emoji.arrow_up + 'Custom | Default' + emoji.arrow_down));
+          new HungryGames.Event(
+              emoji.arrow_up + 'Custom | Default' + emoji.arrow_down));
       events = events.concat(JSON.parse(JSON.stringify(defaultArenaEvents)));
 
       events = events.map(function(obj, i) {
@@ -5466,7 +4826,7 @@ function HungryGames() {
                   })
                   .join('\n');
 
-          return new Event(eventMessage);
+          return new HungryGames.Event(eventMessage);
         } else {
           obj.message = '**___' + obj.message + '___**';
           return obj;
@@ -5674,8 +5034,8 @@ function HungryGames() {
     }
 
 
-    const iNPCs = find(id).includedNPCs || [];
-    const eNPCs = find(id).excludedNPCs || [];
+    const iNPCs = hg.getGame(id).includedNPCs || [];
+    const eNPCs = hg.getGame(id).excludedNPCs || [];
     if (specific) {
       specific = iNPCs.concat(eNPCs).find((el) => el.id == specific.id);
       const embed = new self.Discord.MessageEmbed();
@@ -5696,7 +5056,7 @@ function HungryGames() {
       const finalMessage = new self.Discord.MessageEmbed();
       finalMessage.setTitle('List of NPCs');
       finalMessage.setColor(defaultColor);
-      if (!find(id)) {
+      if (!hg.getGame(id)) {
         createGame(msg, id);
       }
       let iList = [];
@@ -5819,7 +5179,7 @@ function HungryGames() {
      *
      * @private
      *
-     * @param {http.IncomingMessage} incoming
+     * @param {http.IncomingMessage} incoming Response object.
      */
     function onIncoming(incoming) {
       if (incoming.statusCode != 200 ) {
@@ -5894,9 +5254,9 @@ function HungryGames() {
           .then((image) => {
             if (!image) throw new Error('Invalid Data');
             let size = 128;
-            if (find(id) &amp;&amp; find(id).options &amp;&amp;
-                find(id).options.eventAvatarSizes) {
-              size = find(id).options.eventAvatarSizes.avatar;
+            if (hg.getGame(id) &amp;&amp; hg.getGame(id).options &amp;&amp;
+                hg.getGame(id).options.eventAvatarSizes) {
+              size = hg.getGame(id).options.eventAvatarSizes.avatar;
             }
             const copy = new Jimp(image);
             copy.resize(size, size);
@@ -6024,11 +5384,11 @@ function HungryGames() {
 
     const npc = new NPC(formatUsername(username), avatar, id);
 
-    if (!find(gId)) self.createGame(gId);
-    if (!find(gId).includedNPCs) find(gId).includedNPCs = [];
-    find(gId).includedNPCs.push(npc);
+    if (!hg.getGame(gId)) self.createGame(gId);
+    if (!hg.getGame(gId).includedNPCs) hg.getGame(gId).includedNPCs = [];
+    hg.getGame(gId).includedNPCs.push(npc);
 
-    if (!find(gId).currentGame.inProgress) self.createGame(gId);
+    if (!hg.getGame(gId).currentGame.inProgress) self.createGame(gId);
 
     return null;
   };
@@ -6093,21 +5453,23 @@ function HungryGames() {
    * send if success.
    */
   this.removeNPC = function(gId, npc) {
-    const incIndex = find(gId).includedNPCs.findIndex((el) => el.id == npc);
-    const excIndex = find(gId).excludedNPCs.findIndex((el) => el.id == npc);
+    const incIndex =
+        hg.getGame(gId).includedNPCs.findIndex((el) => el.id == npc);
+    const excIndex =
+        hg.getGame(gId).excludedNPCs.findIndex((el) => el.id == npc);
 
     let toDelete;
     if (incIndex > -1) {
-      toDelete = find(gId).includedNPCs.splice(incIndex, 1)[0];
+      toDelete = hg.getGame(gId).includedNPCs.splice(incIndex, 1)[0];
     } else if (excIndex > -1) {
-      toDelete = find(gId).excludedNPCs.splice(excIndex, 1)[0];
+      toDelete = hg.getGame(gId).excludedNPCs.splice(excIndex, 1)[0];
     } else {
       self.error('NPC HALF DISCOVERED :O ' + npc);
       return 'Oops, I was only half able to find that NPC. ' +
           'Something is broken...';
     }
 
-    if (!find(gId).currentGame.inProgress) self.createGame(gId);
+    if (!hg.getGame(gId).currentGame.inProgress) self.createGame(gId);
 
     const embed = new self.Discord.MessageEmbed();
     embed.setTitle('Deleted NPC');
@@ -6118,7 +5480,7 @@ function HungryGames() {
   };
 
   /**
-   * Include an NPC in the game.
+   * @description Include an NPC in the game.
    *
    * @private
    * @type {HungryGames~hgCommandHandler}
@@ -6130,7 +5492,7 @@ function HungryGames() {
   }
 
   /**
-   * Exclude an NPC from the game.
+   * @description Exclude an NPC from the game.
    *
    * @private
    * @type {HungryGames~hgCommandHandler}
@@ -6142,7 +5504,7 @@ function HungryGames() {
   }
 
   /**
-   * Send help message to DM and reply to server.
+   * @description Send help message to DM and reply to server.
    *
    * @private
    * @type {HungryGames~hgCommandHandler}
@@ -6167,8 +5529,8 @@ function HungryGames() {
   }
 
   /**
-   * Replies to the user with stats about all the currently loaded games in this
-   * shard.
+   * @description Replies to the user with stats about all the currently loaded
+   * games in this shard.
    *
    * @private
    * @type {HungryGames~hgCommandHandler}
@@ -6178,7 +5540,7 @@ function HungryGames() {
   function commandStats(msg, id) {
     const listenerBlockDuration = listenersEndTime - Date.now();
     let message = 'There are ' + self.getNumSimulating() +
-        ' games currently simulating of ' + Object.keys(games).length +
+        ' games currently simulating of ' + Object.keys(hg._games).length +
         ' currently loaded.';
     if (listenerBlockDuration > 0) {
       message += '\nThe last listener will end in ' +
@@ -6194,7 +5556,8 @@ function HungryGames() {
   }
 
   /**
-   * Replies to the user with an image saying "rigged". That is all.
+   * @description Replies to the user with an image saying "rigged". That is
+   * all.
    *
    * @private
    * @type {HungryGames~hgCommandHandler}
@@ -6209,7 +5572,7 @@ function HungryGames() {
   }
 
   /**
-   * Allows the game creator to kill a player in the game.
+   * @description Allows the game creator to kill a player in the game.
    *
    * @private
    * @type {HungryGames~hgCommandHandler}
@@ -6222,11 +5585,11 @@ function HungryGames() {
       self.common.reply(msg, 'Please specify a player in the games to kill.');
       return;
     }
-    if (!find(id)) createGame(msg, id);
+    if (!hg.getGame(id)) createGame(msg, id);
     const players = [];
     const notInGame = !mentions.find((u) => {
       players.push(u.id);
-      return !find(id).currentGame.includedUsers.find((p) => {
+      return !hg.getGame(id).currentGame.includedUsers.find((p) => {
         return p.id == u.ud;
       });
     });
@@ -6236,11 +5599,12 @@ function HungryGames() {
       return;
     }
     self.common.reply(
-        msg, find(id).forcePlayerState(players, 'dead', self.messages));
+        msg, hg.getGame(id).forcePlayerState(players, 'dead', hg.messages));
   }
 
   /**
-   * Allows the game creator to heal or revive a player in the game.
+   * @description Allows the game creator to heal or revive a player in the
+   * game.
    *
    * @private
    * @type {HungryGames~hgCommandHandler}
@@ -6253,11 +5617,11 @@ function HungryGames() {
       self.common.reply(msg, 'Please specify a player in the games to heal.');
       return;
     }
-    if (!find(id)) createGame(msg, id);
+    if (!hg.getGame(id)) createGame(msg, id);
     const players = [];
     const notInGame = !mentions.find((u) => {
       players.push(u.id);
-      return !find(id).currentGame.includedUsers.find((p) => {
+      return !hg.getGame(id).currentGame.includedUsers.find((p) => {
         return p.id == u.ud;
       });
     });
@@ -6267,11 +5631,11 @@ function HungryGames() {
       return;
     }
     self.common.reply(
-        msg, find(id).forcePlayerState(players, 'thriving', self.messages));
+        msg, hg.getGame(id).forcePlayerState(players, 'thriving', hg.messages));
   }
 
   /**
-   * Allows the game creator to wound a player in the game.
+   * @description Allows the game creator to wound a player in the game.
    *
    * @private
    * @type {HungryGames~hgCommandHandler}
@@ -6284,11 +5648,11 @@ function HungryGames() {
       self.common.reply(msg, 'Please specify a player in the games to wound.');
       return;
     }
-    if (!find(id)) createGame(msg, id);
+    if (!hg.getGame(id)) createGame(msg, id);
     const players = [];
     const notInGame = !mentions.find((u) => {
       players.push(u.id);
-      return !find(id).currentGame.includedUsers.find((p) => {
+      return !hg.getGame(id).currentGame.includedUsers.find((p) => {
         return p.id == u.ud;
       });
     });
@@ -6298,11 +5662,11 @@ function HungryGames() {
       return;
     }
     self.common.reply(
-        msg, find(id).forcePlayerState(players, 'wounded', self.messages));
+        msg, hg.getGame(id).forcePlayerState(players, 'wounded', hg.messages));
   }
 
   /**
-   * Rename the guild's game to the given custom name.
+   * @description Rename the guild's game to the given custom name.
    *
    * @public
    * @param {string|number} id The guild id of which to change the game's name.
@@ -6312,16 +5676,16 @@ function HungryGames() {
    * due to a game not existing or the name being longer than 100 characters.
    */
   this.renameGame = function(id, name) {
-    if (!find(id) || !find(id).currentGame) return false;
+    if (!hg.getGame(id) || !hg.getGame(id).currentGame) return false;
     if (name.length > 100) return false;
-    find(id).currentGame.customName = name;
-    find(id).currentGame.name =
+    hg.getGame(id).currentGame.customName = name;
+    hg.getGame(id).currentGame.name =
         name || (self.client.guilds.get(id).name + '\'s Hungry Games');
     return true;
   };
 
   /**
-   * Rename a guild's game to a custom name.
+   * @description Rename a guild's game to a custom name.
    *
    * @private
    * @type {HungryGames~hgCommandHandler}
@@ -6329,7 +5693,7 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function commandRename(msg, id) {
-    if (!find(id) || !find(id).currentGame) {
+    if (!hg.getGame(id) || !hg.getGame(id).currentGame) {
       createGame(null, id, true);
     }
     if (self.renameGame(id, msg.text.trim())) {
@@ -6344,8 +5708,8 @@ function HungryGames() {
   }
 
   /**
-   * Start or stop allowing users to enter in to a game by clicking on a
-   * reaction to a message.
+   * @description Start or stop allowing users to enter in to a game by clicking
+   * on a reaction to a message.
    *
    * @private
    * @type {HungryGames~hgCommandHandler}
@@ -6353,10 +5717,10 @@ function HungryGames() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function commandReactJoin(msg, id) {
-    if (!find(id) || !find(id).currentGame) {
+    if (!hg.getGame(id) || !hg.getGame(id).currentGame) {
       createGame(null, id, true);
     }
-    if (find(id).reactMessage) {
+    if (hg.getGame(id).reactMessage) {
       self.endReactJoinMessage(id, (err, info) => {
         if (err) {
           self.error(err);
@@ -6371,8 +5735,8 @@ function HungryGames() {
   }
 
   /**
-   * Send a message with a reaction for users to click on. Records message id
-   * and channel id in game data.
+   * @description Send a message with a reaction for users to click on. Records
+   * message id and channel id in game data.
    *
    * @public
    * @param {Discord~TextChannel|string} channel The channel in the guild to
@@ -6383,7 +5747,7 @@ function HungryGames() {
       channel = self.client.channels.get(channel);
     }
     if (!channel || !channel.guild || !channel.guild.id ||
-        !find(channel.guild.id)) {
+        !hg.getGame(channel.guild.id)) {
       return;
     }
     const embed = new self.Discord.MessageEmbed();
@@ -6391,16 +5755,19 @@ function HungryGames() {
     embed.setTitle(`React with any emoji to join!`);
     embed.setDescription(
         'If you have reacted, you will be included in the next `' +
-        find(channel.guild.id).currentGame.name + '`');
+        hg.getGame(channel.guild.id).currentGame.name + '`');
     channel.send(embed).then((msg) => {
-      find(channel.guild.id).reactMessage = {id: msg.id, channel: channel.id};
+      hg.getGame(channel.guild.id).reactMessage = {
+        id: msg.id,
+        channel: channel.id,
+      };
       msg.react(emoji.crossed_swords).catch(() => {});
     });
   };
 
   /**
-   * End the reaction join and update the included users to only include those
-   * who reacted to the message.
+   * @description End the reaction join and update the included users to only
+   * include those who reacted to the message.
    *
    * @public
    * @param {string} id The guild id of which to end the react join.
@@ -6410,8 +5777,9 @@ function HungryGames() {
    */
   this.endReactJoinMessage = function(id, cb) {
     if (typeof cb !== 'function') cb = function() {};
-    if (!find(id) || !find(id).reactMessage || !find(id).reactMessage.id ||
-        !find(id).reactMessage.channel) {
+    if (!hg.getGame(id) || !hg.getGame(id).reactMessage ||
+        !hg.getGame(id).reactMessage.id ||
+        !hg.getGame(id).reactMessage.channel) {
       cb('Unable to find message with reactions. ' +
          'Was a join via react started?');
       return;
@@ -6421,8 +5789,8 @@ function HungryGames() {
     let numDone = 0;
     let msg;
     self.client.guilds.get(id)
-        .channels.get(find(id).reactMessage.channel)
-        .messages.fetch(find(id).reactMessage.id)
+        .channels.get(hg.getGame(id).reactMessage.channel)
+        .messages.fetch(hg.getGame(id).reactMessage.id)
         .then((m) => {
           msg = m;
           if (!msg.reactions || msg.reactions.size == 0) {
@@ -6440,13 +5808,13 @@ function HungryGames() {
         })
         .catch((err) => {
           console.error(err);
-          find(id).reactMessage = null;
+          hg.getGame(id).reactMessage = null;
           cb('Unable to find message with reactions. Was it deleted?');
         });
     let list = new self.Discord.Collection();
     /**
-     * Adds fetched user reactions to buffer until all are received, then ends
-     * react join.
+     * @description Adds fetched user reactions to buffer until all are
+     * received, then ends react join.
      *
      * @private
      * @param {Discord.Collection.&lt;User>|Discord.User[]} reactionUsers Array of
@@ -6461,7 +5829,7 @@ function HungryGames() {
       }
       if (numTotal != numDone) return;
       self.excludeUsers('everyone', id);
-      find(id).reactMessage = null;
+      hg.getGame(id).reactMessage = null;
       msg.edit('`Ended`').catch(() => {});
       if (list.length == 0) {
         cb(null, 'No users reacted.');
@@ -6472,13 +5840,14 @@ function HungryGames() {
   };
 
   /**
-   * Returns the number of games that are currently being shown to users.
+   * @description Returns the number of games that are currently being shown to
+   * users.
    *
    * @public
    * @returns {number} Number of games simulating.
    */
   this.getNumSimulating = function() {
-    const loadedEntries = Object.entries(games);
+    const loadedEntries = Object.entries(hg._games);
     const inProgress = loadedEntries.filter((game) => {
       return game[1].currentGame &amp;&amp; game[1].currentGame.inProgress &amp;&amp;
           game[1].currentGame.day.state > 1 &amp;&amp; !game[1].currentGame.isPaused;
@@ -6487,7 +5856,7 @@ function HungryGames() {
   };
 
   /**
-   * Get a random word that means "nothing".
+   * @description Get a random word that means "nothing".
    *
    * @private
    * @returns {string} A word meaning "nothing".
@@ -6506,89 +5875,6 @@ function HungryGames() {
       emoji.x,
     ];
     return nothings[Math.floor(Math.random() * nothings.length)];
-  }
-
-  /**
-   * Returns a guild's game data. Returns cached version if that exists, or
-   * searches the file system for saved data. Data will only be checked from
-   * disk at most once every `HungryGames~findDelay` milliseconds. Returns
-   * `null` if data could not be found, or an error occurred.
-   *
-   * @private
-   * @param {number|string} id The guild id to get the data for.
-   * @returns {?HungryGames~GuildGame} The game data, or null if no game could
-   * be loaded.
-   */
-  function find(id) {
-    if (games[id]) return games[id];
-    if (Date.now() - findTimestamps[id] &lt; findDelay) return null;
-    findTimestamps[id] = Date.now();
-    try {
-      const tmp =
-          fs.readFileSync(self.common.guildSaveDir + id + hgSaveDir + saveFile);
-      try {
-        games[id] = JSON.parse(tmp);
-        if (self.initialized) self.debug('Loaded game from file ' + id);
-      } catch (e2) {
-        self.error('Failed to parse game data for guild ' + id);
-        return null;
-      }
-    } catch (e) {
-      if (e.code !== 'ENOENT') {
-        self.debug('Failed to load game data for guild:' + id);
-        console.error(e);
-      }
-      return null;
-    }
-
-    games[id] = GuildGame.from(games[id]);
-    games[id].id = id;
-
-    // Flush default and stale options.
-    if (games[id].options) {
-      for (const opt in defaultOptions) {
-        if (!(defaultOptions[opt] instanceof Object)) continue;
-        if (typeof games[id].options[opt] !==
-            typeof defaultOptions[opt].value) {
-          if (defaultOptions[opt].value instanceof Object) {
-            games[id].options[opt] =
-                Object.assign({}, defaultOptions[opt].value);
-          } else {
-            games[id].options[opt] = defaultOptions[opt].value;
-          }
-        } else if (defaultOptions[opt].value instanceof Object) {
-          const dKeys = Object.keys(defaultOptions[opt].value);
-          dKeys.forEach((el) => {
-            if (typeof games[id].options[opt][el] !==
-                typeof defaultOptions[opt].value[el]) {
-              games[id].options[opt][el] = defaultOptions[opt].value[el];
-            }
-          });
-        }
-      }
-      for (const opt in games[id].options) {
-        if (!(games[id].options[opt] instanceof Object)) continue;
-        if (typeof defaultOptions[opt] === 'undefined') {
-          delete games[id].options[opt];
-        } else if (games[id].options[opt].value instanceof Object) {
-          const keys = Object.keys(games[id].options[opt].value);
-          keys.forEach((el) => {
-            if (typeof games[id].options[opt][el] !==
-                typeof defaultOptions[opt].value[el]) {
-              delete games[id].options[opt][el];
-            }
-          });
-        }
-      }
-    }
-
-    // If the bot stopped while simulating a day, just start over and try
-    // again.
-    if (games[id] &amp;&amp; games[id].currentGame &amp;&amp; games[id].currentGame.day &amp;&amp;
-        games[id].currentGame.day.state === 1) {
-      games[id].currentGame.day.state = 0;
-    }
-    return games[id];
   }
 
   /**
@@ -6742,57 +6028,12 @@ function HungryGames() {
       }
       return;
     }
-    Object.entries(games).forEach(function(obj) {
-      const id = obj[0];
-      const data = obj[1];
-      const dir = self.common.guildSaveDir + id + hgSaveDir;
-      const filename = dir + saveFile;
-      const saveStartTime = Date.now();
-      if (opt == 'async') {
-        mkdirp(dir, function(err) {
-          if (err) {
-            self.error('Failed to create directory for ' + dir);
-            console.error(err);
-            return;
-          }
-          fs.writeFile(filename, JSON.stringify(data), function(err2) {
-            if (err2) {
-              self.error('Failed to save HG data for ' + filename);
-              console.error(err2);
-            } else if (findTimestamps[id] - saveStartTime &lt; -15 * 60 * 1000) {
-              delete games[id];
-              delete findTimestamps[id];
-              self.debug('Purged ' + id);
-            }
-          });
-        });
-      } else {
-        try {
-          mkdirp.sync(dir);
-        } catch (err) {
-          self.error('Failed to create directory for ' + dir);
-          console.error(err);
-          return;
-        }
-        try {
-          fs.writeFileSync(filename, JSON.stringify(data));
-        } catch (err) {
-          self.error('Failed to save HG data for ' + filename);
-          console.error(err);
-          return;
-        }
-        if (findTimestamps[id] - Date.now() &lt; -15 * 60 * 1000) {
-          delete games[id];
-          delete findTimestamps[id];
-          self.debug('Purged ' + id);
-        }
-      }
-    });
+    hg.save(opt);
   };
 
   /**
-   * Register an event listener. Handlers are called in order they are
-   * registered. Earlier events can modify event data.
+   * @description Register an event listener. Handlers are called in order they
+   * are registered. Earlier events can modify event data.
    *
    * @public
    * @param {string} evt The name of the event to listen for.
@@ -6897,7 +6138,7 @@ function HungryGames() {
   process.on('SIGTERM', sigint);
 }
 
-module.exports = new HungryGames();
+module.exports = new HG();
 </code></pre>
         </article>
     </section>
@@ -6908,13 +6149,13 @@ module.exports = new HungryGames();
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_twemojiChecker.html">lib/twemojiChecker</a></li></ul><h3>Classes</h3><ul><li><a href="ChatBot.html">ChatBot</a></li><li><a href="CmdScheduling.html">CmdScheduling</a></li><li><a href="CmdScheduling-ScheduledCommand.html">CmdScheduling~ScheduledCommand</a></li><li><a href="Command.html">Command</a></li><li><a href="Command-CommandSetting.html">Command~CommandSetting</a></li><li><a href="Command-SingleCommand.html">Command~SingleCommand</a></li><li><a href="Common.html">Common</a></li><li><a href="Connect4.html">Connect4</a></li><li><a href="Connect4_Game.html">Connect4#Game</a></li><li><a href="Define.html">Define</a></li><li><a href="DevCmds.html">DevCmds</a></li><li><a href="FunTranslators.html">FunTranslators</a></li><li><a href="HGWeb.html">HGWeb</a></li><li><a href="HungryGames.html">HungryGames</a></li><li><a href="HungryGames-ArenaEvent.html">HungryGames~ArenaEvent</a></li><li><a href="HungryGames-Battle.html">HungryGames~Battle</a></li><li><a href="HungryGames-Day.html">HungryGames~Day</a></li><li><a href="HungryGames-Event.html">HungryGames~Event</a></li><li><a href="HungryGames-FinalEvent.html">HungryGames~FinalEvent</a></li><li><a href="HungryGames-ForcedOutcome.html">HungryGames~ForcedOutcome</a></li><li><a href="HungryGames-Game.html">HungryGames~Game</a></li><li><a href="HungryGames-Grammar.html">HungryGames~Grammar</a></li><li><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></li><li><a href="HungryGames-Messages.html">HungryGames~Messages</a></li><li><a href="HungryGames-NPC.html">HungryGames~NPC</a></li><li><a href="HungryGames-OutcomeProbabilities.html">HungryGames~OutcomeProbabilities</a></li><li><a href="HungryGames-Player.html">HungryGames~Player</a></li><li><a href="HungryGames-Simulator.html">HungryGames~Simulator</a></li><li><a href="HungryGames-Team.html">HungryGames~Team</a></li><li><a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a></li><li><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></li><li><a href="Main.html">Main</a></li><li><a href="MainModule.html">MainModule</a></li><li><a href="Music.html">Music</a></li><li><a href="Patreon.html">Patreon</a></li><li><a href="Patreon-toExport.html">Patreon~toExport</a></li><li><a href="Polling.html">Polling</a></li><li><a href="Polling-Poll.html">Polling~Poll</a></li><li><a href="RoleColors.html">RoleColors</a></li><li><a href="RoleManager.html">RoleManager</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="SMLoader.html">SMLoader</a></li><li><a href="SpikeyBot.html">SpikeyBot</a></li><li><a href="Spotify.html">Spotify</a></li><li><a href="SubModule.html">SubModule</a></li><li><a href="TicTacToe.html">TicTacToe</a></li><li><a href="TicTacToe_Game.html">TicTacToe#Game</a></li><li><a href="TTS.html">TTS</a></li><li><a href="Uno.html">Uno</a></li><li><a href="Uno_Card.html">Uno#Card</a></li><li><a href="Uno_Game.html">Uno#Game</a></li><li><a href="WebAccount.html">WebAccount</a></li><li><a href="WebCommands.html">WebCommands</a></li><li><a href="WebProxy.html">WebProxy</a></li><li><a href="WebSettings.html">WebSettings</a></li><li><a href="WebStats.html">WebStats</a></li></ul><h3>Global</h3><ul><li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#attacker">attacker</a></li><li><a href="global.html#author">author</a></li><li><a href="global.html#autoPlay">autoPlay</a></li><li><a href="global.html#channel">channel</a></li><li><a href="global.html#consumable">consumable</a></li><li><a href="global.html#currentGame">currentGame</a></li><li><a href="global.html#customEvents">customEvents</a></li><li><a href="global.html#day">day</a></li><li><a href="global.html#disabledEvents">disabledEvents</a></li><li><a href="global.html#effectUser">effectUser</a></li><li><a href="global.html#ended">ended</a></li><li><a href="global.html#events">events</a></li><li><a href="global.html#excludedNPCs">excludedNPCs</a></li><li><a href="global.html#excludedUsers">excludedUsers</a></li><li><a href="global.html#fetchSize">fetchSize</a></li><li><a href="global.html#fistBoth">fistBoth</a></li><li><a href="global.html#fistLeft">fistLeft</a></li><li><a href="global.html#fistRight">fistRight</a></li><li><a href="global.html#forcedOutcomes">forcedOutcomes</a></li><li><a href="global.html#forcePlayerState">forcePlayerState</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#icons">icons</a></li><li><a href="global.html#id">id</a></li><li><a href="global.html#includedNPCs">includedNPCs</a></li><li><a href="global.html#includedUsers">includedUsers</a></li><li><a href="global.html#inProgress">inProgress</a></li><li><a href="global.html#kill">kill</a></li><li><a href="global.html#killUser">killUser</a></li><li><a href="global.html#list">list</a></li><li><a href="global.html#littleDeathRate">littleDeathRate</a></li><li><a href="global.html#lotsOfDeathRate">lotsOfDeathRate</a></li><li><a href="global.html#mentionString">mentionString</a></li><li><a href="global.html#message">message</a></li><li><a href="global.html#messageFile">messageFile</a></li><li><a href="global.html#messages">messages</a></li><li><a href="global.html#multiEventUserDistribution">multiEventUserDistribution</a></li><li><a href="global.html#name">name</a></li><li><a href="global.html#nothing">nothing</a></li><li><a href="global.html#num">num</a></li><li><a href="global.html#numAlive">numAlive</a></li><li><a href="global.html#numVictim">numVictim</a></li><li><a href="global.html#options">options</a></li><li><a href="global.html#outcomeProbs">outcomeProbs</a></li><li><a href="global.html#outcomes">outcomes</a></li><li><a href="global.html#outputChannel">outputChannel</a></li><li><a href="global.html#persists">persists</a></li><li><a href="global.html#pickAffectedPlayers">pickAffectedPlayers</a></li><li><a href="global.html#pickEvent">pickEvent</a></li><li><a href="global.html#probabilityEvent">probabilityEvent</a></li><li><a href="global.html#reactMessage">reactMessage</a></li><li><a href="global.html#restoreUser">restoreUser</a></li><li><a href="global.html#revive">revive</a></li><li><a href="global.html#reviveUser">reviveUser</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#settings">settings</a></li><li><a href="global.html#shutdown">shutdown</a></li><li><a href="global.html#state">state</a></li><li><a href="global.html#teams">teams</a></li><li><a href="global.html#text">text</a></li><li><a href="global.html#thrive">thrive</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li><li><a href="global.html#url">url</a></li><li><a href="global.html#validateEventNumConstraint">validateEventNumConstraint</a></li><li><a href="global.html#validateEventRequirements">validateEventRequirements</a></li><li><a href="global.html#validateEventTeamConstraint">validateEventTeamConstraint</a></li><li><a href="global.html#validateEventVictorConstraint">validateEventVictorConstraint</a></li><li><a href="global.html#victim">victim</a></li><li><a href="global.html#wound">wound</a></li><li><a href="global.html#woundUser">woundUser</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_twemojiChecker.html">lib/twemojiChecker</a></li></ul><h3>Classes</h3><ul><li><a href="ChatBot.html">ChatBot</a></li><li><a href="CmdScheduling.html">CmdScheduling</a></li><li><a href="CmdScheduling-ScheduledCommand.html">CmdScheduling~ScheduledCommand</a></li><li><a href="Command.html">Command</a></li><li><a href="Command-CommandSetting.html">Command~CommandSetting</a></li><li><a href="Command-SingleCommand.html">Command~SingleCommand</a></li><li><a href="Common.html">Common</a></li><li><a href="Connect4.html">Connect4</a></li><li><a href="Connect4_Game.html">Connect4#Game</a></li><li><a href="DefaultOptions-BooleanOption.html">DefaultOptions~BooleanOption</a></li><li><a href="DefaultOptions-NumberOption.html">DefaultOptions~NumberOption</a></li><li><a href="DefaultOptions-ObjectOption.html">DefaultOptions~ObjectOption</a></li><li><a href="DefaultOptions-SelectOption.html">DefaultOptions~SelectOption</a></li><li><a href="Define.html">Define</a></li><li><a href="DevCmds.html">DevCmds</a></li><li><a href="FunTranslators.html">FunTranslators</a></li><li><a href="HG.html">HG</a></li><li><a href="HGWeb.html">HGWeb</a></li><li><a href="HG-NPC.html">HG~NPC</a></li><li><a href="HungryGames.html">HungryGames</a></li><li><a href="HungryGames-ArenaEvent.html">HungryGames~ArenaEvent</a></li><li><a href="HungryGames-Battle.html">HungryGames~Battle</a></li><li><a href="HungryGames-Day.html">HungryGames~Day</a></li><li><a href="HungryGames-DefaultOptions.html">HungryGames~DefaultOptions</a></li><li><a href="HungryGames-DefaultOptions-Option.html">HungryGames~DefaultOptions~Option</a></li><li><a href="HungryGames-Event.html">HungryGames~Event</a></li><li><a href="HungryGames-FinalEvent.html">HungryGames~FinalEvent</a></li><li><a href="HungryGames-ForcedOutcome.html">HungryGames~ForcedOutcome</a></li><li><a href="HungryGames-Game.html">HungryGames~Game</a></li><li><a href="HungryGames-Grammar.html">HungryGames~Grammar</a></li><li><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></li><li><a href="HungryGames-Messages.html">HungryGames~Messages</a></li><li><a href="HungryGames-OutcomeProbabilities.html">HungryGames~OutcomeProbabilities</a></li><li><a href="HungryGames-Player.html">HungryGames~Player</a></li><li><a href="HungryGames-Simulator.html">HungryGames~Simulator</a></li><li><a href="HungryGames-Team.html">HungryGames~Team</a></li><li><a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a></li><li><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></li><li><a href="Main.html">Main</a></li><li><a href="MainModule.html">MainModule</a></li><li><a href="Music.html">Music</a></li><li><a href="Patreon.html">Patreon</a></li><li><a href="Patreon-toExport.html">Patreon~toExport</a></li><li><a href="Polling.html">Polling</a></li><li><a href="Polling-Poll.html">Polling~Poll</a></li><li><a href="RoleColors.html">RoleColors</a></li><li><a href="RoleManager.html">RoleManager</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="SMLoader.html">SMLoader</a></li><li><a href="SpikeyBot.html">SpikeyBot</a></li><li><a href="Spotify.html">Spotify</a></li><li><a href="SubModule.html">SubModule</a></li><li><a href="TicTacToe.html">TicTacToe</a></li><li><a href="TicTacToe_Game.html">TicTacToe#Game</a></li><li><a href="TTS.html">TTS</a></li><li><a href="Uno.html">Uno</a></li><li><a href="Uno_Card.html">Uno#Card</a></li><li><a href="Uno_Game.html">Uno#Game</a></li><li><a href="WebAccount.html">WebAccount</a></li><li><a href="WebCommands.html">WebCommands</a></li><li><a href="WebProxy.html">WebProxy</a></li><li><a href="WebSettings.html">WebSettings</a></li><li><a href="WebStats.html">WebStats</a></li></ul><h3>Global</h3><ul><li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#attacker">attacker</a></li><li><a href="global.html#consumable">consumable</a></li><li><a href="global.html#effectUser">effectUser</a></li><li><a href="global.html#events">events</a></li><li><a href="global.html#fetchSize">fetchSize</a></li><li><a href="global.html#fistBoth">fistBoth</a></li><li><a href="global.html#fistLeft">fistLeft</a></li><li><a href="global.html#fistRight">fistRight</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#icons">icons</a></li><li><a href="global.html#id">id</a></li><li><a href="global.html#kill">kill</a></li><li><a href="global.html#killUser">killUser</a></li><li><a href="global.html#list">list</a></li><li><a href="global.html#littleDeathRate">littleDeathRate</a></li><li><a href="global.html#lotsOfDeathRate">lotsOfDeathRate</a></li><li><a href="global.html#mentionString">mentionString</a></li><li><a href="global.html#message">message</a></li><li><a href="global.html#messageFile">messageFile</a></li><li><a href="global.html#messages">messages</a></li><li><a href="global.html#multiEventUserDistribution">multiEventUserDistribution</a></li><li><a href="global.html#nothing">nothing</a></li><li><a href="global.html#num">num</a></li><li><a href="global.html#numVictim">numVictim</a></li><li><a href="global.html#outcomeProbs">outcomeProbs</a></li><li><a href="global.html#outcomes">outcomes</a></li><li><a href="global.html#persists">persists</a></li><li><a href="global.html#pickAffectedPlayers">pickAffectedPlayers</a></li><li><a href="global.html#pickEvent">pickEvent</a></li><li><a href="global.html#probabilityEvent">probabilityEvent</a></li><li><a href="global.html#restoreUser">restoreUser</a></li><li><a href="global.html#revive">revive</a></li><li><a href="global.html#reviveUser">reviveUser</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#settings">settings</a></li><li><a href="global.html#shutdown">shutdown</a></li><li><a href="global.html#state">state</a></li><li><a href="global.html#text">text</a></li><li><a href="global.html#thrive">thrive</a></li><li><a href="global.html#tmpRequire">tmpRequire</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li><li><a href="global.html#url">url</a></li><li><a href="global.html#validateEventNumConstraint">validateEventNumConstraint</a></li><li><a href="global.html#validateEventRequirements">validateEventRequirements</a></li><li><a href="global.html#validateEventTeamConstraint">validateEventTeamConstraint</a></li><li><a href="global.html#validateEventVictorConstraint">validateEventVictorConstraint</a></li><li><a href="global.html#victim">victim</a></li><li><a href="global.html#wound">wound</a></li><li><a href="global.html#woundUser">woundUser</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Apr 11 2019 14:21:42 GMT-0700 (Pacific Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Apr 15 2019 16:59:28 GMT-0700 (Pacific Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>

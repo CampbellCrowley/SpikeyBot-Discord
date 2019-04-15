@@ -29,9 +29,7 @@
 <header>
     
         <h2><span class="attribs"><span class="type-signature"></span></span>
-            <span class="ancestors"><a href="HungryGames.html">HungryGames</a>~</span>Game<span class="signature">(name<span class="signature-attributes">opt</span>, includedUsers<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
-        
-            <div class="class-description">The container with current game state within a guild's game.</div>
+            <span class="ancestors"><a href="HungryGames.html">HungryGames</a>~</span>Game<span class="signature">(name<span class="signature-attributes">opt</span>, includedUsers<span class="signature-attributes">opt</span>, teams<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
         
     
 </header>
@@ -42,16 +40,18 @@
         
 
     
-    <h2>Constructor</h2>
-    
 
     
-    <h4 class="name" id="Game"><span class="type-signature"></span>new Game<span class="signature">(name<span class="signature-attributes">opt</span>, includedUsers<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Game"><span class="type-signature"></span>new Game<span class="signature">(name<span class="signature-attributes">opt</span>, includedUsers<span class="signature-attributes">opt</span>, teams<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
 
 
+
+<div class="description">
+    The container with current game state within a guild's game.
+</div>
 
 
 
@@ -147,8 +147,42 @@
 
             
 
-            <td class="description last">Array of user players that are
-included in this game.</td>
+            <td class="description last">Array of user players that
+are included in this game.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>teams</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;<a href="HungryGames-Team.html">HungryGames~Team</a>></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Array of teams that have been formed
+already.</td>
         </tr>
 
     
@@ -189,7 +223,7 @@ included in this game.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hg_Game.js.html">hg/Game.js</a>, <a href="hg_Game.js.html#line6">line 6</a>
+        <a href="hg_Game.js.html">hg/Game.js</a>, <a href="hg_Game.js.html#line11">line 11</a>
     </li></ul></dd>
     
 
@@ -233,7 +267,765 @@ included in this game.</td>
     
 
     
+        <h3 class="subsection-title">Members</h3>
 
+        
+            
+<h4 class="name" id="day"><span class="type-signature"></span>day<span class="type-signature"> :<a href="HungryGames-Day.html">HungryGames~Day</a></span></h4>
+
+
+
+
+<div class="description">
+    Information about the day that was simulated.
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type"><a href="HungryGames-Day.html">HungryGames~Day</a></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="hg_Game.js.html">hg/Game.js</a>, <a href="hg_Game.js.html#line71">line 71</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="ended"><span class="type-signature"></span>ended<span class="type-signature"> :boolean</span></h4>
+
+
+
+
+<div class="description">
+    Has the game ended.
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">boolean</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="hg_Game.js.html">hg/Game.js</a>, <a href="hg_Game.js.html#line64">line 64</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="forcedOutcomes"><span class="type-signature"></span>forcedOutcomes<span class="type-signature"> :Array.&lt;<a href="HungryGames-ForcedOutcome.html">HungryGames~ForcedOutcome</a>></span></h4>
+
+
+
+
+<div class="description">
+    List of outcomes and players to force before the end of the day. Does not
+affect the simulation, outcomes are forced by appending events at the end
+of the simulated day.
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Array.&lt;<a href="HungryGames-ForcedOutcome.html">HungryGames~ForcedOutcome</a>></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li class="object-value"><pre class="prettyprint"><code>[]</code></pre></li>
+        </ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="hg_Game.js.html">hg/Game.js</a>, <a href="hg_Game.js.html#line57">line 57</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="includedUsers"><span class="type-signature"></span>includedUsers<span class="type-signature"> :Array.&lt;<a href="HungryGames-Player.html">HungryGames~Player</a>></span></h4>
+
+
+
+
+<div class="description">
+    Array of all users currently in the game.
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Array.&lt;<a href="HungryGames-Player.html">HungryGames~Player</a>></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="hg_Game.js.html">hg/Game.js</a>, <a href="hg_Game.js.html#line41">line 41</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="inProgress"><span class="type-signature"></span>inProgress<span class="type-signature"> :boolean</span></h4>
+
+
+
+
+<div class="description">
+    Is the game currently in progress.
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">boolean</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="hg_Game.js.html">hg/Game.js</a>, <a href="hg_Game.js.html#line34">line 34</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="name"><span class="type-signature"></span>name<span class="type-signature"> :string</span></h4>
+
+
+
+
+<div class="description">
+    The name of this game.
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">string</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li>'Hungry Games'</li>
+        </ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="hg_Game.js.html">hg/Game.js</a>, <a href="hg_Game.js.html#line27">line 27</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="numAlive"><span class="type-signature"></span>numAlive<span class="type-signature"> :number</span></h4>
+
+
+
+
+<div class="description">
+    The number of players still alive in this game.
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">number</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="hg_Game.js.html">hg/Game.js</a>, <a href="hg_Game.js.html#line77">line 77</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="teams"><span class="type-signature"></span>teams<span class="type-signature"> :Array.&lt;<a href="HungryGames-Team.html">HungryGames~Team</a>></span></h4>
+
+
+
+
+<div class="description">
+    All teams in the game.
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Array.&lt;<a href="HungryGames-Team.html">HungryGames~Team</a>></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li>[]</li>
+        </ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="hg_Game.js.html">hg/Game.js</a>, <a href="hg_Game.js.html#line48">line 48</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id=".from"><span class="type-signature">(static) </span>from<span class="signature">(data)</span><span class="type-signature"> &rarr; {<a href="HungryGames-Game.html">HungryGames~Game</a>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Create a new Game from an object. Similar to a copy constructor.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>data</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Game like object to copy.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="hg_Game.js.html">hg/Game.js</a>, <a href="hg_Game.js.html#line88">line 88</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Created Game object.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="HungryGames-Game.html">HungryGames~Game</a></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
     
 
     
@@ -249,13 +1041,13 @@ included in this game.</td>
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_twemojiChecker.html">lib/twemojiChecker</a></li></ul><h3>Classes</h3><ul><li><a href="ChatBot.html">ChatBot</a></li><li><a href="CmdScheduling.html">CmdScheduling</a></li><li><a href="CmdScheduling-ScheduledCommand.html">CmdScheduling~ScheduledCommand</a></li><li><a href="Command.html">Command</a></li><li><a href="Command-CommandSetting.html">Command~CommandSetting</a></li><li><a href="Command-SingleCommand.html">Command~SingleCommand</a></li><li><a href="Common.html">Common</a></li><li><a href="Connect4.html">Connect4</a></li><li><a href="Connect4_Game.html">Connect4#Game</a></li><li><a href="Define.html">Define</a></li><li><a href="DevCmds.html">DevCmds</a></li><li><a href="FunTranslators.html">FunTranslators</a></li><li><a href="HGWeb.html">HGWeb</a></li><li><a href="HungryGames.html">HungryGames</a></li><li><a href="HungryGames-ArenaEvent.html">HungryGames~ArenaEvent</a></li><li><a href="HungryGames-Battle.html">HungryGames~Battle</a></li><li><a href="HungryGames-Day.html">HungryGames~Day</a></li><li><a href="HungryGames-Event.html">HungryGames~Event</a></li><li><a href="HungryGames-FinalEvent.html">HungryGames~FinalEvent</a></li><li><a href="HungryGames-ForcedOutcome.html">HungryGames~ForcedOutcome</a></li><li><a href="HungryGames-Game.html">HungryGames~Game</a></li><li><a href="HungryGames-Grammar.html">HungryGames~Grammar</a></li><li><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></li><li><a href="HungryGames-Messages.html">HungryGames~Messages</a></li><li><a href="HungryGames-NPC.html">HungryGames~NPC</a></li><li><a href="HungryGames-OutcomeProbabilities.html">HungryGames~OutcomeProbabilities</a></li><li><a href="HungryGames-Player.html">HungryGames~Player</a></li><li><a href="HungryGames-Simulator.html">HungryGames~Simulator</a></li><li><a href="HungryGames-Team.html">HungryGames~Team</a></li><li><a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a></li><li><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></li><li><a href="Main.html">Main</a></li><li><a href="MainModule.html">MainModule</a></li><li><a href="Music.html">Music</a></li><li><a href="Patreon.html">Patreon</a></li><li><a href="Patreon-toExport.html">Patreon~toExport</a></li><li><a href="Polling.html">Polling</a></li><li><a href="Polling-Poll.html">Polling~Poll</a></li><li><a href="RoleColors.html">RoleColors</a></li><li><a href="RoleManager.html">RoleManager</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="SMLoader.html">SMLoader</a></li><li><a href="SpikeyBot.html">SpikeyBot</a></li><li><a href="Spotify.html">Spotify</a></li><li><a href="SubModule.html">SubModule</a></li><li><a href="TicTacToe.html">TicTacToe</a></li><li><a href="TicTacToe_Game.html">TicTacToe#Game</a></li><li><a href="TTS.html">TTS</a></li><li><a href="Uno.html">Uno</a></li><li><a href="Uno_Card.html">Uno#Card</a></li><li><a href="Uno_Game.html">Uno#Game</a></li><li><a href="WebAccount.html">WebAccount</a></li><li><a href="WebCommands.html">WebCommands</a></li><li><a href="WebProxy.html">WebProxy</a></li><li><a href="WebSettings.html">WebSettings</a></li><li><a href="WebStats.html">WebStats</a></li></ul><h3>Global</h3><ul><li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#attacker">attacker</a></li><li><a href="global.html#author">author</a></li><li><a href="global.html#autoPlay">autoPlay</a></li><li><a href="global.html#channel">channel</a></li><li><a href="global.html#consumable">consumable</a></li><li><a href="global.html#currentGame">currentGame</a></li><li><a href="global.html#customEvents">customEvents</a></li><li><a href="global.html#day">day</a></li><li><a href="global.html#disabledEvents">disabledEvents</a></li><li><a href="global.html#effectUser">effectUser</a></li><li><a href="global.html#ended">ended</a></li><li><a href="global.html#events">events</a></li><li><a href="global.html#excludedNPCs">excludedNPCs</a></li><li><a href="global.html#excludedUsers">excludedUsers</a></li><li><a href="global.html#fetchSize">fetchSize</a></li><li><a href="global.html#fistBoth">fistBoth</a></li><li><a href="global.html#fistLeft">fistLeft</a></li><li><a href="global.html#fistRight">fistRight</a></li><li><a href="global.html#forcedOutcomes">forcedOutcomes</a></li><li><a href="global.html#forcePlayerState">forcePlayerState</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#icons">icons</a></li><li><a href="global.html#id">id</a></li><li><a href="global.html#includedNPCs">includedNPCs</a></li><li><a href="global.html#includedUsers">includedUsers</a></li><li><a href="global.html#inProgress">inProgress</a></li><li><a href="global.html#kill">kill</a></li><li><a href="global.html#killUser">killUser</a></li><li><a href="global.html#list">list</a></li><li><a href="global.html#littleDeathRate">littleDeathRate</a></li><li><a href="global.html#lotsOfDeathRate">lotsOfDeathRate</a></li><li><a href="global.html#mentionString">mentionString</a></li><li><a href="global.html#message">message</a></li><li><a href="global.html#messageFile">messageFile</a></li><li><a href="global.html#messages">messages</a></li><li><a href="global.html#multiEventUserDistribution">multiEventUserDistribution</a></li><li><a href="global.html#name">name</a></li><li><a href="global.html#nothing">nothing</a></li><li><a href="global.html#num">num</a></li><li><a href="global.html#numAlive">numAlive</a></li><li><a href="global.html#numVictim">numVictim</a></li><li><a href="global.html#options">options</a></li><li><a href="global.html#outcomeProbs">outcomeProbs</a></li><li><a href="global.html#outcomes">outcomes</a></li><li><a href="global.html#outputChannel">outputChannel</a></li><li><a href="global.html#persists">persists</a></li><li><a href="global.html#pickAffectedPlayers">pickAffectedPlayers</a></li><li><a href="global.html#pickEvent">pickEvent</a></li><li><a href="global.html#probabilityEvent">probabilityEvent</a></li><li><a href="global.html#reactMessage">reactMessage</a></li><li><a href="global.html#restoreUser">restoreUser</a></li><li><a href="global.html#revive">revive</a></li><li><a href="global.html#reviveUser">reviveUser</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#settings">settings</a></li><li><a href="global.html#shutdown">shutdown</a></li><li><a href="global.html#state">state</a></li><li><a href="global.html#teams">teams</a></li><li><a href="global.html#text">text</a></li><li><a href="global.html#thrive">thrive</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li><li><a href="global.html#url">url</a></li><li><a href="global.html#validateEventNumConstraint">validateEventNumConstraint</a></li><li><a href="global.html#validateEventRequirements">validateEventRequirements</a></li><li><a href="global.html#validateEventTeamConstraint">validateEventTeamConstraint</a></li><li><a href="global.html#validateEventVictorConstraint">validateEventVictorConstraint</a></li><li><a href="global.html#victim">victim</a></li><li><a href="global.html#wound">wound</a></li><li><a href="global.html#woundUser">woundUser</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_twemojiChecker.html">lib/twemojiChecker</a></li></ul><h3>Classes</h3><ul><li><a href="ChatBot.html">ChatBot</a></li><li><a href="CmdScheduling.html">CmdScheduling</a></li><li><a href="CmdScheduling-ScheduledCommand.html">CmdScheduling~ScheduledCommand</a></li><li><a href="Command.html">Command</a></li><li><a href="Command-CommandSetting.html">Command~CommandSetting</a></li><li><a href="Command-SingleCommand.html">Command~SingleCommand</a></li><li><a href="Common.html">Common</a></li><li><a href="Connect4.html">Connect4</a></li><li><a href="Connect4_Game.html">Connect4#Game</a></li><li><a href="DefaultOptions-BooleanOption.html">DefaultOptions~BooleanOption</a></li><li><a href="DefaultOptions-NumberOption.html">DefaultOptions~NumberOption</a></li><li><a href="DefaultOptions-ObjectOption.html">DefaultOptions~ObjectOption</a></li><li><a href="DefaultOptions-SelectOption.html">DefaultOptions~SelectOption</a></li><li><a href="Define.html">Define</a></li><li><a href="DevCmds.html">DevCmds</a></li><li><a href="FunTranslators.html">FunTranslators</a></li><li><a href="HG.html">HG</a></li><li><a href="HGWeb.html">HGWeb</a></li><li><a href="HG-NPC.html">HG~NPC</a></li><li><a href="HungryGames.html">HungryGames</a></li><li><a href="HungryGames-ArenaEvent.html">HungryGames~ArenaEvent</a></li><li><a href="HungryGames-Battle.html">HungryGames~Battle</a></li><li><a href="HungryGames-Day.html">HungryGames~Day</a></li><li><a href="HungryGames-DefaultOptions.html">HungryGames~DefaultOptions</a></li><li><a href="HungryGames-DefaultOptions-Option.html">HungryGames~DefaultOptions~Option</a></li><li><a href="HungryGames-Event.html">HungryGames~Event</a></li><li><a href="HungryGames-FinalEvent.html">HungryGames~FinalEvent</a></li><li><a href="HungryGames-ForcedOutcome.html">HungryGames~ForcedOutcome</a></li><li><a href="HungryGames-Game.html">HungryGames~Game</a></li><li><a href="HungryGames-Grammar.html">HungryGames~Grammar</a></li><li><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></li><li><a href="HungryGames-Messages.html">HungryGames~Messages</a></li><li><a href="HungryGames-OutcomeProbabilities.html">HungryGames~OutcomeProbabilities</a></li><li><a href="HungryGames-Player.html">HungryGames~Player</a></li><li><a href="HungryGames-Simulator.html">HungryGames~Simulator</a></li><li><a href="HungryGames-Team.html">HungryGames~Team</a></li><li><a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a></li><li><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></li><li><a href="Main.html">Main</a></li><li><a href="MainModule.html">MainModule</a></li><li><a href="Music.html">Music</a></li><li><a href="Patreon.html">Patreon</a></li><li><a href="Patreon-toExport.html">Patreon~toExport</a></li><li><a href="Polling.html">Polling</a></li><li><a href="Polling-Poll.html">Polling~Poll</a></li><li><a href="RoleColors.html">RoleColors</a></li><li><a href="RoleManager.html">RoleManager</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="SMLoader.html">SMLoader</a></li><li><a href="SpikeyBot.html">SpikeyBot</a></li><li><a href="Spotify.html">Spotify</a></li><li><a href="SubModule.html">SubModule</a></li><li><a href="TicTacToe.html">TicTacToe</a></li><li><a href="TicTacToe_Game.html">TicTacToe#Game</a></li><li><a href="TTS.html">TTS</a></li><li><a href="Uno.html">Uno</a></li><li><a href="Uno_Card.html">Uno#Card</a></li><li><a href="Uno_Game.html">Uno#Game</a></li><li><a href="WebAccount.html">WebAccount</a></li><li><a href="WebCommands.html">WebCommands</a></li><li><a href="WebProxy.html">WebProxy</a></li><li><a href="WebSettings.html">WebSettings</a></li><li><a href="WebStats.html">WebStats</a></li></ul><h3>Global</h3><ul><li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#attacker">attacker</a></li><li><a href="global.html#consumable">consumable</a></li><li><a href="global.html#effectUser">effectUser</a></li><li><a href="global.html#events">events</a></li><li><a href="global.html#fetchSize">fetchSize</a></li><li><a href="global.html#fistBoth">fistBoth</a></li><li><a href="global.html#fistLeft">fistLeft</a></li><li><a href="global.html#fistRight">fistRight</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#icons">icons</a></li><li><a href="global.html#id">id</a></li><li><a href="global.html#kill">kill</a></li><li><a href="global.html#killUser">killUser</a></li><li><a href="global.html#list">list</a></li><li><a href="global.html#littleDeathRate">littleDeathRate</a></li><li><a href="global.html#lotsOfDeathRate">lotsOfDeathRate</a></li><li><a href="global.html#mentionString">mentionString</a></li><li><a href="global.html#message">message</a></li><li><a href="global.html#messageFile">messageFile</a></li><li><a href="global.html#messages">messages</a></li><li><a href="global.html#multiEventUserDistribution">multiEventUserDistribution</a></li><li><a href="global.html#nothing">nothing</a></li><li><a href="global.html#num">num</a></li><li><a href="global.html#numVictim">numVictim</a></li><li><a href="global.html#outcomeProbs">outcomeProbs</a></li><li><a href="global.html#outcomes">outcomes</a></li><li><a href="global.html#persists">persists</a></li><li><a href="global.html#pickAffectedPlayers">pickAffectedPlayers</a></li><li><a href="global.html#pickEvent">pickEvent</a></li><li><a href="global.html#probabilityEvent">probabilityEvent</a></li><li><a href="global.html#restoreUser">restoreUser</a></li><li><a href="global.html#revive">revive</a></li><li><a href="global.html#reviveUser">reviveUser</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#settings">settings</a></li><li><a href="global.html#shutdown">shutdown</a></li><li><a href="global.html#state">state</a></li><li><a href="global.html#text">text</a></li><li><a href="global.html#thrive">thrive</a></li><li><a href="global.html#tmpRequire">tmpRequire</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li><li><a href="global.html#url">url</a></li><li><a href="global.html#validateEventNumConstraint">validateEventNumConstraint</a></li><li><a href="global.html#validateEventRequirements">validateEventRequirements</a></li><li><a href="global.html#validateEventTeamConstraint">validateEventTeamConstraint</a></li><li><a href="global.html#validateEventVictorConstraint">validateEventVictorConstraint</a></li><li><a href="global.html#victim">victim</a></li><li><a href="global.html#wound">wound</a></li><li><a href="global.html#woundUser">woundUser</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Apr 11 2019 14:21:42 GMT-0700 (Pacific Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Apr 15 2019 16:59:28 GMT-0700 (Pacific Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>
