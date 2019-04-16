@@ -11,7 +11,7 @@ class HungryGames {
   /**
    * @description HungryGames constructor. Currently requires a valid SubModule
    * as a parent.
-   * @TODO: Remove reliance on SubModule.
+   * @todo Remove reliance on SubModule.
    * @param {SubModule} parent Parent submodule used to hook logging into.
    */
   constructor(parent) {

@@ -31,32 +31,37 @@ const fistRight = './img/fist_right.png';
 const fistBoth = './img/fist_both.png';
 
 /**
- * @classdesc A single battle in an Event.
- * @class HungryGames~Battle
- *
- * @param {string} message The message of this battle event.
- * @param {number} attacker The damage done to the attacker.
- * @param {number} victim The damage done to the victim.
+ * @description A single battle in an Event.
+ * @memberof HungryGames
+ * @inner
  */
-function Battle(message, attacker, victim) {
+class Battle {
   /**
-   * Message of this battle event.
-   * @public
-   * @type {string}
+   * @description Create a single battle.
+   * @param {string} message The message of this battle event.
+   * @param {number} attacker The damage done to the attacker.
+   * @param {number} victim The damage done to the victim.
    */
-  this.message = message;
-  /**
-   * Information about attacker.
-   * @public
-   * @type {{damage: number}}
-   */
-  this.attacker = {damage: attacker};
-  /**
-   * Information about victim.
-   * @public
-   * @type {{damage: number}}
-   */
-  this.victim = {damage: victim};
+  constructor(message, attacker, victim) {
+    /**
+     * Message of this battle event.
+     * @public
+     * @type {string}
+     */
+    this.message = message;
+    /**
+     * Information about attacker.
+     * @public
+     * @type {{damage: number}}
+     */
+    this.attacker = {damage: attacker};
+    /**
+     * Information about victim.
+     * @public
+     * @type {{damage: number}}
+     */
+    this.victim = {damage: victim};
+  }
 }
 
 /**

@@ -4262,7 +4262,7 @@ function HG() {
   /**
    * Toggle events in the games.
    *
-   * @TODO: Write this. This is not implemented yet.
+   * @todo Write this. This is not implemented yet.
    * @type {HungryGames~hgCommandHandler}
    * @param {Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
@@ -4278,14 +4278,16 @@ function HG() {
    * Enable or disable an event without deleting it completely.
    *
    * @public
-   *
    * @param {number|string} id The guild id that the event shall be toggled in.
    * @param {string} type The type of event. 'bloodbath', 'player', 'weapon', or
    * 'arena'.
    * @param {?string} subCat The sub-category name of the event if there is one
    * (Such as the weapon name, or arena event message).
-   * @param {HungryGames~Event|HungryGames~ArenaEvent|HungryGames~WeaponEvent}
-   * event The event to toggle.
+   * @param {
+   * HungryGames~Event|
+   * HungryGames~ArenaEvent|
+   * HungryGames~WeaponEvent
+   * } event The event to toggle.
    * @param {boolean} [value] Set enabled to a value instead of toggling.
    * @returns {?string} Error message or null if no error.
    */

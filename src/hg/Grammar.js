@@ -2,10 +2,11 @@
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 
 /**
- * @classdesc Grammar related string formatting.
- * @class HungryGames~Grammar
+ * @description Grammar related string formatting.
+ * @memberof HungryGames
+ * @inner
  */
-function Grammar() {}
+class Grammar {}
 /**
  * Format an array of users into names based on options and grammar rules.
  *

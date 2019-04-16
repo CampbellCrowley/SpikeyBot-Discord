@@ -31,74 +31,122 @@
 const Discord = require('discord.js');
 
 /**
- * @classdesc Serializable container for data pertaining to a single user.
- * @class HungryGames~Player
- *
- * @param {string} id The id of the user this object is representing.
- * @param {string} username The name of the user to show in the game.
- * @param {string} avatarURL URL to avatar to show for the user in the game.
- * @param {?string} [nickname=null] The nickname for this user usually
- * assigned by the guild. If the user does not have a nickname, this will have
- * the same value as `name`.
- * @property {string} id The id of the User this Player represents.
- * @property {string} name The name of this Player.
- * @property {string} avatarURL The URL to the discord avatar of the User.
- * @property {string} nickname The nickname for this user usually assigned by
- * the guild. If the user does not have a nickname, this will have the same
- * value as `name`.
- * @property {boolean} living Is the player still alive.
- * @property {number} bleeding How many days has the player been wounded.
- * @property {number} rank The current rank of the player in the game.
- * @property {string} state The current player state (normal, wounded, dead,
- * zombie).
- * @property {number} kills The number of players this player has caused to
- * die.
- * @property {Object.&lt;number>} weapons The weapons the player currently has
- * and how many of each.
- * @property {Object} settings Custom settings for this user associated with
- * the games.
- * @property {number} dayOfDeath The day at which the player last died in the
- * game. Only a valid number if the player is currently dead. Otherwise a
- * garbage value will be available.
+ * @description Serializable container for data pertaining to a single user.
+ * @memberof HungryGames
+ * @inner
  */
-function Player(id, username, avatarURL, nickname = null) {
-  // Replace backtick with Unicode 1FEF Greek Varia because it looks the same,
-  // but it wont ruin formatting.
-  username = username.replaceAll('`', '`');
-  if (typeof nickname === 'string') nickname = nickname.replaceAll('`', '`');
-  // User id.
-  this.id = id;
-  // Username.
-  this.name = username;
-  // URL TO user's current avatar.
-  this.avatarURL = avatarURL || '';
-  // Nickname for this user.
-  this.nickname = nickname || username;
-  // If this user is still alive.
-  this.living = true;
-  // How many days the players has been wounded.
-  this.bleeding = 0;
-  // The rank at which this user died.
-  this.rank = 1;
-  // Health state.
-  this.state = 'normal';
-  // Number of kills this user has for the game.
-  this.kills = 0;
-  // Map of the weapons this user currently has, and how many of each.
-  this.weapons = {};
-  // Custom settings for the games associated with this player.
-  this.settings = {};
-  // The day when the player died.
-  this.dayOfDeath = -1;
+class Player {
+  /**
+   * @description Create a player object for a game. Requires a unique ID and a
+   * username.
+   * @param {string} id The id of the user this object is representing.
+   * @param {string} username The name of the user to show in the game.
+   * @param {string} avatarURL URL to avatar to show for the user in the game.
+   * @param {?string} [nickname=null] The nickname for this user usually
+   * assigned by the guild. If the user does not have a nickname, this will have
+   * the same value as `name`.
+   */
+  constructor(id, username, avatarURL = '', nickname = null) {
+    // Replace backtick with Unicode 1FEF Greek Varia because it looks the same,
+    // but it wont ruin formatting.
+    username = username.replaceAll('`', '`');
+    if (typeof nickname === 'string') nickname = nickname.replaceAll('`', '`');
+    /**
+     * The id of the User this Player represents.
+     * @type {string}
+     * @public
+     */
+    this.id = id;
+    /**
+     * The name of this Player.
+     * @type {string}
+     * @public
+     */
+    this.name = username;
+    /**
+     * The URL to the discord avatar of the User.
+     * @type {string}
+     * @public
+     * @default ''
+     */
+    this.avatarURL = avatarURL || '';
+    /**
+     * The nickname for this user usually assigned by the guild. If the user
+     * does
+     * not have a nickname, this will have the same value as `name`.
+     * @type {string}
+     */
+    this.nickname = nickname || username;
+    /**
+     * Is the player still alive.
+     * @type {boolean}
+     * @public
+     * @default
+     */
+    this.living = true;
+    /**
+     * How many days has the player been wounded.
+     * @type {number}
+     * @public
+     * @default
+     */
+    this.bleeding = 0;
+    /**
+     * The current rank of the player in the game.
+     * @type {number}
+     * @public
+     * @default
+     */
+    this.rank = 1;
+    /**
+     * The current player state (normal, wounded, dead, zombie).
+     * @type {string}
+     * @public
+     * @default
+     */
+    this.state = 'normal';
+    /**
+     * The number of players this player has caused to die.
+     * @type {number}
+     * @public
+     * @default
+     */
+    this.kills = 0;
+    /**
+     * The weapons the player currently has and how many of each.
+     * @type {Object.&lt;number>}
+     * @public
+     * @default
+     */
+    this.weapons = {};
+    /**
+     * Custom settings for this user associated with the games.
+     * @type {Object}
+     * @public
+     * @default
+     */
+    this.settings = {};
+    /**
+     * The day at which the player last died in the game. Only a valid number if
+     * the player is currently dead. Otherwise a garbage value will be
+     * available.
+     * @type {number}
+     * @public
+     * @default
+     */
+    this.dayOfDeath = -1;
+  }
 }
 
 /**
- * Create a Player from a given Discord.User or Player-like Object. Can be used
- * as a copy-constructor.
+ * @description Create a Player from a given Discord.User or Player-like Object.
+ * Can be used as a copy-constructor.
  *
- * @private
- * @param {Discord~User|Discord~GuildMember|Object} member Object, User or
- * GuildMember to make a Player from.
+ * @public
+ * @static
+ * @param {
+ * Discord~User|Discord~GuildMember|Object
+ * } member Object, User or GuildMember to make a Player from.
  * @returns {HungryGames~Player} Player object created.
  */
 Player.from = function(member) {
@@ -138,13 +186,13 @@ module.exports = Player;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_twemojiChecker.html">lib/twemojiChecker</a></li></ul><h3>Classes</h3><ul><li><a href="ChatBot.html">ChatBot</a></li><li><a href="CmdScheduling.html">CmdScheduling</a></li><li><a href="CmdScheduling-ScheduledCommand.html">CmdScheduling~ScheduledCommand</a></li><li><a href="Command.html">Command</a></li><li><a href="Command-CommandSetting.html">Command~CommandSetting</a></li><li><a href="Command-SingleCommand.html">Command~SingleCommand</a></li><li><a href="Common.html">Common</a></li><li><a href="Connect4.html">Connect4</a></li><li><a href="Connect4_Game.html">Connect4#Game</a></li><li><a href="DefaultOptions-BooleanOption.html">DefaultOptions~BooleanOption</a></li><li><a href="DefaultOptions-NumberOption.html">DefaultOptions~NumberOption</a></li><li><a href="DefaultOptions-ObjectOption.html">DefaultOptions~ObjectOption</a></li><li><a href="DefaultOptions-SelectOption.html">DefaultOptions~SelectOption</a></li><li><a href="Define.html">Define</a></li><li><a href="DevCmds.html">DevCmds</a></li><li><a href="FunTranslators.html">FunTranslators</a></li><li><a href="HG.html">HG</a></li><li><a href="HGWeb.html">HGWeb</a></li><li><a href="HG-NPC.html">HG~NPC</a></li><li><a href="HungryGames.html">HungryGames</a></li><li><a href="HungryGames-ArenaEvent.html">HungryGames~ArenaEvent</a></li><li><a href="HungryGames-Battle.html">HungryGames~Battle</a></li><li><a href="HungryGames-Day.html">HungryGames~Day</a></li><li><a href="HungryGames-DefaultOptions.html">HungryGames~DefaultOptions</a></li><li><a href="HungryGames-DefaultOptions-Option.html">HungryGames~DefaultOptions~Option</a></li><li><a href="HungryGames-Event.html">HungryGames~Event</a></li><li><a href="HungryGames-FinalEvent.html">HungryGames~FinalEvent</a></li><li><a href="HungryGames-ForcedOutcome.html">HungryGames~ForcedOutcome</a></li><li><a href="HungryGames-Game.html">HungryGames~Game</a></li><li><a href="HungryGames-Grammar.html">HungryGames~Grammar</a></li><li><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></li><li><a href="HungryGames-Messages.html">HungryGames~Messages</a></li><li><a href="HungryGames-OutcomeProbabilities.html">HungryGames~OutcomeProbabilities</a></li><li><a href="HungryGames-Player.html">HungryGames~Player</a></li><li><a href="HungryGames-Simulator.html">HungryGames~Simulator</a></li><li><a href="HungryGames-Team.html">HungryGames~Team</a></li><li><a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a></li><li><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></li><li><a href="Main.html">Main</a></li><li><a href="MainModule.html">MainModule</a></li><li><a href="Music.html">Music</a></li><li><a href="Patreon.html">Patreon</a></li><li><a href="Patreon-toExport.html">Patreon~toExport</a></li><li><a href="Polling.html">Polling</a></li><li><a href="Polling-Poll.html">Polling~Poll</a></li><li><a href="RoleColors.html">RoleColors</a></li><li><a href="RoleManager.html">RoleManager</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="SMLoader.html">SMLoader</a></li><li><a href="SpikeyBot.html">SpikeyBot</a></li><li><a href="Spotify.html">Spotify</a></li><li><a href="SubModule.html">SubModule</a></li><li><a href="TicTacToe.html">TicTacToe</a></li><li><a href="TicTacToe_Game.html">TicTacToe#Game</a></li><li><a href="TTS.html">TTS</a></li><li><a href="Uno.html">Uno</a></li><li><a href="Uno_Card.html">Uno#Card</a></li><li><a href="Uno_Game.html">Uno#Game</a></li><li><a href="WebAccount.html">WebAccount</a></li><li><a href="WebCommands.html">WebCommands</a></li><li><a href="WebProxy.html">WebProxy</a></li><li><a href="WebSettings.html">WebSettings</a></li><li><a href="WebStats.html">WebStats</a></li></ul><h3>Global</h3><ul><li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#attacker">attacker</a></li><li><a href="global.html#consumable">consumable</a></li><li><a href="global.html#effectUser">effectUser</a></li><li><a href="global.html#events">events</a></li><li><a href="global.html#fetchSize">fetchSize</a></li><li><a href="global.html#fistBoth">fistBoth</a></li><li><a href="global.html#fistLeft">fistLeft</a></li><li><a href="global.html#fistRight">fistRight</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#icons">icons</a></li><li><a href="global.html#id">id</a></li><li><a href="global.html#kill">kill</a></li><li><a href="global.html#killUser">killUser</a></li><li><a href="global.html#list">list</a></li><li><a href="global.html#littleDeathRate">littleDeathRate</a></li><li><a href="global.html#lotsOfDeathRate">lotsOfDeathRate</a></li><li><a href="global.html#mentionString">mentionString</a></li><li><a href="global.html#message">message</a></li><li><a href="global.html#messageFile">messageFile</a></li><li><a href="global.html#messages">messages</a></li><li><a href="global.html#multiEventUserDistribution">multiEventUserDistribution</a></li><li><a href="global.html#nothing">nothing</a></li><li><a href="global.html#num">num</a></li><li><a href="global.html#numVictim">numVictim</a></li><li><a href="global.html#outcomeProbs">outcomeProbs</a></li><li><a href="global.html#outcomes">outcomes</a></li><li><a href="global.html#persists">persists</a></li><li><a href="global.html#pickAffectedPlayers">pickAffectedPlayers</a></li><li><a href="global.html#pickEvent">pickEvent</a></li><li><a href="global.html#probabilityEvent">probabilityEvent</a></li><li><a href="global.html#restoreUser">restoreUser</a></li><li><a href="global.html#revive">revive</a></li><li><a href="global.html#reviveUser">reviveUser</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#settings">settings</a></li><li><a href="global.html#shutdown">shutdown</a></li><li><a href="global.html#state">state</a></li><li><a href="global.html#text">text</a></li><li><a href="global.html#thrive">thrive</a></li><li><a href="global.html#tmpRequire">tmpRequire</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li><li><a href="global.html#url">url</a></li><li><a href="global.html#validateEventNumConstraint">validateEventNumConstraint</a></li><li><a href="global.html#validateEventRequirements">validateEventRequirements</a></li><li><a href="global.html#validateEventTeamConstraint">validateEventTeamConstraint</a></li><li><a href="global.html#validateEventVictorConstraint">validateEventVictorConstraint</a></li><li><a href="global.html#victim">victim</a></li><li><a href="global.html#wound">wound</a></li><li><a href="global.html#woundUser">woundUser</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_twemojiChecker.html">lib/twemojiChecker</a></li></ul><h3>Classes</h3><ul><li><a href="ChatBot.html">ChatBot</a></li><li><a href="CmdScheduling.html">CmdScheduling</a></li><li><a href="CmdScheduling-ScheduledCommand.html">CmdScheduling~ScheduledCommand</a></li><li><a href="Command.html">Command</a></li><li><a href="Command-CommandSetting.html">Command~CommandSetting</a></li><li><a href="Command-SingleCommand.html">Command~SingleCommand</a></li><li><a href="Common.html">Common</a></li><li><a href="Connect4.html">Connect4</a></li><li><a href="Connect4_Game.html">Connect4#Game</a></li><li><a href="Define.html">Define</a></li><li><a href="DevCmds.html">DevCmds</a></li><li><a href="FunTranslators.html">FunTranslators</a></li><li><a href="HG.html">HG</a></li><li><a href="HGWeb.html">HGWeb</a></li><li><a href="HG-NPC.html">HG~NPC</a></li><li><a href="HungryGames.html">HungryGames</a></li><li><a href="HungryGames-ArenaEvent.html">HungryGames~ArenaEvent</a></li><li><a href="HungryGames-Battle.html">HungryGames~Battle</a></li><li><a href="HungryGames-Day.html">HungryGames~Day</a></li><li><a href="HungryGames-DefaultOptions.html">HungryGames~DefaultOptions</a></li><li><a href="HungryGames-DefaultOptions-BooleanOption.html">HungryGames~DefaultOptions~BooleanOption</a></li><li><a href="HungryGames-DefaultOptions-NumberOption.html">HungryGames~DefaultOptions~NumberOption</a></li><li><a href="HungryGames-DefaultOptions-ObjectOption.html">HungryGames~DefaultOptions~ObjectOption</a></li><li><a href="HungryGames-DefaultOptions-Option.html">HungryGames~DefaultOptions~Option</a></li><li><a href="HungryGames-DefaultOptions-SelectOption.html">HungryGames~DefaultOptions~SelectOption</a></li><li><a href="HungryGames-Event.html">HungryGames~Event</a></li><li><a href="HungryGames-FinalEvent.html">HungryGames~FinalEvent</a></li><li><a href="HungryGames-ForcedOutcome.html">HungryGames~ForcedOutcome</a></li><li><a href="HungryGames-Game.html">HungryGames~Game</a></li><li><a href="HungryGames-Grammar.html">HungryGames~Grammar</a></li><li><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></li><li><a href="HungryGames-Messages.html">HungryGames~Messages</a></li><li><a href="HungryGames-OutcomeProbabilities.html">HungryGames~OutcomeProbabilities</a></li><li><a href="HungryGames-Player.html">HungryGames~Player</a></li><li><a href="HungryGames-Simulator.html">HungryGames~Simulator</a></li><li><a href="HungryGames-Team.html">HungryGames~Team</a></li><li><a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a></li><li><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></li><li><a href="Main.html">Main</a></li><li><a href="MainModule.html">MainModule</a></li><li><a href="Messages.html">Messages</a></li><li><a href="Music.html">Music</a></li><li><a href="Patreon.html">Patreon</a></li><li><a href="Patreon-toExport.html">Patreon~toExport</a></li><li><a href="Polling.html">Polling</a></li><li><a href="Polling-Poll.html">Polling~Poll</a></li><li><a href="RoleColors.html">RoleColors</a></li><li><a href="RoleManager.html">RoleManager</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="SMLoader.html">SMLoader</a></li><li><a href="SpikeyBot.html">SpikeyBot</a></li><li><a href="Spotify.html">Spotify</a></li><li><a href="SubModule.html">SubModule</a></li><li><a href="TicTacToe.html">TicTacToe</a></li><li><a href="TicTacToe_Game.html">TicTacToe#Game</a></li><li><a href="TTS.html">TTS</a></li><li><a href="Uno.html">Uno</a></li><li><a href="Uno_Card.html">Uno#Card</a></li><li><a href="Uno_Game.html">Uno#Game</a></li><li><a href="WebAccount.html">WebAccount</a></li><li><a href="WebCommands.html">WebCommands</a></li><li><a href="WebProxy.html">WebProxy</a></li><li><a href="WebSettings.html">WebSettings</a></li><li><a href="WebStats.html">WebStats</a></li></ul><h3>Global</h3><ul><li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#effectUser">effectUser</a></li><li><a href="global.html#fistBoth">fistBoth</a></li><li><a href="global.html#fistLeft">fistLeft</a></li><li><a href="global.html#fistRight">fistRight</a></li><li><a href="global.html#killUser">killUser</a></li><li><a href="global.html#littleDeathRate">littleDeathRate</a></li><li><a href="global.html#lotsOfDeathRate">lotsOfDeathRate</a></li><li><a href="global.html#multiEventUserDistribution">multiEventUserDistribution</a></li><li><a href="global.html#pickAffectedPlayers">pickAffectedPlayers</a></li><li><a href="global.html#pickEvent">pickEvent</a></li><li><a href="global.html#probabilityEvent">probabilityEvent</a></li><li><a href="global.html#restoreUser">restoreUser</a></li><li><a href="global.html#reviveUser">reviveUser</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#tmpRequire">tmpRequire</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li><li><a href="global.html#validateEventNumConstraint">validateEventNumConstraint</a></li><li><a href="global.html#validateEventRequirements">validateEventRequirements</a></li><li><a href="global.html#validateEventTeamConstraint">validateEventTeamConstraint</a></li><li><a href="global.html#validateEventVictorConstraint">validateEventVictorConstraint</a></li><li><a href="global.html#woundUser">woundUser</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Apr 15 2019 16:59:28 GMT-0700 (Pacific Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Tue Apr 16 2019 13:44:07 GMT-0700 (Pacific Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>

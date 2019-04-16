@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: sandbox.js</title>
+    <title>JSDoc: Class: Messages</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,192 +17,626 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: sandbox.js</h1>
+    <h1 class="page-title">Class: Messages</h1>
 
     
 
 
 
+
+<section>
+
+<header>
     
-    <section>
-        <article>
-            <pre class="prettyprint source linenums"><code>const childProcess = require('child_process');
-require('./subModule.js')(Sandbox); // Extends the SubModule class.
-/**
- * @classdesc Creates a safe environment to run untrusted scripts.
- * @class
- * @augments SubModule
- * @listens Command#js
- */
-function Sandbox() {
-  const self = this;
-  /** @inheritdoc */
-  this.myName = 'Sandbox';
-  /** @inheritdoc */
-  this.initialize = function() {
-    self.command.on('js', commandJS);
-    self.command.on(['py', 'python'], commandPython);
-    self.command.on(['py3', 'python3'], commandPython3);
-  };
-  /** @inheritdoc */
-  this.shutdown = function() {
-    self.command.removeListener('js');
-    self.command.removeListener('py');
-    self.command.removeListener('py3');
-  };
+        <h2><span class="attribs"><span class="type-signature"></span></span>Messages<span class="signature">()</span><span class="type-signature"></span></h2>
+        
+    
+</header>
 
-  /**
-   * Arguments to pass into child_process.exec.
-   * @private
-   * @default
-   * @constant
-   * @type {Object}
-   */
-  const execArgs = {
-    timeout: 35000,  // 5 second leniency for sandbox.
-    maxBuffer: 2 * 1024,
-    env: {},
-  };
+<article>
+    <div class="container-overview">
+    
+        
 
-  /**
-   * Command to execute to start a sandbox.
-   * @private
-   * @default
-   * @constant
-   * @type {string}
-   */
-  const sandboxCommand = 'firejail --profile=./src/lib/sandbox.profile -- ';
-  /**
-   * The command to run in the sandbox to run JavaScript.
-   * @private
-   * @default
-   * @constant
-   * @type {string}
-   */
-  const jsCommand = 'SBnode';
-  /**
-   * The command to run in the sandbox to run Python2.7.
-   * @private
-   * @default
-   * @constant
-   * @type {string}
-   */
-  const pyCommand = 'SBpython';
-  /**
-   * The command to run in the sandbox to run Python3.
-   * @private
-   * @default
-   * @constant
-   * @type {string}
-   */
-  const py3Command = 'SBpython3';
+    
 
-  /**
-   * Run JavaScript code in a sandbox, then show user outcome.
-   *
-   * @private
-   * @type {commandHandler}
-   * @param {Discord~Message} msg Message that triggered command.
-   * @listens Command#js
-   */
-  function commandJS(msg) {
-    const cmd = `${sandboxCommand}${jsCommand}`;
-    msg.channel.startTyping();
-    const p = childProcess.exec(cmd, execArgs, (...args) => {
-      scriptEnd(msg, ...args);
-    });
-    p.stdin.write(msg.text);
-    p.stdin.end();
-  }
+    
+    <h4 class="name" id="Messages"><span class="type-signature"></span>new Messages<span class="signature">()</span><span class="type-signature"></span></h4>
+    
 
-  /**
-   * Run Python2.7 code in a sandbox, then show user outcome.
-   *
-   * @private
-   * @type {commandHandler}
-   * @param {Discord~Message} msg Message that triggered command.
-   * @listens Command#py
-   */
-  function commandPython(msg) {
-    const cmd = `${sandboxCommand}${pyCommand}`;
-    msg.channel.startTyping();
-    const p = childProcess.exec(cmd, execArgs, (...args) => {
-      scriptEnd(msg, ...args);
-    });
-    p.stdin.write(msg.text);
-    p.stdin.end();
-  }
+    
 
-  /**
-   * Run Python3 code in a sandbox, then show user outcome.
-   *
-   * @private
-   * @type {commandHandler}
-   * @param {Discord~Message} msg Message that triggered command.
-   * @listens Command#py
-   */
-  function commandPython3(msg) {
-    const cmd = `${sandboxCommand}${py3Command}`;
-    msg.channel.startTyping();
-    const p = childProcess.exec(cmd, execArgs, (...args) => {
-      scriptEnd(msg, ...args);
-    });
-    p.stdin.write(msg.text);
-    p.stdin.end();
-  }
 
-  /**
-   * Callback when script user's program has finished executing.
-   *
-   * @private
-   * @param {Discord~Message} msg The Discord message that triggered the initial
-   * execution.
-   * @param {Error} err
-   * @param {string|Buffer} stdout
-   * @param {string|Buffer} stderr
-   */
-  function scriptEnd(msg, err, stdout, stderr) {
-    msg.channel.stopTyping();
-    if (err) {
-      if (err.message === 'stderr maxBuffer exceeded' ||
-          err.message === 'stdout maxBuffer exceeded') {
-        self.common.reply(msg, 'Code execution failed.', err.message);
-        return;
-      } else if (err.code === null) {
-        self.common.reply(
-            msg, 'Code execution failed.', 'Execution aborted. ' +
-                'Your code can run at most for 30 seconds.');
-        return;
-      }
-      self.common.reply(
-          msg, 'Oops! Something didn\'t work right...',
-          'Something is broken internally.');
-      console.error(err);
-      self.debug('STDERR: ' + stderr);
-      self.debug('STDOUT: ' + stdout);
-      return;
-    }
-    const embed = new self.Discord.MessageEmbed();
-    embed.setColor([0, 255, 255]);
-    if (stdout.length > 0) {
-      if (stdout.indexOf('\\n') != stdout.lastIndexOf('\\n')) {
-        stdout = stdout.replace(/\\n/g, '\n');
-      }
-      embed.addField('STDOUT', stdout.substr(0, 1024), true);
-    }
-    if (stderr.length > 0) {
-      if (stderr.indexOf('\\n') != stderr.lastIndexOf('\\n')) {
-        stderr = stderr.replace(/\\n/g, '\n');
-      }
-      embed.addField('STDERR', stderr.substr(0, 1024), true);
-    }
-    msg.channel.send(self.common.mention(msg), embed);
-  }
-}
-module.exports = new Sandbox();
-</code></pre>
-        </article>
-    </section>
+
+<div class="description">
+    Create the instance managing the filesystem.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="hg_Messages.js.html">hg/Messages.js</a>, <a href="hg_Messages.js.html#line13">line 13</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id="_messageFile"><span class="type-signature">(private, constant) </span>_messageFile<span class="type-signature"> :string</span></h4>
+
+
+
+
+<div class="description">
+    The file path to read messages.
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">string</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li>./save/hgMessages.json</li>
+        </ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="hg_Messages.js.html">hg/Messages.js</a>, <a href="hg_Messages.js.html#line22">line 22</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="_messages"><span class="type-signature">(private) </span>_messages<span class="type-signature"> :Object.&lt;Array.&lt;string>></span></h4>
+
+
+
+
+<div class="description">
+    All messages to show for games. Parsed from file.
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Object.&lt;Array.&lt;string>></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li class="object-value"><pre class="prettyprint"><code>{}</code></pre></li>
+        </ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="hg_Messages.js.html">hg/Messages.js</a>, <a href="hg_Messages.js.html#line31">line 31</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="_updateMessages"><span class="type-signature">(private) </span>_updateMessages<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Parse all messages from file.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="hg_Messages.js.html">hg/Messages.js</a>, <a href="hg_Messages.js.html#line51">line 51</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="get"><span class="type-signature"></span>get<span class="signature">(type)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Get a random message of a given type from hgMessages.json.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>type</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The message type to get.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="hg_Messages.js.html">hg/Messages.js</a>, <a href="hg_Messages.js.html#line71">line 71</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    A random message of the given type.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">string</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="shutdown"><span class="type-signature"></span>shutdown<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Stop watching for file changes.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="hg_Messages.js.html">hg/Messages.js</a>, <a href="hg_Messages.js.html#line43">line 43</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
 
 
 
