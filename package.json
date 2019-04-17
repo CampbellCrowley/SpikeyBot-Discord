@@ -66,7 +66,7 @@
     "run:rem": "npm run start:rem",
     "start": "node src/SpikeyBot.js --dev --shards &",
     "start:rem": "node src/SpikeyBot.js --dev --shards --botname rembot &",
-    "docs": "npm run lint && bash .hooks/make-docs.sh",
+    "docs": "npm run lint && rm ./docs/*.html && bash .hooks/make-docs.sh",
     "update": "git checkout -- ./npm-shrinkwrap.json ./package.json && exec ssh-agent bash -c \"ssh-add ~/.ssh/sb_id_rsa_nopass && git pull && npm i && npm i youtube-dl\"; kill $SSH_AGENT_PID"
   }
 }

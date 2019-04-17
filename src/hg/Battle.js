@@ -3,34 +3,6 @@
 const Event = require('./Event.js');
 
 /**
- * The file path to read attacking left image.
- *
- * @private
- * @type {string}
- * @constant
- * @default
- */
-const fistLeft = './img/fist_left.png';
-/**
- * The file path to read attacking right image.
- *
- * @private
- * @type {string}
- * @constant
- * @default
- */
-const fistRight = './img/fist_right.png';
-/**
- * The file path to read attacking both directions image.
- *
- * @private
- * @type {string}
- * @constant
- * @default
- */
-const fistBoth = './img/fist_both.png';
-
-/**
  * @description A single battle in an Event.
  * @memberof HungryGames
  * @inner
@@ -63,6 +35,38 @@ class Battle {
     this.victim = {damage: victim};
   }
 }
+
+/**
+ * The file path to read attacking left image.
+ *
+ * @private
+ * @static
+ * @type {string}
+ * @constant
+ * @default
+ */
+Battle._fistLeft = './img/fist_left.png';
+/**
+ * The file path to read attacking right image.
+ *
+ * @private
+ * @static
+ * @type {string}
+ * @constant
+ * @default
+ */
+Battle._fistRight = './img/fist_right.png';
+/**
+ * The file path to read attacking both directions image.
+ *
+ * @private
+ * @static
+ * @type {string}
+ * @constant
+ * @default
+ */
+Battle._fistBoth = './img/fist_both.png';
+
 
 /**
  * Make an event that contains a battle between players before the main event
@@ -214,11 +218,13 @@ Battle.finalize = function(
         game);
 
     if (victimDamage && attackerDamage) {
-      newEvent.icons.splice(1, 0, {url: fistBoth});
+      newEvent.icons.splice(1, 0, {url: Battle._fistBoth});
     } else if (attackerDamage) {
-      newEvent.icons.splice(1, 0, {url: flipRoles ? fistLeft : fistRight});
+      newEvent.icons.splice(
+          1, 0, {url: flipRoles ? Battle._fistLeft : Battle._fistRight});
     } else if (victimDamage) {
-      newEvent.icons.splice(1, 0, {url: flipRoles ? fistRight : fistLeft});
+      newEvent.icons.splice(
+          1, 0, {url: flipRoles ? Battle._fistRight : Battle._fistLeft});
     }
 
     finalEvent.attacks.push(newEvent);

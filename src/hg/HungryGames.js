@@ -32,9 +32,9 @@ class HungryGames {
     this.defaultOptions = new HungryGames.DefaultOptions();
     /**
      * All currently tracked games. Mapped by guild ID. In most cases you should
-     * NOT reference this directly. Use {@link HungryGames.getGame} to get the
+     * NOT reference this directly. Use {@link HungryGames#getGame} to get the
      * game object for a guild.
-     * @see {@link HungryGames.getGame}
+     * @see {@link HungryGames#getGame}
      *
      * @private
      * @type {Object.<HungryGames~GuildGame>}
@@ -63,11 +63,10 @@ class HungryGames {
     this._findDelay = 15000;
     /**
      * The file path to save current state for a specific guild relative to
-     * Common~guildSaveDir.
-     * @see {@link Common~guildSaveDir}
-     * @see {@link HungryGames~games}
-     * @see {@link HungryGames~saveFileDir}
-     * @see {@link HungryGames~hgSaveDir}
+     * Common#guildSaveDir.
+     * @see {@link Common#guildSaveDir}
+     * @see {@link HungryGames#_games}
+     * @see {@link HungryGames#_hgSaveDir}
      *
      * @private
      * @type {string}
@@ -78,10 +77,9 @@ class HungryGames {
     /**
      * The file directory for finding saved data related to the hungry games
      * data of individual guilds.
-     * @see {@link Common~guildSaveDir}
-     * @see {@link HungryGames~games}
-     * @see {@link HungryGames~saveFile}
-     * @see {@link HungryGames~saveFileDir}
+     * @see {@link Common#guildSaveDir}
+     * @see {@link HungryGames#_games}
+     * @see {@link HungryGames#_saveFile}
      *
      * @private
      * @type {string}
@@ -133,11 +131,11 @@ class HungryGames {
 
   /**
    * @description The file path to save current state for a specific guild
-   * relative to Common~guildSaveDir.
-   * @see {@link Common~guildSaveDir}
-   * @see {@link HungryGames~games}
-   * @see {@link HungryGames~saveFileDir}
-   * @see {@link HungryGames~hgSaveDir}
+   * relative to Common#guildSaveDir.
+   * @see {@link Common#guildSaveDir}
+   * @see {@link HungryGames#_games}
+   * @see {@link HungryGames#_saveFile}
+   * @see {@link HungryGames#_hgSaveDir}
    *
    * @public
    * @returns {string} Save file name.
@@ -148,10 +146,10 @@ class HungryGames {
   /**
    * @description The file directory for finding saved data related to the
    * hungry games data of individual guilds.
-   * @see {@link Common~guildSaveDir}
-   * @see {@link HungryGames~games}
-   * @see {@link HungryGames~saveFile}
-   * @see {@link HungryGames~saveFileDir}
+   * @see {@link Common#guildSaveDir}
+   * @see {@link HungryGames#_games}
+   * @see {@link HungryGames#_saveFile}
+   * @see {@link HungryGames#_hgSaveDir}
    *
    * @public
    * @returns {string} Save dir path.
@@ -227,8 +225,8 @@ class HungryGames {
   /**
    * @description Create a new GuildGame.
    * @public
-   * @param {Discord~Guild|string} guild Guild object, or ID to create a game
-   * for.
+   * @param {external:Discord~Guild|string} guild Guild object, or ID to create
+   * a game for.
    * @returns {HungryGames~GuildGame} The created GuildGame.
    */
   create(guild) {
@@ -256,8 +254,8 @@ class HungryGames {
   /**
    * @description Create a new Game for a guild, and refresh the player lists.
    * @public
-   * @param {Discord~Guild|string} guild Guild object, or ID to refresh a game
-   * for.
+   * @param {external:Discord~Guild|string} guild Guild object, or ID to refresh
+   * a game for.
    * @returns {?HungryGames~GuildGame} The GuildGame of which the Game was
    * updated, or null if unable to refresh.
    */
@@ -285,8 +283,8 @@ class HungryGames {
    * and whether to include bots.
    *
    * @public
-   * @param {Discord~Collection<Discord~GuildMember>} members All members in
-   * guild.
+   * @param {external:Discord~Collection<external:Discord~GuildMember>} members
+   * All members in guild.
    * @param {string[]} excluded Array of ids of users that should not be
    * included in the games.
    * @param {boolean} bots Should bots be included in the games.
@@ -578,6 +576,8 @@ class HungryGames {
  * @description Wrapper for normal `require()` but also deletes cache reference
  * to object before requiring. This forces the object to be updated.
  *
+ * @memberof HungryGames
+ *
  * @private
  * @param {string} name Name of module to require.
  * @returns {Object} The required module.
@@ -586,6 +586,9 @@ function tmpRequire(name) {
   delete require.cache[require.resolve(name)];
   return require(name);
 }
+HungryGames.DefaultOptions = tmpRequire('./DefaultOptions.js');
+HungryGames.ForcedOutcome = tmpRequire('./ForcedOutcome.js');
+HungryGames.Grammar = tmpRequire('./Grammar.js');
 HungryGames.FinalEvent = tmpRequire('./FinalEvent.js');
 HungryGames.ArenaEvent = tmpRequire('./ArenaEvent.js');
 HungryGames.WeaponEvent = tmpRequire('./WeaponEvent.js');
@@ -600,6 +603,5 @@ HungryGames.Game = tmpRequire('./Game.js');
 HungryGames.Event = tmpRequire('./Event.js');
 HungryGames.GuildGame = tmpRequire('./GuildGame.js');
 HungryGames.Simulator = tmpRequire('./Simulator.js');
-HungryGames.DefaultOptions = tmpRequire('./DefaultOptions.js');
 
 module.exports = HungryGames;

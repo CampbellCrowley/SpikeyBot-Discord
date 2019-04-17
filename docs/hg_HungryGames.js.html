@@ -60,9 +60,9 @@ class HungryGames {
     this.defaultOptions = new HungryGames.DefaultOptions();
     /**
      * All currently tracked games. Mapped by guild ID. In most cases you should
-     * NOT reference this directly. Use {@link HungryGames.getGame} to get the
+     * NOT reference this directly. Use {@link HungryGames#getGame} to get the
      * game object for a guild.
-     * @see {@link HungryGames.getGame}
+     * @see {@link HungryGames#getGame}
      *
      * @private
      * @type {Object.&lt;HungryGames~GuildGame>}
@@ -91,11 +91,10 @@ class HungryGames {
     this._findDelay = 15000;
     /**
      * The file path to save current state for a specific guild relative to
-     * Common~guildSaveDir.
-     * @see {@link Common~guildSaveDir}
-     * @see {@link HungryGames~games}
-     * @see {@link HungryGames~saveFileDir}
-     * @see {@link HungryGames~hgSaveDir}
+     * Common#guildSaveDir.
+     * @see {@link Common#guildSaveDir}
+     * @see {@link HungryGames#_games}
+     * @see {@link HungryGames#_hgSaveDir}
      *
      * @private
      * @type {string}
@@ -106,10 +105,9 @@ class HungryGames {
     /**
      * The file directory for finding saved data related to the hungry games
      * data of individual guilds.
-     * @see {@link Common~guildSaveDir}
-     * @see {@link HungryGames~games}
-     * @see {@link HungryGames~saveFile}
-     * @see {@link HungryGames~saveFileDir}
+     * @see {@link Common#guildSaveDir}
+     * @see {@link HungryGames#_games}
+     * @see {@link HungryGames#_saveFile}
      *
      * @private
      * @type {string}
@@ -161,11 +159,11 @@ class HungryGames {
 
   /**
    * @description The file path to save current state for a specific guild
-   * relative to Common~guildSaveDir.
-   * @see {@link Common~guildSaveDir}
-   * @see {@link HungryGames~games}
-   * @see {@link HungryGames~saveFileDir}
-   * @see {@link HungryGames~hgSaveDir}
+   * relative to Common#guildSaveDir.
+   * @see {@link Common#guildSaveDir}
+   * @see {@link HungryGames#_games}
+   * @see {@link HungryGames#_saveFile}
+   * @see {@link HungryGames#_hgSaveDir}
    *
    * @public
    * @returns {string} Save file name.
@@ -176,10 +174,10 @@ class HungryGames {
   /**
    * @description The file directory for finding saved data related to the
    * hungry games data of individual guilds.
-   * @see {@link Common~guildSaveDir}
-   * @see {@link HungryGames~games}
-   * @see {@link HungryGames~saveFile}
-   * @see {@link HungryGames~saveFileDir}
+   * @see {@link Common#guildSaveDir}
+   * @see {@link HungryGames#_games}
+   * @see {@link HungryGames#_saveFile}
+   * @see {@link HungryGames#_hgSaveDir}
    *
    * @public
    * @returns {string} Save dir path.
@@ -255,8 +253,8 @@ class HungryGames {
   /**
    * @description Create a new GuildGame.
    * @public
-   * @param {Discord~Guild|string} guild Guild object, or ID to create a game
-   * for.
+   * @param {external:Discord~Guild|string} guild Guild object, or ID to create
+   * a game for.
    * @returns {HungryGames~GuildGame} The created GuildGame.
    */
   create(guild) {
@@ -284,8 +282,8 @@ class HungryGames {
   /**
    * @description Create a new Game for a guild, and refresh the player lists.
    * @public
-   * @param {Discord~Guild|string} guild Guild object, or ID to refresh a game
-   * for.
+   * @param {external:Discord~Guild|string} guild Guild object, or ID to refresh
+   * a game for.
    * @returns {?HungryGames~GuildGame} The GuildGame of which the Game was
    * updated, or null if unable to refresh.
    */
@@ -313,8 +311,8 @@ class HungryGames {
    * and whether to include bots.
    *
    * @public
-   * @param {Discord~Collection&lt;Discord~GuildMember>} members All members in
-   * guild.
+   * @param {external:Discord~Collection&lt;external:Discord~GuildMember>} members
+   * All members in guild.
    * @param {string[]} excluded Array of ids of users that should not be
    * included in the games.
    * @param {boolean} bots Should bots be included in the games.
@@ -606,6 +604,8 @@ class HungryGames {
  * @description Wrapper for normal `require()` but also deletes cache reference
  * to object before requiring. This forces the object to be updated.
  *
+ * @memberof HungryGames
+ *
  * @private
  * @param {string} name Name of module to require.
  * @returns {Object} The required module.
@@ -614,6 +614,9 @@ function tmpRequire(name) {
   delete require.cache[require.resolve(name)];
   return require(name);
 }
+HungryGames.DefaultOptions = tmpRequire('./DefaultOptions.js');
+HungryGames.ForcedOutcome = tmpRequire('./ForcedOutcome.js');
+HungryGames.Grammar = tmpRequire('./Grammar.js');
 HungryGames.FinalEvent = tmpRequire('./FinalEvent.js');
 HungryGames.ArenaEvent = tmpRequire('./ArenaEvent.js');
 HungryGames.WeaponEvent = tmpRequire('./WeaponEvent.js');
@@ -628,7 +631,6 @@ HungryGames.Game = tmpRequire('./Game.js');
 HungryGames.Event = tmpRequire('./Event.js');
 HungryGames.GuildGame = tmpRequire('./GuildGame.js');
 HungryGames.Simulator = tmpRequire('./Simulator.js');
-HungryGames.DefaultOptions = tmpRequire('./DefaultOptions.js');
 
 module.exports = HungryGames;
 </code></pre>
@@ -641,13 +643,13 @@ module.exports = HungryGames;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_twemojiChecker.html">lib/twemojiChecker</a></li></ul><h3>Classes</h3><ul><li><a href="ChatBot.html">ChatBot</a></li><li><a href="CmdScheduling.html">CmdScheduling</a></li><li><a href="CmdScheduling-ScheduledCommand.html">CmdScheduling~ScheduledCommand</a></li><li><a href="Command.html">Command</a></li><li><a href="Command-CommandSetting.html">Command~CommandSetting</a></li><li><a href="Command-SingleCommand.html">Command~SingleCommand</a></li><li><a href="Common.html">Common</a></li><li><a href="Connect4.html">Connect4</a></li><li><a href="Connect4_Game.html">Connect4#Game</a></li><li><a href="Define.html">Define</a></li><li><a href="DevCmds.html">DevCmds</a></li><li><a href="FunTranslators.html">FunTranslators</a></li><li><a href="HG.html">HG</a></li><li><a href="HGWeb.html">HGWeb</a></li><li><a href="HG-NPC.html">HG~NPC</a></li><li><a href="HungryGames.html">HungryGames</a></li><li><a href="HungryGames-ArenaEvent.html">HungryGames~ArenaEvent</a></li><li><a href="HungryGames-Battle.html">HungryGames~Battle</a></li><li><a href="HungryGames-Day.html">HungryGames~Day</a></li><li><a href="HungryGames-DefaultOptions.html">HungryGames~DefaultOptions</a></li><li><a href="HungryGames-DefaultOptions-BooleanOption.html">HungryGames~DefaultOptions~BooleanOption</a></li><li><a href="HungryGames-DefaultOptions-NumberOption.html">HungryGames~DefaultOptions~NumberOption</a></li><li><a href="HungryGames-DefaultOptions-ObjectOption.html">HungryGames~DefaultOptions~ObjectOption</a></li><li><a href="HungryGames-DefaultOptions-Option.html">HungryGames~DefaultOptions~Option</a></li><li><a href="HungryGames-DefaultOptions-SelectOption.html">HungryGames~DefaultOptions~SelectOption</a></li><li><a href="HungryGames-Event.html">HungryGames~Event</a></li><li><a href="HungryGames-FinalEvent.html">HungryGames~FinalEvent</a></li><li><a href="HungryGames-ForcedOutcome.html">HungryGames~ForcedOutcome</a></li><li><a href="HungryGames-Game.html">HungryGames~Game</a></li><li><a href="HungryGames-Grammar.html">HungryGames~Grammar</a></li><li><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></li><li><a href="HungryGames-Messages.html">HungryGames~Messages</a></li><li><a href="HungryGames-OutcomeProbabilities.html">HungryGames~OutcomeProbabilities</a></li><li><a href="HungryGames-Player.html">HungryGames~Player</a></li><li><a href="HungryGames-Simulator.html">HungryGames~Simulator</a></li><li><a href="HungryGames-Team.html">HungryGames~Team</a></li><li><a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a></li><li><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></li><li><a href="Main.html">Main</a></li><li><a href="MainModule.html">MainModule</a></li><li><a href="Messages.html">Messages</a></li><li><a href="Music.html">Music</a></li><li><a href="Patreon.html">Patreon</a></li><li><a href="Patreon-toExport.html">Patreon~toExport</a></li><li><a href="Polling.html">Polling</a></li><li><a href="Polling-Poll.html">Polling~Poll</a></li><li><a href="RoleColors.html">RoleColors</a></li><li><a href="RoleManager.html">RoleManager</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="SMLoader.html">SMLoader</a></li><li><a href="SpikeyBot.html">SpikeyBot</a></li><li><a href="Spotify.html">Spotify</a></li><li><a href="SubModule.html">SubModule</a></li><li><a href="TicTacToe.html">TicTacToe</a></li><li><a href="TicTacToe_Game.html">TicTacToe#Game</a></li><li><a href="TTS.html">TTS</a></li><li><a href="Uno.html">Uno</a></li><li><a href="Uno_Card.html">Uno#Card</a></li><li><a href="Uno_Game.html">Uno#Game</a></li><li><a href="WebAccount.html">WebAccount</a></li><li><a href="WebCommands.html">WebCommands</a></li><li><a href="WebProxy.html">WebProxy</a></li><li><a href="WebSettings.html">WebSettings</a></li><li><a href="WebStats.html">WebStats</a></li></ul><h3>Global</h3><ul><li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#effectUser">effectUser</a></li><li><a href="global.html#fistBoth">fistBoth</a></li><li><a href="global.html#fistLeft">fistLeft</a></li><li><a href="global.html#fistRight">fistRight</a></li><li><a href="global.html#killUser">killUser</a></li><li><a href="global.html#littleDeathRate">littleDeathRate</a></li><li><a href="global.html#lotsOfDeathRate">lotsOfDeathRate</a></li><li><a href="global.html#multiEventUserDistribution">multiEventUserDistribution</a></li><li><a href="global.html#pickAffectedPlayers">pickAffectedPlayers</a></li><li><a href="global.html#pickEvent">pickEvent</a></li><li><a href="global.html#probabilityEvent">probabilityEvent</a></li><li><a href="global.html#restoreUser">restoreUser</a></li><li><a href="global.html#reviveUser">reviveUser</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#tmpRequire">tmpRequire</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li><li><a href="global.html#validateEventNumConstraint">validateEventNumConstraint</a></li><li><a href="global.html#validateEventRequirements">validateEventRequirements</a></li><li><a href="global.html#validateEventTeamConstraint">validateEventTeamConstraint</a></li><li><a href="global.html#validateEventVictorConstraint">validateEventVictorConstraint</a></li><li><a href="global.html#woundUser">woundUser</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_twemojiChecker.html">lib/twemojiChecker</a></li></ul><h3>Externals</h3><ul><li><a href="external-Discord.html">external:Discord</a></li></ul><h3>Classes</h3><ul><li><a href="ChatBot.html">ChatBot</a></li><li><a href="CmdScheduling.html">CmdScheduling</a></li><li><a href="CmdScheduling-ScheduledCommand.html">CmdScheduling~ScheduledCommand</a></li><li><a href="Command.html">Command</a></li><li><a href="Command-CommandSetting.html">Command~CommandSetting</a></li><li><a href="Command-SingleCommand.html">Command~SingleCommand</a></li><li><a href="Common.html">Common</a></li><li><a href="Connect4.html">Connect4</a></li><li><a href="Connect4_Game.html">Connect4#Game</a></li><li><a href="Define.html">Define</a></li><li><a href="DevCmds.html">DevCmds</a></li><li><a href="FunTranslators.html">FunTranslators</a></li><li><a href="HG.html">HG</a></li><li><a href="HGWeb.html">HGWeb</a></li><li><a href="HG-NPC.html">HG~NPC</a></li><li><a href="HungryGames.html">HungryGames</a></li><li><a href="HungryGames-ArenaEvent.html">HungryGames~ArenaEvent</a></li><li><a href="HungryGames-Battle.html">HungryGames~Battle</a></li><li><a href="HungryGames-Day.html">HungryGames~Day</a></li><li><a href="HungryGames-DefaultOptions.html">HungryGames~DefaultOptions</a></li><li><a href="HungryGames-DefaultOptions-BooleanOption.html">HungryGames~DefaultOptions~BooleanOption</a></li><li><a href="HungryGames-DefaultOptions-NumberOption.html">HungryGames~DefaultOptions~NumberOption</a></li><li><a href="HungryGames-DefaultOptions-ObjectOption.html">HungryGames~DefaultOptions~ObjectOption</a></li><li><a href="HungryGames-DefaultOptions-Option.html">HungryGames~DefaultOptions~Option</a></li><li><a href="HungryGames-DefaultOptions-SelectOption.html">HungryGames~DefaultOptions~SelectOption</a></li><li><a href="HungryGames-Event.html">HungryGames~Event</a></li><li><a href="HungryGames-FinalEvent.html">HungryGames~FinalEvent</a></li><li><a href="HungryGames-ForcedOutcome.html">HungryGames~ForcedOutcome</a></li><li><a href="HungryGames-Game.html">HungryGames~Game</a></li><li><a href="HungryGames-Grammar.html">HungryGames~Grammar</a></li><li><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></li><li><a href="HungryGames-Messages.html">HungryGames~Messages</a></li><li><a href="HungryGames-OutcomeProbabilities.html">HungryGames~OutcomeProbabilities</a></li><li><a href="HungryGames-Player.html">HungryGames~Player</a></li><li><a href="HungryGames-Simulator.html">HungryGames~Simulator</a></li><li><a href="HungryGames-Simulator-Worker.html">HungryGames~Simulator~Worker</a></li><li><a href="HungryGames-Team.html">HungryGames~Team</a></li><li><a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a></li><li><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></li><li><a href="Main.html">Main</a></li><li><a href="MainModule.html">MainModule</a></li><li><a href="Messages.html">Messages</a></li><li><a href="Music.html">Music</a></li><li><a href="Patreon.html">Patreon</a></li><li><a href="Patreon-toExport.html">Patreon~toExport</a></li><li><a href="Polling.html">Polling</a></li><li><a href="Polling-Poll.html">Polling~Poll</a></li><li><a href="RoleColors.html">RoleColors</a></li><li><a href="RoleManager.html">RoleManager</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="SMLoader.html">SMLoader</a></li><li><a href="SpikeyBot.html">SpikeyBot</a></li><li><a href="Spotify.html">Spotify</a></li><li><a href="SubModule.html">SubModule</a></li><li><a href="TicTacToe.html">TicTacToe</a></li><li><a href="TicTacToe_Game.html">TicTacToe#Game</a></li><li><a href="TTS.html">TTS</a></li><li><a href="Uno.html">Uno</a></li><li><a href="Uno_Card.html">Uno#Card</a></li><li><a href="Uno_Game.html">Uno#Game</a></li><li><a href="WebAccount.html">WebAccount</a></li><li><a href="WebCommands.html">WebCommands</a></li><li><a href="WebProxy.html">WebProxy</a></li><li><a href="WebSettings.html">WebSettings</a></li><li><a href="WebStats.html">WebStats</a></li></ul><h3>Global</h3><ul><li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Tue Apr 16 2019 13:44:07 GMT-0700 (Pacific Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Tue Apr 16 2019 23:46:25 GMT-0700 (Pacific Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -1,5 +1,10 @@
 // Copyright 2018-2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
+/**
+ * DiscordJS base object.
+ * @external Discord
+ * @see {@link https://discord.js.org/}
+ */
 const Discord = require('discord.js');
 const fs = require('fs');
 const mkdirp = require('mkdirp');
@@ -354,13 +359,15 @@ function SpikeyBot() {
   function createShards() {
     common.log(
         'Sharding enabled with ' + (numShards || 'auto'), 'ShardingManager');
+    const argv = inspectShard > -1 ? ['--inspect'] : [];
+    argv.push('--experimental-worker');
     const manager = new Discord.ShardingManager('./src/SpikeyBot.js', {
       token: (botName && auth[botName]) || (setDev ? auth.dev : auth.release),
       totalShards: numShards || 'auto',
       shardArgs: process.argv.slice(2).filter((arg) => {
         return !arg.startsWith('--shards') && !arg.startsWith('--delay');
       }),
-      execArgv: inspectShard > -1 ? ['--inspect'] : [],
+      execArgv: argv,
     });
     manager.on('shardCreate', (shard) => {
       common.log('Launched shard ' + shard.id, 'ShardingManager');
