@@ -93,7 +93,9 @@ Game.from = function(data) {
   game.ended = data.ended || false;
   game.day = Day.from(data.day);
   game.includedUsers = game.includedUsers.map((el) => Player.from(el));
-  game.numAlive = data.numAlive || game.includedUsers.length;
+  if (!isNaN(data.numAlive)) {
+    game.numAlive = data.numAlive;
+  }
   return game;
 };
 

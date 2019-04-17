@@ -134,7 +134,9 @@ Player.from = function(member) {
     const name = isDiscord ? user.username : member.name;
     player = new Player(user.id, name, avatar, member.nickname);
     if (!isDiscord) {
-      player.living = member.living || true;
+      if (typeof player.living === 'boolean') {
+        player.living = member.living;
+      }
       player.bleeding = member.bleeding || 0;
       player.rank = member.rank || 1;
       player.state = member.state || 'normal';
