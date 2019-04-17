@@ -310,6 +310,7 @@ function Patreon() {
     switch (uId) {
       case self.common.spikeyId:
       case '126464376059330562': // Rohan
+      case '284034290574950410':
         cb(null, {status: true, message: 'User has override.'});
         return;
     }
