@@ -36,7 +36,7 @@ class Worker {
        * @returns {string} A random message of the given type.
        */
       get(type) {
-        const list = sim.messages[type];
+        const list = this._messages[type];
         if (!list) return 'badtype';
         const length = list.length;
         if (length == 0) return 'nomessage';
@@ -584,7 +584,7 @@ class Worker {
           Event.finalizeSimple(sim.messages.get('littleDeath'), sim.game));
     }
     sim.game.currentGame.day.state = 2;
-    this.cb({noReason: true});
+    this.cb({game: sim.game});
   }
   /**
    * @description Pass a message back to the parent.

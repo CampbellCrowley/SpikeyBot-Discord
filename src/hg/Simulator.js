@@ -1,6 +1,7 @@
 // Copyright 2018-2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const {Worker} = require('worker_threads');
+const Game = require('./Game.js');
 
 /**
  * Wrapper for logging functions that normally reference SubModule.error and
@@ -64,6 +65,12 @@ class Simulator {
    * parameter is a possible error string, null if no error.
    */
   go(cb) {
+    if (this.game.currentGame.day.state == 1) {
+      this.hg._parent.error(
+          'Unable to start simulating because simulation is already in ' +
+          'progress.');
+      return;
+    }
     const data = {
       game: this.game.serializable,
       events: {
@@ -75,6 +82,7 @@ class Simulator {
       },
       messages: this.hg.messages._messages,
     };
+    this.game.currentGame.day.state = 1;
     const worker = new Worker(Simulator._workerPath, {workerData: data});
     worker.on('message', (msg) => {
       if (!msg) {
@@ -91,8 +99,12 @@ class Simulator {
       if (msg.endGame) {
         this.game.end();
       }
-      if (msg.reason || msg.noReason) {
+      if (msg.reason) {
         cb(msg.reason);
+      }
+      if (msg.game) {
+        this.game.currentGame = Game.from(msg.game.currentGame);
+        cb();
       }
     });
     worker.on('stdout', (msg) => {
