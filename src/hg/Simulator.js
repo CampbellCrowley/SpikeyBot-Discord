@@ -64,17 +64,49 @@ class Simulator {
    * parameter is a possible error string, null if no error.
    */
   go(cb) {
-    const worker = new Worker(
-        './simulator/worker.js', {workerData: {game: this.game, hg: this.hg}});
+    const data = {
+      game: this.game.serializable,
+      events: {
+        bloodbath: this.hg._defaultBloodbathEvents,
+        player: this.hg._defaultPlayerEvents,
+        arena: this.hg._defaultArenaEvents,
+        weapons: this.hg._defaultWeapons,
+        battles: this.hg._defaultBattles,
+      },
+      messages: this.hg.messages._messages,
+    };
+    const worker = new Worker(Simulator._workerPath, {workerData: data});
     worker.on('message', (msg) => {
-      this.hg.debug('Received Message from Worker: ' + msg);
+      if (!msg) {
+        cb();
+        return;
+      }
+      if (msg.reply && this.msg) {
+        this.hg.common.reply(
+            this.msg, msg.reply.replace(
+                /\{prefix\}/g, this.msg.prefix + this.hg.postPrefix),
+            msg.reply2.replace(
+                /\{prefix\}/g, this.msg.prefix + this.hg.postPrefix));
+      }
+      if (msg.endGame) {
+        this.game.end();
+      }
+      if (msg.reason || msg.noReason) {
+        cb(msg.reason);
+      }
+    });
+    worker.on('stdout', (msg) => {
+      this.hg._parent.debug(msg);
+    });
+    worker.on('stderr', (msg) => {
+      this.hg._parent.error(msg);
     });
     worker.on('error', (err) =>{
-      this.hg.error('Worker errored');
+      this.hg._parent.error('Worker errored');
       console.error(err);
     });
     worker.on('exit', (code) => {
-      this.hg.debug('Worker exited with code ' + code);
+      this.hg._parent.debug('Worker exited with code ' + code);
     });
   }
 }
@@ -816,5 +848,15 @@ Simulator._probabilityEvent = function(
     // return finalPool[Math.floor(Math.random() * finalPool.length)];
   }
 };
+
+/**
+ * Relative path from CWD where the simulation worker is located.
+ * @private
+ * @static
+ * @type {string}
+ * @default
+ * @constant
+ */
+Simulator._workerPath = './src/hg/simulator/worker.js';
 
 module.exports = Simulator;

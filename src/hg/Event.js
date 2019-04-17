@@ -188,7 +188,7 @@ class Event {
             .replace(
                 /\{victim\}/g,
                 Grammar.formatMultiNames(affectedVictims, useNickname))
-            .replaceAll(
+            .replace(
                 /\{attacker\}/g,
                 Grammar.formatMultiNames(affectedAttackers, useNickname));
     if (finalMessage.indexOf('{dead}') > -1) {
@@ -202,14 +202,15 @@ class Event {
               .slice(0, Simulator.weightedUserRand());
       const numDead = deadUsers.length;
       if (numDead === 0) {
-        finalMessage = finalMessage.replaceAll('{dead}', 'an animal')
+        finalMessage = finalMessage.replace(/\{dead\}/g, 'an animal')
             .replace(/\[D([^|]*)\|([^\]]*)\]/g, '$1');
       } else {
         finalMessage =
             finalMessage
                 .replace(/\[D([^|]*)\|([^\]]*)\]/g, numDead === 1 ? '$1' : '$2')
-                .replaceAll(
-                    '{dead}', Grammar.formatMultiNames(deadUsers, useNickname));
+                .replace(
+                    /\{dead\}/,
+                    Grammar.formatMultiNames(deadUsers, useNickname));
       }
     }
     finalMessage = funTranslator.to(translator, finalMessage);

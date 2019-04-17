@@ -5573,7 +5573,8 @@ function HG() {
       return;
     }
     self.common.reply(
-        msg, hg.getGame(id).forcePlayerState(players, 'dead', hg.messages));
+        msg, HungryGames.GuildGame.forcePlayerState(
+            hg.getGame(id), players, 'dead', hg.messages));
   }
 
   /**
@@ -5605,7 +5606,8 @@ function HG() {
       return;
     }
     self.common.reply(
-        msg, hg.getGame(id).forcePlayerState(players, 'thriving', hg.messages));
+        msg, HungryGames.GuildGame.forcePlayerState(
+            hg.getGame(id), players, 'thriving', hg.messages));
   }
 
   /**
@@ -5636,7 +5638,8 @@ function HG() {
       return;
     }
     self.common.reply(
-        msg, hg.getGame(id).forcePlayerState(players, 'wounded', hg.messages));
+        msg, HungryGames.GuildGame.forcePlayerState(
+            hg.getGame(id), players, 'wounded', hg.messages));
   }
 
   /**

@@ -5,6 +5,7 @@ const Event = require('../Event.js');
 const Battle = require('../Battle.js');
 const Grammar = require('../Grammar.js');
 const Simulator = require('../Simulator.js');
+const GuildGame = require('../GuildGame.js');
 
 /**
  * @description Asyncronous worker that does the actual simulating.
@@ -14,14 +15,34 @@ const Simulator = require('../Simulator.js');
 class Worker {
   /**
    * @description Create and start simulating.
-   * @param {HungryGames~Simulator} sim Parent simulator object of which we use
-   * the data of for simulating.
+   * @param {{
+   * game: Object,
+   * messages: Object.<string>
+   * }} sim Simulation data.
    * @param {boolean} [retry=true] Whether to try again if there is an error.
    */
   constructor(sim, retry = true) {
     sim.game.currentGame.day.state = 1;
     sim.game.currentGame.day.num++;
     sim.game.currentGame.day.events = [];
+
+    sim.messages = {
+      _messages: sim.messages,
+      /**
+       * Get a random message of a given type.
+       *
+       * @public
+       * @param {string} type The message type to get.
+       * @returns {string} A random message of the given type.
+       */
+      get(type) {
+        const list = sim.messages[type];
+        if (!list) return 'badtype';
+        const length = list.length;
+        if (length == 0) return 'nomessage';
+        return list[Math.floor(Math.random() * length)];
+      },
+    };
 
     const id = sim.game.id;
 
@@ -41,26 +62,22 @@ class Worker {
     let arenaEvent;
 
     if (sim.game.currentGame.day.num === 0) {
-      userEventPool = sim.hg._defaultBloodbathEvents.concat(
-          sim.game.customEvents.bloodbath);
+      userEventPool =
+          sim.events.bloodbath.concat(sim.game.customEvents.bloodbath);
       if (sim.game.disabledEvents && sim.game.disabledEvents.bloodbath) {
         userEventPool = userEventPool.filter((el) => {
           return !sim.game.disabledEvents.bloodbath.find((d) => {
-            return sim.hg.eventsEqual(d, el);
+            return Event.equal(d, el);
           });
         });
       }
       if (userEventPool.length == 0) {
-        if (sim.msg) {
-          sim.hg.common.reply(
-              sim.msg,
-              'All bloodbath events have been disabled! Please enable ' +
-                  'events so that something can happen in the games!');
-          sim.hg.endGame(sim.msg, id);
-        } else {
-          sim.hg.endGame(null, id);
-        }
-        this.cb('No Bloodbath Events');
+        this.cb({
+          reply: 'All bloodbath events have been disabled! Please enable ' +
+              'events so that something can happen in the games!',
+          endGame: true,
+          reason: 'No Bloodbath Events',
+        });
         return;
       }
     } else {
@@ -68,7 +85,7 @@ class Worker {
           Math.random() < sim.game.options.probabilityOfArenaEvent;
       if (doArenaEvent) {
         const arenaEventPool =
-            sim.hg._defaultArenaEvents.concat(sim.game.customEvents.arena);
+            sim.events.arena.concat(sim.game.customEvents.arena);
         do {
           const index = Math.floor(Math.random() * arenaEventPool.length);
           arenaEvent = arenaEventPool[index];
@@ -86,19 +103,17 @@ class Worker {
             arenaEventPool.splice(index, 1);
           } else {
             sim.game.currentGame.day.events.push(
-                Event.finalizeSimple(
-                    sim.hg.messages.get('eventStart'), sim.game));
+                Event.finalizeSimple(sim.messages.get('eventStart'), sim.game));
             sim.game.currentGame.day.events.push(
                 Event.finalizeSimple(
-                    '**___' + arenaEvent.message + '___**', sim.game));
+                    `**___${arenaEvent.message}___**`, sim.game));
             break;
           }
         } while (arenaEventPool.length > 0);
         if (arenaEventPool.length == 0) doArenaEvent = false;
       }
       if (!doArenaEvent) {
-        userEventPool =
-            sim.hg._defaultPlayerEvents.concat(sim.game.customEvents.player);
+        userEventPool = sim.events.player.concat(sim.game.customEvents.player);
         if (sim.game.disabledEvents && sim.game.disabledEvents.player) {
           userEventPool = userEventPool.filter((el) => {
             return !sim.game.disabledEvents.player.find((d) => {
@@ -107,22 +122,19 @@ class Worker {
           });
         }
         if (userEventPool.length == 0) {
-          if (sim.msg) {
-            sim.hg.common.reply(
-                sim.msg,
+          this.cb({
+            reply:
                 'All player events have been disabled! Please enable events' +
-                    ' so that something can happen in the games!');
-            sim.hg.endGame(sim.msg, id);
-          } else {
-            sim.hg.endGame(null, id);
-          }
-          this.cb('No Player Events');
+                ' so that something can happen in the games!',
+            endGame: true,
+            reason: 'No Player Events',
+          });
           return;
         }
       }
     }
 
-    const weapons = sim.hg._defaultWeapons;
+    const weapons = sim.events.weapons;
     const weaponEventPool = Object.assign({}, weapons);
     if (sim.game.customEvents.weapon) {
       const entries = Object.entries(sim.game.customEvents.weapon);
@@ -269,13 +281,13 @@ class Worker {
                   weaponEventPool[chosenWeapon].name || chosenWeapon;
               eventTry.message =
                   weapons.message
-                      .replaceAll('{weapon}', owner + ' ' + weaponName)
-                      .replaceAll('{action}', eventTry.action)
+                      .replace(/\{weapon\}/g, owner + ' ' + weaponName)
+                      .replace(/\{action\}/g, eventTry.action)
                       .replace(
                           /\[C([^|]*)\|([^\]]*)\]/g,
                           (consumed == 1 ? '$1' : '$2'));
             } else {
-              eventTry.message = eventTry.message.replaceAll('{owner}', owner);
+              eventTry.message = eventTry.message.replace(/\{owner\}/g, owner);
             }
           }
         }
@@ -300,7 +312,7 @@ class Worker {
             userPool, deadPool, sim.game.currentGame.teams, null);
         eventTry = Battle.finalize(
             affectedUsers, numVictim, numAttacker, sim.game.options.mentionAll,
-            sim.game, sim.hg._defaultBattles);
+            sim.game, sim.events.battles);
       } else if (!useWeapon || !eventTry) {
         eventTry = Simulator._pickEvent(
             userPool, userEventPool, sim.game.options,
@@ -308,7 +320,7 @@ class Worker {
             sim.game.currentGame.includedUsers.length,
             sim.game.currentGame.teams, probOpts);
         if (!eventTry) {
-          sim.hg.error(
+          console.error(
               'No event for ' + userPool.length + ' from ' +
               userEventPool.length + ' events. No weapon, Arena Event: ' +
               (doArenaEvent ? arenaEvent.message : 'No') + ', Day: ' +
@@ -318,19 +330,18 @@ class Worker {
           sim.game.currentGame.day.num--;
           if (retry) {
             return new Worker(sim, false);
-          } else {
-            sim.hg.common.reply(
-                sim.msg, 'Oops! I wasn\'t able to find a valid event for the ' +
-                    'remaining players.\nThis is usually because too many ' +
-                    'events are disabled.\nIf you think this is a bug, ' +
-                    'please tell SpikeyRobot#0971',
-                'Try again with `' + sim.msg.prefix + sim.hg.postPrefix +
-                    'next`.\n(Failed to find valid event for \'' +
-                    (doArenaEvent ? arenaEvent.message : 'player events') +
-                    '\' suitable for ' + userPool.length +
-                    ' remaining players)');
           }
-          this.cb('Bad Configuration');
+          this.cb({
+            reply: 'Oops! I wasn\'t able to find a valid event for the ' +
+                'remaining players.\nThis is usually because too many ' +
+                'events are disabled.\nIf you think this is a bug, ' +
+                'please tell SpikeyRobot#0971',
+            reply2: 'Try again with `{prefix}next`.\n(Failed to find valid ' +
+                'event for \'' +
+                (doArenaEvent ? arenaEvent.message : 'player events') +
+                '\' suitable for ' + userPool.length + ' remaining players)',
+            reason: 'Bad Configuration',
+          });
           return;
         }
 
@@ -423,9 +434,8 @@ class Worker {
                     let consumableName = weaponName;
                     const count = el[1];
                     if (!weapons[weaponName]) {
-                      sim.hg.error('Failed to find weapon: ' + weaponName);
-                      return '(Unknown weapon ' + weaponName +
-                          '. This is a bug.)';
+                      console.error('Failed to find weapon: ' + weaponName);
+                      return `(Unknown weapon ${weaponName}. This is a bug.)`;
                     }
                     if (weapons[weaponName].consumable) {
                       consumableName = weapons[weaponName].consumable.replace(
@@ -452,9 +462,8 @@ class Worker {
                     let consumableName = weaponName;
                     const count = el[1];
                     if (!weapons[weaponName]) {
-                      sim.hg.error('Failed to find weapon: ' + weaponName);
-                      return '(Unknown weapon ' + weaponName +
-                          '. This is a bug.)';
+                      console.error('Failed to find weapon: ' + weaponName);
+                      return `(Unknown weapon ${weaponName}. This is a bug.)`;
                     }
                     if (weapons[weaponName].consumable) {
                       consumableName = weapons[weaponName].consumable.replace(
@@ -494,20 +503,20 @@ class Worker {
 
       if (numKilled > 4) {
         sim.game.currentGame.day.events.push(
-            Event.finalizeSimple(sim.hg.messages.get('slaughter'), sim.game));
+            Event.finalizeSimple(sim.messages.get('slaughter'), sim.game));
       }
     }
 
     if (doArenaEvent) {
       sim.game.currentGame.day.events.push(
-          Event.finalizeSimple(sim.hg.messages.get('eventEnd'), sim.game));
+          Event.finalizeSimple(sim.messages.get('eventEnd'), sim.game));
     }
     if (!sim.game.currentGame.forcedOutcomes) {
       sim.game.currentGame.forcedOutcomes = [];
     } else {
       sim.game.currentGame.forcedOutcomes =
           sim.game.currentGame.forcedOutcomes.filter((el) => {
-            sim.game.forcePlayerState(el, sim.hg.messages);
+            GuildGame.forcePlayerState(this.game, el, sim.messages);
             return el.persists;
           });
     }
@@ -550,14 +559,14 @@ class Worker {
     if (usersRecovered.length > 0) {
       sim.game.currentGame.day.events.push(
           Event.finalize(
-              sim.hg.messages.get('patchWounds'), usersRecovered,
+              sim.messages.get('patchWounds'), usersRecovered,
               usersRecovered.length, 0, 'thrives', 'nothing', sim.game));
     }
     if (usersBleeding.length > 0) {
       sim.game.currentGame.day.events.push(
           Event.finalize(
-              sim.hg.messages.get('bleedOut'), usersBleeding,
-              usersBleeding.length, 0, 'dies', 'nothing', sim.game));
+              sim.messages.get('bleedOut'), usersBleeding, usersBleeding.length,
+              0, 'dies', 'nothing', sim.game));
     }
 
     const deathPercentage =
@@ -565,17 +574,17 @@ class Worker {
     if (deathPercentage > Simulator._lotsOfDeathRate) {
       sim.game.currentGame.day.events.splice(
           0, 0,
-          Event.finalizeSimple(sim.hg.messages.get('lotsOfDeath'), sim.game));
+          Event.finalizeSimple(sim.messages.get('lotsOfDeath'), sim.game));
     } else if (deathPercentage === 0) {
       sim.game.currentGame.day.events.push(
-          Event.finalizeSimple(sim.hg.messages.get('noDeath'), sim.game));
+          Event.finalizeSimple(sim.messages.get('noDeath'), sim.game));
     } else if (deathPercentage < Simulator._littleDeathRate) {
       sim.game.currentGame.day.events.splice(
           0, 0,
-          Event.finalizeSimple(sim.hg.messages.get('littleDeath'), sim.game));
+          Event.finalizeSimple(sim.messages.get('littleDeath'), sim.game));
     }
     sim.game.currentGame.day.state = 2;
-    this.cb();
+    this.cb({noReason: true});
   }
   /**
    * @description Pass a message back to the parent.

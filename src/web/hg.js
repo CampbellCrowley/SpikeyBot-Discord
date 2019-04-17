@@ -4,6 +4,7 @@ const http = require('http');
 const socketIo = require('socket.io');
 const auth = require('../../auth.js');
 const crypto = require('crypto');
+const HungryGames = require('../hg/HungryGames.js');
 
 require('../subModule.js')(HGWeb);  // Extends the SubModule class.
 
@@ -1478,8 +1479,8 @@ function HGWeb() {
     const game = hg().getGame(gId);
     if (!game) return;
     socket.emit(
-        'message',
-        hg().getGame(gId).forcePlayerState(gId, list, state, text, persists));
+        'message', HungryGames.GuildGame.forcePlayerState(
+            hg().getGame(gId), list, state, text, persists));
     if (typeof cb === 'function') cb();
   }
   this.forcePlayerState = forcePlayerState;

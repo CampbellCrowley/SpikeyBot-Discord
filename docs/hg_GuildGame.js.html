@@ -31,6 +31,7 @@
 const Game = require('./Game.js');
 const Event = require('./Event.js');
 const Team = require('./Team.js');
+const Simulator = require('./Simulator.js');
 
 /**
  * A single instance of a game in a guild.
@@ -384,96 +385,6 @@ class GuildGame {
 
 
   /**
-   * @description Force a player to have a certain outcome in the current day
-   * being simulated, or the next day that will be simulated. This is acheived
-   * by adding a custom event in which the player will be affected after their
-   * normal event for the day.
-   *
-   * @public
-   * @param {string[]} list The array of player IDs of which to affect.
-   * @param {string} state The outcome to force the players to have been
-   * victims of by the end of the simulated day. ("living", "dead", "wounded",
-   * or "thriving").
-   * @param {HungryGames~Messages} messages Reference to current Messages
-   * instance.
-   * @param {string} [text] Message to show when the user is affected.
-   * @param {boolean} [persists=false] Does this outcome persist to the end of
-   * the game, if false it only exists for the next day.
-   * @returns {string} The output message to tell the user of the outcome of the
-   * operation.
-   */
-  forcePlayerState(list, state, messages, text, persists = false) {
-    if (typeof list === 'object') {
-      persists = list.persists;
-      messages = state;
-      text = list.text;
-      state = list.state;
-      list = list.list;
-    }
-    if (!Array.isArray(list) || list.length == 0) return 'No players given.';
-    if (typeof state !== 'string') return 'No outcome given.';
-    list.forEach((p) => {
-      if (this.currentGame.day.state > 0) {
-        const player = this.currentGame.includedUsers.find((el) => el.id == p);
-        if (!player) return 'Unable to find player.';
-        let outcome;
-        if (player.living &amp;&amp; state === 'dead') {
-          outcome = 'dies';
-          this.killUser(player, 0, null);
-        } else if (
-          !player.living &amp;&amp; (state === 'living' || state === 'thriving')) {
-          outcome = 'revived';
-          this.reviveUser(player, 0, null);
-        } else if (player.state === 'wounded' &amp;&amp; state === 'thriving') {
-          outcome = 'thrives';
-          this.restoreUser(player, 0, null);
-        } else if (
-          player.living &amp;&amp; player.state !== 'wounded' &amp;&amp;
-            state === 'wounded') {
-          outcome = 'wounded';
-          this.woundUser(player, 0, null);
-        } else {
-          return;
-        }
-        if (typeof text !== 'string' || text.length == 0) {
-          switch (state) {
-            case 'dead':
-              text = messages.get('forcedDeath');
-              break;
-            case 'thriving':
-              text = messages.get('forcedHeal');
-              break;
-            case 'wounded':
-              text = messages.get('forcedWound');
-              break;
-          }
-        }
-        const evt =
-            Event.finalize(text, [player], 1, 0, outcome, 'nothing', this);
-        let lastIndex = this.currentGame.day.state - 1;
-        for (let i = this.currentGame.day.events.length - 1; i > lastIndex;
-          i--) {
-          if (this.currentGame.day.events[i].icons.find(
-              (el) => el.id == p)) {
-            lastIndex = i + 1;
-            break;
-          }
-        }
-        this.currentGame.day.events.splice(lastIndex, 0, evt);
-      } else {
-        this.currentGame.forcedOutcomes.push({
-          id: this.id,
-          list: list,
-          state: state,
-          text: text,
-          persists: persists,
-        });
-      }
-    });
-    return `Player(s) will be ${state} by the end of the day.`;
-  }
-
-  /**
    * @description Force this current game to end immediately.
    * @public
    */
@@ -587,6 +498,97 @@ GuildGame.from = function(data) {
   return game;
 };
 
+/**
+ * @description Force a player to have a certain outcome in the current day
+ * being simulated, or the next day that will be simulated. This is acheived
+ * by adding a custom event in which the player will be affected after their
+ * normal event for the day.
+ *
+ * @public
+ * @static
+ * @param {HungryGames~GuildGame} game The game context.
+ * @param {string[]} list The array of player IDs of which to affect.
+ * @param {string} state The outcome to force the players to have been
+ * victims of by the end of the simulated day. ("living", "dead", "wounded",
+ * or "thriving").
+ * @param {HungryGames~Messages} messages Reference to current Messages
+ * instance.
+ * @param {string} [text] Message to show when the user is affected.
+ * @param {boolean} [persists=false] Does this outcome persist to the end of
+ * the game, if false it only exists for the next day.
+ * @returns {string} The output message to tell the user of the outcome of the
+ * operation.
+ */
+GuildGame.forcePlayerState = function(
+    game, list, state, messages, text, persists = false) {
+  if (typeof list === 'object') {
+    persists = list.persists;
+    messages = state;
+    text = list.text;
+    state = list.state;
+    list = list.list;
+  }
+  if (!Array.isArray(list) || list.length == 0) return 'No players given.';
+  if (typeof state !== 'string') return 'No outcome given.';
+  list.forEach((p) => {
+    if (game.currentGame.day.state > 0) {
+      const player = game.currentGame.includedUsers.find((el) => el.id == p);
+      if (!player) return 'Unable to find player.';
+      let outcome;
+      if (player.living &amp;&amp; state === 'dead') {
+        outcome = 'dies';
+        Simulator._killUser(game, player, 0, null);
+      } else if (
+        !player.living &amp;&amp; (state === 'living' || state === 'thriving')) {
+        outcome = 'revived';
+        Simulator._reviveUser(game, player, 0, null);
+      } else if (player.state === 'wounded' &amp;&amp; state === 'thriving') {
+        outcome = 'thrives';
+        Simulator._restoreUser(game, player, 0, null);
+      } else if (
+        player.living &amp;&amp; player.state !== 'wounded' &amp;&amp; state === 'wounded') {
+        outcome = 'wounded';
+        Simulator._woundUser(game, player, 0, null);
+      } else {
+        return;
+      }
+      if (typeof text !== 'string' || text.length == 0) {
+        switch (state) {
+          case 'dead':
+            text = messages.get('forcedDeath');
+            break;
+          case 'thriving':
+            text = messages.get('forcedHeal');
+            break;
+          case 'wounded':
+            text = messages.get('forcedWound');
+            break;
+        }
+      }
+      const evt =
+          Event.finalize(text, [player], 1, 0, outcome, 'nothing', game);
+      let lastIndex = game.currentGame.day.state - 1;
+      for (let i = game.currentGame.day.events.length - 1; i > lastIndex; i--) {
+        if (game.currentGame.day.events[i].icons.find((el) => el.id == p)) {
+          lastIndex = i + 1;
+          break;
+        }
+      }
+      game.currentGame.day.events.splice(lastIndex, 0, evt);
+    } else {
+      game.currentGame.forcedOutcomes.push({
+        id: game.id,
+        list: list,
+        state: state,
+        text: text,
+        persists: persists,
+      });
+    }
+  });
+  return `Player(s) will be ${state} by the end of the day.`;
+};
+
+
 module.exports = GuildGame;
 </code></pre>
         </article>
@@ -604,7 +606,7 @@ module.exports = GuildGame;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Tue Apr 16 2019 23:46:25 GMT-0700 (Pacific Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Wed Apr 17 2019 14:43:43 GMT-0700 (Pacific Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>

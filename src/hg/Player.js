@@ -21,8 +21,8 @@ class Player {
   constructor(id, username, avatarURL = '', nickname = null) {
     // Replace backtick with Unicode 1FEF Greek Varia because it looks the same,
     // but it wont ruin formatting.
-    username = username.replaceAll('`', '`');
-    if (typeof nickname === 'string') nickname = nickname.replaceAll('`', '`');
+    username = username.replace(/`/g, '`');
+    if (typeof nickname === 'string') nickname = nickname.replace(/`/g, '`');
     /**
      * The id of the User this Player represents.
      * @type {string}
