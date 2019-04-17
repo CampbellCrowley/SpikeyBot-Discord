@@ -25,11 +25,12 @@
         {
           "command": "say",
           "description": "Make me say something.",
+          "aliases": "say, echo",
           "examples": [
             {
               "description": "Basic Usage",
               "command": "say Hello World!",
-              "result": "Your message gets deleted (if the bot has permission to manage messages), and the bot says \"Hello World!\""
+              "result": "Your message gets deleted (if the bot has permission to manage messages), and the bot says \"Hello World!\" in the same channel."
             }
           ]
         },

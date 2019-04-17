@@ -276,7 +276,7 @@ function Main() {
     self.command.on('derive', commandDerive);
     self.command.on(
         ['timer', 'timers', 'remind', 'reminder', 'reminders'], commandTimer);
-    self.command.on('say', commandSay);
+    self.command.on(['say', 'echo'], commandSay);
     self.command.on('createdate', commandCreateDate);
     self.command.on('joindate', commandJoinDate, true);
     self.command.on(['pmme', 'dmme'], commandPmMe);
