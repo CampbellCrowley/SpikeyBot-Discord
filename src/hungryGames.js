@@ -1360,9 +1360,8 @@ function HG() {
         if (err) {
           self.error(`${err}: ${id}`);
           self.common.reply('React Join Failed', err);
-        } else {
-          startGame(msg, id);
         }
+        startGame(msg, id);
       });
       return;
     }
@@ -5759,6 +5758,7 @@ function HG() {
     if (!hg.getGame(id) || !hg.getGame(id).reactMessage ||
         !hg.getGame(id).reactMessage.id ||
         !hg.getGame(id).reactMessage.channel) {
+      hg.getGame(id).reactMessage = null;
       cb('Unable to find message with reactions. ' +
          'Was a join via react started?');
       return;
@@ -5767,9 +5767,14 @@ function HG() {
     let numTotal = 0;
     let numDone = 0;
     let msg;
-    self.client.guilds.get(id)
-        .channels.get(hg.getGame(id).reactMessage.channel)
-        .messages.fetch(hg.getGame(id).reactMessage.id)
+    const channel = self.client.guilds.get(id).channels.get(
+        hg.getGame(id).reactMessage.channel);
+    if (!channel) {
+      hg.getGame(id).reactMessage = null;
+      cb('Unable to find message with reactions. Was the channel deleted?');
+      return;
+    }
+    channel.messages.fetch(hg.getGame(id).reactMessage.id)
         .then((m) => {
           msg = m;
           if (!msg.reactions || msg.reactions.size == 0) {
