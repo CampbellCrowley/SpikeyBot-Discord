@@ -1835,17 +1835,19 @@ function HG() {
         nextDay(msg, id);
       } else if (dayComplete) {
         printDay(msg, id);
-        self.client.setTimeout(() => {
-          msg.channel.send('`Autoplaying...`')
-              .then((msg) => {
-                msg.delete({
-                  timeout: hg.getGame(id).options.delayDays - 1250,
-                  reason: 'I can do whatever I want!',
+        if (!hg.getGame(id).options.disableOutput) {
+          self.client.setTimeout(() => {
+            msg.channel.send('`Autoplaying...`')
+                .then((msg) => {
+                  msg.delete({
+                    timeout: hg.getGame(id).options.delayDays - 1250,
+                    reason: 'I can do whatever I want!',
+                  })
+                      .catch(() => {});
                 })
-                    .catch(() => {});
-              })
-              .catch(() => {});
-        }, (hg.getGame(id).options.delayDays > 2000 ? 1200 : 100));
+                .catch(() => {});
+          }, (hg.getGame(id).options.delayDays > 2000 ? 1200 : 100));
+        }
       } else {
         fire('dayStateChange', id);
         printEvent(msg, id);
