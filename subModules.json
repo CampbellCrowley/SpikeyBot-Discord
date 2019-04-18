@@ -40,7 +40,6 @@
   ],
   "release": [
     "./hungryGames.js",
-    "./main.js",
     "./ticTacToe.js",
     "./connect4.js",
     "./music.js",
@@ -51,15 +50,16 @@
     "./spotify.js",
     "./cmdScheduling.js",
     "./web/webhooks.js",
-    "./web/proxy.js",
     "./web/account.js",
     "./web/stats.js",
     "./web/settings.js",
     "./web/hg.js",
     "./uno.js",
+    "./cmdScheduling.js",
     "./sandbox.js",
     "./define.js",
-    "./roleColors.js"
+    "./roleColors.js",
+    "./web/proxy.js"
   ],
   "rembot": [
     "./main.js",
