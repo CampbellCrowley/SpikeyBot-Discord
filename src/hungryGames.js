@@ -7984,6 +7984,7 @@ function HungryGames() {
     if (typeof cb !== 'function') cb = function() {};
     if (!find(id) || !find(id).reactMessage || !find(id).reactMessage.id ||
         !find(id).reactMessage.channel) {
+      find(id).reactMessage = null;
       cb('Unable to find message with reactions. ' +
          'Was a join via react started?');
       return;
@@ -7995,6 +7996,7 @@ function HungryGames() {
     const channel =
         self.client.guilds.get(id).channels.get(find(id).reactMessage.channel);
     if (!channel) {
+      find(id).reactMessage = null;
       cb('Unable to find message with reactions. Was the channel deleted?');
       return;
     }
