@@ -114,11 +114,11 @@ class Simulator {
       this.hg._parent.error(msg);
     });
     worker.on('error', (err) =>{
-      this.hg._parent.error('Worker errored');
+      this.hg._parent.error('Simulation worker errored');
       console.error(err);
     });
     worker.on('exit', (code) => {
-      this.hg._parent.debug('Worker exited with code ' + code);
+      if (code != 0) this.hg._parent.debug('Worker exited with code ' + code);
     });
   }
 }

@@ -134,16 +134,22 @@ Player.from = function(member) {
     const name = isDiscord ? user.username : member.name;
     player = new Player(user.id, name, avatar, member.nickname);
     if (!isDiscord) {
-      if (typeof player.living === 'boolean') {
+      if (typeof player.living === 'boolean' || player.living === 'true' ||
+          player.living === 'false') {
+        if (typeof player.living !== 'boolean') {
+          player.living = player.living === 'true' ? true : false;
+        }
         player.living = member.living;
       }
       player.bleeding = member.bleeding || 0;
       player.rank = member.rank || 1;
       player.state = member.state || 'normal';
-      player.kills = member.kills || 9;
+      player.kills = member.kills || 0;
       player.weapons = member.weapons || {};
       player.settings = member.settings || {};
-      player.dayOfDeath = member.dayOfDeath || -1;
+      if (!isNaN(member.dayOfDeath)) {
+        player.dayOfDeath = member.dayOfDeath;
+      }
     }
   }
   return player;
