@@ -187,8 +187,7 @@ const hgTests = [
   new Test('Events command', '~hg events', ['#embed']),
   new Test(
       'Reset All command', '~hg reset all',
-      ['<@422623712534200321>\n```\nReset HG\n```There is no data to reset. ' +
-       'Start a new game with "~hg create".']),
+      ['<@422623712534200321>\n```\nReset HG\n```There is no data to reset.']),
   new Test(
       'No data: List players', '~hg players',
       [
@@ -230,8 +229,7 @@ const hgTests = [
        'to remove it.\n```']),
   new Test(
       'Reset All command', '~hg reset all',
-      ['<@422623712534200321>\n```\nReset HG\n```There is no data to reset. ' +
-       'Start a new game with "~hg create".']),
+      ['<@422623712534200321>\n```\nReset HG\n```There is no data to reset.']),
   new Test(
       'No data: Pause autoplay', '~hg pause',
       ['<@422623712534200321>\n```\nGame Pausing\n```Failed: There isn\'t ' +
