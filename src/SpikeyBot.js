@@ -268,6 +268,15 @@ function SpikeyBot() {
   let inspectShard = -1;
 
   /**
+   * Is the bot currently rebooting.
+   *
+   * @private
+   * @default
+   * @type {boolean}
+   */
+  let rebooting = false;
+
+  /**
    * Getter for the bot's name. If name is null, it is most likely because there
    * is no custom name and common.isRelease should be used instead.
    *
@@ -409,7 +418,7 @@ function SpikeyBot() {
   let defaultPresence = {
     status: 'online',
     activity: {
-      name: '?help for help',
+      name: 'SpikeyBot.com',
       type: 'WATCHING',
     },
   };
@@ -617,7 +626,7 @@ function SpikeyBot() {
       } else if (isBackup) {
         // updateGame('OFFLINE', 'PLAYING');
       } else {
-        updateGame(defaultPrefix + 'help for help');
+        updateGame('SpikeyBot.com');
       }
     }
     const logChannel = client.channels.get(common.logChannel);
@@ -684,7 +693,7 @@ function SpikeyBot() {
                   console.error(err);
                 }
               });
-          const channel = client.channels.get(parsed.channel.id);
+          const channel = client.channels.get(parsed.channel);
           if (channel) {
             channel.messages.fetch(parsed.id)
                 .then((msg_) => {
@@ -698,7 +707,7 @@ function SpikeyBot() {
                   console.error(err);
                 });
           } else {
-            common.error('Failed to find channel: ' + parsed.channel.id);
+            common.error('Failed to find channel: ' + parsed.channel);
           }
           if (logChannel && !isDev && !testInstance) {
             let additional = '';
@@ -750,6 +759,10 @@ function SpikeyBot() {
 
     initialized = true;
   }
+
+  client.on('shardReady', (id) => {
+    common.log('Shard Ready', `Shard ${id}`);
+  });
 
   client.on('disconnect', onDisconnect);
   /**
@@ -1147,16 +1160,21 @@ function SpikeyBot() {
      * reboot status.
      */
     function reboot(force, hard, msg_) {
-      const toSave = {
-        id: (msg_ || {}).id,
-        channel: {id: (msg_ || {channel: {}}).channel.id},
-        running: false,
-      };
-      try {
-        fs.writeFileSync(fullRebootFilename, JSON.stringify(toSave));
-      } catch (err) {
-        common.error(`Failed to save ${fullRebootFilename}`);
-        console.log(err);
+      if (!rebooting) {
+        if (!msg_) {
+          msg_ = {channel: {}};
+        }
+        const toSave = {
+          id: msg_.id,
+          channel: msg_.channel.id,
+          running: false,
+        };
+        try {
+          fs.writeFileSync(fullRebootFilename, JSON.stringify(toSave));
+        } catch (err) {
+          common.error(`Failed to save ${fullRebootFilename}`);
+          console.log(err);
+        }
       }
       if (!client.shard || !hard) {
         process.exit(-1);
@@ -1169,6 +1187,7 @@ function SpikeyBot() {
       } else {
         client.shard.respawnAll();
       }
+      rebooting = true;
     }
     if ((!msg && silent) || msg.author.id === common.spikeyId) {
       const force = (msg || {content: ''}).content.indexOf(' force') > -1;
