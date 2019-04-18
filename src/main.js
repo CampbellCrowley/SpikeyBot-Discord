@@ -2678,7 +2678,9 @@ function Main() {
    * @listens Command#sendto
    */
   function commandSendTo(msg) {
-    if (msg.author.id != self.common.spikeyId) return;
+    if (!self.common.trustedIds.includes(msg.author.id)) {
+      return;
+    }
     const idString = (msg.text.split(' ')[1] || '').replace(/^@|^<@|>$/g, '');
     if (!idString) {
       self.common.reply(msg, 'Please specify a channel and a message.');

@@ -634,7 +634,11 @@ function HG() {
       if (game.currentGame && game.currentGame.day.state > 1 &&
           game.currentGame.inProgress && !game.currentGame.ended &&
           !game.currentGame.isPaused) {
-        self.nextDay(game.author, g.id, game.outputChannel);
+        try {
+          self.nextDay(game.author, g.id, game.outputChannel);
+        } catch (err) {
+          console.error(err);
+        }
       } else {
         delete hg._games[g.id];
         delete hg._findTimestamps[g.id];
@@ -1995,7 +1999,7 @@ function HG() {
       const avatarSizes = hg.getGame(id).options.eventAvatarSizes;
       const iconSize = avatarSizes.avatar;
       if (iconSize == 0 || events[index].icons.length === 0) {
-        if (!hg.getGame(id).options.disableOutput) {
+        if (!hg.getGame(id).options.disableOutput && msg.channel) {
           msg.channel
               .send(
                   (events[index].mentionString || '') + events[index].message +
@@ -2065,7 +2069,7 @@ function HG() {
             finalImage.getBuffer(Jimp.MIME_PNG, function(err, out) {
               embed.attachFiles(
                   [new self.Discord.MessageAttachment(out, 'hgEvent.png')]);
-              if (!hg.getGame(id).options.disableOutput) {
+              if (!hg.getGame(id).options.disableOutput && msg.channel) {
                 msg.channel.send(events[index].mentionString, embed)
                     .catch((err) => {
                       self.error(
@@ -2335,7 +2339,7 @@ function HG() {
         embed.setFooter(`"${msg.prefix}${self.postPrefix}next" for next day.`);
       }
       embed.setColor(defaultColor);
-      if (!game.options.disableOutput) msg.channel.send(embed);
+      if (!game.options.disableOutput && msg.channel) msg.channel.send(embed);
     }
 
     if (collab && numTeams == 1) {
@@ -2428,13 +2432,13 @@ function HG() {
               !lastId.startsWith('NPC')) {
             winnerTag = `<@${lastId}>`;
           }
-          if (hg.getGame(id).options.disableOutput) return;
+          if (hg.getGame(id).options.disableOutput || !msg.channel) return;
           msg.channel.send(winnerTag, finalMessage).catch((err) => {
             self.error('Failed to send solo winner message: ' + msg.channel.id);
             console.error(err);
           });
         } else {
-          if (hg.getGame(id).options.disableOutput) return;
+          if (hg.getGame(id).options.disableOutput || !msg.channel) return;
           msg.channel.send(winnerTag, finalMessage).catch((err) => {
             self.error('Failed to send winner message: ' + msg.channel.id);
             console.error(err);
@@ -2475,7 +2479,7 @@ function HG() {
         rankEmbed.addField(3, rankList.join('\n').slice(0, 1025), true);
       }
       rankEmbed.setColor(defaultColor);
-      if (!game.options.disableOutput) {
+      if (!game.options.disableOutput && msg.channel) {
         self.client.setTimeout(function() {
           msg.channel.send(rankEmbed).catch((err) => {
             self.error(`Failed to send ranks message: ${msg.channel.id}`);
