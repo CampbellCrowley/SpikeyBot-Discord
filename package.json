@@ -1,6 +1,6 @@
 {
   "name": "spikeybot-discord",
-  "version": "1.9.2",
+  "version": "1.10.0",
   "description": "SpikeyBot",
   "homepage": "https://www.spikeybot.com/",
   "bugs": {
@@ -50,7 +50,7 @@
     "eslint-plugin-jsdoc": "^4.8.3",
     "jsdoc": "^3.5.5",
     "jsdoc-template": "github:braintree/jsdoc-template",
-    "mocha": "^6.1.2"
+    "mocha": "^6.1.3"
   },
   "scripts": {
     "install": ".hooks/install-hooks.sh",
@@ -64,7 +64,7 @@
     "test:main": "mocha --delay --grep \"START|Main Module|END\"",
     "run": "npm start",
     "run:rem": "npm run start:rem",
-    "start": "node src/SpikeyBot.js --dev --shards &",
+    "start": "node --experimental-worker src/SpikeyBot.js --dev --shards &",
     "start:rem": "node src/SpikeyBot.js --dev --shards --botname rembot &",
     "docs": "npm run lint && rm ./docs/*.html && bash .hooks/make-docs.sh",
     "update": "git checkout -- ./npm-shrinkwrap.json ./package.json && exec ssh-agent bash -c \"ssh-add ~/.ssh/sb_id_rsa_nopass && git pull && npm i && npm i youtube-dl\"; kill $SSH_AGENT_PID"
