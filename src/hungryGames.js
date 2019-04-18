@@ -1072,7 +1072,11 @@ function HungryGames() {
       if (game.currentGame && game.currentGame.day.state > 1 &&
           game.currentGame.inProgress && !game.currentGame.ended &&
           !game.currentGame.isPaused) {
-        self.nextDay(game.author, g.id, game.outputChannel);
+        try {
+          self.nextDay(game.author, g.id, game.outputChannel);
+        } catch (err) {
+          console.error(err);
+        }
       } else {
         delete games[g.id];
         delete findTimestamps[g.id];
@@ -4180,7 +4184,7 @@ function HungryGames() {
       const avatarSizes = find(id).options.eventAvatarSizes;
       const iconSize = avatarSizes.avatar;
       if (iconSize == 0 || events[index].icons.length === 0) {
-        if (!find(id).options.disableOutput) {
+        if (!find(id).options.disableOutput && msg.channel) {
           msg.channel
               .send(
                   (events[index].mentionString || '') + events[index].message +
@@ -4250,7 +4254,7 @@ function HungryGames() {
             finalImage.getBuffer(Jimp.MIME_PNG, function(err, out) {
               embed.attachFiles(
                   [new self.Discord.MessageAttachment(out, 'hgEvent.png')]);
-              if (!find(id).options.disableOutput) {
+              if (!find(id).options.disableOutput && msg.channel) {
                 msg.channel.send(events[index].mentionString, embed)
                     .catch((err) => {
                       self.error(
@@ -4523,7 +4527,9 @@ function HungryGames() {
             '"' + msg.prefix + self.postPrefix + 'next" for next day.');
       }
       embed.setColor(defaultColor);
-      if (!find(id).options.disableOutput) msg.channel.send(embed);
+      if (!find(id).options.disableOutput && msg.channel) {
+        msg.channel.send(embed);
+      }
     }
 
     if (collab && numTeams == 1) {
@@ -4624,13 +4630,13 @@ function HungryGames() {
           if (find(id).options.mentionVictor && !lastId.startsWith('NPC')) {
             winnerTag = '<@' + lastId + '>';
           }
-          if (find(id).options.disableOutput) return;
+          if (find(id).options.disableOutput || !msg.channel) return;
           msg.channel.send(winnerTag, finalMessage).catch((err) => {
             self.error('Failed to send solo winner message: ' + msg.channel.id);
             console.error(err);
           });
         } else {
-          if (find(id).options.disableOutput) return;
+          if (find(id).options.disableOutput || !msg.channel) return;
           msg.channel.send(winnerTag, finalMessage).catch((err) => {
             self.error('Failed to send winner message: ' + msg.channel.id);
             console.error(err);
@@ -4675,7 +4681,7 @@ function HungryGames() {
         rankEmbed.addField(3, rankList.join('\n').slice(0, 1025), true);
       }
       rankEmbed.setColor(defaultColor);
-      if (!find(id).options.disableOutput) {
+      if (!find(id).options.disableOutput && !msg.channel) {
         self.client.setTimeout(function() {
           msg.channel.send(rankEmbed).catch((err) => {
             self.error('Failed to send ranks message: ' + msg.channel.id);

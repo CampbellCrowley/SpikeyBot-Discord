@@ -39,6 +39,7 @@
     "./roleColors.js"
   ],
   "release": [
+    "./main.js",
     "./hungryGames.js",
     "./ticTacToe.js",
     "./connect4.js",
