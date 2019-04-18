@@ -7986,9 +7986,13 @@ function HungryGames() {
     let numTotal = 0;
     let numDone = 0;
     let msg;
-    self.client.guilds.get(id)
-        .channels.get(find(id).reactMessage.channel)
-        .messages.fetch(find(id).reactMessage.id)
+    const channel =
+        self.client.guilds.get(id).channels.get(find(id).reactMessage.channel);
+    if (!channel) {
+      cb('Unable to find message with reactions. Was the channel deleted?');
+      return;
+    }
+    channel.messages.fetch(find(id).reactMessage.id)
         .then((m) => {
           msg = m;
           if (!msg.reactions || msg.reactions.size == 0) {
