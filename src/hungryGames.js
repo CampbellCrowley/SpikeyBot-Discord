@@ -2057,9 +2057,8 @@ function HungryGames() {
         if (err) {
           self.error(`${err}: ${id}`);
           self.common.reply('React Join Failed', err);
-        } else {
-          startGame(msg, id);
         }
+        startGame(msg, id);
       });
       return;
     }
