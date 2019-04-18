@@ -404,7 +404,7 @@ class GuildGame {
     }
     this._autoStep = true;
     this._stateUpdateCallback = cb;
-    const delay = this.options.disableOutput ? 10 : this.options.delayEvents;
+    const delay = this.options.disableOutput ? 1 : this.options.delayEvents;
     this._dayEventInterval = setInterval(this.step, delay);
   }
 
@@ -430,7 +430,7 @@ class GuildGame {
         this._dayEventInterval = null;
       }
       if (this.autoPlay && this._autoStep && !this.currentGame.isPaused) {
-        const delay = this.options.disableOutput ? 10 : this.options.delayDays;
+        const delay = this.options.disableOutput ? 1 : this.options.delayDays;
         this._autoPlayTimeout = setTimeout(this.step, delay);
       }
       day.state = 0;
