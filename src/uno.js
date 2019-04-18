@@ -910,10 +910,11 @@ function Uno() {
     }
 
     /**
-     * Sends the game help to the group channel.
+     * @description Sends the game help to the group channel.
      *
      * @private
-     * @returns {Promise.<Discord~Message>}
+     * @returns {Promise.<Discord~Message>} Promise of command help being sent
+     * to the channel.
      */
     function sendHelp() {
       const embed = new self.Discord.MessageEmbed();
@@ -1732,9 +1733,9 @@ function Uno() {
   }
 
   /**
-   * A default hand of cards that the classic game starts with.
+   * @description A default hand of cards that the classic game starts with.
    *
-   * @returns {Uno.Card[]}
+   * @returns {Uno.Card[]} An array of all cards in a deck.
    */
   this.getHand = function() {
     const c = self.Color;

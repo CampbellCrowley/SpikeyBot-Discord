@@ -993,7 +993,8 @@ function SpikeyBot() {
                * name.
                *
                * @private
-               * @param {Error} err
+               * @param {Error} err Error that occurred during making the
+               * directory.
                */
               function writeBotNamePrefix(err) {
                 if (err) {
@@ -1136,7 +1137,7 @@ function SpikeyBot() {
    * Trigger a reboot of the bot. Actually just gracefully shuts down, and
    * expects to be immediately restarted.
    *
-   * @TODO: Support scheduled reload across multiple shards. Currently the bot
+   * @todo Support scheduled reload across multiple shards. Currently the bot
    * waits for the shard at which the command was sent to be ready for reboot
    * instead of all shard deciding on their own when they're ready to reboot.
    * This will also need to check that we are obeying Discord's rebooting rate

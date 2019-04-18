@@ -193,10 +193,12 @@ function SMLoader() {
       'I couldn\'t send you a message, you probably blocked me :(';
 
   /**
-   * Get array of all submodule names and the commit they were last loaded from.
+   * @description Get array of all submodule names and the commit they were last
+   * loaded from.
    *
    * @public
-   * @returns {Array.<{name: string, commit: string}>}
+   * @returns {Array.<{name: string, commit: string}>} Array of submodule names
+   * and commit short hashes.
    */
   toAssign.bot.getSubmoduleCommits = function() {
     return subModuleNames.map((el) => {
@@ -205,11 +207,12 @@ function SMLoader() {
   };
 
   /**
-   * Get a reference to a submodule with the given name.
+   * @description Get a reference to a submodule with the given name.
    *
    * @public
    * @param {string} name The name of the submodule.
-   * @returns {?SubModule}
+   * @returns {?SubModule} Reference to the currently loaded submodule with the
+   * given name, or null if not loaded.
    */
   toAssign.bot.getSubmodule = function(name) {
     if (!subModules[name]) {
@@ -380,10 +383,9 @@ function SMLoader() {
     cb(null);
   };
   /**
-   * Reloads submodules from file. Reloads currently loaded modules if
-   * `name` is not specified. If a submodule is specified that is not
-   * loaded, it will skip the unload step, bull will still be attempted to be
-   * loaded.
+   * @description Reloads submodules from file. Reloads currently loaded modules
+   * if `name` is not specified. If a submodule is specified that is not loaded,
+   * it will skip the unload step, bull will still be attempted to be loaded.
    * @public
    *
    * @param {?string|string[]} [name] Specify submodules to reload, or null to
@@ -399,66 +401,6 @@ function SMLoader() {
    * @param {Function} [cb] Callback to fire once the operation is complete.
    * Single parameter has array of strings of status of each module attempted to
    * be reloaded.
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
    */
   this.reload = function(name, opts, cb) {
     if (typeof cb !== 'function') cb = function() {};

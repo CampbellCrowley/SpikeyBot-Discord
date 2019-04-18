@@ -821,11 +821,11 @@ function HG() {
    * @class
    * @augments Player
    *
-   * @param {string} username The username to show for this NPC.
-   * @param {string} avatarURL The URL (or fake URL) of the image to use as the
+   * @param {string} username The username to show for this npc.
+   * @param {string} avatarURL The url (or fake url) of the image to use as the
    * player's avatar.
-   * @param {string} [id] Id to assign, If a valid ID is not provided, a random
-   * ID will be generated.
+   * @param {string} [id] Id to assign, if a valid id is not provided, a random
+   * id will be generated.
    */
   function NPC(username, avatarURL, id) {
     if (typeof id !== 'string' || !NPC.checkID(id)) {
@@ -5103,8 +5103,8 @@ function HG() {
     let username;
     fetchAvatar();
     /**
-     * Fetch the avatar the user has requested. Prioritizes attachments, then
-     * URLs, otherwise returns.
+     * @description Fetch the avatar the user has requested. Prioritizes
+     * attachments, then URLs, otherwise returns.
      *
      * @private
      */
@@ -5332,16 +5332,16 @@ function HG() {
   }
 
   /**
-   * Create an NPC in a guild.
+   * @description Create an npc in a guild.
    *
    * @public
-   * @param {string|number} gId The guild ID to add the NPC to.
-   * @param {string} username The name of the NPC.
-   * @param {string} avatar The URL path to the avatar. Must be valid URL to
+   * @param {string|number} gId The guild id to add the npc to.
+   * @param {string} username The name of the npc.
+   * @param {string} avatar The url path to the avatar. Must be valid url to
    * this server. (ex:
    * https://www.spikeybot.com/avatars/NPCBBBADEF031F83638/avatar1.png).
-   * @param {string} id The NPC ID of this NPC. Must match the ID in the avatar
-   * URL.
+   * @param {string} id The npc id of this npc. Must match the id in the avatar
+   * url.
    * @returns {?string} Error message or null if no error.
    */
   this.createNPC = function(gId, username, avatar, id) {

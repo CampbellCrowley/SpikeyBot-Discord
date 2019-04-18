@@ -133,7 +133,7 @@ function Define() {
    *   partOfSpeech: string,
    *   examples: Array.<string>,
    *   synonyms: Array.<string>
-   * }} el
+   * }} el Definition object to format.
    * @returns {string} Formatted string.
    */
   function formatSingle(el) {

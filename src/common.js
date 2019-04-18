@@ -547,10 +547,10 @@ String.prototype.replaceAll = function(search, replacement) {
 };
 
 /**
- * Gets the stack trace of the current function call.
+ * @description Gets the stack trace of the current function call.
  *
  * @private
- * @returns {Stack}
+ * @returns {Stack} Error stack for logging.
  */
 function __stack() {
   const orig = Error.prepareStackTrace;
@@ -567,7 +567,9 @@ function __stack() {
 
 const oldErr = console.error;
 /**
- * Augment console.error to reformat DiscordAPIErrors to be more pretty.
+ * @description Augment console.error to reformat DiscordAPIErrors to be more
+ * pretty.
+ * @param {*} args Arguments to pass through to console.error.
  */
 console.error = function(...args) {
   if (args.length == 1 && (args[0] instanceof Discord.DiscordAPIError)) {

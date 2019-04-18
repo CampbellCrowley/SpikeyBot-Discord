@@ -1401,8 +1401,7 @@ function HGWeb() {
   this.removeEvent = removeEvent;
 
   /**
-   * Enable or disable an event without deleting it.
-   *
+   * @description Enable or disable an event without deleting it.
    * @see {@link HungryGames.toggleEvent}
    *
    * @private
@@ -1412,8 +1411,11 @@ function HGWeb() {
    * @param {number|string} gId The guild id to run this command on.
    * @param {string} type The type of event that we are toggling.
    * @param {?string} subCat The subcategory if necessary.
-   * @param {HungryGames~Event|HungryGames~ArenaEvent|HungryGames~WeaponEvent}
-   * event The event to toggle.
+   * @param {
+   * HungryGames~Event|
+   * HungryGames~ArenaEvent|
+   * HungryGames~WeaponEvent
+   * } event The event to toggle.
    * @param {?boolean} value Set the enabled value instead of toggling.
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete.

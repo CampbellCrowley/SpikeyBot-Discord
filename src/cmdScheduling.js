@@ -271,23 +271,23 @@ function CmdScheduling() {
    * @param {string|Object} cmd The command to run, or an object instance of
    * this class (exported using toJSON, then parsed into an object).
    * @param {string|number|Discord~TextChannel} channel The channel or channel
-   * ID of where to run the command.
-   * @param {string|number|Discord~Message} message The message or message ID
+   * id of where to run the command.
+   * @param {string|number|Discord~Message} message The message or message id
    * that created this scheduled command.
-   * @param {number} time The Unix timestamp at which to run the command.
+   * @param {number} time The unix timestamp at which to run the command.
    * @param {?number} repeatDelay The delay in milliseconds at which to run the
    * command again, or null if it does not repeat.
    *
    * @property {string} cmd The command to run.
-   * @property {number|string} bot The ID of the bot instantiating this command.
-   * @property {Discord~TextChannel} channel The channel or channel ID of where
+   * @property {number|string} bot The id of the bot instantiating this command.
+   * @property {Discord~TextChannel} channel The channel or channel id of where
    * to run the command.
    * @property {string|number} channelId The id of the channel where the message
-   * was  sent.
+   * was sent.
    * @property {?Discord~Message} message The message that created this
    * scheduled command, or null if the message was deleted.
    * @property {string|number} messageId The id of the message sent.
-   * @property {number} time The Unix timestamp at which to run the command.
+   * @property {number} time The unix timestamp at which to run the command.
    * @property {number} [repeatDelay=0] The delay in milliseconds at which to
    * run the command again. 0 to not repeat.
    * @property {string} id Random base 36, 3-character long id of this command.
@@ -958,11 +958,11 @@ function CmdScheduling() {
   };
 
   /**
-   * Fires a given event with the associacted data.
+   * @description Fires a given event with the associacted data.
    *
    * @private
    * @param {string} name The name of the event to fire.
-   * @param {*} ...data The arguments to pass into the function calls.
+   * @param {*} data The arguments to pass into the function calls.
    */
   function fireEvent(name, ...data) {
     if (!listeners[name]) return;

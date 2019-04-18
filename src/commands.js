@@ -484,16 +484,16 @@ function Command() {
     this.isMuted = opts.isMuted || false;
 
     /**
-     * Enable, disable, or neutralize this command for the associated guild,
-     * channel, user, or role.
+     * @description Enable, disable, or neutralize this command for the
+     * associated guild, channel, user, or role.
      *
      * @public
      * @fires Command.events#settingsChanged
-     *
-     * @param {string} value `enabled`|`disabled`|`default` Whether to set this
-     * ID to enabled, disabled, or to whatever the default value is.
-     * @param {string} type `guild`|`channel`|`user`|`role` The type of ID that
-     * is being given.
+     * @param {string} value Whether to set this ID to enabled, disabled, or to
+     * whatever the default value is. Allowed values:
+     * `enabled`|`disabled`|`default`.
+     * @param {string} type The type of ID that is being given. Allowed values:
+     * `guild`|`channel`|`user`|`role`.
      * @param {string} id The id to set the value to.
      * @param {string} [id2] The guild ID if `type` is 'role', of where the role
      * is created.
@@ -615,13 +615,14 @@ function Command() {
       }
 
       /**
-       * Searches the given object against the reference data to see if they
-       * find any matching IDs.
+       * @description Searches the given object against the reference data to
+       * see if they find any matching IDs.
        *
        * @private
-       *
-       * @param {Command~CommandSetting.disabled|Command~CommandSetting.enabled}
-       * search The search data.
+       * @param {
+       * Command~CommandSetting.disabled|
+       * Command~CommandSetting.enabled
+       * } search The search data.
        * @param {Discord~Message} data The context to search for.
        * @returns {number} 0 if not disabled, 2 if disabled is specific to user,
        * 1 if disabled for any other reason.

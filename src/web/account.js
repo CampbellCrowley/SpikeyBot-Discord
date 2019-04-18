@@ -413,11 +413,10 @@ function WebAccount() {
     });
   }
   /**
-   * Validate a code received from the client, then use it to retrieve the user
-   * ID associated with it.
+   * @description Validate a code received from the client, then use it to
+   * retrieve the user ID associated with it.
    *
    * @private
-   *
    * @param {string} code The code received from Patreon OAuth2 flow.
    * @param {string|number} userid The Discord user ID associated with this code
    * in order to link accounts.
@@ -450,11 +449,10 @@ function WebAccount() {
         });
   }
   /**
-   * Validate a code received from the client, then use it to retrieve the user
-   * ID associated with it.
+   * @description Validate a code received from the client, then use it to
+   * retrieve the user ID associated with it.
    *
    * @private
-   *
    * @param {string} code The code received from Patreon OAuth2 flow.
    * @param {string|number} userid The Discord user ID associated with this code
    * in order to link accounts.
@@ -536,74 +534,14 @@ function WebAccount() {
   }
 
   /**
-   * Handle the response after successfully requesting the user's basic account
-   * information.
+   * @description Handle the response after successfully requesting the user's
+   * basic account information.
    * @private
    *
    * @param {string|number} userid Discord user id.
    * @param {string} content The response from Spotify.
    * @param {{accessToken: string, expiresIn: number, expiresAt: string,
    * refreshToken: string}} vals The object storing user session information.
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
-   *
    * @param {string} ip Unique identifier for the client that caused this to
    * happen. Used for logging.
    * @param {Function} cb Callback with single parameter, string if error, null
@@ -645,11 +583,10 @@ function WebAccount() {
     });
   }
   /**
-   * Update our Discord table with the retrieved patreon account ID for the
-   * Discord user.
+   * @description Update our Discord table with the retrieved patreon account ID
+   * for the Discord user.
    *
    * @private
-   *
    * @param {string|number} userid The Discord ID of the user to link to the
    * patreonid.
    * @param {string|number} patreonid The Patreon id of the account to link to
@@ -671,11 +608,11 @@ function WebAccount() {
     });
   }
   /**
-   * Update our Discord table with the retrieved spotify account ID for the
-   * Discord user. Deletes row from Spotify table if the userId is falsey.
+   * @description Update our Discord table with the retrieved spotify account ID
+   * for the Discord user. Deletes row from Spotify table if the userId is
+   * falsey.
    *
    * @private
-   *
    * @param {string|number} userid The Discord ID of the user to link to the
    * patreonid.
    * @param {string|number} spotifyid The Spotify id of the account to link to

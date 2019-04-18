@@ -143,8 +143,8 @@ function TTS() {
 
     let vConn;
     /**
-     * Successfully joined a voice channel, now we can request audio data from
-     * Google.
+     * @description Successfully joined a voice channel, now we can request
+     * audio data from Google.
      *
      * @private
      * @param {Discord~VoiceConnection} conn The voice channel connection.

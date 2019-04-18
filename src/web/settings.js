@@ -151,10 +151,10 @@ function WebSettings() {
    *
    * @param {?string} gId The ID of the guild this setting was changed in, or
    * null of not specific to a single guild.
-   * @param {string} value
-   * @param {string} type
-   * @param {string} id
-   * @param {string} [id2]
+   * @param {string} value Value of setting.
+   * @param {string} type Type of value.
+   * @param {string} id Setting id.
+   * @param {string} [id2] Second setting id.
    */
   function handleSettingsChanged(gId, value, type, id, id2) {
     for (const i in sockets) {
@@ -765,16 +765,16 @@ function WebSettings() {
   this.cancelScheduledCommand = cancelScheduledCommand;
 
   /**
-   * Client has created a new scheduled command.
+   * @description Client has created a new scheduled command.
+   * @see {@link CmdScheduling~ScheduledCommand}
    *
    * @public
    * @type {WebSettings~SocketFunction}
    * @param {Object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
-   * @param {string|number} gId The id of the guild of which to add the
-   * command.
-   * @param {Object} cmd The command data of which to make into a {@link
-   * CmdScheduling~ScheduledCommand} and register.
+   * @param {string|number} gId The id of the guild of which to add the command.
+   * @param {Object} cmd The command data of which to make into a
+   * scheduled command and register.
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete, or has failed.
    */

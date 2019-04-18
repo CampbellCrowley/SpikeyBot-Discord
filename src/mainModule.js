@@ -39,9 +39,9 @@ function MainModule() {
     return {};
   };
   /**
-   * Signal that the bot is shutting down and will not be restarting
-   * immediately. This is triggered on all shutdowns where all MainModules and
-   * SubModules will be unloaded.
+   * @description Signal that the bot is shutting down and will not be
+   * restarting immediately. This is triggered on all shutdowns where all
+   * MainModules and SubModules will be unloaded.
    *
    * @public
    * @abstract
