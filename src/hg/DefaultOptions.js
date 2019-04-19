@@ -50,6 +50,30 @@ class Option {
   get category() {
     return this._category;
   }
+
+  /**
+   * @returns {string[]} Array of all keys for this option.
+   */
+  get keys() {
+    const all = Object.entries(Object.getOwnPropertyDescriptors(this));
+    const output = [];
+    for (const one of all) {
+      output.push(one[0].slice(1));
+    }
+    return output;
+  }
+  /**
+   * @returns {HungryGames~DefaultOptions~Option} All variables of this option
+   * fetched through their getters.
+   */
+  get entries() {
+    const keys = this.keys;
+    const output = {};
+    for (const k of keys) {
+      output[k] = this[k];
+    }
+    return output;
+  }
 }
 
 /**
@@ -544,6 +568,18 @@ class DefaultOptions {
       if (one[1].value instanceof Option) {
         output.push(one[0].slice(1));
       }
+    }
+    return output;
+  }
+  /**
+   * @returns {Object.<HungryGames~DefaultOptions~Option>} All options in this
+   * object.
+   */
+  get entries() {
+    const keys = this.keys;
+    const output = {};
+    for (const k of keys) {
+      output[k] = this[k].entries;
     }
     return output;
   }

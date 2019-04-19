@@ -38,6 +38,15 @@ function HG() {
   const hg = new HungryGames(self);
 
   /**
+   * @description Fetch a reference to the current HungryGames instance.
+   * @public
+   * @returns {HungryGames} Current instance.
+   */
+  this.getHG = function() {
+    return hg;
+  };
+
+  /**
    * The maximum number of bytes allowed to be received from a client in an
    * image upload.
    * @public

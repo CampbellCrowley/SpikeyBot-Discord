@@ -59,8 +59,7 @@ function HGWeb() {
    * Update the reference to HungryGames.
    *
    * @private
-   * @returns {HungryGames} Reference to the currently loaded HungryGames
-   * object.
+   * @returns {HG} Reference to the currently loaded HungryGames subModule.
    */
   function hg() {
     const prev = hg_;
@@ -175,7 +174,7 @@ function HGWeb() {
 
     // Unrestricted Access //
     socket.on('fetchDefaultOptions', () => {
-      socket.emit('defaultOptions', hg().defaultOptions);
+      socket.emit('defaultOptions', hg().defaultOptions.entries);
     });
     socket.on('fetchDefaultEvents', () => {
       socket.emit('defaultEvents', hg().getDefaultEvents());
@@ -850,8 +849,9 @@ function HGWeb() {
       return;
     }
 
+    const game = hg().getHG().getGame(gId);
+    if (game) socket.emit('game', gId, game.serializable);
     if (typeof cb === 'function') cb();
-    socket.emit('game', gId, hg().getGame(gId));
   }
   this.fetchGames = fetchGames;
   /**
@@ -887,7 +887,7 @@ function HGWeb() {
         }
       }
     }
-    const game = hg().getGame(gId);
+    const game = hg().getHG().getGame(gId);
     if (!game || !game.currentGame || !game.currentGame.day) {
       if (typeof cb === 'function') cb('NO_GAME_IN_GUILD');
       socket.emit(
@@ -967,7 +967,7 @@ function HGWeb() {
       out = hg().includeUsers([mId], gId);
     }
     if (typeof cb === 'function') cb(out);
-    // socket.emit('game', gId, hg().getGame(gId));
+    // socket.emit('game', gId, hg().getHG().getGame(gId));
   }
   this.includeMember = includeMember;
   /**
@@ -995,10 +995,11 @@ function HGWeb() {
     }
     if (typeof cb === 'function') cb();
     socket.emit('message', hg().setOption(gId, option, value, extra));
-    if (hg().getGame(gId)) {
-      socket.emit('option', gId, option, hg().getGame(gId).options[option]);
+    if (hg().getHG().getGame(gId)) {
+      socket.emit(
+          'option', gId, option, hg().getHG().getGame(gId).options[option]);
       if (option === 'teamSize') {
-        socket.emit('game', gId, hg().getGame(gId));
+        socket.emit('game', gId, hg().getHG().getGame(gId));
       }
     }
   }
@@ -1029,7 +1030,7 @@ function HGWeb() {
     } else {
       socket.emit('message', 'Game created');
     }
-    socket.emit('game', gId, hg().getGame(gId));
+    socket.emit('game', gId, hg().getHG().getGame(gId));
   }
   this.createGame = createGame;
   /**
@@ -1054,7 +1055,7 @@ function HGWeb() {
       return;
     }
     socket.emit('message', hg().resetGame(gId, cmd));
-    socket.emit('game', gId, hg().getGame(gId));
+    socket.emit('game', gId, hg().getHG().getGame(gId));
     if (typeof cb === 'function') cb();
   }
   this.resetGame = resetGame;
@@ -1082,7 +1083,7 @@ function HGWeb() {
     hg().startGame(userData.id, gId, cId);
     if (typeof cb === 'function') cb();
     socket.emit('message', 'Game started');
-    socket.emit('game', gId, hg().getGame(gId));
+    socket.emit('game', gId, hg().getHG().getGame(gId));
   }
   this.startGame = startGame;
   /**
@@ -1109,7 +1110,7 @@ function HGWeb() {
     hg().startAutoplay(userData.id, gId, cId);
     if (typeof cb === 'function') cb();
     socket.emit('message', 'Autoplay enabled');
-    socket.emit('game', gId, hg().getGame(gId));
+    socket.emit('game', gId, hg().getHG().getGame(gId));
   }
   this.startAutoplay = startAutoplay;
   /**
@@ -1161,7 +1162,7 @@ function HGWeb() {
     hg().endGame(userData.id, gId);
     if (typeof cb === 'function') cb();
     socket.emit('message', 'Game ended');
-    socket.emit('game', gId, hg().getGame(gId));
+    socket.emit('game', gId, hg().getHG().getGame(gId));
   }
   this.endGame = endGame;
   /**
@@ -1187,7 +1188,7 @@ function HGWeb() {
     hg().pauseAutoplay(userData.id, gId);
     if (typeof cb === 'function') cb();
     socket.emit('message', 'Autoplay paused');
-    socket.emit('game', gId, hg().getGame(gId));
+    socket.emit('game', gId, hg().getHG().getGame(gId));
   }
   this.pauseAutoplay = pauseAutoplay;
   /**
@@ -1213,7 +1214,7 @@ function HGWeb() {
     const error = hg().pauseGame(gId);
     if (typeof cb === 'function') cb(error);
     if (error !== 'Success') socket.emit('message', error);
-    socket.emit('game', gId, hg().getGame(gId));
+    socket.emit('game', gId, hg().getHG().getGame(gId));
   }
   this.pauseGame = pauseGame;
   /**
@@ -1241,7 +1242,7 @@ function HGWeb() {
     const message = hg().editTeam(userData.id, gId, cmd, one, two);
     if (message) socket.emit('message', message);
     if (typeof cb === 'function') cb();
-    // socket.emit('game', gId, hg().getGame(gId));
+    // socket.emit('game', gId, hg().getHG().getGame(gId));
   }
   this.editTeam = editTeam;
   /**
@@ -1284,7 +1285,7 @@ function HGWeb() {
     } else {
       if (typeof cb === 'function') cb();
       socket.emit('message', 'Created ' + type + ' event.');
-      socket.emit('game', gId, hg().getGame(gId));
+      socket.emit('game', gId, hg().getHG().getGame(gId));
     }
   }
   this.createEvent = createEvent;
@@ -1321,7 +1322,7 @@ function HGWeb() {
     } else {
       if (typeof cb === 'function') cb();
       socket.emit('message', 'Created ' + type + ' event.');
-      socket.emit('game', gId, hg().getGame(gId));
+      socket.emit('game', gId, hg().getHG().getGame(gId));
     }
   }
   this.createMajorEvent = createMajorEvent;
@@ -1361,7 +1362,7 @@ function HGWeb() {
     } else {
       if (typeof cb === 'function') cb();
       socket.emit('message', 'Edited ' + type + ' event.');
-      socket.emit('game', gId, hg().getGame(gId));
+      socket.emit('game', gId, hg().getHG().getGame(gId));
     }
   }
   this.editMajorEvent = editMajorEvent;
@@ -1395,7 +1396,7 @@ function HGWeb() {
     } else {
       if (typeof cb === 'function') cb();
       socket.emit('message', 'Removed event.');
-      socket.emit('game', gId, hg().getGame(gId));
+      socket.emit('game', gId, hg().getHG().getGame(gId));
     }
   }
   this.removeEvent = removeEvent;
@@ -1434,7 +1435,7 @@ function HGWeb() {
     } else {
       if (typeof cb === 'function') cb();
       // socket.emit('message', 'Toggled event.');
-      // socket.emit('game', gId, hg().getGame(gId));
+      // socket.emit('game', gId, hg().getHG().getGame(gId));
     }
   }
   this.toggleEvent = toggleEvent;
@@ -1478,11 +1479,11 @@ function HGWeb() {
       replyNoPerm(socket, 'forcePlayerState');
       return;
     }
-    const game = hg().getGame(gId);
+    const game = hg().getHG().getGame(gId);
     if (!game) return;
     socket.emit(
         'message', HungryGames.GuildGame.forcePlayerState(
-            hg().getGame(gId), list, state, text, persists));
+            hg().getHG().getGame(gId), list, state, text, persists));
     if (typeof cb === 'function') cb();
   }
   this.forcePlayerState = forcePlayerState;
@@ -1511,7 +1512,7 @@ function HGWeb() {
     hg().renameGame(gId, name);
     if (typeof cb === 'function') {
       let name = null;
-      let game = hg().getGame(gId);
+      let game = hg().getHG().getGame(gId);
       if (game) game = game.currentGame;
       if (game) name = game.name;
       cb(name);
@@ -1619,7 +1620,7 @@ function HGWeb() {
       p.then((url) => {
         const error = hg().createNPC(gId, meta.username, url, npcId);
         if (error) socket.emit('message', error);
-        socket.emit('game', gId, hg().getGame(gId));
+        socket.emit('game', gId, hg().getHG().getGame(gId));
         cancelImageUpload(iId);
         if (typeof cb === 'function') cb();
         self.common.logDebug(
