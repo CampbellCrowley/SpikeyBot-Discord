@@ -373,7 +373,7 @@ function HGWeb() {
    */
   function dayStateChange(hg, gId) {
     const keys = Object.keys(sockets);
-    const game = hg().getHG().getGame(gId);
+    const game = hg.getHG().getGame(gId);
     let eventState = null;
     if (!game) return;
     if (game.currentGame.day.events[game.currentGame.day.state - 2] &&
