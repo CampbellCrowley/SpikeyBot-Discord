@@ -2880,9 +2880,7 @@ function Main() {
           try {
             childProcess.execSync(
                 'git diff-index --quiet ' + version.split('#')[1] +
-                ' -- ./src/' +
-                module.filename.slice(
-                    __filename.lastIndexOf('/') + 1, module.filename.length));
+                ' -- ./src/SpikeyBot.js');
             const embed = new self.Discord.MessageEmbed();
             embed.setTitle('Bot update complete!');
             embed.setColor([255, 0, 255]);

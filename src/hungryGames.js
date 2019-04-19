@@ -1842,7 +1842,7 @@ function HG() {
         nextDay(msg, id);
       } else if (dayComplete) {
         printDay(msg, id);
-        if (!hg.getGame(id).options.disableOutput) {
+        if (!hg.getGame(id).options.disableOutput && hg.getGame(id).autoPlay) {
           self.client.setTimeout(() => {
             msg.channel.send('`Autoplaying...`')
                 .then((msg) => {
