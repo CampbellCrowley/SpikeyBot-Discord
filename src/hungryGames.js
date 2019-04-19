@@ -1706,11 +1706,7 @@ function HG() {
     if (hg.getGame(id).currentGame.isPaused) {
       return 'Failed: Game is already paused.';
     }
-    if (!dayEventIntervals[id]) {
-      return 'Failed: Unable to pause game for unknown reason.';
-    }
-    self.client.clearInterval(dayEventIntervals[id]);
-    delete dayEventIntervals[id];
+    hg.getGame(id).clearIntervals();
     hg.getGame(id).currentGame.isPaused = true;
     return 'Success';
   };
