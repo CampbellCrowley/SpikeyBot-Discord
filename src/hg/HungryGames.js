@@ -426,9 +426,13 @@ class HungryGames {
    * be loaded.
    */
   _find(id) {
-    if (this._games[id]) return this._games[id];
-    if (Date.now() - this._findTimestamps[id] < this._findDelay) return null;
-    this._findTimestamps[id] = Date.now();
+    const now = Date.now();
+    if (this._games[id]) {
+      this._findTimestamps[id] = now;
+      return this._games[id];
+    }
+    if (now - this._findTimestamps[id] < this._findDelay) return null;
+    this._findTimestamps[id] = now;
     try {
       const tmp = fs.readFileSync(
           this._parent.common.guildSaveDir + id + this.hgSaveDir +
