@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: Player</title>
+    <title>JSDoc: Class: NPC</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: Player</h1>
+    <h1 class="page-title">Class: NPC</h1>
 
     
 
@@ -28,8 +28,7 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>
-            <span class="ancestors"><a href="HungryGames.html">HungryGames</a>~</span>Player<span class="signature">(id, username, avatarURL, nickname<span class="signature-attributes">opt, nullable</span>)</span><span class="type-signature"></span></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>NPC<span class="signature">(username, avatarURL, id<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
         
     
 </header>
@@ -42,7 +41,7 @@
     
 
     
-    <h4 class="name" id="Player"><span class="type-signature"></span>new Player<span class="signature">(id, username, avatarURL, nickname<span class="signature-attributes">opt, nullable</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="NPC"><span class="type-signature"></span>new NPC<span class="signature">(username, avatarURL, id<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -50,7 +49,9 @@
 
 
 <div class="description">
-    Serializable container for data pertaining to a single user.
+    A player object representing a non-player. It makes sense I
+promise. This represents a Player in the game, that is not attached to a
+real account. Serializable.
 </div>
 
 
@@ -78,49 +79,12 @@
         
 
         
-        <th>Default</th>
-        
 
         <th class="last">Description</th>
     </tr>
     </thead>
 
     <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>id</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">The id of the user this object is representing.</td>
-        </tr>
-
     
 
         <tr>
@@ -148,12 +112,8 @@
             
 
             
-                <td class="default">
-                
-                </td>
-            
 
-            <td class="description last">The name of the user to show in the game.</td>
+            <td class="description last">The username to show for this npc.</td>
         </tr>
 
     
@@ -183,19 +143,16 @@
             
 
             
-                <td class="default">
-                
-                </td>
-            
 
-            <td class="description last">URL to avatar to show for the user in the game.</td>
+            <td class="description last">The url (or fake url) of the image to use as
+the player's avatar.</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>nickname</code></td>
+                <td class="name"><code>id</code></td>
             
 
             <td class="type">
@@ -214,24 +171,15 @@
                 
 
                 
-                    &lt;nullable><br>
-                
 
                 
                 </td>
             
 
             
-                <td class="default">
-                
-                    null
-                
-                </td>
-            
 
-            <td class="description last">The nickname for this user usually
-assigned by the guild. If the user does not have a nickname, this will have
-the same value as `name`.</td>
+            <td class="description last">Id to assign, if a valid id is not provided, a
+random id will be generated.</td>
         </tr>
 
     
@@ -272,7 +220,7 @@ the same value as `name`.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hg_Player.js.html">hg/Player.js</a>, <a href="hg_Player.js.html#line10">line 10</a>
+        <a href="hungryGames.js.html">hungryGames.js</a>, <a href="hungryGames.js.html#line837">line 837</a>
     </li></ul></dd>
     
 
@@ -302,6 +250,17 @@ the same value as `name`.</td>
 
     
     </div>
+
+    
+        <h3 class="subsection-title">Extends</h3>
+
+        
+
+
+    <ul>
+        <li><a href="HungryGames-Player.html">HungryGames~Player</a></li>
+    </ul>
+
 
     
 
@@ -351,6 +310,11 @@ the same value as `name`.</td>
 
     
 
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="HungryGames-Player.html#avatarURL">HungryGames~Player#avatarURL</a>
+    </li></ul></dd>
     
 
     
@@ -429,6 +393,11 @@ the same value as `name`.</td>
     
 
     
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="HungryGames-Player.html#bleeding">HungryGames~Player#bleeding</a>
+    </li></ul></dd>
+    
 
     
 
@@ -503,6 +472,11 @@ available.
     
 
     
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="HungryGames-Player.html#dayOfDeath">HungryGames~Player#dayOfDeath</a>
+    </li></ul></dd>
+    
 
     
 
@@ -575,6 +549,11 @@ available.
     
 
     
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="HungryGames-Player.html#id">HungryGames~Player#id</a>
+    </li></ul></dd>
+    
 
     
 
@@ -598,6 +577,83 @@ available.
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
         <a href="hg_Player.js.html">hg/Player.js</a>, <a href="hg_Player.js.html#line31">line 31</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="isNPC"><span class="type-signature">(constant) </span>isNPC<span class="type-signature"> :boolean</span></h4>
+
+
+
+
+<div class="description">
+    Always true.
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">boolean</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li>true</li>
+        </ul></dd>
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="hungryGames.js.html">hungryGames.js</a>, <a href="hungryGames.js.html#line858">line 858</a>
     </li></ul></dd>
     
 
@@ -646,6 +702,11 @@ available.
 
     
 
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="HungryGames-Player.html#kills">HungryGames~Player#kills</a>
+    </li></ul></dd>
     
 
     
@@ -718,6 +779,11 @@ available.
 
     
 
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="HungryGames-Player.html#living">HungryGames~Player#living</a>
+    </li></ul></dd>
     
 
     
@@ -796,6 +862,11 @@ available.
     
 
     
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="HungryGames-Player.html#name">HungryGames~Player#name</a>
+    </li></ul></dd>
+    
 
     
 
@@ -870,6 +941,11 @@ not have a nickname, this will have the same value as `name`.
     
 
     
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="HungryGames-Player.html#nickname">HungryGames~Player#nickname</a>
+    </li></ul></dd>
+    
 
     
 
@@ -941,6 +1017,11 @@ not have a nickname, this will have the same value as `name`.
 
     
 
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="HungryGames-Player.html#rank">HungryGames~Player#rank</a>
+    </li></ul></dd>
     
 
     
@@ -1019,6 +1100,11 @@ not have a nickname, this will have the same value as `name`.
     
 
     
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="HungryGames-Player.html#settings">HungryGames~Player#settings</a>
+    </li></ul></dd>
+    
 
     
 
@@ -1096,6 +1182,11 @@ not have a nickname, this will have the same value as `name`.
     
 
     
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="HungryGames-Player.html#state">HungryGames~Player#state</a>
+    </li></ul></dd>
+    
 
     
 
@@ -1124,6 +1215,78 @@ not have a nickname, this will have the same value as `name`.
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
         <a href="hg_Player.js.html">hg/Player.js</a>, <a href="hg_Player.js.html#line79">line 79</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="username"><span class="type-signature"></span>username<span class="type-signature"> :string</span></h4>
+
+
+
+
+<div class="description">
+    Equivalent to `this.name` for compatibility.
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">string</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="hungryGames.js.html">hungryGames.js</a>, <a href="hungryGames.js.html#line864">line 864</a>
     </li></ul></dd>
     
 
@@ -1173,6 +1336,11 @@ not have a nickname, this will have the same value as `name`.
     
 
     
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="HungryGames-Player.html#weapons">HungryGames~Player#weapons</a>
+    </li></ul></dd>
+    
 
     
 
@@ -1219,174 +1387,6 @@ not have a nickname, this will have the same value as `name`.
         
     
 
-    
-        <h3 class="subsection-title">Methods</h3>
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id=".from"><span class="type-signature">(static) </span>from<span class="signature">(member)</span><span class="type-signature"> &rarr; {<a href="HungryGames-Player.html">HungryGames~Player</a>}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Create a Player from a given Discord.User or Player-like Object.
-Can be used as a copy-constructor.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>member</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Discord~User</span>
-|
-
-<span class="param-type">Discord~GuildMember</span>
-|
-
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Object, User or GuildMember to make a Player from.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hg_Player.js.html">hg/Player.js</a>, <a href="hg_Player.js.html#line124">line 124</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    Player object created.
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type"><a href="HungryGames-Player.html">HungryGames~Player</a></span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
     
 
     

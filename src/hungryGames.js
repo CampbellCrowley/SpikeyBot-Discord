@@ -828,37 +828,41 @@ function HG() {
    */
 
   /**
-   * @classdesc A player object representing a non-player. It makes sense I
+   * @description A player object representing a non-player. It makes sense I
    * promise. This represents a Player in the game, that is not attached to a
    * real account. Serializable.
-   * @class
-   * @augments Player
-   *
-   * @param {string} username The username to show for this npc.
-   * @param {string} avatarURL The url (or fake url) of the image to use as the
-   * player's avatar.
-   * @param {string} [id] Id to assign, if a valid id is not provided, a random
-   * id will be generated.
+   * @inner
+   * @augments HungryGames~Player
    */
-  function NPC(username, avatarURL, id) {
-    if (typeof id !== 'string' || !NPC.checkID(id)) {
-      id = NPC.createID();
+  class NPC extends HungryGames.Player {
+    /**
+     * @description Create a non-player character.
+     * @param {string} username The username to show for this npc.
+     * @param {string} avatarURL The url (or fake url) of the image to use as
+     * the player's avatar.
+     * @param {string} [id] Id to assign, if a valid id is not provided, a
+     * random id will be generated.
+     */
+    constructor(username, avatarURL, id) {
+      if (typeof id !== 'string' || !NPC.checkID(id)) {
+        id = NPC.createID();
+      }
+      super(id, username, avatarURL);
+      /**
+       * Always true.
+       * @public
+       * @default
+       * @constant
+       * @type {boolean}
+       */
+      this.isNPC = true;
+      /**
+       * Equivalent to `this.name` for compatibility.
+       * @public
+       * @type {string}
+       */
+      this.username = this.name;
     }
-    HungryGames.Player.call(this, id, username, avatarURL);
-    /**
-     * Always true.
-     * @public
-     * @default
-     * @constant
-     * @type {boolean}
-     */
-    this.isNPC = true;
-    /**
-     * Equivalent to `this.name` for compatibility.
-     * @public
-     * @type {string}
-     */
-    this.username = this.name;
   }
   /**
    * Create an NPC from an Object. Similar to copy-constructor.
@@ -1049,32 +1053,30 @@ function HG() {
                 'with "' + msg.prefix + self.postPrefix + 'end".');
       }
       return;
+    } else if (hg.getGame(id)) {
+      if (!silent) {
+        self.common.reply(msg, 'Refreshing current game.');
+      }
+      hg.getGame(id).includedUsers =
+          hg.getGame(id).includedUsers.filter((u) => {
+            const m = msg.guild.members.get(u);
+            if (m && m.partial) m.fetch();
+            return m;
+          });
+      hg.getGame(id).excludedUsers =
+          hg.getGame(id).excludedUsers.filter((u) => {
+            const m = msg.guild.members.get(u);
+            if (m && m.partial) m.fetch();
+            return m;
+          });
+      hg.refresh(msg.guild);
     } else {
-      if (hg.getGame(id)) {
-        hg.getGame(id).includedUsers =
-            hg.getGame(id).includedUsers.filter((u) => {
-              const m = msg.guild.members.get(u);
-              if (m && m.partial) m.fetch();
-              return m;
-            });
-        hg.getGame(id).excludedUsers =
-            hg.getGame(id).excludedUsers.filter((u) => {
-              const m = msg.guild.members.get(u);
-              if (m && m.partial) m.fetch();
-              return m;
-            });
-        if (!silent) {
-          self.common.reply(msg, 'Refreshing current game.');
-        }
-        hg.refresh(msg.guild);
-      } else {
-        if (!silent) {
-          self.common.reply(
-              msg,
-              'Created a Hungry Games with default settings and all members ' +
-                  'included.');
-        }
-        hg.create(msg.guild);
+      hg.create(msg.guild);
+      if (!silent) {
+        self.common.reply(
+            msg,
+            'Created a Hungry Games with default settings and all members ' +
+                'included.');
       }
     }
     hg.getGame(id).formTeams();
