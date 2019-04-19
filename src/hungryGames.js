@@ -1751,6 +1751,10 @@ function HG() {
    * giving up.
    */
   function nextDay(msg, id, retry = true) {
+    if (!msg.channel) {
+      self.error('Failed to start next day because channel is unknown: ' + id);
+      return;
+    }
     const game = hg.getGame(id);
     if (!game || !game.currentGame ||
         !game.currentGame.inProgress) {
