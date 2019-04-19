@@ -251,14 +251,6 @@ function HG() {
    */
   let battles = {};
   /**
-   * All intervals for printing events.
-   *
-   * @private
-   * @type {Object.<number>}
-   * @default
-   */
-  const dayEventIntervals = {};
-  /**
    * Storage of battle messages to edit the content of on the next update.
    *
    * @private
@@ -1768,7 +1760,7 @@ function HG() {
       return;
     }
     if (game.currentGame.day.state !== 0) {
-      if (dayEventIntervals[id]) {
+      if (game._autoStep) {
         self.common.reply(msg, 'Already simulating day.');
       } else if (game.currentGame.day.state == 1) {
         self.common

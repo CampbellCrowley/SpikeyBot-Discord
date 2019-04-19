@@ -489,7 +489,7 @@ GuildGame.from = function(data) {
  */
 GuildGame.forcePlayerState = function(
     game, list, state, messages, text, persists = false) {
-  if (typeof list === 'object') {
+  if (!Array.isArray(list)) {
     persists = list.persists;
     messages = state;
     text = list.text;

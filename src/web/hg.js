@@ -1493,8 +1493,9 @@ function HGWeb() {
     const game = hg().getHG().getGame(gId);
     if (!game) return;
     socket.emit(
-        'message', HungryGames.GuildGame.forcePlayerState(
-            game.serializable, list, state, text, persists));
+        'message',
+        HungryGames.GuildGame.forcePlayerState(
+            game, list, state, hg().getHG().messages, text, persists));
     if (typeof cb === 'function') cb();
   }
   this.forcePlayerState = forcePlayerState;
