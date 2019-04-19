@@ -2006,7 +2006,6 @@ function HG() {
               });
         }
       }
-      events[index].state++;
     } else {
       // delete battleMessage[id];
       const avatarSizes = hg.getGame(id).options.eventAvatarSizes;
@@ -2120,7 +2119,6 @@ function HG() {
               });
         }
       }
-      hg.getGame(id).currentGame.day.state++;
     }
   }
   /**

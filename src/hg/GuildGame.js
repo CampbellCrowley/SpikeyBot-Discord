@@ -365,11 +365,7 @@ class GuildGame {
     this.currentGame.isPaused = false;
     this.currentGame.ended = true;
     this.autoPlay = false;
-    this._autoStep = false;
-    clearInterval(this._dayEventInterval);
-    clearTimeout(this._autoPlayTimeout);
-    this._dayEventInterval = null;
-    this._autoPlayTimeout = null;
+    this.clearIntervals();
   }
   /**
    * @description Clear all timeouts and intervals.
