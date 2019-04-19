@@ -344,7 +344,7 @@ class HungryGames {
     });
     if (includedNPCs && includedNPCs.length > 0) {
       finalMembers = finalMembers.concat(includedNPCs.map((obj) => {
-        return new HungryGames.NPC(obj.name, obj.avatarURL, obj.id);
+        return new this._parent.NPC(obj.name, obj.avatarURL, obj.id);
       }));
     }
     return finalMembers;
