@@ -94,9 +94,7 @@ class Worker {
               sim.game.disabledEvents.arena[arenaEvent.message]) {
             userEventPool = userEventPool.filter((el) => {
               return !sim.game.disabledEvents.arena[arenaEvent.message].find(
-                  (d) => {
-                    return Event.eventsEqual(d, el);
-                  });
+                  (d) => Event.equal(d, el));
             });
           }
           if (userEventPool.length == 0) {
