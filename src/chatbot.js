@@ -92,7 +92,8 @@ function ChatBot() {
 
   /**
    * Write data to a file and make sure the directory exists or create it if it
-   * doesn't. Async
+   * doesn't. Async.
+   *
    * @see {@link Main~mkAndWriteSync}
    *
    * @private
@@ -118,7 +119,8 @@ function ChatBot() {
   }
   /**
    * Write data to a file and make sure the directory exists or create it if it
-   * doesn't. Synchronous
+   * doesn't. Synchronous.
+   *
    * @see {@link Main~mkAndWrite}
    *
    * @private
@@ -219,7 +221,7 @@ function ChatBot() {
           request.queryInput.text.text.substr(0, 256);
     }
 
-    msg.channel.startTyping().catch(() => {});
+    // msg.channel.startTyping().catch(() => {});
 
     const startTime = Date.now();
 
@@ -227,7 +229,7 @@ function ChatBot() {
         .then((responses) => {
           self.debug(
               'Dialogflow response delay: ' + (Date.now() - startTime) + 'ms');
-          msg.channel.stopTyping();
+          // msg.channel.stopTyping();
           // console.log('Intent');
           const result = responses[0].queryResult;
           if (result.parameters.fields.thing) {
@@ -280,7 +282,7 @@ function ChatBot() {
               'Dialogflow response delay: ' + (Date.now() - startTime) + 'ms');
           self.error('Dialogflow failed request: ' + JSON.stringify(request));
           console.error('ERROR:', err);
-          msg.channel.stopTyping();
+          // msg.channel.stopTyping();
           msg.channel.send('Failed to contact DialogFlow: ' + err.details);
         });
   }
@@ -305,10 +307,11 @@ function ChatBot() {
 
   /**
    * Escape a given string to be passed into a regular expression.
+   *
    * @private
    *
    * @param {string} str Input to escape.
-   * @return {string} Escaped string.
+   * @returns {string} Escaped string.
    */
   function escapeRegExp(str) {
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');

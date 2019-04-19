@@ -232,13 +232,13 @@ function SubModule() {
   this.save = function(opt = 'sync') {};
 
   /**
-   * Check if this module is in a state that is ready to be unloaded. If false
-   * is returned, this module should not be unloaded and doing such may risk
-   * putting the module into an uncontrollable state.
+   * @description Check if this module is in a state that is ready to be
+   * unloaded. If false is returned, this module should not be unloaded and
+   * doing such may risk putting the module into an uncontrollable state.
    *
    * @abstract
    * @public
-   * @return {boolean} True if can be unloaded, false if cannot.
+   * @returns {boolean} True if can be unloaded, false if cannot.
    */
   this.unloadable = function() {
     return true;

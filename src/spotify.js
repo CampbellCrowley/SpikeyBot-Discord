@@ -196,6 +196,7 @@ function Spotify() {
 
   /**
    * Check on the user's follow state and update the playing status to match.
+   *
    * @private
    *
    * @param {Discord~Message} msg The message to use as context.
@@ -238,6 +239,7 @@ function Spotify() {
     /**
      * Start playing the music, and create a timeout to check the status, or for
      * the next song.
+     *
      * @private
      */
     function makeTimeout() {
@@ -277,6 +279,7 @@ function Spotify() {
   /**
    * Fetch the song's length from music because Spotify was unable to provide it
    * for us.
+   *
    * @private
    *
    * @param {Discord~Message} msg The context.
@@ -310,6 +313,7 @@ function Spotify() {
 
   /**
    * Attempt to start playing the given song into a voice channel.
+   *
    * @private
    * @param {Discord~Message} msg Message that caused this to happen, and to
    * pass into {@link Command} as context.
@@ -325,6 +329,7 @@ function Spotify() {
 
   /**
    * Update current reference to music submodule.
+   *
    * @private
    */
   function checkMusic() {
@@ -335,6 +340,7 @@ function Spotify() {
 
   /**
    * Cleanup and delete data in order to stop following user.
+   *
    * @private
    * @param {Discord~Message} msg THe context to clear.
    */

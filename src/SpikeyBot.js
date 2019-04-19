@@ -1,5 +1,10 @@
 // Copyright 2018-2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
+/**
+ * DiscordJS base object.
+ * @external Discord
+ * @see {@link https://discord.js.org/}
+ */
 const Discord = require('discord.js');
 const fs = require('fs');
 const mkdirp = require('mkdirp');
@@ -263,12 +268,22 @@ function SpikeyBot() {
   let inspectShard = -1;
 
   /**
+   * Is the bot currently rebooting.
+   *
+   * @private
+   * @default
+   * @type {boolean}
+   */
+  let rebooting = false;
+
+  /**
    * Getter for the bot's name. If name is null, it is most likely because there
    * is no custom name and common.isRelease should be used instead.
+   *
    * @see {@link SpikeyBot~botName}
    *
    * @public
-   * @return {?string} The bot's name or null if it has not been defined yet or
+   * @returns {?string} The bot's name or null if it has not been defined yet or
    * there is no custom name.
    */
   this.getBotName = function() {
@@ -279,10 +294,11 @@ function SpikeyBot() {
   /**
    * Getter for the bot's name. If botName is null, this will give either
    * `release` or `dev`.
+   *
    * @see {@link SpikeyBot~botName}
    *
    * @public
-   * @return {string} The bot's name.
+   * @returns {string} The bot's name.
    */
   this.getFullBotName = function() {
     if (isBackup) return 'FALLBACK';
@@ -346,18 +362,21 @@ function SpikeyBot() {
   /**
    * Create a ShardingManager and spawn shards. This shall only be called at
    * most once, and `login()` shall not be called after this.
+   *
    * @private
    */
   function createShards() {
     common.log(
         'Sharding enabled with ' + (numShards || 'auto'), 'ShardingManager');
+    const argv = inspectShard > -1 ? ['--inspect'] : [];
+    argv.push('--experimental-worker');
     const manager = new Discord.ShardingManager('./src/SpikeyBot.js', {
       token: (botName && auth[botName]) || (setDev ? auth.dev : auth.release),
       totalShards: numShards || 'auto',
       shardArgs: process.argv.slice(2).filter((arg) => {
         return !arg.startsWith('--shards') && !arg.startsWith('--delay');
       }),
-      execArgv: inspectShard > -1 ? ['--inspect'] : [],
+      execArgv: argv,
     });
     manager.on('shardCreate', (shard) => {
       common.log('Launched shard ' + shard.id, 'ShardingManager');
@@ -399,7 +418,7 @@ function SpikeyBot() {
   let defaultPresence = {
     status: 'online',
     activity: {
-      name: '?help for help',
+      name: 'SpikeyBot.com',
       type: 'WATCHING',
     },
   };
@@ -566,7 +585,7 @@ function SpikeyBot() {
    * given
    * command.
    * @param {string} cmd Command to check if the message is this command.
-   * @return {boolean} True if msg is the given command.
+   * @returns {boolean} True if msg is the given command.
    */
   function isCmd(msg, cmd) {
     return msg.content.startsWith(msg.prefix + cmd);
@@ -607,7 +626,7 @@ function SpikeyBot() {
       } else if (isBackup) {
         // updateGame('OFFLINE', 'PLAYING');
       } else {
-        updateGame(defaultPrefix + 'help for help');
+        updateGame('SpikeyBot.com');
       }
     }
     const logChannel = client.channels.get(common.logChannel);
@@ -674,7 +693,7 @@ function SpikeyBot() {
                   console.error(err);
                 }
               });
-          const channel = client.channels.get(parsed.channel.id);
+          const channel = client.channels.get(parsed.channel);
           if (channel) {
             channel.messages.fetch(parsed.id)
                 .then((msg_) => {
@@ -688,7 +707,7 @@ function SpikeyBot() {
                   console.error(err);
                 });
           } else {
-            common.error('Failed to find channel: ' + parsed.channel.id);
+            common.error('Failed to find channel: ' + parsed.channel);
           }
           if (logChannel && !isDev && !testInstance) {
             let additional = '';
@@ -740,6 +759,10 @@ function SpikeyBot() {
 
     initialized = true;
   }
+
+  client.on('shardReady', (id) => {
+    common.log('Shard Ready', `Shard ${id}`);
+  });
 
   client.on('disconnect', onDisconnect);
   /**
@@ -941,6 +964,7 @@ function SpikeyBot() {
         }));
     /**
      * Change the command prefix for the given guild.
+     *
      * @public
      *
      * @param {string} gId The guild id of which to change the command prefix.
@@ -967,8 +991,10 @@ function SpikeyBot() {
                * Write the custom prefix to file after making the
                * directory. This is for bots not using the default
                * name.
+               *
                * @private
-               * @param {Error} err
+               * @param {Error} err Error that occurred during making the
+               * directory.
                */
               function writeBotNamePrefix(err) {
                 if (err) {
@@ -1110,7 +1136,8 @@ function SpikeyBot() {
   /**
    * Trigger a reboot of the bot. Actually just gracefully shuts down, and
    * expects to be immediately restarted.
-   * @TODO: Support scheduled reload across multiple shards. Currently the bot
+   *
+   * @todo Support scheduled reload across multiple shards. Currently the bot
    * waits for the shard at which the command was sent to be ready for reboot
    * instead of all shard deciding on their own when they're ready to reboot.
    * This will also need to check that we are obeying Discord's rebooting rate
@@ -1134,16 +1161,21 @@ function SpikeyBot() {
      * reboot status.
      */
     function reboot(force, hard, msg_) {
-      const toSave = {
-        id: (msg_ || {}).id,
-        channel: {id: (msg_ || {channel: {}}).channel.id},
-        running: false,
-      };
-      try {
-        fs.writeFileSync(fullRebootFilename, JSON.stringify(toSave));
-      } catch (err) {
-        common.error(`Failed to save ${fullRebootFilename}`);
-        console.log(err);
+      if (!rebooting) {
+        if (!msg_) {
+          msg_ = {channel: {}};
+        }
+        const toSave = {
+          id: msg_.id,
+          channel: msg_.channel.id,
+          running: false,
+        };
+        try {
+          fs.writeFileSync(fullRebootFilename, JSON.stringify(toSave));
+        } catch (err) {
+          common.error(`Failed to save ${fullRebootFilename}`);
+          console.log(err);
+        }
       }
       if (!client.shard || !hard) {
         process.exit(-1);
@@ -1156,6 +1188,7 @@ function SpikeyBot() {
       } else {
         client.shard.respawnAll();
       }
+      rebooting = true;
     }
     if ((!msg && silent) || msg.author.id === common.spikeyId) {
       const force = (msg || {content: ''}).content.indexOf(' force') > -1;
@@ -1265,6 +1298,7 @@ function SpikeyBot() {
    * Reloads mainmodules from file. Reloads all modules if `toReload` is not
    * specified. `reloaded` will contain the list of messages describing which
    * mainmodules were reloaded, or not.
+   *
    * @private
    *
    * @param {?string|string[]} [toReload] Specify mainmodules to reload, or null
@@ -1273,7 +1307,7 @@ function SpikeyBot() {
    * information about outcomes of attempting to reload mainmodules.
    * @param {boolean} [schedule=true] Automatically re-schedule reload for
    * mainmodules if they are in an unloadable state.
-   * @return {boolean} True if something failed and not all mainmodules were
+   * @returns {boolean} True if something failed and not all mainmodules were
    * reloaded.
    */
   function reloadMainModules(toReload, reloaded, schedule) {
@@ -1421,6 +1455,7 @@ function SpikeyBot() {
   }
   /**
    * Trigger all mainModules to save their data.
+   *
    * @see {@link SpikeyBot~saveAll()}
    *
    * @private
@@ -1481,10 +1516,11 @@ function SpikeyBot() {
 
   /**
    * Get this guild's custom prefix. Returns the default prefix otherwise.
+   *
    * @public
    *
    * @param {?Discord~Guild|string|number} id The guild id or guild to lookup.
-   * @return {string} The prefix for all commands in the given guild.
+   * @returns {string} The prefix for all commands in the given guild.
    */
   this.getPrefix = function(id) {
     if (!id) return defaultPrefix;
@@ -1494,6 +1530,7 @@ function SpikeyBot() {
 
   /**
    * Load prefixes from file for the given guilds asynchronously.
+   *
    * @private
    *
    * @param {Discord~Guild[]} guilds Array of guilds to fetch the custom
@@ -1540,6 +1577,7 @@ function SpikeyBot() {
   /**
    * Trigger a graceful shutdown with process signals. Does not trigger shutdown
    * if exit is -1.
+   *
    * @private
    *
    * @param {...*} info Information about the signal.
@@ -1557,6 +1595,7 @@ function SpikeyBot() {
   }
   /**
    * Login to Discord. This shall only be called at most once.
+   *
    * @private
    */
   function login() {

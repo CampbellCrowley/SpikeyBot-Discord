@@ -20,9 +20,9 @@ function MainModule() {
   /**
    * Imports data from a previous instance of this class in order to maintain
    * references to other objects and classes across reloads.
+   *
    * @public
    * @abstract
-   *
    * @param {?MainModule~ModuleData} data The data that was exported previously,
    * or null if no data to import.
    */
@@ -30,18 +30,19 @@ function MainModule() {
   /**
    * Export data required to maintain the bot across reloading this module.
    * Expected to be returned directly to this.import once reloaded.
+   *
    * @public
    * @abstract
-   *
-   * @return {MainModule~ModuleData} The data to be exported
+   * @returns {MainModule~ModuleData} The data to be exported.
    */
   this.export = function() {
     return {};
   };
   /**
-   * Signal that the bot is shutting down and will not be restarting
-   * immediately. This is triggered on all shutdowns where all MainModules and
-   * SubModules will be unloaded.
+   * @description Signal that the bot is shutting down and will not be
+   * restarting immediately. This is triggered on all shutdowns where all
+   * MainModules and SubModules will be unloaded.
+   *
    * @public
    * @abstract
    */

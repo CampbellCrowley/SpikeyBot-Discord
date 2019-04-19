@@ -9,11 +9,12 @@ function FunTranslators() {
   const self = this;
   /**
    * Convert a string to a format based on it's name.
+   *
    * @public
    *
    * @param {string} name The name of the translator.
    * @param {string} input The string to convert.
-   * @return {string} The formatted string.
+   * @returns {string} The formatted string.
    */
   this.to = function(name, input) {
     switch (name) {
@@ -31,10 +32,11 @@ function FunTranslators() {
   };
   /**
    * Convert a string to Leet Speak (1337 5p34k).
+   *
    * @public
    *
    * @param {string} input The string to convert.
-   * @return {string} The formatted string.
+   * @returns {string} The formatted string.
    */
   this.toLeetSpeak = function(input) {
     let output = input.replace(/cker(s?)\b/g, 'xor$1');
@@ -64,10 +66,11 @@ function FunTranslators() {
 
   /**
    * Convert a string to the SpongeBob mocking meme font (SpOngEBoB MoCKinG).
+   *
    * @public
    *
    * @param {string} input The string to convert.
-   * @return {string} The formatted string.
+   * @returns {string} The formatted string.
    */
   this.toMockingFont = function(input) {
     const output = input.toLowerCase().split('');
@@ -80,10 +83,11 @@ function FunTranslators() {
 
   /**
    * Convert string to small caps (Hᴇʟʟᴏ Wᴏʀʟᴅ!).
+   *
    * @public
    *
    * @param {string} input The string to convert.
-   * @return {string} The formatted string.
+   * @returns {string} The formatted string.
    */
   this.toSmallCaps = function(input) {
     const map = {
@@ -159,10 +163,11 @@ function FunTranslators() {
 
   /**
    * Convert string to superscript characters (ᴴᵉˡˡᵒ ᵂᵒʳˡᵈᵎ).
+   *
    * @public
    *
    * @param {string} input The string to convert.
-   * @return {string} The formatted string.
+   * @returns {string} The formatted string.
    */
   this.toSuperScript = function(input) {
     const map = {

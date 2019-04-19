@@ -46,7 +46,7 @@
 - record (Record audio in a voice channel. Mention people to only record specific people.)
 - perms (Sends a message with the bitfields of all permissions, as well as the sender's and the bot's permissions for the guild and channel)
 - lookup (Finds information about a given ID)
-- sendto (Given a user or channel ID, the bot will send the message anonymously. Only Spikey can do this)
+- sendto (Given a user or channel ID, the bot will send the message anonymously. Only trusted people can do this)
 - saveall (Trigger all submodules to save their data)
 - thanks (Thanks the person that was mentioned, or says "You're welcome")
 - musicstats (Shows information about currently playing broadcasts)
@@ -72,7 +72,7 @@ The below steps outline the minimum required to get the SpikeyBot to run.
 1) Have a server/computer
     - SB is developed and tested solely on Debian Stretch (amd64), but other OS's may work.
 2) Install [NodeJS](https://nodejs.org/)
-    - The bot is currently running on NodeJS [v10.15.1](https://nodejs.org/dist/v10.15.1/). Other versions may work, but are untested.
+    - The bot is currently running on NodeJS [v10.15.3](https://nodejs.org/dist/v10.15.3/). Other versions may work, but are untested.
 3) Download source code
     - Clone this repository `git clone https://github.com/CampbellCrowley/SpikeyBot-Discord.git` or click the green download button in GitHub.
 4) Install dependencies via NPM
@@ -84,10 +84,12 @@ The below steps outline the minimum required to get the SpikeyBot to run.
 6) Configure SpikeyBot
     - Create `auth.js` in the `SpikeyBot-Discord/` directory with a line that says `exports.release = 'BOT_TOKEN';`, where `BOT_TOKEN` is the bot token from Discord.
     - Modify `./subModules.json` `"release"` section to have the subModules you want.
+    - If you wish to have access to developer commands that normally only SpikeyRobot has access to, replace the `spikeyId` in `./src/common.js` with your account ID.
 7) Run SpikeyBot
     - Run `node src/SpikeyBot.js` in `SpikeyBot-Discord/` (working directory must be the project root).
     - Errors about `gApiCredentials.json` missing can be suppressed by removing `./tts.js` and `./chatbot.js` from `./subModules.json` since these require special authentication from Google's API. (https://console.cloud.google.com/)
     - All website related subModules will not work, and related errors can be suppressed by removing all subModules that start with `./web/` from `./subModules.json`.
+    - If you are **not** running with `--shards` and wish to use the Hungry Games submodule, you must run node with `--experimental-worker`.
 
 # Development
 - Unit tests exist

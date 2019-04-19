@@ -69,6 +69,7 @@ function TTS() {
 
     /**
      * Callback for checking permissions for command.
+     *
      * @private
      * @type {Patreon~basicCB}
      * @param {?string} err The error string, or null if no error.
@@ -96,6 +97,7 @@ function TTS() {
     /**
      * After checking if a user has permission for this command, send the
      * request too Google with the user's settings.
+     *
      * @private
      * @type {Patreon~basicCB}
      * @param {?string} err The error string, or null if no error.
@@ -141,8 +143,9 @@ function TTS() {
 
     let vConn;
     /**
-     * Successfully joined a voice channel, now we can request audio data from
-     * Google.
+     * @description Successfully joined a voice channel, now we can request
+     * audio data from Google.
+     *
      * @private
      * @param {Discord~VoiceConnection} conn The voice channel connection.
      */
@@ -163,6 +166,7 @@ function TTS() {
 
     /**
      * Response from Google with TTS audio data.
+     *
      * @private
      * @param {?Error} err Errors in request.
      * @param {?Object} res Response.

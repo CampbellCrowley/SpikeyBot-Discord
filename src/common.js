@@ -5,6 +5,7 @@ const Discord = require('discord.js');
 
 /**
  * Commonly required things. Helper functions and constants.
+ *
  * @class
  */
 function Common() {
@@ -85,10 +86,10 @@ function Common() {
   };
 
   /**
-   * Pad an IP address with zeroes
+   * Pad an IP address with zeroes.
    *
    * @param {number} str The ipv4 address as a string to format.
-   * @return {string} The padded address.
+   * @returns {string} The padded address.
    */
   this.padIp = function(str) {
     const dM = str.match(/\./g);
@@ -119,7 +120,7 @@ function Common() {
    * with a human readable alias if the address is a known location.
    *
    * @param {string} ip The ip address to format.
-   * @return {string} The formmatted address.
+   * @returns {string} The formmatted address.
    */
   this.getIPName = function(ip) {
     ip = self.padIp(ip);
@@ -152,7 +153,7 @@ function Common() {
    * message.
    *
    * @param {string} ip The ip to include in the prefix.
-   * @return {string} The formatted prefix for a log message.
+   * @returns {string} The formatted prefix for a log message.
    */
   this.updatePrefix = function(ip) {
     if (typeof ip === 'undefined') {
@@ -255,8 +256,8 @@ function Common() {
    * @param {Discord~Message} msg Message to reply to.
    * @param {string} text The main body of the message.
    * @param {string} [post] The footer of the message.
-   * @return {?Promise} Promise of Discord~Message that we attempted to send, or
-   * null if error occurred before attempting to send.
+   * @returns {?Promise} Promise of Discord~Message that we attempted to send,
+   * or null if error occurred before attempting to send.
    */
   this.reply = function(msg, text, post) {
     if (!msg.channel || !msg.channel.send) {
@@ -304,11 +305,12 @@ function Common() {
 
   /**
    * Gets the name and line number of the current function stack.
+   *
    * @private
    *
    * @param {number} [traceIncrease=0] Increase the distance up the stack to
    * show the in the log.
-   * @return {string} Formatted string with length 24.
+   * @returns {string} Formatted string with length 24.
    */
   function getTrace(traceIncrease = 0) {
     if (typeof traceIncrease !== 'number') traceIncrease = 0;
@@ -324,8 +326,8 @@ function Common() {
    * Gets the line number of the function that called a log function.
    *
    * @private
-   * @param {number} [inc=0] Increase distance up the stack to return;
-   * @return {number} Line number of call in stack.
+   * @param {number} [inc=0] Increase distance up the stack to returns.
+   * @returns {number} Line number of call in stack.
    */
   function __line(inc = 0) {
     return __stack()[3 + inc].getLineNumber();
@@ -335,7 +337,7 @@ function Common() {
    * Gets the name of the function that called a log function.
    *
    * @private
-   * @param {number} [inc=0] Increase distance up the stack to return;
+   * @param {number} [inc=0] Increase distance up the stack to return.
    * @return {string} Function name in call stack.
    */
   /* function __function(inc = 0) {
@@ -346,8 +348,8 @@ function Common() {
    * Gets the name of the file that called a log function.
    *
    * @private
-   * @param {number} [inc=0] Increase distance up the stack to return;
-   * @return {string} Filename in call stack.
+   * @param {number} [inc=0] Increase distance up the stack to returns.
+   * @returns {string} Filename in call stack.
    */
   function __filename(inc = 0) {
     return __stack()[3 + inc].getFileName();
@@ -398,7 +400,7 @@ Common.trustedIds = Common.prototype.trustedIds;
  * Format a Discord API error.
  *
  * @param {Discord~DiscordAPIError} e DiscordAPIError to format into a string.
- * @return {string} Error formatted as single line string.
+ * @returns {string} Error formatted as single line string.
  */
 Common.prototype.fmtDAPIErr = function(e) {
   return `ERR:${process.pid} ${e.name}: ${e.message}` +
@@ -409,7 +411,7 @@ Common.prototype.fmtDAPIErr = function(e) {
  * Format a Discord API error.
  *
  * @param {Discord~DiscordAPIError} e DiscordAPIError to format into a string.
- * @return {string} Error formatted as single line string.
+ * @returns {string} Error formatted as single line string.
  */
 Common.fmtDAPIErr = Common.prototype.fmtDAPIErr;
 
@@ -520,7 +522,7 @@ Common.userSaveDir = Common.prototype.userSaveDir;
  *
  * @param {Discord~Message|Discord~UserResolvable} msg Message to format a
  * mention for the author of.
- * @return {string} Formatted mention string.
+ * @returns {string} Formatted mention string.
  */
 Common.prototype.mention = function(msg) {
   if (msg.author) {
@@ -545,9 +547,10 @@ String.prototype.replaceAll = function(search, replacement) {
 };
 
 /**
- * Gets the stack trace of the current function call.
+ * @description Gets the stack trace of the current function call.
+ *
  * @private
- * @return {Stack}
+ * @returns {Stack} Error stack for logging.
  */
 function __stack() {
   const orig = Error.prepareStackTrace;
@@ -564,7 +567,9 @@ function __stack() {
 
 const oldErr = console.error;
 /**
- * Augment console.error to reformat DiscordAPIErrors to be more pretty.
+ * @description Augment console.error to reformat DiscordAPIErrors to be more
+ * pretty.
+ * @param {*} args Arguments to pass through to console.error.
  */
 console.error = function(...args) {
   if (args.length == 1 && (args[0] instanceof Discord.DiscordAPIError)) {

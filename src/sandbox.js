@@ -129,9 +129,9 @@ function Sandbox() {
    * @private
    * @param {Discord~Message} msg The Discord message that triggered the initial
    * execution.
-   * @param {Error} err
-   * @param {string|Buffer} stdout
-   * @param {string|Buffer} stderr
+   * @param {Error} err Error while running script.
+   * @param {string|Buffer} stdout All data passed through stdout.
+   * @param {string|Buffer} stderr All data paseed through stderr.
    */
   function scriptEnd(msg, err, stdout, stderr) {
     msg.channel.stopTyping();

@@ -110,6 +110,7 @@ function CmdScheduling() {
 
   /**
    * Write save data for a guild.
+   *
    * @private
    *
    * @param {string|number} i The guild ID.
@@ -270,23 +271,23 @@ function CmdScheduling() {
    * @param {string|Object} cmd The command to run, or an object instance of
    * this class (exported using toJSON, then parsed into an object).
    * @param {string|number|Discord~TextChannel} channel The channel or channel
-   * ID of where to run the command.
-   * @param {string|number|Discord~Message} message The message or message ID
+   * id of where to run the command.
+   * @param {string|number|Discord~Message} message The message or message id
    * that created this scheduled command.
-   * @param {number} time The Unix timestamp at which to run the command.
+   * @param {number} time The unix timestamp at which to run the command.
    * @param {?number} repeatDelay The delay in milliseconds at which to run the
    * command again, or null if it does not repeat.
    *
    * @property {string} cmd The command to run.
-   * @property {number|string} bot The ID of the bot instantiating this command.
-   * @property {Discord~TextChannel} channel The channel or channel ID of where
+   * @property {number|string} bot The id of the bot instantiating this command.
+   * @property {Discord~TextChannel} channel The channel or channel id of where
    * to run the command.
    * @property {string|number} channelId The id of the channel where the message
-   * was  sent.
+   * was sent.
    * @property {?Discord~Message} message The message that created this
    * scheduled command, or null if the message was deleted.
    * @property {string|number} messageId The id of the message sent.
-   * @property {number} time The Unix timestamp at which to run the command.
+   * @property {number} time The unix timestamp at which to run the command.
    * @property {number} [repeatDelay=0] The delay in milliseconds at which to
    * run the command again. 0 to not repeat.
    * @property {string} id Random base 36, 3-character long id of this command.
@@ -393,6 +394,7 @@ function CmdScheduling() {
      * Trigger the command to be run immediately. Automatically fired at the
      * scheduled time. Does not cancel the normally scheduled command.
      * Re-schedules the command if the command should repeat.
+     *
      * @public
      */
     this.go = function() {
@@ -461,6 +463,7 @@ function CmdScheduling() {
 
     /**
      * Cancel this command and remove Timeout.
+     *
      * @public
      */
     this.cancel = function() {
@@ -473,6 +476,7 @@ function CmdScheduling() {
      * the scheduled time to run the command is more than 2 weeks in the future,
      * the command is not scheduled, and this function must be called manually
      * (less than 2 weeks) before the scheduled time for the command to run.
+     *
      * @public
      */
     this.setTimeout = function() {
@@ -500,7 +504,7 @@ function CmdScheduling() {
      * Export the relevant data to recreate this object, as a JSON object.
      *
      * @public
-     * @return {Object} JSON formatted object.
+     * @returns {Object} JSON formatted object.
      */
     this.toJSON = function() {
       return {
@@ -522,6 +526,7 @@ function CmdScheduling() {
 
   /**
    * Register a created {@link CmdScheduling.ScheduledCommand}.
+   *
    * @private
    * @fires CmdScheduling#commandRegistered
    *
@@ -666,10 +671,11 @@ function CmdScheduling() {
   /**
    * Given a user-inputted string, convert to a number of milliseconds. Input
    * can be on most common time units up to a week.
+   *
    * @private
    *
    * @param {string} str The input string to parse.
-   * @return {number} Number of milliseconds parsed from string.
+   * @returns {number} Number of milliseconds parsed from string.
    */
   function stringToMilliseconds(str) {
     let sum = 0;
@@ -688,10 +694,11 @@ function CmdScheduling() {
     }
     /**
      * Convert a number and a unit to the corresponding number of milliseconds.
+     *
      * @private
      * @param {number} num The number associated with the unit.
      * @param {string} unit The current unit associated with the num.
-     * @return {number} The given number in milliseconds.
+     * @returns {number} The given number in milliseconds.
      */
     function numberToUnit(num, unit) {
       switch (unit) {
@@ -729,10 +736,11 @@ function CmdScheduling() {
 
   /**
    * Returns an array of references to scheduled commands in a guild.
+   *
    * @public
    *
    * @param {string|number} gId The guild id of which to get the commands.
-   * @return {null|CmdScheduling.ScheduledCommand[]} Null if none, or the array
+   * @returns {null|CmdScheduling.ScheduledCommand[]} Null if none, or the array
    * of ScheduledCommands.
    */
   function getScheduledCommandsInGuild(gId) {
@@ -786,12 +794,13 @@ function CmdScheduling() {
 
   /**
    * Cancel a scheduled command in a guild.
+   *
    * @private
    * @fires CmdScheduling#commandCancelled
    *
    * @param {string|number} gId The guild id of which to cancel the command.
    * @param {string|number} cmdId The ID of the command to cancel.
-   * @return {?CmdScheduling.ScheduledCommand} Null if failed, or object that
+   * @returns {?CmdScheduling.ScheduledCommand} Null if failed, or object that
    * was cancelled.
    */
   function cancelCmd(gId, cmdId) {
@@ -871,10 +880,11 @@ function CmdScheduling() {
 
   /**
    * Format a duration in milliseconds into a human readable string.
+   *
    * @private
    *
    * @param {number} msecs Duration in milliseconds.
-   * @return {string} Formatted string.
+   * @returns {string} Formatted string.
    */
   function formatDelay(msecs) {
     let output = '';
@@ -912,6 +922,7 @@ function CmdScheduling() {
 
   /**
    * Register an event handler for the given name with the given handler.
+   *
    * @public
    * @param {string} name The event name to listen for.
    * @param {Function} handler The function to call when the event is fired.
@@ -926,6 +937,7 @@ function CmdScheduling() {
 
   /**
    * Remove an event handler for the given name.
+   *
    * @public
    * @param {string} name The event name to remove the handler for.
    * @param {Function} [handler] THe specific handler to remove, or null for
@@ -946,11 +958,11 @@ function CmdScheduling() {
   };
 
   /**
-   * Fires a given event with the associacted data.
+   * @description Fires a given event with the associacted data.
    *
    * @private
    * @param {string} name The name of the event to fire.
-   * @param {*} ...data The arguments to pass into the function calls.
+   * @param {*} data The arguments to pass into the function calls.
    */
   function fireEvent(name, ...data) {
     if (!listeners[name]) return;
@@ -971,7 +983,7 @@ function CmdScheduling() {
    * @param {string} gId The id of the guild this message is in.
    * @param {string} cId The id of the channel this message was 'sent' in.
    * @param {string} msg The message content.
-   * @return {
+   * @returns {
    *   {
    *     fabricated: boolean,
    *     author: Discord~User,

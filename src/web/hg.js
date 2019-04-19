@@ -4,6 +4,7 @@ const http = require('http');
 const socketIo = require('socket.io');
 const auth = require('../../auth.js');
 const crypto = require('crypto');
+const HungryGames = require('../hg/HungryGames.js');
 
 require('../subModule.js')(HGWeb);  // Extends the SubModule class.
 
@@ -56,9 +57,9 @@ function HGWeb() {
 
   /**
    * Update the reference to HungryGames.
-   * @private
    *
-   * @return {HungryGames} Reference to the currently loaded HungryGames object.
+   * @private
+   * @returns {HG} Reference to the currently loaded HungryGames subModule.
    */
   function hg() {
     const prev = hg_;
@@ -74,6 +75,7 @@ function HGWeb() {
 
   /**
    * Unregister all event handlers from `hg_`.
+   *
    * @private
    */
   function unlinkHG() {
@@ -95,8 +97,8 @@ function HGWeb() {
 
   /**
    * Causes a full shutdown of all servers.
+   *
    * @public
-   * @param {boolean} [skipSave=false] Skip writing data to file.
    */
   this.shutdown = function() {
     if (io) io.close();
@@ -129,7 +131,7 @@ function HGWeb() {
    * Returns the number of connected clients that are not siblings.
    *
    * @public
-   * @return {number} Number of sockets.
+   * @returns {number} Number of sockets.
    */
   this.getNumClients = function() {
     return Object.keys(sockets).length - Object.keys(siblingSockets).length;
@@ -172,7 +174,7 @@ function HGWeb() {
 
     // Unrestricted Access //
     socket.on('fetchDefaultOptions', () => {
-      socket.emit('defaultOptions', hg().defaultOptions);
+      socket.emit('defaultOptions', hg().defaultOptions.entries);
     });
     socket.on('fetchDefaultEvents', () => {
       socket.emit('defaultEvents', hg().getDefaultEvents());
@@ -410,7 +412,7 @@ function HGWeb() {
    *
    * @private
    * @param {number|string} gId The guild id to check.
-   * @return {boolean} True if this shard has this guild.
+   * @returns {boolean} True if this shard has this guild.
    */
   function checkMyGuild(gId) {
     const g = self.client.guilds.get(gId);
@@ -426,7 +428,7 @@ function HGWeb() {
    * @param {string} gId The guild id to check against.
    * @param {?string} cId The channel id to check against.
    * @param {string} cmd The command being attempted.
-   * @return {boolean} Whther the user has permission or not to manage the
+   * @returns {boolean} Whther the user has permission or not to manage the
    * hungry games in the given guild.
    */
   function checkPerm(userData, gId, cId, cmd) {
@@ -450,7 +452,7 @@ function HGWeb() {
    * @param {string} gId The guild id of the guild that contains the channel.
    * @param {string} cId The channel id to check against.
    * @param {string} cmd The command being attempted to check permisisons for.
-   * @return {boolean} Whther the user has permission or not to manage the
+   * @returns {boolean} Whther the user has permission or not to manage the
    * hungry games in the given guild and has permission to send messages in the
    * given channel.
    */
@@ -478,7 +480,7 @@ function HGWeb() {
    * @param {string} gId The id of the guild this message is in.
    * @param {?string} cId The id of the channel this message was 'sent' in.
    * @param {?string} msg The message content.
-   * @return {
+   * @returns {
    *   {
    *     author: Discord~User,
    *     member: Discord~GuildMember,
@@ -511,7 +513,7 @@ function HGWeb() {
    *
    * @private
    * @param {Discord~GuildMember} m The guild member to strip the data from.
-   * @return {Object} The minimal member.
+   * @returns {Object} The minimal member.
    */
   function makeMember(m) {
     if (typeof m !== 'object') {
@@ -547,6 +549,7 @@ function HGWeb() {
 
   /**
    * Cancel and clean up a current image upload.
+   *
    * @private
    * @param {string} iId Image upload ID to purge and abort.
    */
@@ -559,9 +562,10 @@ function HGWeb() {
   /**
    * Create an upload ID and buffer for a client to send to. Automatically
    * cancelled after 60 seconds.
+   *
    * @private
    * @param {string} uId The user ID that started this upload.
-   * @return {Object} The metadata storing object.
+   * @returns {Object} The metadata storing object.
    */
   function beginImageUpload(uId) {
     let id;
@@ -668,10 +672,11 @@ function HGWeb() {
 
   /**
    * Strip a Discord~Guild to the basic information the client will need.
+   *
    * @private
    * @param {Discord~Guild[]} guilds The array of guilds to strip.
    * @param {Object} userData The current user's session data.
-   * @return {Object[]} The stripped guilds.
+   * @returns {Object[]} The stripped guilds.
    */
   function stripGuilds(guilds, userData) {
     return guilds.map((g) => {
@@ -825,6 +830,7 @@ function HGWeb() {
   this.fetchChannel = fetchChannel;
   /**
    * Fetch all game data within a guild.
+   *
    * @see {@link HungryGames.getGame}
    *
    * @private
@@ -843,12 +849,14 @@ function HGWeb() {
       return;
     }
 
+    const game = hg().getHG().getGame(gId);
+    if (game) socket.emit('game', gId, game.serializable);
     if (typeof cb === 'function') cb();
-    socket.emit('game', gId, hg().getGame(gId));
   }
   this.fetchGames = fetchGames;
   /**
    * Fetch the updated game's day information.
+   *
    * @see {@link HungryGames.getGame}
    *
    * @private
@@ -879,7 +887,7 @@ function HGWeb() {
         }
       }
     }
-    const game = hg().getGame(gId);
+    const game = hg().getHG().getGame(gId);
     if (!game || !game.currentGame || !game.currentGame.day) {
       if (typeof cb === 'function') cb('NO_GAME_IN_GUILD');
       socket.emit(
@@ -901,6 +909,7 @@ function HGWeb() {
   this.fetchDay = fetchDay;
   /**
    * Exclude a member from the Games.
+   *
    * @see {@link HungryGames.excludeUsers}
    *
    * @private
@@ -931,6 +940,7 @@ function HGWeb() {
   this.excludeMember = excludeMember;
   /**
    * Include a member in the Games.
+   *
    * @see {@link HungryGames.includeUsers}
    *
    * @private
@@ -957,11 +967,12 @@ function HGWeb() {
       out = hg().includeUsers([mId], gId);
     }
     if (typeof cb === 'function') cb(out);
-    // socket.emit('game', gId, hg().getGame(gId));
+    // socket.emit('game', gId, hg().getHG().getGame(gId));
   }
   this.includeMember = includeMember;
   /**
    * Toggle an option in the Games.
+   *
    * @see {@link HungryGames.setOption}
    *
    * @private
@@ -984,16 +995,18 @@ function HGWeb() {
     }
     if (typeof cb === 'function') cb();
     socket.emit('message', hg().setOption(gId, option, value, extra));
-    if (hg().getGame(gId)) {
-      socket.emit('option', gId, option, hg().getGame(gId).options[option]);
+    if (hg().getHG().getGame(gId)) {
+      socket.emit(
+          'option', gId, option, hg().getHG().getGame(gId).options[option]);
       if (option === 'teamSize') {
-        socket.emit('game', gId, hg().getGame(gId));
+        socket.emit('game', gId, hg().getHG().getGame(gId));
       }
     }
   }
   this.toggleOption = toggleOption;
   /**
    * Create a Game.
+   *
    * @see {@link HungryGames.createGame}
    *
    * @private
@@ -1017,11 +1030,12 @@ function HGWeb() {
     } else {
       socket.emit('message', 'Game created');
     }
-    socket.emit('game', gId, hg().getGame(gId));
+    socket.emit('game', gId, hg().getHG().getGame(gId));
   }
   this.createGame = createGame;
   /**
    * Reset game data.
+   *
    * @see {@link HungryGames.resetGame}
    *
    * @private
@@ -1040,13 +1054,14 @@ function HGWeb() {
       replyNoPerm(socket, 'resetGame');
       return;
     }
-    if (typeof cb === 'function') cb();
     socket.emit('message', hg().resetGame(gId, cmd));
-    socket.emit('game', gId, hg().getGame(gId));
+    socket.emit('game', gId, hg().getHG().getGame(gId));
+    if (typeof cb === 'function') cb();
   }
   this.resetGame = resetGame;
   /**
    * Start the game.
+   *
    * @see {@link HungryGames.startGame}
    *
    * @private
@@ -1068,11 +1083,12 @@ function HGWeb() {
     hg().startGame(userData.id, gId, cId);
     if (typeof cb === 'function') cb();
     socket.emit('message', 'Game started');
-    socket.emit('game', gId, hg().getGame(gId));
+    socket.emit('game', gId, hg().getHG().getGame(gId));
   }
   this.startGame = startGame;
   /**
    * Enable autoplay.
+   *
    * @see {@link HungryGames.startAutoplay}
    *
    * @private
@@ -1094,11 +1110,12 @@ function HGWeb() {
     hg().startAutoplay(userData.id, gId, cId);
     if (typeof cb === 'function') cb();
     socket.emit('message', 'Autoplay enabled');
-    socket.emit('game', gId, hg().getGame(gId));
+    socket.emit('game', gId, hg().getHG().getGame(gId));
   }
   this.startAutoplay = startAutoplay;
   /**
    * Start the next day.
+   *
    * @see {@link HungryGames.nextDay}
    *
    * @private
@@ -1124,6 +1141,7 @@ function HGWeb() {
   this.nextDay = nextDay;
   /**
    * End the game.
+   *
    * @see {@link HungryGames.endGame}
    *
    * @private
@@ -1144,11 +1162,12 @@ function HGWeb() {
     hg().endGame(userData.id, gId);
     if (typeof cb === 'function') cb();
     socket.emit('message', 'Game ended');
-    socket.emit('game', gId, hg().getGame(gId));
+    socket.emit('game', gId, hg().getHG().getGame(gId));
   }
   this.endGame = endGame;
   /**
    * Disable autoplay.
+   *
    * @see {@link HungryGames.pauseAutoplay}
    *
    * @private
@@ -1169,11 +1188,12 @@ function HGWeb() {
     hg().pauseAutoplay(userData.id, gId);
     if (typeof cb === 'function') cb();
     socket.emit('message', 'Autoplay paused');
-    socket.emit('game', gId, hg().getGame(gId));
+    socket.emit('game', gId, hg().getHG().getGame(gId));
   }
   this.pauseAutoplay = pauseAutoplay;
   /**
    * Pause game.
+   *
    * @see {@link HungryGames.pauseGame}
    *
    * @private
@@ -1194,11 +1214,12 @@ function HGWeb() {
     const error = hg().pauseGame(gId);
     if (typeof cb === 'function') cb(error);
     if (error !== 'Success') socket.emit('message', error);
-    socket.emit('game', gId, hg().getGame(gId));
+    socket.emit('game', gId, hg().getHG().getGame(gId));
   }
   this.pauseGame = pauseGame;
   /**
    * Edit the teams.
+   *
    * @see {@link HungryGames.editTeam}
    *
    * @private
@@ -1221,11 +1242,12 @@ function HGWeb() {
     const message = hg().editTeam(userData.id, gId, cmd, one, two);
     if (message) socket.emit('message', message);
     if (typeof cb === 'function') cb();
-    // socket.emit('game', gId, hg().getGame(gId));
+    // socket.emit('game', gId, hg().getHG().getGame(gId));
   }
   this.editTeam = editTeam;
   /**
    * Create a game event.
+   *
    * @see {@link HungryGames.createEvent}
    *
    * @private
@@ -1263,7 +1285,7 @@ function HGWeb() {
     } else {
       if (typeof cb === 'function') cb();
       socket.emit('message', 'Created ' + type + ' event.');
-      socket.emit('game', gId, hg().getGame(gId));
+      socket.emit('game', gId, hg().getHG().getGame(gId));
     }
   }
   this.createEvent = createEvent;
@@ -1271,6 +1293,7 @@ function HGWeb() {
   /**
    * Create a larger game event. Either Arena or Weapon at this point. If
    * message or weapon name already exists, this will instead edit the event.
+   *
    * @see {@link HungryGames.addMajorEvent}
    *
    * @private
@@ -1299,13 +1322,14 @@ function HGWeb() {
     } else {
       if (typeof cb === 'function') cb();
       socket.emit('message', 'Created ' + type + ' event.');
-      socket.emit('game', gId, hg().getGame(gId));
+      socket.emit('game', gId, hg().getHG().getGame(gId));
     }
   }
   this.createMajorEvent = createMajorEvent;
 
   /**
    * Delete a larger game event. Either Arena or Weapon at this point.
+   *
    * @see {@link HungryGames.editMajorEvent}
    *
    * @private
@@ -1338,13 +1362,14 @@ function HGWeb() {
     } else {
       if (typeof cb === 'function') cb();
       socket.emit('message', 'Edited ' + type + ' event.');
-      socket.emit('game', gId, hg().getGame(gId));
+      socket.emit('game', gId, hg().getHG().getGame(gId));
     }
   }
   this.editMajorEvent = editMajorEvent;
 
   /**
    * Remove a game event.
+   *
    * @see {@link HungryGames.removeEvent}
    *
    * @private
@@ -1371,13 +1396,13 @@ function HGWeb() {
     } else {
       if (typeof cb === 'function') cb();
       socket.emit('message', 'Removed event.');
-      socket.emit('game', gId, hg().getGame(gId));
+      socket.emit('game', gId, hg().getHG().getGame(gId));
     }
   }
   this.removeEvent = removeEvent;
 
   /**
-   * Enable or disable an event without deleting it.
+   * @description Enable or disable an event without deleting it.
    * @see {@link HungryGames.toggleEvent}
    *
    * @private
@@ -1387,8 +1412,11 @@ function HGWeb() {
    * @param {number|string} gId The guild id to run this command on.
    * @param {string} type The type of event that we are toggling.
    * @param {?string} subCat The subcategory if necessary.
-   * @param {HungryGames~Event|HungryGames~ArenaEvent|HungryGames~WeaponEvent}
-   * event The event to toggle.
+   * @param {
+   * HungryGames~Event|
+   * HungryGames~ArenaEvent|
+   * HungryGames~WeaponEvent
+   * } event The event to toggle.
    * @param {?boolean} value Set the enabled value instead of toggling.
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete.
@@ -1407,13 +1435,14 @@ function HGWeb() {
     } else {
       if (typeof cb === 'function') cb();
       // socket.emit('message', 'Toggled event.');
-      // socket.emit('game', gId, hg().getGame(gId));
+      // socket.emit('game', gId, hg().getHG().getGame(gId));
     }
   }
   this.toggleEvent = toggleEvent;
 
   /**
    * Force a player in the game to end a day in a certain state.
+   *
    * @see {@link HungryGames.forcePlayerState}
    *
    * @private
@@ -1450,14 +1479,18 @@ function HGWeb() {
       replyNoPerm(socket, 'forcePlayerState');
       return;
     }
+    const game = hg().getHG().getGame(gId);
+    if (!game) return;
     socket.emit(
-        'message', hg().forcePlayerState(gId, list, state, text, persists));
+        'message', HungryGames.GuildGame.forcePlayerState(
+            hg().getHG().getGame(gId), list, state, text, persists));
     if (typeof cb === 'function') cb();
   }
   this.forcePlayerState = forcePlayerState;
 
   /**
    * Rename the guild's game.
+   *
    * @see {@link HungryGames.renameGame}
    *
    * @private
@@ -1479,7 +1512,7 @@ function HGWeb() {
     hg().renameGame(gId, name);
     if (typeof cb === 'function') {
       let name = null;
-      let game = hg().getGame(gId);
+      let game = hg().getHG().getGame(gId);
       if (game) game = game.currentGame;
       if (game) name = game.name;
       cb(name);
@@ -1489,6 +1522,7 @@ function HGWeb() {
 
   /**
    * Remove an NPC from a game.
+   *
    * @see {@link HungryGames.removeNPC}
    *
    * @private
@@ -1586,7 +1620,7 @@ function HGWeb() {
       p.then((url) => {
         const error = hg().createNPC(gId, meta.username, url, npcId);
         if (error) socket.emit('message', error);
-        socket.emit('game', gId, hg().getGame(gId));
+        socket.emit('game', gId, hg().getHG().getGame(gId));
         cancelImageUpload(iId);
         if (typeof cb === 'function') cb();
         self.common.logDebug(

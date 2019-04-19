@@ -176,8 +176,11 @@ const hgTests = [
         '<@422623712534200321>\n```\nSet disableOutput to true from false\n```'
       ]),
   new Test('Run a game with no output', '~hg go', ['#noerr', '#embed']),
+  new Test('Wait for game to end', null, []),
   new Test('Run another game with no output', '~hg go', ['#noerr', '#embed']),
+  new Test('Wait for game to end', null, []),
   new Test('Run another game with no output', '~hg go', ['#noerr', '#embed']),
+  new Test('Wait for game to end', null, []),
   new Test('Rename game', '~hg rename My Cool Game', ['#noerr']),
   new Test('Reset custom name of game', '~hg rename', ['#noerr']),
   new Test(
@@ -187,8 +190,7 @@ const hgTests = [
   new Test('Events command', '~hg events', ['#embed']),
   new Test(
       'Reset All command', '~hg reset all',
-      ['<@422623712534200321>\n```\nReset HG\n```There is no data to reset. ' +
-       'Start a new game with "~hg create".']),
+      ['<@422623712534200321>\n```\nReset HG\n```There is no data to reset.']),
   new Test(
       'No data: List players', '~hg players',
       [
@@ -230,8 +232,7 @@ const hgTests = [
        'to remove it.\n```']),
   new Test(
       'Reset All command', '~hg reset all',
-      ['<@422623712534200321>\n```\nReset HG\n```There is no data to reset. ' +
-       'Start a new game with "~hg create".']),
+      ['<@422623712534200321>\n```\nReset HG\n```There is no data to reset.']),
   new Test(
       'No data: Pause autoplay', '~hg pause',
       ['<@422623712534200321>\n```\nGame Pausing\n```Failed: There isn\'t ' +
@@ -266,6 +267,7 @@ function sendCommand(test, done) {
   currentDone = done;
 
   currentTestPart = -1;
+  if (!test.command) return;
   channel.send(test.command);
 }
 
@@ -341,7 +343,12 @@ function runTests(tests) {
     if (!tests[i] instanceof Test) continue;
     (function(i) {
       it(tests[i].title, function(done) {
-        this.timeout(10000);
+        if (!tests[i].responses || tests[i].responses.length == 0) {
+          setTimeout(done, 10000);
+          this.timeout(11000);
+        } else {
+          this.timeout(10000);
+        }
         sendCommand(tests[i], done);
       });
     })(i);

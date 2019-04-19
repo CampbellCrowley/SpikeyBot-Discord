@@ -112,6 +112,7 @@ function Connect4() {
 
   /**
    * Class that stores the current state of a connect 4 game.
+   *
    * @class
    *
    * @public
@@ -360,7 +361,7 @@ function Connect4() {
    * is player 1, 2 is player 2.
    * @param {number} latestR The row index where the latest move occurred.
    * @param {number} latestC The column index where the latest move occurred.
-   * @return {number} Returns 0 if game is not over, 1 if player 1 won, 2 if
+   * @returns {number} Returns 0 if game is not over, 1 if player 1 won, 2 if
    * player 2 won, 3 if draw.
    */
   function checkWin(board, latestR, latestC) {
