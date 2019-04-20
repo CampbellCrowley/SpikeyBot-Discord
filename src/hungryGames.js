@@ -1776,7 +1776,6 @@ function HG() {
             });
       } else {
         game.currentGame.isPaused = false;
-        printEvent(msg, id);
         game.createInterval(dayStateModified);
       }
       return;
