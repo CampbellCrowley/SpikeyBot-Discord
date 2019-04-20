@@ -432,7 +432,7 @@ class Worker {
                     let consumableName = weaponName;
                     const count = el[1];
                     if (!weapons[weaponName]) {
-                      console.error('Failed to find weapon: ' + weaponName);
+                      console.error('1 Failed to find weapon: ' + weaponName);
                       return `(Unknown weapon ${weaponName}. This is a bug.)`;
                     }
                     if (weapons[weaponName].consumable) {
@@ -454,13 +454,13 @@ class Worker {
           const user = affectedUsers[i];
           const consumableList =
               Object
-                  .entries(user.weapons || {[eventTry.attacker.weapon.name]: 0})
+                  .entries(user.weapons || {[eventTry.victim.weapon.name]: 0})
                   .map((el) => {
                     const weaponName = el[0];
                     let consumableName = weaponName;
                     const count = el[1];
                     if (!weapons[weaponName]) {
-                      console.error('Failed to find weapon: ' + weaponName);
+                      console.error('2 Failed to find weapon: ' + weaponName);
                       return `(Unknown weapon ${weaponName}. This is a bug.)`;
                     }
                     if (weapons[weaponName].consumable) {
