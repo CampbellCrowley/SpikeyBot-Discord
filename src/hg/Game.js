@@ -75,6 +75,13 @@ class Game {
      * @type {number}
      */
     this.numAlive = this.includedUsers.length;
+    /**
+     * Is this game currently paused.
+     * @public
+     * @type {boolean}
+     * @default
+     */
+    this.isPaused = false;
   }
 }
 
@@ -96,6 +103,7 @@ Game.from = function(data) {
   if (!isNaN(data.numAlive)) {
     game.numAlive = data.numAlive;
   }
+  game.isPaused = data.isPaused || false;
   return game;
 };
 
