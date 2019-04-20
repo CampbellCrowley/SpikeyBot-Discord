@@ -514,7 +514,7 @@ class Worker {
     } else {
       sim.game.currentGame.forcedOutcomes =
           sim.game.currentGame.forcedOutcomes.filter((el) => {
-            GuildGame.forcePlayerState(this.game, el, sim.messages);
+            GuildGame.forcePlayerState(sim.game, el, sim.messages);
             return el.persists;
           });
     }
