@@ -1027,6 +1027,7 @@ function HG() {
    * @param {boolean} [silent=false] Should we suppress replies to message.
    * @param {Function} [cb] Callback that fires once loading is complete. No
    * parameters.
+   * @returns {?HungryGames~GuildGame} Created game, or null if failed.
    */
   function createGame(msg, id, silent, cb) {
     if (!msg) {
@@ -1071,18 +1072,21 @@ function HG() {
                 'included.');
       }
     }
-    hg.getGame(id).formTeams();
+    const game = hg.getGame(id);
+    game.formTeams();
     fetchPatreonSettings(
         hg.getGame(id).currentGame.includedUsers, null, null, cb);
+    return game;
   }
   /**
    * Create a Hungry Games for a guild.
    *
    * @public
    * @param {string} id The id of the guild to create the game in.
+   * @returns {?HungryGames~GuildGame} The created game, or null if failed.
    */
   this.createGame = function(id) {
-    createGame(null, id, true);
+    return createGame(null, id, true);
   };
 
   /**
@@ -1332,7 +1336,7 @@ function HG() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function startGame(msg, id) {
-    const game = hg.getGame(id);
+    let game = hg.getGame(id);
     if (game && game.currentGame && game.currentGame.inProgress) {
       self.common.reply(
           msg, 'A game is already in progress! ("' + msg.prefix +
@@ -1379,129 +1383,6 @@ function HG() {
      * @private
      */
     function loadingComplete() {
-      const finalMessage = new self.Discord.MessageEmbed();
-      finalMessage.setTitle(hg.messages.get('gameStart'));
-      finalMessage.setColor(defaultColor);
-
-      const numUsers = game.currentGame.includedUsers.length;
-      if (game.options.teamSize > 0) {
-        game.currentGame.includedUsers.sort(function(a, b) {
-          const aTeam = game.currentGame.teams.findIndex(function(team) {
-            return team.players.findIndex(function(player) {
-              return player == a.id;
-            }) > -1;
-          });
-          const bTeam = game.currentGame.teams.findIndex(function(team) {
-            return team.players.findIndex(function(player) {
-              return player == b.id;
-            }) > -1;
-          });
-          if (aTeam == bTeam) {
-            return a.id - b.id;
-          } else {
-            return aTeam - bTeam;
-          }
-        });
-      }
-      let prevTeam = -1;
-      const statusList = game.currentGame.includedUsers.map(function(obj) {
-        let myTeam = -1;
-        if (game.options.teamSize > 0) {
-          myTeam = game.currentGame.teams.findIndex(function(team) {
-            return team.players.findIndex(function(player) {
-              return player == obj.id;
-            }) > -1;
-          });
-        }
-
-        let shortName;
-        if (obj.nickname && game.options.useNicknames) {
-          shortName = obj.nickname.substring(0, 16);
-          if (shortName != obj.nickname) {
-            shortName = shortName.substring(0, 13) + '...';
-          }
-        } else {
-          shortName = obj.name.substring(0, 16);
-          if (shortName != obj.name) {
-            shortName = shortName.substring(0, 13) + '...';
-          }
-        }
-
-        let prefix = '';
-        if (myTeam != prevTeam) {
-          prevTeam = myTeam;
-          prefix = `__${game.currentGame.teams[myTeam].name}__\n`;
-        }
-
-        return `${prefix}\`${shortName}\``;
-      });
-      if (game.options.teamSize == 0) {
-        statusList.sort((a, b) => {
-          a = a.toLocaleLowerCase();
-          b = b.toLocaleLowerCase();
-          if (a < b) return -1;
-          if (a > b) return 1;
-          return 0;
-        });
-      }
-
-      const numCols = calcColNum(statusList.length > 10 ? 3 : 2, statusList);
-      if (statusList.length >= 5) {
-        const quarterLength = Math.ceil(statusList.length / numCols);
-        for (let i = 0; i < numCols - 1; i++) {
-          const thisMessage =
-              statusList.splice(0, quarterLength).join('\n').substring(0, 1024);
-          finalMessage.addField(
-              'Included (' + (i * quarterLength + 1) + '-' +
-                  ((i + 1) * quarterLength) + ')',
-              thisMessage, true);
-        }
-        finalMessage.addField(
-            `Included (${(numCols - 1) * quarterLength + 1}-${numUsers})`,
-            statusList.join('\n'), true);
-      } else {
-        finalMessage.addField(
-            `Included (${numUsers})`, statusList.join('\n') || 'Nobody', false);
-      }
-      if (game.excludedUsers.length > 0) {
-        let excludedList = '\u200B';
-        if (game.excludedUsers.length < 20) {
-          excludedList =
-              game.excludedUsers.map((obj) => getName(msg.guild, obj))
-                  .join(', ');
-          const trimmedList = excludedList.substr(0, 512);
-          if (excludedList != trimmedList) {
-            excludedList = trimmedList.substr(0, 509) + '...';
-          } else {
-            excludedList = trimmedList;
-          }
-        }
-        finalMessage.addField(
-            `Excluded (${game.excludedUsers.length})`, excludedList, false);
-      }
-
-      if (!game.autoPlay) {
-        finalMessage.setFooter(
-            `"${msg.prefix}${self.postPrefix}next" for next day.`);
-      }
-
-      let mentions = self.common.mention(msg);
-      if (game.options.mentionEveryoneAtStart) {
-        mentions += '@everyone';
-      }
-
-      msg.channel.send(mentions, finalMessage).catch((err) => {
-        self.common.reply(
-            msg, 'Game started!',
-            'Discord rejected my normal message for some reason...');
-        self.error(
-            'Failed to send start game message: ' + msg.channel.id +
-            ' (Cols: ' + numCols + ')');
-        console.error(err);
-      });
-
-      game.currentGame.inProgress = true;
-
       self.client.setTimeout(() => {
         if (hg.getGame(id).autoPlay && !hg.getGame(id).currentGame.isPaused) {
           nextDay(msg, id);
@@ -1509,7 +1390,129 @@ function HG() {
       });
     }
 
-    createGame(msg, id, true, loadingComplete);
+    game = createGame(msg, id, true, loadingComplete);
+
+    const finalMessage = new self.Discord.MessageEmbed();
+    finalMessage.setTitle(hg.messages.get('gameStart'));
+    finalMessage.setColor(defaultColor);
+
+    const numUsers = game.currentGame.includedUsers.length;
+    if (game.options.teamSize > 0) {
+      game.currentGame.includedUsers.sort(function(a, b) {
+        const aTeam = game.currentGame.teams.findIndex(function(team) {
+          return team.players.findIndex(function(player) {
+            return player == a.id;
+          }) > -1;
+        });
+        const bTeam = game.currentGame.teams.findIndex(function(team) {
+          return team.players.findIndex(function(player) {
+            return player == b.id;
+          }) > -1;
+        });
+        if (aTeam == bTeam) {
+          return a.id - b.id;
+        } else {
+          return aTeam - bTeam;
+        }
+      });
+    }
+    let prevTeam = -1;
+    const statusList = game.currentGame.includedUsers.map(function(obj) {
+      let myTeam = -1;
+      if (game.options.teamSize > 0) {
+        myTeam = game.currentGame.teams.findIndex(function(team) {
+          return team.players.findIndex(function(player) {
+            return player == obj.id;
+          }) > -1;
+        });
+      }
+
+      let shortName;
+      if (obj.nickname && game.options.useNicknames) {
+        shortName = obj.nickname.substring(0, 16);
+        if (shortName != obj.nickname) {
+          shortName = shortName.substring(0, 13) + '...';
+        }
+      } else {
+        shortName = obj.name.substring(0, 16);
+        if (shortName != obj.name) {
+          shortName = shortName.substring(0, 13) + '...';
+        }
+      }
+
+      let prefix = '';
+      if (myTeam != prevTeam) {
+        prevTeam = myTeam;
+        prefix = `__${game.currentGame.teams[myTeam].name}__\n`;
+      }
+
+      return `${prefix}\`${shortName}\``;
+    });
+    if (game.options.teamSize == 0) {
+      statusList.sort((a, b) => {
+        a = a.toLocaleLowerCase();
+        b = b.toLocaleLowerCase();
+        if (a < b) return -1;
+        if (a > b) return 1;
+        return 0;
+      });
+    }
+
+    const numCols = calcColNum(statusList.length > 10 ? 3 : 2, statusList);
+    if (statusList.length >= 5) {
+      const quarterLength = Math.ceil(statusList.length / numCols);
+      for (let i = 0; i < numCols - 1; i++) {
+        const thisMessage =
+            statusList.splice(0, quarterLength).join('\n').substring(0, 1024);
+        finalMessage.addField(
+            'Included (' + (i * quarterLength + 1) + '-' +
+                ((i + 1) * quarterLength) + ')',
+            thisMessage, true);
+      }
+      finalMessage.addField(
+          `Included (${(numCols - 1) * quarterLength + 1}-${numUsers})`,
+          statusList.join('\n'), true);
+    } else {
+      finalMessage.addField(
+          `Included (${numUsers})`, statusList.join('\n') || 'Nobody', false);
+    }
+    if (game.excludedUsers.length > 0) {
+      let excludedList = '\u200B';
+      if (game.excludedUsers.length < 20) {
+        excludedList =
+            game.excludedUsers.map((obj) => getName(msg.guild, obj)).join(', ');
+        const trimmedList = excludedList.substr(0, 512);
+        if (excludedList != trimmedList) {
+          excludedList = trimmedList.substr(0, 509) + '...';
+        } else {
+          excludedList = trimmedList;
+        }
+      }
+      finalMessage.addField(
+          `Excluded (${game.excludedUsers.length})`, excludedList, false);
+    }
+
+    if (!game.autoPlay) {
+      finalMessage.setFooter(
+          `"${msg.prefix}${self.postPrefix}next" for next day.`);
+    }
+
+    let mentions = self.common.mention(msg);
+    if (game.options.mentionEveryoneAtStart) {
+      mentions += '@everyone';
+    }
+
+    msg.channel.send(mentions, finalMessage).catch((err) => {
+      self.common.reply(
+          msg, 'Game started!',
+          'Discord rejected my normal message for some reason...');
+      self.error(
+          'Failed to send start game message: ' + msg.channel.id + ' (Cols: ' +
+          numCols + ')');
+      console.error(err);
+    });
+
+    game.currentGame.inProgress = true;
   }
   /**
    * Start the games in the given channel and guild by the given user.
