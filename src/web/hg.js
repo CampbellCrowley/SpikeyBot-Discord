@@ -435,9 +435,8 @@ function HGWeb() {
     if (!userData) return false;
     if (userData.id == self.common.spikeyId) return true;
     const msg = makeMessage(userData.id, gId, cId, 'hg ' + cmd);
-    if (!msg) return false;
-    if (self.command.validate(
-        null, makeMessage(userData.id, gId, null, 'hg ' + cmd))) {
+    if (!msg || !msg.author) return false;
+    if (self.command.validate(null, msg)) {
       return false;
     }
     return true;
