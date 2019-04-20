@@ -508,7 +508,7 @@ function Polling() {
 
     poll.message.channel.send(embed)
         .then(() => {
-          poll.message.delete().catch(() => {});
+          // poll.message.delete().catch(() => {});
         })
         .catch((err) => {
           self.error(
