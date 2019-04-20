@@ -132,23 +132,21 @@ class Worker {
       }
     }
 
-    const weapons = sim.events.weapons;
-    const weaponEventPool = Object.assign({}, weapons);
+    const weapons = Object.assign({}, sim.events.weapons);
     if (sim.game.customEvents.weapon) {
       const entries = Object.entries(sim.game.customEvents.weapon);
       for (let i = 0; i < entries.length; i++) {
-        if (weaponEventPool[entries[i][0]]) {
-          weaponEventPool[entries[i][0]].outcomes =
-              weaponEventPool[entries[i][0]].outcomes.concat(
-                  entries[i][1].outcomes);
+        if (weapons[entries[i][0]]) {
+          weapons[entries[i][0]].outcomes =
+              weapons[entries[i][0]].outcomes.concat(entries[i][1].outcomes);
         } else {
-          weaponEventPool[entries[i][0]] = entries[i][1];
+          weapons[entries[i][0]] = entries[i][1];
         }
 
         if (sim.game.disabledEvents && sim.game.disabledEvents.weapon &&
             sim.game.disabledEvents.weapon[entries[i][0]]) {
-          weaponEventPool[entries[i][0]].outcomes =
-              weaponEventPool[entries[i][0]].outcomes.filter((el) => {
+          weapons[entries[i][0]].outcomes =
+              weapons[entries[i][0]].outcomes.filter((el) => {
                 return !sim.game.disabledEvents.weapon[entries[i][0]].find(
                     (d) => {
                       return Event.equal(d, el);
@@ -199,12 +197,12 @@ class Worker {
         const chosenWeapon =
             userWeapons[Math.floor(Math.random() * userWeapons.length)];
 
-        if (!weaponEventPool[chosenWeapon]) {
+        if (!weapons[chosenWeapon]) {
           useWeapon = false;
           // console.log('No event pool with weapon', chosenWeapon);
         } else {
           eventTry = Simulator._pickEvent(
-              userPool, weaponEventPool[chosenWeapon].outcomes,
+              userPool, weapons[chosenWeapon].outcomes,
               sim.game.options, sim.game.currentGame.numAlive,
               sim.game.currentGame.includedUsers.length,
               sim.game.currentGame.teams, probOpts, userWithWeapon);
@@ -275,8 +273,7 @@ class Worker {
                   '\'s';
             }
             if (!eventTry.message) {
-              const weaponName =
-                  weaponEventPool[chosenWeapon].name || chosenWeapon;
+              const weaponName = weapons[chosenWeapon].name || chosenWeapon;
               eventTry.message =
                   weapons.message
                       .replace(/\{weapon\}/g, owner + ' ' + weaponName)
@@ -353,7 +350,7 @@ class Worker {
 
       let numKilled = 0;
       let weapon = eventTry.victim.weapon;
-      if (weapon && !weaponEventPool[weapon.name]) {
+      if (weapon && !weapons[weapon.name]) {
         weapon = null;
         eventTry.victim.weapon = null;
       }
@@ -386,7 +383,7 @@ class Worker {
         }
       }
       weapon = eventTry.attacker.weapon;
-      if (weapon && !weaponEventPool[weapon.name]) {
+      if (weapon && !weapons[weapon.name]) {
         weapon = null;
         eventTry.attacker.weapon = null;
       }

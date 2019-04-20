@@ -1542,7 +1542,7 @@ function HG() {
    * @param {string} gId The id of the guild to end the games in.
    */
   this.endGame = function(uId, gId) {
-    if (typeof uId === 'object') {
+    if (uId != null && typeof uId === 'object') {
       endGame(uId, gId);
     } else {
       endGame(makeMessage(uId, gId, null), gId, true);
@@ -2576,10 +2576,12 @@ function HG() {
   function endGame(msg, id, silent = false) {
     const game = hg.getGame(id);
     if (!game || !game.currentGame.inProgress) {
-      if (!silent) self.common.reply(msg, 'There isn\'t a game in progress.');
+      if (!silent && msg) {
+        self.common.reply(msg, 'There isn\'t a game in progress.');
+      }
     } else {
       game.end();
-      if (!silent) self.common.reply(msg, 'The game has ended!');
+      if (!silent && msg) self.common.reply(msg, 'The game has ended!');
     }
   }
 
