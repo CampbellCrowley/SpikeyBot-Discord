@@ -4123,7 +4123,7 @@ function HG() {
           for (let j = 0;
             j < hg.getGame(id).customEvents[type][name].outcomes.length; j++) {
             const el = hg.getGame(id).customEvents[type][name].outcomes[j];
-            if (HungryGames.Event.eventsEqual(el, dEl)) {
+            if (HungryGames.Event.equal(el, dEl)) {
               exists = true;
               break;
             }
@@ -4187,7 +4187,7 @@ function HG() {
         let one = match.outcomes[i];
         for (let j = 0; j < search.outcomes.length; j++) {
           const two = search.outcomes[j];
-          if (HungryGames.Event.eventsEqual(one, two)) {
+          if (HungryGames.Event.equal(one, two)) {
             if (data.outcomes && data.outcomes[j]) {
               one = data.outcomes[j];
             } else {
@@ -4220,7 +4220,7 @@ function HG() {
       if (!search.outcomes || search.outcomes.length == 0) return null;
       for (let i = 0; i < search.outcomes.length; i++) {
         for (let j = 0; j < match.outcomes.length; j++) {
-          if (HungryGames.Event.eventsEqual(
+          if (HungryGames.Event.equal(
               search.outcomes[i], match.outcomes[j])) {
             if (!data.outcomes || !data.outcomes[i]) {
               match.outcomes.splice(j, 1);
@@ -4257,7 +4257,7 @@ function HG() {
     }
     const list = hg.getGame(id).customEvents[type];
     for (let i = 0; i < list.length; i++) {
-      if (HungryGames.Event.eventsEqual(list[i], event)) {
+      if (HungryGames.Event.equal(list[i], event)) {
         list.splice(i, 1);
         return null;
       }
@@ -4354,7 +4354,7 @@ function HG() {
     let isDisabled = false;
     let index;
     for (let i = 0; i < allDisabled.length; i++) {
-      if (HungryGames.Event.eventsEqual(allDisabled[i], event)) {
+      if (HungryGames.Event.equal(allDisabled[i], event)) {
         if (typeof value === 'undefined') value = true;
         if (value) isValid = true;
         isDisabled = true;
@@ -4371,7 +4371,7 @@ function HG() {
     if (!value) {
       isValid = false;
       for (let i = 0; i < allEvents.length; i++) {
-        if (HungryGames.Event.eventsEqual(allEvents[i], event)) {
+        if (HungryGames.Event.equal(allEvents[i], event)) {
           isValid = true;
           break;
         }
