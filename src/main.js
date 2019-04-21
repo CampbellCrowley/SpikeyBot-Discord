@@ -884,7 +884,7 @@ function Main() {
    */
   function onMessage(msg) {
     if (!msg.guild) return;
-    if (msg.author.id != self.client.user.id &&
+    if (!msg.author.bot && msg.author.id != self.client.user.id &&
         msg.author.id != self.common.spikeyId) {
       let riggedSimilarity = 0;
       const matchedRigged = msg.content.toLowerCase().replace(/\W/g, '').match(
