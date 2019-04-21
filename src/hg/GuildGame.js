@@ -58,6 +58,7 @@ class GuildGame {
       for (let i = 0; i < includedUsers.length; i++) {
         if (typeof includedUsers[i] === 'string') {
           this.includedUsers.push(includedUsers.splice(i, 1)[0]);
+          i--;
         } else {
           this.includedUsers.push(includedUsers[i].id);
         }
