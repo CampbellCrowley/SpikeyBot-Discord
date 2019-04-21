@@ -183,11 +183,12 @@ function ChatBot() {
           msg.cleanContent
               .replace(
                   new RegExp(
-                      '@' + escapeRegExp(
+                      '\\s*@' + escapeRegExp(
                           msg.guild.me.nickname ||
-                                self.client.user.username),
+                                    self.client.user.username) +
+                          '\\s*',
                       'g'),
-                  'SpikeyBot')
+                  ' SpikeyBot ')
               .trim();
       onChatMessage(msg);
     }
