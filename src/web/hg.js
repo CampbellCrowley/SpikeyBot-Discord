@@ -6,7 +6,7 @@ const auth = require('../../auth.js');
 const crypto = require('crypto');
 const HungryGames = require('../hg/HungryGames.js');
 
-require('../subModule.js')(HGWeb);  // Extends the SubModule class.
+require('../subModule.js').extend(HGWeb);  // Extends the SubModule class.
 
 /**
  * @classdesc Creates a web interface for managing the Hungry Games. Expects

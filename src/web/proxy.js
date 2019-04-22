@@ -13,7 +13,7 @@ const dateFormat = require('dateformat');
 
 const clientId = '444293534720458753';
 const clientSecret = auth.webSecret;
-require('../subModule.js')(WebProxy);  // Extends the SubModule class.
+require('../subModule.js').extend(WebProxy);  // Extends the SubModule class.
 
 /**
  * @classdesc Proxy for account authentication.

@@ -1,7 +1,7 @@
 // Copyright 2018-2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 
-require('./subModule.js')(Define);  // Extends the SubModule class.
+require('./subModule.js').extend(Define);  // Extends the SubModule class.
 const https = require('https');
 const auth = require('../auth.js');
 

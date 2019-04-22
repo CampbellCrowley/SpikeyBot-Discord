@@ -4,7 +4,7 @@
 const fs = require('fs');
 const mkdirp = require('mkdirp');
 
-require('./subModule.js')(RoleManager);  // Extends the SubModule class.
+require('./subModule.js').extend(RoleManager);  // Extends the SubModule class.
 
 /**
  * @classdesc Manages advanced role controls and features.

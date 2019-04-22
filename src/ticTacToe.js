@@ -1,6 +1,6 @@
 // Copyright 2018 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
-require('./subModule.js')(TicTacToe);  // Extends the SubModule class.
+require('./subModule.js').extend(TicTacToe);  // Extends the SubModule class.
 
 /**
  * @classdesc Manages a tic-tac-toe game.

@@ -18,7 +18,7 @@ const patreonAPI = patreon.patreon;
 const patreonOAuthClient =
     patreon.oauth(PATREON_CLIENT_ID, PATREON_CLIENT_SECRET);
 
-require('../subModule.js')(WebAccount);  // Extends the SubModule class.
+require('../subModule.js').extend(WebAccount);  // Extends the SubModule class.
 
 
 /**

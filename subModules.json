@@ -9,9 +9,10 @@
     "./poll.js",
     "./spotify.js",
     "./cmdScheduling.js",
+    "./echo.js",
+    "./roleColors.js",
     "./web/stats.js",
-    "./web/webhooks.js",
-    "./roleColors.js"
+    "./web/webhooks.js"
   ],
   "dev": [
     "./main.js",
@@ -36,7 +37,8 @@
     "./sandbox.js",
     "./define.js",
     "./web/hg.js",
-    "./roleColors.js"
+    "./roleColors.js",
+    "./echo.js"
   ],
   "release": [
     "./main.js",
@@ -53,6 +55,7 @@
     "./uno.js",
     "./sandbox.js",
     "./define.js",
+    "./echo.js",
     "./roleColors.js",
     "./web/hg.js",
     "./web/webhooks.js",
@@ -76,6 +79,7 @@
     "./sandbox.js",
     "./define.js",
     "./hungryGames.js",
+    "./echo.js",
     "./roleColors.js"
   ],
   "FALLBACK": []

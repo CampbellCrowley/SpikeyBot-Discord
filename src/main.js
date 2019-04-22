@@ -1,4 +1,4 @@
-// Copyright 2018 Campbell Crowley. All rights reserved.
+// Copyright 2018-2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const dateFormat = require('dateformat');
 const math = require('mathjs');
@@ -7,7 +7,8 @@ const Jimp = require('jimp');
 const fs = require('fs');
 const mkdirp = require('mkdirp');
 const childProcess = require('child_process');
-require('./subModule.js')(Main); // Extends the SubModule class.
+delete require.cache[require.resolve('./subModule.js')];
+require('./subModule.js').extend(Main);  // Extends the SubModule class.
 
 math.config({matrix: 'Array'});
 
@@ -33,7 +34,6 @@ math.config({matrix: 'Array'});
  * @listens Command#remind
  * @listens Command#reminder
  * @listens Command#reminders
- * @listens Command#say
  * @listens Command#createDate
  * @listens Command#joinDate
  * @listens Command#pmMe
@@ -121,22 +121,6 @@ function Main() {
    * @type {number}
    */
   let smitePerms;
-
-  /**
-   * The id of the last user to use the say command.
-   *
-   * @private
-   * @type {string}
-   */
-  let prevUserSayId = '';
-  /**
-   * The number of times the say command has been used consecutively by the
-   * previous user.
-   *
-   * @private
-   * @type {number}
-   */
-  let prevUserSayCnt = 0;
 
   /**
    * Array of all timers currently set.
@@ -276,7 +260,6 @@ function Main() {
     self.command.on('derive', commandDerive);
     self.command.on(
         ['timer', 'timers', 'remind', 'reminder', 'reminders'], commandTimer);
-    self.command.on(['say', 'echo'], commandSay);
     self.command.on('createdate', commandCreateDate);
     self.command.on('joindate', commandJoinDate, true);
     self.command.on(['pmme', 'dmme'], commandPmMe);
@@ -530,7 +513,6 @@ function Main() {
     self.command.removeListener('graph');
     self.command.removeListener('derive');
     self.command.removeListener('timer');
-    self.command.removeListener('say');
     self.command.removeListener('createdate');
     self.command.removeListener('joindate');
     self.command.removeListener('pmme');
@@ -1515,36 +1497,6 @@ function Main() {
     }
   }
 
-  /**
-   * The user's message will be deleted and the bot will send an identical
-   * message
-   * without the command to make it seem like the bot sent the message.
-   *
-   * @private
-   * @type {commandHandler}
-   * @param {Discord~Message} msg Message that triggered command.
-   * @listens Command#say
-   */
-  function commandSay(msg) {
-    if (msg.delete) msg.delete().catch(() => {});
-    const content = msg.text.trim();
-    msg.channel.send(content || '\u200B').catch((err) => {
-      self.warn(
-          'Failed to send message in channel: ' + msg.channel.id + ': ' +
-          content);
-      console.error(err);
-    });
-    if (msg.fabricated || prevUserSayId != msg.author.id) {
-      prevUserSayId = msg.author.id;
-      prevUserSayCnt = 0;
-    }
-    prevUserSayCnt++;
-    if (prevUserSayCnt % 3 === 0) {
-      msg.channel.send(
-          'Help! ' + self.common.mention(msg) +
-          ' is putting words into my mouth!');
-    }
-  }
   /**
    * Tell the user the date when they created their Discord account.
    *

@@ -2,7 +2,8 @@
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const fs = require('fs');
 const mkdirp = require('mkdirp');
-require('./subModule.js')(CmdScheduling);  // Extends the SubModule class.
+require('./subModule.js')
+    .extend(CmdScheduling);  // Extends the SubModule class.
 
 /**
  * @classdesc Provides interface for scheduling a specific time or interval for

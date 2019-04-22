@@ -7,7 +7,7 @@ const https = require('https');
 const crypto = require('crypto');
 const mkdirp = require('mkdirp'); // mkdir -p
 const FuzzySearch = require('fuzzy-search');
-require('./subModule.js')(HG);  // Extends the SubModule class.
+require('./subModule.js').extend(HG);  // Extends the SubModule class.
 
 /**
  * @classdesc Hunger Games simulator subModule.

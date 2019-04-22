@@ -4,7 +4,7 @@ const emojiChecker = require('./lib/twemojiChcker.js');
 const fs = require('fs');
 const mkdirp = require('mkdirp');
 const rimraf = require('rimraf');
-require('./subModule.js')(Polling); // Extends the SubModule class.
+require('./subModule.js').extend(Polling);  // Extends the SubModule class.
 
 /**
  * @classdesc Controlls poll and vote commands.

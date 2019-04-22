@@ -1,7 +1,7 @@
 // Copyright 2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 
-require('./subModule.js')(RoleColors);  // Extends the SubModule class.
+require('./subModule.js').extend(RoleColors);  // Extends the SubModule class.
 
 /**
  * @classdesc Allows users to change their name color by giving them a role with

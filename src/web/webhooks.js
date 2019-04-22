@@ -2,7 +2,7 @@
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const http = require('http');
 const auth = require('../../auth.js');
-require('../subModule.js')(WebCommands); // Extends the SubModule class.
+require('../subModule.js').extend(WebCommands); // Extends the SubModule class.
 
 const basicAuth = 'Basic ' +
     (auth.commandUsername + ':' + auth.commandPassword).toString('base64');

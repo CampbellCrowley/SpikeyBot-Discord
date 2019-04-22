@@ -1,7 +1,7 @@
 // Copyright 2018 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const https = require('https');
-require('./subModule.js')(Spotify);
+require('./subModule.js').extend(Spotify);
 /**
  * @classdesc Attempts to play what a user is playing on Spotify, to a voice
  * channel.

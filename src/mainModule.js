@@ -1,7 +1,7 @@
 // Copyright 2018 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 
-require('./subModule.js')(MainModule); // Extends the SubModule class.
+require('./subModule.js').extend(MainModule);  // Extends the SubModule class.
 
 /**
  * @classdesc Base class for required modules for the bot to work. Adds

@@ -3,7 +3,7 @@
 const fs = require('fs');
 const sql = require('mysql');
 const auth = require('../auth.js');
-require('./subModule.js')(Patreon); // Extends the SubModule class.
+require('./subModule.js').extend(Patreon);  // Extends the SubModule class.
 
 /**
  * @classdesc Modifies the SpikeyBot object with an interface for checking the

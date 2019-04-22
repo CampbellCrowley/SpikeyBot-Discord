@@ -1,5 +1,6 @@
 const childProcess = require('child_process');
-require('./subModule.js')(Sandbox); // Extends the SubModule class.
+require('./subModule.js').extend(Sandbox);  // Extends the SubModule class.
+
 /**
  * @classdesc Creates a safe environment to run untrusted scripts.
  * @class

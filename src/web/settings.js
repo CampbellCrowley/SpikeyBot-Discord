@@ -4,7 +4,7 @@ const http = require('http');
 const auth = require('../../auth.js');
 const socketIo = require('socket.io');
 
-require('../subModule.js')(WebSettings);  // Extends the SubModule class.
+require('../subModule.js').extend(WebSettings);  // Extends the SubModule class.
 
 /**
  * @classdesc Manages changing settings for the bot from a website.

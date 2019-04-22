@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Module: lib/twemojiChecker</title>
+    <title>JSDoc: Class: Character</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Module: lib/twemojiChecker</h1>
+    <h1 class="page-title">Class: Character</h1>
 
     
 
@@ -28,6 +28,8 @@
 
 <header>
     
+        <h2><span class="attribs"><span class="type-signature"></span></span>
+            <span class="ancestors"><a href="Echo.html">Echo</a>~</span>Character<span class="signature">(username, url<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
         
     
 </header>
@@ -37,112 +39,10 @@
     
         
 
-        
-    
-    </div>
-
     
 
     
-
-    
-
-    
-
-    
-
-    
-
-    
-        <h3 class="subsection-title">Members</h3>
-
-        
-            
-<h4 class="name" id="~re"><span class="type-signature">(private, inner, constant) </span>re<span class="type-signature"> :RegExp</span></h4>
-
-
-
-
-<div class="description">
-    RegExp based on emoji's official Unicode standards
-http://www.unicode.org/Public/UNIDATA/EmojiSources.txt
-https://github.com/twitter/twemoji/blob/27fe654b2bed5331cf1730bb4fbba1efa40af626/2/twemoji.js#L228
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
-<span class="param-type">RegExp</span>
-
-
-        </li>
-    </ul>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="lib_twemojiChcker.js.html">lib/twemojiChcker.js</a>, <a href="lib_twemojiChcker.js.html#line10">line 10</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-        
-    
-
-    
-        <h3 class="subsection-title">Methods</h3>
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="~match"><span class="type-signature">(inner) </span>match<span class="signature">(input)</span><span class="type-signature"> &rarr; {null|Array.&lt;string>}</span></h4>
+    <h4 class="name" id="Character"><span class="type-signature"></span>new Character<span class="signature">(username, url<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -150,7 +50,7 @@ https://github.com/twitter/twemoji/blob/27fe654b2bed5331cf1730bb4fbba1efa40af626
 
 
 <div class="description">
-    Check a string for any emoji matches.
+    A character to send as a webhook.
 </div>
 
 
@@ -174,6 +74,8 @@ https://github.com/twitter/twemoji/blob/27fe654b2bed5331cf1730bb4fbba1efa40af626
         <th>Type</th>
 
         
+        <th>Attributes</th>
+        
 
         
 
@@ -186,7 +88,7 @@ https://github.com/twitter/twemoji/blob/27fe654b2bed5331cf1730bb4fbba1efa40af626
 
         <tr>
             
-                <td class="name"><code>input</code></td>
+                <td class="name"><code>username</code></td>
             
 
             <td class="type">
@@ -199,10 +101,51 @@ https://github.com/twitter/twemoji/blob/27fe654b2bed5331cf1730bb4fbba1efa40af626
             </td>
 
             
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
 
             
 
-            <td class="description last">The string to run the regex against.</td>
+            <td class="description last">Username for webhook.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>url</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Avatar url override for webhook.</td>
         </tr>
 
     
@@ -243,7 +186,7 @@ https://github.com/twitter/twemoji/blob/27fe654b2bed5331cf1730bb4fbba1efa40af626
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="lib_twemojiChcker.js.html">lib/twemojiChcker.js</a>, <a href="lib_twemojiChcker.js.html#line20">line 20</a>
+        <a href="echo.js.html">echo.js</a>, <a href="echo.js.html#line342">line 342</a>
     </li></ul></dd>
     
 
@@ -266,37 +209,176 @@ https://github.com/twitter/twemoji/blob/27fe654b2bed5331cf1730bb4fbba1efa40af626
 
 
 
-<h5>Returns:</h5>
+
+
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
 
         
-<div class="param-desc">
-    The matched return value.
+            
+<h4 class="name" id="avatarURL"><span class="type-signature"></span>avatarURL<span class="type-signature"> :string</span></h4>
+
+
+
+
+<div class="description">
+    Avatar url of this character.
 </div>
 
 
 
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">null</span>
-|
-
-<span class="param-type">Array.&lt;string></span>
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">string</span>
 
 
-    </dd>
-</dl>
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
 
     
 
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="echo.js.html">echo.js</a>, <a href="echo.js.html#line358">line 358</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
 
 
 
 
         
+            
+<h4 class="name" id="username"><span class="type-signature"></span>username<span class="type-signature"> :string</span></h4>
+
+
+
+
+<div class="description">
+    Username of this character.
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">string</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="echo.js.html">echo.js</a>, <a href="echo.js.html#line353">line 353</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+    
+
     
 
     

@@ -2,7 +2,7 @@
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const Readable = require('stream').Readable;
 const tts = require('@google-cloud/text-to-speech');
-require('./subModule.js')(TTS); // Extends the SubModule class.
+require('./subModule.js').extend(TTS);  // Extends the SubModule class.
 
 const ttsRequest = {
   input: {text: 'Hello world!'},

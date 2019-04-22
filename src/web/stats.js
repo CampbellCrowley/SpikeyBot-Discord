@@ -3,7 +3,7 @@
 const http = require('http');
 const https = require('https');
 const auth = require('../../auth.js');
-require('../subModule.js')(WebStats); // Extends the SubModule class.
+require('../subModule.js').extend(WebStats);  // Extends the SubModule class.
 
 /**
  * @classdesc Handles sending the bot's stats to http client requests, and

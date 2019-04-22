@@ -4,7 +4,7 @@ const dialogflow = require('dialogflow');
 const auth = require('../auth.js');
 const fs = require('fs');
 const mkdirp = require('mkdirp');
-require('./subModule.js')(ChatBot);  // Extends the SubModule class.
+require('./subModule.js').extend(ChatBot);  // Extends the SubModule class.
 
 /**
  * @classdesc Manages natural language interaction.

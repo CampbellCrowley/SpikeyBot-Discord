@@ -1,7 +1,7 @@
 // Copyright 2018-2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 
-require('./subModule.js')(DevCmds);  // Extends the SubModule class.
+require('./subModule.js').extend(DevCmds);  // Extends the SubModule class.
 
 /**
  * @classdesc Runs unsafe scripts for development purposes. DO NOT LOAD ON

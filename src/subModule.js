@@ -1,90 +1,107 @@
-// Copyright 2018 Campbell Crowley. All rights reserved.
+// Copyright 2018-2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 /**
- * @classdesc Base class for all Sub-Modules.
+ * @description Base class for all Sub-Modules.
  * @class
  */
-function SubModule() {
+class SubModule {
   /**
-   * The help message to show the user in the main help message.
-   *
-   * @type {string|Discord~MessageEmbed}
+   * Create a subModule.
    */
-  this.helpMessage = undefined;
+  constructor() {
+    /**
+     * The help message to show the user in the main help message.
+     *
+     * @type {string|Discord~MessageEmbed}
+     */
+    this.helpMessage = undefined;
 
-  /**
-   * The postfix for the global prefix for this subModule. Must be defined
-   * before begin(), otherwise it is ignored.
-   *
-   * @abstract
-   * @type {string}
-   * @default
-   */
-  this.postPrefix = '';
-  /**
-   * The current Discord object instance of the bot.
-   *
-   * @type {Discord}
-   */
-  this.Discord;
-  /**
-   * The current bot client.
-   *
-   * @type {Discord~Client}
-   */
-  this.client;
-  /**
-   * The command object for registering command listeners.
-   *
-   * @type {Command}
-   */
-  this.command;
-  /**
-   * The common object.
-   *
-   * @type {Common}
-   */
-  this.common;
+    /**
+     * The postfix for the global prefix for this subModule. Must be defined
+     * before begin(), otherwise it is ignored.
+     *
+     * @abstract
+     * @type {string}
+     * @default
+     */
+    this.postPrefix = '';
+    /**
+     * The current Discord object instance of the bot.
+     *
+     * @type {Discord}
+     */
+    this.Discord;
+    /**
+     * The current bot client.
+     *
+     * @type {Discord~Client}
+     */
+    this.client;
+    /**
+     * The command object for registering command listeners.
+     *
+     * @type {Command}
+     */
+    this.command;
+    /**
+     * The common object.
+     *
+     * @type {Common}
+     */
+    this.common;
 
-  /**
-   * The parent SpikeyBot instance.
-   *
-   * @type {SpikeyBot}
-   */
-  this.bot;
+    /**
+     * The parent SpikeyBot instance.
+     *
+     * @type {SpikeyBot}
+     */
+    this.bot;
 
-  /**
-   * The commit at HEAD at the time this module was loaded. Essentially the
-   * version of this submodule.
-   *
-   * @public
-   * @constant
-   * @type {string}
-   */
-  this.commit = require('child_process')
-      .execSync('git rev-parse --short HEAD')
-      .toString()
-      .trim();
+    /**
+     * The commit at HEAD at the time this module was loaded. Essentially the
+     * version of this submodule.
+     *
+     * @public
+     * @constant
+     * @type {string}
+     */
+    this.commit = require('child_process')
+        .execSync('git rev-parse --short HEAD')
+        .toString()
+        .trim();
 
-  /**
-   * The time at which this madule was loaded for use in checking if the module
-   * needs to be reloaded because the file has been modified since loading.
-   *
-   * @public
-   * @constant
-   * @type {number}
-   */
-  this.loadTime = Date.now();
+    /**
+     * The time at which this madule was loaded for use in checking if the
+     * module
+     * needs to be reloaded because the file has been modified since loading.
+     *
+     * @public
+     * @constant
+     * @type {number}
+     */
+    this.loadTime = Date.now();
 
-  /**
-   * The name of this submodule. Used for differentiating in the log. Should be
-   * defined before begin().
-   *
-   * @protected
-   * @type {string}
-   * @abstract
-   */
-  this.myName = 'SubModule';
+    /**
+     * The name of this submodule. Used for differentiating in the log. Should
+     * be
+     * defined before begin().
+     *
+     * @protected
+     * @type {string}
+     * @abstract
+     */
+    this.myName = 'SubModule';
+
+    /**
+     * Has this subModule been initialized yet (Has begin() been called).
+     *
+     * @protected
+     * @type {boolean}
+     * @default
+     * @readonly
+     */
+    this.initialized = false;
+  }
   /**
    * The function called at the end of begin() for further initialization
    * specific to the subModule. Must be defined before begin() is called.
@@ -92,17 +109,8 @@ function SubModule() {
    * @protected
    * @abstract
    */
-  this.initialize = function() {};
-
-  /**
-   * Has this subModule been initialized yet (Has begin() been called).
-   *
-   * @protected
-   * @type {boolean}
-   * @default
-   * @readonly
-   */
-  this.initialized = false;
+  initialize() {
+  }
 
   /**
    * Initialize this submodule.
@@ -115,7 +123,7 @@ function SubModule() {
    * @param {Common} common Class storing common functions.
    * @param {SpikeyBot} bot The parent SpikeyBot instance.
    */
-  this.begin = function(Discord, client, command, common, bot) {
+  begin(Discord, client, command, common, bot) {
     this.Discord = Discord;
     this.client = client;
     this.command = command;
@@ -163,19 +171,19 @@ function SubModule() {
       this.log(this.myName + ' Initialized');
       this.initialized = true;
     });
-  };
+  }
 
   /**
    * Trigger subModule to shutdown and get ready for process terminating.
    *
    * @public
    */
-  this.end = function() {
+  end() {
     if (!this.initialized) return;
     this.shutdown();
     this.initialized = false;
     this.log(this.myName + ' Shutdown');
-  };
+  }
 
   /**
    * Log using common.log, but automatically set name.
@@ -183,36 +191,36 @@ function SubModule() {
    * @protected
    * @param {string} msg The message to log.
    */
-  this.log = function(msg) {
+  log(msg) {
     console.log(msg);
-  };
+  }
   /**
    * Log using common.logDebug, but automatically set name.
    *
    * @protected
    * @param {string} msg The message to log.
    */
-  this.debug = function(msg) {
+  debug(msg) {
     console.log(msg);
-  };
+  }
   /**
    * Log using common.logWarning, but automatically set name.
    *
    * @protected
    * @param {string} msg The message to log.
    */
-  this.warn = function(msg) {
+  warn(msg) {
     console.log(msg);
-  };
+  }
   /**
    * Log using common.error, but automatically set name.
    *
    * @protected
    * @param {string} msg The message to log.
    */
-  this.error = function(msg) {
+  error(msg) {
     console.error(msg);
-  };
+  }
 
   /**
    * Shutdown and disable this submodule. Removes all event listeners.
@@ -220,7 +228,8 @@ function SubModule() {
    * @abstract
    * @protected
    */
-  this.shutdown = function() {};
+  shutdown() {
+  }
 
   /**
    * Saves all data to files necessary for saving current state.
@@ -229,7 +238,8 @@ function SubModule() {
    * synchronous.
    * @abstract
    */
-  this.save = function(opt = 'sync') {};
+  save(opt = 'sync') {
+  }
 
   /**
    * @description Check if this module is in a state that is ready to be
@@ -240,9 +250,9 @@ function SubModule() {
    * @public
    * @returns {boolean} True if can be unloaded, false if cannot.
    */
-  this.unloadable = function() {
+  unloadable() {
     return true;
-  };
+  }
 }
 
 /**
@@ -255,4 +265,4 @@ SubModule.extend = function(child) {
   child.prototype.constructor = child;
 };
 
-module.exports = SubModule.extend;
+module.exports = SubModule;

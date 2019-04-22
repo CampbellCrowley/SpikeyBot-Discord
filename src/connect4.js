@@ -1,6 +1,6 @@
 // Copyright 2018 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
-require('./subModule.js')(Connect4);  // Extends the SubModule class.
+require('./subModule.js').extend(Connect4);  // Extends the SubModule class.
 
 /**
  * @classdesc Manages a Connect 4 game.

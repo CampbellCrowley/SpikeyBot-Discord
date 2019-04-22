@@ -6,7 +6,7 @@ const ogg = require('ogg');
 const opus = require('node-opus');
 const spawn = require('threads').spawn;
 const Readable = require('stream').Readable;
-require('./subModule.js')(Music);
+require('./subModule.js').extend(Music);
 
 /**
  * @classdesc Music and audio related commands.

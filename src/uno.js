@@ -1,6 +1,6 @@
 // Copyright 2018-2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
-require('./subModule.js')(Uno);  // Extends the SubModule class.
+require('./subModule.js').extend(Uno);  // Extends the SubModule class.
 
 /**
  * @classdesc Manages an Uno game.

@@ -1,7 +1,7 @@
 // Copyright 2018-2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const fs = require('fs');
-require('./mainModule.js')(Command); // Extends the MainModule class.
+require('./mainModule.js')(Command);  // Extends the MainModule class.
 
 /**
  * @classdesc Manages the command event firing for all commands. This is not a
