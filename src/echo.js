@@ -309,6 +309,7 @@ class Echo extends SubModule {
             this.error(
                 'Failed to fetch webhooks for channel: ' + msg.channel.id);
             console.error(err);
+            this.common.reply(msg, 'Unable to fetch webhooks.', err.name);
           });
     } else {
       delete this._characters[msg.guild.id][msg.channel.id][msg.author.id];

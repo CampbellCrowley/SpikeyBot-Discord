@@ -1060,23 +1060,23 @@ function Command() {
         if (s.disabled.channels[c.id]) return;
         s.set(s.defaultDisabled ? 'default' : 'disabled', 'channel', c.id);
       });
-      disabledList.push(c.type + ' channel: #' + c.name);
+      disabledList.push(`${c.type} channel: #${c.name}`);
     });
     msg.mentions.members.forEach((m) => {
       settings.forEach((s) => {
         if (s.disabled.users[m.id]) return;
         s.set(s.defaultDisabled ? 'default' : 'disabled', 'user', m.id);
       });
-      disabledList.push('Member: ' + m.user.tag);
+      disabledList.push(`Member: ${m.user.tag}`);
     });
     msg.mentions.roles.forEach((r) => {
       settings.forEach((s) => {
-        if (s.disabled.roles[r.guild.id + '/' + r.id]) return;
+        if (s.disabled.roles[`${r.guild.id}/${r.id}`]) return;
         s.set(
             s.defaultDisabled ? 'default' : 'disabled', 'role', r.id,
             r.guild.id);
       });
-      disabledList.push('Role: ' + r.name);
+      disabledList.push(`Role: ${r.name}`);
     });
 
     trimmedText.split(/\s/).forEach((el) => {
@@ -1114,7 +1114,7 @@ function Command() {
       });
       if (user) {
         settings.forEach((s) => {
-          if (s.disabled.user[user.id]) return;
+          if (s.disabled.user && s.disabled.user[user.id]) return;
           s.set('disabled', 'user', user.id);
         });
         disabledList.push('Member: ' + user.user.tag);
@@ -1220,7 +1220,7 @@ function Command() {
       });
       if (user) {
         settings.forEach((s) => {
-          if (s.enabled.user[user.id]) return;
+          if (s.enabled.user && s.enabled.user[user.id]) return;
           s.set('enabled', 'user', user.id);
         });
         enabledList.push('Member: ' + user.user.tag);
@@ -1396,7 +1396,7 @@ function Command() {
       const tmp = [];
       let obj;
       if (el[1].defaultDisabled) {
-        tmp.push('`' + el[0] + (el[1].isMuted ? '#' : '') + '` allowed with:');
+        tmp.push('`' + el[0] + (el[1].isMuted ? '~' : '') + '` allowed with:');
         if (el[1].permissions) {
           tmp.push(
               new self.Discord.Permissions(el[1].permissions)
@@ -1405,7 +1405,7 @@ function Command() {
         }
         obj = el[1].enabled;
       } else {
-        tmp.push('`' + el[0] + (el[1].isMuted ? '#' : '') + '` blocked for:');
+        tmp.push('`' + el[0] + (el[1].isMuted ? '~' : '') + '` blocked for:');
         obj = el[1].disabled;
       }
       const channels = Object.keys(obj.channels);
@@ -1475,8 +1475,11 @@ function Command() {
           'Reset values to default with ' + msg.prefix +
           'reset\nChange values with ' + msg.prefix + 'enable or ' +
           msg.prefix + 'disable');
-      embed.setFooter('A # denotes command is muted on error.');
-      msg.channel.send(self.common.mention(msg), embed);
+      embed.setFooter('A ~ denotes command is muted on error.');
+      msg.channel.send(self.common.mention(msg), embed).catch((err) => {
+        self.common.reply(msg, 'Please specify a command to lookup.')
+            .catch(() => {});
+      });
     }
   }
   /**
