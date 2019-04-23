@@ -233,7 +233,7 @@ function Common() {
     process.stderr.write('ERR:');
     process.stderr.write(getTrace(traceIncrease));
     process.stderr.write('\x1B[;31m');
-    process.stderr.write(`${self.updatePrefix(ip)}${message}`);
+    process.stderr.write(`${self.updatePrefix(ip)} ${message}`);
     process.stderr.write('\x1B[1;0m\n');
   };
 

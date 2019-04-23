@@ -478,12 +478,13 @@ Simulator._reviveUser = function(game, a, k, w) {
  * @param {HungryGames~OutcomeProbabilities} probOpts Death rate weights.
  * @param {?Player} weaponWielder A player that is using a weapon in this
  * event, or null if no player is using a weapon.
+ * @param {string} chosenWeapon Name of the weapon the player is trying to use.
  * @returns {?HungryGames~Event} The chosen event that satisfies all
  * requirements, or null if something went wrong.
  */
 Simulator._pickEvent = function(
     userPool, eventPool, options, numAlive, numTotal, teams, probOpts,
-    weaponWielder) {
+    weaponWielder, chosenWeapon) {
   if (eventPool) eventPool = eventPool.filter((el) => el);
   const fails = [];
   let loop = 0;
@@ -535,6 +536,20 @@ Simulator._pickEvent = function(
       continue;
     }
 
+    let consumed = eventTry.consumes * 1;
+    if (eventTry.consumed === 'V') consumed = Math.abs(numVictim);
+    if (eventTry.consumed === 'A') consumed = Math.abs(numAttacker);
+    if (weaponWielder && chosenWeapon) {
+      if (consumed > weaponWielder.weapons[chosenWeapon]) {
+        fails.push(
+            'Not enough consumables (' + consumed + ' > ' +
+            weaponWielder.weapons[chosenWeapon] + '): ' + eventIndex + ' V:' +
+            eventTry.victim.count + ' A:' + eventTry.attacker.count + ' M:' +
+            eventTry.message);
+        continue;
+      }
+    }
+
     const multiAttacker = numAttacker < 0;
     const multiVictim = numVictim < 0;
     const attackerMin = -numAttacker;
@@ -547,7 +562,12 @@ Simulator._pickEvent = function(
         if (multiVictim) {
           numVictim = Simulator.weightedUserRand() + (victimMin - 1);
         }
-        if (victimRevived && attackerRevived) {
+        if (eventTry.consumed === 'V') consumed = numVictim;
+        if (eventTry.consumed === 'A') consumed = numAttacker;
+        if (weaponWielder && chosenWeapon &&
+            consumed > weaponWielder.weapons[chosenWeapon]) {
+          continue;
+        } else if (victimRevived && attackerRevived) {
           if (numAttacker + numVictim <= numTotal - numAlive) break;
         } else if (victimRevived) {
           if (numAttacker <= userPool.length &&

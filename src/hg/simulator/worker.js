@@ -90,16 +90,14 @@ class Worker {
           let total = arenaEventPool.length;
           if (sim.game.options.customEventWeight != 1) {
             arenaEventPool.forEach((el) => {
-              if (arenaEventPool[el].custom) {
+              if (el.custom) {
                 total += sim.game.options.customEventWeight - 1;
               }
             });
           }
           const pick = Math.random() * total;
           const index = arenaEventPool.findIndex((el) => {
-            total -= arenaEventPool[el].custom ?
-                sim.game.options.customEventWeight :
-                1;
+            total -= el.custom ? sim.game.options.customEventWeight : 1;
             if (total < pick) return true;
             return false;
           });
@@ -217,10 +215,11 @@ class Worker {
           // console.log('No event pool with weapon', chosenWeapon);
         } else {
           eventTry = Simulator._pickEvent(
-              userPool, weapons[chosenWeapon].outcomes,
-              sim.game.options, sim.game.currentGame.numAlive,
+              userPool, weapons[chosenWeapon].outcomes, sim.game.options,
+              sim.game.currentGame.numAlive,
               sim.game.currentGame.includedUsers.length,
-              sim.game.currentGame.teams, probOpts, userWithWeapon);
+              sim.game.currentGame.teams, probOpts, userWithWeapon,
+              chosenWeapon);
           if (!eventTry) {
             useWeapon = false;
             /* self.error(
@@ -231,8 +230,8 @@ class Worker {
             numVictim = eventTry.victim.count;
             affectedUsers = Simulator._pickAffectedPlayers(
                 numVictim, numAttacker, eventTry.victim.outcome,
-                eventTry.attacker.outcome, sim.game.options, userPool,
-                deadPool, sim.game.currentGame.teams, userWithWeapon);
+                eventTry.attacker.outcome, sim.game.options, userPool, deadPool,
+                sim.game.currentGame.teams, userWithWeapon, chosenWeapon);
 
             let consumed = eventTry.consumes;
             if (consumed == 'V') {
