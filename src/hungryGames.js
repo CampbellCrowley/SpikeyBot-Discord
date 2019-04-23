@@ -2312,14 +2312,14 @@ function HG() {
         const quarterLength = Math.ceil(numTotal / numCols);
         for (let i = 0; i < numCols - 1; i++) {
           const thisMessage =
-              statusList.splice(0, quarterLength).join('\n').slice(0, 1025);
+              statusList.splice(0, quarterLength).join('\n').slice(0, 1024);
           finalMessage.addField(
               `${i * quarterLength + 1}-${(i + 1) * quarterLength}`,
               thisMessage, true);
         }
         finalMessage.addField(
             `${(numCols - 1) * quarterLength + 1}-${numTotal}`,
-            statusList.join('\n').slice(0, 1025), true);
+            statusList.join('\n').slice(0, 1024), true);
       } else {
         finalMessage.setDescription(statusList.join('\n') || '...');
       }
@@ -2477,10 +2477,10 @@ function HG() {
         const thirdLength = Math.floor(rankList.length / 3);
         for (let i = 0; i < 2; i++) {
           const thisMessage =
-              rankList.splice(0, thirdLength).join('\n').slice(0, 1025);
+              rankList.splice(0, thirdLength).join('\n').slice(0, 1024);
           rankEmbed.addField(i + 1, thisMessage, true);
         }
-        rankEmbed.addField(3, rankList.join('\n').slice(0, 1025), true);
+        rankEmbed.addField(3, rankList.join('\n').slice(0, 1024), true);
       }
       rankEmbed.setColor(defaultColor);
       if (!game.options.disableOutput && msg.channel) {
@@ -2669,7 +2669,8 @@ function HG() {
    * Removes users from a games of a given guild.
    *
    * @public
-   * @param {string|string[]|Discord~User[]} users The users to exclude, or
+   * @param {string|string[]|Discord~User[]|HungryGames~NPC[]} users The users
+   * to exclude, or
    * 'everyone' to exclude everyone.
    * @param {string} id The guild id to remove the users from.
    * @returns {string} A string with the outcomes of each user. May have
@@ -2715,14 +2716,21 @@ function HG() {
         if (obj.startsWith('NPC')) {
           obj = hg.getGame(id).includedNPCs.find((el) => el.id == obj);
           if (!obj && hg.getGame(id).excludedNPCs.find((el) => el.id == obj)) {
-            response += obj.name + ' is already excluded.\n';
+            response += `${obj.name} is already excluded.\n`;
             return;
           }
         } else {
           obj = self.client.users.get(obj);
         }
         if (!obj) {
-          response += obj + ' is not a valid id.\n';
+          response += `${obj} is not a valid id.\n`;
+          return;
+        }
+      } else if (obj.id.startsWith('NPC') && !(obj instanceof NPC)) {
+        obj = hg.getGame(id).includedNPCs.find((el) => el.id == obj.id);
+        if (!obj) {
+          response += `${obj.name} unable to be found (bug?).\n`;
+          self.error('Unable to find NPC matching NPC-like data: ' + id);
           return;
         }
       }
@@ -2735,7 +2743,7 @@ function HG() {
         if (obj.isNPC) {
           hg.getGame(id).excludedNPCs.push(obj);
           if (!onlyError) {
-            response += obj.username + ' added to blacklist.\n';
+            response += obj.username + ' added to blacklist.*\n';
           }
           const includeIndex =
               hg.getGame(id).includedNPCs.findIndex((el) => el.id == obj.id);
@@ -2864,9 +2872,9 @@ function HG() {
    * Adds a user back into the next game.
    *
    * @public
-   * @param {string|string[]|Discord~User[]} users The users to include,
-   * 'everyone' to include all users, 'online' to include online users,
-   * 'offline', 'idle', or 'dnd' for respective users.
+   * @param {string|string[]|Discord~User[]|HungryGames~NPC[]} users The users
+   * to include, 'everyone' to include all users, 'online' to include online
+   * users, 'offline', 'idle', or 'dnd' for respective users.
    * @param {string} id The guild id to add the users to.
    * @returns {string} A string with the outcomes of each user. May have
    * multiple lines for a single user.
@@ -2921,6 +2929,13 @@ function HG() {
           response += obj + ' is not a valid id.\n';
           return;
         }
+      } else if (obj.id.startsWith('NPC') && !(obj instanceof NPC)) {
+        obj = hg.getGame(id).excludedNPCs.find((el) => el.id == obj.id);
+        if (!obj) {
+          response += `${obj.username} unable to be found (bug?).\n`;
+          self.error('Unable to find NPC matching NPC-like data: ' + id);
+          return;
+        }
       }
       if (!hg.getGame(id).options.includeBots && obj.bot) {
         response += obj.username + ' is a bot, but bots are disabled.\n';
@@ -2938,7 +2953,7 @@ function HG() {
         if (!hg.getGame(id).includedNPCs.find((el) => el.id == obj.id)) {
           hg.getGame(id).includedNPCs.push(obj);
           if (!onlyError) {
-            response += obj.username + ' added to whitelist.\n';
+            response += obj.username + ' added to whitelist.*\n';
           }
         }
       } else {
@@ -3062,10 +3077,10 @@ function HG() {
         if (myTeam != prevTeam) {
           prevTeam = myTeam;
           const t = hg.getGame(id).currentGame.teams[myTeam];
-          if (t.name != 'Team ' + (t.id + 1)) {
-            prefix = (t.id + 1) + ' __' + t.name + '__\n';
+          if (t.name != `Team ${t.id + 1}`) {
+            prefix = `${t.id + 1} __${t.name}__\n`;
           } else {
-            prefix = '__' + t.name + '__\n';
+            prefix = `__${t.name}__\n`;
           }
         }
         if (obj.isNPC) {
@@ -3106,7 +3121,8 @@ function HG() {
       }
     }
     if (hg.getGame(id) && hg.getGame(id).excludedUsers &&
-        hg.getGame(id).excludedUsers.length > 0) {
+        (hg.getGame(id).excludedUsers.length +
+         hg.getGame(id).excludedNPCs.length) > 0) {
       const eUsers =
           hg.getGame(id).excludedUsers.concat(hg.getGame(id).excludedNPCs);
       let excludedList = '\u200B';
@@ -3123,8 +3139,7 @@ function HG() {
           excludedList = trimmedList;
         }
       }
-      finalMessage.addField(
-          'Excluded (' + eUsers.length + ')', excludedList, false);
+      finalMessage.addField(`Excluded (${eUsers.length})`, excludedList, false);
     }
     msg.channel.send(self.common.mention(msg), finalMessage).catch((err) => {
       self.common.reply(
@@ -3147,7 +3162,9 @@ function HG() {
    */
   function getName(guild, user) {
     let name = '';
-    if (guild.members.get(user)) {
+    if (typeof user === 'object' && user.username) {
+      name = user.username;
+    } else if (guild.members.get(user)) {
       name = guild.members.get(user).user.username;
     } else {
       name = user;
@@ -5018,6 +5035,9 @@ function HG() {
       return '`' + shortName + '`';
     }
 
+    if (!hg.getGame(id)) {
+      hg.create(msg.guild);
+    }
 
     const iNPCs = hg.getGame(id).includedNPCs || [];
     const eNPCs = hg.getGame(id).excludedNPCs || [];
