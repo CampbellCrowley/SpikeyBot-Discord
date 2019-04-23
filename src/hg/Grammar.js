@@ -22,15 +22,15 @@ Grammar.formatMultiNames = function(names, format = 'username') {
   let output = '';
   for (let i = 0; i < names.length; i++) {
     if (format === 'mention' && !names[i].isNPC) {
-      output += '<@' + names[i].id + '>';
+      output += `<@${names[i].id}>`;
     } else if (format === 'nickname') {
-      output += '`' + (names[i].nickname || names[i].name) + '`';
+      output += `\`${names[i].nickname || names[i].name}\``;
     } else {
-      output += '`' + names[i].name + '`';
+      output += `\`${names[i].name}\``;
     }
 
     if (i == names.length - 2) {
-      output += ', and ';
+      output += ' and ';
     } else if (i != names.length - 1) {
       output += ', ';
     }
