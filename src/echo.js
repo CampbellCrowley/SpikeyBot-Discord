@@ -303,7 +303,7 @@ class Echo extends SubModule {
                         msg.channel.id);
                     console.error(err);
                     this.common.reply(
-                        msg, 'Failed to create webhook', err.name);
+                        msg, 'Failed to create webhook', err.message);
                   });
             } else {
               this.common.reply(msg, 'Created', username);
@@ -313,7 +313,7 @@ class Echo extends SubModule {
             this.error(
                 'Failed to fetch webhooks for channel: ' + msg.channel.id);
             console.error(err);
-            this.common.reply(msg, 'Unable to fetch webhooks.', err.name);
+            this.common.reply(msg, 'Unable to fetch webhooks.', err.message);
           });
     } else {
       delete this._characters[msg.guild.id][msg.channel.id][msg.author.id];

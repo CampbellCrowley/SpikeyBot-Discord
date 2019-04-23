@@ -77,10 +77,11 @@ function SpikeyBot() {
   /**
    * The current bot version parsed from package.json.
    *
-   * @private
+   * @public
    * @type {string}
+   * @constant
    */
-  const version = JSON.parse(fs.readFileSync('package.json')).version + '#' +
+  this.version = JSON.parse(fs.readFileSync('package.json')).version + '#' +
       childProcess.execSync('git rev-parse --short HEAD').toString().trim();
 
   /**
@@ -617,12 +618,14 @@ function SpikeyBot() {
    * @listens Discord~Client#ready
    */
   function onReady() {
-    common.log(`Logged in as ${client.user.tag} (${version})`);
+    common.log(`Logged in as ${client.user.tag} (${self.version})`);
     if (!minimal || isBackup) {
       if (testInstance) {
         updateGame('Running unit test...');
       } else if (isDev) {
-        updateGame('Version: ' + version);
+        updateGame(`Version: ${self.version}`);
+      } else if (botName === 'rembot') {
+        updateGame();
       } else if (isBackup) {
         // updateGame('OFFLINE', 'PLAYING');
       } else {
@@ -633,12 +636,12 @@ function SpikeyBot() {
     if (testInstance) {
       client.users.fetch(common.spikeyId)
           .then((u) => {
-            u.send('Beginning in unit test mode (JS' + version + ')');
+            u.send(`Beginning in unit test mode (JS${self.version})`);
           })
           .catch((err) => {
             common.error('Failed to find SpikeyRobot\'s DMs');
             logChannel.send(
-                'Beginning in unit test mode (JS' + version +
+                'Beginning in unit test mode (JS' + self.version +
                 ') (FAILED TO FIND SpikeyRobot\'s DMs!)');
           });
     }
@@ -654,6 +657,7 @@ function SpikeyBot() {
         try {
           mainModules[i].begin(Discord, client, command, common, self);
         } catch (err) {
+          self.error('Failed to initialize MainModule: ' + mainModuleNames[i]);
           console.log(err);
           if (logChannel) {
             // logChannel.send('Failed to initialize ' + mainModuleNames[i]);
@@ -709,7 +713,7 @@ function SpikeyBot() {
           } else {
             common.error('Failed to find channel: ' + parsed.channel);
           }
-          if (logChannel && !isDev && !testInstance) {
+          if (logChannel && !isDev && !testInstance && !botName) {
             let additional = '';
             if (client.shard) {
               additional += ' Shard: ' + client.shard.ids.join(' ') + ' of ' +
@@ -725,7 +729,7 @@ function SpikeyBot() {
               additional += ' from cold stop.';
             }
             logChannel.send(
-                'I just rebooted (JS' + version + ') ' +
+                'I just rebooted (JS' + self.version + ') ' +
                 (minimal ? 'MINIMAL' : 'FULL') + additional);
           }
         });
@@ -746,12 +750,12 @@ function SpikeyBot() {
         () => {});
     req.on('error', () => {});
     req.end(JSON.stringify({
-      text: client.user.tag + ':' + client.user.id + ' JS' + version,
+      text: `${client.user.tag}:${client.user.id} JS${self.version}`,
       tag: client.user.tag,
       id: client.user.id,
       guild_count: client.guilds.size,
       shard_count: client.shard ? client.shard.count : '0',
-      version: version,
+      version: self.version,
     }));
     // Reset save interval
     clearInterval(saveInterval);
@@ -1495,7 +1499,7 @@ function SpikeyBot() {
                 if (code) {
                   const out = [];
                   reloadMainModules(name, out);
-                  if (out) common.log(out.join(' '));
+                  if (out && out.length > 0) common.log(out.join(' '));
                   if (name == smLoaderFilename) {
                     smReloaded = true;
                   }

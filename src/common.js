@@ -131,16 +131,6 @@ function Common() {
       case '   ':
       case '127.000.000.001':
         return 'SELF           ';
-      case '192.168.001.116':
-        return 'RPI            ';
-      case '132.241.174.082':
-      case '132.241.174.226':
-      case '132.241.174.112':
-        return 'CHICO          ';
-      case '098.210.161.122':
-        return 'HOME           ';
-      case '076.021.061.017':
-        return 'OLD HOME       ';
       case '205.167.046.140':
       case '205.167.046.157':
       case '205.167.046.15':
@@ -162,8 +152,30 @@ function Common() {
     const formattedIP = self.getIPName(ip.replace('::ffff:', ''));
 
     const date = dateFormat(new Date(), 'mm-dd HH:MM:ss');
-    return '[' + title + date + ' ' + formattedIP + ']:';
+    return `[${title}${date} ${formattedIP}]:`;
   };
+
+  /**
+   * Write the final portion of the log message.
+   *
+   * @private
+   * @param {string} message The message to display.
+   * @param {string} ip The IP address or unique identifier of the client that
+   * caused this event to happen.
+   * @param {number} [traceIncrease=0] Increase the distance up the stack to
+   * show the in the log.
+   */
+  function write(message, ip, traceIncrease = 0) {
+    process.stdout.write(getTrace(traceIncrease + 1));
+    if (self.isRelease) {
+      process.stdout.write(`${self.updatePrefix(ip)}\x1B[;${mycolor}m`);
+    } else {
+      process.stdout.write(`\x1B[;${mycolor}m${self.updatePrefix(ip)}`);
+    }
+    message = message.toString().replace(/\n/g, '\\n');
+    process.stdout.write(` ${message}`);
+    process.stdout.write('\x1B[1;0m\n');
+  }
 
   /**
    * Format a log message to be logged. Prefixed with DBG.
@@ -175,17 +187,8 @@ function Common() {
    * show the in the log.
    */
   this.logDebug = function(message, ip, traceIncrease = 0) {
-    message = ('' + message).replace(/\n/g, '\\n');
-    if (self.isRelease) {
-      console.log(
-          'DBG:' + getTrace(traceIncrease) + self.updatePrefix(ip),
-          '\x1B[;' + mycolor + 'm' + message, '\x1B[1;0m');
-    } else {
-      console.log(
-          'DBG:' + getTrace(traceIncrease) + '\x1B[;' + mycolor + 'm' +
-              self.updatePrefix(ip),
-          message, '\x1B[1;0m');
-    }
+    process.stdout.write('DBG:');
+    write(message, ip, traceIncrease);
   };
 
   /**
@@ -198,17 +201,8 @@ function Common() {
    * show the in the log.
    */
   this.log = function(message, ip, traceIncrease = 0) {
-    message = ('' + message).replace(/\n/g, '\\n');
-    if (self.isRelease) {
-      console.log(
-          'INF:' + getTrace(traceIncrease) + self.updatePrefix(ip),
-          '\x1B[;' + mycolor + 'm' + message, '\x1B[1;0m');
-    } else {
-      console.log(
-          'INF:' + getTrace(traceIncrease) + '\x1B[;' + mycolor + 'm' +
-              self.updatePrefix(ip),
-          message, '\x1B[1;0m');
-    }
+    process.stdout.write('INF:');
+    write(message, ip, traceIncrease);
   };
 
   /**
@@ -221,17 +215,8 @@ function Common() {
    * show the in the log.
    */
   this.logWarning = function(message, ip, traceIncrease = 0) {
-    message = ('' + message).replace(/\n/g, '\\n');
-    if (self.isRelease) {
-      console.log(
-          'WRN:' + getTrace(traceIncrease) + self.updatePrefix(ip),
-          '\x1B[;' + mycolor + 'm' + message, '\x1B[1;0m');
-    } else {
-      console.log(
-          'WRN:' + getTrace(traceIncrease) + '\x1B[;' + mycolor + 'm' +
-              self.updatePrefix(ip),
-          message, '\x1B[1;0m');
-    }
+    process.stdout.write('WRN:');
+    write(message, ip, traceIncrease);
   };
 
   /**
@@ -244,10 +229,12 @@ function Common() {
    * show the in the log.
    */
   this.error = function(message, ip, traceIncrease = 0) {
-    message = ('' + message).replace(/\n/g, '\\n');
-    console.log(
-        'ERR:' + getTrace(traceIncrease) + '\x1B[;31m' + self.updatePrefix(ip),
-        message, '\x1B[1;0m');
+    message = `${message}`.replace(/\n/g, '\\n');
+    process.stderr.write('ERR:');
+    process.stderr.write(getTrace(traceIncrease));
+    process.stderr.write('\x1B[;31m');
+    process.stderr.write(`${self.updatePrefix(ip)}${message}`);
+    process.stderr.write('\x1B[1;0m\n');
   };
 
   /**
@@ -403,8 +390,9 @@ Common.trustedIds = Common.prototype.trustedIds;
  * @returns {string} Error formatted as single line string.
  */
 Common.prototype.fmtDAPIErr = function(e) {
-  return `ERR:${process.pid} ${e.name}: ${e.message}` +
-      ` ${e.method} ${e.code} (${e.path})`;
+  const pid = `00000${process.pid}`.slice(-5);
+  return `ERR:${pid}                     [ SpikeyBot.js ` +
+      `${e.name}: ${e.message} ${e.method} ${e.code} (${e.path})`;
 };
 
 /**
@@ -574,6 +562,10 @@ const oldErr = console.error;
 console.error = function(...args) {
   if (args.length == 1 && (args[0] instanceof Discord.DiscordAPIError)) {
     args[0] = Common.fmtDAPIErr(args[0]);
+  } else {
+    const pid = `00000${process.pid}`.slice(-5);
+    oldErr(`ERR:${pid}                     [ SpikeyBot.js  `, ...args);
+    return;
   }
   oldErr(...args);
 };
