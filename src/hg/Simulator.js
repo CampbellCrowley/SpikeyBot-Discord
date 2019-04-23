@@ -555,7 +555,8 @@ Simulator._pickEvent = function(
     const attackerMin = -numAttacker;
     const victimMin = -numVictim;
     if (multiAttacker || multiVictim) {
-      while (true) {
+      let count = 0;
+      while (count++ < 100) {
         if (multiAttacker) {
           numAttacker = Simulator.weightedUserRand() + (attackerMin - 1);
         }
@@ -582,6 +583,11 @@ Simulator._pickEvent = function(
         } else if (numAttacker + numVictim <= userPool.length) {
           break;
         }
+      }
+      if (count >= 100) {
+        self.error('Infinite loop while picking player count .');
+        fails.push('Infinite loop while picking player count.');
+        continue;
       }
     }
 
