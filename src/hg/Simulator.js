@@ -484,11 +484,11 @@ Simulator._reviveUser = function(game, a, k, w) {
 Simulator._pickEvent = function(
     userPool, eventPool, options, numAlive, numTotal, teams, probOpts,
     weaponWielder) {
+  if (eventPool) eventPool = eventPool.filter((el) => el);
   const fails = [];
   let loop = 0;
   while (loop < 100) {
     loop++;
-    if (eventPool) eventPool = eventPool.filter((el) => el);
     if (!eventPool || eventPool.length == 0) {
       fails.push('No Events');
       break;

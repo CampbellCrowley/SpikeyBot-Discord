@@ -87,7 +87,22 @@ class Worker {
         const arenaEventPool =
             sim.events.arena.concat(sim.game.customEvents.arena);
         do {
-          const index = Math.floor(Math.random() * arenaEventPool.length);
+          let total = arenaEventPool.length;
+          if (sim.game.options.customEventWeight != 1) {
+            arenaEventPool.forEach((el) => {
+              if (arenaEventPool[el].custom) {
+                total += sim.game.options.customEventWeight - 1;
+              }
+            });
+          }
+          const pick = Math.random() * total;
+          const index = arenaEventPool.findIndex((el) => {
+            total -= arenaEventPool[el].custom ?
+                sim.game.options.customEventWeight :
+                1;
+            if (total < pick) return true;
+            return false;
+          });
           arenaEvent = arenaEventPool[index];
           userEventPool = arenaEvent.outcomes;
           if (sim.game.disabledEvents && sim.game.disabledEvents.arena &&
