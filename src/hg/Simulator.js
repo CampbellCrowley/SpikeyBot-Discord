@@ -348,12 +348,13 @@ Simulator._pickAffectedPlayers = function(
  */
 Simulator._effectUser = function(game, affected, kills, weapon) {
   if (weapon) {
-    if (typeof affected.weapons[weapon.name] === 'number') {
-      affected.weapons[weapon.name] += weapon.count;
+    if (!isNaN(affected.weapons[weapon.name])) {
+      affected.weapons[weapon.name] =
+          affected.weapons[weapon.name] * 1 + weapon.count;
     } else {
       affected.weapons[weapon.name] = weapon.count;
     }
-    if (affected.weapons[weapon.name] === 0) {
+    if (affected.weapons[weapon.name] <= 0) {
       delete affected.weapons[weapon.name];
     }
   }
