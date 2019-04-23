@@ -174,6 +174,10 @@ class Echo extends SubModule {
     if (!char) {
       return;
     }
+    if (!msg.channel.permissionsFor(msg.guild.me)
+        .has(this.Discord.Permissions.FLAGS.MANAGE_WEBHOOKS)) {
+      return;
+    }
     msg.channel.fetchWebhooks()
         .then((hooks) => {
           const hook = hooks.find((h) => h.owner.id == this.client.user.id);
