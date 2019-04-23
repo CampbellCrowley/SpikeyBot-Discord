@@ -915,7 +915,8 @@ function Main() {
       msg.channel.send('Hi Dad, I\'m Spikey!');
     }
 
-    if (!disabledAutoSmite[msg.guild.id]) {
+    if (!msg.author.id != self.client.user.id &&
+        !disabledAutoSmite[msg.guild.id]) {
       if (msg.mentions.everyone) {
         if (!mentionAccumulator[msg.guild.id]) {
           mentionAccumulator[msg.guild.id] = {};
@@ -2831,7 +2832,8 @@ function Main() {
           }
           try {
             childProcess.execSync(
-                'git diff-index --quiet ' + version.split('#')[1] +
+                'git diff-index --quiet ' +
+                (self.bot.version.split('#')[1] || commit) +
                 ' -- ./src/SpikeyBot.js');
             const embed = new self.Discord.MessageEmbed();
             embed.setTitle('Bot update complete!');
@@ -2849,8 +2851,8 @@ function Main() {
             } else {
               self.error(
                   'Checking for SpikeyBot.js changes failed: ' + err.status);
-              console.error('STDOUT:', err.stdout);
-              console.error('STDERR:', err.stderr);
+              console.error('STDOUT:', err.stdout.toString());
+              console.error('STDERR:', err.stderr.toString());
               const embed = new self.Discord.MessageEmbed();
               embed.setTitle(
                   'Bot update complete, but failed to check if ' +
