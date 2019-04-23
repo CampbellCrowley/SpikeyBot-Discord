@@ -249,9 +249,9 @@
         "consumes": 1
       },
       {
-        "message": "{victim} forgot to unload the gun before cleaning it, and shoots themself in the face.",
-        "attacker": { "count": "0", "outcome": "nothing" },
-        "victim": { "count": "1", "outcome": "dies" },
+        "message": "{attacker} forgot to unload the gun before cleaning it, and shoots themself in the face.",
+        "attacker": { "count": "1", "outcome": "dies" },
+        "victim": { "count": "0", "outcome": "nothing" },
         "consumes": 1
       },
       {
