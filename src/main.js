@@ -164,6 +164,34 @@ function Main() {
   const mentionAccumulator = {};
 
   /**
+   * Previous ping values and their associated timestamps. Stores up to the
+   * previous {@link oldestPing}  worth of pings since a reboot.
+   *
+   * @private
+   * @type {Array.<{time: number, delta: number}>}
+   * @default
+   */
+  let pingHistory = [];
+  fs.readFile('./save/pingHistory.json', (err, data) => {
+    if (err) return;
+    try {
+      pingHistory = JSON.parse(data);
+    } catch (err) {
+      self.error('Failed to parse pingHistory.json');
+      console.error(err);
+    }
+  });
+
+  /**
+   * Oldest ping value to store.
+   *
+   * @private
+   * @type {number}
+   * @default 24 hours
+   */
+  const oldestPing = 24 * 60 * 60 * 1000;
+
+  /**
    * The introduction message the bots sends when pmme is used.
    *
    * @private
@@ -598,6 +626,13 @@ function Main() {
         mkAndWriteSync(filename, dir, self.client.riggedCounter + '');
       }
     }
+    if (opt == 'async') {
+      mkAndWrite(
+          './save/pingHistory.json', './save/', JSON.stringify(pingHistory));
+    } else {
+      mkAndWriteSync(
+          './save/pingHistory.json', './save/', JSON.stringify(pingHistory));
+    }
   };
 
   /**
@@ -674,6 +709,10 @@ function Main() {
         '\\[WS => Shard \\d+\\] Heartbeat acknowledged|' +
         '\\[VOICE)');
     if (info.match(hbRegex)) {
+      pingHistory.push({time: Date.now(), delta: self.client.ws.ping});
+      while (pingHistory[0] && Date.now() - pingHistory[0].time > oldestPing) {
+        pingHistory.splice(0, 1);
+      }
       return;
     }
     self.common.logDebug('Discord Debug: ' + info);
@@ -2000,14 +2039,65 @@ function Main() {
    * @listens Command#ping
    */
   function commandPing(msg) {
+    const graph = [];
+    if (pingHistory.length > 0) {
+      const cols = 70;
+      const rows = 10;
+      const td = oldestPing / cols;
+      const now = Date.now();
+      let index = 0;
+      const values = [];
+      let max = 0;
+      for (let c = 0; c < cols; c++) {
+        let total = 0;
+        let num = 0;
+        for (index;
+          pingHistory[index] && now - pingHistory[index].time < td * (c + 1);
+          index++) {
+          total += pingHistory[index].delta * 1;
+          num++;
+        }
+        total /= num || 1;
+        values.push(total);
+        max = Math.max(max, total);
+      }
+      max *= 1.1;
+      const step = max / rows;
+      for (let r = 0; r < rows; r++) {
+        graph[r] = ['    '];
+        if (r == 0 || r == rows - 1 || r == Math.floor(rows / 2)) {
+          graph[r][0] = (`    ${Math.round(step * (rows - r))}`).slice(-4);
+        }
+        for (let c = cols - 1; c >= 0; c--) {
+          const inRange = step * (rows - r - 1) <= values[c] &&
+              step * (rows - r) > values[c];
+          let char = ' ';
+          if (inRange) {
+            if (step * (rows - r - 0.5) <= values[c]) {
+              char = '-';
+            } else {
+              char = '_';
+            }
+          }
+          graph[r].push(char);
+        }
+        graph[r] = graph[r].join('');
+      }
+      graph[rows] = 'Since: ' +
+          dateFormat(pingHistory[0].time, 'mmm-dd HH:MM Z') + '    ' +
+          pingHistory.length + ' samples';
+    }
+
+    const finalGraph = '```' + graph.join('\n') + '```';
     if (self.client.ping) {
       self.common.reply(
           msg, 'My ping is ' + Math.round(self.client.ping * 10) / 10 + 'ms',
-          '`' + JSON.stringify(self.client.pings) + '`');
+          finalGraph);
     } else {
       self.common.reply(
           msg,
-          'My ping is ' + Math.round(self.client.ws.ping * 10) / 10 + 'ms');
+          'My current ping ' + Math.round(self.client.ws.ping * 10) / 10 + 'ms',
+          finalGraph);
     }
   }
 

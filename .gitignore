@@ -9,4 +9,5 @@ save/users/*
 save/hgWebClients.json
 save/webClients.json
 save/rigged-counter.txt
+save/pingHistory.json
 gApiCredentials*.json
