@@ -2045,35 +2045,38 @@ function Main() {
       const rows = 10;
       const td = oldestPing / cols;
       const now = Date.now();
-      let index = 0;
+      let index = pingHistory.length - 1;
       const values = [];
       let max = 0;
+      let min = 10000;
       for (let c = 0; c < cols; c++) {
         let total = 0;
         let num = 0;
-        for (index;
-          pingHistory[index] && now - pingHistory[index].time < td * (c + 1);
-          index++) {
+        for (index; index >= 0 && now - pingHistory[index].time < td * (c + 1);
+          index--) {
           total += pingHistory[index].delta * 1;
           num++;
         }
         total /= num || 1;
         values.push(total);
         max = Math.max(max, total);
+        if (total != 0) min = Math.min(min, total);
       }
       max *= 1.1;
-      const step = max / rows;
+      min *= 1.1;
+      const step = (max - min) / rows;
       for (let r = 0; r < rows; r++) {
         graph[r] = ['    '];
         if (r == 0 || r == rows - 1 || r == Math.floor(rows / 2)) {
-          graph[r][0] = (`    ${Math.round(step * (rows - r))}`).slice(-4);
+          graph[r][0] =
+              (`    ${Math.round(step * (rows - r) + min)}`).slice(-4);
         }
         for (let c = cols - 1; c >= 0; c--) {
-          const inRange = step * (rows - r - 1) <= values[c] &&
-              step * (rows - r) > values[c];
+          const inRange = min + step * (rows - r - 1) <= values[c] &&
+              min + step * (rows - r) > values[c];
           let char = ' ';
           if (inRange) {
-            if (step * (rows - r - 0.5) <= values[c]) {
+            if (min + step * (rows - r - 0.5) <= values[c]) {
               char = '-';
             } else {
               char = '_';
@@ -2083,9 +2086,10 @@ function Main() {
         }
         graph[r] = graph[r].join('');
       }
-      graph[rows] = 'Since: ' +
-          dateFormat(pingHistory[0].time, 'mmm-dd HH:MM Z') + '    ' +
-          pingHistory.length + ' samples';
+      const dfmt = 'mmm-dd HH:MM Z';
+      graph[rows] = '    ' + dateFormat(pingHistory[0].time, dfmt) +
+          '       --->       ' +
+          dateFormat(pingHistory[pingHistory.length - 1].time, dfmt);
     }
 
     const finalGraph = '```' + graph.join('\n') + '```';
