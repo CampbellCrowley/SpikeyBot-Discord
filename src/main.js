@@ -2063,7 +2063,7 @@ function Main() {
         if (total != 0) min = Math.min(min, total);
       }
       max *= 1.1;
-      min *= 1.1;
+      min *= 0.9;
       const step = (max - min) / rows;
       for (let r = 0; r < rows; r++) {
         graph[r] = ['    '];

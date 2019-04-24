@@ -102,7 +102,7 @@ const mainTests = [
       ['<@422623712534200321>\n```\nI sent your message to SpikeyRobot.\n```']),
   new Test('Flip command', '~flip', ['#embed']),
   new Test('Avatar command', '~avatar', ['#embed']),
-  new Test('Ping command', '~ping', ['^My ping is']),
+  new Test('Ping command', '~ping', ['^My current ping']),
   new Test('Tic Tac Toe command', '~tictactoe', ['`Loading TicTacToe...`']),
   new Test('Connect 4 command', '~connect4', ['`Loading Connect 4...`']),
   new Test('List command settings', '~show', ['#embed']),
