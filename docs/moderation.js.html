@@ -90,6 +90,11 @@ class Moderation extends SubModule {
     ];
 
     this.save = this.save.bind(this);
+    this.muteMember = this.muteMember.bind(this);
+    this._onMessageDelete = this._onMessageDelete.bind(this);
+    this._onMessageDeleteBulk = this._onMessageDeleteBulk.bind(this);
+    this._onGuildMemberRemove = this._onGuildMemberRemove.bind(this);
+    this._onGuildMemberAdd = this._onGuildMemberAdd.bind(this);
   }
   /** @inheritdoc */
   initialize() {
@@ -176,6 +181,10 @@ class Moderation extends SubModule {
             });
       }
     });
+    this.client.on('messageDelete', this._onMessageDelete);
+    this.client.on('messageDeleteBulk', this._onMessageDeleteBulk);
+    this.client.on('guildMemberRemove', this._onGuildMemberRemove);
+    this.client.on('guildMemberAdd', this._onGuildMemberAdd);
   }
   /** @inheritdoc */
   shutdown() {
@@ -184,6 +193,10 @@ class Moderation extends SubModule {
     this.command.removeListener('smite');
     this.command.removeListener('togglemute');
     this.command.removeListener('togglebanmessages'); */
+    this.client.removeListener('messageDelete', this._onMessageDelete);
+    this.client.removeListener('messageDeleteBulk', this._onMessageDeleteBulk);
+    this.client.removeListener('guildMemberRemove', this._onGuildMemberRemove);
+    this.client.removeListener('guildMemberAdd', this._onGuildMemberAdd);
   }
   /** @inheritdoc */
   save(opt) {
@@ -202,6 +215,150 @@ class Moderation extends SubModule {
         this.common.mkAndWriteSync(filename, dir, JSON.stringify(data));
       }
     });
+  }
+
+  /**
+   * @description Handle logging when a message is deleted.
+   * @private
+   * @param {external:Discord~Message} msg The deleted message.
+   */
+  _onMessageDelete(msg) {
+    if (!msg.guild) return;
+    const modLog = this.bot.getSubmodule('./modLog.js');
+    if (!modLog) return;
+    modLog.output(
+        msg.guild, 'messageDelete', null, null,
+        `${msg.author.tag}'s message deleted in #${msg.channel.name}`);
+  }
+  /**
+   * @description Handle logging when multiple messages are deleted.
+   * @private
+   * @param {external:Discord~Collection&lt;external:Discord~Message>} msgs The
+   * deleted messages.
+   */
+  _onMessageDeleteBulk(msgs) {
+    const modLog = this.bot.getSubmodule('./modLog.js');
+    if (!modLog) return;
+    let channels = [];
+    msgs.forEach((m) => {
+      if (!channels.includes(`#${m.channel.name}`)) {
+        channels.push(`#${m.channel.name}`);
+      }
+    });
+    if (channels.length > 3) {
+      channels = `${channels.length} channels`;
+    } else {
+      channels = channels.join(', ');
+    }
+    modLog.output(
+        msgs.first().guild, 'messagePurge', null, null,
+        `${msgs.size} messages deleted from ${channels}.`);
+  }
+  /**
+   * @description Handle a guild member leaving the guild.
+   * @private
+   * @param {external:Discord~GuildMember} member The member that left or was
+   * kicked.
+   */
+  _onGuildMemberRemove(member) {
+    const modLog = this.bot.getSubmodule('./modLog.js');
+    if (!modLog) return;
+    modLog.output(member.guild, 'memberLeave', member.user);
+  }
+  /**
+   * @description Handle someone joining the guild.
+   * @private
+   * @param {external:Discord~GuildMember} member The member that joined.
+   */
+  _onGuildMemberAdd(member) {
+    const modLog = this.bot.getSubmodule('./modLog.js');
+    if (!modLog) return;
+    modLog.output(member.guild, 'memberJoin', member.user);
+  }
+
+  /**
+   * @description Give a guild member a muted role that prevents them from
+   * talking in any channel in the guild.
+   * @public
+   * @param {external:Discord~GuildMember} member The member of the guild to
+   * mute.
+   * @param {Function} cb Callback function with a single argument which is a
+   * string if there was an error, or null if success.
+   */
+  muteMember(member, cb) {
+    let hasMuteRole = false;
+    let muteRole;
+    const toMute = member;
+    member.guild.roles.forEach(function(val, key) {
+      if (val.name == 'Muted') {
+        hasMuteRole = true;
+        muteRole = val;
+      }
+    });
+    const self = this;
+    const mute = function(role, member) {
+      try {
+        member.roles.add(role)
+            .then(() => {
+              cb();
+            })
+            .catch((err) => {
+              self.error(
+                  'Failed to mute member: ' + member.guild.id + '@' +
+                  member.id);
+              console.error(err);
+              cb('Failed to give role');
+            });
+        member.guild.channels.forEach((channel) => {
+          if (channel.permissionsLocked) return;
+          const overwrites = channel.permissionOverwrites.get(role.id);
+          if (overwrites) {
+            if (channel.type == 'category') {
+              if (overwrites.deny.has(
+                  self.Discord.Permissions.FLAGS.SEND_MESSAGES) &amp;&amp;
+                  overwrites.deny.has(self.Discord.Permissions.FLAGS.SPEAK)) {
+                return;
+              }
+            } else if (channel.type == 'text') {
+              if (overwrites.deny.has(
+                  self.Discord.Permissions.FLAGS.SEND_MESSAGES)) {
+                return;
+              }
+            } else if (channel.type == 'voice') {
+              if (overwrites.deny.has(self.Discord.Permissions.FLAGS.SPEAK)) {
+                return;
+              }
+            }
+          }
+          channel.updateOverwrite(role, {SEND_MESSAGES: false, SPEAK: false})
+              .catch(console.error);
+        });
+      } catch (err) {
+        console.log(err);
+        cb('Failed to manage role');
+      }
+    };
+    if (!hasMuteRole) {
+      member.guild.roles
+          .create({
+            data: {
+              name: 'Muted',
+              position: member.guild.me.roles.highest.position - 1,
+              permissions: 0,
+            },
+          })
+          .then((role) => {
+            mute(role, toMute);
+          })
+          .catch((err) => {
+            this.error(
+                'Failed to create mute role in guild: ' + member.guild.id);
+            console.error(err);
+            cb('Failed to create role');
+          });
+    } else {
+      mute(muteRole, toMute);
+    }
   }
 }
 
@@ -222,7 +379,7 @@ module.exports = new Moderation();
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Apr 26 2019 00:12:29 GMT-0700 (Pacific Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Apr 26 2019 15:14:18 GMT-0700 (Pacific Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>

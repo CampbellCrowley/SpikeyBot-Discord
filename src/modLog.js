@@ -141,6 +141,12 @@ class ModLog extends SubModule {
         return 'Purged Messages';
       case 'messageDelete':
         return 'Deleted a Message';
+      case 'memberJoin':
+        return 'Joined the Server';
+      case 'memberLeave':
+        return 'Left the Server';
+      case 'lockdown':
+        return 'Raid Lockdown Started';
       default:
         return `${action[0].toLocaleUpperCase()}${action.slice(1)}`;
     }
@@ -167,10 +173,18 @@ class ModLog extends SubModule {
     const embed = new this.Discord.MessageEmbed();
     embed.setTitle(this._actionString(action));
     embed.setFooter(new Date().toString());
-    embed.setThumbnail(user.displayAvatarURL({size: 16}));
-    if (user) embed.addField(user.tag, user.id, true);
+    if (user) {
+      embed.setThumbnail(user.displayAvatarURL({size: 16}));
+      embed.addField(user.tag, user.id, true);
+    }
     if (owner) embed.addField('Moderator', owner.tag, true);
-    if (message) embed.addField('Additional', message, true);
+    if (message) {
+      if (!user && !owner) {
+        embed.setDescription(message);
+      } else {
+        embed.addField('Additional', message, true);
+      }
+    }
     embed.setTimestamp();
     channel.send(embed);
   }
@@ -236,6 +250,13 @@ class Settings {
      */
     this.logMessageDelete = false;
     /**
+     * @description Should the bot log when a lockdown is started?
+     * @public
+     * @type {boolean}
+     * @default
+     */
+    this.logRaidLockdown = false;
+    /**
      * Log other actions that have not been classified.
      * @public
      * @type {boolean}
@@ -266,6 +287,12 @@ class Settings {
         return this.logMessagePurge;
       case 'messageDelete':
         return this.logMessageDelete;
+      case 'memberLeave':
+        return this.logMemberLeave;
+      case 'memberJoin':
+        return this.logMemberJoin;
+      case 'lockdown':
+        return this.logRaidLockdown;
       default:
         return this.logOther;
     }
@@ -288,6 +315,9 @@ Settings.from = function(obj) {
   output.logMutes = obj.logMutes || false;
   output.logMentionAbuse = obj.logMentionAbuse || false;
   output.logMessagePurge = obj.logMessagePurge || false;
+  output.logMemberLeave = obj.logMemberLeave || false;
+  output.logMemberJoin = obj.logMemberJoin || false;
+  output.logRaidLockdown = obj.logRaidLockdown || false;
   return output;
 };
 

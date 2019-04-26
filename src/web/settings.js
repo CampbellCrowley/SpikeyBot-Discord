@@ -124,7 +124,7 @@ function WebSettings() {
       cmdScheduler.removeListener('commandCancelled', handleCommandCancelled);
     }
     cmdScheduler = null;
-    if (!this.initialized) return;
+    if (!self.initialized) return;
     setTimeout(updateModuleReferences, 100);
   }
   /**
@@ -140,7 +140,7 @@ function WebSettings() {
       raidBlock.removeListener('action', handleRaidAction);
     }
     raidBlock = null;
-    if (!this.initialized) return;
+    if (!self.initialized) return;
     setTimeout(updateModuleReferences, 100);
   }
   /**
@@ -1067,6 +1067,14 @@ function WebSettings() {
       return;
     }
     const settings = raidBlock.getSettings(gId);
+    if (typeof settings[key] === 'number') {
+      value *= 1;
+      if (isNaN(value)) {
+        cb('Bad Payload');
+        return;
+      }
+    }
+
     if (typeof settings[key] === typeof value) {
       settings[key] = value;
     } else {
@@ -1115,7 +1123,22 @@ function WebSettings() {
       return;
     }
     const settings = modLog.getSettings(gId);
-    if (typeof settings[key] === typeof value) {
+    if (typeof settings[key] === 'number') {
+      value *= 1;
+      if (isNaN(value)) {
+        cb('Bad Payload');
+        return;
+      }
+    }
+    if (key === 'channel') {
+      const channel = self.client.guilds.get(gId).channels.get(value);
+      if (!channel) {
+        cb('Bad Payload');
+        return;
+      } else {
+        settings[key] = value;
+      }
+    } else if (typeof settings[key] === typeof value) {
       settings[key] = value;
     } else {
       cb('Bad Payload');

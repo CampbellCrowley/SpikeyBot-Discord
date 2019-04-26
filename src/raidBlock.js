@@ -105,7 +105,21 @@ class RaidBlock extends SubModule {
   _modLog(...args) {
     const modLog = this.bot.getSubmodule('./modLog.js');
     if (!modLog) return;
-    modLog(...args);
+    modLog.output(...args);
+  }
+
+  /**
+   * @description Mute a discord guild member.
+   * @see {@link Moderation~muteMember}
+   *
+   * @private
+   * @param {external:Discord~GuildMember} member Member to mute.
+   * @param {Function} cb Callback function.
+   */
+  _muteMember(member, cb) {
+    const moderation = this.bot.getSubmodule('./moderation.js');
+    if (!moderation) return;
+    moderation.muteMember(member, cb);
   }
 
   /**
@@ -119,7 +133,7 @@ class RaidBlock extends SubModule {
     if (!this._settings[member.guild.id]) return;
     const s = this._settings[member.guild.id];
     const now = Date.now();
-    while (now - s.history[0].time > s.timeInterval) {
+    while (s.history.length > 0 && now - s.history[0].time > s.timeInterval) {
       s.history.splice(0, 1);
     }
     for (let i = 0; i < s.history.length; i++) {
@@ -132,10 +146,12 @@ class RaidBlock extends SubModule {
     if (s.enabled) {
       if (s.numJoin <= s.history.length) {
         this._fire('lockdown', {id: member.guild.id, settings: s});
+        if (now - s.start >= s.duration) {
+          this._modLog(
+              member.guild, 'lockdown', null, null,
+              'Lockdown Activated Automatically');
+        }
         s.start = now;
-        this._modLog(
-            member.guild, 'lockdown', null, null,
-            'Lockdown Activated Automatically');
       }
 
       if (now - s.start < s.duration) {
@@ -155,7 +171,7 @@ class RaidBlock extends SubModule {
         'action', {id: member.guild.id, action: s.action, user: member.user});
     switch (s.action) {
       case 'kick':
-        member.kick('Server on raid lockdown.')
+        member.kick({reason: 'Server on raid lockdown.'})
             .then((m) => {
               this._modLog(m.guild, s.action, m.user, null, 'Raid Lockdown');
             })
@@ -165,7 +181,7 @@ class RaidBlock extends SubModule {
             });
         break;
       case 'ban':
-        member.ban('Server on raid lockdown.')
+        member.ban({reason: 'Server on raid lockdown.'})
             .then((m) => {
               this._modLog(m.guild, s.action, m.user, null, 'Raid Lockdown');
             })
@@ -175,12 +191,33 @@ class RaidBlock extends SubModule {
             });
         break;
       case 'mute':
-        this._modLog(
-            member.guild, s.action, member.user, null, 'Raid Lockdown');
+        this._muteMember(member, (err) => {
+          if (err) {
+            this._modLog(
+                member.guild, s.action, member.user, null,
+                'Failed to mute: ' + err);
+          } else {
+            this._modLog(
+                member.guild, s.action, member.user, null, 'Raid Lockdown');
+          }
+        });
         break;
       case 'warnAndMute':
-        this._modLog(
-            member.guild, s.action, member.user, null, 'Raid Lockdown');
+        this._muteMember(member, (err) => {
+          if (err) {
+            this._modLog(
+                member.guild, s.action, member.user, null,
+                'Failed to mute: ' + err);
+          } else {
+            this._modLog(
+                member.guild, s.action, member.user, null, 'Raid Lockdown');
+          }
+        });
+        member
+            .send(
+                'You have been muted in ' + member.guild.name +
+                ' because the server is on lockdown.')
+            .catch(() => {});
         break;
     }
   }
@@ -326,7 +363,7 @@ class RaidBlock extends SubModule {
    */
   _fire(event, ...args) {
     if (!this._events[event]) return;
-    this._events.forEach((el) => el(...args));
+    this._events[event].forEach((el) => el(...args));
   }
 
   /**
