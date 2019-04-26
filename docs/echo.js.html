@@ -42,6 +42,9 @@ const SubModule = require('./subModule.js');
  * @listens Command#be
  * @listens Command#character
  * @listens Command#impersonate
+ * @listens Command#who
+ * @listens Command#whois
+ * @listens Command#whoami
  */
 class Echo extends SubModule {
   /**
@@ -80,6 +83,9 @@ class Echo extends SubModule {
     this.save = this.save.bind(this);
     this._commandSay = this._commandSay.bind(this);
     this._commandBecome = this._commandBecome.bind(this);
+    this._commandWhoIs = this._commandWhoIs.bind(this);
+    this._commandWhoAmI = this._commandWhoAmI.bind(this);
+    this._commandResetCharacters = this._commandResetCharacters.bind(this);
     this._onMessage = this._onMessage.bind(this);
   }
 
@@ -89,7 +95,27 @@ class Echo extends SubModule {
     this.command.on(
         new this.command.SingleCommand(
             ['become', 'self', 'be', 'character', 'impersonate'],
-            this._commandBecome, {validOnlyInGuild: true}));
+            this._commandBecome, {
+              validOnlyInGuild: true,
+              defaultDisabled: true,
+              permissions: this.Discord.Permissions.FLAGS.MANAGE_MESSAGES |
+                  this.Discord.Permissions.FLAGS.MANAGE_WEBHOOKS |
+                  this.Discord.Permissions.FLAGS.MANAGE_GUILD,
+            }));
+    this.command.on(
+        new this.command.SingleCommand(
+            ['who', 'whois'], this._commandWhoIs, {validOnlyInGuild: true}));
+    this.command.on('whoami', this._commandWhoAmI);
+    this.command.on(
+        new this.command.SingleCommand(
+            ['resetcharacters', 'deletecharacters'],
+            this._commandResetCharacters, {
+              validOnlyInGuild: true,
+              defaultDisabled: true,
+              permissions: this.Discord.Permissions.FLAGS.MANAGE_MESSAGES |
+                  this.Discord.Permissions.FLAGS.MANAGE_WEBHOOKS |
+                  this.Discord.Permissions.FLAGS.MANAGE_GUILD,
+            }));
     this.client.on('message', this._onMessage);
 
     this.client.guilds.forEach((g) => {
@@ -110,6 +136,9 @@ class Echo extends SubModule {
   shutdown() {
     this.command.removeListener('say');
     this.command.removeListener('become');
+    this.command.removeListener('whoami');
+    this.command.removeListener('whois');
+    this.command.removeListener('resetcharacters');
     this.client.removeListener('message', this._onMessage);
   }
   /** @inheritdoc */
@@ -208,7 +237,7 @@ class Echo extends SubModule {
           hook.send(msg.content, {
             username: char.username,
             avatarURL: char.avatarURL,
-            files: msg.attachments.map((el) => el.url),
+            // files: msg.attachments.map((el) => el.url),
           });
           if (msg.channel.permissionsFor(msg.guild.me)
               .has(this.Discord.Permissions.FLAGS.MANAGE_MESSAGES)) {
@@ -272,8 +301,14 @@ class Echo extends SubModule {
     if (!this._characters[msg.guild.id]) {
       this._characters[msg.guild.id] = {};
     }
-    if (!this._characters[msg.guild.id][msg.channel.id]) {
-      this._characters[msg.guild.id][msg.channel.id] = {};
+    let channel = msg.channel;
+    if (msg.mentions.channels.size > 0) {
+      channel = msg.mentions.channels.first();
+      msg.text =
+          msg.text.replace(this.Discord.MessageMentions.CHANNELS_PATTERN, '');
+    }
+    if (!this._characters[msg.guild.id][channel.id]) {
+      this._characters[msg.guild.id][channel.id] = {};
     }
     if (msg.text.length > 1) {
       let url;
@@ -298,22 +333,22 @@ class Echo extends SubModule {
 
       // Wait one loop to prevent the command from triggering the event.
       setTimeout(() => {
-        this._characters[msg.guild.id][msg.channel.id][msg.author.id] =
+        this._characters[msg.guild.id][channel.id][msg.author.id] =
             new Character(username, url);
       });
 
-      msg.channel.fetchWebhooks()
+      channel.fetchWebhooks()
           .then((hooks) => {
             const hook = hooks.find((h) => h.owner.id == this.client.user.id);
             if (!hook) {
-              if (!msg.channel.permissionsFor(msg.guild.me)
+              if (!channel.permissionsFor(msg.guild.me)
                   .has(this.Discord.Permissions.FLAGS.MANAGE_WEBHOOKS)) {
                 this.common.reply(
                     msg, 'Failed to create webhook',
                     'I need permission to manage webhooks.');
                 return;
               }
-              msg.channel
+              channel
                   .createWebhook(
                       'SpikeyBot NPCs',
                       {reason: 'Used for becoming other characters.'})
@@ -322,8 +357,7 @@ class Echo extends SubModule {
                   })
                   .catch((err) => {
                     this.error(
-                        'Failed to create webhook for channel: ' +
-                        msg.channel.id);
+                        'Failed to create webhook for channel: ' + channel.id);
                     console.error(err);
                     this.common.reply(
                         msg, 'Failed to create webhook', err.message);
@@ -333,15 +367,99 @@ class Echo extends SubModule {
             }
           })
           .catch((err) => {
-            this.error(
-                'Failed to fetch webhooks for channel: ' + msg.channel.id);
+            this.error('Failed to fetch webhooks for channel: ' + channel.id);
             console.error(err);
             this.common.reply(msg, 'Unable to fetch webhooks.', err.message);
           });
     } else {
-      delete this._characters[msg.guild.id][msg.channel.id][msg.author.id];
+      delete this._characters[msg.guild.id][channel.id][msg.author.id];
       this.common.reply(msg, 'Disabled character');
     }
+  }
+
+  /**
+   * Tell the user who they are.
+   *
+   * @private
+   * @type {Command~commandHandler}
+   * @param {Discord~Message} msg The message that triggered this command.
+   * @listens Command#whoami
+   */
+  _commandWhoAmI(msg) {
+    const char = msg.guild &amp;&amp; this._characters[msg.guild.id] &amp;&amp;
+        this._characters[msg.guild.id][msg.channel.id] &amp;&amp;
+        this._characters[msg.guild.id][msg.channel.id][msg.author.id];
+    if (char) {
+      this.common.reply(
+          msg, msg.author.tag, msg.author.username + ' (' +
+              msg.member.nickname + ')\nCharacter: ' + char.username);
+    } else {
+      this.common.reply(
+          msg, msg.author.tag,
+          `${msg.author.username} (${msg.member.nickname})`);
+    }
+  }
+
+  /**
+   * List all characters currently active in all channels of a guild.
+   *
+   * @private
+   * @type {Command~commandHandler}
+   * @param {Discord~Message} msg The message that triggered this command.
+   * @listens Command#who
+   * @listens Command#whois
+   */
+  _commandWhoIs(msg) {
+    const chars = msg.guild &amp;&amp; this._characters[msg.guild.id];
+    let output = [];
+    for (let channel in chars) {
+      if (!channel) continue;
+      channel = msg.guild.channels.get(channel);
+      if (!channel) continue;
+      const list = [];
+
+      for (let member in chars[channel.id]) {
+        if (!member) continue;
+        member = msg.guild.members.get(member);
+        if (!member) continue;
+        list.push(
+            `${member.user.tag}: ${chars[channel.id][member.id].username}`);
+      }
+      if (list.length > 0) {
+        output.push(`**#${channel.name}**`);
+        output = output.concat(list);
+      }
+    }
+    this.common.reply(msg, 'Current Characters', output.join('\n') || 'None');
+  }
+
+  /**
+   * Reset all current characters, and delete all webhooks.
+   *
+   * @private
+   * @type {Command~commandHandler}
+   * @param {Discord~Message} msg The message that triggered this command.
+   * @listens Command#resetcharacters
+   */
+  _commandResetCharacters(msg) {
+    if (!this._characters[msg.guild.id]) {
+      this.common.reply(msg, 'No characters to reset.');
+      return;
+    }
+    const channels = Object.keys(this._characters[msg.guild.id]);
+
+    channels.forEach((el) => {
+      const channel = msg.guild.channels.get(el);
+      if (!channel) return;
+      channel.fetchWebhooks()
+          .then((hooks) => {
+            const hook = hooks.find((h) => h.owner.id == this.client.user.id);
+            hook.delete('Clearing all characaters.').catch(() => {});
+          })
+          .catch(() => {});
+    });
+    this._characters[msg.guild.id] = {};
+    this.common.reply(msg, 'All characters deleted.');
   }
 
   /**
@@ -421,7 +539,7 @@ module.exports = new Echo();
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Apr 26 2019 15:14:18 GMT-0700 (Pacific Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Apr 26 2019 16:05:57 GMT-0700 (Pacific Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>

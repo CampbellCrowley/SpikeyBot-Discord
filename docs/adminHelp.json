@@ -285,6 +285,17 @@
           ]
         },
         {
+          "command": "resetcharacters",
+          "description": "Delete all custom characters created with the `become` command.",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "resetcharacters",
+              "result": "All created characters and webhooks will be deleted."
+            }
+          ]
+        }
+        {
           "command": "changeprefix",
           "description": "Set a custom prefix for all commands on the current server.",
           "examples": [
@@ -292,6 +303,47 @@
               "description": "Basic Usage",
               "command": "changeprefix !#!",
               "result": "After confirming, all commands must start with !#!. For example ```{prefix}ping``` would become ```!#!ping```.<br>If you forget what the prefix is, just @SpikeyBot and ask what the prefix is. (@SpikeyBot what's the prefix?)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Raids and Logging",
+      "rows": [
+        {
+          "command": "lockdown",
+          "description": "View lockdown settings, or force a lockdown to start or end.",
+          "validOnlyInGuild": true,
+          "aliases": "lockdown, raid",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "lockdown",
+              "result": "Current configuration will be shown to you. To change settings you must use https://www.spikeybot.com/control/."
+            },
+            {
+              "description": "Force Start",
+              "command": "lockdown active",
+              "result": "Force a lockdown to start immediately (Aliases: enable, enabled, start, begin, on, active, activate, protect)."
+            },
+            {
+              "description": "Force End",
+              "command": "lockdown abort",
+              "result": "Force a lockdown to end immediately (Aliases: disable, end, off, finish, deactivate, inactive, disabled, cance, abort, stop)."
+            }
+          ]
+        },
+        {
+          "command": "setlogchannel",
+          "description": "Change the output channel for moderator logging to the channel the command is typed in.",
+          "validOnlyInGuild": true,
+          "aliases": "setlogchannel, logchannel",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "setlogchannel",
+              "result": "Set the channel you run the command in to the output channel. If the channel is already in use, this will disable it instead. You must use https://www.spikeybot.com/control/ to configure what to log."
             }
           ]
         }

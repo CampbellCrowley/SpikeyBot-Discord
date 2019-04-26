@@ -42,12 +42,34 @@
             {
               "description": "Basic Usage",
               "command": "become A Cool NPC https://www.spikeybot.com/SBIcon-128x128.png",
-              "result": "This will create a webhook that will send messages as a bot named 'A Cool NPC' with the linked profile picture, and delete your messages. The profile picture is optional, and can also be uploaded as an attachment to the message with the command."
+              "result": "This will create a webhook that will send messages as a bot named 'A Cool NPC' with the linked profile picture, and delete your messages. The profile picture is optional, and can also be uploaded as an attachment to the message with the command. This is disabled by default, you can give permission to use it with the `enable` command (ex: `{prefix}enable become #roleplay`)."
+            },
+            {
+              "description": "Specify Channel",
+              "command": "become A Cool NPC https://www.spikeybot.com/SBIcon-128x128.png #roleplay",
+              "result": "Same as Basic Usage, but creates it in the #roleplay channel."
             },
             {
               "description": "Disable NPC",
               "command": "self",
               "result": "Running the command without any arguments, will disable the text replacement."
+            },
+            {
+              "description": "Disable NPC in Channel",
+              "command": "self",
+              "result": "Running the command without any arguments, will disable the text replacement."
+            }
+          ]
+        },
+        {
+          "command": "whois",
+          "description": "List all characters created with `become`.",
+          "aliases": "whois, who",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "whois",
+              "result": "All characters in all channels will be listed."
             }
           ]
         },

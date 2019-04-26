@@ -74,7 +74,6 @@ math.config({matrix: 'Array'});
  * @listens Command#listCommands
  * @listens Command#getPrefix
  * @listens Command#git
- * @listens Command#whoami
  * @listens Command#gettime
  * @listens Command#update
  */
@@ -334,7 +333,6 @@ function Main() {
     self.command.on('listcommands', commandListCommands);
     self.command.on('getprefix', commandGetPrefix);
     self.command.on('git', commandGit);
-    self.command.on('whoami', commandWhoAmI);
     self.command.on('gettime', commandGetTime);
     self.command.on('update', commandUpdate);
 
@@ -567,7 +565,6 @@ function Main() {
     self.command.removeListener('listcommands');
     self.command.removeListener('getprefix');
     self.command.removeListener('git');
-    self.command.removeListener('whoami');
     self.command.removeListener('gettime');
     self.command.removeListener('update');
 
@@ -2869,22 +2866,6 @@ function Main() {
             }
           });
     }
-  }
-
-  /**
-   * Tell the user who they are.
-   *
-   * @private
-   *
-   * @type {Command~commandHandler}
-   * @param {Discord~Message} msg The message that triggered this command.
-   * @listens Command#whoami
-   */
-  function commandWhoAmI(msg) {
-    self.common.reply(
-        msg, msg.author.username, msg.author.username + '#' +
-            msg.author.descriminator + ' / ' + msg.author.tag + ' (' +
-            msg.member.nickname + ')');
   }
 
   /**
