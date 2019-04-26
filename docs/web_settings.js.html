@@ -98,21 +98,44 @@ function WebSettings() {
   let cmdScheduler;
 
   /**
+   * Stores the current reference to the RaidBlock subModule. Null if it doesn't
+   * exist.
+   *
+   * @private
+   * @type {?RaidBlock}
+   */
+  let raidBlock;
+
+  /**
    * Update the references to the aplicable subModules.
    *
    * @private
    */
   function updateModuleReferences() {
     if (!self.initialized) return;
-    if (cmdScheduler &amp;&amp; cmdScheduler.initialized) return;
-    cmdScheduler = self.bot.getSubmodule('./cmdScheduling.js');
     if (!cmdScheduler || !cmdScheduler.initialized) {
-      cmdScheduler = null;
-      setTimeout(updateModuleReferences, 100);
-    } else {
-      cmdScheduler.on('shutdown', handleShutdown);
-      cmdScheduler.on('commandRegistered', handleCommandRegistered);
-      cmdScheduler.on('commandCancelled', handleCommandCancelled);
+      cmdScheduler = self.bot.getSubmodule('./cmdScheduling.js');
+      if (!cmdScheduler || !cmdScheduler.initialized) {
+        cmdScheduler = null;
+        setTimeout(updateModuleReferences, 100);
+      } else {
+        cmdScheduler.on('shutdown', handleShutdown);
+        cmdScheduler.on('commandRegistered', handleCommandRegistered);
+        cmdScheduler.on('commandCancelled', handleCommandCancelled);
+      }
+    }
+    if (!raidBlock || !raidBlock.initialized) {
+      raidBlock = self.bot.getSubmodule('./raidBlock.js');
+      if (!raidBlock || !raidBlock.initialized) {
+        raidBlock = null;
+        if (cmdScheduler &amp;&amp; cmdScheduler.initialized) {
+          setTimeout(updateModuleReferences, 100);
+        }
+      } else {
+        raidBlock.on('shutdown', handleRaidShutdown);
+        raidBlock.on('lockdown', handleLockdown);
+        raidBlock.on('action', handleRaidAction);
+      }
     }
   }
 
@@ -123,6 +146,26 @@ function WebSettings() {
    * @listens CmdScheduling#shutdown
    */
   function handleShutdown() {
+    if (cmdScheduler) {
+      cmdScheduler.removeListener('shutdown', handleShutdown);
+      cmdScheduler.removeListener('commandRegistered', handleCommandRegistered);
+      cmdScheduler.removeListener('commandCancelled', handleCommandCancelled);
+    }
+    if (!this.initialized) return;
+    setTimeout(updateModuleReferences, 100);
+  }
+  /**
+   * Handle RaidBlock shutting down.
+   *
+   * @private
+   * @listens RaidBlock[w#shutdown
+   */
+  function handleRaidShutdown() {
+    if (raidBlock) {
+      raidBlock.removeListener('shutdown', handleRaidShutdown);
+      raidBlock.removeListener('lockdown', handleLockdown);
+      raidBlock.removeListener('action', handleRaidAction);
+    }
     if (!this.initialized) return;
     setTimeout(updateModuleReferences, 100);
   }
@@ -206,6 +249,42 @@ function WebSettings() {
       if (sockets[i] &amp;&amp; sockets[i].cachedGuilds &amp;&amp;
           sockets[i].cachedGuilds.includes(gId)) {
         sockets[i].emit('settingsReset', gId);
+      }
+    }
+  }
+
+  /**
+   * Handle a guild going on lockdown.
+   *
+   * @private
+   * @listens RaidBlock#lockdown
+   *
+   * @param {{settings: RaidBlock~RaidSettings, id: string}} event Event
+   * information.
+   */
+  function handleLockdown(event) {
+    for (const i in sockets) {
+      if (sockets[i] &amp;&amp; sockets[i].cachedGuilds &amp;&amp;
+          sockets[i].cachedGuilds.includes(event.id)) {
+        sockets[i].emit('lockdown', event.id, event.settings);
+      }
+    }
+  }
+
+  /**
+   * Handle a guild lockdown action being performed.
+   *
+   * @private
+   * @listens RaidBlock#action
+   *
+   * @param {{action: string, user: external:Discord~User}} event Event
+   * information.
+   */
+  function handleRaidAction(event) {
+    for (const i in sockets) {
+      if (sockets[i] &amp;&amp; sockets[i].cachedGuilds &amp;&amp;
+          sockets[i].cachedGuilds.includes(event.id)) {
+        sockets[i].emit('raidAction', event.id, event.action, event.user.id);
       }
     }
   }
@@ -303,6 +382,9 @@ function WebSettings() {
     socket.on('fetchSettings', (...args) => {
       callSocketFunction(fetchSettings, args);
     });
+    socket.on('fetchRaidSettings', (...args) => {
+      callSocketFunction(fetchRaidSettings, args);
+    });
     socket.on('fetchScheduledCommands', (...args) => {
       callSocketFunction(fetchScheduledCommands, args);
     });
@@ -314,6 +396,9 @@ function WebSettings() {
     });
     socket.on('changePrefix', (...args) => {
       callSocketFunction(changePrefix, args);
+    });
+    socket.on('changeRaidSetting', (...args) => {
+      callSocketFunction(changeRaidSetting, args);
     });
 
     /**
@@ -705,10 +790,19 @@ function WebSettings() {
       cb('Not signed in.', null);
       return;
     }
-    const guilds = self.client.guilds.filter((obj) => {
-      return userData.id == self.common.spikeyId ||
-          obj.members.get(userData.id);
-    });
+    let guilds = [];
+    if (userData.guilds &amp;&amp; userData.guilds.length > 0) {
+      userData.guilds.forEach((el) => {
+        const g = self.client.guilds.get(el.id);
+        if (!g) return;
+        guilds.push(g);
+      });
+    } else {
+      guilds = self.client.guilds.filter((obj) => {
+        return userData.id == self.common.spikeyId ||
+            obj.members.get(userData.id);
+      });
+    }
     const cmdDefaults = self.command.getDefaultSettings();
     const settings = guilds.map((g) => {
       return {
@@ -716,11 +810,37 @@ function WebSettings() {
         prefix: self.bot.getPrefix(g),
         commandSettings: self.command.getUserSettings(g.id),
         commandDefaults: cmdDefaults,
+        raidSettings: raidBlock &amp;&amp; raidBlock.getSettings(g.id) || null,
       };
     });
     cb(settings);
   }
   this.fetchSettings = fetchSettings;
+
+  /**
+   * Client has requested settings specific to raids for single guild.
+   *
+   * @public
+   * @type {WebSettings~SocketFunction}
+   * @param {Object} userData The current user's session data.
+   * @param {socketIo~Socket} socket The socket connection to reply on.
+   * @param {string} gId The guild ID to fetch the settings for.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete and has data, or has failed.
+   */
+  function fetchRaidSettings(userData, socket, gId, cb) {
+    if (typeof cb !== 'function') cb = function() {};
+    if (!userData) {
+      cb('Not signed in.', null);
+      return;
+    }
+    if (!raidBlock) {
+      cb('Internal Server Error');
+      return;
+    }
+    cb(raidBlock.getSettings(gId));
+  }
+  this.fetchRaidSettings = fetchRaidSettings;
 
   /**
    * Client has requested all scheduled commands for the connected user.
@@ -895,6 +1015,47 @@ function WebSettings() {
     cb();
   }
   this.changePrefix = changePrefix;
+
+  /**
+   * Client has requested to change a single raid setting for a guild.
+   *
+   * @public
+   * @type {WebSettings~SocketFunction}
+   * @param {Object} userData The current user's session data.
+   * @param {socketIo~Socket} socket The socket connection to reply on.
+   * @param {string|number} gId The id of the guild of which to change the
+   * setting.
+   * @param {string} key The name of the setting to change.
+   * @param {string|boolean} value The value to set the setting to.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete, or has failed.
+   */
+  function changeRaidSetting(userData, socket, gId, key, value, cb) {
+    if (typeof cb !== 'function') cb = function() {};
+    if (!checkPerm(userData, gId, null, 'lockdown')) {
+      if (!checkMyGuild(gId)) return;
+      replyNoPerm(socket, 'changeRaidSetting');
+      cb('Forbidden');
+      return;
+    }
+    if (!raidBlock) {
+      cb('Internal Server Error');
+      self.common.error(
+          'Attempted to change RaidBlock settings while raidBlock.js ' +
+              'is not loaded!',
+          socket.id);
+      return;
+    }
+    const settings = raidBlock.getSettings(gId);
+    if (typeof settings[key] === typeof value) {
+      settings[key] = value;
+    } else {
+      cb('Bad Payload');
+      return;
+    }
+    cb();
+  }
+  this.changeRaidSetting = changeRaidSetting;
 }
 module.exports = new WebSettings();
 </code></pre>
@@ -907,13 +1068,13 @@ module.exports = new WebSettings();
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_twemojiChecker.html">lib/twemojiChecker</a></li></ul><h3>Externals</h3><ul><li><a href="external-Discord.html">external:Discord</a></li></ul><h3>Classes</h3><ul><li><a href="ChatBot.html">ChatBot</a></li><li><a href="CmdScheduling.html">CmdScheduling</a></li><li><a href="CmdScheduling-ScheduledCommand.html">CmdScheduling~ScheduledCommand</a></li><li><a href="Command.html">Command</a></li><li><a href="Command-CommandSetting.html">Command~CommandSetting</a></li><li><a href="Command-SingleCommand.html">Command~SingleCommand</a></li><li><a href="Common.html">Common</a></li><li><a href="Connect4.html">Connect4</a></li><li><a href="Connect4_Game.html">Connect4#Game</a></li><li><a href="Define.html">Define</a></li><li><a href="DevCmds.html">DevCmds</a></li><li><a href="Echo.html">Echo</a></li><li><a href="Echo-Character.html">Echo~Character</a></li><li><a href="FunTranslators.html">FunTranslators</a></li><li><a href="HG.html">HG</a></li><li><a href="HGWeb.html">HGWeb</a></li><li><a href="HungryGames.html">HungryGames</a></li><li><a href="HungryGames-ArenaEvent.html">HungryGames~ArenaEvent</a></li><li><a href="HungryGames-Battle.html">HungryGames~Battle</a></li><li><a href="HungryGames-Day.html">HungryGames~Day</a></li><li><a href="HungryGames-DefaultOptions.html">HungryGames~DefaultOptions</a></li><li><a href="HungryGames-DefaultOptions-BooleanOption.html">HungryGames~DefaultOptions~BooleanOption</a></li><li><a href="HungryGames-DefaultOptions-NumberOption.html">HungryGames~DefaultOptions~NumberOption</a></li><li><a href="HungryGames-DefaultOptions-ObjectOption.html">HungryGames~DefaultOptions~ObjectOption</a></li><li><a href="HungryGames-DefaultOptions-Option.html">HungryGames~DefaultOptions~Option</a></li><li><a href="HungryGames-DefaultOptions-SelectOption.html">HungryGames~DefaultOptions~SelectOption</a></li><li><a href="HungryGames-Event.html">HungryGames~Event</a></li><li><a href="HungryGames-FinalEvent.html">HungryGames~FinalEvent</a></li><li><a href="HungryGames-ForcedOutcome.html">HungryGames~ForcedOutcome</a></li><li><a href="HungryGames-Game.html">HungryGames~Game</a></li><li><a href="HungryGames-Grammar.html">HungryGames~Grammar</a></li><li><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></li><li><a href="HungryGames-Messages.html">HungryGames~Messages</a></li><li><a href="HungryGames-OutcomeProbabilities.html">HungryGames~OutcomeProbabilities</a></li><li><a href="HungryGames-Player.html">HungryGames~Player</a></li><li><a href="HungryGames-Simulator.html">HungryGames~Simulator</a></li><li><a href="HungryGames-Simulator-Worker.html">HungryGames~Simulator~Worker</a></li><li><a href="HungryGames-Team.html">HungryGames~Team</a></li><li><a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a></li><li><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></li><li><a href="Main.html">Main</a></li><li><a href="MainModule.html">MainModule</a></li><li><a href="Messages.html">Messages</a></li><li><a href="Music.html">Music</a></li><li><a href="NPC.html">NPC</a></li><li><a href="Patreon.html">Patreon</a></li><li><a href="Patreon-toExport.html">Patreon~toExport</a></li><li><a href="Polling.html">Polling</a></li><li><a href="Polling-Poll.html">Polling~Poll</a></li><li><a href="RoleColors.html">RoleColors</a></li><li><a href="RoleManager.html">RoleManager</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="SMLoader.html">SMLoader</a></li><li><a href="SpikeyBot.html">SpikeyBot</a></li><li><a href="Spotify.html">Spotify</a></li><li><a href="SubModule.html">SubModule</a></li><li><a href="TicTacToe.html">TicTacToe</a></li><li><a href="TicTacToe_Game.html">TicTacToe#Game</a></li><li><a href="TTS.html">TTS</a></li><li><a href="Uno.html">Uno</a></li><li><a href="Uno_Card.html">Uno#Card</a></li><li><a href="Uno_Game.html">Uno#Game</a></li><li><a href="WebAccount.html">WebAccount</a></li><li><a href="WebCommands.html">WebCommands</a></li><li><a href="WebProxy.html">WebProxy</a></li><li><a href="WebSettings.html">WebSettings</a></li><li><a href="WebStats.html">WebStats</a></li></ul><h3>Global</h3><ul><li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_twemojiChecker.html">lib/twemojiChecker</a></li></ul><h3>Externals</h3><ul><li><a href="external-Discord.html">external:Discord</a></li></ul><h3>Classes</h3><ul><li><a href="ChatBot.html">ChatBot</a></li><li><a href="CmdScheduling.html">CmdScheduling</a></li><li><a href="CmdScheduling-ScheduledCommand.html">CmdScheduling~ScheduledCommand</a></li><li><a href="Command.html">Command</a></li><li><a href="Command-CommandSetting.html">Command~CommandSetting</a></li><li><a href="Command-SingleCommand.html">Command~SingleCommand</a></li><li><a href="Common.html">Common</a></li><li><a href="Connect4.html">Connect4</a></li><li><a href="Connect4_Game.html">Connect4#Game</a></li><li><a href="Define.html">Define</a></li><li><a href="DevCmds.html">DevCmds</a></li><li><a href="Echo.html">Echo</a></li><li><a href="Echo-Character.html">Echo~Character</a></li><li><a href="FunTranslators.html">FunTranslators</a></li><li><a href="HG.html">HG</a></li><li><a href="HGWeb.html">HGWeb</a></li><li><a href="HungryGames.html">HungryGames</a></li><li><a href="HungryGames-ArenaEvent.html">HungryGames~ArenaEvent</a></li><li><a href="HungryGames-Battle.html">HungryGames~Battle</a></li><li><a href="HungryGames-Day.html">HungryGames~Day</a></li><li><a href="HungryGames-DefaultOptions.html">HungryGames~DefaultOptions</a></li><li><a href="HungryGames-DefaultOptions-BooleanOption.html">HungryGames~DefaultOptions~BooleanOption</a></li><li><a href="HungryGames-DefaultOptions-NumberOption.html">HungryGames~DefaultOptions~NumberOption</a></li><li><a href="HungryGames-DefaultOptions-ObjectOption.html">HungryGames~DefaultOptions~ObjectOption</a></li><li><a href="HungryGames-DefaultOptions-Option.html">HungryGames~DefaultOptions~Option</a></li><li><a href="HungryGames-DefaultOptions-SelectOption.html">HungryGames~DefaultOptions~SelectOption</a></li><li><a href="HungryGames-Event.html">HungryGames~Event</a></li><li><a href="HungryGames-FinalEvent.html">HungryGames~FinalEvent</a></li><li><a href="HungryGames-ForcedOutcome.html">HungryGames~ForcedOutcome</a></li><li><a href="HungryGames-Game.html">HungryGames~Game</a></li><li><a href="HungryGames-Grammar.html">HungryGames~Grammar</a></li><li><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></li><li><a href="HungryGames-Messages.html">HungryGames~Messages</a></li><li><a href="HungryGames-OutcomeProbabilities.html">HungryGames~OutcomeProbabilities</a></li><li><a href="HungryGames-Player.html">HungryGames~Player</a></li><li><a href="HungryGames-Simulator.html">HungryGames~Simulator</a></li><li><a href="HungryGames-Simulator-Worker.html">HungryGames~Simulator~Worker</a></li><li><a href="HungryGames-Team.html">HungryGames~Team</a></li><li><a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a></li><li><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></li><li><a href="Main.html">Main</a></li><li><a href="MainModule.html">MainModule</a></li><li><a href="Messages.html">Messages</a></li><li><a href="Moderation.html">Moderation</a></li><li><a href="ModLog.html">ModLog</a></li><li><a href="ModLog-Settings.html">ModLog~Settings</a></li><li><a href="Music.html">Music</a></li><li><a href="NPC.html">NPC</a></li><li><a href="Patreon.html">Patreon</a></li><li><a href="Patreon-toExport.html">Patreon~toExport</a></li><li><a href="Polling.html">Polling</a></li><li><a href="Polling-Poll.html">Polling~Poll</a></li><li><a href="RaidBlock.html">RaidBlock</a></li><li><a href="RaidBlock-RaidSettings.html">RaidBlock~RaidSettings</a></li><li><a href="RoleColors.html">RoleColors</a></li><li><a href="RoleManager.html">RoleManager</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="SMLoader.html">SMLoader</a></li><li><a href="SpikeyBot.html">SpikeyBot</a></li><li><a href="Spotify.html">Spotify</a></li><li><a href="SubModule.html">SubModule</a></li><li><a href="TicTacToe.html">TicTacToe</a></li><li><a href="TicTacToe_Game.html">TicTacToe#Game</a></li><li><a href="TTS.html">TTS</a></li><li><a href="Uno.html">Uno</a></li><li><a href="Uno_Card.html">Uno#Card</a></li><li><a href="Uno_Game.html">Uno#Game</a></li><li><a href="WebAccount.html">WebAccount</a></li><li><a href="WebCommands.html">WebCommands</a></li><li><a href="WebProxy.html">WebProxy</a></li><li><a href="WebSettings.html">WebSettings</a></li><li><a href="WebStats.html">WebStats</a></li></ul><h3>Global</h3><ul><li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Wed Apr 24 2019 14:44:43 GMT-0700 (Pacific Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Apr 25 2019 17:14:50 GMT-0700 (Pacific Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>

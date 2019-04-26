@@ -7,7 +7,6 @@ const Jimp = require('jimp');
 const fs = require('fs');
 const mkdirp = require('mkdirp');
 const childProcess = require('child_process');
-delete require.cache[require.resolve('./subModule.js')];
 require('./subModule.js').extend(Main);  // Extends the SubModule class.
 
 math.config({matrix: 'Array'});
@@ -804,40 +803,25 @@ function Main() {
         self.Discord.Permissions.FLAGS.VIEW_AUDIT_LOG)) {
       return;
     }
-    let channel = '';
-    let pos = -1;
-    try {
-      guild.channels.forEach(function(val, key) {
-        if (val.type != 'voice' && val.type != 'category') {
-          if ((pos == -1 || val.position < pos) &&
-              val.permissionsFor(self.client.user)
-                  .has(self.Discord.Permissions.FLAGS.SEND_MESSAGES)) {
-            pos = val.position;
-            channel = val.id;
+    const modLog = self.bot.getSubmodule('./modLog.js');
+    if (!modLog) return;
+    guild.fetchAuditLogs({limit: 1})
+        .then((logs) => {
+          const executor = logs.entries.first().executor;
+          if (executor.id !== self.client.user.id) {
+            modLog.output(
+                guild, 'ban', user, executor, '`Poof! ' + executor.username +
+                    ' has ensured ' + user.username +
+                    ' will never be seen again...');
           }
-        }
-      });
-      guild.fetchAuditLogs({limit: 1})
-          .then((logs) => {
-            if (logs.entries.first().executor.id !== self.client.user.id) {
-              self.client.channels.get(channel).send(
-                  '`Poof! ' + logs.entries.first().executor.username +
-                  ' has ensured ' + user.username +
-                  ' will never be seen again...`\nAdmins can disable these ' +
-                  'messages with `' + self.bot.getPrefix(guild.id) +
-                  'togglebanmessages`.');
-            }
-          })
-          .catch((err) => {
-            self.client.channels.get(channel).send(
-                '`Poof! ' + user.username + ' was never seen again...`');
-            self.error('Failed to find executor of ban.');
-            console.log(err);
-          });
-    } catch (err) {
-      self.error('Failed to send ban from guild:' + guild.id);
-      console.log(err);
-    }
+        })
+        .catch((err) => {
+          modLog.output(
+              guild, 'ban', user, null,
+              '`Poof! ' + user.username + ' was never seen again...`');
+          self.error('Failed to find executor of ban.');
+          console.log(err);
+        });
   }
 
   /**
@@ -1864,6 +1848,12 @@ function Main() {
                     self.common
                         .reply(msg, banMsg, 'Banned ' + toBan.user.username)
                         .catch(() => {});
+                    const modLog = self.getSubmodule('./modLog.js');
+                    if (modLog) {
+                      modLog.output(
+                          msg.guild, 'ban', toBan.user, msg.author,
+                          reason || banMsg);
+                    }
                   })
                   .catch((err) => {
                     self.common
@@ -1894,7 +1884,7 @@ function Main() {
   function commandSmite(msg) {
     if (msg.mentions.members.size === 0) {
       self.common.reply(
-          msg, 'You must mention someone to ban after the command.');
+          msg, 'You must mention someone to smite after the command.');
     } else {
       const toSmite = msg.mentions.members.first();
       if (msg.guild.ownerID !== msg.author.id &&
@@ -1930,6 +1920,11 @@ function Main() {
                       self.common.reply(
                           msg, 'The gods have struck ' + member.user.username +
                               ' with lightning!');
+                      const modLog = self.bot.getSubmodule('./modLog.js');
+                      if (modLog) {
+                        modLog.output(
+                            msg.guild, 'smite', member.user, msg.author);
+                      }
                     })
                     .catch((err) => {
                       self.common.reply(
@@ -2435,30 +2430,34 @@ function Main() {
           'These statistics are collected from the entire bot, ' +
           'across all shards.');
 
-      const guildString = 'Number of guilds: ' + values.numGuilds +
-          '\nLargest Guild: ' + values.numLargestGuild +
+      const guildString = 'Number of servers: ' + values.numGuilds +
+          '\nLargest Server: ' + values.numLargestGuild +
           ' members\nNumber of channels: ' + values.numChannels;
       embed.addField('Guilds', guildString, true);
 
-      const userString = 'Number of users: ' + values.numMembers +
-          '\nNumber of cached users: ' + values.numUsers +
-          '\nNumber of users that are bots: ' + values.numBots +
-          '\nNumber of online users: ' + values.numUsersOnline;
+      const userString = 'Users: ' + values.numMembers + '\nCached users: ' +
+          values.numUsers + '\nUsers that are bots: ' + values.numBots +
+          '\nOnline users: ' + values.numUsersOnline;
       embed.addField('Users', userString, true);
 
-      const actString = 'Number of activities people are doing: ' +
+      const actString = 'Activities people are doing: ' +
           Object.keys(values.activities).length +
           '\nMost popular activity:\n`' + values.largestActivity.name +
           '`\n with ' + values.largestActivity.count + ' people.';
       embed.addField('Activities/Games', actString, true);
 
       const shardUptimes = values.uptimes.map((el, i) => {
-        return 'Shard #' + i + ' (' + values.versions[i] + ')\n- up ' + el;
+        const mem = values.memory[i];
+        return `Shard #${i} (${values.versions[i]})\n- up ${el}\n- ${mem}`;
       });
       const shardString = 'Number of shards: ' + values.numShards +
           '\nThis guild/channel is in shard #' + values.reqShard + '\n' +
           shardUptimes.join('\n');
       embed.addField('Shards', shardString, true);
+
+      const systemString = 'Storage used: ' + values.saveData.match(/^\S+/)[0] +
+          '\nPing: ' + Math.round(self.client.ws.ping) + 'ms';
+      embed.addField('System', systemString, true);
 
       /* embed.addField(
           'This Shard Version',
@@ -2503,6 +2502,7 @@ function Main() {
       numUsersOnline: 0,
       numChannels: 0,
       uptimes: [],
+      memory: [],
       activities: {},
       largestActivity: {name: 'Nothing', count: 0},
       versions: [],
@@ -2510,6 +2510,13 @@ function Main() {
       reqShard: 0,
       fullDelta: 0,
     };
+    try {
+      values.saveData =
+          childProcess.execSync('du -sh ./save/').toString().trim();
+    } catch (err) {
+      self.error('Failed to fetch save directory size.');
+      console.error(err);
+    }
     if (self.client.shard) {
       values.numShards = self.client.shard.count;
       values.reqShard = self.client.shard.ids[0];
@@ -2542,6 +2549,11 @@ function Main() {
         values.numChannels += res[i].numChannels;
         values.uptimes[i] = res[i].uptime;
         values.versions[i] = res[i].version;
+        const mem = res[i].memory;
+        const used = Math.round(mem.heapUsed / 100000) / 10;
+        const heapTotal = Math.round(mem.heapTotal / 100000) / 10;
+        const rss = Math.round(mem.rss / 100000) / 10;
+        values.memory[i] = `${used}/${heapTotal}MB (${rss}MB)`;
         const actVals = Object.entries(res[i].activities);
         for (let j = 0; j < actVals.length; j++) {
           if (tempActs[actVals[j][0]]) {
@@ -2596,6 +2608,7 @@ function Main() {
       numChannels: 0,
       usersOffline: {},
       uptime: '0 days',
+      memory: process.memoryUsage(),
       activities: {},
       version: version + '#' + commit.slice(0, 7),
       shardId: (self.client.shard || {id: 0}).id,
@@ -2634,7 +2647,8 @@ function Main() {
     out.numUsers = self.client.users.size;
     out.numChannels = self.client.channels.size;
 
-    const ut = self.client.uptime;
+    const ut = self.bot.startTimestamp ? Date.now() - self.bot.startTimestamp :
+                                         self.client.uptime;
     out.uptime = Math.floor(ut / 1000 / 60 / 60 / 24) + ' Days, ' +
         Math.floor(ut / 1000 / 60 / 60) % 24 + ' Hours';
     out.delta = Date.now() - startTime;

@@ -70,21 +70,44 @@ function WebSettings() {
   let cmdScheduler;
 
   /**
+   * Stores the current reference to the RaidBlock subModule. Null if it doesn't
+   * exist.
+   *
+   * @private
+   * @type {?RaidBlock}
+   */
+  let raidBlock;
+
+  /**
    * Update the references to the aplicable subModules.
    *
    * @private
    */
   function updateModuleReferences() {
     if (!self.initialized) return;
-    if (cmdScheduler && cmdScheduler.initialized) return;
-    cmdScheduler = self.bot.getSubmodule('./cmdScheduling.js');
     if (!cmdScheduler || !cmdScheduler.initialized) {
-      cmdScheduler = null;
-      setTimeout(updateModuleReferences, 100);
-    } else {
-      cmdScheduler.on('shutdown', handleShutdown);
-      cmdScheduler.on('commandRegistered', handleCommandRegistered);
-      cmdScheduler.on('commandCancelled', handleCommandCancelled);
+      cmdScheduler = self.bot.getSubmodule('./cmdScheduling.js');
+      if (!cmdScheduler || !cmdScheduler.initialized) {
+        cmdScheduler = null;
+        setTimeout(updateModuleReferences, 100);
+      } else {
+        cmdScheduler.on('shutdown', handleShutdown);
+        cmdScheduler.on('commandRegistered', handleCommandRegistered);
+        cmdScheduler.on('commandCancelled', handleCommandCancelled);
+      }
+    }
+    if (!raidBlock || !raidBlock.initialized) {
+      raidBlock = self.bot.getSubmodule('./raidBlock.js');
+      if (!raidBlock || !raidBlock.initialized) {
+        raidBlock = null;
+        if (cmdScheduler && cmdScheduler.initialized) {
+          setTimeout(updateModuleReferences, 100);
+        }
+      } else {
+        raidBlock.on('shutdown', handleRaidShutdown);
+        raidBlock.on('lockdown', handleLockdown);
+        raidBlock.on('action', handleRaidAction);
+      }
     }
   }
 
@@ -95,6 +118,26 @@ function WebSettings() {
    * @listens CmdScheduling#shutdown
    */
   function handleShutdown() {
+    if (cmdScheduler) {
+      cmdScheduler.removeListener('shutdown', handleShutdown);
+      cmdScheduler.removeListener('commandRegistered', handleCommandRegistered);
+      cmdScheduler.removeListener('commandCancelled', handleCommandCancelled);
+    }
+    if (!this.initialized) return;
+    setTimeout(updateModuleReferences, 100);
+  }
+  /**
+   * Handle RaidBlock shutting down.
+   *
+   * @private
+   * @listens RaidBlock[w#shutdown
+   */
+  function handleRaidShutdown() {
+    if (raidBlock) {
+      raidBlock.removeListener('shutdown', handleRaidShutdown);
+      raidBlock.removeListener('lockdown', handleLockdown);
+      raidBlock.removeListener('action', handleRaidAction);
+    }
     if (!this.initialized) return;
     setTimeout(updateModuleReferences, 100);
   }
@@ -178,6 +221,42 @@ function WebSettings() {
       if (sockets[i] && sockets[i].cachedGuilds &&
           sockets[i].cachedGuilds.includes(gId)) {
         sockets[i].emit('settingsReset', gId);
+      }
+    }
+  }
+
+  /**
+   * Handle a guild going on lockdown.
+   *
+   * @private
+   * @listens RaidBlock#lockdown
+   *
+   * @param {{settings: RaidBlock~RaidSettings, id: string}} event Event
+   * information.
+   */
+  function handleLockdown(event) {
+    for (const i in sockets) {
+      if (sockets[i] && sockets[i].cachedGuilds &&
+          sockets[i].cachedGuilds.includes(event.id)) {
+        sockets[i].emit('lockdown', event.id, event.settings);
+      }
+    }
+  }
+
+  /**
+   * Handle a guild lockdown action being performed.
+   *
+   * @private
+   * @listens RaidBlock#action
+   *
+   * @param {{action: string, user: external:Discord~User}} event Event
+   * information.
+   */
+  function handleRaidAction(event) {
+    for (const i in sockets) {
+      if (sockets[i] && sockets[i].cachedGuilds &&
+          sockets[i].cachedGuilds.includes(event.id)) {
+        sockets[i].emit('raidAction', event.id, event.action, event.user.id);
       }
     }
   }
@@ -275,6 +354,9 @@ function WebSettings() {
     socket.on('fetchSettings', (...args) => {
       callSocketFunction(fetchSettings, args);
     });
+    socket.on('fetchRaidSettings', (...args) => {
+      callSocketFunction(fetchRaidSettings, args);
+    });
     socket.on('fetchScheduledCommands', (...args) => {
       callSocketFunction(fetchScheduledCommands, args);
     });
@@ -286,6 +368,9 @@ function WebSettings() {
     });
     socket.on('changePrefix', (...args) => {
       callSocketFunction(changePrefix, args);
+    });
+    socket.on('changeRaidSetting', (...args) => {
+      callSocketFunction(changeRaidSetting, args);
     });
 
     /**
@@ -677,10 +762,19 @@ function WebSettings() {
       cb('Not signed in.', null);
       return;
     }
-    const guilds = self.client.guilds.filter((obj) => {
-      return userData.id == self.common.spikeyId ||
-          obj.members.get(userData.id);
-    });
+    let guilds = [];
+    if (userData.guilds && userData.guilds.length > 0) {
+      userData.guilds.forEach((el) => {
+        const g = self.client.guilds.get(el.id);
+        if (!g) return;
+        guilds.push(g);
+      });
+    } else {
+      guilds = self.client.guilds.filter((obj) => {
+        return userData.id == self.common.spikeyId ||
+            obj.members.get(userData.id);
+      });
+    }
     const cmdDefaults = self.command.getDefaultSettings();
     const settings = guilds.map((g) => {
       return {
@@ -688,11 +782,37 @@ function WebSettings() {
         prefix: self.bot.getPrefix(g),
         commandSettings: self.command.getUserSettings(g.id),
         commandDefaults: cmdDefaults,
+        raidSettings: raidBlock && raidBlock.getSettings(g.id) || null,
       };
     });
     cb(settings);
   }
   this.fetchSettings = fetchSettings;
+
+  /**
+   * Client has requested settings specific to raids for single guild.
+   *
+   * @public
+   * @type {WebSettings~SocketFunction}
+   * @param {Object} userData The current user's session data.
+   * @param {socketIo~Socket} socket The socket connection to reply on.
+   * @param {string} gId The guild ID to fetch the settings for.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete and has data, or has failed.
+   */
+  function fetchRaidSettings(userData, socket, gId, cb) {
+    if (typeof cb !== 'function') cb = function() {};
+    if (!userData) {
+      cb('Not signed in.', null);
+      return;
+    }
+    if (!raidBlock) {
+      cb('Internal Server Error');
+      return;
+    }
+    cb(raidBlock.getSettings(gId));
+  }
+  this.fetchRaidSettings = fetchRaidSettings;
 
   /**
    * Client has requested all scheduled commands for the connected user.
@@ -867,5 +987,46 @@ function WebSettings() {
     cb();
   }
   this.changePrefix = changePrefix;
+
+  /**
+   * Client has requested to change a single raid setting for a guild.
+   *
+   * @public
+   * @type {WebSettings~SocketFunction}
+   * @param {Object} userData The current user's session data.
+   * @param {socketIo~Socket} socket The socket connection to reply on.
+   * @param {string|number} gId The id of the guild of which to change the
+   * setting.
+   * @param {string} key The name of the setting to change.
+   * @param {string|boolean} value The value to set the setting to.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete, or has failed.
+   */
+  function changeRaidSetting(userData, socket, gId, key, value, cb) {
+    if (typeof cb !== 'function') cb = function() {};
+    if (!checkPerm(userData, gId, null, 'lockdown')) {
+      if (!checkMyGuild(gId)) return;
+      replyNoPerm(socket, 'changeRaidSetting');
+      cb('Forbidden');
+      return;
+    }
+    if (!raidBlock) {
+      cb('Internal Server Error');
+      self.common.error(
+          'Attempted to change RaidBlock settings while raidBlock.js ' +
+              'is not loaded!',
+          socket.id);
+      return;
+    }
+    const settings = raidBlock.getSettings(gId);
+    if (typeof settings[key] === typeof value) {
+      settings[key] = value;
+    } else {
+      cb('Bad Payload');
+      return;
+    }
+    cb();
+  }
+  this.changeRaidSetting = changeRaidSetting;
 }
 module.exports = new WebSettings();

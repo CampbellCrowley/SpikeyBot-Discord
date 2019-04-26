@@ -85,6 +85,15 @@ function SpikeyBot() {
       childProcess.execSync('git rev-parse --short HEAD').toString().trim();
 
   /**
+   * Timestamp at which this process was started.
+   *
+   * @public
+   * @type {number}
+   * @constant
+   */
+  this.startTimestamp = Date.now();
+
+  /**
    * Is the bot currently responding as a unit test.
    *
    * @private
@@ -624,8 +633,8 @@ function SpikeyBot() {
         updateGame('Running unit test...');
       } else if (isDev) {
         updateGame(`Version: ${self.version}`);
-      } else if (botName === 'rembot') {
-        updateGame();
+      } else if (botName === 'rembot' || botName === 'mikubot') {
+        updateGame('');
       } else if (isBackup) {
         // updateGame('OFFLINE', 'PLAYING');
       } else {

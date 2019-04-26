@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: moderation.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: moderation.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>// Copyright 2019 Campbell Crowley. All rights reserved.
+// Author: Campbell Crowley (dev@campbellcrowley.com)
+const fs = require('fs');
+const SubModule = require('./subModule.js');
+
+/**
+ * @description Handle all moderator related commands and control.
+ * @extends SubModule
+ */
+class Moderation extends SubModule {
+  /**
+   * Instantiate Moderation SubModule.
+   */
+  constructor() {
+    super();
+    /** @inheritdoc */
+    this.myName = 'Moderation';
+    /**
+     * All guilds that have disabled the auto-smite feature.
+     *
+     * @private
+     * @type {Object.&lt;boolean>}
+     */
+    this._disabledAutoSmite = {};
+
+    /**
+     * All guilds that have disabled sending messages when someone is banned.
+     *
+     * @private
+     * @type {Object.&lt;boolean>}
+     */
+    this._disabledBanMessage = {};
+    /**
+     * The guilds with auto-smite enabled, and members who have mentioned
+     * @everyone, and the timestamps of these mentions.
+     *
+     * @private
+     * @type {Object.&lt;Object.&lt;string>>}
+     */
+    this._mentionAccumulator = {};
+    /**
+     * All of the possible messages to show when using the ban command.
+     *
+     * @private
+     * @type {string[]}
+     * @constant
+     */
+    this._banMsgs = [
+      'It was really nice meeting you!',
+      'You\'re a really great person, I\'m sorry I had to do this.',
+      'See you soon!',
+      'And they were never heard from again...',
+      'Poof! Gone like magic!',
+      'Does it seem quiet in here? Or is it just me?',
+      'And like the trash, they\'re were taken out!',
+      'Looks like they made like a tree, and leaf-ed. (sorry)',
+      'Oof! Looks like my boot to their behind left a mark!',
+      'Between you and me, I didn\'t like them anyways.',
+      'Everyone rejoice! The world has been eradicated of one more person ' +
+          'that no one liked anyways.',
+      'The ban hammer has spoken!',
+    ];
+
+    this.save = this.save.bind(this);
+  }
+  /** @inheritdoc */
+  initialize() {
+    /**
+     * Permissions required to to use the smite command. Bitfield.
+     * @private
+     * @type {number}
+     * @constant
+     */
+    this._smitePerms = this.Discord.Permissions.FLAGS.CONNECT |
+        this.Discord.Permissions.FLAGS.VIEW_CHANNEL;
+
+    /* const adminOnlyOpts = new this.command.CommandSetting({
+      validOnlyInGuild: true,
+      defaultDisabled: true,
+      permissions: this.Discord.Permissions.FLAGS.MANAGE_ROLES |
+          this.Discord.Permissions.FLAGS.MANAGE_GUILD |
+          this.Discord.Permissions.FLAGS.BAN_MEMBERS,
+    });
+
+    this.command.on(
+        new this.command.SingleCommand(['purge', 'prune'], commandPurge, {
+          validOnlyInGuild: true,
+          defaultDisabled: true,
+          permissions: this.Discord.Permissions.FLAGS.MANAGE_MESSAGES,
+        }));
+    this.command.on(
+        new this.command.SingleCommand(['ban', 'fuckyou'], commandBan, {
+          validOnlyInGuild: true,
+          defaultDisabled: true,
+          permissions: this.Discord.Permissions.FLAGS.BAN_MEMBERS,
+        }));
+    this.command.on(new this.command.SingleCommand(['smite'], commandSmite, {
+      validOnlyInGuild: true,
+      defaultDisabled: true,
+      permissions: this.Discord.Permissions.FLAGS.MANAGE_ROLES,
+    }));
+    this.command.on(
+        new this.command.SingleCommand(
+            'togglemute', commandToggleMute, adminOnlyOpts));
+    this.command.on(
+        new this.command.SingleCommand(
+            'togglebanmessages', commandToggleBanMessages, adminOnlyOpts)); */
+
+    this.client.guilds.forEach((g) => {
+      if (!fs.existsSync(
+          `${this.common.guildSaveDir}${g.id}/moderation.json`)) {
+        // This is here to upgrade to new file-system. After first load
+        // main-config.json does not need to be read anymore.
+        fs.readFile(
+            `${this.common.guildSaveDir}${g.id}/main-config.json`,
+            (err, file) => {
+              if (err) return;
+              let parsed;
+              try {
+                parsed = JSON.parse(file);
+              } catch (e) {
+                return;
+              }
+              if (typeof parsed.disabledAutoSmite === 'boolean') {
+                this._disabledAutoSmite[g.id] = parsed.disabledAutoSmite;
+              }
+              if (typeof parsed.disabledBanMessage === 'boolean') {
+                this._disabledBanMessage[g.id] = parsed.disabledBanMessage;
+              }
+            });
+      } else {
+        fs.readFile(
+            `${this.common.guildSaveDir}${g.id}/moderation.json`,
+            (err, file) => {
+              if (err) return;
+              let parsed;
+              try {
+                parsed = JSON.parse(file);
+              } catch (e) {
+                return;
+              }
+              if (typeof parsed.disabledAutoSmite === 'boolean') {
+                this._disabledAutoSmite[g.id] = parsed.disabledAutoSmite;
+              }
+              if (typeof parsed.disabledBanMessage === 'boolean') {
+                this._disabledBanMessage[g.id] = parsed.disabledBanMessage;
+              }
+            });
+      }
+    });
+  }
+  /** @inheritdoc */
+  shutdown() {
+    /* this.command.removeListener('purge');
+    this.command.removeListener('fuckyou');
+    this.command.removeListener('smite');
+    this.command.removeListener('togglemute');
+    this.command.removeListener('togglebanmessages'); */
+  }
+  /** @inheritdoc */
+  save(opt) {
+    if (!this.initialized) return;
+
+    this.client.guilds.forEach((obj) => {
+      const dir = `${this.common.guildSaveDir}${obj.id}/`;
+      const filename = `${dir}moderation.json`;
+      const data = {
+        disabledBanMessage: this._disabledBanMessage[obj.id],
+        disabledAutoSmite: this._disabledAutoSmite[obj.id],
+      };
+      if (opt == 'async') {
+        this.common.mkAndWrite(filename, dir, JSON.stringify(data));
+      } else {
+        this.common.mkAndWriteSync(filename, dir, JSON.stringify(data));
+      }
+    });
+  }
+}
+
+module.exports = new Moderation();
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_twemojiChecker.html">lib/twemojiChecker</a></li></ul><h3>Externals</h3><ul><li><a href="external-Discord.html">external:Discord</a></li></ul><h3>Classes</h3><ul><li><a href="ChatBot.html">ChatBot</a></li><li><a href="CmdScheduling.html">CmdScheduling</a></li><li><a href="CmdScheduling-ScheduledCommand.html">CmdScheduling~ScheduledCommand</a></li><li><a href="Command.html">Command</a></li><li><a href="Command-CommandSetting.html">Command~CommandSetting</a></li><li><a href="Command-SingleCommand.html">Command~SingleCommand</a></li><li><a href="Common.html">Common</a></li><li><a href="Connect4.html">Connect4</a></li><li><a href="Connect4_Game.html">Connect4#Game</a></li><li><a href="Define.html">Define</a></li><li><a href="DevCmds.html">DevCmds</a></li><li><a href="Echo.html">Echo</a></li><li><a href="Echo-Character.html">Echo~Character</a></li><li><a href="FunTranslators.html">FunTranslators</a></li><li><a href="HG.html">HG</a></li><li><a href="HGWeb.html">HGWeb</a></li><li><a href="HungryGames.html">HungryGames</a></li><li><a href="HungryGames-ArenaEvent.html">HungryGames~ArenaEvent</a></li><li><a href="HungryGames-Battle.html">HungryGames~Battle</a></li><li><a href="HungryGames-Day.html">HungryGames~Day</a></li><li><a href="HungryGames-DefaultOptions.html">HungryGames~DefaultOptions</a></li><li><a href="HungryGames-DefaultOptions-BooleanOption.html">HungryGames~DefaultOptions~BooleanOption</a></li><li><a href="HungryGames-DefaultOptions-NumberOption.html">HungryGames~DefaultOptions~NumberOption</a></li><li><a href="HungryGames-DefaultOptions-ObjectOption.html">HungryGames~DefaultOptions~ObjectOption</a></li><li><a href="HungryGames-DefaultOptions-Option.html">HungryGames~DefaultOptions~Option</a></li><li><a href="HungryGames-DefaultOptions-SelectOption.html">HungryGames~DefaultOptions~SelectOption</a></li><li><a href="HungryGames-Event.html">HungryGames~Event</a></li><li><a href="HungryGames-FinalEvent.html">HungryGames~FinalEvent</a></li><li><a href="HungryGames-ForcedOutcome.html">HungryGames~ForcedOutcome</a></li><li><a href="HungryGames-Game.html">HungryGames~Game</a></li><li><a href="HungryGames-Grammar.html">HungryGames~Grammar</a></li><li><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></li><li><a href="HungryGames-Messages.html">HungryGames~Messages</a></li><li><a href="HungryGames-OutcomeProbabilities.html">HungryGames~OutcomeProbabilities</a></li><li><a href="HungryGames-Player.html">HungryGames~Player</a></li><li><a href="HungryGames-Simulator.html">HungryGames~Simulator</a></li><li><a href="HungryGames-Simulator-Worker.html">HungryGames~Simulator~Worker</a></li><li><a href="HungryGames-Team.html">HungryGames~Team</a></li><li><a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a></li><li><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></li><li><a href="Main.html">Main</a></li><li><a href="MainModule.html">MainModule</a></li><li><a href="Messages.html">Messages</a></li><li><a href="Moderation.html">Moderation</a></li><li><a href="ModLog.html">ModLog</a></li><li><a href="ModLog-Settings.html">ModLog~Settings</a></li><li><a href="Music.html">Music</a></li><li><a href="NPC.html">NPC</a></li><li><a href="Patreon.html">Patreon</a></li><li><a href="Patreon-toExport.html">Patreon~toExport</a></li><li><a href="Polling.html">Polling</a></li><li><a href="Polling-Poll.html">Polling~Poll</a></li><li><a href="RaidBlock.html">RaidBlock</a></li><li><a href="RaidBlock-RaidSettings.html">RaidBlock~RaidSettings</a></li><li><a href="RoleColors.html">RoleColors</a></li><li><a href="RoleManager.html">RoleManager</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="SMLoader.html">SMLoader</a></li><li><a href="SpikeyBot.html">SpikeyBot</a></li><li><a href="Spotify.html">Spotify</a></li><li><a href="SubModule.html">SubModule</a></li><li><a href="TicTacToe.html">TicTacToe</a></li><li><a href="TicTacToe_Game.html">TicTacToe#Game</a></li><li><a href="TTS.html">TTS</a></li><li><a href="Uno.html">Uno</a></li><li><a href="Uno_Card.html">Uno#Card</a></li><li><a href="Uno_Game.html">Uno#Game</a></li><li><a href="WebAccount.html">WebAccount</a></li><li><a href="WebCommands.html">WebCommands</a></li><li><a href="WebProxy.html">WebProxy</a></li><li><a href="WebSettings.html">WebSettings</a></li><li><a href="WebStats.html">WebStats</a></li></ul><h3>Global</h3><ul><li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Apr 25 2019 17:14:50 GMT-0700 (Pacific Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

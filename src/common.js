@@ -2,6 +2,8 @@
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const dateFormat = require('dateformat');
 const Discord = require('discord.js');
+const fs = require('fs');
+const mkdirp = require('mkdirp');
 
 /**
  * Commonly required things. Helper functions and constants.
@@ -527,6 +529,64 @@ Common.prototype.mention = function(msg) {
  */
 Common.mention = Common.prototype.mention;
 
+
+/**
+ * Write data to a file and make sure the directory exists or create it if it
+ * doesn't. Async.
+ *
+ * @see {@link Common~mkAndWriteSync}
+ *
+ * @public
+ * @static
+ * @param {string} filename The name of the file including the directory.
+ * @param {string} dir The directory path without the file's name.
+ * @param {string} data The data to write to the file.
+ */
+Common.mkAndWrite = function(filename, dir, data) {
+  mkdirp(dir, (err) => {
+    if (err) {
+      this.error(`Failed to make directory: ${dir}`);
+      console.error(err);
+      return;
+    }
+    fs.writeFile(filename, data, (err2) => {
+      if (err2) {
+        this.error(`Failed to save file: ${filename}`);
+        console.error(err2);
+        return;
+      }
+    });
+  });
+};
+Common.prototype.mkAndWrite = Common.mkAndWrite;
+/**
+ * Write data to a file and make sure the directory exists or create it if it
+ * doesn't. Synchronous.
+ *
+ * @see {@link Common~mkAndWrite}
+ *
+ * @private
+ * @param {string} filename The name of the file including the directory.
+ * @param {string} dir The directory path without the file's name.
+ * @param {string} data The data to write to the file.
+ */
+Common.mkAndWriteSync = function(filename, dir, data) {
+  try {
+    mkdirp.sync(dir);
+  } catch (err) {
+    this.error(`Failed to make directory: ${dir}`);
+    console.error(err);
+    return;
+  }
+  try {
+    fs.writeFileSync(filename, data);
+  } catch (err) {
+    this.error(`Failed to save file: ${filename}`);
+    console.error(err);
+    return;
+  }
+};
+Common.prototype.mkAndWriteSync = Common.mkAndWriteSync;
 
 /* eslint-disable-next-line no-extend-native */
 String.prototype.replaceAll = function(search, replacement) {

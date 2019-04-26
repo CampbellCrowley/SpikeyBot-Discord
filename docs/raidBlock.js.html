@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: raidBlock.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: raidBlock.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>// Copyright 2019 Campbell Crowley. All rights reserved.
+// Author: Campbell Crowley (dev@campbellcrowley.com)
+const fs = require('fs');
+const SubModule = require('./subModule.js');
+
+/**
+ * @description Manages raid blocking commands and configuration.
+ * @listens Discord:external~Client#guildMemberAdd
+ * @listens Command#raid
+ * @listens Command#lockdown
+ * @fires RaidBlock#shutdown
+ * @fires RaidBlock#lockdown
+ * @fires RaidBlock#action
+ */
+class RaidBlock extends SubModule {
+  /**
+   * @description SubModule managing echo related commands.
+   */
+  constructor() {
+    super();
+    /** @inheritdoc */
+    this.myName = 'RaidBlock';
+    /**
+     * Guild settings for raids mapped by their guild id.
+     *
+     * @private
+     * @type {Object.&lt;RaidBlock~RaidSettings>}
+     * @default
+     */
+    this._settings = {};
+    /**
+     * All event handlers registered.
+     *
+     * @private
+     * @type {Object.&lt;Array.&lt;Function>>}
+     * @default
+     */
+    this._events = {};
+    this.save = this.save.bind(this);
+    this.on = this.on.bind(this);
+    this.removeListener = this.removeListener.bind(this);
+    this._commandLockdown = this._commandLockdown.bind(this);
+    this._onGuildMemberAdd = this._onGuildMemberAdd.bind(this);
+  }
+
+  /** @inheritdoc */
+  initialize() {
+    this.command.on(
+        new this.command.SingleCommand(
+            ['lockdown', 'raid'], this._commandLockdown, {
+              validOnlyInGuild: true,
+              defaultDisabled: true,
+              permissions: this.Discord.Permissions.FLAGS.MANAGE_ROLES |
+                  this.Discord.Permissions.FLAGS.MANAGE_GUILD |
+                  this.Discord.Permissions.FLAGS.BAN_MEMBERS,
+            }));
+    this.client.on('guildMemberAdd', this._onGuildMemberAdd);
+
+    this.client.guilds.forEach((g) => {
+      fs.readFile(
+          `${this.common.guildSaveDir}${g.id}/raidSettings.json`,
+          (err, file) => {
+            if (err) return;
+            let parsed;
+            try {
+              parsed = RaidSettings.from(JSON.parse(file));
+              this._settings[g.id] = parsed;
+            } catch (e) {
+              this.error('Failed to parse raidSettings: ' + g.id);
+              console.error(e);
+              return;
+            }
+          });
+    });
+  }
+  /** @inheritdoc */
+  shutdown() {
+    this.command.removeListener('lockdown');
+    this.client.removeListener('guildMemberAdd', this._onGuildMemberAdd);
+    this._fire('shutdown');
+  }
+  /** @inheritdoc */
+  save(opt) {
+    if (!this.initialized) return;
+
+    Object.entries(this._settings).forEach((obj) => {
+      const dir = `${this.common.guildSaveDir}${obj[0]}/`;
+      const filename = `${dir}raidSettings.json`;
+      if (opt == 'async') {
+        this.common.mkAndWrite(filename, dir, JSON.stringify(obj[1]));
+      } else {
+        this.common.mkAndWriteSync(filename, dir, JSON.stringify(obj[1]));
+      }
+    });
+  }
+
+  /**
+   * @description Send a message to a guild's moderation channel (if
+   * configured), describing the action that took place.
+   * @see {@link ModLog}
+   *
+   * @private
+   * @param {*} args The arguments to pass to ModLog.
+   */
+  _modLog(...args) {
+    const modLog = this.bot.getSubmodule('./modLog.js');
+    if (!modLog) return;
+    modLog(...args);
+  }
+
+  /**
+   * @description Handle a member being added to a guild.
+   *
+   * @private
+   * @param {external:Discord~GuildMember} member The guild member that was
+   * added to a guild.
+   */
+  _onGuildMemberAdd(member) {
+    if (!this._settings[member.guild.id]) return;
+    const s = this._settings[member.guild.id];
+    const now = Date.now();
+    while (now - s.history[0].time > s.timeInterval) {
+      s.history.splice(0, 1);
+    }
+    for (let i = 0; i &lt; s.history.length; i++) {
+      if (s.history[i].id == member.id) {
+        s.history.splice(i, 1);
+        break;
+      }
+    }
+    s.history.push({time: now, id: member.id});
+    if (s.enabled) {
+      if (s.numJoin &lt;= s.history.length) {
+        this._fire('lockdown', {id: member.guild.id, settings: s});
+        s.start = now;
+        this._modLog(
+            member.guild, 'lockdown', null, null,
+            'Lockdown Activated Automatically');
+      }
+
+      if (now - s.start &lt; s.duration) {
+        this._doAction(member, s);
+      }
+    }
+  }
+
+  /**
+   * @description Perform lockdown action on a member with given settings.
+   * @private
+   * @param {external:Discord~GuildMember} member Member to perform action on.
+   * @param {RaidBlock~RaidSettings} s Guild settings for raids.
+   */
+  _doAction(member, s) {
+    this._fire(
+        'action', {id: member.guild.id, action: s.action, user: member.user});
+    switch (s.action) {
+      case 'kick':
+        member.kick('Server on raid lockdown.')
+            .then((m) => {
+              this._modLog(m.guild, s.action, m.user, null, 'Raid Lockdown');
+            })
+            .catch((err) => {
+              this.error('Failed to kick user during raid!');
+              console.error(err);
+            });
+        break;
+      case 'ban':
+        member.ban('Server on raid lockdown.')
+            .then((m) => {
+              this._modLog(m.guild, s.action, m.user, null, 'Raid Lockdown');
+            })
+            .catch((err) => {
+              this.error('Failed to kick user during raid!');
+              console.error(err);
+            });
+        break;
+      case 'mute':
+        this._modLog(
+            member.guild, s.action, member.user, null, 'Raid Lockdown');
+        break;
+      case 'warnAndMute':
+        this._modLog(
+            member.guild, s.action, member.user, null, 'Raid Lockdown');
+        break;
+    }
+  }
+
+  /**
+   * @description Initiate a server lockdown, or lift a current lockdown.
+   *
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens Command#lockdown
+   * @listens Command#raid
+   */
+  _commandLockdown(msg) {
+    const s = this.getSettings(msg.guild.id);
+    const now = Date.now();
+    if (msg.text.trim().length == 0) {
+      if (!s.enabled) {
+        this.common.reply(msg, 'Lockdown Status', 'Not Configured');
+        return;
+      }
+      const finalString = [];
+      const active = now - s.start &lt; s.duration;
+      finalString.push(`Active: ${active}`);
+      if (active) {
+        const dateString = new Date(s.start).toString();
+        const timeSince = this._formatDelay(now - s.start);
+        const timeLeft = this._formatDelay(1 * s.start + 1 * s.duration);
+        const durationString = this._formatDelay(s.duration);
+        finalString.push(`Since: ${dateString} (${timeSince})`);
+        finalString.push(`Duration: ${durationString} (${timeLeft})`);
+        finalString.push(`Action: ${s.action}`);
+      } else {
+        const dateString = s.start ? new Date(s.start).toString() : 'Never';
+        const timeSince =
+            s.start ? `(${this._formatDelay(now - s.start)} ago})` : '';
+        const timeLeft = s.start ?
+            `${this._formatDelay(now - (s.start + s.duration))} ago` :
+            '';
+        const durationString = this._formatDelay(s.duration);
+        const intervalString = this._formatDelay(s.timeInterval);
+        finalString.push(`Previous: ${dateString} ${timeSince}`);
+        finalString.push(`Ended: ${timeLeft}`);
+        finalString.push(
+            `Activates if ${s.numJoin} join within ${intervalString}.`);
+        finalString.push(`Duration: ${durationString}`);
+        finalString.push(`Action: ${s.action}`);
+      }
+      this.common.reply(msg, 'Lockdown Status', finalString.join('\n'));
+      return;
+    }
+    const cmd = msg.text.trim().split(' ')[0];
+    const enableCmds = [
+      'enable',
+      'enabled',
+      'start',
+      'begin',
+      'on',
+      'active',
+      'activate',
+      'protect',
+    ];
+    const disableCmds = [
+      'disable',
+      'end',
+      'off',
+      'finish',
+      'deactivate',
+      'inactive',
+      'disabled',
+      'cancel',
+      'abort',
+      'stop',
+    ];
+    if (enableCmds.includes(cmd)) {
+      s.enabled = true;
+      s.start = now;
+      this._fire('lockdown', {id: msg.guild.id, settings: s});
+      this.common.reply(msg, 'Activated Lockdown');
+      this._modLog(
+          msg.guild, 'lockdown', null, msg.author,
+          'Lockdown Activated Manually');
+    } else if (disableCmds.includes(cmd)) {
+      if (s.enabled &amp;&amp; now - s.start &lt; s.duration) {
+        s.start = null;
+        this.common.reply(msg, 'Deactivated Lockdown');
+        this._modLog(
+            msg.guild, 'lockdown', null, msg.author,
+            'Lockdown Deactivated Manually');
+      } else {
+        this.common.reply(msg, 'Lockdown is already deactivated');
+      }
+    } else {
+      this.common.reply(
+          msg, 'Oops! I don\'t understand that.',
+          'https://www.spikeybot.com/control/ has most settings for this.');
+    }
+  }
+
+  /**
+   * @description Get the settings for a guilds.
+   * @public
+   * @param {string} gId The ID of the guild to fetch.
+   * @returns {RaidBlock~RaidSettings} Reference to settings object. If it does
+   * not exist yet, it will first be created with defaults.
+   */
+  getSettings(gId) {
+    if (!this._settings[gId]) this._settings[gId] = new RaidSettings();
+    return this._settings[gId];
+  }
+
+  /**
+   * @description Register an event handler for a specific event. Fires the
+   * handler when the event occurs.
+   * @public
+   * @param {string} event Name of the event to listen for.
+   * @param {Function} handler Callback function handler to fire on the event.
+   */
+  on(event, handler) {
+    if (!this._events[event]) this._events[event] = [];
+    this._events[event].push(handler);
+  }
+
+  /**
+   * @description Remove an event handler that was previously registered.
+   * @public
+   * @param {string} event Name of the event to listen for.
+   * @param {Function} handler Callback function handler to fire on the event.
+   */
+  removeListener(event, handler) {
+    if (!this._events[event]) return;
+    if (!handler) return;
+    const index = this._events[event].findIndex((el) => el === handler);
+    if (index &lt; 0) return;
+    this._events[event].splice(index, 1);
+  }
+
+  /**
+   * @description Fire an event on all handlers.
+   * @private
+   * @param {string} event The event name to fire.
+   * @param {*} args The arguments to pass to handlers.
+   */
+  _fire(event, ...args) {
+    if (!this._events[event]) return;
+    this._events.forEach((el) => el(...args));
+  }
+
+  /**
+   * Format a duration in milliseconds into a human readable string.
+   *
+   * @private
+   * @param {number} msecs Duration in milliseconds.
+   * @returns {string} Formatted string.
+   */
+  _formatDelay(msecs) {
+    let output = '';
+    let unit = 7 * 24 * 60 * 60 * 1000;
+    if (msecs >= unit) {
+      const num = Math.floor(msecs / unit);
+      output += num + ' week' + (num == 1 ? '' : 's') + ', ';
+      msecs -= num * unit;
+    }
+    unit /= 7;
+    if (msecs >= unit) {
+      const num = Math.floor(msecs / unit);
+      output += num + ' day' + (num == 1 ? '' : 's') + ', ';
+      msecs -= num * unit;
+    }
+    unit /= 24;
+    if (msecs >= unit) {
+      const num = Math.floor(msecs / unit);
+      output += num + ' hour' + (num == 1 ? '' : 's') + ', ';
+      msecs -= num * unit;
+    }
+    unit /= 60;
+    if (msecs >= unit) {
+      const num = Math.floor(msecs / unit);
+      output += num + ' minute' + (num == 1 ? '' : 's') + ', ';
+      msecs -= num * unit;
+    }
+    unit /= 60;
+    if (msecs >= unit) {
+      const num = Math.round(msecs / unit);
+      output += num + ' second' + (num == 1 ? '' : 's') + '';
+    }
+    return output.replace(/,\s$/, '');
+  }
+}
+
+/**
+ * Container for RaidBlock related settings.
+ * @memberof RaidBlock
+ * @inner
+ */
+class RaidSettings {
+  /**
+   * @description Create a settings object.
+   *
+   * @param {boolean} [enabled=false] Is raid protection enabled.
+   * @param {number} [numJoin=5] Number of users joined in given time.
+   * @param {number} [timeInterval=10000] Time interval for checking number of
+   * users joined.
+   * @param {number} [duration=600000] Amount of time to be in automated
+   * lockdown.
+   * @param {string} [action='kick'] Action to perform during lockdown.
+   */
+  constructor(
+      enabled = false, numJoin = 5, timeInterval = 10000, duration = 600000,
+      action = 'kick') {
+    /**
+     * @description Is raid protection enabled.
+     * @public
+     * @type {boolean}
+     * @default false
+     */
+    this.enabled = enabled;
+    /**
+     * @description Number of users joined within the configured time interval
+     * to be considered a raid.
+     * @public
+     * @type {number}
+     * @default 5
+     */
+    this.numJoin = numJoin;
+    /**
+     * @description Amount of time for if too many players join, it will be
+     * considered a raid. Time in milliseconds.
+     * @public
+     * @type {number}
+     * @default 10000
+     */
+    this.timeInterval = timeInterval;
+    /**
+     * @description Amount of time to stay on lockdown after a raid has been
+     * detected to have ended.
+     * @public
+     * @type {number}
+     * @default 600000 (10 Minutes)
+     */
+    this.duration = duration;
+    /**
+     * @description Action to perform, while on lockdown, to new member who
+     * join. Possible values are `kick`, `ban`, `mute`, or `warnAndMute`.
+     * @public
+     * @type {string}
+     * @default 'kick'
+     */
+    this.action = action;
+    /**
+     * @description Current raid block state information. Not null is if server
+     * has had a lockdown, start is the last timestamp we consider the raid to
+     * be active, or null if no raid is active.
+     * @public
+     * @type {?number}
+     * @default
+     */
+    this.start = null;
+    /**
+     * @description History of previous member who joined the server within the
+     * time interval. Time is timestamp of join, and id is user's account id.
+     * @public
+     * @type {Array.&lt;{time: number, id: string}>}
+     * @default
+     */
+    this.history = [];
+  }
+}
+
+/**
+ * @description Create a RaidSettings object from a similarly structured object.
+ * Similar to copy-constructor.
+ *
+ * @public
+ * @static
+ * @param {Object} obj Object to convert to RaidSettings.
+ * @returns {RaidBlock~RaidSettings} Created raidsettings object.
+ */
+RaidSettings.from = function(obj) {
+  const output = new RaidSettings(
+      obj.enabled, obj.numJoin, obj.timeInterval, obj.duration, obj.action);
+  return output;
+};
+
+RaidBlock.RaidSettings = RaidSettings;
+
+module.exports = new RaidBlock();
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_twemojiChecker.html">lib/twemojiChecker</a></li></ul><h3>Externals</h3><ul><li><a href="external-Discord.html">external:Discord</a></li></ul><h3>Classes</h3><ul><li><a href="ChatBot.html">ChatBot</a></li><li><a href="CmdScheduling.html">CmdScheduling</a></li><li><a href="CmdScheduling-ScheduledCommand.html">CmdScheduling~ScheduledCommand</a></li><li><a href="Command.html">Command</a></li><li><a href="Command-CommandSetting.html">Command~CommandSetting</a></li><li><a href="Command-SingleCommand.html">Command~SingleCommand</a></li><li><a href="Common.html">Common</a></li><li><a href="Connect4.html">Connect4</a></li><li><a href="Connect4_Game.html">Connect4#Game</a></li><li><a href="Define.html">Define</a></li><li><a href="DevCmds.html">DevCmds</a></li><li><a href="Echo.html">Echo</a></li><li><a href="Echo-Character.html">Echo~Character</a></li><li><a href="FunTranslators.html">FunTranslators</a></li><li><a href="HG.html">HG</a></li><li><a href="HGWeb.html">HGWeb</a></li><li><a href="HungryGames.html">HungryGames</a></li><li><a href="HungryGames-ArenaEvent.html">HungryGames~ArenaEvent</a></li><li><a href="HungryGames-Battle.html">HungryGames~Battle</a></li><li><a href="HungryGames-Day.html">HungryGames~Day</a></li><li><a href="HungryGames-DefaultOptions.html">HungryGames~DefaultOptions</a></li><li><a href="HungryGames-DefaultOptions-BooleanOption.html">HungryGames~DefaultOptions~BooleanOption</a></li><li><a href="HungryGames-DefaultOptions-NumberOption.html">HungryGames~DefaultOptions~NumberOption</a></li><li><a href="HungryGames-DefaultOptions-ObjectOption.html">HungryGames~DefaultOptions~ObjectOption</a></li><li><a href="HungryGames-DefaultOptions-Option.html">HungryGames~DefaultOptions~Option</a></li><li><a href="HungryGames-DefaultOptions-SelectOption.html">HungryGames~DefaultOptions~SelectOption</a></li><li><a href="HungryGames-Event.html">HungryGames~Event</a></li><li><a href="HungryGames-FinalEvent.html">HungryGames~FinalEvent</a></li><li><a href="HungryGames-ForcedOutcome.html">HungryGames~ForcedOutcome</a></li><li><a href="HungryGames-Game.html">HungryGames~Game</a></li><li><a href="HungryGames-Grammar.html">HungryGames~Grammar</a></li><li><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></li><li><a href="HungryGames-Messages.html">HungryGames~Messages</a></li><li><a href="HungryGames-OutcomeProbabilities.html">HungryGames~OutcomeProbabilities</a></li><li><a href="HungryGames-Player.html">HungryGames~Player</a></li><li><a href="HungryGames-Simulator.html">HungryGames~Simulator</a></li><li><a href="HungryGames-Simulator-Worker.html">HungryGames~Simulator~Worker</a></li><li><a href="HungryGames-Team.html">HungryGames~Team</a></li><li><a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a></li><li><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></li><li><a href="Main.html">Main</a></li><li><a href="MainModule.html">MainModule</a></li><li><a href="Messages.html">Messages</a></li><li><a href="Moderation.html">Moderation</a></li><li><a href="ModLog.html">ModLog</a></li><li><a href="ModLog-Settings.html">ModLog~Settings</a></li><li><a href="Music.html">Music</a></li><li><a href="NPC.html">NPC</a></li><li><a href="Patreon.html">Patreon</a></li><li><a href="Patreon-toExport.html">Patreon~toExport</a></li><li><a href="Polling.html">Polling</a></li><li><a href="Polling-Poll.html">Polling~Poll</a></li><li><a href="RaidBlock.html">RaidBlock</a></li><li><a href="RaidBlock-RaidSettings.html">RaidBlock~RaidSettings</a></li><li><a href="RoleColors.html">RoleColors</a></li><li><a href="RoleManager.html">RoleManager</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="SMLoader.html">SMLoader</a></li><li><a href="SpikeyBot.html">SpikeyBot</a></li><li><a href="Spotify.html">Spotify</a></li><li><a href="SubModule.html">SubModule</a></li><li><a href="TicTacToe.html">TicTacToe</a></li><li><a href="TicTacToe_Game.html">TicTacToe#Game</a></li><li><a href="TTS.html">TTS</a></li><li><a href="Uno.html">Uno</a></li><li><a href="Uno_Card.html">Uno#Card</a></li><li><a href="Uno_Game.html">Uno#Game</a></li><li><a href="WebAccount.html">WebAccount</a></li><li><a href="WebCommands.html">WebCommands</a></li><li><a href="WebProxy.html">WebProxy</a></li><li><a href="WebSettings.html">WebSettings</a></li><li><a href="WebStats.html">WebStats</a></li></ul><h3>Global</h3><ul><li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Apr 25 2019 17:14:50 GMT-0700 (Pacific Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

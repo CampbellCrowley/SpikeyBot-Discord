@@ -1,5 +1,8 @@
 {
   "test": [
+    "./moderation.js",
+    "./modLog.js",
+    "./raidBlock.js",
     "./main.js",
     "./music.js",
     "./hungryGames.js",
@@ -26,6 +29,7 @@
     "./chatbot.js",
     "./spotify.js",
     "./cmdScheduling.js",
+    "./raidBlock.js",
     "./web/proxy.js",
     "./web/account.js",
     "./web/stats.js",
@@ -38,9 +42,13 @@
     "./define.js",
     "./web/hg.js",
     "./roleColors.js",
-    "./echo.js"
+    "./echo.js",
+    "./moderation.js",
+    "./modLog.js"
   ],
   "release": [
+    "./moderation.js",
+    "./modLog.js",
     "./main.js",
     "./hungryGames.js",
     "./ticTacToe.js",
@@ -57,6 +65,7 @@
     "./define.js",
     "./echo.js",
     "./roleColors.js",
+    "./raidBlock.js",
     "./web/hg.js",
     "./web/webhooks.js",
     "./web/account.js",
@@ -65,6 +74,9 @@
     "./web/proxy.js"
   ],
   "rembot": [
+    "./moderation.js",
+    "./modLog.js",
+    "./raidBlock.js",
     "./main.js",
     "./ticTacToe.js",
     "./connect4.js",

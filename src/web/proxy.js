@@ -86,7 +86,14 @@ function WebProxy() {
   }
   connectSQL();
 
-  const pathPorts = {};
+  const pathPorts = {
+    '/www.spikeybot.com/socket.io/dev/hg/': 8013,
+    '/www.spikeybot.com/socket.io/hg/': 8011,
+    '/www.spikeybot.com/socket.io/dev/account/': 8015,
+    '/www.spikeybot.com/socket.io/account/': 8014,
+    '/www.spikeybot.com/socket.io/dev/control/': 8021,
+    '/www.spikeybot.com/socket.io/control/': 8020,
+  };
 
   /**
    * The current OAuth2 access information for a single session.
@@ -219,12 +226,6 @@ function WebProxy() {
 
   /** @inheritdoc */
   this.initialize = function() {
-    pathPorts['/www.spikeybot.com/socket.io/dev/hg/'] = 8013;
-    pathPorts['/www.spikeybot.com/socket.io/hg/'] = 8011;
-    pathPorts['/www.spikeybot.com/socket.io/dev/account/'] = 8015;
-    pathPorts['/www.spikeybot.com/socket.io/account/'] = 8014;
-    pathPorts['/www.spikeybot.com/socket.io/dev/control/'] = 8021;
-    pathPorts['/www.spikeybot.com/socket.io/control/'] = 8020;
     app.listen(self.common.isRelease ? 8010 : 8012, '127.0.0.1');
   };
 

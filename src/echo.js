@@ -5,10 +5,15 @@ const mkdirp = require('mkdirp');
 const SubModule = require('./subModule.js');
 
 /**
- * @description Manges echo-related commands.
+ * @description Manages echo-related commands.
  * @listens Discord:external~Client#message
  * @listens Command#say
  * @listens Command#echo
+ * @listens Command#become
+ * @listens Command#self
+ * @listens Command#be
+ * @listens Command#character
+ * @listens Command#impersonate
  */
 class Echo extends SubModule {
   /**
@@ -147,16 +152,6 @@ class Echo extends SubModule {
       console.error(err);
       return;
     }
-  }
-
-
-  /**
-   * @description Bind a command context.
-   * @param {commandHandler} cb Handler to bind to this instance.
-   * @returns {commandHandler} Same function, but with `this` bound.
-   */
-  _cmd(cb) {
-    return cb.bind(this);
   }
 
   /**
