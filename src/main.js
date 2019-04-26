@@ -2042,8 +2042,8 @@ function Main() {
       const now = Date.now();
       let index = pingHistory.length - 1;
       const values = [];
-      let max = 0;
-      let min = 10000;
+      let max = 500;
+      let min = 0;
       for (let c = 0; c < cols; c++) {
         let total = 0;
         let num = 0;

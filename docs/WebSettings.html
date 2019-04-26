@@ -1208,7 +1208,7 @@ exist.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line314">line 314</a>
+        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line317">line 317</a>
     </li></ul></dd>
     
 
@@ -1280,7 +1280,7 @@ exist.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line296">line 296</a>
+        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line299">line 299</a>
     </li></ul></dd>
     
 
@@ -2893,7 +2893,317 @@ complete, or has failed.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line874">line 874</a>
+        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line922">line 922</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~changeModLogSetting"><span class="type-signature">(inner) </span>changeModLogSetting<span class="signature">(userData, socket, gId, key, value, cb<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Client has requested to change a single ModLog setting for a guild.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>userData</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The current user's session data.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>socket</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">socketIo~Socket</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The socket connection to reply on.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>gId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+|
+
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The id of the guild of which to change the
+setting.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>key</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The name of the setting to change.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>value</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+|
+
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The value to set the setting to.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cb</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">basicCB</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Callback that fires once the requested action is
+complete, or has failed.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line1101">line 1101</a>
     </li></ul></dd>
     
 
@@ -3169,7 +3479,7 @@ complete, or has failed.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line973">line 973</a>
+        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line1021">line 1021</a>
     </li></ul></dd>
     
 
@@ -3479,7 +3789,7 @@ complete, or has failed.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line1005">line 1005</a>
+        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line1053">line 1053</a>
     </li></ul></dd>
     
 
@@ -3661,7 +3971,7 @@ given channel, as well as manage the games in the given guild.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line507">line 507</a>
+        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line527">line 527</a>
     </li></ul></dd>
     
 
@@ -3823,7 +4133,7 @@ given channel.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line468">line 468</a>
+        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line488">line 488</a>
     </li></ul></dd>
     
 
@@ -4086,7 +4396,7 @@ guild.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line485">line 485</a>
+        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line505">line 505</a>
     </li></ul></dd>
     
 
@@ -4244,7 +4554,7 @@ hungry games in the given guild.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line415">line 415</a>
+        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line435">line 435</a>
     </li></ul></dd>
     
 
@@ -4523,7 +4833,7 @@ complete and has data, or has failed.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line724">line 724</a>
+        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line744">line 744</a>
     </li></ul></dd>
     
 
@@ -4734,7 +5044,248 @@ complete, or has failed.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line617">line 617</a>
+        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line637">line 637</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="~fetchModLogSettings"><span class="type-signature">(inner) </span>fetchModLogSettings<span class="signature">(userData, socket, gId, cb<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Client has requested settings specific to ModLog for single guild.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>userData</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The current user's session data.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>socket</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">socketIo~Socket</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The socket connection to reply on.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>gId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The guild ID to fetch the settings for.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cb</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">basicCB</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Callback that fires once the requested action is
+complete and has data, or has failed.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line850">line 850</a>
     </li></ul></dd>
     
 
@@ -4975,7 +5526,7 @@ complete and has data, or has failed.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line803">line 803</a>
+        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line825">line 825</a>
     </li></ul></dd>
     
 
@@ -5185,7 +5736,7 @@ complete and has data, or has failed.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line827">line 827</a>
+        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line875">line 875</a>
     </li></ul></dd>
     
 
@@ -5395,7 +5946,7 @@ complete and has data, or has failed.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line759">line 759</a>
+        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line779">line 779</a>
     </li></ul></dd>
     
 
@@ -5481,7 +6032,7 @@ complete and has data, or has failed.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line304">line 304</a>
+        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line307">line 307</a>
     </li></ul></dd>
     
 
@@ -5665,7 +6216,7 @@ in.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line179">line 179</a>
+        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line181">line 181</a>
     </li></ul></dd>
     
 
@@ -5832,7 +6383,7 @@ in.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line154">line 154</a>
+        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line156">line 156</a>
     </li></ul></dd>
     
 
@@ -5973,7 +6524,7 @@ information.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line237">line 237</a>
+        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line239">line 239</a>
     </li></ul></dd>
     
 
@@ -6136,7 +6687,7 @@ information.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line285">line 285</a>
+        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line288">line 288</a>
     </li></ul></dd>
     
 
@@ -6272,7 +6823,7 @@ information.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line255">line 255</a>
+        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line257">line 257</a>
     </li></ul></dd>
     
 
@@ -6363,7 +6914,7 @@ information.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line135">line 135</a>
+        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line136">line 136</a>
     </li></ul></dd>
     
 
@@ -6642,7 +7193,7 @@ null of not specific to a single guild.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line202">line 202</a>
+        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line204">line 204</a>
     </li></ul></dd>
     
 
@@ -6789,7 +7340,7 @@ null of not specific to a single guild.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line219">line 219</a>
+        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line221">line 221</a>
     </li></ul></dd>
     
 
@@ -7021,7 +7572,7 @@ need.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line532">line 532</a>
+        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line552">line 552</a>
     </li></ul></dd>
     
 
@@ -7285,7 +7836,7 @@ need.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line583">line 583</a>
+        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line603">line 603</a>
     </li></ul></dd>
     
 
@@ -7583,7 +8134,7 @@ complete, or has failed.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line901">line 901</a>
+        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line949">line 949</a>
     </li></ul></dd>
     
 
@@ -7749,7 +8300,7 @@ they attempted failed due to insufficient permission.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line453">line 453</a>
+        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line473">line 473</a>
     </li></ul></dd>
     
 
@@ -7884,7 +8435,7 @@ they attempted failed due to insufficient permission.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line323">line 323</a>
+        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line326">line 326</a>
     </li></ul></dd>
     
 
@@ -7970,7 +8521,7 @@ they attempted failed due to insufficient permission.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line269">line 269</a>
+        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line271">line 271</a>
     </li></ul></dd>
     
 
@@ -8210,7 +8761,7 @@ error, or a string if there was an error.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line598">line 598</a>
+        <a href="web_settings.js.html">web/settings.js</a>, <a href="web_settings.js.html#line618">line 618</a>
     </li></ul></dd>
     
 
@@ -8258,7 +8809,7 @@ error, or a string if there was an error.
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Apr 25 2019 17:14:51 GMT-0700 (Pacific Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Apr 26 2019 00:12:30 GMT-0700 (Pacific Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>

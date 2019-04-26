@@ -288,8 +288,7 @@ function HGWeb() {
             return el;
           }
         });
-        self.common.logDebug(
-            func.name + '(' + logArgs.join(',') + ')', socket.id);
+        self.common.logDebug(`${func.name}(${logArgs.join(',')})`, socket.id);
       }
       func.apply(func, [args[0], socket].concat(args.slice(1)));
       if (forward) {

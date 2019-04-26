@@ -123,6 +123,7 @@ function WebSettings() {
       cmdScheduler.removeListener('commandRegistered', handleCommandRegistered);
       cmdScheduler.removeListener('commandCancelled', handleCommandCancelled);
     }
+    cmdScheduler = null;
     if (!this.initialized) return;
     setTimeout(updateModuleReferences, 100);
   }
@@ -138,6 +139,7 @@ function WebSettings() {
       raidBlock.removeListener('lockdown', handleLockdown);
       raidBlock.removeListener('action', handleRaidAction);
     }
+    raidBlock = null;
     if (!this.initialized) return;
     setTimeout(updateModuleReferences, 100);
   }
@@ -270,7 +272,8 @@ function WebSettings() {
     self.log(
         'Restarting into client mode due to server already bound to port.');
     ioClient = require('socket.io-client')(
-        self.common.isRelease ? 'http://localhost:8020' : 'http://localhost:8021',
+        self.common.isRelease ? 'http://localhost:8020' :
+                                'http://localhost:8021',
         {path: '/www.spikeybot.com/socket.io/control/'});
     clientSocketConnection(ioClient);
   }
@@ -357,6 +360,9 @@ function WebSettings() {
     socket.on('fetchRaidSettings', (...args) => {
       callSocketFunction(fetchRaidSettings, args);
     });
+    socket.on('fetchModLogSettings', (...args) => {
+      callSocketFunction(fetchModLogSettings, args);
+    });
     socket.on('fetchScheduledCommands', (...args) => {
       callSocketFunction(fetchScheduledCommands, args);
     });
@@ -372,6 +378,9 @@ function WebSettings() {
     socket.on('changeRaidSetting', (...args) => {
       callSocketFunction(changeRaidSetting, args);
     });
+    socket.on('changeModLogSetting', (...args) => {
+      callSocketFunction(changeModLogSetting, args);
+    });
 
     /**
      * Calls the functions with added arguments, and copies the request to all
@@ -384,6 +393,17 @@ function WebSettings() {
      * siblings.
      */
     function callSocketFunction(func, args, forward = true) {
+      const noLog = ['fetchMember', 'fetchChannel'];
+      if (!noLog.includes(func.name.toString())) {
+        const logArgs = args.map((el) => {
+          if (typeof el === 'function') {
+            return (el.name || 'anonymous') + '()';
+          } else {
+            return el;
+          }
+        });
+        self.common.logDebug(`${func.name}(${logArgs.join(',')})`, socket.id);
+      }
       func.apply(func, [args[0], socket].concat(args.slice(1)));
       if (forward) {
         Object.entries(siblingSockets).forEach((s) => {
@@ -776,6 +796,7 @@ function WebSettings() {
       });
     }
     const cmdDefaults = self.command.getDefaultSettings();
+    const modLog = self.bot.getSubmodule('./modLog.js');
     const settings = guilds.map((g) => {
       return {
         guild: g.id,
@@ -783,6 +804,7 @@ function WebSettings() {
         commandSettings: self.command.getUserSettings(g.id),
         commandDefaults: cmdDefaults,
         raidSettings: raidBlock && raidBlock.getSettings(g.id) || null,
+        modLogSettings: modLog && modLog.getSettings(g.id) || null,
       };
     });
     cb(settings);
@@ -813,6 +835,32 @@ function WebSettings() {
     cb(raidBlock.getSettings(gId));
   }
   this.fetchRaidSettings = fetchRaidSettings;
+
+  /**
+   * Client has requested settings specific to ModLog for single guild.
+   *
+   * @public
+   * @type {WebSettings~SocketFunction}
+   * @param {Object} userData The current user's session data.
+   * @param {socketIo~Socket} socket The socket connection to reply on.
+   * @param {string} gId The guild ID to fetch the settings for.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete and has data, or has failed.
+   */
+  function fetchModLogSettings(userData, socket, gId, cb) {
+    if (typeof cb !== 'function') cb = function() {};
+    if (!userData) {
+      cb('Not signed in.', null);
+      return;
+    }
+    const modLog = self.bot.getSubmodule('./modLog.js');
+    if (!modLog) {
+      cb('Internal Server Error');
+      return;
+    }
+    cb(modLog.getSettings(gId));
+  }
+  this.fetchModLogSettings = fetchModLogSettings;
 
   /**
    * Client has requested all scheduled commands for the connected user.
@@ -1026,7 +1074,62 @@ function WebSettings() {
       return;
     }
     cb();
+
+    for (const i in sockets) {
+      if (sockets[i] && sockets[i].cachedGuilds &&
+          sockets[i].cachedGuilds.includes(gId)) {
+        sockets[i].emit('raidSettingsChanged', gId);
+      }
+    }
   }
   this.changeRaidSetting = changeRaidSetting;
+
+  /**
+   * Client has requested to change a single ModLog setting for a guild.
+   *
+   * @public
+   * @type {WebSettings~SocketFunction}
+   * @param {Object} userData The current user's session data.
+   * @param {socketIo~Socket} socket The socket connection to reply on.
+   * @param {string|number} gId The id of the guild of which to change the
+   * setting.
+   * @param {string} key The name of the setting to change.
+   * @param {string|boolean} value The value to set the setting to.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete, or has failed.
+   */
+  function changeModLogSetting(userData, socket, gId, key, value, cb) {
+    if (typeof cb !== 'function') cb = function() {};
+    if (!checkPerm(userData, gId, null, 'setlogchannel')) {
+      if (!checkMyGuild(gId)) return;
+      replyNoPerm(socket, 'changeModLogSetting');
+      cb('Forbidden');
+      return;
+    }
+    const modLog = self.bot.getSubmodule('./modLog.js');
+    if (!modLog) {
+      cb('Internal Server Error');
+      self.common.error(
+          'Attempted to change ModLog settings while modLog.js is not loaded!',
+          socket.id);
+      return;
+    }
+    const settings = modLog.getSettings(gId);
+    if (typeof settings[key] === typeof value) {
+      settings[key] = value;
+    } else {
+      cb('Bad Payload');
+      return;
+    }
+    cb();
+
+    for (const i in sockets) {
+      if (sockets[i] && sockets[i].cachedGuilds &&
+          sockets[i].cachedGuilds.includes(gId)) {
+        sockets[i].emit('modLogSettingsChanged', gId);
+      }
+    }
+  }
+  this.changeModLogSetting = changeModLogSetting;
 }
 module.exports = new WebSettings();

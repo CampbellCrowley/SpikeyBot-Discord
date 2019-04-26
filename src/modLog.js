@@ -25,6 +25,7 @@ class ModLog extends SubModule {
      */
     this._settings = {};
     this.save = this.save.bind(this);
+    this.getSettings = this.getSettings.bind(this);
     this._commandSetLogChannel = this._commandSetLogChannel.bind(this);
   }
 
@@ -102,18 +103,20 @@ class ModLog extends SubModule {
    * @param {?string} cId The ID of the channel to set as the output channel.
    */
   setLogChannel(gId, cId) {
-    if (!this._settings[gId]) this._settings[gId] = new Settings();
-    this._settings[gId].channel = cId || null;
+    const s = this.getSettings(gId);
+    s.channel = cId || null;
   }
 
   /**
    * @description Obtain reference to settings object for a guild.
    * @public
    * @param {string} gId The ID of the guild to fetch the settings for.
-   * @returns {?ModLog~Settings} Settings object or null if it doesn't exist.
+   * @returns {ModLog~Settings} Settings object, creates one with default
+   * settings first if it doesn't exist.
    */
   getSettings(gId) {
-    return this._settings[gId] || null;
+    if (!this._settings[gId]) this._settings[gId] = new Settings();
+    return this._settings[gId];
   }
 
   /**
