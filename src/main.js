@@ -1810,63 +1810,75 @@ function Main() {
    * @listens Command#ban
    */
   function commandBan(msg) {
-    if (msg.mentions.members.size === 0) {
-      self.common
-          .reply(msg, 'You must mention someone to ban after the command.')
-          .catch(() => {});
-    } else {
-      const reason =
-          msg.text.replace(self.Discord.MessageMentions.USERS_PATTERN, '')
-              .trim();
-      msg.mentions.members.forEach(function(toBan) {
-        if (msg.guild.ownerID !== msg.author.id &&
-            msg.member.roles.highest.comparePositionTo(toBan.roles.highest) <=
-                0) {
+    const uIds = msg.text.match(/\d{17,19}/g);
+    if (!uIds) {
+      self.common.reply(
+          msg, 'You must mention someone to ban or specify an ID of ' +
+              'someone on the server.');
+      return;
+    }
+    const banList = [];
+    uIds.forEach((el) => {
+      const u = msg.guild.members.get(el);
+      if (u) banList.push(u);
+    });
+    if (banList.length == 0) {
+      self.common.reply(
+          msg, 'You must mention someone to ban or specify an ID of ' +
+              'someone on the server.');
+      return;
+    }
+    let reason =
+        msg.text.replace(self.Discord.MessageMentions.USERS_PATTERN, '')
+            .replace(/\d{17,19}/g)
+            .replace(/\s{2,}/g, ' ')
+            .trim();
+    if (reason == 'undefined') reason = null;
+    banList.forEach(function(toBan) {
+      if (msg.guild.ownerID !== msg.author.id &&
+          msg.member.roles.highest.comparePositionTo(toBan.roles.highest) <=
+              0) {
+        self.common
+            .reply(
+                msg, 'You can\'t ban ' + toBan.user.username +
+                    '! You are not stronger than them!')
+            .catch(() => {});
+      } else {
+        const me = msg.guild.me;
+        const myRole = me.roles.highest;
+        const highest = toBan.roles.highest;
+
+        if (!myRole || (highest && myRole.comparePositionTo(highest) <= 0)) {
           self.common
               .reply(
-                  msg, 'You can\'t ban ' + toBan.user.username +
-                      '! You are not stronger than them!')
+                  msg, 'I can\'t ban ' + toBan.user.username +
+                      '! I am not strong enough!')
               .catch(() => {});
         } else {
-          msg.guild.members.fetch(self.client.user).then((me) => {
-            const myRole = me.roles.highest;
-            if (toBan.roles.highest &&
-                myRole.comparePositionTo(toBan.roles.highest) <= 0) {
-              self.common
-                  .reply(
-                      msg, 'I can\'t ban ' + toBan.user.username +
-                          '! I am not strong enough!')
-                  .catch(() => {});
-            } else {
-              const banMsg =
-                  banMsgs[Math.floor(Math.random() * banMsgs.length)];
-              toBan.ban({reason: reason || banMsg})
-                  .then(() => {
-                    self.common
-                        .reply(msg, banMsg, 'Banned ' + toBan.user.username)
-                        .catch(() => {});
-                    const modLog = self.getSubmodule('./modLog.js');
-                    if (modLog) {
-                      modLog.output(
-                          msg.guild, 'ban', toBan.user, msg.author,
-                          reason || banMsg);
-                    }
-                  })
-                  .catch((err) => {
-                    self.common
-                        .reply(
-                            msg, 'Oops! I wasn\'t able to ban ' +
-                                toBan.user.username +
-                                '! I\'m not sure why though!')
-                        .catch(() => {});
-                    self.error('Failed to ban user.');
-                    console.error(err);
-                  });
-            }
-          });
+          const banMsg = banMsgs[Math.floor(Math.random() * banMsgs.length)];
+          toBan.ban({reason: reason || banMsg})
+              .then(() => {
+                self.common.reply(msg, banMsg, 'Banned ' + toBan.user.username)
+                    .catch(() => {});
+                const modLog = self.bot.getSubmodule('./modLog.js');
+                if (modLog) {
+                  modLog.output(
+                      msg.guild, 'ban', toBan.user, msg.author,
+                      reason || banMsg);
+                }
+              })
+              .catch((err) => {
+                self.common
+                    .reply(
+                        msg, 'Oops! I wasn\'t able to ban ' +
+                            toBan.user.username + '! I\'m not sure why though!')
+                    .catch(() => {});
+                self.error('Failed to ban user.');
+                console.error(err);
+              });
         }
-      });
-    }
+      }
+    });
   }
   /**
    * Remove all roles from a user and give them a role that prevents them from

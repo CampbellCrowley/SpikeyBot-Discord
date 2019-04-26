@@ -294,7 +294,7 @@
               "result": "All created characters and webhooks will be deleted."
             }
           ]
-        }
+        },
         {
           "command": "changeprefix",
           "description": "Set a custom prefix for all commands on the current server.",
