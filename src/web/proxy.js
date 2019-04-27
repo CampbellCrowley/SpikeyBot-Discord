@@ -343,41 +343,40 @@ function WebProxy() {
         'Socket connected (' + Object.keys(sockets).length + '): ' + ipName,
         socket.id);
     sockets[socket.id] = socket;
-    let server;
     if (!pathPorts[reqPath]) {
       self.common.error(
           'Client requested unknown endpoint: ' + reqPath, socket.id);
       socket.disconnect();
-    } else {
-      server = sIOClient('http://localhost:' + pathPorts[reqPath], {
-        path: reqPath,
-        extraHeaders:
-            {'x-forwarded-for': socket.handshake.headers['x-forwarded-for']},
-      });
-
-      // Add custom semi-wildcard listeners.
-      const sonevent = server.onevent;
-      server.onevent = function(packet) {
-        const args = packet.data || [];
-        if (server.listeners(args[0]).length) {
-          sonevent.call(this, packet);
-        } else {
-          packet.data = ['*'].concat(args);
-          sonevent.call(this, packet);
-        }
-      };
-      server.on('connect', () => {
-        socket.on('*', (...args) => {
-          server.emit(...[args[0], userData].concat(args.slice(1)));
-        });
-      });
-      server.on('*', (...args) => {
-        socket.emit(...args);
-      });
-      server.on('disconnect', () => {
-        socket.disconnect();
-      });
+      return;
     }
+    const server = sIOClient('http://localhost:' + pathPorts[reqPath], {
+      path: reqPath,
+      extraHeaders:
+          {'x-forwarded-for': socket.handshake.headers['x-forwarded-for']},
+    });
+
+    // Add custom semi-wildcard listeners.
+    const sonevent = server.onevent;
+    server.onevent = function(packet) {
+      const args = packet.data || [];
+      if (server.listeners(args[0]).length) {
+        sonevent.call(this, packet);
+      } else {
+        packet.data = ['*'].concat(args);
+        sonevent.call(this, packet);
+      }
+    };
+    server.on('connect', () => {
+      socket.on('*', (...args) => {
+        server.emit(...[args[0], userData].concat(args.slice(1)));
+      });
+    });
+    server.on('*', (...args) => {
+      socket.emit(...args);
+    });
+    server.on('disconnect', () => {
+      socket.disconnect();
+    });
     const onevent = socket.onevent;
     socket.onevent = function(packet) {
       const args = packet.data || [];
