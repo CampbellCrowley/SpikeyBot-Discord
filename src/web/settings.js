@@ -351,6 +351,9 @@ function WebSettings() {
     socket.on('fetchGuilds', (...args) => {
       callSocketFunction(fetchGuilds, args, false);
     });
+    socket.on('fetchMember', (...args) => {
+      callSocketFunction(fetchMember, args);
+    });
     socket.on('fetchChannel', (...args) => {
       callSocketFunction(fetchChannel, args);
     });
@@ -364,7 +367,7 @@ function WebSettings() {
       callSocketFunction(fetchModLogSettings, args);
     });
     socket.on('fetchCommandSettings', (...args) => {
-      callSocketFunction(fetchModLogSettings, args);
+      callSocketFunction(fetchCommandSettings, args);
     });
     socket.on('fetchScheduledCommands', (...args) => {
       callSocketFunction(fetchScheduledCommands, args);
@@ -735,6 +738,34 @@ function WebSettings() {
   }
 
   /**
+   * Fetch data about a member of a guild.
+   *
+   * @private
+   * @type {HGWeb~SocketFunction}
+   * @param {Object} userData The current user's session data.
+   * @param {socketIo~Socket} socket The socket connection to reply on.
+   * @param {number|string} gId The guild id to look at.
+   * @param {number|string} mId The member's id to lookup.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete, or has failed.
+   */
+  function fetchMember(userData, socket, gId, mId, cb) {
+    if (typeof cb !== 'function') return;
+    if (!checkPerm(userData, gId, null, 'players')) return;
+    const g = self.client.guilds.get(gId);
+    if (!g) return;
+    const m = g.members.get(mId);
+    if (!m) {
+      cb('No Member');
+      return;
+    }
+    const finalMember = makeMember(m);
+
+    cb(null, finalMember);
+  }
+  this.fetchMember = fetchMember;
+
+  /**
    * Client has requested data for a specific channel.
    *
    * @public
@@ -889,9 +920,9 @@ function WebSettings() {
       cb('Not signed in.', null);
       return;
     }
-    let settings = self.commands.getUserSettings(gId);
+    let settings = self.command.getUserSettings(gId);
     if (cmd) {
-      const command = self.commands.find(cmd);
+      const command = self.command.find(cmd);
       if (!command) {
         settings = null;
       } else {
@@ -1224,15 +1255,15 @@ function WebSettings() {
       cb('Forbidden');
       return;
     }
-    const command = self.commands.find(cmd);
+    const command = self.command.find(cmd);
     if (!command) {
       cb('Bad Payload');
       return;
     }
-    const userSettings = self.commands.getUserSettings(gId);
+    const userSettings = self.command.getUserSettings(gId);
     const name = command.getFullName();
     if (!userSettings[name]) {
-      userSettings[name] = new self.commands.CommandSetting(command.options);
+      userSettings[name] = new self.command.CommandSetting(command.options);
     }
 
     const setting = userSettings[name];
