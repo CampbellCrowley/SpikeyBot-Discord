@@ -662,7 +662,11 @@ function HGWeb() {
       const strippedGuilds = stripGuilds(guilds, userData);
       done(strippedGuilds);
     } catch (err) {
-      self.error(err);
+      self.common.error(
+          'Error while fetching guilds (Cached: ' +
+              (userData.guilds && true || false) + ')',
+          socket.id);
+      console.error(err);
       done();
     }
   }

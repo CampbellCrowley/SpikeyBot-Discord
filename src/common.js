@@ -622,7 +622,7 @@ const oldErr = console.error;
 console.error = function(...args) {
   if (args.length == 1 && (args[0] instanceof Discord.DiscordAPIError)) {
     args[0] = Common.fmtDAPIErr(args[0]);
-  } else {
+  } else if (!args[0].startsWith('ERR:')) {
     const pid = `00000${process.pid}`.slice(-5);
     oldErr(`ERR:${pid}                     [ SpikeyBot.js  `, ...args);
     return;
