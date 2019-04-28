@@ -693,7 +693,7 @@ function HGWeb() {
                 return p;
               },
               {});
-      let uOpts = self.command.getUserSettings(g.id);
+      let uOpts = self.command.getUserSettings(g.id) || {};
       uOpts = Object.entries(uOpts)
           .filter((el) => {
             return el[0].startsWith('hg');
