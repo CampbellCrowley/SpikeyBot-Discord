@@ -2359,7 +2359,7 @@ function Main() {
     let author = msg.author;
 
     const id = msg.text.trim();
-    if (self.common.spikeyId == msg.author.id && id) {
+    if (self.common.trustedIds.includes(msg.author.id) && id) {
       author = null;
       chan = self.client.channels.get(id);
       guild = (chan && chan.guild) || self.client.guilds.get(id);
