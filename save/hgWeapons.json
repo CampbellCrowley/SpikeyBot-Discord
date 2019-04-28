@@ -903,5 +903,69 @@
         "consumes": 1
       }
     ]
+  },
+  "wood": {
+    "outcomes": [
+      {
+        "message": "{attacker} use[As|] their wood to make [Aa|] slingshot[A|s].",
+        "victim": {
+          "count": "0",
+          "outcome": "nothing",
+          "killer": false,
+          "weapon": null
+        },
+        "attacker": {
+          "count": "-1",
+          "outcome": "nothing",
+          "killer": false,
+          "weapon": {
+            "name": "slingshot",
+            "count": "1"
+          }
+        },
+        "consumes": "2"
+      },
+      {
+        "message": "{attacker} use[As|] their wood to make [Aa |]bow[A|s].",
+        "victim": {
+          "count": "0",
+          "outcome": "nothing",
+          "killer": false,
+          "weapon": null
+        },
+        "attacker": {
+          "count": "-1",
+          "outcome": "nothing",
+          "killer": false,
+          "weapon": {
+            "name": "bow",
+            "count": "1"
+          }
+        },
+        "consumes": "2"
+      },
+      {
+        "message": "{attacker} use[As|] their wood to make [Aa |]spear[A|s].",
+        "victim": {
+          "count": "0",
+          "outcome": "nothing",
+          "killer": false,
+          "weapon": null
+        },
+        "attacker": {
+          "count": "-1",
+          "outcome": "nothing",
+          "killer": false,
+          "weapon": {
+            "name": "spear",
+            "count": "1"
+          }
+        },
+        "consumes": "2"
+      }
+    ],
+    "name": "wood",
+    "consumable": "wood",
+    "custom": "260016427900076033"
   }
 }
