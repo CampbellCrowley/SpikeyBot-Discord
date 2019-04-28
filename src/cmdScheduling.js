@@ -966,8 +966,7 @@ function CmdScheduling() {
    * @param {*} data The arguments to pass into the function calls.
    */
   function fireEvent(name, ...data) {
-    if (!listeners[name]) return;
-    for (let i = 0; i < listeners[name].length; i++) {
+    for (let i = 0; listeners[name] && i < listeners[name].length; i++) {
       try {
         listeners[name][i].apply(this, data);
       } catch (err) {
@@ -1006,6 +1005,7 @@ function CmdScheduling() {
     message.member = g.members.get(uId);
     message.author = g.members.get(uId).user;
     message.guild = g;
+    message.client = self.client;
     message.channel = self.client.channels.get(cId);
     message.text = msg;
     message.content = msg;

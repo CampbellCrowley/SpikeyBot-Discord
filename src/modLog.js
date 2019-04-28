@@ -133,6 +133,8 @@ class ModLog extends SubModule {
         return 'Banned';
       case 'mute':
         return 'Muted';
+      case 'warnAndMute':
+        return 'Warned and Muted';
       case 'smite':
         return 'Smited';
       case 'mentionAbuse':
@@ -279,6 +281,7 @@ class Settings {
       case 'ban':
         return this.logBans;
       case 'mute':
+      case 'warnAndMute':
       case 'smite':
         return this.logMutes;
       case 'mentionAbuse':
@@ -318,6 +321,7 @@ Settings.from = function(obj) {
   output.logMemberLeave = obj.logMemberLeave || false;
   output.logMemberJoin = obj.logMemberJoin || false;
   output.logRaidLockdown = obj.logRaidLockdown || false;
+  output.logOther = obj.logOther || false;
   return output;
 };
 

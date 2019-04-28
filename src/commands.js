@@ -215,7 +215,7 @@ function Command() {
      */
     this.getFullName = function() {
       if (me.parentName) {
-        return me.parentName + ' ' + me.getName();
+        return `${me.parentName} ${me.getName()}`;
       } else {
         return me.getName();
       }
@@ -267,7 +267,12 @@ function Command() {
      */
     this.trigger = function(msg) {
       if (msg.cmd && msg.cmd != me.getFullName() && me.subCmds) {
-        const sub = msg.cmd.replace(me.getFullName() + ' ', '').split(' ')[0];
+        const sub =
+            msg.cmd
+                .replace(
+                    new RegExp(escapeRegExp(`${me.getFullName()}\\s+`)), '')
+                .split(' ')[0]
+                .toLocaleLowerCase();
         if (sub) {
           let match = me.subCmds[sub];
           if (!match) {
@@ -276,8 +281,8 @@ function Command() {
             });
           }
           if (match) {
-            msg.text =
-                msg.text.replace(new RegExp('^.*?' + me.getFullName()), '');
+            msg.text = msg.text.replace(
+                new RegExp(`^.*?${escapeRegExp(me.getFullName())}`, 'i'), '');
             me.subCmds[sub].trigger(msg);
             return;
           }
@@ -678,11 +683,14 @@ function Command() {
    *
    * @public
    *
-   * @param {string} gId THe guild id of which to fetch the settings.
+   * @param {string} gId The guild id of which to fetch the settings.
    * @returns {Object.<CommandSetting>} The settings for the guild mapped by
-   * command name.
+   * command name. If it doesn't exist, an object will first be created.
    */
   this.getUserSettings = function(gId) {
+    if (!userSettings[gId] && self.client.guilds.get(gId)) {
+      userSettings[gId] = {};
+    }
     return userSettings[gId];
   };
 
@@ -775,7 +783,8 @@ function Command() {
           return true;
         }
       }
-      msg.text = msg.content.replace(msg.prefix + msg.cmd, '');
+      msg.text = msg.content.replace(
+          new RegExp(escapeRegExp(`${msg.prefix}${msg.cmd}`), 'i'), '');
       try {
         func.trigger(msg);
       } catch (err) {
@@ -1475,7 +1484,7 @@ function Command() {
           'Reset values to default with ' + msg.prefix +
           'reset\nChange values with ' + msg.prefix + 'enable or ' +
           msg.prefix + 'disable');
-      embed.setFooter('A ~ denotes command is muted on error.');
+      embed.setFooter('~ denotes command is muted on error.');
       msg.channel.send(self.common.mention(msg), embed).catch((err) => {
         self.common.reply(msg, 'Please specify a command to lookup.')
             .catch(() => {});
@@ -1627,5 +1636,16 @@ function Command() {
       h.apply(h, args);
     });
   };
+
+  /**
+   * Escape a given string to be passed into a regular expression.
+   *
+   * @private
+   * @param {string} str Input to escape.
+   * @returns {string} Escaped string.
+   */
+  function escapeRegExp(str) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
 }
 module.exports = new Command();

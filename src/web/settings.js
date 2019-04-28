@@ -363,6 +363,9 @@ function WebSettings() {
     socket.on('fetchModLogSettings', (...args) => {
       callSocketFunction(fetchModLogSettings, args);
     });
+    socket.on('fetchCommandSettings', (...args) => {
+      callSocketFunction(fetchModLogSettings, args);
+    });
     socket.on('fetchScheduledCommands', (...args) => {
       callSocketFunction(fetchScheduledCommands, args);
     });
@@ -380,6 +383,9 @@ function WebSettings() {
     });
     socket.on('changeModLogSetting', (...args) => {
       callSocketFunction(changeModLogSetting, args);
+    });
+    socket.on('changeCommandSetting', (...args) => {
+      callSocketFunction(changeCommandSetting, args);
     });
 
     /**
@@ -863,6 +869,40 @@ function WebSettings() {
   this.fetchModLogSettings = fetchModLogSettings;
 
   /**
+   * Client has requested settings specific to a single command in a single
+   * guild. This only supplies user settings, if values are default, this will
+   * reply with null.
+   *
+   * @public
+   * @type {WebSettings~SocketFunction}
+   * @param {Object} userData The current user's session data.
+   * @param {socketIo~Socket} socket The socket connection to reply on.
+   * @param {string} gId The guild ID to fetch the settings for.
+   * @param {?string} cmd The name of the command to fetch the setting for, or
+   * null to fetch all settings.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete and has data, or has failed.
+   */
+  function fetchCommandSettings(userData, socket, gId, cmd, cb) {
+    if (typeof cb !== 'function') cb = function() {};
+    if (!userData) {
+      cb('Not signed in.', null);
+      return;
+    }
+    let settings = self.commands.getUserSettings(gId);
+    if (cmd) {
+      const command = self.commands.find(cmd);
+      if (!command) {
+        settings = null;
+      } else {
+        settings = settings[command.getFullName()];
+      }
+    }
+    cb(settings);
+  }
+  this.fetchCommandSettings = fetchCommandSettings;
+
+  /**
    * Client has requested all scheduled commands for the connected user.
    *
    * @public
@@ -1154,5 +1194,80 @@ function WebSettings() {
     }
   }
   this.changeModLogSetting = changeModLogSetting;
+
+  /**
+   * Client has requested to change a single command setting for a guild.
+   *
+   * @public
+   * @type {WebSettings~SocketFunction}
+   * @param {Object} userData The current user's session data.
+   * @param {socketIo~Socket} socket The socket connection to reply on.
+   * @param {string|number} gId The id of the guild of which to change the
+   * setting.
+   * @param {string} cmd The name of the command to change the setting for.
+   * @param {string} key The name of the setting to change.
+   * @param {string|boolean} value The value to set the setting to, or the key
+   * if changing an enabled or disabled category.
+   * @param {?string} id The ID of the channel, user, or role to change
+   * the setting for if changing the enabled or disabled category.
+   * @param {?boolean} enabled The setting to set the value of the ID setting.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete, or has failed.
+   */
+  function changeCommandSetting(
+      userData, socket, gId, cmd, key, value, id, enabled, cb) {
+    if (typeof cb !== 'function') cb = function() {};
+    if (!checkPerm(userData, gId, null, 'enable') ||
+        !checkPerm(userData, gId, null, 'disable')) {
+      if (!checkMyGuild(gId)) return;
+      replyNoPerm(socket, 'changeCommandSetting');
+      cb('Forbidden');
+      return;
+    }
+    const command = self.commands.find(cmd);
+    if (!command) {
+      cb('Bad Payload');
+      return;
+    }
+    const userSettings = self.commands.getUserSettings(gId);
+    const name = command.getFullName();
+    if (!userSettings[name]) {
+      userSettings[name] = new self.commands.CommandSetting(command.options);
+    }
+
+    const setting = userSettings[name];
+
+    if (typeof setting[key] === 'object' && typeof value === 'string') {
+      if (typeof id !== 'string' ||
+          typeof setting[key][value] === 'undefined') {
+        cb('Bad Payload');
+        return;
+      } else {
+        if (enabled === true) {
+          setting[key][value][id] = true;
+        } else if (enabled === false) {
+          delete setting[key][value][id];
+        } else {
+          cb('Bad Payload');
+          return;
+        }
+      }
+    } else if (typeof setting[key] !== typeof value) {
+      cb('Bad Payload');
+      return;
+    } else {
+      setting[key] = value;
+    }
+
+    cb();
+
+    for (const i in sockets) {
+      if (sockets[i] && sockets[i].cachedGuilds &&
+          sockets[i].cachedGuilds.includes(gId)) {
+        sockets[i].emit('commandSettingsChanged', gId, name );
+      }
+    }
+  }
+  this.changeCommandSetting = changeCommandSetting;
 }
 module.exports = new WebSettings();
