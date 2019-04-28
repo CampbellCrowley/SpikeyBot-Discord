@@ -629,7 +629,7 @@ function HGWeb() {
             guilds = response;
           }
         }
-        for (let i = 0; i < guilds.length; i++) {
+        for (let i = 0; guilds && i < guilds.length; i++) {
           guildBuffer[guilds[i].id] = guilds[i];
         }
         replied++;
