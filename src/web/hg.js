@@ -636,7 +636,7 @@ function HGWeb() {
         if (replied > numReplies) {
           if (typeof cb === 'function') cb();
           socket.emit('guilds', null, guildBuffer);
-          socket.cachedGuilds = Object.keys(guildBuffer);
+          socket.cachedGuilds = Object.keys(guildBuffer || {});
         }
       };
       Object.entries(siblingSockets).forEach((obj, i) => {
