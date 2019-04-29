@@ -2100,7 +2100,7 @@ function Main() {
           dateFormat(pingHistory[pingHistory.length - 1].time, dfmt); */
     }
 
-    const finalGraph = '```' + graph.join('\n') + '```';
+    const finalGraph = '24 hour history ```' + graph.join('\n') + '```';
     if (self.client.ping) {
       self.common.reply(
           msg, 'My ping is ' + Math.round(self.client.ping * 10) / 10 + 'ms',
