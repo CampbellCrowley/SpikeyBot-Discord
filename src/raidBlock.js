@@ -150,6 +150,10 @@ class RaidBlock extends SubModule {
           this._modLog(
               member.guild, 'lockdown', null, null,
               'Lockdown Activated Automatically');
+          for (let i = 0; s.history[i].time < now; i++) {
+            const m = member.guild.members.get(s.history[i].id);
+            if (m) this._doAction(m, s);
+          }
         }
         s.start = now;
       }
