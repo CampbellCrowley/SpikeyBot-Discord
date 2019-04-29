@@ -2045,7 +2045,7 @@ function Main() {
   function commandPing(msg) {
     const graph = [];
     if (pingHistory.length > 0) {
-      const cols = 70;
+      const cols = 40;
       const rows = 10;
       const td = oldestPing / cols;
       const now = Date.now();
@@ -2069,13 +2069,13 @@ function Main() {
       max *= 1.1;
       min *= 0.9;
       const step = (max - min) / rows;
-      for (let r = 0; r < rows; r++) {
-        graph[r] = ['    '];
-        if (r == 0 || r == rows - 1 || r == Math.floor(rows / 2)) {
-          graph[r][0] =
-              (`    ${Math.round(step * (rows - r) + min)}`).slice(-4);
-        }
+      for (let r = 0; r <= rows; r++) {
+        graph[r] = [];
         for (let c = cols - 1; c >= 0; c--) {
+          if (r == rows) {
+            graph[r].push('_');
+            continue;
+          }
           const inRange = min + step * (rows - r - 1) <= values[c] &&
               min + step * (rows - r) > values[c];
           let char = ' ';
@@ -2088,12 +2088,16 @@ function Main() {
           }
           graph[r].push(char);
         }
+        graph[r].push('|');
+        if (r == 0 || r == rows - 1 || r == Math.floor(rows / 2)) {
+          graph[r].push(Math.round(step * (rows - r) + min));
+        }
         graph[r] = graph[r].join('');
       }
-      const dfmt = 'mmm-dd HH:MM Z';
+      /* const dfmt = 'mmm-dd HH:MM Z';
       graph[rows] = '    ' + dateFormat(pingHistory[0].time, dfmt) +
           '       --->       ' +
-          dateFormat(pingHistory[pingHistory.length - 1].time, dfmt);
+          dateFormat(pingHistory[pingHistory.length - 1].time, dfmt); */
     }
 
     const finalGraph = '```' + graph.join('\n') + '```';
