@@ -75,17 +75,19 @@ The below steps outline the minimum required to get the SpikeyBot to run.
     - The bot is currently running on NodeJS [v10.15.3](https://nodejs.org/dist/v10.15.3/). Other versions may work, but are untested.
 3) Download source code
     - Clone this repository `git clone https://github.com/CampbellCrowley/SpikeyBot-Discord.git` or click the green download button in GitHub.
-4) Install dependencies via NPM
+4) Install system dependencies
+    - `sudo apt install make libtool autoconf g++ ffmpeg` are required for the default installation.
+5) Install dependencies via NPM
     - Current version of NPM used is `v6.9.0`, but almost any version should be fine.
     - In the `SpikeyBot-Discord` directory, run `npm install`.
-5) Get a bot token from Discord
+6) Get a bot token from Discord
     - A token for the bot that you are trying to run from [Discord](https://discordapp.com/developers/applications/) is required.
     - DO NOT give this token to anybody. Keep it private. The token allows anyone to be your bot.
-6) Configure SpikeyBot
+7) Configure SpikeyBot
     - Create `auth.js` in the `SpikeyBot-Discord/` directory with a line that says `exports.release = 'BOT_TOKEN';`, where `BOT_TOKEN` is the bot token from Discord.
     - Modify `./subModules.json` `"release"` section to have the subModules you want.
     - If you wish to have access to developer commands that normally only SpikeyRobot has access to, replace the `spikeyId` in `./src/common.js` with your account ID.
-7) Run SpikeyBot
+8) Run SpikeyBot
     - Run `node src/SpikeyBot.js` in `SpikeyBot-Discord/` (working directory must be the project root).
     - Errors about `gApiCredentials.json` missing can be suppressed by removing `./tts.js` and `./chatbot.js` from `./subModules.json` since these require special authentication from Google's API. (https://console.cloud.google.com/)
     - All website related subModules will not work, and related errors can be suppressed by removing all subModules that start with `./web/` from `./subModules.json`.
