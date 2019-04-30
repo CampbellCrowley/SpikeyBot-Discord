@@ -91,10 +91,11 @@ class Simulator {
       }
       if (msg.reply && this.msg) {
         this.hg._parent.common.reply(
-            this.msg, msg.reply.replace(
-                /\{prefix\}/g, this.msg.prefix + this.hg.postPrefix),
+            this.msg,
+            msg.reply.replace(
+                /\{prefix\}/g, this.msg.prefix + this.hg._parent.postPrefix),
             msg.reply2.replace(
-                /\{prefix\}/g, this.msg.prefix + this.hg.postPrefix));
+                /\{prefix\}/g, this.msg.prefix + this.hg._parent.postPrefix));
       }
       if (msg.endGame) {
         this.game.end();
