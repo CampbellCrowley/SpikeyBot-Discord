@@ -29,7 +29,7 @@
 <header>
     
         <h2><span class="attribs"><span class="type-signature"></span></span>
-            <span class="ancestors"><a href="RaidBlock.html">RaidBlock</a>~</span>RaidSettings<span class="signature">(enabled<span class="signature-attributes">opt</span>, numJoin<span class="signature-attributes">opt</span>, timeInterval<span class="signature-attributes">opt</span>, duration<span class="signature-attributes">opt</span>, action<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
+            <span class="ancestors"><a href="RaidBlock.html">RaidBlock</a>~</span>RaidSettings<span class="signature">(enabled<span class="signature-attributes">opt</span>, numJoin<span class="signature-attributes">opt</span>, timeInterval<span class="signature-attributes">opt</span>, duration<span class="signature-attributes">opt</span>, action<span class="signature-attributes">opt</span>, warnMessage<span class="signature-attributes">opt, nullable</span>, sendWarning<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
         
             <div class="class-description">Container for RaidBlock related settings.</div>
         
@@ -46,7 +46,7 @@
     
 
     
-    <h4 class="name" id="RaidSettings"><span class="type-signature"></span>new RaidSettings<span class="signature">(enabled<span class="signature-attributes">opt</span>, numJoin<span class="signature-attributes">opt</span>, timeInterval<span class="signature-attributes">opt</span>, duration<span class="signature-attributes">opt</span>, action<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="RaidSettings"><span class="type-signature"></span>new RaidSettings<span class="signature">(enabled<span class="signature-attributes">opt</span>, numJoin<span class="signature-attributes">opt</span>, timeInterval<span class="signature-attributes">opt</span>, duration<span class="signature-attributes">opt</span>, action<span class="signature-attributes">opt</span>, warnMessage<span class="signature-attributes">opt, nullable</span>, sendWarning<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
 
     
@@ -288,6 +288,86 @@ lockdown.</td>
         </tr>
 
     
+
+        <tr>
+            
+                <td class="name"><code>warnMessage</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                    &lt;nullable><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    null
+                
+                </td>
+            
+
+            <td class="description last">DM message to send.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>sendWarning</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last">Should send DM.</td>
+        </tr>
+
+    
     </tbody>
 </table>
 
@@ -325,7 +405,7 @@ lockdown.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="raidBlock.js.html">raidBlock.js</a>, <a href="raidBlock.js.html#line420">line 420</a>
+        <a href="raidBlock.js.html">raidBlock.js</a>, <a href="raidBlock.js.html#line427">line 427</a>
     </li></ul></dd>
     
 
@@ -380,7 +460,7 @@ lockdown.</td>
 
 <div class="description">
     Action to perform, while on lockdown, to new member who
-join. Possible values are `kick`, `ban`, `mute`, or `warnAndMute`.
+join. Possible values are `kick`, `ban`, or `mute`.
 </div>
 
 
@@ -433,7 +513,7 @@ join. Possible values are `kick`, `ban`, `mute`, or `warnAndMute`.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="raidBlock.js.html">raidBlock.js</a>, <a href="raidBlock.js.html#line473">line 473</a>
+        <a href="raidBlock.js.html">raidBlock.js</a>, <a href="raidBlock.js.html#line482">line 482</a>
     </li></ul></dd>
     
 
@@ -511,7 +591,7 @@ detected to have ended.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="raidBlock.js.html">raidBlock.js</a>, <a href="raidBlock.js.html#line465">line 465</a>
+        <a href="raidBlock.js.html">raidBlock.js</a>, <a href="raidBlock.js.html#line474">line 474</a>
     </li></ul></dd>
     
 
@@ -588,7 +668,7 @@ detected to have ended.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="raidBlock.js.html">raidBlock.js</a>, <a href="raidBlock.js.html#line441">line 441</a>
+        <a href="raidBlock.js.html">raidBlock.js</a>, <a href="raidBlock.js.html#line450">line 450</a>
     </li></ul></dd>
     
 
@@ -666,7 +746,7 @@ time interval. Time is timestamp of join, and id is user's account id.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="raidBlock.js.html">raidBlock.js</a>, <a href="raidBlock.js.html#line490">line 490</a>
+        <a href="raidBlock.js.html">raidBlock.js</a>, <a href="raidBlock.js.html#line500">line 500</a>
     </li></ul></dd>
     
 
@@ -744,7 +824,80 @@ to be considered a raid.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="raidBlock.js.html">raidBlock.js</a>, <a href="raidBlock.js.html#line449">line 449</a>
+        <a href="raidBlock.js.html">raidBlock.js</a>, <a href="raidBlock.js.html#line458">line 458</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="sendWarning"><span class="type-signature"></span>sendWarning<span class="type-signature"> :boolean</span></h4>
+
+
+
+
+<div class="description">
+    Should we additionally send `warnMessage` in a DM to the
+user prior to performing the action during a lockdown.
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">boolean</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="raidBlock.js.html">raidBlock.js</a>, <a href="raidBlock.js.html#line518">line 518</a>
     </li></ul></dd>
     
 
@@ -818,7 +971,7 @@ be active, or null if no raid is active.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="raidBlock.js.html">raidBlock.js</a>, <a href="raidBlock.js.html#line482">line 482</a>
+        <a href="raidBlock.js.html">raidBlock.js</a>, <a href="raidBlock.js.html#line492">line 492</a>
     </li></ul></dd>
     
 
@@ -896,7 +1049,80 @@ considered a raid. Time in milliseconds.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="raidBlock.js.html">raidBlock.js</a>, <a href="raidBlock.js.html#line457">line 457</a>
+        <a href="raidBlock.js.html">raidBlock.js</a>, <a href="raidBlock.js.html#line466">line 466</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
+            
+<h4 class="name" id="warnMessage"><span class="type-signature"></span>warnMessage<span class="type-signature"> :string</span></h4>
+
+
+
+
+<div class="description">
+    Message to send to users when they are being warned that the
+raid lockdown is active.
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">string</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="raidBlock.js.html">raidBlock.js</a>, <a href="raidBlock.js.html#line508">line 508</a>
     </li></ul></dd>
     
 
@@ -1026,7 +1252,7 @@ Similar to copy-constructor.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="raidBlock.js.html">raidBlock.js</a>, <a href="raidBlock.js.html#line503">line 503</a>
+        <a href="raidBlock.js.html">raidBlock.js</a>, <a href="raidBlock.js.html#line531">line 531</a>
     </li></ul></dd>
     
 
@@ -1098,7 +1324,7 @@ Similar to copy-constructor.
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun Apr 28 2019 23:50:01 GMT-0700 (Pacific Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Apr 29 2019 22:34:09 GMT-0700 (Pacific Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>

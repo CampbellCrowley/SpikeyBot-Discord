@@ -1146,7 +1146,11 @@ function WebSettings() {
       }
     }
 
+
     if (typeof settings[key] === typeof value) {
+      if (typeof value === 'string' && value.length > 1000) {
+        value = value.substr(0, 1000);
+      }
       settings[key] = value;
     } else {
       cb('Bad Payload');

@@ -201,56 +201,63 @@ class RaidBlock extends SubModule {
   _doAction(member, s) {
     this._fire(
         'action', {id: member.guild.id, action: s.action, user: member.user});
-    switch (s.action) {
-      case 'kick':
-        member.kick({reason: 'Server on raid lockdown.'})
-            .then((m) => {
-              this._modLog(m.guild, s.action, m.user, null, 'Raid Lockdown');
-            })
-            .catch((err) => {
-              this.error('Failed to kick user during raid!');
-              console.error(err);
-            });
-        break;
-      case 'ban':
-        member.ban({reason: 'Server on raid lockdown.'})
-            .then((m) => {
-              this._modLog(m.guild, s.action, m.user, null, 'Raid Lockdown');
-            })
-            .catch((err) => {
-              this.error('Failed to kick user during raid!');
-              console.error(err);
-            });
-        break;
-      case 'mute':
-        this._muteMember(member, (err) => {
-          if (err) {
-            this._modLog(
-                member.guild, s.action, member.user, null,
-                'Failed to mute: ' + err);
-          } else {
-            this._modLog(
-                member.guild, s.action, member.user, null, 'Raid Lockdown');
-          }
-        });
-        break;
-      case 'warnAndMute':
-        this._muteMember(member, (err) => {
-          if (err) {
-            this._modLog(
-                member.guild, s.action, member.user, null,
-                'Failed to mute: ' + err);
-          } else {
-            this._modLog(
-                member.guild, s.action, member.user, null, 'Raid Lockdown');
-          }
-        });
-        member
-            .send(
-                'You have been muted in ' + member.guild.name +
-                ' because the server is on lockdown.')
-            .catch(() => {});
-        break;
+    const self = this;
+    const go = function() {
+      switch (s.action) {
+        case 'kick':
+          member.kick({reason: 'Server on raid lockdown.'})
+              .then((m) => {
+                self._modLog(m.guild, s.action, m.user, null, 'Raid Lockdown');
+              })
+              .catch((err) => {
+                self.error('Failed to kick user during raid!');
+                console.error(err);
+              });
+          break;
+        case 'ban':
+          member.ban({reason: 'Server on raid lockdown.'})
+              .then((m) => {
+                self._modLog(m.guild, s.action, m.user, null, 'Raid Lockdown');
+              })
+              .catch((err) => {
+                self.error('Failed to kick user during raid!');
+                console.error(err);
+              });
+          break;
+        case 'mute':
+          self._muteMember(member, (err) => {
+            if (err) {
+              self._modLog(
+                  member.guild, s.action, member.user, null,
+                  'Failed to mute: ' + err);
+            } else {
+              self._modLog(
+                  member.guild, s.action, member.user, null, 'Raid Lockdown');
+            }
+          });
+          break;
+      }
+    };
+
+    if (s.sendWarning) {
+      let verb = '';
+      switch (s.action) {
+        case 'kick':
+          verb = 'kicked';
+          break;
+        case 'ban':
+          verb = 'banned';
+          break;
+        case 'mute':
+          verb = 'muted';
+          break;
+      }
+      const finalMessage = s.warnMessage.replace(/\{action\}/, verb)
+          .replace(/\{server\}/g, member.guild.name)
+          .replace(/\{username\}/g, member.user.username);
+      member.send(finalMessage).then(go).catch(go);
+    } else {
+      go();
     }
   }
 
@@ -456,10 +463,12 @@ class RaidSettings {
    * @param {number} [duration=600000] Amount of time to be in automated
    * lockdown.
    * @param {string} [action='kick'] Action to perform during lockdown.
+   * @param {?string} [warnMessage=null] DM message to send.
+   * @param {boolean} [sendWarning=false] Should send DM.
    */
   constructor(
       enabled = false, numJoin = 5, timeInterval = 10000, duration = 600000,
-      action = 'kick') {
+      action = 'kick', warnMessage = null, sendWarning = false) {
     /**
      * @description Is raid protection enabled.
      * @public
@@ -493,12 +502,13 @@ class RaidSettings {
     this.duration = duration;
     /**
      * @description Action to perform, while on lockdown, to new member who
-     * join. Possible values are `kick`, `ban`, `mute`, or `warnAndMute`.
+     * join. Possible values are `kick`, `ban`, or `mute`.
      * @public
      * @type {string}
      * @default 'kick'
      */
     this.action = action;
+    if (!['kick', 'ban', 'mute'].includes(this.action)) this.action = 'kick';
     /**
      * @description Current raid block state information. Not null is if server
      * has had a lockdown, start is the last timestamp we consider the raid to
@@ -516,6 +526,24 @@ class RaidSettings {
      * @default
      */
     this.history = [];
+    /**
+     * @description Message to send to users when they are being warned that the
+     * raid lockdown is active.
+     * @public
+     * @type {string}
+     * @default
+     */
+    this.warnMessage = warnMessage ||
+        '{username}, you have been {action} in' +
+            ' {server} because the server is on lockdown.';
+    /**
+     * @description Should we additionally send `warnMessage` in a DM to the
+     * user prior to performing the action during a lockdown.
+     * @public
+     * @type {boolean}
+     * @default
+     */
+    this.sendWarning = sendWarning;
   }
 }
 
@@ -530,7 +558,8 @@ class RaidSettings {
  */
 RaidSettings.from = function(obj) {
   const output = new RaidSettings(
-      obj.enabled, obj.numJoin, obj.timeInterval, obj.duration, obj.action);
+      obj.enabled, obj.numJoin, obj.timeInterval, obj.duration, obj.action,
+      obj.warnMessage, obj.sendWarning);
   return output;
 };
 
@@ -553,7 +582,7 @@ module.exports = new RaidBlock();
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun Apr 28 2019 23:50:01 GMT-0700 (Pacific Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Apr 29 2019 22:34:08 GMT-0700 (Pacific Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>

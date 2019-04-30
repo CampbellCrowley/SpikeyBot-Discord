@@ -2662,7 +2662,7 @@ function HG() {
       return;
     }
 
-    self.common.reply(msg, resPrefix + resPostfix, response);
+    self.common.reply(msg, resPrefix + resPostfix, response.substr(0, 2048));
   }
 
   /**
@@ -2865,7 +2865,7 @@ function HG() {
       return;
     }
 
-    self.common.reply(msg, resPrefix + resPostfix, response);
+    self.common.reply(msg, resPrefix + resPostfix, response.substr(0, 2048));
   }
 
   /**
