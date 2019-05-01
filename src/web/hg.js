@@ -283,7 +283,7 @@ function HGWeb() {
       if (!noLog.includes(func.name.toString())) {
         const logArgs = args.map((el) => {
           if (typeof el === 'function') {
-            return (el.name || 'anonymous') + '()';
+            return (el.name || 'cb') + '()';
           } else {
             return el;
           }
@@ -294,7 +294,7 @@ function HGWeb() {
       if (forward) {
         Object.entries(siblingSockets).forEach((s) => {
           let cb;
-          if (typeof args[args.length-1] === 'function') {
+          if (typeof args[args.length - 1] === 'function') {
             cb = args[args.length - 1];
             args[args.length - 1] = {_function: true};
           }
@@ -302,8 +302,7 @@ function HGWeb() {
               'forwardedRequest', args[0], socket.id, func.name, args.slice(1),
               (res) => {
                 if (res._forward) socket.emit(...res.data);
-                if (res._callback &&
-                    typeof args[args.length - 1] === 'function') {
+                if (res._callback && typeof cb === 'function') {
                   cb(...res.data);
                 }
               });
@@ -604,13 +603,13 @@ function HGWeb() {
       return;
     }
 
+    const numReplies = (Object.entries(siblingSockets).length || 0);
+    let replied = 0;
+    const guildBuffer = {};
     let done;
     if (typeof cb === 'function') {
       done = cb;
     } else {
-      const numReplies = (Object.entries(siblingSockets).length || 0);
-      let replied = 0;
-      const guildBuffer = {};
       /**
        * The callback for each response with the requested data. Replies to the
        * user once all requests have replied.
@@ -634,15 +633,15 @@ function HGWeb() {
         }
         replied++;
         if (replied > numReplies) {
-          if (typeof cb === 'function') cb();
+          if (typeof cb === 'function') cb(guildBuffer);
           socket.emit('guilds', null, guildBuffer);
           socket.cachedGuilds = Object.keys(guildBuffer || {});
         }
       };
-      Object.entries(siblingSockets).forEach((obj, i) => {
-        obj[1].emit('fetchGuilds', userData, socket.id, done);
-      });
     }
+    Object.entries(siblingSockets).forEach((obj, i) => {
+      obj[1].emit('fetchGuilds', userData, socket.id, done);
+    });
 
     try {
       let guilds = [];

@@ -406,7 +406,7 @@ function WebSettings() {
       if (!noLog.includes(func.name.toString())) {
         const logArgs = args.map((el) => {
           if (typeof el === 'function') {
-            return (el.name || 'anonymous') + '()';
+            return (el.name || 'cb') + '()';
           } else {
             return el;
           }
@@ -416,10 +416,18 @@ function WebSettings() {
       func.apply(func, [args[0], socket].concat(args.slice(1)));
       if (forward) {
         Object.entries(siblingSockets).forEach((s) => {
+          let cb;
+          if (typeof args[args.length - 1] === 'function') {
+            cb = args[args.length - 1];
+            args[args.length - 1] = {_function: true};
+          }
           s[1].emit(
               'forwardedRequest', args[0], socket.id, func.name, args.slice(1),
               (res) => {
-                socket.emit(...res);
+                if (res._forward) socket.emit(...res.data);
+                if (res._callback && typeof cb === 'function') {
+                  cb(...res.data);
+                }
               });
         });
       }
@@ -459,12 +467,17 @@ function WebSettings() {
       if (!authenticated) return;
       const fakeSocket = {
         emit: function(...args) {
-          if (typeof cb == 'function') cb(args);
+          if (typeof cb == 'function') cb({_forward: true, data: args});
         },
         id: sId,
       };
+      if (args[args.length - 1]._function) {
+        args[args.length - 1] = function(...a) {
+          if (typeof cb === 'function') cb({_callback: true, data: a});
+        };
+      }
       if (!self[func]) {
-        self.common.logDebug(func + ': is not a function.', sId);
+        self.common.error(func + ': is not a function.', socket.id);
       } else {
         self[func].apply(self[func], [userData, fakeSocket].concat(args));
       }
@@ -650,13 +663,13 @@ function WebSettings() {
       return;
     }
 
+    const numReplies = (Object.entries(siblingSockets).length || 0);
+    let replied = 0;
+    const guildBuffer = {};
     let done;
     if (typeof cb === 'function') {
       done = cb;
     } else {
-      const numReplies = (Object.entries(siblingSockets).length || 0);
-      let replied = 0;
-      const guildBuffer = {};
       /**
        * The callback for each response with the requested data. Replies to the
        * user once all requests have replied.
@@ -675,20 +688,20 @@ function WebSettings() {
             guilds = response;
           }
         }
-        for (let i = 0; i < guilds.length; i++) {
+        for (let i = 0; guilds && i < guilds.length; i++) {
           guildBuffer[guilds[i].id] = guilds[i];
         }
         replied++;
         if (replied > numReplies) {
-          if (typeof cb === 'function') cb();
+          if (typeof cb === 'function') cb(guildBuffer);
           socket.emit('guilds', null, guildBuffer);
           socket.cachedGuilds = Object.keys(guildBuffer);
         }
       };
-      Object.entries(siblingSockets).forEach((obj, i) => {
-        obj[1].emit('fetchGuilds', userData, socket.id, done);
-      });
     }
+    Object.values(siblingSockets).forEach((obj, i) => {
+      obj.emit('fetchGuilds', userData, socket.id, done);
+    });
 
     try {
       let guilds = [];
