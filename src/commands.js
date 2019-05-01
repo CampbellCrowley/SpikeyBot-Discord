@@ -130,10 +130,13 @@ function Command() {
   };
   /** @inheritdoc */
   this.export = function() {
-    return {
+    const output = {
       cmds: cmds,
       events: eventList,
     };
+    cmds = null;
+    eventList = null;
+    return output;
   };
 
   /**

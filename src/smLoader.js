@@ -22,10 +22,13 @@ function SMLoader() {
   };
   /** @inheritdoc */
   this.export = function() {
-    return {
+    const output = {
       subModules: subModules,
       subModuleNames: subModuleNames,
     };
+    subModules = null;
+    subModuleNames = null;
+    return output;
   };
   /** @inheritdoc */
   this.terminate = function() {
@@ -73,6 +76,31 @@ function SMLoader() {
         console.error(e);
       }
     });
+    if (self.client.shard) {
+      /* eslint-disable no-unused-vars */
+      /**
+       * Receive message from another shard asking for us to reload subModules.
+       * @see {@link SMLoader~shardReload}
+       *
+       * @private
+       */
+      self.client.commandReload = shardReload;
+      /**
+       * Receive message from another shard asking for us to unload subModules.
+       * @see {@link SMLoader~shardUnload}
+       *
+       * @private
+       */
+      self.client.commandUnload = shardUnload;
+      /**
+       * Receive message from another shard asking for us to load subModules.
+       * @see {@link SMLoader~shardLoad}
+       *
+       * @private
+       */
+      self.client.commandLoad = shardLoad;
+      /* eslint-enable no-unused-vars */
+    }
   };
   this.shutdown = function() {
     self.command.deleteEvent('reload');
@@ -84,6 +112,12 @@ function SMLoader() {
     const parsed = JSON.parse(data);
     parsed[self.bot.getFullBotName()] = goalSubModuleNames;
     fs.writeFileSync(smListFilename, JSON.stringify(parsed, null, 2));
+
+    if (self.client.shard) {
+      self.client.commandReload = null;
+      self.client.commandUnload = null;
+      self.client.commandLoad = null;
+    }
   };
   /** @inheritdoc */
   this.unloadable = function() {
@@ -488,6 +522,11 @@ function SMLoader() {
    */
   function commandReload(msg) {
     if (trustedIds.includes(msg.author.id)) {
+      if (self.client.shard) {
+        const message = encodeURIComponent(msg.text);
+        self.client.shard.broadcastEval(
+            `this.commandReload("${message}",${self.client.shard.ids[0]})`);
+      }
       let toReload = msg.text.split(' ').splice(1);
       const opts = {};
       toReload = toReload.filter((el) => {
@@ -527,6 +566,76 @@ function SMLoader() {
   }
 
   /**
+   * @description Other shard has requested a reload command.
+   * @private
+   * @param {string} message The command message to parse.
+   * @param {number} id Shard id requesting this.
+   */
+  function shardReload(message, id) {
+    if (id == self.client.shard.ids[0]) return;
+    let toReload = decodeURIComponent(message).split(' ').splice(1);
+    const opts = {};
+    toReload = toReload.filter((el) => {
+      switch (el) {
+        case '--force':
+          opts.force = true;
+          return false;
+        case '--no-schedule':
+          opts.ignoreUnloadable = true;
+          return false;
+        case '--immediate':
+          opts.schedule = false;
+          return false;
+        default:
+          return true;
+      }
+    });
+    self.reload(toReload, opts, (out) => {});
+  }
+  /**
+   * @description Other shard has requested an unload command.
+   * @private
+   * @param {string} message The command message to parse.
+   * @param {number} id Shard id requesting this.
+   */
+  function shardUnload(message, id) {
+    if (id == self.client.shard.ids[0]) return;
+    let toUnload = decodeURIComponent(message).split(' ').splice(1);
+    const opts = {};
+    toUnload = toUnload.filter((el) => {
+      switch (el) {
+        case 'force':
+          opts.force = true;
+          return false;
+        case 'no-schedule':
+          opts.ignoreUnloadable = true;
+          return false;
+        case 'immediate':
+          opts.schedule = false;
+          return false;
+        default:
+          return true;
+      }
+    });
+    for (let i = 0; i < toUnload.length; i++) {
+      self.unload(toUnload[i], opts, (out) => {});
+    }
+  }
+  /**
+   * @description Other shard has requested a load command.
+   * @private
+   * @param {string} message The command message to parse.
+   * @param {number} id Shard id requesting this.
+   */
+  function shardLoad(message, id) {
+    if (id == self.client.shard.ids[0]) return;
+    const toLoad = decodeURIComponent(message).split(' ').splice(1);
+    for (let i = 0; i < toLoad.length; i++) {
+      self.load(toLoad[i], null, (out) => {});
+    }
+  }
+
+  /**
    * Unload specific sub modules.
    *
    * @private
@@ -536,6 +645,11 @@ function SMLoader() {
    */
   function commandUnload(msg) {
     if (trustedIds.includes(msg.author.id)) {
+      if (self.client.shard) {
+        const message = encodeURIComponent(msg.text);
+        self.client.shard.broadcastEval(
+            `this.commandUnload("${message}",${self.client.shard.ids[0]})`);
+      }
       let toUnload = msg.text.split(' ').splice(1);
       const opts = {};
       toUnload = toUnload.filter((el) => {
@@ -607,6 +721,11 @@ function SMLoader() {
    */
   function commandLoad(msg) {
     if (trustedIds.includes(msg.author.id)) {
+      if (self.client.shard) {
+        const message = encodeURIComponent(msg.text);
+        self.client.shard.broadcastEval(
+            `this.commandLoad("${message}",${self.client.shard.ids[0]})`);
+      }
       const toLoad = msg.text.split(' ').splice(1);
       self.common.reply(msg, 'Loading modules...').then((warnMessage) => {
         const numTotal = toLoad.length;

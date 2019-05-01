@@ -395,8 +395,8 @@ function SpikeyBot() {
         common.logDebug(
             'Received message from shard ' + shard.id + ': ' +
             JSON.stringify(msg));
-        // @TODO: Differentiate between a forced reboot, and a scheduled
-        // reboot.
+        // @TODO: Differentiate between a forced hard reboot, and a scheduled
+        // hard reboot. Is this feasible?
         if (msg === 'reboot hard force') {
           common.logWarning('TRIGGERED HARD REBOOT!');
           manager.shards.forEach((s) => {
@@ -409,6 +409,21 @@ function SpikeyBot() {
             s.process.kill('SIGHUP');
           });
           process.exit(-1);
+        } else if (typeof msg === 'string' && msg.startsWith('reboot')) {
+          const idList = msg.match(/\b\d+\b/g);
+          if (msg.indexOf('force') > -1) {
+            manager.shards.forEach((s) => {
+              if (!idList || idList.find((el) => el == s.id)) {
+                s.respawn();
+              }
+            });
+          } else {
+            manager.shards.forEach((s) => {
+              if (!idList || idList.find((el) => el == s.id)) {
+                s.process.send('reboot');
+              }
+            });
+          }
         }
       });
     });
@@ -641,7 +656,11 @@ function SpikeyBot() {
         updateGame('SpikeyBot.com');
       }
     }
-    const logChannel = client.channels.get(common.logChannel);
+    let logChannel = client.channels.get(common.logChannel);
+    if (!logChannel && auth.logWebhookId && auth.logWebhookToken) {
+      logChannel =
+          new Discord.WebhookClient(auth.logWebhookId, auth.logWebhookToken);
+    }
     if (testInstance) {
       client.users.fetch(common.spikeyId)
           .then((u) => {
@@ -764,6 +783,7 @@ function SpikeyBot() {
       id: client.user.id,
       guild_count: client.guilds.size,
       shard_count: client.shard ? client.shard.count : '0',
+      shard_id: client.shard ? client.shard.ids : 'null',
       version: self.version,
     }));
     // Reset save interval
@@ -871,25 +891,30 @@ function SpikeyBot() {
     if (isCmd(msg, '')) {
       let commandSuccess = command.validate(msg.content.split(/ |\n/)[0], msg);
       if (!minimal || isBackup) {
+        const postLog = `${client.shard ? client.shard.ids[0] : ''} SpikeyBot`;
         if (msg.guild !== null) {
           if (!commandSuccess) {
             common.log(
                 msg.channel.id + '@' + msg.author.id + ' ' +
-                msg.content.replaceAll('\n', '\\n'));
+                    msg.content.replaceAll('\n', '\\n'),
+                postLog);
           } else {
             common.logDebug(
                 msg.channel.id + '@' + msg.author.id + ' ' + commandSuccess +
-                ' ' + msg.content.replaceAll('\n', '\\n'));
+                    ' ' + msg.content.replaceAll('\n', '\\n'),
+                postLog);
           }
         } else {
           if (!commandSuccess) {
             common.log(
                 'PM:' + msg.author.id + '@' + msg.author.tag + ' ' +
-                msg.content.replaceAll('\n', '\\n'));
+                    msg.content.replaceAll('\n', '\\n'),
+                postLog);
           } else {
             common.logDebug(
                 'PM:' + msg.author.id + '@' + msg.author.tag + ' ' +
-                commandSuccess + ' ' + msg.content.replaceAll('\n', '\\n'));
+                    commandSuccess + ' ' + msg.content.replaceAll('\n', '\\n'),
+                postLog);
           }
         }
       }
@@ -1204,7 +1229,29 @@ function SpikeyBot() {
       rebooting = true;
     }
     if ((!msg && silent) || msg.author.id === common.spikeyId) {
-      const force = (msg || {content: ''}).content.indexOf(' force') > -1;
+      const content = (msg || {content: ''}).content;
+      const force = content.indexOf(' force') > -1;
+      const doHardReboot = content.indexOf('hard') > -1;
+      if (!doHardReboot) {
+        const idList = content.match(/\b\d+\b/g);
+        const requestedSelf = !idList || !client.shard ||
+            idList.find((el) => el == client.shard.ids[0]);
+        const requestedOthers = !idList ||
+            (client.shard && idList.find((el) => el != client.shard.ids[0]));
+        if (requestedOthers) {
+          client.shard.send(
+              'reboot ' + (force ? 'force ' : '') +
+              (idList ? idList.join(' ') : ''));
+        }
+        if (!requestedSelf) {
+          if (!silent && msg) {
+            common.reply(
+                msg, 'Requested reboot ' + (force ? 'force ' : '') +
+                    (idList ? idList.join(' ') : ''));
+          }
+          return;
+        }
+      }
       if (!force) {
         for (let i = 0; i < mainModules.length; i++) {
           if (mainModules[i] && !mainModules[i].unloadable()) {
@@ -1242,7 +1289,6 @@ function SpikeyBot() {
           console.error(e);
         }
       }
-      const doHardReboot = (msg || {content: ''}).content.indexOf('hard') > -1;
       if (minimal) {
         reboot(force, doHardReboot);
       } else {
@@ -1280,6 +1326,11 @@ function SpikeyBot() {
    */
   function commandReload(msg) {
     if (common.trustedIds.includes(msg.author.id)) {
+      if (client.shard) {
+        const message = encodeURIComponent(msg.text);
+        client.shard.broadcastEval(
+            `this.commandMainReload("${message}",${client.shard.ids[0]})`);
+      }
       const toReload = msg.text.split(' ').splice(1);
       const reloaded = [];
       common.reply(msg, 'Reloading main modules...').then((warnMessage) => {
@@ -1305,6 +1356,19 @@ function SpikeyBot() {
           'It appears SpikeyRobot doesn\'t trust you enough with this ' +
               'command. Sorry!');
     }
+  }
+
+  if (client.shard) {
+    /**
+     * @description When another shard requests that we reload MainModules.
+     * @private
+     * @param {string} message Message relevant to reloading.
+     */
+    client.commandMainReload = function(message) {
+      const toReload = decodeURIComponent(message).split(' ').splice(1);
+      const reloaded = [];
+      reloadMainModules(toReload, reloaded);
+    };
   }
 
   /**

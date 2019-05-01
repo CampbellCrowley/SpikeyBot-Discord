@@ -378,6 +378,9 @@ function Main() {
     process.on('SIGINT', sigint);
     process.on('SIGHUP', sigint);
     process.on('SIGTERM', sigint);
+    if (self.client.shard) {
+      process.on('message', shardMessage);
+    }
 
     if (!self.client.shard || !self.client.shard.ids ||
         self.client.shard.ids[0] == 0) {
@@ -544,13 +547,40 @@ function Main() {
       };
       /* eslint-disable no-unused-vars */
       /**
-       * Receive message from another shard asking for out statistics.
-       * @see {@link Main~getStats()}
+       * Receive message from another shard asking for our statistics.
+       * @see {@link Main~getStats}
        *
        * @private
        * @returns {Object} The statistics we collected.
        */
       self.client.getStats = getStats;
+      /**
+       * Receive message from another shard asking for our permissions in a
+       * channel or guild.
+       * @see {@link Main~fetchShardPerms}
+       *
+       * @private
+       * @returns {?{0: number, 1: number}} The bitfield numbers, or null if not
+       * our guild.
+       */
+      self.client.fetchPerms = fetchShardPerms;
+      /**
+       * Receive message from another shard asking for us to lookup an ID.
+       * @see {@link Main~lookupId}
+       *
+       * @private
+       * @returns {?string} User-formatted string, or null if unable to find.
+       */
+      self.client.lookupId = lookupId;
+      /**
+       * Receive message from another shard asking for us to send a message to a
+       * specific channel.
+       * @see {@link Main~sendTo}
+       *
+       * @private
+       * @returns {boolean} True if found channel, false otherwise.
+       */
+      self.client.sendTo = sendTo;
       /* eslint-enable no-unused-vars */
     }
     self.bot.getStats = getAllStats;
@@ -608,6 +638,9 @@ function Main() {
     process.removeListener('SIGINT', sigint);
     process.removeListener('SIGHUP', sigint);
     process.removeListener('SIGTERM', sigint);
+    if (self.client.shard) {
+      process.on('message', shardMessage);
+    }
   };
 
   /**
@@ -775,7 +808,7 @@ function Main() {
   function onGuildCreate(guild) {
     self.log('ADDED TO NEW GUILD: ' + guild.id + ': ' + guild.name);
     if (guild.memberCount > 100) return;
-    let channel = '';
+    let channel = null;
     let pos = -1;
     try {
       guild.channels.forEach(function(val, key) {
@@ -784,7 +817,7 @@ function Main() {
           if ((pos == -1 || val.position &lt; pos) &amp;&amp; perms &amp;&amp;
               perms.has(self.Discord.Permissions.FLAGS.SEND_MESSAGES)) {
             pos = val.position;
-            channel = val.id;
+            channel = val;
           }
         }
       });
@@ -794,7 +827,7 @@ function Main() {
             'available channel: ' + guild.id);
         return;
       }
-      self.client.channels.get(channel).send(
+      channel.send(
           introduction.replaceAll('{prefix}', self.bot.getPrefix(guild))
               .replaceAll('{username}', self.client.user.username));
     } catch (err) {
@@ -2390,14 +2423,52 @@ function Main() {
     const mem = msg.member;
     let author = msg.author;
 
-    const id = msg.text.trim();
+    let id = msg.text.match(/\b\d+\b/);
     if (self.common.trustedIds.includes(msg.author.id) &amp;&amp; id) {
+      id = id[0];
       author = null;
       chan = self.client.channels.get(id);
       guild = (chan &amp;&amp; chan.guild) || self.client.guilds.get(id);
       if (!guild) {
-        self.common.reply(
-            msg, 'Failed to find channel or guild with that ID.', msg.text);
+        if (self.client.shard) {
+          const toEval = `this.fetchPerms('${id}')`;
+          self.client.shard.broadcastEval(toEval).then((res) => {
+            const index = res.findIndex((el) => el);
+            const match = res[index];
+            if (!match) {
+              self.common.reply(
+                  msg, 'Failed to find channel or guild with that ID.',
+                  msg.text);
+              return;
+            }
+            const chan = match[0];
+            const guild = match[1];
+            const embed = new self.Discord.MessageEmbed();
+            embed.setTitle(`Permissions (Shard #${index})`);
+            if (!isNaN(chan)) {
+              embed.addField(
+                  `Channel ${id}`,
+                  '```css\n' + prePad(chan.toString(2), 31) + ' Me```');
+            }
+            if (!isNaN(guild)) {
+              embed.addField(
+                  'Guild',
+                  '```css\n' + prePad(guild.toString(2), 31) + ' Me```');
+            }
+
+            const allPermPairs = Object.entries(self.Discord.Permissions.FLAGS);
+            const formatted =
+                allPermPairs
+                    .map((el) => `${prePad(el[1].toString(2), 31)} ${el[0]}`)
+                    .join('\n');
+            embed.setDescription('```css\n' + formatted + '```');
+
+            msg.channel.send(embed);
+          });
+        } else {
+          self.common.reply(
+              msg, 'Failed to find channel or guild with that ID.', msg.text);
+        }
         return;
       }
     }
@@ -2428,14 +2499,36 @@ function Main() {
             ' Me```');
 
     const allPermPairs = Object.entries(self.Discord.Permissions.FLAGS);
-    const formatted = allPermPairs.map((el) => {
-      return prePad(el[1].toString(2), 31) + ' ' + el[0];
-    }).join('\n');
+    const formatted =
+        allPermPairs.map((el) => `${prePad(el[1].toString(2), 31)} ${el[0]}`)
+            .join('\n');
     embed.setDescription('```css\n' + formatted + '```');
     embed.setFooter(
         'To see permissions for each command type: `' + msg.prefix + 'show`');
 
     msg.channel.send(embed);
+  }
+  /**
+   * @description Fetch the bitfield of permissions for our self in the guild or
+   * channel with the given id.
+   * @this external:Discord~Client
+   * @private
+   * @param {string} id The channel or guild ID to lookup permissions for.
+   * @returns {?{0: ?number, 1: number}} Null if unable to find, or a number
+   * bitfield representing the permissions.
+   */
+  function fetchShardPerms(id) {
+    const chan = this.channels.get(id);
+    const guild = (chan &amp;&amp; chan.guild) || this.guilds.get(id);
+    if (guild) {
+      const perm = chan &amp;&amp; chan.permissionsFor(this.user);
+      return [
+        perm &amp;&amp; perm.bitfield,
+        guild.member(this.user).permissions.bitfield,
+      ];
+    } else {
+      return null;
+    }
   }
   /**
    * Pad a number with leading zeroes so that it is `digits` long.
@@ -2708,24 +2801,58 @@ function Main() {
   function commandLookup(msg) {
     const id = msg.text.split(' ')[1];
 
-    const user = self.client.users.get(id);
-    const guild = self.client.guilds.get(id);
-    const channel = self.client.channels.get(id);
+    const message =
+        lookupId(id, self.common.trustedIds.includes(msg.author.id));
+
+    if (!message) {
+      if (self.client.shard) {
+        self.client.shard.broadcastEval(`this.lookupId('${id}')`);
+      } else {
+        self.error('Failed to lookup id: ' + id);
+        msg.channel.send(id + ' Failed to be looked up.');
+      }
+    } else {
+      msg.channel.send(message);
+    }
+  }
+
+  /**
+   * @description Lookup an ID for any data associated with it. This checks
+   * guilds, channels, and users.
+   * @this external:Discord~Client
+   * @private
+   * @param {string} id The ID to lookup.
+   * @param {boolean} [trusted=false] Include possibly sensitive information in
+   * result.
+   * @returns {?string} A Discord formatted string to send.
+   */
+  function lookupId(id, trusted = false) {
+    const user = this.users.get(id);
+    const guild = this.guilds.get(id);
+    const channel = this.channels.get(id);
+    const output = [];
 
     if (user) {
       const guilds = [];
-      self.client.guilds.forEach((g) => {
+      this.guilds.forEach((g) => {
         if (g.members.get(id)) guilds.push(g.id);
       });
-      msg.channel.send(
-          id + ': User: `' + user.tag.replace(/`/g, '\\`') + '`' +
-          (user.bot ? ' (bot)' : '') + ' has ' + guilds.length +
-          ' mutual guilds:\n```' + guilds.join(', ') + '```');
+      if (trusted) {
+        output.push(
+            id + ': User: `' + user.tag.replace(/`/g, '\\`') + '`' +
+            (user.bot ? ' (bot)' : '') + ' has ' + guilds.length +
+            ' mutual guilds:\n```' + guilds.join(', ') + '```');
+      } else {
+        output.push(
+            id + ': User: `' + user.tag.replace(/`/g, '\\`') + '`' +
+            (user.bot ? ' (bot)' : '') + ' has ' + guilds.length +
+            ' mutual guilds.');
+      }
     }
     if (channel) {
       if (channel.guild) {
         let additional = '';
-        if (msg.author.id === self.common.spikeyId) {
+        if (trusted) {
           if (channel.members.size > 15) {
             additional = '\nMany Members';
           } else {
@@ -2737,35 +2864,26 @@ function Main() {
                     .join(', ');
           }
         }
-        msg.channel.send(
+        output.push(
             id + ': Guild ' + channel.type + ' Channel: `' +
             channel.name.replace(/`/g, '\\`') + '` with ' +
             channel.members.size + ' members, in guild `' +
             channel.guild.name.replace(/`/g, '\\`') + '` (' + channel.guild.id +
             ')' + additional);
       } else {
-        msg.channel.send(
+        output.push(
             id + ': Channel: `' + channel.name.replace(/`/g, '\\`') + '`');
       }
     }
     if (guild) {
-      msg.channel.send(
+      output.push(
           id + ': Guild: `' + guild.name.replace(/`/g, '\\`') + '` has ' +
           guild.members.size + ' members.');
     }
-
-    if (!user &amp;&amp; !guild &amp;&amp; !channel) {
-      self.client.users.fetch(id)
-          .then((user) => {
-            msg.channel.send(
-                id + ': User: `' + user.tag.replace(/`/g, '\\`') + '`' +
-                (user.bot ? ' (bot)' : ''));
-          })
-          .catch((err) => {
-            self.error('Failed to lookup id: ' + id);
-            // console.error(err);
-            msg.channel.send(id + ' Failed to be looked up.');
-          });
+    if (output.length > 0) {
+      return output.join('\n');
+    } else {
+      return null;
     }
   }
 
@@ -2790,8 +2908,9 @@ function Main() {
     }
     const channel = self.client.channels.get(idString);
     const user = self.client.users.get(idString);
+    const message = msg.text.split(' ').slice(2).join(' ');
     if (channel) {
-      channel.send(msg.text.split(' ').slice(2).join(' '))
+      channel.send(message)
           .then(() => {
             self.common.reply(msg, 'Message sent!');
           })
@@ -2801,7 +2920,7 @@ function Main() {
                 err.message);
           });
     } else if (user) {
-      user.send(msg.text.split(' ').slice(2).join(' '))
+      user.send(message)
           .then(() => {
             self.common.reply(msg, 'Message sent!');
           })
@@ -2811,7 +2930,48 @@ function Main() {
                 err.message);
           });
     } else {
-      self.common.reply(msg, 'I am unable to find that user or channel. :(');
+      if (self.client.shard) {
+        const toSend = encodeURIComponent(message);
+        self.client.shard
+            .broadcastEval(`this.sendTo('${idString}',"${toSend}")`)
+            .then((res) => {
+              const success = res.find((el) => el);
+              if (success) {
+                self.common.reply(
+                    msg, 'Attempted to send from another shard.',
+                    'Possibly succeeded, unable to verify.');
+              } else {
+                self.common.reply(
+                    msg, 'I am unable to find that user or channel. :(');
+              }
+            });
+      } else {
+        self.common.reply(msg, 'I am unable to find that user or channel. :(');
+      }
+    }
+  }
+
+  /**
+   * @description Send a message to a certain channel id.
+   * @private
+   * @param {string} id The channel ID to send the message to.
+   * @param {string} message The message to send. Will have decodeURIComponent
+   * run on before processing.
+   * @returns {boolean} True if found channel, false otherwise.
+   */
+  function sendTo(id, message) {
+    message = decodeURIComponent(message);
+    const channel = this.channels.get(id);
+    const user = this.users.get(id);
+    if (channel) {
+      const perms = channel.permissionsFor(this.user);
+      if (perms &amp;&amp; !perms.has('SEND_MESSAGES')) return false;
+      channel.send(message).catch(console.error);
+      return true;
+    } else if (user) {
+      user.send(message).catch(console.error);
+    } else {
+      return false;
     }
   }
 
@@ -3035,6 +3195,17 @@ function Main() {
     process.removeListener('exit', sigint);
     process.exit();
   }
+
+  /**
+   * @description Received a message from the shard manager.
+   * @private
+   * @param {*} args Message received.
+   */
+  function shardMessage(...args) {
+    if (args[0] == 'reboot') {
+      process.exit(0);
+    }
+  }
 }
 module.exports = new Main();
 </code></pre>
@@ -3053,7 +3224,7 @@ module.exports = new Main();
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Tue Apr 30 2019 19:45:29 GMT-0700 (Pacific Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Tue Apr 30 2019 23:30:18 GMT-0700 (Pacific Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>

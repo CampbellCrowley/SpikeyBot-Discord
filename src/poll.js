@@ -114,8 +114,12 @@ function Polling() {
       return;
     }
 
-    self.client.channels.get(parsed.message.channel)
-        .messages.fetch(parsed.message.message)
+    const channel = self.client.channels.get(parsed.message.channel);
+    if (!channel) {
+      self.error('Failed to find channel: ' + parsed.message.channel);
+      return;
+    }
+    channel.messages.fetch(parsed.message.message)
         .then((message) => {
           const poll =
               (currentPolls[parsed.message.message] =
