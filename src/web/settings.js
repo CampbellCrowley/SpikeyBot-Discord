@@ -718,9 +718,10 @@ function WebSettings() {
         newG.channels =
             g.channels
                 .filter((c) => {
+                  const perms = c.permissionsFor(member);
                   return userData.id == self.common.spikeyId ||
-                      c.permissionsFor(member).has(
-                          self.Discord.Permissions.FLAGS.VIEW_CHANNEL);
+                      (perms &&
+                       perms.has(self.Discord.Permissions.FLAGS.VIEW_CHANNEL));
                 })
                 .map((c) => {
                   return c.id;
