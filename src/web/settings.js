@@ -50,6 +50,8 @@ function WebSettings() {
       app, {path: '/www.spikeybot.com/socket.io/', serveClient: false});
 
   app.on('error', function(err) {
+    if (io) io.close();
+    if (app) app.close();
     if (err.code === 'EADDRINUSE') {
       self.warn(
           'Settings failed to bind to port because it is in use. (' + err.port +
@@ -526,9 +528,9 @@ function WebSettings() {
    */
   function checkPerm(userData, gId, cId, cmd) {
     if (!userData) return false;
-    if (userData.id == self.common.spikeyId) return true;
     const msg = makeMessage(userData.id, gId, cId, cmd);
     if (!msg) return false;
+    if (userData.id == self.common.spikeyId) return true;
     if (self.command.validate(null, makeMessage(userData.id, gId, null, cmd))) {
       return false;
     }
@@ -695,7 +697,7 @@ function WebSettings() {
         if (replied > numReplies) {
           if (typeof cb === 'function') cb(guildBuffer);
           socket.emit('guilds', null, guildBuffer);
-          socket.cachedGuilds = Object.keys(guildBuffer);
+          socket.cachedGuilds = Object.keys(guildBuffer || {});
         }
       };
     }
@@ -750,6 +752,7 @@ function WebSettings() {
       done();
     }
   }
+  this.fetchGuilds = fetchGuilds;
 
   /**
    * Fetch data about a member of a guild.
@@ -858,6 +861,7 @@ function WebSettings() {
         modLogSettings: modLog && modLog.getSettings(g.id) || null,
       };
     });
+    socket.emit('settings', settings);
     cb(settings);
   }
   this.fetchSettings = fetchSettings;
@@ -874,6 +878,7 @@ function WebSettings() {
    * complete and has data, or has failed.
    */
   function fetchRaidSettings(userData, socket, gId, cb) {
+    if (!checkMyGuild(gId)) return;
     if (typeof cb !== 'function') cb = function() {};
     if (!userData) {
       cb('Not signed in.', null);
@@ -899,6 +904,7 @@ function WebSettings() {
    * complete and has data, or has failed.
    */
   function fetchModLogSettings(userData, socket, gId, cb) {
+    if (!checkMyGuild(gId)) return;
     if (typeof cb !== 'function') cb = function() {};
     if (!userData) {
       cb('Not signed in.', null);
@@ -929,6 +935,7 @@ function WebSettings() {
    * complete and has data, or has failed.
    */
   function fetchCommandSettings(userData, socket, gId, cmd, cb) {
+    if (!checkMyGuild(gId)) return;
     if (typeof cb !== 'function') cb = function() {};
     if (!userData) {
       cb('Not signed in.', null);
@@ -987,6 +994,7 @@ function WebSettings() {
         });
       }
     });
+    socket.emit('scheduledCommands', sCmds);
     cb(sCmds);
   }
   this.fetchScheduledCommands = fetchScheduledCommands;
@@ -1014,6 +1022,7 @@ function WebSettings() {
     }
     updateModuleReferences();
     cmdScheduler.cancelCmd(gId, cmdId);
+    cb();
   }
   this.cancelScheduledCommand = cancelScheduledCommand;
 

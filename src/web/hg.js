@@ -31,8 +31,12 @@ function HGWeb() {
   let io;
 
   app.on('error', function(err) {
+    if (io) io.close();
+    if (app) app.close();
     if (err.code === 'EADDRINUSE') {
-      self.shutdown(true);
+      self.warn(
+          'HGWeb failed to bind to port because it is in use. (' + err.port +
+          ')');
       startClient();
     } else {
       self.error('HGWeb failed to bind to port for unknown reason.', err);
@@ -45,9 +49,8 @@ function HGWeb() {
    * @private
    */
   function startClient() {
-    self.common.log(
-        'Restarting into client mode due to server already bound to port.',
-        'HG Web');
+    self.log(
+        'Restarting into client mode due to server already bound to port.');
     ioClient = require('socket.io-client')(
         self.common.isRelease ? 'http://localhost:8011' :
                                 'http://localhost:8013',
@@ -86,11 +89,8 @@ function HGWeb() {
 
   /** @inheritdoc */
   this.initialize = function() {
-    io = socketIo(app, {
-      path: self.common.isRelease ? '/www.spikeybot.com/socket.io/hg' :
-                                  '/www.spikeybot.com/socket.io/dev/hg',
-      serveClient: false,
-    });
+    io = socketIo(
+        app, {path: '/www.spikeybot.com/socket.io/', serveClient: false});
     app.listen(self.common.isRelease ? 8011 : 8013, '127.0.0.1');
     io.on('connection', socketConnection);
   };
@@ -431,13 +431,10 @@ function HGWeb() {
    */
   function checkPerm(userData, gId, cId, cmd) {
     if (!userData) return false;
-    if (userData.id == self.common.spikeyId) return true;
     const msg = makeMessage(userData.id, gId, cId, 'hg ' + cmd);
     if (!msg || !msg.author) return false;
-    if (self.command.validate(null, msg)) {
-      return false;
-    }
-    return true;
+    if (userData.id == self.common.spikeyId) return true;
+    return !self.command.validate(null, msg);
   }
 
   /**
