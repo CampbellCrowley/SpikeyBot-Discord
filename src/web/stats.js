@@ -19,9 +19,8 @@ function WebStats() {
   const app = http.createServer(handler);
   /** @inheritdoc */
   this.initialize = function() {
-    postUpdatedCount();
     app.listen(self.common.isRelease ? 8016 : 8017, '127.0.0.1');
-    postTimeout = self.client.setTimeout(postUpdatedCount, postFrequency);
+    postTimeout = self.client.setTimeout(postUpdatedCount, 1000);
   };
   /** @inheritdoc */
   this.shutdown = function(skipSave) {
