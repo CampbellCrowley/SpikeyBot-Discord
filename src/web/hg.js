@@ -102,7 +102,10 @@ function HGWeb() {
    */
   this.shutdown = function() {
     if (io) io.close();
-    if (ioClient) ioClient.close();
+    if (ioClient) {
+      ioClient.close();
+      ioClient = null;
+    }
     if (app) app.close();
     unlinkHG();
   };
@@ -167,6 +170,15 @@ function HGWeb() {
       if (verification === auth.hgWebSiblingVerification) {
         siblingSockets[socket.id] = socket;
         cb(auth.hgWebSiblingVerificationResponse);
+
+        socket.on('_guildBroadcast', (gId, ...args) => {
+          for (const i in sockets) {
+            if (sockets[i] && sockets[i].cachedGuilds &&
+                sockets[i].cachedGuilds.includes(gId)) {
+              sockets[i].emit(...args);
+            }
+          }
+        });
       } else {
         self.common.error('Client failed to authenticate as child.', socket.id);
       }
@@ -290,14 +302,25 @@ function HGWeb() {
         });
         self.common.logDebug(`${func.name}(${logArgs.join(',')})`, socket.id);
       }
+      let cb;
+      if (typeof args[args.length - 1] === 'function') {
+        const origCB = args[args.length - 1];
+        let fired = false;
+        cb = function(...args) {
+          if (fired) {
+            self.warn('Attempting to fire callback a second time!');
+          }
+          origCB(...args);
+          fired = true;
+        };
+        args[args.length - 1] = cb;
+      }
       func.apply(func, [args[0], socket].concat(args.slice(1)));
+      if (typeof cb === 'function') {
+        args[args.length - 1] = {_function: true};
+      }
       if (forward) {
         Object.entries(siblingSockets).forEach((s) => {
-          let cb;
-          if (typeof args[args.length - 1] === 'function') {
-            cb = args[args.length - 1];
-            args[args.length - 1] = {_function: true};
-          }
           s[1].emit(
               'forwardedRequest', args[0], socket.id, func.name, args.slice(1),
               (res) => {
@@ -386,6 +409,11 @@ function HGWeb() {
             'dayState', gId, game.currentGame.day.num,
             game.currentGame.day.state, eventState);
       }
+    }
+    if (ioClient) {
+      ioClient.emit(
+          '_guildBroadcast', gId, 'dayState', gId, game.currentGame.day.num,
+          game.currentGame.day.state, eventState);
     }
   }
 
@@ -789,8 +817,11 @@ function HGWeb() {
     if (!m) return;
     const finalMember = makeMember(m);
 
-    if (typeof cb === 'function') cb();
-    socket.emit('member', gId, mId, finalMember);
+    if (typeof cb === 'function') {
+      cb(null, finalMember);
+    } else {
+      socket.emit('member', gId, mId, finalMember);
+    }
   }
   this.fetchMember = fetchMember;
   /**
@@ -822,8 +853,11 @@ function HGWeb() {
     if (channel.parent) stripped.parent = {position: channel.parent.position};
     stripped.type = channel.type;
 
-    if (typeof cb === 'function') cb();
-    socket.emit('channel', gId, cId, stripped);
+    if (typeof cb === 'function') {
+      cb(null, stripped);
+    } else {
+      socket.emit('channel', gId, cId, stripped);
+    }
   }
   this.fetchChannel = fetchChannel;
   /**
@@ -848,8 +882,11 @@ function HGWeb() {
     }
 
     const game = hg().getHG().getGame(gId);
-    if (game) socket.emit('game', gId, game.serializable);
-    if (typeof cb === 'function') cb();
+    if (typeof cb === 'function') {
+      cb(null, game && game.serializable);
+    } else {
+      socket.emit('game', gId, game && game.serializable);
+    }
   }
   this.fetchGames = fetchGames;
   /**
@@ -887,9 +924,13 @@ function HGWeb() {
     }
     const game = hg().getHG().getGame(gId);
     if (!game || !game.currentGame || !game.currentGame.day) {
-      if (typeof cb === 'function') cb('NO_GAME_IN_GUILD');
-      socket.emit(
-          'message', 'There doesn\'t appear to be a game on this server yet.');
+      if (typeof cb === 'function') {
+        cb('NO_GAME_IN_GUILD');
+      } else {
+        socket.emit(
+            'message',
+            'There doesn\'t appear to be a game on this server yet.');
+      }
       return;
     }
 
@@ -900,9 +941,12 @@ function HGWeb() {
       return;
     }
 
-    if (typeof cb === 'function') cb();
-    socket.emit(
-        'day', gId, game.currentGame.day, game.currentGame.includedUsers);
+    if (typeof cb === 'function') {
+      cb(null, game.currentGame.day, game.currentGame.includedUsers);
+    } else {
+      socket.emit(
+          'day', gId, game.currentGame.day, game.currentGame.includedUsers);
+    }
   }
   this.fetchDay = fetchDay;
   /**
@@ -991,13 +1035,20 @@ function HGWeb() {
       replyNoPerm(socket, 'toggleOption');
       return;
     }
-    if (typeof cb === 'function') cb();
-    socket.emit('message', hg().setOption(gId, option, value, extra));
+    const response = hg().setOption(gId, option, value, extra || undefined);
     const game = hg().getHG().getGame(gId);
-    if (game) {
-      socket.emit('option', gId, option, game.options[option]);
-      if (option === 'teamSize') {
-        socket.emit('game', gId, game.serializable);
+    if (typeof cb === 'function') {
+      cb(null, response, game && game.options[option],
+          game && game.serializable);
+    } else {
+      if (game) {
+        if (option === 'teamSize') {
+          socket.emit('game', gId, game.serializable);
+        } else {
+          socket.emit('option', gId, option, game.options[option]);
+        }
+      } else {
+        socket.emit('message', response);
       }
     }
   }
@@ -1022,14 +1073,12 @@ function HGWeb() {
       replyNoPerm(socket, 'createGame');
       return;
     }
-    hg().createGame(gId);
+    const game = hg().createGame(gId);
     if (typeof cb === 'function') {
-      cb();
+      cb(game ? null : 'ATTEMPT_FAILED', game && game.serializable);
     } else {
-      socket.emit('message', 'Game created');
+      socket.emit('game', gId, game && game.serializable);
     }
-    const game = hg().getHG().getGame(gId);
-    if (game) socket.emit('game', gId, game.serializable);
   }
   this.createGame = createGame;
   /**
@@ -1053,10 +1102,13 @@ function HGWeb() {
       replyNoPerm(socket, 'resetGame');
       return;
     }
-    socket.emit('message', hg().getHG().resetGame(gId, cmd));
+    const response = hg().getHG().resetGame(gId, cmd);
     const game = hg().getHG().getGame(gId);
-    if (game) socket.emit('game', gId, game.serializable);
-    if (typeof cb === 'function') cb();
+    if (typeof cb === 'function') {
+      cb(null, response, game && game.serializable);
+    } else {
+      socket.emit('game', gId, game && game.serializable);
+    }
   }
   this.resetGame = resetGame;
   /**
@@ -1081,10 +1133,12 @@ function HGWeb() {
       return;
     }
     hg().startGame(userData.id, gId, cId);
-    if (typeof cb === 'function') cb();
-    socket.emit('message', 'Game started');
     const game = hg().getHG().getGame(gId);
-    if (game) socket.emit('game', gId, game.serializable);
+    if (typeof cb === 'function') {
+      cb(null, game && game.serializable);
+    } else {
+      socket.emit('game', gId, game && game.serializable);
+    }
   }
   this.startGame = startGame;
   /**
@@ -1109,10 +1163,12 @@ function HGWeb() {
       return;
     }
     hg().startAutoplay(userData.id, gId, cId);
-    if (typeof cb === 'function') cb();
-    socket.emit('message', 'Autoplay enabled');
     const game = hg().getHG().getGame(gId);
-    if (game) socket.emit('game', gId, game.serializable);
+    if (typeof cb === 'function') {
+      cb(null, game && game.serializable);
+    } else {
+      socket.emit('game', gId, game && game.serializable);
+    }
   }
   this.startAutoplay = startAutoplay;
   /**
@@ -1137,8 +1193,12 @@ function HGWeb() {
       return;
     }
     hg().nextDay(userData.id, gId, cId);
-    if (typeof cb === 'function') cb();
-    socket.emit('message', 'Starting next day');
+    const game = hg().getHG().getGame(gId);
+    if (typeof cb === 'function') {
+      cb(null, game && game.serializable);
+    } else {
+      socket.emit('game', gId, game && game.serializable);
+    }
   }
   this.nextDay = nextDay;
   /**
@@ -1162,10 +1222,12 @@ function HGWeb() {
       return;
     }
     hg().endGame(userData.id, gId);
-    if (typeof cb === 'function') cb();
-    socket.emit('message', 'Game ended');
     const game = hg().getHG().getGame(gId);
-    if (game) socket.emit('game', gId, game.serializable);
+    if (typeof cb === 'function') {
+      cb(null, game && game.serializable);
+    } else {
+      socket.emit('game', gId, game && game.serializable);
+    }
   }
   this.endGame = endGame;
   /**
@@ -1189,10 +1251,12 @@ function HGWeb() {
       return;
     }
     hg().pauseAutoplay(userData.id, gId);
-    if (typeof cb === 'function') cb();
-    socket.emit('message', 'Autoplay paused');
     const game = hg().getHG().getGame(gId);
-    if (game) socket.emit('game', gId, game.serializable);
+    if (typeof cb === 'function') {
+      cb(null, game && game.serializable);
+    } else {
+      socket.emit('game', gId, game && game.serializable);
+    }
   }
   this.pauseAutoplay = pauseAutoplay;
   /**
@@ -1216,10 +1280,20 @@ function HGWeb() {
       return;
     }
     const error = hg().pauseGame(gId);
-    if (typeof cb === 'function') cb(error);
-    if (error !== 'Success') socket.emit('message', error);
     const game = hg().getHG().getGame(gId);
-    if (game) socket.emit('game', gId, game.serializable);
+    if (typeof cb === 'function') {
+      if (error !== 'Success') {
+        cb(error);
+      } else {
+        cb(null, game && game.serializable);
+      }
+    } else {
+      if (error !== 'Success') {
+        socket.emit('message', error);
+      } else {
+        socket.emit('game', gId, game && game.serializable);
+      }
+    }
   }
   this.pauseGame = pauseGame;
   /**
@@ -1245,9 +1319,11 @@ function HGWeb() {
       return;
     }
     const message = hg().editTeam(userData.id, gId, cmd, one, two);
-    if (message) socket.emit('message', message);
-    if (typeof cb === 'function') cb();
-    // socket.emit('game', gId, hg().getHG().getGame(gId));
+    if (typeof cb === 'function') {
+      cb(null, message);
+    } else {
+      if (message) socket.emit('message', message);
+    }
   }
   this.editTeam = editTeam;
   /**
@@ -1285,13 +1361,22 @@ function HGWeb() {
     const err = hg().makeAndAddEvent(
         gId, type, message, nV, nA, oV, oA, kV, kA, wV, wA);
     if (err) {
-      if (typeof cb === 'function') cb('ATTEMPT_FAILED');
-      socket.emit('message', 'Failed to create event: ' + err);
+      if (typeof cb === 'function') {
+        cb('ATTEMPT_FAILED');
+      } else {
+        socket.emit('message', 'Failed to create event: ' + err);
+      }
     } else {
-      if (typeof cb === 'function') cb();
-      socket.emit('message', 'Created ' + type + ' event.');
       const game = hg().getHG().getGame(gId);
-      if (game) socket.emit('game', gId, game.serializable);
+      if (typeof cb === 'function') {
+        if (game) {
+          cb(null, game.serializable);
+        } else {
+          cb();
+        }
+      } else if (game) {
+        socket.emit('game', gId, game.serializable);
+      }
     }
   }
   this.createEvent = createEvent;
@@ -1323,13 +1408,22 @@ function HGWeb() {
     }
     const err = hg().addMajorEvent(gId, type, data, name);
     if (err) {
-      if (typeof cb === 'function') cb('ATTEMPT_FAILED');
-      socket.emit('message', 'Failed to create event: ' + err);
+      if (typeof cb === 'function') {
+        cb('ATTEMPT_FAILED');
+      } else {
+        socket.emit('message', 'Failed to create event: ' + err);
+      }
     } else {
-      if (typeof cb === 'function') cb();
-      socket.emit('message', 'Created ' + type + ' event.');
       const game = hg().getHG().getGame(gId);
-      if (game) socket.emit('game', gId, game.serializable);
+      if (typeof cb === 'function') {
+        if (game) {
+          cb(null, game.serializable);
+        } else {
+          cb();
+        }
+      } else if (game) {
+        socket.emit('game', gId, game.serializable);
+      }
     }
   }
   this.createMajorEvent = createMajorEvent;
@@ -1364,13 +1458,22 @@ function HGWeb() {
     }
     const err = hg().editMajorEvent(gId, type, search, data, name, newName);
     if (err) {
-      if (typeof cb === 'function') cb('ATTEMPT_FAILED');
-      socket.emit('message', 'Failed to edit event: ' + err);
+      if (typeof cb === 'function') {
+        cb('ATTEMPT_FAILED');
+      } else {
+        socket.emit('message', 'Failed to edit event: ' + err);
+      }
     } else {
-      if (typeof cb === 'function') cb();
-      socket.emit('message', 'Edited ' + type + ' event.');
       const game = hg().getHG().getGame(gId);
-      if (game) socket.emit('game', gId, game.serializable);
+      if (typeof cb === 'function') {
+        if (game) {
+          cb(null, game.serializable);
+        } else {
+          cb();
+        }
+      } else if (game) {
+        socket.emit('game', gId, game.serializable);
+      }
     }
   }
   this.editMajorEvent = editMajorEvent;
@@ -1399,13 +1502,22 @@ function HGWeb() {
     }
     const err = hg().removeEvent(gId, type, event);
     if (err) {
-      if (typeof cb === 'function') cb('ATTEMPT_FAILED');
-      socket.emit('message', 'Failed to remove event: ' + err);
+      if (typeof cb === 'function') {
+        cb('ATTEMPT_FAILED');
+      } else {
+        socket.emit('message', 'Failed to remove event: ' + err);
+      }
     } else {
-      if (typeof cb === 'function') cb();
-      socket.emit('message', 'Removed event.');
       const game = hg().getHG().getGame(gId);
-      if (game) socket.emit('game', gId, game.serializable);
+      if (typeof cb === 'function') {
+        if (game) {
+          cb(null, game.serializable);
+        } else {
+          cb();
+        }
+      } else if (game) {
+        socket.emit('game', gId, game.serializable);
+      }
     }
   }
   this.removeEvent = removeEvent;
@@ -1439,8 +1551,11 @@ function HGWeb() {
     }
     const err = hg().toggleEvent(gId, type, subCat, event, value);
     if (err) {
-      if (typeof cb === 'function') cb('ATTEMPT_FAILED');
-      socket.emit('message', 'Failed to toggle event: ' + err);
+      if (typeof cb === 'function') {
+        cb('ATTEMPT_FAILED');
+      } else {
+        socket.emit('message', 'Failed to toggle event: ' + err);
+      }
     } else {
       if (typeof cb === 'function') cb();
       // socket.emit('message', 'Toggled event.');
@@ -1490,11 +1605,13 @@ function HGWeb() {
     }
     const game = hg().getHG().getGame(gId);
     if (!game) return;
-    socket.emit(
-        'message',
-        HungryGames.GuildGame.forcePlayerState(
-            game, list, state, hg().getHG().messages, text, persists));
-    if (typeof cb === 'function') cb();
+    const response = HungryGames.GuildGame.forcePlayerState(
+        game, list, state, hg().getHG().messages, text, persists);
+    if (typeof cb === 'function') {
+      cb(null, response, game.serializable);
+    } else {
+      socket.emit('message', response);
+    }
   }
   this.forcePlayerState = forcePlayerState;
 
@@ -1629,11 +1746,13 @@ function HGWeb() {
       }
       p.then((url) => {
         const error = hg().createNPC(gId, meta.username, url, npcId);
-        if (error) socket.emit('message', error);
         const game = hg().getHG().getGame(gId);
-        if (game) socket.emit('game', gId, game.serializable);
         cancelImageUpload(iId);
-        if (typeof cb === 'function') cb();
+        if (typeof cb === 'function') {
+          cb(error, game && game.serializable);
+        } else if (error) {
+          socket.emit('message', error);
+        }
         self.common.logDebug(
             'NPC Created from upload with URL: ' + url, socket.id);
       }).catch((err) => {

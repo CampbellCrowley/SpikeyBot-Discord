@@ -439,7 +439,9 @@ class HungryGames {
           this.saveFile);
       try {
         this._games[id] = JSON.parse(tmp);
-        this._parent.debug('Loaded game from file ' + id);
+        if (this._parent.initialized) {
+          this._parent.debug('Loaded game from file ' + id);
+        }
       } catch (e2) {
         this._parent.error('Failed to parse game data for guild ' + id);
         return null;

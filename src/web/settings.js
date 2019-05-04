@@ -32,7 +32,10 @@ function WebSettings() {
   /** @inheritdoc */
   this.shutdown = function() {
     if (io) io.close();
-    if (ioClient) ioClient.close();
+    if (ioClient) {
+      ioClient.close();
+      ioClient = null;
+    }
     if (app) app.close();
     if (cmdScheduler) {
       cmdScheduler.removeListener('shutdown', handleShutdown);
@@ -345,6 +348,15 @@ function WebSettings() {
       if (verification === auth.webSettingsSiblingVerification) {
         siblingSockets[socket.id] = socket;
         cb(auth.webSettingsSiblingVerificationResponse);
+
+        socket.on('_guildBroadcast', (gId, ...args) => {
+          for (const i in sockets) {
+            if (sockets[i] && sockets[i].cachedGuilds &&
+                sockets[i].cachedGuilds.includes(gId)) {
+              sockets[i].emit(...args);
+            }
+          }
+        });
       } else {
         self.common.error('Client failed to authenticate as child.', socket.id);
       }
@@ -415,12 +427,23 @@ function WebSettings() {
         });
         self.common.logDebug(`${func.name}(${logArgs.join(',')})`, socket.id);
       }
+      let cb;
+      if (typeof args[args.length - 1] === 'function') {
+        const origCB = args[args.length - 1];
+        let fired = false;
+        cb = function(...args) {
+          if (fired) {
+            self.warn('Attempting to fire callback a second time!');
+          }
+          origCB(...args);
+          fired = true;
+        };
+        args[args.length - 1] = cb;
+      }
       func.apply(func, [args[0], socket].concat(args.slice(1)));
       if (forward) {
         Object.entries(siblingSockets).forEach((s) => {
-          let cb;
-          if (typeof args[args.length - 1] === 'function') {
-            cb = args[args.length - 1];
+          if (typeof cb === 'function') {
             args[args.length - 1] = {_function: true};
           }
           s[1].emit(
@@ -1187,6 +1210,9 @@ function WebSettings() {
         sockets[i].emit('raidSettingsChanged', gId);
       }
     }
+    if (ioClient) {
+      ioClient.emit('_guildBroadcast', gId, 'raidSettingsChanged', gId);
+    }
   }
   this.changeRaidSetting = changeRaidSetting;
 
@@ -1249,6 +1275,9 @@ function WebSettings() {
           sockets[i].cachedGuilds.includes(gId)) {
         sockets[i].emit('modLogSettingsChanged', gId);
       }
+    }
+    if (ioClient) {
+      ioClient.emit('_guildBroadcast', gId, 'modLogSettingsChanged', gId);
     }
   }
   this.changeModLogSetting = changeModLogSetting;
@@ -1324,6 +1353,9 @@ function WebSettings() {
           sockets[i].cachedGuilds.includes(gId)) {
         sockets[i].emit('commandSettingsChanged', gId, name );
       }
+    }
+    if (ioClient) {
+      ioClient.emit('_guildBroadcast', gId, 'commandSettingsChanged', gId);
     }
   }
   this.changeCommandSetting = changeCommandSetting;

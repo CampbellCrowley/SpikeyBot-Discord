@@ -154,6 +154,48 @@ function WebProxy() {
     },
   };
 
+  /** @inheritdoc */
+  this.initialize = function() {
+    app.listen(self.common.isRelease ? 8010 : 8012, '127.0.0.1');
+  };
+
+  /**
+   * Causes a full shutdown of all servers.
+   *
+   * @public
+   */
+  this.shutdown = function() {
+    if (io) io.close();
+    if (app) app.close();
+    clearInterval(purgeInterval);
+    fs.unwatchFile(rateLimitFile);
+    loginInfo = {};
+  };
+
+  /** @inheritdoc */
+  this.save = function(opt) {
+    const toSave = {};
+    for (const i in loginInfo) {
+      if (!loginInfo[i]) continue;
+      toSave[i] = Object.assign({}, loginInfo[i]);
+      if (toSave[i].refreshTimeout) delete toSave[i].refreshTimeout;
+    }
+    if (opt === 'async') {
+      fs.writeFile('./save/webClients.json', JSON.stringify(toSave), (err) => {
+        if (!err) return;
+        self.error('Failed to write webClients.json');
+        console.error(err);
+      });
+    } else {
+      fs.writeFileSync('./save/webClients.json', JSON.stringify(toSave));
+    }
+  };
+
+  /** @inheritdoc */
+  this.unloadable = function() {
+    return true;
+  };
+
   /**
    * Parse rate limits from file.
    *
@@ -185,12 +227,24 @@ function WebProxy() {
     updateRateLimits();
   });
 
-  try {
-    loginInfo = JSON.parse(fs.readFileSync('./save/webClients.json') || {});
-  } catch (err) {
-    if (err.code !== 'ENOENT') console.error(err);
-    loginInfo = {};
-  }
+  // TODO: Move loginInfo into multiple files to prevent all sessions being kept
+  // in memory at all times across all shards.
+  fs.readFile('./save/webClients.json', (err, data) => {
+    if (aborted) return;
+    if (err) {
+      if (err.code !== 'ENOENT') {
+        console.error(err);
+      }
+      loginInfo = {};
+      return;
+    }
+    try {
+      loginInfo = JSON.parse(data);
+      self.debug(Object.keys(loginInfo).length + ' sessions loaded from file.');
+    } catch (err) {
+      console.error('Failed to parse webClients.json', err);
+    }
+  });
   const purgeInterval = setInterval(purgeSessions, 60 * 60 * 1000);
 
   /**
@@ -213,8 +267,11 @@ function WebProxy() {
   const io = socketIo(
       app, {path: '/www.spikeybot.com/socket.io/', serveClient: false});
 
+  let aborted = false;
+
   app.on('error', function(err) {
     if (err.code === 'EADDRINUSE') {
+      aborted = true;
       self.shutdown(true);
       self.warn(
           'Proxy failed to bind to port because it is in use. (' + err.port +
@@ -223,47 +280,6 @@ function WebProxy() {
       self.error('Proxy failed to bind to port for unknown reason.', err);
     }
   });
-
-  /** @inheritdoc */
-  this.initialize = function() {
-    app.listen(self.common.isRelease ? 8010 : 8012, '127.0.0.1');
-  };
-
-  /**
-   * Causes a full shutdown of all servers.
-   *
-   * @public
-   */
-  this.shutdown = function() {
-    if (io) io.close();
-    if (app) app.close();
-    clearInterval(purgeInterval);
-    fs.unwatchFile(rateLimitFile);
-  };
-
-  /** @inheritdoc */
-  this.save = function(opt) {
-    const toSave = {};
-    for (const i in loginInfo) {
-      if (!loginInfo[i]) continue;
-      toSave[i] = Object.assign({}, loginInfo[i]);
-      if (toSave[i].refreshTimeout) delete toSave[i].refreshTimeout;
-    }
-    if (opt === 'async') {
-      fs.writeFile('./save/webClients.json', JSON.stringify(toSave), (err) => {
-        if (!err) return;
-        self.error('Failed to write webClients.json');
-        console.error(err);
-      });
-    } else {
-      fs.writeFileSync('./save/webClients.json', JSON.stringify(toSave));
-    }
-  };
-
-  /** @inheritdoc */
-  this.unloadable = function() {
-    return true;
-  };
 
   /**
    * Handler for all http requests. Should never be called.

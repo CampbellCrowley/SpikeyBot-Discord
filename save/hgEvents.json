@@ -364,6 +364,12 @@
       "message": "{attacker} grabs a radio and listens to some sick jams as they run from the cornucopia.",
       "attacker": { "count": "1", "outcome": "nothing" },
       "victim": { "count": "0", "outcome": "nothing" }
+    },
+    {
+      "message": "{victim} find[Vs a pile| piles] of wood.",
+      "victim": { "count": "-1", "outcome": "nothing", "weapon": { "name": "wood", "count": "3" } },
+      "attacker": { "count": "0", "outcome": "nothing" },
+      "custom": "260016427900076033"
     }
   ],
   "player": [
@@ -1465,6 +1471,18 @@
       "message": "{victim} ha[Vs|ve] been resurrected and [Vwas|were] put back into the arena!",
       "victim": { "count": -1, "outcome": "revived" },
       "attacker": { "count": 0, "outcome": "nothing" }
+    },
+    {
+      "message": "{victim} chop[Vs|] down a tree for some wood.",
+      "victim": { "count": "-1", "outcome": "nothing", "weapon": { "name": "wood", "count": "2" } },
+      "attacker": { "count": "0", "outcome": "nothing" },
+      "custom": "260016427900076033"
+    },
+    {
+      "message": "{victim} find[Vs a piece of|] wood lying on the floor.",
+      "victim": { "count": "-1", "outcome": "nothing", "weapon": { "name": "wood", "count": "1" } },
+      "attacker": { "count": "0", "outcome": "nothing" },
+      "custom": "260016427900076033"
     }
   ],
   "arena": [
