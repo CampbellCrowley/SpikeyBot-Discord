@@ -611,7 +611,12 @@ function Main() {
     process.removeListener('SIGHUP', sigint);
     process.removeListener('SIGTERM', sigint);
     if (self.client.shard) {
-      process.on('message', shardMessage);
+      process.removeListener('message', shardMessage);
+      self.client.updateRiggedCounter = null;
+      self.client.getStats = null;
+      self.client.fetchPerms = null;
+      self.client.lookupId = null;
+      self.client.sendTo = null;
     }
   };
 
@@ -2789,6 +2794,10 @@ function Main() {
               if (el) embed.addField(`Shard #${i}`, el, true);
             });
             msg.channel.send(embed);
+          })
+          .catch((err) => {
+            self.error('Failed to broadcast lookupId command.');
+            console.error(err);
           });
     } else {
       const message = lookupId.call(self.client, id, trusted);
