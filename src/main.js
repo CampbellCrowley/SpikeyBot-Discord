@@ -2773,8 +2773,8 @@ function Main() {
   function commandLookup(msg) {
     const id = msg.text.split(' ')[1];
 
-    const message =
-        lookupId(id, self.common.trustedIds.includes(msg.author.id));
+    const message = lookupId.call(
+        self.client, id, self.common.trustedIds.includes(msg.author.id));
 
     if (!message) {
       if (self.client.shard) {
