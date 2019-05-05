@@ -611,11 +611,6 @@ Simulator._pickEvent = function(
 
     return finalEvent;
   }
-  self.error(
-      'Failed to find suitable event for ' + userPool.length +
-      ' players, from ' + (eventPool && eventPool.length) + ' events with ' +
-      numAlive + ' alive.');
-  // console.error(fails);
   return null;
 };
 /**
