@@ -177,7 +177,7 @@ class RaidBlock extends SubModule {
     const go = function() {
       switch (s.action) {
         case 'kick':
-          member.kick({reason: 'Server on raid lockdown.'})
+          member.kick('Server on raid lockdown.')
               .then((m) => {
                 self._modLog(m.guild, s.action, m.user, null, 'Raid Lockdown');
               })
