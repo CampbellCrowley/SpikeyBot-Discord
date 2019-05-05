@@ -1,70 +1,138 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>JSDoc: Class: ModLog</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>SpikeyBot-Discord Class: ModLog</title>
 
-    <script src="scripts/prettify/prettify.js"> </script>
-    <script src="scripts/prettify/lang-css.js"> </script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
-    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.dark.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.slate.css">
+
 </head>
 
 <body>
 
-<div id="main">
+<div class="navbar navbar-default navbar-fixed-top ">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">SpikeyBot-Discord</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="module-lib_twemojiChecker.html">lib/twemojiChecker</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="ChatBot.html">ChatBot</a></li><li><a href="CmdScheduling.html">CmdScheduling</a></li><li><a href="CmdScheduling-ScheduledCommand.html">CmdScheduling~ScheduledCommand</a></li><li><a href="Command.html">Command</a></li><li><a href="Command-CommandSetting.html">Command~CommandSetting</a></li><li><a href="Command-SingleCommand.html">Command~SingleCommand</a></li><li><a href="Common.html">Common</a></li><li><a href="Connect4.html">Connect4</a></li><li><a href="Connect4_Game.html">Connect4#Game</a></li><li><a href="Define.html">Define</a></li><li><a href="DevCmds.html">DevCmds</a></li><li><a href="Echo.html">Echo</a></li><li><a href="Echo-Character.html">Echo~Character</a></li><li><a href="FunTranslators.html">FunTranslators</a></li><li><a href="HG.html">HG</a></li><li><a href="HGWeb.html">HGWeb</a></li><li><a href="HungryGames.html">HungryGames</a></li><li><a href="HungryGames-ArenaEvent.html">HungryGames~ArenaEvent</a></li><li><a href="HungryGames-Battle.html">HungryGames~Battle</a></li><li><a href="HungryGames-Day.html">HungryGames~Day</a></li><li><a href="HungryGames-DefaultOptions.html">HungryGames~DefaultOptions</a></li><li><a href="HungryGames-DefaultOptions-BooleanOption.html">HungryGames~DefaultOptions~BooleanOption</a></li><li><a href="HungryGames-DefaultOptions-NumberOption.html">HungryGames~DefaultOptions~NumberOption</a></li><li><a href="HungryGames-DefaultOptions-ObjectOption.html">HungryGames~DefaultOptions~ObjectOption</a></li><li><a href="HungryGames-DefaultOptions-Option.html">HungryGames~DefaultOptions~Option</a></li><li><a href="HungryGames-DefaultOptions-SelectOption.html">HungryGames~DefaultOptions~SelectOption</a></li><li><a href="HungryGames-Event.html">HungryGames~Event</a></li><li><a href="HungryGames-FinalEvent.html">HungryGames~FinalEvent</a></li><li><a href="HungryGames-ForcedOutcome.html">HungryGames~ForcedOutcome</a></li><li><a href="HungryGames-Game.html">HungryGames~Game</a></li><li><a href="HungryGames-Grammar.html">HungryGames~Grammar</a></li><li><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></li><li><a href="HungryGames-Messages.html">HungryGames~Messages</a></li><li><a href="HungryGames-OutcomeProbabilities.html">HungryGames~OutcomeProbabilities</a></li><li><a href="HungryGames-Player.html">HungryGames~Player</a></li><li><a href="HungryGames-Simulator.html">HungryGames~Simulator</a></li><li><a href="HungryGames-Simulator-Worker.html">HungryGames~Simulator~Worker</a></li><li><a href="HungryGames-Team.html">HungryGames~Team</a></li><li><a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a></li><li><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></li><li><a href="Main.html">Main</a></li><li><a href="MainModule.html">MainModule</a></li><li><a href="Messages.html">Messages</a></li><li><a href="Moderation.html">Moderation</a></li><li><a href="ModLog.html">ModLog</a></li><li><a href="ModLog-Settings.html">ModLog~Settings</a></li><li><a href="Music.html">Music</a></li><li><a href="NPC.html">NPC</a></li><li><a href="Patreon.html">Patreon</a></li><li><a href="Patreon-toExport.html">Patreon~toExport</a></li><li><a href="Polling.html">Polling</a></li><li><a href="Polling-Poll.html">Polling~Poll</a></li><li><a href="RaidBlock.html">RaidBlock</a></li><li><a href="RaidBlock-RaidSettings.html">RaidBlock~RaidSettings</a></li><li><a href="RoleColors.html">RoleColors</a></li><li><a href="RoleManager.html">RoleManager</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="SMLoader.html">SMLoader</a></li><li><a href="SpikeyBot.html">SpikeyBot</a></li><li><a href="Spotify.html">Spotify</a></li><li><a href="SubModule.html">SubModule</a></li><li><a href="TicTacToe.html">TicTacToe</a></li><li><a href="TicTacToe_Game.html">TicTacToe#Game</a></li><li><a href="TTS.html">TTS</a></li><li><a href="Uno.html">Uno</a></li><li><a href="Uno_Card.html">Uno#Card</a></li><li><a href="Uno_Game.html">Uno#Game</a></li><li><a href="WebAccount.html">WebAccount</a></li><li><a href="WebCommands.html">WebCommands</a></li><li><a href="WebProxy.html">WebProxy</a></li><li><a href="WebSettings.html">WebSettings</a></li><li><a href="WebStats.html">WebStats</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="externals.list.html" class="dropdown-toggle" data-toggle="dropdown">Externals<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="external-Discord.html">Discord</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+        
+            <div class="col-sm-3 col-md-3">
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        
+	</div>
 
-    <h1 class="page-title">Class: ModLog</h1>
-
-    
-
+</div>
+</div>
 
 
+<div class="container" id="toc-content">
+<div class="row">
 
+	
+	<div class="col-md-8">
+	
+		<div id="main">
+			
+
+	<h1 class="page-title">Class: ModLog</h1>
 <section>
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>ModLog<span class="signature">()</span><span class="type-signature"></span></h2>
+        <h2>
+        ModLog
+        </h2>
         
     
 </header>
+
 
 <article>
     <div class="container-overview">
     
         
+<hr>
+<dt>
+    <h4 class="name" id="ModLog"><span class="type-signature"></span>new ModLog()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Manages moderator logging on guilds.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="ModLog"><span class="type-signature"></span>new ModLog<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
     
-
-
-
-<div class="description">
-    Manages moderator logging on guilds.
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -74,59 +142,59 @@
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="modLog.js.html">modLog.js</a>,
+				 <a href="modLog.js.html#sunlight-1-line-11">line 11</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="modLog.js.html">modLog.js</a>, <a href="modLog.js.html#line11">line 11</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>Command#event:setLogChannel</li>
+    
+        <li>Command#event:logChannel</li>
+    </ul>
+    
 
+    
 
+    
 
-<h5>Listens to Events:</h5>
-<ul>
-    <li>Command#event:setLogChannel</li>
+    
 
-    <li>Command#event:logChannel</li>
-</ul>
-
-
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
     
     </div>
@@ -149,38 +217,45 @@
     
 
     
-
-    
         <h3 class="subsection-title">Members</h3>
 
-        
+        <dl>
             
-<h4 class="name" id="_settings"><span class="type-signature">(private) </span>_settings<span class="type-signature"> :Object.&lt;<a href="ModLog-Settings.html">ModLog~Settings</a>></span></h4>
+<hr>
+<dt class="name" id="_settings">
+    <h4 id="_settings"><span class="type-signature">&lt;private> </span>_settings<span class="type-signature"> :Object.&lt;<a href="ModLog-Settings.html">ModLog~Settings</a>></span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Guild settings for raids mapped by their guild id.
+    </div>
+    
 
-
-
-<div class="description">
-    Guild settings for raids mapped by their guild id.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">Object.&lt;<a href="ModLog-Settings.html">ModLog~Settings</a>></span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -190,60 +265,70 @@
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>{}</li>
+		</ul>
+	</dd>
+	
 
-    
 
-    
 
-    
-    <dt class="tag-default">Default Value:</dt>
-    <dd class="tag-default"><ul class="dummy">
-            <li class="object-value"><pre class="prettyprint"><code>{}</code></pre></li>
-        </ul></dd>
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="modLog.js.html">modLog.js</a>,
+				 <a href="modLog.js.html#sunlight-1-line-26">line 26</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="modLog.js.html">modLog.js</a>, <a href="modLog.js.html#line26">line 26</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="myName"><span class="type-signature"></span>myName<span class="type-signature"></span></h4>
+<hr>
+<dt class="name" id="myName">
+    <h4 id="myName"><span class="type-signature"></span>myName<span class="type-signature"></span></h4>
 
+    
+</dt>
+<dd>
+    
 
+    
 
-
-
-
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -253,76 +338,73 @@
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="modLog.js.html">modLog.js</a>,
+				 <a href="modLog.js.html#sunlight-1-line-18">line 18</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="modLog.js.html">modLog.js</a>, <a href="modLog.js.html#line18">line 18</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
+</dd>
 
-
-
-
-        
+        </dl>
     
 
     
         <h3 class="subsection-title">Methods</h3>
 
-        
+        <dl>
             
+<hr>
+<dt>
+    <h4 class="name" id="_actionString"><span class="type-signature">&lt;private> </span>_actionString(action)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Fetch the human readable action string.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="_actionString"><span class="type-signature">(private) </span>_actionString<span class="signature">(action)</span><span class="type-signature"> &rarr; {string}</span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Fetch the human readable action string.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -353,6 +435,7 @@
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -367,12 +450,17 @@
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -382,51 +470,52 @@
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="modLog.js.html">modLog.js</a>,
+				 <a href="modLog.js.html#sunlight-1-line-128">line 128</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="modLog.js.html">modLog.js</a>, <a href="modLog.js.html#line128">line 128</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     Human readable string.
 </div>
@@ -442,45 +531,43 @@
 <span class="param-type">string</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="_commandSetLogChannel"><span class="type-signature">&lt;private> </span>_commandSetLogChannel(msg)</h4>
+    
+    
+</dt>
+<dd>
 
     
-
-    
-    <h4 class="name" id="_commandSetLogChannel"><span class="type-signature">(private) </span>_commandSetLogChannel<span class="signature">(msg)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Command to set the output logging channel. Changes to the
+    <div class="description">
+        Command to set the output logging channel. Changes to the
 channel the command was run in, or toggles if ran in the same channel.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
+    </div>
     
 
-<table class="params">
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -511,6 +598,7 @@ channel the command was run in, or toggles if ran in the same channel.
 <span class="param-type">Discord~Message</span>
 
 
+
             
             </td>
 
@@ -525,12 +613,17 @@ channel the command was run in, or toggles if ran in the same channel.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -540,89 +633,86 @@ channel the command was run in, or toggles if ran in the same channel.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="modLog.js.html">modLog.js</a>,
+				 <a href="modLog.js.html#sunlight-1-line-88">line 88</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="modLog.js.html">modLog.js</a>, <a href="modLog.js.html#line88">line 88</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>Command#event:setLogChannel</li>
+    
+        <li>Command#event:logChannel</li>
+    </ul>
+    
 
+    
 
+    
 
-<h5>Listens to Events:</h5>
-<ul>
-    <li>Command#event:setLogChannel</li>
+    
 
-    <li>Command#event:logChannel</li>
-</ul>
-
-
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="getSettings"><span class="type-signature"></span>getSettings(gId)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Obtain reference to settings object for a guild.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="getSettings"><span class="type-signature"></span>getSettings<span class="signature">(gId)</span><span class="type-signature"> &rarr; {<a href="ModLog-Settings.html">ModLog~Settings</a>}</span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Obtain reference to settings object for a guild.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -653,6 +743,7 @@ channel the command was run in, or toggles if ran in the same channel.
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -667,12 +758,17 @@ channel the command was run in, or toggles if ran in the same channel.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -682,51 +778,52 @@ channel the command was run in, or toggles if ran in the same channel.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="modLog.js.html">modLog.js</a>,
+				 <a href="modLog.js.html#sunlight-1-line-117">line 117</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="modLog.js.html">modLog.js</a>, <a href="modLog.js.html#line117">line 117</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     Settings object, creates one with default
 settings first if it doesn't exist.
@@ -743,41 +840,44 @@ settings first if it doesn't exist.
 <span class="param-type"><a href="ModLog-Settings.html">ModLog~Settings</a></span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="initialize"><span class="type-signature"></span>initialize()</h4>
+    
+    
+</dt>
+<dd>
 
     
 
     
-    <h4 class="name" id="initialize"><span class="type-signature"></span>initialize<span class="signature">()</span><span class="type-signature"></span></h4>
-    
 
     
 
+    
+    
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -787,82 +887,79 @@ settings first if it doesn't exist.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="modLog.js.html">modLog.js</a>,
+				 <a href="modLog.js.html#sunlight-1-line-33">line 33</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="modLog.js.html">modLog.js</a>, <a href="modLog.js.html#line33">line 33</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="output"><span class="type-signature"></span>output(guild, action [, user] [, owner] [, message])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Log a message in a guild.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="output"><span class="type-signature"></span>output<span class="signature">(guild, action, user<span class="signature-attributes">opt, nullable</span>, owner<span class="signature-attributes">opt, nullable</span>, message<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Log a message in a guild.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -872,7 +969,7 @@ settings first if it doesn't exist.
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -895,6 +992,7 @@ settings first if it doesn't exist.
             
                 
 <span class="param-type">external:Discord~Guild</span>
+
 
 
             
@@ -932,6 +1030,7 @@ settings first if it doesn't exist.
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -965,6 +1064,7 @@ settings first if it doesn't exist.
             
                 
 <span class="param-type">external:Discord~User</span>
+
 
 
             
@@ -1009,6 +1109,7 @@ of no user was affected.</td>
 <span class="param-type">external:Discord~User</span>
 
 
+
             
             </td>
 
@@ -1051,6 +1152,7 @@ action. Null is for ourself.</td>
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -1082,12 +1184,17 @@ message.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1097,79 +1204,81 @@ message.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="modLog.js.html">modLog.js</a>,
+				 <a href="modLog.js.html#sunlight-1-line-169">line 169</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="modLog.js.html">modLog.js</a>, <a href="modLog.js.html#line169">line 169</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="save"><span class="type-signature"></span>save()</h4>
+    
+    
+</dt>
+<dd>
 
     
 
     
-    <h4 class="name" id="save"><span class="type-signature"></span>save<span class="signature">()</span><span class="type-signature"></span></h4>
-    
 
     
 
+    
+    
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1179,82 +1288,79 @@ message.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="modLog.js.html">modLog.js</a>,
+				 <a href="modLog.js.html#sunlight-1-line-64">line 64</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="modLog.js.html">modLog.js</a>, <a href="modLog.js.html#line64">line 64</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="setLogChannel"><span class="type-signature"></span>setLogChannel(gId, cId)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Set the log channel for a guild.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="setLogChannel"><span class="type-signature"></span>setLogChannel<span class="signature">(gId, cId<span class="signature-attributes">nullable</span>)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Set the log channel for a guild.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -1264,7 +1370,7 @@ message.</td>
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -1285,6 +1391,7 @@ message.</td>
             
                 
 <span class="param-type">string</span>
+
 
 
             
@@ -1318,6 +1425,7 @@ message.</td>
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -1342,12 +1450,17 @@ message.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1357,79 +1470,81 @@ message.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="modLog.js.html">modLog.js</a>,
+				 <a href="modLog.js.html#sunlight-1-line-105">line 105</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="modLog.js.html">modLog.js</a>, <a href="modLog.js.html#line105">line 105</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="shutdown"><span class="type-signature"></span>shutdown()</h4>
+    
+    
+</dt>
+<dd>
 
     
 
     
-    <h4 class="name" id="shutdown"><span class="type-signature"></span>shutdown<span class="signature">()</span><span class="type-signature"></span></h4>
-    
 
     
 
+    
+    
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1439,54 +1554,54 @@ message.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="modLog.js.html">modLog.js</a>,
+				 <a href="modLog.js.html#sunlight-1-line-60">line 60</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="modLog.js.html">modLog.js</a>, <a href="modLog.js.html#line60">line 60</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
+</dd>
 
-
-
-
-
-
-
-
-
-
-        
+        </dl>
     
 
     
@@ -1499,19 +1614,153 @@ message.</td>
 
 
 
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+		<div class="col-md-3">
+			<div id="toc" class="col-md-3 hidden-xs hidden-sm hidden-md"></div>
+		</div>
+	
+
+</div>
 </div>
 
-<nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_twemojiChecker.html">lib/twemojiChecker</a></li></ul><h3>Externals</h3><ul><li><a href="external-Discord.html">external:Discord</a></li></ul><h3>Classes</h3><ul><li><a href="ChatBot.html">ChatBot</a></li><li><a href="CmdScheduling.html">CmdScheduling</a></li><li><a href="CmdScheduling-ScheduledCommand.html">CmdScheduling~ScheduledCommand</a></li><li><a href="Command.html">Command</a></li><li><a href="Command-CommandSetting.html">Command~CommandSetting</a></li><li><a href="Command-SingleCommand.html">Command~SingleCommand</a></li><li><a href="Common.html">Common</a></li><li><a href="Connect4.html">Connect4</a></li><li><a href="Connect4_Game.html">Connect4#Game</a></li><li><a href="Define.html">Define</a></li><li><a href="DevCmds.html">DevCmds</a></li><li><a href="Echo.html">Echo</a></li><li><a href="Echo-Character.html">Echo~Character</a></li><li><a href="FunTranslators.html">FunTranslators</a></li><li><a href="HG.html">HG</a></li><li><a href="HGWeb.html">HGWeb</a></li><li><a href="HungryGames.html">HungryGames</a></li><li><a href="HungryGames-ArenaEvent.html">HungryGames~ArenaEvent</a></li><li><a href="HungryGames-Battle.html">HungryGames~Battle</a></li><li><a href="HungryGames-Day.html">HungryGames~Day</a></li><li><a href="HungryGames-DefaultOptions.html">HungryGames~DefaultOptions</a></li><li><a href="HungryGames-DefaultOptions-BooleanOption.html">HungryGames~DefaultOptions~BooleanOption</a></li><li><a href="HungryGames-DefaultOptions-NumberOption.html">HungryGames~DefaultOptions~NumberOption</a></li><li><a href="HungryGames-DefaultOptions-ObjectOption.html">HungryGames~DefaultOptions~ObjectOption</a></li><li><a href="HungryGames-DefaultOptions-Option.html">HungryGames~DefaultOptions~Option</a></li><li><a href="HungryGames-DefaultOptions-SelectOption.html">HungryGames~DefaultOptions~SelectOption</a></li><li><a href="HungryGames-Event.html">HungryGames~Event</a></li><li><a href="HungryGames-FinalEvent.html">HungryGames~FinalEvent</a></li><li><a href="HungryGames-ForcedOutcome.html">HungryGames~ForcedOutcome</a></li><li><a href="HungryGames-Game.html">HungryGames~Game</a></li><li><a href="HungryGames-Grammar.html">HungryGames~Grammar</a></li><li><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></li><li><a href="HungryGames-Messages.html">HungryGames~Messages</a></li><li><a href="HungryGames-OutcomeProbabilities.html">HungryGames~OutcomeProbabilities</a></li><li><a href="HungryGames-Player.html">HungryGames~Player</a></li><li><a href="HungryGames-Simulator.html">HungryGames~Simulator</a></li><li><a href="HungryGames-Simulator-Worker.html">HungryGames~Simulator~Worker</a></li><li><a href="HungryGames-Team.html">HungryGames~Team</a></li><li><a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a></li><li><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></li><li><a href="Main.html">Main</a></li><li><a href="MainModule.html">MainModule</a></li><li><a href="Messages.html">Messages</a></li><li><a href="Moderation.html">Moderation</a></li><li><a href="ModLog.html">ModLog</a></li><li><a href="ModLog-Settings.html">ModLog~Settings</a></li><li><a href="Music.html">Music</a></li><li><a href="NPC.html">NPC</a></li><li><a href="Patreon.html">Patreon</a></li><li><a href="Patreon-toExport.html">Patreon~toExport</a></li><li><a href="Polling.html">Polling</a></li><li><a href="Polling-Poll.html">Polling~Poll</a></li><li><a href="RaidBlock.html">RaidBlock</a></li><li><a href="RaidBlock-RaidSettings.html">RaidBlock~RaidSettings</a></li><li><a href="RoleColors.html">RoleColors</a></li><li><a href="RoleManager.html">RoleManager</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="SMLoader.html">SMLoader</a></li><li><a href="SpikeyBot.html">SpikeyBot</a></li><li><a href="Spotify.html">Spotify</a></li><li><a href="SubModule.html">SubModule</a></li><li><a href="TicTacToe.html">TicTacToe</a></li><li><a href="TicTacToe_Game.html">TicTacToe#Game</a></li><li><a href="TTS.html">TTS</a></li><li><a href="Uno.html">Uno</a></li><li><a href="Uno_Card.html">Uno#Card</a></li><li><a href="Uno_Game.html">Uno#Game</a></li><li><a href="WebAccount.html">WebAccount</a></li><li><a href="WebCommands.html">WebCommands</a></li><li><a href="WebProxy.html">WebProxy</a></li><li><a href="WebSettings.html">WebSettings</a></li><li><a href="WebStats.html">WebStats</a></li></ul><h3>Global</h3><ul><li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li></ul>
-</nav>
 
-<br class="clear">
+    <div class="modal fade" id="searchResults">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Search results</h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sat May 04 2019 21:43:40 GMT-0700 (Pacific Daylight Time)
+
+
+	<span class="copyright">
+	<small>Website Contact: <a href="mailto:web@spikeybot.com">web@spikeybot.com</a>.</small><br><small>&copy; Copyright 2019, Campbell Crowley. <a href="https://docs.google.com/document/d/1SAC2aPxxeNqRjlZzjwrnCyyWWyt09ZP-AP7BDBjjQDg/edit?usp=sharing">Privacy Policy</a></small>
+	</span>
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
+	
+		on Saturday, May 4, 2019 10:15 PM (-07:00)
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
 </footer>
 
-<script> prettyPrint(); </script>
-<script src="scripts/linenumber.js"> </script>
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+
+    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+<script>
+	(function ( i, s, o, g, r, a, m ) {
+		i['GoogleAnalyticsObject'] = r;
+		i[r] = i[r] || function () {
+			(i[r].q = i[r].q || []).push( arguments )
+		}, i[r].l = 1 * new Date();
+		a = s.createElement( o ),
+			m = s.getElementsByTagName( o )[0];
+		a.async = 1;
+		a.src = g;
+		m.parentNode.insertBefore( a, m )
+	})( window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga' );
+
+	ga( 'create', 'UA-89923351-1', 'www.spikeybot.com' );
+	ga( 'send', 'pageview' );
+</script>
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            SearcherDisplay.init();
+        });
+    </script>
+
+
 </body>
 </html>

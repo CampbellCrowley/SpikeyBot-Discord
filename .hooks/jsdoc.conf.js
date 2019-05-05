@@ -6,7 +6,7 @@ module.exports = {
     access: 'all',
     private: true,
     readme: './docs/README.md',
-    // template: './node_modules/jsdoc-template',
+    template: './node_modules/ink-docstrap/template',
   },
   source: {
     include: [
@@ -17,17 +17,18 @@ module.exports = {
     ],
   },
   templates: {
-    referenceTitle: 'SpikeyBot-Discord',
-    disableSort: false,
-    collapse: true,
-    resources: {
-      'Discord': 'https://discord.gg/u6U2WRD',
-      'Bot Website': 'https://www.spikeybot.com/',
-      'GitHub': 'https://github.com/CampbellCrowley/SpikeyBot-Discord',
-      'Discord.js': 'https://discord.js.org/#/docs/main/master/general/welcome',
-    },
-    default: {
-      useLongnameInNav: true,
-    },
+    systemName: 'SpikeyBot-Discord',
+    copyright: '<small>Website Contact: <a href="mailto:web@spikeybot.com">' +
+        'web@spikeybot.com</a>.</small><br><small>&copy; Copyright 2019, ' +
+        'Campbell Crowley. <a href="https://docs.google.com/document/d/' +
+        '1SAC2aPxxeNqRjlZzjwrnCyyWWyt09ZP-AP7BDBjjQDg/edit?usp=sharing">' +
+        'Privacy Policy</a></small>',
+    navType: 'inline',
+    theme: 'slate',
+    linenums: true,
+    analytics: {ua: 'UA-89923351-1', domain: 'www.spikeybot.com'},
+    outputSourceFiles: true,
+    dateFormat: 'LLLL (Z)',
+    syntaxTheme: 'dark',
   },
 };

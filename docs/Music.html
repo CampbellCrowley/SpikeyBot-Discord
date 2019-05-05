@@ -1,70 +1,136 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>JSDoc: Class: Music</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>SpikeyBot-Discord Class: Music</title>
 
-    <script src="scripts/prettify/prettify.js"> </script>
-    <script src="scripts/prettify/lang-css.js"> </script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
-    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.dark.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.slate.css">
+
 </head>
 
 <body>
 
-<div id="main">
+<div class="navbar navbar-default navbar-fixed-top ">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">SpikeyBot-Discord</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="module-lib_twemojiChecker.html">lib/twemojiChecker</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="ChatBot.html">ChatBot</a></li><li><a href="CmdScheduling.html">CmdScheduling</a></li><li><a href="CmdScheduling-ScheduledCommand.html">CmdScheduling~ScheduledCommand</a></li><li><a href="Command.html">Command</a></li><li><a href="Command-CommandSetting.html">Command~CommandSetting</a></li><li><a href="Command-SingleCommand.html">Command~SingleCommand</a></li><li><a href="Common.html">Common</a></li><li><a href="Connect4.html">Connect4</a></li><li><a href="Connect4_Game.html">Connect4#Game</a></li><li><a href="Define.html">Define</a></li><li><a href="DevCmds.html">DevCmds</a></li><li><a href="Echo.html">Echo</a></li><li><a href="Echo-Character.html">Echo~Character</a></li><li><a href="FunTranslators.html">FunTranslators</a></li><li><a href="HG.html">HG</a></li><li><a href="HGWeb.html">HGWeb</a></li><li><a href="HungryGames.html">HungryGames</a></li><li><a href="HungryGames-ArenaEvent.html">HungryGames~ArenaEvent</a></li><li><a href="HungryGames-Battle.html">HungryGames~Battle</a></li><li><a href="HungryGames-Day.html">HungryGames~Day</a></li><li><a href="HungryGames-DefaultOptions.html">HungryGames~DefaultOptions</a></li><li><a href="HungryGames-DefaultOptions-BooleanOption.html">HungryGames~DefaultOptions~BooleanOption</a></li><li><a href="HungryGames-DefaultOptions-NumberOption.html">HungryGames~DefaultOptions~NumberOption</a></li><li><a href="HungryGames-DefaultOptions-ObjectOption.html">HungryGames~DefaultOptions~ObjectOption</a></li><li><a href="HungryGames-DefaultOptions-Option.html">HungryGames~DefaultOptions~Option</a></li><li><a href="HungryGames-DefaultOptions-SelectOption.html">HungryGames~DefaultOptions~SelectOption</a></li><li><a href="HungryGames-Event.html">HungryGames~Event</a></li><li><a href="HungryGames-FinalEvent.html">HungryGames~FinalEvent</a></li><li><a href="HungryGames-ForcedOutcome.html">HungryGames~ForcedOutcome</a></li><li><a href="HungryGames-Game.html">HungryGames~Game</a></li><li><a href="HungryGames-Grammar.html">HungryGames~Grammar</a></li><li><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></li><li><a href="HungryGames-Messages.html">HungryGames~Messages</a></li><li><a href="HungryGames-OutcomeProbabilities.html">HungryGames~OutcomeProbabilities</a></li><li><a href="HungryGames-Player.html">HungryGames~Player</a></li><li><a href="HungryGames-Simulator.html">HungryGames~Simulator</a></li><li><a href="HungryGames-Simulator-Worker.html">HungryGames~Simulator~Worker</a></li><li><a href="HungryGames-Team.html">HungryGames~Team</a></li><li><a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a></li><li><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></li><li><a href="Main.html">Main</a></li><li><a href="MainModule.html">MainModule</a></li><li><a href="Messages.html">Messages</a></li><li><a href="Moderation.html">Moderation</a></li><li><a href="ModLog.html">ModLog</a></li><li><a href="ModLog-Settings.html">ModLog~Settings</a></li><li><a href="Music.html">Music</a></li><li><a href="NPC.html">NPC</a></li><li><a href="Patreon.html">Patreon</a></li><li><a href="Patreon-toExport.html">Patreon~toExport</a></li><li><a href="Polling.html">Polling</a></li><li><a href="Polling-Poll.html">Polling~Poll</a></li><li><a href="RaidBlock.html">RaidBlock</a></li><li><a href="RaidBlock-RaidSettings.html">RaidBlock~RaidSettings</a></li><li><a href="RoleColors.html">RoleColors</a></li><li><a href="RoleManager.html">RoleManager</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="SMLoader.html">SMLoader</a></li><li><a href="SpikeyBot.html">SpikeyBot</a></li><li><a href="Spotify.html">Spotify</a></li><li><a href="SubModule.html">SubModule</a></li><li><a href="TicTacToe.html">TicTacToe</a></li><li><a href="TicTacToe_Game.html">TicTacToe#Game</a></li><li><a href="TTS.html">TTS</a></li><li><a href="Uno.html">Uno</a></li><li><a href="Uno_Card.html">Uno#Card</a></li><li><a href="Uno_Game.html">Uno#Game</a></li><li><a href="WebAccount.html">WebAccount</a></li><li><a href="WebCommands.html">WebCommands</a></li><li><a href="WebProxy.html">WebProxy</a></li><li><a href="WebSettings.html">WebSettings</a></li><li><a href="WebStats.html">WebStats</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="externals.list.html" class="dropdown-toggle" data-toggle="dropdown">Externals<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="external-Discord.html">Discord</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+        
+            <div class="col-sm-3 col-md-3">
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        
+	</div>
 
-    <h1 class="page-title">Class: Music</h1>
-
-    
-
+</div>
+</div>
 
 
+<div class="container" id="toc-content">
+<div class="row">
 
+	
+	<div class="col-md-8">
+	
+		<div id="main">
+			
+
+	<h1 class="page-title">Class: Music</h1>
 <section>
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>Music<span class="signature">()</span><span class="type-signature"></span></h2>
+        <h2>
+        Music
+        </h2>
         
             <div class="class-description">Music and audio related commands.</div>
         
     
 </header>
 
+
 <article>
     <div class="container-overview">
     
         
+<hr>
+<dt>
+    <h4 class="name" id="Music"><span class="type-signature"></span>new Music()</h4>
+    
+    
+</dt>
+<dd>
 
     
-    <h2>Constructor</h2>
-    
 
-    
-    <h4 class="name" id="Music"><span class="type-signature"></span>new Music<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
     
 
+    
+    
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -74,102 +140,102 @@
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-38">line 38</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line38">line 38</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
+    <h5>Fires:</h5>
+    <ul>
+        <li>Command#event:stop</li>
+    </ul>
+    
 
+    
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>Discord~Client#event:voiceStateUpdate</li>
+    
+        <li>Command#event:play</li>
+    
+        <li>Command#event:pause</li>
+    
+        <li>Command#event:resume</li>
+    
+        <li>Command#event:leave</li>
+    
+        <li>Command#event:stop</li>
+    
+        <li>Command#event:stfu</li>
+    
+        <li>Command#event:skip</li>
+    
+        <li>Command#event:q</li>
+    
+        <li>Command#event:queue</li>
+    
+        <li>Command#event:playing</li>
+    
+        <li>Command#event:remove</li>
+    
+        <li>Command#event:dequeue</li>
+    
+        <li>Command#event:lyrics</li>
+    
+        <li>Command#event:record</li>
+    
+        <li>Command#event:follow</li>
+    
+        <li>Command#event:unfollow</li>
+    
+        <li>Command#event:stalk</li>
+    
+        <li>Command#event:unstalk</li>
+    
+        <li>Command#event:musicstats</li>
+    
+        <li>Command#event:volume</li>
+    </ul>
+    
 
-<h5>Fires:</h5>
-<ul>
-    <li>Command#event:stop</li>
-</ul>
+    
 
+    
 
+    
 
-<h5>Listens to Events:</h5>
-<ul>
-    <li>Discord~Client#event:voiceStateUpdate</li>
-
-    <li>Command#event:play</li>
-
-    <li>Command#event:pause</li>
-
-    <li>Command#event:resume</li>
-
-    <li>Command#event:leave</li>
-
-    <li>Command#event:stop</li>
-
-    <li>Command#event:stfu</li>
-
-    <li>Command#event:skip</li>
-
-    <li>Command#event:q</li>
-
-    <li>Command#event:queue</li>
-
-    <li>Command#event:playing</li>
-
-    <li>Command#event:remove</li>
-
-    <li>Command#event:dequeue</li>
-
-    <li>Command#event:lyrics</li>
-
-    <li>Command#event:record</li>
-
-    <li>Command#event:follow</li>
-
-    <li>Command#event:unfollow</li>
-
-    <li>Command#event:stalk</li>
-
-    <li>Command#event:unstalk</li>
-
-    <li>Command#event:musicstats</li>
-
-    <li>Command#event:volume</li>
-</ul>
-
-
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
     
     </div>
@@ -196,57 +262,54 @@
     
 
     
-
-    
         <h3 class="subsection-title">Members</h3>
 
-        
+        <dl>
             
-<h4 class="name" id="bot"><span class="type-signature"></span>bot<span class="type-signature"> :<a href="SpikeyBot.html">SpikeyBot</a></span></h4>
+<hr>
+<dt class="name" id="bot">
+    <h4 id="bot"><span class="type-signature"></span>bot<span class="type-signature"> :<a href="SpikeyBot.html">SpikeyBot</a></span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The parent SpikeyBot instance.
+    </div>
+    
 
-
-
-<div class="description">
-    The parent SpikeyBot instance.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type"><a href="SpikeyBot.html">SpikeyBot</a></span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
-
     
 
-    
+	
 
-    
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
-        <a href="SubModule.html#bot">SubModule#bot</a>
-    </li></ul></dd>
-    
+	
 
-    
-
-    
-
-    
-
-    
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="SubModule.html#bot">SubModule#bot</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
 
@@ -256,74 +319,87 @@
 
     
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="subModule.js.html">subModule.js</a>, <a href="subModule.js.html#line58">line 58</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="subModule.js.html">subModule.js</a>,
+				 <a href="subModule.js.html#sunlight-1-line-58">line 58</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="client"><span class="type-signature"></span>client<span class="type-signature"> :Discord~Client</span></h4>
+<hr>
+<dt class="name" id="client">
+    <h4 id="client"><span class="type-signature"></span>client<span class="type-signature"> :Discord~Client</span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The current bot client.
+    </div>
+    
 
-
-
-<div class="description">
-    The current bot client.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">Discord~Client</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
-
     
 
-    
+	
 
-    
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
-        <a href="SubModule.html#client">SubModule#client</a>
-    </li></ul></dd>
-    
+	
 
-    
-
-    
-
-    
-
-    
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="SubModule.html#client">SubModule#client</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
 
@@ -333,74 +409,87 @@
 
     
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="subModule.js.html">subModule.js</a>, <a href="subModule.js.html#line39">line 39</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="subModule.js.html">subModule.js</a>,
+				 <a href="subModule.js.html#sunlight-1-line-39">line 39</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="command"><span class="type-signature"></span>command<span class="type-signature"> :<a href="Command.html">Command</a></span></h4>
+<hr>
+<dt class="name" id="command">
+    <h4 id="command"><span class="type-signature"></span>command<span class="type-signature"> :<a href="Command.html">Command</a></span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The command object for registering command listeners.
+    </div>
+    
 
-
-
-<div class="description">
-    The command object for registering command listeners.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type"><a href="Command.html">Command</a></span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
-
     
 
-    
+	
 
-    
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
-        <a href="SubModule.html#command">SubModule#command</a>
-    </li></ul></dd>
-    
+	
 
-    
-
-    
-
-    
-
-    
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="SubModule.html#command">SubModule#command</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
 
@@ -410,75 +499,88 @@
 
     
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="subModule.js.html">subModule.js</a>, <a href="subModule.js.html#line45">line 45</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="subModule.js.html">subModule.js</a>,
+				 <a href="subModule.js.html#sunlight-1-line-45">line 45</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="commit"><span class="type-signature">(constant) </span>commit<span class="type-signature"> :string</span></h4>
+<hr>
+<dt class="name" id="commit">
+    <h4 id="commit"><span class="type-signature">&lt;constant> </span>commit<span class="type-signature"> :string</span></h4>
 
-
-
-
-<div class="description">
-    The commit at HEAD at the time this module was loaded. Essentially the
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The commit at HEAD at the time this module was loaded. Essentially the
 version of this submodule.
-</div>
+    </div>
+    
 
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">string</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
-
     
 
-    
+	
 
-    
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
-        <a href="SubModule.html#commit">SubModule#commit</a>
-    </li></ul></dd>
-    
+	
 
-    
-
-    
-
-    
-
-    
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="SubModule.html#commit">SubModule#commit</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
 
@@ -488,74 +590,87 @@ version of this submodule.
 
     
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="subModule.js.html">subModule.js</a>, <a href="subModule.js.html#line68">line 68</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="subModule.js.html">subModule.js</a>,
+				 <a href="subModule.js.html#sunlight-1-line-68">line 68</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="common"><span class="type-signature"></span>common<span class="type-signature"> :<a href="Common.html">Common</a></span></h4>
+<hr>
+<dt class="name" id="common">
+    <h4 id="common"><span class="type-signature"></span>common<span class="type-signature"> :<a href="Common.html">Common</a></span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The common object.
+    </div>
+    
 
-
-
-<div class="description">
-    The common object.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type"><a href="Common.html">Common</a></span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
-
     
 
-    
+	
 
-    
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
-        <a href="SubModule.html#common">SubModule#common</a>
-    </li></ul></dd>
-    
+	
 
-    
-
-    
-
-    
-
-    
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="SubModule.html#common">SubModule#common</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
 
@@ -565,74 +680,87 @@ version of this submodule.
 
     
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="subModule.js.html">subModule.js</a>, <a href="subModule.js.html#line51">line 51</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="subModule.js.html">subModule.js</a>,
+				 <a href="subModule.js.html#sunlight-1-line-51">line 51</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="Discord"><span class="type-signature"></span>Discord<span class="type-signature"> :Discord</span></h4>
+<hr>
+<dt class="name" id="Discord">
+    <h4 id="Discord"><span class="type-signature"></span>Discord<span class="type-signature"> :Discord</span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The current Discord object instance of the bot.
+    </div>
+    
 
-
-
-<div class="description">
-    The current Discord object instance of the bot.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">Discord</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
-
     
 
-    
+	
 
-    
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
-        <a href="SubModule.html#Discord">SubModule#Discord</a>
-    </li></ul></dd>
-    
+	
 
-    
-
-    
-
-    
-
-    
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="SubModule.html#Discord">SubModule#Discord</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
 
@@ -642,64 +770,90 @@ version of this submodule.
 
     
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="subModule.js.html">subModule.js</a>, <a href="subModule.js.html#line33">line 33</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="subModule.js.html">subModule.js</a>,
+				 <a href="subModule.js.html#sunlight-1-line-33">line 33</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="helpMessage"><span class="type-signature"></span>helpMessage<span class="type-signature"> :string|Discord~MessageEmbed</span></h4>
+<hr>
+<dt class="name" id="helpMessage">
+    <h4 id="helpMessage"><span class="type-signature"></span>helpMessage<span class="type-signature"> :string|Discord~MessageEmbed</span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The help message to show the user in the main help message.
+    </div>
+    
 
-
-
-<div class="description">
-    The help message to show the user in the main help message.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">string</span>
 |
 
 <span class="param-type">Discord~MessageEmbed</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
-
     
 
-    
+	
 
-    
+	
+
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="SubModule.html#helpMessage">SubModule#helpMessage</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
     <dt class="tag-overrides">Overrides:</dt>
@@ -714,82 +868,87 @@ version of this submodule.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="subModule.js.html">subModule.js</a>, <a href="subModule.js.html#line17">line 17</a>
-    </li></ul></dd>
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="subModule.js.html">subModule.js</a>,
+				 <a href="subModule.js.html#sunlight-1-line-17">line 17</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
+	
+
+	
+
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="initialized"><span class="type-signature">(protected, readonly) </span>initialized<span class="type-signature"> :boolean</span></h4>
+<hr>
+<dt class="name" id="initialized">
+    <h4 id="initialized"><span class="type-signature">&lt;protected, readonly> </span>initialized<span class="type-signature"> :boolean</span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Has this subModule been initialized yet (Has begin() been called).
+    </div>
+    
 
-
-
-<div class="description">
-    Has this subModule been initialized yet (Has begin() been called).
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">boolean</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
-
     
 
-    
+	
 
-    
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
-        <a href="SubModule.html#initialized">SubModule#initialized</a>
-    </li></ul></dd>
-    
+	
 
-    
-
-    
-
-    
-
-    
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="SubModule.html#initialized">SubModule#initialized</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
 
@@ -799,76 +958,89 @@ version of this submodule.
 
     
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="subModule.js.html">subModule.js</a>, <a href="subModule.js.html#line103">line 103</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="subModule.js.html">subModule.js</a>,
+				 <a href="subModule.js.html#sunlight-1-line-103">line 103</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="loadTime"><span class="type-signature">(constant) </span>loadTime<span class="type-signature"> :number</span></h4>
+<hr>
+<dt class="name" id="loadTime">
+    <h4 id="loadTime"><span class="type-signature">&lt;constant> </span>loadTime<span class="type-signature"> :number</span></h4>
 
-
-
-
-<div class="description">
-    The time at which this madule was loaded for use in checking if the
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The time at which this madule was loaded for use in checking if the
 module
 needs to be reloaded because the file has been modified since loading.
-</div>
+    </div>
+    
 
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">number</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
-
     
 
-    
+	
 
-    
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
-        <a href="SubModule.html#loadTime">SubModule#loadTime</a>
-    </li></ul></dd>
-    
+	
 
-    
-
-    
-
-    
-
-    
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="SubModule.html#loadTime">SubModule#loadTime</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
 
@@ -878,63 +1050,89 @@ needs to be reloaded because the file has been modified since loading.
 
     
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="subModule.js.html">subModule.js</a>, <a href="subModule.js.html#line82">line 82</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="subModule.js.html">subModule.js</a>,
+				 <a href="subModule.js.html#sunlight-1-line-82">line 82</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="myName"><span class="type-signature">(abstract, protected) </span>myName<span class="type-signature"> :string</span></h4>
+<hr>
+<dt class="name" id="myName">
+    <h4 id="myName"><span class="type-signature">&lt;abstract, protected> </span>myName<span class="type-signature"> :string</span></h4>
 
-
-
-
-<div class="description">
-    The name of this submodule. Used for differentiating in the log. Should
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The name of this submodule. Used for differentiating in the log. Should
 be
 defined before begin().
-</div>
+    </div>
+    
 
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">string</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
-
     
 
-    
+	
 
-    
+	
+
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="SubModule.html#myName">SubModule#myName</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
     <dt class="tag-overrides">Overrides:</dt>
@@ -949,83 +1147,88 @@ defined before begin().
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="subModule.js.html">subModule.js</a>, <a href="subModule.js.html#line93">line 93</a>
-    </li></ul></dd>
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="subModule.js.html">subModule.js</a>,
+				 <a href="subModule.js.html#sunlight-1-line-93">line 93</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
+	
+
+	
+
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="postPrefix"><span class="type-signature">(abstract) </span>postPrefix<span class="type-signature"> :string</span></h4>
+<hr>
+<dt class="name" id="postPrefix">
+    <h4 id="postPrefix"><span class="type-signature">&lt;abstract> </span>postPrefix<span class="type-signature"> :string</span></h4>
 
-
-
-
-<div class="description">
-    The postfix for the global prefix for this subModule. Must be defined
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The postfix for the global prefix for this subModule. Must be defined
 before begin(), otherwise it is ignored.
-</div>
+    </div>
+    
 
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">string</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
-
     
 
-    
+	
 
-    
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
-        <a href="SubModule.html#postPrefix">SubModule#postPrefix</a>
-    </li></ul></dd>
-    
+	
 
-    
-
-    
-
-    
-
-    
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="SubModule.html#postPrefix">SubModule#postPrefix</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
 
@@ -1035,56 +1238,79 @@ before begin(), otherwise it is ignored.
 
     
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="subModule.js.html">subModule.js</a>, <a href="subModule.js.html#line27">line 27</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="subModule.js.html">subModule.js</a>,
+				 <a href="subModule.js.html#sunlight-1-line-27">line 27</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~broadcasts"><span class="type-signature">(private, inner, constant) </span>broadcasts<span class="type-signature"> :Object.&lt;<a href="Music.html#~Broadcast">Music~Broadcast</a>></span></h4>
+<hr>
+<dt class="name" id="~broadcasts">
+    <h4 id="~broadcasts"><span class="type-signature">&lt;private, inner, constant> </span>broadcasts<span class="type-signature"> :Object.&lt;<a href="Music.html#~Broadcast">Music~Broadcast</a>></span></h4>
 
-
-
-
-<div class="description">
-    All current audio broadcasts to voice channels. Stores all relavent data.
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        All current audio broadcasts to voice channels. Stores all relavent data.
 Stored by guild id.
-</div>
+    </div>
+    
 
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">Object.&lt;<a href="Music.html#~Broadcast">Music~Broadcast</a>></span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1094,70 +1320,79 @@ Stored by guild id.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-97">line 97</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line97">line 97</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~follows"><span class="type-signature">(private, inner, constant) </span>follows<span class="type-signature"> :Object.&lt;string></span></h4>
+<hr>
+<dt class="name" id="~follows">
+    <h4 id="~follows"><span class="type-signature">&lt;private, inner, constant> </span>follows<span class="type-signature"> :Object.&lt;string></span></h4>
 
-
-
-
-<div class="description">
-    The current user IDs of the users to follow into new voice channels. This
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The current user IDs of the users to follow into new voice channels. This
 is mapped by guild id.
-</div>
+    </div>
+    
 
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">Object.&lt;string></span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1167,69 +1402,78 @@ is mapped by guild id.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-106">line 106</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line106">line 106</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~geniusClient"><span class="type-signature">(private, inner, constant) </span>geniusClient<span class="type-signature"> :string</span></h4>
+<hr>
+<dt class="name" id="~geniusClient">
+    <h4 id="~geniusClient"><span class="type-signature">&lt;private, inner, constant> </span>geniusClient<span class="type-signature"> :string</span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The Genuius client token we use to fetch information from their api
+    </div>
+    
 
-
-
-<div class="description">
-    The Genuius client token we use to fetch information from their api
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">string</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1239,69 +1483,78 @@ is mapped by guild id.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-48">line 48</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line48">line 48</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~geniusRequest"><span class="type-signature">(private, inner, constant) </span>geniusRequest<span class="type-signature"> :Object</span></h4>
+<hr>
+<dt class="name" id="~geniusRequest">
+    <h4 id="~geniusRequest"><span class="type-signature">&lt;private, inner, constant> </span>geniusRequest<span class="type-signature"> :Object</span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The request headers to send to genius.
+    </div>
+    
 
-
-
-<div class="description">
-    The request headers to send to genius.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">Object</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1311,64 +1564,74 @@ is mapped by guild id.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>{"hostname":"api.genius.com","path":"/search/","headers":"","method":"GET"}</li>
+		</ul>
+	</dd>
+	
 
-    
 
-    
 
-    
-    <dt class="tag-default">Default Value:</dt>
-    <dd class="tag-default"><ul class="dummy">
-            <li class="object-value"><pre class="prettyprint"><code>{"hostname":"api.genius.com","path":"/search/","headers":"","method":"GET"}</code></pre></li>
-        </ul></dd>
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-58">line 58</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line58">line 58</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~helpObject"><span class="type-signature">(private, inner, constant) </span>helpObject<span class="type-signature"></span></h4>
+<hr>
+<dt class="name" id="~helpObject">
+    <h4 id="~helpObject"><span class="type-signature">&lt;private, inner, constant> </span>helpObject<span class="type-signature"></span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The object that stores all data to be formatted into the help message.
+    </div>
+    
 
+    
 
-
-<div class="description">
-    The object that stores all data to be formatted into the help message.
-</div>
-
-
-
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1378,72 +1641,81 @@ is mapped by guild id.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-197">line 197</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line197">line 197</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~primaryStreamOptions"><span class="type-signature">(private, inner, constant) </span>primaryStreamOptions<span class="type-signature"> :Discord~StreamOptions</span></h4>
+<hr>
+<dt class="name" id="~primaryStreamOptions">
+    <h4 id="~primaryStreamOptions"><span class="type-signature">&lt;private, inner, constant> </span>primaryStreamOptions<span class="type-signature"> :Discord~StreamOptions</span></h4>
 
-
-
-
-<div class="description">
-    Options to pass into the primary stream dispatcher (The one in charge of
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Options to pass into the primary stream dispatcher (The one in charge of
 volume control).
 [StreamOptions](
 https://discord.js.org/#/docs/main/master/typedef/StreamOptions)
-</div>
+    </div>
+    
 
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">Discord~StreamOptions</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1453,77 +1725,88 @@ https://discord.js.org/#/docs/main/master/typedef/StreamOptions)
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>{"passes":1,"fec":true,"bitrate":"auto","volume":0.5,"plp":0,"highWaterMark":5}</li>
+		</ul>
+	</dd>
+	
 
-    
 
-    
 
-    
-    <dt class="tag-default">Default Value:</dt>
-    <dd class="tag-default"><ul class="dummy">
-            <li class="object-value"><pre class="prettyprint"><code>{"passes":1,"fec":true,"bitrate":"auto","volume":0.5,"plp":0,"highWaterMark":5}</code></pre></li>
-        </ul></dd>
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-160">line 160</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line160">line 160</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~secondaryStreamOptions"><span class="type-signature">(private, inner, constant) </span>secondaryStreamOptions<span class="type-signature"> :Discord~StreamOptions</span></h4>
+<hr>
+<dt class="name" id="~secondaryStreamOptions">
+    <h4 id="~secondaryStreamOptions"><span class="type-signature">&lt;private, inner, constant> </span>secondaryStreamOptions<span class="type-signature"> :Discord~StreamOptions</span></h4>
 
-
-
-
-<div class="description">
-    Options to pass into the secondary stream dispatcher (The one buffering for
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Options to pass into the secondary stream dispatcher (The one buffering for
 Discord).
 [StreamOptions](
 https://discord.js.org/#/docs/main/master/typedef/StreamOptions)
-</div>
+    </div>
+    
 
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">Discord~StreamOptions</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1533,74 +1816,85 @@ https://discord.js.org/#/docs/main/master/typedef/StreamOptions)
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>{"passes":1,"fec":true,"bitrate":"auto","volume":0.5,"plp":0.05,"highWaterMark":1000}</li>
+		</ul>
+	</dd>
+	
 
-    
 
-    
 
-    
-    <dt class="tag-default">Default Value:</dt>
-    <dd class="tag-default"><ul class="dummy">
-            <li class="object-value"><pre class="prettyprint"><code>{"passes":1,"fec":true,"bitrate":"auto","volume":0.5,"plp":0.05,"highWaterMark":1000}</code></pre></li>
-        </ul></dd>
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-179">line 179</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line179">line 179</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~special"><span class="type-signature">(private, inner, constant) </span>special<span class="type-signature"> :Object.&lt;Object.&lt;{cmd: string, url: ?string, file: string}>></span></h4>
+<hr>
+<dt class="name" id="~special">
+    <h4 id="~special"><span class="type-signature">&lt;private, inner, constant> </span>special<span class="type-signature"> :Object.&lt;Object.&lt;{cmd: string, url: ?string, file: string}>></span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Special cases of requests to handle seperately.
+    </div>
+    
 
-
-
-<div class="description">
-    Special cases of requests to handle seperately.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">Object.&lt;Object.&lt;{cmd: string, url: ?string, file: string}>></span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1610,69 +1904,78 @@ https://discord.js.org/#/docs/main/master/typedef/StreamOptions)
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-115">line 115</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line115">line 115</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~ytdlOpts"><span class="type-signature">(private, inner, constant) </span>ytdlOpts<span class="type-signature"> :Array.&lt;string></span></h4>
+<hr>
+<dt class="name" id="~ytdlOpts">
+    <h4 id="~ytdlOpts"><span class="type-signature">&lt;private, inner, constant> </span>ytdlOpts<span class="type-signature"> :Array.&lt;string></span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Options passed to youtube-dl for fetching videos.
+    </div>
+    
 
-
-
-<div class="description">
-    Options passed to youtube-dl for fetching videos.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">Array.&lt;string></span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1682,81 +1985,80 @@ https://discord.js.org/#/docs/main/master/typedef/StreamOptions)
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>["-f","bestaudio/worst","--no-playlist","--default-search=auto"]</li>
+		</ul>
+	</dd>
+	
 
-    
 
-    
 
-    
-    <dt class="tag-default">Default Value:</dt>
-    <dd class="tag-default"><ul class="dummy">
-            <li class="object-value"><pre class="prettyprint"><code>["-f","bestaudio/worst","--no-playlist","--default-search=auto"]</code></pre></li>
-        </ul></dd>
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-146">line 146</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line146">line 146</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
+</dd>
 
-
-
-
-        
+        </dl>
     
 
     
         <h3 class="subsection-title">Methods</h3>
 
-        
+        <dl>
             
+<hr>
+<dt>
+    <h4 class="name" id=".streamToOgg"><span class="type-signature">&lt;static> </span>streamToOgg(input, file)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Coverts an incoming Opus stream to a ogg format and writes it to file.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id=".streamToOgg"><span class="type-signature">(static) </span>streamToOgg<span class="signature">(input, file)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Coverts an incoming Opus stream to a ogg format and writes it to file.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -1787,6 +2089,7 @@ https://discord.js.org/#/docs/main/master/typedef/StreamOptions)
 <span class="param-type">ReadableStream</span>
 
 
+
             
             </td>
 
@@ -1810,6 +2113,7 @@ https://discord.js.org/#/docs/main/master/typedef/StreamOptions)
 <span class="param-type">WritableStream</span>
 
 
+
             
             </td>
 
@@ -1824,12 +2128,17 @@ https://discord.js.org/#/docs/main/master/typedef/StreamOptions)
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1839,82 +2148,79 @@ https://discord.js.org/#/docs/main/master/typedef/StreamOptions)
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-1828">line 1828</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line1828">line 1828</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="begin"><span class="type-signature"></span>begin(Discord, client, command, common, bot)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Initialize this submodule.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="begin"><span class="type-signature"></span>begin<span class="signature">(Discord, client, command, common, bot)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Initialize this submodule.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -1945,6 +2251,7 @@ https://discord.js.org/#/docs/main/master/typedef/StreamOptions)
 <span class="param-type">Discord</span>
 
 
+
             
             </td>
 
@@ -1968,6 +2275,7 @@ https://discord.js.org/#/docs/main/master/typedef/StreamOptions)
 <span class="param-type">Discord~Client</span>
 
 
+
             
             </td>
 
@@ -1989,6 +2297,7 @@ https://discord.js.org/#/docs/main/master/typedef/StreamOptions)
             
                 
 <span class="param-type"><a href="Command.html">Command</a></span>
+
 
 
             
@@ -2015,6 +2324,7 @@ register command listeners.</td>
 <span class="param-type"><a href="Common.html">Common</a></span>
 
 
+
             
             </td>
 
@@ -2038,6 +2348,7 @@ register command listeners.</td>
 <span class="param-type"><a href="SpikeyBot.html">SpikeyBot</a></span>
 
 
+
             
             </td>
 
@@ -2052,31 +2363,26 @@ register command listeners.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
-
     
 
-    
+	
 
-    
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
-        <a href="SubModule.html#begin">SubModule#begin</a>
-    </li></ul></dd>
-    
+	
 
-    
-
-    
-
-    
-
-    
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="SubModule.html#begin">SubModule#begin</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
 
@@ -2086,68 +2392,79 @@ register command listeners.</td>
 
     
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="subModule.js.html">subModule.js</a>, <a href="subModule.js.html#line126">line 126</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="subModule.js.html">subModule.js</a>,
+				 <a href="subModule.js.html#sunlight-1-line-126">line 126</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="clearQueue"><span class="type-signature"></span>clearQueue(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Empty a guild's current music queue.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="clearQueue"><span class="type-signature"></span>clearQueue<span class="signature">(msg)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Empty a guild's current music queue.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -2176,6 +2493,7 @@ register command listeners.</td>
             
                 
 <span class="param-type">Discord~Message</span>
+
 
 
             
@@ -2193,12 +2511,17 @@ modify.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -2208,82 +2531,79 @@ modify.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-1280">line 1280</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line1280">line 1280</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="debug"><span class="type-signature">&lt;protected> </span>debug(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Log using common.logDebug, but automatically set name.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="debug"><span class="type-signature">(protected) </span>debug<span class="signature">(msg)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Log using common.logDebug, but automatically set name.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -2314,6 +2634,7 @@ modify.</td>
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -2328,31 +2649,26 @@ modify.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
-
     
 
-    
+	
 
-    
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
-        <a href="SubModule.html#debug">SubModule#debug</a>
-    </li></ul></dd>
-    
+	
 
-    
-
-    
-
-    
-
-    
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="SubModule.html#debug">SubModule#debug</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
 
@@ -2362,88 +2678,94 @@ modify.</td>
 
     
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="subModule.js.html">subModule.js</a>, <a href="subModule.js.html#line203">line 203</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="subModule.js.html">subModule.js</a>,
+				 <a href="subModule.js.html#sunlight-1-line-203">line 203</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="end"><span class="type-signature"></span>end()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Trigger subModule to shutdown and get ready for process terminating.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="end"><span class="type-signature"></span>end<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
     
-
-
-
-<div class="description">
-    Trigger subModule to shutdown and get ready for process terminating.
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
 <dl class="details">
-
     
 
-    
+	
 
-    
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
-        <a href="SubModule.html#end">SubModule#end</a>
-    </li></ul></dd>
-    
+	
 
-    
-
-    
-
-    
-
-    
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="SubModule.html#end">SubModule#end</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
 
@@ -2453,68 +2775,79 @@ modify.</td>
 
     
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="subModule.js.html">subModule.js</a>, <a href="subModule.js.html#line181">line 181</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="subModule.js.html">subModule.js</a>,
+				 <a href="subModule.js.html#sunlight-1-line-181">line 181</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="error"><span class="type-signature">&lt;protected> </span>error(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Log using common.error, but automatically set name.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="error"><span class="type-signature">(protected) </span>error<span class="signature">(msg)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Log using common.error, but automatically set name.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -2545,6 +2878,7 @@ modify.</td>
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -2559,31 +2893,26 @@ modify.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
-
     
 
-    
+	
 
-    
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
-        <a href="SubModule.html#error">SubModule#error</a>
-    </li></ul></dd>
-    
+	
 
-    
-
-    
-
-    
-
-    
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="SubModule.html#error">SubModule#error</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
 
@@ -2593,68 +2922,79 @@ modify.</td>
 
     
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="subModule.js.html">subModule.js</a>, <a href="subModule.js.html#line221">line 221</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="subModule.js.html">subModule.js</a>,
+				 <a href="subModule.js.html#sunlight-1-line-221">line 221</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="getDuration"><span class="type-signature"></span>getDuration(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Get the song's length of the song playing in the given context.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="getDuration"><span class="type-signature"></span>getDuration<span class="signature">(msg)</span><span class="type-signature"> &rarr; (nullable) {number}</span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Get the song's length of the song playing in the given context.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -2685,6 +3025,7 @@ modify.</td>
 <span class="param-type">Discord~Message</span>
 
 
+
             
             </td>
 
@@ -2699,12 +3040,17 @@ modify.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -2714,51 +3060,52 @@ modify.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-530">line 530</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line530">line 530</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     Time in seconds, or null if nothing is playing.
 </div>
@@ -2774,44 +3121,42 @@ modify.</td>
 <span class="param-type">number</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="getProgress"><span class="type-signature"></span>getProgress(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Get the current progress into the song in the given context.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="getProgress"><span class="type-signature"></span>getProgress<span class="signature">(msg)</span><span class="type-signature"> &rarr; (nullable) {number}</span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Get the current progress into the song in the given context.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -2842,6 +3187,7 @@ modify.</td>
 <span class="param-type">Discord~Message</span>
 
 
+
             
             </td>
 
@@ -2856,12 +3202,17 @@ modify.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -2871,51 +3222,52 @@ modify.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-511">line 511</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line511">line 511</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     Time in seconds, or null if nothing is playing.
 </div>
@@ -2931,52 +3283,58 @@ modify.</td>
 <span class="param-type">number</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="initialize"><span class="type-signature">&lt;protected> </span>initialize()</h4>
+    
+    
+</dt>
+<dd>
 
     
-
-    
-    <h4 class="name" id="initialize"><span class="type-signature">(protected) </span>initialize<span class="signature">()</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    The function called at the end of begin() for further initialization
+    <div class="description">
+        The function called at the end of begin() for further initialization
 specific to the subModule. Must be defined before begin() is called.
-</div>
+    </div>
+    
 
+    
 
+    
 
+    
+    
 
-
-
-
-
-
-
-
-
-
+    
 <dl class="details">
-
     
 
-    
+	
 
-    
+	
+
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="SubModule.html#initialize">SubModule#initialize</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
     <dt class="tag-overrides">Overrides:</dt>
@@ -2991,76 +3349,79 @@ specific to the subModule. Must be defined before begin() is called.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="subModule.js.html">subModule.js</a>, <a href="subModule.js.html#line112">line 112</a>
-    </li></ul></dd>
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="subModule.js.html">subModule.js</a>,
+				 <a href="subModule.js.html#sunlight-1-line-112">line 112</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
+	
+
+	
+
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="isSubjugated"><span class="type-signature"></span>isSubjugated(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Check if music is being subjugated by another script.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="isSubjugated"><span class="type-signature"></span>isSubjugated<span class="signature">(msg)</span><span class="type-signature"> &rarr; (nullable) {boolean}</span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Check if music is being subjugated by another script.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -3089,6 +3450,7 @@ specific to the subModule. Must be defined before begin() is called.
             
                 
 <span class="param-type">Discord~Message</span>
+
 
 
             
@@ -3105,12 +3467,17 @@ specific to the subModule. Must be defined before begin() is called.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -3120,51 +3487,52 @@ specific to the subModule. Must be defined before begin() is called.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-1139">line 1139</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line1139">line 1139</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     Null if nothing is playing, true if subjugated, false
 if not subjugated.
@@ -3181,44 +3549,42 @@ if not subjugated.
 <span class="param-type">boolean</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="log"><span class="type-signature">&lt;protected> </span>log(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Log using common.log, but automatically set name.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="log"><span class="type-signature">(protected) </span>log<span class="signature">(msg)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Log using common.log, but automatically set name.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -3249,6 +3615,7 @@ if not subjugated.
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -3263,31 +3630,26 @@ if not subjugated.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
-
     
 
-    
+	
 
-    
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
-        <a href="SubModule.html#log">SubModule#log</a>
-    </li></ul></dd>
-    
+	
 
-    
-
-    
-
-    
-
-    
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="SubModule.html#log">SubModule#log</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
 
@@ -3297,68 +3659,79 @@ if not subjugated.
 
     
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="subModule.js.html">subModule.js</a>, <a href="subModule.js.html#line194">line 194</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="subModule.js.html">subModule.js</a>,
+				 <a href="subModule.js.html#sunlight-1-line-194">line 194</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="pause"><span class="type-signature"></span>pause(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Attempt to pause the current broadcast in a guild.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="pause"><span class="type-signature"></span>pause<span class="signature">(msg)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Attempt to pause the current broadcast in a guild.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -3387,6 +3760,7 @@ if not subjugated.
             
                 
 <span class="param-type">Discord~Message</span>
+
 
 
             
@@ -3403,12 +3777,17 @@ if not subjugated.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -3418,51 +3797,52 @@ if not subjugated.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-918">line 918</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line918">line 918</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     True if success, false if failed.
 </div>
@@ -3478,44 +3858,42 @@ if not subjugated.
 <span class="param-type">boolean</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="playSong"><span class="type-signature"></span>playSong(msg, song [, seek] [, subjugate])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Start playing or enqueue the requested song.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="playSong"><span class="type-signature"></span>playSong<span class="signature">(msg, song, seek<span class="signature-attributes">opt</span>, subjugate<span class="signature-attributes">opt, nullable</span>)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Start playing or enqueue the requested song.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -3525,7 +3903,7 @@ if not subjugated.
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -3546,6 +3924,7 @@ if not subjugated.
             
                 
 <span class="param-type">Discord~Message</span>
+
 
 
             
@@ -3580,6 +3959,7 @@ context.</td>
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -3609,6 +3989,7 @@ context.</td>
             
                 
 <span class="param-type">number</span>
+
 
 
             
@@ -3644,6 +4025,7 @@ context.</td>
 <span class="param-type">boolean</span>
 
 
+
             
             </td>
 
@@ -3673,12 +4055,17 @@ user. Null means leave as current value.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -3688,83 +4075,80 @@ user. Null means leave as current value.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-1043">line 1043</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line1043">line 1043</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="release"><span class="type-signature"></span>release(msg)</h4>
+    
+    
+</dt>
+<dd>
 
     
-
-    
-    <h4 class="name" id="release"><span class="type-signature"></span>release<span class="signature">(msg)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Release subjugation. Does not modify any current queue or playing
+    <div class="description">
+        Release subjugation. Does not modify any current queue or playing
 information.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
+    </div>
     
 
-<table class="params">
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -3793,6 +4177,7 @@ information.
             
                 
 <span class="param-type">Discord~Message</span>
+
 
 
             
@@ -3809,12 +4194,17 @@ information.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -3824,82 +4214,79 @@ information.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-1112">line 1112</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line1112">line 1112</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="resume"><span class="type-signature"></span>resume(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Attempt to resume the current broadcast in a guild.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="resume"><span class="type-signature"></span>resume<span class="signature">(msg)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Attempt to resume the current broadcast in a guild.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -3930,6 +4317,7 @@ information.
 <span class="param-type">Discord~Message</span>
 
 
+
             
             </td>
 
@@ -3944,12 +4332,17 @@ information.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -3959,51 +4352,52 @@ information.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-974">line 974</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line974">line 974</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     True if success, false if failed.
 </div>
@@ -4019,44 +4413,42 @@ information.
 <span class="param-type">boolean</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="save"><span class="type-signature"></span>save( [opt])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Saves all data to files necessary for saving current state.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="save"><span class="type-signature"></span>save<span class="signature">(opt<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Saves all data to files necessary for saving current state.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -4066,7 +4458,7 @@ information.
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -4089,6 +4481,7 @@ information.
             
                 
 <span class="param-type">string</span>
+
 
 
             
@@ -4122,18 +4515,26 @@ synchronous.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
-
     
 
-    
+	
 
-    
+	
+
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="SubModule.html#save">SubModule#save</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
     <dt class="tag-overrides">Overrides:</dt>
@@ -4148,83 +4549,94 @@ synchronous.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="subModule.js.html">subModule.js</a>, <a href="subModule.js.html#line241">line 241</a>
-    </li></ul></dd>
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="subModule.js.html">subModule.js</a>,
+				 <a href="subModule.js.html#sunlight-1-line-241">line 241</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
+	
+
+	
+
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="shutdown"><span class="type-signature">&lt;protected> </span>shutdown()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Shutdown and disable this submodule. Removes all event listeners.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="shutdown"><span class="type-signature">(protected) </span>shutdown<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
     
-
-
-
-<div class="description">
-    Shutdown and disable this submodule. Removes all event listeners.
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
 <dl class="details">
-
     
 
-    
+	
 
-    
+	
+
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="SubModule.html#shutdown">SubModule#shutdown</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
     <dt class="tag-overrides">Overrides:</dt>
@@ -4239,76 +4651,79 @@ synchronous.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="subModule.js.html">subModule.js</a>, <a href="subModule.js.html#line231">line 231</a>
-    </li></ul></dd>
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="subModule.js.html">subModule.js</a>,
+				 <a href="subModule.js.html#sunlight-1-line-231">line 231</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
+	
+
+	
+
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="skipSong"><span class="type-signature"></span>skipSong(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Skip the current song with the given context.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="skipSong"><span class="type-signature"></span>skipSong<span class="signature">(msg)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Skip the current song with the given context.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -4337,6 +4752,7 @@ synchronous.</td>
             
                 
 <span class="param-type">Discord~Message</span>
+
 
 
             
@@ -4354,12 +4770,17 @@ looking up.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -4369,83 +4790,80 @@ looking up.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-863">line 863</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line863">line 863</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="subjugate"><span class="type-signature"></span>subjugate(msg)</h4>
+    
+    
+</dt>
+<dd>
 
     
-
-    
-    <h4 class="name" id="subjugate"><span class="type-signature"></span>subjugate<span class="signature">(msg)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Begin subjugation. Does not modify any current queue or playing
+    <div class="description">
+        Begin subjugation. Does not modify any current queue or playing
 information.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
+    </div>
     
 
-<table class="params">
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -4476,6 +4894,7 @@ information.
 <span class="param-type">Discord~Message</span>
 
 
+
             
             </td>
 
@@ -4490,12 +4909,17 @@ information.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -4505,91 +4929,96 @@ information.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-1125">line 1125</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line1125">line 1125</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="unloadable"><span class="type-signature"></span>unloadable()</h4>
+    
+    
+</dt>
+<dd>
 
     
-
-    
-    <h4 class="name" id="unloadable"><span class="type-signature"></span>unloadable<span class="signature">()</span><span class="type-signature"> &rarr; {boolean}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Check if this module is in a state that is ready to be
+    <div class="description">
+        Check if this module is in a state that is ready to be
 unloaded. If false is returned, this module should not be unloaded and
 doing such may risk putting the module into an uncontrollable state.
-</div>
+    </div>
+    
 
+    
 
+    
 
+    
+    
 
-
-
-
-
-
-
-
-
-
+    
 <dl class="details">
-
     
 
-    
+	
 
-    
+	
+
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="SubModule.html#unloadable">SubModule#unloadable</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
     <dt class="tag-overrides">Overrides:</dt>
@@ -4604,45 +5033,52 @@ doing such may risk putting the module into an uncontrollable state.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="subModule.js.html">subModule.js</a>, <a href="subModule.js.html#line253">line 253</a>
-    </li></ul></dd>
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="subModule.js.html">subModule.js</a>,
+				 <a href="subModule.js.html#sunlight-1-line-253">line 253</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
+	
+
+	
+
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     True if can be unloaded, false if cannot.
 </div>
@@ -4658,44 +5094,42 @@ doing such may risk putting the module into an uncontrollable state.
 <span class="param-type">boolean</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="warn"><span class="type-signature">&lt;protected> </span>warn(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Log using common.logWarning, but automatically set name.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="warn"><span class="type-signature">(protected) </span>warn<span class="signature">(msg)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Log using common.logWarning, but automatically set name.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -4726,6 +5160,7 @@ doing such may risk putting the module into an uncontrollable state.
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -4740,31 +5175,26 @@ doing such may risk putting the module into an uncontrollable state.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
-
     
 
-    
+	
 
-    
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
-        <a href="SubModule.html#warn">SubModule#warn</a>
-    </li></ul></dd>
-    
+	
 
-    
-
-    
-
-    
-
-    
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="SubModule.html#warn">SubModule#warn</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
 
@@ -4774,68 +5204,79 @@ doing such may risk putting the module into an uncontrollable state.
 
     
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="subModule.js.html">subModule.js</a>, <a href="subModule.js.html#line212">line 212</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="subModule.js.html">subModule.js</a>,
+				 <a href="subModule.js.html#sunlight-1-line-212">line 212</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~changeVolume"><span class="type-signature">&lt;private, inner> </span>changeVolume(broadcast, percentage)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Change the volume of the current broadcast.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~changeVolume"><span class="type-signature">(private, inner) </span>changeVolume<span class="signature">(broadcast, percentage)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Change the volume of the current broadcast.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -4864,6 +5305,7 @@ doing such may risk putting the module into an uncontrollable state.
             
                 
 <span class="param-type"><a href="Music.html#~Broadcast">Music~Broadcast</a></span>
+
 
 
             
@@ -4890,6 +5332,7 @@ broadcast information.</td>
 <span class="param-type">number</span>
 
 
+
             
             </td>
 
@@ -4905,12 +5348,17 @@ is double.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -4920,51 +5368,52 @@ is double.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-1790">line 1790</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line1790">line 1790</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     True if success, false if something went wrong.
 </div>
@@ -4980,45 +5429,43 @@ is double.</td>
 <span class="param-type">boolean</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~commandClearQueue"><span class="type-signature">&lt;private, inner> </span>commandClearQueue(msg)</h4>
+    
+    
+</dt>
+<dd>
 
     
-
-    
-    <h4 class="name" id="~commandClearQueue"><span class="type-signature">(private, inner) </span>commandClearQueue<span class="signature">(msg)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Removes all songs from the current queue except for the currently playing
+    <div class="description">
+        Removes all songs from the current queue except for the currently playing
 song.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
+    </div>
     
 
-<table class="params">
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -5047,6 +5494,7 @@ song.
             
                 
 <span class="param-type">Discord~Message</span>
+
 
 
             
@@ -5063,12 +5511,17 @@ song.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -5078,89 +5531,86 @@ song.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-1258">line 1258</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line1258">line 1258</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>Command#event:clear</li>
+    
+        <li>Command#event:empty</li>
+    </ul>
+    
 
+    
 
+    
 
-<h5>Listens to Events:</h5>
-<ul>
-    <li>Command#event:clear</li>
+    
 
-    <li>Command#event:empty</li>
-</ul>
-
-
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~commandFollow"><span class="type-signature">&lt;private, inner> </span>commandFollow(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Follow a user as they change voice channels.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~commandFollow"><span class="type-signature">(private, inner) </span>commandFollow<span class="signature">(msg)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Follow a user as they change voice channels.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -5189,6 +5639,7 @@ song.
             
                 
 <span class="param-type">Discord~Message</span>
+
 
 
             
@@ -5205,12 +5656,17 @@ song.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -5220,87 +5676,84 @@ song.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-1597">line 1597</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line1597">line 1597</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>Command#event:join</li>
+    </ul>
+    
 
+    
 
+    
 
-<h5>Listens to Events:</h5>
-<ul>
-    <li>Command#event:join</li>
-</ul>
+    
 
-
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~commandJoin"><span class="type-signature">&lt;private, inner> </span>commandJoin(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Join a voice channel that the user is in.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~commandJoin"><span class="type-signature">(private, inner) </span>commandJoin<span class="signature">(msg)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Join a voice channel that the user is in.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -5329,6 +5782,7 @@ song.
             
                 
 <span class="param-type">Discord~Message</span>
+
 
 
             
@@ -5345,12 +5799,17 @@ song.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -5360,87 +5819,84 @@ song.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-876">line 876</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line876">line 876</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>Command#event:join</li>
+    </ul>
+    
 
+    
 
+    
 
-<h5>Listens to Events:</h5>
-<ul>
-    <li>Command#event:join</li>
-</ul>
+    
 
-
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~commandLeave"><span class="type-signature">&lt;private, inner> </span>commandLeave(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Cause the bot to leave the voice channel and stop playing music.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~commandLeave"><span class="type-signature">(private, inner) </span>commandLeave<span class="signature">(msg)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Cause the bot to leave the voice channel and stop playing music.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -5469,6 +5925,7 @@ song.
             
                 
 <span class="param-type">Discord~Message</span>
+
 
 
             
@@ -5485,12 +5942,17 @@ song.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -5500,91 +5962,88 @@ song.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-1157">line 1157</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line1157">line 1157</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>Command#event:leave</li>
+    
+        <li>Command#event:stop</li>
+    
+        <li>Command#event:stfu</li>
+    </ul>
+    
 
+    
 
+    
 
-<h5>Listens to Events:</h5>
-<ul>
-    <li>Command#event:leave</li>
+    
 
-    <li>Command#event:stop</li>
-
-    <li>Command#event:stfu</li>
-</ul>
-
-
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~commandLyrics"><span class="type-signature">&lt;private, inner> </span>commandLyrics(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Search for a song's lyrics via Genius.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~commandLyrics"><span class="type-signature">(private, inner) </span>commandLyrics<span class="signature">(msg)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Search for a song's lyrics via Genius.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -5613,6 +6072,7 @@ song.
             
                 
 <span class="param-type">Discord~Message</span>
+
 
 
             
@@ -5629,12 +6089,17 @@ song.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -5644,87 +6109,84 @@ song.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-1333">line 1333</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line1333">line 1333</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>Command#event:lyrics</li>
+    </ul>
+    
 
+    
 
+    
 
-<h5>Listens to Events:</h5>
-<ul>
-    <li>Command#event:lyrics</li>
-</ul>
+    
 
-
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~commandPause"><span class="type-signature">&lt;private, inner> </span>commandPause(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Pause the currently playing music broadcast.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~commandPause"><span class="type-signature">(private, inner) </span>commandPause<span class="signature">(msg)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Pause the currently playing music broadcast.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -5753,6 +6215,7 @@ song.
             
                 
 <span class="param-type">Discord~Message</span>
+
 
 
             
@@ -5769,12 +6232,17 @@ song.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -5784,87 +6252,84 @@ song.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-894">line 894</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line894">line 894</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>Command#event:pause</li>
+    </ul>
+    
 
+    
 
+    
 
-<h5>Listens to Events:</h5>
-<ul>
-    <li>Command#event:pause</li>
-</ul>
+    
 
-
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~commandPlay"><span class="type-signature">&lt;private, inner> </span>commandPlay(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Search for a song to play based off user request.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~commandPlay"><span class="type-signature">(private, inner) </span>commandPlay<span class="signature">(msg)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Search for a song to play based off user request.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -5893,6 +6358,7 @@ song.
             
                 
 <span class="param-type">Discord~Message</span>
+
 
 
             
@@ -5909,12 +6375,17 @@ song.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -5924,87 +6395,84 @@ song.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-1010">line 1010</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line1010">line 1010</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>Command#event:play</li>
+    </ul>
+    
 
+    
 
+    
 
-<h5>Listens to Events:</h5>
-<ul>
-    <li>Command#event:play</li>
-</ul>
+    
 
-
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~commandQueue"><span class="type-signature">&lt;private, inner> </span>commandQueue(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Show the user what is in the queue.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~commandQueue"><span class="type-signature">(private, inner) </span>commandQueue<span class="signature">(msg)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Show the user what is in the queue.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -6033,6 +6501,7 @@ song.
             
                 
 <span class="param-type">Discord~Message</span>
+
 
 
             
@@ -6049,12 +6518,17 @@ song.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -6064,92 +6538,89 @@ song.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-1199">line 1199</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line1199">line 1199</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>Command#event:q</li>
+    
+        <li>Command#event:queue</li>
+    
+        <li>Command#event:playing</li>
+    </ul>
+    
 
+    
 
+    
 
-<h5>Listens to Events:</h5>
-<ul>
-    <li>Command#event:q</li>
+    
 
-    <li>Command#event:queue</li>
-
-    <li>Command#event:playing</li>
-</ul>
-
-
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~commandRecord"><span class="type-signature">&lt;private, inner> </span>commandRecord(msg)</h4>
+    
+    
+</dt>
+<dd>
 
     
-
-    
-    <h4 class="name" id="~commandRecord"><span class="type-signature">(private, inner) </span>commandRecord<span class="signature">(msg)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Join a voice channel and record the specified users audio to a file on this
+    <div class="description">
+        Join a voice channel and record the specified users audio to a file on this
 server.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
+    </div>
     
 
-<table class="params">
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -6178,6 +6649,7 @@ server.
             
                 
 <span class="param-type">Discord~Message</span>
+
 
 
             
@@ -6194,12 +6666,17 @@ server.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -6209,87 +6686,84 @@ server.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-1523">line 1523</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line1523">line 1523</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>Command#event:record</li>
+    </ul>
+    
 
+    
 
+    
 
-<h5>Listens to Events:</h5>
-<ul>
-    <li>Command#event:record</li>
-</ul>
+    
 
-
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~commandRemove"><span class="type-signature">&lt;private, inner> </span>commandRemove(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Remove a song from the queue.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~commandRemove"><span class="type-signature">(private, inner) </span>commandRemove<span class="signature">(msg)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Remove a song from the queue.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -6318,6 +6792,7 @@ server.
             
                 
 <span class="param-type">Discord~Message</span>
+
 
 
             
@@ -6334,12 +6809,17 @@ server.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -6349,89 +6829,86 @@ server.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-1293">line 1293</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line1293">line 1293</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>Command#event:remove</li>
+    
+        <li>Command#event:dequeue</li>
+    </ul>
+    
 
+    
 
+    
 
-<h5>Listens to Events:</h5>
-<ul>
-    <li>Command#event:remove</li>
+    
 
-    <li>Command#event:dequeue</li>
-</ul>
-
-
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~commandResume"><span class="type-signature">&lt;private, inner> </span>commandResume(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Resume the currently paused music broadcast.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~commandResume"><span class="type-signature">(private, inner) </span>commandResume<span class="signature">(msg)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Resume the currently paused music broadcast.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -6460,6 +6937,7 @@ server.
             
                 
 <span class="param-type">Discord~Message</span>
+
 
 
             
@@ -6476,12 +6954,17 @@ server.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -6491,87 +6974,84 @@ server.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-949">line 949</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line949">line 949</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>Command#event:resume</li>
+    </ul>
+    
 
+    
 
+    
 
-<h5>Listens to Events:</h5>
-<ul>
-    <li>Command#event:resume</li>
-</ul>
+    
 
-
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~commandSkip"><span class="type-signature">&lt;private, inner> </span>commandSkip(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Skip the currently playing song and continue to the next in the queue.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~commandSkip"><span class="type-signature">(private, inner) </span>commandSkip<span class="signature">(msg)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Skip the currently playing song and continue to the next in the queue.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -6600,6 +7080,7 @@ server.
             
                 
 <span class="param-type">Discord~Message</span>
+
 
 
             
@@ -6616,12 +7097,17 @@ server.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -6631,87 +7117,84 @@ server.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-1178">line 1178</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line1178">line 1178</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>Command#event:skip</li>
+    </ul>
+    
 
+    
 
+    
 
-<h5>Listens to Events:</h5>
-<ul>
-    <li>Command#event:skip</li>
-</ul>
+    
 
-
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~commandStats"><span class="type-signature">&lt;private, inner> </span>commandStats(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Show statistics about current music broadcasts.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~commandStats"><span class="type-signature">(private, inner) </span>commandStats<span class="signature">(msg)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Show statistics about current music broadcasts.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -6742,6 +7225,7 @@ server.
 <span class="param-type">Discord~Message</span>
 
 
+
             
             </td>
 
@@ -6756,12 +7240,17 @@ server.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -6771,87 +7260,84 @@ server.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-1698">line 1698</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line1698">line 1698</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>Command#event:musicstats</li>
+    </ul>
+    
 
+    
 
+    
 
-<h5>Listens to Events:</h5>
-<ul>
-    <li>Command#event:musicstats</li>
-</ul>
+    
 
-
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~commandVolume"><span class="type-signature">&lt;private, inner> </span>commandVolume(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Change the volume of the current music stream.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~commandVolume"><span class="type-signature">(private, inner) </span>commandVolume<span class="signature">(msg)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Change the volume of the current music stream.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -6882,6 +7368,7 @@ server.
 <span class="param-type">Discord~Message</span>
 
 
+
             
             </td>
 
@@ -6896,12 +7383,17 @@ server.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -6911,91 +7403,88 @@ server.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-1752">line 1752</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line1752">line 1752</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>Command#event:volume</li>
+    
+        <li>Command#event:vol</li>
+    
+        <li>Command#event:v</li>
+    </ul>
+    
 
+    
 
+    
 
-<h5>Listens to Events:</h5>
-<ul>
-    <li>Command#event:volume</li>
+    
 
-    <li>Command#event:vol</li>
-
-    <li>Command#event:v</li>
-</ul>
-
-
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~endSong"><span class="type-signature">&lt;private, inner> </span>endSong(broadcast)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Triggered when a song has finished playing.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~endSong"><span class="type-signature">(private, inner) </span>endSong<span class="signature">(broadcast)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Triggered when a song has finished playing.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -7026,6 +7515,7 @@ server.
 <span class="param-type"><a href="Music.html#~Broadcast">Music~Broadcast</a></span>
 
 
+
             
             </td>
 
@@ -7041,12 +7531,17 @@ information.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -7056,82 +7551,79 @@ information.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-840">line 840</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line840">line 840</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~enqueueSong"><span class="type-signature">&lt;private, inner> </span>enqueueSong(broadcast, song, msg [, info] [, seek])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Add a song to the given broadcast's queue and start playing it not already.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~enqueueSong"><span class="type-signature">(private, inner) </span>enqueueSong<span class="signature">(broadcast, song, msg, info<span class="signature-attributes">opt</span>, seek<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Add a song to the given broadcast's queue and start playing it not already.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -7141,7 +7633,7 @@ information.</td>
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -7164,6 +7656,7 @@ information.</td>
             
                 
 <span class="param-type"><a href="Music.html#~Broadcast">Music~Broadcast</a></span>
+
 
 
             
@@ -7201,6 +7694,7 @@ information.</td>
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -7236,6 +7730,7 @@ information.</td>
 <span class="param-type">Discord~Message</span>
 
 
+
             
             </td>
 
@@ -7269,6 +7764,7 @@ information.</td>
             
                 
 <span class="param-type">Object</span>
+
 
 
             
@@ -7308,6 +7804,7 @@ information.</td>
 <span class="param-type">number</span>
 
 
+
             
             </td>
 
@@ -7339,12 +7836,17 @@ playing.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -7354,87 +7856,84 @@ playing.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-576">line 576</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line576">line 576</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
+    <h5>Fires:</h5>
+    <ul>
+        <li>Command#event:stop</li>
+    </ul>
+    
 
+    
 
-<h5>Fires:</h5>
-<ul>
-    <li>Command#event:stop</li>
-</ul>
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~fetchLyricsPage"><span class="type-signature">&lt;private, inner> </span>fetchLyricsPage(msg, url, title, thumb)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Request the webpage that has the song lyrics on them from Genius.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~fetchLyricsPage"><span class="type-signature">(private, inner) </span>fetchLyricsPage<span class="signature">(msg, url, title, thumb)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Request the webpage that has the song lyrics on them from Genius.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -7465,6 +7964,7 @@ playing.</td>
 <span class="param-type">Discord~Message</span>
 
 
+
             
             </td>
 
@@ -7486,6 +7986,7 @@ playing.</td>
             
                 
 <span class="param-type">string</span>
+
 
 
             
@@ -7511,6 +8012,7 @@ playing.</td>
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -7534,6 +8036,7 @@ playing.</td>
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -7549,12 +8052,17 @@ later.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -7564,82 +8072,79 @@ later.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-1428">line 1428</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line1428">line 1428</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~formatDateTime"><span class="type-signature">&lt;private, inner> </span>formatDateTime(date)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Formats a given date into a datestring.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~formatDateTime"><span class="type-signature">(private, inner) </span>formatDateTime<span class="signature">(date)</span><span class="type-signature"> &rarr; {string}</span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Formats a given date into a datestring.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -7676,6 +8181,7 @@ later.</td>
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -7690,12 +8196,17 @@ later.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -7705,51 +8216,52 @@ later.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-1668">line 1668</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line1668">line 1668</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     The formatted datetime.
 </div>
@@ -7765,44 +8277,42 @@ later.</td>
 <span class="param-type">string</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~formatPlaytime"><span class="type-signature">&lt;private, inner> </span>formatPlaytime(seconds)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Format the given number of seconds into the playtime format.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~formatPlaytime"><span class="type-signature">(private, inner) </span>formatPlaytime<span class="signature">(seconds)</span><span class="type-signature"> &rarr; {string}</span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Format the given number of seconds into the playtime format.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -7833,6 +8343,7 @@ later.</td>
 <span class="param-type">number</span>
 
 
+
             
             </td>
 
@@ -7847,12 +8358,17 @@ later.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -7862,51 +8378,52 @@ later.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-545">line 545</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line545">line 545</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     The formatted string in minutes and seconds.
 </div>
@@ -7922,44 +8439,42 @@ later.</td>
 <span class="param-type">string</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~formatSongInfo"><span class="type-signature">&lt;private, inner> </span>formatSongInfo(info [, dispatcher] [, seek])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Format the info response from ytdl into a human readable format.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~formatSongInfo"><span class="type-signature">(private, inner) </span>formatSongInfo<span class="signature">(info, dispatcher<span class="signature-attributes">opt</span>, seek<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Discord~MessageEmbed}</span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Format the info response from ytdl into a human readable format.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -7969,7 +8484,7 @@ later.</td>
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -7992,6 +8507,7 @@ later.</td>
             
                 
 <span class="param-type">Object</span>
+
 
 
             
@@ -8027,6 +8543,7 @@ later.</td>
             
                 
 <span class="param-type">Discord~StreamDispatcher</span>
+
 
 
             
@@ -8068,6 +8585,7 @@ determine remaining play time.</td>
 <span class="param-type">number</span>
 
 
+
             
             </td>
 
@@ -8099,12 +8617,17 @@ for starting playback somewhere other than the beginning.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -8114,51 +8637,52 @@ for starting playback somewhere other than the beginning.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-462">line 462</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line462">line 462</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     The formatted song info.
 </div>
@@ -8174,44 +8698,42 @@ for starting playback somewhere other than the beginning.</td>
 <span class="param-type">Discord~MessageEmbed</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~formNum"><span class="type-signature">&lt;private, inner> </span>formNum(num)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Add commas between digits on large numbers.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~formNum"><span class="type-signature">(private, inner) </span>formNum<span class="signature">(num)</span><span class="type-signature"> &rarr; {string}</span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Add commas between digits on large numbers.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -8245,6 +8767,7 @@ for starting playback somewhere other than the beginning.</td>
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -8259,12 +8782,17 @@ for starting playback somewhere other than the beginning.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -8274,51 +8802,52 @@ for starting playback somewhere other than the beginning.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-555">line 555</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line555">line 555</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     The formatted number.
 </div>
@@ -8334,44 +8863,42 @@ for starting playback somewhere other than the beginning.</td>
 <span class="param-type">string</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~getRemainingSeconds"><span class="type-signature">&lt;private, inner> </span>getRemainingSeconds(info, dispatcher)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Get the remaining playtime in the given song info and broadcast.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~getRemainingSeconds"><span class="type-signature">(private, inner) </span>getRemainingSeconds<span class="signature">(info, dispatcher)</span><span class="type-signature"> &rarr; {number}</span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Get the remaining playtime in the given song info and broadcast.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -8402,6 +8929,7 @@ for starting playback somewhere other than the beginning.</td>
 <span class="param-type">Object</span>
 
 
+
             
             </td>
 
@@ -8425,6 +8953,7 @@ for starting playback somewhere other than the beginning.</td>
 <span class="param-type">Discord~StreamDispatcher</span>
 
 
+
             
             </td>
 
@@ -8440,12 +8969,17 @@ song currently.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -8455,51 +8989,52 @@ song currently.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-498">line 498</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line498">line 498</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     Number of seconds remaining in the song playtime.
 </div>
@@ -8515,44 +9050,42 @@ song currently.</td>
 <span class="param-type">number</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~getVolume"><span class="type-signature">&lt;private, inner> </span>getVolume(broadcast)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Get the volume of the current broadcast.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~getVolume"><span class="type-signature">(private, inner) </span>getVolume<span class="signature">(broadcast)</span><span class="type-signature"> &rarr; (nullable) {number}</span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Get the volume of the current broadcast.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -8583,6 +9116,7 @@ song currently.</td>
 <span class="param-type"><a href="Music.html#~Broadcast">Music~Broadcast</a></span>
 
 
+
             
             </td>
 
@@ -8598,12 +9132,17 @@ broadcast information.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -8613,51 +9152,52 @@ broadcast information.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-1814">line 1814</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line1814">line 1814</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     The logarithmic volume percentage. 0.5 is half, 2 is
 double. Null if error.
@@ -8674,45 +9214,43 @@ double. Null if error.
 <span class="param-type">number</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~handleVoiceStateUpdate"><span class="type-signature">&lt;private, inner> </span>handleVoiceStateUpdate(oldState, newState)</h4>
+    
+    
+</dt>
+<dd>
 
     
-
-    
-    <h4 class="name" id="~handleVoiceStateUpdate"><span class="type-signature">(private, inner) </span>handleVoiceStateUpdate<span class="signature">(oldState, newState)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Leave a voice channel if all other users have left. Should also cause music
+    <div class="description">
+        Leave a voice channel if all other users have left. Should also cause music
 and recordings to stop.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
+    </div>
     
 
-<table class="params">
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -8743,6 +9281,7 @@ and recordings to stop.
 <span class="param-type">Discord~VoiceState</span>
 
 
+
             
             </td>
 
@@ -8766,6 +9305,7 @@ and recordings to stop.
 <span class="param-type">Discord~VoiceState</span>
 
 
+
             
             </td>
 
@@ -8780,12 +9320,17 @@ and recordings to stop.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -8795,88 +9340,85 @@ and recordings to stop.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-387">line 387</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line387">line 387</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>Discord~Client#event:voiceStateUpdate</li>
+    </ul>
+    
 
+    
 
+    
 
-<h5>Listens to Events:</h5>
-<ul>
-    <li>Discord~Client#event:voiceStateUpdate</li>
-</ul>
+    
 
-
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~makeBroadcast"><span class="type-signature">&lt;private, inner> </span>makeBroadcast(broadcast)</h4>
+    
+    
+</dt>
+<dd>
 
     
-
-    
-    <h4 class="name" id="~makeBroadcast"><span class="type-signature">(private, inner) </span>makeBroadcast<span class="signature">(broadcast)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Create a voice channel broadcast based off of the media source, and start
+    <div class="description">
+        Create a voice channel broadcast based off of the media source, and start
 playing the audio.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
+    </div>
     
 
-<table class="params">
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -8907,6 +9449,7 @@ playing the audio.
 <span class="param-type"><a href="Music.html#~Broadcast">Music~Broadcast</a></span>
 
 
+
             
             </td>
 
@@ -8922,12 +9465,17 @@ information.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -8937,82 +9485,79 @@ information.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-713">line 713</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line713">line 713</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~mention"><span class="type-signature">&lt;private, inner> </span>mention(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Creates formatted string for mentioning the author of msg.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~mention"><span class="type-signature">(private, inner) </span>mention<span class="signature">(msg)</span><span class="type-signature"> &rarr; {string}</span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Creates formatted string for mentioning the author of msg.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -9043,6 +9588,7 @@ information.</td>
 <span class="param-type">Discord~Message</span>
 
 
+
             
             </td>
 
@@ -9057,12 +9603,17 @@ information.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -9072,51 +9623,52 @@ information.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-360">line 360</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line360">line 360</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     Formatted mention string.
 </div>
@@ -9132,44 +9684,42 @@ information.</td>
 <span class="param-type">string</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~monthToShort"><span class="type-signature">&lt;private, inner> </span>monthToShort(month)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Convert the month number to a 3 letter string of the month's name.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~monthToShort"><span class="type-signature">(private, inner) </span>monthToShort<span class="signature">(month)</span><span class="type-signature"> &rarr; {string}</span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Convert the month number to a 3 letter string of the month's name.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -9200,6 +9750,7 @@ information.</td>
 <span class="param-type">number</span>
 
 
+
             
             </td>
 
@@ -9214,12 +9765,17 @@ information.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -9229,51 +9785,52 @@ information.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-1683">line 1683</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line1683">line 1683</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     The 3 character string.
 </div>
@@ -9289,44 +9846,42 @@ information.</td>
 <span class="param-type">string</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~pauseBroadcast"><span class="type-signature">&lt;private, inner> </span>pauseBroadcast(broadcast)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Cause the given broadcast to be paused.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~pauseBroadcast"><span class="type-signature">(private, inner) </span>pauseBroadcast<span class="signature">(broadcast)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Cause the given broadcast to be paused.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -9357,6 +9912,7 @@ information.</td>
 <span class="param-type"><a href="Music.html#~Broadcast">Music~Broadcast</a></span>
 
 
+
             
             </td>
 
@@ -9372,12 +9928,17 @@ information.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -9387,51 +9948,52 @@ information.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-931">line 931</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line931">line 931</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     If the music was actully paused. False if the music is
 already paused or nothing is playing.
@@ -9448,44 +10010,42 @@ already paused or nothing is playing.
 <span class="param-type">boolean</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~reply"><span class="type-signature">&lt;private, inner> </span>reply(msg, text, post)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Replies to the author and channel of msg with the given message.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~reply"><span class="type-signature">(private, inner) </span>reply<span class="signature">(msg, text, post)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Replies to the author and channel of msg with the given message.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -9514,6 +10074,7 @@ already paused or nothing is playing.
             
                 
 <span class="param-type">Discord~Message</span>
+
 
 
             
@@ -9539,6 +10100,7 @@ already paused or nothing is playing.
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -9562,6 +10124,7 @@ already paused or nothing is playing.
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -9576,12 +10139,17 @@ already paused or nothing is playing.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -9591,53 +10159,61 @@ already paused or nothing is playing.
 
     
 
+	
+	<dt class="important tag-deprecated method-doc-label method-doc-details-label">Deprecated:</dt>
+	
+    <dd>
+        <ul class="dummy">
+            <li>Use Common.reply instead.</li>
+        </ul>
+    </dd>
+    
     
 
-    
+	
 
-    
+	
 
-    
-        <dt class="important tag-deprecated">Deprecated:</dt><dd><ul class="dummy"><li>Use Common.reply instead.</li></ul></dd>
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-374">line 374</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line374">line 374</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     Promise of Discord~Message that we attempted to send.
 </div>
@@ -9653,45 +10229,43 @@ already paused or nothing is playing.
 <span class="param-type">Promise</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~reqLyricsURL"><span class="type-signature">&lt;private, inner> </span>reqLyricsURL(msg, id)</h4>
+    
+    
+</dt>
+<dd>
 
     
-
-    
-    <h4 class="name" id="~reqLyricsURL"><span class="type-signature">(private, inner) </span>reqLyricsURL<span class="signature">(msg, id)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Request the song information from Genius from previous search to find the
+    <div class="description">
+        Request the song information from Genius from previous search to find the
 page where the lyrics are.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
+    </div>
     
 
-<table class="params">
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -9722,6 +10296,7 @@ page where the lyrics are.
 <span class="param-type">Discord~Message</span>
 
 
+
             
             </td>
 
@@ -9745,6 +10320,7 @@ page where the lyrics are.
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -9759,12 +10335,17 @@ page where the lyrics are.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -9774,82 +10355,79 @@ page where the lyrics are.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-1385">line 1385</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line1385">line 1385</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~resumeBroadcast"><span class="type-signature">&lt;private, inner> </span>resumeBroadcast(broadcast)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Cause the given broadcast to be resumed.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~resumeBroadcast"><span class="type-signature">(private, inner) </span>resumeBroadcast<span class="signature">(broadcast)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Cause the given broadcast to be resumed.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -9880,6 +10458,7 @@ page where the lyrics are.
 <span class="param-type"><a href="Music.html#~Broadcast">Music~Broadcast</a></span>
 
 
+
             
             </td>
 
@@ -9895,12 +10474,17 @@ information.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -9910,51 +10494,52 @@ information.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-987">line 987</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line987">line 987</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     If the music was actully resumed. False if the music is
 already playing or nothing is playing or the bot is alone in a channel.
@@ -9971,44 +10556,42 @@ already playing or nothing is playing or the bot is alone in a channel.
 <span class="param-type">boolean</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~skipSong"><span class="type-signature">&lt;private, inner> </span>skipSong(broadcast)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Skip the current song, then attempt to play the next.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~skipSong"><span class="type-signature">(private, inner) </span>skipSong<span class="signature">(broadcast)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Skip the current song, then attempt to play the next.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -10037,6 +10620,7 @@ already playing or nothing is playing or the bot is alone in a channel.
             
                 
 <span class="param-type"><a href="Music.html#~Broadcast">Music~Broadcast</a></span>
+
 
 
             
@@ -10054,12 +10638,17 @@ information.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -10069,82 +10658,79 @@ information.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-851">line 851</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line851">line 851</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~startPlaying"><span class="type-signature">&lt;private, inner> </span>startPlaying(broadcast)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Start playing the first item in the queue of the broadcast.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~startPlaying"><span class="type-signature">(private, inner) </span>startPlaying<span class="signature">(broadcast)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Start playing the first item in the queue of the broadcast.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -10173,6 +10759,7 @@ information.</td>
             
                 
 <span class="param-type"><a href="Music.html#~Broadcast">Music~Broadcast</a></span>
+
 
 
             
@@ -10190,12 +10777,17 @@ about the song.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -10205,82 +10797,79 @@ about the song.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-611">line 611</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line611">line 611</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~startStream"><span class="type-signature">&lt;private, inner> </span>startStream(input, done, progress)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Starts the streams as a thread and reports done with the streams.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~startStream"><span class="type-signature">(private, inner) </span>startStream<span class="signature">(input, done, progress)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Starts the streams as a thread and reports done with the streams.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -10311,6 +10900,7 @@ about the song.</td>
 <span class="param-type">Object</span>
 
 
+
             
             </td>
 
@@ -10332,6 +10922,7 @@ about the song.</td>
             
                 
 <span class="param-type">function</span>
+
 
 
             
@@ -10357,6 +10948,7 @@ about the song.</td>
 <span class="param-type">function</span>
 
 
+
             
             </td>
 
@@ -10371,12 +10963,17 @@ about the song.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -10386,83 +10983,80 @@ about the song.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-809">line 809</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line809">line 809</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~stripLyrics"><span class="type-signature">&lt;private, inner> </span>stripLyrics(msg, content, title, url, thumb)</h4>
+    
+    
+</dt>
+<dd>
 
     
-
-    
-    <h4 class="name" id="~stripLyrics"><span class="type-signature">(private, inner) </span>stripLyrics<span class="signature">(msg, content, title, url, thumb)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Crawl the received webpage for the data we need, then format the data and
+    <div class="description">
+        Crawl the received webpage for the data we need, then format the data and
 show it to the user.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
+    </div>
     
 
-<table class="params">
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -10493,6 +11087,7 @@ show it to the user.
 <span class="param-type">Discord~Message</span>
 
 
+
             
             </td>
 
@@ -10514,6 +11109,7 @@ show it to the user.
             
                 
 <span class="param-type">string</span>
+
 
 
             
@@ -10539,6 +11135,7 @@ show it to the user.
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -10560,6 +11157,7 @@ show it to the user.
             
                 
 <span class="param-type">string</span>
+
 
 
             
@@ -10586,6 +11184,7 @@ user.</td>
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -10601,12 +11200,17 @@ later.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -10616,91 +11220,96 @@ later.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-1471">line 1471</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line1471">line 1471</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
+</dd>
 
-
-
-
-
-
-
-
-
-
-        
+        </dl>
     
 
     
         <h3 class="subsection-title">Type Definitions</h3>
 
-        
+        <dl>
                 
-<h4 class="name" id="~Broadcast">Broadcast</h4>
+<hr>
+<dt class="name" id="~Broadcast">
+    <h4 id="~Broadcast">Broadcast</h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Information about a server's music and queue.
+    </div>
+    
 
-
-
-<div class="description">
-    Information about a server's music and queue.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">Object</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
+    
+<dl class="details">
+    
 
     <h5 class="subsection-title">Properties:</h5>
 
-    
+    <dl>
 
-<table class="props">
+<table class="props table table-striped">
     <thead>
     <tr>
         
@@ -10710,7 +11319,7 @@ later.</td>
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -10731,6 +11340,7 @@ later.</td>
             
                 
 <span class="param-type">Array.&lt;string></span>
+
 
 
             
@@ -10760,6 +11370,7 @@ later.</td>
             
                 
 <span class="param-type">Object.&lt;boolean></span>
+
 
 
             
@@ -10793,6 +11404,7 @@ skip.</td>
 <span class="param-type">boolean</span>
 
 
+
             
             </td>
 
@@ -10821,6 +11433,7 @@ channel.</td>
             
                 
 <span class="param-type">Discord~VoiceBroadcast</span>
+
 
 
             
@@ -10855,6 +11468,7 @@ actually playing the audio.</td>
 <span class="param-type">Discord~VoiceConnection</span>
 
 
+
             
             </td>
 
@@ -10885,6 +11499,7 @@ audio is being streamed to.</td>
             
                 
 <span class="param-type">Discord~StreamDispatcher</span>
+
 
 
             
@@ -10919,6 +11534,7 @@ the current audio channel.</td>
 <span class="param-type">Object</span>
 
 
+
             
             </td>
 
@@ -10941,11 +11557,15 @@ thread, readable stream, and song information.</td>
     
     </tbody>
 </table>
+</dl>
 
+    
 
+	
 
+	
 
-<dl class="details">
+	
 
     
 
@@ -10955,42 +11575,42 @@ thread, readable stream, and song information.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="music.js.html">music.js</a>,
+				 <a href="music.js.html#sunlight-1-line-70">line 70</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="music.js.html">music.js</a>, <a href="music.js.html#line70">line 70</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
+</dd>
 
-
-
-
-            
+            </dl>
     
 
     
@@ -11001,19 +11621,153 @@ thread, readable stream, and song information.</td>
 
 
 
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+		<div class="col-md-3">
+			<div id="toc" class="col-md-3 hidden-xs hidden-sm hidden-md"></div>
+		</div>
+	
+
+</div>
 </div>
 
-<nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_twemojiChecker.html">lib/twemojiChecker</a></li></ul><h3>Externals</h3><ul><li><a href="external-Discord.html">external:Discord</a></li></ul><h3>Classes</h3><ul><li><a href="ChatBot.html">ChatBot</a></li><li><a href="CmdScheduling.html">CmdScheduling</a></li><li><a href="CmdScheduling-ScheduledCommand.html">CmdScheduling~ScheduledCommand</a></li><li><a href="Command.html">Command</a></li><li><a href="Command-CommandSetting.html">Command~CommandSetting</a></li><li><a href="Command-SingleCommand.html">Command~SingleCommand</a></li><li><a href="Common.html">Common</a></li><li><a href="Connect4.html">Connect4</a></li><li><a href="Connect4_Game.html">Connect4#Game</a></li><li><a href="Define.html">Define</a></li><li><a href="DevCmds.html">DevCmds</a></li><li><a href="Echo.html">Echo</a></li><li><a href="Echo-Character.html">Echo~Character</a></li><li><a href="FunTranslators.html">FunTranslators</a></li><li><a href="HG.html">HG</a></li><li><a href="HGWeb.html">HGWeb</a></li><li><a href="HungryGames.html">HungryGames</a></li><li><a href="HungryGames-ArenaEvent.html">HungryGames~ArenaEvent</a></li><li><a href="HungryGames-Battle.html">HungryGames~Battle</a></li><li><a href="HungryGames-Day.html">HungryGames~Day</a></li><li><a href="HungryGames-DefaultOptions.html">HungryGames~DefaultOptions</a></li><li><a href="HungryGames-DefaultOptions-BooleanOption.html">HungryGames~DefaultOptions~BooleanOption</a></li><li><a href="HungryGames-DefaultOptions-NumberOption.html">HungryGames~DefaultOptions~NumberOption</a></li><li><a href="HungryGames-DefaultOptions-ObjectOption.html">HungryGames~DefaultOptions~ObjectOption</a></li><li><a href="HungryGames-DefaultOptions-Option.html">HungryGames~DefaultOptions~Option</a></li><li><a href="HungryGames-DefaultOptions-SelectOption.html">HungryGames~DefaultOptions~SelectOption</a></li><li><a href="HungryGames-Event.html">HungryGames~Event</a></li><li><a href="HungryGames-FinalEvent.html">HungryGames~FinalEvent</a></li><li><a href="HungryGames-ForcedOutcome.html">HungryGames~ForcedOutcome</a></li><li><a href="HungryGames-Game.html">HungryGames~Game</a></li><li><a href="HungryGames-Grammar.html">HungryGames~Grammar</a></li><li><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></li><li><a href="HungryGames-Messages.html">HungryGames~Messages</a></li><li><a href="HungryGames-OutcomeProbabilities.html">HungryGames~OutcomeProbabilities</a></li><li><a href="HungryGames-Player.html">HungryGames~Player</a></li><li><a href="HungryGames-Simulator.html">HungryGames~Simulator</a></li><li><a href="HungryGames-Simulator-Worker.html">HungryGames~Simulator~Worker</a></li><li><a href="HungryGames-Team.html">HungryGames~Team</a></li><li><a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a></li><li><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></li><li><a href="Main.html">Main</a></li><li><a href="MainModule.html">MainModule</a></li><li><a href="Messages.html">Messages</a></li><li><a href="Moderation.html">Moderation</a></li><li><a href="ModLog.html">ModLog</a></li><li><a href="ModLog-Settings.html">ModLog~Settings</a></li><li><a href="Music.html">Music</a></li><li><a href="NPC.html">NPC</a></li><li><a href="Patreon.html">Patreon</a></li><li><a href="Patreon-toExport.html">Patreon~toExport</a></li><li><a href="Polling.html">Polling</a></li><li><a href="Polling-Poll.html">Polling~Poll</a></li><li><a href="RaidBlock.html">RaidBlock</a></li><li><a href="RaidBlock-RaidSettings.html">RaidBlock~RaidSettings</a></li><li><a href="RoleColors.html">RoleColors</a></li><li><a href="RoleManager.html">RoleManager</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="SMLoader.html">SMLoader</a></li><li><a href="SpikeyBot.html">SpikeyBot</a></li><li><a href="Spotify.html">Spotify</a></li><li><a href="SubModule.html">SubModule</a></li><li><a href="TicTacToe.html">TicTacToe</a></li><li><a href="TicTacToe_Game.html">TicTacToe#Game</a></li><li><a href="TTS.html">TTS</a></li><li><a href="Uno.html">Uno</a></li><li><a href="Uno_Card.html">Uno#Card</a></li><li><a href="Uno_Game.html">Uno#Game</a></li><li><a href="WebAccount.html">WebAccount</a></li><li><a href="WebCommands.html">WebCommands</a></li><li><a href="WebProxy.html">WebProxy</a></li><li><a href="WebSettings.html">WebSettings</a></li><li><a href="WebStats.html">WebStats</a></li></ul><h3>Global</h3><ul><li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li></ul>
-</nav>
 
-<br class="clear">
+    <div class="modal fade" id="searchResults">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Search results</h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sat May 04 2019 21:43:40 GMT-0700 (Pacific Daylight Time)
+
+
+	<span class="copyright">
+	<small>Website Contact: <a href="mailto:web@spikeybot.com">web@spikeybot.com</a>.</small><br><small>&copy; Copyright 2019, Campbell Crowley. <a href="https://docs.google.com/document/d/1SAC2aPxxeNqRjlZzjwrnCyyWWyt09ZP-AP7BDBjjQDg/edit?usp=sharing">Privacy Policy</a></small>
+	</span>
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
+	
+		on Saturday, May 4, 2019 10:15 PM (-07:00)
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
 </footer>
 
-<script> prettyPrint(); </script>
-<script src="scripts/linenumber.js"> </script>
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+
+    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+<script>
+	(function ( i, s, o, g, r, a, m ) {
+		i['GoogleAnalyticsObject'] = r;
+		i[r] = i[r] || function () {
+			(i[r].q = i[r].q || []).push( arguments )
+		}, i[r].l = 1 * new Date();
+		a = s.createElement( o ),
+			m = s.getElementsByTagName( o )[0];
+		a.async = 1;
+		a.src = g;
+		m.parentNode.insertBefore( a, m )
+	})( window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga' );
+
+	ga( 'create', 'UA-89923351-1', 'www.spikeybot.com' );
+	ga( 'send', 'pageview' );
+</script>
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            SearcherDisplay.init();
+        });
+    </script>
+
+
 </body>
 </html>

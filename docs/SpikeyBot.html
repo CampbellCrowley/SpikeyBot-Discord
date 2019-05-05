@@ -1,70 +1,136 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>JSDoc: Class: SpikeyBot</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>SpikeyBot-Discord Class: SpikeyBot</title>
 
-    <script src="scripts/prettify/prettify.js"> </script>
-    <script src="scripts/prettify/lang-css.js"> </script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
-    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.dark.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.slate.css">
+
 </head>
 
 <body>
 
-<div id="main">
+<div class="navbar navbar-default navbar-fixed-top ">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">SpikeyBot-Discord</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="module-lib_twemojiChecker.html">lib/twemojiChecker</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="ChatBot.html">ChatBot</a></li><li><a href="CmdScheduling.html">CmdScheduling</a></li><li><a href="CmdScheduling-ScheduledCommand.html">CmdScheduling~ScheduledCommand</a></li><li><a href="Command.html">Command</a></li><li><a href="Command-CommandSetting.html">Command~CommandSetting</a></li><li><a href="Command-SingleCommand.html">Command~SingleCommand</a></li><li><a href="Common.html">Common</a></li><li><a href="Connect4.html">Connect4</a></li><li><a href="Connect4_Game.html">Connect4#Game</a></li><li><a href="Define.html">Define</a></li><li><a href="DevCmds.html">DevCmds</a></li><li><a href="Echo.html">Echo</a></li><li><a href="Echo-Character.html">Echo~Character</a></li><li><a href="FunTranslators.html">FunTranslators</a></li><li><a href="HG.html">HG</a></li><li><a href="HGWeb.html">HGWeb</a></li><li><a href="HungryGames.html">HungryGames</a></li><li><a href="HungryGames-ArenaEvent.html">HungryGames~ArenaEvent</a></li><li><a href="HungryGames-Battle.html">HungryGames~Battle</a></li><li><a href="HungryGames-Day.html">HungryGames~Day</a></li><li><a href="HungryGames-DefaultOptions.html">HungryGames~DefaultOptions</a></li><li><a href="HungryGames-DefaultOptions-BooleanOption.html">HungryGames~DefaultOptions~BooleanOption</a></li><li><a href="HungryGames-DefaultOptions-NumberOption.html">HungryGames~DefaultOptions~NumberOption</a></li><li><a href="HungryGames-DefaultOptions-ObjectOption.html">HungryGames~DefaultOptions~ObjectOption</a></li><li><a href="HungryGames-DefaultOptions-Option.html">HungryGames~DefaultOptions~Option</a></li><li><a href="HungryGames-DefaultOptions-SelectOption.html">HungryGames~DefaultOptions~SelectOption</a></li><li><a href="HungryGames-Event.html">HungryGames~Event</a></li><li><a href="HungryGames-FinalEvent.html">HungryGames~FinalEvent</a></li><li><a href="HungryGames-ForcedOutcome.html">HungryGames~ForcedOutcome</a></li><li><a href="HungryGames-Game.html">HungryGames~Game</a></li><li><a href="HungryGames-Grammar.html">HungryGames~Grammar</a></li><li><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></li><li><a href="HungryGames-Messages.html">HungryGames~Messages</a></li><li><a href="HungryGames-OutcomeProbabilities.html">HungryGames~OutcomeProbabilities</a></li><li><a href="HungryGames-Player.html">HungryGames~Player</a></li><li><a href="HungryGames-Simulator.html">HungryGames~Simulator</a></li><li><a href="HungryGames-Simulator-Worker.html">HungryGames~Simulator~Worker</a></li><li><a href="HungryGames-Team.html">HungryGames~Team</a></li><li><a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a></li><li><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></li><li><a href="Main.html">Main</a></li><li><a href="MainModule.html">MainModule</a></li><li><a href="Messages.html">Messages</a></li><li><a href="Moderation.html">Moderation</a></li><li><a href="ModLog.html">ModLog</a></li><li><a href="ModLog-Settings.html">ModLog~Settings</a></li><li><a href="Music.html">Music</a></li><li><a href="NPC.html">NPC</a></li><li><a href="Patreon.html">Patreon</a></li><li><a href="Patreon-toExport.html">Patreon~toExport</a></li><li><a href="Polling.html">Polling</a></li><li><a href="Polling-Poll.html">Polling~Poll</a></li><li><a href="RaidBlock.html">RaidBlock</a></li><li><a href="RaidBlock-RaidSettings.html">RaidBlock~RaidSettings</a></li><li><a href="RoleColors.html">RoleColors</a></li><li><a href="RoleManager.html">RoleManager</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="SMLoader.html">SMLoader</a></li><li><a href="SpikeyBot.html">SpikeyBot</a></li><li><a href="Spotify.html">Spotify</a></li><li><a href="SubModule.html">SubModule</a></li><li><a href="TicTacToe.html">TicTacToe</a></li><li><a href="TicTacToe_Game.html">TicTacToe#Game</a></li><li><a href="TTS.html">TTS</a></li><li><a href="Uno.html">Uno</a></li><li><a href="Uno_Card.html">Uno#Card</a></li><li><a href="Uno_Game.html">Uno#Game</a></li><li><a href="WebAccount.html">WebAccount</a></li><li><a href="WebCommands.html">WebCommands</a></li><li><a href="WebProxy.html">WebProxy</a></li><li><a href="WebSettings.html">WebSettings</a></li><li><a href="WebStats.html">WebStats</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="externals.list.html" class="dropdown-toggle" data-toggle="dropdown">Externals<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="external-Discord.html">Discord</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+        
+            <div class="col-sm-3 col-md-3">
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        
+	</div>
 
-    <h1 class="page-title">Class: SpikeyBot</h1>
-
-    
-
+</div>
+</div>
 
 
+<div class="container" id="toc-content">
+<div class="row">
 
+	
+	<div class="col-md-8">
+	
+		<div id="main">
+			
+
+	<h1 class="page-title">Class: SpikeyBot</h1>
 <section>
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>SpikeyBot<span class="signature">()</span><span class="type-signature"></span></h2>
+        <h2>
+        SpikeyBot
+        </h2>
         
             <div class="class-description">Main class that manages the bot.</div>
         
     
 </header>
 
+
 <article>
     <div class="container-overview">
     
         
+<hr>
+<dt>
+    <h4 class="name" id="SpikeyBot"><span class="type-signature"></span>new SpikeyBot()</h4>
+    
+    
+</dt>
+<dd>
 
     
-    <h2>Constructor</h2>
-    
 
-    
-    <h4 class="name" id="SpikeyBot"><span class="type-signature"></span>new SpikeyBot<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
     
 
+    
+    
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -74,65 +140,65 @@
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-75">line 75</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line75">line 75</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>Discord~Client#event:ready</li>
+    
+        <li>Discord~Client#event:message</li>
+    
+        <li>Command#event:updateGame</li>
+    
+        <li>Command#event:reboot</li>
+    
+        <li>Command#event:mainreload</li>
+    </ul>
+    
 
+    
 
+    
 
-<h5>Listens to Events:</h5>
-<ul>
-    <li>Discord~Client#event:ready</li>
+    
 
-    <li>Discord~Client#event:message</li>
-
-    <li>Command#event:updateGame</li>
-
-    <li>Command#event:reboot</li>
-
-    <li>Command#event:mainreload</li>
-</ul>
-
-
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
     
     </div>
@@ -148,38 +214,45 @@
     
 
     
-
-    
         <h3 class="subsection-title">Members</h3>
 
-        
+        <dl>
             
-<h4 class="name" id="startTimestamp"><span class="type-signature">(constant) </span>startTimestamp<span class="type-signature"> :number</span></h4>
+<hr>
+<dt class="name" id="startTimestamp">
+    <h4 id="startTimestamp"><span class="type-signature">&lt;constant> </span>startTimestamp<span class="type-signature"> :number</span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Timestamp at which this process was started.
+    </div>
+    
 
-
-
-<div class="description">
-    Timestamp at which this process was started.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">number</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -189,69 +262,78 @@
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-94">line 94</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line94">line 94</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="version"><span class="type-signature">(constant) </span>version<span class="type-signature"> :string</span></h4>
+<hr>
+<dt class="name" id="version">
+    <h4 id="version"><span class="type-signature">&lt;constant> </span>version<span class="type-signature"> :string</span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The current bot version parsed from package.json.
+    </div>
+    
 
-
-
-<div class="description">
-    The current bot version parsed from package.json.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">string</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -261,70 +343,79 @@
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-84">line 84</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line84">line 84</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~botName"><span class="type-signature">(private, inner) </span>botName<span class="type-signature"> :string</span></h4>
+<hr>
+<dt class="name" id="~botName">
+    <h4 id="~botName"><span class="type-signature">&lt;private, inner> </span>botName<span class="type-signature"> :string</span></h4>
 
-
-
-
-<div class="description">
-    The name of the client secret to use. Defaults to release either release or
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The name of the client secret to use. Defaults to release either release or
 dev depending on the --dev flag.
-</div>
+    </div>
+    
 
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">string</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -334,69 +425,78 @@ dev depending on the --dev flag.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-254">line 254</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line254">line 254</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~command"><span class="type-signature">(private, inner) </span>command<span class="type-signature"> :<a href="Command.html">Command</a></span></h4>
+<hr>
+<dt class="name" id="~command">
+    <h4 id="~command"><span class="type-signature">&lt;private, inner> </span>command<span class="type-signature"> :<a href="Command.html">Command</a></span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The current instance of Command.
+    </div>
+    
 
-
-
-<div class="description">
-    The current instance of Command.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type"><a href="Command.html">Command</a></span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -406,69 +506,78 @@ dev depending on the --dev flag.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-156">line 156</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line156">line 156</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~commandFilename"><span class="type-signature">(private, inner, constant) </span>commandFilename<span class="type-signature"> :string</span></h4>
+<hr>
+<dt class="name" id="~commandFilename">
+    <h4 id="~commandFilename"><span class="type-signature">&lt;private, inner, constant> </span>commandFilename<span class="type-signature"> :string</span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The filename of the Command mainModule.
+    </div>
+    
 
-
-
-<div class="description">
-    The filename of the Command mainModule.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">string</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -478,77 +587,88 @@ dev depending on the --dev flag.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>./commands.js</li>
+		</ul>
+	</dd>
+	
 
-    
 
-    
 
-    
-    <dt class="tag-default">Default Value:</dt>
-    <dd class="tag-default"><ul class="dummy">
-            <li>./commands.js</li>
-        </ul></dd>
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-129">line 129</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line129">line 129</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~delayBoot"><span class="type-signature">(private, inner) </span>delayBoot<span class="type-signature"> :number</span></h4>
+<hr>
+<dt class="name" id="~delayBoot">
+    <h4 id="~delayBoot"><span class="type-signature">&lt;private, inner> </span>delayBoot<span class="type-signature"> :number</span></h4>
 
-
-
-
-<div class="description">
-    Number of milliseconds to delay the call to client.login in order to
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Number of milliseconds to delay the call to client.login in order to
 prevent race conditions of multiple bots in the same directory. This is set
 with the `--delay` flag. `--delay` with no value will default to 5000
 milliseconds.
-</div>
+    </div>
+    
 
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">number</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -558,69 +678,78 @@ milliseconds.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-266">line 266</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line266">line 266</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~disconnectReason"><span class="type-signature">(private, inner, nullable) </span>disconnectReason<span class="type-signature"> :string</span></h4>
+<hr>
+<dt class="name" id="~disconnectReason">
+    <h4 id="~disconnectReason"><span class="type-signature">&lt;private, inner, nullable> </span>disconnectReason<span class="type-signature"> :string</span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Reason the bot was disconnected from Discord's servers.
+    </div>
+    
 
-
-
-<div class="description">
-    Reason the bot was disconnected from Discord's servers.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">string</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -630,222 +759,160 @@ milliseconds.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-226">line 226</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line226">line 226</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~enableSharding"><span class="type-signature">(private, inner) </span>enableSharding<span class="type-signature"> :boolean</span></h4>
+<hr>
+<dt class="name" id="~enableSharding">
+    <h4 id="~enableSharding"><span class="type-signature">&lt;private, inner> </span>enableSharding<span class="type-signature"> :boolean</span></h4>
 
-
-
-
-<div class="description">
-    Whether or not to spawn the bot as multiple shards. Enabled with `--shards`
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Whether or not to spawn the bot as multiple shards. Enabled with `--shards`
 cli argument.
-</div>
+    </div>
+    
 
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">boolean</span>
 
 
-        </li>
-    </ul>
 
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line235">line 235</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-        
-            
-<h4 class="name" id="~fullRebootFilename"><span class="type-signature">(private, inner, constant) </span>fullRebootFilename<span class="type-signature"> :string</span></h4>
-
-
-
-
-<div class="description">
-    The full filename where information about the bot rebooting is stored.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
-<span class="param-type">string</span>
-
-
-        </li>
-    </ul>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line510">line 510</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li>rebootFilename</li>
+            </li>
         </ul>
-    </dd>
     
 
     
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-235">line 235</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~guildCustomPrefixFile"><span class="type-signature">(private, inner, constant) </span>guildCustomPrefixFile<span class="type-signature"> :string</span></h4>
+<hr>
+<dt class="name" id="~fullRebootFilename">
+    <h4 id="~fullRebootFilename"><span class="type-signature">&lt;private, inner, constant> </span>fullRebootFilename<span class="type-signature"> :string</span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The full filename where information about the bot rebooting is stored.
+    </div>
+    
 
-
-
-<div class="description">
-    The path in the guild's subdirectory where we store custom prefixes for
-bots with custom names.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">string</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -855,70 +922,168 @@ bots with custom names.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-510">line 510</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line603">line 603</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li>rebootFilename</li>
+			</ul>
+	</dd>
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~guildPrefixes"><span class="type-signature">(private, inner, constant) </span>guildPrefixes<span class="type-signature"> :Object.&lt;string></span></h4>
+<hr>
+<dt class="name" id="~guildCustomPrefixFile">
+    <h4 id="~guildCustomPrefixFile"><span class="type-signature">&lt;private, inner, constant> </span>guildCustomPrefixFile<span class="type-signature"> :string</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The path in the guild's subdirectory where we store custom prefixes for
+bots with custom names.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">string</span>
 
 
 
+            </li>
+        </ul>
+    
 
-<div class="description">
-    Cache of all loaded guild's command prefixes. Populated asyncronously after
-client ready event.
-</div>
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
 
 
 
-    <h5>Type:</h5>
-    <ul>
-        <li>
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-603">line 603</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
             
+<hr>
+<dt class="name" id="~guildPrefixes">
+    <h4 id="~guildPrefixes"><span class="type-signature">&lt;private, inner, constant> </span>guildPrefixes<span class="type-signature"> :Object.&lt;string></span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Cache of all loaded guild's command prefixes. Populated asyncronously after
+client ready event.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">Object.&lt;string></span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -928,69 +1093,78 @@ client ready event.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-582">line 582</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line582">line 582</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~guildPrefixFile"><span class="type-signature">(private, inner, constant) </span>guildPrefixFile<span class="type-signature"> :string</span></h4>
+<hr>
+<dt class="name" id="~guildPrefixFile">
+    <h4 id="~guildPrefixFile"><span class="type-signature">&lt;private, inner, constant> </span>guildPrefixFile<span class="type-signature"> :string</span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The path in the guild's subdirectory where we store custom prefixes.
+    </div>
+    
 
-
-
-<div class="description">
-    The path in the guild's subdirectory where we store custom prefixes.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">string</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1000,69 +1174,78 @@ client ready event.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-592">line 592</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line592">line 592</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~initialized"><span class="type-signature">(private, inner) </span>initialized<span class="type-signature"> :boolean</span></h4>
+<hr>
+<dt class="name" id="~initialized">
+    <h4 id="~initialized"><span class="type-signature">&lt;private, inner> </span>initialized<span class="type-signature"> :boolean</span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Has the bot been initialized already.
+    </div>
+    
 
-
-
-<div class="description">
-    Has the bot been initialized already.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">boolean</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1072,72 +1255,81 @@ client ready event.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-552">line 552</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line552">line 552</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~inspectShard"><span class="type-signature">(private, inner) </span>inspectShard<span class="type-signature"> :number</span></h4>
+<hr>
+<dt class="name" id="~inspectShard">
+    <h4 id="~inspectShard"><span class="type-signature">&lt;private, inner> </span>inspectShard<span class="type-signature"> :number</span></h4>
 
-
-
-
-<div class="description">
-    Enable inspecting/profiling for a shard to launch. Set via cli falgs. -1 to
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Enable inspecting/profiling for a shard to launch. Set via cli falgs. -1 to
 disable. (Currently only supports enabling. the `--inspect` flag will be
 sent to all shards that are started. This is due to limitations of
 Discord~ShardingManager)
-</div>
+    </div>
+    
 
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">number</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1147,69 +1339,78 @@ Discord~ShardingManager)
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-278">line 278</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line278">line 278</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~isBackup"><span class="type-signature">(private, inner) </span>isBackup<span class="type-signature"> :boolean</span></h4>
+<hr>
+<dt class="name" id="~isBackup">
+    <h4 id="~isBackup"><span class="type-signature">&lt;private, inner> </span>isBackup<span class="type-signature"> :boolean</span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Is this bot managing backup status monitoring.
+    </div>
+    
 
-
-
-<div class="description">
-    Is this bot managing backup status monitoring.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">boolean</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1219,70 +1420,79 @@ Discord~ShardingManager)
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-203">line 203</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line203">line 203</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~mainModuleListFile"><span class="type-signature">(private, inner, constant) </span>mainModuleListFile<span class="type-signature"> :string</span></h4>
+<hr>
+<dt class="name" id="~mainModuleListFile">
+    <h4 id="~mainModuleListFile"><span class="type-signature">&lt;private, inner, constant> </span>mainModuleListFile<span class="type-signature"> :string</span></h4>
 
-
-
-
-<div class="description">
-    Filename of which to load additional MainModule names. The file must be a
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Filename of which to load additional MainModule names. The file must be a
 valid JSON array of strings.
-</div>
+    </div>
+    
 
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">string</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1292,75 +1502,86 @@ valid JSON array of strings.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>./mainModules.json</li>
+		</ul>
+	</dd>
+	
 
-    
 
-    
 
-    
-    <dt class="tag-default">Default Value:</dt>
-    <dd class="tag-default"><ul class="dummy">
-            <li>./mainModules.json</li>
-        </ul></dd>
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-173">line 173</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line173">line 173</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~mainModuleNames"><span class="type-signature">(private, inner) </span>mainModuleNames<span class="type-signature"> :Array.&lt;string></span></h4>
+<hr>
+<dt class="name" id="~mainModuleNames">
+    <h4 id="~mainModuleNames"><span class="type-signature">&lt;private, inner> </span>mainModuleNames<span class="type-signature"> :Array.&lt;string></span></h4>
 
-
-
-
-<div class="description">
-    The list of all mainModules to load. Always includes <a href="SpikeyBot.html#~commandFilename">SpikeyBot~commandFilename</a> and SpikeyBot~smListFilename. Additional
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The list of all mainModules to load. Always includes <a href="SpikeyBot.html#~commandFilename">SpikeyBot~commandFilename</a> and SpikeyBot~smListFilename. Additional
 mainModules can be loaded from <a href="SpikeyBot.html#~mainModuleListFile">SpikeyBot~mainModuleListFile</a>.
-</div>
+    </div>
+    
 
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">Array.&lt;string></span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1370,69 +1591,78 @@ mainModules can be loaded from <a href="SpikeyBot.html#~mainModuleListFile">Spik
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-182">line 182</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line182">line 182</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~mainModules"><span class="type-signature">(private, inner, constant) </span>mainModules<span class="type-signature"> :Array.&lt;<a href="MainModule.html">MainModule</a>></span></h4>
+<hr>
+<dt class="name" id="~mainModules">
+    <h4 id="~mainModules"><span class="type-signature">&lt;private, inner, constant> </span>mainModules<span class="type-signature"> :Array.&lt;<a href="MainModule.html">MainModule</a>></span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Instances of MainModules currently loaded.
+    </div>
+    
 
-
-
-<div class="description">
-    Instances of MainModules currently loaded.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">Array.&lt;<a href="MainModule.html">MainModule</a>></span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1442,70 +1672,79 @@ mainModules can be loaded from <a href="SpikeyBot.html#~mainModuleListFile">Spik
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-218">line 218</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line218">line 218</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~minimal"><span class="type-signature">(private, inner) </span>minimal<span class="type-signature"> :boolean</span></h4>
+<hr>
+<dt class="name" id="~minimal">
+    <h4 id="~minimal"><span class="type-signature">&lt;private, inner> </span>minimal<span class="type-signature"> :boolean</span></h4>
 
-
-
-
-<div class="description">
-    Should this bot only load minimal features as to not overlap with multiple
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Should this bot only load minimal features as to not overlap with multiple
 instances.
-</div>
+    </div>
+    
 
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">boolean</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1515,70 +1754,79 @@ instances.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-211">line 211</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line211">line 211</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~numShards"><span class="type-signature">(private, inner) </span>numShards<span class="type-signature"> :number</span></h4>
+<hr>
+<dt class="name" id="~numShards">
+    <h4 id="~numShards"><span class="type-signature">&lt;private, inner> </span>numShards<span class="type-signature"> :number</span></h4>
 
-
-
-
-<div class="description">
-    The number of shards to use if sharding is enabled. 0 to let Discord
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The number of shards to use if sharding is enabled. 0 to let Discord
 decide. Set from `--shards=#` cli argument.
-</div>
+    </div>
+    
 
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">number</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1588,154 +1836,174 @@ decide. Set from `--shards=#` cli argument.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-244">line 244</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line244">line 244</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~rebootFilename"><span class="type-signature">(private, inner, constant) </span>rebootFilename<span class="type-signature"> :string</span></h4>
+<hr>
+<dt class="name" id="~rebootFilename">
+    <h4 id="~rebootFilename"><span class="type-signature">&lt;private, inner, constant> </span>rebootFilename<span class="type-signature"> :string</span></h4>
 
-
-
-
-<div class="description">
-    Filename without file extension where information about the bot rebooting
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Filename without file extension where information about the bot rebooting
 is stored.
-</div>
+    </div>
+    
 
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">string</span>
 
 
-        </li>
-    </ul>
 
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-default">Default Value:</dt>
-    <dd class="tag-default"><ul class="dummy">
-            <li>./save/reboot</li>
-        </ul></dd>
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line149">line 149</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li>fullRebootFilename</li>
+            </li>
         </ul>
-    </dd>
     
 
     
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>./save/reboot</li>
+		</ul>
+	</dd>
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-149">line 149</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li>fullRebootFilename</li>
+			</ul>
+	</dd>
+	
+
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~rebooting"><span class="type-signature">(private, inner) </span>rebooting<span class="type-signature"> :boolean</span></h4>
+<hr>
+<dt class="name" id="~rebooting">
+    <h4 id="~rebooting"><span class="type-signature">&lt;private, inner> </span>rebooting<span class="type-signature"> :boolean</span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Is the bot currently rebooting.
+    </div>
+    
 
-
-
-<div class="description">
-    Is the bot currently rebooting.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">boolean</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1745,235 +2013,264 @@ is stored.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-287">line 287</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line287">line 287</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~saveFrequency"><span class="type-signature">(private, inner, constant) </span>saveFrequency<span class="type-signature"> :number</span></h4>
+<hr>
+<dt class="name" id="~saveFrequency">
+    <h4 id="~saveFrequency"><span class="type-signature">&lt;private, inner, constant> </span>saveFrequency<span class="type-signature"> :number</span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The frequency at which saveInterval will run.
+    </div>
+    
 
-
-
-<div class="description">
-    The frequency at which saveInterval will run.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">number</span>
 
 
-        </li>
-    </ul>
 
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-default">Default Value:</dt>
-    <dd class="tag-default"><ul class="dummy">
-            <li>5 Minutes</li>
-        </ul></dd>
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line573">line 573</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li><a href="SpikeyBot.html#~saveInterval">SpikeyBot~saveInterval</a></li>
+            </li>
         </ul>
-    </dd>
     
 
     
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>5 Minutes</li>
+		</ul>
+	</dd>
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-573">line 573</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li><a href="SpikeyBot.html#~saveInterval">SpikeyBot~saveInterval</a></li>
+			</ul>
+	</dd>
+	
+
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~saveInterval"><span class="type-signature">(private, inner) </span>saveInterval<span class="type-signature"> :Interval</span></h4>
+<hr>
+<dt class="name" id="~saveInterval">
+    <h4 id="~saveInterval"><span class="type-signature">&lt;private, inner> </span>saveInterval<span class="type-signature"> :Interval</span></h4>
 
-
-
-
-<div class="description">
-    The Interval in which we will save and purge data on all mainmodules.
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The Interval in which we will save and purge data on all mainmodules.
 Begins after onReady.
-</div>
+    </div>
+    
 
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">Interval</span>
 
 
-        </li>
-    </ul>
 
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line563">line 563</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li>SpikeyBot~onReady()</li>
-        
-            <li><a href="SpikeyBot.html#~saveFrequency">SpikeyBot~saveFrequency</a></li>
+            </li>
         </ul>
-    </dd>
     
 
     
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-563">line 563</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li>SpikeyBot~onReady()</li>
+			
+			<li><a href="SpikeyBot.html#~saveFrequency">SpikeyBot~saveFrequency</a></li>
+			</ul>
+	</dd>
+	
+
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~setDev"><span class="type-signature">(private, inner) </span>setDev<span class="type-signature"> :boolean</span></h4>
+<hr>
+<dt class="name" id="~setDev">
+    <h4 id="~setDev"><span class="type-signature">&lt;private, inner> </span>setDev<span class="type-signature"> :boolean</span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Is this bot running in development mode.
+    </div>
+    
 
-
-
-<div class="description">
-    Is this bot running in development mode.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">boolean</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1983,69 +2280,78 @@ Begins after onReady.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-197">line 197</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line197">line 197</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~smLoader"><span class="type-signature">(private, inner) </span>smLoader<span class="type-signature"> :<a href="SMLoader.html">SMLoader</a></span></h4>
+<hr>
+<dt class="name" id="~smLoader">
+    <h4 id="~smLoader"><span class="type-signature">&lt;private, inner> </span>smLoader<span class="type-signature"> :<a href="SMLoader.html">SMLoader</a></span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The current instance of SMLoader.
+    </div>
+    
 
-
-
-<div class="description">
-    The current instance of SMLoader.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type"><a href="SMLoader.html">SMLoader</a></span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -2055,69 +2361,78 @@ Begins after onReady.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-163">line 163</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line163">line 163</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~smLoaderFilename"><span class="type-signature">(private, inner, constant) </span>smLoaderFilename<span class="type-signature"> :string</span></h4>
+<hr>
+<dt class="name" id="~smLoaderFilename">
+    <h4 id="~smLoaderFilename"><span class="type-signature">&lt;private, inner, constant> </span>smLoaderFilename<span class="type-signature"> :string</span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The filename of the SMLoader mainModule.
+    </div>
+    
 
-
-
-<div class="description">
-    The filename of the SMLoader mainModule.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">string</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -2127,74 +2442,85 @@ Begins after onReady.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>./smLoader.js</li>
+		</ul>
+	</dd>
+	
 
-    
 
-    
 
-    
-    <dt class="tag-default">Default Value:</dt>
-    <dd class="tag-default"><ul class="dummy">
-            <li>./smLoader.js</li>
-        </ul></dd>
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-138">line 138</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line138">line 138</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~testChannel"><span class="type-signature">(private, inner, constant) </span>testChannel<span class="type-signature"> :string</span></h4>
+<hr>
+<dt class="name" id="~testChannel">
+    <h4 id="~testChannel"><span class="type-signature">&lt;private, inner, constant> </span>testChannel<span class="type-signature"> :string</span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The channel id for the channel to reserve for only unit testing in.
+    </div>
+    
 
-
-
-<div class="description">
-    The channel id for the channel to reserve for only unit testing in.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">string</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -2204,75 +2530,86 @@ Begins after onReady.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>439642818084995074</li>
+		</ul>
+	</dd>
+	
 
-    
 
-    
 
-    
-    <dt class="tag-default">Default Value:</dt>
-    <dd class="tag-default"><ul class="dummy">
-            <li>439642818084995074</li>
-        </ul></dd>
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-111">line 111</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line111">line 111</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~testInstance"><span class="type-signature">(private, inner) </span>testInstance<span class="type-signature"> :boolean</span></h4>
+<hr>
+<dt class="name" id="~testInstance">
+    <h4 id="~testInstance"><span class="type-signature">&lt;private, inner> </span>testInstance<span class="type-signature"> :boolean</span></h4>
 
-
-
-
-<div class="description">
-    Is the bot started with the intent of solely running a unit test. Reduces
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Is the bot started with the intent of solely running a unit test. Reduces
 messages sent that are unnecessary.
-</div>
+    </div>
+    
 
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">boolean</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -2282,69 +2619,78 @@ messages sent that are unnecessary.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-119">line 119</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line119">line 119</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~testMode"><span class="type-signature">(private, inner) </span>testMode<span class="type-signature"> :boolean</span></h4>
+<hr>
+<dt class="name" id="~testMode">
+    <h4 id="~testMode"><span class="type-signature">&lt;private, inner> </span>testMode<span class="type-signature"> :boolean</span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Is the bot currently responding as a unit test.
+    </div>
+    
 
-
-
-<div class="description">
-    Is the bot currently responding as a unit test.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">boolean</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -2354,76 +2700,73 @@ messages sent that are unnecessary.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-102">line 102</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line102">line 102</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
+</dd>
 
-
-
-
-        
+        </dl>
     
 
     
         <h3 class="subsection-title">Methods</h3>
 
-        
+        <dl>
             
+<hr>
+<dt>
+    <h4 class="name" id="changePrefix"><span class="type-signature"></span>changePrefix(gId, newPrefix)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Change the command prefix for the given guild.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="changePrefix"><span class="type-signature"></span>changePrefix<span class="signature">(gId, newPrefix)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Change the command prefix for the given guild.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -2454,6 +2797,7 @@ messages sent that are unnecessary.
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -2477,6 +2821,7 @@ messages sent that are unnecessary.
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -2491,12 +2836,17 @@ messages sent that are unnecessary.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -2506,84 +2856,86 @@ messages sent that are unnecessary.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-1011">line 1011</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line1011">line 1011</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="getBotName"><span class="type-signature"></span>getBotName()</h4>
+    
+    
+</dt>
+<dd>
 
     
-
-    
-    <h4 class="name" id="getBotName"><span class="type-signature"></span>getBotName<span class="signature">()</span><span class="type-signature"> &rarr; (nullable) {string}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Getter for the bot's name. If name is null, it is most likely because there
+    <div class="description">
+        Getter for the bot's name. If name is null, it is most likely because there
 is no custom name and common.isRelease should be used instead.
-</div>
+    </div>
+    
 
+    
 
+    
 
+    
+    
 
-
-
-
-
-
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -2593,58 +2945,59 @@ is no custom name and common.isRelease should be used instead.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-299">line 299</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line299">line 299</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li><a href="SpikeyBot.html#~botName">SpikeyBot~botName</a></li>
+			</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li><a href="SpikeyBot.html#~botName">SpikeyBot~botName</a></li>
-        </ul>
-    </dd>
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     The bot's name or null if it has not been defined yet or
 there is no custom name.
@@ -2661,46 +3014,49 @@ there is no custom name.
 <span class="param-type">string</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="getFullBotName"><span class="type-signature"></span>getFullBotName()</h4>
+    
+    
+</dt>
+<dd>
 
     
-
-    
-    <h4 class="name" id="getFullBotName"><span class="type-signature"></span>getFullBotName<span class="signature">()</span><span class="type-signature"> &rarr; {string}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Getter for the bot's name. If botName is null, this will give either
+    <div class="description">
+        Getter for the bot's name. If botName is null, this will give either
 `release` or `dev`.
-</div>
+    </div>
+    
 
+    
 
+    
 
+    
+    
 
-
-
-
-
-
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -2710,58 +3066,59 @@ there is no custom name.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-313">line 313</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line313">line 313</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li><a href="SpikeyBot.html#~botName">SpikeyBot~botName</a></li>
+			</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li><a href="SpikeyBot.html#~botName">SpikeyBot~botName</a></li>
-        </ul>
-    </dd>
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     The bot's name.
 </div>
@@ -2777,44 +3134,42 @@ there is no custom name.
 <span class="param-type">string</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="getPrefix"><span class="type-signature"></span>getPrefix(id)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Get this guild's custom prefix. Returns the default prefix otherwise.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="getPrefix"><span class="type-signature"></span>getPrefix<span class="signature">(id)</span><span class="type-signature"> &rarr; {string}</span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Get this guild's custom prefix. Returns the default prefix otherwise.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -2851,6 +3206,7 @@ there is no custom name.
 <span class="param-type">number</span>
 
 
+
             
             </td>
 
@@ -2865,12 +3221,17 @@ there is no custom name.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -2880,51 +3241,52 @@ there is no custom name.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-1602">line 1602</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line1602">line 1602</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     The prefix for all commands in the given guild.
 </div>
@@ -2940,45 +3302,48 @@ there is no custom name.
 <span class="param-type">string</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="reloadCommon"><span class="type-signature"></span>reloadCommon()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Delete cache and re-require common.js and auth.js.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="reloadCommon"><span class="type-signature"></span>reloadCommon<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
     
-
-
-
-<div class="description">
-    Delete cache and re-require common.js and auth.js.
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -2988,82 +3353,79 @@ there is no custom name.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-363">line 363</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line363">line 363</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~commandChangePrefix"><span class="type-signature">&lt;private, inner> </span>commandChangePrefix(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Change the custom prefix for the given guild.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~commandChangePrefix"><span class="type-signature">(private, inner) </span>commandChangePrefix<span class="signature">(msg)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Change the custom prefix for the given guild.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -3094,6 +3456,7 @@ there is no custom name.
 <span class="param-type">Discord~Message</span>
 
 
+
             
             </td>
 
@@ -3108,12 +3471,17 @@ there is no custom name.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -3123,88 +3491,85 @@ there is no custom name.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-1130">line 1130</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line1130">line 1130</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>Command#event:changePrefix</li>
+    </ul>
+    
 
+    
 
+    
 
-<h5>Listens to Events:</h5>
-<ul>
-    <li>Command#event:changePrefix</li>
-</ul>
+    
 
-
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~commandReboot"><span class="type-signature">&lt;private, inner> </span>commandReboot(msg [, silent])</h4>
+    
+    
+</dt>
+<dd>
 
     
-
-    
-    <h4 class="name" id="~commandReboot"><span class="type-signature">(private, inner) </span>commandReboot<span class="signature">(msg, silent<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Trigger a reboot of the bot. Actually just gracefully shuts down, and
+    <div class="description">
+        Trigger a reboot of the bot. Actually just gracefully shuts down, and
 expects to be immediately restarted.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
+    </div>
     
 
-<table class="params">
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -3214,7 +3579,7 @@ expects to be immediately restarted.
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -3237,6 +3602,7 @@ expects to be immediately restarted.
             
                 
 <span class="param-type">Discord~Message</span>
+
 
 
             
@@ -3274,6 +3640,7 @@ expects to be immediately restarted.
 <span class="param-type">boolean</span>
 
 
+
             
             </td>
 
@@ -3304,12 +3671,17 @@ expects to be immediately restarted.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -3319,98 +3691,95 @@ expects to be immediately restarted.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-1190">line 1190</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line1190">line 1190</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
-    <dt class="tag-todo">To Do:</dt>
-    <dd class="tag-todo">
-        <ul>
-            <li>Support scheduled reload across multiple shards. Currently the bot
+	
+	<dt class="tag-todo method-doc-label method-doc-details-label">To Do:</dt>
+	<dd class="tag-todo">
+		<ul>
+			<li>Support scheduled reload across multiple shards. Currently the bot
 waits for the shard at which the command was sent to be ready for reboot
 instead of all shard deciding on their own when they're ready to reboot.
 This will also need to check that we are obeying Discord's rebooting rate
 limits to help reduce downtime.</li>
-        </ul>
-    </dd>
-    
+			</ul>
+	</dd>
+	
 </dl>
 
 
+    
 
+    
 
+    
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>Command#event:reboot</li>
+    </ul>
+    
 
+    
 
+    
 
-<h5>Listens to Events:</h5>
-<ul>
-    <li>Command#event:reboot</li>
-</ul>
+    
 
-
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~commandReload"><span class="type-signature">&lt;private, inner> </span>commandReload(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Reload all mainmodules by unloading then re-requiring.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~commandReload"><span class="type-signature">(private, inner) </span>commandReload<span class="signature">(msg)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Reload all mainmodules by unloading then re-requiring.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -3441,6 +3810,7 @@ limits to help reduce downtime.</li>
 <span class="param-type">Discord~Message</span>
 
 
+
             
             </td>
 
@@ -3455,12 +3825,17 @@ limits to help reduce downtime.</li>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -3470,87 +3845,84 @@ limits to help reduce downtime.</li>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-1327">line 1327</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line1327">line 1327</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>Command#event:mainreload</li>
+    </ul>
+    
 
+    
 
+    
 
-<h5>Listens to Events:</h5>
-<ul>
-    <li>Command#event:mainreload</li>
-</ul>
+    
 
-
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~commandSaveAll"><span class="type-signature">&lt;private, inner> </span>commandSaveAll(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Trigger all mainModules to save their data.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~commandSaveAll"><span class="type-signature">(private, inner) </span>commandSaveAll<span class="signature">(msg)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Trigger all mainModules to save their data.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -3581,6 +3953,7 @@ limits to help reduce downtime.</li>
 <span class="param-type">Discord~Message</span>
 
 
+
             
             </td>
 
@@ -3595,12 +3968,17 @@ limits to help reduce downtime.</li>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -3610,94 +3988,91 @@ limits to help reduce downtime.</li>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-1543">line 1543</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line1543">line 1543</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li>SpikeyBot~saveAll()</li>
+			</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li>SpikeyBot~saveAll()</li>
-        </ul>
-    </dd>
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>Command#event:saveAll</li>
+    </ul>
+    
 
+    
 
+    
 
-<h5>Listens to Events:</h5>
-<ul>
-    <li>Command#event:saveAll</li>
-</ul>
+    
 
-
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~commandUpdateGame"><span class="type-signature">&lt;private, inner> </span>commandUpdateGame(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Change current status message.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~commandUpdateGame"><span class="type-signature">(private, inner) </span>commandUpdateGame<span class="signature">(msg)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Change current status message.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -3728,6 +4103,7 @@ limits to help reduce downtime.</li>
 <span class="param-type">Discord~Message</span>
 
 
+
             
             </td>
 
@@ -3742,12 +4118,17 @@ limits to help reduce downtime.</li>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -3757,89 +4138,91 @@ limits to help reduce downtime.</li>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-1096">line 1096</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line1096">line 1096</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>Command#event:updateGame</li>
+    </ul>
+    
 
+    
 
+    
 
-<h5>Listens to Events:</h5>
-<ul>
-    <li>Command#event:updateGame</li>
-</ul>
+    
 
-
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~createShards"><span class="type-signature">&lt;private, inner> </span>createShards()</h4>
+    
+    
+</dt>
+<dd>
 
     
-
-    
-    <h4 class="name" id="~createShards"><span class="type-signature">(private, inner) </span>createShards<span class="signature">()</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Create a ShardingManager and spawn shards. This shall only be called at
+    <div class="description">
+        Create a ShardingManager and spawn shards. This shall only be called at
 most once, and `login()` shall not be called after this.
-</div>
+    </div>
+    
 
+    
 
+    
 
+    
+    
 
-
-
-
-
-
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -3849,83 +4232,80 @@ most once, and `login()` shall not be called after this.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-378">line 378</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line378">line 378</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~exit"><span class="type-signature">&lt;private, inner> </span>exit(info)</h4>
+    
+    
+</dt>
+<dd>
 
     
-
-    
-    <h4 class="name" id="~exit"><span class="type-signature">(private, inner) </span>exit<span class="signature">(&hellip;info)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Trigger a graceful shutdown with process signals. Does not trigger shutdown
+    <div class="description">
+        Trigger a graceful shutdown with process signals. Does not trigger shutdown
 if exit is -1.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
+    </div>
     
 
-<table class="params">
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -3935,7 +4315,7 @@ if exit is -1.
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -3956,6 +4336,7 @@ if exit is -1.
             
                 
 <span class="param-type">*</span>
+
 
 
             
@@ -3982,12 +4363,17 @@ if exit is -1.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -3997,93 +4383,90 @@ if exit is -1.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-1667">line 1667</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line1667">line 1667</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>event:SIGINT</li>
+    
+        <li>event:SIGHUP</li>
+    
+        <li>event:SIGTERM</li>
+    
+        <li>process#event:exit</li>
+    </ul>
+    
 
+    
 
+    
 
-<h5>Listens to Events:</h5>
-<ul>
-    <li>event:SIGINT</li>
+    
 
-    <li>event:SIGHUP</li>
-
-    <li>event:SIGTERM</li>
-
-    <li>process#event:exit</li>
-</ul>
-
-
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~isCmd"><span class="type-signature">&lt;private, inner> </span>isCmd(msg, cmd)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Checks if given message is the given command.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~isCmd"><span class="type-signature">(private, inner) </span>isCmd<span class="signature">(msg, cmd)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Checks if given message is the given command.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -4112,6 +4495,7 @@ if exit is -1.
             
                 
 <span class="param-type">Discord~Message</span>
+
 
 
             
@@ -4139,6 +4523,7 @@ command.</td>
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -4153,12 +4538,17 @@ command.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -4168,51 +4558,52 @@ command.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-615">line 615</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line615">line 615</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     True if msg is the given command.
 </div>
@@ -4228,44 +4619,42 @@ command.</td>
 <span class="param-type">boolean</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~loadGuildPrefixes"><span class="type-signature">&lt;private, inner> </span>loadGuildPrefixes(guilds)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Load prefixes from file for the given guilds asynchronously.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~loadGuildPrefixes"><span class="type-signature">(private, inner) </span>loadGuildPrefixes<span class="signature">(guilds)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Load prefixes from file for the given guilds asynchronously.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -4296,6 +4685,7 @@ command.</td>
 <span class="param-type">Array.&lt;Discord~Guild></span>
 
 
+
             
             </td>
 
@@ -4311,12 +4701,17 @@ prefixes of.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -4326,83 +4721,85 @@ prefixes of.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-1616">line 1616</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line1616">line 1616</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~login"><span class="type-signature">&lt;private, inner> </span>login()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Login to Discord. This shall only be called at most once.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~login"><span class="type-signature">(private, inner) </span>login<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
     
-
-
-
-<div class="description">
-    Login to Discord. This shall only be called at most once.
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -4412,83 +4809,80 @@ prefixes of.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-1678">line 1678</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line1678">line 1678</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~onDisconnect"><span class="type-signature">&lt;private, inner> </span>onDisconnect(event)</h4>
+    
+    
+</dt>
+<dd>
 
     
-
-    
-    <h4 class="name" id="~onDisconnect"><span class="type-signature">(private, inner) </span>onDisconnect<span class="signature">(event)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    The bot has disconnected from Discord and will not be attempting to
+    <div class="description">
+        The bot has disconnected from Discord and will not be attempting to
 reconnect.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
+    </div>
     
 
-<table class="params">
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -4519,6 +4913,7 @@ reconnect.
 <span class="param-type">CloseEvent</span>
 
 
+
             
             </td>
 
@@ -4533,12 +4928,17 @@ reconnect.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -4548,87 +4948,84 @@ reconnect.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-809">line 809</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line809">line 809</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>Discord~Client#event:disconnect</li>
+    </ul>
+    
 
+    
 
+    
 
-<h5>Listens to Events:</h5>
-<ul>
-    <li>Discord~Client#event:disconnect</li>
-</ul>
+    
 
-
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~onMessage"><span class="type-signature">&lt;private, inner> </span>onMessage(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Handle a message sent.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~onMessage"><span class="type-signature">(private, inner) </span>onMessage<span class="signature">(msg)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Handle a message sent.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -4659,6 +5056,7 @@ reconnect.
 <span class="param-type">Discord~Message</span>
 
 
+
             
             </td>
 
@@ -4673,12 +5071,17 @@ reconnect.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -4688,92 +5091,89 @@ reconnect.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-856">line 856</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line856">line 856</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
+    <h5>Fires:</h5>
+    <ul>
+        <li>event:Command</li>
+    </ul>
+    
 
+    
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>Discord~Client#event:message</li>
+    </ul>
+    
 
-<h5>Fires:</h5>
-<ul>
-    <li>event:Command</li>
-</ul>
+    
 
+    
 
+    
 
-<h5>Listens to Events:</h5>
-<ul>
-    <li>Discord~Client#event:message</li>
-</ul>
-
-
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~onPresenceUpdate"><span class="type-signature">&lt;private, inner> </span>onPresenceUpdate(oldMem, newMem)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Attempt to detect when the main bot goes offline by the presence changing.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~onPresenceUpdate"><span class="type-signature">(private, inner) </span>onPresenceUpdate<span class="signature">(oldMem, newMem)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Attempt to detect when the main bot goes offline by the presence changing.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -4804,6 +5204,7 @@ reconnect.
 <span class="param-type">Discord~GuildMember</span>
 
 
+
             
             </td>
 
@@ -4827,6 +5228,7 @@ reconnect.
 <span class="param-type">Discord~GuildMember</span>
 
 
+
             
             </td>
 
@@ -4841,12 +5243,17 @@ reconnect.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -4856,83 +5263,85 @@ reconnect.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-837">line 837</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line837">line 837</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~onReady"><span class="type-signature">&lt;private, inner> </span>onReady()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        The bot has become ready.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~onReady"><span class="type-signature">(private, inner) </span>onReady<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
     
-
-
-
-<div class="description">
-    The bot has become ready.
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -4942,88 +5351,90 @@ reconnect.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-644">line 644</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line644">line 644</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>Discord~Client#event:ready</li>
+    </ul>
+    
 
+    
 
+    
 
-<h5>Listens to Events:</h5>
-<ul>
-    <li>Discord~Client#event:ready</li>
-</ul>
+    
 
-
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~onReconnecting"><span class="type-signature">&lt;private, inner> </span>onReconnecting()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        The bot has disconnected from Discord, and is reconnecting.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~onReconnecting"><span class="type-signature">(private, inner) </span>onReconnecting<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
     
-
-
-
-<div class="description">
-    The bot has disconnected from Discord, and is reconnecting.
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -5033,89 +5444,86 @@ reconnect.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-822">line 822</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line822">line 822</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>Discord~Client#event:reconnecting</li>
+    </ul>
+    
 
+    
 
+    
 
-<h5>Listens to Events:</h5>
-<ul>
-    <li>Discord~Client#event:reconnecting</li>
-</ul>
+    
 
-
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~reloadMainModules"><span class="type-signature">&lt;private, inner> </span>reloadMainModules( [toReload] [, reloaded] [, schedule])</h4>
+    
+    
+</dt>
+<dd>
 
     
-
-    
-    <h4 class="name" id="~reloadMainModules"><span class="type-signature">(private, inner) </span>reloadMainModules<span class="signature">(toReload<span class="signature-attributes">opt</span>, reloaded<span class="signature-attributes">opt</span>, schedule<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Reloads mainmodules from file. Reloads all modules if `toReload` is not
+    <div class="description">
+        Reloads mainmodules from file. Reloads all modules if `toReload` is not
 specified. `reloaded` will contain the list of messages describing which
 mainmodules were reloaded, or not.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
+    </div>
     
 
-<table class="params">
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -5125,7 +5533,7 @@ mainmodules were reloaded, or not.
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -5151,6 +5559,7 @@ mainmodules were reloaded, or not.
 |
 
 <span class="param-type">Array.&lt;string></span>
+
 
 
             
@@ -5191,6 +5600,7 @@ to reload all mainmodules.</td>
 <span class="param-type">Array.&lt;string></span>
 
 
+
             
             </td>
 
@@ -5229,6 +5639,7 @@ information about outcomes of attempting to reload mainmodules.</td>
 <span class="param-type">boolean</span>
 
 
+
             
             </td>
 
@@ -5260,12 +5671,17 @@ mainmodules if they are in an unloadable state.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -5275,51 +5691,52 @@ mainmodules if they are in an unloadable state.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-1390">line 1390</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line1390">line 1390</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     True if something failed and not all mainmodules were
 reloaded.
@@ -5336,45 +5753,48 @@ reloaded.
 <span class="param-type">boolean</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~saveAll"><span class="type-signature">&lt;private, inner> </span>saveAll()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Trigger all mainmodules to save their data.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~saveAll"><span class="type-signature">(private, inner) </span>saveAll<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
     
-
-
-
-<div class="description">
-    Trigger all mainmodules to save their data.
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -5384,82 +5804,79 @@ reloaded.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-1516">line 1516</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line1516">line 1516</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~updateGame"><span class="type-signature">&lt;private, inner> </span>updateGame(game [, type])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Changes the bot's status message.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~updateGame"><span class="type-signature">(private, inner) </span>updateGame<span class="signature">(game, type<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Changes the bot's status message.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -5469,7 +5886,7 @@ reloaded.
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -5492,6 +5909,7 @@ reloaded.
             
                 
 <span class="param-type">string</span>
+
 
 
             
@@ -5529,6 +5947,7 @@ reloaded.
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -5559,12 +5978,17 @@ reloaded.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -5574,54 +5998,54 @@ reloaded.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="SpikeyBot.js.html">SpikeyBot.js</a>,
+				 <a href="SpikeyBot.js.html#sunlight-1-line-625">line 625</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="SpikeyBot.js.html">SpikeyBot.js</a>, <a href="SpikeyBot.js.html#line625">line 625</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
+</dd>
 
-
-
-
-
-
-
-
-
-
-        
+        </dl>
     
 
     
@@ -5634,19 +6058,153 @@ reloaded.
 
 
 
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+		<div class="col-md-3">
+			<div id="toc" class="col-md-3 hidden-xs hidden-sm hidden-md"></div>
+		</div>
+	
+
+</div>
 </div>
 
-<nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_twemojiChecker.html">lib/twemojiChecker</a></li></ul><h3>Externals</h3><ul><li><a href="external-Discord.html">external:Discord</a></li></ul><h3>Classes</h3><ul><li><a href="ChatBot.html">ChatBot</a></li><li><a href="CmdScheduling.html">CmdScheduling</a></li><li><a href="CmdScheduling-ScheduledCommand.html">CmdScheduling~ScheduledCommand</a></li><li><a href="Command.html">Command</a></li><li><a href="Command-CommandSetting.html">Command~CommandSetting</a></li><li><a href="Command-SingleCommand.html">Command~SingleCommand</a></li><li><a href="Common.html">Common</a></li><li><a href="Connect4.html">Connect4</a></li><li><a href="Connect4_Game.html">Connect4#Game</a></li><li><a href="Define.html">Define</a></li><li><a href="DevCmds.html">DevCmds</a></li><li><a href="Echo.html">Echo</a></li><li><a href="Echo-Character.html">Echo~Character</a></li><li><a href="FunTranslators.html">FunTranslators</a></li><li><a href="HG.html">HG</a></li><li><a href="HGWeb.html">HGWeb</a></li><li><a href="HungryGames.html">HungryGames</a></li><li><a href="HungryGames-ArenaEvent.html">HungryGames~ArenaEvent</a></li><li><a href="HungryGames-Battle.html">HungryGames~Battle</a></li><li><a href="HungryGames-Day.html">HungryGames~Day</a></li><li><a href="HungryGames-DefaultOptions.html">HungryGames~DefaultOptions</a></li><li><a href="HungryGames-DefaultOptions-BooleanOption.html">HungryGames~DefaultOptions~BooleanOption</a></li><li><a href="HungryGames-DefaultOptions-NumberOption.html">HungryGames~DefaultOptions~NumberOption</a></li><li><a href="HungryGames-DefaultOptions-ObjectOption.html">HungryGames~DefaultOptions~ObjectOption</a></li><li><a href="HungryGames-DefaultOptions-Option.html">HungryGames~DefaultOptions~Option</a></li><li><a href="HungryGames-DefaultOptions-SelectOption.html">HungryGames~DefaultOptions~SelectOption</a></li><li><a href="HungryGames-Event.html">HungryGames~Event</a></li><li><a href="HungryGames-FinalEvent.html">HungryGames~FinalEvent</a></li><li><a href="HungryGames-ForcedOutcome.html">HungryGames~ForcedOutcome</a></li><li><a href="HungryGames-Game.html">HungryGames~Game</a></li><li><a href="HungryGames-Grammar.html">HungryGames~Grammar</a></li><li><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></li><li><a href="HungryGames-Messages.html">HungryGames~Messages</a></li><li><a href="HungryGames-OutcomeProbabilities.html">HungryGames~OutcomeProbabilities</a></li><li><a href="HungryGames-Player.html">HungryGames~Player</a></li><li><a href="HungryGames-Simulator.html">HungryGames~Simulator</a></li><li><a href="HungryGames-Simulator-Worker.html">HungryGames~Simulator~Worker</a></li><li><a href="HungryGames-Team.html">HungryGames~Team</a></li><li><a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a></li><li><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></li><li><a href="Main.html">Main</a></li><li><a href="MainModule.html">MainModule</a></li><li><a href="Messages.html">Messages</a></li><li><a href="Moderation.html">Moderation</a></li><li><a href="ModLog.html">ModLog</a></li><li><a href="ModLog-Settings.html">ModLog~Settings</a></li><li><a href="Music.html">Music</a></li><li><a href="NPC.html">NPC</a></li><li><a href="Patreon.html">Patreon</a></li><li><a href="Patreon-toExport.html">Patreon~toExport</a></li><li><a href="Polling.html">Polling</a></li><li><a href="Polling-Poll.html">Polling~Poll</a></li><li><a href="RaidBlock.html">RaidBlock</a></li><li><a href="RaidBlock-RaidSettings.html">RaidBlock~RaidSettings</a></li><li><a href="RoleColors.html">RoleColors</a></li><li><a href="RoleManager.html">RoleManager</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="SMLoader.html">SMLoader</a></li><li><a href="SpikeyBot.html">SpikeyBot</a></li><li><a href="Spotify.html">Spotify</a></li><li><a href="SubModule.html">SubModule</a></li><li><a href="TicTacToe.html">TicTacToe</a></li><li><a href="TicTacToe_Game.html">TicTacToe#Game</a></li><li><a href="TTS.html">TTS</a></li><li><a href="Uno.html">Uno</a></li><li><a href="Uno_Card.html">Uno#Card</a></li><li><a href="Uno_Game.html">Uno#Game</a></li><li><a href="WebAccount.html">WebAccount</a></li><li><a href="WebCommands.html">WebCommands</a></li><li><a href="WebProxy.html">WebProxy</a></li><li><a href="WebSettings.html">WebSettings</a></li><li><a href="WebStats.html">WebStats</a></li></ul><h3>Global</h3><ul><li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li></ul>
-</nav>
 
-<br class="clear">
+    <div class="modal fade" id="searchResults">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Search results</h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sat May 04 2019 21:43:40 GMT-0700 (Pacific Daylight Time)
+
+
+	<span class="copyright">
+	<small>Website Contact: <a href="mailto:web@spikeybot.com">web@spikeybot.com</a>.</small><br><small>&copy; Copyright 2019, Campbell Crowley. <a href="https://docs.google.com/document/d/1SAC2aPxxeNqRjlZzjwrnCyyWWyt09ZP-AP7BDBjjQDg/edit?usp=sharing">Privacy Policy</a></small>
+	</span>
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
+	
+		on Saturday, May 4, 2019 10:15 PM (-07:00)
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
 </footer>
 
-<script> prettyPrint(); </script>
-<script src="scripts/linenumber.js"> </script>
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+
+    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+<script>
+	(function ( i, s, o, g, r, a, m ) {
+		i['GoogleAnalyticsObject'] = r;
+		i[r] = i[r] || function () {
+			(i[r].q = i[r].q || []).push( arguments )
+		}, i[r].l = 1 * new Date();
+		a = s.createElement( o ),
+			m = s.getElementsByTagName( o )[0];
+		a.async = 1;
+		a.src = g;
+		m.parentNode.insertBefore( a, m )
+	})( window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga' );
+
+	ga( 'create', 'UA-89923351-1', 'www.spikeybot.com' );
+	ga( 'send', 'pageview' );
+</script>
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            SearcherDisplay.init();
+        });
+    </script>
+
+
 </body>
 </html>

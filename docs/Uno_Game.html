@@ -1,70 +1,134 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>JSDoc: Class: Game</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>SpikeyBot-Discord Class: Game</title>
 
-    <script src="scripts/prettify/prettify.js"> </script>
-    <script src="scripts/prettify/lang-css.js"> </script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
-    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.dark.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.slate.css">
+
 </head>
 
 <body>
 
-<div id="main">
+<div class="navbar navbar-default navbar-fixed-top ">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">SpikeyBot-Discord</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="module-lib_twemojiChecker.html">lib/twemojiChecker</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="ChatBot.html">ChatBot</a></li><li><a href="CmdScheduling.html">CmdScheduling</a></li><li><a href="CmdScheduling-ScheduledCommand.html">CmdScheduling~ScheduledCommand</a></li><li><a href="Command.html">Command</a></li><li><a href="Command-CommandSetting.html">Command~CommandSetting</a></li><li><a href="Command-SingleCommand.html">Command~SingleCommand</a></li><li><a href="Common.html">Common</a></li><li><a href="Connect4.html">Connect4</a></li><li><a href="Connect4_Game.html">Connect4#Game</a></li><li><a href="Define.html">Define</a></li><li><a href="DevCmds.html">DevCmds</a></li><li><a href="Echo.html">Echo</a></li><li><a href="Echo-Character.html">Echo~Character</a></li><li><a href="FunTranslators.html">FunTranslators</a></li><li><a href="HG.html">HG</a></li><li><a href="HGWeb.html">HGWeb</a></li><li><a href="HungryGames.html">HungryGames</a></li><li><a href="HungryGames-ArenaEvent.html">HungryGames~ArenaEvent</a></li><li><a href="HungryGames-Battle.html">HungryGames~Battle</a></li><li><a href="HungryGames-Day.html">HungryGames~Day</a></li><li><a href="HungryGames-DefaultOptions.html">HungryGames~DefaultOptions</a></li><li><a href="HungryGames-DefaultOptions-BooleanOption.html">HungryGames~DefaultOptions~BooleanOption</a></li><li><a href="HungryGames-DefaultOptions-NumberOption.html">HungryGames~DefaultOptions~NumberOption</a></li><li><a href="HungryGames-DefaultOptions-ObjectOption.html">HungryGames~DefaultOptions~ObjectOption</a></li><li><a href="HungryGames-DefaultOptions-Option.html">HungryGames~DefaultOptions~Option</a></li><li><a href="HungryGames-DefaultOptions-SelectOption.html">HungryGames~DefaultOptions~SelectOption</a></li><li><a href="HungryGames-Event.html">HungryGames~Event</a></li><li><a href="HungryGames-FinalEvent.html">HungryGames~FinalEvent</a></li><li><a href="HungryGames-ForcedOutcome.html">HungryGames~ForcedOutcome</a></li><li><a href="HungryGames-Game.html">HungryGames~Game</a></li><li><a href="HungryGames-Grammar.html">HungryGames~Grammar</a></li><li><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></li><li><a href="HungryGames-Messages.html">HungryGames~Messages</a></li><li><a href="HungryGames-OutcomeProbabilities.html">HungryGames~OutcomeProbabilities</a></li><li><a href="HungryGames-Player.html">HungryGames~Player</a></li><li><a href="HungryGames-Simulator.html">HungryGames~Simulator</a></li><li><a href="HungryGames-Simulator-Worker.html">HungryGames~Simulator~Worker</a></li><li><a href="HungryGames-Team.html">HungryGames~Team</a></li><li><a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a></li><li><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></li><li><a href="Main.html">Main</a></li><li><a href="MainModule.html">MainModule</a></li><li><a href="Messages.html">Messages</a></li><li><a href="Moderation.html">Moderation</a></li><li><a href="ModLog.html">ModLog</a></li><li><a href="ModLog-Settings.html">ModLog~Settings</a></li><li><a href="Music.html">Music</a></li><li><a href="NPC.html">NPC</a></li><li><a href="Patreon.html">Patreon</a></li><li><a href="Patreon-toExport.html">Patreon~toExport</a></li><li><a href="Polling.html">Polling</a></li><li><a href="Polling-Poll.html">Polling~Poll</a></li><li><a href="RaidBlock.html">RaidBlock</a></li><li><a href="RaidBlock-RaidSettings.html">RaidBlock~RaidSettings</a></li><li><a href="RoleColors.html">RoleColors</a></li><li><a href="RoleManager.html">RoleManager</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="SMLoader.html">SMLoader</a></li><li><a href="SpikeyBot.html">SpikeyBot</a></li><li><a href="Spotify.html">Spotify</a></li><li><a href="SubModule.html">SubModule</a></li><li><a href="TicTacToe.html">TicTacToe</a></li><li><a href="TicTacToe_Game.html">TicTacToe#Game</a></li><li><a href="TTS.html">TTS</a></li><li><a href="Uno.html">Uno</a></li><li><a href="Uno_Card.html">Uno#Card</a></li><li><a href="Uno_Game.html">Uno#Game</a></li><li><a href="WebAccount.html">WebAccount</a></li><li><a href="WebCommands.html">WebCommands</a></li><li><a href="WebProxy.html">WebProxy</a></li><li><a href="WebSettings.html">WebSettings</a></li><li><a href="WebStats.html">WebStats</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="externals.list.html" class="dropdown-toggle" data-toggle="dropdown">Externals<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="external-Discord.html">Discord</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+        
+            <div class="col-sm-3 col-md-3">
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        
+	</div>
 
-    <h1 class="page-title">Class: Game</h1>
-
-    
-
+</div>
+</div>
 
 
+<div class="container" id="toc-content">
+<div class="row">
 
+	
+	<div class="col-md-8">
+	
+		<div id="main">
+			
+
+	<h1 class="page-title">Class: Game</h1>
 <section>
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>
-            <span class="ancestors"><a href="Uno.html">Uno</a>#</span>Game<span class="signature">(memberList, maker)</span><span class="type-signature"></span></h2>
+        <h2>
+            <span class="ancestors"><a href="Uno.html">Uno</a>#</span>
+        
+        Game
+        </h2>
         
     
 </header>
+
 
 <article>
     <div class="container-overview">
     
         
+<hr>
+<dt>
+    <h4 class="name" id="Game"><span class="type-signature"></span>new Game(memberList, maker)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Class that stores the current state of an Uno game.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="Game"><span class="type-signature"></span>new Game<span class="signature">(memberList, maker)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Class that stores the current state of an Uno game.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -95,6 +159,7 @@
 <span class="param-type">Array.&lt;Discord~GuildMember></span>
 
 
+
             
             </td>
 
@@ -119,6 +184,7 @@ this game.</td>
 <span class="param-type">Discord~GuildMember</span>
 
 
+
             
             </td>
 
@@ -134,12 +200,17 @@ change settings and manage users.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -149,52 +220,52 @@ change settings and manage users.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="uno.js.html">uno.js</a>,
+				 <a href="uno.js.html#sunlight-1-line-408">line 408</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="uno.js.html">uno.js</a>, <a href="uno.js.html#line408">line 408</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
     
     </div>
@@ -210,39 +281,46 @@ change settings and manage users.</td>
     
 
     
-
-    
         <h3 class="subsection-title">Members</h3>
 
-        
+        <dl>
             
-<h4 class="name" id="catChannel"><span class="type-signature">(nullable) </span>catChannel<span class="type-signature"> :Discord~CategoryChannel</span></h4>
+<hr>
+<dt class="name" id="catChannel">
+    <h4 id="catChannel"><span class="type-signature">&lt;nullable> </span>catChannel<span class="type-signature"> :Discord~CategoryChannel</span></h4>
 
-
-
-
-<div class="description">
-    The category that stores all channels for this game. Null until it is
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The category that stores all channels for this game. Null until it is
 created.
-</div>
+    </div>
+    
 
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">Discord~CategoryChannel</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -252,69 +330,78 @@ created.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="uno.js.html">uno.js</a>,
+				 <a href="uno.js.html#sunlight-1-line-453">line 453</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="uno.js.html">uno.js</a>, <a href="uno.js.html#line453">line 453</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="createTimestamp"><span class="type-signature">(constant) </span>createTimestamp<span class="type-signature"> :number</span></h4>
+<hr>
+<dt class="name" id="createTimestamp">
+    <h4 id="createTimestamp"><span class="type-signature">&lt;constant> </span>createTimestamp<span class="type-signature"> :number</span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The timestamp at which this game was first created.
+    </div>
+    
 
-
-
-<div class="description">
-    The timestamp at which this game was first created.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">number</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -324,70 +411,79 @@ created.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="uno.js.html">uno.js</a>,
+				 <a href="uno.js.html#sunlight-1-line-489">line 489</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="uno.js.html">uno.js</a>, <a href="uno.js.html#line489">line 489</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="groupChannel"><span class="type-signature">(nullable) </span>groupChannel<span class="type-signature"> :Discord~TextChannel</span></h4>
+<hr>
+<dt class="name" id="groupChannel">
+    <h4 id="groupChannel"><span class="type-signature">&lt;nullable> </span>groupChannel<span class="type-signature"> :Discord~TextChannel</span></h4>
 
-
-
-
-<div class="description">
-    The channel that all players of this game can view and type in. Null
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The channel that all players of this game can view and type in. Null
 until the channel is created.
-</div>
+    </div>
+    
 
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">Discord~TextChannel</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -397,69 +493,78 @@ until the channel is created.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="uno.js.html">uno.js</a>,
+				 <a href="uno.js.html#sunlight-1-line-461">line 461</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="uno.js.html">uno.js</a>, <a href="uno.js.html#line461">line 461</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="id"><span class="type-signature">(readonly) </span>id<span class="type-signature"> :number</span></h4>
+<hr>
+<dt class="name" id="id">
+    <h4 id="id"><span class="type-signature">&lt;readonly> </span>id<span class="type-signature"> :number</span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The ID of this uno game. Should be unique per guild.
+    </div>
+    
 
-
-
-<div class="description">
-    The ID of this uno game. Should be unique per guild.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">number</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -469,69 +574,78 @@ until the channel is created.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="uno.js.html">uno.js</a>,
+				 <a href="uno.js.html#sunlight-1-line-435">line 435</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="uno.js.html">uno.js</a>, <a href="uno.js.html#line435">line 435</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="lastInteractTimestamp"><span class="type-signature">(constant) </span>lastInteractTimestamp<span class="type-signature"> :number</span></h4>
+<hr>
+<dt class="name" id="lastInteractTimestamp">
+    <h4 id="lastInteractTimestamp"><span class="type-signature">&lt;constant> </span>lastInteractTimestamp<span class="type-signature"> :number</span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The timestamp at which this game was last interacted with.
+    </div>
+    
 
-
-
-<div class="description">
-    The timestamp at which this game was last interacted with.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">number</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -541,69 +655,78 @@ until the channel is created.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="uno.js.html">uno.js</a>,
+				 <a href="uno.js.html#sunlight-1-line-499">line 499</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="uno.js.html">uno.js</a>, <a href="uno.js.html#line499">line 499</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="started"><span class="type-signature">(readonly) </span>started<span class="type-signature"> :boolean</span></h4>
+<hr>
+<dt class="name" id="started">
+    <h4 id="started"><span class="type-signature">&lt;readonly> </span>started<span class="type-signature"> :boolean</span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Has this game been started.
+    </div>
+    
 
-
-
-<div class="description">
-    Has this game been started.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">boolean</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -613,60 +736,68 @@ until the channel is created.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="uno.js.html">uno.js</a>,
+				 <a href="uno.js.html#sunlight-1-line-479">line 479</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="uno.js.html">uno.js</a>, <a href="uno.js.html#line479">line 479</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~currentCollector"><span class="type-signature">(private, inner) </span>currentCollector<span class="type-signature"></span></h4>
+<hr>
+<dt class="name" id="~currentCollector">
+    <h4 id="~currentCollector"><span class="type-signature">&lt;private, inner> </span>currentCollector<span class="type-signature"></span></h4>
 
-
-
-
-<div class="description">
-    The current Discord~MessageCollector that is listening to messages in the
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The current Discord~MessageCollector that is listening to messages in the
 groupChannel.
-</div>
+    </div>
+    
 
+    
 
-
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -676,74 +807,85 @@ groupChannel.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>type {?Discord~MessageCollector}</li>
+		</ul>
+	</dd>
+	
 
-    
 
-    
 
-    
-    <dt class="tag-default">Default Value:</dt>
-    <dd class="tag-default"><ul class="dummy">
-            <li>type {?Discord~MessageCollector}</li>
-        </ul></dd>
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="uno.js.html">uno.js</a>,
+				 <a href="uno.js.html#sunlight-1-line-576">line 576</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="uno.js.html">uno.js</a>, <a href="uno.js.html#line576">line 576</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~direction"><span class="type-signature">(private, inner) </span>direction<span class="type-signature"> :number</span></h4>
+<hr>
+<dt class="name" id="~direction">
+    <h4 id="~direction"><span class="type-signature">&lt;private, inner> </span>direction<span class="type-signature"> :number</span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The current direction of play. Either 1 or -1.
+    </div>
+    
 
-
-
-<div class="description">
-    The current direction of play. Either 1 or -1.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">number</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -753,74 +895,85 @@ groupChannel.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>1</li>
+		</ul>
+	</dd>
+	
 
-    
 
-    
 
-    
-    <dt class="tag-default">Default Value:</dt>
-    <dd class="tag-default"><ul class="dummy">
-            <li>1</li>
-        </ul></dd>
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="uno.js.html">uno.js</a>,
+				 <a href="uno.js.html#sunlight-1-line-566">line 566</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="uno.js.html">uno.js</a>, <a href="uno.js.html#line566">line 566</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~discarded"><span class="type-signature">(private, inner) </span>discarded<span class="type-signature"> :Array.&lt;Uno.Card></span></h4>
+<hr>
+<dt class="name" id="~discarded">
+    <h4 id="~discarded"><span class="type-signature">&lt;private, inner> </span>discarded<span class="type-signature"> :Array.&lt;Uno.Card></span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        All cards currently not in a player's hand.
+    </div>
+    
 
-
-
-<div class="description">
-    All cards currently not in a player's hand.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">Array.&lt;Uno.Card></span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -830,69 +983,78 @@ groupChannel.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="uno.js.html">uno.js</a>,
+				 <a href="uno.js.html#sunlight-1-line-469">line 469</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="uno.js.html">uno.js</a>, <a href="uno.js.html#line469">line 469</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~members"><span class="type-signature">(private, inner, constant) </span>members<span class="type-signature"> :Object.&lt;Discord~GuildMember></span></h4>
+<hr>
+<dt class="name" id="~members">
+    <h4 id="~members"><span class="type-signature">&lt;private, inner, constant> </span>members<span class="type-signature"> :Object.&lt;Discord~GuildMember></span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The guild members in this game mapped by their ID.
+    </div>
+    
 
-
-
-<div class="description">
-    The guild members in this game mapped by their ID.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">Object.&lt;Discord~GuildMember></span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -902,69 +1064,78 @@ groupChannel.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="uno.js.html">uno.js</a>,
+				 <a href="uno.js.html#sunlight-1-line-425">line 425</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="uno.js.html">uno.js</a>, <a href="uno.js.html#line425">line 425</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~players"><span class="type-signature">(private, inner, constant) </span>players<span class="type-signature"> :Array.&lt;(Uno.Player|Uno.NPC)></span></h4>
+<hr>
+<dt class="name" id="~players">
+    <h4 id="~players"><span class="type-signature">&lt;private, inner, constant> </span>players<span class="type-signature"> :Array.&lt;(Uno.Player|Uno.NPC)></span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The array of all player in the game in the order of their turn.
+    </div>
+    
 
-
-
-<div class="description">
-    The array of all player in the game in the order of their turn.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">Array.&lt;(Uno.Player|Uno.NPC)></span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -974,71 +1145,80 @@ groupChannel.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="uno.js.html">uno.js</a>,
+				 <a href="uno.js.html#sunlight-1-line-444">line 444</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="uno.js.html">uno.js</a>, <a href="uno.js.html#line444">line 444</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~previousTurn"><span class="type-signature">(private, inner) </span>previousTurn<span class="type-signature"> :number</span></h4>
+<hr>
+<dt class="name" id="~previousTurn">
+    <h4 id="~previousTurn"><span class="type-signature">&lt;private, inner> </span>previousTurn<span class="type-signature"> :number</span></h4>
 
-
-
-
-<div class="description">
-    The index of the player whose turn it was previously. This is -1 if the
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The index of the player whose turn it was previously. This is -1 if the
 current turn is the first turn of the game, and will otherwise be the
 previous player to play a card.
-</div>
+    </div>
+    
 
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">number</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1048,149 +1228,167 @@ previous player to play a card.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="uno.js.html">uno.js</a>,
+				 <a href="uno.js.html#sunlight-1-line-547">line 547</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="uno.js.html">uno.js</a>, <a href="uno.js.html#line547">line 547</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~topCard"><span class="type-signature">(private, inner, nullable) </span>topCard<span class="type-signature"> :Uno.Card</span></h4>
+<hr>
+<dt class="name" id="~topCard">
+    <h4 id="~topCard"><span class="type-signature">&lt;private, inner, nullable> </span>topCard<span class="type-signature"> :Uno.Card</span></h4>
 
-
-
-
-<div class="description">
-    The current card on the top of the discard pile that will need to be
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The current card on the top of the discard pile that will need to be
 matched by the next player to play a card.
-</div>
+    </div>
+    
 
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">Uno.Card</span>
 
 
-        </li>
-    </ul>
 
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="uno.js.html">uno.js</a>, <a href="uno.js.html#line557">line 557</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li>Uno.Game~previousCard</li>
+            </li>
         </ul>
-    </dd>
     
 
     
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="uno.js.html">uno.js</a>,
+				 <a href="uno.js.html#sunlight-1-line-557">line 557</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li>Uno.Game~previousCard</li>
+			</ul>
+	</dd>
+	
+
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~turn"><span class="type-signature">(private, inner) </span>turn<span class="type-signature"> :number</span></h4>
+<hr>
+<dt class="name" id="~turn">
+    <h4 id="~turn"><span class="type-signature">&lt;private, inner> </span>turn<span class="type-signature"> :number</span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The current index of the player whose turn it is.
+    </div>
+    
 
-
-
-<div class="description">
-    The current index of the player whose turn it is.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">number</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1200,76 +1398,73 @@ matched by the next player to play a card.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="uno.js.html">uno.js</a>,
+				 <a href="uno.js.html#sunlight-1-line-508">line 508</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="uno.js.html">uno.js</a>, <a href="uno.js.html#line508">line 508</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
+</dd>
 
-
-
-
-        
+        </dl>
     
 
     
         <h3 class="subsection-title">Methods</h3>
 
-        
+        <dl>
             
+<hr>
+<dt>
+    <h4 class="name" id="addNPCs"><span class="type-signature"></span>addNPCs( [num])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Add a certain number of NPCs into the game.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="addNPCs"><span class="type-signature"></span>addNPCs<span class="signature">(num<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Add a certain number of NPCs into the game.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -1279,7 +1474,7 @@ matched by the next player to play a card.
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -1302,6 +1497,7 @@ matched by the next player to play a card.
             
                 
 <span class="param-type">number</span>
+
 
 
             
@@ -1334,12 +1530,17 @@ matched by the next player to play a card.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1349,51 +1550,52 @@ matched by the next player to play a card.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="uno.js.html">uno.js</a>,
+				 <a href="uno.js.html#sunlight-1-line-1368">line 1368</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="uno.js.html">uno.js</a>, <a href="uno.js.html#line1368">line 1368</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     Success if true, failed if false.
 </div>
@@ -1409,44 +1611,42 @@ matched by the next player to play a card.
 <span class="param-type">boolean</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="addPlayer"><span class="type-signature"></span>addPlayer(p)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Add the given guild member to the game.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="addPlayer"><span class="type-signature"></span>addPlayer<span class="signature">(p)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Add the given guild member to the game.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -1477,6 +1677,7 @@ matched by the next player to play a card.
 <span class="param-type">Discord~GuildMember</span>
 
 
+
             
             </td>
 
@@ -1491,12 +1692,17 @@ matched by the next player to play a card.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1506,51 +1712,52 @@ matched by the next player to play a card.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="uno.js.html">uno.js</a>,
+				 <a href="uno.js.html#sunlight-1-line-1335">line 1335</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="uno.js.html">uno.js</a>, <a href="uno.js.html#line1335">line 1335</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     Success if true, failed if false.
 </div>
@@ -1566,45 +1773,48 @@ matched by the next player to play a card.
 <span class="param-type">boolean</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="end"><span class="type-signature"></span>end()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Ends this game and deletes all created channels.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="end"><span class="type-signature"></span>end<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
     
-
-
-
-<div class="description">
-    Ends this game and deletes all created channels.
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1614,83 +1824,85 @@ matched by the next player to play a card.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="uno.js.html">uno.js</a>,
+				 <a href="uno.js.html#sunlight-1-line-1310">line 1310</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="uno.js.html">uno.js</a>, <a href="uno.js.html#line1310">line 1310</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="getPlayers"><span class="type-signature"></span>getPlayers()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Returns the list of all players currently in this game.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="getPlayers"><span class="type-signature"></span>getPlayers<span class="signature">()</span><span class="type-signature"> &rarr; {Array.&lt;string>|Array.&lt;number>}</span></h4>
     
 
     
-
-
-
-<div class="description">
-    Returns the list of all players currently in this game.
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1700,51 +1912,52 @@ matched by the next player to play a card.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="uno.js.html">uno.js</a>,
+				 <a href="uno.js.html#sunlight-1-line-1434">line 1434</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="uno.js.html">uno.js</a>, <a href="uno.js.html#line1434">line 1434</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     Array of player IDs. Type is number-like.
 </div>
@@ -1763,44 +1976,42 @@ matched by the next player to play a card.
 <span class="param-type">Array.&lt;number></span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="removeNPCs"><span class="type-signature"></span>removeNPCs( [num])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Remove a certain number of NPCs from the game.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="removeNPCs"><span class="type-signature"></span>removeNPCs<span class="signature">(num<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Remove a certain number of NPCs from the game.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -1810,7 +2021,7 @@ matched by the next player to play a card.
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -1833,6 +2044,7 @@ matched by the next player to play a card.
             
                 
 <span class="param-type">number</span>
+
 
 
             
@@ -1865,12 +2077,17 @@ matched by the next player to play a card.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1880,51 +2097,52 @@ matched by the next player to play a card.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="uno.js.html">uno.js</a>,
+				 <a href="uno.js.html#sunlight-1-line-1391">line 1391</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="uno.js.html">uno.js</a>, <a href="uno.js.html#line1391">line 1391</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     Success if true, failed if false.
 </div>
@@ -1940,44 +2158,42 @@ matched by the next player to play a card.
 <span class="param-type">boolean</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="removePlayer"><span class="type-signature"></span>removePlayer(p)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Remove the user with the given ID from the game.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="removePlayer"><span class="type-signature"></span>removePlayer<span class="signature">(p)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Remove the user with the given ID from the game.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -2017,6 +2233,7 @@ matched by the next player to play a card.
 <span class="param-type">Uno.Player</span>
 
 
+
             
             </td>
 
@@ -2032,12 +2249,17 @@ user to remove.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -2047,84 +2269,81 @@ user to remove.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="uno.js.html">uno.js</a>,
+				 <a href="uno.js.html#sunlight-1-line-1411">line 1411</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="uno.js.html">uno.js</a>, <a href="uno.js.html#line1411">line 1411</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~callUno"><span class="type-signature">&lt;private, inner> </span>callUno(caller)</h4>
+    
+    
+</dt>
+<dd>
 
     
-
-    
-    <h4 class="name" id="~callUno"><span class="type-signature">(private, inner) </span>callUno<span class="signature">(caller)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    A player has called Uno. To say that they are about to have one card,
+    <div class="description">
+        A player has called Uno. To say that they are about to have one card,
 they now have one card after playing, or the previous person now has one
 card and did not call Uno.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
+    </div>
     
 
-<table class="params">
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -2158,6 +2377,7 @@ card and did not call Uno.
 <span class="param-type">number</span>
 
 
+
             
             </td>
 
@@ -2172,12 +2392,17 @@ card and did not call Uno.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -2187,82 +2412,79 @@ card and did not call Uno.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="uno.js.html">uno.js</a>,
+				 <a href="uno.js.html#sunlight-1-line-1277">line 1277</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="uno.js.html">uno.js</a>, <a href="uno.js.html#line1277">line 1277</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~checkCard"><span class="type-signature">&lt;private, inner> </span>checkCard(card [, card2])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Checks if the given card may be played next.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~checkCard"><span class="type-signature">(private, inner) </span>checkCard<span class="signature">(card, card2<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Checks if the given card may be played next.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -2272,7 +2494,7 @@ card and did not call Uno.
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -2293,6 +2515,7 @@ card and did not call Uno.
             
                 
 <span class="param-type">Uno.Card</span>
+
 
 
             
@@ -2326,6 +2549,7 @@ card and did not call Uno.
 <span class="param-type">Uno.Card</span>
 
 
+
             
             </td>
 
@@ -2351,12 +2575,17 @@ current topCard will be used.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -2366,58 +2595,59 @@ current topCard will be used.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="uno.js.html">uno.js</a>,
+				 <a href="uno.js.html#sunlight-1-line-1260">line 1260</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="uno.js.html">uno.js</a>, <a href="uno.js.html#line1260">line 1260</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li>Uno.Game~topCard</li>
+			</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li>Uno.Game~topCard</li>
-        </ul>
-    </dd>
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     True if can be played, false otherwise.
 </div>
@@ -2433,45 +2663,43 @@ current topCard will be used.</td>
 <span class="param-type">boolean</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~drawAndSkip"><span class="type-signature">&lt;private, inner> </span>drawAndSkip( [num])</h4>
+    
+    
+</dt>
+<dd>
 
     
-
-    
-    <h4 class="name" id="~drawAndSkip"><span class="type-signature">(private, inner) </span>drawAndSkip<span class="signature">(num<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Cause the current player to draw cards from the discarded pile, then skip
+    <div class="description">
+        Cause the current player to draw cards from the discarded pile, then skip
 their turn and continue to the next player.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
+    </div>
     
 
-<table class="params">
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -2481,7 +2709,7 @@ their turn and continue to the next player.
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -2504,6 +2732,7 @@ their turn and continue to the next player.
             
                 
 <span class="param-type">number</span>
+
 
 
             
@@ -2536,12 +2765,17 @@ their turn and continue to the next player.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -2551,82 +2785,79 @@ their turn and continue to the next player.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="uno.js.html">uno.js</a>,
+				 <a href="uno.js.html#sunlight-1-line-1000">line 1000</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="uno.js.html">uno.js</a>, <a href="uno.js.html#line1000">line 1000</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~drawCards"><span class="type-signature">&lt;private, inner> </span>drawCards(num [, silent])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Cause the current player to draw cards from the discarded pile.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~drawCards"><span class="type-signature">(private, inner) </span>drawCards<span class="signature">(num, silent<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Cause the current player to draw cards from the discarded pile.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -2636,7 +2867,7 @@ their turn and continue to the next player.
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -2659,6 +2890,7 @@ their turn and continue to the next player.
             
                 
 <span class="param-type">number</span>
+
 
 
             
@@ -2696,6 +2928,7 @@ their turn and continue to the next player.
 <span class="param-type">boolean</span>
 
 
+
             
             </td>
 
@@ -2727,12 +2960,17 @@ channel.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -2742,84 +2980,86 @@ channel.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="uno.js.html">uno.js</a>,
+				 <a href="uno.js.html#sunlight-1-line-1014">line 1014</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="uno.js.html">uno.js</a>, <a href="uno.js.html#line1014">line 1014</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~endGame"><span class="type-signature">&lt;private, inner> </span>endGame()</h4>
+    
+    
+</dt>
+<dd>
 
     
-
-    
-    <h4 class="name" id="~endGame"><span class="type-signature">(private, inner) </span>endGame<span class="signature">()</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Called after a game has been won by somebody. Clears all players of their
+    <div class="description">
+        Called after a game has been won by somebody. Clears all players of their
 cards, and resets the game to ready for next game state.
-</div>
+    </div>
+    
 
+    
 
+    
 
+    
+    
 
-
-
-
-
-
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -2829,85 +3069,87 @@ cards, and resets the game to ready for next game state.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="uno.js.html">uno.js</a>,
+				 <a href="uno.js.html#sunlight-1-line-903">line 903</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="uno.js.html">uno.js</a>, <a href="uno.js.html#line903">line 903</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~finishSetup"><span class="type-signature">&lt;private, inner> </span>finishSetup()</h4>
+    
+    
+</dt>
+<dd>
 
     
-
-    
-    <h4 class="name" id="~finishSetup"><span class="type-signature">(private, inner) </span>finishSetup<span class="signature">()</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Begins listening for messages in the groupChannel that relate to the
+    <div class="description">
+        Begins listening for messages in the groupChannel that relate to the
 setup of the game, and sends a message to the group channel with game
 instructions.
-</div>
+    </div>
+    
 
+    
 
+    
 
+    
+    
 
-
-
-
-
-
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -2917,83 +3159,85 @@ instructions.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="uno.js.html">uno.js</a>,
+				 <a href="uno.js.html#sunlight-1-line-649">line 649</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="uno.js.html">uno.js</a>, <a href="uno.js.html#line649">line 649</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~listPlayers"><span class="type-signature">&lt;inner> </span>listPlayers()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Send the list of current players in this game to the group channel.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~listPlayers"><span class="type-signature">(inner) </span>listPlayers<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
     
-
-
-
-<div class="description">
-    Send the list of current players in this game to the group channel.
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -3003,82 +3247,79 @@ instructions.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="uno.js.html">uno.js</a>,
+				 <a href="uno.js.html#sunlight-1-line-784">line 784</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="uno.js.html">uno.js</a>, <a href="uno.js.html#line784">line 784</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~nextTurn"><span class="type-signature">&lt;private, inner> </span>nextTurn( [skip])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Called after a player's turn, to trigger the next player's turn.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~nextTurn"><span class="type-signature">(private, inner) </span>nextTurn<span class="signature">(skip<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Called after a player's turn, to trigger the next player's turn.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -3088,7 +3329,7 @@ instructions.
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -3111,6 +3352,7 @@ instructions.
             
                 
 <span class="param-type">boolean</span>
+
 
 
             
@@ -3145,12 +3387,17 @@ turn is intended to be skipped.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -3160,82 +3407,79 @@ turn is intended to be skipped.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="uno.js.html">uno.js</a>,
+				 <a href="uno.js.html#sunlight-1-line-972">line 972</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="uno.js.html">uno.js</a>, <a href="uno.js.html#line972">line 972</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~parseToCard"><span class="type-signature">&lt;private, inner> </span>parseToCard(text)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Parse a string of text to a playable card.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~parseToCard"><span class="type-signature">(private, inner) </span>parseToCard<span class="signature">(text)</span><span class="type-signature"> &rarr; (nullable) {Uno.Card}</span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Parse a string of text to a playable card.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -3264,6 +3508,7 @@ turn is intended to be skipped.</td>
             
                 
 <span class="param-type">string</span>
+
 
 
             
@@ -3280,12 +3525,17 @@ turn is intended to be skipped.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -3295,51 +3545,52 @@ turn is intended to be skipped.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="uno.js.html">uno.js</a>,
+				 <a href="uno.js.html#sunlight-1-line-1226">line 1226</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="uno.js.html">uno.js</a>, <a href="uno.js.html#line1226">line 1226</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     The matched card, or null if no match.
 </div>
@@ -3355,44 +3606,42 @@ turn is intended to be skipped.</td>
 <span class="param-type">Uno.Card</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~playCard"><span class="type-signature">&lt;private, inner> </span>playCard(text)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Play a card for the current player.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~playCard"><span class="type-signature">(private, inner) </span>playCard<span class="signature">(text<span class="signature-attributes">nullable</span>)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Play a card for the current player.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -3402,7 +3651,7 @@ turn is intended to be skipped.</td>
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -3423,6 +3672,7 @@ turn is intended to be skipped.</td>
             
                 
 <span class="param-type">string</span>
+
 
 
             
@@ -3449,12 +3699,17 @@ turn is intended to be skipped.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -3464,51 +3719,52 @@ turn is intended to be skipped.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="uno.js.html">uno.js</a>,
+				 <a href="uno.js.html#sunlight-1-line-1061">line 1061</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="uno.js.html">uno.js</a>, <a href="uno.js.html#line1061">line 1061</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     True if the game has ended. False if the game should
 continue.
@@ -3525,45 +3781,48 @@ continue.
 <span class="param-type">boolean</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~sendHelp"><span class="type-signature">&lt;private, inner> </span>sendHelp()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Sends the game help to the group channel.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~sendHelp"><span class="type-signature">(private, inner) </span>sendHelp<span class="signature">()</span><span class="type-signature"> &rarr; {Promise.&lt;Discord~Message>}</span></h4>
     
 
     
-
-
-
-<div class="description">
-    Sends the game help to the group channel.
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -3573,51 +3832,52 @@ continue.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="uno.js.html">uno.js</a>,
+				 <a href="uno.js.html#sunlight-1-line-919">line 919</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="uno.js.html">uno.js</a>, <a href="uno.js.html#line919">line 919</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     Promise of command help being sent
 to the channel.
@@ -3634,45 +3894,48 @@ to the channel.
 <span class="param-type">Promise.&lt;Discord~Message></span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~startGame"><span class="type-signature">&lt;private, inner> </span>startGame()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Deal cards to all players, and start the game.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~startGame"><span class="type-signature">(private, inner) </span>startGame<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
     
-
-
-
-<div class="description">
-    Deal cards to all players, and start the game.
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -3682,54 +3945,54 @@ to the channel.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="uno.js.html">uno.js</a>,
+				 <a href="uno.js.html#sunlight-1-line-797">line 797</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="uno.js.html">uno.js</a>, <a href="uno.js.html#line797">line 797</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
+</dd>
 
-
-
-
-
-
-
-
-
-
-        
+        </dl>
     
 
     
@@ -3742,19 +4005,153 @@ to the channel.
 
 
 
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+		<div class="col-md-3">
+			<div id="toc" class="col-md-3 hidden-xs hidden-sm hidden-md"></div>
+		</div>
+	
+
+</div>
 </div>
 
-<nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_twemojiChecker.html">lib/twemojiChecker</a></li></ul><h3>Externals</h3><ul><li><a href="external-Discord.html">external:Discord</a></li></ul><h3>Classes</h3><ul><li><a href="ChatBot.html">ChatBot</a></li><li><a href="CmdScheduling.html">CmdScheduling</a></li><li><a href="CmdScheduling-ScheduledCommand.html">CmdScheduling~ScheduledCommand</a></li><li><a href="Command.html">Command</a></li><li><a href="Command-CommandSetting.html">Command~CommandSetting</a></li><li><a href="Command-SingleCommand.html">Command~SingleCommand</a></li><li><a href="Common.html">Common</a></li><li><a href="Connect4.html">Connect4</a></li><li><a href="Connect4_Game.html">Connect4#Game</a></li><li><a href="Define.html">Define</a></li><li><a href="DevCmds.html">DevCmds</a></li><li><a href="Echo.html">Echo</a></li><li><a href="Echo-Character.html">Echo~Character</a></li><li><a href="FunTranslators.html">FunTranslators</a></li><li><a href="HG.html">HG</a></li><li><a href="HGWeb.html">HGWeb</a></li><li><a href="HungryGames.html">HungryGames</a></li><li><a href="HungryGames-ArenaEvent.html">HungryGames~ArenaEvent</a></li><li><a href="HungryGames-Battle.html">HungryGames~Battle</a></li><li><a href="HungryGames-Day.html">HungryGames~Day</a></li><li><a href="HungryGames-DefaultOptions.html">HungryGames~DefaultOptions</a></li><li><a href="HungryGames-DefaultOptions-BooleanOption.html">HungryGames~DefaultOptions~BooleanOption</a></li><li><a href="HungryGames-DefaultOptions-NumberOption.html">HungryGames~DefaultOptions~NumberOption</a></li><li><a href="HungryGames-DefaultOptions-ObjectOption.html">HungryGames~DefaultOptions~ObjectOption</a></li><li><a href="HungryGames-DefaultOptions-Option.html">HungryGames~DefaultOptions~Option</a></li><li><a href="HungryGames-DefaultOptions-SelectOption.html">HungryGames~DefaultOptions~SelectOption</a></li><li><a href="HungryGames-Event.html">HungryGames~Event</a></li><li><a href="HungryGames-FinalEvent.html">HungryGames~FinalEvent</a></li><li><a href="HungryGames-ForcedOutcome.html">HungryGames~ForcedOutcome</a></li><li><a href="HungryGames-Game.html">HungryGames~Game</a></li><li><a href="HungryGames-Grammar.html">HungryGames~Grammar</a></li><li><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></li><li><a href="HungryGames-Messages.html">HungryGames~Messages</a></li><li><a href="HungryGames-OutcomeProbabilities.html">HungryGames~OutcomeProbabilities</a></li><li><a href="HungryGames-Player.html">HungryGames~Player</a></li><li><a href="HungryGames-Simulator.html">HungryGames~Simulator</a></li><li><a href="HungryGames-Simulator-Worker.html">HungryGames~Simulator~Worker</a></li><li><a href="HungryGames-Team.html">HungryGames~Team</a></li><li><a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a></li><li><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></li><li><a href="Main.html">Main</a></li><li><a href="MainModule.html">MainModule</a></li><li><a href="Messages.html">Messages</a></li><li><a href="Moderation.html">Moderation</a></li><li><a href="ModLog.html">ModLog</a></li><li><a href="ModLog-Settings.html">ModLog~Settings</a></li><li><a href="Music.html">Music</a></li><li><a href="NPC.html">NPC</a></li><li><a href="Patreon.html">Patreon</a></li><li><a href="Patreon-toExport.html">Patreon~toExport</a></li><li><a href="Polling.html">Polling</a></li><li><a href="Polling-Poll.html">Polling~Poll</a></li><li><a href="RaidBlock.html">RaidBlock</a></li><li><a href="RaidBlock-RaidSettings.html">RaidBlock~RaidSettings</a></li><li><a href="RoleColors.html">RoleColors</a></li><li><a href="RoleManager.html">RoleManager</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="SMLoader.html">SMLoader</a></li><li><a href="SpikeyBot.html">SpikeyBot</a></li><li><a href="Spotify.html">Spotify</a></li><li><a href="SubModule.html">SubModule</a></li><li><a href="TicTacToe.html">TicTacToe</a></li><li><a href="TicTacToe_Game.html">TicTacToe#Game</a></li><li><a href="TTS.html">TTS</a></li><li><a href="Uno.html">Uno</a></li><li><a href="Uno_Card.html">Uno#Card</a></li><li><a href="Uno_Game.html">Uno#Game</a></li><li><a href="WebAccount.html">WebAccount</a></li><li><a href="WebCommands.html">WebCommands</a></li><li><a href="WebProxy.html">WebProxy</a></li><li><a href="WebSettings.html">WebSettings</a></li><li><a href="WebStats.html">WebStats</a></li></ul><h3>Global</h3><ul><li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li></ul>
-</nav>
 
-<br class="clear">
+    <div class="modal fade" id="searchResults">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Search results</h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sat May 04 2019 21:43:40 GMT-0700 (Pacific Daylight Time)
+
+
+	<span class="copyright">
+	<small>Website Contact: <a href="mailto:web@spikeybot.com">web@spikeybot.com</a>.</small><br><small>&copy; Copyright 2019, Campbell Crowley. <a href="https://docs.google.com/document/d/1SAC2aPxxeNqRjlZzjwrnCyyWWyt09ZP-AP7BDBjjQDg/edit?usp=sharing">Privacy Policy</a></small>
+	</span>
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
+	
+		on Saturday, May 4, 2019 10:15 PM (-07:00)
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
 </footer>
 
-<script> prettyPrint(); </script>
-<script src="scripts/linenumber.js"> </script>
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+
+    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+<script>
+	(function ( i, s, o, g, r, a, m ) {
+		i['GoogleAnalyticsObject'] = r;
+		i[r] = i[r] || function () {
+			(i[r].q = i[r].q || []).push( arguments )
+		}, i[r].l = 1 * new Date();
+		a = s.createElement( o ),
+			m = s.getElementsByTagName( o )[0];
+		a.async = 1;
+		a.src = g;
+		m.parentNode.insertBefore( a, m )
+	})( window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga' );
+
+	ga( 'create', 'UA-89923351-1', 'www.spikeybot.com' );
+	ga( 'send', 'pageview' );
+</script>
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            SearcherDisplay.init();
+        });
+    </script>
+
+
 </body>
 </html>

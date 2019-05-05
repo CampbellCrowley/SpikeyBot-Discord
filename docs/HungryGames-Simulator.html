@@ -1,70 +1,134 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>JSDoc: Class: Simulator</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>SpikeyBot-Discord Class: Simulator</title>
 
-    <script src="scripts/prettify/prettify.js"> </script>
-    <script src="scripts/prettify/lang-css.js"> </script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
-    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.dark.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.slate.css">
+
 </head>
 
 <body>
 
-<div id="main">
+<div class="navbar navbar-default navbar-fixed-top ">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">SpikeyBot-Discord</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="module-lib_twemojiChecker.html">lib/twemojiChecker</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="ChatBot.html">ChatBot</a></li><li><a href="CmdScheduling.html">CmdScheduling</a></li><li><a href="CmdScheduling-ScheduledCommand.html">CmdScheduling~ScheduledCommand</a></li><li><a href="Command.html">Command</a></li><li><a href="Command-CommandSetting.html">Command~CommandSetting</a></li><li><a href="Command-SingleCommand.html">Command~SingleCommand</a></li><li><a href="Common.html">Common</a></li><li><a href="Connect4.html">Connect4</a></li><li><a href="Connect4_Game.html">Connect4#Game</a></li><li><a href="Define.html">Define</a></li><li><a href="DevCmds.html">DevCmds</a></li><li><a href="Echo.html">Echo</a></li><li><a href="Echo-Character.html">Echo~Character</a></li><li><a href="FunTranslators.html">FunTranslators</a></li><li><a href="HG.html">HG</a></li><li><a href="HGWeb.html">HGWeb</a></li><li><a href="HungryGames.html">HungryGames</a></li><li><a href="HungryGames-ArenaEvent.html">HungryGames~ArenaEvent</a></li><li><a href="HungryGames-Battle.html">HungryGames~Battle</a></li><li><a href="HungryGames-Day.html">HungryGames~Day</a></li><li><a href="HungryGames-DefaultOptions.html">HungryGames~DefaultOptions</a></li><li><a href="HungryGames-DefaultOptions-BooleanOption.html">HungryGames~DefaultOptions~BooleanOption</a></li><li><a href="HungryGames-DefaultOptions-NumberOption.html">HungryGames~DefaultOptions~NumberOption</a></li><li><a href="HungryGames-DefaultOptions-ObjectOption.html">HungryGames~DefaultOptions~ObjectOption</a></li><li><a href="HungryGames-DefaultOptions-Option.html">HungryGames~DefaultOptions~Option</a></li><li><a href="HungryGames-DefaultOptions-SelectOption.html">HungryGames~DefaultOptions~SelectOption</a></li><li><a href="HungryGames-Event.html">HungryGames~Event</a></li><li><a href="HungryGames-FinalEvent.html">HungryGames~FinalEvent</a></li><li><a href="HungryGames-ForcedOutcome.html">HungryGames~ForcedOutcome</a></li><li><a href="HungryGames-Game.html">HungryGames~Game</a></li><li><a href="HungryGames-Grammar.html">HungryGames~Grammar</a></li><li><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></li><li><a href="HungryGames-Messages.html">HungryGames~Messages</a></li><li><a href="HungryGames-OutcomeProbabilities.html">HungryGames~OutcomeProbabilities</a></li><li><a href="HungryGames-Player.html">HungryGames~Player</a></li><li><a href="HungryGames-Simulator.html">HungryGames~Simulator</a></li><li><a href="HungryGames-Simulator-Worker.html">HungryGames~Simulator~Worker</a></li><li><a href="HungryGames-Team.html">HungryGames~Team</a></li><li><a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a></li><li><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></li><li><a href="Main.html">Main</a></li><li><a href="MainModule.html">MainModule</a></li><li><a href="Messages.html">Messages</a></li><li><a href="Moderation.html">Moderation</a></li><li><a href="ModLog.html">ModLog</a></li><li><a href="ModLog-Settings.html">ModLog~Settings</a></li><li><a href="Music.html">Music</a></li><li><a href="NPC.html">NPC</a></li><li><a href="Patreon.html">Patreon</a></li><li><a href="Patreon-toExport.html">Patreon~toExport</a></li><li><a href="Polling.html">Polling</a></li><li><a href="Polling-Poll.html">Polling~Poll</a></li><li><a href="RaidBlock.html">RaidBlock</a></li><li><a href="RaidBlock-RaidSettings.html">RaidBlock~RaidSettings</a></li><li><a href="RoleColors.html">RoleColors</a></li><li><a href="RoleManager.html">RoleManager</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="SMLoader.html">SMLoader</a></li><li><a href="SpikeyBot.html">SpikeyBot</a></li><li><a href="Spotify.html">Spotify</a></li><li><a href="SubModule.html">SubModule</a></li><li><a href="TicTacToe.html">TicTacToe</a></li><li><a href="TicTacToe_Game.html">TicTacToe#Game</a></li><li><a href="TTS.html">TTS</a></li><li><a href="Uno.html">Uno</a></li><li><a href="Uno_Card.html">Uno#Card</a></li><li><a href="Uno_Game.html">Uno#Game</a></li><li><a href="WebAccount.html">WebAccount</a></li><li><a href="WebCommands.html">WebCommands</a></li><li><a href="WebProxy.html">WebProxy</a></li><li><a href="WebSettings.html">WebSettings</a></li><li><a href="WebStats.html">WebStats</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="externals.list.html" class="dropdown-toggle" data-toggle="dropdown">Externals<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="external-Discord.html">Discord</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+        
+            <div class="col-sm-3 col-md-3">
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        
+	</div>
 
-    <h1 class="page-title">Class: Simulator</h1>
-
-    
-
+</div>
+</div>
 
 
+<div class="container" id="toc-content">
+<div class="row">
 
+	
+	<div class="col-md-8">
+	
+		<div id="main">
+			
+
+	<h1 class="page-title">Class: Simulator</h1>
 <section>
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>
-            <span class="ancestors"><a href="HungryGames.html">HungryGames</a>~</span>Simulator<span class="signature">(game, hg, msg<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
+        <h2>
+            <span class="ancestors"><a href="HungryGames.html">HungryGames</a>~</span>
+        
+        Simulator
+        </h2>
         
     
 </header>
+
 
 <article>
     <div class="container-overview">
     
         
+<hr>
+<dt>
+    <h4 class="name" id="Simulator"><span class="type-signature"></span>new Simulator(game, hg [, msg])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Manages HG day simulation.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="Simulator"><span class="type-signature"></span>new Simulator<span class="signature">(game, hg, msg<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Manages HG day simulation.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -74,7 +138,7 @@
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -95,6 +159,7 @@
             
                 
 <span class="param-type"><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></span>
+
 
 
             
@@ -126,6 +191,7 @@
             
                 
 <span class="param-type"><a href="HungryGames.html">HungryGames</a></span>
+
 
 
             
@@ -160,6 +226,7 @@ references.</td>
 <span class="param-type">Discord~Message</span>
 
 
+
             
             </td>
 
@@ -184,12 +251,17 @@ references.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -199,52 +271,52 @@ references.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="hg_Simulator.js.html">hg/Simulator.js</a>,
+				 <a href="hg_Simulator.js.html#sunlight-1-line-24">line 24</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hg_Simulator.js.html">hg/Simulator.js</a>, <a href="hg_Simulator.js.html#line24">line 24</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
     
     </div>
@@ -267,39 +339,46 @@ references.</td>
     
 
     
-
-    
         <h3 class="subsection-title">Members</h3>
 
-        
+        <dl>
             
-<h4 class="name" id="._littleDeathRate"><span class="type-signature">(private, static, constant) </span>_littleDeathRate<span class="type-signature"> :number</span></h4>
+<hr>
+<dt class="name" id="._littleDeathRate">
+    <h4 id="._littleDeathRate"><span class="type-signature">&lt;private, static, constant> </span>_littleDeathRate<span class="type-signature"> :number</span></h4>
 
-
-
-
-<div class="description">
-    If a lower percentage of people die in one day than this value,
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        If a lower percentage of people die in one day than this value,
 then show a relevant message.
-</div>
+    </div>
+    
 
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">number</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -309,75 +388,86 @@ then show a relevant message.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>0.15</li>
+		</ul>
+	</dd>
+	
 
-    
 
-    
 
-    
-    <dt class="tag-default">Default Value:</dt>
-    <dd class="tag-default"><ul class="dummy">
-            <li>0.15</li>
-        </ul></dd>
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="hg_Simulator.js.html">hg/Simulator.js</a>,
+				 <a href="hg_Simulator.js.html#sunlight-1-line-170">line 170</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hg_Simulator.js.html">hg/Simulator.js</a>, <a href="hg_Simulator.js.html#line170">line 170</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="._lotsOfDeathRate"><span class="type-signature">(private, static, constant) </span>_lotsOfDeathRate<span class="type-signature"> :number</span></h4>
+<hr>
+<dt class="name" id="._lotsOfDeathRate">
+    <h4 id="._lotsOfDeathRate"><span class="type-signature">&lt;private, static, constant> </span>_lotsOfDeathRate<span class="type-signature"> :number</span></h4>
 
-
-
-
-<div class="description">
-    If a larger percentage of people die in one day than this value,
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        If a larger percentage of people die in one day than this value,
 then show a relevant message.
-</div>
+    </div>
+    
 
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">number</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -387,75 +477,86 @@ then show a relevant message.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>0.75</li>
+		</ul>
+	</dd>
+	
 
-    
 
-    
 
-    
-    <dt class="tag-default">Default Value:</dt>
-    <dd class="tag-default"><ul class="dummy">
-            <li>0.75</li>
-        </ul></dd>
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="hg_Simulator.js.html">hg/Simulator.js</a>,
+				 <a href="hg_Simulator.js.html#sunlight-1-line-159">line 159</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hg_Simulator.js.html">hg/Simulator.js</a>, <a href="hg_Simulator.js.html#line159">line 159</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="._multiEventUserDistribution"><span class="type-signature">(private, static, constant) </span>_multiEventUserDistribution<span class="type-signature"> :Object.&lt;number></span></h4>
+<hr>
+<dt class="name" id="._multiEventUserDistribution">
+    <h4 id="._multiEventUserDistribution"><span class="type-signature">&lt;private, static, constant> </span>_multiEventUserDistribution<span class="type-signature"> :Object.&lt;number></span></h4>
 
-
-
-
-<div class="description">
-    Probability of each amount of people being chosen for an event.
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Probability of each amount of people being chosen for an event.
 Must total to 1.0
-</div>
+    </div>
+    
 
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">Object.&lt;number></span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -465,74 +566,85 @@ Must total to 1.0
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>{"undefined":0.0005}</li>
+		</ul>
+	</dd>
+	
 
-    
 
-    
 
-    
-    <dt class="tag-default">Default Value:</dt>
-    <dd class="tag-default"><ul class="dummy">
-            <li class="object-value"><pre class="prettyprint"><code>{"undefined":0.0005}</code></pre></li>
-        </ul></dd>
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="hg_Simulator.js.html">hg/Simulator.js</a>,
+				 <a href="hg_Simulator.js.html#sunlight-1-line-137">line 137</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hg_Simulator.js.html">hg/Simulator.js</a>, <a href="hg_Simulator.js.html#line137">line 137</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="._workerPath"><span class="type-signature">(private, static, constant) </span>_workerPath<span class="type-signature"> :string</span></h4>
+<hr>
+<dt class="name" id="._workerPath">
+    <h4 id="._workerPath"><span class="type-signature">&lt;private, static, constant> </span>_workerPath<span class="type-signature"> :string</span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Relative path from CWD where the simulation worker is located.
+    </div>
+    
 
-
-
-<div class="description">
-    Relative path from CWD where the simulation worker is located.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">string</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -542,81 +654,80 @@ Must total to 1.0
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>./src/hg/simulator/worker.js</li>
+		</ul>
+	</dd>
+	
 
-    
 
-    
 
-    
-    <dt class="tag-default">Default Value:</dt>
-    <dd class="tag-default"><ul class="dummy">
-            <li>./src/hg/simulator/worker.js</li>
-        </ul></dd>
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="hg_Simulator.js.html">hg/Simulator.js</a>,
+				 <a href="hg_Simulator.js.html#sunlight-1-line-900">line 900</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hg_Simulator.js.html">hg/Simulator.js</a>, <a href="hg_Simulator.js.html#line900">line 900</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
+</dd>
 
-
-
-
-        
+        </dl>
     
 
     
         <h3 class="subsection-title">Methods</h3>
 
-        
+        <dl>
             
+<hr>
+<dt>
+    <h4 class="name" id="._effectUser"><span class="type-signature">&lt;private, static> </span>_effectUser(game, affected, kills [, weapon])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Base of all actions to perform on a player.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="._effectUser"><span class="type-signature">(private, static) </span>_effectUser<span class="signature">(game, affected, kills, weapon<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Base of all actions to perform on a player.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -626,7 +737,7 @@ Must total to 1.0
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -647,6 +758,7 @@ Must total to 1.0
             
                 
 <span class="param-type"><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></span>
+
 
 
             
@@ -680,6 +792,7 @@ Must total to 1.0
 <span class="param-type"><a href="HungryGames-Player.html">HungryGames~Player</a></span>
 
 
+
             
             </td>
 
@@ -709,6 +822,7 @@ Must total to 1.0
             
                 
 <span class="param-type">number</span>
+
 
 
             
@@ -742,6 +856,7 @@ Must total to 1.0
 <span class="param-type">Array.&lt;HungryGames~Weapon></span>
 
 
+
             
             </td>
 
@@ -766,12 +881,17 @@ Must total to 1.0
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -781,82 +901,79 @@ Must total to 1.0
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="hg_Simulator.js.html">hg/Simulator.js</a>,
+				 <a href="hg_Simulator.js.html#sunlight-1-line-350">line 350</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hg_Simulator.js.html">hg/Simulator.js</a>, <a href="hg_Simulator.js.html#line350">line 350</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="._killUser"><span class="type-signature">&lt;private, static> </span>_killUser(game, a, k [, w])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Kill the given player in the given guild game.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="._killUser"><span class="type-signature">(private, static) </span>_killUser<span class="signature">(game, a, k, w<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Kill the given player in the given guild game.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -866,7 +983,7 @@ Must total to 1.0
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -887,6 +1004,7 @@ Must total to 1.0
             
                 
 <span class="param-type"><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></span>
+
 
 
             
@@ -920,6 +1038,7 @@ Must total to 1.0
 <span class="param-type"><a href="HungryGames-Player.html">HungryGames~Player</a></span>
 
 
+
             
             </td>
 
@@ -949,6 +1068,7 @@ Must total to 1.0
             
                 
 <span class="param-type">number</span>
+
 
 
             
@@ -982,6 +1102,7 @@ Must total to 1.0
 <span class="param-type">Array.&lt;HungryGames~Weapon></span>
 
 
+
             
             </td>
 
@@ -1006,12 +1127,17 @@ Must total to 1.0
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1021,82 +1147,79 @@ Must total to 1.0
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="hg_Simulator.js.html">hg/Simulator.js</a>,
+				 <a href="hg_Simulator.js.html#sunlight-1-line-375">line 375</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hg_Simulator.js.html">hg/Simulator.js</a>, <a href="hg_Simulator.js.html#line375">line 375</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="._pickAffectedPlayers"><span class="type-signature">&lt;private, static> </span>_pickAffectedPlayers(numVictim, numAttacker, victimOutcome, attackerOutcome, options, userPool, deadPool, teams, weaponWielder)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Pick the players to put into an event.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="._pickAffectedPlayers"><span class="type-signature">(private, static) </span>_pickAffectedPlayers<span class="signature">(numVictim, numAttacker, victimOutcome, attackerOutcome, options, userPool, deadPool, teams, weaponWielder<span class="signature-attributes">nullable</span>)</span><span class="type-signature"> &rarr; {Array.&lt;<a href="HungryGames-Player.html">HungryGames~Player</a>>}</span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Pick the players to put into an event.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -1106,7 +1229,7 @@ Must total to 1.0
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -1127,6 +1250,7 @@ Must total to 1.0
             
                 
 <span class="param-type">number</span>
+
 
 
             
@@ -1160,6 +1284,7 @@ Must total to 1.0
 <span class="param-type">number</span>
 
 
+
             
             </td>
 
@@ -1189,6 +1314,7 @@ Must total to 1.0
             
                 
 <span class="param-type">string</span>
+
 
 
             
@@ -1223,6 +1349,7 @@ instead of userPool.</td>
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -1255,6 +1382,7 @@ deadPool instead of userPool.</td>
 <span class="param-type">Object</span>
 
 
+
             
             </td>
 
@@ -1284,6 +1412,7 @@ deadPool instead of userPool.</td>
             
                 
 <span class="param-type">Array.&lt;<a href="HungryGames-Player.html">HungryGames~Player</a>></span>
+
 
 
             
@@ -1318,6 +1447,7 @@ into an event.</td>
 <span class="param-type">Array.&lt;<a href="HungryGames-Player.html">HungryGames~Player</a>></span>
 
 
+
             
             </td>
 
@@ -1348,6 +1478,7 @@ revived.</td>
             
                 
 <span class="param-type">Array.&lt;<a href="HungryGames-Team.html">HungryGames~Team</a>></span>
+
 
 
             
@@ -1381,6 +1512,7 @@ revived.</td>
 <span class="param-type">Player</span>
 
 
+
             
             </td>
 
@@ -1406,12 +1538,17 @@ or null if no player is using a weapon.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1421,51 +1558,52 @@ or null if no player is using a weapon.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="hg_Simulator.js.html">hg/Simulator.js</a>,
+				 <a href="hg_Simulator.js.html#sunlight-1-line-218">line 218</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hg_Simulator.js.html">hg/Simulator.js</a>, <a href="hg_Simulator.js.html#line218">line 218</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     Array of all players that will be affected by
 this event.
@@ -1482,44 +1620,42 @@ this event.
 <span class="param-type">Array.&lt;<a href="HungryGames-Player.html">HungryGames~Player</a>></span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="._pickEvent"><span class="type-signature">&lt;private, static> </span>_pickEvent(userPool, eventPool, options, numAlive, numTotal, teams, probOpts, weaponWielder, chosenWeapon)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Pick event that satisfies all requirements and settings.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="._pickEvent"><span class="type-signature">(private, static) </span>_pickEvent<span class="signature">(userPool, eventPool, options, numAlive, numTotal, teams, probOpts, weaponWielder<span class="signature-attributes">nullable</span>, chosenWeapon)</span><span class="type-signature"> &rarr; (nullable) {<a href="HungryGames-Event.html">HungryGames~Event</a>}</span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Pick event that satisfies all requirements and settings.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -1529,7 +1665,7 @@ this event.
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -1550,6 +1686,7 @@ this event.
             
                 
 <span class="param-type">Array.&lt;<a href="HungryGames-Player.html">HungryGames~Player</a>></span>
+
 
 
             
@@ -1584,6 +1721,7 @@ in this day.</td>
 <span class="param-type">Array.&lt;<a href="HungryGames-Event.html">HungryGames~Event</a>></span>
 
 
+
             
             </td>
 
@@ -1614,6 +1752,7 @@ choose at this time.</td>
             
                 
 <span class="param-type">Object</span>
+
 
 
             
@@ -1647,6 +1786,7 @@ choose at this time.</td>
 <span class="param-type">number</span>
 
 
+
             
             </td>
 
@@ -1676,6 +1816,7 @@ choose at this time.</td>
             
                 
 <span class="param-type">number</span>
+
 
 
             
@@ -1709,6 +1850,7 @@ choose at this time.</td>
 <span class="param-type">Array.&lt;<a href="HungryGames-Team.html">HungryGames~Team</a>></span>
 
 
+
             
             </td>
 
@@ -1740,6 +1882,7 @@ choose at this time.</td>
 <span class="param-type"><a href="HungryGames-OutcomeProbabilities.html">HungryGames~OutcomeProbabilities</a></span>
 
 
+
             
             </td>
 
@@ -1769,6 +1912,7 @@ choose at this time.</td>
             
                 
 <span class="param-type">Player</span>
+
 
 
             
@@ -1805,6 +1949,7 @@ event, or null if no player is using a weapon.</td>
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -1827,12 +1972,17 @@ event, or null if no player is using a weapon.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1842,51 +1992,52 @@ event, or null if no player is using a weapon.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="hg_Simulator.js.html">hg/Simulator.js</a>,
+				 <a href="hg_Simulator.js.html#sunlight-1-line-487">line 487</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hg_Simulator.js.html">hg/Simulator.js</a>, <a href="hg_Simulator.js.html#line487">line 487</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     The chosen event that satisfies all
 requirements, or null if something went wrong.
@@ -1903,44 +2054,42 @@ requirements, or null if something went wrong.
 <span class="param-type"><a href="HungryGames-Event.html">HungryGames~Event</a></span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="._probabilityEvent"><span class="type-signature">&lt;private, static> </span>_probabilityEvent(eventPool, probabilityOpts [, customWeight] [, recurse])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Produce a random event that using probabilities set in options.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="._probabilityEvent"><span class="type-signature">(private, static) </span>_probabilityEvent<span class="signature">(eventPool, probabilityOpts, customWeight<span class="signature-attributes">opt</span>, recurse<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {number}</span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Produce a random event that using probabilities set in options.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -1950,7 +2099,7 @@ requirements, or null if something went wrong.
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -1973,6 +2122,7 @@ requirements, or null if something went wrong.
             
                 
 <span class="param-type">Array.&lt;<a href="HungryGames-Event.html">HungryGames~Event</a>></span>
+
 
 
             
@@ -2010,6 +2160,7 @@ requirements, or null if something went wrong.
 <span class="param-type">Object</span>
 
 
+
             
             </td>
 
@@ -2043,6 +2194,7 @@ requirements, or null if something went wrong.
             
                 
 <span class="param-type">number</span>
+
 
 
             
@@ -2084,6 +2236,7 @@ requirements, or null if something went wrong.
 <span class="param-type">number</span>
 
 
+
             
             </td>
 
@@ -2114,12 +2267,17 @@ requirements, or null if something went wrong.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -2129,51 +2287,52 @@ requirements, or null if something went wrong.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="hg_Simulator.js.html">hg/Simulator.js</a>,
+				 <a href="hg_Simulator.js.html#sunlight-1-line-814">line 814</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hg_Simulator.js.html">hg/Simulator.js</a>, <a href="hg_Simulator.js.html#line814">line 814</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     The index of the event that was chosen.
 </div>
@@ -2189,44 +2348,42 @@ requirements, or null if something went wrong.
 <span class="param-type">number</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="._restoreUser"><span class="type-signature">&lt;private, static> </span>_restoreUser(game, a, k [, w])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Heal the given player in the given guild game.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="._restoreUser"><span class="type-signature">(private, static) </span>_restoreUser<span class="signature">(game, a, k, w<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Heal the given player in the given guild game.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -2236,7 +2393,7 @@ requirements, or null if something went wrong.
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -2257,6 +2414,7 @@ requirements, or null if something went wrong.
             
                 
 <span class="param-type"><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></span>
+
 
 
             
@@ -2290,6 +2448,7 @@ requirements, or null if something went wrong.
 <span class="param-type"><a href="HungryGames-Player.html">HungryGames~Player</a></span>
 
 
+
             
             </td>
 
@@ -2319,6 +2478,7 @@ requirements, or null if something went wrong.
             
                 
 <span class="param-type">number</span>
+
 
 
             
@@ -2352,6 +2512,7 @@ requirements, or null if something went wrong.
 <span class="param-type">Array.&lt;HungryGames~Weapon></span>
 
 
+
             
             </td>
 
@@ -2376,12 +2537,17 @@ requirements, or null if something went wrong.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -2391,82 +2557,79 @@ requirements, or null if something went wrong.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="hg_Simulator.js.html">hg/Simulator.js</a>,
+				 <a href="hg_Simulator.js.html#sunlight-1-line-428">line 428</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hg_Simulator.js.html">hg/Simulator.js</a>, <a href="hg_Simulator.js.html#line428">line 428</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="._reviveUser"><span class="type-signature">&lt;private, static> </span>_reviveUser(game, a, k [, w])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Revive the given player in the given guild game.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="._reviveUser"><span class="type-signature">(private, static) </span>_reviveUser<span class="signature">(game, a, k, w<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Revive the given player in the given guild game.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -2476,7 +2639,7 @@ requirements, or null if something went wrong.
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -2497,6 +2660,7 @@ requirements, or null if something went wrong.
             
                 
 <span class="param-type"><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></span>
+
 
 
             
@@ -2530,6 +2694,7 @@ requirements, or null if something went wrong.
 <span class="param-type"><a href="HungryGames-Player.html">HungryGames~Player</a></span>
 
 
+
             
             </td>
 
@@ -2559,6 +2724,7 @@ requirements, or null if something went wrong.
             
                 
 <span class="param-type">number</span>
+
 
 
             
@@ -2592,6 +2758,7 @@ requirements, or null if something went wrong.
 <span class="param-type">Array.&lt;HungryGames~Weapon></span>
 
 
+
             
             </td>
 
@@ -2616,12 +2783,17 @@ requirements, or null if something went wrong.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -2631,82 +2803,79 @@ requirements, or null if something went wrong.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="hg_Simulator.js.html">hg/Simulator.js</a>,
+				 <a href="hg_Simulator.js.html#sunlight-1-line-443">line 443</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hg_Simulator.js.html">hg/Simulator.js</a>, <a href="hg_Simulator.js.html#line443">line 443</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="._validateEventNumConstraint"><span class="type-signature">&lt;private, static> </span>_validateEventNumConstraint(numVictim, numAttacker, userPool, numAlive)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Ensure the number of users in an event is mathematically possible.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="._validateEventNumConstraint"><span class="type-signature">(private, static) </span>_validateEventNumConstraint<span class="signature">(numVictim, numAttacker, userPool, numAlive)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Ensure the number of users in an event is mathematically possible.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -2737,6 +2906,7 @@ requirements, or null if something went wrong.
 <span class="param-type">number</span>
 
 
+
             
             </td>
 
@@ -2758,6 +2928,7 @@ requirements, or null if something went wrong.
             
                 
 <span class="param-type">number</span>
+
 
 
             
@@ -2783,6 +2954,7 @@ requirements, or null if something went wrong.
 <span class="param-type">Array.&lt;<a href="HungryGames-Player.html">HungryGames~Player</a>></span>
 
 
+
             
             </td>
 
@@ -2805,6 +2977,7 @@ into an event.</td>
             
                 
 <span class="param-type">number</span>
+
 
 
             
@@ -2821,12 +2994,17 @@ into an event.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -2836,51 +3014,52 @@ into an event.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="hg_Simulator.js.html">hg/Simulator.js</a>,
+				 <a href="hg_Simulator.js.html#sunlight-1-line-756">line 756</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hg_Simulator.js.html">hg/Simulator.js</a>, <a href="hg_Simulator.js.html#line756">line 756</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     If the event requires a number of players that is valid
 from the number of players left to choose from.
@@ -2897,45 +3076,43 @@ from the number of players left to choose from.
 <span class="param-type">boolean</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="._validateEventRequirements"><span class="type-signature">&lt;private, static> </span>_validateEventRequirements(numVictim, numAttacker, userPool, numAlive, teams, options, victimsDie, attackersDie, weaponWielder)</h4>
+    
+    
+</dt>
+<dd>
 
     
-
-    
-    <h4 class="name" id="._validateEventRequirements"><span class="type-signature">(private, static) </span>_validateEventRequirements<span class="signature">(numVictim, numAttacker, userPool, numAlive, teams, options, victimsDie, attackersDie, weaponWielder<span class="signature-attributes">nullable</span>)</span><span class="type-signature"> &rarr; (nullable) {string}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Ensure the event chosen meets all requirements for actually being used in
+    <div class="description">
+        Ensure the event chosen meets all requirements for actually being used in
 the current game.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
+    </div>
     
 
-<table class="params">
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -2945,7 +3122,7 @@ the current game.
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -2966,6 +3143,7 @@ the current game.
             
                 
 <span class="param-type">number</span>
+
 
 
             
@@ -2999,6 +3177,7 @@ the current game.
 <span class="param-type">number</span>
 
 
+
             
             </td>
 
@@ -3028,6 +3207,7 @@ the current game.
             
                 
 <span class="param-type">Array.&lt;<a href="HungryGames-Player.html">HungryGames~Player</a>></span>
+
 
 
             
@@ -3060,6 +3240,7 @@ into an event.</td>
             
                 
 <span class="param-type">number</span>
+
 
 
             
@@ -3093,6 +3274,7 @@ into an event.</td>
 <span class="param-type">Array.&lt;<a href="HungryGames-Team.html">HungryGames~Team</a>></span>
 
 
+
             
             </td>
 
@@ -3122,6 +3304,7 @@ into an event.</td>
             
                 
 <span class="param-type">Object</span>
+
 
 
             
@@ -3155,6 +3338,7 @@ into an event.</td>
 <span class="param-type">boolean</span>
 
 
+
             
             </td>
 
@@ -3184,6 +3368,7 @@ into an event.</td>
             
                 
 <span class="param-type">boolean</span>
+
 
 
             
@@ -3217,6 +3402,7 @@ into an event.</td>
 <span class="param-type">Player</span>
 
 
+
             
             </td>
 
@@ -3242,12 +3428,17 @@ event, or null if no player is using a weapon.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -3257,51 +3448,52 @@ event, or null if no player is using a weapon.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="hg_Simulator.js.html">hg/Simulator.js</a>,
+				 <a href="hg_Simulator.js.html#sunlight-1-line-780">line 780</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hg_Simulator.js.html">hg/Simulator.js</a>, <a href="hg_Simulator.js.html#line780">line 780</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     String of failing constraint check, or null if passes.
 </div>
@@ -3317,44 +3509,42 @@ event, or null if no player is using a weapon.</td>
 <span class="param-type">string</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="._validateEventTeamConstraint"><span class="type-signature">&lt;private, static> </span>_validateEventTeamConstraint(numVictim, numAttacker, userPool, teams, options, victimsDie, attackersDie, weaponWielder)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Ensure teammates don't attack each other.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="._validateEventTeamConstraint"><span class="type-signature">(private, static) </span>_validateEventTeamConstraint<span class="signature">(numVictim, numAttacker, userPool, teams, options, victimsDie, attackersDie, weaponWielder<span class="signature-attributes">nullable</span>)</span><span class="type-signature"> &rarr; (nullable) {string}</span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Ensure teammates don't attack each other.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -3364,7 +3554,7 @@ event, or null if no player is using a weapon.</td>
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -3385,6 +3575,7 @@ event, or null if no player is using a weapon.</td>
             
                 
 <span class="param-type">number</span>
+
 
 
             
@@ -3418,6 +3609,7 @@ event, or null if no player is using a weapon.</td>
 <span class="param-type">number</span>
 
 
+
             
             </td>
 
@@ -3447,6 +3639,7 @@ event, or null if no player is using a weapon.</td>
             
                 
 <span class="param-type">Array.&lt;<a href="HungryGames-Player.html">HungryGames~Player</a>></span>
+
 
 
             
@@ -3481,6 +3674,7 @@ into an event.</td>
 <span class="param-type">Array.&lt;<a href="HungryGames-Team.html">HungryGames~Team</a>></span>
 
 
+
             
             </td>
 
@@ -3510,6 +3704,7 @@ into an event.</td>
             
                 
 <span class="param-type">Object</span>
+
 
 
             
@@ -3543,6 +3738,7 @@ into an event.</td>
 <span class="param-type">boolean</span>
 
 
+
             
             </td>
 
@@ -3572,6 +3768,7 @@ into an event.</td>
             
                 
 <span class="param-type">boolean</span>
+
 
 
             
@@ -3605,6 +3802,7 @@ into an event.</td>
 <span class="param-type">Player</span>
 
 
+
             
             </td>
 
@@ -3630,12 +3828,17 @@ event, or null if no player is using a weapon.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -3645,51 +3848,52 @@ event, or null if no player is using a weapon.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="hg_Simulator.js.html">hg/Simulator.js</a>,
+				 <a href="hg_Simulator.js.html#sunlight-1-line-638">line 638</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hg_Simulator.js.html">hg/Simulator.js</a>, <a href="hg_Simulator.js.html#line638">line 638</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     String describing failing check, or null of pass.
 </div>
@@ -3705,44 +3909,42 @@ event, or null if no player is using a weapon.</td>
 <span class="param-type">string</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="._validateEventVictorConstraint"><span class="type-signature">&lt;private, static> </span>_validateEventVictorConstraint(numVictim, numAttacker, numAlive, options, victimsDie, attackersDie)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Ensure the event we choose will not force all players to be dead.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="._validateEventVictorConstraint"><span class="type-signature">(private, static) </span>_validateEventVictorConstraint<span class="signature">(numVictim, numAttacker, numAlive, options, victimsDie, attackersDie)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Ensure the event we choose will not force all players to be dead.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -3773,6 +3975,7 @@ event, or null if no player is using a weapon.</td>
 <span class="param-type">number</span>
 
 
+
             
             </td>
 
@@ -3794,6 +3997,7 @@ event, or null if no player is using a weapon.</td>
             
                 
 <span class="param-type">number</span>
+
 
 
             
@@ -3819,6 +4023,7 @@ event, or null if no player is using a weapon.</td>
 <span class="param-type">number</span>
 
 
+
             
             </td>
 
@@ -3840,6 +4045,7 @@ event, or null if no player is using a weapon.</td>
             
                 
 <span class="param-type">Object</span>
+
 
 
             
@@ -3865,6 +4071,7 @@ event, or null if no player is using a weapon.</td>
 <span class="param-type">boolean</span>
 
 
+
             
             </td>
 
@@ -3888,6 +4095,7 @@ event, or null if no player is using a weapon.</td>
 <span class="param-type">boolean</span>
 
 
+
             
             </td>
 
@@ -3902,12 +4110,17 @@ event, or null if no player is using a weapon.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -3917,51 +4130,52 @@ event, or null if no player is using a weapon.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="hg_Simulator.js.html">hg/Simulator.js</a>,
+				 <a href="hg_Simulator.js.html#sunlight-1-line-733">line 733</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hg_Simulator.js.html">hg/Simulator.js</a>, <a href="hg_Simulator.js.html#line733">line 733</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     Will this event follow current options set about number
 of victors required.
@@ -3978,44 +4192,42 @@ of victors required.
 <span class="param-type">boolean</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="._woundUser"><span class="type-signature">&lt;private, static> </span>_woundUser(game, a, k [, w])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Wound the given player in the given guild game.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="._woundUser"><span class="type-signature">(private, static) </span>_woundUser<span class="signature">(game, a, k, w<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Wound the given player in the given guild game.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -4025,7 +4237,7 @@ of victors required.
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -4046,6 +4258,7 @@ of victors required.
             
                 
 <span class="param-type"><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></span>
+
 
 
             
@@ -4079,6 +4292,7 @@ of victors required.
 <span class="param-type"><a href="HungryGames-Player.html">HungryGames~Player</a></span>
 
 
+
             
             </td>
 
@@ -4108,6 +4322,7 @@ of victors required.
             
                 
 <span class="param-type">number</span>
+
 
 
             
@@ -4141,6 +4356,7 @@ of victors required.
 <span class="param-type">Array.&lt;HungryGames~Weapon></span>
 
 
+
             
             </td>
 
@@ -4165,12 +4381,17 @@ of victors required.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -4180,83 +4401,85 @@ of victors required.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="hg_Simulator.js.html">hg/Simulator.js</a>,
+				 <a href="hg_Simulator.js.html#sunlight-1-line-414">line 414</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hg_Simulator.js.html">hg/Simulator.js</a>, <a href="hg_Simulator.js.html#line414">line 414</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id=".weightedUserRand"><span class="type-signature">&lt;static> </span>weightedUserRand()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Produce a random number that is weighted by multiEventUserDistribution.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id=".weightedUserRand"><span class="type-signature">(static) </span>weightedUserRand<span class="signature">()</span><span class="type-signature"> &rarr; {number}</span></h4>
     
 
     
-
-
-
-<div class="description">
-    Produce a random number that is weighted by multiEventUserDistribution.
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -4266,58 +4489,59 @@ of victors required.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="hg_Simulator.js.html">hg/Simulator.js</a>,
+				 <a href="hg_Simulator.js.html#sunlight-1-line-181">line 181</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hg_Simulator.js.html">hg/Simulator.js</a>, <a href="hg_Simulator.js.html#line181">line 181</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li>multiEventUserDistribution</li>
+			</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li>multiEventUserDistribution</li>
-        </ul>
-    </dd>
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     The weighted number outcome.
 </div>
@@ -4333,44 +4557,42 @@ of victors required.
 <span class="param-type">number</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="go"><span class="type-signature"></span>go(cb)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Simulate a day with the current GuildGame.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="go"><span class="type-signature"></span>go<span class="signature">(cb)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Simulate a day with the current GuildGame.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -4401,6 +4623,7 @@ of victors required.
 <span class="param-type">function</span>
 
 
+
             
             </td>
 
@@ -4416,12 +4639,17 @@ parameter is a possible error string, null if no error.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -4431,82 +4659,79 @@ parameter is a possible error string, null if no error.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="hg_Simulator.js.html">hg/Simulator.js</a>,
+				 <a href="hg_Simulator.js.html#sunlight-1-line-67">line 67</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hg_Simulator.js.html">hg/Simulator.js</a>, <a href="hg_Simulator.js.html#line67">line 67</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="setGame"><span class="type-signature"></span>setGame(game)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Change the GuildGame to simulate.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="setGame"><span class="type-signature"></span>setGame<span class="signature">(game)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Change the GuildGame to simulate.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -4537,6 +4762,7 @@ parameter is a possible error string, null if no error.</td>
 <span class="param-type"><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></span>
 
 
+
             
             </td>
 
@@ -4551,12 +4777,17 @@ parameter is a possible error string, null if no error.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -4566,82 +4797,79 @@ parameter is a possible error string, null if no error.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="hg_Simulator.js.html">hg/Simulator.js</a>,
+				 <a href="hg_Simulator.js.html#sunlight-1-line-42">line 42</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hg_Simulator.js.html">hg/Simulator.js</a>, <a href="hg_Simulator.js.html#line42">line 42</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="setMessage"><span class="type-signature"></span>setMessage(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Update the message to reply to.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="setMessage"><span class="type-signature"></span>setMessage<span class="signature">(msg)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Update the message to reply to.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -4672,6 +4900,7 @@ parameter is a possible error string, null if no error.</td>
 <span class="param-type">Discord~Message</span>
 
 
+
             
             </td>
 
@@ -4686,12 +4915,17 @@ parameter is a possible error string, null if no error.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -4701,82 +4935,79 @@ parameter is a possible error string, null if no error.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="hg_Simulator.js.html">hg/Simulator.js</a>,
+				 <a href="hg_Simulator.js.html#sunlight-1-line-58">line 58</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hg_Simulator.js.html">hg/Simulator.js</a>, <a href="hg_Simulator.js.html#line58">line 58</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="setParent"><span class="type-signature"></span>setParent(hg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Update the reference to the parent <a href="HungryGames.html">HungryGames</a>.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="setParent"><span class="type-signature"></span>setParent<span class="signature">(hg)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Update the reference to the parent <a href="HungryGames.html">HungryGames</a>.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -4807,6 +5038,7 @@ parameter is a possible error string, null if no error.</td>
 <span class="param-type"><a href="HungryGames.html">HungryGames</a></span>
 
 
+
             
             </td>
 
@@ -4821,12 +5053,17 @@ parameter is a possible error string, null if no error.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -4836,54 +5073,54 @@ parameter is a possible error string, null if no error.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="hg_Simulator.js.html">hg/Simulator.js</a>,
+				 <a href="hg_Simulator.js.html#sunlight-1-line-50">line 50</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="hg_Simulator.js.html">hg/Simulator.js</a>, <a href="hg_Simulator.js.html#line50">line 50</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
+</dd>
 
-
-
-
-
-
-
-
-
-
-        
+        </dl>
     
 
     
@@ -4896,19 +5133,153 @@ parameter is a possible error string, null if no error.</td>
 
 
 
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+		<div class="col-md-3">
+			<div id="toc" class="col-md-3 hidden-xs hidden-sm hidden-md"></div>
+		</div>
+	
+
+</div>
 </div>
 
-<nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_twemojiChecker.html">lib/twemojiChecker</a></li></ul><h3>Externals</h3><ul><li><a href="external-Discord.html">external:Discord</a></li></ul><h3>Classes</h3><ul><li><a href="ChatBot.html">ChatBot</a></li><li><a href="CmdScheduling.html">CmdScheduling</a></li><li><a href="CmdScheduling-ScheduledCommand.html">CmdScheduling~ScheduledCommand</a></li><li><a href="Command.html">Command</a></li><li><a href="Command-CommandSetting.html">Command~CommandSetting</a></li><li><a href="Command-SingleCommand.html">Command~SingleCommand</a></li><li><a href="Common.html">Common</a></li><li><a href="Connect4.html">Connect4</a></li><li><a href="Connect4_Game.html">Connect4#Game</a></li><li><a href="Define.html">Define</a></li><li><a href="DevCmds.html">DevCmds</a></li><li><a href="Echo.html">Echo</a></li><li><a href="Echo-Character.html">Echo~Character</a></li><li><a href="FunTranslators.html">FunTranslators</a></li><li><a href="HG.html">HG</a></li><li><a href="HGWeb.html">HGWeb</a></li><li><a href="HungryGames.html">HungryGames</a></li><li><a href="HungryGames-ArenaEvent.html">HungryGames~ArenaEvent</a></li><li><a href="HungryGames-Battle.html">HungryGames~Battle</a></li><li><a href="HungryGames-Day.html">HungryGames~Day</a></li><li><a href="HungryGames-DefaultOptions.html">HungryGames~DefaultOptions</a></li><li><a href="HungryGames-DefaultOptions-BooleanOption.html">HungryGames~DefaultOptions~BooleanOption</a></li><li><a href="HungryGames-DefaultOptions-NumberOption.html">HungryGames~DefaultOptions~NumberOption</a></li><li><a href="HungryGames-DefaultOptions-ObjectOption.html">HungryGames~DefaultOptions~ObjectOption</a></li><li><a href="HungryGames-DefaultOptions-Option.html">HungryGames~DefaultOptions~Option</a></li><li><a href="HungryGames-DefaultOptions-SelectOption.html">HungryGames~DefaultOptions~SelectOption</a></li><li><a href="HungryGames-Event.html">HungryGames~Event</a></li><li><a href="HungryGames-FinalEvent.html">HungryGames~FinalEvent</a></li><li><a href="HungryGames-ForcedOutcome.html">HungryGames~ForcedOutcome</a></li><li><a href="HungryGames-Game.html">HungryGames~Game</a></li><li><a href="HungryGames-Grammar.html">HungryGames~Grammar</a></li><li><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></li><li><a href="HungryGames-Messages.html">HungryGames~Messages</a></li><li><a href="HungryGames-OutcomeProbabilities.html">HungryGames~OutcomeProbabilities</a></li><li><a href="HungryGames-Player.html">HungryGames~Player</a></li><li><a href="HungryGames-Simulator.html">HungryGames~Simulator</a></li><li><a href="HungryGames-Simulator-Worker.html">HungryGames~Simulator~Worker</a></li><li><a href="HungryGames-Team.html">HungryGames~Team</a></li><li><a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a></li><li><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></li><li><a href="Main.html">Main</a></li><li><a href="MainModule.html">MainModule</a></li><li><a href="Messages.html">Messages</a></li><li><a href="Moderation.html">Moderation</a></li><li><a href="ModLog.html">ModLog</a></li><li><a href="ModLog-Settings.html">ModLog~Settings</a></li><li><a href="Music.html">Music</a></li><li><a href="NPC.html">NPC</a></li><li><a href="Patreon.html">Patreon</a></li><li><a href="Patreon-toExport.html">Patreon~toExport</a></li><li><a href="Polling.html">Polling</a></li><li><a href="Polling-Poll.html">Polling~Poll</a></li><li><a href="RaidBlock.html">RaidBlock</a></li><li><a href="RaidBlock-RaidSettings.html">RaidBlock~RaidSettings</a></li><li><a href="RoleColors.html">RoleColors</a></li><li><a href="RoleManager.html">RoleManager</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="SMLoader.html">SMLoader</a></li><li><a href="SpikeyBot.html">SpikeyBot</a></li><li><a href="Spotify.html">Spotify</a></li><li><a href="SubModule.html">SubModule</a></li><li><a href="TicTacToe.html">TicTacToe</a></li><li><a href="TicTacToe_Game.html">TicTacToe#Game</a></li><li><a href="TTS.html">TTS</a></li><li><a href="Uno.html">Uno</a></li><li><a href="Uno_Card.html">Uno#Card</a></li><li><a href="Uno_Game.html">Uno#Game</a></li><li><a href="WebAccount.html">WebAccount</a></li><li><a href="WebCommands.html">WebCommands</a></li><li><a href="WebProxy.html">WebProxy</a></li><li><a href="WebSettings.html">WebSettings</a></li><li><a href="WebStats.html">WebStats</a></li></ul><h3>Global</h3><ul><li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li></ul>
-</nav>
 
-<br class="clear">
+    <div class="modal fade" id="searchResults">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Search results</h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sat May 04 2019 21:43:40 GMT-0700 (Pacific Daylight Time)
+
+
+	<span class="copyright">
+	<small>Website Contact: <a href="mailto:web@spikeybot.com">web@spikeybot.com</a>.</small><br><small>&copy; Copyright 2019, Campbell Crowley. <a href="https://docs.google.com/document/d/1SAC2aPxxeNqRjlZzjwrnCyyWWyt09ZP-AP7BDBjjQDg/edit?usp=sharing">Privacy Policy</a></small>
+	</span>
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
+	
+		on Saturday, May 4, 2019 10:15 PM (-07:00)
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
 </footer>
 
-<script> prettyPrint(); </script>
-<script src="scripts/linenumber.js"> </script>
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+
+    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+<script>
+	(function ( i, s, o, g, r, a, m ) {
+		i['GoogleAnalyticsObject'] = r;
+		i[r] = i[r] || function () {
+			(i[r].q = i[r].q || []).push( arguments )
+		}, i[r].l = 1 * new Date();
+		a = s.createElement( o ),
+			m = s.getElementsByTagName( o )[0];
+		a.async = 1;
+		a.src = g;
+		m.parentNode.insertBefore( a, m )
+	})( window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga' );
+
+	ga( 'create', 'UA-89923351-1', 'www.spikeybot.com' );
+	ga( 'send', 'pageview' );
+</script>
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            SearcherDisplay.init();
+        });
+    </script>
+
+
 </body>
 </html>

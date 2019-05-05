@@ -1,34 +1,99 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>JSDoc: Class: HGWeb</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>SpikeyBot-Discord Class: HGWeb</title>
 
-    <script src="scripts/prettify/prettify.js"> </script>
-    <script src="scripts/prettify/lang-css.js"> </script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
-    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.dark.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.slate.css">
+
 </head>
 
 <body>
 
-<div id="main">
+<div class="navbar navbar-default navbar-fixed-top ">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">SpikeyBot-Discord</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="module-lib_twemojiChecker.html">lib/twemojiChecker</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="ChatBot.html">ChatBot</a></li><li><a href="CmdScheduling.html">CmdScheduling</a></li><li><a href="CmdScheduling-ScheduledCommand.html">CmdScheduling~ScheduledCommand</a></li><li><a href="Command.html">Command</a></li><li><a href="Command-CommandSetting.html">Command~CommandSetting</a></li><li><a href="Command-SingleCommand.html">Command~SingleCommand</a></li><li><a href="Common.html">Common</a></li><li><a href="Connect4.html">Connect4</a></li><li><a href="Connect4_Game.html">Connect4#Game</a></li><li><a href="Define.html">Define</a></li><li><a href="DevCmds.html">DevCmds</a></li><li><a href="Echo.html">Echo</a></li><li><a href="Echo-Character.html">Echo~Character</a></li><li><a href="FunTranslators.html">FunTranslators</a></li><li><a href="HG.html">HG</a></li><li><a href="HGWeb.html">HGWeb</a></li><li><a href="HungryGames.html">HungryGames</a></li><li><a href="HungryGames-ArenaEvent.html">HungryGames~ArenaEvent</a></li><li><a href="HungryGames-Battle.html">HungryGames~Battle</a></li><li><a href="HungryGames-Day.html">HungryGames~Day</a></li><li><a href="HungryGames-DefaultOptions.html">HungryGames~DefaultOptions</a></li><li><a href="HungryGames-DefaultOptions-BooleanOption.html">HungryGames~DefaultOptions~BooleanOption</a></li><li><a href="HungryGames-DefaultOptions-NumberOption.html">HungryGames~DefaultOptions~NumberOption</a></li><li><a href="HungryGames-DefaultOptions-ObjectOption.html">HungryGames~DefaultOptions~ObjectOption</a></li><li><a href="HungryGames-DefaultOptions-Option.html">HungryGames~DefaultOptions~Option</a></li><li><a href="HungryGames-DefaultOptions-SelectOption.html">HungryGames~DefaultOptions~SelectOption</a></li><li><a href="HungryGames-Event.html">HungryGames~Event</a></li><li><a href="HungryGames-FinalEvent.html">HungryGames~FinalEvent</a></li><li><a href="HungryGames-ForcedOutcome.html">HungryGames~ForcedOutcome</a></li><li><a href="HungryGames-Game.html">HungryGames~Game</a></li><li><a href="HungryGames-Grammar.html">HungryGames~Grammar</a></li><li><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></li><li><a href="HungryGames-Messages.html">HungryGames~Messages</a></li><li><a href="HungryGames-OutcomeProbabilities.html">HungryGames~OutcomeProbabilities</a></li><li><a href="HungryGames-Player.html">HungryGames~Player</a></li><li><a href="HungryGames-Simulator.html">HungryGames~Simulator</a></li><li><a href="HungryGames-Simulator-Worker.html">HungryGames~Simulator~Worker</a></li><li><a href="HungryGames-Team.html">HungryGames~Team</a></li><li><a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a></li><li><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></li><li><a href="Main.html">Main</a></li><li><a href="MainModule.html">MainModule</a></li><li><a href="Messages.html">Messages</a></li><li><a href="Moderation.html">Moderation</a></li><li><a href="ModLog.html">ModLog</a></li><li><a href="ModLog-Settings.html">ModLog~Settings</a></li><li><a href="Music.html">Music</a></li><li><a href="NPC.html">NPC</a></li><li><a href="Patreon.html">Patreon</a></li><li><a href="Patreon-toExport.html">Patreon~toExport</a></li><li><a href="Polling.html">Polling</a></li><li><a href="Polling-Poll.html">Polling~Poll</a></li><li><a href="RaidBlock.html">RaidBlock</a></li><li><a href="RaidBlock-RaidSettings.html">RaidBlock~RaidSettings</a></li><li><a href="RoleColors.html">RoleColors</a></li><li><a href="RoleManager.html">RoleManager</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="SMLoader.html">SMLoader</a></li><li><a href="SpikeyBot.html">SpikeyBot</a></li><li><a href="Spotify.html">Spotify</a></li><li><a href="SubModule.html">SubModule</a></li><li><a href="TicTacToe.html">TicTacToe</a></li><li><a href="TicTacToe_Game.html">TicTacToe#Game</a></li><li><a href="TTS.html">TTS</a></li><li><a href="Uno.html">Uno</a></li><li><a href="Uno_Card.html">Uno#Card</a></li><li><a href="Uno_Game.html">Uno#Game</a></li><li><a href="WebAccount.html">WebAccount</a></li><li><a href="WebCommands.html">WebCommands</a></li><li><a href="WebProxy.html">WebProxy</a></li><li><a href="WebSettings.html">WebSettings</a></li><li><a href="WebStats.html">WebStats</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="externals.list.html" class="dropdown-toggle" data-toggle="dropdown">Externals<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="external-Discord.html">Discord</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+        
+            <div class="col-sm-3 col-md-3">
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        
+	</div>
 
-    <h1 class="page-title">Class: HGWeb</h1>
-
-    
-
+</div>
+</div>
 
 
+<div class="container" id="toc-content">
+<div class="row">
 
+	
+	<div class="col-md-8">
+	
+		<div id="main">
+			
+
+	<h1 class="page-title">Class: HGWeb</h1>
 <section>
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>HGWeb<span class="signature">()</span><span class="type-signature"></span></h2>
+        <h2>
+        HGWeb
+        </h2>
         
             <div class="class-description">Creates a web interface for managing the Hungry Games. Expects
 ../hungryGames.js is loaded or will be loaded.</div>
@@ -36,36 +101,37 @@
     
 </header>
 
+
 <article>
     <div class="container-overview">
     
         
+<hr>
+<dt>
+    <h4 class="name" id="HGWeb"><span class="type-signature"></span>new HGWeb()</h4>
+    
+    
+</dt>
+<dd>
 
     
-    <h2>Constructor</h2>
-    
 
-    
-    <h4 class="name" id="HGWeb"><span class="type-signature"></span>new HGWeb<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
     
 
+    
+    
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -75,52 +141,52 @@
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-16">line 16</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line16">line 16</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
     
     </div>
@@ -136,38 +202,45 @@
     
 
     
-
-    
         <h3 class="subsection-title">Members</h3>
 
-        
+        <dl>
             
-<h4 class="name" id="~imageBuffer"><span class="type-signature">(private, inner, constant) </span>imageBuffer<span class="type-signature"> :Object</span></h4>
+<hr>
+<dt class="name" id="~imageBuffer">
+    <h4 id="~imageBuffer"><span class="type-signature">&lt;private, inner, constant> </span>imageBuffer<span class="type-signature"> :Object</span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Buffer storing all current image uploads and their associated meta-data.
+    </div>
+    
 
-
-
-<div class="description">
-    Buffer storing all current image uploads and their associated meta-data.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">Object</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -177,69 +250,78 @@
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-28">line 28</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line28">line 28</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~siblingSockets"><span class="type-signature">(private, inner, constant) </span>siblingSockets<span class="type-signature"> :Object.&lt;Socket></span></h4>
+<hr>
+<dt class="name" id="~siblingSockets">
+    <h4 id="~siblingSockets"><span class="type-signature">&lt;private, inner, constant> </span>siblingSockets<span class="type-signature"> :Object.&lt;Socket></span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Map of all sockets connected that are siblings.
+    </div>
+    
 
-
-
-<div class="description">
-    Map of all sockets connected that are siblings.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">Object.&lt;Socket></span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -249,69 +331,78 @@
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-149">line 149</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line149">line 149</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~sockets"><span class="type-signature">(private, inner, constant) </span>sockets<span class="type-signature"> :Object.&lt;Socket></span></h4>
+<hr>
+<dt class="name" id="~sockets">
+    <h4 id="~sockets"><span class="type-signature">&lt;private, inner, constant> </span>sockets<span class="type-signature"> :Object.&lt;Socket></span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Map of all currently connected sockets.
+    </div>
+    
 
-
-
-<div class="description">
-    Map of all currently connected sockets.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">Object.&lt;Socket></span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -321,77 +412,79 @@
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-131">line 131</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line131">line 131</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
+</dd>
 
-
-
-
-        
+        </dl>
     
 
     
         <h3 class="subsection-title">Methods</h3>
 
-        
+        <dl>
             
+<hr>
+<dt>
+    <h4 class="name" id="getNumClients"><span class="type-signature"></span>getNumClients()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Returns the number of connected clients that are not siblings.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="getNumClients"><span class="type-signature"></span>getNumClients<span class="signature">()</span><span class="type-signature"> &rarr; {number}</span></h4>
     
 
     
-
-
-
-<div class="description">
-    Returns the number of connected clients that are not siblings.
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -401,51 +494,52 @@
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-139">line 139</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line139">line 139</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     Number of sockets.
 </div>
@@ -461,41 +555,44 @@
 <span class="param-type">number</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="initialize"><span class="type-signature"></span>initialize()</h4>
+    
+    
+</dt>
+<dd>
 
     
 
     
-    <h4 class="name" id="initialize"><span class="type-signature"></span>initialize<span class="signature">()</span><span class="type-signature"></span></h4>
-    
 
     
 
+    
+    
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -505,83 +602,85 @@
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-91">line 91</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line91">line 91</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="shutdown"><span class="type-signature"></span>shutdown()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Causes a full shutdown of all servers.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="shutdown"><span class="type-signature"></span>shutdown<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
     
-
-
-
-<div class="description">
-    Causes a full shutdown of all servers.
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -591,83 +690,80 @@
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-103">line 103</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line103">line 103</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~beginImageUpload"><span class="type-signature">&lt;private, inner> </span>beginImageUpload(uId)</h4>
+    
+    
+</dt>
+<dd>
 
     
-
-    
-    <h4 class="name" id="~beginImageUpload"><span class="type-signature">(private, inner) </span>beginImageUpload<span class="signature">(uId)</span><span class="type-signature"> &rarr; {Object}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Create an upload ID and buffer for a client to send to. Automatically
+    <div class="description">
+        Create an upload ID and buffer for a client to send to. Automatically
 cancelled after 60 seconds.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
+    </div>
     
 
-<table class="params">
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -698,6 +794,7 @@ cancelled after 60 seconds.
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -712,12 +809,17 @@ cancelled after 60 seconds.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -727,51 +829,52 @@ cancelled after 60 seconds.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-592">line 592</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line592">line 592</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     The metadata storing object.
 </div>
@@ -787,44 +890,42 @@ cancelled after 60 seconds.
 <span class="param-type">Object</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~cancelImageUpload"><span class="type-signature">&lt;private, inner> </span>cancelImageUpload(iId)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Cancel and clean up a current image upload.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~cancelImageUpload"><span class="type-signature">(private, inner) </span>cancelImageUpload<span class="signature">(iId)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Cancel and clean up a current image upload.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -855,6 +956,7 @@ cancelled after 60 seconds.
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -869,12 +971,17 @@ cancelled after 60 seconds.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -884,83 +991,80 @@ cancelled after 60 seconds.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-578">line 578</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line578">line 578</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~checkChannelPerm"><span class="type-signature">&lt;private, inner> </span>checkChannelPerm(userData, gId, cId, cmd)</h4>
+    
+    
+</dt>
+<dd>
 
     
-
-    
-    <h4 class="name" id="~checkChannelPerm"><span class="type-signature">(private, inner) </span>checkChannelPerm<span class="signature">(userData, gId, cId, cmd)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Check that the given user has permission to see and send messages in the
+    <div class="description">
+        Check that the given user has permission to see and send messages in the
 given channel, as well as manage the games in the given guild.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
+    </div>
     
 
-<table class="params">
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -991,6 +1095,7 @@ given channel, as well as manage the games in the given guild.
 <span class="param-type">UserData</span>
 
 
+
             
             </td>
 
@@ -1012,6 +1117,7 @@ given channel, as well as manage the games in the given guild.
             
                 
 <span class="param-type">string</span>
+
 
 
             
@@ -1037,6 +1143,7 @@ given channel, as well as manage the games in the given guild.
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -1060,6 +1167,7 @@ given channel, as well as manage the games in the given guild.
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -1074,12 +1182,17 @@ given channel, as well as manage the games in the given guild.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1089,51 +1202,52 @@ given channel, as well as manage the games in the given guild.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-481">line 481</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line481">line 481</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     Whther the user has permission or not to manage the
 hungry games in the given guild and has permission to send messages in the
@@ -1151,44 +1265,42 @@ given channel.
 <span class="param-type">boolean</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~checkMyGuild"><span class="type-signature">&lt;private, inner> </span>checkMyGuild(gId)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Checks if the current shard is responsible for the requested guild.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~checkMyGuild"><span class="type-signature">(private, inner) </span>checkMyGuild<span class="signature">(gId)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Checks if the current shard is responsible for the requested guild.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -1222,6 +1334,7 @@ given channel.
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -1236,12 +1349,17 @@ given channel.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1251,51 +1369,52 @@ given channel.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-443">line 443</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line443">line 443</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     True if this shard has this guild.
 </div>
@@ -1311,45 +1430,43 @@ given channel.
 <span class="param-type">boolean</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~checkPerm"><span class="type-signature">&lt;private, inner> </span>checkPerm(userData, gId, cId, cmd)</h4>
+    
+    
+</dt>
+<dd>
 
     
-
-    
-    <h4 class="name" id="~checkPerm"><span class="type-signature">(private, inner) </span>checkPerm<span class="signature">(userData, gId, cId<span class="signature-attributes">nullable</span>, cmd)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Check that the given user has permission to manage the games in the given
+    <div class="description">
+        Check that the given user has permission to manage the games in the given
 guild.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
+    </div>
     
 
-<table class="params">
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -1359,7 +1476,7 @@ guild.
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -1380,6 +1497,7 @@ guild.
             
                 
 <span class="param-type">UserData</span>
+
 
 
             
@@ -1413,6 +1531,7 @@ guild.
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -1442,6 +1561,7 @@ guild.
             
                 
 <span class="param-type">string</span>
+
 
 
             
@@ -1477,6 +1597,7 @@ guild.
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -1499,12 +1620,17 @@ guild.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1514,51 +1640,52 @@ guild.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-460">line 460</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line460">line 460</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     Whther the user has permission or not to manage the
 hungry games in the given guild.
@@ -1575,44 +1702,42 @@ hungry games in the given guild.
 <span class="param-type">boolean</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~clientSocketConnection"><span class="type-signature">&lt;private, inner> </span>clientSocketConnection(socket)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Handler for connecting as a client to the server.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~clientSocketConnection"><span class="type-signature">(private, inner) </span>clientSocketConnection<span class="signature">(socket)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Handler for connecting as a client to the server.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -1643,6 +1768,7 @@ hungry games in the given guild.
 <span class="param-type">socketIo~Socket</span>
 
 
+
             
             </td>
 
@@ -1657,12 +1783,17 @@ hungry games in the given guild.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1672,82 +1803,79 @@ hungry games in the given guild.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-351">line 351</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line351">line 351</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~createEvent"><span class="type-signature">&lt;private, inner> </span>createEvent(userData, socket, gId, type, message, nV, nA, oV, oA, kV, kA, wV, wA [, cb])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Create a game event.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~createEvent"><span class="type-signature">(private, inner) </span>createEvent<span class="signature">(userData, socket, gId, type, message, nV, nA, oV, oA, kV, kA, wV<span class="signature-attributes">nullable</span>, wA<span class="signature-attributes">nullable</span>, cb<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Create a game event.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -1757,7 +1885,7 @@ hungry games in the given guild.
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -1778,6 +1906,7 @@ hungry games in the given guild.
             
                 
 <span class="param-type">Object</span>
+
 
 
             
@@ -1809,6 +1938,7 @@ hungry games in the given guild.
             
                 
 <span class="param-type">socketIo~Socket</span>
+
 
 
             
@@ -1845,6 +1975,7 @@ hungry games in the given guild.
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -1874,6 +2005,7 @@ hungry games in the given guild.
             
                 
 <span class="param-type">string</span>
+
 
 
             
@@ -1907,6 +2039,7 @@ hungry games in the given guild.
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -1936,6 +2069,7 @@ hungry games in the given guild.
             
                 
 <span class="param-type">string</span>
+
 
 
             
@@ -1969,6 +2103,7 @@ hungry games in the given guild.
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -1998,6 +2133,7 @@ hungry games in the given guild.
             
                 
 <span class="param-type">string</span>
+
 
 
             
@@ -2031,6 +2167,7 @@ hungry games in the given guild.
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -2060,6 +2197,7 @@ hungry games in the given guild.
             
                 
 <span class="param-type">string</span>
+
 
 
             
@@ -2093,6 +2231,7 @@ hungry games in the given guild.
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -2122,6 +2261,7 @@ hungry games in the given guild.
             
                 
 <span class="param-type">Object</span>
+
 
 
             
@@ -2157,6 +2297,7 @@ hungry games in the given guild.
 <span class="param-type">Object</span>
 
 
+
             
             </td>
 
@@ -2190,6 +2331,7 @@ hungry games in the given guild.
 <span class="param-type">basicCB</span>
 
 
+
             
             </td>
 
@@ -2215,12 +2357,17 @@ complete, or has failed.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -2230,89 +2377,86 @@ complete, or has failed.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-1352">line 1352</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line1352">line 1352</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li>HungryGames.createEvent</li>
+			</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li>HungryGames.createEvent</li>
-        </ul>
-    </dd>
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~createGame"><span class="type-signature">&lt;private, inner> </span>createGame(userData, socket, gId [, cb])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Create a Game.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~createGame"><span class="type-signature">(private, inner) </span>createGame<span class="signature">(userData, socket, gId, cb<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Create a Game.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -2322,7 +2466,7 @@ complete, or has failed.</td>
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -2343,6 +2487,7 @@ complete, or has failed.</td>
             
                 
 <span class="param-type">Object</span>
+
 
 
             
@@ -2374,6 +2519,7 @@ complete, or has failed.</td>
             
                 
 <span class="param-type">socketIo~Socket</span>
+
 
 
             
@@ -2408,6 +2554,7 @@ complete, or has failed.</td>
 |
 
 <span class="param-type">string</span>
+
 
 
             
@@ -2441,6 +2588,7 @@ complete, or has failed.</td>
 <span class="param-type">basicCB</span>
 
 
+
             
             </td>
 
@@ -2466,12 +2614,17 @@ complete, or has failed.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -2481,90 +2634,87 @@ complete, or has failed.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-1069">line 1069</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line1069">line 1069</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li>HungryGames.createGame</li>
+			</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li>HungryGames.createGame</li>
-        </ul>
-    </dd>
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~createMajorEvent"><span class="type-signature">&lt;private, inner> </span>createMajorEvent(userData, socket, gId, type, data, name [, cb])</h4>
+    
+    
+</dt>
+<dd>
 
     
-
-    
-    <h4 class="name" id="~createMajorEvent"><span class="type-signature">(private, inner) </span>createMajorEvent<span class="signature">(userData, socket, gId, type, data, name<span class="signature-attributes">nullable</span>, cb<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Create a larger game event. Either Arena or Weapon at this point. If
+    <div class="description">
+        Create a larger game event. Either Arena or Weapon at this point. If
 message or weapon name already exists, this will instead edit the event.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
+    </div>
     
 
-<table class="params">
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -2574,7 +2724,7 @@ message or weapon name already exists, this will instead edit the event.
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -2595,6 +2745,7 @@ message or weapon name already exists, this will instead edit the event.
             
                 
 <span class="param-type">Object</span>
+
 
 
             
@@ -2626,6 +2777,7 @@ message or weapon name already exists, this will instead edit the event.
             
                 
 <span class="param-type">socketIo~Socket</span>
+
 
 
             
@@ -2662,6 +2814,7 @@ message or weapon name already exists, this will instead edit the event.
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -2691,6 +2844,7 @@ message or weapon name already exists, this will instead edit the event.
             
                 
 <span class="param-type">string</span>
+
 
 
             
@@ -2727,6 +2881,7 @@ message or weapon name already exists, this will instead edit the event.
 <span class="param-type"><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></span>
 
 
+
             
             </td>
 
@@ -2757,6 +2912,7 @@ data.</td>
             
                 
 <span class="param-type">string</span>
+
 
 
             
@@ -2792,6 +2948,7 @@ data.</td>
 <span class="param-type">basicCB</span>
 
 
+
             
             </td>
 
@@ -2817,12 +2974,17 @@ complete, or has failed.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -2832,91 +2994,88 @@ complete, or has failed.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-1402">line 1402</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line1402">line 1402</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li>HungryGames.addMajorEvent</li>
+			</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li>HungryGames.addMajorEvent</li>
-        </ul>
-    </dd>
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~dayStateChange"><span class="type-signature">&lt;private, inner> </span>dayStateChange(hg, gId)</h4>
+    
+    
+</dt>
+<dd>
 
     
-
-    
-    <h4 class="name" id="~dayStateChange"><span class="type-signature">(private, inner) </span>dayStateChange<span class="signature">(hg, gId)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    This gets fired whenever the day state of any game changes in the hungry
+    <div class="description">
+        This gets fired whenever the day state of any game changes in the hungry
 games. This then notifies all clients that the state changed, if they care
 about the guild.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
+    </div>
     
 
-<table class="params">
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -2947,6 +3106,7 @@ about the guild.
 <span class="param-type"><a href="HungryGames.html">HungryGames</a></span>
 
 
+
             
             </td>
 
@@ -2970,6 +3130,7 @@ about the guild.
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -2984,12 +3145,17 @@ about the guild.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -2999,87 +3165,84 @@ about the guild.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-395">line 395</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line395">line 395</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>HungryGames#event:dayStateChange</li>
+    </ul>
+    
 
+    
 
+    
 
-<h5>Listens to Events:</h5>
-<ul>
-    <li>HungryGames#event:dayStateChange</li>
-</ul>
+    
 
-
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~editMajorEvent"><span class="type-signature">&lt;private, inner> </span>editMajorEvent(userData, socket, gId, type, search, data, name, newName [, cb])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Delete a larger game event. Either Arena or Weapon at this point.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~editMajorEvent"><span class="type-signature">(private, inner) </span>editMajorEvent<span class="signature">(userData, socket, gId, type, search, data, name<span class="signature-attributes">nullable</span>, newName<span class="signature-attributes">nullable</span>, cb<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Delete a larger game event. Either Arena or Weapon at this point.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -3089,7 +3252,7 @@ about the guild.
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -3110,6 +3273,7 @@ about the guild.
             
                 
 <span class="param-type">Object</span>
+
 
 
             
@@ -3141,6 +3305,7 @@ about the guild.
             
                 
 <span class="param-type">socketIo~Socket</span>
+
 
 
             
@@ -3177,6 +3342,7 @@ about the guild.
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -3206,6 +3372,7 @@ about the guild.
             
                 
 <span class="param-type">string</span>
+
 
 
             
@@ -3240,6 +3407,7 @@ about the guild.
 |
 
 <span class="param-type"><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></span>
+
 
 
             
@@ -3277,6 +3445,7 @@ data to find to edit.</td>
 <span class="param-type"><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></span>
 
 
+
             
             </td>
 
@@ -3307,6 +3476,7 @@ data to set the matched searches to.</td>
             
                 
 <span class="param-type">string</span>
+
 
 
             
@@ -3342,6 +3512,7 @@ data to set the matched searches to.</td>
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -3375,6 +3546,7 @@ data to set the matched searches to.</td>
 <span class="param-type">basicCB</span>
 
 
+
             
             </td>
 
@@ -3400,12 +3572,17 @@ complete, or has failed.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -3415,89 +3592,86 @@ complete, or has failed.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-1451">line 1451</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line1451">line 1451</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li>HungryGames.editMajorEvent</li>
+			</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li>HungryGames.editMajorEvent</li>
-        </ul>
-    </dd>
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~editTeam"><span class="type-signature">&lt;private, inner> </span>editTeam(userData, socket, gId, cmd, one, two [, cb])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Edit the teams.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~editTeam"><span class="type-signature">(private, inner) </span>editTeam<span class="signature">(userData, socket, gId, cmd, one, two, cb<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Edit the teams.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -3507,7 +3681,7 @@ complete, or has failed.</td>
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -3528,6 +3702,7 @@ complete, or has failed.</td>
             
                 
 <span class="param-type">Object</span>
+
 
 
             
@@ -3559,6 +3734,7 @@ complete, or has failed.</td>
             
                 
 <span class="param-type">socketIo~Socket</span>
+
 
 
             
@@ -3593,6 +3769,7 @@ complete, or has failed.</td>
 |
 
 <span class="param-type">string</span>
+
 
 
             
@@ -3626,6 +3803,7 @@ complete, or has failed.</td>
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -3655,6 +3833,7 @@ complete, or has failed.</td>
             
                 
 <span class="param-type">string</span>
+
 
 
             
@@ -3688,6 +3867,7 @@ complete, or has failed.</td>
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -3719,6 +3899,7 @@ complete, or has failed.</td>
 <span class="param-type">basicCB</span>
 
 
+
             
             </td>
 
@@ -3744,12 +3925,17 @@ complete, or has failed.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -3759,89 +3945,86 @@ complete, or has failed.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-1315">line 1315</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line1315">line 1315</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li>HungryGames.editTeam</li>
+			</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li>HungryGames.editTeam</li>
-        </ul>
-    </dd>
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~endGame"><span class="type-signature">&lt;private, inner> </span>endGame(userData, socket, gId [, cb])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        End the game.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~endGame"><span class="type-signature">(private, inner) </span>endGame<span class="signature">(userData, socket, gId, cb<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    End the game.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -3851,7 +4034,7 @@ complete, or has failed.</td>
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -3872,6 +4055,7 @@ complete, or has failed.</td>
             
                 
 <span class="param-type">Object</span>
+
 
 
             
@@ -3903,6 +4087,7 @@ complete, or has failed.</td>
             
                 
 <span class="param-type">socketIo~Socket</span>
+
 
 
             
@@ -3937,6 +4122,7 @@ complete, or has failed.</td>
 |
 
 <span class="param-type">string</span>
+
 
 
             
@@ -3970,6 +4156,7 @@ complete, or has failed.</td>
 <span class="param-type">basicCB</span>
 
 
+
             
             </td>
 
@@ -3995,12 +4182,17 @@ complete, or has failed.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -4010,89 +4202,86 @@ complete, or has failed.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-1217">line 1217</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line1217">line 1217</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li>HungryGames.endGame</li>
+			</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li>HungryGames.endGame</li>
-        </ul>
-    </dd>
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~excludeMember"><span class="type-signature">&lt;private, inner> </span>excludeMember(userData, socket, gId, mId [, cb])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Exclude a member from the Games.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~excludeMember"><span class="type-signature">(private, inner) </span>excludeMember<span class="signature">(userData, socket, gId, mId, cb<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Exclude a member from the Games.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -4102,7 +4291,7 @@ complete, or has failed.</td>
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -4123,6 +4312,7 @@ complete, or has failed.</td>
             
                 
 <span class="param-type">Object</span>
+
 
 
             
@@ -4154,6 +4344,7 @@ complete, or has failed.</td>
             
                 
 <span class="param-type">socketIo~Socket</span>
+
 
 
             
@@ -4188,6 +4379,7 @@ complete, or has failed.</td>
 |
 
 <span class="param-type">string</span>
+
 
 
             
@@ -4224,6 +4416,7 @@ complete, or has failed.</td>
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -4255,6 +4448,7 @@ complete, or has failed.</td>
 <span class="param-type">basicCB</span>
 
 
+
             
             </td>
 
@@ -4280,12 +4474,17 @@ complete, or has failed.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -4295,89 +4494,86 @@ complete, or has failed.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-966">line 966</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line966">line 966</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li>HungryGames.excludeUsers</li>
+			</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li>HungryGames.excludeUsers</li>
-        </ul>
-    </dd>
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~fetchChannel"><span class="type-signature">&lt;private, inner> </span>fetchChannel(userData, socket, gId, cId [, cb])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Fetch data about a channel of a guild.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~fetchChannel"><span class="type-signature">(private, inner) </span>fetchChannel<span class="signature">(userData, socket, gId, cId, cb<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Fetch data about a channel of a guild.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -4387,7 +4583,7 @@ complete, or has failed.</td>
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -4408,6 +4604,7 @@ complete, or has failed.</td>
             
                 
 <span class="param-type">Object</span>
+
 
 
             
@@ -4439,6 +4636,7 @@ complete, or has failed.</td>
             
                 
 <span class="param-type">socketIo~Socket</span>
+
 
 
             
@@ -4473,6 +4671,7 @@ complete, or has failed.</td>
 |
 
 <span class="param-type">string</span>
+
 
 
             
@@ -4509,6 +4708,7 @@ complete, or has failed.</td>
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -4540,6 +4740,7 @@ complete, or has failed.</td>
 <span class="param-type">basicCB</span>
 
 
+
             
             </td>
 
@@ -4565,12 +4766,17 @@ complete, or has failed.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -4580,82 +4786,79 @@ complete, or has failed.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-839">line 839</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line839">line 839</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~fetchDay"><span class="type-signature">&lt;private, inner> </span>fetchDay(userData, socket, gId [, cb])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Fetch the updated game's day information.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~fetchDay"><span class="type-signature">(private, inner) </span>fetchDay<span class="signature">(userData, socket, gId, cb<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Fetch the updated game's day information.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -4665,7 +4868,7 @@ complete, or has failed.</td>
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -4686,6 +4889,7 @@ complete, or has failed.</td>
             
                 
 <span class="param-type">Object</span>
+
 
 
             
@@ -4717,6 +4921,7 @@ complete, or has failed.</td>
             
                 
 <span class="param-type">socketIo~Socket</span>
+
 
 
             
@@ -4753,6 +4958,7 @@ complete, or has failed.</td>
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -4784,6 +4990,7 @@ complete, or has failed.</td>
 <span class="param-type">basicCB</span>
 
 
+
             
             </td>
 
@@ -4809,12 +5016,17 @@ complete, or has failed.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -4824,89 +5036,86 @@ complete, or has failed.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-905">line 905</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line905">line 905</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li>HungryGames.getGame</li>
+			</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li>HungryGames.getGame</li>
-        </ul>
-    </dd>
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~fetchGames"><span class="type-signature">&lt;private, inner> </span>fetchGames(userData, socket, gId [, cb])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Fetch all game data within a guild.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~fetchGames"><span class="type-signature">(private, inner) </span>fetchGames<span class="signature">(userData, socket, gId, cb<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Fetch all game data within a guild.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -4916,7 +5125,7 @@ complete, or has failed.</td>
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -4937,6 +5146,7 @@ complete, or has failed.</td>
             
                 
 <span class="param-type">Object</span>
+
 
 
             
@@ -4968,6 +5178,7 @@ complete, or has failed.</td>
             
                 
 <span class="param-type">socketIo~Socket</span>
+
 
 
             
@@ -5004,6 +5215,7 @@ complete, or has failed.</td>
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -5035,6 +5247,7 @@ complete, or has failed.</td>
 <span class="param-type">basicCB</span>
 
 
+
             
             </td>
 
@@ -5060,12 +5273,17 @@ complete, or has failed.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -5075,90 +5293,87 @@ complete, or has failed.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-876">line 876</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line876">line 876</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li>HungryGames.getGame</li>
+			</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li>HungryGames.getGame</li>
-        </ul>
-    </dd>
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~fetchGuild"><span class="type-signature">&lt;private, inner> </span>fetchGuild(userData, socket, gId [, cb])</h4>
+    
+    
+</dt>
+<dd>
 
     
-
-    
-    <h4 class="name" id="~fetchGuild"><span class="type-signature">(private, inner) </span>fetchGuild<span class="signature">(userData, socket, gId, cb<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Fetch all relevant data for a mutual guilds with the user and send it to
+    <div class="description">
+        Fetch all relevant data for a mutual guilds with the user and send it to
 the user.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
+    </div>
     
 
-<table class="params">
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -5168,7 +5383,7 @@ the user.
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -5189,6 +5404,7 @@ the user.
             
                 
 <span class="param-type">Object</span>
+
 
 
             
@@ -5220,6 +5436,7 @@ the user.
             
                 
 <span class="param-type">socketIo~Socket</span>
+
 
 
             
@@ -5254,6 +5471,7 @@ the user.
 |
 
 <span class="param-type">number</span>
+
 
 
             
@@ -5287,6 +5505,7 @@ the user.
 <span class="param-type">basicCB</span>
 
 
+
             
             </td>
 
@@ -5312,12 +5531,17 @@ complete, or has failed.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -5327,83 +5551,80 @@ complete, or has failed.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-775">line 775</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line775">line 775</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~fetchGuilds"><span class="type-signature">&lt;private, inner> </span>fetchGuilds(userData, socket [, cb])</h4>
+    
+    
+</dt>
+<dd>
 
     
-
-    
-    <h4 class="name" id="~fetchGuilds"><span class="type-signature">(private, inner) </span>fetchGuilds<span class="signature">(userData, socket, cb<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Fetch all relevant data for all mutual guilds with the user and send it to
+    <div class="description">
+        Fetch all relevant data for all mutual guilds with the user and send it to
 the user.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
+    </div>
     
 
-<table class="params">
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -5413,7 +5634,7 @@ the user.
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -5434,6 +5655,7 @@ the user.
             
                 
 <span class="param-type">Object</span>
+
 
 
             
@@ -5465,6 +5687,7 @@ the user.
             
                 
 <span class="param-type">socketIo~Socket</span>
+
 
 
             
@@ -5498,6 +5721,7 @@ the user.
 <span class="param-type">basicCB</span>
 
 
+
             
             </td>
 
@@ -5523,12 +5747,17 @@ complete, or has failed.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -5538,82 +5767,79 @@ complete, or has failed.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-624">line 624</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line624">line 624</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~fetchMember"><span class="type-signature">&lt;private, inner> </span>fetchMember(userData, socket, gId, mId [, cb])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Fetch data about a member of a guild.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~fetchMember"><span class="type-signature">(private, inner) </span>fetchMember<span class="signature">(userData, socket, gId, mId, cb<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Fetch data about a member of a guild.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -5623,7 +5849,7 @@ complete, or has failed.</td>
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -5644,6 +5870,7 @@ complete, or has failed.</td>
             
                 
 <span class="param-type">Object</span>
+
 
 
             
@@ -5675,6 +5902,7 @@ complete, or has failed.</td>
             
                 
 <span class="param-type">socketIo~Socket</span>
+
 
 
             
@@ -5709,6 +5937,7 @@ complete, or has failed.</td>
 |
 
 <span class="param-type">string</span>
+
 
 
             
@@ -5745,6 +5974,7 @@ complete, or has failed.</td>
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -5776,6 +6006,7 @@ complete, or has failed.</td>
 <span class="param-type">basicCB</span>
 
 
+
             
             </td>
 
@@ -5801,12 +6032,17 @@ complete, or has failed.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -5816,82 +6052,79 @@ complete, or has failed.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-812">line 812</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line812">line 812</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~forcePlayerState"><span class="type-signature">&lt;private, inner> </span>forcePlayerState(userData, socket, gId, list, state [, text] [, persists] [, cb])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Force a player in the game to end a day in a certain state.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~forcePlayerState"><span class="type-signature">(private, inner) </span>forcePlayerState<span class="signature">(userData, socket, gId, list, state, text<span class="signature-attributes">opt</span>, persists<span class="signature-attributes">opt</span>, cb<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Force a player in the game to end a day in a certain state.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -5901,7 +6134,7 @@ complete, or has failed.</td>
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -5922,6 +6155,7 @@ complete, or has failed.</td>
             
                 
 <span class="param-type">Object</span>
+
 
 
             
@@ -5953,6 +6187,7 @@ complete, or has failed.</td>
             
                 
 <span class="param-type">socketIo-Socket</span>
+
 
 
             
@@ -5989,6 +6224,7 @@ complete, or has failed.</td>
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -6018,6 +6254,7 @@ complete, or has failed.</td>
             
                 
 <span class="param-type">Array.&lt;string></span>
+
 
 
             
@@ -6051,6 +6288,7 @@ complete, or has failed.</td>
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -6080,6 +6318,7 @@ complete, or has failed.</td>
             
                 
 <span class="param-type">string</span>
+
 
 
             
@@ -6116,6 +6355,7 @@ command.</td>
 <span class="param-type">boolean</span>
 
 
+
             
             </td>
 
@@ -6149,6 +6389,7 @@ command.</td>
 <span class="param-type">basicCB</span>
 
 
+
             
             </td>
 
@@ -6174,12 +6415,17 @@ complete.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -6189,89 +6435,86 @@ complete.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-1585">line 1585</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line1585">line 1585</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li>HungryGames.forcePlayerState</li>
+			</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li>HungryGames.forcePlayerState</li>
-        </ul>
-    </dd>
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~handler"><span class="type-signature">&lt;private, inner> </span>handler(req, res)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Handler for all http requests. Should never be called.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~handler"><span class="type-signature">(private, inner) </span>handler<span class="signature">(req, res)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Handler for all http requests. Should never be called.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -6302,6 +6545,7 @@ complete.</td>
 <span class="param-type">http.IncomingMessage</span>
 
 
+
             
             </td>
 
@@ -6325,6 +6569,7 @@ complete.</td>
 <span class="param-type">http.ServerResponse</span>
 
 
+
             
             </td>
 
@@ -6339,12 +6584,17 @@ complete.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -6354,83 +6604,85 @@ complete.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-120">line 120</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line120">line 120</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~hg"><span class="type-signature">&lt;private, inner> </span>hg()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Update the reference to HungryGames.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~hg"><span class="type-signature">(private, inner) </span>hg<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="HG.html">HG</a>}</span></h4>
     
 
     
-
-
-
-<div class="description">
-    Update the reference to HungryGames.
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -6440,51 +6692,52 @@ complete.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-67">line 67</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line67">line 67</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     Reference to the currently loaded HungryGames subModule.
 </div>
@@ -6500,44 +6753,42 @@ complete.</td>
 <span class="param-type"><a href="HG.html">HG</a></span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~imageChunk"><span class="type-signature">&lt;private, inner> </span>imageChunk(userData, socket, gId, iId, chunkId, chunk [, cb])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Handle receiving image data for avatar uploading.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~imageChunk"><span class="type-signature">(private, inner) </span>imageChunk<span class="signature">(userData, socket, gId, iId, chunkId, chunk<span class="signature-attributes">nullable</span>, cb<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Handle receiving image data for avatar uploading.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -6547,7 +6798,7 @@ complete.</td>
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -6568,6 +6819,7 @@ complete.</td>
             
                 
 <span class="param-type">Object</span>
+
 
 
             
@@ -6599,6 +6851,7 @@ complete.</td>
             
                 
 <span class="param-type">socketIo~Socket</span>
+
 
 
             
@@ -6635,6 +6888,7 @@ complete.</td>
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -6664,6 +6918,7 @@ complete.</td>
             
                 
 <span class="param-type">string</span>
+
 
 
             
@@ -6697,6 +6952,7 @@ complete.</td>
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -6726,6 +6982,7 @@ complete.</td>
             
                 
 <span class="param-type">Buffer</span>
+
 
 
             
@@ -6762,6 +7019,7 @@ sent.</td>
 <span class="param-type">basicCB</span>
 
 
+
             
             </td>
 
@@ -6787,12 +7045,17 @@ complete, or has failed.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -6802,82 +7065,79 @@ complete, or has failed.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-1693">line 1693</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line1693">line 1693</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~imageInfo"><span class="type-signature">&lt;private, inner> </span>imageInfo(userData, socket, gId, meta [, cb])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Handle client requesting to begin image upload.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~imageInfo"><span class="type-signature">(private, inner) </span>imageInfo<span class="signature">(userData, socket, gId, meta, cb<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Handle client requesting to begin image upload.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -6887,7 +7147,7 @@ complete, or has failed.</td>
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -6908,6 +7168,7 @@ complete, or has failed.</td>
             
                 
 <span class="param-type">Object</span>
+
 
 
             
@@ -6939,6 +7200,7 @@ complete, or has failed.</td>
             
                 
 <span class="param-type">socketIo~Socket</span>
+
 
 
             
@@ -6973,6 +7235,7 @@ complete, or has failed.</td>
 |
 
 <span class="param-type">string</span>
+
 
 
             
@@ -7006,6 +7269,7 @@ complete, or has failed.</td>
 <span class="param-type">Object</span>
 
 
+
             
             </td>
 
@@ -7037,6 +7301,7 @@ complete, or has failed.</td>
 <span class="param-type">basicCB</span>
 
 
+
             
             </td>
 
@@ -7063,12 +7328,17 @@ second parameter. Any error will be the first parameter.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -7078,82 +7348,79 @@ second parameter. Any error will be the first parameter.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-1788">line 1788</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line1788">line 1788</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~includeMember"><span class="type-signature">&lt;private, inner> </span>includeMember(userData, socket, gId, mId [, cb])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Include a member in the Games.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~includeMember"><span class="type-signature">(private, inner) </span>includeMember<span class="signature">(userData, socket, gId, mId, cb<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Include a member in the Games.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -7163,7 +7430,7 @@ second parameter. Any error will be the first parameter.</td>
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -7184,6 +7451,7 @@ second parameter. Any error will be the first parameter.</td>
             
                 
 <span class="param-type">Object</span>
+
 
 
             
@@ -7215,6 +7483,7 @@ second parameter. Any error will be the first parameter.</td>
             
                 
 <span class="param-type">socketIo~Socket</span>
+
 
 
             
@@ -7249,6 +7518,7 @@ second parameter. Any error will be the first parameter.</td>
 |
 
 <span class="param-type">string</span>
+
 
 
             
@@ -7285,6 +7555,7 @@ second parameter. Any error will be the first parameter.</td>
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -7316,6 +7587,7 @@ second parameter. Any error will be the first parameter.</td>
 <span class="param-type">basicCB</span>
 
 
+
             
             </td>
 
@@ -7341,12 +7613,17 @@ complete, or has failed.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -7356,90 +7633,87 @@ complete, or has failed.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-997">line 997</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line997">line 997</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li>HungryGames.includeUsers</li>
+			</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li>HungryGames.includeUsers</li>
-        </ul>
-    </dd>
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~makeMember"><span class="type-signature">&lt;private, inner> </span>makeMember(m)</h4>
+    
+    
+</dt>
+<dd>
 
     
-
-    
-    <h4 class="name" id="~makeMember"><span class="type-signature">(private, inner) </span>makeMember<span class="signature">(m)</span><span class="type-signature"> &rarr; {Object}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Strips a Discord~GuildMember to only the necessary data that a client will
+    <div class="description">
+        Strips a Discord~GuildMember to only the necessary data that a client will
 need.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
+    </div>
     
 
-<table class="params">
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -7470,6 +7744,7 @@ need.
 <span class="param-type">Discord~GuildMember</span>
 
 
+
             
             </td>
 
@@ -7484,12 +7759,17 @@ need.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -7499,51 +7779,52 @@ need.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-540">line 540</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line540">line 540</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     The minimal member.
 </div>
@@ -7559,44 +7840,42 @@ need.
 <span class="param-type">Object</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~makeMessage"><span class="type-signature">&lt;private, inner> </span>makeMessage(uId, gId, cId, msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Forms a Discord~Message similar object from given IDs.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~makeMessage"><span class="type-signature">(private, inner) </span>makeMessage<span class="signature">(uId, gId, cId<span class="signature-attributes">nullable</span>, msg<span class="signature-attributes">nullable</span>)</span><span class="type-signature"> &rarr; {Object}</span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Forms a Discord~Message similar object from given IDs.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -7606,7 +7885,7 @@ need.
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -7627,6 +7906,7 @@ need.
             
                 
 <span class="param-type">string</span>
+
 
 
             
@@ -7660,6 +7940,7 @@ need.
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -7689,6 +7970,7 @@ need.
             
                 
 <span class="param-type">string</span>
+
 
 
             
@@ -7724,6 +8006,7 @@ need.
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -7748,12 +8031,17 @@ need.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -7763,51 +8051,52 @@ need.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-517">line 517</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line517">line 517</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     The created message-like object.
 </div>
@@ -7823,44 +8112,42 @@ need.
 <span class="param-type">Object</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~nextDay"><span class="type-signature">&lt;private, inner> </span>nextDay(userData, socket, gId, cId [, cb])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Start the next day.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~nextDay"><span class="type-signature">(private, inner) </span>nextDay<span class="signature">(userData, socket, gId, cId, cb<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Start the next day.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -7870,7 +8157,7 @@ need.
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -7891,6 +8178,7 @@ need.
             
                 
 <span class="param-type">Object</span>
+
 
 
             
@@ -7922,6 +8210,7 @@ need.
             
                 
 <span class="param-type">socketIo~Socket</span>
+
 
 
             
@@ -7956,6 +8245,7 @@ need.
 |
 
 <span class="param-type">string</span>
+
 
 
             
@@ -7992,6 +8282,7 @@ need.
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -8023,6 +8314,7 @@ need.
 <span class="param-type">basicCB</span>
 
 
+
             
             </td>
 
@@ -8048,12 +8340,17 @@ complete, or has failed.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -8063,89 +8360,86 @@ complete, or has failed.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-1188">line 1188</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line1188">line 1188</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li>HungryGames.nextDay</li>
+			</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li>HungryGames.nextDay</li>
-        </ul>
-    </dd>
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~pauseAutoplay"><span class="type-signature">&lt;private, inner> </span>pauseAutoplay(userData, socket, gId [, cb])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Disable autoplay.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~pauseAutoplay"><span class="type-signature">(private, inner) </span>pauseAutoplay<span class="signature">(userData, socket, gId, cb<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Disable autoplay.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -8155,7 +8449,7 @@ complete, or has failed.</td>
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -8176,6 +8470,7 @@ complete, or has failed.</td>
             
                 
 <span class="param-type">Object</span>
+
 
 
             
@@ -8207,6 +8502,7 @@ complete, or has failed.</td>
             
                 
 <span class="param-type">socketIo~Socket</span>
+
 
 
             
@@ -8241,6 +8537,7 @@ complete, or has failed.</td>
 |
 
 <span class="param-type">string</span>
+
 
 
             
@@ -8274,6 +8571,7 @@ complete, or has failed.</td>
 <span class="param-type">basicCB</span>
 
 
+
             
             </td>
 
@@ -8299,12 +8597,17 @@ complete, or has failed.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -8314,89 +8617,86 @@ complete, or has failed.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-1246">line 1246</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line1246">line 1246</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li>HungryGames.pauseAutoplay</li>
+			</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li>HungryGames.pauseAutoplay</li>
-        </ul>
-    </dd>
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~pauseGame"><span class="type-signature">&lt;private, inner> </span>pauseGame(userData, socket, gId [, cb])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Pause game.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~pauseGame"><span class="type-signature">(private, inner) </span>pauseGame<span class="signature">(userData, socket, gId, cb<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Pause game.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -8406,7 +8706,7 @@ complete, or has failed.</td>
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -8427,6 +8727,7 @@ complete, or has failed.</td>
             
                 
 <span class="param-type">Object</span>
+
 
 
             
@@ -8458,6 +8759,7 @@ complete, or has failed.</td>
             
                 
 <span class="param-type">socketIo~Socket</span>
+
 
 
             
@@ -8492,6 +8794,7 @@ complete, or has failed.</td>
 |
 
 <span class="param-type">string</span>
+
 
 
             
@@ -8525,6 +8828,7 @@ complete, or has failed.</td>
 <span class="param-type">basicCB</span>
 
 
+
             
             </td>
 
@@ -8550,12 +8854,17 @@ complete, or has failed.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -8565,89 +8874,86 @@ complete, or has failed.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-1275">line 1275</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line1275">line 1275</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li>HungryGames.pauseGame</li>
+			</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li>HungryGames.pauseGame</li>
-        </ul>
-    </dd>
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~removeEvent"><span class="type-signature">&lt;private, inner> </span>removeEvent(userData, socket, gId, type, event [, cb])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Remove a game event.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~removeEvent"><span class="type-signature">(private, inner) </span>removeEvent<span class="signature">(userData, socket, gId, type, event, cb<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Remove a game event.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -8657,7 +8963,7 @@ complete, or has failed.</td>
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -8678,6 +8984,7 @@ complete, or has failed.</td>
             
                 
 <span class="param-type">Object</span>
+
 
 
             
@@ -8709,6 +9016,7 @@ complete, or has failed.</td>
             
                 
 <span class="param-type">socketIo~Socket</span>
+
 
 
             
@@ -8743,6 +9051,7 @@ complete, or has failed.</td>
 |
 
 <span class="param-type">string</span>
+
 
 
             
@@ -8774,6 +9083,7 @@ complete, or has failed.</td>
             
                 
 <span class="param-type">string</span>
+
 
 
             
@@ -8807,6 +9117,7 @@ complete, or has failed.</td>
 <span class="param-type"><a href="HungryGames-Event.html">HungryGames~Event</a></span>
 
 
+
             
             </td>
 
@@ -8838,6 +9149,7 @@ complete, or has failed.</td>
 <span class="param-type">basicCB</span>
 
 
+
             
             </td>
 
@@ -8863,12 +9175,17 @@ complete, or has failed.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -8878,89 +9195,86 @@ complete, or has failed.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-1496">line 1496</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line1496">line 1496</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li>HungryGames.removeEvent</li>
+			</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li>HungryGames.removeEvent</li>
-        </ul>
-    </dd>
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~removeNPC"><span class="type-signature">&lt;private, inner> </span>removeNPC(userData, socket, gId, npcId [, cb])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Remove an NPC from a game.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~removeNPC"><span class="type-signature">(private, inner) </span>removeNPC<span class="signature">(userData, socket, gId, npcId, cb<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Remove an NPC from a game.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -8970,7 +9284,7 @@ complete, or has failed.</td>
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -8991,6 +9305,7 @@ complete, or has failed.</td>
             
                 
 <span class="param-type">Object</span>
+
 
 
             
@@ -9022,6 +9337,7 @@ complete, or has failed.</td>
             
                 
 <span class="param-type">socketIo-Socket</span>
+
 
 
             
@@ -9056,6 +9372,7 @@ complete, or has failed.</td>
 |
 
 <span class="param-type">string</span>
+
 
 
             
@@ -9089,6 +9406,7 @@ complete, or has failed.</td>
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -9120,6 +9438,7 @@ complete, or has failed.</td>
 <span class="param-type">basicCB</span>
 
 
+
             
             </td>
 
@@ -9145,12 +9464,17 @@ complete.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -9160,89 +9484,86 @@ complete.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-1664">line 1664</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line1664">line 1664</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li>HungryGames.removeNPC</li>
+			</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li>HungryGames.removeNPC</li>
-        </ul>
-    </dd>
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~renameGame"><span class="type-signature">&lt;private, inner> </span>renameGame(userData, socket, gId, name [, cb])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Rename the guild's game.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~renameGame"><span class="type-signature">(private, inner) </span>renameGame<span class="signature">(userData, socket, gId, name, cb<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Rename the guild's game.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -9252,7 +9573,7 @@ complete.</td>
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -9273,6 +9594,7 @@ complete.</td>
             
                 
 <span class="param-type">Object</span>
+
 
 
             
@@ -9304,6 +9626,7 @@ complete.</td>
             
                 
 <span class="param-type">socketIo-Socket</span>
+
 
 
             
@@ -9338,6 +9661,7 @@ complete.</td>
 |
 
 <span class="param-type">string</span>
+
 
 
             
@@ -9371,6 +9695,7 @@ complete.</td>
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -9402,6 +9727,7 @@ complete.</td>
 <span class="param-type">basicCB</span>
 
 
+
             
             </td>
 
@@ -9427,12 +9753,17 @@ complete.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -9442,90 +9773,87 @@ complete.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-1632">line 1632</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line1632">line 1632</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li>HungryGames.renameGame</li>
+			</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li>HungryGames.renameGame</li>
-        </ul>
-    </dd>
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~replyNoPerm"><span class="type-signature">&lt;private, inner> </span>replyNoPerm(socket, cmd)</h4>
+    
+    
+</dt>
+<dd>
 
     
-
-    
-    <h4 class="name" id="~replyNoPerm"><span class="type-signature">(private, inner) </span>replyNoPerm<span class="signature">(socket, cmd)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Send a message to the given socket informing the client that the command
+    <div class="description">
+        Send a message to the given socket informing the client that the command
 they attempted failed due to insufficient permission.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
+    </div>
     
 
-<table class="params">
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -9556,6 +9884,7 @@ they attempted failed due to insufficient permission.
 <span class="param-type">Socket</span>
 
 
+
             
             </td>
 
@@ -9579,6 +9908,7 @@ they attempted failed due to insufficient permission.
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -9593,12 +9923,17 @@ they attempted failed due to insufficient permission.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -9608,82 +9943,79 @@ they attempted failed due to insufficient permission.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-428">line 428</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line428">line 428</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~resetGame"><span class="type-signature">&lt;private, inner> </span>resetGame(userData, socket, gId, cmd [, cb])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Reset game data.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~resetGame"><span class="type-signature">(private, inner) </span>resetGame<span class="signature">(userData, socket, gId, cmd, cb<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Reset game data.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -9693,7 +10025,7 @@ they attempted failed due to insufficient permission.
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -9714,6 +10046,7 @@ they attempted failed due to insufficient permission.
             
                 
 <span class="param-type">Object</span>
+
 
 
             
@@ -9745,6 +10078,7 @@ they attempted failed due to insufficient permission.
             
                 
 <span class="param-type">socketIo~Socket</span>
+
 
 
             
@@ -9781,6 +10115,7 @@ they attempted failed due to insufficient permission.
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -9810,6 +10145,7 @@ they attempted failed due to insufficient permission.
             
                 
 <span class="param-type">string</span>
+
 
 
             
@@ -9843,6 +10179,7 @@ they attempted failed due to insufficient permission.
 <span class="param-type">basicCB</span>
 
 
+
             
             </td>
 
@@ -9868,12 +10205,17 @@ complete, or has failed.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -9883,89 +10225,86 @@ complete, or has failed.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-1098">line 1098</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line1098">line 1098</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li>HungryGames.resetGame</li>
+			</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li>HungryGames.resetGame</li>
-        </ul>
-    </dd>
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~socketConnection"><span class="type-signature">&lt;private, inner> </span>socketConnection(socket)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Handler for a new socket connecting.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~socketConnection"><span class="type-signature">(private, inner) </span>socketConnection<span class="signature">(socket)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Handler for a new socket connecting.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -9996,6 +10335,7 @@ complete, or has failed.</td>
 <span class="param-type">socketIo~Socket</span>
 
 
+
             
             </td>
 
@@ -10010,12 +10350,17 @@ complete, or has failed.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -10025,82 +10370,79 @@ complete, or has failed.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-157">line 157</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line157">line 157</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~startAutoplay"><span class="type-signature">&lt;private, inner> </span>startAutoplay(userData, socket, gId, cId [, cb])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Enable autoplay.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~startAutoplay"><span class="type-signature">(private, inner) </span>startAutoplay<span class="signature">(userData, socket, gId, cId, cb<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Enable autoplay.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -10110,7 +10452,7 @@ complete, or has failed.</td>
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -10131,6 +10473,7 @@ complete, or has failed.</td>
             
                 
 <span class="param-type">Object</span>
+
 
 
             
@@ -10162,6 +10505,7 @@ complete, or has failed.</td>
             
                 
 <span class="param-type">socketIo~Socket</span>
+
 
 
             
@@ -10198,6 +10542,7 @@ complete, or has failed.</td>
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -10230,6 +10575,7 @@ complete, or has failed.</td>
 |
 
 <span class="param-type">string</span>
+
 
 
             
@@ -10263,6 +10609,7 @@ complete, or has failed.</td>
 <span class="param-type">basicCB</span>
 
 
+
             
             </td>
 
@@ -10288,12 +10635,17 @@ complete, or has failed.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -10303,90 +10655,92 @@ complete, or has failed.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-1158">line 1158</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line1158">line 1158</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li>HungryGames.startAutoplay</li>
+			</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li>HungryGames.startAutoplay</li>
-        </ul>
-    </dd>
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~startClient"><span class="type-signature">&lt;private, inner> </span>startClient()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Start a socketio client connection to the primary running server.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~startClient"><span class="type-signature">(private, inner) </span>startClient<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
     
-
-
-
-<div class="description">
-    Start a socketio client connection to the primary running server.
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -10396,82 +10750,79 @@ complete, or has failed.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-51">line 51</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line51">line 51</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~startGame"><span class="type-signature">&lt;private, inner> </span>startGame(userData, socket, gId, cId [, cb])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Start the game.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~startGame"><span class="type-signature">(private, inner) </span>startGame<span class="signature">(userData, socket, gId, cId, cb<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Start the game.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -10481,7 +10832,7 @@ complete, or has failed.</td>
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -10502,6 +10853,7 @@ complete, or has failed.</td>
             
                 
 <span class="param-type">Object</span>
+
 
 
             
@@ -10533,6 +10885,7 @@ complete, or has failed.</td>
             
                 
 <span class="param-type">socketIo~Socket</span>
+
 
 
             
@@ -10567,6 +10920,7 @@ complete, or has failed.</td>
 |
 
 <span class="param-type">string</span>
+
 
 
             
@@ -10603,6 +10957,7 @@ complete, or has failed.</td>
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -10634,6 +10989,7 @@ complete, or has failed.</td>
 <span class="param-type">basicCB</span>
 
 
+
             
             </td>
 
@@ -10659,12 +11015,17 @@ complete, or has failed.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -10674,89 +11035,86 @@ complete, or has failed.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-1128">line 1128</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line1128">line 1128</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li>HungryGames.startGame</li>
+			</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li>HungryGames.startGame</li>
-        </ul>
-    </dd>
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~stripGuilds"><span class="type-signature">&lt;private, inner> </span>stripGuilds(guilds, userData)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Strip a Discord~Guild to the basic information the client will need.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~stripGuilds"><span class="type-signature">(private, inner) </span>stripGuilds<span class="signature">(guilds, userData)</span><span class="type-signature"> &rarr; {Array.&lt;Object>}</span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Strip a Discord~Guild to the basic information the client will need.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -10787,6 +11145,7 @@ complete, or has failed.</td>
 <span class="param-type">Array.&lt;Discord~Guild></span>
 
 
+
             
             </td>
 
@@ -10810,6 +11169,7 @@ complete, or has failed.</td>
 <span class="param-type">Object</span>
 
 
+
             
             </td>
 
@@ -10824,12 +11184,17 @@ complete, or has failed.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -10839,51 +11204,52 @@ complete, or has failed.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-707">line 707</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line707">line 707</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     The stripped guilds.
 </div>
@@ -10899,44 +11265,42 @@ complete, or has failed.</td>
 <span class="param-type">Array.&lt;Object></span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~toggleEvent"><span class="type-signature">&lt;private, inner> </span>toggleEvent(userData, socket, gId, type, subCat, event, value [, cb])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Enable or disable an event without deleting it.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~toggleEvent"><span class="type-signature">(private, inner) </span>toggleEvent<span class="signature">(userData, socket, gId, type, subCat<span class="signature-attributes">nullable</span>, event, value<span class="signature-attributes">nullable</span>, cb<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Enable or disable an event without deleting it.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -10946,7 +11310,7 @@ complete, or has failed.</td>
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -10967,6 +11331,7 @@ complete, or has failed.</td>
             
                 
 <span class="param-type">Object</span>
+
 
 
             
@@ -10998,6 +11363,7 @@ complete, or has failed.</td>
             
                 
 <span class="param-type">socketIo-Socket</span>
+
 
 
             
@@ -11034,6 +11400,7 @@ complete, or has failed.</td>
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -11065,6 +11432,7 @@ complete, or has failed.</td>
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -11094,6 +11462,7 @@ complete, or has failed.</td>
             
                 
 <span class="param-type">string</span>
+
 
 
             
@@ -11135,6 +11504,7 @@ complete, or has failed.</td>
 <span class="param-type"><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></span>
 
 
+
             
             </td>
 
@@ -11164,6 +11534,7 @@ complete, or has failed.</td>
             
                 
 <span class="param-type">boolean</span>
+
 
 
             
@@ -11199,6 +11570,7 @@ complete, or has failed.</td>
 <span class="param-type">basicCB</span>
 
 
+
             
             </td>
 
@@ -11224,12 +11596,17 @@ complete.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -11239,89 +11616,86 @@ complete.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-1545">line 1545</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line1545">line 1545</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li>HungryGames.toggleEvent</li>
+			</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li>HungryGames.toggleEvent</li>
-        </ul>
-    </dd>
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~toggleOption"><span class="type-signature">&lt;private, inner> </span>toggleOption(userData, socket, gId, option, value, extra [, cb])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Toggle an option in the Games.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~toggleOption"><span class="type-signature">(private, inner) </span>toggleOption<span class="signature">(userData, socket, gId, option, value, extra, cb<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Toggle an option in the Games.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -11331,7 +11705,7 @@ complete.</td>
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -11352,6 +11726,7 @@ complete.</td>
             
                 
 <span class="param-type">Object</span>
+
 
 
             
@@ -11383,6 +11758,7 @@ complete.</td>
             
                 
 <span class="param-type">socketIo~Socket</span>
+
 
 
             
@@ -11419,6 +11795,7 @@ complete.</td>
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -11448,6 +11825,7 @@ complete.</td>
             
                 
 <span class="param-type">string</span>
+
 
 
             
@@ -11484,6 +11862,7 @@ complete.</td>
 <span class="param-type">number</span>
 
 
+
             
             </td>
 
@@ -11513,6 +11892,7 @@ complete.</td>
             
                 
 <span class="param-type">string</span>
+
 
 
             
@@ -11546,6 +11926,7 @@ complete.</td>
 <span class="param-type">basicCB</span>
 
 
+
             
             </td>
 
@@ -11571,12 +11952,17 @@ complete, or has failed.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -11586,90 +11972,92 @@ complete, or has failed.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-1031">line 1031</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line1031">line 1031</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li>HungryGames.setOption</li>
+			</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li>HungryGames.setOption</li>
-        </ul>
-    </dd>
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~unlinkHG"><span class="type-signature">&lt;private, inner> </span>unlinkHG()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Unregister all event handlers from `hg_`.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~unlinkHG"><span class="type-signature">(private, inner) </span>unlinkHG<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
     
-
-
-
-<div class="description">
-    Unregister all event handlers from `hg_`.
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -11679,89 +12067,86 @@ complete, or has failed.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-84">line 84</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line84">line 84</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
+</dd>
 
-
-
-
-
-
-
-
-
-
-        
+        </dl>
     
 
     
         <h3 class="subsection-title">Type Definitions</h3>
 
-        
+        <dl>
                 
+<hr>
+<dt>
+    <h4 class="name" id="~basicCB"><span class="type-signature"></span>basicCB(err)</h4>
+    
+    
+</dt>
+<dd>
 
     
-
-    
-    <h4 class="name" id="~basicCB"><span class="type-signature"></span>basicCB<span class="signature">(err<span class="signature-attributes">nullable</span>)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Basic callback with single argument. The argument is null if there is no
+    <div class="description">
+        Basic callback with single argument. The argument is null if there is no
 error, or a string if there was an error.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
+    </div>
     
 
-<table class="params">
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -11771,7 +12156,7 @@ error, or a string if there was an error.
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -11792,6 +12177,7 @@ error, or a string if there was an error.
             
                 
 <span class="param-type">string</span>
+
 
 
             
@@ -11818,12 +12204,17 @@ error, or a string if there was an error.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -11833,54 +12224,54 @@ error, or a string if there was an error.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-605">line 605</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="web_hg.js.html">web/hg.js</a>, <a href="web_hg.js.html#line605">line 605</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
+</dd>
 
-
-
-
-
-
-
-
-
-
-            
+            </dl>
     
 
     
@@ -11891,19 +12282,153 @@ error, or a string if there was an error.
 
 
 
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+		<div class="col-md-3">
+			<div id="toc" class="col-md-3 hidden-xs hidden-sm hidden-md"></div>
+		</div>
+	
+
+</div>
 </div>
 
-<nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_twemojiChecker.html">lib/twemojiChecker</a></li></ul><h3>Externals</h3><ul><li><a href="external-Discord.html">external:Discord</a></li></ul><h3>Classes</h3><ul><li><a href="ChatBot.html">ChatBot</a></li><li><a href="CmdScheduling.html">CmdScheduling</a></li><li><a href="CmdScheduling-ScheduledCommand.html">CmdScheduling~ScheduledCommand</a></li><li><a href="Command.html">Command</a></li><li><a href="Command-CommandSetting.html">Command~CommandSetting</a></li><li><a href="Command-SingleCommand.html">Command~SingleCommand</a></li><li><a href="Common.html">Common</a></li><li><a href="Connect4.html">Connect4</a></li><li><a href="Connect4_Game.html">Connect4#Game</a></li><li><a href="Define.html">Define</a></li><li><a href="DevCmds.html">DevCmds</a></li><li><a href="Echo.html">Echo</a></li><li><a href="Echo-Character.html">Echo~Character</a></li><li><a href="FunTranslators.html">FunTranslators</a></li><li><a href="HG.html">HG</a></li><li><a href="HGWeb.html">HGWeb</a></li><li><a href="HungryGames.html">HungryGames</a></li><li><a href="HungryGames-ArenaEvent.html">HungryGames~ArenaEvent</a></li><li><a href="HungryGames-Battle.html">HungryGames~Battle</a></li><li><a href="HungryGames-Day.html">HungryGames~Day</a></li><li><a href="HungryGames-DefaultOptions.html">HungryGames~DefaultOptions</a></li><li><a href="HungryGames-DefaultOptions-BooleanOption.html">HungryGames~DefaultOptions~BooleanOption</a></li><li><a href="HungryGames-DefaultOptions-NumberOption.html">HungryGames~DefaultOptions~NumberOption</a></li><li><a href="HungryGames-DefaultOptions-ObjectOption.html">HungryGames~DefaultOptions~ObjectOption</a></li><li><a href="HungryGames-DefaultOptions-Option.html">HungryGames~DefaultOptions~Option</a></li><li><a href="HungryGames-DefaultOptions-SelectOption.html">HungryGames~DefaultOptions~SelectOption</a></li><li><a href="HungryGames-Event.html">HungryGames~Event</a></li><li><a href="HungryGames-FinalEvent.html">HungryGames~FinalEvent</a></li><li><a href="HungryGames-ForcedOutcome.html">HungryGames~ForcedOutcome</a></li><li><a href="HungryGames-Game.html">HungryGames~Game</a></li><li><a href="HungryGames-Grammar.html">HungryGames~Grammar</a></li><li><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></li><li><a href="HungryGames-Messages.html">HungryGames~Messages</a></li><li><a href="HungryGames-OutcomeProbabilities.html">HungryGames~OutcomeProbabilities</a></li><li><a href="HungryGames-Player.html">HungryGames~Player</a></li><li><a href="HungryGames-Simulator.html">HungryGames~Simulator</a></li><li><a href="HungryGames-Simulator-Worker.html">HungryGames~Simulator~Worker</a></li><li><a href="HungryGames-Team.html">HungryGames~Team</a></li><li><a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a></li><li><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></li><li><a href="Main.html">Main</a></li><li><a href="MainModule.html">MainModule</a></li><li><a href="Messages.html">Messages</a></li><li><a href="Moderation.html">Moderation</a></li><li><a href="ModLog.html">ModLog</a></li><li><a href="ModLog-Settings.html">ModLog~Settings</a></li><li><a href="Music.html">Music</a></li><li><a href="NPC.html">NPC</a></li><li><a href="Patreon.html">Patreon</a></li><li><a href="Patreon-toExport.html">Patreon~toExport</a></li><li><a href="Polling.html">Polling</a></li><li><a href="Polling-Poll.html">Polling~Poll</a></li><li><a href="RaidBlock.html">RaidBlock</a></li><li><a href="RaidBlock-RaidSettings.html">RaidBlock~RaidSettings</a></li><li><a href="RoleColors.html">RoleColors</a></li><li><a href="RoleManager.html">RoleManager</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="SMLoader.html">SMLoader</a></li><li><a href="SpikeyBot.html">SpikeyBot</a></li><li><a href="Spotify.html">Spotify</a></li><li><a href="SubModule.html">SubModule</a></li><li><a href="TicTacToe.html">TicTacToe</a></li><li><a href="TicTacToe_Game.html">TicTacToe#Game</a></li><li><a href="TTS.html">TTS</a></li><li><a href="Uno.html">Uno</a></li><li><a href="Uno_Card.html">Uno#Card</a></li><li><a href="Uno_Game.html">Uno#Game</a></li><li><a href="WebAccount.html">WebAccount</a></li><li><a href="WebCommands.html">WebCommands</a></li><li><a href="WebProxy.html">WebProxy</a></li><li><a href="WebSettings.html">WebSettings</a></li><li><a href="WebStats.html">WebStats</a></li></ul><h3>Global</h3><ul><li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li></ul>
-</nav>
 
-<br class="clear">
+    <div class="modal fade" id="searchResults">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Search results</h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sat May 04 2019 21:43:40 GMT-0700 (Pacific Daylight Time)
+
+
+	<span class="copyright">
+	<small>Website Contact: <a href="mailto:web@spikeybot.com">web@spikeybot.com</a>.</small><br><small>&copy; Copyright 2019, Campbell Crowley. <a href="https://docs.google.com/document/d/1SAC2aPxxeNqRjlZzjwrnCyyWWyt09ZP-AP7BDBjjQDg/edit?usp=sharing">Privacy Policy</a></small>
+	</span>
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
+	
+		on Saturday, May 4, 2019 10:15 PM (-07:00)
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
 </footer>
 
-<script> prettyPrint(); </script>
-<script src="scripts/linenumber.js"> </script>
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+
+    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+<script>
+	(function ( i, s, o, g, r, a, m ) {
+		i['GoogleAnalyticsObject'] = r;
+		i[r] = i[r] || function () {
+			(i[r].q = i[r].q || []).push( arguments )
+		}, i[r].l = 1 * new Date();
+		a = s.createElement( o ),
+			m = s.getElementsByTagName( o )[0];
+		a.async = 1;
+		a.src = g;
+		m.parentNode.insertBefore( a, m )
+	})( window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga' );
+
+	ga( 'create', 'UA-89923351-1', 'www.spikeybot.com' );
+	ga( 'send', 'pageview' );
+</script>
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            SearcherDisplay.init();
+        });
+    </script>
+
+
 </body>
 </html>

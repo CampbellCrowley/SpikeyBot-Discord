@@ -1,34 +1,99 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>JSDoc: Class: Command</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>SpikeyBot-Discord Class: Command</title>
 
-    <script src="scripts/prettify/prettify.js"> </script>
-    <script src="scripts/prettify/lang-css.js"> </script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
-    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.dark.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.slate.css">
+
 </head>
 
 <body>
 
-<div id="main">
+<div class="navbar navbar-default navbar-fixed-top ">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">SpikeyBot-Discord</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="module-lib_twemojiChecker.html">lib/twemojiChecker</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="ChatBot.html">ChatBot</a></li><li><a href="CmdScheduling.html">CmdScheduling</a></li><li><a href="CmdScheduling-ScheduledCommand.html">CmdScheduling~ScheduledCommand</a></li><li><a href="Command.html">Command</a></li><li><a href="Command-CommandSetting.html">Command~CommandSetting</a></li><li><a href="Command-SingleCommand.html">Command~SingleCommand</a></li><li><a href="Common.html">Common</a></li><li><a href="Connect4.html">Connect4</a></li><li><a href="Connect4_Game.html">Connect4#Game</a></li><li><a href="Define.html">Define</a></li><li><a href="DevCmds.html">DevCmds</a></li><li><a href="Echo.html">Echo</a></li><li><a href="Echo-Character.html">Echo~Character</a></li><li><a href="FunTranslators.html">FunTranslators</a></li><li><a href="HG.html">HG</a></li><li><a href="HGWeb.html">HGWeb</a></li><li><a href="HungryGames.html">HungryGames</a></li><li><a href="HungryGames-ArenaEvent.html">HungryGames~ArenaEvent</a></li><li><a href="HungryGames-Battle.html">HungryGames~Battle</a></li><li><a href="HungryGames-Day.html">HungryGames~Day</a></li><li><a href="HungryGames-DefaultOptions.html">HungryGames~DefaultOptions</a></li><li><a href="HungryGames-DefaultOptions-BooleanOption.html">HungryGames~DefaultOptions~BooleanOption</a></li><li><a href="HungryGames-DefaultOptions-NumberOption.html">HungryGames~DefaultOptions~NumberOption</a></li><li><a href="HungryGames-DefaultOptions-ObjectOption.html">HungryGames~DefaultOptions~ObjectOption</a></li><li><a href="HungryGames-DefaultOptions-Option.html">HungryGames~DefaultOptions~Option</a></li><li><a href="HungryGames-DefaultOptions-SelectOption.html">HungryGames~DefaultOptions~SelectOption</a></li><li><a href="HungryGames-Event.html">HungryGames~Event</a></li><li><a href="HungryGames-FinalEvent.html">HungryGames~FinalEvent</a></li><li><a href="HungryGames-ForcedOutcome.html">HungryGames~ForcedOutcome</a></li><li><a href="HungryGames-Game.html">HungryGames~Game</a></li><li><a href="HungryGames-Grammar.html">HungryGames~Grammar</a></li><li><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></li><li><a href="HungryGames-Messages.html">HungryGames~Messages</a></li><li><a href="HungryGames-OutcomeProbabilities.html">HungryGames~OutcomeProbabilities</a></li><li><a href="HungryGames-Player.html">HungryGames~Player</a></li><li><a href="HungryGames-Simulator.html">HungryGames~Simulator</a></li><li><a href="HungryGames-Simulator-Worker.html">HungryGames~Simulator~Worker</a></li><li><a href="HungryGames-Team.html">HungryGames~Team</a></li><li><a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a></li><li><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></li><li><a href="Main.html">Main</a></li><li><a href="MainModule.html">MainModule</a></li><li><a href="Messages.html">Messages</a></li><li><a href="Moderation.html">Moderation</a></li><li><a href="ModLog.html">ModLog</a></li><li><a href="ModLog-Settings.html">ModLog~Settings</a></li><li><a href="Music.html">Music</a></li><li><a href="NPC.html">NPC</a></li><li><a href="Patreon.html">Patreon</a></li><li><a href="Patreon-toExport.html">Patreon~toExport</a></li><li><a href="Polling.html">Polling</a></li><li><a href="Polling-Poll.html">Polling~Poll</a></li><li><a href="RaidBlock.html">RaidBlock</a></li><li><a href="RaidBlock-RaidSettings.html">RaidBlock~RaidSettings</a></li><li><a href="RoleColors.html">RoleColors</a></li><li><a href="RoleManager.html">RoleManager</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="SMLoader.html">SMLoader</a></li><li><a href="SpikeyBot.html">SpikeyBot</a></li><li><a href="Spotify.html">Spotify</a></li><li><a href="SubModule.html">SubModule</a></li><li><a href="TicTacToe.html">TicTacToe</a></li><li><a href="TicTacToe_Game.html">TicTacToe#Game</a></li><li><a href="TTS.html">TTS</a></li><li><a href="Uno.html">Uno</a></li><li><a href="Uno_Card.html">Uno#Card</a></li><li><a href="Uno_Game.html">Uno#Game</a></li><li><a href="WebAccount.html">WebAccount</a></li><li><a href="WebCommands.html">WebCommands</a></li><li><a href="WebProxy.html">WebProxy</a></li><li><a href="WebSettings.html">WebSettings</a></li><li><a href="WebStats.html">WebStats</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="externals.list.html" class="dropdown-toggle" data-toggle="dropdown">Externals<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="external-Discord.html">Discord</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+        
+            <div class="col-sm-3 col-md-3">
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        
+	</div>
 
-    <h1 class="page-title">Class: Command</h1>
-
-    
-
+</div>
+</div>
 
 
+<div class="container" id="toc-content">
+<div class="row">
 
+	
+	<div class="col-md-8">
+	
+		<div id="main">
+			
+
+	<h1 class="page-title">Class: Command</h1>
 <section>
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>Command<span class="signature">()</span><span class="type-signature"></span></h2>
+        <h2>
+        Command
+        </h2>
         
             <div class="class-description">Manages the command event firing for all commands. This is not a
 normal submodule, and is treated differently in the SpikeyBot class.</div>
@@ -36,36 +101,37 @@ normal submodule, and is treated differently in the SpikeyBot class.</div>
     
 </header>
 
+
 <article>
     <div class="container-overview">
     
         
+<hr>
+<dt>
+    <h4 class="name" id="Command"><span class="type-signature"></span>new Command()</h4>
+    
+    
+</dt>
+<dd>
 
     
-    <h2>Constructor</h2>
-    
 
-    
-    <h4 class="name" id="Command"><span class="type-signature"></span>new Command<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
     
 
+    
+    
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -75,52 +141,52 @@ normal submodule, and is treated differently in the SpikeyBot class.</div>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="commands.js.html">commands.js</a>,
+				 <a href="commands.js.html#sunlight-1-line-12">line 12</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="commands.js.html">commands.js</a>, <a href="commands.js.html#line12">line 12</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
     
     </div>
@@ -157,57 +223,54 @@ normal submodule, and is treated differently in the SpikeyBot class.</div>
     
 
     
-
-    
         <h3 class="subsection-title">Members</h3>
 
-        
+        <dl>
             
-<h4 class="name" id="bot"><span class="type-signature"></span>bot<span class="type-signature"> :<a href="SpikeyBot.html">SpikeyBot</a></span></h4>
+<hr>
+<dt class="name" id="bot">
+    <h4 id="bot"><span class="type-signature"></span>bot<span class="type-signature"> :<a href="SpikeyBot.html">SpikeyBot</a></span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The parent SpikeyBot instance.
+    </div>
+    
 
-
-
-<div class="description">
-    The parent SpikeyBot instance.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type"><a href="SpikeyBot.html">SpikeyBot</a></span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
-
     
 
-    
+	
 
-    
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
-        <a href="SubModule.html#bot">SubModule#bot</a>
-    </li></ul></dd>
-    
+	
 
-    
-
-    
-
-    
-
-    
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="SubModule.html#bot">SubModule#bot</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
 
@@ -217,74 +280,87 @@ normal submodule, and is treated differently in the SpikeyBot class.</div>
 
     
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="subModule.js.html">subModule.js</a>, <a href="subModule.js.html#line58">line 58</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="subModule.js.html">subModule.js</a>,
+				 <a href="subModule.js.html#sunlight-1-line-58">line 58</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="client"><span class="type-signature"></span>client<span class="type-signature"> :Discord~Client</span></h4>
+<hr>
+<dt class="name" id="client">
+    <h4 id="client"><span class="type-signature"></span>client<span class="type-signature"> :Discord~Client</span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The current bot client.
+    </div>
+    
 
-
-
-<div class="description">
-    The current bot client.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">Discord~Client</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
-
     
 
-    
+	
 
-    
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
-        <a href="SubModule.html#client">SubModule#client</a>
-    </li></ul></dd>
-    
+	
 
-    
-
-    
-
-    
-
-    
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="SubModule.html#client">SubModule#client</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
 
@@ -294,217 +370,251 @@ normal submodule, and is treated differently in the SpikeyBot class.</div>
 
     
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="subModule.js.html">subModule.js</a>, <a href="subModule.js.html#line39">line 39</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="subModule.js.html">subModule.js</a>,
+				 <a href="subModule.js.html#sunlight-1-line-39">line 39</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="command"><span class="type-signature"></span>command<span class="type-signature"> :<a href="Command.html">Command</a></span></h4>
+<hr>
+<dt class="name" id="command">
+    <h4 id="command"><span class="type-signature"></span>command<span class="type-signature"> :<a href="Command.html">Command</a></span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The command object for registering command listeners.
+    </div>
+    
 
-
-
-<div class="description">
-    The command object for registering command listeners.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type"><a href="Command.html">Command</a></span>
 
 
-        </li>
-    </ul>
 
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
-        <a href="SubModule.html#command">SubModule#command</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="subModule.js.html">subModule.js</a>, <a href="subModule.js.html#line45">line 45</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-        
-            
-<h4 class="name" id="CommandSetting"><span class="type-signature"></span>CommandSetting<span class="type-signature"></span></h4>
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="commands.js.html">commands.js</a>, <a href="commands.js.html#line673">line 673</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li><a href="Command-CommandSetting.html">Command~CommandSetting</a></li>
+            </li>
         </ul>
-    </dd>
     
 
     
+<dl class="details">
+    
+
+	
+
+	
+
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="SubModule.html#command">SubModule#command</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="subModule.js.html">subModule.js</a>,
+				 <a href="subModule.js.html#sunlight-1-line-45">line 45</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="commit"><span class="type-signature">(constant) </span>commit<span class="type-signature"> :string</span></h4>
+<hr>
+<dt class="name" id="CommandSetting">
+    <h4 id="CommandSetting"><span class="type-signature"></span>CommandSetting<span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+    
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
 
 
 
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="commands.js.html">commands.js</a>,
+				 <a href="commands.js.html#sunlight-1-line-673">line 673</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-<div class="description">
-    The commit at HEAD at the time this module was loaded. Essentially the
-version of this submodule.
-</div>
+	
+
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li><a href="Command-CommandSetting.html">Command~CommandSetting</a></li>
+			</ul>
+	</dd>
+	
+
+	
+</dl>
 
 
+    
+</dd>
 
-    <h5>Type:</h5>
-    <ul>
-        <li>
+        
             
+<hr>
+<dt class="name" id="commit">
+    <h4 id="commit"><span class="type-signature">&lt;constant> </span>commit<span class="type-signature"> :string</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The commit at HEAD at the time this module was loaded. Essentially the
+version of this submodule.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">string</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
-
     
 
-    
+	
 
-    
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
-        <a href="SubModule.html#commit">SubModule#commit</a>
-    </li></ul></dd>
-    
+	
 
-    
-
-    
-
-    
-
-    
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="SubModule.html#commit">SubModule#commit</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
 
@@ -514,74 +624,87 @@ version of this submodule.
 
     
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="subModule.js.html">subModule.js</a>, <a href="subModule.js.html#line68">line 68</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="subModule.js.html">subModule.js</a>,
+				 <a href="subModule.js.html#sunlight-1-line-68">line 68</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="common"><span class="type-signature"></span>common<span class="type-signature"> :<a href="Common.html">Common</a></span></h4>
+<hr>
+<dt class="name" id="common">
+    <h4 id="common"><span class="type-signature"></span>common<span class="type-signature"> :<a href="Common.html">Common</a></span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The common object.
+    </div>
+    
 
-
-
-<div class="description">
-    The common object.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type"><a href="Common.html">Common</a></span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
-
     
 
-    
+	
 
-    
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
-        <a href="SubModule.html#common">SubModule#common</a>
-    </li></ul></dd>
-    
+	
 
-    
-
-    
-
-    
-
-    
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="SubModule.html#common">SubModule#common</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
 
@@ -591,45 +714,67 @@ version of this submodule.
 
     
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="subModule.js.html">subModule.js</a>, <a href="subModule.js.html#line51">line 51</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="subModule.js.html">subModule.js</a>,
+				 <a href="subModule.js.html#sunlight-1-line-51">line 51</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="deleteEvent"><span class="type-signature"></span>deleteEvent<span class="type-signature"></span></h4>
+<hr>
+<dt class="name" id="deleteEvent">
+    <h4 id="deleteEvent"><span class="type-signature"></span>deleteEvent<span class="type-signature"></span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Alias for Command.removeListener
+    </div>
+    
 
+    
 
-
-<div class="description">
-    Alias for Command.removeListener
-</div>
-
-
-
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -639,90 +784,96 @@ version of this submodule.
 
     
 
+	
+	<dt class="important tag-deprecated method-doc-label method-doc-details-label">Deprecated:</dt>
+	
+    <dd class="yes-def tag-deprecated">
+        <ul class="dummy">
+            <li>Yes</li>
+        </ul>
+    </dd>
+    
     
 
-    
+	
 
-    
+	
 
-    
-        <dt class="important tag-deprecated">Deprecated:</dt><dd class="yes-def tag-deprecated"><ul class="dummy"><li>Yes</li></ul></dd>
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="commands.js.html">commands.js</a>,
+				 <a href="commands.js.html#sunlight-1-line-862">line 862</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="commands.js.html">commands.js</a>, <a href="commands.js.html#line862">line 862</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="Discord"><span class="type-signature"></span>Discord<span class="type-signature"> :Discord</span></h4>
+<hr>
+<dt class="name" id="Discord">
+    <h4 id="Discord"><span class="type-signature"></span>Discord<span class="type-signature"> :Discord</span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The current Discord object instance of the bot.
+    </div>
+    
 
-
-
-<div class="description">
-    The current Discord object instance of the bot.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">Discord</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
-
     
 
-    
+	
 
-    
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
-        <a href="SubModule.html#Discord">SubModule#Discord</a>
-    </li></ul></dd>
-    
+	
 
-    
-
-    
-
-    
-
-    
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="SubModule.html#Discord">SubModule#Discord</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
 
@@ -732,77 +883,90 @@ version of this submodule.
 
     
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="subModule.js.html">subModule.js</a>, <a href="subModule.js.html#line33">line 33</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="subModule.js.html">subModule.js</a>,
+				 <a href="subModule.js.html#sunlight-1-line-33">line 33</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="helpMessage"><span class="type-signature"></span>helpMessage<span class="type-signature"> :string|Discord~MessageEmbed</span></h4>
+<hr>
+<dt class="name" id="helpMessage">
+    <h4 id="helpMessage"><span class="type-signature"></span>helpMessage<span class="type-signature"> :string|Discord~MessageEmbed</span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The help message to show the user in the main help message.
+    </div>
+    
 
-
-
-<div class="description">
-    The help message to show the user in the main help message.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">string</span>
 |
 
 <span class="param-type">Discord~MessageEmbed</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
-
     
 
-    
+	
 
-    
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
-        <a href="SubModule.html#helpMessage">SubModule#helpMessage</a>
-    </li></ul></dd>
-    
+	
 
-    
-
-    
-
-    
-
-    
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="SubModule.html#helpMessage">SubModule#helpMessage</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
 
@@ -812,74 +976,87 @@ version of this submodule.
 
     
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="subModule.js.html">subModule.js</a>, <a href="subModule.js.html#line17">line 17</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="subModule.js.html">subModule.js</a>,
+				 <a href="subModule.js.html#sunlight-1-line-17">line 17</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="initialized"><span class="type-signature">(protected, readonly) </span>initialized<span class="type-signature"> :boolean</span></h4>
+<hr>
+<dt class="name" id="initialized">
+    <h4 id="initialized"><span class="type-signature">&lt;protected, readonly> </span>initialized<span class="type-signature"> :boolean</span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Has this subModule been initialized yet (Has begin() been called).
+    </div>
+    
 
-
-
-<div class="description">
-    Has this subModule been initialized yet (Has begin() been called).
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">boolean</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
-
     
 
-    
+	
 
-    
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
-        <a href="SubModule.html#initialized">SubModule#initialized</a>
-    </li></ul></dd>
-    
+	
 
-    
-
-    
-
-    
-
-    
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="SubModule.html#initialized">SubModule#initialized</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
 
@@ -889,76 +1066,89 @@ version of this submodule.
 
     
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="subModule.js.html">subModule.js</a>, <a href="subModule.js.html#line103">line 103</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="subModule.js.html">subModule.js</a>,
+				 <a href="subModule.js.html#sunlight-1-line-103">line 103</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="loadTime"><span class="type-signature">(constant) </span>loadTime<span class="type-signature"> :number</span></h4>
+<hr>
+<dt class="name" id="loadTime">
+    <h4 id="loadTime"><span class="type-signature">&lt;constant> </span>loadTime<span class="type-signature"> :number</span></h4>
 
-
-
-
-<div class="description">
-    The time at which this madule was loaded for use in checking if the
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The time at which this madule was loaded for use in checking if the
 module
 needs to be reloaded because the file has been modified since loading.
-</div>
+    </div>
+    
 
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">number</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
-
     
 
-    
+	
 
-    
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
-        <a href="SubModule.html#loadTime">SubModule#loadTime</a>
-    </li></ul></dd>
-    
+	
 
-    
-
-    
-
-    
-
-    
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="SubModule.html#loadTime">SubModule#loadTime</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
 
@@ -968,63 +1158,89 @@ needs to be reloaded because the file has been modified since loading.
 
     
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="subModule.js.html">subModule.js</a>, <a href="subModule.js.html#line82">line 82</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="subModule.js.html">subModule.js</a>,
+				 <a href="subModule.js.html#sunlight-1-line-82">line 82</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="myName"><span class="type-signature">(protected) </span>myName<span class="type-signature"> :string</span></h4>
+<hr>
+<dt class="name" id="myName">
+    <h4 id="myName"><span class="type-signature">&lt;protected> </span>myName<span class="type-signature"> :string</span></h4>
 
-
-
-
-<div class="description">
-    The name of this submodule. Used for differentiating in the log. Should
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The name of this submodule. Used for differentiating in the log. Should
 be
 defined before begin().
-</div>
+    </div>
+    
 
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">string</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
-
     
 
-    
+	
 
-    
+	
+
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="SubModule.html#myName">SubModule#myName</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
     <dt class="tag-overrides">Overrides:</dt>
@@ -1039,206 +1255,242 @@ defined before begin().
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="subModule.js.html">subModule.js</a>, <a href="subModule.js.html#line93">line 93</a>
-    </li></ul></dd>
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="subModule.js.html">subModule.js</a>,
+				 <a href="subModule.js.html#sunlight-1-line-93">line 93</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
+	
+
+	
+
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="postPrefix"><span class="type-signature">(abstract) </span>postPrefix<span class="type-signature"> :string</span></h4>
+<hr>
+<dt class="name" id="postPrefix">
+    <h4 id="postPrefix"><span class="type-signature">&lt;abstract> </span>postPrefix<span class="type-signature"> :string</span></h4>
 
-
-
-
-<div class="description">
-    The postfix for the global prefix for this subModule. Must be defined
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The postfix for the global prefix for this subModule. Must be defined
 before begin(), otherwise it is ignored.
-</div>
+    </div>
+    
 
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">string</span>
 
 
-        </li>
-    </ul>
 
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
-        <a href="SubModule.html#postPrefix">SubModule#postPrefix</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="subModule.js.html">subModule.js</a>, <a href="subModule.js.html#line27">line 27</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-        
-            
-<h4 class="name" id="SingleCommand"><span class="type-signature"></span>SingleCommand<span class="type-signature"></span></h4>
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="commands.js.html">commands.js</a>, <a href="commands.js.html#line382">line 382</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li><a href="Command-SingleCommand.html">Command~SingleCommand</a></li>
+            </li>
         </ul>
-    </dd>
     
 
     
+<dl class="details">
+    
+
+	
+
+	
+
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="SubModule.html#postPrefix">SubModule#postPrefix</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="subModule.js.html">subModule.js</a>,
+				 <a href="subModule.js.html#sunlight-1-line-27">line 27</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~cmds"><span class="type-signature">(private, inner) </span>cmds<span class="type-signature"> :Object.&lt;SingleCommand></span></h4>
+<hr>
+<dt class="name" id="SingleCommand">
+    <h4 id="SingleCommand"><span class="type-signature"></span>SingleCommand<span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+    
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
 
 
 
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="commands.js.html">commands.js</a>,
+				 <a href="commands.js.html#sunlight-1-line-382">line 382</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-<div class="description">
-    All tracked commands mapped by command name.
-</div>
+	
+
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li><a href="Command-SingleCommand.html">Command~SingleCommand</a></li>
+			</ul>
+	</dd>
+	
+
+	
+</dl>
 
 
+    
+</dd>
 
-    <h5>Type:</h5>
-    <ul>
-        <li>
+        
             
+<hr>
+<dt class="name" id="~cmds">
+    <h4 id="~cmds"><span class="type-signature">&lt;private, inner> </span>cmds<span class="type-signature"> :Object.&lt;SingleCommand></span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        All tracked commands mapped by command name.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">Object.&lt;SingleCommand></span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1248,69 +1500,78 @@ before begin(), otherwise it is ignored.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="commands.js.html">commands.js</a>,
+				 <a href="commands.js.html#sunlight-1-line-160">line 160</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="commands.js.html">commands.js</a>, <a href="commands.js.html#line160">line 160</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~commandSettingsFile"><span class="type-signature">(private, inner, constant) </span>commandSettingsFile<span class="type-signature"> :string</span></h4>
+<hr>
+<dt class="name" id="~commandSettingsFile">
+    <h4 id="~commandSettingsFile"><span class="type-signature">&lt;private, inner, constant> </span>commandSettingsFile<span class="type-signature"> :string</span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Filename in the guild's subdirectory where command settings are stored.
+    </div>
+    
 
-
-
-<div class="description">
-    Filename in the guild's subdirectory where command settings are stored.
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">string</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1320,64 +1581,74 @@ before begin(), otherwise it is ignored.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>/commandSettings.json</li>
+		</ul>
+	</dd>
+	
 
-    
 
-    
 
-    
-    <dt class="tag-default">Default Value:</dt>
-    <dd class="tag-default"><ul class="dummy">
-            <li>/commandSettings.json</li>
-        </ul></dd>
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="commands.js.html">commands.js</a>,
+				 <a href="commands.js.html#sunlight-1-line-730">line 730</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="commands.js.html">commands.js</a>, <a href="commands.js.html#line730">line 730</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~eventList"><span class="type-signature">(inner) </span>eventList<span class="type-signature"></span></h4>
+<hr>
+<dt class="name" id="~eventList">
+    <h4 id="~eventList"><span class="type-signature">&lt;inner> </span>eventList<span class="type-signature"></span></h4>
 
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Currently registered event listeners for non-command events.
+    </div>
+    
 
+    
 
-
-<div class="description">
-    Currently registered event listeners for non-command events.
-</div>
-
-
-
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1387,70 +1658,79 @@ before begin(), otherwise it is ignored.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="commands.js.html">commands.js</a>,
+				 <a href="commands.js.html#sunlight-1-line-152">line 152</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="commands.js.html">commands.js</a>, <a href="commands.js.html#line152">line 152</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~onlyservermessage"><span class="type-signature">(private, inner, constant) </span>onlyservermessage<span class="type-signature"> :string</span></h4>
+<hr>
+<dt class="name" id="~onlyservermessage">
+    <h4 id="~onlyservermessage"><span class="type-signature">&lt;private, inner, constant> </span>onlyservermessage<span class="type-signature"> :string</span></h4>
 
-
-
-
-<div class="description">
-    The message to send to the user if they attempt a server-only command in a
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The message to send to the user if they attempt a server-only command in a
 non-server channel.
-</div>
+    </div>
+    
 
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">string</span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1460,70 +1740,79 @@ non-server channel.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="commands.js.html">commands.js</a>,
+				 <a href="commands.js.html#sunlight-1-line-720">line 720</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="commands.js.html">commands.js</a>, <a href="commands.js.html#line720">line 720</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
-
-
-
+    
+</dd>
 
         
             
-<h4 class="name" id="~userSettings"><span class="type-signature">(private, inner, constant) </span>userSettings<span class="type-signature"> :Object.&lt;Object.&lt;CommandSetting>></span></h4>
+<hr>
+<dt class="name" id="~userSettings">
+    <h4 id="~userSettings"><span class="type-signature">&lt;private, inner, constant> </span>userSettings<span class="type-signature"> :Object.&lt;Object.&lt;CommandSetting>></span></h4>
 
-
-
-
-<div class="description">
-    Specific settings defined by users as restrictions on commands. Mapped by
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Specific settings defined by users as restrictions on commands. Mapped by
 guild id, then by the command.
-</div>
+    </div>
+    
 
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
 <span class="param-type">Object.&lt;Object.&lt;CommandSetting>></span>
 
 
-        </li>
-    </ul>
 
+            </li>
+        </ul>
+    
 
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1533,76 +1822,73 @@ guild id, then by the command.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="commands.js.html">commands.js</a>,
+				 <a href="commands.js.html#sunlight-1-line-682">line 682</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="commands.js.html">commands.js</a>, <a href="commands.js.html#line682">line 682</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
+</dd>
 
-
-
-
-        
+        </dl>
     
 
     
         <h3 class="subsection-title">Methods</h3>
 
-        
+        <dl>
             
+<hr>
+<dt>
+    <h4 class="name" id="addEventListener"><span class="type-signature"></span>addEventListener(name, handler)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Register an event listener.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="addEventListener"><span class="type-signature"></span>addEventListener<span class="signature">(name, handler)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Register an event listener.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -1633,6 +1919,7 @@ guild id, then by the command.
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -1656,6 +1943,7 @@ guild id, then by the command.
 <span class="param-type">function</span>
 
 
+
             
             </td>
 
@@ -1670,12 +1958,17 @@ guild id, then by the command.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -1685,82 +1978,79 @@ guild id, then by the command.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="commands.js.html">commands.js</a>,
+				 <a href="commands.js.html#sunlight-1-line-1604">line 1604</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="commands.js.html">commands.js</a>, <a href="commands.js.html#line1604">line 1604</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="begin"><span class="type-signature"></span>begin(Discord, client, command, common, bot)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Initialize this submodule.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="begin"><span class="type-signature"></span>begin<span class="signature">(Discord, client, command, common, bot)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Initialize this submodule.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -1791,6 +2081,7 @@ guild id, then by the command.
 <span class="param-type">Discord</span>
 
 
+
             
             </td>
 
@@ -1814,6 +2105,7 @@ guild id, then by the command.
 <span class="param-type">Discord~Client</span>
 
 
+
             
             </td>
 
@@ -1835,6 +2127,7 @@ guild id, then by the command.
             
                 
 <span class="param-type"><a href="Command.html">Command</a></span>
+
 
 
             
@@ -1861,6 +2154,7 @@ register command listeners.</td>
 <span class="param-type"><a href="Common.html">Common</a></span>
 
 
+
             
             </td>
 
@@ -1884,6 +2178,7 @@ register command listeners.</td>
 <span class="param-type"><a href="SpikeyBot.html">SpikeyBot</a></span>
 
 
+
             
             </td>
 
@@ -1898,31 +2193,26 @@ register command listeners.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
-
     
 
-    
+	
 
-    
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
-        <a href="SubModule.html#begin">SubModule#begin</a>
-    </li></ul></dd>
-    
+	
 
-    
-
-    
-
-    
-
-    
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="SubModule.html#begin">SubModule#begin</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
 
@@ -1932,68 +2222,79 @@ register command listeners.</td>
 
     
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="subModule.js.html">subModule.js</a>, <a href="subModule.js.html#line126">line 126</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="subModule.js.html">subModule.js</a>,
+				 <a href="subModule.js.html#sunlight-1-line-126">line 126</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="debug"><span class="type-signature">&lt;protected> </span>debug(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Log using common.logDebug, but automatically set name.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="debug"><span class="type-signature">(protected) </span>debug<span class="signature">(msg)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Log using common.logDebug, but automatically set name.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -2024,6 +2325,7 @@ register command listeners.</td>
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -2038,31 +2340,26 @@ register command listeners.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
-
     
 
-    
+	
 
-    
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
-        <a href="SubModule.html#debug">SubModule#debug</a>
-    </li></ul></dd>
-    
+	
 
-    
-
-    
-
-    
-
-    
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="SubModule.html#debug">SubModule#debug</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
 
@@ -2072,88 +2369,94 @@ register command listeners.</td>
 
     
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="subModule.js.html">subModule.js</a>, <a href="subModule.js.html#line203">line 203</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="subModule.js.html">subModule.js</a>,
+				 <a href="subModule.js.html#sunlight-1-line-203">line 203</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="end"><span class="type-signature"></span>end()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Trigger subModule to shutdown and get ready for process terminating.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="end"><span class="type-signature"></span>end<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
     
-
-
-
-<div class="description">
-    Trigger subModule to shutdown and get ready for process terminating.
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
 <dl class="details">
-
     
 
-    
+	
 
-    
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
-        <a href="SubModule.html#end">SubModule#end</a>
-    </li></ul></dd>
-    
+	
 
-    
-
-    
-
-    
-
-    
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="SubModule.html#end">SubModule#end</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
 
@@ -2163,68 +2466,79 @@ register command listeners.</td>
 
     
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="subModule.js.html">subModule.js</a>, <a href="subModule.js.html#line181">line 181</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="subModule.js.html">subModule.js</a>,
+				 <a href="subModule.js.html#sunlight-1-line-181">line 181</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="error"><span class="type-signature">&lt;protected> </span>error(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Log using common.error, but automatically set name.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="error"><span class="type-signature">(protected) </span>error<span class="signature">(msg)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Log using common.error, but automatically set name.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -2255,6 +2569,7 @@ register command listeners.</td>
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -2269,31 +2584,26 @@ register command listeners.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
-
     
 
-    
+	
 
-    
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
-        <a href="SubModule.html#error">SubModule#error</a>
-    </li></ul></dd>
-    
+	
 
-    
-
-    
-
-    
-
-    
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="SubModule.html#error">SubModule#error</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
 
@@ -2303,76 +2613,95 @@ register command listeners.</td>
 
     
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="subModule.js.html">subModule.js</a>, <a href="subModule.js.html#line221">line 221</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="subModule.js.html">subModule.js</a>,
+				 <a href="subModule.js.html#sunlight-1-line-221">line 221</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="export"><span class="type-signature"></span>export()</h4>
+    
+    
+</dt>
+<dd>
 
     
-
-    
-    <h4 class="name" id="export"><span class="type-signature"></span>export<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="MainModule.html#~ModuleData">MainModule~ModuleData</a>}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Export data required to maintain the bot across reloading this module.
+    <div class="description">
+        Export data required to maintain the bot across reloading this module.
 Expected to be returned directly to this.import once reloaded.
-</div>
+    </div>
+    
 
+    
 
+    
 
+    
+    
 
-
-
-
-
-
-
-
-
-
+    
 <dl class="details">
-
     
 
-    
+	
 
-    
+	
+
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="MainModule.html#export">MainModule#export</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
     <dt class="tag-overrides">Overrides:</dt>
@@ -2387,45 +2716,52 @@ Expected to be returned directly to this.import once reloaded.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="mainModule.js.html">mainModule.js</a>, <a href="mainModule.js.html#line38">line 38</a>
-    </li></ul></dd>
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="mainModule.js.html">mainModule.js</a>,
+				 <a href="mainModule.js.html#sunlight-1-line-38">line 38</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
+	
+
+	
+
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     The data to be exported.
 </div>
@@ -2441,44 +2777,42 @@ Expected to be returned directly to this.import once reloaded.
 <span class="param-type"><a href="MainModule.html#~ModuleData">MainModule~ModuleData</a></span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="find"><span class="type-signature"></span>find(cmd, msg [, setCmd])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Returns the callback function for the given event.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="find"><span class="type-signature"></span>find<span class="signature">(cmd<span class="signature-attributes">nullable</span>, msg, setCmd<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; (nullable) {<a href="Command-SingleCommand.html">Command~SingleCommand</a>}</span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Returns the callback function for the given event.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -2488,7 +2822,7 @@ Expected to be returned directly to this.import once reloaded.
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -2511,6 +2845,7 @@ Expected to be returned directly to this.import once reloaded.
             
                 
 <span class="param-type">string</span>
+
 
 
             
@@ -2551,6 +2886,7 @@ could be matched with msg.</td>
 <span class="param-type">Discord~Message</span>
 
 
+
             
             </td>
 
@@ -2587,6 +2923,7 @@ object will be updated with the command name that was found as msg.cmd.</td>
 <span class="param-type">boolean</span>
 
 
+
             
             </td>
 
@@ -2618,12 +2955,17 @@ match the found command.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -2633,51 +2975,52 @@ match the found command.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="commands.js.html">commands.js</a>,
+				 <a href="commands.js.html#sunlight-1-line-878">line 878</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="commands.js.html">commands.js</a>, <a href="commands.js.html#line878">line 878</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     The single command object reference, or
 null if it could not be found.
@@ -2694,45 +3037,43 @@ null if it could not be found.
 <span class="param-type"><a href="Command-SingleCommand.html">Command~SingleCommand</a></span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="findAll"><span class="type-signature"></span>findAll(cmd, msg)</h4>
+    
+    
+</dt>
+<dd>
 
     
-
-    
-    <h4 class="name" id="findAll"><span class="type-signature"></span>findAll<span class="signature">(cmd, msg)</span><span class="type-signature"> &rarr; {Array.&lt;<a href="Command-SingleCommand.html">Command~SingleCommand</a>>}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Returns all the callback functions for the given event with wildcards
+    <div class="description">
+        Returns all the callback functions for the given event with wildcards
 allowed.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
+    </div>
     
 
-<table class="params">
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -2763,6 +3104,7 @@ allowed.
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -2787,6 +3129,7 @@ prefixes.</td>
 <span class="param-type">Discord~Message</span>
 
 
+
             
             </td>
 
@@ -2802,12 +3145,17 @@ if it exist.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -2817,51 +3165,52 @@ if it exist.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="commands.js.html">commands.js</a>,
+				 <a href="commands.js.html#sunlight-1-line-920">line 920</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="commands.js.html">commands.js</a>, <a href="commands.js.html#line920">line 920</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     The command object references, or an
 empty array if it could not be found.
@@ -2878,44 +3227,42 @@ empty array if it could not be found.
 <span class="param-type">Array.&lt;<a href="Command-SingleCommand.html">Command~SingleCommand</a>></span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="fire"><span class="type-signature"></span>fire(name, args)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Fire all handlers listening for an event.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="fire"><span class="type-signature"></span>fire<span class="signature">(name, args)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Fire all handlers listening for an event.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -2946,6 +3293,7 @@ empty array if it could not be found.
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -2969,6 +3317,7 @@ empty array if it could not be found.
 <span class="param-type">*</span>
 
 
+
             
             </td>
 
@@ -2983,12 +3332,17 @@ empty array if it could not be found.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -2998,83 +3352,85 @@ empty array if it could not be found.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="commands.js.html">commands.js</a>,
+				 <a href="commands.js.html#sunlight-1-line-1635">line 1635</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="commands.js.html">commands.js</a>, <a href="commands.js.html#line1635">line 1635</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="getAllNames"><span class="type-signature"></span>getAllNames()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Fetches a list of all currently registered commands.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="getAllNames"><span class="type-signature"></span>getAllNames<span class="signature">()</span><span class="type-signature"> &rarr; {Array.&lt;string>}</span></h4>
     
 
     
-
-
-
-<div class="description">
-    Fetches a list of all currently registered commands.
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -3084,51 +3440,52 @@ empty array if it could not be found.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="commands.js.html">commands.js</a>,
+				 <a href="commands.js.html#sunlight-1-line-1030">line 1030</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="commands.js.html">commands.js</a>, <a href="commands.js.html#line1030">line 1030</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     Array of all registered commands.
 </div>
@@ -3144,45 +3501,48 @@ empty array if it could not be found.
 <span class="param-type">Array.&lt;string></span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="getDefaultSettings"><span class="type-signature"></span>getDefaultSettings()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Fetch all commands and their default setting values.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="getDefaultSettings"><span class="type-signature"></span>getDefaultSettings<span class="signature">()</span><span class="type-signature"> &rarr; {Object.&lt;SingleCommand>}</span></h4>
     
 
     
-
-
-
-<div class="description">
-    Fetch all commands and their default setting values.
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -3192,58 +3552,59 @@ empty array if it could not be found.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="commands.js.html">commands.js</a>,
+				 <a href="commands.js.html#sunlight-1-line-708">line 708</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="commands.js.html">commands.js</a>, <a href="commands.js.html#line708">line 708</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li><a href="Command.html#~cmds">Command~cmds</a></li>
+			</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li><a href="Command.html#~cmds">Command~cmds</a></li>
-        </ul>
-    </dd>
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     All currently registered commands.
 </div>
@@ -3259,44 +3620,42 @@ empty array if it could not be found.
 <span class="param-type">Object.&lt;SingleCommand></span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="getUserSettings"><span class="type-signature"></span>getUserSettings(gId)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Fetch all user-defined settings for a guild.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="getUserSettings"><span class="type-signature"></span>getUserSettings<span class="signature">(gId)</span><span class="type-signature"> &rarr; {Object.&lt;CommandSetting>}</span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Fetch all user-defined settings for a guild.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -3327,6 +3686,7 @@ empty array if it could not be found.
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -3341,12 +3701,17 @@ empty array if it could not be found.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -3356,51 +3721,52 @@ empty array if it could not be found.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="commands.js.html">commands.js</a>,
+				 <a href="commands.js.html#sunlight-1-line-693">line 693</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="commands.js.html">commands.js</a>, <a href="commands.js.html#line693">line 693</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     The settings for the guild mapped by
 command name. If it doesn't exist, an object will first be created.
@@ -3417,45 +3783,43 @@ command name. If it doesn't exist, an object will first be created.
 <span class="param-type">Object.&lt;CommandSetting></span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="import"><span class="type-signature"></span>import(data)</h4>
+    
+    
+</dt>
+<dd>
 
     
-
-    
-    <h4 class="name" id="import"><span class="type-signature"></span>import<span class="signature">(data<span class="signature-attributes">nullable</span>)</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Imports data from a previous instance of this class in order to maintain
+    <div class="description">
+        Imports data from a previous instance of this class in order to maintain
 references to other objects and classes across reloads.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
+    </div>
     
 
-<table class="params">
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -3465,7 +3829,7 @@ references to other objects and classes across reloads.
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -3486,6 +3850,7 @@ references to other objects and classes across reloads.
             
                 
 <span class="param-type"><a href="MainModule.html#~ModuleData">MainModule~ModuleData</a></span>
+
 
 
             
@@ -3513,18 +3878,26 @@ or null if no data to import.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
-
     
 
-    
+	
 
-    
+	
+
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="MainModule.html#import">MainModule#import</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
     <dt class="tag-overrides">Overrides:</dt>
@@ -3539,84 +3912,95 @@ or null if no data to import.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="mainModule.js.html">mainModule.js</a>, <a href="mainModule.js.html#line29">line 29</a>
-    </li></ul></dd>
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="mainModule.js.html">mainModule.js</a>,
+				 <a href="mainModule.js.html#sunlight-1-line-29">line 29</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
+	
+
+	
+
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="initialize"><span class="type-signature">&lt;protected> </span>initialize()</h4>
+    
+    
+</dt>
+<dd>
 
     
-
-    
-    <h4 class="name" id="initialize"><span class="type-signature">(protected) </span>initialize<span class="signature">()</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    The function called at the end of begin() for further initialization
+    <div class="description">
+        The function called at the end of begin() for further initialization
 specific to the subModule. Must be defined before begin() is called.
-</div>
+    </div>
+    
 
+    
 
+    
 
+    
+    
 
-
-
-
-
-
-
-
-
-
+    
 <dl class="details">
-
     
 
-    
+	
 
-    
+	
+
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="SubModule.html#initialize">SubModule#initialize</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
     <dt class="tag-overrides">Overrides:</dt>
@@ -3631,76 +4015,79 @@ specific to the subModule. Must be defined before begin() is called.
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="subModule.js.html">subModule.js</a>, <a href="subModule.js.html#line112">line 112</a>
-    </li></ul></dd>
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="subModule.js.html">subModule.js</a>,
+				 <a href="subModule.js.html#sunlight-1-line-112">line 112</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
+	
+
+	
+
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="log"><span class="type-signature">&lt;protected> </span>log(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Log using common.log, but automatically set name.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="log"><span class="type-signature">(protected) </span>log<span class="signature">(msg)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Log using common.log, but automatically set name.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -3731,6 +4118,7 @@ specific to the subModule. Must be defined before begin() is called.
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -3745,31 +4133,26 @@ specific to the subModule. Must be defined before begin() is called.
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
-
     
 
-    
+	
 
-    
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
-        <a href="SubModule.html#log">SubModule#log</a>
-    </li></ul></dd>
-    
+	
 
-    
-
-    
-
-    
-
-    
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="SubModule.html#log">SubModule#log</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
 
@@ -3779,68 +4162,79 @@ specific to the subModule. Must be defined before begin() is called.
 
     
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="subModule.js.html">subModule.js</a>, <a href="subModule.js.html#line194">line 194</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="subModule.js.html">subModule.js</a>,
+				 <a href="subModule.js.html#sunlight-1-line-194">line 194</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="on"><span class="type-signature"></span>on(cmd [, cb] [, onlyserver])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Registers a listener for a command.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="on"><span class="type-signature"></span>on<span class="signature">(cmd, cb<span class="signature-attributes">opt</span>, onlyserver<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Registers a listener for a command.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -3850,7 +4244,7 @@ specific to the subModule. Must be defined before begin() is called.
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -3879,6 +4273,7 @@ specific to the subModule. Must be defined before begin() is called.
 |
 
 <span class="param-type"><a href="Command-SingleCommand.html">Command~SingleCommand</a></span>
+
 
 
             
@@ -3914,6 +4309,7 @@ specific to the subModule. Must be defined before begin() is called.
             
                 
 <span class="param-type"><a href="global.html#commandHandler">commandHandler</a></span>
+
 
 
             
@@ -3953,6 +4349,7 @@ specific to the subModule. Must be defined before begin() is called.
 <span class="param-type">boolean</span>
 
 
+
             
             </td>
 
@@ -3984,12 +4381,17 @@ on a server.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -3999,82 +4401,79 @@ on a server.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="commands.js.html">commands.js</a>,
+				 <a href="commands.js.html#sunlight-1-line-811">line 811</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="commands.js.html">commands.js</a>, <a href="commands.js.html#line811">line 811</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="removeEventListener"><span class="type-signature"></span>removeEventListener(name, handler)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Remove an event listener.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="removeEventListener"><span class="type-signature"></span>removeEventListener<span class="signature">(name, handler)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Remove an event listener.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -4105,6 +4504,7 @@ on a server.</td>
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -4128,6 +4528,7 @@ on a server.</td>
 <span class="param-type">function</span>
 
 
+
             
             </td>
 
@@ -4143,12 +4544,17 @@ listen on this event.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -4158,82 +4564,79 @@ listen on this event.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="commands.js.html">commands.js</a>,
+				 <a href="commands.js.html#sunlight-1-line-1617">line 1617</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="commands.js.html">commands.js</a>, <a href="commands.js.html#line1617">line 1617</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="removeListener"><span class="type-signature"></span>removeListener(cmd)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Remove listener for a command.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="removeListener"><span class="type-signature"></span>removeListener<span class="signature">(cmd)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Remove listener for a command.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -4267,6 +4670,7 @@ listen on this event.</td>
 <span class="param-type">Array.&lt;string></span>
 
 
+
             
             </td>
 
@@ -4282,12 +4686,17 @@ for.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -4297,82 +4706,79 @@ for.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="commands.js.html">commands.js</a>,
+				 <a href="commands.js.html#sunlight-1-line-837">line 837</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="commands.js.html">commands.js</a>, <a href="commands.js.html#line837">line 837</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="save"><span class="type-signature"></span>save( [opt])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Saves all data to files necessary for saving current state.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="save"><span class="type-signature"></span>save<span class="signature">(opt<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Saves all data to files necessary for saving current state.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -4382,7 +4788,7 @@ for.</td>
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -4405,6 +4811,7 @@ for.</td>
             
                 
 <span class="param-type">string</span>
+
 
 
             
@@ -4438,18 +4845,26 @@ synchronous.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
-
     
 
-    
+	
 
-    
+	
+
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="SubModule.html#save">SubModule#save</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
     <dt class="tag-overrides">Overrides:</dt>
@@ -4464,83 +4879,94 @@ synchronous.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="subModule.js.html">subModule.js</a>, <a href="subModule.js.html#line241">line 241</a>
-    </li></ul></dd>
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="subModule.js.html">subModule.js</a>,
+				 <a href="subModule.js.html#sunlight-1-line-241">line 241</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
+	
+
+	
+
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="shutdown"><span class="type-signature">&lt;protected> </span>shutdown()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Shutdown and disable this submodule. Removes all event listeners.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="shutdown"><span class="type-signature">(protected) </span>shutdown<span class="signature">()</span><span class="type-signature"></span></h4>
     
 
     
-
-
-
-<div class="description">
-    Shutdown and disable this submodule. Removes all event listeners.
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
 <dl class="details">
-
     
 
-    
+	
 
-    
+	
+
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="SubModule.html#shutdown">SubModule#shutdown</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
     <dt class="tag-overrides">Overrides:</dt>
@@ -4555,98 +4981,96 @@ synchronous.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="subModule.js.html">subModule.js</a>, <a href="subModule.js.html#line231">line 231</a>
-    </li></ul></dd>
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="subModule.js.html">subModule.js</a>,
+				 <a href="subModule.js.html#sunlight-1-line-231">line 231</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
+	
+
+	
+
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="terminate"><span class="type-signature">&lt;abstract> </span>terminate()</h4>
+    
+    
+</dt>
+<dd>
 
     
-
-    
-    <h4 class="name" id="terminate"><span class="type-signature">(abstract) </span>terminate<span class="signature">()</span><span class="type-signature"></span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Signal that the bot is shutting down and will not be
+    <div class="description">
+        Signal that the bot is shutting down and will not be
 restarting immediately. This is triggered on all shutdowns where all
 MainModules and SubModules will be unloaded.
-</div>
+    </div>
+    
 
+    
 
+    
 
+    
+    
 
-
-
-
-
-
-
-
-
-
+    
 <dl class="details">
-
     
 
-    
+	
 
-    
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
-        <a href="MainModule.html#terminate">MainModule#terminate</a>
-    </li></ul></dd>
-    
+	
 
-    
-
-    
-
-    
-
-    
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="MainModule.html#terminate">MainModule#terminate</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
 
@@ -4656,69 +5080,80 @@ MainModules and SubModules will be unloaded.
 
     
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="mainModule.js.html">mainModule.js</a>, <a href="mainModule.js.html#line49">line 49</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="mainModule.js.html">mainModule.js</a>,
+				 <a href="mainModule.js.html#sunlight-1-line-49">line 49</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="trigger"><span class="type-signature"></span>trigger(msg [, msg2])</h4>
+    
+    
+</dt>
+<dd>
 
     
-
-    
-    <h4 class="name" id="trigger"><span class="type-signature"></span>trigger<span class="signature">(msg, msg2<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Trigger a command firing and call it's handler passing in msg as only
+    <div class="description">
+        Trigger a command firing and call it's handler passing in msg as only
 argument.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
+    </div>
     
 
-<table class="params">
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -4728,7 +5163,7 @@ argument.
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -4752,6 +5187,7 @@ argument.
 |
 
 <span class="param-type">string</span>
+
 
 
             
@@ -4787,6 +5223,7 @@ the command to trigger from msg.</td>
 <span class="param-type">Discord~Message</span>
 
 
+
             
             </td>
 
@@ -4812,12 +5249,17 @@ first argument is a string.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -4827,51 +5269,52 @@ first argument is a string.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="commands.js.html">commands.js</a>,
+				 <a href="commands.js.html#sunlight-1-line-743">line 743</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="commands.js.html">commands.js</a>, <a href="commands.js.html#line743">line 743</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     True if command was handled by us.
 </div>
@@ -4887,66 +5330,59 @@ first argument is a string.</td>
 <span class="param-type">boolean</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="unloadable"><span class="type-signature">&lt;abstract> </span>unloadable()</h4>
+    
+    
+</dt>
+<dd>
 
     
-
-    
-    <h4 class="name" id="unloadable"><span class="type-signature">(abstract) </span>unloadable<span class="signature">()</span><span class="type-signature"> &rarr; {boolean}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Check if this module is in a state that is ready to be
+    <div class="description">
+        Check if this module is in a state that is ready to be
 unloaded. If false is returned, this module should not be unloaded and
 doing such may risk putting the module into an uncontrollable state.
-</div>
+    </div>
+    
 
+    
 
+    
 
+    
+    
 
-
-
-
-
-
-
-
-
-
+    
 <dl class="details">
-
     
 
-    
+	
 
-    
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
-        <a href="SubModule.html#unloadable">SubModule#unloadable</a>
-    </li></ul></dd>
-    
+	
 
-    
-
-    
-
-    
-
-    
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="SubModule.html#unloadable">SubModule#unloadable</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
 
@@ -4956,37 +5392,52 @@ doing such may risk putting the module into an uncontrollable state.
 
     
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="subModule.js.html">subModule.js</a>, <a href="subModule.js.html#line253">line 253</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="subModule.js.html">subModule.js</a>,
+				 <a href="subModule.js.html#sunlight-1-line-253">line 253</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     True if can be unloaded, false if cannot.
 </div>
@@ -5002,45 +5453,43 @@ doing such may risk putting the module into an uncontrollable state.
 <span class="param-type">boolean</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="validate"><span class="type-signature"></span>validate(cmd, msg [, func])</h4>
+    
+    
+</dt>
+<dd>
 
     
-
-    
-    <h4 class="name" id="validate"><span class="type-signature"></span>validate<span class="signature">(cmd<span class="signature-attributes">nullable</span>, msg<span class="signature-attributes">nullable</span>, func<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; (nullable) {string}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    Checks that the given command can be run with the given context. Does not
+    <div class="description">
+        Checks that the given command can be run with the given context. Does not
 actually fire the event.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
+    </div>
     
 
-<table class="params">
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -5050,7 +5499,7 @@ actually fire the event.
         <th>Type</th>
 
         
-        <th>Attributes</th>
+        <th>Argument</th>
         
 
         
@@ -5071,6 +5520,7 @@ actually fire the event.
             
                 
 <span class="param-type">string</span>
+
 
 
             
@@ -5105,6 +5555,7 @@ command to validate.</td>
             
                 
 <span class="param-type">Discord~Message</span>
+
 
 
             
@@ -5142,6 +5593,7 @@ validated.</td>
 <span class="param-type"><a href="Command-SingleCommand.html">Command~SingleCommand</a></span>
 
 
+
             
             </td>
 
@@ -5168,12 +5620,17 @@ cmd will be fetched.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -5183,51 +5640,52 @@ cmd will be fetched.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="commands.js.html">commands.js</a>,
+				 <a href="commands.js.html#sunlight-1-line-972">line 972</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="commands.js.html">commands.js</a>, <a href="commands.js.html#line972">line 972</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     Message causing failure, or null if valid.
 </div>
@@ -5243,44 +5701,42 @@ cmd will be fetched.</td>
 <span class="param-type">string</span>
 
 
+
     </dd>
 </dl>
 
+
+        
+
     
-
-
-
-
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="warn"><span class="type-signature">&lt;protected> </span>warn(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Log using common.logWarning, but automatically set name.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="warn"><span class="type-signature">(protected) </span>warn<span class="signature">(msg)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Log using common.logWarning, but automatically set name.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -5309,6 +5765,7 @@ cmd will be fetched.</td>
             
                 
 <span class="param-type">string</span>
+
 
 
             
@@ -5325,31 +5782,26 @@ cmd will be fetched.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
-
     
 
-    
+	
 
-    
-    <dt class="inherited-from">Inherited From:</dt>
-    <dd class="inherited-from"><ul class="dummy"><li>
-        <a href="SubModule.html#warn">SubModule#warn</a>
-    </li></ul></dd>
-    
+	
 
-    
-
-    
-
-    
-
-    
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="SubModule.html#warn">SubModule#warn</a>
+			</li>
+		</ul>
+	</dd>
+	
 
     
 
@@ -5359,68 +5811,79 @@ cmd will be fetched.</td>
 
     
 
-    
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="subModule.js.html">subModule.js</a>, <a href="subModule.js.html#line212">line 212</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="subModule.js.html">subModule.js</a>,
+				 <a href="subModule.js.html#sunlight-1-line-212">line 212</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~commandAllowCmd"><span class="type-signature">&lt;private, inner> </span>commandAllowCmd(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Allow user to unmute a command.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~commandAllowCmd"><span class="type-signature">(private, inner) </span>commandAllowCmd<span class="signature">(msg)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Allow user to unmute a command.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -5451,6 +5914,7 @@ cmd will be fetched.</td>
 <span class="param-type">Discord~Message</span>
 
 
+
             
             </td>
 
@@ -5465,12 +5929,17 @@ cmd will be fetched.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -5480,82 +5949,79 @@ cmd will be fetched.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="commands.js.html">commands.js</a>,
+				 <a href="commands.js.html#sunlight-1-line-1292">line 1292</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="commands.js.html">commands.js</a>, <a href="commands.js.html#line1292">line 1292</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~commandBlockCmd"><span class="type-signature">&lt;private, inner> </span>commandBlockCmd(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Allow user to mute a command.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~commandBlockCmd"><span class="type-signature">(private, inner) </span>commandBlockCmd<span class="signature">(msg)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Allow user to mute a command.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -5586,6 +6052,7 @@ cmd will be fetched.</td>
 <span class="param-type">Discord~Message</span>
 
 
+
             
             </td>
 
@@ -5600,12 +6067,17 @@ cmd will be fetched.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -5615,82 +6087,79 @@ cmd will be fetched.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="commands.js.html">commands.js</a>,
+				 <a href="commands.js.html#sunlight-1-line-1256">line 1256</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="commands.js.html">commands.js</a>, <a href="commands.js.html#line1256">line 1256</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~commandDisable"><span class="type-signature">&lt;private, inner> </span>commandDisable(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Allow user to disable a command.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~commandDisable"><span class="type-signature">(private, inner) </span>commandDisable<span class="signature">(msg)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Allow user to disable a command.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -5721,6 +6190,7 @@ cmd will be fetched.</td>
 <span class="param-type">Discord~Message</span>
 
 
+
             
             </td>
 
@@ -5735,12 +6205,17 @@ cmd will be fetched.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -5750,82 +6225,79 @@ cmd will be fetched.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="commands.js.html">commands.js</a>,
+				 <a href="commands.js.html#sunlight-1-line-1042">line 1042</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="commands.js.html">commands.js</a>, <a href="commands.js.html#line1042">line 1042</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~commandEnable"><span class="type-signature">&lt;private, inner> </span>commandEnable(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Allow user to enable a command.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~commandEnable"><span class="type-signature">(private, inner) </span>commandEnable<span class="signature">(msg)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Allow user to enable a command.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -5856,6 +6328,7 @@ cmd will be fetched.</td>
 <span class="param-type">Discord~Message</span>
 
 
+
             
             </td>
 
@@ -5870,12 +6343,17 @@ cmd will be fetched.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -5885,82 +6363,79 @@ cmd will be fetched.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="commands.js.html">commands.js</a>,
+				 <a href="commands.js.html#sunlight-1-line-1149">line 1149</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="commands.js.html">commands.js</a>, <a href="commands.js.html#line1149">line 1149</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~commandReset"><span class="type-signature">&lt;private, inner> </span>commandReset(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Reset all custom command settings to default.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~commandReset"><span class="type-signature">(private, inner) </span>commandReset<span class="signature">(msg)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Reset all custom command settings to default.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -5991,6 +6466,7 @@ cmd will be fetched.</td>
 <span class="param-type">Discord~Message</span>
 
 
+
             
             </td>
 
@@ -6005,12 +6481,17 @@ cmd will be fetched.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -6020,87 +6501,84 @@ cmd will be fetched.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="commands.js.html">commands.js</a>,
+				 <a href="commands.js.html#sunlight-1-line-1506">line 1506</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="commands.js.html">commands.js</a>, <a href="commands.js.html#line1506">line 1506</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
+    <h5>Fires:</h5>
+    <ul>
+        <li>Command.events#event:settingsReset</li>
+    </ul>
+    
 
+    
 
-<h5>Fires:</h5>
-<ul>
-    <li>Command.events#event:settingsReset</li>
-</ul>
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~commandShow"><span class="type-signature">&lt;private, inner> </span>commandShow(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Show user the currently configured settings for commands.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~commandShow"><span class="type-signature">(private, inner) </span>commandShow<span class="signature">(msg)</span><span class="type-signature"></span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Show user the currently configured settings for commands.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -6131,6 +6609,7 @@ cmd will be fetched.</td>
 <span class="param-type">Discord~Message</span>
 
 
+
             
             </td>
 
@@ -6145,12 +6624,17 @@ cmd will be fetched.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -6160,82 +6644,79 @@ cmd will be fetched.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="commands.js.html">commands.js</a>,
+				 <a href="commands.js.html#sunlight-1-line-1328">line 1328</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="commands.js.html">commands.js</a>, <a href="commands.js.html#line1328">line 1328</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-
-
-
+    
+</dd>
 
         
             
+<hr>
+<dt>
+    <h4 class="name" id="~escapeRegExp"><span class="type-signature">&lt;private, inner> </span>escapeRegExp(str)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Escape a given string to be passed into a regular expression.
+    </div>
+    
+
+    
 
     
 
     
-    <h4 class="name" id="~escapeRegExp"><span class="type-signature">(private, inner) </span>escapeRegExp<span class="signature">(str)</span><span class="type-signature"> &rarr; {string}</span></h4>
     
+        <h5>Parameters:</h5>
+        
 
-    
-
-
-
-<div class="description">
-    Escape a given string to be passed into a regular expression.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
+<table class="params table table-striped">
     <thead>
     <tr>
         
@@ -6266,6 +6747,7 @@ cmd will be fetched.</td>
 <span class="param-type">string</span>
 
 
+
             
             </td>
 
@@ -6280,12 +6762,17 @@ cmd will be fetched.</td>
     </tbody>
 </table>
 
+    
 
-
-
-
-
+    
 <dl class="details">
+    
+
+	
+
+	
+
+	
 
     
 
@@ -6295,51 +6782,52 @@ cmd will be fetched.</td>
 
     
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
+	
 
-    
 
-    
 
-    
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="commands.js.html">commands.js</a>,
+				 <a href="commands.js.html#sunlight-1-line-1650">line 1650</a>
+			</li>
+		</ul>
+	</dd>
+	
 
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="commands.js.html">commands.js</a>, <a href="commands.js.html#line1650">line 1650</a>
-    </li></ul></dd>
-    
+	
 
-    
+	
 
-    
-
-    
+	
 </dl>
 
 
+    
 
+    
 
+    
 
+    
 
+    
 
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
+    
+    <h5>Returns:</h5>
+    
+            
 <div class="param-desc">
     Escaped string.
 </div>
@@ -6355,16 +6843,17 @@ cmd will be fetched.</td>
 <span class="param-type">string</span>
 
 
+
     </dd>
 </dl>
 
-    
-
-
-
-
 
         
+
+    
+</dd>
+
+        </dl>
     
 
     
@@ -6377,19 +6866,153 @@ cmd will be fetched.</td>
 
 
 
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+		<div class="col-md-3">
+			<div id="toc" class="col-md-3 hidden-xs hidden-sm hidden-md"></div>
+		</div>
+	
+
+</div>
 </div>
 
-<nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-lib_twemojiChecker.html">lib/twemojiChecker</a></li></ul><h3>Externals</h3><ul><li><a href="external-Discord.html">external:Discord</a></li></ul><h3>Classes</h3><ul><li><a href="ChatBot.html">ChatBot</a></li><li><a href="CmdScheduling.html">CmdScheduling</a></li><li><a href="CmdScheduling-ScheduledCommand.html">CmdScheduling~ScheduledCommand</a></li><li><a href="Command.html">Command</a></li><li><a href="Command-CommandSetting.html">Command~CommandSetting</a></li><li><a href="Command-SingleCommand.html">Command~SingleCommand</a></li><li><a href="Common.html">Common</a></li><li><a href="Connect4.html">Connect4</a></li><li><a href="Connect4_Game.html">Connect4#Game</a></li><li><a href="Define.html">Define</a></li><li><a href="DevCmds.html">DevCmds</a></li><li><a href="Echo.html">Echo</a></li><li><a href="Echo-Character.html">Echo~Character</a></li><li><a href="FunTranslators.html">FunTranslators</a></li><li><a href="HG.html">HG</a></li><li><a href="HGWeb.html">HGWeb</a></li><li><a href="HungryGames.html">HungryGames</a></li><li><a href="HungryGames-ArenaEvent.html">HungryGames~ArenaEvent</a></li><li><a href="HungryGames-Battle.html">HungryGames~Battle</a></li><li><a href="HungryGames-Day.html">HungryGames~Day</a></li><li><a href="HungryGames-DefaultOptions.html">HungryGames~DefaultOptions</a></li><li><a href="HungryGames-DefaultOptions-BooleanOption.html">HungryGames~DefaultOptions~BooleanOption</a></li><li><a href="HungryGames-DefaultOptions-NumberOption.html">HungryGames~DefaultOptions~NumberOption</a></li><li><a href="HungryGames-DefaultOptions-ObjectOption.html">HungryGames~DefaultOptions~ObjectOption</a></li><li><a href="HungryGames-DefaultOptions-Option.html">HungryGames~DefaultOptions~Option</a></li><li><a href="HungryGames-DefaultOptions-SelectOption.html">HungryGames~DefaultOptions~SelectOption</a></li><li><a href="HungryGames-Event.html">HungryGames~Event</a></li><li><a href="HungryGames-FinalEvent.html">HungryGames~FinalEvent</a></li><li><a href="HungryGames-ForcedOutcome.html">HungryGames~ForcedOutcome</a></li><li><a href="HungryGames-Game.html">HungryGames~Game</a></li><li><a href="HungryGames-Grammar.html">HungryGames~Grammar</a></li><li><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></li><li><a href="HungryGames-Messages.html">HungryGames~Messages</a></li><li><a href="HungryGames-OutcomeProbabilities.html">HungryGames~OutcomeProbabilities</a></li><li><a href="HungryGames-Player.html">HungryGames~Player</a></li><li><a href="HungryGames-Simulator.html">HungryGames~Simulator</a></li><li><a href="HungryGames-Simulator-Worker.html">HungryGames~Simulator~Worker</a></li><li><a href="HungryGames-Team.html">HungryGames~Team</a></li><li><a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a></li><li><a href="HungryGames-WeaponEvent.html">HungryGames~WeaponEvent</a></li><li><a href="Main.html">Main</a></li><li><a href="MainModule.html">MainModule</a></li><li><a href="Messages.html">Messages</a></li><li><a href="Moderation.html">Moderation</a></li><li><a href="ModLog.html">ModLog</a></li><li><a href="ModLog-Settings.html">ModLog~Settings</a></li><li><a href="Music.html">Music</a></li><li><a href="NPC.html">NPC</a></li><li><a href="Patreon.html">Patreon</a></li><li><a href="Patreon-toExport.html">Patreon~toExport</a></li><li><a href="Polling.html">Polling</a></li><li><a href="Polling-Poll.html">Polling~Poll</a></li><li><a href="RaidBlock.html">RaidBlock</a></li><li><a href="RaidBlock-RaidSettings.html">RaidBlock~RaidSettings</a></li><li><a href="RoleColors.html">RoleColors</a></li><li><a href="RoleManager.html">RoleManager</a></li><li><a href="Sandbox.html">Sandbox</a></li><li><a href="SMLoader.html">SMLoader</a></li><li><a href="SpikeyBot.html">SpikeyBot</a></li><li><a href="Spotify.html">Spotify</a></li><li><a href="SubModule.html">SubModule</a></li><li><a href="TicTacToe.html">TicTacToe</a></li><li><a href="TicTacToe_Game.html">TicTacToe#Game</a></li><li><a href="TTS.html">TTS</a></li><li><a href="Uno.html">Uno</a></li><li><a href="Uno_Card.html">Uno#Card</a></li><li><a href="Uno_Game.html">Uno#Game</a></li><li><a href="WebAccount.html">WebAccount</a></li><li><a href="WebCommands.html">WebCommands</a></li><li><a href="WebProxy.html">WebProxy</a></li><li><a href="WebSettings.html">WebSettings</a></li><li><a href="WebStats.html">WebStats</a></li></ul><h3>Global</h3><ul><li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li></ul>
-</nav>
 
-<br class="clear">
+    <div class="modal fade" id="searchResults">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Search results</h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sat May 04 2019 21:43:40 GMT-0700 (Pacific Daylight Time)
+
+
+	<span class="copyright">
+	<small>Website Contact: <a href="mailto:web@spikeybot.com">web@spikeybot.com</a>.</small><br><small>&copy; Copyright 2019, Campbell Crowley. <a href="https://docs.google.com/document/d/1SAC2aPxxeNqRjlZzjwrnCyyWWyt09ZP-AP7BDBjjQDg/edit?usp=sharing">Privacy Policy</a></small>
+	</span>
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
+	
+		on Saturday, May 4, 2019 10:15 PM (-07:00)
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
 </footer>
 
-<script> prettyPrint(); </script>
-<script src="scripts/linenumber.js"> </script>
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+
+    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+
+<!--Google Analytics-->
+
+<script>
+	(function ( i, s, o, g, r, a, m ) {
+		i['GoogleAnalyticsObject'] = r;
+		i[r] = i[r] || function () {
+			(i[r].q = i[r].q || []).push( arguments )
+		}, i[r].l = 1 * new Date();
+		a = s.createElement( o ),
+			m = s.getElementsByTagName( o )[0];
+		a.async = 1;
+		a.src = g;
+		m.parentNode.insertBefore( a, m )
+	})( window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga' );
+
+	ga( 'create', 'UA-89923351-1', 'www.spikeybot.com' );
+	ga( 'send', 'pageview' );
+</script>
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            SearcherDisplay.init();
+        });
+    </script>
+
+
 </body>
 </html>
