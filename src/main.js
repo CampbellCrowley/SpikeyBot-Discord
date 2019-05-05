@@ -924,8 +924,8 @@ function Main() {
    */
   function onMessage(msg) {
     if (!msg.guild) return;
-    if (!msg.author.bot && msg.author.id != self.client.user.id &&
-        msg.author.id != self.common.spikeyId) {
+    if (msg.author.bot || msg.author.id == self.client.user.id) return;
+    if (msg.author.id != self.common.spikeyId) {
       let riggedSimilarity = 0;
       const matchedRigged = msg.content.toLowerCase().replace(/\W/g, '').match(
           /r[^i]*i[^g]*g[^g]*g[^e]*e[^d]*d/g);
@@ -969,12 +969,22 @@ function Main() {
       }
     }
 
-    if (msg.content.endsWith(', I\'m Dad!')) {
-      msg.channel.send('Hi Dad, I\'m Spikey!');
+    const word = msg.content.match(/\bi'?m\s+(.*)/i);
+    if (word) {
+      const dadId = '503720029456695306';
+      if (msg.channel.members.get(dadId)) {
+        msg.channel
+            .awaitMessages(
+                (m) => m.author.id === dadId,
+                {max: 1, time: 10000, errors: ['time']})
+            .then((collected) => {
+              msg.channel.send('Hi Dad, I\'m Spikey!');
+            })
+            .catch(() => {});
+      }
     }
 
-    if (!msg.author.id != self.client.user.id &&
-        !disabledAutoSmite[msg.guild.id]) {
+    if (!disabledAutoSmite[msg.guild.id]) {
       if (msg.mentions.everyone) {
         if (!mentionAccumulator[msg.guild.id]) {
           mentionAccumulator[msg.guild.id] = {};
@@ -1068,7 +1078,7 @@ function Main() {
     }
     if (msg.content.match(/^[0-9]*[dD][0-9]+\b/)) {
       msg.prefix = self.bot.getPrefix(msg.guild);
-      msg.content = msg.prefix + 'd ' + msg.content;
+      msg.content = `${msg.prefix}d ${msg.content}`;
       self.command.trigger('d', msg);
     }
   }
