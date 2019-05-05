@@ -2772,19 +2772,32 @@ function Main() {
    */
   function commandLookup(msg) {
     const id = msg.text.split(' ')[1];
+    const trusted = self.common.trustedIds.includes(msg.author.id);
 
-    const message = lookupId.call(
-        self.client, id, self.common.trustedIds.includes(msg.author.id));
+    if (self.client.shard) {
+      self.client.shard.broadcastEval(`this.lookupId('${id}',${trusted})`)
+          .then((res) => {
+            if (!res.find((el) => el)) {
+              self.error(`Failed to lookup id: ${id}`);
+              msg.channel.send(`${id} Failed to be looked up.`);
+              return;
+            }
 
-    if (!message) {
-      if (self.client.shard) {
-        self.client.shard.broadcastEval(`this.lookupId('${id}')`);
-      } else {
+            const embed = new self.Discord.MessageEmbed();
+            embed.setTitle(id);
+            res.forEach((el, i) => {
+              if (el) embed.addField(`Shard #${i}`, el, true);
+            });
+            msg.channel.send(embed);
+          });
+    } else {
+      const message = lookupId.call(self.client, id, trusted);
+      if (!message) {
         self.error('Failed to lookup id: ' + id);
         msg.channel.send(id + ' Failed to be looked up.');
+      } else {
+        msg.channel.send(message);
       }
-    } else {
-      msg.channel.send(message);
     }
   }
 
@@ -2811,12 +2824,12 @@ function Main() {
       });
       if (trusted) {
         output.push(
-            id + ': User: `' + user.tag.replace(/`/g, '\\`') + '`' +
+            'User: `' + user.tag.replace(/`/g, '\\`') + '`' +
             (user.bot ? ' (bot)' : '') + ' has ' + guilds.length +
-            ' mutual guilds:\n```' + guilds.join(', ') + '```');
+            ' mutual guilds: ' + guilds.join(', '));
       } else {
         output.push(
-            id + ': User: `' + user.tag.replace(/`/g, '\\`') + '`' +
+            'User: `' + user.tag.replace(/`/g, '\\`') + '`' +
             (user.bot ? ' (bot)' : '') + ' has ' + guilds.length +
             ' mutual guilds.');
       }
@@ -2829,27 +2842,23 @@ function Main() {
             additional = '\nMany Members';
           } else {
             additional = '\nMembers: ' +
-                channel.members
-                    .map((m) => {
-                      return m.id + (m.user.bot ? ' (bot)' : '');
-                    })
+                channel.members.map((m) => m.id + (m.user.bot ? ' (bot)' : ''))
                     .join(', ');
           }
         }
         output.push(
-            id + ': Guild ' + channel.type + ' Channel: `' +
+            'Guild ' + channel.type + ' Channel: `' +
             channel.name.replace(/`/g, '\\`') + '` with ' +
             channel.members.size + ' members, in guild `' +
             channel.guild.name.replace(/`/g, '\\`') + '` (' + channel.guild.id +
             ')' + additional);
       } else {
-        output.push(
-            id + ': Channel: `' + channel.name.replace(/`/g, '\\`') + '`');
+        output.push('Channel: `' + channel.name.replace(/`/g, '\\`') + '`');
       }
     }
     if (guild) {
       output.push(
-          id + ': Guild: `' + guild.name.replace(/`/g, '\\`') + '` has ' +
+          'Guild: `' + guild.name.replace(/`/g, '\\`') + '` has ' +
           guild.members.size + ' members.');
     }
     if (output.length > 0) {

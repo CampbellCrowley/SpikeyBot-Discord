@@ -29,7 +29,6 @@
     "./chatbot.js",
     "./spotify.js",
     "./cmdScheduling.js",
-    "./web/proxy.js",
     "./web/account.js",
     "./web/stats.js",
     "./web/settings.js",
@@ -44,7 +43,8 @@
     "./echo.js",
     "./moderation.js",
     "./modLog.js",
-    "./raidBlock.js"
+    "./raidBlock.js",
+    "./web/proxy.js"
   ],
   "release": [
     "./moderation.js",
