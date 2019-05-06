@@ -165,7 +165,7 @@ function ChatBot() {
    * @listens Discord#message
    */
   function onMessage(msg) {
-    if (!msg.user.bot && msg.guild && disabledChatBot[msg.guild.id]) return;
+    if (!msg.author.bot && msg.guild && disabledChatBot[msg.guild.id]) return;
     msg.prefix = self.bot.getPrefix(msg.guild);
     if (!msg.author.bot && msg.guild &&
         msg.mentions.users.get(self.client.user.id) &&
