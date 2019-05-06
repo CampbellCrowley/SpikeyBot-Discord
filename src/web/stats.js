@@ -204,8 +204,8 @@ function WebStats() {
           guildCount: values.numGuilds,
           users: values.numMembers,
           shards: Object.values(values.shardGuilds),
-          shard_id: values.reqShard,
-          shardId: values.reqShard,
+          // shard_id: values.reqShard,
+          // shardId: values.reqShard,
           shard_count: values.numShards,
           shardCount: values.numShards,
         });
