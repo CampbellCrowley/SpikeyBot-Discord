@@ -3600,7 +3600,9 @@ function HG() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function swapTeamUsers(msg, id) {
-    if (msg.mentions.users.size + msg.softMentions.users.size != 2) {
+    const mentions = msg.mentions.users.concat(msg.softMentions.users);
+    if (mentions.size != 2) {
+      console.log(msg.mentions.users.size, msg.softMentions.users.size);
       self.common.reply(
           msg, 'Swapping requires mentioning 2 users to swap teams with ' +
               'eachother.');
@@ -3609,7 +3611,6 @@ function HG() {
     if (!hg.getGame(id) || !hg.getGame(id).currentGame) {
       createGame(null, id, true);
     }
-    const mentions = msg.mentions.users.concat(msg.softMentions.users);
     const user1 = mentions.first().id;
     const user2 = mentions.first(2)[1].id;
     let teamId1 = 0;
