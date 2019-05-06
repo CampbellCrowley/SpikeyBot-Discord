@@ -1,4 +1,4 @@
-// Copyright 2018 Campbell Crowley. All rights reserved.
+// Copyright 2018-2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const http = require('http');
 const https = require('https');
@@ -124,6 +124,16 @@ function WebStats() {
       method: 'POST',
       headers: {
         'Authorization': auth.botsOnDiscordXYZKey,
+        'content-type': 'application/json',
+      },
+    },
+    {
+      protocol: 'https:',
+      host: 'api.botlist.space',
+      path: '/v1/bots/{id}',
+      method: 'POST',
+      headers: {
+        'Authorization': auth.botlistSpaceToken,
         'content-type': 'application/json',
       },
     },
