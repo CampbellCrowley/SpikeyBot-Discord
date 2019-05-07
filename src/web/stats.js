@@ -129,11 +129,11 @@ function WebStats() {
     },
     {
       protocol: 'https:',
-      host: 'api.botlist.space',
-      path: '/v1/bots/{id}',
+      host: 'divinediscordbots.com',
+      path: '/bot/318552464356016131/stats',
       method: 'POST',
       headers: {
-        'Authorization': auth.botlistSpaceToken,
+        'Authorization': auth.divineDiscordBotsComToken,
         'content-type': 'application/json',
       },
     },
