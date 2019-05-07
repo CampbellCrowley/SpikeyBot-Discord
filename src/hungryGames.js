@@ -3602,7 +3602,6 @@ function HG() {
   function swapTeamUsers(msg, id) {
     const mentions = msg.mentions.users.concat(msg.softMentions.users);
     if (mentions.size != 2) {
-      console.log(msg.mentions.users.size, msg.softMentions.users.size);
       self.common.reply(
           msg, 'Swapping requires mentioning 2 users to swap teams with ' +
               'eachother.');
