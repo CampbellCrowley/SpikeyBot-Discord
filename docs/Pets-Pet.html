@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>SpikeyBot-Discord Source: hg/Grammar.js</title>
+	<title>SpikeyBot-Discord Class: Pet</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -81,60 +81,959 @@
 <div class="row">
 
 	
-	<div class="col-md-12">
+	<div class="col-md-8">
 	
 		<div id="main">
 			
 
-		<h1 class="page-title">Source: hg/Grammar.js</h1>
-    
+	<h1 class="page-title">Class: Pet</h1>
 <section>
-    <article>
-        <pre
-            class="sunlight-highlight-javascript linenums">// Copyright 2019 Campbell Crowley. All rights reserved.
-// Author: Campbell Crowley (dev@campbellcrowley.com)
 
-/**
- * @description Grammar related string formatting.
- * @memberof HungryGames
- * @inner
- */
-class Grammar {}
-/**
- * Format an array of users into names based on options and grammar rules.
- *
- * @public
- * @param {HungryGames~Player[]} names An array of players to format the names
- * of.
- * @param {string} [format='username'] Setting of how to format the user's name.
- * `username` will use their account name, `mention` will use their ID to format
- * a mention tag, `nickname` will use their custom guild nickname.
- * @returns {string} The formatted string of names.
- */
-Grammar.formatMultiNames = function(names, format = 'username') {
-  let output = '';
-  for (let i = 0; i &lt; names.length; i++) {
-    if (format === 'mention' &amp;&amp; !names[i].isNPC) {
-      output += `&lt;@${names[i].id}>`;
-    } else if (format === 'nickname') {
-      output += `\`${names[i].nickname || names[i].name}\``;
-    } else {
-      output += `\`${names[i].name}\``;
-    }
+<header>
+    
+        <h2>
+            <span class="ancestors"><a href="Pets.html">Pets</a>~</span>
+        
+        Pet
+        </h2>
+        
+    
+</header>
 
-    if (i == names.length - 2) {
-      output += ' and ';
-    } else if (i != names.length - 1) {
-      output += ', ';
-    }
-  }
-  return output;
-};
-module.exports = Grammar;
-</pre>
-    </article>
+
+<article>
+    <div class="container-overview">
+    
+        
+<hr>
+<dt>
+    <h4 class="name" id="Pet"><span class="type-signature"></span>new Pet(owner, name)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Contains information about a single user's pet.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>owner</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">external:Discord~GuildMember</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Reference to the guild member
+that owns this pet.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The name of this pet.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="Pet.js.html">Pet.js</a>,
+				 <a href="Pet.js.html#sunlight-1-line-10">line 10</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        <dl>
+            
+<hr>
+<dt class="name" id="_lastInteractTime">
+    <h4 id="_lastInteractTime"><span class="type-signature">&lt;private> </span>_lastInteractTime<span class="type-signature"> :number</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The timestamp at which this object was last interacted with.
+This is used for purging from memory when not used for a while.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">number</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>Date.now()</li>
+		</ul>
+	</dd>
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="Pet.js.html">Pet.js</a>,
+				 <a href="Pet.js.html#sunlight-1-line-50">line 50</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="guild">
+    <h4 id="guild"><span class="type-signature"></span>guild<span class="type-signature"> :string</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The ID of the guild this pet is in.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">string</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="Pet.js.html">Pet.js</a>,
+				 <a href="Pet.js.html#sunlight-1-line-29">line 29</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="id">
+    <h4 id="id"><span class="type-signature"></span>id<span class="type-signature"> :string</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The ID of this pet. Does not check for uniqueness, but
+expects the ID to be unique per-user per-guild.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">string</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="Pet.js.html">Pet.js</a>,
+				 <a href="Pet.js.html#sunlight-1-line-36">line 36</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="name">
+    <h4 id="name"><span class="type-signature"></span>name<span class="type-signature"> :string</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The name of this pet.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">string</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="Pet.js.html">Pet.js</a>,
+				 <a href="Pet.js.html#sunlight-1-line-42">line 42</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="owner">
+    <h4 id="owner"><span class="type-signature"></span>owner<span class="type-signature"> :string</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        ID of the owner of this pet.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">string</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="Pet.js.html">Pet.js</a>,
+				 <a href="Pet.js.html#sunlight-1-line-23">line 23</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="serializable">
+    <h4 id="serializable"><span class="type-signature"></span>serializable<span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Get a serializable version of this class instance. Strips all
+private variables, and all functions. Assumes all public variables are
+serializable if they aren't a function.
+    </div>
+    
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="Pet.js.html">Pet.js</a>,
+				 <a href="Pet.js.html#sunlight-1-line-62">line 62</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        </dl>
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        <dl>
+            
+<hr>
+<dt>
+    <h4 class="name" id=".from"><span class="type-signature">&lt;static> </span>from(obj)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Create a Pet from a Pet-like Object. Similar to
+copy-constructor.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>obj</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The Pet-like object to copy.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="Pet.js.html">Pet.js</a>,
+				 <a href="Pet.js.html#sunlight-1-line-91">line 91</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    Created Pet object.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Pet</span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="touch"><span class="type-signature"></span>touch()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Touch this object to update the last `_lastInteractTime`.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="Pet.js.html">Pet.js</a>,
+				 <a href="Pet.js.html#sunlight-1-line-78">line 78</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        </dl>
+    
+
+    
+
+    
+</article>
+
 </section>
-
 
 
 
@@ -144,6 +1043,10 @@ module.exports = Grammar;
 
 	<div class="clearfix"></div>
 
+	
+		<div class="col-md-3">
+			<div id="toc" class="col-md-3 hidden-xs hidden-sm hidden-md"></div>
+		</div>
 	
 
 </div>

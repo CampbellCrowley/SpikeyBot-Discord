@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>SpikeyBot-Discord Source: hg/Grammar.js</title>
+	<title>SpikeyBot-Discord Class: Pets</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -81,60 +81,1061 @@
 <div class="row">
 
 	
-	<div class="col-md-12">
+	<div class="col-md-8">
 	
 		<div id="main">
 			
 
-		<h1 class="page-title">Source: hg/Grammar.js</h1>
-    
+	<h1 class="page-title">Class: Pets</h1>
 <section>
-    <article>
-        <pre
-            class="sunlight-highlight-javascript linenums">// Copyright 2019 Campbell Crowley. All rights reserved.
-// Author: Campbell Crowley (dev@campbellcrowley.com)
 
-/**
- * @description Grammar related string formatting.
- * @memberof HungryGames
- * @inner
- */
-class Grammar {}
-/**
- * Format an array of users into names based on options and grammar rules.
- *
- * @public
- * @param {HungryGames~Player[]} names An array of players to format the names
- * of.
- * @param {string} [format='username'] Setting of how to format the user's name.
- * `username` will use their account name, `mention` will use their ID to format
- * a mention tag, `nickname` will use their custom guild nickname.
- * @returns {string} The formatted string of names.
- */
-Grammar.formatMultiNames = function(names, format = 'username') {
-  let output = '';
-  for (let i = 0; i &lt; names.length; i++) {
-    if (format === 'mention' &amp;&amp; !names[i].isNPC) {
-      output += `&lt;@${names[i].id}>`;
-    } else if (format === 'nickname') {
-      output += `\`${names[i].nickname || names[i].name}\``;
-    } else {
-      output += `\`${names[i].name}\``;
-    }
+<header>
+    
+        <h2>
+        Pets
+        </h2>
+        
+    
+</header>
 
-    if (i == names.length - 2) {
-      output += ' and ';
-    } else if (i != names.length - 1) {
-      output += ', ';
-    }
-  }
-  return output;
-};
-module.exports = Grammar;
-</pre>
-    </article>
+
+<article>
+    <div class="container-overview">
+    
+        
+<hr>
+<dt>
+    <h4 class="name" id="Pets"><span class="type-signature"></span>new Pets()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Manages pet related commands.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="pets.js.html">pets.js</a>,
+				 <a href="pets.js.html#sunlight-1-line-12">line 12</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>Command#event:pet</li>
+    </ul>
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+    
+    </div>
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Classes</h3>
+
+        <dl>
+            <dt><a href="Pets-Pet.html">Pet</a></dt>
+            <dd></dd>
+        </dl>
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        <dl>
+            
+<hr>
+<dt class="name" id="_pets">
+    <h4 id="_pets"><span class="type-signature">&lt;private> </span>_pets<span class="type-signature"> :Object.&lt;Object.&lt;Object.&lt;Pet>>></span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        All pets currently cached. Mapped by guild ID, then user ID,
+then pet ID. Only one pet is allowed per user at this time, but this
+future proofing in case users will be able to have multiples in the
+future.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">Object.&lt;Object.&lt;Object.&lt;Pet>>></span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>{}</li>
+		</ul>
+	</dd>
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="pets.js.html">pets.js</a>,
+				 <a href="pets.js.html#sunlight-1-line-30">line 30</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="myName">
+    <h4 id="myName"><span class="type-signature"></span>myName<span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+    
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="pets.js.html">pets.js</a>,
+				 <a href="pets.js.html#sunlight-1-line-19">line 19</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        </dl>
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        <dl>
+            
+<hr>
+<dt>
+    <h4 class="name" id="_commandPet"><span class="type-signature">&lt;private> </span>_commandPet(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        User typed the pet command.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>msg</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Discord~Message</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Message that triggered command.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="pets.js.html">pets.js</a>,
+				 <a href="pets.js.html#sunlight-1-line-71">line 71</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>Command#event:pet</li>
+    </ul>
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="_getAllPets"><span class="type-signature">&lt;private> </span>_getAllPets(member, cb)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Get an array of all of a user's pets in a guild.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>member</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">external:Discord~GuildMember</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Guild member to fetch all pets
+for.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cb</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Callback with first argument as optional error, and
+second as array of Pet objects.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="pets.js.html">pets.js</a>,
+				 <a href="pets.js.html#sunlight-1-line-85">line 85</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="_getPet"><span class="type-signature">&lt;private> </span>_getPet(member, pId, cb)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Fetch a user's pet.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>member</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">external:Discord~GuildMember</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">A guild member of which
+to fetch the pet for.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>pId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The pet ID to fetch.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cb</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Callback once complete. First argument is optional
+error, second is parsed Pet object.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="pets.js.html">pets.js</a>,
+				 <a href="pets.js.html#sunlight-1-line-126">line 126</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="initialize"><span class="type-signature"></span>initialize()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="pets.js.html">pets.js</a>,
+				 <a href="pets.js.html#sunlight-1-line-39">line 39</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="save"><span class="type-signature"></span>save()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="pets.js.html">pets.js</a>,
+				 <a href="pets.js.html#sunlight-1-line-49">line 49</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="shutdown"><span class="type-signature"></span>shutdown()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="pets.js.html">pets.js</a>,
+				 <a href="pets.js.html#sunlight-1-line-45">line 45</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        </dl>
+    
+
+    
+
+    
+</article>
+
 </section>
-
 
 
 
@@ -144,6 +1145,10 @@ module.exports = Grammar;
 
 	<div class="clearfix"></div>
 
+	
+		<div class="col-md-3">
+			<div id="toc" class="col-md-3 hidden-xs hidden-sm hidden-md"></div>
+		</div>
 	
 
 </div>
