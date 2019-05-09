@@ -499,9 +499,10 @@ GuildGame.forcePlayerState = function(
   }
   if (!Array.isArray(list) || list.length == 0) return 'No players given.';
   if (typeof state !== 'string') return 'No outcome given.';
+  const players = [];
   list.forEach((p) => {
+    const player = game.currentGame.includedUsers.find((el) => el.id == p);
     if (game.currentGame.day.state > 0) {
-      const player = game.currentGame.includedUsers.find((el) => el.id == p);
       if (!player) return 'Unable to find player.';
       let outcome;
       if (player.living && state === 'dead') {
@@ -553,8 +554,16 @@ GuildGame.forcePlayerState = function(
         persists: persists,
       });
     }
+    if (player) players.push(player.name);
   });
-  return `Player(s) will be ${state} by the end of the day.`;
+  if (players.length == 0) {
+    return `No players found.`;
+  } else if (players.length < 5) {
+    const names = players.map((el) => `\`${el}\``).join(', ');
+    return `${names} will be ${state} by the end of the day.`;
+  } else {
+    return `${players.length} players will be ${state} by the end of the day.`;
+  }
 };
 
 

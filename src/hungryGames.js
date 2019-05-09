@@ -5577,6 +5577,79 @@ function HG() {
   }
 
   /**
+   * @description Fetch an array of user IDs that are in the current game and
+   * have been referenced in any way due to the given message from the user.
+   * @private
+   * @param {Discord~Message} msg The message that lead to this being called.
+   * @param {string} id The id of the guild this was triggered from.
+   * @returns {string[]} Array of user IDs that are in the current game that
+   * were mentioned.
+   */
+  function parseGamePlayers(msg, id) {
+    const mentions = msg.mentions.users.concat(msg.softMentions.users);
+    if (!hg.getGame(id)) createGame(msg, id);
+    const game = hg.getGame(id);
+
+    let firstWord = msg.text.trim().split(' ')[0];
+    if (firstWord) firstWord = firstWord.toLowerCase();
+    const specialWords = {
+      everyone: ['everyone', '@everyone', 'all'],
+      online: ['online', 'here'],
+      offline: ['offline'],
+      idle: ['idle', 'away', 'snooze', 'snoozed'],
+      dnd: ['dnd', 'busy'],
+      bots: ['bot', 'bots'],
+      npcs: ['npc', 'npcs', 'ai', 'ais'],
+    };
+
+    let players = [];
+    const incU = game.currentGame.includedUsers;
+    if (specialWords.everyone.includes(firstWord)) {
+      players = game.currentGame.includedUsers.map((el) => el.id);
+    } else if (specialWords.online.includes(firstWord)) {
+      players = incU.filter((el) => {
+        const member = msg.guild.members.get(el.id);
+        if (!member) return false;
+        return member.user.presence.status === 'online';
+      }).map((el) => el.id);
+    } else if (specialWords.offline.includes(firstWord)) {
+      players = incU.filter((el) => {
+        const member = msg.guild.members.get(el.id);
+        if (!member) return false;
+        return member.user.presence.status === 'offline';
+      }).map((el) => el.id);
+    } else if (specialWords.idle.includes(firstWord)) {
+      players = incU.filter((el) => {
+        const member = msg.guild.members.get(el.id);
+        if (!member) return false;
+        return member.user.presence.status === 'idle';
+      }).map((el) => el.id);
+    } else if (specialWords.dnd.includes(firstWord)) {
+      players = incU.filter((el) => {
+        const member = msg.guild.members.get(el.id);
+        if (!member) return false;
+        return member.user.presence.status === 'dnd';
+      }).map((el) => el.id);
+    } else if (specialWords.npcs.includes(firstWord)) {
+      players = incU.filter((el) => el.isNPC).map((el) => el.id);
+    } else if (specialWords.bots.includes(firstWord)) {
+      players = incU.filter((el) => {
+        const member = msg.guild.members.get(el.id);
+        if (!member) return false;
+        return member.user.bot;
+      }).map((el) => el.id);
+    }
+
+    return players.concat(
+        mentions
+            .filter((u) => {
+              if (players.includes(u.id)) return false;
+              return game.currentGame.includedUsers.find((p) => p.id == u.ud);
+            })
+            .map((el) => el.id));
+  }
+
+  /**
    * @description Allows the game creator to kill a player in the game.
    *
    * @private
@@ -5585,22 +5658,10 @@ function HG() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function commandKill(msg, id) {
-    const mentions = msg.mentions.users.concat(msg.softMentions.users);
-    if (mentions.size <= 0) {
+    const players = parseGamePlayers(msg, id);
+
+    if (!players || players.length == 0) {
       self.common.reply(msg, 'Please specify a player in the games to kill.');
-      return;
-    }
-    if (!hg.getGame(id)) createGame(msg, id);
-    const players = [];
-    const notInGame = !mentions.find((u) => {
-      players.push(u.id);
-      return !hg.getGame(id).currentGame.includedUsers.find((p) => {
-        return p.id == u.ud;
-      });
-    });
-    if (notInGame) {
-      self.common.reply(
-          msg, notInGame.tag + ' does not appear to be in the current game.');
       return;
     }
     self.common.reply(
@@ -5618,22 +5679,10 @@ function HG() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function commandHeal(msg, id) {
-    const mentions = msg.mentions.users.concat(msg.softMentions.users);
-    if (mentions.size <= 0) {
+    const players = parseGamePlayers(msg, id);
+
+    if (!players || players.length == 0) {
       self.common.reply(msg, 'Please specify a player in the games to heal.');
-      return;
-    }
-    if (!hg.getGame(id)) createGame(msg, id);
-    const players = [];
-    const notInGame = !mentions.find((u) => {
-      players.push(u.id);
-      return !hg.getGame(id).currentGame.includedUsers.find((p) => {
-        return p.id == u.ud;
-      });
-    });
-    if (notInGame) {
-      self.common.reply(
-          msg, notInGame.tag + ' does not appear to be in the current game.');
       return;
     }
     self.common.reply(
@@ -5650,22 +5699,10 @@ function HG() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function commandWound(msg, id) {
-    const mentions = msg.mentions.users.concat(msg.softMentions.users);
-    if (mentions.size <= 0) {
+    const players = parseGamePlayers(msg, id);
+
+    if (!players || players.length == 0) {
       self.common.reply(msg, 'Please specify a player in the games to wound.');
-      return;
-    }
-    if (!hg.getGame(id)) createGame(msg, id);
-    const players = [];
-    const notInGame = !mentions.find((u) => {
-      players.push(u.id);
-      return !hg.getGame(id).currentGame.includedUsers.find((p) => {
-        return p.id == u.ud;
-      });
-    });
-    if (notInGame) {
-      self.common.reply(
-          msg, notInGame.tag + ' does not appear to be in the current game.');
       return;
     }
     self.common.reply(
