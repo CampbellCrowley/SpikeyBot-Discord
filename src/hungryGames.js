@@ -5588,7 +5588,14 @@ function HG() {
    * were mentioned.
    */
   function parseGamePlayers(msg, id) {
-    const mentions = msg.mentions.users.concat(msg.softMentions.users);
+    const mentionedRoleUsers = new self.Discord.UserStore(
+        self.client,
+        ...msg.mentions.roles.map((r) => r.members.map((m) => m.user)));
+    const softRoleUsers = new self.Discord.UserStore(
+        self.client,
+        ...msg.softMentions.roles.map((r) => r.members.map((m) => m.user)));
+    const mentions = msg.mentions.users.concat(msg.softMentions.users)
+        .concat(mentionedRoleUsers.concat(softRoleUsers));
     if (!hg.getGame(id)) createGame(msg, id);
     const game = hg.getGame(id);
 
@@ -5646,7 +5653,7 @@ function HG() {
         mentions
             .filter((u) => {
               if (players.includes(u.id)) return false;
-              return game.currentGame.includedUsers.find((p) => p.id == u.ud);
+              return game.currentGame.includedUsers.find((p) => p.id == u.id);
             })
             .map((el) => el.id));
   }
