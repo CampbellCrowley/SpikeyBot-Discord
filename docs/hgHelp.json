@@ -541,6 +541,11 @@
               "description": "Multiple Players",
               "command": "kill @SpikeyRobot#0971 @SpikeyBot#4928",
               "result": "A message will be added to the current day or the next day, that kills SpikeyRobot and SpikeyBot if they are not already dead."
+            },
+            {
+              "description": "Groups of Players",
+              "command": "kill everyone",
+              "result": "All groups that the include and exclude commands support, this also supports (online, offline, idle, dnd, everyone, bots, npcs)."
             }
           ]
         },
@@ -559,6 +564,11 @@
               "description": "Multiple Players",
               "command": "wound @SpikeyRobot#0971 @SpikeyBot#4928",
               "result": "A message will be added to the current day or the next day, that wounds SpikeyRobot and SpikeyBot if they are not already wounded."
+            },
+            {
+              "description": "Groups of Players",
+              "command": "wound everyone",
+              "result": "All groups that the include and exclude commands support, this also supports (online, offline, idle, dnd, everyone, bots, npcs)."
             }
           ]
         },
@@ -577,6 +587,11 @@
               "description": "Multiple Players",
               "command": "heal @SpikeyRobot#0971 @SpikeyBot#4928",
               "result": "A message will be added to the current day or the next day, that heals SpikeyRobot and SpikeyBot if they are not already fully healed."
+            },
+            {
+              "description": "Groups of Players",
+              "command": "heal everyone",
+              "result": "All groups that the include and exclude commands support, this also supports (online, offline, idle, dnd, everyone, bots, npcs)."
             }
           ]
         }
