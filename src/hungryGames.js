@@ -2727,9 +2727,10 @@ function HG() {
           return;
         }
       } else if (obj.id.startsWith('NPC') && !(obj instanceof NPC)) {
+        const objId = obj.id;
         obj = hg.getGame(id).includedNPCs.find((el) => el.id == obj.id);
         if (!obj) {
-          response += `${obj.name} unable to be found (bug?).\n`;
+          response += `${objId} unable to be found (already excluded?).\n`;
           self.error('Unable to find NPC matching NPC-like data: ' + id);
           return;
         }
@@ -2930,9 +2931,10 @@ function HG() {
           return;
         }
       } else if (obj.id.startsWith('NPC') && !(obj instanceof NPC)) {
+        const objId = obj.id;
         obj = hg.getGame(id).excludedNPCs.find((el) => el.id == obj.id);
         if (!obj) {
-          response += `${obj.username} unable to be found (bug?).\n`;
+          response += `${objId} unable to be found (already included?).\n`;
           self.error('Unable to find NPC matching NPC-like data: ' + id);
           return;
         }
