@@ -274,7 +274,12 @@ function SMLoader() {
    */
   this.unload = function(name, opts, cb) {
     if (!opts) {
-      opts = {schedule: true, updateGoal: true, ignoreUnloadable: false};
+      opts = {
+        schedule: true,
+        updateGoal: true,
+        ignoreUnloadable: false,
+        reloading: false,
+      };
     } else {
       if (opts.schedule == null) opts.schedule = true;
       if (opts.updateGoal == null) opts.updateGoal = true;
@@ -292,7 +297,8 @@ function SMLoader() {
       return;
     }
     if (!opts.ignoreUnloadable) {
-      if (!sm.unloadable()) {
+      if (!sm.unloadable() ||
+          (opts.reloading && (sm.reloadable && !sm.reloadable()))) {
         if (opts.schedule) {
           if (unloadTimeouts[name]) {
             if (!unloadCallbacks[name]) unloadCallbacks[name] = [];
@@ -449,6 +455,7 @@ function SMLoader() {
     } else if (opts.schedule == null) {
       opts.schedule = true;
     }
+    opts.reloading = true;
     opts.updateGoal = false;
 
     const numTotal = name.length;
@@ -457,7 +464,7 @@ function SMLoader() {
     for (let i = 0; i < numTotal; i++) {
       if (!opts.force && subModules[name[i]]) {
         try {
-          const mtime = fs.statSync(__dirname + '/' + name[i]).mtime;
+          const mtime = fs.statSync(`${__dirname}/${name[i]}`).mtime;
           // For some reason, directly comparing these two for equality does not
           // work.
           if (mtime - subModules[name[i]].modifiedTime == 0) {
@@ -478,23 +485,22 @@ function SMLoader() {
      * Actually trigger the reload process for a single submodule.
      *
      * @private
-     *
      * @param {string} name The submodule name to reload.
      */
     function reloadSingle(name) {
       self.unload(name, opts, (err) => {
         if (err) {
-          output.push(name + ': ' + err);
+          output.push(`${name}: ${err}`);
           done();
           return;
         }
         self.load(name, opts, (err2) => {
           if (err2) {
-            output.push(name + ': ' + err2);
+            output.push(`${name}: ${err2}`);
             done();
             return;
           }
-          output.push(name + ': `Success`');
+          output.push(`${name}: \`Success\``);
           done();
         });
       });

@@ -542,20 +542,24 @@ Common.mention = Common.prototype.mention;
  * @param {string} filename The name of the file including the directory.
  * @param {string} dir The directory path without the file's name.
  * @param {string} data The data to write to the file.
+ * @param {Function} [cb] Optional callback that fires on completion.
  */
-Common.mkAndWrite = function(filename, dir, data) {
+Common.mkAndWrite = function(filename, dir, data, cb) {
   mkdirp(dir, (err) => {
     if (err) {
       this.error(`Failed to make directory: ${dir}`);
       console.error(err);
+      if (typeof cb === 'function') cb();
       return;
     }
     fs.writeFile(filename, data, (err2) => {
       if (err2) {
         this.error(`Failed to save file: ${filename}`);
         console.error(err2);
+        if (typeof cb === 'function') cb();
         return;
       }
+      if (typeof cb === 'function') cb();
     });
   });
 };

@@ -2,17 +2,18 @@
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 /**
  * @description Base class for all Sub-Modules.
- * @class
  */
 class SubModule {
   /**
-   * Create a subModule.
+   * @description Create a subModule.
    */
   constructor() {
     /**
      * The help message to show the user in the main help message.
      *
-     * @type {string|Discord~MessageEmbed}
+     * @abstract
+     * @type {string|external:Discord~MessageEmbed}
+     * @default
      */
     this.helpMessage = undefined;
 
@@ -28,24 +29,28 @@ class SubModule {
     /**
      * The current Discord object instance of the bot.
      *
-     * @type {Discord}
+     * @public
+     * @type {external:Discord}
      */
     this.Discord;
     /**
      * The current bot client.
      *
-     * @type {Discord~Client}
+     * @public
+     * @type {external:Discord~Client}
      */
     this.client;
     /**
      * The command object for registering command listeners.
      *
+     * @public
      * @type {Command}
      */
     this.command;
     /**
      * The common object.
      *
+     * @public
      * @type {Common}
      */
     this.common;
@@ -53,6 +58,7 @@ class SubModule {
     /**
      * The parent SpikeyBot instance.
      *
+     * @public
      * @type {SpikeyBot}
      */
     this.bot;
@@ -164,11 +170,21 @@ class SubModule {
     };
 
     if (this.initialized) return;
+
     this.client.setTimeout(() => {
       if (this.initialized) return;
-      this.debug(this.myName + ' Initialize...');
+      this.debug(`${this.myName} Initialize...`);
+
+      this.save = this.save.bind(this);
+      this.initialize = this.initialize.bind(this);
+      this.shutdown = this.shutdown.bind(this);
+      this.log = this.log.bind(this);
+      this.warn = this.warn.bind(this);
+      this.debug = this.debug.bind(this);
+      this.error = this.error.bind(this);
+
       this.initialize();
-      this.log(this.myName + ' Initialized');
+      this.log(`${this.myName} Initialized`);
       this.initialized = true;
     });
   }
@@ -182,7 +198,7 @@ class SubModule {
     if (!this.initialized) return;
     this.shutdown();
     this.initialized = false;
-    this.log(this.myName + ' Shutdown');
+    this.log(`${this.myName} Shutdown`);
   }
 
   /**
@@ -245,6 +261,7 @@ class SubModule {
    * @description Check if this module is in a state that is ready to be
    * unloaded. If false is returned, this module should not be unloaded and
    * doing such may risk putting the module into an uncontrollable state.
+   * @see {@link SubModule~reloadable}
    *
    * @abstract
    * @public
@@ -253,11 +270,29 @@ class SubModule {
   unloadable() {
     return true;
   }
+
+  /**
+   * @description Check if this module is in a state that is ready to be
+   * reloaded. If false is returned, this module should not be unloaded and
+   * doing such may risk putting the module into an uncontrollable state. This
+   * is different from unloadable, which checks if this module can be stopped
+   * completely, this checks if the module can be stopped and restarted.
+   * @see {@link SubModule~unloadable}
+   *
+   * @abstract
+   * @public
+   * @returns {boolean} True if can be reloaded, false if cannot.
+   */
+  reloadable() {
+    return this.unloadable();
+  }
 }
 
 /**
  * Extends SubModule as the base class of a child.
  *
+ * @public
+ * @static
  * @param {Object} child The child class to extend.
  */
 SubModule.extend = function(child) {
