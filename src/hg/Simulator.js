@@ -488,22 +488,22 @@ Simulator._pickEvent = function(
     userPool, eventPool, options, numAlive, numTotal, teams, probOpts,
     weaponWielder, chosenWeapon) {
   if (eventPool) eventPool = eventPool.filter((el) => el);
-  const fails = [];
+  // const fails = [];
   let loop = 0;
   while (loop < 100) {
     loop++;
     if (!eventPool || eventPool.length == 0) {
-      fails.push('No Events');
+      // fails.push('No Events');
       break;
     }
     const eventIndex = Simulator._probabilityEvent(
         eventPool, probOpts, options.customEventWeight);
     const eventTry = eventPool[eventIndex];
     if (!eventTry) {
-      if (fails.length < 3) {
+      /* if (fails.length < 3) {
         console.error('Invalid Event:', eventTry);
       }
-      fails.push('Invalid Event');
+      fails.push('Invalid Event'); */
       eventPool.splice(eventIndex, 1);
       continue;
     }
@@ -524,30 +524,30 @@ Simulator._pickEvent = function(
     // If the chosen event requires more players than there are remaining,
     // pick a new event.
     if (eventEffectsNumMin > userPool.length) {
-      fails.push(
+      /* fails.push(
           'Event too large (' + eventEffectsNumMin + ' > ' + userPool.length +
           '): ' + eventIndex + ' V:' + eventTry.victim.count + ' A:' +
-          eventTry.attacker.count + ' M:' + eventTry.message);
+          eventTry.attacker.count + ' M:' + eventTry.message); */
       continue;
     } else if (eventRevivesNumMin > numTotal - numAlive) {
-      fails.push(
+      /* fails.push(
           'Event too large (' + eventRevivesNumMin + ' > ' +
           (numTotal - numAlive) + '): ' + eventIndex + ' V:' +
           eventTry.victim.count + ' A:' + eventTry.attacker.count + ' M:' +
-          eventTry.message);
+          eventTry.message); */
       continue;
     }
 
-    let consumed = eventTry.consumes * 1;
-    if (eventTry.consumed === 'V') consumed = Math.abs(numVictim);
-    if (eventTry.consumed === 'A') consumed = Math.abs(numAttacker);
+    let consumes = eventTry.consumes * 1;
+    if (eventTry.consumes === 'V') consumes = Math.abs(numVictim);
+    if (eventTry.consumes === 'A') consumes = Math.abs(numAttacker);
     if (weaponWielder && chosenWeapon) {
-      if (consumed > weaponWielder.weapons[chosenWeapon]) {
-        fails.push(
-            'Not enough consumables (' + consumed + ' > ' +
+      if (consumes > weaponWielder.weapons[chosenWeapon]) {
+        /* fails.push(
+            'Not enough consumables (' + consumes + ' > ' +
             weaponWielder.weapons[chosenWeapon] + '): ' + eventIndex + ' V:' +
             eventTry.victim.count + ' A:' + eventTry.attacker.count + ' M:' +
-            eventTry.message);
+            eventTry.message); */
         continue;
       }
     }
@@ -565,10 +565,10 @@ Simulator._pickEvent = function(
         if (multiVictim) {
           numVictim = Simulator.weightedUserRand() + (victimMin - 1);
         }
-        if (eventTry.consumed === 'V') consumed = numVictim;
-        if (eventTry.consumed === 'A') consumed = numAttacker;
+        if (eventTry.consumes === 'V') consumes = numVictim;
+        if (eventTry.consumes === 'A') consumes = numAttacker;
         if (weaponWielder && chosenWeapon &&
-            consumed > weaponWielder.weapons[chosenWeapon]) {
+            consumes > weaponWielder.weapons[chosenWeapon]) {
           continue;
         } else if (victimRevived && attackerRevived) {
           if (numAttacker + numVictim <= numTotal - numAlive) break;
@@ -587,8 +587,8 @@ Simulator._pickEvent = function(
         }
       }
       if (count >= 100) {
-        self.error('Infinite loop while picking player count .');
-        fails.push('Infinite loop while picking player count.');
+        self.error('Infinite loop while picking player count.');
+        // fails.push('Infinite loop while picking player count.');
         continue;
       }
     }
@@ -598,9 +598,9 @@ Simulator._pickEvent = function(
         userPool, numAlive, teams, options, eventTry.victim.outcome == 'dies',
         eventTry.attacker.outcome == 'dies', weaponWielder);
     if (failReason) {
-      fails.push(
+      /* fails.push(
           'Fails event requirement validation: ' + eventIndex + ' ' +
-          failReason);
+          failReason); */
       continue;
     }
 
