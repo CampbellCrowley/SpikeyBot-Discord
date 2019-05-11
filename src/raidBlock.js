@@ -5,6 +5,7 @@ const SubModule = require('./subModule.js');
 
 /**
  * @description Manages raid blocking commands and configuration.
+ * @augments SubModule
  * @listens Discord:external~Client#guildMemberAdd
  * @listens Command#raid
  * @listens Command#lockdown

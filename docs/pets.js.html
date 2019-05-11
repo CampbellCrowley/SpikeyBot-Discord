@@ -101,6 +101,7 @@ const SubModule = require('./subModule.js');
 /**
  * @description Manages pet related commands.
  * @listens Command#pet
+ * @augments SubModule
  */
 class Pets extends SubModule {
   /**
@@ -141,15 +142,40 @@ class Pets extends SubModule {
   /** @inheritdoc */
   save(opt) {
     if (!this.initialized) return;
+    const now = Date.now();
 
-    Object.values(this._pets).forEach((obj) => {
+    /**
+     * @description Check if pet is purgable from memory, and purges if
+     * possible.
+     * @private
+     * @param {Pet} obj Pet object to potentially purge.
+     */
+    const checkPurge = (obj) => {
+      if (now - obj._lastInteractTime > 5 * 60 * 1000) {
+        delete this._pets[obj.guild][obj.user][obj.id];
+      }
+    };
+
+    const list = Object.values(this._pets).reduce((a, c) => {
+      return a = a.concat(Object.values(c).reduce((a, c) => {
+        return a = a.concat(Object.values(c));
+      }, []));
+    }, []);
+
+    console.log(list);
+
+    list.forEach((obj) => {
       const dir = `${this.common.guildSaveDir}${obj.guild}/pets/${obj.owner}/`;
       const filename = `${dir}${obj.id}.json`;
       if (opt == 'async') {
-        this.common.mkAndWrite(filename, dir, JSON.stringify(obj.serializable));
+        this.common.mkAndWrite(
+            filename, dir, JSON.stringify(obj.serializable), () => {
+              checkPurge(obj);
+            });
       } else {
         this.common.mkAndWriteSync(
             filename, dir, JSON.stringify(obj.serializable));
+        checkPurge(obj);
       }
     });
   }
@@ -162,8 +188,18 @@ class Pets extends SubModule {
    * @listens Command#pet
    */
   _commandPet(msg) {
-    this._getAllPetsPet(msg.member, (err, pets) => {
-
+    this._getAllPets(msg.member, (err, pets) => {
+      if (err) {
+        this.common.reply(msg, err);
+        return;
+      }
+      if (pets.length == 0) {
+        this.common.reply(msg, 'Pets', 'You don\'t have any pets.');
+      } else {
+        this.common.reply(
+            msg, 'Pets',
+            JSON.stringify(pets.map((el) => el.serializable), null, 2));
+      }
     });
   }
 
@@ -182,6 +218,10 @@ class Pets extends SubModule {
 
     fs.readdir(dir, (err, files) => {
       if (err) {
+        if (err.code === 'ENOENT') {
+          cb(null, []);
+          return;
+        }
         cb(err);
         return;
       }

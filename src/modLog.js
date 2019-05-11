@@ -5,6 +5,7 @@ const SubModule = require('./subModule.js');
 
 /**
  * @description Manages moderator logging on guilds.
+ * @augments SubModule
  * @listens Command#setLogChannel
  * @listens Command#logChannel
  */

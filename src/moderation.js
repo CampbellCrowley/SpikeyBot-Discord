@@ -5,7 +5,7 @@ const SubModule = require('./subModule.js');
 
 /**
  * @description Handle all moderator related commands and control.
- * @extends SubModule
+ * @augments SubModule
  */
 class Moderation extends SubModule {
   /**
