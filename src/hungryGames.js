@@ -3316,7 +3316,7 @@ function HG() {
         return 'Set ' + option + ' to ' + obj[option] + ' from ' + old;
       }
     } else if (type === 'string') {
-      value = value.toLowerCase();
+      value = (value || '').toLowerCase();
       if (defaultObj[option].values.lastIndexOf(value) < 0) {
         return 'That is not a valid value for ' + option +
             ', which requires one of the following: ' +
