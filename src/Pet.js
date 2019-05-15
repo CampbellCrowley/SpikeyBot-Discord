@@ -33,7 +33,7 @@ class Pet {
      * @type {string}
      * @public
      */
-    this.id = crypto.randomBytes(4).toString('base64');
+    this.id = crypto.randomBytes(6).toString('base64');
     /**
      * @description The name of this pet.
      * @type {string}
