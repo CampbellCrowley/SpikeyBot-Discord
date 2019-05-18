@@ -414,6 +414,7 @@ function SpikeyBot() {
           if (msg.indexOf('force') > -1) {
             manager.shards.forEach((s) => {
               if (!idList || idList.find((el) => el == s.id)) {
+                s.process.send('reboot');
                 s.respawn();
               }
             });

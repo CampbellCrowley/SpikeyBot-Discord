@@ -3203,7 +3203,7 @@ function Main() {
    */
   function shardMessage(...args) {
     if (args[0] == 'reboot') {
-      process.exit(0);
+      process.kill(process.pid, 'SIGINT');
     }
   }
 }
