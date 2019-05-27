@@ -923,7 +923,7 @@
             "count": "1"
           }
         },
-        "consumes": "2"
+        "consumes": "2A"
       },
       {
         "message": "{attacker} use[As|] their wood to make [Aa |]bow[A|s].",
@@ -942,7 +942,7 @@
             "count": "1"
           }
         },
-        "consumes": "2"
+        "consumes": "2A"
       },
       {
         "message": "{attacker} use[As|] their wood to make [Aa |]spear[A|s].",
@@ -961,7 +961,7 @@
             "count": "1"
           }
         },
-        "consumes": "2"
+        "consumes": "2A"
       }
     ],
     "name": "wood",

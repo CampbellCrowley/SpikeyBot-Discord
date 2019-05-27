@@ -538,9 +538,9 @@ Simulator._pickEvent = function(
       continue;
     }
 
-    let consumes = eventTry.consumes * 1;
-    if (eventTry.consumes === 'V') consumes = Math.abs(numVictim);
-    if (eventTry.consumes === 'A') consumes = Math.abs(numAttacker);
+    const consumes = Math.abs(
+        Simulator._parseConsumeCount(
+            eventTry.consumes, numVictim, numAttacker));
     if (weaponWielder && chosenWeapon) {
       if (consumes > weaponWielder.weapons[chosenWeapon]) {
         /* fails.push(
@@ -565,10 +565,10 @@ Simulator._pickEvent = function(
         if (multiVictim) {
           numVictim = Simulator.weightedUserRand() + (victimMin - 1);
         }
-        if (eventTry.consumes === 'V') consumes = numVictim;
-        if (eventTry.consumes === 'A') consumes = numAttacker;
         if (weaponWielder && chosenWeapon &&
-            consumes > weaponWielder.weapons[chosenWeapon]) {
+            Simulator._parseConsumeCount(
+                eventTry.consumes, numVictim, numAttacker) >
+                weaponWielder.weapons[chosenWeapon]) {
           continue;
         } else if (victimRevived && attackerRevived) {
           if (numAttacker + numVictim <= numTotal - numAlive) break;
@@ -881,6 +881,28 @@ Simulator._probabilityEvent = function(
       return false;
     });
     // return finalPool[Math.floor(Math.random() * finalPool.length)];
+  }
+};
+
+/**
+ * Parse the number of items consumed from the given consumed value, and number
+ * of victims and attackers.
+ *
+ * @private
+ * @static
+ * @param {string} consumeString The consumes value for the event.
+ * @param {number} numVictim The number of victims in the event.
+ * @param {number} numAttacker The number of attackers in the event.
+ * @returns {number} The number of consumed items.
+ */
+Simulator._parseConsumeCount = function(consumeString, numVictim, numAttacker) {
+  const consumedMatch = (consumeString + '').match(/^(\d*)(V|A)$/);
+  if (!consumedMatch) {
+    return 0;
+  } else if (consumedMatch[2] == 'V') {
+    return numVictim * (consumedMatch[1] || 1);
+  } else if (consumedMatch[2] == 'A') {
+    return numAttacker * (consumedMatch[1] || 1);
   }
 };
 

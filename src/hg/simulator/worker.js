@@ -233,12 +233,8 @@ class Worker {
                 eventTry.attacker.outcome, sim.game.options, userPool, deadPool,
                 sim.game.currentGame.teams, userWithWeapon, chosenWeapon);
 
-            let consumed = eventTry.consumes;
-            if (consumed == 'V') {
-              consumed = numVictim;
-            } else if (consumed == 'A') {
-              consumed = numAttacker;
-            }
+            const consumed = Simulator._parseConsumeCount(
+                eventTry.consumes, numVictim, numAttacker);
             userWithWeapon.weapons[chosenWeapon] -= consumed;
             if (userWithWeapon.weapons[chosenWeapon] <= 0) {
               delete userWithWeapon.weapons[chosenWeapon];
