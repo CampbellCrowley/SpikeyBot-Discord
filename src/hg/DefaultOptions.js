@@ -103,6 +103,13 @@ class NumberOption extends Option {
       this._range = null;
     }
   }
+  /**
+   * @description Get the range of allowable values for this option.
+   * @returns {?{min: number, max: number}} Allowable range of values.
+   */
+  get range() {
+    return this._range;
+  }
 }
 /**
  * Boolean option.
