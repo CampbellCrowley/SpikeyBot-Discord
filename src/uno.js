@@ -270,7 +270,6 @@ function Uno() {
    *
    * @public
    * @constant
-   * @default
    * @enum {number}
    */
   this.CardFace = {
