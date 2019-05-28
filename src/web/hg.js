@@ -308,7 +308,9 @@ function HGWeb() {
         let fired = false;
         cb = function(...args) {
           if (fired) {
-            self.warn('Attempting to fire callback a second time!');
+            self.warn(
+                'Attempting to fire callback a second time! (' + func.name +
+                ')');
           }
           origCB(...args);
           fired = true;
@@ -364,6 +366,7 @@ function HGWeb() {
     socket.on('forwardedRequest', (userData, sId, func, args, cb) => {
       if (!authenticated) return;
       const fakeSocket = {
+        fake: true,
         emit: function(...args) {
           if (typeof cb == 'function') cb({_forward: true, data: args});
         },

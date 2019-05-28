@@ -173,6 +173,9 @@ function WebSettings() {
         sockets[i].emit('commandRegistered', toSend, gId);
       }
     }
+    if (ioClient) {
+      ioClient.emit('_guildBroadcast', gId, 'commandRegistered', toSend, gId);
+    }
   }
   /**
    * Handle a CmdScheduling.ScheduledCommand being canceled.
@@ -189,6 +192,9 @@ function WebSettings() {
           sockets[i].cachedGuilds.includes(gId)) {
         sockets[i].emit('commandCancelled', cmdId, gId);
       }
+    }
+    if (ioClient) {
+      ioClient.emit('_guildBroadcast', gId, 'commandCancelled', cmdId, gId);
     }
   }
 
@@ -213,6 +219,10 @@ function WebSettings() {
         sockets[i].emit('settingsChanged', gId, value, type, id, id2);
       }
     }
+    if (ioClient) {
+      ioClient.emit(
+          '_guildBroadcast', gId, 'settingsChanged', gId, value, type, id, id2);
+    }
   }
 
   /**
@@ -229,6 +239,9 @@ function WebSettings() {
           sockets[i].cachedGuilds.includes(gId)) {
         sockets[i].emit('settingsReset', gId);
       }
+    }
+    if (ioClient) {
+      ioClient.emit('_guildBroadcast', gId, 'settingsReset', gId);
     }
   }
 
@@ -248,6 +261,10 @@ function WebSettings() {
         sockets[i].emit('lockdown', event.id, event.settings);
       }
     }
+    if (ioClient) {
+      ioClient.emit(
+          '_guildBroadcast', event.id, 'lockdown', event.id, event.settings);
+    }
   }
 
   /**
@@ -265,6 +282,11 @@ function WebSettings() {
           sockets[i].cachedGuilds.includes(event.id)) {
         sockets[i].emit('raidAction', event.id, event.action, event.user.id);
       }
+    }
+    if (ioClient) {
+      ioClient.emit(
+          '_guildBroadcast', event.id, 'raidAction', event.id, event.action,
+          event.user.id);
     }
   }
 
@@ -433,7 +455,9 @@ function WebSettings() {
         let fired = false;
         cb = function(...args) {
           if (fired) {
-            self.warn('Attempting to fire callback a second time!');
+            self.warn(
+                'Attempting to fire callback a second time! (' + func.name +
+                ')');
           }
           origCB(...args);
           fired = true;
@@ -441,11 +465,11 @@ function WebSettings() {
         args[args.length - 1] = cb;
       }
       func.apply(func, [args[0], socket].concat(args.slice(1)));
+      if (typeof cb === 'function') {
+        args[args.length - 1] = {_function: true};
+      }
       if (forward) {
         Object.entries(siblingSockets).forEach((s) => {
-          if (typeof cb === 'function') {
-            args[args.length - 1] = {_function: true};
-          }
           s[1].emit(
               'forwardedRequest', args[0], socket.id, func.name, args.slice(1),
               (res) => {
@@ -491,6 +515,7 @@ function WebSettings() {
     socket.on('forwardedRequest', (userData, sId, func, args, cb) => {
       if (!authenticated) return;
       const fakeSocket = {
+        fake: true,
         emit: function(...args) {
           if (typeof cb == 'function') cb({_forward: true, data: args});
         },
@@ -854,9 +879,8 @@ function WebSettings() {
    * complete and has data, or has failed.
    */
   function fetchSettings(userData, socket, cb) {
-    if (typeof cb !== 'function') cb = function() {};
     if (!userData) {
-      cb('Not signed in.', null);
+      if (typeof cb === 'function') cb('Not signed in.', null);
       return;
     }
     let guilds = [];
@@ -884,8 +908,11 @@ function WebSettings() {
         modLogSettings: modLog && modLog.getSettings(g.id) || null,
       };
     });
-    socket.emit('settings', settings);
-    cb(settings);
+    if (!socket.fake && typeof cb === 'function') {
+      cb(settings);
+    } else {
+      socket.emit('settings', settings);
+    }
   }
   this.fetchSettings = fetchSettings;
 
@@ -988,14 +1015,18 @@ function WebSettings() {
    * complete and has data, or has failed.
    */
   function fetchScheduledCommands(userData, socket, cb) {
-    if (typeof cb !== 'function') cb = function() {};
     if (!userData) {
-      cb('Not signed in.', null);
+      if (!socket.fake && typeof cb === 'function') cb('Not signed in.', null);
       return;
     }
-    const guilds = self.client.guilds.filter((obj) => {
-      return obj.members.get(userData.id);
-    });
+    let guilds = userData.guilds;
+    if (guilds) {
+      guilds.map((el) => self.client.guilds.get(el.id));
+    } else {
+      guilds = self.client.guilds.filter((obj) => {
+        return obj.members.get(userData.id);
+      });
+    }
     const sCmds = {};
     updateModuleReferences();
     if (!cmdScheduler) {
@@ -1003,6 +1034,7 @@ function WebSettings() {
       return;
     }
     guilds.forEach((g) => {
+      if (!g) return;
       const list = cmdScheduler.getScheduledCommandsInGuild(g.id);
       if (list && list.length > 0) {
         sCmds[g.id] = list.map((el) => {
@@ -1017,8 +1049,11 @@ function WebSettings() {
         });
       }
     });
-    socket.emit('scheduledCommands', sCmds);
-    cb(sCmds);
+    if (!socket.fake && typeof cb === 'function') {
+      cb(sCmds);
+    } else {
+      socket.emit('scheduledCmds', sCmds);
+    }
   }
   this.fetchScheduledCommands = fetchScheduledCommands;
 
