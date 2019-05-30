@@ -1410,25 +1410,7 @@ function HG() {
     finalMessage.setColor(defaultColor);
 
     const numUsers = game.currentGame.includedUsers.length;
-    if (game.options.teamSize > 0) {
-      game.currentGame.includedUsers.sort(function(a, b) {
-        const aTeam = game.currentGame.teams.findIndex(function(team) {
-          return team.players.findIndex(function(player) {
-            return player == a.id;
-          }) > -1;
-        });
-        const bTeam = game.currentGame.teams.findIndex(function(team) {
-          return team.players.findIndex(function(player) {
-            return player == b.id;
-          }) > -1;
-        });
-        if (aTeam == bTeam) {
-          return a.id - b.id;
-        } else {
-          return aTeam - bTeam;
-        }
-      });
-    }
+    if (game.options.teamSize > 0) sortTeams(game);
     let prevTeam = -1;
     const statusList = game.currentGame.includedUsers.map(function(obj) {
       let myTeam = -1;
@@ -2220,25 +2202,7 @@ function HG() {
       current.ended = true;
       game.autoPlay = false;
     } else {
-      if (game.options.teamSize > 0) {
-        current.includedUsers.sort((a, b) => {
-          const aTeam = current.teams.findIndex((team) => {
-            return team.players.findIndex((player) => {
-              return player == a.id;
-            }) > -1;
-          });
-          const bTeam = current.teams.findIndex((team) => {
-            return team.players.findIndex((player) => {
-              return player == b.id;
-            }) > -1;
-          });
-          if (aTeam == bTeam) {
-            return a.id - b.id;
-          } else {
-            return aTeam - bTeam;
-          }
-        });
-      }
+      if (game.options.teamSize > 0) sortTeams(game);
       let prevTeam = -1;
       let playersToShow = current.includedUsers;
       if (game.options.numDaysShowDeath >= 0 ||
@@ -2507,23 +2471,7 @@ function HG() {
       if (game.options.teamSize > 0) {
         const teamRankEmbed = new self.Discord.MessageEmbed();
         teamRankEmbed.setTitle('Final Team Ranks');
-        current.includedUsers.sort((a, b) => {
-          const aTeam = current.teams.find((team) => {
-            return team.players.findIndex((player) => {
-              return player == a.id;
-            }) > -1;
-          });
-          const bTeam = current.teams.find((team) => {
-            return team.players.findIndex((player) => {
-              return player == b.id;
-            }) > -1;
-          });
-          if (aTeam.id == bTeam.id) {
-            return a.rank - b.rank;
-          } else {
-            return aTeam.rank - bTeam.rank;
-          }
-        });
+        sortTeams(game);
         let prevTeam = -1;
         const statusList =
             current.includedUsers.map((obj) => {
@@ -3036,47 +2984,25 @@ function HG() {
     finalMessage.setDescription(
         'To refresh: ' + msg.prefix + self.postPrefix + 'create');
     finalMessage.setColor(defaultColor);
-    if (!hg.getGame(id)) {
-      createGame(msg, id);
-    }
-    if (hg.getGame(id) && hg.getGame(id).currentGame &&
-        hg.getGame(id).currentGame.includedUsers) {
-      const iUsers = hg.getGame(id).currentGame.includedUsers;
+    let game = hg.getGame(id);
+    if (!game) game = createGame(msg, id);
+    if (game && game.currentGame && game.currentGame.includedUsers) {
+      const iUsers = game.currentGame.includedUsers;
       const numUsers = iUsers.length;
-      if (hg.getGame(id).options.teamSize > 0) {
-        iUsers.sort(function(a, b) {
-          const aTeam =
-              hg.getGame(id).currentGame.teams.findIndex(function(team) {
-                return team.players.findIndex(function(player) {
-                  return player == a.id;
-                }) > -1;
-              });
-          const bTeam =
-              hg.getGame(id).currentGame.teams.findIndex(function(team) {
-                return team.players.findIndex(function(player) {
-                  return player == b.id;
-                }) > -1;
-              });
-          if (aTeam == bTeam) {
-            return a.id - b.id;
-          } else {
-            return aTeam - bTeam;
-          }
-        });
-      }
+      if (game.options.teamSize > 0) sortTeams(game);
       let prevTeam = -1;
-      const statusList = iUsers.map(function(obj) {
+      const statusList = iUsers.map((obj) => {
         let myTeam = -1;
-        if (hg.getGame(id).options.teamSize > 0) {
-          myTeam = hg.getGame(id).currentGame.teams.findIndex(function(team) {
-            return team.players.findIndex(function(player) {
+        if (game.options.teamSize > 0) {
+          myTeam = game.currentGame.teams.findIndex((team) => {
+            return team.players.findIndex((player) => {
               return player == obj.id;
             }) > -1;
           });
         }
 
         let shortName;
-        if (obj.nickname && hg.getGame(id).options.useNicknames) {
+        if (obj.nickname && game.options.useNicknames) {
           shortName = obj.nickname.substring(0, 16);
           if (shortName != obj.nickname) {
             shortName = shortName.substring(0, 13) + '...';
@@ -3091,7 +3017,7 @@ function HG() {
         let prefix = '';
         if (myTeam != prevTeam) {
           prevTeam = myTeam;
-          const t = hg.getGame(id).currentGame.teams[myTeam];
+          const t = game.currentGame.teams[myTeam];
           if (t.name != `Team ${t.id + 1}`) {
             prefix = `${t.id + 1} __${t.name}__\n`;
           } else {
@@ -3104,7 +3030,7 @@ function HG() {
 
         return prefix + '`' + shortName + '`';
       });
-      if (hg.getGame(id).options.teamSize == 0) {
+      if (game.options.teamSize == 0) {
         statusList.sort((a, b) => {
           a = a.toLocaleLowerCase();
           b = b.toLocaleLowerCase();
@@ -3135,11 +3061,9 @@ function HG() {
             false);
       }
     }
-    if (hg.getGame(id) && hg.getGame(id).excludedUsers &&
-        (hg.getGame(id).excludedUsers.length +
-         hg.getGame(id).excludedNPCs.length) > 0) {
-      const eUsers =
-          hg.getGame(id).excludedUsers.concat(hg.getGame(id).excludedNPCs);
+    if (game && game.excludedUsers &&
+        (game.excludedUsers.length + game.excludedNPCs.length) > 0) {
+      const eUsers = game.excludedUsers.concat(game.excludedNPCs);
       let excludedList = '\u200B';
       if (eUsers.length < 20) {
         excludedList = eUsers
@@ -5949,6 +5873,38 @@ function HG() {
       }
     }
   };
+
+  /**
+   * @description Sort the includedUsers and teams for the given game.
+   * @private
+   * @param {HungryGames~GuildGame} game The game to sort.
+   */
+  function sortTeams(game) {
+    game.currentGame.teams.sort((a, b) => b.id - a.id);
+    game.currentGame.includedUsers.sort((a, b) => {
+      const aTeam = game.currentGame.teams.find((team) => {
+        return team.players.findIndex((player) => {
+          return player == a.id;
+        }) > -1;
+      });
+      const bTeam = game.currentGame.teams.find((team) => {
+        return team.players.findIndex((player) => {
+          return player == b.id;
+        }) > -1;
+      });
+      if (!aTeam || !bTeam || aTeam.id == bTeam.id) {
+        const aN = ((game.options.useNicknames && a.nickname) || a.name)
+            .toLocaleLowerCase();
+        const bN = ((game.options.useNicknames && b.nickname) || b.name)
+            .toLocaleLowerCase();
+        if (aN < bN) return -1;
+        if (aN > bN) return 1;
+        return 0;
+      } else {
+        return aTeam.id - bTeam.id;
+      }
+    });
+  }
 
   /**
    * @description Returns the number of games that are currently being shown to
