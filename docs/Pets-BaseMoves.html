@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>SpikeyBot-Discord Source: subModule.js</title>
+	<title>SpikeyBot-Discord Class: BaseMoves</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -81,323 +81,914 @@
 <div class="row">
 
 	
-	<div class="col-md-12">
+	<div class="col-md-8">
 	
 		<div id="main">
 			
 
-		<h1 class="page-title">Source: subModule.js</h1>
-    
+	<h1 class="page-title">Class: BaseMoves</h1>
 <section>
-    <article>
-        <pre
-            class="sunlight-highlight-javascript linenums">// Copyright 2018-2019 Campbell Crowley. All rights reserved.
-// Author: Campbell Crowley (dev@campbellcrowley.com)
-/**
- * @description Base class for all Sub-Modules.
- */
-class SubModule {
-  /**
-   * @description Create a subModule.
-   */
-  constructor() {
-    /**
-     * The help message to show the user in the main help message.
-     *
-     * @abstract
-     * @type {string|external:Discord~MessageEmbed}
-     * @default
-     */
-    this.helpMessage = undefined;
 
-    /**
-     * The postfix for the global prefix for this subModule. Must be defined
-     * before begin(), otherwise it is ignored.
-     *
-     * @abstract
-     * @type {string}
-     * @default
-     */
-    this.postPrefix = '';
-    /**
-     * The current Discord object instance of the bot.
-     *
-     * @public
-     * @type {external:Discord}
-     */
-    this.Discord;
-    /**
-     * The current bot client.
-     *
-     * @public
-     * @type {external:Discord~Client}
-     */
-    this.client;
-    /**
-     * The command object for registering command listeners.
-     *
-     * @public
-     * @type {Command}
-     */
-    this.command;
-    /**
-     * The common object.
-     *
-     * @public
-     * @type {Common}
-     */
-    this.common;
+<header>
+    
+        <h2>
+            <span class="ancestors"><a href="Pets.html">Pets</a>~</span>
+        
+        BaseMoves
+        </h2>
+        
+    
+</header>
 
-    /**
-     * The parent SpikeyBot instance.
-     *
-     * @public
-     * @type {SpikeyBot}
-     */
-    this.bot;
 
-    /**
-     * The commit at HEAD at the time this module was loaded. Essentially the
-     * version of this submodule.
-     *
-     * @public
-     * @constant
-     * @type {string}
-     */
-    this.commit = require('child_process')
-        .execSync('git rev-parse --short HEAD')
-        .toString()
-        .trim();
+<article>
+    <div class="container-overview">
+    
+        
+<hr>
+<dt>
+    <h4 class="name" id="BaseMoves"><span class="type-signature"></span>new BaseMoves()</h4>
+    
+    
+</dt>
+<dd>
 
-    /**
-     * The time at which this madule was loaded for use in checking if the
-     * module
-     * needs to be reloaded because the file has been modified since loading.
-     *
-     * @public
-     * @constant
-     * @type {number}
-     */
-    this.loadTime = Date.now();
+    
+    <div class="description">
+        Manages base information for all possible moves.
+    </div>
+    
 
-    /**
-     * The name of this submodule. Used for differentiating in the log. Should
-     * be
-     * defined before begin().
-     *
-     * @protected
-     * @type {string}
-     * @abstract
-     */
-    this.myName = 'SubModule';
+    
 
-    /**
-     * Has this subModule been initialized yet (Has begin() been called).
-     *
-     * @protected
-     * @type {boolean}
-     * @default
-     * @readonly
-     */
-    this.initialized = false;
-  }
-  /**
-   * The function called at the end of begin() for further initialization
-   * specific to the subModule. Must be defined before begin() is called.
-   *
-   * @protected
-   * @abstract
-   */
-  initialize() {
-  }
+    
 
-  /**
-   * Initialize this submodule.
-   *
-   * @public
-   * @param {Discord} Discord The Discord object for the API library.
-   * @param {Discord~Client} client The client that represents this bot.
-   * @param {Command} command The command instance in which to
-   * register command listeners.
-   * @param {Common} common Class storing common functions.
-   * @param {SpikeyBot} bot The parent SpikeyBot instance.
-   */
-  begin(Discord, client, command, common, bot) {
-    this.Discord = Discord;
-    this.client = client;
-    this.command = command;
-    this.common = common;
-    this.bot = bot;
+    
+    
 
-    this.log = function(msg) {
-      if (this.client.shard) {
-        this.common.log(
-            msg, `${this.client.shard.ids.join(' ')} ${this.myName}`, 1);
-      } else {
-        this.common.log(msg, this.myName, 1);
-      }
-    };
-    this.debug = function(msg) {
-      if (this.client.shard) {
-        this.common.logDebug(
-            msg, `${this.client.shard.ids.join(' ')} ${this.myName}`, 1);
-      } else {
-        this.common.logDebug(msg, this.myName, 1);
-      }
-    };
-    this.warn = function(msg) {
-      if (this.client.shard) {
-        this.common.logWarning(
-            msg, `${this.client.shard.ids.join(' ')} ${this.myName}`, 1);
-      } else {
-        this.common.logWarning(msg, this.myName, 1);
-      }
-    };
-    this.error = function(msg) {
-      if (this.client.shard) {
-        this.common.error(
-            msg, `${this.client.shard.ids.join(' ')} ${this.myName}`, 1);
-      } else {
-        this.common.error(msg, this.myName, 1);
-      }
-    };
+    
+<dl class="details">
+    
 
-    if (this.initialized) return;
+	
 
-    this.client.setTimeout(() => {
-      if (this.initialized) return;
-      this.debug(`${this.myName} Initialize...`);
+	
 
-      this.save = this.save.bind(this);
-      this.initialize = this.initialize.bind(this);
-      this.shutdown = this.shutdown.bind(this);
-      this.log = this.log.bind(this);
-      this.warn = this.warn.bind(this);
-      this.debug = this.debug.bind(this);
-      this.error = this.error.bind(this);
+	
 
-      this.initialize();
-      this.log(`${this.myName} Initialized`);
-      this.initialized = true;
-    });
-  }
+    
 
-  /**
-   * Trigger subModule to shutdown and get ready for process terminating.
-   *
-   * @public
-   */
-  end() {
-    if (!this.initialized) return;
-    this.shutdown();
-    this.initialized = false;
-    this.log(`${this.myName} Shutdown`);
-  }
+    
 
-  /**
-   * Log using common.log, but automatically set name.
-   *
-   * @protected
-   * @param {string} msg The message to log.
-   */
-  log(msg) {
-    console.log(msg);
-  }
-  /**
-   * Log using common.logDebug, but automatically set name.
-   *
-   * @protected
-   * @param {string} msg The message to log.
-   */
-  debug(msg) {
-    console.log(msg);
-  }
-  /**
-   * Log using common.logWarning, but automatically set name.
-   *
-   * @protected
-   * @param {string} msg The message to log.
-   */
-  warn(msg) {
-    console.log(msg);
-  }
-  /**
-   * Log using common.error, but automatically set name.
-   *
-   * @protected
-   * @param {string} msg The message to log.
-   */
-  error(msg) {
-    console.error(msg);
-  }
+    
 
-  /**
-   * Shutdown and disable this submodule. Removes all event listeners.
-   *
-   * @abstract
-   * @protected
-   */
-  shutdown() {
-  }
+    
 
-  /**
-   * Saves all data to files necessary for saving current state.
-   *
-   * @param {string} [opt='sync'] Can be 'async', otherwise defaults to
-   * synchronous.
-   * @abstract
-   */
-  save(opt = 'sync') {
-  }
+	
 
-  /**
-   * @description Check if this module is in a state that is ready to be
-   * unloaded. If false is returned, this module should not be unloaded and
-   * doing such may risk putting the module into an uncontrollable state.
-   * @see {@link SubModule~reloadable}
-   *
-   * @abstract
-   * @public
-   * @returns {boolean} True if can be unloaded, false if cannot.
-   */
-  unloadable() {
-    return true;
-  }
+	
 
-  /**
-   * @description Check if this module is in a state that is ready to be
-   * reloaded. If false is returned, this module should not be unloaded and
-   * doing such may risk putting the module into an uncontrollable state. This
-   * is different from unloadable, which checks if this module can be stopped
-   * completely, this checks if the module can be stopped and restarted.
-   * @see {@link SubModule~unloadable}
-   *
-   * @abstract
-   * @public
-   * @returns {boolean} True if can be reloaded, false if cannot.
-   */
-  reloadable() {
-    return this.unloadable();
-  }
-}
+	
 
-/**
- * Extends SubModule as the base class of a child.
- *
- * @public
- * @static
- * @param {Object} child The child class to extend.
- */
-SubModule.extend = function(child) {
-  child.prototype = new SubModule();
-  child.prototype.constructor = child;
-};
+	
 
-module.exports = SubModule;
-</pre>
-    </article>
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="pets_BaseMoves.js.html">pets/BaseMoves.js</a>,
+				 <a href="pets_BaseMoves.js.html#sunlight-1-line-10">line 10</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        <dl>
+            
+<hr>
+<dt class="name" id="_baseFile">
+    <h4 id="_baseFile"><span class="type-signature">&lt;private> </span>_baseFile<span class="type-signature"> :string</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The filename of the file to read move information from.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">string</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>./save/petMoves.json</li>
+		</ul>
+	</dd>
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="pets_BaseMoves.js.html">pets/BaseMoves.js</a>,
+				 <a href="pets_BaseMoves.js.html#sunlight-1-line-21">line 21</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="_moves">
+    <h4 id="_moves"><span class="type-signature">&lt;private> </span>_moves<span class="type-signature"> :Object</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Parsed data from file.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">Object</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>{}</li>
+		</ul>
+	</dd>
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="pets_BaseMoves.js.html">pets/BaseMoves.js</a>,
+				 <a href="pets_BaseMoves.js.html#sunlight-1-line-28">line 28</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        </dl>
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        <dl>
+            
+<hr>
+<dt>
+    <h4 class="name" id="_fileUpdate"><span class="type-signature">&lt;private> </span>_fileUpdate(curr, prev)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        File has been modified, re-read and parse data.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>curr</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">fs.Stats</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Current file stats.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>prev</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">fs.Stats</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Previous file stats.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="pets_BaseMoves.js.html">pets/BaseMoves.js</a>,
+				 <a href="pets_BaseMoves.js.html#sunlight-1-line-73">line 73</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="_readFile"><span class="type-signature">&lt;private> </span>_readFile()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Read and parse data from the file.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="pets_BaseMoves.js.html">pets/BaseMoves.js</a>,
+				 <a href="pets_BaseMoves.js.html#sunlight-1-line-82">line 82</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="get"><span class="type-signature"></span>get(name)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Fetch base object for a single move.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Name of move to fetch.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="pets_BaseMoves.js.html">pets/BaseMoves.js</a>,
+				 <a href="pets_BaseMoves.js.html#sunlight-1-line-63">line 63</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    Object reference of pet information for the move, or
+null if could not be found.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Object</span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="initialize"><span class="type-signature"></span>initialize()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Start watching file system changes and read pet information
+from file.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="pets_BaseMoves.js.html">pets/BaseMoves.js</a>,
+				 <a href="pets_BaseMoves.js.html#sunlight-1-line-42">line 42</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="shutdown"><span class="type-signature"></span>shutdown()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Stop watching for file system changes, and remove all event
+listeners.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="pets_BaseMoves.js.html">pets/BaseMoves.js</a>,
+				 <a href="pets_BaseMoves.js.html#sunlight-1-line-52">line 52</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        </dl>
+    
+
+    
+
+    
+</article>
+
 </section>
-
 
 
 
@@ -407,6 +998,10 @@ module.exports = SubModule;
 
 	<div class="clearfix"></div>
 
+	
+		<div class="col-md-3">
+			<div id="toc" class="col-md-3 hidden-xs hidden-sm hidden-md"></div>
+		</div>
 	
 
 </div>

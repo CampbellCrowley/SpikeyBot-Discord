@@ -40,7 +40,7 @@ class Pet {
      * @type {string}
      * @public
      */
-    this.id = crypto.randomBytes(6).toString('base64');
+    this.id = crypto.randomBytes(6).toString('base64').replace(/\//g, '=');
 
     /**
      * @description The number of experience points this pet has.

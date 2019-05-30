@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>SpikeyBot-Discord Source: subModule.js</title>
+	<title>SpikeyBot-Discord Source: pets/BaseMoves.js</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -86,314 +86,112 @@
 		<div id="main">
 			
 
-		<h1 class="page-title">Source: subModule.js</h1>
+		<h1 class="page-title">Source: pets/BaseMoves.js</h1>
     
 <section>
     <article>
         <pre
-            class="sunlight-highlight-javascript linenums">// Copyright 2018-2019 Campbell Crowley. All rights reserved.
+            class="sunlight-highlight-javascript linenums">// Copyright 2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
+const fs = require('fs');
+
 /**
- * @description Base class for all Sub-Modules.
+ * @description Manages base information for all possible moves.
+ * @memberof Pets
+ * @inner
  */
-class SubModule {
+class BaseMoves {
   /**
-   * @description Create a subModule.
+   * @description Create instance.
    */
   constructor() {
     /**
-     * The help message to show the user in the main help message.
-     *
-     * @abstract
-     * @type {string|external:Discord~MessageEmbed}
-     * @default
-     */
-    this.helpMessage = undefined;
-
-    /**
-     * The postfix for the global prefix for this subModule. Must be defined
-     * before begin(), otherwise it is ignored.
-     *
-     * @abstract
+     * @description The filename of the file to read move information from.
+     * @private
      * @type {string}
      * @default
      */
-    this.postPrefix = '';
+    this._baseFile = './save/petMoves.json';
     /**
-     * The current Discord object instance of the bot.
-     *
-     * @public
-     * @type {external:Discord}
-     */
-    this.Discord;
-    /**
-     * The current bot client.
-     *
-     * @public
-     * @type {external:Discord~Client}
-     */
-    this.client;
-    /**
-     * The command object for registering command listeners.
-     *
-     * @public
-     * @type {Command}
-     */
-    this.command;
-    /**
-     * The common object.
-     *
-     * @public
-     * @type {Common}
-     */
-    this.common;
-
-    /**
-     * The parent SpikeyBot instance.
-     *
-     * @public
-     * @type {SpikeyBot}
-     */
-    this.bot;
-
-    /**
-     * The commit at HEAD at the time this module was loaded. Essentially the
-     * version of this submodule.
-     *
-     * @public
-     * @constant
-     * @type {string}
-     */
-    this.commit = require('child_process')
-        .execSync('git rev-parse --short HEAD')
-        .toString()
-        .trim();
-
-    /**
-     * The time at which this madule was loaded for use in checking if the
-     * module
-     * needs to be reloaded because the file has been modified since loading.
-     *
-     * @public
-     * @constant
-     * @type {number}
-     */
-    this.loadTime = Date.now();
-
-    /**
-     * The name of this submodule. Used for differentiating in the log. Should
-     * be
-     * defined before begin().
-     *
-     * @protected
-     * @type {string}
-     * @abstract
-     */
-    this.myName = 'SubModule';
-
-    /**
-     * Has this subModule been initialized yet (Has begin() been called).
-     *
-     * @protected
-     * @type {boolean}
+     * @description Parsed data from file.
+     * @private
+     * @type {Object}
      * @default
-     * @readonly
      */
-    this.initialized = false;
+    this._moves = {};
+
+    this.initialize = this.initialize.bind(this);
+    this.shutdown = this.shutdown.bind(this);
+    this.get = this.get.bind(this);
+    this._fileUpdate = this._fileUpdate.bind(this);
+    this._readFile = this._readFile.bind(this);
   }
+
   /**
-   * The function called at the end of begin() for further initialization
-   * specific to the subModule. Must be defined before begin() is called.
-   *
-   * @protected
-   * @abstract
+   * @description Start watching file system changes and read pet information
+   * from file.
+   * @public
    */
   initialize() {
+    fs.watchFile(this._baseFile, {persistent: false}, this._fileUpdate);
+    this._readFile();
   }
 
   /**
-   * Initialize this submodule.
-   *
+   * @description Stop watching for file system changes, and remove all event
+   * listeners.
    * @public
-   * @param {Discord} Discord The Discord object for the API library.
-   * @param {Discord~Client} client The client that represents this bot.
-   * @param {Command} command The command instance in which to
-   * register command listeners.
-   * @param {Common} common Class storing common functions.
-   * @param {SpikeyBot} bot The parent SpikeyBot instance.
-   */
-  begin(Discord, client, command, common, bot) {
-    this.Discord = Discord;
-    this.client = client;
-    this.command = command;
-    this.common = common;
-    this.bot = bot;
-
-    this.log = function(msg) {
-      if (this.client.shard) {
-        this.common.log(
-            msg, `${this.client.shard.ids.join(' ')} ${this.myName}`, 1);
-      } else {
-        this.common.log(msg, this.myName, 1);
-      }
-    };
-    this.debug = function(msg) {
-      if (this.client.shard) {
-        this.common.logDebug(
-            msg, `${this.client.shard.ids.join(' ')} ${this.myName}`, 1);
-      } else {
-        this.common.logDebug(msg, this.myName, 1);
-      }
-    };
-    this.warn = function(msg) {
-      if (this.client.shard) {
-        this.common.logWarning(
-            msg, `${this.client.shard.ids.join(' ')} ${this.myName}`, 1);
-      } else {
-        this.common.logWarning(msg, this.myName, 1);
-      }
-    };
-    this.error = function(msg) {
-      if (this.client.shard) {
-        this.common.error(
-            msg, `${this.client.shard.ids.join(' ')} ${this.myName}`, 1);
-      } else {
-        this.common.error(msg, this.myName, 1);
-      }
-    };
-
-    if (this.initialized) return;
-
-    this.client.setTimeout(() => {
-      if (this.initialized) return;
-      this.debug(`${this.myName} Initialize...`);
-
-      this.save = this.save.bind(this);
-      this.initialize = this.initialize.bind(this);
-      this.shutdown = this.shutdown.bind(this);
-      this.log = this.log.bind(this);
-      this.warn = this.warn.bind(this);
-      this.debug = this.debug.bind(this);
-      this.error = this.error.bind(this);
-
-      this.initialize();
-      this.log(`${this.myName} Initialized`);
-      this.initialized = true;
-    });
-  }
-
-  /**
-   * Trigger subModule to shutdown and get ready for process terminating.
-   *
-   * @public
-   */
-  end() {
-    if (!this.initialized) return;
-    this.shutdown();
-    this.initialized = false;
-    this.log(`${this.myName} Shutdown`);
-  }
-
-  /**
-   * Log using common.log, but automatically set name.
-   *
-   * @protected
-   * @param {string} msg The message to log.
-   */
-  log(msg) {
-    console.log(msg);
-  }
-  /**
-   * Log using common.logDebug, but automatically set name.
-   *
-   * @protected
-   * @param {string} msg The message to log.
-   */
-  debug(msg) {
-    console.log(msg);
-  }
-  /**
-   * Log using common.logWarning, but automatically set name.
-   *
-   * @protected
-   * @param {string} msg The message to log.
-   */
-  warn(msg) {
-    console.log(msg);
-  }
-  /**
-   * Log using common.error, but automatically set name.
-   *
-   * @protected
-   * @param {string} msg The message to log.
-   */
-  error(msg) {
-    console.error(msg);
-  }
-
-  /**
-   * Shutdown and disable this submodule. Removes all event listeners.
-   *
-   * @abstract
-   * @protected
    */
   shutdown() {
+    fs.unwatchFile(this._baseFile, this._fileUpdate);
   }
 
   /**
-   * Saves all data to files necessary for saving current state.
-   *
-   * @param {string} [opt='sync'] Can be 'async', otherwise defaults to
-   * synchronous.
-   * @abstract
-   */
-  save(opt = 'sync') {
-  }
-
-  /**
-   * @description Check if this module is in a state that is ready to be
-   * unloaded. If false is returned, this module should not be unloaded and
-   * doing such may risk putting the module into an uncontrollable state.
-   * @see {@link SubModule~reloadable}
-   *
-   * @abstract
+   * @description Fetch base object for a single move.
    * @public
-   * @returns {boolean} True if can be unloaded, false if cannot.
+   * @param {string} name Name of move to fetch.
+   * @returns {?Object} Object reference of pet information for the move, or
+   * null if could not be found.
    */
-  unloadable() {
-    return true;
+  get(name) {
+    return this._moves[(name + '').trim().toLowerCase()];
   }
 
   /**
-   * @description Check if this module is in a state that is ready to be
-   * reloaded. If false is returned, this module should not be unloaded and
-   * doing such may risk putting the module into an uncontrollable state. This
-   * is different from unloadable, which checks if this module can be stopped
-   * completely, this checks if the module can be stopped and restarted.
-   * @see {@link SubModule~unloadable}
-   *
-   * @abstract
-   * @public
-   * @returns {boolean} True if can be reloaded, false if cannot.
+   * @description File has been modified, re-read and parse data.
+   * @private
+   * @param {fs.Stats} curr Current file stats.
+   * @param {fs.Stats} prev Previous file stats.
    */
-  reloadable() {
-    return this.unloadable();
+  _fileUpdate(curr, prev) {
+    if (curr.mtime == prev.mtime) return;
+    this._readFile();
+  }
+
+  /**
+   * @description Read and parse data from the file.
+   * @private
+   */
+  _readFile() {
+    fs.readFile(this._baseFile, (err, data) => {
+      if (err) {
+        console.error(
+            'Failed to read base pet move information:', this._baseFile,
+            err.code);
+        return;
+      }
+      try {
+        this._moves = JSON.parse(data);
+      } catch (err) {
+        console.error(
+            'Failed to parse base pet move information:', this._baseFile, err);
+        return;
+      }
+    });
   }
 }
 
-/**
- * Extends SubModule as the base class of a child.
- *
- * @public
- * @static
- * @param {Object} child The child class to extend.
- */
-SubModule.extend = function(child) {
-  child.prototype = new SubModule();
-  child.prototype.constructor = child;
-};
-
-module.exports = SubModule;
+module.exports = BaseMoves;
 </pre>
     </article>
 </section>

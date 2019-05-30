@@ -29,7 +29,10 @@
     "attack": 3,
     "defense": 2,
     "speed": 2,
-    "health": 10
+    "health": 10,
+    "moves": [
+      "bite"
+    ]
   },
   "cat": {
     "name": "Cat",
@@ -61,7 +64,10 @@
     "attack": 4,
     "defense": 1,
     "speed": 5,
-    "health": 10
+    "health": 10,
+    "moves": [
+      "scratch"
+    ]
   },
   "bird": {
     "name": "Bird",
@@ -93,6 +99,9 @@
     "attack": 3,
     "defense": 2,
     "speed": 4,
-    "health": 10
+    "health": 10,
+    "moves": [
+      "peck"
+    ]
   }
 }

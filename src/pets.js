@@ -1,11 +1,17 @@
 // Copyright 2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const fs = require('fs');
-delete require.cache[require.resolve('./pets/Pet.js')];
-const Pet = require('./pets/Pet.js');
-delete require.cache[require.resolve('./pets/BasePets.js')];
-const BasePets = require('./pets/BasePets.js');
 const SubModule = require('./subModule.js');
+
+delete require.cache[require.resolve('./pets/Pet.js')];
+delete require.cache[require.resolve('./pets/BasePets.js')];
+delete require.cache[require.resolve('./pets/BasePets.js')];
+const Pet = require('./pets/Pet.js');
+const BasePets = require('./pets/BasePets.js');
+const BaseMoves = require('./pets/BaseMoves.js');
+
+const confirm = '✅';
+const cancel = '❌';
 
 /**
  * @description Manages pet related commands.
@@ -50,11 +56,19 @@ class Pets extends SubModule {
      * @default
      */
     this._basePets = new BasePets();
+    /**
+     * @description Instance of {@link Pets~BaseMoves}.
+     * @private
+     * @type {Pets~BaseMoves}
+     * @default
+     */
+    this._baseMoves = new BaseMoves();
 
     this._getAllPets = this._getAllPets.bind(this);
     this._getPet = this._getPet.bind(this);
     this._commandPet = this._commandPet.bind(this);
     this._commandAdopt = this._commandAdopt.bind(this);
+    this._commandAbandon = this._commandAbandon.bind(this);
     this._releasePet = this._releasePet.bind(this);
     this._saveSingle = this._saveSingle.bind(this);
     this._checkPurge = this._checkPurge.bind(this);
@@ -64,9 +78,11 @@ class Pets extends SubModule {
     this.command.on(
         new this.command.SingleCommand(['pet'], this._commandPet, null, [
           new this.command.SingleCommand(['adopt', 'new'], this._commandAdopt),
+          new this.command.SingleCommand(['abandon'], this._commandAbandon),
         ]));
 
     this._basePets.initialize();
+    this._baseMoves.initialize();
 
     /**
      * @description Release pet from memory.
@@ -79,6 +95,7 @@ class Pets extends SubModule {
     this.command.removeListener('pet');
     this.client.releasePet = null;
     this._basePets.shutdown();
+    this._baseMoves.shutdown();
   }
   /** @inheritdoc */
   save(opt) {
@@ -187,8 +204,6 @@ class Pets extends SubModule {
               'Name must be between 3 and 16 characters.');
           return;
         }
-        const confirm = '✅';
-        const cancel = '❌';
         let reactMessage;
         this.common
             .reply(
@@ -206,15 +221,15 @@ class Pets extends SubModule {
               }, {max: 1, time: 30000});
             })
             .then((reactions) => {
+              reactMessage.reactions.removeAll().catch(() => {});
               if (reactions.size == 0) {
-                reactMessage.reactions.removeAll().catch(() => {});
                 reactMessage.edit('Timed out, enter command again.');
                 return;
               } else if (reactions.first().emoji.name == cancel) {
-                reactMessage.reactions.removeAll().catch(() => {});
                 reactMessage.edit('Cancelled');
                 return;
               }
+              reactMessage.edit('Confirmed');
               const newPet = new Pet(msg.author.id, match[2], match[1]);
               this._saveSingle(newPet, 'async', () => {
                 this.common.reply(
@@ -250,6 +265,49 @@ class Pets extends SubModule {
                 ' one with `' + msg.prefix + this.postPrefix + 'adopt`');
         return;
       }
+      let reactMessage;
+      this.common
+          .reply(
+              msg, 'Are you sure?',
+              'This cannot be undone, your pet will never forgive you if you ' +
+                  'abandon them.\n' + confirm + ': yes, ' + cancel + ': no')
+          .then((m) => {
+            reactMessage = m;
+            m.react(confirm).then(() => m.react(cancel));
+          })
+          .then(() => {
+            return reactMessage.awaitReactions((reaction, user) => {
+              return user.id == msg.author.id &&
+                  (reaction.emoji.name == confirm ||
+                   reaction.emoji.name == cancel);
+            }, {max: 1, time: 30000});
+          })
+          .then((reactions) => {
+            reactMessage.reactions.removeAll().catch(() => {});
+            if (reactions.size == 0) {
+              reactMessage.edit('Timed out, enter command again.');
+              return;
+            } else if (reactions.first().emoji.name == cancel) {
+              reactMessage.edit('Cancelled');
+              return;
+            }
+            reactMessage.edit('Confirmed');
+            const uId = msg.author.id;
+            const pId = pets[0].id;
+
+            const fName = `${this.common.userSaveDir}${uId}/pets/${pId}.json`;
+            fs.unlink(fName, (err) => {
+              if (err) {
+                this.error('Failed to delete pet file: ' + fName);
+                console.error(err);
+                return;
+              }
+              const pet = this._pets[uId][pId];
+              this.common.reply(
+                  msg, 'Pet Abandoned', `${pet.name} (${pet.species})`);
+              delete this._pets[uId][pId];
+            });
+          });
     });
   }
 

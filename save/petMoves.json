@@ -1,0 +1,14 @@
+{
+  "bite": {
+    "attack": 1.0,
+    "defense": 1.0
+  },
+  "scratch": {
+    "attack": 1.0,
+    "defense": 1.0
+  },
+  "peck": {
+    "attack": 1.0,
+    "defense": 1.0
+  }
+}
