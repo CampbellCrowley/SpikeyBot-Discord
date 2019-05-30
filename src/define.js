@@ -94,7 +94,7 @@ function Define() {
    *
    * @private
    * @param {Discord~Message} msg Message to reply to.
-   * @param {Object} data Parsed reply from words api.
+   * @param {object} data Parsed reply from words api.
    */
   function replyDef(msg, data) {
     const embed = new self.Discord.MessageEmbed();

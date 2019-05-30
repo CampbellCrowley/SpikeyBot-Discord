@@ -619,7 +619,7 @@ function WebSettings() {
    *
    * @private
    * @param {Discord~GuildMember} m The guild member to strip the data from.
-   * @returns {Object} The minimal member.
+   * @returns {object} The minimal member.
    */
   function makeMember(m) {
     if (!m) return null;
@@ -701,7 +701,7 @@ function WebSettings() {
    *
    * @private
    * @type {WebSettings~SocketFunction}
-   * @param {Object} userData The current user's session data.
+   * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete, or has failed.
@@ -725,10 +725,10 @@ function WebSettings() {
        * user once all requests have replied.
        *
        * @private
-       * @param {string|Object} guilds Either the guild data to send to the
+       * @param {string|object} guilds Either the guild data to send to the
        * user, or 'guilds' if this is a reply from a sibling client.
        * @param {?string} [err] The error that occurred, or null if no error.
-       * @param {Object} [response] The guild data if `guilds` equals 'guilds'.
+       * @param {object} [response] The guild data if `guilds` equals 'guilds'.
        */
       done = function(guilds, err, response) {
         if (guilds === 'guilds') {
@@ -807,7 +807,7 @@ function WebSettings() {
    *
    * @private
    * @type {HGWeb~SocketFunction}
-   * @param {Object} userData The current user's session data.
+   * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
    * @param {number|string} mId The member's id to lookup.
@@ -835,7 +835,7 @@ function WebSettings() {
    *
    * @public
    * @type {WebSettings~SocketFunction}
-   * @param {Object} userData The current user's session data.
+   * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The ID of the Discord guild where the channel
    * is.
@@ -873,7 +873,7 @@ function WebSettings() {
    *
    * @public
    * @type {WebSettings~SocketFunction}
-   * @param {Object} userData The current user's session data.
+   * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete and has data, or has failed.
@@ -921,7 +921,7 @@ function WebSettings() {
    *
    * @public
    * @type {WebSettings~SocketFunction}
-   * @param {Object} userData The current user's session data.
+   * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {string} gId The guild ID to fetch the settings for.
    * @param {basicCB} [cb] Callback that fires once the requested action is
@@ -947,7 +947,7 @@ function WebSettings() {
    *
    * @public
    * @type {WebSettings~SocketFunction}
-   * @param {Object} userData The current user's session data.
+   * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {string} gId The guild ID to fetch the settings for.
    * @param {basicCB} [cb] Callback that fires once the requested action is
@@ -976,7 +976,7 @@ function WebSettings() {
    *
    * @public
    * @type {WebSettings~SocketFunction}
-   * @param {Object} userData The current user's session data.
+   * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {string} gId The guild ID to fetch the settings for.
    * @param {?string} cmd The name of the command to fetch the setting for, or
@@ -1009,7 +1009,7 @@ function WebSettings() {
    *
    * @public
    * @type {WebSettings~SocketFunction}
-   * @param {Object} userData The current user's session data.
+   * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete and has data, or has failed.
@@ -1062,7 +1062,7 @@ function WebSettings() {
    *
    * @public
    * @type {WebSettings~SocketFunction}
-   * @param {Object} userData The current user's session data.
+   * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {string|number} gId The id of the guild of which to cancel the
    * command.
@@ -1090,10 +1090,10 @@ function WebSettings() {
    *
    * @public
    * @type {WebSettings~SocketFunction}
-   * @param {Object} userData The current user's session data.
+   * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {string|number} gId The id of the guild of which to add the command.
-   * @param {Object} cmd The command data of which to make into a
+   * @param {object} cmd The command data of which to make into a
    * scheduled command and register.
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete, or has failed.
@@ -1162,7 +1162,7 @@ function WebSettings() {
    *
    * @public
    * @type {WebSettings~SocketFunction}
-   * @param {Object} userData The current user's session data.
+   * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {string|number} gId The id of the guild of which to change the
    * prefix.
@@ -1193,7 +1193,7 @@ function WebSettings() {
    *
    * @public
    * @type {WebSettings~SocketFunction}
-   * @param {Object} userData The current user's session data.
+   * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {string|number} gId The id of the guild of which to change the
    * setting.
@@ -1256,7 +1256,7 @@ function WebSettings() {
    *
    * @public
    * @type {WebSettings~SocketFunction}
-   * @param {Object} userData The current user's session data.
+   * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {string|number} gId The id of the guild of which to change the
    * setting.
@@ -1322,7 +1322,7 @@ function WebSettings() {
    *
    * @public
    * @type {WebSettings~SocketFunction}
-   * @param {Object} userData The current user's session data.
+   * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {string|number} gId The id of the guild of which to change the
    * setting.

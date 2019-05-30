@@ -142,7 +142,7 @@ class ObjectOption extends Option {
   /**
    * @description Stores any object. Shallow copies the object using
    * Object.assign.
-   * @param {Object} value Value of this option.
+   * @param {object} value Value of this option.
    * @param {?string} [comment=null] Comment/description for the user about this
    * option.
    * @param {?string} [category=null] Category this option falls under for
@@ -579,7 +579,7 @@ class DefaultOptions {
     return output;
   }
   /**
-   * @returns {Object.<HungryGames~DefaultOptions~Option>} All options in this
+   * @returns {object<HungryGames~DefaultOptions~Option>} All options in this
    * object.
    */
   get entries() {

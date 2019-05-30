@@ -357,7 +357,7 @@ function Command() {
      * be a subcommand.
      *
      * @public
-     * @returns {Object.<CommandSetting>} The settings for this command or
+     * @returns {object<CommandSetting>} The settings for this command or
      * sub-command mapped by guild ids.
      */
     this.getUserOptions = function() {
@@ -655,7 +655,7 @@ function Command() {
      *
      * @public
      *
-     * @returns {Object} Object ready to be stringified for file saving.
+     * @returns {object} Object ready to be stringified for file saving.
      */
     this.toJSON = function() {
       return {
@@ -687,7 +687,7 @@ function Command() {
    * @public
    *
    * @param {string} gId The guild id of which to fetch the settings.
-   * @returns {Object.<CommandSetting>} The settings for the guild mapped by
+   * @returns {object<CommandSetting>} The settings for the guild mapped by
    * command name. If it doesn't exist, an object will first be created.
    */
   this.getUserSettings = function(gId) {
@@ -703,7 +703,7 @@ function Command() {
    * @see {@link Command~cmds}
    * @public
    *
-   * @returns {Object.<SingleCommand>} All currently registered commands.
+   * @returns {object<SingleCommand>} All currently registered commands.
    */
   this.getDefaultSettings = function() {
     return cmds;

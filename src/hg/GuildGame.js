@@ -14,7 +14,7 @@ class GuildGame {
   /**
    * @description Create a game instance for a single guild.
    * @param {string} id Guild id of the Guild that this object is for.
-   * @param {Object.<number|boolean|string|Object>} options The game options.
+   * @param {object<number|boolean|string|object>} options The game options.
    * @param {string} [name] Name of this game to be passed to the Game object.
    * @param {string[]|HungryGames~Player[]} [includedUsers] Array of user IDs
    * that will be included in the next game, or array of Players to include.
@@ -27,14 +27,14 @@ class GuildGame {
    * @param {{
    * bloodbath: HungryGames~Event[],
    * player: HungryGames~Event[],
-   * weapon: Object.<HungryGames~WeaponEvent>,
+   * weapon: object.<HungryGames~WeaponEvent>,
    * arena: HungryGames~ArenaEvent[]
    * }} [customEvents] All custom events for the guild.
    * @param {{
    * bloodbath: HungryGames~Event[],
    * player: HungryGames~Event[],
-   * weapon: Object.<Array.<HungryGames~Event>>,
-   * arena: Object.<Array.<HungryGames~Event>>
+   * weapon: object.<Array.<HungryGames~Event>>,
+   * arena: object.<Array.<HungryGames~Event>>
    * }} [disabledEvents] All disabled events for the guild.
    */
   constructor(
@@ -219,7 +219,7 @@ class GuildGame {
    * private variables, and all functions. Assumes all public variables are
    * serializable if they aren't a function.
    * @public
-   * @returns {Object} Serializable version of this instance.
+   * @returns {object} Serializable version of this instance.
    */
   get serializable() {
     const all = Object.entries(Object.getOwnPropertyDescriptors(this));
@@ -448,7 +448,7 @@ class GuildGame {
  * constructor.
  *
  * @public
- * @param {Object} data GuildGame like object.
+ * @param {object} data GuildGame like object.
  * @returns {HungryGames~GuildGame} Created GuildGame.
  */
 GuildGame.from = function(data) {

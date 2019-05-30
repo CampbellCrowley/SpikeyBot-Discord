@@ -525,7 +525,7 @@ class RaidSettings {
  *
  * @public
  * @static
- * @param {Object} obj Object to convert to RaidSettings.
+ * @param {object} obj Object to convert to RaidSettings.
  * @returns {RaidBlock~RaidSettings} Created raidsettings object.
  */
 RaidSettings.from = function(obj) {

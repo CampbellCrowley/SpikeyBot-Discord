@@ -117,7 +117,7 @@ class Player {
  * @public
  * @static
  * @param {
- * Discord~User|Discord~GuildMember|Object
+ * Discord~User|Discord~GuildMember|object
  * } member Object, User or GuildMember to make a Player from.
  * @returns {HungryGames~Player} Player object created.
  */

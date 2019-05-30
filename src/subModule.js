@@ -258,7 +258,7 @@ class SubModule {
 /**
  * Extends SubModule as the base class of a child.
  *
- * @param {Object} child The child class to extend.
+ * @param {object} child The child class to extend.
  */
 SubModule.extend = function(child) {
   child.prototype = new SubModule();

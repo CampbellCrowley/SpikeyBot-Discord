@@ -586,7 +586,7 @@ class HungryGames {
  *
  * @private
  * @param {string} name Name of module to require.
- * @returns {Object} The required module.
+ * @returns {object} The required module.
  */
 function tmpRequire(name) {
   delete require.cache[require.resolve(name)];

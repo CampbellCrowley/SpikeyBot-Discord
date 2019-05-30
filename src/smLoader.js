@@ -262,7 +262,7 @@ function SMLoader() {
    *
    * @param {string} name Specify submodule to unload. If it is already
    * unloaded, it will be ignored and return successful.
-   * @param {Object} [opts] Options object.
+   * @param {object} [opts] Options object.
    * @param {boolean} [opts.schedule=true] Automatically re-schedule unload for
    * submodule if it is in an unloadable state.
    * @param {boolean} [opts.ignoreUnloadable=false] Force a submodule to unload
@@ -368,7 +368,7 @@ function SMLoader() {
    *
    * @param {string} name Specify submodule to load. If it is already loaded,
    * they will be ignored and return successful.
-   * @param {Object} [opts] Options object.
+   * @param {object} [opts] Options object.
    * @param {boolean} [opts.updateGoal=true] Update the goal state of the
    * subModule to loaded.
    * @param {Function} [cb] Callback to fire once the operation is complete.
@@ -424,7 +424,7 @@ function SMLoader() {
    *
    * @param {?string|string[]} [name] Specify submodules to reload, or null to
    * reload all submodules to their goal state.
-   * @param {Object} [opts] Options object.
+   * @param {object} [opts] Options object.
    * @param {boolean} [opts.schedule=true] Automatically re-schedule reload for
    * submodules if they are not in an unloadable state.
    * @param {boolean} [opts.ignoreUnloadable=false] Force a submodule to unload

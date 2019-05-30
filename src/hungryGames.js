@@ -873,7 +873,7 @@ function HG() {
    * Create an NPC from an Object. Similar to copy-constructor.
    *
    * @public
-   * @param {Object} data NPC like Object.
+   * @param {object} data NPC like Object.
    * @returns {HungryGames~NPC} Copied NPC.
    */
   NPC.from = function(data) {
@@ -997,7 +997,7 @@ function HG() {
    * games.
    *
    * @public
-   * @returns {{bloodbath: Object, player: Object, arena: Object}} Object
+   * @returns {{bloodbath: object, player: object, arena: object}} Object
    * storing default events.
    */
   this.getDefaultEvents = function() {
@@ -3272,7 +3272,7 @@ function HG() {
    *
    * @private
    * @param {Discord~Message} msg The message that lead to this being called.
-   * @param {Object} options The options to format.
+   * @param {object} options The options to format.
    */
   function showOpts(msg, options) {
     const entries = Object.entries(options);
@@ -3334,7 +3334,7 @@ function HG() {
    *
    * @private
    * @param {Discord~Message} msg_ The message we sent showing the options.
-   * @param {Object} options The options to show in the message.
+   * @param {object} options The options to show in the message.
    * @param {number} index The page index to show.
    */
   function optChangeListener(msg_, options, index) {
@@ -5977,8 +5977,8 @@ function HG() {
    * Recursively freeze all elements of an object.
    *
    * @private
-   * @param {Object} object The object to deep freeze.
-   * @returns {Object} The frozen object.
+   * @param {object} object The object to deep freeze.
+   * @returns {object} The frozen object.
    */
   function deepFreeze(object) {
     const propNames = Object.getOwnPropertyNames(object);

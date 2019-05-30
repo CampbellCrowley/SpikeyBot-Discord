@@ -52,7 +52,7 @@ function MainModule() {
 /**
  * Extends MainModule as the base class of a child.
  *
- * @param {Object} child The child class to extend.
+ * @param {object} child The child class to extend.
  */
 MainModule.extend = function(child) {
   child.prototype = new MainModule();

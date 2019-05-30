@@ -2659,7 +2659,7 @@ function Main() {
      * Callback once all shards have replied with their stats.
      *
      * @private
-     * @param {Array.<Object>} res Array of each response object.
+     * @param {Array<object>} res Array of each response object.
      */
     function statsResponse(res) {
       const parseStart = Date.now();
@@ -2728,7 +2728,7 @@ function Main() {
    * Fetch our statistics about the bot on this shard.
    *
    * @private
-   * @returns {Object} The statistics we collected.
+   * @returns {object} The statistics we collected.
    */
   function getStats() {
     const startTime = Date.now();

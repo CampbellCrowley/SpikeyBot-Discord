@@ -16,8 +16,8 @@ class Worker {
   /**
    * @description Create and start simulating.
    * @param {{
-   * game: Object,
-   * messages: Object.<string>
+   * game: object,
+   * messages: object.<string>
    * }} sim Simulation data.
    * @param {boolean} [retry=true] Whether to try again if there is an error.
    */

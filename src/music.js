@@ -451,7 +451,7 @@ function Music() {
    * Format the info response from ytdl into a human readable format.
    *
    * @private
-   * @param {Object} info The info received from ytdl about the song.
+   * @param {object} info The info received from ytdl about the song.
    * @param {Discord~StreamDispatcher} [dispatcher] The broadcast dispatcher
    * that is currently broadcasting audio. If defined, this will be used to
    * determine remaining play time.
@@ -490,7 +490,7 @@ function Music() {
    * Get the remaining playtime in the given song info and broadcast.
    *
    * @private
-   * @param {Object} info The song info received from ytdl.
+   * @param {object} info The song info received from ytdl.
    * @param {Discord~StreamDispatcher} dispatcher The dispatcher playing the
    * song currently.
    * @returns {number} Number of seconds remaining in the song playtime.
@@ -568,7 +568,7 @@ function Music() {
    * @param {Music~Broadcast} broadcast The broadcast storage container.
    * @param {string} song The song that was requested.
    * @param {Discord~Message} msg The message that requested the song.
-   * @param {Object} [info] The info from ytdl about the song.
+   * @param {object} [info] The info from ytdl about the song.
    * @param {number} [seek=0] The number of seconds into a song to start
    * playing.
    * @fires Command#stop
@@ -802,7 +802,7 @@ function Music() {
    * Starts the streams as a thread and reports done with the streams.
    *
    * @private
-   * @param {Object} input Input vars.
+   * @param {object} input Input vars.
    * @param {Function} done Done callback.
    * @param {Function} progress Progress callback.
    */

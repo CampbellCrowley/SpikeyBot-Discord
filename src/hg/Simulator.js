@@ -204,7 +204,7 @@ Simulator.weightedUserRand = function() {
  * instead of userPool.
  * @param {string} attackerOutcome Outcome of attackers. If "revived", uses
  * deadPool instead of userPool.
- * @param {Object} options Options for this game.
+ * @param {object} options Options for this game.
  * @param {HungryGames~Player[]} userPool Pool of all remaining players to put
  * into an event.
  * @param {HungryGames~Player[]} deadPool Pool of all dead players that can be
@@ -473,7 +473,7 @@ Simulator._reviveUser = function(game, a, k, w) {
  * in this day.
  * @param {HungryGames~Event[]} eventPool Pool of all events available to
  * choose at this time.
- * @param {Object} options The options set in the current game.
+ * @param {object} options The options set in the current game.
  * @param {number} numAlive Number of players in the game still alive.
  * @param {number} numTotal Number of players in the game total.
  * @param {HungryGames~Team[]} teams Array of teams in this game.
@@ -623,7 +623,7 @@ Simulator._pickEvent = function(
  * @param {HungryGames~Player[]} userPool Pool of all remaining players to put
  * into an event.
  * @param {HungryGames~Team[]} teams All teams in this game.
- * @param {Object} options Options for this game.
+ * @param {object} options Options for this game.
  * @param {boolean} victimsDie Do the victims die in this event?
  * @param {boolean} attackersDie Do the attackers die in this event?
  * @param {?Player} weaponWielder A player that is using a weapon in this
@@ -719,7 +719,7 @@ Simulator._validateEventTeamConstraint = function(
  * @param {number} numVictim Number of victims in this event.
  * @param {number} numAttacker Number of attackers in this event.
  * @param {number} numAlive Total number of living players left in the game.
- * @param {Object} options The options set for this game.
+ * @param {object} options The options set for this game.
  * @param {boolean} victimsDie Do the victims die in this event?
  * @param {boolean} attackersDie Do the attackers die in this event?
  * @returns {boolean} Will this event follow current options set about number
@@ -765,7 +765,7 @@ Simulator._validateEventNumConstraint = function(
  * into an event.
  * @param {number} numAlive Total number of living players left in the game.
  * @param {HungryGames~Team[]} teams All teams in this game.
- * @param {Object} options The options set for this game.
+ * @param {object} options The options set for this game.
  * @param {boolean} victimsDie Do the victims die in this event?
  * @param {boolean} attackersDie Do the attackers die in this event?
  * @param {?Player} weaponWielder A player that is using a weapon in this
