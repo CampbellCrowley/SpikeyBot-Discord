@@ -351,9 +351,9 @@ Simulator._effectUser = function(game, affected, kills, weapon) {
   if (weapon) {
     if (!isNaN(affected.weapons[weapon.name])) {
       affected.weapons[weapon.name] =
-          affected.weapons[weapon.name] * 1 + weapon.count;
+          affected.weapons[weapon.name] * 1 + weapon.count * 1;
     } else {
-      affected.weapons[weapon.name] = weapon.count;
+      affected.weapons[weapon.name] = weapon.count * 1;
     }
     if (affected.weapons[weapon.name] <= 0) {
       delete affected.weapons[weapon.name];
