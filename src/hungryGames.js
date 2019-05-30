@@ -348,7 +348,7 @@ function HG() {
     });
   }
   updateEvents();
-  fs.watchFile(eventFile, function(curr, prev) {
+  fs.watchFile(eventFile, {persistent: false}, function(curr, prev) {
     if (curr.mtime == prev.mtime) return;
     if (self.initialized) {
       self.debug('Re-reading default events from file');
@@ -378,7 +378,7 @@ function HG() {
     });
   }
   updateBattles();
-  fs.watchFile(battleFile, function(curr, prev) {
+  fs.watchFile(battleFile, {persistent: false}, function(curr, prev) {
     if (curr.mtime == prev.mtime) return;
     if (self.initialized) {
       self.debug('Re-reading battles from file');
@@ -407,7 +407,7 @@ function HG() {
     });
   }
   updateWeapons();
-  fs.watchFile(weaponsFile, function(curr, prev) {
+  fs.watchFile(weaponsFile, {persistent: false}, function(curr, prev) {
     if (curr.mtime == prev.mtime) return;
     if (self.initialized) {
       self.debug('Re-reading default weapons from file');

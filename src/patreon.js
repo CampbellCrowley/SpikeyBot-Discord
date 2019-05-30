@@ -95,7 +95,7 @@ function Patreon() {
     });
   }
   updateTierPerms();
-  fs.watchFile(patreonTierPermFile, (curr, prev) => {
+  fs.watchFile(patreonTierPermFile, {persistent: false}, (curr, prev) => {
     if (curr.mtime == prev.mtime) return;
     if (self.initialized) {
       self.debug('Re-reading Patreon tier reward information from file');
@@ -128,15 +128,18 @@ function Patreon() {
     });
   }
   updatePatreonSettingsTemplate();
-  fs.watchFile(patreonSettingsTemplateFile, (curr, prev) => {
-    if (curr.mtime == prev.mtime) return;
-    if (self.initialized) {
-      self.debug('Re-reading Patreon setting template information from file');
-    } else {
-      console.log('Patreon: Re-reading setting template information from file');
-    }
-    updatePatreonSettingsTemplate();
-  });
+  fs.watchFile(
+      patreonSettingsTemplateFile, {persistent: false}, (curr, prev) => {
+        if (curr.mtime == prev.mtime) return;
+        if (self.initialized) {
+          self.debug(
+              'Re-reading Patreon setting template information from file');
+        } else {
+          console.log(
+              'Patreon: Re-reading setting template information from file');
+        }
+        updatePatreonSettingsTemplate();
+      });
 
   /**
    * The object describing the connection with the SQL server.

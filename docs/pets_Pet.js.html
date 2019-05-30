@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>SpikeyBot-Discord Modules</title>
+	<title>SpikeyBot-Discord Source: pets/Pet.js</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -81,322 +81,180 @@
 <div class="row">
 
 	
-	<div class="col-md-8">
+	<div class="col-md-12">
 	
 		<div id="main">
 			
 
-	<h1 class="page-title">Modules</h1>
+		<h1 class="page-title">Source: pets/Pet.js</h1>
+    
 <section>
+    <article>
+        <pre
+            class="sunlight-highlight-javascript linenums">// Copyright 2019 Campbell Crowley. All rights reserved.
+// Author: Campbell Crowley (dev@campbellcrowley.com)
+const crypto = require('crypto');
 
-<header>
-    
-        <h2>
-        
-        </h2>
-        
-    
-</header>
+/**
+ * @description Contains information about a single user's pet.
+ * @memberof Pets
+ * @inner
+ */
+class Pet {
+  /**
+   * @description Create a pet for a user.
+   * @param {string} owner ID of the user that owns this pet.
+   * @param {string} name The name of this pet.
+   * @param {string} species The species of this pet.
+   */
+  constructor(owner, name, species) {
+    /**
+     * @description ID of the owner of this pet.
+     * @type {string}
+     * @public
+     */
+    this.owner = owner;
+    /**
+     * @description The name of this pet.
+     * @type {string}
+     * @public
+     */
+    this.name = name;
+    /**
+     * @description The species ID of this pet.
+     * @type {string}
+     * @public
+     */
+    this.species = species;
 
+    /**
+     * @description The ID of this pet. Does not check for uniqueness, but
+     * expects the ID to be unique per-user.
+     * @type {string}
+     * @public
+     */
+    this.id = crypto.randomBytes(6).toString('base64');
 
-<article>
-    <div class="container-overview">
-    
-        
+    /**
+     * @description The number of experience points this pet has.
+     * @public
+     * @type {number}
+     * @default
+     */
+    this.xp = 0;
+    /**
+     * @description Attack modifier on top of base species stat.
+     * @public
+     * @type {number}
+     * @default
+     */
+    this.attackMod = 0;
+    /**
+     * @description Defense modifier on top of base species stat.
+     * @public
+     * @type {number}
+     * @default
+     */
+    this.defenseMod = 0;
+    /**
+     * @description Speed modifier on top of base species stat.
+     * @public
+     * @type {number}
+     * @default
+     */
+    this.speedMod = 0;
+    /**
+     * @description Health modifier on top of base species stat.
+     * @public
+     * @type {number}
+     * @default
+     */
+    this.healthMod = 0;
+    /**
+     * @description Current number of lives remaining.
+     * @public
+     * @type {number}
+     * @default
+     */
+    this.lives = 3;
+    /**
+     * @description Timestamp at most recent time the pet has begun resting.
+     * Used for regenerating lives.
+     * @public
+     * @type {number}
+     * @default
+     */
+    this.restStartTimestamp = Date.now();
 
-        
-<dl class="details">
-    
+    /**
+     * @description The timestamp at which this object was last interacted with.
+     * This is used for purging from memory when not used for a while.
+     * @type {number}
+     * @private
+     * @default Date.now()
+     */
+    this._lastInteractTime = Date.now();
 
-	
+    this.touch = this.touch.bind(this);
+  }
 
-	
+  /**
+   * @description Get a serializable version of this class instance. Strips all
+   * private variables, and all functions. Assumes all public variables are
+   * serializable if they aren't a function.
+   * @public
+   * @returns {Object} Serializable version of this instance.
+   */
+  get serializable() {
+    const all = Object.entries(Object.getOwnPropertyDescriptors(this));
+    const output = {};
+    for (const one of all) {
+      if (typeof one[1].value === 'function' || one[0].startsWith('_')) {
+        continue;
+      }
+      output[one[0]] = one[1].value;
+    }
+    return output;
+  }
 
-	
+  /**
+   * @description Touch this object to update the last `_lastInteractTime`.
+   * @public
+   */
+  touch() {
+    this._lastInteractTime = Date.now();
+  }
+}
 
-    
+/**
+ * @description Create a Pet from a Pet-like Object. Similar to
+ * copy-constructor.
+ * @public
+ * @static
+ * @param {Object} obj The Pet-like object to copy.
+ * @returns {Pet} Created Pet object.
+ */
+Pet.from = function(obj) {
+  const output = new Pet(obj.owner, obj.name, obj.species);
+  if (obj.id) output.id = obj.id;
+  if (obj.xp) output.xp = obj.xp * 1;
+  if (obj.attackMod) output.attackMod = obj.attackMod * 1;
+  if (obj.defenseMod) output.defenseMod = obj.defenseMod * 1;
+  if (obj.speedMod) output.speedMod = obj.speedMod * 1;
+  if (obj.healthMod) output.healthMod = obj.healthMod * 1;
+  if (typeof obj.lives === 'number') output.lives = obj.lives * 1;
+  if (obj.restStartTimestamp &amp;&amp;
+      obj.restStartTimestamp &lt; output.restStartTimestamp) {
+    output.restStartTimestamp = obj.restStartTimestamp;
+  }
+  return output;
+};
 
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-        
-    
-    </div>
-
-    
-
-    
-
-    
-        <h3 class="subsection-title">Classes</h3>
-
-        <dl>
-            <dt><a href="ChatBot.html">ChatBot</a></dt>
-            <dd></dd>
-        
-            <dt><a href="CmdScheduling.html">CmdScheduling</a></dt>
-            <dd></dd>
-        
-            <dt><a href="CmdScheduling-ScheduledCommand.html">ScheduledCommand</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Command.html">Command</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Command-CommandSetting.html">CommandSetting</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Command-SingleCommand.html">SingleCommand</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Common.html">Common</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Connect4.html">Connect4</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Connect4_Game.html">Game</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Define.html">Define</a></dt>
-            <dd></dd>
-        
-            <dt><a href="DevCmds.html">DevCmds</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Echo.html">Echo</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Echo-Character.html">Character</a></dt>
-            <dd></dd>
-        
-            <dt><a href="FunTranslators.html">FunTranslators</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HG.html">HG</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HGWeb.html">HGWeb</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames.html">HungryGames</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-ArenaEvent.html">ArenaEvent</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-Battle.html">Battle</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-Day.html">Day</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-DefaultOptions.html">DefaultOptions</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-DefaultOptions-BooleanOption.html">BooleanOption</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-DefaultOptions-NumberOption.html">NumberOption</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-DefaultOptions-ObjectOption.html">ObjectOption</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-DefaultOptions-Option.html">Option</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-DefaultOptions-SelectOption.html">SelectOption</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-Event.html">Event</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-FinalEvent.html">FinalEvent</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-ForcedOutcome.html">ForcedOutcome</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-Game.html">Game</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-Grammar.html">Grammar</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-GuildGame.html">GuildGame</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-Messages.html">Messages</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-OutcomeProbabilities.html">OutcomeProbabilities</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-Player.html">Player</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-Simulator.html">Simulator</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-Simulator-Worker.html">Worker</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-Team.html">Team</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-UserIconUrl.html">UserIconUrl</a></dt>
-            <dd></dd>
-        
-            <dt><a href="HungryGames-WeaponEvent.html">WeaponEvent</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Main.html">Main</a></dt>
-            <dd></dd>
-        
-            <dt><a href="MainModule.html">MainModule</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Messages.html">Messages</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Moderation.html">Moderation</a></dt>
-            <dd></dd>
-        
-            <dt><a href="ModLog.html">ModLog</a></dt>
-            <dd></dd>
-        
-            <dt><a href="ModLog-Settings.html">Settings</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Music.html">Music</a></dt>
-            <dd></dd>
-        
-            <dt><a href="NPC.html">NPC</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Patreon.html">Patreon</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Patreon-toExport.html">toExport</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Pets.html">Pets</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Pets-BasePets.html">BasePets</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Pets-Pet.html">Pet</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Polling.html">Polling</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Polling-Poll.html">Poll</a></dt>
-            <dd></dd>
-        
-            <dt><a href="RaidBlock.html">RaidBlock</a></dt>
-            <dd></dd>
-        
-            <dt><a href="RaidBlock-RaidSettings.html">RaidSettings</a></dt>
-            <dd></dd>
-        
-            <dt><a href="RoleColors.html">RoleColors</a></dt>
-            <dd></dd>
-        
-            <dt><a href="RoleManager.html">RoleManager</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Sandbox.html">Sandbox</a></dt>
-            <dd></dd>
-        
-            <dt><a href="SMLoader.html">SMLoader</a></dt>
-            <dd></dd>
-        
-            <dt><a href="SpikeyBot.html">SpikeyBot</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Spotify.html">Spotify</a></dt>
-            <dd></dd>
-        
-            <dt><a href="SubModule.html">SubModule</a></dt>
-            <dd></dd>
-        
-            <dt><a href="TicTacToe.html">TicTacToe</a></dt>
-            <dd></dd>
-        
-            <dt><a href="TicTacToe_Game.html">Game</a></dt>
-            <dd></dd>
-        
-            <dt><a href="TTS.html">TTS</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Uno.html">Uno</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Uno_Card.html">Card</a></dt>
-            <dd></dd>
-        
-            <dt><a href="Uno_Game.html">Game</a></dt>
-            <dd></dd>
-        
-            <dt><a href="WebAccount.html">WebAccount</a></dt>
-            <dd></dd>
-        
-            <dt><a href="WebCommands.html">WebCommands</a></dt>
-            <dd></dd>
-        
-            <dt><a href="WebProxy.html">WebProxy</a></dt>
-            <dd></dd>
-        
-            <dt><a href="WebSettings.html">WebSettings</a></dt>
-            <dd></dd>
-        
-            <dt><a href="WebStats.html">WebStats</a></dt>
-            <dd></dd>
-        </dl>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</article>
-
+module.exports = Pet;
+</pre>
+    </article>
 </section>
+
 
 
 
@@ -406,10 +264,6 @@
 
 	<div class="clearfix"></div>
 
-	
-		<div class="col-md-3">
-			<div id="toc" class="col-md-3 hidden-xs hidden-sm hidden-md"></div>
-		</div>
 	
 
 </div>

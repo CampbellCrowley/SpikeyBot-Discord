@@ -10,36 +10,89 @@ const crypto = require('crypto');
 class Pet {
   /**
    * @description Create a pet for a user.
-   * @param {external:Discord~GuildMember} owner Reference to the guild member
-   * that owns this pet.
+   * @param {string} owner ID of the user that owns this pet.
    * @param {string} name The name of this pet.
+   * @param {string} species The species of this pet.
    */
-  constructor(owner, name) {
+  constructor(owner, name, species) {
     /**
      * @description ID of the owner of this pet.
      * @type {string}
      * @public
      */
-    this.owner = owner.user.id;
-    /**
-     * @description The ID of the guild this pet is in.
-     * @type {string}
-     * @public
-     */
-    this.guild = owner.guild.id;
-    /**
-     * @description The ID of this pet. Does not check for uniqueness, but
-     * expects the ID to be unique per-user per-guild.
-     * @type {string}
-     * @public
-     */
-    this.id = crypto.randomBytes(6).toString('base64');
+    this.owner = owner;
     /**
      * @description The name of this pet.
      * @type {string}
      * @public
      */
     this.name = name;
+    /**
+     * @description The species ID of this pet.
+     * @type {string}
+     * @public
+     */
+    this.species = species;
+
+    /**
+     * @description The ID of this pet. Does not check for uniqueness, but
+     * expects the ID to be unique per-user.
+     * @type {string}
+     * @public
+     */
+    this.id = crypto.randomBytes(6).toString('base64');
+
+    /**
+     * @description The number of experience points this pet has.
+     * @public
+     * @type {number}
+     * @default
+     */
+    this.xp = 0;
+    /**
+     * @description Attack modifier on top of base species stat.
+     * @public
+     * @type {number}
+     * @default
+     */
+    this.attackMod = 0;
+    /**
+     * @description Defense modifier on top of base species stat.
+     * @public
+     * @type {number}
+     * @default
+     */
+    this.defenseMod = 0;
+    /**
+     * @description Speed modifier on top of base species stat.
+     * @public
+     * @type {number}
+     * @default
+     */
+    this.speedMod = 0;
+    /**
+     * @description Health modifier on top of base species stat.
+     * @public
+     * @type {number}
+     * @default
+     */
+    this.healthMod = 0;
+    /**
+     * @description Current number of lives remaining.
+     * @public
+     * @type {number}
+     * @default
+     */
+    this.lives = 3;
+    /**
+     * @description Timestamp at most recent time the pet has begun resting.
+     * Used for regenerating lives.
+     * @public
+     * @type {number}
+     * @default
+     */
+    this.restStartTimestamp = Date.now();
+
     /**
      * @description The timestamp at which this object was last interacted with.
      * This is used for purging from memory when not used for a while.
@@ -89,17 +142,18 @@ class Pet {
  * @returns {Pet} Created Pet object.
  */
 Pet.from = function(obj) {
-  let owner = obj.owner;
-  if (!owner || !owner.user || !owner.user.id || !owner.guild ||
-      !owner.guild.id) {
-    if (typeof owner === 'string' && typeof obj.guild === 'string') {
-      owner = {user: {id: owner}, guild: {id: obj.guild}};
-    } else {
-      return null;
-    }
-  }
-  const output = new Pet(owner, obj.name);
+  const output = new Pet(obj.owner, obj.name, obj.species);
   if (obj.id) output.id = obj.id;
+  if (obj.xp) output.xp = obj.xp * 1;
+  if (obj.attackMod) output.attackMod = obj.attackMod * 1;
+  if (obj.defenseMod) output.defenseMod = obj.defenseMod * 1;
+  if (obj.speedMod) output.speedMod = obj.speedMod * 1;
+  if (obj.healthMod) output.healthMod = obj.healthMod * 1;
+  if (typeof obj.lives === 'number') output.lives = obj.lives * 1;
+  if (obj.restStartTimestamp &&
+      obj.restStartTimestamp < output.restStartTimestamp) {
+    output.restStartTimestamp = obj.restStartTimestamp;
+  }
   return output;
 };
 

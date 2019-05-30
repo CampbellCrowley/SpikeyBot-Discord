@@ -1,0 +1,98 @@
+{
+  "dog": {
+    "name": "Dog",
+    "icon": "https://www.spikeybot.com/SBIcon-128x128.png",
+    "levels": {
+      "0": {
+        "name": "Yapper",
+        "icon": "https://www.spikeybot.com/SBIcon-128x128.png"
+      },
+      "10": {
+        "name": "Pupper",
+        "icon": "https://www.spikeybot.com/SBIcon-128x128.png"
+      },
+      "20": {
+        "name": "Doggo",
+        "icon": "https://www.spikeybot.com/SBIcon-128x128.png"
+      },
+      "30": {
+        "name": "Woofer",
+        "icon": "https://www.spikeybot.com/SBIcon-128x128.png"
+      },
+      "40": {
+        "name": "Floofer",
+        "icon": "https://www.spikeybot.com/SBIcon-128x128.png"
+      }
+    },
+    "shortDescription": "Your Best Friend",
+    "longDescription": "After it's mother tragically died while giving birth, you couldn't bear to leave this cute little fur-ball in the forest to fend for itself. It's been by your side ever since, and will gladly give its life to save yours, as you have already saved its life.",
+    "attack": 3,
+    "defense": 2,
+    "speed": 2,
+    "health": 10
+  },
+  "cat": {
+    "name": "Cat",
+    "icon": "https://www.spikeybot.com/SBIcon-128x128.png",
+    "levels": {
+      "0": {
+        "name": "Kitty",
+        "icon": "https://www.spikeybot.com/SBIcon-128x128.png"
+      },
+      "10": {
+        "name": "Kitten",
+        "icon": "https://www.spikeybot.com/SBIcon-128x128.png"
+      },
+      "20": {
+        "name": "Catto",
+        "icon": "https://www.spikeybot.com/SBIcon-128x128.png"
+      },
+      "30": {
+        "name": "Cat",
+        "icon": "https://www.spikeybot.com/SBIcon-128x128.png"
+      },
+      "40": {
+        "name": "Panther",
+        "icon": "https://www.spikeybot.com/SBIcon-128x128.png"
+      }
+    },
+    "shortDescription": "A Silent Assassin",
+    "longDescription": "You don't know where this silhouette came from, or how it manages to disappear completely into the shadows, but you seem to feel safer now that it's around. However, the tuna sandwich you didn't finish last night does appear to be missing...",
+    "attack": 4,
+    "defense": 1,
+    "speed": 5,
+    "health": 10
+  },
+  "bird": {
+    "name": "Bird",
+    "icon": "https://www.spikeybot.com/SBIcon-128x128.png",
+    "levels": {
+      "0": {
+        "name": "Fledgling",
+        "icon": "https://www.spikeybot.com/SBIcon-128x128.png"
+      },
+      "10": {
+        "name": "Chick",
+        "icon": "https://www.spikeybot.com/SBIcon-128x128.png"
+      },
+      "20": {
+        "name": "Birdie",
+        "icon": "https://www.spikeybot.com/SBIcon-128x128.png"
+      },
+      "30": {
+        "name": "Bird",
+        "icon": "https://www.spikeybot.com/SBIcon-128x128.png"
+      },
+      "40": {
+        "name": "Raptor",
+        "icon": "https://www.spikeybot.com/SBIcon-128x128.png"
+      }
+    },
+    "shortDescription": "Eyes in the Sky",
+    "longDescription": "Ever since returning an egg to the nest it fell out of, you seem to have a new friend in the trees and sky above protecting you. Your pest problem has also resolved itself since then, but correlation doesn't mean causation. Right?",
+    "attack": 3,
+    "defense": 2,
+    "speed": 4,
+    "health": 10
+  }
+}

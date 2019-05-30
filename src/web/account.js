@@ -119,16 +119,17 @@ function WebAccount() {
     });
   }
   updatePatreonSettingsTemplate();
-  fs.watchFile(patreonSettingsTemplateFile, (curr, prev) => {
-    if (curr.mtime == prev.mtime) return;
-    if (self.initialized) {
-      self.log('Re-reading Patreon setting template information from file');
-    } else {
-      console.log(
-          'WebAccount: Re-reading setting template information from file');
-    }
-    updatePatreonSettingsTemplate();
-  });
+  fs.watchFile(
+      patreonSettingsTemplateFile, {persistent: false}, (curr, prev) => {
+        if (curr.mtime == prev.mtime) return;
+        if (self.initialized) {
+          self.log('Re-reading Patreon setting template information from file');
+        } else {
+          console.log(
+              'WebAccount: Re-reading setting template information from file');
+        }
+        updatePatreonSettingsTemplate();
+      });
 
 
   /** @inheritdoc */

@@ -217,7 +217,7 @@ function WebProxy() {
     });
   }
   updateRateLimits();
-  fs.watchFile(rateLimitFile, (curr, prev) => {
+  fs.watchFile(rateLimitFile, {persistent: false}, (curr, prev) => {
     if (curr.mtime == prev.mtime) return;
     if (self.initialized) {
       self.debug('Re-reading rate limits from file');

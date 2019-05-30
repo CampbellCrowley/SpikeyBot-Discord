@@ -30,7 +30,7 @@ class Messages {
      */
     this._messages = {};
     this._updateMessages();
-    fs.watchFile(this._messageFile, (curr, prev) => {
+    fs.watchFile(this._messageFile, {persistent: false}, (curr, prev) => {
       if (curr.mtime == prev.mtime) return;
       this._updateMessages();
     });
