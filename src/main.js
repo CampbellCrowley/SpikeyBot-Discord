@@ -741,6 +741,7 @@ function Main() {
         '\\[ws\\] \\[connection\\] Sending a heartbeat|' +
         '\\[WS => Shard \\d+\\] Sending a heartbeat|' +
         '\\[WS => Shard \\d+\\] Heartbeat acknowledged|' +
+        '\\[WS => Manager\\] There are \\d+ unavailable guilds.|' +
         '\\[VOICE)');
     if (info.match(hbRegex)) {
       pingHistory.push({time: Date.now(), delta: self.client.ws.ping});
