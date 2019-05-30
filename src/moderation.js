@@ -253,7 +253,25 @@ class Moderation extends SubModule {
   _onGuildMemberAdd(member) {
     const modLog = this.bot.getSubmodule('./modLog.js');
     if (!modLog) return;
-    modLog.output(member.guild, 'memberJoin', member.user);
+    let num = -1;
+    if (this.client.shard) {
+      const toEval =
+          `this.guilds.filter((g) => g.members.get('${member.id}')).size`;
+      this.client.shard.broadcastEval(toEval).then((res) => {
+        res.forEach((el) => num += el);
+        const additional =
+            num > 0 ? `${num} other mutual server${num > 1 ? 's' : ''}.` : null;
+        modLog.output(
+            member.guild, 'memberJoin', member.user, null, additional);
+      });
+    } else {
+      this.client.guilds.forEach((g) => {
+        if (g.members.get(member.id)) num++;
+      });
+      const additional =
+          num > 0 ? `${num} other mutual server${num > 1 ? 's' : ''}.` : null;
+      modLog.output(member.guild, 'memberJoin', member.user, null, additional);
+    }
   }
 
   /**
