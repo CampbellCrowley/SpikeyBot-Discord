@@ -176,7 +176,7 @@ class ModLog extends SubModule {
     embed.setTitle(this._actionString(action));
     embed.setFooter(new Date().toString());
     if (user) {
-      embed.setThumbnail(user.displayAvatarURL({size: 16}));
+      embed.setThumbnail(user.displayAvatarURL({size: 32}));
       embed.addField(user.tag, `<@${user.id}>\n${user.id}`, true);
     }
     if (owner) embed.addField('Moderator', owner.tag, true);
