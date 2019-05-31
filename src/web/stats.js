@@ -183,7 +183,7 @@ function WebStats() {
    * @see {@link Main~getAllStats~values}
    *
    * @private
-   * @param {Object} cb The bot's stats as an object.
+   * @param {object} cb The bot's stats as an object.
    */
   function getStats(cb) {
     if (cachedTime + cachedLifespan < Date.now()) {

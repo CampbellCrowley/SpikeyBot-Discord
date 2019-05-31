@@ -259,7 +259,7 @@ function WebAccount() {
        *
        * @private
        *
-       * @param {Object} data The data previously received to add the Patreon
+       * @param {object} data The data previously received to add the Patreon
        * info onto.
        */
       function fetchPatreonSQL(data) {
@@ -286,7 +286,7 @@ function WebAccount() {
        *
        * @private
        *
-       * @param {Object} data The data previously received to add the Spotify
+       * @param {object} data The data previously received to add the Spotify
        * info onto.
        */
       function fetchSpotifySQL(data) {
@@ -317,7 +317,7 @@ function WebAccount() {
        *
        * @private
        *
-       * @param {Object} data The data previously received to add the Discord
+       * @param {object} data The data previously received to add the Discord
        * user info onto, then send to the client.
        */
       function fetchDiscordBot(data) {
@@ -730,7 +730,7 @@ function WebAccount() {
      * setting to change.
      *
      * @private
-     * @param {Object} obj The template object to compare the request against.
+     * @param {object} obj The template object to compare the request against.
      * @param {string[]} s The array of each setting key that was a part of
      * the request.
      * @param {string|number} value The value to change the setting to.

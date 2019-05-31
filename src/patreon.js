@@ -200,7 +200,7 @@ function Patreon() {
      * @private
      * @type {Patreon~basicCB}
      * @param {?string} err The error string, or null if no error.
-     * @param {?{status: Object, message: string}} data The returned data if
+     * @param {?{status: object, message: string}} data The returned data if
      * there was no error.
      */
     function getPerms(err, data) {
@@ -366,7 +366,7 @@ function Patreon() {
      * @private
      * @type {Patreon~basicCB}
      * @param {?string} err The error string, or null if no error.
-     * @param {?{status: Object, message: string}} data The returned data if
+     * @param {?{status: object, message: string}} data The returned data if
      * there was no error.
      */
     function getPerms(err, data) {
@@ -420,7 +420,7 @@ function Patreon() {
      * @private
      * @type {Patreon~basicCB}
      * @param {?string} err The error string, or null if no error.
-     * @param {?{status: Object, message: string}} data The returned data if
+     * @param {?{status: object, message: string}} data The returned data if
      * there was no error.
      */
     function checkPerm(err, data) {
@@ -539,7 +539,7 @@ function Patreon() {
      * Searches an object for the given key values.
      *
      * @private
-     * @param {Object} obj The object to traverse.
+     * @param {object} obj The object to traverse.
      * @param {string[]} keys The keys to step through.
      * @param {Patreon~basicCB} myCb The callback with the final value.
      */
@@ -581,7 +581,7 @@ function Patreon() {
    * @param {string|number} uId The Discord user ID to check.
    * @param {Patreon~basicCB} cb Callback with parameters for error and success
    * values.
-   * @param {?Object} cb.data.status A single row if it was found.
+   * @param {?object} cb.data.status A single row if it was found.
    */
   function fetchPatreonRow(uId, cb) {
     /**

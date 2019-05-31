@@ -116,7 +116,13 @@
 <a href="https://github.com/CampbellCrowley/SpikeyBot-Discord"><img src="https://img.shields.io/github/last-commit/CampbellCrowley/SpikeyBot-Discord.svg" alt="Last Commit"></a>
 <a href="https://www.patreon.com/CampbellCrowley"><img src="https://img.shields.io/badge/donate-patreon-F96854.svg" alt="Patreon"></a>
 <a href="https://www.paypal.me/SpikeyBot"><img src="https://img.shields.io/badge/donate-paypal-0070BA.svg" alt="PayPal"></a></p>
-<h3>Bot's website: <a href="https://www.spikeybot.com/">SpikeyBot.com</a></h3><h3>Support my development: <a href="https://www.patreon.com/campbellcrowley/">Patreon</a> <a href="https://www.paypal.me/spikeybot">PayPal</a></h3><h1>Commands</h1><h6><a href="https://www.spikeybot.com/help/">Web Page with most commands available on the bot's website</a></h6><h2>Hidden Commands</h2><h3>These commands are not included in the normal help page or <code>help</code> command because they are either easter-eggs, developer commands, or just not useful for most users.</h3><ul>
+<h3>Bot's website: <a href="https://www.spikeybot.com/">SpikeyBot.com</a></h3>
+<h3>Support my development: <a href="https://www.patreon.com/campbellcrowley/">Patreon</a> <a href="https://www.paypal.me/spikeybot">PayPal</a></h3>
+<h1>Commands</h1>
+<h6><a href="https://www.spikeybot.com/help/">Web Page with most commands available on the bot's website</a></h6>
+<h2>Hidden Commands</h2>
+<h3>These commands are not included in the normal help page or <code>help</code> command because they are either easter-eggs, developer commands, or just not useful for most users.</h3>
+<ul>
 <li>git (Get the git commit log, or run a git command)</li>
 <li>js (Run sandboxed javascript code)</li>
 <li>py (Run sandboxed python code)</li>
@@ -157,61 +163,110 @@
 <li>whoami (Replies with the user's username, and full tag from different sources)</li>
 <li>gettime (Replies with the server's timezone and time, as well as GMT)</li>
 </ul>
-<h1>Event Controlled</h1><ul>
-<li>Added to guild<ul>
+<h1>Event Controlled</h1>
+<ul>
+<li>Added to guild
+<ul>
 <li>Sends a message to the top text channel introducing the bot.</li>
 </ul>
 </li>
-<li>User in guild is banned<ul>
+<li>User in guild is banned
+<ul>
 <li>Sends a message saying the user was banned and by whom.</li>
 <li>Disable with <code>togglebanmessages</code>.</li>
 </ul>
 </li>
 </ul>
 <hr>
-<h1>Self-Hosting</h1><p>The bot is not designed to be easily hosted by others, but still may be done.<br>The below steps outline the minimum required to get the SpikeyBot to run.<br>1) Have a server/computer</p>
-<pre class="prettyprint source"><code>- SB is developed and tested solely on Debian Stretch (amd64), but other OS's may work.</code></pre><p>2) Install <a href="https://nodejs.org/">NodeJS</a></p>
-<pre class="prettyprint source"><code>- The bot is currently running on NodeJS [v10.15.3](https://nodejs.org/dist/v10.15.3/). Other versions may work, but are untested.</code></pre><p>3) Download source code</p>
-<pre class="prettyprint source"><code>- Clone this repository `git clone https://github.com/CampbellCrowley/SpikeyBot-Discord.git` or click the green download button in GitHub.</code></pre><p>4) Install system dependencies</p>
-<pre class="prettyprint source"><code>- `sudo apt install make libtool autoconf g++ ffmpeg` are required for the default installation.</code></pre><p>5) Install dependencies via NPM</p>
-<pre class="prettyprint source"><code>- Current version of NPM used is `v6.9.0`, but almost any version should be fine.
-- In the `SpikeyBot-Discord` directory, run `npm install`.</code></pre><p>6) Get a bot token from Discord</p>
-<pre class="prettyprint source"><code>- A token for the bot that you are trying to run from [Discord](https://discordapp.com/developers/applications/) is required.
-- DO NOT give this token to anybody. Keep it private. The token allows anyone to be your bot.</code></pre><p>7) Configure SpikeyBot</p>
-<pre class="prettyprint source"><code>- Create `auth.js` in the `SpikeyBot-Discord/` directory with a line that says `exports.release = 'BOT_TOKEN';`, where `BOT_TOKEN` is the bot token from Discord.
-- Modify `./subModules.json` `&quot;release&quot;` section to have the subModules you want.
-- If you wish to have access to developer commands that normally only SpikeyRobot has access to, replace the `spikeyId` in `./src/common.js` with your account ID.</code></pre><p>8) Run SpikeyBot</p>
-<pre class="prettyprint source"><code>- Run `node src/SpikeyBot.js` in `SpikeyBot-Discord/` (working directory must be the project root).
-- Errors about `gApiCredentials.json` missing can be suppressed by removing `./tts.js` and `./chatbot.js` from `./subModules.json` since these require special authentication from Google's API. (https://console.cloud.google.com/)
-- All website related subModules will not work, and related errors can be suppressed by removing all subModules that start with `./web/` from `./subModules.json`.
-- If you are **not** running with `--shards` and wish to use the Hungry Games submodule, you must run node with `--experimental-worker`.</code></pre><h1>Development</h1><ul>
-<li>Unit tests exist<ul>
+<h1>Self-Hosting</h1>
+<p>The bot is not designed to be easily hosted by others, but still may be done.<br>
+The below steps outline the minimum required to get the SpikeyBot to run.</p>
+<ol>
+<li>Have a server/computer
+<ul>
+<li>SB is developed and tested solely on Debian Stretch (amd64), but other OS's may work.</li>
+</ul>
+</li>
+<li>Install <a href="https://nodejs.org/">NodeJS</a>
+<ul>
+<li>The bot is currently running on NodeJS <a href="https://nodejs.org/dist/v10.15.3/">v10.15.3</a>. Other versions may work, but are untested.</li>
+</ul>
+</li>
+<li>Download source code
+<ul>
+<li>Clone this repository <code>git clone https://github.com/CampbellCrowley/SpikeyBot-Discord.git</code> or click the green download button in GitHub.</li>
+</ul>
+</li>
+<li>Install system dependencies
+<ul>
+<li><code>sudo apt install make libtool autoconf g++ ffmpeg</code> are required for the default installation.</li>
+</ul>
+</li>
+<li>Install dependencies via NPM
+<ul>
+<li>Current version of NPM used is <code>v6.9.0</code>, but almost any version should be fine.</li>
+<li>In the <code>SpikeyBot-Discord</code> directory, run <code>npm install</code>.</li>
+</ul>
+</li>
+<li>Get a bot token from Discord
+<ul>
+<li>A token for the bot that you are trying to run from <a href="https://discordapp.com/developers/applications/">Discord</a> is required.</li>
+<li>DO NOT give this token to anybody. Keep it private. The token allows anyone to be your bot.</li>
+</ul>
+</li>
+<li>Configure SpikeyBot
+<ul>
+<li>Create <code>auth.js</code> in the <code>SpikeyBot-Discord/</code> directory with a line that says <code>exports.release = 'BOT_TOKEN';</code>, where <code>BOT_TOKEN</code> is the bot token from Discord.</li>
+<li>Modify <code>./subModules.json</code> <code>&quot;release&quot;</code> section to have the subModules you want.</li>
+<li>If you wish to have access to developer commands that normally only SpikeyRobot has access to, replace the <code>spikeyId</code> in <code>./src/common.js</code> with your account ID.</li>
+</ul>
+</li>
+<li>Run SpikeyBot
+<ul>
+<li>Run <code>node src/SpikeyBot.js</code> in <code>SpikeyBot-Discord/</code> (working directory must be the project root).</li>
+<li>Errors about <code>gApiCredentials.json</code> missing can be suppressed by removing <code>./tts.js</code> and <code>./chatbot.js</code> from <code>./subModules.json</code> since these require special authentication from Google's API. (https://console.cloud.google.com/)</li>
+<li>All website related subModules will not work, and related errors can be suppressed by removing all subModules that start with <code>./web/</code> from <code>./subModules.json</code>.</li>
+<li>If you are <strong>not</strong> running with <code>--shards</code> and wish to use the Hungry Games submodule, you must run node with <code>--experimental-worker</code>.</li>
+</ul>
+</li>
+</ol>
+<h1>Development</h1>
+<ul>
+<li>Unit tests exist
+<ul>
 <li>Covers all current commands with text-only replies.</li>
 <li>Tests only send a message, and check for response messages that match expected output.
-1) String exact match
-2) String contains match
-3) String does not contain match
-4) String is not an error
-5) Is an embed
-6) Correct number of messages</li>
+<ol>
+<li>String exact match</li>
+<li>String contains match</li>
+<li>String does not contain match</li>
+<li>String is not an error</li>
+<li>Is an embed</li>
+<li>Correct number of messages</li>
+</ol>
+</li>
 <li>Does not check the content of embeds.</li>
 <li>Need more thorough and flexible tests.</li>
 </ul>
 </li>
-<li>Linting<ul>
+<li>Linting
+<ul>
 <li>All commits are checked by eslint using Google defaults.</li>
 <li>Eslint is run with pre-commit git hook.</li>
 </ul>
 </li>
-<li>Most code is moved into subModules for easier division and reloading.<ul>
+<li>Most code is moved into subModules for easier division and reloading.
+<ul>
 <li>Minimal mode only loads minimal features to allow for multiple bots to run without overlap.</li>
 <li>Music subModule downloads audio in a separate thread but is still managed by the main event loop.</li>
-<li>SubModules are stored in <code>./subModules.json</code>.<ul>
+<li>SubModules are stored in <code>./subModules.json</code>.
+<ul>
 <li>Path relative to module should be given (Usually relative to <code>./src/</code>).</li>
 <li>Must be valid for directly being passed into <code>require()</code>.</li>
 </ul>
 </li>
-<li>MainModules are loaded automatically by <code>./src/SpikeyBot.js</code> and are required.<ul>
+<li>MainModules are loaded automatically by <code>./src/SpikeyBot.js</code> and are required.
+<ul>
 <li>SubModules are loaded by <code>./src/smLoader.js</code>.</li>
 <li>Commands are all managed by <code>./src/commands.js</code>.</li>
 <li>Additional MainModules can be loaded by placing them in <code>./mainModules.json</code></li>
@@ -219,9 +274,12 @@
 </li>
 </ul>
 </li>
-<li>Files<ul>
-<li>Most persistent data is saved to disk when bot shuts down.<ul>
-<li>Hungry Games current state is saved and loaded.<ul>
+<li>Files
+<ul>
+<li>Most persistent data is saved to disk when bot shuts down.
+<ul>
+<li>Hungry Games current state is saved and loaded.
+<ul>
 <li>Events and most messages are also read from file.</li>
 </ul>
 </li>
@@ -279,9 +337,9 @@
 	</span>
 
 <span class="jsdoc-message">
-	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.2</a>
 	
-		on Wednesday, May 29, 2019 10:10 PM (-07:00)
+		on Friday, May 31, 2019 12:54 AM (-07:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

@@ -169,7 +169,7 @@ function TTS() {
      *
      * @private
      * @param {?Error} err Errors in request.
-     * @param {?Object} res Response.
+     * @param {?object} res Response.
      */
     function onSpeechResponse(err, res) {
       if (err) {

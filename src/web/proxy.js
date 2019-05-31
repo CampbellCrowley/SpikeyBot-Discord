@@ -537,7 +537,7 @@ function WebProxy() {
      * session, and refresh the tokens when necessary.
      *
      * @private
-     * @param {Object} data User data.
+     * @param {object} data User data.
      */
     function receivedLoginInfo(data) {
       if (data) {
@@ -699,9 +699,9 @@ function WebProxy() {
    * Send a https request to discord.
    *
    * @private
-   * @param {?Object|string} data The data to send in the request.
+   * @param {?object|string} data The data to send in the request.
    * @param {basicCallback} cb Callback with error, and data arguments.
-   * @param {?Object} host Request object to override the default with.
+   * @param {?object} host Request object to override the default with.
    */
   function discordRequest(data, cb, host) {
     host = host || tokenHost;

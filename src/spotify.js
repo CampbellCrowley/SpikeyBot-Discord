@@ -201,7 +201,7 @@ function Spotify() {
    *
    * @param {Discord~Message} msg The message to use as context.
    * @param {string|number} userId The discord user id that we are following.
-   * @param {Object} [songInfo] If song info is provided, this will not be
+   * @param {object} [songInfo] If song info is provided, this will not be
    * fetched first. If it is not, the information will be fetched from Spotify
    * first.
    * @param {boolean} [start=false] Should we setup the player with our settings

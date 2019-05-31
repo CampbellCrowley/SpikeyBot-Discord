@@ -89,7 +89,7 @@ class Game {
  * Create a new Game from an object. Similar to a copy constructor.
  *
  * @public
- * @param {Object} data Game like object to copy.
+ * @param {object} data Game like object to copy.
  * @returns {HungryGames~Game} Created Game object.
  */
 Game.from = function(data) {

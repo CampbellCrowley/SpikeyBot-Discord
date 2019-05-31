@@ -538,7 +538,7 @@ function HGWeb() {
    *
    * @private
    * @param {Discord~GuildMember} m The guild member to strip the data from.
-   * @returns {Object} The minimal member.
+   * @returns {object} The minimal member.
    */
   function makeMember(m) {
     if (typeof m !== 'object') {
@@ -590,7 +590,7 @@ function HGWeb() {
    *
    * @private
    * @param {string} uId The user ID that started this upload.
-   * @returns {Object} The metadata storing object.
+   * @returns {object} The metadata storing object.
    */
   function beginImageUpload(uId) {
     let id;
@@ -619,7 +619,7 @@ function HGWeb() {
    *
    * @private
    * @type {HGWeb~SocketFunction}
-   * @param {Object} userData The current user's session data.
+   * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete, or has failed.
@@ -643,10 +643,10 @@ function HGWeb() {
        * user once all requests have replied.
        *
        * @private
-       * @param {string|Object} guilds Either the guild data to send to the
+       * @param {string|object} guilds Either the guild data to send to the
        * user, or 'guilds' if this is a reply from a sibling client.
        * @param {?string} [err] The error that occurred, or null if no error.
-       * @param {Object} [response] The guild data if `guilds` equals 'guilds'.
+       * @param {object} [response] The guild data if `guilds` equals 'guilds'.
        */
       done = function(guilds, err, response) {
         if (guilds === 'guilds') {
@@ -704,8 +704,8 @@ function HGWeb() {
    *
    * @private
    * @param {Discord~Guild[]} guilds The array of guilds to strip.
-   * @param {Object} userData The current user's session data.
-   * @returns {Object[]} The stripped guilds.
+   * @param {object} userData The current user's session data.
+   * @returns {Array<object>} The stripped guilds.
    */
   function stripGuilds(guilds, userData) {
     return guilds.map((g) => {
@@ -769,7 +769,7 @@ function HGWeb() {
    *
    * @private
    * @type {HGWeb~SocketFunction}
-   * @param {Object} userData The current user's session data.
+   * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {string|number} gId The ID of the guild that was requested.
    * @param {basicCB} [cb] Callback that fires once the requested action is
@@ -805,7 +805,7 @@ function HGWeb() {
    *
    * @private
    * @type {HGWeb~SocketFunction}
-   * @param {Object} userData The current user's session data.
+   * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
    * @param {number|string} mId The member's id to lookup.
@@ -832,7 +832,7 @@ function HGWeb() {
    *
    * @private
    * @type {HGWeb~SocketFunction}
-   * @param {Object} userData The current user's session data.
+   * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
    * @param {number|string} cId The channel's id to lookup.
@@ -870,7 +870,7 @@ function HGWeb() {
    *
    * @private
    * @type {HGWeb~SocketFunction}
-   * @param {Object} userData The current user's session data.
+   * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
    * @param {basicCB} [cb] Callback that fires once the requested action is
@@ -899,7 +899,7 @@ function HGWeb() {
    *
    * @private
    * @type {HGWeb~SocketFunction}
-   * @param {Object} userData The current user's session data.
+   * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
    * @param {basicCB} [cb] Callback that fires once the requested action is
@@ -959,7 +959,7 @@ function HGWeb() {
    *
    * @private
    * @type {HGWeb~SocketFunction}
-   * @param {Object} userData The current user's session data.
+   * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
    * @param {number|string} mId The member id to exclude.
@@ -990,7 +990,7 @@ function HGWeb() {
    *
    * @private
    * @type {HGWeb~SocketFunction}
-   * @param {Object} userData The current user's session data.
+   * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
    * @param {number|string} mId The member id to include.
@@ -1022,7 +1022,7 @@ function HGWeb() {
    *
    * @private
    * @type {HGWeb~SocketFunction}
-   * @param {Object} userData The current user's session data.
+   * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
    * @param {string} option The option to change.
@@ -1063,7 +1063,7 @@ function HGWeb() {
    *
    * @private
    * @type {HGWeb~SocketFunction}
-   * @param {Object} userData The current user's session data.
+   * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
    * @param {basicCB} [cb] Callback that fires once the requested action is
@@ -1091,7 +1091,7 @@ function HGWeb() {
    *
    * @private
    * @type {HGWeb~SocketFunction}
-   * @param {Object} userData The current user's session data.
+   * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
    * @param {string} cmd Command specifying what data to delete.
@@ -1121,7 +1121,7 @@ function HGWeb() {
    *
    * @private
    * @type {HGWeb~SocketFunction}
-   * @param {Object} userData The current user's session data.
+   * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
    * @param {number|string} cId Channel to start the game in.
@@ -1151,7 +1151,7 @@ function HGWeb() {
    *
    * @private
    * @type {HGWeb~SocketFunction}
-   * @param {Object} userData The current user's session data.
+   * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
    * @param {number|string} cId Channel to send the messages in.
@@ -1181,7 +1181,7 @@ function HGWeb() {
    *
    * @private
    * @type {HGWeb~SocketFunction}
-   * @param {Object} userData The current user's session data.
+   * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
    * @param {number|string} cId Channel to send the messages in.
@@ -1211,7 +1211,7 @@ function HGWeb() {
    *
    * @private
    * @type {HGWeb~SocketFunction}
-   * @param {Object} userData The current user's session data.
+   * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
    * @param {basicCB} [cb] Callback that fires once the requested action is
@@ -1240,7 +1240,7 @@ function HGWeb() {
    *
    * @private
    * @type {HGWeb~SocketFunction}
-   * @param {Object} userData The current user's session data.
+   * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
    * @param {basicCB} [cb] Callback that fires once the requested action is
@@ -1269,7 +1269,7 @@ function HGWeb() {
    *
    * @private
    * @type {HGWeb~SocketFunction}
-   * @param {Object} userData The current user's session data.
+   * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
    * @param {basicCB} [cb] Callback that fires once the requested action is
@@ -1306,7 +1306,7 @@ function HGWeb() {
    *
    * @private
    * @type {HGWeb~SocketFunction}
-   * @param {Object} userData The current user's session data.
+   * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
    * @param {string} cmd The command to run.
@@ -1336,7 +1336,7 @@ function HGWeb() {
    *
    * @private
    * @type {HGWeb~SocketFunction}
-   * @param {Object} userData The current user's session data.
+   * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
    * @param {string} type The type of event.
@@ -1347,8 +1347,8 @@ function HGWeb() {
    * @param {string} oA Outcome of attackers.
    * @param {string} kV Do the victims kill.
    * @param {string} kA Do the attackers kill.
-   * @param {?Object} wV The weapon information for this event.
-   * @param {?Object} wA The weapon information for this event.
+   * @param {?object} wV The weapon information for this event.
+   * @param {?object} wA The weapon information for this event.
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete, or has failed.
    */
@@ -1392,7 +1392,7 @@ function HGWeb() {
    *
    * @private
    * @type {HGWeb~SocketFunction}
-   * @param {Object} userData The current user's session data.
+   * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
    * @param {string} type The type of event.
@@ -1438,7 +1438,7 @@ function HGWeb() {
    *
    * @private
    * @type {HGWeb~SocketFunction}
-   * @param {Object} userData The current user's session data.
+   * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
    * @param {string} type The type of event.
@@ -1488,7 +1488,7 @@ function HGWeb() {
    *
    * @private
    * @type {HGWeb~SocketFunction}
-   * @param {Object} userData The current user's session data.
+   * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
    * @param {string} type The type of event.
@@ -1531,7 +1531,7 @@ function HGWeb() {
    *
    * @private
    * @type {HGWeb~SocketFunction}
-   * @param {Object} userData The current user's session data.
+   * @param {object} userData The current user's session data.
    * @param {socketIo-Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to run this command on.
    * @param {string} type The type of event that we are toggling.
@@ -1574,7 +1574,7 @@ function HGWeb() {
    *
    * @private
    * @type {HGWeb~SocketFunction}
-   * @param {Object} userData The current user's session data.
+   * @param {object} userData The current user's session data.
    * @param {socketIo-Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to run this command on.
    * @param {string[]} list The list of user IDs of the players to effect.
@@ -1625,7 +1625,7 @@ function HGWeb() {
    *
    * @private
    * @type {HGWeb~SocketFunction}
-   * @param {Object} userData The current user's session data.
+   * @param {object} userData The current user's session data.
    * @param {socketIo-Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to run this command on.
    * @param {string} name The name to change the game to.
@@ -1657,7 +1657,7 @@ function HGWeb() {
    *
    * @private
    * @type {HGWeb~SocketFunction}
-   * @param {Object} userData The current user's session data.
+   * @param {object} userData The current user's session data.
    * @param {socketIo-Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to run this command on.
    * @param {string} npcId The ID of the NPC to remove.
@@ -1683,7 +1683,7 @@ function HGWeb() {
    *
    * @private
    * @type {HGWeb~SocketFunction}
-   * @param {Object} userData The current user's session data.
+   * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
    * @param {string} iId The image ID that is being uploaded.
@@ -1780,10 +1780,10 @@ function HGWeb() {
    *
    * @private
    * @type {HGWeb~SocketFunction}
-   * @param {Object} userData The current user's session data.
+   * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
-   * @param {Object} meta Metadata to associate with this upload.
+   * @param {object} meta Metadata to associate with this upload.
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete, or has failed. If succeeded, an upload ID will be passed as the
    * second parameter. Any error will be the first parameter.

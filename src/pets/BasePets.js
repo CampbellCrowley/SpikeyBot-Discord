@@ -57,7 +57,7 @@ class BasePets {
    * @description Fetch base object for a species.
    * @public
    * @param {string} species Name of species to fetch.
-   * @returns {?Object} Object reference of pet information for the species, or
+   * @returns {?object} Object reference of pet information for the species, or
    * null if could not be found.
    */
   get(species) {

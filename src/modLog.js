@@ -308,7 +308,7 @@ class Settings {
  * copy-constructor.
  * @public
  * @static
- * @param {Object} obj Object to create a Settings object from.
+ * @param {object} obj Object to create a Settings object from.
  * @returns {ModLog~Settings} The created object.
  */
 Settings.from = function(obj) {

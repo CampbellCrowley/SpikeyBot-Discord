@@ -741,6 +741,7 @@ function Main() {
         '\\[ws\\] \\[connection\\] Sending a heartbeat|' +
         '\\[WS => Shard \\d+\\] Sending a heartbeat|' +
         '\\[WS => Shard \\d+\\] Heartbeat acknowledged|' +
+        '\\[WS => Manager\\] There are \\d+ unavailable guilds.|' +
         '\\[VOICE)');
     if (info.match(hbRegex)) {
       pingHistory.push({time: Date.now(), delta: self.client.ws.ping});
@@ -1850,12 +1851,14 @@ function Main() {
     }
   }
   /**
-   * Ban a mentioed user and send a message saying they were banned.
+   * Ban a mentioed user (or role from ID) and send a message saying they were
+   * banned.
    *
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
    * @listens Command#ban
+   * @listens Command#fuckyou
    */
   function commandBan(msg) {
     const uIds = msg.text.match(/\d{17,19}/g);
@@ -1868,7 +1871,16 @@ function Main() {
     const banList = [];
     uIds.forEach((el) => {
       const u = msg.guild.members.get(el);
-      if (u) banList.push(u);
+      if (u) {
+        if (!banList.includes(u.id)) banList.push(u);
+      } else {
+        const r = msg.guild.roles.get(el);
+        if (r) {
+          r.members.forEach((m) => {
+            if (!banList.includes(m.id)) banList.push(m);
+          });
+        }
+      }
     });
     if (banList.length == 0) {
       self.common.reply(
@@ -1878,6 +1890,7 @@ function Main() {
     }
     let reason =
         msg.text.replace(self.Discord.MessageMentions.USERS_PATTERN, '')
+            .replace(self.Discord.MessageMentions.ROLES_PATTERN, '')
             .replace(/\d{17,19}/g)
             .replace(/\s{2,}/g, ' ')
             .trim();
@@ -2647,7 +2660,7 @@ function Main() {
      * Callback once all shards have replied with their stats.
      *
      * @private
-     * @param {Array.<Object>} res Array of each response object.
+     * @param {Array<object>} res Array of each response object.
      */
     function statsResponse(res) {
       const parseStart = Date.now();
@@ -2716,7 +2729,7 @@ function Main() {
    * Fetch our statistics about the bot on this shard.
    *
    * @private
-   * @returns {Object} The statistics we collected.
+   * @returns {object} The statistics we collected.
    */
   function getStats() {
     const startTime = Date.now();

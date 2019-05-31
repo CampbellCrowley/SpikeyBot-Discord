@@ -907,7 +907,7 @@
   "wood": {
     "outcomes": [
       {
-        "message": "{attacker} use[As|] their wood to make [Aa|] slingshot[A|s].",
+        "message": "{attacker} use[As|] {owner} wood to make [Aa|] slingshot[A|s].",
         "victim": {
           "count": "0",
           "outcome": "nothing",
@@ -926,7 +926,7 @@
         "consumes": "2A"
       },
       {
-        "message": "{attacker} use[As|] their wood to make [Aa |]bow[A|s].",
+        "message": "{attacker} use[As|] {owner} wood to make [Aa |]bow[A|s].",
         "victim": {
           "count": "0",
           "outcome": "nothing",
@@ -945,7 +945,7 @@
         "consumes": "2A"
       },
       {
-        "message": "{attacker} use[As|] their wood to make [Aa |]spear[A|s].",
+        "message": "{attacker} use[As|] {owner} wood to make [Aa |]spear[A|s].",
         "victim": {
           "count": "0",
           "outcome": "nothing",

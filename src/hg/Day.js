@@ -46,7 +46,7 @@ class Day {
  * Create a Day from an Object. Similar to copy-constructor.
  *
  * @public
- * @param {Object} data Day like Object.
+ * @param {object} data Day like Object.
  * @returns {HungryGames~Day} Created Day.
  */
 Day.from = function(data) {

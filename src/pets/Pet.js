@@ -110,7 +110,7 @@ class Pet {
    * private variables, and all functions. Assumes all public variables are
    * serializable if they aren't a function.
    * @public
-   * @returns {Object} Serializable version of this instance.
+   * @returns {object} Serializable version of this instance.
    */
   get serializable() {
     const all = Object.entries(Object.getOwnPropertyDescriptors(this));
@@ -138,7 +138,7 @@ class Pet {
  * copy-constructor.
  * @public
  * @static
- * @param {Object} obj The Pet-like object to copy.
+ * @param {object} obj The Pet-like object to copy.
  * @returns {Pet} Created Pet object.
  */
 Pet.from = function(obj) {

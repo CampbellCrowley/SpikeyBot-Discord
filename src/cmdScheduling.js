@@ -115,7 +115,7 @@ function CmdScheduling() {
    * @private
    *
    * @param {string|number} i The guild ID.
-   * @param {Object} data The data to write.
+   * @param {object} data The data to write.
    * @param {string} [opt='sync'] See {@link save}.
    */
   function writeSaveData(i, data, opt) {
@@ -269,7 +269,7 @@ function CmdScheduling() {
    * @class
    *
    * @public
-   * @param {string|Object} cmd The command to run, or an object instance of
+   * @param {string|object} cmd The command to run, or an object instance of
    * this class (exported using toJSON, then parsed into an object).
    * @param {string|number|Discord~TextChannel} channel The channel or channel
    * id of where to run the command.
@@ -505,7 +505,7 @@ function CmdScheduling() {
      * Export the relevant data to recreate this object, as a JSON object.
      *
      * @public
-     * @returns {Object} JSON formatted object.
+     * @returns {object} JSON formatted object.
      */
     this.toJSON = function() {
       return {

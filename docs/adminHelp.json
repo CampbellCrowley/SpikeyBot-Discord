@@ -43,6 +43,43 @@
               "description": "Ban Multiple Users",
               "command": "ban @SpikeyRobot @RoboSoupCan",
               "result": "SpikeyRobot and RoboSoupCan will be banned from your server, and the bot will send a message in the chat saying goodbye."
+            },
+            {
+              "description": "Ban By ID",
+              "command": "ban 124733888177111041",
+              "result": "SpikeyRobot will be banned from your server, and the bot will send a message in the chat saying goodbye. (Works with multiple IDs)"
+            },
+            {
+              "description": "Ban Role",
+              "command": "ban 574744521427124254",
+              "result": "All member in the role with the ID, will be banned from your server, and the bot will send a message in the chat saying goodbye. (Works with multiple IDs)"
+            }
+          ]
+        },
+        {
+          "command": "kick",
+          "description": "I will kick the person you mention.",
+          "validOnlyInGuild": true,
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "kick @SpikeyRobot",
+              "result": "SpikeyRobot will be kicked from your server."
+            },
+            {
+              "description": "Kick Multiple Users",
+              "command": "kick @SpikeyRobot @RoboSoupCan",
+              "result": "SpikeyRobot and RoboSoupCan will be kicked from your server."
+            },
+            {
+              "description": "Kick By ID",
+              "command": "kick 124733888177111041",
+              "result": "SpikeyRobot will be kicked. (Works with multiple IDs)"
+            },
+            {
+              "description": "Kick Role",
+              "command": "kick 574744521427124254",
+              "result": "The role with the given ID, will have all of its members kicked. (Mentioning the role also works)"
             }
           ]
         },

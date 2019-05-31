@@ -16,8 +16,8 @@ class Worker {
   /**
    * @description Create and start simulating.
    * @param {{
-   * game: Object,
-   * messages: Object.<string>
+   * game: object,
+   * messages: object.<string>
    * }} sim Simulation data.
    * @param {boolean} [retry=true] Whether to try again if there is an error.
    */
@@ -55,6 +55,14 @@ class Worker {
       const tmp = userPool[i];
       userPool[i] = userPool[index];
       userPool[index] = tmp;
+    }
+    const teams = sim.game.currentGame.teams;
+    // Shuffle team order because games may have been rigged :hyperthonk:.
+    for (let i = 0; i < teams.length; i++) {
+      const index = Math.floor(Math.random() * (teams.length - i)) + i;
+      const tmp = teams[i];
+      teams[i] = teams[index];
+      teams[index] = tmp;
     }
     const startingAlive = userPool.length;
     let userEventPool;
@@ -217,9 +225,8 @@ class Worker {
           eventTry = Simulator._pickEvent(
               userPool, weapons[chosenWeapon].outcomes, sim.game.options,
               sim.game.currentGame.numAlive,
-              sim.game.currentGame.includedUsers.length,
-              sim.game.currentGame.teams, probOpts, userWithWeapon,
-              chosenWeapon);
+              sim.game.currentGame.includedUsers.length, teams, probOpts,
+              userWithWeapon, chosenWeapon);
           if (!eventTry) {
             useWeapon = false;
             /* self.error(
@@ -231,7 +238,7 @@ class Worker {
             affectedUsers = Simulator._pickAffectedPlayers(
                 numVictim, numAttacker, eventTry.victim.outcome,
                 eventTry.attacker.outcome, sim.game.options, userPool, deadPool,
-                sim.game.currentGame.teams, userWithWeapon, chosenWeapon);
+                teams, userWithWeapon, chosenWeapon);
 
             const consumed = Simulator._parseConsumeCount(
                 eventTry.consumes, numVictim, numAttacker);
@@ -298,23 +305,23 @@ class Worker {
         }
       }
 
-      const doBattle =
-          ((!useWeapon && !doArenaEvent) || !eventTry) && userPool.length > 1 &&
+      const doBattle = ((!useWeapon && !doArenaEvent) || !eventTry) &&
+          userPool.length > 1 &&
           (Math.random() < sim.game.options.probabilityOfBattle ||
            sim.game.currentGame.numAlive == 2) &&
           !Simulator._validateEventRequirements(
-              1, 1, userPool, sim.game.currentGame.numAlive,
-              sim.game.currentGame.teams, sim.game.options, true, false);
+              1, 1, userPool, sim.game.currentGame.numAlive, teams,
+              sim.game.options, true, false);
       if (doBattle) {
         do {
           numAttacker = Simulator.weightedUserRand();
           numVictim = Simulator.weightedUserRand();
         } while (Simulator._validateEventRequirements(
             numVictim, numAttacker, userPool, sim.game.currentGame.numAlive,
-            sim.game.currentGame.teams, sim.game.options, true, false));
+            teams, sim.game.options, true, false));
         affectedUsers = Simulator._pickAffectedPlayers(
             numVictim, numAttacker, 'dies', 'nothing', sim.game.options,
-            userPool, deadPool, sim.game.currentGame.teams, null);
+            userPool, deadPool, teams, null);
         eventTry = Battle.finalize(
             affectedUsers, numVictim, numAttacker, sim.game.options.mentionAll,
             sim.game, sim.events.battles);
@@ -322,8 +329,7 @@ class Worker {
         eventTry = Simulator._pickEvent(
             userPool, userEventPool, sim.game.options,
             sim.game.currentGame.numAlive,
-            sim.game.currentGame.includedUsers.length,
-            sim.game.currentGame.teams, probOpts);
+            sim.game.currentGame.includedUsers.length, teams, probOpts);
         if (!eventTry) {
           console.error(
               'No event for ' + userPool.length + ' from ' +
@@ -355,7 +361,7 @@ class Worker {
         affectedUsers = Simulator._pickAffectedPlayers(
             numVictim, numAttacker, eventTry.victim.outcome,
             eventTry.attacker.outcome, sim.game.options, userPool, deadPool,
-            sim.game.currentGame.teams, null);
+            teams, null);
       }
 
       let numKilled = 0;
@@ -540,7 +546,7 @@ class Worker {
           obj.rank = sim.game.currentGame.numAlive--;
           obj.dayOfDeath = sim.game.currentGame.day.num;
           if (sim.game.options.teamSize > 0) {
-            const team = sim.game.currentGame.teams.find((team) => {
+            const team = teams.find((team) => {
               return team.players.findIndex((player) => {
                 return obj.id == player;
               }) > -1;
@@ -548,7 +554,7 @@ class Worker {
             team.numAlive--;
             if (team.numAlive === 0) {
               let teamsLeft = 0;
-              sim.game.currentGame.teams.forEach((obj) => {
+              teams.forEach((obj) => {
                 if (obj.numAlive > 0) teamsLeft++;
               });
               team.rank = teamsLeft + 1;

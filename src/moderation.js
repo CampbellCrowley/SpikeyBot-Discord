@@ -67,6 +67,7 @@ class Moderation extends SubModule {
     this._onMessageDeleteBulk = this._onMessageDeleteBulk.bind(this);
     this._onGuildMemberRemove = this._onGuildMemberRemove.bind(this);
     this._onGuildMemberAdd = this._onGuildMemberAdd.bind(this);
+    this._commandKick = this._commandKick.bind(this);
   }
   /** @inheritdoc */
   initialize() {
@@ -110,6 +111,12 @@ class Moderation extends SubModule {
     this.command.on(
         new this.command.SingleCommand(
             'togglebanmessages', commandToggleBanMessages, adminOnlyOpts)); */
+    this.command.on(
+        new this.command.SingleCommand(['kick'], this._commandKick, {
+          validOnlyInGuild: true,
+          defaultDisabled: true,
+          permissions: this.Discord.Permissions.FLAGS.KICK_MEMBERS,
+        }));
 
     this.client.guilds.forEach((g) => {
       if (!fs.existsSync(
@@ -165,6 +172,7 @@ class Moderation extends SubModule {
     this.command.removeListener('smite');
     this.command.removeListener('togglemute');
     this.command.removeListener('togglebanmessages'); */
+    this.command.removeListener('kick');
     this.client.removeListener('messageDelete', this._onMessageDelete);
     this.client.removeListener('messageDeleteBulk', this._onMessageDeleteBulk);
     this.client.removeListener('guildMemberRemove', this._onGuildMemberRemove);
@@ -245,7 +253,25 @@ class Moderation extends SubModule {
   _onGuildMemberAdd(member) {
     const modLog = this.bot.getSubmodule('./modLog.js');
     if (!modLog) return;
-    modLog.output(member.guild, 'memberJoin', member.user);
+    let num = -1;
+    if (this.client.shard) {
+      const toEval =
+          `this.guilds.filter((g) => g.members.get('${member.id}')).size`;
+      this.client.shard.broadcastEval(toEval).then((res) => {
+        res.forEach((el) => num += el);
+        const additional =
+            num > 0 ? `${num} other mutual server${num > 1 ? 's' : ''}.` : null;
+        modLog.output(
+            member.guild, 'memberJoin', member.user, null, additional);
+      });
+    } else {
+      this.client.guilds.forEach((g) => {
+        if (g.members.get(member.id)) num++;
+      });
+      const additional =
+          num > 0 ? `${num} other mutual server${num > 1 ? 's' : ''}.` : null;
+      modLog.output(member.guild, 'memberJoin', member.user, null, additional);
+    }
   }
 
   /**
@@ -331,6 +357,98 @@ class Moderation extends SubModule {
     } else {
       mute(muteRole, toMute);
     }
+  }
+
+  /**
+   * Kick a mentioed user (or role from ID) and send a message saying they were
+   * banned.
+   *
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens Command#kick
+   */
+  _commandKick(msg) {
+    const uIds = msg.text.match(/\d{17,19}/g);
+    if (!uIds) {
+      this.common.reply(
+          msg, 'You must mention someone to kick or specify an ID of ' +
+              'someone on the server.');
+      return;
+    }
+    const banList = [];
+    uIds.forEach((el) => {
+      const u = msg.guild.members.get(el);
+      if (u) {
+        if (!banList.includes(u.id)) banList.push(u);
+      } else {
+        const r = msg.guild.roles.get(el);
+        if (r) {
+          r.members.forEach((m) => {
+            if (!banList.includes(m.id)) banList.push(m);
+          });
+        }
+      }
+    });
+    if (banList.length == 0) {
+      this.common.reply(
+          msg, 'You must mention someone to kick or specify an ID of ' +
+              'someone on the server.');
+      return;
+    }
+    let reason =
+        msg.text.replace(this.Discord.MessageMentions.USERS_PATTERN, '')
+            .replace(this.Discord.MessageMentions.ROLES_PATTERN, '')
+            .replace(/\d{17,19}/g)
+            .replace(/\s{2,}/g, ' ')
+            .trim();
+    if (reason == 'undefined') reason = null;
+    banList.forEach((toBan) => {
+      if (msg.guild.ownerID !== msg.author.id &&
+          msg.member.roles.highest.comparePositionTo(toBan.roles.highest) <=
+              0) {
+        this.common
+            .reply(
+                msg, 'You can\'t kick ' + toBan.user.username +
+                    '! You are not stronger than them!')
+            .catch(() => {});
+      } else {
+        const me = msg.guild.me;
+        const myRole = me.roles.highest;
+        const highest = toBan.roles.highest;
+
+        if (!myRole || (highest && myRole.comparePositionTo(highest) <= 0)) {
+          this.common
+              .reply(
+                  msg, 'I can\'t kick ' + toBan.user.username +
+                      '! I am not strong enough!')
+              .catch(() => {});
+        } else {
+          // const banMsg = banMsgs[Math.floor(Math.random() * banMsgs.length)];
+          const banMsg = 'Kicked';
+          toBan.kick({reason: reason || banMsg})
+              .then(() => {
+                this.common.reply(msg, banMsg, 'Kicked ' + toBan.user.username)
+                    .catch(() => {});
+                const modLog = this.bot.getSubmodule('./modLog.js');
+                if (modLog) {
+                  modLog.output(
+                      msg.guild, 'kick', toBan.user, msg.author,
+                      reason || banMsg);
+                }
+              })
+              .catch((err) => {
+                this.common
+                    .reply(
+                        msg, 'Oops! I wasn\'t able to kick ' +
+                            toBan.user.username + '! I\'m not sure why though!')
+                    .catch(() => {});
+                this.error('Failed to kick user.');
+                console.error(err);
+              });
+        }
+      }
+    });
   }
 }
 

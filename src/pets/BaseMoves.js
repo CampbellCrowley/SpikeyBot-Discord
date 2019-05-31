@@ -57,7 +57,7 @@ class BaseMoves {
    * @description Fetch base object for a single move.
    * @public
    * @param {string} name Name of move to fetch.
-   * @returns {?Object} Object reference of pet information for the move, or
+   * @returns {?object} Object reference of pet information for the move, or
    * null if could not be found.
    */
   get(name) {

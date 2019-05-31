@@ -113,7 +113,7 @@
 
     
     <div class="description">
-        Handle all moderator related commands and control.
+        Instantiate Moderation SubModule.
     </div>
     
 
@@ -160,7 +160,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="moderation.js.html">moderation.js</a>,
-				 <a href="moderation.js.html#sunlight-1-line-10">line 10</a>
+				 <a href="moderation.js.html#sunlight-1-line-14">line 14</a>
 			</li>
 		</ul>
 	</dd>
@@ -604,7 +604,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="moderation.js.html">moderation.js</a>,
-				 <a href="moderation.js.html#sunlight-1-line-79">line 79</a>
+				 <a href="moderation.js.html#sunlight-1-line-80">line 80</a>
 			</li>
 		</ul>
 	</dd>
@@ -668,6 +668,11 @@
 	</dd>
 	
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#bot">SubModule#bot</a>
+    </li></ul></dd>
     
 
     
@@ -759,6 +764,11 @@
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#client">SubModule#client</a>
+    </li></ul></dd>
+    
 
     
 
@@ -848,6 +858,11 @@
 	</dd>
 	
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#command">SubModule#command</a>
+    </li></ul></dd>
     
 
     
@@ -940,6 +955,11 @@ version of this submodule.
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#commit">SubModule#commit</a>
+    </li></ul></dd>
+    
 
     
 
@@ -1030,6 +1050,11 @@ version of this submodule.
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#common">SubModule#common</a>
+    </li></ul></dd>
+    
 
     
 
@@ -1119,6 +1144,11 @@ version of this submodule.
 	</dd>
 	
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#Discord">SubModule#Discord</a>
+    </li></ul></dd>
     
 
     
@@ -1213,6 +1243,11 @@ version of this submodule.
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#helpMessage">SubModule#helpMessage</a>
+    </li></ul></dd>
+    
 
     
 
@@ -1302,6 +1337,11 @@ version of this submodule.
 	</dd>
 	
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#initialized">SubModule#initialized</a>
+    </li></ul></dd>
     
 
     
@@ -1394,6 +1434,11 @@ needs to be reloaded because the file has been modified since loading.
 	</dd>
 	
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#loadTime">SubModule#loadTime</a>
+    </li></ul></dd>
     
 
     
@@ -1583,6 +1628,11 @@ before begin(), otherwise it is ignored.
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#postPrefix">SubModule#postPrefix</a>
+    </li></ul></dd>
+    
 
     
 
@@ -1632,6 +1682,150 @@ before begin(), otherwise it is ignored.
         <h3 class="subsection-title">Methods</h3>
 
         <dl>
+            
+<hr>
+<dt>
+    <h4 class="name" id="_commandKick"><span class="type-signature">&lt;private> </span>_commandKick(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Kick a mentioed user (or role from ID) and send a message saying they were
+banned.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>msg</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Discord~Message</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Message that triggered command.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="moderation.js.html">moderation.js</a>,
+				 <a href="moderation.js.html#sunlight-1-line-371">line 371</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>Command#event:kick</li>
+    </ul>
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
             
 <hr>
 <dt>
@@ -1740,7 +1934,7 @@ before begin(), otherwise it is ignored.
 		<ul class="dummy">
 			<li>
 				<a href="moderation.js.html">moderation.js</a>,
-				 <a href="moderation.js.html#sunlight-1-line-245">line 245</a>
+				 <a href="moderation.js.html#sunlight-1-line-253">line 253</a>
 			</li>
 		</ul>
 	</dd>
@@ -1879,7 +2073,7 @@ kicked.</td>
 		<ul class="dummy">
 			<li>
 				<a href="moderation.js.html">moderation.js</a>,
-				 <a href="moderation.js.html#sunlight-1-line-235">line 235</a>
+				 <a href="moderation.js.html#sunlight-1-line-243">line 243</a>
 			</li>
 		</ul>
 	</dd>
@@ -2017,7 +2211,7 @@ kicked.</td>
 		<ul class="dummy">
 			<li>
 				<a href="moderation.js.html">moderation.js</a>,
-				 <a href="moderation.js.html#sunlight-1-line-197">line 197</a>
+				 <a href="moderation.js.html#sunlight-1-line-205">line 205</a>
 			</li>
 		</ul>
 	</dd>
@@ -2156,7 +2350,7 @@ deleted messages.</td>
 		<ul class="dummy">
 			<li>
 				<a href="moderation.js.html">moderation.js</a>,
-				 <a href="moderation.js.html#sunlight-1-line-211">line 211</a>
+				 <a href="moderation.js.html#sunlight-1-line-219">line 219</a>
 			</li>
 		</ul>
 	</dd>
@@ -2375,6 +2569,11 @@ register command listeners.</td>
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#begin">SubModule#begin</a>
+    </li></ul></dd>
+    
 
     
 
@@ -2522,6 +2721,11 @@ register command listeners.</td>
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#debug">SubModule#debug</a>
+    </li></ul></dd>
+    
 
     
 
@@ -2618,6 +2822,11 @@ register command listeners.</td>
 	</dd>
 	
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#end">SubModule#end</a>
+    </li></ul></dd>
     
 
     
@@ -2765,6 +2974,11 @@ register command listeners.</td>
 	</dd>
 	
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#error">SubModule#error</a>
+    </li></ul></dd>
     
 
     
@@ -3016,6 +3230,11 @@ specific to the subModule. Must be defined before begin() is called.
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#log">SubModule#log</a>
+    </li></ul></dd>
+    
 
     
 
@@ -3206,7 +3425,7 @@ string if there was an error, or null if success.</td>
 		<ul class="dummy">
 			<li>
 				<a href="moderation.js.html">moderation.js</a>,
-				 <a href="moderation.js.html#sunlight-1-line-260">line 260</a>
+				 <a href="moderation.js.html#sunlight-1-line-286">line 286</a>
 			</li>
 		</ul>
 	</dd>
@@ -3281,6 +3500,11 @@ completely, this checks if the module can be stopped and restarted.
 	</dd>
 	
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#reloadable">SubModule#reloadable</a>
+    </li></ul></dd>
     
 
     
@@ -3687,6 +3911,11 @@ doing such may risk putting the module into an uncontrollable state.
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#unloadable">SubModule#unloadable</a>
+    </li></ul></dd>
+    
 
     
 
@@ -3865,6 +4094,11 @@ doing such may risk putting the module into an uncontrollable state.
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#warn">SubModule#warn</a>
+    </li></ul></dd>
+    
 
     
 
@@ -3971,9 +4205,9 @@ doing such may risk putting the module into an uncontrollable state.
 	</span>
 
 <span class="jsdoc-message">
-	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.2</a>
 	
-		on Wednesday, May 29, 2019 10:10 PM (-07:00)
+		on Friday, May 31, 2019 12:54 AM (-07:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

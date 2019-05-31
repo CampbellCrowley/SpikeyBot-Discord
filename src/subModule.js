@@ -293,7 +293,7 @@ class SubModule {
  *
  * @public
  * @static
- * @param {Object} child The child class to extend.
+ * @param {object} child The child class to extend.
  */
 SubModule.extend = function(child) {
   child.prototype = new SubModule();
