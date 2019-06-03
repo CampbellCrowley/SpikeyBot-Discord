@@ -641,7 +641,7 @@ function Command() {
         if (msg.guild) {
           if (search.guilds[msg.guild.id]) return 1;
           if (msg.member.roles.find((r) => {
-            return search.roles[msg.guild.id + '/' + r.id];
+            return search.roles[`${msg.guild.id}/${r.id}`];
           })) {
             return 2;
           }
@@ -1519,7 +1519,7 @@ function Command() {
                 return;
               }
               msg_.edit('`Confirmed`');
-              delete userSettings[msg.guild.id];
+              userSettings[msg.guild.id] = {};
               self.common.reply(
                   msg, 'All settings for commands have been reset.');
               self.fire('settingsReset', msg.guild.id);

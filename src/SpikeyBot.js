@@ -414,14 +414,14 @@ function SpikeyBot() {
           if (msg.indexOf('force') > -1) {
             manager.shards.forEach((s) => {
               if (!idList || idList.find((el) => el == s.id)) {
-                s.process.send('reboot');
+                s.process.send(`reboot ${s.id}`);
                 s.respawn();
               }
             });
           } else {
             manager.shards.forEach((s) => {
               if (!idList || idList.find((el) => el == s.id)) {
-                s.process.send('reboot');
+                s.process.send(`reboot ${s.id}`);
               }
             });
           }
@@ -749,7 +749,8 @@ function SpikeyBot() {
                   client.shard.count;
             }
             if (crashed) {
-              additional += ' due to rapid unscheduled dissassembly!';
+              // additional += ' due to rapid unscheduled dissassembly!';
+              additional += '*';
             } else if (disconnectReason) {
               additional +=
                   ' after disconnecting from Discord!\n' + disconnectReason;
