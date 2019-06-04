@@ -2670,9 +2670,12 @@ function HG() {
     if (!Array.isArray(users)) {
       users = users.array();
     }
-    users = users.filter((el) => el);
+    if (users.length > 10000) {
+      self.warn(`Excluding ${users.length} users.`);
+    }
     const onlyError = users.length > 2;
     users.forEach(function(obj) {
+      if (!obj) return;
       if (typeof obj === 'string') {
         if (obj.startsWith('NPC')) {
           obj = hg.getGame(id).includedNPCs.find((el) => el.id == obj);
@@ -2858,10 +2861,7 @@ function HG() {
       case 'idle':
       case 'dnd':
         users = hg.getGame(id)
-            .excludedUsers
-            .map((u) => {
-              return self.client.users.get(u);
-            })
+            .excludedUsers.map((u) => self.client.users.get(u))
             .filter((u) => {
               if (!u) return false;
               return u.presence.status === users;
@@ -2874,21 +2874,24 @@ function HG() {
     if (!Array.isArray(users)) {
       users = users.array();
     }
-    users = users.filter((el) => el);
+    if (users.length > 10000) {
+      self.warn(`Including ${users.length} users.`);
+    }
     const onlyError = users.length > 2;
     users.forEach(function(obj) {
+      if (!obj) return;
       if (typeof obj === 'string') {
         if (obj.startsWith('NPC')) {
           obj = hg.getGame(id).excludedNPCs.find((el) => el.id == obj);
           if (!obj && hg.getGame(id).includedNPCs.find((el) => el.id == obj)) {
-            response += obj.username + ' is already included.\n';
+            response += `${obj.username} is already included.\n`;
             return;
           }
         } else {
           obj = self.client.users.get(obj);
         }
         if (!obj) {
-          response += obj + ' is not a valid id.\n';
+          response += `${obj} is not a valid id.\n`;
           return;
         }
       } else if (obj.id.startsWith('NPC') && !(obj instanceof NPC)) {
@@ -2896,12 +2899,12 @@ function HG() {
         obj = hg.getGame(id).excludedNPCs.find((el) => el.id == obj.id);
         if (!obj) {
           response += `${objId} unable to be found (already included?).\n`;
-          self.error('Unable to find NPC matching NPC-like data: ' + id);
+          self.error(`Unable to find NPC matching NPC-like data: ${id}`);
           return;
         }
       }
       if (!hg.getGame(id).options.includeBots && obj.bot) {
-        response += obj.username + ' is a bot, but bots are disabled.\n';
+        response += `${obj.username} is a bot, but bots are disabled.\n`;
         return;
       }
       if (obj.isNPC) {
@@ -2916,7 +2919,7 @@ function HG() {
         if (!hg.getGame(id).includedNPCs.find((el) => el.id == obj.id)) {
           hg.getGame(id).includedNPCs.push(obj);
           if (!onlyError) {
-            response += obj.username + ' added to whitelist.*\n';
+            response += `${obj.username} added to whitelist.*\n`;
           }
         }
       } else {
@@ -2930,13 +2933,13 @@ function HG() {
         if (!hg.getGame(id).includedUsers.includes(obj.id)) {
           hg.getGame(id).includedUsers.push(obj.id);
           if (!onlyError) {
-            response += obj.username + ' added to whitelist.\n';
+            response += `${obj.username} added to whitelist.\n`;
           }
         }
       }
       if (hg.getGame(id).currentGame.inProgress) {
         if (!onlyError) {
-          response += obj.username + ' skipped.\n';
+          response += `${obj.username} skipped.\n`;
         }
       } else if (!hg.getGame(id).currentGame.includedUsers.find((u) => {
         return u.id === obj.id;
@@ -2957,7 +2960,7 @@ function HG() {
         hg.getGame(id).formTeams(id);
       } else {
         if (!onlyError) {
-          response += obj.username + ' is already included.\n';
+          response += `${obj.username} is already included.\n`;
         }
       }
     });
