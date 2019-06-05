@@ -754,6 +754,14 @@ function HG() {
    */
   function mkCmd(cb) {
     return function(msg) {
+      if (msg.guild.memberCount > 20000) {
+        self.common.reply(
+            msg,
+            'Sorry, but HG has been temporarily disabled on servers larger' +
+                ' than 20000 people.',
+            'More information on my support server.');
+        return;
+      }
       const id = msg.guild.id;
       hg.fetchGame(id, (game) => {
         if (game) {
