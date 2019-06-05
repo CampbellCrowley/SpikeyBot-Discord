@@ -1930,7 +1930,7 @@ function HG() {
         const newImage = function(image, outcome, placement, barColor) {
           try {
             if (battleIconSize > 0) {
-              image.resize(battleIconSize, battleIconSize);
+              if (image) image.resize(battleIconSize, battleIconSize);
               if (underlineSize > 0) {
                 if (typeof barColor === 'number') {
                   finalImage.blit(
@@ -1949,8 +1949,11 @@ function HG() {
                       battleIconSize + underlineSize);
                 }
               }
-              finalImage.blit(
-                  image, placement * (battleIconSize + iconGap), underlineSize);
+              if (image) {
+                finalImage.blit(
+                    image, placement * (battleIconSize + iconGap),
+                    underlineSize);
+              }
             }
           } catch (err) {
             console.error(err);
@@ -2039,7 +2042,7 @@ function HG() {
         const newImage = function(image, outcome, placement, barColor) {
           try {
             if (iconSize > 0) {
-              image.resize(iconSize, iconSize);
+              if (image) image.resize(iconSize, iconSize);
               if (underlineSize > 0) {
                 if (typeof barColor === 'number') {
                   finalImage.blit(
@@ -2068,8 +2071,10 @@ function HG() {
                       iconSize + underlineSize);
                 }
               }
-              finalImage.blit(
-                  image, placement * (iconSize + iconGap), underlineSize);
+              if (image) {
+                finalImage.blit(
+                    image, placement * (iconSize + iconGap), underlineSize);
+              }
             }
           } catch (err) {
             console.error(err);
@@ -2357,7 +2362,7 @@ function HG() {
         const newImage = function(image, userId) {
           try {
             if (victorIconSize > 0) {
-              image.resize(victorIconSize, victorIconSize);
+              if (image) image.resize(victorIconSize, victorIconSize);
               if (underlineSize > 0) {
                 const user =
                     current.includedUsers.find((obj) => obj.id == userId);
@@ -2381,8 +2386,11 @@ function HG() {
                     new Jimp(victorIconSize, underlineSize, color),
                     responses * (victorIconSize + iconGap), victorIconSize);
               }
-              finalImage.blit(
-                  image, responses * (victorIconSize + iconGap), underlineSize);
+              if (image) {
+                finalImage.blit(
+                    image, responses * (victorIconSize + iconGap),
+                    underlineSize);
+              }
             }
           } catch (err) {
             self.warn('Failed to blit victor image');
@@ -6107,8 +6115,8 @@ function HG() {
     if (typeof url === 'string') {
       const splitURL = url.match(/\/(avatars)\/(\w+)\/([^?&/]+)/);
       if (splitURL && splitURL[1] == 'avatars') {
-        dir = self.common.userSaveDir + 'avatars/' + splitURL[2] + '/';
-        filename = dir + splitURL[3];
+        dir = `${self.common.userSaveDir}avatars/${splitURL[2]}/`;
+        filename = `${dir}${splitURL[3]}`;
       }
       if (filename && fs.existsSync(filename)) {
         fromCache = true;

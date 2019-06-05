@@ -1126,6 +1126,8 @@ function SpikeyBot() {
    * @listens Command#changePrefix
    */
   function commandChangePrefix(msg) {
+    const canReact = msg.channel.permissionsFor(self.client.user)
+        .has(Discord.Permissions.FLAGS.ADD_REACTIONS);
     const confirmEmoji = '✅';
     const newPrefix = msg.text.slice(1);
     if (newPrefix.length < 1) {
@@ -1138,14 +1140,13 @@ function SpikeyBot() {
       common.reply(
           msg, 'Sorry, but custom prefixes may not contain any whitespace.');
     } else {
-      msg.channel
-          .send(
-              common.mention(msg) +
-              ' Are you sure you wish to change the command prefix for ' +
-              'this server from `' + self.getPrefix(msg.guild.id) + '` to `' +
-              newPrefix + '`?')
+      common
+          .reply(
+              msg, 'Change prefix from `' + self.getPrefix(msg.guild.id) +
+                  '` to `' + newPrefix + '`?',
+              canReact ? null : `React with ${confirmEmoji} to confirm.`)
           .then((msg_) => {
-            msg_.react(confirmEmoji);
+            if (canReact) msg_.react(confirmEmoji);
             msg_.awaitReactions((reaction, user) => {
               if (user.id !== msg.author.id) return false;
               return reaction.emoji.name == confirmEmoji;
