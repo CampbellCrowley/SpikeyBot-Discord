@@ -297,6 +297,7 @@ class HungryGames {
    */
   getAllPlayers(
       members, excluded, bots, included, excludeByDefault, includedNPCs = []) {
+    const iTime = Date.now();
     let finalMembers = [];
     if (!bots || Array.isArray(excluded)) {
       finalMembers = members.filter((obj) => {
@@ -346,6 +347,10 @@ class HungryGames {
       finalMembers = finalMembers.concat(includedNPCs.map((obj) => {
         return new this._parent.NPC(obj.name, obj.avatarURL, obj.id);
       }));
+    }
+    const now = Date.now();
+    if (now - iTime > 10) {
+      this._parent.debug(`GetAllPlayers ${finalMembers.length} ${now - iTime}`);
     }
     return finalMembers;
   }

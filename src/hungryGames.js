@@ -325,6 +325,16 @@ function HG() {
   const eventHandlers = {};
 
   /**
+   * Maximum number of operations allowed each event loop to prevent cpu
+   * deadlock.
+   * @private
+   * @type {number}
+   * @constant
+   * @default
+   */
+  const maxOpts = 10;
+
+  /**
    * @description Parse all default events from file.
    *
    * @private
@@ -754,14 +764,6 @@ function HG() {
    */
   function mkCmd(cb) {
     return function(msg) {
-      if (msg.guild.memberCount > 5000) {
-        self.common.reply(
-            msg,
-            'Sorry, but HG has been temporarily disabled on servers larger' +
-                ' than 5000 people.',
-            'More information on my support server.');
-        return;
-      }
       const id = msg.guild.id;
       if (hg.getGame(id)) {
         let text = msg.text.trim().toLocaleLowerCase();
@@ -1434,12 +1436,12 @@ function HG() {
       if (obj.nickname && game.options.useNicknames) {
         shortName = obj.nickname.substring(0, 16);
         if (shortName != obj.nickname) {
-          shortName = shortName.substring(0, 13) + '...';
+          shortName = `${shortName.substring(0, 13)}...`;
         }
       } else {
         shortName = obj.name.substring(0, 16);
         if (shortName != obj.name) {
-          shortName = shortName.substring(0, 13) + '...';
+          shortName = `${shortName.substring(0, 13)}...`;
         }
       }
 
@@ -1486,7 +1488,7 @@ function HG() {
             game.excludedUsers.map((obj) => getName(msg.guild, obj)).join(', ');
         const trimmedList = excludedList.substr(0, 512);
         if (excludedList != trimmedList) {
-          excludedList = trimmedList.substr(0, 509) + '...';
+          excludedList = `${trimmedList.substr(0, 509)}...`;
         } else {
           excludedList = trimmedList;
         }
@@ -2583,32 +2585,34 @@ function HG() {
     };
     let resPrefix = '';
     let resPostfix = ' have been removed from the games.';
-    let response;
+    const done = function(response) {
+      self.common.reply(msg, resPrefix + resPostfix, response.substr(0, 2048));
+    };
     if (hg.getGame(id).currentGame.inProgress) {
       resPostfix = ' will be removed from the next game.';
     }
     if (specialWords.everyone.includes(firstWord)) {
-      response = self.excludeUsers('everyone', id);
       resPrefix = 'All users';
+      self.excludeUsers('everyone', id, done);
     } else if (specialWords.online.includes(firstWord)) {
-      response = self.excludeUsers('online', id);
       resPrefix = 'All online users';
+      self.excludeUsers('online', id, done);
     } else if (specialWords.offline.includes(firstWord)) {
-      response = self.excludeUsers('offline', id);
       resPrefix = 'All offline users';
+      self.excludeUsers('offline', id, done);
     } else if (specialWords.idle.includes(firstWord)) {
-      response = self.excludeUsers('idle', id);
       resPrefix = 'All idle users';
+      self.excludeUsers('idle', id, done);
     } else if (specialWords.dnd.includes(firstWord)) {
-      response = self.excludeUsers('dnd', id);
       resPrefix = 'All DND users';
+      self.excludeUsers('dnd', id, done);
     } else if (specialWords.npcs.includes(firstWord)) {
-      response = self.excludeUsers(hg.getGame(id).includedNPCs.slice(0), id);
       resPrefix = 'All NPCs';
+      self.excludeUsers(hg.getGame(id).includedNPCs.slice(0), id, done);
     } else if (specialWords.bots.includes(firstWord)) {
-      response = self.setOption(id, 'includeBots', false);
       resPrefix = 'Bots';
       resPostfix = ' are now blocked from the games.';
+      done(self.setOption(id, 'includeBots', false));
     } else if (
       msg.mentions.users.size + msg.softMentions.users.size +
             msg.mentions.roles.size + msg.softMentions.roles.size ==
@@ -2617,7 +2621,6 @@ function HG() {
           msg,
           'You must specify who you wish for me to exclude from the next ' +
               'game.');
-      return;
     } else {
       const mentionedRoleUsers = new self.Discord.UserStore(
           self.client,
@@ -2627,11 +2630,11 @@ function HG() {
           ...msg.softMentions.roles.map((r) => r.members.map((m) => m.user)));
       const mentions = msg.mentions.users.concat(msg.softMentions.users)
           .concat(mentionedRoleUsers.concat(softRoleUsers));
-      self.common.reply(msg, self.excludeUsers(mentions, id));
-      return;
-    }
 
-    self.common.reply(msg, resPrefix + resPostfix, response.substr(0, 2048));
+      self.excludeUsers(mentions, id, (res) => {
+        self.common.reply(msg, res);
+      });
+    }
   }
 
   /**
@@ -2642,35 +2645,39 @@ function HG() {
    * to exclude, or
    * 'everyone' to exclude everyone.
    * @param {string} id The guild id to remove the users from.
-   * @returns {string} A string with the outcomes of each user. May have
+   * @param {Function} cb Callback for when long running operations complete.
+   * Single argument with a string with the outcomes of each user. May have
    * multiple lines for a single user.
    */
-  this.excludeUsers = function(users, id) {
-    let response = '';
-    if (!hg.getGame(id)) {
-      return 'No game';
+  this.excludeUsers = function(users, id, cb) {
+    const game = hg.getGame(id);
+    if (!game) {
+      cb('No game');
+      return;
     }
-    if (!hg.getGame(id).excludedNPCs) hg.getGame(id).excludedNPCs = [];
-    if (!hg.getGame(id).includedNPCs) hg.getGame(id).includedNPCs = [];
+    if (!game.excludedNPCs) game.excludedNPCs = [];
+    if (!game.includedNPCs) game.includedNPCs = [];
     const iTime = Date.now();
     const tmp = [];
     switch (users) {
       case 'everyone':
-        users =
-            hg.getGame(id).includedUsers.concat(hg.getGame(id).includedNPCs);
+        users = game.includedUsers.concat(game.includedNPCs);
         break;
       case 'online':
       case 'offline':
       case 'idle':
       case 'dnd':
-        hg.getGame(id).includedUsers.forEach((u) => {
+        game.includedUsers.forEach((u) => {
           const user = self.client.users.get(u);
           if (user && user.presence.status === users) tmp.push(user);
         });
         users = tmp;
         break;
       default:
-        if (typeof users === 'string') return 'Invalid users';
+        if (typeof users === 'string') {
+          cb('Invalid users');
+          return;
+        }
         break;
     }
     if (!Array.isArray(users)) {
@@ -2678,95 +2685,124 @@ function HG() {
     }
     if (users.length > 10000) {
       self.warn(`Excluding ${users.length} users.`);
-      return;
     }
     const iTime2 = Date.now();
     const onlyError = users.length > 2;
-    users.forEach(function(obj) {
-      if (!obj) return;
-      if (typeof obj === 'string') {
-        if (obj.startsWith('NPC')) {
-          obj = hg.getGame(id).includedNPCs.find((el) => el.id == obj);
-          if (!obj && hg.getGame(id).excludedNPCs.find((el) => el.id == obj)) {
-            response += `${obj.name} is already excluded.\n`;
-            return;
-          }
-        } else {
-          obj = self.client.users.get(obj);
-        }
-        if (!obj) {
-          response += `${obj} is not a valid id.\n`;
-          return;
-        }
-      } else if (obj.id.startsWith('NPC') && !(obj instanceof NPC)) {
-        const objId = obj.id;
-        obj = hg.getGame(id).includedNPCs.find((el) => el.id == obj.id);
-        if (!obj) {
-          response += `${objId} unable to be found (already excluded?).\n`;
-          self.error('Unable to find NPC matching NPC-like data: ' + id);
-          return;
-        }
+    const response = [];
+    const chunk = function(index = 0) {
+      for (let i = index; i < users.length && i < index + maxOpts; i++) {
+        response.push(excludeIterate(game, users[i], onlyError));
       }
-      if (hg.getGame(id).excludedUsers.includes(obj.id)) {
-        if (!onlyError) {
-          response += obj.username +
-              ' is already excluded. Create a new game to reset players.\n';
+      if (index + maxOpts < users.length) {
+        setTimeout(() => {
+          chunk(index + maxOpts);
+        });
+      } else {
+        done();
+      }
+    };
+    const done = function() {
+      const now = Date.now();
+      if (now - iTime > 10 || now - iTime2 > 10) {
+        self.debug(`Excluding ${users.length} ${now - iTime} ${now - iTime2}`);
+      }
+      const finalRes = response.length > 0 ?
+          response.join('') :
+          `Succeeded without errors (${users.length} excluded)`;
+      cb(finalRes);
+    };
+
+    chunk(0);
+  };
+
+  /**
+   * @description Exclude a single user from the game as a single iteration step
+   * of the exclude command.
+   * @private
+   * @param {HungryGames~GuildGame} game The game to manipulate.
+   * @param {string|HungryGames~Player|HungryGames~NPC} obj Player for this
+   * iteration.
+   * @param {boolean} [onlyError=false] Only add error messages to response.
+   * @returns {string} Response text for the user performing the operation.
+   */
+  function excludeIterate(game, obj, onlyError = false) {
+    if (!obj) return '';
+    const response = [];
+    if (typeof obj === 'string') {
+      if (obj.startsWith('NPC')) {
+        obj = game.includedNPCs.find((el) => el.id == obj);
+        if (!obj && game.excludedNPCs.find((el) => el.id == obj)) {
+          response.push(`${obj.name} is already excluded.`);
+          return;
         }
       } else {
-        if (obj.isNPC) {
-          hg.getGame(id).excludedNPCs.push(obj);
-          if (!onlyError) {
-            response += obj.username + ' added to blacklist.*\n';
-          }
-          const includeIndex =
-              hg.getGame(id).includedNPCs.findIndex((el) => el.id == obj.id);
-          if (includeIndex >= 0) {
-            /* if (!onlyError) {
-              response += obj.username + ' removed from whitelist.\n';
-            } */
-            hg.getGame(id).includedNPCs.splice(includeIndex, 1);
-          }
-        } else {
-          hg.getGame(id).excludedUsers.push(obj.id);
-          if (!onlyError) {
-            response += obj.username + ' added to blacklist.\n';
-          }
-          if (!hg.getGame(id).includedUsers) hg.getGame(id).includedUsers = [];
-          const includeIndex = hg.getGame(id).includedUsers.indexOf(obj.id);
-          if (includeIndex >= 0) {
-            /* if (!onlyError) {
-              response += obj.username + ' removed from whitelist.\n';
-            } */
-            hg.getGame(id).includedUsers.splice(includeIndex, 1);
-          }
+        obj = self.client.users.get(obj);
+      }
+      if (!obj) {
+        response.push(`${obj} is not a valid id.`);
+        return;
+      }
+    } else if (obj.id.startsWith('NPC') && !(obj instanceof NPC)) {
+      const objId = obj.id;
+      obj = game.includedNPCs.find((el) => el.id == obj.id);
+      if (!obj) {
+        response.push(`${objId} unable to be found (already excluded?).`);
+        self.error(`Unable to find NPC matching NPC-like data: ${game.id}`);
+        return;
+      }
+    }
+    if (game.excludedUsers.includes(obj.id)) {
+      if (!onlyError) {
+        response.push(`${obj.username} is already excluded.`);
+      }
+    } else {
+      if (obj.isNPC) {
+        game.excludedNPCs.push(obj);
+        if (!onlyError) {
+          response.push(`${obj.username} added to blacklist.*`);
         }
-        if (!hg.getGame(id).currentGame.inProgress) {
-          const index =
-              hg.getGame(id).currentGame.includedUsers.findIndex(function(el) {
-                return el.id == obj.id;
-              });
-          if (index >= 0) {
-            hg.getGame(id).currentGame.includedUsers.splice(index, 1);
-            /* if (!onlyError) {
-              response += obj.username + ' removed from included players.\n';
-            } */
-            hg.getGame(id).formTeams(id);
-          } else if (!hg.getGame(id).options.includeBots && obj.bot) {
-            // Bots are already excluded.
-          } else {
-            response +=
-                'Failed to remove ' + obj.username + ' for an unknown reason.';
-            self.error(
-                'Failed to remove player from included list. (' + obj.id + ')');
-          }
+        const includeIndex =
+            game.includedNPCs.findIndex((el) => el.id == obj.id);
+        if (includeIndex >= 0) {
+          /* if (!onlyError) {
+            response += obj.username + ' removed from whitelist.\n';
+          } */
+          game.includedNPCs.splice(includeIndex, 1);
+        }
+      } else {
+        game.excludedUsers.push(obj.id);
+        if (!onlyError) {
+          response.push(`${obj.username} added to blacklist.`);
+        }
+        if (!game.includedUsers) game.includedUsers = [];
+        const includeIndex = game.includedUsers.indexOf(obj.id);
+        if (includeIndex >= 0) {
+          /* if (!onlyError) {
+            response += obj.username + ' removed from whitelist.\n';
+          } */
+          game.includedUsers.splice(includeIndex, 1);
         }
       }
-    });
-    const now = Date.now();
-    self.debug(`Excluding ${users.length} ${now - iTime} ${now - iTime2}`);
-    return response ||
-        ('Succeeded without errors (' + users.length + ' excluded)');
-  };
+      if (!game.currentGame.inProgress) {
+        const index =
+            game.currentGame.includedUsers.findIndex((el) => el.id == obj.id);
+        if (index >= 0) {
+          game.currentGame.includedUsers.splice(index, 1);
+          /* if (!onlyError) {
+            response += obj.username + ' removed from included players.\n';
+          } */
+          game.formTeams(game.id);
+        } else if (!game.options.includeBots && obj.bot) {
+          // Bots are already excluded.
+        } else {
+          response.push(
+              `Failed to remove ${obj.username} for an unknown reason.`);
+          self.error(`Failed to remove player from included list. (${obj.id})`);
+        }
+      }
+    }
+    return response.join('\n');
+  }
 
   /**
    * Add a user back into the next game.
@@ -2793,32 +2829,34 @@ function HG() {
     };
     let resPrefix = '';
     let resPostfix = ' have been added to the games.';
-    let response;
+    const done = function(response) {
+      self.common.reply(msg, resPrefix + resPostfix, response.substr(0, 2048));
+    };
     if (hg.getGame(id).currentGame.inProgress) {
       resPostfix = ' will be added into the next game.';
     }
     if (specialWords.everyone.includes(firstWord)) {
-      response = self.includeUsers('everyone', id);
       resPrefix = 'All users';
+      self.includeUsers('everyone', id, done);
     } else if (specialWords.online.includes(firstWord)) {
-      response = self.includeUsers('online', id);
       resPrefix = 'All online users';
+      self.includeUsers('online', id, done);
     } else if (specialWords.offline.includes(firstWord)) {
-      response = self.includeUsers('offline', id);
       resPrefix = 'All offline users';
+      self.includeUsers('offline', id, done);
     } else if (specialWords.idle.includes(firstWord)) {
-      response = self.includeUsers('idle', id);
       resPrefix = 'All idle users';
+      self.includeUsers('idle', id, done);
     } else if (specialWords.dnd.includes(firstWord)) {
-      response = self.includeUsers('dnd', id);
       resPrefix = 'All DND users';
+      self.includeUsers('dnd', id, done);
     } else if (specialWords.npcs.includes(firstWord)) {
-      response = self.includeUsers(hg.getGame(id).excludedNPCs.slice(0), id);
       resPrefix = 'All NCPs';
+      self.includeUsers(hg.getGame(id).excludedNPCs.slice(0), id, done);
     } else if (specialWords.bots.includes(firstWord)) {
-      response = self.setOption(id, 'includeBots', true);
       resPrefix = 'Bots';
       resPostfix = ' can now be added to the games.';
+      done(self.setOption(id, 'includeBots', true));
     } else if (
       msg.mentions.users.size + msg.softMentions.users.size +
             msg.mentions.roles.size + msg.softMentions.roles.size ==
@@ -2836,11 +2874,12 @@ function HG() {
           ...msg.softMentions.roles.map((r) => r.members.map((m) => m.user)));
       const mentions = msg.mentions.users.concat(msg.softMentions.users)
           .concat(mentionedRoleUsers.concat(softRoleUsers));
-      self.common.reply(msg, self.includeUsers(mentions, id));
+
+      self.includeUsers(mentions, id, (response) => {
+        self.common.reply(msg, response);
+      });
       return;
     }
-
-    self.common.reply(msg, resPrefix + resPostfix, response.substr(0, 2048));
   }
 
   /**
@@ -2851,35 +2890,39 @@ function HG() {
    * to include, 'everyone' to include all users, 'online' to include online
    * users, 'offline', 'idle', or 'dnd' for respective users.
    * @param {string} id The guild id to add the users to.
-   * @returns {string} A string with the outcomes of each user. May have
+   * @param {Function} cb Callback for when long running operations complete.
+   * Single argument with a string with the outcomes of each user. May have
    * multiple lines for a single user.
    */
-  this.includeUsers = function(users, id) {
-    let response = '';
-    if (!hg.getGame(id)) {
-      return 'No game';
+  this.includeUsers = function(users, id, cb) {
+    const game = hg.getGame(id);
+    if (!game) {
+      cb('No game');
+      return;
     }
-    if (!hg.getGame(id).excludedNPCs) hg.getGame(id).excludedNPCs = [];
-    if (!hg.getGame(id).includedNPCs) hg.getGame(id).includedNPCs = [];
+    if (!game.excludedNPCs) game.excludedNPCs = [];
+    if (!game.includedNPCs) game.includedNPCs = [];
     const iTime = Date.now();
     const tmp = [];
     switch (users) {
       case 'everyone':
-        users =
-            hg.getGame(id).excludedUsers.concat(hg.getGame(id).excludedNPCs);
+        users = game.excludedUsers.concat(game.excludedNPCs);
         break;
       case 'online':
       case 'offline':
       case 'idle':
       case 'dnd':
-        hg.getGame(id).excludedUsers.forEach((u) => {
+        game.excludedUsers.forEach((u) => {
           const user = self.client.users.get(u);
           if (user && user.presence.status === users) tmp.push(user);
         });
         users = tmp;
         break;
       default:
-        if (typeof users === 'string') return 'Invalid users';
+        if (typeof users === 'string') {
+          cb('Invalid users');
+          return;
+        }
         break;
     }
     if (!Array.isArray(users)) {
@@ -2887,106 +2930,131 @@ function HG() {
     }
     if (users.length > 10000) {
       self.warn(`Including ${users.length} users.`);
-      return;
     }
     const iTime2 = Date.now();
     const onlyError = users.length > 2;
-    users.forEach(function(obj) {
-      if (!obj) return;
-      if (typeof obj === 'string') {
-        if (obj.startsWith('NPC')) {
-          obj = hg.getGame(id).excludedNPCs.find((el) => el.id == obj);
-          if (!obj && hg.getGame(id).includedNPCs.find((el) => el.id == obj)) {
-            response += `${obj.username} is already included.\n`;
-            return;
-          }
-        } else {
-          obj = self.client.users.get(obj);
-        }
-        if (!obj) {
-          response += `${obj} is not a valid id.\n`;
-          return;
-        }
-      } else if (obj.id.startsWith('NPC') && !(obj instanceof NPC)) {
-        const objId = obj.id;
-        obj = hg.getGame(id).excludedNPCs.find((el) => el.id == obj.id);
-        if (!obj) {
-          response += `${objId} unable to be found (already included?).\n`;
-          self.error(`Unable to find NPC matching NPC-like data: ${id}`);
-          return;
-        }
+    const response = [];
+    const chunk = function(index = 0) {
+      for (let i = index; i < users.length && i < index + maxOpts; i++) {
+        response.push(includeIterate(game, users[i], onlyError));
       }
-      if (!hg.getGame(id).options.includeBots && obj.bot) {
-        response += `${obj.username} is a bot, but bots are disabled.\n`;
+      if (index + maxOpts < users.length) {
+        setTimeout(() => {
+          chunk(index + maxOpts);
+        });
+      } else {
+        done();
+      }
+    };
+    const done = function() {
+      const now = Date.now();
+      if (now - iTime > 10 || now - iTime2 > 10) {
+        self.debug(`Including ${users.length} ${now - iTime} ${now - iTime2}`);
+      }
+      const finalRes = response.length > 0 ?
+          response.join('') :
+          `Succeeded without errors (${users.length} included)`;
+      cb(finalRes);
+    };
+
+    chunk(0);
+  };
+
+  /**
+   * @description Include a single user from the game as a single iteration step
+   * of the include command.
+   * @private
+   * @param {HungryGames~GuildGame} game The game to manipulate.
+   * @param {string|HungryGames~Player|HungryGames~NPC} obj Player for this
+   * iteration.
+   * @param {boolean} [onlyError=false] Only add error messages to response.
+   * @returns {string} Response text for the user performing the operation.
+   */
+  function includeIterate(game, obj, onlyError = false) {
+    if (!obj) return '';
+    const response = [];
+    if (typeof obj === 'string') {
+      if (obj.startsWith('NPC')) {
+        obj = game.excludedNPCs.find((el) => el.id == obj);
+        if (!obj && game.includedNPCs.find((el) => el.id == obj)) {
+          response.push(`${obj.username} is already included.`);
+          return;
+        }
+      } else {
+        obj = self.client.users.get(obj);
+      }
+      if (!obj) {
+        response.push(`${obj} is not a valid id.`);
         return;
       }
-      if (obj.isNPC) {
-        const excludeIndex =
-            hg.getGame(id).excludedNPCs.findIndex((el) => el.id == obj.id);
-        if (excludeIndex >= 0) {
-          /* if (!onlyError) {
-            response += obj.username + ' removed from blacklist.\n';
-          } */
-          hg.getGame(id).excludedNPCs.splice(excludeIndex, 1);
-        }
-        if (!hg.getGame(id).includedNPCs.find((el) => el.id == obj.id)) {
-          hg.getGame(id).includedNPCs.push(obj);
-          if (!onlyError) {
-            response += `${obj.username} added to whitelist.*\n`;
-          }
-        }
-      } else {
-        const excludeIndex = hg.getGame(id).excludedUsers.indexOf(obj.id);
-        if (excludeIndex >= 0) {
-          /* if (!onlyError) {
-            response += obj.username + ' removed from blacklist.\n';
-          } */
-          hg.getGame(id).excludedUsers.splice(excludeIndex, 1);
-        }
-        if (!hg.getGame(id).includedUsers.includes(obj.id)) {
-          hg.getGame(id).includedUsers.push(obj.id);
-          if (!onlyError) {
-            response += `${obj.username} added to whitelist.\n`;
-          }
-        }
+    } else if (obj.id.startsWith('NPC') && !(obj instanceof NPC)) {
+      const objId = obj.id;
+      obj = game.excludedNPCs.find((el) => el.id == obj.id);
+      if (!obj) {
+        response.push(`${objId} unable to be found (already included?).`);
+        self.error(`Unable to find NPC matching NPC-like data: ${game.id}`);
+        return;
       }
-      if (hg.getGame(id).currentGame.inProgress) {
-        if (!onlyError) {
-          response += `${obj.username} skipped.\n`;
-        }
-      } else if (!hg.getGame(id).currentGame.includedUsers.find((u) => {
-        return u.id === obj.id;
-      })) {
-        if (obj.isNPC) {
-          hg.getGame(id).currentGame.includedUsers.push(
-              new NPC(obj.name, obj.avatarURL, obj.id));
-        } else {
-          hg.getGame(id).currentGame.includedUsers.push(
-              new HungryGames.Player(
-                  obj.id, obj.username,
-                  obj.avatarURL || obj.displayAvatarURL({format: 'png'}),
-                  obj.nickname));
-        }
-        /* if (!onlyError) {
-          response += obj.username + ' added to included players.\n';
-        } */
-        hg.getGame(id).formTeams(id);
-      } else {
-        if (!onlyError) {
-          response += `${obj.username} is already included.\n`;
-        }
-      }
-    });
-    if (hg.getGame(id).currentGame.inProgress) {
-      response +=
-          'Players were skipped because a game is currently in progress. ' +
-          'Players cannot be added to a game while it\'s in progress.';
     }
-    const now = Date.now();
-    self.debug(`Including ${users.length} ${now - iTime} ${now - iTime2}`);
-    return response ||
-        ('Succeeded without errors (' + users.length + ' included)');
-  };
+    if (!game.options.includeBots && obj.bot) {
+      response.push(`${obj.username} is a bot, but bots are disabled.`);
+      return;
+    }
+    if (obj.isNPC) {
+      const excludeIndex = game.excludedNPCs.findIndex((el) => el.id == obj.id);
+      if (excludeIndex >= 0) {
+        /* if (!onlyError) {
+          response += obj.username + ' removed from blacklist.\n';
+        } */
+        game.excludedNPCs.splice(excludeIndex, 1);
+      }
+      if (!game.includedNPCs.find((el) => el.id == obj.id)) {
+        game.includedNPCs.push(obj);
+        if (!onlyError) {
+          response.push(`${obj.username} added to whitelist.*`);
+        }
+      }
+    } else {
+      const excludeIndex = game.excludedUsers.indexOf(obj.id);
+      if (excludeIndex >= 0) {
+        /* if (!onlyError) {
+          response += obj.username + ' removed from blacklist.\n';
+        } */
+        game.excludedUsers.splice(excludeIndex, 1);
+      }
+      if (!game.includedUsers.includes(obj.id)) {
+        game.includedUsers.push(obj.id);
+        if (!onlyError) {
+          response.push(`${obj.username} added to whitelist.`);
+        }
+      }
+    }
+    if (game.currentGame.inProgress) {
+      if (!onlyError) {
+        response.push(`${obj.username} skipped.`);
+      }
+    } else if (!game.currentGame.includedUsers.find((u) => u.id === obj.id)) {
+      if (obj.isNPC) {
+        game.currentGame.includedUsers.push(
+            new NPC(obj.name, obj.avatarURL, obj.id));
+      } else {
+        game.currentGame.includedUsers.push(
+            new HungryGames.Player(
+                obj.id, obj.username,
+                obj.avatarURL || obj.displayAvatarURL({format: 'png'}),
+                obj.nickname));
+      }
+      /* if (!onlyError) {
+        response += obj.username + ' added to included players.\n';
+      } */
+      game.formTeams();
+    } else {
+      if (!onlyError) {
+        response.push(`${obj.username} is already included.`);
+      }
+    }
+    return response.join('\n');
+  }
 
   /**
    * Show a formatted message of all users and teams in current server.
@@ -5881,14 +5949,15 @@ function HG() {
         numDone += reactionUsers.length || reactionUsers.size;
       }
       if (numTotal != numDone) return;
-      self.excludeUsers('everyone', id);
-      hg.getGame(id).reactMessage = null;
-      msg.edit('`Ended`').catch(() => {});
-      if (list.length == 0) {
-        cb(null, 'No users reacted.');
-      } else {
-        cb(null, self.includeUsers(list, id));
-      }
+      self.excludeUsers('everyone', id, (res) => {
+        hg.getGame(id).reactMessage = null;
+        msg.edit('`Ended`').catch(() => {});
+        if (list.length == 0) {
+          cb(null, 'No users reacted.');
+        } else {
+          cb(null, self.includeUsers(list, id));
+        }
+      });
     }
   };
 
