@@ -2652,24 +2652,22 @@ function HG() {
     }
     if (!hg.getGame(id).excludedNPCs) hg.getGame(id).excludedNPCs = [];
     if (!hg.getGame(id).includedNPCs) hg.getGame(id).includedNPCs = [];
+    const iTime = Date.now();
+    const tmp = [];
     switch (users) {
       case 'everyone':
-        users = hg.getGame(id).includedUsers.slice(0).concat(
-            hg.getGame(id).includedNPCs.slice(0));
+        users =
+            hg.getGame(id).includedUsers.concat(hg.getGame(id).includedNPCs);
         break;
       case 'online':
       case 'offline':
       case 'idle':
       case 'dnd':
-        users = hg.getGame(id)
-            .includedUsers
-            .map((u) => {
-              return self.client.users.get(u);
-            })
-            .filter((u) => {
-              if (!u) return false;
-              return u.presence.status === users;
-            });
+        hg.getGame(id).includedUsers.forEach((u) => {
+          const user = self.client.users.get(u);
+          if (user && user.presence.status === users) tmp.push(user);
+        });
+        users = tmp;
         break;
       default:
         if (typeof users === 'string') return 'Invalid users';
@@ -2680,7 +2678,9 @@ function HG() {
     }
     if (users.length > 10000) {
       self.warn(`Excluding ${users.length} users.`);
+      return;
     }
+    const iTime2 = Date.now();
     const onlyError = users.length > 2;
     users.forEach(function(obj) {
       if (!obj) return;
@@ -2762,6 +2762,8 @@ function HG() {
         }
       }
     });
+    const now = Date.now();
+    self.debug(`Excluding ${users.length} ${now - iTime} ${now - iTime2}`);
     return response ||
         ('Succeeded without errors (' + users.length + ' excluded)');
   };
@@ -2859,21 +2861,22 @@ function HG() {
     }
     if (!hg.getGame(id).excludedNPCs) hg.getGame(id).excludedNPCs = [];
     if (!hg.getGame(id).includedNPCs) hg.getGame(id).includedNPCs = [];
+    const iTime = Date.now();
+    const tmp = [];
     switch (users) {
       case 'everyone':
-        users = hg.getGame(id).excludedUsers.slice(0).concat(
-            hg.getGame(id).excludedNPCs.slice(0));
+        users =
+            hg.getGame(id).excludedUsers.concat(hg.getGame(id).excludedNPCs);
         break;
       case 'online':
       case 'offline':
       case 'idle':
       case 'dnd':
-        users = hg.getGame(id)
-            .excludedUsers.map((u) => self.client.users.get(u))
-            .filter((u) => {
-              if (!u) return false;
-              return u.presence.status === users;
-            });
+        hg.getGame(id).excludedUsers.forEach((u) => {
+          const user = self.client.users.get(u);
+          if (user && user.presence.status === users) tmp.push(user);
+        });
+        users = tmp;
         break;
       default:
         if (typeof users === 'string') return 'Invalid users';
@@ -2884,7 +2887,9 @@ function HG() {
     }
     if (users.length > 10000) {
       self.warn(`Including ${users.length} users.`);
+      return;
     }
+    const iTime2 = Date.now();
     const onlyError = users.length > 2;
     users.forEach(function(obj) {
       if (!obj) return;
@@ -2977,6 +2982,8 @@ function HG() {
           'Players were skipped because a game is currently in progress. ' +
           'Players cannot be added to a game while it\'s in progress.';
     }
+    const now = Date.now();
+    self.debug(`Including ${users.length} ${now - iTime} ${now - iTime2}`);
     return response ||
         ('Succeeded without errors (' + users.length + ' included)');
   };
