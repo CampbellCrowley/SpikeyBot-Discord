@@ -2513,18 +2513,21 @@ function Main() {
   function commandPerms(msg) {
     let chan = msg.channel;
     let guild = msg.guild;
-    const mem = msg.member;
+    let mem = msg.member;
     let author = msg.author;
 
-    let id = msg.text.match(/\b\d+\b/);
-    if (self.common.trustedIds.includes(msg.author.id) &amp;&amp; id) {
-      id = id[0];
-      author = null;
-      chan = self.client.channels.get(id);
-      guild = (chan &amp;&amp; chan.guild) || self.client.guilds.get(id);
+    const idList = msg.text.match(/\b\d{17,19}\b/g);
+    if (self.common.trustedIds.includes(msg.author.id) &amp;&amp; idList) {
+      const id = idList[0];
+      const id2 = idList[1];
+      chan = self.client.channels.get(id) || self.client.channels.get(id2);
+      guild = (chan &amp;&amp; chan.guild) || self.client.guilds.get(id) ||
+          self.client.guilds.get(id2);
+      mem = guild &amp;&amp; (guild.members.get(id) || guild.members.get(id2));
+      author = mem &amp;&amp; mem.user;
       if (!guild) {
         if (self.client.shard) {
-          const toEval = `this.fetchPerms('${id}')`;
+          const toEval = `this.fetchPerms('${id}', '${id2}')`;
           self.client.shard.broadcastEval(toEval).then((res) => {
             const index = res.findIndex((el) => el);
             const match = res[index];
@@ -2534,29 +2537,16 @@ function Main() {
                   msg.text);
               return;
             }
-            const chan = match[0];
-            const guild = match[1];
+            const cId = match.cId;
+            const cY = match.cY;
+            const cM = match.cM;
+            const gId = match.gId;
+            const gY = match.gY;
+            const gM = match.gM;
+            const uId = match.uId;
             const embed = new self.Discord.MessageEmbed();
             embed.setTitle(`Permissions (Shard #${index})`);
-            if (!isNaN(chan)) {
-              embed.addField(
-                  `Channel ${id}`,
-                  '```css\n' + prePad(chan.toString(2), 31) + ' Me```');
-            }
-            if (!isNaN(guild)) {
-              embed.addField(
-                  'Guild',
-                  '```css\n' + prePad(guild.toString(2), 31) + ' Me```');
-            }
-
-            const allPermPairs = Object.entries(self.Discord.Permissions.FLAGS);
-            const formatted =
-                allPermPairs
-                    .map((el) => `${prePad(el[1].toString(2), 31)} ${el[0]}`)
-                    .join('\n');
-            embed.setDescription('```css\n' + formatted + '```');
-
-            msg.channel.send(embed);
+            replyPerms(msg, gId, gM, gY, cId, cM, cY, uId, embed);
           });
         } else {
           self.common.reply(
@@ -2566,59 +2556,116 @@ function Main() {
       }
     }
 
-    const embed = new self.Discord.MessageEmbed();
-    embed.setTitle('Permissions');
-    if (chan) {
-      embed.addField(
-          'Channel ' + chan.id, '```css\n' +
-              (author ?
-                   prePad(
-                       chan.permissionsFor(author).bitfield.toString(2), 31) +
-                       ' You\n' :
-                   '') +
-              prePad(chan.permissionsFor(self.client.user).bitfield.toString(2),
-                  31) +
-              ' Me```');
+    const cY = chan &amp;&amp; author &amp;&amp; chan.permissionsFor(author).bitfield;
+    const cM = chan &amp;&amp; chan.permissionsFor(self.client.user).bitfield;
+    const gY = author &amp;&amp; mem.permissions.bitfield;
+    const gM = guild.members.get(self.client.user.id).permissions.bitfield;
+    const uId = author &amp;&amp; author.id;
+    replyPerms(msg, guild.id, gM, gY, chan.id, cM, cY, uId);
+  }
+
+  /**
+   * @description Reply to the given message with the permission information of
+   * the given guild, channel, and user.
+   * @private
+   * @param {external:Discord~Message} msg Message to reply to.
+   * @param {string} gId Guild ID for displaying.
+   * @param {number} gM Bitfield for self in the guild.
+   * @param {number} [gY] Bitfield for user in guild.
+   * @param {string} [cId] Channel ID for displaying.
+   * @param {number} [cM] Bitfield for self in channel.
+   * @param {number} [cY] Bitfield for user in channel.
+   * @param {string} [uId] User id to show.
+   * @param {external:Discord~MessageEmbed} [embed] Embed object to modify
+   * instead of creating a new one.
+   */
+  function replyPerms(msg, gId, gM, gY, cId, cM, cY, uId, embed) {
+    if (!embed) {
+      embed = new self.Discord.MessageEmbed();
+      embed.setTitle('Permissions');
     }
+    const you = uId || 'You';
+    if ((cY != null &amp;&amp; !isNaN(cY)) || (cM != null &amp;&amp; !isNaN(cM))) {
+      embed.addField(
+          `Channel ${cId}`, '```css\n' +
+              (cY == null || isNaN(cY) ?
+                   '' :
+                   `${prePad(cY.toString(2), 31)} ${you}\n`) +
+              prePad(cM.toString(2), 31) + ' Me```');
+    }
+
     embed.addField(
-        'Guild ' + guild.id,
-        '```css\n' +
-            (author ?
-                 prePad(mem.permissions.bitfield.toString(2), 31) + ' You\n' :
-                 '') +
-            prePad(
-                guild.member(self.client.user).permissions.bitfield.toString(2),
-                31) +
-            ' Me```');
+        `Guild ${gId}`, '```css\n' +
+            (gY == null || isNaN(gY) ?
+                 '' :
+                 `${prePad(gY.toString(2), 31)} ${you}\n`) +
+            prePad(gM.toString(2), 31) + ' Me```');
 
     const allPermPairs = Object.entries(self.Discord.Permissions.FLAGS);
-    const formatted =
-        allPermPairs.map((el) => `${prePad(el[1].toString(2), 31)} ${el[0]}`)
-            .join('\n');
+    const formatted = allPermPairs
+        .map((el) => {
+          const cYou = (cY &amp; el[1]) ? 'Y' : ' ';
+          const cMe = (cM &amp; el[1]) ? 'M' : ' ';
+          const gYou = (gY &amp; el[1]) ? 'Y' : ' ';
+          const gMe = (gM &amp; el[1]) ? 'M' : ' ';
+          const bits = prePad(el[1].toString(2), 31);
+          const flags = `${cYou}${cMe}/${gYou}${gMe}`;
+          return `${bits} ${flags} ${el[0]}`;
+        })
+        .join('\n');
     embed.setDescription('```css\n' + formatted + '```');
     embed.setFooter(
         'To see permissions for each command type: `' + msg.prefix + 'show`');
-
     msg.channel.send(embed);
   }
+
   /**
-   * @description Fetch the bitfield of permissions for our self in the guild or
-   * channel with the given id.
+   * @description Fetch the bitfield of permissions for our self or a given user
+   * id in the guild or channel with the given id.
+   *
    * @this external:Discord~Client
    * @private
-   * @param {string} id The channel or guild ID to lookup permissions for.
-   * @returns {?{0: ?number, 1: number}} Null if unable to find, or a number
-   * bitfield representing the permissions.
+   * @param {string} id The channel or guild id or user id to lookup permissions
+   * for.
+   * @param {string} [id2] The channel or guild id or user id to lookup
+   * permissions for.
+   * @returns {?{
+   *   cId: ?string,
+   *   cY: ?number,
+   *   cM: ?number,
+   *   gId: string,
+   *   gY: ?number,
+   *   gM: number,
+   *   uId: ?string
+   * }} Null if unable to find, or an object with found data. Element`cId` is
+   * channel id, `gId` is guild id, `cY` is bitfield permissions for user in
+   * channel, `cM` is bitfield permissions for self in channel, `gY` is bitfield
+   * permissions for user in guild, `gM` is bitfield permissions for self in
+   * guild, `uId` is id of matched user.
    */
-  function fetchShardPerms(id) {
-    const chan = this.channels.get(id);
-    const guild = (chan &amp;&amp; chan.guild) || this.guilds.get(id);
+  function fetchShardPerms(id, id2) {
+    const chan = this.channels.get(id) || this.channels.get(id2);
+    const guild =
+        (chan &amp;&amp; chan.guild) || this.guilds.get(id) || this.guilds.get(id2);
     if (guild) {
-      const perm = chan &amp;&amp; chan.permissionsFor(this.user);
-      return [
-        perm &amp;&amp; perm.bitfield,
-        guild.member(this.user).permissions.bitfield,
-      ];
+      const mem = guild.members.get(id) || guild.members.get(id2);
+
+      const cMPerms = chan &amp;&amp; chan.permissionsFor(this.user);
+      const cM = cMPerms &amp;&amp; cMPerms.bitfield;
+      const cYPerms = chan &amp;&amp; chan.permissionsFor(mem);
+      const cY = cYPerms &amp;&amp; cYPerms.bitfield;
+
+      const gM = guild.members.get(this.user.id).permissions.bitfield;
+      const gY = mem &amp;&amp; mem.permissions.bitfield;
+      return {
+        cId: chan &amp;&amp; chan.id,
+        cY: cY,
+        cM: cM,
+        gId: guild.id,
+        gY: gY,
+        gM: gM,
+        uId: mem &amp;&amp; mem.id,
+      };
     } else {
       return null;
     }
@@ -3359,7 +3406,7 @@ module.exports = new Main();
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.2</a>
 	
-		on Tuesday, June 4, 2019 2:26 PM (-07:00)
+		on Tuesday, June 4, 2019 10:14 PM (-07:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

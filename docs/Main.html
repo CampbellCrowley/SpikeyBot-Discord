@@ -5587,7 +5587,7 @@ way to reference this if the user has forgotten the prefix.
 		<ul class="dummy">
 			<li>
 				<a href="main.js.html">main.js</a>,
-				 <a href="main.js.html#sunlight-1-line-3044">line 3044</a>
+				 <a href="main.js.html#sunlight-1-line-3091">line 3091</a>
 			</li>
 		</ul>
 	</dd>
@@ -5730,7 +5730,7 @@ way to reference this if the user has forgotten the prefix.
 		<ul class="dummy">
 			<li>
 				<a href="main.js.html">main.js</a>,
-				 <a href="main.js.html#sunlight-1-line-3097">line 3097</a>
+				 <a href="main.js.html#sunlight-1-line-3144">line 3144</a>
 			</li>
 		</ul>
 	</dd>
@@ -5873,7 +5873,7 @@ way to reference this if the user has forgotten the prefix.
 		<ul class="dummy">
 			<li>
 				<a href="main.js.html">main.js</a>,
-				 <a href="main.js.html#sunlight-1-line-3059">line 3059</a>
+				 <a href="main.js.html#sunlight-1-line-3106">line 3106</a>
 			</li>
 		</ul>
 	</dd>
@@ -6304,7 +6304,7 @@ from.
 		<ul class="dummy">
 			<li>
 				<a href="main.js.html">main.js</a>,
-				 <a href="main.js.html#sunlight-1-line-3028">line 3028</a>
+				 <a href="main.js.html#sunlight-1-line-3075">line 3075</a>
 			</li>
 		</ul>
 	</dd>
@@ -6447,7 +6447,7 @@ from.
 		<ul class="dummy">
 			<li>
 				<a href="main.js.html">main.js</a>,
-				 <a href="main.js.html#sunlight-1-line-2801">line 2801</a>
+				 <a href="main.js.html#sunlight-1-line-2848">line 2848</a>
 			</li>
 		</ul>
 	</dd>
@@ -7603,7 +7603,7 @@ channels on the same shard.
 		<ul class="dummy">
 			<li>
 				<a href="main.js.html">main.js</a>,
-				 <a href="main.js.html#sunlight-1-line-2913">line 2913</a>
+				 <a href="main.js.html#sunlight-1-line-2960">line 2960</a>
 			</li>
 		</ul>
 	</dd>
@@ -8177,7 +8177,7 @@ without the bot's help.
 		<ul class="dummy">
 			<li>
 				<a href="main.js.html">main.js</a>,
-				 <a href="main.js.html#sunlight-1-line-2558">line 2558</a>
+				 <a href="main.js.html#sunlight-1-line-2605">line 2605</a>
 			</li>
 		</ul>
 	</dd>
@@ -8321,7 +8321,7 @@ them instead.
 		<ul class="dummy">
 			<li>
 				<a href="main.js.html">main.js</a>,
-				 <a href="main.js.html#sunlight-1-line-3003">line 3003</a>
+				 <a href="main.js.html#sunlight-1-line-3050">line 3050</a>
 			</li>
 		</ul>
 	</dd>
@@ -9197,7 +9197,7 @@ shards to reload the changes.
 		<ul class="dummy">
 			<li>
 				<a href="main.js.html">main.js</a>,
-				 <a href="main.js.html#sunlight-1-line-3115">line 3115</a>
+				 <a href="main.js.html#sunlight-1-line-3162">line 3162</a>
 			</li>
 		</ul>
 	</dd>
@@ -9707,7 +9707,7 @@ shards to reload the changes.
             
 <hr>
 <dt>
-    <h4 class="name" id="~fetchShardPerms"><span class="type-signature">&lt;private, inner> </span>fetchShardPerms(id)</h4>
+    <h4 class="name" id="~fetchShardPerms"><span class="type-signature">&lt;private, inner> </span>fetchShardPerms(id [, id2])</h4>
     
     
 </dt>
@@ -9715,8 +9715,8 @@ shards to reload the changes.
 
     
     <div class="description">
-        Fetch the bitfield of permissions for our self in the guild or
-channel with the given id.
+        Fetch the bitfield of permissions for our self or a given user
+id in the guild or channel with the given id.
     </div>
     
 
@@ -9741,6 +9741,8 @@ channel with the given id.
 
         <th>Type</th>
 
+        
+        <th>Argument</th>
         
 
         
@@ -9768,10 +9770,54 @@ channel with the given id.
             </td>
 
             
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
 
             
 
-            <td class="description last">The channel or guild ID to lookup permissions for.</td>
+            <td class="description last">The channel or guild id or user id to lookup permissions
+for.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>id2</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The channel or guild id or user id to lookup
+permissions for.</td>
         </tr>
 
     
@@ -9816,7 +9862,7 @@ channel with the given id.
 		<ul class="dummy">
 			<li>
 				<a href="main.js.html">main.js</a>,
-				 <a href="main.js.html#sunlight-1-line-2520">line 2520</a>
+				 <a href="main.js.html#sunlight-1-line-2553">line 2553</a>
 			</li>
 		</ul>
 	</dd>
@@ -9845,8 +9891,11 @@ channel with the given id.
     
             
 <div class="param-desc">
-    Null if unable to find, or a number
-bitfield representing the permissions.
+    Null if unable to find, or an object with found data. Element`cId` is
+channel id, `gId` is guild id, `cY` is bitfield permissions for user in
+channel, `cM` is bitfield permissions for self in channel, `gY` is bitfield
+permissions for user in guild, `gM` is bitfield permissions for self in
+guild, `uId` is id of matched user.
 </div>
 
 
@@ -9981,7 +10030,7 @@ stats objeccts.</td>
 		<ul class="dummy">
 			<li>
 				<a href="main.js.html">main.js</a>,
-				 <a href="main.js.html#sunlight-1-line-2622">line 2622</a>
+				 <a href="main.js.html#sunlight-1-line-2669">line 2669</a>
 			</li>
 		</ul>
 	</dd>
@@ -10069,7 +10118,7 @@ stats objeccts.</td>
 		<ul class="dummy">
 			<li>
 				<a href="main.js.html">main.js</a>,
-				 <a href="main.js.html#sunlight-1-line-2734">line 2734</a>
+				 <a href="main.js.html#sunlight-1-line-2781">line 2781</a>
 			</li>
 		</ul>
 	</dd>
@@ -10292,7 +10341,7 @@ result.</td>
 		<ul class="dummy">
 			<li>
 				<a href="main.js.html">main.js</a>,
-				 <a href="main.js.html#sunlight-1-line-2846">line 2846</a>
+				 <a href="main.js.html#sunlight-1-line-2893">line 2893</a>
 			</li>
 		</ul>
 	</dd>
@@ -11895,7 +11944,7 @@ have.</td>
 		<ul class="dummy">
 			<li>
 				<a href="main.js.html">main.js</a>,
-				 <a href="main.js.html#sunlight-1-line-2542">line 2542</a>
+				 <a href="main.js.html#sunlight-1-line-2589">line 2589</a>
 			</li>
 		</ul>
 	</dd>
@@ -11944,6 +11993,424 @@ have.</td>
 
 
         
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="~replyPerms"><span class="type-signature">&lt;private, inner> </span>replyPerms(msg, gId, gM [, gY] [, cId] [, cM] [, cY] [, uId] [, embed])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Reply to the given message with the permission information of
+the given guild, channel, and user.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Argument</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>msg</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">external:Discord~Message</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Message to reply to.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>gId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Guild ID for displaying.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>gM</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Bitfield for self in the guild.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>gY</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Bitfield for user in guild.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Channel ID for displaying.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cM</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Bitfield for self in channel.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cY</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Bitfield for user in channel.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>uId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">User id to show.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>embed</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">external:Discord~MessageEmbed</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Embed object to modify
+instead of creating a new one.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="main.js.html">main.js</a>,
+				 <a href="main.js.html#sunlight-1-line-2489">line 2489</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
 
     
 </dd>
@@ -12082,7 +12549,7 @@ run on before processing.</td>
 		<ul class="dummy">
 			<li>
 				<a href="main.js.html">main.js</a>,
-				 <a href="main.js.html#sunlight-1-line-2975">line 2975</a>
+				 <a href="main.js.html#sunlight-1-line-3022">line 3022</a>
 			</li>
 		</ul>
 	</dd>
@@ -12394,7 +12861,7 @@ run on before processing.</td>
 		<ul class="dummy">
 			<li>
 				<a href="main.js.html">main.js</a>,
-				 <a href="main.js.html#sunlight-1-line-3217">line 3217</a>
+				 <a href="main.js.html#sunlight-1-line-3264">line 3264</a>
 			</li>
 		</ul>
 	</dd>
@@ -12482,7 +12949,7 @@ run on before processing.</td>
 		<ul class="dummy">
 			<li>
 				<a href="main.js.html">main.js</a>,
-				 <a href="main.js.html#sunlight-1-line-3192">line 3192</a>
+				 <a href="main.js.html#sunlight-1-line-3239">line 3239</a>
 			</li>
 		</ul>
 	</dd>
@@ -12922,7 +13389,7 @@ run on before processing.</td>
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.2</a>
 	
-		on Tuesday, June 4, 2019 2:26 PM (-07:00)
+		on Tuesday, June 4, 2019 10:14 PM (-07:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>
