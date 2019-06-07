@@ -99,6 +99,14 @@ class GuildGame {
      */
     this.autoPlay = false;
     /**
+     * Does this game currently have any long running operations being
+     * performed.
+     * @public
+     * @type {boolean}
+     * @default false
+     */
+    this.loading = false;
+    /**
      * Is this game automatically stepping, or are steps controlled manually.
      * @private
      * @type {boolean}

@@ -765,7 +765,14 @@ function HG() {
   function mkCmd(cb) {
     return function(msg) {
       const id = msg.guild.id;
-      if (hg.getGame(id)) {
+      const game = hg.getGame(id);
+      if (game) {
+        if (game.loading) {
+          self.common.reply(
+              msg, 'Still loading', 'A previous command is still loading. ' +
+                  'Please wait for it to complete.');
+          return;
+        }
         let text = msg.text.trim().toLocaleLowerCase();
         if (text.length > 0) {
           hg.getGame(id).channel = msg.channel.id;
@@ -1059,8 +1066,8 @@ function HG() {
         guild: self.client.guilds.get(id),
       };
     }
-    if (hg.getGame(id) && hg.getGame(id).currentGame &&
-        hg.getGame(id).currentGame.inProgress) {
+    const g = hg.getGame(id);
+    if (g && g.currentGame && g.currentGame.inProgress) {
       if (!silent) {
         self.common.reply(
             msg,
@@ -1069,22 +1076,20 @@ function HG() {
                 'with "' + msg.prefix + self.postPrefix + 'end".');
       }
       return;
-    } else if (hg.getGame(id)) {
+    } else if (g) {
       if (!silent) {
         self.common.reply(msg, 'Refreshing current game.');
       }
-      hg.getGame(id).includedUsers =
-          hg.getGame(id).includedUsers.filter((u) => {
-            const m = msg.guild.members.get(u);
-            if (m && m.partial) m.fetch();
-            return m;
-          });
-      hg.getGame(id).excludedUsers =
-          hg.getGame(id).excludedUsers.filter((u) => {
-            const m = msg.guild.members.get(u);
-            if (m && m.partial) m.fetch();
-            return m;
-          });
+      g.includedUsers = g.includedUsers.filter((u) => {
+        const m = msg.guild.members.get(u);
+        if (m && m.partial) m.fetch();
+        return m;
+      });
+      g.excludedUsers = g.excludedUsers.filter((u) => {
+        const m = msg.guild.members.get(u);
+        if (m && m.partial) m.fetch();
+        return m;
+      });
       hg.refresh(msg.guild);
     } else {
       hg.create(msg.guild);
@@ -1097,8 +1102,7 @@ function HG() {
     }
     const game = hg.getGame(id);
     game.formTeams();
-    fetchPatreonSettings(
-        hg.getGame(id).currentGame.includedUsers, null, null, cb);
+    fetchPatreonSettings(game.currentGame.includedUsers, null, null, cb);
     return game;
   }
   /**
@@ -1415,87 +1419,8 @@ function HG() {
 
     game = createGame(msg, id, true, loadingComplete);
 
-    const finalMessage = new self.Discord.MessageEmbed();
+    const finalMessage = makePlayerListEmbed(game);
     finalMessage.setTitle(hg.messages.get('gameStart'));
-    finalMessage.setColor(defaultColor);
-
-    const numUsers = game.currentGame.includedUsers.length;
-    if (game.options.teamSize > 0) sortTeams(game);
-    let prevTeam = -1;
-    const statusList = game.currentGame.includedUsers.map(function(obj) {
-      let myTeam = -1;
-      if (game.options.teamSize > 0) {
-        myTeam = game.currentGame.teams.findIndex(function(team) {
-          return team.players.findIndex(function(player) {
-            return player == obj.id;
-          }) > -1;
-        });
-      }
-
-      let shortName;
-      if (obj.nickname && game.options.useNicknames) {
-        shortName = obj.nickname.substring(0, 16);
-        if (shortName != obj.nickname) {
-          shortName = `${shortName.substring(0, 13)}...`;
-        }
-      } else {
-        shortName = obj.name.substring(0, 16);
-        if (shortName != obj.name) {
-          shortName = `${shortName.substring(0, 13)}...`;
-        }
-      }
-
-      let prefix = '';
-      if (myTeam != prevTeam) {
-        prevTeam = myTeam;
-        prefix = `__${game.currentGame.teams[myTeam].name}__\n`;
-      }
-
-      return `${prefix}\`${shortName}\``;
-    });
-    if (game.options.teamSize == 0) {
-      statusList.sort((a, b) => {
-        a = a.toLocaleLowerCase();
-        b = b.toLocaleLowerCase();
-        if (a < b) return -1;
-        if (a > b) return 1;
-        return 0;
-      });
-    }
-
-    const numCols = calcColNum(statusList.length > 10 ? 3 : 2, statusList);
-    if (statusList.length >= 5) {
-      const quarterLength = Math.ceil(statusList.length / numCols);
-      for (let i = 0; i < numCols - 1; i++) {
-        const thisMessage =
-            statusList.splice(0, quarterLength).join('\n').substring(0, 1024);
-        finalMessage.addField(
-            'Included (' + (i * quarterLength + 1) + '-' +
-                ((i + 1) * quarterLength) + ')',
-            thisMessage, true);
-      }
-      finalMessage.addField(
-          `Included (${(numCols - 1) * quarterLength + 1}-${numUsers})`,
-          statusList.join('\n'), true);
-    } else {
-      finalMessage.addField(
-          `Included (${numUsers})`, statusList.join('\n') || 'Nobody', false);
-    }
-    if (game.excludedUsers.length > 0) {
-      let excludedList = '\u200B';
-      if (game.excludedUsers.length < 20) {
-        excludedList =
-            game.excludedUsers.map((obj) => getName(msg.guild, obj)).join(', ');
-        const trimmedList = excludedList.substr(0, 512);
-        if (excludedList != trimmedList) {
-          excludedList = `${trimmedList.substr(0, 509)}...`;
-        } else {
-          excludedList = trimmedList;
-        }
-      }
-      finalMessage.addField(
-          `Excluded (${game.excludedUsers.length})`, excludedList, false);
-    }
 
     if (!game.autoPlay) {
       finalMessage.setFooter(
@@ -1512,8 +1437,8 @@ function HG() {
           msg, 'Game started!',
           'Discord rejected my normal message for some reason...');
       self.error(
-          'Failed to send start game message: ' + msg.channel.id + ' (Cols: ' +
-          numCols + ')');
+          'Failed to send start game message: ' + msg.channel.id + ' (Num: ' +
+          game.currentGame.includedUsers.length + ')');
       console.error(err);
     });
 
@@ -1813,6 +1738,7 @@ function HG() {
       return;
     }
     const sim = new HungryGames.Simulator(game, hg, msg);
+    const iTime = Date.now();
     sim.go((err) => {
       // Signal ready to display events.
       fire('dayStateChange', id);
@@ -1837,6 +1763,10 @@ function HG() {
       game.currentGame.isPaused = false;
       game.createInterval(dayStateModified);
     });
+    const now = Date.now();
+    if (now - iTime > 10) {
+      self.warn(`Simulator.go ${now - iTime}`);
+    }
     /**
      * @description Callback for every time the game state is modified.
      * @private
@@ -2577,8 +2507,9 @@ function HG() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function excludeUser(msg, id) {
-    if (!hg.getGame(id) || !hg.getGame(id).currentGame) {
-      createGame(msg, id);
+    let game = hg.getGame(id);
+    if (!game || !game.currentGame) {
+      game = createGame(msg, id);
     }
     let firstWord = msg.text.trim().split(' ')[0];
     if (firstWord) firstWord = firstWord.toLowerCase();
@@ -2596,7 +2527,7 @@ function HG() {
     const done = function(response) {
       self.common.reply(msg, resPrefix + resPostfix, response.substr(0, 2048));
     };
-    if (hg.getGame(id).currentGame.inProgress) {
+    if (game.currentGame.inProgress) {
       resPostfix = ' will be removed from the next game.';
     }
     if (specialWords.everyone.includes(firstWord)) {
@@ -2616,7 +2547,7 @@ function HG() {
       self.excludeUsers('dnd', id, done);
     } else if (specialWords.npcs.includes(firstWord)) {
       resPrefix = 'All NPCs';
-      self.excludeUsers(hg.getGame(id).includedNPCs.slice(0), id, done);
+      self.excludeUsers(game.includedNPCs.slice(0), id, done);
     } else if (specialWords.bots.includes(firstWord)) {
       resPrefix = 'Bots';
       resPostfix = ' are now blocked from the games.';
@@ -2663,6 +2594,11 @@ function HG() {
       cb('No game');
       return;
     }
+    if (game.loading) {
+      cb('A previous command is still loading.\n' +
+         'Please wait for it to complete.');
+      return;
+    }
     if (!game.excludedNPCs) game.excludedNPCs = [];
     if (!game.includedNPCs) game.includedNPCs = [];
     const iTime = Date.now();
@@ -2698,6 +2634,9 @@ function HG() {
     const onlyError = users.length > 2;
     const response = [];
     const chunk = function(index = 0) {
+      // Touch the game so it doens't get purged from memory.
+      const game = hg.getGame(id);
+      game.loading = true;
       for (let i = index; i < users.length && i < index + maxOpts; i++) {
         response.push(excludeIterate(game, users[i], onlyError));
       }
@@ -2710,9 +2649,13 @@ function HG() {
       }
     };
     const done = function() {
+      game.loading = false;
       const now = Date.now();
-      if (now - iTime > 10 || now - iTime2 > 10) {
-        self.debug(`Excluding ${users.length} ${now - iTime} ${now - iTime2}`);
+      const begin = iTime2 - iTime;
+      const first = iTime3 - iTime2;
+      const loop = now - iTime2;
+      if (begin > 10 || first > 10 || loop > 10) {
+        self.debug(`Excluding ${users.length} ${begin} ${first} ${loop}`);
       }
       const finalRes = response.length > 0 ?
           response.join('') :
@@ -2721,6 +2664,7 @@ function HG() {
     };
 
     chunk(0);
+    const iTime3 = Date.now();
   };
 
   /**
@@ -2908,6 +2852,11 @@ function HG() {
       cb('No game');
       return;
     }
+    if (game.loading) {
+      cb('A previous command is still loading.\n' +
+         'Please wait for it to complete.');
+      return;
+    }
     if (!game.excludedNPCs) game.excludedNPCs = [];
     if (!game.includedNPCs) game.includedNPCs = [];
     const iTime = Date.now();
@@ -2943,6 +2892,9 @@ function HG() {
     const onlyError = users.length > 2;
     const response = [];
     const chunk = function(index = 0) {
+      // Touch the game so it doens't get purged from memory.
+      const game = hg.getGame(id);
+      game.loading = true;
       for (let i = index; i < users.length && i < index + maxOpts; i++) {
         response.push(includeIterate(game, users[i], onlyError));
       }
@@ -2955,9 +2907,13 @@ function HG() {
       }
     };
     const done = function() {
+      game.loading = false;
       const now = Date.now();
-      if (now - iTime > 10 || now - iTime2 > 10) {
-        self.debug(`Including ${users.length} ${now - iTime} ${now - iTime2}`);
+      const begin = iTime2 - iTime;
+      const first = iTime3 - iTime2;
+      const loop = now - iTime2;
+      if (begin > 10 || first > 10 || loop > 10) {
+        self.debug(`Including ${users.length} ${begin} ${first} ${loop}`);
       }
       const finalRes = response.length > 0 ?
           response.join('') :
@@ -2966,6 +2922,7 @@ function HG() {
     };
 
     chunk(0);
+    const iTime3 = Date.now();
   };
 
   /**
@@ -3073,115 +3030,121 @@ function HG() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function listPlayers(msg, id) {
-    const finalMessage = new self.Discord.MessageEmbed();
-    finalMessage.setTitle('List of players');
-    finalMessage.setDescription(
-        'To refresh: ' + msg.prefix + self.postPrefix + 'create');
-    finalMessage.setColor(defaultColor);
     let game = hg.getGame(id);
     if (!game) game = createGame(msg, id);
-    if (game && game.currentGame && game.currentGame.includedUsers) {
-      const iUsers = game.currentGame.includedUsers;
-      const numUsers = iUsers.length;
-      if (game.options.teamSize > 0) sortTeams(game);
-      let prevTeam = -1;
-      const statusList = iUsers.map((obj) => {
-        let myTeam = -1;
-        if (game.options.teamSize > 0) {
-          myTeam = game.currentGame.teams.findIndex((team) => {
-            return team.players.findIndex((player) => {
-              return player == obj.id;
-            }) > -1;
-          });
-        }
+    const finalMessage = makePlayerListEmbed(game);
+    finalMessage.setDescription(
+        `To refresh: ${msg.prefix}${self.postPrefix}create`);
+    msg.channel.send(self.common.mention(msg), finalMessage).catch((err) => {
+      self.common.reply(
+          msg, 'Oops, Discord rejected my message for some reason...');
+      self.error('Failed to send list of players message: ' + msg.channel.id);
+      console.error(err);
+    });
+  }
 
-        let shortName;
-        if (obj.nickname && game.options.useNicknames) {
-          shortName = obj.nickname.substring(0, 16);
-          if (shortName != obj.nickname) {
-            shortName = shortName.substring(0, 13) + '...';
-          }
-        } else {
-          shortName = obj.name.substring(0, 16);
-          if (shortName != obj.name) {
-            shortName = shortName.substring(0, 13) + '...';
-          }
-        }
-
-        let prefix = '';
-        if (myTeam != prevTeam) {
-          prevTeam = myTeam;
-          const t = game.currentGame.teams[myTeam];
-          if (t.name != `Team ${t.id + 1}`) {
-            prefix = `${t.id + 1} __${t.name}__\n`;
-          } else {
-            prefix = `__${t.name}__\n`;
-          }
-        }
-        if (obj.isNPC) {
-          prefix += '*';
-        }
-
-        return prefix + '`' + shortName + '`';
-      });
-      if (game.options.teamSize == 0) {
-        statusList.sort((a, b) => {
-          a = a.toLocaleLowerCase();
-          b = b.toLocaleLowerCase();
-          if (a < b) return -1;
-          if (a > b) return 1;
-          return 0;
-        });
-      }
-      if (statusList.length >= 5) {
-        const numCols = calcColNum(statusList.length > 10 ? 3 : 2, statusList);
-
-        const quarterLength = Math.ceil(statusList.length / numCols);
-        for (let i = 0; i < numCols - 1; i++) {
-          const thisMessage =
-              statusList.splice(0, quarterLength).join('\n').substr(0, 1024);
-          finalMessage.addField(
-              'Included (' + (i * quarterLength + 1) + '-' +
-                  ((i + 1) * quarterLength) + ')',
-              thisMessage, true);
-        }
-        finalMessage.addField(
-            'Included (' + ((numCols - 1) * quarterLength + 1) + '-' +
-                numUsers + ')',
-            statusList.join('\n').substr(0, 1024), true);
-      } else {
-        finalMessage.addField(
-            'Included (' + numUsers + ')', statusList.join('\n') || 'Nobody...',
-            false);
-      }
+  /**
+   * @description Create a {@link external:Discord~MessageEmbed} that lists all
+   * included and excluded players in the game.
+   * @private
+   * @param {HungryGames~GuildGame} game The game to format.
+   * @param {external:Discord~MessageEmbed} [finalMessage] Optional existing
+   * embed to modify instead of creating a new one.
+   * @returns {external:Discord~MessageEmbed} The created message embed.
+   */
+  function makePlayerListEmbed(game, finalMessage) {
+    if (!finalMessage) {
+      finalMessage = new self.Discord.MessageEmbed();
+      finalMessage.setTitle('List of players');
+      finalMessage.setColor(defaultColor);
     }
-    if (game && game.excludedUsers &&
-        (game.excludedUsers.length + game.excludedNPCs.length) > 0) {
-      const eUsers = game.excludedUsers.concat(game.excludedNPCs);
+    if (!game || !game.currentGame || !game.currentGame.includedUsers) {
+      finalMessage.addField(
+          'No Players', 'No game created or no players in the game.');
+      return finalMessage;
+    }
+    const numUsers = game.currentGame.includedUsers.length;
+    if (numUsers > 200) {
+      finalMessage.addField(
+          `Included (${numUsers})`, `Excluded (${game.excludedUsers.length})`,
+          true);
+      return finalMessage;
+    }
+    if (game.options.teamSize > 0) sortTeams(game);
+    let prevTeam = -1;
+    const statusList = game.currentGame.includedUsers.map((obj) => {
+      let myTeam = -1;
+      if (game.options.teamSize > 0) {
+        myTeam = game.currentGame.teams.findIndex(
+            (team) => team.players.find((player) => player == obj.id));
+      }
+
+      let shortName;
+      if (obj.nickname && game.options.useNicknames) {
+        shortName = obj.nickname.substring(0, 16);
+        if (shortName != obj.nickname) {
+          shortName = `${shortName.substring(0, 13)}...`;
+        }
+      } else {
+        shortName = obj.name.substring(0, 16);
+        if (shortName != obj.name) {
+          shortName = `${shortName.substring(0, 13)}...`;
+        }
+      }
+
+      let prefix = '';
+      if (myTeam != prevTeam) {
+        prevTeam = myTeam;
+        prefix = `__${game.currentGame.teams[myTeam].name}__\n`;
+      }
+
+      return `${prefix}\`${shortName}\``;
+    });
+    if (game.options.teamSize == 0) {
+      statusList.sort((a, b) => {
+        a = a.toLocaleLowerCase();
+        b = b.toLocaleLowerCase();
+        if (a < b) return -1;
+        if (a > b) return 1;
+        return 0;
+      });
+    }
+
+    const numCols = calcColNum(statusList.length > 10 ? 3 : 2, statusList);
+    if (statusList.length >= 5) {
+      const quarterLength = Math.ceil(statusList.length / numCols);
+      for (let i = 0; i < numCols - 1; i++) {
+        const thisMessage =
+            statusList.splice(0, quarterLength).join('\n').substring(0, 1024);
+        finalMessage.addField(
+            'Included (' + (i * quarterLength + 1) + '-' +
+                ((i + 1) * quarterLength) + ')',
+            thisMessage, true);
+      }
+      finalMessage.addField(
+          `Included (${(numCols - 1) * quarterLength + 1}-${numUsers})`,
+          statusList.join('\n'), true);
+    } else {
+      finalMessage.addField(
+          `Included (${numUsers})`, statusList.join('\n') || 'Nobody', false);
+    }
+    if (game.excludedUsers.length > 0) {
       let excludedList = '\u200B';
-      if (eUsers.length < 20) {
-        excludedList = eUsers
-            .map(function(obj) {
-              return getName(msg.guild, obj);
-            })
-            .join(', ');
+      if (game.excludedUsers.length < 20) {
+        const guild = self.client.guilds.get(game.id);
+        excludedList =
+            game.excludedUsers.map((obj) => getName(guild, obj)).join(', ');
         const trimmedList = excludedList.substr(0, 512);
         if (excludedList != trimmedList) {
-          excludedList = trimmedList.substr(0, 509) + '...';
+          excludedList = `${trimmedList.substr(0, 509)}...`;
         } else {
           excludedList = trimmedList;
         }
       }
-      finalMessage.addField(`Excluded (${eUsers.length})`, excludedList, false);
+      finalMessage.addField(
+          `Excluded (${game.excludedUsers.length})`, excludedList, false);
     }
-    msg.channel.send(self.common.mention(msg), finalMessage).catch((err) => {
-      self.common.reply(
-          msg, 'Oops, Discord rejected my message for some reason...',
-          'This is possibly because there are too many people in the games ' +
-              'to show in this list.');
-      self.error('Failed to send list of players message: ' + msg.channel.id);
-      console.error(err);
-    });
+    return finalMessage;
   }
 
   /**

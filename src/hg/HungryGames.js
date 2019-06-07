@@ -300,8 +300,8 @@ class HungryGames {
     const iTime = Date.now();
     let finalMembers = [];
     if (!bots || Array.isArray(excluded)) {
-      finalMembers = members.filter((obj) => {
-        if (obj.isNPC) return false;
+      members.forEach((obj) => {
+        if (obj.isNPC) return;
         if (included && excluded &&
             !included.includes(obj.user.id) &&
             !excluded.includes(obj.user.id)) {
@@ -317,36 +317,34 @@ class HungryGames {
               'User in both blacklist and whitelist: ' + obj.user.id +
               ' Guild: ' + obj.guild.id);
           if (excludeByDefault) {
-            included.splice(
-                included.findIndex((el) => {
-                  return el == obj.user.id;
-                }),
-                1);
+            included.splice(included.findIndex((el) => el == obj.user.id), 1);
           } else {
-            excluded.splice(
-                excluded.findIndex((el) => {
-                  return el == obj.user.id;
-                }),
-                1);
+            excluded.splice(excluded.findIndex((el) => el == obj.user.id), 1);
           }
         }
-        return !(
-          (!bots && obj.user.bot) ||
-            (excluded && excluded.includes(obj.user.id) ||
-             (excludeByDefault && included &&
-              !included.includes(obj.user.id))));
+        const toInclude =
+            !((!bots && obj.user.bot) ||
+              (excluded && excluded.includes(obj.user.id) ||
+               (excludeByDefault && included &&
+                !included.includes(obj.user.id))));
+        if (toInclude) {
+          finalMembers.push(
+              new HungryGames.Player(
+                  obj.id, obj.user.username,
+                  obj.user.displayAvatarURL({format: 'png'}), obj.nickname));
+        }
       });
+    } else {
+      finalMembers = members.map(
+          (obj) => new HungryGames.Player(
+              obj.id, obj.user.username,
+              obj.user.displayAvatarURL({format: 'png'}), obj.nickname));
     }
-    if (finalMembers.length == 0) finalMembers = members.slice();
-    finalMembers = finalMembers.map((obj) => {
-      return new HungryGames.Player(
-          obj.id, obj.user.username, obj.user.displayAvatarURL({format: 'png'}),
-          obj.nickname);
-    });
     if (includedNPCs && includedNPCs.length > 0) {
-      finalMembers = finalMembers.concat(includedNPCs.map((obj) => {
-        return new this._parent.NPC(obj.name, obj.avatarURL, obj.id);
-      }));
+      includedNPCs.forEach((obj) => {
+        finalMembers.push(
+            new this._parent.NPC(obj.name, obj.avatarURL, obj.id));
+      });
     }
     const now = Date.now();
     if (now - iTime > 10) {
