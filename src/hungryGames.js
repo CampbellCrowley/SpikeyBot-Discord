@@ -332,7 +332,7 @@ function HG() {
    * @constant
    * @default
    */
-  const maxOpts = 10;
+  const maxOpts = 1000;
 
   /**
    * @description Parse all default events from file.
@@ -2648,6 +2648,7 @@ function HG() {
         done();
       }
     };
+    let iTime3 = Date.now();
     const done = function() {
       game.loading = false;
       const now = Date.now();
@@ -2664,7 +2665,7 @@ function HG() {
     };
 
     chunk(0);
-    const iTime3 = Date.now();
+    iTime3 = Date.now();
   };
 
   /**
@@ -2906,6 +2907,7 @@ function HG() {
         done();
       }
     };
+    let iTime3 = Date.now();
     const done = function() {
       game.loading = false;
       const now = Date.now();
@@ -2922,7 +2924,7 @@ function HG() {
     };
 
     chunk(0);
-    const iTime3 = Date.now();
+    iTime3 = Date.now();
   };
 
   /**
