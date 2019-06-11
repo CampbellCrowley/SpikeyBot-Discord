@@ -1,7 +1,7 @@
 // Copyright 2018-2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const dateFormat = require('dateformat');
-const math = require('mathjs');
+const mathjs = require('mathjs');
 const algebra = require('algebra.js');
 const Jimp = require('jimp');
 const fs = require('fs');
@@ -9,7 +9,7 @@ const mkdirp = require('mkdirp');
 const childProcess = require('child_process');
 require('./subModule.js').extend(Main);  // Extends the SubModule class.
 
-math.config({matrix: 'Array'});
+const math = mathjs.create(mathjs.all, {matrix: 'Array'});
 
 /**
  * @classdesc Basic commands and features for the bot.
