@@ -564,7 +564,7 @@ class HungryGames {
             console.error(err);
           }
         }
-        yj.parseAsync(data, (err, data) => {
+        yj.parseAsync(data.toString(), (err, data) => {
           if (err) {
             this._parent.error('Failed to parse game data:' + id);
             console.error(err);
