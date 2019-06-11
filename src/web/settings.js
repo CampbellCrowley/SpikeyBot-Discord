@@ -1270,6 +1270,12 @@ function WebSettings() {
       return;
     }
 
+    if (self.command.find(cmd).getFullName() ===
+        self.command.find('sch').getFullName()) {
+      cb('Invalid Command');
+      return;
+    }
+
     const newCmd = new cmdScheduler.ScheduledCommand({
       cmd: cmd.cmd,
       channel: msg.channel,
@@ -1279,8 +1285,11 @@ function WebSettings() {
       member: msg.member,
     });
 
-    cmdScheduler.registerScheduledCommand(newCmd);
-    cb(null);
+    if (!cmdScheduler.registerScheduledCommand(newCmd)) {
+      cb('Time is too close to existing command.');
+    } else {
+      cb(null);
+    }
   }
   this.registerScheduledCommand = registerScheduledCommand;
 
