@@ -22,7 +22,7 @@
     "erlpack": "github:discordapp/erlpack#674ebfd3439ba4b7ce616709821d27630f7cdc61",
     "fuzzy-search": "^3.0.1",
     "jimp": "^0.6.4",
-    "mathjs": "^6.0.0",
+    "mathjs": "^6.0.1",
     "mkdirp": "^0.5.1",
     "mysql": "^2.17.1",
     "node-opus": "^0.3.2",
