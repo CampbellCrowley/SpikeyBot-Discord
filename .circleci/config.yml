@@ -6,8 +6,7 @@ version: 2
 jobs:
   build:
     docker:
-      # specify the version you desire here
-      - image: circleci/node:10
+      - image: circleci/node:10.16.0-stretch
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -16,20 +15,15 @@ jobs:
 
     working_directory: ~/repo
 
-    branches:
-      only:
-        - indev
-        - unreviewed/indev
-
     steps:
       - checkout
 
       # Download and cache dependencies
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
+      # - restore_cache:
+      #     keys:
+      #       - v1-dependencies-{{ checksum "package.json" }}
+      #       # fallback to using the latest cache if no exact match is found
+      #       - v1-dependencies-
 
       - run: npm install
 
@@ -38,5 +32,16 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
 
+      # Obtain login token
+      - run: echo "exports.test = '$DISCORD_TOKEN';" > auth.js
       # run tests!
-      - run: npm test
+      - run: npm run lintandtest
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only: indev

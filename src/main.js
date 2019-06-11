@@ -9,9 +9,7 @@ const mkdirp = require('mkdirp');
 const childProcess = require('child_process');
 require('./subModule.js').extend(Main);  // Extends the SubModule class.
 
-const math = mathjs.create(mathjs.all, {
-  matrix: 'Array',
-});
+const math = mathjs.create(mathjs.all, {matrix: 'Array'});
 
 /**
  * @classdesc Basic commands and features for the bot.
