@@ -38,5 +38,13 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
 
+      # Obtain login token
+      - run: echo "exports.test = '$DISCORD_TOKEN';" > auth.js
       # run tests!
-      - run: npm test
+      - run: npm run lintandtest
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build
