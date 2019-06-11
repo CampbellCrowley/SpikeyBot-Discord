@@ -32,6 +32,7 @@
     "socket.io": "^2.2.0",
     "sodium": "^3.0.2",
     "threads": "^0.12.1",
+    "yieldable-json": "^1.0.1",
     "youtube-dl": "^2.0.0",
     "zlib-sync": "^0.1.4"
   },

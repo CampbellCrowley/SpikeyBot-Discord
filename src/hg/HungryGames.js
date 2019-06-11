@@ -3,6 +3,7 @@
 const fs = require('fs');
 const mkdirp = require('mkdirp'); // mkdir -p
 const rimraf = require('rimraf'); // rm -rf
+const yj = require('yieldable-json');
 
 /**
  * Contains a Hunger Games style simulation.
@@ -62,14 +63,14 @@ class HungryGames {
      */
     this._findDelay = 15000;
     /**
-     * Maximum number of operations allowed each event loop to prevent cpu
-     * deadlock.
+     * Maximum amount of milliseconds long running operations are allowed to
+     * take to prevent cpu deadlock.
      * @public
      * @type {number}
      * @constant
      * @default
      */
-    this.maxOpts = 5000;
+    this.maxDelta = 5;
     /**
      * The file path to save current state for a specific guild relative to
      * Common#guildSaveDir.
@@ -178,6 +179,19 @@ class HungryGames {
    */
   getGame(id) {
     return this._find(id);
+  }
+
+  /**
+   * @description Similar to {@link HungryGames.getGame} except asyncronous and
+   * fetched game is passed as callback argument.
+   *
+   * @public
+   * @param {string} id The guild id to get the data for.
+   * @param {Function} cb Callback with single argument. Null if unable to be
+   * found, {@link HungryGames~GuildGame} if found.
+   */
+  fetchGame(id, cb) {
+    this._find(id, cb);
   }
 
   /**
@@ -362,24 +376,22 @@ class HungryGames {
       }
       cb(finalMembers);
     };
-    const memberStep = function(index) {
-      let nextIndex = index;
-      if (index < memList.length) {
-        for (let i = index; i - index < self.maxOpts && i < memList.length;
-          i++) {
+    const memberStep = function(i) {
+      const start = Date.now();
+      if (i < memList.length) {
+        for (i; Date.now() - start < self.maxDelta && i < memList.length; i++) {
           memberIterate(memList[i]);
-          nextIndex++;
         }
-        setTimeout(() => memberStep(nextIndex));
-      } else if (includedNPCs && index - memList.length < includedNPCs.length) {
-        for (let i = index; i - index < self.maxOpts && i < includedNPCs.length;
+        setTimeout(() => memberStep(i));
+      } else if (includedNPCs && i - memList.length < includedNPCs.length) {
+        for (i; Date.now() - start < self.maxDelta &&
+             i - memList.length < includedNPCs.length;
           i++) {
-          const obj = includedNPCs[i];
+          const obj = includedNPCs[i - memList.length];
           finalMembers.push(
               new self._parent.NPC(obj.name, obj.avatarURL, obj.id));
-          nextIndex++;
         }
-        setTimeout(() => memberStep(nextIndex));
+        setTimeout(() => memberStep(i));
       } else {
         done();
       }
@@ -461,93 +473,131 @@ class HungryGames {
    *
    * @private
    * @param {number|string} id The guild id to get the data for.
+   * @param {Function} [cb] Callback to fire once complete. This becomes
+   * asyncronous if given, if not given this function is syncronous. Single
+   * parameter is null if not found, or {@link HungryGames~GuildGame} if found.
    * @returns {?HungryGames~GuildGame} The game data, or null if no game could
-   * be loaded.
+   * be loaded or loading asyncronously because a callback was given.
    */
-  _find(id) {
+  _find(id, cb) {
+    const a = typeof cb === 'function';
+    if (!a) cb = function() {};
     const now = Date.now();
     if (this._games[id]) {
       this._findTimestamps[id] = now;
+      cb(this._games[id]);
       return this._games[id];
     }
-    if (now - this._findTimestamps[id] < this._findDelay) return null;
+    if (now - this._findTimestamps[id] < this._findDelay) {
+      cb(null);
+      return null;
+    }
     this._findTimestamps[id] = now;
-    try {
-      const tmp = fs.readFileSync(
-          this._parent.common.guildSaveDir + id + this.hgSaveDir +
-          this.saveFile);
+
+    const self = this;
+    const parse = function(game) {
       try {
-        this._games[id] = JSON.parse(tmp);
-        if (this._parent.initialized) {
-          this._parent.debug('Loaded game from file ' + id);
-        }
-      } catch (e2) {
-        this._parent.error('Failed to parse game data for guild ' + id);
+        game = HungryGames.GuildGame.from(game);
+        game.id = id;
+      } catch (err) {
+        self._parent.error('Failed to parse game data for guild ' + id);
         return null;
       }
-    } catch (e) {
-      if (e.code !== 'ENOENT') {
-        this._parent.debug('Failed to load game data for guild:' + id);
-        console.error(e);
-      }
-      return null;
-    }
 
-    try {
-      this._games[id] = HungryGames.GuildGame.from(this._games[id]);
-      this._games[id].id = id;
-    } catch (err) {
-      this._parent.error('Failed to parse game data for guild ' + id);
-      return null;
-    }
-
-    // Flush default and stale options.
-    if (this._games[id].options) {
-      for (const opt in this.defaultOptions.keys) {
-        if (!(this.defaultOptions[opt] instanceof Object)) continue;
-        if (typeof this._games[id].options[opt] !==
-            typeof this.defaultOptions[opt].value) {
-          if (this.defaultOptions[opt].value instanceof Object) {
-            this._games[id].options[opt] =
-                Object.assign({}, this.defaultOptions[opt].value);
-          } else {
-            this._games[id].options[opt] = this.defaultOptions[opt].value;
+      // Flush default and stale options.
+      if (game.options) {
+        for (const opt in self.defaultOptions.keys) {
+          if (!(self.defaultOptions[opt] instanceof Object)) continue;
+          if (typeof game.options[opt] !==
+              typeof self.defaultOptions[opt].value) {
+            if (self.defaultOptions[opt].value instanceof Object) {
+              game.options[opt] =
+                  Object.assign({}, self.defaultOptions[opt].value);
+            } else {
+              game.options[opt] = self.defaultOptions[opt].value;
+            }
+          } else if (self.defaultOptions[opt].value instanceof Object) {
+            const dKeys = Object.keys(self.defaultOptions[opt].value);
+            dKeys.forEach((el) => {
+              if (typeof game.options[opt][el] !==
+                  typeof self.defaultOptions[opt].value[el]) {
+                game.options[opt][el] = self.defaultOptions[opt].value[el];
+              }
+            });
           }
-        } else if (this.defaultOptions[opt].value instanceof Object) {
-          const dKeys = Object.keys(this.defaultOptions[opt].value);
-          dKeys.forEach((el) => {
-            if (typeof this._games[id].options[opt][el] !==
-                typeof this.defaultOptions[opt].value[el]) {
-              this._games[id].options[opt][el] =
-                  this.defaultOptions[opt].value[el];
-            }
-          });
+        }
+        for (const opt in game.options) {
+          if (!(game.options[opt] instanceof Object)) continue;
+          if (typeof self.defaultOptions[opt] === 'undefined') {
+            delete game.options[opt];
+          } else if (game.options[opt].value instanceof Object) {
+            const keys = Object.keys(game.options[opt].value);
+            keys.forEach((el) => {
+              if (typeof game.options[opt][el] !==
+                  typeof self.defaultOptions[opt].value[el]) {
+                delete game.options[opt][el];
+              }
+            });
+          }
         }
       }
-      for (const opt in this._games[id].options) {
-        if (!(this._games[id].options[opt] instanceof Object)) continue;
-        if (typeof this.defaultOptions[opt] === 'undefined') {
-          delete this._games[id].options[opt];
-        } else if (this._games[id].options[opt].value instanceof Object) {
-          const keys = Object.keys(this._games[id].options[opt].value);
-          keys.forEach((el) => {
-            if (typeof this._games[id].options[opt][el] !==
-                typeof this.defaultOptions[opt].value[el]) {
-              delete this._games[id].options[opt][el];
-            }
-          });
-        }
-      }
-    }
 
-    // If the bot stopped while simulating a day, just start over and try
-    // again.
-    if (this._games[id] && this._games[id].currentGame &&
-        this._games[id].currentGame.day &&
-        this._games[id].currentGame.day.state === 1) {
-      this._games[id].currentGame.day.state = 0;
+      // If the bot stopped while simulating a day, just start over and try
+      // again.
+      if (game && game.currentGame && game.currentGame.day &&
+          game.currentGame.day.state === 1) {
+        game.currentGame.day.state = 0;
+      }
+      return game;
+    };
+
+    const filename =
+        this._parent.common.guildSaveDir + id + this.hgSaveDir + this.saveFile;
+    if (a) {
+      fs.readFile(filename, (err, data) => {
+        if (err) {
+          if (err.code === 'ENOENT') {
+            cb(null);
+            return;
+          } else {
+            this._parent.debug('Failed to load game data for guild:' + id);
+            console.error(err);
+          }
+        }
+        yj.parseAsync(data, (err, data) => {
+          if (err) {
+            this._parent.error('Failed to parse game data:' + id);
+            console.error(err);
+            return;
+          }
+          if (this._parent.initialized) {
+            this._parent.debug('Loaded game from file ' + id);
+          }
+          this._games[id] = parse(data);
+          cb(this._games[id]);
+        });
+      });
+    } else {
+      try {
+        const tmp = fs.readFileSync(filename);
+        try {
+          this._games[id] = JSON.parse(tmp);
+          if (this._parent.initialized) {
+            this._parent.debug('Loaded game from file ' + id);
+          }
+        } catch (e2) {
+          this._parent.error('Failed to parse game data for guild ' + id);
+          return null;
+        }
+      } catch (e) {
+        if (e.code !== 'ENOENT') {
+          this._parent.debug('Failed to load game data for guild:' + id);
+          console.error(e);
+        }
+        return null;
+      }
+      return this._games[id] = parse(this._games[id]);
     }
-    return this._games[id];
   }
   /**
    * @description Save all HG related data to file. Purges old data from memory
@@ -570,16 +620,23 @@ class HungryGames {
             console.error(err);
             return;
           }
-          fs.writeFile(filename, JSON.stringify(data), (err2) => {
-            if (err2) {
-              this._parent.error('Failed to save HG data for ' + filename);
-              console.error(err2);
-            } else if (
-              this._findTimestamps[id] - saveStartTime < -15 * 60 * 1000) {
-              delete this._games[id];
-              delete this._findTimestamps[id];
-              this._parent.debug('Purged ' + id);
+          yj.stringifyAsync(data, (err, stringified) => {
+            if (err) {
+              this._parent.error('Failed to stringify HG data for ' + id);
+              console.error(err);
+              return;
             }
+            fs.writeFile(filename, stringified, (err2) => {
+              if (err2) {
+                this._parent.error('Failed to save HG data for ' + filename);
+                console.error(err2);
+              } else if (
+                this._findTimestamps[id] - saveStartTime < -15 * 60 * 1000) {
+                delete this._games[id];
+                delete this._findTimestamps[id];
+                this._parent.debug(`Purged ${id}`);
+              }
+            });
           });
         });
       } else {

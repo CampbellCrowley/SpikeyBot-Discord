@@ -192,15 +192,10 @@ const hgTests = [
       ['<@422623712534200321>\n```\nReset HG\n```There is no data to reset.']),
   new Test(
       'No data: List players', '~hg players',
-      [
-        '<@422623712534200321>\n```\nCreated a Hungry Games with default ' +
-            'settings and all members included.\n```',
-        '#embed'
-      ]),
+      ['<@422623712534200321>\n```\nA game has not been created yet.\n```']),
   new Test(
       'Reset All command', '~hg reset all',
-      ['<@422623712534200321>\n```\nReset HG\n```Resetting ALL Hungry Games ' +
-       'data for this server!']),
+      ['<@422623712534200321>\n```\nReset HG\n```There is no data to reset.']),
   new Test(
       'No data: Exclude', '~hg exclude',
       [

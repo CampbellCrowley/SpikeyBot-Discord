@@ -722,21 +722,22 @@ function HG() {
     self.client.on('channelDelete', onChannelDelete);
 
     self.client.guilds.forEach((g) => {
-      const game = hg.getGame(g.id);
-      if (!game) return;
+      hg.fetchGame(g.id, (game) => {
+        if (!game) return;
 
-      if (game.currentGame &amp;&amp; game.currentGame.day.state > 1 &amp;&amp;
-          game.currentGame.inProgress &amp;&amp; !game.currentGame.ended &amp;&amp;
-          !game.currentGame.isPaused) {
-        try {
-          self.nextDay(game.author, g.id, game.outputChannel);
-        } catch (err) {
-          console.error(err);
+        if (game.currentGame &amp;&amp; game.currentGame.day.state > 1 &amp;&amp;
+            game.currentGame.inProgress &amp;&amp; !game.currentGame.ended &amp;&amp;
+            !game.currentGame.isPaused) {
+          try {
+            self.nextDay(game.author, g.id, game.outputChannel);
+          } catch (err) {
+            console.error(err);
+          }
+        } else {
+          delete hg._games[g.id];
+          delete hg._findTimestamps[g.id];
         }
-      } else {
-        delete hg._games[g.id];
-        delete hg._findTimestamps[g.id];
-      }
+      });
     });
 
     cmdSearcher = new FuzzySearch(
@@ -2731,9 +2732,14 @@ function HG() {
     if (!game.includedNPCs) game.includedNPCs = [];
     const iTime = Date.now();
     const tmp = [];
+    let npcs = [];
+    let d = 0;
+    let decrement = false;
     switch (users) {
       case 'everyone':
-        users = game.includedUsers.concat(game.includedNPCs);
+        users = game.includedUsers;
+        npcs = game.includedNPCs;
+        decrement = true;
         break;
       case 'online':
       case 'offline':
@@ -2755,45 +2761,51 @@ function HG() {
     if (!Array.isArray(users)) {
       users = users.array();
     }
-    if (users.length > 10000) {
-      self.warn(`Excluding ${users.length} users.`);
+    const num = users.length + npcs.length;
+    const numUsers = users.length;
+    if (num > 10000) {
+      self.warn(`Excluding ${num} users.`);
     }
     const iTime2 = Date.now();
-    const onlyError = users.length > 2;
+    const onlyError = num > 2;
     const response = [];
-    const chunk = function(index = 0) {
-      // Touch the game so it doens't get purged from memory.
+    const chunk = function(i = 0) {
+      // Touch the game so it doesn't get purged from memory.
       const game = hg.getGame(id);
       game.loading = true;
-      for (let i = index; i &lt; users.length &amp;&amp; i &lt; index + hg.maxOpts; i++) {
-        response.push(excludeIterate(game, users[i], onlyError));
+
+      const start = Date.now();
+      for (i; i &lt; num &amp;&amp; Date.now() - start &lt; hg.maxDelta; i++) {
+        if (i &lt; numUsers) {
+          response.push(excludeIterate(game, users[i - d], onlyError));
+          if (decrement) d++;
+        } else {
+          response.push(excludeIterate(game, npcs[i - numUsers], onlyError));
+        }
       }
-      if (index + hg.maxOpts &lt; users.length) {
+      if (i &lt; num) {
         setTimeout(() => {
-          chunk(index + hg.maxOpts);
+          chunk(i);
         });
       } else {
         done();
       }
     };
-    let iTime3 = Date.now();
     const done = function() {
       game.loading = false;
       const now = Date.now();
       const begin = iTime2 - iTime;
-      const first = iTime3 - iTime2;
       const loop = now - iTime2;
-      if (begin > 10 || first > 10 || loop > 10) {
-        self.debug(`Excluding ${users.length} ${begin} ${first} ${loop}`);
+      if (begin > 10 || loop > 10) {
+        self.debug(`Excluding ${num} ${begin} ${loop}`);
       }
       const finalRes = response.length > 0 ?
           response.join('') :
-          `Succeeded without errors (${users.length} excluded)`;
+          `Succeeded without errors (${num} excluded)`;
       cb(finalRes);
     };
 
-    chunk(0);
-    iTime3 = Date.now();
+    setTimeout(chunk);
   };
 
   /**
@@ -2999,9 +3011,14 @@ function HG() {
     if (!game.includedNPCs) game.includedNPCs = [];
     const iTime = Date.now();
     const tmp = [];
+    let npcs = [];
+    let d = 0;
+    let decrement = false;
     switch (users) {
       case 'everyone':
-        users = game.excludedUsers.concat(game.excludedNPCs);
+        users = game.excludedUsers;
+        npcs = game.excludedNPCs;
+        decrement = true;
         break;
       case 'online':
       case 'offline':
@@ -3023,45 +3040,51 @@ function HG() {
     if (!Array.isArray(users)) {
       users = users.array();
     }
-    if (users.length > 10000) {
-      self.warn(`Including ${users.length} users.`);
+    const num = users.length + npcs.length;
+    const numUsers = users.length;
+    if (num > 10000) {
+      self.warn(`Including ${num} users.`);
     }
     const iTime2 = Date.now();
-    const onlyError = users.length > 2;
+    const onlyError = num > 2;
     const response = [];
-    const chunk = function(index = 0) {
-      // Touch the game so it doens't get purged from memory.
+    const chunk = function(i = 0) {
+      // Touch the game so it doesn't get purged from memory.
       const game = hg.getGame(id);
       game.loading = true;
-      for (let i = index; i &lt; users.length &amp;&amp; i &lt; index + hg.maxOpts; i++) {
-        response.push(includeIterate(game, users[i], onlyError));
+
+      const start = Date.now();
+      for (i; i &lt; num &amp;&amp; Date.now() - start &lt; hg.maxDelta; i++) {
+        if (i &lt; numUsers) {
+          response.push(includeIterate(game, users[i - d], onlyError));
+          if (decrement) d++;
+        } else {
+          response.push(includeIterate(game, npcs[i - numUsers], onlyError));
+        }
       }
-      if (index + hg.maxOpts &lt; users.length) {
+      if (i &lt; num) {
         setTimeout(() => {
-          chunk(index + hg.maxOpts);
+          chunk(i);
         });
       } else {
         done();
       }
     };
-    let iTime3 = Date.now();
     const done = function() {
       game.loading = false;
       const now = Date.now();
       const begin = iTime2 - iTime;
-      const first = iTime3 - iTime2;
       const loop = now - iTime2;
-      if (begin > 10 || first > 10 || loop > 10) {
-        self.debug(`Including ${users.length} ${begin} ${first} ${loop}`);
+      if (begin > 10 || loop > 10) {
+        self.debug(`Including ${num} ${begin} ${loop}`);
       }
       const finalRes = response.length > 0 ?
           response.join('') :
-          `Succeeded without errors (${users.length} included)`;
+          `Succeeded without errors (${num} included)`;
       cb(finalRes);
     };
 
-    chunk(0);
-    iTime3 = Date.now();
+    setTimeout(chunk);
   };
 
   /**
@@ -6542,7 +6565,7 @@ module.exports = new HG();
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.2</a>
 	
-		on Tuesday, June 11, 2019 1:57 PM (-07:00)
+		on Tuesday, June 11, 2019 4:34 PM (-07:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>
