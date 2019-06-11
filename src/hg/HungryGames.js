@@ -62,6 +62,15 @@ class HungryGames {
      */
     this._findDelay = 15000;
     /**
+     * Maximum number of operations allowed each event loop to prevent cpu
+     * deadlock.
+     * @public
+     * @type {number}
+     * @constant
+     * @default
+     */
+    this.maxOpts = 5000;
+    /**
      * The file path to save current state for a specific guild relative to
      * Common#guildSaveDir.
      * @see {@link Common#guildSaveDir}
@@ -227,9 +236,10 @@ class HungryGames {
    * @public
    * @param {external:Discord~Guild|string} guild Guild object, or ID to create
    * a game for.
-   * @returns {HungryGames~GuildGame} The created GuildGame.
+   * @param {Function} [cb] Callback once game has been fully created. Passes
+   * the created game as the only argument.
    */
-  create(guild) {
+  create(guild, cb) {
     if (!(guild instanceof this._parent.Discord.Guild)) {
       guild = this._parent.client.guilds.get(guild);
     }
@@ -246,9 +256,11 @@ class HungryGames {
     if (guild.memberCount > 100) {
       opts.excludeNewUsers = true;
     }
-    return this._games[guild.id] = new HungryGames.GuildGame(
-        guild.id, opts, `${guild.name}'s Hungry Games`,
-        this.getAllPlayers(guild.members, [], false, [], false));
+    this.getAllPlayers(guild.members, [], false, [], false, [], (res) => {
+      this._games[guild.id] = new HungryGames.GuildGame(
+          guild.id, opts, `${guild.name}'s Hungry Games`, res);
+      cb(this._games[guild.id]);
+    });
   }
 
   /**
@@ -256,26 +268,29 @@ class HungryGames {
    * @public
    * @param {external:Discord~Guild|string} guild Guild object, or ID to refresh
    * a game for.
-   * @returns {?HungryGames~GuildGame} The GuildGame of which the Game was
-   * updated, or null if unable to refresh.
+   * @param {Function} [cb] Callback once game has been fully refreshed. Passes
+   * the refreshed game as the only argument, or null if unable to find the
+   * game.
    */
-  refresh(guild) {
+  refresh(guild, cb) {
     if (!(guild instanceof this._parent.Discord.Guild)) {
       guild = this._parent.client.guilds.get(guild);
     }
     const game = this.getGame(guild.id);
     if (!game) {
-      return null;
+      cb(null);
+      return;
     }
     const name = (game.currentGame && game.currentGame.customName) ||
         (`${guild.name}'s Hungry Games`);
     const teams = game.currentGame && game.currentGame.teams;
-    game.currentGame = new HungryGames.Game(
-        name, this.getAllPlayers(
-            guild.members, game.excludedUsers, game.options.includeBots,
-            game.includedUsers, game.options.excludeNewUsers,
-            game.includedNPCs),
-        teams);
+    this.getAllPlayers(
+        guild.members, game.excludedUsers, game.options.includeBots,
+        game.includedUsers, game.options.excludeNewUsers, game.includedNPCs,
+        (res) => {
+          game.currentGame = new HungryGames.Game(name, res, teams);
+          cb(game);
+        });
   }
 
   /**
@@ -293,64 +308,85 @@ class HungryGames {
    * @param {boolean} excludeByDefault Should new users be excluded from the
    * game by default?
    * @param {NPC[]} [includedNPCs=[]] NPCs to include as players.
-   * @returns {HungryGames~Player[]} Array of players to include in the games.
+   * @param {basicCB} cb Callback on completion. Only argument is array of
+   * {@link HungryGames~Player} to include in the games.
    */
   getAllPlayers(
-      members, excluded, bots, included, excludeByDefault, includedNPCs = []) {
+      members, excluded, bots, included, excludeByDefault, includedNPCs, cb) {
     const iTime = Date.now();
-    let finalMembers = [];
-    if (!bots || Array.isArray(excluded)) {
-      members.forEach((obj) => {
-        if (obj.isNPC) return;
-        if (included && excluded &&
-            !included.includes(obj.user.id) &&
-            !excluded.includes(obj.user.id)) {
-          if (excludeByDefault) {
-            excluded.push(obj.user.id);
-          } else {
-            included.push(obj.user.id);
-          }
-        } else if (
-          included && excluded && included.includes(obj.user.id) &&
-            excluded.includes(obj.user.id)) {
-          this._parent.error(
-              'User in both blacklist and whitelist: ' + obj.user.id +
-              ' Guild: ' + obj.guild.id);
-          if (excludeByDefault) {
-            included.splice(included.findIndex((el) => el == obj.user.id), 1);
-          } else {
-            excluded.splice(excluded.findIndex((el) => el == obj.user.id), 1);
-          }
+    const finalMembers = [];
+    const self = this;
+    if (!Array.isArray(excluded)) excluded = [];
+    const memList = Array.isArray(members) ? members : members.array();
+
+    const memberIterate = function(obj) {
+      if (obj.isNPC) return;
+      if (included && excluded && !included.includes(obj.user.id) &&
+          !excluded.includes(obj.user.id)) {
+        if (excludeByDefault) {
+          excluded.push(obj.user.id);
+        } else {
+          included.push(obj.user.id);
         }
-        const toInclude =
-            !((!bots && obj.user.bot) ||
-              (excluded && excluded.includes(obj.user.id) ||
-               (excludeByDefault && included &&
-                !included.includes(obj.user.id))));
-        if (toInclude) {
-          finalMembers.push(
-              new HungryGames.Player(
-                  obj.id, obj.user.username,
-                  obj.user.displayAvatarURL({format: 'png'}), obj.nickname));
+      } else if (
+        included && excluded && included.includes(obj.user.id) &&
+          excluded.includes(obj.user.id)) {
+        self._parent.error(
+            'User in both blacklist and whitelist: ' + obj.user.id +
+            ' Guild: ' + obj.guild.id);
+        if (excludeByDefault) {
+          included.splice(included.findIndex((el) => el == obj.user.id), 1);
+        } else {
+          excluded.splice(excluded.findIndex((el) => el == obj.user.id), 1);
         }
-      });
-    } else {
-      finalMembers = members.map(
-          (obj) => new HungryGames.Player(
-              obj.id, obj.user.username,
-              obj.user.displayAvatarURL({format: 'png'}), obj.nickname));
-    }
-    if (includedNPCs && includedNPCs.length > 0) {
-      includedNPCs.forEach((obj) => {
+      }
+      const toInclude = !(
+        (!bots && obj.user.bot) ||
+          (excluded && excluded.includes(obj.user.id) ||
+           (excludeByDefault && included && !included.includes(obj.user.id))));
+      if (toInclude) {
         finalMembers.push(
-            new this._parent.NPC(obj.name, obj.avatarURL, obj.id));
-      });
-    }
-    const now = Date.now();
-    if (now - iTime > 10) {
-      this._parent.debug(`GetAllPlayers ${finalMembers.length} ${now - iTime}`);
-    }
-    return finalMembers;
+            new HungryGames.Player(
+                obj.id, obj.user.username,
+                obj.user.displayAvatarURL({format: 'png'}), obj.nickname));
+      }
+    };
+    let iTime2 = 0;
+    const done = function() {
+      const now = Date.now();
+      const start = iTime2 - iTime;
+      const total = now - iTime;
+      if (start > 10 || total > 10) {
+        self._parent.debug(
+            `GetAllPlayers ${finalMembers.length} ${start} ${total}`);
+      }
+      cb(finalMembers);
+    };
+    const memberStep = function(index) {
+      let nextIndex = index;
+      if (index < memList.length) {
+        for (let i = index; i - index < self.maxOpts && i < memList.length;
+          i++) {
+          memberIterate(memList[i]);
+          nextIndex++;
+        }
+        setTimeout(() => memberStep(nextIndex));
+      } else if (includedNPCs && index - memList.length < includedNPCs.length) {
+        for (let i = index; i - index < self.maxOpts && i < includedNPCs.length;
+          i++) {
+          const obj = includedNPCs[i];
+          finalMembers.push(
+              new self._parent.NPC(obj.name, obj.avatarURL, obj.id));
+          nextIndex++;
+        }
+        setTimeout(() => memberStep(nextIndex));
+      } else {
+        done();
+      }
+    };
+
+    iTime2 = Date.now();
+    memberStep(0);
   }
 
   /**

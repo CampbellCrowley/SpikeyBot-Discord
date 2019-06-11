@@ -325,16 +325,6 @@ function HG() {
   const eventHandlers = {};
 
   /**
-   * Maximum number of operations allowed each event loop to prevent cpu
-   * deadlock.
-   * @private
-   * @type {number}
-   * @constant
-   * @default
-   */
-  const maxOpts = 1000;
-
-  /**
    * @description Parse all default events from file.
    *
    * @private
@@ -1055,9 +1045,8 @@ function HG() {
    * @param {?Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
    * @param {boolean} [silent=false] Should we suppress replies to message.
-   * @param {Function} [cb] Callback that fires once loading is complete. No
-   * parameters.
-   * @returns {?HungryGames~GuildGame} Created game, or null if failed.
+   * @param {Function} [cb] Callback that fires once loading is complete. Only
+   * parameter is created {@link HungryGames~GuildGame} or null if failed.
    */
   function createGame(msg, id, silent, cb) {
     if (!msg) {
@@ -1067,6 +1056,22 @@ function HG() {
       };
     }
     const g = hg.getGame(id);
+    /**
+     * @description Fires once game creation is done, and we are ready to
+     * continue.
+     * @private
+     * @param {?HungryGames~GuildGame} game Created GuildGame if successful.
+     */
+    const done = function(game) {
+      if (!game) {
+        cb(null);
+        return;
+      }
+      game.formTeams();
+      fetchPatreonSettings(game.currentGame.includedUsers, null, null, () => {
+        if (typeof cb === 'function') cb(game);
+      });
+    };
     if (g && g.currentGame && g.currentGame.inProgress) {
       if (!silent) {
         self.common.reply(
@@ -1075,7 +1080,7 @@ function HG() {
                 'to create a new one, you must end the current one first ' +
                 'with "' + msg.prefix + self.postPrefix + 'end".');
       }
-      return;
+      if (typeof cb === 'function') cb(null);
     } else if (g) {
       if (!silent) {
         self.common.reply(msg, 'Refreshing current game.');
@@ -1090,30 +1095,29 @@ function HG() {
         if (m && m.partial) m.fetch();
         return m;
       });
-      hg.refresh(msg.guild);
+      hg.refresh(msg.guild, done);
     } else {
-      hg.create(msg.guild);
-      if (!silent) {
-        self.common.reply(
-            msg,
-            'Created a Hungry Games with default settings and all members ' +
-                'included.');
-      }
+      hg.create(msg.guild, (game) => {
+        if (!silent) {
+          self.common.reply(
+              msg,
+              'Created a Hungry Games with default settings and all members ' +
+                  'included.');
+        }
+        done(game);
+      });
     }
-    const game = hg.getGame(id);
-    game.formTeams();
-    fetchPatreonSettings(game.currentGame.includedUsers, null, null, cb);
-    return game;
   }
   /**
    * Create a Hungry Games for a guild.
    *
    * @public
    * @param {string} id The id of the guild to create the game in.
-   * @returns {?HungryGames~GuildGame} The created game, or null if failed.
+   * @param {Function} [cb] Callback that fires once loading is complete. Only
+   * parameter is created {@link HungryGames~GuildGame} or null if failed.
    */
-  this.createGame = function(id) {
-    return createGame(null, id, true);
+  this.createGame = function(id, cb) {
+    createGame(null, id, true, cb);
   };
 
   /**
@@ -1363,7 +1367,7 @@ function HG() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function startGame(msg, id) {
-    let game = hg.getGame(id);
+    const game = hg.getGame(id);
     if (game && game.currentGame && game.currentGame.inProgress) {
       self.common.reply(
           msg, 'A game is already in progress! ("' + msg.prefix +
@@ -1415,34 +1419,44 @@ function HG() {
           nextDay(msg, id);
         }
       });
+      game.loading = false;
     }
 
-    game = createGame(msg, id, true, loadingComplete);
-
-    const finalMessage = makePlayerListEmbed(game);
-    finalMessage.setTitle(hg.messages.get('gameStart'));
-
-    if (!game.autoPlay) {
-      finalMessage.setFooter(
-          `"${msg.prefix}${self.postPrefix}next" for next day.`);
+    if (game) {
+      game.loading = true;
+      if (game.currentGame) game.currentGame.inProgress = true;
     }
+    createGame(msg, id, true, (game) => {
+      if (!game) {
+        self.common.reply(msg, 'Failed to create game for unknown reason.');
+        return;
+      }
 
-    let mentions = self.common.mention(msg);
-    if (game.options.mentionEveryoneAtStart) {
-      mentions += '@everyone';
-    }
+      game.currentGame.inProgress = true;
+      const finalMessage = makePlayerListEmbed(game);
+      finalMessage.setTitle(hg.messages.get('gameStart'));
 
-    msg.channel.send(mentions, finalMessage).catch((err) => {
-      self.common.reply(
-          msg, 'Game started!',
-          'Discord rejected my normal message for some reason...');
-      self.error(
-          'Failed to send start game message: ' + msg.channel.id + ' (Num: ' +
-          game.currentGame.includedUsers.length + ')');
-      console.error(err);
+      if (!game.autoPlay) {
+        finalMessage.setFooter(
+            `"${msg.prefix}${self.postPrefix}next" for next day.`);
+      }
+
+      let mentions = self.common.mention(msg);
+      if (game.options.mentionEveryoneAtStart) {
+        mentions += '@everyone';
+      }
+
+      msg.channel.send(mentions, finalMessage).catch((err) => {
+        self.common.reply(
+            msg, 'Game started!',
+            'Discord rejected my normal message for some reason...');
+        self.error(
+            'Failed to send start game message: ' + msg.channel.id + ' (Num: ' +
+            game.currentGame.includedUsers.length + ')');
+        console.error(err);
+      });
+      loadingComplete();
     });
-
-    game.currentGame.inProgress = true;
   }
   /**
    * Start the games in the given channel and guild by the given user.
@@ -1570,13 +1584,22 @@ function HG() {
    * @type {HungryGames~hgCommandHandler}
    * @param {Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
+   * @param {HungryGames~GuildGame} [game] The game object to start autoplay on.
    */
-  function startAutoplay(msg, id) {
-    if (!hg.getGame(id) || !hg.getGame(id).currentGame) {
-      createGame(msg, id);
+  function startAutoplay(msg, id, game) {
+    if (!game) game = hg.getGame(id);
+    if (!game || !game.currentGame) {
+      createGame(msg, id, false, (game) => {
+        if (!game) {
+          self.common.reply(msg, 'Failed to create game for unknown reason.');
+          return;
+        }
+        startAutoplay(msg, id, game);
+      });
+      return;
     }
-    if (hg.getGame(id).autoPlay && hg.getGame(id).currentGame.inProgress) {
-      if (hg.getGame(id).currentGame.isPaused) {
+    if (game.autoPlay && game.currentGame.inProgress) {
+      if (game.currentGame.isPaused) {
         self.common.reply(
             msg, 'Autoplay is already enabled.', 'To resume the game, use `' +
                 msg.prefix + self.postPrefix + 'resume`.');
@@ -1584,9 +1607,8 @@ function HG() {
         pauseAutoplay(msg, id);
       }
     } else {
-      hg.getGame(id).autoPlay = true;
-      if (hg.getGame(id).currentGame.inProgress &&
-          hg.getGame(id).currentGame.day.state === 0) {
+      game.autoPlay = true;
+      if (game.currentGame.inProgress && game.currentGame.day.state === 0) {
         if (self.command.validate(msg.prefix + 'hg next', msg)) {
           self.common.reply(
               msg,
@@ -1598,7 +1620,7 @@ function HG() {
             '<@' + msg.author.id +
             '> `Enabling Autoplay! Starting the next day!`');
         nextDay(msg, id);
-      } else if (!hg.getGame(id).currentGame.inProgress) {
+      } else if (!game.currentGame.inProgress) {
         if (self.command.validate(msg.prefix + 'hg start', msg)) {
           self.common.reply(
               msg, 'Sorry, but you don\'t have permission to start the games.',
@@ -1609,7 +1631,7 @@ function HG() {
             '<@' + msg.author.id +
             '> `Autoplay is enabled. Starting the games!`');
         startGame(msg, id);
-      } else if (hg.getGame(id).currentGame.isPaused) {
+      } else if (game.currentGame.isPaused) {
         self.common.reply(
             msg, 'Enabling Autoplay',
             'Resume game with `' + msg.prefix + self.postPrefix + 'resume`.');
@@ -2505,11 +2527,19 @@ function HG() {
    * @type {HungryGames~hgCommandHandler}
    * @param {Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
+   * @param {HungryGames~GuildGame} [game] Game object to exclude user from.
    */
-  function excludeUser(msg, id) {
-    let game = hg.getGame(id);
+  function excludeUser(msg, id, game) {
+    if (!game) game = hg.getGame(id);
     if (!game || !game.currentGame) {
-      game = createGame(msg, id);
+      createGame(msg, id, false, (game) => {
+        if (!game) {
+          self.common.reply(msg, 'Failed to create game for unknown reason.');
+          return;
+        }
+        excludeUser(msg, id, game);
+      });
+      return;
     }
     let firstWord = msg.text.trim().split(' ')[0];
     if (firstWord) firstWord = firstWord.toLowerCase();
@@ -2637,12 +2667,12 @@ function HG() {
       // Touch the game so it doens't get purged from memory.
       const game = hg.getGame(id);
       game.loading = true;
-      for (let i = index; i < users.length && i < index + maxOpts; i++) {
+      for (let i = index; i < users.length && i < index + hg.maxOpts; i++) {
         response.push(excludeIterate(game, users[i], onlyError));
       }
-      if (index + maxOpts < users.length) {
+      if (index + hg.maxOpts < users.length) {
         setTimeout(() => {
-          chunk(index + maxOpts);
+          chunk(index + hg.maxOpts);
         });
       } else {
         done();
@@ -2764,10 +2794,19 @@ function HG() {
    * @type {HungryGames~hgCommandHandler}
    * @param {Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
+   * @param {HungryGames~GuildGame} [game] The game object to modify.
    */
-  function includeUser(msg, id) {
-    if (!hg.getGame(id) || !hg.getGame(id).currentGame) {
-      createGame(msg, id);
+  function includeUser(msg, id, game) {
+    if (!game) game = hg.getGame(id);
+    if (!game || !game.currentGame) {
+      createGame(msg, id, false, (game) => {
+        if (!game) {
+          self.common.reply(msg, 'Failed to create game for unknown reason.');
+          return;
+        }
+        includeUser(msg, id, game);
+      });
+      return;
     }
     let firstWord = msg.text.trim().split(' ')[0];
     if (firstWord) firstWord = firstWord.toLowerCase();
@@ -2785,7 +2824,7 @@ function HG() {
     const done = function(response) {
       self.common.reply(msg, resPrefix + resPostfix, response.substr(0, 2048));
     };
-    if (hg.getGame(id).currentGame.inProgress) {
+    if (game.currentGame.inProgress) {
       resPostfix = ' will be added into the next game.';
     }
     if (specialWords.everyone.includes(firstWord)) {
@@ -2805,7 +2844,7 @@ function HG() {
       self.includeUsers('dnd', id, done);
     } else if (specialWords.npcs.includes(firstWord)) {
       resPrefix = 'All NCPs';
-      self.includeUsers(hg.getGame(id).excludedNPCs.slice(0), id, done);
+      self.includeUsers(game.excludedNPCs.slice(0), id, done);
     } else if (specialWords.bots.includes(firstWord)) {
       resPrefix = 'Bots';
       resPostfix = ' can now be added to the games.';
@@ -2896,12 +2935,12 @@ function HG() {
       // Touch the game so it doens't get purged from memory.
       const game = hg.getGame(id);
       game.loading = true;
-      for (let i = index; i < users.length && i < index + maxOpts; i++) {
+      for (let i = index; i < users.length && i < index + hg.maxOpts; i++) {
         response.push(includeIterate(game, users[i], onlyError));
       }
-      if (index + maxOpts < users.length) {
+      if (index + hg.maxOpts < users.length) {
         setTimeout(() => {
-          chunk(index + maxOpts);
+          chunk(index + hg.maxOpts);
         });
       } else {
         done();
@@ -3032,8 +3071,11 @@ function HG() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function listPlayers(msg, id) {
-    let game = hg.getGame(id);
-    if (!game) game = createGame(msg, id);
+    const game = hg.getGame(id);
+    if (!game) {
+      self.common.reply(msg, 'A game has not been created yet.');
+      return;
+    }
     const finalMessage = makePlayerListEmbed(game);
     finalMessage.setDescription(
         `To refresh: ${msg.prefix}${self.postPrefix}create`);
@@ -3204,7 +3246,7 @@ function HG() {
    */
   this.setOption = function(id, option, value, text = '') {
     if (!hg.getGame(id) || !hg.getGame(id).currentGame) {
-      this.createGame(id);
+      return 'A game has not been created yet.';
     }
     if (typeof option === 'undefined' || option.length == 0) {
       return null;
@@ -3294,9 +3336,8 @@ function HG() {
         obj[option] = value;
         if (option == 'includeBots') {
           createGame(null, id, true);
-          // createGame(msg, id, true);
         }
-        return 'Set ' + option + ' to ' + obj[option] + ' from ' + old;
+        return `Set ${option} to ${obj[option]} from ${old}`;
       }
     } else if (type === 'string') {
       value = (value || '').toLowerCase();
@@ -3511,7 +3552,7 @@ function HG() {
    */
   this.editTeam = function(uId, gId, cmd, one, two) {
     if (!hg.getGame(gId) || !hg.getGame(gId).currentGame) {
-      createGame(null, gId, true);
+      return 'No game has been created yet.';
     }
     if (hg.getGame(gId).currentGame.inProgress) {
       switch (cmd) {
@@ -3596,8 +3637,9 @@ function HG() {
    * @private
    * @param {Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
+   * @param {HungryGames~GuildGame} [game] The game object to modify.
    */
-  function swapTeamUsers(msg, id) {
+  function swapTeamUsers(msg, id, game) {
     const mentions = msg.mentions.users.concat(msg.softMentions.users);
     if (mentions.size != 2) {
       self.common.reply(
@@ -3605,8 +3647,16 @@ function HG() {
               'eachother.');
       return;
     }
-    if (!hg.getGame(id) || !hg.getGame(id).currentGame) {
-      createGame(null, id, true);
+    if (!game) game = hg.getGame(id);
+    if (!game || !game.currentGame) {
+      createGame(msg, id, false, (game) => {
+        if (!game) {
+          self.common.reply(msg, 'Failed to create game for unknown reason.');
+          return;
+        }
+        swapTeamUsers(msg, id, game);
+      });
+      return;
     }
     const user1 = mentions.first().id;
     const user2 = mentions.first(2)[1].id;
@@ -3614,14 +3664,14 @@ function HG() {
     let playerId1 = 0;
     let teamId2 = 0;
     let playerId2 = 0;
-    teamId1 = hg.getGame(id).currentGame.teams.findIndex(function(team) {
+    teamId1 = game.currentGame.teams.findIndex(function(team) {
       const index = team.players.findIndex(function(player) {
         return player == user1;
       });
       if (index > -1) playerId1 = index;
       return index > -1;
     });
-    teamId2 = hg.getGame(id).currentGame.teams.findIndex(function(team) {
+    teamId2 = game.currentGame.teams.findIndex(function(team) {
       const index = team.players.findIndex(function(player) {
         return player == user2;
       });
@@ -3632,11 +3682,11 @@ function HG() {
       self.common.reply(msg, 'Please ensure both users are on a team.');
       return;
     }
-    const intVal = hg.getGame(id).currentGame.teams[teamId1].players[playerId1];
-    hg.getGame(id).currentGame.teams[teamId1].players[playerId1] =
-        hg.getGame(id).currentGame.teams[teamId2].players[playerId2];
+    const intVal = game.currentGame.teams[teamId1].players[playerId1];
+    game.currentGame.teams[teamId1].players[playerId1] =
+        game.currentGame.teams[teamId2].players[playerId2];
 
-    hg.getGame(id).currentGame.teams[teamId2].players[playerId2] = intVal;
+    game.currentGame.teams[teamId2].players[playerId2] = intVal;
 
     self.common.reply(msg, 'Swapped players!');
   }
@@ -3646,15 +3696,24 @@ function HG() {
    * @private
    * @param {Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
+   * @param {HungryGames~GuildGame} [game] The game object to modify.
    */
-  function moveTeamUser(msg, id) {
+  function moveTeamUser(msg, id, game) {
     const mentions = msg.mentions.users.concat(msg.softMentions.users);
     if (mentions.size < 1) {
       self.common.reply(msg, 'You must at least mention one user to move.');
       return;
     }
-    if (!hg.getGame(id) || !hg.getGame(id).currentGame) {
-      createGame(null, id, true);
+    if (!game) game = hg.getGame(id);
+    if (!game || !game.currentGame) {
+      createGame(msg, id, false, (game) => {
+        if (!game) {
+          self.common.reply(msg, 'Failed to create game for unknown reason.');
+          return;
+        }
+        moveTeamUser(msg, id, game);
+      });
+      return;
     }
     let user1 = mentions.first().id;
     let teamId1 = 0;
@@ -3672,7 +3731,7 @@ function HG() {
     }
 
     let teamId2 = 0;
-    teamId1 = hg.getGame(id).currentGame.teams.findIndex((team) => {
+    teamId1 = game.currentGame.teams.findIndex((team) => {
       const index = team.players.findIndex((player) => {
         return player == user1;
       });
@@ -3680,15 +3739,14 @@ function HG() {
       return index > -1;
     });
     if (user2 > 0) {
-      teamId2 = hg.getGame(id).currentGame.teams.findIndex((team) => {
+      teamId2 = game.currentGame.teams.findIndex((team) => {
         return team.players.findIndex((player) => {
           return player == user2;
         }) > -1;
       });
     } else {
       teamId2 = msg.text.trim().split(' ')[1] - 1;
-      teamId2 = hg.getGame(id).currentGame.teams.findIndex(
-          (team) => team.id == teamId2);
+      teamId2 = game.currentGame.teams.findIndex((team) => team.id == teamId2);
     }
     if (teamId1 < 0 || teamId2 < 0 || isNaN(teamId2)) {
       let extra = null;
@@ -3703,24 +3761,23 @@ function HG() {
           extra);
       return;
     }
-    if (teamId2 >= hg.getGame(id).currentGame.teams.length) {
-      hg.getGame(id).currentGame.teams.push(
+    if (teamId2 >= game.currentGame.teams.length) {
+      game.currentGame.teams.push(
           new HungryGames.Team(
-              hg.getGame(id).currentGame.teams.length,
-              'Team ' + (hg.getGame(id).currentGame.teams.length + 1), []));
-      teamId2 = hg.getGame(id).currentGame.teams.length - 1;
+              game.currentGame.teams.length,
+              'Team ' + (game.currentGame.teams.length + 1), []));
+      teamId2 = game.currentGame.teams.length - 1;
     }
     self.common.reply(
         msg, 'Moving `' + self.client.users.get(user1).username + '` from ' +
-            hg.getGame(id).currentGame.teams[teamId1].name + ' to ' +
-            hg.getGame(id).currentGame.teams[teamId2].name);
+            game.currentGame.teams[teamId1].name + ' to ' +
+            game.currentGame.teams[teamId2].name);
 
-    hg.getGame(id).currentGame.teams[teamId2].players.push(
-        hg.getGame(id).currentGame.teams[teamId1].players.splice(
-            playerId1, 1)[0]);
+    game.currentGame.teams[teamId2].players.push(
+        game.currentGame.teams[teamId1].players.splice(playerId1, 1)[0]);
 
-    if (hg.getGame(id).currentGame.teams[teamId1].players.length == 0) {
-      hg.getGame(id).currentGame.teams.splice(teamId1, 1);
+    if (game.currentGame.teams[teamId1].players.length == 0) {
+      game.currentGame.teams.splice(teamId1, 1);
     }
   }
   /**
@@ -3746,7 +3803,10 @@ function HG() {
     }
     let teamId = search - 1;
     if (!hg.getGame(id) || !hg.getGame(id).currentGame) {
-      createGame(null, id, true);
+      if (!silent) {
+        self.common.reply(msg, 'A game has not been created yet.');
+      }
+      return;
     }
     if (isNaN(search)) {
       teamId = hg.getGame(id).currentGame.teams.findIndex(function(team) {
@@ -3786,7 +3846,10 @@ function HG() {
    */
   function randomizeTeams(msg, id, silent) {
     if (!hg.getGame(id) || !hg.getGame(id).currentGame) {
-      createGame(null, id, true);
+      if (!silent) {
+        self.common.reply(msg, 'A game has not been created yet.');
+      }
+      return;
     }
     if (hg.getGame(id).currentGame.inProgress) {
       if (!silent) {
@@ -3823,10 +3886,19 @@ function HG() {
    * @type {HungryGames~hgCommandHandler}
    * @param {Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
+   * @param {HungryGames~GuildGame} [game] The game object to modify.
    */
-  function createEvent(msg, id) {
-    if (!hg.getGame(id)) {
-      createGame(msg, id);
+  function createEvent(msg, id, game) {
+    if (!game) game = hg.getGame(id);
+    if (!game) {
+      createGame(msg, id, false, (game) => {
+        if (!game) {
+          self.common.reply(msg, 'Failed to create game for unknown reason.');
+          return;
+        }
+        createEvent(msg, id, game);
+      });
+      return;
     }
     newEventMessages[msg.id] = msg;
     const authId = msg.author.id;
@@ -5039,7 +5111,8 @@ function HG() {
     }
 
     if (!hg.getGame(id)) {
-      hg.create(msg.guild);
+      self.common.reply(msg, 'A game has not been created yet.');
+      return;
     }
 
     const iNPCs = hg.getGame(id).includedNPCs || [];
@@ -5064,9 +5137,6 @@ function HG() {
       const finalMessage = new self.Discord.MessageEmbed();
       finalMessage.setTitle('List of NPCs');
       finalMessage.setColor(defaultColor);
-      if (!hg.getGame(id)) {
-        createGame(msg, id);
-      }
       let iList = [];
       let eList = [];
       if (iNPCs.length > 0) iList = iNPCs.map(mapFunc).sort();
@@ -5392,12 +5462,18 @@ function HG() {
 
     const npc = new NPC(formatUsername(username), avatar, id);
 
-    if (!hg.getGame(gId)) self.createGame(gId);
-    if (!hg.getGame(gId).includedNPCs) hg.getGame(gId).includedNPCs = [];
-    hg.getGame(gId).includedNPCs.push(npc);
+    const pushNPC = function(game) {
+      if (!game.includedNPCs) hg.getGame(gId).includedNPCs = [];
+      game.includedNPCs.push(npc);
 
-    if (!hg.getGame(gId).currentGame.inProgress) self.createGame(gId);
-
+      if (!game.currentGame.inProgress) self.createGame(gId);
+    };
+    const game = hg.getGame(gId);
+    if (!game) {
+      self.createGame(gId, pushNPC);
+    } else {
+      pushNPC(game);
+    }
     return null;
   };
 
@@ -5622,11 +5698,11 @@ function HG() {
    * have been referenced in any way due to the given message from the user.
    * @private
    * @param {Discord~Message} msg The message that lead to this being called.
-   * @param {string} id The id of the guild this was triggered from.
+   * @param {HungryGames~GuildGame} game The game this is for.
    * @returns {string[]} Array of user IDs that are in the current game that
    * were mentioned.
    */
-  function parseGamePlayers(msg, id) {
+  function parseGamePlayers(msg, game) {
     const mentionedRoleUsers = new self.Discord.UserStore(
         self.client,
         ...msg.mentions.roles.map((r) => r.members.map((m) => m.user)));
@@ -5635,8 +5711,6 @@ function HG() {
         ...msg.softMentions.roles.map((r) => r.members.map((m) => m.user)));
     const mentions = msg.mentions.users.concat(msg.softMentions.users)
         .concat(mentionedRoleUsers.concat(softRoleUsers));
-    if (!hg.getGame(id)) createGame(msg, id);
-    const game = hg.getGame(id);
 
     let firstWord = msg.text.trim().split(' ')[0];
     if (firstWord) firstWord = firstWord.toLowerCase();
@@ -5704,9 +5778,21 @@ function HG() {
    * @type {HungryGames~hgCommandHandler}
    * @param {Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
+   * @param {HungryGames~GuildGame} [game] The game object to modify.
    */
-  function commandKill(msg, id) {
-    const players = parseGamePlayers(msg, id);
+  function commandKill(msg, id, game) {
+    if (!game) game = hg.getGame(id);
+    if (!game) {
+      createGame(msg, id, false, (game) => {
+        if (!game) {
+          self.common.reply(msg, 'Failed to create game for unknown reason.');
+          return;
+        }
+        commandKill(msg, id, game);
+      });
+      return;
+    }
+    const players = parseGamePlayers(msg, game);
 
     if (!players || players.length == 0) {
       self.common.reply(msg, 'Please specify a player in the games to kill.');
@@ -5725,9 +5811,21 @@ function HG() {
    * @type {HungryGames~hgCommandHandler}
    * @param {Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
+   * @param {HungryGames~GuildGame} [game] The game object to modify.
    */
-  function commandHeal(msg, id) {
-    const players = parseGamePlayers(msg, id);
+  function commandHeal(msg, id, game) {
+    if (!game) game = hg.getGame(id);
+    if (!game) {
+      createGame(msg, id, false, (game) => {
+        if (!game) {
+          self.common.reply(msg, 'Failed to create game for unknown reason.');
+          return;
+        }
+        commandHeal(msg, id, game);
+      });
+      return;
+    }
+    const players = parseGamePlayers(msg, game);
 
     if (!players || players.length == 0) {
       self.common.reply(msg, 'Please specify a player in the games to heal.');
@@ -5745,9 +5843,21 @@ function HG() {
    * @type {HungryGames~hgCommandHandler}
    * @param {Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
+   * @param {HungryGames~GuildGame} [game] The game object to modify.
    */
-  function commandWound(msg, id) {
-    const players = parseGamePlayers(msg, id);
+  function commandWound(msg, id, game) {
+    if (!game) game = hg.getGame(id);
+    if (!game) {
+      createGame(msg, id, false, (game) => {
+        if (!game) {
+          self.common.reply(msg, 'Failed to create game for unknown reason.');
+          return;
+        }
+        commandWound(msg, id, game);
+      });
+      return;
+    }
+    const players = parseGamePlayers(msg, game);
 
     if (!players || players.length == 0) {
       self.common.reply(msg, 'Please specify a player in the games to wound.');
@@ -5784,10 +5894,19 @@ function HG() {
    * @type {HungryGames~hgCommandHandler}
    * @param {Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
+   * @param {HungryGames~GuildGame} [game] The game object to modify.
    */
-  function commandRename(msg, id) {
-    if (!hg.getGame(id) || !hg.getGame(id).currentGame) {
-      createGame(null, id, true);
+  function commandRename(msg, id, game) {
+    if (!game) game = hg.getGame(id);
+    if (!game || !game.currentGame) {
+      createGame(msg, id, false, (game) => {
+        if (!game) {
+          self.common.reply(msg, 'Failed to create game for unknown reason.');
+          return;
+        }
+        commandRename(msg, id, game);
+      });
+      return;
     }
     if (self.renameGame(id, msg.text.trim())) {
       self.common.reply(
@@ -5808,12 +5927,21 @@ function HG() {
    * @type {HungryGames~hgCommandHandler}
    * @param {Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
+   * @param {HungryGames~GuildGame} [game] The game object to modify.
    */
-  function commandReactJoin(msg, id) {
-    if (!hg.getGame(id) || !hg.getGame(id).currentGame) {
-      createGame(null, id, true);
+  function commandReactJoin(msg, id, game) {
+    if (!game) game = hg.getGame(id);
+    if (!game || !game.currentGame) {
+      createGame(msg, id, false, (game) => {
+        if (!game) {
+          self.common.reply(msg, 'Failed to create game for unknown reason.');
+          return;
+        }
+        commandReactJoin(msg, id, game);
+      });
+      return;
     }
-    if (hg.getGame(id).reactMessage) {
+    if (game.reactMessage) {
       self.endReactJoinMessage(id, (err, info) => {
         if (err) {
           self.error(err);

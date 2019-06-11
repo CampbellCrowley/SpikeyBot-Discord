@@ -1452,7 +1452,7 @@ deadlock.
 	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
 	<dd class="tag-default">
 		<ul class="dummy">
-			<li>1000</li>
+			<li>5000</li>
 		</ul>
 	</dd>
 	
@@ -1763,7 +1763,7 @@ to object before requiring. This forces the object to be updated.
 		<ul class="dummy">
 			<li>
 				<a href="hg_HungryGames.js.html">hg/HungryGames.js</a>,
-				 <a href="hg_HungryGames.js.html#sunlight-1-line-603">line 603</a>
+				 <a href="hg_HungryGames.js.html#sunlight-1-line-630">line 630</a>
 			</li>
 		</ul>
 	</dd>
@@ -1931,7 +1931,7 @@ Returns `null` if data could not be found, or an error occurred.
 		<ul class="dummy">
 			<li>
 				<a href="hg_HungryGames.js.html">hg/HungryGames.js</a>,
-				 <a href="hg_HungryGames.js.html#sunlight-1-line-440">line 440</a>
+				 <a href="hg_HungryGames.js.html#sunlight-1-line-467">line 467</a>
 			</li>
 		</ul>
 	</dd>
@@ -1989,7 +1989,7 @@ be loaded.
             
 <hr>
 <dt>
-    <h4 class="name" id="create"><span class="type-signature"></span>create(guild)</h4>
+    <h4 class="name" id="create"><span class="type-signature"></span>create(guild [, cb])</h4>
     
     
 </dt>
@@ -2020,6 +2020,8 @@ be loaded.
         <th>Type</th>
 
         
+        <th>Argument</th>
+        
 
         
 
@@ -2049,11 +2051,54 @@ be loaded.
             </td>
 
             
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
 
             
 
             <td class="description last">Guild object, or ID to create
 a game for.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cb</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Callback once game has been fully created. Passes
+the created game as the only argument.</td>
         </tr>
 
     
@@ -2098,7 +2143,7 @@ a game for.</td>
 		<ul class="dummy">
 			<li>
 				<a href="hg_HungryGames.js.html">hg/HungryGames.js</a>,
-				 <a href="hg_HungryGames.js.html#sunlight-1-line-241">line 241</a>
+				 <a href="hg_HungryGames.js.html#sunlight-1-line-242">line 242</a>
 			</li>
 		</ul>
 	</dd>
@@ -2123,30 +2168,6 @@ a game for.</td>
     
 
     
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    The created GuildGame.
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type"><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></span>
-
-
-
-    </dd>
-</dl>
-
-
-        
 
     
 </dd>
@@ -2155,7 +2176,7 @@ a game for.</td>
             
 <hr>
 <dt>
-    <h4 class="name" id="getAllPlayers"><span class="type-signature"></span>getAllPlayers(members, excluded, bots, included, excludeByDefault [, includedNPCs])</h4>
+    <h4 class="name" id="getAllPlayers"><span class="type-signature"></span>getAllPlayers(members, excluded, bots, included, excludeByDefault [, includedNPCs], cb)</h4>
     
     
 </dt>
@@ -2423,6 +2444,43 @@ game by default?</td>
         </tr>
 
     
+
+        <tr>
+            
+                <td class="name"><code>cb</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">basicCB</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">Callback on completion. Only argument is array of
+<a href="HungryGames-Player.html">HungryGames~Player</a> to include in the games.</td>
+        </tr>
+
+    
     </tbody>
 </table>
 
@@ -2464,7 +2522,7 @@ game by default?</td>
 		<ul class="dummy">
 			<li>
 				<a href="hg_HungryGames.js.html">hg/HungryGames.js</a>,
-				 <a href="hg_HungryGames.js.html#sunlight-1-line-307">line 307</a>
+				 <a href="hg_HungryGames.js.html#sunlight-1-line-314">line 314</a>
 			</li>
 		</ul>
 	</dd>
@@ -2489,30 +2547,6 @@ game by default?</td>
     
 
     
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    Array of players to include in the games.
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Array.&lt;<a href="HungryGames-Player.html">HungryGames~Player</a>></span>
-
-
-
-    </dd>
-</dl>
-
-
-        
 
     
 </dd>
@@ -2685,7 +2719,7 @@ game in a guild.
             
 <hr>
 <dt>
-    <h4 class="name" id="refresh"><span class="type-signature"></span>refresh(guild)</h4>
+    <h4 class="name" id="refresh"><span class="type-signature"></span>refresh(guild [, cb])</h4>
     
     
 </dt>
@@ -2716,6 +2750,8 @@ game in a guild.
         <th>Type</th>
 
         
+        <th>Argument</th>
+        
 
         
 
@@ -2745,11 +2781,55 @@ game in a guild.
             </td>
 
             
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
 
             
 
             <td class="description last">Guild object, or ID to refresh
 a game for.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cb</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Callback once game has been fully refreshed. Passes
+the refreshed game as the only argument, or null if unable to find the
+game.</td>
         </tr>
 
     
@@ -2794,7 +2874,7 @@ a game for.</td>
 		<ul class="dummy">
 			<li>
 				<a href="hg_HungryGames.js.html">hg/HungryGames.js</a>,
-				 <a href="hg_HungryGames.js.html#sunlight-1-line-271">line 271</a>
+				 <a href="hg_HungryGames.js.html#sunlight-1-line-275">line 275</a>
 			</li>
 		</ul>
 	</dd>
@@ -2819,31 +2899,6 @@ a game for.</td>
     
 
     
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    The GuildGame of which the Game was
-updated, or null if unable to refresh.
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type"><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></span>
-
-
-
-    </dd>
-</dl>
-
-
-        
 
     
 </dd>
@@ -2981,7 +3036,7 @@ updated, or null if unable to refresh.
 		<ul class="dummy">
 			<li>
 				<a href="hg_HungryGames.js.html">hg/HungryGames.js</a>,
-				 <a href="hg_HungryGames.js.html#sunlight-1-line-373">line 373</a>
+				 <a href="hg_HungryGames.js.html#sunlight-1-line-400">line 400</a>
 			</li>
 		</ul>
 	</dd>
@@ -3165,7 +3220,7 @@ synchronous.</td>
 		<ul class="dummy">
 			<li>
 				<a href="hg_HungryGames.js.html">hg/HungryGames.js</a>,
-				 <a href="hg_HungryGames.js.html#sunlight-1-line-532">line 532</a>
+				 <a href="hg_HungryGames.js.html#sunlight-1-line-559">line 559</a>
 			</li>
 		</ul>
 	</dd>
@@ -3949,7 +4004,7 @@ for a full stop.
 		<ul class="dummy">
 			<li>
 				<a href="hg_HungryGames.js.html">hg/HungryGames.js</a>,
-				 <a href="hg_HungryGames.js.html#sunlight-1-line-586">line 586</a>
+				 <a href="hg_HungryGames.js.html#sunlight-1-line-613">line 613</a>
 			</li>
 		</ul>
 	</dd>
@@ -4093,7 +4148,7 @@ for a full stop.
 		<ul class="dummy">
 			<li>
 				<a href="hungryGames.js.html">hungryGames.js</a>,
-				 <a href="hungryGames.js.html#sunlight-1-line-4531">line 4531</a>
+				 <a href="hungryGames.js.html#sunlight-1-line-4613">line 4613</a>
 			</li>
 		</ul>
 	</dd>
@@ -4231,7 +4286,7 @@ for a full stop.
 		<ul class="dummy">
 			<li>
 				<a href="hungryGames.js.html">hungryGames.js</a>,
-				 <a href="hungryGames.js.html#sunlight-1-line-4402">line 4402</a>
+				 <a href="hungryGames.js.html#sunlight-1-line-4484">line 4484</a>
 			</li>
 		</ul>
 	</dd>
@@ -4369,7 +4424,7 @@ for a full stop.
 		<ul class="dummy">
 			<li>
 				<a href="hungryGames.js.html">hungryGames.js</a>,
-				 <a href="hungryGames.js.html#sunlight-1-line-4467">line 4467</a>
+				 <a href="hungryGames.js.html#sunlight-1-line-4549">line 4549</a>
 			</li>
 		</ul>
 	</dd>
@@ -4614,7 +4669,7 @@ convenience.</td>
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.2</a>
 	
-		on Tuesday, June 11, 2019 11:48 AM (-07:00)
+		on Tuesday, June 11, 2019 1:08 PM (-07:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

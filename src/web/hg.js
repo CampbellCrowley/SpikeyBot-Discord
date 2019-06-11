@@ -1078,12 +1078,13 @@ function HGWeb() {
       replyNoPerm(socket, 'createGame');
       return;
     }
-    const game = hg().createGame(gId);
-    if (typeof cb === 'function') {
-      cb(game ? null : 'ATTEMPT_FAILED', game && game.serializable);
-    } else {
-      socket.emit('game', gId, game && game.serializable);
-    }
+    hg().createGame(gId, (game) => {
+      if (typeof cb === 'function') {
+        cb(game ? null : 'ATTEMPT_FAILED', game && game.serializable);
+      } else {
+        socket.emit('game', gId, game && game.serializable);
+      }
+    });
   }
   this.createGame = createGame;
   /**
