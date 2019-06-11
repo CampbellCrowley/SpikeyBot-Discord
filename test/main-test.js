@@ -279,7 +279,7 @@ function sendCommand(test, done) {
 function testMessageContent(msg) {
   if (msg.author.id !== client.user.id) return;
   if (msg.channel.id !== channelID) {
-    if (!ready) {
+    if (!ready && msg.content.startsWith('Beginning in unit test mode(JS')) {
       ready = true;
       startTests();
     }
