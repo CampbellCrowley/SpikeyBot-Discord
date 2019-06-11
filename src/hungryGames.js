@@ -1064,6 +1064,7 @@ function HG() {
      */
     const done = function(game) {
       if (!game) {
+        self.warn('Failed to create/refresh game');
         cb(null);
         return;
       }
@@ -1397,9 +1398,11 @@ function HG() {
     } else if (!myPerms.has(self.Discord.Permissions.FLAGS.SEND_MESSAGES)) {
       return;
     }
+    if (game) game.loading = true;
     if (game && game.reactMessage) {
       self.endReactJoinMessage(id, (err, info) => {
         if (err) {
+          if (game) game.loading = false;
           self.error(`${err}: ${id}`);
           self.common.reply('React Join Failed', err);
         }
@@ -1422,27 +1425,28 @@ function HG() {
       game.loading = false;
     }
 
-    if (game) {
-      game.loading = true;
-      if (game.currentGame) game.currentGame.inProgress = true;
-    }
-    createGame(msg, id, true, (game) => {
-      if (!game) {
+    createGame(msg, id, true, (g) => {
+      if (!g) {
+        if (game) {
+          game.loading = false;
+          if (game.currentGame) game.currentGame.inProgress = false;
+        }
+        self.warn('Failed to create game to start game');
         self.common.reply(msg, 'Failed to create game for unknown reason.');
         return;
       }
 
-      game.currentGame.inProgress = true;
-      const finalMessage = makePlayerListEmbed(game);
+      g.currentGame.inProgress = true;
+      const finalMessage = makePlayerListEmbed(g);
       finalMessage.setTitle(hg.messages.get('gameStart'));
 
-      if (!game.autoPlay) {
+      if (!g.autoPlay) {
         finalMessage.setFooter(
             `"${msg.prefix}${self.postPrefix}next" for next day.`);
       }
 
       let mentions = self.common.mention(msg);
-      if (game.options.mentionEveryoneAtStart) {
+      if (g.options.mentionEveryoneAtStart) {
         mentions += '@everyone';
       }
 
@@ -1452,11 +1456,12 @@ function HG() {
             'Discord rejected my normal message for some reason...');
         self.error(
             'Failed to send start game message: ' + msg.channel.id + ' (Num: ' +
-            game.currentGame.includedUsers.length + ')');
+            g.currentGame.includedUsers.length + ')');
         console.error(err);
       });
       loadingComplete();
     });
+    if (game && game.currentGame) game.currentGame.inProgress = true;
   }
   /**
    * Start the games in the given channel and guild by the given user.
