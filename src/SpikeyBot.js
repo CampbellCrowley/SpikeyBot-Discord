@@ -837,7 +837,7 @@ function SpikeyBot() {
    * @param {Discord~GuildMember} newMem Member after presence update.
    */
   function onPresenceUpdate(oldMem, newMem) {
-    if (oldMem.id !== client.user.id) return;
+    if (!newMem || newMem.id !== client.user.id) return;
     common.log(
         'Presence updated: ' + newMem.presence.status + ': ' +
         (newMem.presence.activity && newMem.presence.activity.name ||
