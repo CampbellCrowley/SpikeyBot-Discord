@@ -3672,21 +3672,23 @@ function HG() {
     }
 
     let teamId2 = 0;
-    teamId1 = hg.getGame(id).currentGame.teams.findIndex(function(team) {
-      const index = team.players.findIndex(function(player) {
+    teamId1 = hg.getGame(id).currentGame.teams.findIndex((team) => {
+      const index = team.players.findIndex((player) => {
         return player == user1;
       });
       if (index > -1) playerId1 = index;
       return index > -1;
     });
     if (user2 > 0) {
-      teamId2 = hg.getGame(id).currentGame.teams.findIndex(function(team) {
-        return team.players.findIndex(function(player) {
+      teamId2 = hg.getGame(id).currentGame.teams.findIndex((team) => {
+        return team.players.findIndex((player) => {
           return player == user2;
         }) > -1;
       });
     } else {
       teamId2 = msg.text.trim().split(' ')[1] - 1;
+      teamId2 = hg.getGame(id).currentGame.teams.findIndex(
+          (team) => team.id == teamId2);
     }
     if (teamId1 < 0 || teamId2 < 0 || isNaN(teamId2)) {
       let extra = null;
@@ -3752,12 +3754,15 @@ function HG() {
           return player == mentions.first().id;
         }) > -1;
       });
+    } else {
+      teamId = hg.getGame(id).currentGame.teams.findIndex(
+          (team) => team.id == teamId);
     }
-    if (teamId < 0 || teamId >= hg.getGame(id).currentGame.teams.length) {
+    if (teamId < 0) {
       if (!silent) {
         self.common.reply(
-            msg, 'Please specify a valid team id. (0 - ' +
-                (hg.getGame(id).currentGame.teams.length - 1) + ')');
+            msg, 'Please specify a valid team id. (1 - ' +
+                hg.getGame(id).currentGame.teams.length + ')');
       }
       return;
     }
