@@ -1623,7 +1623,7 @@
       "resolved": "https://registry.npmjs.org/google-gax/-/google-gax-1.1.1.tgz",
       "integrity": "sha512-30CLetXzyd9B1Ilqvt4q9ETaeSUgJ54ygwtLRDyPrvl6Wb+s2U7WdwCpfkrbWWmEUxh+FTQq5PMcyW8HQ+BiGA==",
       "requires": {
-        "@grpc/grpc-js": "^0.4.0",
+        "@grpc/grpc-js": "^0.4.3",
         "@grpc/proto-loader": "^0.5.1",
         "duplexify": "^3.6.0",
         "google-auth-library": "^4.0.0",
