@@ -321,7 +321,10 @@ function testMessageContent(msg) {
 }
 
 
-client.login(auth.test);
+client.login(auth.test).catch((err) => {
+  console.error(err);
+  process.exit(1);
+});
 client.on('message', testMessageContent);
 client.on('ready', () => {
   console.log("Test bot ready");

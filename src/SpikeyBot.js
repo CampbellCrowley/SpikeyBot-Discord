@@ -1674,18 +1674,20 @@ function SpikeyBot() {
    * @private
    */
   function login() {
+    let token = auth.release;
     if (botName) {
-      if (!auth[botName]) {
+      token = auth[botName];
+      if (!token) {
         common.error('Failed to find auth entry for ' + botName);
         process.exit(1);
-      } else {
-        client.login(auth[botName]);
       }
     } else if (isDev) {
-      client.login(auth.dev);
-    } else {
-      client.login(auth.release);
+      token = auth.dev;
     }
+    client.login(token).catch((err) => {
+      console.error(err);
+      process.exit(1);
+    });
   }
 }
 
