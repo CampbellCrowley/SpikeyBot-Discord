@@ -1513,7 +1513,6 @@ function SpikeyBot() {
    * @private
    */
   function saveAll() {
-    common.logDebug('Starting save on all mainModules.');
     for (let i = 0; i < mainModules.length; i++) {
       if (typeof mainModules[i].save === 'function') {
         try {
