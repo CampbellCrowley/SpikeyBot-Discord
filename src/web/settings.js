@@ -1271,11 +1271,11 @@ function WebSettings() {
     }
 
     const prefix = self.bot.getPrefix(gId);
-    if (cmd.cmd.startsWith(prefix)) {
-      cmd.cmd = cmd.cmd.replace(prefix, '');
+    if (!cmd.cmd.startsWith(prefix)) {
+      cmd.cmd = prefix + cmd.cmd;
     }
 
-    const single = self.command.find(cmd.cmd);
+    const single = self.command.find(cmd.cmd, {prefix: prefix});
     if (!single) {
       cb('Invalid Command');
       return;
