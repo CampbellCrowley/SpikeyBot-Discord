@@ -341,7 +341,7 @@ function CmdScheduling() {
       if (typeof myself.channel !== 'object') {
         myself.channel = self.client.channels.get(myself.channelId);
       }
-      if (typeof myself.channel !== 'object') {
+      if (typeof myself.channel !== 'object' || myself.channel.deleted) {
         self.debug(
             'Cancelling command due to channel not existing: ' +
             myself.channelId + '@' + myself.memberId + ': ' + myself.cmd);
