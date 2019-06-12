@@ -565,13 +565,21 @@ class HungryGames {
             console.error(err);
           }
         }
-        yj.parseAsync(data.toString(), (err, data) => {
+        yj.parseAsync(data.toString(), (err, parsed) => {
           if (err) {
-            this._parent.error('Failed to parse game data:' + id);
+            this._parent.error(
+                'Failed to parse game data:' + id +
+                ' Falling back to JSON.parse');
             console.error(err);
-            return;
+            try {
+              parsed = JSON.parse(data);
+            } catch (err) {
+              this._parent.error('Failed to parse using JSON.parse');
+              console.error(err);
+              return;
+            }
           }
-          this._games[id] = parse(data);
+          this._games[id] = parse(parsed);
           cb(this._games[id]);
         });
       });
