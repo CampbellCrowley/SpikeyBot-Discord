@@ -1782,7 +1782,9 @@ function HG() {
       embed.setColor(defaultColor);
       if (!game || !game.options.disableOutput) {
         msg.channel.send(embed).catch((err) => {
-          if (err.message === 'Missing Permissions') {
+          if (err.message === 'Missing Permissions' ||
+              err.message === 'Missing Access' ||
+              err.message === 'Unknown Channel') {
             self.pauseGame(id);
           }
         });
