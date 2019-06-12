@@ -1270,8 +1270,17 @@ function WebSettings() {
       return;
     }
 
-    if (self.command.find(cmd.cmd).getFullName() ===
-        self.command.find('sch').getFullName()) {
+    const prefix = self.bot.getPrefix(gId);
+    if (cmd.cmd.startsWith(prefix)) {
+      cmd.cmd = cmd.cmd.replace(prefix, '');
+    }
+
+    const single = self.command.find(cmd.cmd);
+    if (!single) {
+      cb('Invalid Command');
+      return;
+    }
+    if (single.getFullName() === self.command.find('sch').getFullName()) {
       cb('Invalid Command');
       return;
     }
