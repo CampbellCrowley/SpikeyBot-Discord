@@ -143,23 +143,23 @@ const hgTests = [
       ]),
   new Test(
       'Exclude player nomention', '~hg exclude SpikeyRobot',
-      ['<@422623712534200321>\n```\nSpikeyRobot added to blacklist.\n```']),
+      ['<@422623712534200321>\n```\nSpikeyRobot added to blacklist.\n\n```']),
   new Test(
       'Include player nomention', '~hg include SpikeyRobot',
-      ['<@422623712534200321>\n```\nSpikeyRobot added to whitelist.\n```']),
+      ['<@422623712534200321>\n```\nSpikeyRobot added to whitelist.\n\n```']),
   new Test(
       'Exclude player', '~hg exclude <@124733888177111041>',
-      ['<@422623712534200321>\n```\nSpikeyRobot added to blacklist.\n```']),
+      ['<@422623712534200321>\n```\nSpikeyRobot added to blacklist.\n\n```']),
   new Test('List teams and check excluded', '~hg players', ['#embed']),
   new Test(
       'Exclude player already excluded', '~hg exclude <@124733888177111041>',
-      ['<@422623712534200321>\n```\nSpikeyRobot is already excluded.\n```']),
+      ['<@422623712534200321>\n```\nSpikeyRobot is already excluded.\n\n```']),
   new Test(
       'Include player', '~hg include <@124733888177111041>',
-      ['<@422623712534200321>\n```\nSpikeyRobot added to whitelist.\n```']),
+      ['<@422623712534200321>\n```\nSpikeyRobot added to whitelist.\n\n```']),
   new Test(
       'Include player already included', '~hg include <@124733888177111041>',
-      ['<@422623712534200321>\n```\nSpikeyRobot is already included.\n```']),
+      ['<@422623712534200321>\n```\nSpikeyRobot is already included.\n\n```']),
   new Test('List teams and check included', '~hg players', ['#embed']),
   new Test(
       'Rename Team', '~hg teams rename <@124733888177111041> The overlord',
