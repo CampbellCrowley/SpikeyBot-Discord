@@ -788,7 +788,6 @@ function HGWeb() {
 
     const guild = self.client.guilds.get(gId);
     if (!guild) {
-      cb(null);
       return;
     }
     if (userData.id != self.common.spikeyId &&

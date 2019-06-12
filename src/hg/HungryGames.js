@@ -620,9 +620,17 @@ class HungryGames {
           }
           yj.stringifyAsync(data, (err, stringified) => {
             if (err) {
-              this._parent.error('Failed to stringify HG data for ' + id);
+              this._parent.error(
+                  'Failed to stringify HG data for ' + id +
+                  ' Falling back to JSON.stringify');
               console.error(err);
-              return;
+              try {
+                stringified = JSON.stringify(data);
+              } catch (err) {
+                this._parent.error('Failed to stringify synchronously');
+                console.error(err);
+                return;
+              }
             }
             fs.writeFile(filename, stringified, (err2) => {
               if (err2) {
