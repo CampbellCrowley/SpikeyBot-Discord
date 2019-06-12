@@ -435,8 +435,15 @@ function CmdScheduling() {
       }
       myself.message.content = myself.cmd;
       myself.message.fabricated = true;
-      if (self.command.find(myself.cmd, myself.message).getFullName() ===
-          self.command.find('sch').getFullName()) {
+      const cmd = self.command.find(myself.cmd, myself.message);
+      if (!cmd) {
+        self.error(
+            'Unknown ScheduledCmd: ' + myself.message.channel.id + '@' +
+            myself.message.author.id + ' ' + myself.cmd + ' ' +
+            myself.message.content);
+        return;
+      }
+      if (cmd.getFullName() === self.command.find('sch').getFullName()) {
         self.error(
             'Recursive ScheduledCmd: ' + myself.message.channel.id + '@' +
             myself.message.author.id + ' ' + myself.message.content);
