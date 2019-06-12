@@ -290,21 +290,22 @@ class HungryGames {
     if (!(guild instanceof this._parent.Discord.Guild)) {
       guild = this._parent.client.guilds.get(guild);
     }
-    const game = this.getGame(guild.id);
-    if (!game) {
-      cb(null);
-      return;
-    }
-    const name = (game.currentGame && game.currentGame.customName) ||
-        (`${guild.name}'s Hungry Games`);
-    const teams = game.currentGame && game.currentGame.teams;
-    this.getAllPlayers(
-        guild.members, game.excludedUsers, game.options.includeBots,
-        game.includedUsers, game.options.excludeNewUsers, game.includedNPCs,
-        (res) => {
-          game.currentGame = new HungryGames.Game(name, res, teams);
-          cb(game);
-        });
+    this.fetchGame(guild.id, (game) => {
+      if (!game) {
+        cb(null);
+        return;
+      }
+      const name = (game.currentGame && game.currentGame.customName) ||
+          (`${guild.name}'s Hungry Games`);
+      const teams = game.currentGame && game.currentGame.teams;
+      this.getAllPlayers(
+          guild.members, game.excludedUsers, game.options.includeBots,
+          game.includedUsers, game.options.excludeNewUsers, game.includedNPCs,
+          (res) => {
+            game.currentGame = new HungryGames.Game(name, res, teams);
+            cb(game);
+          });
+    });
   }
 
   /**
@@ -569,9 +570,6 @@ class HungryGames {
             this._parent.error('Failed to parse game data:' + id);
             console.error(err);
             return;
-          }
-          if (this._parent.initialized) {
-            this._parent.debug('Loaded game from file ' + id);
           }
           this._games[id] = parse(data);
           cb(this._games[id]);

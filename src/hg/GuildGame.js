@@ -410,6 +410,7 @@ class GuildGame {
     this._autoStep = true;
     this._stateUpdateCallback = cb;
     const delay = this.options.disableOutput ? 1 : this.options.delayEvents;
+    this.step();
     this._dayEventInterval = setInterval(this.step, delay);
   }
 

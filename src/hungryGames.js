@@ -720,11 +720,10 @@ function HG() {
    * @listens Discord~Client#guildDelete
    */
   function onGuildDelete(guild) {
-    if (!hg.getGame(guild.id) || !hg.getGame(guild.id).currentGame ||
-        !hg.getGame(guild.id).currentGame.inProgress) {
-      return;
-    }
-    self.endGame(null, guild.id, true);
+    hg.fetchGame(guild.id, (game) => {
+      if (!game || !game.currentGame || !game.currentGame.inProgress) return;
+      self.endGame(null, guild.id, true);
+    });
   }
 
   /**
@@ -756,52 +755,49 @@ function HG() {
   function mkCmd(cb) {
     return function(msg) {
       const id = msg.guild.id;
-      const game = hg.getGame(id);
-      if (game) {
-        if (game.loading) {
-          self.common.reply(
-              msg, 'Still loading', 'A previous command is still loading. ' +
-                  'Please wait for it to complete.');
-          return;
-        }
-        let text = msg.text.trim().toLocaleLowerCase();
-        if (text.length > 0) {
-          hg.getGame(id).channel = msg.channel.id;
-          hg.getGame(id).author = msg.author.id;
-          if (hg.getGame(id).includedNPCs) {
-            hg.getGame(id).includedNPCs.sort((a, b) => {
-              return b.username.length - a.username.length;
-            });
-            hg.getGame(id).includedNPCs.forEach((el) => {
-              if (text.indexOf(el.username.toLocaleLowerCase()) > -1) {
-                // text = text.replace(el.username.toLocaleLowerCase(), '');
-                msg.softMentions.users.add(el);
-              } else if (text.indexOf(el.id.toLocaleLowerCase()) > -1) {
-                text = text.replace(el.id.toLocaleLowerCase(), '');
-                msg.softMentions.users.add(el);
-              }
-            });
+      hg.fetchGame(id, (game) => {
+        if (game) {
+          if (game.loading) {
+            self.common.reply(
+                msg, 'Still loading', 'A previous command is still loading. ' +
+                    'Please wait for it to complete.');
+            return;
           }
-          if (hg.getGame(id).excludedNPCs) {
-            hg.getGame(id).excludedNPCs.sort((a, b) => {
-              return b.username.length - a.username.length;
-            });
-            hg.getGame(id).excludedNPCs.forEach((el) => {
-              if (text.indexOf(el.username.toLocaleLowerCase()) > -1) {
-                // text = text.replace(el.username.toLocaleLowerCase(), '');
-                msg.softMentions.users.add(el);
-              } else if (text.indexOf(el.id.toLocaleLowerCase()) > -1) {
-                text = text.replace(el.id.toLocaleLowerCase(), '');
-                msg.softMentions.users.add(el);
-              }
-            });
+          let text = msg.text.trim().toLocaleLowerCase();
+          if (text.length > 0) {
+            game.channel = msg.channel.id;
+            game.author = msg.author.id;
+            if (game.includedNPCs) {
+              game.includedNPCs.sort((a, b) => {
+                return b.username.length - a.username.length;
+              });
+              game.includedNPCs.forEach((el) => {
+                if (text.indexOf(el.username.toLocaleLowerCase()) > -1) {
+                  // text = text.replace(el.username.toLocaleLowerCase(), '');
+                  msg.softMentions.users.add(el);
+                } else if (text.indexOf(el.id.toLocaleLowerCase()) > -1) {
+                  text = text.replace(el.id.toLocaleLowerCase(), '');
+                  msg.softMentions.users.add(el);
+                }
+              });
+            }
+            if (game.excludedNPCs) {
+              game.excludedNPCs.sort(
+                  (a, b) => b.username.length - a.username.length);
+              game.excludedNPCs.forEach((el) => {
+                if (text.indexOf(el.username.toLocaleLowerCase()) > -1) {
+                  // text = text.replace(el.username.toLocaleLowerCase(), '');
+                  msg.softMentions.users.add(el);
+                } else if (text.indexOf(el.id.toLocaleLowerCase()) > -1) {
+                  text = text.replace(el.id.toLocaleLowerCase(), '');
+                  msg.softMentions.users.add(el);
+                }
+              });
+            }
           }
-          /* console.log(
-              msg.softNoMatch, msg.softMentions.users.map((el) => el.username));
-             */
         }
-      }
-      cb(msg, id);
+        cb(msg, id /* , game*/);
+      });
     };
   }
 
@@ -1350,8 +1346,8 @@ function HG() {
         'Weapon Events (' + Object.keys(events).length + ' weapons)', file);
 
     events = defaultArenaEvents;
-    if (hg.getGame(id) && hg.getGame(id).customEvents.arena) {
-      events = events.concat(hg.getGame(id).customEvents.arena);
+    if (game && game.customEvents.arena) {
+      events = events.concat(game.customEvents.arena);
     }
     file = new self.Discord.MessageAttachment();
     file.setFile(Buffer.from(JSON.stringify(events, null, 2)));
@@ -1423,7 +1419,7 @@ function HG() {
           nextDay(msg, id);
         }
       });
-      game.loading = false;
+      if (game) game.loading = false;
     }
 
     createGame(msg, id, true, (g) => {
@@ -1785,7 +1781,11 @@ function HG() {
       }
       embed.setColor(defaultColor);
       if (!game || !game.options.disableOutput) {
-        msg.channel.send(embed);
+        msg.channel.send(embed).catch((err) => {
+          if (err.message === 'Missing Permissions') {
+            self.pauseGame(id);
+          }
+        });
       }
       game.outputChannel = msg.channel.id;
       game.currentGame.isPaused = false;
