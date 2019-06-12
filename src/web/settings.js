@@ -1270,7 +1270,7 @@ function WebSettings() {
       return;
     }
 
-    if (self.command.find(cmd).getFullName() ===
+    if (self.command.find(cmd.cmd).getFullName() ===
         self.command.find('sch').getFullName()) {
       cb('Invalid Command');
       return;
