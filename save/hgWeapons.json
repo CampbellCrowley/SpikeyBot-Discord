@@ -725,7 +725,7 @@
       {
         "message": "{victim} steal[Vs|] [Aa |]hatchet[A|s] from {attacker}!",
         "attacker": { "count": "1", "outcome": "nothing" },
-        "victim": { "count": "1", "outcome": "nothing", "weapon": { "name": "sword", "count": 1 } },
+        "victim": { "count": "1", "outcome": "nothing", "weapon": { "name": "hatchet", "count": 1 } },
         "consumes": 1
       },
       {

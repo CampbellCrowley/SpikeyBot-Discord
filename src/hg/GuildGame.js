@@ -99,6 +99,14 @@ class GuildGame {
      */
     this.autoPlay = false;
     /**
+     * Does this game currently have any long running operations being
+     * performed.
+     * @public
+     * @type {boolean}
+     * @default false
+     */
+    this.loading = false;
+    /**
      * Is this game automatically stepping, or are steps controlled manually.
      * @private
      * @type {boolean}
@@ -402,6 +410,7 @@ class GuildGame {
     this._autoStep = true;
     this._stateUpdateCallback = cb;
     const delay = this.options.disableOutput ? 1 : this.options.delayEvents;
+    this.step();
     this._dayEventInterval = setInterval(this.step, delay);
   }
 

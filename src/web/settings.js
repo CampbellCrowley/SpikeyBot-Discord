@@ -387,6 +387,9 @@ function WebSettings() {
     socket.on('fetchGuilds', (...args) => {
       callSocketFunction(fetchGuilds, args, false);
     });
+    socket.on('fetchGuild', (...args) => {
+      callSocketFunction(fetchGuild, args);
+    });
     socket.on('fetchMember', (...args) => {
       callSocketFunction(fetchMember, args);
     });
@@ -407,6 +410,9 @@ function WebSettings() {
     });
     socket.on('fetchScheduledCommands', (...args) => {
       callSocketFunction(fetchScheduledCommands, args);
+    });
+    socket.on('fetchGuildScheduledCommands', (...args) => {
+      callSocketFunction(fetchGuildScheduledCommands, args);
     });
     socket.on('cancelScheduledCommand', (...args) => {
       callSocketFunction(cancelScheduledCommand, args);
@@ -576,9 +582,9 @@ function WebSettings() {
    */
   function checkPerm(userData, gId, cId, cmd) {
     if (!userData) return false;
+    if (userData.id == self.common.spikeyId) return true;
     const msg = makeMessage(userData.id, gId, cId, cmd);
     if (!msg) return false;
-    if (userData.id == self.common.spikeyId) return true;
     if (self.command.validate(null, makeMessage(userData.id, gId, null, cmd))) {
       return false;
     }
@@ -768,30 +774,7 @@ function WebSettings() {
             })
             .array();
       }
-      const strippedGuilds = guilds.map((g) => {
-        const member = g.members.get(userData.id);
-        const newG = {};
-        newG.iconURL = g.iconURL();
-        newG.name = g.name;
-        newG.id = g.id;
-        newG.ownerId = g.ownerID;
-        newG.members = g.members.map((m) => {
-          return m.id;
-        });
-        newG.channels =
-            g.channels
-                .filter((c) => {
-                  const perms = c.permissionsFor(member);
-                  return userData.id == self.common.spikeyId ||
-                      (perms &&
-                       perms.has(self.Discord.Permissions.FLAGS.VIEW_CHANNEL));
-                })
-                .map((c) => {
-                  return c.id;
-                });
-        newG.myself = makeMember(member || userData.id);
-        return newG;
-      });
+      const strippedGuilds = stripGuilds(guilds, userData);
       socket.cachedGuilds = strippedGuilds.map((g) => g.id);
       done(strippedGuilds);
     } catch (err) {
@@ -801,6 +784,78 @@ function WebSettings() {
     }
   }
   this.fetchGuilds = fetchGuilds;
+
+  /**
+   * Strip a Discord~Guild to the basic information the client will need.
+   *
+   * @private
+   * @param {Discord~Guild[]} guilds The array of guilds to strip.
+   * @param {object} userData The current user's session data.
+   * @returns {Array<object>} The stripped guilds.
+   */
+  function stripGuilds(guilds, userData) {
+    return guilds.map((g) => {
+      const member = g.members.get(userData.id);
+      const newG = {};
+      newG.iconURL = g.iconURL();
+      newG.name = g.name;
+      newG.id = g.id;
+      newG.ownerId = g.ownerID;
+      newG.members = g.members.map((m) => {
+        return m.id;
+      });
+      newG.channels =
+          g.channels
+              .filter((c) => {
+                const perms = c.permissionsFor(member);
+                return userData.id == self.common.spikeyId ||
+                    (perms &&
+                     perms.has(self.Discord.Permissions.FLAGS.VIEW_CHANNEL));
+              })
+              .map((c) => {
+                return c.id;
+              });
+      newG.myself = makeMember(member || userData.id);
+      return newG;
+    });
+  }
+
+  /**
+   * Fetch a single guild.
+   *
+   * @private
+   * @type {HGWeb~SocketFunction}
+   * @param {object} userData The current user's session data.
+   * @param {socketIo~Socket} socket The socket connection to reply on.
+   * @param {string|number} gId The ID of the guild that was requested.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete, or has failed.
+   */
+  function fetchGuild(userData, socket, gId, cb) {
+    if (!userData) {
+      self.common.error('Fetch Guild without userData', socket.id);
+      if (typeof cb === 'function') cb('SIGNED_OUT');
+      return;
+    }
+    if (typeof cb !== 'function') {
+      self.common.logWarning(
+          'Fetch Guild attempted without callback', socket.id);
+      return;
+    }
+
+    const guild = self.client.guilds.get(gId);
+    if (!guild) {
+      // cb(null);
+      return;
+    }
+    if (userData.id != self.common.spikeyId &&
+        !guild.members.get(userData.id)) {
+      // cb(null);
+      return;
+    }
+    cb(stripGuilds([guild], userData)[0]);
+  }
+  this.fetchGuild = fetchGuild;
 
   /**
    * Fetch data about a member of a guild.
@@ -934,6 +989,14 @@ function WebSettings() {
       cb('Not signed in.', null);
       return;
     }
+    if (userData.id != self.common.spikeyId) {
+      const guild = self.client.guilds.get(gId);
+      const member = guild.members.get(userData.id);
+      if (!member) {
+        cb('NO_PERM');
+        return;
+      }
+    }
     if (!raidBlock) {
       cb('Internal Server Error');
       return;
@@ -959,6 +1022,14 @@ function WebSettings() {
     if (!userData) {
       cb('Not signed in.', null);
       return;
+    }
+    if (userData.id != self.common.spikeyId) {
+      const guild = self.client.guilds.get(gId);
+      const member = guild.members.get(userData.id);
+      if (!member) {
+        cb('NO_PERM');
+        return;
+      }
     }
     const modLog = self.bot.getSubmodule('./modLog.js');
     if (!modLog) {
@@ -990,6 +1061,14 @@ function WebSettings() {
     if (!userData) {
       cb('Not signed in.', null);
       return;
+    }
+    if (userData.id != self.common.spikeyId) {
+      const guild = self.client.guilds.get(gId);
+      const member = guild.members.get(userData.id);
+      if (!member) {
+        cb('NO_PERM');
+        return;
+      }
     }
     let settings = self.command.getUserSettings(gId);
     if (cmd) {
@@ -1057,6 +1136,54 @@ function WebSettings() {
   }
   this.fetchScheduledCommands = fetchScheduledCommands;
 
+  /**
+   * Client has requested scheduled commands for a guild.
+   *
+   * @public
+   * @type {WebSettings~SocketFunction}
+   * @param {object} userData The current user's session data.
+   * @param {socketIo~Socket} socket The socket connection to reply on.
+   * @param {string} gId The guild ID to fetch.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete and has data, or has failed.
+   */
+  function fetchGuildScheduledCommands(userData, socket, gId, cb) {
+    if (!checkMyGuild(gId)) return;
+    if (typeof cb !== 'function') cb = function() {};
+    if (!userData) {
+      cb('Not signed in.', null);
+      return;
+    }
+    if (userData.id != self.common.spikeyId) {
+      const guild = self.client.guilds.get(gId);
+      const member = guild.members.get(userData.id);
+      if (!member) {
+        cb('NO_PERM');
+        return;
+      }
+    }
+    updateModuleReferences();
+    if (!cmdScheduler) {
+      self.warn('Failed to get reference to CmdScheduler!');
+      return;
+    }
+    const list = cmdScheduler.getScheduledCommandsInGuild(gId);
+    let sCmds;
+    if (list && list.length > 0) {
+      sCmds = list.map((el) => {
+        return {
+          id: el.id,
+          channel: el.channel.id,
+          cmd: el.cmd,
+          repeatDelay: el.repeatDelay,
+          time: el.time,
+          member: makeMember(el.member),
+        };
+      });
+    }
+    cb(sCmds);
+  }
+  this.fetchGuildScheduledCommands = fetchGuildScheduledCommands;
   /**
    * Client has requested that a scheduled command be cancelled.
    *
@@ -1143,6 +1270,12 @@ function WebSettings() {
       return;
     }
 
+    if (self.command.find(cmd).getFullName() ===
+        self.command.find('sch').getFullName()) {
+      cb('Invalid Command');
+      return;
+    }
+
     const newCmd = new cmdScheduler.ScheduledCommand({
       cmd: cmd.cmd,
       channel: msg.channel,
@@ -1152,8 +1285,11 @@ function WebSettings() {
       member: msg.member,
     });
 
-    cmdScheduler.registerScheduledCommand(newCmd);
-    cb(null);
+    if (!cmdScheduler.registerScheduledCommand(newCmd)) {
+      cb('Time is too close to existing command.');
+    } else {
+      cb(null);
+    }
   }
   this.registerScheduledCommand = registerScheduledCommand;
 

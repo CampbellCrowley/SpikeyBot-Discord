@@ -507,14 +507,14 @@ function SpikeyBot() {
           if (msg.indexOf('force') > -1) {
             manager.shards.forEach((s) => {
               if (!idList || idList.find((el) => el == s.id)) {
-                s.process.send('reboot');
+                s.process.send(`reboot ${s.id}`);
                 s.respawn();
               }
             });
           } else {
             manager.shards.forEach((s) => {
               if (!idList || idList.find((el) => el == s.id)) {
-                s.process.send('reboot');
+                s.process.send(`reboot ${s.id}`);
               }
             });
           }
@@ -842,7 +842,8 @@ function SpikeyBot() {
                   client.shard.count;
             }
             if (crashed) {
-              additional += ' due to rapid unscheduled dissassembly!';
+              // additional += ' due to rapid unscheduled dissassembly!';
+              additional += '*';
             } else if (disconnectReason) {
               additional +=
                   ' after disconnecting from Discord!\n' + disconnectReason;
@@ -929,7 +930,7 @@ function SpikeyBot() {
    * @param {Discord~GuildMember} newMem Member after presence update.
    */
   function onPresenceUpdate(oldMem, newMem) {
-    if (oldMem.id !== client.user.id) return;
+    if (!newMem || newMem.id !== client.user.id) return;
     common.log(
         'Presence updated: ' + newMem.presence.status + ': ' +
         (newMem.presence.activity &amp;&amp; newMem.presence.activity.name ||
@@ -979,37 +980,27 @@ function SpikeyBot() {
     msg.prefix = self.getPrefix(msg.guild);
 
     if (msg.guild === null &amp;&amp; !msg.content.startsWith(msg.prefix)) {
-      msg.content = msg.prefix + msg.content;
+      msg.content = `${msg.prefix}${msg.content}`;
     }
 
     if (isCmd(msg, '')) {
       let commandSuccess = command.validate(msg.content.split(/ |\n/)[0], msg);
+      let logged = '';
       if (!minimal || isBackup) {
         const postLog = `${client.shard ? client.shard.ids[0] : ''} SpikeyBot`;
+        const content = msg.content.replace(/\n/g, '\\n');
+        let author;
         if (msg.guild !== null) {
-          if (!commandSuccess) {
-            common.log(
-                msg.channel.id + '@' + msg.author.id + ' ' +
-                    msg.content.replaceAll('\n', '\\n'),
-                postLog);
-          } else {
-            common.logDebug(
-                msg.channel.id + '@' + msg.author.id + ' ' + commandSuccess +
-                    ' ' + msg.content.replaceAll('\n', '\\n'),
-                postLog);
-          }
+          author = `${msg.channel.id}@${msg.author.id}`;
         } else {
-          if (!commandSuccess) {
-            common.log(
-                'PM:' + msg.author.id + '@' + msg.author.tag + ' ' +
-                    msg.content.replaceAll('\n', '\\n'),
-                postLog);
-          } else {
-            common.logDebug(
-                'PM:' + msg.author.id + '@' + msg.author.tag + ' ' +
-                    commandSuccess + ' ' + msg.content.replaceAll('\n', '\\n'),
-                postLog);
-          }
+          author = `PM:${msg.author.id}@${msg.author.tag}`;
+        }
+        if (!commandSuccess) {
+          logged = `${author} ${content}`;
+          common.log(logged, postLog);
+        } else {
+          logged = `${author} ${commandSuccess} ${content}`;
+          common.logDebug(logged, postLog);
         }
       }
       const now = new Date();
@@ -1064,7 +1055,13 @@ function SpikeyBot() {
             .catch(() => {});
         commandSuccess = true;
       } else {
+        const start = Date.now();
         commandSuccess = command.trigger(msg);
+        const delta = Date.now() - start;
+        if (delta > 20) {
+          const toLog = logged || msg.content;
+          common.logDebug(`${toLog} took an excessive ${delta}ms`);
+        }
       }
       if (!commandSuccess &amp;&amp; msg.guild === null &amp;&amp; !minimal &amp;&amp; !testMode) {
         if (msg.content.split(/ |\n/)[0].indexOf('chat') &lt; 0 &amp;&amp;
@@ -1222,6 +1219,8 @@ function SpikeyBot() {
    * @listens Command#changePrefix
    */
   function commandChangePrefix(msg) {
+    const canReact = msg.channel.permissionsFor(self.client.user)
+        .has(Discord.Permissions.FLAGS.ADD_REACTIONS);
     const confirmEmoji = '✅';
     const newPrefix = msg.text.slice(1);
     if (newPrefix.length &lt; 1) {
@@ -1234,14 +1233,13 @@ function SpikeyBot() {
       common.reply(
           msg, 'Sorry, but custom prefixes may not contain any whitespace.');
     } else {
-      msg.channel
-          .send(
-              common.mention(msg) +
-              ' Are you sure you wish to change the command prefix for ' +
-              'this server from `' + self.getPrefix(msg.guild.id) + '` to `' +
-              newPrefix + '`?')
+      common
+          .reply(
+              msg, 'Change prefix from `' + self.getPrefix(msg.guild.id) +
+                  '` to `' + newPrefix + '`?',
+              canReact ? null : `React with ${confirmEmoji} to confirm.`)
           .then((msg_) => {
-            msg_.react(confirmEmoji);
+            if (canReact) msg_.react(confirmEmoji);
             msg_.awaitReactions((reaction, user) => {
               if (user.id !== msg.author.id) return false;
               return reaction.emoji.name == confirmEmoji;
@@ -1608,7 +1606,6 @@ function SpikeyBot() {
    * @private
    */
   function saveAll() {
-    common.logDebug('Starting save on all mainModules.');
     for (let i = 0; i &lt; mainModules.length; i++) {
       if (typeof mainModules[i].save === 'function') {
         try {
@@ -1770,18 +1767,20 @@ function SpikeyBot() {
    * @private
    */
   function login() {
+    let token = auth.release;
     if (botName) {
-      if (!auth[botName]) {
+      token = auth[botName];
+      if (!token) {
         common.error('Failed to find auth entry for ' + botName);
         process.exit(1);
-      } else {
-        client.login(auth[botName]);
       }
     } else if (isDev) {
-      client.login(auth.dev);
-    } else {
-      client.login(auth.release);
+      token = auth.dev;
     }
+    client.login(token).catch((err) => {
+      console.error(err);
+      process.exit(1);
+    });
   }
 }
 
@@ -1831,7 +1830,7 @@ module.exports = new SpikeyBot();
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.2</a>
 	
-		on Friday, May 31, 2019 1:14 AM (-07:00)
+		on Wednesday, June 12, 2019 3:03 PM (-07:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

@@ -896,13 +896,15 @@ Simulator._probabilityEvent = function(
  * @returns {number} The number of consumed items.
  */
 Simulator._parseConsumeCount = function(consumeString, numVictim, numAttacker) {
-  const consumedMatch = (consumeString + '').match(/^(\d*)(V|A)$/);
+  const consumedMatch = (consumeString + '').match(/^(\d*)(V|A)?$/);
   if (!consumedMatch) {
     return 0;
   } else if (consumedMatch[2] == 'V') {
     return numVictim * (consumedMatch[1] || 1);
   } else if (consumedMatch[2] == 'A') {
     return numAttacker * (consumedMatch[1] || 1);
+  } else {
+    return consumedMatch[1];
   }
 };
 

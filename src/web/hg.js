@@ -764,8 +764,7 @@ function HGWeb() {
   }
 
   /**
-   * Fetch all relevant data for a mutual guilds with the user and send it to
-   * the user.
+   * Fetch a single guild.
    *
    * @private
    * @type {HGWeb~SocketFunction}
@@ -789,7 +788,6 @@ function HGWeb() {
 
     const guild = self.client.guilds.get(gId);
     if (!guild) {
-      cb(null);
       return;
     }
     if (userData.id != self.common.spikeyId &&
@@ -973,14 +971,16 @@ function HGWeb() {
       replyNoPerm(socket, 'excludeMember');
       return;
     }
-    let out;
     if (mId === 'everyone' || mId === 'online' || mId == 'offline' ||
         mId == 'dnd' || mId == 'idle') {
-      out = hg().excludeUsers(mId, gId);
+      hg().excludeUsers(mId, gId, (res) => {
+        if (typeof cb === 'function') cb(res);
+      });
     } else {
-      out = hg().excludeUsers([mId], gId);
+      hg().excludeUsers([mId], gId, (res) => {
+        if (typeof cb === 'function') cb(res);
+      });
     }
-    if (typeof cb === 'function') cb(out);
   }
   this.excludeMember = excludeMember;
   /**
@@ -1004,15 +1004,16 @@ function HGWeb() {
       replyNoPerm(socket, 'includeMember');
       return;
     }
-    let out;
     if (mId === 'everyone' || mId === 'online' || mId == 'offline' ||
         mId == 'dnd' || mId == 'idle') {
-      out = hg().includeUsers(mId, gId);
+      hg().includeUsers(mId, gId, (res) => {
+        if (typeof cb === 'function') cb(res);
+      });
     } else {
-      out = hg().includeUsers([mId], gId);
+      hg().includeUsers([mId], gId, (res) => {
+        if (typeof cb === 'function') cb(res);
+      });
     }
-    if (typeof cb === 'function') cb(out);
-    // socket.emit('game', gId, hg().getHG().getGame(gId));
   }
   this.includeMember = includeMember;
   /**
@@ -1076,12 +1077,13 @@ function HGWeb() {
       replyNoPerm(socket, 'createGame');
       return;
     }
-    const game = hg().createGame(gId);
-    if (typeof cb === 'function') {
-      cb(game ? null : 'ATTEMPT_FAILED', game && game.serializable);
-    } else {
-      socket.emit('game', gId, game && game.serializable);
-    }
+    hg().createGame(gId, (game) => {
+      if (typeof cb === 'function') {
+        cb(game ? null : 'ATTEMPT_FAILED', game && game.serializable);
+      } else {
+        socket.emit('game', gId, game && game.serializable);
+      }
+    });
   }
   this.createGame = createGame;
   /**

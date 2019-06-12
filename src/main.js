@@ -1,7 +1,7 @@
 // Copyright 2018-2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const dateFormat = require('dateformat');
-const math = require('mathjs');
+const mathjs = require('mathjs');
 const algebra = require('algebra.js');
 const Jimp = require('jimp');
 const fs = require('fs');
@@ -9,7 +9,7 @@ const mkdirp = require('mkdirp');
 const childProcess = require('child_process');
 require('./subModule.js').extend(Main);  // Extends the SubModule class.
 
-math.config({matrix: 'Array'});
+const math = mathjs.create(mathjs.all, {matrix: 'Array'});
 
 /**
  * @classdesc Basic commands and features for the bot.
@@ -1306,7 +1306,7 @@ function Main() {
         const split = formula.split('=');
         formula = split[1] + ' - (' + split[0] + ')';
       }
-      let simplified = math.eval(formula).toString();
+      let simplified = math.evaluate(formula).toString();
       simplified = simplified.replace(/ \* ([A-Za-z])/g, '$1');
       self.common.reply(msg, simplified);
     } catch (err) {
@@ -1340,20 +1340,20 @@ function Main() {
       const domainTemp = cmd.match(/\[([^,]*),([^\]]*)\]/m);
       const rangeTemp = cmd.match(/\[[^\]]*\][^[]*\[([^,]*),([^\]]*)\]/m);
       if (domainTemp !== null && domainTemp.length == 3) {
-        domainMin = math.eval(domainTemp[1]);
-        domainMax = math.eval(domainTemp[2]);
+        domainMin = math.evaluate(domainTemp[1]);
+        domainMax = math.evaluate(domainTemp[2]);
       } else {
         domainMin = -10;
         domainMax = 10;
       }
       if (rangeTemp !== null && rangeTemp.length == 3) {
-        rangeMin = math.eval(rangeTemp[1]);
-        rangeMax = math.eval(rangeTemp[2]);
+        rangeMin = math.evaluate(rangeTemp[1]);
+        rangeMax = math.evaluate(rangeTemp[2]);
       }
       xVal = math.range(
           domainMin, domainMax, (domainMax - domainMin) / graphSize / dotSize);
       yVal = xVal.map(function(x) {
-        return expr.eval({x: x});
+        return expr.evaluate({x: x});
       });
       try {
         let formula = expression;
@@ -1363,7 +1363,7 @@ function Main() {
         }
         const exprSlope = math.derivative(formula, 'x');
         ypVal = xVal.map(function(x) {
-          return exprSlope.eval({x: x});
+          return exprSlope.evaluate({x: x});
         });
       } catch (err) {
         console.log(err);
@@ -2420,18 +2420,21 @@ function Main() {
   function commandPerms(msg) {
     let chan = msg.channel;
     let guild = msg.guild;
-    const mem = msg.member;
+    let mem = msg.member;
     let author = msg.author;
 
-    let id = msg.text.match(/\b\d+\b/);
-    if (self.common.trustedIds.includes(msg.author.id) && id) {
-      id = id[0];
-      author = null;
-      chan = self.client.channels.get(id);
-      guild = (chan && chan.guild) || self.client.guilds.get(id);
+    const idList = msg.text.match(/\b\d{17,19}\b/g);
+    if (self.common.trustedIds.includes(msg.author.id) && idList) {
+      const id = idList[0];
+      const id2 = idList[1];
+      chan = self.client.channels.get(id) || self.client.channels.get(id2);
+      guild = (chan && chan.guild) || self.client.guilds.get(id) ||
+          self.client.guilds.get(id2);
+      mem = guild && (guild.members.get(id) || guild.members.get(id2));
+      author = mem && mem.user;
       if (!guild) {
         if (self.client.shard) {
-          const toEval = `this.fetchPerms('${id}')`;
+          const toEval = `this.fetchPerms('${id}', '${id2}')`;
           self.client.shard.broadcastEval(toEval).then((res) => {
             const index = res.findIndex((el) => el);
             const match = res[index];
@@ -2441,29 +2444,16 @@ function Main() {
                   msg.text);
               return;
             }
-            const chan = match[0];
-            const guild = match[1];
+            const cId = match.cId;
+            const cY = match.cY;
+            const cM = match.cM;
+            const gId = match.gId;
+            const gY = match.gY;
+            const gM = match.gM;
+            const uId = match.uId;
             const embed = new self.Discord.MessageEmbed();
             embed.setTitle(`Permissions (Shard #${index})`);
-            if (!isNaN(chan)) {
-              embed.addField(
-                  `Channel ${id}`,
-                  '```css\n' + prePad(chan.toString(2), 31) + ' Me```');
-            }
-            if (!isNaN(guild)) {
-              embed.addField(
-                  'Guild',
-                  '```css\n' + prePad(guild.toString(2), 31) + ' Me```');
-            }
-
-            const allPermPairs = Object.entries(self.Discord.Permissions.FLAGS);
-            const formatted =
-                allPermPairs
-                    .map((el) => `${prePad(el[1].toString(2), 31)} ${el[0]}`)
-                    .join('\n');
-            embed.setDescription('```css\n' + formatted + '```');
-
-            msg.channel.send(embed);
+            replyPerms(msg, gId, gM, gY, cId, cM, cY, uId, embed);
           });
         } else {
           self.common.reply(
@@ -2473,59 +2463,116 @@ function Main() {
       }
     }
 
-    const embed = new self.Discord.MessageEmbed();
-    embed.setTitle('Permissions');
-    if (chan) {
-      embed.addField(
-          'Channel ' + chan.id, '```css\n' +
-              (author ?
-                   prePad(
-                       chan.permissionsFor(author).bitfield.toString(2), 31) +
-                       ' You\n' :
-                   '') +
-              prePad(chan.permissionsFor(self.client.user).bitfield.toString(2),
-                  31) +
-              ' Me```');
+    const cY = chan && author && chan.permissionsFor(author).bitfield;
+    const cM = chan && chan.permissionsFor(self.client.user).bitfield;
+    const gY = author && mem.permissions.bitfield;
+    const gM = guild.members.get(self.client.user.id).permissions.bitfield;
+    const uId = author && author.id;
+    replyPerms(msg, guild.id, gM, gY, chan.id, cM, cY, uId);
+  }
+
+  /**
+   * @description Reply to the given message with the permission information of
+   * the given guild, channel, and user.
+   * @private
+   * @param {external:Discord~Message} msg Message to reply to.
+   * @param {string} gId Guild ID for displaying.
+   * @param {number} gM Bitfield for self in the guild.
+   * @param {number} [gY] Bitfield for user in guild.
+   * @param {string} [cId] Channel ID for displaying.
+   * @param {number} [cM] Bitfield for self in channel.
+   * @param {number} [cY] Bitfield for user in channel.
+   * @param {string} [uId] User id to show.
+   * @param {external:Discord~MessageEmbed} [embed] Embed object to modify
+   * instead of creating a new one.
+   */
+  function replyPerms(msg, gId, gM, gY, cId, cM, cY, uId, embed) {
+    if (!embed) {
+      embed = new self.Discord.MessageEmbed();
+      embed.setTitle('Permissions');
     }
+    const you = uId || 'You';
+    if ((cY != null && !isNaN(cY)) || (cM != null && !isNaN(cM))) {
+      embed.addField(
+          `Channel ${cId}`, '```css\n' +
+              (cY == null || isNaN(cY) ?
+                   '' :
+                   `${prePad(cY.toString(2), 31)} ${you}\n`) +
+              prePad(cM.toString(2), 31) + ' Me```');
+    }
+
     embed.addField(
-        'Guild ' + guild.id,
-        '```css\n' +
-            (author ?
-                 prePad(mem.permissions.bitfield.toString(2), 31) + ' You\n' :
-                 '') +
-            prePad(
-                guild.member(self.client.user).permissions.bitfield.toString(2),
-                31) +
-            ' Me```');
+        `Guild ${gId}`, '```css\n' +
+            (gY == null || isNaN(gY) ?
+                 '' :
+                 `${prePad(gY.toString(2), 31)} ${you}\n`) +
+            prePad(gM.toString(2), 31) + ' Me```');
 
     const allPermPairs = Object.entries(self.Discord.Permissions.FLAGS);
-    const formatted =
-        allPermPairs.map((el) => `${prePad(el[1].toString(2), 31)} ${el[0]}`)
-            .join('\n');
+    const formatted = allPermPairs
+        .map((el) => {
+          const cYou = (cY & el[1]) ? 'Y' : ' ';
+          const cMe = (cM & el[1]) ? 'M' : ' ';
+          const gYou = (gY & el[1]) ? 'Y' : ' ';
+          const gMe = (gM & el[1]) ? 'M' : ' ';
+          const bits = prePad(el[1].toString(2), 31);
+          const flags = `${cYou}${cMe}/${gYou}${gMe}`;
+          return `${bits} ${flags} ${el[0]}`;
+        })
+        .join('\n');
     embed.setDescription('```css\n' + formatted + '```');
     embed.setFooter(
         'To see permissions for each command type: `' + msg.prefix + 'show`');
-
     msg.channel.send(embed);
   }
+
   /**
-   * @description Fetch the bitfield of permissions for our self in the guild or
-   * channel with the given id.
+   * @description Fetch the bitfield of permissions for our self or a given user
+   * id in the guild or channel with the given id.
+   *
    * @this external:Discord~Client
    * @private
-   * @param {string} id The channel or guild ID to lookup permissions for.
-   * @returns {?{0: ?number, 1: number}} Null if unable to find, or a number
-   * bitfield representing the permissions.
+   * @param {string} id The channel or guild id or user id to lookup permissions
+   * for.
+   * @param {string} [id2] The channel or guild id or user id to lookup
+   * permissions for.
+   * @returns {?{
+   *   cId: ?string,
+   *   cY: ?number,
+   *   cM: ?number,
+   *   gId: string,
+   *   gY: ?number,
+   *   gM: number,
+   *   uId: ?string
+   * }} Null if unable to find, or an object with found data. Element`cId` is
+   * channel id, `gId` is guild id, `cY` is bitfield permissions for user in
+   * channel, `cM` is bitfield permissions for self in channel, `gY` is bitfield
+   * permissions for user in guild, `gM` is bitfield permissions for self in
+   * guild, `uId` is id of matched user.
    */
-  function fetchShardPerms(id) {
-    const chan = this.channels.get(id);
-    const guild = (chan && chan.guild) || this.guilds.get(id);
+  function fetchShardPerms(id, id2) {
+    const chan = this.channels.get(id) || this.channels.get(id2);
+    const guild =
+        (chan && chan.guild) || this.guilds.get(id) || this.guilds.get(id2);
     if (guild) {
-      const perm = chan && chan.permissionsFor(this.user);
-      return [
-        perm && perm.bitfield,
-        guild.member(this.user).permissions.bitfield,
-      ];
+      const mem = guild.members.get(id) || guild.members.get(id2);
+
+      const cMPerms = chan && chan.permissionsFor(this.user);
+      const cM = cMPerms && cMPerms.bitfield;
+      const cYPerms = chan && chan.permissionsFor(mem);
+      const cY = cYPerms && cYPerms.bitfield;
+
+      const gM = guild.members.get(this.user.id).permissions.bitfield;
+      const gY = mem && mem.permissions.bitfield;
+      return {
+        cId: chan && chan.id,
+        cY: cY,
+        cM: cM,
+        gId: guild.id,
+        gY: gY,
+        gM: gM,
+        uId: mem && mem.id,
+      };
     } else {
       return null;
     }

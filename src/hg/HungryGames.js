@@ -3,6 +3,7 @@
 const fs = require('fs');
 const mkdirp = require('mkdirp'); // mkdir -p
 const rimraf = require('rimraf'); // rm -rf
+const yj = require('yieldable-json');
 
 /**
  * Contains a Hunger Games style simulation.
@@ -61,6 +62,15 @@ class HungryGames {
      * @default 15 Seconds
      */
     this._findDelay = 15000;
+    /**
+     * Maximum amount of milliseconds long running operations are allowed to
+     * take to prevent cpu deadlock.
+     * @public
+     * @type {number}
+     * @constant
+     * @default
+     */
+    this.maxDelta = 5;
     /**
      * The file path to save current state for a specific guild relative to
      * Common#guildSaveDir.
@@ -172,6 +182,19 @@ class HungryGames {
   }
 
   /**
+   * @description Similar to {@link HungryGames.getGame} except asyncronous and
+   * fetched game is passed as callback argument.
+   *
+   * @public
+   * @param {string} id The guild id to get the data for.
+   * @param {Function} cb Callback with single argument. Null if unable to be
+   * found, {@link HungryGames~GuildGame} if found.
+   */
+  fetchGame(id, cb) {
+    this._find(id, cb);
+  }
+
+  /**
    * @description Update the reference to the array storing default bloodbath
    * events.
    *
@@ -227,9 +250,10 @@ class HungryGames {
    * @public
    * @param {external:Discord~Guild|string} guild Guild object, or ID to create
    * a game for.
-   * @returns {HungryGames~GuildGame} The created GuildGame.
+   * @param {Function} [cb] Callback once game has been fully created. Passes
+   * the created game as the only argument.
    */
-  create(guild) {
+  create(guild, cb) {
     if (!(guild instanceof this._parent.Discord.Guild)) {
       guild = this._parent.client.guilds.get(guild);
     }
@@ -246,9 +270,11 @@ class HungryGames {
     if (guild.memberCount > 100) {
       opts.excludeNewUsers = true;
     }
-    return this._games[guild.id] = new HungryGames.GuildGame(
-        guild.id, opts, `${guild.name}'s Hungry Games`,
-        this.getAllPlayers(guild.members, [], false, [], false));
+    this.getAllPlayers(guild.members, [], false, [], false, [], (res) => {
+      this._games[guild.id] = new HungryGames.GuildGame(
+          guild.id, opts, `${guild.name}'s Hungry Games`, res);
+      cb(this._games[guild.id]);
+    });
   }
 
   /**
@@ -256,26 +282,30 @@ class HungryGames {
    * @public
    * @param {external:Discord~Guild|string} guild Guild object, or ID to refresh
    * a game for.
-   * @returns {?HungryGames~GuildGame} The GuildGame of which the Game was
-   * updated, or null if unable to refresh.
+   * @param {Function} [cb] Callback once game has been fully refreshed. Passes
+   * the refreshed game as the only argument, or null if unable to find the
+   * game.
    */
-  refresh(guild) {
+  refresh(guild, cb) {
     if (!(guild instanceof this._parent.Discord.Guild)) {
       guild = this._parent.client.guilds.get(guild);
     }
-    const game = this.getGame(guild.id);
-    if (!game) {
-      return null;
-    }
-    const name = (game.currentGame && game.currentGame.customName) ||
-        (`${guild.name}'s Hungry Games`);
-    const teams = game.currentGame && game.currentGame.teams;
-    game.currentGame = new HungryGames.Game(
-        name, this.getAllPlayers(
-            guild.members, game.excludedUsers, game.options.includeBots,
-            game.includedUsers, game.options.excludeNewUsers,
-            game.includedNPCs),
-        teams);
+    this.fetchGame(guild.id, (game) => {
+      if (!game) {
+        cb(null);
+        return;
+      }
+      const name = (game.currentGame && game.currentGame.customName) ||
+          (`${guild.name}'s Hungry Games`);
+      const teams = game.currentGame && game.currentGame.teams;
+      this.getAllPlayers(
+          guild.members, game.excludedUsers, game.options.includeBots,
+          game.includedUsers, game.options.excludeNewUsers, game.includedNPCs,
+          (res) => {
+            game.currentGame = new HungryGames.Game(name, res, teams);
+            cb(game);
+          });
+    });
   }
 
   /**
@@ -293,61 +323,83 @@ class HungryGames {
    * @param {boolean} excludeByDefault Should new users be excluded from the
    * game by default?
    * @param {NPC[]} [includedNPCs=[]] NPCs to include as players.
-   * @returns {HungryGames~Player[]} Array of players to include in the games.
+   * @param {basicCB} cb Callback on completion. Only argument is array of
+   * {@link HungryGames~Player} to include in the games.
    */
   getAllPlayers(
-      members, excluded, bots, included, excludeByDefault, includedNPCs = []) {
-    let finalMembers = [];
-    if (!bots || Array.isArray(excluded)) {
-      finalMembers = members.filter((obj) => {
-        if (obj.isNPC) return false;
-        if (included && excluded &&
-            !included.includes(obj.user.id) &&
-            !excluded.includes(obj.user.id)) {
-          if (excludeByDefault) {
-            excluded.push(obj.user.id);
-          } else {
-            included.push(obj.user.id);
-          }
-        } else if (
-          included && excluded && included.includes(obj.user.id) &&
-            excluded.includes(obj.user.id)) {
-          this._parent.error(
-              'User in both blacklist and whitelist: ' + obj.user.id +
-              ' Guild: ' + obj.guild.id);
-          if (excludeByDefault) {
-            included.splice(
-                included.findIndex((el) => {
-                  return el == obj.user.id;
-                }),
-                1);
-          } else {
-            excluded.splice(
-                excluded.findIndex((el) => {
-                  return el == obj.user.id;
-                }),
-                1);
-          }
+      members, excluded, bots, included, excludeByDefault, includedNPCs, cb) {
+    const iTime = Date.now();
+    const finalMembers = [];
+    const self = this;
+    if (!Array.isArray(excluded)) excluded = [];
+    const memList = Array.isArray(members) ? members : members.array();
+
+    const memberIterate = function(obj) {
+      if (obj.isNPC) return;
+      if (included && excluded && !included.includes(obj.user.id) &&
+          !excluded.includes(obj.user.id)) {
+        if (excludeByDefault) {
+          excluded.push(obj.user.id);
+        } else {
+          included.push(obj.user.id);
         }
-        return !(
-          (!bots && obj.user.bot) ||
-            (excluded && excluded.includes(obj.user.id) ||
-             (excludeByDefault && included &&
-              !included.includes(obj.user.id))));
-      });
-    }
-    if (finalMembers.length == 0) finalMembers = members.slice();
-    finalMembers = finalMembers.map((obj) => {
-      return new HungryGames.Player(
-          obj.id, obj.user.username, obj.user.displayAvatarURL({format: 'png'}),
-          obj.nickname);
-    });
-    if (includedNPCs && includedNPCs.length > 0) {
-      finalMembers = finalMembers.concat(includedNPCs.map((obj) => {
-        return new this._parent.NPC(obj.name, obj.avatarURL, obj.id);
-      }));
-    }
-    return finalMembers;
+      } else if (
+        included && excluded && included.includes(obj.user.id) &&
+          excluded.includes(obj.user.id)) {
+        self._parent.error(
+            'User in both blacklist and whitelist: ' + obj.user.id +
+            ' Guild: ' + obj.guild.id);
+        if (excludeByDefault) {
+          included.splice(included.findIndex((el) => el == obj.user.id), 1);
+        } else {
+          excluded.splice(excluded.findIndex((el) => el == obj.user.id), 1);
+        }
+      }
+      const toInclude = !(
+        (!bots && obj.user.bot) ||
+          (excluded && excluded.includes(obj.user.id) ||
+           (excludeByDefault && included && !included.includes(obj.user.id))));
+      if (toInclude) {
+        finalMembers.push(
+            new HungryGames.Player(
+                obj.id, obj.user.username,
+                obj.user.displayAvatarURL({format: 'png'}), obj.nickname));
+      }
+    };
+    let iTime2 = 0;
+    const done = function() {
+      const now = Date.now();
+      const start = iTime2 - iTime;
+      const total = now - iTime;
+      if (start > 10 || total > 10) {
+        self._parent.debug(
+            `GetAllPlayers ${finalMembers.length} ${start} ${total}`);
+      }
+      cb(finalMembers);
+    };
+    const memberStep = function(i) {
+      const start = Date.now();
+      if (i < memList.length) {
+        for (i; Date.now() - start < self.maxDelta && i < memList.length; i++) {
+          memberIterate(memList[i]);
+        }
+        setTimeout(() => memberStep(i));
+      } else if (includedNPCs && i - memList.length < includedNPCs.length) {
+        for (i; Date.now() - start < self.maxDelta &&
+             i - memList.length < includedNPCs.length;
+          i++) {
+          const obj = includedNPCs[i - memList.length];
+          finalMembers.push(
+              new self._parent.NPC(obj.name, obj.avatarURL, obj.id));
+        }
+        setTimeout(() => memberStep(i));
+      } else {
+        done();
+      }
+    };
+
+    iTime2 = Date.now();
+    memberStep(0);
   }
 
   /**
@@ -422,93 +474,136 @@ class HungryGames {
    *
    * @private
    * @param {number|string} id The guild id to get the data for.
+   * @param {Function} [cb] Callback to fire once complete. This becomes
+   * asyncronous if given, if not given this function is syncronous. Single
+   * parameter is null if not found, or {@link HungryGames~GuildGame} if found.
    * @returns {?HungryGames~GuildGame} The game data, or null if no game could
-   * be loaded.
+   * be loaded or loading asyncronously because a callback was given.
    */
-  _find(id) {
+  _find(id, cb) {
+    const a = typeof cb === 'function';
+    if (!a) cb = function() {};
     const now = Date.now();
     if (this._games[id]) {
       this._findTimestamps[id] = now;
+      cb(this._games[id]);
       return this._games[id];
     }
-    if (now - this._findTimestamps[id] < this._findDelay) return null;
+    if (now - this._findTimestamps[id] < this._findDelay) {
+      cb(null);
+      return null;
+    }
     this._findTimestamps[id] = now;
-    try {
-      const tmp = fs.readFileSync(
-          this._parent.common.guildSaveDir + id + this.hgSaveDir +
-          this.saveFile);
+
+    const self = this;
+    const parse = function(game) {
       try {
-        this._games[id] = JSON.parse(tmp);
-        if (this._parent.initialized) {
-          this._parent.debug('Loaded game from file ' + id);
-        }
-      } catch (e2) {
-        this._parent.error('Failed to parse game data for guild ' + id);
+        game = HungryGames.GuildGame.from(game);
+        game.id = id;
+      } catch (err) {
+        self._parent.error('Failed to parse game data for guild ' + id);
         return null;
       }
-    } catch (e) {
-      if (e.code !== 'ENOENT') {
-        this._parent.debug('Failed to load game data for guild:' + id);
-        console.error(e);
-      }
-      return null;
-    }
 
-    try {
-      this._games[id] = HungryGames.GuildGame.from(this._games[id]);
-      this._games[id].id = id;
-    } catch (err) {
-      this._parent.error('Failed to parse game data for guild ' + id);
-      return null;
-    }
-
-    // Flush default and stale options.
-    if (this._games[id].options) {
-      for (const opt in this.defaultOptions.keys) {
-        if (!(this.defaultOptions[opt] instanceof Object)) continue;
-        if (typeof this._games[id].options[opt] !==
-            typeof this.defaultOptions[opt].value) {
-          if (this.defaultOptions[opt].value instanceof Object) {
-            this._games[id].options[opt] =
-                Object.assign({}, this.defaultOptions[opt].value);
-          } else {
-            this._games[id].options[opt] = this.defaultOptions[opt].value;
+      // Flush default and stale options.
+      if (game.options) {
+        for (const opt in self.defaultOptions.keys) {
+          if (!(self.defaultOptions[opt] instanceof Object)) continue;
+          if (typeof game.options[opt] !==
+              typeof self.defaultOptions[opt].value) {
+            if (self.defaultOptions[opt].value instanceof Object) {
+              game.options[opt] =
+                  Object.assign({}, self.defaultOptions[opt].value);
+            } else {
+              game.options[opt] = self.defaultOptions[opt].value;
+            }
+          } else if (self.defaultOptions[opt].value instanceof Object) {
+            const dKeys = Object.keys(self.defaultOptions[opt].value);
+            dKeys.forEach((el) => {
+              if (typeof game.options[opt][el] !==
+                  typeof self.defaultOptions[opt].value[el]) {
+                game.options[opt][el] = self.defaultOptions[opt].value[el];
+              }
+            });
           }
-        } else if (this.defaultOptions[opt].value instanceof Object) {
-          const dKeys = Object.keys(this.defaultOptions[opt].value);
-          dKeys.forEach((el) => {
-            if (typeof this._games[id].options[opt][el] !==
-                typeof this.defaultOptions[opt].value[el]) {
-              this._games[id].options[opt][el] =
-                  this.defaultOptions[opt].value[el];
-            }
-          });
+        }
+        for (const opt in game.options) {
+          if (!(game.options[opt] instanceof Object)) continue;
+          if (typeof self.defaultOptions[opt] === 'undefined') {
+            delete game.options[opt];
+          } else if (game.options[opt].value instanceof Object) {
+            const keys = Object.keys(game.options[opt].value);
+            keys.forEach((el) => {
+              if (typeof game.options[opt][el] !==
+                  typeof self.defaultOptions[opt].value[el]) {
+                delete game.options[opt][el];
+              }
+            });
+          }
         }
       }
-      for (const opt in this._games[id].options) {
-        if (!(this._games[id].options[opt] instanceof Object)) continue;
-        if (typeof this.defaultOptions[opt] === 'undefined') {
-          delete this._games[id].options[opt];
-        } else if (this._games[id].options[opt].value instanceof Object) {
-          const keys = Object.keys(this._games[id].options[opt].value);
-          keys.forEach((el) => {
-            if (typeof this._games[id].options[opt][el] !==
-                typeof this.defaultOptions[opt].value[el]) {
-              delete this._games[id].options[opt][el];
-            }
-          });
-        }
-      }
-    }
 
-    // If the bot stopped while simulating a day, just start over and try
-    // again.
-    if (this._games[id] && this._games[id].currentGame &&
-        this._games[id].currentGame.day &&
-        this._games[id].currentGame.day.state === 1) {
-      this._games[id].currentGame.day.state = 0;
+      // If the bot stopped while simulating a day, just start over and try
+      // again.
+      if (game && game.currentGame && game.currentGame.day &&
+          game.currentGame.day.state === 1) {
+        game.currentGame.day.state = 0;
+      }
+      return game;
+    };
+
+    const filename =
+        this._parent.common.guildSaveDir + id + this.hgSaveDir + this.saveFile;
+    if (a) {
+      fs.readFile(filename, (err, data) => {
+        if (err) {
+          if (err.code === 'ENOENT') {
+            cb(null);
+            return;
+          } else {
+            this._parent.debug('Failed to load game data for guild:' + id);
+            console.error(err);
+          }
+        }
+        yj.parseAsync(data.toString(), (err, parsed) => {
+          if (err) {
+            this._parent.error(
+                'Failed to parse game data:' + id +
+                ' Falling back to JSON.parse');
+            console.error(err);
+            try {
+              parsed = JSON.parse(data);
+            } catch (err) {
+              this._parent.error('Failed to parse using JSON.parse');
+              console.error(err);
+              return;
+            }
+          }
+          this._games[id] = parse(parsed);
+          cb(this._games[id]);
+        });
+      });
+    } else {
+      try {
+        const tmp = fs.readFileSync(filename);
+        try {
+          this._games[id] = JSON.parse(tmp);
+          if (this._parent.initialized) {
+            this._parent.debug('Loaded game from file ' + id);
+          }
+        } catch (e2) {
+          this._parent.error('Failed to parse game data for guild ' + id);
+          return null;
+        }
+      } catch (e) {
+        if (e.code !== 'ENOENT') {
+          this._parent.debug('Failed to load game data for guild:' + id);
+          console.error(e);
+        }
+        return null;
+      }
+      return this._games[id] = parse(this._games[id]);
     }
-    return this._games[id];
   }
   /**
    * @description Save all HG related data to file. Purges old data from memory
@@ -531,16 +626,31 @@ class HungryGames {
             console.error(err);
             return;
           }
-          fs.writeFile(filename, JSON.stringify(data), (err2) => {
-            if (err2) {
-              this._parent.error('Failed to save HG data for ' + filename);
-              console.error(err2);
-            } else if (
-              this._findTimestamps[id] - saveStartTime < -15 * 60 * 1000) {
-              delete this._games[id];
-              delete this._findTimestamps[id];
-              this._parent.debug('Purged ' + id);
+          yj.stringifyAsync(data, (err, stringified) => {
+            if (err) {
+              this._parent.error(
+                  'Failed to stringify HG data for ' + id +
+                  ' Falling back to JSON.stringify');
+              console.error(err);
+              try {
+                stringified = JSON.stringify(data);
+              } catch (err) {
+                this._parent.error('Failed to stringify synchronously');
+                console.error(err);
+                return;
+              }
             }
+            fs.writeFile(filename, stringified, (err2) => {
+              if (err2) {
+                this._parent.error('Failed to save HG data for ' + filename);
+                console.error(err2);
+              } else if (
+                this._findTimestamps[id] - saveStartTime < -15 * 60 * 1000) {
+                delete this._games[id];
+                delete this._findTimestamps[id];
+                this._parent.debug(`Purged ${id}`);
+              }
+            });
           });
         });
       } else {

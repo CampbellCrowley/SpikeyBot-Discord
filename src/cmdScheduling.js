@@ -58,7 +58,7 @@ function CmdScheduling() {
                 parsed[i].time += parsed[i].repeatDelay;
               }
             }
-            schedules[g.id].push(new ScheduledCommand(parsed[i]));
+            registerScheduledCommand(new ScheduledCommand(parsed[i]));
           }
         } catch (err) {
           self.error('Failed to parse data for guild commands: ' + g.id);
@@ -341,7 +341,7 @@ function CmdScheduling() {
       if (typeof myself.channel !== 'object') {
         myself.channel = self.client.channels.get(myself.channelId);
       }
-      if (typeof myself.channel !== 'object') {
+      if (typeof myself.channel !== 'object' || myself.channel.deleted) {
         self.debug(
             'Cancelling command due to channel not existing: ' +
             myself.channelId + '@' + myself.memberId + ': ' + myself.cmd);
@@ -435,6 +435,20 @@ function CmdScheduling() {
       }
       myself.message.content = myself.cmd;
       myself.message.fabricated = true;
+      const cmd = self.command.find(myself.cmd, myself.message);
+      if (!cmd) {
+        self.error(
+            'Unknown ScheduledCmd: ' + myself.message.channel.id + '@' +
+            myself.message.author.id + ' ' + myself.cmd + ' ' +
+            myself.message.content);
+        return;
+      }
+      if (cmd.getFullName() === self.command.find('sch').getFullName()) {
+        self.error(
+            'Recursive ScheduledCmd: ' + myself.message.channel.id + '@' +
+            myself.message.author.id + ' ' + myself.message.content);
+        return;
+      }
       self.debug(
           'ScheduledCmd: ' + myself.message.channel.id + '@' +
           myself.message.author.id + ' ' + myself.message.content);
@@ -521,7 +535,7 @@ function CmdScheduling() {
     };
 
     getReferences();
-    this.setTimeout();
+    setTimeout(() => this.setTimeout());
   }
   this.ScheduledCommand = ScheduledCommand;
 
@@ -533,23 +547,24 @@ function CmdScheduling() {
    *
    * @param {CmdScheduling.ScheduledCommand} sCmd The ScheduledCommand object to
    * register.
+   * @returns {boolean} True if succeeded, False if too close to existing
+   * command.
    */
   function registerScheduledCommand(sCmd) {
     const gId = sCmd.message.guild.id;
     if (!schedules[gId]) {
       schedules[gId] = [sCmd];
     } else {
-      let inserted = false;
       for (let i = 0; i < schedules[gId].length; i++) {
-        if (sCmd.time < schedules[gId][i].time) {
-          schedules[gId].splice(i, 0, sCmd);
-          inserted = true;
-          break;
+        if (Math.abs(schedules[gId][i].time - sCmd.time) < 5000) {
+          sCmd.cancel();
+          return false;
         }
       }
-      if (!inserted) schedules[gId].push(sCmd);
+      schedules[gId].push(sCmd);
     }
     fireEvent('commandRegistered', sCmd, sCmd.message.guild.id);
+    return true;
   }
   /**
    * Register a created {@link CmdScheduling.ScheduledCommand}.
@@ -597,6 +612,13 @@ function CmdScheduling() {
       return;
     }
 
+    if (self.command.find(splitCmd[0]).getFullName() ===
+        self.command.find('sch').getFullName()) {
+      self.common.reply(msg, 'Commands may not be recursive.', invalid);
+      return;
+    }
+
+
     if (delay.match(/every|repeat/)) {
       const splitTimes = delay.match(/^(.*?)(every|repeat)(.*)$/);
       delay = splitTimes[1];
@@ -621,7 +643,11 @@ function CmdScheduling() {
     const newCmd =
         new ScheduledCommand(cmd, msg.channel, msg, delay + Date.now(), repeat);
 
-    registerScheduledCommand(newCmd);
+    if (!registerScheduledCommand(newCmd)) {
+      self.common.reply(
+          msg, 'Sorry, but commands must be separated by at least 5 seconds.');
+      return;
+    }
 
     const embed = new self.Discord.MessageEmbed();
     embed.setTitle('Created Scheduled Command (' + newCmd.id + ')');
@@ -681,7 +707,7 @@ function CmdScheduling() {
   function stringToMilliseconds(str) {
     let sum = 0;
     str = (str + '')
-        .replace(/\b(and|repeat|every|after)\b/g, '')
+        .replace(/\b(and|repeat|every|after|in)\b/g, '')
         .trim()
         .toLowerCase();
 
@@ -874,7 +900,20 @@ function CmdScheduling() {
     for (const g in schedules) {
       if (!schedules[g] || !schedules[g].length) continue;
       for (let i = 0; i < schedules[g].length; i++) {
-        schedules[g][i].setTimeout();
+        let abort = false;
+        for (let j = 0; j < schedules[g].length; j++) {
+          if (i == j) continue;
+          if (Math.abs(schedules[g][i].time - schedules[g][j].time) < 5000) {
+            abort = true;
+            break;
+          }
+        }
+        if (abort) {
+          schedules[g][i].cancel();
+          schedules[g].splice(i, 1);
+        } else {
+          schedules[g][i].setTimeout();
+        }
       }
     }
   }

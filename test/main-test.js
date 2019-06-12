@@ -153,8 +153,7 @@ const hgTests = [
   new Test('List teams and check excluded', '~hg players', ['#embed']),
   new Test(
       'Exclude player already excluded', '~hg exclude <@124733888177111041>',
-      ['<@422623712534200321>\n```\nSpikeyRobot is already excluded. ' +
-       'Create a new game to reset players.\n\n```']),
+      ['<@422623712534200321>\n```\nSpikeyRobot is already excluded.\n\n```']),
   new Test(
       'Include player', '~hg include <@124733888177111041>',
       ['<@422623712534200321>\n```\nSpikeyRobot added to whitelist.\n\n```']),
@@ -193,15 +192,10 @@ const hgTests = [
       ['<@422623712534200321>\n```\nReset HG\n```There is no data to reset.']),
   new Test(
       'No data: List players', '~hg players',
-      [
-        '<@422623712534200321>\n```\nCreated a Hungry Games with default ' +
-            'settings and all members included.\n```',
-        '#embed'
-      ]),
+      ['<@422623712534200321>\n```\nA game has not been created yet.\n```']),
   new Test(
       'Reset All command', '~hg reset all',
-      ['<@422623712534200321>\n```\nReset HG\n```Resetting ALL Hungry Games ' +
-       'data for this server!']),
+      ['<@422623712534200321>\n```\nReset HG\n```There is no data to reset.']),
   new Test(
       'No data: Exclude', '~hg exclude',
       [
@@ -280,7 +274,7 @@ function sendCommand(test, done) {
 function testMessageContent(msg) {
   if (msg.author.id !== client.user.id) return;
   if (msg.channel.id !== channelID) {
-    if (!ready) {
+    if (!ready && msg.content.startsWith('Beginning in unit test mode (JS')) {
       ready = true;
       startTests();
     }
@@ -321,7 +315,10 @@ function testMessageContent(msg) {
 }
 
 
-client.login(auth.test);
+client.login(auth.test).catch((err) => {
+  console.error(err);
+  process.exit(1);
+});
 client.on('message', testMessageContent);
 client.on('ready', () => {
   console.log("Test bot ready");
