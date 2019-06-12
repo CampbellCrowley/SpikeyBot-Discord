@@ -2640,13 +2640,10 @@ function HG() {
     const iTime = Date.now();
     const tmp = [];
     let npcs = [];
-    let d = 0;
-    let decrement = false;
     switch (users) {
       case 'everyone':
         users = game.includedUsers;
         npcs = game.includedNPCs;
-        decrement = true;
         break;
       case 'online':
       case 'offline':
@@ -2676,21 +2673,21 @@ function HG() {
     const iTime2 = Date.now();
     const onlyError = num > 2;
     const response = [];
-    const chunk = function(i = 0) {
+    const chunk = function(i = -1) {
+      if (i < 0) i = num - 1;
       // Touch the game so it doesn't get purged from memory.
       const game = hg.getGame(id);
       game.loading = true;
 
       const start = Date.now();
-      for (i; i < num && Date.now() - start < hg.maxDelta; i++) {
+      for (i; i >= 0 && Date.now() - start < hg.maxDelta; i--) {
         if (i < numUsers) {
-          response.push(excludeIterate(game, users[i - d], onlyError));
-          if (decrement) d++;
+          response.push(excludeIterate(game, users[i], onlyError));
         } else {
           response.push(excludeIterate(game, npcs[i - numUsers], onlyError));
         }
       }
-      if (i < num) {
+      if (i >= 0) {
         setTimeout(() => {
           chunk(i);
         });
@@ -2733,14 +2730,14 @@ function HG() {
         obj = game.includedNPCs.find((el) => el.id == obj);
         if (!obj && game.excludedNPCs.find((el) => el.id == obj)) {
           response.push(`${obj.name} is already excluded.`);
-          return;
+          return `${response.join('\n')}\n`;
         }
       } else {
         obj = self.client.users.get(obj);
       }
       if (!obj) {
         response.push(`${obj} is not a valid id.`);
-        return;
+        return `${response.join('\n')}\n`;
       }
     } else if (obj.id.startsWith('NPC') && !(obj instanceof NPC)) {
       const objId = obj.id;
@@ -2748,7 +2745,7 @@ function HG() {
       if (!obj) {
         response.push(`${objId} unable to be found (already excluded?).`);
         self.error(`Unable to find NPC matching NPC-like data: ${game.id}`);
-        return;
+        return `${response.join('\n')}\n`;
       }
     }
     if (game.excludedUsers.includes(obj.id)) {
@@ -2801,7 +2798,7 @@ function HG() {
         }
       }
     }
-    return response.join('\n');
+    return `${response.join('\n')}\n`;
   }
 
   /**
@@ -2919,13 +2916,10 @@ function HG() {
     const iTime = Date.now();
     const tmp = [];
     let npcs = [];
-    let d = 0;
-    let decrement = false;
     switch (users) {
       case 'everyone':
         users = game.excludedUsers;
         npcs = game.excludedNPCs;
-        decrement = true;
         break;
       case 'online':
       case 'offline':
@@ -2955,21 +2949,21 @@ function HG() {
     const iTime2 = Date.now();
     const onlyError = num > 2;
     const response = [];
-    const chunk = function(i = 0) {
+    const chunk = function(i = -1) {
+      if (i < 0) i = num - 1;
       // Touch the game so it doesn't get purged from memory.
       const game = hg.getGame(id);
       game.loading = true;
 
       const start = Date.now();
-      for (i; i < num && Date.now() - start < hg.maxDelta; i++) {
+      for (i; i >= 0 && Date.now() - start < hg.maxDelta; i--) {
         if (i < numUsers) {
-          response.push(includeIterate(game, users[i - d], onlyError));
-          if (decrement) d++;
+          response.push(includeIterate(game, users[i], onlyError));
         } else {
           response.push(includeIterate(game, npcs[i - numUsers], onlyError));
         }
       }
-      if (i < num) {
+      if (i >= 0) {
         setTimeout(() => {
           chunk(i);
         });
@@ -3012,14 +3006,14 @@ function HG() {
         obj = game.excludedNPCs.find((el) => el.id == obj);
         if (!obj && game.includedNPCs.find((el) => el.id == obj)) {
           response.push(`${obj.username} is already included.`);
-          return;
+          return `${response.join('\n')}\n`;
         }
       } else {
         obj = self.client.users.get(obj);
       }
       if (!obj) {
         response.push(`${obj} is not a valid id.`);
-        return;
+        return `${response.join('\n')}\n`;
       }
     } else if (obj.id.startsWith('NPC') && !(obj instanceof NPC)) {
       const objId = obj.id;
@@ -3027,12 +3021,12 @@ function HG() {
       if (!obj) {
         response.push(`${objId} unable to be found (already included?).`);
         self.error(`Unable to find NPC matching NPC-like data: ${game.id}`);
-        return;
+        return `${response.join('\n')}\n`;
       }
     }
     if (!game.options.includeBots && obj.bot) {
       response.push(`${obj.username} is a bot, but bots are disabled.`);
-      return;
+      return `${response.join('\n')}\n`;
     }
     if (obj.isNPC) {
       const excludeIndex = game.excludedNPCs.findIndex((el) => el.id == obj.id);
@@ -3087,7 +3081,7 @@ function HG() {
         response.push(`${obj.username} is already included.`);
       }
     }
-    return response.join('\n');
+    return `${response.join('\n')}\n`;
   }
 
   /**
