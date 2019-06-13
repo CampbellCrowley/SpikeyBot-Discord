@@ -92,7 +92,7 @@ function RoleColors() {
     } else {
       const rgbMatch =
           color.match(/(\d{1,3})\b\D+\b(\d{1,3})\b\D+\b(\d{1,3}\b)/);
-      const hexMatch = color.match(/(#[A-Fa-f0-9]{6})/);
+      const hexMatch = color.match(/#?([A-Fa-f0-9]{6})/);
       if (rgbMatch) {
         color = [rgbMatch[1], rgbMatch[2], rgbMatch[3]];
         colorString = '';
@@ -102,7 +102,7 @@ function RoleColors() {
         colorString = color.join(', ');
       } else if (hexMatch) {
         color = hexMatch[1];
-        colorString = color;
+        colorString = `#${color}`;
       } else {
         self.common.reply(
             msg, 'I\'m not sure what color that is, sorry.', color);
@@ -127,6 +127,7 @@ function RoleColors() {
           .catch((err) => {
             self.error('Unable to create color role:' + msg.channel.id);
             console.error(err);
+            self.common.reply(msg, 'Unable to update color.', err.message);
           });
     } else {
       role.setColor(color)
@@ -144,6 +145,7 @@ function RoleColors() {
           .catch((err) => {
             self.error('Unable to edit color role:' + msg.channel.id);
             console.error(err);
+            self.common.reply(msg, 'Unable to update color.', err.message);
           });
     }
   }
