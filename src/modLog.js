@@ -155,6 +155,41 @@ class ModLog extends SubModule {
   }
 
   /**
+   * @description Fetch the color for the given action.
+   * @private
+   * @param {string} action The action to lookup.
+   * @returns {external:Discord~ColorResolvable} The color for the given action.
+   */
+  _actionColor(action) {
+    switch (action) {
+      case 'kick':
+        return 'ORANGE';
+      case 'ban':
+        return 'RED';
+      case 'mute':
+        return 'YELLOW';
+      case 'warnAndMute':
+        return 'GOLD';
+      case 'smite':
+        return 'DARK_GOLD';
+      case 'mentionAbuse':
+        return 'DARK_PURPLE';
+      case 'messagePurge':
+        return 'BLUE';
+      case 'messageDelete':
+        return 'DARK_BLUE';
+      case 'memberJoin':
+        return 'GREEN';
+      case 'memberLeave':
+        return 'GREY';
+      case 'lockdown':
+        return 'DARK_NAVY';
+      default:
+        return 'DEFAULT';
+    }
+  }
+
+  /**
    * @description Log a message in a guild.
    * @public
    * @param {external:Discord~Guild} guild The guild the action took place in.
@@ -165,8 +200,10 @@ class ModLog extends SubModule {
    * action. Null is for ourself.
    * @param {string} [message=null] Additional information to attach to the log
    * message.
+   * @param {string} [message2=null] Additional information to attach to the log
+   * message.
    */
-  output(guild, action, user, owner, message) {
+  output(guild, action, user, owner, message, message2) {
     const s = this._settings[guild.id];
     if (!s || !s.channel) return;
     if (!s.check(action)) return;
@@ -174,6 +211,7 @@ class ModLog extends SubModule {
     if (!channel) return;
     const embed = new this.Discord.MessageEmbed();
     embed.setTitle(this._actionString(action));
+    embed.setColor(this._actionColor(action));
     embed.setFooter(new Date().toString());
     if (user) {
       embed.setThumbnail(user.displayAvatarURL({size: 32}));
@@ -181,7 +219,9 @@ class ModLog extends SubModule {
     }
     if (owner) embed.addField('Moderator', owner.tag, true);
     if (message) {
-      if (!user && !owner) {
+      if (message2) {
+        embed.addField(message, message2, true);
+      } else if (!user && !owner) {
         embed.setDescription(message);
       } else {
         embed.addField('Additional', message, true);
@@ -318,6 +358,7 @@ Settings.from = function(obj) {
   output.logMutes = obj.logMutes || false;
   output.logMentionAbuse = obj.logMentionAbuse || false;
   output.logMessagePurge = obj.logMessagePurge || false;
+  output.logMessageDelete = obj.logMessageDelete || false;
   output.logMemberLeave = obj.logMemberLeave || false;
   output.logMemberJoin = obj.logMemberJoin || false;
   output.logRaidLockdown = obj.logRaidLockdown || false;
