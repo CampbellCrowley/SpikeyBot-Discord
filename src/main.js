@@ -1306,7 +1306,7 @@ function Main() {
         const split = formula.split('=');
         formula = split[1] + ' - (' + split[0] + ')';
       }
-      let simplified = math.eval(formula).toString();
+      let simplified = math.evaluate(formula).toString();
       simplified = simplified.replace(/ \* ([A-Za-z])/g, '$1');
       self.common.reply(msg, simplified);
     } catch (err) {
@@ -1340,20 +1340,20 @@ function Main() {
       const domainTemp = cmd.match(/\[([^,]*),([^\]]*)\]/m);
       const rangeTemp = cmd.match(/\[[^\]]*\][^[]*\[([^,]*),([^\]]*)\]/m);
       if (domainTemp !== null && domainTemp.length == 3) {
-        domainMin = math.eval(domainTemp[1]);
-        domainMax = math.eval(domainTemp[2]);
+        domainMin = math.evaluate(domainTemp[1]);
+        domainMax = math.evaluate(domainTemp[2]);
       } else {
         domainMin = -10;
         domainMax = 10;
       }
       if (rangeTemp !== null && rangeTemp.length == 3) {
-        rangeMin = math.eval(rangeTemp[1]);
-        rangeMax = math.eval(rangeTemp[2]);
+        rangeMin = math.evaluate(rangeTemp[1]);
+        rangeMax = math.evaluate(rangeTemp[2]);
       }
       xVal = math.range(
           domainMin, domainMax, (domainMax - domainMin) / graphSize / dotSize);
       yVal = xVal.map(function(x) {
-        return expr.eval({x: x});
+        return expr.evaluate({x: x});
       });
       try {
         let formula = expression;
@@ -1363,7 +1363,7 @@ function Main() {
         }
         const exprSlope = math.derivative(formula, 'x');
         ypVal = xVal.map(function(x) {
-          return exprSlope.eval({x: x});
+          return exprSlope.evaluate({x: x});
         });
       } catch (err) {
         console.log(err);
