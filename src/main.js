@@ -2781,13 +2781,6 @@ function Main() {
       reqShard: 0,
       fullDelta: 0,
     };
-    try {
-      values.saveData =
-          childProcess.execSync('du -sh ./save/').toString().trim();
-    } catch (err) {
-      self.error('Failed to fetch save directory size.');
-      console.error(err);
-    }
     if (self.client.shard) {
       values.numShards = self.client.shard.count;
       values.reqShard = self.client.shard.ids[0];
@@ -2856,11 +2849,19 @@ function Main() {
       cb(values);
     }
 
-    if (self.client.shard) {
-      self.client.shard.broadcastEval('this.getStats()').then(statsResponse);
-    } else {
-      statsResponse([getStats()]);
-    }
+    childProcess.exec('du -sh ./save/', (err, stdout, stderr) => {
+      if (err) {
+        self.error('Failed to fetch save directory size.');
+        console.error(err);
+      } else {
+        values.saveData = stdout.toString().trim();
+      }
+      if (self.client.shard) {
+        self.client.shard.broadcastEval('this.getStats()').then(statsResponse);
+      } else {
+        statsResponse([getStats()]);
+      }
+    });
   }
   /**
    * Fetch our statistics about the bot on this shard.
@@ -2881,7 +2882,7 @@ function Main() {
       uptime: '0 days',
       memory: process.memoryUsage(),
       activities: {},
-      version: version + '#' + commit.slice(0, 7),
+      version: `${version}#${commit.slice(0, 7)}`,
       shardId: (self.client.shard || {id: 0}).id,
     };
 
@@ -2923,7 +2924,7 @@ function Main() {
     out.uptime = Math.floor(ut / 1000 / 60 / 60 / 24) + ' Days, ' +
         Math.floor(ut / 1000 / 60 / 60) % 24 + ' Hours';
     out.delta = Date.now() - startTime;
-    out.deltaString = 'a' + out.delta + 'g' + guildDelta + 'u' + userDelta;
+    out.deltaString = `a${out.delta}g${guildDelta}u${userDelta}`;
     return out;
   }
 
