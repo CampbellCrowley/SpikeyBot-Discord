@@ -209,6 +209,7 @@ class Moderation extends SubModule {
     const tag = msg.author.tag;
     const id = msg.author.id;
     const channel = msg.channel.name;
+    if (id == this.client.user.id && msg.content === '`Autoplaying...`') return;
     modLog.output(
         msg.guild, 'messageDelete', null, null,
         `${tag}'s (${id}) message in #${channel}`, msg.content);
