@@ -667,7 +667,7 @@ function HGWeb() {
         }
       };
     }
-    Object.entries(siblingSockets).forEach((obj, i) => {
+    Object.entries(siblingSockets).forEach((obj) => {
       obj[1].emit('fetchGuilds', userData, socket.id, done);
     });
 
@@ -1760,12 +1760,9 @@ function HGWeb() {
         }
         self.common.logDebug(
             'NPC Created from upload with URL: ' + url, socket.id);
-      }).catch((err) => {
+      }).catch(() => {
         cancelImageUpload(iId);
         if (typeof cb === 'function') cb('Malformed Data');
-        /* self.common.error(
-            'Error while saving avatar from web: ' + err, socket.id);
-        console.error(err); */
       });
     } else {
       self.common.logWarning(

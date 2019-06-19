@@ -143,9 +143,8 @@ function WebAccount() {
    * Causes a full shutdown of all servers.
    *
    * @public
-   * @param {boolean} [skipSave=false] Skip writing data to file.
    */
-  this.shutdown = function(skipSave) {
+  this.shutdown = function() {
     if (io) io.close();
     if (app) app.close();
     fs.unwatchFile(patreonSettingsTemplateFile);
@@ -477,11 +476,13 @@ function WebAccount() {
         }
       });
     });
+    /* eslint-disable @typescript-eslint/camelcase */
     req.end(querystring.stringify({
       code: code,
       redirect_uri: redirectURL,
       grant_type: 'authorization_code',
     }));
+    /* eslint-enable @typescript-eslint/camelcase */
   }
 
   /**
@@ -572,7 +573,7 @@ function WebAccount() {
           vals.accessToken,
           vals.expiresAt,
         ]);
-    sqlCon.query(toSend, (err, res) => {
+    sqlCon.query(toSend, (err) => {
       if (err) {
         self.common.error('Failed to update Spotify table with user data.', ip);
         console.error(err);
@@ -597,7 +598,7 @@ function WebAccount() {
   function updateUserPatreonId(userid, patreonid, cb) {
     const toSend = sqlCon.format(
         'UPDATE Discord SET patreonId=? WHERE id=?', [patreonid, userid]);
-    sqlCon.query(toSend, function(err, response) {
+    sqlCon.query(toSend, (err) => {
       if (err) {
         self.common.error('Failed to update patreonId in Discord table.');
         console.log(err);
@@ -632,7 +633,7 @@ function WebAccount() {
         } else {
           const toSend2 = sqlCon.format(
               'DELETE FROM Spotify WHERE id=?', [rows[0].spotifyId]);
-          sqlCon.query(toSend2, (err, rows) => {
+          sqlCon.query(toSend2, (err) => {
             if (err) {
               self.common.error(
                   'Failed to delete spotifyId from Spotify table.');
@@ -654,7 +655,7 @@ function WebAccount() {
     function setId() {
       const toSend = sqlCon.format(
           'UPDATE Discord SET spotifyId=? WHERE id=?', [spotifyid, userid]);
-      sqlCon.query(toSend, function(err, response) {
+      sqlCon.query(toSend, (err) => {
         if (err) {
           self.common.error('Failed to update spotifyId in Discord table.');
           console.log(err);
@@ -920,10 +921,12 @@ function WebAccount() {
           }
         });
       });
+      /* eslint-disable @typescript-eslint/camelcase */
       req.end(querystring.stringify({
         refresh_token: token,
         grant_type: 'refresh_token',
       }));
+      /* eslint-enable @typescript-eslint/camelcase */
     }
   };
   /**

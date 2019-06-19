@@ -267,7 +267,7 @@ function Connect4() {
    * @param {number} index The number of reactions we have added so far.
    */
   function addReactions(msg, index = 0) {
-    msg.react(emoji[index]).then((_) => {
+    msg.react(emoji[index]).then(() => {
       if (index < numCols - 1) addReactions(msg, index + 1);
     });
   }

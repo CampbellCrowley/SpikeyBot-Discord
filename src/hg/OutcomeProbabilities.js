@@ -26,28 +26,28 @@ class OutcomeProbabilities {
      * @type {number}
      * @default
      */
-    this.kill = 22;
+    this.kill = kill || 22;
     /**
      * The probability of an event being chosen that wounds players.
      * @public
      * @type {number}
      * @default
      */
-    this.wound = 4;
+    this.wound = wound || 4;
     /**
      * The probability of an event being chosen that heals players.
      * @public
      * @type {number}
      * @default
      */
-    this.thrive = 8;
+    this.thrive = thrive || 8;
     /**
      * The probability of an event being chosen that revives players.
      * @public
      * @type {number}
      * @default
      */
-    this.revive = 6;
+    this.revive = revive || 6;
     /**
      * The probability of an event being chosen that does not have any effect on
      * players.
@@ -55,7 +55,7 @@ class OutcomeProbabilities {
      * @type {number}
      * @default
      */
-    this.nothing = 60;
+    this.nothing = nothing || 60;
   }
 }
 module.exports = OutcomeProbabilities;

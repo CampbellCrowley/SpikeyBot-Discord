@@ -23,7 +23,7 @@ function WebStats() {
     postTimeout = self.client.setTimeout(postUpdatedCount, 1000);
   };
   /** @inheritdoc */
-  this.shutdown = function(skipSave) {
+  this.shutdown = function() {
     if (app) app.close();
     if (postTimeout) self.client.clearTimeout(postTimeout);
   };
@@ -207,6 +207,7 @@ function WebStats() {
     if (self.client.user.id !== '318552464356016131') return;
     getStats((values) => {
       self.log('Current Guild Count: ' + values.numGuilds);
+      /* eslint-disable @typescript-eslint/camelcase */
       if (self.client.shard) {
         sendRequest({
           server_count: values.numGuilds,
@@ -227,6 +228,7 @@ function WebStats() {
           users: values.numMembers,
         });
       }
+      /* eslint-enable @typescript-eslint/camelcase */
     });
     /**
      * Send the request after we have fetched our stats.

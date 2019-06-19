@@ -793,7 +793,7 @@ function Main() {
     let channel = null;
     let pos = -1;
     try {
-      guild.channels.forEach(function(val, key) {
+      guild.channels.forEach((val) => {
         if (val.type == 'text') {
           const perms = val.permissionsFor(self.client.user);
           if ((pos == -1 || val.position < pos) && perms &&
@@ -982,7 +982,7 @@ function Main() {
             .awaitMessages(
                 (m) => m.author.id === dadId,
                 {max: 1, time: 10000, errors: ['time']})
-            .then((collected) => {
+            .then(() => {
               msg.channel.send('Hi Dad, I\'m Spikey!');
             })
             .catch(() => {});
@@ -1014,7 +1014,7 @@ function Main() {
           let hasMuteRole = false;
           let muteRole;
           const toMute = msg.member;
-          msg.guild.roles.forEach(function(val, key) {
+          msg.guild.roles.forEach((val) => {
             if (val.name == 'MentionAbuser') {
               hasMuteRole = true;
               muteRole = val;
@@ -1372,9 +1372,7 @@ function Main() {
       } catch (err) {
         console.log(err);
         msg.channel.send('Failed to derive given equation. ' + err.message);
-        ypVal = xVal.map(function(x) {
-          return 1;
-        });
+        return;
       }
     } catch (err) {
       self.common.reply(msg, err.message);
@@ -1882,7 +1880,7 @@ function Main() {
               'I\'m sorry, but I don\'t have permission to delete messages ' +
                   'in this channel.\nTo allow me to do this, please give me ' +
                   'permission to Manage Messages.')
-          .catch((err) => {
+          .catch(() => {
             self.warn(
                 'Unable to reply to user without perms attemping purge: ' +
                 msg.channel);
@@ -2067,7 +2065,7 @@ function Main() {
           } else {
             let hasSmiteRole = false;
             let smiteRole;
-            msg.guild.roles.forEach(function(val, key) {
+            msg.guild.roles.forEach((val) => {
               if (val.name == 'Smited') {
                 hasSmiteRole = true;
                 smiteRole = val;
@@ -2849,7 +2847,7 @@ function Main() {
       cb(values);
     }
 
-    childProcess.exec('du -sh ./save/', (err, stdout, stderr) => {
+    childProcess.exec('du -sh ./save/', (err, stdout) => {
       if (err) {
         self.error('Failed to fetch save directory size.');
         console.error(err);
@@ -3105,6 +3103,7 @@ function Main() {
   /**
    * @description Send a message to a certain channel id.
    * @private
+   * @this external:Discord~ClientUser
    * @param {string} id The channel ID to send the message to.
    * @param {string} message The message to send. Will have decodeURIComponent
    * run on before processing.
@@ -3197,7 +3196,7 @@ function Main() {
   function commandGit(msg) {
     if (msg.author.id === self.common.spikeyId && msg.text.length > 1) {
       childProcess.exec(
-          'git' + msg.text, (err, stdout, stderr) => {
+          'git' + msg.text, (err, stdout) => {
             if (err) {
               msg.channel.send(`<@${msg.author.id}> ${err.message}`);
             } else {
@@ -3210,7 +3209,7 @@ function Main() {
       childProcess.exec(
           'git remote -v && echo "" && ' +
               'git log --oneline --decorate=short --graph --all -20',
-          (err, stdout, stderr) => {
+          (err, stdout) => {
             if (err) {
               self.error('Failed to fetch the current git status.');
               console.error(err);

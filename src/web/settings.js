@@ -755,7 +755,7 @@ function WebSettings() {
         }
       };
     }
-    Object.values(siblingSockets).forEach((obj, i) => {
+    Object.values(siblingSockets).forEach((obj) => {
       obj.emit('fetchGuilds', userData, socket.id, done);
     });
 

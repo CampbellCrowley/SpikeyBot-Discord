@@ -291,7 +291,7 @@ class Moderation extends SubModule {
     let hasMuteRole = false;
     let muteRole;
     const toMute = member;
-    member.guild.roles.forEach(function(val, key) {
+    member.guild.roles.forEach((val) => {
       if (val.name == 'Muted') {
         hasMuteRole = true;
         muteRole = val;

@@ -541,8 +541,10 @@ function WebProxy() {
      */
     function receivedLoginInfo(data) {
       if (data) {
+        /* eslint-disable @typescript-eslint/camelcase */
         data.expires_at = data.expires_in * 1000 + Date.now();
         data.expiration_date = Date.now() + (1000 * 60 * 60 * 24 * 30);
+        /* eslint-enable @typescript-eslint/camelcase */
         data.session = session;
         if (loginInfo[session] && loginInfo[session].refresh_token &&
             !data.refresh_token) {
@@ -633,6 +635,7 @@ function WebProxy() {
         const parsed = JSON.parse(data);
         parsed.session = {
           id: loginInfo.session,
+          /* eslint-disable-next-line @typescript-eslint/camelcase */
           expiration_date: loginInfo.expiration_date,
         };
         const now = dateFormat(new Date(), 'yyyy-mm-dd\'T\'HH:MM:ss.l\'Z\'');
@@ -775,11 +778,13 @@ function WebProxy() {
    */
   function refreshToken(refreshToken_, cb) {
     const data = {
+      /* eslint-disable @typescript-eslint/camelcase */
       client_id: clientId,
       client_secret: clientSecret,
       grant_type: 'refresh_token',
       refresh_token: refreshToken_,
       redirect_uri: 'https://www.spikeybot.com/redirect',
+      /* eslint-enable @typescript-eslint/camelcase */
     };
     discordRequest(data, cb);
   }
@@ -796,10 +801,12 @@ function WebProxy() {
     const host = Object.assign({}, tokenHost);
     host.path += '/revoke';
     const data = {
+      /* eslint-disable @typescript-eslint/camelcase */
       client_id: clientId,
       client_secret: clientSecret,
       token_type_hint: 'refresh_token',
       token: token,
+      /* eslint-enable @typescript-eslint/camelcase */
     };
     discordRequest(data, cb, host);
   }
@@ -814,11 +821,13 @@ function WebProxy() {
    */
   function authorizeRequest(code, cb) {
     const data = {
+      /* eslint-disable @typescript-eslint/camelcase */
       client_id: clientId,
       client_secret: clientSecret,
       grant_type: 'authorization_code',
       code: code,
       redirect_uri: 'https://www.spikeybot.com/redirect',
+      /* eslint-enable @typescript-eslint/camelcase */
     };
     discordRequest(data, cb);
   }

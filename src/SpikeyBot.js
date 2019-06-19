@@ -42,6 +42,7 @@ process.on('uncaughtException', unhandledRejection);
 // Catch MaxListenersExceededWarning and provide more useful information.
 const EventEmitter = require('events').EventEmitter;
 const originalAddListener = EventEmitter.prototype.addListener;
+/* eslint-disable no-invalid-this */
 const addListener = function(...args) {
   originalAddListener.apply(this, args);
   const type = args[0];
@@ -60,6 +61,7 @@ const addListener = function(...args) {
 
   return this;
 };
+/* eslint-enable no-invalid-this */
 EventEmitter.prototype.addListener = addListener;
 EventEmitter.prototype.on = addListener;
 
@@ -687,6 +689,7 @@ function SpikeyBot() {
           })
           .catch((err) => {
             common.error('Failed to find SpikeyRobot\'s DMs');
+            console.error(err);
             logChannel.send(
                 'Beginning in unit test mode (JS' + self.version +
                 ') (FAILED TO FIND SpikeyRobot\'s DMs!)');
@@ -797,6 +800,7 @@ function SpikeyBot() {
         },
         () => {});
     req.on('error', () => {});
+    /* eslint-disable @typescript-eslint/camelcase */
     req.end(JSON.stringify({
       text: `${client.user.tag}:${client.user.id} JS${self.version}`,
       tag: client.user.tag,
@@ -806,6 +810,7 @@ function SpikeyBot() {
       shard_id: client.shard ? client.shard.ids : 'null',
       version: self.version,
     }));
+    /* eslint-enable @typescript-eslint/camelcase */
     // Reset save interval
     clearInterval(saveInterval);
     saveInterval = setInterval(saveAll, saveFrequency);
@@ -1584,7 +1589,7 @@ function SpikeyBot() {
                 'git diff-index --quiet ' + mainModules[i].commit +
                 ' -- ./src/' + mainModuleNames[i])
             .on('close', ((name) => {
-              return (code, signal) => {
+              return (code) => {
                 if (code) {
                   const out = [];
                   reloadMainModules(name, out);
