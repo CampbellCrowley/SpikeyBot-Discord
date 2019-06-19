@@ -103,6 +103,10 @@ class Pet {
     this._lastInteractTime = Date.now();
 
     this.touch = this.touch.bind(this);
+    this.addXP = this.addXP.bind(this);
+    this.numPoints = this.numPoints.bind(this);
+    this.spendPoint = this.spendPoint.bind(this);
+    this.autoLevelUp = this.autoLevelUp.bind(this);
   }
 
   /**
@@ -131,6 +135,83 @@ class Pet {
   touch() {
     this._lastInteractTime = Date.now();
   }
+
+  /**
+   * @description Add XP to the pet, and trigger any level-up actions that may
+   * need to occur.
+   *
+   * @public
+   * @param {number} xp Amount of XP to add.
+   * @param {boolean} [auto=false] Auto level up after adding XP.
+   */
+  addXP(xp, auto = false) {
+    if (typeof xp !== 'number' || isNaN(xp)) {
+      throw new TypeError('xp is not a number');
+    }
+    this.xp += xp;
+    if (auto) this.autoLevelUp();
+  }
+
+  /**
+   * @description Get the number of remaining points available to spend on
+   * modifiers.
+   *
+   * @public
+   * @returns {number} Number of spendable points.
+   */
+  get numPoints() {
+    return this.getLevel(this.xp) -
+        (this.attackMod + this.defenseMod + this.speedMod);
+  }
+
+  /**
+   * @description Spend points on a given modifier.
+   *
+   * @public
+   * @param {string} category The name of the modifier to spend the points on.
+   * @param {number} [num=1] The number of points to spend.
+   */
+  spendPoint(category, num = 1) {
+    const remaining = this.numPoints;
+    if (num > remaining) num = remaining;
+    if (num == 0) return;
+    if (num < 0) {
+      throw new Error(
+          'Attempted to spend negative amount of points. (' + num + ')');
+    }
+    switch (category) {
+      default:
+        throw new Error('Unknown modifier: ' + category);
+      case 'speed':
+        this.speedMod += num;
+        break;
+      case 'attack':
+        this.attackMod += num;
+        break;
+      case 'defense':
+        this.defenseMod += num;
+        break;
+    }
+  }
+
+  /**
+   * @description Automatically spend all remaining modifier points
+   * automatically until all are used up.
+   *
+   * @public
+   */
+  autoLevelUp() {
+    while (this.numPoints > 0) {
+      let least = 'attack';
+      if (this.defenseMod < this.attackMod && this.defenseMod < this.speedMod) {
+        least = 'defense';
+      } else if (
+        this.speedMod < this.defenseMod && this.speedMod < this.attackMod) {
+        least = 'speed';
+      }
+      this.spendPoint(least);
+    }
+  }
 }
 
 /**
@@ -155,6 +236,42 @@ Pet.from = function(obj) {
     output.restStartTimestamp = obj.restStartTimestamp;
   }
   return output;
+};
+
+/**
+ * @description Calculate the required amount of XP for the given level.
+ *
+ * This function provides a very steep curve for levelling up. This is to help
+ * prevent extremely high leveled characters, and to encourage players to play
+ * a lot in order to level up. This is attempting to follow the similar
+ * structure to D&D since I wish to have a similar timeline for character
+ * development and play speed (characters can last for months and take weeks
+ * to level up).
+ *
+ * @public
+ * @static
+ * @param {number} level The level number to calculate the required XP for.
+ * @returns {number} XP required to be the given level.
+ */
+Pet.levelXP = function(level) {
+  return 100 * (level * level) - (100 * level);
+};
+
+/**
+ * @description Get the level number for the given amount of XP. Uses
+ * {@link Pets~Pet.levelXP} to calculate.
+ *
+ * @public
+ * @static
+ * @param {number} xp The amount of XP to find the level number for.
+ * @returns {number} The level number for the amount of XP.
+ */
+Pet.getLevel = function(xp) {
+  let level = 0;
+  do {
+    level++;
+  } while (Pet.levelXP(level) <= xp);
+  return level - 1;
 };
 
 module.exports = Pet;

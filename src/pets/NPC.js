@@ -20,6 +20,9 @@ class NPC extends Pet {
   constructor(base, pets, moves) {
     const pet = pets.random();
     super(null, pet.name, pet.id);
+
+    this.xp = 0;
+    this.addXP((base instanceof Pet) ? base.xp : base, true);
   }
 }
 

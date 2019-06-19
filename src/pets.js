@@ -444,24 +444,6 @@ class Pets extends SubModule {
 
     return false;
   }
-
-  /**
-   * @description Calculate the required amount of XP for the given level.
-   *
-   * This function provides a very steep curve for levelling up. This is to help
-   * prevent extremely high leveled characters, and to encourage players to play
-   * a lot in order to level up. This is attempting to follow the similar
-   * structure to D&D since I wish to have a similar timeline for character
-   * development and play speed (characters can last for months and take weeks
-   * to level up).
-   *
-   * @public
-   * @param {number} level The level number to calculate the required XP for.
-   * @returns {number} XP required to be the given level.
-   */
-  levelXP(level) {
-    return 100 * (level * level) - (100 * level);
-  }
 }
 
 Pets.Pet = Pet;
