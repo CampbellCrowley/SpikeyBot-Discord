@@ -235,8 +235,11 @@ class GuildGame {
     for (const one of all) {
       if (typeof one[1].value === 'function' || one[0].startsWith('_')) {
         continue;
+      } else if (one[1].value && one[1].value.serializable) {
+        output[one[0]] = one[1].value.serializable;
+      } else {
+        output[one[0]] = one[1].value;
       }
-      output[one[0]] = one[1].value;
     }
     return output;
   }

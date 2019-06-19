@@ -626,32 +626,33 @@ class HungryGames {
             console.error(err);
             return;
           }
-          yj.stringifyAsync(data, (err, stringified) => {
-            if (err) {
-              this._parent.error(
-                  'Failed to stringify HG data for ' + id +
-                  ' Falling back to JSON.stringify');
-              console.error(err);
-              try {
-                stringified = JSON.stringify(data);
-              } catch (err) {
-                this._parent.error('Failed to stringify synchronously');
-                console.error(err);
-                return;
-              }
+          // yj.stringifyAsync(data, (err, stringified) => {
+          //   if (err) {
+          //     this._parent.error(
+          //         'Failed to stringify HG data for ' + id +
+          //         ' Falling back to JSON.stringify');
+          //     console.error(err);
+          //     try {
+          //       stringified = JSON.stringify(data);
+          //     } catch (err) {
+          //       this._parent.error('Failed to stringify synchronously');
+          //       console.error(err);
+          //       return;
+          //     }
+          //   }
+          const stringified = JSON.stringify(data);
+          fs.writeFile(filename, stringified, (err2) => {
+            if (err2) {
+              this._parent.error('Failed to save HG data for ' + filename);
+              console.error(err2);
+            } else if (
+              this._findTimestamps[id] - saveStartTime < -15 * 60 * 1000) {
+              delete this._games[id];
+              delete this._findTimestamps[id];
+              this._parent.debug(`Purged ${id}`);
             }
-            fs.writeFile(filename, stringified, (err2) => {
-              if (err2) {
-                this._parent.error('Failed to save HG data for ' + filename);
-                console.error(err2);
-              } else if (
-                this._findTimestamps[id] - saveStartTime < -15 * 60 * 1000) {
-                delete this._games[id];
-                delete this._findTimestamps[id];
-                this._parent.debug(`Purged ${id}`);
-              }
-            });
           });
+          // });
         });
       } else {
         try {
