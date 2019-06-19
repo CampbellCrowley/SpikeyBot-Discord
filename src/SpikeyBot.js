@@ -244,6 +244,16 @@ function SpikeyBot() {
   let numShards = 0;
 
   /**
+   * Number of bytes to allocate for each shard memory. Passed as
+   * `--max-old-space-size=` to the spawned node process. Null for default.
+   *
+   * @private
+   * @default
+   * @type {?number}
+   */
+  let shardMem = null;
+
+  /**
    * The name of the client secret to use. Defaults to release either release or
    * dev depending on the --dev flag.
    *
@@ -335,6 +345,13 @@ function SpikeyBot() {
       if (process.argv[i].indexOf('=') > -1) {
         numShards = process.argv[i].split('=')[1] * 1 || 0;
       }
+    } else if (process.argv[i].startsWith('--shardmem')) {
+      if (process.argv[i].indexOf('=') > -1) {
+        shardMem = process.argv[i].split('=')[1] * 1 || null;
+      }
+      if (!shardMem) {
+        throw new Error(`Bad Memory Amount '${process.argv[i]}'`);
+      }
     } else if (process.argv[i] === '--backup') {
       isBackup = true;
     } else if (process.argv[i].startsWith('--delay')) {
@@ -379,6 +396,7 @@ function SpikeyBot() {
     common.log(
         'Sharding enabled with ' + (numShards || 'auto'), 'ShardingManager');
     const argv = inspectShard > -1 ? ['--inspect'] : [];
+    if (shardMem != null) argv.push(`--max-old-space-size=${shardMem}`);
     argv.push('--experimental-worker');
     const manager = new Discord.ShardingManager('./src/SpikeyBot.js', {
       token: (botName && auth[botName]) || (setDev ? auth.dev : auth.release),

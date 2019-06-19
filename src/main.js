@@ -35,6 +35,8 @@ const math = mathjs.create(mathjs.all, {matrix: 'Array'});
  * @listens Command#reminders
  * @listens Command#createDate
  * @listens Command#joinDate
+ * @listens Command#server
+ * @listens Command#serverInfo
  * @listens Command#pmMe
  * @listens Command#dmMe
  * @listens Command#pmSpikey
@@ -288,6 +290,7 @@ function Main() {
         ['timer', 'timers', 'remind', 'reminder', 'reminders'], commandTimer);
     self.command.on('createdate', commandCreateDate);
     self.command.on('joindate', commandJoinDate, true);
+    self.command.on(['server', 'serverinfo'], commandServerInfo, true);
     self.command.on(['pmme', 'dmme'], commandPmMe);
     self.command.on(['pmspikey', 'dmspikey'], commandPmSpikey);
     self.command.on('thotpm', commandThotPm);
@@ -570,6 +573,7 @@ function Main() {
     self.command.removeListener('timer');
     self.command.removeListener('createdate');
     self.command.removeListener('joindate');
+    self.command.removeListener('serverinfo');
     self.command.removeListener('pmme');
     self.command.removeListener('pmspikey');
     self.command.removeListener('thotpm');
@@ -1576,15 +1580,21 @@ function Main() {
    * @listens Command#createDate
    */
   function commandCreateDate(msg) {
-    if (msg.mentions.users.size === 0) {
-      self.common.reply(
-          msg, 'You created your discord account on ' +
-              dateFormat(msg.author.createdTimestamp));
+    const mention = msg.mentions.users.first() ||
+        msg.softMentions.users.first() || msg.author;
+    const perms = msg.channel.permissionsFor &&
+        msg.channel.permissionsFor(self.client.user);
+    const time = mention.createdAt;
+    if (!perms || perms.has('EMBED_LINKS')) {
+      const embed = new self.Discord.MessageEmbed();
+      embed.setTitle('Account create date');
+      embed.setColor([255, 0, 255]);
+      embed.setDescription(`<@${mention.id}>: ${time.toUTCString()}`);
+      embed.setTimestamp(time);
+      msg.channel.send(`<@${msg.author.id}>`, embed);
     } else {
       self.common.reply(
-          msg, msg.mentions.users.first().username +
-              ' created their discord account on ' +
-              dateFormat(msg.mentions.users.first().createdTimestamp));
+          msg, `${mention.tag} created ${time.toUTCString()}`, mention.id);
     }
   }
   /**
@@ -1597,14 +1607,94 @@ function Main() {
    * @listens Command#joinDate
    */
   function commandJoinDate(msg) {
-    if (msg.mentions.users.size === 0) {
-      self.common.reply(
-          msg, 'You joined this server on ' +
-              dateFormat(msg.member.joinedTimestamp));
+    const mention = msg.mentions.members.first() ||
+        msg.softMentions.members.first() || msg.member;
+
+    const reply = function(member) {
+      const perms = msg.channel.permissionsFor &&
+          msg.channel.permissionsFor(self.client.user);
+      const time = member.joinedAt;
+      if (!perms || perms.has('EMBED_LINKS')) {
+        const embed = new self.Discord.MessageEmbed();
+        embed.setTitle('Server join date');
+        embed.setColor([255, 0, 255]);
+        embed.setDescription(`<@${member.id}>: ${time.toUTCString()}`);
+        embed.setTimestamp(time);
+        return msg.channel.send(`<@${msg.author.id}>`, embed);
+      } else {
+        return self.common.reply(
+            msg, `${member.tag} joined ${time.toUTCString()}`, member.id);
+      }
+    };
+
+    if (!mention.joinedAt) {
+      mention.fetch().then(reply).catch((err) => {
+        self.error('Failed to send join date: ' + msg.channel.id);
+        console.error(err);
+        if (err.message != 'No Perms') {
+          self.common.reply(msg, 'Oops! Something went wrong...', err.message);
+        }
+      });
     } else {
-      self.common.reply(
-          msg, msg.mentions.users.first().username + ' joined this server on ' +
-              dateFormat(msg.mentions.users.first().joinedTimestamp));
+      reply(mention).catch((err) => {
+        self.error('Failed to send join date: ' + msg.channel.id);
+        console.error(err);
+        if (err.message != 'No Perms') {
+          self.common.reply(msg, 'Oops! Something went wrong...', err.message);
+        }
+      });
+    }
+  }
+  /**
+   * Send information about the current server.
+   *
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens Command#server
+   * @listens Command#serverInfo
+   */
+  function commandServerInfo(msg) {
+    const perms = msg.channel.permissionsFor &&
+        msg.channel.permissionsFor(self.client.user);
+    const guild = msg.guild;
+    const icon = guild.iconURL();
+    const banner = guild.banner && guild.bannerURL();
+    const splash = guild.splash && guild.splashURL();
+    const vanity = guild.vanityURLCode;
+    if (!perms || perms.has('EMBED_LINKS')) {
+      const embed = new self.Discord.MessageEmbed();
+      embed.setColor([255, 0, 255]);
+      embed.setTitle(guild.name);
+      if (splash) {
+        embed.setImage(splash);
+      } else if (banner) {
+        embed.setImage(banner);
+      }
+      if (icon) embed.setThumbnail(icon);
+      if (guild.description) embed.setDescription(guild.description);
+      embed.addField(
+          'Numbers', 'Members: ' + guild.memberCount + '\nChannels: ' +
+              guild.channels.size + '\nRoles: ' + guild.roles.size +
+              '\nEmojis: ' + guild.emojis.size,
+          true);
+      embed.addField(
+          'Server', 'Created: ' + guild.createdAt.toUTCString() +
+              '\nOwner: <@' + guild.owner.id + '>\nRegion: ' + guild.region +
+              '\nVerification: ' + guild.verificationLevel + ' (' +
+              guild.verfied + ')',
+          true);
+      embed.addField(
+          'Links', (icon ? `Icon: ${icon}\n` : '') +
+              (banner ? `Banner: ${banner}\n` : '') +
+              (splash ? `Splash: ${splash}\n` : '') +
+              (vanity ? `Vanity: discord.gg/${vanity}\n` : ''),
+          true);
+      if (guild.shard) embed.setFooter(`Shard #${guild.shard.id}`);
+      msg.channel.send(`<@${msg.author.id}>`, embed);
+    } else {
+      self.commit.reply(
+          msg, 'Please allow me to embed links to use this command here.');
     }
   }
   /**
@@ -2691,13 +2781,6 @@ function Main() {
       reqShard: 0,
       fullDelta: 0,
     };
-    try {
-      values.saveData =
-          childProcess.execSync('du -sh ./save/').toString().trim();
-    } catch (err) {
-      self.error('Failed to fetch save directory size.');
-      console.error(err);
-    }
     if (self.client.shard) {
       values.numShards = self.client.shard.count;
       values.reqShard = self.client.shard.ids[0];
@@ -2766,11 +2849,19 @@ function Main() {
       cb(values);
     }
 
-    if (self.client.shard) {
-      self.client.shard.broadcastEval('this.getStats()').then(statsResponse);
-    } else {
-      statsResponse([getStats()]);
-    }
+    childProcess.exec('du -sh ./save/', (err, stdout, stderr) => {
+      if (err) {
+        self.error('Failed to fetch save directory size.');
+        console.error(err);
+      } else {
+        values.saveData = stdout.toString().trim();
+      }
+      if (self.client.shard) {
+        self.client.shard.broadcastEval('this.getStats()').then(statsResponse);
+      } else {
+        statsResponse([getStats()]);
+      }
+    });
   }
   /**
    * Fetch our statistics about the bot on this shard.
@@ -2791,7 +2882,7 @@ function Main() {
       uptime: '0 days',
       memory: process.memoryUsage(),
       activities: {},
-      version: version + '#' + commit.slice(0, 7),
+      version: `${version}#${commit.slice(0, 7)}`,
       shardId: (self.client.shard || {id: 0}).id,
     };
 
@@ -2833,7 +2924,7 @@ function Main() {
     out.uptime = Math.floor(ut / 1000 / 60 / 60 / 24) + ' Days, ' +
         Math.floor(ut / 1000 / 60 / 60) % 24 + ' Hours';
     out.delta = Date.now() - startTime;
-    out.deltaString = 'a' + out.delta + 'g' + guildDelta + 'u' + userDelta;
+    out.deltaString = `a${out.delta}g${guildDelta}u${userDelta}`;
     return out;
   }
 

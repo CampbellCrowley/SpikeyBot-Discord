@@ -107,6 +107,19 @@
           ]
         },
         {
+          "command": "server",
+          "aliases": "server, serverinfo",
+          "description": "Information about the current server will be sent including links to images.",
+          "validOnlyInGuild": true,
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "server",
+              "result": "The bot will tell you information about the server."
+            }
+          ]
+        },
+        {
           "command": "pmme",
           "description": "I will introduce myself to you!",
           "aliases": "pmme, dmme",

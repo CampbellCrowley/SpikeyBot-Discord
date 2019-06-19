@@ -40,9 +40,9 @@
       }
     },
     "@google-cloud/text-to-speech": {
-      "version": "1.1.0",
-      "resolved": "https://registry.npmjs.org/@google-cloud/text-to-speech/-/text-to-speech-1.1.0.tgz",
-      "integrity": "sha512-NsKi7aPHqdgA6BhKwnPYj9xJ//xP2hcOpJeDaAmbDv16PrOfVwCXdRiAn05syySH3KY+LIzxDWS4yh0Y4FZYJw==",
+      "version": "1.1.1",
+      "resolved": "https://registry.npmjs.org/@google-cloud/text-to-speech/-/text-to-speech-1.1.1.tgz",
+      "integrity": "sha512-EMLrGilhnndR4aFJZ84+4nXPTSmTEZIIKscQEJMCWNpM78MFIGeGTkH4sDc152P4wAHCkPfKdojdi+knXUMccQ==",
       "requires": {
         "google-gax": "^1.0.0"
       }
@@ -410,9 +410,9 @@
       "integrity": "sha512-1w52Nyx4Gq47uuu0EVcsHBxZFJgurQ+rTKS3qMHxR1GY2T8c2AJYd6vZoZ9q1rupaDjU0yT+Jc2XTyXkjeMA+Q=="
     },
     "@types/node": {
-      "version": "10.14.8",
-      "resolved": "https://registry.npmjs.org/@types/node/-/node-10.14.8.tgz",
-      "integrity": "sha512-I4+DbJEhLEg4/vIy/2gkWDvXBOOtPKV9EnLhYjMoqxcRW+TTZtUftkHktz/a8suoD5mUL7m6ReLrkPvSsCQQmw=="
+      "version": "10.14.9",
+      "resolved": "https://registry.npmjs.org/@types/node/-/node-10.14.9.tgz",
+      "integrity": "sha512-NelG/dSahlXYtSoVPErrp06tYFrvzj8XLWmKA+X8x0W//4MqbUyZu++giUG/v0bjAT6/Qxa8IjodrfdACyb0Fg=="
     },
     "abort-controller": {
       "version": "3.0.0",
@@ -918,9 +918,9 @@
       "integrity": "sha1-3zrhmayt+31ECqrgsp4icrJOxhk="
     },
     "dialogflow": {
-      "version": "0.10.0",
-      "resolved": "https://registry.npmjs.org/dialogflow/-/dialogflow-0.10.0.tgz",
-      "integrity": "sha512-UeWgjSinRXHjWta8gn+WqNlA9EaEx1NAtNOghfIgiFh+OpMBcJgk/jk24kPOLfho0/LY2psYZTMLYWlGyKcIcQ==",
+      "version": "0.10.1",
+      "resolved": "https://registry.npmjs.org/dialogflow/-/dialogflow-0.10.1.tgz",
+      "integrity": "sha512-aULzboCRdREOBvSlMQH3XWkBAW2EPnLyjztup/K61UYY+L0KzjC1jzDOUPZD42yMlB1p1SX0X296LF8rYvsDIA==",
       "requires": {
         "google-gax": "^1.0.0",
         "protobufjs": "^6.8.0"
@@ -933,8 +933,8 @@
       "dev": true
     },
     "discord.js": {
-      "version": "github:discordjs/discord.js#8652e47c14eccd1c8cab27f0d1acb8d7335349e8",
-      "from": "github:discordjs/discord.js#8652e47c14eccd1c8cab27f0d1acb8d7335349e8",
+      "version": "github:discordjs/discord.js#1bec28bd8105aa09f43492491be9dd9cc7f7d701",
+      "from": "github:discordjs/discord.js#1bec28bd8105aa09f43492491be9dd9cc7f7d701",
       "requires": {
         "form-data": "^2.3.3",
         "node-fetch": "^2.3.0",
@@ -1246,9 +1246,9 @@
       "dev": true
     },
     "eslint-plugin-jsdoc": {
-      "version": "8.0.1",
-      "resolved": "https://registry.npmjs.org/eslint-plugin-jsdoc/-/eslint-plugin-jsdoc-8.0.1.tgz",
-      "integrity": "sha512-kzZHxDjTgNSdDpwULMqSBZr6wKaX+vvIrg/D+UppH8rd87bh+sPzs8PEJNjsQ94tx2TSQebc3P2cXcmkIVsyeA==",
+      "version": "8.1.0",
+      "resolved": "https://registry.npmjs.org/eslint-plugin-jsdoc/-/eslint-plugin-jsdoc-8.1.0.tgz",
+      "integrity": "sha512-YVHgZz1zc7M0jDyNRD//ehkK3cMIRRqH0xv78V/7ZpIfuLvIKgk57fA5d8WN6dVZ+pDU4zNgvWftRV6Dbh84Cg==",
       "dev": true,
       "requires": {
         "comment-parser": "^0.5.4",
@@ -1596,9 +1596,9 @@
       "dev": true
     },
     "google-auth-library": {
-      "version": "4.2.0",
-      "resolved": "https://registry.npmjs.org/google-auth-library/-/google-auth-library-4.2.0.tgz",
-      "integrity": "sha512-AtIzv/MZpo8BQvt1J+ObetUVFQBAae2I3u6Wy4XqePYShHnYiRdXqWr2WWBkIllOGbWEwsq4PUfvafgw76XGLQ==",
+      "version": "4.2.1",
+      "resolved": "https://registry.npmjs.org/google-auth-library/-/google-auth-library-4.2.1.tgz",
+      "integrity": "sha512-EPYsbVGekePmBwntDgT87e2jj46yyFZY5rYDvX3VjHGgJJ6yjKPdOnlXZVozUxJg5Hn35rY17rxWtthUzaKF1w==",
       "requires": {
         "arrify": "^2.0.0",
         "base64-js": "^1.3.0",
@@ -1664,15 +1664,14 @@
       "dev": true
     },
     "gtoken": {
-      "version": "3.0.0",
-      "resolved": "https://registry.npmjs.org/gtoken/-/gtoken-3.0.0.tgz",
-      "integrity": "sha512-IY9HVi78D4ykVHn+ThI7rlcpdFtKyo9e9YLim9S9T3rp6fEnfeTexcrqzSpExVshPofsdauLKIa8dEnzX7ZLfQ==",
+      "version": "3.0.1",
+      "resolved": "https://registry.npmjs.org/gtoken/-/gtoken-3.0.1.tgz",
+      "integrity": "sha512-/bOZFfO6c+BC2IoOrvV+NKfEWQ1CCycrWG55Ix8ZfO/tTM0iGg9ojoQUWPbH5QS+vf+JoQYeTJ0zS+EDCP5M9w==",
       "requires": {
         "gaxios": "^2.0.0",
         "google-p12-pem": "^2.0.0",
         "jws": "^3.1.5",
-        "mime": "^2.2.0",
-        "pify": "^4.0.0"
+        "mime": "^2.2.0"
       }
     },
     "har-schema": {
@@ -2666,9 +2665,9 @@
       }
     },
     "node-fetch": {
-      "version": "2.3.0",
-      "resolved": "https://registry.npmjs.org/node-fetch/-/node-fetch-2.3.0.tgz",
-      "integrity": "sha512-MOd8pV3fxENbryESLgVIeaGKrdl+uaYhCSSVkjeOb/31/njTpcis5aWfdqgNlHIrKOLRbMnfPINPOML2CIFeXA=="
+      "version": "2.6.0",
+      "resolved": "https://registry.npmjs.org/node-fetch/-/node-fetch-2.6.0.tgz",
+      "integrity": "sha512-8dG4H5ujfvFiqDmVu9fQ5bOHUC15JMjMY/Zumv26oOvvVJjM67KF8koCWIabKQ1GJIa9r2mMZscBq/TbdOcmNA=="
     },
     "node-forge": {
       "version": "0.8.4",
@@ -2990,11 +2989,6 @@
       "version": "2.9.3",
       "resolved": "https://registry.npmjs.org/phin/-/phin-2.9.3.tgz",
       "integrity": "sha512-CzFr90qM24ju5f88quFC/6qohjC144rehe5n6DH900lgXmUe86+xCKc10ev56gRKC4/BkHUoG4uSiQgBiIXwDA=="
-    },
-    "pify": {
-      "version": "4.0.1",
-      "resolved": "https://registry.npmjs.org/pify/-/pify-4.0.1.tgz",
-      "integrity": "sha512-uB80kBFb/tfd68bVleG9T5GGsGPjJrLAUpR5PZIrhBnIaRTQRjqdJSsIKkOP6OAIFbj7GOrcudc5pNjZ+geV2g=="
     },
     "pixelmatch": {
       "version": "4.0.2",

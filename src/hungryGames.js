@@ -754,6 +754,14 @@ function HG() {
    */
   function mkCmd(cb) {
     return function(msg) {
+      if (msg.guild.memberCount > 20000) {
+        self.common.reply(
+            msg,
+            'Sorry, but HG has been temporarily disabled on servers larger' +
+                ' than 20000 people.',
+            'More information on my support server.');
+        return;
+      }
       const id = msg.guild.id;
       hg.fetchGame(id, (game) => {
         if (game) {
@@ -2725,7 +2733,7 @@ function HG() {
    * @returns {string} Response text for the user performing the operation.
    */
   function excludeIterate(game, obj, onlyError = false) {
-    if (!obj) return '';
+    if (!obj || obj === 'undefined') return '';
     const response = [];
     if (typeof obj === 'string') {
       if (obj.startsWith('NPC')) {
@@ -3001,7 +3009,7 @@ function HG() {
    * @returns {string} Response text for the user performing the operation.
    */
   function includeIterate(game, obj, onlyError = false) {
-    if (!obj) return '';
+    if (!obj || obj === 'undefined') return '';
     const response = [];
     if (typeof obj === 'string') {
       if (obj.startsWith('NPC')) {
@@ -6085,7 +6093,7 @@ function HG() {
         if (list.length == 0) {
           cb(null, 'No users reacted.');
         } else {
-          cb(null, self.includeUsers(list, id));
+          self.includeUsers(list, id, (res) => cb(null, res));
         }
       });
     }

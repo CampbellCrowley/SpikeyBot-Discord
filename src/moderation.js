@@ -206,9 +206,13 @@ class Moderation extends SubModule {
     if (!msg.guild) return;
     const modLog = this.bot.getSubmodule('./modLog.js');
     if (!modLog) return;
+    const tag = msg.author.tag;
+    const id = msg.author.id;
+    const channel = msg.channel.name;
+    if (id == this.client.user.id && msg.content === '`Autoplaying...`') return;
     modLog.output(
         msg.guild, 'messageDelete', null, null,
-        `${msg.author.tag}'s message deleted in #${msg.channel.name}`);
+        `${tag}'s (${id}) message in #${channel}`, msg.content);
   }
   /**
    * @description Handle logging when multiple messages are deleted.
