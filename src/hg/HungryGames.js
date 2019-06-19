@@ -626,21 +626,14 @@ class HungryGames {
             console.error(err);
             return;
           }
-          // yj.stringifyAsync(data, (err, stringified) => {
-          //   if (err) {
-          //     this._parent.error(
-          //         'Failed to stringify HG data for ' + id +
-          //         ' Falling back to JSON.stringify');
-          //     console.error(err);
-          //     try {
-          //       stringified = JSON.stringify(data);
-          //     } catch (err) {
-          //       this._parent.error('Failed to stringify synchronously');
-          //       console.error(err);
-          //       return;
-          //     }
-          //   }
-          const stringified = JSON.stringify(data);
+          let stringified;
+          try {
+            stringified = JSON.stringify(data);
+          } catch (err) {
+            this._parent.error('Failed to stringify synchronously');
+            console.error(err);
+            return;
+          }
           fs.writeFile(filename, stringified, (err2) => {
             if (err2) {
               this._parent.error('Failed to save HG data for ' + filename);
@@ -652,7 +645,6 @@ class HungryGames {
               this._parent.debug(`Purged ${id}`);
             }
           });
-          // });
         });
       } else {
         try {
