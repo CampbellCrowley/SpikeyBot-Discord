@@ -65,6 +65,17 @@ class BasePets {
   }
 
   /**
+   * @description Fetch a base object for a random species.
+   * @public
+   * @returns {?object} Object reference of pet information for the species, or
+   * null if could not be found.
+   */
+  random() {
+    const list = Object.keys(this._pets);
+    return this._pets[Math.floor(list.length * Math.random())];
+  }
+
+  /**
    * @description File has been modified, re-read and parse data.
    * @private
    * @param {fs.Stats} curr Current file stats.

@@ -1,5 +1,6 @@
 {
   "dog": {
+    "id": "dog",
     "name": "Dog",
     "icon": "https://www.spikeybot.com/SBIcon-128x128.png",
     "levels": {
@@ -35,6 +36,7 @@
     ]
   },
   "cat": {
+    "id": "cat",
     "name": "Cat",
     "icon": "https://www.spikeybot.com/SBIcon-128x128.png",
     "levels": {
@@ -70,6 +72,7 @@
     ]
   },
   "bird": {
+    "id": "bird",
     "name": "Bird",
     "icon": "https://www.spikeybot.com/SBIcon-128x128.png",
     "levels": {

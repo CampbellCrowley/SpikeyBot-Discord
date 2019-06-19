@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>SpikeyBot-Discord Class: NumberOption</title>
+	<title>SpikeyBot-Discord Class: NPC</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -86,18 +86,16 @@
 		<div id="main">
 			
 
-	<h1 class="page-title">Class: NumberOption</h1>
+	<h1 class="page-title">Class: NPC</h1>
 <section>
 
 <header>
     
         <h2>
-            <span class="ancestors"><a href="HungryGames.html">HungryGames</a><a href="HungryGames-DefaultOptions.html">~DefaultOptions</a>~</span>
+            <span class="ancestors"><a href="Pets.html">Pets</a>~</span>
         
-        NumberOption
+        NPC
         </h2>
-        
-            <div class="class-description">Number option.</div>
         
     
 </header>
@@ -109,7 +107,7 @@
         
 <hr>
 <dt>
-    <h4 class="name" id="NumberOption"><span class="type-signature"></span>new NumberOption(value [, comment] [, category] [, range])</h4>
+    <h4 class="name" id="NPC"><span class="type-signature"></span>new NPC(base, pets, moves)</h4>
     
     
 </dt>
@@ -117,7 +115,8 @@
 
     
     <div class="description">
-        Stores a number value with optional range.
+        Create an NPC based off the opponent data, or at the given
+level.
     </div>
     
 
@@ -140,11 +139,7 @@
         <th>Type</th>
 
         
-        <th>Argument</th>
-        
 
-        
-        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -156,13 +151,16 @@
 
         <tr>
             
-                <td class="name"><code>value</code></td>
+                <td class="name"><code>base</code></td>
             
 
             <td class="type">
             
                 
 <span class="param-type">number</span>
+|
+
+<span class="param-type"><a href="Pets-Pet.html">Pets~Pet</a></span>
 
 
 
@@ -170,35 +168,24 @@
             </td>
 
             
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
 
             
-                <td class="default">
-                
-                </td>
-            
 
-            <td class="description last">Value of this option.</td>
+            <td class="description last">Amount of XP to give this npc, or a pet to
+base the data off of.</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>comment</code></td>
+                <td class="name"><code>pets</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type"><a href="Pets-BasePets.html">Pets~BasePets</a></span>
 
 
 
@@ -206,42 +193,23 @@
             </td>
 
             
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                    &lt;nullable><br>
-                
-
-                
-                </td>
-            
 
             
-                <td class="default">
-                
-                    null
-                
-                </td>
-            
 
-            <td class="description last">Comment/description for the user about this
-option.</td>
+            <td class="description last">Information of available pets.</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>category</code></td>
+                <td class="name"><code>moves</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type"><a href="Pets-BaseMoves.html">Pets~BaseMoves</a></span>
 
 
 
@@ -249,67 +217,10 @@ option.</td>
             </td>
 
             
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                    &lt;nullable><br>
-                
-
-                
-                </td>
-            
 
             
-                <td class="default">
-                
-                    null
-                
-                </td>
-            
 
-            <td class="description last">Category this option falls under for
-showing user.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>range</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">Allowed range of this value.</td>
+            <td class="description last">Information of base moves.</td>
         </tr>
 
     
@@ -353,8 +264,8 @@ showing user.</td>
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="hg_DefaultOptions.js.html">hg/DefaultOptions.js</a>,
-				 <a href="hg_DefaultOptions.js.html#sunlight-1-line-95">line 95</a>
+				<a href="pets_NPC.js.html">pets/NPC.js</a>,
+				 <a href="pets_NPC.js.html#sunlight-1-line-20">line 20</a>
 			</li>
 		</ul>
 	</dd>
@@ -393,7 +304,7 @@ showing user.</td>
 
 
     <ul>
-        <li><a href="HungryGames-DefaultOptions-Option.html">HungryGames~DefaultOptions~Option</a></li>
+        <li><a href="Pets-Pet.html">Pets~Pet</a></li>
     </ul>
 
 
@@ -413,15 +324,404 @@ showing user.</td>
         <dl>
             
 <hr>
-<dt class="name" id="category">
-    <h4 id="category"><span class="type-signature">&lt;nullable> </span>category<span class="type-signature"> :string</span></h4>
+<dt class="name" id="_lastInteractTime">
+    <h4 id="_lastInteractTime"><span class="type-signature">&lt;private> </span>_lastInteractTime<span class="type-signature"> :number</span></h4>
 
     
 </dt>
 <dd>
     
     <div class="description">
-        Get the category of this option.
+        The timestamp at which this object was last interacted with.
+This is used for purging from memory when not used for a while.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">number</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="Pets-Pet.html#_lastInteractTime">Pets~Pet#_lastInteractTime</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="Pets-Pet.html#_lastInteractTime">Pets~Pet#_lastInteractTime</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>Date.now()</li>
+		</ul>
+	</dd>
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="pets_Pet.js.html">pets/Pet.js</a>,
+				 <a href="pets_Pet.js.html#sunlight-1-line-103">line 103</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="attackMod">
+    <h4 id="attackMod"><span class="type-signature"></span>attackMod<span class="type-signature"> :number</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Attack modifier on top of base species stat.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">number</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="Pets-Pet.html#attackMod">Pets~Pet#attackMod</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="Pets-Pet.html#attackMod">Pets~Pet#attackMod</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="pets_Pet.js.html">pets/Pet.js</a>,
+				 <a href="pets_Pet.js.html#sunlight-1-line-58">line 58</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="defenseMod">
+    <h4 id="defenseMod"><span class="type-signature"></span>defenseMod<span class="type-signature"> :number</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Defense modifier on top of base species stat.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">number</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="Pets-Pet.html#defenseMod">Pets~Pet#defenseMod</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="Pets-Pet.html#defenseMod">Pets~Pet#defenseMod</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="pets_Pet.js.html">pets/Pet.js</a>,
+				 <a href="pets_Pet.js.html#sunlight-1-line-65">line 65</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="healthMod">
+    <h4 id="healthMod"><span class="type-signature"></span>healthMod<span class="type-signature"> :number</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Health modifier on top of base species stat.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">number</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="Pets-Pet.html#healthMod">Pets~Pet#healthMod</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="Pets-Pet.html#healthMod">Pets~Pet#healthMod</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="pets_Pet.js.html">pets/Pet.js</a>,
+				 <a href="pets_Pet.js.html#sunlight-1-line-79">line 79</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="id">
+    <h4 id="id"><span class="type-signature"></span>id<span class="type-signature"> :string</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The ID of this pet. Does not check for uniqueness, but
+expects the ID to be unique per-user.
     </div>
     
 
@@ -451,7 +751,7 @@ showing user.</td>
 	<dd class="inherited-from">
 		<ul class="dummy">
 			<li>
-				<a href="HungryGames-DefaultOptions-Option.html#category">HungryGames~DefaultOptions~Option#category</a>
+				<a href="Pets-Pet.html#id">Pets~Pet#id</a>
 			</li>
 		</ul>
 	</dd>
@@ -460,7 +760,7 @@ showing user.</td>
     
     <dt class="tag-overrides">Overrides:</dt>
     <dd class="tag-overrides"><ul class="dummy"><li>
-        <a href="HungryGames-DefaultOptions-Option.html#category">HungryGames~DefaultOptions~Option#category</a>
+        <a href="Pets-Pet.html#id">Pets~Pet#id</a>
     </li></ul></dd>
     
 
@@ -487,8 +787,8 @@ showing user.</td>
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="hg_DefaultOptions.js.html">hg/DefaultOptions.js</a>,
-				 <a href="hg_DefaultOptions.js.html#sunlight-1-line-50">line 50</a>
+				<a href="pets_Pet.js.html">pets/Pet.js</a>,
+				 <a href="pets_Pet.js.html#sunlight-1-line-43">line 43</a>
 			</li>
 		</ul>
 	</dd>
@@ -508,15 +808,117 @@ showing user.</td>
         
             
 <hr>
-<dt class="name" id="comment">
-    <h4 id="comment"><span class="type-signature">&lt;nullable> </span>comment<span class="type-signature"> :string</span></h4>
+<dt class="name" id="lives">
+    <h4 id="lives"><span class="type-signature"></span>lives<span class="type-signature"> :number</span></h4>
 
     
 </dt>
 <dd>
     
     <div class="description">
-        Get the description of this option.
+        Current number of lives remaining.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">number</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="Pets-Pet.html#lives">Pets~Pet#lives</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="Pets-Pet.html#lives">Pets~Pet#lives</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>3</li>
+		</ul>
+	</dd>
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="pets_Pet.js.html">pets/Pet.js</a>,
+				 <a href="pets_Pet.js.html#sunlight-1-line-86">line 86</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="name">
+    <h4 id="name"><span class="type-signature"></span>name<span class="type-signature"> :string</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The name of this pet.
     </div>
     
 
@@ -546,7 +948,7 @@ showing user.</td>
 	<dd class="inherited-from">
 		<ul class="dummy">
 			<li>
-				<a href="HungryGames-DefaultOptions-Option.html#comment">HungryGames~DefaultOptions~Option#comment</a>
+				<a href="Pets-Pet.html#name">Pets~Pet#name</a>
 			</li>
 		</ul>
 	</dd>
@@ -555,7 +957,7 @@ showing user.</td>
     
     <dt class="tag-overrides">Overrides:</dt>
     <dd class="tag-overrides"><ul class="dummy"><li>
-        <a href="HungryGames-DefaultOptions-Option.html#comment">HungryGames~DefaultOptions~Option#comment</a>
+        <a href="Pets-Pet.html#name">Pets~Pet#name</a>
     </li></ul></dd>
     
 
@@ -582,8 +984,8 @@ showing user.</td>
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="hg_DefaultOptions.js.html">hg/DefaultOptions.js</a>,
-				 <a href="hg_DefaultOptions.js.html#sunlight-1-line-42">line 42</a>
+				<a href="pets_Pet.js.html">pets/Pet.js</a>,
+				 <a href="pets_Pet.js.html#sunlight-1-line-29">line 29</a>
 			</li>
 		</ul>
 	</dd>
@@ -603,245 +1005,15 @@ showing user.</td>
         
             
 <hr>
-<dt class="name" id="entries">
-    <h4 id="entries"><span class="type-signature"></span>entries<span class="type-signature"></span></h4>
-
-    
-</dt>
-<dd>
-    
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
-	<dd class="inherited-from">
-		<ul class="dummy">
-			<li>
-				<a href="HungryGames-DefaultOptions-Option.html#entries">HungryGames~DefaultOptions~Option#entries</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-    
-    <dt class="tag-overrides">Overrides:</dt>
-    <dd class="tag-overrides"><ul class="dummy"><li>
-        <a href="HungryGames-DefaultOptions-Option.html#entries">HungryGames~DefaultOptions~Option#entries</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="hg_DefaultOptions.js.html">hg/DefaultOptions.js</a>,
-				 <a href="hg_DefaultOptions.js.html#sunlight-1-line-69">line 69</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="keys">
-    <h4 id="keys"><span class="type-signature"></span>keys<span class="type-signature"></span></h4>
-
-    
-</dt>
-<dd>
-    
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
-	<dd class="inherited-from">
-		<ul class="dummy">
-			<li>
-				<a href="HungryGames-DefaultOptions-Option.html#keys">HungryGames~DefaultOptions~Option#keys</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-    
-    <dt class="tag-overrides">Overrides:</dt>
-    <dd class="tag-overrides"><ul class="dummy"><li>
-        <a href="HungryGames-DefaultOptions-Option.html#keys">HungryGames~DefaultOptions~Option#keys</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="hg_DefaultOptions.js.html">hg/DefaultOptions.js</a>,
-				 <a href="hg_DefaultOptions.js.html#sunlight-1-line-57">line 57</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="range">
-    <h4 id="range"><span class="type-signature"></span>range<span class="type-signature"></span></h4>
+<dt class="name" id="owner">
+    <h4 id="owner"><span class="type-signature"></span>owner<span class="type-signature"> :string</span></h4>
 
     
 </dt>
 <dd>
     
     <div class="description">
-        Get the range of allowable values for this option.
-    </div>
-    
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="hg_DefaultOptions.js.html">hg/DefaultOptions.js</a>,
-				 <a href="hg_DefaultOptions.js.html#sunlight-1-line-110">line 110</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="value">
-    <h4 id="value"><span class="type-signature"></span>value<span class="type-signature"> :*</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        Get the value of this option.
+        ID of the owner of this pet.
     </div>
     
 
@@ -850,7 +1022,7 @@ showing user.</td>
         <ul>
             <li>
                 
-<span class="param-type">*</span>
+<span class="param-type">string</span>
 
 
 
@@ -871,7 +1043,7 @@ showing user.</td>
 	<dd class="inherited-from">
 		<ul class="dummy">
 			<li>
-				<a href="HungryGames-DefaultOptions-Option.html#value">HungryGames~DefaultOptions~Option#value</a>
+				<a href="Pets-Pet.html#owner">Pets~Pet#owner</a>
 			</li>
 		</ul>
 	</dd>
@@ -880,7 +1052,7 @@ showing user.</td>
     
     <dt class="tag-overrides">Overrides:</dt>
     <dd class="tag-overrides"><ul class="dummy"><li>
-        <a href="HungryGames-DefaultOptions-Option.html#value">HungryGames~DefaultOptions~Option#value</a>
+        <a href="Pets-Pet.html#owner">Pets~Pet#owner</a>
     </li></ul></dd>
     
 
@@ -907,8 +1079,475 @@ showing user.</td>
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="hg_DefaultOptions.js.html">hg/DefaultOptions.js</a>,
-				 <a href="hg_DefaultOptions.js.html#sunlight-1-line-34">line 34</a>
+				<a href="pets_Pet.js.html">pets/Pet.js</a>,
+				 <a href="pets_Pet.js.html#sunlight-1-line-23">line 23</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="restStartTimestamp">
+    <h4 id="restStartTimestamp"><span class="type-signature"></span>restStartTimestamp<span class="type-signature"> :number</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Timestamp at most recent time the pet has begun resting.
+Used for regenerating lives.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">number</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="Pets-Pet.html#restStartTimestamp">Pets~Pet#restStartTimestamp</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="Pets-Pet.html#restStartTimestamp">Pets~Pet#restStartTimestamp</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="pets_Pet.js.html">pets/Pet.js</a>,
+				 <a href="pets_Pet.js.html#sunlight-1-line-94">line 94</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="serializable">
+    <h4 id="serializable"><span class="type-signature"></span>serializable<span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Get a serializable version of this class instance. Strips all
+private variables, and all functions. Assumes all public variables are
+serializable if they aren't a function.
+    </div>
+    
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="Pets-Pet.html#serializable">Pets~Pet#serializable</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="Pets-Pet.html#serializable">Pets~Pet#serializable</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="pets_Pet.js.html">pets/Pet.js</a>,
+				 <a href="pets_Pet.js.html#sunlight-1-line-115">line 115</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="species">
+    <h4 id="species"><span class="type-signature"></span>species<span class="type-signature"> :string</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The species ID of this pet.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">string</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="Pets-Pet.html#species">Pets~Pet#species</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="Pets-Pet.html#species">Pets~Pet#species</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="pets_Pet.js.html">pets/Pet.js</a>,
+				 <a href="pets_Pet.js.html#sunlight-1-line-35">line 35</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="speedMod">
+    <h4 id="speedMod"><span class="type-signature"></span>speedMod<span class="type-signature"> :number</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Speed modifier on top of base species stat.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">number</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="Pets-Pet.html#speedMod">Pets~Pet#speedMod</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="Pets-Pet.html#speedMod">Pets~Pet#speedMod</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="pets_Pet.js.html">pets/Pet.js</a>,
+				 <a href="pets_Pet.js.html#sunlight-1-line-72">line 72</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="xp">
+    <h4 id="xp"><span class="type-signature"></span>xp<span class="type-signature"> :number</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The number of experience points this pet has.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">number</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="Pets-Pet.html#xp">Pets~Pet#xp</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="Pets-Pet.html#xp">Pets~Pet#xp</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="pets_Pet.js.html">pets/Pet.js</a>,
+				 <a href="pets_Pet.js.html#sunlight-1-line-51">line 51</a>
 			</li>
 		</ul>
 	</dd>
@@ -928,6 +1567,112 @@ showing user.</td>
         </dl>
     
 
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        <dl>
+            
+<hr>
+<dt>
+    <h4 class="name" id="touch"><span class="type-signature"></span>touch()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Touch this object to update the last `_lastInteractTime`.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="Pets-Pet.html#touch">Pets~Pet#touch</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="Pets-Pet.html#touch">Pets~Pet#touch</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="pets_Pet.js.html">pets/Pet.js</a>,
+				 <a href="pets_Pet.js.html#sunlight-1-line-131">line 131</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        </dl>
     
 
     
