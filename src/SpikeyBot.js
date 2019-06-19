@@ -1144,7 +1144,7 @@ function SpikeyBot() {
    * @listens Command#changePrefix
    */
   function commandChangePrefix(msg) {
-    const canReact = msg.channel.permissionsFor(self.client.user)
+    const canReact = msg.channel.permissionsFor(client.user)
         .has(Discord.Permissions.FLAGS.ADD_REACTIONS);
     const confirmEmoji = '✅';
     const newPrefix = msg.text.slice(1);
