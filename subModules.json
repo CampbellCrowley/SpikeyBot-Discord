@@ -61,7 +61,6 @@
     "./spotify.js",
     "./cmdScheduling.js",
     "./uno.js",
-    "./sandbox.js",
     "./define.js",
     "./echo.js",
     "./roleColors.js",
