@@ -46,9 +46,8 @@ class Worker {
 
     const id = sim.game.id;
 
-    const userPool = sim.game.currentGame.includedUsers.filter((obj) => {
-      return obj.living;
-    });
+    const userPool =
+        sim.game.currentGame.includedUsers.filter((obj) => obj.living);
     // Shuffle user order because games may have been rigged :thonk:.
     for (let i = 0; i < userPool.length; i++) {
       const index = Math.floor(Math.random() * (userPool.length - i)) + i;
@@ -527,7 +526,9 @@ class Worker {
     } else {
       sim.game.currentGame.forcedOutcomes =
           sim.game.currentGame.forcedOutcomes.filter((el) => {
-            GuildGame.forcePlayerState(sim.game, el, sim.messages);
+            if (typeof el.text !== 'string') el.text = sim.events.player;
+            GuildGame.forcePlayerState(
+                sim.game, el, sim.messages, sim.events.player);
             return el.persists;
           });
     }

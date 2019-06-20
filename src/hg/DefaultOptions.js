@@ -355,6 +355,10 @@ class DefaultOptions {
         2, 'The relative weight of custom events. 2 means custom events are ' +
             'twice as likely to be chosen.',
         'probabilities', {min: 0, max: 1000});
+    this._anonForceOutcome = new BooleanOption(
+        false, 'Forced outcomes will use existing events instead of saying ' +
+            '"The game makers" did it.',
+        'other');
     this._disableOutput = new BooleanOption(
         false, 'Debugging purposes only. I mean, you can enable it, but it ma' +
             'kes the games really boring. Up to you ¯\\_(ツ)_/¯',
@@ -556,6 +560,13 @@ class DefaultOptions {
    */
   get customEventWeight() {
     return this._customEventWeight;
+  }
+  /**
+   * @description Get anonForceOutcome.
+   * @returns {BooleanOption} Option value.
+   */
+  get anonForceOutcome() {
+    return this._anonForceOutcome;
   }
   /**
    * @description Get disableOutput.

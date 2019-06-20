@@ -507,7 +507,7 @@ class HungryGames {
 
       // Flush default and stale options.
       if (game.options) {
-        for (const opt in self.defaultOptions.keys) {
+        for (const opt of self.defaultOptions.keys) {
           if (!(self.defaultOptions[opt] instanceof Object)) continue;
           if (typeof game.options[opt] !==
               typeof self.defaultOptions[opt].value) {

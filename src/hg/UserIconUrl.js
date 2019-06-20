@@ -16,7 +16,7 @@ class UserIconUrl {
    * @param {number} [fetchSize] Size of icon to fetch from Discord.
    */
   constructor(url, id, settings, fetchSize) {
-    url = url || '';
+    url = typeof url === 'string' ? url : '';
     /**
      * Size of the icon to request from Discord.
      * @public
