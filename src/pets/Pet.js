@@ -1,6 +1,7 @@
 // Copyright 2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const crypto = require('crypto');
+const c = require('./Constants.js');
 
 /**
  * @description Contains information about a single user's pet.
@@ -212,6 +213,21 @@ class Pet {
       this.spendPoint(least);
     }
   }
+
+  /**
+   * @description Signal this pet just won a battle, and update accordingly.
+   * @public
+   */
+  wonBattle() {
+    this.xp += c.winXP;
+  }
+  /**
+   * @description Signal this pet just lost a battle, and update accordingly.
+   * @public
+   */
+  lostBattle() {
+    this.xp += c.loseXP;
+  }
 }
 
 /**
@@ -254,7 +270,7 @@ Pet.from = function(obj) {
  * @returns {number} XP required to be the given level.
  */
 Pet.levelXP = function(level) {
-  return 100 * (level * level) - (100 * level);
+  return c.levelXPFactor * (level * level) - (c.levelXPFactor * level);
 };
 
 /**

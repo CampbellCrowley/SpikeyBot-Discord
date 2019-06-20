@@ -24,7 +24,6 @@ class Strings {
       throw new TypeError('Directory is not a string.');
     }
     defaultLocale = Strings.parseLocale(defaultLocale);
-    console.log(defaultLocale);
     if (!defaultLocale) {
       throw new TypeError('Default Locale is not a valid locale.');
     }
@@ -73,8 +72,8 @@ class Strings {
    */
   static get localRegExp() {
     return new RegExp(
-        '^(?<language>[a-z]{2})(?:_(?<territory>[A-Z]{2})' +
-        '(?:\\.(?<codeset>[^@]+)))$');
+        '^(?<language>[a-z]{2})(?:_(?<territory>[A-Z]{2}))?' +
+        '(?:\\.(?<codeset>[^@]+))?$');
   }
 
   /**
@@ -86,11 +85,12 @@ class Strings {
    *   language: string,
    *   territory: ?string,
    *   codeset: ?string
-   * }} Output from RegExp match of {@link localeRegExp}, or
-   * null if not a valid locale.
+   * }} Matched groups or null if not a valid locale.
    */
   static parseLocale(locale) {
-    return typeof locale === 'string' && locale.match(Strings.localRegExp);
+    const match =
+        typeof locale === 'string' && locale.match(Strings.localRegExp);
+    return match && match.groups;
   }
 
   /**
@@ -99,7 +99,11 @@ class Strings {
    * @public
    */
   purge() {
-    fs.readdir(this._stringsDir, (err, files) => {
+    fs.readdir(`${__dirname}/${this._stringsDir}`, (err, files) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
       for (const f of files) {
         delete require.cache[require.resolve(
             `${this._stringsDir}${f}${this._stringsFilename}`)];

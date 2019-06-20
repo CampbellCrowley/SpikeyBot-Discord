@@ -3,9 +3,14 @@
 const fs = require('fs');
 const SubModule = require('./subModule.js');
 
+delete require.cache[require.resolve('./locale/Strings.js')];
+const Strings = require('./locale/Strings.js');
+
+delete require.cache[require.resolve('./pets/Constants.js')];
 delete require.cache[require.resolve('./pets/Pet.js')];
 delete require.cache[require.resolve('./pets/BasePets.js')];
-delete require.cache[require.resolve('./pets/BasePets.js')];
+delete require.cache[require.resolve('./pets/BaseMoves.js')];
+const Constants = require('./pets/Constants.js');
 const Pet = require('./pets/Pet.js');
 const BasePets = require('./pets/BasePets.js');
 const BaseMoves = require('./pets/BaseMoves.js');
@@ -54,6 +59,7 @@ class Pets extends SubModule {
      * @private
      * @type {Pets~BasePets}
      * @default
+     * @constant
      */
     this._basePets = new BasePets();
     /**
@@ -61,8 +67,19 @@ class Pets extends SubModule {
      * @private
      * @type {Pets~BaseMoves}
      * @default
+     * @constant
      */
     this._baseMoves = new BaseMoves();
+
+    /**
+     * @description Instance of locale string manager.
+     * @private
+     * @type {Strings}
+     * @default
+     * @constant
+     */
+    this._strings = new Strings('pets');
+    this._strings.purge();
 
     this._getAllPets = this._getAllPets.bind(this);
     this._getPet = this._getPet.bind(this);
@@ -108,6 +125,22 @@ class Pets extends SubModule {
     list.forEach((obj) => {
       this._saveSingle(obj, opt);
     });
+  }
+  /**
+   * @description Reply to msg with locale strings.
+   * @private
+   *
+   * @param {external:Discord~Message} msg Message to reply to.
+   * @param {?string} titleKey String key for the title, or null for default.
+   * @param {string} bodyKey String key for the body message.
+   * @param {string} [rep] Placeholder replacements for the body only.
+   * @returns {Promise<external:Discord~Message>} Message send promise from
+   * {@link external:Discord}.
+   */
+  _reply(msg, titleKey, bodyKey, ...rep) {
+    return this.common.reply(
+        msg, this._strings.get(titleKey, msg.locale),
+        this._strings.get(bodyKey, msg.locale, rep));
   }
 
   /**
@@ -160,10 +193,9 @@ class Pets extends SubModule {
         return;
       }
       if (pets.length == 0) {
-        this.common.reply(
-            msg, 'Pets', 'You don\'t have a pet.\nType `' + msg.prefix +
-                this.postPrefix + 'adopt` to get a new pet.');
+        this._reply(msg, 'title', 'noPet', `${msg.prefix}${this.postPrefix}`);
       } else {
+        // Temporary.
         this.common.reply(
             msg, 'Pets',
             JSON.stringify(pets.map((el) => el.serializable), null, 2));
@@ -186,29 +218,21 @@ class Pets extends SubModule {
       }
       if (pets.length == 0) {
         const match = msg.text.match(/^\s*(\w+)\s+(\w{1,16})$/);
-        const species = this._basePets.get(match[1]);
+        const species = match && this._basePets.get(match[1]);
         if (!match) {
-          this.common.reply(
-              msg, 'Please specify a valid species and a name for your pet.',
-              'See https://www.spikeybot.com/pets/ for available options.');
+          this._reply(msg, 'noSpecies', 'availableSpeciesInfo');
           return;
         } else if (!species) {
-          this.common.reply(
-              msg, `${match[1]} is not an available species.`,
-              'See https://www.spikeybot.com/pets/ for available options.');
+          this._reply(msg, 'invalidSpecies', 'availableSpeciesInfo');
           return;
         } else if (!match[2] || match[2].length < 3) {
-          this.common.reply(
-              msg,
-              'Please specify a valid name for your pet after the species.',
-              'Name must be between 3 and 16 characters.');
+          this._reply(msg, 'invalidName', 'nameInstructions', 3, 16);
           return;
         }
         let reactMessage;
-        this.common
-            .reply(
-                msg, `Adopt a ${match[1]} named ${match[2]}?`,
-                `${confirm}: yes, ${cancel}: no`)
+        this._reply(
+            msg, 'title', 'confirmAdopt', match[1], match[2], confirm,
+            cancel)
             .then((m) => {
               reactMessage = m;
               return m.react(confirm).then(() => m.react(cancel));
@@ -223,24 +247,22 @@ class Pets extends SubModule {
             .then((reactions) => {
               reactMessage.reactions.removeAll().catch(() => {});
               if (reactions.size == 0) {
-                reactMessage.edit('Timed out, enter command again.');
+                reactMessage.edit(
+                    this._strings.get('commandTimedOut', msg.locale));
                 return;
               } else if (reactions.first().emoji.name == cancel) {
-                reactMessage.edit('Cancelled');
+                reactMessage.edit(this._strings.get('cancelled', msg.locale));
                 return;
               }
-              reactMessage.edit('Confirmed');
+              reactMessage.edit(this._strings.get('confirmed', msg.locale));
               const newPet = new Pet(msg.author.id, match[2], match[1]);
               this._saveSingle(newPet, 'async', () => {
-                this.common.reply(
-                    msg, `Adopted ${species.name}`,
-                    `Congratulations! ${match[2]} is now your pet!`);
+                this._reply(
+                    msg, 'title', 'adoptionConfirmed', species.name, match[2]);
               });
             });
       } else {
-        this.common.reply(
-            msg, 'Pets',
-            'You already have a pet! It deserves your undivided love.');
+        this._reply(msg, 'title', 'alreadyHavePet');
       }
     });
   }
@@ -448,5 +470,8 @@ class Pets extends SubModule {
 
 Pets.Pet = Pet;
 Pets.BasePets = BasePets;
+Pets.BaseMoves = BaseMoves;
+Pets.Constants = Constants;
+Pets.Strings = Strings;
 
 module.exports = new Pets();
