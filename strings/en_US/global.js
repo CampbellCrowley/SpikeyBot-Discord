@@ -1,10 +1,19 @@
 // Copyright 2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
+const Locale = require('../../src/locale/Locale.js');
 
-// eslint-disable-next-line require-jsdoc
-class S extends require('../../src/locale/Locale.js') {}
-S.locale = 'en_US.ASCII';
+/**
+ * @description United States English.
+ * @extends Locale
+ */
+class EnUsGlobal extends Locale {
+  /**
+   * @description Constructor.
+   */
+  constructor() {
+    super();
+    this.username = 'SpikeyBot';
+  }
+}
 
-S.username = 'SpikeyBot';
-
-module.exports = S;
+module.exports = new EnUsGlobal();
