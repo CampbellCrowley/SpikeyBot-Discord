@@ -5,6 +5,9 @@ module.exports = {
   "plugins": [
     "jsdoc",
   ],
+  "parserOptions": {
+    "ecmaVersion": 2018,
+  },
   "rules": {
     "no-console": "off",
     "no-constant-condition": [
