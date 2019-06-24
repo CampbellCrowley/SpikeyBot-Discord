@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>SpikeyBot-Discord Source: mainModule.js</title>
+	<title>SpikeyBot-Discord Class: Stats</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -81,84 +81,202 @@
 <div class="row">
 
 	
-	<div class="col-md-12">
+	<div class="col-md-8">
 	
 		<div id="main">
 			
 
-		<h1 class="page-title">Source: mainModule.js</h1>
-    
+	<h1 class="page-title">Class: Stats</h1>
 <section>
-    <article>
-        <pre
-            class="sunlight-highlight-javascript linenums">// Copyright 2018 Campbell Crowley. All rights reserved.
-// Author: Campbell Crowley (dev@campbellcrowley.com)
 
-require('./subModule.js').extend(MainModule);  // Extends the SubModule class.
+<header>
+    
+        <h2>
+            <span class="ancestors"><a href="HungryGames.html">HungryGames</a>~</span>
+        
+        Stats
+        </h2>
+        
+    
+</header>
 
-/**
- * @classdesc Base class for required modules for the bot to work. Adds
- * interface for maintaining references across reloads.
- * @class
- * @augments SubModule
- */
-function MainModule() {
-  /**
-   * The data exported and imported by this module intended to be used to
-   * persist across reloads.
-   * @typedef MainModule~ModuleData
-   *
-   * @type {Object.&lt;*>}
-   */
-  /* eslint-disable @typescript-eslint/no-unused-vars */
-  /**
-   * Imports data from a previous instance of this class in order to maintain
-   * references to other objects and classes across reloads.
-   *
-   * @public
-   * @abstract
-   * @param {?MainModule~ModuleData} data The data that was exported previously,
-   * or null if no data to import.
-   */
-  this.import = function(data) {};
-  /* eslint-enable @typescript-eslint/no-unused-vars */
-  /**
-   * Export data required to maintain the bot across reloading this module.
-   * Expected to be returned directly to this.import once reloaded.
-   *
-   * @public
-   * @abstract
-   * @returns {MainModule~ModuleData} The data to be exported.
-   */
-  this.export = function() {
-    return {};
-  };
-  /**
-   * @description Signal that the bot is shutting down and will not be
-   * restarting immediately. This is triggered on all shutdowns where all
-   * MainModules and SubModules will be unloaded.
-   *
-   * @public
-   * @abstract
-   */
-  this.terminate = function() {};
-}
 
-/**
- * Extends MainModule as the base class of a child.
- *
- * @param {object} child The child class to extend.
- */
-MainModule.extend = function(child) {
-  child.prototype = new MainModule();
-  child.prototype.constructor = child;
-};
+<article>
+    <div class="container-overview">
+    
+        
+<hr>
+<dt>
+    <h4 class="name" id="Stats"><span class="type-signature"></span>new Stats( [metadata])</h4>
+    
+    
+</dt>
+<dd>
 
-module.exports = MainModule.extend;
-</pre>
-    </article>
+    
+    <div class="description">
+        Create object.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Argument</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>metadata</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#HGStatMetadata">HGStatMetadata</a></span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Additional information to store with
+these stats.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="hg_Stats.js.html">hg/Stats.js</a>,
+				 <a href="hg_Stats.js.html#sunlight-1-line-26">line 26</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
 </section>
-
 
 
 
@@ -168,6 +286,10 @@ module.exports = MainModule.extend;
 
 	<div class="clearfix"></div>
 
+	
+		<div class="col-md-3">
+			<div id="toc" class="col-md-3 hidden-xs hidden-sm hidden-md"></div>
+		</div>
 	
 
 </div>
