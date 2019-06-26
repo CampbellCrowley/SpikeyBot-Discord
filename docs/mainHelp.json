@@ -74,104 +74,6 @@
           ]
         },
         {
-          "command": "createdate",
-          "description": "I will tell you the date you created your account!",
-          "examples": [
-            {
-              "description": "Basic Usage",
-              "command": "createdate",
-              "result": "The bot will tell you the date you created your account in the Los Angeles timezone."
-            },
-            {
-              "description": "Mentioning",
-              "command": "createdate @SpikeyRobot",
-              "result": "The bot will tell you the date SpikeyRobot created their account in the Los Angeles timezone."
-            }
-          ]
-        },
-        {
-          "command": "joindate",
-          "description": "I will tell you the date you joined the server you sent the message from!",
-          "validOnlyInGuild": false,
-          "examples": [
-            {
-              "description": "Basic Usage",
-              "command": "joindate",
-              "result": "The bot will tell you the date you joined the server where you sent the message, in the Los Angeles timezone."
-            },
-            {
-              "description": "Mentioning",
-              "command": "joindate @SpikeyRobot",
-              "result": "The bot will tell you the date SpikeyRobot joined the server where you sent the message, in the Los Angeles timezone."
-            }
-          ]
-        },
-        {
-          "command": "server",
-          "aliases": "server, serverinfo",
-          "description": "Information about the current server will be sent including links to images.",
-          "validOnlyInGuild": true,
-          "examples": [
-            {
-              "description": "Basic Usage",
-              "command": "server",
-              "result": "The bot will tell you information about the server."
-            }
-          ]
-        },
-        {
-          "command": "pmme",
-          "description": "I will introduce myself to you!",
-          "aliases": "pmme, dmme",
-          "examples": [
-            {
-              "description": "Basic Usage",
-              "command": "pmme",
-              "result": "The bot will send you a direct message giving a brief description about itself."
-            }
-          ]
-        },
-        {
-          "command": "pmspikey",
-          "description": "I will send SpikeyRobot (my creator) your message because you are too shy!",
-          "aliases": "pmspikey, dmspikey",
-          "examples": [
-            {
-              "description": "Basic Usage",
-              "command": "pmspikey You should totally add blockchain to the bot!",
-              "result": "The bot will send a direct message to @SpikeyRobot#0971 telling him to add your ridiculous feature idea."
-            }
-          ]
-        },
-        {
-          "command": "avatar",
-          "description": "Need a better look at your profile pic? I'll show you the original.",
-          "aliases": "avatar, profile",
-          "examples": [
-            {
-              "description": "Basic Usage",
-              "command": "avatar",
-              "result": "Your profile picture will be sent as a reply to your command."
-            },
-            {
-              "description": "Mentioning",
-              "command": "avatar @SpikeyRobot",
-              "result": "SpikeyRobot's profile picture will be sent as a reply to your command."
-            }
-          ]
-        },
-        {
-          "command": "ping",
-          "description": "Want to know what my delay to the server is? I can tell you my ping!",
-          "examples": [
-            {
-              "description": "Basic Usage",
-              "command": "ping",
-              "result": "The bot will reply with the delay in milliseconds between the bot and Discord's server that it is connected to, as well as the 3 previous values."
-            }
-          ]
-        },
-        {
           "command": "timer",
           "description": "Set a timer for a certain number of seconds. The bot will DM you the message at the end. No options lists timers.",
           "aliases": "timer, timers, remind, reminder, reminders",
@@ -237,17 +139,6 @@
               "description": "Cancel a scheduled command",
               "command": "schedule cancel xyz",
               "result": "Cancel the scheduled command with the ID of xyz."
-            }
-          ]
-        },
-        {
-          "command": "stats",
-          "description": "Displays statistics about the bot and the servers it's on.",
-          "examples": [
-            {
-              "description": "Basic Usage",
-              "command": "stats",
-              "result": "The bot will reply with information about the number of users, number Discord servers (guilds), and similar data."
             }
           ]
         }
@@ -554,6 +445,120 @@
               "description": "Basic Usage",
               "command": "define discord",
               "result": "A reply with a bunch of information about the word will be sent."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Info",
+      "rows": [
+        {
+          "command": "createdate",
+          "description": "I will tell you the date you created your account!",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "createdate",
+              "result": "The bot will tell you the date you created your account in the Los Angeles timezone."
+            },
+            {
+              "description": "Mentioning",
+              "command": "createdate @SpikeyRobot",
+              "result": "The bot will tell you the date SpikeyRobot created their account in the Los Angeles timezone."
+            }
+          ]
+        },
+        {
+          "command": "joindate",
+          "description": "I will tell you the date you joined the server you sent the message from!",
+          "validOnlyInGuild": false,
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "joindate",
+              "result": "The bot will tell you the date you joined the server where you sent the message, in the Los Angeles timezone."
+            },
+            {
+              "description": "Mentioning",
+              "command": "joindate @SpikeyRobot",
+              "result": "The bot will tell you the date SpikeyRobot joined the server where you sent the message, in the Los Angeles timezone."
+            }
+          ]
+        },
+        {
+          "command": "server",
+          "aliases": "server, serverinfo",
+          "description": "Information about the current server will be sent including links to images.",
+          "validOnlyInGuild": true,
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "server",
+              "result": "The bot will tell you information about the server."
+            }
+          ]
+        },
+        {
+          "command": "pmme",
+          "description": "I will introduce myself to you!",
+          "aliases": "pmme, dmme",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "pmme",
+              "result": "The bot will send you a direct message giving a brief description about itself."
+            }
+          ]
+        },
+        {
+          "command": "pmspikey",
+          "description": "I will send SpikeyRobot (my creator) your message because you are too shy!",
+          "aliases": "pmspikey, dmspikey",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "pmspikey You should totally add blockchain to the bot!",
+              "result": "The bot will send a direct message to @SpikeyRobot#0971 telling him to add your ridiculous feature idea."
+            }
+          ]
+        },
+        {
+          "command": "avatar",
+          "description": "Need a better look at your profile pic? I'll show you the original.",
+          "aliases": "avatar, profile",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "avatar",
+              "result": "Your profile picture will be sent as a reply to your command."
+            },
+            {
+              "description": "Mentioning",
+              "command": "avatar @SpikeyRobot",
+              "result": "SpikeyRobot's profile picture will be sent as a reply to your command."
+            }
+          ]
+        },
+        {
+          "command": "ping",
+          "description": "Want to know what my delay to the server is? I can tell you my ping!",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "ping",
+              "result": "The bot will reply with the delay in milliseconds between the bot and Discord's server that it is connected to, as well as the 3 previous values."
+            }
+          ]
+        },
+        {
+          "command": "stats",
+          "description": "Displays statistics about the bot and the servers it's on.",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "stats",
+              "result": "The bot will reply with information about the number of users, number Discord servers (guilds), and similar data."
             }
           ]
         }

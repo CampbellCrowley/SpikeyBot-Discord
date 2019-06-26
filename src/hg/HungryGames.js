@@ -449,12 +449,12 @@ class HungryGames {
     } else if (command == 'users') {
       game.includedUsers = [];
       game.excludedUsers = [];
-      this.refresh(id);
+      this.refresh(id, () => {});
       return 'Resetting ALL user data!';
     } else if (command == 'npcs') {
       game.includedNPCs = [];
       game.excludedNPCs = [];
-      this.refresh(id);
+      this.refresh(id, () => {});
       return 'Resetting ALL NPC data!';
     } else {
       return 'Please specify what data to reset.\nall {deletes all data ' +
