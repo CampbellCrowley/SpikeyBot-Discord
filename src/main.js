@@ -2855,7 +2855,13 @@ function Main() {
         values.saveData = stdout.toString().trim();
       }
       if (self.client.shard) {
-        self.client.shard.broadcastEval('this.getStats()').then(statsResponse);
+        self.client.shard.broadcastEval('this.getStats()')
+            .then(statsResponse)
+            .catch((err) => {
+              self.error('Failed to fetch stats from shards.');
+              console.error(err);
+              statsResponse([]);
+            });
       } else {
         statsResponse([getStats()]);
       }

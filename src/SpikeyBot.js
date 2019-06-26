@@ -55,7 +55,6 @@ const addListener = function(...args) {
         'Too many listeners of type "' + type +
         '" added to EventEmitter. Max is ' + max + ' and we\'ve added ' +
         numListeners + '.');
-    console.error(error);
     throw error;
   }
 
