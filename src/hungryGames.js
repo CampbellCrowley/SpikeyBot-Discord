@@ -329,9 +329,9 @@ function HG() {
       try {
         const parsed = JSON.parse(data);
         if (parsed) {
-          defaultBloodbathEvents = deepFreeze(parsed['bloodbath']);
-          defaultPlayerEvents = deepFreeze(parsed['player']);
-          defaultArenaEvents = deepFreeze(parsed['arena']);
+          defaultBloodbathEvents = self.common.deepFreeze(parsed['bloodbath']);
+          defaultPlayerEvents = self.common.deepFreeze(parsed['player']);
+          defaultArenaEvents = self.common.deepFreeze(parsed['arena']);
           hg.setDefaultBloodbathEvents(defaultBloodbathEvents);
           hg.setDefaultPlayerEvents(defaultPlayerEvents);
           hg.setDefaultArenaEvents(defaultArenaEvents);
@@ -363,7 +363,7 @@ function HG() {
       try {
         const parsed = JSON.parse(data);
         if (parsed) {
-          battles = deepFreeze(parsed);
+          battles = self.common.deepFreeze(parsed);
           hg.setDefaultBattles(battles);
         }
       } catch (err) {
@@ -392,7 +392,7 @@ function HG() {
       try {
         const parsed = JSON.parse(data);
         if (parsed) {
-          weapons = deepFreeze(parsed);
+          weapons = self.common.deepFreeze(parsed);
           hg.setDefaultWeapons(weapons);
         }
       } catch (err) {
@@ -897,7 +897,7 @@ function HG() {
     let id;
     do {
       id = `NPC${crypto.randomBytes(8).toString('hex').toUpperCase()}`;
-    } while (fs.existsSync(self.common.userSaveDir + 'avatars/' + id));
+    } while (fs.existsSync(`${self.common.userSaveDir}avatars/${id}`));
     return id;
   };
   /**
@@ -6188,23 +6188,6 @@ function HG() {
       }
     }
     return numCols;
-  }
-
-  /**
-   * Recursively freeze all elements of an object.
-   *
-   * @private
-   * @param {object} object The object to deep freeze.
-   * @returns {object} The frozen object.
-   */
-  function deepFreeze(object) {
-    const propNames = Object.getOwnPropertyNames(object);
-    for (const name of propNames) {
-      const value = object[name];
-      object[name] =
-          value && typeof value === 'object' ? deepFreeze(value) : value;
-    }
-    return Object.freeze(object);
   }
 
   /**

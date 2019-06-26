@@ -710,8 +710,9 @@ HungryGames.Player = tmpRequire('./Player.js');
 HungryGames.Team = tmpRequire('./Team.js');
 HungryGames.Game = tmpRequire('./Game.js');
 HungryGames.Event = tmpRequire('./Event.js');
-HungryGames.StatManager = tmpRequire('./StatManager.js');
 HungryGames.Stats = tmpRequire('./Stats.js');
+HungryGames.StatGroup = tmpRequire('./StatGroup.js');
+HungryGames.StatManager = tmpRequire('./StatManager.js');
 HungryGames.GuildGame = tmpRequire('./GuildGame.js');
 HungryGames.Simulator = tmpRequire('./Simulator.js');
 

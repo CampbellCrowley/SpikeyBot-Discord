@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>SpikeyBot-Discord Class: Event</title>
+	<title>SpikeyBot-Discord Class: StatGroup</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -86,7 +86,7 @@
 		<div id="main">
 			
 
-	<h1 class="page-title">Class: Event</h1>
+	<h1 class="page-title">Class: StatGroup</h1>
 <section>
 
 <header>
@@ -94,10 +94,8 @@
         <h2>
             <span class="ancestors"><a href="HungryGames.html">HungryGames</a>~</span>
         
-        Event
+        StatGroup
         </h2>
-        
-            <div class="class-description">Event that can happen in a game.</div>
         
     
 </header>
@@ -109,7 +107,7 @@
         
 <hr>
 <dt>
-    <h4 class="name" id="Event"><span class="type-signature"></span>new Event(message [, numVictim] [, numAttacker] [, victimOutcome] [, attackerOutcome] [, victimKiller] [, attackerKiller] [, battle] [, state] [, attacks])</h4>
+    <h4 class="name" id="StatGroup"><span class="type-signature"></span>new StatGroup(parent [, metadata])</h4>
     
     
 </dt>
@@ -117,7 +115,7 @@
 
     
     <div class="description">
-        Creates a HungryGames Event.
+        Create group.
     </div>
     
 
@@ -144,8 +142,6 @@
         
 
         
-        <th>Default</th>
-        
 
         <th class="last">Description</th>
     </tr>
@@ -156,13 +152,13 @@
 
         <tr>
             
-                <td class="name"><code>message</code></td>
+                <td class="name"><code>parent</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">GuildGame</span>
 
 
 
@@ -180,104 +176,23 @@
             
 
             
-                <td class="default">
-                
-                </td>
-            
 
-            <td class="description last">The message to show.</td>
+            <td class="description last">The parent instance of this group.</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>numVictim</code></td>
+                <td class="name"><code>metadata</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type"><a href="global.html#HGStatMetadata">HGStatMetadata</a></span>
+|
 
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    0
-                
-                </td>
-            
-
-            <td class="description last">The number of victims in this event.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>numAttacker</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    0
-                
-                </td>
-            
-
-            <td class="description last">The number of attackers in this event.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>victimOutcome</code></td>
-            
-
-            <td class="type">
-            
-                
 <span class="param-type">string</span>
 
 
@@ -298,260 +213,10 @@
             
 
             
-                <td class="default">
-                
-                    nothing
-                
-                </td>
-            
 
-            <td class="description last">The outcome of the victims from
-this event.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>attackerOutcome</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    nothing
-                
-                </td>
-            
-
-            <td class="description last">The outcome of the attackers from
-this event.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>victimKiller</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    false
-                
-                </td>
-            
-
-            <td class="description last">Do the victims kill anyone in this
-event. Used for calculating kill count.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>attackerKiller</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    false
-                
-                </td>
-            
-
-            <td class="description last">Do the attackers kill anyone in
-this event. Used for calculating kill count.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>battle</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    false
-                
-                </td>
-            
-
-            <td class="description last">Is this event a battle?</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>state</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    0
-                
-                </td>
-            
-
-            <td class="description last">State of event if there are multiple attacks
-before the event.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>attacks</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array.&lt;<a href="HungryGames-Event.html">HungryGames~Event</a>></span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    []
-                
-                </td>
-            
-
-            <td class="description last">Array of attacks that take place
-before the event.</td>
+            <td class="description last">Additional information to store
+with these stats, or ID if metadata should be read from file since this
+group already exists.</td>
         </tr>
 
     
@@ -595,8 +260,8 @@ before the event.</td>
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="hg_Event.js.html">hg/Event.js</a>,
-				 <a href="hg_Event.js.html#sunlight-1-line-34">line 34</a>
+				<a href="hg_StatGroup.js.html">hg/StatGroup.js</a>,
+				 <a href="hg_StatGroup.js.html#sunlight-1-line-34">line 34</a>
 			</li>
 		</ul>
 	</dd>
@@ -644,15 +309,16 @@ before the event.</td>
         <dl>
             
 <hr>
-<dt class="name" id="action">
-    <h4 id="action"><span class="type-signature">&lt;nullable> </span>action<span class="type-signature"> :string</span></h4>
+<dt class="name" id="_dir">
+    <h4 id="_dir"><span class="type-signature">&lt;private, constant> </span>_dir<span class="type-signature"> :string</span></h4>
 
     
 </dt>
 <dd>
     
     <div class="description">
-        The action to format into a message if this is a weapon event.
+        The directory where all of this group's information is
+stored.
     </div>
     
 
@@ -704,8 +370,8 @@ before the event.</td>
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="hg_Event.js.html">hg/Event.js</a>,
-				 <a href="hg_Event.js.html#sunlight-1-line-50">line 50</a>
+				<a href="hg_StatGroup.js.html">hg/StatGroup.js</a>,
+				 <a href="hg_StatGroup.js.html#sunlight-1-line-102">line 102</a>
 			</li>
 		</ul>
 	</dd>
@@ -725,15 +391,19 @@ before the event.</td>
         
             
 <hr>
-<dt class="name" id="attacker">
-    <h4 id="attacker"><span class="type-signature"></span>attacker<span class="type-signature"> :Object</span></h4>
+<dt class="name" id="_fetchQueue">
+    <h4 id="_fetchQueue"><span class="type-signature">&lt;private> </span>_fetchQueue<span class="type-signature"> :Object.&lt;Array.&lt;function()>></span></h4>
 
     
 </dt>
 <dd>
     
     <div class="description">
-        Information about the attackers in this event.
+        Queue of callbacks to fire once an object has been read from
+file. This is used to ensure that if multiple manipulations are requested
+on a single object at the same time, all modifications will take place on
+the same instance instead of overwriting eachother. Mapped by ID being
+fetched.
     </div>
     
 
@@ -742,153 +412,7 @@ before the event.</td>
         <ul>
             <li>
                 
-<span class="param-type">Object</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-    <h5 class="subsection-title">Properties:</h5>
-
-    <dl>
-
-<table class="props table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Argument</th>
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>weapon</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-                    &lt;nullable><br>
-                
-                </td>
-            
-
-            
-
-            <td class="description last">The weapon information
-to
-give to the player.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-</dl>
-
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="hg_Event.js.html">hg/Event.js</a>,
-				 <a href="hg_Event.js.html#sunlight-1-line-74">line 74</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="attacks">
-    <h4 id="attacks"><span class="type-signature"></span>attacks<span class="type-signature"> :Array.&lt;<a href="HungryGames-Event.html">HungryGames~Event</a>></span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        The attacks in a battle to show before the message.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">Array.&lt;<a href="HungryGames-Event.html">HungryGames~Event</a>></span>
+<span class="param-type">Object.&lt;Array.&lt;function()>></span>
 
 
 
@@ -926,7 +450,7 @@ give to the player.</td>
 	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
 	<dd class="tag-default">
 		<ul class="dummy">
-			<li>[]</li>
+			<li>{}</li>
 		</ul>
 	</dd>
 	
@@ -938,8 +462,8 @@ give to the player.</td>
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="hg_Event.js.html">hg/Event.js</a>,
-				 <a href="hg_Event.js.html#sunlight-1-line-100">line 100</a>
+				<a href="hg_StatGroup.js.html">hg/StatGroup.js</a>,
+				 <a href="hg_StatGroup.js.html#sunlight-1-line-84">line 84</a>
 			</li>
 		</ul>
 	</dd>
@@ -959,275 +483,15 @@ give to the player.</td>
         
             
 <hr>
-<dt class="name" id="battle">
-    <h4 id="battle"><span class="type-signature"></span>battle<span class="type-signature"> :boolean</span></h4>
+<dt class="name" id="_id">
+    <h4 id="_id"><span class="type-signature">&lt;private> </span>_id<span class="type-signature"> :string</span></h4>
 
     
 </dt>
 <dd>
     
     <div class="description">
-        Is this event a battle event.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">boolean</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
-	<dd class="tag-default">
-		<ul class="dummy">
-			<li>false</li>
-		</ul>
-	</dd>
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="hg_Event.js.html">hg/Event.js</a>,
-				 <a href="hg_Event.js.html#sunlight-1-line-86">line 86</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="consumes">
-    <h4 id="consumes"><span class="type-signature"></span>consumes<span class="type-signature"> :number|string</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        Amount of consumables used if this is a weapon event.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">number</span>
-|
-
-<span class="param-type">string</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="hg_Event.js.html">hg/Event.js</a>,
-				 <a href="hg_Event.js.html#sunlight-1-line-107">line 107</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="custom">
-    <h4 id="custom"><span class="type-signature"></span>custom<span class="type-signature"> :boolean</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        If the event is created by the user.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">boolean</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
-	<dd class="tag-default">
-		<ul class="dummy">
-			<li>true</li>
-		</ul>
-	</dd>
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="hg_Event.js.html">hg/Event.js</a>,
-				 <a href="hg_Event.js.html#sunlight-1-line-114">line 114</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="message">
-    <h4 id="message"><span class="type-signature"></span>message<span class="type-signature"> :string</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        The message to show.
+        The unique ID for this stat group. Unique per-guild.
     </div>
     
 
@@ -1279,8 +543,8 @@ give to the player.</td>
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="hg_Event.js.html">hg/Event.js</a>,
-				 <a href="hg_Event.js.html#sunlight-1-line-43">line 43</a>
+				<a href="hg_StatGroup.js.html">hg/StatGroup.js</a>,
+				 <a href="hg_StatGroup.js.html#sunlight-1-line-67">line 67</a>
 			</li>
 		</ul>
 	</dd>
@@ -1300,15 +564,17 @@ give to the player.</td>
         
             
 <hr>
-<dt class="name" id="state">
-    <h4 id="state"><span class="type-signature"></span>state<span class="type-signature"> :number</span></h4>
+<dt class="name" id="_saveQueue">
+    <h4 id="_saveQueue"><span class="type-signature">&lt;private> </span>_saveQueue<span class="type-signature"> :Object.&lt;{data: <a href="HungryGames-Stats.html">HungryGames~Stats</a>, timeout: Timeout}></span></h4>
 
     
 </dt>
 <dd>
     
     <div class="description">
-        The current state of printing the battle messages.
+        Cache of Stats objects that are to be saved to file, and the
+Timeout until it will be saved. Prevents saving the same file multiple
+times at once.
     </div>
     
 
@@ -1317,7 +583,7 @@ give to the player.</td>
         <ul>
             <li>
                 
-<span class="param-type">number</span>
+<span class="param-type">Object.&lt;{data: <a href="HungryGames-Stats.html">HungryGames~Stats</a>, timeout: Timeout}></span>
 
 
 
@@ -1355,7 +621,7 @@ give to the player.</td>
 	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
 	<dd class="tag-default">
 		<ul class="dummy">
-			<li>0</li>
+			<li>{}</li>
 		</ul>
 	</dd>
 	
@@ -1367,8 +633,8 @@ give to the player.</td>
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="hg_Event.js.html">hg/Event.js</a>,
-				 <a href="hg_Event.js.html#sunlight-1-line-93">line 93</a>
+				<a href="hg_StatGroup.js.html">hg/StatGroup.js</a>,
+				 <a href="hg_StatGroup.js.html#sunlight-1-line-93">line 93</a>
 			</li>
 		</ul>
 	</dd>
@@ -1388,15 +654,15 @@ give to the player.</td>
         
             
 <hr>
-<dt class="name" id="victim">
-    <h4 id="victim"><span class="type-signature"></span>victim<span class="type-signature"> :Object</span></h4>
+<dt class="name" id="meta">
+    <h4 id="meta"><span class="type-signature"></span>meta<span class="type-signature"> :<a href="global.html#HGStatMetadata">HGStatMetadata</a></span></h4>
 
     
 </dt>
 <dd>
     
     <div class="description">
-        Information about the victims in this event.
+        Metadata stored along with the stats.
     </div>
     
 
@@ -1405,7 +671,7 @@ give to the player.</td>
         <ul>
             <li>
                 
-<span class="param-type">Object</span>
+<span class="param-type"><a href="global.html#HGStatMetadata">HGStatMetadata</a></span>
 
 
 
@@ -1417,70 +683,6 @@ give to the player.</td>
 <dl class="details">
     
 
-    <h5 class="subsection-title">Properties:</h5>
-
-    <dl>
-
-<table class="props table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Argument</th>
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>weapon</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-                    &lt;nullable><br>
-                
-                </td>
-            
-
-            
-
-            <td class="description last">The weapon information
-to give to the player.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-</dl>
-
-    
-
 	
 
 	
@@ -1503,6 +705,13 @@ to give to the player.</td>
 
 	
 
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>{}</li>
+		</ul>
+	</dd>
 	
 
 
@@ -1512,8 +721,8 @@ to give to the player.</td>
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="hg_Event.js.html">hg/Event.js</a>,
-				 <a href="hg_Event.js.html#sunlight-1-line-59">line 59</a>
+				<a href="hg_StatGroup.js.html">hg/StatGroup.js</a>,
+				 <a href="hg_StatGroup.js.html#sunlight-1-line-60">line 60</a>
 			</li>
 		</ul>
 	</dd>
@@ -1540,7 +749,7 @@ to give to the player.</td>
             
 <hr>
 <dt>
-    <h4 class="name" id=".equal"><span class="type-signature">&lt;static> </span>equal(e1, e2)</h4>
+    <h4 class="name" id="_fetchUser"><span class="type-signature">&lt;private> </span>_fetchUser(uId, cb)</h4>
     
     
 </dt>
@@ -1548,7 +757,8 @@ to give to the player.</td>
 
     
     <div class="description">
-        Compare two events to check if they are equivalent.
+        Fetch stats for a specific user in this group. Returned stats
+are modifiable, but changes will not persist unless saved to file.
     </div>
     
 
@@ -1583,13 +793,13 @@ to give to the player.</td>
 
         <tr>
             
-                <td class="name"><code>e1</code></td>
+                <td class="name"><code>uId</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type"><a href="HungryGames-Event.html">HungryGames~Event</a></span>
+<span class="param-type">string</span>
 
 
 
@@ -1600,20 +810,20 @@ to give to the player.</td>
 
             
 
-            <td class="description last">First event.</td>
+            <td class="description last">The user ID of which to lookup.</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>e2</code></td>
+                <td class="name"><code>cb</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type"><a href="HungryGames-Event.html">HungryGames~Event</a></span>
+<span class="param-type">function</span>
 
 
 
@@ -1624,7 +834,8 @@ to give to the player.</td>
 
             
 
-            <td class="description last">Second event to compare.</td>
+            <td class="description last">Callback with optional error as first argument,
+otherwise has stats as second argument.</td>
         </tr>
 
     
@@ -1668,8 +879,8 @@ to give to the player.</td>
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="hg_Event.js.html">hg/Event.js</a>,
-				 <a href="hg_Event.js.html#sunlight-1-line-231">line 231</a>
+				<a href="hg_StatGroup.js.html">hg/StatGroup.js</a>,
+				 <a href="hg_StatGroup.js.html#sunlight-1-line-140">line 140</a>
 			</li>
 		</ul>
 	</dd>
@@ -1694,30 +905,6 @@ to give to the player.</td>
     
 
     
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    If the two given events are equivalent.
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">boolean</span>
-
-
-
-    </dd>
-</dl>
-
-
-        
 
     
 </dd>
@@ -1726,7 +913,7 @@ to give to the player.</td>
             
 <hr>
 <dt>
-    <h4 class="name" id=".finalize"><span class="type-signature">&lt;static> </span>finalize(message, affectedUsers, numVictim, numAttacker, victimOutcome, attackerOutcome, game)</h4>
+    <h4 class="name" id="_saveMetadata"><span class="type-signature">&lt;private> </span>_saveMetadata( [immediate])</h4>
     
     
 </dt>
@@ -1734,319 +921,7 @@ to give to the player.</td>
 
     
     <div class="description">
-        Format an event string based on specified users.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>message</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The message to show.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>affectedUsers</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array.&lt;<a href="HungryGames-Player.html">HungryGames~Player</a>></span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">An array of all users affected
-by this event.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>numVictim</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Number of victims in this event.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>numAttacker</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Number of attackers in this event.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>victimOutcome</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The outcome of the victims from this event.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>attackerOutcome</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The outcome of the attackers from this
-event.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>game</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The GuildGame to make this event for.
-Used for settings and fetching other players not affected by this event if
-necessary.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="hg_Event.js.html">hg/Event.js</a>,
-				 <a href="hg_Event.js.html#sunlight-1-line-157">line 157</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    The final event that was created and
-formatted ready for display.
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type"><a href="HungryGames-FinalEvent.html">HungryGames~FinalEvent</a></span>
-
-
-
-    </dd>
-</dl>
-
-
-        
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id=".finalizeSimple"><span class="type-signature">&lt;private, static> </span>finalizeSimple(message [, game])</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Make an event that doesn't affect any players and is just a
-plain message.
+        Save the current metadata to file.
     </div>
     
 
@@ -2073,6 +948,8 @@ plain message.
         
 
         
+        <th>Default</th>
+        
 
         <th class="last">Description</th>
     </tr>
@@ -2083,45 +960,13 @@ plain message.
 
         <tr>
             
-                <td class="name"><code>message</code></td>
+                <td class="name"><code>immediate</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">The message to show.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>game</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></span>
+<span class="param-type">boolean</span>
 
 
 
@@ -2141,9 +986,15 @@ plain message.
             
 
             
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
 
-            <td class="description last">The GuildGame to make this event for.
-This is to check options and fetch players that may be necessary.</td>
+            <td class="description last">Force saving to perform immediately
+instead of delaying until next event loop.</td>
         </tr>
 
     
@@ -2187,8 +1038,8 @@ This is to check options and fetch players that may be necessary.</td>
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="hg_Event.js.html">hg/Event.js</a>,
-				 <a href="hg_Event.js.html#sunlight-1-line-137">line 137</a>
+				<a href="hg_StatGroup.js.html">hg/StatGroup.js</a>,
+				 <a href="hg_StatGroup.js.html#sunlight-1-line-330">line 330</a>
 			</li>
 		</ul>
 	</dd>
@@ -2213,36 +1064,6 @@ This is to check options and fetch players that may be necessary.</td>
     
 
     
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    The event that was created.
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type"><a href="HungryGames-FinalEvent.html">HungryGames~FinalEvent</a></span>
-
-
-
-    </dd>
-</dl>
-
-
-        
-
-    
-        <h5>Example</h5>
-        
-    <pre class="sunlight-highlight-javascript">Event.finalizeSimple(&#x27;Something happens!&#x27;, game);</pre>
-
 
     
 </dd>
@@ -2251,7 +1072,7 @@ This is to check options and fetch players that may be necessary.</td>
             
 <hr>
 <dt>
-    <h4 class="name" id="equal"><span class="type-signature"></span>equal(two)</h4>
+    <h4 class="name" id="_saveUser"><span class="type-signature">&lt;private> </span>_saveUser(data [, immediate])</h4>
     
     
 </dt>
@@ -2259,7 +1080,203 @@ This is to check options and fetch players that may be necessary.</td>
 
     
     <div class="description">
-        Compare this Event to another to check if they are equivalent.
+        Save a stats object to file.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Argument</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>data</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="HungryGames-Stats.html">HungryGames~Stats</a></span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">The stats object to save.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>immediate</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last">Force saving to happen immediately
+instead of waiting until next event loop.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="hg_StatGroup.js.html">hg/StatGroup.js</a>,
+				 <a href="hg_StatGroup.js.html#sunlight-1-line-272">line 272</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="fetchUser"><span class="type-signature"></span>fetchUser(uId, cb)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Fetch stats for a specific user in this group. Returned stats
+will be frozen and immutable.
     </div>
     
 
@@ -2294,13 +1311,13 @@ This is to check options and fetch players that may be necessary.</td>
 
         <tr>
             
-                <td class="name"><code>two</code></td>
+                <td class="name"><code>uId</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type"><a href="HungryGames-Event.html">HungryGames~Event</a></span>
+<span class="param-type">string</span>
 
 
 
@@ -2311,7 +1328,32 @@ This is to check options and fetch players that may be necessary.</td>
 
             
 
-            <td class="description last">Other Event to compare against.</td>
+            <td class="description last">The user ID of which to lookup.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cb</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Callback with optional error as first argument,
+otherwise has stats as second argument.</td>
         </tr>
 
     
@@ -2355,8 +1397,8 @@ This is to check options and fetch players that may be necessary.</td>
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="hg_Event.js.html">hg/Event.js</a>,
-				 <a href="hg_Event.js.html#sunlight-1-line-124">line 124</a>
+				<a href="hg_StatGroup.js.html">hg/StatGroup.js</a>,
+				 <a href="hg_StatGroup.js.html#sunlight-1-line-188">line 188</a>
 			</li>
 		</ul>
 	</dd>
@@ -2381,36 +1423,1040 @@ This is to check options and fetch players that may be necessary.</td>
     
 
     
-    <h5>Returns:</h5>
+
     
-            
-<div class="param-desc">
-    If they are equivalent.
-</div>
+</dd>
 
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
         
-<span class="param-type">boolean</span>
+            
+<hr>
+<dt>
+    <h4 class="name" id="fetchValue"><span class="type-signature"></span>fetchValue(uId, key, cb)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Fetch a stat value for a single user. Immutable.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>uId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
 
 
 
-    </dd>
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The user ID of which to fetch.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>key</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The key of the value to fetch.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cb</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Callback with optional error argument, and matched
+value.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="hg_StatGroup.js.html">hg/StatGroup.js</a>,
+				 <a href="hg_StatGroup.js.html#sunlight-1-line-226">line 226</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
 </dl>
 
 
-        
+    
 
     
-        <h5>Example</h5>
-        
-    <pre class="sunlight-highlight-javascript">console.log(firstEvent.equal(otherEvent));</pre>
 
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="increment"><span class="type-signature"></span>increment(uId, key, amount, cb)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Increment a value by an amount.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>uId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The user ID of which to modify.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>key</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The key of the value to modify.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>amount</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Amount to increment by. Can be negative to
+decrement.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cb</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Callback with single optional error argument.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="hg_StatGroup.js.html">hg/StatGroup.js</a>,
+				 <a href="hg_StatGroup.js.html#sunlight-1-line-245">line 245</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="setMetaEnd"><span class="type-signature"></span>setMetaEnd(endTime)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Set the metadata end time.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>endTime</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Date</span>
+|
+
+<span class="param-type">number</span>
+|
+
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Date parsable time.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="hg_StatGroup.js.html">hg/StatGroup.js</a>,
+				 <a href="hg_StatGroup.js.html#sunlight-1-line-319">line 319</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="setMetaName"><span class="type-signature"></span>setMetaName(name)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Set the metadata name.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The new value.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="hg_StatGroup.js.html">hg/StatGroup.js</a>,
+				 <a href="hg_StatGroup.js.html#sunlight-1-line-297">line 297</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="setMetaStart"><span class="type-signature"></span>setMetaStart(startTime)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Set the metadata start time.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>startTime</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Date</span>
+|
+
+<span class="param-type">number</span>
+|
+
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Date parsable time.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="hg_StatGroup.js.html">hg/StatGroup.js</a>,
+				 <a href="hg_StatGroup.js.html#sunlight-1-line-309">line 309</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="setValue"><span class="type-signature"></span>setValue(uId, key, value, cb)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Set a stat value for a single user.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>uId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The user ID of which to change.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>key</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The key of the value to change.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>value</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The value to store.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cb</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Callback with single optional error argument.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="hg_StatGroup.js.html">hg/StatGroup.js</a>,
+				 <a href="hg_StatGroup.js.html#sunlight-1-line-206">line 206</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
 
     
 </dd>

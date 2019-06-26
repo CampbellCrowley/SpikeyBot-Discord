@@ -553,13 +553,13 @@ Common.mention = Common.prototype.mention;
 Common.mkAndWrite = function(filename, dir, data) {
   mkdirp(dir, (err) => {
     if (err) {
-      this.error(`Failed to make directory: ${dir}`);
+      if (this.error) this.error(`Failed to make directory: ${dir}`);
       console.error(err);
       return;
     }
     fs.writeFile(filename, data, (err2) => {
       if (err2) {
-        this.error(`Failed to save file: ${filename}`);
+        if (this.error) this.error(`Failed to save file: ${filename}`);
         console.error(err2);
         return;
       }
@@ -573,7 +573,7 @@ Common.prototype.mkAndWrite = Common.mkAndWrite;
  *
  * @see {@link Common~mkAndWrite}
  *
- * @private
+ * @public
  * @param {string} filename The name of the file including the directory.
  * @param {string} dir The directory path without the file's name.
  * @param {string} data The data to write to the file.
@@ -582,19 +582,38 @@ Common.mkAndWriteSync = function(filename, dir, data) {
   try {
     mkdirp.sync(dir);
   } catch (err) {
-    this.error(`Failed to make directory: ${dir}`);
+    if (this.error) this.error(`Failed to make directory: ${dir}`);
     console.error(err);
     return;
   }
   try {
     fs.writeFileSync(filename, data);
   } catch (err) {
-    this.error(`Failed to save file: ${filename}`);
+    if (this.error) this.error(`Failed to save file: ${filename}`);
     console.error(err);
     return;
   }
 };
 Common.prototype.mkAndWriteSync = Common.mkAndWriteSync;
+
+/**
+ * Recursively freeze all elements of an object.
+ *
+ * @public
+ * @param {object} object The object to deep freeze.
+ * @returns {object} The frozen object.
+ */
+Common.deepFreeze = function(object) {
+  const propNames = Object.getOwnPropertyNames(object);
+  for (const name of propNames) {
+    const value = object[name];
+    object[name] =
+        value && typeof value === 'object' ? Common.deepFreeze(value) : value;
+  }
+  return Object.freeze(object);
+};
+Common.prototype.deepFreeze = Common.deepFreeze;
+
 
 /* eslint-disable-next-line no-extend-native */
 String.prototype.replaceAll = function(search, replacement) {
