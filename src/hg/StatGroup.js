@@ -116,8 +116,8 @@ class StatGroup {
    */
   _fetchUser(uId, cb) {
     if (typeof uId !== 'string' ||
-        (uId !== 'meta' && !uId.match(/^\d{17,19}$/))) {
-      throw new TypeError('uId is not a valid ID.');
+        (uId !== 'meta' && !uId.match(/^(\d{17,19}|NPC[A-F0-9]+)$/))) {
+      throw new TypeError('uId (' + uId + ') is not a valid ID.');
     }
     // Data is queued to be saved, and is still cached, return the cached
     // version instead of reading the stale version from file.

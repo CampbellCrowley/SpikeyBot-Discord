@@ -42,9 +42,13 @@ class StatManager {
     if (current.day.num == 0) previous.reset();
 
     const inc = function(...args) {
-      lifetime.increment(...args);
-      previous.increment(...args);
-      if (group) group.increment(...args);
+      try {
+        lifetime.increment(...args);
+        previous.increment(...args);
+        if (group) group.increment(...args);
+      } catch (err) {
+        console.error(err);
+      }
     };
 
     for (const e of events) {

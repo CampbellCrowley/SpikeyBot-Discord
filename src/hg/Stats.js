@@ -14,7 +14,8 @@ class Stats {
    */
   constructor(data) {
     if (!data || typeof data !== 'object') data = {id: data};
-    if (typeof data.id !== 'string' || !data.id.match(/^\d{17,19}$/)) {
+    if (typeof data.id !== 'string' ||
+        !data.id.match(/^(\d{17,19}|NPC[A-F0-9]+)$/)) {
       throw new TypeError(`ID is not a valid user ID. (${data.id})`);
     }
     /**

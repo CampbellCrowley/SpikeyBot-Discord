@@ -555,10 +555,12 @@ Common.mention = Common.prototype.mention;
 Common.mkAndWrite = function(filename, dir, data, cb) {
   mkdirp(dir, (err) => {
     if (err) {
-      if (this.error) this.error(`Failed to make directory: ${dir}`);
-      console.error(err);
-      if (typeof cb === 'function') cb(err);
-      return;
+      if (err.code !== 'EEXIST') {
+        if (this.error) this.error(`Failed to make directory: ${dir}`);
+        console.error(err);
+        if (typeof cb === 'function') cb(err);
+        return;
+      }
     }
     if (typeof data === 'object') data = JSON.stringify(data);
     fs.writeFile(filename, data, (err2) => {

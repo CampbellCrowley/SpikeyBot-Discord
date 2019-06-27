@@ -44,7 +44,8 @@
     "./moderation.js",
     "./modLog.js",
     "./raidBlock.js",
-    "./web/proxy.js"
+    "./web/proxy.js",
+    "./pets.js"
   ],
   "release": [
     "./moderation.js",
