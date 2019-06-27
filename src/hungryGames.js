@@ -1786,6 +1786,8 @@ function HG() {
               err.message === 'Missing Access' ||
               err.message === 'Unknown Channel') {
             self.pauseGame(id);
+          } else {
+            console.error(err);
           }
         });
       }

@@ -4,6 +4,7 @@ const Game = require('./Game.js');
 const Event = require('./Event.js');
 const Team = require('./Team.js');
 const Simulator = require('./Simulator.js');
+const StatManager = require('./StatManager.js');
 
 /**
  * A single instance of a game in a guild.
@@ -197,6 +198,15 @@ class GuildGame {
     this.reactMessage = null;
 
     /**
+     * The ID of the currently active {@link HungryGames~StatGroup} tracking
+     * stats.
+     * @public
+     * @type {?string}
+     * @default
+     */
+    this.statGroup = null;
+
+    /**
      * Interval for day events.
      * @private
      * @type {?Timeout}
@@ -220,6 +230,13 @@ class GuildGame {
      * @default
      */
     this._stateUpdateCallback = null;
+    /**
+     * Manages all stats for all players.
+     * @private
+     * @type {HungryGames~StatManager}
+     * @constant
+     */
+    this._stats = new StatManager();
   }
 
   /**
@@ -443,6 +460,7 @@ class GuildGame {
         this._autoPlayTimeout = setTimeout(this.step, delay);
       }
       day.state = 0;
+      this._stats.parseDay(this);
     } else if (index < 0) {
       return;
     } else if (
@@ -473,6 +491,7 @@ GuildGame.from = function(data) {
   game.channel = data.channel || null;
   game.author = data.author || null;
   game.outputChannel = data.outputChannel || null;
+  game.statGroup = data.statGroup || null;
   if (data.currentGame) {
     game.currentGame = Game.from(data.currentGame);
   }

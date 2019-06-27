@@ -15,7 +15,7 @@ class Stats {
   constructor(data) {
     if (!data || typeof data !== 'object') data = {id: data};
     if (typeof data.id !== 'string' || !data.id.match(/^\d{17,19}$/)) {
-      throw new TypeError('ID is not a valid user ID.');
+      throw new TypeError(`ID is not a valid user ID. (${data.id})`);
     }
     /**
      * @description The ID of the user this object represents.
@@ -33,21 +33,30 @@ class Stats {
      * @property {number} kills Number of kills.
      * @property {number} deaths Number of deaths.
      * @property {number} wounds Number of times wounded.
+     * @property {number} heals Number of times wounds have healed.
      * @property {number} revives Number of times revived.
      * @property {number} wins Number of games won.
      * @property {number} losses Number of games lost.
+     * @property {number} daysAlive Number of days spent alive (includes
+     * wounded).
+     * @property {number} daysDead Number of days spent dead.
+     * @property {number} daysWounded Number of days spent wounded.
      */
     this._data = {
       kills: typeof data.kills === 'number' && data.kills || 0,
       deaths: typeof data.deaths === 'number' && data.deaths || 0,
       wounds: typeof data.wounds === 'number' && data.wounds || 0,
+      heals: typeof data.heals === 'number' && data.heals || 0,
       revives: typeof data.revives === 'number' && data.revives || 0,
       wins: typeof data.wins === 'number' && data.wins || 0,
       losses: typeof data.losses === 'number' && data.losses || 0,
+      daysAlive: typeof data.daysAlive === 'number' && data.daysAlive || 0,
+      daysDead: typeof data.daysDead === 'number' && data.daysDead || 0,
+      daysWounded:
+          typeof data.daysWounded === 'number' && data.daysWounded || 0,
     };
 
     this.get = this.get.bind(this);
-    this.id = this.id.bind(this);
   }
 
   /**
@@ -84,7 +93,7 @@ class Stats {
   /**
    * @description Fetch the data stored here as a serializable object.
    * @public
-   * @returns {Object} Reference to serializable data.
+   * @returns {object} Reference to serializable data.
    */
   get serializable() {
     return this._data;

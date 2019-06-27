@@ -93,7 +93,6 @@
         <pre
             class="sunlight-highlight-javascript linenums">// Copyright 2018-2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
-const GuildGame = require('./GuildGame.js');
 const Stats = require('./Stats.js');
 const common = require('../common.js');
 const crypto = require('crypto');
@@ -110,7 +109,12 @@ const fs = require('fs');
  * to include information.
  * @property {Date=} endTime The timestamp of the last time this object includes
  * information for.
+ * @property {Date} createDate The timestamp at which this stats object was
+ * created.
+ * @property {Date} modifiedDate The timestamp at which this stats object was
+ * last modified.
  */
+
 /**
  * @description HG stats for a single timeframe.
  * @memberof HungryGames
@@ -125,10 +129,6 @@ class StatGroup {
    * group already exists.
    */
   constructor(parent, metadata) {
-    if (!(parent instanceof GuildGame)) {
-      throw new TypeError('parent is not of type GuildGame');
-    }
-
     const dir = `${common.guildSaveDir}${parent.id}/hg/stats/`;
     let id;
     if (typeof metadata === 'string') {
@@ -136,31 +136,16 @@ class StatGroup {
       metadata = null;
     }
 
-    const self = this;
-    const fillMeta = function(metadata) {
-      if (!metadata) return;
-      if (metadata.name) self.setMetaName(metadata.name);
-      if (metadata.startTime != null) self.setMetaStart(metadata.startTime);
-      if (metadata.endTime != null) self.setMetaEnd(metadata.endTime);
-    };
-
-    /**
-     * @description Metadata stored along with the stats.
-     * @public
-     * @type {HGStatMetadata}
-     * @default
-     */
-    this.meta = {};
-    fillMeta(metadata);
     /**
      * @description The unique ID for this stat group. Unique per-guild.
+     * @todo Limit number of IDs to prevent infinite loop finding new ID.
      * @private
      * @type {string}
      */
     this._id = id;
     if (!this._id) {
       do {
-        this._id = crypto.randomBytes(8).toString('hex').toUpperCase();
+        this._id = crypto.randomBytes(2).toString('hex').toUpperCase();
       } while (fs.existsSync(`${dir}${this._id}`));
     }
 
@@ -194,23 +179,6 @@ class StatGroup {
      */
     this._dir = `${dir}${this._id}/`;
 
-    fs.readFile(`${this._dir}meta.json`, (err, data) => {
-      if (err) {
-        if (err.code === 'ENOENT') {
-          this._saveMetadata();
-          return;
-        }
-        console.error(err);
-        return;
-      }
-      try {
-        fillMeta(JSON.parse(data));
-        this._saveMetadata();
-      } catch (err) {
-        console.error(err);
-      }
-    });
-
     this._fetchUser = this._fetchUser.bind(this);
     this.fetchUser = this.fetchUser.bind(this);
     this.setValue = this.setValue.bind(this);
@@ -219,7 +187,20 @@ class StatGroup {
     this.setMetaName = this.setMetaName.bind(this);
     this.setMetaStart = this.setMetaStart.bind(this);
     this.setMetaEnd = this.setMetaEnd.bind(this);
+    this._fetchMetadata = this._fetchMetadata.bind(this);
     this._saveMetadata = this._saveMetadata.bind(this);
+
+    if (metadata) {
+      this._saveMetadata(this._parseMetadata(metadata));
+    } else {
+      this._fetchMetadata((err, meta) => {
+        if (err) {
+          console.error(err);
+          return;
+        }
+        this._saveMetadata(meta);
+      });
+    }
   }
 
   /**
@@ -231,8 +212,9 @@ class StatGroup {
    * otherwise has stats as second argument.
    */
   _fetchUser(uId, cb) {
-    if (typeof uId !== 'string' || !uId.match(/^\d{17,19}$/)) {
-      throw new TypeError('uId is not a valid user Id');
+    if (typeof uId !== 'string' ||
+        (uId !== 'meta' &amp;&amp; !uId.match(/^\d{17,19}$/))) {
+      throw new TypeError('uId is not a valid ID.');
     }
     // Data is queued to be saved, and is still cached, return the cached
     // version instead of reading the stale version from file.
@@ -259,11 +241,21 @@ class StatGroup {
     };
     fs.readFile(`${this._dir}${uId}.json`, (err, data) => {
       if (err) {
-        done(err);
-        return;
+        if (err.code === 'ENOENT') {
+          data = '{}';
+        } else {
+          done(err);
+          return;
+        }
       }
       try {
-        done(null, Stats.from(JSON.parse(data)));
+        if (uId === 'meta') {
+          done(null, this._parseMetadata(JSON.parse(data)));
+        } else {
+          const parsed = JSON.parse(data);
+          if (!parsed.id) parsed.id = uId;
+          done(null, Stats.from(parsed));
+        }
       } catch (err) {
         done(err);
       }
@@ -271,8 +263,9 @@ class StatGroup {
   }
 
   /**
-   * @description Fetch stats for a specific user in this group. Returned stats
-   * will be frozen and immutable.
+   * @description Fetch stats for a specific user in this group. Modified values
+   * will not persist. Use functions to modify.
+   * @todo Return immutable/frozen copy to enforce no-modify rule.
    * @public
    * @param {string} uId The user ID of which to lookup.
    * @param {Function} cb Callback with optional error as first argument,
@@ -284,7 +277,8 @@ class StatGroup {
         cb(err);
         return;
       }
-      cb(null, common.deepFreeze(stats));
+      // cb(null, common.deepFreeze(stats));
+      cb(null, stats);
     });
   }
 
@@ -331,27 +325,36 @@ class StatGroup {
    * @public
    * @param {string} uId The user ID of which to modify.
    * @param {string} key The key of the value to modify.
-   * @param {number} amount Amount to increment by. Can be negative to
+   * @param {number} [amount=1] Amount to increment by. Can be negative to
    * decrement.
-   * @param {Function} cb Callback with single optional error argument.
+   * @param {Function} [cb] Callback with single optional error argument.
    */
-  increment(uId, key, amount, cb) {
+  increment(uId, key, amount = 1, cb) {
     if (typeof amount !== 'number' || isNaN(amount)) {
       throw new TypeError('Amount is not a number.');
     }
     this._fetchUser(uId, (err, data) => {
       if (err) {
-        cb(err);
+        if (typeof cb !== 'function') {
+          console.error(err);
+        } else {
+          cb(err);
+        }
         return;
       }
       if (!data.get(key)) data.set(key, 0);
       if (typeof data.get(key) !== 'number') {
-        cb(new TypeError('Fetched value is not a number.'));
+        const err = new TypeError('Fetched value is not a number.');
+        if (typeof cb !== 'function') {
+          console.error(err);
+        } else {
+          cb(err);
+        }
         return;
       }
       data.set(key, data.get(key) + amount);
       this._saveUser(data);
-      cb();
+      if (typeof cb === 'function') cb();
     });
   }
 
@@ -363,17 +366,15 @@ class StatGroup {
    * instead of waiting until next event loop.
    */
   _saveUser(data, immediate = false) {
-    if (!(data instanceof Stats)) {
-      throw new TypeError('data is not a Stats object');
-    }
     if (this._saveQueue[data.id]) {
       clearTimeout(this._saveQueue[data.id].timeout);
+      this._saveQueue[data.id].timeout = null;
     }
     if (!immediate) {
       this._saveQueue[data.id] = {
         data: data,
-        timeout:
-            setTimeout(() => this._saveUser(this._saveQueue[data.id], true)),
+        timeout: setTimeout(
+            () => this._saveUser(this._saveQueue[data.id].data, true)),
       };
       return;
     }
@@ -388,11 +389,14 @@ class StatGroup {
    * @param {string} name The new value.
    */
   setMetaName(name) {
-    if (typeof name !== 'string') {
-      throw new TypeError('Name is not a string');
-    }
-    this.meta.name = name;
-    this._saveMetadata();
+    this.fetchMetadata((err, meta) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
+      meta.name = name;
+      this._saveMetadata(meta);
+    });
   }
   /**
    * @description Set the metadata start time.
@@ -400,8 +404,14 @@ class StatGroup {
    * @param {Date|number|string} startTime Date parsable time.
    */
   setMetaStart(startTime) {
-    this.meta.startTime = new Date(startTime);
-    this._saveMetadata();
+    this.fetchMetadata((err, meta) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
+      meta.startTime = new Date(startTime);
+      this._saveMetadata(meta);
+    });
   }
 
   /**
@@ -410,33 +420,84 @@ class StatGroup {
    * @param {Date|number|string} endTime Date parsable time.
    */
   setMetaEnd(endTime) {
-    this.meta.endTime = new Date(endTime);
-    this._saveMetadata();
+    this.fetchMetadata((err, meta) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
+      meta.endTime = new Date(endTime);
+      this._saveMetadata(meta);
+    });
+  }
+
+  /**
+   * @description Fetch the metadata for this group from file.
+   * @private
+   * @param {Function} cb Callback with optional error argument, otherwise
+   * second argument is parsed {@link HGStatMetadata}.
+   */
+  _fetchMetadata(cb) {
+    this._fetchUser('meta', cb);
+  }
+
+  /**
+   * @description Fetch the metadata for this group from file. Modified values
+   * will not persist. Use functions to modify.
+   * @private
+   * @param {Function} cb Callback with optional error argument, otherwise
+   * second argument is parsed {@link HGStatMetadata}.
+   */
+  fetchMetadata(cb) {
+    this.fetchUser('meta', cb);
+  }
+
+  /**
+   * @description Parse the given object into a {@link HGStatMetadata} object.
+   * @private
+   * @param {object} data The data to parse.
+   * @returns {HGStatMetadata} The parsed object.
+   */
+  _parseMetadata(data) {
+    const out = {};
+    if (!data) data = {};
+    if (data.name != null) out.name = data.name;
+    if (data.startTime != null) out.startTime = new Date(data.startTime);
+    if (data.endTime != null) out.endTime = new Date(data.endTime);
+    out.createDate = data.createDate ? new Date(data.createDate) : new Date();
+    out.modifiedDate =
+        data.modifiedDate ? new Date(data.modifiedDate) : new Date();
+    return out;
   }
 
   /**
    * @description Save the current metadata to file.
    * @private
+   * @param {HGStatMetadata} meta The data to save. Overwrites existing data.
    * @param {boolean} [immediate=false] Force saving to perform immediately
    * instead of delaying until next event loop.
    */
-  _saveMetadata(immediate = false) {
-    if (this._saveMetaTimeout) {
-      clearTimeout(this._saveMetaTimeout);
-      this._saveMetaTimeout = null;
+  _saveMetadata(meta, immediate = false) {
+    if (this._saveQueue.meta) {
+      clearTimeout(this._saveQueue.meta.timeout);
+      this._saveQueue.meta.timeout = null;
     }
     if (!immediate) {
-      this._saveMetaTimeout = this.setTimeout(() => this._saveMetadata(true));
+      this._saveQueue.meta = {
+        data: meta,
+        timeout: setTimeout(
+            () => this._saveMetadata(this._saveQueue.meta.data, true)),
+      };
       return;
     }
     const data = {
-      name: this.meta.name,
-      startTime: this.meta.startTime &amp;&amp; this.meta.startTime.getDate(),
-      endTime: this.meta.endTime &amp;&amp; this.meta.endTime.getDate(),
+      name: meta.name,
+      startTime: meta.startTime &amp;&amp; meta.startTime.getTime(),
+      endTime: meta.endTime &amp;&amp; meta.endTime.getTime(),
+      createDate: meta.createDate.getTime(),
+      modifiedDate: Date.now(),
     };
-    fs.writeFile(`${this._dir}meta.json`, JSON.stringify(data), (err) => {
-      if (err) console.error(err);
-    });
+    delete this._saveQueue.meta;
+    common.mkAndWrite(`${this._dir}meta.json`, this._dir, data);
   }
 }
 module.exports = StatGroup;
@@ -485,7 +546,7 @@ module.exports = StatGroup;
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.2</a>
 	
-		on Tuesday, June 25, 2019 11:32 PM (-07:00)
+		on Wednesday, June 26, 2019 8:21 PM (-07:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

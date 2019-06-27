@@ -114,7 +114,7 @@ class Simulator {
     worker.on('stderr', (msg) => {
       this.hg._parent.error(msg);
     });
-    worker.on('error', (err) =>{
+    worker.on('error', (err) => {
       this.hg._parent.error('Simulation worker errored');
       console.error(err);
     });
