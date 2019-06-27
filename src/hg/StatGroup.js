@@ -277,7 +277,7 @@ class StatGroup {
       this._saveQueue[data.id] = {
         data: data,
         timeout: setTimeout(
-            () => this._saveUser(this._saveQueue[data.id].data, true)),
+            () => this._saveUser(this._saveQueue[data.id].data, true), 1000),
       };
       return;
     }
@@ -388,7 +388,7 @@ class StatGroup {
       this._saveQueue.meta = {
         data: meta,
         timeout: setTimeout(
-            () => this._saveMetadata(this._saveQueue.meta.data, true)),
+            () => this._saveMetadata(this._saveQueue.meta.data, true), 1000),
       };
       return;
     }
