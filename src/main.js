@@ -3274,9 +3274,10 @@ function Main() {
           const noReload = msg.content.indexOf('--noreload') > -1;
           if (!noReload) {
             self.bot.reloadCommon();
-            self.client.reloadUpdatedMainModules();
             if (self.client.shard) {
               self.client.shard.broadcastEval('this.reloadUpdatedMainModules');
+            } else {
+              self.client.reloadUpdatedMainModules();
             }
           }
           try {

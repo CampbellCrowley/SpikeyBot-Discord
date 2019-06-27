@@ -79,6 +79,15 @@ class Stats {
   }
 
   /**
+   * @description Get array of all keys stored by this object.
+   * @public
+   * @returns {string[]} Array of all keys.
+   */
+  get keys() {
+    return Object.keys(this._data);
+  }
+
+  /**
    * @description Set a value for a certain datapoint.
    * @public
    * @param {string} key The name of this datapoint.

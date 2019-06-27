@@ -4,6 +4,7 @@ const Stats = require('./Stats.js');
 const common = require('../common.js');
 const crypto = require('crypto');
 const fs = require('fs');
+const rimraf = require('rimraf');
 
 /**
  * @description Metadata to store along with a {@link HungryGames~StatGroup}
@@ -49,11 +50,11 @@ class StatGroup {
      * @private
      * @type {string}
      */
-    this._id = id;
-    if (!this._id) {
+    this.id = id;
+    if (!this.id) {
       do {
-        this._id = crypto.randomBytes(2).toString('hex').toUpperCase();
-      } while (fs.existsSync(`${dir}${this._id}`));
+        this.id = crypto.randomBytes(2).toString('hex').toUpperCase();
+      } while (fs.existsSync(`${dir}${this.id}`));
     }
 
     /**
@@ -84,7 +85,7 @@ class StatGroup {
      * @type {string}
      * @constant
      */
-    this._dir = `${dir}${this._id}/`;
+    this._dir = `${dir}${this.id}/`;
 
     this._fetchUser = this._fetchUser.bind(this);
     this.fetchUser = this.fetchUser.bind(this);
@@ -405,6 +406,35 @@ class StatGroup {
     };
     delete this._saveQueue.meta;
     common.mkAndWrite(`${this._dir}meta.json`, this._dir, data);
+  }
+
+  /**
+   * @description Delete all data associated with this group.
+   * @public
+   */
+  reset() {
+    const keys = Object.keys(this._saveQueue);
+    for (const k of keys) {
+      clearTimeout(this._saveQueue[k].timeout);
+      delete this._saveQueue[k];
+    }
+    rimraf(this._dir, (err) => {
+      if (err) console.error(err);
+    });
+  }
+
+  /**
+   * @description Check if a stat group with the given ID exists for the given
+   * game.
+   * @public
+   * @static
+   * @param {HungryGames~GuildGame} game The game of which the stats to look up.
+   * @param {string} id The group ID to check for.
+   * @returns {boolean} True if exists, false otherwise.
+   */
+  static exists(game, id) {
+    const dir = `${common.guildSaveDir}${game.id}/hg/stats/`;
+    return fs.existsSync(`${dir}${id}/`);
   }
 }
 module.exports = StatGroup;

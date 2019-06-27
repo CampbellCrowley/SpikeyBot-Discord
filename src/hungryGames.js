@@ -553,14 +553,20 @@ function HG() {
           ['end', 'abort', 'stop'], mkCmd(endGame), cmdOpts),
       new self.command.SingleCommand(
           ['save'],
-          function(msg) {
-            self.save('async');
-            msg.channel.send('`Saving all data.`');
+          (msg) => {
+            if (self.common.trustedIds.includes(msg.author.id)) {
+              self.save('async');
+              msg.channel.send('`Saving all data.`');
+            } else {
+              self.common.reply(msg, 'You can\'t do that.', 'No');
+            }
           },
           cmdOpts),
       new self.command.SingleCommand(
           ['team', 'teams', 't'], mkCmd(editTeam), cmdOpts),
-      new self.command.SingleCommand(['stats'], mkCmd(commandStats), cmdOpts),
+      new self.command.SingleCommand(
+          ['stats', 'stat', 'info', 'me'], mkCmd(commandStats), cmdOpts),
+      new self.command.SingleCommand(['nums'], mkCmd(commandNums), cmdOpts),
       new self.command.SingleCommand(
           ['rig', 'rigged'], mkCmd(commandRig), cmdOpts),
       new self.command.SingleCommand(
@@ -5638,6 +5644,61 @@ function HG() {
   }
 
   /**
+   * @description Responds with stats about a player in the games.
+   *
+   * @private
+   * @type {HungryGames~hgCommandHandler}
+   * @param {Discord~Message} msg The message that lead to this being called.
+   * @param {string} id Guild ID this command was called from.
+   */
+  function commandStats(msg, id) {
+    const game = hg.getGame(id);
+    const numTotal = game.statGroup ? 3 : 2;
+    const user = msg.softMentions.users.first() || msg.author;
+    let numDone = 0;
+    const embed = new self.Discord.MessageEmbed();
+    embed.setTitle(`${user.tag}'s HG Stats`);
+
+    const checkDone = function() {
+      numDone++;
+      if (numDone === numTotal) {
+        msg.channel.send(self.common.mention(msg), embed);
+      }
+    };
+
+    const groupDone = function(err, group) {
+      if (!group) {
+        checkDone();
+        return;
+      }
+      group.fetchUser(user.id, (err, data) => {
+        if (err) {
+          console.error(err);
+        } else {
+          const list = data.keys.map(
+              (el) => `${self.common.camelToSpaces(el)}: ${data.get(el)}`);
+          let name;
+          if (group.id === 'global') {
+            name = 'Lifetime';
+          } else if (group.id === 'previous') {
+            name = 'Previous Game';
+          } else if (group.name) {
+            name = `${group.name} (${group.id})`;
+          } else {
+            name = `${group.id}`;
+          }
+          embed.addField(name, list.join('\n'), true);
+        }
+        checkDone();
+      });
+    };
+
+    if (game.statGroup) game._stats.fetchGroup(game.statGroup, groupDone);
+    game._stats.fetchGroup('global', groupDone);
+    game._stats.fetchGroup('previous', groupDone);
+  }
+
+  /**
    * @description Replies to the user with stats about all the currently loaded
    * games in this shard.
    *
@@ -5645,7 +5706,7 @@ function HG() {
    * @type {HungryGames~hgCommandHandler}
    * @param {Discord~Message} msg The message that lead to this being called.
    */
-  function commandStats(msg) {
+  function commandNums(msg) {
     if (self.client.shard) {
       self.client.shard.broadcastEval('this.getHGStats(true)')
           .then(

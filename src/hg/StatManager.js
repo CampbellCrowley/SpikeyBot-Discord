@@ -10,17 +10,24 @@ const StatGroup = require('./StatGroup.js');
 class StatManager {
   /**
    * @description Constructor.
+   * @param {HungryGames~GuildGame} game Parent game.
    */
-  constructor() {
+  constructor(game) {
+    /**
+     * @description Parent game to reference by default.
+     * @public
+     * @type {HungryGames~GuildGame}
+     * @constant
+     */
+    this.game = game;
     this.parseDay = this.parseDay.bind(this);
   }
   /**
    * @description Update stats based on the current day data of the given game.
    * @public
-   * @param {HungryGames~GuildGame} game The game of which to parse the current
-   * day information.
    */
-  parseDay(game) {
+  parseDay() {
+    const game = this.game;
     const current = game && game.currentGame;
     const events = current && current.day && current.day.events;
     if (!events || !Array.isArray(events)) {
@@ -29,10 +36,14 @@ class StatManager {
       return;
     }
     const lifetime = new StatGroup(game, 'global');
+    const previous = new StatGroup(game, 'previous');
     const group = game.statGroup ? new StatGroup(game, game.statGroup) : null;
+
+    if (current.day.num == 0) previous.reset();
 
     const inc = function(...args) {
       lifetime.increment(...args);
+      previous.increment(...args);
       if (group) group.increment(...args);
     };
 
@@ -91,6 +102,31 @@ class StatManager {
           inc(id, 'losses');
         }
       }
+    }
+  }
+
+  /**
+   * @description Fetch a {@HungryGames~StatGroup} reference.
+   * @public
+   * @param {string} [id='global'] The ID of the group to fetch.
+   * @param {Function} cb Callback with optional error argument, otherwise
+   * second argument is the group reference.
+   */
+  fetchGroup(id = 'global', cb) {
+    if (typeof cb !== 'function') {
+      cb = id;
+      if (typeof cb !== 'function') {
+        throw new TypeError('Callback must be a function');
+      }
+      id = 'global';
+    }
+    if (typeof id !== 'string') {
+      throw new TypeError('ID must be a string');
+    }
+    if (StatGroup.exists(this.game, id)) {
+      cb(null, new StatGroup(this.game, id));
+    } else {
+      cb('Group doesn\'t exist');
     }
   }
 }

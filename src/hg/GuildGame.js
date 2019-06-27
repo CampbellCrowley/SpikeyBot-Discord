@@ -236,7 +236,7 @@ class GuildGame {
      * @type {HungryGames~StatManager}
      * @constant
      */
-    this._stats = new StatManager();
+    this._stats = new StatManager(this);
   }
 
   /**
@@ -460,7 +460,7 @@ class GuildGame {
         this._autoPlayTimeout = setTimeout(this.step, delay);
       }
       day.state = 0;
-      this._stats.parseDay(this);
+      this._stats.parseDay();
     } else if (index < 0) {
       return;
     } else if (

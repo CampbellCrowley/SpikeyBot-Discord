@@ -384,6 +384,10 @@ function SpikeyBot() {
     delete require.cache[require.resolve('./common.js')];
     common = require('./common.js');
     common.begin(testInstance, !isDev);
+
+    for (const m of mainModules) {
+      m.begin(Discord, client, command, common, self);
+    }
   };
   self.reloadCommon();
 

@@ -620,6 +620,21 @@ Common.deepFreeze = function(object) {
 };
 Common.prototype.deepFreeze = Common.deepFreeze;
 
+/**
+ * @description Convert a string in camelcase to a human readable spaces format.
+ * (helloWorld --> Hello World)
+ *
+ * @private
+ * @param {string} str The input.
+ * @returns {string} The output.
+ */
+Common.camelToSpaces = function(str) {
+  return str.replace(/([A-Z])/g, ' $1').replace(/^./, function(str) {
+    return str.toUpperCase();
+  });
+};
+Common.prototype.camelToSpaces = Common.camelToSpaces;
+
 
 /* eslint-disable-next-line no-extend-native */
 String.prototype.replaceAll = function(search, replacement) {

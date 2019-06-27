@@ -524,6 +524,29 @@
       ]
     },
     {
+      "title": "Stat Tracking",
+      "rows": [
+        {
+          "command": "stats",
+          "description": "Show all tracked stats about players.",
+          "aliases": "stats, stat, info, me",
+          "validOnlyInGuild": true,
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "stats",
+              "result": "Lifetime, previous game, and the selected group stats for the user who ran the command will be sent."
+            },
+            {
+              "description": "Basic Usage",
+              "command": "stats SpikeyRobot",
+              "result": "Tracked stats for SpikeyRobot will be sent."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "title": "Admin Control",
       "rows": [
         {
