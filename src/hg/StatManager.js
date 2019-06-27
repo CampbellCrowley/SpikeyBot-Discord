@@ -129,5 +129,31 @@ class StatManager {
       cb('Group doesn\'t exist');
     }
   }
+
+  /**
+   * @description Create a new stat group.
+   * @public
+   * @param {HGStatMetadata} [metadata] Metadata to store with stat group.
+   * @param {Function} [cb] Callback function once completed. Only argument is
+   * the created group.
+   */
+  createGroup(metadata, cb) {
+    if (typeof metadata === 'function') {
+      cb = metadata;
+      metadata = null;
+    }
+    const created = new StatGroup(this.game, metadata);
+    if (typeof cb === 'function') cb(created);
+  }
+
+  /**
+   * @description Fetch IDs of all created groups.
+   * @public
+   * @param {Function} cb Callback with optional error argument, otherwise
+   * second argument is array of IDs as strings.
+   */
+  fetchGroupList(cb) {
+    StatGroup.fetchList(this.game, cb);
+  }
 }
 module.exports = StatManager;

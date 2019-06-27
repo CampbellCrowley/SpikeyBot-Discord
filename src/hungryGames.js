@@ -565,7 +565,22 @@ function HG() {
       new self.command.SingleCommand(
           ['team', 'teams', 't'], mkCmd(editTeam), cmdOpts),
       new self.command.SingleCommand(
-          ['stats', 'stat', 'info', 'me'], mkCmd(commandStats), cmdOpts),
+          ['stats', 'stat', 'info', 'me'], mkCmd(commandStats), cmdOpts, ),
+      new self.command.SingleCommand(
+          ['group', 'groups', 'season', 'seasons'], mkCmd(commandGroups),
+          cmdOpts,
+          [
+            new self.command.SingleCommand(
+                ['create', 'new', 'make'], mkCmd(commandNewGroup), cmdOpts),
+            new self.command.SingleCommand(
+                ['delete', 'remove'], mkCmd(commandDeleteGroup), cmdOpts),
+            new self.command.SingleCommand(
+                ['select', 'choose', 'use'], mkCmd(commandSelectGroup),
+                cmdOpts),
+            new self.command.SingleCommand(
+                ['rename', 'name', 'title'], mkCmd(commandRenameGroup),
+                cmdOpts),
+          ]),
       new self.command.SingleCommand(['nums'], mkCmd(commandNums), cmdOpts),
       new self.command.SingleCommand(
           ['rig', 'rigged'], mkCmd(commandRig), cmdOpts),
@@ -5658,6 +5673,7 @@ function HG() {
     let numDone = 0;
     const embed = new self.Discord.MessageEmbed();
     embed.setTitle(`${user.tag}'s HG Stats`);
+    embed.setColor([255, 0, 255]);
 
     const checkDone = function() {
       numDone++;
@@ -5677,25 +5693,225 @@ function HG() {
         } else {
           const list = data.keys.map(
               (el) => `${self.common.camelToSpaces(el)}: ${data.get(el)}`);
-          let name;
           if (group.id === 'global') {
-            name = 'Lifetime';
+            embed.addField('Lifetime', list.join('\n'), true);
+            checkDone();
+            return;
           } else if (group.id === 'previous') {
-            name = 'Previous Game';
-          } else if (group.name) {
-            name = `${group.name} (${group.id})`;
-          } else {
-            name = `${group.id}`;
+            embed.addField('Previous Game', list.join('\n'), true);
+            checkDone();
+            return;
           }
-          embed.addField(name, list.join('\n'), true);
+          group.fetchMetadata((err, meta) => {
+            if (err) {
+              self.error(
+                  'Failed to fetch metadata for group ' + id + '/' + group.id);
+              console.error(err);
+            }
+            if (meta && meta.name) {
+              embed.addField(meta.name, list.join('\n'), true);
+            } else {
+              embed.addField(group.id, list.join('\n'), true);
+            }
+            checkDone();
+          });
         }
-        checkDone();
       });
     };
 
     if (game.statGroup) game._stats.fetchGroup(game.statGroup, groupDone);
     game._stats.fetchGroup('global', groupDone);
     game._stats.fetchGroup('previous', groupDone);
+  }
+
+  /**
+   * @description Responds with list of all stat group names and IDs.
+   *
+   * @private
+   * @type {HungryGames~hgCommandHandler}
+   * @param {Discord~Message} msg The message that lead to this being called.
+   * @param {string} id Guild ID this command was called from.
+   */
+  function commandGroups(msg, id) {
+    const game = hg.getGame(id);
+    let total = 0;
+    let done = 0;
+    const list = [];
+    const checkDone = function() {
+      done++;
+      if (done >= total) {
+        self.common.reply(
+            msg, 'Stat Groups',
+            list.join('\n') || 'I wasn\'t able to find that group.');
+      }
+    };
+    const groupDone = function(err, group) {
+      if (err) {
+        checkDone();
+        return;
+      }
+      group.fetchMetadata((err, meta) => {
+        const flag = game.statGroup === group.id ? '*' : ' ';
+        if (err) {
+          list.push(`${group.id}${flag}`);
+          checkDone();
+          self.error(
+              'Failed to fetch metadata for stat group: ' + id + '/' +
+              group.id);
+        } else {
+          list.push(`${group.id}${flag}: ${meta.name}`);
+          checkDone();
+        }
+      });
+    };
+    const groupID = msg.text.match(/\b([a-fA-F0-9]{4})\b/);
+    if (groupID) {
+      total = 1;
+      game._stats.fetchGroup(groupID[1].toUpperCase(), groupDone);
+    } else {
+      game._stats.fetchGroupList((err, list) => {
+        if (err) {
+          self.error('Failed to get list of stat groups.');
+          console.error(err);
+          self.common.reply(
+              msg, 'Failed to get list of groups.', 'Something broke...');
+          return;
+        }
+        list = list.filter((el) => !['global', 'previous'].includes(el));
+        total = list.length;
+        list.forEach((el) => game._stats.fetchGroup(el, groupDone));
+        if (list.length === 0) {
+          self.common.reply(msg, 'There are no created groups.');
+        }
+      });
+    }
+  }
+
+  /**
+   * @description Creates a new stat group.
+   *
+   * @private
+   * @type {HungryGames~hgCommandHandler}
+   * @param {Discord~Message} msg The message that lead to this being called.
+   * @param {string} id Guild ID this command was called from.
+   */
+  function commandNewGroup(msg, id) {
+    const game = hg.getGame(id);
+    const name = msg.text.trim().slice(0, 24);
+    game._stats.createGroup({name: name}, (group) => {
+      let res = group.id;
+      if (name) res = `${res}: ${name}`;
+      game.statGroup = group.id;
+      self.common.reply(msg, 'Created and selected new stat group', res);
+    });
+  }
+
+  /**
+   * @description Selects an existing stat group.
+   *
+   * @private
+   * @type {HungryGames~hgCommandHandler}
+   * @param {Discord~Message} msg The message that lead to this being called.
+   * @param {string} id Guild ID this command was called from.
+   */
+  function commandSelectGroup(msg, id) {
+    const game = hg.getGame(id);
+    let groupID = msg.text.match(/\b([a-fA-F0-9]{4})\b/);
+    if (!groupID) {
+      self.common.reply(msg, 'Disabled stat group');
+      game.statGroup = null;
+      return;
+    }
+    groupID = groupID[1].toUpperCase();
+    game._stats.fetchGroup(groupID, (err, group) => {
+      if (err) {
+        self.common.reply(
+            msg, 'I wasn\'t able to find that group.', 'List groups with `' +
+                msg.prefix + self.postPrefix + 'groups`');
+        return;
+      }
+      game.statGroup = groupID;
+      let name;
+      if (group.name) {
+        name = `${group.name} (${group.id})`;
+      } else {
+        name = `${group.id}`;
+      }
+      self.common.reply(msg, 'Selected group', name);
+    });
+  }
+
+  /**
+   * @description Renames an existing stat group.
+   *
+   * @private
+   * @type {HungryGames~hgCommandHandler}
+   * @param {Discord~Message} msg The message that lead to this being called.
+   * @param {string} id Guild ID this command was called from.
+   */
+  function commandRenameGroup(msg, id) {
+    const game = hg.getGame(id);
+    const regex = /\b([a-fA-F0-9]{4})\b/;
+    let groupID = msg.text.match(regex);
+    if (!groupID) {
+      self.common.reply(
+          msg, 'Please specify a valid group ID to rename.',
+          'List groups with `' + msg.prefix + self.postPrefix + 'groups`');
+      return;
+    }
+    groupID = groupID[1].toUpperCase();
+    const newName = msg.text.replace(regex, '').trim().slice(0, 24);
+    game._stats.fetchGroup(groupID, (err, group) => {
+      if (err) {
+        self.common.reply(
+            msg, 'I wasn\'t able to find that group.', 'List groups with `' +
+                msg.prefix + self.postPrefix + 'groups`');
+        return;
+      }
+      group.setMetaName(newName);
+      let name;
+      if (newName) {
+        name = `${group.id}: (${newName})`;
+      } else {
+        name = `${group.id}`;
+      }
+      self.common.reply(msg, 'Renamed group', name);
+    });
+  }
+
+  /**
+   * @description Deletes an existing stat group.
+   *
+   * @private
+   * @type {HungryGames~hgCommandHandler}
+   * @param {Discord~Message} msg The message that lead to this being called.
+   * @param {string} id Guild ID this command was called from.
+   */
+  function commandDeleteGroup(msg, id) {
+    const game = hg.getGame(id);
+    let groupID = msg.text.match(/\b([a-fA-F0-9]{4})\b/);
+    if (!groupID) {
+      self.common.reply(
+          msg, 'Please specify a valid group ID to rename.',
+          'List groups with `' + msg.prefix + self.postPrefix + 'groups`');
+      return;
+    }
+    groupID = groupID[1].toUpperCase();
+    game._stats.fetchGroup(groupID, (err, group) => {
+      if (err) {
+        self.common.reply(
+            msg, 'I wasn\'t able to find that group.', 'List groups with `' +
+                msg.prefix + self.postPrefix + 'groups`');
+        return;
+      }
+      let additional = null;
+      if (game.statGroup === group.id) {
+        additional = 'Disabled stat group';
+        game.statGroup = null;
+      }
+      group.reset();
+      self.common.reply(msg, `Deleted group ${group.id}`, additional);
+    });
   }
 
   /**

@@ -543,6 +543,44 @@
               "result": "Tracked stats for SpikeyRobot will be sent."
             }
           ]
+        },
+        {
+          "command": "groups",
+          "description": "Show all stat groups. A stat group can be enabled or disabled anytime to allow for collecting stats only when specified.",
+          "aliases": "group, groups, season, seasons",
+          "validOnlyInGuild": true,
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "groups",
+              "result": "List all created stat groups. "
+            },
+            {
+              "description": "Create Group",
+              "command": "group new My Cool Stat Group",
+              "result": "A new stat group will be created and is selected by default."
+            },
+            {
+              "description": "Delete Group",
+              "command": "group delete A726",
+              "result": "Delete the group with the ID of A726. This cannot be undone."
+            },
+            {
+              "description": "Rename Group",
+              "command": "group rename A726 Season 2",
+              "result": "Rename group with the ID A726 to 'Season 2'."
+            },
+            {
+              "description": "Select Group",
+              "command": "group select A726",
+              "result": "Set group A726 as the active group to collect stats on."
+            },
+            {
+              "description": "Disable Group",
+              "command": "group select",
+              "result": "Disable the current group so none are being used."
+            }
+          ]
         }
       ]
     },

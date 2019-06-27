@@ -371,7 +371,7 @@ stored.
 		<ul class="dummy">
 			<li>
 				<a href="hg_StatGroup.js.html">hg/StatGroup.js</a>,
-				 <a href="hg_StatGroup.js.html#sunlight-1-line-88">line 88</a>
+				 <a href="hg_StatGroup.js.html#sunlight-1-line-83">line 83</a>
 			</li>
 		</ul>
 	</dd>
@@ -463,7 +463,7 @@ fetched.
 		<ul class="dummy">
 			<li>
 				<a href="hg_StatGroup.js.html">hg/StatGroup.js</a>,
-				 <a href="hg_StatGroup.js.html#sunlight-1-line-70">line 70</a>
+				 <a href="hg_StatGroup.js.html#sunlight-1-line-65">line 65</a>
 			</li>
 		</ul>
 	</dd>
@@ -553,7 +553,7 @@ times at once.
 		<ul class="dummy">
 			<li>
 				<a href="hg_StatGroup.js.html">hg/StatGroup.js</a>,
-				 <a href="hg_StatGroup.js.html#sunlight-1-line-79">line 79</a>
+				 <a href="hg_StatGroup.js.html#sunlight-1-line-74">line 74</a>
 			</li>
 		</ul>
 	</dd>
@@ -574,7 +574,7 @@ times at once.
             
 <hr>
 <dt class="name" id="id">
-    <h4 id="id"><span class="type-signature">&lt;private> </span>id<span class="type-signature"> :string</span></h4>
+    <h4 id="id"><span class="type-signature"></span>id<span class="type-signature"> :string</span></h4>
 
     
 </dt>
@@ -634,7 +634,140 @@ times at once.
 		<ul class="dummy">
 			<li>
 				<a href="hg_StatGroup.js.html">hg/StatGroup.js</a>,
-				 <a href="hg_StatGroup.js.html#sunlight-1-line-53">line 53</a>
+				 <a href="hg_StatGroup.js.html#sunlight-1-line-52">line 52</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        </dl>
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        <dl>
+            
+<hr>
+<dt>
+    <h4 class="name" id=".createID"><span class="type-signature">&lt;static> </span>createID(game)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Create an ID for a new group.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>game</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The game to create an ID for to ensure
+no collisions.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="hg_StatGroup.js.html">hg/StatGroup.js</a>,
+				 <a href="hg_StatGroup.js.html#sunlight-1-line-456">line 456</a>
 			</li>
 		</ul>
 	</dd>
@@ -656,15 +789,45 @@ times at once.
 
 
     
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    Valid created ID.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">string</span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
 </dd>
 
-        </dl>
-    
-
-    
-        <h3 class="subsection-title">Methods</h3>
-
-        <dl>
+        
             
 <hr>
 <dt>
@@ -798,7 +961,7 @@ game.
 		<ul class="dummy">
 			<li>
 				<a href="hg_StatGroup.js.html">hg/StatGroup.js</a>,
-				 <a href="hg_StatGroup.js.html#sunlight-1-line-435">line 435</a>
+				 <a href="hg_StatGroup.js.html#sunlight-1-line-430">line 430</a>
 			</li>
 		</ul>
 	</dd>
@@ -847,6 +1010,169 @@ game.
 
 
         
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id=".fetchList"><span class="type-signature">&lt;static> </span>fetchList(game, cb)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Fetch list of IDs for all created groups.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>game</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The game to get list for.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cb</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Callback with optional error argument, otherwise
+second argument is array of IDs as strings.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="hg_StatGroup.js.html">hg/StatGroup.js</a>,
+				 <a href="hg_StatGroup.js.html#sunlight-1-line-443">line 443</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
 
     
 </dd>
@@ -961,7 +1287,7 @@ second argument is parsed <a href="global.html#HGStatMetadata">HGStatMetadata</a
 		<ul class="dummy">
 			<li>
 				<a href="hg_StatGroup.js.html">hg/StatGroup.js</a>,
-				 <a href="hg_StatGroup.js.html#sunlight-1-line-347">line 347</a>
+				 <a href="hg_StatGroup.js.html#sunlight-1-line-342">line 342</a>
 			</li>
 		</ul>
 	</dd>
@@ -1125,7 +1451,7 @@ otherwise has stats as second argument.</td>
 		<ul class="dummy">
 			<li>
 				<a href="hg_StatGroup.js.html">hg/StatGroup.js</a>,
-				 <a href="hg_StatGroup.js.html#sunlight-1-line-122">line 122</a>
+				 <a href="hg_StatGroup.js.html#sunlight-1-line-117">line 117</a>
 			</li>
 		</ul>
 	</dd>
@@ -1263,7 +1589,7 @@ otherwise has stats as second argument.</td>
 		<ul class="dummy">
 			<li>
 				<a href="hg_StatGroup.js.html">hg/StatGroup.js</a>,
-				 <a href="hg_StatGroup.js.html#sunlight-1-line-368">line 368</a>
+				 <a href="hg_StatGroup.js.html#sunlight-1-line-363">line 363</a>
 			</li>
 		</ul>
 	</dd>
@@ -1482,7 +1808,7 @@ instead of delaying until next event loop.</td>
 		<ul class="dummy">
 			<li>
 				<a href="hg_StatGroup.js.html">hg/StatGroup.js</a>,
-				 <a href="hg_StatGroup.js.html#sunlight-1-line-387">line 387</a>
+				 <a href="hg_StatGroup.js.html#sunlight-1-line-382">line 382</a>
 			</li>
 		</ul>
 	</dd>
@@ -1677,7 +2003,7 @@ instead of waiting until next event loop.</td>
 		<ul class="dummy">
 			<li>
 				<a href="hg_StatGroup.js.html">hg/StatGroup.js</a>,
-				 <a href="hg_StatGroup.js.html#sunlight-1-line-276">line 276</a>
+				 <a href="hg_StatGroup.js.html#sunlight-1-line-271">line 271</a>
 			</li>
 		</ul>
 	</dd>
@@ -1817,7 +2143,7 @@ second argument is parsed <a href="global.html#HGStatMetadata">HGStatMetadata</a
 		<ul class="dummy">
 			<li>
 				<a href="hg_StatGroup.js.html">hg/StatGroup.js</a>,
-				 <a href="hg_StatGroup.js.html#sunlight-1-line-358">line 358</a>
+				 <a href="hg_StatGroup.js.html#sunlight-1-line-353">line 353</a>
 			</li>
 		</ul>
 	</dd>
@@ -1981,7 +2307,7 @@ otherwise has stats as second argument.</td>
 		<ul class="dummy">
 			<li>
 				<a href="hg_StatGroup.js.html">hg/StatGroup.js</a>,
-				 <a href="hg_StatGroup.js.html#sunlight-1-line-182">line 182</a>
+				 <a href="hg_StatGroup.js.html#sunlight-1-line-177">line 177</a>
 			</li>
 		</ul>
 	</dd>
@@ -2175,7 +2501,7 @@ value.</td>
 		<ul class="dummy">
 			<li>
 				<a href="hg_StatGroup.js.html">hg/StatGroup.js</a>,
-				 <a href="hg_StatGroup.js.html#sunlight-1-line-221">line 221</a>
+				 <a href="hg_StatGroup.js.html#sunlight-1-line-216">line 216</a>
 			</li>
 		</ul>
 	</dd>
@@ -2444,7 +2770,7 @@ decrement.</td>
 		<ul class="dummy">
 			<li>
 				<a href="hg_StatGroup.js.html">hg/StatGroup.js</a>,
-				 <a href="hg_StatGroup.js.html#sunlight-1-line-240">line 240</a>
+				 <a href="hg_StatGroup.js.html#sunlight-1-line-235">line 235</a>
 			</li>
 		</ul>
 	</dd>
@@ -2532,7 +2858,7 @@ decrement.</td>
 		<ul class="dummy">
 			<li>
 				<a href="hg_StatGroup.js.html">hg/StatGroup.js</a>,
-				 <a href="hg_StatGroup.js.html#sunlight-1-line-415">line 415</a>
+				 <a href="hg_StatGroup.js.html#sunlight-1-line-410">line 410</a>
 			</li>
 		</ul>
 	</dd>
@@ -2676,7 +3002,7 @@ decrement.</td>
 		<ul class="dummy">
 			<li>
 				<a href="hg_StatGroup.js.html">hg/StatGroup.js</a>,
-				 <a href="hg_StatGroup.js.html#sunlight-1-line-330">line 330</a>
+				 <a href="hg_StatGroup.js.html#sunlight-1-line-325">line 325</a>
 			</li>
 		</ul>
 	</dd>
@@ -2814,7 +3140,7 @@ decrement.</td>
 		<ul class="dummy">
 			<li>
 				<a href="hg_StatGroup.js.html">hg/StatGroup.js</a>,
-				 <a href="hg_StatGroup.js.html#sunlight-1-line-299">line 299</a>
+				 <a href="hg_StatGroup.js.html#sunlight-1-line-294">line 294</a>
 			</li>
 		</ul>
 	</dd>
@@ -2958,7 +3284,7 @@ decrement.</td>
 		<ul class="dummy">
 			<li>
 				<a href="hg_StatGroup.js.html">hg/StatGroup.js</a>,
-				 <a href="hg_StatGroup.js.html#sunlight-1-line-314">line 314</a>
+				 <a href="hg_StatGroup.js.html#sunlight-1-line-309">line 309</a>
 			</li>
 		</ul>
 	</dd>
@@ -3168,7 +3494,7 @@ decrement.</td>
 		<ul class="dummy">
 			<li>
 				<a href="hg_StatGroup.js.html">hg/StatGroup.js</a>,
-				 <a href="hg_StatGroup.js.html#sunlight-1-line-201">line 201</a>
+				 <a href="hg_StatGroup.js.html#sunlight-1-line-196">line 196</a>
 			</li>
 		</ul>
 	</dd>
@@ -3251,7 +3577,7 @@ decrement.</td>
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.2</a>
 	
-		on Wednesday, June 26, 2019 11:57 PM (-07:00)
+		on Thursday, June 27, 2019 1:44 AM (-07:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

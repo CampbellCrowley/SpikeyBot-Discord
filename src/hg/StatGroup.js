@@ -46,16 +46,11 @@ class StatGroup {
 
     /**
      * @description The unique ID for this stat group. Unique per-guild.
-     * @todo Limit number of IDs to prevent infinite loop finding new ID.
-     * @private
+     * @public
      * @type {string}
      */
     this.id = id;
-    if (!this.id) {
-      do {
-        this.id = crypto.randomBytes(2).toString('hex').toUpperCase();
-      } while (fs.existsSync(`${dir}${this.id}`));
-    }
+    if (!this.id) this.id = StatGroup.createID(parent);
 
     /**
      * @description Queue of callbacks to fire once an object has been read from
@@ -435,6 +430,37 @@ class StatGroup {
   static exists(game, id) {
     const dir = `${common.guildSaveDir}${game.id}/hg/stats/`;
     return fs.existsSync(`${dir}${id}/`);
+  }
+
+  /**
+   * @description Fetch list of IDs for all created groups.
+   * @public
+   * @static
+   * @param {HungryGames~GuildGame} game The game to get list for.
+   * @param {Function} cb Callback with optional error argument, otherwise
+   * second argument is array of IDs as strings.
+   */
+  static fetchList(game, cb) {
+    fs.readdir(`${common.guildSaveDir}${game.id}/hg/stats/`, cb);
+  }
+
+  /**
+   * @description Create an ID for a new group.
+   * @todo Limit number of IDs to prevent infinite loop finding new ID.
+   * @public
+   * @static
+   * @param {HungryGames~GuildGame} game The game to create an ID for to ensure
+   * no collisions.
+   * @returns {string} Valid created ID.
+   */
+  static createID(game) {
+    const dir = `${common.guildSaveDir}${game.id}/hg/stats/`;
+    let output;
+    do {
+      const id = crypto.randomBytes(2).toString('hex').toUpperCase();
+      output = `0000${id}`.slice(-4);
+    } while (fs.existsSync(`${dir}${output}`));
+    return output;
   }
 }
 module.exports = StatGroup;
