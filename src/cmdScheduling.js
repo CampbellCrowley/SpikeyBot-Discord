@@ -358,7 +358,7 @@ function CmdScheduling() {
                 myself.member = msg.member;
                 myself.memberId = msg.member.id;
               })
-              .catch((err) => {
+              .catch(() => {
                 self.debug(
                     'Failed to find message: ' + myself.channelId + '@' +
                     myself.memberId + ' ' + myself.messageId + ': ' +
@@ -998,7 +998,7 @@ function CmdScheduling() {
   };
 
   /**
-   * @description Fires a given event with the associacted data.
+   * @description Fires a given event with the associated data.
    *
    * @private
    * @param {string} name The name of the event to fire.
@@ -1007,7 +1007,7 @@ function CmdScheduling() {
   function fireEvent(name, ...data) {
     for (let i = 0; listeners[name] && i < listeners[name].length; i++) {
       try {
-        listeners[name][i].apply(this, data);
+        listeners[name][i](...data);
       } catch (err) {
         self.error('Error in firing event: ' + name);
         console.error(err);

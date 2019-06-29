@@ -636,12 +636,12 @@ function Command() {
        * 1 if disabled for any other reason.
        */
       function findMatch(search, data) {
-        if (search.users[msg.author.id]) return 2;
-        if (msg.channel && search.channels[msg.channel.id]) return 1;
-        if (msg.guild) {
-          if (search.guilds[msg.guild.id]) return 1;
-          if (msg.member.roles.find((r) => {
-            return search.roles[`${msg.guild.id}/${r.id}`];
+        if (search.users[data.author.id]) return 2;
+        if (data.channel && search.channels[data.channel.id]) return 1;
+        if (data.guild) {
+          if (search.guilds[data.guild.id]) return 1;
+          if (data.member.roles.find((r) => {
+            return search.roles[`${data.guild.id}/${r.id}`];
           })) {
             return 2;
           }
@@ -1488,7 +1488,7 @@ function Command() {
           'reset\nChange values with ' + msg.prefix + 'enable or ' +
           msg.prefix + 'disable');
       embed.setFooter('~ denotes command is muted on error.');
-      msg.channel.send(self.common.mention(msg), embed).catch((err) => {
+      msg.channel.send(self.common.mention(msg), embed).catch(() => {
         self.common.reply(msg, 'Please specify a command to lookup.')
             .catch(() => {});
       });

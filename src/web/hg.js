@@ -667,7 +667,7 @@ function HGWeb() {
         }
       };
     }
-    Object.entries(siblingSockets).forEach((obj, i) => {
+    Object.entries(siblingSockets).forEach((obj) => {
       obj[1].emit('fetchGuilds', userData, socket.id, done);
     });
 
@@ -1610,6 +1610,7 @@ function HGWeb() {
     }
     const game = hg().getHG().getGame(gId);
     if (!game) return;
+    if (typeof text != 'string') text = hg().getHG()._defaultPlayerEvents;
     const response = HungryGames.GuildGame.forcePlayerState(
         game, list, state, hg().getHG().messages, text, persists);
     if (typeof cb === 'function') {
@@ -1760,12 +1761,9 @@ function HGWeb() {
         }
         self.common.logDebug(
             'NPC Created from upload with URL: ' + url, socket.id);
-      }).catch((err) => {
+      }).catch(() => {
         cancelImageUpload(iId);
         if (typeof cb === 'function') cb('Malformed Data');
-        /* self.common.error(
-            'Error while saving avatar from web: ' + err, socket.id);
-        console.error(err); */
       });
     } else {
       self.common.logWarning(

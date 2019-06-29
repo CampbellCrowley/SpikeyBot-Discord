@@ -4,6 +4,8 @@ const dateFormat = require('dateformat');
 const Discord = require('discord.js');
 const fs = require('fs');
 const mkdirp = require('mkdirp');
+const sql = require('mysql');
+const auth = require('../auth.js');
 
 /**
  * Commonly required things. Helper functions and constants.
@@ -548,22 +550,26 @@ Common.mention = Common.prototype.mention;
  * @static
  * @param {string} filename The name of the file including the directory.
  * @param {string} dir The directory path without the file's name.
- * @param {string} data The data to write to the file.
- * @param {Function} [cb] Optional callback that fires on completion.
+ * @param {string|object} data The data to write to the file.
+ * @param {Function} [cb] Callback to fire on completion. Only parameter is
+ * optional error.
  */
 Common.mkAndWrite = function(filename, dir, data, cb) {
   mkdirp(dir, (err) => {
     if (err) {
-      this.error(`Failed to make directory: ${dir}`);
-      console.error(err);
-      if (typeof cb === 'function') cb();
-      return;
+      if (err.code !== 'EEXIST') {
+        if (this.error) this.error(`Failed to make directory: ${dir}`);
+        console.error(err);
+        if (typeof cb === 'function') cb(err);
+        return;
+      }
     }
+    if (typeof data === 'object') data = JSON.stringify(data);
     fs.writeFile(filename, data, (err2) => {
       if (err2) {
-        this.error(`Failed to save file: ${filename}`);
+        if (this.error) this.error(`Failed to save file: ${filename}`);
         console.error(err2);
-        if (typeof cb === 'function') cb();
+        if (typeof cb === 'function') cb(err2);
         return;
       }
       if (typeof cb === 'function') cb();
@@ -577,7 +583,7 @@ Common.prototype.mkAndWrite = Common.mkAndWrite;
  *
  * @see {@link Common~mkAndWrite}
  *
- * @private
+ * @public
  * @param {string} filename The name of the file including the directory.
  * @param {string} dir The directory path without the file's name.
  * @param {string} data The data to write to the file.
@@ -586,19 +592,99 @@ Common.mkAndWriteSync = function(filename, dir, data) {
   try {
     mkdirp.sync(dir);
   } catch (err) {
-    this.error(`Failed to make directory: ${dir}`);
+    if (this.error) this.error(`Failed to make directory: ${dir}`);
     console.error(err);
     return;
   }
   try {
     fs.writeFileSync(filename, data);
   } catch (err) {
-    this.error(`Failed to save file: ${filename}`);
+    if (this.error) this.error(`Failed to save file: ${filename}`);
     console.error(err);
     return;
   }
 };
 Common.prototype.mkAndWriteSync = Common.mkAndWriteSync;
+
+/**
+ * Recursively freeze all elements of an object.
+ *
+ * @public
+ * @param {object} object The object to deep freeze.
+ * @returns {object} The frozen object.
+ */
+Common.deepFreeze = function(object) {
+  const propNames = Object.getOwnPropertyNames(object);
+  for (const name of propNames) {
+    const value = object[name];
+    object[name] =
+        value && typeof value === 'object' ? Common.deepFreeze(value) : value;
+  }
+  return Object.freeze(object);
+};
+Common.prototype.deepFreeze = Common.deepFreeze;
+
+/**
+ * @description Convert a string in camelcase to a human readable spaces format.
+ * (helloWorld --> Hello World)
+ *
+ * @private
+ * @param {string} str The input.
+ * @returns {string} The output.
+ */
+Common.camelToSpaces = function(str) {
+  return str.replace(/([A-Z])/g, ' $1').replace(/^./, function(str) {
+    return str.toUpperCase();
+  });
+};
+Common.prototype.camelToSpaces = Common.camelToSpaces;
+
+/**
+ * The object describing the connection with the SQL server.
+ *
+ * @global
+ * @type {?sql.ConnectionConfig}
+ */
+global.sqlCon;
+/**
+ * Create initial connection with sql server. The connection is injected into
+ * the global scope as {@link sqlCon}. If a connection still exists, calling
+ * this function just returns the current reference.
+ *
+ * @public
+ * @param {boolean} [force=false] Force a new connection to be established.
+ * @returns {sql.ConnectionConfig} Current sql connection object.
+ */
+Common.connectSQL = function(force = false) {
+  if (global.sqlCon && !force) return global.sqlCon;
+  if (global.sqlCon && global.sqlCon.end) global.sqlCon.end();
+  /* eslint-disable-next-line new-cap */
+  global.sqlCon = new sql.createConnection({
+    user: auth.sqlUsername,
+    password: auth.sqlPassword,
+    host: auth.sqlHost,
+    database: 'appusers',
+    port: 3306,
+  });
+  global.sqlCon.on('error', (e) => {
+    if (this.error) {
+      this.error(e);
+    } else {
+      console.error(e);
+    }
+    if (e.fatal) {
+      Common.connectSQL(true);
+    }
+  });
+  if (this.log) {
+    this.log('SQL Connection created');
+  } else {
+    console.log('SQL Connection created');
+  }
+  return global.sqlCon;
+};
+Common.prototype.connectSQL = Common.connectSQL;
+
 
 /* eslint-disable-next-line no-extend-native */
 String.prototype.replaceAll = function(search, replacement) {

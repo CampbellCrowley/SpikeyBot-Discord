@@ -4,7 +4,6 @@ const fs = require('fs');
 const http = require('http');
 const https = require('https');
 const socketIo = require('socket.io');
-const sql = require('mysql');
 const auth = require('../../auth.js');
 const patreon = require('patreon');
 const mkdirp = require('mkdirp'); // mkdir -p
@@ -136,6 +135,7 @@ function WebAccount() {
   this.initialize = function() {
     app.listen(self.common.isRelease ? 8014 : 8015, '127.0.0.1');
     self.bot.accounts = toExport;
+    self.common.connectSQL();
   };
 
   const toExport = {};
@@ -144,9 +144,8 @@ function WebAccount() {
    * Causes a full shutdown of all servers.
    *
    * @public
-   * @param {boolean} [skipSave=false] Skip writing data to file.
    */
-  this.shutdown = function(skipSave) {
+  this.shutdown = function() {
     if (io) io.close();
     if (app) app.close();
     fs.unwatchFile(patreonSettingsTemplateFile);
@@ -156,37 +155,6 @@ function WebAccount() {
   this.unloadable = function() {
     return true;
   };
-
-
-  /**
-   * The object describing the connection with the SQL server.
-   *
-   * @private
-   * @type {sql.ConnectionConfig}
-   */
-  let sqlCon;
-  /**
-   * Create initial connection with sql server.
-   *
-   * @private
-   */
-  function connectSQL() {
-    /* eslint-disable-next-line new-cap */
-    sqlCon = new sql.createConnection({
-      user: auth.sqlUsername,
-      password: auth.sqlPassword,
-      host: auth.sqlHost,
-      database: 'appusers',
-      port: 3306,
-    });
-    sqlCon.on('error', function(e) {
-      self.error(e);
-      if (e.fatal) {
-        connectSQL();
-      }
-    });
-  }
-  connectSQL();
 
   /**
    * Handler for all http requests. Should never be called.
@@ -243,9 +211,9 @@ function WebAccount() {
        * @private
        */
       function fetchDiscordSQL() {
-        const toSend = sqlCon.format(
+        const toSend = global.sqlCon.format(
             'SELECT * FROM Discord WHERE id=? LIMIT 1', [userData.id]);
-        sqlCon.query(toSend, (err, rows) => {
+        global.sqlCon.query(toSend, (err, rows) => {
           if (err) {
             self.error(err);
             cb('Server Error', null);
@@ -267,9 +235,9 @@ function WebAccount() {
           fetchSpotifySQL(data);
           return;
         }
-        const toSend = sqlCon.format(
+        const toSend = global.sqlCon.format(
             'SELECT * FROM Patreon WHERE id=? LIMIT 1', [data.patreonId]);
-        sqlCon.query(toSend, (err, rows) => {
+        global.sqlCon.query(toSend, (err, rows) => {
           if (err) {
             self.error(err);
             cb('Server Error', null);
@@ -294,9 +262,9 @@ function WebAccount() {
           fetchDiscordBot(data);
           return;
         }
-        const toSend = sqlCon.format(
+        const toSend = global.sqlCon.format(
             'SELECT * FROM Spotify WHERE id=? LIMIT 1', [data.spotifyId]);
-        sqlCon.query(toSend, (err, rows) => {
+        global.sqlCon.query(toSend, (err, rows) => {
           if (err) {
             self.error(err);
             cb('Server Error', null);
@@ -478,11 +446,13 @@ function WebAccount() {
         }
       });
     });
+    /* eslint-disable @typescript-eslint/camelcase */
     req.end(querystring.stringify({
       code: code,
       redirect_uri: redirectURL,
       grant_type: 'authorization_code',
     }));
+    /* eslint-enable @typescript-eslint/camelcase */
   }
 
   /**
@@ -560,7 +530,7 @@ function WebAccount() {
     }
     vals.id = parsed.id;
     vals.name = parsed.display_name;
-    const toSend = sqlCon.format(
+    const toSend = global.sqlCon.format(
         'INSERT INTO Spotify (id,name,accessToken,refreshToken,tokenExpiresAt' +
             ') VALUES (?,?,?,?,?) ON DUPLICATE KEY UPDATE accessToken=?,token' +
             'ExpiresAt=?',
@@ -573,7 +543,7 @@ function WebAccount() {
           vals.accessToken,
           vals.expiresAt,
         ]);
-    sqlCon.query(toSend, (err, res) => {
+    global.sqlCon.query(toSend, (err) => {
       if (err) {
         self.common.error('Failed to update Spotify table with user data.', ip);
         console.error(err);
@@ -596,9 +566,9 @@ function WebAccount() {
    * or null if no error.
    */
   function updateUserPatreonId(userid, patreonid, cb) {
-    const toSend = sqlCon.format(
+    const toSend = global.sqlCon.format(
         'UPDATE Discord SET patreonId=? WHERE id=?', [patreonid, userid]);
-    sqlCon.query(toSend, function(err, response) {
+    global.sqlCon.query(toSend, (err) => {
       if (err) {
         self.common.error('Failed to update patreonId in Discord table.');
         console.log(err);
@@ -623,17 +593,17 @@ function WebAccount() {
    */
   function updateUserSpotifyId(userid, spotifyid, cb) {
     if (!spotifyid) {
-      const toSendGet =
-          sqlCon.format('SELECT spotifyId FROM Discord WHERE id=?', [userid]);
-      sqlCon.query(toSendGet, (err, rows) => {
+      const toSendGet = global.sqlCon.format(
+          'SELECT spotifyId FROM Discord WHERE id=?', [userid]);
+      global.sqlCon.query(toSendGet, (err, rows) => {
         if (err) {
           self.common.error('Failed to fetch spotifyId from Discord table.');
           console.log(err);
           cb('Internal Server Error');
         } else {
-          const toSend2 = sqlCon.format(
+          const toSend2 = global.sqlCon.format(
               'DELETE FROM Spotify WHERE id=?', [rows[0].spotifyId]);
-          sqlCon.query(toSend2, (err, rows) => {
+          global.sqlCon.query(toSend2, (err) => {
             if (err) {
               self.common.error(
                   'Failed to delete spotifyId from Spotify table.');
@@ -653,9 +623,9 @@ function WebAccount() {
      * Send request to sql server.
      */
     function setId() {
-      const toSend = sqlCon.format(
+      const toSend = global.sqlCon.format(
           'UPDATE Discord SET spotifyId=? WHERE id=?', [spotifyid, userid]);
-      sqlCon.query(toSend, function(err, response) {
+      global.sqlCon.query(toSend, (err) => {
         if (err) {
           self.common.error('Failed to update spotifyId in Discord table.');
           console.log(err);
@@ -843,9 +813,9 @@ function WebAccount() {
   toExport.getSpotifyToken = function(uId, cb) {
     let firstAttempt = true;
     let sId;
-    const toSend = sqlCon.format(
+    const toSend = global.sqlCon.format(
         'SELECT spotifyId FROM Discord WHERE id=? LIMIT 1', [uId]);
-    sqlCon.query(toSend, (err, rows) => {
+    global.sqlCon.query(toSend, (err, rows) => {
       if (err) {
         self.error(err);
         cb(null);
@@ -870,9 +840,9 @@ function WebAccount() {
         return;
       }
       sId = id;
-      const toSend =
-          sqlCon.format('SELECT * FROM Spotify WHERE id=? LIMIT 1', [sId]);
-      sqlCon.query(toSend, (err, rows) => {
+      const toSend = global.sqlCon.format(
+          'SELECT * FROM Spotify WHERE id=? LIMIT 1', [sId]);
+      global.sqlCon.query(toSend, (err, rows) => {
         if (err) {
           self.error(err);
           cb(null);
@@ -921,10 +891,12 @@ function WebAccount() {
           }
         });
       });
+      /* eslint-disable @typescript-eslint/camelcase */
       req.end(querystring.stringify({
         refresh_token: token,
         grant_type: 'refresh_token',
       }));
+      /* eslint-enable @typescript-eslint/camelcase */
     }
   };
   /**

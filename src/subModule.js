@@ -247,6 +247,7 @@ class SubModule {
   shutdown() {
   }
 
+  /* eslint-disable @typescript-eslint/no-unused-vars */
   /**
    * Saves all data to files necessary for saving current state.
    *
@@ -256,6 +257,7 @@ class SubModule {
    */
   save(opt = 'sync') {
   }
+  /* eslint-enable @typescript-eslint/no-unused-vars */
 
   /**
    * @description Check if this module is in a state that is ready to be

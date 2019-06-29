@@ -310,7 +310,7 @@ function Music() {
   };
 
   /** @inheritdoc */
-  this.save = function(opt) {
+  this.save = function() {
     if (!self.initialized) return;
     // Purge broadcasts that have been paused for more than 15 minutes.
     const entries = Object.entries(broadcasts);
@@ -650,7 +650,7 @@ function Music() {
             'Now playing [' + broadcast.queue.length + ' left in queue]');
         broadcast.current.request.channel.send(embed);
       }
-      broadcast.current.oninfo = function(info) {
+      broadcast.current.oninfo = function() {
         broadcast.isLoading = false;
       };
     } else {
@@ -1550,7 +1550,7 @@ function Music() {
     file.on('close', () => {
       msg.channel.send('Saved to ' + url);
     });
-    const listen = function(user, receiver, conn) {
+    const listen = function(user, receiver /* , conn*/) {
       if (streams[user.id] ||
           (msg.mentions.users.size > 0 && !msg.mentions.users.get(user.id))) {
         return;

@@ -229,7 +229,7 @@ function TicTacToe() {
    * @param {number} index The number of reactions we have added so far.
    */
   function addReactions(msg, index = 0) {
-    msg.react(emoji[index]).then((_) => {
+    msg.react(emoji[index]).then(() => {
       if (index < 8) addReactions(msg, index + 1);
     });
   }

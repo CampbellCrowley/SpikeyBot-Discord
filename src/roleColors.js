@@ -114,7 +114,7 @@ function RoleColors() {
       msg.guild.roles.create({data: roleData})
           .then((r) => {
             r.setColor(color);
-            target.roles.add(r).then((m) => {
+            target.roles.add(r).then(() => {
               const embed = new self.Discord.MessageEmbed();
               embed.setColor(color);
               embed.setTitle('Updated color.');
@@ -132,7 +132,7 @@ function RoleColors() {
     } else {
       role.setColor(color)
           .then((r) => {
-            target.roles.add(r).then((m) => {
+            target.roles.add(r).then(() => {
               const embed = new self.Discord.MessageEmbed();
               embed.setColor(color);
               embed.setTitle('Updated color.');

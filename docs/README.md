@@ -18,9 +18,9 @@
 ## Hidden Commands
 ### These commands are not included in the normal help page or `help` command because they are either easter-eggs, developer commands, or just not useful for most users.
 - git (Get the git commit log, or run a git command)
-- js (Run sandboxed javascript code)
-- py (Run sandboxed python code)
-- py3 (Run sandboxed python3 code)
+- js (Run sandboxed javascript code, currently disabled)
+- py (Run sandboxed python code, currently disabled)
+- py3 (Run sandboxed python3 code, currently disabled)
 - run (If dev.js is loaded, this will run unsafe scripts on the bot using eval)
 - thotpm (Semi-anonymously have the bot DM someone. Only a couple people can use this command)
 - pmuser (Sends the specified user a pm from the bot, but tells the recipient who the sender was)
@@ -33,6 +33,7 @@
 - hg makemewin (Replies with a message telling the user their chances of winning have not increased)
 - hg makemelose (Replies with a message telling the user their chances of losing have not increased)
 - hg rigged (Replies with an image of the emoji that says "rigged")
+- hg nums (Replies with number of currently simulating games, loaded games, and connected web clients across all shards)
 - vi (Alias for `play nice try vi`)
 - airhorn (Plays airhorn sound)
 - rickroll (Plays Rick Astley in voice channel)

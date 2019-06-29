@@ -1,8 +1,6 @@
 // Copyright 2018 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const fs = require('fs');
-const sql = require('mysql');
-const auth = require('../auth.js');
 require('./subModule.js').extend(Patreon);  // Extends the SubModule class.
 
 /**
@@ -141,40 +139,12 @@ function Patreon() {
         updatePatreonSettingsTemplate();
       });
 
-  /**
-   * The object describing the connection with the SQL server.
-   *
-   * @private
-   * @type {sql.ConnectionConfig}
-   */
-  let sqlCon;
-  /**
-   * Create initial connection with sql server.
-   *
-   * @private
-   */
-  function connectSQL() {
-    /* eslint-disable-next-line new-cap */
-    sqlCon = new sql.createConnection({
-      user: auth.sqlUsername,
-      password: auth.sqlPassword,
-      host: auth.sqlHost,
-      database: 'appusers',
-      port: 3306,
-    });
-    sqlCon.on('error', function(e) {
-      self.error(e);
-      if (e.fatal) {
-        connectSQL();
-      }
-    });
-  }
-  connectSQL();
-
   /** @inheritdoc */
   this.initialize = function() {
     self.bot.patreon = toExport;
     self.command.on('patreon', commandPatreon);
+
+    self.common.connectSQL();
   };
   /** @inheritdoc */
   this.shutdown = function() {
@@ -611,9 +581,9 @@ function Patreon() {
         null);
         return;
       }
-      const toSend = sqlCon.format(
+      const toSend = global.sqlCon.format(
           'SELECT * FROM Patreon WHERE id=? LIMIT 1', [user.patreonId]);
-      sqlCon.query(toSend, receivedPatreonRow);
+      global.sqlCon.query(toSend, receivedPatreonRow);
     }
     /**
      * SQL query response callback for request to the Patreon table.
@@ -637,8 +607,8 @@ function Patreon() {
     }
 
     const toSend =
-        sqlCon.format('SELECT * FROM Discord WHERE id=? LIMIT 1', [uId]);
-    sqlCon.query(toSend, receivedDiscordRow);
+        global.sqlCon.format('SELECT * FROM Discord WHERE id=? LIMIT 1', [uId]);
+    global.sqlCon.query(toSend, receivedDiscordRow);
   }
 }
 module.exports = new Patreon();

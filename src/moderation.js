@@ -209,7 +209,10 @@ class Moderation extends SubModule {
     const tag = msg.author.tag;
     const id = msg.author.id;
     const channel = msg.channel.name;
-    if (id == this.client.user.id && msg.content === '`Autoplaying...`') return;
+    if ((id == this.client.user.id || id == '318552464356016131') &&
+        msg.content === '`Autoplaying...`') {
+      return;
+    }
     modLog.output(
         msg.guild, 'messageDelete', null, null,
         `${tag}'s (${id}) message in #${channel}`, msg.content);
@@ -223,6 +226,9 @@ class Moderation extends SubModule {
   _onMessageDeleteBulk(msgs) {
     const modLog = this.bot.getSubmodule('./modLog.js');
     if (!modLog) return;
+    if (!modLog.getSettings(msgs.first().guild.id).check('messagePurge')) {
+      return;
+    }
     let channels = [];
     msgs.forEach((m) => {
       if (!channels.includes(`#${m.channel.name}`)) {
@@ -257,17 +263,27 @@ class Moderation extends SubModule {
   _onGuildMemberAdd(member) {
     const modLog = this.bot.getSubmodule('./modLog.js');
     if (!modLog) return;
+    if (!modLog.getSettings(member.guild.id).check('memberJoin')) return;
     let num = -1;
     if (this.client.shard) {
       const toEval =
           `this.guilds.filter((g) => g.members.get('${member.id}')).size`;
-      this.client.shard.broadcastEval(toEval).then((res) => {
-        res.forEach((el) => num += el);
-        const additional =
-            num > 0 ? `${num} other mutual server${num > 1 ? 's' : ''}.` : null;
-        modLog.output(
-            member.guild, 'memberJoin', member.user, null, additional);
-      });
+      this.client.shard.broadcastEval(toEval)
+          .then((res) => {
+            res.forEach((el) => num += el);
+            const additional = num > 0 ?
+                `${num} other mutual server${num > 1 ? 's' : ''}.` :
+                null;
+            modLog.output(
+                member.guild, 'memberJoin', member.user, null, additional);
+          })
+          .catch((err) => {
+            this.error(
+                'Failed to get mutual guild count: ' + member.guild.id + '@' +
+                member.user.id);
+            console.error(err);
+            modLog.output(member.guild, 'memberJoin', member.user);
+          });
     } else {
       this.client.guilds.forEach((g) => {
         if (g.members.get(member.id)) num++;
@@ -291,7 +307,7 @@ class Moderation extends SubModule {
     let hasMuteRole = false;
     let muteRole;
     const toMute = member;
-    member.guild.roles.forEach(function(val, key) {
+    member.guild.roles.forEach((val) => {
       if (val.name == 'Muted') {
         hasMuteRole = true;
         muteRole = val;

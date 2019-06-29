@@ -116,7 +116,7 @@ class Event {
 
   /**
    * @description Compare this Event to another to check if they are equivalent.
-   * @example const isEqual = firstEvent.equal(otherEvent);
+   * @example console.log(firstEvent.equal(otherEvent));
    * @public
    * @param {HungryGames~Event} two Other Event to compare against.
    * @returns {boolean} If they are equivalent.

@@ -524,6 +524,100 @@
       ]
     },
     {
+      "title": "Stat Tracking",
+      "rows": [
+        {
+          "command": "stats",
+          "description": "Show all tracked stats about players.",
+          "aliases": "stats, stat, info, me",
+          "validOnlyInGuild": true,
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "stats",
+              "result": "Lifetime, previous game, and the selected group stats for the user who ran the command will be sent."
+            },
+            {
+              "description": "Basic Usage",
+              "command": "stats SpikeyRobot",
+              "result": "Tracked stats for SpikeyRobot will be sent."
+            }
+          ]
+        },
+        {
+          "command": "leaderboard",
+          "description": "Show the top players ordered by stats.",
+          "aliases": "leaderboard, leaderboards, leader, leaders, top, rank, ranks",
+          "validOnlyInGuild": true,
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "top",
+              "result": "The top 10 players all time by number of games won will be shown."
+            },
+            {
+              "description": "Different Stats",
+              "command": "top kills",
+              "result": "Players will be ranked by kills. (Available stats: kills, deaths, wounds, heals, revives, wins, losses, daysAlive, daysDead, daysWounded)"
+            },
+            {
+              "description": "Previous Game Only",
+              "command": "top previous kills",
+              "result": "The previous game stats will be used for ranking player kills."
+            },
+            {
+              "description": "Different Group",
+              "command": "top A37C",
+              "result": "Group with the ID A37C stats will be shown. If a specific stat is not specified, it defaults to number of wins."
+            },
+            {
+              "description": "Number of Players",
+              "command": "top lifetime kills 3",
+              "result": "The top 3 players by number of kills of all time, will be shown."
+            }
+          ]
+        },
+        {
+          "command": "groups",
+          "description": "Show all stat groups. A stat group can be enabled or disabled anytime to allow for collecting stats only when specified.",
+          "aliases": "group, groups, season, seasons, g, gr",
+          "validOnlyInGuild": true,
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "groups",
+              "result": "List all created stat groups. "
+            },
+            {
+              "description": "Create Group",
+              "command": "group new My Cool Stat Group",
+              "result": "A new stat group will be created and is selected by default."
+            },
+            {
+              "description": "Delete Group",
+              "command": "group delete A726",
+              "result": "Delete the group with the ID of A726. This cannot be undone."
+            },
+            {
+              "description": "Rename Group",
+              "command": "group rename A726 Season 2",
+              "result": "Rename group with the ID A726 to 'Season 2'."
+            },
+            {
+              "description": "Select Group",
+              "command": "group select A726",
+              "result": "Set group A726 as the active group to collect stats on."
+            },
+            {
+              "description": "Disable Group",
+              "command": "group select",
+              "result": "Disable the current group so none are being used."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "title": "Admin Control",
       "rows": [
         {

@@ -17,6 +17,7 @@ function MainModule() {
    *
    * @type {Object.<*>}
    */
+  /* eslint-disable @typescript-eslint/no-unused-vars */
   /**
    * Imports data from a previous instance of this class in order to maintain
    * references to other objects and classes across reloads.
@@ -27,6 +28,7 @@ function MainModule() {
    * or null if no data to import.
    */
   this.import = function(data) {};
+  /* eslint-enable @typescript-eslint/no-unused-vars */
   /**
    * Export data required to maintain the bot across reloading this module.
    * Expected to be returned directly to this.import once reloaded.

@@ -324,7 +324,7 @@ class Echo extends SubModule {
                   .createWebhook(
                       'SpikeyBot NPCs',
                       {reason: 'Used for becoming other characters.'})
-                  .then((created) => {
+                  .then(() => {
                     this.common.reply(msg, 'Created', username);
                   })
                   .catch((err) => {

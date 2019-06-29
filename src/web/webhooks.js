@@ -36,7 +36,7 @@ function WebCommands() {
     });
   };
   /** @inheritdoc */
-  this.shutdown = function(skipSave) {
+  this.shutdown = function() {
     if (app) app.close();
   };
 

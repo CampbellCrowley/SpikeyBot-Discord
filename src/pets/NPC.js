@@ -15,9 +15,9 @@ class NPC extends Pet {
    * @param {number|Pets~Pet} base Amount of XP to give this npc, or a pet to
    * base the data off of.
    * @param {Pets~BasePets} pets Information of available pets.
-   * @param {Pets~BaseMoves} moves Information of base moves.
+   * // @param {Pets~BaseMoves} moves Information of base moves.
    */
-  constructor(base, pets, moves) {
+  constructor(base, pets /* , moves*/) {
     const pet = pets.random();
     super(null, pet.name, pet.id);
 

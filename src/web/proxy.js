@@ -8,7 +8,6 @@ const sIOClient = require('socket.io-client');
 const querystring = require('querystring');
 const auth = require('../../auth.js');
 const crypto = require('crypto');
-const sql = require('mysql');
 const dateFormat = require('dateformat');
 
 const clientId = '444293534720458753';
@@ -55,36 +54,6 @@ function WebProxy() {
     path: '/api',
     method: 'GET',
   };
-
-  /**
-   * The object describing the connection with the SQL server.
-   *
-   * @private
-   * @type {sql.ConnectionConfig}
-   */
-  let sqlCon;
-  /**
-   * Create initial connection with sql server.
-   *
-   * @private
-   */
-  function connectSQL() {
-    /* eslint-disable-next-line new-cap */
-    sqlCon = new sql.createConnection({
-      user: auth.sqlUsername,
-      password: auth.sqlPassword,
-      host: auth.sqlHost,
-      database: 'appusers',
-      port: 3306,
-    });
-    sqlCon.on('error', function(e) {
-      self.error(e);
-      if (e.fatal) {
-        connectSQL();
-      }
-    });
-  }
-  connectSQL();
 
   const pathPorts = {
     '/www.spikeybot.com/socket.io/dev/hg/': 8013,
@@ -157,6 +126,7 @@ function WebProxy() {
   /** @inheritdoc */
   this.initialize = function() {
     app.listen(self.common.isRelease ? 8010 : 8012, '127.0.0.1');
+    self.common.connectSQL();
   };
 
   /**
@@ -541,8 +511,10 @@ function WebProxy() {
      */
     function receivedLoginInfo(data) {
       if (data) {
+        /* eslint-disable @typescript-eslint/camelcase */
         data.expires_at = data.expires_in * 1000 + Date.now();
         data.expiration_date = Date.now() + (1000 * 60 * 60 * 24 * 30);
+        /* eslint-enable @typescript-eslint/camelcase */
         data.session = session;
         if (loginInfo[session] && loginInfo[session].refresh_token &&
             !data.refresh_token) {
@@ -633,13 +605,14 @@ function WebProxy() {
         const parsed = JSON.parse(data);
         parsed.session = {
           id: loginInfo.session,
+          /* eslint-disable-next-line @typescript-eslint/camelcase */
           expiration_date: loginInfo.expiration_date,
         };
         const now = dateFormat(new Date(), 'yyyy-mm-dd\'T\'HH:MM:ss.l\'Z\'');
-        const toSend = sqlCon.format(
+        const toSend = global.sqlCon.format(
             'INSERT INTO Discord (id) values (?) ON DUPLICATE KEY UPDATE ?',
             [parsed.id, {lastLogin: now}]);
-        sqlCon.query(toSend, (err) => {
+        global.sqlCon.query(toSend, (err) => {
           if (err) {
             self.error(err);
           }
@@ -775,11 +748,13 @@ function WebProxy() {
    */
   function refreshToken(refreshToken_, cb) {
     const data = {
+      /* eslint-disable @typescript-eslint/camelcase */
       client_id: clientId,
       client_secret: clientSecret,
       grant_type: 'refresh_token',
       refresh_token: refreshToken_,
       redirect_uri: 'https://www.spikeybot.com/redirect',
+      /* eslint-enable @typescript-eslint/camelcase */
     };
     discordRequest(data, cb);
   }
@@ -796,10 +771,12 @@ function WebProxy() {
     const host = Object.assign({}, tokenHost);
     host.path += '/revoke';
     const data = {
+      /* eslint-disable @typescript-eslint/camelcase */
       client_id: clientId,
       client_secret: clientSecret,
       token_type_hint: 'refresh_token',
       token: token,
+      /* eslint-enable @typescript-eslint/camelcase */
     };
     discordRequest(data, cb, host);
   }
@@ -814,11 +791,13 @@ function WebProxy() {
    */
   function authorizeRequest(code, cb) {
     const data = {
+      /* eslint-disable @typescript-eslint/camelcase */
       client_id: clientId,
       client_secret: clientSecret,
       grant_type: 'authorization_code',
       code: code,
       redirect_uri: 'https://www.spikeybot.com/redirect',
+      /* eslint-enable @typescript-eslint/camelcase */
     };
     discordRequest(data, cb);
   }

@@ -596,7 +596,7 @@ function SMLoader() {
           return true;
       }
     });
-    self.reload(toReload, opts, (out) => {});
+    self.reload(toReload, opts, () => {});
   }
   /**
    * @description Other shard has requested an unload command.
@@ -624,7 +624,7 @@ function SMLoader() {
       }
     });
     for (let i = 0; i < toUnload.length; i++) {
-      self.unload(toUnload[i], opts, (out) => {});
+      self.unload(toUnload[i], opts, () => {});
     }
   }
   /**
@@ -637,7 +637,7 @@ function SMLoader() {
     if (id == self.client.shard.ids[0]) return;
     const toLoad = decodeURIComponent(message).split(' ').splice(1);
     for (let i = 0; i < toLoad.length; i++) {
-      self.load(toLoad[i], null, (out) => {});
+      self.load(toLoad[i], null, () => {});
     }
   }
 
@@ -856,7 +856,7 @@ function SMLoader() {
                 subModules[subModuleNames[i]].commit + ' -- ./src/' +
                 subModuleNames[i])
             .on('close', ((name) => {
-              return (code, signal) => {
+              return (code) => {
                 if (code) {
                   self.reload(name, {force: true}, (out) => {
                     self.log(out.join(' '));

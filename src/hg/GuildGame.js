@@ -4,6 +4,7 @@ const Game = require('./Game.js');
 const Event = require('./Event.js');
 const Team = require('./Team.js');
 const Simulator = require('./Simulator.js');
+const StatManager = require('./StatManager.js');
 
 /**
  * A single instance of a game in a guild.
@@ -13,6 +14,7 @@ const Simulator = require('./Simulator.js');
 class GuildGame {
   /**
    * @description Create a game instance for a single guild.
+   * @param {string} bot User id of the current bot instance.
    * @param {string} id Guild id of the Guild that this object is for.
    * @param {object<number|boolean|string|object>} options The game options.
    * @param {string} [name] Name of this game to be passed to the Game object.
@@ -38,13 +40,20 @@ class GuildGame {
    * }} [disabledEvents] All disabled events for the guild.
    */
   constructor(
-      id, options, name, includedUsers, excludedUsers, includedNPCs,
+      bot, id, options, name, includedUsers, excludedUsers, includedNPCs,
       excludedNPCs, customEvents, disabledEvents) {
-    this.step = this.step.bind(this);
+    /**
+     * The ID of the current bot account.
+     * @public
+     * @type {string}
+     * @constant
+     */
+    this.bot = bot;
     /**
      * The ID of the Guild this is for.
      * @public
      * @type {string}
+     * @constant
      */
     this.id = id;
     /**
@@ -197,6 +206,15 @@ class GuildGame {
     this.reactMessage = null;
 
     /**
+     * The ID of the currently active {@link HungryGames~StatGroup} tracking
+     * stats.
+     * @public
+     * @type {?string}
+     * @default
+     */
+    this.statGroup = null;
+
+    /**
      * Interval for day events.
      * @private
      * @type {?Timeout}
@@ -220,6 +238,15 @@ class GuildGame {
      * @default
      */
     this._stateUpdateCallback = null;
+    /**
+     * Manages all stats for all players.
+     * @private
+     * @type {HungryGames~StatManager}
+     * @constant
+     */
+    this._stats = new StatManager(this);
+
+    this.step = this.step.bind(this);
   }
 
   /**
@@ -443,6 +470,7 @@ class GuildGame {
         this._autoPlayTimeout = setTimeout(this.step, delay);
       }
       day.state = 0;
+      this._stats.parseDay();
     } else if (index < 0) {
       return;
     } else if (
@@ -465,14 +493,15 @@ class GuildGame {
  */
 GuildGame.from = function(data) {
   const game = new GuildGame(
-      data.id, data.options, data.name, data.includedUsers, data.excludedUsers,
-      data.includedNPCs, data.excludedNPCs, data.customEvents,
-      data.disabledEvents);
+      data.bot, data.id, data.options, data.name, data.includedUsers,
+      data.excludedUsers, data.includedNPCs, data.excludedNPCs,
+      data.customEvents, data.disabledEvents);
   game.autoPlay = data.autoPlay || false;
   game.reactMessage = data.reactMessage || null;
   game.channel = data.channel || null;
   game.author = data.author || null;
   game.outputChannel = data.outputChannel || null;
+  game.statGroup = data.statGroup || null;
   if (data.currentGame) {
     game.currentGame = Game.from(data.currentGame);
   }
@@ -494,7 +523,8 @@ GuildGame.from = function(data) {
  * or "thriving").
  * @param {HungryGames~Messages} messages Reference to current Messages
  * instance.
- * @param {string} [text] Message to show when the user is affected.
+ * @param {string|HungryGames~Event[]} [text] Message to show when the user is
+ * affected, or array of default events if not specifying a specific message.
  * @param {boolean} [persists=false] Does this outcome persist to the end of
  * the game, if false it only exists for the next day.
  * @returns {string} The output message to tell the user of the outcome of the
@@ -534,7 +564,30 @@ GuildGame.forcePlayerState = function(
       } else {
         return;
       }
-      if (typeof text !== 'string' || text.length == 0) {
+      let evt;
+      if (typeof text !== 'string' && Array.isArray(text) &&
+          game.options.anonForceOutcome) {
+        let eventPool = text.concat(game.customEvents.player);
+        eventPool = eventPool.filter((el) => {
+          const checkOutcome =
+              el.victim.outcome === outcome || el.attacker.outcome === outcome;
+          const checkCount = Math.abs(el.victim.count * 1) +
+                  Math.abs(el.attacker.count * 1) ===
+              1;
+          const checkDisabled = !game.disabledEvents ||
+              !game.disabledEvents.player ||
+              !game.disabledEvents.player.find((d) => Event.equal(d, el));
+          return checkOutcome && checkCount && checkDisabled;
+        });
+        if (eventPool.length > 0) {
+          const pick = eventPool[Math.floor(eventPool.length * Math.random())];
+          text = pick.message;
+          evt = Event.finalize(
+              text, [player], Math.abs(pick.victim.count * 1),
+              Math.abs(pick.attacker.count * 1), outcome, outcome, game);
+        }
+      }
+      if (typeof text !== 'string') {
         switch (state) {
           case 'dead':
             text = messages.get('forcedDeath');
@@ -547,8 +600,10 @@ GuildGame.forcePlayerState = function(
             break;
         }
       }
-      const evt =
-          Event.finalize(text, [player], 1, 0, outcome, 'nothing', game);
+      if (!evt) {
+        evt = Event.finalize(text, [player], 1, 0, outcome, 'nothing', game);
+      }
+      // State - 2 = the event index, + 1 is the next index to get shown.
       let lastIndex = game.currentGame.day.state - 1;
       for (let i = game.currentGame.day.events.length - 1; i > lastIndex; i--) {
         if (game.currentGame.day.events[i].icons.find((el) => el.id == p)) {
@@ -556,13 +611,17 @@ GuildGame.forcePlayerState = function(
           break;
         }
       }
-      game.currentGame.day.events.splice(lastIndex, 0, evt);
+      if (lastIndex < game.currentGame.day.events.length) {
+        game.currentGame.day.events.splice(lastIndex, 0, evt);
+      } else {
+        game.currentGame.day.events.push(evt);
+      }
     } else {
       game.currentGame.forcedOutcomes.push({
         id: game.id,
         list: list,
         state: state,
-        text: text,
+        text: typeof text === 'string' ? text : null,
         persists: persists,
       });
     }

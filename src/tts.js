@@ -133,7 +133,7 @@ function TTS() {
       if (msg.member.voice.channel.connection) {
         onJoinVoice(msg.member.voice.channel.connection);
       } else {
-        msg.member.voice.channel.join().then(onJoinVoice).catch((err) => {
+        msg.member.voice.channel.join().then(onJoinVoice).catch(() => {
           self.common.reply(
               msg, 'Oops! I wasn\'t able to join your voice channel.');
           return;

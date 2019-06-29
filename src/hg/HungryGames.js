@@ -16,6 +16,12 @@ class HungryGames {
    * @param {SubModule} parent Parent submodule used to hook logging into.
    */
   constructor(parent) {
+    /**
+     * Parent subModule for logging and bot hooking.
+     * @private
+     * @type {HG}
+     * @constant
+     */
     this._parent = parent;
     /**
      * Current {@link HungryGames~Messages} instance.
@@ -272,7 +278,8 @@ class HungryGames {
     }
     this.getAllPlayers(guild.members, [], false, [], false, [], (res) => {
       this._games[guild.id] = new HungryGames.GuildGame(
-          guild.id, opts, `${guild.name}'s Hungry Games`, res);
+          this._parent.client.user.id, guild.id, opts,
+          `${guild.name}'s Hungry Games`, res);
       cb(this._games[guild.id]);
     });
   }
@@ -449,12 +456,12 @@ class HungryGames {
     } else if (command == 'users') {
       game.includedUsers = [];
       game.excludedUsers = [];
-      this.refresh(id);
+      this.refresh(id, () => {});
       return 'Resetting ALL user data!';
     } else if (command == 'npcs') {
       game.includedNPCs = [];
       game.excludedNPCs = [];
-      this.refresh(id);
+      this.refresh(id, () => {});
       return 'Resetting ALL NPC data!';
     } else {
       return 'Please specify what data to reset.\nall {deletes all data ' +
@@ -497,6 +504,7 @@ class HungryGames {
 
     const self = this;
     const parse = function(game) {
+      if (!game.bot) game.bot = self._parent.client.user.id;
       try {
         game = HungryGames.GuildGame.from(game);
         game.id = id;
@@ -507,7 +515,7 @@ class HungryGames {
 
       // Flush default and stale options.
       if (game.options) {
-        for (const opt in self.defaultOptions.keys) {
+        for (const opt of self.defaultOptions.keys) {
           if (!(self.defaultOptions[opt] instanceof Object)) continue;
           if (typeof game.options[opt] !==
               typeof self.defaultOptions[opt].value) {
@@ -710,6 +718,9 @@ HungryGames.Player = tmpRequire('./Player.js');
 HungryGames.Team = tmpRequire('./Team.js');
 HungryGames.Game = tmpRequire('./Game.js');
 HungryGames.Event = tmpRequire('./Event.js');
+HungryGames.Stats = tmpRequire('./Stats.js');
+HungryGames.StatGroup = tmpRequire('./StatGroup.js');
+HungryGames.StatManager = tmpRequire('./StatManager.js');
 HungryGames.GuildGame = tmpRequire('./GuildGame.js');
 HungryGames.Simulator = tmpRequire('./Simulator.js');
 
