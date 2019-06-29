@@ -565,10 +565,11 @@ function HG() {
       new self.command.SingleCommand(
           ['team', 'teams', 't'], mkCmd(editTeam), cmdOpts),
       new self.command.SingleCommand(
-          ['stats', 'stat', 'info', 'me'], mkCmd(commandStats), cmdOpts),
+          ['stats', 'stat', 'info', 'me'], mkCmd(commandStats),
+          {validOnlyInGuild: true}),
       new self.command.SingleCommand(
           ['leaderboard', 'leader', 'top', 'rank', 'ranks'],
-          mkCmd(commandLeaderboard), cmdOpts),
+          mkCmd(commandLeaderboard), {validOnlyInGuild: true}),
       new self.command.SingleCommand(
           ['group', 'groups', 'season', 'seasons'], mkCmd(commandGroups),
           cmdOpts,
@@ -5930,7 +5931,8 @@ function HG() {
    */
   function commandLeaderboard(msg, id) {
     const game = hg.getGame(id);
-    let groupID = msg.text.match(/\b([a-fA-F0-9]{4})\b/);
+    const regex = /\b([a-fA-F0-9]{4})\b/;
+    let groupID = msg.text.match(regex);
     if (!groupID) {
       const prevList = ['last', 'previous', 'recent'];
       if (prevList.find((el) => msg.text.indexOf(el) > -1)) {
@@ -5941,7 +5943,14 @@ function HG() {
     } else {
       groupID = groupID[1].toUpperCase();
     }
-    game._stats.fetchGroup(groupID, (err /* , group*/) => {
+    const text = msg.text.toLocaleLowerCase();
+    const col =
+        HungryGames.Stats.keys.find(
+            (el) => text.indexOf(el.toLocaleLowerCase()) > -1 ||
+                text.indexOf(
+                    self.common.camelToSpaces(el).toLocaleLowerCase()) > -1) ||
+        'wins';
+    game._stats.fetchGroup(groupID, (err, group) => {
       if (err) {
         self.common.reply(
             msg, 'I wasn\'t able to find that group.', 'List groups with `' +
@@ -5949,7 +5958,70 @@ function HG() {
                 'groups`, or say "lifetime" or "previous".');
         return;
       }
-      self.common.reply(msg, 'WIP');
+      const opts = {};
+      opts.sort = col;
+      const num = msg.text.replace(regex, '').match(/\d+/);
+      if (num && num[0] * 1 > 0) opts.limit = num[0] * 1;
+      group.fetchUsers(opts, (err, rows) => {
+        if (err) {
+          self.error('Failed to fetch leaderboard: ' + id + '/' + groupID);
+          console.error(err);
+          self.common.reply(
+              msg,
+              'Oops! Something went wrong while fetching the leaderboard...');
+          return;
+        }
+        const list = rows.map((el, i) => {
+          let name;
+          if (el.id.startsWith('NPC')) {
+            const npc = game.includedNPCs.find((n) => n.id === el.id) ||
+                game.excludedNPCs.find((n) => n.id === el.id);
+            name = npc ? npc.name : el.id;
+          } else {
+            const iU =
+                game.currentGame.includedUsers.find((u) => u.id === el.id);
+            if (iU) {
+              name = game.options.useNicknames && iU.nickname || iU.name;
+            } else {
+              const m = msg.guild.members.get(el.id);
+              name = m ? (game.options.useNicknames && m.nickname) || m.name :
+                         el.id;
+            }
+          }
+          return `${i+1}) ${name}: ${el.get(col)}`;
+        });
+
+        const embed = new self.Discord.MessageEmbed();
+        embed.setTitle(`Rank by ${col}`);
+        const groupName = groupID === 'global' ? 'lifetime' : groupID;
+        embed.setDescription(groupName);
+        embed.setColor([255, 0, 255]);
+
+        const numCols = calcColNum(1, list);
+        const numTotal = list.length;
+        const quarterLength = Math.ceil(numTotal / numCols);
+
+        for (let i = 0; i < numCols - 1; i++) {
+          const thisMessage =
+              list.splice(0, quarterLength).join('\n').slice(0, 1024);
+          embed.addField(
+              `${i * quarterLength + 1}-${(i + 1) * quarterLength}`,
+              thisMessage, true);
+        }
+        embed.addField(
+            `${(numCols - 1) * quarterLength + 1}-${numTotal}`,
+            list.join('\n').slice(0, 1024), true);
+
+        msg.channel.send(self.common.mention(msg), embed).catch((err) => {
+          self.error(
+              'Failed to send leaderboard in channel: ' + msg.channel.id);
+          console.error(err);
+          self.common.reply(
+              msg, 'Oops! I wasn\'t able to send the leaderboard here for an ' +
+                  'unknown reason.',
+              err.code);
+        });
+      });
     });
   }
 

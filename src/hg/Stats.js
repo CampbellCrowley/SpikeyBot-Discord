@@ -91,6 +91,17 @@ class Stats {
   }
 
   /**
+   * @description Get array of all keys stored by this object when requested
+   * from a static scope.
+   * @public
+   * @static
+   * @returns {string[]} Array of all keys.
+   */
+  static get keys() {
+    return new Stats('0000000000000000000').keys;
+  }
+
+  /**
    * @description Set a value for a certain datapoint.
    * @public
    * @param {string} key The name of this datapoint.

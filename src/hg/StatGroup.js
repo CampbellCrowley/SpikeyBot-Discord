@@ -237,6 +237,97 @@ class StatGroup {
   }
 
   /**
+   * @description Options for fetching a group of user stats.
+   * @typedef {object} HGStatGroupUserSelectOptions
+   *
+   * @property {string} [sort='wins'] Column to sort data by.
+   * @property {boolean} [ascending=false] Sort ascending or descending order.
+   * @property {number} [limit=10] Limit the number of fetched users.
+   * @property {number} [offset=0] Offset start index of found users.
+   */
+
+  /**
+   * @description Fetch stats for a group of users. If array of IDs is given,
+   * data will not be sorted.
+   * @public
+   * @param {HGStatGroupUserSelectOptions|string[]} [opts] Options to specify
+   * which users are fetched, or array of user IDs to fetch.
+   * @param {Function} cb Callback with optional error as first argument,
+   * otherwise has stats as second argument as array of
+   * {@link HungryGames~Stats} objects.
+   */
+  fetchUsers(opts, cb) {
+    if (typeof opts === 'function') {
+      cb = opts;
+      opts = {};
+    }
+    if (typeof cb !== 'function') {
+      throw new TypeError('Callback must be a function');
+    }
+    if (!opts || typeof opts !== 'object') {
+      opts = {};
+    }
+
+    const onReply = function(err, rows) {
+      if (err) {
+        cb(err);
+        return;
+      }
+      try {
+        cb(null, rows.map((el) => {
+          el.id = el.userId;
+          return new Stats(el);
+        }));
+      } catch (err) {
+        cb(err);
+      }
+    };
+
+    if (Array.isArray(opts)) {
+      if (opts.length === 0) {
+        cb(null, []);
+        return;
+      }
+
+      const userList = opts.map(() => `userId=?`).join(' OR ');
+
+      const toSend = global.sqlCon.format(
+          'SELECT * FROM HGStats WHERE ' +
+              'botId=? AND guildId=? AND groupId=? AND (' + userList + ');',
+          [this.bot, this.guild, this.id].concat(opts));
+      global.sqlCon.query(toSend, onReply);
+    } else {
+      if (typeof opts.sort === 'undefined') {
+        opts.sort = 'wins';
+      } else if (typeof opts.sort !== 'string') {
+        opts.sort = null;
+      }
+      if (typeof opts.limit === 'undefined') opts.limit = 10;
+      if (!opts.offset || typeof opts.offset !== 'number' ||
+          isNaN(opts.offset)) {
+        opts.offset = 0;
+      }
+
+      const sort =
+          (typeof opts.sort === 'string' ?
+               ' ORDER BY ?? ' + (opts.ascending ? '' : 'DESC ') :
+               '');
+
+      const limit = typeof opts.limit === 'number' && !isNaN(opts.limit) ?
+          `LIMIT ${opts.limit}` +
+              (opts.offset ? ` OFFSET ${opts.offset}` : '') :
+          '';
+
+      const toSend = global.sqlCon.format(
+          'SELECT * FROM HGStats WHERE ' +
+              'botId=? AND guildId=? AND groupId=?' + sort + limit + ';',
+          [this.bot, this.guild, this.id, opts.sort]);
+
+      global.sqlCon.query(toSend, onReply);
+    }
+  }
+
+  /**
    * @description Set a stat value for a single user.
    * @public
    * @param {string} uId The user ID of which to change.
