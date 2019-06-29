@@ -6028,7 +6028,7 @@ function HG() {
         }
         embed.addField(
             `${(numCols - 1) * quarterLength + 1}-${numTotal}`,
-            list.join('\n').slice(0, 1024), true);
+            list.join('\n').slice(0, 1024) || '.', true);
 
         msg.channel.send(self.common.mention(msg), embed).catch((err) => {
           self.error(
