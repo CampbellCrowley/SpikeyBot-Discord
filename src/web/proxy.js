@@ -8,7 +8,6 @@ const sIOClient = require('socket.io-client');
 const querystring = require('querystring');
 const auth = require('../../auth.js');
 const crypto = require('crypto');
-const sql = require('mysql');
 const dateFormat = require('dateformat');
 
 const clientId = '444293534720458753';
@@ -55,36 +54,6 @@ function WebProxy() {
     path: '/api',
     method: 'GET',
   };
-
-  /**
-   * The object describing the connection with the SQL server.
-   *
-   * @private
-   * @type {sql.ConnectionConfig}
-   */
-  let sqlCon;
-  /**
-   * Create initial connection with sql server.
-   *
-   * @private
-   */
-  function connectSQL() {
-    /* eslint-disable-next-line new-cap */
-    sqlCon = new sql.createConnection({
-      user: auth.sqlUsername,
-      password: auth.sqlPassword,
-      host: auth.sqlHost,
-      database: 'appusers',
-      port: 3306,
-    });
-    sqlCon.on('error', function(e) {
-      self.error(e);
-      if (e.fatal) {
-        connectSQL();
-      }
-    });
-  }
-  connectSQL();
 
   const pathPorts = {
     '/www.spikeybot.com/socket.io/dev/hg/': 8013,
@@ -157,6 +126,7 @@ function WebProxy() {
   /** @inheritdoc */
   this.initialize = function() {
     app.listen(self.common.isRelease ? 8010 : 8012, '127.0.0.1');
+    self.common.connectSQL();
   };
 
   /**
@@ -639,10 +609,10 @@ function WebProxy() {
           expiration_date: loginInfo.expiration_date,
         };
         const now = dateFormat(new Date(), 'yyyy-mm-dd\'T\'HH:MM:ss.l\'Z\'');
-        const toSend = sqlCon.format(
+        const toSend = global.sqlCon.format(
             'INSERT INTO Discord (id) values (?) ON DUPLICATE KEY UPDATE ?',
             [parsed.id, {lastLogin: now}]);
-        sqlCon.query(toSend, (err) => {
+        global.sqlCon.query(toSend, (err) => {
           if (err) {
             self.error(err);
           }

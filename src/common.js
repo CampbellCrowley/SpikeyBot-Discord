@@ -4,6 +4,8 @@ const dateFormat = require('dateformat');
 const Discord = require('discord.js');
 const fs = require('fs');
 const mkdirp = require('mkdirp');
+const sql = require('mysql');
+const auth = require('../auth.js');
 
 /**
  * Commonly required things. Helper functions and constants.
@@ -636,6 +638,52 @@ Common.camelToSpaces = function(str) {
   });
 };
 Common.prototype.camelToSpaces = Common.camelToSpaces;
+
+/**
+ * The object describing the connection with the SQL server.
+ *
+ * @global
+ * @type {?sql.ConnectionConfig}
+ */
+global.sqlCon;
+/**
+ * Create initial connection with sql server. The connection is injected into
+ * the global scope as {@link sqlCon}. If a connection still exists, calling
+ * this function just returns the current reference.
+ *
+ * @public
+ * @param {boolean} [force=false] Force a new connection to be established.
+ * @returns {sql.ConnectionConfig} Current sql connection object.
+ */
+Common.connectSQL = function(force = false) {
+  if (global.sqlCon && !force) return global.sqlCon;
+  if (global.sqlCon && global.sqlCon.end) global.sqlCon.end();
+  /* eslint-disable-next-line new-cap */
+  global.sqlCon = new sql.createConnection({
+    user: auth.sqlUsername,
+    password: auth.sqlPassword,
+    host: auth.sqlHost,
+    database: 'appusers',
+    port: 3306,
+  });
+  global.sqlCon.on('error', (e) => {
+    if (this.error) {
+      this.error(e);
+    } else {
+      console.error(e);
+    }
+    if (e.fatal) {
+      Common.connectSQL(true);
+    }
+  });
+  if (this.log) {
+    this.log('SQL Connection created');
+  } else {
+    console.log('SQL Connection created');
+  }
+  return global.sqlCon;
+};
+Common.prototype.connectSQL = Common.connectSQL;
 
 
 /* eslint-disable-next-line no-extend-native */
