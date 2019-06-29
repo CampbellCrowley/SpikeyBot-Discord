@@ -5989,6 +5989,12 @@ function HG() {
               'Oops! Something went wrong while fetching the leaderboard...');
           return;
         }
+        if (!rows || rows.length === 0) {
+          self.common.reply(
+              msg, 'It doesn\'t look like this group has any game data yet.',
+              'Check back after a game to see your stats!');
+          return;
+        }
         const list = rows.map((el, i) => {
           let name;
           if (el.id.startsWith('NPC')) {
