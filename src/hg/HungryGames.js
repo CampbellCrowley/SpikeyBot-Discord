@@ -16,6 +16,12 @@ class HungryGames {
    * @param {SubModule} parent Parent submodule used to hook logging into.
    */
   constructor(parent) {
+    /**
+     * Parent subModule for logging and bot hooking.
+     * @private
+     * @type {HG}
+     * @constant
+     */
     this._parent = parent;
     /**
      * Current {@link HungryGames~Messages} instance.
@@ -272,7 +278,8 @@ class HungryGames {
     }
     this.getAllPlayers(guild.members, [], false, [], false, [], (res) => {
       this._games[guild.id] = new HungryGames.GuildGame(
-          guild.id, opts, `${guild.name}'s Hungry Games`, res);
+          this._parent.client.user.id, guild.id, opts,
+          `${guild.name}'s Hungry Games`, res);
       cb(this._games[guild.id]);
     });
   }
@@ -497,6 +504,7 @@ class HungryGames {
 
     const self = this;
     const parse = function(game) {
+      if (!game.bot) game.bot = self._parent.client.user.id;
       try {
         game = HungryGames.GuildGame.from(game);
         game.id = id;

@@ -27,7 +27,9 @@ class Stats {
     this._id = data.id;
 
     /**
-     * @description Cache of all datapoints.
+     * @description Cache of all datapoints. All properties must match SQL
+     * database excluding `groupId`, `guildId` and `userId` which must not be
+     * included.
      * @private
      * @type {Object}
      *

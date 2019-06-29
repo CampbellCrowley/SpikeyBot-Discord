@@ -64,7 +64,7 @@ module.exports = {
     "jsdoc/check-alignment": 1,
     "jsdoc/check-examples": 1,
     "jsdoc/check-indentation": 0,
-    "jsdoc/check-param-names": 1,
+    "jsdoc/check-param-names": "error",
     "jsdoc/check-syntax": 1,
     "jsdoc/check-tag-names": 1,
     "jsdoc/check-types": 1,
@@ -87,5 +87,6 @@ module.exports = {
     "@typescript-eslint/no-use-before-define": "off",
     // "@typescript-eslint/restrict-plus-operands": "error",
     "@typescript-eslint/ban-types": "off",
+    "@typescript-eslint/no-unused-vars": "error",
   },
 };

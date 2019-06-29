@@ -14,6 +14,7 @@ const StatManager = require('./StatManager.js');
 class GuildGame {
   /**
    * @description Create a game instance for a single guild.
+   * @param {string} bot User id of the current bot instance.
    * @param {string} id Guild id of the Guild that this object is for.
    * @param {object<number|boolean|string|object>} options The game options.
    * @param {string} [name] Name of this game to be passed to the Game object.
@@ -39,13 +40,20 @@ class GuildGame {
    * }} [disabledEvents] All disabled events for the guild.
    */
   constructor(
-      id, options, name, includedUsers, excludedUsers, includedNPCs,
+      bot, id, options, name, includedUsers, excludedUsers, includedNPCs,
       excludedNPCs, customEvents, disabledEvents) {
-    this.step = this.step.bind(this);
+    /**
+     * The ID of the current bot account.
+     * @public
+     * @type {string}
+     * @constant
+     */
+    this.bot = bot;
     /**
      * The ID of the Guild this is for.
      * @public
      * @type {string}
+     * @constant
      */
     this.id = id;
     /**
@@ -237,6 +245,8 @@ class GuildGame {
      * @constant
      */
     this._stats = new StatManager(this);
+
+    this.step = this.step.bind(this);
   }
 
   /**
@@ -483,9 +493,9 @@ class GuildGame {
  */
 GuildGame.from = function(data) {
   const game = new GuildGame(
-      data.id, data.options, data.name, data.includedUsers, data.excludedUsers,
-      data.includedNPCs, data.excludedNPCs, data.customEvents,
-      data.disabledEvents);
+      data.bot, data.id, data.options, data.name, data.includedUsers,
+      data.excludedUsers, data.includedNPCs, data.excludedNPCs,
+      data.customEvents, data.disabledEvents);
   game.autoPlay = data.autoPlay || false;
   game.reactMessage = data.reactMessage || null;
   game.channel = data.channel || null;

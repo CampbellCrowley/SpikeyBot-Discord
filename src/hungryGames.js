@@ -565,7 +565,10 @@ function HG() {
       new self.command.SingleCommand(
           ['team', 'teams', 't'], mkCmd(editTeam), cmdOpts),
       new self.command.SingleCommand(
-          ['stats', 'stat', 'info', 'me'], mkCmd(commandStats), cmdOpts, ),
+          ['stats', 'stat', 'info', 'me'], mkCmd(commandStats), cmdOpts),
+      new self.command.SingleCommand(
+          ['leaderboard', 'leader', 'top', 'rank', 'ranks'],
+          mkCmd(commandLeaderboard), cmdOpts),
       new self.command.SingleCommand(
           ['group', 'groups', 'season', 'seasons'], mkCmd(commandGroups),
           cmdOpts,
@@ -5689,6 +5692,9 @@ function HG() {
       }
       group.fetchUser(user.id, (err, data) => {
         if (err) {
+          self.error(
+              'Failed to fetch HG User stats: ' + id + '@' + user.id + '/' +
+              group.id);
           console.error(err);
         } else {
           const list = data.keys.map(
@@ -5911,6 +5917,39 @@ function HG() {
       }
       group.reset();
       self.common.reply(msg, `Deleted group ${group.id}`, additional);
+    });
+  }
+
+  /**
+   * @description Ranks players by stat.
+   *
+   * @private
+   * @type {HungryGames~hgCommandHandler}
+   * @param {Discord~Message} msg The message that lead to this being called.
+   * @param {string} id Guild ID this command was called from.
+   */
+  function commandLeaderboard(msg, id) {
+    const game = hg.getGame(id);
+    let groupID = msg.text.match(/\b([a-fA-F0-9]{4})\b/);
+    if (!groupID) {
+      const prevList = ['last', 'previous', 'recent'];
+      if (prevList.find((el) => msg.text.indexOf(el) > -1)) {
+        groupID = 'previous';
+      } else {
+        groupID = 'global';
+      }
+    } else {
+      groupID = groupID[1].toUpperCase();
+    }
+    game._stats.fetchGroup(groupID, (err /* , group*/) => {
+      if (err) {
+        self.common.reply(
+            msg, 'I wasn\'t able to find that group.', 'List groups with `' +
+                msg.prefix + self.postPrefix +
+                'groups`, or say "lifetime" or "previous".');
+        return;
+      }
+      self.common.reply(msg, 'WIP');
     });
   }
 

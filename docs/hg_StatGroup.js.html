@@ -130,12 +130,30 @@ class StatGroup {
    * group already exists.
    */
   constructor(parent, metadata) {
-    const dir = `${common.guildSaveDir}${parent.id}/hg/stats/`;
     let id;
     if (typeof metadata === 'string') {
       id = metadata;
       metadata = null;
     }
+
+    // Ensure SQL connection is established.
+    common.connectSQL();
+
+    /**
+     * @description The ID of this current bot.
+     * @public
+     * @type {string}
+     * @constant
+     */
+    this.bot = parent.bot;
+
+    /**
+     * @description The guild ID where this stat group resides.
+     * @public
+     * @type {string}
+     * @constant
+     */
+    this.guild = parent.id;
 
     /**
      * @description The unique ID for this stat group. Unique per-guild.
@@ -166,6 +184,7 @@ class StatGroup {
      */
     this._saveQueue = {};
 
+    const dir = `${common.guildSaveDir}${parent.id}/hg/stats/`;
     /**
      * @description The directory where all of this group's information is
      * stored.
@@ -185,6 +204,7 @@ class StatGroup {
     this.setMetaEnd = this.setMetaEnd.bind(this);
     this._fetchMetadata = this._fetchMetadata.bind(this);
     this._saveMetadata = this._saveMetadata.bind(this);
+    this.reset = this.reset.bind(this);
 
     if (metadata) {
       this._saveMetadata(this._parseMetadata(metadata));
@@ -235,27 +255,58 @@ class StatGroup {
       });
       delete self._fetchQueue[uId];
     };
-    fs.readFile(`${this._dir}${uId}.json`, (err, data) => {
-      if (err) {
-        if (err.code === 'ENOENT') {
-          data = '{}';
-        } else {
+    if (uId === 'meta') {
+      fs.readFile(`${this._dir}${uId}.json`, (err, data) => {
+        if (err) {
+          if (err.code === 'ENOENT') {
+            data = '{}';
+          } else {
+            done(err);
+            return;
+          }
+        }
+        try {
+          done(null, this._parseMetadata(JSON.parse(data)));
+        } catch (err) {
+          done(err);
+        }
+      });
+    } else {
+      const toSend = global.sqlCon.format(
+          'SELECT * FROM HGStats WHERE ' +
+              'botId=? AND guildId=? AND groupId=? AND userId=?',
+          [this.bot, this.guild, this.id, uId]);
+      global.sqlCon.query(toSend, (err, rows) => {
+        if (err) {
           done(err);
           return;
         }
-      }
-      try {
-        if (uId === 'meta') {
-          done(null, this._parseMetadata(JSON.parse(data)));
+        if (!rows || rows.length == 0) {
+          // Fallback to legacy filesytem.
+          fs.readFile(`${this._dir}${uId}.json`, (err, data) => {
+            if (err) {
+              if (err.code === 'ENOENT') {
+                data = '{}';
+              } else {
+                done(err);
+                return;
+              }
+            }
+            try {
+              const parsed = JSON.parse(data);
+              parsed.id = uId;
+              done(null, Stats.from(parsed));
+            } catch (err) {
+              done(err);
+            }
+          });
         } else {
-          const parsed = JSON.parse(data);
-          if (!parsed.id) parsed.id = uId;
-          done(null, Stats.from(parsed));
+          const data = rows[0] || {};
+          data.id = uId;
+          done(null, Stats.from(data));
         }
-      } catch (err) {
-        done(err);
-      }
-    });
+      });
+    }
   }
 
   /**
@@ -375,8 +426,33 @@ class StatGroup {
       return;
     }
     delete this._saveQueue[data.id];
-    common.mkAndWrite(
-        `${this._dir}${data.id}.json`, this._dir, data.serializable);
+
+    const setList = 'botId=?,guildId=?,groupId=?,userId=?,' +
+        data.keys.map((el) => `${el}=?`).join(',');
+    const valueList = [this.bot, this.guild, this.id, data.id].concat(
+        Object.values(data.serializable));
+
+    const toSend = global.sqlCon.format(
+        'INSERT INTO HGStats SET ' + setList + ' ON DUPLICATE KEY UPDATE ' +
+            setList + ';',
+        valueList.concat(valueList));
+    global.sqlCon.query(toSend, (err) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
+      const fn = `${this._dir}${data.id}.json`;
+      if (fs.existsSync(fn)) {
+        fs.unlink(fn, (err) => {
+          if (err) {
+            console.error('Failed to remove legacy user stat file:', fn);
+            console.error(err);
+          }
+        });
+      }
+    });
+    // common.mkAndWrite(
+    //     `${this._dir}${data.id}.json`, this._dir, data.serializable);
   }
 
   /**
@@ -501,13 +577,24 @@ class StatGroup {
    * @public
    */
   reset() {
-    const keys = Object.keys(this._saveQueue);
-    for (const k of keys) {
-      clearTimeout(this._saveQueue[k].timeout);
-      delete this._saveQueue[k];
-    }
+    const self = this;
+    const resetQueue = function() {
+      const keys = Object.keys(self._saveQueue);
+      for (const k of keys) {
+        clearTimeout(self._saveQueue[k].timeout);
+        delete self._saveQueue[k];
+      }
+    };
+    resetQueue();
+    const toSend = global.sqlCon.format(
+        'DELETE FROM HGStats WHERE guildId=? AND groupID=?;',
+        [this.guild, this.id]);
+    global.sqlCon.query(toSend, (err) => {
+      if (err) console.error(err);
+    });
     rimraf(this._dir, (err) => {
       if (err) console.error(err);
+      resetQueue();
     });
   }
 
@@ -602,7 +689,7 @@ module.exports = StatGroup;
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.2</a>
 	
-		on Friday, June 28, 2019 7:53 PM (-07:00)
+		on Friday, June 28, 2019 9:28 PM (-07:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>
