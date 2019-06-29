@@ -1121,12 +1121,12 @@ function HG() {
       g.includedUsers = g.includedUsers.filter((u) => {
         const m = msg.guild.members.get(u);
         if (m && m.partial) m.fetch();
-        return m;
+        return m && !m.deleted;
       });
       g.excludedUsers = g.excludedUsers.filter((u) => {
         const m = msg.guild.members.get(u);
         if (m && m.partial) m.fetch();
-        return m;
+        return m && !m.deleted;
       });
       hg.refresh(msg.guild, done);
     } else {
@@ -5964,10 +5964,16 @@ function HG() {
         'wins';
     game._stats.fetchGroup(groupID, (err, group) => {
       if (err) {
-        self.common.reply(
-            msg, 'I wasn\'t able to find that group.', 'List groups with `' +
-                msg.prefix + self.postPrefix +
-                'groups`, or say "lifetime" or "previous".');
+        if (groupID === 'previous' || groupID === 'global') {
+          self.common.reply(
+              msg, 'It doesn\'t look like you\'ve finished a game yet.',
+              'Check back after a game to see your stats!');
+        } else {
+          self.common.reply(
+              msg, 'I wasn\'t able to find that group.', 'List groups with `' +
+                  msg.prefix + self.postPrefix +
+                  'groups`, or say "lifetime" or "previous".');
+        }
         return;
       }
       const opts = {};
