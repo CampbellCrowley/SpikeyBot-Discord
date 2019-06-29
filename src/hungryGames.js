@@ -568,11 +568,19 @@ function HG() {
           ['stats', 'stat', 'info', 'me'], mkCmd(commandStats),
           {validOnlyInGuild: true}),
       new self.command.SingleCommand(
-          ['leaderboard', 'leader', 'top', 'rank', 'ranks'],
+          [
+            'leaderboard',
+            'leaderboards',
+            'leader',
+            'leaders',
+            'top',
+            'rank',
+            'ranks',
+          ],
           mkCmd(commandLeaderboard), {validOnlyInGuild: true}),
       new self.command.SingleCommand(
-          ['group', 'groups', 'season', 'seasons'], mkCmd(commandGroups),
-          cmdOpts,
+          ['group', 'groups', 'season', 'seasons', 'g', 'gr'],
+          mkCmd(commandGroups), cmdOpts,
           [
             new self.command.SingleCommand(
                 ['create', 'new', 'make'], mkCmd(commandNewGroup), cmdOpts),
@@ -5778,11 +5786,15 @@ function HG() {
     } else {
       game._stats.fetchGroupList((err, list) => {
         if (err) {
-          self.error('Failed to get list of stat groups.');
-          console.error(err);
-          self.common.reply(
-              msg, 'Failed to get list of groups.', 'Something broke...');
-          return;
+          if (err.code === 'ENOENT') {
+            list = [];
+          } else {
+            self.error('Failed to get list of stat groups.');
+            console.error(err);
+            self.common.reply(
+                msg, 'Failed to get list of groups.', 'Something broke...');
+            return;
+          }
         }
         list = list.filter((el) => !['global', 'previous'].includes(el));
         total = list.length;

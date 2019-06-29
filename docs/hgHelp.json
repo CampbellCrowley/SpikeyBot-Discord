@@ -547,7 +547,7 @@
         {
           "command": "leaderboard",
           "description": "Show the top players ordered by stats.",
-          "aliases": "leaderboard, leader, top, rank, ranks",
+          "aliases": "leaderboard, leaderboards, leader, leaders, top, rank, ranks",
           "validOnlyInGuild": true,
           "examples": [
             {
@@ -580,7 +580,7 @@
         {
           "command": "groups",
           "description": "Show all stat groups. A stat group can be enabled or disabled anytime to allow for collecting stats only when specified.",
-          "aliases": "group, groups, season, seasons",
+          "aliases": "group, groups, season, seasons, g, gr",
           "validOnlyInGuild": true,
           "examples": [
             {
