@@ -3349,7 +3349,9 @@ function HG() {
    * @returns {string} Message saying what happened. Can be an error message.
    */
   function changeObjectValue(
-      obj, defaultObj, option, value, values, id, range, keys = []) {
+      obj, defaultObj, option, value, values, id, range, keys) {
+    if (!keys || !Array.isArray(keys)) keys = [];
+    keys.push(option);
     let type = typeof defaultObj[option];
     if (type !== 'undefined' &&
         typeof defaultObj[option].value !== 'undefined') {
@@ -3425,8 +3427,7 @@ function HG() {
       } else {
         return changeObjectValue(
             obj[option], defaultObj[option].value || defaultObj[option],
-            values[1], values[2], values.slice(3), id, range,
-            keys.push(option));
+            values[1], values[2], values.slice(3), id, range, keys);
       }
     } else {
       return 'Changing the value of this option does not work yet. (' + option +
