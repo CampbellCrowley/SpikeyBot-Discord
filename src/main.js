@@ -2693,6 +2693,10 @@ function Main() {
   function commandStats(msg) {
     msg.channel.startTyping();
     self.bot.getStats((values) => {
+      if (!values) {
+        self.common.reply(msg, 'Failed to fetch stats.');
+        return;
+      }
       const embed = new self.Discord.MessageEmbed();
       embed.setTitle('SpikeyBot Stats');
       embed.setDescription(
@@ -2788,7 +2792,8 @@ function Main() {
      * Callback once all shards have replied with their stats.
      *
      * @private
-     * @param {Array<object>} res Array of each response object.
+     * @param {?Array<object>} res Array of each response object or null if
+     * error.
      */
     function statsResponse(res) {
       const parseStart = Date.now();
@@ -2860,7 +2865,7 @@ function Main() {
             .catch((err) => {
               self.error('Failed to fetch stats from shards.');
               console.error(err);
-              statsResponse([]);
+              statsResponse(null);
             });
       } else {
         statsResponse([getStats()]);

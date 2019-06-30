@@ -20,7 +20,7 @@ function WebStats() {
   /** @inheritdoc */
   this.initialize = function() {
     app.listen(self.common.isRelease ? 8016 : 8017, '127.0.0.1');
-    postTimeout = self.client.setTimeout(postUpdatedCount, 1000);
+    postTimeout = self.client.setTimeout(postUpdatedCount, 30000);
   };
   /** @inheritdoc */
   this.shutdown = function() {
@@ -163,24 +163,38 @@ function WebStats() {
       self.common.log('Requested Webhook that doesn\'t exist yet.', ip);
     } else if (req.url.indexOf('/stats/shield') == 0) {
       getStats((stats) => {
-        res.writeHead(200, {'content-type': 'application/json'});
-        const filteredStats = {
-          schemaVersion: 1,
-          label: 'SpikeyBot Servers',
-          message: stats.numGuilds + '',
-          color: 'purple',
-          cacheSeconds: Math.floor(cachedLifespan / 1000),
-        };
-        res.end(JSON.stringify(filteredStats));
-        self.common.log('Sent stats: ' + req.url, ip);
+        if (!stats) {
+          res.writeHead(500, {'content-type': 'application/json'});
+          res.end(
+              JSON.stringify({code: 500, message: 'Internal Server Error'}));
+          self.common.log('Failed to send stats (500): ' + req.url, ip);
+        } else {
+          res.writeHead(200, {'content-type': 'application/json'});
+          const filteredStats = {
+            schemaVersion: 1,
+            label: 'SpikeyBot Servers',
+            message: stats.numGuilds + '',
+            color: 'purple',
+            cacheSeconds: Math.floor(cachedLifespan / 1000),
+          };
+          res.end(JSON.stringify(filteredStats));
+          self.common.log('Sent stats: ' + req.url, ip);
+        }
       });
     } else {
       getStats((stats) => {
-        res.writeHead(200, {'content-type': 'application/json'});
-        const filteredStats = Object.assign({}, stats);
-        filteredStats.activities = 'REDACTED';
-        res.end(JSON.stringify(filteredStats));
-        self.common.log('Sent stats: ' + req.url, ip);
+        if (!stats) {
+          res.writeHead(500, {'content-type': 'application/json'});
+          res.end(
+              JSON.stringify({code: 500, message: 'Internal Server Error'}));
+          self.common.log('Failed to send stats (500): ' + req.url, ip);
+        } else {
+          res.writeHead(200, {'content-type': 'application/json'});
+          const filteredStats = Object.assign({}, stats);
+          filteredStats.activities = 'REDACTED';
+          res.end(JSON.stringify(filteredStats));
+          self.common.log('Sent stats: ' + req.url, ip);
+        }
       });
     }
   }
@@ -196,7 +210,7 @@ function WebStats() {
     if (cachedTime + cachedLifespan < Date.now()) {
       cachedTime = Date.now();
       self.bot.getStats((values) => {
-        cachedStats = values;
+        if (values) cachedStats = values;
         cb(values);
       });
     } else {
@@ -213,6 +227,10 @@ function WebStats() {
     if (postTimeout) self.client.clearTimeout(postTimeout);
     if (self.client.user.id !== '318552464356016131') return;
     getStats((values) => {
+      if (!values || !values.numGuilds) {
+        self.warn('Unable to post guild count due to failure to fetch stats.');
+        return;
+      }
       self.log('Current Guild Count: ' + values.numGuilds);
       /* eslint-disable @typescript-eslint/camelcase */
       if (self.client.shard) {
