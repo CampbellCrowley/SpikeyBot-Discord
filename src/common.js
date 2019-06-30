@@ -685,6 +685,16 @@ Common.connectSQL = function(force = false) {
 };
 Common.prototype.connectSQL = Common.connectSQL;
 
+/**
+ * @description The User-Agent to send in http request headers.
+ * @public
+ * @type {string}
+ * @constant
+ */
+Common.ua =
+    'Mozilla/5.0 (compatible; SpikeyBot/1.0; +https://www.spikeybot.com/)';
+Common.prototype.ua = Common.ua;
+
 
 /* eslint-disable-next-line no-extend-native */
 String.prototype.replaceAll = function(search, replacement) {

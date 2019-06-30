@@ -85,6 +85,7 @@ function WebAccount() {
           'Basic ' + (Buffer.from(auth.spotifyId + ':' + auth.spotifySecret)
               .toString('base64')),
       'Content-Type': 'application/x-www-form-urlencoded',
+      'User-Agent': require('../common.js').ua,
     },
   };
 
@@ -93,6 +94,9 @@ function WebAccount() {
     host: 'api.spotify.com',
     path: '/v1/me',
     method: 'GET',
+    headers: {
+      'User-Agent': require('../common.js').ua,
+    },
   };
 
   /**

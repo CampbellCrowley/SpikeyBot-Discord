@@ -28,6 +28,9 @@ function Spotify() {
     host: 'api.spotify.com',
     path: '/v1/me/player/currently-playing',
     method: 'GET',
+    headers: {
+      'User-Agent': require('./common.js').ua,
+    },
   };
 
   /** @inheritdoc */

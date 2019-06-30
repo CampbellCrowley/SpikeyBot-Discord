@@ -799,6 +799,7 @@ function SpikeyBot() {
           path: '/webhook/botstart',
           headers: {
             'Content-Type': 'application/json',
+            'User-Agent': common.ua,
           },
         },
         () => {});

@@ -5293,9 +5293,11 @@ function HG() {
         let request = https.request;
         if (url.startsWith('http://')) request = http.request;
 
+        const opt = {headers: {'User-Agent': self.common.ua}};
+
         let req;
         try {
-          req = request(url, onIncoming);
+          req = request(url, opt, onIncoming);
         } catch (err) {
           self.warn('Failed to request npc avatar: ' + url);
           // console.error(err);

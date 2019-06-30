@@ -2,6 +2,7 @@
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const ytdl = require('youtube-dl'); // Music thread uses separate require.
 const fs = require('fs'); // Music thread uses separate require.
+const https = require('https');
 const ogg = require('ogg');
 const opus = require('node-opus');
 const spawn = require('threads').spawn;
@@ -61,11 +62,10 @@ function Music() {
     headers: {
       'Accept': 'application/json',
       'Authorization': 'Bearer ' + geniusClient,
+      'User-Agent': require('./common.js').ua,
     },
     method: 'GET',
   };
-
-  const https = require('https');
 
   /**
    * Information about a server's music and queue.
@@ -1427,7 +1427,14 @@ function Music() {
    */
   function fetchLyricsPage(msg, url, title, thumb) {
     const URL = url.match(/https:\/\/([^/]*)(.*)/);
-    const thisReq = {hostname: URL[1], path: URL[2], method: 'GET'};
+    const thisReq = {
+      hostname: URL[1],
+      path: URL[2],
+      method: 'GET',
+      headers: {
+        'User-Agent': self.common.ua,
+      },
+    };
     const req = https.request(thisReq, function(response) {
       let content = '';
       response.on('data', function(chunk) {

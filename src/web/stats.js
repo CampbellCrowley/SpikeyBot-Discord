@@ -80,6 +80,8 @@ function WebStats() {
    */
   let postTimeout;
 
+  const ua = require('../common.js').ua;
+
   /**
    * The request information for updating our server count on bot list websites.
    * @private
@@ -95,6 +97,7 @@ function WebStats() {
       headers: {
         'Authorization': auth.discordBotsOrgToken,
         'content-type': 'application/json',
+        'User-Agent': ua,
       },
     },
     {
@@ -105,6 +108,7 @@ function WebStats() {
       headers: {
         'Authorization': 'Bot ' + auth.discordBotListComToken,
         'content-type': 'application/json',
+        'User-Agent': ua,
       },
     },
     {
@@ -115,6 +119,7 @@ function WebStats() {
       headers: {
         'Authorization': auth.discordBotsGGToken,
         'content-type': 'application/json',
+        'User-Agent': ua,
       },
     },
     {
@@ -125,16 +130,18 @@ function WebStats() {
       headers: {
         'Authorization': auth.botsOnDiscordXYZKey,
         'content-type': 'application/json',
+        'User-Agent': ua,
       },
     },
     {
       protocol: 'https:',
       host: 'divinediscordbots.com',
-      path: '/bot/318552464356016131/stats',
+      path: '/bot/{id}/stats',
       method: 'POST',
       headers: {
         'Authorization': auth.divineDiscordBotsComToken,
         'content-type': 'application/json',
+        'User-Agent': ua,
       },
     },
   ];

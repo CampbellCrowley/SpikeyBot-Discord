@@ -39,6 +39,9 @@ function WebProxy() {
     host: 'discordapp.com',
     path: '/api/oauth2/token',
     method: 'POST',
+    headers: {
+      'User-Agent': require('../common.js').ua,
+    },
   };
   /**
    * The url to send a request to the discord api.
@@ -53,6 +56,9 @@ function WebProxy() {
     host: 'discordapp.com',
     path: '/api',
     method: 'GET',
+    headers: {
+      'User-Agent': require('../common.js').ua,
+    },
   };
 
   const pathPorts = {
@@ -664,6 +670,7 @@ function WebProxy() {
     host.path = `/api${path}`;
     host.headers = {
       'Authorization': `${loginInfo.token_type} ${loginInfo.access_token}`,
+      'User-Agent': self.common.ua,
     };
     discordRequest('', cb, host);
   }
