@@ -342,15 +342,16 @@ class HungryGames {
     const iTime = Date.now();
     const finalMembers = [];
     const self = this;
-    if (!Array.isArray(excluded)) excluded = [];
     const memList = Array.isArray(members) ? members : members.array();
+    const large = memList.length >= HungryGames.largeServerCount;
+    if (large || !Array.isArray(excluded)) excluded = [];
 
     const memberIterate = function(obj) {
       if (obj.isNPC) return;
       if (included && excluded && !included.includes(obj.user.id) &&
           !excluded.includes(obj.user.id)) {
         if (excludeByDefault) {
-          excluded.push(obj.user.id);
+          if (!large) excluded.push(obj.user.id);
         } else {
           included.push(obj.user.id);
         }
@@ -728,6 +729,19 @@ class HungryGames {
     this.messages.shutdown();
   }
 }
+
+/**
+ * Games with more than this many members is considered large, and will have
+ * some features disabled in order to improve performance.
+ *
+ * @public
+ * @static
+ * @type {number}
+ * @constant
+ * @default
+ */
+HungryGames.largeServerCount = 20000;
+
 /**
  * @description Wrapper for normal `require()` but also deletes cache reference
  * to object before requiring. This forces the object to be updated.

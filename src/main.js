@@ -3028,7 +3028,7 @@ function Main() {
         output.push(
             'Guild ' + channel.type + ' Channel: `' +
             channel.name.replace(/`/g, '\\`') + '` with ' +
-            channel.members.size + ' members, in guild `' +
+            channel.memberCount + ' members, in guild `' +
             channel.guild.name.replace(/`/g, '\\`') + '` (' + channel.guild.id +
             ')' + additional);
       } else {
@@ -3038,7 +3038,7 @@ function Main() {
     if (guild) {
       output.push(
           'Guild: `' + guild.name.replace(/`/g, '\\`') + '` has ' +
-          guild.members.size + ' members.');
+          guild.memberCount + ' members.');
     }
     if (output.length > 0) {
       return output.join('\n');

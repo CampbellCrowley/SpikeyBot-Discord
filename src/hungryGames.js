@@ -781,14 +781,14 @@ function HG() {
    */
   function mkCmd(cb) {
     return function(msg) {
-      if (msg.guild.memberCount > 20000) {
+      /* if (msg.guild.memberCount > 20000) {
         self.common.reply(
             msg,
             'Sorry, but HG has been temporarily disabled on servers larger' +
                 ' than 20000 people.',
             'More information on my support server.');
         return;
-      }
+      } */
       const id = msg.guild.id;
       hg.fetchGame(id, (game) => {
         if (game) {
@@ -1123,11 +1123,15 @@ function HG() {
         if (m && m.partial) m.fetch();
         return m && !m.deleted;
       });
-      g.excludedUsers = g.excludedUsers.filter((u) => {
-        const m = msg.guild.members.get(u);
-        if (m && m.partial) m.fetch();
-        return m && !m.deleted;
-      });
+      if (msg.guild.memberCount >= HungryGames.largeServerCount) {
+        g.excludedUsers = [];
+      } else {
+        g.excludedUsers = g.excludedUsers.filter((u) => {
+          const m = msg.guild.members.get(u);
+          if (m && m.partial) m.fetch();
+          return m && !m.deleted;
+        });
+      }
       hg.refresh(msg.guild, done);
     } else {
       hg.create(msg.guild, (game) => {
@@ -2679,6 +2683,8 @@ function HG() {
     const iTime = Date.now();
     const tmp = [];
     let npcs = [];
+    const large =
+        self.client.guilds.get(id).memberCount >= HungryGames.largeServerCount;
     switch (users) {
       case 'everyone':
         users = game.includedUsers;
@@ -2721,9 +2727,10 @@ function HG() {
       const start = Date.now();
       for (i; i >= 0 && Date.now() - start < hg.maxDelta; i--) {
         if (i < numUsers) {
-          response.push(excludeIterate(game, users[i], onlyError));
+          response.push(excludeIterate(game, users[i], onlyError, large));
         } else {
-          response.push(excludeIterate(game, npcs[i - numUsers], onlyError));
+          response.push(
+              excludeIterate(game, npcs[i - numUsers], onlyError, large));
         }
       }
       if (i >= 0) {
@@ -2760,9 +2767,11 @@ function HG() {
    * @param {string|HungryGames~Player|HungryGames~NPC} obj Player for this
    * iteration.
    * @param {boolean} [onlyError=false] Only add error messages to response.
+   * @param {boolean} [large=false] Is this a large game where excluded users
+   * are not tracked.
    * @returns {string} Response text for the user performing the operation.
    */
-  function excludeIterate(game, obj, onlyError = false) {
+  function excludeIterate(game, obj, onlyError = false, large = false) {
     if (!obj || obj === 'undefined') return '';
     const response = [];
     if (typeof obj === 'string') {
@@ -2788,7 +2797,8 @@ function HG() {
         return `${response.join('\n')}\n`;
       }
     }
-    if (game.excludedUsers.includes(obj.id)) {
+    if ((!large && game.excludedUsers.includes(obj.id)) ||
+        (large && !game.includedUsers.includes(obj.id))) {
       if (!onlyError) {
         response.push(`${obj.username} is already excluded.`);
       }
@@ -2807,7 +2817,7 @@ function HG() {
           game.includedNPCs.splice(includeIndex, 1);
         }
       } else {
-        game.excludedUsers.push(obj.id);
+        if (!large) game.excludedUsers.push(obj.id);
         if (!onlyError) {
           response.push(`${obj.username} added to blacklist.`);
         }
@@ -2955,6 +2965,12 @@ function HG() {
     const iTime = Date.now();
     const tmp = [];
     let npcs = [];
+    const large =
+        self.client.guilds.get(id).memberCount >= HungryGames.largeServerCount;
+    if (large && typeof users === 'string') {
+      cb('Too many members');
+      return;
+    }
     switch (users) {
       case 'everyone':
         users = game.excludedUsers;
@@ -3399,6 +3415,13 @@ function HG() {
         return 'That is not a valid value for ' + option +
             ', which requires true or false. (Currently ' + obj[option] + ')';
       } else {
+        if (option == 'excludeNewUsers' &&
+            self.client.guilds.get(id).memberCount >=
+                HungryGames.largeServerCount) {
+          obj[option] = true;
+          return 'Due to performance issues, large servers must exclude new ' +
+              'users by default.';
+        }
         const old = obj[option];
         obj[option] = value;
         if (option == 'includeBots') {
