@@ -71,6 +71,10 @@ function HGWeb() {
     if (prev !== hg_) {
       unlinkHG();
       hg_.on('dayStateChange', dayStateChange);
+      hg_.on('toggleOption', handleOptionChange);
+      hg_.on('create', broadcastGame);
+      hg_.on('refresh', broadcastGame);
+      hg_.on('reset', broadcastGame);
       hg_.on('shutdown', unlinkHG);
     }
     return hg_;
@@ -84,6 +88,10 @@ function HGWeb() {
   function unlinkHG() {
     if (!hg_) return;
     hg_.removeListener('dayStateChange', dayStateChange);
+    hg_.removeListener('toggleOption', handleOptionChange);
+    hg_.removeListener('create', broadcastGame);
+    hg_.removeListener('refresh', broadcastGame);
+    hg_.removeListener('reset', broadcastGame);
     hg_.removeListener('shutdown', unlinkHG);
   }
 
@@ -393,10 +401,9 @@ function HGWeb() {
    * @private
    * @param {HungryGames} hg HG object firing the event.
    * @param {string} gId Guild id of the state change.
-   * @listens HungryGames#dayStateChange
+   * @listens HG#dayStateChange
    */
   function dayStateChange(hg, gId) {
-    const keys = Object.keys(sockets);
     const game = hg.getHG().getGame(gId);
     let eventState = null;
     if (!game) return;
@@ -405,19 +412,63 @@ function HGWeb() {
       eventState =
           game.currentGame.day.events[game.currentGame.day.state - 2].state;
     }
+    guildBroadcast(
+        gId, 'dayState', game.currentGame.day.num, game.currentGame.day.state,
+        eventState);
+  }
+
+  /**
+   * Broadcast a message to all relevant clients.
+   *
+   * @private
+   * @param {string} gId Guild ID to broadcast message for.
+   * @param {string} event The name of the event to broadcast.
+   * @param {*} args Data to send in broadcast.
+   */
+  function guildBroadcast(gId, event, ...args) {
+    const keys = Object.keys(sockets);
     for (const i in keys) {
       if (!sockets[keys[i]].cachedGuilds) continue;
       if (sockets[keys[i]].cachedGuilds.find((g) => g === gId)) {
-        sockets[keys[i]].emit(
-            'dayState', gId, game.currentGame.day.num,
-            game.currentGame.day.state, eventState);
+        sockets[keys[i]].emit(event, gId, ...args);
       }
     }
     if (ioClient) {
-      ioClient.emit(
-          '_guildBroadcast', gId, 'dayState', gId, game.currentGame.day.num,
-          game.currentGame.day.state, eventState);
+      ioClient.emit('_guildBroadcast', gId, event, gId, ...args);
     }
+  }
+
+  /**
+   * Handles an option being changed and broadcasting the update to clients.
+   *
+   * @private
+   * @listens HG#toggleOption
+   * @param {HungryGames} hg HG object firing the event.
+   * @param {string} gId Guild ID of the option change.
+   * @param {string} opt1 Option key.
+   * @param {string} opt2 Option second key or value.
+   * // @param {string} [opt3] Option value if object option.
+   */
+  function handleOptionChange(hg, gId, opt1, opt2) {
+    if (opt1 === 'teamSize') {
+      broadcastGame(hg, gId);
+    } else {
+      guildBroadcast(gId, 'option', opt1, opt2);
+    }
+  }
+
+  /**
+   * Handles broadcasting the game data to all relevant clients.
+   *
+   * @private
+   * @listens HG#create
+   * @listens HG#refresh
+   * @param {HungryGames} hg HG object firing event.
+   * @param {string} gId The guild ID to data for.
+   */
+  function broadcastGame(hg, gId) {
+    const game = hg.getHG().getGame(gId);
+    guildBroadcast(gId, 'game', game && game.serializable);
   }
 
   /**
@@ -1045,13 +1096,7 @@ function HGWeb() {
       cb(null, response, game && game.options[option],
           game && game.serializable);
     } else {
-      if (game) {
-        if (option === 'teamSize') {
-          socket.emit('game', gId, game.serializable);
-        } else {
-          socket.emit('option', gId, option, game.options[option]);
-        }
-      } else {
+      if (!game) {
         socket.emit('message', response);
       }
     }
@@ -1080,8 +1125,6 @@ function HGWeb() {
     hg().createGame(gId, (game) => {
       if (typeof cb === 'function') {
         cb(game ? null : 'ATTEMPT_FAILED', game && game.serializable);
-      } else {
-        socket.emit('game', gId, game && game.serializable);
       }
     });
   }
@@ -1111,8 +1154,6 @@ function HGWeb() {
     const game = hg().getHG().getGame(gId);
     if (typeof cb === 'function') {
       cb(null, response, game && game.serializable);
-    } else {
-      socket.emit('game', gId, game && game.serializable);
     }
   }
   this.resetGame = resetGame;

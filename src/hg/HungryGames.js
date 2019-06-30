@@ -253,6 +253,7 @@ class HungryGames {
 
   /**
    * @description Create a new GuildGame.
+   * @fires HG#create
    * @public
    * @param {external:Discord~Guild|string} guild Guild object, or ID to create
    * a game for.
@@ -281,11 +282,13 @@ class HungryGames {
           this._parent.client.user.id, guild.id, opts,
           `${guild.name}'s Hungry Games`, res);
       cb(this._games[guild.id]);
+      this._parent._fire('create', guild.id);
     });
   }
 
   /**
    * @description Create a new Game for a guild, and refresh the player lists.
+   * @fires HG#refresh
    * @public
    * @param {external:Discord~Guild|string} guild Guild object, or ID to refresh
    * a game for.
@@ -311,6 +314,7 @@ class HungryGames {
           (res) => {
             game.currentGame = new HungryGames.Game(name, res, teams);
             cb(game);
+            this._parent._fire('refresh', guild.id);
           });
     });
   }
@@ -412,6 +416,7 @@ class HungryGames {
   /**
    * Reset the specified category of data from a game.
    *
+   * @fires HG#reset
    * @public
    * @param {string} id The id of the guild to modify.
    * @param {string} command The category of data to reset.
@@ -426,6 +431,7 @@ class HungryGames {
       return 'A game is currently in progress. Please end it before ' +
           'reseting game data.';
     }
+    this._parent._fire('reset', id, command);
     if (command == 'all') {
       game._stats.fetchGroupList((err, list) => {
         if (err) {

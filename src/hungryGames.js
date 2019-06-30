@@ -699,7 +699,7 @@ function HG() {
     process.removeListener('SIGINT', sigint);
     process.removeListener('SIGHUP', sigint);
     process.removeListener('SIGTERM', sigint);
-    fire('shutdown');
+    self._fire('shutdown');
 
     Object.keys(eventHandlers).forEach((el) => delete eventHandlers[el]);
 
@@ -1798,7 +1798,7 @@ function HG() {
     const iTime = Date.now();
     sim.go(() => {
       // Signal ready to display events.
-      fire('dayStateChange', id);
+      self._fire('dayStateChange', id);
       const embed = new self.Discord.MessageEmbed();
       if (game.currentGame.day.num === 0) {
         embed.setTitle(hg.messages.get('bloodbathStart'));
@@ -1834,6 +1834,7 @@ function HG() {
     }
     /**
      * @description Callback for every time the game state is modified.
+     * @fires HG#dayStateChange
      * @private
      * @type {HungryGames~GuildGame~StateUpdateCB}
      * @param {boolean} dayComplete Has the day ended.
@@ -1858,7 +1859,7 @@ function HG() {
           }, (hg.getGame(id).options.delayDays > 2000 ? 1200 : 100));
         }
       } else {
-        fire('dayStateChange', id);
+        self._fire('dayStateChange', id);
         printEvent(msg, id);
       }
     }
@@ -2652,6 +2653,7 @@ function HG() {
   /**
    * Removes users from a games of a given guild.
    *
+   * @fires HG#refresh
    * @public
    * @param {string|string[]|Discord~User[]|HungryGames~NPC[]} users The users
    * to exclude, or
@@ -2744,6 +2746,7 @@ function HG() {
           response.join('') :
           `Succeeded without errors (${num} excluded)`;
       cb(finalRes);
+      self._fire('refresh', id);
     };
 
     setTimeout(chunk);
@@ -2907,7 +2910,6 @@ function HG() {
       self.common.reply(
           msg,
           'You must specify who you wish for me to include in the next game.');
-      return;
     } else {
       const mentionedRoleUsers = new self.Discord.UserStore(
           self.client,
@@ -2921,13 +2923,13 @@ function HG() {
       self.includeUsers(mentions, id, (response) => {
         self.common.reply(msg, response);
       });
-      return;
     }
   }
 
   /**
    * Adds a user back into the next game.
    *
+   * @fires HG#refresh
    * @public
    * @param {string|string[]|Discord~User[]|HungryGames~NPC[]} users The users
    * to include, 'everyone' to include all users, 'online' to include online
@@ -3020,6 +3022,7 @@ function HG() {
           response.join('') :
           `Succeeded without errors (${num} included)`;
       cb(finalRes);
+      self._fire('refresh', id);
     };
 
     setTimeout(chunk);
@@ -3328,6 +3331,7 @@ function HG() {
    * Recurse through an object to change a certain child value based off a given
    * array of words.
    *
+   * @fires HG#toggleOption
    * @private
    * @param {HungryGames~GuildGame.options} obj The object with the values to
    * change.
@@ -3341,10 +3345,11 @@ function HG() {
    * @param {string} id The id of the guild this was triggered for.
    * @param {{min: number, max: number}} [range] Allowable range for values that
    * are numbers.
+   * @param {string[]} [keys=[]] List of previous option keys.
    * @returns {string} Message saying what happened. Can be an error message.
    */
   function changeObjectValue(
-      obj, defaultObj, option, value, values, id, range) {
+      obj, defaultObj, option, value, values, id, range, keys = []) {
     let type = typeof defaultObj[option];
     if (type !== 'undefined' &&
         typeof defaultObj[option].value !== 'undefined') {
@@ -3374,6 +3379,7 @@ function HG() {
 
         const old = obj[option];
         obj[option] = value;
+        self._fire('toggleOption', id, ...keys, option, value);
         if (option == 'teamSize' && value != 0) {
           return 'Set ' + option + ' to ' + obj[option] + ' from ' + old +
               '\nTo reset teams to the correct size, type "' +
@@ -3396,6 +3402,7 @@ function HG() {
         if (option == 'includeBots') {
           createGame(null, id, true);
         }
+        self._fire('toggleOption', id, ...keys, option, value);
         return `Set ${option} to ${obj[option]} from ${old}`;
       }
     } else if (type === 'string') {
@@ -3408,6 +3415,7 @@ function HG() {
       } else {
         const old = obj[option];
         obj[option] = value;
+        self._fire('toggleOption', id, ...keys, option, value);
         return 'Set ' + option + ' to ' + obj[option] + ' from ' + old;
       }
     } else if (type === 'object') {
@@ -3417,7 +3425,8 @@ function HG() {
       } else {
         return changeObjectValue(
             obj[option], defaultObj[option].value || defaultObj[option],
-            values[1], values[2], values.slice(3), id, range);
+            values[1], values[2], values.slice(3), id, range,
+            keys.push(option));
       }
     } else {
       return 'Changing the value of this option does not work yet. (' + option +
@@ -6755,7 +6764,7 @@ function HG() {
    * @param {string} evt The event to fire.
    * @param {...*} args Arguments for the event.
    */
-  function fire(evt, ...args) {
+  this._fire = function(evt, ...args) {
     if (!eventHandlers[evt]) return;
     eventHandlers[evt].forEach((el) => {
       try {
@@ -6765,7 +6774,7 @@ function HG() {
         console.error(err);
       }
     });
-  }
+  };
 
   /**
    * Catch process exiting so we can save if necessary, and remove other
