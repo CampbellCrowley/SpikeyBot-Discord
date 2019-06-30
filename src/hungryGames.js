@@ -6681,6 +6681,14 @@ function HG() {
      * @returns {Promise} Promise from Jimp with image data.
      */
     function toJimp(path) {
+      if (typeof path === 'string' && path.startsWith('http')) {
+        path = {
+          url: path,
+          headers: {
+            'User-Agent': self.common.ua,
+          },
+        };
+      }
       return Jimp.read(path).catch((err) => {
         if (fromCache) {
           self.error('Failed to read from cache: ' + path);
