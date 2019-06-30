@@ -427,6 +427,21 @@ class HungryGames {
           'reseting game data.';
     }
     if (command == 'all') {
+      game._stats.fetchGroupList((err, list) => {
+        if (err) {
+          this._parent.error('Failed to fetch stat group list: ' + id);
+          console.error(err);
+          return;
+        }
+        list.forEach((el) => game._stats.fetchGroup(el, (err, group) => {
+          if (err) {
+            this._parent.error('Failed to fetch group: ' + id + '/' + el);
+            console.error(err);
+            return;
+          }
+          group.reset();
+        }));
+      });
       delete this._games[id];
       rimraf(this._parent.common.guildSaveDir + id + this.hgSaveDir, (err) => {
         if (!err) return;
@@ -436,6 +451,23 @@ class HungryGames {
         console.error(err);
       });
       return 'Resetting ALL Hungry Games data for this server!';
+    } else if (command == 'stats') {
+      game._stats.fetchGroupList((err, list) => {
+        if (err) {
+          this._parent.error('Failed to fetch stat group list: ' + id);
+          console.error(err);
+          return;
+        }
+        list.forEach((el) => game._stats.fetchGroup(el, (err, group) => {
+          if (err) {
+            this._parent.error('Failed to fetch group: ' + id + '/' + el);
+            console.error(err);
+            return;
+          }
+          group.reset();
+        }));
+      });
+      return 'Resetting ALL Hungry Games stats for this server!';
     } else if (command == 'events') {
       game.customEvents = {bloodbath: [], player: [], arena: [], weapon: {}};
       return 'Resetting ALL Hungry Games events for this server!';
@@ -469,7 +501,8 @@ class HungryGames {
           'current {deletes all data about the current game},\noptions ' +
           '{resets all options to default values},\nteams {delete all ' +
           'teams and creates new ones},\nusers {delete data about where to ' +
-          'put users when creating a new game},\nnpcs {delete all NPCS}.';
+          'put users when creating a new game},\nnpcs {delete all NPCS}.' +
+          '\nstats {delete all stats and groups}.';
     }
   }
 
