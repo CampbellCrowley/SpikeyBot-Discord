@@ -1,14 +1,32 @@
 {
   "bite": {
+    "description": "Sink some teeth into the enemy.",
     "attack": 1.0,
     "defense": 1.0
   },
   "scratch": {
+    "description": "Use those claws for their intended purpose.",
     "attack": 1.0,
     "defense": 1.0
   },
   "peck": {
+    "description": "That beak is sharper than it appears.",
     "attack": 1.0,
     "defense": 1.0
+  },
+  "pointyEnd": {
+    "description": "It's not that hard to figure out, just stick 'em with the pointy end.",
+    "attack": 1.1,
+    "defense": 0.9
+  },
+  "trundle": {
+    "description": "Is that rock is moving. Oh no, that's not a rock!",
+    "attack": 0.9,
+    "defense": 1.1
+  },
+  "hiddenBlade": {
+    "description": "They'll never see it coming.",
+    "attack": 1.125,
+    "defense": 0.875
   }
 }

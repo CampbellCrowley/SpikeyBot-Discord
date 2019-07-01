@@ -14,8 +14,10 @@ class Pet {
    * @param {string} owner ID of the user that owns this pet.
    * @param {string} name The name of this pet.
    * @param {string} species The species of this pet.
+   * @param {?string} [petClass=null] The class name of this pet or null for
+   * none.
    */
-  constructor(owner, name, species) {
+  constructor(owner, name, species, petClass) {
     /**
      * @description ID of the owner of this pet.
      * @type {string}
@@ -34,6 +36,13 @@ class Pet {
      * @public
      */
     this.species = species;
+
+    /**
+     * @description The character class for this pet.
+     * @type {?string}
+     * @public
+     */
+    this.petClass = petClass || null;
 
     /**
      * @description The ID of this pet. Does not check for uniqueness, but

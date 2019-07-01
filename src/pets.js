@@ -10,10 +10,12 @@ delete require.cache[require.resolve('./pets/Constants.js')];
 delete require.cache[require.resolve('./pets/Pet.js')];
 delete require.cache[require.resolve('./pets/BasePets.js')];
 delete require.cache[require.resolve('./pets/BaseMoves.js')];
+delete require.cache[require.resolve('./pets/BasePetClasses.js')];
 const Constants = require('./pets/Constants.js');
 const Pet = require('./pets/Pet.js');
 const BasePets = require('./pets/BasePets.js');
 const BaseMoves = require('./pets/BaseMoves.js');
+const BasePetClasses = require('./pets/BasePetClasses.js');
 
 const confirm = '✅';
 const cancel = '❌';
@@ -471,6 +473,7 @@ class Pets extends SubModule {
 Pets.Pet = Pet;
 Pets.BasePets = BasePets;
 Pets.BaseMoves = BaseMoves;
+Pets.BasePetClasses = BasePetClasses;
 Pets.Constants = Constants;
 Pets.Strings = Strings;
 

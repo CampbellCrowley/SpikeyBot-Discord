@@ -1,0 +1,41 @@
+{
+  "warrior": {
+    "id": "warrior",
+    "name": "Warrior",
+    "shortDescription": "Stick them with the pointy end",
+    "longDescription": "Your companion understands the importance of balance. A strong attack is pointless if you aren't alive to fight back.",
+    "attack": 10,
+    "defense": 10,
+    "speed": 5,
+    "health": 50,
+    "moves": [
+      "pointyEnd"
+    ]
+  },
+  "tank": {
+    "id": "tank",
+    "name": "Tank",
+    "shortDescription": "Damage? What damage?",
+    "longDescription": "Is that armor on your pet? No, that's not possible. Just a trick of the light surely. Come to think of it, you can't remember the last time they were injured. Could this be related?",
+    "attack": 4,
+    "defense": 18,
+    "speed": 3,
+    "health": 50,
+    "moves": [
+      "trundle"
+    ]
+  },
+  "assassin": {
+    "id": "assassin",
+    "name": "Assassin",
+    "shortDescription": "Can't Touch This",
+    "longDescription": "Fresh new kicks and pants, your pet makes every battle look like a dance. If your enemies can't go with the flow in a spin, if they can't move to this, then they are dead.",
+    "attack": 12,
+    "defense": 3,
+    "speed": 10,
+    "health": 50,
+    "moves": [
+      "hiddenBlade"
+    ]
+  }
+}
