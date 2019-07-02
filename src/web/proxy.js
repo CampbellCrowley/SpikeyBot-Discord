@@ -405,7 +405,8 @@ function WebProxy() {
         // this...
         if (loginInfo[session].expires_at - 6 * 24 * 60 * 60 * 1000 <
             Date.now()) {
-          refreshToken(loginInfo[session].refresh_token, (err, data) => {
+          const info = loginInfo[session];
+          refreshToken(info.refresh_token, info.scope, (err, data) => {
             if (!err) {
               let parsed;
               try {
@@ -755,7 +756,7 @@ function WebProxy() {
     } else {
       loginInfo.refreshTimeout = setTimeout(function() {
         self.debug('Refreshing token for session: ' + loginInfo.session);
-        refreshToken(loginInfo.refresh_token, (err, data) => {
+        refreshToken(loginInfo.refresh_token, loginInfo.scope, (err, data) => {
           let parsed;
           if (!err) {
             try {
@@ -777,10 +778,11 @@ function WebProxy() {
    * @private
    * @param {string} refreshToken_ The refresh token used for refreshing
    * credentials.
+   * @param {string} scope Scope to refresh.
    * @param {basicCallback} cb The callback from the https request, with an
    * error argument, and a data argument.
    */
-  function refreshToken(refreshToken_, cb) {
+  function refreshToken(refreshToken_, scope, cb) {
     const data = {
       /* eslint-disable @typescript-eslint/camelcase */
       client_id: clientId,
@@ -788,6 +790,7 @@ function WebProxy() {
       grant_type: 'refresh_token',
       refresh_token: refreshToken_,
       redirect_uri: 'https://www.spikeybot.com/redirect',
+      scope: scope,
       /* eslint-enable @typescript-eslint/camelcase */
     };
     discordRequest(data, cb);
