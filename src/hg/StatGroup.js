@@ -585,8 +585,8 @@ class StatGroup {
     };
     resetQueue();
     const toSend = global.sqlCon.format(
-        'DELETE FROM HGStats WHERE guildId=? AND groupID=?;',
-        [this.guild, this.id]);
+        'DELETE FROM HGStats WHERE botId=? AND guildId=? AND groupID=?;',
+        [this.bot, this.guild, this.id]);
     global.sqlCon.query(toSend, (err) => {
       if (err) console.error(err);
     });
