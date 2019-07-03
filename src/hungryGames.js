@@ -6053,11 +6053,12 @@ function HG() {
             const iU =
                 game.currentGame.includedUsers.find((u) => u.id === el.id);
             if (iU) {
-              name = game.options.useNicknames && iU.nickname || iU.name;
+              name = (game.options.useNicknames && iU.nickname) || iU.name;
             } else {
               const m = msg.guild.members.get(el.id);
-              name = m ? (game.options.useNicknames && m.nickname) || m.name :
-                         el.id;
+              name = m ?
+                  (game.options.useNicknames && m.nickname) || m.user.username :
+                  el.id;
             }
           }
           return `${i+1}) ${name}: ${el.get(col)}`;
