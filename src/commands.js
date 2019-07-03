@@ -302,47 +302,38 @@ function Command() {
         uIds.forEach((el) => {
           const u = self.client.users.get(el);
           if (u) msg.softMentions.users.add(u);
-        });
-        if (msg.guild) {
-          uIds.forEach((el) => {
+          if (msg.guild) {
             const m = msg.guild.members.get(el);
             if (m) msg.softMentions.members.add(m);
-          });
-          uIds.forEach((el) => {
-            const m = msg.guild.roles.get(el);
-            if (m) msg.softMentions.roles.add(m);
-          });
-        }
+            const r = msg.guild.roles.get(el);
+            if (r) msg.softMentions.roles.add(r);
+          }
+        });
       }
       if (msg.guild) {
         const sT = msg.text.toLocaleLowerCase();
-        if (msg.guild.members) {
-          msg.guild.members.forEach((el) => {
-            if (sT.indexOf(el.user.username.toLocaleLowerCase()) > -1) {
-              // sT = sT.replace(el.user.username.toLocaleLowerCase(), '');
-              msg.softMentions.members.add(el);
-              msg.softMentions.users.add(el.user);
-            } else if (sT.indexOf(el.user.tag.toLocaleLowerCase()) > -1) {
-              // sT = sT.replace(el.user.tag.toLocaleLowerCase(), '');
-              msg.softMentions.members.add(el);
-              msg.softMentions.users.add(el.user);
-            } else if (
-              el.nickname &&
-                sT.indexOf(el.nickname.toLocaleLowerCase()) > -1) {
-              // sT = sT.replace(el.nickname.toLocaleLowerCase(), '');
-              msg.softMentions.members.add(el);
-              msg.softMentions.users.add(el.user);
-            }
-          });
-        }
-        if (msg.guild.roles) {
-          msg.guild.roles.forEach((el) => {
-            if (sT.indexOf(el.name.toLocaleLowerCase()) > -1) {
-              // sT = sT.replace(el.role.name.toLocaleLowerCase(), '');
-              msg.softMentions.roles.add(el);
-            }
-          });
-        }
+        msg.guild.members.forEach((el) => {
+          if (sT.indexOf(el.user.username.toLocaleLowerCase()) > -1) {
+            // sT = sT.replace(el.user.username.toLocaleLowerCase(), '');
+            msg.softMentions.members.add(el);
+            msg.softMentions.users.add(el.user);
+          } else if (sT.indexOf(el.user.tag.toLocaleLowerCase()) > -1) {
+            // sT = sT.replace(el.user.tag.toLocaleLowerCase(), '');
+            msg.softMentions.members.add(el);
+            msg.softMentions.users.add(el.user);
+          } else if (
+            el.nickname && sT.indexOf(el.nickname.toLocaleLowerCase()) > -1) {
+            // sT = sT.replace(el.nickname.toLocaleLowerCase(), '');
+            msg.softMentions.members.add(el);
+            msg.softMentions.users.add(el.user);
+          }
+        });
+        msg.guild.roles.forEach((el) => {
+          if (sT.indexOf(el.name.toLocaleLowerCase()) > -1) {
+            // sT = sT.replace(el.role.name.toLocaleLowerCase(), '');
+            msg.softMentions.roles.add(el);
+          }
+        });
       }
       handler(msg);
     };

@@ -556,6 +556,13 @@ function Main() {
        * @returns {boolean} True if found channel, false otherwise.
        */
       self.client.sendTo = sendTo;
+      /**
+       * Sweep users from cache to release memory.
+       * @see {@link Main~sweepUsers}
+       *
+       * @public
+       */
+      self.client.sweepUsers = sweepUsers;
       /* eslint-enable no-unused-vars */
     }
     self.bot.getStats = getAllStats;
@@ -3243,9 +3250,21 @@ function Main() {
       return;
     }
     const num = self.client.users.size;
-    sweepUsers();
-    self.common.reply(
-        msg, 'Sweeping users.', `${num} --> ${self.client.users.size}`);
+    if (self.client.shard) {
+      self.client.shard.broadcastEval('this.sweepUsers();')
+          .then(() => {
+            self.common.reply(
+                msg, 'Sweeping users.', `${num} --> ${self.client.users.size}`);
+          })
+          .catch((err) => {
+            self.error('Failed to sweep users on shards.');
+            console.error(err);
+          });
+    } else {
+      sweepUsers();
+      self.common.reply(
+          msg, 'Sweeping users.', `${num} --> ${self.client.users.size}`);
+    }
   }
   /**
    * Cause stale users to be purged from cache.

@@ -274,16 +274,26 @@ class HungryGames {
         opts[key] = this.defaultOptions[key].value;
       }
     }
+    const self = this;
+    const getAll = function(members) {
+      self.getAllPlayers(members, [], false, [], false, [], (res) => {
+        self._games[guild.id] = new HungryGames.GuildGame(
+            self._parent.client.user.id, guild.id, opts,
+            `${guild.name}'s Hungry Games`, res);
+        cb(self._games[guild.id]);
+        self._parent._fire('create', guild.id);
+      });
+    };
     if (guild.memberCount > 100) {
       opts.excludeNewUsers = true;
+      getAll(guild.members);
+    } else {
+      guild.members.fetch().then(getAll).catch((err) => {
+        this._parent.error('Failed to fetch all users for guild: ' + guild.id);
+        console.error(err);
+        cb(null);
+      });
     }
-    this.getAllPlayers(guild.members, [], false, [], false, [], (res) => {
-      this._games[guild.id] = new HungryGames.GuildGame(
-          this._parent.client.user.id, guild.id, opts,
-          `${guild.name}'s Hungry Games`, res);
-      cb(this._games[guild.id]);
-      this._parent._fire('create', guild.id);
-    });
   }
 
   /**
@@ -308,14 +318,28 @@ class HungryGames {
       const name = (game.currentGame && game.currentGame.customName) ||
           (`${guild.name}'s Hungry Games`);
       const teams = game.currentGame && game.currentGame.teams;
-      this.getAllPlayers(
-          guild.members, game.excludedUsers, game.options.includeBots,
-          game.includedUsers, game.options.excludeNewUsers, game.includedNPCs,
-          (res) => {
-            game.currentGame = new HungryGames.Game(name, res, teams);
-            cb(game);
-            this._parent._fire('refresh', guild.id);
-          });
+
+      const self = this;
+      const getAll = function(members) {
+        self.getAllPlayers(
+            members, game.excludedUsers, game.options.includeBots,
+            game.includedUsers, game.options.excludeNewUsers, game.includedNPCs,
+            (res) => {
+              game.currentGame = new HungryGames.Game(name, res, teams);
+              cb(game);
+              self._parent._fire('refresh', guild.id);
+            });
+      };
+      if (game.options.excludeNewUsers) {
+        getAll(guild.members);
+      } else {
+        guild.members.fetch().then(getAll).catch((err) => {
+          this._parent.error(
+              'Failed to fetch all users for guild: ' + guild.id);
+          console.error(err);
+          cb(null);
+        });
+      }
     });
   }
 
