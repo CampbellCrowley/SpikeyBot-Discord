@@ -1,6 +1,6 @@
 #!/bin/bash
 
-STAGED_SCRIPTS=$(git diff --cached --name-only --diff-filter=ACM | grep ".js$" | tr '\n' ' ')
+STAGED_SCRIPTS=$(git diff --cached --name-only --diff-filter=ACM | grep \".js$\" | grep -v eslintrc.js | grep -v \"^docs/\" | tr '\\n' ' ')
 STAGED_DATA=$(git diff --cached --name-only --diff-filter=ACM | grep ".json$" | tr '\n' ' ')
 
 # if [[ "$STAGED_SCRIPTS" = "" ]]; then
@@ -32,7 +32,7 @@ STAGED_DATA=$(git diff --cached --name-only --diff-filter=ACM | grep ".json$" | 
 # fi
 
 if [[ "$STAGED_SCRIPTS" != "" || "$STAGED_DATA" != "" ]]; then
-  echo "Linting: $STAGED_SCRIPTS"
+  echo -n "> Linting: $STAGED_SCRIPTS"
   npm run lintforcommit
   if [[ "$?" != 0 ]]; then
     exit 1
