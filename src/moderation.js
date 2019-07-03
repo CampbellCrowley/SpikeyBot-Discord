@@ -213,9 +213,12 @@ class Moderation extends SubModule {
         msg.content === '`Autoplaying...`') {
       return;
     }
+    const files = msg.attachments.map((el) => el.url);
     modLog.output(
         msg.guild, 'messageDelete', null, null,
-        `${tag}'s (${id}) message in #${channel}`, msg.content);
+        `${tag}'s (${id}) message in #${channel}`, files.length > 0 ?
+            `${msg.content.substr(0, 100)}\n\nFiles: ${files.join(' ')}` :
+            msg.content);
   }
   /**
    * @description Handle logging when multiple messages are deleted.
