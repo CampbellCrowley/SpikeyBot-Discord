@@ -1448,11 +1448,9 @@ function HG() {
     } else if (!myPerms.has(self.Discord.Permissions.FLAGS.SEND_MESSAGES)) {
       return;
     }
-    if (game) game.loading = true;
     if (game && game.reactMessage) {
       self.endReactJoinMessage(id, (err) => {
         if (err) {
-          if (game) game.loading = false;
           self.error(`${err}: ${id}`);
           self.common.reply('React Join Failed', err);
         }
@@ -1460,6 +1458,7 @@ function HG() {
       });
       return;
     }
+    if (game) game.loading = true;
     /**
      * Once the game has finished loading all necessary data, start it if
      * autoplay is enabled.
