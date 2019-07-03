@@ -79,7 +79,7 @@ The below steps outline the minimum required to get the SpikeyBot to run.
 4) Install system dependencies
     - `sudo apt install make libtool autoconf g++ ffmpeg` are required for the default installation.
 5) Install dependencies via NPM
-    - Current version of NPM used is `v6.9.0`, but almost any version should be fine.
+    - Current version of NPM used is `v6.9.2`, but almost any version should be fine.
     - In the `SpikeyBot-Discord` directory, run `npm install`.
 6) Get a bot token from Discord
     - A token for the bot that you are trying to run from [Discord](https://discordapp.com/developers/applications/) is required.

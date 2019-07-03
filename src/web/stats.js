@@ -190,9 +190,7 @@ function WebStats() {
           self.common.log('Failed to send stats (500): ' + req.url, ip);
         } else {
           res.writeHead(200, {'content-type': 'application/json'});
-          const filteredStats = Object.assign({}, stats);
-          filteredStats.activities = 'REDACTED';
-          res.end(JSON.stringify(filteredStats));
+          res.end(JSON.stringify(stats));
           self.common.log('Sent stats: ' + req.url, ip);
         }
       });

@@ -5,7 +5,6 @@ const mathjs = require('mathjs');
 const algebra = require('algebra.js');
 const Jimp = require('jimp');
 const fs = require('fs');
-const mkdirp = require('mkdirp');
 const childProcess = require('child_process');
 require('./subModule.js').extend(Main);  // Extends the SubModule class.
 
@@ -636,9 +635,9 @@ function Main() {
       const dir = self.common.userSaveDir + obj.id + '/timers/';
       const filename = dir + obj.time + '.json';
       if (opt == 'async') {
-        mkAndWrite(filename, dir, JSON.stringify(obj));
+        self.common.mkAndWrite(filename, dir, JSON.stringify(obj));
       } else {
-        mkAndWriteSync(filename, dir, JSON.stringify(obj));
+        self.common.mkAndWriteSync(filename, dir, JSON.stringify(obj));
       }
     });
     self.client.guilds.forEach(function(g) {
@@ -650,82 +649,47 @@ function Main() {
         disabledRiggedCounter: disabledRiggedCounter[g.id],
       };
       if (opt == 'async') {
-        mkAndWrite(filename, dir, JSON.stringify(obj));
+        self.common.mkAndWrite(filename, dir, JSON.stringify(obj));
       } else {
-        mkAndWriteSync(filename, dir, JSON.stringify(obj));
+        self.common.mkAndWriteSync(filename, dir, JSON.stringify(obj));
       }
     });
     if (!self.client.shard || self.client.shard.ids[0] == 0) {
       const dir = './save/';
       const filename = dir + 'rigged-counter.txt';
       if (opt == 'async') {
-        mkAndWrite(filename, dir, self.client.riggedCounter + '');
+        self.common.mkAndWrite(filename, dir, self.client.riggedCounter + '');
       } else {
-        mkAndWriteSync(filename, dir, self.client.riggedCounter + '');
+        self.common.mkAndWriteSync(
+            filename, dir, self.client.riggedCounter + '');
       }
     }
     if (opt == 'async') {
-      mkAndWrite(
+      self.common.mkAndWrite(
           './save/pingHistory.json', './save/', JSON.stringify(pingHistory));
     } else {
-      mkAndWriteSync(
+      self.common.mkAndWriteSync(
           './save/pingHistory.json', './save/', JSON.stringify(pingHistory));
     }
+    sweepUsers();
   };
 
   /**
-   * Write data to a file and make sure the directory exists or create it if it
-   * doesn't. Async.
-   *
-   * @see {@link Main~mkAndWriteSync}
+   * Cause stale users to be purged from cache.
    *
    * @private
-   * @param {string} filename The name of the file including the directory.
-   * @param {string} dir The directory path without the file's name.
-   * @param {string} data The data to write to the file.
    */
-  function mkAndWrite(filename, dir, data) {
-    mkdirp(dir, function(err) {
-      if (err) {
-        self.error('Failed to make directory: ' + dir, 'Main');
-        console.error(err);
-        return;
-      }
-      fs.writeFile(filename, data, function(err2) {
-        if (err2) {
-          self.error('Failed to save timer: ' + filename, 'Main');
-          console.error(err2);
-          return;
-        }
-      });
+  function sweepUsers() {
+    // const now = Date.now();
+    // const maxMsgAge = 15 * 60 * 1000;
+    self.client.users.sweep((user) => {
+      /* return user.lastMessage ?
+          (now - user.lastMessage.createdTimestamp > maxMsgAge ||
+           now - user.lastMessage.editedTimestamp > maxMsgAge) :
+          user.presence.status === 'offline'; */
+      return user.bot || !user.lastMessage ||
+          user.presence.status === 'offline';
     });
-  }
-  /**
-   * Write data to a file and make sure the directory exists or create it if it
-   * doesn't. Synchronous.
-   *
-   * @see {@link Main~mkAndWrite}
-   *
-   * @private
-   * @param {string} filename The name of the file including the directory.
-   * @param {string} dir The directory path without the file's name.
-   * @param {string} data The data to write to the file.
-   */
-  function mkAndWriteSync(filename, dir, data) {
-    try {
-      mkdirp.sync(dir);
-    } catch (err) {
-      self.error('Failed to make directory: ' + dir, 'Main');
-      console.error(err);
-      return;
-    }
-    try {
-      fs.writeFileSync(filename, data);
-    } catch (err) {
-      self.error('Failed to save timer: ' + filename, 'Main');
-      console.error(err);
-      return;
-    }
   }
 
   /**
@@ -2697,33 +2661,37 @@ function Main() {
         self.common.reply(msg, 'Failed to fetch stats.');
         return;
       }
+      const fmtNum = function(num) {
+        const out = [];
+        num *= 1;
+        while (num > 999) {
+          out.push(`,${Math.floor(((num / 1000) % 1) * 1000)}`);
+          num = Math.floor(num / 1000);
+        }
+        return `${num}${out.reverse().join('')}`;
+      };
       const embed = new self.Discord.MessageEmbed();
       embed.setTitle('SpikeyBot Stats');
       embed.setDescription(
           'These statistics are collected from the entire bot, ' +
           'across all shards.');
 
-      const guildString = 'Number of servers: ' + values.numGuilds +
-          '\nLargest Server: ' + values.numLargestGuild +
-          ' members\nNumber of channels: ' + values.numChannels;
+      const guildString = 'Number of servers: ' + fmtNum(values.numGuilds) +
+          '\nLargest Server: ' + fmtNum(values.numLargestGuild) +
+          ' members\nChannels: ' + fmtNum(values.numChannels) + '\nEmojis: ' +
+          fmtNum(values.numEmojis) + '\nVerified: ' +
+          fmtNum(values.numVerified);
       embed.addField('Guilds', guildString, true);
 
-      const userString = 'Users: ' + values.numMembers + '\nCached users: ' +
-          values.numUsers + '\nUsers that are bots: ' + values.numBots +
-          '\nOnline users: ' + values.numUsersOnline;
+      const userString = 'Users: ' + fmtNum(values.numMembers) +
+          '\nCached users: ' + fmtNum(values.numUsers);
       embed.addField('Users', userString, true);
-
-      const actString = 'Activities people are doing: ' +
-          Object.keys(values.activities).length +
-          '\nMost popular activity:\n`' + values.largestActivity.name +
-          '`\n with ' + values.largestActivity.count + ' people.';
-      embed.addField('Activities/Games', actString, true);
 
       const shardUptimes = values.uptimes.map((el, i) => {
         const mem = values.memory[i];
-        return `Shard #${i} (${values.versions[i]})\n- up ${el}\n- ${mem}`;
+        return `\`Shard #${i} (${values.versions[i]})\`\n- up ${el}\n- ${mem}`;
       });
-      const shardString = 'Number of shards: ' + values.numShards +
+      const shardString = 'Number of shards: ' + fmtNum(values.numShards) +
           '\nThis guild/channel is in shard #' + values.reqShard + '\n' +
           shardUptimes.join('\n');
       embed.addField('Shards', shardString, true);
@@ -2731,17 +2699,6 @@ function Main() {
       const systemString = 'Storage used: ' + values.saveData.match(/^\S+/)[0] +
           '\nPing: ' + Math.round(self.client.ws.ping) + 'ms';
       embed.addField('System', systemString, true);
-
-      /* embed.addField(
-          'This Shard Version',
-          'Shard: ' + version + '\nCommit: ' + commit.slice(0, 7) +
-              '\nDiscord.js: ' + (self.Discord.version || 'Unknown') + '\n' +
-              self.bot.getSubmoduleCommits()
-                  .map((el) => {
-                    return el.name + ': ' + el.commit;
-                  })
-                  .join('\n'),
-          true); */
 
       embed.setColor([0, 100, 255]);
 
@@ -2771,12 +2728,12 @@ function Main() {
       shardGuilds: {},
       numUsers: 0,
       numMembers: 0,
-      numBots: 0,
       numUsersOnline: 0,
       numChannels: 0,
+      numEmojis: 0,
+      numVerified: 0,
       uptimes: [],
       memory: [],
-      activities: {},
       largestActivity: {name: 'Nothing', count: 0},
       versions: [],
       numShards: 0,
@@ -2801,9 +2758,6 @@ function Main() {
       values.uptimes = new Array(res.length);
       values.versions = new Array(res.length);
 
-      const tempActs = {};
-      const tempOffline = {};
-
       for (let i = 0; i < res.length; i++) {
         values.numGuilds += res[i].numGuilds;
         values.shardGuilds[i] = res[i].numGuilds;
@@ -2811,9 +2765,9 @@ function Main() {
             Math.max(res[i].numLargestGuild, values.numLargestGuild);
         values.numUsers += res[i].numUsers;
         values.numMembers += res[i].numMembers;
-        values.numBots += res[i].numBots;
-        values.numUsersOnline += res[i].numUsersOnline;
         values.numChannels += res[i].numChannels;
+        values.numEmojis += res[i].numEmojis;
+        values.numVerified += res[i].numVerified;
         values.uptimes[i] = res[i].uptime;
         values.versions[i] = res[i].version;
         const mem = res[i].memory;
@@ -2821,29 +2775,7 @@ function Main() {
         const heapTotal = Math.round(mem.heapTotal / 100000) / 10;
         const rss = Math.round(mem.rss / 100000) / 10;
         values.memory[i] = `${used}/${heapTotal}MB (${rss}MB)`;
-        const actVals = Object.entries(res[i].activities);
-        for (let j = 0; j < actVals.length; j++) {
-          if (tempActs[actVals[j][0]]) {
-            Object.assign(tempActs[actVals[j][0]], actVals[j][1]);
-          } else {
-            tempActs[actVals[j][0]] = actVals[j][1];
-          }
-        }
-        Object.assign(tempOffline, res[i].usersOffline);
         delays[i] = res[i].deltaString;
-      }
-      values.numUsersOnline = values.numUsers - Object.keys(tempOffline).length;
-      const tmpVals = Object.entries(tempActs);
-      for (let i = 0; i < tmpVals.length; i++) {
-        const count = Object.keys(tmpVals[i][1]).length;
-        values.activities[tmpVals[i][0]] = count;
-
-        if (count > values.largestActivity.count) {
-          values.largestActivity = {
-            name: tmpVals[i][0],
-            count: count,
-          };
-        }
       }
       values.fullDelta = Date.now() - startTime;
       self.debug(
@@ -2885,9 +2817,9 @@ function Main() {
       numLargestGuild: 0,
       numUsers: 0,
       numMembers: 0,
-      numBots: 0,
       numChannels: 0,
-      usersOffline: {},
+      numEmojis: 0,
+      numVerified: 0,
       uptime: '0 days',
       memory: process.memoryUsage(),
       activities: {},
@@ -2896,33 +2828,17 @@ function Main() {
     };
 
     out.numGuilds = self.client.guilds.size;
-    let maxNum = 0;
-    let totalNum = 0;
 
     let iTime = Date.now();
     self.client.guilds.forEach((g) => {
-      maxNum = Math.max(g.memberCount, maxNum);
-      totalNum += g.memberCount;
-
-      g.presences.forEach((p) => {
-        if (p.status === 'offline') {
-          out.usersOffline[p.userID] = 1;
-          return;
-        }
-        if (!p.activity || p.user.bot) return;
-        const name = p.activity.name;
-        if (!out.activities[name]) out.activities[name] = {};
-        out.activities[name][p.userID] = 1;
-      });
+      out.numLargestGuild = Math.max(g.memberCount, out.numLargestGuild);
+      out.numMembers += g.memberCount;
+      out.numEmojis += g.emojis.size;
+      if (g.verified) out.numVerified++;
     });
     const guildDelta = Date.now() - iTime;
-    out.numMembers = totalNum;
-    out.numLargestGuild = maxNum;
 
     iTime = Date.now();
-    self.client.users.forEach((u) => {
-      if (u.bot) out.numBots++;
-    });
     const userDelta = Date.now() - iTime;
 
     out.numUsers = self.client.users.size;
