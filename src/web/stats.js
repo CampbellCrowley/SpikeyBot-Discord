@@ -41,6 +41,7 @@ function WebStats() {
 
   /**
    * The timestamp at which the stats were last requested.
+   *
    * @private
    * @default
    * @type {number}
@@ -49,6 +50,7 @@ function WebStats() {
   /**
    * The amount of time the cached data is considered fresh. Anything longer
    * than this must be re-fetched.
+   *
    * @private
    * @constant
    * @default 5 Minutes
@@ -58,6 +60,7 @@ function WebStats() {
 
   /**
    * The object storing the previously received stats values.
+   *
    * @private
    * @default
    * @type {Main~getAllStats~values}
@@ -65,7 +68,8 @@ function WebStats() {
   let cachedStats = {};
 
   /**
-   * The amount frequency at which we will post our stats to discordbots.org
+   * The amount frequency at which we will post our stats to discordbots.org.
+   *
    * @private
    * @constant
    * @default 12 Hours
@@ -75,6 +79,7 @@ function WebStats() {
 
   /**
    * The next scheduled event at which to post our stats.
+   *
    * @private
    * @type {Timeout}
    */
@@ -84,6 +89,7 @@ function WebStats() {
 
   /**
    * The request information for updating our server count on bot list websites.
+   *
    * @private
    * @default
    * @constant

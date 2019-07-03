@@ -133,7 +133,7 @@ function Main() {
    * All guilds that have disabled the auto-smite feature.
    *
    * @private
-   * @type {Object.<boolean>}
+   * @type {object.<boolean>}
    */
   const disabledAutoSmite = {};
 
@@ -141,7 +141,7 @@ function Main() {
    * All guilds that have disabled sending messages when someone is banned.
    *
    * @private
-   * @type {Object.<boolean>}
+   * @type {object.<boolean>}
    */
   const disabledBanMessage = {};
 
@@ -149,16 +149,16 @@ function Main() {
    * The guilds that have disabled the rigged messages.
    *
    * @private
-   * @type {Object.<boolean>}
+   * @type {object.<boolean>}
    */
   const disabledRiggedCounter = {};
 
   /**
    * The guilds with auto-smite enabled, and members who have mentioned
-   * @everyone, and the timestamps of these mentions.
+   * "@everyone", and the timestamps of these mentions.
    *
    * @private
-   * @type {Object.<Object.<string>>}
+   * @type {object.<object.<string>>}
    */
   const mentionAccumulator = {};
 
@@ -523,15 +523,17 @@ function Main() {
       /* eslint-disable no-unused-vars */
       /**
        * Receive message from another shard asking for our statistics.
+       *
        * @see {@link Main~getStats}
        *
        * @private
-       * @returns {Object} The statistics we collected.
+       * @returns {object} The statistics we collected.
        */
       self.client.getStats = getStats;
       /**
        * Receive message from another shard asking for our permissions in a
        * channel or guild.
+       *
        * @see {@link Main~fetchShardPerms}
        *
        * @private
@@ -541,6 +543,7 @@ function Main() {
       self.client.fetchPerms = fetchShardPerms;
       /**
        * Receive message from another shard asking for us to lookup an ID.
+       *
        * @see {@link Main~lookupId}
        *
        * @private
@@ -550,6 +553,7 @@ function Main() {
       /**
        * Receive message from another shard asking for us to send a message to a
        * specific channel.
+       *
        * @see {@link Main~sendTo}
        *
        * @private
@@ -558,6 +562,7 @@ function Main() {
       self.client.sendTo = sendTo;
       /**
        * Sweep users from cache to release memory.
+       *
        * @see {@link Main~sweepUsers}
        *
        * @public
@@ -2293,7 +2298,7 @@ function Main() {
   /**
    * An object storing information about a timer.
    *
-   * @typedef {Object} Main~Timer
+   * @typedef {object} Main~Timer
    * @property {string} id The id of the user who set the timer.
    * @property {string} message The message for when the timer ends.
    * @property {number} time The time since epoch at which the timer will end.
@@ -2709,6 +2714,7 @@ function Main() {
     const startTime = Date.now();
     /**
      * The stats object that is the result of this function.
+     *
      * @private
      * @default
      */

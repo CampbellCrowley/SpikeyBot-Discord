@@ -155,7 +155,7 @@ function Command() {
    * All tracked commands mapped by command name.
    *
    * @private
-   * @type {Object.<SingleCommand>}
+   * @type {object.<SingleCommand>}
    */
   let cmds = {};
 
@@ -188,6 +188,7 @@ function Command() {
 
     /**
      * The name of the parent command if this is a subcommand.
+     *
      * @public
      * @readonly
      * @type {?string}
@@ -240,6 +241,7 @@ function Command() {
     /**
      * All versions of this command that may be used to trigger the same
      * handler.
+     *
      * @public
      *
      * @type {string[]}
@@ -250,10 +252,11 @@ function Command() {
 
     /**
      * Sub commands for this single command. Triggered by commands separated by
-     * whitespace. Object mapped by subcommand name, similar to {@link
-     * Command~cmds}.
+     * whitespace. Object mapped by subcommand name, similar to
+     * {@link Command~cmds}.
+     *
      * @public
-     * @type {Object.<SingleCommand>}
+     * @type {object.<SingleCommand>}
      */
     this.subCmds = {};
     for (let i = 0; i < subCmds.length; i++) {
@@ -339,6 +342,7 @@ function Command() {
     };
     /**
      * The current options and settings for this command.
+     *
      * @public
      * @type {Command~CommandSetting}
      */
@@ -386,12 +390,14 @@ function Command() {
     /**
      * The guild ID of the guild is settings object is for, or null if this
      * instance is not specific to a single guild.
+     *
      * @public
      * @type {?string}
      */
     this.myGuild = opts.guildId || null;
     /**
      * If the command is only allowed to be used in guilds.
+     *
      * @public
      * @type {boolean}
      */
@@ -407,13 +413,14 @@ function Command() {
      * will be mapped to a truthy value. Roles will be mapped to the guild ID
      * and the role ID. Use {@link Command~CommandSetting.set} to change these
      * values.
+     *
      * @public
      * @readonly
      * @type {{
-     *    guilds: Object.<boolean>,
-     *    channels: Object.<boolean>,
-     *    users: Object.<boolean>,
-     *    roles: Object.<boolean>
+     *    guilds: object.<boolean>,
+     *    channels: object.<boolean>,
+     *    users: object.<boolean>,
+     *    roles: object.<boolean>
      * }}
      */
     this.disabled = {guilds: {}, channels: {}, users: {}, roles: {}};
@@ -436,13 +443,14 @@ function Command() {
      * will be mapped to a truthy value. Roles will be mapped to the guild ID
      * and the role ID. Use {@link Command~CommandSetting.set} to change these
      * values.
+     *
      * @public
      * @readonly
      * @type {{
-     *    guilds: Object.<boolean>,
-     *    channels: Object.<boolean>,
-     *    users: Object.<boolean>,
-     *    roles: Object.<boolean>
+     *    guilds: object.<boolean>,
+     *    channels: object.<boolean>,
+     *    users: object.<boolean>,
+     *    roles: object.<boolean>
      * }}
      */
     this.enabled = {guilds: {}, channels: {}, users: {}, roles: {}};
@@ -464,6 +472,7 @@ function Command() {
     /**
      * Bitfield representation of the required permissions for a user to have to
      * run this command. Same bitfield used by Discord~Permissions.
+     *
      * @public
      * @type {number}
      * @default 0
@@ -476,6 +485,7 @@ function Command() {
     /**
      * Will this command be completely silenced so that no output will be sent.
      * Only applicable when command is disabled.
+     *
      * @private
      * @type {boolean}
      * @default
@@ -668,7 +678,7 @@ function Command() {
    * guild id, then by the command.
    *
    * @private
-   * @type {Object.<Object.<CommandSetting>>}
+   * @type {object.<object.<CommandSetting>>}
    */
   const userSettings = {};
 
@@ -846,7 +856,8 @@ function Command() {
     }
   };
   /**
-   * Alias for {@link Command.removeListener}
+   * Alias for {@link Command.removeListener}.
+   *
    * @deprecated
    * @public
    */

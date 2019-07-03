@@ -16,7 +16,8 @@ class Day {
    */
   constructor(num, events) {
     /**
-     * The day number this is. (Bloodbath is 0)
+     * The day number this is. (Bloodbath is 0).
+     *
      * @public
      * @type {number}
      * @default
@@ -26,7 +27,8 @@ class Day {
     /**
      * The state index of this day. 0 is not yet simulated, 1 is currently
      * simulating, and 2-n are the index of the event to show if reduced by 2.
-     * (2 = event #0, 3 = event #1)
+     * (2 = event #0, 3 = event #1).
+     *
      * @public
      * @type {number}
      * @default
@@ -34,6 +36,7 @@ class Day {
     this.state = 0;
     /**
      * All events to take place during this day.
+     *
      * @public
      * @type {HungryGames~Event[]}
      * @default

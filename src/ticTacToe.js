@@ -44,7 +44,7 @@ function TicTacToe() {
    * Helper object of emoji characters mapped to names.
    *
    * @private
-   * @type {Object.<string>}
+   * @type {object.<string>}
    * @constant
    * @default
    */
@@ -66,6 +66,7 @@ function TicTacToe() {
   /**
    * The number of currently active games. Used to determine of submodule is
    * unloadable.
+   *
    * @private
    * @type {number}
    * @default
@@ -104,22 +105,26 @@ function TicTacToe() {
     const game = this;
     /**
      * The players in this game.
+     *
      * @type {{p1: Discord~User, p2: Discord~User}}
      */
     this.players = players;
     /**
      * An array of 9 elements that stores 0, 1, or 2 to signify who owns which
      * space of the board. 0 is nobody, 1 is player 1, 2 is player 2.
+     *
      * @type {number[]}
      */
     this.board = [0, 0, 0, 0, 0, 0, 0, 0, 0];
     /**
      * Which player's turn it is. Either 1 or 2.
+     *
      * @type {number}
      */
     this.turn = 1;
     /**
      * The message displaying the current game.
+     *
      * @type {Discord~Message}
      */
     this.msg = msg;

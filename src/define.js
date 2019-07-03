@@ -28,6 +28,7 @@ function Define() {
 
   /**
    * Base url to request from api.
+   *
    * @private
    * @default
    * @constant

@@ -22,6 +22,7 @@ function HG() {
 
   /**
    * Name of the HG Web submodule for lookup.
+   *
    * @private
    * @constant
    * @default
@@ -49,6 +50,7 @@ function HG() {
   /**
    * The maximum number of bytes allowed to be received from a client in an
    * image upload.
+   *
    * @public
    * @type {number}
    * @constant
@@ -72,6 +74,7 @@ function HG() {
   ];
   /**
    * The file path to read default events.
+   *
    * @see {@link HungryGames~defaultPlayerEvents}
    * @see {@link HungryGames~defaultArenaEvents}
    * @see {@link HungryGames~defaultBloodbathEvents}
@@ -84,6 +87,7 @@ function HG() {
   const eventFile = './save/hgEvents.json';
   /**
    * The file path to read battle events.
+   *
    * @see {@link HungryGames~battles}
    *
    * @private
@@ -94,6 +98,7 @@ function HG() {
   const battleFile = './save/hgBattles.json';
   /**
    * The file path to read weapon events.
+   *
    * @see {@link HungryGames~weapons}
    *
    * @private
@@ -150,9 +155,9 @@ function HG() {
   /**
    * Default options for a game.
    *
-   * @type {Object.<{
+   * @type {object.<{
    *     value: string|number|boolean,
-   *     values: ?string[],
+   *     values: null|string[],
    *     comment: string
    *   }>}
    * @constant
@@ -183,7 +188,7 @@ function HG() {
    * Helper object of emoji characters mapped to names.
    *
    * @private
-   * @type {Object.<string>}
+   * @type {object.<string>}
    * @constant
    */
   const emoji = {
@@ -232,6 +237,7 @@ function HG() {
 
   /**
    * All attacks and outcomes for battles.
+   *
    * @see {@link HungryGames~battleFile}
    *
    * @private
@@ -248,21 +254,23 @@ function HG() {
    * Storage of battle messages to edit the content of on the next update.
    *
    * @private
-   * @type {Object.<Discord~Message>}
+   * @type {object.<Discord~Message>}
    * @default
    */
   const battleMessage = {};
   /**
    * All weapons and their respective actions. Parsed from file.
+   *
    * @see {@link HungryGames~weaponsFile}
    *
    * @private
-   * @type {Object.<HungryGames~WeaponEvent>}
+   * @type {object.<HungryGames~WeaponEvent>}
    * @default
    */
   let weapons = {};
   /**
    * Default parsed bloodbath events.
+   *
    * @see {@link HungryGames~eventFile}
    *
    * @private
@@ -271,6 +279,7 @@ function HG() {
   let defaultBloodbathEvents = [];
   /**
    * Default parsed player events.
+   *
    * @see {@link HungryGames~eventFile}
    *
    * @private
@@ -279,6 +288,7 @@ function HG() {
   let defaultPlayerEvents = [];
   /**
    * Default parsed arena events.
+   *
    * @see {@link HungryGames~eventFile}
    *
    * @private
@@ -290,7 +300,7 @@ function HG() {
    * getting the rest of the information about the event.
    *
    * @private
-   * @type {Object.<Discord~Message>}
+   * @type {object.<Discord~Message>}
    * @default
    */
   const newEventMessages = {};
@@ -298,7 +308,7 @@ function HG() {
    * Messages I have sent showing current options.
    *
    * @private
-   * @type {Object.<Discord~Message>}
+   * @type {object.<Discord~Message>}
    * @default
    */
   const optionMessages = {};
@@ -306,6 +316,7 @@ function HG() {
   /**
    * The last time the currently scheduled reaction event listeners are expected
    * to end. Used for checking of submoduleis unloadable.
+   *
    * @private
    * @type {number}
    */
@@ -313,8 +324,9 @@ function HG() {
 
   /**
    * All registered event handlers.
+   *
    * @private
-   * @type {Object.<Array.<Function>>}
+   * @type {object.<Array.<Function>>}
    */
   const eventHandlers = {};
 
@@ -894,6 +906,7 @@ function HG() {
       super(id, username, avatarURL);
       /**
        * Always true.
+       *
        * @public
        * @default
        * @constant
@@ -902,6 +915,7 @@ function HG() {
       this.isNPC = true;
       /**
        * Equivalent to `this.name` for compatibility.
+       *
        * @public
        * @type {string}
        */

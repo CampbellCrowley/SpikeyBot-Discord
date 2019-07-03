@@ -13,9 +13,10 @@ function MainModule() {
   /**
    * The data exported and imported by this module intended to be used to
    * persist across reloads.
+   *
    * @typedef MainModule~ModuleData
    *
-   * @type {Object.<*>}
+   * @type {object.<*>}
    */
   /* eslint-disable @typescript-eslint/no-unused-vars */
   /**

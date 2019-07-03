@@ -2,6 +2,7 @@
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 /**
  * DiscordJS base object.
+ *
  * @external Discord
  * @see {@link https://discord.js.org/}
  */
@@ -140,6 +141,7 @@ function SpikeyBot() {
   /**
    * Filename without file extension where information about the bot rebooting
    * is stored.
+   *
    * @see {@link fullRebootFilename}
    *
    * @private
@@ -173,9 +175,10 @@ function SpikeyBot() {
    */
   const mainModuleListFile = './mainModules.json';
   /**
-   * The list of all mainModules to load. Always includes {@link
-   * SpikeyBot~commandFilename} and {@link SpikeyBot~smListFilename}. Additional
-   * mainModules can be loaded from {@link SpikeyBot~mainModuleListFile}.
+   * The list of all mainModules to load. Always includes
+   * {@link SpikeyBot~commandFilename} and {@link SpikeyBot~smListFilename}.
+   * Additional mainModules can be loaded from
+   * {@link SpikeyBot~mainModuleListFile}.
    *
    * @private
    * @type {string[]}
@@ -198,6 +201,7 @@ function SpikeyBot() {
   let setDev = false;
   /**
    * Is this bot managing backup status monitoring.
+   *
    * @private
    * @type {boolean}
    */
@@ -277,10 +281,10 @@ function SpikeyBot() {
   let delayBoot = 0;
 
   /**
-   * Enable inspecting/profiling for a shard to launch. Set via cli falgs. -1 to
-   * disable. (Currently only supports enabling. the `--inspect` flag will be
+   * Enable inspecting/profiling for a shard to launch. Set via cli flags, -1 to
+   * disable. Currently only supports enabling. The `--inspect` flag will be
    * sent to all shards that are started. This is due to limitations of
-   * Discord~ShardingManager)
+   * {@link external:Discord~ShardingManager}.
    *
    * @private
    * @default
@@ -524,6 +528,7 @@ function SpikeyBot() {
 
   /**
    * The full filename where information about the bot rebooting is stored.
+   *
    * @see {@link rebootFilename}
    *
    * @private
@@ -578,6 +583,7 @@ function SpikeyBot() {
   /**
    * The Interval in which we will save and purge data on all mainmodules.
    * Begins after onReady.
+   *
    * @see {@link SpikeyBot~onReady()}
    * @see {@link SpikeyBot~saveFrequency}
    *
@@ -587,6 +593,7 @@ function SpikeyBot() {
   let saveInterval;
   /**
    * The frequency at which saveInterval will run.
+   *
    * @see {@link SpikeyBot~saveInterval}
    *
    * @private
@@ -601,7 +608,7 @@ function SpikeyBot() {
    * client ready event.
    *
    * @private
-   * @type {Object.<string>}
+   * @type {object.<string>}
    */
   const guildPrefixes = {};
 
@@ -610,7 +617,7 @@ function SpikeyBot() {
    *
    * @private
    * @constant
-   * @defaut
+   * @default
    * @type {string}
    */
   const guildPrefixFile = '/prefix.txt';
@@ -621,7 +628,7 @@ function SpikeyBot() {
    *
    * @private
    * @constant
-   * @defaut
+   * @default
    * @type {string}
    */
   const guildCustomPrefixFile = '/prefixes.json';

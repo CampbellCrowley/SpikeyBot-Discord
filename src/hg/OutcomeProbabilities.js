@@ -22,6 +22,7 @@ class OutcomeProbabilities {
   constructor(kill, wound, thrive, revive, nothing) {
     /**
      * The probability of an event being chosen that kills players.
+     *
      * @public
      * @type {number}
      * @default
@@ -29,6 +30,7 @@ class OutcomeProbabilities {
     this.kill = kill || 22;
     /**
      * The probability of an event being chosen that wounds players.
+     *
      * @public
      * @type {number}
      * @default
@@ -36,6 +38,7 @@ class OutcomeProbabilities {
     this.wound = wound || 4;
     /**
      * The probability of an event being chosen that heals players.
+     *
      * @public
      * @type {number}
      * @default
@@ -43,6 +46,7 @@ class OutcomeProbabilities {
     this.thrive = thrive || 8;
     /**
      * The probability of an event being chosen that revives players.
+     *
      * @public
      * @type {number}
      * @default
@@ -51,6 +55,7 @@ class OutcomeProbabilities {
     /**
      * The probability of an event being chosen that does not have any effect on
      * players.
+     *
      * @public
      * @type {number}
      * @default

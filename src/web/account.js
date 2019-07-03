@@ -56,6 +56,7 @@ function WebAccount() {
   const patreonSettingsFilename = '/patreonSettings.json';
   /**
    * File where the template for the Patreon settings is stored.
+   *
    * @see {@link WebAccount~patreonSettingsTemplate}
    *
    * @private
@@ -68,10 +69,11 @@ function WebAccount() {
    * The parsed data from {@link WebAccount~patreonSettingsTemplateFile}. Data
    * that outlines the available options that can be changed, and their possible
    * values.
+   *
    * @private
    *
    * @default
-   * @type {Object.<Object>}
+   * @type {object.<object>}
    */
   let patreonSettingsTemplate = {};
 
@@ -175,7 +177,7 @@ function WebAccount() {
    * Map of all currently connected sockets.
    *
    * @private
-   * @type {Object.<Socket>}
+   * @type {object.<Socket>}
    */
   const sockets = {};
 

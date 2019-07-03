@@ -12,11 +12,11 @@ const rimraf = require('rimraf');
  * not trustworthy for any processing.
  * @typedef {object} HGStatMetadata
  *
- * @property {string=} name The user-defined name of this stats object.
- * @property {Date=} startTime The timestamp at which this stats object starts
+ * @property {string} [name] The user-defined name of this stats object.
+ * @property {Date} [startTime] The timestamp at which this stats object starts
  * to include information.
- * @property {Date=} endTime The timestamp of the last time this object includes
- * information for.
+ * @property {Date} [endTime] The timestamp of the last time this object
+ * includes information for.
  * @property {Date} createDate The timestamp at which this stats object was
  * created.
  * @property {Date} modifiedDate The timestamp at which this stats object was
@@ -77,7 +77,7 @@ class StatGroup {
      * the same instance instead of overwriting eachother. Mapped by ID being
      * fetched.
      * @private
-     * @type {Object.<Array.<function>>}
+     * @type {object.<Array.<Function>>}
      * @default
      */
     this._fetchQueue = {};
@@ -86,7 +86,7 @@ class StatGroup {
      * Timeout until it will be saved. Prevents saving the same file multiple
      * times at once.
      * @private
-     * @type {Object.<{data: HungryGames~Stats, timeout: Timeout}>}
+     * @type {object.<{data: HungryGames~Stats, timeout: Timeout}>}
      * @default
      */
     this._saveQueue = {};

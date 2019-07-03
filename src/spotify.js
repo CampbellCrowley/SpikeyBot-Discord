@@ -18,10 +18,11 @@ function Spotify() {
   /**
    * The request to send to spotify to fetch the currently playing information
    * for a user.
+   *
    * @private
    * @default
    * @constant
-   * @type {Object}
+   * @type {object}
    */
   const apiRequest = {
     protocol: 'https:',
@@ -53,8 +54,9 @@ function Spotify() {
   /**
    * The current users we are monitoring the spotify status of, and some related
    * information. Mapped by guild id.
+   *
    * @private
-   * @type {Object}
+   * @type {object}
    */
   const following = {};
 

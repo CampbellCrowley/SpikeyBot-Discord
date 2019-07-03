@@ -72,6 +72,7 @@ function WebProxy() {
 
   /**
    * The current OAuth2 access information for a single session.
+   *
    * @typedef loginState
    *
    * @property {string} access_token The current token for api requests.
@@ -96,7 +97,7 @@ function WebProxy() {
    * is valid. Mapped by session id.
    *
    * @private
-   * @type {Object.<loginState>}
+   * @type {object.<loginState>}
    */
   let loginInfo = {};
   const currentSessions = {};
@@ -104,13 +105,15 @@ function WebProxy() {
    * Cache of requests to the Discord API to reduce duplicate calls and reduce
    * rate limiting. Mapped by user ID and request path. If user ID is unknown,
    * requests are not cached.
+   *
    * @private
-   * @type {Object.<Function[]>}
+   * @type {object.<Function[]>}
    */
   const reqCache = {};
 
   /**
    * File storing website rate limit specifications.
+   *
    * @private
    * @type {string}
    */
@@ -120,7 +123,7 @@ function WebProxy() {
    * Object storing parsed rate limit info from {@link rateLimitFile}.
    *
    * @private
-   * @type {Object}
+   * @type {object}
    * @default
    */
   let rateLimits = {
@@ -281,7 +284,7 @@ function WebProxy() {
    * Map of all currently connected sockets.
    *
    * @private
-   * @type {Object.<Socket>}
+   * @type {object.<Socket>}
    */
   const sockets = {};
 
@@ -335,7 +338,7 @@ function WebProxy() {
      * The historic quantities for each rate limit group.
      *
      * @private
-     * @type {Object.<number>}
+     * @type {object.<number>}
      */
     const rateHistory = {};
 

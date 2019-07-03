@@ -6,6 +6,7 @@ const Game = require('./Game.js');
 /**
  * Wrapper for logging functions that normally reference SubModule.error and
  * similar.
+ *
  * @todo Obtain reference to SubModule to be able to remove this.
  * @private
  * @constant
@@ -130,7 +131,7 @@ class Simulator {
  *
  * @private
  * @static
- * @type {Object.<number>}
+ * @type {object.<number>}
  * @constant
  * @default
  */
@@ -910,6 +911,7 @@ Simulator._parseConsumeCount = function(consumeString, numVictim, numAttacker) {
 
 /**
  * Relative path from CWD where the simulation worker is located.
+ *
  * @private
  * @static
  * @type {string}

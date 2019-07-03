@@ -20,7 +20,7 @@ class ModLog extends SubModule {
      * Guild settings for raids mapped by their guild id.
      *
      * @private
-     * @type {Object.<ModLog~Settings>}
+     * @type {object.<ModLog~Settings>}
      * @default
      */
     this._settings = {};
@@ -300,6 +300,7 @@ class Settings {
     this.logRaidLockdown = false;
     /**
      * Log other actions that have not been classified.
+     *
      * @public
      * @type {boolean}
      * @default

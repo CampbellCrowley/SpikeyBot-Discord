@@ -251,7 +251,7 @@ function CmdScheduling() {
    * Currently registered event listeners, mapped by event name.
    *
    * @private
-   * @type {Object.<Array.<Function>>}
+   * @type {object.<Array.<Function>>}
    */
   let listeners = {};
 
@@ -260,7 +260,7 @@ function CmdScheduling() {
    * sorted arrays by time to run next command.
    *
    * @private
-   * @type {Object.<Array.<CmdScheduling.ScheduledCommand>>}
+   * @type {object.<Array.<CmdScheduling.ScheduledCommand>>}
    */
   const schedules = {};
 
@@ -568,6 +568,7 @@ function CmdScheduling() {
   }
   /**
    * Register a created {@link CmdScheduling.ScheduledCommand}.
+   *
    * @public
    * @see {@link CmdScheduling~registerScheduledCommand}
    */
@@ -848,6 +849,7 @@ function CmdScheduling() {
   }
   /**
    * Cancel a scheduled command in a guild.
+   *
    * @public
    * @see {@link CmdScheduling~cancelCmd}
    */

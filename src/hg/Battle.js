@@ -17,18 +17,21 @@ class Battle {
   constructor(message, attacker, victim) {
     /**
      * Message of this battle event.
+     *
      * @public
      * @type {string}
      */
     this.message = message;
     /**
      * Information about attacker.
+     *
      * @public
      * @type {{damage: number}}
      */
     this.attacker = {damage: attacker};
     /**
      * Information about victim.
+     *
      * @public
      * @type {{damage: number}}
      */

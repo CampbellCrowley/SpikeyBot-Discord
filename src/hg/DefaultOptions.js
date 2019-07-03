@@ -3,6 +3,7 @@
 
 /**
  * Option base.
+ *
  * @memberof HungryGames~DefaultOptions
  * @inner
  */
@@ -78,9 +79,10 @@ class Option {
 
 /**
  * Number option.
+ *
  * @memberof HungryGames~DefaultOptions
  * @inner
- * @extends HungryGames~DefaultOptions~Option
+ * @augments HungryGames~DefaultOptions~Option
  */
 class NumberOption extends Option {
   /**
@@ -113,9 +115,10 @@ class NumberOption extends Option {
 }
 /**
  * Boolean option.
+ *
  * @memberof HungryGames~DefaultOptions
  * @inner
- * @extends HungryGames~DefaultOptions~Option
+ * @augments HungryGames~DefaultOptions~Option
  */
 class BooleanOption extends Option {
   /**
@@ -134,9 +137,10 @@ class BooleanOption extends Option {
 
 /**
  * Object option. Shallow copies passed value and range.
+ *
  * @memberof HungryGames~DefaultOptions
  * @inner
- * @extends HungryGames~DefaultOptions~Option
+ * @augments HungryGames~DefaultOptions~Option
  */
 class ObjectOption extends Option {
   /**
@@ -171,9 +175,10 @@ class ObjectOption extends Option {
 
 /**
  * One of multiple choices option.
+ *
  * @memberof HungryGames~DefaultOptions
  * @inner
- * @extends HungryGames~DefaultOptions~Option
+ * @augments HungryGames~DefaultOptions~Option
  */
 class SelectOption extends Option {
   /**
@@ -212,6 +217,7 @@ class SelectOption extends Option {
 
 /**
  * Default options for a HungryGames.
+ *
  * @memberof HungryGames
  * @inner
  */

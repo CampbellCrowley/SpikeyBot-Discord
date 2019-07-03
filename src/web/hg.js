@@ -22,8 +22,9 @@ function HGWeb() {
   let ioClient;
   /**
    * Buffer storing all current image uploads and their associated meta-data.
+   *
    * @private
-   * @type {Object}
+   * @type {object}
    */
   const imageBuffer = {};
 
@@ -134,7 +135,7 @@ function HGWeb() {
    * Map of all currently connected sockets.
    *
    * @private
-   * @type {Object.<Socket>}
+   * @type {object.<Socket>}
    */
   const sockets = {};
 
@@ -152,7 +153,7 @@ function HGWeb() {
    * Map of all sockets connected that are siblings.
    *
    * @private
-   * @type {Object.<Socket>}
+   * @type {object.<Socket>}
    */
   const siblingSockets = {};
 
@@ -610,6 +611,7 @@ function HGWeb() {
   /**
    * Basic callback with single argument. The argument is null if there is no
    * error, or a string if there was an error.
+   *
    * @callback HGWeb~basicCB
    *
    * @param {?string} err The error response.

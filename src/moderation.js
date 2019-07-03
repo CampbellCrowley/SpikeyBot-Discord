@@ -5,7 +5,7 @@ const SubModule = require('./subModule.js');
 
 /**
  * @description Handle all moderator related commands and control.
- * @extends SubModule
+ * @augments SubModule
  */
 class Moderation extends SubModule {
   /**
@@ -19,7 +19,7 @@ class Moderation extends SubModule {
      * All guilds that have disabled the auto-smite feature.
      *
      * @private
-     * @type {Object.<boolean>}
+     * @type {object.<boolean>}
      */
     this._disabledAutoSmite = {};
 
@@ -27,15 +27,15 @@ class Moderation extends SubModule {
      * All guilds that have disabled sending messages when someone is banned.
      *
      * @private
-     * @type {Object.<boolean>}
+     * @type {object.<boolean>}
      */
     this._disabledBanMessage = {};
     /**
      * The guilds with auto-smite enabled, and members who have mentioned
-     * @everyone, and the timestamps of these mentions.
+     * "@everyone", and the timestamps of these mentions.
      *
      * @private
-     * @type {Object.<Object.<string>>}
+     * @type {object.<object.<string>>}
      */
     this._mentionAccumulator = {};
     /**
@@ -73,6 +73,7 @@ class Moderation extends SubModule {
   initialize() {
     /**
      * Permissions required to to use the smite command. Bitfield.
+     *
      * @private
      * @type {number}
      * @constant

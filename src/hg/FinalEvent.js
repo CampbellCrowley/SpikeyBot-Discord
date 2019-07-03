@@ -23,12 +23,14 @@ class FinalEvent {
       attackerOutcome = 'nothing', mentionString = '') {
     /**
      * Message to send to users.
+     *
      * @public
      * @type {string}
      */
     this.message = message;
     /**
      * Icons to include with sent message.
+     *
      * @public
      * @type {HungryGames~UserIconUrl[]}
      * @default []
@@ -36,6 +38,7 @@ class FinalEvent {
     this.icons = icons;
     /**
      * Number of victims in this event.
+     *
      * @public
      * @type {number}
      * @default 0
@@ -43,6 +46,7 @@ class FinalEvent {
     this.numVictim = numVictim;
     /**
      * Information about the victims in this event.
+     *
      * @public
      * @type {{outcome: string}}
      * @default {outcome: 'nothing'}
@@ -50,6 +54,7 @@ class FinalEvent {
     this.victim = {outcome: victimOutcome};
     /**
      * Information about the attackers in this event.
+     *
      * @public
      * @type {{outcome: string}}
      * @default {outcome: 'nothing'}
@@ -57,6 +62,7 @@ class FinalEvent {
     this.attacker = {outcome: attackerOutcome};
     /**
      * String mentions to ping users.
+     *
      * @public
      * @type {string}
      * @default ''

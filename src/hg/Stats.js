@@ -31,7 +31,7 @@ class Stats {
      * database excluding `groupId`, `guildId` and `userId` which must not be
      * included.
      * @private
-     * @type {Object}
+     * @type {object}
      *
      * @property {number} kills Number of kills.
      * @property {number} deaths Number of deaths.

@@ -16,6 +16,7 @@ function Common() {
   const self = this;
   /**
    * The number of characters reserved for the filename of the script.
+   *
    * @private
    * @constant
    * @type {number}
@@ -25,6 +26,7 @@ function Common() {
 
   /**
    * The color code to prefix log messages with for this script.
+   *
    * @private
    * @type {number}
    * @default
@@ -32,6 +34,7 @@ function Common() {
   let mycolor = 0;
   /**
    * The script's filename to show in the log.
+   *
    * @private
    * @type {string}
    * @constant
@@ -41,6 +44,7 @@ function Common() {
       '';
   /**
    * The final formatted filename for logging.
+   *
    * @private
    * @type {string}
    */
@@ -49,11 +53,13 @@ function Common() {
   /**
    * Whether this should be shown as a release version, or a debug version in
    * the log.
+   *
    * @type {boolean}
    */
   this.isRelease = false;
   /**
    * Whether this current instance is running as a unit test.
+   *
    * @type {boolean}
    */
   this.isTest = false;
@@ -337,7 +343,7 @@ function Common() {
    *
    * @private
    * @param {number} [inc=0] Increase distance up the stack to return.
-   * @return {string} Function name in call stack.
+   * @returns {string} Function name in call stack.
    */
   /* function __function(inc = 0) {
     return __stack()[3 + inc].getFunctionName();
@@ -366,7 +372,7 @@ function Common() {
  */
 Common.prototype.spikeyId = '124733888177111041';
 /**
- * SpikeyRobot's Discord ID
+ * SpikeyRobot's Discord ID.
  *
  * @type {string}
  * @default
@@ -388,6 +394,7 @@ Common.prototype.trustedIds = [
 ];
 /**
  * Trusted IDs.
+ *
  * @see {@link Common.prototype.trustedIds}
  *
  * @constant
@@ -535,7 +542,7 @@ Common.prototype.mention = function(msg) {
  * Creates formatted string for mentioning the author of msg.
  *
  * @param {Discord~Message} msg Message to format a mention for the author of.
- * @return {string} Formatted mention string.
+ * @returns {string} Formatted mention string.
  */
 Common.mention = Common.prototype.mention;
 

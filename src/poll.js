@@ -185,6 +185,7 @@ function Polling() {
 
   /**
    * The subdirectory in the guild to store all member polls.
+   *
    * @private
    * @constant
    * @default
@@ -193,6 +194,7 @@ function Polling() {
   /**
    * The filename in the member's subdirectory, in the guild's subdirectory, to
    * save a poll's state.
+   *
    * @private
    * @constant
    * @default
@@ -201,6 +203,7 @@ function Polling() {
 
   /**
    * The default reaction emojis to use for a poll.
+   *
    * @private
    * @default
    * @constant
@@ -212,7 +215,7 @@ function Polling() {
    * message id that is collecting the poll data.
    *
    * @private
-   * @type {Object.<Polling~Poll>}
+   * @type {object.<Polling~Poll>}
    */
   const currentPolls = {};
 
@@ -239,30 +242,35 @@ function Polling() {
   function Poll(author, message, options) {
     /**
      * ID of the user who started this poll.
+     *
      * @public
      * @type {string}
      */
     this.author = author;
     /**
      * Reference to the Message object with the reaction listener.
+     *
      * @public
      * @type {Discord~Message}
      */
     this.message = message;
     /**
      * The user defined text associated with this poll.
+     *
      * @public
      * @type {string}
      */
     this.title = options.title;
     /**
      * The timestamp at which this poll is scheduled to end.
+     *
      * @public
      * @type {?number}
      */
     this.endTime = options.endTime;
     /**
      * The emojis to add as reactions to use as buttons.
+     *
      * @public
      * @type {string[]}
      */
@@ -270,12 +278,14 @@ function Polling() {
     /**
      * The full string that came with the emoji if the user specified custom
      * response options.
+     *
      * @public
      * @type {string[]}
      */
     this.choices = options.choices || options.emojis;
     /**
      * The scheduled timeout when this poll will end.
+     *
      * @public
      * @type {?Timeout}
      */

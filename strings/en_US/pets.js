@@ -4,7 +4,7 @@ const Locale = require('../../src/locale/Locale.js');
 
 /**
  * @description United States English.
- * @extends Locale
+ * @augments Locale
  */
 class EnUsPets extends Locale {
   /**

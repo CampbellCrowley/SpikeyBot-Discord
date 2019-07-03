@@ -80,6 +80,7 @@ function SMLoader() {
       /* eslint-disable no-unused-vars */
       /**
        * Receive message from another shard asking for us to reload subModules.
+       *
        * @see {@link SMLoader~shardReload}
        *
        * @private
@@ -87,6 +88,7 @@ function SMLoader() {
       self.client.commandReload = shardReload;
       /**
        * Receive message from another shard asking for us to unload subModules.
+       *
        * @see {@link SMLoader~shardUnload}
        *
        * @private
@@ -94,6 +96,7 @@ function SMLoader() {
       self.client.commandUnload = shardUnload;
       /**
        * Receive message from another shard asking for us to load subModules.
+       *
        * @see {@link SMLoader~shardLoad}
        *
        * @private
@@ -148,7 +151,7 @@ function SMLoader() {
    *
    * @private
    * @constant
-   * @defualt
+   * @default
    * @type {string}
    */
   const smListFilename = './subModules.json';
@@ -173,7 +176,7 @@ function SMLoader() {
    * Instances of SubModules currently loaded mapped by their name.
    *
    * @private
-   * @type {Object.<SubModule>}
+   * @type {object.<SubModule>}
    */
   let subModules = {};
 
@@ -182,7 +185,7 @@ function SMLoader() {
    * unloadable state. Mapped by name of submodule.
    *
    * @private
-   * @type {Object.<Timeout>}
+   * @type {object.<Timeout>}
    */
   const unloadTimeouts = {};
 
@@ -191,7 +194,7 @@ function SMLoader() {
    * by name of subModule, then array of all callbacks.
    *
    * @private
-   * @type {Object.<Array.<Function>>}
+   * @type {object.<Array.<Function>>}
    */
   const unloadCallbacks = {};
 

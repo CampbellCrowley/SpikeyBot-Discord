@@ -5,7 +5,7 @@ const SubModule = require('./subModule.js');
 
 /**
  * @description Manages raid blocking commands and configuration.
- * @listens Discord:external~Client#guildMemberAdd
+ * @listens external:Discord~Client#guildMemberAdd
  * @listens Command#raid
  * @listens Command#lockdown
  * @fires RaidBlock#shutdown
@@ -24,7 +24,7 @@ class RaidBlock extends SubModule {
      * Guild settings for raids mapped by their guild id.
      *
      * @private
-     * @type {Object.<RaidBlock~RaidSettings>}
+     * @type {object.<RaidBlock~RaidSettings>}
      * @default
      */
     this._settings = {};
@@ -32,7 +32,7 @@ class RaidBlock extends SubModule {
      * All event handlers registered.
      *
      * @private
-     * @type {Object.<Array.<Function>>}
+     * @type {object.<Array.<Function>>}
      * @default
      */
     this._events = {};
@@ -421,6 +421,7 @@ class RaidBlock extends SubModule {
 
 /**
  * Container for RaidBlock related settings.
+ *
  * @memberof RaidBlock
  * @inner
  */
