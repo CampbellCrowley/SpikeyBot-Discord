@@ -337,6 +337,7 @@ function Main() {
     self.command.on('git', commandGit);
     self.command.on('gettime', commandGetTime);
     self.command.on('update', commandUpdate);
+    self.command.on('sweep', commandSweep);
 
 
     self.client.on('debug', onDebug);
@@ -600,6 +601,7 @@ function Main() {
     self.command.removeListener('git');
     self.command.removeListener('gettime');
     self.command.removeListener('update');
+    self.command.removeListener('sweep');
 
     self.client.removeListener('debug', onDebug);
     self.client.removeListener('warn', onWarn);
@@ -671,26 +673,7 @@ function Main() {
       self.common.mkAndWriteSync(
           './save/pingHistory.json', './save/', JSON.stringify(pingHistory));
     }
-    sweepUsers();
   };
-
-  /**
-   * Cause stale users to be purged from cache.
-   *
-   * @private
-   */
-  function sweepUsers() {
-    // const now = Date.now();
-    // const maxMsgAge = 15 * 60 * 1000;
-    self.client.users.sweep((user) => {
-      /* return user.lastMessage ?
-          (now - user.lastMessage.createdTimestamp > maxMsgAge ||
-           now - user.lastMessage.editedTimestamp > maxMsgAge) :
-          user.presence.status === 'offline'; */
-      return user.bot || !user.lastMessage ||
-          user.presence.status === 'offline';
-    });
-  }
 
   /**
    * A general debug message was produced.
@@ -3245,6 +3228,43 @@ function Main() {
       });
     });
   }
+
+  /**
+   * Trigger sweeping of users from cache.
+   *
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens Command#sweep
+   */
+  function commandSweep(msg) {
+    if (msg.author.id != self.common.spikeyId) {
+      self.common.reply(msg, 'You can\'t use this command.');
+      return;
+    }
+    const num = self.client.users.size;
+    sweepUsers();
+    self.common.reply(
+        msg, 'Sweeping users.', `${num} --> ${self.client.users.size}`);
+  }
+  /**
+   * Cause stale users to be purged from cache.
+   *
+   * @private
+   */
+  function sweepUsers() {
+    // const now = Date.now();
+    // const maxMsgAge = 15 * 60 * 1000;
+    self.client.users.sweep((user) => {
+      /* return user.lastMessage ?
+          (now - user.lastMessage.createdTimestamp > maxMsgAge ||
+           now - user.lastMessage.editedTimestamp > maxMsgAge) :
+          user.presence.status === 'offline'; */
+      return user.bot || !user.lastMessage ||
+          user.presence.status === 'offline';
+    });
+  }
+
 
   /**
    * Triggered via SIGINT, SIGHUP or SIGTERM. Saves data before exiting.
