@@ -1050,8 +1050,12 @@ function HG() {
    * games.
    *
    * @public
-   * @returns {{bloodbath: object, player: object, arena: object}} Object
-   * storing default events.
+   * @returns {{
+   *   bloodbath: object,
+   *   player: object,
+   *   arena: object,
+   *   weapon: object
+   * }} Object storing default events.
    */
   this.getDefaultEvents = function() {
     return {

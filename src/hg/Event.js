@@ -209,14 +209,11 @@ class Event {
                 /\{attacker\}/g,
                 Grammar.formatMultiNames(affectedAttackers, useNickname));
     if (finalMessage.indexOf('{dead}') > -1) {
-      const deadUsers =
-          game.currentGame.includedUsers
-              .filter(function(obj) {
-                return !obj.living && !affectedUsers.find(function(u) {
-                  return u.id == obj.id;
-                });
-              })
-              .slice(0, Simulator.weightedUserRand());
+      const deadUsers = game.currentGame.includedUsers
+          .filter(
+              (obj) => !obj.living &&
+                                    !affectedUsers.find((u) => u.id == obj.id))
+          .slice(0, Simulator.weightedUserRand());
       const numDead = deadUsers.length;
       if (numDead === 0) {
         finalMessage = finalMessage.replace(/\{dead\}/g, 'an animal')
