@@ -122,7 +122,7 @@
     },
     {
       "message": "{attacker} manages to find a bag full of explosives.",
-      "attacker": { "count": "1", "outcome": "nothing", "weapon": { "name": "explosives", "count": 3 } },
+      "attacker": { "count": "1", "outcome": "nothing", "weapon": { "name": "explosive", "count": 3 } },
       "victim": { "count": "0", "outcome": "nothing" }
     },
     {
@@ -400,7 +400,7 @@
     },
     {
       "message": "{attacker} manage[As|] to find [Aa bag|bags] full of explosives.",
-      "attacker": { "count": "-1", "outcome": "nothing", "weapon": { "name": "explosives", "count": 3 } },
+      "attacker": { "count": "-1", "outcome": "nothing", "weapon": { "name": "explosive", "count": 3 } },
       "victim": { "count": "0", "outcome": "nothing" }
     },
     {
