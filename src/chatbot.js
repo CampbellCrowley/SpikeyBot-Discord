@@ -3,7 +3,6 @@
 const dialogflow = require('dialogflow');
 const auth = require('../auth.js');
 const fs = require('fs');
-const mkdirp = require('mkdirp');
 require('./subModule.js').extend(ChatBot);  // Extends the SubModule class.
 
 /**
@@ -26,6 +25,14 @@ function ChatBot() {
    */
   const disabledChatBot = {};
 
+  /**
+   * Regexp to match a mention mentioning the bot.
+   *
+   * @private
+   * @type {RegExp}
+   */
+  let selfMentionRegex;
+
   /** @inheritdoc */
   this.initialize = function() {
     self.command.on('chat', onChatMessage);
@@ -41,6 +48,8 @@ function ChatBot() {
             })));
 
     self.client.on('message', onMessage);
+
+    selfMentionRegex = new RegExp(`\\s*<@!?${self.client.user.id}>\\s*`);
 
     if (self.bot.getBotName()) {
       process.env.GOOGLE_APPLICATION_CREDENTIALS =
@@ -84,67 +93,12 @@ function ChatBot() {
         disabledChatBot: disabledChatBot[g.id],
       };
       if (opt == 'async') {
-        mkAndWrite(filename, dir, JSON.stringify(obj));
+        self.common.mkAndWrite(filename, dir, JSON.stringify(obj));
       } else {
-        mkAndWriteSync(filename, dir, JSON.stringify(obj));
+        self.common.mkAndWriteSync(filename, dir, JSON.stringify(obj));
       }
     });
   };
-
-  /**
-   * Write data to a file and make sure the directory exists or create it if it
-   * doesn't. Async.
-   *
-   * @see {@link Main~mkAndWriteSync}
-   *
-   * @private
-   * @param {string} filename The name of the file including the directory.
-   * @param {string} dir The directory path without the file's name.
-   * @param {string} data The data to write to the file.
-   */
-  function mkAndWrite(filename, dir, data) {
-    mkdirp(dir, function(err) {
-      if (err) {
-        self.error('Failed to make directory: ' + dir, 'Main');
-        console.error(err);
-        return;
-      }
-      fs.writeFile(filename, data, function(err2) {
-        if (err2) {
-          self.error('Failed to save timer: ' + filename, 'Main');
-          console.error(err2);
-          return;
-        }
-      });
-    });
-  }
-  /**
-   * Write data to a file and make sure the directory exists or create it if it
-   * doesn't. Synchronous.
-   *
-   * @see {@link Main~mkAndWrite}
-   *
-   * @private
-   * @param {string} filename The name of the file including the directory.
-   * @param {string} dir The directory path without the file's name.
-   * @param {string} data The data to write to the file.
-   */
-  function mkAndWriteSync(filename, dir, data) {
-    try {
-      mkdirp.sync(dir);
-    } catch (err) {
-      self.error('Failed to make directory: ' + dir, 'Main');
-      console.error(err);
-      return;
-    }
-    try {
-      fs.writeFileSync(filename, data);
-    } catch (err) {
-      self.error('Failed to save timer: ' + filename, 'Main');
-      console.error(err);
-      return;
-    }
-  }
 
   let sessionClient;
 
@@ -166,17 +120,21 @@ function ChatBot() {
    * @listens Discord#message
    */
   function onMessage(msg) {
-    if (!msg.author.bot && msg.guild && disabledChatBot[msg.guild.id]) return;
+    if (msg.author.bot || !msg.guild) return;
     msg.prefix = self.bot.getPrefix(msg.guild);
-    if (!msg.author.bot && msg.guild &&
-        msg.mentions.users.get(self.client.user.id) &&
+    if (msg.mentions.users.get(self.client.user.id) &&
         !self.command.find(msg.content.match(/^\S+/)[0], msg)) {
-      const withoutMe =
-          msg.content
-              .replace(
-                  new RegExp('\\s*<@!?' + self.client.user.id + '>\\s*'), '')
-              .trim();
-      if (!withoutMe || withoutMe.length < 2) {
+      const withoutMe = msg.content.replace(selfMentionRegex, '').trim();
+      if (self.command.find(withoutMe.match(/^\S+/)[0], msg)) {
+        self.log('No Prefix: ' + msg.content);
+        msg.content = `${msg.prefix}${withoutMe}`;
+        if (!self.command.trigger(msg)) {
+          self.warn(`Command "${msg.content}" failed!`);
+        }
+        return;
+      } else if (withoutMe.length < 2) {
+        return;
+      } else if (disabledChatBot[msg.guild.id]) {
         return;
       }
       self.log(msg.channel.id + '@' + msg.author.id + ' ' + msg.content);
@@ -231,8 +189,6 @@ function ChatBot() {
         .then((responses) => {
           self.debug(
               'Dialogflow response delay: ' + (Date.now() - startTime) + 'ms');
-          // msg.channel.stopTyping();
-          // console.log('Intent');
           const result = responses[0].queryResult;
           if (result.parameters.fields.thing) {
             const list = result.parameters.fields.thing.listValue.values;
@@ -241,13 +197,6 @@ function ChatBot() {
             result.fulfillmentText =
                 result.fulfillmentText.replace(/~thing/g, chosen);
           }
-          /* console.log(`  Query: ${result.queryText}`);
-          console.log(`  Response: ${result.fulfillmentText}`);
-          if (result.intent) {
-            console.log(`  Intent: ${result.intent.displayName}`);
-          } else {
-            console.log(`  No intent matched.`);
-          } */
           if (result.fulfillmentText) {
             msg.channel.send(result.fulfillmentText.replace(/\\n/g, '\n'))
                 .catch((err) => {
@@ -284,7 +233,6 @@ function ChatBot() {
               'Dialogflow response delay: ' + (Date.now() - startTime) + 'ms');
           self.error('Dialogflow failed request: ' + JSON.stringify(request));
           console.error('ERROR:', err);
-          // msg.channel.stopTyping();
           msg.channel.send('Failed to contact DialogFlow: ' + err.details);
         });
   }
