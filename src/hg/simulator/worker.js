@@ -2,6 +2,7 @@
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const {workerData, parentPort} = require('worker_threads');
 const Event = require('../Event.js');
+const Day = require('../Day.js');
 const Battle = require('../Battle.js');
 const Grammar = require('../Grammar.js');
 const Simulator = require('../Simulator.js');
@@ -22,9 +23,9 @@ class Worker {
    * @param {boolean} [retry=true] Whether to try again if there is an error.
    */
   constructor(sim, retry = true) {
+    sim.game.currentGame.prevDay = sim.game.currentGame.day;
+    sim.game.currentGame.day = Day.from(sim.game.currentGame.nextDay);
     sim.game.currentGame.day.state = 1;
-    sim.game.currentGame.day.num++;
-    sim.game.currentGame.day.events = [];
 
     sim.messages = {
       _messages: sim.messages,
@@ -496,6 +497,8 @@ class Worker {
           Event.finalizeSimple(sim.messages.get('littleDeath'), sim.game));
     }
     sim.game.currentGame.day.state = 2;
+    sim.game.currentGame.nextDay =
+        Day.from({num: sim.game.currentGame.day.num + 1});
     this.cb({game: sim.game});
   }
   /**
