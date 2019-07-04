@@ -162,16 +162,18 @@ class Worker {
         } else {
           weapons[entries[i][0]] = entries[i][1];
         }
-
-        if (sim.game.disabledEvents && sim.game.disabledEvents.weapon &&
-            sim.game.disabledEvents.weapon[entries[i][0]]) {
-          weapons[entries[i][0]].outcomes =
-              weapons[entries[i][0]].outcomes.filter((el) => {
-                return !sim.game.disabledEvents.weapon[entries[i][0]].find(
-                    (d) => {
-                      return Event.equal(d, el);
-                    });
-              });
+      }
+    }
+    if (sim.game.disabledEvents && sim.game.disabledEvents.weapon) {
+      const entries = Object.entries(sim.game.disabledEvents.weapon);
+      for (let i = 0; i < entries.length; i++) {
+        if (!weapons[entries[i][0]]) continue;
+        weapons[entries[i][0]].outcomes =
+            weapons[entries[i][0]].outcomes.filter(
+                (el) => !sim.game.disabledEvents.weapon[entries[i][0]].find(
+                    (d) => Event.equal(d, el)));
+        if (weapons[entries[i][0]].outcomes.length === 0) {
+          delete weapons[entries[i][0]];
         }
       }
     }
