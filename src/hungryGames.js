@@ -6516,16 +6516,14 @@ function HG() {
         .then((m) => {
           msg = m;
           if (!msg.reactions || msg.reactions.size == 0) {
-            usersFetched([]);
+            usersFetched();
           } else {
             msg.reactions.forEach((el) => {
               numTotal++;
               el.users.fetch().then(usersFetched).catch((err) => {
                 self.error('Failed to fetch user reactions: ' + msg.channel.id);
                 console.error(err);
-                for (let i = 0; i < el.count; i++) {
-                  usersFetched([]);
-                }
+                usersFetched();
               });
             });
           }
@@ -6555,7 +6553,7 @@ function HG() {
       self.excludeUsers('everyone', id, () => {
         hg.getGame(id).reactMessage = null;
         msg.edit('`Ended`').catch(() => {});
-        if (list.length == 0) {
+        if (list.size == 0) {
           cb(null, 'No users reacted.');
         } else {
           self.includeUsers(list, id, (res) => cb(null, res));
