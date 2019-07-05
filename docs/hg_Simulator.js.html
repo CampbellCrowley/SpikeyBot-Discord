@@ -95,7 +95,6 @@
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const {Worker} = require('worker_threads');
 const Game = require('./Game.js');
-const Grammar = require('./Grammar.js');
 
 /**
  * Wrapper for logging functions that normally reference SubModule.error and
@@ -1004,141 +1003,6 @@ Simulator._parseConsumeCount = function(consumeString, numVictim, numAttacker) {
 };
 
 /**
- * @description Format an event message for the given weapon information.
- * @public
- * @static
- * @param {HungryGames~Event} eventTry The event to format.
- * @param {HungryGames~Player} userWithWeapon The player using the weapon.
- * @param {string} ownerName The formated name to insert fot the weapon owner.
- * @param {boolean} firstAttacker Is the weapon owner the first attacker in list
- * of affected users.
- * @param {string} chosenWeapon The id of the chosen weapon.
- * @param {object.&lt;HungryGames~WeaponEvent>} weapons The default weapons object
- * injected with custom weapons.
- * @returns {string} Additional subMessage.
- */
-Simulator.formatWeaponEvent = function(
-    eventTry, userWithWeapon, ownerName, firstAttacker, chosenWeapon, weapons) {
-  let subMessage = '';
-
-  const numVictim = eventTry.victim.count;
-  const numAttacker = eventTry.attacker.count;
-  const consumed =
-      Simulator._parseConsumeCount(eventTry.consumes, numVictim, numAttacker);
-  if (userWithWeapon.weapons[chosenWeapon] &lt;= 0) {
-    delete userWithWeapon.weapons[chosenWeapon];
-
-    const weaponName = chosenWeapon;
-    let consumableName = weaponName;
-    if (weapons[weaponName]) {
-      if (weapons[weaponName].consumable) {
-        consumableName = weapons[weaponName].consumable.replace(
-            /\[C([^|]*)\|([^\]]*)\]/g, '$2');
-      } else if (weapons[weaponName].name) {
-        consumableName =
-            weapons[weaponName].name.replace(/\[C([^|]*)\|([^\]]*)\]/g, '$2');
-      } else {
-        consumableName += 's';
-      }
-    } else {
-      consumableName += 's';
-    }
-    subMessage = `${ownerName} runs out of ${consumableName}.`;
-  } else if (consumed != 0) {
-    const weaponName = chosenWeapon;
-    let consumableName = weaponName;
-    const count = consumed;
-    if (weapons[weaponName].consumable) {
-      consumableName = weapons[weaponName].consumable.replace(
-          /\[C([^|]*)\|([^\]]*)\]/g, (count == 1 ? '$1' : '$2'));
-    } else if (weapons[weaponName].name) {
-      consumableName = weapons[weaponName].name.replace(
-          /\[C([^|]*)\|([^\]]*)\]/g, (count == 1 ? '$1' : '$2'));
-    } else if (count != 1) {
-      consumableName += 's';
-    }
-    subMessage = `${ownerName} lost ${count} ${consumableName}.`;
-  }
-
-  let owner = 'their';
-  if (numAttacker > 1 || (numAttacker == 1 &amp;&amp; !firstAttacker)) {
-    owner = `${ownerName}'s`;
-  }
-  if (!eventTry.message) {
-    const weaponName = weapons[chosenWeapon].name || chosenWeapon;
-    eventTry.message =
-        weapons.message.replace(/\{weapon\}/g, `${owner} ${weaponName}`)
-            .replace(/\{action\}/g, eventTry.action)
-            .replace(/\[C([^|]*)\|([^\]]*)\]/g, (consumed == 1 ? '$1' : '$2'));
-  } else {
-    eventTry.message = eventTry.message.replace(/\{owner\}/g, owner);
-  }
-  return subMessage;
-};
-
-/**
- * @description Format the text that shows all users' inventories in an event.
- * @public
- * @static
- * @param {HungryGames~Event} eventTry The event to format inventories for.
- * @param {number} numVictim The number of victims in this event.
- * @param {number} numAttacker The number of attackers in this event.
- * @param {HungryGames~Player[]} affectedUsers Array of all player affected by
- * this event.
- * @param {object.&lt;HungryGames~WeaponEvent>} weapons The default weapons object
- * injected with custom weapons.
- * @param {string} nameFormat The format for
- * {@link HungryGames~Grammar~formatMultiNames}.
- * @returns {string} The additional text to append.
- */
-Simulator.formatWeaponCounts = function(
-    eventTry, numVictim, numAttacker, affectedUsers, weapons, nameFormat) {
-  const finalConsumeList = {};
-  for (let i = 0; i &lt; numVictim + numAttacker; i++) {
-    const evtGroup =
-        i &lt; numVictim ? eventTry.victim.weapon : eventTry.attacker.weapon;
-    if (!evtGroup) {
-      if (i &lt; numVictim) {
-        i += numVictim - 1;
-      } else {
-        i += numAttacker - 1;
-      }
-      continue;
-    }
-    const user = affectedUsers[i];
-    const entries = Object.entries(user.weapons || {[evtGroup.name]: 0});
-    const consumableList =
-        entries.map((el) => {
-          const weaponName = el[0];
-          let consumableName = weaponName;
-          const count = el[1];
-          if (!weapons[weaponName]) {
-            console.error('Failed to find weapon: ' + weaponName);
-            return `(Unknown weapon ${weaponName}. Was it deleted?)`;
-          }
-          if (weapons[weaponName].consumable) {
-            consumableName = weapons[weaponName].consumable.replace(
-                /\[C([^|]*)\|([^\]]*)\]/g, (count == 1 ? '$1' : '$2'));
-          } else if (count != 1) {
-            consumableName += 's';
-          }
-          return `${count || 0} ${consumableName}`;
-        });
-    const list = consumableList.join(', ');
-    if (!finalConsumeList[list]) {
-      finalConsumeList[list] = [];
-    }
-    finalConsumeList[list].push(user);
-  }
-  const subMessage = [];
-  Object.entries(finalConsumeList).forEach((el) => {
-    const multi = Grammar.formatMultiNames(el[1], nameFormat);
-    subMessage.push(`\n${multi} now has ${el[0]}.`);
-  });
-  return subMessage.join('');
-};
-
-/**
  * Relative path from CWD where the simulation worker is located.
  *
  * @private
@@ -1195,7 +1059,7 @@ module.exports = Simulator;
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.2</a>
 	
-		on Wednesday, July 3, 2019 7:40 PM (-07:00)
+		on Friday, July 5, 2019 2:35 PM (-07:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

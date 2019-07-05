@@ -1452,7 +1452,7 @@ function HG() {
       self.endReactJoinMessage(id, (err) => {
         if (err) {
           self.error(`${err}: ${id}`);
-          self.common.reply('React Join Failed', err);
+          self.common.reply(msg, 'React Join Failed', err);
         }
         startGame(msg, id);
       });
@@ -2740,8 +2740,16 @@ function HG() {
       const start = Date.now();
       for (i; i >= 0 && Date.now() - start < hg.maxDelta; i--) {
         if (i < numUsers) {
+          if (!users[i]) {
+            self.error('Bad User: ' + users[i] + ': ' + i + ' ' + id);
+          }
           response.push(excludeIterate(game, users[i], onlyError, large));
         } else {
+          if (!npcs[i - numUsers]) {
+            self.error(
+                'Bad NPC: ' + npcs[i - numUsers] + ': ' + (i - numUsers) + ' ' +
+                id);
+          }
           response.push(
               excludeIterate(game, npcs[i - numUsers], onlyError, large));
         }
@@ -6467,7 +6475,7 @@ function HG() {
     channel.send(embed).then((msg) => {
       hg.getGame(channel.guild.id).reactMessage = {
         id: msg.id,
-        channel: channel.id,
+        channel: msg.channel.id,
       };
       msg.react(emoji.crossedSwords).catch(() => {});
     });
