@@ -6519,11 +6519,13 @@ function HG() {
             usersFetched([]);
           } else {
             msg.reactions.forEach((el) => {
-              numTotal += el.count;
+              numTotal++;
               el.users.fetch().then(usersFetched).catch((err) => {
                 self.error('Failed to fetch user reactions: ' + msg.channel.id);
                 console.error(err);
-                usersFetched([]);
+                for (let i = 0; i < el.count; i++) {
+                  usersFetched([]);
+                }
               });
             });
           }
@@ -6543,13 +6545,13 @@ function HG() {
      * users for a single reaction.
      */
     function usersFetched(reactionUsers) {
+      numDone++;
       if (reactionUsers &&
           (reactionUsers.length > 0 || reactionUsers.size > 0)) {
         list = list.concat(
             reactionUsers.filter((el) => el.id != self.client.user.id));
-        numDone += reactionUsers.length || reactionUsers.size;
       }
-      if (numTotal != numDone) return;
+      if (numTotal > numDone) return;
       self.excludeUsers('everyone', id, () => {
         hg.getGame(id).reactMessage = null;
         msg.edit('`Ended`').catch(() => {});
