@@ -341,6 +341,7 @@ function Main() {
 
 
     self.client.on('debug', onDebug);
+    self.client.on('rateLimit', onRateLimit);
     self.client.on('warn', onWarn);
     self.client.on('error', onError);
     self.client.on('guildCreate', onGuildCreate);
@@ -616,6 +617,7 @@ function Main() {
     self.command.removeListener('sweep');
 
     self.client.removeListener('debug', onDebug);
+    self.client.removeListener('rateLimit', onRateLimit);
     self.client.removeListener('warn', onWarn);
     self.client.removeListener('error', onError);
     self.client.removeListener('guildCreate', onGuildCreate);
@@ -692,7 +694,7 @@ function Main() {
    *
    * @private
    * @param {string} info The information.
-   * @listens Discord~Client#debug
+   * @listens external:Discord~Client#debug
    */
   function onDebug(info) {
     const hbRegex = new RegExp(
@@ -714,6 +716,17 @@ function Main() {
       return;
     }
     self.common.logDebug('Discord Debug: ' + info);
+  }
+
+  /**
+   * A rate limit message was produced.
+   *
+   * @private
+   * @param {object} info The information.
+   * @listens external:Discord~Client#rateLimit
+   */
+  function onRateLimit(info) {
+    self.common.logDebug('Discord Rate Limit: ' + JSON.stringify(info));
   }
 
   /**
