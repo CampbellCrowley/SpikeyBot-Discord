@@ -900,9 +900,9 @@ function WebSettings() {
    * complete and has data, or has failed.
    */
   function fetchChannel(userData, socket, gId, cId, cb) {
+    if (!checkMyGuild(gId)) return;
     if (typeof cb !== 'function') cb = function() {};
     if (!checkChannelPerm(userData, gId, cId)) {
-      if (!checkMyGuild(gId)) return;
       replyNoPerm(socket, 'fetchChannel');
       cb(null);
       return;
@@ -1412,9 +1412,9 @@ function WebSettings() {
    * complete, or has failed.
    */
   function changeModLogSetting(userData, socket, gId, key, value, cb) {
+    if (!checkMyGuild(gId)) return;
     if (typeof cb !== 'function') cb = function() {};
     if (!checkPerm(userData, gId, null, 'setlogchannel')) {
-      if (!checkMyGuild(gId)) return;
       replyNoPerm(socket, 'changeModLogSetting');
       cb('Forbidden');
       return;
@@ -1484,10 +1484,10 @@ function WebSettings() {
    */
   function changeCommandSetting(
       userData, socket, gId, cmd, key, value, id, enabled, cb) {
+    if (!checkMyGuild(gId)) return;
     if (typeof cb !== 'function') cb = function() {};
     if (!checkPerm(userData, gId, null, 'enable') ||
         !checkPerm(userData, gId, null, 'disable')) {
-      if (!checkMyGuild(gId)) return;
       replyNoPerm(socket, 'changeCommandSetting');
       cb('Forbidden');
       return;

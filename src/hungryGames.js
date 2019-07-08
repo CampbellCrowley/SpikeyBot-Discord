@@ -1471,7 +1471,7 @@ function HG() {
       self.endReactJoinMessage(id, (err) => {
         if (err) {
           self.error(`${err}: ${id}`);
-          self.common.reply('React Join Failed', err);
+          self.common.reply(msg, 'React Join Failed', err);
         }
         startGame(msg, id);
       });
@@ -2750,6 +2750,7 @@ function HG() {
     const iTime2 = Date.now();
     const onlyError = num > 2;
     const response = [];
+    let fetchWait = 0;
     const chunk = function(i = -1) {
       if (i < 0) i = num - 1;
       // Touch the game so it doesn't get purged from memory.
@@ -2759,7 +2760,16 @@ function HG() {
       const start = Date.now();
       for (i; i >= 0 && Date.now() - start < hg.maxDelta; i--) {
         if (i < numUsers) {
-          response.push(excludeIterate(game, users[i], onlyError, large));
+          if (typeof users[i] === 'string' &&
+              !self.client.users.get(users[i])) {
+            fetchWait++;
+            self.client.users.fetch(users[i]).then(fetched).catch((err) => {
+              response.push(err.message);
+              fetched();
+            });
+          } else {
+            response.push(excludeIterate(game, users[i], onlyError, large));
+          }
         } else {
           response.push(
               excludeIterate(game, npcs[i - numUsers], onlyError, large));
@@ -2769,7 +2779,7 @@ function HG() {
         setTimeout(() => {
           chunk(i);
         });
-      } else {
+      } else if (fetchWait === 0) {
         done();
       }
     };
@@ -2786,6 +2796,12 @@ function HG() {
           `Succeeded without errors (${num} excluded)`;
       cb(finalRes);
       self._fire('refresh', id);
+    };
+
+    const fetched = function(user) {
+      fetchWait--;
+      if (user) response.push(excludeIterate(game, user, onlyError, large));
+      if (fetchWait === 0) done();
     };
 
     setTimeout(chunk);
@@ -3036,6 +3052,7 @@ function HG() {
     const iTime2 = Date.now();
     const onlyError = num > 2;
     const response = [];
+    let fetchWait = 0;
     const chunk = function(i = -1) {
       if (i < 0) i = num - 1;
       // Touch the game so it doesn't get purged from memory.
@@ -3045,7 +3062,16 @@ function HG() {
       const start = Date.now();
       for (i; i >= 0 && Date.now() - start < hg.maxDelta; i--) {
         if (i < numUsers) {
-          response.push(includeIterate(game, users[i], onlyError));
+          if (typeof users[i] === 'string' &&
+              !self.client.users.get(users[i])) {
+            fetchWait++;
+            self.client.users.fetch(users[i]).then(fetched).catch((err) => {
+              response.push(err.message);
+              fetched();
+            });
+          } else {
+            response.push(includeIterate(game, users[i], onlyError));
+          }
         } else {
           response.push(includeIterate(game, npcs[i - numUsers], onlyError));
         }
@@ -3054,7 +3080,7 @@ function HG() {
         setTimeout(() => {
           chunk(i);
         });
-      } else {
+      } else if (fetchWait === 0) {
         done();
       }
     };
@@ -3071,6 +3097,12 @@ function HG() {
           `Succeeded without errors (${num} included)`;
       cb(finalRes);
       self._fire('refresh', id);
+    };
+
+    const fetched = function(user) {
+      fetchWait--;
+      if (user) response.push(includeIterate(game, user, onlyError));
+      if (fetchWait === 0) done();
     };
 
     setTimeout(chunk);
@@ -6583,7 +6615,7 @@ function HG() {
     channel.send(embed).then((msg) => {
       hg.getGame(channel.guild.id).reactMessage = {
         id: msg.id,
-        channel: channel.id,
+        channel: msg.channel.id,
       };
       msg.react(emoji.crossedSwords).catch(() => {});
     });
@@ -6624,14 +6656,14 @@ function HG() {
         .then((m) => {
           msg = m;
           if (!msg.reactions || msg.reactions.size == 0) {
-            usersFetched([]);
+            usersFetched();
           } else {
             msg.reactions.forEach((el) => {
-              numTotal += el.count;
+              numTotal++;
               el.users.fetch().then(usersFetched).catch((err) => {
                 self.error('Failed to fetch user reactions: ' + msg.channel.id);
                 console.error(err);
-                usersFetched([]);
+                usersFetched();
               });
             });
           }
@@ -6651,17 +6683,17 @@ function HG() {
      * users for a single reaction.
      */
     function usersFetched(reactionUsers) {
+      numDone++;
       if (reactionUsers &&
           (reactionUsers.length > 0 || reactionUsers.size > 0)) {
         list = list.concat(
             reactionUsers.filter((el) => el.id != self.client.user.id));
-        numDone += reactionUsers.length || reactionUsers.size;
       }
-      if (numTotal != numDone) return;
+      if (numTotal > numDone) return;
       self.excludeUsers('everyone', id, () => {
         hg.getGame(id).reactMessage = null;
         msg.edit('`Ended`').catch(() => {});
-        if (list.length == 0) {
+        if (list.size == 0) {
           cb(null, 'No users reacted.');
         } else {
           self.includeUsers(list, id, (res) => cb(null, res));

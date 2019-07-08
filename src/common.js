@@ -403,6 +403,17 @@ Common.prototype.trustedIds = [
 Common.trustedIds = Common.prototype.trustedIds;
 
 /**
+ * The channel id for the channel to reserve for only unit testing in.
+ *
+ * @public
+ * @default
+ * @constant
+ * @type {string}
+ */
+Common.testChannel = '439642818084995074';
+Common.prototype.testChannel = Common.testChannel;
+
+/**
  * Format a Discord API error.
  *
  * @param {Discord~DiscordAPIError} e DiscordAPIError to format into a string.

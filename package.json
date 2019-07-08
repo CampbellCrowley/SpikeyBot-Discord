@@ -19,6 +19,7 @@
     "dateformat": "^3.0.3",
     "dialogflow": "^0.10.2",
     "discord.js": "github:discordjs/discord.js#b65a4f05da40a45e33f78fc43c9b8172a170a3df",
+    "diff": "^4.0.1",
     "erlpack": "github:discordapp/erlpack#674ebfd3439ba4b7ce616709821d27630f7cdc61",
     "fuzzy-search": "^3.0.1",
     "jimp": "^0.6.4",
