@@ -2,6 +2,7 @@
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const fs = require('fs');
 const SubModule = require('./subModule.js');
+const diff = require('diff');
 
 /**
  * @description Handle all moderator related commands and control.
@@ -64,6 +65,7 @@ class Moderation extends SubModule {
     this.save = this.save.bind(this);
     this.muteMember = this.muteMember.bind(this);
     this._onMessageDelete = this._onMessageDelete.bind(this);
+    this._onMessageUpdate = this._onMessageUpdate.bind(this);
     this._onMessageDeleteBulk = this._onMessageDeleteBulk.bind(this);
     this._onGuildMemberRemove = this._onGuildMemberRemove.bind(this);
     this._onGuildMemberAdd = this._onGuildMemberAdd.bind(this);
@@ -162,6 +164,7 @@ class Moderation extends SubModule {
       }
     });
     this.client.on('messageDelete', this._onMessageDelete);
+    this.client.on('messageUpdate', this._onMessageUpdate);
     this.client.on('messageDeleteBulk', this._onMessageDeleteBulk);
     this.client.on('guildMemberRemove', this._onGuildMemberRemove);
     this.client.on('guildMemberAdd', this._onGuildMemberAdd);
@@ -175,6 +178,7 @@ class Moderation extends SubModule {
     this.command.removeListener('togglebanmessages'); */
     this.command.removeListener('kick');
     this.client.removeListener('messageDelete', this._onMessageDelete);
+    this.client.removeListener('messageUpdate', this._onMessageUpdate);
     this.client.removeListener('messageDeleteBulk', this._onMessageDeleteBulk);
     this.client.removeListener('guildMemberRemove', this._onGuildMemberRemove);
     this.client.removeListener('guildMemberAdd', this._onGuildMemberAdd);
@@ -205,6 +209,7 @@ class Moderation extends SubModule {
    */
   _onMessageDelete(msg) {
     if (!msg.guild) return;
+    if (msg.channel.id === this.common.testChannel) return;
     const modLog = this.bot.getSubmodule('./modLog.js');
     if (!modLog) return;
     const tag = msg.author.tag;
@@ -217,9 +222,80 @@ class Moderation extends SubModule {
     const files = msg.attachments.map((el) => el.url);
     modLog.output(
         msg.guild, 'messageDelete', null, null,
-        `${tag}'s (${id}) message in #${channel}`, files.length > 0 ?
+        `${tag}'s (${id}) in #${channel}`, files.length > 0 ?
             `${msg.content.substr(0, 100)}\n\nFiles: ${files.join(' ')}` :
             msg.content);
+  }
+  /**
+   * @description Handle logging when a message is edited.
+   * @private
+   * @param {external:Discord~Message} prev The previous message.
+   * @param {external:Discord~Message} msg The new message.
+   */
+  _onMessageUpdate(prev, msg) {
+    if (!msg.guild) return;
+    if (msg.channel.id === this.common.testChannel) return;
+    if (msg.author.id === this.client.user.id) return;
+    const modLog = this.bot.getSubmodule('./modLog.js');
+    if (!modLog) return;
+    const tag = msg.author.tag;
+    const id = msg.author.id;
+    const channel = msg.channel.name;
+
+    const diffs = diff.diffWords(prev.content, msg.content);
+    let out = '';
+
+    if (diffs.length > 0) {
+      let last = null;
+      for (let i = 0; i < diffs.length; i++) {
+        const d = diffs[i];
+        if (!d.added && !d.removed) {
+          if (last) out += ']';
+          if (d.count > 23) {
+            if (last) out += '\n';
+            if (last) {
+              out += d.value.substr(0, 10).replace(/\n/g, '\\n') + '...';
+              if (i != diffs.length - 1) {
+                out += d.value.substr(-10).replace(/\n/g, ' ');
+              }
+            } else {
+              out += d.value.substr(-23).replace(/\n/g, ' ');
+            }
+          } else if (d.value != ' ') {
+            if (last) out += '\n';
+            out += d.value.replace(/\n/g, '\\n');
+          }
+          last = null;
+        } else if (d.added) {
+          if (last && last != 'add') {
+            out += ']\n+[';
+          } else if (!last) {
+            out += '\n+[';
+          }
+          out += `${d.value.replace(/\n/g, '\\n')}`;
+          last = 'add';
+        } else if (d.removed) {
+          if (last && last != 'remove') {
+            out += ']\n-[';
+          } else if (!last) {
+            out += '\n-[';
+          }
+          out += `${d.value.replace(/\n/g, '\\n')}`;
+          last = true;
+        }
+      }
+      if (last) out += ']';
+    } else {
+      out = '*[Embeds Updated]';
+    }
+
+    const preview = prev.content.length > 103 ?
+        (prev.content.substr(0, 100) + '...') :
+        prev.content;
+    modLog.output(
+        msg.guild, 'messageUpdate', null, null,
+        `${tag}'s (${id}) in #${channel} (ID: ${msg.id})`,
+        preview, 'Diff', '```diff\n' + out + '```');
   }
   /**
    * @description Handle logging when multiple messages are deleted.
