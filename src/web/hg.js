@@ -236,6 +236,7 @@ function HGWeb() {
         (...args) => handle(fetchStatGroupMetadata, args));
     socket.on('fetchStats', (...args) => handle(fetchStats, args));
     socket.on('fetchLeaderboard', (...args) => handle(fetchLeaderboard, args));
+    socket.on('modifyInventory', (...args) => handle(modifyInventory, args));
     socket.on('imageChunk', (...args) => handle(imageChunk, args));
     socket.on('imageInfo', (...args) => handle(imageInfo, args));
     // End Restricted Access \\
@@ -1691,7 +1692,7 @@ function HGWeb() {
     if (!checkPerm(userData, gId, null, 'groups')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, 'groups');
+      replyNoPerm(socket, 'fetchStatGroupList');
       return;
     }
     const game = hg().getHG().getGame(gId);
@@ -1735,7 +1736,7 @@ function HGWeb() {
     if (!checkPerm(userData, guildId, null, 'groups')) {
       if (!checkMyGuild(guildId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, 'groups');
+      replyNoPerm(socket, 'fetchStatGroupMetadata');
       return;
     }
     const game = hg().getHG().getGame(guildId);
@@ -1784,7 +1785,7 @@ function HGWeb() {
     if (!checkPerm(userData, guildId, null, 'stats')) {
       if (!checkMyGuild(guildId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, 'stats');
+      replyNoPerm(socket, 'fetchStats');
       return;
     }
     const game = hg().getHG().getGame(guildId);
@@ -1833,7 +1834,7 @@ function HGWeb() {
     if (!checkPerm(userData, guildId, null, 'stats')) {
       if (!checkMyGuild(guildId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, 'stats');
+      replyNoPerm(socket, 'fetchLeaderboard');
       return;
     }
     const game = hg().getHG().getGame(guildId);
@@ -1864,6 +1865,42 @@ function HGWeb() {
     });
   }
   this.fetchLeaderboard = fetchLeaderboard;
+  /**
+   * Give or take weapons from a player.
+   *
+   * @private
+   * @type {HGWeb~SocketFunction}
+   * @param {object} userData The current user's session data.
+   * @param {socketIo~Socket} socket The socket connection to reply on.
+   * @param {number|string} gId The guild id to look at.
+   * @param {string} uId The ID of the user to give or take weapon from.
+   * @param {string} weapon The ID of the weapon to give or take.
+   * @param {number} count Number of weapons to give or take. Positive is give,
+   * negative is take.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete, or has failed.
+   */
+  function modifyInventory(userData, socket, gId, uId, weapon, count, cb) {
+    if (!checkPerm(userData, gId, null, 'give') ||
+        !checkPerm(userData, gId, null, 'take')) {
+      if (!checkMyGuild(gId)) return;
+      if (typeof cb === 'function') cb('NO_PERM');
+      replyNoPerm(socket, 'modifyInventory');
+      return;
+    }
+    const game = hg().getHG().getGame(gId);
+    if (!game) {
+      if (typeof cb === 'function') cb('NO_GAME_IN_GUILD');
+      return;
+    }
+    const response = game.modifyPlayerWeapon(uId, weapon, hg().getHG(), count);
+    if (typeof cb === 'function') {
+      cb(null, response, game.serializable);
+    } else {
+      socket.emit('message', response);
+    }
+  }
+  this.modifyInventory = modifyInventory;
   /**
    * Handle receiving image data for avatar uploading.
    *
