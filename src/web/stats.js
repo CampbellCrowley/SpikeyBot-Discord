@@ -20,7 +20,8 @@ function WebStats() {
   /** @inheritdoc */
   this.initialize = function() {
     app.listen(self.common.isRelease ? 8016 : 8017, '127.0.0.1');
-    postTimeout = self.client.setTimeout(postUpdatedCount, 30000);
+    postTimeout = self.client.setTimeout(
+        postUpdatedCount, self.common.isRelease ? 30000 : 5000);
   };
   /** @inheritdoc */
   this.shutdown = function() {
@@ -31,9 +32,9 @@ function WebStats() {
   app.on('error', function(err) {
     if (err.code === 'EADDRINUSE') {
       self.warn(
-          'Stats failed to bind to port because it is in use. (' + err.port +
-          ')');
-      self.shutdown(true);
+          'Stats failed to bind to port, starting in minimal mode. (' +
+          err.port + ')');
+      if (app) app.close();
     } else {
       self.error('Webhooks failed to bind to port for unknown reason.', err);
     }
@@ -105,6 +106,12 @@ function WebStats() {
         'content-type': 'application/json',
         'User-Agent': ua,
       },
+      _data: {
+        'server_count': 'guildCount',
+        'shard_id': 'shardId',
+        'shard_count': 'shardCount',
+      },
+      _allShards: false,
     },
     {
       protocol: 'https:',
@@ -112,10 +119,16 @@ function WebStats() {
       path: '/api/bots/{id}/stats',
       method: 'POST',
       headers: {
-        'Authorization': 'Bot ' + auth.discordBotListComToken,
+        'Authorization': `Bot ${auth.discordBotListComToken}`,
         'content-type': 'application/json',
         'User-Agent': ua,
       },
+      _data: {
+        'guilds': 'shardGuildCount',
+        'shard_id': 'shardId',
+        'users': 'userCount',
+      },
+      _allShards: true,
     },
     {
       protocol: 'https:',
@@ -127,6 +140,12 @@ function WebStats() {
         'content-type': 'application/json',
         'User-Agent': ua,
       },
+      _data: {
+        'guildCount': 'guildCount',
+        'shardCount': 'shardCount',
+        'shardId': 'shardId',
+      },
+      _allShards: false,
     },
     {
       protocol: 'https:',
@@ -138,6 +157,10 @@ function WebStats() {
         'content-type': 'application/json',
         'User-Agent': ua,
       },
+      _data: {
+        'guildCount': 'guildCount',
+      },
+      _allShards: false,
     },
     {
       protocol: 'https:',
@@ -149,6 +172,11 @@ function WebStats() {
         'content-type': 'application/json',
         'User-Agent': ua,
       },
+      _data: {
+        'server_count': 'guildCount',
+        'shards': 'shardCount',
+      },
+      _allShards: false,
     },
   ];
 
@@ -229,35 +257,28 @@ function WebStats() {
    */
   function postUpdatedCount() {
     if (postTimeout) self.client.clearTimeout(postTimeout);
-    if (self.client.user.id !== '318552464356016131') return;
     getStats((values) => {
       if (!values || !values.numGuilds) {
         self.warn('Unable to post guild count due to failure to fetch stats.');
         return;
       }
-      self.log('Current Guild Count: ' + values.numGuilds);
-      /* eslint-disable @typescript-eslint/camelcase */
+      if (!self.client.shard || self.client.shard.ids[0] === 0) {
+        self.log('Current Guild Count: ' + values.numGuilds);
+      }
       if (self.client.shard) {
         sendRequest({
-          server_count: values.numGuilds,
-          guilds: values.numGuilds,
           guildCount: values.numGuilds,
-          users: values.numMembers,
-          // shards: values.numShards,
-          // shard_id: values.reqShard,
-          // shardId: values.reqShard,
-          shard_count: values.numShards,
+          userCount: values.numMembers,
+          shardId: values.reqShard,
           shardCount: values.numShards,
+          shardGuildCount: values.shardGuilds[values.reqShard],
         });
       } else {
         sendRequest({
-          server_count: values.numGuilds,
-          guilds: values.numGuilds,
           guildCount: values.numGuilds,
-          users: values.numMembers,
+          userCount: values.numMembers,
         });
       }
-      /* eslint-enable @typescript-eslint/camelcase */
     });
     /**
      * Send the request after we have fetched our stats.
@@ -267,10 +288,25 @@ function WebStats() {
      * shard_count: number}} data The data to send in our request.
      */
     function sendRequest(data) {
-      const body = JSON.stringify(data);
       apiHosts.forEach((apiHost) => {
-        const host = apiHost;
+        if (!apiHost._allShards && data.shardId > 0) return;
+
+        const pairs = Object.entries(apiHost._data);
+        const body = {};
+        pairs.forEach((el) => body[el[0]] = data[el[1]]);
+
+        const host = Object.assign({}, apiHost);
+        delete host._data;
+        delete host._allShards;
         host.path = host.path.replace('{id}', self.client.user.id);
+
+        if (!self.common.isRelease) {
+          self.debug(
+              'NOOP POST: ' + host.host + host.path + ' ' +
+              JSON.stringify(body));
+          return;
+        }
+
         const req = https.request(host, (res) => {
           let content = '';
           res.on('data', (chunk) => {
@@ -290,7 +326,7 @@ function WebStats() {
             }
           });
         });
-        req.end(body);
+        req.end(JSON.stringify(body));
         req.on('error', console.error);
       });
     }
