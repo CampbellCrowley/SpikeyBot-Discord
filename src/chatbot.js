@@ -125,7 +125,8 @@ function ChatBot() {
     if (msg.mentions.users.get(self.client.user.id) &&
         !self.command.find(msg.content.match(/^\S+/)[0], msg)) {
       const withoutMe = msg.content.replace(selfMentionRegex, '').trim();
-      if (self.command.find(withoutMe.match(/^\S+/)[0], msg)) {
+      const withoutMeMatch = withoutMe.match(/^\S+/);
+      if (withoutMeMatch && self.command.find(withoutMeMatch[0], msg)) {
         self.log('No Prefix: ' + msg.content);
         msg.content = `${msg.prefix}${withoutMe}`;
         if (!self.command.trigger(msg)) {
