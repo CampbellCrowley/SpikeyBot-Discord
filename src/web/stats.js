@@ -126,7 +126,7 @@ function WebStats() {
       _data: {
         'guilds': 'shardGuildCount',
         'shard_id': 'shardId',
-        'users': 'userCount',
+        'users': 'shardUserCount',
       },
       _allShards: true,
     },
@@ -141,11 +141,11 @@ function WebStats() {
         'User-Agent': ua,
       },
       _data: {
-        'guildCount': 'guildCount',
+        'guildCount': 'shardGuildCount',
         'shardCount': 'shardCount',
         'shardId': 'shardId',
       },
-      _allShards: false,
+      _allShards: true,
     },
     {
       protocol: 'https:',
@@ -272,6 +272,7 @@ function WebStats() {
           shardId: values.reqShard,
           shardCount: values.numShards,
           shardGuildCount: values.shardGuilds[values.reqShard],
+          shardUserCount: values.shardUsers[values.reqShard],
         });
       } else {
         sendRequest({

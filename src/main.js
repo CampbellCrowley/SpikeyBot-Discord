@@ -2735,6 +2735,7 @@ function Main() {
       numGuilds: 0,
       numLargestGuild: 0,
       shardGuilds: {},
+      shardUsers: {},
       numUsers: 0,
       numMembers: 0,
       numUsersOnline: 0,
@@ -2770,6 +2771,7 @@ function Main() {
       for (let i = 0; i < res.length; i++) {
         values.numGuilds += res[i].numGuilds;
         values.shardGuilds[i] = res[i].numGuilds;
+        values.shardUsers[i] = res[i].numUsers;
         values.numLargestGuild =
             Math.max(res[i].numLargestGuild, values.numLargestGuild);
         values.numUsers += res[i].numUsers;
