@@ -119,6 +119,11 @@ class Simulator {
     worker.on('error', (err) => {
       this.hg._parent.error('Simulation worker errored');
       console.error(err);
+      this.game.currentGame.day.state = 0;
+      this.hg._parent.common.reply(
+          this.msg,
+          'Simulator crashed for unknown reason while simulating next day.',
+          'Try again with `hg next`, otherwise game may be in a bad state.');
     });
     worker.on('exit', (code) => {
       if (code != 0) this.hg._parent.debug('Worker exited with code ' + code);

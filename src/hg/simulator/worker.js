@@ -250,7 +250,7 @@ class Worker {
             }
             const ownerName =
                 Grammar.formatMultiNames([userWithWeapon], nameFormat);
-            const firstAttacker =
+            const firstAttacker = affectedUsers[eventTry.victim.count] &&
                 affectedUsers[eventTry.victim.count].id == userWithWeapon.id;
             subMessage += Simulator.formatWeaponEvent(
                 eventTry, userWithWeapon, ownerName, firstAttacker,
