@@ -77,6 +77,8 @@ const math = mathjs.create(mathjs.all, {matrix: 'Array'});
  * @listens Command#git
  * @listens Command#gettime
  * @listens Command#update
+ * @listens Command#bans
+ * @listens Command#listbans
  */
 function Main() {
   const self = this;
@@ -163,6 +165,23 @@ function Main() {
   const mentionAccumulator = {};
 
   /**
+   * Cache storing data about requested user ban information. Mapped by user ID,
+   * then array of guild IDs where the user is banned.
+   *
+   * @private
+   * @type {object.<string[]>}
+   */
+  const banListCache = {};
+  /**
+   * Data about number of responses expected and completed for a user from all
+   * shards.
+   *
+   * @private
+   * @type {object.<{total: number, done: number, callbacks: Function[]}>}
+   */
+  const banListRequests = {};
+
+  /**
    * Previous ping values and their associated timestamps. Stores up to the
    * previous {@link oldestPing}  worth of pings since a reboot.
    *
@@ -198,8 +217,8 @@ function Main() {
    * @constant
    */
   const introduction = '\nHello! My name is {username}.\nI was created by ' +
-      'SpikeyRobot#0971, so if you wish to add any features, feel free to PM ' +
-      'him! (Tip: Use **{prefix}pmspikey**)\n\nThe prefix for commands can ' +
+      'SpikeyRobot#0971, so if you wish to add any features, feel free to DM ' +
+      'him! (Tip: Use **{prefix}dmspikey**)\n\nThe prefix for commands can ' +
       'be changed with `{prefix}changeprefix`.\nIf you\'d like to know what ' +
       'I can do, type **{prefix}help** in a PM to me and I\'ll let you know!' +
       '\nThe help is also available on my web page: https://www.spikeybot.com/';
@@ -338,6 +357,7 @@ function Main() {
     self.command.on('gettime', commandGetTime);
     self.command.on('update', commandUpdate);
     self.command.on('sweep', commandSweep);
+    self.command.on(['bans', 'listbans'], commandListBans);
 
 
     self.client.on('debug', onDebug);
@@ -569,6 +589,27 @@ function Main() {
        * @public
        */
       self.client.sweepUsers = sweepUsers;
+      /**
+       * Request this shard broadcast all guilds where a user has been banned.
+       *
+       * @see {@link Main~broadcastBanList}
+       * @see {@link Main~banListResponse}
+       * @see {@link Main~commandListBans}
+       *
+       * @public
+       */
+      self.client.broadcastBanList = broadcastBanList;
+      /**
+       * Response from a shard due to {@link Main~broadcastBanList} being
+       * called.
+       *
+       * @see {@link Main~broadcastBanList}
+       * @see {@link Main~banListResponse}
+       * @see {@link Main~commandListBans}
+       *
+       * @public
+       */
+      self.client.banListResponse = banListResponse;
       /* eslint-enable no-unused-vars */
     }
     self.bot.getStats = getAllStats;
@@ -615,6 +656,7 @@ function Main() {
     self.command.removeListener('gettime');
     self.command.removeListener('update');
     self.command.removeListener('sweep');
+    self.command.removeListener('bans');
 
     self.client.removeListener('debug', onDebug);
     self.client.removeListener('rateLimit', onRateLimit);
@@ -3305,6 +3347,145 @@ function Main() {
     });
   }
 
+  /**
+   * Fetch all guilds a user has been banned from that we know of.
+   *
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens Command#sweep
+   */
+  function commandListBans(msg) {
+    const user = msg.softMentions.users.first() || msg.author;
+    requestBanList(user.id, (res) => {
+      const pairs = Object.entries(res);
+      if (pairs.length > 5) {
+        self.common.reply(
+            msg, `${user.tag} Known Bans`, `${pairs.length} known servers.`);
+        return;
+      }
+      const out = pairs.map((el) => `${el[0]}: ${el[1]}`).join('\n');
+      self.common.reply(msg, `${user.tag} Known Bans`, out || 'None');
+    });
+  }
+
+  /**
+   * Request the ban lists for a user from all shards.
+   *
+   * @private
+   * @param {string} userId The ID of the user to fetch.
+   * @param {Function} cb The callback once all requests have completed.
+   */
+  function requestBanList(userId, cb) {
+    if (self.client.shard) {
+      const num = self.client.shard.count;
+      if (!banListRequests[userId]) {
+        banListRequests[userId] = {total: 0, done: 0, callbacks: []};
+        delete banListCache[userId];
+      } else if (banListRequests[userId].done < banListRequests[userId].total) {
+        banListRequests[userId].callbacks.push(cb);
+        return;
+      }
+      banListRequests[userId].callbacks.push(cb);
+      self.client.shard
+          .broadcastEval(`this.broadcastBanList('${userId}',${num})`)
+          .catch((err) => {
+            self.error('Failed to broadcast for ban list.');
+            console.error(err);
+          });
+    } else {
+      let total = 0;
+      let done = 0;
+      const res = {};
+      self.client.guilds.forEach((g) => {
+        total++;
+        g.fetchBans().then((bans) => {
+          bans.forEach((b) => {
+            if (b.user.id != userId) return;
+            res[g.id] = b.reason || true;
+          });
+          done++;
+          if (done >= total) cb(res);
+        }).catch(() => {
+          done++;
+          if (done >= total) cb(res);
+        });
+      });
+    }
+  }
+
+  /**
+   * Fired when shard sends the ban list response data.
+   *
+   * @private
+   * @param {string} userId The ID of the user this data is for.
+   * @param {object.<string>} res The response data from a shard.
+   */
+  function banListResponse(userId, res) {
+    if (!banListRequests[userId]) {
+      banListRequests[userId] = {total: 0, done: 1, callbacks: []};
+    } else {
+      banListRequests[userId].done++;
+    }
+    if (!banListCache[userId]) banListCache[userId] = {};
+    if (res) {
+      for (const g in res) {
+        if (!res[g]) continue;
+        banListCache[userId][g] = res[g];
+      }
+    }
+    if (banListRequests[userId].done === banListRequests[userId].total) {
+      banListRequests[userId].callbacks.forEach((cb) => {
+        try {
+          cb(banListCache[userId]);
+        } catch (err) {
+          self.error('Error while firing callback for ban lists: ' + userId);
+          console.error(err);
+        }
+      });
+    }
+  }
+
+  /**
+   * Fetch the list of guilds the user has been banned from. Responds through a
+   * broadcastEval to all shards with an object mapped by guild ID and the value
+   * is the ban reason as a string.
+   *
+   * @private
+   * @param {string} userId The ID of the user to fetch.
+   * @param {number} numReq The number of additional responses from other shards
+   * should be expected.
+   */
+  function broadcastBanList(userId, numReq) {
+    if (!banListRequests[userId]) {
+      banListRequests[userId] = {total: numReq, done: 0, callbacks: []};
+    } else {
+      banListRequests[userId].total += numReq;
+    }
+    let total = 0;
+    let done = 0;
+    const res = {};
+    self.client.guilds.forEach((g) => {
+      total++;
+      g.fetchBans().then((bans) => {
+        bans.forEach((b) => {
+          if (b.user.id != userId) return;
+          res[g.id] = b.reason || true;
+        });
+        done++;
+        if (done >= total) {
+          self.client.shard.broadcastEval(
+              `this.banListResponse('${userId}',${JSON.stringify(res)})`);
+        }
+      }).catch(() => {
+        done++;
+        if (done >= total) {
+          self.client.shard.broadcastEval(
+              `this.banListResponse('${userId}',${JSON.stringify(res)})`);
+        }
+      });
+    });
+  }
 
   /**
    * Triggered via SIGINT, SIGHUP or SIGTERM. Saves data before exiting.
