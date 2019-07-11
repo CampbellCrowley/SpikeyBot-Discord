@@ -1855,7 +1855,11 @@ function HGWeb() {
           if (typeof cb === 'function') cb('ATTEMPT_FAILED');
           return;
         }
-        const serializable = rows.map((el) => el.serializable);
+        const serializable = rows.map((el) => {
+          const out = {id: el.id};
+          Object.assign(out, el.serializable);
+          return out;
+        });
         if (typeof cb === 'function') {
           cb(null, serializable);
         } else {
