@@ -788,7 +788,8 @@ function Main() {
    * @listens external:Discord~Client#rateLimit
    */
   function onRateLimit(info) {
-    self.common.logDebug('Discord Rate Limit: ' + JSON.stringify(info));
+    info;
+    // self.common.logDebug('Discord Rate Limit: ' + JSON.stringify(info));
   }
 
   /**
