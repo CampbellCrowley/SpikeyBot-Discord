@@ -3442,6 +3442,7 @@ function Main() {
           self.error('Error while firing callback for ban lists: ' + userId);
           console.error(err);
         }
+        delete banListRequests[userId];
       });
     }
   }
