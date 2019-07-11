@@ -244,6 +244,7 @@ class Moderation extends SubModule {
 
     const diffs = diff.diffWords(prev.content, msg.content);
     let out = '';
+    let diffOk = false;
 
     if (diffs.length > 0) {
       let last = null;
@@ -267,6 +268,7 @@ class Moderation extends SubModule {
           }
           last = null;
         } else if (d.added) {
+          diffOk = true;
           if (last && last != 'add') {
             out += ']\n+[';
           } else if (!last) {
@@ -275,6 +277,7 @@ class Moderation extends SubModule {
           out += `${d.value.replace(/\n/g, '\\n')}`;
           last = 'add';
         } else if (d.removed) {
+          diffOk = true;
           if (last && last != 'remove') {
             out += ']\n-[';
           } else if (!last) {
@@ -289,14 +292,22 @@ class Moderation extends SubModule {
     if (!out || out.trim().length == 0) {
       out = '*[Embeds Updated]';
     }
+    if (!diffOk) return;
 
     const preview = prev.content.length > 103 ?
         (prev.content.substr(0, 100) + '...') :
         prev.content;
-    modLog.output(
-        msg.guild, 'messageUpdate', null, null,
-        `${tag}'s (${id}) in #${channel} (ID: ${msg.id})`,
-        preview, 'Diff', '```diff\n' + out + '```');
+    if (msg.author.bot) {
+      modLog.output(
+          msg.guild, 'messageBotUpdate', null, null,
+          `${tag}'s (${id}) in #${channel} (ID: ${msg.id})`, preview, 'Diff',
+          '```diff\n' + out + '```');
+    } else {
+      modLog.output(
+          msg.guild, 'messageUpdate', null, null,
+          `${tag}'s (${id}) in #${channel} (ID: ${msg.id})`, preview, 'Diff',
+          '```diff\n' + out + '```');
+    }
   }
   /**
    * @description Handle logging when multiple messages are deleted.
