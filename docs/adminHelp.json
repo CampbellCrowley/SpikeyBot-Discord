@@ -57,18 +57,6 @@
           ]
         },
         {
-          "command": "listbans",
-          "description": "List all known servers where the specified user has been banned.",
-          "aliases": "bans, listbans",
-          "examples": [
-            {
-              "description": "Basic Usage",
-              "command": "bans @RoboSoupCan",
-              "result": "The list of servers where the bot knows RoboSoupCan has been banned and the reason for each ban will be shown. (Bot needs permission to view ban list on server for ban to show up)."
-            }
-          ]
-        },
-        {
           "command": "kick",
           "description": "I will kick the person you mention.",
           "validOnlyInGuild": true,
