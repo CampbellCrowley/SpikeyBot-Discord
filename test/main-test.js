@@ -104,7 +104,7 @@ const mainTests = [
   new Test('List command settings', '~show', ['#embed']),
   new Test('Reset command settings', '~reset', ['#noerr', '#noerr']),
   new Test('Git command', '~git', ['^```']),
-  new Test('Who am I', '~whoami', ['^Bot']),
+  new Test('Who am I', '~whoami', ['#embed']),
   new Test('What time is it', '~gettime', ['#noerr']),
   new Test('Color command hex', '~color #0F8D1C', ['#noerr']),
   new Test('Color command rgb', '~color 255 0 255', ['#noerr']),
