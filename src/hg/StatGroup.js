@@ -299,7 +299,7 @@ class StatGroup {
     } else {
       if (typeof opts.sort === 'undefined') {
         opts.sort = 'wins';
-      } else if (typeof opts.sort !== 'string') {
+      } else if (typeof opts.sort !== 'string' || opts.sort.length == 0) {
         opts.sort = null;
       }
       if (typeof opts.limit === 'undefined') opts.limit = 10;

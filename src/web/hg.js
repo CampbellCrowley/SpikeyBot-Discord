@@ -563,6 +563,7 @@ function HGWeb() {
       color: m.displayColor,
       guild: {id: m.guild.id},
       permissions: m.permissions.bitfield,
+      premiumSinceTimestamp: m.premiumSinceTimestamp,
       user: {
         username: m.user.username,
         avatarURL: m.user.displayAvatarURL(),
