@@ -528,6 +528,17 @@ function Main() {
             disabledBanMessage[g.id] = parsed.disabledBanMessage || false;
             disabledRiggedCounter[g.id] = parsed.disabledRiggedCounter || false;
           });
+      fs.readFile(
+          `${self.common.guildSaveDir}${g.id}/banCache.json`, (err, file) => {
+            if (err) return;
+            let parsed;
+            try {
+              parsed = JSON.parse(file);
+            } catch (e) {
+              return;
+            }
+            banListCache[g.id] = parsed;
+          });
     });
 
     fs.readFile('./save/rigged-counter.txt', function(err, file) {
@@ -803,6 +814,15 @@ function Main() {
         self.common.mkAndWrite(filename, dir, JSON.stringify(obj));
       } else {
         self.common.mkAndWriteSync(filename, dir, JSON.stringify(obj));
+      }
+
+      const filename2 = dir + '/banCache.json';
+      if (opt == 'async') {
+        self.common.mkAndWrite(
+            filename2, dir, JSON.stringify(banListCache[g.id]));
+      } else {
+        self.common.mkAndWriteSync(
+            filename2, dir, JSON.stringify(banListCache[g.id]));
       }
     });
     if (!self.client.shard || self.client.shard.ids[0] == 0) {
@@ -3446,20 +3466,37 @@ function Main() {
    * @private
    * @type {commandHandler}
    * @param {Discord~Message} msg Message that triggered command.
-   * @listens Command#sweep
+   * @listens Command#listbans
+   * @listens Command#bans
    */
   function commandListBans(msg) {
+    if (msg.author.id != self.common.spikeyId) {
+      self.common.reply(
+          msg,
+          'Sorry, I know I just added this, I need to fix something first.',
+          'Should be working again in a few minutes.');
+      return;
+    }
     const user = msg.softMentions.users.first() || msg.author;
-    requestBanList(user.id, (res) => {
-      const pairs = Object.entries(res);
-      if (pairs.length > 5) {
-        self.common.reply(
-            msg, `${user.tag} Known Bans`, `${pairs.length} known servers.`);
-        return;
-      }
-      const out = pairs.map((el) => `${el[0]}: ${el[1]}`).join('\n');
-      self.common.reply(msg, `${user.tag} Known Bans`, out || 'None');
-    });
+    self.common
+        .reply(
+            msg, 'Loading ban list...',
+            'Please wait, this will take a while.\nBan list updates after ' +
+                '1 hour. ')
+        .then((_msg) => {
+          requestBanList(user.id, (res) => {
+            _msg.delete();
+            const pairs = Object.entries(res);
+            if (pairs.length > 5) {
+              self.common.reply(
+                  msg, `${user.tag} Known Bans`,
+                  `${pairs.length} known servers.`);
+              return;
+            }
+            const out = pairs.map((el) => `${el[0]}: ${el[1]}`).join('\n');
+            self.common.reply(msg, `${user.tag} Known Bans`, out || 'None');
+          });
+        });
   }
 
   /**
@@ -3559,25 +3596,43 @@ function Main() {
     let total = 0;
     let done = 0;
     const res = {};
+    const checkDone = function() {
+      done++;
+      if (done >= total) {
+        self.client.shard.broadcastEval(
+            `this.banListResponse('${userId}',${JSON.stringify(res)})`);
+      }
+    };
     self.client.guilds.forEach((g) => {
+      if (!g.me.permissions.has('BAN_MEMBERS')) return;
       total++;
-      g.fetchBans().then((bans) => {
-        bans.forEach((b) => {
-          if (b.user.id != userId) return;
-          res[g.id] = b.reason || true;
-        });
-        done++;
-        if (done >= total) {
-          self.client.shard.broadcastEval(
-              `this.banListResponse('${userId}',${JSON.stringify(res)})`);
-        }
-      }).catch(() => {
-        done++;
-        if (done >= total) {
-          self.client.shard.broadcastEval(
-              `this.banListResponse('${userId}',${JSON.stringify(res)})`);
-        }
-      });
+      const now = Date.now();
+      if (banListCache[g.id] &amp;&amp; banListCache[g.id].timestamp &amp;&amp;
+          now - banListCache[g.id].timestamp &lt; 60 * 60 * 1000) {
+        res[g.id] = banListCache[g.id].users[userId];
+        console.log('Used cache');
+        checkDone();
+        return;
+      } else if (banListCache[g.id]) {
+        banListCache[g.id].users = {};
+      }
+      g.fetchBans()
+          .then((bans) => {
+            bans.forEach((b) => {
+              if (!banListCache[g.id]) banListCache[g.id] = {users: {}};
+              banListCache[g.id].timestamp = now;
+              banListCache[g.id].users[b.user.id] = b.reason || true;
+              if (b.user.id != userId) return;
+              res[g.id] = b.reason || true;
+            });
+            checkDone();
+          })
+          .catch((err) => {
+            console.error(err);
+            if (!banListCache[g.id]) banListCache[g.id] = {users: {}};
+            banListCache[g.id].timestamp = now;
+            checkDone();
+          });
     });
   }
 
@@ -3666,7 +3721,7 @@ module.exports = new Main();
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.2</a>
 	
-		on Thursday, July 11, 2019 11:06 AM (-07:00)
+		on Thursday, July 11, 2019 11:49 AM (-07:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>
