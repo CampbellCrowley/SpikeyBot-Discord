@@ -3377,6 +3377,12 @@ function Main() {
    * @listens Command#bans
    */
   function commandListBans(msg) {
+    if (msg.author.id != self.common.spikeyId) {
+      self.common.reply(
+          msg, 'Sorry, this command was disabled temporarily due to Discord ' +
+              'rate limit issues.');
+      return;
+    }
     const user = msg.softMentions.users.first() || msg.author;
     self.common
         .reply(
