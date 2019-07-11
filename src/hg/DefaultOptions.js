@@ -305,7 +305,7 @@ class DefaultOptions {
         'messages');
     this._delayEvents = new NumberOption(
         3500, 'Delay in milliseconds between each event being printed.',
-        'other', {min: 1500, max: 30000}, 'time');
+        'other', {min: 2000, max: 30000}, 'time');
     this._delayDays = new NumberOption(
         7000, 'Delay in milliseconds between each day being printed.', 'other',
         {min: 2500, max: 129600000},  // 1.5 days
