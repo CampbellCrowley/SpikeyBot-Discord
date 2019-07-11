@@ -3377,13 +3377,6 @@ function Main() {
    * @listens Command#bans
    */
   function commandListBans(msg) {
-    if (msg.author.id != self.common.spikeyId) {
-      self.common.reply(
-          msg,
-          'Sorry, I know I just added this, I need to fix something first.',
-          'Should be working again in a few minutes.');
-      return;
-    }
     const user = msg.softMentions.users.first() || msg.author;
     self.common
         .reply(
@@ -3517,7 +3510,6 @@ function Main() {
       if (banListCache[g.id] && banListCache[g.id].timestamp &&
           now - banListCache[g.id].timestamp < 60 * 60 * 1000) {
         res[g.id] = banListCache[g.id].users[userId];
-        console.log('Used cache');
         checkDone();
         return;
       } else if (banListCache[g.id]) {
