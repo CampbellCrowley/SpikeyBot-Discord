@@ -167,15 +167,7 @@ function WebSettings() {
       time: cmd.time,
       member: makeMember(cmd.member),
     };
-    for (const i in sockets) {
-      if (sockets[i] && sockets[i].cachedGuilds &&
-          sockets[i].cachedGuilds.includes(gId)) {
-        sockets[i].emit('commandRegistered', toSend, gId);
-      }
-    }
-    if (ioClient) {
-      ioClient.emit('_guildBroadcast', gId, 'commandRegistered', toSend, gId);
-    }
+    guildBroadcast(gId, 'commandRegistered', toSend, gId);
   }
   /**
    * Handle a CmdScheduling.ScheduledCommand being canceled.
@@ -187,15 +179,7 @@ function WebSettings() {
    * in.
    */
   function handleCommandCancelled(cmdId, gId) {
-    for (const i in sockets) {
-      if (sockets[i] && sockets[i].cachedGuilds &&
-          sockets[i].cachedGuilds.includes(gId)) {
-        sockets[i].emit('commandCancelled', cmdId, gId);
-      }
-    }
-    if (ioClient) {
-      ioClient.emit('_guildBroadcast', gId, 'commandCancelled', cmdId, gId);
-    }
+    guildBroadcast(gId, 'commandCancelled', cmdId, gId);
   }
 
   /**
@@ -213,16 +197,7 @@ function WebSettings() {
    * @param {string} [id2] Second setting id.
    */
   function handleSettingsChanged(gId, value, type, id, id2) {
-    for (const i in sockets) {
-      if (sockets[i] && sockets[i].cachedGuilds &&
-          (!gId || sockets[i].cachedGuilds.includes(gId))) {
-        sockets[i].emit('settingsChanged', gId, value, type, id, id2);
-      }
-    }
-    if (ioClient) {
-      ioClient.emit(
-          '_guildBroadcast', gId, 'settingsChanged', gId, value, type, id, id2);
-    }
+    guildBroadcast(gId, 'settingsChanged', gId, value, type, id, id2);
   }
 
   /**
@@ -234,15 +209,7 @@ function WebSettings() {
    * @param {string} gId The ID of the guild in which the settings were reset.
    */
   function handleSettingsReset(gId) {
-    for (const i in sockets) {
-      if (sockets[i] && sockets[i].cachedGuilds &&
-          sockets[i].cachedGuilds.includes(gId)) {
-        sockets[i].emit('settingsReset', gId);
-      }
-    }
-    if (ioClient) {
-      ioClient.emit('_guildBroadcast', gId, 'settingsReset', gId);
-    }
+    guildBroadcast(gId, 'settingsReset', gId);
   }
 
   /**
@@ -255,16 +222,7 @@ function WebSettings() {
    * information.
    */
   function handleLockdown(event) {
-    for (const i in sockets) {
-      if (sockets[i] && sockets[i].cachedGuilds &&
-          sockets[i].cachedGuilds.includes(event.id)) {
-        sockets[i].emit('lockdown', event.id, event.settings);
-      }
-    }
-    if (ioClient) {
-      ioClient.emit(
-          '_guildBroadcast', event.id, 'lockdown', event.id, event.settings);
-    }
+    guildBroadcast(event.id, 'lockdown', event.id, event.settings);
   }
 
   /**
@@ -277,17 +235,8 @@ function WebSettings() {
    * information.
    */
   function handleRaidAction(event) {
-    for (const i in sockets) {
-      if (sockets[i] && sockets[i].cachedGuilds &&
-          sockets[i].cachedGuilds.includes(event.id)) {
-        sockets[i].emit('raidAction', event.id, event.action, event.user.id);
-      }
-    }
-    if (ioClient) {
-      ioClient.emit(
-          '_guildBroadcast', event.id, 'raidAction', event.id, event.action,
-          event.user.id);
-    }
+    guildBroadcast(
+        event.id, 'raidAction', event.id, event.action, event.user.id);
   }
 
   /**
@@ -539,6 +488,28 @@ function WebSettings() {
       }
     });
   }
+
+  /**
+   * Broadcast a message to all relevant clients.
+   *
+   * @private
+   * @param {string} gId Guild ID to broadcast message for.
+   * @param {string} event The name of the event to broadcast.
+   * @param {*} args Data to send in broadcast.
+   */
+  function guildBroadcast(gId, event, ...args) {
+    const keys = Object.keys(sockets);
+    for (const i in keys) {
+      if (!sockets[keys[i]].cachedGuilds) continue;
+      if (sockets[keys[i]].cachedGuilds.find((g) => g === gId)) {
+        sockets[keys[i]].emit(event, gId, ...args);
+      }
+    }
+    if (ioClient) {
+      ioClient.emit('_guildBroadcast', gId, event, gId, ...args);
+    }
+  }
+
 
   /**
    * Send a message to the given socket informing the client that the command
@@ -1385,15 +1356,7 @@ function WebSettings() {
     }
     cb();
 
-    for (const i in sockets) {
-      if (sockets[i] && sockets[i].cachedGuilds &&
-          sockets[i].cachedGuilds.includes(gId)) {
-        sockets[i].emit('raidSettingsChanged', gId);
-      }
-    }
-    if (ioClient) {
-      ioClient.emit('_guildBroadcast', gId, 'raidSettingsChanged', gId);
-    }
+    guildBroadcast(gId, 'raidSettingsChanged', gId);
   }
   this.changeRaidSetting = changeRaidSetting;
 
@@ -1451,15 +1414,7 @@ function WebSettings() {
     }
     cb();
 
-    for (const i in sockets) {
-      if (sockets[i] && sockets[i].cachedGuilds &&
-          sockets[i].cachedGuilds.includes(gId)) {
-        sockets[i].emit('modLogSettingsChanged', gId);
-      }
-    }
-    if (ioClient) {
-      ioClient.emit('_guildBroadcast', gId, 'modLogSettingsChanged', gId);
-    }
+    guildBroadcast(gId, 'modLogSettingsChanged', gId);
   }
   this.changeModLogSetting = changeModLogSetting;
 
@@ -1529,15 +1484,7 @@ function WebSettings() {
 
     cb();
 
-    for (const i in sockets) {
-      if (sockets[i] && sockets[i].cachedGuilds &&
-          sockets[i].cachedGuilds.includes(gId)) {
-        sockets[i].emit('commandSettingsChanged', gId, name );
-      }
-    }
-    if (ioClient) {
-      ioClient.emit('_guildBroadcast', gId, 'commandSettingsChanged', gId);
-    }
+    guildBroadcast(gId, 'commandSettingsChanged', gId);
   }
   this.changeCommandSetting = changeCommandSetting;
 }
