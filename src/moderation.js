@@ -285,7 +285,8 @@ class Moderation extends SubModule {
         }
       }
       if (last) out += ']';
-    } else {
+    }
+    if (!out || out.trim().length == 0) {
       out = '*[Embeds Updated]';
     }
 
