@@ -8,6 +8,7 @@ const StatManager = require('./StatManager.js');
 
 /**
  * A single instance of a game in a guild.
+ *
  * @memberof HungryGames
  * @inner
  */
@@ -44,6 +45,7 @@ class GuildGame {
       excludedNPCs, customEvents, disabledEvents) {
     /**
      * The ID of the current bot account.
+     *
      * @public
      * @type {string}
      * @constant
@@ -51,6 +53,7 @@ class GuildGame {
     this.bot = bot;
     /**
      * The ID of the Guild this is for.
+     *
      * @public
      * @type {string}
      * @constant
@@ -58,6 +61,7 @@ class GuildGame {
     this.id = id;
     /**
      * Array of user IDs that will be included in the next game.
+     *
      * @public
      * @type {string[]}
      * @default []
@@ -75,6 +79,7 @@ class GuildGame {
     }
     /**
      * Array of user IDs that will be excluded from the next game.
+     *
      * @public
      * @type {string[]}
      * @default []
@@ -82,6 +87,7 @@ class GuildGame {
     this.excludedUsers = excludedUsers || [];
     /**
      * Array of NPCs that will be included in the game.
+     *
      * @public
      * @type {HungryGames~NPC[]}
      * @default []
@@ -89,6 +95,7 @@ class GuildGame {
     this.includedNPCs = includedNPCs || [];
     /**
      * Array of NPCs that will be excluded from the game.
+     *
      * @public
      * @type {HungryGames~NPC[]}
      * @default []
@@ -96,12 +103,14 @@ class GuildGame {
     this.excludedNPCs = excludedNPCs || [];
     /**
      * Game options.
+     *
      * @public
-     * @type {Object}
+     * @type {object}
      */
     this.options = options;
     /**
      * Is this game autoplaying?
+     *
      * @public
      * @type {boolean}
      * @default false
@@ -110,6 +119,7 @@ class GuildGame {
     /**
      * Does this game currently have any long running operations being
      * performed.
+     *
      * @public
      * @type {boolean}
      * @default false
@@ -117,6 +127,7 @@ class GuildGame {
     this.loading = false;
     /**
      * Is this game automatically stepping, or are steps controlled manually.
+     *
      * @private
      * @type {boolean}
      * @default false
@@ -124,15 +135,14 @@ class GuildGame {
     this._autoStep = false;
     /**
      * All custom events for the guild.
+     *
      * @public
-     * @type {
-     *   {
-     *     bloodbath: HungryGames~Event[],
-     *     player: HungryGames~Event[],
-     *     weapon: Object.<HungryGames~WeaponEvent>,
-     *     arena: HungryGames~ArenaEvent[]
-     *   }
-     * }
+     * @type {{
+     *   bloodbath: HungryGames~Event[],
+     *   player: HungryGames~Event[],
+     *   weapon: object.<HungryGames~WeaponEvent>,
+     *   arena: HungryGames~ArenaEvent[]
+     * }}
      * @default {{bloodbath: [], player: [], arena: [], weapon: {}}}
      */
     this.customEvents =
@@ -150,6 +160,7 @@ class GuildGame {
 
     /**
      * Current game information.
+     *
      * @public
      * @type {HungryGames~Game}
      * @default
@@ -158,15 +169,14 @@ class GuildGame {
     /**
      * Disabled event information. These events are not allowed to show up in
      * the game.
+     *
      * @public
-     * @type {
-     *   {
-     *     bloodbath: HungryGames~Event[],
-     *     player: HungryGames~Event[],
-     *     weapon: Object.<Array.<HungryGames~Event>>,
-     *     arena: Object.<Array.<HungryGames~Event>>
-     *   }
-     * }
+     * @type {{
+     *   bloodbath: HungryGames~Event[],
+     *   player: HungryGames~Event[],
+     *   weapon: object.<Array.<HungryGames~Event>>,
+     *   arena: object.<Array.<HungryGames~Event>>
+     * }}
      * @default {{bloodbath: [], player: [], arena: {}, weapon: {}}}
      */
     this.disabledEvents =
@@ -175,6 +185,7 @@ class GuildGame {
     /**
      * The channel id a command was last sent from that affected this guild
      * game.
+     *
      * @public
      * @type {?string}
      * @default
@@ -183,6 +194,7 @@ class GuildGame {
     /**
      * The id of the user that last sent a command which interacted with this
      * guild game.
+     *
      * @public
      * @type {?string}
      * @default
@@ -191,6 +203,7 @@ class GuildGame {
 
     /**
      * The channel id where the game messages are currently being sent in.
+     *
      * @public
      * @type {?string}
      * @default
@@ -199,6 +212,7 @@ class GuildGame {
 
     /**
      * Message ID of the message to fetch reactions from for join via react.
+     *
      * @public
      * @type {?{id: string, channel: string}}
      * @default
@@ -208,6 +222,7 @@ class GuildGame {
     /**
      * The ID of the currently active {@link HungryGames~StatGroup} tracking
      * stats.
+     *
      * @public
      * @type {?string}
      * @default
@@ -216,6 +231,7 @@ class GuildGame {
 
     /**
      * Interval for day events.
+     *
      * @private
      * @type {?Timeout}
      * @default
@@ -233,6 +249,7 @@ class GuildGame {
 
     /**
      * Function to call when state is modified.
+     *
      * @private
      * @type {?HungryGames~GuildGame~StateUpdateCB}
      * @default
@@ -240,6 +257,7 @@ class GuildGame {
     this._stateUpdateCallback = null;
     /**
      * Manages all stats for all players.
+     *
      * @private
      * @type {HungryGames~StatManager}
      * @constant

@@ -25,7 +25,7 @@ class Messages {
      * All messages to show for games. Parsed from file.
      *
      * @private
-     * @type {Object.<string[]>}
+     * @type {object.<string[]>}
      * @default
      */
     this._messages = {};

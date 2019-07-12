@@ -3,6 +3,7 @@
 
 /**
  * Option base.
+ *
  * @memberof HungryGames~DefaultOptions
  * @inner
  */
@@ -78,9 +79,10 @@ class Option {
 
 /**
  * Number option.
+ *
  * @memberof HungryGames~DefaultOptions
  * @inner
- * @extends HungryGames~DefaultOptions~Option
+ * @augments HungryGames~DefaultOptions~Option
  */
 class NumberOption extends Option {
   /**
@@ -113,9 +115,10 @@ class NumberOption extends Option {
 }
 /**
  * Boolean option.
+ *
  * @memberof HungryGames~DefaultOptions
  * @inner
- * @extends HungryGames~DefaultOptions~Option
+ * @augments HungryGames~DefaultOptions~Option
  */
 class BooleanOption extends Option {
   /**
@@ -134,9 +137,10 @@ class BooleanOption extends Option {
 
 /**
  * Object option. Shallow copies passed value and range.
+ *
  * @memberof HungryGames~DefaultOptions
  * @inner
- * @extends HungryGames~DefaultOptions~Option
+ * @augments HungryGames~DefaultOptions~Option
  */
 class ObjectOption extends Option {
   /**
@@ -171,9 +175,10 @@ class ObjectOption extends Option {
 
 /**
  * One of multiple choices option.
+ *
  * @memberof HungryGames~DefaultOptions
  * @inner
- * @extends HungryGames~DefaultOptions~Option
+ * @augments HungryGames~DefaultOptions~Option
  */
 class SelectOption extends Option {
   /**
@@ -212,6 +217,7 @@ class SelectOption extends Option {
 
 /**
  * Default options for a HungryGames.
+ *
  * @memberof HungryGames
  * @inner
  */
@@ -243,18 +249,18 @@ class DefaultOptions {
     this._includeBots = new BooleanOption(
         false, 'Should bots be included in the games. If this is false, bots ' +
             'cannot be added manually.',
-        'other');
+        'players');
     this._excludeNewUsers = new BooleanOption(
         false, 'Should new users who join your server be excluded from the ' +
             'games by default. True will add all new users to the blacklist, ' +
             'false will put all new users into the next game automatically.',
-        'other');
+        'players');
     this._allowNoVictors = new BooleanOption(
         false,
         'Should it be possible to end a game without any winners. If true, ' +
             'it is possible for every player to die, causing the game to end ' +
             'with everyone dead. False forces at least one winner.',
-        'features');
+        'other');
     this._bleedDays = new NumberOption(
         2, 'Number of days a user can bleed before they can die.', 'other');
     this._battleHealth = new NumberOption(
@@ -263,7 +269,7 @@ class DefaultOptions {
     this._teamSize = new NumberOption(
         0, 'Maximum size of teams when automatically forming teams. 0 to ' +
             'disable teams',
-        'other');
+        'players');
     this._teammatesCollaborate = new SelectOption(
         'always',
         'Will teammates work together. If disabled, teammates can kill ' +
@@ -272,31 +278,31 @@ class DefaultOptions {
             ' is remaining, not one player. Untilend means teammates work ' +
             'together until the end of the game, this means only there will ' +
             'be only 1 victor.',
-        'features', ['disabled', 'always', 'untilend']);
+        'players', ['disabled', 'always', 'untilend']);
     this._useEnemyWeapon = new BooleanOption(
         false,
         'This will allow the attacker in an event to use the victim\'s ' +
             'weapon against them.',
-        'features');
+        'players');
     this._mentionVictor = new BooleanOption(
         false,
         'Should the victor of the game (can be team), be tagged/mentioned ' +
             'so they get notified?',
-        'features');
+        'messages');
     this._mentionAll = new SelectOption(
         'disabled',
         'Should a user be mentioned every time something happens to them ' +
             'in the game? (can be disabled, for all events, or for when the ' +
             'user dies)',
-        'features', ['disabled', 'all', 'death']);
+        'messages', ['disabled', 'all', 'death']);
     this._mentionEveryoneAtStart = new BooleanOption(
         false, 'Should @everyone be mentioned when the game is started?',
-        'features');
+        'messages');
     this._useNicknames = new BooleanOption(
         false, 'Should we use user\'s custom server nicknames instead of ' +
             'their account username? Names only change when a new game is ' +
             'created.',
-        'features');
+        'messages');
     this._delayEvents = new NumberOption(
         3500, 'Delay in milliseconds between each event being printed.',
         'other', {min: 1500, max: 30000}, 'time');
@@ -326,31 +332,31 @@ class DefaultOptions {
         'The number of pixels each player\'s avatar will be tall and wide, ' +
             'the underline status height, and the gap between each avatar. ' +
             'This is for all normal events and arena event messages.',
-        'other', {min: 0, max: 512});
+        'messages', {min: 0, max: 512});
     this._battleAvatarSizes = new ObjectOption(
         {avatar: 32, underline: 4, gap: 4},
         'The number of pixels each player\'s avatar will be tall and wide, ' +
             'the underline status height, and the gap between each avatar. ' +
             'This is for each battle turn.',
-        'other', {min: 0, max: 512});
+        'messages', {min: 0, max: 512});
     this._victorAvatarSizes = new ObjectOption(
         {avatar: 80, underline: 4, gap: 4},
         'The number of pixels each player\'s avatar will be tall and wide, ' +
             'the underline status height, and the gap between each avatar. ' +
             'This is when announcing the winners of the game.',
-        'other', {min: 0, max: 512});
+        'messages', {min: 0, max: 512});
     this._numDaysShowDeath = new NumberOption(
         -1,
         'The number of days after a player has died to show them as dead in' +
             ' the status list after each day. -1 will always show dead ' +
             'players. 0 will never show dead players. 1 will only show them ' +
             'for the day they died. 2 will show them for 2 days.',
-        'other', {min: -1, max: 100});
+        'messages', {min: -1, max: 100});
     this._showLivingPlayers = new BooleanOption(
         true,
         'Include the living players in the status updates. Instead of only ' +
             'wounded or dead players.',
-        'other');
+        'messages');
     this._customEventWeight = new NumberOption(
         2, 'The relative weight of custom events. 2 means custom events are ' +
             'twice as likely to be chosen.',

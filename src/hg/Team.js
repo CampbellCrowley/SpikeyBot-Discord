@@ -16,24 +16,28 @@ class Team {
   constructor(id, name, players) {
     /**
      * The unique id unique to a guild for this team.
+     *
      * @type {string}
      * @public
      */
     this.id = id;
     /**
      * The name of this team. Truncates to 100 characters.
+     *
      * @type {string}
-     * @pubilic
+     * @public
      */
     this.name = name.slice(0, 101);
     /**
      * Array of player ids on the team.
+     *
      * @type {string[]}
      * @public
      */
     this.players = players;
     /**
      * The current team rank.
+     *
      * @type {number}
      * @public
      * @default
@@ -41,6 +45,7 @@ class Team {
     this.rank = 1;
     /**
      * The number of players on the team still alive.
+     *
      * @type {number}
      * @public
      * @default players.length

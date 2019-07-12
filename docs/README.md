@@ -57,6 +57,7 @@
 - getprefix (Used by chatbot so users can ask the bot, by mentioning it, what the prefix is)
 - whoami (Replies with the user's username, and full tag from different sources)
 - gettime (Replies with the server's timezone and time, as well as GMT)
+- sweep (Removes users from cache that we don't care about at the moment in order to free memory. Only Spikey can do this)
 
 # Event Controlled
 - Added to guild
@@ -79,7 +80,7 @@ The below steps outline the minimum required to get the SpikeyBot to run.
 4) Install system dependencies
     - `sudo apt install make libtool autoconf g++ ffmpeg` are required for the default installation.
 5) Install dependencies via NPM
-    - Current version of NPM used is `v6.9.0`, but almost any version should be fine.
+    - Current version of NPM used is `v6.9.2`, but almost any version should be fine.
     - In the `SpikeyBot-Discord` directory, run `npm install`.
 6) Get a bot token from Discord
     - A token for the bot that you are trying to run from [Discord](https://discordapp.com/developers/applications/) is required.

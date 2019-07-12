@@ -22,6 +22,7 @@ function HG() {
 
   /**
    * Name of the HG Web submodule for lookup.
+   *
    * @private
    * @constant
    * @default
@@ -49,6 +50,7 @@ function HG() {
   /**
    * The maximum number of bytes allowed to be received from a client in an
    * image upload.
+   *
    * @public
    * @type {number}
    * @constant
@@ -72,6 +74,7 @@ function HG() {
   ];
   /**
    * The file path to read default events.
+   *
    * @see {@link HungryGames~defaultPlayerEvents}
    * @see {@link HungryGames~defaultArenaEvents}
    * @see {@link HungryGames~defaultBloodbathEvents}
@@ -84,6 +87,7 @@ function HG() {
   const eventFile = './save/hgEvents.json';
   /**
    * The file path to read battle events.
+   *
    * @see {@link HungryGames~battles}
    *
    * @private
@@ -94,6 +98,7 @@ function HG() {
   const battleFile = './save/hgBattles.json';
   /**
    * The file path to read weapon events.
+   *
    * @see {@link HungryGames~weapons}
    *
    * @private
@@ -150,9 +155,9 @@ function HG() {
   /**
    * Default options for a game.
    *
-   * @type {Object.<{
+   * @type {object.<{
    *     value: string|number|boolean,
-   *     values: ?string[],
+   *     values: null|string[],
    *     comment: string
    *   }>}
    * @constant
@@ -183,7 +188,7 @@ function HG() {
    * Helper object of emoji characters mapped to names.
    *
    * @private
-   * @type {Object.<string>}
+   * @type {object.<string>}
    * @constant
    */
   const emoji = {
@@ -232,6 +237,7 @@ function HG() {
 
   /**
    * All attacks and outcomes for battles.
+   *
    * @see {@link HungryGames~battleFile}
    *
    * @private
@@ -248,21 +254,23 @@ function HG() {
    * Storage of battle messages to edit the content of on the next update.
    *
    * @private
-   * @type {Object.<Discord~Message>}
+   * @type {object.<Discord~Message>}
    * @default
    */
   const battleMessage = {};
   /**
    * All weapons and their respective actions. Parsed from file.
+   *
    * @see {@link HungryGames~weaponsFile}
    *
    * @private
-   * @type {Object.<HungryGames~WeaponEvent>}
+   * @type {object.<HungryGames~WeaponEvent>}
    * @default
    */
   let weapons = {};
   /**
    * Default parsed bloodbath events.
+   *
    * @see {@link HungryGames~eventFile}
    *
    * @private
@@ -271,6 +279,7 @@ function HG() {
   let defaultBloodbathEvents = [];
   /**
    * Default parsed player events.
+   *
    * @see {@link HungryGames~eventFile}
    *
    * @private
@@ -279,6 +288,7 @@ function HG() {
   let defaultPlayerEvents = [];
   /**
    * Default parsed arena events.
+   *
    * @see {@link HungryGames~eventFile}
    *
    * @private
@@ -290,7 +300,7 @@ function HG() {
    * getting the rest of the information about the event.
    *
    * @private
-   * @type {Object.<Discord~Message>}
+   * @type {object.<Discord~Message>}
    * @default
    */
   const newEventMessages = {};
@@ -298,7 +308,7 @@ function HG() {
    * Messages I have sent showing current options.
    *
    * @private
-   * @type {Object.<Discord~Message>}
+   * @type {object.<Discord~Message>}
    * @default
    */
   const optionMessages = {};
@@ -306,6 +316,7 @@ function HG() {
   /**
    * The last time the currently scheduled reaction event listeners are expected
    * to end. Used for checking of submoduleis unloadable.
+   *
    * @private
    * @type {number}
    */
@@ -313,8 +324,9 @@ function HG() {
 
   /**
    * All registered event handlers.
+   *
    * @private
-   * @type {Object.<Array.<Function>>}
+   * @type {object.<Array.<Function>>}
    */
   const eventHandlers = {};
 
@@ -699,7 +711,7 @@ function HG() {
     process.removeListener('SIGINT', sigint);
     process.removeListener('SIGHUP', sigint);
     process.removeListener('SIGTERM', sigint);
-    fire('shutdown');
+    self._fire('shutdown');
 
     Object.keys(eventHandlers).forEach((el) => delete eventHandlers[el]);
 
@@ -781,14 +793,14 @@ function HG() {
    */
   function mkCmd(cb) {
     return function(msg) {
-      if (msg.guild.memberCount > 20000) {
+      /* if (msg.guild.memberCount > 20000) {
         self.common.reply(
             msg,
             'Sorry, but HG has been temporarily disabled on servers larger' +
                 ' than 20000 people.',
             'More information on my support server.');
         return;
-      }
+      } */
       const id = msg.guild.id;
       hg.fetchGame(id, (game) => {
         if (game) {
@@ -894,6 +906,7 @@ function HG() {
       super(id, username, avatarURL);
       /**
        * Always true.
+       *
        * @public
        * @default
        * @constant
@@ -902,6 +915,7 @@ function HG() {
       this.isNPC = true;
       /**
        * Equivalent to `this.name` for compatibility.
+       *
        * @public
        * @type {string}
        */
@@ -1123,11 +1137,15 @@ function HG() {
         if (m && m.partial) m.fetch();
         return m && !m.deleted;
       });
-      g.excludedUsers = g.excludedUsers.filter((u) => {
-        const m = msg.guild.members.get(u);
-        if (m && m.partial) m.fetch();
-        return m && !m.deleted;
-      });
+      if (msg.guild.memberCount >= HungryGames.largeServerCount) {
+        g.excludedUsers = [];
+      } else {
+        g.excludedUsers = g.excludedUsers.filter((u) => {
+          const m = msg.guild.members.get(u);
+          if (m && m.partial) m.fetch();
+          return m && !m.deleted;
+        });
+      }
       hg.refresh(msg.guild, done);
     } else {
       hg.create(msg.guild, (game) => {
@@ -1430,18 +1448,17 @@ function HG() {
     } else if (!myPerms.has(self.Discord.Permissions.FLAGS.SEND_MESSAGES)) {
       return;
     }
-    if (game) game.loading = true;
     if (game && game.reactMessage) {
       self.endReactJoinMessage(id, (err) => {
         if (err) {
-          if (game) game.loading = false;
           self.error(`${err}: ${id}`);
-          self.common.reply('React Join Failed', err);
+          self.common.reply(msg, 'React Join Failed', err);
         }
         startGame(msg, id);
       });
       return;
     }
+    if (game) game.loading = true;
     /**
      * Once the game has finished loading all necessary data, start it if
      * autoplay is enabled.
@@ -1798,7 +1815,7 @@ function HG() {
     const iTime = Date.now();
     sim.go(() => {
       // Signal ready to display events.
-      fire('dayStateChange', id);
+      self._fire('dayStateChange', id);
       const embed = new self.Discord.MessageEmbed();
       if (game.currentGame.day.num === 0) {
         embed.setTitle(hg.messages.get('bloodbathStart'));
@@ -1834,6 +1851,7 @@ function HG() {
     }
     /**
      * @description Callback for every time the game state is modified.
+     * @fires HG#dayStateChange
      * @private
      * @type {HungryGames~GuildGame~StateUpdateCB}
      * @param {boolean} dayComplete Has the day ended.
@@ -1858,7 +1876,7 @@ function HG() {
           }, (hg.getGame(id).options.delayDays > 2000 ? 1200 : 100));
         }
       } else {
-        fire('dayStateChange', id);
+        self._fire('dayStateChange', id);
         printEvent(msg, id);
       }
     }
@@ -2652,6 +2670,7 @@ function HG() {
   /**
    * Removes users from a games of a given guild.
    *
+   * @fires HG#refresh
    * @public
    * @param {string|string[]|Discord~User[]|HungryGames~NPC[]} users The users
    * to exclude, or
@@ -2677,6 +2696,8 @@ function HG() {
     const iTime = Date.now();
     const tmp = [];
     let npcs = [];
+    const large =
+        self.client.guilds.get(id).memberCount >= HungryGames.largeServerCount;
     switch (users) {
       case 'everyone':
         users = game.includedUsers;
@@ -2710,6 +2731,7 @@ function HG() {
     const iTime2 = Date.now();
     const onlyError = num > 2;
     const response = [];
+    let fetchWait = 0;
     const chunk = function(i = -1) {
       if (i < 0) i = num - 1;
       // Touch the game so it doesn't get purged from memory.
@@ -2719,16 +2741,26 @@ function HG() {
       const start = Date.now();
       for (i; i >= 0 && Date.now() - start < hg.maxDelta; i--) {
         if (i < numUsers) {
-          response.push(excludeIterate(game, users[i], onlyError));
+          if (typeof users[i] === 'string' &&
+              !self.client.users.get(users[i])) {
+            fetchWait++;
+            self.client.users.fetch(users[i]).then(fetched).catch((err) => {
+              response.push(err.message);
+              fetched();
+            });
+          } else {
+            response.push(excludeIterate(game, users[i], onlyError, large));
+          }
         } else {
-          response.push(excludeIterate(game, npcs[i - numUsers], onlyError));
+          response.push(
+              excludeIterate(game, npcs[i - numUsers], onlyError, large));
         }
       }
       if (i >= 0) {
         setTimeout(() => {
           chunk(i);
         });
-      } else {
+      } else if (fetchWait === 0) {
         done();
       }
     };
@@ -2744,6 +2776,13 @@ function HG() {
           response.join('') :
           `Succeeded without errors (${num} excluded)`;
       cb(finalRes);
+      self._fire('refresh', id);
+    };
+
+    const fetched = function(user) {
+      fetchWait--;
+      if (user) response.push(excludeIterate(game, user, onlyError, large));
+      if (fetchWait === 0) done();
     };
 
     setTimeout(chunk);
@@ -2757,9 +2796,11 @@ function HG() {
    * @param {string|HungryGames~Player|HungryGames~NPC} obj Player for this
    * iteration.
    * @param {boolean} [onlyError=false] Only add error messages to response.
+   * @param {boolean} [large=false] Is this a large game where excluded users
+   * are not tracked.
    * @returns {string} Response text for the user performing the operation.
    */
-  function excludeIterate(game, obj, onlyError = false) {
+  function excludeIterate(game, obj, onlyError = false, large = false) {
     if (!obj || obj === 'undefined') return '';
     const response = [];
     if (typeof obj === 'string') {
@@ -2785,7 +2826,8 @@ function HG() {
         return `${response.join('\n')}\n`;
       }
     }
-    if (game.excludedUsers.includes(obj.id)) {
+    if ((!large && game.excludedUsers.includes(obj.id)) ||
+        (large && !game.includedUsers.includes(obj.id))) {
       if (!onlyError) {
         response.push(`${obj.username} is already excluded.`);
       }
@@ -2804,7 +2846,7 @@ function HG() {
           game.includedNPCs.splice(includeIndex, 1);
         }
       } else {
-        game.excludedUsers.push(obj.id);
+        if (!large) game.excludedUsers.push(obj.id);
         if (!onlyError) {
           response.push(`${obj.username} added to blacklist.`);
         }
@@ -2907,7 +2949,6 @@ function HG() {
       self.common.reply(
           msg,
           'You must specify who you wish for me to include in the next game.');
-      return;
     } else {
       const mentionedRoleUsers = new self.Discord.UserStore(
           self.client,
@@ -2921,13 +2962,13 @@ function HG() {
       self.includeUsers(mentions, id, (response) => {
         self.common.reply(msg, response);
       });
-      return;
     }
   }
 
   /**
    * Adds a user back into the next game.
    *
+   * @fires HG#refresh
    * @public
    * @param {string|string[]|Discord~User[]|HungryGames~NPC[]} users The users
    * to include, 'everyone' to include all users, 'online' to include online
@@ -2953,6 +2994,12 @@ function HG() {
     const iTime = Date.now();
     const tmp = [];
     let npcs = [];
+    const large =
+        self.client.guilds.get(id).memberCount >= HungryGames.largeServerCount;
+    if (large && typeof users === 'string') {
+      cb('Too many members');
+      return;
+    }
     switch (users) {
       case 'everyone':
         users = game.excludedUsers;
@@ -2986,6 +3033,7 @@ function HG() {
     const iTime2 = Date.now();
     const onlyError = num > 2;
     const response = [];
+    let fetchWait = 0;
     const chunk = function(i = -1) {
       if (i < 0) i = num - 1;
       // Touch the game so it doesn't get purged from memory.
@@ -2995,7 +3043,16 @@ function HG() {
       const start = Date.now();
       for (i; i >= 0 && Date.now() - start < hg.maxDelta; i--) {
         if (i < numUsers) {
-          response.push(includeIterate(game, users[i], onlyError));
+          if (typeof users[i] === 'string' &&
+              !self.client.users.get(users[i])) {
+            fetchWait++;
+            self.client.users.fetch(users[i]).then(fetched).catch((err) => {
+              response.push(err.message);
+              fetched();
+            });
+          } else {
+            response.push(includeIterate(game, users[i], onlyError));
+          }
         } else {
           response.push(includeIterate(game, npcs[i - numUsers], onlyError));
         }
@@ -3004,7 +3061,7 @@ function HG() {
         setTimeout(() => {
           chunk(i);
         });
-      } else {
+      } else if (fetchWait === 0) {
         done();
       }
     };
@@ -3020,6 +3077,13 @@ function HG() {
           response.join('') :
           `Succeeded without errors (${num} included)`;
       cb(finalRes);
+      self._fire('refresh', id);
+    };
+
+    const fetched = function(user) {
+      fetchWait--;
+      if (user) response.push(includeIterate(game, user, onlyError));
+      if (fetchWait === 0) done();
     };
 
     setTimeout(chunk);
@@ -3328,6 +3392,7 @@ function HG() {
    * Recurse through an object to change a certain child value based off a given
    * array of words.
    *
+   * @fires HG#toggleOption
    * @private
    * @param {HungryGames~GuildGame.options} obj The object with the values to
    * change.
@@ -3341,10 +3406,13 @@ function HG() {
    * @param {string} id The id of the guild this was triggered for.
    * @param {{min: number, max: number}} [range] Allowable range for values that
    * are numbers.
+   * @param {string[]} [keys=[]] List of previous option keys.
    * @returns {string} Message saying what happened. Can be an error message.
    */
   function changeObjectValue(
-      obj, defaultObj, option, value, values, id, range) {
+      obj, defaultObj, option, value, values, id, range, keys) {
+    if (!keys || !Array.isArray(keys)) keys = [];
+    keys.push(option);
     let type = typeof defaultObj[option];
     if (type !== 'undefined' &&
         typeof defaultObj[option].value !== 'undefined') {
@@ -3374,6 +3442,7 @@ function HG() {
 
         const old = obj[option];
         obj[option] = value;
+        self._fire('toggleOption', id, ...keys, option, value);
         if (option == 'teamSize' && value != 0) {
           return 'Set ' + option + ' to ' + obj[option] + ' from ' + old +
               '\nTo reset teams to the correct size, type "' +
@@ -3391,11 +3460,19 @@ function HG() {
         return 'That is not a valid value for ' + option +
             ', which requires true or false. (Currently ' + obj[option] + ')';
       } else {
+        if (option == 'excludeNewUsers' &&
+            self.client.guilds.get(id).memberCount >=
+                HungryGames.largeServerCount) {
+          obj[option] = true;
+          return 'Due to performance issues, large servers must exclude new ' +
+              'users by default.';
+        }
         const old = obj[option];
         obj[option] = value;
         if (option == 'includeBots') {
           createGame(null, id, true);
         }
+        self._fire('toggleOption', id, ...keys, option, value);
         return `Set ${option} to ${obj[option]} from ${old}`;
       }
     } else if (type === 'string') {
@@ -3408,6 +3485,7 @@ function HG() {
       } else {
         const old = obj[option];
         obj[option] = value;
+        self._fire('toggleOption', id, ...keys, option, value);
         return 'Set ' + option + ' to ' + obj[option] + ' from ' + old;
       }
     } else if (type === 'object') {
@@ -3417,7 +3495,7 @@ function HG() {
       } else {
         return changeObjectValue(
             obj[option], defaultObj[option].value || defaultObj[option],
-            values[1], values[2], values.slice(3), id, range);
+            values[1], values[2], values.slice(3), id, range, keys);
       }
     } else {
       return 'Changing the value of this option does not work yet. (' + option +
@@ -5293,9 +5371,11 @@ function HG() {
         let request = https.request;
         if (url.startsWith('http://')) request = http.request;
 
+        const opt = {headers: {'User-Agent': self.common.ua}};
+
         let req;
         try {
-          req = request(url, onIncoming);
+          req = request(url, opt, onIncoming);
         } catch (err) {
           self.warn('Failed to request npc avatar: ' + url);
           // console.error(err);
@@ -6005,11 +6085,12 @@ function HG() {
             const iU =
                 game.currentGame.includedUsers.find((u) => u.id === el.id);
             if (iU) {
-              name = game.options.useNicknames && iU.nickname || iU.name;
+              name = (game.options.useNicknames && iU.nickname) || iU.name;
             } else {
               const m = msg.guild.members.get(el.id);
-              name = m ? (game.options.useNicknames && m.nickname) || m.name :
-                         el.id;
+              name = m ?
+                  (game.options.useNicknames && m.nickname) || m.user.username :
+                  el.id;
             }
           }
           return `${i+1}) ${name}: ${el.get(col)}`;
@@ -6418,7 +6499,7 @@ function HG() {
     channel.send(embed).then((msg) => {
       hg.getGame(channel.guild.id).reactMessage = {
         id: msg.id,
-        channel: channel.id,
+        channel: msg.channel.id,
       };
       msg.react(emoji.crossedSwords).catch(() => {});
     });
@@ -6459,14 +6540,14 @@ function HG() {
         .then((m) => {
           msg = m;
           if (!msg.reactions || msg.reactions.size == 0) {
-            usersFetched([]);
+            usersFetched();
           } else {
             msg.reactions.forEach((el) => {
-              numTotal += el.count;
+              numTotal++;
               el.users.fetch().then(usersFetched).catch((err) => {
                 self.error('Failed to fetch user reactions: ' + msg.channel.id);
                 console.error(err);
-                usersFetched([]);
+                usersFetched();
               });
             });
           }
@@ -6486,17 +6567,17 @@ function HG() {
      * users for a single reaction.
      */
     function usersFetched(reactionUsers) {
+      numDone++;
       if (reactionUsers &&
           (reactionUsers.length > 0 || reactionUsers.size > 0)) {
         list = list.concat(
             reactionUsers.filter((el) => el.id != self.client.user.id));
-        numDone += reactionUsers.length || reactionUsers.size;
       }
-      if (numTotal != numDone) return;
+      if (numTotal > numDone) return;
       self.excludeUsers('everyone', id, () => {
         hg.getGame(id).reactMessage = null;
         msg.edit('`Ended`').catch(() => {});
-        if (list.length == 0) {
+        if (list.size == 0) {
           cb(null, 'No users reacted.');
         } else {
           self.includeUsers(list, id, (res) => cb(null, res));
@@ -6679,6 +6760,14 @@ function HG() {
      * @returns {Promise} Promise from Jimp with image data.
      */
     function toJimp(path) {
+      if (typeof path === 'string' && path.startsWith('http')) {
+        path = {
+          url: path,
+          headers: {
+            'User-Agent': self.common.ua,
+          },
+        };
+      }
       return Jimp.read(path).catch((err) => {
         if (fromCache) {
           self.error('Failed to read from cache: ' + path);
@@ -6745,7 +6834,7 @@ function HG() {
    * @param {string} evt The event to fire.
    * @param {...*} args Arguments for the event.
    */
-  function fire(evt, ...args) {
+  this._fire = function(evt, ...args) {
     if (!eventHandlers[evt]) return;
     eventHandlers[evt].forEach((el) => {
       try {
@@ -6755,7 +6844,7 @@ function HG() {
         console.error(err);
       }
     });
-  }
+  };
 
   /**
    * Catch process exiting so we can save if necessary, and remove other

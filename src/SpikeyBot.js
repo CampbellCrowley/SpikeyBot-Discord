@@ -2,6 +2,7 @@
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 /**
  * DiscordJS base object.
+ *
  * @external Discord
  * @see {@link https://discord.js.org/}
  */
@@ -102,15 +103,6 @@ function SpikeyBot() {
    */
   let testMode = false;
   /**
-   * The channel id for the channel to reserve for only unit testing in.
-   *
-   * @private
-   * @default
-   * @constant
-   * @type {string}
-   */
-  const testChannel = '439642818084995074';
-  /**
    * Is the bot started with the intent of solely running a unit test. Reduces
    * messages sent that are unnecessary.
    *
@@ -140,6 +132,7 @@ function SpikeyBot() {
   /**
    * Filename without file extension where information about the bot rebooting
    * is stored.
+   *
    * @see {@link fullRebootFilename}
    *
    * @private
@@ -173,9 +166,10 @@ function SpikeyBot() {
    */
   const mainModuleListFile = './mainModules.json';
   /**
-   * The list of all mainModules to load. Always includes {@link
-   * SpikeyBot~commandFilename} and {@link SpikeyBot~smListFilename}. Additional
-   * mainModules can be loaded from {@link SpikeyBot~mainModuleListFile}.
+   * The list of all mainModules to load. Always includes
+   * {@link SpikeyBot~commandFilename} and {@link SpikeyBot~smListFilename}.
+   * Additional mainModules can be loaded from
+   * {@link SpikeyBot~mainModuleListFile}.
    *
    * @private
    * @type {string[]}
@@ -198,6 +192,7 @@ function SpikeyBot() {
   let setDev = false;
   /**
    * Is this bot managing backup status monitoring.
+   *
    * @private
    * @type {boolean}
    */
@@ -277,10 +272,10 @@ function SpikeyBot() {
   let delayBoot = 0;
 
   /**
-   * Enable inspecting/profiling for a shard to launch. Set via cli falgs. -1 to
-   * disable. (Currently only supports enabling. the `--inspect` flag will be
+   * Enable inspecting/profiling for a shard to launch. Set via cli flags, -1 to
+   * disable. Currently only supports enabling. The `--inspect` flag will be
    * sent to all shards that are started. This is due to limitations of
-   * Discord~ShardingManager)
+   * {@link external:Discord~ShardingManager}.
    *
    * @private
    * @default
@@ -524,6 +519,7 @@ function SpikeyBot() {
 
   /**
    * The full filename where information about the bot rebooting is stored.
+   *
    * @see {@link rebootFilename}
    *
    * @private
@@ -578,6 +574,7 @@ function SpikeyBot() {
   /**
    * The Interval in which we will save and purge data on all mainmodules.
    * Begins after onReady.
+   *
    * @see {@link SpikeyBot~onReady()}
    * @see {@link SpikeyBot~saveFrequency}
    *
@@ -587,6 +584,7 @@ function SpikeyBot() {
   let saveInterval;
   /**
    * The frequency at which saveInterval will run.
+   *
    * @see {@link SpikeyBot~saveInterval}
    *
    * @private
@@ -601,7 +599,7 @@ function SpikeyBot() {
    * client ready event.
    *
    * @private
-   * @type {Object.<string>}
+   * @type {object.<string>}
    */
   const guildPrefixes = {};
 
@@ -610,7 +608,7 @@ function SpikeyBot() {
    *
    * @private
    * @constant
-   * @defaut
+   * @default
    * @type {string}
    */
   const guildPrefixFile = '/prefix.txt';
@@ -621,7 +619,7 @@ function SpikeyBot() {
    *
    * @private
    * @constant
-   * @defaut
+   * @default
    * @type {string}
    */
   const guildCustomPrefixFile = '/prefixes.json';
@@ -799,6 +797,7 @@ function SpikeyBot() {
           path: '/webhook/botstart',
           headers: {
             'Content-Type': 'application/json',
+            'User-Agent': common.ua,
           },
         },
         () => {});
@@ -886,7 +885,7 @@ function SpikeyBot() {
     if (msg.system) return;
     if (testInstance) {
       if (!testMode && msg.author.id === client.user.id &&
-          msg.channel.id == testChannel) {
+          msg.channel.id == common.testChannel) {
         if (isDev && msg.content === '~`RUN UNIT TESTS`~') {
           testMode = true;
           msg.channel.send('~`UNIT TEST MODE ENABLED`~');
@@ -897,7 +896,7 @@ function SpikeyBot() {
       } else if (
         testMode && msg.author.id === client.user.id &&
           msg.content === '~`END UNIT TESTS`~' &&
-          msg.channel.id == testChannel) {
+          msg.channel.id == common.testChannel) {
         testMode = false;
         msg.channel.send('~`UNIT TEST MODE DISABLED`~');
         return;
@@ -906,7 +905,7 @@ function SpikeyBot() {
 
     // Only respond to messages in the test channel if we are in unit test mode.
     // In unit test mode, only respond to messages in the test channel.
-    if (testMode != (msg.channel.id == testChannel)) return;
+    if (testMode != (msg.channel.id == common.testChannel)) return;
 
     if (!testMode && msg.author.bot) return;
 

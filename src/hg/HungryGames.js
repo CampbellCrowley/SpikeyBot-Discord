@@ -18,6 +18,7 @@ class HungryGames {
   constructor(parent) {
     /**
      * Parent subModule for logging and bot hooking.
+     *
      * @private
      * @type {HG}
      * @constant
@@ -25,6 +26,7 @@ class HungryGames {
     this._parent = parent;
     /**
      * Current {@link HungryGames~Messages} instance.
+     *
      * @public
      * @type {HungryGames~Messages}
      * @constant
@@ -32,6 +34,7 @@ class HungryGames {
     this.messages = new HungryGames.Messages();
     /**
      * Default game options.
+     *
      * @public
      * @type {HungryGames~DefaultOptions}
      * @constant
@@ -39,12 +42,13 @@ class HungryGames {
     this.defaultOptions = new HungryGames.DefaultOptions();
     /**
      * All currently tracked games. Mapped by guild ID. In most cases you should
-     * NOT reference this directly. Use {@link HungryGames#getGame} to get the
+     * not reference this directly. Use {@link HungryGames#getGame} to get the
      * game object for a guild.
+     *
      * @see {@link HungryGames#getGame}
      *
      * @private
-     * @type {Object.<HungryGames~GuildGame>}
+     * @type {object.<HungryGames~GuildGame>}
      * @default
      * @constant
      */
@@ -55,7 +59,7 @@ class HungryGames {
      * blocking.
      *
      * @private
-     * @type {Object.<number>}
+     * @type {object.<number>}
      * @constant
      */
     this._findTimestamps = {};
@@ -71,6 +75,7 @@ class HungryGames {
     /**
      * Maximum amount of milliseconds long running operations are allowed to
      * take to prevent cpu deadlock.
+     *
      * @public
      * @type {number}
      * @constant
@@ -79,7 +84,8 @@ class HungryGames {
     this.maxDelta = 5;
     /**
      * The file path to save current state for a specific guild relative to
-     * Common#guildSaveDir.
+     * {@link Common~guildSaveDir}.
+     *
      * @see {@link Common#guildSaveDir}
      * @see {@link HungryGames#_games}
      * @see {@link HungryGames#_hgSaveDir}
@@ -93,6 +99,7 @@ class HungryGames {
     /**
      * The file directory for finding saved data related to the hungry games
      * data of individual guilds.
+     *
      * @see {@link Common#guildSaveDir}
      * @see {@link HungryGames#_games}
      * @see {@link HungryGames#_saveFile}
@@ -253,6 +260,7 @@ class HungryGames {
 
   /**
    * @description Create a new GuildGame.
+   * @fires HG#create
    * @public
    * @param {external:Discord~Guild|string} guild Guild object, or ID to create
    * a game for.
@@ -273,19 +281,31 @@ class HungryGames {
         opts[key] = this.defaultOptions[key].value;
       }
     }
+    const self = this;
+    const getAll = function(members) {
+      self.getAllPlayers(members, [], false, [], false, [], (res) => {
+        self._games[guild.id] = new HungryGames.GuildGame(
+            self._parent.client.user.id, guild.id, opts,
+            `${guild.name}'s Hungry Games`, res);
+        cb(self._games[guild.id]);
+        self._parent._fire('create', guild.id);
+      });
+    };
     if (guild.memberCount > 100) {
       opts.excludeNewUsers = true;
+      getAll(guild.members);
+    } else {
+      guild.members.fetch().then(getAll).catch((err) => {
+        this._parent.error('Failed to fetch all users for guild: ' + guild.id);
+        console.error(err);
+        cb(null);
+      });
     }
-    this.getAllPlayers(guild.members, [], false, [], false, [], (res) => {
-      this._games[guild.id] = new HungryGames.GuildGame(
-          this._parent.client.user.id, guild.id, opts,
-          `${guild.name}'s Hungry Games`, res);
-      cb(this._games[guild.id]);
-    });
   }
 
   /**
    * @description Create a new Game for a guild, and refresh the player lists.
+   * @fires HG#refresh
    * @public
    * @param {external:Discord~Guild|string} guild Guild object, or ID to refresh
    * a game for.
@@ -305,13 +325,28 @@ class HungryGames {
       const name = (game.currentGame && game.currentGame.customName) ||
           (`${guild.name}'s Hungry Games`);
       const teams = game.currentGame && game.currentGame.teams;
-      this.getAllPlayers(
-          guild.members, game.excludedUsers, game.options.includeBots,
-          game.includedUsers, game.options.excludeNewUsers, game.includedNPCs,
-          (res) => {
-            game.currentGame = new HungryGames.Game(name, res, teams);
-            cb(game);
-          });
+
+      const self = this;
+      const getAll = function(members) {
+        self.getAllPlayers(
+            members, game.excludedUsers, game.options.includeBots,
+            game.includedUsers, game.options.excludeNewUsers, game.includedNPCs,
+            (res) => {
+              game.currentGame = new HungryGames.Game(name, res, teams);
+              cb(game);
+              self._parent._fire('refresh', guild.id);
+            });
+      };
+      if (game.options.excludeNewUsers) {
+        getAll(guild.members);
+      } else {
+        guild.members.fetch().then(getAll).catch((err) => {
+          this._parent.error(
+              'Failed to fetch all users for guild: ' + guild.id);
+          console.error(err);
+          cb(null);
+        });
+      }
     });
   }
 
@@ -338,15 +373,16 @@ class HungryGames {
     const iTime = Date.now();
     const finalMembers = [];
     const self = this;
-    if (!Array.isArray(excluded)) excluded = [];
     const memList = Array.isArray(members) ? members : members.array();
+    const large = memList.length >= HungryGames.largeServerCount;
+    if (large || !Array.isArray(excluded)) excluded = [];
 
     const memberIterate = function(obj) {
       if (obj.isNPC) return;
       if (included && excluded && !included.includes(obj.user.id) &&
           !excluded.includes(obj.user.id)) {
         if (excludeByDefault) {
-          excluded.push(obj.user.id);
+          if (!large) excluded.push(obj.user.id);
         } else {
           included.push(obj.user.id);
         }
@@ -412,6 +448,7 @@ class HungryGames {
   /**
    * Reset the specified category of data from a game.
    *
+   * @fires HG#reset
    * @public
    * @param {string} id The id of the guild to modify.
    * @param {string} command The category of data to reset.
@@ -426,7 +463,23 @@ class HungryGames {
       return 'A game is currently in progress. Please end it before ' +
           'reseting game data.';
     }
+    this._parent._fire('reset', id, command);
     if (command == 'all') {
+      game._stats.fetchGroupList((err, list) => {
+        if (err) {
+          this._parent.error('Failed to fetch stat group list: ' + id);
+          console.error(err);
+          return;
+        }
+        list.forEach((el) => game._stats.fetchGroup(el, (err, group) => {
+          if (err) {
+            this._parent.error('Failed to fetch group: ' + id + '/' + el);
+            console.error(err);
+            return;
+          }
+          group.reset();
+        }));
+      });
       delete this._games[id];
       rimraf(this._parent.common.guildSaveDir + id + this.hgSaveDir, (err) => {
         if (!err) return;
@@ -436,6 +489,23 @@ class HungryGames {
         console.error(err);
       });
       return 'Resetting ALL Hungry Games data for this server!';
+    } else if (command == 'stats') {
+      game._stats.fetchGroupList((err, list) => {
+        if (err) {
+          this._parent.error('Failed to fetch stat group list: ' + id);
+          console.error(err);
+          return;
+        }
+        list.forEach((el) => game._stats.fetchGroup(el, (err, group) => {
+          if (err) {
+            this._parent.error('Failed to fetch group: ' + id + '/' + el);
+            console.error(err);
+            return;
+          }
+          group.reset();
+        }));
+      });
+      return 'Resetting ALL Hungry Games stats for this server!';
     } else if (command == 'events') {
       game.customEvents = {bloodbath: [], player: [], arena: [], weapon: {}};
       return 'Resetting ALL Hungry Games events for this server!';
@@ -469,7 +539,8 @@ class HungryGames {
           'current {deletes all data about the current game},\noptions ' +
           '{resets all options to default values},\nteams {delete all ' +
           'teams and creates new ones},\nusers {delete data about where to ' +
-          'put users when creating a new game},\nnpcs {delete all NPCS}.';
+          'put users when creating a new game},\nnpcs {delete all NPCS}.' +
+          '\nstats {delete all stats and groups}.';
     }
   }
 
@@ -689,6 +760,19 @@ class HungryGames {
     this.messages.shutdown();
   }
 }
+
+/**
+ * Games with more than this many members is considered large, and will have
+ * some features disabled in order to improve performance.
+ *
+ * @public
+ * @static
+ * @type {number}
+ * @constant
+ * @default
+ */
+HungryGames.largeServerCount = 20000;
+
 /**
  * @description Wrapper for normal `require()` but also deletes cache reference
  * to object before requiring. This forces the object to be updated.

@@ -40,6 +40,7 @@ function Patreon() {
   const patreonTierPermFile = './save/patreonTiers.json';
   /**
    * The parsed data from file about patron tier rewards.
+   *
    * @see {@link Patreon~patreonTierPermFile}
    *
    * @private
@@ -50,6 +51,7 @@ function Patreon() {
 
   /**
    * File where the template for the Patreon settings is stored.
+   *
    * @see {@link Patreon~patreonSettingsTemplate}
    * @see {@link WebAccount~patreonSettingsTemplate}
    *
@@ -63,10 +65,11 @@ function Patreon() {
    * The parsed data from {@link Patreon~patreonSettingsTemplateFile}. Data
    * that outlines the available options that can be changed, and their possible
    * values.
+   *
    * @private
    *
    * @default
-   * @type {Object.<Object>}
+   * @type {object.<object>}
    */
   let patreonSettingsTemplate = {};
 
@@ -243,6 +246,7 @@ function Patreon() {
   /**
    * Basic callback function that has two parameters. One with error
    * information, and the other with data if there was no error.
+   *
    * @callback Patreon~basicCB
    * @param {?string} err The error string, or null if no error.
    * @param {?{status: *, message: string}} data The returned data if there was

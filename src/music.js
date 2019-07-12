@@ -2,6 +2,7 @@
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const ytdl = require('youtube-dl'); // Music thread uses separate require.
 const fs = require('fs'); // Music thread uses separate require.
+const https = require('https');
 const ogg = require('ogg');
 const opus = require('node-opus');
 const spawn = require('threads').spawn;
@@ -39,7 +40,7 @@ function Music() {
   const self = this;
   this.myName = 'Music';
   /**
-   * The Genuius client token we use to fetch information from their api
+   * The Genuius client token we use to fetch information from their api.
    *
    * @private
    * @type {string}
@@ -51,7 +52,7 @@ function Music() {
    * The request headers to send to genius.
    *
    * @private
-   * @type {Object}
+   * @type {object}
    * @default
    * @constant
    */
@@ -61,18 +62,18 @@ function Music() {
     headers: {
       'Accept': 'application/json',
       'Authorization': 'Bearer ' + geniusClient,
+      'User-Agent': require('./common.js').ua,
     },
     method: 'GET',
   };
 
-  const https = require('https');
-
   /**
    * Information about a server's music and queue.
-   * @typedef {Object} Music~Broadcast
+   *
+   * @typedef {object} Music~Broadcast
    *
    * @property {string[]} queue Requests that have been queued.
-   * @property {Object.<boolean>} skips Stores user id's and whether
+   * @property {object.<boolean>} skips Stores user id's and whether
    * they have voted to skip. Non-existent user means they have not voted to
    * skip.
    * @property {boolean} isPlaying Is audio currntly being streamed to the
@@ -83,7 +84,7 @@ function Music() {
    * audio is being streamed to.
    * @property {?Discord~StreamDispatcher} dispatcher The Discord dispatcher for
    * the current audio channel.
-   * @property {?Object} current The current broadcast information including
+   * @property {?object} current The current broadcast information including
    * thread, readable stream, and song information.
    */
 
@@ -92,7 +93,7 @@ function Music() {
    * Stored by guild id.
    *
    * @private
-   * @type {Object.<Music~Broadcast>}
+   * @type {object.<Music~Broadcast>}
    */
   const broadcasts = {};
 
@@ -101,7 +102,7 @@ function Music() {
    * is mapped by guild id.
    *
    * @private
-   * @type {Object.<string>}
+   * @type {object.<string>}
    */
   const follows = {};
 
@@ -109,7 +110,7 @@ function Music() {
    * Special cases of requests to handle seperately.
    *
    * @private
-   * @type {Object.<Object.<{cmd: string, url: ?string, file: string}>>}
+   * @type {object.<object.<{cmd: string, url: ?string, file: string}>>}
    * @constant
    */
   const special = {
@@ -150,7 +151,7 @@ function Music() {
    * Options to pass into the primary stream dispatcher (The one in charge of
    * volume control).
    * [StreamOptions](
-   * https://discord.js.org/#/docs/main/master/typedef/StreamOptions)
+   * https://discord.js.org/#/docs/main/master/typedef/StreamOptions).
    *
    * @private
    * @constant
@@ -166,14 +167,11 @@ function Music() {
     highWaterMark: 5,
   };
   /**
-   * Options to pass into the secondary stream dispatcher (The one buffering for
-   * Discord).
-   * [StreamOptions](
-   * https://discord.js.org/#/docs/main/master/typedef/StreamOptions)
+   * Options to pass into the secondary stream dispatcher (for Discord).
    *
    * @private
    * @constant
-   * @type {Discord~StreamOptions}
+   * @type {external:Discord~StreamOptions}
    * @default
    */
   const secondaryStreamOptions = {
@@ -1427,7 +1425,14 @@ function Music() {
    */
   function fetchLyricsPage(msg, url, title, thumb) {
     const URL = url.match(/https:\/\/([^/]*)(.*)/);
-    const thisReq = {hostname: URL[1], path: URL[2], method: 'GET'};
+    const thisReq = {
+      hostname: URL[1],
+      path: URL[2],
+      method: 'GET',
+      headers: {
+        'User-Agent': self.common.ua,
+      },
+    };
     const req = https.request(thisReq, function(response) {
       let content = '';
       response.on('data', function(chunk) {

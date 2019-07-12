@@ -41,7 +41,7 @@ class Pets extends SubModule {
      * Only one pet is allowed per user at this time, but this future proofing
      * in case users will be able to have multiples in the future.
      * @private
-     * @type {Object.<Object.<Pet>>}
+     * @type {object.<object.<Pet>>}
      * @default
      */
     this._pets = {};
@@ -51,7 +51,7 @@ class Pets extends SubModule {
      * are not loaded anymore. Used for {@link Pets._releasePet} to prevent
      * saving multiple times. If the ID exists, it will be true.
      * @private
-     * @type {Object.<boolean>}
+     * @type {object.<boolean>}
      * @default
      */
     this._releasing = {};

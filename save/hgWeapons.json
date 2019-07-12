@@ -93,7 +93,7 @@
       {
         "message": "{victim} steal[Vs|] [Aan |]explosive[A|s] from {attacker}!",
         "attacker": { "count": "1", "outcome": "nothing" },
-        "victim": { "count": "1", "outcome": "nothing", "weapon": { "name": "explosives", "count": 1} },
+        "victim": { "count": "1", "outcome": "nothing", "weapon": { "name": "explosive", "count": 1} },
         "consumes": 1
       },
       {

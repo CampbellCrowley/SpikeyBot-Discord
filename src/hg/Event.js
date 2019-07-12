@@ -8,6 +8,7 @@ const funTranslator = require('../lib/funTranslators.js');
 
 /**
  * Event that can happen in a game.
+ *
  * @memberof HungryGames
  * @inner
  */
@@ -37,12 +38,14 @@ class Event {
       battle = false, state = 0, attacks = []) {
     /**
      * The message to show.
+     *
      * @public
      * @type {string}
      */
     this.message = message;
     /**
      * The action to format into a message if this is a weapon event.
+     *
      * @public
      * @type {?string}
      * @default
@@ -50,9 +53,14 @@ class Event {
     this.action = null;
     /**
      * Information about the victims in this event.
+     *
      * @public
-     * @type {{count: number, outcome: string, killer: boolean, weapon:
-     * ?Object}}
+     * @type {{
+     *   count: number,
+     *   outcome: string,
+     *   killer: boolean,
+     *   weapon: ?object
+     * }}
      * @property {?{name: string, count: number}} weapon The weapon information
      * to give to the player.
      */
@@ -64,12 +72,16 @@ class Event {
     };
     /**
      * Information about the attackers in this event.
+     *
      * @public
-     * @type {{count: number, outcome: string, killer: boolean, weapon:
-     * ?Object}}
+     * @type {{
+     *   count: number,
+     *   outcome: string,
+     *   killer: boolean,
+     *   weapon: ?object
+     * }}
      * @property {?{name: string, count: number}} weapon The weapon information
-     * to
-     * give to the player.
+     * to give to the player.
      */
     this.attacker = {
       count: numAttacker,
@@ -79,6 +91,7 @@ class Event {
     };
     /**
      * Is this event a battle event.
+     *
      * @public
      * @type {boolean}
      * @default false
@@ -86,6 +99,7 @@ class Event {
     this.battle = battle;
     /**
      * The current state of printing the battle messages.
+     *
      * @public
      * @type {number}
      * @default 0
@@ -93,6 +107,7 @@ class Event {
     this.state = state;
     /**
      * The attacks in a battle to show before the message.
+     *
      * @public
      * @type {HungryGames~Event[]}
      * @default []
@@ -100,6 +115,7 @@ class Event {
     this.attacks = attacks;
     /**
      * Amount of consumables used if this is a weapon event.
+     *
      * @public
      * @type {?number|string}
      * @default
@@ -107,10 +123,11 @@ class Event {
     this.consumes = null;
     /**
      * If the event is created by the user.
+     *
      * @public
      * @type {boolean}
      * @default
-    */
+     */
     this.custom = true;
   }
 

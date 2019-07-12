@@ -28,6 +28,7 @@ function Define() {
 
   /**
    * Base url to request from api.
+   *
    * @private
    * @default
    * @constant
@@ -52,8 +53,9 @@ function Define() {
     }
     const word = match[1];
     msg.channel.startTyping();
+    const opt = {headers: {'User-Agent': self.common.ua}};
 
-    const req = https.request(reqURL + word, (res) => {
+    const req = https.request(reqURL + word, opt, (res) => {
       let data = '';
       res.on('data', (chunk) => {
         data += chunk;

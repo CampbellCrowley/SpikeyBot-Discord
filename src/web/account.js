@@ -56,6 +56,7 @@ function WebAccount() {
   const patreonSettingsFilename = '/patreonSettings.json';
   /**
    * File where the template for the Patreon settings is stored.
+   *
    * @see {@link WebAccount~patreonSettingsTemplate}
    *
    * @private
@@ -68,10 +69,11 @@ function WebAccount() {
    * The parsed data from {@link WebAccount~patreonSettingsTemplateFile}. Data
    * that outlines the available options that can be changed, and their possible
    * values.
+   *
    * @private
    *
    * @default
-   * @type {Object.<Object>}
+   * @type {object.<object>}
    */
   let patreonSettingsTemplate = {};
 
@@ -85,6 +87,7 @@ function WebAccount() {
           'Basic ' + (Buffer.from(auth.spotifyId + ':' + auth.spotifySecret)
               .toString('base64')),
       'Content-Type': 'application/x-www-form-urlencoded',
+      'User-Agent': require('../common.js').ua,
     },
   };
 
@@ -93,6 +96,9 @@ function WebAccount() {
     host: 'api.spotify.com',
     path: '/v1/me',
     method: 'GET',
+    headers: {
+      'User-Agent': require('../common.js').ua,
+    },
   };
 
   /**
@@ -172,7 +178,7 @@ function WebAccount() {
    * Map of all currently connected sockets.
    *
    * @private
-   * @type {Object.<Socket>}
+   * @type {object.<Socket>}
    */
   const sockets = {};
 

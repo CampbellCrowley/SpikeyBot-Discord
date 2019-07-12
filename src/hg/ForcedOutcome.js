@@ -28,24 +28,28 @@ class ForcedOutcome {
     }
     /**
      * The guild ID of which the users will be affected.
+     *
      * @public
      * @type {string}
      */
     this.id = id;
     /**
      * The array of player IDs of which this concerns.
+     *
      * @public
      * @type {string[]}
      */
     this.list = list;
     /**
      * The state to force the players to be in.
+     *
      * @public
      * @type {string}
      */
     this.state = state;
     /**
      * Message to show when the user is affected.
+     *
      * @public
      * @type {string}
      */
@@ -54,6 +58,7 @@ class ForcedOutcome {
      * Does this outcome persist to the end of the game. False to only exist for
      * a
      * single day.
+     *
      * @public
      * @type {boolean}
      * @default false

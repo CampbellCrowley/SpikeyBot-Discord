@@ -26,10 +26,11 @@ function Sandbox() {
 
   /**
    * Arguments to pass into child_process.exec.
+   *
    * @private
    * @default
    * @constant
-   * @type {Object}
+   * @type {object}
    */
   const execArgs = {
     timeout: 35000,  // 5 second leniency for sandbox.
@@ -39,6 +40,7 @@ function Sandbox() {
 
   /**
    * Command to execute to start a sandbox.
+   *
    * @private
    * @default
    * @constant
@@ -47,6 +49,7 @@ function Sandbox() {
   const sandboxCommand = 'firejail --profile=./src/lib/sandbox.profile -- ';
   /**
    * The command to run in the sandbox to run JavaScript.
+   *
    * @private
    * @default
    * @constant
@@ -55,6 +58,7 @@ function Sandbox() {
   const jsCommand = 'SBnode';
   /**
    * The command to run in the sandbox to run Python2.7.
+   *
    * @private
    * @default
    * @constant
@@ -63,6 +67,7 @@ function Sandbox() {
   const pyCommand = 'SBpython';
   /**
    * The command to run in the sandbox to run Python3.
+   *
    * @private
    * @default
    * @constant

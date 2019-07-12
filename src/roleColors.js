@@ -59,7 +59,7 @@ function RoleColors() {
     }
     let color = msg.text.trim();
     let colorString = color;
-    const role = msg.guild.roles.find((el) => el.name == target.id);
+    const role = msg.guild.roles.find((el) => el.name.indexOf(target.id) > -1);
     const colorList = [
       'DEFAULT',
       'WHITE',

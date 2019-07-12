@@ -20,8 +20,9 @@ function ChatBot() {
 
   /**
    * The guilds that have disabled the chatbot feature.
+   *
    * @private
-   * @type {Object.<boolean>}
+   * @type {object.<boolean>}
    */
   const disabledChatBot = {};
 

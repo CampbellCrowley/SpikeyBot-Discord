@@ -172,6 +172,11 @@
               "description": "Reset Included and Excluded Users",
               "command": "reset users",
               "result": "Bot will remove all users from both blacklist and whitelist and reset them with the current game settings."
+            },
+            {
+              "description": "Reset Stats and Stat Groups",
+              "command": "reset stats",
+              "result": "Bot will remove and reset all tracked stats and stat groups. All lifetime stats will also be reset."
             }
           ]
         }

@@ -25,18 +25,21 @@ class Player {
     if (typeof nickname === 'string') nickname = nickname.replace(/`/g, '`');
     /**
      * The id of the User this Player represents.
+     *
      * @type {string}
      * @public
      */
     this.id = id;
     /**
      * The name of this Player.
+     *
      * @type {string}
      * @public
      */
     this.name = username;
     /**
      * The URL to the discord avatar of the User.
+     *
      * @type {string}
      * @public
      * @default ''
@@ -46,11 +49,13 @@ class Player {
      * The nickname for this user usually assigned by the guild. If the user
      * does
      * not have a nickname, this will have the same value as `name`.
+     *
      * @type {string}
      */
     this.nickname = nickname || username;
     /**
      * Is the player still alive.
+     *
      * @type {boolean}
      * @public
      * @default
@@ -58,6 +63,7 @@ class Player {
     this.living = true;
     /**
      * How many days has the player been wounded.
+     *
      * @type {number}
      * @public
      * @default
@@ -65,6 +71,7 @@ class Player {
     this.bleeding = 0;
     /**
      * The current rank of the player in the game.
+     *
      * @type {number}
      * @public
      * @default
@@ -72,6 +79,7 @@ class Player {
     this.rank = 1;
     /**
      * The current player state (normal, wounded, dead, zombie).
+     *
      * @type {string}
      * @public
      * @default
@@ -79,6 +87,7 @@ class Player {
     this.state = 'normal';
     /**
      * The number of players this player has caused to die.
+     *
      * @type {number}
      * @public
      * @default
@@ -86,14 +95,16 @@ class Player {
     this.kills = 0;
     /**
      * The weapons the player currently has and how many of each.
-     * @type {Object.<number>}
+     *
+     * @type {object.<number>}
      * @public
      * @default
      */
     this.weapons = {};
     /**
      * Custom settings for this user associated with the games.
-     * @type {Object}
+     *
+     * @type {object}
      * @public
      * @default
      */
@@ -102,6 +113,7 @@ class Player {
      * The day at which the player last died in the game. Only a valid number if
      * the player is currently dead. Otherwise a garbage value will be
      * available.
+     *
      * @type {number}
      * @public
      * @default

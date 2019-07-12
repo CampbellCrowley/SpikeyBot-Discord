@@ -21,7 +21,7 @@ class ModLog extends SubModule {
      * Guild settings for raids mapped by their guild id.
      *
      * @private
-     * @type {Object.<ModLog~Settings>}
+     * @type {object.<ModLog~Settings>}
      * @default
      */
     this._settings = {};
@@ -144,6 +144,8 @@ class ModLog extends SubModule {
         return 'Purged Messages';
       case 'messageDelete':
         return 'Deleted a Message';
+      case 'messageUpdate':
+        return 'Edited a Message';
       case 'memberJoin':
         return 'Joined the Server';
       case 'memberLeave':
@@ -179,6 +181,8 @@ class ModLog extends SubModule {
         return 'BLUE';
       case 'messageDelete':
         return 'DARK_BLUE';
+      case 'messageUpdate':
+        return 'DARK_AQUA';
       case 'memberJoin':
         return 'GREEN';
       case 'memberLeave':
@@ -203,8 +207,9 @@ class ModLog extends SubModule {
    * message.
    * @param {string} [message2=null] Additional information to attach to the log
    * message.
+   * @param {string} [msgs] Additional messages to attach to the log.
    */
-  output(guild, action, user, owner, message, message2) {
+  output(guild, action, user, owner, message, message2, ...msgs) {
     const s = this._settings[guild.id];
     if (!s || !s.channel) return;
     if (!s.check(action)) return;
@@ -227,6 +232,9 @@ class ModLog extends SubModule {
       } else {
         embed.addField('Additional', message, true);
       }
+    }
+    for (let i = 0; i < msgs.length; i += 2) {
+      embed.addField(msgs[i], msgs[i + 1] || '\u200B', true);
     }
     embed.setTimestamp();
     channel.send(embed);
@@ -293,6 +301,13 @@ class Settings {
      */
     this.logMessageDelete = false;
     /**
+     * @description Should the bot log when a message is edited?
+     * @public
+     * @type {boolean}
+     * @default
+     */
+    this.logMessageUpdate = false;
+    /**
      * @description Should the bot log when a lockdown is started?
      * @public
      * @type {boolean}
@@ -301,6 +316,7 @@ class Settings {
     this.logRaidLockdown = false;
     /**
      * Log other actions that have not been classified.
+     *
      * @public
      * @type {boolean}
      * @default
@@ -331,6 +347,8 @@ class Settings {
         return this.logMessagePurge;
       case 'messageDelete':
         return this.logMessageDelete;
+      case 'messageUpdate':
+        return this.logMessageUpdate;
       case 'memberLeave':
         return this.logMemberLeave;
       case 'memberJoin':
@@ -360,6 +378,7 @@ Settings.from = function(obj) {
   output.logMentionAbuse = obj.logMentionAbuse || false;
   output.logMessagePurge = obj.logMessagePurge || false;
   output.logMessageDelete = obj.logMessageDelete || false;
+  output.logMessageUpdate = obj.logMessageUpdate || false;
   output.logMemberLeave = obj.logMemberLeave || false;
   output.logMemberJoin = obj.logMemberJoin || false;
   output.logRaidLockdown = obj.logRaidLockdown || false;

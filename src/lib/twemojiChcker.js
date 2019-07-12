@@ -2,7 +2,8 @@
 /**
  * RegExp based on emoji's official Unicode standards
  * http://www.unicode.org/Public/UNIDATA/EmojiSources.txt
- * https://github.com/twitter/twemoji/blob/27fe654b2bed5331cf1730bb4fbba1efa40af626/2/twemoji.js#L228
+ * https://github.com/twitter/twemoji/blob/27fe654b2bed5331cf1730bb4fbba1efa40af626/2/twemoji.js#L228.
+ *
  * @private
  * @constant
  * @type {RegExp}

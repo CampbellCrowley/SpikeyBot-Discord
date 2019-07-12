@@ -17,12 +17,14 @@ class ArenaEvent {
   constructor(message, outcomes, outcomeProbs) {
     /**
      * Message sent at the start of the arena event.
+     *
      * @public
      * @type {string}
      */
     this.message = message;
     /**
      * All possible events in this arena event.
+     *
      * @public
      * @type {HungryGames~Event[]}
      */
@@ -30,6 +32,7 @@ class ArenaEvent {
     /**
      * Outcome probabilities specific to this arena event. Overrides the global
      * arena event outcome probability settings. Null to use global settings.
+     *
      * @public
      * @type {?HungryGames~OutcomeProbabilities}
      */

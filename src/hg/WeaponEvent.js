@@ -17,12 +17,14 @@ class WeaponEvent {
   constructor(outcomes, consumable) {
     /**
      * All possible events for this weapon event.
+     *
      * @public
      * @type {HungryGames~Event[]}
      */
     this.outcomes = outcomes;
     /**
      * The formattable string for what to call this weapon's consumable items.
+     *
      * @public
      * @type {?string}
      */

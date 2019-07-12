@@ -48,6 +48,7 @@ function Uno() {
 
   /**
    * ASCII art text to show when a player calls Uno.
+   *
    * @private
    * @constant
    * @default
@@ -65,6 +66,7 @@ function Uno() {
   /**
    * The number of currently active games. Used to determine of submodule is
    * unloadable.
+   *
    * @private
    * @type {number}
    * @default
@@ -72,20 +74,23 @@ function Uno() {
   let numGames = 0;
 
   /**
-   * self.Discord.Permissions.FLAGS
+   * Self.Discord.Permissions.FLAGS.
+   *
    * @private
    */
   let pFlags = null;
 
   /**
    * All games currently in progress mapped by guilds, then by the game ID.
+   *
    * @private
-   * @type {Object.<Object.<Uno.Game>>}
+   * @type {object.<object.<Uno.Game>>}
    */
   const games = {};
 
   /**
    * Delay for NPC to play their card.
+   *
    * @private
    * @type number
    * @default
@@ -96,6 +101,7 @@ function Uno() {
   /* eslint-disable no-multi-spaces */
   /**
    * Default names of NPCs to add when adding non-bot NPCs.
+   *
    * @private
    * @default
    * @constant
@@ -113,6 +119,7 @@ function Uno() {
 
   /**
    * Maximum number of players allowed in a game.
+   *
    * @private
    * @type number
    * @default
@@ -220,6 +227,7 @@ function Uno() {
   }
   /**
    * Enum for card colors.
+   *
    * @public
    * @constant
    * @default
@@ -253,7 +261,7 @@ function Uno() {
   /**
    * Enum for card faces. The two least significant nibbles are the card face.
    * The most significant used nibbles are for card effects (designated by the
-   * EFFECT_MASK).
+   * `EFFECT_MASK`).
    *
    * BASE_MASK is the bitwise not of EFFECT_MASK, except on only the nibbles
    * that are less significant than EFFECT_MASK.
@@ -338,6 +346,7 @@ function Uno() {
     const card = this;
     /**
      * The face value of this card.
+     *
      * @public
      * @type {Uno.CardFace}
      */
@@ -347,6 +356,7 @@ function Uno() {
     }
     /**
      * The color of this card.
+     *
      * @public
      * @type {Uno.Color}
      */
@@ -419,7 +429,7 @@ function Uno() {
      * The guild members in this game mapped by their ID.
      *
      * @private
-     * @type {Object.<Discord~GuildMember>}
+     * @type {object.<Discord~GuildMember>}
      */
     const members = {};
 
@@ -528,6 +538,7 @@ function Uno() {
     /**
      * The card played by the previous player in the turn order. Will be null
      * after a player has been skipped, since they did not play a card.
+     *
      * @see {@link Uno.Game~topCard}
      *
      * @private
@@ -548,6 +559,7 @@ function Uno() {
     /**
      * The current card on the top of the discard pile that will need to be
      * matched by the next player to play a card.
+     *
      * @see {@link Uno.Game~previousCard}
      *
      * @private
@@ -1481,6 +1493,7 @@ function Uno() {
 
     /**
      * The Discord ID of this player.
+     *
      * @public
      * @readonly
      * @type {string}
@@ -1488,6 +1501,7 @@ function Uno() {
     this.id = member.id;
     /**
      * The name of this player.
+     *
      * @public
      * @readonly
      * @type {string}
@@ -1523,6 +1537,7 @@ function Uno() {
     /**
      * The channel for this player's private messages for the game. Null until
      * the channel is created.
+     *
      * @public
      * @readonly
      * @type {?Discord~TextChannel}
@@ -1554,6 +1569,7 @@ function Uno() {
         });
     /**
      * The current cards that this player has in their hand.
+     *
      * @public
      * @type {Uno.Card[]}
      */
@@ -1585,6 +1601,7 @@ function Uno() {
     if (typeof options !== 'object') options = {};
     /**
      * The ID of this npc. Must be uniqueness is not enforced, but is required.
+     *
      * @public
      * @readonly
      * @type {string}
@@ -1592,6 +1609,7 @@ function Uno() {
     this.id = options.id || `NPC${name}`;
     /**
      * The name of this player.
+     *
      * @public
      * @readonly
      * @type {string}
@@ -1651,7 +1669,7 @@ function Uno() {
     this.probCallUno = options.probCallUno || 0.5;
 
     /**
-     * Delay before calling uno if this NPC is going to call it. (Milliseconds)
+     * Delay before calling uno if this NPC is going to call it. (Milliseconds).
      *
      * @public
      * @type {number}

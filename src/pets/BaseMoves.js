@@ -22,7 +22,7 @@ class BaseMoves {
     /**
      * @description Parsed data from file.
      * @private
-     * @type {Object}
+     * @type {object}
      * @default
      */
     this._moves = {};

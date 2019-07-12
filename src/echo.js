@@ -7,7 +7,7 @@ const SubModule = require('./subModule.js');
 /**
  * @description Manages echo-related commands.
  * @augments SubModule
- * @listens Discord:external~Client#message
+ * @listens external:Discord~Client#message
  * @listens Command#say
  * @listens Command#echo
  * @listens Command#become
@@ -49,7 +49,7 @@ class Echo extends SubModule {
      * guild id, then channel id, then user id.
      *
      * @private
-     * @type {Object}
+     * @type {object}
      * @default
      */
     this._characters = {};

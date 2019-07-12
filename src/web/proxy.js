@@ -39,6 +39,9 @@ function WebProxy() {
     host: 'discordapp.com',
     path: '/api/oauth2/token',
     method: 'POST',
+    headers: {
+      'User-Agent': require('../common.js').ua,
+    },
   };
   /**
    * The url to send a request to the discord api.
@@ -53,6 +56,9 @@ function WebProxy() {
     host: 'discordapp.com',
     path: '/api',
     method: 'GET',
+    headers: {
+      'User-Agent': require('../common.js').ua,
+    },
   };
 
   const pathPorts = {
@@ -66,6 +72,7 @@ function WebProxy() {
 
   /**
    * The current OAuth2 access information for a single session.
+   *
    * @typedef loginState
    *
    * @property {string} access_token The current token for api requests.
@@ -90,13 +97,23 @@ function WebProxy() {
    * is valid. Mapped by session id.
    *
    * @private
-   * @type {Object.<loginState>}
+   * @type {object.<loginState>}
    */
   let loginInfo = {};
   const currentSessions = {};
+  /**
+   * Cache of requests to the Discord API to reduce duplicate calls and reduce
+   * rate limiting. Mapped by user ID and request path. If user ID is unknown,
+   * requests are not cached.
+   *
+   * @private
+   * @type {object.<Function[]>}
+   */
+  const reqCache = {};
 
   /**
    * File storing website rate limit specifications.
+   *
    * @private
    * @type {string}
    */
@@ -106,7 +123,7 @@ function WebProxy() {
    * Object storing parsed rate limit info from {@link rateLimitFile}.
    *
    * @private
-   * @type {Object}
+   * @type {object}
    * @default
    */
   let rateLimits = {
@@ -267,7 +284,7 @@ function WebProxy() {
    * Map of all currently connected sockets.
    *
    * @private
-   * @type {Object.<Socket>}
+   * @type {object.<Socket>}
    */
   const sockets = {};
 
@@ -321,7 +338,7 @@ function WebProxy() {
      * The historic quantities for each rate limit group.
      *
      * @private
-     * @type {Object.<number>}
+     * @type {object.<number>}
      */
     const rateHistory = {};
 
@@ -391,7 +408,8 @@ function WebProxy() {
         // this...
         if (loginInfo[session].expires_at - 6 * 24 * 60 * 60 * 1000 <
             Date.now()) {
-          refreshToken(loginInfo[session].refresh_token, (err, data) => {
+          const info = loginInfo[session];
+          refreshToken(info.refresh_token, info.scope, (err, data) => {
             if (!err) {
               let parsed;
               try {
@@ -617,6 +635,7 @@ function WebProxy() {
             self.error(err);
           }
         });
+        loginInfo.userId = parsed.id;
         if (loginInfo.scope && loginInfo.scope.indexOf('guilds') > -1) {
           fetchGuilds(loginInfo, (data) => {
             parsed.guilds = data;
@@ -660,12 +679,31 @@ function WebProxy() {
    * and data arguments.
    */
   function apiRequest(loginInfo, path, cb) {
+    const reqId = `${loginInfo.userId}${path}`;
+    if (reqCache[reqId]) {
+      reqCache[reqId].push(cb);
+      if (reqId) return;
+    } else {
+      reqCache[reqId] = [cb];
+    }
     const host = apiHost;
     host.path = `/api${path}`;
     host.headers = {
       'Authorization': `${loginInfo.token_type} ${loginInfo.access_token}`,
+      'User-Agent': self.common.ua,
     };
-    discordRequest('', cb, host);
+    discordRequest('', (err, res) => {
+      const split = reqCache[reqId].splice(0);
+      for (const it of split) {
+        try {
+          it(err, res);
+        } catch (err) {
+          self.error('Discord API request callback failed');
+          console.error(err);
+        }
+      }
+      if (reqCache[reqId].length === 0) delete reqCache[reqId];
+    }, host);
   }
 
   /**
@@ -721,7 +759,7 @@ function WebProxy() {
     } else {
       loginInfo.refreshTimeout = setTimeout(function() {
         self.debug('Refreshing token for session: ' + loginInfo.session);
-        refreshToken(loginInfo.refresh_token, (err, data) => {
+        refreshToken(loginInfo.refresh_token, loginInfo.scope, (err, data) => {
           let parsed;
           if (!err) {
             try {
@@ -743,10 +781,11 @@ function WebProxy() {
    * @private
    * @param {string} refreshToken_ The refresh token used for refreshing
    * credentials.
+   * @param {string} scope Scope to refresh.
    * @param {basicCallback} cb The callback from the https request, with an
    * error argument, and a data argument.
    */
-  function refreshToken(refreshToken_, cb) {
+  function refreshToken(refreshToken_, scope, cb) {
     const data = {
       /* eslint-disable @typescript-eslint/camelcase */
       client_id: clientId,
@@ -754,6 +793,7 @@ function WebProxy() {
       grant_type: 'refresh_token',
       refresh_token: refreshToken_,
       redirect_uri: 'https://www.spikeybot.com/redirect',
+      scope: scope,
       /* eslint-enable @typescript-eslint/camelcase */
     };
     discordRequest(data, cb);

@@ -19,26 +19,30 @@ class UserIconUrl {
     url = typeof url === 'string' ? url : '';
     /**
      * Size of the icon to request from Discord.
+     *
      * @public
      * @type {number}
      */
     this.fetchSize = fetchSize || UserIconUrl.fetchSize;
     /**
      * Icon URL.
+     *
      * @public
      * @type {string}
      */
     this.url = `${url.replace(/\?size=[0-9]*/, '')}?size=${this.fetchSize}`;
     /**
      * User ID.
+     *
      * @public
      * @type {string}
      */
     this.id = id;
     /**
      * Optional user settings for displaying this icon.
+     *
      * @public
-     * @type {?string[]}
+     * @type {null|string[]}
      */
     this.settings = settings;
   }

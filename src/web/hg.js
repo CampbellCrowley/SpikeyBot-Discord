@@ -22,8 +22,9 @@ function HGWeb() {
   let ioClient;
   /**
    * Buffer storing all current image uploads and their associated meta-data.
+   *
    * @private
-   * @type {Object}
+   * @type {object}
    */
   const imageBuffer = {};
 
@@ -71,6 +72,10 @@ function HGWeb() {
     if (prev !== hg_) {
       unlinkHG();
       hg_.on('dayStateChange', dayStateChange);
+      hg_.on('toggleOption', handleOptionChange);
+      hg_.on('create', broadcastGame);
+      hg_.on('refresh', broadcastGame);
+      hg_.on('reset', broadcastGame);
       hg_.on('shutdown', unlinkHG);
     }
     return hg_;
@@ -84,6 +89,10 @@ function HGWeb() {
   function unlinkHG() {
     if (!hg_) return;
     hg_.removeListener('dayStateChange', dayStateChange);
+    hg_.removeListener('toggleOption', handleOptionChange);
+    hg_.removeListener('create', broadcastGame);
+    hg_.removeListener('refresh', broadcastGame);
+    hg_.removeListener('reset', broadcastGame);
     hg_.removeListener('shutdown', unlinkHG);
   }
 
@@ -126,7 +135,7 @@ function HGWeb() {
    * Map of all currently connected sockets.
    *
    * @private
-   * @type {Object.<Socket>}
+   * @type {object.<Socket>}
    */
   const sockets = {};
 
@@ -144,7 +153,7 @@ function HGWeb() {
    * Map of all sockets connected that are siblings.
    *
    * @private
-   * @type {Object.<Socket>}
+   * @type {object.<Socket>}
    */
   const siblingSockets = {};
 
@@ -194,90 +203,41 @@ function HGWeb() {
     // End Unrestricted Access \\
 
     // Restricted Access //
-    socket.on('fetchGuilds', (...args) => {
-      callSocketFunction(fetchGuilds, args, false);
-    });
-    socket.on('fetchGuild', (...args) => {
-      callSocketFunction(fetchGuild, args);
-    });
-    socket.on('fetchMember', (...args) => {
-      callSocketFunction(fetchMember, args);
-    });
-    socket.on('fetchChannel', (...args) => {
-      callSocketFunction(fetchChannel, args);
-    });
-    socket.on('fetchGames', (...args) => {
-      callSocketFunction(fetchGames, args);
-    });
-    socket.on('fetchDay', (...args) => {
-      callSocketFunction(fetchDay, args);
-    });
-    socket.on('excludeMember', (...args) => {
-      callSocketFunction(excludeMember, args);
-    });
-    socket.on('includeMember', (...args) => {
-      callSocketFunction(includeMember, args);
-    });
-    socket.on('toggleOption', (...args) => {
-      callSocketFunction(toggleOption, args);
-    });
-    socket.on('createGame', (...args) => {
-      callSocketFunction(createGame, args);
-    });
-    socket.on('resetGame', (...args) => {
-      callSocketFunction(resetGame, args);
-    });
-    socket.on('startGame', (...args) => {
-      callSocketFunction(startGame, args);
-    });
-    socket.on('startAutoplay', (...args) => {
-      callSocketFunction(startAutoplay, args);
-    });
-    socket.on('nextDay', (...args) => {
-      callSocketFunction(nextDay, args);
-    });
-    socket.on('endGame', (...args) => {
-      callSocketFunction(endGame, args);
-    });
-    socket.on('pauseAutoplay', (...args) => {
-      callSocketFunction(pauseAutoplay, args);
-    });
-    socket.on('pauseGame', (...args) => {
-      callSocketFunction(pauseGame, args);
-    });
-    socket.on('editTeam', (...args) => {
-      callSocketFunction(editTeam, args);
-    });
-    socket.on('createEvent', (...args) => {
-      callSocketFunction(createEvent, args);
-    });
-    socket.on('createMajorEvent', (...args) => {
-      callSocketFunction(createMajorEvent, args);
-    });
-    socket.on('editMajorEvent', (...args) => {
-      callSocketFunction(editMajorEvent, args);
-    });
-    socket.on('removeEvent', (...args) => {
-      callSocketFunction(removeEvent, args);
-    });
-    socket.on('toggleEvent', (...args) => {
-      callSocketFunction(toggleEvent, args);
-    });
-    socket.on('forcePlayerState', (...args) => {
-      callSocketFunction(forcePlayerState, args);
-    });
-    socket.on('renameGame', (...args) => {
-      callSocketFunction(renameGame, args);
-    });
-    socket.on('removeNPC', (...args) => {
-      callSocketFunction(removeNPC, args);
-    });
-    socket.on('imageChunk', (...args) => {
-      callSocketFunction(imageChunk, args);
-    });
-    socket.on('imageInfo', (...args) => {
-      callSocketFunction(imageInfo, args);
-    });
+    socket.on('fetchGuilds', (...args) => handle(fetchGuilds, args, false));
+    socket.on('fetchGuild', (...args) => handle(fetchGuild, args));
+    socket.on('fetchMember', (...args) => handle(fetchMember, args));
+    socket.on('fetchChannel', (...args) => handle(fetchChannel, args));
+    socket.on('fetchGames', (...args) => handle(fetchGames, args));
+    socket.on('fetchDay', (...args) => handle(fetchDay, args));
+    socket.on('excludeMember', (...args) => handle(excludeMember, args));
+    socket.on('includeMember', (...args) => handle(includeMember, args));
+    socket.on('toggleOption', (...args) => handle(toggleOption, args));
+    socket.on('createGame', (...args) => handle(createGame, args));
+    socket.on('resetGame', (...args) => handle(resetGame, args));
+    socket.on('startGame', (...args) => handle(startGame, args));
+    socket.on('startAutoplay', (...args) => handle(startAutoplay, args));
+    socket.on('nextDay', (...args) => handle(nextDay, args));
+    socket.on('endGame', (...args) => handle(endGame, args));
+    socket.on('pauseAutoplay', (...args) => handle(pauseAutoplay, args));
+    socket.on('pauseGame', (...args) => handle(pauseGame, args));
+    socket.on('editTeam', (...args) => handle(editTeam, args));
+    socket.on('createEvent', (...args) => handle(createEvent, args));
+    socket.on('createMajorEvent', (...args) => handle(createMajorEvent, args));
+    socket.on('editMajorEvent', (...args) => handle(editMajorEvent, args));
+    socket.on('removeEvent', (...args) => handle(removeEvent, args));
+    socket.on('toggleEvent', (...args) => handle(toggleEvent, args));
+    socket.on('forcePlayerState', (...args) => handle(forcePlayerState, args));
+    socket.on('renameGame', (...args) => handle(renameGame, args));
+    socket.on('removeNPC', (...args) => handle(removeNPC, args));
+    socket.on(
+        'fetchStatGroupList', (...args) => handle(fetchStatGroupList, args));
+    socket.on(
+        'fetchStatGroupMetadata',
+        (...args) => handle(fetchStatGroupMetadata, args));
+    socket.on('fetchStats', (...args) => handle(fetchStats, args));
+    socket.on('fetchLeaderboard', (...args) => handle(fetchLeaderboard, args));
+    socket.on('imageChunk', (...args) => handle(imageChunk, args));
+    socket.on('imageInfo', (...args) => handle(imageInfo, args));
     // End Restricted Access \\
 
     /**
@@ -290,7 +250,7 @@ function HGWeb() {
      * @param {boolean} [forward=true] Forward this request directly to all
      * siblings.
      */
-    function callSocketFunction(func, args, forward = true) {
+    function handle(func, args, forward = true) {
       const noLog = ['fetchMember', 'fetchChannel', 'imageChunk'];
       if (!noLog.includes(func.name.toString())) {
         const logArgs = args.map((el) => {
@@ -393,10 +353,9 @@ function HGWeb() {
    * @private
    * @param {HungryGames} hg HG object firing the event.
    * @param {string} gId Guild id of the state change.
-   * @listens HungryGames#dayStateChange
+   * @listens HG#dayStateChange
    */
   function dayStateChange(hg, gId) {
-    const keys = Object.keys(sockets);
     const game = hg.getHG().getGame(gId);
     let eventState = null;
     if (!game) return;
@@ -405,19 +364,63 @@ function HGWeb() {
       eventState =
           game.currentGame.day.events[game.currentGame.day.state - 2].state;
     }
+    guildBroadcast(
+        gId, 'dayState', game.currentGame.day.num, game.currentGame.day.state,
+        eventState);
+  }
+
+  /**
+   * Broadcast a message to all relevant clients.
+   *
+   * @private
+   * @param {string} gId Guild ID to broadcast message for.
+   * @param {string} event The name of the event to broadcast.
+   * @param {*} args Data to send in broadcast.
+   */
+  function guildBroadcast(gId, event, ...args) {
+    const keys = Object.keys(sockets);
     for (const i in keys) {
       if (!sockets[keys[i]].cachedGuilds) continue;
       if (sockets[keys[i]].cachedGuilds.find((g) => g === gId)) {
-        sockets[keys[i]].emit(
-            'dayState', gId, game.currentGame.day.num,
-            game.currentGame.day.state, eventState);
+        sockets[keys[i]].emit(event, gId, ...args);
       }
     }
     if (ioClient) {
-      ioClient.emit(
-          '_guildBroadcast', gId, 'dayState', gId, game.currentGame.day.num,
-          game.currentGame.day.state, eventState);
+      ioClient.emit('_guildBroadcast', gId, event, gId, ...args);
     }
+  }
+
+  /**
+   * Handles an option being changed and broadcasting the update to clients.
+   *
+   * @private
+   * @listens HG#toggleOption
+   * @param {HungryGames} hg HG object firing the event.
+   * @param {string} gId Guild ID of the option change.
+   * @param {string} opt1 Option key.
+   * @param {string} opt2 Option second key or value.
+   * // @param {string} [opt3] Option value if object option.
+   */
+  function handleOptionChange(hg, gId, opt1, opt2) {
+    if (opt1 === 'teamSize') {
+      broadcastGame(hg, gId);
+    } else {
+      guildBroadcast(gId, 'option', opt1, opt2);
+    }
+  }
+
+  /**
+   * Handles broadcasting the game data to all relevant clients.
+   *
+   * @private
+   * @listens HG#create
+   * @listens HG#refresh
+   * @param {HungryGames} hg HG object firing event.
+   * @param {string} gId The guild ID to data for.
+   */
+  function broadcastGame(hg, gId) {
+    const game = hg.getHG().getGame(gId);
+    guildBroadcast(gId, 'game', game && game.serializable);
   }
 
   /**
@@ -608,6 +611,7 @@ function HGWeb() {
   /**
    * Basic callback with single argument. The argument is null if there is no
    * error, or a string if there was an error.
+   *
    * @callback HGWeb~basicCB
    *
    * @param {?string} err The error response.
@@ -737,6 +741,7 @@ function HGWeb() {
       newG.iconURL = g.iconURL();
       newG.name = g.name;
       newG.id = g.id;
+      newG.bot = self.client.user.id;
       newG.ownerId = g.ownerID;
       newG.members = g.members.map((m) => {
         return m.id;
@@ -1045,13 +1050,7 @@ function HGWeb() {
       cb(null, response, game && game.options[option],
           game && game.serializable);
     } else {
-      if (game) {
-        if (option === 'teamSize') {
-          socket.emit('game', gId, game.serializable);
-        } else {
-          socket.emit('option', gId, option, game.options[option]);
-        }
-      } else {
+      if (!game) {
         socket.emit('message', response);
       }
     }
@@ -1080,8 +1079,6 @@ function HGWeb() {
     hg().createGame(gId, (game) => {
       if (typeof cb === 'function') {
         cb(game ? null : 'ATTEMPT_FAILED', game && game.serializable);
-      } else {
-        socket.emit('game', gId, game && game.serializable);
       }
     });
   }
@@ -1111,8 +1108,6 @@ function HGWeb() {
     const game = hg().getHG().getGame(gId);
     if (typeof cb === 'function') {
       cb(null, response, game && game.serializable);
-    } else {
-      socket.emit('game', gId, game && game.serializable);
     }
   }
   this.resetGame = resetGame;
@@ -1681,6 +1676,194 @@ function HGWeb() {
   }
   this.removeNPC = removeNPC;
 
+  /**
+   * Respond with list of stat groups for the requested guild.
+   *
+   * @private
+   * @type {HGWeb~SocketFunction}
+   * @param {object} userData The current user's session data.
+   * @param {socketIo~Socket} socket The socket connection to reply on.
+   * @param {number|string} gId The guild id to look at.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete, or has failed.
+   */
+  function fetchStatGroupList(userData, socket, gId, cb) {
+    if (!checkPerm(userData, gId, null, 'groups')) {
+      if (!checkMyGuild(gId)) return;
+      if (typeof cb === 'function') cb('NO_PERM');
+      replyNoPerm(socket, 'groups');
+      return;
+    }
+    const game = hg().getHG().getGame(gId);
+    if (!game) {
+      if (typeof cb === 'function') cb('NO_GAME_IN_GUILD');
+      return;
+    }
+    game._stats.fetchGroupList((err, list) => {
+      if (err) {
+        if (err.code === 'ENOENT') {
+          list = [];
+        } else {
+          self.error('Failed to get list of stat groups.');
+          console.error(err);
+          if (typeof cb === 'function') cb('ATTEMPT_FAILED');
+          return;
+        }
+      }
+      if (typeof cb === 'function') {
+        cb(null, list);
+      } else {
+        socket.emit('statGroupList', gId, list);
+      }
+    });
+  }
+  this.fetchStatGroupList = fetchStatGroupList;
+
+  /**
+   * Respond with metadata for the requested stat group.
+   *
+   * @private
+   * @type {HGWeb~SocketFunction}
+   * @param {object} userData The current user's session data.
+   * @param {socketIo~Socket} socket The socket connection to reply on.
+   * @param {number|string} guildId The guild id to look at.
+   * @param {string} groupId The ID of the group.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete, or has failed.
+   */
+  function fetchStatGroupMetadata(userData, socket, guildId, groupId, cb) {
+    if (!checkPerm(userData, guildId, null, 'groups')) {
+      if (!checkMyGuild(guildId)) return;
+      if (typeof cb === 'function') cb('NO_PERM');
+      replyNoPerm(socket, 'groups');
+      return;
+    }
+    const game = hg().getHG().getGame(guildId);
+    if (!game) {
+      if (typeof cb === 'function') cb('NO_GAME_IN_GUILD');
+      return;
+    }
+    game._stats.fetchGroup(groupId, (err, group) => {
+      if (err) {
+        if (typeof cb === 'function') cb('BAD_GROUP');
+        return;
+      }
+      group.fetchMetadata((err, meta) => {
+        if (err) {
+          self.error(
+              'Failed to fetch metadata for stat group: ' + guildId + '/' +
+              group.id);
+          console.error(err);
+          if (typeof cb === 'function') cb('ATTEMPT_FAILED');
+          return;
+        }
+        if (typeof cb === 'function') {
+          cb(null, meta);
+        } else {
+          socket.emit('statGroupMetadata', guildId, groupId, meta);
+        }
+      });
+    });
+  }
+  this.fetchStatGroupMetadata = fetchStatGroupMetadata;
+
+  /**
+   * Respond with stats for a specific user in a group.
+   *
+   * @private
+   * @type {HGWeb~SocketFunction}
+   * @param {object} userData The current user's session data.
+   * @param {socketIo~Socket} socket The socket connection to reply on.
+   * @param {number|string} guildId The guild id to look at.
+   * @param {string} groupId The ID of the group.
+   * @param {string} userId The ID of the user.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete, or has failed.
+   */
+  function fetchStats(userData, socket, guildId, groupId, userId, cb) {
+    if (!checkPerm(userData, guildId, null, 'stats')) {
+      if (!checkMyGuild(guildId)) return;
+      if (typeof cb === 'function') cb('NO_PERM');
+      replyNoPerm(socket, 'stats');
+      return;
+    }
+    const game = hg().getHG().getGame(guildId);
+    if (!game) {
+      if (typeof cb === 'function') cb('NO_GAME_IN_GUILD');
+      return;
+    }
+    game._stats.fetchGroup(groupId, (err, group) => {
+      if (err) {
+        if (typeof cb === 'function') cb('BAD_GROUP');
+        return;
+      }
+      group.fetchUser(userId, (err, data) => {
+        if (err) {
+          self.error(
+              'Failed to fetch user stats: ' + guildId + '@' + userId + '/' +
+              group.id);
+          console.error(err);
+          if (typeof cb === 'function') cb('ATTEMPT_FAILED');
+          return;
+        }
+        if (typeof cb === 'function') {
+          cb(null, data.serializable);
+        } else {
+          socket.emit('userStats', guildId, groupId, userId, data.serializable);
+        }
+      });
+    });
+  }
+  this.fetchStats = fetchStats;
+
+  /**
+   * Respond with leaderboard information.
+   *
+   * @private
+   * @type {HGWeb~SocketFunction}
+   * @param {object} userData The current user's session data.
+   * @param {socketIo~Socket} socket The socket connection to reply on.
+   * @param {number|string} guildId The guild id to look at.
+   * @param {string} groupId The ID of the group.
+   * @param {HGStatGroupUserSelectOptions} opt Data select options.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete, or has failed.
+   */
+  function fetchLeaderboard(userData, socket, guildId, groupId, opt, cb) {
+    if (!checkPerm(userData, guildId, null, 'stats')) {
+      if (!checkMyGuild(guildId)) return;
+      if (typeof cb === 'function') cb('NO_PERM');
+      replyNoPerm(socket, 'stats');
+      return;
+    }
+    const game = hg().getHG().getGame(guildId);
+    if (!game) {
+      if (typeof cb === 'function') cb('NO_GAME_IN_GUILD');
+      return;
+    }
+    game._stats.fetchGroup(groupId, (err, group) => {
+      if (err) {
+        if (typeof cb === 'function') cb('BAD_GROUP');
+        return;
+      }
+      group.fetchUsers(opt, (err, rows) => {
+        if (err) {
+          self.error(
+              'Failed to fetch leaderboard: ' + guildId + '/' + group.id);
+          console.error(err);
+          if (typeof cb === 'function') cb('ATTEMPT_FAILED');
+          return;
+        }
+        const serializable = rows.map((el) => el.serializable);
+        if (typeof cb === 'function') {
+          cb(null, serializable);
+        } else {
+          socket.emit('userStats', guildId, groupId, opt, serializable);
+        }
+      });
+    });
+  }
+  this.fetchLeaderboard = fetchLeaderboard;
   /**
    * Handle receiving image data for avatar uploading.
    *

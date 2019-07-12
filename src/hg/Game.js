@@ -20,6 +20,7 @@ class Game {
   constructor(name, includedUsers, teams) {
     /**
      * The name of this game.
+     *
      * @public
      * @type {string}
      * @default 'Hungry Games'
@@ -27,6 +28,7 @@ class Game {
     this.name = name || 'Hungry Games';
     /**
      * Is the game currently in progress.
+     *
      * @public
      * @type {boolean}
      * @default
@@ -34,6 +36,7 @@ class Game {
     this.inProgress = false;
     /**
      * Array of all users currently in the game.
+     *
      * @public
      * @type {HungryGames~Player[]}
      * @default
@@ -41,6 +44,7 @@ class Game {
     this.includedUsers = includedUsers || [];
     /**
      * All teams in the game.
+     *
      * @public
      * @type {HungryGames~Team[]}
      * @default []
@@ -50,6 +54,7 @@ class Game {
      * List of outcomes and players to force before the end of the day. Does not
      * affect the simulation, outcomes are forced by appending events at the end
      * of the simulated day.
+     *
      * @public
      * @type {HungryGames~ForcedOutcome[]}
      * @default
@@ -57,6 +62,7 @@ class Game {
     this.forcedOutcomes = [];
     /**
      * Has the game ended.
+     *
      * @public
      * @type {boolean}
      * @default
@@ -64,6 +70,7 @@ class Game {
     this.ended = false;
     /**
      * Information about the day that was simulated.
+     *
      * @public
      * @type {HungryGames~Day}
      * @default
@@ -71,12 +78,14 @@ class Game {
     this.day = new Day();
     /**
      * The number of players still alive in this game.
+     *
      * @public
      * @type {number}
      */
     this.numAlive = this.includedUsers.length;
     /**
      * Is this game currently paused.
+     *
      * @public
      * @type {boolean}
      * @default
