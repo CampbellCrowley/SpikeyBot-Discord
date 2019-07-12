@@ -262,7 +262,7 @@ function Common() {
       return null;
     }
     const trace = getTrace(0);
-    const perms = msg.channel.permissionsFor &&
+    const perms = msg.channel.permissionsFor && msg.client &&
         msg.channel.permissionsFor(msg.client.user);
     if (perms && !perms.has('SEND_MESSAGES')) {
       self.logDebug(
