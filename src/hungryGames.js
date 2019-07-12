@@ -2760,7 +2760,7 @@ function HG() {
       const start = Date.now();
       for (i; i >= 0 && Date.now() - start < hg.maxDelta; i--) {
         if (i < numUsers) {
-          if (typeof users[i] === 'string' &&
+          if (typeof users[i] === 'string' && !users[i].startsWith('NPC') &&
               !self.client.users.get(users[i])) {
             fetchWait++;
             self.client.users.fetch(users[i]).then(fetched).catch((err) => {
@@ -3062,7 +3062,7 @@ function HG() {
       const start = Date.now();
       for (i; i >= 0 && Date.now() - start < hg.maxDelta; i--) {
         if (i < numUsers) {
-          if (typeof users[i] === 'string' &&
+          if (typeof users[i] === 'string' && !users[i].startsWith('NPC') &&
               !self.client.users.get(users[i])) {
             fetchWait++;
             self.client.users.fetch(users[i]).then(fetched).catch((err) => {
