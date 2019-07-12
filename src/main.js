@@ -1718,10 +1718,11 @@ function Main() {
               guild.verfied + ')',
           true);
       embed.addField(
-          'Links', (icon ? `Icon: ${icon}\n` : '') +
-              (banner ? `Banner: ${banner}\n` : '') +
-              (splash ? `Splash: ${splash}\n` : '') +
-              (vanity ? `Vanity: discord.gg/${vanity}\n` : ''),
+          'Links', ((icon ? `Icon: ${icon}\n` : '') +
+                    (banner ? `Banner: ${banner}\n` : '') +
+                    (splash ? `Splash: ${splash}\n` : '') +
+                    (vanity ? `Vanity: discord.gg/${vanity}\n` : '')) ||
+              '*None*',
           true);
       if (guild.shard) embed.setFooter(`Shard #${guild.shard.id}`);
       msg.channel.send(`<@${msg.author.id}>`, embed);
