@@ -142,6 +142,7 @@ class ModLog extends SubModule {
       case 'messagePurge':
         return 'Purged Messages';
       case 'messageDelete':
+      case 'messageBotDelete':
         return 'Deleted a Message';
       case 'messageUpdate':
       case 'messageBotUpdate':
@@ -180,6 +181,7 @@ class ModLog extends SubModule {
       case 'messagePurge':
         return 'BLUE';
       case 'messageDelete':
+      case 'messageBotDelete':
         return 'DARK_BLUE';
       case 'messageUpdate':
       case 'messageBotUpdate':
@@ -295,12 +297,19 @@ class Settings {
      */
     this.logMessagePurge = false;
     /**
-     * @description Should the bot log when a message is deleted?
+     * @description Should the bot log when a user's message is deleted?
      * @public
      * @type {boolean}
      * @default
      */
     this.logMessageDelete = false;
+    /**
+     * @description Should the bot log when a bot message is deleted?
+     * @public
+     * @type {boolean}
+     * @default
+     */
+    this.logMessageBotDelete = false;
     /**
      * @description Should the bot log when a user's message is edited?
      * @public
@@ -355,6 +364,8 @@ class Settings {
         return this.logMessagePurge;
       case 'messageDelete':
         return this.logMessageDelete;
+      case 'messageBotDelete':
+        return this.logMessageBotDelete;
       case 'messageUpdate':
         return this.logMessageUpdate;
       case 'messageBotUpdate':
@@ -388,6 +399,7 @@ Settings.from = function(obj) {
   output.logMentionAbuse = obj.logMentionAbuse || false;
   output.logMessagePurge = obj.logMessagePurge || false;
   output.logMessageDelete = obj.logMessageDelete || false;
+  output.logMessageBotDelete = obj.logMessageBotDelete || false;
   output.logMessageUpdate = obj.logMessageUpdate || false;
   output.logMessageBotUpdate = obj.logMessageBotUpdate || false;
   output.logMemberLeave = obj.logMemberLeave || false;

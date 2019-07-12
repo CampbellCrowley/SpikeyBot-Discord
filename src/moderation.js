@@ -220,11 +220,19 @@ class Moderation extends SubModule {
       return;
     }
     const files = msg.attachments.map((el) => el.url);
-    modLog.output(
-        msg.guild, 'messageDelete', null, null,
-        `${tag}'s (${id}) in #${channel}`, files.length > 0 ?
-            `${msg.content.substr(0, 100)}\n\nFiles: ${files.join(' ')}` :
-            msg.content);
+    if (msg.author.bot) {
+      modLog.output(
+          msg.guild, 'messageBotDelete', null, null,
+          `${tag}'s (${id}) in #${channel}`, files.length > 0 ?
+              `${msg.content.substr(0, 100)}\n\nFiles: ${files.join(' ')}` :
+              msg.content);
+    } else {
+      modLog.output(
+          msg.guild, 'messageDelete', null, null,
+          `${tag}'s (${id}) in #${channel}`, files.length > 0 ?
+              `${msg.content.substr(0, 100)}\n\nFiles: ${files.join(' ')}` :
+              msg.content);
+    }
   }
   /**
    * @description Handle logging when a message is edited.
