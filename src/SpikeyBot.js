@@ -923,7 +923,7 @@ function SpikeyBot() {
         const content = msg.content.replace(/\n/g, '\\n');
         let author;
         if (msg.guild !== null) {
-          author = `${msg.channel.id}@${msg.author.id}`;
+          author = `${msg.guild.id}#${msg.channel.id}@${msg.author.id}`;
         } else {
           author = `PM:${msg.author.id}@${msg.author.tag}`;
         }

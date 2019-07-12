@@ -127,7 +127,13 @@ function ChatBot() {
       const withoutMe = msg.content.replace(selfMentionRegex, '').trim();
       const withoutMeMatch = withoutMe.match(/^\S+/);
       if (withoutMeMatch && self.command.find(withoutMeMatch[0], msg)) {
-        self.log('No Prefix: ' + msg.content);
+        let author;
+        if (msg.guild !== null) {
+          author = `${msg.guild.id}#${msg.channel.id}@${msg.author.id}`;
+        } else {
+          author = `PM:${msg.author.id}@${msg.author.tag}`;
+        }
+        self.log(`${author} ${msg.content}`);
         msg.content = `${msg.prefix}${withoutMe}`;
         if (!self.command.trigger(msg)) {
           self.warn(`Command "${msg.content}" failed!`);
@@ -222,7 +228,13 @@ function ChatBot() {
                   el[1].stringValue);
             });
 
-            self.log('Triggered command: ' + cmd);
+            let author;
+            if (msg.guild !== null) {
+              author = `${msg.guild.id}#${msg.channel.id}@${msg.author.id}`;
+            } else {
+              author = `PM:${msg.author.id}@${msg.author.tag}`;
+            }
+            self.log(`${author} ${msg.content}`);
             msg.content = cmd;
             if (!self.command.trigger(msg)) {
               self.warn('Command "' + cmd + '" failed!');
