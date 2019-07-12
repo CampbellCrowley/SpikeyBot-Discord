@@ -36,9 +36,10 @@ function Polling() {
           return;
         }
         files.forEach((folder) => {
-          fs.readFile(dir + folder + saveFilename, (err, data) => {
+          fs.readFile(dir + folder + '/' + saveFilename, (err, data) => {
             if (err) {
-              self.error('Failed to read file: ' + dir + folder + saveFilename);
+              self.error(
+                  'Failed to read file: ' + dir + folder + '/' + saveFilename);
               console.error(err);
               return;
             }
@@ -80,7 +81,7 @@ function Polling() {
     const polls = Object.entries(currentPolls);
     for (let i = 0; i < polls.length; i++) {
       const dir = self.common.guildSaveDir + polls[i][1].message.guild.id +
-          guildSubDir + polls[i][1].author;
+          guildSubDir + polls[i][1].author + '/';
       const filename = dir + saveFilename;
       const temp = Object.assign({}, polls[i][1]);
       temp.emojis = temp.emojis.map((el) => el.id || el);
@@ -91,9 +92,9 @@ function Polling() {
       delete temp.timeout;
       const pollString = JSON.stringify(temp);
       if (opt === 'async') {
-        self.common.mkAndWrite(dir, filename, pollString);
+        self.common.mkAndWrite(filename, dir, pollString);
       } else {
-        self.common.mkAndWriteSync(dir, filename, pollString);
+        self.common.mkAndWriteSync(filename, dir, pollString);
       }
     }
   };
@@ -151,7 +152,7 @@ function Polling() {
    * @constant
    * @default
    */
-  const saveFilename = '/save.json';
+  const saveFilename = 'save.json';
 
   /**
    * The default reaction emojis to use for a poll.
