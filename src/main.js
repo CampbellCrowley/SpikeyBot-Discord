@@ -872,7 +872,7 @@ function Main() {
    * @listens Discord~Client#guildBanAdd
    */
   function onGuildBanAdd(guild, user) {
-    if (user.id == self.client.id) return;
+    if (user.id == self.client.user.id) return;
     if (disabledBanMessage[guild.id]) return;
     if (!guild.me.hasPermission(
         self.Discord.Permissions.FLAGS.VIEW_AUDIT_LOG)) {
