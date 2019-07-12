@@ -308,10 +308,10 @@ class StatGroup {
         opts.offset = 0;
       }
 
-      const sort =
-          (typeof opts.sort === 'string' ?
-               ' ORDER BY ?? ' + (opts.ascending ? '' : 'DESC ') :
-               '');
+      const sort = (typeof opts.sort === 'string' ?
+                        ' ORDER BY ?? ' + (opts.ascending ? '' : 'DESC ') :
+                        '') +
+          ', `userId` ';
 
       const limit = typeof opts.limit === 'number' && !isNaN(opts.limit) ?
           `LIMIT ${opts.limit}` +
