@@ -237,6 +237,9 @@ function HGWeb() {
     socket.on('fetchStats', (...args) => handle(fetchStats, args));
     socket.on('fetchLeaderboard', (...args) => handle(fetchLeaderboard, args));
     socket.on('modifyInventory', (...args) => handle(modifyInventory, args));
+    socket.on('selectStatGroup', (...args) => handle(selectStatGroup, args));
+    socket.on('createStatGroup', (...args) => handle(createStatGroup, args));
+    socket.on('deleteStatGroup', (...args) => handle(deleteStatGroup, args));
     socket.on('imageChunk', (...args) => handle(imageChunk, args));
     socket.on('imageInfo', (...args) => handle(imageInfo, args));
     // End Restricted Access \\
@@ -333,7 +336,7 @@ function HGWeb() {
         },
         id: sId,
       };
-      if (args[args.length - 1]._function) {
+      if (args[args.length - 1] && args[args.length - 1]._function) {
         args[args.length - 1] = function(...a) {
           if (typeof cb === 'function') cb({_callback: true, data: a});
         };
@@ -1906,6 +1909,135 @@ function HGWeb() {
     }
   }
   this.modifyInventory = modifyInventory;
+  /**
+   * Set the currently selected stat group.
+   *
+   * @private
+   * @type {HGWeb~SocketFunction}
+   * @param {object} userData The current user's session data.
+   * @param {socketIo~Socket} socket The socket connection to reply on.
+   * @param {string} guildId The guild id to look at.
+   * @param {?string} groupId The ID of the group to select, or null to set
+   * none.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete, or has failed.
+   */
+  function selectStatGroup(userData, socket, guildId, groupId, cb) {
+    if (!checkPerm(userData, guildId, null, 'group select')) {
+      if (!checkMyGuild(guildId)) return;
+      if (typeof cb === 'function') cb('NO_PERM');
+      replyNoPerm(socket, 'selectStatGroup');
+      return;
+    }
+    const game = hg().getHG().getGame(guildId);
+    if (!game) {
+      if (typeof cb === 'function') cb('NO_GAME_IN_GUILD');
+      return;
+    }
+    if (!groupId || groupId.length == 0) {
+      game.statGroup = null;
+      if (typeof cb === 'function') cb(null);
+      broadcastGame(hg(), guildId);
+      return;
+    } else if (typeof groupId !== 'string') {
+      cb('BAD_GROUP');
+      return;
+    }
+
+    game._stats.fetchGroup(groupId, (err, group) => {
+      if (err) {
+        cb('BAD_GROUP');
+        return;
+      }
+      game.statGroup = group.id;
+      if (typeof cb === 'function') cb(null);
+      broadcastGame(hg(), guildId);
+    });
+  }
+  this.selectStatGroup = selectStatGroup;
+  /**
+   * Create a stat group.
+   *
+   * @private
+   * @type {HGWeb~SocketFunction}
+   * @param {object} userData The current user's session data.
+   * @param {socketIo~Socket} socket The socket connection to reply on.
+   * @param {string} guildId The guild id to look at.
+   * @param {?string} name The name of the new group.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete, or has failed.
+   */
+  function createStatGroup(userData, socket, guildId, name, cb) {
+    if (!checkPerm(userData, guildId, null, 'group create')) {
+      if (!checkMyGuild(guildId)) return;
+      if (typeof cb === 'function') cb('NO_PERM');
+      replyNoPerm(socket, 'createStatGroup');
+      return;
+    }
+    const game = hg().getHG().getGame(guildId);
+    if (!game) {
+      if (typeof cb === 'function') cb('NO_GAME_IN_GUILD');
+      return;
+    }
+    if (name && typeof name === 'string') {
+      if (name.length === 0 || name.length > 24) {
+        cb('BAD_NAME');
+        return;
+      }
+    } else if (name) {
+      cb('BAD_NAME');
+      return;
+    }
+
+    game._stats.createGroup({name: name}, (group) => {
+      group.fetchMetadata((err, meta) => {
+        if (err) {
+          cb('ATTEMPT_FAILED');
+          return;
+        }
+        if (typeof cb === 'function') cb(null, group.id, meta);
+      });
+    });
+  }
+  this.createStatGroup = createStatGroup;
+  /**
+   * Delete a stat group.
+   *
+   * @private
+   * @type {HGWeb~SocketFunction}
+   * @param {object} userData The current user's session data.
+   * @param {socketIo~Socket} socket The socket connection to reply on.
+   * @param {string} guildId The guild id to look at.
+   * @param {string} groupId The group id to delete.
+   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * complete, or has failed.
+   */
+  function deleteStatGroup(userData, socket, guildId, groupId, cb) {
+    if (!checkPerm(userData, guildId, null, 'group delete')) {
+      if (!checkMyGuild(guildId)) return;
+      if (typeof cb === 'function') cb('NO_PERM');
+      replyNoPerm(socket, 'deleteStatGroup');
+      return;
+    }
+    const game = hg().getHG().getGame(guildId);
+    if (!game) {
+      if (typeof cb === 'function') cb('NO_GAME_IN_GUILD');
+      return;
+    }
+
+    game._stats.fetchGroup(groupId, (err, group) => {
+      if (err) {
+        cb('BAD_GROUP');
+        return;
+      }
+      if (game.statGroup === group.id) {
+        game.statGroup = null;
+      }
+      group.reset();
+      if (typeof cb === 'function') cb(null);
+    });
+  }
+  this.deleteStatGroup = deleteStatGroup;
   /**
    * Handle receiving image data for avatar uploading.
    *

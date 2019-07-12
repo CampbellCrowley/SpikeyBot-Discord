@@ -476,7 +476,7 @@ function WebSettings() {
         },
         id: sId,
       };
-      if (args[args.length - 1]._function) {
+      if (args[args.length - 1] && args[args.length - 1]._function) {
         args[args.length - 1] = function(...a) {
           if (typeof cb === 'function') cb({_callback: true, data: a});
         };

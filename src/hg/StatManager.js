@@ -125,12 +125,11 @@ class StatManager {
       id = 'global';
     }
     if (typeof id !== 'string') {
-      throw new TypeError('ID must be a string');
-    }
-    if (StatGroup.exists(this.game, id)) {
+      cb(new TypeError('ID must be a string'));
+    } else if (StatGroup.exists(this.game, id)) {
       cb(null, new StatGroup(this.game, id));
     } else {
-      cb('Group doesn\'t exist');
+      cb(new Error('Group doesn\'t exist'));
     }
   }
 

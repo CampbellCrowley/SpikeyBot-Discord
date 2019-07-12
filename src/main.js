@@ -3390,9 +3390,8 @@ function Main() {
             msg, 'Loading ban list...',
             'Please wait, this will take a while.\nBan list updates after ' +
                 '1 hour. ')
-        .then((_msg) => {
+        .then(() => {
           requestBanList(user.id, (res) => {
-            _msg.delete();
             const pairs = Object.entries(res);
             if (pairs.length > 5) {
               self.common.reply(
