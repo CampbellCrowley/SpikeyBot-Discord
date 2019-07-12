@@ -1286,21 +1286,21 @@ function Uno() {
      * @param {string|number} caller The user ID of the player who called Uno.
      */
     function callUno(caller) {
-      if (players[turn].id == caller && !players[turn].calledUno &&
-          players[turn].hand.length == 2) {
+      if (players[turn] && players[turn].id == caller &&
+          !players[turn].calledUno && players[turn].hand.length == 2) {
         players[turn].calledUno = true;
         const mention = players[turn].mention;
         game.groupChannel.send(`${mention} called\`\`\`\n${unoText}\n\`\`\``);
       }
       if (previousTurn > -1) {
-        if (players[previousTurn].id == caller &&
+        if (players[previousTurn] && players[previousTurn].id == caller &&
             !players[previousTurn].calledUno &&
             players[previousTurn].hand.length == 1) {
           players[previousTurn].calledUno = true;
           const mention = players[previousTurn].mention;
           game.groupChannel.send(`${mention} called\`\`\`\n${unoText}\n\`\`\``);
         }
-        if (!players[previousTurn].calledUno &&
+        if (players[previousTurn] && !players[previousTurn].calledUno &&
             players[previousTurn].hand.length == 1) {
           game.groupChannel.send(
               players[previousTurn].mention +

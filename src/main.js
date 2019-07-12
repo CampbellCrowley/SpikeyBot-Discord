@@ -77,6 +77,8 @@ const math = mathjs.create(mathjs.all, {matrix: 'Array'});
  * @listens Command#git
  * @listens Command#gettime
  * @listens Command#update
+ * @listens Command#bans
+ * @listens Command#listbans
  */
 function Main() {
   const self = this;
@@ -163,6 +165,23 @@ function Main() {
   const mentionAccumulator = {};
 
   /**
+   * Cache storing data about requested user ban information. Mapped by user ID,
+   * then array of guild IDs where the user is banned.
+   *
+   * @private
+   * @type {object.<string[]>}
+   */
+  const banListCache = {};
+  /**
+   * Data about number of responses expected and completed for a user from all
+   * shards.
+   *
+   * @private
+   * @type {object.<{total: number, done: number, callbacks: Function[]}>}
+   */
+  const banListRequests = {};
+
+  /**
    * Previous ping values and their associated timestamps. Stores up to the
    * previous {@link oldestPing}  worth of pings since a reboot.
    *
@@ -198,8 +217,8 @@ function Main() {
    * @constant
    */
   const introduction = '\nHello! My name is {username}.\nI was created by ' +
-      'SpikeyRobot#0971, so if you wish to add any features, feel free to PM ' +
-      'him! (Tip: Use **{prefix}pmspikey**)\n\nThe prefix for commands can ' +
+      'SpikeyRobot#0971, so if you wish to add any features, feel free to DM ' +
+      'him! (Tip: Use **{prefix}dmspikey**)\n\nThe prefix for commands can ' +
       'be changed with `{prefix}changeprefix`.\nIf you\'d like to know what ' +
       'I can do, type **{prefix}help** in a PM to me and I\'ll let you know!' +
       '\nThe help is also available on my web page: https://www.spikeybot.com/';
@@ -338,9 +357,11 @@ function Main() {
     self.command.on('gettime', commandGetTime);
     self.command.on('update', commandUpdate);
     self.command.on('sweep', commandSweep);
+    self.command.on(['bans', 'listbans'], commandListBans);
 
 
     self.client.on('debug', onDebug);
+    self.client.on('rateLimit', onRateLimit);
     self.client.on('warn', onWarn);
     self.client.on('error', onError);
     self.client.on('guildCreate', onGuildCreate);
@@ -413,6 +434,17 @@ function Main() {
             disabledAutoSmite[g.id] = parsed.disabledAutoSmite || false;
             disabledBanMessage[g.id] = parsed.disabledBanMessage || false;
             disabledRiggedCounter[g.id] = parsed.disabledRiggedCounter || false;
+          });
+      fs.readFile(
+          `${self.common.guildSaveDir}${g.id}/banCache.json`, (err, file) => {
+            if (err) return;
+            let parsed;
+            try {
+              parsed = JSON.parse(file);
+            } catch (e) {
+              return;
+            }
+            banListCache[g.id] = parsed;
           });
     });
 
@@ -568,6 +600,27 @@ function Main() {
        * @public
        */
       self.client.sweepUsers = sweepUsers;
+      /**
+       * Request this shard broadcast all guilds where a user has been banned.
+       *
+       * @see {@link Main~broadcastBanList}
+       * @see {@link Main~banListResponse}
+       * @see {@link Main~commandListBans}
+       *
+       * @public
+       */
+      self.client.broadcastBanList = broadcastBanList;
+      /**
+       * Response from a shard due to {@link Main~broadcastBanList} being
+       * called.
+       *
+       * @see {@link Main~broadcastBanList}
+       * @see {@link Main~banListResponse}
+       * @see {@link Main~commandListBans}
+       *
+       * @public
+       */
+      self.client.banListResponse = banListResponse;
       /* eslint-enable no-unused-vars */
     }
     self.bot.getStats = getAllStats;
@@ -614,8 +667,10 @@ function Main() {
     self.command.removeListener('gettime');
     self.command.removeListener('update');
     self.command.removeListener('sweep');
+    self.command.removeListener('bans');
 
     self.client.removeListener('debug', onDebug);
+    self.client.removeListener('rateLimit', onRateLimit);
     self.client.removeListener('warn', onWarn);
     self.client.removeListener('error', onError);
     self.client.removeListener('guildCreate', onGuildCreate);
@@ -667,6 +722,15 @@ function Main() {
       } else {
         self.common.mkAndWriteSync(filename, dir, JSON.stringify(obj));
       }
+
+      const filename2 = dir + '/banCache.json';
+      if (opt == 'async') {
+        self.common.mkAndWrite(
+            filename2, dir, JSON.stringify(banListCache[g.id]));
+      } else {
+        self.common.mkAndWriteSync(
+            filename2, dir, JSON.stringify(banListCache[g.id]));
+      }
     });
     if (!self.client.shard || self.client.shard.ids[0] == 0) {
       const dir = './save/';
@@ -692,7 +756,7 @@ function Main() {
    *
    * @private
    * @param {string} info The information.
-   * @listens Discord~Client#debug
+   * @listens external:Discord~Client#debug
    */
   function onDebug(info) {
     const hbRegex = new RegExp(
@@ -714,6 +778,18 @@ function Main() {
       return;
     }
     self.common.logDebug('Discord Debug: ' + info);
+  }
+
+  /**
+   * A rate limit message was produced.
+   *
+   * @private
+   * @param {object} info The information.
+   * @listens external:Discord~Client#rateLimit
+   */
+  function onRateLimit(info) {
+    info;
+    // self.common.logDebug('Discord Rate Limit: ' + JSON.stringify(info));
   }
 
   /**
@@ -796,7 +872,7 @@ function Main() {
    * @listens Discord~Client#guildBanAdd
    */
   function onGuildBanAdd(guild, user) {
-    if (user.id == self.client.id) return;
+    if (user.id == self.client.user.id) return;
     if (disabledBanMessage[guild.id]) return;
     if (!guild.me.hasPermission(
         self.Discord.Permissions.FLAGS.VIEW_AUDIT_LOG)) {
@@ -1642,10 +1718,11 @@ function Main() {
               guild.verfied + ')',
           true);
       embed.addField(
-          'Links', (icon ? `Icon: ${icon}\n` : '') +
-              (banner ? `Banner: ${banner}\n` : '') +
-              (splash ? `Splash: ${splash}\n` : '') +
-              (vanity ? `Vanity: discord.gg/${vanity}\n` : ''),
+          'Links', ((icon ? `Icon: ${icon}\n` : '') +
+                    (banner ? `Banner: ${banner}\n` : '') +
+                    (splash ? `Splash: ${splash}\n` : '') +
+                    (vanity ? `Vanity: discord.gg/${vanity}\n` : '')) ||
+              '*None*',
           true);
       if (guild.shard) embed.setFooter(`Shard #${guild.shard.id}`);
       msg.channel.send(`<@${msg.author.id}>`, embed);
@@ -2722,6 +2799,7 @@ function Main() {
       numGuilds: 0,
       numLargestGuild: 0,
       shardGuilds: {},
+      shardUsers: {},
       numUsers: 0,
       numMembers: 0,
       numUsersOnline: 0,
@@ -2757,6 +2835,7 @@ function Main() {
       for (let i = 0; i < res.length; i++) {
         values.numGuilds += res[i].numGuilds;
         values.shardGuilds[i] = res[i].numGuilds;
+        values.shardUsers[i] = res[i].numUsers;
         values.numLargestGuild =
             Math.max(res[i].numLargestGuild, values.numLargestGuild);
         values.numUsers += res[i].numUsers;
@@ -2940,7 +3019,7 @@ function Main() {
         output.push(
             'Guild ' + channel.type + ' Channel: `' +
             channel.name.replace(/`/g, '\\`') + '` with ' +
-            channel.memberCount + ' members, in guild `' +
+            channel.members.size + '+ members, in guild `' +
             channel.guild.name.replace(/`/g, '\\`') + '` (' + channel.guild.id +
             ')' + additional);
       } else {
@@ -3290,6 +3369,178 @@ function Main() {
     });
   }
 
+  /**
+   * Fetch all guilds a user has been banned from that we know of.
+   *
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens Command#listbans
+   * @listens Command#bans
+   */
+  function commandListBans(msg) {
+    if (msg.author.id != self.common.spikeyId) {
+      self.common.reply(
+          msg, 'Sorry, this command was disabled temporarily due to Discord ' +
+              'rate limit issues.');
+      return;
+    }
+    const user = msg.softMentions.users.first() || msg.author;
+    self.common
+        .reply(
+            msg, 'Loading ban list...',
+            'Please wait, this will take a while.\nBan list updates after ' +
+                '1 hour. ')
+        .then(() => {
+          requestBanList(user.id, (res) => {
+            const pairs = Object.entries(res);
+            if (pairs.length > 5) {
+              self.common.reply(
+                  msg, `${user.tag} Known Bans`,
+                  `${pairs.length} known servers.`);
+              return;
+            }
+            const out = pairs.map((el) => `${el[0]}: ${el[1]}`).join('\n');
+            self.common.reply(msg, `${user.tag} Known Bans`, out || 'None');
+          });
+        });
+  }
+
+  /**
+   * Request the ban lists for a user from all shards.
+   *
+   * @private
+   * @param {string} userId The ID of the user to fetch.
+   * @param {Function} cb The callback once all requests have completed.
+   */
+  function requestBanList(userId, cb) {
+    if (self.client.shard) {
+      const num = self.client.shard.count;
+      if (!banListRequests[userId]) {
+        banListRequests[userId] = {total: 0, done: 0, callbacks: []};
+        delete banListCache[userId];
+      } else if (banListRequests[userId].done < banListRequests[userId].total) {
+        banListRequests[userId].callbacks.push(cb);
+        return;
+      }
+      banListRequests[userId].callbacks.push(cb);
+      self.client.shard
+          .broadcastEval(`this.broadcastBanList('${userId}',${num})`)
+          .catch((err) => {
+            self.error('Failed to broadcast for ban list.');
+            console.error(err);
+          });
+    } else {
+      let total = 0;
+      let done = 0;
+      const res = {};
+      self.client.guilds.forEach((g) => {
+        total++;
+        g.fetchBans().then((bans) => {
+          bans.forEach((b) => {
+            if (b.user.id != userId) return;
+            res[g.id] = b.reason || true;
+          });
+          done++;
+          if (done >= total) cb(res);
+        }).catch(() => {
+          done++;
+          if (done >= total) cb(res);
+        });
+      });
+    }
+  }
+
+  /**
+   * Fired when shard sends the ban list response data.
+   *
+   * @private
+   * @param {string} userId The ID of the user this data is for.
+   * @param {object.<string>} res The response data from a shard.
+   */
+  function banListResponse(userId, res) {
+    if (!banListRequests[userId]) {
+      banListRequests[userId] = {total: 0, done: 1, callbacks: []};
+    } else {
+      banListRequests[userId].done++;
+    }
+    if (!banListCache[userId]) banListCache[userId] = {};
+    if (res) {
+      for (const g in res) {
+        if (!res[g]) continue;
+        banListCache[userId][g] = res[g];
+      }
+    }
+    if (banListRequests[userId].done === banListRequests[userId].total) {
+      banListRequests[userId].callbacks.forEach((cb) => {
+        try {
+          cb(banListCache[userId]);
+        } catch (err) {
+          self.error('Error while firing callback for ban lists: ' + userId);
+          console.error(err);
+        }
+        delete banListRequests[userId];
+      });
+    }
+  }
+
+  /**
+   * Fetch the list of guilds the user has been banned from. Responds through a
+   * broadcastEval to all shards with an object mapped by guild ID and the value
+   * is the ban reason as a string.
+   *
+   * @private
+   * @param {string} userId The ID of the user to fetch.
+   * @param {number} numReq The number of additional responses from other shards
+   * should be expected.
+   */
+  function broadcastBanList(userId, numReq) {
+    if (!banListRequests[userId]) {
+      banListRequests[userId] = {total: numReq, done: 0, callbacks: []};
+    } else {
+      banListRequests[userId].total += numReq;
+    }
+    let total = 0;
+    let done = 0;
+    const res = {};
+    const checkDone = function() {
+      done++;
+      if (done >= total) {
+        self.client.shard.broadcastEval(
+            `this.banListResponse('${userId}',${JSON.stringify(res)})`);
+      }
+    };
+    self.client.guilds.forEach((g) => {
+      if (!g.me.permissions.has('BAN_MEMBERS')) return;
+      total++;
+      const now = Date.now();
+      if (banListCache[g.id] && banListCache[g.id].timestamp &&
+          now - banListCache[g.id].timestamp < 60 * 60 * 1000) {
+        res[g.id] = banListCache[g.id].users[userId];
+        checkDone();
+        return;
+      } else if (banListCache[g.id]) {
+        banListCache[g.id].users = {};
+      }
+      g.fetchBans()
+          .then((bans) => {
+            bans.forEach((b) => {
+              if (!banListCache[g.id]) banListCache[g.id] = {users: {}};
+              banListCache[g.id].timestamp = now;
+              banListCache[g.id].users[b.user.id] = b.reason || true;
+              if (b.user.id != userId) return;
+              res[g.id] = b.reason || true;
+            });
+            checkDone();
+          })
+          .catch((err) => {
+            console.error(err);
+            if (!banListCache[g.id]) banListCache[g.id] = {users: {}};
+            banListCache[g.id].timestamp = now;
+            checkDone();
+          });
+    });
+  }
 
   /**
    * Triggered via SIGINT, SIGHUP or SIGTERM. Saves data before exiting.

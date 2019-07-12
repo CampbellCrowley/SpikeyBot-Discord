@@ -693,6 +693,42 @@
               "result": "All groups that the include and exclude commands support, this also supports (online, offline, idle, dnd, everyone, bots, npcs)."
             }
           ]
+        },
+        {
+          "command": "give",
+          "description": "This will give a player a weapon that you specify.",
+          "aliases": "give, reward, rewards, award, awards, sponsor, sponsors, gift, gifts",
+          "validOnlyInGuild": true,
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "give @SpikeyRobot#0971 knife",
+              "result": "SpikeyRobot will immediately be given a knife."
+            },
+            {
+              "description": "Multiple Consumables",
+              "command": "give @SpikeyRobot#0971 bow 20",
+              "result": "SpikeyRobot will immediately be given a bow with 20 arrows."
+            }
+          ]
+        },
+        {
+          "command": "take",
+          "description": "This will take a weapon from a player that you specify.",
+          "aliases": "take, destroy, reduce",
+          "validOnlyInGuild": true,
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "take @SpikeyRobot#0971 knife",
+              "result": "SpikeyRobot will immediately lose a knife. If they end up with 0 or less, a message saying they lost all of their knives will still be sent."
+            },
+            {
+              "description": "Multiple Consumables",
+              "command": "take @SpikeyRobot#0971 bow 20",
+              "result": "SpikeyRobot will immediately lose 20 arrows from their bow. If they end up with 0 or less, a message saying they lost all their arrows will be sent."
+            }
+          ]
         }
       ]
     }

@@ -23,7 +23,7 @@ class Day {
      * @default
      */
     this.num = -1;
-    if (typeof num === 'number') this.num = num;
+    if (typeof num === 'number' && !isNaN(num)) this.num = num;
     /**
      * The state index of this day. 0 is not yet simulated, 1 is currently
      * simulating, and 2-n are the index of the event to show if reduced by 2.
@@ -53,7 +53,9 @@ class Day {
  * @returns {HungryGames~Day} Created Day.
  */
 Day.from = function(data) {
-  const day = new Day(data.num, data.events);
+  if (!data) return new Day();
+  const evts = Array.isArray(data.events) ? data.events.slice(0) : undefined;
+  const day = new Day(data.num * 1, evts);
   day.state = data.state || 0;
   return day;
 };

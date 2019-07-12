@@ -617,6 +617,21 @@ function HG() {
           ['wound', 'hurt', 'damage', 'stab', 'punch', 'slap', 'injure'],
           mkCmd(commandWound), cmdOpts),
       new self.command.SingleCommand(
+          [
+            'give',
+            'reward',
+            'award',
+            'sponsor',
+            'rewards',
+            'awards',
+            'gift',
+            'gifts',
+            'sponsors',
+          ],
+          mkCmd(commandGiveWeapon), cmdOpts),
+      new self.command.SingleCommand(
+          ['take', 'destroy', 'reduce'], mkCmd(commandTakeWeapon), cmdOpts),
+      new self.command.SingleCommand(
           ['rename', 'name'], mkCmd(commandRename), cmdOpts),
       new self.command.SingleCommand(
           ['react', 'reaction', 'emote', 'emoji'], mkCmd(commandReactJoin),
@@ -1050,8 +1065,12 @@ function HG() {
    * games.
    *
    * @public
-   * @returns {{bloodbath: object, player: object, arena: object}} Object
-   * storing default events.
+   * @returns {{
+   *   bloodbath: object,
+   *   player: object,
+   *   arena: object,
+   *   weapon: object
+   * }} Object storing default events.
    */
   this.getDefaultEvents = function() {
     return {
@@ -2741,7 +2760,7 @@ function HG() {
       const start = Date.now();
       for (i; i >= 0 && Date.now() - start < hg.maxDelta; i--) {
         if (i < numUsers) {
-          if (typeof users[i] === 'string' &&
+          if (typeof users[i] === 'string' && !users[i].startsWith('NPC') &&
               !self.client.users.get(users[i])) {
             fetchWait++;
             self.client.users.fetch(users[i]).then(fetched).catch((err) => {
@@ -3043,7 +3062,7 @@ function HG() {
       const start = Date.now();
       for (i; i >= 0 && Date.now() - start < hg.maxDelta; i--) {
         if (i < numUsers) {
-          if (typeof users[i] === 'string' &&
+          if (typeof users[i] === 'string' && !users[i].startsWith('NPC') &&
               !self.client.users.get(users[i])) {
             fetchWait++;
             self.client.users.fetch(users[i]).then(fetched).catch((err) => {
@@ -6438,6 +6457,103 @@ function HG() {
     }
   }
 
+  /**
+   * @description Give a certain amount of a weapon to a player.
+   *
+   * @see {@link HG~commandModifyWeapon}
+   *
+   * @private
+   * @type {HungryGames~hgCommandHandler}
+   * @param {Discord~Message} msg The message that lead to this being called.
+   * @param {string} id The id of the guild this was triggered from.
+   * @listens Command#hg give
+   */
+  function commandGiveWeapon(msg, id) {
+    commandModifyWeapon(msg, id, false);
+  }
+  /**
+   * @description Take a certain amount of a weapon from a player.
+   *
+   * @see {@link HG~commandModifyWeapon}
+   *
+   * @private
+   * @type {HungryGames~hgCommandHandler}
+   * @param {Discord~Message} msg The message that lead to this being called.
+   * @param {string} id The id of the guild this was triggered from.
+   * @listens Command#hg take
+   */
+  function commandTakeWeapon(msg, id) {
+    commandModifyWeapon(msg, id, true);
+  }
+
+  /**
+   * @description Actually does the parsing for {@link HG~commandGiveWeapon} and
+   * {@link HG~commandTakeWeapon}.
+   *
+   * @private
+   * @type {HungryGames~hgCommandHandler}
+   * @param {Discord~Message} msg The message that lead to this being called.
+   * @param {string} id The id of the guild this was triggered from.
+   * @param {boolean} [flip=false] Should the parsed number value be multiplied
+   * by -1.
+   */
+  function commandModifyWeapon(msg, id, flip = false) {
+    const game = hg.getGame(id);
+    if (!game || !game.currentGame || !game.currentGame.includedUsers) {
+      self.common.reply(msg, 'Please start a game first.');
+      return;
+    }
+    let users = msg.softMentions.users;
+    if (users.size === 0) {
+      self.common.reply(msg, 'Please specify a player to modify.');
+      return;
+    }
+    users = users.filter(
+        (el) => game.currentGame.includedUsers.find((u) => u.id == el.id));
+    if (users.size === 0) {
+      self.common.reply(msg, 'Please specify a player that is in the game.');
+      return;
+    }
+    let num = 0;
+    let final = null;
+    const list = [];
+    const text = msg.text.toLocaleLowerCase().replace(/\d{17,19}/g);
+    Object.entries(weapons).forEach((w) => {
+      list.push(w[0]);
+      if (text.indexOf(w[0].toLocaleLowerCase()) > -1 ||
+          (w[1].name && text.indexOf(w[1].name.toLocaleLowerCase()) > -1)) {
+        num++;
+        final = w[0];
+      }
+    });
+    if (game.customEvents && game.customEvents.weapons) {
+      Object.entries(game.customEvents.weapons).forEach((w) => {
+        if (!list.includes(w[0]) &&
+            (text.indexOf(w[0].toLocaleLowerCase()) > -1 ||
+             (w[1].name && text.indexOf(w[1].name.toLocaleLowerCase()) > -1))) {
+          num++;
+          final = w[0];
+        }
+      });
+    }
+    if (num == 0) {
+      self.common.reply(msg, 'Please specify a weapon.');
+      return;
+    } else if (num > 1) {
+      self.common.reply(
+          msg, 'I\'m not sure which weapon you wanted, I found more than one.');
+      return;
+    }
+    let count = text.match(/-?\d+/);
+    if (!count) {
+      count = flip ? -1 : 1;
+    } else {
+      count = (flip ? -1 : 1) * count[0];
+    }
+
+    const error = game.modifyPlayerWeapon(users.first().id, final, hg, count);
+    self.common.reply(msg, error);
+  }
   /**
    * @description Start or stop allowing users to enter in to a game by clicking
    * on a reaction to a message.

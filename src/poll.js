@@ -2,7 +2,6 @@
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const emojiChecker = require('./lib/twemojiChcker.js');
 const fs = require('fs');
-const mkdirp = require('mkdirp');
 const rimraf = require('rimraf');
 require('./subModule.js').extend(Polling);  // Extends the SubModule class.
 
@@ -37,9 +36,10 @@ function Polling() {
           return;
         }
         files.forEach((folder) => {
-          fs.readFile(dir + folder + saveFilename, (err, data) => {
+          fs.readFile(dir + folder + '/' + saveFilename, (err, data) => {
             if (err) {
-              self.error('Failed to read file: ' + dir + folder + saveFilename);
+              self.error(
+                  'Failed to read file: ' + dir + folder + '/' + saveFilename);
               console.error(err);
               return;
             }
@@ -81,9 +81,10 @@ function Polling() {
     const polls = Object.entries(currentPolls);
     for (let i = 0; i < polls.length; i++) {
       const dir = self.common.guildSaveDir + polls[i][1].message.guild.id +
-          guildSubDir + polls[i][1].author;
-      const filename = saveFilename;
+          guildSubDir + polls[i][1].author + '/';
+      const filename = dir + saveFilename;
       const temp = Object.assign({}, polls[i][1]);
+      temp.emojis = temp.emojis.map((el) => el.id || el);
       temp.message = {
         channel: temp.message.channel.id,
         message: temp.message.id,
@@ -91,9 +92,9 @@ function Polling() {
       delete temp.timeout;
       const pollString = JSON.stringify(temp);
       if (opt === 'async') {
-        mkdirAndWrite(dir, filename, pollString);
+        self.common.mkAndWrite(filename, dir, pollString);
       } else {
-        mkdirAndWriteSync(dir, filename, pollString);
+        self.common.mkAndWriteSync(filename, dir, pollString);
       }
     }
   };
@@ -119,6 +120,7 @@ function Polling() {
       self.error('Failed to find channel: ' + parsed.message.channel);
       return;
     }
+    parsed.emojis = parsed.emojis.map((el) => self.client.emojis.get(el) || el);
     channel.messages.fetch(parsed.message.message)
         .then((message) => {
           const poll =
@@ -132,55 +134,6 @@ function Polling() {
               parsed.message.channel);
           console.error(err);
         });
-  }
-
-  /**
-   * Asyncronously create a directory and write a file in the directory.
-   *
-   * @private
-   * @param {string} dir The file path to create and write the file to.
-   * @param {string} filename The file name of the file without the path.
-   * @param {string} data The data to write to the tile.
-   */
-  function mkdirAndWrite(dir, filename, data) {
-    mkdirp(dir, (err) => {
-      if (err) {
-        self.error('Failed to mkdirp: ' + dir);
-        console.error(err);
-        return;
-      }
-      fs.writeFileSync(dir + filename, data, (err) => {
-        if (err) {
-          self.error('Failed to write: ' + dir + filename);
-          console.error(err);
-          return;
-        }
-      });
-    });
-  }
-  /**
-   * Syncronously create a directory and write a file in the directory.
-   *
-   * @private
-   * @param {string} dir The file path to create and write the file to.
-   * @param {string} filename The file name of the file without the path.
-   * @param {string} data The data to write to the tile.
-   */
-  function mkdirAndWriteSync(dir, filename, data) {
-    try {
-      mkdirp.sync(dir);
-    } catch (err) {
-      self.error('Failed to mkdirp: ' + dir);
-      console.error(err);
-      return;
-    }
-    try {
-      fs.writeFileSync(dir + filename, data);
-    } catch (err) {
-      self.error('Failed to write: ' + dir + filename);
-      console.error(err);
-      return;
-    }
   }
 
   /**
@@ -199,7 +152,7 @@ function Polling() {
    * @constant
    * @default
    */
-  const saveFilename = '/save.json';
+  const saveFilename = 'save.json';
 
   /**
    * The default reaction emojis to use for a poll.
@@ -309,8 +262,7 @@ function Polling() {
       self.common.reply(
           msg,
           'Sorry, you may only have one poll per server at a time.\nType ' +
-              self.bot.getPrefix(msg.guild.id) +
-              'endpoll to end your current poll.');
+              msg.prefix + 'endpoll to end your current poll.');
       return;
     }
     const choicesMatch = msg.text.match(/\[[^\]]*\]/g);
@@ -344,6 +296,10 @@ function Polling() {
           duration = durationMatch[1] * 1000 * 60 * 60 * 24;
           timeUnit = 'day';
           break;
+        case 'w':
+          duration = durationMatch[1] * 1000 * 60 * 60 * 24 * 7;
+          timeUnit = 'week';
+          break;
       }
       textString = durationMatch[3];
     }
@@ -369,18 +325,27 @@ function Polling() {
       choicesMatch.forEach((el, i, obj) => {
         if (error) return;
         el = obj[i] = el.replace(/^\[|\]$/g, '');
-        const matchedEmoji = emojiChecker.match(el);
+        let matchedEmoji = emojiChecker.match(el);
         if (!matchedEmoji) {
-          error = i + 1;
-          return;
+          matchedEmoji = el.match(/<a?:\w+:(\d+)>/);
+          if (!matchedEmoji) {
+            error = i + 1;
+            return;
+          }
+          matchedEmoji = self.client.emojis.get(matchedEmoji[1]);
+          if (!matchedEmoji) {
+            error = i + 1;
+            return;
+          }
+          matchedEmoji = [matchedEmoji];
         }
         emojis.push(matchedEmoji[0]);
         embed.addField(el, '\u200B', true);
       });
       if (error) {
         self.common.reply(
-            msg,
-            'Sorry, but choice #' + error + ' does not have a valid emoji.');
+            msg, 'Sorry, but choice #' + error +
+                ' doesn\'t have an emoji that I know.');
         return;
       }
     }
@@ -506,7 +471,7 @@ function Polling() {
     let max = 0;
     reactions.forEach((r) => {
       const i = poll.emojis.findIndex((e) => {
-        return e == r.emoji.name;
+        return e == r.emoji.name || e == r.emoji.id;
       });
       if (r.count - 1 > max) {
         index = i;

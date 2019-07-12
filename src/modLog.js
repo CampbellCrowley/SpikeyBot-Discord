@@ -143,8 +143,10 @@ class ModLog extends SubModule {
       case 'messagePurge':
         return 'Purged Messages';
       case 'messageDelete':
+      case 'messageBotDelete':
         return 'Deleted a Message';
       case 'messageUpdate':
+      case 'messageBotUpdate':
         return 'Edited a Message';
       case 'memberJoin':
         return 'Joined the Server';
@@ -180,8 +182,10 @@ class ModLog extends SubModule {
       case 'messagePurge':
         return 'BLUE';
       case 'messageDelete':
+      case 'messageBotDelete':
         return 'DARK_BLUE';
       case 'messageUpdate':
+      case 'messageBotUpdate':
         return 'DARK_AQUA';
       case 'memberJoin':
         return 'GREEN';
@@ -294,19 +298,33 @@ class Settings {
      */
     this.logMessagePurge = false;
     /**
-     * @description Should the bot log when a message is deleted?
+     * @description Should the bot log when a user's message is deleted?
      * @public
      * @type {boolean}
      * @default
      */
     this.logMessageDelete = false;
     /**
-     * @description Should the bot log when a message is edited?
+     * @description Should the bot log when a bot message is deleted?
+     * @public
+     * @type {boolean}
+     * @default
+     */
+    this.logMessageBotDelete = false;
+    /**
+     * @description Should the bot log when a user's message is edited?
      * @public
      * @type {boolean}
      * @default
      */
     this.logMessageUpdate = false;
+    /**
+     * @description Should the bot log when a bot's message is edited?
+     * @public
+     * @type {boolean}
+     * @default
+     */
+    this.logMessageBotUpdate = false;
     /**
      * @description Should the bot log when a lockdown is started?
      * @public
@@ -347,8 +365,12 @@ class Settings {
         return this.logMessagePurge;
       case 'messageDelete':
         return this.logMessageDelete;
+      case 'messageBotDelete':
+        return this.logMessageBotDelete;
       case 'messageUpdate':
         return this.logMessageUpdate;
+      case 'messageBotUpdate':
+        return this.logMessageBotUpdate;
       case 'memberLeave':
         return this.logMemberLeave;
       case 'memberJoin':
@@ -378,7 +400,9 @@ Settings.from = function(obj) {
   output.logMentionAbuse = obj.logMentionAbuse || false;
   output.logMessagePurge = obj.logMessagePurge || false;
   output.logMessageDelete = obj.logMessageDelete || false;
+  output.logMessageBotDelete = obj.logMessageBotDelete || false;
   output.logMessageUpdate = obj.logMessageUpdate || false;
+  output.logMessageBotUpdate = obj.logMessageBotUpdate || false;
   output.logMemberLeave = obj.logMemberLeave || false;
   output.logMemberJoin = obj.logMemberJoin || false;
   output.logRaidLockdown = obj.logRaidLockdown || false;

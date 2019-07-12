@@ -77,6 +77,25 @@ class Game {
      */
     this.day = new Day();
     /**
+     * Information about the previous day that was simulated. It is replaced by
+     * {@link HungryGames~Game} when a new day starts and defaults to before the
+     * first day.
+     *
+     * @public
+     * @type {?HungryGames~Day}
+     * @default
+     */
+    this.prevDay = null;
+    /**
+     * Information about the next day to be simulated. Usually empty, but this
+     * data will replace {@link HungryGames~Game} when a new day starts.
+     *
+     * @public
+     * @type {HungryGames~Day}
+     * @default
+     */
+    this.nextDay = new Day(0);
+    /**
      * The number of players still alive in this game.
      *
      * @public
@@ -108,6 +127,9 @@ Game.from = function(data) {
   game.forcedOutcomes = data.forcedOutcomes || [];
   game.ended = data.ended || false;
   game.day = Day.from(data.day);
+  if (data.nextDay) game.nextDay = Day.from(data.nextDay);
+  if (game.nextDay.num < 0) game.nextDay.num = 0;
+  if (data.prevDay) game.prevDay = Day.from(data.prevDay);
   game.includedUsers = game.includedUsers.map((el) => Player.from(el));
   if (!isNaN(data.numAlive)) {
     game.numAlive = data.numAlive;

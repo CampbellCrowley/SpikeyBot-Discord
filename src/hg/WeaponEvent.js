@@ -2,7 +2,7 @@
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 
 /**
- * @description An Arena event storing Events.
+ * @description A game weapon storing possible {@link HungryGames~Event}s.
  * @memberof HungryGames
  * @inner
  */
@@ -13,8 +13,9 @@ class WeaponEvent {
    * event.
    * @param {string} [consumable] The formattable string for what to call this
    * weapons consumable items.
+   * @param {string} [name] The formattable name for this weapon.
    */
-  constructor(outcomes, consumable) {
+  constructor(outcomes, consumable, name) {
     /**
      * All possible events for this weapon event.
      *
@@ -29,6 +30,13 @@ class WeaponEvent {
      * @type {?string}
      */
     this.consumable = consumable || null;
+    /**
+     * The formattable string for what to call this weapon.
+     *
+     * @public
+     * @type {?string}
+     */
+    this.name = name || null;
   }
 }
 

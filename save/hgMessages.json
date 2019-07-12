@@ -168,5 +168,16 @@
     "{victim} hurt themsel[Vf|ves] when the game makers wished it so.",
     "The game makers kinda didn't like {victim}, so they hurt them.",
     "{victim} [Vis|are] wounded by the game makers."
+  ],
+  "giveWeapon": [
+    "{attacker} receive[As|] {weapon} from a sponsor!",
+    "A parachute with {weapon} falls in front of {attacker}.",
+    "A sponsor felt like being nice and give {attacker} {weapon}.",
+    "Some sponsors decided {attacker} need[As|] {weapon}."
+  ],
+  "takeWeapon": [
+    "{attacker} lose[As|] {weapon} because the game makers thought [Wit was|they were] OP.",
+    "The game makers didn't like {attacker} with {weapon}, so they took [Wit|them] away.",
+    "The game makers deem {attacker} not worthy of having {weapon}."
   ]
 }

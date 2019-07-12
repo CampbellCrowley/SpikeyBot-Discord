@@ -166,7 +166,7 @@
             {
               "description": "Custom Response Options",
               "command": "poll 1h Which emoji is the best? [💩 Poop is best][🍔 Cheeeezeburgerz][Fly away! ✈]",
-              "result": "💩, 🍔, and ✈ emojis and text will be used as poll options. Up to 25 custom options can be used. After 1 hour, the bot will end the poll. (Only the default unicode emojis are supported).<br><img src=\"https://res.cloudinary.com/spikeybot/image/upload/v1546212266/tQj7Yq2.png\">"
+              "result": "💩, 🍔, and ✈ emojis and text will be used as poll options. Up to 25 custom options can be used. After 1 hour, the bot will end the poll.<br><img src=\"https://res.cloudinary.com/spikeybot/image/upload/v1546212266/tQj7Yq2.png\">"
             }
           ]
         },
@@ -537,6 +537,18 @@
               "description": "Mentioning",
               "command": "avatar @SpikeyRobot",
               "result": "SpikeyRobot's profile picture will be sent as a reply to your command."
+            }
+          ]
+        },
+        {
+          "command": "listbans",
+          "description": "List all servers where user has been banned.",
+          "aliases": "bans, listbans",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "bans @RoboSoupCan",
+              "result": "The list of servers where the bot knows RoboSoupCan has been banned and the reason for each ban will be shown. (Bot needs permission to view ban list on server for ban to show up)."
             }
           ]
         },

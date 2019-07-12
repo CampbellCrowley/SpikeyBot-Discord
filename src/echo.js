@@ -358,17 +358,79 @@ class Echo extends SubModule {
    * @listens Command#whoami
    */
   _commandWhoAmI(msg) {
-    const char = msg.guild && this._characters[msg.guild.id] &&
-        this._characters[msg.guild.id][msg.channel.id] &&
-        this._characters[msg.guild.id][msg.channel.id][msg.author.id];
-    if (char) {
-      this.common.reply(
-          msg, msg.author.tag, msg.author.username + ' (' +
-              msg.member.nickname + ')\nCharacter: ' + char.username);
+    let member = msg.softMentions.members.first() || msg.member;
+    const user = member.user;
+    const chanChar = member.guild && this._characters[member.guild.id];
+    const charList = [];
+    if (chanChar) {
+      for (const chan of Object.entries(chanChar)) {
+        if (!chan[1]) continue;
+        const userList = Object.entries(chan[1]);
+        if (userList.length == 0) continue;
+        for (const u of userList) {
+          if (u[0] !== user.id || !u[1]) continue;
+          const name = msg.guild.channels.get(chan[0]).name;
+          charList.push(`#${name}: ${u[1].username}`);
+        }
+      }
+    }
+    let numReq = 1;
+    let numDone = 0;
+    const tag = `${user.tag} (${user.id})`;
+    let num = 0;
+    const embed = new this.Discord.MessageEmbed();
+    const self = this;
+
+    const send = function() {
+      numDone++;
+      if (numDone < numReq) return;
+      const joinDate = member.joinedAt ?
+          `\nJoined Server: ${member.joinedAt.toUTCString()}` :
+          '';
+      const createDate = `\nAccount Created: ${user.createdAt.toUTCString()}`;
+      const dates = `${joinDate}${createDate}`;
+      const mutual =
+          num > 0 ? `\n${num} mutual server${num > 1 ? 's' : ''}.` : '';
+      const nick = ` (${member.nickname||'*No Nickname*'})`;
+      const name = `${user.username}${nick}${dates}${mutual}`;
+      embed.setColor([255, 0, 255]);
+      embed.setTitle(tag);
+      embed.setThumbnail(user.displayAvatarURL({size: 32}));
+      if (charList.length == 1) {
+        embed.setDescription(`${name}\n**Character**: ${charList[0]}`);
+      } else if (charList.length > 0) {
+        embed.setDescription(
+            `${name}\n**Characters**:\n${charList.join('\n')}`);
+      } else {
+        embed.setDescription(name);
+      }
+      msg.channel.send(self.common.mention(msg), embed).catch(() => {
+        self.common.reply(msg, tag, name);
+      });
+    };
+
+    if (!member.joinedAt) {
+      numReq++;
+      member.fetch()
+          .then((mem) => {
+            member = mem;
+            send();
+          })
+          .catch(send);
+    }
+
+    if (this.client.shard) {
+      const toEval =
+          `this.guilds.filter((g) => g.members.get('${user.id}')).size`;
+      this.client.shard.broadcastEval(toEval).then((res) => {
+        res.forEach((el) => num += el);
+        send();
+      });
     } else {
-      this.common.reply(
-          msg, msg.author.tag,
-          `${msg.author.username} (${msg.member.nickname})`);
+      this.client.guilds.forEach((g) => {
+        if (g.members.get(member.id)) num++;
+      });
+      send();
     }
   }
 
@@ -382,6 +444,10 @@ class Echo extends SubModule {
    * @listens Command#whois
    */
   _commandWhoIs(msg) {
+    if (msg.softMentions.members.size > 0) {
+      this._commandWhoAmI(msg);
+      return;
+    }
     const chars = msg.guild && this._characters[msg.guild.id];
     let output = [];
     for (let channel in chars) {

@@ -2,6 +2,7 @@
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const {workerData, parentPort} = require('worker_threads');
 const Event = require('../Event.js');
+const Day = require('../Day.js');
 const Battle = require('../Battle.js');
 const Grammar = require('../Grammar.js');
 const Simulator = require('../Simulator.js');
@@ -22,9 +23,9 @@ class Worker {
    * @param {boolean} [retry=true] Whether to try again if there is an error.
    */
   constructor(sim, retry = true) {
+    sim.game.currentGame.prevDay = sim.game.currentGame.day;
+    sim.game.currentGame.day = Day.from(sim.game.currentGame.nextDay);
     sim.game.currentGame.day.state = 1;
-    sim.game.currentGame.day.num++;
-    sim.game.currentGame.day.events = [];
 
     sim.messages = {
       _messages: sim.messages,
@@ -246,62 +247,14 @@ class Worker {
             userWithWeapon.weapons[chosenWeapon] -= consumed;
             if (userWithWeapon.weapons[chosenWeapon] <= 0) {
               delete userWithWeapon.weapons[chosenWeapon];
-
-              const weaponName = chosenWeapon;
-              let consumableName = weaponName;
-              if (weapons[weaponName]) {
-                if (weapons[weaponName].consumable) {
-                  consumableName = weapons[weaponName].consumable.replace(
-                      /\[C([^|]*)\|([^\]]*)\]/g, '$2');
-                } else if (weapons[weaponName].name) {
-                  consumableName = weapons[weaponName].name.replace(
-                      /\[C([^|]*)\|([^\]]*)\]/g, '$2');
-                } else {
-                  consumableName += 's';
-                }
-              } else {
-                consumableName += 's';
-              }
-              subMessage +=
-                  Grammar.formatMultiNames([userWithWeapon], nameFormat) +
-                  ' runs out of ' + consumableName + '.';
-            } else if (consumed != 0) {
-              const weaponName = chosenWeapon;
-              let consumableName = weaponName;
-              const count = consumed;
-              if (weapons[weaponName].consumable) {
-                consumableName = weapons[weaponName].consumable.replace(
-                    /\[C([^|]*)\|([^\]]*)\]/g, (count == 1 ? '$1' : '$2'));
-              } else if (weapons[weaponName].name) {
-                consumableName = weapons[weaponName].name.replace(
-                    /\[C([^|]*)\|([^\]]*)\]/g, (count == 1 ? '$1' : '$2'));
-              } else if (count != 1) {
-                consumableName += 's';
-              }
-              subMessage +=
-                  Grammar.formatMultiNames([userWithWeapon], nameFormat) +
-                  ' lost ' + count + ' ' + consumableName + '.';
             }
-
-            let owner = 'their';
-            if (numAttacker > 1 ||
-                (numAttacker == 1 &&
-                 affectedUsers[numVictim].id != userWithWeapon.id)) {
-              owner = Grammar.formatMultiNames([userWithWeapon], nameFormat) +
-                  '\'s';
-            }
-            if (!eventTry.message) {
-              const weaponName = weapons[chosenWeapon].name || chosenWeapon;
-              eventTry.message =
-                  weapons.message
-                      .replace(/\{weapon\}/g, owner + ' ' + weaponName)
-                      .replace(/\{action\}/g, eventTry.action)
-                      .replace(
-                          /\[C([^|]*)\|([^\]]*)\]/g,
-                          (consumed == 1 ? '$1' : '$2'));
-            } else {
-              eventTry.message = eventTry.message.replace(/\{owner\}/g, owner);
-            }
+            const ownerName =
+                Grammar.formatMultiNames([userWithWeapon], nameFormat);
+            const firstAttacker = affectedUsers[eventTry.victim.count] &&
+                affectedUsers[eventTry.victim.count].id == userWithWeapon.id;
+            subMessage += Simulator.formatWeaponEvent(
+                eventTry, userWithWeapon, ownerName, firstAttacker,
+                chosenWeapon, weapons);
           }
         }
       }
@@ -435,62 +388,8 @@ class Worker {
 
       let finalEvent = eventTry;
 
-      if (eventTry.attacker.weapon) {
-        for (let i = 0; i < numAttacker; i++) {
-          const user = affectedUsers[numVictim + i];
-          const consumableList =
-              Object
-                  .entries(user.weapons || {[eventTry.attacker.weapon.name]: 0})
-                  .map((el) => {
-                    const weaponName = el[0];
-                    let consumableName = weaponName;
-                    const count = el[1];
-                    if (!weapons[weaponName]) {
-                      console.error('1 Failed to find weapon: ' + weaponName);
-                      return `(Unknown weapon ${weaponName}. This is a bug.)`;
-                    }
-                    if (weapons[weaponName].consumable) {
-                      consumableName = weapons[weaponName].consumable.replace(
-                          /\[C([^|]*)\|([^\]]*)\]/g,
-                          '$' + (count == 1 ? '1' : '2'));
-                    } else if (count != 1) {
-                      consumableName += 's';
-                    }
-                    return (count || 0) + ' ' + consumableName;
-                  })
-                  .join(', ');
-          subMessage += '\n' + Grammar.formatMultiNames([user], nameFormat) +
-              ' now has ' + consumableList + '.';
-        }
-      }
-      if (eventTry.victim.weapon) {
-        for (let i = 0; i < numVictim; i++) {
-          const user = affectedUsers[i];
-          const consumableList =
-              Object
-                  .entries(user.weapons || {[eventTry.victim.weapon.name]: 0})
-                  .map((el) => {
-                    const weaponName = el[0];
-                    let consumableName = weaponName;
-                    const count = el[1];
-                    if (!weapons[weaponName]) {
-                      console.error('2 Failed to find weapon: ' + weaponName);
-                      return `(Unknown weapon ${weaponName}. This is a bug.)`;
-                    }
-                    if (weapons[weaponName].consumable) {
-                      consumableName = weapons[weaponName].consumable.replace(
-                          /\[C([^|]*)\|([^\]]*)\]/g,
-                          '$' + (count == 1 ? '1' : '2'));
-                    } else if (count != 1) {
-                      consumableName += 's';
-                    }
-                    return (count || 0) + ' ' + consumableName;
-                  })
-                  .join(', ');
-          subMessage += '\n' + Grammar.formatMultiNames([user], nameFormat) +
-              ' now has ' + consumableList + '.';
-        }
-      }
+      subMessage += Simulator.formatWeaponCounts(
+          eventTry, numVictim, numAttacker, affectedUsers, weapons, nameFormat);
 
       if (doBattle) {
         affectedUsers = [];
@@ -598,6 +497,8 @@ class Worker {
           Event.finalizeSimple(sim.messages.get('littleDeath'), sim.game));
     }
     sim.game.currentGame.day.state = 2;
+    sim.game.currentGame.nextDay =
+        Day.from({num: sim.game.currentGame.day.num + 1});
     this.cb({game: sim.game});
   }
   /**

@@ -1,10 +1,12 @@
 // Copyright 2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const Game = require('./Game.js');
+const Grammar = require('./Grammar.js');
 const Event = require('./Event.js');
 const Team = require('./Team.js');
 const Simulator = require('./Simulator.js');
 const StatManager = require('./StatManager.js');
+const WeaponEvent = require('./WeaponEvent.js');
 
 /**
  * A single instance of a game in a guild.
@@ -265,6 +267,7 @@ class GuildGame {
     this._stats = new StatManager(this);
 
     this.step = this.step.bind(this);
+    this.modifyPlayerWeapon = this.modifyPlayerWeapon.bind(this);
   }
 
   /**
@@ -499,132 +502,309 @@ class GuildGame {
       day.state++;
     }
   }
-}
 
-/**
- * @description Create a GuildGame from data parsed from file. Similar to copy
- * constructor.
- *
- * @public
- * @param {object} data GuildGame like object.
- * @returns {HungryGames~GuildGame} Created GuildGame.
- */
-GuildGame.from = function(data) {
-  const game = new GuildGame(
-      data.bot, data.id, data.options, data.name, data.includedUsers,
-      data.excludedUsers, data.includedNPCs, data.excludedNPCs,
-      data.customEvents, data.disabledEvents);
-  game.autoPlay = data.autoPlay || false;
-  game.reactMessage = data.reactMessage || null;
-  game.channel = data.channel || null;
-  game.author = data.author || null;
-  game.outputChannel = data.outputChannel || null;
-  game.statGroup = data.statGroup || null;
-  if (data.currentGame) {
-    game.currentGame = Game.from(data.currentGame);
+  /**
+   * @description Create a GuildGame from data parsed from file. Similar to copy
+   * constructor.
+   *
+   * @public
+   * @static
+   * @param {object} data GuildGame like object.
+   * @returns {HungryGames~GuildGame} Created GuildGame.
+   */
+  static from(data) {
+    const game = new GuildGame(
+        data.bot, data.id, data.options, data.name, data.includedUsers,
+        data.excludedUsers, data.includedNPCs, data.excludedNPCs,
+        data.customEvents, data.disabledEvents);
+    game.autoPlay = data.autoPlay || false;
+    game.reactMessage = data.reactMessage || null;
+    game.channel = data.channel || null;
+    game.author = data.author || null;
+    game.outputChannel = data.outputChannel || null;
+    game.statGroup = data.statGroup || null;
+    if (data.currentGame) {
+      game.currentGame = Game.from(data.currentGame);
+    }
+    return game;
   }
-  return game;
-};
-
-/**
- * @description Force a player to have a certain outcome in the current day
- * being simulated, or the next day that will be simulated. This is acheived
- * by adding a custom event in which the player will be affected after their
- * normal event for the day.
- *
- * @public
- * @static
- * @param {HungryGames~GuildGame} game The game context.
- * @param {string[]} list The array of player IDs of which to affect.
- * @param {string} state The outcome to force the players to have been
- * victims of by the end of the simulated day. ("living", "dead", "wounded",
- * or "thriving").
- * @param {HungryGames~Messages} messages Reference to current Messages
- * instance.
- * @param {string|HungryGames~Event[]} [text] Message to show when the user is
- * affected, or array of default events if not specifying a specific message.
- * @param {boolean} [persists=false] Does this outcome persist to the end of
- * the game, if false it only exists for the next day.
- * @returns {string} The output message to tell the user of the outcome of the
- * operation.
- */
-GuildGame.forcePlayerState = function(
-    game, list, state, messages, text, persists = false) {
-  if (!Array.isArray(list)) {
-    persists = list.persists;
-    messages = state;
-    text = list.text;
-    state = list.state;
-    list = list.list;
-  }
-  if (!Array.isArray(list) || list.length == 0) return 'No players given.';
-  if (typeof state !== 'string') return 'No outcome given.';
-  const players = [];
-  list.forEach((p) => {
-    const player = game.currentGame.includedUsers.find((el) => el.id == p);
-    if (game.currentGame.day.state > 0) {
-      if (!player) return 'Unable to find player.';
-      let outcome;
-      if (player.living && state === 'dead') {
-        outcome = 'dies';
-        Simulator._killUser(game, player, 0, null);
-      } else if (
-        !player.living && (state === 'living' || state === 'thriving')) {
-        outcome = 'revived';
-        Simulator._reviveUser(game, player, 0, null);
-      } else if (player.state === 'wounded' && state === 'thriving') {
-        outcome = 'thrives';
-        Simulator._restoreUser(game, player, 0, null);
-      } else if (
-        player.living && player.state !== 'wounded' && state === 'wounded') {
-        outcome = 'wounded';
-        Simulator._woundUser(game, player, 0, null);
+  /**
+   * @description Force a player to have a certain outcome in the current day
+   * being simulated, or the next day that will be simulated. This is acheived
+   * by adding a custom event in which the player will be affected after their
+   * normal event for the day.
+   *
+   * @public
+   * @static
+   * @param {HungryGames~GuildGame} game The game context.
+   * @param {string[]} list The array of player IDs of which to affect.
+   * @param {string} state The outcome to force the players to have been
+   * victims of by the end of the simulated day. ("living", "dead", "wounded",
+   * or "thriving").
+   * @param {HungryGames~Messages} messages Reference to current Messages
+   * instance.
+   * @param {string|HungryGames~Event[]} [text] Message to show when the user is
+   * affected, or array of default events if not specifying a specific message.
+   * @param {boolean} [persists=false] Does this outcome persist to the end of
+   * the game, if false it only exists for the next day.
+   * @returns {string} The output message to tell the user of the outcome of the
+   * operation.
+   */
+  static forcePlayerState(game, list, state, messages, text, persists = false) {
+    if (!Array.isArray(list)) {
+      persists = list.persists;
+      messages = state;
+      text = list.text;
+      state = list.state;
+      list = list.list;
+    }
+    if (!Array.isArray(list) || list.length == 0) return 'No players given.';
+    if (typeof state !== 'string') return 'No outcome given.';
+    const players = [];
+    list.forEach((p) => {
+      const player = game.currentGame.includedUsers.find((el) => el.id == p);
+      if (game.currentGame.day.state > 0) {
+        if (!player) return;
+        let outcome;
+        if (player.living && state === 'dead') {
+          outcome = 'dies';
+          Simulator._killUser(game, player, 0, null);
+        } else if (
+          !player.living && (state === 'living' || state === 'thriving')) {
+          outcome = 'revived';
+          Simulator._reviveUser(game, player, 0, null);
+        } else if (player.state === 'wounded' && state === 'thriving') {
+          outcome = 'thrives';
+          Simulator._restoreUser(game, player, 0, null);
+        } else if (
+          player.living && player.state !== 'wounded' &&
+            state === 'wounded') {
+          outcome = 'wounded';
+          Simulator._woundUser(game, player, 0, null);
+        } else {
+          return;
+        }
+        let evt;
+        if (typeof text !== 'string' && Array.isArray(text) &&
+            game.options.anonForceOutcome) {
+          let eventPool = text.concat(game.customEvents.player);
+          eventPool = eventPool.filter((el) => {
+            const checkOutcome = el.victim.outcome === outcome ||
+                el.attacker.outcome === outcome;
+            const checkCount = Math.abs(el.victim.count * 1) +
+                    Math.abs(el.attacker.count * 1) ===
+                1;
+            const checkDisabled = !game.disabledEvents ||
+                !game.disabledEvents.player ||
+                !game.disabledEvents.player.find((d) => Event.equal(d, el));
+            return checkOutcome && checkCount && checkDisabled;
+          });
+          if (eventPool.length > 0) {
+            const pick =
+                eventPool[Math.floor(eventPool.length * Math.random())];
+            text = pick.message;
+            evt = Event.finalize(
+                text, [player], Math.abs(pick.victim.count * 1),
+                Math.abs(pick.attacker.count * 1), outcome, outcome, game);
+          }
+        }
+        if (typeof text !== 'string') {
+          switch (state) {
+            case 'dead':
+              text = messages.get('forcedDeath');
+              break;
+            case 'thriving':
+              text = messages.get('forcedHeal');
+              break;
+            case 'wounded':
+              text = messages.get('forcedWound');
+              break;
+          }
+        }
+        if (!evt) {
+          evt = Event.finalize(text, [player], 1, 0, outcome, 'nothing', game);
+        }
+        // State - 2 = the event index, + 1 is the next index to get shown.
+        let lastIndex = game.currentGame.day.state - 1;
+        for (let i = game.currentGame.day.events.length - 1; i > lastIndex;
+          i--) {
+          if (game.currentGame.day.events[i].icons.find((el) => el.id == p)) {
+            lastIndex = i + 1;
+            break;
+          }
+        }
+        if (lastIndex < game.currentGame.day.events.length) {
+          game.currentGame.day.events.splice(lastIndex, 0, evt);
+        } else {
+          game.currentGame.day.events.push(evt);
+        }
       } else {
-        return;
-      }
-      let evt;
-      if (typeof text !== 'string' && Array.isArray(text) &&
-          game.options.anonForceOutcome) {
-        let eventPool = text.concat(game.customEvents.player);
-        eventPool = eventPool.filter((el) => {
-          const checkOutcome =
-              el.victim.outcome === outcome || el.attacker.outcome === outcome;
-          const checkCount = Math.abs(el.victim.count * 1) +
-                  Math.abs(el.attacker.count * 1) ===
-              1;
-          const checkDisabled = !game.disabledEvents ||
-              !game.disabledEvents.player ||
-              !game.disabledEvents.player.find((d) => Event.equal(d, el));
-          return checkOutcome && checkCount && checkDisabled;
+        game.currentGame.forcedOutcomes.push({
+          id: game.id,
+          list: list,
+          state: state,
+          text: typeof text === 'string' ? text : null,
+          persists: persists,
         });
-        if (eventPool.length > 0) {
-          const pick = eventPool[Math.floor(eventPool.length * Math.random())];
-          text = pick.message;
-          evt = Event.finalize(
-              text, [player], Math.abs(pick.victim.count * 1),
-              Math.abs(pick.attacker.count * 1), outcome, outcome, game);
+      }
+      if (player) players.push(player.name);
+    });
+    if (players.length == 0) {
+      return 'No players found.';
+    } else if (players.length < 5) {
+      const names = players
+          .map((el) => `\`${el}\``)
+          .join(', ');
+      return `${names} will be ${state} by the end of the day.`;
+    } else {
+      return `${players.length} players will be ${state} ` +
+          'by the end of the day.';
+    }
+  }
+
+  /**
+   * @description Give or take a weapon from a player.
+   * @public
+   * @param {string} player The ID of the player to modify.
+   * @param {string} weapon The weapon ID to give/take.
+   * @param {?string|HungryGames} [text=null] The message text to show, or
+   * reference to object storing default events. If no value is given, a random
+   * message is chosen from `./save/hgMessages.json`.
+   * @param {number} [count=1] The amount to give to the player. Negative to
+   * take away.
+   * @param {boolean} [set=false] Set the amount to `count` instead of
+   * incrementing.
+   * @returns {string} The output message to tell the user of the outcome of the
+   * operation.
+   */
+  modifyPlayerWeapon(player, weapon, text = null, count = 1, set = false) {
+    const game = this;
+    if (!game.currentGame || !game.currentGame.includedUsers) {
+      return 'No game in progress.';
+    }
+    player = game.currentGame.includedUsers.find((el) => el.id == player);
+    if (!player) return 'Unable to find player.';
+
+    const diff = (set ? count - player.weapons[weapon] : count) || 0;
+    if (!diff) return 'Count must be non-zero number.';
+    count = Math.max(0, (player.weapons[weapon] || 0) + diff);
+
+    const weapons = {};
+    weapons[weapon] = new WeaponEvent([], null, weapon);
+
+    let evt;
+    if (typeof text !== 'string' && text && typeof text === 'object' &&
+        game.options.anonForceOutcome) {
+      const defaultEvents = text.getDefaultEvents();
+      const defaultWeapon = defaultEvents.weapon[weapon];
+      const custom = game.customEvents && game.customEvents.weapon &&
+          game.customEvents.weapon[weapon];
+
+      weapons.action = defaultEvents.weapon.action;
+      weapons[weapon] = new WeaponEvent(
+          [], (custom && custom.consumable) ||
+              (defaultWeapon && defaultWeapon.consumable),
+          (custom && custom.name) || (defaultWeapon && defaultWeapon.name));
+
+      let eventPool;
+      if (diff < 0) {
+        if (defaultWeapon && custom) {
+          eventPool = defaultWeapon.outcomes.concat(custom.outcomes);
+        } else if (defaultWeapon) {
+          eventPool = defaultWeapon.outcomes;
+        } else if (custom) {
+          eventPool = custom.outcomes;
+        } else {
+          return 'Unable to find weapon';
         }
+        weapons[weapon].outcomes = eventPool.slice(0);
+        const disabled = game.disabledEvents && game.disabledEvents.weapon &&
+            game.disabledEvents.weapon[weapon];
+        eventPool = eventPool.filter((el) => {
+          return (Math.abs(el.victim.count) + Math.abs(el.attacker.count) ===
+                  1) &&
+              (!disabled || !disabled.find((d) => Event.equal(d, el)));
+        });
+      } else {
+        eventPool = defaultEvents.player.concat(game.customEvents.player);
+        const disabled = game.disabledEvents && game.disabledEvents.player;
+        eventPool = eventPool.filter((el) => {
+          const aW = el.attacker.weapon;
+          const aCheck = aW && aW.name === weapon && aW.count > 0;
+          const vW = el.victim.weapon;
+          const vCheck = vW && vW.name === weapon && vW.count > 0;
+          return (aCheck || vCheck) &&
+              (Math.abs(el.attacker.count) + Math.abs(el.victim.count) === 1) &&
+              !disabled.find((d) => Event.equal(d, el));
+        });
+        weapons[weapon].outcomes = eventPool.slice(0);
       }
-      if (typeof text !== 'string') {
-        switch (state) {
-          case 'dead':
-            text = messages.get('forcedDeath');
-            break;
-          case 'thriving':
-            text = messages.get('forcedHeal');
-            break;
-          case 'wounded':
-            text = messages.get('forcedWound');
-            break;
-        }
+      if (eventPool.length > 0) {
+        const pick = eventPool[Math.floor(eventPool.length * Math.random())];
+
+        const affectedUsers = [player];
+        /* const affectedUsers = Simulator._pickAffectedPlayers(
+            pick.victim.count, pick.attacker.count, pick.victim.outcome,
+            pick.attacker.outcome, game.options, [player],
+            game.currentGame.includedUsers.filter((el) => !el.living),
+            game.currentGame.teams, player); */
+
+        const numVictim = Math.abs(pick.victim.count * 1);
+        const numAttacker = Math.abs(pick.attacker.count * 1);
+
+        const owner = 'their';
+        // let owner = 'their';
+        // if (numAttacker > 1 || (numAttacker == 1 && !firstAttacker)) {
+        //   owner = `${ownerName}'s`;
+        // }
+        text = pick.message.replace(/\{owner\}/g, owner);
+
+        evt = Event.finalize(
+            text, affectedUsers, numVictim,
+            numAttacker, pick.victim.outcome,
+            pick.attacker.outcome, game);
       }
-      if (!evt) {
-        evt = Event.finalize(text, [player], 1, 0, outcome, 'nothing', game);
+    }
+    if (typeof text !== 'string' && text && typeof text === 'object') {
+      if (diff < 0) {
+        text = text.messages.get('takeWeapon');
+      } else {
+        text = text.messages.get('giveWeapon');
       }
+    }
+    if (!evt) {
+      text = text.replace(
+          /\{weapon\}/g,
+          Math.abs(diff) === 1 ? `their ${weapon}` : `${weapon}s`);
+      evt = Event.finalize(text, [player], 0, 1, 'nothing', 'nothing', game);
+    }
+
+    player.weapons[weapon] = count;
+
+    const nameFormat = game.options.useNicknames ? 'nickname' : 'username';
+    if (diff < 0) {
+      const ownerName = Grammar.formatMultiNames([player], nameFormat);
+      const firstAttacker = true;
+      // const firstAttacker = affectedUsers[evt.numVictim].id != player.id;
+      evt.subMessage = Simulator.formatWeaponEvent(
+          evt, player, ownerName, firstAttacker, weapon, weapons);
+    } else {
+      evt.attacker.weapon = weapons[weapon];
+      evt.victim.weapon = weapons[weapon];
+
+      evt.subMessage = Simulator.formatWeaponCounts(
+          evt, evt.numVictim, 1 - evt.numVictim, [player], weapons, nameFormat);
+
+      delete evt.attacker.weapon;
+      delete evt.victim.weapon;
+    }
+
+    if (game.currentGame.day.state > 0) {
       // State - 2 = the event index, + 1 is the next index to get shown.
       let lastIndex = game.currentGame.day.state - 1;
       for (let i = game.currentGame.day.events.length - 1; i > lastIndex; i--) {
-        if (game.currentGame.day.events[i].icons.find((el) => el.id == p)) {
+        if (game.currentGame.day.events[i].icons.find(
+            (el) => el.id == player.id)) {
           lastIndex = i + 1;
           break;
         }
@@ -635,25 +815,10 @@ GuildGame.forcePlayerState = function(
         game.currentGame.day.events.push(evt);
       }
     } else {
-      game.currentGame.forcedOutcomes.push({
-        id: game.id,
-        list: list,
-        state: state,
-        text: typeof text === 'string' ? text : null,
-        persists: persists,
-      });
+      game.currentGame.nextDay.events.push(evt);
     }
-    if (player) players.push(player.name);
-  });
-  if (players.length == 0) {
-    return `No players found.`;
-  } else if (players.length < 5) {
-    const names = players.map((el) => `\`${el}\``).join(', ');
-    return `${names} will be ${state} by the end of the day.`;
-  } else {
-    return `${players.length} players will be ${state} by the end of the day.`;
+    return `${player.name} now has ${count} ${weapon}`;
   }
-};
-
+}
 
 module.exports = GuildGame;

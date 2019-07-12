@@ -299,7 +299,7 @@ class StatGroup {
     } else {
       if (typeof opts.sort === 'undefined') {
         opts.sort = 'wins';
-      } else if (typeof opts.sort !== 'string') {
+      } else if (typeof opts.sort !== 'string' || opts.sort.length == 0) {
         opts.sort = null;
       }
       if (typeof opts.limit === 'undefined') opts.limit = 10;
@@ -308,10 +308,10 @@ class StatGroup {
         opts.offset = 0;
       }
 
-      const sort =
-          (typeof opts.sort === 'string' ?
-               ' ORDER BY ?? ' + (opts.ascending ? '' : 'DESC ') :
-               '');
+      const sort = (typeof opts.sort === 'string' ?
+                        ' ORDER BY ?? ' + (opts.ascending ? '' : 'DESC ') :
+                        '') +
+          ', `userId` ';
 
       const limit = typeof opts.limit === 'number' && !isNaN(opts.limit) ?
           `LIMIT ${opts.limit}` +

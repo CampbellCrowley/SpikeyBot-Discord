@@ -259,6 +259,27 @@ class HungryGames {
   }
 
   /**
+   * @description Returns an object storing all of the default events for the
+   * games.
+   *
+   * @public
+   * @returns {{
+   *   bloodbath: object,
+   *   player: object,
+   *   arena: object,
+   *   weapon: object
+   * }} Object storing default events.
+   */
+  getDefaultEvents() {
+    return {
+      bloodbath: this._defaultBloodbathEvents,
+      player: this._defaultPlayerEvents,
+      weapon: this._defaultWeapons,
+      arena: this._defaultArenaEvents,
+    };
+  }
+
+  /**
    * @description Create a new GuildGame.
    * @fires HG#create
    * @public

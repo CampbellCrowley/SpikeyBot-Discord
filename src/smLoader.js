@@ -409,8 +409,13 @@ function SMLoader() {
       }
     } catch (err) {
       cb('Failed to Load');
-      self.error('Failed to load submodule: ' + name);
-      console.error(err);
+      if (err.message.startsWith('Cannot find module')) {
+        self.error(
+            'Failed to load submodule: ' + name + ' (' + err.message + ')');
+      } else {
+        self.error('Failed to load submodule: ' + name);
+        console.error(err);
+      }
       return;
     }
     try {
