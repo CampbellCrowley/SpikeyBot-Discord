@@ -3018,7 +3018,7 @@ function Main() {
         output.push(
             'Guild ' + channel.type + ' Channel: `' +
             channel.name.replace(/`/g, '\\`') + '` with ' +
-            channel.memberCount + ' members, in guild `' +
+            channel.members.size + '+ members, in guild `' +
             channel.guild.name.replace(/`/g, '\\`') + '` (' + channel.guild.id +
             ')' + additional);
       } else {
