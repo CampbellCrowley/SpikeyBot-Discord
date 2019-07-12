@@ -358,7 +358,7 @@ class Echo extends SubModule {
    * @listens Command#whoami
    */
   _commandWhoAmI(msg) {
-    const member = msg.softMentions.members.first() || msg.member;
+    let member = msg.softMentions.members.first() || msg.member;
     const user = member.user;
     const chanChar = member.guild && this._characters[member.guild.id];
     const charList = [];
@@ -374,20 +374,24 @@ class Echo extends SubModule {
         }
       }
     }
-    const joinDate = member.joinedAt ?
-        `\nJoined Server: ${member.joinedAt.toUTCString()}` :
-        '';
-    const createDate = `\nAccount Created: ${user.createdAt.toUTCString()}`;
-    const dates = `${joinDate}${createDate}`;
-    const nick = ` (${member.nickname||'*No Nickname*'})`;
+    let numReq = 1;
+    let numDone = 0;
     const tag = `${user.tag} (${user.id})`;
     let num = 0;
     const embed = new this.Discord.MessageEmbed();
     const self = this;
 
     const send = function() {
+      numDone++;
+      if (numDone < numReq) return;
+      const joinDate = member.joinedAt ?
+          `\nJoined Server: ${member.joinedAt.toUTCString()}` :
+          '';
+      const createDate = `\nAccount Created: ${user.createdAt.toUTCString()}`;
+      const dates = `${joinDate}${createDate}`;
       const mutual =
           num > 0 ? `\n${num} mutual server${num > 1 ? 's' : ''}.` : '';
+      const nick = ` (${member.nickname||'*No Nickname*'})`;
       const name = `${user.username}${nick}${dates}${mutual}`;
       embed.setColor([255, 0, 255]);
       embed.setTitle(tag);
@@ -404,6 +408,16 @@ class Echo extends SubModule {
         self.common.reply(msg, tag, name);
       });
     };
+
+    if (!member.joinedAt) {
+      numReq++;
+      member.fetch()
+          .then((mem) => {
+            member = mem;
+            send();
+          })
+          .catch(send);
+    }
 
     if (this.client.shard) {
       const toEval =
