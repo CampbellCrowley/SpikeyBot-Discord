@@ -1488,6 +1488,8 @@ function HG() {
       self.client.setTimeout(() => {
         if (hg.getGame(id).autoPlay && !hg.getGame(id).currentGame.isPaused) {
           nextDay(msg, id);
+        } else {
+          self._fire('gameStarted', id);
         }
       });
       if (game) game.loading = false;
