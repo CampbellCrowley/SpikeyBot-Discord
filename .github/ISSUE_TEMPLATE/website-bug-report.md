@@ -1,6 +1,9 @@
 ---
 name: Website Bug report
 about: Create a bug report related to SpikeyBot's website or other web related features.
+title: ''
+labels: bug, web
+assignees: ''
 
 ---
 
