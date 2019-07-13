@@ -53,6 +53,7 @@ class Echo extends SubModule {
      * @default
      */
     this._characters = {};
+    this.save = this.save.bind(this);
     this._commandSay = this._commandSay.bind(this);
     this._commandBecome = this._commandBecome.bind(this);
     this._commandWhoIs = this._commandWhoIs.bind(this);
