@@ -981,7 +981,7 @@ function Uno() {
      * @private
      */
     function nextTurn(skip) {
-      if (turn > -1 && !players[turn].npc) {
+      if (turn > -1 && players[turn] && !players[turn].npc) {
         players[turn].channel.send(
             '`Your current hand:`', getCardEmbed(players[turn].hand));
       }
