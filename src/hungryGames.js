@@ -2792,7 +2792,7 @@ function HG() {
         self.debug(`Excluding ${num} ${begin} ${loop}`);
       }
       const finalRes = response.length > 0 ?
-          response.join('') :
+          response.filter((el) => el !== '\n').join('') :
           `Succeeded without errors (${num} excluded)`;
       cb(finalRes);
       self._fire('refresh', id);
@@ -3093,7 +3093,7 @@ function HG() {
         self.debug(`Including ${num} ${begin} ${loop}`);
       }
       const finalRes = response.length > 0 ?
-          response.join('') :
+          response.filter((el) => el !== '\n').join('') :
           `Succeeded without errors (${num} included)`;
       cb(finalRes);
       self._fire('refresh', id);
@@ -3188,8 +3188,9 @@ function HG() {
       } else {
         game.currentGame.includedUsers.push(
             new HungryGames.Player(
-                obj.id, obj.username,
-                obj.avatarURL || obj.displayAvatarURL({format: 'png'}),
+                obj.id, obj.username, (obj.displayAvatarURL &&
+                                       obj.displayAvatarURL({format: 'png'})) ||
+                    obj.avatarURL,
                 obj.nickname));
       }
       /* if (!onlyError) {
