@@ -126,13 +126,13 @@ function ChatBot() {
         !self.command.find(msg.content.match(/^\S+/)[0], msg)) {
       const withoutMe = msg.content.replace(selfMentionRegex, '').trim();
       const withoutMeMatch = withoutMe.match(/^\S+/);
+      let author;
+      if (msg.guild !== null) {
+        author = `${msg.guild.id}#${msg.channel.id}@${msg.author.id}`;
+      } else {
+        author = `PM:${msg.author.id}@${msg.author.tag}`;
+      }
       if (withoutMeMatch && self.command.find(withoutMeMatch[0], msg)) {
-        let author;
-        if (msg.guild !== null) {
-          author = `${msg.guild.id}#${msg.channel.id}@${msg.author.id}`;
-        } else {
-          author = `PM:${msg.author.id}@${msg.author.tag}`;
-        }
         self.log(`${author} ${msg.content}`);
         msg.content = `${msg.prefix}${withoutMe}`;
         if (!self.command.trigger(msg)) {
@@ -144,7 +144,7 @@ function ChatBot() {
       } else if (disabledChatBot[msg.guild.id]) {
         return;
       }
-      self.log(msg.channel.id + '@' + msg.author.id + ' ' + msg.content);
+      self.log(`${author} ${msg.content}`);
       msg.text = ' ' +
           msg.cleanContent
               .replace(

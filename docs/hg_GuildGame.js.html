@@ -638,14 +638,11 @@ class GuildGame {
    * instance.
    * @param {string|HungryGames~Event[]} [text] Message to show when the user is
    * affected, or array of default events if not specifying a specific message.
-   * @param {boolean} [persists=false] Does this outcome persist to the end of
-   * the game, if false it only exists for the next day.
    * @returns {string} The output message to tell the user of the outcome of the
    * operation.
    */
-  static forcePlayerState(game, list, state, messages, text, persists = false) {
+  static forcePlayerState(game, list, state, messages, text) {
     if (!Array.isArray(list)) {
-      persists = list.persists;
       messages = state;
       text = list.text;
       state = list.state;
@@ -656,66 +653,73 @@ class GuildGame {
     const players = [];
     list.forEach((p) => {
       const player = game.currentGame.includedUsers.find((el) => el.id == p);
+      if (!player) return;
+      let outcome;
+      if (player.living &amp;&amp; state === 'dead') {
+        outcome = 'dies';
+      } else if (
+        !player.living &amp;&amp; (state === 'living' || state === 'thriving')) {
+        outcome = 'revived';
+      } else if (player.state === 'wounded' &amp;&amp; state === 'thriving') {
+        outcome = 'thrives';
+      } else if (
+        player.living &amp;&amp; player.state !== 'wounded' &amp;&amp; state === 'wounded') {
+        outcome = 'wounded';
+      } else {
+        return;
+      }
+      let evt;
+      if (typeof text !== 'string' &amp;&amp; Array.isArray(text) &amp;&amp;
+          game.options.anonForceOutcome) {
+        let eventPool = text.concat(game.customEvents.player);
+        eventPool = eventPool.filter((el) => {
+          const checkOutcome =
+              el.victim.outcome === outcome || el.attacker.outcome === outcome;
+          const checkCount = Math.abs(el.victim.count * 1) +
+                  Math.abs(el.attacker.count * 1) ===
+              1;
+          const checkDisabled = !game.disabledEvents ||
+              !game.disabledEvents.player ||
+              !game.disabledEvents.player.find((d) => Event.equal(d, el));
+          return checkOutcome &amp;&amp; checkCount &amp;&amp; checkDisabled;
+        });
+        if (eventPool.length > 0) {
+          const pick = eventPool[Math.floor(eventPool.length * Math.random())];
+          text = pick.message;
+          evt = Event.finalize(
+              text, [player], Math.abs(pick.victim.count * 1),
+              Math.abs(pick.attacker.count * 1), outcome, outcome, game,
+              pick.victim.killer, pick.attacker.killer, pick.victim.weapon,
+              pick.attacker.weapon);
+        }
+      }
+      if (typeof text !== 'string') {
+        switch (state) {
+          case 'dead':
+            text = messages.get('forcedDeath');
+            break;
+          case 'thriving':
+            text = messages.get('forcedHeal');
+            break;
+          case 'wounded':
+            text = messages.get('forcedWound');
+            break;
+        }
+      }
+      if (!evt) {
+        evt = Event.finalize(text, [player], 1, 0, outcome, 'nothing', game);
+      }
       if (game.currentGame.day.state > 0) {
-        if (!player) return;
-        let outcome;
-        if (player.living &amp;&amp; state === 'dead') {
-          outcome = 'dies';
+        if (outcome === 'dies') {
           Simulator._killUser(game, player, 0, null);
-        } else if (
-          !player.living &amp;&amp; (state === 'living' || state === 'thriving')) {
-          outcome = 'revived';
+        } else if (outcome === 'revived') {
           Simulator._reviveUser(game, player, 0, null);
-        } else if (player.state === 'wounded' &amp;&amp; state === 'thriving') {
-          outcome = 'thrives';
+        } else if (outcome === 'thrives') {
           Simulator._restoreUser(game, player, 0, null);
-        } else if (
-          player.living &amp;&amp; player.state !== 'wounded' &amp;&amp;
-            state === 'wounded') {
-          outcome = 'wounded';
+        } else if (outcome === 'wounded') {
           Simulator._woundUser(game, player, 0, null);
         } else {
           return;
-        }
-        let evt;
-        if (typeof text !== 'string' &amp;&amp; Array.isArray(text) &amp;&amp;
-            game.options.anonForceOutcome) {
-          let eventPool = text.concat(game.customEvents.player);
-          eventPool = eventPool.filter((el) => {
-            const checkOutcome = el.victim.outcome === outcome ||
-                el.attacker.outcome === outcome;
-            const checkCount = Math.abs(el.victim.count * 1) +
-                    Math.abs(el.attacker.count * 1) ===
-                1;
-            const checkDisabled = !game.disabledEvents ||
-                !game.disabledEvents.player ||
-                !game.disabledEvents.player.find((d) => Event.equal(d, el));
-            return checkOutcome &amp;&amp; checkCount &amp;&amp; checkDisabled;
-          });
-          if (eventPool.length > 0) {
-            const pick =
-                eventPool[Math.floor(eventPool.length * Math.random())];
-            text = pick.message;
-            evt = Event.finalize(
-                text, [player], Math.abs(pick.victim.count * 1),
-                Math.abs(pick.attacker.count * 1), outcome, outcome, game);
-          }
-        }
-        if (typeof text !== 'string') {
-          switch (state) {
-            case 'dead':
-              text = messages.get('forcedDeath');
-              break;
-            case 'thriving':
-              text = messages.get('forcedHeal');
-              break;
-            case 'wounded':
-              text = messages.get('forcedWound');
-              break;
-          }
-        }
-        if (!evt) {
-          evt = Event.finalize(text, [player], 1, 0, outcome, 'nothing', game);
         }
         // State - 2 = the event index, + 1 is the next index to get shown.
         let lastIndex = game.currentGame.day.state - 1;
@@ -732,13 +736,7 @@ class GuildGame {
           game.currentGame.day.events.push(evt);
         }
       } else {
-        game.currentGame.forcedOutcomes.push({
-          id: game.id,
-          list: list,
-          state: state,
-          text: typeof text === 'string' ? text : null,
-          persists: persists,
-        });
+        game.currentGame.nextDay.events.push(evt);
       }
       if (player) players.push(player.name);
     });
@@ -846,16 +844,15 @@ class GuildGame {
         const numAttacker = Math.abs(pick.attacker.count * 1);
 
         const owner = 'their';
-        // let owner = 'their';
-        // if (numAttacker > 1 || (numAttacker == 1 &amp;&amp; !firstAttacker)) {
-        //   owner = `${ownerName}'s`;
-        // }
         text = pick.message.replace(/\{owner\}/g, owner);
 
+        const vWeapon = Object.assign({}, pick.victim.weapon);
+        const aWeapon = Object.assign({}, pick.attacker.weapon);
+
         evt = Event.finalize(
-            text, affectedUsers, numVictim,
-            numAttacker, pick.victim.outcome,
-            pick.attacker.outcome, game);
+            text, affectedUsers, numVictim, numAttacker, pick.victim.outcome,
+            pick.attacker.outcome, game, pick.victim.killer,
+            pick.attacker.killer, vWeapon, aWeapon);
       }
     }
     if (typeof text !== 'string' &amp;&amp; text &amp;&amp; typeof text === 'object') {
@@ -872,7 +869,7 @@ class GuildGame {
       evt = Event.finalize(text, [player], 0, 1, 'nothing', 'nothing', game);
     }
 
-    player.weapons[weapon] = count;
+    // player.weapons[weapon] = count;
 
     const nameFormat = game.options.useNicknames ? 'nickname' : 'username';
     if (diff &lt; 0) {
@@ -960,7 +957,7 @@ module.exports = GuildGame;
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.2</a>
 	
-		on Friday, July 12, 2019 10:12 PM (-07:00)
+		on Saturday, July 13, 2019 10:39 AM (-07:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

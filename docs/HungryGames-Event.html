@@ -1668,7 +1668,7 @@ to give to the player.</td>
 		<ul class="dummy">
 			<li>
 				<a href="hg_Event.js.html">hg/Event.js</a>,
-				 <a href="hg_Event.js.html#sunlight-1-line-245">line 245</a>
+				 <a href="hg_Event.js.html#sunlight-1-line-247">line 247</a>
 			</li>
 		</ul>
 	</dd>
@@ -1725,7 +1725,7 @@ to give to the player.</td>
             
 <hr>
 <dt>
-    <h4 class="name" id=".finalize"><span class="type-signature">&lt;static> </span>finalize(message, affectedUsers, numVictim, numAttacker, victimOutcome, attackerOutcome, game)</h4>
+    <h4 class="name" id=".finalize"><span class="type-signature">&lt;static> </span>finalize(message, affectedUsers, numVictim, numAttacker, victimOutcome, attackerOutcome, game [, victimKiller] [, attackerKiller])</h4>
     
     
 </dt>
@@ -1756,7 +1756,11 @@ to give to the player.</td>
         <th>Type</th>
 
         
+        <th>Argument</th>
+        
 
+        
+        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -1782,7 +1786,19 @@ to give to the player.</td>
             </td>
 
             
+                <td class="attributes">
+                
 
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last">The message to show.</td>
@@ -1806,7 +1822,19 @@ to give to the player.</td>
             </td>
 
             
+                <td class="attributes">
+                
 
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last">An array of all users affected
@@ -1831,7 +1859,19 @@ by this event.</td>
             </td>
 
             
+                <td class="attributes">
+                
 
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last">Number of victims in this event.</td>
@@ -1855,7 +1895,19 @@ by this event.</td>
             </td>
 
             
+                <td class="attributes">
+                
 
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last">Number of attackers in this event.</td>
@@ -1879,7 +1931,19 @@ by this event.</td>
             </td>
 
             
+                <td class="attributes">
+                
 
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last">The outcome of the victims from this event.</td>
@@ -1903,7 +1967,19 @@ by this event.</td>
             </td>
 
             
+                <td class="attributes">
+                
 
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last">The outcome of the attackers from this
@@ -1928,12 +2004,104 @@ event.</td>
             </td>
 
             
+                <td class="attributes">
+                
 
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last">The GuildGame to make this event for.
 Used for settings and fetching other players not affected by this event if
 necessary.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>victimKiller</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last">Do victims kill attackers.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>attackerKiller</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last">Do attackers kill victims.</td>
         </tr>
 
     
@@ -1978,7 +2146,7 @@ necessary.</td>
 		<ul class="dummy">
 			<li>
 				<a href="hg_Event.js.html">hg/Event.js</a>,
-				 <a href="hg_Event.js.html#sunlight-1-line-174">line 174</a>
+				 <a href="hg_Event.js.html#sunlight-1-line-176">line 176</a>
 			</li>
 		</ul>
 	</dd>
@@ -2468,7 +2636,7 @@ This is to check options and fetch players that may be necessary.</td>
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.2</a>
 	
-		on Friday, July 12, 2019 10:12 PM (-07:00)
+		on Saturday, July 13, 2019 10:39 AM (-07:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>
