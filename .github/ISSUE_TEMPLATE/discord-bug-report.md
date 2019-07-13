@@ -1,6 +1,9 @@
 ---
 name: Discord Bug report
 about: Create a bug report related to SpikeyBot in Discord (not the website).
+title: ''
+labels: bug
+assignees: ''
 
 ---
 
