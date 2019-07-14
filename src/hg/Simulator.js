@@ -3,6 +3,7 @@
 const {Worker} = require('worker_threads');
 const Game = require('./Game.js');
 const Grammar = require('./Grammar.js');
+const Event = require('./Event.js');
 
 /**
  * Wrapper for logging functions that normally reference SubModule.error and
@@ -205,12 +206,7 @@ Simulator.weightedUserRand = function() {
  *
  * @private
  * @static
- * @param {number} numVictim Number of victims in this event.
- * @param {number} numAttacker Number of attackers in this event.
- * @param {string} victimOutcome Outcome of victims. If "revived", uses deadPool
- * instead of userPool.
- * @param {string} attackerOutcome Outcome of attackers. If "revived", uses
- * deadPool instead of userPool.
+ * @param {HungryGames~Event} evt The event data to pick players for.
  * @param {object} options Options for this game.
  * @param {HungryGames~Player[]} userPool Pool of all remaining players to put
  * into an event.
@@ -223,9 +219,12 @@ Simulator.weightedUserRand = function() {
  * this event.
  */
 Simulator._pickAffectedPlayers = function(
-    numVictim, numAttacker, victimOutcome, attackerOutcome, options, userPool,
-    deadPool, teams, weaponWielder) {
+    evt, options, userPool, deadPool, teams, weaponWielder) {
   const affectedUsers = [];
+  const victimOutcome = evt.victim.outcome;
+  const attackerOutcome = evt.attacker.outcome;
+  const numAttacker = evt.attacker.count;
+  const numVictim = evt.victim.count;
   const victimRevived = victimOutcome === 'revived';
   const attackerRevived = attackerOutcome === 'revived';
 
@@ -352,7 +351,7 @@ Simulator._pickAffectedPlayers = function(
  * @param {HungryGames~GuildGame} game Current GuildGame being affected.
  * @param {HungryGames~Player} affected The player to affect.
  * @param {number} kills The number of kills the player gets in this action.
- * @param {HungryGames~Weapon[]} [weapon] The weapon being used if any.
+ * @param {{name: string, count: number}} [weapon] The weapon being used if any.
  */
 Simulator._effectUser = function(game, affected, kills, weapon) {
   if (weapon) {
@@ -377,7 +376,7 @@ Simulator._effectUser = function(game, affected, kills, weapon) {
  * @param {HungryGames~GuildGame} game Current GuildGame being affected.
  * @param {HungryGames~Player} a The player to affect.
  * @param {number} k The number of kills the player gets in this action.
- * @param {HungryGames~Weapon[]} [w] The weapon being used if any.
+ * @param {{name: string, count: number}} [w] The weapon being used if any.
  */
 Simulator._killUser = function(game, a, k, w) {
   Simulator._effectUser(game, a, k, w);
@@ -416,7 +415,7 @@ Simulator._killUser = function(game, a, k, w) {
  * @param {HungryGames~GuildGame} game Current GuildGame being affected.
  * @param {HungryGames~Player} a The player to affect.
  * @param {number} k The number of kills the player gets in this action.
- * @param {HungryGames~Weapon[]} [w] The weapon being used if any.
+ * @param {{name: string, count: number}} [w] The weapon being used if any.
  */
 Simulator._woundUser = function(game, a, k, w) {
   Simulator._effectUser(game, a, k, w);
@@ -430,7 +429,7 @@ Simulator._woundUser = function(game, a, k, w) {
  * @param {HungryGames~GuildGame} game Current GuildGame being affected.
  * @param {HungryGames~Player} a The player to affect.
  * @param {number} k The number of kills the player gets in this action.
- * @param {HungryGames~Weapon[]} [w] The weapon being used if any.
+ * @param {{name: string, count: number}} [w] The weapon being used if any.
  */
 Simulator._restoreUser = function(game, a, k, w) {
   Simulator._effectUser(game, a, k, w);
@@ -445,7 +444,7 @@ Simulator._restoreUser = function(game, a, k, w) {
  * @param {HungryGames~GuildGame} game Current GuildGame being affected.
  * @param {HungryGames~Player} a The player to affect.
  * @param {number} k The number of kills the player gets in this action.
- * @param {HungryGames~Weapon[]} [w] The weapon being used if any.
+ * @param {{name: string, count: number}} [w] The weapon being used if any.
  */
 Simulator._reviveUser = function(game, a, k, w) {
   Simulator._effectUser(game, a, k, w);
@@ -611,7 +610,7 @@ Simulator._pickEvent = function(
       continue;
     }
 
-    const finalEvent = JSON.parse(JSON.stringify(eventPool[eventIndex]));
+    const finalEvent = Event.from(eventPool[eventIndex]);
 
     finalEvent.attacker.count = numAttacker;
     finalEvent.victim.count = numVictim;
@@ -993,8 +992,6 @@ Simulator.formatWeaponEvent = function(
  * @public
  * @static
  * @param {HungryGames~Event} eventTry The event to format inventories for.
- * @param {number} numVictim The number of victims in this event.
- * @param {number} numAttacker The number of attackers in this event.
  * @param {HungryGames~Player[]} affectedUsers Array of all player affected by
  * this event.
  * @param {object.<HungryGames~WeaponEvent>} weapons The default weapons object
@@ -1004,7 +1001,9 @@ Simulator.formatWeaponEvent = function(
  * @returns {string} The additional text to append.
  */
 Simulator.formatWeaponCounts = function(
-    eventTry, numVictim, numAttacker, affectedUsers, weapons, nameFormat) {
+    eventTry, affectedUsers, weapons, nameFormat) {
+  const numVictim = eventTry.victim.count;
+  const numAttacker = eventTry.attacker.count;
   const finalConsumeList = {};
   for (let i = 0; i < numVictim + numAttacker; i++) {
     const evtGroup =

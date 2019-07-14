@@ -65,16 +65,28 @@ UserIconUrl.fetchSize = 128;
  *
  * @public
  * @static
- * @param {HungryGames~Player[]|HungryGames~Player} users Array of users to
+ * @param {HungryGames~Player[]|HungryGames~Player} victims Array of users to
  * process, or single user. Output will always be an array.
+ * @param {HungryGames~Player[]} [attackers] Array of users to process.
  * @returns {HungryGames~UserIconUrl[]} The user ids and urls for all users
  * avatars.
  */
-UserIconUrl.from = function(users) {
-  if (!Array.isArray(users)) users = [users];
-  return users.map(function(obj) {
+UserIconUrl.from = function(victims, attackers) {
+  if (!Array.isArray(victims)) victims = [victims];
+  let out = victims.map((obj) => {
+    if (!obj.settings) obj.settings = [];
+    obj.settings.push('victim');
     return new UserIconUrl(obj.avatarURL, obj.id, obj.settings);
   });
+  if (attackers) {
+    if (!Array.isArray(victims)) victims = [victims];
+    out = out.concat(attackers.map((obj) => {
+      if (!obj.settings) obj.settings = [];
+      obj.settings.push('attacker');
+      return new UserIconUrl(obj.avatarURL, obj.id, obj.settings);
+    }));
+  }
+  return out;
 };
 
 module.exports = UserIconUrl;

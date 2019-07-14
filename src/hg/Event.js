@@ -1,10 +1,6 @@
 // Copyright 2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const FinalEvent = require('./FinalEvent.js');
-const UserIconUrl = require('./UserIconUrl.js');
-const Grammar = require('./Grammar.js');
-const Simulator = require('./Simulator.js');
-const funTranslator = require('../lib/funTranslators.js');
 
 /**
  * Event that can happen in a game.
@@ -55,12 +51,11 @@ class Event {
      * Information about the victims in this event.
      *
      * @public
-     * @type {{
-     *   count: number,
-     *   outcome: string,
-     *   killer: boolean,
-     *   weapon: ?object
-     * }}
+     * @type {object}
+     * @property {number} count Number of victims. Negative means "at least" the
+     * magnitude.
+     * @property {string} outcome The outcome of the victims.
+     * @property {boolean} killer Do the victims kill the attackers.
      * @property {?{name: string, count: number}} weapon The weapon information
      * to give to the player.
      */
@@ -74,12 +69,11 @@ class Event {
      * Information about the attackers in this event.
      *
      * @public
-     * @type {{
-     *   count: number,
-     *   outcome: string,
-     *   killer: boolean,
-     *   weapon: ?object
-     * }}
+     * @type {object}
+     * @property {number} count Number of attackers. Negative means "at least"
+     * the magnitude.
+     * @property {string} outcome The outcome of the attackers.
+     * @property {boolean} killer Do the attackers kill the victims.
      * @property {?{name: string, count: number}} weapon The weapon information
      * to give to the player.
      */
@@ -129,6 +123,9 @@ class Event {
      * @default
      */
     this.custom = true;
+
+    this.finalize = this.finalize.bind(this);
+    this.equal = this.equal.bind(this);
   }
 
   /**
@@ -142,10 +139,22 @@ class Event {
     return Event.equal(this, two);
   }
   /**
+   * @description Finalize this instance.
+   * @public
+   * @param {HungryGames~GuildGame} game Game context.
+   * @param {HungryGames~Player[]} affected An array of all players affected by
+   * this event.
+   * @returns {HungryGames~FinalEvent} The finalized event.
+   */
+  finalize(game, affected) {
+    return new FinalEvent(this, game, affected);
+  }
+  /**
    * @description Make an event that doesn't affect any players and is just a
    * plain message.
    * @example Event.finalizeSimple('Something happens!', game);
-   * @private
+   * @public
+   * @static
    * @param {string} message The message to show.
    * @param {HungryGames~GuildGame} [game] The GuildGame to make this event for.
    * This is to check options and fetch players that may be necessary.
@@ -157,6 +166,7 @@ class Event {
   /**
    * @description Format an event string based on specified users.
    * @public
+   * @static
    * @param {string} message The message to show.
    * @param {HungryGames~Player[]} affectedUsers An array of all users affected
    * by this event.
@@ -174,70 +184,16 @@ class Event {
   static finalize(
       message, affectedUsers, numVictim, numAttacker, victimOutcome,
       attackerOutcome, game) {
-    const useNickname = game.options.useNicknames ? 'nickname' : 'username';
-    const mention = game.options.mentionAll;
-    let mentionString = '';
-    let translator = null;
-    for (let i = 0; i < affectedUsers.length; i++) {
-      if (!affectedUsers.isNPC && mention == 'all' ||
-          (mention == 'death' &&
-           ((victimOutcome == 'dies' && i < numVictim) ||
-            (attackerOutcome == 'dies' && i >= numVictim)))) {
-        mentionString += `<@${affectedUsers[i].id}>`;
-      }
-      if (affectedUsers[i].settings &&
-          affectedUsers[i].settings['hg:fun_translators'] &&
-          affectedUsers[i].settings['hg:fun_translators'] !== 'disabled') {
-        translator = affectedUsers[i].settings['hg:fun_translators'];
-      }
-    }
-    const affectedVictims = affectedUsers.splice(0, numVictim);
-    const affectedAttackers = affectedUsers.splice(0, numAttacker);
-    let finalMessage = message;
-    finalMessage = finalMessage.replace(
-        /\[V([^|]*)\|([^\]]*)\]/g,
-        '$' + (affectedVictims.length > 1 ? '2' : '1'));
-    finalMessage = finalMessage.replace(
-        /\[A([^|]*)\|([^\]]*)\]/g,
-        '$' + (affectedAttackers.length > 1 ? '2' : '1'));
-    finalMessage =
-        finalMessage
-            .replace(
-                /\{victim\}/g,
-                Grammar.formatMultiNames(affectedVictims, useNickname))
-            .replace(
-                /\{attacker\}/g,
-                Grammar.formatMultiNames(affectedAttackers, useNickname));
-    if (finalMessage.indexOf('{dead}') > -1) {
-      const deadUsers = game.currentGame.includedUsers
-          .filter(
-              (obj) => !obj.living &&
-                                    !affectedUsers.find((u) => u.id == obj.id))
-          .slice(0, Simulator.weightedUserRand());
-      const numDead = deadUsers.length;
-      if (numDead === 0) {
-        finalMessage = finalMessage.replace(/\{dead\}/g, 'an animal')
-            .replace(/\[D([^|]*)\|([^\]]*)\]/g, '$1');
-      } else {
-        finalMessage =
-            finalMessage
-                .replace(/\[D([^|]*)\|([^\]]*)\]/g, numDead === 1 ? '$1' : '$2')
-                .replace(
-                    /\{dead\}/,
-                    Grammar.formatMultiNames(deadUsers, useNickname));
-      }
-    }
-    finalMessage = funTranslator.to(translator, finalMessage);
-    const finalIcons =
-        UserIconUrl.from(affectedVictims.concat(affectedAttackers));
     return new FinalEvent(
-        finalMessage, finalIcons, numVictim, victimOutcome, attackerOutcome,
-        mentionString);
+        new Event(
+            message, numVictim, numAttacker, victimOutcome, attackerOutcome),
+        game, affectedUsers);
   }
 
   /**
    * @description Compare two events to check if they are equivalent.
    * @public
+   * @static
    * @param {HungryGames~Event} e1 First event.
    * @param {HungryGames~Event} e2 Second event to compare.
    * @returns {boolean} If the two given events are equivalent.
@@ -279,6 +235,50 @@ class Event {
       return false;
     }
     return true;
+  }
+
+  /**
+   * @description Create a new Event object from a Event-like object. Similar to
+   * copy-constructor.
+   *
+   * @public
+   * @static
+   * @param {object} obj Event-like object to copy.
+   * @returns {HungryGames~Event} Copy of event.
+   */
+  static from(obj) {
+    const out = new Event(obj.message);
+    if (obj.victim) {
+      out.victim.count = obj.victim.count || 0;
+      out.victim.outcome = obj.victim.outcome || 'nothing';
+      out.victim.killer = obj.victim.killer || false;
+      if (obj.victim.weapon) {
+        out.victim.weapon = {
+          name: obj.victim.weapon.name,
+          count: obj.victim.weapon.count,
+        };
+      }
+    }
+    if (obj.attacker) {
+      out.attacker.count = obj.attacker.count || 0;
+      out.attacker.outcome = obj.attacker.outcome || 'nothing';
+      out.attacker.killer = obj.attacker.killer || false;
+      if (obj.attacker.weapon) {
+        out.attacker.weapon = {
+          name: obj.attacker.weapon.name,
+          count: obj.attacker.weapon.count,
+        };
+      }
+    }
+    if (obj.attacks) {
+      out.attacks = obj.attacks.map((el) => Event.from(el));
+    }
+    out.battle = obj.battle || false;
+    out.state = obj.state || 0;
+    out.consumes = obj.consumes || null;
+    out.custom = obj.custom || false;
+
+    return out;
   }
 }
 

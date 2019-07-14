@@ -51,16 +51,6 @@ class Game {
      */
     this.teams = teams || [];
     /**
-     * List of outcomes and players to force before the end of the day. Does not
-     * affect the simulation, outcomes are forced by appending events at the end
-     * of the simulated day.
-     *
-     * @public
-     * @type {HungryGames~ForcedOutcome[]}
-     * @default
-     */
-    this.forcedOutcomes = [];
-    /**
      * Has the game ended.
      *
      * @public
@@ -124,7 +114,6 @@ Game.from = function(data) {
   const game = new Game(data.name, data.includedUsers);
   game.inProgress = data.inProgress || false;
   game.teams = data.teams || [];
-  game.forcedOutcomes = data.forcedOutcomes || [];
   game.ended = data.ended || false;
   game.day = Day.from(data.day);
   if (data.nextDay) game.nextDay = Day.from(data.nextDay);

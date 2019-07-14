@@ -47,8 +47,13 @@ class Worker {
 
     const id = sim.game.id;
 
-    const userPool =
-        sim.game.currentGame.includedUsers.filter((obj) => obj.living);
+    const userPool = sim.game.currentGame.includedUsers.filter((player) => {
+      if (!player.living) return false;
+
+      const evt = sim.game.currentGame.day.events.find(
+          (el) => el.icons.find(player.id));
+      return !evt;
+    });
     // Shuffle user order because games may have been rigged :thonk:.
     for (let i = 0; i < userPool.length; i++) {
       const index = Math.floor(Math.random() * (userPool.length - i)) + i;
@@ -190,14 +195,9 @@ class Worker {
     while (userPool.length > 0) {
       let eventTry;
       let affectedUsers;
-      let numAttacker;
-      let numVictim;
 
-      let subMessage = '';
-
-      const deadPool = sim.game.currentGame.includedUsers.filter((obj) => {
-        return !obj.living;
-      });
+      const deadPool =
+          sim.game.currentGame.includedUsers.filter((obj) => !obj.living);
 
       let userWithWeapon = null;
       if (!doArenaEvent) {
@@ -235,26 +235,17 @@ class Worker {
                 'No event with weapon "' + chosenWeapon +
                 '" for available players ' + id); */
           } else {
-            numAttacker = eventTry.attacker.count;
-            numVictim = eventTry.victim.count;
+            eventTry.consumer = userWithWeapon.id;
             affectedUsers = Simulator._pickAffectedPlayers(
-                numVictim, numAttacker, eventTry.victim.outcome,
-                eventTry.attacker.outcome, sim.game.options, userPool, deadPool,
-                teams, userWithWeapon, chosenWeapon);
+                eventTry, sim.game.options, userPool, deadPool, teams,
+                userWithWeapon, chosenWeapon);
 
-            const consumed = Simulator._parseConsumeCount(
-                eventTry.consumes, numVictim, numAttacker);
-            userWithWeapon.weapons[chosenWeapon] -= consumed;
-            if (userWithWeapon.weapons[chosenWeapon] <= 0) {
-              delete userWithWeapon.weapons[chosenWeapon];
-            }
-            const ownerName =
-                Grammar.formatMultiNames([userWithWeapon], nameFormat);
             const firstAttacker = affectedUsers[eventTry.victim.count] &&
                 affectedUsers[eventTry.victim.count].id == userWithWeapon.id;
-            subMessage += Simulator.formatWeaponEvent(
-                eventTry, userWithWeapon, ownerName, firstAttacker,
-                chosenWeapon, weapons);
+            eventTry.subMessage = Simulator.formatWeaponEvent(
+                eventTry, userWithWeapon,
+                Grammar.formatMultiNames([userWithWeapon], nameFormat),
+                firstAttacker, chosenWeapon, weapons);
           }
         }
       }
@@ -267,15 +258,18 @@ class Worker {
               1, 1, userPool, sim.game.currentGame.numAlive, teams,
               sim.game.options, true, false);
       if (doBattle) {
+        let numVictim;
+        let numAttacker;
         do {
           numAttacker = Simulator.weightedUserRand();
           numVictim = Simulator.weightedUserRand();
         } while (Simulator._validateEventRequirements(
             numVictim, numAttacker, userPool, sim.game.currentGame.numAlive,
             teams, sim.game.options, true, false));
+
         affectedUsers = Simulator._pickAffectedPlayers(
-            numVictim, numAttacker, 'dies', 'nothing', sim.game.options,
-            userPool, deadPool, teams, null);
+            new Event('', numVictim, numAttacker, 'dies', 'nothing'),
+            sim.game.options, userPool, deadPool, teams, null);
         eventTry = Battle.finalize(
             affectedUsers, numVictim, numAttacker, sim.game.options.mentionAll,
             sim.game, sim.events.battles);
@@ -292,10 +286,9 @@ class Worker {
               sim.game.currentGame.day.num + ' Guild: ' + id + ' Retrying: ' +
               retry);
           sim.game.currentGame.day.state = 0;
-          sim.game.currentGame.day.num--;
-          if (retry) {
-            return new Worker(sim, false);
-          }
+
+          if (retry) return new Worker(sim, false);
+
           this.cb({
             reply: 'Oops! I wasn\'t able to find a valid event for the ' +
                 'remaining players.\nThis is usually because too many ' +
@@ -310,107 +303,20 @@ class Worker {
           return;
         }
 
-        numAttacker = eventTry.attacker.count;
-        numVictim = eventTry.victim.count;
         affectedUsers = Simulator._pickAffectedPlayers(
-            numVictim, numAttacker, eventTry.victim.outcome,
-            eventTry.attacker.outcome, sim.game.options, userPool, deadPool,
-            teams, null);
+            eventTry, sim.game.options, userPool, deadPool, teams, null);
       }
 
-      let numKilled = 0;
-      let weapon = eventTry.victim.weapon;
-      if (weapon && !weapons[weapon.name]) {
-        weapon = null;
-        eventTry.victim.weapon = null;
-      }
-      for (let i = 0; i < numVictim; i++) {
-        let numKills = 0;
-        if (eventTry.victim.killer) numKills = numAttacker;
-        const affected = affectedUsers[i];
-        switch (eventTry.victim.outcome) {
-          case 'dies':
-            numKilled++;
-            Simulator._killUser(sim.game, affected, numKills, weapon);
-            break;
-          case 'wounded':
-            Simulator._woundUser(sim.game, affected, numKills, weapon);
-            break;
-          case 'thrives':
-            Simulator._restoreUser(sim.game, affected, numKills, weapon);
-            break;
-          case 'revived':
-            Simulator._reviveUser(sim.game, affected, numKills, weapon);
-            break;
-          default:
-            Simulator._effectUser(sim.game, affected, numKills, weapon);
-            break;
-        }
-        if (affected.state == 'wounded') {
-          affected.bleeding++;
-        } else {
-          affected.bleeding = 0;
-        }
-      }
-      weapon = eventTry.attacker.weapon;
-      if (weapon && !weapons[weapon.name]) {
-        weapon = null;
-        eventTry.attacker.weapon = null;
-      }
-      for (let i = numVictim; i < numVictim + numAttacker; i++) {
-        let numKills = 0;
-        if (eventTry.attacker.killer) numKills = numVictim;
-        const affected = affectedUsers[i];
-        switch (eventTry.attacker.outcome) {
-          case 'dies':
-            numKilled++;
-            Simulator._killUser(sim.game, affected, numKills, weapon);
-            break;
-          case 'wounded':
-            Simulator._woundUser(sim.game, affected, numKills, weapon);
-            break;
-          case 'thrives':
-            Simulator._restoreUser(sim.game, affected, numKills, weapon);
-            break;
-          case 'revived':
-            Simulator._reviveUser(sim.game, affected, numKills, weapon);
-            break;
-          default:
-            Simulator._effectUser(sim.game, affected, numKills, weapon);
-            break;
-        }
-        if (affected.state == 'wounded') {
-          affected.bleeding++;
-        } else {
-          affected.bleeding = 0;
-        }
-      }
-
-      let finalEvent = eventTry;
-
-      subMessage += Simulator.formatWeaponCounts(
-          eventTry, numVictim, numAttacker, affectedUsers, weapons, nameFormat);
+      eventTry.subMessage += Simulator.formatWeaponCounts(
+          eventTry, affectedUsers, weapons, nameFormat);
 
       if (doBattle) {
         affectedUsers = [];
       } else {
-        finalEvent = Event.finalize(
-            eventTry.message, affectedUsers, numVictim, numAttacker,
-            eventTry.victim.outcome, eventTry.attacker.outcome, sim.game);
-        finalEvent.subMessage = subMessage;
+        eventTry = eventTry.finalize(sim.game, affectedUsers);
       }
-      /* if (eventTry.attacker.killer && eventTry.victim.killer) {
-        finalEvent.icons.splice(numVictim, 0, {url: fistBoth});
-      } else if (eventTry.attacker.killer) {
-        finalEvent.icons.splice(numVictim, 0, {url: fistRight});
-      } else if (eventTry.victim.killer) {
-        finalEvent.icons.splice(numVictim, 0, {url: fistLeft});
-      } */
-      sim.game.currentGame.day.events.push(finalEvent);
 
-      if (affectedUsers.length !== 0) {
-        console.log('Affected users remain! ' + affectedUsers.length);
-      }
+      sim.game.currentGame.day.events.push(eventTry);
 
       if (numKilled > 4) {
         sim.game.currentGame.day.events.push(
@@ -418,20 +324,122 @@ class Worker {
       }
     }
 
+    // Apply outcomes.
+
+    sim.game.currentGame.day.events.forEach((evt) => {
+      evt.icons.forEach((icon) => {
+        if (!icon.id) return;
+        const player =
+            sim.game.currentGame.includedUsers.find((p) => p.id === icon.id);
+        if (!player) return;
+        const isV = icon.settings && icon.settings.includes('victim');
+        const isA = icon.settings && icon.settings.includes('attacker');
+        const group = (isA && evt.attacker) || (isV && evt.victim);
+        const other = (isA && evt.victim) || (isV && evt.attacker);
+        const kills = group.killer ? other.count : 0;
+        const outcome = group.outcome;
+        if (outcome === 'dies') {
+          Simulator._killUser(sim.game, player, kills, null);
+        } else if (outcome === 'revived') {
+          Simulator._reviveUser(sim.game, player, kills, null);
+        } else if (outcome === 'thrives') {
+          Simulator._restoreUser(sim.game, player, kills, null);
+        } else if (outcome === 'wounded') {
+          Simulator._woundUser(sim.game, player, kills, null);
+        } else {
+          return;
+        }
+
+        if (evt.consumes) {
+          const consumer = sim.game.currentGame.includeUsers.find(
+              (p) => p.id === evt.consumer);
+          if (consumer) {
+            for (const consumed of evt.consumed) {
+              if (consumer.weapons[consumed.name]) {
+                const count = Simulator._parseConsumeCount(
+                    evt.consumes, numVictim, numAttacker);
+                consumer.weapons[consumed.name] -= count;
+                if (consumer.weapons[consumed.name] <= 0) {
+                  delete consumer.weapons[consumed.name];
+                }
+              }
+            }
+          }
+        }
+        let numKilled = 0;
+        let weapon = eventTry.victim.weapon;
+        if (weapon && !weapons[weapon.name]) {
+          weapon = null;
+          eventTry.victim.weapon = null;
+        }
+        for (let i = 0; i < numVictim; i++) {
+          let numKills = 0;
+          if (eventTry.victim.killer) numKills = numAttacker;
+          const affected = affectedUsers[i];
+          switch (eventTry.victim.outcome) {
+            case 'dies':
+              numKilled++;
+              Simulator._killUser(sim.game, affected, numKills, weapon);
+              break;
+            case 'wounded':
+              Simulator._woundUser(sim.game, affected, numKills, weapon);
+              break;
+            case 'thrives':
+              Simulator._restoreUser(sim.game, affected, numKills, weapon);
+              break;
+            case 'revived':
+              Simulator._reviveUser(sim.game, affected, numKills, weapon);
+              break;
+            default:
+              Simulator._effectUser(sim.game, affected, numKills, weapon);
+              break;
+          }
+          if (affected.state == 'wounded') {
+            affected.bleeding++;
+          } else {
+            affected.bleeding = 0;
+          }
+        }
+        weapon = eventTry.attacker.weapon;
+        if (weapon && !weapons[weapon.name]) {
+          weapon = null;
+          eventTry.attacker.weapon = null;
+        }
+        for (let i = numVictim; i < numVictim + numAttacker; i++) {
+          let numKills = 0;
+          if (eventTry.attacker.killer) numKills = numVictim;
+          const affected = affectedUsers[i];
+          switch (eventTry.attacker.outcome) {
+            case 'dies':
+              numKilled++;
+              Simulator._killUser(sim.game, affected, numKills, weapon);
+              break;
+            case 'wounded':
+              Simulator._woundUser(sim.game, affected, numKills, weapon);
+              break;
+            case 'thrives':
+              Simulator._restoreUser(sim.game, affected, numKills, weapon);
+              break;
+            case 'revived':
+              Simulator._reviveUser(sim.game, affected, numKills, weapon);
+              break;
+            default:
+              Simulator._effectUser(sim.game, affected, numKills, weapon);
+              break;
+          }
+          if (affected.state == 'wounded') {
+            affected.bleeding++;
+          } else {
+            affected.bleeding = 0;
+          }
+        }
+      });
+    });
+    // Apply Outcomes. \\
+
     if (doArenaEvent) {
       sim.game.currentGame.day.events.push(
           Event.finalizeSimple(sim.messages.get('eventEnd'), sim.game));
-    }
-    if (!sim.game.currentGame.forcedOutcomes) {
-      sim.game.currentGame.forcedOutcomes = [];
-    } else {
-      sim.game.currentGame.forcedOutcomes =
-          sim.game.currentGame.forcedOutcomes.filter((el) => {
-            if (typeof el.text !== 'string') el.text = sim.events.player;
-            GuildGame.forcePlayerState(
-                sim.game, el, sim.messages, sim.events.player);
-            return el.persists;
-          });
     }
     const usersBleeding = [];
     const usersRecovered = [];
