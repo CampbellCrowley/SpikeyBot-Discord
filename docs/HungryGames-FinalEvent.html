@@ -107,7 +107,7 @@
         
 <hr>
 <dt>
-    <h4 class="name" id="FinalEvent"><span class="type-signature"></span>new FinalEvent(message [, icons] [, numVictim] [, victimOutcome] [, attackerOutcome] [, mentionString] [, victimKiller] [, attackerKiller])</h4>
+    <h4 class="name" id="FinalEvent"><span class="type-signature"></span>new FinalEvent(evt, game, affected)</h4>
     
     
 </dt>
@@ -138,11 +138,7 @@
         <th>Type</th>
 
         
-        <th>Argument</th>
-        
 
-        
-        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -154,13 +150,13 @@
 
         <tr>
             
-                <td class="name"><code>message</code></td>
+                <td class="name"><code>evt</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type"><a href="HungryGames-Event.html">HungryGames~Event</a></span>
 
 
 
@@ -168,35 +164,23 @@
             </td>
 
             
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
 
             
-                <td class="default">
-                
-                </td>
-            
 
-            <td class="description last">Text to send to users.</td>
+            <td class="description last">Event to finalize.</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>icons</code></td>
+                <td class="name"><code>game</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Array.&lt;<a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a>></span>
+<span class="param-type"><a href="HungryGames-GuildGame.html">HungryGames~GuildGame</a></span>
 
 
 
@@ -204,37 +188,23 @@
             </td>
 
             
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
 
             
-                <td class="default">
-                
-                </td>
-            
 
-            <td class="description last">Icons for this event.</td>
+            <td class="description last">Game context.</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>numVictim</code></td>
+                <td class="name"><code>affected</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">Array.&lt;<a href="HungryGames-Player.html">HungryGames~Player</a>></span>
 
 
 
@@ -242,228 +212,11 @@
             </td>
 
             
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
 
             
-                <td class="default">
-                
-                    0
-                
-                </td>
-            
 
-            <td class="description last">Number of victims in this event.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>victimOutcome</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    'nothing'
-                
-                </td>
-            
-
-            <td class="description last">Victim outcome due to this event.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>attackerOutcome</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    'nothing'
-                
-                </td>
-            
-
-            <td class="description last">Attacker outcome due to this
-event.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>mentionString</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    ''
-                
-                </td>
-            
-
-            <td class="description last">String of mentions to separate from the
-message embeds so that users are properly pinged.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>victimKiller</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    false
-                
-                </td>
-            
-
-            <td class="description last">Do the victims kill anyone.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>attackerKiller</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">boolean</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    false
-                
-                </td>
-            
-
-            <td class="description last">Do the attackers kill anyone.</td>
+            <td class="description last">An array of all players affected by
+this event.</td>
         </tr>
 
     
@@ -508,7 +261,7 @@ message embeds so that users are properly pinged.</td>
 		<ul class="dummy">
 			<li>
 				<a href="hg_FinalEvent.js.html">hg/FinalEvent.js</a>,
-				 <a href="hg_FinalEvent.js.html#sunlight-1-line-23">line 23</a>
+				 <a href="hg_FinalEvent.js.html#sunlight-1-line-21">line 21</a>
 			</li>
 		</ul>
 	</dd>
@@ -564,7 +317,8 @@ message embeds so that users are properly pinged.</td>
 <dd>
     
     <div class="description">
-        Information about the attackers in this event.
+        Information about the attackers as a result of this event.
+Weapon count is amount gained.
     </div>
     
 
@@ -608,13 +362,6 @@ message embeds so that users are properly pinged.</td>
 	
 
 	
-	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
-	<dd class="tag-default">
-		<ul class="dummy">
-			<li>{outcome: 'nothing'}</li>
-		</ul>
-	</dd>
-	
 
 
 
@@ -624,7 +371,7 @@ message embeds so that users are properly pinged.</td>
 		<ul class="dummy">
 			<li>
 				<a href="hg_FinalEvent.js.html">hg/FinalEvent.js</a>,
-				 <a href="hg_FinalEvent.js.html#sunlight-1-line-65">line 65</a>
+				 <a href="hg_FinalEvent.js.html#sunlight-1-line-143">line 143</a>
 			</li>
 		</ul>
 	</dd>
@@ -644,191 +391,15 @@ message embeds so that users are properly pinged.</td>
         
             
 <hr>
-<dt class="name" id="attackerKiller">
-    <h4 id="attackerKiller"><span class="type-signature"></span>attackerKiller<span class="type-signature"> :boolean</span></h4>
+<dt class="name" id="consumer">
+    <h4 id="consumer"><span class="type-signature"></span>consumer<span class="type-signature"> :string</span></h4>
 
     
 </dt>
 <dd>
     
     <div class="description">
-        Do attackers kill.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">boolean</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
-	<dd class="tag-default">
-		<ul class="dummy">
-			<li>false</li>
-		</ul>
-	</dd>
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="hg_FinalEvent.js.html">hg/FinalEvent.js</a>,
-				 <a href="hg_FinalEvent.js.html#sunlight-1-line-89">line 89</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="icons">
-    <h4 id="icons"><span class="type-signature"></span>icons<span class="type-signature"> :Array.&lt;<a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a>></span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        Icons to include with sent message.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">Array.&lt;<a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a>></span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
-	<dd class="tag-default">
-		<ul class="dummy">
-			<li>[]</li>
-		</ul>
-	</dd>
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="hg_FinalEvent.js.html">hg/FinalEvent.js</a>,
-				 <a href="hg_FinalEvent.js.html#sunlight-1-line-41">line 41</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="mentionString">
-    <h4 id="mentionString"><span class="type-signature"></span>mentionString<span class="type-signature"> :string</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        String mentions to ping users.
+        The ID of the player that will be consuming weapons.
     </div>
     
 
@@ -872,13 +443,6 @@ message embeds so that users are properly pinged.</td>
 	
 
 	
-	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
-	<dd class="tag-default">
-		<ul class="dummy">
-			<li>''</li>
-		</ul>
-	</dd>
-	
 
 
 
@@ -888,7 +452,7 @@ message embeds so that users are properly pinged.</td>
 		<ul class="dummy">
 			<li>
 				<a href="hg_FinalEvent.js.html">hg/FinalEvent.js</a>,
-				 <a href="hg_FinalEvent.js.html#sunlight-1-line-73">line 73</a>
+				 <a href="hg_FinalEvent.js.html#sunlight-1-line-108">line 108</a>
 			</li>
 		</ul>
 	</dd>
@@ -908,15 +472,177 @@ message embeds so that users are properly pinged.</td>
         
             
 <hr>
-<dt class="name" id="message">
-    <h4 id="message"><span class="type-signature"></span>message<span class="type-signature"> :string</span></h4>
+<dt class="name" id="consumes">
+    <h4 id="consumes"><span class="type-signature"></span>consumes<span class="type-signature"> :Array.&lt;{name: string, count: number}></span></h4>
 
     
 </dt>
 <dd>
     
     <div class="description">
-        Message to send to users.
+        Amount of weapons this consumes.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">Array.&lt;{name: string, count: number}></span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="hg_FinalEvent.js.html">hg/FinalEvent.js</a>,
+				 <a href="hg_FinalEvent.js.html#sunlight-1-line-102">line 102</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="icons">
+    <h4 id="icons"><span class="type-signature"></span>icons<span class="type-signature"> :Array.&lt;<a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a>></span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The icons to show in the message.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">Array.&lt;<a href="HungryGames-UserIconUrl.html">HungryGames~UserIconUrl</a>></span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="hg_FinalEvent.js.html">hg/FinalEvent.js</a>,
+				 <a href="hg_FinalEvent.js.html#sunlight-1-line-95">line 95</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="mentionString">
+    <h4 id="mentionString"><span class="type-signature"></span>mentionString<span class="type-signature"> :string</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        String to send to mention users.
     </div>
     
 
@@ -989,15 +715,15 @@ message embeds so that users are properly pinged.</td>
         
             
 <hr>
-<dt class="name" id="numVictim">
-    <h4 id="numVictim"><span class="type-signature"></span>numVictim<span class="type-signature"> :number</span></h4>
+<dt class="name" id="message">
+    <h4 id="message"><span class="type-signature"></span>message<span class="type-signature"> :string</span></h4>
 
     
 </dt>
 <dd>
     
     <div class="description">
-        Number of victims in this event.
+        Message to show to user.
     </div>
     
 
@@ -1006,7 +732,7 @@ message embeds so that users are properly pinged.</td>
         <ul>
             <li>
                 
-<span class="param-type">number</span>
+<span class="param-type">string</span>
 
 
 
@@ -1041,13 +767,6 @@ message embeds so that users are properly pinged.</td>
 	
 
 	
-	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
-	<dd class="tag-default">
-		<ul class="dummy">
-			<li>0</li>
-		</ul>
-	</dd>
-	
 
 
 
@@ -1057,7 +776,7 @@ message embeds so that users are properly pinged.</td>
 		<ul class="dummy">
 			<li>
 				<a href="hg_FinalEvent.js.html">hg/FinalEvent.js</a>,
-				 <a href="hg_FinalEvent.js.html#sunlight-1-line-49">line 49</a>
+				 <a href="hg_FinalEvent.js.html#sunlight-1-line-89">line 89</a>
 			</li>
 		</ul>
 	</dd>
@@ -1085,7 +804,8 @@ message embeds so that users are properly pinged.</td>
 <dd>
     
     <div class="description">
-        Information about the victims in this event.
+        Information about the victims as a result of this event.
+Weapon count is amount gained.
     </div>
     
 
@@ -1129,13 +849,6 @@ message embeds so that users are properly pinged.</td>
 	
 
 	
-	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
-	<dd class="tag-default">
-		<ul class="dummy">
-			<li>{outcome: 'nothing'}</li>
-		</ul>
-	</dd>
-	
 
 
 
@@ -1145,95 +858,7 @@ message embeds so that users are properly pinged.</td>
 		<ul class="dummy">
 			<li>
 				<a href="hg_FinalEvent.js.html">hg/FinalEvent.js</a>,
-				 <a href="hg_FinalEvent.js.html#sunlight-1-line-57">line 57</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="victimKiller">
-    <h4 id="victimKiller"><span class="type-signature"></span>victimKiller<span class="type-signature"> :boolean</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        Do victims kill.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">boolean</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
-	<dd class="tag-default">
-		<ul class="dummy">
-			<li>false</li>
-		</ul>
-	</dd>
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="hg_FinalEvent.js.html">hg/FinalEvent.js</a>,
-				 <a href="hg_FinalEvent.js.html#sunlight-1-line-81">line 81</a>
+				 <a href="hg_FinalEvent.js.html#sunlight-1-line-126">line 126</a>
 			</li>
 		</ul>
 	</dd>
@@ -1306,7 +931,7 @@ message embeds so that users are properly pinged.</td>
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.2</a>
 	
-		on Saturday, July 13, 2019 10:39 AM (-07:00)
+		on Monday, July 15, 2019 1:22 PM (-07:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

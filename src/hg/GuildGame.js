@@ -622,6 +622,7 @@ class GuildGame {
     if (!Array.isArray(list) || list.length == 0) return 'No players given.';
     if (typeof state !== 'string') return 'No outcome given.';
     const players = [];
+    const outcomes = {};
     list.forEach((p) => {
       const player = game.currentGame.includedUsers.find((el) => el.id == p);
       if (!player) return;
@@ -639,26 +640,42 @@ class GuildGame {
       } else {
         return;
       }
+      if (!outcomes[outcome]) outcomes[outcome] = [];
+      outcomes[outcome].push(player);
+    });
+
+    /**
+     * @description Find and apply an event to players.
+     * @private
+     * @param {HungryGames~Player[]} affected Array of players to affect.
+     * @param {string} outcome The outcome to apply.
+     */
+    const findEvent = function(affected, outcome) {
       let evt;
       if (typeof text !== 'string' && Array.isArray(text) &&
           game.options.anonForceOutcome) {
         let eventPool = text.concat(game.customEvents.player);
         eventPool = eventPool.filter((el) => {
-          const checkOutcome =
-              el.victim.outcome === outcome || el.attacker.outcome === outcome;
-          const checkCount = Math.abs(el.victim.count * 1) +
-                  Math.abs(el.attacker.count * 1) ===
-              1;
-          const checkDisabled = !game.disabledEvents ||
-              !game.disabledEvents.player ||
-              !game.disabledEvents.player.find((d) => Event.equal(d, el));
-          return checkOutcome && checkCount && checkDisabled;
+          const checkVictim = el.victim.outcome === outcome &&
+              (el.victim.count === affected.length ||
+               (el.victim.count < 0 &&
+                el.victim.count * -1 <= affected.length));
+          const checkAttacker = el.attacker.outcome === outcome &&
+              (el.attacker.count === affected.length ||
+               (el.attacker.count < 0 &&
+                el.attacker.count * -1 <= affected.length));
+          const checkCount = el.attacker.count === 0 || el.victim.count === 0;
+          const checkDisabled =
+              !game.disabledEvents || !game.disabledEvents.player;
+          return (checkVictim || checkAttacker) && checkCount &&
+              (checkDisabled ||
+               !game.disabledEvents.player.find((d) => Event.equal(d, el)));
         });
         if (eventPool.length > 0) {
           const pick = eventPool[Math.floor(eventPool.length * Math.random())];
           text = pick.message;
           evt = Event.finalize(
-              text, [player], Math.abs(pick.victim.count * 1),
+              text, affected, Math.abs(pick.victim.count * 1),
               Math.abs(pick.attacker.count * 1), outcome, outcome, game,
               pick.victim.killer, pick.attacker.killer, pick.victim.weapon,
               pick.attacker.weapon);
@@ -678,27 +695,33 @@ class GuildGame {
         }
       }
       if (!evt) {
-        evt = Event.finalize(text, [player], 1, 0, outcome, 'nothing', game);
+        evt = Event.finalize(text, affected, 1, 0, outcome, 'nothing', game);
       }
       if (game.currentGame.day.state > 0) {
-        if (outcome === 'dies') {
-          Simulator._killUser(game, player, 0, null);
-        } else if (outcome === 'revived') {
-          Simulator._reviveUser(game, player, 0, null);
-        } else if (outcome === 'thrives') {
-          Simulator._restoreUser(game, player, 0, null);
-        } else if (outcome === 'wounded') {
-          Simulator._woundUser(game, player, 0, null);
-        } else {
-          return;
+        for (const player of affected) {
+          if (outcome === 'dies') {
+            Simulator._killUser(game, player, 0, null);
+          } else if (outcome === 'revived') {
+            Simulator._reviveUser(game, player, 0, null);
+          } else if (outcome === 'thrives') {
+            Simulator._restoreUser(game, player, 0, null);
+          } else if (outcome === 'wounded') {
+            Simulator._woundUser(game, player, 0, null);
+          } else {
+            break;
+          }
+          players.push(player.name);
         }
         // State - 2 = the event index, + 1 is the next index to get shown.
         let lastIndex = game.currentGame.day.state - 1;
-        for (let i = game.currentGame.day.events.length - 1; i > lastIndex;
-          i--) {
-          if (game.currentGame.day.events[i].icons.find((el) => el.id == p)) {
-            lastIndex = i + 1;
-            break;
+        if (affected.length === 1) {
+          const p = affected[0].id;
+          for (let i = game.currentGame.day.events.length - 1; i > lastIndex;
+            i--) {
+            if (game.currentGame.day.events[i].icons.find((el) => el.id == p)) {
+              lastIndex = i + 1;
+              break;
+            }
           }
         }
         if (lastIndex < game.currentGame.day.events.length) {
@@ -709,8 +732,19 @@ class GuildGame {
       } else {
         game.currentGame.nextDay.events.push(evt);
       }
-      if (player) players.push(player.name);
-    });
+    };
+
+    for (const outcome in outcomes) {
+      if (!outcomes[outcome] || outcomes[outcome].length == 0) continue;
+      const affected = outcomes[outcome];
+      if (affected.length < 7) {
+        findEvent(affected, outcome);
+      } else {
+        do {
+          findEvent(affected.splice(0, 7), outcome);
+        } while (affected.length > 0);
+      }
+    }
     if (players.length == 0) {
       return 'No players found.';
     } else if (players.length < 5) {
@@ -802,30 +836,11 @@ class GuildGame {
         weapons[weapon].outcomes = eventPool.slice(0);
       }
       if (eventPool.length > 0) {
-        const pick = eventPool[Math.floor(eventPool.length * Math.random())];
+        const pick =
+            Event.from(eventPool[Math.floor(eventPool.length * Math.random())]);
 
-        const affectedUsers = [player];
-        /* const affectedUsers = Simulator._pickAffectedPlayers(
-            pick.victim.count, pick.attacker.count, pick.victim.outcome,
-            pick.attacker.outcome, game.options, [player],
-            game.currentGame.includedUsers.filter((el) => !el.living),
-            game.currentGame.teams, player); */
-
-        const numVictim = Math.abs(pick.victim.count * 1);
-        const numAttacker = Math.abs(pick.attacker.count * 1);
-
-        const owner = 'their';
-        text = pick.message.replace(/\{owner\}/g, owner);
-
-        const vWeapon = Object.assign({}, pick.victim.weapon);
-        vWeapon[weapon] = diff;
-        const aWeapon = Object.assign({}, pick.attacker.weapon);
-        aWeapon[weapon] = diff;
-
-        evt = Event.finalize(
-            text, affectedUsers, numVictim, numAttacker, pick.victim.outcome,
-            pick.attacker.outcome, game, pick.victim.killer,
-            pick.attacker.killer, vWeapon, aWeapon);
+        text = pick.message = pick.message.replace(/\{owner\}/g, 'their');
+        evt = pick.finalize(game, [player]);
       }
     }
     if (typeof text !== 'string' && text && typeof text === 'object') {
@@ -842,8 +857,6 @@ class GuildGame {
       evt = Event.finalize(text, [player], 0, 1, 'nothing', 'nothing', game);
     }
 
-    // player.weapons[weapon] = count;
-
     const nameFormat = game.options.useNicknames ? 'nickname' : 'username';
     if (diff < 0) {
       const ownerName = Grammar.formatMultiNames([player], nameFormat);
@@ -851,15 +864,14 @@ class GuildGame {
       // const firstAttacker = affectedUsers[evt.numVictim].id != player.id;
       evt.subMessage = Simulator.formatWeaponEvent(
           evt, player, ownerName, firstAttacker, weapon, weapons);
+      evt.consumer = player.id;
+      evt.consumes = -diff;
     } else {
-      evt.attacker.weapon = weapons[weapon];
-      evt.victim.weapon = weapons[weapon];
+      (evt.attacker.weapons.find((w) => w.name === weapon) || {}).count = diff;
+      (evt.victim.weapons.find((w) => w.name === weapon) || {}).count = diff;
 
       evt.subMessage = Simulator.formatWeaponCounts(
           evt, evt.numVictim, 1 - evt.numVictim, [player], weapons, nameFormat);
-
-      delete evt.attacker.weapon;
-      delete evt.victim.weapon;
     }
 
     if (game.currentGame.day.state > 0) {
