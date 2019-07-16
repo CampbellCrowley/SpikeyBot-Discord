@@ -247,6 +247,10 @@ class Worker {
                 'No event with weapon "' + chosenWeapon +
                 '" for available players ' + id); */
           } else {
+            affectedUsers = Simulator._pickAffectedPlayers(
+                eventTry, sim.game.options, userPool, deadPool, teams,
+                userWithWeapon, chosenWeapon);
+
             eventTry.consumer = userWithWeapon.id;
             eventTry.consumes = [{
               name: chosenWeapon,
@@ -254,9 +258,6 @@ class Worker {
                   eventTry.consumes, eventTry.victim.count,
                   eventTry.attacker.count),
             }];
-            affectedUsers = Simulator._pickAffectedPlayers(
-                eventTry, sim.game.options, userPool, deadPool, teams,
-                userWithWeapon, chosenWeapon);
 
             const firstAttacker = affectedUsers[eventTry.victim.count] &&
                 affectedUsers[eventTry.victim.count].id == userWithWeapon.id;
@@ -350,6 +351,7 @@ class Worker {
           obj.living) {
         if (Math.random() < sim.game.options.probabilityOfBleedToDeath &&
             (sim.game.options.allowNoVictors || numAlive > 1)) {
+          numAlive--;
           usersBleeding.push(obj);
         } else {
           usersRecovered.push(obj);
@@ -396,9 +398,9 @@ class Worker {
         const isA = icon.settings.attacker;
         const group = (isA && evt.attacker) || (isV && evt.victim);
         const other = (isA && evt.victim) || (isV && evt.attacker);
-        const kills = group.killer ? other.count : 0;
-        const outcome = group.outcome;
-        Simulator._applyOutcome(sim.game, player, kills, null, outcome);
+        Simulator._applyOutcome(
+            sim.game, player, group.killer ? other.count : 0, null,
+            group.outcome);
 
         if (evt.consumes && evt.consumes.length > 0) {
           const consumer = sim.game.currentGame.includedUsers.find(
@@ -406,8 +408,7 @@ class Worker {
           if (consumer) {
             for (const consumed of evt.consumes) {
               if (consumer.weapons[consumed.name]) {
-                const count = Simulator._parseConsumeCount(
-                    consumed.count, evt.victim.count, evt.attacker.count);
+                const count = consumed.count;
                 consumer.weapons[consumed.name] -= count;
                 if (consumer.weapons[consumed.name] <= 0) {
                   delete consumer.weapons[consumed.name];
@@ -419,7 +420,7 @@ class Worker {
         if (group.weapons && group.weapons.length > 0) {
           for (const w of group.weapons) {
             if (player.weapons[w.name]) {
-              player.weapons[w.name] = player.waepons[w.name] * 1 + w.count * 1;
+              player.weapons[w.name] = player.weapons[w.name] * 1 + w.count * 1;
               if (player.weapons[w.name] <= 0) delete player.weapons[w.name];
             } else if (w.count > 0) {
               player.weapons[w.name] = w.count * 1;
@@ -434,7 +435,7 @@ class Worker {
         }
       });
 
-      evt.subMessage = (evt.subMessage || '') +
+      evt.subMessage +=
           Simulator.formatWeaponCounts(evt, affected, weapons, nameFormat);
     });
     // Apply Outcomes. \\

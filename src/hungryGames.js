@@ -1864,7 +1864,9 @@ function HG() {
       }
       game.outputChannel = msg.channel.id;
       game.currentGame.isPaused = false;
-      game.createInterval(dayStateModified);
+      setTimeout(() => {
+        game.createInterval(dayStateModified);
+      }, game.options.delayEvents);
     });
     const now = Date.now();
     if (now - iTime > 10) {

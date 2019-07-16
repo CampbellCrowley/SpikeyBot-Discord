@@ -989,7 +989,7 @@ Simulator.formatWeaponEvent = function(
     } else {
       consumableName += 's';
     }
-    subMessage = `${ownerName} runs out of ${consumableName}.`;
+    subMessage = `\n${ownerName} runs out of ${consumableName}.`;
   } else if (consumed != 0) {
     const weaponName = chosenWeapon;
     let consumableName = weaponName;
@@ -1003,7 +1003,7 @@ Simulator.formatWeaponEvent = function(
     } else if (count != 1) {
       consumableName += 's';
     }
-    subMessage = `${ownerName} lost ${count} ${consumableName}.`;
+    subMessage = `\n${ownerName} lost ${count} ${consumableName}.`;
   }
 
   let owner = 'their';
@@ -1037,9 +1037,30 @@ Simulator.formatWeaponEvent = function(
  */
 Simulator.formatWeaponCounts = function(
     eventTry, affectedUsers, weapons, nameFormat) {
-  const numVictim = eventTry.victim.count;
-  const numAttacker = eventTry.attacker.count;
+  const numVictim = Math.abs(eventTry.victim.count);
+  const numAttacker = Math.abs(eventTry.attacker.count);
   const finalConsumeList = {};
+
+
+  const getWeaponCount = function(el) {
+    const weaponName = el[0];
+    let consumableName = weaponName;
+    const count = el[1];
+    if (!weapons[weaponName]) {
+      // console.log(weapons);
+      // throw new Error('Bad weapon ' + weaponName);
+      console.error('Unable to find weapon ' + weaponName);
+      return `(Unknown weapon ${weaponName}. Was it deleted?)`;
+      // return `${count || 0} something`;
+    }
+    if (weapons[weaponName].consumable) {
+      consumableName = weapons[weaponName].consumable.replace(
+          /\[C([^|]*)\|([^\]]*)\]/g, (count == 1 ? '$1' : '$2'));
+    } else if (count != 1) {
+      consumableName += 's';
+    }
+    return `${count || 0} ${consumableName}`;
+  };
   for (let i = 0; i < numVictim + numAttacker; i++) {
     const group = i < numVictim ? eventTry.victim : eventTry.attacker;
     const evtGroup = group.weapon || group.weapons;
@@ -1053,36 +1074,16 @@ Simulator.formatWeaponCounts = function(
     }
     const user = affectedUsers[i];
     let entries;
-    if (user.weapons) {
-      entries = Object.entries(user.weapons);
-    } else if (Array.isArray(evtGroup)) {
-      entries = evtGroup.map((el) => [el.name, el.count]);
-    } else {
-      entries = [[evtGroup.name, evtGroup.count]];
-    }
-    const consumableList =
-        entries.map((el) => {
-          const weaponName = el[0];
-          let consumableName = weaponName;
-          const count = el[1];
-          if (!weapons[weaponName]) {
-            console.error('Failed to find weapon: ' + weaponName);
-            return `(Unknown weapon ${weaponName}. Was it deleted?)`;
-          }
-          if (weapons[weaponName].consumable) {
-            consumableName = weapons[weaponName].consumable.replace(
-                /\[C([^|]*)\|([^\]]*)\]/g, (count == 1 ? '$1' : '$2'));
-          } else if (count != 1) {
-            consumableName += 's';
-          }
-          return `${count || 0} ${consumableName}`;
-        });
+    if (user.weapons) entries = Object.entries(user.weapons);
+    if (entries.length === 0) continue;
+    const consumableList = entries.map(getWeaponCount);
     const list = consumableList.join(', ');
     if (!finalConsumeList[list]) {
       finalConsumeList[list] = [];
     }
     finalConsumeList[list].push(user);
   }
+
   const subMessage = [];
   Object.entries(finalConsumeList).forEach((el) => {
     const multi = Grammar.formatMultiNames(el[1], nameFormat);
