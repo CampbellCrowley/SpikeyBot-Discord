@@ -2,7 +2,6 @@
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const UserIconUrl = require('./UserIconUrl.js');
 const Grammar = require('./Grammar.js');
-const Simulator = require('./Simulator.js');
 const funTranslator = require('../lib/funTranslators.js');
 
 /**
@@ -33,7 +32,8 @@ class FinalEvent {
     this.mentionString = '';
     let translator = null;
     for (let i = 0; i < affected.length; i++) {
-      if (!affected.isNPC && mention == 'all' ||
+      if (!affected[i]) console.log('BAD AFFECTED', affected);
+      if (!affected[i].isNPC && mention == 'all' ||
           (mention == 'death' &&
            ((vO == 'dies' && i < nV) || (aO == 'dies' && i >= nV)))) {
         this.mentionString += `<@${affected[i].id}>`;
@@ -44,8 +44,8 @@ class FinalEvent {
         translator = affected[i].settings['hg:fun_translators'];
       }
     }
-    const affectedVictims = affected.splice(0, nV);
-    const affectedAttackers = affected.splice(0, nA);
+    const affectedVictims = affected.slice(0, nV);
+    const affectedAttackers = affected.slice(nV, nA + nV);
     let finalMessage =
         evt.message
             .replace(
@@ -56,11 +56,12 @@ class FinalEvent {
                 affectedAttackers.length > 1 ? '$2' : '$1');
     let deadUsers = [];
     if (finalMessage.indexOf('{dead}') > -1) {
-      deadUsers =
-          game.currentGame.includedUsers
-              .filter(
-                  (obj) => !obj.living && !affected.find((u) => u.id == obj.id))
-              .slice(0, Simulator.weightedUserRand());
+      const deadList = game.currentGame.includedUsers.filter(
+          (obj) => !obj.living && !affected.find((u) => u.id == obj.id));
+      if (deadList.length > 0) {
+        const index = Math.floor(Math.random() * deadList.length);
+        deadUsers = deadList.slice(index, index + 1);
+      }
       finalMessage = finalMessage.replace(
           /\[D([^|]*)\|([^\]]*)\]/g, deadUsers.length <= 1 ? '$1' : '$2');
     }
@@ -70,7 +71,7 @@ class FinalEvent {
             case 'victim':
               return Grammar.formatMultiNames(affectedVictims, useNickname);
             case 'attacker':
-              return Grammar.formatMultiNames(affectedVictims, useNickname);
+              return Grammar.formatMultiNames(affectedAttackers, useNickname);
             case 'dead':
               if (deadUsers.length > 0) {
                 return Grammar.formatMultiNames(deadUsers, useNickname);
@@ -146,6 +147,13 @@ class FinalEvent {
       killer: evt.attacker.killer,
       weapons: aW || [],
     };
+
+    /**
+     * @description Additional message text to display.
+     * @public
+     * @type {string}
+     */
+    this.subMessage = evt.subMessage || '';
   }
 }
 

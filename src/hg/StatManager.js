@@ -56,7 +56,8 @@ class StatManager {
       for (let i = 0; i < e.icons.length; i++) {
         const id = e.icons[i].id;
         if (!id) continue;
-        const outcome = i < e.numVictim ? e.victim.outcome : e.attacker.outcome;
+        const outcome =
+            e.icons[i].settings.victim ? e.victim.outcome : e.attacker.outcome;
         switch (outcome) {
           case 'dies':
             inc(id, 'deaths');

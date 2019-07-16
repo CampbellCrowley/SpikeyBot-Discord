@@ -2021,7 +2021,7 @@ function HG() {
             numNonUser++;
             outcome = 'nothing';
           } else if (
-            i >= events[index].attacks[battleState].numVictim + numNonUser) {
+            i >= events[index].attacks[battleState].victim.count + numNonUser) {
             outcome = events[index].attacks[battleState].attacker.outcome;
           }
           readImage(events[index].attacks[battleState].icons[i].url)
@@ -2064,7 +2064,7 @@ function HG() {
         if (events[index].subMessage) {
           // embed.addField('\u200B', events[index].subMessage, false);
           embed.setDescription(
-              events[index].message + '\n' + events[index].subMessage);
+              `${events[index].message}\n${events[index].subMessage}`);
         } else {
           embed.setDescription(events[index].message);
         }
@@ -2136,7 +2136,7 @@ function HG() {
           if (!events[index].icons[i].id) {
             numNonUser++;
             outcome = 'nothing';
-          } else if (i >= events[index].numVictim + numNonUser) {
+          } else if (i >= events[index].victim.count + numNonUser) {
             outcome = events[index].attacker.outcome;
           }
           readImage(events[index].icons[i].url)

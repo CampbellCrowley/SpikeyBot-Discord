@@ -11,8 +11,8 @@ class UserIconUrl {
    * @description Create a container for an icon to show.
    * @param {string} url Url of icon.
    * @param {string} id Id of the user the icon belongs to.
-   * @param {string[]} [settings] Possible settings for the user related to how
-   * this icon should be displayed.
+   * @param {object.<string>} [settings] Possible settings for the user related
+   * to how this icon should be displayed.
    * @param {number} [fetchSize] Size of icon to fetch from Discord.
    */
   constructor(url, id, settings, fetchSize) {
@@ -42,7 +42,7 @@ class UserIconUrl {
      * Optional user settings for displaying this icon.
      *
      * @public
-     * @type {null|string[]}
+     * @type {null|object.<string>}
      */
     this.settings = settings;
   }
@@ -74,15 +74,17 @@ UserIconUrl.fetchSize = 128;
 UserIconUrl.from = function(victims, attackers) {
   if (!Array.isArray(victims)) victims = [victims];
   let out = victims.map((obj) => {
-    if (!obj.settings) obj.settings = [];
-    obj.settings.push('victim');
+    if (!obj.settings) obj.settings = {};
+    obj.settings.victim = true;
+    obj.settings.attacker = false;
     return new UserIconUrl(obj.avatarURL, obj.id, obj.settings);
   });
   if (attackers) {
     if (!Array.isArray(victims)) victims = [victims];
     out = out.concat(attackers.map((obj) => {
-      if (!obj.settings) obj.settings = [];
-      obj.settings.push('attacker');
+      if (!obj.settings) obj.settings = {};
+      obj.settings.attacker = true;
+      obj.settings.victim = false;
       return new UserIconUrl(obj.avatarURL, obj.id, obj.settings);
     }));
   }

@@ -123,6 +123,13 @@ class Event {
      * @default
      */
     this.custom = true;
+    /**
+     * @description Additional message text to send.
+     * @public
+     * @type {string}
+     * @default
+     */
+    this.subMessage = '';
 
     this.finalize = this.finalize.bind(this);
     this.equal = this.equal.bind(this);
@@ -273,10 +280,12 @@ class Event {
     if (obj.attacks) {
       out.attacks = obj.attacks.map((el) => Event.from(el));
     }
+    out.action = obj.action || null;
     out.battle = obj.battle || false;
     out.state = obj.state || 0;
-    out.consumes = obj.consumes || null;
+    out.consumes = obj.consumes || [];
     out.custom = obj.custom || false;
+    out.subMessage = obj.subMessage || '';
 
     return out;
   }

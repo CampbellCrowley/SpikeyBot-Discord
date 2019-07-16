@@ -471,6 +471,38 @@ Simulator._reviveUser = function(game, a, k, w) {
 };
 
 /**
+ * @description Apply the given outcome to a player in the given guild game.
+ *
+ * @private
+ * @static
+ * @param {HungryGames~GuildGame} game Current GuildGame being affected.
+ * @param {HungryGames~Player} a The player to affect.
+ * @param {number} k The number of kills the player gets in this action.
+ * @param {{name: string, count: number}} [w] The weapon being used if any.
+ * @param {string} outcome The outcome to apply.
+ * @returns {boolean} True if valid outcome was successfully applied, false
+ * otherwise. ('nothing' is considered not valid).
+ */
+Simulator._applyOutcome = function(game, a, k, w, outcome) {
+  switch (outcome) {
+    case 'dies':
+      Simulator._killUser(game, a, k, w);
+      return true;
+    case 'revived':
+      Simulator._reviveUser(game, a, k, w);
+      return true;
+    case 'thrives':
+      Simulator._restoreUser(game, a, k, w);
+      return true;
+    case 'wounded':
+      Simulator._woundUser(game, a, k, w);
+      return true;
+    default:
+      return false;
+  }
+};
+
+/**
  * Pick event that satisfies all requirements and settings.
  *
  * @private
@@ -934,7 +966,10 @@ Simulator.formatWeaponEvent = function(
 
   const numVictim = eventTry.victim.count;
   const numAttacker = eventTry.attacker.count;
-  const consumed =
+  const found = eventTry.consumes && eventTry.consumes.find &&
+      eventTry.consumes.find((el) => el.name === chosenWeapon);
+  const consumed = found ?
+      found.count :
       Simulator._parseConsumeCount(eventTry.consumes, numVictim, numAttacker);
   if (userWithWeapon.weapons[chosenWeapon] <= 0) {
     delete userWithWeapon.weapons[chosenWeapon];
@@ -1006,9 +1041,9 @@ Simulator.formatWeaponCounts = function(
   const numAttacker = eventTry.attacker.count;
   const finalConsumeList = {};
   for (let i = 0; i < numVictim + numAttacker; i++) {
-    const evtGroup =
-        i < numVictim ? eventTry.victim.weapon : eventTry.attacker.weapon;
-    if (!evtGroup) {
+    const group = i < numVictim ? eventTry.victim : eventTry.attacker;
+    const evtGroup = group.weapon || group.weapons;
+    if (!evtGroup || evtGroup.length === 0) {
       if (i < numVictim) {
         i += numVictim - 1;
       } else {
@@ -1017,7 +1052,14 @@ Simulator.formatWeaponCounts = function(
       continue;
     }
     const user = affectedUsers[i];
-    const entries = Object.entries(user.weapons || {[evtGroup.name]: 0});
+    let entries;
+    if (user.weapons) {
+      entries = Object.entries(user.weapons);
+    } else if (Array.isArray(evtGroup)) {
+      entries = evtGroup.map((el) => [el.name, el.count]);
+    } else {
+      entries = [[evtGroup.name, evtGroup.count]];
+    }
     const consumableList =
         entries.map((el) => {
           const weaponName = el[0];
@@ -1044,7 +1086,8 @@ Simulator.formatWeaponCounts = function(
   const subMessage = [];
   Object.entries(finalConsumeList).forEach((el) => {
     const multi = Grammar.formatMultiNames(el[1], nameFormat);
-    subMessage.push(`\n${multi} now has ${el[0]}.`);
+    const has = el[1].length == 1 ? 'has' : 'have';
+    subMessage.push(`\n${multi} now ${has} ${el[0]}.`);
   });
   return subMessage.join('');
 };

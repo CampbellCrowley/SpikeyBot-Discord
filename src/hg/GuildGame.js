@@ -525,7 +525,7 @@ class GuildGame {
     const index = day.state - 2;
     const dayOver = index >= day.events.length;
     if (typeof this._stateUpdateCallback === 'function') {
-      this._stateUpdateCallback(dayOver, index < 0);
+      this._stateUpdateCallback(dayOver, index < 0 && !this.currentGame.ended);
     }
     if (this._autoPlayTimeout) {
       clearTimeout(this._autoPlayTimeout);
@@ -626,16 +626,45 @@ class GuildGame {
     list.forEach((p) => {
       const player = game.currentGame.includedUsers.find((el) => el.id == p);
       if (!player) return;
+      players.push(player.name);
+
+      let living = player.living;
+      let currentState = player.state;
+
+      if (game.currentGame.day.state <= 1) {
+        game.currentGame.nextDay.events.forEach((evt) => {
+          const found = evt.icons.find((icon) => icon.id === player.id);
+          if (!found) return;
+          const group = found.settings.victim ? evt.victim : evt.attacker;
+          switch (group.outcome) {
+            case 'dies':
+              living = false;
+              currentState = 'dead';
+              break;
+            case 'revived':
+              living = true;
+              currentState = 'zombie';
+              break;
+            case 'thrives':
+              living = true;
+              currentState = 'living';
+              break;
+            case 'wounded':
+              living = true;
+              currentState = 'wounded';
+              break;
+          }
+        });
+      }
       let outcome;
-      if (player.living && state === 'dead') {
+      if (living && state === 'dead') {
         outcome = 'dies';
       } else if (
-        !player.living && (state === 'living' || state === 'thriving')) {
+        !living && (state === 'living' || state === 'thriving')) {
         outcome = 'revived';
-      } else if (player.state === 'wounded' && state === 'thriving') {
+      } else if (currentState === 'wounded' && state === 'thriving') {
         outcome = 'thrives';
-      } else if (
-        player.living && player.state !== 'wounded' && state === 'wounded') {
+      } else if (living && currentState !== 'wounded' && state === 'wounded') {
         outcome = 'wounded';
       } else {
         return;
@@ -697,38 +726,24 @@ class GuildGame {
       if (!evt) {
         evt = Event.finalize(text, affected, 1, 0, outcome, 'nothing', game);
       }
-      if (game.currentGame.day.state > 0) {
+      if (game.currentGame.day.state > 1) {
         for (const player of affected) {
-          if (outcome === 'dies') {
-            Simulator._killUser(game, player, 0, null);
-          } else if (outcome === 'revived') {
-            Simulator._reviveUser(game, player, 0, null);
-          } else if (outcome === 'thrives') {
-            Simulator._restoreUser(game, player, 0, null);
-          } else if (outcome === 'wounded') {
-            Simulator._woundUser(game, player, 0, null);
-          } else {
-            break;
-          }
-          players.push(player.name);
+          if (!Simulator._applyOutcome(game, player, 0, null, outcome)) break;
         }
         // State - 2 = the event index, + 1 is the next index to get shown.
-        let lastIndex = game.currentGame.day.state - 1;
-        if (affected.length === 1) {
+        // let lastIndex = game.currentGame.day.state - 1;
+        /* if (affected.length === 1) {
           const p = affected[0].id;
           for (let i = game.currentGame.day.events.length - 1; i > lastIndex;
             i--) {
             if (game.currentGame.day.events[i].icons.find((el) => el.id == p)) {
-              lastIndex = i + 1;
+              lastIndex = i + 2;
               break;
             }
           }
-        }
-        if (lastIndex < game.currentGame.day.events.length) {
-          game.currentGame.day.events.splice(lastIndex, 0, evt);
-        } else {
-          game.currentGame.day.events.push(evt);
-        }
+        } */
+        // game.currentGame.day.events.splice(lastIndex, 0, evt);
+        game.currentGame.day.events.push(evt);
       } else {
         game.currentGame.nextDay.events.push(evt);
       }
@@ -871,7 +886,8 @@ class GuildGame {
       (evt.victim.weapons.find((w) => w.name === weapon) || {}).count = diff;
 
       evt.subMessage = Simulator.formatWeaponCounts(
-          evt, evt.numVictim, 1 - evt.numVictim, [player], weapons, nameFormat);
+          evt, evt.victim.count, 1 - evt.victim.count, [player], weapons,
+          nameFormat);
     }
 
     if (game.currentGame.day.state > 0) {

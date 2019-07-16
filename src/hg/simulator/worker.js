@@ -46,11 +46,26 @@ class Worker {
 
     const id = sim.game.id;
 
+    let startingAlive = 0;
+    let numAlive = 0;
+
     const userPool = sim.game.currentGame.includedUsers.filter((player) => {
       if (!player.living) return false;
+      startingAlive++;
 
-      const evt = sim.game.currentGame.day.events.find(
-          (el) => el.icons.find(player.id));
+      let isV = false;
+      const evt = sim.game.currentGame.day.events.find((el) => {
+        const icon = el.icons.find((icon) => icon.id === player.id);
+        if (icon) isV = icon.settings.victim;
+        return icon;
+      });
+      if (!evt) {
+        numAlive++;
+      } else if (isV && evt.victim.outcome !== 'dies') {
+        numAlive++;
+      } else if (!isV && evt.attacker.outcome !== 'dies') {
+        numAlive++;
+      }
       return !evt;
     });
     // Shuffle user order because games may have been rigged :thonk:.
@@ -68,7 +83,6 @@ class Worker {
       teams[i] = teams[index];
       teams[index] = tmp;
     }
-    const startingAlive = userPool.length;
     let userEventPool;
     let doArenaEvent = false;
     let arenaEvent;
@@ -225,9 +239,8 @@ class Worker {
         } else {
           eventTry = Simulator._pickEvent(
               userPool, weapons[chosenWeapon].outcomes, sim.game.options,
-              sim.game.currentGame.numAlive,
-              sim.game.currentGame.includedUsers.length, teams, probOpts,
-              userWithWeapon, chosenWeapon);
+              numAlive, sim.game.currentGame.includedUsers.length, teams,
+              probOpts, userWithWeapon, chosenWeapon);
           if (!eventTry) {
             useWeapon = false;
             /* self.error(
@@ -235,6 +248,12 @@ class Worker {
                 '" for available players ' + id); */
           } else {
             eventTry.consumer = userWithWeapon.id;
+            eventTry.consumes = [{
+              name: chosenWeapon,
+              count: Simulator._parseConsumeCount(
+                  eventTry.consumes, eventTry.victim.count,
+                  eventTry.attacker.count),
+            }];
             affectedUsers = Simulator._pickAffectedPlayers(
                 eventTry, sim.game.options, userPool, deadPool, teams,
                 userWithWeapon, chosenWeapon);
@@ -252,10 +271,9 @@ class Worker {
       const doBattle = ((!useWeapon && !doArenaEvent) || !eventTry) &&
           userPool.length > 1 &&
           (Math.random() < sim.game.options.probabilityOfBattle ||
-           sim.game.currentGame.numAlive == 2) &&
+           (sim.game.currentGame.numAlive == 2 && numAlive == 2)) &&
           !Simulator._validateEventRequirements(
-              1, 1, userPool, sim.game.currentGame.numAlive, teams,
-              sim.game.options, true, false);
+              1, 1, userPool, numAlive, teams, sim.game.options, true, false);
       if (doBattle) {
         let numVictim;
         let numAttacker;
@@ -263,8 +281,8 @@ class Worker {
           numAttacker = Simulator.weightedUserRand();
           numVictim = Simulator.weightedUserRand();
         } while (Simulator._validateEventRequirements(
-            numVictim, numAttacker, userPool, sim.game.currentGame.numAlive,
-            teams, sim.game.options, true, false));
+            numVictim, numAttacker, userPool, numAlive, teams, sim.game.options,
+            true, false));
 
         affectedUsers = Simulator._pickAffectedPlayers(
             new Event('', numVictim, numAttacker, 'dies', 'nothing'),
@@ -274,8 +292,7 @@ class Worker {
             sim.game, sim.events.battles);
       } else if (!useWeapon || !eventTry) {
         eventTry = Simulator._pickEvent(
-            userPool, userEventPool, sim.game.options,
-            sim.game.currentGame.numAlive,
+            userPool, userEventPool, sim.game.options, numAlive,
             sim.game.currentGame.includedUsers.length, teams, probOpts);
         if (!eventTry) {
           console.error(
@@ -306,12 +323,7 @@ class Worker {
             eventTry, sim.game.options, userPool, deadPool, teams, null);
       }
 
-      eventTry.subMessage += Simulator.formatWeaponCounts(
-          eventTry, affectedUsers, weapons, nameFormat);
-
-      if (doBattle) {
-        affectedUsers = [];
-      } else {
+      if (!doBattle) {
         eventTry = eventTry.finalize(sim.game, affectedUsers);
       }
 
@@ -320,6 +332,7 @@ class Worker {
       const numKilled =
           (eventTry.attacker.outcome === 'dies' ? eventTry.attacker.count : 0) +
           (eventTry.victim.outcome === 'dies' ? eventTry.victim.count : 0);
+      numAlive -= numKilled;
       if (numKilled > 4) {
         sim.game.currentGame.day.events.push(
             Event.finalizeSimple(sim.messages.get('slaughter'), sim.game));
@@ -336,8 +349,7 @@ class Worker {
       if (obj.bleeding > 0 && obj.bleeding >= sim.game.options.bleedDays &&
           obj.living) {
         if (Math.random() < sim.game.options.probabilityOfBleedToDeath &&
-            (sim.game.options.allowNoVictors ||
-             sim.game.currentGame.numAlive > 1)) {
+            (sim.game.options.allowNoVictors || numAlive > 1)) {
           usersBleeding.push(obj);
         } else {
           usersRecovered.push(obj);
@@ -357,8 +369,7 @@ class Worker {
               0, 'dies', 'nothing', sim.game));
     }
 
-    const deathPercentage =
-        1 - (sim.game.currentGame.numAlive / startingAlive);
+    const deathPercentage = 1 - (numAlive / startingAlive);
     if (deathPercentage > Simulator._lotsOfDeathRate) {
       sim.game.currentGame.day.events.splice(
           0, 0,
@@ -374,37 +385,29 @@ class Worker {
 
     // Apply outcomes.
     sim.game.currentGame.day.events.forEach((evt) => {
+      const affected = [];
       evt.icons.forEach((icon) => {
         if (!icon.id) return;
         const player =
             sim.game.currentGame.includedUsers.find((p) => p.id === icon.id);
         if (!player) return;
-        const isV = icon.settings && icon.settings.includes('victim');
-        const isA = icon.settings && icon.settings.includes('attacker');
+        affected.push(player);
+        const isV = icon.settings.victim;
+        const isA = icon.settings.attacker;
         const group = (isA && evt.attacker) || (isV && evt.victim);
         const other = (isA && evt.victim) || (isV && evt.attacker);
         const kills = group.killer ? other.count : 0;
         const outcome = group.outcome;
-        if (outcome === 'dies') {
-          Simulator._killUser(sim.game, player, kills, null);
-        } else if (outcome === 'revived') {
-          Simulator._reviveUser(sim.game, player, kills, null);
-        } else if (outcome === 'thrives') {
-          Simulator._restoreUser(sim.game, player, kills, null);
-        } else if (outcome === 'wounded') {
-          Simulator._woundUser(sim.game, player, kills, null);
-        } else {
-          return;
-        }
+        Simulator._applyOutcome(sim.game, player, kills, null, outcome);
 
-        if (evt.consumes) {
-          const consumer = sim.game.currentGame.includeUsers.find(
+        if (evt.consumes && evt.consumes.length > 0) {
+          const consumer = sim.game.currentGame.includedUsers.find(
               (p) => p.id === evt.consumer);
           if (consumer) {
-            for (const consumed of evt.consumed) {
+            for (const consumed of evt.consumes) {
               if (consumer.weapons[consumed.name]) {
                 const count = Simulator._parseConsumeCount(
-                    evt.consumes, evt.victim.count, evt.attacker.count);
+                    consumed.count, evt.victim.count, evt.attacker.count);
                 consumer.weapons[consumed.name] -= count;
                 if (consumer.weapons[consumed.name] <= 0) {
                   delete consumer.weapons[consumed.name];
@@ -423,12 +426,16 @@ class Worker {
             }
           }
         }
+
         if (player.state == 'wounded') {
           player.bleeding++;
         } else {
           player.bleeding = 0;
         }
       });
+
+      evt.subMessage = (evt.subMessage || '') +
+          Simulator.formatWeaponCounts(evt, affected, weapons, nameFormat);
     });
     // Apply Outcomes. \\
 
