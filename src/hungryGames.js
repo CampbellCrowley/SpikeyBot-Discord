@@ -1866,7 +1866,7 @@ function HG() {
       game.currentGame.isPaused = false;
       setTimeout(() => {
         game.createInterval(dayStateModified);
-      }, game.options.delayEvents);
+      }, game.options.disableOutput ? 0 : game.options.delayEvents);
     });
     const now = Date.now();
     if (now - iTime > 10) {
