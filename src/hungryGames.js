@@ -2793,8 +2793,8 @@ function HG() {
       if (begin > 10 || loop > 10) {
         self.debug(`Excluding ${num} ${begin} ${loop}`);
       }
-      const finalRes = response.length > 0 ?
-          response.filter((el) => el !== '\n').join('') :
+      const finalRes = (response.length > 0 &&
+                        response.filter((el) => el !== '\n').join('').trim()) ||
           `Succeeded without errors (${num} excluded)`;
       cb(finalRes);
       self._fire('refresh', id);
@@ -3094,8 +3094,8 @@ function HG() {
       if (begin > 10 || loop > 10) {
         self.debug(`Including ${num} ${begin} ${loop}`);
       }
-      const finalRes = response.length > 0 ?
-          response.filter((el) => el !== '\n').join('') :
+      const finalRes = (response.length > 0 &&
+                        response.filter((el) => el !== '\n').join('').trim()) ||
           `Succeeded without errors (${num} included)`;
       cb(finalRes);
       self._fire('refresh', id);
