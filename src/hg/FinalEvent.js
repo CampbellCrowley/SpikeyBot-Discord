@@ -32,7 +32,10 @@ class FinalEvent {
     this.mentionString = '';
     let translator = null;
     for (let i = 0; i < affected.length; i++) {
-      if (!affected[i]) console.log('BAD AFFECTED', affected);
+      if (!affected[i]) {
+        console.log('BAD AFFECTED', affected);
+        continue;
+      }
       if (!affected[i].isNPC && mention == 'all' ||
           (mention == 'death' &&
            ((vO == 'dies' && i < nV) || (aO == 'dies' && i >= nV)))) {
