@@ -481,7 +481,8 @@ Simulator._reviveUser = function(game, a, k, w) {
  * @param {{name: string, count: number}} [w] The weapon being used if any.
  * @param {string} outcome The outcome to apply.
  * @returns {boolean} True if valid outcome was successfully applied, false
- * otherwise. ('nothing' is considered not valid).
+ * otherwise. ('nothing' is considered not valid, but outcome will still be
+ * applied).
  */
 Simulator._applyOutcome = function(game, a, k, w, outcome) {
   switch (outcome) {
@@ -497,6 +498,9 @@ Simulator._applyOutcome = function(game, a, k, w, outcome) {
     case 'wounded':
       Simulator._woundUser(game, a, k, w);
       return true;
+    case 'nothing':
+      Simulator._effectUser(game, a, k, w);
+      return false;
     default:
       return false;
   }

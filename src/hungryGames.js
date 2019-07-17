@@ -1803,7 +1803,6 @@ function HG() {
               if (err.message != 'No Perms') console.error(err);
             });
       } else {
-        game.currentGame.isPaused = false;
         game.createInterval(dayStateModified);
       }
       return;
@@ -1863,7 +1862,6 @@ function HG() {
         });
       }
       game.outputChannel = msg.channel.id;
-      game.currentGame.isPaused = false;
       setTimeout(() => {
         game.createInterval(dayStateModified);
       }, game.options.disableOutput ? 0 : game.options.delayEvents);

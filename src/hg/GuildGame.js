@@ -508,6 +508,7 @@ class GuildGame {
       throw new Error(
           'Attempted to register second listener for existing interval.');
     }
+    this.currentGame.isPaused = false;
     this._autoStep = true;
     this._stateUpdateCallback = cb;
     const delay = this.options.disableOutput ? 1 : this.options.delayEvents;
