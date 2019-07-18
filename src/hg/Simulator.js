@@ -451,13 +451,13 @@ Simulator._reviveUser = function(game, a, k, w) {
   Simulator._effectUser(game, a, k, w);
   a.state = a.state === 'normal' ? 'normal' : 'zombie';
   a.bleeding = 0;
+  game.currentGame.includedUsers.forEach((obj) => {
+    if (!obj.living && obj.rank < a.rank) obj.rank++;
+  });
   a.rank = 1;
   if (a.living) return;
   a.living = true;
   game.currentGame.numAlive++;
-  game.currentGame.includedUsers.forEach((obj) => {
-    if (!obj.living && obj.rank < a.rank) obj.rank++;
-  });
   if (game.options.teamSize > 0) {
     const team = game.currentGame.teams.find((obj) => {
       return obj.players.findIndex((obj) => {
