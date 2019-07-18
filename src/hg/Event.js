@@ -130,9 +130,6 @@ class Event {
      * @default
      */
     this.subMessage = '';
-
-    this.finalize = this.finalize.bind(this);
-    this.equal = this.equal.bind(this);
   }
 
   /**
