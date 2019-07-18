@@ -83,7 +83,7 @@ class StatGroup {
     this._fetchQueue = {};
     /**
      * @description Cache of Stats objects that are to be saved to file, and the
-     * Timeout until it will be saved. Prevents saving the same file multiple
+     * timeout until it will be saved. Prevents saving the same file multiple
      * times at once.
      * @private
      * @type {object.<{data: HungryGames~Stats, timeout: Timeout}>}

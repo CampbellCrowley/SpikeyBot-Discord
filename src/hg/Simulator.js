@@ -134,7 +134,7 @@ class Simulator {
 
 /**
  * @description Probability of each amount of people being chosen for an event.
- * Must total to 1.0
+ * Must total to 1.0.
  *
  * @private
  * @static

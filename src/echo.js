@@ -507,7 +507,7 @@ class Echo extends SubModule {
 
   /**
    * @description Remove url from username, and format to rules similar to
-   * Discord.
+   * discord.
    *
    * @private
    * @param {string} u The username.

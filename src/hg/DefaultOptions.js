@@ -145,7 +145,7 @@ class BooleanOption extends Option {
 class ObjectOption extends Option {
   /**
    * @description Stores any object. Shallow copies the object using
-   * Object.assign.
+   * object.assign.
    * @param {object} value Value of this option.
    * @param {?string} [comment=null] Comment/description for the user about this
    * option.

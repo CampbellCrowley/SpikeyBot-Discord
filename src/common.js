@@ -644,7 +644,7 @@ Common.prototype.deepFreeze = Common.deepFreeze;
 
 /**
  * @description Convert a string in camelcase to a human readable spaces format.
- * (helloWorld --> Hello World)
+ * (helloWorld --> Hello World).
  *
  * @private
  * @param {string} str The input.

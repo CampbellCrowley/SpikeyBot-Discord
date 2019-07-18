@@ -4,8 +4,7 @@
 require('./subModule.js').extend(DevCmds);  // Extends the SubModule class.
 
 /**
- * @classdesc Runs unsafe scripts for development purposes. DO NOT LOAD ON
- * RELEASE VERSIONS.
+ * @classdesc Runs unsafe scripts for development purposes.
  * @class
  * @augments SubModule
  * @listens Discord~Client#message

@@ -4,8 +4,8 @@ const fs = require('fs');
 require('./subModule.js').extend(Patreon);  // Extends the SubModule class.
 
 /**
- * @classdesc Modifies the SpikeyBot object with an interface for checking the
- * Patreon status of users.
+ * @classdesc Modifies the {@link SpikeyBot} object with an interface for
+ * checking the Patreon status of users.
  * @class
  * @augments SubModule
  * @listens Command#patreon

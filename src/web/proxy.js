@@ -76,7 +76,7 @@ function WebProxy() {
    * @typedef loginState
    *
    * @property {string} access_token The current token for api requests.
-   * @property {string} token_type The type of token. (Usually 'Bearer')
+   * @property {string} token_type The type of token (Usually 'Bearer').
    * @property {number} expires_in Number of seconds after the token is
    * authorized at which it becomes invalid.
    * @property {string} refresh_token Token used to refresh the expired

@@ -1081,8 +1081,8 @@ function HG() {
     };
   };
   /**
-   * @description Returns the object storing all default {@link
-   * HungryGames~Battle}s parsed from file.
+   * @description Returns the object storing all default
+   * {@link HungryGames~Battle}s parsed from file.
    *
    * @public
    * @returns {HungryGames~Battle[]} Array of all default battle events.
@@ -1091,8 +1091,8 @@ function HG() {
     return battles;
   };
   /**
-   * @description Returns the object storing all default {@link
-   * HungryGames~Weapon}s parsed from file.
+   * @description Returns the object storing all default
+   * {@link HungryGames~Weapon}s parsed from file.
    *
    * @public
    * @returns {HungryGames~Weapon[]} Array of all default weapons.
