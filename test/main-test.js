@@ -165,6 +165,7 @@ const hgTests = [
   new Test(
       'Reset Options command', '~hg reset options',
       ['<@422623712534200321>\n```\nReset HG\n```Resetting ALL options!']),
+  new Test('Enable bots', '~hg opt includeBots true', ['#noerr']),
   new Test('Exclude all players', '~hg exclude everyone', ['#noerr']),
   new Test(
       'Include a few players',
