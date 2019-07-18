@@ -193,6 +193,7 @@ class Echo extends SubModule {
    */
   _onMessage(msg) {
     if (!msg.guild || msg.author.bot) return;
+    if (!msg.content || msg.content.length === 0) return;
     const char = this._characters[msg.guild.id] &&
         this._characters[msg.guild.id][msg.channel.id] &&
         this._characters[msg.guild.id][msg.channel.id][msg.author.id];
@@ -211,6 +212,9 @@ class Echo extends SubModule {
             username: char.username,
             avatarURL: char.avatarURL,
             // files: msg.attachments.map((el) => el.url),
+          }).catch((err) => {
+            this.error('Failed to send webhook: ' + msg.channel.id);
+            console.error(err);
           });
           if (msg.channel.permissionsFor(msg.guild.me)
               .has(this.Discord.Permissions.FLAGS.MANAGE_MESSAGES)) {
