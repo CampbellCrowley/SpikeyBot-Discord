@@ -75,7 +75,7 @@ class Worker {
           numAlive++;
         }
       }
-      return !evt;
+      return player.living && !evt;
     });
     // Shuffle user order because games may have been rigged :thonk:.
     for (let i = 0; i < userPool.length; i++) {
