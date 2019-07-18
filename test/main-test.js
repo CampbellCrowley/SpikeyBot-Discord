@@ -165,6 +165,11 @@ const hgTests = [
   new Test(
       'Reset Options command', '~hg reset options',
       ['<@422623712534200321>\n```\nReset HG\n```Resetting ALL options!']),
+  new Test('Exclude all players', '~hg exclude everyone', ['#noerr']),
+  new Test(
+      'Include a few players',
+      '~hg include spikeybot-dev spikeyrobot robosoupcan spikeybot',
+      ['#noerr']),
   new Test(
       'Enable no output mode', '~hg opt disableOutput true',
       [
