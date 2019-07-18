@@ -50,8 +50,9 @@ class Worker {
     let numAlive = 0;
 
     const userPool = sim.game.currentGame.includedUsers.filter((player) => {
-      if (!player.living) return false;
-      startingAlive++;
+      if (player.living) startingAlive++;
+
+      player.simWeapons = Object.assign({}, player.weapons);
 
       let isV = false;
       const evt = sim.game.currentGame.day.events.find((el) => {
@@ -59,12 +60,20 @@ class Worker {
         if (icon) isV = icon.settings.victim;
         return icon;
       });
-      if (!evt) {
-        numAlive++;
-      } else if (isV && evt.victim.outcome !== 'dies') {
-        numAlive++;
-      } else if (!isV && evt.attacker.outcome !== 'dies') {
-        numAlive++;
+      if (player.living) {
+        if (!evt) {
+          numAlive++;
+        } else if (isV && evt.victim.outcome !== 'dies') {
+          numAlive++;
+        } else if (!isV && evt.attacker.outcome !== 'dies') {
+          numAlive++;
+        }
+      } else if (evt) {
+        if (isV && evt.victim.outcome === 'revived') {
+          numAlive++;
+        } else if (!isV && evt.attacker.outcome === 'revived') {
+          numAlive++;
+        }
       }
       return !evt;
     });
@@ -265,6 +274,11 @@ class Worker {
                 eventTry, userWithWeapon,
                 Grammar.formatMultiNames([userWithWeapon], nameFormat),
                 firstAttacker, chosenWeapon, weapons);
+
+            userWithWeapon.weapons[chosenWeapon] -= eventTry.consumes.count;
+            if (userWithWeapon.weapons[chosenWeapon] <= 0) {
+              delete userWithWeapon.weapons[chosenWeapon];
+            }
           }
         }
       }
@@ -272,7 +286,7 @@ class Worker {
       const doBattle = ((!useWeapon && !doArenaEvent) || !eventTry) &&
           userPool.length > 1 &&
           (Math.random() < sim.game.options.probabilityOfBattle ||
-           (sim.game.currentGame.numAlive == 2 && numAlive == 2)) &&
+           (startingAlive == 2 && numAlive == 2)) &&
           !Simulator._validateEventRequirements(
               1, 1, userPool, numAlive, teams, sim.game.options, true, false);
       if (doBattle) {
@@ -338,6 +352,12 @@ class Worker {
         sim.game.currentGame.day.events.push(
             Event.finalizeSimple(sim.messages.get('slaughter'), sim.game));
       }
+
+      const numRevived =
+          (eventTry.attacker.outcome === 'revived' ? eventTry.attacker.count :
+                                                     0) +
+          (eventTry.victim.outcome === 'revived' ? eventTry.victim.count : 0);
+      numAlive += numRevived;
     }
 
     if (doArenaEvent) {
@@ -351,7 +371,6 @@ class Worker {
           obj.living) {
         if (Math.random() < sim.game.options.probabilityOfBleedToDeath &&
             (sim.game.options.allowNoVictors || numAlive > 1)) {
-          numAlive--;
           usersBleeding.push(obj);
         } else {
           usersRecovered.push(obj);
@@ -365,6 +384,7 @@ class Worker {
               usersRecovered.length, 0, 'thrives', 'nothing', sim.game));
     }
     if (usersBleeding.length > 0) {
+      numAlive -= usersBleeding.length;
       sim.game.currentGame.day.events.push(
           Event.finalize(
               sim.messages.get('bleedOut'), usersBleeding, usersBleeding.length,
@@ -393,6 +413,10 @@ class Worker {
         const player =
             sim.game.currentGame.includedUsers.find((p) => p.id === icon.id);
         if (!player) return;
+        if (player.simWeapons) {
+          player.weapons = player.simWeapons;
+          delete player.simWeapons;
+        }
         affected.push(player);
         const isV = icon.settings.victim;
         const isA = icon.settings.attacker;
@@ -427,16 +451,17 @@ class Worker {
             }
           }
         }
-
-        if (player.state == 'wounded') {
-          player.bleeding++;
-        } else {
-          player.bleeding = 0;
-        }
       });
 
       evt.subMessage +=
           Simulator.formatWeaponCounts(evt, affected, weapons, nameFormat);
+    });
+    sim.game.currentGame.includedUsers.forEach((player) => {
+      if (player.state == 'wounded') {
+        player.bleeding++;
+      } else {
+        player.bleeding = 0;
+      }
     });
     // Apply Outcomes. \\
 

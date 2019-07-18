@@ -2199,6 +2199,7 @@ function HG() {
       self.warn(
           'Realtime alive count is incorrect! ' + current.numAlive + ' vs ' +
           numAlive);
+      current.numAlive = numAlive;
     }
 
     const finalMessage = new self.Discord.MessageEmbed();

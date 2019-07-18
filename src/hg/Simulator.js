@@ -380,10 +380,11 @@ Simulator._effectUser = function(game, affected, kills, weapon) {
  */
 Simulator._killUser = function(game, a, k, w) {
   Simulator._effectUser(game, a, k, w);
-  a.living = false;
   a.bleeding = 0;
   a.state = 'dead';
   a.weapons = {};
+  if (!a.living) return;
+  a.living = false;
   a.rank = game.currentGame.numAlive--;
   a.dayOfDeath = game.currentGame.day.num;
   if (game.options.teamSize > 0) {
@@ -448,6 +449,11 @@ Simulator._restoreUser = function(game, a, k, w) {
  */
 Simulator._reviveUser = function(game, a, k, w) {
   Simulator._effectUser(game, a, k, w);
+  a.state = a.state === 'normal' ? 'normal' : 'zombie';
+  a.bleeding = 0;
+  a.rank = 1;
+  if (a.living) return;
+  a.living = true;
   game.currentGame.numAlive++;
   game.currentGame.includedUsers.forEach((obj) => {
     if (!obj.living && obj.rank < a.rank) obj.rank++;
@@ -464,10 +470,6 @@ Simulator._reviveUser = function(game, a, k, w) {
     });
     team.rank = 1;
   }
-  a.state = 'zombie';
-  a.living = true;
-  a.bleeding = 0;
-  a.rank = 1;
 };
 
 /**
