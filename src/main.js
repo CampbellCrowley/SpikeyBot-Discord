@@ -1888,16 +1888,47 @@ function Main() {
    * @listens Command#flip
    */
   function commandFlip(msg) {
-    const rand = Math.round(Math.random());
-    let url = 'https://www.spikeybot.com/heads.png';
-    let text = 'Heads!';
-    if (rand) {
-      url = 'https://www.spikeybot.com/tails.png';
-      text = 'Tails!';
+    const match = msg.text.match(/\d+/);
+    if (!match) {
+      const rand = Math.round(Math.random());
+      let url = 'https://www.spikeybot.com/heads.png';
+      let text = 'Heads!';
+      if (rand) {
+        url = 'https://www.spikeybot.com/tails.png';
+        text = 'Tails!';
+      }
+      const embed = new self.Discord.MessageEmbed({title: text});
+      embed.setImage(url);
+      msg.channel.send(embed).catch(() => {
+        self.common.reply(
+            msg, 'Failed to send reply.',
+            'Am I able to embed images and links?');
+      });
+    } else {
+      const h = '🇭 ';
+      const t = '🇹 ';
+      const num = Math.min(500, match[0]);
+      let numH = 0;
+      const outList = [];
+      for (let i = 0; i < num; i++) {
+        const out = Math.random() > 0.5;
+        if (out) numH++;
+        outList.push(out ? h : t);
+      }
+      const p = numH / num;
+      const percent = Math.round(p * 10000) / 100;
+      const embed = new self.Discord.MessageEmbed();
+      embed.setTitle(`Flipped ${num} coins`);
+      embed.setColor([p * 255, 0, (1 - p) * 255]);
+      embed.setDescription(outList.join(''));
+      embed.setFooter(
+          `${percent}% Heads, ${numH} Heads, ${num-numH} Tails, ${num} Total`);
+      msg.channel.send(embed).catch(() => {
+        self.common.reply(
+            msg, 'Failed to send reply.',
+            'Am I able to embed images and links?');
+      });
     }
-    const embed = new self.Discord.MessageEmbed({title: text});
-    embed.setImage(url);
-    msg.channel.send(embed);
   }
   /**
    * Delete a given number of messages from a text channel.
@@ -2480,46 +2511,67 @@ function Main() {
           (numbers.length == 1 ? 'e' : 'ce'));
     }
 
-    if (allSame && numbers.length > 1) {
+    if (numbers.length > 1) {
+      let outList = [];
+      const sorted = outcomes.slice(0).sort();
+      const freq = [];
       let sum = 0;
-      let max = 0;
-      let min = outcomes[0];
-      const outList = outcomes.slice(0);
-      numbers.forEach((el, i) => {
-        sum += outcomes[i];
-        max = Math.max(max, outcomes[i]);
-        min = Math.min(min, outcomes[i]);
-      });
+      const max = sorted[sorted.length - 1];
+      const min = sorted[0];
+      if (allSame) {
+        outList = outcomes.slice(0);
+        numbers.forEach((el, i) => {
+          const num = outcomes[i];
+          if (!freq[num]) freq[num] = 0;
+          freq[num]++;
+          sum += num;
+        });
 
-      embed.setDescription(outList.join(', '));
-      if (outList.length > 3) {
-        embed.setFooter(
-            'Sum: ' + sum + ', Max: ' + max + ', Min: ' + min + ', Avg: ' +
-            (sum / outList.length));
-      } else {
-        embed.setFooter('Sum: ' + sum);
+        embed.setDescription(outList.join(', '));
+      } else if (!allSame) {
+        outList = numbers.map((el, i) => {
+          const num = outcomes[i];
+          if (!freq[num]) freq[num] = 0;
+          freq[num]++;
+          sum += num;
+          return `${el} --> ${outcomes[i]}`;
+        });
+
+        embed.setDescription(`{sides} --> {rolled}\n${outList.join('\n')}`);
       }
-    } else if (!allSame && numbers.length > 1) {
-      let sum = 0;
-      let max = 0;
-      let min = outcomes[0];
-      const outList = numbers.map((el, i) => {
-        sum += outcomes[i];
-        max = Math.max(max, outcomes[i]);
-        min = Math.min(min, outcomes[i]);
-        return el + ' --> ' + outcomes[i];
+      const maxFreq = freq.reduce((a, b, i) => {
+        if (a.count < b) return {num: i, count: b};
+        return a;
+      }, {count: 0, num: 0});
+      const modes = [];
+      freq.forEach((el, i) => {
+        if (el === maxFreq.count) modes.push(i);
       });
-
-      embed.setDescription('{sides} --> {rolled}\n' + outList.join('\n'));
+      let mode = null;
+      if (modes.length < 4 && modes.length < outList.length) {
+        mode = `${modes.join(', ')} (${maxFreq.count} times)`;
+      }
+      const mean = sum / outList.length;
+      const median = Math.round(
+          (sorted[Math.floor(sorted.length / 2)] +
+                          sorted[Math.floor(
+                              (sorted.length % 2 == 0 ? sorted.length :
+                                                        sorted.length - 1) /
+                              2)]) /
+                         2 * 10) /
+          10;
       if (outList.length > 3) {
+        const finalMode = mode ? `, Mode: ${mode}` : '';
         embed.setFooter(
-            'Sum: ' + sum + ', Max: ' + max + ', Min: ' + min + ', Avg: ' +
-            (sum / outList.length));
+            `Sum: ${sum}, Max: ${max}, Min: ${min}, ` +
+            `Mean: ${mean}, Median: ${median}${finalMode}`);
+      } else if (outList.length > 2) {
+        embed.setFooter(`Sum: ${sum}, Avg: ${mean}`);
       } else {
-        embed.setFooter('Sum: ' + sum);
+        embed.setFooter(`Sum: ${sum}`);
       }
     } else {
-      embed.setDescription('Rolled: ' + outcomes[0]);
+      embed.setDescription(`Rolled: ${outcomes[0]}`);
     }
 
     msg.channel.send(self.common.mention(msg), embed).catch((e) => {
