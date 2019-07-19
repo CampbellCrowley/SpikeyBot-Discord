@@ -364,46 +364,6 @@ class Worker {
       sim.game.currentGame.day.events.push(
           Event.finalizeSimple(sim.messages.get('eventEnd'), sim.game));
     }
-    const usersBleeding = [];
-    const usersRecovered = [];
-    sim.game.currentGame.includedUsers.forEach((obj) => {
-      if (obj.bleeding > 0 && obj.bleeding >= sim.game.options.bleedDays &&
-          obj.living) {
-        if (Math.random() < sim.game.options.probabilityOfBleedToDeath &&
-            (sim.game.options.allowNoVictors || numAlive > 1)) {
-          usersBleeding.push(obj);
-        } else {
-          usersRecovered.push(obj);
-        }
-      }
-    });
-    if (usersRecovered.length > 0) {
-      sim.game.currentGame.day.events.push(
-          Event.finalize(
-              sim.messages.get('patchWounds'), usersRecovered,
-              usersRecovered.length, 0, 'thrives', 'nothing', sim.game));
-    }
-    if (usersBleeding.length > 0) {
-      numAlive -= usersBleeding.length;
-      sim.game.currentGame.day.events.push(
-          Event.finalize(
-              sim.messages.get('bleedOut'), usersBleeding, usersBleeding.length,
-              0, 'dies', 'nothing', sim.game));
-    }
-
-    const deathPercentage = 1 - (numAlive / startingAlive);
-    if (deathPercentage > Simulator._lotsOfDeathRate) {
-      sim.game.currentGame.day.events.splice(
-          0, 0,
-          Event.finalizeSimple(sim.messages.get('lotsOfDeath'), sim.game));
-    } else if (deathPercentage === 0) {
-      sim.game.currentGame.day.events.push(
-          Event.finalizeSimple(sim.messages.get('noDeath'), sim.game));
-    } else if (deathPercentage < Simulator._littleDeathRate) {
-      sim.game.currentGame.day.events.splice(
-          0, 0,
-          Event.finalizeSimple(sim.messages.get('littleDeath'), sim.game));
-    }
 
     // Apply outcomes.
     sim.game.currentGame.day.events.forEach((evt) => {
@@ -456,6 +416,8 @@ class Worker {
       evt.subMessage +=
           Simulator.formatWeaponCounts(evt, affected, weapons, nameFormat);
     });
+
+    // Bleeding
     sim.game.currentGame.includedUsers.forEach((player) => {
       if (player.state == 'wounded') {
         player.bleeding++;
@@ -463,7 +425,55 @@ class Worker {
         player.bleeding = 0;
       }
     });
-    // Apply Outcomes. \\
+
+    // Finish bleeding
+    const usersBleeding = [];
+    const usersRecovered = [];
+    sim.game.currentGame.includedUsers.forEach((obj) => {
+      if (obj.bleeding > 0 && obj.bleeding > sim.game.options.bleedDays &&
+          obj.living) {
+        if (Math.random() < sim.game.options.probabilityOfBleedToDeath &&
+            (sim.game.options.allowNoVictors || numAlive > 1)) {
+          usersBleeding.push(obj);
+        } else {
+          usersRecovered.push(obj);
+        }
+      }
+    });
+    if (usersRecovered.length > 0) {
+      sim.game.currentGame.day.events.push(
+          Event.finalize(
+              sim.messages.get('patchWounds'), usersRecovered,
+              usersRecovered.length, 0, 'thrives', 'nothing', sim.game));
+      usersRecovered.forEach((player) => {
+        Simulator._applyOutcome(sim.game, player, 0, null, 'thrives');
+      });
+    }
+    if (usersBleeding.length > 0) {
+      numAlive -= usersBleeding.length;
+      sim.game.currentGame.day.events.push(
+          Event.finalize(
+              sim.messages.get('bleedOut'), usersBleeding, usersBleeding.length,
+              0, 'dies', 'nothing', sim.game));
+      usersBleeding.forEach((player) => {
+        Simulator._applyOutcome(sim.game, player, 0, null, 'dies');
+      });
+    }
+
+    // Additional messages
+    const deathPercentage = 1 - (numAlive / startingAlive);
+    if (deathPercentage > Simulator._lotsOfDeathRate) {
+      sim.game.currentGame.day.events.splice(
+          0, 0,
+          Event.finalizeSimple(sim.messages.get('lotsOfDeath'), sim.game));
+    } else if (deathPercentage === 0) {
+      sim.game.currentGame.day.events.push(
+          Event.finalizeSimple(sim.messages.get('noDeath'), sim.game));
+    } else if (deathPercentage < Simulator._littleDeathRate) {
+      sim.game.currentGame.day.events.splice(
+          0, 0,
+          Event.finalizeSimple(sim.messages.get('littleDeath'), sim.game));
+    }
 
     sim.game.currentGame.day.state = 2;
     sim.game.currentGame.nextDay =
