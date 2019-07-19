@@ -376,7 +376,7 @@ a command to be run.</div>
 		<ul class="dummy">
 			<li>
 				<a href="cmdScheduling.js.html">cmdScheduling.js</a>,
-				 <a href="cmdScheduling.js.html#sunlight-1-line-856">line 856</a>
+				 <a href="cmdScheduling.js.html#sunlight-1-line-858">line 858</a>
 			</li>
 		</ul>
 	</dd>
@@ -1545,7 +1545,7 @@ before begin(), otherwise it is ignored.
 		<ul class="dummy">
 			<li>
 				<a href="cmdScheduling.js.html">cmdScheduling.js</a>,
-				 <a href="cmdScheduling.js.html#sunlight-1-line-575">line 575</a>
+				 <a href="cmdScheduling.js.html#sunlight-1-line-577">line 577</a>
 			</li>
 		</ul>
 	</dd>
@@ -3191,7 +3191,7 @@ specific to the subModule. Must be defined before begin() is called.
 		<ul class="dummy">
 			<li>
 				<a href="cmdScheduling.js.html">cmdScheduling.js</a>,
-				 <a href="cmdScheduling.js.html#sunlight-1-line-972">line 972</a>
+				 <a href="cmdScheduling.js.html#sunlight-1-line-974">line 974</a>
 			</li>
 		</ul>
 	</dd>
@@ -3506,7 +3506,7 @@ all.</td>
 		<ul class="dummy">
 			<li>
 				<a href="cmdScheduling.js.html">cmdScheduling.js</a>,
-				 <a href="cmdScheduling.js.html#sunlight-1-line-988">line 988</a>
+				 <a href="cmdScheduling.js.html#sunlight-1-line-990">line 990</a>
 			</li>
 		</ul>
 	</dd>
@@ -4197,7 +4197,7 @@ run.
 		<ul class="dummy">
 			<li>
 				<a href="cmdScheduling.js.html">cmdScheduling.js</a>,
-				 <a href="cmdScheduling.js.html#sunlight-1-line-865">line 865</a>
+				 <a href="cmdScheduling.js.html#sunlight-1-line-867">line 867</a>
 			</li>
 		</ul>
 	</dd>
@@ -4365,7 +4365,7 @@ run.
 		<ul class="dummy">
 			<li>
 				<a href="cmdScheduling.js.html">cmdScheduling.js</a>,
-				 <a href="cmdScheduling.js.html#sunlight-1-line-834">line 834</a>
+				 <a href="cmdScheduling.js.html#sunlight-1-line-836">line 836</a>
 			</li>
 		</ul>
 	</dd>
@@ -4534,7 +4534,7 @@ commands.
 		<ul class="dummy">
 			<li>
 				<a href="cmdScheduling.js.html">cmdScheduling.js</a>,
-				 <a href="cmdScheduling.js.html#sunlight-1-line-586">line 586</a>
+				 <a href="cmdScheduling.js.html#sunlight-1-line-588">line 588</a>
 			</li>
 		</ul>
 	</dd>
@@ -4721,7 +4721,7 @@ commands.
 		<ul class="dummy">
 			<li>
 				<a href="cmdScheduling.js.html">cmdScheduling.js</a>,
-				 <a href="cmdScheduling.js.html#sunlight-1-line-1009">line 1009</a>
+				 <a href="cmdScheduling.js.html#sunlight-1-line-1011">line 1011</a>
 			</li>
 		</ul>
 	</dd>
@@ -4859,7 +4859,7 @@ commands.
 		<ul class="dummy">
 			<li>
 				<a href="cmdScheduling.js.html">cmdScheduling.js</a>,
-				 <a href="cmdScheduling.js.html#sunlight-1-line-931">line 931</a>
+				 <a href="cmdScheduling.js.html#sunlight-1-line-933">line 933</a>
 			</li>
 		</ul>
 	</dd>
@@ -5024,7 +5024,7 @@ commands.
 		<ul class="dummy">
 			<li>
 				<a href="cmdScheduling.js.html">cmdScheduling.js</a>,
-				 <a href="cmdScheduling.js.html#sunlight-1-line-774">line 774</a>
+				 <a href="cmdScheduling.js.html#sunlight-1-line-776">line 776</a>
 			</li>
 		</ul>
 	</dd>
@@ -5262,7 +5262,7 @@ of ScheduledCommands.
 		<ul class="dummy">
 			<li>
 				<a href="cmdScheduling.js.html">cmdScheduling.js</a>,
-				 <a href="cmdScheduling.js.html#sunlight-1-line-1040">line 1040</a>
+				 <a href="cmdScheduling.js.html#sunlight-1-line-1042">line 1042</a>
 			</li>
 		</ul>
 	</dd>
@@ -5319,7 +5319,7 @@ of ScheduledCommands.
             
 <hr>
 <dt>
-    <h4 class="name" id="~registerScheduledCommand"><span class="type-signature">&lt;private, inner> </span>registerScheduledCommand(sCmd)</h4>
+    <h4 class="name" id="~registerScheduledCommand"><span class="type-signature">&lt;private, inner> </span>registerScheduledCommand(sCmd [, gId])</h4>
     
     
 </dt>
@@ -5350,6 +5350,8 @@ of ScheduledCommands.
         <th>Type</th>
 
         
+        <th>Argument</th>
+        
 
         
 
@@ -5376,11 +5378,54 @@ of ScheduledCommands.
             </td>
 
             
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
 
             
 
             <td class="description last">The ScheduledCommand object to
 register.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>gId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Guild ID if message has not yet been found, or to
+override the ID found in the given object.</td>
         </tr>
 
     
@@ -5425,7 +5470,7 @@ register.</td>
 		<ul class="dummy">
 			<li>
 				<a href="cmdScheduling.js.html">cmdScheduling.js</a>,
-				 <a href="cmdScheduling.js.html#sunlight-1-line-553">line 553</a>
+				 <a href="cmdScheduling.js.html#sunlight-1-line-555">line 555</a>
 			</li>
 		</ul>
 	</dd>
@@ -5594,7 +5639,7 @@ with the list of commands.
 		<ul class="dummy">
 			<li>
 				<a href="cmdScheduling.js.html">cmdScheduling.js</a>,
-				 <a href="cmdScheduling.js.html#sunlight-1-line-791">line 791</a>
+				 <a href="cmdScheduling.js.html#sunlight-1-line-793">line 793</a>
 			</li>
 		</ul>
 	</dd>
@@ -5682,7 +5727,7 @@ with the list of commands.
 		<ul class="dummy">
 			<li>
 				<a href="cmdScheduling.js.html">cmdScheduling.js</a>,
-				 <a href="cmdScheduling.js.html#sunlight-1-line-901">line 901</a>
+				 <a href="cmdScheduling.js.html#sunlight-1-line-903">line 903</a>
 			</li>
 		</ul>
 	</dd>
@@ -5823,7 +5868,7 @@ with the list of commands.
 		<ul class="dummy">
 			<li>
 				<a href="cmdScheduling.js.html">cmdScheduling.js</a>,
-				 <a href="cmdScheduling.js.html#sunlight-1-line-674">line 674</a>
+				 <a href="cmdScheduling.js.html#sunlight-1-line-676">line 676</a>
 			</li>
 		</ul>
 	</dd>
@@ -5962,7 +6007,7 @@ can be on most common time units up to a week.
 		<ul class="dummy">
 			<li>
 				<a href="cmdScheduling.js.html">cmdScheduling.js</a>,
-				 <a href="cmdScheduling.js.html#sunlight-1-line-708">line 708</a>
+				 <a href="cmdScheduling.js.html#sunlight-1-line-710">line 710</a>
 			</li>
 		</ul>
 	</dd>
@@ -6302,7 +6347,7 @@ can be on most common time units up to a week.
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a>
 	
-		on Thursday, July 18, 2019 5:20 PM (-07:00)
+		on Thursday, July 18, 2019 6:36 PM (-07:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

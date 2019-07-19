@@ -58,7 +58,7 @@ function CmdScheduling() {
                 parsed[i].time += parsed[i].repeatDelay;
               }
             }
-            registerScheduledCommand(new ScheduledCommand(parsed[i]));
+            registerScheduledCommand(new ScheduledCommand(parsed[i]), g.id);
           }
         } catch (err) {
           self.error('Failed to parse data for guild commands: ' + g.id);
@@ -547,11 +547,13 @@ function CmdScheduling() {
    *
    * @param {CmdScheduling.ScheduledCommand} sCmd The ScheduledCommand object to
    * register.
+   * @param {string} [gId] Guild ID if message has not yet been found, or to
+   * override the ID found in the given object.
    * @returns {boolean} True if succeeded, False if too close to existing
    * command.
    */
-  function registerScheduledCommand(sCmd) {
-    const gId = sCmd.message.guild.id;
+  function registerScheduledCommand(sCmd, gId) {
+    if (!gId) gId = sCmd.message.guild.id;
     if (!schedules[gId]) {
       schedules[gId] = [sCmd];
     } else {
