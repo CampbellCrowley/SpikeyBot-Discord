@@ -90,12 +90,12 @@ Battle._fistBoth = './img/fist_both.png';
  */
 Battle.finalize = function(
     affectedUsers, numVictim, numAttacker, mention, game, battles) {
-  const useNicknames = game.options.useNicknames == 'all';
+  const useNicknames = game.options.useNicknames;
   const outcomeMessage =
       battles.outcomes[Math.floor(Math.random() * battles.outcomes.length)];
   const finalEvent = Event.finalize(
-      outcomeMessage, affectedUsers.slice(0), numVictim, numAttacker, 'dies',
-      'nothing', game);
+      outcomeMessage, affectedUsers, numVictim, numAttacker, 'dies', 'nothing',
+      game);
   finalEvent.attacker.killer = true;
   finalEvent.battle = true;
   finalEvent.state = 0;
@@ -112,20 +112,16 @@ Battle.finalize = function(
   const battleString = '**A battle has broken out!**';
   let healthText =
       affectedUsers
-          .map(function(obj, index) {
-            return '`' +
-                (useNicknames ? (obj.nickname || obj.name) : obj.name) + '`: ' +
-                Math.max((maxHealth - userHealth[index]), 0) + 'HP';
-          })
-          .sort(function(a, b) {
-            return a.id - b.id;
-          })
+          .map(
+              (obj, index) => '`' +
+                  (useNicknames ? (obj.nickname || obj.name) : obj.name) +
+                  '`: ' + Math.max((maxHealth - userHealth[index]), 0) + 'HP')
+          .sort((a, b) => a.id - b.id)
           .join(', ');
   finalEvent.attacks.push(
       Event.finalize(
-          battleString + '\n' + startMessage + '\n' + healthText,
-          affectedUsers.slice(0), numVictim, numAttacker, 'nothing', 'nothing',
-          game));
+          `${battleString}\n${startMessage}\n${healthText}`, affectedUsers,
+          numVictim, numAttacker, 'nothing', 'nothing', game));
 
   let loop = 0;
   do {
@@ -138,7 +134,7 @@ Battle.finalize = function(
     const attackerEventDamage = eventTry.attacker.damage * 1;
     const victimEventDamage = eventTry.victim.damage * 1;
 
-    const flipRoles = Math.random() > 0.5;
+    const flipRoles = Math.random() > 0.6;
     const attackerIndex = Math.floor(Math.random() * numAttacker) + numVictim;
 
     if (loop == 999) {
@@ -193,16 +189,14 @@ Battle.finalize = function(
 
     healthText =
         affectedUsers
-            .map(function(obj, index) {
+            .map((obj, index) => {
               const health = Math.max((maxHealth - userHealth[index]), 0);
               const prePost = health === 0 ? '~~' : '';
               return prePost + '`' +
                   (useNicknames ? (obj.nickname || obj.name) : obj.name) +
                   '`: ' + health + 'HP' + prePost;
             })
-            .sort(function(a, b) {
-              return a.id - b.id;
-            })
+            .sort((a, b) => a.id - b.id)
             .join(', ');
     let messageText = eventTry.message;
     if (duplicateCount > 0) {

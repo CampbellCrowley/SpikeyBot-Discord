@@ -74,17 +74,17 @@ UserIconUrl.fetchSize = 128;
 UserIconUrl.from = function(victims, attackers) {
   if (!Array.isArray(victims)) victims = [victims];
   let out = victims.map((obj) => {
-    if (!obj.settings) obj.settings = {};
+    obj.settings = Object.assign({}, obj.settings);
     obj.settings.victim = true;
-    obj.settings.attacker = false;
+    delete obj.settings.attacker;
     return new UserIconUrl(obj.avatarURL, obj.id, obj.settings);
   });
   if (attackers) {
-    if (!Array.isArray(victims)) victims = [victims];
+    if (!Array.isArray(attackers)) attackers = [attackers];
     out = out.concat(attackers.map((obj) => {
-      if (!obj.settings) obj.settings = {};
+      obj.settings = Object.assign({}, obj.settings);
       obj.settings.attacker = true;
-      obj.settings.victim = false;
+      delete obj.settings.victim;
       return new UserIconUrl(obj.avatarURL, obj.id, obj.settings);
     }));
   }
