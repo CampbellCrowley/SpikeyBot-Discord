@@ -583,6 +583,23 @@ class GuildGame {
             data.customEvents.battle.outcomes || [];
       }
     }
+    if (data.disabledEvents) {
+      if (Array.isArray(data.disabledEvents.bloodbath)) {
+        game.disabledEvents.bloodbath = data.disabledEvents.bloodbath;
+      }
+      if (Array.isArray(data.disabledEvents.player)) {
+        game.disabledEvents.player = data.disabledEvents.player;
+      }
+      if (data.disabledEvents.arena) {
+        game.disabledEvents.arena = data.disabledEvents.arena;
+      }
+      if (data.disabledEvents.weapon) {
+        game.disabledEvents.weapon = data.disabledEvents.weapon;
+      }
+      if (data.disabledEvents.battle) {
+        game.disabledEvents.battle = data.disabledEvents.battle;
+      }
+    }
 
     game.channel = data.channel || null;
     game.author = data.author || null;
