@@ -1,7 +1,6 @@
 // Copyright 2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const fs = require('fs');
-const mkdirp = require('mkdirp');
 const SubModule = require('./subModule.js');
 
 /**
@@ -122,66 +121,11 @@ class Echo extends SubModule {
       const dir = `${this.common.guildSaveDir}${obj[0]}/`;
       const filename = `${dir}characters.json`;
       if (opt == 'async') {
-        this._mkAndWrite(filename, dir, JSON.stringify(obj[1]));
+        this.common.mkAndWrite(filename, dir, JSON.stringify(obj[1]));
       } else {
-        this._mkAndWriteSync(filename, dir, JSON.stringify(obj[1]));
+        this.common.mkAndWriteSync(filename, dir, JSON.stringify(obj[1]));
       }
     });
-  }
-
-  /**
-   * Write data to a file and make sure the directory exists or create it if it
-   * doesn't. Async.
-   *
-   * @see {@link Echo~_mkAndWriteSync}
-   *
-   * @private
-   * @param {string} filename The name of the file including the directory.
-   * @param {string} dir The directory path without the file's name.
-   * @param {string} data The data to write to the file.
-   */
-  _mkAndWrite(filename, dir, data) {
-    mkdirp(dir, (err) => {
-      if (err) {
-        this.error('Failed to make directory: ' + dir);
-        console.error(err);
-        return;
-      }
-      fs.writeFile(filename, data, (err2) => {
-        if (err2) {
-          this.error('Failed to save echos: ' + filename);
-          console.error(err2);
-          return;
-        }
-      });
-    });
-  }
-  /**
-   * Write data to a file and make sure the directory exists or create it if it
-   * doesn't. Synchronous.
-   *
-   * @see {@link Echo~_mkAndWrite}
-   *
-   * @private
-   * @param {string} filename The name of the file including the directory.
-   * @param {string} dir The directory path without the file's name.
-   * @param {string} data The data to write to the file.
-   */
-  _mkAndWriteSync(filename, dir, data) {
-    try {
-      mkdirp.sync(dir);
-    } catch (err) {
-      this.error('Failed to make directory: ' + dir);
-      console.error(err);
-      return;
-    }
-    try {
-      fs.writeFileSync(filename, data);
-    } catch (err) {
-      this.error('Failed to save echos: ' + filename);
-      console.error(err);
-      return;
-    }
   }
 
   /**
