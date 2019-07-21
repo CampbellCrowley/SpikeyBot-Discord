@@ -218,10 +218,11 @@ function Main() {
    */
   const introduction = '\nHello! My name is {username}.\nI was created by ' +
       'SpikeyRobot#0971, so if you wish to add any features, feel free to DM ' +
-      'him! (Tip: Use **{prefix}dmspikey**)\n\nThe prefix for commands can ' +
-      'be changed with `{prefix}changeprefix`.\nIf you\'d like to know what ' +
-      'I can do, type **{prefix}help** in a PM to me and I\'ll let you know!' +
-      '\nThe help is also available on my web page: https://www.spikeybot.com/';
+      'him! (Tip: **{prefix}dmspikey** does this)\n\nThe prefix for commands ' +
+      'can be changed with `{prefix}changeprefix`.\nIf you\'d like to know ' +
+      'what I can do, type **{prefix}help** in a PM to me and I\'ll let you ' +
+      'know!\nThe help is also available on my web page: ' +
+      'https://www.spikeybot.com/';
   /**
    * The message sent to the channel where the user asked to be DM'd, but we
    * were unable to deliver the DM.
@@ -468,7 +469,7 @@ function Main() {
         helpObject.description.replaceAll('{prefix}', self.bot.getPrefix()));
     helpObject.sections.forEach(function(obj) {
       const titleID = encodeURIComponent(obj.title.replace(/\s/g, '_'));
-      const titleURL = '[web](' + self.common.webHelp + '#' + titleID + ')';
+      const titleURL = `${self.common.webHelp}#${titleID} `;
       tmpHelp.addField(
           obj.title, titleURL + '```js\n' +
               obj.rows
@@ -506,7 +507,7 @@ function Main() {
             '{prefix}', self.bot.getPrefix()));
     adminHelpObject.sections.forEach(function(obj) {
       const titleID = encodeURIComponent(obj.title.replace(/\s/g, '_'));
-      const titleURL = '[web](' + self.common.webHelp + '#' + titleID + ')';
+      const titleURL = `${self.common.webHelp}#${titleID} `;
       tmpAdminHelp.addField(
           obj.title, titleURL + '```js\n' +
               obj.rows

@@ -240,7 +240,7 @@ function Music() {
         helpObject.description.replaceAll('{prefix}', self.bot.getPrefix()));
     helpObject.sections.forEach(function(obj) {
       const titleID = encodeURIComponent(obj.title.replace(/\s/g, '_'));
-      const titleURL = '[web](' + self.common.webHelp + '#' + titleID + ')';
+      const titleURL = `${self.common.webHelp}#${titleID} `;
       tmpHelp.addField(
           obj.title, titleURL + '```js\n' +
               obj.rows

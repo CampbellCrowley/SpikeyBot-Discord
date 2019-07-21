@@ -467,8 +467,8 @@ function HG() {
         encodeURIComponent(helpObject.title.replace(/\s/g, '_')));
     helpObject.sections.forEach(function(obj) {
       const titleID =
-          encodeURIComponent(self.postPrefix + obj.title.replace(/\s/g, '_'));
-      const titleURL = '[web](' + self.common.webHelp + '#' + titleID + ')';
+          encodeURIComponent((self.postPrefix + obj.title).replace(/\s/g, '_'));
+      const titleURL = `${self.common.webHelp}#${titleID} `;
       tmpHelp.addField(
           obj.title, titleURL + '```js\n' +
               obj.rows
