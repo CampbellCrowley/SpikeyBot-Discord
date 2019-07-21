@@ -282,6 +282,29 @@
           ]
         },
         {
+          "command": "allowbot",
+          "description": "Toggle allowing bots to run commands. Be careful with this command.",
+          "aliases": "allowbot, allowbots, enablebot, enablebots, togglebot, togglebots, denybot, debybots, disablebot, disablebots",
+          "validOnlyInGuild": true,
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "togglebots",
+              "result": "Toggle whether SpikeyBot will listen to other bot's commands. Enabling this feature can be dangerous. Only enable this if you are absolutely sure this will not cause a feedback loop."
+            },
+            {
+              "description": "Force Enabled",
+              "command": "allowbots true",
+              "result": "Allow SpikeyBot to listen to other bot's commands. Enabling this feature can be dangerous. Only enable this if you are absolutely sure this will not cause a feedback loop."
+            },
+            {
+              "description": "Force Disable",
+              "command": "allowbots false",
+              "result": "Deny SpikeyBot to listen to other bot's commands."
+            }
+          ]
+        },
+        {
           "command": "show",
           "description": "Show all current enabled and disabled command settings.",
           "aliases": "show, enabled, disabled, showenabled, showdisabled, settings, permissions",

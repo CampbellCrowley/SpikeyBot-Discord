@@ -45,11 +45,13 @@
     "./modLog.js",
     "./raidBlock.js",
     "./web/proxy.js",
-    "./pets.js"
+    "./pets.js",
+    "./botCommands.js"
   ],
   "release": [
     "./moderation.js",
     "./modLog.js",
+    "./raidBlock.js",
     "./main.js",
     "./hungryGames.js",
     "./ticTacToe.js",
@@ -65,7 +67,7 @@
     "./define.js",
     "./echo.js",
     "./roleColors.js",
-    "./raidBlock.js",
+    "./botCommands.js",
     "./web/hg.js",
     "./web/webhooks.js",
     "./web/account.js",

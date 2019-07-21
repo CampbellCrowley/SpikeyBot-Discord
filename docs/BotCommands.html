@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>SpikeyBot-Discord Class: WebProxy</title>
+	<title>SpikeyBot-Discord Class: BotCommands</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -86,16 +86,14 @@
 		<div id="main">
 			
 
-	<h1 class="page-title">Class: WebProxy</h1>
+	<h1 class="page-title">Class: BotCommands</h1>
 <section>
 
 <header>
     
         <h2>
-        WebProxy
+        BotCommands
         </h2>
-        
-            <div class="class-description">Proxy for account authentication.</div>
         
     
 </header>
@@ -107,12 +105,16 @@
         
 <hr>
 <dt>
-    <h4 class="name" id="WebProxy"><span class="type-signature"></span>new WebProxy()</h4>
+    <h4 class="name" id="BotCommands"><span class="type-signature"></span>new BotCommands()</h4>
     
     
 </dt>
 <dd>
 
+    
+    <div class="description">
+        SubModule providing external bot command interface.
+    </div>
     
 
     
@@ -157,8 +159,8 @@
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="web_proxy.js.html">web/proxy.js</a>,
-				 <a href="web_proxy.js.html#sunlight-1-line-22">line 22</a>
+				<a href="botCommands.js.html">botCommands.js</a>,
+				 <a href="botCommands.js.html#sunlight-1-line-16">line 16</a>
 			</li>
 		</ul>
 	</dd>
@@ -176,6 +178,13 @@
 
     
 
+    
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>external:Discord~Client#event:message</li>
+    
+        <li>Command#event:togglebot</li>
+    </ul>
     
 
     
@@ -215,6 +224,438 @@
         <h3 class="subsection-title">Members</h3>
 
         <dl>
+            
+<hr>
+<dt class="name" id="_cooldownLength">
+    <h4 id="_cooldownLength"><span class="type-signature">&lt;private, constant> </span>_cooldownLength<span class="type-signature"> :number</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Amount of time in milliseconds to ignore all bot commands
+after exceeding the rate limit.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">number</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="botCommands.js.html">botCommands.js</a>,
+				 <a href="botCommands.js.html#sunlight-1-line-58">line 58</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="_filename">
+    <h4 id="_filename"><span class="type-signature">&lt;private, constant> </span>_filename<span class="type-signature"> :string</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The name of the file to check for if bot commands are
+enabled.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">string</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>/enableBotCommands</li>
+		</ul>
+	</dd>
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="botCommands.js.html">botCommands.js</a>,
+				 <a href="botCommands.js.html#sunlight-1-line-29">line 29</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="_maxDelta">
+    <h4 id="_maxDelta"><span class="type-signature">&lt;private, constant> </span>_maxDelta<span class="type-signature"> :number</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Amount of time in milliseconds where a maximum of
+BotCommands~_maxNum commands may be triggered before cooldown is
+started.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">number</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="botCommands.js.html">botCommands.js</a>,
+				 <a href="botCommands.js.html#sunlight-1-line-49">line 49</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="_maxNum">
+    <h4 id="_maxNum"><span class="type-signature">&lt;private, constant> </span>_maxNum<span class="type-signature"> :number</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Maximum number of commands that can be triggered this way
+per BotCommands~_maxDelta.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">number</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>5</li>
+		</ul>
+	</dd>
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="botCommands.js.html">botCommands.js</a>,
+				 <a href="botCommands.js.html#sunlight-1-line-39">line 39</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="_recentCommands">
+    <h4 id="_recentCommands"><span class="type-signature">&lt;private> </span>_recentCommands<span class="type-signature"> :object.&lt;{history: Array.&lt;{author: string, time: number}>, cooldownStart: number}></span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        History of last few commands triggered per-guild. Used to
+put command triggering on cooldown if rate limits are exceeded.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">object.&lt;{history: Array.&lt;{author: string, time: number}>, cooldownStart: number}></span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>{}</li>
+		</ul>
+	</dd>
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="botCommands.js.html">botCommands.js</a>,
+				 <a href="botCommands.js.html#sunlight-1-line-70">line 70</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
             
 <hr>
 <dt class="name" id="bot">
@@ -262,6 +703,11 @@ autocompletion, updates to current reference at init.
 	</dd>
 	
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#bot">SubModule#bot</a>
+    </li></ul></dd>
     
 
     
@@ -353,6 +799,11 @@ autocompletion, updates to current reference at init.
 	</dd>
 	
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#client">SubModule#client</a>
+    </li></ul></dd>
     
 
     
@@ -446,6 +897,11 @@ init.
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#command">SubModule#command</a>
+    </li></ul></dd>
+    
 
     
 
@@ -536,6 +992,11 @@ version of this submodule.
 	</dd>
 	
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#commit">SubModule#commit</a>
+    </li></ul></dd>
     
 
     
@@ -628,6 +1089,11 @@ autocompletion, updates to current reference at init.
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#common">SubModule#common</a>
+    </li></ul></dd>
+    
 
     
 
@@ -718,6 +1184,11 @@ value for editor autocompletion, updates to current reference at init.
 	</dd>
 	
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#Discord">SubModule#Discord</a>
+    </li></ul></dd>
     
 
     
@@ -815,6 +1286,11 @@ value for editor autocompletion, updates to current reference at init.
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#helpMessage">SubModule#helpMessage</a>
+    </li></ul></dd>
+    
 
     
 
@@ -904,6 +1380,11 @@ value for editor autocompletion, updates to current reference at init.
 	</dd>
 	
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#initialized">SubModule#initialized</a>
+    </li></ul></dd>
     
 
     
@@ -996,6 +1477,11 @@ needs to be reloaded because the file has been modified since loading.
 	</dd>
 	
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#loadTime">SubModule#loadTime</a>
+    </li></ul></dd>
     
 
     
@@ -1185,6 +1671,11 @@ before begin(), otherwise it is ignored.
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#postPrefix">SubModule#postPrefix</a>
+    </li></ul></dd>
+    
 
     
 
@@ -1227,598 +1718,6 @@ before begin(), otherwise it is ignored.
     
 </dd>
 
-        
-            
-<hr>
-<dt class="name" id="~apiHost">
-    <h4 id="~apiHost"><span class="type-signature">&lt;private, inner, constant> </span>apiHost<span class="type-signature"> :Object</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        The url to send a request to the discord api.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">Object</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
-	<dd class="tag-default">
-		<ul class="dummy">
-			<li>{"protocol":"https:","host":"discordapp.com","path":"/api","method":"GET","headers":""}</li>
-		</ul>
-	</dd>
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="web_proxy.js.html">web/proxy.js</a>,
-				 <a href="web_proxy.js.html#sunlight-1-line-54">line 54</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="~loginInfo">
-    <h4 id="~loginInfo"><span class="type-signature">&lt;private, inner> </span>loginInfo<span class="type-signature"> :object.&lt;<a href="global.html#loginState">loginState</a>></span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        Stores the tokens and associated data for all clients connected while data
-is valid. Mapped by session id.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">object.&lt;<a href="global.html#loginState">loginState</a>></span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="web_proxy.js.html">web/proxy.js</a>,
-				 <a href="web_proxy.js.html#sunlight-1-line-102">line 102</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="~rateLimitFile">
-    <h4 id="~rateLimitFile"><span class="type-signature">&lt;private, inner, constant> </span>rateLimitFile<span class="type-signature"> :string</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        File storing website rate limit specifications.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">string</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="web_proxy.js.html">web/proxy.js</a>,
-				 <a href="web_proxy.js.html#sunlight-1-line-120">line 120</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="~rateLimits">
-    <h4 id="~rateLimits"><span class="type-signature">&lt;private, inner> </span>rateLimits<span class="type-signature"> :object</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        Object storing parsed rate limit info from rateLimitFile.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">object</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
-	<dd class="tag-default">
-		<ul class="dummy">
-			<li>{"commands":"","groups":"","global":""}</li>
-		</ul>
-	</dd>
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="web_proxy.js.html">web/proxy.js</a>,
-				 <a href="web_proxy.js.html#sunlight-1-line-129">line 129</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="~reqCache">
-    <h4 id="~reqCache"><span class="type-signature">&lt;private, inner, constant> </span>reqCache<span class="type-signature"> :object.&lt;Array.&lt;function()>></span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        Cache of requests to the Discord API to reduce duplicate calls and reduce
-rate limiting. Mapped by user ID and request path. If user ID is unknown,
-requests are not cached.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">object.&lt;Array.&lt;function()>></span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="web_proxy.js.html">web/proxy.js</a>,
-				 <a href="web_proxy.js.html#sunlight-1-line-112">line 112</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="~sockets">
-    <h4 id="~sockets"><span class="type-signature">&lt;private, inner, constant> </span>sockets<span class="type-signature"> :object.&lt;Socket></span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        Map of all currently connected sockets.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">object.&lt;Socket></span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="web_proxy.js.html">web/proxy.js</a>,
-				 <a href="web_proxy.js.html#sunlight-1-line-289">line 289</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="~tokenHost">
-    <h4 id="~tokenHost"><span class="type-signature">&lt;private, inner, constant> </span>tokenHost<span class="type-signature"> :Object</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        The url to send a received `code` to via `POST` to receive a user's
-tokens.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">Object</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
-	<dd class="tag-default">
-		<ul class="dummy">
-			<li>{"protocol":"https:","host":"discordapp.com","path":"/api/oauth2/token","method":"POST","headers":""}</li>
-		</ul>
-	</dd>
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="web_proxy.js.html">web/proxy.js</a>,
-				 <a href="web_proxy.js.html#sunlight-1-line-37">line 37</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
         </dl>
     
 
@@ -1826,6 +1725,292 @@ tokens.
         <h3 class="subsection-title">Methods</h3>
 
         <dl>
+            
+<hr>
+<dt>
+    <h4 class="name" id="_commandToggleBotCmds"><span class="type-signature">&lt;private> </span>_commandToggleBotCmds(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Toggle whether bots are able to run commands on this guild.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>msg</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Discord~Message</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Message that triggered command.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="botCommands.js.html">botCommands.js</a>,
+				 <a href="botCommands.js.html#sunlight-1-line-192">line 192</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>Command#event:togglebot</li>
+    </ul>
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="_onMessage"><span class="type-signature">&lt;private> </span>_onMessage(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Handle messages sent by bots.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>msg</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Discord~Message</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Message was sent.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="botCommands.js.html">botCommands.js</a>,
+				 <a href="botCommands.js.html#sunlight-1-line-112">line 112</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>Discord#event:message</li>
+    </ul>
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
             
 <hr>
 <dt>
@@ -2015,6 +2200,11 @@ register command listeners.</td>
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#begin">SubModule#begin</a>
+    </li></ul></dd>
+    
 
     
 
@@ -2162,6 +2352,11 @@ register command listeners.</td>
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#debug">SubModule#debug</a>
+    </li></ul></dd>
+    
 
     
 
@@ -2258,6 +2453,11 @@ register command listeners.</td>
 	</dd>
 	
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#end">SubModule#end</a>
+    </li></ul></dd>
     
 
     
@@ -2405,6 +2605,11 @@ register command listeners.</td>
 	</dd>
 	
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#error">SubModule#error</a>
+    </li></ul></dd>
     
 
     
@@ -2656,6 +2861,11 @@ specific to the subModule. Must be defined before begin() is called.
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#log">SubModule#log</a>
+    </li></ul></dd>
+    
 
     
 
@@ -2757,6 +2967,11 @@ completely, this checks if the module can be stopped and restarted.
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#reloadable">SubModule#reloadable</a>
+    </li></ul></dd>
+    
 
     
 
@@ -2846,7 +3061,7 @@ completely, this checks if the module can be stopped and restarted.
             
 <hr>
 <dt>
-    <h4 class="name" id="save"><span class="type-signature"></span>save( [opt])</h4>
+    <h4 class="name" id="save"><span class="type-signature">&lt;abstract> </span>save( [opt])</h4>
     
     
 </dt>
@@ -3019,7 +3234,7 @@ synchronous.</td>
             
 <hr>
 <dt>
-    <h4 class="name" id="shutdown"><span class="type-signature"></span>shutdown()</h4>
+    <h4 class="name" id="shutdown"><span class="type-signature">&lt;protected> </span>shutdown()</h4>
     
     
 </dt>
@@ -3027,7 +3242,7 @@ synchronous.</td>
 
     
     <div class="description">
-        Causes a full shutdown of all servers.
+        Shutdown and disable this submodule. Removes all event listeners.
     </div>
     
 
@@ -3046,6 +3261,15 @@ synchronous.</td>
 
 	
 
+	
+	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
+	<dd class="inherited-from">
+		<ul class="dummy">
+			<li>
+				<a href="SubModule.html#shutdown">SubModule#shutdown</a>
+			</li>
+		</ul>
+	</dd>
 	
 
     
@@ -3078,8 +3302,8 @@ synchronous.</td>
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="web_proxy.js.html">web/proxy.js</a>,
-				 <a href="web_proxy.js.html#sunlight-1-line-154">line 154</a>
+				<a href="subModule.js.html">subModule.js</a>,
+				 <a href="subModule.js.html#sunlight-1-line-252">line 252</a>
 			</li>
 		</ul>
 	</dd>
@@ -3112,7 +3336,7 @@ synchronous.</td>
             
 <hr>
 <dt>
-    <h4 class="name" id="unloadable"><span class="type-signature"></span>unloadable()</h4>
+    <h4 class="name" id="unloadable"><span class="type-signature">&lt;abstract> </span>unloadable()</h4>
     
     
 </dt>
@@ -3336,6 +3560,11 @@ doing such may risk putting the module into an uncontrollable state.
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#warn">SubModule#warn</a>
+    </li></ul></dd>
+    
 
     
 
@@ -3362,1890 +3591,6 @@ doing such may risk putting the module into an uncontrollable state.
 			<li>
 				<a href="subModule.js.html">subModule.js</a>,
 				 <a href="subModule.js.html#sunlight-1-line-233">line 233</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="~apiRequest"><span class="type-signature">&lt;private, inner> </span>apiRequest(loginInfo, path, cb)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Formats a request to the discord api at the given path.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>loginInfo</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">LoginInfo</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The credentials of the user we are sending the
-request for.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>path</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The path for the api request to send.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>cb</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">basicCallback</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The response from the https request with error
-and data arguments.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="web_proxy.js.html">web/proxy.js</a>,
-				 <a href="web_proxy.js.html#sunlight-1-line-681">line 681</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="~authorizeRequest"><span class="type-signature">&lt;private, inner> </span>authorizeRequest(code, cb)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Authenticate with the discord server using a login code.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>code</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The login code received from our client.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>cb</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">basicCallback</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The response from the https request with error
-and data arguments.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="web_proxy.js.html">web/proxy.js</a>,
-				 <a href="web_proxy.js.html#sunlight-1-line-832">line 832</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="~discordRequest"><span class="type-signature">&lt;private, inner> </span>discordRequest(data, cb, host)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Send a https request to discord.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Argument</th>
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>data</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-|
-
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">The data to send in the request.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>cb</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">basicCallback</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Callback with error, and data arguments.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>host</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-                    &lt;nullable><br>
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Request object to override the default with.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="web_proxy.js.html">web/proxy.js</a>,
-				 <a href="web_proxy.js.html#sunlight-1-line-717">line 717</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="~fetchGuilds"><span class="type-signature">&lt;private, inner> </span>fetchGuilds(loginInfo, cb)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Fetches the guild information of the user we have the token of.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>loginInfo</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">LoginInfo</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The credentials of the session user.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>cb</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">singleCB</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The callback storing the user's data, or null if
-something went wrong.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="web_proxy.js.html">web/proxy.js</a>,
-				 <a href="web_proxy.js.html#sunlight-1-line-660">line 660</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="~fetchIdentity"><span class="type-signature">&lt;private, inner> </span>fetchIdentity(loginInfo, cb)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Fetches the identity of the user we have the token of.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>loginInfo</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">LoginInfo</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The credentials of the session user.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>cb</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">singleCB</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The callback storing the user's data, or null if
-something went wrong.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="web_proxy.js.html">web/proxy.js</a>,
-				 <a href="web_proxy.js.html#sunlight-1-line-620">line 620</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="~handler"><span class="type-signature">&lt;private, inner> </span>handler(req, res)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Handler for all http requests. Should never be called.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>req</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">http.IncomingMessage</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The client's request.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>res</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">http.ServerResponse</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Our response to the client.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="web_proxy.js.html">web/proxy.js</a>,
-				 <a href="web_proxy.js.html#sunlight-1-line-278">line 278</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="~makeRefreshTimeout"><span class="type-signature">&lt;private, inner> </span>makeRefreshTimeout(loginInfo, cb)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Refreshes the given token once it expires.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>loginInfo</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">LoginInfo</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The credentials to refresh.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>cb</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">singleCB</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The callback that is fired storing the new credentials
-once they are refreshed.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="web_proxy.js.html">web/proxy.js</a>,
-				 <a href="web_proxy.js.html#sunlight-1-line-751">line 751</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="~purgeSessions"><span class="type-signature">&lt;private, inner> </span>purgeSessions()</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Purge stale data from loginInfo.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="web_proxy.js.html">web/proxy.js</a>,
-				 <a href="web_proxy.js.html#sunlight-1-line-242">line 242</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="~refreshToken"><span class="type-signature">&lt;private, inner> </span>refreshToken(refreshToken_, scope, cb)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Request new credentials with refresh token from discord.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>refreshToken_</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The refresh token used for refreshing
-credentials.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>scope</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Scope to refresh.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>cb</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">basicCallback</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The callback from the https request, with an
-error argument, and a data argument.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="web_proxy.js.html">web/proxy.js</a>,
-				 <a href="web_proxy.js.html#sunlight-1-line-788">line 788</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="~revokeToken"><span class="type-signature">&lt;private, inner> </span>revokeToken(token, cb)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Revoke a current refresh token from discord.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>token</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The refresh token to revoke.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>cb</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">basicCallback</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The callback from the https request, with an
-error argument, and a data argument.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="web_proxy.js.html">web/proxy.js</a>,
-				 <a href="web_proxy.js.html#sunlight-1-line-810">line 810</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="~socketConnection"><span class="type-signature">&lt;private, inner> </span>socketConnection(socket)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Handler for a new socket connecting.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>socket</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">socketIo~Socket</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The socket.io socket that connected.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="web_proxy.js.html">web/proxy.js</a>,
-				 <a href="web_proxy.js.html#sunlight-1-line-298">line 298</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="~updateRateLimits"><span class="type-signature">&lt;private, inner> </span>updateRateLimits()</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Parse rate limits from file.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="web_proxy.js.html">web/proxy.js</a>,
-				 <a href="web_proxy.js.html#sunlight-1-line-191">line 191</a>
 			</li>
 		</ul>
 	</dd>

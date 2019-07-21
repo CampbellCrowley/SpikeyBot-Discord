@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>SpikeyBot-Discord Source: pets/BasePetClasses.js</title>
+	<title>SpikeyBot-Discord Source: botCommands.js</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -86,7 +86,7 @@
 		<div id="main">
 			
 
-		<h1 class="page-title">Source: pets/BasePetClasses.js</h1>
+		<h1 class="page-title">Source: botCommands.js</h1>
     
 <section>
     <article>
@@ -94,114 +94,263 @@
             class="sunlight-highlight-javascript linenums">// Copyright 2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const fs = require('fs');
+const SubModule = require('./subModule.js');
 
 /**
- * @description Manages base information for all pet classes.
- * @memberof Pets
- * @inner
+ * @description Provides interface to allow other bots to run commands.
+ * @augments SubModule
+ * @listens external:Discord~Client#message
+ * @listens Command#togglebot
  */
-class BasePetClasses {
+class BotCommands extends SubModule {
   /**
-   * @description Create instance.
+   * @description SubModule providing external bot command interface.
    */
   constructor() {
+    super();
+    /** @inheritdoc */
+    this.myName = 'BotCommands';
+
     /**
-     * @description The filename of the file to read class information from.
+     * @description The name of the file to check for if bot commands are
+     * enabled.
      * @private
+     * @constant
+     * @default
      * @type {string}
-     * @default
      */
-    this._baseFile = './save/petClasses.json';
+    this._filename = '/enableBotCommands';
+
     /**
-     * @description Parsed data from file.
+     * @description Maximum number of commands that can be triggered this way
+     * per {@link BotCommands~_maxDelta}.
      * @private
-     * @type {object}
+     * @type {number}
+     * @constant
      * @default
      */
-    this._classes = {};
+    this._maxNum = 5;
+    /**
+     * @description Amount of time in milliseconds where a maximum of
+     * {@link BotCommands~_maxNum} commands may be triggered before cooldown is
+     * started.
+     * @private
+     * @type {number}
+     * @constant
+     * @default
+     */
+    this._maxDelta = 15 * 1000;
+    /**
+     * @description Amount of time in milliseconds to ignore all bot commands
+     * after exceeding the rate limit.
+     * @private
+     * @type {number}
+     * @constant
+     * @default
+     */
+    this._cooldownLength = 10 * 1000;
 
-    this.initialize = this.initialize.bind(this);
-    this.shutdown = this.shutdown.bind(this);
-    this.get = this.get.bind(this);
-    this._fileUpdate = this._fileUpdate.bind(this);
-    this._readFile = this._readFile.bind(this);
+    /**
+     * @description History of last few commands triggered per-guild. Used to
+     * put command triggering on cooldown if rate limits are exceeded.
+     * @private
+     * @type {object.&lt;{
+     *   history: Array.&lt;{author: string, time: number}>,
+     *   cooldownStart: number
+     * }>}
+     * @default
+     */
+    this._recentCommands = {};
+
+    this._onMessage = this._onMessage.bind(this);
+    this._commandToggleBotCmds = this._commandToggleBotCmds.bind(this);
   }
-
-  /**
-   * @description Start watching file system changes and read pet information
-   * from file.
-   * @public
-   */
+  /** @inheritdoc */
   initialize() {
-    fs.watchFile(this._baseFile, {persistent: false}, this._fileUpdate);
-    this._readFile();
+    this.command.on(
+        new this.command.SingleCommand(
+            [
+              'allowbot',
+              'allowbots',
+              'enablebot',
+              'enablebots',
+              'togglebot',
+              'togglebots',
+              'denybot',
+              'denybots',
+              'disablebot',
+              'disablebots',
+            ],
+            this._commandToggleBotCmds, new this.command.CommandSetting({
+              validOnlyInGuild: true,
+              defaultDisabled: true,
+              permissions: this.Discord.Permissions.FLAGS.MANAGE_ROLES |
+                  this.Discord.Permissions.FLAGS.MANAGE_GUILD,
+            })));
+    this.client.on('message', this._onMessage);
   }
-
-  /**
-   * @description Stop watching for file system changes, and remove all event
-   * listeners.
-   * @public
-   */
+  /** @inheritdoc */
   shutdown() {
-    fs.unwatchFile(this._baseFile, this._fileUpdate);
+    this.command.deleteEvent('allowbot');
+    this.client.removeListener('message', this._onMessage);
   }
 
   /**
-   * @description Fetch base object for a class.
-   * @public
-   * @param {string} petClass Name of class to fetch.
-   * @returns {?object} Object reference of pet information for the class, or
-   * null if could not be found.
-   */
-  get(petClass) {
-    return this._pets[(petClass + '').trim().toLowerCase()];
-  }
-
-  /**
-   * @description Fetch a base object for a random class.
-   * @public
-   * @returns {?object} Object reference of pet information for the class, or
-   * null if could not be found.
-   */
-  random() {
-    const list = Object.keys(this._pets);
-    return this._pets[Math.floor(list.length * Math.random())];
-  }
-
-  /**
-   * @description File has been modified, re-read and parse data.
+   * Handle messages sent by bots.
+   *
    * @private
-   * @param {fs.Stats} curr Current file stats.
-   * @param {fs.Stats} prev Previous file stats.
+   * @param {Discord~Message} msg Message was sent.
+   * @listens Discord#message
    */
-  _fileUpdate(curr, prev) {
-    if (curr.mtime == prev.mtime) return;
-    this._readFile();
-  }
+  _onMessage(msg) {
+    if (!msg.guild || !msg.author.bot ||
+        msg.author.id === this.client.user.id) {
+      return;
+    }
 
-  /**
-   * @description Read and parse data from the file.
-   * @private
-   */
-  _readFile() {
-    fs.readFile(this._baseFile, (err, data) => {
-      if (err) {
-        console.error(
-            'Failed to read base class information:', this._baseFile, err.code);
+    const prefixRegex = new RegExp(`^&lt;@!?${this.client.user.id}>`);
+
+    if (!msg.content.match(prefixRegex)) return;
+
+    let recent = this._recentCommands[msg.guild.id];
+    const now = Date.now();
+    if (recent &amp;&amp; now - recent.cooldownStart &lt; this._cooldownLength) return;
+
+    if (!fs.existsSync(
+        `${this.common.guildSaveDir}${msg.guild.id}${this._filename}`)) {
+      return;
+    }
+
+    msg.content = msg.content.replace(prefixRegex, '').trim();
+    msg.prefix = this.bot.getPrefix(msg.guild);
+    msg.botCmd = true;
+
+    const commandSuccess =
+        this.command.validate(msg.content.split(/ |\n/)[0], msg);
+    if (commandSuccess !== 'No Handler') {
+      if (!recent) {
+        recent = this._recentCommands[msg.guild.id] = {
+          history: [],
+          cooldownStart: 0,
+        };
+      }
+      const hist = recent.history;
+
+      hist.push({author: msg.author.id, time: now});
+
+      let num = 0;
+      const oldest = now - this._maxDelta;
+      while (num &lt; hist.length &amp;&amp; hist[num].time &lt; oldest) num++;
+      if (num > 0) hist.splice(0, num);
+
+      if (hist.length > this._maxNum) {
+        this.common.reply(
+            msg, 'Bot Command Rate Limit',
+            'Rate limit exceeded. All bot commands will be ignored for ' +
+                '10 seconds.');
+        this._recentCommands[msg.guild.id].cooldownStart = now;
         return;
       }
-      try {
-        this._pets = JSON.parse(data);
-      } catch (err) {
-        console.error(
-            'Failed to parse base class information:', this._baseFile, err);
-        return;
-      }
-    });
+    }
+    const content = msg.content.replace(/\n/g, '\\n');
+    let author;
+    let logged;
+    if (msg.guild !== null) {
+      author = `Bot:${msg.guild.id}#${msg.channel.id}@${msg.author.id}`;
+    } else {
+      author = `Bot:PM:${msg.author.id}@${msg.author.tag}`;
+    }
+    if (!commandSuccess) {
+      logged = `${author} ${content}`;
+      this.log(logged);
+    } else {
+      logged = `${author} ${commandSuccess} ${content}`;
+      this.debug(logged);
+    }
+    const start = Date.now();
+    this.command.trigger(msg);
+    const delta = Date.now() - start;
+    if (delta > 20) {
+      this.debug(`${logged} took an excessive ${delta}ms`);
+    }
+  }
+
+  /**
+   * @description Toggle whether bots are able to run commands on this guild.
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens Command#togglebot
+   */
+  _commandToggleBotCmds(msg) {
+    const enableList = ['enable', 'on', 'allow', 'true'];
+    const disableList = ['disable', 'off', 'deny', 'false', 'disallow'];
+    const file = `${this.common.guildSaveDir}${msg.guild.id}${this._filename}`;
+    const exists = fs.existsSync(file);
+    let setTo = true;
+    const content = msg.content.toLocaleLowerCase();
+    if (enableList.find((el) => content.indexOf(el) > -1)) {
+      setTo = true;
+    } else if (disableList.find((el) => content.indexOf(el) > -1)) {
+      setTo = false;
+    } else {
+      setTo = !exists;
+    }
+
+    if (!exists &amp;&amp; setTo) {
+      const emoji = '✅';
+      this.common
+          .reply(
+              msg, 'Are you sure?',
+              'Allowing bots to run commands could potentially cause a ' +
+                  'feedback loop. Only enable this if you know what you are' +
+                  ' doing. Use at your own risk.\nReact with ' + emoji +
+                  ' to confirm')
+          .then((msg_) => {
+            msg_.react(emoji).catch(() => {});
+            msg_.awaitReactions(
+                (reaction, user) => reaction.emoji.name == emoji &amp;&amp;
+                        user.id === msg.author.id,
+                {max: 1, time: 30 * 1000})
+                .then((reactions) => {
+                  msg_.reactions.removeAll().catch(() => {});
+                  if (reactions.size == 0) {
+                    msg_.edit('Timed Out').catch(() => {});
+                    return;
+                  }
+                  try {
+                    fs.closeSync(fs.openSync(file, 'a'));
+                    this.common.reply(msg, 'Bot Commands', 'Now Allowed');
+                  } catch (err) {
+                    this.error(
+                        'Failed to enable bot commands: ' + msg.guild.id);
+                    console.error(err);
+                    this.common.reply(
+                        msg, 'Bot Commands',
+                        'Failed to toggle due to internal error.');
+                  }
+                });
+          });
+    } else if (exists &amp;&amp; !setTo) {
+      fs.unlink(file, (err) => {
+        if (err) {
+          this.error('Failed to disable bot commands: ' + msg.guild.id);
+          console.error(err);
+          this.common.reply(
+              msg, 'Bot Commands', 'Failed to toggle due to internal error.');
+        } else {
+          this.common.reply(msg, 'Bot Commands', 'Now Disallowed');
+        }
+      });
+    } else {
+      this.common.reply(
+          msg, 'Bot Commands',
+          setTo ? 'Already allowed' : 'Already disallowed');
+    }
   }
 }
 
-module.exports = BasePetClasses;
+module.exports = new BotCommands();
 </pre>
     </article>
 </section>
