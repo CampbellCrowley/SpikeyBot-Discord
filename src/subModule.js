@@ -12,7 +12,7 @@ class SubModule {
      * The help message to show the user in the main help message.
      *
      * @abstract
-     * @type {string|external:Discord~MessageEmbed}
+     * @type {undefined|string|external:Discord~MessageEmbed}
      * @default
      */
     this.helpMessage = undefined;
@@ -27,41 +27,47 @@ class SubModule {
      */
     this.postPrefix = '';
     /**
-     * The current Discord object instance of the bot.
+     * The current Discord object instance of the bot. Defaults to require cache
+     * value for editor autocompletion, updates to current reference at init.
      *
      * @public
      * @type {external:Discord}
      */
-    this.Discord;
+    this.Discord = require('discord.js');
     /**
-     * The current bot client.
+     * The current bot client. Defaults to require cache value for editor
+     * autocompletion, updates to current reference at init.
      *
      * @public
      * @type {external:Discord~Client}
      */
-    this.client;
+    this.client = this.Discord.Client;
     /**
-     * The command object for registering command listeners.
+     * The command object for registering command listeners. Defaults to require
+     * cache value for editor autocompletion, updates to current reference at
+     * init.
      *
      * @public
      * @type {Command}
      */
-    this.command;
+    this.command = require('./commands.js');
     /**
-     * The common object.
+     * The common object. Defaults to require cache value for editor
+     * autocompletion, updates to current reference at init.
      *
      * @public
      * @type {Common}
      */
-    this.common;
+    this.common = require('./common.js');
 
     /**
-     * The parent SpikeyBot instance.
+     * The parent SpikeyBot instance. Defaults to required cache value for
+     * autocompletion, updates to current reference at init.
      *
      * @public
-     * @type {SpikeyBot}
+     * @type {?SpikeyBot}
      */
-    this.bot;
+    this.bot = require('./SpikeyBot.js');
 
     /**
      * The commit at HEAD at the time this module was loaded. Essentially the
@@ -71,13 +77,12 @@ class SubModule {
      * @constant
      * @type {string}
      */
+    this.commit = '';
     this.commit = require('child_process')
-        .execSync('git rev-parse --short HEAD')
-        .toString()
-        .trim();
+        .execSync('git rev-parse --short HEAD').toString().trim();
 
     /**
-     * The time at which this madule was loaded for use in checking if the
+     * The time at which this module was loaded for use in checking if the
      * module
      * needs to be reloaded because the file has been modified since loading.
      *
