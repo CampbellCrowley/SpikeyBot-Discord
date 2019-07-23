@@ -474,11 +474,11 @@ function HG() {
               obj.rows
                   .map(function(row) {
                     if (typeof row === 'string') {
-                      return prefix + row.replaceAll('{prefix}', prefix);
+                      return prefix + row.replace(/\{prefix\}/g, prefix);
                     } else if (typeof row === 'object') {
                       return prefix +
-                          row.command.replaceAll('{prefix}', prefix) + ' // ' +
-                          row.description.replaceAll('{prefix}', prefix);
+                          row.command.replace(/\{prefix\}/g, prefix) + ' // ' +
+                          row.description.replace(/\{prefix\}/g, prefix);
                     }
                   })
                   .join('\n') +
@@ -1842,7 +1842,7 @@ function HG() {
       } else {
         embed.setTitle(
             hg.messages.get('dayStart')
-                .replaceAll('{}', game.currentGame.day.num));
+                .replace(/\{\}/g, game.currentGame.day.num));
       }
       if (!game.autoPlay && game.currentGame.day.num < 2) {
         embed.setFooter(
@@ -2190,7 +2190,7 @@ function HG() {
         }
         if (team.numAlive > 1 && team.numAlive == team.players.length) {
           numWholeTeams++;
-          lastWholeTeam = index;
+          lastWholeTeam = team.id;
         }
       });
     }
@@ -2351,9 +2351,10 @@ function HG() {
         finalMessage.setDescription(statusList.join('\n') || '...');
       }
       if (numWholeTeams == 1) {
+        const teamName =
+            current.teams.find((el) => el.id === lastWholeTeam).name;
         finalMessage.setFooter(
-            hg.messages.get('teamRemaining')
-                .replaceAll('{}', current.teams[lastWholeTeam].name));
+            hg.messages.get('teamRemaining').replace(/\{\}/g, teamName));
       }
     }
     if (!current.ended) {
@@ -2363,8 +2364,8 @@ function HG() {
       } else {
         embed.setTitle(
             hg.messages.get('dayEnd')
-                .replaceAll('{day}', current.day.num)
-                .replaceAll('{alive}', numAlive));
+                .replace(/\{day\}/g, current.day.num)
+                .replace(/\{alive\}/g, numAlive));
       }
       if (!game.autoPlay) {
         embed.setFooter(`"${msg.prefix}${self.postPrefix}next" for next day.`);
@@ -5196,9 +5197,9 @@ function HG() {
    * @returns {string} The formatted message with emojis.
    */
   function formatEventString(arenaEvent, newline) {
-    let message = arenaEvent.message.replaceAll('{attacker}', '`attacker`')
-        .replaceAll('{victim}', '`victim`')
-        .replaceAll('{dead}', '`dead`');
+    let message = arenaEvent.message.replace(/\{attacker\}/g, '`attacker`')
+        .replace(/\{victim\}/g, '`victim`')
+        .replace(/\{dead\}/g, '`dead`');
     if (newline) message += '\n    ';
     message += '(' + emoji.crossedSwords + ': ' +
         ('' + arenaEvent.attacker.count).replace('-', '>');
