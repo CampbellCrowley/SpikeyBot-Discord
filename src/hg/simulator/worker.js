@@ -49,6 +49,8 @@ class Worker {
     let startingAlive = 0;
     let numAlive = 0;
 
+    const deadPool =
+        sim.game.currentGame.includedUsers.filter((obj) => !obj.living);
     const userPool = sim.game.currentGame.includedUsers.filter((player) => {
       if (player.living) startingAlive++;
 
@@ -217,9 +219,6 @@ class Worker {
     while (userPool.length > 0) {
       let eventTry;
       let affectedUsers;
-
-      const deadPool =
-          sim.game.currentGame.includedUsers.filter((obj) => !obj.living);
 
       let userWithWeapon = null;
       if (!doArenaEvent) {
