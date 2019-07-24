@@ -2645,7 +2645,7 @@ function Main() {
     const gY = author && mem.permissions.bitfield;
     const gM = guild.members.get(self.client.user.id).permissions.bitfield;
     const uId = author && author.id;
-    replyPerms(msg, guild.id, gM, gY, chan.id, cM, cY, uId);
+    replyPerms(msg, guild.id, gM, gY, chan && chan.id, cM, cY, uId);
   }
 
   /**
