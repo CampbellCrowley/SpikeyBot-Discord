@@ -343,7 +343,7 @@ class HungryGames {
         cb(null);
         return;
       }
-      const name = (game.currentGame && game.currentGame.customName) ||
+      const name = (game.currentGame && game.currentGame.name) ||
           (`${guild.name}'s Hungry Games`);
       const teams = game.currentGame && game.currentGame.teams;
 
