@@ -1776,15 +1776,21 @@ function Main() {
         .then((user) => {
           user.send(msg.author.id + ': ' + msg.author.tag + ': ' + msg.content)
               .then(() => {
-                self.common.reply(msg, 'I sent your message to SpikeyRobot.');
+                if (user.presence.status === 'offline') {
+                  self.common.reply(
+                      msg, 'I sent your message to SpikeyRobot.',
+                      'SpikeyRobot is currently offline, but will get back to' +
+                          ' you ASAP.');
+                } else {
+                  self.common.reply(msg, 'I sent your message to SpikeyRobot.');
+                }
               });
         })
         .catch((err) => {
           console.log(err);
           self.common.reply(
-              msg,
-              'Something went wrong and I couldn\'t send your message. Sorry ' +
-                  'that\'s all I know :(');
+              msg, 'Something went wrong and I couldn\'t send your message.',
+              'Sorry that\'s all I know :(');
         });
   }
   /**

@@ -905,10 +905,10 @@ Simulator._probabilityEvent = function(
       return Simulator._probabilityEvent(
           eventPool, probabilityOpts, customWeight, recurse + 1);
     } else {
-      self.error(
+      /* self.error(
           'Failed to find event with probabilities: ' +
           JSON.stringify(probabilityOpts) + ' from ' + eventPool.length +
-          ' events.');
+          ' events.'); */
       return Math.floor(Math.random() * eventPool.length);
     }
   } else {
