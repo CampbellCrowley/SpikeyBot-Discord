@@ -488,8 +488,10 @@ class HungryGames {
     if (command == 'all') {
       game._stats.fetchGroupList((err, list) => {
         if (err) {
-          this._parent.error('Failed to fetch stat group list: ' + id);
-          console.error(err);
+          if (err.code !== 'ENOENT') {
+            this._parent.error('Failed to fetch stat group list: ' + id);
+            console.error(err);
+          }
           return;
         }
         list.forEach((el) => game._stats.fetchGroup(el, (err, group) => {
@@ -513,8 +515,10 @@ class HungryGames {
     } else if (command == 'stats') {
       game._stats.fetchGroupList((err, list) => {
         if (err) {
-          this._parent.error('Failed to fetch stat group list: ' + id);
-          console.error(err);
+          if (err.code !== 'ENOENT') {
+            this._parent.error('Failed to fetch stat group list: ' + id);
+            console.error(err);
+          }
           return;
         }
         list.forEach((el) => game._stats.fetchGroup(el, (err, group) => {
