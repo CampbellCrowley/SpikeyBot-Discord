@@ -683,6 +683,8 @@ function Main() {
     process.removeListener('SIGINT', sigint);
     process.removeListener('SIGHUP', sigint);
     process.removeListener('SIGTERM', sigint);
+
+    timers.forEach((el) => self.client.clearTimeout(el.timeout));
     if (self.client.shard) {
       process.removeListener('message', shardMessage);
       self.client.updateRiggedCounter = null;
@@ -701,7 +703,9 @@ function Main() {
    */
   this.save = function(opt) {
     if (!self.initialized) return;
-    timers.forEach(function(obj) {
+    timers.forEach((el) => {
+      const obj = Object.assign({}, el);
+      delete obj.timeout;
       const dir = self.common.userSaveDir + obj.id + '/timers/';
       const filename = dir + obj.time + '.json';
       if (opt == 'async') {
@@ -1520,16 +1524,12 @@ function Main() {
     if (split.length == 0) {
       let num = 0;
       const messages =
-          timers
-              .filter(function(obj) {
-                return obj.id == msg.author.id;
-              })
-              .map(function(obj) {
-                num++;
-                return 'In ' +
-                    Math.floor((obj.time - Date.now()) / 1000 / 60 * 10) / 10 +
-                    ' minutes: ' + obj.message;
-              });
+          timers.filter((obj) => obj.id == msg.author.id).map((obj) => {
+            num++;
+            return 'In ' +
+                Math.floor((obj.time - Date.now()) / 1000 / 60 * 10) / 10 +
+                ' minutes: ' + obj.message;
+          });
       self.common.reply(
           msg, 'You have ' + num + ' timers set.\n' + messages.join('\n'));
       return;
@@ -2422,13 +2422,11 @@ function Main() {
   function setTimer(timer) {
     timers.push(timer);
     const now = Date.now();
-    self.client.setTimeout(function() {
+    timer.timeout = self.client.setTimeout(() => {
       self.client.users.fetch(timer.id).then((user) => {
         user.send(timer.message);
         const now = Date.now();
-        timers = timers.filter(function(obj) {
-          return obj.time > now;
-        });
+        timers = timers.filter((obj) => obj.time > now);
       });
     }, timer.time - now);
   }
