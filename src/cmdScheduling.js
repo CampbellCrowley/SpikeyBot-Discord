@@ -338,17 +338,18 @@ function CmdScheduling() {
      * @private
      */
     function getReferences() {
-      if (typeof myself.channel !== 'object') {
+      if (!myself.channel || typeof myself.channel !== 'object') {
         myself.channel = self.client.channels.get(myself.channelId);
       }
-      if (typeof myself.channel !== 'object' || myself.channel.deleted) {
+      if (!myself.channel || typeof myself.channel !== 'object' ||
+          myself.channel.deleted) {
         self.debug(
             'Cancelling command due to channel not existing: ' +
             myself.channelId + '@' + myself.memberId + ': ' + myself.cmd);
         myself.cancel();
         return;
       }
-      if (typeof myself.message !== 'object') {
+      if (!myself.message || typeof myself.message !== 'object') {
         myself.message = myself.channel.messages.get(myself.messageId);
         if (!myself.message) {
           myself.channel.messages.fetch(myself.messageId)
@@ -374,7 +375,7 @@ function CmdScheduling() {
           myself.memberId = myself.message.member.id;
         }
       }
-      if (typeof myself.member !== 'object') {
+      if (!myself.member || typeof myself.member !== 'object') {
         myself.member = myself.channel.members.get(myself.memberId);
         if (!myself.member) {
           myself.channel.guild.members.fetch(myself.memberId)
@@ -565,7 +566,9 @@ function CmdScheduling() {
       }
       schedules[gId].push(sCmd);
     }
-    fireEvent('commandRegistered', sCmd, sCmd.message.guild.id);
+    if (sCmd.message) {
+      fireEvent('commandRegistered', sCmd, sCmd.message.guild.id);
+    }
     return true;
   }
   /**
