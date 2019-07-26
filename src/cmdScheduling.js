@@ -1053,6 +1053,11 @@ function CmdScheduling() {
     message.text = msg;
     message.content = msg;
     message.prefix = self.bot.getPrefix(gId);
+    message.mentions = {
+      users: new self.Discord.UserStore(self.client),
+      members: new self.Discord.GuildMemberStore(g),
+      roles: new self.Discord.RoleStore(g),
+    };
     return message;
   }
 }
