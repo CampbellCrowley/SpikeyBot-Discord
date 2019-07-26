@@ -927,7 +927,7 @@ class GuildGame {
       evt.consumer = player.id;
       evt.consumes = [{name: weapon, count: -diff}];
       evt.subMessage = Simulator.formatWeaponEvent(
-          evt, player, ownerName, firstAttacker, weapon, weapons);
+          evt, player, ownerName, firstAttacker, weapon, weapons, count);
       if (game.currentGame.day.state > 1) {
         if (count <= 0) {
           delete player.weapons[weapon];

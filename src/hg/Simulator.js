@@ -964,21 +964,29 @@ Simulator._parseConsumeCount = function(consumeString, numVictim, numAttacker) {
  * @param {string} chosenWeapon The id of the chosen weapon.
  * @param {object.<HungryGames~WeaponEvent>} weapons The default weapons object
  * injected with custom weapons.
+ * @param {number} [countOverride] If specified, this value is used as the final
+ * amount the player will end up with, instead of using the calculated value.
  * @returns {string} Additional subMessage.
  */
 Simulator.formatWeaponEvent = function(
-    eventTry, userWithWeapon, ownerName, firstAttacker, chosenWeapon, weapons) {
+    eventTry, userWithWeapon, ownerName, firstAttacker, chosenWeapon, weapons,
+    countOverride) {
   let subMessage = '';
 
   const numVictim = eventTry.victim.count;
   const numAttacker = eventTry.attacker.count;
   const found = eventTry.consumes && eventTry.consumes.find &&
       eventTry.consumes.find((el) => el.name === chosenWeapon);
-  const consumed = found ?
-      found.count :
-      Simulator._parseConsumeCount(eventTry.consumes, numVictim, numAttacker);
-  if (userWithWeapon.weapons[chosenWeapon] <= 0) {
-    delete userWithWeapon.weapons[chosenWeapon];
+  const consumed = Simulator._parseConsumeCount(
+      found ? found.count : eventTry.consumes, numVictim, numAttacker);
+  const count = countOverride != null ?
+      countOverride :
+      userWithWeapon.weapons[chosenWeapon] - consumed;
+  if (count <= 0) {
+    if ((userWithWeapon.weapons[chosenWeapon] - consumed || 0) ==
+        (countOverride || 0)) {
+      delete userWithWeapon.weapons[chosenWeapon];
+    }
 
     const weaponName = chosenWeapon;
     let consumableName = weaponName;
@@ -1079,8 +1087,8 @@ Simulator.formatWeaponCounts = function(
       continue;
     }
     const user = affectedUsers[i];
-    let entries;
-    if (user.weapons) entries = Object.entries(user.weapons);
+    let entries = [];
+    if (user && user.weapons) entries = Object.entries(user.weapons);
     if (entries.length === 0) continue;
     const consumableList = entries.map(getWeaponCount);
     const list = consumableList.join(', ');
