@@ -49,8 +49,6 @@ class Worker {
     let startingAlive = 0;
     let numAlive = 0;
 
-    const deadPool =
-        sim.game.currentGame.includedUsers.filter((obj) => !obj.living);
     const userPool = sim.game.currentGame.includedUsers.filter((player) => {
       if (player.living) startingAlive++;
 
@@ -79,6 +77,8 @@ class Worker {
       }
       return player.living && !evt;
     });
+    const deadPool = sim.game.currentGame.includedUsers.filter(
+        (obj) => !userPool.find((el) => el.id === obj.id));
     // Shuffle user order because games may have been rigged :thonk:.
     for (let i = 0; i < userPool.length; i++) {
       const index = Math.floor(Math.random() * (userPool.length - i)) + i;
@@ -339,6 +339,13 @@ class Worker {
 
       if (!doBattle) {
         eventTry = eventTry.finalize(sim.game, affectedUsers);
+      }
+
+      if (eventTry.victim.outcome === 'dies') {
+        [].push.apply(deadPool, affectedUsers.slice(0, eventTry.victim.count));
+      }
+      if (eventTry.attacker.outcome === 'dies') {
+        [].push.apply(deadPool, affectedUsers.slice(eventTry.victim.count));
       }
 
       sim.game.currentGame.day.events.push(eventTry);
