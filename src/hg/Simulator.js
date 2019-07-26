@@ -97,8 +97,10 @@ class Simulator {
             this.msg,
             msg.reply.replace(
                 /\{prefix\}/g, this.msg.prefix + this.hg._parent.postPrefix),
-            msg.reply2.replace(
-                /\{prefix\}/g, this.msg.prefix + this.hg._parent.postPrefix));
+            msg.reply2 &&
+                msg.reply2.replace(
+                    /\{prefix\}/g,
+                    this.msg.prefix + this.hg._parent.postPrefix));
       }
       if (msg.endGame) {
         this.game.end();
