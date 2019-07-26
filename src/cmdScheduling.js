@@ -1029,13 +1029,18 @@ function CmdScheduling() {
    * @returns {
    *   {
    *     fabricated: boolean,
-   *     author: Discord~User,
-   *     member: Discord~GuildMember,
-   *     guild: Discord~Guild,
-   *     channel: Discord~GuildChannel,
+   *     author: external:Discord~User,
+   *     member: external:Discord~GuildMember,
+   *     guild: external:Discord~Guild,
+   *     channel: external:Discord~GuildChannel,
    *     text: string,
    *     content: string,
-   *     prefix: string
+   *     prefix: string,
+   *     mentions: {
+   *       users: external:Discord~UserStore,
+   *       members: external:Discord~GuildMemberStore,
+   *       roles: external:Discord~RoleStore
+   *     }
    *   }
    * } The created message-like object.
    */
