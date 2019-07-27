@@ -2459,6 +2459,9 @@ function Main() {
       let matchNum = 0;
       for (let i = 0; i < numbers.length; i++) {
         const el = numbers[i];
+        if (typeof el !== 'string') {
+          self.error(`${el} is not a string: ${msg.text}`);
+        }
         const match = el.match(/(\d*)([xXdD*])(\d+)/);
         if (!match) {
           const firstNum = el.match(/(\d+)/);
