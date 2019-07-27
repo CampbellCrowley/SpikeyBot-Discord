@@ -865,7 +865,9 @@ function Uno() {
             }
           }
         }
-        if (turn < 0 || m.author.id != players[turn].id) return false;
+        if (turn < 0 || !players[turn] || m.author.id != players[turn].id) {
+          return false;
+        }
         if (m.content.toLowerCase().startsWith('uno')) {
           game.lastInteractTimestamp = Date.now();
           // self.debug(m.channel.id + '@' + m.author.id + ' ' + m.content);
