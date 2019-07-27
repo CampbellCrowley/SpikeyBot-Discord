@@ -6505,7 +6505,8 @@ function HG() {
    */
   function commandModifyWeapon(msg, id, flip = false) {
     const game = hg.getGame(id);
-    if (!game || !game.currentGame || !game.currentGame.includedUsers) {
+    if (!game || !game.currentGame || !game.currentGame.includedUsers ||
+        !game.currentGame.inProgress) {
       self.common.reply(msg, 'Please start a game first.');
       return;
     }
@@ -6550,11 +6551,11 @@ function HG() {
           msg, 'I\'m not sure which weapon you wanted, I found more than one.');
       return;
     }
-    let count = text.match(/-?\d+/);
+    let count = text.match(/\b(-?\d+)\b/);
     if (!count) {
       count = flip ? -1 : 1;
     } else {
-      count = (flip ? -1 : 1) * count[0];
+      count = (flip ? -1 : 1) * count[1];
     }
 
     const error = game.modifyPlayerWeapon(users.first().id, final, hg, count);

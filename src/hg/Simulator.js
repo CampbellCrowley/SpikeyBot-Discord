@@ -981,9 +981,10 @@ Simulator.formatWeaponEvent = function(
       eventTry.consumes.find((el) => el.name === chosenWeapon);
   const consumed = Simulator._parseConsumeCount(
       found ? found.count : eventTry.consumes, numVictim, numAttacker);
-  const count = countOverride != null ?
-      countOverride :
-      userWithWeapon.weapons[chosenWeapon] - consumed;
+  const count = (countOverride != null ?
+                     countOverride :
+                     userWithWeapon.weapons[chosenWeapon] - consumed) ||
+      0;
   if (count <= 0) {
     if ((userWithWeapon.weapons[chosenWeapon] - consumed || 0) ==
         (countOverride || 0)) {
