@@ -107,7 +107,7 @@ class FinalEvent {
     if (!evt.consumes || typeof evt.consumes === 'number') {
       this.consumes = [];
     } else if (!Array.isArray(this.consumes)) {
-      throw new TypeError('Consumes is not an array');
+      throw new TypeError('Consumes is not an array: ' + evt.consumes);
     }
     /**
      * @description The ID of the player that will be consuming weapons.
