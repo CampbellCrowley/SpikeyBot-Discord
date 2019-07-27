@@ -259,13 +259,12 @@ class Worker {
                 eventTry, sim.game.options, userPool, deadPool, teams,
                 userWithWeapon, chosenWeapon);
 
+            const count = Simulator._parseConsumeCount(
+                eventTry.consumes, eventTry.victim.count,
+                eventTry.attacker.count);
+
             eventTry.consumer = userWithWeapon.id;
-            eventTry.consumes = [{
-              name: chosenWeapon,
-              count: Simulator._parseConsumeCount(
-                  eventTry.consumes, eventTry.victim.count,
-                  eventTry.attacker.count),
-            }];
+            eventTry.consumes = [{name: chosenWeapon, count: count}];
 
             const firstAttacker = affectedUsers[eventTry.victim.count] &&
                 affectedUsers[eventTry.victim.count].id == userWithWeapon.id;
@@ -274,7 +273,7 @@ class Worker {
                 Grammar.formatMultiNames([userWithWeapon], nameFormat),
                 firstAttacker, chosenWeapon, weapons);
 
-            userWithWeapon.weapons[chosenWeapon] -= eventTry.consumes.count;
+            userWithWeapon.weapons[chosenWeapon] -= count;
             if (userWithWeapon.weapons[chosenWeapon] <= 0) {
               delete userWithWeapon.weapons[chosenWeapon];
             }
