@@ -1785,6 +1785,7 @@ function HG() {
             self.error('Failed to tell user to start game: ' + err.message);
             if (err.message != 'No Perms') console.error(err);
           });
+      if (game) game.clearIntervals();
       return;
     }
     if (game.currentGame.day.state !== 0) {
