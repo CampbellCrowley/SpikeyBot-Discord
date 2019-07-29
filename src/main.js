@@ -2491,7 +2491,7 @@ function Main() {
             allSame = false;
           }
           numbers.splice(i, 1, match[1]);
-          for (let j = 0; j < match[3] - 1; j++) {
+          for (let j = 0; j < match[3] - 1 && j <= 501; j++) {
             numbers.splice(i, 0, match[1]);
           }
         }
