@@ -889,6 +889,7 @@ function HGWeb() {
    */
   function fetchGames(userData, socket, gId, cb) {
     if (!checkPerm(userData, gId, null, 'options') ||
+        !checkPerm(userData, gId, null, 'events') ||
         !checkPerm(userData, gId, null, 'players')) {
       if (!checkMyGuild(gId)) return;
       replyNoPerm(socket, 'fetchGames');
