@@ -1728,7 +1728,7 @@ function Main() {
       if (guild.shard) embed.setFooter(`Shard #${guild.shard.id}`);
       msg.channel.send(`<@${msg.author.id}>`, embed);
     } else {
-      self.commit.reply(
+      self.commom.reply(
           msg, 'Please allow me to embed links to use this command here.');
     }
   }
