@@ -552,7 +552,7 @@
         {
           "command": "leaderboard",
           "description": "Show the top players ordered by stats.",
-          "aliases": "leaderboard, leaderboards, leader, leaders, top, rank, ranks",
+          "aliases": "leaderboard, leaderboards, leader, leaders, lb, top, rank, ranks",
           "validOnlyInGuild": true,
           "examples": [
             {

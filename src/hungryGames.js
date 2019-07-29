@@ -581,6 +581,7 @@ function HG() {
           {validOnlyInGuild: true}),
       new self.command.SingleCommand(
           [
+            'lb',
             'leaderboard',
             'leaderboards',
             'leader',
