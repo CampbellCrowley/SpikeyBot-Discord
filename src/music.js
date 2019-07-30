@@ -473,7 +473,7 @@ function Music() {
           ' left)';
     }
     const output = new self.Discord.MessageEmbed();
-    const title = info.title === '_' ? info.track : info.title;
+    const title = info.track || info.title;
     output.setDescription(
         title + '\nUploaded by ' + info.uploader + '\n[👍 ' +
         formNum(info.like_count) + ' 👎 ' + formNum(info.dislike_count) +
