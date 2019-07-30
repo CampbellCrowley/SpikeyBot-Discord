@@ -5786,6 +5786,12 @@ function HG() {
    */
   function commandStats(msg, id) {
     const game = hg.getGame(id);
+    if (!game) {
+      self.common.reply(
+          msg, 'No Stats', 'You haven\'t started a game before. ' +
+              'Stats will be available after a game is started.');
+      return;
+    }
     const numTotal = game.statGroup ? 3 : 2;
     const user = msg.softMentions.users.first() || msg.author;
     let numDone = 0;
