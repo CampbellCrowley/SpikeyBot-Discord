@@ -473,8 +473,9 @@ function Music() {
           ' left)';
     }
     const output = new self.Discord.MessageEmbed();
+    const title = info.title === '_' ? info.track : info.title;
     output.setDescription(
-        info.title + '\nUploaded by ' + info.uploader + '\n[👍 ' +
+        title + '\nUploaded by ' + info.uploader + '\n[👍 ' +
         formNum(info.like_count) + ' 👎 ' + formNum(info.dislike_count) +
         '][👁️ ' + formNum(info.view_count) + ']\n' + currentTime + '[' +
         formatPlaytime(info._duration_raw) + ']' + remaining);
