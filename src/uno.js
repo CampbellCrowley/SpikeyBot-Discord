@@ -992,6 +992,13 @@ function Uno() {
       turn += direction;
       if (turn < 0) turn = players.length - 1;
       if (turn > players.length - 1) turn = 0;
+      if (!players[turn]) {
+        game.groupChannel.send(
+            'Game Crashed. Unable to keep track of players properly.' +
+            ' Please report this bug.');
+        endGame();
+        return;
+      }
       if (skip) {
         game.groupChannel.send(
             '`Skipping` ' + players[turn].mention + '\'s turn!');

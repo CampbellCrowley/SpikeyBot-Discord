@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>SpikeyBot-Discord Class: Messages</title>
+	<title>SpikeyBot-Discord Source: web/webApi.js</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -81,659 +81,248 @@
 <div class="row">
 
 	
-	<div class="col-md-8">
+	<div class="col-md-12">
 	
 		<div id="main">
 			
 
-	<h1 class="page-title">Class: Messages</h1>
+		<h1 class="page-title">Source: web/webApi.js</h1>
+    
 <section>
-
-<header>
-    
-        <h2>
-        Messages
-        </h2>
-        
-    
-</header>
-
-
-<article>
-    <div class="container-overview">
-    
-        
-<hr>
-<dt>
-    <h4 class="name" id="Messages"><span class="type-signature"></span>new Messages()</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Create the instance managing the filesystem.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="hg_Messages.js.html">hg/Messages.js</a>,
-				 <a href="hg_Messages.js.html#sunlight-1-line-13">line 13</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-    
-    </div>
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-        <h3 class="subsection-title">Members</h3>
-
-        <dl>
-            
-<hr>
-<dt class="name" id="_messageFile">
-    <h4 id="_messageFile"><span class="type-signature">&lt;private, constant> </span>_messageFile<span class="type-signature"> :string</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        The file path to read messages.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">string</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
-	<dd class="tag-default">
-		<ul class="dummy">
-			<li>./save/hgMessages.json</li>
-		</ul>
-	</dd>
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="hg_Messages.js.html">hg/Messages.js</a>,
-				 <a href="hg_Messages.js.html#sunlight-1-line-22">line 22</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="_messages">
-    <h4 id="_messages"><span class="type-signature">&lt;private> </span>_messages<span class="type-signature"> :object.&lt;Array.&lt;string>></span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        All messages to show for games. Parsed from file.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">object.&lt;Array.&lt;string>></span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
-	<dd class="tag-default">
-		<ul class="dummy">
-			<li>{}</li>
-		</ul>
-	</dd>
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="hg_Messages.js.html">hg/Messages.js</a>,
-				 <a href="hg_Messages.js.html#sunlight-1-line-31">line 31</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        </dl>
-    
-
-    
-        <h3 class="subsection-title">Methods</h3>
-
-        <dl>
-            
-<hr>
-<dt>
-    <h4 class="name" id="_updateMessages"><span class="type-signature">&lt;private> </span>_updateMessages()</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Parse all messages from file.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="hg_Messages.js.html">hg/Messages.js</a>,
-				 <a href="hg_Messages.js.html#sunlight-1-line-51">line 51</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="get"><span class="type-signature"></span>get(type)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Get a random message of a given type from hgMessages.json.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>type</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The message type to get.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="hg_Messages.js.html">hg/Messages.js</a>,
-				 <a href="hg_Messages.js.html#sunlight-1-line-71">line 71</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    A random message of the given type.
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">string</span>
-
-
-
-    </dd>
-</dl>
-
-
-        
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="shutdown"><span class="type-signature"></span>shutdown()</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Stop watching for file changes.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="hg_Messages.js.html">hg/Messages.js</a>,
-				 <a href="hg_Messages.js.html#sunlight-1-line-43">line 43</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        </dl>
-    
-
-    
-
-    
-</article>
-
+    <article>
+        <pre
+            class="sunlight-highlight-javascript linenums">// Copyright 2018-2019 Campbell Crowley. All rights reserved.
+// Author: Campbell Crowley (dev@campbellcrowley.com)
+const http = require('http');
+const auth = require('../../auth.js');
+const WebUserData = require('./WebUserData.js');
+const ApiEndpoint = require('./ApiEndpoint.js');
+const SubModule = require('../subModule.js');
+
+const basicAuth = 'Basic ' +
+    (auth.commandUsername + ':' + auth.commandPassword).toString('base64');
+
+/**
+ * @classdesc Handles receiving webhooks and other API requests from external
+ * services.
+ * @class
+ * @augments SubModule
+ */
+class WebApi extends SubModule {
+  /**
+   * Creates SubModule instance.
+   */
+  constructor() {
+    super();
+    this.myName = 'Webhooks';
+    /**
+     * @description Web server listening for requests, fires
+     * {@link WebCommands._handler} on requests.
+     *
+     * @private
+     * @type {?http.Server}
+     */
+    this._app = null;
+
+    /**
+     * @description Data representing available API endpoints, and where to
+     * redirect data.
+     *
+     * @private
+     * @type {object.&lt;ApiEndpoint>}
+     * @constant
+     * @default
+     */
+    this._endpoints = {
+      'hg': new ApiEndpoint('hg', './web/hg.js'),
+      'account': new ApiEndpoint('account', './web/account.js'),
+      'settings': new ApiEndpoint('settings', './web/settings.js'),
+    };
+
+    this._handler = this._handler.bind(this);
+  }
+
+  /** @inheritdoc */
+  initialize() {
+    this._app = http.createServer(this._handler);
+    setTimeout(() => {
+      this._app.listen(this.common.isRelease ? 8018 : 8019, '127.0.0.1');
+    });
+    this._app.on('error', (err) => {
+      if (err.code === 'EADDRINUSE') {
+        this.warn(
+            'Webhooks failed to bind to port because it is in use. (' +
+            err.port + ')');
+        this.shutdown(true);
+      } else {
+        this.error('Webhooks failed to bind to port for unknown reason.', err);
+      }
+    });
+  }
+  /** @inheritdoc */
+  shutdown() {
+    if (this._app) {
+      this._app.close();
+      this._app = null;
+    }
+  }
+
+  /**
+   * Handler for all http requests.
+   *
+   * @private
+   * @param {http.IncomingMessage} req The client's request.
+   * @param {http.ServerResponse} res Our response to the client.
+   */
+  _handler(req, res) {
+    const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress ||
+        'ERROR';
+    const url = req.url.replace(/^\/dev/, '');
+    if (url.startsWith('/api')) {
+      this._apiRequest(req, res, url, ip);
+    } else if (req.method !== 'POST') {
+      res.writeHead(405);
+      res.end();
+      this.common.log(
+          'Requested endpoint with invalid method: ' + req.method + ' ' +
+              req.url,
+          ip);
+    } else if (url.startsWith('/webhook/botstart')) {
+      this.common.logDebug('Bot start webhook request: ' + req.url, ip);
+      let content = '';
+      req.on('data', (chunk) => content += chunk);
+      req.on('end', () => {
+        this.debug('Bot start webhook content: ' + content);
+        res.writeHead(204);
+        res.end();
+      });
+    } else if (!url.startsWith('/webhook')) {
+      res.writeHead(501);
+      res.end();
+      this.common.log('Requested non-existent endpoint: ' + req.url, ip);
+    } else if (req.headers.authorization !== basicAuth) {
+      this.common.error(
+          'Requested webhook with incorrect authorization header: ' +
+              req.headers.authorization,
+          ip);
+      res.writeHead(401);
+      res.end();
+    } else {
+      let content = '';
+      req.on('data', (chunk) => {
+        content += chunk;
+      });
+      req.on('end', () => {
+        console.log(content);
+        res.writeHead(204);
+        res.end();
+      });
+    }
+  }
+
+  /**
+   * @description Handles requests to the API endpoint.
+   *
+   * @private
+   * @param {http.IncomingMessage} req Client request.
+   * @param {http.ServerResponse} res Server response.
+   * @param {string} url The requested url. Generally a similar or slightly
+   * modified version of `req.url`.
+   * @param {string} ip IP for logging purposes.
+   */
+  _apiRequest(req, res, url, ip) {
+    const match = url.match(/^(?&lt;endpoint>[^/]+){1}(?:\/(?&lt;args>.+)?$)/);
+    if (!match || !match.groups.endpoint ||
+        !this._endpoints[match.groups.endpoint]) {
+      this.debug(`API Unknown: ${url}`, ip);
+      res.writeHead(404);
+      res.end('404: Not Found');
+      return;
+    }
+
+    const ep = this._endpoints[match.groups.endpoint];
+    const sm = this.bot.getSubmodule(ep.smPath);
+    if (!sm) {
+      this.debug(`API Unloaded: ${url} (${ep.smPath})`, ip);
+      res.writeHead(503);
+      res.end('503: Service Unavailable');
+      return;
+    }
+
+    const token = req.headers.authorization;
+    if (!token || token.length == 0) {
+      this.debug(`API NOTOKEN: ${url}`, ip);
+      res.writeHead(401);
+      res.end('401: Unauthorized');
+      return;
+    }
+    // const args = match.groups.args &amp;&amp; match.grous.args.split('/');
+
+    let reqData = null;
+    let userData = null;
+    const self = this;
+
+    const checkDone = function() {
+      if (reqData &amp;&amp; userData &amp;&amp; sm &amp;&amp; res) {
+        self._apiReady(sm, userData, reqData, res);
+      }
+    };
+
+    let body = '';
+    req.on('data', (chunk) => body += chunk);
+    req.on('end', () => {
+      try {
+        reqData = ApiRequestBody.from(JSON.parse(body));
+        checkDone();
+      } catch (err) {
+        res.writeHead(400);
+        res.end('400: Bad Request');
+        return;
+      }
+    });
+
+    const toSend = global.sqlCon.format(
+        'SELECT FROM Discord id WHERE apiToken=?', [token]);
+    global.sqlCon.query(toSend, (err, rows) => {
+      if (err) {
+        this.error('SQL query for user API token failed.');
+        console.error(err);
+        res.writeHead(500);
+        res.end('500: Internal Server Error');
+        return;
+      }
+      if (!rows || rows.length === 0 || !rows[0].id) {
+        this.debug(`API BADTOKEN: ${url}`, ip);
+        res.writeHead(401);
+        res.end('401: Unauthorized');
+        return;
+      }
+      userData = new WebUserData(rows[0].id);
+      checkDone();
+    });
+  }
+
+  /**
+   * @description All necessary request data has been collected for an endpoint.
+   * Handle finally firing request internally.
+   *
+   * @private
+   * @param {SubModule} sm Reference to SubModule that will be handling the
+   * request.
+   * @param {WebUserData} userData The user data for the request.
+   * @param {ApiRequestBody} reqData Data sent in body of request to send to
+   * endpoint.
+   * @param {http.ServerResponse} res Our response to the api request.
+   */
+  _apiReady(sm, userData, reqData, res) {
+
+  }
+}
+module.exports = new WebApi();
+</pre>
+    </article>
 </section>
+
 
 
 
@@ -743,10 +332,6 @@
 
 	<div class="clearfix"></div>
 
-	
-		<div class="col-md-3">
-			<div id="toc" class="col-md-3 hidden-xs hidden-sm hidden-md"></div>
-		</div>
 	
 
 </div>

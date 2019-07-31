@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>SpikeyBot-Discord Class: Messages</title>
+	<title>SpikeyBot-Discord Source: web/ApiEndpoint.js</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -81,659 +81,79 @@
 <div class="row">
 
 	
-	<div class="col-md-8">
+	<div class="col-md-12">
 	
 		<div id="main">
 			
 
-	<h1 class="page-title">Class: Messages</h1>
+		<h1 class="page-title">Source: web/ApiEndpoint.js</h1>
+    
 <section>
-
-<header>
-    
-        <h2>
-        Messages
-        </h2>
-        
-    
-</header>
-
-
-<article>
-    <div class="container-overview">
-    
-        
-<hr>
-<dt>
-    <h4 class="name" id="Messages"><span class="type-signature"></span>new Messages()</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Create the instance managing the filesystem.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="hg_Messages.js.html">hg/Messages.js</a>,
-				 <a href="hg_Messages.js.html#sunlight-1-line-13">line 13</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-    
-    </div>
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-        <h3 class="subsection-title">Members</h3>
-
-        <dl>
-            
-<hr>
-<dt class="name" id="_messageFile">
-    <h4 id="_messageFile"><span class="type-signature">&lt;private, constant> </span>_messageFile<span class="type-signature"> :string</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        The file path to read messages.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">string</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
-	<dd class="tag-default">
-		<ul class="dummy">
-			<li>./save/hgMessages.json</li>
-		</ul>
-	</dd>
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="hg_Messages.js.html">hg/Messages.js</a>,
-				 <a href="hg_Messages.js.html#sunlight-1-line-22">line 22</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="_messages">
-    <h4 id="_messages"><span class="type-signature">&lt;private> </span>_messages<span class="type-signature"> :object.&lt;Array.&lt;string>></span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        All messages to show for games. Parsed from file.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">object.&lt;Array.&lt;string>></span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
-	<dd class="tag-default">
-		<ul class="dummy">
-			<li>{}</li>
-		</ul>
-	</dd>
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="hg_Messages.js.html">hg/Messages.js</a>,
-				 <a href="hg_Messages.js.html#sunlight-1-line-31">line 31</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        </dl>
-    
-
-    
-        <h3 class="subsection-title">Methods</h3>
-
-        <dl>
-            
-<hr>
-<dt>
-    <h4 class="name" id="_updateMessages"><span class="type-signature">&lt;private> </span>_updateMessages()</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Parse all messages from file.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="hg_Messages.js.html">hg/Messages.js</a>,
-				 <a href="hg_Messages.js.html#sunlight-1-line-51">line 51</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="get"><span class="type-signature"></span>get(type)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Get a random message of a given type from hgMessages.json.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>type</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The message type to get.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="hg_Messages.js.html">hg/Messages.js</a>,
-				 <a href="hg_Messages.js.html#sunlight-1-line-71">line 71</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    A random message of the given type.
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">string</span>
-
-
-
-    </dd>
-</dl>
-
-
-        
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="shutdown"><span class="type-signature"></span>shutdown()</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Stop watching for file changes.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="hg_Messages.js.html">hg/Messages.js</a>,
-				 <a href="hg_Messages.js.html#sunlight-1-line-43">line 43</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        </dl>
-    
-
-    
-
-    
-</article>
-
+    <article>
+        <pre
+            class="sunlight-highlight-javascript linenums">// Copyright 2019 Campbell Crowley. All rights reserved.
+// Author: Campbell Crowley (dev@campbellcrowley.com)
+
+/**
+ * @classdesc Data associated with describing an API endpoint, and instructions
+ * on where to send data as well as what data is allowed.
+ * @class
+ */
+class ApiEndpoint {
+  /**
+   * @description Create an instance.
+   * @param {string} name The name of this endpoint.
+   * @param {string} smPath The path to the SubModule to direct data.
+   * @param {object} [options] Additional options for controlling request data.
+   * @param {string[]} [options.accept=[]] Acceptable content-type headers.
+   * @param {number} [options.maxLen=0] Maximum number of bytes allowed per
+   * request.
+   * @param {string[]} [options.methods=['GET,'POST']] Acceptable http methods
+   * for requests.
+   */
+  constructor(name, smPath, options = {}) {
+    if (!options) options = {};
+    /**
+     * @description The name of the API endpoint.
+     * @public
+     * @type {string}
+     */
+    this.name = name;
+    /**
+     * @description The path the the SubModule to redirect data.
+     * @public
+     * @type {string}
+     */
+    this.smPath = smPath;
+    /**
+     * @description List of acceptable content-type headers.
+     * @public
+     * @type {string[]}
+     * @default ['application/json']
+     */
+    this.accept = options.accept || ['application/json'];
+    /**
+     * @description Maximum number of bytes allowed per request.
+     * @public
+     * @type {number}
+     * @default 0
+     */
+    this.maxLen = options.maxLen || 0;
+    /**
+     * @description List of acceptable request methods.
+     * @public
+     * @type {string[]}
+     * @default ['GET', 'POST']
+     */
+    this.methods = options.methods || ['GET', 'POST'];
+  }
+}
+
+module.exports = ApiEndpoint;
+</pre>
+    </article>
 </section>
+
 
 
 
@@ -743,10 +163,6 @@
 
 	<div class="clearfix"></div>
 
-	
-		<div class="col-md-3">
-			<div id="toc" class="col-md-3 hidden-xs hidden-sm hidden-md"></div>
-		</div>
 	
 
 </div>

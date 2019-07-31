@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>SpikeyBot-Discord Class: SelectOption</title>
+	<title>SpikeyBot-Discord Class: ApiEndpoint</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -86,18 +86,17 @@
 		<div id="main">
 			
 
-	<h1 class="page-title">Class: SelectOption</h1>
+	<h1 class="page-title">Class: ApiEndpoint</h1>
 <section>
 
 <header>
     
         <h2>
-            <span class="ancestors"><a href="HungryGames.html">HungryGames</a><a href="HungryGames-DefaultOptions.html">~DefaultOptions</a>~</span>
-        
-        SelectOption
+        ApiEndpoint
         </h2>
         
-            <div class="class-description">One of multiple choices option.</div>
+            <div class="class-description">Data associated with describing an API endpoint, and instructions
+on where to send data as well as what data is allowed.</div>
         
     
 </header>
@@ -109,7 +108,7 @@
         
 <hr>
 <dt>
-    <h4 class="name" id="SelectOption"><span class="type-signature"></span>new SelectOption(value [, comment] [, category], values)</h4>
+    <h4 class="name" id="ApiEndpoint"><span class="type-signature"></span>new ApiEndpoint(name, smPath [, options])</h4>
     
     
 </dt>
@@ -117,7 +116,7 @@
 
     
     <div class="description">
-        Allows an option from a set of possible values.
+        Create an instance.
     </div>
     
 
@@ -129,6 +128,125 @@
     
         <h5>Parameters:</h5>
         
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Argument</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The name of this endpoint.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>smPath</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The path to the SubModule to direct data.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Additional options for controlling request data.
+                <h6 class="method-params-label method-subparams-label">Properties</h6>
+                
 
 <table class="params table table-striped">
     <thead>
@@ -156,129 +274,7 @@
 
         <tr>
             
-                <td class="name"><code>value</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last">Value of this option.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>comment</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                    &lt;nullable><br>
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    null
-                
-                </td>
-            
-
-            <td class="description last">Comment/description for the user about this
-option.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>category</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                    &lt;nullable><br>
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    null
-                
-                </td>
-            
-
-            <td class="description last">Category this option falls under for
-showing user.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>values</code></td>
+                <td class="name"><code>accept</code></td>
             
 
             <td class="type">
@@ -294,6 +290,8 @@ showing user.</td>
             
                 <td class="attributes">
                 
+                    &lt;optional><br>
+                
 
                 
 
@@ -304,10 +302,101 @@ showing user.</td>
             
                 <td class="default">
                 
+                    []
+                
                 </td>
             
 
-            <td class="description last">Possible values.</td>
+            <td class="description last">Acceptable content-type headers.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>maxLen</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    0
+                
+                </td>
+            
+
+            <td class="description last">Maximum number of bytes allowed per
+request.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>methods</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;string></span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    ['GET,'POST']
+                
+                </td>
+            
+
+            <td class="description last">Acceptable http methods
+for requests.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
         </tr>
 
     
@@ -351,8 +440,8 @@ showing user.</td>
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="hg_DefaultOptions.js.html">hg/DefaultOptions.js</a>,
-				 <a href="hg_DefaultOptions.js.html#sunlight-1-line-193">line 193</a>
+				<a href="web_ApiEndpoint.js.html">web/ApiEndpoint.js</a>,
+				 <a href="web_ApiEndpoint.js.html#sunlight-1-line-21">line 21</a>
 			</li>
 		</ul>
 	</dd>
@@ -383,17 +472,6 @@ showing user.</td>
 
     
     </div>
-
-    
-        <h3 class="subsection-title">Extends</h3>
-
-        
-
-
-    <ul>
-        <li><a href="HungryGames-DefaultOptions-Option.html">HungryGames~DefaultOptions~Option</a></li>
-    </ul>
-
 
     
 
@@ -411,15 +489,279 @@ showing user.</td>
         <dl>
             
 <hr>
-<dt class="name" id="category">
-    <h4 id="category"><span class="type-signature">&lt;nullable> </span>category<span class="type-signature"> :string</span></h4>
+<dt class="name" id="accept">
+    <h4 id="accept"><span class="type-signature"></span>accept<span class="type-signature"> :Array.&lt;string></span></h4>
 
     
 </dt>
 <dd>
     
     <div class="description">
-        Get the category of this option.
+        List of acceptable content-type headers.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">Array.&lt;string></span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>['application/json']</li>
+		</ul>
+	</dd>
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_ApiEndpoint.js.html">web/ApiEndpoint.js</a>,
+				 <a href="web_ApiEndpoint.js.html#sunlight-1-line-41">line 41</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="maxLen">
+    <h4 id="maxLen"><span class="type-signature"></span>maxLen<span class="type-signature"> :number</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Maximum number of bytes allowed per request.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">number</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>0</li>
+		</ul>
+	</dd>
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_ApiEndpoint.js.html">web/ApiEndpoint.js</a>,
+				 <a href="web_ApiEndpoint.js.html#sunlight-1-line-48">line 48</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="methods">
+    <h4 id="methods"><span class="type-signature"></span>methods<span class="type-signature"> :Array.&lt;string></span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        List of acceptable request methods.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">Array.&lt;string></span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>['GET', 'POST']</li>
+		</ul>
+	</dd>
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_ApiEndpoint.js.html">web/ApiEndpoint.js</a>,
+				 <a href="web_ApiEndpoint.js.html#sunlight-1-line-55">line 55</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="name">
+    <h4 id="name"><span class="type-signature"></span>name<span class="type-signature"> :string</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The name of the API endpoint.
     </div>
     
 
@@ -445,21 +787,7 @@ showing user.</td>
 	
 
 	
-	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
-	<dd class="inherited-from">
-		<ul class="dummy">
-			<li>
-				<a href="HungryGames-DefaultOptions-Option.html#category">HungryGames~DefaultOptions~Option#category</a>
-			</li>
-		</ul>
-	</dd>
-	
 
-    
-    <dt class="tag-overrides">Overrides:</dt>
-    <dd class="tag-overrides"><ul class="dummy"><li>
-        <a href="HungryGames-DefaultOptions-Option.html#category">HungryGames~DefaultOptions~Option#category</a>
-    </li></ul></dd>
     
 
     
@@ -485,8 +813,8 @@ showing user.</td>
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="hg_DefaultOptions.js.html">hg/DefaultOptions.js</a>,
-				 <a href="hg_DefaultOptions.js.html#sunlight-1-line-51">line 51</a>
+				<a href="web_ApiEndpoint.js.html">web/ApiEndpoint.js</a>,
+				 <a href="web_ApiEndpoint.js.html#sunlight-1-line-28">line 28</a>
 			</li>
 		</ul>
 	</dd>
@@ -506,15 +834,15 @@ showing user.</td>
         
             
 <hr>
-<dt class="name" id="comment">
-    <h4 id="comment"><span class="type-signature">&lt;nullable> </span>comment<span class="type-signature"> :string</span></h4>
+<dt class="name" id="smPath">
+    <h4 id="smPath"><span class="type-signature"></span>smPath<span class="type-signature"> :string</span></h4>
 
     
 </dt>
 <dd>
     
     <div class="description">
-        Get the description of this option.
+        The path the the SubModule to redirect data.
     </div>
     
 
@@ -540,345 +868,6 @@ showing user.</td>
 	
 
 	
-	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
-	<dd class="inherited-from">
-		<ul class="dummy">
-			<li>
-				<a href="HungryGames-DefaultOptions-Option.html#comment">HungryGames~DefaultOptions~Option#comment</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-    
-    <dt class="tag-overrides">Overrides:</dt>
-    <dd class="tag-overrides"><ul class="dummy"><li>
-        <a href="HungryGames-DefaultOptions-Option.html#comment">HungryGames~DefaultOptions~Option#comment</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="hg_DefaultOptions.js.html">hg/DefaultOptions.js</a>,
-				 <a href="hg_DefaultOptions.js.html#sunlight-1-line-43">line 43</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="entries">
-    <h4 id="entries"><span class="type-signature"></span>entries<span class="type-signature"></span></h4>
-
-    
-</dt>
-<dd>
-    
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
-	<dd class="inherited-from">
-		<ul class="dummy">
-			<li>
-				<a href="HungryGames-DefaultOptions-Option.html#entries">HungryGames~DefaultOptions~Option#entries</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-    
-    <dt class="tag-overrides">Overrides:</dt>
-    <dd class="tag-overrides"><ul class="dummy"><li>
-        <a href="HungryGames-DefaultOptions-Option.html#entries">HungryGames~DefaultOptions~Option#entries</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="hg_DefaultOptions.js.html">hg/DefaultOptions.js</a>,
-				 <a href="hg_DefaultOptions.js.html#sunlight-1-line-70">line 70</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="keys">
-    <h4 id="keys"><span class="type-signature"></span>keys<span class="type-signature"></span></h4>
-
-    
-</dt>
-<dd>
-    
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
-	<dd class="inherited-from">
-		<ul class="dummy">
-			<li>
-				<a href="HungryGames-DefaultOptions-Option.html#keys">HungryGames~DefaultOptions~Option#keys</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-    
-    <dt class="tag-overrides">Overrides:</dt>
-    <dd class="tag-overrides"><ul class="dummy"><li>
-        <a href="HungryGames-DefaultOptions-Option.html#keys">HungryGames~DefaultOptions~Option#keys</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="hg_DefaultOptions.js.html">hg/DefaultOptions.js</a>,
-				 <a href="hg_DefaultOptions.js.html#sunlight-1-line-58">line 58</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="value">
-    <h4 id="value"><span class="type-signature"></span>value<span class="type-signature"> :*</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        Get the value of this option.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">*</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
-	<dd class="inherited-from">
-		<ul class="dummy">
-			<li>
-				<a href="HungryGames-DefaultOptions-Option.html#value">HungryGames~DefaultOptions~Option#value</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-    
-    <dt class="tag-overrides">Overrides:</dt>
-    <dd class="tag-overrides"><ul class="dummy"><li>
-        <a href="HungryGames-DefaultOptions-Option.html#value">HungryGames~DefaultOptions~Option#value</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="hg_DefaultOptions.js.html">hg/DefaultOptions.js</a>,
-				 <a href="hg_DefaultOptions.js.html#sunlight-1-line-35">line 35</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="values">
-    <h4 id="values"><span class="type-signature"></span>values<span class="type-signature"></span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        Get possible values for this option.
-    </div>
-    
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
 
     
 
@@ -905,8 +894,8 @@ showing user.</td>
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="hg_DefaultOptions.js.html">hg/DefaultOptions.js</a>,
-				 <a href="hg_DefaultOptions.js.html#sunlight-1-line-213">line 213</a>
+				<a href="web_ApiEndpoint.js.html">web/ApiEndpoint.js</a>,
+				 <a href="web_ApiEndpoint.js.html#sunlight-1-line-34">line 34</a>
 			</li>
 		</ul>
 	</dd>

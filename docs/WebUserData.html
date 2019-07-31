@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>SpikeyBot-Discord Class: TTS</title>
+	<title>SpikeyBot-Discord Class: WebUserData</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -86,16 +86,17 @@
 		<div id="main">
 			
 
-	<h1 class="page-title">Class: TTS</h1>
+	<h1 class="page-title">Class: WebUserData</h1>
 <section>
 
 <header>
     
         <h2>
-        TTS
+        WebUserData
         </h2>
         
-            <div class="class-description">Adds text-to-speech support for voice channels.</div>
+            <div class="class-description">The user data injected to be sent along with all user request to
+the web API.</div>
         
     
 </header>
@@ -107,19 +108,73 @@
         
 <hr>
 <dt>
-    <h4 class="name" id="TTS"><span class="type-signature"></span>new TTS()</h4>
+    <h4 class="name" id="WebUserData"><span class="type-signature"></span>new WebUserData(id)</h4>
     
     
 </dt>
 <dd>
 
     
-
+    <div class="description">
+        Create an instance of the user metadata.
+    </div>
     
 
     
 
     
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>id</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">User ID of user performing request.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
     
 
     
@@ -157,8 +212,8 @@
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="tts.js.html">tts.js</a>,
-				 <a href="tts.js.html#sunlight-1-line-20">line 20</a>
+				<a href="web_WebUserData.js.html">web/WebUserData.js</a>,
+				 <a href="web_WebUserData.js.html#sunlight-1-line-14">line 14</a>
 			</li>
 		</ul>
 	</dd>
@@ -177,13 +232,6 @@
     
 
     
-    <h5>Listens to Events:</h5>
-    <ul>
-        <li>Command#event:tts</li>
-    
-        <li>Command#event:speak</li>
-    </ul>
-    
 
     
 
@@ -196,17 +244,6 @@
 
     
     </div>
-
-    
-        <h3 class="subsection-title">Extends</h3>
-
-        
-
-
-    <ul>
-        <li><a href="SubModule.html">SubModule</a></li>
-    </ul>
-
 
     
 
@@ -224,16 +261,19 @@
         <dl>
             
 <hr>
-<dt class="name" id="bot">
-    <h4 id="bot"><span class="type-signature">&lt;nullable> </span>bot<span class="type-signature"> :<a href="SpikeyBot.html">SpikeyBot</a></span></h4>
+<dt class="name" id="_guilds">
+    <h4 id="_guilds"><span class="type-signature">&lt;private> </span>_guilds<span class="type-signature"> :null|Array.&lt;string></span></h4>
 
     
 </dt>
 <dd>
     
     <div class="description">
-        The parent SpikeyBot instance. Defaults to required cache value for
-autocompletion, updates to current reference at init.
+        Array of guild IDs this user is a part of. This will only be
+available if request was made using the user's token with 'guilds' as a
+scope, and thus may not exist in all requests.* It may be used to improve
+efficiency, to prevent looking up all guilds with the user performing the
+request.
     </div>
     
 
@@ -242,7 +282,10 @@ autocompletion, updates to current reference at init.
         <ul>
             <li>
                 
-<span class="param-type"><a href="SpikeyBot.html">SpikeyBot</a></span>
+<span class="param-type">null</span>
+|
+
+<span class="param-type">Array.&lt;string></span>
 
 
 
@@ -258,15 +301,6 @@ autocompletion, updates to current reference at init.
 
 	
 
-	
-	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
-	<dd class="inherited-from">
-		<ul class="dummy">
-			<li>
-				<a href="SubModule.html#bot">SubModule#bot</a>
-			</li>
-		</ul>
-	</dd>
 	
 
     
@@ -294,8 +328,8 @@ autocompletion, updates to current reference at init.
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="subModule.js.html">subModule.js</a>,
-				 <a href="subModule.js.html#sunlight-1-line-70">line 70</a>
+				<a href="web_WebUserData.js.html">web/WebUserData.js</a>,
+				 <a href="web_WebUserData.js.html#sunlight-1-line-38">line 38</a>
 			</li>
 		</ul>
 	</dd>
@@ -303,6 +337,13 @@ autocompletion, updates to current reference at init.
 
 	
 
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li>WebUserData~guilds</li>
+			</ul>
+	</dd>
 	
 
 	
@@ -315,199 +356,15 @@ autocompletion, updates to current reference at init.
         
             
 <hr>
-<dt class="name" id="client">
-    <h4 id="client"><span class="type-signature"></span>client<span class="type-signature"> :external:Discord~Client</span></h4>
+<dt class="name" id="_id">
+    <h4 id="_id"><span class="type-signature">&lt;private, constant> </span>_id<span class="type-signature"> :string</span></h4>
 
     
 </dt>
 <dd>
     
     <div class="description">
-        The current bot client. Defaults to require cache value for editor
-autocompletion, updates to current reference at init.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">external:Discord~Client</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
-	<dd class="inherited-from">
-		<ul class="dummy">
-			<li>
-				<a href="SubModule.html#client">SubModule#client</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="subModule.js.html">subModule.js</a>,
-				 <a href="subModule.js.html#sunlight-1-line-44">line 44</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="command">
-    <h4 id="command"><span class="type-signature"></span>command<span class="type-signature"> :<a href="Command.html">Command</a></span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        The command object for registering command listeners. Defaults to require
-cache value for editor autocompletion, updates to current reference at
-init.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type"><a href="Command.html">Command</a></span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
-	<dd class="inherited-from">
-		<ul class="dummy">
-			<li>
-				<a href="SubModule.html#command">SubModule#command</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="subModule.js.html">subModule.js</a>,
-				 <a href="subModule.js.html#sunlight-1-line-53">line 53</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="commit">
-    <h4 id="commit"><span class="type-signature">&lt;constant> </span>commit<span class="type-signature"> :string</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        The commit at HEAD at the time this module was loaded. Essentially the
-version of this submodule.
+        The user's ID.
     </div>
     
 
@@ -533,15 +390,6 @@ version of this submodule.
 	
 
 	
-	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
-	<dd class="inherited-from">
-		<ul class="dummy">
-			<li>
-				<a href="SubModule.html#commit">SubModule#commit</a>
-			</li>
-		</ul>
-	</dd>
-	
 
     
 
@@ -568,8 +416,8 @@ version of this submodule.
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="subModule.js.html">subModule.js</a>,
-				 <a href="subModule.js.html#sunlight-1-line-80">line 80</a>
+				<a href="web_WebUserData.js.html">web/WebUserData.js</a>,
+				 <a href="web_WebUserData.js.html#sunlight-1-line-24">line 24</a>
 			</li>
 		</ul>
 	</dd>
@@ -577,6 +425,13 @@ version of this submodule.
 
 	
 
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li>WebUserData~id</li>
+			</ul>
+	</dd>
 	
 
 	
@@ -589,390 +444,15 @@ version of this submodule.
         
             
 <hr>
-<dt class="name" id="common">
-    <h4 id="common"><span class="type-signature"></span>common<span class="type-signature"> :<a href="Common.html">Common</a></span></h4>
+<dt class="name" id="_sessionExpirationDate">
+    <h4 id="_sessionExpirationDate"><span class="type-signature">&lt;private, nullable> </span>_sessionExpirationDate<span class="type-signature"> :number</span></h4>
 
     
 </dt>
 <dd>
     
     <div class="description">
-        The common object. Defaults to require cache value for editor
-autocompletion, updates to current reference at init.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type"><a href="Common.html">Common</a></span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
-	<dd class="inherited-from">
-		<ul class="dummy">
-			<li>
-				<a href="SubModule.html#common">SubModule#common</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="subModule.js.html">subModule.js</a>,
-				 <a href="subModule.js.html#sunlight-1-line-61">line 61</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="Discord">
-    <h4 id="Discord"><span class="type-signature"></span>Discord<span class="type-signature"> :<a href="external-Discord.html">external:Discord</a></span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        The current Discord object instance of the bot. Defaults to require cache
-value for editor autocompletion, updates to current reference at init.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type"><a href="external-Discord.html">external:Discord</a></span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
-	<dd class="inherited-from">
-		<ul class="dummy">
-			<li>
-				<a href="SubModule.html#Discord">SubModule#Discord</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="subModule.js.html">subModule.js</a>,
-				 <a href="subModule.js.html#sunlight-1-line-36">line 36</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="helpMessage">
-    <h4 id="helpMessage"><span class="type-signature"></span>helpMessage<span class="type-signature"> :undefined|string|external:Discord~MessageEmbed</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        The help message to show the user in the main help message.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">undefined</span>
-|
-
-<span class="param-type">string</span>
-|
-
-<span class="param-type">external:Discord~MessageEmbed</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
-	<dd class="inherited-from">
-		<ul class="dummy">
-			<li>
-				<a href="SubModule.html#helpMessage">SubModule#helpMessage</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-    
-    <dt class="tag-overrides">Overrides:</dt>
-    <dd class="tag-overrides"><ul class="dummy"><li>
-        <a href="SubModule.html#helpMessage">SubModule#helpMessage</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="subModule.js.html">subModule.js</a>,
-				 <a href="subModule.js.html#sunlight-1-line-18">line 18</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="initialized">
-    <h4 id="initialized"><span class="type-signature">&lt;protected, readonly> </span>initialized<span class="type-signature"> :boolean</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        Has this subModule been initialized yet (Has begin() been called).
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">boolean</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
-	<dd class="inherited-from">
-		<ul class="dummy">
-			<li>
-				<a href="SubModule.html#initialized">SubModule#initialized</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="subModule.js.html">subModule.js</a>,
-				 <a href="subModule.js.html#sunlight-1-line-114">line 114</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="loadTime">
-    <h4 id="loadTime"><span class="type-signature">&lt;constant> </span>loadTime<span class="type-signature"> :number</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        The time at which this module was loaded for use in checking if the
-module
-needs to be reloaded because the file has been modified since loading.
+        Session expiration timestamp for the user request.
     </div>
     
 
@@ -998,15 +478,6 @@ needs to be reloaded because the file has been modified since loading.
 	
 
 	
-	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
-	<dd class="inherited-from">
-		<ul class="dummy">
-			<li>
-				<a href="SubModule.html#loadTime">SubModule#loadTime</a>
-			</li>
-		</ul>
-	</dd>
-	
 
     
 
@@ -1033,8 +504,8 @@ needs to be reloaded because the file has been modified since loading.
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="subModule.js.html">subModule.js</a>,
-				 <a href="subModule.js.html#sunlight-1-line-93">line 93</a>
+				<a href="web_WebUserData.js.html">web/WebUserData.js</a>,
+				 <a href="web_WebUserData.js.html#sunlight-1-line-54">line 54</a>
 			</li>
 		</ul>
 	</dd>
@@ -1054,203 +525,16 @@ needs to be reloaded because the file has been modified since loading.
         
             
 <hr>
-<dt class="name" id="myName">
-    <h4 id="myName"><span class="type-signature">&lt;protected> </span>myName<span class="type-signature"> :string</span></h4>
+<dt class="name" id="_sessionId">
+    <h4 id="_sessionId"><span class="type-signature">&lt;private, nullable> </span>_sessionId<span class="type-signature"> :string</span></h4>
 
     
 </dt>
 <dd>
     
     <div class="description">
-        The name of this submodule. Used for differentiating in the log. Should
-be
-defined before begin().
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">string</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
-	<dd class="inherited-from">
-		<ul class="dummy">
-			<li>
-				<a href="SubModule.html#myName">SubModule#myName</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-    
-    <dt class="tag-overrides">Overrides:</dt>
-    <dd class="tag-overrides"><ul class="dummy"><li>
-        <a href="SubModule.html#myName">SubModule#myName</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="subModule.js.html">subModule.js</a>,
-				 <a href="subModule.js.html#sunlight-1-line-104">line 104</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="postPrefix">
-    <h4 id="postPrefix"><span class="type-signature">&lt;abstract> </span>postPrefix<span class="type-signature"> :string</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        The postfix for the global prefix for this subModule. Must be defined
-before begin(), otherwise it is ignored.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">string</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
-	<dd class="inherited-from">
-		<ul class="dummy">
-			<li>
-				<a href="SubModule.html#postPrefix">SubModule#postPrefix</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="subModule.js.html">subModule.js</a>,
-				 <a href="subModule.js.html#sunlight-1-line-28">line 28</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="~ttsPermString">
-    <h4 id="~ttsPermString"><span class="type-signature">&lt;private, inner, constant> </span>ttsPermString<span class="type-signature"> :string</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        The permission required to use TTS commands.
+        Session ID for the user request. Null if request was not
+made as a session.
     </div>
     
 
@@ -1294,12 +578,86 @@ before begin(), otherwise it is ignored.
 	
 
 	
-	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
-	<dd class="tag-default">
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
 		<ul class="dummy">
-			<li>tts:all</li>
+			<li>
+				<a href="web_WebUserData.js.html">web/WebUserData.js</a>,
+				 <a href="web_WebUserData.js.html#sunlight-1-line-47">line 47</a>
+			</li>
 		</ul>
 	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="avatar">
+    <h4 id="avatar"><span class="type-signature">&lt;nullable> </span>avatar<span class="type-signature"> :string</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        User's avatar hash.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">string</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
 	
 
 
@@ -1309,8 +667,8 @@ before begin(), otherwise it is ignored.
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="tts.js.html">tts.js</a>,
-				 <a href="tts.js.html#sunlight-1-line-55">line 55</a>
+				<a href="web_WebUserData.js.html">web/WebUserData.js</a>,
+				 <a href="web_WebUserData.js.html#sunlight-1-line-88">line 88</a>
 			</li>
 		</ul>
 	</dd>
@@ -1318,6 +676,1010 @@ before begin(), otherwise it is ignored.
 
 	
 
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li><a href="https://discordapp.com/developers/docs/resources/user#user-object">https://discordapp.com/developers/docs/resources/user#user-object</a></li>
+			</ul>
+	</dd>
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="bot">
+    <h4 id="bot"><span class="type-signature">&lt;nullable> </span>bot<span class="type-signature"> :boolean</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Is this user a bot.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">boolean</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_WebUserData.js.html">web/WebUserData.js</a>,
+				 <a href="web_WebUserData.js.html#sunlight-1-line-99">line 99</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li><a href="https://discordapp.com/developers/docs/resources/user#user-object">https://discordapp.com/developers/docs/resources/user#user-object</a></li>
+			</ul>
+	</dd>
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="discriminator">
+    <h4 id="discriminator"><span class="type-signature">&lt;nullable> </span>discriminator<span class="type-signature"> :string</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        User's account discriminator.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">string</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_WebUserData.js.html">web/WebUserData.js</a>,
+				 <a href="web_WebUserData.js.html#sunlight-1-line-77">line 77</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li><a href="https://discordapp.com/developers/docs/resources/user#user-object">https://discordapp.com/developers/docs/resources/user#user-object</a></li>
+			</ul>
+	</dd>
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="flags">
+    <h4 id="flags"><span class="type-signature">&lt;nullable> </span>flags<span class="type-signature"> :number</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Discord user flags.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">number</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_WebUserData.js.html">web/WebUserData.js</a>,
+				 <a href="web_WebUserData.js.html#sunlight-1-line-132">line 132</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li><a href="https://discordapp.com/developers/docs/resources/user#user-object">https://discordapp.com/developers/docs/resources/user#user-object</a></li>
+			</ul>
+	</dd>
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="guilds">
+    <h4 id="guilds"><span class="type-signature"></span>guilds<span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Getter for guild list.
+    </div>
+    
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_WebUserData.js.html">web/WebUserData.js</a>,
+				 <a href="web_WebUserData.js.html#sunlight-1-line-162">line 162</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li>WebUserData~_guilds</li>
+			</ul>
+	</dd>
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="id">
+    <h4 id="id"><span class="type-signature"></span>id<span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Getter for user ID.
+    </div>
+    
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_WebUserData.js.html">web/WebUserData.js</a>,
+				 <a href="web_WebUserData.js.html#sunlight-1-line-152">line 152</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li>WebUserData~_id</li>
+			</ul>
+	</dd>
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="locale">
+    <h4 id="locale"><span class="type-signature">&lt;nullable> </span>locale<span class="type-signature"> :string</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The user's chosen language option.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">string</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_WebUserData.js.html">web/WebUserData.js</a>,
+				 <a href="web_WebUserData.js.html#sunlight-1-line-121">line 121</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li><a href="https://discordapp.com/developers/docs/resources/user#user-object">https://discordapp.com/developers/docs/resources/user#user-object</a></li>
+			</ul>
+	</dd>
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="mfaEnabled">
+    <h4 id="mfaEnabled"><span class="type-signature">&lt;nullable> </span>mfaEnabled<span class="type-signature"> :boolean</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Is two factor authentication enabled on this user's account.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">boolean</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_WebUserData.js.html">web/WebUserData.js</a>,
+				 <a href="web_WebUserData.js.html#sunlight-1-line-110">line 110</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li><a href="https://discordapp.com/developers/docs/resources/user#user-object">https://discordapp.com/developers/docs/resources/user#user-object</a></li>
+			</ul>
+	</dd>
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="premiumType">
+    <h4 id="premiumType"><span class="type-signature">&lt;nullable> </span>premiumType<span class="type-signature"> :number</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        User's Nitro status.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">number</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_WebUserData.js.html">web/WebUserData.js</a>,
+				 <a href="web_WebUserData.js.html#sunlight-1-line-143">line 143</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li><a href="https://discordapp.com/developers/docs/resources/user#user-object">https://discordapp.com/developers/docs/resources/user#user-object</a></li>
+			</ul>
+	</dd>
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="serializable">
+    <h4 id="serializable"><span class="type-signature"></span>serializable<span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Get a serializable version of this class instance. Behaves
+differently than HG serializable getters in that private variables are
+converted to public instead of being removed. Assumes all variables are
+serializable if they aren't a function.
+    </div>
+    
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_WebUserData.js.html">web/WebUserData.js</a>,
+				 <a href="web_WebUserData.js.html#sunlight-1-line-240">line 240</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="sessionExpirationDate">
+    <h4 id="sessionExpirationDate"><span class="type-signature"></span>sessionExpirationDate<span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Getter for session expiration timestamp.
+    </div>
+    
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_WebUserData.js.html">web/WebUserData.js</a>,
+				 <a href="web_WebUserData.js.html#sunlight-1-line-203">line 203</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li>WebUserData~_sessionExpirationDate</li>
+			</ul>
+	</dd>
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="sessionId">
+    <h4 id="sessionId"><span class="type-signature"></span>sessionId<span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Getter for session ID.
+    </div>
+    
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_WebUserData.js.html">web/WebUserData.js</a>,
+				 <a href="web_WebUserData.js.html#sunlight-1-line-172">line 172</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li>WebUserData~_sessionId</li>
+			</ul>
+	</dd>
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="username">
+    <h4 id="username"><span class="type-signature">&lt;nullable> </span>username<span class="type-signature"> :string</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        User's username.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">string</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_WebUserData.js.html">web/WebUserData.js</a>,
+				 <a href="web_WebUserData.js.html#sunlight-1-line-66">line 66</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li><a href="https://discordapp.com/developers/docs/resources/user#user-object">https://discordapp.com/developers/docs/resources/user#user-object</a></li>
+			</ul>
+	</dd>
 	
 
 	
@@ -1337,7 +1699,7 @@ before begin(), otherwise it is ignored.
             
 <hr>
 <dt>
-    <h4 class="name" id="begin"><span class="type-signature"></span>begin(Discord, client, command, common, bot)</h4>
+    <h4 class="name" id=".from"><span class="type-signature">&lt;static> </span>from(obj)</h4>
     
     
 </dt>
@@ -1345,7 +1707,7 @@ before begin(), otherwise it is ignored.
 
     
     <div class="description">
-        Initialize this submodule.
+        Create this object from a Discord User Object response data.
     </div>
     
 
@@ -1380,13 +1742,13 @@ before begin(), otherwise it is ignored.
 
         <tr>
             
-                <td class="name"><code>Discord</code></td>
+                <td class="name"><code>obj</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">Discord</span>
+<span class="param-type">object</span>
 
 
 
@@ -1397,104 +1759,7 @@ before begin(), otherwise it is ignored.
 
             
 
-            <td class="description last">The Discord object for the API library.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>client</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Discord~Client</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The client that represents this bot.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>command</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="Command.html">Command</a></span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The command instance in which to
-register command listeners.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>common</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="Common.html">Common</a></span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Class storing common functions.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>bot</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="SpikeyBot.html">SpikeyBot</a></span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The parent SpikeyBot instance.</td>
+            <td class="description last">Object data from Discord.</td>
         </tr>
 
     
@@ -1512,15 +1777,6 @@ register command listeners.</td>
 	
 
 	
-	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
-	<dd class="inherited-from">
-		<ul class="dummy">
-			<li>
-				<a href="SubModule.html#begin">SubModule#begin</a>
-			</li>
-		</ul>
-	</dd>
-	
 
     
 
@@ -1547,8 +1803,8 @@ register command listeners.</td>
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="subModule.js.html">subModule.js</a>,
-				 <a href="subModule.js.html#sunlight-1-line-137">line 137</a>
+				<a href="web_WebUserData.js.html">web/WebUserData.js</a>,
+				 <a href="web_WebUserData.js.html#sunlight-1-line-263">line 263</a>
 			</li>
 		</ul>
 	</dd>
@@ -1556,755 +1812,6 @@ register command listeners.</td>
 
 	
 
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="debug"><span class="type-signature">&lt;protected> </span>debug(msg)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Log using common.logDebug, but automatically set name.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>msg</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The message to log.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
-	<dd class="inherited-from">
-		<ul class="dummy">
-			<li>
-				<a href="SubModule.html#debug">SubModule#debug</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="subModule.js.html">subModule.js</a>,
-				 <a href="subModule.js.html#sunlight-1-line-224">line 224</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="end"><span class="type-signature"></span>end()</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Trigger subModule to shutdown and get ready for process terminating.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
-	<dd class="inherited-from">
-		<ul class="dummy">
-			<li>
-				<a href="SubModule.html#end">SubModule#end</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="subModule.js.html">subModule.js</a>,
-				 <a href="subModule.js.html#sunlight-1-line-202">line 202</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="error"><span class="type-signature">&lt;protected> </span>error(msg)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Log using common.error, but automatically set name.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>msg</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The message to log.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
-	<dd class="inherited-from">
-		<ul class="dummy">
-			<li>
-				<a href="SubModule.html#error">SubModule#error</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="subModule.js.html">subModule.js</a>,
-				 <a href="subModule.js.html#sunlight-1-line-242">line 242</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="initialize"><span class="type-signature">&lt;protected> </span>initialize()</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        The function called at the end of begin() for further initialization
-specific to the subModule. Must be defined before begin() is called.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
-	<dd class="inherited-from">
-		<ul class="dummy">
-			<li>
-				<a href="SubModule.html#initialize">SubModule#initialize</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-    
-    <dt class="tag-overrides">Overrides:</dt>
-    <dd class="tag-overrides"><ul class="dummy"><li>
-        <a href="SubModule.html#initialize">SubModule#initialize</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="subModule.js.html">subModule.js</a>,
-				 <a href="subModule.js.html#sunlight-1-line-123">line 123</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="log"><span class="type-signature">&lt;protected> </span>log(msg)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Log using common.log, but automatically set name.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>msg</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The message to log.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
-	<dd class="inherited-from">
-		<ul class="dummy">
-			<li>
-				<a href="SubModule.html#log">SubModule#log</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="subModule.js.html">subModule.js</a>,
-				 <a href="subModule.js.html#sunlight-1-line-215">line 215</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="reloadable"><span class="type-signature">&lt;abstract> </span>reloadable()</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Check if this module is in a state that is ready to be
-reloaded. If false is returned, this module should not be unloaded and
-doing such may risk putting the module into an uncontrollable state. This
-is different from unloadable, which checks if this module can be stopped
-completely, this checks if the module can be stopped and restarted.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
-	<dd class="inherited-from">
-		<ul class="dummy">
-			<li>
-				<a href="SubModule.html#reloadable">SubModule#reloadable</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="subModule.js.html">subModule.js</a>,
-				 <a href="subModule.js.html#sunlight-1-line-293">line 293</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
-	<dd class="tag-see">
-		<ul>
-			<li>SubModule~unloadable</li>
-			</ul>
-	</dd>
 	
 
 	
@@ -2326,7 +1833,7 @@ completely, this checks if the module can be stopped and restarted.
     
             
 <div class="param-desc">
-    True if can be reloaded, false if cannot.
+    Created object.
 </div>
 
 
@@ -2337,7 +1844,7 @@ completely, this checks if the module can be stopped and restarted.
     </dt>
     <dd>
         
-<span class="param-type">boolean</span>
+<span class="param-type"><a href="WebUserData.html">WebUserData</a></span>
 
 
 
@@ -2354,7 +1861,7 @@ completely, this checks if the module can be stopped and restarted.
             
 <hr>
 <dt>
-    <h4 class="name" id="save"><span class="type-signature">&lt;abstract> </span>save( [opt])</h4>
+    <h4 class="name" id="setGuilds"><span class="type-signature"></span>setGuilds(guilds)</h4>
     
     
 </dt>
@@ -2362,7 +1869,145 @@ completely, this checks if the module can be stopped and restarted.
 
     
     <div class="description">
-        Saves all data to files necessary for saving current state.
+        Set the list of guilds for this user.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>guilds</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;string></span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Array of guild IDs for this user.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_WebUserData.js.html">web/WebUserData.js</a>,
+				 <a href="web_WebUserData.js.html#sunlight-1-line-225">line 225</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="setSession"><span class="type-signature"></span>setSession(sId, date)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Setter for session ID and expiration date.
     </div>
     
 
@@ -2389,8 +2034,6 @@ completely, this checks if the module can be stopped and restarted.
         
 
         
-        <th>Default</th>
-        
 
         <th class="last">Description</th>
     </tr>
@@ -2401,7 +2044,7 @@ completely, this checks if the module can be stopped and restarted.
 
         <tr>
             
-                <td class="name"><code>opt</code></td>
+                <td class="name"><code>sId</code></td>
             
 
             <td class="type">
@@ -2417,7 +2060,45 @@ completely, this checks if the module can be stopped and restarted.
             
                 <td class="attributes">
                 
-                    &lt;optional><br>
+
+                
+                    &lt;nullable><br>
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Session ID or null to unset.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>date</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+|
+
+<span class="param-type">Date</span>
+|
+
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
                 
 
                 
@@ -2427,15 +2108,8 @@ completely, this checks if the module can be stopped and restarted.
             
 
             
-                <td class="default">
-                
-                    'sync'
-                
-                </td>
-            
 
-            <td class="description last">Can be 'async', otherwise defaults to
-synchronous.</td>
+            <td class="description last">Date or timestamp, or null to unset.</td>
         </tr>
 
     
@@ -2453,15 +2127,6 @@ synchronous.</td>
 	
 
 	
-	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
-	<dd class="inherited-from">
-		<ul class="dummy">
-			<li>
-				<a href="SubModule.html#save">SubModule#save</a>
-			</li>
-		</ul>
-	</dd>
-	
 
     
 
@@ -2488,209 +2153,8 @@ synchronous.</td>
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="subModule.js.html">subModule.js</a>,
-				 <a href="subModule.js.html#sunlight-1-line-263">line 263</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="shutdown"><span class="type-signature">&lt;protected> </span>shutdown()</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Shutdown and disable this submodule. Removes all event listeners.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
-	<dd class="inherited-from">
-		<ul class="dummy">
-			<li>
-				<a href="SubModule.html#shutdown">SubModule#shutdown</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-    
-    <dt class="tag-overrides">Overrides:</dt>
-    <dd class="tag-overrides"><ul class="dummy"><li>
-        <a href="SubModule.html#shutdown">SubModule#shutdown</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="subModule.js.html">subModule.js</a>,
-				 <a href="subModule.js.html#sunlight-1-line-252">line 252</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="unloadable"><span class="type-signature">&lt;abstract> </span>unloadable()</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Check if this module is in a state that is ready to be
-unloaded. If false is returned, this module should not be unloaded and
-doing such may risk putting the module into an uncontrollable state.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
-	<dd class="inherited-from">
-		<ul class="dummy">
-			<li>
-				<a href="SubModule.html#unloadable">SubModule#unloadable</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="subModule.js.html">subModule.js</a>,
-				 <a href="subModule.js.html#sunlight-1-line-277">line 277</a>
+				<a href="web_WebUserData.js.html">web/WebUserData.js</a>,
+				 <a href="web_WebUserData.js.html#sunlight-1-line-183">line 183</a>
 			</li>
 		</ul>
 	</dd>
@@ -2702,7 +2166,9 @@ doing such may risk putting the module into an uncontrollable state.
 	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
 	<dd class="tag-see">
 		<ul>
-			<li>SubModule~reloadable</li>
+			<li>WebUserData~_sessionId</li>
+			
+			<li>WebUserData~_sessionExpirationDate</li>
 			</ul>
 	</dd>
 	
@@ -2722,30 +2188,6 @@ doing such may risk putting the module into an uncontrollable state.
     
 
     
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    True if can be unloaded, false if cannot.
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">boolean</span>
-
-
-
-    </dd>
-</dl>
-
-
-        
 
     
 </dd>
@@ -2754,7 +2196,7 @@ doing such may risk putting the module into an uncontrollable state.
             
 <hr>
 <dt>
-    <h4 class="name" id="warn"><span class="type-signature">&lt;protected> </span>warn(msg)</h4>
+    <h4 class="name" id="setSessionExpirationDate"><span class="type-signature"></span>setSessionExpirationDate(sED)</h4>
     
     
 </dt>
@@ -2762,7 +2204,7 @@ doing such may risk putting the module into an uncontrollable state.
 
     
     <div class="description">
-        Log using common.logWarning, but automatically set name.
+        Setter for session expiration timestamp.
     </div>
     
 
@@ -2797,7 +2239,160 @@ doing such may risk putting the module into an uncontrollable state.
 
         <tr>
             
-                <td class="name"><code>msg</code></td>
+                <td class="name"><code>sED</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+|
+
+<span class="param-type">Date</span>
+|
+
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Date or timestamp, or null to unset.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_WebUserData.js.html">web/WebUserData.js</a>,
+				 <a href="web_WebUserData.js.html#sunlight-1-line-212">line 212</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li>WebUserData~_sessionExpirationDate</li>
+			</ul>
+	</dd>
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="setSessionId"><span class="type-signature"></span>setSessionId(sId)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Setter for session ID.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Argument</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>sId</code></td>
             
 
             <td class="type">
@@ -2811,157 +2406,20 @@ doing such may risk putting the module into an uncontrollable state.
             </td>
 
             
-
-            
-
-            <td class="description last">The message to log.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-	<dt class="inherited-from method-doc-label method-doc-details-label">Inherited From:</dt>
-	<dd class="inherited-from">
-		<ul class="dummy">
-			<li>
-				<a href="SubModule.html#warn">SubModule#warn</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="subModule.js.html">subModule.js</a>,
-				 <a href="subModule.js.html#sunlight-1-line-233">line 233</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="~commandTTS"><span class="type-signature">&lt;private, inner> </span>commandTTS(msg)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Joins a user's voice channel and speaks the given message.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>msg</code></td>
-            
-
-            <td class="type">
-            
+                <td class="attributes">
                 
-<span class="param-type">Discord~Message</span>
 
+                
+                    &lt;nullable><br>
+                
 
-
-            
-            </td>
-
-            
-
+                
+                </td>
             
 
-            <td class="description last">Message that triggered command.</td>
+            
+
+            <td class="description last">Session ID or null to unset.</td>
         </tr>
 
     
@@ -3005,8 +2463,8 @@ doing such may risk putting the module into an uncontrollable state.
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="tts.js.html">tts.js</a>,
-				 <a href="tts.js.html#sunlight-1-line-66">line 66</a>
+				<a href="web_WebUserData.js.html">web/WebUserData.js</a>,
+				 <a href="web_WebUserData.js.html#sunlight-1-line-193">line 193</a>
 			</li>
 		</ul>
 	</dd>
@@ -3014,6 +2472,13 @@ doing such may risk putting the module into an uncontrollable state.
 
 	
 
+	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li>WebUserData~_sessionId</li>
+			</ul>
+	</dd>
 	
 
 	
@@ -3024,13 +2489,6 @@ doing such may risk putting the module into an uncontrollable state.
 
     
 
-    
-    <h5>Listens to Events:</h5>
-    <ul>
-        <li>Command#event:tts</li>
-    
-        <li>Command#event:speak</li>
-    </ul>
     
 
     
