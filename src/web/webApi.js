@@ -192,11 +192,11 @@ class WebApi extends SubModule {
    */
   _apiRequest(req, res, url, ip) {
     const match = url.match(
-        /^\/api\/(?<endpoint>[^/]+){1}\/(?<cmd>[^/]+){1}(?:\/(?<args>.+))?$/);
+        /^\/api\/(?<endpoint>[^/]+){1}\/(?<cmd>[^/]+){1}(?:\/(?<args>.*))?$/);
 
     if (!match || !match.groups.endpoint || !match.groups.cmd ||
         !this._endpoints[match.groups.endpoint]) {
-      this.common.logDebug(`API Unknown: ${url}`, ip);
+      this.common.logDebug(`API Unknown: ${url} ${JSON.stringify(match)}`, ip);
       res.writeHead(404);
       res.end('404: Not Found');
       return;
@@ -210,7 +210,7 @@ class WebApi extends SubModule {
       return;
     }
 
-    const rateInfo = self._checkRateLimit(match.groups.cmd, token);
+    const rateInfo = this._checkRateLimit(match.groups.cmd, token);
     res.setHeader('X-RateLimit-Limit', rateInfo.limit);
     res.setHeader('X-RateLimit-Remaining', rateInfo.remaining);
     res.setHeader('X-RateLimit-Bucket', rateInfo.group);
@@ -238,10 +238,11 @@ class WebApi extends SubModule {
     req.on('data', (chunk) => body += chunk);
     req.on('end', () => {
       try {
-        reqData = ApiRequestBody.from(JSON.parse(body));
+        reqData = ApiRequestBody.from(JSON.parse(body), match.groups.cmd);
         reqData.endpoint = ep;
         checkDone();
       } catch (err) {
+        this.common.error('Failed to parse request body: ' + url, ip);
         res.writeHead(400);
         res.end('400: Bad Request');
         return;
@@ -249,7 +250,7 @@ class WebApi extends SubModule {
     });
 
     const toSend = global.sqlCon.format(
-        'SELECT FROM Discord id WHERE apiToken=?', [token]);
+        'SELECT id FROM Discord WHERE apiToken=?', [token]);
     global.sqlCon.query(toSend, (err, rows) => {
       if (err) {
         this.common.error('SQL query for user API token failed.', ip);
@@ -295,10 +296,12 @@ class WebApi extends SubModule {
     socket.on('connect', () => {
       const reqTimeout = setTimeout(() => {
         this.common.logDebug(
-            'No response from endpoint request: ' + reqData.cmd, ip);
+            'No response from endpoint request: ' +
+                (reqData.cmd || 'NO COMMAND'),
+            ip);
         socket.close();
-        res.writeHead(503);
-        res.end('503: Service Unavailable');
+        res.writeHead(404);
+        res.end('404: Not Found');
       }, 5000);
       const ud = userData.serializable;
       socket.emit(reqData.cmd, ud, ...reqData.args, (err, ...response) => {
@@ -306,7 +309,7 @@ class WebApi extends SubModule {
         socket.close();
         this.common.logDebug(
             'Fullfilled API Request: ' + reqData.endpoint.name + ' (err: ' +
-            !!err + ')');
+            !!err + ', ' + reqData.cmd + ')');
         if (err) {
           res.writeHead(400, {'content-type': 'application/json'});
           res.end(JSON.stringify({message: err}));
@@ -319,9 +322,10 @@ class WebApi extends SubModule {
         }
       });
     });
-    socket.on('connect_error', () => {
+    socket.on('connect_error', (err) => {
       this.common.logDebug(
           'Failed to connect to endpoint: ' + reqData.endpoint.name, ip);
+      console.error(err);
       res.writeHead(503);
       res.end('503: Service Unavailable');
     });

@@ -38,7 +38,7 @@ class ApiEndpoint {
      * @public
      * @type {string}
      */
-    this.path = path;
+    this.path = `/www.spikeybot.com/socket.io/${path}`;
     /**
      * @description List of acceptable content-type headers.
      * @public

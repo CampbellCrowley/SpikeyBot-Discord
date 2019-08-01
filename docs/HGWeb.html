@@ -457,6 +457,541 @@
             
 <hr>
 <dt>
+    <h4 class="name" id="fetchGuild"><span class="type-signature"></span>fetchGuild(userData, socket, gId [, cb])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Fetch a single guild.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Argument</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>userData</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The current user's session data.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>socket</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">socketIo~Socket</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The socket connection to reply on.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>gId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+|
+
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The ID of the guild that was requested.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cb</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">basicCB</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Callback that fires once the requested action is
+complete, or has failed.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-801">line 801</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="fetchMember"><span class="type-signature"></span>fetchMember(userData, socket, gId, mId [, cb])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Fetch data about a member of a guild.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Argument</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>userData</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The current user's session data.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>socket</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">socketIo~Socket</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The socket connection to reply on.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>gId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+|
+
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The guild id to look at.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>mId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+|
+
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The member's id to lookup.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cb</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">basicCB</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Callback that fires once the requested action is
+complete, or has failed.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_hg.js.html">web/hg.js</a>,
+				 <a href="web_hg.js.html#sunlight-1-line-836">line 836</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
     <h4 class="name" id="getNumClients"><span class="type-signature"></span>getNumClients()</h4>
     
     
@@ -847,7 +1382,7 @@ cancelled after 60 seconds.
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-606">line 606</a>
+				 <a href="web_hg.js.html#sunlight-1-line-614">line 614</a>
 			</li>
 		</ul>
 	</dd>
@@ -1033,7 +1568,7 @@ cancelled after 60 seconds.
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-428">line 428</a>
+				 <a href="web_hg.js.html#sunlight-1-line-436">line 436</a>
 			</li>
 		</ul>
 	</dd>
@@ -1178,7 +1713,7 @@ cancelled after 60 seconds.
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-592">line 592</a>
+				 <a href="web_hg.js.html#sunlight-1-line-600">line 600</a>
 			</li>
 		</ul>
 	</dd>
@@ -1389,7 +1924,7 @@ given channel, as well as manage the games in the given guild.
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-494">line 494</a>
+				 <a href="web_hg.js.html#sunlight-1-line-502">line 502</a>
 			</li>
 		</ul>
 	</dd>
@@ -1556,7 +2091,7 @@ given channel.
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-456">line 456</a>
+				 <a href="web_hg.js.html#sunlight-1-line-464">line 464</a>
 			</li>
 		</ul>
 	</dd>
@@ -1827,7 +2362,7 @@ guild.
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-473">line 473</a>
+				 <a href="web_hg.js.html#sunlight-1-line-481">line 481</a>
 			</li>
 		</ul>
 	</dd>
@@ -1990,7 +2525,7 @@ hungry games in the given guild.
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-320">line 320</a>
+				 <a href="web_hg.js.html#sunlight-1-line-328">line 328</a>
 			</li>
 		</ul>
 	</dd>
@@ -2564,7 +3099,7 @@ complete, or has failed.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-1395">line 1395</a>
+				 <a href="web_hg.js.html#sunlight-1-line-1400">line 1400</a>
 			</li>
 		</ul>
 	</dd>
@@ -2821,7 +3356,7 @@ complete, or has failed.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-1135">line 1135</a>
+				 <a href="web_hg.js.html#sunlight-1-line-1140">line 1140</a>
 			</li>
 		</ul>
 	</dd>
@@ -3181,7 +3716,7 @@ complete, or has failed.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-1445">line 1445</a>
+				 <a href="web_hg.js.html#sunlight-1-line-1450">line 1450</a>
 			</li>
 		</ul>
 	</dd>
@@ -3469,7 +4004,7 @@ complete, or has failed.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-2008">line 2008</a>
+				 <a href="web_hg.js.html#sunlight-1-line-2013">line 2013</a>
 			</li>
 		</ul>
 	</dd>
@@ -3633,7 +4168,7 @@ about the guild.
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-365">line 365</a>
+				 <a href="web_hg.js.html#sunlight-1-line-373">line 373</a>
 			</li>
 		</ul>
 	</dd>
@@ -3917,7 +4452,7 @@ complete, or has failed.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-2053">line 2053</a>
+				 <a href="web_hg.js.html#sunlight-1-line-2058">line 2058</a>
 			</li>
 		</ul>
 	</dd>
@@ -4339,7 +4874,7 @@ complete, or has failed.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-1494">line 1494</a>
+				 <a href="web_hg.js.html#sunlight-1-line-1499">line 1499</a>
 			</li>
 		</ul>
 	</dd>
@@ -4692,7 +5227,7 @@ complete, or has failed.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-1358">line 1358</a>
+				 <a href="web_hg.js.html#sunlight-1-line-1363">line 1363</a>
 			</li>
 		</ul>
 	</dd>
@@ -4949,7 +5484,7 @@ complete, or has failed.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-1260">line 1260</a>
+				 <a href="web_hg.js.html#sunlight-1-line-1265">line 1265</a>
 			</li>
 		</ul>
 	</dd>
@@ -5241,7 +5776,7 @@ complete, or has failed.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-1038">line 1038</a>
+				 <a href="web_hg.js.html#sunlight-1-line-1043">line 1043</a>
 			</li>
 		</ul>
 	</dd>
@@ -5533,7 +6068,7 @@ complete, or has failed.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-857">line 857</a>
+				 <a href="web_hg.js.html#sunlight-1-line-862">line 862</a>
 			</li>
 		</ul>
 	</dd>
@@ -5783,7 +6318,7 @@ complete, or has failed.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-924">line 924</a>
+				 <a href="web_hg.js.html#sunlight-1-line-929">line 929</a>
 			</li>
 		</ul>
 	</dd>
@@ -6040,7 +6575,7 @@ complete, or has failed.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-894">line 894</a>
+				 <a href="web_hg.js.html#sunlight-1-line-899">line 899</a>
 			</li>
 		</ul>
 	</dd>
@@ -6055,256 +6590,6 @@ complete, or has failed.</td>
 			<li>HungryGames.getGame</li>
 			</ul>
 	</dd>
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="~fetchGuild"><span class="type-signature">&lt;private, inner> </span>fetchGuild(userData, socket, gId [, cb])</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Fetch a single guild.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Argument</th>
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>userData</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">The current user's session data.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>socket</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">socketIo~Socket</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">The socket connection to reply on.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>gId</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-|
-
-<span class="param-type">number</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">The ID of the guild that was requested.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>cb</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">basicCB</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Callback that fires once the requested action is
-complete, or has failed.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-794">line 794</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
 	
 
 	
@@ -6513,7 +6798,7 @@ complete, or has failed.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-639">line 639</a>
+				 <a href="web_hg.js.html#sunlight-1-line-647">line 647</a>
 			</li>
 		</ul>
 	</dd>
@@ -6827,292 +7112,7 @@ complete, or has failed.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-1875">line 1875</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="~fetchMember"><span class="type-signature">&lt;private, inner> </span>fetchMember(userData, socket, gId, mId [, cb])</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Fetch data about a member of a guild.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Argument</th>
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>userData</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">The current user's session data.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>socket</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">socketIo~Socket</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">The socket connection to reply on.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>gId</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-|
-
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">The guild id to look at.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>mId</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-|
-
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">The member's id to lookup.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>cb</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">basicCB</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Callback that fires once the requested action is
-complete, or has failed.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-830">line 830</a>
+				 <a href="web_hg.js.html#sunlight-1-line-1880">line 1880</a>
 			</li>
 		</ul>
 	</dd>
@@ -7362,7 +7362,7 @@ complete, or has failed.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-984">line 984</a>
+				 <a href="web_hg.js.html#sunlight-1-line-989">line 989</a>
 			</li>
 		</ul>
 	</dd>
@@ -7619,7 +7619,7 @@ complete, or has failed.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-1733">line 1733</a>
+				 <a href="web_hg.js.html#sunlight-1-line-1738">line 1738</a>
 			</li>
 		</ul>
 	</dd>
@@ -7901,7 +7901,7 @@ complete, or has failed.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-1777">line 1777</a>
+				 <a href="web_hg.js.html#sunlight-1-line-1782">line 1782</a>
 			</li>
 		</ul>
 	</dd>
@@ -8215,7 +8215,7 @@ complete, or has failed.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-1826">line 1826</a>
+				 <a href="web_hg.js.html#sunlight-1-line-1831">line 1831</a>
 			</li>
 		</ul>
 	</dd>
@@ -8598,7 +8598,7 @@ complete.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-1628">line 1628</a>
+				 <a href="web_hg.js.html#sunlight-1-line-1633">line 1633</a>
 			</li>
 		</ul>
 	</dd>
@@ -8819,7 +8819,7 @@ complete.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-387">line 387</a>
+				 <a href="web_hg.js.html#sunlight-1-line-395">line 395</a>
 			</li>
 		</ul>
 	</dd>
@@ -9030,7 +9030,7 @@ complete.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-411">line 411</a>
+				 <a href="web_hg.js.html#sunlight-1-line-419">line 419</a>
 			</li>
 		</ul>
 	</dd>
@@ -9658,7 +9658,7 @@ complete, or has failed.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-2094">line 2094</a>
+				 <a href="web_hg.js.html#sunlight-1-line-2099">line 2099</a>
 			</li>
 		</ul>
 	</dd>
@@ -9941,7 +9941,7 @@ second parameter. Any error will be the first parameter.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-2186">line 2186</a>
+				 <a href="web_hg.js.html#sunlight-1-line-2191">line 2191</a>
 			</li>
 		</ul>
 	</dd>
@@ -10226,7 +10226,7 @@ complete, or has failed.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-1071">line 1071</a>
+				 <a href="web_hg.js.html#sunlight-1-line-1076">line 1076</a>
 			</li>
 		</ul>
 	</dd>
@@ -10372,7 +10372,7 @@ need.
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-553">line 553</a>
+				 <a href="web_hg.js.html#sunlight-1-line-561">line 561</a>
 			</li>
 		</ul>
 	</dd>
@@ -10644,7 +10644,7 @@ need.
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-530">line 530</a>
+				 <a href="web_hg.js.html#sunlight-1-line-538">line 538</a>
 			</li>
 		</ul>
 	</dd>
@@ -11015,7 +11015,7 @@ complete, or has failed.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-1929">line 1929</a>
+				 <a href="web_hg.js.html#sunlight-1-line-1934">line 1934</a>
 			</li>
 		</ul>
 	</dd>
@@ -11300,7 +11300,7 @@ complete, or has failed.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-1236">line 1236</a>
+				 <a href="web_hg.js.html#sunlight-1-line-1241">line 1241</a>
 			</li>
 		</ul>
 	</dd>
@@ -11557,7 +11557,7 @@ complete, or has failed.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-1289">line 1289</a>
+				 <a href="web_hg.js.html#sunlight-1-line-1294">line 1294</a>
 			</li>
 		</ul>
 	</dd>
@@ -11814,7 +11814,7 @@ complete, or has failed.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-1318">line 1318</a>
+				 <a href="web_hg.js.html#sunlight-1-line-1323">line 1323</a>
 			</li>
 		</ul>
 	</dd>
@@ -12135,7 +12135,7 @@ complete, or has failed.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-1539">line 1539</a>
+				 <a href="web_hg.js.html#sunlight-1-line-1544">line 1544</a>
 			</li>
 		</ul>
 	</dd>
@@ -12424,7 +12424,7 @@ complete.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-1708">line 1708</a>
+				 <a href="web_hg.js.html#sunlight-1-line-1713">line 1713</a>
 			</li>
 		</ul>
 	</dd>
@@ -12713,7 +12713,7 @@ complete.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-1676">line 1676</a>
+				 <a href="web_hg.js.html#sunlight-1-line-1681">line 1681</a>
 			</li>
 		</ul>
 	</dd>
@@ -12883,7 +12883,7 @@ they attempted failed due to insufficient permission.
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-441">line 441</a>
+				 <a href="web_hg.js.html#sunlight-1-line-449">line 449</a>
 			</li>
 		</ul>
 	</dd>
@@ -13165,7 +13165,7 @@ complete, or has failed.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-1161">line 1161</a>
+				 <a href="web_hg.js.html#sunlight-1-line-1166">line 1166</a>
 			</li>
 		</ul>
 	</dd>
@@ -13454,7 +13454,7 @@ complete, or has failed.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-1963">line 1963</a>
+				 <a href="web_hg.js.html#sunlight-1-line-1968">line 1968</a>
 			</li>
 		</ul>
 	</dd>
@@ -13877,7 +13877,7 @@ complete, or has failed.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-1211">line 1211</a>
+				 <a href="web_hg.js.html#sunlight-1-line-1216">line 1216</a>
 			</li>
 		</ul>
 	</dd>
@@ -14257,7 +14257,7 @@ complete, or has failed.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-1186">line 1186</a>
+				 <a href="web_hg.js.html#sunlight-1-line-1191">line 1191</a>
 			</li>
 		</ul>
 	</dd>
@@ -14426,7 +14426,7 @@ complete, or has failed.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-726">line 726</a>
+				 <a href="web_hg.js.html#sunlight-1-line-733">line 733</a>
 			</li>
 		</ul>
 	</dd>
@@ -14838,7 +14838,7 @@ complete.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-1588">line 1588</a>
+				 <a href="web_hg.js.html#sunlight-1-line-1593">line 1593</a>
 			</li>
 		</ul>
 	</dd>
@@ -15194,7 +15194,7 @@ complete, or has failed.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-1106">line 1106</a>
+				 <a href="web_hg.js.html#sunlight-1-line-1111">line 1111</a>
 			</li>
 		</ul>
 	</dd>
@@ -15446,7 +15446,7 @@ error, or a string if there was an error.
 		<ul class="dummy">
 			<li>
 				<a href="web_hg.js.html">web/hg.js</a>,
-				 <a href="web_hg.js.html#sunlight-1-line-619">line 619</a>
+				 <a href="web_hg.js.html#sunlight-1-line-627">line 627</a>
 			</li>
 		</ul>
 	</dd>
@@ -15527,7 +15527,7 @@ error, or a string if there was an error.
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a>
 	
-		on Wednesday, July 31, 2019 7:31 PM (-07:00)
+		on Wednesday, July 31, 2019 8:54 PM (-07:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

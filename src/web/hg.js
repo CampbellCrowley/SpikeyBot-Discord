@@ -206,45 +206,53 @@ function HGWeb() {
 
     // Restricted Access //
     socket.on('fetchGuilds', (...args) => handle(fetchGuilds, args, false));
-    socket.on('fetchGuild', (...args) => handle(fetchGuild, args));
-    socket.on('fetchMember', (...args) => handle(fetchMember, args));
-    socket.on('fetchChannel', (...args) => handle(fetchChannel, args));
-    socket.on('fetchGames', (...args) => handle(fetchGames, args));
-    socket.on('fetchDay', (...args) => handle(fetchDay, args));
-    socket.on('fetchNextDay', (...args) => handle(fetchNextDay, args));
-    socket.on('excludeMember', (...args) => handle(excludeMember, args));
-    socket.on('includeMember', (...args) => handle(includeMember, args));
-    socket.on('toggleOption', (...args) => handle(toggleOption, args));
-    socket.on('createGame', (...args) => handle(createGame, args));
-    socket.on('resetGame', (...args) => handle(resetGame, args));
-    socket.on('startGame', (...args) => handle(startGame, args));
-    socket.on('startAutoplay', (...args) => handle(startAutoplay, args));
-    socket.on('nextDay', (...args) => handle(nextDay, args));
-    socket.on('endGame', (...args) => handle(endGame, args));
-    socket.on('pauseAutoplay', (...args) => handle(pauseAutoplay, args));
-    socket.on('pauseGame', (...args) => handle(pauseGame, args));
-    socket.on('editTeam', (...args) => handle(editTeam, args));
-    socket.on('createEvent', (...args) => handle(createEvent, args));
-    socket.on('createMajorEvent', (...args) => handle(createMajorEvent, args));
-    socket.on('editMajorEvent', (...args) => handle(editMajorEvent, args));
-    socket.on('removeEvent', (...args) => handle(removeEvent, args));
-    socket.on('toggleEvent', (...args) => handle(toggleEvent, args));
-    socket.on('forcePlayerState', (...args) => handle(forcePlayerState, args));
-    socket.on('renameGame', (...args) => handle(renameGame, args));
-    socket.on('removeNPC', (...args) => handle(removeNPC, args));
+    socket.on('fetchGuild', (...args) => handle(self.fetchGuild, args));
+    socket.on('fetchMember', (...args) => handle(self.fetchMember, args));
+    socket.on('fetchChannel', (...args) => handle(self.fetchChannel, args));
+    socket.on('fetchGames', (...args) => handle(self.fetchGames, args));
+    socket.on('fetchDay', (...args) => handle(self.fetchDay, args));
+    socket.on('fetchNextDay', (...args) => handle(self.fetchNextDay, args));
+    socket.on('excludeMember', (...args) => handle(self.excludeMember, args));
+    socket.on('includeMember', (...args) => handle(self.includeMember, args));
+    socket.on('toggleOption', (...args) => handle(self.toggleOption, args));
+    socket.on('createGame', (...args) => handle(self.createGame, args));
+    socket.on('resetGame', (...args) => handle(self.resetGame, args));
+    socket.on('startGame', (...args) => handle(self.startGame, args));
+    socket.on('startAutoplay', (...args) => handle(self.startAutoplay, args));
+    socket.on('nextDay', (...args) => handle(self.nextDay, args));
+    socket.on('endGame', (...args) => handle(self.endGame, args));
+    socket.on('pauseAutoplay', (...args) => handle(self.pauseAutoplay, args));
+    socket.on('pauseGame', (...args) => handle(self.pauseGame, args));
+    socket.on('editTeam', (...args) => handle(self.editTeam, args));
+    socket.on('createEvent', (...args) => handle(self.createEvent, args));
     socket.on(
-        'fetchStatGroupList', (...args) => handle(fetchStatGroupList, args));
+        'createMajorEvent', (...args) => handle(self.createMajorEvent, args));
+    socket.on('editMajorEvent', (...args) => handle(self.editMajorEvent, args));
+    socket.on('removeEvent', (...args) => handle(self.removeEvent, args));
+    socket.on('toggleEvent', (...args) => handle(self.toggleEvent, args));
+    socket.on(
+        'forcePlayerState', (...args) => handle(self.forcePlayerState, args));
+    socket.on('renameGame', (...args) => handle(self.renameGame, args));
+    socket.on('removeNPC', (...args) => handle(self.removeNPC, args));
+    socket.on(
+        'fetchStatGroupList',
+        (...args) => handle(self.fetchStatGroupList, args));
     socket.on(
         'fetchStatGroupMetadata',
-        (...args) => handle(fetchStatGroupMetadata, args));
-    socket.on('fetchStats', (...args) => handle(fetchStats, args));
-    socket.on('fetchLeaderboard', (...args) => handle(fetchLeaderboard, args));
-    socket.on('modifyInventory', (...args) => handle(modifyInventory, args));
-    socket.on('selectStatGroup', (...args) => handle(selectStatGroup, args));
-    socket.on('createStatGroup', (...args) => handle(createStatGroup, args));
-    socket.on('deleteStatGroup', (...args) => handle(deleteStatGroup, args));
-    socket.on('imageChunk', (...args) => handle(imageChunk, args));
-    socket.on('imageInfo', (...args) => handle(imageInfo, args));
+        (...args) => handle(self.fetchStatGroupMetadata, args));
+    socket.on('fetchStats', (...args) => handle(self.fetchStats, args));
+    socket.on(
+        'fetchLeaderboard', (...args) => handle(self.fetchLeaderboard, args));
+    socket.on(
+        'modifyInventory', (...args) => handle(self.modifyInventory, args));
+    socket.on(
+        'selectStatGroup', (...args) => handle(self.selectStatGroup, args));
+    socket.on(
+        'createStatGroup', (...args) => handle(self.createStatGroup, args));
+    socket.on(
+        'deleteStatGroup', (...args) => handle(self.deleteStatGroup, args));
+    socket.on('imageChunk', (...args) => handle(self.imageChunk, args));
+    socket.on('imageInfo', (...args) => handle(self.imageInfo, args));
     // End Restricted Access \\
 
     /**
@@ -713,7 +721,6 @@ function HGWeb() {
       done();
     }
   }
-  this.fetchGuilds = fetchGuilds;
 
   /**
    * Strip a Discord~Guild to the basic information the client will need.
@@ -783,7 +790,7 @@ function HGWeb() {
   /**
    * Fetch a single guild.
    *
-   * @private
+   * @public
    * @type {HGWeb~SocketFunction}
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
@@ -791,7 +798,7 @@ function HGWeb() {
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete, or has failed.
    */
-  function fetchGuild(userData, socket, gId, cb) {
+  this.fetchGuild = function(userData, socket, gId, cb) {
     if (!userData) {
       self.common.error('Fetch Guild without userData', socket.id);
       if (typeof cb === 'function') cb('SIGNED_OUT');
@@ -813,12 +820,11 @@ function HGWeb() {
       return;
     }
     cb(stripGuilds([guild], userData)[0]);
-  }
-  this.fetchGuild = fetchGuild;
+  };
   /**
    * Fetch data about a member of a guild.
    *
-   * @private
+   * @public
    * @type {HGWeb~SocketFunction}
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
@@ -827,7 +833,7 @@ function HGWeb() {
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete, or has failed.
    */
-  function fetchMember(userData, socket, gId, mId, cb) {
+  this.fetchMember = function(userData, socket, gId, mId, cb) {
     if (!checkPerm(userData, gId, null, 'players')) return;
     const g = self.client.guilds.get(gId);
     if (!g) return;
@@ -840,8 +846,7 @@ function HGWeb() {
     } else {
       socket.emit('member', gId, mId, finalMember);
     }
-  }
-  this.fetchMember = fetchMember;
+  };
   /**
    * Fetch data about a channel of a guild.
    *

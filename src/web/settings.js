@@ -689,6 +689,10 @@ function WebSettings() {
       self.common.error('Fetch Guilds without userData', 'WebSettings');
       if (typeof cb === 'function') cb('Not signed in', null);
       return;
+    } else if (userData.apiRequest) {
+      // Disabled for API requests due to the possible issue with performance
+      // fetching list of guilds.
+      return;
     }
 
     const numReplies = (Object.entries(siblingSockets).length || 0);
