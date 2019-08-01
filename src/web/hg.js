@@ -798,7 +798,7 @@ function HGWeb() {
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete, or has failed.
    */
-  this.fetchGuild = function(userData, socket, gId, cb) {
+  this.fetchGuild = function fetchGuild(userData, socket, gId, cb) {
     if (!userData) {
       self.common.error('Fetch Guild without userData', socket.id);
       if (typeof cb === 'function') cb('SIGNED_OUT');
@@ -833,7 +833,7 @@ function HGWeb() {
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete, or has failed.
    */
-  this.fetchMember = function(userData, socket, gId, mId, cb) {
+  this.fetchMember = function fetchMember(userData, socket, gId, mId, cb) {
     if (!checkPerm(userData, gId, null, 'players')) return;
     const g = self.client.guilds.get(gId);
     if (!g) return;
@@ -850,7 +850,7 @@ function HGWeb() {
   /**
    * Fetch data about a channel of a guild.
    *
-   * @private
+   * @public
    * @type {HGWeb~SocketFunction}
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
@@ -859,7 +859,7 @@ function HGWeb() {
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete, or has failed.
    */
-  function fetchChannel(userData, socket, gId, cId, cb) {
+  this.fetchChannel = function fetchChannel(userData, socket, gId, cId, cb) {
     if (!checkChannelPerm(userData, gId, cId, '')) return;
     const g = self.client.guilds.get(gId);
     if (!g) return;
@@ -881,14 +881,13 @@ function HGWeb() {
     } else {
       socket.emit('channel', gId, cId, stripped);
     }
-  }
-  this.fetchChannel = fetchChannel;
+  };
   /**
    * Fetch all game data within a guild.
    *
    * @see {@link HungryGames.getGame}
    *
-   * @private
+   * @public
    * @type {HGWeb~SocketFunction}
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
@@ -896,7 +895,7 @@ function HGWeb() {
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete, or has failed.
    */
-  function fetchGames(userData, socket, gId, cb) {
+  this.fetchGames = function fetchGames(userData, socket, gId, cb) {
     if (!checkPerm(userData, gId, null, 'options') ||
         !checkPerm(userData, gId, null, 'events') ||
         !checkPerm(userData, gId, null, 'players')) {
@@ -911,14 +910,13 @@ function HGWeb() {
     } else {
       socket.emit('game', gId, game && game.serializable);
     }
-  }
-  this.fetchGames = fetchGames;
+  };
   /**
    * Fetch the updated game's day information.
    *
    * @see {@link HungryGames.getGame}
    *
-   * @private
+   * @public
    * @type {HGWeb~SocketFunction}
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
@@ -926,7 +924,7 @@ function HGWeb() {
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete, or has failed.
    */
-  function fetchDay(userData, socket, gId, cb) {
+  this.fetchDay = function fetchDay(userData, socket, gId, cb) {
     let g; let m;
     if (!userData) {
       return;
@@ -971,14 +969,13 @@ function HGWeb() {
       socket.emit(
           'day', gId, game.currentGame.day, game.currentGame.includedUsers);
     }
-  }
-  this.fetchDay = fetchDay;
+  };
   /**
    * Fetch the game's next day information.
    *
    * @see {@link HungryGames.getGame}
    *
-   * @private
+   * @public
    * @type {HGWeb~SocketFunction}
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
@@ -986,7 +983,7 @@ function HGWeb() {
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete, or has failed.
    */
-  function fetchNextDay(userData, socket, gId, cb) {
+  this.fetchNextDay = function fetchNextDay(userData, socket, gId, cb) {
     if (!checkPerm(userData, gId, null, 'kill')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
@@ -1024,14 +1021,13 @@ function HGWeb() {
     } else {
       socket.emit('nextDay', gId, game.currentGame.nextDay);
     }
-  }
-  this.fetchNextDay = fetchNextDay;
+  };
   /**
    * Exclude a member from the Games.
    *
    * @see {@link HungryGames.excludeUsers}
    *
-   * @private
+   * @public
    * @type {HGWeb~SocketFunction}
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
@@ -1040,7 +1036,7 @@ function HGWeb() {
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete, or has failed.
    */
-  function excludeMember(userData, socket, gId, mId, cb) {
+  this.excludeMember = function excludeMember(userData, socket, gId, mId, cb) {
     if (!checkPerm(userData, gId, null, 'exclude')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
@@ -1057,14 +1053,13 @@ function HGWeb() {
         if (typeof cb === 'function') cb(res);
       });
     }
-  }
-  this.excludeMember = excludeMember;
+  };
   /**
    * Include a member in the Games.
    *
    * @see {@link HungryGames.includeUsers}
    *
-   * @private
+   * @public
    * @type {HGWeb~SocketFunction}
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
@@ -1073,7 +1068,7 @@ function HGWeb() {
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete, or has failed.
    */
-  function includeMember(userData, socket, gId, mId, cb) {
+  this.includeMember = function includeMember(userData, socket, gId, mId, cb) {
     if (!checkPerm(userData, gId, null, 'include')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
@@ -1090,14 +1085,13 @@ function HGWeb() {
         if (typeof cb === 'function') cb(res);
       });
     }
-  }
-  this.includeMember = includeMember;
+  };
   /**
    * Toggle an option in the Games.
    *
    * @see {@link HungryGames.setOption}
    *
-   * @private
+   * @public
    * @type {HGWeb~SocketFunction}
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
@@ -1108,7 +1102,8 @@ function HGWeb() {
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete, or has failed.
    */
-  function toggleOption(userData, socket, gId, option, value, extra, cb) {
+  this.toggleOption = function toggleOption(
+      userData, socket, gId, option, value, extra, cb) {
     if (!checkPerm(userData, gId, null, 'option')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
@@ -1122,14 +1117,13 @@ function HGWeb() {
     } else if (!game) {
       socket.emit('message', response);
     }
-  }
-  this.toggleOption = toggleOption;
+  };
   /**
    * Create a Game.
    *
    * @see {@link HungryGames.createGame}
    *
-   * @private
+   * @public
    * @type {HGWeb~SocketFunction}
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
@@ -1137,7 +1131,7 @@ function HGWeb() {
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete, or has failed.
    */
-  function createGame(userData, socket, gId, cb) {
+  this.createGame = function createGame(userData, socket, gId, cb) {
     if (!checkPerm(userData, gId, null, 'create')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
@@ -1147,14 +1141,13 @@ function HGWeb() {
     hg().createGame(gId, (game) => {
       if (typeof cb === 'function') cb(game ? null : 'ATTEMPT_FAILED');
     });
-  }
-  this.createGame = createGame;
+  };
   /**
    * Reset game data.
    *
    * @see {@link HungryGames.resetGame}
    *
-   * @private
+   * @public
    * @type {HGWeb~SocketFunction}
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
@@ -1163,7 +1156,7 @@ function HGWeb() {
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete, or has failed.
    */
-  function resetGame(userData, socket, gId, cmd, cb) {
+  this.resetGame = function resetGame(userData, socket, gId, cmd, cb) {
     if (!checkPerm(userData, gId, null, 'reset')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
@@ -1172,14 +1165,13 @@ function HGWeb() {
     }
     const response = hg().getHG().resetGame(gId, cmd);
     if (typeof cb === 'function') cb(null, response);
-  }
-  this.resetGame = resetGame;
+  };
   /**
    * Start the game.
    *
    * @see {@link HungryGames.startGame}
    *
-   * @private
+   * @public
    * @type {HGWeb~SocketFunction}
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
@@ -1188,7 +1180,7 @@ function HGWeb() {
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete, or has failed.
    */
-  function startGame(userData, socket, gId, cId, cb) {
+  this.startGame = function startGame(userData, socket, gId, cId, cb) {
     if (!checkChannelPerm(userData, gId, cId, 'start')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
@@ -1197,14 +1189,13 @@ function HGWeb() {
     }
     hg().startGame(userData.id, gId, cId);
     if (typeof cb === 'function') cb(null);
-  }
-  this.startGame = startGame;
+  };
   /**
    * Enable autoplay.
    *
    * @see {@link HungryGames.startAutoplay}
    *
-   * @private
+   * @public
    * @type {HGWeb~SocketFunction}
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
@@ -1213,7 +1204,7 @@ function HGWeb() {
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete, or has failed.
    */
-  function startAutoplay(userData, socket, gId, cId, cb) {
+  this.startAutoplay = function startAutoplay(userData, socket, gId, cId, cb) {
     if (!checkChannelPerm(userData, gId, cId, 'autoplay')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
@@ -1222,14 +1213,13 @@ function HGWeb() {
     }
     hg().startAutoplay(userData.id, gId, cId);
     if (typeof cb === 'function') cb(null);
-  }
-  this.startAutoplay = startAutoplay;
+  };
   /**
    * Start the next day.
    *
    * @see {@link HungryGames.nextDay}
    *
-   * @private
+   * @public
    * @type {HGWeb~SocketFunction}
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
@@ -1238,7 +1228,7 @@ function HGWeb() {
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete, or has failed.
    */
-  function nextDay(userData, socket, gId, cId, cb) {
+  this.nextDay = function nextDay(userData, socket, gId, cId, cb) {
     if (!checkChannelPerm(userData, gId, cId, 'next')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
@@ -1247,14 +1237,13 @@ function HGWeb() {
     }
     hg().nextDay(userData.id, gId, cId);
     if (typeof cb === 'function') cb(null);
-  }
-  this.nextDay = nextDay;
+  };
   /**
    * End the game.
    *
    * @see {@link HungryGames.endGame}
    *
-   * @private
+   * @public
    * @type {HGWeb~SocketFunction}
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
@@ -1262,7 +1251,7 @@ function HGWeb() {
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete, or has failed.
    */
-  function endGame(userData, socket, gId, cb) {
+  this.endGame = function endGame(userData, socket, gId, cb) {
     if (!checkPerm(userData, gId, null, 'end')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
@@ -1276,14 +1265,13 @@ function HGWeb() {
     } else {
       socket.emit('game', gId, game && game.serializable);
     }
-  }
-  this.endGame = endGame;
+  };
   /**
    * Disable autoplay.
    *
    * @see {@link HungryGames.pauseAutoplay}
    *
-   * @private
+   * @public
    * @type {HGWeb~SocketFunction}
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
@@ -1291,7 +1279,7 @@ function HGWeb() {
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete, or has failed.
    */
-  function pauseAutoplay(userData, socket, gId, cb) {
+  this.pauseAutoplay = function pauseAutoplay(userData, socket, gId, cb) {
     if (!checkPerm(userData, gId, null, 'autoplay')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
@@ -1305,14 +1293,13 @@ function HGWeb() {
     } else {
       socket.emit('game', gId, game && game.serializable);
     }
-  }
-  this.pauseAutoplay = pauseAutoplay;
+  };
   /**
    * Pause game.
    *
    * @see {@link HungryGames.pauseGame}
    *
-   * @private
+   * @public
    * @type {HGWeb~SocketFunction}
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
@@ -1320,7 +1307,7 @@ function HGWeb() {
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete, or has failed.
    */
-  function pauseGame(userData, socket, gId, cb) {
+  this.pauseGame = function pauseGame(userData, socket, gId, cb) {
     if (!checkPerm(userData, gId, null, 'pause')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
@@ -1342,14 +1329,13 @@ function HGWeb() {
         socket.emit('game', gId, game && game.serializable);
       }
     }
-  }
-  this.pauseGame = pauseGame;
+  };
   /**
    * Edit the teams.
    *
    * @see {@link HungryGames.editTeam}
    *
-   * @private
+   * @public
    * @type {HGWeb~SocketFunction}
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
@@ -1360,7 +1346,7 @@ function HGWeb() {
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete, or has failed.
    */
-  function editTeam(userData, socket, gId, cmd, one, two, cb) {
+  this.editTeam = function editTeam(userData, socket, gId, cmd, one, two, cb) {
     if (!checkPerm(userData, gId, null, 'team')) {
       if (!checkMyGuild(gId)) return;
       replyNoPerm(socket, 'editTeam');
@@ -1372,14 +1358,13 @@ function HGWeb() {
     } else {
       if (message) socket.emit('message', message);
     }
-  }
-  this.editTeam = editTeam;
+  };
   /**
    * Create a game event.
    *
    * @see {@link HungryGames.createEvent}
    *
-   * @private
+   * @public
    * @type {HGWeb~SocketFunction}
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
@@ -1397,7 +1382,7 @@ function HGWeb() {
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete, or has failed.
    */
-  function createEvent(
+  this.createEvent = function createEvent(
       userData, socket, gId, type, message, nV, nA, oV, oA, kV, kA, wV, wA,
       cb) {
     if (!checkPerm(userData, gId, null, 'event')) {
@@ -1426,8 +1411,7 @@ function HGWeb() {
         socket.emit('game', gId, game.serializable);
       }
     }
-  }
-  this.createEvent = createEvent;
+  };
 
   /**
    * Create a larger game event. Either Arena or Weapon at this point. If
@@ -1435,7 +1419,7 @@ function HGWeb() {
    *
    * @see {@link HungryGames.addMajorEvent}
    *
-   * @private
+   * @public
    * @type {HGWeb~SocketFunction}
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
@@ -1447,7 +1431,8 @@ function HGWeb() {
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete, or has failed.
    */
-  function createMajorEvent(userData, socket, gId, type, data, name, cb) {
+  this.createMajorEvent = function createMajorEvent(
+      userData, socket, gId, type, data, name, cb) {
     if (!checkPerm(userData, gId, null, 'event')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
@@ -1473,15 +1458,14 @@ function HGWeb() {
         socket.emit('game', gId, game.serializable);
       }
     }
-  }
-  this.createMajorEvent = createMajorEvent;
+  };
 
   /**
    * Delete a larger game event. Either Arena or Weapon at this point.
    *
    * @see {@link HungryGames.editMajorEvent}
    *
-   * @private
+   * @public
    * @type {HGWeb~SocketFunction}
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
@@ -1496,7 +1480,7 @@ function HGWeb() {
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete, or has failed.
    */
-  function editMajorEvent(
+  this.editMajorEvent = function editMajorEvent(
       userData, socket, gId, type, search, data, name, newName, cb) {
     if (!checkPerm(userData, gId, null, 'event')) {
       if (!checkMyGuild(gId)) return;
@@ -1523,15 +1507,14 @@ function HGWeb() {
         socket.emit('game', gId, game.serializable);
       }
     }
-  }
-  this.editMajorEvent = editMajorEvent;
+  };
 
   /**
    * Remove a game event.
    *
    * @see {@link HungryGames.removeEvent}
    *
-   * @private
+   * @public
    * @type {HGWeb~SocketFunction}
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
@@ -1541,7 +1524,8 @@ function HGWeb() {
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete, or has failed.
    */
-  function removeEvent(userData, socket, gId, type, event, cb) {
+  this.removeEvent = function removeEvent(
+      userData, socket, gId, type, event, cb) {
     if (!checkPerm(userData, gId, null, 'event')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
@@ -1567,14 +1551,13 @@ function HGWeb() {
         socket.emit('game', gId, game.serializable);
       }
     }
-  }
-  this.removeEvent = removeEvent;
+  };
 
   /**
    * @description Enable or disable an event without deleting it.
    * @see {@link HungryGames.toggleEvent}
    *
-   * @private
+   * @public
    * @type {HGWeb~SocketFunction}
    * @param {object} userData The current user's session data.
    * @param {socketIo-Socket} socket The socket connection to reply on.
@@ -1590,7 +1573,8 @@ function HGWeb() {
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete.
    */
-  function toggleEvent(userData, socket, gId, type, subCat, event, value, cb) {
+  this.toggleEvent = function toggleEvent(
+      userData, socket, gId, type, subCat, event, value, cb) {
     if (!checkPerm(userData, gId, null, 'event')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
@@ -1609,15 +1593,14 @@ function HGWeb() {
       // socket.emit('message', 'Toggled event.');
       // socket.emit('game', gId, hg().getHG().getGame(gId));
     }
-  }
-  this.toggleEvent = toggleEvent;
+  };
 
   /**
    * Force a player in the game to end a day in a certain state.
    *
    * @see {@link HungryGames.forcePlayerState}
    *
-   * @private
+   * @public
    * @type {HGWeb~SocketFunction}
    * @param {object} userData The current user's session data.
    * @param {socketIo-Socket} socket The socket connection to reply on.
@@ -1630,7 +1613,7 @@ function HGWeb() {
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete.
    */
-  function forcePlayerState(
+  this.forcePlayerState = function forcePlayerState(
       userData, socket, gId, list, state, text, persists, cb) {
     let cmdToCheck = state;
     switch (state) {
@@ -1661,15 +1644,14 @@ function HGWeb() {
     } else {
       socket.emit('message', response);
     }
-  }
-  this.forcePlayerState = forcePlayerState;
+  };
 
   /**
    * Rename the guild's game.
    *
    * @see {@link HungryGames.renameGame}
    *
-   * @private
+   * @public
    * @type {HGWeb~SocketFunction}
    * @param {object} userData The current user's session data.
    * @param {socketIo-Socket} socket The socket connection to reply on.
@@ -1678,7 +1660,7 @@ function HGWeb() {
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete.
    */
-  function renameGame(userData, socket, gId, name, cb) {
+  this.renameGame = function renameGame(userData, socket, gId, name, cb) {
     if (!checkPerm(userData, gId, null, 'rename')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
@@ -1693,15 +1675,14 @@ function HGWeb() {
       if (game) name = game.name;
       cb(name);
     }
-  }
-  this.renameGame = renameGame;
+  };
 
   /**
    * Remove an NPC from a game.
    *
    * @see {@link HungryGames.removeNPC}
    *
-   * @private
+   * @public
    * @type {HGWeb~SocketFunction}
    * @param {object} userData The current user's session data.
    * @param {socketIo-Socket} socket The socket connection to reply on.
@@ -1710,7 +1691,7 @@ function HGWeb() {
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete.
    */
-  function removeNPC(userData, socket, gId, npcId, cb) {
+  this.removeNPC = function removeNPC(userData, socket, gId, npcId, cb) {
     if (!checkPerm(userData, gId, null, 'ai remove')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
@@ -1721,13 +1702,12 @@ function HGWeb() {
     if (typeof cb === 'function') {
       cb(typeof error === 'string' ? error : null);
     }
-  }
-  this.removeNPC = removeNPC;
+  };
 
   /**
    * Respond with list of stat groups for the requested guild.
    *
-   * @private
+   * @public
    * @type {HGWeb~SocketFunction}
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
@@ -1735,7 +1715,8 @@ function HGWeb() {
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete, or has failed.
    */
-  function fetchStatGroupList(userData, socket, gId, cb) {
+  this.fetchStatGroupList = function fetchStatGroupList(
+      userData, socket, gId, cb) {
     if (!checkPerm(userData, gId, null, 'groups')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
@@ -1764,13 +1745,12 @@ function HGWeb() {
         socket.emit('statGroupList', gId, list);
       }
     });
-  }
-  this.fetchStatGroupList = fetchStatGroupList;
+  };
 
   /**
    * Respond with metadata for the requested stat group.
    *
-   * @private
+   * @public
    * @type {HGWeb~SocketFunction}
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
@@ -1779,7 +1759,8 @@ function HGWeb() {
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete, or has failed.
    */
-  function fetchStatGroupMetadata(userData, socket, guildId, groupId, cb) {
+  this.fetchStatGroupMetadata = function fetchStatGroupMetadata(
+      userData, socket, guildId, groupId, cb) {
     if (!checkPerm(userData, guildId, null, 'groups')) {
       if (!checkMyGuild(guildId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
@@ -1812,13 +1793,12 @@ function HGWeb() {
         }
       });
     });
-  }
-  this.fetchStatGroupMetadata = fetchStatGroupMetadata;
+  };
 
   /**
    * Respond with stats for a specific user in a group.
    *
-   * @private
+   * @public
    * @type {HGWeb~SocketFunction}
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
@@ -1828,7 +1808,8 @@ function HGWeb() {
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete, or has failed.
    */
-  function fetchStats(userData, socket, guildId, groupId, userId, cb) {
+  this.fetchStats = function fetchStats(
+      userData, socket, guildId, groupId, userId, cb) {
     if (!checkPerm(userData, guildId, null, 'stats')) {
       if (!checkMyGuild(guildId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
@@ -1861,13 +1842,12 @@ function HGWeb() {
         }
       });
     });
-  }
-  this.fetchStats = fetchStats;
+  };
 
   /**
    * Respond with leaderboard information.
    *
-   * @private
+   * @public
    * @type {HGWeb~SocketFunction}
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
@@ -1877,7 +1857,8 @@ function HGWeb() {
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete, or has failed.
    */
-  function fetchLeaderboard(userData, socket, guildId, groupId, opt, cb) {
+  this.fetchLeaderboard = function fetchLeaderboard(
+      userData, socket, guildId, groupId, opt, cb) {
     if (!checkPerm(userData, guildId, null, 'stats')) {
       if (!checkMyGuild(guildId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
@@ -1914,12 +1895,11 @@ function HGWeb() {
         }
       });
     });
-  }
-  this.fetchLeaderboard = fetchLeaderboard;
+  };
   /**
    * Give or take weapons from a player.
    *
-   * @private
+   * @public
    * @type {HGWeb~SocketFunction}
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
@@ -1931,7 +1911,8 @@ function HGWeb() {
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete, or has failed.
    */
-  function modifyInventory(userData, socket, gId, uId, weapon, count, cb) {
+  this.modifyInventory = function modifyInventory(
+      userData, socket, gId, uId, weapon, count, cb) {
     if (!checkPerm(userData, gId, null, 'give') ||
         !checkPerm(userData, gId, null, 'take')) {
       if (!checkMyGuild(gId)) return;
@@ -1950,12 +1931,11 @@ function HGWeb() {
     } else {
       socket.emit('message', response);
     }
-  }
-  this.modifyInventory = modifyInventory;
+  };
   /**
    * Set the currently selected stat group.
    *
-   * @private
+   * @public
    * @type {HGWeb~SocketFunction}
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
@@ -1965,7 +1945,8 @@ function HGWeb() {
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete, or has failed.
    */
-  function selectStatGroup(userData, socket, guildId, groupId, cb) {
+  this.selectStatGroup = function selectStatGroup(
+      userData, socket, guildId, groupId, cb) {
     if (!checkPerm(userData, guildId, null, 'group select')) {
       if (!checkMyGuild(guildId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
@@ -1996,12 +1977,11 @@ function HGWeb() {
       if (typeof cb === 'function') cb(null);
       broadcastGame(hg(), guildId);
     });
-  }
-  this.selectStatGroup = selectStatGroup;
+  };
   /**
    * Create a stat group.
    *
-   * @private
+   * @public
    * @type {HGWeb~SocketFunction}
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
@@ -2010,7 +1990,8 @@ function HGWeb() {
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete, or has failed.
    */
-  function createStatGroup(userData, socket, guildId, name, cb) {
+  this.createStatGroup = function createStatGroup(
+      userData, socket, guildId, name, cb) {
     if (!checkPerm(userData, guildId, null, 'group create')) {
       if (!checkMyGuild(guildId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
@@ -2041,12 +2022,11 @@ function HGWeb() {
         if (typeof cb === 'function') cb(null, group.id, meta);
       });
     });
-  }
-  this.createStatGroup = createStatGroup;
+  };
   /**
    * Delete a stat group.
    *
-   * @private
+   * @public
    * @type {HGWeb~SocketFunction}
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
@@ -2055,7 +2035,8 @@ function HGWeb() {
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete, or has failed.
    */
-  function deleteStatGroup(userData, socket, guildId, groupId, cb) {
+  this.deleteStatGroup = function deleteStatGroup(
+      userData, socket, guildId, groupId, cb) {
     if (!checkPerm(userData, guildId, null, 'group delete')) {
       if (!checkMyGuild(guildId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
@@ -2079,12 +2060,11 @@ function HGWeb() {
       group.reset();
       if (typeof cb === 'function') cb(null);
     });
-  }
-  this.deleteStatGroup = deleteStatGroup;
+  };
   /**
    * Handle receiving image data for avatar uploading.
    *
-   * @private
+   * @public
    * @type {HGWeb~SocketFunction}
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
@@ -2096,7 +2076,8 @@ function HGWeb() {
    * @param {basicCB} [cb] Callback that fires once the requested action is
    * complete, or has failed.
    */
-  function imageChunk(userData, socket, gId, iId, chunkId, chunk, cb) {
+  this.imageChunk = function imageChunk(
+      userData, socket, gId, iId, chunkId, chunk, cb) {
     const meta = imageBuffer[iId];
     if (!meta) {
       if (!checkMyGuild(gId)) return;
@@ -2173,12 +2154,11 @@ function HGWeb() {
       if (typeof cb === 'function') cb();
       cancelImageUpload(iId);
     }
-  }
-  this.imageChunk = imageChunk;
+  };
   /**
    * Handle client requesting to begin image upload.
    *
-   * @private
+   * @public
    * @type {HGWeb~SocketFunction}
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
@@ -2188,7 +2168,7 @@ function HGWeb() {
    * complete, or has failed. If succeeded, an upload ID will be passed as the
    * second parameter. Any error will be the first parameter.
    */
-  function imageInfo(userData, socket, gId, meta, cb) {
+  this.imageInfo = function imageInfo(userData, socket, gId, meta, cb) {
     if (!meta || typeof meta.type !== 'string' ||
         isNaN(meta.contentLength * 1)) {
       if (typeof cb === 'function') cb('Malformed Data');
@@ -2223,8 +2203,7 @@ function HGWeb() {
     } else {
       if (typeof cb === 'function') cb('NO_PERM');
     }
-  }
-  this.imageInfo = imageInfo;
+  };
 }
 
 module.exports = new HGWeb();
