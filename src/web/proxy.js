@@ -14,6 +14,7 @@ const clientId = '444293534720458753';
 const clientSecret = auth.webSecret;
 require('../subModule.js').extend(WebProxy);  // Extends the SubModule class.
 
+delete require.cache[require.resolve('./WebUserData.js')];
 const WebUserData = require('./WebUserData.js');
 
 /**
@@ -434,7 +435,7 @@ function WebProxy() {
               fetchIdentity(loginInfo[session], (identity) => {
                 userData = identity;
                 if (userData) {
-                  socket.emit('authorized', null, userData);
+                  socket.emit('authorized', null, userData.serializable);
                   self.common.logDebug('Authorized ' + userData.id, socket.id);
                 } else {
                   socket.emit('authorized', 'Getting user data failed', null);
@@ -452,7 +453,7 @@ function WebProxy() {
           fetchIdentity(loginInfo[session], (identity) => {
             userData = identity;
             if (userData) {
-              socket.emit('authorized', null, userData);
+              socket.emit('authorized', null, userData.serializable);
               self.common.logDebug('Authorized ' + userData.id, socket.id);
             } else {
               socket.emit('authorized', 'Getting user data failed', null);
@@ -478,7 +479,7 @@ function WebProxy() {
           receivedLoginInfo(JSON.parse(res));
           fetchIdentity(loginInfo[session], (identity) => {
             userData = identity;
-            socket.emit('authorized', null, userData);
+            socket.emit('authorized', null, userData && userData.serializable);
             if (userData) {
               self.common.logDebug('Authorized ' + userData.id, socket.id);
             } else {

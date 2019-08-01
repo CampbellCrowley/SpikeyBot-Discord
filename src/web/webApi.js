@@ -4,10 +4,14 @@ const fs = require('fs');
 const http = require('http');
 const auth = require('../../auth.js');
 const sIOClient = require('socket.io-client');
-const WebUserData = require('./WebUserData.js');
-const ApiEndpoint = require('./ApiEndpoint.js');
-const ApiRequestBody = require('./ApiRequestBody.js');
 const SubModule = require('../subModule.js');
+
+delete require.cache[require.resolve('./WebUserData.js')];
+const WebUserData = require('./WebUserData.js');
+delete require.cache[require.resolve('./ApiEndpoint.js')];
+const ApiEndpoint = require('./ApiEndpoint.js');
+delete require.cache[require.resolve('./ApiRequestBody.js')];
+const ApiRequestBody = require('./ApiRequestBody.js');
 
 const basicAuth = 'Basic ' +
     (auth.commandUsername + ':' + auth.commandPassword).toString('base64');
