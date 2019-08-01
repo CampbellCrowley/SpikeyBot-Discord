@@ -64,6 +64,19 @@ function WebSettings() {
       console.error('Settings failed to bind to port for unknown reason.', err);
     }
   });
+  /**
+   * @description Function calls handlers for requested commands.
+   * @typedef WebSettings~SocketFunction
+   * @type Function
+   *
+   * @param {WebUserData} userData The user data of the user performing the
+   * request.
+   * @param {socketIo~Socket} socket The socket connection firing the command.
+   * Not necessarily the socket that will reply to the end client.
+   * @param {...*} args Additional function-specific arguments.
+   * @param {WebSettings~basicCB} [cb] Callback that fires once requested action
+   * is complete or has failed. Client may not pass a callback.
+   */
 
   /**
    * Stores the current reference to the CmdScheduling subModule. Null if it
@@ -136,7 +149,7 @@ function WebSettings() {
    * Handle RaidBlock shutting down.
    *
    * @private
-   * @listens RaidBlock[w#shutdown
+   * @listens RaidBlock#shutdown
    */
   function handleRaidShutdown() {
     if (raidBlock) {
@@ -333,66 +346,52 @@ function WebSettings() {
       }
     });
 
-    socket.on('fetchGuilds', (...args) => {
-      callSocketFunction(fetchGuilds, args, false);
-    });
-    socket.on('fetchGuild', (...args) => {
-      callSocketFunction(fetchGuild, args);
-    });
-    socket.on('fetchMember', (...args) => {
-      callSocketFunction(fetchMember, args);
-    });
-    socket.on('fetchChannel', (...args) => {
-      callSocketFunction(fetchChannel, args);
-    });
-    socket.on('fetchSettings', (...args) => {
-      callSocketFunction(fetchSettings, args);
-    });
-    socket.on('fetchRaidSettings', (...args) => {
-      callSocketFunction(fetchRaidSettings, args);
-    });
-    socket.on('fetchModLogSettings', (...args) => {
-      callSocketFunction(fetchModLogSettings, args);
-    });
-    socket.on('fetchCommandSettings', (...args) => {
-      callSocketFunction(fetchCommandSettings, args);
-    });
-    socket.on('fetchScheduledCommands', (...args) => {
-      callSocketFunction(fetchScheduledCommands, args);
-    });
-    socket.on('fetchGuildScheduledCommands', (...args) => {
-      callSocketFunction(fetchGuildScheduledCommands, args);
-    });
-    socket.on('cancelScheduledCommand', (...args) => {
-      callSocketFunction(cancelScheduledCommand, args);
-    });
-    socket.on('registerScheduledCommand', (...args) => {
-      callSocketFunction(registerScheduledCommand, args);
-    });
-    socket.on('changePrefix', (...args) => {
-      callSocketFunction(changePrefix, args);
-    });
-    socket.on('changeRaidSetting', (...args) => {
-      callSocketFunction(changeRaidSetting, args);
-    });
-    socket.on('changeModLogSetting', (...args) => {
-      callSocketFunction(changeModLogSetting, args);
-    });
-    socket.on('changeCommandSetting', (...args) => {
-      callSocketFunction(changeCommandSetting, args);
-    });
+    socket.on('fetchGuilds', (...args) => handle(fetchGuilds, args, false));
+    socket.on('fetchGuild', (...args) => handle(self.fetchGuild, args));
+    socket.on('fetchMember', (...args) => handle(self.fetchMember, args));
+    socket.on('fetchChannel', (...args) => handle(self.fetchChannel, args));
+    socket.on('fetchSettings', (...args) => handle(self.fetchSettings, args));
+    socket.on(
+        'fetchRaidSettings', (...args) => handle(self.fetchRaidSettings, args));
+    socket.on(
+        'fetchModLogSettings',
+        (...args) => handle(self.fetchModLogSettings, args));
+    socket.on(
+        'fetchCommandSettings',
+        (...args) => handle(self.fetchCommandSettings, args));
+    socket.on(
+        'fetchScheduledCommands',
+        (...args) => handle(self.fetchScheduledCommands, args));
+    socket.on(
+        'fetchGuildScheduledCommands',
+        (...args) => handle(self.fetchGuildScheduledCommands, args));
+    socket.on(
+        'cancelScheduledCommand',
+        (...args) => handle(self.cancelScheduledCommand, args));
+    socket.on(
+        'registerScheduledCommand',
+        (...args) => handle(self.registerScheduledCommand, args));
+    socket.on('changePrefix', (...args) => handle(self.changePrefix, args));
+    socket.on(
+        'changeRaidSetting', (...args) => handle(self.changeRaidSetting, args));
+    socket.on(
+        'changeModLogSetting',
+        (...args) => handle(self.changeModLogSetting, args));
+    socket.on(
+        'changeCommandSetting',
+        (...args) => handle(self.changeCommandSetting, args));
 
     /**
      * Calls the functions with added arguments, and copies the request to all
      * sibling clients.
      *
      * @private
-     * @param {Function} func The function to call.
+     * @param {WebSettings~SocketFunction} func The function to call.
      * @param {Array.<*>} args Array of arguments to send to function.
      * @param {boolean} [forward=true] Forward this request directly to all
      * siblings.
      */
-    function callSocketFunction(func, args, forward = true) {
+    function handle(func, args, forward = true) {
       const noLog = ['fetchMember', 'fetchChannel'];
       if (!noLog.includes(func.name.toString())) {
         const logArgs = args.map((el) => {
@@ -671,6 +670,7 @@ function WebSettings() {
    * @callback WebSettings~basicCB
    *
    * @param {?string} err The error response.
+   * @param {*} res Response data if no error.
    */
 
   /**
@@ -679,9 +679,9 @@ function WebSettings() {
    *
    * @private
    * @type {WebSettings~SocketFunction}
-   * @param {object} userData The current user's session data.
+   * @param {WebUserData} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * @param {Function} [cb] Callback that fires once the requested action is
    * complete, or has failed.
    */
   function fetchGuilds(userData, socket, cb) {
@@ -799,15 +799,15 @@ function WebSettings() {
   /**
    * Fetch a single guild.
    *
-   * @private
-   * @type {HGWeb~SocketFunction}
+   * @public
+   * @type {WebSettings~SocketFunction}
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {string|number} gId The ID of the guild that was requested.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete, or has failed.
+   * @param {WebSettings~basicCB} [cb] Callback that fires once the requested
+   * action is complete, or has failed.
    */
-  function fetchGuild(userData, socket, gId, cb) {
+  this.fetchGuild = function fetchGuild(userData, socket, gId, cb) {
     if (!userData) {
       self.common.error('Fetch Guild without userData', socket.id);
       if (typeof cb === 'function') cb('SIGNED_OUT');
@@ -820,32 +820,28 @@ function WebSettings() {
     }
 
     const guild = self.client.guilds.get(gId);
-    if (!guild) {
-      // cb(null);
-      return;
-    }
+    if (!guild) return;
     if (userData.id != self.common.spikeyId &&
         !guild.members.get(userData.id)) {
-      // cb(null);
+      cb(null);
       return;
     }
-    cb(stripGuilds([guild], userData)[0]);
-  }
-  this.fetchGuild = fetchGuild;
+    cb(null, stripGuilds([guild], userData)[0]);
+  };
 
   /**
    * Fetch data about a member of a guild.
    *
-   * @private
-   * @type {HGWeb~SocketFunction}
+   * @public
+   * @type {WebSettings~SocketFunction}
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
    * @param {number|string} mId The member's id to lookup.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete, or has failed.
+   * @param {WebSettings~basicCB} [cb] Callback that fires once the requested
+   * action is complete, or has failed.
    */
-  function fetchMember(userData, socket, gId, mId, cb) {
+  this.fetchMember = function fetchMember(userData, socket, gId, mId, cb) {
     if (typeof cb !== 'function') return;
     if (!checkPerm(userData, gId, null, 'players')) return;
     const g = self.client.guilds.get(gId);
@@ -858,8 +854,7 @@ function WebSettings() {
     const finalMember = makeMember(m);
 
     cb(null, finalMember);
-  }
-  this.fetchMember = fetchMember;
+  };
 
   /**
    * Client has requested data for a specific channel.
@@ -871,15 +866,15 @@ function WebSettings() {
    * @param {number|string} gId The ID of the Discord guild where the channel
    * is.
    * @param {number|string} cId The ID of the Discord channel to fetch.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete and has data, or has failed.
+   * @param {WebSettings~basicCB} [cb] Callback that fires once the requested
+   * action is complete and has data, or has failed.
    */
-  function fetchChannel(userData, socket, gId, cId, cb) {
+  this.fetchChannel = function fetchChannel(userData, socket, gId, cId, cb) {
     if (!checkMyGuild(gId)) return;
     if (typeof cb !== 'function') cb = function() {};
     if (!checkChannelPerm(userData, gId, cId)) {
       replyNoPerm(socket, 'fetchChannel');
-      cb(null);
+      cb('NO_PERM');
       return;
     }
     const c = self.client.channels.get(cId);
@@ -895,9 +890,8 @@ function WebSettings() {
     if (c.parent) {
       stripped.parent = {position: c.parent.position};
     }
-    cb(stripped);
-  }
-  this.fetchChannel = fetchChannel;
+    cb(null, stripped);
+  };
 
   /**
    * Client has requested all settings for all guilds for the connected user.
@@ -906,10 +900,10 @@ function WebSettings() {
    * @type {WebSettings~SocketFunction}
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete and has data, or has failed.
+   * @param {WebSettings~basicCB} [cb] Callback that fires once the requested
+   * action is complete and has data, or has failed.
    */
-  function fetchSettings(userData, socket, cb) {
+  this.fetchSettings = function fetchSettings(userData, socket, cb) {
     if (!userData) {
       if (typeof cb === 'function') cb('Not signed in.', null);
       return;
@@ -940,12 +934,11 @@ function WebSettings() {
       };
     });
     if (!socket.fake && typeof cb === 'function') {
-      cb(settings);
+      cb(null, settings);
     } else {
-      socket.emit('settings', settings);
+      socket.emit('settings', null, settings);
     }
-  }
-  this.fetchSettings = fetchSettings;
+  };
 
   /**
    * Client has requested settings specific to raids for single guild.
@@ -955,10 +948,11 @@ function WebSettings() {
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {string} gId The guild ID to fetch the settings for.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete and has data, or has failed.
+   * @param {WebSettings~basicCB} [cb] Callback that fires once the requested
+   * action is complete and has data, or has failed.
    */
-  function fetchRaidSettings(userData, socket, gId, cb) {
+  this.fetchRaidSettings = function fetchRaidSettings(
+      userData, socket, gId, cb) {
     if (!checkMyGuild(gId)) return;
     if (typeof cb !== 'function') cb = function() {};
     if (!userData) {
@@ -977,9 +971,8 @@ function WebSettings() {
       cb('Internal Server Error');
       return;
     }
-    cb(raidBlock.getSettings(gId));
-  }
-  this.fetchRaidSettings = fetchRaidSettings;
+    cb(null, raidBlock.getSettings(gId));
+  };
 
   /**
    * Client has requested settings specific to ModLog for single guild.
@@ -989,10 +982,11 @@ function WebSettings() {
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {string} gId The guild ID to fetch the settings for.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete and has data, or has failed.
+   * @param {WebSettings~basicCB} [cb] Callback that fires once the requested
+   * action is complete and has data, or has failed.
    */
-  function fetchModLogSettings(userData, socket, gId, cb) {
+  this.fetchModLogSettings = function fetchModLogSettings(
+      userData, socket, gId, cb) {
     if (!checkMyGuild(gId)) return;
     if (typeof cb !== 'function') cb = function() {};
     if (!userData) {
@@ -1012,9 +1006,8 @@ function WebSettings() {
       cb('Internal Server Error');
       return;
     }
-    cb(modLog.getSettings(gId));
-  }
-  this.fetchModLogSettings = fetchModLogSettings;
+    cb(null, modLog.getSettings(gId));
+  };
 
   /**
    * Client has requested settings specific to a single command in a single
@@ -1028,10 +1021,11 @@ function WebSettings() {
    * @param {string} gId The guild ID to fetch the settings for.
    * @param {?string} cmd The name of the command to fetch the setting for, or
    * null to fetch all settings.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete and has data, or has failed.
+   * @param {WebSettings~basicCB} [cb] Callback that fires once the requested
+   * action is complete and has data, or has failed.
    */
-  function fetchCommandSettings(userData, socket, gId, cmd, cb) {
+  this.fetchCommandSettings = function fetchCommandSettings(
+      userData, socket, gId, cmd, cb) {
     if (!checkMyGuild(gId)) return;
     if (typeof cb !== 'function') cb = function() {};
     if (!userData) {
@@ -1055,9 +1049,8 @@ function WebSettings() {
         settings = settings[command.getFullName()];
       }
     }
-    cb(settings);
-  }
-  this.fetchCommandSettings = fetchCommandSettings;
+    cb(null, settings);
+  };
 
   /**
    * Client has requested all scheduled commands for the connected user.
@@ -1066,10 +1059,11 @@ function WebSettings() {
    * @type {WebSettings~SocketFunction}
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete and has data, or has failed.
+   * @param {WebSettings~basicCB} [cb] Callback that fires once the requested
+   * action is complete and has data, or has failed.
    */
-  function fetchScheduledCommands(userData, socket, cb) {
+  this.fetchScheduledCommands = function fetchScheduledCommands(
+      userData, socket, cb) {
     if (!userData) {
       if (!socket.fake && typeof cb === 'function') cb('Not signed in.', null);
       return;
@@ -1105,12 +1099,11 @@ function WebSettings() {
       }
     });
     if (!socket.fake && typeof cb === 'function') {
-      cb(sCmds);
+      cb(null, sCmds);
     } else {
-      socket.emit('scheduledCmds', sCmds);
+      socket.emit('scheduledCmds', null, sCmds);
     }
-  }
-  this.fetchScheduledCommands = fetchScheduledCommands;
+  };
 
   /**
    * Client has requested scheduled commands for a guild.
@@ -1120,10 +1113,11 @@ function WebSettings() {
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {string} gId The guild ID to fetch.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete and has data, or has failed.
+   * @param {WebSettings~basicCB} [cb] Callback that fires once the requested
+   * action is complete and has data, or has failed.
    */
-  function fetchGuildScheduledCommands(userData, socket, gId, cb) {
+  this.fetchGuildScheduledCommands = function fetchGuildScheduledCommands(
+      userData, socket, gId, cb) {
     if (!checkMyGuild(gId)) return;
     if (typeof cb !== 'function') cb = function() {};
     if (!userData) {
@@ -1157,9 +1151,8 @@ function WebSettings() {
         };
       });
     }
-    cb(sCmds);
-  }
-  this.fetchGuildScheduledCommands = fetchGuildScheduledCommands;
+    cb(null, sCmds);
+  };
   /**
    * Client has requested that a scheduled command be cancelled.
    *
@@ -1170,10 +1163,11 @@ function WebSettings() {
    * @param {string|number} gId The id of the guild of which to cancel the
    * command.
    * @param {string} cmdId The ID of the command to cancel.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete, or has failed.
+   * @param {WebSettings~basicCB} [cb] Callback that fires once the requested
+   * action is complete, or has failed.
    */
-  function cancelScheduledCommand(userData, socket, gId, cmdId, cb) {
+  this.cancelScheduledCommand = function cancelScheduledCommand(
+      userData, socket, gId, cmdId, cb) {
     if (typeof cb !== 'function') cb = function() {};
     if (!checkPerm(userData, gId, null, 'schedule')) {
       if (!checkMyGuild(gId)) return;
@@ -1183,9 +1177,8 @@ function WebSettings() {
     }
     updateModuleReferences();
     cmdScheduler.cancelCmd(gId, cmdId);
-    cb();
-  }
-  this.cancelScheduledCommand = cancelScheduledCommand;
+    cb(null);
+  };
 
   /**
    * @description Client has created a new scheduled command.
@@ -1198,10 +1191,11 @@ function WebSettings() {
    * @param {string|number} gId The id of the guild of which to add the command.
    * @param {object} cmd The command data of which to make into a
    * scheduled command and register.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete, or has failed.
+   * @param {WebSettings~basicCB} [cb] Callback that fires once the requested
+   * action is complete, or has failed.
    */
-  function registerScheduledCommand(userData, socket, gId, cmd, cb) {
+  this.registerScheduledCommand = function registerScheduledCommand(
+      userData, socket, gId, cmd, cb) {
     if (typeof cb !== 'function') cb = function() {};
     if (!checkMyGuild(gId)) return;
     if (!checkPerm(userData, gId, cmd && cmd.channel, 'schedule')) {
@@ -1275,8 +1269,7 @@ function WebSettings() {
     } else {
       cb(null);
     }
-  }
-  this.registerScheduledCommand = registerScheduledCommand;
+  };
 
   /**
    * Client has requested to change the command prefix for a guild.
@@ -1288,10 +1281,10 @@ function WebSettings() {
    * @param {string|number} gId The id of the guild of which to change the
    * prefix.
    * @param {string} prefix The new prefix value to set.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete, or has failed.
+   * @param {WebSettings~basicCB} [cb] Callback that fires once the requested
+   * action is complete, or has failed.
    */
-  function changePrefix(userData, socket, gId, prefix, cb) {
+  this.changePrefix = function changePrefix(userData, socket, gId, prefix, cb) {
     if (typeof cb !== 'function') cb = function() {};
     if (!checkPerm(userData, gId, null, 'changeprefix')) {
       if (!checkMyGuild(gId)) return;
@@ -1305,9 +1298,8 @@ function WebSettings() {
       cb('Internal Error');
       return;
     }
-    cb();
-  }
-  this.changePrefix = changePrefix;
+    cb(null);
+  };
 
   /**
    * Client has requested to change a single raid setting for a guild.
@@ -1320,10 +1312,11 @@ function WebSettings() {
    * setting.
    * @param {string} key The name of the setting to change.
    * @param {string|boolean} value The value to set the setting to.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete, or has failed.
+   * @param {WebSettings~basicCB} [cb] Callback that fires once the requested
+   * action is complete, or has failed.
    */
-  function changeRaidSetting(userData, socket, gId, key, value, cb) {
+  this.changeRaidSetting = function changeRaidSetting(
+      userData, socket, gId, key, value, cb) {
     if (typeof cb !== 'function') cb = function() {};
     if (!checkPerm(userData, gId, null, 'lockdown')) {
       if (!checkMyGuild(gId)) return;
@@ -1358,11 +1351,10 @@ function WebSettings() {
       cb('Bad Payload');
       return;
     }
-    cb();
+    cb(null);
 
     guildBroadcast(gId, 'raidSettingsChanged', gId);
-  }
-  this.changeRaidSetting = changeRaidSetting;
+  };
 
   /**
    * Client has requested to change a single ModLog setting for a guild.
@@ -1375,10 +1367,11 @@ function WebSettings() {
    * setting.
    * @param {string} key The name of the setting to change.
    * @param {string|boolean} value The value to set the setting to.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete, or has failed.
+   * @param {WebSettings~basicCB} [cb] Callback that fires once the requested
+   * action is complete, or has failed.
    */
-  function changeModLogSetting(userData, socket, gId, key, value, cb) {
+  this.changeModLogSetting = function changeModLogSetting(
+      userData, socket, gId, key, value, cb) {
     if (!checkMyGuild(gId)) return;
     if (typeof cb !== 'function') cb = function() {};
     if (!checkPerm(userData, gId, null, 'setlogchannel')) {
@@ -1416,11 +1409,10 @@ function WebSettings() {
       cb('Bad Payload');
       return;
     }
-    cb();
+    cb(null);
 
     guildBroadcast(gId, 'modLogSettingsChanged', gId);
-  }
-  this.changeModLogSetting = changeModLogSetting;
+  };
 
   /**
    * Client has requested to change a single command setting for a guild.
@@ -1438,10 +1430,10 @@ function WebSettings() {
    * @param {?string} id The ID of the channel, user, or role to change
    * the setting for if changing the enabled or disabled category.
    * @param {?boolean} enabled The setting to set the value of the ID setting.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete, or has failed.
+   * @param {WebSettings~basicCB} [cb] Callback that fires once the requested
+   * action is complete, or has failed.
    */
-  function changeCommandSetting(
+  this.changeCommandSetting = function changeCommandSetting(
       userData, socket, gId, cmd, key, value, id, enabled, cb) {
     if (!checkMyGuild(gId)) return;
     if (typeof cb !== 'function') cb = function() {};
@@ -1486,10 +1478,9 @@ function WebSettings() {
       setting[key] = value;
     }
 
-    cb();
+    cb(null);
 
     guildBroadcast(gId, 'commandSettingsChanged', gId);
-  }
-  this.changeCommandSetting = changeCommandSetting;
+  };
 }
 module.exports = new WebSettings();

@@ -625,12 +625,27 @@ function HGWeb() {
   }
 
   /**
+   * @description Function calls handlers for requested commands.
+   * @typedef HGWeb~SocketFunction
+   * @type Function
+   *
+   * @param {WebUserData} userData The user data of the user performing the
+   * request.
+   * @param {socketIo~Socket} socket The socket connection firing the command.
+   * Not necessarily the socket that will reply to the end client.
+   * @param {...*} args Additional function-specific arguments.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once requested action is
+   * complete or has failed. Client may not pass a callback.
+   */
+
+  /**
    * Basic callback with single argument. The argument is null if there is no
    * error, or a string if there was an error.
    *
    * @callback HGWeb~basicCB
    *
    * @param {?string} err The error response.
+   * @param {*} res Response data if no error.
    */
 
   /**
@@ -641,7 +656,7 @@ function HGWeb() {
    * @type {HGWeb~SocketFunction}
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * @param {Function} [cb] Callback that fires once the requested action is
    * complete, or has failed.
    */
   function fetchGuilds(userData, socket, cb) {
@@ -795,8 +810,8 @@ function HGWeb() {
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {string|number} gId The ID of the guild that was requested.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete, or has failed.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete, or has failed.
    */
   this.fetchGuild = function fetchGuild(userData, socket, gId, cb) {
     if (!userData) {
@@ -819,7 +834,7 @@ function HGWeb() {
       cb(null);
       return;
     }
-    cb(stripGuilds([guild], userData)[0]);
+    cb(null, stripGuilds([guild], userData)[0]);
   };
   /**
    * Fetch data about a member of a guild.
@@ -830,8 +845,8 @@ function HGWeb() {
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
    * @param {number|string} mId The member's id to lookup.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete, or has failed.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete, or has failed.
    */
   this.fetchMember = function fetchMember(userData, socket, gId, mId, cb) {
     if (!checkPerm(userData, gId, null, 'players')) return;
@@ -856,8 +871,8 @@ function HGWeb() {
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
    * @param {number|string} cId The channel's id to lookup.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete, or has failed.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete, or has failed.
    */
   this.fetchChannel = function fetchChannel(userData, socket, gId, cId, cb) {
     if (!checkChannelPerm(userData, gId, cId, '')) return;
@@ -980,8 +995,8 @@ function HGWeb() {
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete, or has failed.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete, or has failed.
    */
   this.fetchNextDay = function fetchNextDay(userData, socket, gId, cb) {
     if (!checkPerm(userData, gId, null, 'kill')) {
@@ -1033,8 +1048,8 @@ function HGWeb() {
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
    * @param {number|string} mId The member id to exclude.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete, or has failed.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete, or has failed.
    */
   this.excludeMember = function excludeMember(userData, socket, gId, mId, cb) {
     if (!checkPerm(userData, gId, null, 'exclude')) {
@@ -1065,8 +1080,8 @@ function HGWeb() {
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
    * @param {number|string} mId The member id to include.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete, or has failed.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete, or has failed.
    */
   this.includeMember = function includeMember(userData, socket, gId, mId, cb) {
     if (!checkPerm(userData, gId, null, 'include')) {
@@ -1099,8 +1114,8 @@ function HGWeb() {
    * @param {string} option The option to change.
    * @param {string|number} value The value to set option to.
    * @param {string} extra The extra text if the option is in an object.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete, or has failed.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete, or has failed.
    */
   this.toggleOption = function toggleOption(
       userData, socket, gId, option, value, extra, cb) {
@@ -1128,8 +1143,8 @@ function HGWeb() {
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete, or has failed.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete, or has failed.
    */
   this.createGame = function createGame(userData, socket, gId, cb) {
     if (!checkPerm(userData, gId, null, 'create')) {
@@ -1153,8 +1168,8 @@ function HGWeb() {
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
    * @param {string} cmd Command specifying what data to delete.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete, or has failed.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete, or has failed.
    */
   this.resetGame = function resetGame(userData, socket, gId, cmd, cb) {
     if (!checkPerm(userData, gId, null, 'reset')) {
@@ -1177,8 +1192,8 @@ function HGWeb() {
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
    * @param {number|string} cId Channel to start the game in.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete, or has failed.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete, or has failed.
    */
   this.startGame = function startGame(userData, socket, gId, cId, cb) {
     if (!checkChannelPerm(userData, gId, cId, 'start')) {
@@ -1201,8 +1216,8 @@ function HGWeb() {
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
    * @param {number|string} cId Channel to send the messages in.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete, or has failed.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete, or has failed.
    */
   this.startAutoplay = function startAutoplay(userData, socket, gId, cId, cb) {
     if (!checkChannelPerm(userData, gId, cId, 'autoplay')) {
@@ -1225,8 +1240,8 @@ function HGWeb() {
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
    * @param {number|string} cId Channel to send the messages in.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete, or has failed.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete, or has failed.
    */
   this.nextDay = function nextDay(userData, socket, gId, cId, cb) {
     if (!checkChannelPerm(userData, gId, cId, 'next')) {
@@ -1248,8 +1263,8 @@ function HGWeb() {
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete, or has failed.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete, or has failed.
    */
   this.endGame = function endGame(userData, socket, gId, cb) {
     if (!checkPerm(userData, gId, null, 'end')) {
@@ -1276,8 +1291,8 @@ function HGWeb() {
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete, or has failed.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete, or has failed.
    */
   this.pauseAutoplay = function pauseAutoplay(userData, socket, gId, cb) {
     if (!checkPerm(userData, gId, null, 'autoplay')) {
@@ -1304,8 +1319,8 @@ function HGWeb() {
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete, or has failed.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete, or has failed.
    */
   this.pauseGame = function pauseGame(userData, socket, gId, cb) {
     if (!checkPerm(userData, gId, null, 'pause')) {
@@ -1343,8 +1358,8 @@ function HGWeb() {
    * @param {string} cmd The command to run.
    * @param {string} one The first argument.
    * @param {string} two The second argument.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete, or has failed.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete, or has failed.
    */
   this.editTeam = function editTeam(userData, socket, gId, cmd, one, two, cb) {
     if (!checkPerm(userData, gId, null, 'team')) {
@@ -1379,8 +1394,8 @@ function HGWeb() {
    * @param {string} kA Do the attackers kill.
    * @param {?object} wV The weapon information for this event.
    * @param {?object} wA The weapon information for this event.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete, or has failed.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete, or has failed.
    */
   this.createEvent = function createEvent(
       userData, socket, gId, type, message, nV, nA, oV, oA, kV, kA, wV, wA,
@@ -1405,7 +1420,7 @@ function HGWeb() {
         if (game) {
           cb(null, game.serializable);
         } else {
-          cb();
+          cb(null);
         }
       } else if (game) {
         socket.emit('game', gId, game.serializable);
@@ -1428,8 +1443,8 @@ function HGWeb() {
    * @param {HungryGames~ArenaEvent|HungryGames~WeaponEvent} data The event
    * data.
    * @param {?string} name The name of the weapon if this is a weapon event.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete, or has failed.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete, or has failed.
    */
   this.createMajorEvent = function createMajorEvent(
       userData, socket, gId, type, data, name, cb) {
@@ -1452,7 +1467,7 @@ function HGWeb() {
         if (game) {
           cb(null, game.serializable);
         } else {
-          cb();
+          cb(null);
         }
       } else if (game) {
         socket.emit('game', gId, game.serializable);
@@ -1477,8 +1492,8 @@ function HGWeb() {
    * data to set the matched searches to.
    * @param {?string} name The internal name of the weapon to find.
    * @param {?string} newName The new internal name of the weapon.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete, or has failed.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete, or has failed.
    */
   this.editMajorEvent = function editMajorEvent(
       userData, socket, gId, type, search, data, name, newName, cb) {
@@ -1501,7 +1516,7 @@ function HGWeb() {
         if (game) {
           cb(null, game.serializable);
         } else {
-          cb();
+          cb(null);
         }
       } else if (game) {
         socket.emit('game', gId, game.serializable);
@@ -1521,8 +1536,8 @@ function HGWeb() {
    * @param {number|string} gId The guild id to look at.
    * @param {string} type The type of event.
    * @param {HungryGames~Event} event The game event to remove.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete, or has failed.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete, or has failed.
    */
   this.removeEvent = function removeEvent(
       userData, socket, gId, type, event, cb) {
@@ -1545,7 +1560,7 @@ function HGWeb() {
         if (game) {
           cb(null, game.serializable);
         } else {
-          cb();
+          cb(null);
         }
       } else if (game) {
         socket.emit('game', gId, game.serializable);
@@ -1570,8 +1585,8 @@ function HGWeb() {
    * HungryGames~WeaponEvent
    * } event The event to toggle.
    * @param {?boolean} value Set the enabled value instead of toggling.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete.
    */
   this.toggleEvent = function toggleEvent(
       userData, socket, gId, type, subCat, event, value, cb) {
@@ -1589,7 +1604,7 @@ function HGWeb() {
         socket.emit('message', 'Failed to toggle event: ' + err);
       }
     } else {
-      if (typeof cb === 'function') cb();
+      if (typeof cb === 'function') cb(null);
       // socket.emit('message', 'Toggled event.');
       // socket.emit('game', gId, hg().getHG().getGame(gId));
     }
@@ -1610,8 +1625,8 @@ function HGWeb() {
    * @param {string} [text] The message to show in the games as a result of this
    * command.
    * @param {boolean} [persists] Will this state be forced until the game ends.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete.
    */
   this.forcePlayerState = function forcePlayerState(
       userData, socket, gId, list, state, text, persists, cb) {
@@ -1657,8 +1672,8 @@ function HGWeb() {
    * @param {socketIo-Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to run this command on.
    * @param {string} name The name to change the game to.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete.
    */
   this.renameGame = function renameGame(userData, socket, gId, name, cb) {
     if (!checkPerm(userData, gId, null, 'rename')) {
@@ -1688,8 +1703,8 @@ function HGWeb() {
    * @param {socketIo-Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to run this command on.
    * @param {string} npcId The ID of the NPC to remove.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete.
    */
   this.removeNPC = function removeNPC(userData, socket, gId, npcId, cb) {
     if (!checkPerm(userData, gId, null, 'ai remove')) {
@@ -1712,8 +1727,8 @@ function HGWeb() {
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete, or has failed.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete, or has failed.
    */
   this.fetchStatGroupList = function fetchStatGroupList(
       userData, socket, gId, cb) {
@@ -1756,8 +1771,8 @@ function HGWeb() {
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} guildId The guild id to look at.
    * @param {string} groupId The ID of the group.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete, or has failed.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete, or has failed.
    */
   this.fetchStatGroupMetadata = function fetchStatGroupMetadata(
       userData, socket, guildId, groupId, cb) {
@@ -1805,8 +1820,8 @@ function HGWeb() {
    * @param {number|string} guildId The guild id to look at.
    * @param {string} groupId The ID of the group.
    * @param {string} userId The ID of the user.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete, or has failed.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete, or has failed.
    */
   this.fetchStats = function fetchStats(
       userData, socket, guildId, groupId, userId, cb) {
@@ -1854,8 +1869,8 @@ function HGWeb() {
    * @param {number|string} guildId The guild id to look at.
    * @param {string} groupId The ID of the group.
    * @param {HGStatGroupUserSelectOptions} opt Data select options.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete, or has failed.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete, or has failed.
    */
   this.fetchLeaderboard = function fetchLeaderboard(
       userData, socket, guildId, groupId, opt, cb) {
@@ -1908,8 +1923,8 @@ function HGWeb() {
    * @param {string} weapon The ID of the weapon to give or take.
    * @param {number} count Number of weapons to give or take. Positive is give,
    * negative is take.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete, or has failed.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete, or has failed.
    */
   this.modifyInventory = function modifyInventory(
       userData, socket, gId, uId, weapon, count, cb) {
@@ -1942,8 +1957,8 @@ function HGWeb() {
    * @param {string} guildId The guild id to look at.
    * @param {?string} groupId The ID of the group to select, or null to set
    * none.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete, or has failed.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete, or has failed.
    */
   this.selectStatGroup = function selectStatGroup(
       userData, socket, guildId, groupId, cb) {
@@ -1987,8 +2002,8 @@ function HGWeb() {
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {string} guildId The guild id to look at.
    * @param {?string} name The name of the new group.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete, or has failed.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete, or has failed.
    */
   this.createStatGroup = function createStatGroup(
       userData, socket, guildId, name, cb) {
@@ -2032,8 +2047,8 @@ function HGWeb() {
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {string} guildId The guild id to look at.
    * @param {string} groupId The group id to delete.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete, or has failed.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete, or has failed.
    */
   this.deleteStatGroup = function deleteStatGroup(
       userData, socket, guildId, groupId, cb) {
@@ -2073,7 +2088,7 @@ function HGWeb() {
    * @param {string} chunkId Id of the chunk being received.
    * @param {?Buffer} chunk Chunk of data received, or null if all data has been
    * sent.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
+   * @param {Function} [cb] Callback that fires once the requested action is
    * complete, or has failed.
    */
   this.imageChunk = function imageChunk(
@@ -2164,9 +2179,9 @@ function HGWeb() {
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
    * @param {object} meta Metadata to associate with this upload.
-   * @param {basicCB} [cb] Callback that fires once the requested action is
-   * complete, or has failed. If succeeded, an upload ID will be passed as the
-   * second parameter. Any error will be the first parameter.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete, or has failed. If succeeded, an upload ID will be passed as
+   * the second parameter. Any error will be the first parameter.
    */
   this.imageInfo = function imageInfo(userData, socket, gId, meta, cb) {
     if (!meta || typeof meta.type !== 'string' ||
