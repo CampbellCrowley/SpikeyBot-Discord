@@ -14,6 +14,8 @@ const clientId = '444293534720458753';
 const clientSecret = auth.webSecret;
 require('../subModule.js').extend(WebProxy);  // Extends the SubModule class.
 
+const WebUserData = require('./WebUserData.js');
+
 /**
  * @classdesc Proxy for account authentication.
  * @class
@@ -73,7 +75,7 @@ function WebProxy() {
   /**
    * The current OAuth2 access information for a single session.
    *
-   * @typedef loginState
+   * @typedef LoginState
    *
    * @property {string} access_token The current token for api requests.
    * @property {string} token_type The type of token (Usually 'Bearer').
@@ -97,7 +99,7 @@ function WebProxy() {
    * is valid. Mapped by session id.
    *
    * @private
-   * @type {object.<loginState>}
+   * @type {object.<LoginState>}
    */
   let loginInfo = {};
   const currentSessions = {};
@@ -133,10 +135,7 @@ function WebProxy() {
     },
     groups: {
       auth: {num: 1, delta: 2},
-    },
-    global: {
-      num: 2,
-      delta: 2,
+      global: {num: 2, delta: 2},
     },
   };
 
@@ -243,7 +242,7 @@ function WebProxy() {
     const keys = Object.keys(loginInfo);
     const now = Date.now();
     for (const i in keys) {
-      if (loginInfo[keys[i]].expiration_date < now) {
+      if (loginInfo[keys[i]].expirationDate < now) {
         clearTimeout(loginInfo[keys[i]].refreshTimeout);
         delete loginInfo[keys[i]];
       }
@@ -304,7 +303,14 @@ function WebProxy() {
 
     const reqPath = socket.handshake.url.split('?')[0];
 
-    let userData = {};
+    /**
+     * @description User data to inject alongside requests. Null if user isn't
+     * signed in yet, or is generally unknown.
+     * @private
+     * @type {?WebUserData}
+     * @default
+     */
+    let userData = null;
     let session;
     do {
       session = crypto.randomBytes(64).toString('base64');
@@ -317,7 +323,7 @@ function WebProxy() {
      * At different levels we will react to messages differently.
      * Level 0: All requests will be handled normally.
      * Level 1: Requests will be handled normally, with an additional warning.
-     * Level 2: All request will receive a http 429 equivalent reply.
+     * Level 2: All requests will receive a http 429 equivalent reply.
      * Level 3: All requests are ignored and no response will be provided.
      * Level 4: The connection will be closed immediately.
      *
@@ -371,7 +377,9 @@ function WebProxy() {
     };
     server.on('connect', () => {
       socket.on('*', (...args) => {
-        server.emit(...[args[0], userData].concat(args.slice(1)));
+        server.emit(
+            ...[args[0], userData && userData.serializable].concat(
+                args.slice(1)));
       });
     });
     server.on('*', (...args) => {
@@ -403,10 +411,9 @@ function WebProxy() {
       restoreAttempt = true;
       if (loginInfo[sess]) {
         session = sess;
-        // Temporarily refreshing the token on (nearly) every restore. This
-        // seems to work fine, but I receive a 401 invalid_grant when I don't do
-        // this...
-        if (loginInfo[session].expires_at - 6 * 24 * 60 * 60 * 1000 <
+        // Refresh the token if it has expired, or is close to expiring (within
+        // 24 hours).
+        if (loginInfo[session].expires_at - 1 * 24 * 60 * 60 * 1000 <
             Date.now()) {
           const info = loginInfo[session];
           refreshToken(info.refresh_token, info.scope, (err, data) => {
@@ -620,29 +627,26 @@ function WebProxy() {
   function fetchIdentity(loginInfo, cb) {
     apiRequest(loginInfo, '/users/@me', (err, data) => {
       if (!err) {
-        const parsed = JSON.parse(data);
-        parsed.session = {
-          id: loginInfo.session,
-          /* eslint-disable-next-line @typescript-eslint/camelcase */
-          expiration_date: loginInfo.expiration_date,
-        };
+        const ud = WebUserData.from(JSON.parse(data));
+        ud.setSession(loginInfo.session, loginInfo.expiration_date);
+
         const now = dateFormat(new Date(), 'yyyy-mm-dd\'T\'HH:MM:ss.l\'Z\'');
         const toSend = global.sqlCon.format(
             'INSERT INTO Discord (id) values (?) ON DUPLICATE KEY UPDATE ?',
-            [parsed.id, {lastLogin: now}]);
+            [ud.id, {lastLogin: now}]);
         global.sqlCon.query(toSend, (err) => {
           if (err) {
             self.error(err);
           }
         });
-        loginInfo.userId = parsed.id;
+        loginInfo.userId = ud.id;
         if (loginInfo.scope && loginInfo.scope.indexOf('guilds') > -1) {
           fetchGuilds(loginInfo, (data) => {
-            parsed.guilds = data;
-            cb(parsed);
+            ud.setGuilds(data);
+            cb(ud);
           });
         } else {
-          cb(parsed);
+          cb(ud);
         }
       } else {
         cb(null);

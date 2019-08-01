@@ -8,6 +8,7 @@ const auth = require('../../auth.js');
 const patreon = require('patreon');
 const mkdirp = require('mkdirp'); // mkdir -p
 const querystring = require('querystring');
+const crypto = require('crypto');
 
 const PATREON_CLIENT_ID = auth.patreonClientId;
 const PATREON_CLIENT_SECRET = auth.patreonClientSecret;
@@ -377,6 +378,43 @@ function WebAccount() {
         return;
       }
       changePatreonSetting(userData.id, setting, value, cb);
+    });
+    socket.on('fetchApiToken', (userData, cb) => {
+      if (typeof cb !== 'function') return;
+      if (!userData) {
+        cb('Not signed in.', null);
+        return;
+      }
+      const toSend = global.sqlCon.format(
+          'SELECT apiToken FROM Discord WHERE id=?', [userData.id]);
+      global.sqlCon.query(toSend, (err, rows) => {
+        if (err) {
+          self.error('Failed to fetch apiToken from database.');
+          console.error(err);
+          cb('Internal Server Error');
+          return;
+        }
+        cb(null, rows && rows[0] && rows[0].apiToken);
+      });
+    });
+    socket.on('resetApiToken', (userData, cb) => {
+      if (typeof cb !== 'function') cb = function() {};
+      if (!userData) {
+        cb('Not signed in.', null);
+        return;
+      }
+      const token = crypto.randomBytes(128).toString('base64');
+      const toSend = global.sqlCon.format(
+          'UPDATE Discord SET apiToken=? WHERE id=?', [token, userData.id]);
+      global.sqlCon.query(toSend, (err) => {
+        if (err) {
+          self.error('Failed to reset apiToken in database.');
+          console.error(err);
+          cb('Internal Server Error');
+          return;
+        }
+        cb(null, token);
+      });
     });
 
     socket.on('disconnect', () => {

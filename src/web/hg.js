@@ -641,6 +641,10 @@ function HGWeb() {
       self.common.error('Fetch Guilds without userData', socket.id);
       if (typeof cb === 'function') cb('SIGNED_OUT');
       return;
+    } else if (userData.apiRequest) {
+      // Disabled for API requests due to the possible issue with performance
+      // fetching list of guilds.
+      return;
     }
 
     const numReplies = (Object.entries(siblingSockets).length || 0);
