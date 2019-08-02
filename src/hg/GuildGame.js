@@ -928,13 +928,6 @@ class GuildGame {
       evt.consumes = [{name: weapon, count: -diff}];
       evt.subMessage = Simulator.formatWeaponEvent(
           evt, player, ownerName, firstAttacker, weapon, weapons, count);
-      if (game.currentGame.day.state > 1) {
-        if (count <= 0) {
-          delete player.weapons[weapon];
-        } else {
-          player.weapons[weapon] = count;
-        }
-      }
     } else {
       const aW = evt.attacker.weapons.find((w) => w.name === weapon);
       if (!aW) {
@@ -951,10 +944,16 @@ class GuildGame {
     }
 
     if (game.currentGame.day.state > 1) {
+      if (count <= 0) {
+        count = 0;
+        delete player.weapons[weapon];
+      } else {
+        player.weapons[weapon] = count;
+      }
       evt.subMessage +=
           Simulator.formatWeaponCounts(evt, [player], weapons, nameFormat);
       // State - 2 = the event index, + 1 is the next index to get shown.
-      let lastIndex = game.currentGame.day.state - 1;
+      /* let lastIndex = game.currentGame.day.state - 1;
       for (let i = game.currentGame.day.events.length - 1; i > lastIndex; i--) {
         if (game.currentGame.day.events[i].icons.find(
             (el) => el.id == player.id)) {
@@ -964,9 +963,9 @@ class GuildGame {
       }
       if (lastIndex < game.currentGame.day.events.length) {
         game.currentGame.day.events.splice(lastIndex, 0, evt);
-      } else {
-        game.currentGame.day.events.push(evt);
-      }
+      } else { */
+      game.currentGame.day.events.push(evt);
+      // }
       return `${player.name} now has ${count} ${weapon}`;
     } else {
       game.currentGame.nextDay.events.push(evt);
