@@ -92,21 +92,29 @@ function CmdScheduling() {
       const dir = self.common.guildSaveDir + g.id;
       const filename = dir + saveSubDir;
       if (opt === 'async') {
-        fs.unlink(filename, () => {});
+        fs.unlink(filename, () => {
+          if (schedules[g.id] && schedules[g.id].length) {
+            schedules[g.id] = schedules[g.id].filter((el) => !el.complete);
+            const data = schedules[g.id].map((el) => el.toJSON());
+            writeSaveData(g.id, data, opt);
+          }
+        });
       } else {
         try {
           fs.unlinkSync(filename);
         } catch (err) {
-          // Meh.
+          if (err.code !== 'ENOENT') {
+            this.error('Failed to unlink sCmd data: ' + g.id);
+            console.error(err);
+          }
+        }
+        if (schedules[g.id] && schedules[g.id].length) {
+          schedules[g.id] = schedules[g.id].filter((el) => !el.complete);
+          const data = schedules[g.id].map((el) => el.toJSON());
+          writeSaveData(g.id, data, opt);
         }
       }
     });
-    for (const i in schedules) {
-      if (!schedules[i] || !schedules[i].length) continue;
-      schedules[i] = schedules[i].filter((el) => !el.complete);
-      const data = schedules[i].map((el) => el.toJSON());
-      writeSaveData(i, data, opt);
-    }
   };
 
   /**
