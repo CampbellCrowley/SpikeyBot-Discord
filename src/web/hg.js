@@ -1976,7 +1976,6 @@ function HGWeb() {
     if (!groupId || groupId.length == 0) {
       game.statGroup = null;
       if (typeof cb === 'function') cb(null);
-      broadcastGame(hg(), guildId);
       return;
     } else if (typeof groupId !== 'string') {
       cb('BAD_GROUP');
@@ -1990,7 +1989,6 @@ function HGWeb() {
       }
       game.statGroup = group.id;
       if (typeof cb === 'function') cb(null);
-      broadcastGame(hg(), guildId);
     });
   };
   /**
