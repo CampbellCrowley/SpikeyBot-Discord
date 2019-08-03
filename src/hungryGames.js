@@ -3468,7 +3468,7 @@ function HG() {
 
         const old = obj[option];
         obj[option] = value;
-        self._fire('toggleOption', id, ...keys, option, value);
+        self._fire('toggleOption', id, ...keys, value);
         if (option == 'teamSize' && value != 0) {
           return 'Set ' + option + ' to ' + obj[option] + ' from ' + old +
               '\nTo reset teams to the correct size, type "' +
@@ -3498,7 +3498,7 @@ function HG() {
         if (option == 'includeBots') {
           createGame(null, id, true);
         }
-        self._fire('toggleOption', id, ...keys, option, value);
+        self._fire('toggleOption', id, ...keys, value);
         return `Set ${option} to ${obj[option]} from ${old}`;
       }
     } else if (type === 'string') {
@@ -3511,7 +3511,7 @@ function HG() {
       } else {
         const old = obj[option];
         obj[option] = value;
-        self._fire('toggleOption', id, ...keys, option, value);
+        self._fire('toggleOption', id, ...keys, value);
         return 'Set ' + option + ' to ' + obj[option] + ' from ' + old;
       }
     } else if (type === 'object') {

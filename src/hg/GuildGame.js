@@ -385,26 +385,21 @@ class GuildGame {
         });
       });
 
-      this.currentGame.teams.sort((a, b) => {
-        return a.id - b.id;
-      });
+      this.currentGame.teams.sort((a, b) => a.id - b.id);
+
       const notIncluded = this.currentGame.includedUsers.slice(0);
       // Remove players from teams if they are no longer included in game.
       for (let i = 0; i < this.currentGame.teams.length; i++) {
         const team = this.currentGame.teams[i];
         team.id = i;
         for (let j = 0; j < team.players.length; j++) {
-          if (this.currentGame.includedUsers.findIndex((obj) => {
-            return obj.id === team.players[j];
-          }) < 0) {
+          if (!this.currentGame.includedUsers.find(
+              (obj) => obj.id === team.players[j])) {
             team.players.splice(j, 1);
             j--;
           } else {
             notIncluded.splice(
-                notIncluded.findIndex((obj) => {
-                  return obj.id === team.players[j];
-                }),
-                1);
+                notIncluded.findIndex((obj) => obj.id === team.players[j]), 1);
           }
         }
         if (team.players.length == 0) {
@@ -434,12 +429,10 @@ class GuildGame {
       this.currentGame.teams = [];
       for (let i = 0; i < numTeams; i++) {
         this.currentGame.teams[i] = new Team(
-            i, 'Team ' + (i + 1),
+            i, `Team ${i + 1}`,
             this.currentGame.includedUsers
                 .slice(i * teamSize, i * teamSize + teamSize)
-                .map((obj) => {
-                  return obj.id;
-                }));
+                .map((obj) => obj.id));
       }
     }
     // Reset team data.
@@ -459,8 +452,7 @@ class GuildGame {
 
     if (corruptTeam) {
       return 'Teams appeared to be corrupted, teams may have been ' +
-          'rearranged.\nThis error has been reported and is being ' +
-          'looked into.';
+          'rearranged.\nIf you have more information, please report this bug.';
     }
     return null;
   }

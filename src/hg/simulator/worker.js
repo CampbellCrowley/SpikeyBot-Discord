@@ -370,6 +370,13 @@ class Worker {
           Event.finalizeSimple(sim.messages.get('eventEnd'), sim.game));
     }
 
+    sim.game.currentGame.includedUsers.forEach((player) => {
+      if (player.simWeapons) {
+        player.weapons = player.simWeapons;
+        delete player.simWeapons;
+      }
+    });
+
     // Apply outcomes.
     sim.game.currentGame.day.events.forEach((evt) => {
       const affected = [];
@@ -378,10 +385,6 @@ class Worker {
         const player =
             sim.game.currentGame.includedUsers.find((p) => p.id === icon.id);
         if (!player) return;
-        if (player.simWeapons) {
-          player.weapons = player.simWeapons;
-          delete player.simWeapons;
-        }
         affected.push(player);
         const isV = icon.settings.victim;
         const isA = icon.settings.attacker;
@@ -390,22 +393,6 @@ class Worker {
         Simulator._applyOutcome(
             sim.game, player, group.killer ? other.count : 0, null,
             group.outcome);
-
-        if (evt.consumes && evt.consumes.length > 0) {
-          const consumer = sim.game.currentGame.includedUsers.find(
-              (p) => p.id === evt.consumer);
-          if (consumer) {
-            for (const consumed of evt.consumes) {
-              if (consumer.weapons[consumed.name]) {
-                const count = consumed.count;
-                consumer.weapons[consumed.name] -= count;
-                if (consumer.weapons[consumed.name] <= 0) {
-                  delete consumer.weapons[consumed.name];
-                }
-              }
-            }
-          }
-        }
         if (group.weapons && group.weapons.length > 0) {
           for (const w of group.weapons) {
             if (player.weapons[w.name]) {
@@ -417,6 +404,22 @@ class Worker {
           }
         }
       });
+
+      if (evt.consumes && evt.consumes.length > 0) {
+        const consumer = sim.game.currentGame.includedUsers.find(
+            (p) => p.id === evt.consumer);
+        if (consumer) {
+          for (const consumed of evt.consumes) {
+            if (consumer.weapons[consumed.name]) {
+              const count = consumed.count;
+              consumer.weapons[consumed.name] -= count;
+              if (consumer.weapons[consumed.name] <= 0) {
+                delete consumer.weapons[consumed.name];
+              }
+            }
+          }
+        }
+      }
 
       evt.subMessage +=
           Simulator.formatWeaponCounts(evt, affected, weapons, nameFormat);

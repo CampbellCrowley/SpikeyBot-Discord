@@ -414,13 +414,13 @@ function HGWeb() {
    * @param {string} gId Guild ID of the option change.
    * @param {string} opt1 Option key.
    * @param {string} opt2 Option second key or value.
-   * // @param {string} [opt3] Option value if object option.
+   * @param {string} [opt3] Option value if object option.
    */
-  function handleOptionChange(hg, gId, opt1, opt2) {
+  function handleOptionChange(hg, gId, opt1, opt2, opt3) {
     if (opt1 === 'teamSize') {
       broadcastGame(hg, gId);
     } else {
-      guildBroadcast(gId, 'option', opt1, opt2);
+      guildBroadcast(gId, 'option', opt1, opt2, opt3);
     }
   }
 
@@ -1128,7 +1128,7 @@ function HGWeb() {
     const response = hg().setOption(gId, option, value, extra || undefined);
     const game = hg().getHG().getGame(gId);
     if (typeof cb === 'function') {
-      cb(null, response, game && game.options[option]);
+      cb(null, response);
     } else if (!game) {
       socket.emit('message', response);
     }
