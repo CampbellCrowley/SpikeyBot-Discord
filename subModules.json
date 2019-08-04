@@ -28,7 +28,6 @@
     "./poll.js",
     "./chatbot.js",
     "./spotify.js",
-    "./cmdScheduling.js",
     "./web/account.js",
     "./web/stats.js",
     "./web/settings.js",
@@ -46,7 +45,8 @@
     "./raidBlock.js",
     "./web/proxy.js",
     "./pets.js",
-    "./botCommands.js"
+    "./botCommands.js",
+    "./cmdScheduling.js"
   ],
   "release": [
     "./moderation.js",

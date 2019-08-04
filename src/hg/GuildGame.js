@@ -7,6 +7,7 @@ const Team = require('./Team.js');
 const Simulator = require('./Simulator.js');
 const StatManager = require('./StatManager.js');
 const WeaponEvent = require('./WeaponEvent.js');
+const ActionStore = require('./actions/ActionStore.js');
 
 /**
  * A single instance of a game in a guild.
@@ -280,6 +281,15 @@ class GuildGame {
      * @default
      */
     this.statGroup = null;
+
+    /**
+     * The actions to perform when certain events occur.
+     *
+     * @public
+     * @type {HungryGames~ActionStore}
+     * @default
+     */
+    this.actions = new ActionStore(this);
 
     /**
      * Interval for day events.

@@ -1836,34 +1836,12 @@ function HG() {
     const sim = new HungryGames.Simulator(game, hg, msg);
     const iTime = Date.now();
     sim.go(() => {
+      game.outputChannel = msg.channel.id;
+
       // Signal ready to display events.
       self._fire('dayStateChange', id);
-      const embed = new self.Discord.MessageEmbed();
-      if (game.currentGame.day.num === 0) {
-        embed.setTitle(hg.messages.get('bloodbathStart'));
-      } else {
-        embed.setTitle(
-            hg.messages.get('dayStart')
-                .replace(/\{\}/g, game.currentGame.day.num));
-      }
-      if (!game.autoPlay && game.currentGame.day.num < 2) {
-        embed.setFooter(
-            'Tip: Use "' + msg.prefix + self.postPrefix +
-            'autoplay" to automate the games.');
-      }
-      embed.setColor(defaultColor);
-      if (!game || !game.options.disableOutput) {
-        msg.channel.send(embed).catch((err) => {
-          if (err.message === 'Missing Permissions' ||
-              err.message === 'Missing Access' ||
-              err.message === 'Unknown Channel') {
-            self.pauseGame(id);
-          } else {
-            console.error(err);
-          }
-        });
-      }
-      game.outputChannel = msg.channel.id;
+      HungryGames.ActionManager.dayStart(hg, game);
+
       setTimeout(() => {
         game.createInterval(dayStateModified);
       }, game.options.disableOutput ? 0 : game.options.delayEvents);
@@ -1884,6 +1862,7 @@ function HG() {
       if (doSim) {
         nextDay(msg, id);
       } else if (dayComplete) {
+        HungryGames.ActionManager.dayEnd(hg, game);
         printDay(msg, id);
         if (!hg.getGame(id).options.disableOutput && hg.getGame(id).autoPlay) {
           self.client.setTimeout(() => {

@@ -719,6 +719,10 @@ class HungryGames {
   save(opt) {
     Object.entries(this._games).forEach((obj) => {
       const id = obj[0];
+      if (!obj[1]) {
+        console.error(id, 'Doesn\'t exist.');
+        return;
+      }
       const data = obj[1].serializable;
       const dir = this._parent.common.guildSaveDir + id + this.hgSaveDir;
       const filename = dir + this.saveFile;
@@ -812,6 +816,13 @@ function tmpRequire(name) {
   delete require.cache[require.resolve(name)];
   return require(name);
 }
+HungryGames.HGAction = tmpRequire('./actions/HGAction.js');
+HungryGames.MemberAction = tmpRequire('./actions/MemberAction.js');
+HungryGames.ChannelAction = tmpRequire('./actions/ChannelAction.js');
+HungryGames.SendMessageAction = tmpRequire('./actions/SendMessageAction.js');
+HungryGames.DayStartAction = tmpRequire('./actions/DayStartAction.js');
+HungryGames.ActionStore = tmpRequire('./actions/ActionStore.js');
+HungryGames.ActionManager = tmpRequire('./actions/ActionManager.js');
 HungryGames.DefaultOptions = tmpRequire('./DefaultOptions.js');
 HungryGames.ForcedOutcome = tmpRequire('./ForcedOutcome.js');
 HungryGames.Grammar = tmpRequire('./Grammar.js');

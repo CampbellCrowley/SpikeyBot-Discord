@@ -64,7 +64,7 @@
     "lint": "eslint --no-ignore $(find ./ -iname '*.js' -not -path './node_modules/*' -not -path './docs/*' -not -path './dist/*' -printf '%p ')",
     "lint:fix": "eslint --fix --no-ignore $(find ./ -iname '*.js' -not -path './node_modules/*' -not -path './docs/*' -not -path './dist/*' -printf '%p ')",
     "lintandtest": "npm run lint && npm run test",
-    "lintforcommit": "TOLINT=\"$(git diff --cached --name-only --diff-filter=ACM | grep \".js$\" | grep -v \"^docs/\" | tr '\\n' ' ')\";if [ -z \"$TOLINT\" ]; then echo 'Nothing to lint'; else eslint $TOLINT; fi",
+    "lintforcommit": "TOLINT=\"$(git diff --cached --name-only --diff-filter=ACM | grep \".js$\" | grep -v \"^docs/\" | tr '\\n' ' ')\";if [ -z \"$TOLINT\" ]; then echo 'Nothing to lint'; else eslint --ignore-pattern '!.eslintrc.js' $TOLINT; fi",
     "test": "mocha --delay",
     "test:hg": "mocha --delay --grep \"START|Hungry Games|END\"",
     "test:hg:npc": "mocha --delay --grep \"START|NPC|END\"",
