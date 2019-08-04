@@ -13,6 +13,7 @@ module.exports = {
   'parserOptions': {
     'ecmaFeatures': {'modules': true},
     'project': 'tsconfig.json',
+    'tsconfigRootDir': __dirname,
     'ecmaVersion': 2018,
   },
   'plugins': [
