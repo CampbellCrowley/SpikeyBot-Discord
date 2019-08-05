@@ -47,7 +47,7 @@
 			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
-					<li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#_saveData">_saveData</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#sqlCon">sqlCon</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li>
+					<li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#_handler">_handler</a></li><li><a href="global.html#_saveData">_saveData</a></li><li><a href="global.html#delay">delay</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#sqlCon">sqlCon</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li>
 				</ul>
 			</li>
 			
@@ -107,7 +107,7 @@
         
 <hr>
 <dt>
-    <h4 class="name" id="Action"><span class="type-signature"></span>new Action(handler)</h4>
+    <h4 class="name" id="Action"><span class="type-signature"></span>new Action(handler [, delay])</h4>
     
     
 </dt>
@@ -138,7 +138,11 @@
         <th>Type</th>
 
         
+        <th>Argument</th>
+        
 
+        
+        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -164,10 +168,63 @@
             </td>
 
             
+                <td class="attributes">
+                
 
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last">Action handler override.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>delay</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    0
+                
+                </td>
+            
+
+            <td class="description last">Delay calling the handler by this many
+milliseconds after triggered.</td>
         </tr>
 
     
@@ -212,7 +269,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="hg_actions_Action.js.html">hg/actions/Action.js</a>,
-				 <a href="hg_actions_Action.js.html#sunlight-1-line-26">line 26</a>
+				 <a href="hg_actions_Action.js.html#sunlight-1-line-28">line 28</a>
 			</li>
 		</ul>
 	</dd>
@@ -342,7 +399,7 @@ Injects data from `this._saveData`.
 		<ul class="dummy">
 			<li>
 				<a href="hg_actions_Action.js.html">hg/actions/Action.js</a>,
-				 <a href="hg_actions_Action.js.html#sunlight-1-line-48">line 48</a>
+				 <a href="hg_actions_Action.js.html#sunlight-1-line-64">line 64</a>
 			</li>
 		</ul>
 	</dd>
@@ -523,7 +580,7 @@ references.</td>
 		<ul class="dummy">
 			<li>
 				<a href="hg_actions_Action.js.html">hg/actions/Action.js</a>,
-				 <a href="hg_actions_Action.js.html#sunlight-1-line-78">line 78</a>
+				 <a href="hg_actions_Action.js.html#sunlight-1-line-102">line 102</a>
 			</li>
 		</ul>
 	</dd>
@@ -580,7 +637,7 @@ references.</td>
             
 <hr>
 <dt>
-    <h4 class="name" id="trigger"><span class="type-signature">&lt;abstract> </span>trigger(hg, game)</h4>
+    <h4 class="name" id="trigger"><span class="type-signature"></span>trigger(hg, game [, args])</h4>
     
     
 </dt>
@@ -611,6 +668,8 @@ references.</td>
         <th>Type</th>
 
         
+        <th>Argument</th>
+        
 
         
 
@@ -637,6 +696,14 @@ references.</td>
             </td>
 
             
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
 
             
 
@@ -661,10 +728,54 @@ references.</td>
             </td>
 
             
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
 
             
 
             <td class="description last">Game context.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>args</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                    &lt;repeatable><br>
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Additional arguments to pass.</td>
         </tr>
 
     
@@ -709,7 +820,7 @@ references.</td>
 		<ul class="dummy">
 			<li>
 				<a href="hg_actions_Action.js.html">hg/actions/Action.js</a>,
-				 <a href="hg_actions_Action.js.html#sunlight-1-line-61">line 61</a>
+				 <a href="hg_actions_Action.js.html#sunlight-1-line-81">line 81</a>
 			</li>
 		</ul>
 	</dd>
@@ -1145,7 +1256,7 @@ channel.
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a>
 	
-		on Monday, August 5, 2019 2:48 AM (-07:00)
+		on Monday, August 5, 2019 3:29 AM (-07:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

@@ -73,7 +73,7 @@ class SendTeamRankMessageAction extends ChannelAction {
           });
         }
       }
-    });
+    }, 10000);
   }
   /**
    * @description Create action from save data.

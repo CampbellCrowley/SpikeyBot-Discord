@@ -145,7 +145,7 @@ class SendStatusListAction extends ChannelAction {
         hg._parent.error('Failed to send status list: ' + channel.id);
         console.error(err);
       });
-    });
+    }, 1000);
   }
 
   /**

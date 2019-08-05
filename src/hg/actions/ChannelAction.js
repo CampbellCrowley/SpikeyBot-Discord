@@ -25,26 +25,11 @@ class ChannelAction extends Action {
    * @inheritdoc
    * @param {HungryGames~Action~ChannelActionHandler} handler Handler to
    * override.
+   * @param {number} [delay=0] Delay calling the handler by this many
+   * milliseconds after triggered.
    */
-  constructor(handler) {
-    super(handler);
-  }
-
-  /**
-   * @description Trigger the action to be performed.
-   *
-   * @type {HungryGames~Action~ChannelActionHandler}
-   * @public
-   * @abstract
-   * @param {HungryGames} hg HG context.
-   * @param {HungryGames~GuildGame} game Game context.
-   * @param {external:Discord~TextChannel} channel Channel context.
-   */
-  trigger(hg, game, channel) {
-    hg;
-    game;
-    channel;
-    throw new Error('Trigger function not overridden.');
+  constructor(handler, delay) {
+    super(handler, delay);
   }
 }
 

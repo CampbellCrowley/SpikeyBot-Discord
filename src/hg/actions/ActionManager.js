@@ -85,7 +85,6 @@ class ActionManager {
     const guild = hg._parent.client.guilds.get(game.id);
 
     list.forEach((el) => {
-      console.log(el.constructor.name);
       if (el instanceof MemberAction) {
         game.includedUsers.forEach((player) => {
           if (player.isNPC) return;

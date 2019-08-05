@@ -22,12 +22,28 @@ class Action {
   /**
    * @description Create action.
    * @param {HungryGames~Action~ActionHandler} handler Action handler override.
+   * @param {number} [delay=0] Delay calling the handler by this many
+   * milliseconds after triggered.
    */
-  constructor(handler) {
+  constructor(handler, delay = 0) {
     if (typeof handler !== 'function') {
       throw new TypeError('Handler is not a function.');
     }
-    this.trigger = handler;
+    /**
+     * @description Passed handler to fire once triggered.
+     * @private
+     * @type {HungryGames~Action~ActionHandler}
+     * @constant
+     */
+    this._handler = handler;
+    /**
+     * @description Delay handler call by this many milliseconds after
+     * triggered.
+     * @public
+     * @default 0
+     * @type {number}
+     */
+    this.delay = delay || 0;
     /**
      * @description Data injected into save file that the `create` function uses
      * to restore data. Must be serializable.
@@ -46,7 +62,11 @@ class Action {
    * be saved to file.
    */
   get serializable() {
-    return {className: this.constructor.name, data: this._saveData};
+    return {
+      className: this.constructor.name,
+      delay: this.delay,
+      data: this._saveData,
+    };
   }
 
   /**
@@ -54,14 +74,18 @@ class Action {
    *
    * @type {HungryGames~Action~ActionHandler}
    * @public
-   * @abstract
    * @param {HungryGames} hg HG context.
    * @param {HungryGames~GuildGame} game Game context.
+   * @param {...*} [args] Additional arguments to pass.
    */
-  trigger(hg, game) {
-    hg;
-    game;
-    throw new Error('Trigger function not overridden.');
+  trigger(hg, game, ...args) {
+    if (this.delay && !game.options.disableOutput) {
+      hg._parent.client.setTimeout(() => {
+        this._handler(hg, game, ...args);
+      }, this.delay);
+    } else {
+      this._handler(hg, game, ...args);
+    }
   }
 
   /**

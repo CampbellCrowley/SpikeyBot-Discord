@@ -1843,6 +1843,7 @@ function HG() {
         }
       } else {
         printEvent(msg, id);
+        HungryGames.ActionManager.stepped(hg, game);
       }
     }
   }

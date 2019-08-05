@@ -54,7 +54,7 @@ class SendPlayerRankMessageAction extends ChannelAction {
           console.error(err);
         });
       }
-    });
+    }, 5000);
   }
   /**
    * @description Create action from save data.
