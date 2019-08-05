@@ -1297,12 +1297,13 @@ function Main() {
           msg, 'Please ensure your equation has exactly 1 equals sign.');
       return;
     }
-    const equation = msg.text;
+    const equation = msg.text.replace(/÷/g, '/');
     const variables = equation.match(/[A-Za-z]+/gm);
     const equals = equation.match(/=/g);
     if (!variables || variables.length < 1) {
       self.common.reply(
-          msg, 'Please ensure you have at least one variable in the equation.');
+          msg, 'Please ensure you have at least one variable in the equation.',
+          'Did you mean to use `' + msg.prefix + 'eval`?');
       return;
     } else if (!equals || equals.length < 1) {
       self.common.reply(
@@ -1345,7 +1346,7 @@ function Main() {
    */
   function commandEvaluate(msg) {
     try {
-      let formula = msg.text;
+      let formula = msg.text.replace(/÷/g, '/');
       if (formula.indexOf('=') > -1) {
         const split = formula.split('=');
         formula = split[1] + ' - (' + split[0] + ')';
