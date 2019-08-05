@@ -321,10 +321,8 @@ Simulator._pickAffectedPlayers = function(
   } else {
     let i = weaponWielder ? 1 : 0;
     for (i; i < numAttacker + numVictim; i++) {
-      if (i < numVictim && victimRevived) {
-        const userIndex = Math.floor(Math.random() * deadPool.length);
-        affectedUsers.push(deadPool.splice(userIndex, 1)[0]);
-      } else if (i >= numVictim && attackerRevived) {
+      if ((i < numVictim && victimRevived) ||
+          (i >= numVictim && attackerRevived)) {
         const userIndex = Math.floor(Math.random() * deadPool.length);
         affectedUsers.push(deadPool.splice(userIndex, 1)[0]);
       } else {
@@ -337,9 +335,7 @@ Simulator._pickAffectedPlayers = function(
       }
     }
     if (weaponWielder) {
-      const wielderIndex = userPool.findIndex((u) => {
-        return u.id == weaponWielder.id;
-      });
+      const wielderIndex = userPool.findIndex((u) => u.id == weaponWielder.id);
       affectedUsers.push(userPool.splice(wielderIndex, 1)[0]);
     }
   }
@@ -693,9 +689,7 @@ Simulator._validateEventTeamConstraint = function(
         let numPool = 0;
 
         team.players.forEach((player) => {
-          if (userPool.findIndex((pool) => {
-            return pool.id == player && pool.living;
-          }) > -1) {
+          if (userPool.find((pool) => pool.id == player && pool.living)) {
             numPool++;
           }
         });

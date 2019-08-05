@@ -80,9 +80,8 @@ class Action {
    */
   trigger(hg, game, ...args) {
     if (this.delay && !game.options.disableOutput) {
-      hg._parent.client.setTimeout(() => {
-        this._handler(hg, game, ...args);
-      }, this.delay);
+      hg._parent.client.setTimeout(
+          () => this._handler(hg, game, ...args), this.delay);
     } else {
       this._handler(hg, game, ...args);
     }
@@ -121,6 +120,8 @@ const toLoad = [
   './SendStatusListAction.js',
   './SendTeamRankMessageAction.js',
   './SendVictorAction.js',
+  './SendEventMessageAction.js',
+  './SendAutoplayingMessageAlertAction.js',
 ];
 toLoad.forEach((el) => delete require.cache[require.resolve(el)]);
 toLoad.forEach((el) => {

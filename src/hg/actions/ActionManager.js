@@ -44,8 +44,117 @@ class ActionManager {
    * @param {HungryGames~GuildGame} game Game context events are firing in.
    */
   static stepped(hg, game) {
-    hg;
-    game;
+    ActionManager._triggerAll(hg, game, game.actions.eventInstant);
+
+    const death = game.actions.eventPlayerDeath;
+    const revive = game.actions.eventPlayerRevive;
+    const wound = game.actions.eventPlayerWound;
+    const heal = game.actions.eventPlayerHealed;
+    const killed = game.actions.eventPlayerKilled;
+    const gain = game.actions.eventPlayerGainWeapon;
+    const lose = game.actions.eventPlayerLoseWeapon;
+    const use = game.actions.eventPlayerUseWeapon;
+    const none = game.actions.eventPlayerUnAffected;
+
+    const day = game.currentGame.day;
+    const guild = hg._parent.client.guilds.get(game.id);
+    const evt = day.events[day.state];
+
+    if (evt) {
+      const go = function(member, group, weapons = {}) {
+        game.actions.eventPlayerAffected.forEach(
+            (el) => el.trigger(hg, game, member));
+        let action = none;
+        let unaffected = true;
+        switch (group.outcome) {
+          case 'dies':
+            action = death;
+            unaffected = false;
+            break;
+          case 'wounded':
+            action = wound;
+            unaffected = false;
+            break;
+          case 'thrives':
+            action = heal;
+            unaffected = false;
+            break;
+          case 'revived':
+            action = revive;
+            unaffected = false;
+            break;
+        }
+        if (!unaffected) {
+          action.forEach((el) => el.trigger(hg, game, member));
+        }
+        if (group.killer) {
+          action = killed;
+          unaffected = false;
+          action.forEach((el) => el.trigger(hg, game, member));
+        }
+
+        if (weapons) {
+          unaffected = false;
+          let pos = false;
+          let neg = false;
+          let non = false;
+          for (const w of Object.values(weapons)) {
+            let act = null;
+            if (w > 0 && !pos) {
+              act = gain;
+              pos = true;
+            } else if (w < 0 && !neg) {
+              act = lose;
+              neg = true;
+            } else if (w == 0 && !non) {
+              act = use;
+              non = true;
+            }
+
+            if (act) act.forEach((el) => el.trigger(hg, game, member));
+
+            if (pos && neg && non) break;
+          }
+          unaffected = !pos && !neg && !non;
+        }
+
+        if (unaffected) action.forEach((el) => el.trigger(hg, game, member));
+      };
+
+      let sameConsumer = false;
+      evt.icons.forEach((el) => {
+        const member = guild.members.get(el.id);
+        const group = el.settings.victim ? evt.victim : evt.attacker;
+        const weapons = {};
+
+        group.weapons.forEach((w) => weapons[w.name] = w.count);
+        sameConsumer = sameConsumer || evt.consumer === el.id;
+        if (el.settings.attacker && evt.consumer) {
+          evt.consumes.forEach((w) => {
+            if (!weapons[w.name]) weapons[w.name] = -w.count;
+            weapons[w.name] -= w.count;
+          });
+        }
+
+        if (!member) {
+          guild.members.fetch(el.id).then((mem) => go(mem, group, weapons));
+        } else {
+          go(member, group, weapons);
+        }
+      });
+
+      if (evt.consumer && !sameConsumer) {
+        const weapons = {};
+        const member = guild.members.get(evt.consumer);
+        evt.consumes.forEach((el) => weapons[el.name] = -el.count);
+        if (!member) {
+          guild.members.fetch(evt.consumer)
+              .then((mem) => go(mem, {outcome: 'nothing'}, weapons));
+        } else {
+          go(member, {outcome: 'nothing'}, weapons);
+        }
+      }
+    }
   }
   /**
    * @description Call when game is started.

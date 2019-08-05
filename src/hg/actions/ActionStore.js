@@ -13,65 +13,67 @@ class ActionStore {
   constructor() {
     const Action = require('./Action.js');
     /**
-     * @description Fired prior to the event message being sent.
+     * @description Fired as the event message being sent.
      * @public
      * @type {HungryGames~Action[]}
      * @default
      */
-    this.eventStart = [];
-    /**
-     * @description Fired after the event message being sent.
-     * @public
-     * @type {HungryGames~Action[]}
-     * @default
-     */
-    this.eventEnd = [];
+    this.eventInstant = [
+      new Action.SendEventMessageAction(),
+    ];
     /**
      * @description Fired during the event if players get killed.
      * @public
-     * @type {HungryGames~Action[]}
+     * @type {HungryGames~MemberAction[]}
      * @default
      */
     this.eventPlayerDeath = [];
     /**
      * @description Fired during the event if players get revived.
      * @public
-     * @type {HungryGames~Action[]}
+     * @type {HungryGames~MemberAction[]}
      * @default
      */
     this.eventPlayerRevive = [];
     /**
      * @description Fired during the event if players get wounded.
      * @public
-     * @type {HungryGames~Action[]}
+     * @type {HungryGames~MemberAction[]}
      * @default
      */
     this.eventPlayerWound = [];
     /**
+     * @description Fired during the event if players get healed.
+     * @public
+     * @type {HungryGames~MemberAction[]}
+     * @default
+     */
+    this.eventPlayerHealed = [];
+    /**
      * @description Fired during the event if players kill another player.
      * @public
-     * @type {HungryGames~Action[]}
+     * @type {HungryGames~MemberAction[]}
      * @default
      */
     this.eventPlayerKilled = [];
     /**
      * @description Fired during the event if players gain weapons.
      * @public
-     * @type {HungryGames~Action[]}
+     * @type {HungryGames~MemberAction[]}
      * @default
      */
     this.eventPlayerGainWeapon = [];
     /**
      * @description Fired during the event if players lose weapons.
      * @public
-     * @type {HungryGames~Action[]}
+     * @type {HungryGames~MemberAction[]}
      * @default
      */
     this.eventPlayerLoseWeapon = [];
     /**
      * @description Fired during the event if players use their weapon.
      * @public
-     * @type {HungryGames~Action[]}
+     * @type {HungryGames~MemberAction[]}
      * @default
      */
     this.eventPlayerUseWeapon = [];
@@ -79,14 +81,14 @@ class ActionStore {
      * @description Fired during the event if player state is not changed for a
      * player.
      * @public
-     * @type {HungryGames~Action[]}
+     * @type {HungryGames~MemberAction[]}
      * @default
      */
     this.eventPlayerUnAffected = [];
     /**
-     * @description Fired during the event if for all players.
+     * @description Fired during the event for all players.
      * @public
-     * @type {HungryGames~Action[]}
+     * @type {HungryGames~MemberAction[]}
      * @default
      */
     this.eventPlayerAffected = [];
@@ -109,6 +111,7 @@ class ActionStore {
     this.dayEnd = [
       new Action.SendDayEndMessageAction(),
       new Action.SendStatusListAction(),
+      new Action.SendAutoplayingMessageAlertAction,
     ];
     /**
      * @description Fired for all players who end day alive.
@@ -227,7 +230,10 @@ class ActionStore {
         }
         const action = Action[toParse.className];
         if (action) {
-          out[one[0]][two] = Action[toParse.className].create(obj[one[0]][two]);
+          out[one[0]][two] = Action[toParse.className].create(toParse.data);
+          if (typeof obj[one[0]][two].delay === 'number') {
+            out[one[0]][two].delay = toParse.delay;
+          }
         } else {
           console.error(toParse.className, 'is not an Action');
         }
