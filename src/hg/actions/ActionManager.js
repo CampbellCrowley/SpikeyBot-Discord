@@ -1,6 +1,6 @@
 // Copyright 2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
-const HGAction = require('./HGAction.js');
+const Action = require('./Action.js');
 const ChannelAction = require('./ChannelAction.js');
 const MemberAction = require('./MemberAction.js');
 
@@ -17,14 +17,12 @@ class ActionManager {
    * @static
    * @param {HungryGames} hg HG context events are firing from.
    * @param {HungryGames~GuildGame} game Game context events are firing in.
-   * @param {HungryGames~ActionStore} store The action store to fire actions
-   * from.
    */
-  static dayStart(hg, game, store) {
+  static dayStart(hg, game) {
     const channel = hg._parent.client.channels.get(game.outputChannel);
     const guild = hg._parent.client.guilds.get(game.id);
 
-    const list = store._dayStart;
+    const list = game.actions.dayStart;
     list.forEach((el) => {
       if (el instanceof MemberAction) {
         game.includedUsers.forEach((player) => {
@@ -35,7 +33,7 @@ class ActionManager {
         });
       } else if (el instanceof ChannelAction) {
         el.trigger(hg, game, channel);
-      } else if (el instanceof HGAction) {
+      } else if (el instanceof Action) {
         el.trigger(hg, game);
       }
     });

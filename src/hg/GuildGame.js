@@ -607,9 +607,8 @@ class GuildGame {
     game.author = data.author || null;
     game.outputChannel = data.outputChannel || null;
     game.statGroup = data.statGroup || null;
-    if (data.currentGame) {
-      game.currentGame = Game.from(data.currentGame);
-    }
+    if (data.currentGame) game.currentGame = Game.from(data.currentGame);
+    if (data.actions) game.actions = ActionStore.from(data.actions);
     return game;
   }
   /**

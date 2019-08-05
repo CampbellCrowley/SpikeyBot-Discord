@@ -5,9 +5,9 @@ const ChannelAction = require('./ChannelAction.js');
 /**
  * @description Send a message in the game channel.
  *
- * @memberof HungryGames
+ * @memberof HungryGames~Action
  * @inner
- * @augments HungryGames~ChannelAction
+ * @augments HungryGames~Action~ChannelAction
  */
 class SendMessageAction extends ChannelAction {
   /**
@@ -16,12 +16,13 @@ class SendMessageAction extends ChannelAction {
    */
   constructor(msg) {
     super((hg, game, channel) => channel.send(msg));
-    this.serializable = {msg: msg};
+    this._saveData = {msg: msg};
   }
   /**
    * @description Create action from save data.
    * @public
    * @static
+   * @override
    * @param {external:Discord~Client} client Bot client context to get object
    * references.
    * @param {string} id Guild ID this action is for.

@@ -1,6 +1,6 @@
 // Copyright 2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
-const HGAction = require('./HGAction.js');
+const Action = require('./Action.js');
 
 /**
  * @description Handler function for a action to be performed on a player.
@@ -18,9 +18,9 @@ const HGAction = require('./HGAction.js');
  *
  * @memberof HungryGames
  * @inner
- * @augments HungryGames~HGAction
+ * @augments HungryGames~Action
  */
-class MemberAction extends HGAction {
+class MemberAction extends Action {
   /**
    * @inheritdoc
    * @param {HungryGames~MemberActionHandler} handler Handler to override.

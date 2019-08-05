@@ -1,6 +1,5 @@
 // Copyright 2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
-const DayStartAction = require('./DayStartAction.js');
 /**
  * @description Manages game action firing and listeners.
  *
@@ -9,168 +8,224 @@ const DayStartAction = require('./DayStartAction.js');
  */
 class ActionStore {
   /**
-   * @description Create action.
-   * @param {HungryGames~GuildGame} ctx Game context actions will be performed
-   * in.
+   * @description Create action store.
    */
-  constructor(ctx) {
-    /**
-     * @description Game context actions will be performed in.
-     * @private
-     * @type {HungryGames~GuildGame}
-     * @constant
-     */
-    this._ctx = ctx;
+  constructor() {
     /**
      * @description Fired prior to the event message being sent.
-     * @private
-     * @type {HGAction[]}
+     * @public
+     * @type {HungryGames~Action[]}
      * @default
      */
-    this._eventStart = [];
+    this.eventStart = [];
     /**
      * @description Fired after the event message being sent.
-     * @private
-     * @type {HGAction[]}
+     * @public
+     * @type {HungryGames~Action[]}
      * @default
      */
-    this._eventEnd = [];
+    this.eventEnd = [];
     /**
      * @description Fired during the event if players get killed.
-     * @private
-     * @type {HGAction[]}
+     * @public
+     * @type {HungryGames~Action[]}
      * @default
      */
-    this._eventPlayerDeath = [];
+    this.eventPlayerDeath = [];
     /**
      * @description Fired during the event if players get revived.
-     * @private
-     * @type {HGAction[]}
+     * @public
+     * @type {HungryGames~Action[]}
      * @default
      */
-    this._eventPlayerRevive = [];
+    this.eventPlayerRevive = [];
     /**
      * @description Fired during the event if players get wounded.
-     * @private
-     * @type {HGAction[]}
+     * @public
+     * @type {HungryGames~Action[]}
      * @default
      */
-    this._eventPlayerWound = [];
+    this.eventPlayerWound = [];
     /**
      * @description Fired during the event if players kill another player.
-     * @private
-     * @type {HGAction[]}
+     * @public
+     * @type {HungryGames~Action[]}
      * @default
      */
-    this._eventPlayerKilled = [];
+    this.eventPlayerKilled = [];
     /**
      * @description Fired during the event if players gain weapons.
-     * @private
-     * @type {HGAction[]}
+     * @public
+     * @type {HungryGames~Action[]}
      * @default
      */
-    this._eventPlayerGainWeapon = [];
+    this.eventPlayerGainWeapon = [];
     /**
      * @description Fired during the event if players lose weapons.
-     * @private
-     * @type {HGAction[]}
+     * @public
+     * @type {HungryGames~Action[]}
      * @default
      */
-    this._eventPlayerLoseWeapon = [];
+    this.eventPlayerLoseWeapon = [];
     /**
      * @description Fired during the event if players use their weapon.
-     * @private
-     * @type {HGAction[]}
+     * @public
+     * @type {HungryGames~Action[]}
      * @default
      */
-    this._eventPlayerUseWeapon = [];
+    this.eventPlayerUseWeapon = [];
     /**
      * @description Fired during the event if player state is not changed for a
      * player.
-     * @private
-     * @type {HGAction[]}
+     * @public
+     * @type {HungryGames~Action[]}
      * @default
      */
-    this._eventPlayerUnAffected = [];
+    this.eventPlayerUnAffected = [];
     /**
      * @description Fired during the event if for all players.
-     * @private
-     * @type {HGAction[]}
+     * @public
+     * @type {HungryGames~Action[]}
      * @default
      */
-    this._eventPlayerAffected = [];
+    this.eventPlayerAffected = [];
+    const DayStartAction = require('./DayStartAction.js');
     /**
      * @description Fired prior to the day starting.
-     * @private
-     * @type {HGAction[]}
+     * @public
+     * @type {HungryGames~Action[]}
      * @default
      */
-    this._dayStart = [
+    this.dayStart = [
       new DayStartAction(),
     ];
     /**
      * @description Fired after a day has ended.
-     * @private
-     * @type {HGAction[]}
+     * @public
+     * @type {HungryGames~Action[]}
      * @default
      */
-    this._dayEnd = [];
+    this.dayEnd = [];
     /**
      * @description Fired for all players who end day alive.
-     * @private
-     * @type {HGAction[]}
+     * @public
+     * @type {HungryGames~Action[]}
      * @default
      */
-    this._dayPlayerAlive = [];
+    this.dayPlayerAlive = [];
     /**
      * @description Fired for all players who end day dead.
-     * @private
-     * @type {HGAction[]}
+     * @public
+     * @type {HungryGames~Action[]}
      * @default
      */
-    this._dayPlayerDead = [];
+    this.dayPlayerDead = [];
     /**
      * @description Fired for all players who end day wounded.
-     * @private
-     * @type {HGAction[]}
+     * @public
+     * @type {HungryGames~Action[]}
      * @default
      */
-    this._dayPlayerWounded = [];
+    this.dayPlayerWounded = [];
     /**
      * @description Fired prior to the game starting.
-     * @private
-     * @type {HGAction[]}
+     * @public
+     * @type {HungryGames~Action[]}
      * @default
      */
-    this._gameStart = [];
+    this.gameStart = [];
     /**
      * @description Fired after the game has ended.
-     * @private
-     * @type {HGAction[]}
+     * @public
+     * @type {HungryGames~Action[]}
      * @default
      */
-    this._gameEnd = [];
+    this.gameEnd = [];
     /**
      * @description Fired for all player who end the game alive.
-     * @private
-     * @type {HGAction[]}
+     * @public
+     * @type {HungryGames~Action[]}
      * @default
      */
-    this._gamePlayerAlive = [];
+    this.gamePlayerAlive = [];
     /**
      * @description Fired for all player who end the game dead.
-     * @private
-     * @type {HGAction[]}
+     * @public
+     * @type {HungryGames~Action[]}
      * @default
      */
-    this._gamePlayerDead = [];
+    this.gamePlayerDead = [];
     /**
      * @description Fired for all player who end the game wounded.
-     * @private
-     * @type {HGAction[]}
+     * @public
+     * @type {HungryGames~Action[]}
      * @default
      */
-    this._gamePlayerWounded = [];
+    this.gamePlayerWounded = [];
+  }
+
+  /**
+   * @description Get a serializable version of this class instance. Strips all
+   * private variables, and all functions. Assumes all public variables are
+   * serializable if they aren't a function.
+   * @public
+   * @returns {object} Serializable version of this instance.
+   */
+  get serializable() {
+    const all = Object.entries(Object.getOwnPropertyDescriptors(this));
+    const output = {};
+    for (const one of all) {
+      if (typeof one[1].value === 'function' || one[0].startsWith('_')) {
+        continue;
+      } else if (one[1].value && one[1].value.serializable) {
+        output[one[0]] = one[1].value.serializable;
+      } else if (Array.isArray(one[1].value)) {
+        output[one[0]] = [];
+        for (const two in one[1].value) {
+          if (!one[1].value[two]) continue;
+          output[one[0]][two] = one[1].value[two].serializable;
+        }
+      } else {
+        output[one[0]] = one[1].value;
+      }
+    }
+    return output;
+  }
+
+  /**
+   * @description Convert a serialized action store back into the object.
+   * @public
+   * @static
+   * @param {object} obj Parsed data from save file.
+   * @returns {HungryGames~ActionStore} Parsed object data.
+   */
+  static from(obj) {
+    const Action = require('./Action.js');
+
+    const out = new ActionStore();
+    const all = Object.entries(Object.getOwnPropertyDescriptors(out));
+    for (const one of all) {
+      if (!Array.isArray(one[1].value)) continue;
+
+      out[one[0]] = [];
+      for (const two in obj[one[0]]) {
+        if (!obj[one[0]][two]) continue;
+
+        const toParse = obj[one[0]][two];
+        if (typeof toParse.className !== 'string' ||
+            toParse.className.length === 0) {
+          console.error(toParse.className, 'is not an Action name');
+          continue;
+        }
+        const action = Action[toParse.className];
+        if (action) {
+          out[one[0]][two] = Action[toParse.className].create(obj[one[0]][two]);
+        } else {
+          console.error(toParse.className, 'is not an Action');
+        }
+      }
+    }
+    return out;
   }
 }
 

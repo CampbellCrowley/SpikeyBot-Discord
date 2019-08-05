@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>SpikeyBot-Discord Class: OutcomeProbabilities</title>
+	<title>SpikeyBot-Discord Source: hg/actions/Action.js</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -81,747 +81,120 @@
 <div class="row">
 
 	
-	<div class="col-md-8">
+	<div class="col-md-12">
 	
 		<div id="main">
 			
 
-	<h1 class="page-title">Class: OutcomeProbabilities</h1>
+		<h1 class="page-title">Source: hg/actions/Action.js</h1>
+    
 <section>
-
-<header>
-    
-        <h2>
-            <span class="ancestors"><a href="HungryGames.html">HungryGames</a>~</span>
-        
-        OutcomeProbabilities
-        </h2>
-        
-    
-</header>
-
-
-<article>
-    <div class="container-overview">
-    
-        
-<hr>
-<dt>
-    <h4 class="name" id="OutcomeProbabilities"><span class="type-signature"></span>new OutcomeProbabilities( [kill] [, wound] [, thrive] [, revive] [, nothing])</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Create an object storing relative probabilities.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Argument</th>
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>kill</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Kill probability.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>wound</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Wound probability.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>thrive</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Thrive probability.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>revive</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Revive probability.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>nothing</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">Probability of no outcome change.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="hg_OutcomeProbabilities.js.html">hg/OutcomeProbabilities.js</a>,
-				 <a href="hg_OutcomeProbabilities.js.html#sunlight-1-line-22">line 22</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-    
-    </div>
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-        <h3 class="subsection-title">Members</h3>
-
-        <dl>
-            
-<hr>
-<dt class="name" id="kill">
-    <h4 id="kill"><span class="type-signature"></span>kill<span class="type-signature"> :number</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        The probability of an event being chosen that kills players.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">number</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="hg_OutcomeProbabilities.js.html">hg/OutcomeProbabilities.js</a>,
-				 <a href="hg_OutcomeProbabilities.js.html#sunlight-1-line-30">line 30</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="nothing">
-    <h4 id="nothing"><span class="type-signature"></span>nothing<span class="type-signature"> :number</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        The probability of an event being chosen that does not have any effect on
-players.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">number</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="hg_OutcomeProbabilities.js.html">hg/OutcomeProbabilities.js</a>,
-				 <a href="hg_OutcomeProbabilities.js.html#sunlight-1-line-63">line 63</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="revive">
-    <h4 id="revive"><span class="type-signature"></span>revive<span class="type-signature"> :number</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        The probability of an event being chosen that revives players.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">number</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="hg_OutcomeProbabilities.js.html">hg/OutcomeProbabilities.js</a>,
-				 <a href="hg_OutcomeProbabilities.js.html#sunlight-1-line-54">line 54</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="thrive">
-    <h4 id="thrive"><span class="type-signature"></span>thrive<span class="type-signature"> :number</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        The probability of an event being chosen that heals players.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">number</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="hg_OutcomeProbabilities.js.html">hg/OutcomeProbabilities.js</a>,
-				 <a href="hg_OutcomeProbabilities.js.html#sunlight-1-line-46">line 46</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="wound">
-    <h4 id="wound"><span class="type-signature"></span>wound<span class="type-signature"> :number</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        The probability of an event being chosen that wounds players.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">number</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="hg_OutcomeProbabilities.js.html">hg/OutcomeProbabilities.js</a>,
-				 <a href="hg_OutcomeProbabilities.js.html#sunlight-1-line-38">line 38</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        </dl>
-    
-
-    
-
-    
-
-    
-</article>
-
+    <article>
+        <pre
+            class="sunlight-highlight-javascript linenums">// Copyright 2019 Campbell Crowley. All rights reserved.
+// Author: Campbell Crowley (dev@campbellcrowley.com)
+
+/**
+ * @description Handler function for a generic action.
+ * @typedef HungryGames~Action~ActionHandler
+ * @type Function
+ *
+ * @param {HungryGames} hg HG context.
+ * @param {HungryGames~GuildGame} game Game context.
+ */
+
+/**
+ * @description Base for actions to perform in response to certain things that
+ * happen during a hunger games.
+ *
+ * @memberof HungryGames
+ * @inner
+ * @interface
+ */
+class Action {
+  /**
+   * @description Create action.
+   * @param {HungryGames~Action~ActionHandler} handler Action handler override.
+   */
+  constructor(handler) {
+    if (typeof handler !== 'function') {
+      throw new TypeError('Handler is not a function.');
+    }
+    this.trigger = handler;
+    /**
+     * @description Data injected into save file that the `create` function uses
+     * to restore data. Must be serializable.
+     * @type {undefined|object}
+     * @private
+     * @default
+     */
+    this._saveData = undefined;
+  }
+
+  /**
+   * @description Convert this object to serializable format for saving to file.
+   * Injects data from `this._saveData`.
+   * @public
+   * @returns {{className: string, data: ?object}} Serializable object that can
+   * be saved to file.
+   */
+  get serializable() {
+    return {className: this.constructor.name, data: this._saveData};
+  }
+
+  /**
+   * @description Trigger the action to be performed.
+   *
+   * @type {HungryGames~Action~ActionHandler}
+   * @public
+   * @abstract
+   * @param {HungryGames} hg HG context.
+   * @param {HungryGames~GuildGame} game Game context.
+   */
+  trigger(hg, game) {
+    hg;
+    game;
+    throw new Error('Trigger function not overridden.');
+  }
+
+  /**
+   * @description Create action from save data.
+   * @public
+   * @static
+   * @abstract
+   * @param {external:Discord~Client} client Bot client context to get object
+   * references.
+   * @param {string} id Guild ID this action is for.
+   * @param {object} obj The parsed data from file.
+   * @returns {HungryGames~Action} The created action.
+   */
+  static create(client, id, obj) {
+    id;
+    obj;
+    client;
+    throw new Error('Create function not overridden.');
+  }
+}
+
+module.exports = Action;
+
+const toLoad = [
+  './MemberAction.js',
+  './ChannelAction.js',
+  './GiveRoleAction.js',
+  './TakeRoleAction.js',
+  './SendMessageAction.js',
+  './DayStartAction.js',
+];
+toLoad.forEach((el) => delete require.cache[require.resolve(el)]);
+toLoad.forEach((el) => {
+  const obj = require(el);
+  Action[obj.name] = obj;
+});
+</pre>
+    </article>
 </section>
+
 
 
 
@@ -831,10 +204,6 @@ players.
 
 	<div class="clearfix"></div>
 
-	
-		<div class="col-md-3">
-			<div id="toc" class="col-md-3 hidden-xs hidden-sm hidden-md"></div>
-		</div>
 	
 
 </div>

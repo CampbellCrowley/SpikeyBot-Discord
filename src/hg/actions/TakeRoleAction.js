@@ -5,9 +5,9 @@ const MemberAction = require('./MemberAction.js');
 /**
  * @description Take a role from a member.
  *
- * @memberof HungryGames
+ * @memberof HungryGames~Action
  * @inner
- * @augments HungryGames~MemberAction
+ * @augments HungryGames~Action~MemberAction
  */
 class TakeRoleAction extends MemberAction {
   /**
@@ -17,12 +17,13 @@ class TakeRoleAction extends MemberAction {
    */
   constructor(role) {
     super((hg, game, member) => member.roles.remove(role, 'HG Automation'));
-    this.serializable = {role: role.id};
+    this._saveData = {role: role.id};
   }
   /**
    * @description Create action from save data.
    * @public
    * @static
+   * @override
    * @param {external:Discord~Client} client Bot client context to get object
    * references.
    * @param {string} id Guild ID this action is for.

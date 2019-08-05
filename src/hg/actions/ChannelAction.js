@@ -1,11 +1,11 @@
 // Copyright 2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
-const HGAction = require('./HGAction.js');
+const Action = require('./Action.js');
 
 /**
  * @description Handler function for a action to be performed on the game
  * channel.
- * @typedef HungryGames~ChannelActionHandler
+ * @typedef HungryGames~Action~ChannelActionHandler
  * @type Function
  *
  * @param {HungryGames} hg HG context.
@@ -18,12 +18,13 @@ const HGAction = require('./HGAction.js');
  *
  * @memberof HungryGames
  * @inner
- * @augments HungryGames~HGAction
+ * @augments HungryGames~Action
  */
-class ChannelAction extends HGAction {
+class ChannelAction extends Action {
   /**
    * @inheritdoc
-   * @param {HungryGames~ChannelActionHandler} handler Handler to override.
+   * @param {HungryGames~Action~ChannelActionHandler} handler Handler to
+   * override.
    */
   constructor(handler) {
     super(handler);
@@ -32,7 +33,7 @@ class ChannelAction extends HGAction {
   /**
    * @description Trigger the action to be performed.
    *
-   * @type {HungryGames~ChannelActionHandler}
+   * @type {HungryGames~Action~ChannelActionHandler}
    * @public
    * @abstract
    * @param {HungryGames} hg HG context.

@@ -5,9 +5,9 @@ const ChannelAction = require('./ChannelAction.js');
 /**
  * @description Sends day start message.
  *
- * @memberof HungryGames
+ * @memberof HungryGames~Action
  * @inner
- * @augments HungryGames~ChannelAction
+ * @augments HungryGames~Action~ChannelAction
  */
 class DayStartAction extends ChannelAction {
   /**
@@ -43,7 +43,16 @@ class DayStartAction extends ChannelAction {
         });
       }
     });
-    this.serializable = {special: 'DayStartAction'};
+  }
+  /**
+   * @description Create action from save data.
+   * @public
+   * @static
+   * @override
+   * @returns {HungryGames~GiveRoleAction} The created action.
+   */
+  static create() {
+    return new DayStartAction();
   }
 }
 

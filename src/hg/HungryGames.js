@@ -558,6 +558,9 @@ class HungryGames {
       game.excludedNPCs = [];
       this.refresh(id, () => {});
       return 'Resetting ALL NPC data!';
+    } else if (command == 'actions') {
+      game.actions = new HungryGames.ActionStore();
+      return 'Resetting ALL actions!';
     } else {
       return 'Please specify what data to reset.\nall {deletes all data ' +
           'for this server},\nevents {deletes all custom events},\n' +
@@ -565,7 +568,8 @@ class HungryGames {
           '{resets all options to default values},\nteams {delete all ' +
           'teams and creates new ones},\nusers {delete data about where to ' +
           'put users when creating a new game},\nnpcs {delete all NPCS}.' +
-          '\nstats {delete all stats and groups}.';
+          '\nstats {delete all stats and groups}.\nactions {reset all actions' +
+          ' to default settings}.';
     }
   }
 
@@ -606,6 +610,7 @@ class HungryGames {
         game.id = id;
       } catch (err) {
         self._parent.error('Failed to parse game data for guild ' + id);
+        console.error(err);
         return null;
       }
 
@@ -721,6 +726,7 @@ class HungryGames {
       const id = obj[0];
       if (!obj[1]) {
         console.error(id, 'Doesn\'t exist.');
+        delete this._games[obj[0]];
         return;
       }
       const data = obj[1].serializable;
@@ -783,9 +789,7 @@ class HungryGames {
    * @public
    */
   shutdown() {
-    Object.values(this._games).forEach((el) => {
-      el.clearIntervals();
-    });
+    Object.values(this._games).forEach((el) => el.clearIntervals());
     this.messages.shutdown();
   }
 }
@@ -802,46 +806,38 @@ class HungryGames {
  */
 HungryGames.largeServerCount = 20000;
 
-/**
- * @description Wrapper for normal `require()` but also deletes cache reference
- * to object before requiring. This forces the object to be updated.
- *
- * @memberof HungryGames
- *
- * @private
- * @param {string} name Name of module to require.
- * @returns {object} The required module.
- */
-function tmpRequire(name) {
-  delete require.cache[require.resolve(name)];
-  return require(name);
-}
-HungryGames.HGAction = tmpRequire('./actions/HGAction.js');
-HungryGames.MemberAction = tmpRequire('./actions/MemberAction.js');
-HungryGames.ChannelAction = tmpRequire('./actions/ChannelAction.js');
-HungryGames.SendMessageAction = tmpRequire('./actions/SendMessageAction.js');
-HungryGames.DayStartAction = tmpRequire('./actions/DayStartAction.js');
-HungryGames.ActionStore = tmpRequire('./actions/ActionStore.js');
-HungryGames.ActionManager = tmpRequire('./actions/ActionManager.js');
-HungryGames.DefaultOptions = tmpRequire('./DefaultOptions.js');
-HungryGames.ForcedOutcome = tmpRequire('./ForcedOutcome.js');
-HungryGames.Grammar = tmpRequire('./Grammar.js');
-HungryGames.FinalEvent = tmpRequire('./FinalEvent.js');
-HungryGames.ArenaEvent = tmpRequire('./ArenaEvent.js');
-HungryGames.WeaponEvent = tmpRequire('./WeaponEvent.js');
-HungryGames.Battle = tmpRequire('./Battle.js');
-HungryGames.OutcomeProbabilities = tmpRequire('./OutcomeProbabilities.js');
-HungryGames.Day = tmpRequire('./Day.js');
-HungryGames.Messages = tmpRequire('./Messages.js');
-HungryGames.UserIconUrl = tmpRequire('./UserIconUrl.js');
-HungryGames.Player = tmpRequire('./Player.js');
-HungryGames.Team = tmpRequire('./Team.js');
-HungryGames.Game = tmpRequire('./Game.js');
-HungryGames.Event = tmpRequire('./Event.js');
-HungryGames.Stats = tmpRequire('./Stats.js');
-HungryGames.StatGroup = tmpRequire('./StatGroup.js');
-HungryGames.StatManager = tmpRequire('./StatManager.js');
-HungryGames.GuildGame = tmpRequire('./GuildGame.js');
-HungryGames.Simulator = tmpRequire('./Simulator.js');
-
 module.exports = HungryGames;
+
+const toLoad = [
+  // Actions
+  './actions/Action.js',
+  './actions/ActionStore.js',
+  './actions/ActionManager.js',
+  // Base
+  './DefaultOptions.js',
+  './ForcedOutcome.js',
+  './Grammar.js',
+  './FinalEvent.js',
+  './ArenaEvent.js',
+  './WeaponEvent.js',
+  './Battle.js',
+  './OutcomeProbabilities.js',
+  './Day.js',
+  './Messages.js',
+  './UserIconUrl.js',
+  './Player.js',
+  './Team.js',
+  './Game.js',
+  './Event.js',
+  './Stats.js',
+  './StatGroup.js',
+  './StatManager.js',
+  './GuildGame.js',
+  // Sim
+  './Simulator.js',
+];
+toLoad.forEach((el) => delete require.cache[require.resolve(el)]);
+toLoad.forEach((el) => {
+  const obj = require(el);
+  HungryGames[obj.name] = obj;
+});
