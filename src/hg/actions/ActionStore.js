@@ -11,6 +11,7 @@ class ActionStore {
    * @description Create action store.
    */
   constructor() {
+    const Action = require('./Action.js');
     /**
      * @description Fired prior to the event message being sent.
      * @public
@@ -89,7 +90,6 @@ class ActionStore {
      * @default
      */
     this.eventPlayerAffected = [];
-    const DayStartAction = require('./DayStartAction.js');
     /**
      * @description Fired prior to the day starting.
      * @public
@@ -97,33 +97,37 @@ class ActionStore {
      * @default
      */
     this.dayStart = [
-      new DayStartAction(),
+      new Action.SendDayStartMessageAction(),
     ];
     /**
-     * @description Fired after a day has ended.
+     * @description Fired after a day has ended. Does not fire if game has
+     * ended.
      * @public
      * @type {HungryGames~Action[]}
      * @default
      */
-    this.dayEnd = [];
+    this.dayEnd = [
+      new Action.SendDayEndMessageAction(),
+      new Action.SendStatusListAction(),
+    ];
     /**
      * @description Fired for all players who end day alive.
      * @public
-     * @type {HungryGames~Action[]}
+     * @type {HungryGames~MemberAction[]}
      * @default
      */
     this.dayPlayerAlive = [];
     /**
      * @description Fired for all players who end day dead.
      * @public
-     * @type {HungryGames~Action[]}
+     * @type {HungryGames~MemberAction[]}
      * @default
      */
     this.dayPlayerDead = [];
     /**
      * @description Fired for all players who end day wounded.
      * @public
-     * @type {HungryGames~Action[]}
+     * @type {HungryGames~MemberAction[]}
      * @default
      */
     this.dayPlayerWounded = [];
@@ -140,25 +144,29 @@ class ActionStore {
      * @type {HungryGames~Action[]}
      * @default
      */
-    this.gameEnd = [];
+    this.gameEnd = [
+      new Action.SendVictorAction(),
+      new Action.SendPlayerRankMessageAction(),
+      new Action.SendTeamRankMessageAction(),
+    ];
     /**
      * @description Fired for all player who end the game alive.
      * @public
-     * @type {HungryGames~Action[]}
+     * @type {HungryGames~MemberAction[]}
      * @default
      */
     this.gamePlayerAlive = [];
     /**
      * @description Fired for all player who end the game dead.
      * @public
-     * @type {HungryGames~Action[]}
+     * @type {HungryGames~MemberAction[]}
      * @default
      */
     this.gamePlayerDead = [];
     /**
      * @description Fired for all player who end the game wounded.
      * @public
-     * @type {HungryGames~Action[]}
+     * @type {HungryGames~MemberAction[]}
      * @default
      */
     this.gamePlayerWounded = [];

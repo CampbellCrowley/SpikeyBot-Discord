@@ -91,7 +91,12 @@ const toLoad = [
   './GiveRoleAction.js',
   './TakeRoleAction.js',
   './SendMessageAction.js',
-  './DayStartAction.js',
+  './SendDayStartMessageAction.js',
+  './SendDayEndMessageAction.js',
+  './SendPlayerRankMessageAction.js',
+  './SendStatusListAction.js',
+  './SendTeamRankMessageAction.js',
+  './SendVictorAction.js',
 ];
 toLoad.forEach((el) => delete require.cache[require.resolve(el)]);
 toLoad.forEach((el) => {

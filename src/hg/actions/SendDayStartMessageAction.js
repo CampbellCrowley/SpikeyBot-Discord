@@ -9,7 +9,7 @@ const ChannelAction = require('./ChannelAction.js');
  * @inner
  * @augments HungryGames~Action~ChannelAction
  */
-class DayStartAction extends ChannelAction {
+class SendDayStartMessageAction extends ChannelAction {
   /**
    * @description Create an action that will send a message to the game channel
    * saying the day has started.
@@ -49,11 +49,11 @@ class DayStartAction extends ChannelAction {
    * @public
    * @static
    * @override
-   * @returns {HungryGames~GiveRoleAction} The created action.
+   * @returns {HungryGames~SendDayStartMessageAction} The created action.
    */
   static create() {
-    return new DayStartAction();
+    return new SendDayStartMessageAction();
   }
 }
 
-module.exports = DayStartAction;
+module.exports = SendDayStartMessageAction;

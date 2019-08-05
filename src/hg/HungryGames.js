@@ -811,8 +811,8 @@ module.exports = HungryGames;
 const toLoad = [
   // Actions
   './actions/Action.js',
-  './actions/ActionStore.js',
   './actions/ActionManager.js',
+  './actions/ActionStore.js',
   // Base
   './DefaultOptions.js',
   './ForcedOutcome.js',

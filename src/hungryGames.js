@@ -986,7 +986,7 @@ function HG() {
    */
   NPC.saveAvatar = function(avatar, id) {
     if (!NPC.checkID(id)) return null;
-    return readImage(avatar).then((image) => {
+    return self.readImage(avatar).then((image) => {
       if (!image) throw new Error('Failed to fetch NPC avatar.');
       const dir = self.common.userSaveDir + 'avatars/' + id + '/';
       const imgName = Date.now() + '.png';
@@ -1024,42 +1024,6 @@ function HG() {
    * @public
    */
   this.NPC = NPC;
-
-  /**
-   * @description Delay a message to send at the given time in milliseconds
-   * since epoch.
-   *
-   * @private
-   * @param {Discord~TextChannel} channel The channel to send the message in.
-   * @param {
-   * Discord~StringResolvable|
-   * Discord~MessageOptions|
-   * Discord~MessageEmbed|
-   * Discord~MessageAttachment|
-   * Discord~MessageAttachment[]
-   * } one The message to send.
-   * @param {
-   * Discord~StringResolvable|
-   * Discord~MessageOptions|
-   * Discord~MessageEmbed|
-   * Discord~MessageAttachment|
-   * Discord~MessageAttachment[]
-   * } two The message to send.
-   * @param {number} time The time to send the message in milliseconds since
-   * epoch.
-   */
-  function sendAtTime(channel, one, two, time) {
-    if (time <= Date.now()) {
-      channel.send(one, two).catch((err) => {
-        self.error('Failed to send message to channel: ' + channel.id);
-        console.error(err);
-      });
-    } else {
-      self.client.setTimeout(function() {
-        sendAtTime(channel, one, two, time);
-      }, time - Date.now());
-    }
-  }
 
   /**
    * @description Returns an object storing all of the default events for the
@@ -1859,11 +1823,11 @@ function HG() {
      * @param {boolean} doSim If next day should be simulated and started.
      */
     function dayStateModified(dayComplete, doSim) {
+      self._fire('dayStateChange', id);
       if (doSim) {
         nextDay(msg, id);
       } else if (dayComplete) {
-        HungryGames.ActionManager.dayEnd(hg, game);
-        printDay(msg, id);
+        endDayCheck(msg, id);
         if (!hg.getGame(id).options.disableOutput && hg.getGame(id).autoPlay) {
           self.client.setTimeout(() => {
             msg.channel.send('`Autoplaying...`')
@@ -1878,7 +1842,6 @@ function HG() {
           }, (hg.getGame(id).options.delayDays > 2000 ? 1200 : 100));
         }
       } else {
-        self._fire('dayStateChange', id);
         printEvent(msg, id);
       }
     }
@@ -1895,12 +1858,10 @@ function HG() {
   function printEvent(msg, id) {
     const index = hg.getGame(id).currentGame.day.state - 2;
     const events = hg.getGame(id).currentGame.day.events;
-    if (index >= events.length) {
-      printDay(msg, id);
-    } else if (!events[index]) {
-      /* self.warn(
-          'Failed to find event for index ' + index + '/' + events.length +
-          ' even though it should exist: ' + id); */
+    if (index >= events.length || !events[index]) {
+      self.error(
+          'Attempted to print event beyond end of list. ' + index + '/' +
+          events.length);
     } else if (
       events[index].battle &&
         events[index].state < events[index].attacks.length) {
@@ -2005,7 +1966,7 @@ function HG() {
             i >= events[index].attacks[battleState].victim.count + numNonUser) {
             outcome = events[index].attacks[battleState].attacker.outcome;
           }
-          readImage(events[index].attacks[battleState].icons[i].url)
+          self.readImage(events[index].attacks[battleState].icons[i].url)
               .then(
                   function(outcome, placement, settings) {
                     return function(image) {
@@ -2120,7 +2081,7 @@ function HG() {
           } else if (i >= events[index].victim.count + numNonUser) {
             outcome = events[index].attacker.outcome;
           }
-          readImage(events[index].icons[i].url)
+          self.readImage(events[index].icons[i].url)
               .then(
                   function(outcome, placement, settings) {
                     return function(image) {
@@ -2140,39 +2101,25 @@ function HG() {
     }
   }
   /**
-   * Trigger the end of a day and print summary/outcome at the end of the day.
+   * Trigger the end of a day.
    *
    * @private
    * @param {Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
    */
-  function printDay(msg, id) {
+  function endDayCheck(msg, id) {
     let numAlive = 0;
-    let lastIndex = 0;
-    let lastId = 0;
     let numTeams = 0;
-    let lastTeam = 0;
-    let numWholeTeams = 0;
-    let lastWholeTeam = 0;
     const game = hg.getGame(id);
     const current = game.currentGame;
-    current.includedUsers.forEach((el, i) => {
+    current.includedUsers.forEach((el) => {
       if (el.living) {
         numAlive++;
-        lastIndex = i;
-        lastId = el.id;
       }
     });
     if (game.options.teamSize > 0) {
-      current.teams.forEach(function(team, index) {
-        if (team.numAlive > 0) {
-          numTeams++;
-          lastTeam = index;
-        }
-        if (team.numAlive > 1 && team.numAlive == team.players.length) {
-          numWholeTeams++;
-          lastWholeTeam = team.id;
-        }
+      current.teams.forEach((team) => {
+        if (team.numAlive > 0) numTeams++;
       });
     }
 
@@ -2183,384 +2130,16 @@ function HG() {
       current.numAlive = numAlive;
     }
 
-    const finalMessage = new self.Discord.MessageEmbed();
-    finalMessage.setColor(defaultColor);
-
     const collab = game.options.teammatesCollaborate == 'always' ||
         (game.options.teammatesCollaborate == 'untilend' &&
          numTeams > 1);
-    if (collab && numTeams == 1) {
-      const teamName = current.teams[lastTeam].name;
-      finalMessage.setTitle(`${teamName} has won ${current.name}!`);
-      let teamPlayerList = current.teams[lastTeam]
-          .players
-          .map((player) => {
-            const p = current.includedUsers.find((user) => {
-              return user.id == player;
-            });
-            if (game.options.useNicknames) {
-              return p.nickname || p.name;
-            } else {
-              return p.name;
-            }
-          })
-          .join(', ');
-      if (teamPlayerList.length > 1024) {
-        teamPlayerList = `${teamPlayerList.substring(0, 1021)}...`;
-      }
-      finalMessage.setDescription(teamPlayerList);
+    if ((collab && numTeams === 1) || numAlive <= 1) {
       current.inProgress = false;
       current.ended = true;
       game.autoPlay = false;
-    } else if (numAlive == 1) {
-      const p = current.includedUsers[lastIndex];
-      const winnerName =
-          game.options.useNicknames ? (p.nickname || p.name) : p.name;
-      let teamName = '';
-      if (game.options.teamSize > 0) {
-        teamName = `(${current.teams[lastTeam].name}) `;
-      }
-      finalMessage.setTitle(
-          `\`${winnerName}${teamName}\` has won ${current.name}!`);
-      finalMessage.setThumbnail(current.includedUsers[lastIndex].avatarURL);
-      current.inProgress = false;
-      current.ended = true;
-      game.autoPlay = false;
-    } else if (numAlive < 1) {
-      finalMessage.setTitle(
-          `Everyone has died in ${current.name}!\nThere are no winners!`);
-      current.inProgress = false;
-      current.ended = true;
-      game.autoPlay = false;
+      HungryGames.ActionManager.gameEnd(hg, game);
     } else {
-      if (game.options.teamSize > 0) sortTeams(game);
-      let prevTeam = -1;
-      let playersToShow = current.includedUsers;
-      if (game.options.numDaysShowDeath >= 0 ||
-          !game.options.showLivingPlayers) {
-        playersToShow = playersToShow.filter((el) => {
-          if (!game.options.showLivingPlayers && el.living) {
-            return false;
-          }
-          return el.living || el.state == 'wounded' ||
-              (game.options.numDaysShowDeath >= 0 &&
-               current.day.num - el.dayOfDeath < game.options.numDaysShowDeath);
-        });
-      }
-      const showDead = playersToShow.find((el) => !el.living);
-      const showWounded = playersToShow.find((el) => el.state == 'wounded');
-      finalMessage.setAuthor(
-          emoji.redHeart + 'Alive' +
-          (showWounded ? (`, ${emoji.yellowHeart}Wounded`) : '') +
-          (showDead ? (`, ${emoji.skull}Dead`) : ''));
-      let showKills = false;
-      const statusList = playersToShow.map(function(obj) {
-        let myTeam = -1;
-        if (game.options.teamSize > 0) {
-          myTeam = current.teams.findIndex((team) => {
-            return team.players.findIndex((player) => {
-              return player == obj.id;
-            }) > -1;
-          });
-        }
-        let symbol = emoji.heart;
-        if (!obj.living) {
-          symbol = emoji.skull;
-        } else if (obj.state == 'wounded') {
-          symbol = emoji.yellowHeart;
-          /* } else if (obj.state == 'zombie') {
-            symbol = emoji.brokenHeart; */
-        }
-
-        let shortName;
-        if (obj.nickname && game.options.useNicknames) {
-          shortName = obj.nickname.substring(0, 16);
-          if (shortName != obj.nickname) {
-            shortName = `${shortName.substring(0, 13)}...`;
-          }
-        } else {
-          shortName = obj.name.substring(0, 16);
-          if (shortName != obj.name) {
-            shortName = `${shortName.substring(0, 13)}...`;
-          }
-        }
-
-        let prefix = '';
-        if (myTeam != prevTeam) {
-          prevTeam = myTeam;
-          prefix = `__${current.teams[myTeam].name}__\n`;
-        }
-
-        showKills = showKills || obj.kills > 0;
-
-        return prefix + symbol + '`' + shortName + '`' +
-            (obj.kills > 0 ? '(' + obj.kills + ')' : '');
-      });
-      finalMessage.setTitle(`Status update!${showKills ? ' (kills)' : ''}`);
-      if (game.options.teamSize == 0) {
-        statusList.sort((a, b) => {
-          if (a.startsWith(emoji.skull)) {
-            if (!b.startsWith(emoji.skull)) {
-              return 1;
-            }
-          } else if (b.startsWith(emoji.skull)) {
-            if (!a.startsWith(emoji.skull)) {
-              return -1;
-            }
-          }
-          if (a < b) return -1;
-          if (a > b) return 1;
-          return 0;
-        });
-      }
-      if (statusList.length >= 5) {
-        const numCols = calcColNum(statusList.length > 10 ? 3 : 2, statusList);
-
-        const numTotal = statusList.length;
-        const quarterLength = Math.ceil(numTotal / numCols);
-        for (let i = 0; i < numCols - 1; i++) {
-          const thisMessage =
-              statusList.splice(0, quarterLength).join('\n').slice(0, 1024);
-          finalMessage.addField(
-              `${i * quarterLength + 1}-${(i + 1) * quarterLength}`,
-              thisMessage, true);
-        }
-        finalMessage.addField(
-            `${(numCols - 1) * quarterLength + 1}-${numTotal}`,
-            statusList.join('\n').slice(0, 1024), true);
-      } else {
-        finalMessage.setDescription(statusList.join('\n') || '...');
-      }
-      if (numWholeTeams == 1) {
-        const teamName =
-            current.teams.find((el) => el.id === lastWholeTeam).name;
-        finalMessage.setFooter(
-            hg.messages.get('teamRemaining').replace(/\{\}/g, teamName));
-      }
-    }
-    if (!current.ended) {
-      const embed = new self.Discord.MessageEmbed();
-      if (current.day.num == 0) {
-        embed.setTitle(hg.messages.get('bloodbathEnd'));
-      } else {
-        embed.setTitle(
-            hg.messages.get('dayEnd')
-                .replace(/\{day\}/g, current.day.num)
-                .replace(/\{alive\}/g, numAlive));
-      }
-      if (!game.autoPlay) {
-        embed.setFooter(`"${msg.prefix}${self.postPrefix}next" for next day.`);
-      }
-      embed.setColor(defaultColor);
-      if (!game.options.disableOutput && msg.channel) msg.channel.send(embed);
-    }
-
-    if (collab && numTeams == 1) {
-      const sendTime = Date.now() + (game.options.delayDays > 2000 ? 1000 : 0);
-      let winnerTag = '';
-      if (game.options.mentionVictor) {
-        winnerTag = current.teams[lastTeam]
-            .players.filter((player) => !player.startsWith('NPC'))
-            .map((player) => `<@${player}>`).join(' ');
-      }
-      const avatarSizes = game.options.victorAvatarSizes;
-      const victorIconSize = avatarSizes.avatar;
-      if (victorIconSize === 0) {
-        sendAtTime(msg.channel, winnerTag, finalMessage, sendTime);
-      } else {
-        const iconGap = avatarSizes.gap;
-        const underlineSize = avatarSizes.underline;
-        const finalImage = new Jimp(
-            current.teams[lastTeam].players.length *
-                    (victorIconSize + iconGap) -
-                iconGap,
-            victorIconSize + underlineSize);
-        let responses = 0;
-        const newImage = function(image, userId) {
-          try {
-            if (victorIconSize > 0) {
-              if (image) image.resize(victorIconSize, victorIconSize);
-              if (underlineSize > 0) {
-                const user =
-                    current.includedUsers.find((obj) => obj.id == userId);
-                let color = 0x0;
-                if (user && !user.living) {
-                  color = 0xFF0000FF;
-                } else if (user && user.state == 'wounded') {
-                  color = 0xFFFF00FF;
-                } else if (user) {
-                  color = 0x00FF00FF;
-                }
-                if (user && user.settings &&
-                    typeof user.settings['hg:bar_color'] === 'number') {
-                  finalImage.blit(
-                      new Jimp(
-                          victorIconSize, underlineSize,
-                          user.settings['hg:bar_color']),
-                      responses * (victorIconSize + iconGap), 0);
-                }
-                finalImage.blit(
-                    new Jimp(victorIconSize, underlineSize, color),
-                    responses * (victorIconSize + iconGap), victorIconSize);
-              }
-              if (image) {
-                finalImage.blit(
-                    image, responses * (victorIconSize + iconGap),
-                    underlineSize);
-              }
-            }
-          } catch (err) {
-            self.warn('Failed to blit victor image');
-            console.error(err);
-          }
-          responses++;
-          if (responses == current.teams[lastTeam].players.length) {
-            finalImage.getBuffer(Jimp.MIME_PNG, function(err, out) {
-              finalMessage.attachFiles([new self.Discord.MessageAttachment(
-                  out, 'hgTeamVictor.png')]);
-              sendAtTime(msg.channel, winnerTag, finalMessage, sendTime);
-            });
-          }
-        };
-        current.teams[lastTeam].players.forEach(
-            (player) => {
-              const p = current.includedUsers.find((obj) => obj.id == player);
-              const icon = p.avatarURL;
-              const userId = p.id;
-              readImage(icon)
-                  .then(function(userId) {
-                    return function(image) {
-                      newImage(image, userId);
-                    };
-                  }(userId))
-                  .catch((err) => {
-                    self.error('Failed to read image');
-                    console.log(err);
-                    responses++;
-                  });
-            });
-      }
-    } else {
-      self.client.setTimeout(() => {
-        let winnerTag = '';
-        if (numAlive == 1) {
-          if (hg.getGame(id).options.mentionVictor &&
-              !lastId.startsWith('NPC')) {
-            winnerTag = `<@${lastId}>`;
-          }
-          if (hg.getGame(id).options.disableOutput || !msg.channel) return;
-          msg.channel.send(winnerTag, finalMessage).catch((err) => {
-            self.error('Failed to send solo winner message: ' + msg.channel.id);
-            console.error(err);
-          });
-        } else {
-          if (hg.getGame(id).options.disableOutput || !msg.channel) return;
-          msg.channel.send(winnerTag, finalMessage).catch((err) => {
-            self.error('Failed to send winner message: ' + msg.channel.id);
-            console.error(err);
-          });
-        }
-      }, (game.options.delayDays > 2000 ? 1000 : 0));
-    }
-
-    if (current.ended) {
-      const rankEmbed = new self.Discord.MessageEmbed();
-      rankEmbed.setTitle('Final Ranks (kills)');
-      const rankList =
-          current.includedUsers.sort((a, b) => a.rank - b.rank).map((obj) => {
-            let shortName;
-            if (obj.nickname && game.options.useNicknames) {
-              shortName = obj.nickname.substring(0, 16);
-              if (shortName != obj.nickname) {
-                shortName = `${shortName.substring(0, 13)}...`;
-              }
-            } else {
-              shortName = obj.name.substring(0, 16);
-              if (shortName != obj.name) {
-                shortName = `${shortName.substring(0, 13)}...`;
-              }
-            }
-            return obj.rank + ') ' + shortName +
-                (obj.kills > 0 ? ' (' + obj.kills + ')' : '');
-          });
-      if (rankList.length <= 20) {
-        rankEmbed.setDescription(rankList.join('\n'));
-      } else {
-        const thirdLength = Math.floor(rankList.length / 3);
-        for (let i = 0; i < 2; i++) {
-          const thisMessage =
-              rankList.splice(0, thirdLength).join('\n').slice(0, 1024);
-          rankEmbed.addField(i + 1, thisMessage, true);
-        }
-        rankEmbed.addField(3, rankList.join('\n').slice(0, 1024), true);
-      }
-      rankEmbed.setColor(defaultColor);
-      if (!game.options.disableOutput && msg.channel) {
-        self.client.setTimeout(function() {
-          msg.channel.send(rankEmbed).catch((err) => {
-            self.error(`Failed to send ranks message: ${msg.channel.id}`);
-            console.error(err);
-          });
-        }, 5000);
-      }
-      if (game.options.teamSize > 0) {
-        const teamRankEmbed = new self.Discord.MessageEmbed();
-        teamRankEmbed.setTitle('Final Team Ranks');
-        sortTeams(game);
-        let prevTeam = -1;
-        const statusList =
-            current.includedUsers.map((obj) => {
-              let myTeam = -1;
-              myTeam = current.teams.findIndex((team) => {
-                return team.players.findIndex((player) => {
-                  return player == obj.id;
-                }) > -1;
-              });
-              let shortName;
-              if (obj.nickname && game.options.useNicknames) {
-                shortName = obj.nickname.substring(0, 16);
-                if (shortName != obj.nickname) {
-                  shortName = shortName.substring(0, 13) + '...';
-                }
-              } else {
-                shortName = obj.name.substring(0, 16);
-                if (shortName != obj.name) {
-                  shortName = shortName.substring(0, 13) + '...';
-                }
-              }
-
-              let prefix = '';
-              if (myTeam != prevTeam) {
-                prevTeam = myTeam;
-                prefix = current.teams[myTeam].rank + ') __' +
-                    current.teams[myTeam].name + '__\n';
-              }
-
-              return `${prefix}\`${shortName}\``;
-            });
-        if (statusList.length >= 5) {
-          const numCols =
-              calcColNum(statusList.length > 10 ? 3 : 2, statusList);
-
-          const quarterLength = Math.ceil(statusList.length / numCols);
-          for (let i = 0; i < numCols - 1; i++) {
-            const thisMessage = statusList.splice(0, quarterLength).join('\n');
-            teamRankEmbed.addField(i + 1, thisMessage, true);
-          }
-          teamRankEmbed.addField(numCols, statusList.join('\n'), true);
-        } else {
-          teamRankEmbed.setDescription(statusList.join('\n'));
-        }
-        teamRankEmbed.setColor(defaultColor);
-        if (!game.options.disableOutput) {
-          self.client.setTimeout(() => {
-            msg.channel.send(teamRankEmbed).catch((err) => {
-              self.error('Failed to send final team ranks: ' + msg.channel.id);
-              console.error(err);
-            });
-          }, 8000);
-        }
-      }
+      HungryGames.ActionManager.dayEnd(hg, game);
     }
   }
   /**
@@ -3242,7 +2821,7 @@ function HG() {
           true);
       return finalMessage;
     }
-    if (game.options.teamSize > 0) sortTeams(game);
+    if (game.options.teamSize > 0) self.sortTeams(game);
     let prevTeam = -1;
     const statusList = game.currentGame.includedUsers.map((obj) => {
       let myTeam = -1;
@@ -3282,7 +2861,7 @@ function HG() {
       });
     }
 
-    const numCols = calcColNum(statusList.length > 10 ? 3 : 2, statusList);
+    const numCols = self.calcColNum(statusList.length > 10 ? 3 : 2, statusList);
     if (statusList.length >= 5) {
       const quarterLength = Math.ceil(statusList.length / numCols);
       for (let i = 0; i < numCols - 1; i++) {
@@ -4788,9 +4367,7 @@ function HG() {
       }
     });
 
-    msg.react(emoji.whiteCheckMark).then(() => {
-      msg.react(emoji.x);
-    });
+    msg.react(emoji.whiteCheckMark).then(() => msg.react(emoji.x));
   }
 
   /**
@@ -5287,7 +4864,7 @@ function HG() {
       const numINPCs = iList.length;
       const numENPCs = eList.length;
       if (iList.length >= 5) {
-        const numCols = calcColNum(iList.length > 10 ? 3 : 2, iList);
+        const numCols = self.calcColNum(iList.length > 10 ? 3 : 2, iList);
 
         const quarterLength = Math.ceil(iList.length / numCols);
         for (let i = 0; i < numCols - 1; i++) {
@@ -5307,7 +4884,7 @@ function HG() {
             'Included (' + numINPCs + ')', iList.join('\n') || 'None.', false);
       }
       if (eList.length >= 5) {
-        const numCols = calcColNum(eList.length > 10 ? 3 : 2, eList);
+        const numCols = self.calcColNum(eList.length > 10 ? 3 : 2, eList);
 
         const quarterLength = Math.ceil(eList.length / numCols);
         for (let i = 0; i < numCols - 1; i++) {
@@ -6113,7 +5690,7 @@ function HG() {
         embed.setDescription(groupName);
         embed.setColor([255, 0, 255]);
 
-        const numCols = calcColNum(1, list);
+        const numCols = self.calcColNum(1, list);
         const numTotal = list.length;
         const quarterLength = Math.ceil(numTotal / numCols);
 
@@ -6697,10 +6274,10 @@ function HG() {
 
   /**
    * @description Sort the includedUsers and teams for the given game.
-   * @private
+   * @public
    * @param {HungryGames~GuildGame} game The game to sort.
    */
-  function sortTeams(game) {
+  this.sortTeams = function(game) {
     game.currentGame.teams.sort((a, b) => b.id - a.id);
     game.currentGame.includedUsers.sort((a, b) => {
       const aTeam = game.currentGame.teams.find((team) => {
@@ -6725,7 +6302,7 @@ function HG() {
         return aTeam.id - bTeam.id;
       }
     });
-  }
+  };
 
   /**
    * @description Returns the number of games that are currently being shown to
@@ -6773,13 +6350,13 @@ function HG() {
    * [Discord API Docs](
    * https://discordapp.com/developers/docs/resources/channel#embed-limits).
    *
-   * @private
+   * @public
    *
    * @param {number} numCols Minimum number of columns.
    * @param {string[]} statusList List of text to check.
    * @returns {number} Number of columns the data shall be formatted as.
    */
-  function calcColNum(numCols, statusList) {
+  this.calcColNum = function(numCols, statusList) {
     if (numCols === statusList.length) return numCols;
     // if (numCols > 25) return 25;
     if (numCols > 5) return 5;
@@ -6788,11 +6365,11 @@ function HG() {
       if (statusList.slice(quarterLength * i, quarterLength * (i + 1))
           .join('\n')
           .length > 1024) {
-        return calcColNum(numCols + 1, statusList);
+        return self.calcColNum(numCols + 1, statusList);
       }
     }
     return numCols;
-  }
+  };
 
   /**
    * Update {@link HungryGames~listenersEndTime} because a new listener was
@@ -6811,13 +6388,13 @@ function HG() {
    * Attempt to fetch an image from a URL. Checks if the file has been cached to
    * the filesystem first.
    *
-   * @private
+   * @public
    *
    * @param {string|Jimp|Buffer} url The url to fetch the image from, or
    * anything Jimp supports.
    * @returns {Promise} Promise from JIMP with image data.
    */
-  function readImage(url) {
+  this.readImage = function(url) {
     let fromCache = false;
     let filename;
     let dir;
@@ -6886,7 +6463,7 @@ function HG() {
         }
       });
     }
-  }
+  };
 
   // Util //
   /**
