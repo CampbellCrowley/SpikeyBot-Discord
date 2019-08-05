@@ -318,7 +318,8 @@ class Echo extends SubModule {
         if (userList.length == 0) continue;
         for (const u of userList) {
           if (u[0] !== user.id || !u[1]) continue;
-          const name = msg.guild.channels.get(chan[0]).name;
+          const channel = msg.guild.channels.get(chan[0]);
+          const name = (channel && channel.name) || chan[0];
           charList.push(`#${name}: ${u[1].username}`);
         }
       }
