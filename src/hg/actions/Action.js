@@ -108,23 +108,35 @@ class Action {
 
 module.exports = Action;
 
-const toLoad = [
-  './MemberAction.js',
-  './ChannelAction.js',
-  './GiveRoleAction.js',
-  './TakeRoleAction.js',
-  './SendMessageAction.js',
-  './SendDayStartMessageAction.js',
-  './SendDayEndMessageAction.js',
-  './SendPlayerRankMessageAction.js',
-  './SendStatusListAction.js',
-  './SendTeamRankMessageAction.js',
-  './SendVictorAction.js',
-  './SendEventMessageAction.js',
-  './SendAutoplayingMessageAlertAction.js',
+/**
+ * @description List of available actions.
+ * @public
+ * @static
+ * @type {Array.<{path: string, pickable: boolean}>}
+ */
+Action.actionList = [
+  {path: './MemberAction.js'},
+  {path: './ChannelAction.js'},
+  {path: './GiveRoleAction.js', pickable: true},
+  {path: './TakeRoleAction.js', pickable: true},
+  {path: './SendMessageAction.js', pickable: true},
+  {path: './SendDayStartMessageAction.js', pickable: true},
+  {path: './SendDayEndMessageAction.js', pickable: true},
+  {path: './SendPlayerRankMessageAction.js', pickable: true},
+  {path: './SendStatusListAction.js', pickable: true},
+  {path: './SendTeamRankMessageAction.js', pickable: true},
+  {path: './SendVictorAction.js', pickable: true},
+  {path: './SendEventMessageAction.js', pickable: true},
+  {path: './SendAutoplayingMessageAlertAction.js', pickable: true},
 ];
-toLoad.forEach((el) => delete require.cache[require.resolve(el)]);
-toLoad.forEach((el) => {
-  const obj = require(el);
-  Action[obj.name] = obj;
+
+Action.actionList.forEach(
+    (el) => delete require.cache[require.resolve(el.path)]);
+Action.actionList.forEach((el) => {
+  try {
+    const obj = require(el.path);
+    Action[obj.name] = obj;
+  } catch (err) {
+    console.error(err);
+  }
 });

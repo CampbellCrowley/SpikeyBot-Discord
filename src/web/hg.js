@@ -202,6 +202,9 @@ function HGWeb() {
     socket.on('fetchDefaultEvents', () => {
       socket.emit('defaultEvents', hg().getDefaultEvents());
     });
+    socket.on('fetchActionList', () => {
+      socket.emit('actionList', HungryGames.Action.actionList);
+    });
     // End Unrestricted Access \\
 
     // Restricted Access //
