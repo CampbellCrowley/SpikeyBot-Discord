@@ -1036,8 +1036,8 @@
       "integrity": "sha512-s2+XdvhPCOF01LRQBC8hf4vhbVmI2CGS5aZnxLJlT5FtdhPCDFq80q++zK2KlrVorVDdL5BOGZ/VfLrVtYNF+Q=="
     },
     "discord.js": {
-      "version": "github:discordjs/discord.js#b65a4f05da40a45e33f78fc43c9b8172a170a3df",
-      "from": "github:discordjs/discord.js#b65a4f05da40a45e33f78fc43c9b8172a170a3df",
+      "version": "github:discordjs/discord.js#d14db521585f2b6b1a6c50d3a9acecc73bea25a3",
+      "from": "github:discordjs/discord.js#d14db521585f2b6b1a6c50d3a9acecc73bea25a3",
       "requires": {
         "form-data": "^2.3.3",
         "node-fetch": "^2.3.0",
@@ -2500,9 +2500,9 @@
       "dev": true
     },
     "mathjs": {
-      "version": "6.0.3",
-      "resolved": "https://registry.npmjs.org/mathjs/-/mathjs-6.0.3.tgz",
-      "integrity": "sha512-BkXSjaWg0Dkwf6S3Cs7bLorei96ltYtCxNoTaLCZcH7OK+T+RgpobH86bTKD9oRI1hABXfuom/vf/RGI9CTfHA==",
+      "version": "6.0.4",
+      "resolved": "https://registry.npmjs.org/mathjs/-/mathjs-6.0.4.tgz",
+      "integrity": "sha512-mhgAkRrSqUJl/LAeEi70zJ28RcA7l8yJ7YGsZg+UJkupuvep+JQX0cxs5BBNLDqaklnKT25dLgT8fF5a5pzhEA==",
       "requires": {
         "complex.js": "2.0.11",
         "decimal.js": "10.2.0",
