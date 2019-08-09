@@ -2548,12 +2548,17 @@ function HG() {
       return finalMessage;
     }
     if (game.options.teamSize > 0) self.sortTeams(game);
-    let prevTeam = -1;
+    let prevTeam = null;
     const statusList = game.currentGame.includedUsers.map((obj) => {
-      let myTeam = -1;
+      let myTeam = null;
       if (game.options.teamSize > 0) {
-        myTeam = game.currentGame.teams.findIndex(
+        myTeam = game.currentGame.teams.find(
             (team) => team.players.find((player) => player == obj.id));
+        if (!myTeam) {
+          self.error(
+              'Failed to find team for player: ' + obj.id + ' in ' + game.id);
+          console.error(game.currentGame.teams);
+        }
       }
 
       let shortName;
@@ -2570,9 +2575,9 @@ function HG() {
       }
 
       let prefix = '';
-      if (myTeam != prevTeam) {
+      if (myTeam && myTeam !== prevTeam) {
         prevTeam = myTeam;
-        prefix = `__${game.currentGame.teams[myTeam].name}__\n`;
+        prefix = `__${myTeam.name}__\n`;
       }
 
       return `${prefix}\`${shortName}\``;
