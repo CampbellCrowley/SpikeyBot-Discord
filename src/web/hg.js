@@ -75,9 +75,14 @@ function HGWeb() {
       hg_.on('toggleOption', handleOptionChange);
       hg_.on('create', broadcastGame);
       hg_.on('refresh', broadcastGame);
+      hg_.on('memberAdd', handleMemberAdd);
+      hg_.on('memberRemove', handleMemberRemove);
       hg_.on('gameStarted', broadcastGame);
       hg_.on('reset', broadcastGame);
       hg_.on('shutdown', unlinkHG);
+
+      hg_.client.on('guildMemberAdd', handleGuildMemberAdd);
+      hg_.client.on('guildMemberRemove', handleGuildMemberRemove);
     }
     return hg_;
   }
@@ -93,9 +98,14 @@ function HGWeb() {
     hg_.removeListener('toggleOption', handleOptionChange);
     hg_.removeListener('create', broadcastGame);
     hg_.removeListener('refresh', broadcastGame);
+    hg_.removeListener('memberAdd', handleMemberAdd);
+    hg_.removeListener('memberRemove', handleMemberRemove);
     hg_.removeListener('gameStarted', broadcastGame);
     hg_.removeListener('reset', broadcastGame);
     hg_.removeListener('shutdown', unlinkHG);
+
+    hg_.client.removeListener('guildMemberAdd', handleGuildMemberAdd);
+    hg_.client.removeListener('guildMemberRemove', handleGuildMemberRemove);
   }
 
   /** @inheritdoc */
@@ -428,6 +438,54 @@ function HGWeb() {
     } else {
       guildBroadcast(gId, 'option', opt1, opt2, opt3);
     }
+  }
+
+  /**
+   * Handle a member being added to a guild.
+   *
+   * @private
+   * @listens external:Discord~Client#guildMemberAdd
+   * @param {external:Discord~GuildMember} member The member added.
+   */
+  function handleGuildMemberAdd(member) {
+    handleMemberAdd(hg(), member.guild.id, member.id);
+  }
+
+  /**
+   * Handle a member being removed from a guild.
+   *
+   * @private
+   * @listens external:Discord~Client#guildMemberRemove
+   * @param {external:Discord~GuildMember} member The member removed.
+   */
+  function handleGuildMemberRemove(member) {
+    handleMemberRemove(hg(), member.guild.id, member.id);
+  }
+
+  /**
+   * Handle a member being added to a guild.
+   *
+   * @private
+   * @listens HG#memberAdd
+   * @param {HungryGames} hg HG object firing the event.
+   * @param {string} gId Guild ID of the member added.
+   * @param {string} mId Member ID that was added.
+   */
+  function handleMemberAdd(hg, gId, mId) {
+    guildBroadcast(gId, 'memberAdd', mId);
+  }
+
+  /**
+   * Handle a member being removed from a guild.
+   *
+   * @private
+   * @listens HG#memberRemove
+   * @param {HungryGames} hg HG object firing the event.
+   * @param {string} gId Guild ID of the member removed.
+   * @param {string} mId Member ID that was removed.
+   */
+  function handleMemberRemove(hg, gId, mId) {
+    guildBroadcast(gId, 'memberRemove', mId);
   }
 
   /**

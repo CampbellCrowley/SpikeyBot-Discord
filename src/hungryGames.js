@@ -4919,6 +4919,7 @@ function HG() {
       game.includedNPCs.push(npc);
 
       if (!game.currentGame.inProgress) self.createGame(gId);
+      self._fire('memberAdd', gId, npc.id);
     };
     const game = hg.getGame(gId);
     if (!game) {
@@ -4997,8 +4998,10 @@ function HG() {
     let toDelete;
     if (incIndex > -1) {
       toDelete = hg.getGame(gId).includedNPCs.splice(incIndex, 1)[0];
+      self._fire('memberRemove', gId, npc);
     } else if (excIndex > -1) {
       toDelete = hg.getGame(gId).excludedNPCs.splice(excIndex, 1)[0];
+      self._fire('memberRemove', gId, npc);
     } else {
       self.error('NPC HALF DISCOVERED :O ' + npc);
       return 'Oops, I was only half able to find that NPC. ' +
