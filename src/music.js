@@ -754,9 +754,11 @@ function Music() {
       self.error('Error in starting broadcast: ' + broadcast.current.song);
       console.log(err);
       if (broadcast.current.request) {
-        broadcast.current.request.channel.send(
-            '```An error occured while attempting to play ' +
-            broadcast.current.song + '.```');
+        self.common.reply(
+            broadcast.current.request,
+            'An error occured while attempting to play ' +
+                broadcast.current.song + '.',
+            err.message);
       }
       broadcast.isLoading = false;
       skipSong(broadcast);
@@ -788,9 +790,12 @@ function Music() {
       self.error('Error in thread: ' + broadcast.current.song);
       console.log(err);
       if (broadcast.current.request) {
-        broadcast.current.request.channel.send(
-            '```An error occured while attempting to play ' +
-            broadcast.current.song + '.```');
+        const text = err.message.match(/ERROR:[^;]+/);
+        self.common.reply(
+            broadcast.current.request,
+            'An error occured while attempting to play ' +
+                broadcast.current.song + '.',
+            text && text[0]);
       }
       broadcast.isLoading = false;
       skipSong(broadcast);
