@@ -213,6 +213,7 @@ function HGWeb() {
     socket.on('fetchGuilds', (...args) => handle(fetchGuilds, args, false));
     socket.on('fetchGuild', (...args) => handle(self.fetchGuild, args));
     socket.on('fetchMember', (...args) => handle(self.fetchMember, args));
+    socket.on('fetchRoles', (...args) => handle(self.fetchRoles, args));
     socket.on('fetchChannel', (...args) => handle(self.fetchChannel, args));
     socket.on('fetchGames', (...args) => handle(self.fetchGames, args));
     socket.on('fetchDay', (...args) => handle(self.fetchDay, args));
@@ -578,7 +579,7 @@ function HGWeb() {
     }
     return {
       nickname: m.nickname,
-      roles: m.roles.array(),
+      roles: m.roles.array().map((el) => el.id),
       color: m.displayColor,
       guild: {id: m.guild.id},
       permissions: m.permissions.bitfield,
@@ -865,6 +866,30 @@ function HGWeb() {
       cb(null, finalMember);
     } else {
       socket.emit('member', gId, mId, finalMember);
+    }
+  };
+  /**
+   * Fetch data about a role in a guild.
+   *
+   * @public
+   * @type {HGWeb~SocketFunction}
+   * @param {object} userData The current user's session data.
+   * @param {socketIo~Socket} socket The socket connection to reply on.
+   * @param {number|string} gId The guild id to look at.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete, or has failed.
+   */
+  this.fetchRoles = function fetchRoles(userData, socket, gId, cb) {
+    if (!checkPerm(userData, gId, null)) return;
+    const g = self.client.guilds.get(gId);
+    if (!g) return;
+
+    const roles = g.roles.array();
+
+    if (typeof cb === 'function') {
+      cb(null, roles);
+    } else {
+      socket.emit('member', gId, roles);
     }
   };
   /**

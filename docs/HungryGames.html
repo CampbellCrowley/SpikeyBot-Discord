@@ -416,7 +416,7 @@ some features disabled in order to improve performance.
 		<ul class="dummy">
 			<li>
 				<a href="hg_HungryGames.js.html">hg/HungryGames.js</a>,
-				 <a href="hg_HungryGames.js.html#sunlight-1-line-807">line 807</a>
+				 <a href="hg_HungryGames.js.html#sunlight-1-line-890">line 890</a>
 			</li>
 		</ul>
 	</dd>
@@ -2008,7 +2008,7 @@ parameter is null if not found, or <a href="HungryGames-GuildGame.html">HungryGa
 		<ul class="dummy">
 			<li>
 				<a href="hg_HungryGames.js.html">hg/HungryGames.js</a>,
-				 <a href="hg_HungryGames.js.html#sunlight-1-line-590">line 590</a>
+				 <a href="hg_HungryGames.js.html#sunlight-1-line-673">line 673</a>
 			</li>
 		</ul>
 	</dd>
@@ -3078,6 +3078,312 @@ game in a guild.
             
 <hr>
 <dt>
+    <h4 class="name" id="insertAction"><span class="type-signature"></span>insertAction(gId, trigger, action [, args] [, cb])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Create and insert an action for a trigger in the given guild.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Argument</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>gId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">The guild ID of the game to modify.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>trigger</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">The name of the trigger to insert the action into.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>action</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">The name of the action to create.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>args</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;*></span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    []
+                
+                </td>
+            
+
+            <td class="description last">The optional additional arguments required for
+the action to be created.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cb</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">Callback once completed. Single argument is error
+string if failed, or null if succeeded.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="hg_HungryGames.js.html">hg/HungryGames.js</a>,
+				 <a href="hg_HungryGames.js.html#sunlight-1-line-587">line 587</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
     <h4 class="name" id="refresh"><span class="type-signature"></span>refresh(guild [, cb])</h4>
     
     
@@ -3254,6 +3560,253 @@ game.</td>
     <ul>
         <li>HG#event:refresh</li>
     </ul>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="removeAction"><span class="type-signature"></span>removeAction(gId, trigger, index [, cb])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Remove an action for a trigger in the given guild.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Argument</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>gId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The guild ID of the game to modify.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>trigger</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The name of the trigger to remove the action from.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>index</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The index of the action to remove.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cb</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Callback once completed. Single argument is error
+string if failed, or null if succeeded.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="hg_HungryGames.js.html">hg/HungryGames.js</a>,
+				 <a href="hg_HungryGames.js.html#sunlight-1-line-631">line 631</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
     
 
     
@@ -3589,7 +4142,7 @@ synchronous.</td>
 		<ul class="dummy">
 			<li>
 				<a href="hg_HungryGames.js.html">hg/HungryGames.js</a>,
-				 <a href="hg_HungryGames.js.html#sunlight-1-line-724">line 724</a>
+				 <a href="hg_HungryGames.js.html#sunlight-1-line-807">line 807</a>
 			</li>
 		</ul>
 	</dd>
@@ -4373,7 +4926,7 @@ for a full stop.
 		<ul class="dummy">
 			<li>
 				<a href="hg_HungryGames.js.html">hg/HungryGames.js</a>,
-				 <a href="hg_HungryGames.js.html#sunlight-1-line-791">line 791</a>
+				 <a href="hg_HungryGames.js.html#sunlight-1-line-874">line 874</a>
 			</li>
 		</ul>
 	</dd>
@@ -5225,7 +5778,7 @@ represents.</td>
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a>
 	
-		on Thursday, August 8, 2019 8:15 PM (-07:00)
+		on Thursday, August 8, 2019 10:47 PM (-07:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>
