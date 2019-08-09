@@ -447,7 +447,6 @@ class HungryGames {
         for (i; Date.now() - start < self.maxDelta && i < memList.length; i++) {
           memberIterate(memList[i]);
         }
-        setTimeout(() => memberStep(i));
       } else if (includedNPCs && i - memList.length < includedNPCs.length) {
         for (i; Date.now() - start < self.maxDelta &&
              i - memList.length < includedNPCs.length;
@@ -456,10 +455,11 @@ class HungryGames {
           finalMembers.push(
               new self._parent.NPC(obj.name, obj.avatarURL, obj.id));
         }
-        setTimeout(() => memberStep(i));
       } else {
         done();
+        return;
       }
+      setTimeout(() => memberStep(i));
     };
 
     iTime2 = Date.now();

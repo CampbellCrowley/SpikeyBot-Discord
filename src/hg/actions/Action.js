@@ -256,6 +256,7 @@ Action.actionList.forEach((el) => {
   try {
     const obj = require(el.path);
     Action[obj.name] = obj;
+    el.name = obj.name;
   } catch (err) {
     console.error(err);
   }
