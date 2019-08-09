@@ -204,6 +204,33 @@ class ActionStore {
   }
 
   /**
+   * @description Insert an action for a trigger.
+   * @public
+   * @param {string} name The name of the trigger to insert the action.
+   * @param {HungryGames~Action} action The action to insert.
+   * @returns {boolean} True if success, false if unable to find trigger by
+   * given name.
+   */
+  insert(name, action) {
+    if (!Array.isArray(this[name])) return false;
+    this[name].push(action);
+    return true;
+  }
+
+  /**
+   * @description Remove an action from a trigger.
+   * @public
+   * @param {string} name The name of the trigger to remove from.
+   * @param {number} index The index in the array of the action to remove.
+   * @returns {?Action} The removed action, or null if unable to find action.
+   */
+  remove(name, index) {
+    if (!Array.isArray(this[name])) return false;
+    if (!this[name][index]) return false;
+    return this[name].splice(index, 1);
+  }
+
+  /**
    * @description Convert a serialized action store back into the object.
    * @public
    * @static
@@ -221,22 +248,9 @@ class ActionStore {
       out[one[0]] = [];
       for (const two in obj[one[0]]) {
         if (!obj[one[0]][two]) continue;
-
-        const toParse = obj[one[0]][two];
-        if (typeof toParse.className !== 'string' ||
-            toParse.className.length === 0) {
-          console.error(toParse.className, 'is not an Action name');
-          continue;
-        }
-        const action = Action[toParse.className];
-        if (action) {
-          out[one[0]][two] = Action[toParse.className].create(toParse.data);
-          if (typeof obj[one[0]][two].delay === 'number') {
-            out[one[0]][two].delay = toParse.delay;
-          }
-        } else {
-          console.error(toParse.className, 'is not an Action');
-        }
+        const action = Action.from(obj[one[0]][two]);
+        if (!action) continue;
+        out[one[0]][two] = action;
       }
     }
     return out;

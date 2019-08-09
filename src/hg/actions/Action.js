@@ -104,6 +104,35 @@ class Action {
     client;
     throw new Error('Create function not overridden.');
   }
+
+  /**
+   * @description Create an Action object from save data. Looks up action from
+   * {@link HungryGames~Action~actionList}.
+   * @public
+   * @static
+   * @param {object} obj The object data from save file.
+   * @returns {?Action} The created action, or null if failed to find the
+   * action.
+   */
+  static from(obj) {
+    if (typeof obj.className !== 'string' ||
+        obj.className.length === 0) {
+      console.error(obj.className, 'is not an Action name');
+      return null;
+    }
+    const action = Action[obj.className];
+    let out = null;
+    if (action) {
+      out = action.create(obj.data);
+      if (typeof obj.delay === 'number') {
+        out.delay = obj.delay;
+      }
+    } else {
+      console.error(obj.className, 'is not an Action');
+      return null;
+    }
+    return out;
+  }
 }
 
 /**

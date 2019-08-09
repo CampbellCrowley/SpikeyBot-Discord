@@ -574,6 +574,89 @@ class HungryGames {
   }
 
   /**
+   * @description Create and insert an action for a trigger in the given guild.
+   * @public
+   * @param {string} gId The guild ID of the game to modify.
+   * @param {string} trigger The name of the trigger to insert the action into.
+   * @param {string} action The name of the action to create.
+   * @param {Array.<*>} [args=[]] The optional additional arguments required for
+   * the action to be created.
+   * @param {Function} [cb] Callback once completed. Single argument is error
+   * string if failed, or null if succeeded.
+   */
+  insertAction(gId, trigger, action, args = [], cb) {
+    if (typeof cb !== 'function') cb = function() {};
+
+    this.fetchGame(gId, (game) => {
+      if (!game) {
+        cb('No game has been created.');
+        return;
+      }
+      const act =
+          HungryGames.Action.actionList.find((el) => el.name === action);
+      if (!act) {
+        cb('Unknown action.');
+        return;
+      }
+      if (!game.actions) {
+        cb('Game doesn\'t have any action data.');
+        return;
+      }
+      if (!Array.isArray(game.actions[trigger])) {
+        cb('Unknown trigger.');
+        return;
+      }
+      const res =
+          game.actions.insert(trigger, new HungryGames.Action[action](...args));
+      if (res) {
+        this._parent._fire('actionInsert', gId, trigger);
+        cb();
+        return;
+      } else {
+        cb('Bad trigger.');
+        return;
+      }
+    });
+  }
+
+  /**
+   * @description Remove an action for a trigger in the given guild.
+   * @public
+   * @param {string} gId The guild ID of the game to modify.
+   * @param {string} trigger The name of the trigger to remove the action from.
+   * @param {number} index The index of the action to remove.
+   * @param {Function} [cb] Callback once completed. Single argument is error
+   * string if failed, or null if succeeded.
+   */
+  removeAction(gId, trigger, index, cb) {
+    if (typeof cb !== 'function') cb = function() {};
+
+    this.fetchGame(gId, (game) => {
+      if (!game) {
+        cb('No game has been created.');
+        return;
+      }
+      if (!game.actions) {
+        cb('Game doesn\'t have any action data.');
+        return;
+      }
+      if (!Array.isArray(game.actions[trigger])) {
+        cb('Unknown trigger.');
+        return;
+      }
+      const res = game.actions.remove(trigger, index);
+      if (res) {
+        this._parent._fire('actionRemove', gId, trigger);
+        cb();
+        return;
+      } else {
+        cb('Bad Index.');
+        return;
+      }
+    });
+  }
+
+  /**
    * @description Returns a guild's game data. Returns cached version if that
    * exists, or searches the file system for saved data. Data will only be
    * checked from disk at most once every `HungryGames~findDelay` milliseconds.

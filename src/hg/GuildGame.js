@@ -289,7 +289,7 @@ class GuildGame {
      * @type {HungryGames~ActionStore}
      * @default
      */
-    this.actions = new ActionStore(this);
+    this.actions = new ActionStore();
 
     /**
      * Interval for day events.
