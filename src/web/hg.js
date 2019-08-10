@@ -508,7 +508,8 @@ function HGWeb() {
    */
   function handleActionUpdate(hg, gId) {
     const game = hg.getHG().getGame(gId);
-    guildBroadcast(gId, 'actions', game && game.actions);
+    guildBroadcast(
+        gId, 'actions', game && game.actions && game.actions.serializable);
   }
 
   /**
@@ -1248,7 +1249,7 @@ function HGWeb() {
       replyNoPerm(socket, 'updateAction');
       return;
     }
-    hg().getHG().updateAction(gId, trigger, id, cb);
+    hg().getHG().updateAction(gId, trigger, id, key, value, cb);
   };
   /**
    * Exclude a member from the Games.
