@@ -1767,7 +1767,7 @@ function Main() {
     let emojis = [];
 
     const finalSend = function() {
-      const total = emojiText.length + unicodeList.length;
+      const total = emojiIds.length + unicodeList.length;
       if (total <= 0) {
         self.common.reply(
             msg, 'No emojis specified',
