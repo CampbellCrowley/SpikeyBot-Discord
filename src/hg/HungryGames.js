@@ -624,11 +624,11 @@ class HungryGames {
    * @public
    * @param {string} gId The guild ID of the game to modify.
    * @param {string} trigger The name of the trigger to remove the action from.
-   * @param {number} index The index of the action to remove.
+   * @param {string} id The id of the action to remove.
    * @param {Function} [cb] Callback once completed. Single argument is error
    * string if failed, or null if succeeded.
    */
-  removeAction(gId, trigger, index, cb) {
+  removeAction(gId, trigger, id, cb) {
     if (typeof cb !== 'function') cb = function() {};
 
     this.fetchGame(gId, (game) => {
@@ -644,7 +644,7 @@ class HungryGames {
         cb('Unknown trigger.');
         return;
       }
-      const res = game.actions.remove(trigger, index);
+      const res = game.actions.remove(trigger, id);
       if (res) {
         this._parent._fire('actionRemove', gId, trigger);
         cb();
@@ -653,6 +653,49 @@ class HungryGames {
         cb('Bad Index.');
         return;
       }
+    });
+  }
+
+  /**
+   * @description Update a specific action for a trigger in the given guild.
+   * @public
+   * @param {string} gId The guild ID of the game to modify.
+   * @param {string} trigger The name of the trigger to remove the action from.
+   * @param {string} id The id of the action to remove.
+   * @param {string} key The key of the value to change.
+   * @param {number|string} value The value to set the setting to.
+   * @param {Function} [cb] Callback once completed. Single argument is error
+   * string if failed, or null if succeeded.
+   */
+  updateAction(gId, trigger, id, key, value, cb) {
+    if (typeof cb !== 'function') cb = function() {};
+
+    this.fetchGame(gId, (game) => {
+      if (!game) {
+        cb('No game has been created.');
+        return;
+      }
+      if (!game.actions) {
+        cb('Game doesn\'t have any action data.');
+        return;
+      }
+      if (!Array.isArray(game.actions[trigger])) {
+        cb('Unknown trigger.');
+        return;
+      }
+      const action = game.actions[trigger].find((el) => el.id === id);
+      if (!action) {
+        cb('Unknown action.');
+        return;
+      }
+      if (typeof value !== typeof action[key]) {
+        cb('Bad value.');
+        return;
+      }
+      action[key] = value;
+
+      this._parent._fire('actionUpdate', gId, trigger);
+      cb();
     });
   }
 

@@ -47,7 +47,7 @@
 			<li class="dropdown">
 				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
 				<ul class="dropdown-menu inline">
-					<li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#_handler">_handler</a></li><li><a href="global.html#_saveData">_saveData</a></li><li><a href="global.html#delay">delay</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#sqlCon">sqlCon</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li>
+					<li><a href="global.html#__stack">__stack</a></li><li><a href="global.html#_handler">_handler</a></li><li><a href="global.html#_saveData">_saveData</a></li><li><a href="global.html#delay">delay</a></li><li><a href="global.html#id">id</a></li><li><a href="global.html#self">self</a></li><li><a href="global.html#sqlCon">sqlCon</a></li><li><a href="global.html#unhandledRejection">unhandledRejection</a></li>
 				</ul>
 			</li>
 			
@@ -416,7 +416,7 @@ some features disabled in order to improve performance.
 		<ul class="dummy">
 			<li>
 				<a href="hg_HungryGames.js.html">hg/HungryGames.js</a>,
-				 <a href="hg_HungryGames.js.html#sunlight-1-line-890">line 890</a>
+				 <a href="hg_HungryGames.js.html#sunlight-1-line-933">line 933</a>
 			</li>
 		</ul>
 	</dd>
@@ -2008,7 +2008,7 @@ parameter is null if not found, or <a href="HungryGames-GuildGame.html">HungryGa
 		<ul class="dummy">
 			<li>
 				<a href="hg_HungryGames.js.html">hg/HungryGames.js</a>,
-				 <a href="hg_HungryGames.js.html#sunlight-1-line-673">line 673</a>
+				 <a href="hg_HungryGames.js.html#sunlight-1-line-716">line 716</a>
 			</li>
 		</ul>
 	</dd>
@@ -3577,7 +3577,7 @@ game.</td>
             
 <hr>
 <dt>
-    <h4 class="name" id="removeAction"><span class="type-signature"></span>removeAction(gId, trigger, index [, cb])</h4>
+    <h4 class="name" id="removeAction"><span class="type-signature"></span>removeAction(gId, trigger, id [, cb])</h4>
     
     
 </dt>
@@ -3686,13 +3686,13 @@ game.</td>
 
         <tr>
             
-                <td class="name"><code>index</code></td>
+                <td class="name"><code>id</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">string</span>
 
 
 
@@ -3711,7 +3711,7 @@ game.</td>
 
             
 
-            <td class="description last">The index of the action to remove.</td>
+            <td class="description last">The id of the action to remove.</td>
         </tr>
 
     
@@ -4142,7 +4142,7 @@ synchronous.</td>
 		<ul class="dummy">
 			<li>
 				<a href="hg_HungryGames.js.html">hg/HungryGames.js</a>,
-				 <a href="hg_HungryGames.js.html#sunlight-1-line-807">line 807</a>
+				 <a href="hg_HungryGames.js.html#sunlight-1-line-850">line 850</a>
 			</li>
 		</ul>
 	</dd>
@@ -4926,7 +4926,321 @@ for a full stop.
 		<ul class="dummy">
 			<li>
 				<a href="hg_HungryGames.js.html">hg/HungryGames.js</a>,
-				 <a href="hg_HungryGames.js.html#sunlight-1-line-874">line 874</a>
+				 <a href="hg_HungryGames.js.html#sunlight-1-line-917">line 917</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="updateAction"><span class="type-signature"></span>updateAction(gId, trigger, id, key, value [, cb])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Update a specific action for a trigger in the given guild.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Argument</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>gId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The guild ID of the game to modify.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>trigger</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The name of the trigger to remove the action from.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>id</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The id of the action to remove.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>key</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The key of the value to change.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>value</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+|
+
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The value to set the setting to.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cb</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Callback once completed. Single argument is error
+string if failed, or null if succeeded.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="hg_HungryGames.js.html">hg/HungryGames.js</a>,
+				 <a href="hg_HungryGames.js.html#sunlight-1-line-670">line 670</a>
 			</li>
 		</ul>
 	</dd>
@@ -5778,7 +6092,7 @@ represents.</td>
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a>
 	
-		on Friday, August 9, 2019 5:29 PM (-07:00)
+		on Friday, August 9, 2019 8:48 PM (-07:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

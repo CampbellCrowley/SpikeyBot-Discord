@@ -75,6 +75,9 @@ function HGWeb() {
       hg_.on('refresh', broadcastGame);
       hg_.on('memberAdd', handleMemberAdd);
       hg_.on('memberRemove', handleMemberRemove);
+      hg_.on('actionInsert', handleActionUpdate);
+      hg_.on('actionRemove', handleActionUpdate);
+      hg_.on('actionUpdate', handleActionUpdate);
       hg_.on('gameStarted', broadcastGame);
       hg_.on('reset', broadcastGame);
       hg_.on('shutdown', unlinkHG);
@@ -98,6 +101,9 @@ function HGWeb() {
     hg_.removeListener('refresh', broadcastGame);
     hg_.removeListener('memberAdd', handleMemberAdd);
     hg_.removeListener('memberRemove', handleMemberRemove);
+    hg_.removeListener('actionInsert', handleActionUpdate);
+    hg_.removeListener('actionRemove', handleActionUpdate);
+    hg_.removeListener('actionUpdate', handleActionUpdate);
     hg_.removeListener('gameStarted', broadcastGame);
     hg_.removeListener('reset', broadcastGame);
     hg_.removeListener('shutdown', unlinkHG);
@@ -229,6 +235,7 @@ function HGWeb() {
     socket.on('fetchActions', (...args) => handle(self.fetchActions, args));
     socket.on('insertAction', (...args) => handle(self.insertAction, args));
     socket.on('removeAction', (...args) => handle(self.removeAction, args));
+    socket.on('updateAction', (...args) => handle(self.updateAction, args));
     socket.on('excludeMember', (...args) => handle(self.excludeMember, args));
     socket.on('includeMember', (...args) => handle(self.includeMember, args));
     socket.on('toggleOption', (...args) => handle(self.toggleOption, args));
@@ -487,6 +494,21 @@ function HGWeb() {
    */
   function handleMemberRemove(hg, gId, mId) {
     guildBroadcast(gId, 'memberRemove', mId);
+  }
+
+  /**
+   * Handle actions being modified in a server.
+   *
+   * @private
+   * @listens HG#actionInsert
+   * @listens HG#actionRemove
+   * @listens HG#actionUpdate
+   * @param {HungryGames} hg HG object firing event.
+   * @param {string} gId The guild ID that was updated.
+   */
+  function handleActionUpdate(hg, gId) {
+    const game = hg.getHG().getGame(gId);
+    guildBroadcast(gId, 'actions', game && game.actions);
   }
 
   /**
@@ -1189,19 +1211,44 @@ function HGWeb() {
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
    * @param {string} trigger The name of the trigger.
-   * @param {number} index The index of the action to remove.
+   * @param {string} id The id of the action to remove.
    * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
    * is complete, or has failed.
    */
   this.removeAction = function removeAction(
-      userData, socket, gId, trigger, index, cb) {
+      userData, socket, gId, trigger, id, cb) {
     if (!checkPerm(userData, gId, null, 'options')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
       replyNoPerm(socket, 'removeAction');
       return;
     }
-    hg().getHG().removeAction(gId, trigger, index, cb);
+    hg().getHG().removeAction(gId, trigger, id, cb);
+  };
+  /**
+   * Update an action for a trigger in a guild.
+   *
+   * @public
+   * @type {HGWeb~SocketFunction}
+   * @param {object} userData The current user's session data.
+   * @param {socketIo~Socket} socket The socket connection to reply on.
+   * @param {number|string} gId The guild id to look at.
+   * @param {string} trigger The name of the trigger.
+   * @param {string} id The id of the action to remove.
+   * @param {string} key The key of the value to change.
+   * @param {number|string} value The value to set.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete, or has failed.
+   */
+  this.updateAction = function updateAction(
+      userData, socket, gId, trigger, id, key, value, cb) {
+    if (!checkPerm(userData, gId, null, 'options')) {
+      if (!checkMyGuild(gId)) return;
+      if (typeof cb === 'function') cb('NO_PERM');
+      replyNoPerm(socket, 'updateAction');
+      return;
+    }
+    hg().getHG().updateAction(gId, trigger, id, cb);
   };
   /**
    * Exclude a member from the Games.

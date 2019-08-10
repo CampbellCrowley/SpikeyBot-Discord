@@ -213,6 +213,10 @@ class ActionStore {
    */
   insert(name, action) {
     if (!Array.isArray(this[name])) return false;
+    const Action = require('./Action.js');
+    while (this[name].find((el) => el.id === action.id)) {
+      action.id = Action.createID();
+    }
     this[name].push(action);
     return true;
   }
@@ -221,12 +225,13 @@ class ActionStore {
    * @description Remove an action from a trigger.
    * @public
    * @param {string} name The name of the trigger to remove from.
-   * @param {number} index The index in the array of the action to remove.
+   * @param {string} id The id of the action to remove.
    * @returns {?Action} The removed action, or null if unable to find action.
    */
-  remove(name, index) {
+  remove(name, id) {
     if (!Array.isArray(this[name])) return false;
-    if (!this[name][index]) return false;
+    const index = this[name].findIndex((el) => el.id === id);
+    if (index < 0) return false;
     return this[name].splice(index, 1);
   }
 

@@ -1,5 +1,6 @@
 // Copyright 2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
+const crypto = require('crypto');
 
 /**
  * @description Handler function for a generic action.
@@ -29,6 +30,13 @@ class Action {
     if (typeof handler !== 'function') {
       throw new TypeError('Handler is not a function.');
     }
+    /**
+     * @description The unique ID for this action. Propably globally unique,
+     * definitely unique per-trigger in a guild.
+     * @public
+     * @type {string}
+     */
+    this.id = Action.createID();
     /**
      * @description Passed handler to fire once triggered.
      * @private
@@ -63,6 +71,7 @@ class Action {
    */
   get serializable() {
     return {
+      id: this.id,
       className: this.constructor.name,
       delay: this.delay,
       data: this._saveData,
@@ -106,6 +115,16 @@ class Action {
   }
 
   /**
+   * @description Generate an ID for an Action. Does not check for collisions.
+   * @public
+   * @static
+   * @returns {string} Generated ID.
+   */
+  static createID() {
+    return crypto.randomBytes(8).toString('hex').toUpperCase();
+  }
+
+  /**
    * @description Create an Action object from save data. Looks up action from
    * {@link HungryGames~Action~actionList}.
    * @public
@@ -126,6 +145,9 @@ class Action {
       out = action.create(obj.data);
       if (typeof obj.delay === 'number') {
         out.delay = obj.delay;
+      }
+      if (typeof obj.id === 'string') {
+        out.id = obj.id;
       }
     } else {
       console.error(obj.className, 'is not an Action');
