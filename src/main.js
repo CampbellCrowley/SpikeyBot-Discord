@@ -1,11 +1,13 @@
 // Copyright 2018-2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
+const emojiChecker = require('./lib/twemojiChcker.js');
+const childProcess = require('child_process');
 const dateFormat = require('dateformat');
-const mathjs = require('mathjs');
 const algebra = require('algebra.js');
+const mathjs = require('mathjs');
 const Jimp = require('jimp');
 const fs = require('fs');
-const childProcess = require('child_process');
+
 require('./subModule.js').extend(Main);  // Extends the SubModule class.
 
 const math = mathjs.create(mathjs.all, {matrix: 'Array'});
@@ -310,6 +312,7 @@ function Main() {
     self.command.on('createdate', commandCreateDate);
     self.command.on('joindate', commandJoinDate, true);
     self.command.on(['server', 'serverinfo'], commandServerInfo, true);
+    self.command.on(['emoji', 'emote', 'e', 'emojis', 'emotes'], commandEmoji);
     self.command.on(['pmme', 'dmme'], commandPmMe);
     self.command.on(['pmspikey', 'dmspikey'], commandPmSpikey);
     self.command.on('thotpm', commandThotPm);
@@ -640,6 +643,7 @@ function Main() {
     self.command.removeListener('createdate');
     self.command.removeListener('joindate');
     self.command.removeListener('serverinfo');
+    self.command.removeListener('emoji');
     self.command.removeListener('pmme');
     self.command.removeListener('pmspikey');
     self.command.removeListener('thotpm');
@@ -1732,6 +1736,130 @@ function Main() {
       self.commom.reply(
           msg, 'Please allow me to embed links to use this command here.');
     }
+  }
+  /**
+   * Send information about the emojis sent in the message.
+   *
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens Command#emoji
+   * @listens Command#emote
+   * @listens Command#e
+   * @listens Command#emojis
+   * @listens Command#emotes
+   */
+  function commandEmoji(msg) {
+    const embeddable = (!msg.channel.permissionsFor) ||
+        msg.channel.permissionsFor(self.client.user)
+            .has(self.Discord.Permissions.FLAGS.EMBED_LINKS);
+
+    const unicode = emojiChecker.match(msg.content);
+    const unicodeList = unicode && unicode.map((el) => {
+      return el + ': ' + el.replace(/./g, (str) => {
+        return '\\u' +
+            ((`0000` + str.charCodeAt(0).toString(16)).slice(-4)).toUpperCase();
+      });
+    }) ||
+        [];
+    const emojiText = msg.content.match(/<a?:\w+:\d+>/g);
+    const emojiIds =
+        emojiText && emojiText.map((el) => el.match(/<a?:\w+:(\d+)>/)[1]) || [];
+    let emojis = [];
+
+    if (self.client.shard && emojiIds.length > 0) {
+      const toSend = JSON.stringify(emojiIds) +
+          '.map((el)=>this.emojis.get(el))' +
+          '.filter((el)=>el)' +
+          '.map((el)=>{el.guildName=el.guild.name;return JSON.stringify(el);})';
+      self.client.shard.broadcastEval(toSend)
+          .then((res) => {
+            res.forEach((el) => {
+              if (!el) return;
+              el.forEach((emoji) => emojis.push(JSON.parse(emoji)));
+            });
+            finalSend();
+          })
+          .catch((err) => {
+            self.error('Failed to fetch emojis from shards.');
+            console.error(err);
+            self.common.reply(msg, 'Oops! Something inside me is broken.');
+          });
+    } else {
+      emojis = emojiIds.map((el) => self.client.emojis.get(el));
+      finalSend();
+    }
+
+    const finalSend = function() {
+      const total = emojiText.length + unicodeList.length;
+      if (total <= 0) {
+        self.common.reply(
+            msg, 'No emojis specified',
+            'Please type an emoji after the command.');
+      } else if (embeddable) {
+        const embed = new self.Discord.MessageEmbed();
+        embed.setColor([255, 0, 255]);
+        if (total == 1) {
+          embed.setTitle('Emoji');
+          if (emojis.length > 0) {
+            const emoji = emojis[0];
+            if (!emoji) {
+              embed.setDescription(
+                  'I do not know anything about that emoji.' +
+                  '\nIt\'s probably not from a server that I am in.');
+              embed.setFooter(`${emojiText[0]} ${emojiIds[0]} ${emoji}`);
+            } else {
+              const toString =
+                  `<${emoji.animated?'a':''}:${emoji.name}:${emoji.id||''}>`;
+              embed.setImage(emoji.url);
+              const gName = emoji.guild && emoji.guild.name ||
+                  emoji.guildName || 'unknown server';
+              embed.setDescription(`${toString} from ${gName}`);
+              embed.setURL(emoji.url);
+              if (emoji.id) embed.setFooter(emoji.id);
+              const infoRows = [];
+              infoRows.push(`Name: ${emoji.name}`);
+              infoRows.push(`Formatted: \\${toString}`);
+              infoRows.push(`Animated: ${emoji.animated}`);
+              infoRows.push(`Managed: ${emoji.managed}`);
+              infoRows.push(`Requires Colons: ${emoji.requiresColons}`);
+              infoRows.push(`URL: ${emoji.url}`);
+              embed.addField('Info', infoRows.join('\n'), true);
+            }
+          } else {
+            const emoji = unicodeList[0];
+            if (!emoji) {
+              embed.setDescription(
+                  'I do not know anything about that emoji.\nThis is ' +
+                  'strange, there isn\'t much to know about that one..');
+            } else {
+              embed.setDescription(emoji);
+              embed.setFooter('Unicode Emoji');
+            }
+          }
+        } else {
+          embed.setTitle('Emojis');
+          if (unicodeList.length > 0) {
+            embed.addField('Unicode Emojis', unicodeList.join('\n'), true);
+          }
+          if (emojis.length > 0) {
+            const list = emojiText.map((el, i) => {
+              return `${el}: ${emojis[i] && emojis[i].url || 'Unknown'}`;
+            });
+            embed.addField('Discord Emojis', list, true);
+          }
+        }
+        msg.channel.send(self.common.mention(msg), embed).catch(console.error);
+      } else {
+        const emojiList = emojis.map((el) => ` ${el.toString()}: $ {
+              el.url
+            }
+            `);
+        self.common.reply(
+            msg, 'Emojis',
+            unicodeList.join('\n') + '\n' + emojiList.join('\n'));
+      }
+    };
   }
   /**
    * Send the user a PM with a greeting introducing who the bot is.
