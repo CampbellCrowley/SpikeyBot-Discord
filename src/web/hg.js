@@ -1,5 +1,3 @@
-// Copyright 2018-2019 Campbell Crowley. All rights reserved.
-// Author: Campbell Crowley (dev@campbellcrowley.com)
 const http = require('http');
 const socketIo = require('socket.io');
 const auth = require('../../auth.js');
@@ -228,6 +226,9 @@ function HGWeb() {
     socket.on('fetchGames', (...args) => handle(self.fetchGames, args));
     socket.on('fetchDay', (...args) => handle(self.fetchDay, args));
     socket.on('fetchNextDay', (...args) => handle(self.fetchNextDay, args));
+    socket.on('fetchActions', (...args) => handle(self.fetchActions, args));
+    socket.on('insertAction', (...args) => handle(self.insertAction, args));
+    socket.on('removeAction', (...args) => handle(self.removeAction, args));
     socket.on('excludeMember', (...args) => handle(self.excludeMember, args));
     socket.on('includeMember', (...args) => handle(self.includeMember, args));
     socket.on('toggleOption', (...args) => handle(self.toggleOption, args));
@@ -1124,6 +1125,83 @@ function HGWeb() {
     } else {
       socket.emit('nextDay', gId, game.currentGame.nextDay);
     }
+  };
+  /**
+   * Fetch the game's current action/trigger information.
+   *
+   * @public
+   * @type {HGWeb~SocketFunction}
+   * @param {object} userData The current user's session data.
+   * @param {socketIo~Socket} socket The socket connection to reply on.
+   * @param {number|string} gId The guild id to look at.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete, or has failed.
+   */
+  this.fetchActions = function fetchActions(userData, socket, gId, cb) {
+    if (!checkPerm(userData, gId, null, 'options')) {
+      if (!checkMyGuild(gId)) return;
+      if (typeof cb === 'function') cb('NO_PERM');
+      replyNoPerm(socket, 'fetchActions');
+      return;
+    }
+    const game = hg().getHG().getGame(gId);
+    if (!game || !game.actions) {
+      if (typeof cb === 'function') cb('NO_GAME_IN_GUILD');
+      return;
+    }
+
+    if (typeof cb === 'function') {
+      cb(null, game.actions.serializable);
+    } else {
+      socket.emit('actions', gId, game.actions.serializable);
+    }
+  };
+  /**
+   * Add an action to a trigger in a guild.
+   *
+   * @public
+   * @type {HGWeb~SocketFunction}
+   * @param {object} userData The current user's session data.
+   * @param {socketIo~Socket} socket The socket connection to reply on.
+   * @param {number|string} gId The guild id to look at.
+   * @param {string} trigger The name of the trigger.
+   * @param {string} action The name of the action.
+   * @param {Array.<*>} args Optional arguments to pass for the action creation.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete, or has failed.
+   */
+  this.insertAction = function insertAction(
+      userData, socket, gId, trigger, action, args, cb) {
+    if (!checkPerm(userData, gId, null, 'options')) {
+      if (!checkMyGuild(gId)) return;
+      if (typeof cb === 'function') cb('NO_PERM');
+      replyNoPerm(socket, 'insertAction');
+      return;
+    }
+    hg().getHG().insertAction(gId, trigger, action, args, cb);
+  };
+  /**
+   * Remove an action from a trigger in a guild.
+   *
+   * @public
+   * @type {HGWeb~SocketFunction}
+   * @param {object} userData The current user's session data.
+   * @param {socketIo~Socket} socket The socket connection to reply on.
+   * @param {number|string} gId The guild id to look at.
+   * @param {string} trigger The name of the trigger.
+   * @param {number} index The index of the action to remove.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete, or has failed.
+   */
+  this.removeAction = function removeAction(
+      userData, socket, gId, trigger, index, cb) {
+    if (!checkPerm(userData, gId, null, 'options')) {
+      if (!checkMyGuild(gId)) return;
+      if (typeof cb === 'function') cb('NO_PERM');
+      replyNoPerm(socket, 'removeAction');
+      return;
+    }
+    hg().getHG().removeAction(gId, trigger, index, cb);
   };
   /**
    * Exclude a member from the Games.

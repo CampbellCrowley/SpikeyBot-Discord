@@ -610,7 +610,7 @@ class HungryGames {
           game.actions.insert(trigger, new HungryGames.Action[action](...args));
       if (res) {
         this._parent._fire('actionInsert', gId, trigger);
-        cb();
+        cb(null);
         return;
       } else {
         cb('Bad trigger.');
