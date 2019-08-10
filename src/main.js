@@ -1767,31 +1767,8 @@ function Main() {
         emojiText && emojiText.map((el) => el.match(/<a?:\w+:(\d+)>/)[1]) || [];
     let emojis = [];
 
-    if (self.client.shard && emojiIds.length > 0) {
-      const toSend = JSON.stringify(emojiIds) +
-          '.map((el)=>this.emojis.get(el))' +
-          '.filter((el)=>el)' +
-          '.map((el)=>{el.guildName=el.guild.name;return JSON.stringify(el);})';
-      self.client.shard.broadcastEval(toSend)
-          .then((res) => {
-            res.forEach((el) => {
-              if (!el) return;
-              el.forEach((emoji) => emojis.push(JSON.parse(emoji)));
-            });
-            finalSend();
-          })
-          .catch((err) => {
-            self.error('Failed to fetch emojis from shards.');
-            console.error(err);
-            self.common.reply(msg, 'Oops! Something inside me is broken.');
-          });
-    } else {
-      emojis = emojiIds.map((el) => self.client.emojis.get(el));
-      finalSend();
-    }
-
     const finalSend = function() {
-      const total = emojiText.length + unicodeList.length;
+      const total = emojiIds.length + unicodeList.length;
       if (total <= 0) {
         self.common.reply(
             msg, 'No emojis specified',
@@ -1860,6 +1837,29 @@ function Main() {
             unicodeList.join('\n') + '\n' + emojiList.join('\n'));
       }
     };
+
+    if (self.client.shard && emojiIds.length > 0) {
+      const toSend = JSON.stringify(emojiIds) +
+          '.map((el)=>this.emojis.get(el))' +
+          '.filter((el)=>el)' +
+          '.map((el)=>{el.guildName=el.guild.name;return JSON.stringify(el);})';
+      self.client.shard.broadcastEval(toSend)
+          .then((res) => {
+            res.forEach((el) => {
+              if (!el) return;
+              el.forEach((emoji) => emojis.push(JSON.parse(emoji)));
+            });
+            finalSend();
+          })
+          .catch((err) => {
+            self.error('Failed to fetch emojis from shards.');
+            console.error(err);
+            self.common.reply(msg, 'Oops! Something inside me is broken.');
+          });
+    } else {
+      emojis = emojiIds.map((el) => self.client.emojis.get(el));
+      finalSend();
+    }
   }
   /**
    * Send the user a PM with a greeting introducing who the bot is.
