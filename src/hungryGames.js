@@ -1443,10 +1443,10 @@ function HG() {
      */
     function loadingComplete() {
       self.client.setTimeout(() => {
+        self._fire('gameStarted', id);
+        HungryGames.ActionManager.gameStart(self.getHG(), game);
         if (hg.getGame(id).autoPlay && !hg.getGame(id).currentGame.isPaused) {
           nextDay(msg, id);
-        } else {
-          self._fire('gameStarted', id);
         }
       });
       if (game) game.loading = false;
@@ -1882,6 +1882,12 @@ function HG() {
     if (!game || !game.currentGame.inProgress) {
       if (!silent && msg) {
         self.common.reply(msg, 'There isn\'t a game in progress.');
+      }
+    } else if (
+      game.loading || (game.currentGame && game.currentGame.day.state == 1)) {
+      if (!silent && msg) {
+        self.common.reply(
+            msg, 'Game is currently loading. Please wait, then try again.');
       }
     } else {
       game.end();

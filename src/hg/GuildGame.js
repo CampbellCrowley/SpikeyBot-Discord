@@ -563,9 +563,11 @@ class GuildGame {
    * @public
    * @static
    * @param {object} data GuildGame like object.
+   * @param {external:Discord~Client} client Discord client reference for
+   * creating {@link HungryGames~ActionStore}.
    * @returns {HungryGames~GuildGame} Created GuildGame.
    */
-  static from(data) {
+  static from(data, client) {
     const game = new GuildGame(
         data.bot, data.id, data.options, data.name, data.includedUsers,
         data.excludedUsers, data.includedNPCs, data.excludedNPCs);
@@ -608,7 +610,9 @@ class GuildGame {
     game.outputChannel = data.outputChannel || null;
     game.statGroup = data.statGroup || null;
     if (data.currentGame) game.currentGame = Game.from(data.currentGame);
-    if (data.actions) game.actions = ActionStore.from(data.actions);
+    if (data.actions) {
+      game.actions = ActionStore.from(client, game.id, data.actions);
+    }
     return game;
   }
   /**

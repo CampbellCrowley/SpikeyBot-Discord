@@ -1189,7 +1189,7 @@ function HGWeb() {
    * @param {number|string} gId The guild id to look at.
    * @param {string} trigger The name of the trigger.
    * @param {string} action The name of the action.
-   * @param {Array.<*>} args Optional arguments to pass for the action creation.
+   * @param {object} args Optional arguments to pass for the action creation.
    * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
    * is complete, or has failed.
    */

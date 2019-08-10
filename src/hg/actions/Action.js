@@ -129,11 +129,14 @@ class Action {
    * {@link HungryGames~Action~actionList}.
    * @public
    * @static
+   * @param {external:Discord~Client} client Client reference for obtaining
+   * discord object references.
+   * @param {string} id The Guild ID this action is for.
    * @param {object} obj The object data from save file.
    * @returns {?Action} The created action, or null if failed to find the
    * action.
    */
-  static from(obj) {
+  static from(client, id, obj) {
     if (typeof obj.className !== 'string' ||
         obj.className.length === 0) {
       console.error(obj.className, 'is not an Action name');
@@ -142,7 +145,11 @@ class Action {
     const action = Action[obj.className];
     let out = null;
     if (action) {
-      out = action.create(obj.data);
+      out = action.create(client, id, obj.data);
+      if (!out) {
+        console.error('Unable to create', obj.className, id, obj);
+        return null;
+      }
       if (typeof obj.delay === 'number') {
         out.delay = obj.delay;
       }
@@ -166,9 +173,21 @@ class Action {
 Action.actionList = [
   {path: './MemberAction.js'},
   {path: './ChannelAction.js'},
-  {path: './GiveRoleAction.js', type: 'member', args: ['role']},
-  {path: './TakeRoleAction.js', type: 'member', args: ['role']},
-  {path: './SendMessageAction.js', type: 'channel', args: ['text']},
+  {
+    path: './GiveRoleAction.js',
+    type: 'member',
+    args: [{name: 'role', type: 'role'}],
+  },
+  {
+    path: './TakeRoleAction.js',
+    type: 'member',
+    args: [{name: 'role', type: 'role'}],
+  },
+  {
+    path: './SendMessageAction.js',
+    type: 'channel',
+    args: [{name: 'message', type: 'text'}],
+  },
   {path: './SendDayStartMessageAction.js', type: 'channel'},
   {path: './SendDayEndMessageAction.js', type: 'channel'},
   {path: './SendPlayerRankMessageAction.js', type: 'channel'},

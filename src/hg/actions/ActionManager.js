@@ -195,7 +195,7 @@ class ActionManager {
 
     list.forEach((el) => {
       if (el instanceof MemberAction) {
-        game.includedUsers.forEach((player) => {
+        game.currentGame.includedUsers.forEach((player) => {
           if (player.isNPC) return;
           const member = guild.members.get(player.id);
           if (!member) return;

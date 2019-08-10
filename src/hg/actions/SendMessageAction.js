@@ -15,8 +15,29 @@ class SendMessageAction extends ChannelAction {
    * @param {string} msg The message to send.
    */
   constructor(msg) {
-    super((hg, game, channel) => channel.send(msg));
-    this._saveData = {msg: msg};
+    super((hg, game, channel) => channel.send(this._message));
+    this._saveData = {message: msg};
+    this._message = msg;
+  }
+  /**
+   * @description Get the current message text.
+   * @public
+   * @returns {string} The current message text.
+   */
+  get message() {
+    return this._message;
+  }
+  /**
+   * @description Update the message with a new value.
+   * @public
+   * @param {string} msg The new message text.
+   * @returns {?string} The new string, or null if failed for some reason.
+   */
+  set message(msg) {
+    if (typeof msg !== 'string' || msg.length === 0) return null;
+    this._message = msg;
+    this._saveData.message = msg;
+    return msg;
   }
   /**
    * @description Create action from save data.
@@ -30,7 +51,7 @@ class SendMessageAction extends ChannelAction {
    * @returns {HungryGames~SendMessageAction} The created action.
    */
   static create(client, id, obj) {
-    return new SendMessageAction(obj.msg);
+    return new SendMessageAction(obj.message);
   }
 }
 

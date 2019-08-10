@@ -239,10 +239,13 @@ class ActionStore {
    * @description Convert a serialized action store back into the object.
    * @public
    * @static
+   * @param {external:Discord~Client} client Client reference for obtaining
+   * discord object references.
+   * @param {string} id The Guild ID this action store is for.
    * @param {object} obj Parsed data from save file.
    * @returns {HungryGames~ActionStore} Parsed object data.
    */
-  static from(obj) {
+  static from(client, id, obj) {
     const Action = require('./Action.js');
 
     const out = new ActionStore();
@@ -253,7 +256,7 @@ class ActionStore {
       out[one[0]] = [];
       for (const two in obj[one[0]]) {
         if (!obj[one[0]][two]) continue;
-        const action = Action.from(obj[one[0]][two]);
+        const action = Action.from(client, id, obj[one[0]][two]);
         if (!action) continue;
         out[one[0]][two] = action;
       }

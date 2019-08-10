@@ -579,12 +579,12 @@ class HungryGames {
    * @param {string} gId The guild ID of the game to modify.
    * @param {string} trigger The name of the trigger to insert the action into.
    * @param {string} action The name of the action to create.
-   * @param {Array.<*>} [args=[]] The optional additional arguments required for
+   * @param {object} [args={}] The optional additional arguments required for
    * the action to be created.
    * @param {Function} [cb] Callback once completed. Single argument is error
    * string if failed, or null if succeeded.
    */
-  insertAction(gId, trigger, action, args = [], cb) {
+  insertAction(gId, trigger, action, args = {}, cb) {
     if (typeof cb !== 'function') cb = function() {};
 
     this.fetchGame(gId, (game) => {
@@ -606,8 +606,13 @@ class HungryGames {
         cb('Unknown trigger.');
         return;
       }
-      const res =
-          game.actions.insert(trigger, new HungryGames.Action[action](...args));
+      const created =
+          HungryGames.Action[action].create(this._parent.client, gId, args);
+      if (!created) {
+        cb('Bad Args');
+        return;
+      }
+      const res = game.actions.insert(trigger, created);
       if (res) {
         this._parent._fire('actionInsert', gId, trigger);
         cb(null);
@@ -732,7 +737,7 @@ class HungryGames {
     const parse = function(game) {
       if (!game.bot) game.bot = self._parent.client.user.id;
       try {
-        game = HungryGames.GuildGame.from(game);
+        game = HungryGames.GuildGame.from(game, self._parent.client);
         game.id = id;
       } catch (err) {
         self._parent.error('Failed to parse game data for guild ' + id);

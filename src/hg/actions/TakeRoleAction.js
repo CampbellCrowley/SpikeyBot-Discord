@@ -16,8 +16,33 @@ class TakeRoleAction extends MemberAction {
    * @param {external:Discord~Role} role The role to take.
    */
   constructor(role) {
-    super((hg, game, member) => member.roles.remove(role, 'HG Automation'));
+    super((hg, game, member) => {
+      member.roles.remove(this._role, 'HG Automation');
+    });
+    this._role = role;
     this._saveData = {role: role.id};
+  }
+  /**
+   * @description Get role ID of current configured role.
+   * @public
+   * @returns {string} The current role ID.
+   */
+  get role() {
+    return this._role.id;
+  }
+  /**
+   * @description Update the role with a new value.
+   * @public
+   * @param {string} rId The ID of the role to set.
+   * @returns {?external:Discord~GuildRole} Found role, or null if unable to
+   * find role. If unable to find, it will not update the value.
+   */
+  set role(rId) {
+    const newRole = this._role.guild.roles.get(rId);
+    if (!newRole) return null;
+    this._role = newRole;
+    this._saveData.role = newRole.id;
+    return newRole;
   }
   /**
    * @description Create action from save data.
@@ -28,10 +53,13 @@ class TakeRoleAction extends MemberAction {
    * references.
    * @param {string} id Guild ID this action is for.
    * @param {object} obj The parsed data from file.
-   * @returns {HungryGames~TakeRoleAction} The created action.
+   * @returns {?HungryGames~TakeRoleAction} The created action, null if unable
+   * to find the given role.
    */
   static create(client, id, obj) {
-    return new TakeRoleAction(client.guilds.get(id).roles.get(obj.role.id));
+    const role = client.guilds.get(id).roles.get(obj.role);
+    if (!role) return null;
+    return new TakeRoleAction(role);
   }
 }
 
