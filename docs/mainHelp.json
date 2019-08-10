@@ -505,6 +505,18 @@
           ]
         },
         {
+          "command": "emoji",
+          "aliases": "emoji, emote, e, emojis, emotes",
+          "description": "Get information about the specified emoji.",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "e 😄 :thonk:",
+              "result": "The bot will tell you information about all of the emotes you typed. More information is given if you only type one emote."
+            }
+          ]
+        },
+        {
           "command": "pmme",
           "description": "I will introduce myself to you!",
           "aliases": "pmme, dmme",

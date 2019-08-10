@@ -1771,14 +1771,12 @@ function Main() {
           '.map((el)=>this.emojis.get(el))' +
           '.filter((el)=>el)' +
           '.map((el)=>{el.guildName=el.guild.name;return JSON.stringify(el);})';
-      console.log(toSend);
       self.client.shard.broadcastEval(toSend)
           .then((res) => {
             res.forEach((el) => {
               if (!el) return;
               el.forEach((emoji) => emojis.push(JSON.parse(emoji)));
             });
-            console.log(emojis);
             finalSend();
           })
           .catch((err) => {
