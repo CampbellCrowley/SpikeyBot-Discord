@@ -1782,8 +1782,10 @@ function Main() {
             if (!emoji) {
               embed.setDescription(
                   'I do not know anything about that emoji.' +
-                  '\nIt\'s probably not from a server that I am in.');
-              embed.setFooter(`${emojiText[0]} ${emojiIds[0]} ${emoji}`);
+                  '\nIt\'s probably not from a server that I am in.' +
+                  '\nBut here\'s the url: https://cdn.discordapp.com/emojis/' +
+                  emojiIds[0]);
+              embed.setFooter(`${emojiText[0]} ${emojiIds[0]}`);
             } else {
               const toString =
                   `<${emoji.animated?'a':''}:${emoji.name}:${emoji.id||''}>`;
