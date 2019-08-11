@@ -1777,7 +1777,7 @@ function Main() {
         embed.setColor([255, 0, 255]);
         if (total == 1) {
           embed.setTitle('Emoji');
-          if (emojis.length > 0) {
+          if (emojiIds.length > 0) {
             const emoji = emojis[0];
             if (!emoji) {
               embed.setDescription(
@@ -1827,10 +1827,7 @@ function Main() {
         }
         msg.channel.send(self.common.mention(msg), embed).catch(console.error);
       } else {
-        const emojiList = emojis.map((el) => ` ${el.toString()}: $ {
-              el.url
-            }
-            `);
+        const emojiList = emojis.map((el) => `${el.toString()}:${el.url}`);
         self.common.reply(
             msg, 'Emojis',
             unicodeList.join('\n') + '\n' + emojiList.join('\n'));
