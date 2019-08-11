@@ -3460,7 +3460,11 @@ function Main() {
           if (!noReload) {
             self.bot.reloadCommon();
             if (self.client.shard) {
-              self.client.shard.broadcastEval('this.reloadUpdatedMainModules');
+              self.client.shard.broadcastEval(
+                  'this.reloadUpdatedMainModules()', () => {
+                    self.client.shard.broadcastEval(
+                        'this.reloadUpdatedSubModules()');
+                  });
             } else {
               self.client.reloadUpdatedMainModules();
             }
