@@ -1780,10 +1780,12 @@ function Main() {
           if (emojiIds.length > 0) {
             const emoji = emojis[0];
             if (!emoji) {
+              embed.setImage(`https://cdn.discordapp.com/emojis/${emojiIds[0]}`);
+              embed.setURL(`https://cdn.discordapp.com/emojis/${emojiIds[0]}`);
               embed.setDescription(
                   'I do not know anything about that emoji.' +
                   '\nIt\'s probably not from a server that I am in.' +
-                  '\nBut here\'s the url: https://cdn.discordapp.com/emojis/' +
+                  '\n\nBut here\'s the url: https://cdn.discordapp.com/emojis/' +
                   emojiIds[0]);
               embed.setFooter(`${emojiText[0]} ${emojiIds[0]}`);
             } else {
