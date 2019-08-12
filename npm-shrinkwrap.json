@@ -4222,9 +4222,9 @@
       "integrity": "sha512-VZnu90BnJYAcRsOVLoMIKz+SIEyKQ/sGf5e3GUrWWzFnNIoQBb2MY7ImDvugU33hPUyb8/glxUb0iPr5ENNtKg=="
     },
     "youtube-dl": {
-      "version": "2.0.0",
-      "resolved": "https://registry.npmjs.org/youtube-dl/-/youtube-dl-2.0.0.tgz",
-      "integrity": "sha512-1R5bcnBMVqQIk85wqTJ8pxPq5UbzxZXJy4KSaf3N1dedZG4uAzq5zuoiHcNcsGle5JtoHNpTWDBjTDhHO0SipQ==",
+      "version": "2.0.1",
+      "resolved": "https://registry.npmjs.org/youtube-dl/-/youtube-dl-2.0.1.tgz",
+      "integrity": "sha512-6CS6954i5Su8W9frP4RqJ/De1Kg4ralp4yAeUy1KJRUzrtrvyCnQytlGMsXp/CGslOC/KdBR4F9jWlq4PUhtFw==",
       "requires": {
         "hh-mm-ss": "~1.2.0",
         "mkdirp": "~0.5.1",
