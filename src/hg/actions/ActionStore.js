@@ -180,6 +180,20 @@ class ActionStore {
      * @default
      */
     this.gamePlayerWounded = [];
+    /**
+     * @description Fired for all player who won the game.
+     * @public
+     * @type {HungryGames~MemberAction[]}
+     * @default
+     */
+    this.gamePlayerWin = [];
+    /**
+     * @description Fired for all player who lost the game.
+     * @public
+     * @type {HungryGames~MemberAction[]}
+     * @default
+     */
+    this.gamePlayerLose = [];
   }
 
   /**

@@ -1444,7 +1444,7 @@ function HG() {
     function loadingComplete() {
       self.client.setTimeout(() => {
         self._fire('gameStarted', id);
-        HungryGames.ActionManager.gameStart(self.getHG(), game);
+        HungryGames.ActionManager.gameStart(hg, game);
         if (hg.getGame(id).autoPlay && !hg.getGame(id).currentGame.isPaused) {
           nextDay(msg, id);
         }
@@ -1891,7 +1891,7 @@ function HG() {
       }
     } else {
       game.end();
-      HungryGames.ActionManager.gameAbort(hg.getHG(), game);
+      HungryGames.ActionManager.gameAbort(hg, game);
       if (!silent && msg) self.common.reply(msg, 'The game has ended!');
     }
   }

@@ -560,6 +560,7 @@ class HungryGames {
       return 'Resetting ALL NPC data!';
     } else if (command == 'actions') {
       game.actions = new HungryGames.ActionStore();
+      this._parent._fire('actionUpdate', id, null);
       return 'Resetting ALL actions!';
     } else {
       return 'Please specify what data to reset.\nall {deletes all data ' +

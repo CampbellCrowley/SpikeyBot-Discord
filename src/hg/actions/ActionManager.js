@@ -179,6 +179,31 @@ class ActionManager {
     const dead = game.actions.gamePlayerDead;
     const wounded = game.actions.gamePlayerWounded;
     ActionManager._endTrigger(hg, game, list, alive, dead, wounded);
+
+    let winList = [];
+    if (game.options.teamSize > 0 &&
+        game.options.teammatesCollaborate === 'always') {
+      const team = game.currentGame.teams.find((team) => team.numAlive > 0);
+      if (team) winList = team.players;
+    } else {
+      const player = game.currentGame.includedUsers.find((el) => el.living);
+      if (player) winList.push(player.id);
+    }
+
+    const win = game.actions.gamePlayerWin;
+    const lose = game.actions.gamePlayerLose;
+
+    const guild = hg._parent.client.guilds.get(game.id);
+    game.currentGame.includedUsers.forEach((player) => {
+      if (player.isNPC) return;
+      const member = guild.members.get(player.id);
+      if (!member) return;
+      if (winList.includes(player.id)) {
+        win.forEach((el) => el.trigger(hg, game, member));
+      } else {
+        lose.forEach((el) => el.trigger(hg, game, member));
+      }
+    });
   }
 
   /**

@@ -321,6 +321,16 @@ Action.triggerMeta = {
     types: ['member', 'channel'],
     description: 'After game ended, for all players that are wounded.',
   },
+  gamePlayerWin: {
+    order: 52,
+    types: ['member'],
+    description: 'After game ended, for all players that won.',
+  },
+  gamePlayerLose: {
+    order: 52,
+    types: ['member'],
+    description: 'After game ended, for all players that lost.',
+  },
 };
 
 module.exports = Action;
