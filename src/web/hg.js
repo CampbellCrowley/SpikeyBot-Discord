@@ -217,9 +217,12 @@ function HGWeb() {
       socket.emit('defaultEvents', hg().getDefaultEvents());
     });
     socket.on('fetchActionList', () => {
-      socket.emit(
-          'actionList', HungryGames.Action.actionList,
-          HungryGames.Action.triggerMeta);
+      const Action = HungryGames.Action;
+      if (!Action) {
+        socket.emit('actionList', null, null);
+      } else {
+        socket.emit('actionList', Action.actionList, Action.triggerMeta);
+      }
     });
     // End Unrestricted Access \\
 

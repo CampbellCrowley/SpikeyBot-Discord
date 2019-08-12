@@ -1891,6 +1891,7 @@ function HG() {
       }
     } else {
       game.end();
+      HungryGames.ActionManager.gameAbort(hg.getHG(), game);
       if (!silent && msg) self.common.reply(msg, 'The game has ended!');
     }
   }

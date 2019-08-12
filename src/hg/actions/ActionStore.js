@@ -153,6 +153,13 @@ class ActionStore {
       new Action.SendTeamRankMessageAction(),
     ];
     /**
+     * @description Fired after the game has aborted.
+     * @public
+     * @type {HungryGames~Action[]}
+     * @default
+     */
+    this.gameAbort = [];
+    /**
      * @description Fired for all player who end the game alive.
      * @public
      * @type {HungryGames~MemberAction[]}

@@ -301,6 +301,11 @@ Action.triggerMeta = {
     types: ['member', 'channel'],
     description: 'After game has ended.',
   },
+  gameAbort: {
+    order: 50,
+    types: ['member', 'channel'],
+    description: 'If game is ended early with command.',
+  },
   gamePlayerDead: {
     order: 51,
     types: ['member', 'channel'],

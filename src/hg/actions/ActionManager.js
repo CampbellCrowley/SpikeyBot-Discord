@@ -182,6 +182,17 @@ class ActionManager {
   }
 
   /**
+   * @description Call when game has been aborted.
+   * @public
+   * @static
+   * @param {HungryGames} hg HG context events are firing from.
+   * @param {HungryGames~GuildGame} game Game context events are firing in.
+   */
+  static gameAbort(hg, game) {
+    ActionManager._triggerAll(hg, game, game.actions.gameAbort);
+  }
+
+  /**
    * @description Trigger all given actions.
    * @private
    * @static
