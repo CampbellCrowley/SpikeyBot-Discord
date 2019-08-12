@@ -2,6 +2,8 @@
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const fs = require('fs');
 const mkdirp = require('mkdirp');
+const MessageMaker = require('./lib/MessageMaker.js');
+
 require('./subModule.js')
     .extend(CmdScheduling);  // Extends the SubModule class.
 
@@ -1037,44 +1039,13 @@ function CmdScheduling() {
    * @param {string} gId The id of the guild this message is in.
    * @param {string} cId The id of the channel this message was 'sent' in.
    * @param {string} msg The message content.
-   * @returns {
-   *   {
-   *     fabricated: boolean,
-   *     author: external:Discord~User,
-   *     member: external:Discord~GuildMember,
-   *     guild: external:Discord~Guild,
-   *     channel: external:Discord~GuildChannel,
-   *     text: string,
-   *     content: string,
-   *     prefix: string,
-   *     mentions: {
-   *       users: external:Discord~UserStore,
-   *       members: external:Discord~GuildMemberStore,
-   *       roles: external:Discord~RoleStore
-   *     }
-   *   }
-   * } The created message-like object.
+   * @returns {?MessageMaker} The created message-like object, or null if
+   * invalid channel.
    */
   function makeMessage(uId, gId, cId, msg) {
     if (!cId) return null;
-    const g = self.client.guilds.get(gId);
-    if (!g) return null;
-    const message = {};
-    message.fabricated = true;
-    message.member = g.members.get(uId);
-    message.author = g.members.get(uId).user;
-    message.guild = g;
-    message.client = self.client;
-    message.channel = self.client.channels.get(cId);
-    message.text = msg;
-    message.content = msg;
-    message.prefix = self.bot.getPrefix(gId);
-    message.mentions = {
-      users: new self.Discord.UserStore(self.client),
-      members: new self.Discord.GuildMemberStore(g),
-      roles: new self.Discord.RoleStore(g),
-    };
-    return message;
+    const message = new MessageMaker(self, uId, gId, cId, msg);
+    return message.guild ? message : null;
   }
 }
 module.exports = new CmdScheduling();

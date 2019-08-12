@@ -7,6 +7,7 @@ const https = require('https');
 const crypto = require('crypto');
 const mkdirp = require('mkdirp'); // mkdir -p
 const FuzzySearch = require('fuzzy-search');
+const MessageMaker = require('./lib/MessageMaker.js');
 require('./subModule.js').extend(HG);  // Extends the SubModule class.
 
 /**
@@ -1545,39 +1546,11 @@ function HG() {
    * @param {string} gId The id of the guild this message is in.
    * @param {?string} cId The id of the channel this message was 'sent' in.
    * @param {?string} msg The message content.
-   * @returns {
-   *   {
-   *     author: Discord~Member,
-   *     guild: Discord~Guild,
-   *     channel: Discord~GuildChannel
-   *   }
-   * } The created message-like object.
+   * @returns {MessageMaker} The created message-like object.
    */
   function makeMessage(uId, gId, cId, msg) {
-    const g = self.client.guilds.get(gId);
-    if (!g) return null;
     if (!cId && hg.getGame(gId)) cId = hg.getGame(gId).channel;
-    return {
-      author: self.client.users.get(uId),
-      client: self.client,
-      member: g.members.get(uId),
-      guild: g,
-      channel: g.channels.get(cId),
-      text: msg,
-      content: msg,
-      prefix: self.bot.getPrefix(gId),
-      softMentions: {
-        members: new self.Discord.Collection(),
-        users: new self.Discord.Collection(),
-        roles: new self.Discord.Collection(),
-      },
-      mentions: {
-        channels: new self.Discord.Collection(),
-        members: new self.Discord.Collection(),
-        roles: new self.Discord.Collection(),
-        users: new self.Discord.Collection(),
-      },
-    };
+    return new MessageMaker(self, uId, gId, cId, msg);
   }
   /**
    * Stop autoplaying.

@@ -3,6 +3,7 @@
 const http = require('http');
 const auth = require('../../auth.js');
 const socketIo = require('socket.io');
+const MessageMaker = require('../lib/MessageMaker.js');
 
 require('../subModule.js').extend(WebSettings);  // Extends the SubModule class.
 
@@ -636,31 +637,11 @@ function WebSettings() {
    * @param {string} gId The id of the guild this message is in.
    * @param {?string} cId The id of the channel this message was 'sent' in.
    * @param {?string} msg The message content.
-   * @returns {
-   *   {
-   *     author: Discord~User,
-   *     member: Discord~GuildMember,
-   *     guild: Discord~Guild,
-   *     channel: Discord~GuildChannel,
-   *     text: string,
-   *     content: string,
-   *     prefix: string
-   *   }
-   * } The created message-like object.
+   * @returns {MessageMaker} The created message-like object.
    */
   function makeMessage(uId, gId, cId, msg) {
-    const g = self.client.guilds.get(gId);
-    if (!g) return null;
-    const prefix = self.bot.getPrefix(gId);
-    return {
-      member: g.members.get(uId),
-      author: self.client.users.get(uId),
-      guild: g,
-      channel: g.channels.get(cId),
-      text: msg,
-      content: `${prefix}${msg}`,
-      prefix: prefix,
-    };
+    const message = new MessageMaker(self, uId, gId, cId, msg);
+    return message.guild ? message : null;
   }
 
   /**

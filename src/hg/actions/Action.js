@@ -55,11 +55,11 @@ class Action {
     /**
      * @description Data injected into save file that the `create` function uses
      * to restore data. Must be serializable.
-     * @type {undefined|object}
+     * @type {object}
      * @private
      * @default
      */
-    this._saveData = undefined;
+    this._saveData = {};
   }
 
   /**
@@ -187,6 +187,11 @@ Action.actionList = [
     path: './SendMessageAction.js',
     type: 'channel',
     args: [{name: 'message', type: 'text'}],
+  },
+  {
+    path: './RunCommandAction.js',
+    type: 'channel',
+    args: [{name: 'command', type: 'text'}, {name: 'author', type: 'member'}],
   },
   {path: './SendDayStartMessageAction.js', type: 'channel'},
   {path: './SendDayEndMessageAction.js', type: 'channel'},

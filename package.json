@@ -1,6 +1,6 @@
 {
   "name": "spikeybot-discord",
-  "version": "1.12.0",
+  "version": "1.12.1",
   "description": "SpikeyBot",
   "homepage": "https://www.spikeybot.com/",
   "bugs": {
@@ -19,7 +19,7 @@
     "dateformat": "^3.0.3",
     "dialogflow": "^0.10.3",
     "diff": "^4.0.1",
-    "discord.js": "github:discordjs/discord.js#d14db521585f2b6b1a6c50d3a9acecc73bea25a3",
+    "discord.js": "github:discordjs/discord.js#f79f0243438a89c4d8a910461800b1adff2fe6e5",
     "erlpack": "github:discordapp/erlpack#674ebfd3439ba4b7ce616709821d27630f7cdc61",
     "fuzzy-search": "^3.0.1",
     "jimp": "^0.6.4",
