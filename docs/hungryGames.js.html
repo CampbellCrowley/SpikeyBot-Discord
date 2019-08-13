@@ -347,40 +347,64 @@ function HG() {
   /**
    * All weapons and their respective actions. Parsed from file.
    *
-   * @see {@link HungryGames~weaponsFile}
+   * @see {@link HungryGames~eventFileList}
    *
    * @private
-   * @type {object.&lt;HungryGames~WeaponEvent>}
+   * @type {HungryGames~WeaponEvent[]}
    * @default
    */
-  let weapons = {};
+  const weapons = [];
+  /**
+   * @description The file where the default event IDs are listed.
+   * @private
+   * @type {string}
+   * @default
+   * @constant
+   */
+  const eventFileList = './save/hgDefaultEvents.json';
+  /**
+   * @description Directory where all event data is stored.
+   * @private
+   * @type {string}
+   * @default
+   * @constant
+   */
+  const eventDir = './save/hg/events/';
+  /**
+   * @description Parsed data from {@link HG~eventFileList}.
+   * @private
+   * @type {object}
+   * @default
+   * @constant
+   */
+  let defaultEventIds = {};
   /**
    * Default parsed bloodbath events.
    *
-   * @see {@link HungryGames~eventFile}
+   * @see {@link HungryGames~eventFileList}
    *
    * @private
    * @type {HungryGames~Event[]}
    */
-  let defaultBloodbathEvents = [];
+  const defaultBloodbathEvents = [];
   /**
    * Default parsed player events.
    *
-   * @see {@link HungryGames~eventFile}
+   * @see {@link HungryGames~eventFileList}
    *
    * @private
    * @type {HungryGames~Event[]}
    */
-  let defaultPlayerEvents = [];
+  const defaultPlayerEvents = [];
   /**
    * Default parsed arena events.
    *
-   * @see {@link HungryGames~eventFile}
+   * @see {@link HungryGames~eventFileList}
    *
    * @private
    * @type {HungryGames~ArenaEvent[]}
    */
-  let defaultArenaEvents = [];
+  const defaultArenaEvents = [];
   /**
    * Messages that the user sent with a new event to add, for storage while
    * getting the rest of the information about the event.
@@ -422,25 +446,25 @@ function HG() {
    * @private
    */
   function updateEvents() {
-    fs.readFile(eventFile, function(err, data) {
-      if (err) return;
+    fs.readFile(eventFileList, (err, data) => {
+      if (err) {
+        self.error('Failed to read default event list.');
+        console.error(err);
+        return;
+      }
       try {
         const parsed = JSON.parse(data);
-        if (parsed) {
-          defaultBloodbathEvents = self.common.deepFreeze(parsed['bloodbath']);
-          defaultPlayerEvents = self.common.deepFreeze(parsed['player']);
-          defaultArenaEvents = self.common.deepFreeze(parsed['arena']);
-          hg.setDefaultBloodbathEvents(defaultBloodbathEvents);
-          hg.setDefaultPlayerEvents(defaultPlayerEvents);
-          hg.setDefaultArenaEvents(defaultArenaEvents);
-        }
+        if (!parsed) return;
+        defaultEventIds = parsed;
+        loadDefaultsFromIds(parsed);
       } catch (err) {
+        self.error(eventFileList + ' Parse failed.');
         console.log(err);
       }
     });
   }
   updateEvents();
-  fs.watchFile(eventFile, {persistent: false}, function(curr, prev) {
+  fs.watchFile(eventFile, {persistent: false}, (curr, prev) => {
     if (curr.mtime == prev.mtime) return;
     if (self.initialized) {
       self.debug('Re-reading default events from file');
@@ -449,6 +473,103 @@ function HG() {
     }
     updateEvents();
   });
+
+  /**
+   * @description Load all default events from file, described by the loaded
+   * list from file.
+   * @private
+   * @param {{
+   *   bloodbath: string[],
+   *   player: string[],
+   *   arena: string[],
+   *   battles: string[],
+   *   weapons: string[]
+   * }} obj List of IDs to load.
+   */
+  function loadDefaultsFromIds(obj) {
+    const keys = Object.keys(obj);
+    const numDone = {};
+    const numTotal = {};
+    const checkDone = function(type) {
+      if (!numDone[type]) numDone[type] = 0;
+      numDone[type]++;
+      if (numDone[type] &lt; numTotal[type]) return;
+
+      switch (type) {
+        case 'bloodbath':
+          hg.setDefaultBloodbathEvents(defaultBloodbathEvents);
+          break;
+        case 'player':
+          hg.setDefaultPlayerEvents(defaultPlayerEvents);
+          break;
+        case 'arena':
+          hg.setDefaultArenaEvents(defaultArenaEvents);
+          break;
+        case 'weapon':
+          hg.setDefaultWeapons(weapons);
+          break;
+        case 'battle':
+          hg.setDefaultBattles(battles);
+          break;
+      }
+    };
+    keys.forEach((type) => {
+      let out;
+      switch (type) {
+        case 'bloodbath':
+          out = defaultBloodbathEvents;
+          break;
+        case 'player':
+          out = defaultPlayerEvents;
+          break;
+        case 'arena':
+          out = defaultArenaEvents;
+          break;
+        case 'weapon':
+          out = weapons;
+          break;
+        case 'battle':
+          // TODO: Battle object.
+          break;
+        default:
+          self.warn('Unkonwn type of event: ' + type);
+          return;
+      }
+      for (let i = out.length - 1; i >= 0; i--) {
+        if (!obj[type].find((el) => el === out[i].id)) out.splice(i, 1);
+      }
+      if (!numTotal[type]) numTotal[type] = 0;
+      numTotal[type] += obj[type].length;
+      obj[type].forEach((el) => {
+        if (out.find((evt) => evt.id === el)) {
+          checkDone();
+          return;
+        }
+        fs.readFile(`${eventDir}${el}.json`, (err, data) => {
+          if (err) {
+            self.error(`Failed to load: ${eventDir}${el}.json`);
+            console.error(err);
+            checkDone(type);
+            return;
+          }
+          try {
+            const parsed = JSON.parse(data);
+            if (!parsed) {
+              self.error(`Failed to parse: ${eventDir}${el}.json (NO DATA)`);
+            } else {
+              out.push(parsed);
+            }
+            checkDone(type);
+          } catch (err) {
+            self.error(`Failed to parse: ${eventDir}${el}.json`);
+            console.error(err);
+            checkDone(type);
+            return;
+          }
+        });
+      });
+    });
+  }
 
   /**
    * @description Parse all battles from file.
@@ -478,35 +599,6 @@ function HG() {
       console.log('HG: Re-reading battles from file');
     }
     updateBattles();
-  });
-  /**
-   * @description Parse all weapons events from file.
-   *
-   * @private
-   */
-  function updateWeapons() {
-    fs.readFile(weaponsFile, function(err, data) {
-      if (err) return;
-      try {
-        const parsed = JSON.parse(data);
-        if (parsed) {
-          weapons = self.common.deepFreeze(parsed);
-          hg.setDefaultWeapons(weapons);
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    });
-  }
-  updateWeapons();
-  fs.watchFile(weaponsFile, {persistent: false}, function(curr, prev) {
-    if (curr.mtime == prev.mtime) return;
-    if (self.initialized) {
-      self.debug('Re-reading default weapons from file');
-    } else {
-      console.log('HG: Re-reading default weapons from file');
-    }
-    updateWeapons();
   });
 
   /**
@@ -597,8 +689,6 @@ function HG() {
       new self.command.SingleCommand(
           ['reset', 'clear'], mkCmd(resetGame), cmdOpts),
       new self.command.SingleCommand(['debug'], mkCmd(showGameInfo), cmdOpts),
-      new self.command.SingleCommand(
-          ['debugevents'], mkCmd(showGameEvents), cmdOpts),
       new self.command.SingleCommand(
           ['exclude', 'remove', 'exc', 'ex'], mkCmd(excludeUser), cmdOpts),
       new self.command.SingleCommand(
@@ -1117,10 +1207,11 @@ function HG() {
    *
    * @public
    * @returns {{
-   *   bloodbath: object,
-   *   player: object,
-   *   arena: object,
-   *   weapon: object
+   *   bloodbath: HungryGames~Event[],
+   *   player: HungryGames~Event[],
+   *   arena: HungryGames~ArenaEvent[],
+   *   weapon: HungryGames~WeaponEvent[],
+   *   battle: object
    * }} Object storing default events.
    */
   this.getDefaultEvents = function() {
@@ -1129,6 +1220,7 @@ function HG() {
       player: defaultPlayerEvents,
       weapon: weapons,
       arena: defaultArenaEvents,
+      battle: battles,
     };
   };
   /**
@@ -1403,79 +1495,6 @@ function HG() {
     } else {
       self.common.reply(msg, 'No game created', finalId);
     }
-  }
-  /**
-   * Send all event data about the default events to the chat.
-   *
-   * @private
-   * @type {HungryGames~hgCommandHandler}
-   * @param {Discord~Message} msg The message that lead to this being called.
-   * @param {string} id The id of the guild this was triggered from.
-   */
-  function showGameEvents(msg, id) {
-    let events = defaultBloodbathEvents;
-    const game = hg.getGame(id);
-    if (game &amp;&amp; game.customEvents.bloodbath) {
-      events = events.concat(game.customEvents.bloodbath);
-    }
-    let file = new self.Discord.MessageAttachment();
-    file.setFile(Buffer.from(JSON.stringify(events, null, 2)));
-    file.setName('BloodbathEvents.json');
-    fetchStats(events);
-    msg.channel.send(
-        'Bloodbath Events (' + events.length + ') ' +
-            Math.round(events.numKill / events.length * 1000) / 10 +
-            '% kill, ' +
-            Math.round(events.numWound / events.length * 1000) / 10 +
-            '% wound, ' +
-            Math.round(events.numThrive / events.length * 1000) / 10 +
-            '% heal.',
-        file);
-
-    events = defaultPlayerEvents;
-    if (game &amp;&amp; game.customEvents.player) {
-      events = events.concat(game.customEvents.player);
-    }
-    file = new self.Discord.MessageAttachment();
-    file.setFile(Buffer.from(JSON.stringify(events, null, 2)));
-    file.setName('PlayerEvents.json');
-    fetchStats(events);
-    msg.channel.send(
-        'Player Events (' + events.length + ') ' +
-            Math.round(events.numKill / events.length * 1000) / 10 +
-            '% kill, ' +
-            Math.round(events.numWound / events.length * 1000) / 10 +
-            '% wound, ' +
-            Math.round(events.numThrive / events.length * 1000) / 10 +
-            '% heal.',
-        file);
-
-    events = Object.assign({}, weapons);
-    if (game &amp;&amp; game.customEvents.weapon) {
-      const keys = Object.keys(game.customEvents.weapon);
-      for (let i = 0; i &lt; keys.length; i++) {
-        if (events[keys[i]]) {
-          events[keys[i]].outcomes = events[keys[i]].outcomes.concat(
-              game.customEvents.weapon[keys[i]].outcomes);
-        } else {
-          events[keys[i]] = game.customEvents.weapon[keys[i]];
-        }
-      }
-    }
-    file = new self.Discord.MessageAttachment();
-    file.setFile(Buffer.from(JSON.stringify(events, null, 2)));
-    file.setName('WeaponEvents.json');
-    msg.channel.send(
-        'Weapon Events (' + Object.keys(events).length + ' weapons)', file);
-
-    events = defaultArenaEvents;
-    if (game &amp;&amp; game.customEvents.arena) {
-      events = events.concat(game.customEvents.arena);
-    }
-    file = new self.Discord.MessageAttachment();
-    file.setFile(Buffer.from(JSON.stringify(events, null, 2)));
-    file.setName('ArenaEvents.json');
-    msg.channel.send('Arena Events (' + events.length + ')', file);
   }
 
   // Time Control //
@@ -3930,16 +3949,10 @@ function HG() {
     let allEvents;
     switch (type) {
       case 'bloodbath':
-        allEvents = defaultBloodbathEvents.concat(
-            hg.getGame(id).customEvents.bloodbath);
-        break;
       case 'player':
-        allEvents =
-            defaultPlayerEvents.concat(hg.getGame(id).customEvents.player);
-        break;
       case 'arena':
         allEvents =
-            defaultArenaEvents.concat(hg.getGame(id).customEvents.arena);
+            defaultEventIds[type].concat(hg.getGame(id).customEventIds[type]);
         break;
       case 'weapon': {
         allEvents = Object.assign({}, weapons);
@@ -6447,7 +6460,7 @@ module.exports = new HG();
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a>
 	
-		on Monday, August 12, 2019 3:37 PM (-07:00)
+		on Monday, August 12, 2019 10:54 PM (-07:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

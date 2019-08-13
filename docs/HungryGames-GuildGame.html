@@ -109,7 +109,7 @@
         
 <hr>
 <dt>
-    <h4 class="name" id="GuildGame"><span class="type-signature"></span>new GuildGame(bot, id, options [, name] [, includedUsers] [, excludedUsers] [, includedNPCs] [, excludedNPCs] [, customEvents] [, disabledEvents])</h4>
+    <h4 class="name" id="GuildGame"><span class="type-signature"></span>new GuildGame(bot, id, options [, name] [, includedUsers] [, excludedUsers] [, includedNPCs] [, excludedNPCs], customEventIds, disabledEventIds [, customEvents] [, disabledEvents])</h4>
     
     
 </dt>
@@ -427,6 +427,71 @@ from the game.</td>
 
         <tr>
             
+                <td class="name"><code>customEventIds</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Array of IDs of custom events to load.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>disabledEventIds</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;string></span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Array of IDs of events to be disabled
+from game.</td>
+        </tr>
+
+    
+
+        <tr>
+            
                 <td class="name"><code>customEvents</code></td>
             
 
@@ -454,7 +519,7 @@ from the game.</td>
 
             
 
-            <td class="description last">All custom events for the guild.</td>
+            <td class="description last">Legacy storage for custom events.</td>
         </tr>
 
     
@@ -488,7 +553,7 @@ from the game.</td>
 
             
 
-            <td class="description last">All disabled events for the guild.</td>
+            <td class="description last">Legacy storage for disabled events.</td>
         </tr>
 
     
@@ -533,7 +598,7 @@ from the game.</td>
 		<ul class="dummy">
 			<li>
 				<a href="hg_GuildGame.js.html">hg/GuildGame.js</a>,
-				 <a href="hg_GuildGame.js.html#sunlight-1-line-56">line 56</a>
+				 <a href="hg_GuildGame.js.html#sunlight-1-line-69">line 69</a>
 			</li>
 		</ul>
 	</dd>
@@ -643,7 +708,7 @@ cancelling if user ends the game between days.
 		<ul class="dummy">
 			<li>
 				<a href="hg_GuildGame.js.html">hg/GuildGame.js</a>,
-				 <a href="hg_GuildGame.js.html#sunlight-1-line-310">line 310</a>
+				 <a href="hg_GuildGame.js.html#sunlight-1-line-363">line 363</a>
 			</li>
 		</ul>
 	</dd>
@@ -731,7 +796,7 @@ cancelling if user ends the game between days.
 		<ul class="dummy">
 			<li>
 				<a href="hg_GuildGame.js.html">hg/GuildGame.js</a>,
-				 <a href="hg_GuildGame.js.html#sunlight-1-line-148">line 148</a>
+				 <a href="hg_GuildGame.js.html#sunlight-1-line-162">line 162</a>
 			</li>
 		</ul>
 	</dd>
@@ -812,7 +877,7 @@ cancelling if user ends the game between days.
 		<ul class="dummy">
 			<li>
 				<a href="hg_GuildGame.js.html">hg/GuildGame.js</a>,
-				 <a href="hg_GuildGame.js.html#sunlight-1-line-301">line 301</a>
+				 <a href="hg_GuildGame.js.html#sunlight-1-line-354">line 354</a>
 			</li>
 		</ul>
 	</dd>
@@ -893,7 +958,7 @@ cancelling if user ends the game between days.
 		<ul class="dummy">
 			<li>
 				<a href="hg_GuildGame.js.html">hg/GuildGame.js</a>,
-				 <a href="hg_GuildGame.js.html#sunlight-1-line-319">line 319</a>
+				 <a href="hg_GuildGame.js.html#sunlight-1-line-372">line 372</a>
 			</li>
 		</ul>
 	</dd>
@@ -974,7 +1039,7 @@ cancelling if user ends the game between days.
 		<ul class="dummy">
 			<li>
 				<a href="hg_GuildGame.js.html">hg/GuildGame.js</a>,
-				 <a href="hg_GuildGame.js.html#sunlight-1-line-327">line 327</a>
+				 <a href="hg_GuildGame.js.html#sunlight-1-line-380">line 380</a>
 			</li>
 		</ul>
 	</dd>
@@ -1055,7 +1120,7 @@ cancelling if user ends the game between days.
 		<ul class="dummy">
 			<li>
 				<a href="hg_GuildGame.js.html">hg/GuildGame.js</a>,
-				 <a href="hg_GuildGame.js.html#sunlight-1-line-292">line 292</a>
+				 <a href="hg_GuildGame.js.html#sunlight-1-line-345">line 345</a>
 			</li>
 		</ul>
 	</dd>
@@ -1137,7 +1202,7 @@ guild game.
 		<ul class="dummy">
 			<li>
 				<a href="hg_GuildGame.js.html">hg/GuildGame.js</a>,
-				 <a href="hg_GuildGame.js.html#sunlight-1-line-255">line 255</a>
+				 <a href="hg_GuildGame.js.html#sunlight-1-line-308">line 308</a>
 			</li>
 		</ul>
 	</dd>
@@ -1225,7 +1290,7 @@ guild game.
 		<ul class="dummy">
 			<li>
 				<a href="hg_GuildGame.js.html">hg/GuildGame.js</a>,
-				 <a href="hg_GuildGame.js.html#sunlight-1-line-131">line 131</a>
+				 <a href="hg_GuildGame.js.html#sunlight-1-line-145">line 145</a>
 			</li>
 		</ul>
 	</dd>
@@ -1306,7 +1371,7 @@ guild game.
 		<ul class="dummy">
 			<li>
 				<a href="hg_GuildGame.js.html">hg/GuildGame.js</a>,
-				 <a href="hg_GuildGame.js.html#sunlight-1-line-66">line 66</a>
+				 <a href="hg_GuildGame.js.html#sunlight-1-line-80">line 80</a>
 			</li>
 		</ul>
 	</dd>
@@ -1388,7 +1453,7 @@ game.
 		<ul class="dummy">
 			<li>
 				<a href="hg_GuildGame.js.html">hg/GuildGame.js</a>,
-				 <a href="hg_GuildGame.js.html#sunlight-1-line-246">line 246</a>
+				 <a href="hg_GuildGame.js.html#sunlight-1-line-299">line 299</a>
 			</li>
 		</ul>
 	</dd>
@@ -1469,7 +1534,88 @@ game.
 		<ul class="dummy">
 			<li>
 				<a href="hg_GuildGame.js.html">hg/GuildGame.js</a>,
-				 <a href="hg_GuildGame.js.html#sunlight-1-line-201">line 201</a>
+				 <a href="hg_GuildGame.js.html#sunlight-1-line-238">line 238</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="customEventIds">
+    <h4 id="customEventIds"><span class="type-signature"></span>customEventIds<span class="type-signature"> :Object</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        The IDs of all custom events for this guild.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">Object</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="hg_GuildGame.js.html">hg/GuildGame.js</a>,
+				 <a href="hg_GuildGame.js.html#sunlight-1-line-179">line 179</a>
 			</li>
 		</ul>
 	</dd>
@@ -1567,7 +1713,88 @@ game.
 		<ul class="dummy">
 			<li>
 				<a href="hg_GuildGame.js.html">hg/GuildGame.js</a>,
-				 <a href="hg_GuildGame.js.html#sunlight-1-line-176">line 176</a>
+				 <a href="hg_GuildGame.js.html#sunlight-1-line-213">line 213</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="disabledEventIds">
+    <h4 id="disabledEventIds"><span class="type-signature"></span>disabledEventIds<span class="type-signature"> :Object</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        List of IDs of events to disable per-category.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">Object</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="hg_GuildGame.js.html">hg/GuildGame.js</a>,
+				 <a href="hg_GuildGame.js.html#sunlight-1-line-254">line 254</a>
 			</li>
 		</ul>
 	</dd>
@@ -1666,7 +1893,7 @@ the game.
 		<ul class="dummy">
 			<li>
 				<a href="hg_GuildGame.js.html">hg/GuildGame.js</a>,
-				 <a href="hg_GuildGame.js.html#sunlight-1-line-230">line 230</a>
+				 <a href="hg_GuildGame.js.html#sunlight-1-line-283">line 283</a>
 			</li>
 		</ul>
 	</dd>
@@ -1754,7 +1981,7 @@ the game.
 		<ul class="dummy">
 			<li>
 				<a href="hg_GuildGame.js.html">hg/GuildGame.js</a>,
-				 <a href="hg_GuildGame.js.html#sunlight-1-line-116">line 116</a>
+				 <a href="hg_GuildGame.js.html#sunlight-1-line-130">line 130</a>
 			</li>
 		</ul>
 	</dd>
@@ -1842,7 +2069,7 @@ the game.
 		<ul class="dummy">
 			<li>
 				<a href="hg_GuildGame.js.html">hg/GuildGame.js</a>,
-				 <a href="hg_GuildGame.js.html#sunlight-1-line-100">line 100</a>
+				 <a href="hg_GuildGame.js.html#sunlight-1-line-114">line 114</a>
 			</li>
 		</ul>
 	</dd>
@@ -1923,7 +2150,7 @@ the game.
 		<ul class="dummy">
 			<li>
 				<a href="hg_GuildGame.js.html">hg/GuildGame.js</a>,
-				 <a href="hg_GuildGame.js.html#sunlight-1-line-74">line 74</a>
+				 <a href="hg_GuildGame.js.html#sunlight-1-line-88">line 88</a>
 			</li>
 		</ul>
 	</dd>
@@ -2011,7 +2238,7 @@ the game.
 		<ul class="dummy">
 			<li>
 				<a href="hg_GuildGame.js.html">hg/GuildGame.js</a>,
-				 <a href="hg_GuildGame.js.html#sunlight-1-line-108">line 108</a>
+				 <a href="hg_GuildGame.js.html#sunlight-1-line-122">line 122</a>
 			</li>
 		</ul>
 	</dd>
@@ -2099,7 +2326,7 @@ the game.
 		<ul class="dummy">
 			<li>
 				<a href="hg_GuildGame.js.html">hg/GuildGame.js</a>,
-				 <a href="hg_GuildGame.js.html#sunlight-1-line-82">line 82</a>
+				 <a href="hg_GuildGame.js.html#sunlight-1-line-96">line 96</a>
 			</li>
 		</ul>
 	</dd>
@@ -2188,7 +2415,7 @@ performed.
 		<ul class="dummy">
 			<li>
 				<a href="hg_GuildGame.js.html">hg/GuildGame.js</a>,
-				 <a href="hg_GuildGame.js.html#sunlight-1-line-140">line 140</a>
+				 <a href="hg_GuildGame.js.html#sunlight-1-line-154">line 154</a>
 			</li>
 		</ul>
 	</dd>
@@ -2269,7 +2496,7 @@ performed.
 		<ul class="dummy">
 			<li>
 				<a href="hg_GuildGame.js.html">hg/GuildGame.js</a>,
-				 <a href="hg_GuildGame.js.html#sunlight-1-line-123">line 123</a>
+				 <a href="hg_GuildGame.js.html#sunlight-1-line-137">line 137</a>
 			</li>
 		</ul>
 	</dd>
@@ -2350,7 +2577,7 @@ performed.
 		<ul class="dummy">
 			<li>
 				<a href="hg_GuildGame.js.html">hg/GuildGame.js</a>,
-				 <a href="hg_GuildGame.js.html#sunlight-1-line-264">line 264</a>
+				 <a href="hg_GuildGame.js.html#sunlight-1-line-317">line 317</a>
 			</li>
 		</ul>
 	</dd>
@@ -2431,7 +2658,7 @@ performed.
 		<ul class="dummy">
 			<li>
 				<a href="hg_GuildGame.js.html">hg/GuildGame.js</a>,
-				 <a href="hg_GuildGame.js.html#sunlight-1-line-273">line 273</a>
+				 <a href="hg_GuildGame.js.html#sunlight-1-line-326">line 326</a>
 			</li>
 		</ul>
 	</dd>
@@ -2503,7 +2730,7 @@ serializable if they aren't a function.
 		<ul class="dummy">
 			<li>
 				<a href="hg_GuildGame.js.html">hg/GuildGame.js</a>,
-				 <a href="hg_GuildGame.js.html#sunlight-1-line-340">line 340</a>
+				 <a href="hg_GuildGame.js.html#sunlight-1-line-393">line 393</a>
 			</li>
 		</ul>
 	</dd>
@@ -2585,7 +2812,7 @@ stats.
 		<ul class="dummy">
 			<li>
 				<a href="hg_GuildGame.js.html">hg/GuildGame.js</a>,
-				 <a href="hg_GuildGame.js.html#sunlight-1-line-283">line 283</a>
+				 <a href="hg_GuildGame.js.html#sunlight-1-line-336">line 336</a>
 			</li>
 		</ul>
 	</dd>
@@ -2867,7 +3094,7 @@ affected, or array of default events if not specifying a specific message.</td>
 		<ul class="dummy">
 			<li>
 				<a href="hg_GuildGame.js.html">hg/GuildGame.js</a>,
-				 <a href="hg_GuildGame.js.html#sunlight-1-line-638">line 638</a>
+				 <a href="hg_GuildGame.js.html#sunlight-1-line-719">line 719</a>
 			</li>
 		</ul>
 	</dd>
@@ -3056,7 +3283,7 @@ creating <a href="HungryGames-ActionStore.html">HungryGames~ActionStore</a>.</td
 		<ul class="dummy">
 			<li>
 				<a href="hg_GuildGame.js.html">hg/GuildGame.js</a>,
-				 <a href="hg_GuildGame.js.html#sunlight-1-line-570">line 570</a>
+				 <a href="hg_GuildGame.js.html#sunlight-1-line-623">line 623</a>
 			</li>
 		</ul>
 	</dd>
@@ -3168,7 +3395,7 @@ creating <a href="HungryGames-ActionStore.html">HungryGames~ActionStore</a>.</td
 		<ul class="dummy">
 			<li>
 				<a href="hg_GuildGame.js.html">hg/GuildGame.js</a>,
-				 <a href="hg_GuildGame.js.html#sunlight-1-line-486">line 486</a>
+				 <a href="hg_GuildGame.js.html#sunlight-1-line-539">line 539</a>
 			</li>
 		</ul>
 	</dd>
@@ -3309,7 +3536,7 @@ interval.</td>
 		<ul class="dummy">
 			<li>
 				<a href="hg_GuildGame.js.html">hg/GuildGame.js</a>,
-				 <a href="hg_GuildGame.js.html#sunlight-1-line-505">line 505</a>
+				 <a href="hg_GuildGame.js.html#sunlight-1-line-558">line 558</a>
 			</li>
 		</ul>
 	</dd>
@@ -3397,7 +3624,7 @@ interval.</td>
 		<ul class="dummy">
 			<li>
 				<a href="hg_GuildGame.js.html">hg/GuildGame.js</a>,
-				 <a href="hg_GuildGame.js.html#sunlight-1-line-475">line 475</a>
+				 <a href="hg_GuildGame.js.html#sunlight-1-line-528">line 528</a>
 			</li>
 		</ul>
 	</dd>
@@ -3487,7 +3714,7 @@ players.
 		<ul class="dummy">
 			<li>
 				<a href="hg_GuildGame.js.html">hg/GuildGame.js</a>,
-				 <a href="hg_GuildGame.js.html#sunlight-1-line-372">line 372</a>
+				 <a href="hg_GuildGame.js.html#sunlight-1-line-425">line 425</a>
 			</li>
 		</ul>
 	</dd>
@@ -3828,7 +4055,7 @@ incrementing.</td>
 		<ul class="dummy">
 			<li>
 				<a href="hg_GuildGame.js.html">hg/GuildGame.js</a>,
-				 <a href="hg_GuildGame.js.html#sunlight-1-line-815">line 815</a>
+				 <a href="hg_GuildGame.js.html#sunlight-1-line-896">line 896</a>
 			</li>
 		</ul>
 	</dd>
@@ -3942,7 +4169,7 @@ prior to any action, if it's set.
 		<ul class="dummy">
 			<li>
 				<a href="hg_GuildGame.js.html">hg/GuildGame.js</a>,
-				 <a href="hg_GuildGame.js.html#sunlight-1-line-526">line 526</a>
+				 <a href="hg_GuildGame.js.html#sunlight-1-line-579">line 579</a>
 			</li>
 		</ul>
 	</dd>
@@ -4112,7 +4339,7 @@ started.</td>
 		<ul class="dummy">
 			<li>
 				<a href="hg_GuildGame.js.html">hg/GuildGame.js</a>,
-				 <a href="hg_GuildGame.js.html#sunlight-1-line-355">line 355</a>
+				 <a href="hg_GuildGame.js.html#sunlight-1-line-408">line 408</a>
 			</li>
 		</ul>
 	</dd>
@@ -4193,7 +4420,7 @@ started.</td>
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a>
 	
-		on Monday, August 12, 2019 3:37 PM (-07:00)
+		on Monday, August 12, 2019 10:54 PM (-07:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

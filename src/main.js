@@ -2924,13 +2924,16 @@ function Main() {
         return;
       }
       const fmtNum = function(num) {
+        if (num < 1000) return `${num}`;
         const out = [];
         num *= 1;
         while (num > 999) {
-          out.push(`,${Math.floor(((num / 1000) % 1) * 1000)}`);
+          out.push(Math.floor(((num / 1000) % 1) * 1000));
           num = Math.floor(num / 1000);
         }
-        return `${num}${out.reverse().join('')}`;
+        const joined =
+            ',' + out.reverse().map((el) => ('000' + el).slice(-3)).join(',');
+        return `${num}${joined}`;
       };
       const embed = new self.Discord.MessageEmbed();
       embed.setTitle('SpikeyBot Stats');
