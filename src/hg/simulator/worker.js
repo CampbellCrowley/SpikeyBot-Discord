@@ -6,6 +6,7 @@ const Day = require('../Day.js');
 const Battle = require('../Battle.js');
 const Grammar = require('../Grammar.js');
 const Simulator = require('../Simulator.js');
+const EventContainer = require('../EventContainer.js');
 
 /**
  * @description Asyncronous worker that does the actual simulating.
@@ -16,8 +17,9 @@ class Worker {
   /**
    * @description Create and start simulating.
    * @param {{
-   * game: object,
-   * messages: object.<string>
+   *   game: object,
+   *   messages: object.<string>,
+   *   events: HungryGames~EventContainer
    * }} sim Simulation data.
    * @param {boolean} [retry=true] Whether to try again if there is an error.
    */
@@ -25,6 +27,15 @@ class Worker {
     sim.game.currentGame.prevDay = sim.game.currentGame.day;
     sim.game.currentGame.day = Day.from(sim.game.currentGame.nextDay);
     sim.game.currentGame.day.state = 1;
+    if (!sim.game.customEventStore.serializable) {
+      sim.game.customEventStore = new EventContainer(sim.game.customEventStore);
+    }
+    if (!sim.events.serializable) {
+      const battle = sim.events.battles;
+      sim.events = new EventContainer(sim.events);
+      sim.events.battles = battle;
+    }
+
 
     sim.messages = {
       _messages: sim.messages,
@@ -44,6 +55,20 @@ class Worker {
       },
     };
 
+    // Wait for all custom events to be fetched.
+    sim.game.customEventStore.waitForReady(() => {
+      sim.events.waitForReady(() => {
+        this.simulate(sim, retry);
+      });
+    });
+  }
+  /**
+   * @description Run the simulation.
+   * @private
+   * @param {{game: objcet, messages: object.<string>}} sim Simulation data.
+   * @param {boolean} retry Whether to try again if there is an error.
+   */
+  simulate(sim, retry) {
     const id = sim.game.id;
 
     let startingAlive = 0;
@@ -100,14 +125,11 @@ class Worker {
 
     if (sim.game.currentGame.day.num === 0) {
       userEventPool =
-          sim.events.bloodbath.concat(sim.game.customEvents.bloodbath);
-      if (sim.game.disabledEvents && sim.game.disabledEvents.bloodbath) {
-        userEventPool = userEventPool.filter((el) => {
-          return !sim.game.disabledEvents.bloodbath.find((d) => {
-            return Event.equal(d, el);
-          });
-        });
-      }
+          sim.events.getArray('bloodbath')
+              .concat(sim.game.customEventStore.getArray('bloodbath'));
+      userEventPool = userEventPool.filter(
+          (el) =>
+            !sim.game.disabledEventIds.bloodbath.find((d) => d === el.id));
       if (userEventPool.length == 0) {
         this.cb({
           reply: 'All bloodbath events have been disabled! Please enable ' +
@@ -122,7 +144,11 @@ class Worker {
           Math.random() < sim.game.options.probabilityOfArenaEvent;
       if (doArenaEvent) {
         const arenaEventPool =
-            sim.events.arena.concat(sim.game.customEvents.arena);
+            sim.events.getArray('arena')
+                .concat(sim.game.customEventStore.getArray('arena'))
+                .filter(
+                    (evt) => !sim.game.disabledEventIds.arena.find(
+                        (el) => el === evt.id));
         do {
           let total = arenaEventPool.length;
           if (sim.game.options.customEventWeight != 1) {
@@ -139,14 +165,9 @@ class Worker {
             return false;
           });
           arenaEvent = arenaEventPool[index];
-          userEventPool = arenaEvent.outcomes;
-          if (sim.game.disabledEvents && sim.game.disabledEvents.arena &&
-              sim.game.disabledEvents.arena[arenaEvent.message]) {
-            userEventPool = userEventPool.filter((el) => {
-              return !sim.game.disabledEvents.arena[arenaEvent.message].find(
-                  (d) => Event.equal(d, el));
-            });
-          }
+          userEventPool = arenaEvent.outcomes.filter(
+              (el) => !sim.game.disabledEventIds.arena.find(
+                  (d) => d === `${arenaEvent.id}/${el.id}`));
           if (userEventPool.length == 0) {
             arenaEventPool.splice(index, 1);
           } else {
@@ -161,14 +182,10 @@ class Worker {
         if (arenaEventPool.length == 0) doArenaEvent = false;
       }
       if (!doArenaEvent) {
-        userEventPool = sim.events.player.concat(sim.game.customEvents.player);
-        if (sim.game.disabledEvents && sim.game.disabledEvents.player) {
-          userEventPool = userEventPool.filter((el) => {
-            return !sim.game.disabledEvents.player.find((d) => {
-              return Event.equal(d, el);
-            });
-          });
-        }
+        userEventPool = sim.events.getArray('player').concat(
+            sim.game.customEventStore.getArray('player'));
+        userEventPool = userEventPool.filter(
+            (el) => !sim.game.disabledEventIds.player.find((d) => d === el.id));
         if (userEventPool.length == 0) {
           this.cb({
             reply:
@@ -182,31 +199,25 @@ class Worker {
       }
     }
 
-    const weapons = Object.assign({}, sim.events.weapons);
-    if (sim.game.customEvents.weapon) {
-      const entries = Object.entries(sim.game.customEvents.weapon);
-      for (let i = 0; i < entries.length; i++) {
-        if (weapons[entries[i][0]]) {
-          weapons[entries[i][0]].outcomes =
-              weapons[entries[i][0]].outcomes.concat(entries[i][1].outcomes);
-        } else {
-          weapons[entries[i][0]] = entries[i][1];
-        }
+    const weapons = Object.assign(
+        Object.assign({}, sim.events.get('weapon')),
+        sim.game.customEventStore.get('weapon'));
+
+    const disabledList = sim.game.disabledEventIds.weapon;
+    const weaponList = Object.values(weapons);
+    weaponList.forEach((evt) => {
+      evt.outcomes = evt.outcomes.filter(
+          (el) => !disabledList.find((dis) => `${evt.id}/${el.id}` === dis));
+
+      if (evt.outcomes.length === 0 ||
+          disabledList.find((dis) => evt.id === dis)) {
+        delete weapons[evt.id];
       }
-    }
-    if (sim.game.disabledEvents && sim.game.disabledEvents.weapon) {
-      const entries = Object.entries(sim.game.disabledEvents.weapon);
-      for (let i = 0; i < entries.length; i++) {
-        if (!weapons[entries[i][0]]) continue;
-        weapons[entries[i][0]].outcomes =
-            weapons[entries[i][0]].outcomes.filter(
-                (el) => !sim.game.disabledEvents.weapon[entries[i][0]].find(
-                    (d) => Event.equal(d, el)));
-        if (weapons[entries[i][0]].outcomes.length === 0) {
-          delete weapons[entries[i][0]];
-        }
-      }
-    }
+    });
+
+    const battles = sim.events.battles;
+    /* sim.events.getArray('battles').concat(
+        sim.game.customEventStore.get('battles')) */
 
     const probOpts = sim.game.currentGame.day.num === 0 ?
         sim.game.options.bloodbathOutcomeProbs :
@@ -264,7 +275,7 @@ class Worker {
                 eventTry.attacker.count);
 
             eventTry.consumer = userWithWeapon.id;
-            eventTry.consumes = [{name: chosenWeapon, count: count}];
+            eventTry.consumes = [{id: chosenWeapon, count: count}];
 
             const firstAttacker = affectedUsers[eventTry.victim.count] &&
                 affectedUsers[eventTry.victim.count].id == userWithWeapon.id;
@@ -302,7 +313,7 @@ class Worker {
             sim.game.options, userPool, deadPool, teams, null);
         eventTry = Battle.finalize(
             affectedUsers, numVictim, numAttacker, sim.game.options.mentionAll,
-            sim.game, sim.events.battles);
+            sim.game, battles);
       } else if (!useWeapon || !eventTry) {
         eventTry = Simulator._pickEvent(
             userPool, userEventPool, sim.game.options, numAlive,
@@ -316,7 +327,10 @@ class Worker {
               retry);
           sim.game.currentGame.day.state = 0;
 
-          if (retry) return new Worker(sim, false);
+          if (retry) {
+            new Worker(sim, false);
+            return;
+          }
 
           this.cb({
             reply: 'Oops! I wasn\'t able to find a valid event for the ' +
@@ -395,11 +409,11 @@ class Worker {
             group.outcome);
         if (group.weapons && group.weapons.length > 0) {
           for (const w of group.weapons) {
-            if (player.weapons[w.name]) {
-              player.weapons[w.name] = player.weapons[w.name] * 1 + w.count * 1;
-              if (player.weapons[w.name] <= 0) delete player.weapons[w.name];
+            if (player.weapons[w.id]) {
+              player.weapons[w.id] = player.weapons[w.id] * 1 + w.count * 1;
+              if (player.weapons[w.id] <= 0) delete player.weapons[w.id];
             } else if (w.count > 0) {
-              player.weapons[w.name] = w.count * 1;
+              player.weapons[w.id] = w.count * 1;
             }
           }
         }
@@ -410,11 +424,11 @@ class Worker {
             (p) => p.id === evt.consumer);
         if (consumer) {
           for (const consumed of evt.consumes) {
-            if (consumer.weapons[consumed.name]) {
+            if (consumer.weapons[consumed.id]) {
               const count = consumed.count;
-              consumer.weapons[consumed.name] -= count;
-              if (consumer.weapons[consumed.name] <= 0) {
-                delete consumer.weapons[consumed.name];
+              consumer.weapons[consumed.id] -= count;
+              if (consumer.weapons[consumed.id] <= 0) {
+                delete consumer.weapons[consumed.id];
               }
             }
           }

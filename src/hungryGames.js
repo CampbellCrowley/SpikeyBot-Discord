@@ -74,19 +74,6 @@ function HG() {
     'hg:personal_weapon',
   ];
   /**
-   * The file path to read default events.
-   *
-   * @see {@link HungryGames~defaultPlayerEvents}
-   * @see {@link HungryGames~defaultArenaEvents}
-   * @see {@link HungryGames~defaultBloodbathEvents}
-   *
-   * @private
-   * @type {string}
-   * @constant
-   * @default
-   */
-  const eventFile = './save/hgEvents.json';
-  /**
    * The file path to read battle events.
    *
    * @see {@link HungryGames~battles}
@@ -97,27 +84,6 @@ function HG() {
    * @default
    */
   const battleFile = './save/hgBattles.json';
-  /**
-   * The file path to read weapon events.
-   *
-   * @see {@link HungryGames~weapons}
-   *
-   * @private
-   * @type {string}
-   * @constant
-   * @default
-   */
-  const weaponsFile = './save/hgWeapons.json';
-
-  /**
-   * Number of events to show on a single page of events.
-   *
-   * @private
-   * @type {number}
-   * @constant
-   * @default
-   */
-  const numEventsPerPage = 10;
 
   /**
    * Maximum amount of time to wait for reactions to a message.
@@ -227,16 +193,6 @@ function HG() {
   };
 
   /**
-   * The alphabet twice, first lowercase, then uppercase.
-   *
-   * @private
-   * @type {string}
-   * @constant
-   * @default
-   */
-  const alph = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-
-  /**
    * All attacks and outcomes for battles.
    *
    * @see {@link HungryGames~battleFile}
@@ -252,51 +208,21 @@ function HG() {
    */
   let battles = {};
   /**
-   * All weapons and their respective actions. Parsed from file.
-   *
-   * @see {@link HungryGames~weaponsFile}
-   *
+   * @description The file where the default event IDs are listed.
    * @private
-   * @type {object.<HungryGames~WeaponEvent>}
+   * @type {string}
    * @default
+   * @constant
    */
-  let weapons = {};
+  const eventFileList = './save/hgDefaultEvents.json';
   /**
-   * Default parsed bloodbath events.
-   *
-   * @see {@link HungryGames~eventFile}
-   *
+   * @description Container for all default events.
    * @private
-   * @type {HungryGames~Event[]}
-   */
-  let defaultBloodbathEvents = [];
-  /**
-   * Default parsed player events.
-   *
-   * @see {@link HungryGames~eventFile}
-   *
-   * @private
-   * @type {HungryGames~Event[]}
-   */
-  let defaultPlayerEvents = [];
-  /**
-   * Default parsed arena events.
-   *
-   * @see {@link HungryGames~eventFile}
-   *
-   * @private
-   * @type {HungryGames~ArenaEvent[]}
-   */
-  let defaultArenaEvents = [];
-  /**
-   * Messages that the user sent with a new event to add, for storage while
-   * getting the rest of the information about the event.
-   *
-   * @private
-   * @type {object.<Discord~Message>}
+   * @type {HungryGames~EventContainer}
    * @default
+   * @constant
    */
-  const newEventMessages = {};
+  const defaultEvents = new HungryGames.EventContainer();
   /**
    * Messages I have sent showing current options.
    *
@@ -329,33 +255,50 @@ function HG() {
    * @private
    */
   function updateEvents() {
-    fs.readFile(eventFile, function(err, data) {
-      if (err) return;
+    fs.readFile(eventFileList, (err, data) => {
+      if (err) {
+        self.error('Failed to read default event list.');
+        console.error(err);
+        return;
+      }
       try {
         const parsed = JSON.parse(data);
-        if (parsed) {
-          defaultBloodbathEvents = self.common.deepFreeze(parsed['bloodbath']);
-          defaultPlayerEvents = self.common.deepFreeze(parsed['player']);
-          defaultArenaEvents = self.common.deepFreeze(parsed['arena']);
-          hg.setDefaultBloodbathEvents(defaultBloodbathEvents);
-          hg.setDefaultPlayerEvents(defaultPlayerEvents);
-          hg.setDefaultArenaEvents(defaultArenaEvents);
-        }
+        if (!parsed) return;
+        loadDefaultsFromIds(parsed);
       } catch (err) {
+        self.error(eventFileList + ' Parse failed.');
         console.log(err);
       }
     });
   }
   updateEvents();
-  fs.watchFile(eventFile, {persistent: false}, function(curr, prev) {
-    if (curr.mtime == prev.mtime) return;
-    if (self.initialized) {
-      self.debug('Re-reading default events from file');
-    } else {
-      console.log('HG: Re-reading default events from file');
-    }
-    updateEvents();
-  });
+  fs.watchFile(
+      HungryGames.EventContainer.eventDir, {persistent: false},
+      (curr, prev) => {
+        if (curr.mtime == prev.mtime) return;
+        if (self.initialized) {
+          self.debug('Re-reading default events from file');
+        } else {
+          console.log('HG: Re-reading default events from file');
+        }
+        updateEvents();
+      });
+
+  /**
+   * @description Load all default events from file, described by the loaded
+   * list from file.
+   * @private
+   * @param {{
+   *   bloodbath: string[],
+   *   player: string[],
+   *   arena: string[],
+   *   weapon: string[]
+   * }} obj List of IDs to load.
+   */
+  function loadDefaultsFromIds(obj) {
+    defaultEvents.updateAndFetchAll(
+        obj, () => hg.setDefaultEvents(defaultEvents));
+  }
 
   /**
    * @description Parse all battles from file.
@@ -385,35 +328,6 @@ function HG() {
       console.log('HG: Re-reading battles from file');
     }
     updateBattles();
-  });
-  /**
-   * @description Parse all weapons events from file.
-   *
-   * @private
-   */
-  function updateWeapons() {
-    fs.readFile(weaponsFile, function(err, data) {
-      if (err) return;
-      try {
-        const parsed = JSON.parse(data);
-        if (parsed) {
-          weapons = self.common.deepFreeze(parsed);
-          hg.setDefaultWeapons(weapons);
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    });
-  }
-  updateWeapons();
-  fs.watchFile(weaponsFile, {persistent: false}, function(curr, prev) {
-    if (curr.mtime == prev.mtime) return;
-    if (self.initialized) {
-      self.debug('Re-reading default weapons from file');
-    } else {
-      console.log('HG: Re-reading default weapons from file');
-    }
-    updateWeapons();
   });
 
   /**
@@ -505,33 +419,14 @@ function HG() {
           ['reset', 'clear'], mkCmd(resetGame), cmdOpts),
       new self.command.SingleCommand(['debug'], mkCmd(showGameInfo), cmdOpts),
       new self.command.SingleCommand(
-          ['debugevents'], mkCmd(showGameEvents), cmdOpts),
-      new self.command.SingleCommand(
           ['exclude', 'remove', 'exc', 'ex'], mkCmd(excludeUser), cmdOpts),
       new self.command.SingleCommand(
           ['include', 'add', 'inc', 'in'], mkCmd(includeUser), cmdOpts),
       new self.command.SingleCommand(
-          [
-            'options',
-            'setting',
-            'settings',
-            'set',
-            'option',
-            'opt',
-            'opts',
-          ],
+          ['options', 'setting', 'settings', 'set', 'option', 'opt', 'opts'],
           mkCmd(toggleOpt), cmdOpts),
       new self.command.SingleCommand(
-          ['events', 'event'], mkCmd(listEvents), cmdOpts,
-          [
-            new self.command.SingleCommand(
-                ['add', 'create'], mkCmd(createEvent), cmdOpts),
-            new self.command.SingleCommand(
-                ['remove', 'delete'], mkCmd(removeEvent), cmdOpts),
-            new self.command.SingleCommand(
-                ['toggle', 'enable', 'disable'], mkCmd(commandToggleEvent),
-                cmdOpts),
-          ]),
+          ['events', 'event'], mkCmd(useWebsiteForCustom), cmdOpts),
       new self.command.SingleCommand(
           ['npc', 'ai', 'npcs', 'ais', 'bots', 'bot'], mkCmd(listNPCs), cmdOpts,
           [
@@ -612,15 +507,8 @@ function HG() {
           mkCmd(commandWound), cmdOpts),
       new self.command.SingleCommand(
           [
-            'give',
-            'reward',
-            'award',
-            'sponsor',
-            'rewards',
-            'awards',
-            'gift',
-            'gifts',
-            'sponsors',
+            'give', 'reward', 'award', 'sponsor', 'rewards', 'awards', 'gift',
+            'gifts', 'sponsors',
           ],
           mkCmd(commandGiveWeapon), cmdOpts),
       new self.command.SingleCommand(
@@ -634,13 +522,8 @@ function HG() {
     const hgCmd =
         new self.command.SingleCommand(
             [
-              'hg',
-              'hunger',
-              'hungry',
-              'hungergames',
-              'hungrygames',
-              'hungergame',
-              'hungrygame',
+              'hg', 'hunger', 'hungry', 'hungergames', 'hungrygames',
+              'hungergame', 'hungrygame',
             ],
             function(msg) {
               if (cmdSearcher && msg.text && msg.text.length > 1) {
@@ -672,7 +555,6 @@ function HG() {
 
     setupHelp();
 
-    self.client.on('messageUpdate', handleMessageEdit);
     self.client.on('guildDelete', onGuildDelete);
     self.client.on('channelDelete', onChannelDelete);
 
@@ -713,7 +595,6 @@ function HG() {
   /** @inheritdoc */
   this.shutdown = function() {
     self.command.deleteEvent('hg');
-    self.client.removeListener('messageUpdate', handleMessageEdit);
     self.client.removeListener('guildDelete', onGuildDelete);
     self.client.removeListener('channelDelete', onChannelDelete);
     process.removeListener('exit', exit);
@@ -724,9 +605,8 @@ function HG() {
 
     Object.keys(eventHandlers).forEach((el) => delete eventHandlers[el]);
 
-    fs.unwatchFile(eventFile);
+    fs.unwatchFile(HungryGames.EventContainer.eventDir);
     fs.unwatchFile(battleFile);
-    fs.unwatchFile(weaponsFile);
 
     hg.shutdown();
 
@@ -741,24 +621,10 @@ function HG() {
     return self.getNumSimulating() === 0 && listenersEndTime < Date.now() &&
         (!web || !web.getNumClients || web.getNumClients() == 0);
   };
-
-  /**
-   * @description Handler for when the create event message is edited and we
-   * should update our message with the updated event.
-   *
-   * @private
-   * @param {Discord~Message} oldMsg The message before being edited.
-   * @param {Discord~Message} newMsg The message after being edited.
-   * @listens Discord~Client#messageUpdate
-   */
-  function handleMessageEdit(oldMsg, newMsg) {
-    if (newEventMessages[oldMsg.id]) {
-      newMsg.text = newMsg.text.trim();
-      newMsg.myResponse = oldMsg.myResponse;
-      newEventMessages[oldMsg.id] = newMsg;
-      updateEventPreview(newMsg);
-    }
-  }
+  /** @inheritdoc */
+  this.reloadable = function() {
+    return self.getNumSimulating() === 0 && listenersEndTime < Date.now();
+  };
 
   /**
    * @description Handle being removed from a guild.
@@ -879,7 +745,7 @@ function HG() {
    */
   function commandMakeMeLose(msg) {
     self.common.reply(
-        msg, 'Your probability of losing has increased by ' + nothing() + '!');
+        msg, `Your probability of losing has increased by ${nothing()}!`);
   }
 
   /**
@@ -1023,20 +889,10 @@ function HG() {
    * games.
    *
    * @public
-   * @returns {{
-   *   bloodbath: object,
-   *   player: object,
-   *   arena: object,
-   *   weapon: object
-   * }} Object storing default events.
+   * @returns {HungryGames~EventContainer} Object storing default events.
    */
   this.getDefaultEvents = function() {
-    return {
-      bloodbath: defaultBloodbathEvents,
-      player: defaultPlayerEvents,
-      weapon: weapons,
-      arena: defaultArenaEvents,
-    };
+    return defaultEvents;
   };
   /**
    * @description Returns the object storing all default
@@ -1056,7 +912,7 @@ function HG() {
    * @returns {HungryGames~Weapon[]} Array of all default weapons.
    */
   this.getDefaultWeapons = function() {
-    return weapons;
+    return defaultEvents.getArray('weapon');
   };
 
   // Create //
@@ -1310,79 +1166,6 @@ function HG() {
     } else {
       self.common.reply(msg, 'No game created', finalId);
     }
-  }
-  /**
-   * Send all event data about the default events to the chat.
-   *
-   * @private
-   * @type {HungryGames~hgCommandHandler}
-   * @param {Discord~Message} msg The message that lead to this being called.
-   * @param {string} id The id of the guild this was triggered from.
-   */
-  function showGameEvents(msg, id) {
-    let events = defaultBloodbathEvents;
-    const game = hg.getGame(id);
-    if (game && game.customEvents.bloodbath) {
-      events = events.concat(game.customEvents.bloodbath);
-    }
-    let file = new self.Discord.MessageAttachment();
-    file.setFile(Buffer.from(JSON.stringify(events, null, 2)));
-    file.setName('BloodbathEvents.json');
-    fetchStats(events);
-    msg.channel.send(
-        'Bloodbath Events (' + events.length + ') ' +
-            Math.round(events.numKill / events.length * 1000) / 10 +
-            '% kill, ' +
-            Math.round(events.numWound / events.length * 1000) / 10 +
-            '% wound, ' +
-            Math.round(events.numThrive / events.length * 1000) / 10 +
-            '% heal.',
-        file);
-
-    events = defaultPlayerEvents;
-    if (game && game.customEvents.player) {
-      events = events.concat(game.customEvents.player);
-    }
-    file = new self.Discord.MessageAttachment();
-    file.setFile(Buffer.from(JSON.stringify(events, null, 2)));
-    file.setName('PlayerEvents.json');
-    fetchStats(events);
-    msg.channel.send(
-        'Player Events (' + events.length + ') ' +
-            Math.round(events.numKill / events.length * 1000) / 10 +
-            '% kill, ' +
-            Math.round(events.numWound / events.length * 1000) / 10 +
-            '% wound, ' +
-            Math.round(events.numThrive / events.length * 1000) / 10 +
-            '% heal.',
-        file);
-
-    events = Object.assign({}, weapons);
-    if (game && game.customEvents.weapon) {
-      const keys = Object.keys(game.customEvents.weapon);
-      for (let i = 0; i < keys.length; i++) {
-        if (events[keys[i]]) {
-          events[keys[i]].outcomes = events[keys[i]].outcomes.concat(
-              game.customEvents.weapon[keys[i]].outcomes);
-        } else {
-          events[keys[i]] = game.customEvents.weapon[keys[i]];
-        }
-      }
-    }
-    file = new self.Discord.MessageAttachment();
-    file.setFile(Buffer.from(JSON.stringify(events, null, 2)));
-    file.setName('WeaponEvents.json');
-    msg.channel.send(
-        'Weapon Events (' + Object.keys(events).length + ' weapons)', file);
-
-    events = defaultArenaEvents;
-    if (game && game.customEvents.arena) {
-      events = events.concat(game.customEvents.arena);
-    }
-    file = new self.Discord.MessageAttachment();
-    file.setFile(Buffer.from(JSON.stringify(events, null, 2)));
-    file.setName('ArenaEvents.json');
-    msg.channel.send('Arena Events (' + events.length + ')', file);
   }
 
   // Time Control //
@@ -3310,240 +3093,6 @@ function HG() {
     if (!silent) self.common.reply(msg, 'Teams have been randomized!');
   }
 
-  // Game Events //
-  /**
-   * Create a custom event for a guild.
-   *
-   * @private
-   * @type {HungryGames~hgCommandHandler}
-   * @param {Discord~Message} msg The message that lead to this being called.
-   * @param {string} id The id of the guild this was triggered from.
-   * @param {HungryGames~GuildGame} [game] The game object to modify.
-   */
-  function createEvent(msg, id, game) {
-    if (!game) game = hg.getGame(id);
-    if (!game) {
-      createGame(msg, id, false, (game) => {
-        if (!game) {
-          self.common.reply(msg, 'Failed to create game for unknown reason.');
-          return;
-        }
-        createEvent(msg, id, game);
-      });
-      return;
-    }
-    newEventMessages[msg.id] = msg;
-    const authId = msg.author.id;
-    msg.channel.send('`Loading...`').then((msg_) => {
-      newEventMessages[msg.id].myResponse = msg_;
-      newReact(maxReactAwaitTime);
-      msg_.awaitReactions(function(reaction, user) {
-        return (reaction.emoji.name == emoji.redCircle ||
-                    reaction.emoji.name == emoji.trophy) &&
-                user.id == authId;
-      }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
-        if (reactions.size == 0) {
-          msg_.reactions.removeAll().catch(() => {});
-          delete newEventMessages[msg.id];
-          return;
-        }
-        let eventType = 'player';
-        if (reactions.first().emoji.name == emoji.redCircle) {
-          eventType = 'bloodbath';
-        }
-        const message = newEventMessages[msg.id].text;
-        msg_.delete().catch(() => {});
-        msg.channel.send('`Loading...`')
-            .then(function(msg_) {
-              let numVictim = 0;
-              let numAttacker = 0;
-              let victimOutcome = 'nothing';
-              let attackerOutcome = 'nothing';
-              let victimKiller = false;
-              let attackerKiller = false;
-              const getAttackNum = function() {
-                createEventNums(
-                    msg_, authId,
-                    '`How many attackers may be in this event? (-1 means at ' +
-                        'least 1, -2 at least 2)`',
-                    (num) => {
-                      numAttacker = num;
-                      // msg_.reactions.removeAll();
-                      msg_.channel.send('Loading...').then((msg) => {
-                        msg_ = msg;
-                        getVictimNum();
-                      });
-                      msg_.delete().catch(() => {});
-                    });
-              };
-              const getVictimNum = function() {
-                createEventNums(
-                    msg_, authId,
-                    '`How many victims may be in this event? (-1 means at ' +
-                        'least 1, -2 at least 2)`',
-                    (num) => {
-                      numVictim = num;
-                      // msg_.reactions.removeAll();
-                      msg_.channel.send('Loading...')
-                          .then((msg) => {
-                            msg_ = msg;
-                            getAttackOutcome();
-                          })
-                          .catch((err) => {
-                            self.error(
-                                'Failed to send message to create event: ' +
-                                msg_.channel.id);
-                            console.error(err);
-                          });
-                      msg_.delete().catch(() => {});
-                    });
-              };
-              const getAttackOutcome = function() {
-                if (numAttacker == 0) {
-                  getVictimOutcome();
-                } else {
-                  createEventOutcome(
-                      msg_, authId, '`What is the outcome of the attackers?`',
-                      function(outcome) {
-                        attackerOutcome = outcome;
-                        // msg_.reactions.removeAll();
-                        msg_.channel.send('Loading...')
-                            .then((msg) => {
-                              msg_ = msg;
-                              getVictimOutcome();
-                            })
-                            .catch((err) => {
-                              self.error(
-                                  'Failed to send message to create event: ' +
-                                  msg_.channel.id);
-                              console.error(err);
-                            });
-                        msg_.delete().catch(() => {});
-                      });
-                }
-              };
-              const getVictimOutcome = function() {
-                if (numVictim == 0) {
-                  getIsAttackerKiller();
-                } else {
-                  createEventOutcome(
-                      msg_, authId, '`What is the outcome of the victims?`',
-                      function(outcome) {
-                        victimOutcome = outcome;
-                        // msg_.reactions.removeAll();
-                        msg_.channel.send('Loading...')
-                            .then((msg) => {
-                              msg_ = msg;
-                              getIsAttackerKiller();
-                            })
-                            .catch((err) => {
-                              self.error(
-                                  'Failed to send message to create event: ' +
-                                  msg_.channel.id);
-                              console.error(err);
-                            });
-                        msg_.delete().catch(() => {});
-                      });
-                }
-              };
-              const getIsAttackerKiller = function() {
-                if (numAttacker == 0) {
-                  getIsVictimKiller();
-                } else {
-                  createEventAttacker(
-                      msg_, authId,
-                      '`Do the attacker(s) kill someone in this event?`',
-                      function(outcome) {
-                        attackerKiller = outcome;
-                        // msg_.reactions.removeAll();
-                        msg_.channel.send('Loading...')
-                            .then((msg) => {
-                              msg_ = msg;
-                              getIsVictimKiller();
-                            })
-                            .catch((err) => {
-                              self.error(
-                                  'Failed to send message to create event: ' +
-                                  msg_.channel.id);
-                              console.error(err);
-                            });
-                        msg_.delete().catch(() => {});
-                      });
-                }
-              };
-              const getIsVictimKiller = function() {
-                if (numVictim == 0) {
-                  finish();
-                } else {
-                  createEventAttacker(
-                      msg_, authId,
-                      '`Do the victim(s) kill someone in this event?`',
-                      function(outcome) {
-                        victimKiller = outcome;
-                        finish();
-                      });
-                }
-              };
-              const finish = function() {
-                msg_.delete().catch(() => {});
-                const error = self.makeAndAddEvent(
-                    id, eventType, message, numVictim, numAttacker,
-                    victimOutcome, attackerOutcome, victimKiller,
-                    attackerKiller);
-                if (error) {
-                  msg.channel
-                      .send(
-                          '`Failed to create event!`\n' + eventType +
-                          ' event\n' + error)
-                      .catch(
-                          (err) => {
-                            self.error(
-                                'Failed to send message to create event: ' +
-                                msg_.channel.id);
-                            console.error(err);
-                          });
-                } else {
-                  msg.channel
-                      .send(
-                          '`Event created!`\n' +
-                          formatEventString(
-                              new HungryGames.Event(
-                                  message, numVictim, numAttacker,
-                                  victimOutcome, attackerOutcome, victimKiller,
-                                  attackerKiller)) +
-                          '\n' + eventType + ' event')
-                      .catch(
-                          (err) => {
-                            self.error(
-                                'Failed to send message to create event: ' +
-                                msg_.channel.id);
-                            console.error(err);
-                          });
-                }
-              };
-
-              getAttackNum();
-            })
-            .catch((err) => {
-              self.error(
-                  'Failed to send message to create events: ' + msg.channel.id);
-              console.error(err);
-            });
-        delete newEventMessages[msg.id];
-      });
-      msg_.react(emoji.redCircle)
-          .then(() => {
-            msg_.react(emoji.trophy);
-          })
-          .catch((err) => {
-            self.error(
-                'Failed to add reactions to create events: ' + msg_.channel.id);
-            console.error(err);
-          });
-      updateEventPreview(newEventMessages[msg.id]);
-    }).catch(() => {});
-  }
-
   /**
    * Creates an event and adds it to the custom events for the given guild.
    *
@@ -3551,35 +3100,37 @@ function HG() {
    * @param {string} id The guild id to add the event to.
    * @param {string} type The type of event this is. Either 'player' or
    * 'bloodbath'.
-   * @param {string} message The event message.
-   * @param {number} numVictim The number of victims in the event.
-   * @param {number} numAttacker The number of attackers in the event.
-   * @param {string} victimOutcome The outcome of the victims due to this event.
-   * @param {string} attackerOutcome The outcome of the attackers due to this
+   * @param {object} obj Settings to pass.
+   * @param {string} obj.message The event message.
+   * @param {number} obj.numVictim The number of victims in the event.
+   * @param {number} obj.numAttacker The number of attackers in the event.
+   * @param {string} obj.victimOutcome The outcome of the victims due to this
    * event.
-   * @param {boolean} victimKiller Do the victims kill anyone.
-   * @param {boolean} attackerKiller Do the attackers kill anyone.
-   * @param {{name: string, count: number}} vWeapon The weapon information to
-   * give the victim.
-   * @param {{name: string, count: number}} aWeapon The weapon information to
-   * give the attacker.
+   * @param {string} obj.attackerOutcome The outcome of the attackers due to
+   * this event.
+   * @param {boolean} obj.victimKiller Do the victims kill anyone.
+   * @param {boolean} obj.attackerKiller Do the attackers kill anyone.
+   * @param {{name: string, count: number}} obj.vWeapon The weapon information
+   * to give the victim.
+   * @param {{name: string, count: number}} obj.aWeapon The weapon information
+   * to give the attacker.
    * @returns {?string} Error message or null if no error.
    */
-  this.makeAndAddEvent = function(
-      id, type, message, numVictim, numAttacker, victimOutcome, attackerOutcome,
-      victimKiller, attackerKiller, vWeapon = null, aWeapon = null) {
+  this.makeAndAddEvent = function(id, type, obj) {
+    // message, numVictim, numAttacker, victimOutcome, attackerOutcome,
+    //   victimKiller, attackerKiller, vWeapon = null, aWeapon = null) {
     if (type !== 'player' && type !== 'bloodbath') return 'Invalid Type';
-    if (!hg.getGame(id) || !hg.getGame(id).customEvents) {
+    if (!hg.getGame(id) || !hg.getGame(id).customEventStore) {
       return 'Invalid ID or no game.';
     }
     const newEvent = new HungryGames.Event(
-        message, numVictim, numAttacker, victimOutcome, attackerOutcome,
-        victimKiller, attackerKiller);
-    if (vWeapon) {
-      newEvent.victim.weapon = vWeapon;
+        obj.message, obj.numVictim, obj.numAttacker, obj.victimOutcome,
+        obj.attackerOutcome, obj.victimKiller, obj.attackerKiller);
+    if (obj.vWeapon) {
+      newEvent.victim.weapon = obj.vWeapon;
     }
-    if (aWeapon) {
-      newEvent.attacker.weapon = aWeapon;
+    if (obj.aWeapon) {
+      newEvent.attacker.weapon = obj.aWeapon;
     }
     return self.addEvent(id, type, newEvent);
   };
@@ -3795,721 +3346,70 @@ function HG() {
   };
 
   /**
-   * Toggle events in the games.
-   *
-   * @todo Write this. This is not implemented yet.
-   * @type {HungryGames~hgCommandHandler}
-   * @param {Discord~Message} msg The message that lead to this being called.
-   */
-  function commandToggleEvent(msg) {
-    self.common.reply(
-        msg, 'Sorry, this feature is only available on the website.',
-        'https://www.spikeybot.com/hg/');
-    // let error = self.toggleEvent(id, type, subCat, event, value);
-  }
-
-  /**
    * Enable or disable an event without deleting it completely.
    *
    * @public
    * @param {number|string} id The guild id that the event shall be toggled in.
    * @param {string} type The type of event. 'bloodbath', 'player', 'weapon', or
    * 'arena'.
-   * @param {?string} subCat The sub-category name of the event if there is one
-   * (Such as the weapon name, or arena event message).
-   * @param {
-   * HungryGames~Event|
-   * HungryGames~ArenaEvent|
-   * HungryGames~WeaponEvent
-   * } event The event to toggle.
+   * @param {string} evtId The event ID of which to toggle in the category.
    * @param {boolean} [value] Set enabled to a value instead of toggling.
    * @returns {?string} Error message or null if no error.
    */
-  this.toggleEvent = function(id, type, subCat, event, value) {
+  this.toggleEvent = function(id, type, evtId, value) {
     if (!['bloodbath', 'arena', 'player', 'weapon'].includes(type)) {
       return 'Invalid Type';
     }
     if (!hg.getGame(id)) return 'Invalid ID or no game';
-    if (!hg.getGame(id).disabledEvents) {
-      hg.getGame(id).disabledEvents =
-          {bloodbath: [], player: [], arena: {}, weapon: {}};
-    }
-    let allEvents;
-    switch (type) {
-      case 'bloodbath':
-        allEvents = defaultBloodbathEvents.concat(
-            hg.getGame(id).customEvents.bloodbath);
-        break;
-      case 'player':
-        allEvents =
-            defaultPlayerEvents.concat(hg.getGame(id).customEvents.player);
-        break;
-      case 'arena':
-        allEvents =
-            defaultArenaEvents.concat(hg.getGame(id).customEvents.arena);
-        break;
-      case 'weapon': {
-        allEvents = Object.assign({}, weapons);
-        const entries = Object.entries(hg.getGame(id).customEvents.weapon);
-        for (let i = 0; i < entries.length; i++) {
-          if (allEvents[entries[i][0]]) {
-            allEvents[entries[i][0]].outcomes =
-                allEvents[entries[i][0]].outcomes.concat(
-                    entries[i][1].outcomes);
-          } else {
-            allEvents[entries[i][0]] = entries[i][1];
-          }
-        }
-        break;
-      }
+
+    const allDisabled = hg.getGame(id).disabledEvents[type];
+    const dIndex = allDisabled.findIndex((el) => el === evtId);
+    if (typeof value !== 'boolean') value = dIndex > -1;
+
+    if ((dIndex > -1) !== value) {
+      return `Already ${value?'Enabled':'Disabled'}`;
+    } else if (!value) {
+      allDisabled.splice(dIndex, 1);
+      return null;
     }
 
-    let allDisabled = hg.getGame(id).disabledEvents[type];
+    const allIds = defaultEvents.ids(type).concat(
+        hg.getGame(id).customEventStore.ids(type));
+    const searchOutcomes = ['arena', 'weapon'].includes(type);
 
-    if (['weapon', 'arena'].includes(type)) {
-      if (!subCat) return 'Invalid Category';
-      if (type === 'weapon') allEvents = allEvents[subCat];
-      if (type === 'arena') {
-        allEvents = allEvents.find((el) => el.message === subCat);
-      }
-      if (!allEvents) return 'Invalid Category';
-      allEvents = allEvents.outcomes;
-      if (!allDisabled[subCat]) allDisabled[subCat] = [];
-      allDisabled = allDisabled[subCat];
-    }
+    const exists = allIds.find((el) => {
+      if (el === evtId) return true;
+      if (!searchOutcomes) return false;
 
-    let isValid = false;
-    let isDisabled = false;
-    let index;
-    for (let i = 0; i < allDisabled.length; i++) {
-      if (HungryGames.Event.equal(allDisabled[i], event)) {
-        if (typeof value === 'undefined') value = true;
-        if (value) isValid = true;
-        isDisabled = true;
-        index = i;
-        break;
-      }
-    }
-    if (!isDisabled && !value) {
-      value = false;
-      isValid = true;
-    }
-    if (!isValid) return 'Already ' + (value ? 'Enabled' : 'Disabled');
+      const evt =
+          self.getDefaultEvents()[type].find((el) => evtId.startsWith(el.id));
+      if (!evt) return false;
 
-    if (!value) {
-      isValid = false;
-      for (let i = 0; i < allEvents.length; i++) {
-        if (HungryGames.Event.equal(allEvents[i], event)) {
-          isValid = true;
-          break;
-        }
-      }
-      if (!isValid) return 'Invalid Event';
-      allDisabled.push(event);
+      const sub = evt.outcomes.find((sub) => `${el.id}/${sub.id}` === evtId);
+      return sub;
+    });
+
+    if (exists) {
+      allDisabled.push(evtId);
+      return null;
     } else {
-      allDisabled.splice(index, 1);
+      return 'Unknown event to disable';
     }
-    return null;
   };
 
   /**
-   * The callback after receiving a number from user input.
-   *
-   * @callback HungryGames~createEventNumCallback
-   * @param {number} num The number received from the user.
-   */
-
-  /**
-   * Let the user choose how many of something will be in this event being
-   * created.
-   *
-   * @private
-   * @param {Discord~Message} msg The message that lead to this being called.
-   * @param {string} id The id of the guild this was triggered from.
-   * @param {string} show The message to show explaining the number.
-   * @param {HungryGames~createEventNumCallback} cb The callback after the user
-   * has chosen a number.
-   */
-  function createEventNums(msg, id, show, cb) {
-    msg.edit(show + '\nNo people');
-
-    let num = 0;
-    const regLis = function() {
-      newReact(maxReactAwaitTime);
-      msg.awaitReactions(function(reaction, user) {
-        if (user.id != self.client.user.id) {
-          reaction.users.remove(user).catch(() => {});
-        }
-        return (reaction.emoji.name == emoji.arrowUp ||
-                   reaction.emoji.name == emoji.arrowDown ||
-                   reaction.emoji.name == emoji.whiteCheckMark) &&
-               user.id == id;
-      }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
-        if (reactions.size == 0) {
-          msg.reactions.removeAll().catch(() => {});
-          return;
-        }
-        const name = reactions.first().emoji.name;
-        if (name == emoji.arrowUp) {
-          num++;
-        } else if (name == emoji.arrowDown) {
-          num--;
-        } else if (name == emoji.whiteCheckMark) {
-          cb(num);
-          return;
-        }
-        let message = 'No people.';
-        if (num < 0) {
-          message = 'At least ' + num * -1 + ' people.';
-        } else if (num > 0) {
-          message = num + ' people exactly.';
-        }
-        msg.edit(show + '\n' + message);
-        regLis();
-      });
-    };
-
-    regLis();
-
-    msg.react(emoji.whiteCheckMark).then(() => {
-      msg.react(emoji.arrowUp).then(() => {
-        msg.react(emoji.arrowDown);
-      });
-    });
-  }
-  /**
-   * The callback after receiving an event outcome from a user.
-   *
-   * @callback HungryGames~createEventOutcomeCallback
-   * @param {string} outcome The outcome chosen by the user.
-   */
-
-  /**
-   * Let the user choose what the outcome of an event will be.
-   *
-   * @private
-   * @param {Discord~Message} msg The message that lead to this being called.
-   * @param {string} id The id of the guild this was triggered from.
-   * @param {string} show The message to show explaining the options.
-   * @param {HungryGames~createEventOutcomeCallback} cb The callback after the
-   * user has chosen an outcome.
-   */
-  function createEventOutcome(msg, id, show, cb) {
-    msg.edit(
-        show + '\n' + getOutcomeEmoji('nothing') + 'Nothing, ' +
-        getOutcomeEmoji('dies') + 'Dies, ' + getOutcomeEmoji('wounded') +
-        'Wounded, ' + getOutcomeEmoji('thrives') + 'Healed, ' +
-        getOutcomeEmoji('revived') + 'Revived');
-
-    newReact(maxReactAwaitTime);
-    msg.awaitReactions(function(reaction, user) {
-      return (reaction.emoji.name == getOutcomeEmoji('thrives') ||
-                 reaction.emoji.name == getOutcomeEmoji('revived') ||
-                 reaction.emoji.name == getOutcomeEmoji('wounded') ||
-                 reaction.emoji.name == getOutcomeEmoji('nothing') ||
-                 reaction.emoji.name == getOutcomeEmoji('dies')) &&
-             user.id == id;
-    }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
-      if (reactions.size == 0) {
-        msg.reactions.removeAll().catch(() => {});
-        return;
-      }
-      switch (reactions.first().emoji.name) {
-        case getOutcomeEmoji('revived'):
-          cb('revived');
-          return;
-        case getOutcomeEmoji('thrives'):
-          cb('thrives');
-          return;
-        case getOutcomeEmoji('wounded'):
-          cb('wounded');
-          return;
-        case getOutcomeEmoji('nothing'):
-          cb('nothing');
-          return;
-        case getOutcomeEmoji('dies'):
-          cb('dies');
-          return;
-      }
-    });
-
-    msg.react(getOutcomeEmoji('nothing')).then(() => {
-      msg.react(getOutcomeEmoji('dies')).then(() => {
-        msg.react(getOutcomeEmoji('wounded')).then(() => {
-          msg.react(getOutcomeEmoji('thrives'));
-        });
-      });
-    });
-  }
-  /**
-   * The callback after receiving a boolean input.
-   *
-   * @callback HungryGames~createEventBooleanCallback
-   * @param {boolean} outcome The value chosen by the user.
-   */
-
-  /**
-   * Let the user choose whether the event attackers and victims kill anyone.
-   *
-   * @private
-   * @param {Discord~Message} msg The message that lead to this being called.
-   * @param {string} id The id of the guild this was triggered from.
-   * @param {string} show The message to show explaining the options.
-   * @param {HungryGames~createEventBooleanCallback} cb The callback after the
-   * user has chosen an outcome.
-   */
-  function createEventAttacker(msg, id, show, cb) {
-    msg.edit(show);
-
-    newReact(maxReactAwaitTime);
-    msg.awaitReactions(function(reaction, user) {
-      return (reaction.emoji.name == emoji.whiteCheckMark ||
-                 reaction.emoji.name == emoji.x) &&
-             user.id == id;
-    }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
-      if (reactions.size == 0) {
-        msg.reactions.removeAll().catch(() => {});
-        return;
-      }
-      if (reactions.first().emoji.name == emoji.whiteCheckMark) {
-        cb(true);
-      } else {
-        cb(false);
-      }
-    });
-
-    msg.react(emoji.whiteCheckMark).then(() => msg.react(emoji.x));
-  }
-
-  /**
-   * When a user is creating a custom event and edits their message, we need to
-   * edit the preview.
-   *
-   * @private
-   * @param {Discord~Message} msg Our message previewing the new event.
-   */
-  function updateEventPreview(msg) {
-    msg.text = msg.text.split(' ').slice(1).join(' ');
-    const helpMsg =
-        '```\nEdit your message until you are happy with the below outcomes, ' +
-        'then click the type of event.\n\nReplace names with "{victim}" or ' +
-        '"{attacker}" (with brackets).\n\nUse "[Vsingular|plural]" or ' +
-        '"[Asingular|plural]" to put "singular" if there\'s only one person, ' +
-        'or "plural" if there are more\n (A for attacker, V for victim).\n```';
-    const finalOptionsHelp =
-        emoji.redCircle + 'Bloodbath event, ' + emoji.trophy + 'Normal event.';
-    const users = msg.guild.members.random(4);
-    const players = [];
-    let cnt = 0;
-    for (let i = 0; cnt < 4; i++) {
-      const nextUser = users[i % users.length];
-      if (typeof nextUser === 'undefined') continue;
-      players.push(HungryGames.Player.from(nextUser.user));
-      cnt++;
-    }
-    try {
-      const single = HungryGames.Event
-          .finalize(
-              msg.text, players.slice(0), 1, 1, 'nothing',
-              'nothing', hg.getGame(msg.guild.id))
-          .message;
-      const pluralOne = HungryGames.Event
-          .finalize(
-              msg.text, players.slice(0), 2, 1, 'nothing',
-              'nothing', hg.getGame(msg.guild.id))
-          .message;
-      const pluralTwo = HungryGames.Event
-          .finalize(
-              msg.text, players.slice(0), 1, 2, 'nothing',
-              'nothing', hg.getGame(msg.guild.id))
-          .message;
-      const pluralBoth = HungryGames.Event
-          .finalize(
-              msg.text, players.slice(0), 2, 2, 'nothing',
-              'nothing', hg.getGame(msg.guild.id))
-          .message;
-      msg.myResponse.edit(
-          helpMsg + single + '\n' + pluralOne + '\n' + pluralTwo + '\n' +
-          pluralBoth +
-          '\n\n(Tip: The Hungry Games can be managed from my website: ' +
-          'https://www.spikeybot.com/hg/)\n' + finalOptionsHelp);
-    } catch (err) {
-      console.log(err);
-    }
-  }
-  /**
-   * Delete a custom event from a guild.
+   * Tell users to use the website to manage custom events.
    *
    * @private
    * @type {HungryGames~hgCommandHandler}
    * @param {Discord~Message} msg The message that lead to this being called.
    * @param {string} id The id of the guild this was triggered from.
    */
-  function removeEvent(msg, id) {
-    if (!hg.getGame(id)) {
-      self.common.reply(
-          msg, 'You must first create an event in order to remove it.');
-      return;
-    }
-    const split = msg.text.trim().split(' ');
-
-    if (split.length == 0) {
-      self.common.reply(
-          msg, 'You must specify the number of the custom event you wish to ' +
-              'remove.');
-      return;
-    } else if (isNaN(split[0])) {
-      self.common.reply(
-          msg,
-          'The number you specified, isn\'t a number, please pick a number.');
-      return;
-    } else if (split[0] <= 0) {
-      self.common.reply(
-          msg, 'The number you chose, is a bad number. I don\'t like it.');
-      return;
-    }
-
-    const num = split[0] - 1;
-
-    self.common
-        .reply(
-            msg, 'Which type of event is this?',
-            emoji.redCircle + 'Bloodbath, ' + emoji.trophy + 'Normal.')
-        .then((msg_) => {
-          newReact(maxReactAwaitTime);
-          msg_.awaitReactions(function(reaction, user) {
-            return user.id == msg.author.id &&
-                    (reaction.emoji.name == emoji.redCircle ||
-                     reaction.emoji.name == emoji.trophy);
-          }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
-            if (reactions.size == 0) {
-              msg_.reactions.removeAll().catch(() => {});
-              return;
-            }
-            let eventType = 'player';
-            if (reactions.first().emoji.name == emoji.redCircle) {
-              eventType = 'bloodbath';
-            }
-
-            if (eventType == 'player') {
-              if (num >= hg.getGame(id).customEvents.player.length) {
-                self.common.reply(
-                    msg,
-                    'That number is a really big scary number. Try a smaller ' +
-                        'one.');
-                msg_.delete().catch(() => {});
-              } else {
-                const removed =
-                    hg.getGame(id).customEvents.player.splice(num, 1)[0];
-                self.common.reply(
-                    msg, 'Removed event.', formatEventString(removed, true));
-                msg_.delete().catch(() => {});
-              }
-            } else {
-              if (num >= hg.getGame(id).customEvents.bloodbath.length) {
-                self.common.reply(
-                    msg,
-                    'That number is a really big scary number. Try a smaller ' +
-                        'one.');
-                msg_.delete().catch(() => {});
-              } else {
-                const removed =
-                    hg.getGame(id).customEvents.bloodbath.splice(num, 1)[0];
-                self.common.reply(
-                    msg, 'Removed event.', formatEventString(removed, true));
-                msg_.delete().catch(() => {});
-              }
-            }
-          });
-
-          msg_.react(emoji.redCircle).then(() => {
-            msg_.react(emoji.trophy);
-          });
-        });
-  }
-  /**
-   * Put information about an array of events into the array.
-   *
-   * @private
-   * @param {HungryGames~Event[]} events Array of events to process and modify.
-   */
-  function fetchStats(events) {
-    let numKill = 0;
-    let numWound = 0;
-    let numThrive = 0;
-    events.forEach(function(obj) {
-      if (obj.attacker.outcome == 'dies' || obj.victim.outcome == 'dies') {
-        numKill++;
-      }
-      if (obj.attacker.outcome == 'wounded' ||
-          obj.victim.outcome == 'wounded') {
-        numWound++;
-      }
-      if (obj.attacker.outcome == 'thrives' ||
-          obj.victim.outcome == 'thrives') {
-        numThrive++;
-      }
-    });
-    events.numKill = numKill;
-    events.numWound = numWound;
-    events.numThrive = numThrive;
-  }
-  /**
-   * Allow user to view all events available on their server and summary of each
-   * type of event.
-   *
-   * @private
-   * @type {HungryGames~hgCommandHandler}
-   * @param {Discord~Message} msg The message that lead to this being called.
-   * @param {string} id The id of the guild this was triggered from.
-   * @param {number} [page=0] The page number to show.
-   * @param {string} [eventType='player'] The type of event to show.
-   * @param {Discord~Message} [editMsg] The message to edit instead of sending a
-   * new message.
-   */
-  function listEvents(msg, id, page = 0, eventType, editMsg) {
-    const embed = new self.Discord.MessageEmbed();
-
-    let events = [];
-    let numCustomEvents = 0;
-    let title;
-    if (!eventType) eventType = 'player';
-    if (eventType == 'player') {
-      if (hg.getGame(id) && hg.getGame(id).customEvents.player) {
-        events = JSON.parse(JSON.stringify(hg.getGame(id).customEvents.player));
-        numCustomEvents = hg.getGame(id).customEvents.player.length;
-      }
-      events.push(
-          new HungryGames.Event(
-              `${emoji.arrowUp}Custom | Default${emoji.arrowDown}`));
-      events = events.concat(JSON.parse(JSON.stringify(defaultPlayerEvents)));
-      title = 'Player';
-      fetchStats(events);
-      embed.setColor([0, 255, 0]);
-    } else if (eventType == 'bloodbath') {
-      if (hg.getGame(id) && hg.getGame(id).customEvents.bloodbath) {
-        events =
-            JSON.parse(JSON.stringify(hg.getGame(id).customEvents.bloodbath));
-        numCustomEvents = hg.getGame(id).customEvents.bloodbath.length;
-      }
-      events.push(
-          new HungryGames.Event(
-              `${emoji.arrowUp}Custom | Default${emoji.arrowDown}`));
-      events =
-          events.concat(JSON.parse(JSON.stringify(defaultBloodbathEvents)));
-      title = 'Bloodbath';
-      fetchStats(events);
-      embed.setColor([255, 0, 0]);
-    } else if (eventType == 'arena') {
-      if (hg.getGame(id) && hg.getGame(id).customEvents.arena) {
-        events = JSON.parse(JSON.stringify(hg.getGame(id).customEvents.arena));
-        numCustomEvents = hg.getGame(id).customEvents.arena.length;
-      }
-      if (numCustomEvents == 0 && page <= 0) {
-        page = 1;
-      }
-      events.push(
-          new HungryGames.Event(
-              `${emoji.arrowUp}Custom | Default${emoji.arrowDown}`));
-      events = events.concat(JSON.parse(JSON.stringify(defaultArenaEvents)));
-
-      events = events.map((obj) => {
-        if (obj.outcomes) {
-          fetchStats(obj.outcomes);
-
-          const percentKill = obj.outcomes.numKill / obj.outcomes.length;
-          const percentWound = obj.outcomes.numWound / obj.outcomes.length;
-          const percentHeal = obj.outcomes.numThrive / obj.outcomes.length;
-
-          const eventMessage = '**___' + obj.message + '___** (' +
-              Math.round(percentKill * 1000) / 10 + '% kill, ' +
-              Math.round(percentWound * 1000) / 10 + '% wound, ' +
-              Math.round(percentHeal * 1000) / 10 + '% heal.)\n' +
-              obj.outcomes
-                  .map(
-                      (outcome, index) =>
-                        `${alph[index]}) ${formatEventString(outcome, true)}`)
-                  .join('\n');
-
-          return new HungryGames.Event(eventMessage);
-        } else {
-          obj.message = `**___${obj.message}___**`;
-          return obj;
-        }
-      });
-      title = 'Arena';
-      embed.setColor([0, 0, 255]);
-    } else {
-      self.error(
-          'HOW COULD THIS BE? I\'ve made a mistake! Unknown event type (' +
-          eventType + ')');
-      self.common.reply(msg, 'BIG Oops! THIS message should _never_ appear!');
-    }
-
-    const numEvents = events.length;
-    const numThisPage = eventType == 'arena' ? 1 : numEventsPerPage;
-    const numPages = Math.ceil(numEvents / numThisPage);
-    if (page * numThisPage >= numEvents) {
-      page = numPages - 1;
-    } else if (page < 0) {
-      page = 0;
-    }
-
-    let fullTitle = `All ${title} Events (${numEvents - 1}) `;
-    if (eventType != 'arena') {
-      fullTitle += Math.round(events.numKill / events.length * 1000) / 10 +
-          '% kill, ' + Math.round(events.numWound / events.length * 1000) / 10 +
-          '% wound, ' +
-          Math.round(events.numThrive / events.length * 1000) / 10 + '% heal.';
-    }
-    embed.setTitle(fullTitle);
-    embed.setFooter(`(Page: ${page + 1}/${numPages})`);
-
-    embed.setDescription(
-        events.slice(page * numThisPage, (page + 1) * numThisPage)
-            .map(function(obj, index) {
-              let num = (index + 1 + numThisPage * page);
-              if (eventType == 'arena') {
-                num = 0;
-              } else {
-                // Not equal to because we are 1 indexed, not 0.
-                if (num > numCustomEvents) num -= numCustomEvents + 1;
-              }
-
-              if (num == 0) {
-                return obj.message;
-              } else {
-                return `${num}) ${formatEventString(obj, true)}`;
-              }
-            })
-            .join('\n'));
-
-    const callback = function(msg_) {
-      newReact(maxReactAwaitTime);
-      msg_.awaitReactions(function(reaction, user) {
-        if (user.id != self.client.user.id) {
-          reaction.users.remove(user).catch(() => {});
-        }
-        return user.id == msg.author.id &&
-                (reaction.emoji.name == emoji.arrowRight ||
-                 reaction.emoji.name == emoji.arrowLeft ||
-                 reaction.emoji.name == emoji.arrowDoubleRight ||
-                 reaction.emoji.name == emoji.arrowDoubleLeft ||
-                 reaction.emoji.name == emoji.arrowsCounterClockwise);
-      }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
-        if (reactions.size == 0) {
-          msg_.reactions.removeAll().catch(() => {});
-          return;
-        }
-        switch (reactions.first().emoji.name) {
-          case emoji.arrowRight:
-            listEvents(msg, id, page + 1, eventType, msg_);
-            break;
-          case emoji.arrowLeft:
-            listEvents(msg, id, page - 1, eventType, msg_);
-            break;
-          case emoji.arrowDoubleRight:
-            listEvents(msg, id, numPages - 1, eventType, msg_);
-            break;
-          case emoji.arrowDoubleLeft:
-            listEvents(msg, id, 0, eventType, msg_);
-            break;
-          case emoji.arrowsCounterClockwise:
-            if (eventType == 'player') {
-              eventType = 'arena';
-            } else if (eventType == 'arena') {
-              eventType = 'bloodbath';
-            } else if (eventType == 'bloodbath') {
-              eventType = 'player';
-            }
-            listEvents(msg, id, 0, eventType, msg_);
-            break;
-        }
-      });
-
-      const myReactions = msg_.reactions.filter(function(obj) {
-        return obj.me;
-      });
-      if (!myReactions.find((r) => r.name == emoji.arrowRight) ||
-          !myReactions.find((r) => r.name == emoji.arrowLeft) ||
-          !myReactions.find((r) => r.name == emoji.arrowDoubleRight) ||
-          !myReactions.find((r) => r.name == emoji.arrowDoubleLeft) ||
-          !myReactions.find((r) => r.name == emoji.arrowsCounterClockwise)) {
-        msg_.react(emoji.arrowDoubleLeft)
-            .then(() => {
-              msg_.react(emoji.arrowLeft).then(() => {
-                msg_.react(emoji.arrowRight).then(() => {
-                  msg_.react(emoji.arrowDoubleRight).then(() => {
-                    msg_.react(emoji.arrowsCounterClockwise);
-                  });
-                });
-              });
-            })
-            .catch(console.log);
-      }
-    };
-
-    if (!editMsg) {
-      msg.channel.send(embed).then(callback);
-    } else {
-      editMsg.edit(embed).then(callback);
-    }
-  }
-
-  /**
-   * Format an event to show its settings to the user.
-   *
-   * @private
-   * @param {HungryGames~Event|string} arenaEvent The event to format.
-   * @param {boolean} [newline=false] If a new line should be inserted for
-   * better formatting.
-   * @returns {string} The formatted message with emojis.
-   */
-  function formatEventString(arenaEvent, newline) {
-    let message = arenaEvent.message.replace(/\{attacker\}/g, '`attacker`')
-        .replace(/\{victim\}/g, '`victim`')
-        .replace(/\{dead\}/g, '`dead`');
-    if (newline) message += '\n    ';
-    message += '(' + emoji.crossedSwords + ': ' +
-        ('' + arenaEvent.attacker.count).replace('-', '>');
-    if (arenaEvent.attacker.count != 0) {
-      message += ', ' + getOutcomeEmoji(arenaEvent.attacker.outcome) +
-          (arenaEvent.attacker.killer ? ' Killer ' : '');
-    }
-    message += ')';
-    if (newline) message += '\n    ';
-    message += '(' + emoji.shield + ': ' +
-        ('' + arenaEvent.victim.count).replace('-', '>');
-    if (arenaEvent.victim.count != 0) {
-      message += ', ' + getOutcomeEmoji(arenaEvent.victim.outcome) +
-          (arenaEvent.victim.killer ? ' Killer' : '');
-    }
-
-    return message + ')';
-  }
-
-  /**
-   * Get the emoji for a specific outcome of an event.
-   *
-   * @private
-   * @param {string} outcome The outcome to get the emoji of.
-   * @returns {string} The emoji.
-   */
-  function getOutcomeEmoji(outcome) {
-    switch (outcome) {
-      case 'dies':
-        return emoji.skull;
-      case 'nothing':
-        return emoji.whiteCheckMark;
-      case 'wounded':
-        return emoji.yellowHeart;
-      case 'thrives':
-        return emoji.heart;
-      case 'revived':
-        return emoji.blueHeart;
-      default:
-        return emoji.question;
-    }
+  function useWebsiteForCustom(msg, id) {
+    self.common.reply(
+        msg, 'This command is no longer available.',
+        'Please use https://www.spikeybot.com/hg/#?guild=' + id +
+            ' to manage custom events.');
   }
 
   /**
@@ -5801,27 +4701,26 @@ function HG() {
     let num = 0;
     let final = null;
     const list = [];
-    const text = msg.text.toLocaleLowerCase().replace(/\d{17,19}/g);
-    Object.entries(weapons).forEach((w) => {
-      list.push(w[0]);
-      if (text.indexOf(w[0].toLocaleLowerCase()) > -1 ||
-          (w[1].name && text.indexOf(w[1].name.toLocaleLowerCase()) > -1)) {
-        num++;
-        final = w[0];
-      }
-    });
-    if (game.customEvents && game.customEvents.weapons) {
-      Object.entries(game.customEvents.weapons).forEach((w) => {
-        if (!list.includes(w[0]) &&
-            (text.indexOf(w[0].toLocaleLowerCase()) > -1 ||
-             (w[1].name && text.indexOf(w[1].name.toLocaleLowerCase()) > -1))) {
+    const text = msg.text.toLocaleLowerCase().replace(/\d{17,19}/g, '');
+    const weapons = game.customEventStore.getArray('weapon');
+    if (weapons) {
+      weapons.forEach((w) => {
+        list.push(w.name);
+        if (text.indexOf(w.name.toLocaleLowerCase()) > -1) {
           num++;
-          final = w[0];
+          final = w.id;
         }
       });
     }
+    weapons.forEach((w) => {
+      if (!list.includes(w.name) &&
+          text.indexOf(w.name.toLocaleLowerCase()) > -1) {
+        num++;
+        final = w.id;
+      }
+    });
     if (num == 0) {
-      self.common.reply(msg, 'Please specify a weapon.');
+      self.common.reply(msg, 'Please specify a valid weapon name.');
       return;
     } else if (num > 1) {
       self.common.reply(

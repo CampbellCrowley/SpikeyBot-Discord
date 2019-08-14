@@ -33,6 +33,14 @@ class Event {
       attackerOutcome = 'nothing', victimKiller = false, attackerKiller = false,
       battle = false, state = 0, attacks = []) {
     /**
+     * @description The full unique ID of this event. If not specified, this
+     * generates just the 32 bit short hash.
+     * @public
+     * @type {string}
+     * @constant
+     */
+    this.id = require('crypto').randomBytes(4).readUInt32BE().toString(36);
+    /**
      * The message to show.
      *
      * @public
@@ -56,8 +64,8 @@ class Event {
      * magnitude.
      * @property {string} outcome The outcome of the victims.
      * @property {boolean} killer Do the victims kill the attackers.
-     * @property {?{name: string, count: number}} weapon The weapon information
-     * to give to the player.
+     * @property {?{id: string, count: number}} weapon The weapon information to
+     * give to the player.
      */
     this.victim = {
       count: numVictim,
@@ -74,8 +82,8 @@ class Event {
      * the magnitude.
      * @property {string} outcome The outcome of the attackers.
      * @property {boolean} killer Do the attackers kill the victims.
-     * @property {?{name: string, count: number}} weapon The weapon information
-     * to give to the player.
+     * @property {?{id: string, count: number}} weapon The weapon information to
+     * give to the player.
      */
     this.attacker = {
       count: numAttacker,
@@ -215,7 +223,7 @@ class Event {
       if (v1.outcome != v2.outcome) return false;
       if (!v1.killer != !v2.killer) return false;
       if (v1.weapon && v2.weapon) {
-        if (v1.weapon.name != v2.weapon.name) return false;
+        if (v1.weapon.id != v2.weapon.id) return false;
         if (v1.weapon.count != v2.weapon.count) return false;
       } else if (!(!v1.weapon && !v2.weapon)) {
         return false;
@@ -230,7 +238,7 @@ class Event {
       if (a1.outcome != a2.outcome) return false;
       if (!a1.killer != !a2.killer) return false;
       if (a1.weapon && a2.weapon) {
-        if (a1.weapon.name != a2.weapon.name) return false;
+        if (a1.weapon.id != a2.weapon.id) return false;
         if (a1.weapon.count != a2.weapon.count) return false;
       } else if (!(!a1.weapon && !a2.weapon)) {
         return false;
@@ -252,13 +260,14 @@ class Event {
    */
   static from(obj) {
     const out = new Event(obj.message);
+    if (obj.id) out.id = obj.id;
     if (obj.victim) {
       out.victim.count = obj.victim.count || 0;
       out.victim.outcome = obj.victim.outcome || 'nothing';
       out.victim.killer = obj.victim.killer || false;
       if (obj.victim.weapon) {
         out.victim.weapon = {
-          name: obj.victim.weapon.name,
+          id: obj.victim.weapon.id,
           count: obj.victim.weapon.count,
         };
       }
@@ -269,7 +278,7 @@ class Event {
       out.attacker.killer = obj.attacker.killer || false;
       if (obj.attacker.weapon) {
         out.attacker.weapon = {
-          name: obj.attacker.weapon.name,
+          id: obj.attacker.weapon.id,
           count: obj.attacker.weapon.count,
         };
       }

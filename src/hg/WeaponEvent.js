@@ -38,6 +38,18 @@ class WeaponEvent {
      */
     this.name = name || null;
   }
+  /**
+   * @description Default action template.
+   * @public
+   * @static
+   * @readonly
+   * @type {string}
+   * @constant
+   * @default
+   */
+  static get action() {
+    return '{attacker} {action} {victim} with {weapon}.';
+  }
 }
 
 module.exports = WeaponEvent;

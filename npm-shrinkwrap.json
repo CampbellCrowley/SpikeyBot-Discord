@@ -1,6 +1,6 @@
 {
   "name": "spikeybot-discord",
-  "version": "1.11.10",
+  "version": "1.12.1",
   "lockfileVersion": 1,
   "requires": true,
   "dependencies": {
@@ -1036,8 +1036,8 @@
       "integrity": "sha512-s2+XdvhPCOF01LRQBC8hf4vhbVmI2CGS5aZnxLJlT5FtdhPCDFq80q++zK2KlrVorVDdL5BOGZ/VfLrVtYNF+Q=="
     },
     "discord.js": {
-      "version": "github:discordjs/discord.js#d14db521585f2b6b1a6c50d3a9acecc73bea25a3",
-      "from": "github:discordjs/discord.js#d14db521585f2b6b1a6c50d3a9acecc73bea25a3",
+      "version": "github:discordjs/discord.js#f79f0243438a89c4d8a910461800b1adff2fe6e5",
+      "from": "github:discordjs/discord.js#f79f0243438a89c4d8a910461800b1adff2fe6e5",
       "requires": {
         "form-data": "^2.3.3",
         "node-fetch": "^2.3.0",

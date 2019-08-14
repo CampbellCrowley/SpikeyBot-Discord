@@ -111,29 +111,13 @@ class HungryGames {
      */
     this._hgSaveDir = '/hg/';
     /**
-     * Array of all events that can take place in the bloodbath by default.
-     *
+     * @description Object storing all default events for the games. Null until
+     * specified by instantiator.
      * @private
-     * @type {HungryGames~Event[]}
+     * @type {?HungryGames~EventContainer}
      * @default
      */
-    this._defaultBloodbathEvents = [];
-    /**
-     * Array of all events that can take place normally by default.
-     *
-     * @private
-     * @type {HungryGames~Event[]}
-     * @default
-     */
-    this._defaultPlayerEvents = [];
-    /**
-     * Array of all arena events that can take place normally by default.
-     *
-     * @private
-     * @type {HungryGames~ArenaEvent[]}
-     * @default
-     */
-    this._defaultArenaEvents = [];
+    this._defaultEventStore = null;
     /**
      * Array of all battles that can take place normally by default.
      *
@@ -142,14 +126,6 @@ class HungryGames {
      * @default
      */
     this._defaultBattles = [];
-    /**
-     * Array of all weapons that can be used normally by default.
-     *
-     * @private
-     * @type {HungryGames~Weapon[]}
-     * @default
-     */
-    this._defaultWeapons = [];
   }
 
   /**
@@ -208,34 +184,13 @@ class HungryGames {
   }
 
   /**
-   * @description Update the reference to the array storing default bloodbath
-   * events.
-   *
+   * @description Update reference to the current
+   * {@link HungryGames~EventContainer} that stores all custom events.
    * @public
-   * @param {HungryGames~Event[]} list Array to reference.
+   * @param {HungryGames~EventContainer} ec The container reference.
    */
-  setDefaultBloodbathEvents(list) {
-    this._defaultBloodbathEvents = list;
-  }
-  /**
-   * @description Update the reference to the array storing default player
-   * events.
-   *
-   * @public
-   * @param {HungryGames~Event[]} list Array to reference.
-   */
-  setDefaultPlayerEvents(list) {
-    this._defaultPlayerEvents = list;
-  }
-  /**
-   * @description Update the reference to the array storing default arena
-   * events.
-   *
-   * @public
-   * @param {HungryGames~ArenaEvent[]} list Array to reference.
-   */
-  setDefaultArenaEvents(list) {
-    this._defaultArenaEvents = list;
+  setDefaultEvents(ec) {
+    this._defaultEventStore = ec;
   }
   /**
    * @description Update the reference to the array storing default battles
@@ -247,36 +202,16 @@ class HungryGames {
   setDefaultBattles(list) {
     this._defaultBattles = list;
   }
-  /**
-   * @description Update the reference to the array storing default weapons
-   * events.
-   *
-   * @public
-   * @param {HungryGames~Weapon[]} list Array to reference.
-   */
-  setDefaultWeapons(list) {
-    this._defaultWeapons = list;
-  }
 
   /**
    * @description Returns an object storing all of the default events for the
    * games.
    *
    * @public
-   * @returns {{
-   *   bloodbath: object,
-   *   player: object,
-   *   arena: object,
-   *   weapon: object
-   * }} Object storing default events.
+   * @returns {HungryGames~EventContainer} Object storing default events.
    */
   getDefaultEvents() {
-    return {
-      bloodbath: this._defaultBloodbathEvents,
-      player: this._defaultPlayerEvents,
-      weapon: this._defaultWeapons,
-      arena: this._defaultArenaEvents,
-    };
+    return this._defaultEventStore;
   }
 
   /**
@@ -511,7 +446,7 @@ class HungryGames {
             id + this.hgSaveDir);
         console.error(err);
       });
-      return 'Resetting ALL Hungry Games data for this server!';
+      return 'Reset ALL Hungry Games data for this server!';
     } else if (command == 'stats') {
       game._stats.fetchGroupList((err, list) => {
         if (err) {
@@ -530,38 +465,45 @@ class HungryGames {
           group.reset();
         }));
       });
-      return 'Resetting ALL Hungry Games stats for this server!';
+      return 'Reset ALL Hungry Games stats for this server!';
     } else if (command == 'events') {
-      game.customEvents = {bloodbath: [], player: [], arena: [], weapon: {}};
-      return 'Resetting ALL Hungry Games events for this server!';
+      game.customEventStore = new HungryGames.EventContainer();
+      game.disabledEventIds = {
+        bloodbath: [],
+        player: [],
+        arena: [],
+        weapon: [],
+        battle: {starts: [], attacks: [], outcomes: []},
+      };
+      return 'Reset ALL Hungry Games events for this server!';
     } else if (command == 'current') {
       game.currentGame = null;
-      return 'Resetting ALL data for current game!';
+      return 'Reset ALL data for current game!';
     } else if (command == 'options') {
       const optKeys = this.defaultOptions.keys;
       game.options = {};
       for (const key of optKeys) {
         game.options[key] = this.defaultOptions[key].value;
       }
-      return 'Resetting ALL options!';
+      return 'Reset ALL options!';
     } else if (command == 'teams') {
       game.currentGame.teams = [];
       game.formTeams();
-      return 'Resetting ALL teams!';
+      return 'Reset ALL teams!';
     } else if (command == 'users') {
       game.includedUsers = [];
       game.excludedUsers = [];
       this.refresh(id, () => {});
-      return 'Resetting ALL user data!';
+      return 'Reset ALL user data!';
     } else if (command == 'npcs') {
       game.includedNPCs = [];
       game.excludedNPCs = [];
       this.refresh(id, () => {});
-      return 'Resetting ALL NPC data!';
+      return 'Reset ALL NPC data!';
     } else if (command == 'actions') {
       game.actions = new HungryGames.ActionStore();
       this._parent._fire('actionUpdate', id, null);
-      return 'Resetting ALL actions!';
+      return 'Reset ALL actions!';
     } else {
       return 'Please specify what data to reset.\nall {deletes all data ' +
           'for this server},\nevents {deletes all custom events},\n' +
@@ -961,6 +903,7 @@ const toLoad = [
   './Team.js',
   './Game.js',
   './Event.js',
+  './EventContainer.js',
   './Stats.js',
   './StatGroup.js',
   './StatManager.js',

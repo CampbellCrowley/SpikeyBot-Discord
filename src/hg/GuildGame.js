@@ -8,6 +8,7 @@ const Simulator = require('./Simulator.js');
 const StatManager = require('./StatManager.js');
 const WeaponEvent = require('./WeaponEvent.js');
 const ActionStore = require('./actions/ActionStore.js');
+const EventContainer = require('./EventContainer.js');
 
 /**
  * A single instance of a game in a guild.
@@ -31,31 +32,22 @@ class GuildGame {
    * @param {HungryGames~NPC[]} [excludedNPCs] Array of NPC objects to exclude
    * from the game.
    * @param {{
-   *   bloodbath: HungryGames~Event[],
-   *   player: HungryGames~Event[],
-   *   weapon: object.<HungryGames~WeaponEvent>,
-   *   arena: HungryGames~ArenaEvent[],
+   *   bloodbath: string[],
+   *   player: string[],
+   *   weapon: string[],
+   *   arena: string[],
    *   battle: {
    *     starts: string[],
-   *     attacks: HungryGames~Event[],
+   *     attacks: string[],
    *     outcomes: string[]
    *   }
-   * }} [customEvents] All custom events for the guild.
-   * @param {{
-   *   bloodbath: HungryGames~Event[],
-   *   player: HungryGames~Event[],
-   *   weapon: object.<Array.<HungryGames~Event>>,
-   *   arena: object.<Array.<HungryGames~Event>>,
-   *   battle: {
-   *     starts: string[],
-   *     attacks: HungryGames~Event[],
-   *     outcomes: string[]
-   *   }
-   * }} [disabledEvents] All disabled events for the guild.
+   * }} customEventIds Array of IDs of custom events to load.
+   * @param {string[]} disabledEventIds Array of IDs of events to be disabled
+   * from game.
    */
   constructor(
       bot, id, options, name, includedUsers, excludedUsers, includedNPCs,
-      excludedNPCs, customEvents, disabledEvents) {
+      excludedNPCs, customEventIds, disabledEventIds) {
     /**
      * The ID of the current bot account.
      *
@@ -147,49 +139,15 @@ class GuildGame {
      */
     this._autoStep = false;
     /**
-     * All custom events for the guild.
-     *
+     * @description Storage manager for all custom events.
+     * @todo Currently each guild will cache all events on its own, this will be
+     * find for now, but would be more efficient if a global cache was used
+     * instead.
      * @public
-     * @type {{
-     *   bloodbath: HungryGames~Event[],
-     *   player: HungryGames~Event[],
-     *   weapon: object.<HungryGames~WeaponEvent>,
-     *   arena: HungryGames~ArenaEvent[],
-     *   battle: {
-     *     starts: string[],
-     *     attacks: HungryGames~Event[],
-     *     outcomes: string[]
-     *   }
-     * }}
-     * @default {{
-     *   bloodbath: [],
-     *   player: [],
-     *   arena: [],
-     *   weapon: {},
-     *   battle: {
-     *     starts: [],
-     *     attacks: [],
-     *     outcomes: []
-     *   }
-     * }}
+     * @type {HungryGames~EventContainer}
+     * @constant
      */
-    this.customEvents = customEvents || {
-      bloodbath: [],
-      player: [],
-      arena: [],
-      weapon: {},
-      battle: {starts: [], attacks: [], outcomes: []},
-    };
-
-    // Force custom events to have custom event flag. (This is here due to
-    // updating from previous version without custom event flag).
-    if (this.customEvents) {
-      for (const cat of Object.values(this.customEvents)) {
-        for (const evt of Object.values(cat)) {
-          if (typeof evt === 'object') evt.custom = true;
-        }
-      }
-    }
+    this.customEventStore = new EventContainer(customEventIds);
 
     /**
      * Current game information.
@@ -200,39 +158,30 @@ class GuildGame {
      */
     this.currentGame = new Game(name, includedUsers);
     /**
-     * Disabled event information. These events are not allowed to show up in
-     * the game.
-     *
+     * @description List of IDs of events to disable per-category.
      * @public
      * @type {{
-     *   bloodbath: HungryGames~Event[],
-     *   player: HungryGames~Event[],
-     *   weapon: object.<Array.<HungryGames~Event>>,
-     *   arena: object.<Array.<HungryGames~Event>>,
+     *   bloodbath: string[],
+     *   player: string[],
+     *   arena: string[],
+     *   weapon: string[],
      *   battle: {
      *     starts: string[],
-     *     attacks: HungryGames~Event[],
-     *     outcomes: string[]
-     *   }
-     * }}
-     * @default {{
-     *   bloodbath: [],
-     *   player: [],
-     *   arena: {},
-     *   weapon: {},
-     *   battle: {
-     *     starts: string[],
-     *     attacks: HungryGames~Event[],
+     *     attacks: string[],
      *     outcomes: string[]
      *   }
      * }}
      */
-    this.disabledEvents = disabledEvents || {
+    this.disabledEventIds = disabledEventIds || {
       bloodbath: [],
       player: [],
-      arena: {},
-      weapon: {},
-      battle: {starts: [], attacks: [], outcomes: []},
+      arena: [],
+      weapon: [],
+      battle: {
+        starts: [],
+        attacks: [],
+        outcomes: [],
+      },
     };
 
     /**
@@ -574,34 +523,42 @@ class GuildGame {
     game.autoPlay = data.autoPlay || false;
     game.reactMessage = data.reactMessage || null;
 
+    // Legacy custom event storage.
     if (data.customEvents) {
-      game.customEvents.bloodbath = data.customEvents.bloodbath || [];
-      game.customEvents.player = data.customEvents.player || [];
-      game.customEvents.arena = data.customEvents.arena || [];
-      game.customEvents.weapon = data.customEvents.weapon || {};
+      game.legacyEvents = {};
+      game.legacyEvents.bloodbath = data.customEvents.bloodbath || [];
+      game.legacyEvents.player = data.customEvents.player || [];
+      game.legacyEvents.arena = data.customEvents.arena || [];
+      game.legacyEvents.weapon = data.customEvents.weapon || {};
       if (data.customEvents.battle) {
-        game.customEvents.battle.starts = data.customEvents.battle.starts || [];
-        game.customEvents.battle.attacks =
+        game.legacyEvents.battle = {};
+        game.legacyEvents.battle.starts = data.customEvents.battle.starts || [];
+        game.legacyEvents.battle.attacks =
             data.customEvents.battle.attacks || [];
-        game.customEvents.battle.outcomes =
+        game.legacyEvents.battle.outcomes =
             data.customEvents.battle.outcomes || [];
       }
     }
-    if (data.disabledEvents) {
-      if (Array.isArray(data.disabledEvents.bloodbath)) {
-        game.disabledEvents.bloodbath = data.disabledEvents.bloodbath;
-      }
-      if (Array.isArray(data.disabledEvents.player)) {
-        game.disabledEvents.player = data.disabledEvents.player;
-      }
-      if (data.disabledEvents.arena) {
-        game.disabledEvents.arena = data.disabledEvents.arena;
-      }
-      if (data.disabledEvents.weapon) {
-        game.disabledEvents.weapon = data.disabledEvents.weapon;
-      }
-      if (data.disabledEvents.battle) {
-        game.disabledEvents.battle = data.disabledEvents.battle;
+    if (data.legacyEvents) {
+      game.legacyEvents = data.legacyEvents;
+    }
+    // End legacy custom events.
+
+    if (data.customEventStore) {
+      game.customEventStore.updateAndFetchAll(data.customEventStore);
+    }
+    if (data.disabledEventIds) {
+      game.disabledEventIds.bloodbath = data.disabledEventIds.bloodbath || [];
+      game.disabledEventIds.player = data.disabledEventIds.player || [];
+      game.disabledEventIds.arena = data.disabledEventIds.arena || [];
+      game.disabledEventIds.weapon = data.disabledEventIds.weapon || [];
+      if (data.disabledEventIds.battle) {
+        game.disabledEventIds.battle.starts =
+            data.disabledEventIds.battle.starts || [];
+        game.disabledEventIds.battle.attacks =
+            data.disabledEventIds.battle.attacks || [];
+        game.disabledEventIds.battle.outcomes =
+            data.disabledEventIds.battle.outcomes || [];
       }
     }
 
@@ -632,18 +589,24 @@ class GuildGame {
    * instance.
    * @param {string|HungryGames~Event[]} [text] Message to show when the user is
    * affected, or array of default events if not specifying a specific message.
-   * @returns {string} The output message to tell the user of the outcome of the
-   * operation.
+   * @param {Function} [cb] Callback once complete. Single parameter is the
+   * output message to tell the user of the outcome of the operation.
    */
-  static forcePlayerState(game, list, state, messages, text) {
+  static forcePlayerState(game, list, state, messages, text, cb) {
     if (!Array.isArray(list)) {
       messages = state;
       text = list.text;
       state = list.state;
       list = list.list;
     }
-    if (!Array.isArray(list) || list.length == 0) return 'No players given.';
-    if (typeof state !== 'string') return 'No outcome given.';
+    if (!Array.isArray(list) || list.length == 0) {
+      cb('No players given.');
+      return;
+    }
+    if (typeof state !== 'string') {
+      cb('No outcome given.');
+      return;
+    }
     const players = [];
     const outcomes = {};
     list.forEach((p) => {
@@ -706,7 +669,7 @@ class GuildGame {
       let evt;
       if (typeof text !== 'string' && Array.isArray(text) &&
           game.options.anonForceOutcome) {
-        let eventPool = text.concat(game.customEvents.player);
+        let eventPool = text.concat(game.customEventStore.get('player'));
         eventPool = eventPool.filter((el) => {
           const checkVictim = el.victim.outcome === outcome &&
               (el.victim.count === affected.length ||
@@ -754,47 +717,34 @@ class GuildGame {
         for (const player of affected) {
           if (!Simulator._applyOutcome(game, player, 0, null, outcome)) break;
         }
-        // State - 2 = the event index, + 1 is the next index to get shown.
-        // let lastIndex = game.currentGame.day.state - 1;
-        /* if (affected.length === 1) {
-          const p = affected[0].id;
-          for (let i = game.currentGame.day.events.length - 1; i > lastIndex;
-            i--) {
-            if (game.currentGame.day.events[i].icons.find((el) => el.id == p)) {
-              lastIndex = i + 2;
-              break;
-            }
-          }
-        } */
-        // game.currentGame.day.events.splice(lastIndex, 0, evt);
         game.currentGame.day.events.push(evt);
       } else {
         game.currentGame.nextDay.events.push(evt);
       }
     };
 
-    for (const outcome in outcomes) {
-      if (!outcomes[outcome] || outcomes[outcome].length == 0) continue;
-      const affected = outcomes[outcome];
-      if (affected.length < 7) {
-        findEvent(affected, outcome);
-      } else {
-        do {
-          findEvent(affected.splice(0, 7), outcome);
-        } while (affected.length > 0);
+    game.customEventStore.waitForReady(() => {
+      for (const outcome in outcomes) {
+        if (!outcomes[outcome] || outcomes[outcome].length == 0) continue;
+        const affected = outcomes[outcome];
+        if (affected.length < 7) {
+          findEvent(affected, outcome);
+        } else {
+          do {
+            findEvent(affected.splice(0, 7), outcome);
+          } while (affected.length > 0);
+        }
       }
-    }
-    if (players.length == 0) {
-      return 'No players found.';
-    } else if (players.length < 5) {
-      const names = players
-          .map((el) => `\`${el}\``)
-          .join(', ');
-      return `${names} will be ${state} by the end of the day.`;
-    } else {
-      return `${players.length} players will be ${state} ` +
-          'by the end of the day.';
-    }
+      if (players.length == 0) {
+        cb('No players found.');
+      } else if (players.length < 5) {
+        const names = players.map((el) => `\`${el}\``).join(', ');
+        cb(`${names} will be ${state} by the end of the day.`);
+      } else {
+        cb(`${players.length} players will be ${state} ` +
+           'by the end of the day.');
+      }
+    });
   }
 
   /**
@@ -846,136 +796,141 @@ class GuildGame {
     count = Math.max(0, current + diff);
 
     const defaultEvents = text.getDefaultEvents();
-    const customWeapons = game.customEvents && game.customEvents.weapon;
-    const weapons = {};
-    if (player.weapons) {
-      for (const w in player.weapons) {
-        if (!player.weapons[w]) continue;
-        weapons[w] = new WeaponEvent(
-            [], (customWeapons[w] || defaultEvents.weapon[w]).consumable, w);
+    game.customEventStore.waitForReady(() => {
+      const customWeapons = game.customEventStore.get('weapon');
+      const weapons = {};
+      if (player.weapons) {
+        for (const w in player.weapons) {
+          if (!player.weapons[w]) continue;
+          weapons[w] = new WeaponEvent(
+              [], (customWeapons[w] || defaultEvents.weapon[w]).consumable, w);
+        }
       }
-    }
-    if (!weapons[weapon]) weapons[weapon] = new WeaponEvent([], null, weapon);
+      if (!weapons[weapon]) weapons[weapon] = new WeaponEvent([], null, weapon);
 
 
-    let evt;
-    if (typeof text !== 'string' && text && typeof text === 'object' &&
-        game.options.anonForceOutcome) {
-      const defaultWeapon = defaultEvents.weapon[weapon];
-      const custom = customWeapons && game.customEvents.weapon[weapon];
+      let evt;
+      if (typeof text !== 'string' && text && typeof text === 'object' &&
+          game.options.anonForceOutcome) {
+        const defaultWeapon = defaultEvents.weapon[weapon];
+        const custom = customWeapons.find((evt) => evt.name === weapon);
 
-      weapons.action = defaultEvents.weapon.action;
-      weapons[weapon] = new WeaponEvent(
-          [], (custom && custom.consumable) ||
-              (defaultWeapon && defaultWeapon.consumable),
-          (custom && custom.name) || (defaultWeapon && defaultWeapon.name));
+        weapons.action = defaultEvents.weapon.action;
+        weapons[weapon] = new WeaponEvent(
+            [], (custom && custom.consumable) ||
+                (defaultWeapon && defaultWeapon.consumable),
+            (custom && custom.name) || (defaultWeapon && defaultWeapon.name));
 
-      let eventPool;
-      if (diff < 0) {
-        if (defaultWeapon && custom) {
-          eventPool = defaultWeapon.outcomes.concat(custom.outcomes);
-        } else if (defaultWeapon) {
-          eventPool = defaultWeapon.outcomes;
-        } else if (custom) {
-          eventPool = custom.outcomes;
+        let eventPool;
+        if (diff < 0) {
+          if (defaultWeapon && custom) {
+            eventPool = defaultWeapon.outcomes.concat(custom.outcomes);
+          } else if (defaultWeapon) {
+            eventPool = defaultWeapon.outcomes;
+          } else if (custom) {
+            eventPool = custom.outcomes;
+          } else {
+            return 'Unable to find weapon';
+          }
+          weapons[weapon].outcomes = eventPool.slice(0);
+          const disabled = game.disabledEvents && game.disabledEvents.weapon &&
+              game.disabledEvents.weapon[weapon];
+          eventPool = eventPool.filter((el) => {
+            return (Math.abs(el.victim.count) + Math.abs(el.attacker.count) ===
+                    1) &&
+                (!disabled || !disabled.find((d) => Event.equal(d, el)));
+          });
         } else {
-          return 'Unable to find weapon';
+          eventPool = defaultEvents.get('player').concat(
+              game.customEventStore.get('player'));
+          const disabled = game.disabledEvents && game.disabledEvents.player;
+          eventPool = eventPool.filter((el) => {
+            const aW = el.attacker.weapon;
+            const aCheck = aW && aW.name === weapon && aW.count > 0;
+            const vW = el.victim.weapon;
+            const vCheck = vW && vW.name === weapon && vW.count > 0;
+            return (aCheck || vCheck) &&
+                (Math.abs(el.attacker.count) + Math.abs(el.victim.count) ===
+                 1) &&
+                !disabled.find((d) => Event.equal(d, el));
+          });
+          weapons[weapon].outcomes = eventPool.slice(0);
         }
-        weapons[weapon].outcomes = eventPool.slice(0);
-        const disabled = game.disabledEvents && game.disabledEvents.weapon &&
-            game.disabledEvents.weapon[weapon];
-        eventPool = eventPool.filter((el) => {
-          return (Math.abs(el.victim.count) + Math.abs(el.attacker.count) ===
-                  1) &&
-              (!disabled || !disabled.find((d) => Event.equal(d, el)));
-        });
-      } else {
-        eventPool = defaultEvents.player.concat(game.customEvents.player);
-        const disabled = game.disabledEvents && game.disabledEvents.player;
-        eventPool = eventPool.filter((el) => {
-          const aW = el.attacker.weapon;
-          const aCheck = aW && aW.name === weapon && aW.count > 0;
-          const vW = el.victim.weapon;
-          const vCheck = vW && vW.name === weapon && vW.count > 0;
-          return (aCheck || vCheck) &&
-              (Math.abs(el.attacker.count) + Math.abs(el.victim.count) === 1) &&
-              !disabled.find((d) => Event.equal(d, el));
-        });
-        weapons[weapon].outcomes = eventPool.slice(0);
-      }
-      if (eventPool.length > 0) {
-        const pick =
-            Event.from(eventPool[Math.floor(eventPool.length * Math.random())]);
+        if (eventPool.length > 0) {
+          const pick = Event.from(
+              eventPool[Math.floor(eventPool.length * Math.random())]);
 
-        text = pick.message = pick.message.replace(/\{owner\}/g, 'their');
-        evt = pick.finalize(game, [player]);
+          text = pick.message = pick.message.replace(/\{owner\}/g, 'their');
+          evt = pick.finalize(game, [player]);
+        }
       }
-    }
-    if (typeof text !== 'string' && text && typeof text === 'object') {
+      if (typeof text !== 'string' && text && typeof text === 'object') {
+        if (diff < 0) {
+          text = text.messages.get('takeWeapon');
+        } else {
+          text = text.messages.get('giveWeapon');
+        }
+      }
+      if (!evt) {
+        text = text.replace(
+            /\{weapon\}/g,
+            Math.abs(diff) === 1 ? `their ${weapon}` : `${weapon}s`);
+        evt = Event.finalize(text, [player], 0, 1, 'nothing', 'nothing', game);
+      }
+
+      const nameFormat = game.options.useNicknames ? 'nickname' : 'username';
       if (diff < 0) {
-        text = text.messages.get('takeWeapon');
+        const ownerName = Grammar.formatMultiNames([player], nameFormat);
+        const firstAttacker = true;
+        evt.consumer = player.id;
+        evt.consumes = [{name: weapon, count: -diff}];
+        evt.subMessage = Simulator.formatWeaponEvent(
+            evt, player, ownerName, firstAttacker, weapon, weapons, count);
       } else {
-        text = text.messages.get('giveWeapon');
-      }
-    }
-    if (!evt) {
-      text = text.replace(
-          /\{weapon\}/g,
-          Math.abs(diff) === 1 ? `their ${weapon}` : `${weapon}s`);
-      evt = Event.finalize(text, [player], 0, 1, 'nothing', 'nothing', game);
-    }
-
-    const nameFormat = game.options.useNicknames ? 'nickname' : 'username';
-    if (diff < 0) {
-      const ownerName = Grammar.formatMultiNames([player], nameFormat);
-      const firstAttacker = true;
-      evt.consumer = player.id;
-      evt.consumes = [{name: weapon, count: -diff}];
-      evt.subMessage = Simulator.formatWeaponEvent(
-          evt, player, ownerName, firstAttacker, weapon, weapons, count);
-    } else {
-      const aW = evt.attacker.weapons.find((w) => w.name === weapon);
-      if (!aW) {
-        evt.attacker.weapons.push({name: weapon, count: diff});
-      } else {
-        aW.count = diff;
-      }
-      const vW = evt.victim.weapons.find((w) => w.name === weapon);
-      if (!vW) {
-        evt.victim.weapons.push({name: weapon, count: diff});
-      } else {
-        vW.count = diff;
-      }
-    }
-
-    if (game.currentGame.day.state > 1) {
-      if (count <= 0) {
-        count = 0;
-        delete player.weapons[weapon];
-      } else {
-        player.weapons[weapon] = count;
-      }
-      evt.subMessage +=
-          Simulator.formatWeaponCounts(evt, [player], weapons, nameFormat);
-      // State - 2 = the event index, + 1 is the next index to get shown.
-      /* let lastIndex = game.currentGame.day.state - 1;
-      for (let i = game.currentGame.day.events.length - 1; i > lastIndex; i--) {
-        if (game.currentGame.day.events[i].icons.find(
-            (el) => el.id == player.id)) {
-          lastIndex = i + 1;
-          break;
+        const aW = evt.attacker.weapons.find((w) => w.name === weapon);
+        if (!aW) {
+          evt.attacker.weapons.push({name: weapon, count: diff});
+        } else {
+          aW.count = diff;
+        }
+        const vW = evt.victim.weapons.find((w) => w.name === weapon);
+        if (!vW) {
+          evt.victim.weapons.push({name: weapon, count: diff});
+        } else {
+          vW.count = diff;
         }
       }
-      if (lastIndex < game.currentGame.day.events.length) {
-        game.currentGame.day.events.splice(lastIndex, 0, evt);
-      } else { */
-      game.currentGame.day.events.push(evt);
-      // }
-      return `${player.name} now has ${count} ${weapon}`;
-    } else {
-      game.currentGame.nextDay.events.push(evt);
-      return `${player.name} will have ${count} ${weapon}`;
-    }
+
+      if (game.currentGame.day.state > 1) {
+        if (count <= 0) {
+          count = 0;
+          delete player.weapons[weapon];
+        } else {
+          player.weapons[weapon] = count;
+        }
+        evt.subMessage +=
+            Simulator.formatWeaponCounts(evt, [player], weapons, nameFormat);
+        // State - 2 = the event index, + 1 is the next index to get shown.
+        /* let lastIndex = game.currentGame.day.state - 1;
+        for (let i = game.currentGame.day.events.length - 1; i > lastIndex; i--)
+        {
+          if (game.currentGame.day.events[i].icons.find(
+              (el) => el.id == player.id)) {
+            lastIndex = i + 1;
+            break;
+          }
+        }
+        if (lastIndex < game.currentGame.day.events.length) {
+          game.currentGame.day.events.splice(lastIndex, 0, evt);
+        } else { */
+        game.currentGame.day.events.push(evt);
+        // }
+        return `${player.name} now has ${count} ${weapon}`;
+      } else {
+        game.currentGame.nextDay.events.push(evt);
+        return `${player.name} will have ${count} ${weapon}`;
+      }
+    });
   }
 }
 

@@ -4,6 +4,7 @@ const {Worker} = require('worker_threads');
 const Game = require('./Game.js');
 const Grammar = require('./Grammar.js');
 const Event = require('./Event.js');
+const WeaponEvent = require('./WeaponEvent.js');
 
 /**
  * Wrapper for logging functions that normally reference SubModule.error and
@@ -76,13 +77,9 @@ class Simulator {
     }
     const data = {
       game: this.game.serializable,
-      events: {
-        bloodbath: this.hg._defaultBloodbathEvents,
-        player: this.hg._defaultPlayerEvents,
-        arena: this.hg._defaultArenaEvents,
-        weapons: this.hg._defaultWeapons,
-        battles: this.hg._defaultBattles,
-      },
+      events: Object.assign(
+          this.hg._defaultEventStore.serializable,
+          {battles: this.hg._defaultBattles}),
       messages: this.hg.messages._messages,
     };
     this.game.currentGame.day.state = 1;
@@ -349,18 +346,18 @@ Simulator._pickAffectedPlayers = function(
  * @param {HungryGames~GuildGame} game Current GuildGame being affected.
  * @param {HungryGames~Player} affected The player to affect.
  * @param {number} kills The number of kills the player gets in this action.
- * @param {{name: string, count: number}} [weapon] The weapon being used if any.
+ * @param {{id: string, count: number}} [weapon] The weapon being used if any.
  */
 Simulator._effectUser = function(game, affected, kills, weapon) {
   if (weapon) {
-    if (!isNaN(affected.weapons[weapon.name])) {
-      affected.weapons[weapon.name] =
-          affected.weapons[weapon.name] * 1 + weapon.count * 1;
+    if (!isNaN(affected.weapons[weapon.id])) {
+      affected.weapons[weapon.id] =
+          affected.weapons[weapon.id] * 1 + weapon.count * 1;
     } else {
-      affected.weapons[weapon.name] = weapon.count * 1;
+      affected.weapons[weapon.id] = weapon.count * 1;
     }
-    if (affected.weapons[weapon.name] <= 0) {
-      delete affected.weapons[weapon.name];
+    if (affected.weapons[weapon.id] <= 0) {
+      delete affected.weapons[weapon.id];
     }
   }
   affected.kills += kills;
@@ -522,13 +519,13 @@ Simulator._applyOutcome = function(game, a, k, w, outcome) {
  * @param {HungryGames~OutcomeProbabilities} probOpts Death rate weights.
  * @param {?Player} weaponWielder A player that is using a weapon in this
  * event, or null if no player is using a weapon.
- * @param {string} chosenWeapon Name of the weapon the player is trying to use.
+ * @param {string} weaponId ID of the weapon the player is trying to use.
  * @returns {?HungryGames~Event} The chosen event that satisfies all
  * requirements, or null if something went wrong.
  */
 Simulator._pickEvent = function(
     userPool, eventPool, options, numAlive, numTotal, teams, probOpts,
-    weaponWielder, chosenWeapon) {
+    weaponWielder, weaponId) {
   if (eventPool) eventPool = eventPool.filter((el) => el);
   // const fails = [];
   let loop = 0;
@@ -583,11 +580,11 @@ Simulator._pickEvent = function(
     const consumes = Math.abs(
         Simulator._parseConsumeCount(
             eventTry.consumes, numVictim, numAttacker));
-    if (weaponWielder && chosenWeapon) {
-      if (consumes > weaponWielder.weapons[chosenWeapon]) {
+    if (weaponWielder && weaponId) {
+      if (consumes > weaponWielder.weapons[weaponId]) {
         /* fails.push(
             'Not enough consumables (' + consumes + ' > ' +
-            weaponWielder.weapons[chosenWeapon] + '): ' + eventIndex + ' V:' +
+            weaponWielder.weapons[weaponId] + '): ' + eventIndex + ' V:' +
             eventTry.victim.count + ' A:' + eventTry.attacker.count + ' M:' +
             eventTry.message); */
         continue;
@@ -607,10 +604,10 @@ Simulator._pickEvent = function(
         if (multiVictim) {
           numVictim = Simulator.weightedUserRand() + (victimMin - 1);
         }
-        if (weaponWielder && chosenWeapon &&
+        if (weaponWielder && weaponId &&
             Simulator._parseConsumeCount(
                 eventTry.consumes, numVictim, numAttacker) >
-                weaponWielder.weapons[chosenWeapon]) {
+                weaponWielder.weapons[weaponId]) {
           continue;
         } else if (victimRevived && attackerRevived) {
           if (numAttacker + numVictim <= numTotal - numAlive) break;
@@ -957,7 +954,7 @@ Simulator._parseConsumeCount = function(consumeString, numVictim, numAttacker) {
  * @param {string} ownerName The formated name to insert fot the weapon owner.
  * @param {boolean} firstAttacker Is the weapon owner the first attacker in list
  * of affected users.
- * @param {string} chosenWeapon The id of the chosen weapon.
+ * @param {string} weaponId The id of the chosen weapon.
  * @param {object.<HungryGames~WeaponEvent>} weapons The default weapons object
  * injected with custom weapons.
  * @param {number} [countOverride] If specified, this value is used as the final
@@ -965,51 +962,49 @@ Simulator._parseConsumeCount = function(consumeString, numVictim, numAttacker) {
  * @returns {string} Additional subMessage.
  */
 Simulator.formatWeaponEvent = function(
-    eventTry, userWithWeapon, ownerName, firstAttacker, chosenWeapon, weapons,
+    eventTry, userWithWeapon, ownerName, firstAttacker, weaponId, weapons,
     countOverride) {
   let subMessage = '';
 
   const numVictim = eventTry.victim.count;
   const numAttacker = eventTry.attacker.count;
   const found = eventTry.consumes && eventTry.consumes.find &&
-      eventTry.consumes.find((el) => el.name === chosenWeapon);
+      eventTry.consumes.find((el) => el.id === weaponId);
   const consumed = Simulator._parseConsumeCount(
       found ? found.count : eventTry.consumes, numVictim, numAttacker);
-  const count = (countOverride != null ?
-                     countOverride :
-                     userWithWeapon.weapons[chosenWeapon] - consumed) ||
+  const count =
+      (countOverride != null ? countOverride :
+                               userWithWeapon.weapons[weaponId] - consumed) ||
       0;
+  const chosenWeapon = weapons[weaponId];
+  const weaponName = chosenWeapon && chosenWeapon.name || weaponId;
   if (count <= 0) {
-    if ((userWithWeapon.weapons[chosenWeapon] - consumed || 0) ==
+    if ((userWithWeapon.weapons[weaponId] - consumed || 0) ==
         (countOverride || 0)) {
-      delete userWithWeapon.weapons[chosenWeapon];
+      delete userWithWeapon.weapons[weaponId];
     }
 
-    const weaponName = chosenWeapon;
     let consumableName = weaponName;
-    if (weapons[weaponName]) {
-      if (weapons[weaponName].consumable) {
-        consumableName = weapons[weaponName].consumable.replace(
-            /\[C([^|]*)\|([^\]]*)\]/g, '$2');
-      } else if (weapons[weaponName].name) {
+    if (chosenWeapon) {
+      if (chosenWeapon.consumable) {
         consumableName =
-            weapons[weaponName].name.replace(/\[C([^|]*)\|([^\]]*)\]/g, '$2');
+            chosenWeapon.consumable.replace(/\[C([^|]*)\|([^\]]*)\]/g, '$2');
+      } else if (chosenWeapon.name) {
+        consumableName =
+            chosenWeapon.name.replace(/\[C([^|]*)\|([^\]]*)\]/g, '$2');
       } else {
         consumableName += 's';
       }
-    } else {
-      consumableName += 's';
     }
     subMessage = `\n${ownerName} runs out of ${consumableName}.`;
   } else if (consumed != 0) {
-    const weaponName = chosenWeapon;
     let consumableName = weaponName;
     const count = consumed;
-    if (weapons[weaponName].consumable) {
-      consumableName = weapons[weaponName].consumable.replace(
+    if (chosenWeapon.consumable) {
+      consumableName = chosenWeapon.consumable.replace(
           /\[C([^|]*)\|([^\]]*)\]/g, (count == 1 ? '$1' : '$2'));
-    } else if (weapons[weaponName].name) {
-      consumableName = weapons[weaponName].name.replace(
+    } else if (chosenWeapon.name) {
+      consumableName = chosenWeapon.name.replace(
           /\[C([^|]*)\|([^\]]*)\]/g, (count == 1 ? '$1' : '$2'));
     } else if (count != 1) {
       consumableName += 's';
@@ -1022,9 +1017,8 @@ Simulator.formatWeaponEvent = function(
     owner = `${ownerName}'s`;
   }
   if (!eventTry.message) {
-    const weaponName = weapons[chosenWeapon].name || chosenWeapon;
     eventTry.message =
-        weapons.message.replace(/\{weapon\}/g, `${owner} ${weaponName}`)
+        WeaponEvent.action.replace(/\{weapon\}/g, `${owner} ${weaponName}`)
             .replace(/\{action\}/g, eventTry.action)
             .replace(/\[C([^|]*)\|([^\]]*)\]/g, (consumed == 1 ? '$1' : '$2'));
   } else {
@@ -1054,18 +1048,16 @@ Simulator.formatWeaponCounts = function(
 
 
   const getWeaponCount = function(el) {
-    const weaponName = el[0];
+    const weapon = weapons[el[0]];
+    const weaponName = weapon && weapon.name || el[0];
     let consumableName = weaponName;
     const count = el[1];
-    if (!weapons[weaponName]) {
-      // console.log(weapons);
-      // throw new Error('Bad weapon ' + weaponName);
-      console.error('Unable to find weapon ' + weaponName);
+    if (!weapon) {
+      console.error('Unable to find weapon ' + el[0]);
       return `(Unknown weapon ${weaponName}. Was it deleted?)`;
-      // return `${count || 0} something`;
     }
-    if (weapons[weaponName].consumable) {
-      consumableName = weapons[weaponName].consumable.replace(
+    if (weapon.consumable) {
+      consumableName = weapon.consumable.replace(
           /\[C([^|]*)\|([^\]]*)\]/g, (count == 1 ? '$1' : '$2'));
     } else if (count != 1) {
       consumableName += 's';

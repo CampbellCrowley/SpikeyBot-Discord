@@ -117,9 +117,9 @@ class FinalEvent {
     this.consumer = evt.consumer;
 
     const vW = evt.victim.weapon &&
-        [{name: evt.victim.weapon.name, count: evt.victim.weapon.count}];
+        [{id: evt.victim.weapon.id, count: evt.victim.weapon.count}];
     const aW = evt.attacker.weapon &&
-        [{name: evt.attacker.weapon.name, count: evt.attacker.weapon.count}];
+        [{id: evt.attacker.weapon.id, count: evt.attacker.weapon.count}];
 
     /**
      * @description Information about the victims as a result of this event.
