@@ -10,7 +10,7 @@ class Day {
   /**
    * @description Create a basic game day.
    * @param {number} [num] The day number.
-   * @param {HungryGames~Event[]} [events] The events that will take place
+   * @param {HungryGames~FinalEvent[]} [events] The events that will take place
    * during
    * this day.
    */
@@ -38,7 +38,7 @@ class Day {
      * All events to take place during this day.
      *
      * @public
-     * @type {HungryGames~Event[]}
+     * @type {HungryGames~FinalEvent[]}
      * @default
      */
     this.events = events || [];

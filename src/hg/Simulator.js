@@ -1,10 +1,7 @@
 // Copyright 2018-2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const {Worker} = require('worker_threads');
-const Game = require('./Game.js');
-const Grammar = require('./Grammar.js');
-const Event = require('./Event.js');
-const WeaponEvent = require('./WeaponEvent.js');
+const HungryGames = require('./HungryGames.js');
 
 /**
  * Wrapper for logging functions that normally reference SubModule.error and
@@ -106,7 +103,7 @@ class Simulator {
         cb(msg.reason);
       }
       if (msg.game) {
-        this.game.currentGame = Game.from(msg.game.currentGame);
+        this.game.currentGame = HungryGames.Game.from(msg.game.currentGame);
         cb();
       }
     });
@@ -205,7 +202,7 @@ Simulator.weightedUserRand = function() {
  *
  * @private
  * @static
- * @param {HungryGames~Event} evt The event data to pick players for.
+ * @param {HungryGames~NormalEvent} evt The event data to pick players for.
  * @param {object} options Options for this game.
  * @param {HungryGames~Player[]} userPool Pool of all remaining players to put
  * into an event.
@@ -510,7 +507,7 @@ Simulator._applyOutcome = function(game, a, k, w, outcome) {
  * @static
  * @param {HungryGames~Player[]} userPool Pool of players left to chose from
  * in this day.
- * @param {HungryGames~Event[]} eventPool Pool of all events available to
+ * @param {HungryGames~NormalEvent[]} eventPool Pool of all events available to
  * choose at this time.
  * @param {object} options The options set in the current game.
  * @param {number} numAlive Number of players in the game still alive.
@@ -520,7 +517,7 @@ Simulator._applyOutcome = function(game, a, k, w, outcome) {
  * @param {?Player} weaponWielder A player that is using a weapon in this
  * event, or null if no player is using a weapon.
  * @param {string} weaponId ID of the weapon the player is trying to use.
- * @returns {?HungryGames~Event} The chosen event that satisfies all
+ * @returns {?HungryGames~NormalEvent} The chosen event that satisfies all
  * requirements, or null if something went wrong.
  */
 Simulator._pickEvent = function(
@@ -643,7 +640,7 @@ Simulator._pickEvent = function(
       continue;
     }
 
-    const finalEvent = Event.from(eventPool[eventIndex]);
+    const finalEvent = HungryGames.NormalEvent.from(eventPool[eventIndex]);
 
     finalEvent.attacker.count = numAttacker;
     finalEvent.victim.count = numVictim;
@@ -835,9 +832,13 @@ Simulator._validateEventRequirements = function(
  *
  * @private
  * @static
- * @param {HungryGames~Event[]} eventPool The pool of all events to consider.
+ * @param {HungryGames~NormalEvent[]} eventPool The pool of all events to
+ * consider.
  * @param {{
- * kill: number, wound: number, thrive: number, nothing: number
+ *   kill: number,
+ *   wound: number,
+ *   thrive: number,
+ *   nothing: number
  * }} probabilityOpts The probabilities of each type of event being used.
  * @param {number} [customWeight=1] The weight of custom events.
  * @param {number} [recurse=0] The current recursive depth.
@@ -949,7 +950,7 @@ Simulator._parseConsumeCount = function(consumeString, numVictim, numAttacker) {
  * @description Format an event message for the given weapon information.
  * @public
  * @static
- * @param {HungryGames~Event} eventTry The event to format.
+ * @param {HungryGames~NormalEvent} eventTry The event to format.
  * @param {HungryGames~Player} userWithWeapon The player using the weapon.
  * @param {string} ownerName The formated name to insert fot the weapon owner.
  * @param {boolean} firstAttacker Is the weapon owner the first attacker in list
@@ -1018,7 +1019,8 @@ Simulator.formatWeaponEvent = function(
   }
   if (!eventTry.message) {
     eventTry.message =
-        WeaponEvent.action.replace(/\{weapon\}/g, `${owner} ${weaponName}`)
+        HungryGames.WeaponEvent.action
+            .replace(/\{weapon\}/g, `${owner} ${weaponName}`)
             .replace(/\{action\}/g, eventTry.action)
             .replace(/\[C([^|]*)\|([^\]]*)\]/g, (consumed == 1 ? '$1' : '$2'));
   } else {
@@ -1031,7 +1033,8 @@ Simulator.formatWeaponEvent = function(
  * @description Format the text that shows all users' inventories in an event.
  * @public
  * @static
- * @param {HungryGames~Event} eventTry The event to format inventories for.
+ * @param {HungryGames~NormalEvent} eventTry The event to format inventories
+ * for.
  * @param {HungryGames~Player[]} affectedUsers Array of all player affected by
  * this event.
  * @param {object.<HungryGames~WeaponEvent>} weapons The default weapons object
@@ -1089,7 +1092,7 @@ Simulator.formatWeaponCounts = function(
 
   const subMessage = [];
   Object.entries(finalConsumeList).forEach((el) => {
-    const multi = Grammar.formatMultiNames(el[1], nameFormat);
+    const multi = HungryGames.Grammar.formatMultiNames(el[1], nameFormat);
     const has = el[1].length == 1 ? 'has' : 'have';
     subMessage.push(`\n${multi} now ${has} ${el[0]}.`);
   });

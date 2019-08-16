@@ -3094,258 +3094,6 @@ function HG() {
   }
 
   /**
-   * Creates an event and adds it to the custom events for the given guild.
-   *
-   * @public
-   * @param {string} id The guild id to add the event to.
-   * @param {string} type The type of event this is. Either 'player' or
-   * 'bloodbath'.
-   * @param {object} obj Settings to pass.
-   * @param {string} obj.message The event message.
-   * @param {number} obj.numVictim The number of victims in the event.
-   * @param {number} obj.numAttacker The number of attackers in the event.
-   * @param {string} obj.victimOutcome The outcome of the victims due to this
-   * event.
-   * @param {string} obj.attackerOutcome The outcome of the attackers due to
-   * this event.
-   * @param {boolean} obj.victimKiller Do the victims kill anyone.
-   * @param {boolean} obj.attackerKiller Do the attackers kill anyone.
-   * @param {{name: string, count: number}} obj.vWeapon The weapon information
-   * to give the victim.
-   * @param {{name: string, count: number}} obj.aWeapon The weapon information
-   * to give the attacker.
-   * @returns {?string} Error message or null if no error.
-   */
-  this.makeAndAddEvent = function(id, type, obj) {
-    // message, numVictim, numAttacker, victimOutcome, attackerOutcome,
-    //   victimKiller, attackerKiller, vWeapon = null, aWeapon = null) {
-    if (type !== 'player' && type !== 'bloodbath') return 'Invalid Type';
-    if (!hg.getGame(id) || !hg.getGame(id).customEventStore) {
-      return 'Invalid ID or no game.';
-    }
-    const newEvent = new HungryGames.Event(
-        obj.message, obj.numVictim, obj.numAttacker, obj.victimOutcome,
-        obj.attackerOutcome, obj.victimKiller, obj.attackerKiller);
-    if (obj.vWeapon) {
-      newEvent.victim.weapon = obj.vWeapon;
-    }
-    if (obj.aWeapon) {
-      newEvent.attacker.weapon = obj.aWeapon;
-    }
-    return self.addEvent(id, type, newEvent);
-  };
-  /**
-   * Adds a given event to the given guild's custom events.
-   *
-   * @public
-   * @param {string} id The id of the guild to add the event to.
-   * @param {string} type The type of event this is.
-   * @param {HungryGames~Event} event The event to add.
-   * @returns {?string} Error message or null if no error.
-   */
-  this.addEvent = function(id, type, event) {
-    if (type !== 'bloodbath' && type !== 'player') return 'Invalid Type';
-    if (!hg.getGame(id) || !hg.getGame(id).customEvents) {
-      return 'Invalid ID or no game.';
-    }
-    if (typeof event.message !== 'string' || event.message.length == 0) {
-      return 'Event must have a message.';
-    }
-    for (let i = 0; i < hg.getGame(id).customEvents[type].length; i++) {
-      if (HungryGames.Event.equal(
-          event, hg.getGame(id).customEvents[type][i])) {
-        return 'Event already exists!';
-      }
-    }
-    hg.getGame(id).customEvents[type].push(event);
-    return null;
-  };
-
-  /**
-   * Creates an event and adds it to the custom events for the given guild. Or
-   * edits an existing event by appending new events to the major event.
-   *
-   * @public
-   * @param {string} id The guild id to add the event to.
-   * @param {string} type The type of event this is. Either 'arena' or 'weapon'.
-   * @param {HungryGames~ArenaEvent|HungryGames~WeaponEvent} data The event
-   * data.
-   * @param {string} [name] The internal name of the weapon being added.
-   * @returns {?string} Error message or null if no error.
-   */
-  this.addMajorEvent = function(id, type, data, name) {
-    if (type !== 'arena' && type !== 'weapon') return 'Invalid Type';
-    if (!hg.getGame(id) || !hg.getGame(id).customEvents) {
-      return 'Invalid ID or no game.';
-    }
-    if (type === 'arena') {
-      if (!data.message || data.message.length == 0) {
-        return 'Event must have a message.';
-      }
-      for (let i = 0; i < hg.getGame(id).customEvents[type].length; i++) {
-        if (hg.getGame(id).customEvents[type][i].message === data.message) {
-          hg.getGame(id).customEvents[type][i] =
-              Object.assign(hg.getGame(id).customEvents[type][i], data);
-          return null;
-        }
-      }
-      hg.getGame(id).customEvents[type].push(data);
-      return null;
-    } else if (type === 'weapon') {
-      if (hg.getGame(id).customEvents[type][name]) {
-        if (data.name) hg.getGame(id).customEvents[type][name].name = data.name;
-        if (data.consumable) {
-          hg.getGame(id).customEvents[type][name].consumable = data.consumable;
-        }
-        for (let i = 0; i < data.outcomes.length; i++) {
-          let exists = false;
-          const dEl = data.outcomes[i];
-          for (let j = 0;
-            j < hg.getGame(id).customEvents[type][name].outcomes.length; j++) {
-            const el = hg.getGame(id).customEvents[type][name].outcomes[j];
-            if (HungryGames.Event.equal(el, dEl)) {
-              exists = true;
-              break;
-            }
-          }
-          if (exists) continue;
-          hg.getGame(id).customEvents[type][name].outcomes.push(
-              data.outcomes[i]);
-        }
-      } else {
-        hg.getGame(id).customEvents[type][name] = data;
-      }
-      return null;
-    }
-    return 'Invalid Type';
-  };
-
-  /**
-   * Searches custom events for the given one, then edits it with the given
-   * data. If the data is null besides required data for finding the major
-   * event, the major event gets deleted. (Arena or Weapon events).
-   *
-   * @public
-   * @param {string} id The id of the guild to remove the event from.
-   * @param {string} type The type of event this is.
-   * @param {HungryGames~ArenaEvent|HungryGames~WeaponEvent} search The event
-   * data to use to search for.
-   * @param {?HungryGames~ArenaEvent|HungryGames~WeaponEvent} data The event
-   * data to set the matched search to. If this is null, the event is deleted.
-   * @param {string} [name] The name of the weapon to look for or the message of
-   * the arena event to edit.
-   * @param {string} [newName] The new name of the weapon that was found with
-   * `name`.
-   * @returns {?string} Error message or null if no error.
-   */
-  this.editMajorEvent = function(id, type, search, data, name, newName) {
-    if (type !== 'arena' && type !== 'weapon') return 'Invalid Type';
-    if (!hg.getGame(id) || !hg.getGame(id).customEvents) {
-      return 'Invalid ID or no game.';
-    }
-    const list = hg.getGame(id).customEvents[type];
-    if (type === 'arena') {
-      let match;
-      let matchId = -1;
-      for (let i = 0; i < list.length; i++) {
-        if (list[i].message == search.message) {
-          match = list[i];
-          matchId = i;
-          break;
-        }
-      }
-      if (!match) return 'Failed to find event to edit.';
-
-      if (!data) {
-        hg.getGame(id).customEvents[type].splice(matchId, 1);
-        return null;
-      }
-      if (search.message) match.message = data.message;
-      if (search.outcomeProbs) match.outcomeProbs = data.outcomeProbs;
-      if (!search.outcomes || search.outcomes.length == 0) return null;
-      for (let i = 0; i < match.outcomes.length; i++) {
-        let one = match.outcomes[i];
-        for (let j = 0; j < search.outcomes.length; j++) {
-          const two = search.outcomes[j];
-          if (HungryGames.Event.equal(one, two)) {
-            if (data.outcomes && data.outcomes[j]) {
-              one = data.outcomes[j];
-            } else {
-              match.outcomes.splice(i, 1);
-              i--;
-            }
-            break;
-          }
-        }
-      }
-      if (match.outcomes.length == 0) {
-        hg.getGame(id).customEvents[type].splice(matchId, 1);
-      }
-      return null;
-    } else if (type === 'weapon') {
-      let match = hg.getGame(id).customEvents[type][name];
-      if (!match) return 'Failed to find weapon to edit.';
-      if (newName) {
-        match = hg.getGame(id).customEvents[type][newName] =
-            Object.assign({}, match);
-        delete hg.getGame(id).customEvents[type][name];
-      }
-      if (!search) return null;
-      if (!data) {
-        delete hg.getGame(id).customEvents[type][newName || name];
-        return null;
-      }
-      if (search.name) match.name = data.name;
-      if (search.consumable) match.consumable = data.consumable;
-      if (!search.outcomes || search.outcomes.length == 0) return null;
-      for (let i = 0; i < search.outcomes.length; i++) {
-        for (let j = 0; j < match.outcomes.length; j++) {
-          if (HungryGames.Event.equal(
-              search.outcomes[i], match.outcomes[j])) {
-            if (!data.outcomes || !data.outcomes[i]) {
-              match.outcomes.splice(j, 1);
-            } else {
-              match.outcomes[j] = data.outcomes[i];
-            }
-            break;
-          }
-        }
-      }
-      if (match.outcomes.length == 0) {
-        delete hg.getGame(id).customEvents[type][newName || name];
-      }
-      return null;
-    }
-
-    return 'Failed to find event to edit.';
-  };
-
-  /**
-   * Searches custom events for the given one, then removes it from the custom
-   * events. (Bloodbath or Player events).
-   *
-   * @public
-   * @param {string} id The id of the guild to remove the event from.
-   * @param {string} type The type of event this is.
-   * @param {HungryGames~Event} event The event to search for.
-   * @returns {?string} Error message or null if no error.
-   */
-  this.removeEvent = function(id, type, event) {
-    if (type !== 'bloodbath' && type !== 'player') return 'Invalid Type';
-    if (!hg.getGame(id) || !hg.getGame(id).customEvents) {
-      return 'Invalid ID or no game.';
-    }
-    const list = hg.getGame(id).customEvents[type];
-    for (let i = 0; i < list.length; i++) {
-      if (HungryGames.Event.equal(list[i], event)) {
-        list.splice(i, 1);
-        return null;
-      }
-    }
-    return 'Failed to find event to remove.';
-  };
-
-  /**
    * Enable or disable an event without deleting it completely.
    *
    * @public
@@ -4516,10 +4264,11 @@ function HG() {
       self.common.reply(msg, 'Please specify a player in the games to kill.');
       return;
     }
-    self.common.reply(
-        msg, HungryGames.GuildGame.forcePlayerState(
-            hg.getGame(id), players, 'dead', hg.messages,
-            hg._defaultPlayerEvents));
+    HungryGames.GuildGame.forcePlayerState(
+        hg.getGame(id), players, 'dead', hg.messages, hg._defaultPlayerEvents,
+        (res) => {
+          self.common.reply(msg, res);
+        });
   }
 
   /**
@@ -4550,10 +4299,11 @@ function HG() {
       self.common.reply(msg, 'Please specify a player in the games to heal.');
       return;
     }
-    self.common.reply(
-        msg, HungryGames.GuildGame.forcePlayerState(
-            hg.getGame(id), players, 'thriving', hg.messages,
-            hg._defaultPlayerEvents));
+    HungryGames.GuildGame.forcePlayerState(
+        hg.getGame(id), players, 'thriving', hg.messages,
+        hg._defaultPlayerEvents, (res) => {
+          self.common.reply(msg, res);
+        });
   }
 
   /**
@@ -4583,10 +4333,11 @@ function HG() {
       self.common.reply(msg, 'Please specify a player in the games to wound.');
       return;
     }
-    self.common.reply(
-        msg, HungryGames.GuildGame.forcePlayerState(
-            hg.getGame(id), players, 'wounded', hg.messages,
-            hg._defaultPlayerEvents));
+    HungryGames.GuildGame.forcePlayerState(
+        hg.getGame(id), players, 'wounded', hg.messages,
+        hg._defaultPlayerEvents, (res) => {
+          self.common.reply(msg, res);
+        });
   }
 
   /**
@@ -4703,15 +4454,13 @@ function HG() {
     const list = [];
     const text = msg.text.toLocaleLowerCase().replace(/\d{17,19}/g, '');
     const weapons = game.customEventStore.getArray('weapon');
-    if (weapons) {
-      weapons.forEach((w) => {
-        list.push(w.name);
-        if (text.indexOf(w.name.toLocaleLowerCase()) > -1) {
-          num++;
-          final = w.id;
-        }
-      });
-    }
+    defaultEvents.getArray('weapon').forEach((w) => {
+      list.push(w.name);
+      if (text.indexOf(w.name.toLocaleLowerCase()) > -1) {
+        num++;
+        final = w.id;
+      }
+    });
     weapons.forEach((w) => {
       if (!list.includes(w.name) &&
           text.indexOf(w.name.toLocaleLowerCase()) > -1) {
@@ -4734,8 +4483,9 @@ function HG() {
       count = (flip ? -1 : 1) * count[1];
     }
 
-    const error = game.modifyPlayerWeapon(users.first().id, final, hg, count);
-    self.common.reply(msg, error);
+    game.modifyPlayerWeapon(
+        users.first().id, final, hg, count, false,
+        (res) => self.common.reply(msg, res));
   }
   /**
    * @description Start or stop allowing users to enter in to a game by clicking

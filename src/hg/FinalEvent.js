@@ -12,7 +12,7 @@ const funTranslator = require('../lib/funTranslators.js');
 class FinalEvent {
   /**
    * @description Create an event ready for display.
-   * @param {HungryGames~Event} evt Event to finalize.
+   * @param {HungryGames~NormalEvent} evt Event to finalize.
    * @param {HungryGames~GuildGame} game Game context.
    * @param {HungryGames~Player[]} affected An array of all players affected by
    * this event.

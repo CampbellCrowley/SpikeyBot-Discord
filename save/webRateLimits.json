@@ -5,6 +5,7 @@
     "connect": "auth",
     "fetchMember": "fetchInfo",
     "fetchChannel": "fetchInfo",
+    "fetchEvent": "fetchInfo",
     "imageChunk": "upload"
   },
   "groups": {

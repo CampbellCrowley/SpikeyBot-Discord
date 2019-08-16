@@ -1,12 +1,7 @@
 // Copyright 2018-2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const {workerData, parentPort} = require('worker_threads');
-const Event = require('../Event.js');
-const Day = require('../Day.js');
-const Battle = require('../Battle.js');
-const Grammar = require('../Grammar.js');
-const Simulator = require('../Simulator.js');
-const EventContainer = require('../EventContainer.js');
+const HungryGames = require('../HungryGames.js');
 
 /**
  * @description Asyncronous worker that does the actual simulating.
@@ -25,14 +20,16 @@ class Worker {
    */
   constructor(sim, retry = true) {
     sim.game.currentGame.prevDay = sim.game.currentGame.day;
-    sim.game.currentGame.day = Day.from(sim.game.currentGame.nextDay);
+    sim.game.currentGame.day =
+        HungryGames.Day.from(sim.game.currentGame.nextDay);
     sim.game.currentGame.day.state = 1;
     if (!sim.game.customEventStore.serializable) {
-      sim.game.customEventStore = new EventContainer(sim.game.customEventStore);
+      sim.game.customEventStore =
+          new HungryGames.EventContainer(sim.game.customEventStore);
     }
     if (!sim.events.serializable) {
       const battle = sim.events.battles;
-      sim.events = new EventContainer(sim.events);
+      sim.events = new HungryGames.EventContainer(sim.events);
       sim.events.battles = battle;
     }
 
@@ -128,8 +125,7 @@ class Worker {
           sim.events.getArray('bloodbath')
               .concat(sim.game.customEventStore.getArray('bloodbath'));
       userEventPool = userEventPool.filter(
-          (el) =>
-            !sim.game.disabledEventIds.bloodbath.find((d) => d === el.id));
+          (el) => !sim.game.disabledEventIds.bloodbath.includes(el.id));
       if (userEventPool.length == 0) {
         this.cb({
           reply: 'All bloodbath events have been disabled! Please enable ' +
@@ -147,8 +143,7 @@ class Worker {
             sim.events.getArray('arena')
                 .concat(sim.game.customEventStore.getArray('arena'))
                 .filter(
-                    (evt) => !sim.game.disabledEventIds.arena.find(
-                        (el) => el === evt.id));
+                    (evt) => !sim.game.disabledEventIds.arena.includes(evt.id));
         do {
           let total = arenaEventPool.length;
           if (sim.game.options.customEventWeight != 1) {
@@ -166,15 +161,16 @@ class Worker {
           });
           arenaEvent = arenaEventPool[index];
           userEventPool = arenaEvent.outcomes.filter(
-              (el) => !sim.game.disabledEventIds.arena.find(
-                  (d) => d === `${arenaEvent.id}/${el.id}`));
+              (el) => !sim.game.disabledEventIds.arena.includes(
+                  `${arenaEvent.id}/${el.id}`));
           if (userEventPool.length == 0) {
             arenaEventPool.splice(index, 1);
           } else {
             sim.game.currentGame.day.events.push(
-                Event.finalizeSimple(sim.messages.get('eventStart'), sim.game));
+                HungryGames.Event.finalizeSimple(
+                    sim.messages.get('eventStart'), sim.game));
             sim.game.currentGame.day.events.push(
-                Event.finalizeSimple(
+                HungryGames.Event.finalizeSimple(
                     `**___${arenaEvent.message}___**`, sim.game));
             break;
           }
@@ -185,7 +181,7 @@ class Worker {
         userEventPool = sim.events.getArray('player').concat(
             sim.game.customEventStore.getArray('player'));
         userEventPool = userEventPool.filter(
-            (el) => !sim.game.disabledEventIds.player.find((d) => d === el.id));
+            (el) => !sim.game.disabledEventIds.player.includes(el.id));
         if (userEventPool.length == 0) {
           this.cb({
             reply:
@@ -207,10 +203,9 @@ class Worker {
     const weaponList = Object.values(weapons);
     weaponList.forEach((evt) => {
       evt.outcomes = evt.outcomes.filter(
-          (el) => !disabledList.find((dis) => `${evt.id}/${el.id}` === dis));
+          (el) => !disabledList.includes(`${evt.id}/${el.id}`));
 
-      if (evt.outcomes.length === 0 ||
-          disabledList.find((dis) => evt.id === dis)) {
+      if (evt.outcomes.length === 0 || disabledList.includes(evt.id)) {
         delete weapons[evt.id];
       }
     });
@@ -256,7 +251,7 @@ class Worker {
           useWeapon = false;
           // console.log('No event pool with weapon', chosenWeapon);
         } else {
-          eventTry = Simulator._pickEvent(
+          eventTry = HungryGames.Simulator._pickEvent(
               userPool, weapons[chosenWeapon].outcomes, sim.game.options,
               numAlive, sim.game.currentGame.includedUsers.length, teams,
               probOpts, userWithWeapon, chosenWeapon);
@@ -266,11 +261,11 @@ class Worker {
                 'No event with weapon "' + chosenWeapon +
                 '" for available players ' + id); */
           } else {
-            affectedUsers = Simulator._pickAffectedPlayers(
+            affectedUsers = HungryGames.Simulator._pickAffectedPlayers(
                 eventTry, sim.game.options, userPool, deadPool, teams,
                 userWithWeapon, chosenWeapon);
 
-            const count = Simulator._parseConsumeCount(
+            const count = HungryGames.Simulator._parseConsumeCount(
                 eventTry.consumes, eventTry.victim.count,
                 eventTry.attacker.count);
 
@@ -279,9 +274,9 @@ class Worker {
 
             const firstAttacker = affectedUsers[eventTry.victim.count] &&
                 affectedUsers[eventTry.victim.count].id == userWithWeapon.id;
-            eventTry.subMessage = Simulator.formatWeaponEvent(
-                eventTry, userWithWeapon,
-                Grammar.formatMultiNames([userWithWeapon], nameFormat),
+            eventTry.subMessage = HungryGames.Simulator.formatWeaponEvent(
+                eventTry, userWithWeapon, HungryGames.Grammar.formatMultiNames(
+                    [userWithWeapon], nameFormat),
                 firstAttacker, chosenWeapon, weapons);
 
             userWithWeapon.weapons[chosenWeapon] -= count;
@@ -296,26 +291,27 @@ class Worker {
           userPool.length > 1 &&
           (Math.random() < sim.game.options.probabilityOfBattle ||
            (startingAlive == 2 && numAlive == 2)) &&
-          !Simulator._validateEventRequirements(
+          !HungryGames.Simulator._validateEventRequirements(
               1, 1, userPool, numAlive, teams, sim.game.options, true, false);
       if (doBattle) {
         let numVictim;
         let numAttacker;
         do {
-          numAttacker = Simulator.weightedUserRand();
-          numVictim = Simulator.weightedUserRand();
-        } while (Simulator._validateEventRequirements(
+          numAttacker = HungryGames.Simulator.weightedUserRand();
+          numVictim = HungryGames.Simulator.weightedUserRand();
+        } while (HungryGames.Simulator._validateEventRequirements(
             numVictim, numAttacker, userPool, numAlive, teams, sim.game.options,
             true, false));
 
-        affectedUsers = Simulator._pickAffectedPlayers(
-            new Event('', numVictim, numAttacker, 'dies', 'nothing'),
+        affectedUsers = HungryGames.Simulator._pickAffectedPlayers(
+            new HungryGames.NormalEvent(
+                '', numVictim, numAttacker, 'dies', 'nothing'),
             sim.game.options, userPool, deadPool, teams, null);
-        eventTry = Battle.finalize(
+        eventTry = HungryGames.Battle.finalize(
             affectedUsers, numVictim, numAttacker, sim.game.options.mentionAll,
             sim.game, battles);
       } else if (!useWeapon || !eventTry) {
-        eventTry = Simulator._pickEvent(
+        eventTry = HungryGames.Simulator._pickEvent(
             userPool, userEventPool, sim.game.options, numAlive,
             sim.game.currentGame.includedUsers.length, teams, probOpts);
         if (!eventTry) {
@@ -346,7 +342,7 @@ class Worker {
           return;
         }
 
-        affectedUsers = Simulator._pickAffectedPlayers(
+        affectedUsers = HungryGames.Simulator._pickAffectedPlayers(
             eventTry, sim.game.options, userPool, deadPool, teams, null);
       }
 
@@ -369,7 +365,8 @@ class Worker {
       numAlive -= numKilled;
       if (numKilled > 4) {
         sim.game.currentGame.day.events.push(
-            Event.finalizeSimple(sim.messages.get('slaughter'), sim.game));
+            HungryGames.Event.finalizeSimple(
+                sim.messages.get('slaughter'), sim.game));
       }
 
       const numRevived =
@@ -381,7 +378,8 @@ class Worker {
 
     if (doArenaEvent) {
       sim.game.currentGame.day.events.push(
-          Event.finalizeSimple(sim.messages.get('eventEnd'), sim.game));
+          HungryGames.Event.finalizeSimple(
+              sim.messages.get('eventEnd'), sim.game));
     }
 
     sim.game.currentGame.includedUsers.forEach((player) => {
@@ -404,7 +402,7 @@ class Worker {
         const isA = icon.settings.attacker;
         const group = (isA && evt.attacker) || (isV && evt.victim);
         const other = (isA && evt.victim) || (isV && evt.attacker);
-        Simulator._applyOutcome(
+        HungryGames.Simulator._applyOutcome(
             sim.game, player, group.killer ? other.count : 0, null,
             group.outcome);
         if (group.weapons && group.weapons.length > 0) {
@@ -435,8 +433,8 @@ class Worker {
         }
       }
 
-      evt.subMessage +=
-          Simulator.formatWeaponCounts(evt, affected, weapons, nameFormat);
+      evt.subMessage += HungryGames.Simulator.formatWeaponCounts(
+          evt, affected, weapons, nameFormat);
     });
 
     // Bleeding
@@ -464,42 +462,44 @@ class Worker {
     });
     if (usersRecovered.length > 0) {
       sim.game.currentGame.day.events.push(
-          Event.finalize(
+          HungryGames.NormalEvent.finalize(
               sim.messages.get('patchWounds'), usersRecovered,
               usersRecovered.length, 0, 'thrives', 'nothing', sim.game));
       usersRecovered.forEach((player) => {
-        Simulator._applyOutcome(sim.game, player, 0, null, 'thrives');
+        HungryGames.Simulator._applyOutcome(
+            sim.game, player, 0, null, 'thrives');
       });
     }
     if (usersBleeding.length > 0) {
       numAlive -= usersBleeding.length;
       sim.game.currentGame.day.events.push(
-          Event.finalize(
+          HungryGames.NormalEvent.finalize(
               sim.messages.get('bleedOut'), usersBleeding, usersBleeding.length,
               0, 'dies', 'nothing', sim.game));
       usersBleeding.forEach((player) => {
-        Simulator._applyOutcome(sim.game, player, 0, null, 'dies');
+        HungryGames.Simulator._applyOutcome(sim.game, player, 0, null, 'dies');
       });
     }
 
     // Additional messages
     const deathPercentage = 1 - (numAlive / startingAlive);
-    if (deathPercentage > Simulator._lotsOfDeathRate) {
+    if (deathPercentage > HungryGames.Simulator._lotsOfDeathRate) {
       sim.game.currentGame.day.events.splice(
-          0, 0,
-          Event.finalizeSimple(sim.messages.get('lotsOfDeath'), sim.game));
+          0, 0, HungryGames.Event.finalizeSimple(
+              sim.messages.get('lotsOfDeath'), sim.game));
     } else if (deathPercentage === 0) {
       sim.game.currentGame.day.events.push(
-          Event.finalizeSimple(sim.messages.get('noDeath'), sim.game));
-    } else if (deathPercentage < Simulator._littleDeathRate) {
+          HungryGames.Event.finalizeSimple(
+              sim.messages.get('noDeath'), sim.game));
+    } else if (deathPercentage < HungryGames.Simulator._littleDeathRate) {
       sim.game.currentGame.day.events.splice(
-          0, 0,
-          Event.finalizeSimple(sim.messages.get('littleDeath'), sim.game));
+          0, 0, HungryGames.Event.finalizeSimple(
+              sim.messages.get('littleDeath'), sim.game));
     }
 
     sim.game.currentGame.day.state = 2;
     sim.game.currentGame.nextDay =
-        Day.from({num: sim.game.currentGame.day.num + 1});
+        HungryGames.Day.from({num: sim.game.currentGame.day.num + 1});
     this.cb({game: sim.game});
   }
   /**

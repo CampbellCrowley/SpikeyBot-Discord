@@ -641,7 +641,7 @@ function Command() {
         if (data.channel && search.channels[data.channel.id]) return 1;
         if (data.guild) {
           if (search.guilds[data.guild.id]) return 1;
-          if (data.member.roles.find((r) => {
+          if (data.member && data.member.roles.find((r) => {
             return search.roles[`${data.guild.id}/${r.id}`];
           })) {
             return 2;

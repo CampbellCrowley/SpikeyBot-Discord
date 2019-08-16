@@ -33,8 +33,7 @@ function unhandledRejection(...args) {
   } else if (args[0] && args[0].message == 'No Perms') {
     console.log(`ERR:${pid}`, args[0]);
   } else {
-    // console.log(`ERR:${pid}`, ...args);
-    console.log(`ERR:${pid}`, args[0]);
+    console.log(`ERR:${pid}`, 'Uncaught', args[0]);
   }
 }
 process.on('unhandledRejection', unhandledRejection);

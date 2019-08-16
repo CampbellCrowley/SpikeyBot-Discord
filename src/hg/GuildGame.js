@@ -1,14 +1,6 @@
 // Copyright 2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
-const Game = require('./Game.js');
-const Grammar = require('./Grammar.js');
-const Event = require('./Event.js');
-const Team = require('./Team.js');
-const Simulator = require('./Simulator.js');
-const StatManager = require('./StatManager.js');
-const WeaponEvent = require('./WeaponEvent.js');
-const ActionStore = require('./actions/ActionStore.js');
-const EventContainer = require('./EventContainer.js');
+const HungryGames = require('./HungryGames.js');
 
 /**
  * A single instance of a game in a guild.
@@ -147,7 +139,7 @@ class GuildGame {
      * @type {HungryGames~EventContainer}
      * @constant
      */
-    this.customEventStore = new EventContainer(customEventIds);
+    this.customEventStore = new HungryGames.EventContainer(customEventIds);
 
     /**
      * Current game information.
@@ -156,7 +148,7 @@ class GuildGame {
      * @type {HungryGames~Game}
      * @default
      */
-    this.currentGame = new Game(name, includedUsers);
+    this.currentGame = new HungryGames.Game(name, includedUsers);
     /**
      * @description List of IDs of events to disable per-category.
      * @public
@@ -238,7 +230,7 @@ class GuildGame {
      * @type {HungryGames~ActionStore}
      * @default
      */
-    this.actions = new ActionStore();
+    this.actions = new HungryGames.ActionStore();
 
     /**
      * Interval for day events.
@@ -273,7 +265,7 @@ class GuildGame {
      * @type {HungryGames~StatManager}
      * @constant
      */
-    this._stats = new StatManager(this);
+    this._stats = new HungryGames.StatManager(this);
 
     this.step = this.step.bind(this);
     this.modifyPlayerWeapon = this.modifyPlayerWeapon.bind(this);
@@ -379,15 +371,17 @@ class GuildGame {
         }
         if (found) continue;
         // Add a team if all existing teams are full.
-        this.currentGame.teams[this.currentGame.teams.length] = new Team(
-            this.currentGame.teams.length,
-            'Team ' + (this.currentGame.teams.length + 1), [notIncluded[i].id]);
+        this.currentGame.teams[this.currentGame.teams.length] =
+            new HungryGames.Team(
+                this.currentGame.teams.length,
+                'Team ' + (this.currentGame.teams.length + 1),
+                [notIncluded[i].id]);
       }
     } else {
       // Create all teams for players.
       this.currentGame.teams = [];
       for (let i = 0; i < numTeams; i++) {
-        this.currentGame.teams[i] = new Team(
+        this.currentGame.teams[i] = new HungryGames.Team(
             i, `Team ${i + 1}`,
             this.currentGame.includedUsers
                 .slice(i * teamSize, i * teamSize + teamSize)
@@ -566,9 +560,12 @@ class GuildGame {
     game.author = data.author || null;
     game.outputChannel = data.outputChannel || null;
     game.statGroup = data.statGroup || null;
-    if (data.currentGame) game.currentGame = Game.from(data.currentGame);
+    if (data.currentGame) {
+      game.currentGame = HungryGames.Game.from(data.currentGame);
+    }
     if (data.actions) {
-      game.actions = ActionStore.from(client, game.id, data.actions);
+      game.actions =
+          HungryGames.ActionStore.from(client, game.id, data.actions);
     }
     return game;
   }
@@ -587,8 +584,9 @@ class GuildGame {
    * or "thriving").
    * @param {HungryGames~Messages} messages Reference to current Messages
    * instance.
-   * @param {string|HungryGames~Event[]} [text] Message to show when the user is
-   * affected, or array of default events if not specifying a specific message.
+   * @param {string|HungryGames~NormalEvent[]} [text] Message to show when the
+   * user is affected, or array of default events if not specifying a specific
+   * message.
    * @param {Function} [cb] Callback once complete. Single parameter is the
    * output message to tell the user of the outcome of the operation.
    */
@@ -680,18 +678,15 @@ class GuildGame {
                (el.attacker.count < 0 &&
                 el.attacker.count * -1 <= affected.length));
           const checkCount = el.attacker.count === 0 || el.victim.count === 0;
-          const checkDisabled =
-              !game.disabledEvents || !game.disabledEvents.player;
           return (checkVictim || checkAttacker) && checkCount &&
-              (checkDisabled ||
-               !game.disabledEvents.player.find((d) => Event.equal(d, el)));
+              !game.disabledEventIds.player.includes(el.id);
         });
         if (eventPool.length > 0) {
           const pick = eventPool[Math.floor(eventPool.length * Math.random())];
           text = pick.message;
           const vC = pick.victim.count == 0 ? 0 : affected.length;
           const aC = pick.attacker.count == 0 ? 0 : affected.length;
-          evt = Event.finalize(
+          evt = HungryGames.NormalEvent.finalize(
               text, affected, vC, aC, outcome, outcome, game,
               pick.victim.killer, pick.attacker.killer, pick.victim.weapon,
               pick.attacker.weapon);
@@ -711,11 +706,15 @@ class GuildGame {
         }
       }
       if (!evt) {
-        evt = Event.finalize(text, affected, 1, 0, outcome, 'nothing', game);
+        evt = HungryGames.NormalEvent.finalize(
+            text, affected, 1, 0, outcome, 'nothing', game);
       }
       if (game.currentGame.day.state > 1) {
         for (const player of affected) {
-          if (!Simulator._applyOutcome(game, player, 0, null, outcome)) break;
+          if (!HungryGames.Simulator._applyOutcome(
+              game, player, 0, null, outcome)) {
+            break;
+          }
         }
         game.currentGame.day.events.push(evt);
       } else {
@@ -759,23 +758,28 @@ class GuildGame {
    * take away.
    * @param {boolean} [set=false] Set the amount to `count` instead of
    * incrementing.
-   * @returns {string} The output message to tell the user of the outcome of the
-   * operation.
+   * @param {Function} [cb] Callback once complete. Only parameter is the output
+   * message to tell the user of the outcome of the operation.
    */
-  modifyPlayerWeapon(player, weapon, text = null, count = 1, set = false) {
+  modifyPlayerWeapon(player, weapon, text = null, count = 1, set = false, cb) {
+    if (typeof cb !== 'function') cb = function() {};
     const game = this;
     if (!game.currentGame || !game.currentGame.includedUsers) {
-      return 'No game in progress.';
+      cb('No game in progress.');
+      return;
     }
     player = game.currentGame.includedUsers.find((el) => el.id == player);
-    if (!player) return 'Unable to find player.';
+    if (!player) {
+      cb('Unable to find player.');
+      return;
+    }
 
     let current = player.weapons[weapon] || 0;
     if (game.currentGame.day.state <= 1) {
       for (const evt of game.currentGame.nextDay.events) {
         if (evt.consumer === player.id) {
           for (const w of evt.consumes) {
-            if (w.name !== weapon) continue;
+            if (w.id !== weapon) continue;
             current -= w.count;
           }
         }
@@ -784,7 +788,7 @@ class GuildGame {
           const list =
               icon.settings.victim ? evt.victim.weapons : evt.attacker.weapons;
           for (const w of list) {
-            if (w.name !== weapon) continue;
+            if (w.id !== weapon) continue;
             current += w.count * 1;
           }
         }
@@ -792,31 +796,41 @@ class GuildGame {
     }
 
     const diff = (set ? count - current : count) || 0;
-    if (!diff) return 'Count must be non-zero number.';
+    if (!diff) {
+      cb('Count must be non-zero number.');
+      return;
+    }
     count = Math.max(0, current + diff);
 
-    const defaultEvents = text.getDefaultEvents();
+    const defaultEvents =
+        text.getDefaultEvents && text.getDefaultEvents().get('weapon');
     game.customEventStore.waitForReady(() => {
       const customWeapons = game.customEventStore.get('weapon');
       const weapons = {};
       if (player.weapons) {
         for (const w in player.weapons) {
           if (!player.weapons[w]) continue;
-          weapons[w] = new WeaponEvent(
-              [], (customWeapons[w] || defaultEvents.weapon[w]).consumable, w);
+          const existing = customWeapons[w] || defaultEvents[w];
+          weapons[w] = new HungryGames.WeaponEvent(
+              [], existing.consumable, existing.name);
         }
       }
-      if (!weapons[weapon]) weapons[weapon] = new WeaponEvent([], null, weapon);
+      if (!weapons[weapon]) {
+        const existing = customWeapons[weapon] || defaultEvents[weapon];
+        weapons[weapon] = new HungryGames.WeaponEvent(
+            [], existing && existing.consumable,
+            existing && existing.name || weapon);
+      }
 
+      const name = weapons[weapon].name;
 
       let evt;
-      if (typeof text !== 'string' && text && typeof text === 'object' &&
-          game.options.anonForceOutcome) {
-        const defaultWeapon = defaultEvents.weapon[weapon];
-        const custom = customWeapons.find((evt) => evt.name === weapon);
+      if (text && typeof text === 'object' && game.options.anonForceOutcome) {
+        const defaultWeapon = defaultEvents[weapon];
+        const custom = customWeapons[weapon];
 
-        weapons.action = defaultEvents.weapon.action;
-        weapons[weapon] = new WeaponEvent(
+        weapons.action = HungryGames.WeaponEvent.action;
+        weapons[weapon] = new HungryGames.WeaponEvent(
             [], (custom && custom.consumable) ||
                 (defaultWeapon && defaultWeapon.consumable),
             (custom && custom.name) || (defaultWeapon && defaultWeapon.name));
@@ -830,20 +844,20 @@ class GuildGame {
           } else if (custom) {
             eventPool = custom.outcomes;
           } else {
-            return 'Unable to find weapon';
+            cb('Unable to find weapon');
+            return;
           }
           weapons[weapon].outcomes = eventPool.slice(0);
-          const disabled = game.disabledEvents && game.disabledEvents.weapon &&
-              game.disabledEvents.weapon[weapon];
+          const disabled = game.disabledEventIds.weapon;
           eventPool = eventPool.filter((el) => {
-            return (Math.abs(el.victim.count) + Math.abs(el.attacker.count) ===
-                    1) &&
-                (!disabled || !disabled.find((d) => Event.equal(d, el)));
+            return Math.abs(el.victim.count) + Math.abs(el.attacker.count) ===
+                1 &&
+                !disabled.includes(el.id);
           });
         } else {
           eventPool = defaultEvents.get('player').concat(
               game.customEventStore.get('player'));
-          const disabled = game.disabledEvents && game.disabledEvents.player;
+          const disabled = game.disabledEventIds.player;
           eventPool = eventPool.filter((el) => {
             const aW = el.attacker.weapon;
             const aCheck = aW && aW.name === weapon && aW.count > 0;
@@ -852,19 +866,19 @@ class GuildGame {
             return (aCheck || vCheck) &&
                 (Math.abs(el.attacker.count) + Math.abs(el.victim.count) ===
                  1) &&
-                !disabled.find((d) => Event.equal(d, el));
+                !disabled.includes(el.id);
           });
           weapons[weapon].outcomes = eventPool.slice(0);
         }
         if (eventPool.length > 0) {
-          const pick = Event.from(
+          const pick = HungryGames.NormalEvent.from(
               eventPool[Math.floor(eventPool.length * Math.random())]);
 
           text = pick.message = pick.message.replace(/\{owner\}/g, 'their');
           evt = pick.finalize(game, [player]);
         }
       }
-      if (typeof text !== 'string' && text && typeof text === 'object') {
+      if (text && typeof text === 'object') {
         if (diff < 0) {
           text = text.messages.get('takeWeapon');
         } else {
@@ -872,30 +886,34 @@ class GuildGame {
         }
       }
       if (!evt) {
+        const name = weapons[weapon].name;
         text = text.replace(
-            /\{weapon\}/g,
-            Math.abs(diff) === 1 ? `their ${weapon}` : `${weapon}s`);
-        evt = Event.finalize(text, [player], 0, 1, 'nothing', 'nothing', game);
+            /\{weapon\}/g, Math.abs(diff) === 1 ? `their ${name}` : `${name}s`);
+        text = text.replace(
+            /\[W([^|]*)\|([^\]]*)\]/g, (Math.abs(diff) == 1 ? '$1' : '$2'));
+        evt = HungryGames.NormalEvent.finalize(
+            text, [player], 0, 1, 'nothing', 'nothing', game);
       }
 
       const nameFormat = game.options.useNicknames ? 'nickname' : 'username';
       if (diff < 0) {
-        const ownerName = Grammar.formatMultiNames([player], nameFormat);
+        const ownerName =
+            HungryGames.Grammar.formatMultiNames([player], nameFormat);
         const firstAttacker = true;
         evt.consumer = player.id;
-        evt.consumes = [{name: weapon, count: -diff}];
-        evt.subMessage = Simulator.formatWeaponEvent(
+        evt.consumes = [{id: weapon, count: -diff}];
+        evt.subMessage = HungryGames.Simulator.formatWeaponEvent(
             evt, player, ownerName, firstAttacker, weapon, weapons, count);
       } else {
-        const aW = evt.attacker.weapons.find((w) => w.name === weapon);
+        const aW = evt.attacker.weapons.find((w) => w.id === weapon);
         if (!aW) {
-          evt.attacker.weapons.push({name: weapon, count: diff});
+          evt.attacker.weapons.push({id: weapon, count: diff});
         } else {
           aW.count = diff;
         }
-        const vW = evt.victim.weapons.find((w) => w.name === weapon);
+        const vW = evt.victim.weapons.find((w) => w.id === weapon);
         if (!vW) {
-          evt.victim.weapons.push({name: weapon, count: diff});
+          evt.victim.weapons.push({id: weapon, count: diff});
         } else {
           vW.count = diff;
         }
@@ -908,8 +926,8 @@ class GuildGame {
         } else {
           player.weapons[weapon] = count;
         }
-        evt.subMessage +=
-            Simulator.formatWeaponCounts(evt, [player], weapons, nameFormat);
+        evt.subMessage += HungryGames.Simulator.formatWeaponCounts(
+            evt, [player], weapons, nameFormat);
         // State - 2 = the event index, + 1 is the next index to get shown.
         /* let lastIndex = game.currentGame.day.state - 1;
         for (let i = game.currentGame.day.events.length - 1; i > lastIndex; i--)
@@ -925,10 +943,12 @@ class GuildGame {
         } else { */
         game.currentGame.day.events.push(evt);
         // }
-        return `${player.name} now has ${count} ${weapon}`;
+        cb(`${player.name} now has ${count} ${name}`);
+        return;
       } else {
         game.currentGame.nextDay.events.push(evt);
-        return `${player.name} will have ${count} ${weapon}`;
+        cb(`${player.name} will have ${count} ${name}`);
+        return;
       }
     });
   }

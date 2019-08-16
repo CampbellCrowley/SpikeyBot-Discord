@@ -22,7 +22,7 @@ class EventContainer {
     /**
      * @description Cached bloodbath events.
      * @private
-     * @type {object.<HungryGames~Event>}
+     * @type {object.<HungryGames~NormalEvent>}
      * @default
      * @constant
      */
@@ -38,7 +38,7 @@ class EventContainer {
     /**
      * @description Cached player events.
      * @private
-     * @type {object.<HungryGames~Event>}
+     * @type {object.<HungryGames~NormalEvent>}
      * @default
      * @constant
      */
@@ -54,7 +54,7 @@ class EventContainer {
     /**
      * @description Cached arena events.
      * @private
-     * @type {object.<HungryGames~Event>}
+     * @type {object.<HungryGames~ArenaEvent>}
      * @default
      * @constant
      */
@@ -70,7 +70,7 @@ class EventContainer {
     /**
      * @description Cached weapon events.
      * @private
-     * @type {object.<HungryGames~Event>}
+     * @type {object.<HungryGames~WeaponEvent>}
      * @default
      * @constant
      */
@@ -181,6 +181,7 @@ class EventContainer {
    * @param {string} type The type to fetch.
    * @returns {object.<
    *   HungryGames~Event|
+   *   HungryGames~NormalEvent|
    *   HungryGames~ArenaEvent|
    *   HungryGames~Battle|
    *   HungryGames~WeaponEvent
@@ -215,6 +216,7 @@ class EventContainer {
    * @param {string} type The type to fetch.
    * @returns {Array.<
    *   HungryGames~Event|
+   *   HungryGames~NormalEvent|
    *   HungryGames~ArenaEvent|
    *   HungryGames~Battle|
    *   HungryGames~WeaponEvent
@@ -314,8 +316,10 @@ class EventContainer {
     this._loading++;
     fs.readFile(`${eventDir}${id}.json`, (err, data) => {
       if (err) {
-        console.error(`Failed to load: ${eventDir}${id}.json`);
-        console.error(err);
+        if (err.code !== 'ENOENT') {
+          console.error(`Failed to load: ${eventDir}${id}.json`);
+          console.error(err);
+        }
         done('BAD_ID');
         return;
       }

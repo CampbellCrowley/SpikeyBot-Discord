@@ -1,13 +1,14 @@
 // Copyright 2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
-const Event = require('./Event.js');
+const HungryGames = require('./HungryGames.js');
 
 /**
  * @description A single battle in an Event.
  * @memberof HungryGames
  * @inner
+ * @augments HungryGames~Event
  */
-class Battle {
+class Battle extends HungryGames.Event {
   /**
    * @description Create a single battle.
    * @param {string} message The message of this battle event.
@@ -15,13 +16,7 @@ class Battle {
    * @param {number} victim The damage done to the victim.
    */
   constructor(message, attacker, victim) {
-    /**
-     * Message of this battle event.
-     *
-     * @public
-     * @type {string}
-     */
-    this.message = message;
+    super(message);
     /**
      * Information about attacker.
      *
@@ -87,14 +82,14 @@ class Battle {
    * is for settings checking and fetching non-affected users.
    * @param {HungryGames~Battle[]} battles Array of all possible battle events
    * to choose from.
-   * @returns {HungryGames~Event} The event that was created.
+   * @returns {HungryGames~NormalEvent} The event that was created.
    */
   static finalize(
       affectedUsers, numVictim, numAttacker, mention, game, battles) {
     const useNicknames = game.options.useNicknames;
     const outcomeMessage =
         battles.outcomes[Math.floor(Math.random() * battles.outcomes.length)];
-    const finalEvent = Event.finalize(
+    const finalEvent = HungryGames.NormalEvent.finalize(
         outcomeMessage, affectedUsers, numVictim, numAttacker, 'dies',
         'nothing', game);
     finalEvent.attacker.killer = true;
@@ -120,7 +115,7 @@ class Battle {
             .sort((a, b) => a.id - b.id)
             .join(', ');
     finalEvent.attacks.push(
-        Event.finalize(
+        HungryGames.NormalEvent.finalize(
             `${battleString}\n${startMessage}\n${healthText}`, affectedUsers,
             numVictim, numAttacker, 'nothing', 'nothing', game));
 
@@ -206,7 +201,7 @@ class Battle {
         messageText += ' x' + (duplicateCount + 1);
       }
 
-      const newEvent = Event.finalize(
+      const newEvent = HungryGames.NormalEvent.finalize(
           battleString + '\n' + messageText + '\n' + healthText,
           [
             affectedUsers[flipRoles ? attackerIndex : victimIndex],
@@ -233,6 +228,5 @@ class Battle {
     return finalEvent;
   }
 }
-
 
 module.exports = Battle;

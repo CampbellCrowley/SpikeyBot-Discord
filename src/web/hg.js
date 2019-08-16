@@ -215,7 +215,7 @@ function HGWeb() {
       socket.emit('defaultOptions', hg().defaultOptions.entries);
     });
     socket.on('fetchDefaultEvents', () => {
-      socket.emit('defaultEvents', hg().getDefaultEvents());
+      socket.emit('defaultEvents', hg().getDefaultEvents().serializable);
     });
     socket.on('fetchActionList', () => {
       const Action = HungryGames.Action;
@@ -254,11 +254,12 @@ function HGWeb() {
     socket.on('pauseGame', (...args) => handle(self.pauseGame, args));
     socket.on('editTeam', (...args) => handle(self.editTeam, args));
     socket.on('createEvent', (...args) => handle(self.createEvent, args));
-    socket.on(
-        'createMajorEvent', (...args) => handle(self.createMajorEvent, args));
-    socket.on('editMajorEvent', (...args) => handle(self.editMajorEvent, args));
+    socket.on('addEvent', (...args) => handle(self.addEvent, args));
     socket.on('removeEvent', (...args) => handle(self.removeEvent, args));
+    socket.on('deleteEvent', (...args) => handle(self.deleteEvent, args));
     socket.on('toggleEvent', (...args) => handle(self.toggleEvent, args));
+    socket.on('replaceEvent', (...args) => handle(self.replaceEvent, args));
+    socket.on('fetchEvent', (...args) => handle(self.fetchEvent, args, false));
     socket.on(
         'forcePlayerState', (...args) => handle(self.forcePlayerState, args));
     socket.on('renameGame', (...args) => handle(self.renameGame, args));
@@ -295,7 +296,7 @@ function HGWeb() {
      * siblings.
      */
     function handle(func, args, forward = true) {
-      const noLog = ['fetchMember', 'fetchChannel', 'imageChunk'];
+      const noLog = ['fetchMember', 'fetchChannel', 'fetchEvent', 'imageChunk'];
       if (!noLog.includes(func.name.toString())) {
         const logArgs = args.map((el) => {
           if (typeof el === 'function') {
@@ -321,13 +322,21 @@ function HGWeb() {
         };
         args[args.length - 1] = cb;
       }
-      func.apply(func, [args[0], socket].concat(args.slice(1)));
+      try {
+        func.apply(func, [args[0], socket].concat(args.slice(1)));
+      } catch (err) {
+        console.error(err);
+        if (typeof cb === 'function') {
+          cb('INTERNAL_SERVER_ERROR');
+        }
+        return;
+      }
       if (typeof cb === 'function') {
         args[args.length - 1] = {_function: true};
       }
       if (forward) {
-        Object.entries(siblingSockets).forEach((s) => {
-          s[1].emit(
+        Object.values(siblingSockets).forEach((s) => {
+          s.emit(
               'forwardedRequest', args[0], socket.id, func.name, args.slice(1),
               (res) => {
                 if (res._forward) socket.emit(...res.data);
@@ -1599,7 +1608,8 @@ function HGWeb() {
   /**
    * Create a game event.
    *
-   * @see {@link HungryGames.createEvent}
+   * @see {@link HungryGames~createEvent}
+   * @see {@link HungryGames~EventContainer~fetch}
    *
    * @public
    * @type {HGWeb~SocketFunction}
@@ -1607,187 +1617,158 @@ function HGWeb() {
    * @param {socketIo~Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to look at.
    * @param {string} type The type of event.
-   * @param {string} message The message of the event.
-   * @param {string} nV Number of victims.
-   * @param {string} nA Number of attackers.
-   * @param {string} oV Outcome of victims.
-   * @param {string} oA Outcome of attackers.
-   * @param {string} kV Do the victims kill.
-   * @param {string} kA Do the attackers kill.
-   * @param {?object} wV The weapon information for this event.
-   * @param {?object} wA The weapon information for this event.
+   * @param {HungryGames~Event} evt The event data of the event to create.
    * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
    * is complete, or has failed.
    */
   this.createEvent = function createEvent(
-      userData, socket, gId, type, message, nV, nA, oV, oA, kV, kA, wV, wA,
-      cb) {
+      userData, socket, gId, type, evt, cb) {
     if (!checkPerm(userData, gId, null, 'event')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, 'createEvent');
+      replyNoPerm(socket, this.name);
       return;
     }
-    const err = hg().makeAndAddEvent(
-        gId, type, message, nV, nA, oV, oA, kV, kA, wV, wA);
-    if (err) {
-      if (typeof cb === 'function') {
-        cb('ATTEMPT_FAILED');
-      } else {
-        socket.emit('message', 'Failed to create event: ' + err);
+    if (typeof cb !== 'function') cb = function() {};
+    evt.creator = userData.id;
+    evt.id = null;
+    if (evt.type === 'normal') {
+      const err = HungryGames.NormalEvent.validate(evt);
+      if (err) {
+        cb(err);
+        return null;
       }
+      evt = HungryGames.NormalEvent.from(evt);
+    } else if (evt.type === 'arena') {
+      const err = HungryGames.ArenaEvent.validate(evt);
+      if (err) {
+        cb(err);
+        return null;
+      }
+      evt = HungryGames.ArenaEvent.from(evt);
+    } else if (evt.type === 'weapon') {
+      const err = HungryGames.WeaponEvent.validate(evt);
+      if (err) {
+        cb(err);
+        return null;
+      }
+      evt = HungryGames.WeaponEvent.from(evt);
     } else {
-      const game = hg().getHG().getGame(gId);
-      if (typeof cb === 'function') {
-        if (game) {
-          cb(null, game.serializable);
-        } else {
-          cb(null);
-        }
-      } else if (game) {
-        socket.emit('game', gId, game.serializable);
-      }
+      cb('BAD_TYPE');
+      return null;
     }
+
+    const eId = hg().getHG().replaceEvent(userData.id, evt, (err) => {
+      if (err) {
+        if (typeof cb === 'function') {
+          cb('ATTEMPT_FAILED', err);
+        } else {
+          socket.emit('message', 'Failed to create event: ' + err);
+        }
+      } else {
+        cb(null, eId);
+      }
+    });
   };
 
   /**
-   * Create a larger game event. Either Arena or Weapon at this point. If
-   * message or weapon name already exists, this will instead edit the event.
-   *
-   * @see {@link HungryGames.addMajorEvent}
-   *
+   * @description Add an existing event to a guild's custom events.
    * @public
+   * @see {@link HungryGames~EventContainer~fetch}
    * @type {HGWeb~SocketFunction}
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
-   * @param {number|string} gId The guild id to look at.
-   * @param {string} type The type of event.
-   * @param {HungryGames~ArenaEvent|HungryGames~WeaponEvent} data The event
-   * data.
-   * @param {?string} name The name of the weapon if this is a weapon event.
+   * @param {string} gId The guild ID of the guild to modify.
+   * @param {string} type The event category to add the event to.
+   * @param {string} eId The event ID to add.
    * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
    * is complete, or has failed.
    */
-  this.createMajorEvent = function createMajorEvent(
-      userData, socket, gId, type, data, name, cb) {
+  this.addEvent = function addEvent(userData, socket, gId, type, eId, cb) {
     if (!checkPerm(userData, gId, null, 'event')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, 'createMajorEvent');
+      replyNoPerm(socket, this.name);
       return;
     }
-    const err = hg().addMajorEvent(gId, type, data, name);
-    if (err) {
-      if (typeof cb === 'function') {
-        cb('ATTEMPT_FAILED');
-      } else {
-        socket.emit('message', 'Failed to create event: ' + err);
+    if (typeof cb !== 'function') cb = function() {};
+
+    hg().getHG().fetchGame(gId, (game) => {
+      if (!game) {
+        cb('NO_GAME');
+        return;
       }
-    } else {
-      const game = hg().getHG().getGame(gId);
-      if (typeof cb === 'function') {
-        if (game) {
-          cb(null, game.serializable);
+      game.customEvents.fetch(eId, type, (err) => {
+        if (err) {
+          cb('ATTEMPT_FAILED', err);
         } else {
           cb(null);
+          if (type) guildBroadcast(gId, 'eventAdded', gId, type, eId);
         }
-      } else if (game) {
-        socket.emit('game', gId, game.serializable);
-      }
-    }
+      });
+    });
   };
 
   /**
-   * Delete a larger game event. Either Arena or Weapon at this point.
-   *
-   * @see {@link HungryGames.editMajorEvent}
-   *
+   * @description Remove an event from a guild's custom events.
    * @public
+   * @see {@link HungryGames~EventContainer~remove}
    * @type {HGWeb~SocketFunction}
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
-   * @param {number|string} gId The guild id to look at.
-   * @param {string} type The type of event.
-   * @param {HungryGames~ArenaEvent|HungryGames~WeaponEvent} search The event
-   * data to find to edit.
-   * @param {HungryGames~ArenaEvent|HungryGames~WeaponEvent} data The event
-   * data to set the matched searches to.
-   * @param {?string} name The internal name of the weapon to find.
-   * @param {?string} newName The new internal name of the weapon.
-   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
-   * is complete, or has failed.
-   */
-  this.editMajorEvent = function editMajorEvent(
-      userData, socket, gId, type, search, data, name, newName, cb) {
-    if (!checkPerm(userData, gId, null, 'event')) {
-      if (!checkMyGuild(gId)) return;
-      if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, 'removeMajorEvent');
-      return;
-    }
-    const err = hg().editMajorEvent(gId, type, search, data, name, newName);
-    if (err) {
-      if (typeof cb === 'function') {
-        cb('ATTEMPT_FAILED');
-      } else {
-        socket.emit('message', 'Failed to edit event: ' + err);
-      }
-    } else {
-      const game = hg().getHG().getGame(gId);
-      if (typeof cb === 'function') {
-        if (game) {
-          cb(null, game.serializable);
-        } else {
-          cb(null);
-        }
-      } else if (game) {
-        socket.emit('game', gId, game.serializable);
-      }
-    }
-  };
-
-  /**
-   * Remove a game event.
-   *
-   * @see {@link HungryGames.removeEvent}
-   *
-   * @public
-   * @type {HGWeb~SocketFunction}
-   * @param {object} userData The current user's session data.
-   * @param {socketIo~Socket} socket The socket connection to reply on.
-   * @param {number|string} gId The guild id to look at.
-   * @param {string} type The type of event.
-   * @param {HungryGames~Event} event The game event to remove.
+   * @param {string} gId The guild ID of the guild to modify.
+   * @param {string} type The event category to remove the event from.
+   * @param {string} eId The event ID to remove.
    * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
    * is complete, or has failed.
    */
   this.removeEvent = function removeEvent(
-      userData, socket, gId, type, event, cb) {
+      userData, socket, gId, type, eId, cb) {
     if (!checkPerm(userData, gId, null, 'event')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, 'removeEvent');
+      replyNoPerm(socket, this.name);
       return;
     }
-    const err = hg().removeEvent(gId, type, event);
-    if (err) {
-      if (typeof cb === 'function') {
-        cb('ATTEMPT_FAILED');
+    if (typeof cb !== 'function') cb = function() {};
+
+    hg().getHG().fetchGame(gId, (game) => {
+      if (!game) {
+        cb('NO_GAME');
+        return;
+      }
+      if (game.customEvents.remove(eId, type)) {
+        cb(null);
+        if (type) guildBroadcast(gId, 'eventRemoved', gId, type, eId);
       } else {
-        socket.emit('message', 'Failed to remove event: ' + err);
+        cb('ATTEMPT_FAILED');
       }
-    } else {
-      const game = hg().getHG().getGame(gId);
-      if (typeof cb === 'function') {
-        if (game) {
-          cb(null, game.serializable);
-        } else {
-          cb(null);
-        }
-      } else if (game) {
-        socket.emit('game', gId, game.serializable);
+    });
+  };
+
+  /**
+   * Delete a game event.
+   *
+   * @see {@link HungryGames.deleteEvent}
+   *
+   * @public
+   * @type {HGWeb~SocketFunction}
+   * @param {object} userData The current user's session data.
+   * @param {socketIo~Socket} socket The socket connection to reply on.
+   * @param {string} eId The event ID to delete.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete, or has failed.
+   */
+  this.deleteEvent = function deleteEvent(userData, socket, eId, cb) {
+    if (!userData) return;
+    hg().getHG().deleteEvent(userData.id, eId, (err) => {
+      if (typeof cb !== 'function') return;
+      if (err) {
+        cb('ATTEMPT_FAILED', err);
+      } else {
+        cb(null);
       }
-    }
+    });
   };
 
   /**
@@ -1800,36 +1781,105 @@ function HGWeb() {
    * @param {socketIo-Socket} socket The socket connection to reply on.
    * @param {number|string} gId The guild id to run this command on.
    * @param {string} type The type of event that we are toggling.
-   * @param {?string} subCat The subcategory if necessary.
-   * @param {
-   * HungryGames~Event|
-   * HungryGames~ArenaEvent|
-   * HungryGames~WeaponEvent
-   * } event The event to toggle.
+   * @param {string} event The ID of the event to toggle.
    * @param {?boolean} value Set the enabled value instead of toggling.
    * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
    * is complete.
    */
   this.toggleEvent = function toggleEvent(
-      userData, socket, gId, type, subCat, event, value, cb) {
+      userData, socket, gId, type, event, value, cb) {
     if (!checkPerm(userData, gId, null, 'event')) {
       if (!checkMyGuild(gId)) return;
       if (typeof cb === 'function') cb('NO_PERM');
       replyNoPerm(socket, 'removeEvent');
       return;
     }
-    const err = hg().toggleEvent(gId, type, subCat, event, value);
+    if (typeof cb !== 'function') cb = function() {};
+    const err = hg().toggleEvent(gId, type, event, value);
     if (err) {
-      if (typeof cb === 'function') {
-        cb('ATTEMPT_FAILED');
-      } else {
-        socket.emit('message', 'Failed to toggle event: ' + err);
-      }
+      cb('ATTEMPT_FAILED');
     } else {
-      if (typeof cb === 'function') cb(null);
-      // socket.emit('message', 'Toggled event.');
-      // socket.emit('game', gId, hg().getHG().getGame(gId));
+      cb(null);
     }
+  };
+  /**
+   * Replace a custom event with new data.
+   *
+   * @see {@link HungryGames~replaceEvent}
+   *
+   * @public
+   * @type {HGWeb~SocketFunction}
+   * @param {object} userData The current user's session data.
+   * @param {socketIo~Socket} socket The socket connection to reply on.
+   * @param {HungryGames~Event} evt The event data to update the event to.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete, or has failed.
+   */
+  this.replaceEvent = function replaceEvent(userData, socket, evt, cb) {
+    if (!userData) return;
+    if (typeof cb !== 'function') cb = function() {};
+    evt.creator = userData.id;
+    if (evt.type === 'normal') {
+      const err = HungryGames.NormalEvent.validate(evt);
+      if (err) {
+        cb(err);
+        return;
+      }
+      evt = HungryGames.NormalEvent.from(evt);
+    } else if (evt.type === 'arena') {
+      const err = HungryGames.ArenaEvent.validate(evt);
+      if (err) {
+        cb(err);
+        return;
+      }
+      evt = HungryGames.ArenaEvent.from(evt);
+    } else if (evt.type === 'weapon') {
+      const err = HungryGames.WeaponEvent.validate(evt);
+      if (err) {
+        cb(err);
+        return;
+      }
+      evt = HungryGames.WeaponEvent.from(evt);
+    } else {
+      cb('BAD_TYPE');
+      return;
+    }
+
+    hg().getHG().replaceEvent(userData.id, evt, (err) => {
+      if (err) {
+        if (typeof cb === 'function') {
+          cb('ATTEMPT_FAILED', err);
+        } else {
+          socket.emit('message', 'Failed to create event: ' + err);
+        }
+      } else {
+        cb(null);
+      }
+    });
+  };
+
+  /**
+   * Fetch a single event data.
+   *
+   * @see {@link HungryGames~EventContainer~fetch}
+   *
+   * @public
+   * @type {HGWeb~SocketFunction}
+   * @param {object} userData The current user's session data.
+   * @param {socketIo-Socket} socket The socket connection to reply on.
+   * @param {string} eId The event ID to fetch.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete.
+   */
+  this.fetchEvent = function fetchEvent(userData, socket, eId, cb) {
+    if (!userData) return;
+    hg().getDefaultEvents().fetch(eId, null, (err, evt) => {
+      if (err) {
+        cb('ATTEMPT_FAILED', err);
+      } else {
+        cb(null, evt);
+      }
+    });
   };
 
   /**

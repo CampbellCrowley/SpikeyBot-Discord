@@ -648,6 +648,208 @@ class HungryGames {
   }
 
   /**
+   * @description Create a new event.
+   * @public
+   * @param {HungryGames~Event} evt Event object, or Event-like object, to
+   * finalize and save.
+   * @param {Function} [cb] Optional callback that fires once data is saved to
+   * file. First parameter is optional error string argument. Second is
+   * otherwise the final created event.
+   * @returns {?string} The event's ID if the event was created successfully, or
+   * null if failed to parse data.
+   */
+  createEvent(evt, cb) {
+    const creator = evt.creator;
+
+    if (evt.type === 'normal') {
+      const err = HungryGames.NormalEvent.validate(evt);
+      if (err) {
+        cb(err);
+        return null;
+      }
+      evt = HungryGames.NormalEvent.from(evt);
+    } else if (evt.type === 'arena') {
+      const err = HungryGames.ArenaEvent.validate(evt);
+      if (err) {
+        cb(err);
+        return null;
+      }
+      evt = HungryGames.ArenaEvent.from(evt);
+    } else if (evt.type === 'weapon') {
+      const err = HungryGames.WeaponEvent.validate(evt);
+      if (err) {
+        cb(err);
+        return null;
+      }
+      evt = HungryGames.WeaponEvent.from(evt);
+    } else {
+      cb('BAD_TYPE');
+      return null;
+    }
+    const hash = HungryGames.Event.createIDHash();
+    const now = Date.now();
+    if (!evt.id.match(/\d{17,19}\/\d+-[0-9a-f]/)) {
+      evt.id = `${creator}/${now}-${hash}`;
+    }
+    evt.creator = creator;
+
+    if (evt.outcomes) {
+      evt.outcomes.map((el) => HungryGames.NormalEvent.from(el));
+    }
+
+    const newDir = HungryGames.EventContainer.eventDir;
+    const filename = newDir + evt.id + '.json';
+    if (fs.existsSync(filename)) {
+      cb('ALREADY_EXISTS');
+      return null;
+    }
+    mkdirp(newDir + creator, (err) => {
+      if (err) {
+        console.error(err);
+        cb('MKDIR_FAILED');
+        return;
+      }
+      fs.writeFile(filename, JSON.stringify(evt), (err) => {
+        if (err) {
+          console.error(err);
+          cb('WRITE_FAILED');
+          return;
+        }
+
+        const toSend = global.sqlCon.format(
+            'INSERT INTO HGEvents (Id, CreatorId, DateCreated, Privacy, ' +
+                'EventType) VALUES (?, ?, FROM_UNIXTIME(?), "unlisted", ?)',
+            [evt.id, evt.creator, now / 1000, evt.type]);
+        global.sqlCon.query(toSend, (err) => {
+          if (err) {
+            console.error(err);
+            cb('SQL_FAILED');
+            return;
+          }
+          cb(null, evt);
+        });
+      });
+    });
+    return evt.id;
+  }
+
+  /**
+   * @description Completely delete an event and all of its data.
+   * @public
+   * @param {string} user The user requesting deletion.
+   * @param {string} id The ID of the event to delete.
+   * @param {Function} [cb] Callback once completed. Only parameter is optional
+   * error string.
+   */
+  deleteEvent(user, id, cb) {
+    if (typeof cb !== 'function') cb = function() {};
+    const toSend =
+        global.sqlCon.format('SELECT * FROM HGEvents WHERE id=? LIMIT 1', [id]);
+    global.sqlCon.query(toSend, (err, rows) => {
+      if (err) {
+        console.error(err);
+        cb('SQL_FAILED');
+        return;
+      }
+      if (!rows || !rows[0] || !rows[0].CreatorId) {
+        cb('BAD_ID');
+        return;
+      }
+      if (rows[0].CreatorId != user) {
+        cb('BAD_USER');
+        return;
+      }
+      const toSend =
+          global.sqlCon.format('DELETE FROM HGEvents WHERE id=? LIMIT 1', [id]);
+      global.sqlCon.query(toSend, (err) => {
+        if (err) {
+          console.error(err);
+          cb('SQL_FAILED');
+          return;
+        }
+        fs.unlink(HungryGames.EventContainer.eventDir + id + '.json', (err) => {
+          if (err) {
+            console.error(err);
+            cb('UNLINK_FAILED');
+            return;
+          }
+          cb(null);
+        });
+      });
+    });
+  }
+
+  /**
+   * @description Replace an event with new data.
+   * @public
+   * @param {string} user The user requesting deletion.
+   * @param {HungryGames~Event} evt The new event data.
+   * @param {Function} [cb] Callback once completed. Only parameter is optional
+   * error string.
+   */
+  replaceEvent(user, evt, cb) {
+    if (typeof cb !== 'function') cb = function() {};
+
+    if (evt.type === 'normal') {
+      const err = HungryGames.NormalEvent.validate(evt);
+      if (err) {
+        cb(err);
+        return;
+      }
+      evt = HungryGames.NormalEvent.from(evt);
+    } else if (evt.type === 'arena') {
+      const err = HungryGames.ArenaEvent.validate(evt);
+      if (err) {
+        cb(err);
+        return;
+      }
+      evt = HungryGames.ArenaEvent.from(evt);
+    } else if (evt.type === 'weapon') {
+      const err = HungryGames.WeaponEvent.validate(evt);
+      if (err) {
+        cb(err);
+        return;
+      }
+      evt = HungryGames.WeaponEvent.from(evt);
+    } else {
+      cb('BAD_TYPE');
+      return;
+    }
+    const newDir = HungryGames.EventContainer.eventDir;
+    const filename = newDir + evt.id + '.json';
+    if (!fs.existsSync(filename)) {
+      cb('NONEXISTENT');
+      return;
+    }
+
+    const toSend = global.sqlCon.format(
+        'SELECT * FROM HGEvents WHERE id=? LIMIT 1', [evt.id]);
+    global.sqlCon.query(toSend, (err, rows) => {
+      if (err) {
+        console.error(err);
+        cb('SQL_FAILED');
+        return;
+      }
+      if (!rows || !rows[0] || !rows[0].CreatorId) {
+        cb('BAD_ID');
+        return;
+      }
+      if (rows[0].CreatorId != user) {
+        cb('BAD_USER');
+        return;
+      }
+      fs.writeFile(filename, JSON.stringify(evt), (err) => {
+        if (err) {
+          console.error(err);
+          cb('WRITE_FAILED');
+          return;
+        }
+        cb(null);
+      });
+    });
+  }
+
+  /**
    * @description Returns a guild's game data. Returns cached version if that
    * exists, or searches the file system for saved data. Data will only be
    * checked from disk at most once every `HungryGames~findDelay` milliseconds.
@@ -892,6 +1094,8 @@ const toLoad = [
   './ForcedOutcome.js',
   './Grammar.js',
   './FinalEvent.js',
+  './Event.js',
+  './NormalEvent.js',
   './ArenaEvent.js',
   './WeaponEvent.js',
   './Battle.js',
@@ -902,7 +1106,6 @@ const toLoad = [
   './Player.js',
   './Team.js',
   './Game.js',
-  './Event.js',
   './EventContainer.js',
   './Stats.js',
   './StatGroup.js',
