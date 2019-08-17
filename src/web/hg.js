@@ -79,6 +79,9 @@ function HGWeb() {
       hg_.on('actionInsert', handleActionUpdate);
       hg_.on('actionRemove', handleActionUpdate);
       hg_.on('actionUpdate', handleActionUpdate);
+      hg_.on('eventToggled', handleEventToggled);
+      hg_.on('eventAdded', handleEventAdded);
+      hg_.on('eventRemoved', handleEventRemoved);
       hg_.on('gameStarted', broadcastGame);
       hg_.on('reset', broadcastGame);
       hg_.on('shutdown', unlinkHG);
@@ -105,6 +108,9 @@ function HGWeb() {
     hg_.removeListener('actionInsert', handleActionUpdate);
     hg_.removeListener('actionRemove', handleActionUpdate);
     hg_.removeListener('actionUpdate', handleActionUpdate);
+    hg_.removeListener('eventToggled', handleEventToggled);
+    hg_.removeListener('eventAdded', handleEventAdded);
+    hg_.removeListener('eventRemoved', handleEventRemoved);
     hg_.removeListener('gameStarted', broadcastGame);
     hg_.removeListener('reset', broadcastGame);
     hg_.removeListener('shutdown', unlinkHG);
@@ -524,6 +530,49 @@ function HGWeb() {
     const game = hg.getHG().getGame(gId);
     guildBroadcast(
         gId, 'actions', game && game.actions && game.actions.serializable);
+  }
+
+  /**
+   * Handle events being toggled in a server.
+   *
+   * @private
+   * @listens HG#eventToggled
+   * @param {HungryGames} hg HG object firing event.
+   * @param {string} gId The guild ID that was updated.
+   * @param {string} type The category the event was toggled in.
+   * @param {string} eId The ID of the event that was toggled.
+   * @param {boolean} value The if event is now enabled.
+   */
+  function handleEventToggled(hg, gId, type, eId, value) {
+    guildBroadcast(gId, 'eventToggled', gId, type, eId, value);
+  }
+
+  /**
+   * Handle events being added to a server.
+   *
+   * @private
+   * @listens HG#eventAdded
+   * @param {HungryGames} hg HG object firing event.
+   * @param {string} gId The guild ID that was updated.
+   * @param {string} type The event category.
+   * @param {string} eId The ID of the event that was added.
+   */
+  function handleEventAdded(hg, gId, type, eId) {
+    guildBroadcast(gId, 'eventAdded', gId, type, eId);
+  }
+
+  /**
+   * Handle events being removed from a server.
+   *
+   * @private
+   * @listens HG#eventRemoved
+   * @param {HungryGames} hg HG object firing event.
+   * @param {string} gId The guild ID that was updated.
+   * @param {string} type The event category.
+   * @param {string} eId The ID of the event that was removed.
+   */
+  function handleEventRemoved(hg, gId, type, eId) {
+    guildBroadcast(gId, 'eventRemoved', gId, type, eId);
   }
 
   /**
@@ -1636,26 +1685,26 @@ function HGWeb() {
       const err = HungryGames.NormalEvent.validate(evt);
       if (err) {
         cb(err);
-        return null;
+        return;
       }
       evt = HungryGames.NormalEvent.from(evt);
     } else if (evt.type === 'arena') {
       const err = HungryGames.ArenaEvent.validate(evt);
       if (err) {
         cb(err);
-        return null;
+        return;
       }
       evt = HungryGames.ArenaEvent.from(evt);
     } else if (evt.type === 'weapon') {
       const err = HungryGames.WeaponEvent.validate(evt);
       if (err) {
         cb(err);
-        return null;
+        return;
       }
       evt = HungryGames.WeaponEvent.from(evt);
     } else {
       cb('BAD_TYPE');
-      return null;
+      return;
     }
 
     const eId = hg().getHG().replaceEvent(userData.id, evt, (err) => {
@@ -1797,7 +1846,7 @@ function HGWeb() {
     if (typeof cb !== 'function') cb = function() {};
     const err = hg().toggleEvent(gId, type, event, value);
     if (err) {
-      cb('ATTEMPT_FAILED');
+      cb('ATTEMPT_FAILED', err);
     } else {
       cb(null);
     }

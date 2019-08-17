@@ -3096,6 +3096,8 @@ function HG() {
   /**
    * Enable or disable an event without deleting it completely.
    *
+   * @fires HG#eventToggled
+   *
    * @public
    * @param {number|string} id The guild id that the event shall be toggled in.
    * @param {string} type The type of event. 'bloodbath', 'player', 'weapon', or
@@ -3110,7 +3112,7 @@ function HG() {
     }
     if (!hg.getGame(id)) return 'Invalid ID or no game';
 
-    const allDisabled = hg.getGame(id).disabledEvents[type];
+    const allDisabled = hg.getGame(id).disabledEventIds[type];
     const dIndex = allDisabled.findIndex((el) => el === evtId);
     if (typeof value !== 'boolean') value = dIndex > -1;
 
@@ -3118,6 +3120,7 @@ function HG() {
       return `Already ${value?'Enabled':'Disabled'}`;
     } else if (!value) {
       allDisabled.splice(dIndex, 1);
+      self._fire('eventToggled', id, type, evtId, value);
       return null;
     }
 
@@ -3139,6 +3142,7 @@ function HG() {
 
     if (exists) {
       allDisabled.push(evtId);
+      self._fire('eventToggled', id, type, evtId, value);
       return null;
     } else {
       return 'Unknown event to disable';
