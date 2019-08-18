@@ -164,7 +164,7 @@ const hgTests = [
   new Test('Randomize teams', '~hg teams randomize', ['#noerr']),
   new Test(
       'Reset Options command', '~hg reset options',
-      ['<@422623712534200321>\n```\nReset HG\n```Resetting ALL options!']),
+      ['<@422623712534200321>\n```\nReset HG\n```Reset ALL options!']),
   new Test('Enable bots', '~hg opt includeBots true', ['#noerr']),
   new Test('Exclude all players', '~hg exclude everyone', ['#noerr']),
   new Test(
@@ -186,7 +186,7 @@ const hgTests = [
   new Test('Reset custom name of game', '~hg rename', ['#noerr']),
   new Test(
       'Reset All command', '~hg reset all',
-      ['<@422623712534200321>\n```\nReset HG\n```Resetting ALL Hungry Games ' +
+      ['<@422623712534200321>\n```\nReset HG\n```Reset ALL Hungry Games ' +
        'data for this server!']),
   new Test('Events command', '~hg events', ['#embed']),
   new Test(
@@ -208,7 +208,7 @@ const hgTests = [
       ]),
   new Test(
       'Reset All command', '~hg reset all',
-      ['<@422623712534200321>\n```\nReset HG\n```Resetting ALL Hungry Games ' +
+      ['<@422623712534200321>\n```\nReset HG\n```Reset ALL Hungry Games ' +
        'data for this server!']),
   new Test(
       'No data: Include', '~hg include',
@@ -220,7 +220,7 @@ const hgTests = [
       ]),
   new Test(
       'Reset All command', '~hg reset all',
-      ['<@422623712534200321>\n```\nReset HG\n```Resetting ALL Hungry Games ' +
+      ['<@422623712534200321>\n```\nReset HG\n```Reset ALL Hungry Games ' +
        'data for this server!']),
   new Test(
       'No data: Event remove', '~hg events remove 0',
