@@ -123,6 +123,7 @@ class ActionManager {
 
       let sameConsumer = false;
       evt.icons.forEach((el) => {
+        if (el.id.startsWith('NPC')) return;
         const member = guild.members.get(el.id);
         const group = el.settings.victim ? evt.victim : evt.attacker;
         const weapons = {};
