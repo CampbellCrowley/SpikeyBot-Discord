@@ -134,7 +134,6 @@ class Event {
 
   /**
    * @description Compare this Event to another to check if they are equivalent.
-   * @example console.log(firstEvent.equal(otherEvent));
    * @public
    * @param {HungryGames~Event} two Other Event to compare against.
    * @returns {boolean} If they are equivalent.
@@ -156,7 +155,6 @@ class Event {
   /**
    * @description Make an event that doesn't affect any players and is just a
    * plain message.
-   * @example Event.finalizeSimple('Something happens!', game);
    * @public
    * @static
    * @param {string} message The message to show.

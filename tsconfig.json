@@ -8,7 +8,12 @@
   },
   "include": [
     "src/**/*.js",
-    "src/**/*.ts"
+    "src/**/*.ts",
+    "test/main-test.js",
+    "strings/**/*.js",
+    ".eslintrc.js",
+    ".hooks/**/*.js",
+    "<text>"
   ],
   "exclude": [
     "node_modules",
