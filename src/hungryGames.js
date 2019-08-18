@@ -2535,11 +2535,11 @@ function HG() {
       if (game.options.teamSize > 0) {
         myTeam = game.currentGame.teams.find(
             (team) => team.players.find((player) => player == obj.id));
-        if (!myTeam) {
+        /* if (!myTeam) {
           self.error(
               'Failed to find team for player: ' + obj.id + ' in ' + game.id);
           console.error(game.currentGame.teams);
-        }
+        } */
       }
 
       let shortName;
