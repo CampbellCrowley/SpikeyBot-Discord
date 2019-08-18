@@ -115,7 +115,6 @@ class NormalEvent extends HungryGames.Event {
 
   /**
    * @description Compare this Event to another to check if they are equivalent.
-   * @example console.log(firstEvent.equal(otherEvent));
    * @public
    * @param {HungryGames~NormalEvent} two Other NormalEvent to compare against.
    * @returns {boolean} If they are equivalent.

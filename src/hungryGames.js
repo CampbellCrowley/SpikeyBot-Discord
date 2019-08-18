@@ -1228,8 +1228,9 @@ function HG() {
     function loadingComplete() {
       self.client.setTimeout(() => {
         self._fire('gameStarted', id);
+        const game = hg.getGame(id);
         HungryGames.ActionManager.gameStart(hg, game);
-        if (hg.getGame(id).autoPlay && !hg.getGame(id).currentGame.isPaused) {
+        if (game.autoPlay && !game.currentGame.isPaused) {
           nextDay(msg, id);
         }
       });

@@ -138,13 +138,17 @@ class ActionManager {
         }
 
         if (!member) {
-          guild.members.fetch(el.id).then((mem) => go(mem, group, weapons));
+          guild.members.fetch(el.id)
+              .then((mem) => go(mem, group, weapons))
+              .catch((err) => {
+                console.error('Unable to fetch member for action:', err);
+              });
         } else {
           go(member, group, weapons);
         }
       });
 
-      if (evt.consumer && !sameConsumer) {
+      if (evt.consumer && !sameConsumer && !evt.consumer.startsWith('NPC')) {
         const weapons = {};
         const member = guild.members.get(evt.consumer);
         evt.consumes.forEach((el) => weapons[el.name] = -el.count);

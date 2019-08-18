@@ -9,10 +9,14 @@
   "include": [
     "src/**/*.js",
     "src/**/*.ts",
-    "test/main-test.js"
+    "test/main-test.js",
+    "strings/**/*.js",
+    "*.js",
+    ".*.js",
+    ".hooks/**/*.js"
   ],
   "exclude": [
     "node_modules",
-    "docs"
+    "docs",
   ]
 }

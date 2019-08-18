@@ -74,7 +74,6 @@ class Event {
   /**
    * @description Make an event that doesn't affect any players and is just a
    * plain message.
-   * @example Event.finalizeSimple('Something happens!', game);
    * @public
    * @static
    * @param {string} message The message to show.
