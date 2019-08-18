@@ -25,7 +25,7 @@ class WeaponEvent extends HungryGames.Event {
      * @public
      * @type {HungryGames~Event[]}
      */
-    this.outcomes = outcomes;
+    this.outcomes = outcomes || [];
     /**
      * The formattable string for what to call this weapon's consumable items.
      *
@@ -39,7 +39,7 @@ class WeaponEvent extends HungryGames.Event {
      * @public
      * @type {string}
      */
-    this.name = name;
+    this.name = name || '';
   }
   /**
    * @description Default action template.
@@ -67,15 +67,18 @@ class WeaponEvent extends HungryGames.Event {
     if (err) return err;
 
     if (evt.outcomes && !Array.isArray(evt.outcomes)) {
-      return 'BAD_DATA';
+      return 'BAD_OUTCOMES';
     } else if (evt.outcomes) {
-      if (evt.outcomes.find((el) => !HungryGames.NormalEvent.validate(el))) {
-        return 'BAD_DATA';
+      let outerr;
+      evt.outcomes.find((el) => outerr = HungryGames.NormalEvent.validate(el));
+      if (outerr) {
+        return 'BAD_OUTCOME_' + outerr;
       }
     }
 
-    if (evt.consumable && typeof evt.consumable !== 'string' ||
-        evt.consumable.length === 0 || evt.consumable.length > 1000) {
+    if (evt.consumable &&
+        (typeof evt.consumable !== 'string' || evt.consumable.length === 0 ||
+         evt.consumable.length > 1000)) {
       return 'BAD_DATA';
     }
 
@@ -85,6 +88,21 @@ class WeaponEvent extends HungryGames.Event {
     }
 
     return null;
+  }
+
+  /**
+   * @description Create a new WeaponEvent object from a WeaponEvent-like
+   * object. Similar to copy-constructor.
+   *
+   * @public
+   * @static
+   * @param {object} obj Event-like object to copy.
+   * @returns {HungryGames~WeaponEvent} Copy of event.
+   */
+  static from(obj) {
+    const out = new WeaponEvent(obj.outcomes, obj.consumable, obj.name || '');
+    out.fill(obj);
+    return out;
   }
 }
 

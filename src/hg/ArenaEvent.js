@@ -19,20 +19,12 @@ class ArenaEvent extends HungryGames.Event {
   constructor(message, outcomes, outcomeProbs) {
     super(message);
     /**
-     * Message sent at the start of the arena event.
-     *
-     * @public
-     * @type {string}
-     * @override
-     */
-    this.message = message;
-    /**
      * All possible events in this arena event.
      *
      * @public
      * @type {HungryGames~NormalEvent[]}
      */
-    this.outcomes = outcomes;
+    this.outcomes = outcomes || [];
     /**
      * Outcome probabilities specific to this arena event. Overrides the global
      * arena event outcome probability settings. Null to use global settings.
@@ -40,7 +32,7 @@ class ArenaEvent extends HungryGames.Event {
      * @public
      * @type {?HungryGames~OutcomeProbabilities}
      */
-    this.outcomeProbs = outcomeProbs;
+    this.outcomeProbs = outcomeProbs || null;
   }
   /**
    * @description Validate that the given data is properly typed and structured
@@ -56,10 +48,12 @@ class ArenaEvent extends HungryGames.Event {
     if (err) return err;
 
     if (evt.outcomes && !Array.isArray(evt.outcomes)) {
-      return 'BAD_DATA';
+      return 'BAD_OUTCOMES';
     } else if (evt.outcomes) {
-      if (evt.outcomes.find((el) => !HungryGames.NormalEvent.validate(el))) {
-        return 'BAD_DATA';
+      let outerr;
+      evt.outcomes.find((el) => outerr = HungryGames.NormalEvent.validate(el));
+      if (outerr) {
+        return 'BAD_OUTCOME_' + outerr;
       }
     }
 
@@ -68,10 +62,26 @@ class ArenaEvent extends HungryGames.Event {
       const fail = keys.find(
           (key) => evt.outcomeProbs[key] != null &&
               isNaN(evt.outcomeProbs[key] *= 1));
-      if (fail) return 'BAD_DATA';
+      if (fail) return 'BAD_OUTCOME_PROBS';
     }
 
     return null;
+  }
+
+  /**
+   * @description Create a new ArenaEvent object from a ArenaEvent-like object.
+   * Similar to copy-constructor.
+   *
+   * @public
+   * @static
+   * @param {object} obj Event-like object to copy.
+   * @returns {HungryGames~ArenaEvent} Copy of event.
+   */
+  static from(obj) {
+    const out = new ArenaEvent(
+        obj.message, obj.outcomes || [], obj.outcomeProbs || null);
+    out.fill(obj);
+    return out;
   }
 }
 

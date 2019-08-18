@@ -291,8 +291,8 @@ class EventContainer {
    * if already cached.
    * @public
    * @param {string} id The event ID to fetch.
-   * @param {?string} type The type to cache this event as, or null to not
-   * cache.
+   * @param {?string} type The category to add this event to. If null, event
+   * will not be stored in category, nor cached.
    * @param {basicCB} cb Callback once completed. First argument is optional
    * error string, second is otherwise the event object.
    */
@@ -330,6 +330,7 @@ class EventContainer {
           done('PARSE_ERROR');
         } else {
           if (type && EventContainer.types.includes(type)) {
+            if (!this.ids(type).includes(id)) this.ids(type).push(id);
             this.get(type)[id] = parsed;
           }
           done(null, parsed);

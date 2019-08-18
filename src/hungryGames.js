@@ -3118,35 +3118,15 @@ function HG() {
 
     if ((dIndex > -1) !== value) {
       return `Already ${value?'Enabled':'Disabled'}`;
-    } else if (!value) {
+    } else if (value) {
       allDisabled.splice(dIndex, 1);
       self._fire('eventToggled', id, type, evtId, value);
       return null;
     }
 
-    const allIds = defaultEvents.ids(type).concat(
-        hg.getGame(id).customEventStore.ids(type));
-    const searchOutcomes = ['arena', 'weapon'].includes(type);
-
-    const exists = allIds.find((el) => {
-      if (el === evtId) return true;
-      if (!searchOutcomes) return false;
-
-      const evt =
-          self.getDefaultEvents()[type].find((el) => evtId.startsWith(el.id));
-      if (!evt) return false;
-
-      const sub = evt.outcomes.find((sub) => `${el.id}/${sub.id}` === evtId);
-      return sub;
-    });
-
-    if (exists) {
-      allDisabled.push(evtId);
-      self._fire('eventToggled', id, type, evtId, value);
-      return null;
-    } else {
-      return 'Unknown event to disable';
-    }
+    allDisabled.push(evtId);
+    self._fire('eventToggled', id, type, evtId, value);
+    return null;
   };
 
   /**

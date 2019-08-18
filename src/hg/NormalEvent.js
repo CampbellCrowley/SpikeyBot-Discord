@@ -223,27 +223,28 @@ class NormalEvent extends HungryGames.Event {
     const err = HungryGames.Event.validate(evt);
     if (err) return err;
 
-    if (evt.action && typeof evt.action !== 'string' ||
-        evt.action.length === 0 || evt.action.length > 1000) {
-      return 'BAD_DATA';
+    if (evt.action && (typeof evt.action !== 'string' ||
+                       evt.action.length === 0 || evt.action.length > 1000)) {
+      return 'BAD_ACTION';
     }
 
     if (evt.battle != null && typeof evt.battle !== 'boolean' &&
         evt.battle !== 'true' && evt.battle !== 'false') {
-      return 'BAD_DATA';
+      return 'BAD_BATTLE';
     } else if (evt.battle != null) {
       evt.battle = evt.battle === 'true';
     }
 
     if (evt.state != null && !Number.isSafeInteger(evt.state *= 1)) {
-      return 'BAD_DATA';
+      return 'BAD_STATE';
     }
 
     if (evt.attacks && !Array.isArray(evt.attacks)) {
-      return 'BAD_DATA';
+      return 'BAD_ATTACKS';
     } else if (evt.attacks) {
-      if (evt.attacks.find((el) => !NormalEvent.validate(el))) {
-        return 'BAD_DATA';
+      let outerr;
+      if (evt.attacks.find((el) => outerr = NormalEvent.validate(el))) {
+        return 'BAD_ATTACK_' + outerr;
       }
     }
 
@@ -251,7 +252,7 @@ class NormalEvent extends HungryGames.Event {
         (typeof evt.consumes !== 'string' || evt.consumes.length > 100 ||
          evt.consumes.length === 0) &&
         !Number.isSafeInteger(evt.consumes * 1)) {
-      return 'BAD_DATA';
+      return 'BAD_CONSUMES';
     }
 
     if (evt.victim) {
@@ -263,19 +264,20 @@ class NormalEvent extends HungryGames.Event {
         case 'thrives':
           break;
         default:
-          return 'BAD_DATA';
+          return 'BAD_VICTIM_OUTCOME';
       }
       if (!Number.isSafeInteger(evt.victim.count *= 1)) return 'BAD_DATA';
       if (typeof evt.victim.killer !== 'boolean') {
         if (evt.victim.killer !== 'true' && evt.victim.killer !== 'false') {
-          return 'BAD_DATA';
+          return 'BAD_VICTIM_KILLER';
         } else {
           evt.victim.killer = evt.victim.killer === 'true';
         }
       }
-      if (evt.victim.weapon && typeof evt.victim.weapon.id !== 'string' ||
-          !Number.isSafeInteger(evt.victim.weapon.count *= 1)) {
-        return 'BAD_DATA';
+      if (evt.victim.weapon &&
+          (typeof evt.victim.weapon.id !== 'string' ||
+           !Number.isSafeInteger(evt.victim.weapon.count *= 1))) {
+        return 'BAD_VICTIM_WEAPON';
       }
     }
     if (evt.attacker) {
@@ -287,19 +289,20 @@ class NormalEvent extends HungryGames.Event {
         case 'thrives':
           break;
         default:
-          return 'BAD_DATA';
+          return 'BAD_ATTACKER_OUTCOME';
       }
       if (!Number.isSafeInteger(evt.attacker.count *= 1)) return 'BAD_DATA';
       if (typeof evt.attacker.killer !== 'boolean') {
         if (evt.attacker.killer !== 'true' && evt.attacker.killer !== 'false') {
-          return 'BAD_DATA';
+          return 'BAD_ATTACKER_COUNT';
         } else {
           evt.attacker.killer = evt.attacker.killer === 'true';
         }
       }
-      if (evt.attacker.weapon && typeof evt.attacker.weapon.id !== 'string' ||
-          !Number.isSafeInteger(evt.attacker.weapon.count *= 1)) {
-        return 'BAD_DATA';
+      if (evt.attacker.weapon &&
+          (typeof evt.attacker.weapon.id !== 'string' ||
+           !Number.isSafeInteger(evt.attacker.weapon.count *= 1))) {
+        return 'BAD_ATTACKER_WEAPON';
       }
     }
     return null;

@@ -659,6 +659,7 @@ class HungryGames {
    * null if failed to parse data.
    */
   createEvent(evt, cb) {
+    if (typeof cb !== 'function') cb = function() {};
     const creator = evt.creator;
 
     if (evt.type === 'normal') {
@@ -675,6 +676,12 @@ class HungryGames {
         return null;
       }
       evt = HungryGames.ArenaEvent.from(evt);
+      const fail = evt.outcomes.find(
+          (el) => typeof el.id !== 'string' || el.id.length === 0);
+      if (fail) {
+        cb('BAD_OUTCOME_BAD_ID');
+        return;
+      }
     } else if (evt.type === 'weapon') {
       const err = HungryGames.WeaponEvent.validate(evt);
       if (err) {
@@ -682,6 +689,12 @@ class HungryGames {
         return null;
       }
       evt = HungryGames.WeaponEvent.from(evt);
+      const fail = evt.outcomes.find(
+          (el) => typeof el.id !== 'string' || el.id.length === 0);
+      if (fail) {
+        cb('BAD_OUTCOME_BAD_ID');
+        return;
+      }
     } else {
       cb('BAD_TYPE');
       return null;

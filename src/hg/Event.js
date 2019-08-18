@@ -102,14 +102,15 @@ class Event {
     }
     if (typeof evt.message !== 'string' || evt.message.length === 0 ||
         evt.message.length > 1000) {
-      return 'BAD_DATA';
+      return 'BAD_MESSAGE';
     }
-    if (evt.id && typeof evt.id !== 'string' || evt.id.length === 0) {
-      return 'BAD_DATA';
+    if (evt.id && (typeof evt.id !== 'string' || evt.id.length === 0)) {
+      return 'BAD_ID';
     }
-    if (evt.subMessage && typeof evt.subMessage !== 'string' ||
-        evt.subMessage.length === 0 || evt.subMessage.length > 1000) {
-      return 'BAD_DATA';
+    if (evt.subMessage &&
+        (typeof evt.subMessage !== 'string' || evt.subMessage.length === 0 ||
+         evt.subMessage.length > 1000)) {
+      return 'BAD_SUB_MESSAGE';
     }
     if (evt.type) {
       switch (evt.type) {
@@ -119,7 +120,7 @@ class Event {
         case 'battle':
           break;
         default:
-          return 'BAD_DATA';
+          return 'BAD_TYPE';
       }
     }
     return null;

@@ -352,10 +352,12 @@ function HGWeb() {
     socket.on('pauseAutoplay', (...args) => handle(self.pauseAutoplay, args));
     socket.on('pauseGame', (...args) => handle(self.pauseGame, args));
     socket.on('editTeam', (...args) => handle(self.editTeam, args));
-    socket.on('createEvent', (...args) => handle(self.createEvent, args));
+    socket.on(
+        'createEvent', (...args) => handle(self.createEvent, args, false));
     socket.on('addEvent', (...args) => handle(self.addEvent, args));
     socket.on('removeEvent', (...args) => handle(self.removeEvent, args));
-    socket.on('deleteEvent', (...args) => handle(self.deleteEvent, args));
+    socket.on(
+        'deleteEvent', (...args) => handle(self.deleteEvent, args, false));
     socket.on('toggleEvent', (...args) => handle(self.toggleEvent, args));
     socket.on('replaceEvent', (...args) => handle(self.replaceEvent, args));
     socket.on('fetchEvent', (...args) => handle(self.fetchEvent, args, false));
@@ -637,7 +639,7 @@ function HGWeb() {
    * @param {boolean} value The if event is now enabled.
    */
   function handleEventToggled(hg, gId, type, eId, value) {
-    guildBroadcast(gId, 'eventToggled', gId, type, eId, value);
+    guildBroadcast(gId, 'eventToggled', type, eId, value);
   }
 
   /**
@@ -651,7 +653,7 @@ function HGWeb() {
    * @param {string} eId The ID of the event that was added.
    */
   function handleEventAdded(hg, gId, type, eId) {
-    guildBroadcast(gId, 'eventAdded', gId, type, eId);
+    guildBroadcast(gId, 'eventAdded', type, eId);
   }
 
   /**
@@ -665,7 +667,7 @@ function HGWeb() {
    * @param {string} eId The ID of the event that was removed.
    */
   function handleEventRemoved(hg, gId, type, eId) {
-    guildBroadcast(gId, 'eventRemoved', gId, type, eId);
+    guildBroadcast(gId, 'eventRemoved', type, eId);
   }
 
   /**
@@ -1757,20 +1759,12 @@ function HGWeb() {
    * @type {HGWeb~SocketFunction}
    * @param {object} userData The current user's session data.
    * @param {socketIo~Socket} socket The socket connection to reply on.
-   * @param {number|string} gId The guild id to look at.
-   * @param {string} type The type of event.
    * @param {HungryGames~Event} evt The event data of the event to create.
    * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
    * is complete, or has failed.
    */
-  this.createEvent = function createEvent(
-      userData, socket, gId, type, evt, cb) {
-    if (!checkPerm(userData, gId, null, 'event')) {
-      if (!checkMyGuild(gId)) return;
-      if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, this.name);
-      return;
-    }
+  this.createEvent = function createEvent(userData, socket, evt, cb) {
+    if (!userData) return;
     if (typeof cb !== 'function') cb = function() {};
     evt.creator = userData.id;
     evt.id = null;
@@ -1782,6 +1776,12 @@ function HGWeb() {
       }
       evt = HungryGames.NormalEvent.from(evt);
     } else if (evt.type === 'arena') {
+      if (Array.isArray(evt.outcomes)) {
+        evt.outcomes.forEach((el, i) => {
+          el.creator = userData.id;
+          evt.outcomes[i] = HungryGames.NormalEvent.from(el);
+        });
+      }
       const err = HungryGames.ArenaEvent.validate(evt);
       if (err) {
         cb(err);
@@ -1789,6 +1789,13 @@ function HGWeb() {
       }
       evt = HungryGames.ArenaEvent.from(evt);
     } else if (evt.type === 'weapon') {
+      if (Array.isArray(evt.outcomes)) {
+        evt.outcomes.forEach((el, i) => {
+          el.creator = userData.id;
+          evt.outcomes[i] = HungryGames.NormalEvent.from(el);
+        });
+      }
+      evt.message = 'Weapon Message';
       const err = HungryGames.WeaponEvent.validate(evt);
       if (err) {
         cb(err);
@@ -1800,7 +1807,7 @@ function HGWeb() {
       return;
     }
 
-    const eId = hg().getHG().replaceEvent(userData.id, evt, (err) => {
+    const eId = hg().getHG().createEvent(evt, (err) => {
       if (err) {
         if (typeof cb === 'function') {
           cb('ATTEMPT_FAILED', err);
@@ -1835,17 +1842,22 @@ function HGWeb() {
     }
     if (typeof cb !== 'function') cb = function() {};
 
+    if (!type) {
+      cb('BAD_TYPE');
+      return;
+    }
+
     hg().getHG().fetchGame(gId, (game) => {
       if (!game) {
         cb('NO_GAME');
         return;
       }
-      game.customEvents.fetch(eId, type, (err) => {
+      game.customEventStore.fetch(eId, type, (err) => {
         if (err) {
           cb('ATTEMPT_FAILED', err);
         } else {
           cb(null);
-          if (type) guildBroadcast(gId, 'eventAdded', gId, type, eId);
+          if (type) guildBroadcast(gId, 'eventAdded', type, eId);
         }
       });
     });
@@ -1879,9 +1891,9 @@ function HGWeb() {
         cb('NO_GAME');
         return;
       }
-      if (game.customEvents.remove(eId, type)) {
+      if (game.customEventStore.remove(eId, type)) {
         cb(null);
-        if (type) guildBroadcast(gId, 'eventRemoved', gId, type, eId);
+        if (type) guildBroadcast(gId, 'eventRemoved', type, eId);
       } else {
         cb('ATTEMPT_FAILED');
       }
@@ -2679,7 +2691,7 @@ module.exports = new HGWeb();
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a>
 	
-		on Saturday, August 17, 2019 11:44 AM (-07:00)
+		on Sunday, August 18, 2019 12:20 AM (-07:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>
