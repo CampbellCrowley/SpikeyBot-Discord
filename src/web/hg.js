@@ -269,6 +269,9 @@ function HGWeb() {
     socket.on('replaceEvent', (...args) => handle(self.replaceEvent, args));
     socket.on('fetchEvent', (...args) => handle(self.fetchEvent, args, false));
     socket.on(
+        'fetchUserEvents',
+        (...args) => handle(self.fetchUserEvents, args, false));
+    socket.on(
         'forcePlayerState', (...args) => handle(self.forcePlayerState, args));
     socket.on('renameGame', (...args) => handle(self.renameGame, args));
     socket.on('removeNPC', (...args) => handle(self.removeNPC, args));
@@ -1941,6 +1944,23 @@ function HGWeb() {
         cb(null, evt);
       }
     });
+  };
+
+  /**
+   * Fetch list of IDs of all events the user has created.
+   *
+   * @see {@link HungryGames~fetchUserEvents}
+   *
+   * @public
+   * @type {HGWeb~SocketFunction}
+   * @param {object} userData The current user's session data.
+   * @param {socketIo-Socket} socket The socket connection to reply on.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete.
+   */
+  this.fetchUserEvents = function fetchUserEvents(userData, socket, cb) {
+    if (!userData) return;
+    hg().getHG().fetchUserEvents(userData.id, cb);
   };
 
   /**

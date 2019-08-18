@@ -756,6 +756,16 @@ class HungryGames {
    */
   deleteEvent(user, id, cb) {
     if (typeof cb !== 'function') cb = function() {};
+    if (typeof id !== 'string' || id.length === 0) {
+      cb('BAD_ID');
+      return;
+    }
+    const match = id.match(/^(\d{17,19}\/\d+-[0-9a-z]+)\/([0-9a-z]+)$/);
+    let sub = null;
+    if (match) {
+      id = match[1];
+      sub = match[2];
+    }
     const toSend =
         global.sqlCon.format('SELECT * FROM HGEvents WHERE id=? LIMIT 1', [id]);
     global.sqlCon.query(toSend, (err, rows) => {
@@ -772,23 +782,44 @@ class HungryGames {
         cb('BAD_USER');
         return;
       }
-      const toSend =
-          global.sqlCon.format('DELETE FROM HGEvents WHERE id=? LIMIT 1', [id]);
-      global.sqlCon.query(toSend, (err) => {
-        if (err) {
-          console.error(err);
-          cb('SQL_FAILED');
+      if (sub) {
+        if (!this._defaultEventStore) {
+          cb('NOT_READY');
           return;
         }
-        fs.unlink(HungryGames.EventContainer.eventDir + id + '.json', (err) => {
+        this._defaultEventStore.fetch(id, null, (err, evt) => {
           if (err) {
-            console.error(err);
-            cb('UNLINK_FAILED');
+            cb(err);
             return;
           }
-          cb(null);
+          const index = evt.outcomes.findIndex((el) => el.id === sub);
+          if (index === -1) {
+            cb('BAD_SUB_ID');
+            return;
+          }
+          evt.outcomes.splice(index, 1);
+          this.replaceEvent(user, evt, cb);
         });
-      });
+      } else {
+        const toSend = global.sqlCon.format(
+            'DELETE FROM HGEvents WHERE id=? LIMIT 1', [id]);
+        global.sqlCon.query(toSend, (err) => {
+          if (err) {
+            console.error(err);
+            cb('SQL_FAILED');
+            return;
+          }
+          fs.unlink(
+              HungryGames.EventContainer.eventDir + id + '.json', (err) => {
+                if (err) {
+                  console.error(err);
+                  cb('UNLINK_FAILED');
+                  return;
+                }
+                cb(null);
+              });
+        });
+      }
     });
   }
 
@@ -859,6 +890,29 @@ class HungryGames {
         }
         cb(null);
       });
+    });
+  }
+
+  /**
+   * @description Fetch all event IDs of the events the given user has created.
+   * @public
+   * @param {string} user The user requesting deletion.
+   * @param {basicCB} [cb] Callback once completed. First parameter is optional
+   * error string, second is otherwise an array if strings.
+   */
+  fetchUserEvents(user, cb) {
+    fs.readdir(HungryGames.EventContainer.eventDir + user, (err, files) => {
+      if (err) {
+        if (err.code === 'ENOENT') {
+          cb(null, []);
+        } else {
+          cb('READ_FAILED');
+        }
+      } else {
+        cb(null, files.map((el) => {
+          return user + '/' + el.toString().replace(/\.json$/, '');
+        }));
+      }
     });
   }
 
