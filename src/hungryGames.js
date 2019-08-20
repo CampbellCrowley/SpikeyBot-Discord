@@ -2312,6 +2312,8 @@ function HG() {
       return finalMessage;
     }
     if (game.options.teamSize > 0) self.sortTeams(game);
+    const splitEmbeds =
+        game.currentGame.teams.length < 25 && game.options.teamSize > 0;
     let prevTeam = null;
     const statusList = game.currentGame.includedUsers.map((obj) => {
       let myTeam = null;
@@ -2337,6 +2339,7 @@ function HG() {
           shortName = `${shortName.substring(0, 13)}...`;
         }
       }
+      if (splitEmbeds) return shortName;
 
       let prefix = '';
       if (myTeam && myTeam !== prevTeam) {
@@ -2356,23 +2359,33 @@ function HG() {
       });
     }
 
-    const numCols = self.calcColNum(statusList.length > 10 ? 3 : 2, statusList);
-    if (statusList.length >= 5) {
-      const quarterLength = Math.ceil(statusList.length / numCols);
-      for (let i = 0; i < numCols - 1; i++) {
-        const thisMessage =
-            statusList.splice(0, quarterLength).join('\n').substring(0, 1024);
+    if (splitEmbeds) {
+      game.currentGame.teams.reverse().forEach((el) => {
         finalMessage.addField(
-            'Included (' + (i * quarterLength + 1) + '-' +
-                ((i + 1) * quarterLength) + ')',
-            thisMessage, true);
-      }
-      finalMessage.addField(
-          `Included (${(numCols - 1) * quarterLength + 1}-${numUsers})`,
-          statusList.join('\n'), true);
+            el.name,
+            statusList.splice(0, el.players.length).join('\n').slice(0, 1023),
+            true);
+      });
     } else {
-      finalMessage.addField(
-          `Included (${numUsers})`, statusList.join('\n') || 'Nobody', false);
+      const numCols =
+          self.calcColNum(statusList.length > 10 ? 3 : 2, statusList);
+      if (statusList.length >= 5) {
+        const quarterLength = Math.ceil(statusList.length / numCols);
+        for (let i = 0; i < numCols - 1; i++) {
+          const thisMessage =
+              statusList.splice(0, quarterLength).join('\n').substring(0, 1024);
+          finalMessage.addField(
+              'Included (' + (i * quarterLength + 1) + '-' +
+                  ((i + 1) * quarterLength) + ')',
+              thisMessage, true);
+        }
+        finalMessage.addField(
+            `Included (${(numCols - 1) * quarterLength + 1}-${numUsers})`,
+            statusList.join('\n'), true);
+      } else {
+        finalMessage.addField(
+            `Included (${numUsers})`, statusList.join('\n') || 'Nobody', false);
+      }
     }
     if (game.excludedUsers.length > 0) {
       let excludedList = '\u200B';
@@ -3764,6 +3777,11 @@ function HG() {
    */
   function commandGroups(msg, id) {
     const game = hg.getGame(id);
+    if (!game) {
+      self.common.reply(
+          msg, 'There is no group data yet.', 'Please create a group first.');
+      return;
+    }
     let total = 0;
     let done = 0;
     const list = [];
@@ -3828,9 +3846,20 @@ function HG() {
    * @type {HungryGames~hgCommandHandler}
    * @param {Discord~Message} msg The message that lead to this being called.
    * @param {string} id Guild ID this command was called from.
+   * @param {HungryGames~GuildGame} [game] The game object to modify.
    */
-  function commandNewGroup(msg, id) {
-    const game = hg.getGame(id);
+  function commandNewGroup(msg, id, game) {
+    if (!game) game = hg.getGame(id);
+    if (!game) {
+      createGame(msg, id, false, (game) => {
+        if (!game) {
+          self.common.reply(msg, 'Failed to create game for unknown reason.');
+          return;
+        }
+        commandNewGroup(msg, id, game);
+      });
+      return;
+    }
     const name = msg.text.trim().slice(0, 24);
     game._stats.createGroup({name: name}, (group) => {
       let res = group.id;
@@ -3850,6 +3879,11 @@ function HG() {
    */
   function commandSelectGroup(msg, id) {
     const game = hg.getGame(id);
+    if (!game) {
+      self.common.reply(
+          msg, 'There is no group data yet.', 'Please create a group first.');
+      return;
+    }
     let groupID = msg.text.match(/\b([a-fA-F0-9]{4})\b/);
     if (!groupID) {
       self.common.reply(msg, 'Disabled stat group');
@@ -3885,6 +3919,11 @@ function HG() {
    */
   function commandRenameGroup(msg, id) {
     const game = hg.getGame(id);
+    if (!game) {
+      self.common.reply(
+          msg, 'There is no group data yet.', 'Please create a group first.');
+      return;
+    }
     const regex = /\b([a-fA-F0-9]{4})\b/;
     let groupID = msg.text.match(regex);
     if (!groupID) {
@@ -3923,6 +3962,11 @@ function HG() {
    */
   function commandDeleteGroup(msg, id) {
     const game = hg.getGame(id);
+    if (!game) {
+      self.common.reply(
+          msg, 'There is no group data yet.', 'Please create a group first.');
+      return;
+    }
     let groupID = msg.text.match(/\b([a-fA-F0-9]{4})\b/);
     if (!groupID) {
       self.common.reply(
@@ -3958,6 +4002,12 @@ function HG() {
    */
   function commandLeaderboard(msg, id) {
     const game = hg.getGame(id);
+    if (!game) {
+      self.common.reply(
+          msg, 'There is no game data to show stats for.',
+          'Try again after you have completed a game.');
+      return;
+    }
     const regex = /\b([a-fA-F0-9]{4})\b/;
     let groupID = msg.text.match(regex);
     if (!groupID) {
@@ -4075,21 +4125,16 @@ function HG() {
    */
   function commandNums(msg) {
     if (self.client.shard) {
-      self.client.shard.broadcastEval('this.getHGStats(true)')
-          .then(
-              (res) => {
-                const embed = new self.Discord.MessageEmbed();
-                embed.setTitle('Stats Across Shards');
-                res.forEach((el, i) => {
-                  embed.addField(`#${i}`, el, true);
-                });
-                msg.channel.send(embed);
-              })
-          .catch((err) => {
-            self.common.reply(
-                msg, 'Oops, something went wrong while fetching stats.');
-            self.error(err);
-          });
+      self.client.shard.broadcastEval('this.getHGStats(true)').then((res) => {
+        const embed = new self.Discord.MessageEmbed();
+        embed.setTitle('Stats Across Shards');
+        res.forEach((el, i) => embed.addField(`#${i}`, el, true));
+        msg.channel.send(embed);
+      }).catch((err) => {
+        self.common.reply(
+            msg, 'Oops, something went wrong while fetching stats.');
+        self.error(err);
+      });
     } else {
       self.common.reply(msg, getStatsString());
     }

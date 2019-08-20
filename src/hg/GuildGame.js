@@ -707,7 +707,7 @@ class GuildGame {
       }
       if (!evt) {
         evt = HungryGames.NormalEvent.finalize(
-            text, affected, 1, 0, outcome, 'nothing', game);
+            text, affected, affected.length, 0, outcome, 'nothing', game);
       }
       if (game.currentGame.day.state > 1) {
         for (const player of affected) {

@@ -73,6 +73,7 @@ class Worker {
 
     const userPool = sim.game.currentGame.includedUsers.filter((player) => {
       if (player.living) startingAlive++;
+      if (player.state === 'zombie') player.state = 'normal';
 
       player.simWeapons = Object.assign({}, player.weapons);
 

@@ -441,7 +441,7 @@ Simulator._restoreUser = function(game, a, k, w) {
  */
 Simulator._reviveUser = function(game, a, k, w) {
   Simulator._effectUser(game, a, k, w);
-  a.state = a.state === 'normal' ? 'normal' : 'zombie';
+  a.state = a.living ? 'normal' : 'zombie';
   a.bleeding = 0;
   game.currentGame.includedUsers.forEach((obj) => {
     if (!obj.living && obj.rank < a.rank) obj.rank++;

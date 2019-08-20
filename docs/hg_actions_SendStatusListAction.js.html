@@ -116,36 +116,58 @@ class SendStatusListAction extends ChannelAction {
       if (game.options.numDaysShowDeath >= 0 ||
           !game.options.showLivingPlayers) {
         playersToShow = playersToShow.filter((el) => {
-          if (!game.options.showLivingPlayers &amp;&amp; el.living) return false;
+          if (!game.options.showLivingPlayers &amp;&amp; el.living &amp;&amp;
+              el.state !== 'zombie') {
+            return false;
+          }
           return el.living || el.state == 'wounded' ||
-              (game.options.numDaysShowDeath >= 0 &amp;&amp;
-               current.day.num - el.dayOfDeath &lt; game.options.numDaysShowDeath);
+              game.options.numDaysShowDeath &lt; 0 ||
+              current.day.num - el.dayOfDeath &lt; game.options.numDaysShowDeath;
         });
       }
+      const showLiving =
+          playersToShow.find((el) => el.living &amp;&amp; el.state !== 'zombie');
       const showDead = playersToShow.find((el) => !el.living);
       const showWounded = playersToShow.find((el) => el.state == 'wounded');
+      const showRevived = playersToShow.find((el) => el.state == 'zombie');
 
       const emoji = {
         heart: '❤',
         redHeart: '❤️',
         yellowHeart: '💛',
+        blueHeart: '💙',
         skull: '💀',
       };
 
+      let numTeamsToShow = 0;
+      const numPerTeam = [];
+      if (game.options.teamSize > 0) {
+        playersToShow.forEach((obj) => {
+          const myTeam = current.teams.findIndex((team) => {
+            return team.players.findIndex((player) => player == obj.id) > -1;
+          });
+          if (!numPerTeam[myTeam]) numPerTeam[myTeam] = 0;
+          numPerTeam[myTeam]++;
+        });
+
+        numTeamsToShow = numPerTeam.filter((el) => el > 0).length;
+      }
+      const splitEmbeds = numTeamsToShow &lt; 25 &amp;&amp; game.options.teamSize > 0;
+
       const finalMessage = new hg._parent.Discord.MessageEmbed();
       finalMessage.setColor([255, 0, 255]);
-      finalMessage.setAuthor(
-          emoji.redHeart + 'Alive' +
-          (showWounded ? (`, ${emoji.yellowHeart}Wounded`) : '') +
-          (showDead ? (`, ${emoji.skull}Dead`) : ''));
+      const keys = [];
+      if (showLiving) keys.push(`${emoji.redHeart}Alive`);
+      if (showWounded) keys.push(`${emoji.yellowHeart}Wounded`);
+      if (showRevived) keys.push(`${emoji.blueHeart}Revived`);
+      if (showDead) keys.push(`${emoji.skull}Dead`);
+      if (keys.length > 0) finalMessage.setAuthor(keys.join(', '));
       let showKills = false;
-      const statusList = playersToShow.map(function(obj) {
+      const statusList = playersToShow.map((obj) => {
         let myTeam = -1;
         if (game.options.teamSize > 0) {
           myTeam = current.teams.findIndex((team) => {
-            return team.players.findIndex((player) => {
-              return player == obj.id;
-            }) > -1;
+            return team.players.findIndex((player) => player == obj.id) > -1;
           });
         }
         let symbol = emoji.heart;
@@ -153,8 +175,8 @@ class SendStatusListAction extends ChannelAction {
           symbol = emoji.skull;
         } else if (obj.state == 'wounded') {
           symbol = emoji.yellowHeart;
-          /* } else if (obj.state == 'zombie') {
-            symbol = emoji.brokenHeart; */
+        } else if (obj.state == 'zombie') {
+          symbol = emoji.blueHeart;
         }
 
         let shortName;
@@ -171,7 +193,7 @@ class SendStatusListAction extends ChannelAction {
         }
 
         let prefix = '';
-        if (myTeam != prevTeam) {
+        if (!splitEmbeds &amp;&amp; myTeam != prevTeam) {
           prevTeam = myTeam;
           prefix = `__${current.teams[myTeam].name}__\n`;
         }
@@ -182,40 +204,51 @@ class SendStatusListAction extends ChannelAction {
             (obj.kills > 0 ? '(' + obj.kills + ')' : '');
       });
       finalMessage.setTitle(`Status update!${showKills ? ' (kills)' : ''}`);
-      if (game.options.teamSize == 0) {
-        statusList.sort((a, b) => {
-          if (a.startsWith(emoji.skull)) {
-            if (!b.startsWith(emoji.skull)) {
-              return 1;
-            }
-          } else if (b.startsWith(emoji.skull)) {
-            if (!a.startsWith(emoji.skull)) {
-              return -1;
-            }
-          }
-          if (a &lt; b) return -1;
-          if (a > b) return 1;
-          return 0;
-        });
-      }
-      if (statusList.length >= 5) {
-        const numCols =
-            hg._parent.calcColNum(statusList.length > 10 ? 3 : 2, statusList);
-
-        const numTotal = statusList.length;
-        const quarterLength = Math.ceil(numTotal / numCols);
-        for (let i = 0; i &lt; numCols - 1; i++) {
-          const thisMessage =
-              statusList.splice(0, quarterLength).join('\n').slice(0, 1024);
+      if (splitEmbeds) {
+        game.currentGame.teams.reverse().forEach((el, i) => {
+          const index = game.currentGame.teams.length - i - 1;
+          if (!numPerTeam[index]) return;
           finalMessage.addField(
-              `${i * quarterLength + 1}-${(i + 1) * quarterLength}`,
-              thisMessage, true);
-        }
-        finalMessage.addField(
-            `${(numCols - 1) * quarterLength + 1}-${numTotal}`,
-            statusList.join('\n').slice(0, 1024), true);
+              el.name,
+              statusList.splice(0, numPerTeam[index]).join('\n').slice(0, 1023),
+              true);
+        });
       } else {
-        finalMessage.setDescription(statusList.join('\n') || '...');
+        if (game.options.teamSize == 0) {
+          statusList.sort((a, b) => {
+            if (a.startsWith(emoji.skull)) {
+              if (!b.startsWith(emoji.skull)) {
+                return 1;
+              }
+            } else if (b.startsWith(emoji.skull)) {
+              if (!a.startsWith(emoji.skull)) {
+                return -1;
+              }
+            }
+            if (a &lt; b) return -1;
+            if (a > b) return 1;
+            return 0;
+          });
+        }
+        if (statusList.length >= 5) {
+          const numCols =
+              hg._parent.calcColNum(statusList.length > 10 ? 3 : 2, statusList);
+
+          const numTotal = statusList.length;
+          const quarterLength = Math.ceil(numTotal / numCols);
+          for (let i = 0; i &lt; numCols - 1; i++) {
+            const thisMessage =
+                statusList.splice(0, quarterLength).join('\n').slice(0, 1024);
+            finalMessage.addField(
+                `${i * quarterLength + 1}-${(i + 1) * quarterLength}`,
+                thisMessage, true);
+          }
+          finalMessage.addField(
+              `${(numCols - 1) * quarterLength + 1}-${numTotal}`,
+              statusList.join('\n').slice(0, 1024), true);
+        } else {
+          finalMessage.setDescription(statusList.join('\n') || '...');
+        }
       }
 
       let numWholeTeams = 0;
@@ -299,7 +332,7 @@ module.exports = SendStatusListAction;
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a>
 	
-		on Sunday, August 18, 2019 4:40 PM (-07:00)
+		on Tuesday, August 20, 2019 3:36 PM (-07:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>
