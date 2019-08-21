@@ -312,6 +312,11 @@ class EventContainer {
       cb(err, obj);
     };
 
+    if (!id.match || !id.match(/^\d{17,19}\/\d+-[0-9a-z]+$/)) {
+      done('BAD_ID');
+      return;
+    }
+
     const eventDir = EventContainer.eventDir;
     this._loading++;
     fs.readFile(`${eventDir}${id}.json`, (err, data) => {

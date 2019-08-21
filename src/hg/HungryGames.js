@@ -748,6 +748,9 @@ class HungryGames {
 
   /**
    * @description Completely delete an event and all of its data.
+   * @todo Deleting a sub-event is not safe for multiple requests, it does not
+   * handle the requests properly if a second request is made before the first
+   * is completed.
    * @public
    * @param {string} user The user requesting deletion.
    * @param {string} id The ID of the event to delete.
@@ -767,7 +770,7 @@ class HungryGames {
       sub = match[2];
     }
     const toSend =
-        global.sqlCon.format('SELECT * FROM HGEvents WHERE id=? LIMIT 1', [id]);
+        global.sqlCon.format('SELECT * FROM HGEvents WHERE id=?', [id]);
     global.sqlCon.query(toSend, (err, rows) => {
       if (err) {
         console.error(err);
@@ -801,23 +804,25 @@ class HungryGames {
           this.replaceEvent(user, evt, cb);
         });
       } else {
-        const toSend = global.sqlCon.format(
-            'DELETE FROM HGEvents WHERE id=? LIMIT 1', [id]);
-        global.sqlCon.query(toSend, (err) => {
+        const toSend =
+            global.sqlCon.format('DELETE FROM HGEvents WHERE id=?', [id]);
+        global.sqlCon.query(toSend, (err, rows) => {
           if (err) {
             console.error(err);
             cb('SQL_FAILED');
             return;
+          } else if (!rows.affectedRows) {
+            console.error('FAILED to delete event row', id);
           }
-          fs.unlink(
-              HungryGames.EventContainer.eventDir + id + '.json', (err) => {
-                if (err) {
-                  console.error(err);
-                  cb('UNLINK_FAILED');
-                  return;
-                }
-                cb(null);
-              });
+          const filename = `${HungryGames.EventContainer.eventDir}${id}.json`;
+          fs.unlink(filename, (err) => {
+            if (err) {
+              console.error(err);
+              cb('UNLINK_FAILED');
+              return;
+            }
+            cb(null);
+          });
         });
       }
     });
@@ -882,6 +887,13 @@ class HungryGames {
         cb('BAD_USER');
         return;
       }
+      const toSend = global.sqlCon.format(
+          'UPDATE HGEvents SET DateModified=FROM_UNIXTIME(?) WHERE id=?',
+          [Date.now() / 1000, evt.id]);
+      global.sqlCon.query(toSend, (err) => {
+        if (err) console.error(err);
+      });
+
       fs.writeFile(filename, JSON.stringify(evt), (err) => {
         if (err) {
           console.error(err);
@@ -898,20 +910,16 @@ class HungryGames {
    * @public
    * @param {string} user The user requesting deletion.
    * @param {basicCB} [cb] Callback once completed. First parameter is optional
-   * error string, second is otherwise an array if strings.
+   * error string, second is otherwise an array if database rows.
    */
   fetchUserEvents(user, cb) {
-    fs.readdir(HungryGames.EventContainer.eventDir + user, (err, files) => {
+    const toSend = global.sqlCon.format(
+        'SELECT * FROM HGEvents WHERE CreatorId=?', [user]);
+    global.sqlCon.query(toSend, (err, files) => {
       if (err) {
-        if (err.code === 'ENOENT') {
-          cb(null, []);
-        } else {
-          cb('READ_FAILED');
-        }
+        cb('SQL_FAILED');
       } else {
-        cb(null, files.map((el) => {
-          return user + '/' + el.toString().replace(/\.json$/, '');
-        }));
+        cb(null, files);
       }
     });
   }
