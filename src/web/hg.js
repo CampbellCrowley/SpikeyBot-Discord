@@ -266,7 +266,8 @@ function HGWeb() {
     socket.on(
         'deleteEvent', (...args) => handle(self.deleteEvent, args, false));
     socket.on('toggleEvent', (...args) => handle(self.toggleEvent, args));
-    socket.on('replaceEvent', (...args) => handle(self.replaceEvent, args));
+    socket.on(
+        'replaceEvent', (...args) => handle(self.replaceEvent, args, false));
     socket.on('fetchEvent', (...args) => handle(self.fetchEvent, args, false));
     socket.on(
         'fetchUserEvents',
