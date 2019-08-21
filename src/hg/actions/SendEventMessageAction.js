@@ -23,7 +23,9 @@ class SendEventMessageAction extends ChannelAction {
       if (!evt) {
         hg._parent.error(
             'Attempted to print event beyond end of list. ' + index + '/' +
-            events.length);
+            events.length + ' (' + game.id + ')');
+        game.clearIntervals();
+        game.currentGame.isPaused = true;
       } else if (evt.battle && evt.state < evt.attacks.length) {
         const attk = evt.attacks[evt.state];
         const embed = new hg._parent.Discord.MessageEmbed();
