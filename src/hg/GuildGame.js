@@ -519,13 +519,13 @@ class GuildGame {
 
     // Legacy custom event storage.
     if (data.customEvents) {
-      game.legacyEvents = {};
+      if (!game.legacyEvents) game.legacyEvents = {};
       game.legacyEvents.bloodbath = data.customEvents.bloodbath || [];
       game.legacyEvents.player = data.customEvents.player || [];
       game.legacyEvents.arena = data.customEvents.arena || [];
       game.legacyEvents.weapon = data.customEvents.weapon || {};
       if (data.customEvents.battle) {
-        game.legacyEvents.battle = {};
+        if (!game.legacyEvents.battle) game.legacyEvents.battle = {};
         game.legacyEvents.battle.starts = data.customEvents.battle.starts || [];
         game.legacyEvents.battle.attacks =
             data.customEvents.battle.attacks || [];

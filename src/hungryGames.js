@@ -428,6 +428,8 @@ function HG() {
       new self.command.SingleCommand(
           ['events', 'event'], mkCmd(useWebsiteForCustom), cmdOpts),
       new self.command.SingleCommand(
+          ['claimlegacy'], mkCmd(commandClaimLegacyEvents), cmdOpts),
+      new self.command.SingleCommand(
           ['npc', 'ai', 'npcs', 'ais', 'bots', 'bot'], mkCmd(listNPCs), cmdOpts,
           [
             new self.command.SingleCommand(
@@ -469,14 +471,8 @@ function HG() {
           {validOnlyInGuild: true}),
       new self.command.SingleCommand(
           [
-            'lb',
-            'leaderboard',
-            'leaderboards',
-            'leader',
-            'leaders',
-            'top',
-            'rank',
-            'ranks',
+            'lb', 'leaderboard', 'leaderboards', 'leader', 'leaders', 'top',
+            'rank', 'ranks',
           ],
           mkCmd(commandLeaderboard), {validOnlyInGuild: true}),
       new self.command.SingleCommand(
@@ -685,10 +681,10 @@ function HG() {
                     'Please wait for it to complete.');
             return;
           }
+          game.channel = msg.channel.id;
+          game.author = msg.author.id;
           let text = msg.text.trim().toLocaleLowerCase();
           if (text.length > 0) {
-            game.channel = msg.channel.id;
-            game.author = msg.author.id;
             if (game.includedNPCs) {
               game.includedNPCs.sort((a, b) => {
                 return b.username.length - a.username.length;
@@ -3156,6 +3152,125 @@ function HG() {
         msg, 'This command is no longer available.',
         'Please use https://www.spikeybot.com/hg/#?guild=' + id +
             ' to manage custom events.');
+  }
+
+  /**
+   * Update all legacy custom events to the newer ID based system.
+   *
+   * @private
+   * @type {HungryGames~hgCommandHandler}
+   * @param {Discord~Message} msg The message that lead to this being called.
+   * @param {string} id The id of the guild this was triggered from.
+   */
+  function commandClaimLegacyEvents(msg, id) {
+    const game = hg.getGame(id);
+    if (!game || !game.legacyEvents) {
+      self.common.reply(
+          msg, 'No legacy events.',
+          'Unable to find any legacy events, and thus there is no operation ' +
+              'to perform.');
+      return;
+    }
+
+    const custom = game.legacyEvents;
+    const owner = msg.author.id;
+    const dir = self.common.guildSaveDir + id;
+    const stringified = JSON.stringify(custom, null, 2);
+    let total = 0;
+    let done = 0;
+    let deleted = false;
+    let errored = false;
+
+    const checkDone = function() {
+      done++;
+      if (done < total) return;
+
+      const additional =
+          (deleted ?
+               'Events that give weapons were reset.\n\nYou can edit events ' +
+                   'on the website to give the weapons again.' :
+               'No deleted weapon info.') +
+          (errored ?
+               '\nSome events failed to be converted due to unknown errors.' :
+               '\nNo errors.');
+
+      self.common.reply(msg, 'Events claimed', additional);
+
+      fs.writeFile(dir + '/HGLegacyEventBackup.json', stringified, (err) => {
+        if (err) {
+          self.error('Failed to save HG Legacy event backup file.');
+          console.error(err);
+          return;
+        }
+        if (!errored) delete game.legacyEvents;
+      });
+      const perms = msg.channel.permissionsFor(self.client.user);
+      if (perms.has(self.Discord.Permissions.FLAGS.SEND_MESSAGES) &&
+          perms.has(self.Discord.Permissions.FLAGS.ATTACH_FILES)) {
+        msg.channel.send(
+            'Backup of the saved legacy event data.',
+            new self.Discord.MessageAttachment(
+                Buffer.from(stringified), 'HGLegacyEventBackup.json'));
+      }
+    };
+
+    const iterate = function(type, type2) {
+      return function(evt, i) {
+        total++;
+        if ((evt.victim && evt.victim.weapon) ||
+            (evt.attacker && evt.attacker.weapon)) {
+          deleted = true;
+          delete evt.victim.weapon;
+          delete evt.attacker.weapon;
+        }
+        if (evt.outcomes) {
+          evt.outcomes.forEach((el) => {
+            el.creator = owner;
+            el.type = 'normal';
+          });
+        }
+        evt.type = type2;
+        evt.creator = owner;
+        hg.createEvent(evt, (err, out) => {
+          if (err) {
+            self.error(
+                'Failed to update legacy event: ' + type + ' ' + type2 + ' ' +
+                i + ' ' + id);
+            console.error(err);
+            errored = true;
+            checkDone();
+            return;
+          }
+          game.customEventStore.fetch(out.id, type, (err) => {
+            if (err) {
+              self.error(
+                  'Failed to fetch claimed event: ' + out.id + ' ' + type +
+                  ' ' + i + ' ' + id);
+              console.error(err);
+              errored = true;
+              checkDone();
+              return;
+            }
+            checkDone();
+          });
+        });
+      };
+    };
+
+    custom.bloodbath.forEach(iterate('bloodbath', 'normal'));
+    custom.player.forEach(iterate('player', 'normal'));
+    custom.arena.forEach(iterate('arena', 'arena'));
+
+    const wepIterate = iterate('weapon', 'weapon');
+    Object.entries(custom.weapon).forEach((el, i) => {
+      const evt = Object.assign({}, el[1]);
+      evt.name = el[0];
+      wepIterate(evt, i);
+    });
+
+    if (total === 0) {
+      self.common.reply(msg, 'No legacy events found to update.');
+    }
   }
 
   /**

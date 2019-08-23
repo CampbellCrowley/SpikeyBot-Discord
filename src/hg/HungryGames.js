@@ -1009,6 +1009,25 @@ class HungryGames {
           game.currentGame.day.state === 1) {
         game.currentGame.day.state = 0;
       }
+
+      if (game.legacyEvents) {
+        setTimeout(() => {
+          if (!self._games[id]) return;
+          if (!game.legacyEvents) return;
+          const MM = require('../lib/MessageMaker.js');
+          const msg = new MM(self._parent, game.author, id, game.channel);
+          if (!msg || !msg.channel || !msg.author) return;
+          self._parent.common.reply(
+              msg, 'Important Legacy Event Notice',
+              'Storage for custom events has been updated.\nUse `' +
+                  msg.prefix + self._parent.postPrefix +
+                  'claimlegacy` to move all custom events to your account.' +
+                  '\n\nBe aware that whoever runs the command, will be the ' +
+                  'only one who can edit the events, and will have sole ' +
+                  'ownership of the events.\n\nCustom events will not be used' +
+                  ' in the game until they have been claimed.');
+        }, 1000);
+      }
       return game;
     };
 

@@ -63,6 +63,7 @@ class WeaponEvent extends HungryGames.Event {
    * @returns {?string} Error string, or null if no error.
    */
   static validate(evt) {
+    if (!evt.message) evt.message = 'Weapon Message';
     const err = HungryGames.Event.validate(evt);
     if (err) return err;
 
@@ -100,8 +101,12 @@ class WeaponEvent extends HungryGames.Event {
    * @returns {HungryGames~WeaponEvent} Copy of event.
    */
   static from(obj) {
-    const out = new WeaponEvent(obj.outcomes, obj.consumable, obj.name || '');
+    const out = new WeaponEvent(undefined, obj.consumable, obj.name || '');
     out.fill(obj);
+    if (Array.isArray(obj.outcomes)) {
+      obj.outcomes.forEach(
+          (el) => out.outcomes.push(HungryGames.NormalEvent.from(el)));
+    }
     return out;
   }
 }

@@ -78,9 +78,14 @@ class ArenaEvent extends HungryGames.Event {
    * @returns {HungryGames~ArenaEvent} Copy of event.
    */
   static from(obj) {
-    const out = new ArenaEvent(
-        obj.message, obj.outcomes || [], obj.outcomeProbs || null);
+    const out =
+        new ArenaEvent(obj.message, undefined, obj.outcomeProbs || null);
+
     out.fill(obj);
+    if (Array.isArray(obj.outcomes)) {
+      obj.outcomes.forEach(
+          (el) => out.outcomes.push(HungryGames.NormalEvent.from(el)));
+    }
     return out;
   }
 }
