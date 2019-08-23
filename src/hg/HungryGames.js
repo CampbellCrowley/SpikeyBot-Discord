@@ -475,6 +475,7 @@ class HungryGames {
         weapon: [],
         battle: {starts: [], attacks: [], outcomes: []},
       };
+      delete game.legacyEvents;
       return 'Reset ALL Hungry Games events for this server!';
     } else if (command == 'current') {
       game.currentGame = null;
