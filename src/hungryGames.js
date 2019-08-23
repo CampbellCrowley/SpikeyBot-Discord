@@ -673,8 +673,24 @@ function HG() {
         return;
       } */
       const id = msg.guild.id;
+      const cached = hg._games[id];
       hg.fetchGame(id, (game) => {
         if (game) {
+          if (!cached && game.legacyEvents) {
+            setTimeout(() => {
+              if (!hg._games[id]) return;
+              if (!game.legacyEvents) return;
+              self.common.reply(
+                  msg, 'Important Legacy Event Notice',
+                  'Storage for custom events has been updated.\nUse `' +
+                      msg.prefix + self.postPrefix +
+                      'claimlegacy` to move all custom events to your account' +
+                      '.\n\nBe aware that whoever runs the command, will be ' +
+                      'the only one who can edit the events, and will have ' +
+                      'sole ownership of the events.\n\nCustom events will ' +
+                      'not be used in the game until they have been claimed.');
+            }, 1000);
+          }
           if (game.loading) {
             self.common.reply(
                 msg, 'Still loading', 'A previous command is still loading. ' +
@@ -3172,9 +3188,41 @@ function HG() {
       return;
     }
 
+    self.claimLegacy(game, msg.author.id, (err, res, stringified) => {
+      if (err) {
+        self.common.reply(msg, 'No Events Claimed', err);
+      } else {
+        self.common.reply(msg, 'Events claimed', res);
+        const perms = msg.channel.permissionsFor(self.client.user);
+        if (perms.has(self.Discord.Permissions.FLAGS.SEND_MESSAGES) &&
+            perms.has(self.Discord.Permissions.FLAGS.ATTACH_FILES)) {
+          msg.channel.send(
+              'Backup of the saved legacy event data.',
+              new self.Discord.MessageAttachment(
+                  Buffer.from(stringified), 'HGLegacyEventBackup.json'));
+        }
+      }
+    });
+  }
+
+  /**
+   * @description Claim legacy events to the given owner's account.
+   * @public
+   * @param {HungryGames~GuildGame} game The game storing legacy events.
+   * @param {string} owner The ID of ther user to attach the events to.
+   * @param {Function} cb Callback once completed. First argument is optional
+   * error string, second is otherwise success information string, third will
+   * always be the stringified legacy events.
+   */
+  this.claimLegacy = function(game, owner, cb) {
     const custom = game.legacyEvents;
-    const owner = msg.author.id;
-    const dir = self.common.guildSaveDir + id;
+
+    if (!custom) {
+      cb('No legacy events to claim.');
+      return;
+    }
+
+    const dir = self.common.guildSaveDir + game.id;
     const stringified = JSON.stringify(custom, null, 2);
     let total = 0;
     let done = 0;
@@ -3194,7 +3242,7 @@ function HG() {
                '\nSome events failed to be converted due to unknown errors.' :
                '\nNo errors.');
 
-      self.common.reply(msg, 'Events claimed', additional);
+      cb(null, additional, stringified);
 
       fs.writeFile(dir + '/HGLegacyEventBackup.json', stringified, (err) => {
         if (err) {
@@ -3204,14 +3252,6 @@ function HG() {
         }
         if (!errored) delete game.legacyEvents;
       });
-      const perms = msg.channel.permissionsFor(self.client.user);
-      if (perms.has(self.Discord.Permissions.FLAGS.SEND_MESSAGES) &&
-          perms.has(self.Discord.Permissions.FLAGS.ATTACH_FILES)) {
-        msg.channel.send(
-            'Backup of the saved legacy event data.',
-            new self.Discord.MessageAttachment(
-                Buffer.from(stringified), 'HGLegacyEventBackup.json'));
-      }
     };
 
     const iterate = function(type, type2) {
@@ -3235,7 +3275,7 @@ function HG() {
           if (err) {
             self.error(
                 'Failed to update legacy event: ' + type + ' ' + type2 + ' ' +
-                i + ' ' + id);
+                i + ' ' + game.id);
             console.error(err);
             errored = true;
             checkDone();
@@ -3245,7 +3285,7 @@ function HG() {
             if (err) {
               self.error(
                   'Failed to fetch claimed event: ' + out.id + ' ' + type +
-                  ' ' + i + ' ' + id);
+                  ' ' + type2 + ' ' + i + ' ' + game.id);
               console.error(err);
               errored = true;
               checkDone();
@@ -3269,9 +3309,9 @@ function HG() {
     });
 
     if (total === 0) {
-      self.common.reply(msg, 'No legacy events found to update.');
+      cb('No legacy events found to update.');
     }
-  }
+  };
 
   /**
    * List all currently created NPCs.

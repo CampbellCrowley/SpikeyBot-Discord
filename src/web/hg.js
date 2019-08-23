@@ -273,6 +273,8 @@ function HGWeb() {
         'fetchUserEvents',
         (...args) => handle(self.fetchUserEvents, args, false));
     socket.on(
+        'claimLegacyEvents', (...args) => handle(self.claimLegacyEvents, args));
+    socket.on(
         'forcePlayerState', (...args) => handle(self.forcePlayerState, args));
     socket.on('renameGame', (...args) => handle(self.renameGame, args));
     socket.on('removeNPC', (...args) => handle(self.removeNPC, args));
@@ -1411,13 +1413,14 @@ function HGWeb() {
       replyNoPerm(socket, 'toggleOption');
       return;
     }
-    const response = hg().setOption(gId, option, value, extra || undefined);
-    const game = hg().getHG().getGame(gId);
-    if (typeof cb === 'function') {
-      cb(null, response);
-    } else if (!game) {
-      socket.emit('message', response);
-    }
+    hg().getHG().fetchGame(gId, (game) => {
+      const response = hg().setOption(gId, option, value, extra || undefined);
+      if (typeof cb === 'function') {
+        cb(null, response);
+      } else if (!game) {
+        socket.emit('message', response);
+      }
+    });
   };
   /**
    * Create a Game.
@@ -1962,6 +1965,37 @@ function HGWeb() {
   this.fetchUserEvents = function fetchUserEvents(userData, socket, cb) {
     if (!userData) return;
     hg().getHG().fetchUserEvents(userData.id, cb);
+  };
+
+  /**
+   * Claim legacy events to the user.
+   *
+   * @see {@link HungryGames~claimLegacy}
+   *
+   * @public
+   * @type {HGWeb~SocketFunction}
+   * @param {object} userData The current user's session data.
+   * @param {socketIo-Socket} socket The socket connection to reply on.
+   * @param {string} gId The guild id to look at.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete.
+   */
+  this.claimLegacyEvents = function claimLegacyEvents(
+      userData, socket, gId, cb) {
+    if (!checkPerm(userData, gId, null, 'claimlegacy')) {
+      if (!checkMyGuild(gId)) return;
+      if (typeof cb === 'function') cb('NO_PERM');
+      replyNoPerm(socket, this.name);
+      return;
+    }
+    hg().getHG().fetchGame(gId, (game) => {
+      if (typeof cb !== 'function') cb = function() {};
+      if (!game) {
+        cb('NO_GAME');
+      } else {
+        hg().claimLegacy(game, userData.id, cb);
+      }
+    });
   };
 
   /**
