@@ -41,7 +41,7 @@ class SendTeamRankMessageAction extends ChannelAction {
             }
           }
 
-          if (splitEmbeds) return `${current.teams[myTeam].rank}) ${shortName}`;
+          if (splitEmbeds) return shortName;
 
           let prefix = '';
           if (myTeam != prevTeam) {
@@ -55,8 +55,10 @@ class SendTeamRankMessageAction extends ChannelAction {
         if (splitEmbeds) {
           game.currentGame.teams.reverse().forEach((el) => {
             teamRankEmbed.addField(
-                el.name, statusList.splice(0, el.players.length)
-                    .join('\n').slice(0, 1023),
+                `${el.rank}) ${el.name}`,
+                statusList.splice(0, el.players.length)
+                    .join('\n')
+                    .slice(0, 1023),
                 true);
           });
         } else {
