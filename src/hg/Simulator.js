@@ -942,7 +942,7 @@ Simulator._parseConsumeCount = function(consumeString, numVictim, numAttacker) {
   } else if (consumedMatch[2] == 'A') {
     return numAttacker * (consumedMatch[1] || 1);
   } else {
-    return consumedMatch[1];
+    return consumedMatch[1] * 1;
   }
 };
 

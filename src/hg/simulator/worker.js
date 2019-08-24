@@ -280,9 +280,11 @@ class Worker {
                     [userWithWeapon], nameFormat),
                 firstAttacker, chosenWeapon, weapons);
 
-            userWithWeapon.weapons[chosenWeapon] -= count;
-            if (userWithWeapon.weapons[chosenWeapon] <= 0) {
-              delete userWithWeapon.weapons[chosenWeapon];
+            if (userWithWeapon.weapons[chosenWeapon]) {
+              userWithWeapon.weapons[chosenWeapon] -= count;
+              if (userWithWeapon.weapons[chosenWeapon] <= 0) {
+                delete userWithWeapon.weapons[chosenWeapon];
+              }
             }
           }
         }
