@@ -667,7 +667,7 @@ class GuildGame {
       let evt;
       if (typeof text !== 'string' && Array.isArray(text) &&
           game.options.anonForceOutcome) {
-        let eventPool = text.concat(game.customEventStore.get('player'));
+        let eventPool = text.concat(game.customEventStore.getArray('player'));
         eventPool = eventPool.filter((el) => {
           const checkVictim = el.victim.outcome === outcome &&
               (el.victim.count === affected.length ||

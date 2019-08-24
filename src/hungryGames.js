@@ -4454,8 +4454,8 @@ function HG() {
       return;
     }
     HungryGames.GuildGame.forcePlayerState(
-        hg.getGame(id), players, 'dead', hg.messages, hg._defaultPlayerEvents,
-        (res) => {
+        hg.getGame(id), players, 'dead', hg.messages,
+        hg._defaultEventStore.getArray('player'), (res) => {
           self.common.reply(msg, res);
         });
   }
@@ -4490,7 +4490,7 @@ function HG() {
     }
     HungryGames.GuildGame.forcePlayerState(
         hg.getGame(id), players, 'thriving', hg.messages,
-        hg._defaultPlayerEvents, (res) => {
+        hg._defaultEventStore.getArray('player'), (res) => {
           self.common.reply(msg, res);
         });
   }
@@ -4524,7 +4524,7 @@ function HG() {
     }
     HungryGames.GuildGame.forcePlayerState(
         hg.getGame(id), players, 'wounded', hg.messages,
-        hg._defaultPlayerEvents, (res) => {
+        hg._defaultEventStore.getArray('player'), (res) => {
           self.common.reply(msg, res);
         });
   }

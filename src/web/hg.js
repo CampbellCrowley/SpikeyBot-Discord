@@ -2039,7 +2039,9 @@ function HGWeb() {
     }
     const game = hg().getHG().getGame(gId);
     if (!game) return;
-    if (typeof text != 'string') text = hg().getHG()._defaultPlayerEvents;
+    if (typeof text != 'string') {
+      text = hg().getHG()._defaultEventStore.getArray('player');
+    }
     HungryGames.GuildGame.forcePlayerState(
         game, list, state, hg().getHG().messages, text, (res) => {
           if (typeof cb === 'function') {
