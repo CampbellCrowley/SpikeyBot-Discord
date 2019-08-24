@@ -41,7 +41,7 @@ class SendTeamRankMessageAction extends ChannelAction {
             }
           }
 
-          if (splitEmbeds) return shortName;
+          if (splitEmbeds) return `${current.teams[myTeam].rank}) ${shortName}`;
 
           let prefix = '';
           if (myTeam != prevTeam) {
