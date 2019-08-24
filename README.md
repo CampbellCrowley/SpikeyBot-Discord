@@ -71,6 +71,7 @@
 # Self-Hosting
 The bot is not designed to be easily hosted by others, but still may be done.  
 The below steps outline the minimum required to get the SpikeyBot to run.  
+Hungry Games requires a MariaDB server to be available for storage of all events. If this database is not setup properly, HG may run into problems, and is not tested.  
 1) Have a server/computer
     - SB is developed and tested solely on Debian Stretch (amd64), but other OS's may work.
 2) Install [NodeJS](https://nodejs.org/)

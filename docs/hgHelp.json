@@ -489,40 +489,26 @@
       "rows": [
         {
           "command": "events",
-          "description": "This will list all custom events that could happen in the game. The HG Webview page can be much easier to use.",
+          "description": "These commands are currently disabled, and no longer supported due to develpoment challenges. Use https://www.spikeybot.com/hg/ to manage and view events.",
           "aliases": "events, event",
           "validOnlyInGuild": true,
           "examples": [
             {
               "description": "Basic Usage",
               "command": "events",
-              "result": "Message with list of all events will be sent. Use arrow reactions to change page, circle arrows to change event type."
+              "result": "These commands are currently disabled, and no longer supported due to develpoment challenges. Use https://www.spikeybot.com/hg/ to manage and view events."
             }
           ]
         },
         {
-          "command": "events add",
-          "description": "Begins process of adding a custom event. Not all event types can be created yet due to the complications of making a UI. The HG Webview page can be much easier to use, and supports more types.",
-          "aliases": "add, create",
+          "command": "claimlegacy",
+          "description": "Transition custom events from legacy storage system to the newer format. Legacy custom events will solely be editable by the one who runs this command.",
           "validOnlyInGuild": true,
           "examples": [
             {
               "description": "Basic Usage",
-              "command": "event create {victim} [Vis|are] killed by {attacker}!",
-              "result": "Edit the message you sent until the examples look correct to you, then use the reactions on the bot's message to continue event creation."
-            }
-          ]
-        },
-        {
-          "command": "events remove",
-          "description": "Remove a custom event. The number is the number shown in the list of events.",
-          "aliases": "remove, delete",
-          "validOnlyInGuild": true,
-          "examples": [
-            {
-              "description": "Basic Usage",
-              "command": "event delete 10",
-              "result": "Start to delete custom event #10, click the reactions to choose which type of event this was."
+              "command": "claimlegacy",
+              "result": "Transition custom events from legacy storage system to the newer format. Legacy custom events will solely be editable by the one who runs this command. Unfortunately events that give weapons, will have the given weapon data reset. Issues with conversion can be fixed at https://www.spikeybot.com/hg/."
             }
           ]
         }
