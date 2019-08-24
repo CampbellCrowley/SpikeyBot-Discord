@@ -3271,6 +3271,12 @@ function HG() {
           evt.outcomes.forEach((el) => {
             el.creator = owner;
             el.type = 'normal';
+            if ((el.victim && el.victim.weapon) ||
+                (el.attacker && el.attacker.weapon)) {
+              deleted = true;
+              delete el.victim.weapon;
+              delete el.attacker.weapon;
+            }
           });
         }
         evt.type = type2;
