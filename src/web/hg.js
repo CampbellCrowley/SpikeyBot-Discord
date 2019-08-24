@@ -925,6 +925,7 @@ function HGWeb() {
       newG.channels =
           g.channels
               .filter((c) => {
+                if (!member) return false;
                 return userData.id == self.common.spikeyId ||
                     c.permissionsFor(member).has(
                         self.Discord.Permissions.FLAGS.VIEW_CHANNEL);
