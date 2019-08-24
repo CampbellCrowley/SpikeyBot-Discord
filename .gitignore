@@ -6,6 +6,7 @@ save/reboot-*.json
 auth.js
 save/guilds/*
 save/users/*
+save/hg/events/*
 save/hgWebClients.json
 save/webClients.json
 save/rigged-counter.txt
