@@ -347,7 +347,7 @@ class NormalEvent extends HungryGames.Event {
     if (typeof obj.action === 'string') out.action = obj.action;
     if (typeof obj.battle === 'boolean') out.battle = obj.battle;
     if (typeof obj.state === 'number') out.state = obj.state;
-    if (Array.isArray(obj.consumes)) out.consumes = obj.consumes;
+    if (obj.consumes) out.consumes = obj.consumes;
 
     return out;
   }

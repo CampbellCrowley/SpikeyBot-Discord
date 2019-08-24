@@ -2040,13 +2040,14 @@ function HGWeb() {
     const game = hg().getHG().getGame(gId);
     if (!game) return;
     if (typeof text != 'string') text = hg().getHG()._defaultPlayerEvents;
-    const response = HungryGames.GuildGame.forcePlayerState(
-        game, list, state, hg().getHG().messages, text, persists);
-    if (typeof cb === 'function') {
-      cb(null, response, game.serializable);
-    } else {
-      socket.emit('message', response);
-    }
+    HungryGames.GuildGame.forcePlayerState(
+        game, list, state, hg().getHG().messages, text, (res) => {
+          if (typeof cb === 'function') {
+            cb(null, res, game.serializable);
+          } else {
+            socket.emit('message', res);
+          }
+        });
   };
 
   /**

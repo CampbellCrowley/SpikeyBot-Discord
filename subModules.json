@@ -19,7 +19,6 @@
   ],
   "dev": [
     "./main.js",
-    "./hungryGames.js",
     "./ticTacToe.js",
     "./connect4.js",
     "./music.js",
@@ -37,7 +36,6 @@
     "./roleManager.js",
     "./sandbox.js",
     "./define.js",
-    "./web/hg.js",
     "./roleColors.js",
     "./echo.js",
     "./moderation.js",
@@ -46,7 +44,9 @@
     "./web/proxy.js",
     "./pets.js",
     "./botCommands.js",
-    "./cmdScheduling.js"
+    "./cmdScheduling.js",
+    "./hungryGames.js",
+    "./web/hg.js"
   ],
   "release": [
     "./moderation.js",
