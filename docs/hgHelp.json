@@ -489,14 +489,14 @@
       "rows": [
         {
           "command": "events",
-          "description": "These commands are currently disabled, and no longer supported due to develpoment challenges. Use https://www.spikeybot.com/hg/ to manage and view events.",
+          "description": "These commands are currently disabled, and no longer supported due to development challenges. Use https://www.spikeybot.com/hg/ to manage and view events.",
           "aliases": "events, event",
           "validOnlyInGuild": true,
           "examples": [
             {
               "description": "Basic Usage",
               "command": "events",
-              "result": "These commands are currently disabled, and no longer supported due to develpoment challenges. Use https://www.spikeybot.com/hg/ to manage and view events."
+              "result": "These commands are currently disabled, and no longer supported due to development challenges. Use https://www.spikeybot.com/hg/ to manage and view events."
             }
           ]
         },
