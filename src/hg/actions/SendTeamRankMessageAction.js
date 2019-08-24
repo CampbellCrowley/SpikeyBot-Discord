@@ -74,14 +74,13 @@ class SendTeamRankMessageAction extends ChannelAction {
           } else {
             teamRankEmbed.setDescription(statusList.join('\n'));
           }
-          teamRankEmbed.setColor([255, 0, 255]);
-          if (!game.options.disableOutput) {
-            channel.send(teamRankEmbed).catch((err) => {
-              hg._parent.error(
-                  'Failed to send final team ranks: ' + channel.id);
-              console.error(err);
-            });
-          }
+        }
+        teamRankEmbed.setColor([255, 0, 255]);
+        if (!game.options.disableOutput) {
+          channel.send(teamRankEmbed).catch((err) => {
+            hg._parent.error('Failed to send final team ranks: ' + channel.id);
+            console.error(err);
+          });
         }
       }
     }, 10000);
