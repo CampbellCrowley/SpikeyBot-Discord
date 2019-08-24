@@ -299,7 +299,7 @@ class DefaultOptions {
         false, 'Should @everyone be mentioned when the game is started?',
         'messages');
     this._useNicknames = new BooleanOption(
-        false, 'Should we use user\'s custom server nicknames instead of ' +
+        true, 'Should we use user\'s custom server nicknames instead of ' +
             'their account username? Names only change when a new game is ' +
             'created.',
         'messages');
