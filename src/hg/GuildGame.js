@@ -855,8 +855,8 @@ class GuildGame {
                 !disabled.includes(el.id);
           });
         } else {
-          eventPool = defaultEvents.get('player').concat(
-              game.customEventStore.get('player'));
+          eventPool = text.getDefaultEvents().getArray('player').concat(
+              game.customEventStore.getArray('player'));
           const disabled = game.disabledEventIds.player;
           eventPool = eventPool.filter((el) => {
             const aW = el.attacker.weapon;
