@@ -643,7 +643,7 @@ function WebProxy() {
         loginInfo.userId = ud.id;
         if (loginInfo.scope && loginInfo.scope.indexOf('guilds') > -1) {
           fetchGuilds(loginInfo, (data) => {
-            ud.setGuilds(data);
+            if (data) ud.setGuilds(data);
             cb(ud);
           });
         } else {
