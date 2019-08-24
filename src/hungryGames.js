@@ -599,7 +599,7 @@ function HG() {
 
     Object.keys(eventHandlers).forEach((el) => delete eventHandlers[el]);
 
-    fs.unwatchFile(HungryGames.EventContainer.eventDir);
+    fs.unwatchFile(eventFileList);
     fs.unwatchFile(battleFile);
 
     hg.shutdown();
