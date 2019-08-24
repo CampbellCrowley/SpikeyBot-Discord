@@ -272,17 +272,15 @@ function HG() {
     });
   }
   updateEvents();
-  fs.watchFile(
-      HungryGames.EventContainer.eventDir, {persistent: false},
-      (curr, prev) => {
-        if (curr.mtime == prev.mtime) return;
-        if (self.initialized) {
-          self.debug('Re-reading default events from file');
-        } else {
-          console.log('HG: Re-reading default events from file');
-        }
-        updateEvents();
-      });
+  fs.watchFile(eventFileList, {persistent: false}, (curr, prev) => {
+    if (curr.mtime == prev.mtime) return;
+    if (self.initialized) {
+      self.debug('Re-reading default events from file');
+    } else {
+      console.log('HG: Re-reading default events from file');
+    }
+    updateEvents();
+  });
 
   /**
    * @description Load all default events from file, described by the loaded
