@@ -2330,11 +2330,11 @@ function HG() {
       if (game.options.teamSize > 0) {
         myTeam = game.currentGame.teams.find(
             (team) => team.players.find((player) => player == obj.id));
-        if (!myTeam) {
+        /* if (!myTeam) {
           self.error(
               'Failed to find team for player: ' + obj.id + ' in ' + game.id);
           console.error(game.currentGame.teams);
-        }
+        } */
       }
 
       let shortName;
@@ -2451,7 +2451,13 @@ function HG() {
     const value = msg.text.split(' ')[1];
     const output = self.setOption(id, option, value, msg.text);
     if (!output) {
-      showOpts(msg, hg.getGame(id).options);
+      if (!hg.getGame(id).options) {
+        self.common.reply(
+            msg, 'No options have been set.', 'Please create a game first. `' +
+                msg.prefix + self.postPrefix + 'create`');
+      } else {
+        showOpts(msg, hg.getGame(id).options);
+      }
     } else {
       self.common.reply(msg, output);
     }
