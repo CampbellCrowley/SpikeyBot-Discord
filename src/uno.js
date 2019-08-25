@@ -600,7 +600,7 @@ function Uno() {
 
       const groupPerms = [
         {
-          id: maker.guild.defaultRole,
+          id: maker.guild.roles.everyone,
           allow: 0,
           deny: pFlags.VIEW_CHANNEL | pFlags.SEND_MESSAGES,
           type: 'role',
@@ -661,7 +661,8 @@ function Uno() {
       sendHelp().then(() => {
         // This is disabled during testing as to not annoy others with
         // random notifications.
-        /* game.groupChannel.permissionOverwrites.get(maker.guild.defaultRole)
+        /* game.groupChannel.permissionOverwrites
+            .get(maker.guild.roles.everyone)
             .update({VIEW_CHANNEL: true}); */
       });
       if (currentCollector) {
@@ -807,7 +808,7 @@ function Uno() {
      */
     function startGame() {
       game.groupChannel.updateOverwrite(
-          maker.guild.defaultRole, {
+          maker.guild.roles.everyone, {
             VIEW_CHANNEL: false,
           },
           'UNO game has starte.');
@@ -1473,7 +1474,7 @@ function Uno() {
 
     const permOverwrites = [
       {
-        id: member.guild.defaultRole,
+        id: member.guild.roles.everyone,
         allow: 0,
         deny: pFlags.VIEW_CHANNEL,
         type: 'role',
