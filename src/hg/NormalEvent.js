@@ -265,9 +265,12 @@ class NormalEvent extends HungryGames.Event {
         default:
           return 'BAD_VICTIM_OUTCOME';
       }
-      if (!Number.isSafeInteger(evt.victim.count *= 1)) return 'BAD_DATA';
+      if (!Number.isSafeInteger(evt.victim.count *= 1)) {
+        return 'BAD_VICTIM_COUNT';
+      }
       if (typeof evt.victim.killer !== 'boolean') {
-        if (evt.victim.killer !== 'true' && evt.victim.killer !== 'false') {
+        if (evt.victim.killer && evt.victim.killer !== 'true' &&
+            evt.victim.killer !== 'false') {
           return 'BAD_VICTIM_KILLER';
         } else {
           evt.victim.killer = evt.victim.killer === 'true';
@@ -290,10 +293,13 @@ class NormalEvent extends HungryGames.Event {
         default:
           return 'BAD_ATTACKER_OUTCOME';
       }
-      if (!Number.isSafeInteger(evt.attacker.count *= 1)) return 'BAD_DATA';
+      if (!Number.isSafeInteger(evt.attacker.count *= 1)) {
+        return 'BAD_ATTACKER_COUNT';
+      }
       if (typeof evt.attacker.killer !== 'boolean') {
-        if (evt.attacker.killer !== 'true' && evt.attacker.killer !== 'false') {
-          return 'BAD_ATTACKER_COUNT';
+        if (evt.attacker.killer && evt.attacker.killer !== 'true' &&
+            evt.attacker.killer !== 'false') {
+          return 'BAD_ATTACKER_KILLER';
         } else {
           evt.attacker.killer = evt.attacker.killer === 'true';
         }
