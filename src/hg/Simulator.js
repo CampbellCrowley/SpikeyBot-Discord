@@ -1082,7 +1082,7 @@ Simulator.formatWeaponCounts = function(
     let entries = [];
     if (user && user.weapons) entries = Object.entries(user.weapons);
     if (entries.length === 0) continue;
-    const consumableList = entries.map(getWeaponCount);
+    const consumableList = entries.filter((el) => el[0]).map(getWeaponCount);
     const list = consumableList.join(', ');
     if (!finalConsumeList[list]) {
       finalConsumeList[list] = [];

@@ -811,6 +811,10 @@ class GuildGame {
         for (const w in player.weapons) {
           if (!player.weapons[w]) continue;
           const existing = customWeapons[w] || defaultEvents[w];
+          if (!existing) {
+            console.error('Unable to find weapon:', w, 'in guild', game.id);
+            continue;
+          }
           weapons[w] = new HungryGames.WeaponEvent(
               [], existing.consumable, existing.name);
         }
