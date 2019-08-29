@@ -1988,7 +1988,7 @@ function HG() {
     if (firstWord) firstWord = firstWord.toLowerCase();
     const specialWords = {
       everyone: ['everyone', '@everyone', 'all'],
-      online: ['online', 'here'],
+      online: ['online', 'here', '@here'],
       offline: ['offline'],
       idle: ['idle', 'away', 'snooze', 'snoozed'],
       dnd: ['dnd', 'busy'],
@@ -4377,7 +4377,7 @@ function HG() {
     if (firstWord) firstWord = firstWord.toLowerCase();
     const specialWords = {
       everyone: ['everyone', '@everyone', 'all'],
-      online: ['online', 'here'],
+      online: ['online', 'here', '@here'],
       offline: ['offline'],
       idle: ['idle', 'away', 'snooze', 'snoozed'],
       dnd: ['dnd', 'busy'],
