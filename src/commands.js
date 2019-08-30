@@ -1260,7 +1260,7 @@ function Command() {
       self.common.reply(
           msg,
           'Please specify a command.\nThis will suppress errors when a user ' +
-              'attempts a command when they don\' have permission to use it.');
+              'attempts a command when they don\'t have permission to use it.');
       return;
     }
     const trimmedText = msg.text.trim();
@@ -1296,7 +1296,7 @@ function Command() {
       self.common.reply(
           msg,
           'Please specify a command.\nThis will show errors when a user ' +
-              'attempts a command when they don\' have permission to use it.');
+              'attempts a command when they don\'t have permission to use it.');
       return;
     }
     const trimmedText = msg.text.trim();
