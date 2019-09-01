@@ -596,7 +596,7 @@ function Command() {
         if (msg.channel) {
           const permObj = msg.channel.permissionsFor(msg.member);
           if (permObj) perms = permObj.bitfield;
-        } else {
+        } else if (msg.member) {
           perms = msg.member.permissions.bitfield;
         }
         hasPerm =
