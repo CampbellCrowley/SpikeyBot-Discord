@@ -1401,9 +1401,7 @@ function Main() {
       }
       xVal = math.range(
           domainMin, domainMax, (domainMax - domainMin) / graphSize / dotSize);
-      yVal = xVal.map(function(x) {
-        return expr.evaluate({x: x});
-      });
+      yVal = xVal.map((x) => expr.evaluate({x: x}));
       try {
         let formula = expression;
         if (formula.indexOf('=') > -1) {
@@ -1411,11 +1409,9 @@ function Main() {
           formula = split[1] + ' - (' + split[0] + ')';
         }
         const exprSlope = math.derivative(formula, 'x');
-        ypVal = xVal.map(function(x) {
-          return exprSlope.evaluate({x: x});
-        });
+        ypVal = xVal.map((x) => exprSlope.evaluate({x: x}));
       } catch (err) {
-        console.log(err);
+        // console.error(err);
         msg.channel.send('Failed to derive given equation. ' + err.message);
         return;
       }
@@ -1427,7 +1423,7 @@ function Main() {
     let minY = 0;
     let maxY = 0;
     if (typeof rangeMin === 'undefined') {
-      yVal.forEach(function(obj) {
+      yVal.forEach((obj) => {
         if (minY > obj) minY = obj;
         if (maxY < obj) maxY = obj;
       });
@@ -1467,7 +1463,7 @@ function Main() {
     } else {
       expression = 'y = ' + simplify(expMatch[1]);
     }
-    finalImage.getBuffer(Jimp.MIME_PNG, function(err, out) {
+    finalImage.getBuffer(Jimp.MIME_PNG, (err, out) => {
       const embed = new self.Discord.MessageEmbed();
       embed.setTitle('Graph of ' + expression);
       embed.setDescription(
