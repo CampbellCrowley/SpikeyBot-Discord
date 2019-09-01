@@ -3709,15 +3709,18 @@ function HG() {
       if (!game.includedNPCs) hg.getGame(gId).includedNPCs = [];
       game.includedNPCs.push(npc);
 
-      if (!game.currentGame.inProgress) self.createGame(gId);
+      if (!game.currentGame || !game.currentGame.inProgress) {
+        self.createGame(gId);
+      }
       self._fire('memberAdd', gId, npc.id);
     };
-    const game = hg.getGame(gId);
-    if (!game) {
-      self.createGame(gId, pushNPC);
-    } else {
-      pushNPC(game);
-    }
+    hg.fetchGame(gId, (game) => {
+      if (!game) {
+        self.createGame(gId, pushNPC);
+      } else {
+        pushNPC(game);
+      }
+    });
     return null;
   };
 
