@@ -276,9 +276,7 @@ function Common() {
                 ' because I do not have permission to send messages there.')
             .catch(() => {});
       }
-      return new Promise((resolve, reject) => {
-        reject(new Error('No Perms'));
-      });
+      return new Promise((resolve, reject) => reject(new Error('No Perms')));
     }
     if (self.isTest || (perms && !perms.has('EMBED_LINKS'))) {
       return msg.channel
@@ -293,9 +291,7 @@ function Common() {
       embed.setColor([255, 0, 255]);
       if (text.length <= 256) {
         embed.setTitle(text);
-        if (post) {
-          embed.setDescription(post);
-        }
+        if (post) embed.setDescription(post);
       } else {
         embed.setDescription(text + (post ? '\n' + post : ''));
       }
