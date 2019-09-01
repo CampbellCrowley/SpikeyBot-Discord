@@ -713,7 +713,7 @@ function HGWeb() {
     }
     return {
       nickname: m.nickname,
-      roles: m.roles.map((el) => el.id),
+      roles: m.roles.map && m.roles.map((el) => el.id),
       color: m.displayColor,
       guild: {id: m.guild.id},
       permissions: m.permissions.bitfield,
