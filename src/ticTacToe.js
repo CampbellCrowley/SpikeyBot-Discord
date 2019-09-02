@@ -318,14 +318,15 @@ function TicTacToe() {
   function checkWin(board, latest) {
     const player = board[latest];
     // Column
-    for (let i = 1; i < 3; i++) {
-      if (board[(i * 3) % 9] != player) break;
+    const col = latest % 3;
+    for (let i = 0; i < 3; i++) {
+      if (board[i * 3 + col] != player) break;
       if (i == 2) return player;
     }
     // Row
-    const row = Math.floor(latest / 3) * 3;
-    for (let i = 1; i < 3; i++) {
-      if (board[(i + latest - row) % 3 + row] != player) break;
+    const row = Math.floor(latest / 3);
+    for (let i = 0; i < 3; i++) {
+      if (board[i + row * 3] != player) break;
       if (i == 2) return player;
     }
     // Diagonals
