@@ -3013,9 +3013,10 @@ function HG() {
               'Team ' + (game.currentGame.teams.length + 1), []));
       teamId2 = game.currentGame.teams.length - 1;
     }
+    const user1Final = self.client.users.get(user1);
     self.common.reply(
-        msg, 'Moving `' + self.client.users.get(user1).username + '` from ' +
-            game.currentGame.teams[teamId1].name + ' to ' +
+        msg, 'Moving `' + (user1Final && user1Final.username || user1) +
+            '` from ' + game.currentGame.teams[teamId1].name + ' to ' +
             game.currentGame.teams[teamId2].name);
 
     game.currentGame.teams[teamId2].players.push(
