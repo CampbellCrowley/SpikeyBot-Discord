@@ -287,7 +287,7 @@ function Connect4() {
   function addListener(msg, game) {
     msg.awaitReactions(function(reaction, user) {
       if (user.id != self.client.user.id) {
-        reaction.users.remove(user).catch(() => {});
+        // reaction.users.remove(user).catch(() => {});
       } else {
         return false;
       }
