@@ -249,7 +249,7 @@ function TicTacToe() {
   function addListener(msg, game) {
     msg.awaitReactions(function(reaction, user) {
       if (user.id != self.client.user.id) {
-        reaction.users.remove(user).catch(() => {});
+        // reaction.users.remove(user).catch(() => {});
       } else {
         return false;
       }
@@ -281,7 +281,7 @@ function TicTacToe() {
       if (!game.players.p2 && game.turn == 2) {
         game.players.p2 = reactions.first().users.first(2)[1];
       }
-      reactions.first().users.remove(self.client.user).catch(() => {});
+      // reactions.first().users.remove(self.client.user).catch(() => {});
 
       let move = -1;
       const choice = reactions.first().emoji;
