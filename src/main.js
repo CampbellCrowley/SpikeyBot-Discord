@@ -2021,29 +2021,47 @@ function Main() {
    * @listens Command#flip
    */
   function commandFlip(msg) {
-    const match = msg.text.match(/\d+/) || [1];
-    const h = '🇭 ';
-    const t = '🇹 ';
-    const num = Math.min(500, match[0]);
-    let numH = 0;
-    const outList = [];
-    for (let i = 0; i < num; i++) {
-      const out = Math.random() > 0.5;
-      if (out) numH++;
-      outList.push(out ? h : t);
+    const match = msg.text.match(/\d+/);
+    if (!match) {
+      const rand = Math.round(Math.random());
+      let url = 'https://www.spikeybot.com/heads.png';
+      let text = 'Heads!';
+      if (rand) {
+        url = 'https://www.spikeybot.com/tails.png';
+        text = 'Tails!';
+      }
+      const embed = new self.Discord.MessageEmbed({title: text});
+      embed.setImage(url);
+      msg.channel.send(embed).catch(() => {
+        self.common.reply(
+            msg, 'Failed to send reply.',
+            'Am I able to embed images and links?');
+      });
+    } else {
+      const h = '🇭 ';
+      const t = '🇹 ';
+      const num = Math.min(500, match[0]);
+      let numH = 0;
+      const outList = [];
+      for (let i = 0; i < num; i++) {
+        const out = Math.random() > 0.5;
+        if (out) numH++;
+        outList.push(out ? h : t);
+      }
+      const p = numH / num;
+      const percent = Math.round(p * 10000) / 100;
+      const embed = new self.Discord.MessageEmbed();
+      embed.setTitle(`Flipped ${num} coins`);
+      embed.setColor([p * 255, 0, (1 - p) * 255]);
+      embed.setDescription(outList.join(''));
+      embed.setFooter(
+          `${percent}% Heads, ${numH} Heads, ${num-numH} Tails, ${num} Total`);
+      msg.channel.send(embed).catch(() => {
+        self.common.reply(
+            msg, 'Failed to send reply.',
+            'Am I able to embed images and links?');
+      });
     }
-    const p = numH / num;
-    const percent = Math.round(p * 10000) / 100;
-    const embed = new self.Discord.MessageEmbed();
-    embed.setTitle(`Flipped ${num} coins`);
-    embed.setColor([p * 255, 0, (1 - p) * 255]);
-    embed.setDescription(outList.join(''));
-    embed.setFooter(
-        `${percent}% Heads, ${numH} Heads, ${num-numH} Tails, ${num} Total`);
-    msg.channel.send(embed).catch(() => {
-      self.common.reply(
-          msg, 'Failed to send reply.', 'Am I able to embed images and links?');
-    });
   }
   /**
    * Delete a given number of messages from a text channel.
