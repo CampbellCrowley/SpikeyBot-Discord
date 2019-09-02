@@ -59,7 +59,7 @@ function RoleColors() {
     }
     let color = msg.text.trim();
     let colorString = color;
-    let role = msg.guild.roles.find((el) => el.name.indexOf(target.id) > -1);
+    const role = msg.guild.roles.find((el) => el.name.indexOf(target.id) > -1);
     const colorList = [
       'DEFAULT',
       'WHITE',
@@ -109,36 +109,44 @@ function RoleColors() {
         return;
       }
     }
-    const finished = function() {
-      const embed = new self.Discord.MessageEmbed();
-      embed.setColor(role.color);
-      embed.setTitle('Updated color.');
-      embed.setDescription(colorString);
-      msg.channel.send(embed).catch(() => {
-        const padded = ('000000' + role.color.toString(16)).slice(-6);
-        self.common.reply(msg, 'Updated color.', `#${padded}`);
-      });
-    };
-    const fail = function(err) {
-      self.error('Unable to create color role:' + msg.channel.id);
-      console.error(err);
-      self.common.reply(msg, 'Unable to update color.', err.message);
-    };
     if (!role) {
       const roleData = {name: target.id, color: color, permissions: 0};
       msg.guild.roles.create({data: roleData})
           .then((r) => {
-            role = r;
-            return r.setColor(color);
+            r.setColor(color);
+            target.roles.add(r).then(() => {
+              const embed = new self.Discord.MessageEmbed();
+              embed.setColor(color);
+              embed.setTitle('Updated color.');
+              embed.setDescription(colorString);
+              msg.channel.send(embed).catch(() => {
+                self.common.reply(msg, 'Updated color.', colorString);
+              });
+            });
           })
-          .then((r) => target.roles.add(r))
-          .then(finished)
-          .catch(fail);
+          .catch((err) => {
+            self.error('Unable to create color role:' + msg.channel.id);
+            console.error(err);
+            self.common.reply(msg, 'Unable to update color.', err.message);
+          });
     } else {
       role.setColor(color)
-          .then((r) => target.roles.add(r))
-          .then(finished)
-          .catch(fail);
+          .then((r) => {
+            target.roles.add(r).then(() => {
+              const embed = new self.Discord.MessageEmbed();
+              embed.setColor(color);
+              embed.setTitle('Updated color.');
+              embed.setDescription(colorString);
+              msg.channel.send(embed).catch(() => {
+                self.common.reply(msg, 'Updated color.', colorString);
+              });
+            });
+          })
+          .catch((err) => {
+            self.error('Unable to edit color role:' + msg.channel.id);
+            console.error(err);
+            self.common.reply(msg, 'Unable to update color.', err.message);
+          });
     }
   }
 }
