@@ -362,10 +362,10 @@ function HGWeb() {
       }
     }
 
-    socket.on('disconnect', () => {
+    socket.on('disconnect', (reason) => {
       self.common.log(
-          'Socket disconnected (' + (Object.keys(sockets).length - 1) + '): ' +
-              ipName,
+          'Socket disconnected HG (' + (Object.keys(sockets).length - 1) +
+              ')(' + reason + '): ' + ipName,
           socket.id);
       if (siblingSockets[socket.id]) delete siblingSockets[socket.id];
       delete sockets[socket.id];

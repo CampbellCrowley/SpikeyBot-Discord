@@ -437,10 +437,10 @@ function WebSettings() {
       }
     }
 
-    socket.on('disconnect', () => {
+    socket.on('disconnect', (reason) => {
       self.common.log(
           'Socket disconnected Settings (' + (Object.keys(sockets).length - 1) +
-              '): ' + ipName,
+              ')(' + reason + '): ' + ipName,
           socket.id);
       if (siblingSockets[socket.id]) delete siblingSockets[socket.id];
       delete sockets[socket.id];
