@@ -321,7 +321,7 @@ function WebSettings() {
         socket.handshake.address);
 
     self.common.log(
-        'Socket connected Settings (' + Object.keys(sockets).length + '): ' +
+        'Socket    connected Settings (' + Object.keys(sockets).length + '): ' +
             ipName,
         socket.id);
     sockets[socket.id] = socket;

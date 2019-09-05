@@ -193,7 +193,8 @@ function HGWeb() {
         socket.handshake.headers['x-forwarded-for'] ||
         socket.handshake.address);
     self.common.log(
-        'Socket connected (' + Object.keys(sockets).length + '): ' + ipName,
+        'Socket    connected HG (' + Object.keys(sockets).length + '): ' +
+            ipName,
         socket.id);
     sockets[socket.id] = socket;
 
