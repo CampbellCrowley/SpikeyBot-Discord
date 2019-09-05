@@ -54,7 +54,7 @@ function HGWeb() {
     ioClient = require('socket.io-client')(
         self.common.isRelease ? 'http://localhost:8011' :
                                 'http://localhost:8013',
-        {path: '/www.spikeybot.com/socket.io/hg/'});
+        {path: '/www.spikeybot.com/socket.io/hg/', reconnectionDelay: 0});
     clientSocketConnection(ioClient);
   }
 
@@ -411,6 +411,16 @@ function HGWeb() {
         self[func].apply(self[func], [userData, fakeSocket].concat(args));
       }
     });
+
+    const error = function(...args) {
+      console.error(...args);
+    };
+
+    socket.on('connect_error', error);
+    socket.on('connect_timeout', error);
+    socket.on('reconnect_error', error);
+    socket.on('reconnect_failed', error);
+    socket.on('error', error);
   }
 
   /**

@@ -264,7 +264,7 @@ function WebSettings() {
     ioClient = require('socket.io-client')(
         self.common.isRelease ? 'http://localhost:8020' :
                                 'http://localhost:8021',
-        {path: '/www.spikeybot.com/socket.io/control/'});
+        {path: '/www.spikeybot.com/socket.io/control/', reconnectionDelay: 0});
     clientSocketConnection(ioClient);
   }
 
@@ -487,6 +487,16 @@ function WebSettings() {
         self[func].apply(self[func], [userData, fakeSocket].concat(args));
       }
     });
+
+    const error = function(...args) {
+      console.error(...args);
+    };
+
+    socket.on('connect_error', error);
+    socket.on('connect_timeout', error);
+    socket.on('reconnect_error', error);
+    socket.on('reconnect_failed', error);
+    socket.on('error', error);
   }
 
   /**
