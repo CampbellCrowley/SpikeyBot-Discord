@@ -900,15 +900,11 @@ function HGWeb() {
     return guilds.map((g) => {
       let dOpts = self.command.getDefaultSettings() || {};
       dOpts = Object.entries(dOpts)
-          .filter((el) => {
-            return el[1].getFullName().startsWith('hg');
-          })
-          .reduce(
-              (p, c) => {
-                p[c[0]] = c[1];
-                return p;
-              },
-              {});
+          .filter((el) => el[1].getFullName().startsWith('hg'))
+          .reduce((p, c) => {
+            p[c[0]] = c[1];
+            return p;
+          }, {});
       let uOpts = self.command.getUserSettings(g.id) || {};
       uOpts = Object.entries(uOpts)
           .filter((el) => {
