@@ -278,6 +278,7 @@ function HGWeb() {
     socket.on(
         'forcePlayerState', (...args) => handle(self.forcePlayerState, args));
     socket.on('renameGame', (...args) => handle(self.renameGame, args));
+    socket.on('renameNPC', (...args) => handle(self.renameNPC, args));
     socket.on('removeNPC', (...args) => handle(self.removeNPC, args));
     socket.on(
         'fetchStatGroupList',
@@ -2088,6 +2089,35 @@ function HGWeb() {
       if (game) game = game.currentGame;
       if (game) name = game.name;
       cb(name);
+    }
+  };
+
+  /**
+   * Rename an NPC in a game.
+   *
+   * @see {@link HungryGames.renameNPC}
+   *
+   * @public
+   * @type {HGWeb~SocketFunction}
+   * @param {object} userData The current user's session data.
+   * @param {socketIo-Socket} socket The socket connection to reply on.
+   * @param {number|string} gId The guild id to run this command on.
+   * @param {string} npcId The ID of the NPC to rename.
+   * @param {string} username The new username for the NPC.
+   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
+   * is complete.
+   */
+  this.renameNPC = function renameNPC(
+      userData, socket, gId, npcId, username, cb) {
+    if (!checkPerm(userData, gId, null, 'ai create')) {
+      if (!checkMyGuild(gId)) return;
+      if (typeof cb === 'function') cb('NO_PERM');
+      replyNoPerm(socket, 'renameNPC');
+      return;
+    }
+    const error = hg().renameNPC(gId, npcId, username);
+    if (typeof cb === 'function') {
+      cb(typeof error === 'string' ? error : null);
     }
   };
 

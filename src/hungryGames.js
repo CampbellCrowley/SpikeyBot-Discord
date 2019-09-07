@@ -700,9 +700,8 @@ function HG() {
           let text = msg.text.trim().toLocaleLowerCase();
           if (text.length > 0) {
             if (game.includedNPCs) {
-              game.includedNPCs.sort((a, b) => {
-                return b.username.length - a.username.length;
-              });
+              game.includedNPCs.sort(
+                  (a, b) => b.username.length - a.username.length);
               game.includedNPCs.forEach((el) => {
                 if (text.indexOf(el.username.toLocaleLowerCase()) > -1) {
                   // text = text.replace(el.username.toLocaleLowerCase(), '');
@@ -3513,13 +3512,8 @@ function HG() {
       }
       const cl = incoming.headers['content-length'];
       const type = incoming.headers['content-type'];
-      const supported = [
-        'image/jpeg',
-        'image/png',
-        'image/bmp',
-        'image/tiff',
-        'image/gif',
-      ];
+      const supported =
+          ['image/jpeg', 'image/png', 'image/bmp', 'image/tiff', 'image/gif'];
       self.debug('MIME: ' + type + ', CL: ' + cl);
       if (!supported.includes(type)) {
         incoming.destroy();
@@ -3559,9 +3553,7 @@ function HG() {
           msg.channel.stopTyping();
         }
       });
-      incoming.on('end', () => {
-        onGetAvatar(Buffer.concat(data));
-      });
+      incoming.on('end', () => onGetAvatar(Buffer.concat(data)));
     }
     /**
      * Once image has been received, convert to Jimp.
@@ -3615,9 +3607,7 @@ function HG() {
           [new self.Discord.MessageAttachment(buffer, username + '.png')]);
       msg.channel.send(embed)
           .then((msg_) => {
-            msg_.react(emoji.whiteCheckMark).then(() => {
-              msg_.react(emoji.x);
-            });
+            msg_.react(emoji.whiteCheckMark).then(() => msg_.react(emoji.x));
             newReact(maxReactAwaitTime);
             msg_.awaitReactions((reaction, user) => {
               return user.id == msg.author.id &&
@@ -3725,7 +3715,7 @@ function HG() {
   };
 
   /**
-   * Remove url from username, and format to rules similar to Discord.
+   * Clean up username, and format to rules similar to Discord.
    *
    * @private
    *
@@ -3745,6 +3735,28 @@ function HG() {
    * @public
    */
   this.formatUsername = formatUsername;
+
+  /**
+   * @description Rename an npc in a guild.
+   *
+   * @public
+   * @param {string|number} gId The guild ID context.
+   * @param {string} npcId The ID of the NPC to rename.
+   * @param {string} username The new name of the npc.
+   * @returns {?string} Error message or null if no error.
+   */
+  this.renameNPC = function(gId, npcId, username) {
+    const npc = hg.getGame(gId).includedNPCs.find((el) => el.id == npcId) ||
+        hg.getGame(gId).excludedNPCs.find((el) => el.id == npcId);
+    if (!npc) return 'INVALID_NPC';
+
+    username = formatUsername(username);
+    if (username.length < 2) return 'INVALID_USERNAME';
+    npc.username = username;
+    npc.name = username;
+
+    return null;
+  };
 
   /**
    * Delete an NPC.
@@ -3770,7 +3782,8 @@ function HG() {
     if (typeof success === 'string') {
       self.common.reply(msg, success);
     } else {
-      msg.channel.send(success);
+      msg.channel.send(success).catch(
+          () => self.common.reply(msg, 'NPC Deleted', toDelete.id));
     }
   }
   /**
