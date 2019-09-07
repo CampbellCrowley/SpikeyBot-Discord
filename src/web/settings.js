@@ -68,7 +68,7 @@ function WebSettings() {
   /**
    * @description Function calls handlers for requested commands.
    * @typedef WebSettings~SocketFunction
-   * @type Function
+   * @type {Function}
    *
    * @param {WebUserData} userData The user data of the user performing the
    * request.

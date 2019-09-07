@@ -5,7 +5,7 @@ const crypto = require('crypto');
 /**
  * @description Handler function for a generic action.
  * @typedef HungryGames~Action~ActionHandler
- * @type Function
+ * @type {Function}
  *
  * @param {HungryGames} hg HG context.
  * @param {HungryGames~GuildGame} game Game context.

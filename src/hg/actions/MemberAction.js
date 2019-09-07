@@ -5,7 +5,7 @@ const Action = require('./Action.js');
 /**
  * @description Handler function for a action to be performed on a player.
  * @typedef HungryGames~MemberActionHandler
- * @type Function
+ * @type {Function}
  *
  * @param {HungryGames} hg HG context.
  * @param {HungryGames~GuildGame} game Game context.

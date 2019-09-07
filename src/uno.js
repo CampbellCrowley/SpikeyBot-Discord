@@ -92,7 +92,7 @@ function Uno() {
    * Delay for NPC to play their card.
    *
    * @private
-   * @type number
+   * @type {number}
    * @default
    * @constant
    */
@@ -121,7 +121,7 @@ function Uno() {
    * Maximum number of players allowed in a game.
    *
    * @private
-   * @type number
+   * @type {number}
    * @default
    * @constant
    */

@@ -6,7 +6,7 @@ const Action = require('./Action.js');
  * @description Handler function for a action to be performed on the game
  * channel.
  * @typedef HungryGames~Action~ChannelActionHandler
- * @type Function
+ * @type {Function}
  *
  * @param {HungryGames} hg HG context.
  * @param {HungryGames~GuildGame} game Game context.

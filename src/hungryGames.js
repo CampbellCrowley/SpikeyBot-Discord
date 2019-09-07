@@ -2694,8 +2694,7 @@ function HG() {
         reaction.users.remove(user).catch(() => {});
       }
       return (reaction.emoji.name == emoji.arrowRight ||
-                  reaction.emoji.name == emoji.arrowLeft) /* &&
-            user.id == msg_.origAuth*/ &&
+                  reaction.emoji.name == emoji.arrowLeft) &&
               user.id != self.client.user.id;
     }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
       if (reactions.size == 0) {
