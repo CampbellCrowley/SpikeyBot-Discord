@@ -1261,7 +1261,7 @@ function SpikeyBot() {
             idList.find((el) => el == client.shard.ids[0]);
         const requestedOthers = !idList ||
             (client.shard && idList.find((el) => el != client.shard.ids[0]));
-        if (requestedOthers) {
+        if (requestedOthers && client.shard) {
           client.shard.send(
               'reboot ' + (force ? 'force ' : '') +
               (idList ? idList.join(' ') : ''));
