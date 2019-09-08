@@ -294,7 +294,8 @@ function Command() {
           }
         }
       }
-      const uIds = msg.text.match(/\d{17,19}/g);
+      let text = msg.text;
+      const uIds = text.match(/\d{17,19}/g);
       msg.softMentions = {
         users: new self.Discord.UserStore(self.client),
         members: msg.guild ? new self.Discord.GuildMemberStore(msg.guild) :
@@ -304,7 +305,10 @@ function Command() {
       if (uIds) {
         uIds.forEach((el) => {
           const u = self.client.users.get(el);
-          if (u) msg.softMentions.users.add(u);
+          if (u) {
+            msg.softMentions.users.add(u);
+            text = text.replace(el, '');
+          }
           if (msg.guild) {
             const m = msg.guild.members.get(el);
             if (m) msg.softMentions.members.add(m);
@@ -314,7 +318,7 @@ function Command() {
         });
       }
       if (msg.guild) {
-        const sT = msg.text.toLocaleLowerCase();
+        const sT = text.toLocaleLowerCase();
         msg.guild.members.forEach((el) => {
           if (sT.indexOf(el.user.username.toLocaleLowerCase()) > -1) {
             // sT = sT.replace(el.user.username.toLocaleLowerCase(), '');
