@@ -67,6 +67,7 @@ function SMLoader() {
           self.error(
               'Unable to find subModule list for bot: (' +
               self.bot.getFullBotName() + ') ' + smListFilename);
+          goalSubModuleNames = parsed['FALLBACK'];
           return;
         }
         self.reload();
