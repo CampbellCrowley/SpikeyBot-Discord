@@ -17,7 +17,7 @@ class GiveRoleAction extends MemberAction {
   constructor(role) {
     super((hg, game, member) => {
       if (!member.guild.me.hasPermission('MANAGE_ROLES')) return;
-      member.roles.add(this._role, 'HG Automation').catch(() => {});
+      member.roles.add(this._role, 'HG Automation').catch(console.error);
     });
     this._role = role;
     this._saveData = {role: role.id};
