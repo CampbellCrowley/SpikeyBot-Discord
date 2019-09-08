@@ -242,6 +242,11 @@
               "description": "Exclude NPCs",
               "command": "exclude npcs",
               "result": "All NPCs who are currently included will be removed."
+            },
+            {
+              "description": "Prevent Including Bots",
+              "command": "exclude bots",
+              "result": "This is an alias for `{prefix}opt includeBots false`."
             }
           ]
         },
@@ -290,6 +295,11 @@
               "description": "Include NPCs",
               "command": "include npcs",
               "result": "All NPCs who are currently excluded will be added."
+            },
+            {
+              "description": "Allow Including Bots",
+              "command": "include bots",
+              "result": "This is an alias for `{prefix}opt includeBots true`, and does not actually include bots."
             }
           ]
         },
@@ -385,6 +395,24 @@
               "description": "Create with uploaded image",
               "command": "npc create New Best Friend",
               "result": "The NPC named 'New Best Friend' will be created using an image attached to the message. The command is the 'Description' part when uploading an image to Discord."
+            }
+          ]
+        },
+        {
+          "command": "npc rename",
+          "description": "Rename an NPC.",
+          "aliases": "rename, name, edit",
+          "validOnlyInGuild": true,
+          "examples": [
+            {
+              "description": "Rename an NPC using its name",
+              "command": "npc rename Bad Name Good Name",
+              "result": "The NPC named 'Bad Name' will be renamed to 'Good Name'."
+            },
+            {
+              "description": "Rename an NPC using its ID",
+              "command": "npc rename NPC707EE794C7D42049 Good Name",
+              "result": "The NPC with the same ID will be renamed to 'Good Name'."
             }
           ]
         },

@@ -433,6 +433,8 @@ function HG() {
             new self.command.SingleCommand(
                 ['add', 'create'], mkCmd(createNPC), cmdOpts),
             new self.command.SingleCommand(
+                ['rename', 'name', 'edit'], mkCmd(renameNPC), cmdOpts),
+            new self.command.SingleCommand(
                 ['remove', 'delete'], mkCmd(removeNPC), cmdOpts),
             new self.command.SingleCommand(
                 ['include', 'inc', 'in'], mkCmd(includeNPC), cmdOpts),
@@ -3735,6 +3737,41 @@ function HG() {
    * @public
    */
   this.formatUsername = formatUsername;
+
+  /**
+   * Rename an NPC.
+   *
+   * @private
+   * @type {HungryGames~hgCommandHandler}
+   * @param {Discord~Message} msg The message that lead to this being called.
+   * @param {string} id The id of the guild this was triggered from.
+   */
+  function renameNPC(msg, id) {
+    const mentions =
+        msg.softMentions.users.filter((el) => el.id.startsWith('NPC'));
+    if (mentions.size == 0) {
+      if (msg.text && msg.text.length > 1) {
+        self.common.reply(msg, 'I wasn\'t able to find that NPC.');
+      } else {
+        self.common.reply(msg, 'Please specify an NPC to rename.');
+      }
+      return;
+    }
+    const toRename = mentions.first();
+
+    const oldName = toRename.username;
+    const trimmed = (msg.text.indexOf(toRename.id) > -1 ?
+                         msg.text.replace(toRename.id, '') :
+                         msg.text.replace(oldName, '')).trim();
+    const newName = formatUsername(trimmed);
+    const success = self.renameNPC(id, toRename.id, newName);
+    if (success) {
+      self.common.reply(msg, 'Failed to rename NPC', success);
+    } else {
+      self.common.reply(
+          msg, 'Renamed NPC', '`' + oldName + '` to `' + newName + '`');
+    }
+  }
 
   /**
    * @description Rename an npc in a guild.
