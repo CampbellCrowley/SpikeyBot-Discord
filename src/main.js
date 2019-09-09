@@ -1713,7 +1713,7 @@ function Main() {
               guild.channels.size + '\nRoles: ' + guild.roles.size +
               '\nEmojis: ' + guild.emojis.size,
           true);
-      if (!guild.owner) {
+      if (!guild.ownerID) {
         embed.addField(
             'Server', 'Created: ' + guild.createdAt.toUTCString() +
                 '\nOwner: _Unknown_\nRegion: ' + guild.region +
@@ -1723,7 +1723,7 @@ function Main() {
       } else {
         embed.addField(
             'Server', 'Created: ' + guild.createdAt.toUTCString() +
-                '\nOwner: <@' + guild.owner.id + '>\nRegion: ' + guild.region +
+                '\nOwner: <@' + guild.ownerID + '>\nRegion: ' + guild.region +
                 '\nVerification: ' + guild.verificationLevel + ' (' +
                 guild.verfied + ')',
             true);
