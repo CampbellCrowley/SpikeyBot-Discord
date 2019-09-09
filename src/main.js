@@ -1713,12 +1713,21 @@ function Main() {
               guild.channels.size + '\nRoles: ' + guild.roles.size +
               '\nEmojis: ' + guild.emojis.size,
           true);
-      embed.addField(
-          'Server', 'Created: ' + guild.createdAt.toUTCString() +
-              '\nOwner: <@' + guild.owner.id + '>\nRegion: ' + guild.region +
-              '\nVerification: ' + guild.verificationLevel + ' (' +
-              guild.verfied + ')',
-          true);
+      if (!guild.owner) {
+        embed.addField(
+            'Server', 'Created: ' + guild.createdAt.toUTCString() +
+                '\nOwner: _Unknown_\nRegion: ' + guild.region +
+                '\nVerification: ' + guild.verificationLevel + ' (' +
+                guild.verfied + ')',
+            true);
+      } else {
+        embed.addField(
+            'Server', 'Created: ' + guild.createdAt.toUTCString() +
+                '\nOwner: <@' + guild.owner.id + '>\nRegion: ' + guild.region +
+                '\nVerification: ' + guild.verificationLevel + ' (' +
+                guild.verfied + ')',
+            true);
+      }
       embed.addField(
           'Links', ((icon ? `Icon: ${icon}\n` : '') +
                     (banner ? `Banner: ${banner}\n` : '') +
