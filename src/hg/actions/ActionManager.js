@@ -141,7 +141,9 @@ class ActionManager {
           guild.members.fetch(el.id)
               .then((mem) => go(mem, group, weapons))
               .catch((err) => {
-                console.error('Unable to fetch member for action:', err);
+                console.error(
+                    'Unable to fetch member for action:', err.message,
+                    err.path);
               });
         } else {
           go(member, group, weapons);
