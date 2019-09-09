@@ -1,6 +1,6 @@
 {
   "name": "spikeybot-discord",
-  "version": "1.13.2",
+  "version": "1.13.3",
   "lockfileVersion": 1,
   "requires": true,
   "dependencies": {
@@ -3878,9 +3878,9 @@
       "integrity": "sha512-RbN7MaTQBZLJYzDENHPA0nUmWT0Ex80KHItprrgbTPufYhIlTePvCXZxyQK7wgn19FW5bnuaBIKcBb5mRWjB1Q=="
     },
     "typescript": {
-      "version": "3.6.2",
-      "resolved": "https://registry.npmjs.org/typescript/-/typescript-3.6.2.tgz",
-      "integrity": "sha512-lmQ4L+J6mnu3xweP8+rOrUwzmN+MRAj7TgtJtDaXE5PMyX2kCrklhg3rvOsOIfNeAWMQWO2F1GPc1kMD2vLAfw==",
+      "version": "3.5.3",
+      "resolved": "https://registry.npmjs.org/typescript/-/typescript-3.5.3.tgz",
+      "integrity": "sha512-ACzBtm/PhXBDId6a6sDJfroT2pOWt/oOnk4/dElG5G33ZL776N3Y6/6bKZJBFpd+b05F3Ct9qDjMeJmRWtE2/g==",
       "dev": true
     },
     "uc.micro": {
