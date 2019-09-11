@@ -12,7 +12,6 @@ class EnUsGlobal extends Locale {
    */
   constructor() {
     super();
-    this.username = 'SpikeyBot';
   }
 }
 

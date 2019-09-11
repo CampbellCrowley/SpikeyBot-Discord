@@ -416,16 +416,13 @@ class HungryGames {
    * @public
    * @param {string} id The id of the guild to modify.
    * @param {string} command The category of data to reset.
-   * @returns {string} The message explaining what happened.
+   * @returns {string} The message key referencing what happened.
    */
   resetGame(id, command) {
     const game = this.getGame(id);
-    if (!game) {
-      return 'There is no data to reset.';
-    }
+    if (!game) return 'resetNoData';
     if (game.currentGame && game.currentGame.inProgress) {
-      return 'A game is currently in progress. Please end it before ' +
-          'reseting game data.';
+      return 'resetInProgress';
     }
     this._parent._fire('reset', id, command);
     if (command == 'all') {
@@ -454,7 +451,7 @@ class HungryGames {
             id + this.hgSaveDir);
         console.error(err);
       });
-      return 'Reset ALL Hungry Games data for this server!';
+      return 'resetAll';
     } else if (command == 'stats') {
       game._stats.fetchGroupList((err, list) => {
         if (err) {
@@ -473,7 +470,7 @@ class HungryGames {
           group.reset();
         }));
       });
-      return 'Reset ALL Hungry Games stats for this server!';
+      return 'resetStats';
     } else if (command == 'events') {
       game.customEventStore = new HungryGames.EventContainer();
       game.disabledEventIds = {
@@ -484,47 +481,40 @@ class HungryGames {
         battle: {starts: [], attacks: [], outcomes: []},
       };
       delete game.legacyEvents;
-      return 'Reset ALL Hungry Games events for this server!';
+      return 'resetEvents';
     } else if (command == 'current') {
       game.currentGame = null;
-      return 'Reset ALL data for current game!';
+      return 'resetCurrent';
     } else if (command == 'options') {
       const optKeys = this.defaultOptions.keys;
       game.options = {};
       for (const key of optKeys) {
         game.options[key] = this.defaultOptions[key].value;
       }
-      return 'Reset ALL options!';
+      return 'resetOptions';
     } else if (command == 'teams') {
       game.currentGame.teams = [];
       game.formTeams();
-      return 'Reset ALL teams!';
+      return 'resetTeams';
     } else if (command == 'users') {
       game.includedUsers = [];
       game.excludedUsers = [];
       this.refresh(id, () => {});
-      return 'Reset ALL user data!';
+      return 'resetUsers';
     } else if (command == 'npcs') {
       game.includedNPCs = [];
       game.excludedNPCs = [];
       this.refresh(id, () => {});
-      return 'Reset ALL NPC data!';
+      return 'resetNPCs';
     } else if (command == 'actions') {
       game.actions = new HungryGames.ActionStore();
       this._parent._fire('actionUpdate', id, null);
-      return 'Reset ALL actions!';
+      return 'resetActions';
     } else if (command == 'react') {
       game.reactMessage = null;
-      return 'Reset react message!';
+      return 'resetReact';
     } else {
-      return 'Please specify what data to reset.\nall {deletes all data ' +
-          'for this server},\nevents {deletes all custom events},\n' +
-          'current {deletes all data about the current game},\noptions ' +
-          '{resets all options to default values},\nteams {delete all ' +
-          'teams and creates new ones},\nusers {delete data about where to ' +
-          'put users when creating a new game},\nnpcs {delete all NPCS}.' +
-          '\nstats {delete all stats and groups}.\nactions {reset all actions' +
-          ' to default settings}.\nreact {cancels hg react command}.';
+      return 'resetHelp';
     }
   }
 
@@ -655,7 +645,7 @@ class HungryGames {
       action[key] = value;
 
       this._parent._fire('actionUpdate', gId, trigger);
-      cb();
+      cb(null);
     });
   }
 
@@ -1120,19 +1110,21 @@ class HungryGames {
     Object.values(this._games).forEach((el) => el.clearIntervals());
     this.messages.shutdown();
   }
-}
 
-/**
- * Games with more than this many members is considered large, and will have
- * some features disabled in order to improve performance.
- *
- * @public
- * @static
- * @type {number}
- * @constant
- * @default
- */
-HungryGames.largeServerCount = 20000;
+  /**
+   * Games with more than this many members is considered large, and will have
+   * some features disabled in order to improve performance.
+   *
+   * @public
+   * @static
+   * @type {number}
+   * @constant
+   * @default 20000
+   */
+  static get largeServerCount() {
+    return 20000;
+  }
+}
 
 module.exports = HungryGames;
 
