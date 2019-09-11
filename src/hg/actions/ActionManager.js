@@ -245,7 +245,7 @@ class ActionManager {
           el.trigger(hg, game, member);
         });
       } else if (el instanceof ChannelAction) {
-        el.trigger(hg, game, channel);
+        if (channel) el.trigger(hg, game, channel);
       } else if (el instanceof Action) {
         el.trigger(hg, game);
       }
