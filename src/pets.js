@@ -142,7 +142,7 @@ class Pets extends SubModule {
   _reply(msg, titleKey, bodyKey, ...rep) {
     return this.common.reply(
         msg, this._strings.get(titleKey, msg.locale),
-        this._strings.get(bodyKey, msg.locale, rep));
+        this._strings.get(bodyKey, msg.locale, ...rep));
   }
 
   /**
