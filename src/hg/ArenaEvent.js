@@ -51,9 +51,14 @@ class ArenaEvent extends HungryGames.Event {
       return 'BAD_OUTCOMES';
     } else if (evt.outcomes) {
       let outerr;
-      evt.outcomes.find((el) => outerr = HungryGames.NormalEvent.validate(el));
+      let index;
+      evt.outcomes.find((el, i) => {
+        outerr = HungryGames.NormalEvent.validate(el);
+        index = i;
+        return outerr;
+      });
       if (outerr) {
-        return 'BAD_OUTCOME_' + outerr;
+        return `BAD_OUTCOME_${index}_${outerr}`;
       }
     }
 

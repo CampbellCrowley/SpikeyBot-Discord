@@ -242,8 +242,14 @@ class NormalEvent extends HungryGames.Event {
       return 'BAD_ATTACKS';
     } else if (evt.attacks) {
       let outerr;
-      if (evt.attacks.find((el) => outerr = NormalEvent.validate(el))) {
-        return 'BAD_ATTACK_' + outerr;
+      let index;
+      evt.attacks.find((el, i) => {
+        outerr = NormalEvent.validate(el);
+        index = i;
+        return outerr;
+      });
+      if (outerr) {
+        return `BAD_ATTACK_${index}_${outerr}`;
       }
     }
 
