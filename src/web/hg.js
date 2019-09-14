@@ -266,7 +266,6 @@ function HGWeb() {
     socket.on('fetchDay', (...args) => handle(self.fetchDay, args));
     socket.on('fetchNextDay', (...args) => handle(self.fetchNextDay, args));
     socket.on('fetchActions', (...args) => handle(self.fetchActions, args));
-    socket.on('resetActions', (...args) => handle(self.resetActions, args));
     socket.on('insertAction', (...args) => handle(self.insertAction, args));
     socket.on('removeAction', (...args) => handle(self.removeAction, args));
     socket.on('updateAction', (...args) => handle(self.updateAction, args));
@@ -1264,28 +1263,6 @@ function HGWeb() {
     }
   };
   /**
-   * Reset the game's current action/trigger information to default values.
-   *
-   * @public
-   * @type {HGWeb~SocketFunction}
-   * @param {object} userData The current user's session data.
-   * @param {socketIo~Socket} socket The socket connection to reply on.
-   * @param {number|string} gId The guild id to look at.
-   * @param {HGWeb~basicCB} [cb] Callback that fires once the requested action
-   * is complete, or has failed.
-   */
-  this.resetActions = function resetActions(userData, socket, gId, cb) {
-    if (!checkPerm(userData, gId, null, 'options')) {
-      if (!checkMyGuild(gId)) return;
-      if (typeof cb === 'function') cb('NO_PERM');
-      replyNoPerm(socket, 'resetActions');
-      return;
-    }
-    const response = hg().getHG().resetGame(gId, 'actions');
-
-    if (typeof cb === 'function') cb(null, response);
-  };
-  /**
    * Add an action to a trigger in a guild.
    *
    * @public
@@ -1499,8 +1476,10 @@ function HGWeb() {
       replyNoPerm(socket, 'resetGame');
       return;
     }
-    const response = hg().getHG().resetGame(gId, cmd);
-    if (typeof cb === 'function') cb(null, response);
+    hg().getHG().fetchGame(gId, () => {
+      const response = hg().getHG().resetGame(gId, cmd);
+      if (typeof cb === 'function') cb(null, response);
+    });
   };
   /**
    * Start the game.

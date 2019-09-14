@@ -74,7 +74,7 @@ class Pets extends SubModule {
     this._baseMoves = new BaseMoves();
 
     /**
-     * @description Instance of locale string manager.
+     * @description Instance of locale strings helper.
      * @private
      * @type {Strings}
      * @default

@@ -732,9 +732,7 @@ function HG() {
    * {@link external:Discord}.
    */
   function reply(msg, titleKey, bodyKey, ...rep) {
-    return self.common.reply(
-        msg, strings.get(titleKey, msg.locale),
-        strings.get(bodyKey, msg.locale, ...rep));
+    return strings.reply(self.common, msg, titleKey, bodyKey, ...rep);
   }
 
   /**

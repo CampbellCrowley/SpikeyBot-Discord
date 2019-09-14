@@ -20,10 +20,12 @@ class EnUsHG extends Locale {
         'Hmm, did you mean one of the following commands?';
     this.unknownCommandSuggestOne = 'Hmm, did you mean';
     this.unknownCommand = 'Oh noes! I can\'t understand that!';
+    // {} is replaced with command prefix.
     this.unknownCommandHelp = '`{}help` for help.';
     this.messageRejected =
         'Discord rejected my normal message for some reason...';
     this.legacyEventNoticeTitle = 'Important Legacy Event Notice';
+    // {} is replaced with command prefix.
     this.legacyEventNoticeBody =
         'Storage for custom events has been updated.\nUse `{}claimlegacy` to ' +
         'move all custom events to your account.\n\nBe aware that whoever ' +
@@ -34,6 +36,7 @@ class EnUsHG extends Locale {
     this.loadingBody =
         'A previous command is still loading. Please wait for it to complete.';
     this.makeMeWin = 'Everyone\'s probability of winning has increased!';
+    // {} is replaced with some word or symbol meaning "nothing".
     this.makeMeLose = 'Your probability of losing has increased by {}!';
     this.resetTitle = 'Reset HG';
     this.resetNoData = 'There is no data to reset.';
@@ -61,6 +64,7 @@ class EnUsHG extends Locale {
         '{cancels hg react command}.';
     this.startedTitle = 'Game started!';
     this.startInProgressTitle = 'A game is already in progress!';
+    // Both {} are replaced with command prefix.
     this.startInProgressBody = '`{}next` for next day, or `{}end` to abort)';
     this.startNoAttachFiles = 'Sorry, but I need permission to send images in' +
         ' this channel before I can start the games.\nPlease ensure I have ' +
@@ -80,14 +84,20 @@ class EnUsHG extends Locale {
     this.reactNoUsers = 'No users reacted.';
     this.createFailedUnknown = 'Failed to create game for unknown reason.';
     this.pauseAutoNoAutoTitle = 'Not autoplaying.';
+    // {} is replaced with command prefix.
     this.pauseAutoNoAutoBody = 'If you wish to autoplay, type `{}autoplay`.';
+    // {} is replaced with the ID of the user that ran the command.
     this.pauseAuto =
         '<@{}> `Autoplay will stop at the end of the current day.`';
     this.startAutoAlreadyEnabled = 'Autoplay is already enabled.';
+    // {} is replaced with the command prefix.
     this.resumeAutoInstructions = 'To resume the game, use `{}resume`.';
+    // {} is replaced with the ID of the user that ran the command.
     this.startAutoDay = '<@{}> `Enabling Autoplay! Starting the next day!`';
+    // {} is replaced with the ID of the user that ran the command.
     this.startAutoGame = '<@{}> `Autoplay is enabled. Starting the games!`';
     this.enableAutoTitle = 'Enabling Autoplay';
+    // {} is replaced with the ID of the user that ran the command.
     this.enableAuto = '<@{}> `Enabling autoplay!`';
 
     this.noPermNext =
@@ -103,4 +113,3 @@ class EnUsHG extends Locale {
 }
 
 module.exports = new EnUsHG();
-
