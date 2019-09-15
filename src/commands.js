@@ -840,6 +840,7 @@ function Command() {
    * for.
    */
   this.removeListener = function(cmd) {
+    if (!cmds) return;
     if (typeof cmd === 'string') {
       const obj = Object.entries(cmds).find((el) => {
         return el[1].aliases.includes(cmd);

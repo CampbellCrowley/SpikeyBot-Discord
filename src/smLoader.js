@@ -107,10 +107,10 @@ function SMLoader() {
     }
   };
   this.shutdown = function() {
-    self.command.deleteEvent('reload');
-    self.command.deleteEvent('unload');
-    self.command.deleteEvent('load');
-    self.command.deleteEvent('help');
+    self.command.removeListener('reload');
+    self.command.removeListener('unload');
+    self.command.removeListener('load');
+    self.command.removeListener('help');
 
     const data = fs.readFileSync(smListFilename);
     const parsed = JSON.parse(data);
@@ -125,9 +125,7 @@ function SMLoader() {
   };
   /** @inheritdoc */
   this.unloadable = function() {
-    return subModuleNames.findIndex((el) => {
-      return !subModules[el].unloadable();
-    }) < 0;
+    return subModuleNames.findIndex((el) => !subModules[el].unloadable()) < 0;
   };
   /** @inheritdoc */
   this.save = function(...args) {

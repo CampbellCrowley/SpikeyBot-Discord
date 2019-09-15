@@ -546,9 +546,9 @@ function SpikeyBot() {
         } else if (mainModuleNames[i] == smLoaderFilename) {
           smLoader = mainModules[i];
         }
-        process.stdout.write(': DONE\n');
+        process.stdout.write('DBG: DONE\n');
       } catch (err) {
-        process.stdout.write(': ERROR\n');
+        process.stdout.write('ERR: ERROR\n');
         console.error(mainModuleNames[i], err);
       }
     }
@@ -909,6 +909,7 @@ function SpikeyBot() {
     if (!testMode && msg.author.bot) return;
 
     msg.prefix = self.getPrefix(msg.guild);
+    if (self.getLocale && msg.guild) msg.locale = self.getLocale(msg.guild.id);
 
     if (msg.guild === null && !msg.content.startsWith(msg.prefix)) {
       msg.content = `${msg.prefix}${msg.content}`;
@@ -1439,9 +1440,7 @@ function SpikeyBot() {
 
     for (let i = 0; i < mainModules.length; i++) {
       if (toReload.length > numArg) {
-        if (!toReload.find(function(el) {
-          return mainModuleNames[i] == el;
-        })) {
+        if (!toReload.find((el) => mainModuleNames[i] == el)) {
           continue;
         }
       }
@@ -1465,9 +1464,7 @@ function SpikeyBot() {
           if (!mainModules[i].unloadable()) {
             if (schedule) {
               reloaded.push('(' + mainModuleNames[i] + ': reload scheduled)');
-              setTimeout(function() {
-                reloadMainModules(mainModuleNames[i]);
-              }, 10000);
+              setTimeout(() => reloadMainModules(mainModuleNames[i]), 10000);
             } else {
               reloaded.push('(' + mainModuleNames[i] + ': not unloadable)');
             }
@@ -1477,14 +1474,14 @@ function SpikeyBot() {
       }
       try {
         try {
-          if (mainModules[i].save) {
+          if (typeof mainModules[i].save === 'function') {
             mainModules[i].save();
           } else {
             common.error(
                 'Mainmodule ' + mainModuleNames[i] +
                 ' does not have a save() function.');
           }
-          if (mainModules[i].end) {
+          if (typeof mainModules[i].end === 'function') {
             mainModules[i].end();
           } else {
             common.error(
@@ -1520,7 +1517,9 @@ function SpikeyBot() {
         } else if (mainModuleNames[i] == smLoaderFilename) {
           smLoader = mainModules[i];
         }
-        mainModules[i].begin(Discord, client, command, common, self);
+        for (let j = 0; j < mainModules.length; j++) {
+          mainModules[j].begin(Discord, client, command, common, self);
+        }
         reloaded.push(mainModuleNames[i]);
       } catch (err) {
         error = true;
