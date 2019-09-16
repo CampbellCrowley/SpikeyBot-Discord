@@ -1233,7 +1233,7 @@ function HG() {
       }
 
       g.currentGame.inProgress = true;
-      const finalMessage = makePlayerListEmbed(g);
+      const finalMessage = makePlayerListEmbed(g, null, msg.locale);
       finalMessage.setTitle(hg.messages.get('gameStart'));
 
       if (!g.autoPlay) {
@@ -2250,15 +2250,16 @@ function HG() {
   function listPlayers(msg, id) {
     const game = hg.getGame(id);
     if (!game) {
-      self.common.reply(msg, 'A game has not been created yet.');
+      reply(msg, 'gameNotCreated');
       return;
     }
-    const finalMessage = makePlayerListEmbed(game);
+    const finalMessage = makePlayerListEmbed(game, null, msg.locale);
     finalMessage.setDescription(
-        `To refresh: ${msg.prefix}${self.postPrefix}create`);
+        strings.get(
+            'playerRefreshInfo', msg.locale,
+            `${msg.prefix}${self.postPrefix}`));
     msg.channel.send(self.common.mention(msg), finalMessage).catch((err) => {
-      self.common.reply(
-          msg, 'Oops, Discord rejected my message for some reason...');
+      reply(msg, 'messageRejected');
       self.error('Failed to send list of players message: ' + msg.channel.id);
       console.error(err);
     });
@@ -2271,12 +2272,13 @@ function HG() {
    * @param {HungryGames~GuildGame} game The game to format.
    * @param {external:Discord~MessageEmbed} [finalMessage] Optional existing
    * embed to modify instead of creating a new one.
+   * @param {?string} [locale=null] Language locale to format titles.
    * @returns {external:Discord~MessageEmbed} The created message embed.
    */
-  function makePlayerListEmbed(game, finalMessage) {
+  function makePlayerListEmbed(game, finalMessage, locale = null) {
     if (!finalMessage) {
       finalMessage = new self.Discord.MessageEmbed();
-      finalMessage.setTitle('List of players');
+      finalMessage.setTitle(strings.get('listPlayerTitle', locale));
       finalMessage.setColor(defaultColor);
     }
     if (!game || !game.currentGame || !game.currentGame.includedUsers) {
