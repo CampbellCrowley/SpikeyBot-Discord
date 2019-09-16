@@ -54,8 +54,10 @@ class EnUsHGMessages extends Locale {
       'This game will have no gods or kings. Only man.',
     ];
     this.bloodbathEnd = [
-      'Bloodbath has ended.', 'Now, the game has begun.',
-      'Blood has been spilt.', 'The day has only just begun.',
+      'Bloodbath has ended.',
+      'Now, the game has begun.',
+      'Blood has been spilt.',
+      'The day has only just begun.',
       'The bloodbath may have ended, but the games have only just begun!',
       'The end of the bloodbath only marks a new beginning.',
       'The end is still nowhere in sight.',

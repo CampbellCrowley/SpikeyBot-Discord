@@ -101,7 +101,7 @@ class EnUsHG extends Locale {
     this.enableAuto = '<@{}> `Enabling autoplay!`';
     this.pauseGameNoGame = 'Failed: There isn\'t currently a game in progress.';
     this.pauseGameAlreadyPaused = 'Failed: Game is already paused.';
-    this.pauseGmaeTitle = 'Game Pausing';
+    this.pauseGameTitle = 'Game Pausing';
     this.needStartGameTitle = 'You must start a game first!';
     this.needStartGameBody = 'Use `{}start` to start a game!';
     this.nextDayAlreadySimulating = 'Already simulating day.';

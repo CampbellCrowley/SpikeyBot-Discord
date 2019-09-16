@@ -1234,7 +1234,7 @@ function HG() {
 
       g.currentGame.inProgress = true;
       const finalMessage = makePlayerListEmbed(g, null, msg.locale);
-      finalMessage.setTitle(hg.messages.get('gameStart'));
+      finalMessage.setTitle(hg.messages.get('gameStart', msg.locale));
 
       if (!g.autoPlay) {
         finalMessage.setFooter(
