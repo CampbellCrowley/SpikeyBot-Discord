@@ -160,7 +160,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="src_hg_Messages.js.html">src/hg/Messages.js</a>,
-				 <a href="src_hg_Messages.js.html#sunlight-1-line-13">line 13</a>
+				 <a href="src_hg_Messages.js.html#sunlight-1-line-14">line 14</a>
 			</li>
 		</ul>
 	</dd>
@@ -208,15 +208,15 @@
         <dl>
             
 <hr>
-<dt class="name" id="_messageFile">
-    <h4 id="_messageFile"><span class="type-signature">&lt;private, constant> </span>_messageFile<span class="type-signature"> :string</span></h4>
+<dt class="name" id="_messages">
+    <h4 id="_messages"><span class="type-signature">&lt;private> </span>_messages<span class="type-signature"> :EnUsHGMessages</span></h4>
 
     
 </dt>
 <dd>
     
     <div class="description">
-        The file path to read messages.
+        All messages to show for games. Parsed from locale file.
     </div>
     
 
@@ -225,7 +225,7 @@
         <ul>
             <li>
                 
-<span class="param-type">string</span>
+<span class="param-type">EnUsHGMessages</span>
 
 
 
@@ -259,13 +259,6 @@
 
 	
 
-	
-	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
-	<dd class="tag-default">
-		<ul class="dummy">
-			<li>./save/hgMessages.json</li>
-		</ul>
-	</dd>
 	
 
 
@@ -293,94 +286,6 @@
     
 </dd>
 
-        
-            
-<hr>
-<dt class="name" id="_messages">
-    <h4 id="_messages"><span class="type-signature">&lt;private> </span>_messages<span class="type-signature"> :object.&lt;Array.&lt;string>></span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        All messages to show for games. Parsed from file.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">object.&lt;Array.&lt;string>></span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
-	<dd class="tag-default">
-		<ul class="dummy">
-			<li>{}</li>
-		</ul>
-	</dd>
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="src_hg_Messages.js.html">src/hg/Messages.js</a>,
-				 <a href="src_hg_Messages.js.html#sunlight-1-line-31">line 31</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
         </dl>
     
 
@@ -391,95 +296,7 @@
             
 <hr>
 <dt>
-    <h4 class="name" id="_updateMessages"><span class="type-signature">&lt;private> </span>_updateMessages()</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Parse all messages from file.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="src_hg_Messages.js.html">src/hg/Messages.js</a>,
-				 <a href="src_hg_Messages.js.html#sunlight-1-line-51">line 51</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="get"><span class="type-signature"></span>get(type)</h4>
+    <h4 class="name" id="get"><span class="type-signature"></span>get(type [, locale] [, rep])</h4>
     
     
 </dt>
@@ -510,6 +327,8 @@
         <th>Type</th>
 
         
+        <th>Argument</th>
+        
 
         
 
@@ -536,10 +355,88 @@
             </td>
 
             
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
 
             
 
             <td class="description last">The message type to get.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>locale</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Language locale of string to get.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>rep</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                    &lt;repeatable><br>
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Values to replace tags in the chosen string.</td>
         </tr>
 
     
@@ -593,6 +490,13 @@
 	
 
 	
+	<dt class="tag-see method-doc-label method-doc-details-label">See:</dt>
+	<dd class="tag-see">
+		<ul>
+			<li>(@link Strings~get}</li>
+			</ul>
+	</dd>
+	
 
 	
 </dl>
@@ -625,6 +529,182 @@
     <dd>
         
 <span class="param-type">string</span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="getMessages"><span class="type-signature"></span>getMessages( [locale])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Get all messages for the given locale as a serializable
+object.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Argument</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>locale</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">The language locale to fetch strings in.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="src_hg_Messages.js.html">src/hg/Messages.js</a>,
+				 <a href="src_hg_Messages.js.html#sunlight-1-line-42">line 42</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    The key-pair mapping of available messages, or null if
+unable to find locale group.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">object</span>
 
 
 
@@ -696,7 +776,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="src_hg_Messages.js.html">src/hg/Messages.js</a>,
-				 <a href="src_hg_Messages.js.html#sunlight-1-line-43">line 43</a>
+				 <a href="src_hg_Messages.js.html#sunlight-1-line-30">line 30</a>
 			</li>
 		</ul>
 	</dd>
@@ -779,7 +859,7 @@
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.4</a>
 	
-		on Friday, June 19, 2020 5:06 PM (-07:00)
+		on Friday, June 19, 2020 5:09 PM (-07:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

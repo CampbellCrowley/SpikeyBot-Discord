@@ -72,12 +72,15 @@ class Simulator {
           'progress.');
       return;
     }
+    const locale = this.hg._parent.bot.getLocale &&
+        this.hg._parent.bot.getLocale(this.game.id);
+
     const data = {
       game: this.game.serializable,
       events: Object.assign(
           this.hg._defaultEventStore.serializable,
           {battles: this.hg._defaultBattles}),
-      messages: this.hg.messages._messages,
+      messages: this.hg.messages.getMessages(locale),
     };
     this.game.currentGame.day.state = 1;
     const worker = new Worker(Simulator._workerPath, {workerData: data});

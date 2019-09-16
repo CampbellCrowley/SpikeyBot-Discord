@@ -153,9 +153,8 @@ class Strings {
     if (!localeGroup) {
       console.error(`Unable to find locale: ${locale}`);
       return null;
-    } else {
-      return localeGroup.get(key, rep);
     }
+    return localeGroup.get(key, ...rep);
   }
 
   /**
