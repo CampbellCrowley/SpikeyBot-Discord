@@ -1631,7 +1631,7 @@ function HG() {
     if (!game || !game.currentGame.inProgress) {
       if (!silent && msg) reply(msg, 'endGameNoGame');
     } else if (
-      game.loading || (game.currentGame && game.currentGame.day.state <= 1)) {
+      game.loading || (game.currentGame && game.currentGame.day.state == 1)) {
       if (!silent && msg) {
         reply(msg, 'endGameLoading');
       }
@@ -1676,43 +1676,43 @@ function HG() {
       npcs: ['npc', 'npcs', 'ai', 'ais'],
     };
     let resPrefix = '';
-    let resPostfix = ' have been removed from the games.';
+    let resPostfix = 'excludePast';
     const done = function(response) {
-      self.common.reply(msg, resPrefix + resPostfix, response.substr(0, 2048));
+      const locale = self.bot.getLocale && self.bot.getLocale(id);
+      const title = strings.get(
+          'excludeTemplate', locale, strings.get(resPrefix, locale),
+          strings.get(resPostfix, locale));
+      const body = response.substr(0, 1024);
+      self.common.reply(msg, title, body);
     };
-    if (game.currentGame.inProgress) {
-      resPostfix = ' will be removed from the next game.';
-    }
+    if (game.currentGame.inProgress) resPostfix = 'excludeFuture';
     if (specialWords.everyone.includes(firstWord)) {
-      resPrefix = 'All users';
+      resPrefix = 'usersAll';
       self.excludeUsers('everyone', id, done);
     } else if (specialWords.online.includes(firstWord)) {
-      resPrefix = 'All online users';
+      resPrefix = 'usersOnline';
       self.excludeUsers('online', id, done);
     } else if (specialWords.offline.includes(firstWord)) {
-      resPrefix = 'All offline users';
+      resPrefix = 'usersOffline';
       self.excludeUsers('offline', id, done);
     } else if (specialWords.idle.includes(firstWord)) {
-      resPrefix = 'All idle users';
+      resPrefix = 'usersIdle';
       self.excludeUsers('idle', id, done);
     } else if (specialWords.dnd.includes(firstWord)) {
-      resPrefix = 'All DND users';
+      resPrefix = 'usersDND';
       self.excludeUsers('dnd', id, done);
     } else if (specialWords.npcs.includes(firstWord)) {
-      resPrefix = 'All NPCs';
+      resPrefix = 'usersNPCs';
       self.excludeUsers(game.includedNPCs.slice(0), id, done);
     } else if (specialWords.bots.includes(firstWord)) {
-      resPrefix = 'Bots';
-      resPostfix = ' are now blocked from the games.';
+      resPrefix = 'usersBots';
+      resPostfix = 'excludeBlocked';
       done(self.setOption(id, 'includeBots', false));
     } else if (
       msg.mentions.users.size + msg.softMentions.users.size +
             msg.mentions.roles.size + msg.softMentions.roles.size ==
         0) {
-      self.common.reply(
-          msg,
-          'You must specify who you wish for me to exclude from the next ' +
-              'game.');
+      reply(msg, 'excludeNoMention');
     } else {
       self.excludeUsers(parseMentions(msg), id, (res) => {
         self.common.reply(msg, res);
@@ -1735,13 +1735,13 @@ function HG() {
    */
   this.excludeUsers = function(users, id, cb) {
     const game = hg.getGame(id);
+    const locale = self.bot.getLocale && self.bot.getLocale(id);
     if (!game) {
-      cb('No game');
+      cb(strings.get('noGame', locale));
       return;
     }
     if (game.loading) {
-      cb('A previous command is still loading.\n' +
-         'Please wait for it to complete.');
+      cb(strings.get('stillLoading', locale));
       return;
     }
     if (!game.excludedNPCs) game.excludedNPCs = [];
@@ -1768,7 +1768,7 @@ function HG() {
         break;
       default:
         if (typeof users === 'string') {
-          cb('Invalid users');
+          cb(strings.get('usersInvalid', locale));
           return;
         }
         break;
@@ -1802,17 +1802,17 @@ function HG() {
               fetched();
             });
           } else {
-            response.push(excludeIterate(game, users[i], onlyError, large));
+            response.push(
+                excludeIterate(game, users[i], onlyError, large, locale));
           }
         } else {
           response.push(
-              excludeIterate(game, npcs[i - numUsers], onlyError, large));
+              excludeIterate(
+                  game, npcs[i - numUsers], onlyError, large, locale));
         }
       }
       if (i >= 0) {
-        setTimeout(() => {
-          chunk(i);
-        });
+        setTimeout(() => chunk(i));
       } else if (fetchWait === 0) {
         done();
       }
@@ -1827,7 +1827,7 @@ function HG() {
       }
       const finalRes = (response.length > 0 &&
                         response.filter((el) => el !== '\n').join('').trim()) ||
-          `Succeeded without errors (${num} excluded)`;
+          strings.get('excludeLargeSuccess', locale, num);
       cb(finalRes);
       self._fire('refresh', id);
     };
@@ -1851,30 +1851,33 @@ function HG() {
    * @param {boolean} [onlyError=false] Only add error messages to response.
    * @param {boolean} [large=false] Is this a large game where excluded users
    * are not tracked.
+   * @param {?string} [locale=null] String locale for respons formatting.
    * @returns {string} Response text for the user performing the operation.
    */
-  function excludeIterate(game, obj, onlyError = false, large = false) {
+  function excludeIterate(
+      game, obj, onlyError = false, large = false, locale = null) {
     if (!obj || obj === 'undefined') return '';
     const response = [];
     if (typeof obj === 'string') {
       if (obj.startsWith('NPC')) {
         obj = game.includedNPCs.find((el) => el.id == obj);
         if (!obj && game.excludedNPCs.find((el) => el.id == obj)) {
-          response.push(`${obj.name} is already excluded.`);
+          response.push(
+              strings.get('excludeAlreadyExcluded', locale, obj.name));
           return `${response.join('\n')}\n`;
         }
       } else {
         obj = self.client.users.resolve(obj);
       }
       if (!obj) {
-        response.push(`${obj} is not a valid id.`);
+        response.push(strings.get('excludeInvalidId', locale, obj));
         return `${response.join('\n')}\n`;
       }
     } else if (obj.id.startsWith('NPC') && !(obj instanceof NPC)) {
       const objId = obj.id;
       obj = game.includedNPCs.find((el) => el.id == obj.id);
       if (!obj) {
-        response.push(`${objId} unable to be found (already excluded?).`);
+        response.push(strings.get('excludeUnableToFind', locale, objId));
         self.error(`Unable to find NPC matching NPC-like data: ${game.id}`);
         return `${response.join('\n')}\n`;
       }
@@ -1882,13 +1885,15 @@ function HG() {
     if ((!large && game.excludedUsers.includes(obj.id)) ||
         (large && !game.includedUsers.includes(obj.id))) {
       if (!onlyError) {
-        response.push(`${obj.username} is already excluded.`);
+        response.push(
+            strings.get('excludeAlreadyExcluded', locale, obj.username));
       }
     } else {
       if (obj.isNPC) {
         game.excludedNPCs.push(obj);
         if (!onlyError) {
-          response.push(`${obj.username} added to blacklist.*`);
+          response.push(
+              strings.get('excludeBlacklist', locale, obj.username) + '*');
         }
         const includeIndex =
             game.includedNPCs.findIndex((el) => el.id == obj.id);
@@ -1901,7 +1906,7 @@ function HG() {
       } else {
         if (!large) game.excludedUsers.push(obj.id);
         if (!onlyError) {
-          response.push(`${obj.username} added to blacklist.`);
+          response.push(strings.get('excludeBlacklist', locale, obj.username));
         }
         if (!game.includedUsers) game.includedUsers = [];
         const includeIndex = game.includedUsers.indexOf(obj.id);
@@ -1925,7 +1930,7 @@ function HG() {
           // Bots are already excluded.
         } else {
           response.push(
-              `Failed to remove ${obj.username} for an unknown reason.`);
+              strings.get('excludeFailedUnknown', locale, obj.username));
           self.error(`Failed to remove player from included list. (${obj.id})`);
         }
       }

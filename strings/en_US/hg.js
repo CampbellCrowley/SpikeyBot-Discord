@@ -124,6 +124,30 @@ class EnUsHG extends Locale {
     this.endGameSuccess = 'The game has ended!';
 
     this.excludeTemplate = '{0} {1}';
+    this.usersAll = 'All users';
+    this.usersOnline = 'All online users';
+    this.usersOffline = 'All offline users';
+    this.usersIdle = 'All idle users';
+    this.usersDND = 'All DND users';
+    this.usersNPCs = 'All NPCs';
+    this.usersBots = 'Bots';
+    this.excludeBlocked = 'are now blocked from the games.';
+    this.excludeFuture = 'will be removed from the next game.';
+    this.excludePast = 'have been removed from the games.';
+    this.noGame = 'No game';
+
+    this.excludeNoMention =
+        'You must specify who you wish for me to exclude from the next game.';
+
+    this.stillLoading =
+        'A previous command is still loading.\nPlease wait for it to complete.';
+    this.usersInvalid = 'Invalid users';
+    this.excludeLargeSuccess = 'Succeeded without errors ({} excluded)';
+    this.excludeAlreadyExcluded = '{} is already excluded.';
+    this.excludeInvalidId = '{} is not a valid id.';
+    this.excludeUnableToFind = '{} unable to be found (already excluded?).';
+    this.excludeBlacklist = '{} added to blacklist.';
+    this.excludeFailedUnknown = 'Failed to remove {} for an unknown reason.';
 
     this.success = 'Success';
     this.noPermNext =
