@@ -64,8 +64,8 @@ class EnUsHG extends Locale {
         '{cancels hg react command}.';
     this.startedTitle = 'Game started!';
     this.startInProgressTitle = 'A game is already in progress!';
-    // Both {} are replaced with command prefix.
-    this.startInProgressBody = '`{}next` for next day, or `{}end` to abort)';
+    // Both {0} is replaced with command prefix.
+    this.startInProgressBody = '`{0}next` for next day, or `{0}end` to abort)';
     this.startNoAttachFiles = 'Sorry, but I need permission to send images in' +
         ' this channel before I can start the games.\nPlease ensure I have ' +
         'the "Attach Files" permission in this channel.';
@@ -99,7 +99,33 @@ class EnUsHG extends Locale {
     this.enableAutoTitle = 'Enabling Autoplay';
     // {} is replaced with the ID of the user that ran the command.
     this.enableAuto = '<@{}> `Enabling autoplay!`';
+    this.pauseGameNoGame = 'Failed: There isn\'t currently a game in progress.';
+    this.pauseGameAlreadyPaused = 'Failed: Game is already paused.';
+    this.pauseGmaeTitle = 'Game Pausing';
+    this.needStartGameTitle = 'You must start a game first!';
+    this.needStartGameBody = 'Use `{}start` to start a game!';
+    this.nextDayAlreadySimulating = 'Already simulating day.';
+    this.nextDayAlredySimBroken =
+        'I think I\'m already simulating... if this isn\'t true this game has' +
+        ' crashed and you must end the game.';
+    this.nextDayPermImagesTitle =
+        'Sorry, but I need permission to send images in this channel before I' +
+        ' can start the games.';
+    this.nextDayPermImagesBody =
+        'Please ensure I have the "Attach Files" permission in this channel.';
+    this.nextDayPermEmbedTitle =
+        'Sorry, but I need permission to embed messages in this channel ' +
+        'before I can start the games.';
+    this.nextDayPermEmbedBody =
+        'Please ensure I have the "Embed Links" permission in this channel.';
+    this.endGameNoGame = 'There isn\'t a game in progress.';
+    this.endGameLoading =
+        'Game is currently loading. Please wait, then try again.';
+    this.endGameSuccess = 'The game has ended!';
 
+    this.excludeTemplate = '{0} {1}';
+
+    this.success = 'Success';
     this.noPermNext =
         'Sorry, but you don\'t have permission to start the next day in the ' +
         'games.';

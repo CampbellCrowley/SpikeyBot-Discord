@@ -1177,7 +1177,7 @@ function HG() {
     const game = hg.getGame(id);
     if (game && game.currentGame && game.currentGame.inProgress) {
       const prefix = `${msg.prefix}${self.postPrefix}`;
-      reply(msg, 'startInProgressTitle', 'startInProgressBody', prefix, prefix);
+      reply(msg, 'startInProgressTitle', 'startInProgressBody', prefix);
       return;
     }
     const myPerms = msg.channel.permissionsFor(self.client.user.id);
@@ -1408,16 +1408,18 @@ function HG() {
    * @returns {string} User information of the outcome of this command.
    */
   this.pauseGame = function(id) {
+    let locale = null;
+    if (self.bot.getLocale) locale = self.bot.getLocale(id);
     if (!hg.getGame(id) || !hg.getGame(id).currentGame ||
         !hg.getGame(id).currentGame.inProgress) {
-      return 'Failed: There isn\'t currently a game in progress.';
+      return strings.get('pauseGameNoGame', locale);
     }
     if (hg.getGame(id).currentGame.isPaused) {
-      return 'Failed: Game is already paused.';
+      return strings.get('pauseGameAlreadyPaused', locale);
     }
     hg.getGame(id).clearIntervals();
     hg.getGame(id).currentGame.isPaused = true;
-    return 'Success';
+    return strings.get('success', locale);
   };
 
   /**
@@ -1430,7 +1432,7 @@ function HG() {
    * @param {string} id The id of the guild this was triggered from.
    */
   function pauseGame(msg, id) {
-    self.common.reply(msg, 'Game Pausing', self.pauseGame(id));
+    reply(msg, 'pauseGameTitle', 'fillOne', self.pauseGame(id));
   }
 
   /**
@@ -1462,10 +1464,8 @@ function HG() {
     const game = hg.getGame(id);
     if (!game || !game.currentGame ||
         !game.currentGame.inProgress) {
-      self.common
-          .reply(
-              msg, 'You must start a game first! Use "' + msg.prefix +
-                  self.postPrefix + 'start" to start a game!')
+      const prefix = msg.prefix = self.postPrefix;
+      reply(msg, 'needStartGameTitle', 'needStartGameBody', prefix)
           .catch((err) => {
             self.error('Failed to tell user to start game: ' + err.message);
             if (err.message != 'No Perms') console.error(err);
@@ -1475,19 +1475,13 @@ function HG() {
     }
     if (game.currentGame.day.state !== 0) {
       if (game._autoStep) {
-        self.common.reply(msg, 'Already simulating day.');
+        reply(msg, 'nextDayAlreadySimulating');
       } else if (game.currentGame.day.state == 1) {
-        self.common
-            .reply(
-                msg,
-                'I think I\'m already simulating... if this isn\'t true this ' +
-                    'game has crashed and you must end the game.')
-            .catch((err) => {
-              self.error(
-                  'Failed to tell user day is already in progress: ' +
-                  err.message);
-              if (err.message != 'No Perms') console.error(err);
-            });
+        reply(msg, 'nextDayAlreadySimBroken').catch((err) => {
+          self.error(
+              'Failed to tell user day is already in progress: ' + err.message);
+          if (err.message != 'No Perms') console.error(err);
+        });
       } else if (autoStep) {
         game.createInterval(dayStateModified);
       } else {
@@ -1500,12 +1494,7 @@ function HG() {
     if (!myPerms ||
         (!myPerms.has(self.Discord.Permissions.FLAGS.ATTACH_FILES) &&
          !myPerms.has(self.Discord.Permissions.FLAGS.ADMINISTRATOR))) {
-      self.common.reply(
-          msg, 'Sorry, but I need permission to send images ' +
-              'in this channel before I can start the games.\nPlease ensure' +
-              ' I have the "Attach Files" permission in this channel.',
-          myPerms ? null :
-                    'This is probably a bug, this should be fixed soon.');
+      reply(msg, 'nextDayPermImagesTitle', 'nextDayPermImagesBody');
       if (!myPerms) {
         self.error(
             'Failed to fetch perms for myself. ' + (msg.guild.me && true));
@@ -1514,10 +1503,7 @@ function HG() {
     } else if (
       !myPerms.has(self.Discord.Permissions.FLAGS.EMBED_LINKS) &&
         !myPerms.has(self.Discord.Permissions.FLAGS.ADMINISTRATOR)) {
-      self.common.reply(
-          msg, 'Sorry, but I need permission to embed messages ' +
-              'in this channel before I can start the games.\nPlease ensure' +
-              ' I have the "Embed Links" permission in this channel.');
+      reply(msg, 'nextDayPermEmbedTitle', 'nextDayPermEmbedBody');
       return;
     }
     const sim = new HungryGames.Simulator(game, hg, msg);
@@ -1643,19 +1629,16 @@ function HG() {
   function endGame(msg, id, silent = false) {
     const game = hg.getGame(id);
     if (!game || !game.currentGame.inProgress) {
-      if (!silent && msg) {
-        self.common.reply(msg, 'There isn\'t a game in progress.');
-      }
+      if (!silent && msg) reply(msg, 'endGameNoGame');
     } else if (
-      game.loading || (game.currentGame && game.currentGame.day.state == 1)) {
+      game.loading || (game.currentGame && game.currentGame.day.state <= 1)) {
       if (!silent && msg) {
-        self.common.reply(
-            msg, 'Game is currently loading. Please wait, then try again.');
+        reply(msg, 'endGameLoading');
       }
     } else {
       game.end();
       HungryGames.ActionManager.gameAbort(hg, game);
-      if (!silent && msg) self.common.reply(msg, 'The game has ended!');
+      if (!silent && msg) reply(msg, 'endGameSuccess');
     }
   }
 
@@ -1674,7 +1657,7 @@ function HG() {
     if (!game || !game.currentGame) {
       createGame(msg, id, false, (game) => {
         if (!game) {
-          self.common.reply(msg, 'Failed to create game for unknown reason.');
+          reply(msg, 'createFailedUnknown');
           return;
         }
         excludeUser(msg, id, game);
