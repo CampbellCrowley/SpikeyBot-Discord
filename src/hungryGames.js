@@ -1971,42 +1971,43 @@ function HG() {
       npcs: ['npc', 'npcs', 'ai', 'ais'],
     };
     let resPrefix = '';
-    let resPostfix = ' have been added to the games.';
+    let resPostfix = 'includePast';
     const done = function(response) {
-      self.common.reply(msg, resPrefix + resPostfix, response.substr(0, 2048));
+      const locale = self.bot.getLocale && self.bot.getLocale(id);
+      const title = strings.get(
+          'excludeTemplate', locale, strings.get(resPrefix, locale),
+          strings.get(resPostfix, locale));
+      const body = response.substr(0, 1024);
+      self.common.reply(msg, title, body);
     };
-    if (game.currentGame.inProgress) {
-      resPostfix = ' will be added into the next game.';
-    }
+    if (game.currentGame.inProgress) resPostfix = 'includeFuture';
     if (specialWords.everyone.includes(firstWord)) {
-      resPrefix = 'All users';
+      resPrefix = 'usersAll';
       self.includeUsers('everyone', id, done);
     } else if (specialWords.online.includes(firstWord)) {
-      resPrefix = 'All online users';
+      resPrefix = 'usersOnline';
       self.includeUsers('online', id, done);
     } else if (specialWords.offline.includes(firstWord)) {
-      resPrefix = 'All offline users';
+      resPrefix = 'usersOffline';
       self.includeUsers('offline', id, done);
     } else if (specialWords.idle.includes(firstWord)) {
-      resPrefix = 'All idle users';
+      resPrefix = 'usersIdle';
       self.includeUsers('idle', id, done);
     } else if (specialWords.dnd.includes(firstWord)) {
-      resPrefix = 'All DND users';
+      resPrefix = 'usersDND';
       self.includeUsers('dnd', id, done);
     } else if (specialWords.npcs.includes(firstWord)) {
-      resPrefix = 'All NCPs';
+      resPrefix = 'usersNPCs';
       self.includeUsers(game.excludedNPCs.slice(0), id, done);
     } else if (specialWords.bots.includes(firstWord)) {
-      resPrefix = 'Bots';
-      resPostfix = ' can now be added to the games.';
+      resPrefix = 'usersBots';
+      resPostfix = 'includeUnblocked';
       done(self.setOption(id, 'includeBots', true));
     } else if (
       msg.mentions.users.size + msg.softMentions.users.size +
             msg.mentions.roles.size + msg.softMentions.roles.size ==
         0) {
-      self.common.reply(
-          msg,
-          'You must specify who you wish for me to include in the next game.');
+      reply(msg, 'includeNoMention');
     } else {
       self.includeUsers(parseMentions(msg), id, (response) => {
         self.common.reply(msg, response);
@@ -2029,13 +2030,13 @@ function HG() {
    */
   this.includeUsers = function(users, id, cb) {
     const game = hg.getGame(id);
+    const locale = self.bot.getLocale && self.bot.getLocale(id);
     if (!game) {
-      cb('No game');
+      cb(strings.get('noGame', locale));
       return;
     }
     if (game.loading) {
-      cb('A previous command is still loading.\n' +
-         'Please wait for it to complete.');
+      cb(strings.get('stillLoading', locale));
       return;
     }
     if (!game.excludedNPCs) game.excludedNPCs = [];
@@ -2066,7 +2067,7 @@ function HG() {
         break;
       default:
         if (typeof users === 'string') {
-          cb('Invalid users');
+          cb(strings.get('usersInvalid', locale));
           return;
         }
         break;
@@ -2124,7 +2125,7 @@ function HG() {
       }
       const finalRes = (response.length > 0 &&
                         response.filter((el) => el !== '\n').join('').trim()) ||
-          `Succeeded without errors (${num} included)`;
+          strings.get('includeLargeSuccess', locale, num);
       cb(finalRes);
       self._fire('refresh', id);
     };
@@ -2146,36 +2147,38 @@ function HG() {
    * @param {string|HungryGames~Player|HungryGames~NPC} obj Player for this
    * iteration.
    * @param {boolean} [onlyError=false] Only add error messages to response.
+   * @param {?string} [locale=null] String locale for respons formatting.
    * @returns {string} Response text for the user performing the operation.
    */
-  function includeIterate(game, obj, onlyError = false) {
+  function includeIterate(game, obj, onlyError = false, locale = null) {
     if (!obj || obj === 'undefined') return '';
     const response = [];
     if (typeof obj === 'string') {
       if (obj.startsWith('NPC')) {
         obj = game.excludedNPCs.find((el) => el.id == obj);
         if (!obj && game.includedNPCs.find((el) => el.id == obj)) {
-          response.push(`${obj.username} is already included.`);
+          response.push(
+              strings.get('includeAlreadyIncluded', locale, obj.username));
           return `${response.join('\n')}\n`;
         }
       } else {
         obj = self.client.users.resolve(obj);
       }
       if (!obj) {
-        response.push(`${obj} is not a valid id.`);
+        response.push(strings.get('excludeInvalidId', locale, obj));
         return `${response.join('\n')}\n`;
       }
     } else if (obj.id.startsWith('NPC') && !(obj instanceof NPC)) {
       const objId = obj.id;
       obj = game.excludedNPCs.find((el) => el.id == obj.id);
       if (!obj) {
-        response.push(`${objId} unable to be found (already included?).`);
+        response.push(strings.get('includeUnableToFind', locale, objId));
         self.error(`Unable to find NPC matching NPC-like data: ${game.id}`);
         return `${response.join('\n')}\n`;
       }
     }
     if (!game.options.includeBots && obj.bot) {
-      response.push(`${obj.username} is a bot, but bots are disabled.`);
+      response.push(strings.get('includeBotsDisabled', locale, obj.username));
       return `${response.join('\n')}\n`;
     }
     if (obj.isNPC) {
@@ -2189,7 +2192,8 @@ function HG() {
       if (!game.includedNPCs.find((el) => el.id == obj.id)) {
         game.includedNPCs.push(obj);
         if (!onlyError) {
-          response.push(`${obj.username} added to whitelist.*`);
+          response.push(
+              strings.get('includeWhitelist', locale, obj.username) + '*');
         }
       }
     } else {
@@ -2203,25 +2207,24 @@ function HG() {
       if (!game.includedUsers.includes(obj.id)) {
         game.includedUsers.push(obj.id);
         if (!onlyError) {
-          response.push(`${obj.username} added to whitelist.`);
+          response.push(strings.get('includeWhitelist', locale, obj.username));
         }
       }
     }
     if (game.currentGame.inProgress) {
       if (!onlyError) {
-        response.push(`${obj.username} skipped.`);
+        response.push(strings.get('includeSkipped', locale, obj.username));
       }
     } else if (!game.currentGame.includedUsers.find((u) => u.id === obj.id)) {
       if (obj.isNPC) {
         game.currentGame.includedUsers.push(
             new NPC(obj.name, obj.avatarURL, obj.id));
       } else {
+        const avatar =
+            (obj.displayAvatarURL && obj.displayAvatarURL({format: 'png'})) ||
+            obj.avatarURL;
         game.currentGame.includedUsers.push(
-            new HungryGames.Player(
-                obj.id, obj.username, (obj.displayAvatarURL &&
-                                       obj.displayAvatarURL({format: 'png'})) ||
-                    obj.avatarURL,
-                obj.nickname));
+            new HungryGames.Player(obj.id, obj.username, avatar, obj.nickname));
       }
       /* if (!onlyError) {
         response += obj.username + ' added to included players.\n';
@@ -2229,7 +2232,8 @@ function HG() {
       game.formTeams();
     } else {
       if (!onlyError) {
-        response.push(`${obj.username} is already included.`);
+        response.push(
+            strings.get('includeAlreadyIncluded', locale, obj.username));
       }
     }
     return `${response.join('\n')}\n`;

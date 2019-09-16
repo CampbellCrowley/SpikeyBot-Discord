@@ -123,6 +123,8 @@ class EnUsHG extends Locale {
         'Game is currently loading. Please wait, then try again.';
     this.endGameSuccess = 'The game has ended!';
 
+    // {0} is the group that was modified (ie: "All users").
+    // {1} is what was modified (ie: "have been added to the games.").
     this.excludeTemplate = '{0} {1}';
     this.usersAll = 'All users';
     this.usersOnline = 'All online users';
@@ -134,19 +136,30 @@ class EnUsHG extends Locale {
     this.excludeBlocked = 'are now blocked from the games.';
     this.excludeFuture = 'will be removed from the next game.';
     this.excludePast = 'have been removed from the games.';
+    this.includeUnblocked = 'can now be added to the games.';
+    this.includeFuture = 'will be added into the next game.';
+    this.includePast = 'have been added to the games.';
     this.noGame = 'No game';
 
     this.excludeNoMention =
         'You must specify who you wish for me to exclude from the next game.';
+    this.includeNoMention =
+        'You must specify who you wish for me to include in the next game.';
 
     this.stillLoading =
         'A previous command is still loading.\nPlease wait for it to complete.';
     this.usersInvalid = 'Invalid users';
-    this.excludeLargeSuccess = 'Succeeded without errors ({} excluded)';
-    this.excludeAlreadyExcluded = '{} is already excluded.';
     this.excludeInvalidId = '{} is not a valid id.';
+    this.includeBotsDisabled = '{} is a bot, but bots are disabled.';
+    this.includeSkipped = '{} skipped.';
+    this.excludeLargeSuccess = 'Succeeded without errors ({} excluded)';
+    this.includeLargeSuccess = 'Succeeded without errors ({} included)';
+    this.excludeAlreadyExcluded = '{} is already excluded.';
+    this.includeAlreadyIncluded = '{} is already included.';
     this.excludeUnableToFind = '{} unable to be found (already excluded?).';
+    this.includeUnableToFind = '{} unable to be found (already included?).';
     this.excludeBlacklist = '{} added to blacklist.';
+    this.includeWhitelist = '{} added to whitelist.';
     this.excludeFailedUnknown = 'Failed to remove {} for an unknown reason.';
 
     this.success = 'Success';
