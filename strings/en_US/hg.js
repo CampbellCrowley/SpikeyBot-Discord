@@ -171,6 +171,38 @@ class EnUsHG extends Locale {
     this.messageRejected =
         'Oops, Discord rejected my message for some reason...';
     this.listPlayerTitle = 'List of players';
+    this.listPlayerNoPlayersTitle = 'No Players';
+    this.listPlayerNoPlayersBody = 'No game created or no players in the game.';
+    this.listPlayerIncludedNum = 'Included ({})';
+    this.listPlayerExcludedNum = 'Excluded ({})';
+
+    this.optionNoOptions = 'No options have been set.';
+    this.optionCreateGame = 'Please create a game first. `{}create`';
+    this.optionInvalidChoice =
+        'That is not a valid option to change! ({0})\nUse `{1}options` to see' +
+        ' all changeable options.';
+    this.optionTeamDuringGame =
+        'Teams and included players cannot be modified during a game.\nYou ' +
+        'must end the current game first to do this.';
+    this.optionInvalidNumber =
+        'That is not a valid value for {0}, which requires a number. ' +
+        '(Currently {1})';
+    this.optionChangeTeam =
+        'Set {0} to {1} from {2}\nTo reset teams to the correct size, type ' +
+        '"{3}teams reset".\nThis will delete all teams, and create new ones.';
+    this.optionChange = 'Set {0} to {1} from {2}';
+    this.optionInvalidBoolean =
+        'That is not a valid value for {0}, which requires true or false. ' +
+        '(Currently {1})';
+    this.optionServerToLargeExclude =
+        'Due to performance issues, large servers must exclude new users by ' +
+        'default.';
+    this.optionInvalidString =
+        'That is not a valid value for {}, which requires one of the ' +
+        'following: {}. (Currently {})';
+    this.optionInvalidObject = '`{}` is not a valid option to change!';
+    this.optionInvalidType =
+        'Changing the value of this option does not work yet. ({}: {})\n{}({})';
 
     this.success = 'Success';
     this.noPermNext =

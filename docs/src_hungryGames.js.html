@@ -2376,13 +2376,16 @@ function HG() {
     }
     if (!game || !game.currentGame || !game.currentGame.includedUsers) {
       finalMessage.addField(
-          'No Players', 'No game created or no players in the game.');
+          strings.get('listPlayerNoPlayersTitle', locale),
+          strings.get('listPlayerNoPlayersBody', locale));
       return finalMessage;
     }
     const numUsers = game.currentGame.includedUsers.length;
     if (numUsers > 200) {
       finalMessage.addField(
-          `Included (${numUsers})`, `Excluded (${game.excludedUsers.length})`,
+          strings.get('listPlayerIncludedNum', locale, numUsers),
+          strings.get(
+              'listPlayerExcludedNum', locale, game.excludedUsers.length),
           true);
       return finalMessage;
     }
@@ -2450,16 +2453,20 @@ function HG() {
           const thisMessage =
               statusList.splice(0, quarterLength).join('\n').substring(0, 1024);
           finalMessage.addField(
-              'Included (' + (i * quarterLength + 1) + '-' +
-                  ((i + 1) * quarterLength) + ')',
+              strings.get(
+                  'listPlayerIncludedNum', locale,
+                  `${i * quarterLength + 1}-${(i + 1) * quarterLength}`),
               thisMessage, true);
         }
         finalMessage.addField(
-            `Included (${(numCols - 1) * quarterLength + 1}-${numUsers})`,
+            strings.get(
+                'listPlayerIncludedNum', locale,
+                `${(numCols - 1) * quarterLength + 1}-${numUsers}`),
             statusList.join('\n'), true);
       } else {
         finalMessage.addField(
-            `Included (${numUsers})`, statusList.join('\n') || 'Nobody', false);
+            strings.get('listPlayerIncludedNum', locale, numUsers),
+            statusList.join('\n') || 'Nobody', false);
       }
     }
     if (game.excludedUsers.length > 0) {
@@ -2476,7 +2483,9 @@ function HG() {
         }
       }
       finalMessage.addField(
-          `Excluded (${game.excludedUsers.length})`, excludedList, false);
+          strings.get(
+              'listPlayerExcludedNum', locale, game.excludedUsers.length),
+          excludedList, false);
     }
     return finalMessage;
   }
@@ -2517,9 +2526,9 @@ function HG() {
     const output = self.setOption(id, option, value, msg.text);
     if (!output) {
       if (!hg.getGame(id).options) {
-        self.common.reply(
-            msg, 'No options have been set.', 'Please create a game first. `' +
-                msg.prefix + self.postPrefix + 'create`');
+        reply(
+            msg, 'optionNoOptions', 'optionCreateGame,',
+            `${msg.prefix}${self.postPrefix}`);
       } else {
         showOpts(msg, hg.getGame(id).options);
       }
@@ -2541,8 +2550,9 @@ function HG() {
    * the user the list of options instead.
    */
   this.setOption = function(id, option, value, text = '') {
+    const locale = self.bot.getLocale &amp;&amp; self.bot.getLocale(id);
     if (!hg.getGame(id) || !hg.getGame(id).currentGame) {
-      return 'A game has not been created yet.';
+      return strings.get('gameNotCreated', locale);
     }
     if (typeof option === 'undefined' || option.length == 0) {
       return null;
@@ -2550,9 +2560,9 @@ function HG() {
       option[0] === '_' || typeof defaultOptions[option] === 'undefined') {
       const searchedOption = defaultOptSearcher.search(option);
       if (typeof defaultOptions[searchedOption] === 'undefined') {
-        return 'That is not a valid option to change! (' + option + ')\nUse `' +
-            self.bot.getPrefix(id) + self.postPrefix +
-            'options` to see all changeable options.';
+        return strings.get(
+            'optionInvalidChoice', locale, option,
+            `${self.bot.getPrefix(id)}${self.postPrefix}`);
       }
       option = searchedOption;
     }
@@ -2584,6 +2594,7 @@ function HG() {
    */
   function changeObjectValue(
       obj, defaultObj, option, value, values, id, range, keys) {
+    const locale = self.bot.getLocale &amp;&amp; self.bot.getLocale(id);
     if (!keys || !Array.isArray(keys)) keys = [];
     keys.push(option);
     let type = typeof defaultObj[option];
@@ -2594,51 +2605,41 @@ function HG() {
     }
     if (hg.getGame(id).currentGame &amp;&amp; hg.getGame(id).currentGame.inProgress) {
       if (option == 'teamSize' || option == 'includeBots') {
-        return 'Teams and included players cannot be modified during a game.' +
-            '\nYou must end the current game first to do this.';
+        return strings.get('optionTeamDuringGame', locale);
       }
     }
     if (type === 'number') {
       value = Number(value);
       if (typeof value !== 'number' || isNaN(value)) {
-        return 'That is not a valid value for ' + option +
-            ', which requires a number. (Currently ' + obj[option] + ')';
+        return strings.get('optionInvalidNumber', locale, option, obj[option]);
       } else {
         if (range) {
           if (value &lt; range.min) value = range.min;
           if (value > range.max) value = range.max;
         }
-        /* if ((option == 'delayDays' || option == 'delayEvents') &amp;&amp; value &lt;
-        500) {
-          value = 1000;
-        } */
 
         const old = obj[option];
         obj[option] = value;
         self._fire('toggleOption', id, ...keys, value);
         if (option == 'teamSize' &amp;&amp; value != 0) {
-          return 'Set ' + option + ' to ' + obj[option] + ' from ' + old +
-              '\nTo reset teams to the correct size, type "' +
-              self.bot.getPrefix() + self.postPrefix +
-              'teams reset".\nThis will delete all teams, and create ' +
-              'new ones.';
+          return strings.get(
+              'optionChangeTeam', locale, option, obj[option], old,
+              `${self.bot.getPrefix()}${self.postPrefix}`);
         } else {
-          return 'Set ' + option + ' to ' + obj[option] + ' from ' + old;
+          return strings.get('optionChange', locale, option, obj[option], old);
         }
       }
     } else if (type === 'boolean') {
       if (typeof value === 'string') value = value.toLowerCase();
       if (value === 'true' || value === 'false') value = value === 'true';
       if (typeof value !== 'boolean') {
-        return 'That is not a valid value for ' + option +
-            ', which requires true or false. (Currently ' + obj[option] + ')';
+        return strings.get('optionInvalidBoolean', locale, option, obj[option]);
       } else {
         if (option == 'excludeNewUsers' &amp;&amp;
             self.client.guilds.resolve(id).memberCount >=
                 HungryGames.largeServerCount) {
           obj[option] = true;
-          return 'Due to performance issues, large servers must exclude new ' +
-              'users by default.';
+          return strings.get('optionServerToLargeExclude', locale);
         }
         const old = obj[option];
         obj[option] = value;
@@ -2646,34 +2647,34 @@ function HG() {
           createGame(null, id, true);
         }
         self._fire('toggleOption', id, ...keys, value);
-        return `Set ${option} to ${obj[option]} from ${old}`;
+        return strings.get('optionChange', locale, option, obj[option], old);
       }
     } else if (type === 'string') {
       value = (value || '').toLowerCase();
       if (defaultObj[option].values.lastIndexOf(value) &lt; 0) {
-        return 'That is not a valid value for ' + option +
-            ', which requires one of the following: ' +
-            JSON.stringify(defaultObj[option].values) + '. (Currently ' +
-            obj[option] + ')';
+        return strings.get(
+            'optionInvalidString', locale, option,
+            JSON.stringify(defaultObj[option].values), obj[option]);
       } else {
         const old = obj[option];
         obj[option] = value;
         self._fire('toggleOption', id, ...keys, value);
-        return 'Set ' + option + ' to ' + obj[option] + ' from ' + old;
+        return strings.get('optionChange', locale, option, obj[option], old);
       }
     } else if (type === 'object') {
       if (typeof defaultObj[option].value[value] === 'undefined') {
-        return '`' + value + '` is not a valid option to change!' +
-            JSON.stringify(obj[option], null, 1);
+        return strings.get(
+            'optionInvalidObject', locale, value,
+            JSON.stringify(obj[option], null, 1));
       } else {
         return changeObjectValue(
             obj[option], defaultObj[option].value || defaultObj[option],
             values[1], values[2], values.slice(3), id, range, keys);
       }
     } else {
-      return 'Changing the value of this option does not work yet. (' + option +
-          ': ' + type + ')\n' + JSON.stringify(defaultObj) + '(' + value + ')' +
-          JSON.stringify(values);
+      return strings.get(
+          'optionInvalidType', locale, option, type, JSON.stringify(defaultObj),
+          value, JSON.stringify(values));
     }
   }
 
@@ -5258,7 +5259,7 @@ module.exports = new HG();
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.4</a>
 	
-		on Friday, June 19, 2020 5:10 PM (-07:00)
+		on Friday, June 19, 2020 5:11 PM (-07:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>
