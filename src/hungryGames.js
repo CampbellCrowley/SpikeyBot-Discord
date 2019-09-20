@@ -2595,7 +2595,7 @@ function HG() {
   function showOpts(msg, options) {
     const entries = Object.entries(options);
 
-    const bodyList = entries.map(function(obj) {
+    const bodyList = entries.map((obj) => {
       const key = obj[0];
       const val = obj[1];
 
@@ -2623,15 +2623,20 @@ function HG() {
     if (page >= bodyFields.length) page = bodyFields.length - 1;
 
     const embed = new self.Discord.MessageEmbed();
-    embed.setTitle('Current Options');
-    embed.setFooter('Page ' + (page + 1) + ' of ' + (bodyFields.length));
+    embed.setTitle(strings.get('optionListTitle', msg.locale));
+    embed.setFooter('pageNumbers', msg.locale, (page + 1), (bodyFields.length));
     embed.setDescription('```js\n' + bodyFields[page].join('\n\n') + '```');
     embed.addField(
-        'Simple Example',
-        msg.prefix + self.postPrefix + 'options includeBots true', true);
+        strings.get('optionListSimpleExampleTitle', msg.locale),
+        strings.get(
+            'optionListSimpleExampleBody', msg.locale,
+            `${msg.prefix}${self.postPrefix}`),
+        true);
     embed.addField(
-        'Change Object Example',
-        msg.prefix + self.postPrefix + 'options playerOutcomeProbs kill 23',
+        strings.get('optionListObjectExampleTitle', msg.locale),
+        strings.get(
+            'optionListObjectExampleBody', msg.locale,
+            `${msg.prefix}${self.postPrefix}`),
         true);
 
     if (optionMessages[msg.id]) {

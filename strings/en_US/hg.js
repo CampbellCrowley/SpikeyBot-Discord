@@ -202,8 +202,15 @@ class EnUsHG extends Locale {
         'following: {}. (Currently {})';
     this.optionInvalidObject = '`{}` is not a valid option to change!';
     this.optionInvalidType =
-        'Changing the value of this option does not work yet. ({}: {})\n{}({})';
+        'Changing the value of this option does not work yet. ({0}: {1})' +
+        '\n{2}({3})';
+    this.optionListTitle = 'Current Options';
+    this.optionListSimpleExampleTitle = 'Simple Example';
+    this.optionListSimpleExampleBody = '{}options includeBots true';
+    this.optionListObjectExampleTitle = 'Change Object Example';
+    this.optionListObjectExampleBody = '{}options playerOutcomeProbs kill 23';
 
+    this.pageNumbers = 'Page {0} of {1}';
     this.success = 'Success';
     this.noPermNext =
         'Sorry, but you don\'t have permission to start the next day in the ' +

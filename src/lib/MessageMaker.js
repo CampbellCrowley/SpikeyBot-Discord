@@ -86,6 +86,12 @@ class MessageMaker {
      */
     this.prefix = prefix;
     /**
+     * @description Guild locale setting.
+     * @public
+     * @type {?string}
+     */
+    this.locale = self.bot.getLocale && self.bot.getLocale(gId);
+    /**
      * @description Empty soft mention collections for compatibility.
      * @public
      * @type {{
