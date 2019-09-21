@@ -436,7 +436,7 @@ function HGWeb() {
     });
 
     const error = function(...args) {
-      console.error(...args);
+      console.error('HG WebSocket Error:', ...args);
     };
 
     socket.on('connect_error', error);
