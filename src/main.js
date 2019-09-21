@@ -1718,14 +1718,14 @@ function Main() {
             'Server', 'Created: ' + guild.createdAt.toUTCString() +
                 '\nOwner: _Unknown_\nRegion: ' + guild.region +
                 '\nVerification: ' + guild.verificationLevel + ' (' +
-                guild.verfied + ')',
+                guild.verified + ')\nPartnered: ' + guild.partnered,
             true);
       } else {
         embed.addField(
             'Server', 'Created: ' + guild.createdAt.toUTCString() +
                 '\nOwner: <@' + guild.ownerID + '>\nRegion: ' + guild.region +
                 '\nVerification: ' + guild.verificationLevel + ' (' +
-                guild.verfied + ')',
+                guild.verified + ')\nPartnered: ' + guild.partnered,
             true);
       }
       embed.addField(
@@ -2950,7 +2950,8 @@ function Main() {
           '\nLargest Server: ' + fmtNum(values.numLargestGuild) +
           ' members\nChannels: ' + fmtNum(values.numChannels) + '\nEmojis: ' +
           fmtNum(values.numEmojis) + '\nVerified: ' +
-          fmtNum(values.numVerified);
+          fmtNum(values.numVerified) + '\nPartnered: ' +
+          fmtNum(values.numPartnered);
       embed.addField('Guilds', guildString, true);
 
       const userString = 'Users: ' + fmtNum(values.numMembers) +
@@ -3004,6 +3005,7 @@ function Main() {
       numChannels: 0,
       numEmojis: 0,
       numVerified: 0,
+      numPartnered: 0,
       uptimes: [],
       memory: [],
       largestActivity: {name: 'Nothing', count: 0},
@@ -3041,6 +3043,7 @@ function Main() {
         values.numChannels += res[i].numChannels;
         values.numEmojis += res[i].numEmojis;
         values.numVerified += res[i].numVerified;
+        values.numPartnered += res[i].numPartnered;
         values.uptimes[i] = res[i].uptime;
         values.versions[i] = res[i].version;
         const mem = res[i].memory;
@@ -3093,6 +3096,7 @@ function Main() {
       numChannels: 0,
       numEmojis: 0,
       numVerified: 0,
+      numPartnered: 0,
       uptime: '0 days',
       memory: process.memoryUsage(),
       activities: {},
@@ -3108,6 +3112,7 @@ function Main() {
       out.numMembers += g.memberCount;
       out.numEmojis += g.emojis.size;
       if (g.verified) out.numVerified++;
+      if (g.partnered) out.numPartnered++;
     });
     const guildDelta = Date.now() - iTime;
 
