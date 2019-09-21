@@ -210,6 +210,34 @@ class EnUsHG extends Locale {
     this.optionListObjectExampleTitle = 'Change Object Example';
     this.optionListObjectExampleBody = '{}options playerOutcomeProbs kill 23';
 
+    this.teamEditNoGame =
+        'There isn\'t currently any game to edit. Please create one first.';
+    this.teamEditInProgress =
+        'You must end the current game before editing teams.';
+    this.teamEditNoTeams =
+        'There are no teams to edit. If you wish to have teams, you can set ' +
+        'teamSize to the size of teams you wish to have.';
+    // {} is replaced with team number.
+    this.teamDefaultName= 'Team {}';
+    this.teamSwapNeedTwo =
+        'Swapping requires mentioning 2 users to swap teams with eachother.';
+    this.teamSwapNoTeam = 'Please ensure both users are on a team.';
+    this.teamSwapSuccess = 'Swapped players!';
+    this.teamMoveNoMention = 'You must at least mention one user to move.';
+    this.teamMoveNoTeam = 'Is {} on a team?';
+    this.teamMoveBadFormat =
+        'Please ensure the first option is the user, and the second ' +
+        'is the destination (either a mention or a team id).';
+    this.teamMoveSuccess = 'Moving `{0}` from {1} to {2}';
+    this.teamRenameNoId =
+        'Please specify a team id, or mention someone on a team, in order to ' +
+        'rename their team.';
+    this.teamRenameInvalidIdTitle = 'Please specify a valid team id';
+    this.teamRenameInvalidIdBody = '(1 - {})';
+    this.teamRenameSuccess = 'Renaming "{0}" to "{1}"';
+    this.teamRandomizeNoTeams = 'There are no teams to randomize.';
+    this.teamRandomizeSuccess = 'Teams have been randomized!';
+
     this.pageNumbers = 'Page {0} of {1}';
     this.success = 'Success';
     this.noPermNext =

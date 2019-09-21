@@ -2663,18 +2663,16 @@ function HG() {
   function optChangeListener(msg_, options, index) {
     msg_.optId = index;
     optionMessages[msg_.id] = msg_;
-    msg_.react(emoji.arrowLeft).then(() => {
-      msg_.react(emoji.arrowRight);
-    });
+    msg_.react(emoji.arrowLeft).then(() => msg_.react(emoji.arrowRight));
     newReact(maxReactAwaitTime);
-    msg_.awaitReactions(function(reaction, user) {
+    msg_.awaitReactions((reaction, user) => {
       if (user.id != self.client.user.id) {
         reaction.users.remove(user).catch(() => {});
       }
       return (reaction.emoji.name == emoji.arrowRight ||
                   reaction.emoji.name == emoji.arrowLeft) &&
               user.id != self.client.user.id;
-    }, {max: 1, time: maxReactAwaitTime}).then(function(reactions) {
+    }, {max: 1, time: maxReactAwaitTime}).then((reactions) => {
       if (reactions.size == 0) {
         msg_.reactions.removeAll().catch(() => {});
         delete optionMessages[msg_.id];
@@ -2705,10 +2703,10 @@ function HG() {
   function editTeam(msg, id, silent) {
     const split = msg.text.trim().split(' ');
     if (!hg.getGame(id) || !hg.getGame(id).currentGame) {
-      const message = 'There isn\'t currently any game to edit.' +
-          ' Please create one first.';
+      const message = strings.get('teamEditNoGame', msg.locale);
       if (!silent) {
-        msg.channel.send(self.common.mention(msg) + ' `' + message + '`');
+        msg.channel.send(self.common.mention(msg) + ' `' + message + '`')
+            .catch(console.error);
       }
       return message;
     }
@@ -2717,7 +2715,7 @@ function HG() {
         case 'rename':
           break;
         default: {
-          const message = 'You must end the current game before editing teams.';
+          const message = strings.get('teamEditInProgress', msg.locale);
           if (!silent) {
             msg.channel.send(self.common.mention(msg) + ' `' + message + '`');
           }
@@ -2726,12 +2724,10 @@ function HG() {
       }
     }
     if (hg.getGame(id).options.teamSize == 0) {
-      const message =
-          'There are no teams to edit. If you wish to have teams, you can ' +
-          'set teamSize to the size of teams you wish to have.';
+      const message = strings.get('teamEditNoTeams', msg.locale);
       if (!silent) {
         self.common.reply(
-            msg, message, msg.prefix + self.postPrefix + 'opt teamSize 2');
+            msg, message, `${msg.prefix}${self.postPrefix}opt teamSize 2`);
       }
       return message;
     }
@@ -2746,7 +2742,7 @@ function HG() {
         renameTeam(msg, id, silent);
         break;
       case 'reset':
-        if (!silent) self.common.reply(msg, 'Resetting ALL teams!');
+        if (!silent) reply(msg, 'resetTeams');
         hg.getGame(id).currentGame.teams = [];
         hg.getGame(id).formTeams(id);
         break;
@@ -2773,8 +2769,9 @@ function HG() {
    * @returns {?string} Error message or null if no error.
    */
   this.editTeam = function(uId, gId, cmd, one, two) {
+    const locale = self.bot.getLocale && self.bot.getLocale(gId);
     if (!hg.getGame(gId) || !hg.getGame(gId).currentGame) {
-      return 'No game has been created yet.';
+      return strings.get('gameNotCreated', locale);
     }
     if (hg.getGame(gId).currentGame.inProgress) {
       switch (cmd) {
@@ -2833,12 +2830,11 @@ function HG() {
         if (!teamS) break;
         if (!teamD) {
           const current = hg.getGame(gId).currentGame;
-          teamD =
-              current.teams[current.teams.push(
-                  new HungryGames.Team(
-                      current.teams.length,
-                      'Team ' + (current.teams.length + 1), [])) -
-                            1];
+          const newTeam = new HungryGames.Team(
+              current.teams.length,
+              strings.get('teamDefaultName', locale, current.teams.length + 1),
+              []);
+          teamD = current.teams[current.teams.push(newTeam) - 1];
         }
         teamD.players.push(teamS.players.splice(pId, 1)[0]);
         if (teamS.players.length === 0) {
@@ -2864,16 +2860,14 @@ function HG() {
   function swapTeamUsers(msg, id, game) {
     const mentions = msg.mentions.users.concat(msg.softMentions.users);
     if (mentions.size != 2) {
-      self.common.reply(
-          msg, 'Swapping requires mentioning 2 users to swap teams with ' +
-              'eachother.');
+      reply(msg, 'teamSwapNeedTwo');
       return;
     }
     if (!game) game = hg.getGame(id);
     if (!game || !game.currentGame) {
       createGame(msg, id, false, (game) => {
         if (!game) {
-          self.common.reply(msg, 'Failed to create game for unknown reason.');
+          reply(msg, 'createFailedUnknown');
           return;
         }
         swapTeamUsers(msg, id, game);
@@ -2886,22 +2880,18 @@ function HG() {
     let playerId1 = 0;
     let teamId2 = 0;
     let playerId2 = 0;
-    teamId1 = game.currentGame.teams.findIndex(function(team) {
-      const index = team.players.findIndex(function(player) {
-        return player == user1;
-      });
+    teamId1 = game.currentGame.teams.findIndex((team) => {
+      const index = team.players.findIndex((player) => player == user1);
       if (index > -1) playerId1 = index;
       return index > -1;
     });
-    teamId2 = game.currentGame.teams.findIndex(function(team) {
-      const index = team.players.findIndex(function(player) {
-        return player == user2;
-      });
+    teamId2 = game.currentGame.teams.findIndex((team) => {
+      const index = team.players.findIndex((player) => player == user2);
       if (index > -1) playerId2 = index;
       return index > -1;
     });
     if (teamId1 < 0 || teamId2 < 0) {
-      self.common.reply(msg, 'Please ensure both users are on a team.');
+      reply(msg, 'teamSwapNoTeam');
       return;
     }
     const intVal = game.currentGame.teams[teamId1].players[playerId1];
@@ -2910,7 +2900,7 @@ function HG() {
 
     game.currentGame.teams[teamId2].players[playerId2] = intVal;
 
-    self.common.reply(msg, 'Swapped players!');
+    reply(msg, 'teamSwapSuccess');
   }
   /**
    * Move a single user to another team.
@@ -2923,14 +2913,14 @@ function HG() {
   function moveTeamUser(msg, id, game) {
     const mentions = msg.mentions.users.concat(msg.softMentions.users);
     if (mentions.size < 1) {
-      self.common.reply(msg, 'You must at least mention one user to move.');
+      reply(msg, 'teamMoveNoMention');
       return;
     }
     if (!game) game = hg.getGame(id);
     if (!game || !game.currentGame) {
       createGame(msg, id, false, (game) => {
         if (!game) {
-          self.common.reply(msg, 'Failed to create game for unknown reason.');
+          reply(msg, 'createFailedUnknown');
           return;
         }
         moveTeamUser(msg, id, game);
@@ -2954,49 +2944,47 @@ function HG() {
 
     let teamId2 = 0;
     teamId1 = game.currentGame.teams.findIndex((team) => {
-      const index = team.players.findIndex((player) => {
-        return player == user1;
-      });
+      const index = team.players.findIndex((player) => player == user1);
       if (index > -1) playerId1 = index;
       return index > -1;
     });
     if (user2 > 0) {
-      teamId2 = game.currentGame.teams.findIndex((team) => {
-        return team.players.findIndex((player) => {
-          return player == user2;
-        }) > -1;
-      });
+      teamId2 = game.currentGame.teams.findIndex(
+          (team) => team.players.find((player) => player == user2));
     } else {
-      teamId2 = msg.text.trim().split(' ')[1] - 1;
+      const split = msg.text.trim().split(' ');
+      teamId2 = split.find((el) => el.match(/^\d+$/)) - 1;
       teamId2 = game.currentGame.teams.findIndex((team) => team.id == teamId2);
     }
     if (teamId1 < 0 || teamId2 < 0 || isNaN(teamId2)) {
       let extra = null;
       if (user2 > 0 && teamId2 < 0) {
-        extra =
-            'Is ' + self.client.users.resolve(user2).username + ' on a team?';
+        extra = strings.get(
+            'teamMoveNoTeam', msg.locale,
+            self.client.users.resolve(user2).username);
       } else if (user1 > 0 && teamId1 < 0) {
-        extra =
-            'Is ' + self.client.users.resolve(user1).username + ' on a team?';
+        extra = strings.get(
+            'teamMoveNoTeam', msg.locale,
+            self.client.users.resolve(user1).username);
       }
-      self.common.reply(
-          msg, 'Please ensure the first option is the user, and the second ' +
-              'is the destination (either a mention or a team id).',
-          extra);
+      reply(msg, 'teamMoveBadFormat', extra && 'fillOne', extra);
       return;
     }
     if (teamId2 >= game.currentGame.teams.length) {
-      game.currentGame.teams.push(
-          new HungryGames.Team(
-              game.currentGame.teams.length,
-              'Team ' + (game.currentGame.teams.length + 1), []));
+      const newTeam = new HungryGames.Team(
+          game.currentGame.teams.length,
+          strings.get(
+              'teamDefaultName', msg.locale, game.currentGame.teams.length + 1),
+          []);
+      game.currentGame.teams.push(newTeam);
       teamId2 = game.currentGame.teams.length - 1;
     }
     const user1Final = self.client.users.resolve(user1);
-    self.common.reply(
-        msg, 'Moving `' + (user1Final && user1Final.username || user1) +
-            '` from ' + game.currentGame.teams[teamId1].name + ' to ' +
-            game.currentGame.teams[teamId2].name);
+    reply(
+        msg, 'success', 'teamMoveSuccess',
+        user1Final && user1Final.username || user1,
+        game.currentGame.teams[teamId1].name,
+        game.currentGame.teams[teamId2].name);
 
     game.currentGame.teams[teamId2].players.push(
         game.currentGame.teams[teamId1].players.splice(playerId1, 1)[0]);
@@ -3019,43 +3007,35 @@ function HG() {
     const search = Number(split[0]);
     const mentions = msg.mentions.users.concat(msg.softMentions.users);
     if (isNaN(search) && (mentions.size == 0)) {
-      if (!silent) {
-        self.common.reply(
-            msg, 'Please specify a team id, or mention someone on a team, in ' +
-                'order to rename their team.');
-      }
+      if (!silent) reply(msg, 'teamRenameNoId');
       return;
     }
     let teamId = search - 1;
     if (!hg.getGame(id) || !hg.getGame(id).currentGame) {
-      if (!silent) {
-        self.common.reply(msg, 'A game has not been created yet.');
-      }
+      if (!silent) reply(msg, 'gameNotCreated');
       return;
     }
     if (isNaN(search)) {
-      teamId = hg.getGame(id).currentGame.teams.findIndex(function(team) {
-        return team.players.findIndex(function(player) {
-          return player == mentions.first().id;
-        }) > -1;
-      });
+      teamId = hg.getGame(id).currentGame.teams.findIndex(
+          (team) =>
+            team.players.find((player) => player == mentions.first().id));
     } else {
       teamId = hg.getGame(id).currentGame.teams.findIndex(
           (team) => team.id == teamId);
     }
     if (teamId < 0) {
       if (!silent) {
-        self.common.reply(
-            msg, 'Please specify a valid team id. (1 - ' +
-                hg.getGame(id).currentGame.teams.length + ')');
+        reply(
+            msg, 'teamRenameInvalidIdTitle', 'teamRenameInvalidIdBody',
+            hg.getGame(id).currentGame.teams.length);
       }
       return;
     }
     message = message.slice(0, 101);
     if (!silent) {
-      self.common.reply(
-          msg, 'Renaming "' + hg.getGame(id).currentGame.teams[teamId].name +
-              '" to "' + message + '"');
+      reply(
+          msg, 'success', 'teamRenameSuccess',
+          hg.getGame(id).currentGame.teams[teamId].name, message);
     }
     hg.getGame(id).currentGame.teams[teamId].name = message;
   }
@@ -3071,20 +3051,16 @@ function HG() {
    */
   function randomizeTeams(msg, id, silent) {
     if (!hg.getGame(id) || !hg.getGame(id).currentGame) {
-      if (!silent) {
-        self.common.reply(msg, 'A game has not been created yet.');
-      }
+      if (!silent) reply(msg, 'gameNotCreated');
       return;
     }
     if (hg.getGame(id).currentGame.inProgress) {
-      if (!silent) {
-        self.common.reply(msg, 'Please end the current game to modify teams.');
-      }
+      if (!silent) reply(msg, 'teamEditInProgress');
       return;
     }
     const current = hg.getGame(id).currentGame;
     if (current.teams.length == 0) {
-      if (!silent) self.common.reply(msg, 'There are no teams to randomize.');
+      if (!silent) reply(msg, 'teamRandomizeNoTeams');
       return;
     }
     for (let i = 0; i < current.includedUsers.length; i++) {
@@ -3100,7 +3076,7 @@ function HG() {
           current.teams[teamId2].players[playerId2];
       current.teams[teamId2].players[playerId2] = intVal;
     }
-    if (!silent) self.common.reply(msg, 'Teams have been randomized!');
+    if (!silent) self.common.reply(msg, 'teamRandomizeSuccess');
   }
 
   /**
