@@ -2373,7 +2373,7 @@ function HG() {
     if (splitEmbeds) {
       game.currentGame.teams.reverse().forEach((el) => {
         finalMessage.addField(
-            el.name,
+            el.name || el.id,
             statusList.splice(0, el.players.length).join('\n').slice(0, 1023),
             true);
       });
