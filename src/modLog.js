@@ -326,6 +326,20 @@ class Settings {
      */
     this.logMessageBotUpdate = false;
     /**
+     * @description Should the bot log when a user joins the guild?
+     * @public
+     * @type {boolean}
+     * @default
+     */
+    this.logMemberJoin = false;
+    /**
+     * @description Should the bot log when a user leaves the guild?
+     * @public
+     * @type {boolean}
+     * @default
+     */
+    this.logMemberLeave = false;
+    /**
      * @description Should the bot log when a lockdown is started?
      * @public
      * @type {boolean}
