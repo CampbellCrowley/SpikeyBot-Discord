@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>SpikeyBot-Discord Class: MainModule</title>
+	<title>SpikeyBot-Discord Class: Twitch</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -86,17 +86,14 @@
 		<div id="main">
 			
 
-	<h1 class="page-title">Class: MainModule</h1>
+	<h1 class="page-title">Class: Twitch</h1>
 <section>
 
 <header>
     
         <h2>
-        MainModule
+        Twitch
         </h2>
-        
-            <div class="class-description">Base class for required modules for the bot to work. Adds
-interface for maintaining references across reloads.</div>
         
     
 </header>
@@ -108,12 +105,16 @@ interface for maintaining references across reloads.</div>
         
 <hr>
 <dt>
-    <h4 class="name" id="MainModule"><span class="type-signature"></span>new MainModule()</h4>
+    <h4 class="name" id="Twitch"><span class="type-signature"></span>new Twitch()</h4>
     
     
 </dt>
 <dd>
 
+    
+    <div class="description">
+        SubModule managing Twitch related commands.
+    </div>
     
 
     
@@ -158,8 +159,8 @@ interface for maintaining references across reloads.</div>
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="mainModule.js.html">mainModule.js</a>,
-				 <a href="mainModule.js.html#sunlight-1-line-12">line 12</a>
+				<a href="twitch.js.html">twitch.js</a>,
+				 <a href="twitch.js.html#sunlight-1-line-20">line 20</a>
 			</li>
 		</ul>
 	</dd>
@@ -177,6 +178,11 @@ interface for maintaining references across reloads.</div>
 
     
 
+    
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>Command#event:twitch</li>
+    </ul>
     
 
     
@@ -216,6 +222,389 @@ interface for maintaining references across reloads.</div>
         <h3 class="subsection-title">Members</h3>
 
         <dl>
+            
+<hr>
+<dt class="name" id=".apiHost">
+    <h4 id=".apiHost"><span class="type-signature">&lt;static> </span>apiHost<span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Get default host information for API client request.
+    </div>
+    
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="twitch.js.html">twitch.js</a>,
+				 <a href="twitch.js.html#sunlight-1-line-105">line 105</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id=".loginHost">
+    <h4 id=".loginHost"><span class="type-signature">&lt;static> </span>loginHost<span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Get default host information for API request to fetch user
+information.
+    </div>
+    
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="twitch.js.html">twitch.js</a>,
+				 <a href="twitch.js.html#sunlight-1-line-126">line 126</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id=".subHost">
+    <h4 id=".subHost"><span class="type-signature">&lt;static> </span>subHost<span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Get default host information for requesting to subscribe or
+unsubscribe from a webhook.
+    </div>
+    
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="twitch.js.html">twitch.js</a>,
+				 <a href="twitch.js.html#sunlight-1-line-86">line 86</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="_strings">
+    <h4 id="_strings"><span class="type-signature">&lt;private, constant> </span>_strings<span class="type-signature"> :<a href="Strings.html">Strings</a></span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Instance of locale string manager.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type"><a href="Strings.html">Strings</a></span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="twitch.js.html">twitch.js</a>,
+				 <a href="twitch.js.html#sunlight-1-line-45">line 45</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="_subscriptions">
+    <h4 id="_subscriptions"><span class="type-signature">&lt;private, constant> </span>_subscriptions<span class="type-signature"> :object.&lt;string></span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Currently known webhook topic subscriptions (Not to be
+confused with channel subscriptions, which we don't care about). Mapped
+by Twitch User ID.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">object.&lt;string></span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>{}</li>
+		</ul>
+	</dd>
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="twitch.js.html">twitch.js</a>,
+				 <a href="twitch.js.html#sunlight-1-line-36">line 36</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
             
 <hr>
 <dt class="name" id="bot">
@@ -263,6 +652,11 @@ autocompletion, updates to current reference at init.
 	</dd>
 	
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#bot">SubModule#bot</a>
+    </li></ul></dd>
     
 
     
@@ -354,6 +748,11 @@ autocompletion, updates to current reference at init.
 	</dd>
 	
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#client">SubModule#client</a>
+    </li></ul></dd>
     
 
     
@@ -447,6 +846,11 @@ init.
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#command">SubModule#command</a>
+    </li></ul></dd>
+    
 
     
 
@@ -537,6 +941,11 @@ version of this submodule.
 	</dd>
 	
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#commit">SubModule#commit</a>
+    </li></ul></dd>
     
 
     
@@ -629,6 +1038,11 @@ autocompletion, updates to current reference at init.
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#common">SubModule#common</a>
+    </li></ul></dd>
+    
 
     
 
@@ -719,6 +1133,11 @@ value for editor autocompletion, updates to current reference at init.
 	</dd>
 	
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#Discord">SubModule#Discord</a>
+    </li></ul></dd>
     
 
     
@@ -816,6 +1235,11 @@ value for editor autocompletion, updates to current reference at init.
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#helpMessage">SubModule#helpMessage</a>
+    </li></ul></dd>
+    
 
     
 
@@ -905,6 +1329,11 @@ value for editor autocompletion, updates to current reference at init.
 	</dd>
 	
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#initialized">SubModule#initialized</a>
+    </li></ul></dd>
     
 
     
@@ -998,6 +1427,11 @@ needs to be reloaded because the file has been modified since loading.
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#loadTime">SubModule#loadTime</a>
+    </li></ul></dd>
+    
 
     
 
@@ -1044,7 +1478,7 @@ needs to be reloaded because the file has been modified since loading.
             
 <hr>
 <dt class="name" id="myName">
-    <h4 id="myName"><span class="type-signature">&lt;abstract, protected> </span>myName<span class="type-signature"> :string</span></h4>
+    <h4 id="myName"><span class="type-signature">&lt;protected> </span>myName<span class="type-signature"> :string</span></h4>
 
     
 </dt>
@@ -1089,6 +1523,11 @@ defined before begin().
 	</dd>
 	
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#myName">SubModule#myName</a>
+    </li></ul></dd>
     
 
     
@@ -1136,7 +1575,7 @@ defined before begin().
             
 <hr>
 <dt class="name" id="postPrefix">
-    <h4 id="postPrefix"><span class="type-signature">&lt;abstract> </span>postPrefix<span class="type-signature"> :string</span></h4>
+    <h4 id="postPrefix"><span class="type-signature"></span>postPrefix<span class="type-signature"> :string</span></h4>
 
     
 </dt>
@@ -1180,6 +1619,11 @@ before begin(), otherwise it is ignored.
 	</dd>
 	
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#postPrefix">SubModule#postPrefix</a>
+    </li></ul></dd>
     
 
     
@@ -1233,7 +1677,7 @@ before begin(), otherwise it is ignored.
             
 <hr>
 <dt>
-    <h4 class="name" id=".extend"><span class="type-signature">&lt;static> </span>extend(child)</h4>
+    <h4 class="name" id="_apiRequest"><span class="type-signature">&lt;private> </span>_apiRequest(host, data, cb)</h4>
     
     
 </dt>
@@ -1241,7 +1685,8 @@ before begin(), otherwise it is ignored.
 
     
     <div class="description">
-        Extends MainModule as the base class of a child.
+        Send a request to the Twitch API. Given host data overrides
+the default data, and the data is sent as the payload.
     </div>
     
 
@@ -1276,7 +1721,7 @@ before begin(), otherwise it is ignored.
 
         <tr>
             
-                <td class="name"><code>child</code></td>
+                <td class="name"><code>host</code></td>
             
 
             <td class="type">
@@ -1293,7 +1738,56 @@ before begin(), otherwise it is ignored.
 
             
 
-            <td class="description last">The child class to extend.</td>
+            <td class="description last">The host information for the request.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>data</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Payload to send with request.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cb</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Callback once completed, first parameter is optional
+error, second is response data object if no error.</td>
         </tr>
 
     
@@ -1337,8 +1831,546 @@ before begin(), otherwise it is ignored.
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="mainModule.js.html">mainModule.js</a>,
-				 <a href="mainModule.js.html#sunlight-1-line-60">line 60</a>
+				<a href="twitch.js.html">twitch.js</a>,
+				 <a href="twitch.js.html#sunlight-1-line-181">line 181</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="_commandSubscribe"><span class="type-signature">&lt;private> </span>_commandSubscribe(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Subscribe to notifications for a streamer in a text channel.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>msg</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Discord~Message</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Message that triggered command.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="twitch.js.html">twitch.js</a>,
+				 <a href="twitch.js.html#sunlight-1-line-223">line 223</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>Command#event:twitch_add</li>
+    </ul>
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="_commandTwitch"><span class="type-signature">&lt;private> </span>_commandTwitch(msg)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Fallback twitch command if no options specified.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>msg</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Discord~Message</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Message that triggered command.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="twitch.js.html">twitch.js</a>,
+				 <a href="twitch.js.html#sunlight-1-line-202">line 202</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>Command#event:twitch</li>
+    </ul>
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="_fetchSubscriptions"><span class="type-signature">&lt;private> </span>_fetchSubscriptions()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Fetch the current webhook subscriptions we have from Twitch
+API.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="twitch.js.html">twitch.js</a>,
+				 <a href="twitch.js.html#sunlight-1-line-190">line 190</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="_fetchUser"><span class="type-signature">&lt;private> </span>_fetchUser(login, cb)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Fetch the user data from a twitch username.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>login</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The user's login name.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cb</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Callback with optional error, otherwise user data
+object from Twitch.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="twitch.js.html">twitch.js</a>,
+				 <a href="twitch.js.html#sunlight-1-line-146">line 146</a>
 			</li>
 		</ul>
 	</dd>
@@ -1557,6 +2589,11 @@ register command listeners.</td>
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#begin">SubModule#begin</a>
+    </li></ul></dd>
+    
 
     
 
@@ -1704,6 +2741,11 @@ register command listeners.</td>
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#debug">SubModule#debug</a>
+    </li></ul></dd>
+    
 
     
 
@@ -1800,6 +2842,11 @@ register command listeners.</td>
 	</dd>
 	
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#end">SubModule#end</a>
+    </li></ul></dd>
     
 
     
@@ -1948,6 +2995,11 @@ register command listeners.</td>
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#error">SubModule#error</a>
+    </li></ul></dd>
+    
 
     
 
@@ -2006,272 +3058,7 @@ register command listeners.</td>
             
 <hr>
 <dt>
-    <h4 class="name" id="export"><span class="type-signature">&lt;abstract> </span>export()</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Export data required to maintain the bot across reloading this module.
-Expected to be returned directly to this.import once reloaded.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="mainModule.js.html">mainModule.js</a>,
-				 <a href="mainModule.js.html#sunlight-1-line-41">line 41</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    The data to be exported.
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type"><a href="MainModule.html#~ModuleData">MainModule~ModuleData</a></span>
-
-
-
-    </dd>
-</dl>
-
-
-        
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="import"><span class="type-signature">&lt;abstract> </span>import(data)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Imports data from a previous instance of this class in order to maintain
-references to other objects and classes across reloads.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Argument</th>
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>data</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="MainModule.html#~ModuleData">MainModule~ModuleData</a></span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-                    &lt;nullable><br>
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">The data that was exported previously,
-or null if no data to import.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="mainModule.js.html">mainModule.js</a>,
-				 <a href="mainModule.js.html#sunlight-1-line-31">line 31</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="initialize"><span class="type-signature">&lt;abstract, protected> </span>initialize()</h4>
+    <h4 class="name" id="initialize"><span class="type-signature">&lt;protected> </span>initialize()</h4>
     
     
 </dt>
@@ -2310,6 +3097,11 @@ specific to the subModule. Must be defined before begin() is called.
 	</dd>
 	
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#initialize">SubModule#initialize</a>
+    </li></ul></dd>
     
 
     
@@ -2458,6 +3250,11 @@ specific to the subModule. Must be defined before begin() is called.
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#log">SubModule#log</a>
+    </li></ul></dd>
+    
 
     
 
@@ -2558,6 +3355,11 @@ completely, this checks if the module can be stopped and restarted.
 	</dd>
 	
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#reloadable">SubModule#reloadable</a>
+    </li></ul></dd>
     
 
     
@@ -2758,6 +3560,11 @@ synchronous.</td>
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#save">SubModule#save</a>
+    </li></ul></dd>
+    
 
     
 
@@ -2816,7 +3623,7 @@ synchronous.</td>
             
 <hr>
 <dt>
-    <h4 class="name" id="shutdown"><span class="type-signature">&lt;abstract, protected> </span>shutdown()</h4>
+    <h4 class="name" id="shutdown"><span class="type-signature">&lt;protected> </span>shutdown()</h4>
     
     
 </dt>
@@ -2855,6 +3662,11 @@ synchronous.</td>
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#shutdown">SubModule#shutdown</a>
+    </li></ul></dd>
+    
 
     
 
@@ -2881,96 +3693,6 @@ synchronous.</td>
 			<li>
 				<a href="subModule.js.html">subModule.js</a>,
 				 <a href="subModule.js.html#sunlight-1-line-252">line 252</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="terminate"><span class="type-signature">&lt;abstract> </span>terminate()</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Signal that the bot is shutting down and will not be
-restarting immediately. This is triggered on all shutdowns where all
-<a href="MainModule.html">MainModule</a>s and <a href="SubModule.html">SubModule</a>s will be unloaded.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="mainModule.js.html">mainModule.js</a>,
-				 <a href="mainModule.js.html#sunlight-1-line-52">line 52</a>
 			</li>
 		</ul>
 	</dd>
@@ -3043,6 +3765,11 @@ doing such may risk putting the module into an uncontrollable state.
 	</dd>
 	
 
+    
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#unloadable">SubModule#unloadable</a>
+    </li></ul></dd>
     
 
     
@@ -3222,6 +3949,11 @@ doing such may risk putting the module into an uncontrollable state.
 	
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="SubModule.html#warn">SubModule#warn</a>
+    </li></ul></dd>
+    
 
     
 
@@ -3279,92 +4011,6 @@ doing such may risk putting the module into an uncontrollable state.
         </dl>
     
 
-    
-        <h3 class="subsection-title">Type Definitions</h3>
-
-        <dl>
-                
-<hr>
-<dt class="name" id="~ModuleData">
-    <h4 id="~ModuleData">ModuleData</h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        The data exported and imported by this module intended to be used to
-persist across reloads.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">object.&lt;*></span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="mainModule.js.html">mainModule.js</a>,
-				 <a href="mainModule.js.html#sunlight-1-line-13">line 13</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-            </dl>
     
 
     

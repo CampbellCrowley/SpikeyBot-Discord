@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>SpikeyBot-Discord Source: hg/actions/Action.js</title>
+	<title>SpikeyBot-Discord Source: twitch.js</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -86,364 +86,254 @@
 		<div id="main">
 			
 
-		<h1 class="page-title">Source: hg/actions/Action.js</h1>
+		<h1 class="page-title">Source: twitch.js</h1>
     
 <section>
     <article>
         <pre
             class="sunlight-highlight-javascript linenums">// Copyright 2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
-const crypto = require('crypto');
+const fs = require('fs');
+const SubModule = require('./subModule.js');
+const auth = require('../auth.js');
+const https = require('https');
+
+delete require.cache[require.resolve('./locale/Strings.js')];
+const Strings = require('./locale/Strings.js');
 
 /**
- * @description Handler function for a generic action.
- * @typedef HungryGames~Action~ActionHandler
- * @type {Function}
- *
- * @param {HungryGames} hg HG context.
- * @param {HungryGames~GuildGame} game Game context.
+ * @description Manages Twitch related commands.
+ * @listens Command#twitch
+ * @augments SubModule
  */
-
-/**
- * @description Base for actions to perform in response to certain things that
- * happen during a hunger games.
- *
- * @memberof HungryGames
- * @inner
- * @interface
- */
-class Action {
+class Twitch extends SubModule {
   /**
-   * @description Create action.
-   * @param {HungryGames~Action~ActionHandler} handler Action handler override.
-   * @param {number} [delay=0] Delay calling the handler by this many
-   * milliseconds after triggered.
+   * @description SubModule managing Twitch related commands.
    */
-  constructor(handler, delay = 0) {
-    if (typeof handler !== 'function') {
-      throw new TypeError('Handler is not a function.');
-    }
+  constructor() {
+    super();
+    /** @inheritdoc */
+    this.myName = 'Twitch';
+    /** @inheritdoc */
+    this.postPrefix = 'twitch ';
+
     /**
-     * @description The unique ID for this action. Propably globally unique,
-     * definitely unique per-trigger in a guild.
-     * @public
-     * @type {string}
-     */
-    this.id = Action.createID();
-    /**
-     * @description Passed handler to fire once triggered.
+     * @description Currently known webhook topic subscriptions (Not to be
+     * confused with channel subscriptions, which we don't care about). Mapped
+     * by Twitch User ID.
      * @private
-     * @type {HungryGames~Action~ActionHandler}
+     * @type {object.&lt;string>}
+     * @default
      * @constant
      */
-    this._handler = handler;
+    this._subscriptions = {};
+
     /**
-     * @description Delay handler call by this many milliseconds after
-     * triggered.
-     * @public
-     * @default 0
-     * @type {number}
-     */
-    this.delay = delay || 0;
-    /**
-     * @description Data injected into save file that the `create` function uses
-     * to restore data. Must be serializable.
-     * @type {object}
+     * @description Instance of locale string manager.
      * @private
+     * @type {Strings}
      * @default
+     * @constant
      */
-    this._saveData = {};
+    this._strings = new Strings('twitch');
+    this._strings.purge();
+
+    this._commandTwitch = this._commandTwitch.bind(this);
+    this._commandSubscribe = this._commandSubscribe.bind(this);
+    this._commandUnSubscribe = this._commandUnSubscribe.bind(this);
+  }
+  /** @inheritdoc */
+  initialize() {
+    const perms = {
+      validOnlyInGuild: true,
+      defaultDisabled: true,
+      permissions: this.Discord.Permissions.FLAGS.MANAGE_CHANNELS |
+          this.Discord.Permissions.FLAGS.MANAGE_MESSAGES |
+          this.Discord.Permissions.FLAGS.MANAGE_GUILD,
+    };
+    this.command.on(
+        new this.command.SingleCommand(['twitch'], this._commandTwitch, perms, [
+          new this.command.SingleCommand(
+              [
+                'add', 'subscribe', 'sub', 'notify', 'notifications', 'on',
+                'enable', 'alert',
+              ],
+              this._commandSubscribe, perms),
+          new this.command.SingleCommand(
+              ['remove', 'unsubscribe', 'unsub', 'stop', 'off', 'disable'],
+              this._commandUnSubscribe, perms),
+        ]));
+  }
+  /** @inheritdoc */
+  shutdown() {
+    this.command.removeListener('twitch');
   }
 
   /**
-   * @description Convert this object to serializable format for saving to file.
-   * Injects data from `this._saveData`.
+   * @description Get default host information for requesting to subscribe or
+   * unsubscribe from a webhook.
    * @public
-   * @returns {{className: string, data: ?object}} Serializable object that can
-   * be saved to file.
+   * @static
+   * @returns {object} Object to pass into https request.
    */
-  get serializable() {
+  static get subHost() {
     return {
-      id: this.id,
-      className: this.constructor.name,
-      delay: this.delay,
-      data: this._saveData,
+      protocol: 'https:',
+      host: 'api.twitch.tv',
+      path: '/helix/webhooks/hub',
+      method: 'POST',
+      headers: {
+        'User-Agent': require('./common.js').ua,
+        'Client-ID': auth.twitchID,
+      },
     };
   }
 
   /**
-   * @description Trigger the action to be performed.
+   * @description Get default host information for API client request.
+   * @public
+   * @static
+   * @returns {object} Object to pass into https request.
+   */
+  static get apiHost() {
+    return {
+      protocol: 'https:',
+      host: 'api.twitch.tv',
+      path: '/helix/webhooks/subscriptions',
+      method: 'GET',
+      headers: {
+        'User-Agent': require('./common.js').ua,
+        'Authorization': 'Bearer ' + auth.twitchSecret,
+        'Client-ID': auth.twitchID,
+      },
+    };
+  }
+
+  /**
+   * @description Get default host information for API request to fetch user
+   * information.
+   * @public
+   * @static
+   * @returns {object} Object to pass into https request.
+   */
+  static get loginHost() {
+    return {
+      protocol: 'https:',
+      host: 'api.twitch.tv',
+      path: '/helix/users?login=',
+      method: 'GET',
+      headers: {
+        'User-Agent': require('./common.js').ua,
+        'Client-ID': auth.twitchID,
+      },
+    };
+  }
+
+  /**
+   * @description Fetch the user data from a twitch username.
+   * @private
+   * @param {string} login The user's login name.
+   * @param {Function} cb Callback with optional error, otherwise user data
+   * object from Twitch.
+   */
+  _fetchUser(login, cb) {
+    const host = Twitch.loginHost;
+    host.path += encodeURIComponent(login);
+    const req = https.request(host, (res) => {
+      let content = '';
+      res.on('data', (chunk) => content += chunk);
+      res.on('end', () => {
+        if (res.statusCode == 200) {
+          try {
+            cb(null, JSON.parse(content));
+          } catch (err) {
+            this.error('Failed to parse response from Twitch');
+            console.error(err, content);
+            cb('Bad Response');
+            return;
+          }
+        } else {
+          this.error(res.statusCode + ': ' + content);
+          console.error(host);
+          cb(res.statusCode + ' from Twitch');
+        }
+      });
+    });
+    req.end();
+  }
+
+  /**
+   * @description Send a request to the Twitch API. Given host data overrides
+   * the default data, and the data is sent as the payload.
+   * @private
+   * @param {object} host The host information for the request.
+   * @param {string} data Payload to send with request.
+   * @param {Function} cb Callback once completed, first parameter is optional
+   * error, second is response data object if no error.
+   */
+  _apiRequest(host, data, cb) {
+
+  }
+
+  /**
+   * @description Fetch the current webhook subscriptions we have from Twitch
+   * API.
+   * @private
+   */
+  _fetchSubscriptions() {
+
+  }
+
+  /**
+   * @description Fallback twitch command if no options specified.
    *
-   * @type {HungryGames~Action~ActionHandler}
-   * @public
-   * @param {HungryGames} hg HG context.
-   * @param {HungryGames~GuildGame} game Game context.
-   * @param {...*} [args] Additional arguments to pass.
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens Command#twitch
    */
-  trigger(hg, game, ...args) {
-    if (this.delay &amp;&amp; !game.options.disableOutput) {
-      hg._parent.client.setTimeout(
-          () => this._handler(hg, game, ...args), this.delay);
-    } else {
-      this._handler(hg, game, ...args);
+  _commandTwitch(msg) {
+    const sub = this._subscriptions[msg.guild.id];
+    const chan = sub &amp;&amp; Object.entries(sub);
+    if (!chan || chan.length === 0) {
+      this._strings.reply(
+          this.common, msg, 'noAlertsTitle', 'help',
+          `${msg.prefix}${this.postPrefix}`);
+      return;
     }
+
+    this.common.reply(msg, JSON.stringify(chan, null, 2));
   }
 
   /**
-   * @description Create action from save data.
-   * @public
-   * @static
-   * @abstract
-   * @param {external:Discord~Client} client Bot client context to get object
-   * references.
-   * @param {string} id Guild ID this action is for.
-   * @param {object} obj The parsed data from file.
-   * @returns {HungryGames~Action} The created action.
+   * @description Subscribe to notifications for a streamer in a text channel.
+   *
+   * @private
+   * @type {commandHandler}
+   * @param {Discord~Message} msg Message that triggered command.
+   * @listens Command#twitch_add
    */
-  static create(client, id, obj) {
-    id;
-    obj;
-    client;
-    throw new Error('Create function not overridden.');
-  }
-
-  /**
-   * @description Generate an ID for an Action. Does not check for collisions.
-   * @public
-   * @static
-   * @returns {string} Generated ID.
-   */
-  static createID() {
-    return crypto.randomBytes(8).toString('hex').toUpperCase();
-  }
-
-  /**
-   * @description Create an Action object from save data. Looks up action from
-   * {@link HungryGames~Action~actionList}.
-   * @public
-   * @static
-   * @param {external:Discord~Client} client Client reference for obtaining
-   * discord object references.
-   * @param {string} id The Guild ID this action is for.
-   * @param {object} obj The object data from save file.
-   * @returns {?Action} The created action, or null if failed to find the
-   * action.
-   */
-  static from(client, id, obj) {
-    if (typeof obj.className !== 'string' ||
-        obj.className.length === 0) {
-      console.error(obj.className, 'is not an Action name');
-      return null;
+  _commandSubscribe(msg) {
+    const text = msg.text.trim();
+    if (!text.length &lt;= 2) {
+      this._strings.reply(this.common, msg, 'subNoUsername');
+      return;
     }
-    const action = Action[obj.className];
-    let out = null;
-    if (action) {
-      out = action.create(client, id, obj.data);
-      if (!out) {
-        console.error('Unable to create', obj.className, id, obj);
-        return null;
-      }
-      if (typeof obj.delay === 'number') {
-        out.delay = obj.delay;
-      }
-      if (typeof obj.id === 'string') {
-        out.id = obj.id;
-      }
-    } else {
-      console.error(obj.className, 'is not an Action');
-      return null;
+    if (!text.match(/^(#)?[a-zA-Z0-9][\w]{2,24}$/)) {
+      this._strings.reply(this.common, msg, 'subBadUsername');
+      return;
     }
-    return out;
+    this._fetchUser(text, (err, user) => {
+      if (err) return;
+      if (!this._subscriptions[msg.guild.id]) {
+        this._subscriptions[msg.guild.id] = {};
+      }
+      const sub = this._subscriptions[msg.guild.id];
+      if (!sub[msg.channel.id]) sub[msg.channel.id] = {};
+    });
   }
 }
-
-/**
- * @description List of available actions.
- * @public
- * @static
- * @type {Array.&lt;{path: string, pickable: boolean}>}
- */
-Action.actionList = [
-  {path: './MemberAction.js'},
-  {path: './ChannelAction.js'},
-  {
-    path: './GiveRoleAction.js',
-    type: 'member',
-    args: [{name: 'role', type: 'role'}],
-  },
-  {
-    path: './TakeRoleAction.js',
-    type: 'member',
-    args: [{name: 'role', type: 'role'}],
-  },
-  {
-    path: './SendMessageAction.js',
-    type: 'channel',
-    args: [{name: 'message', type: 'text'}],
-  },
-  {
-    path: './RunCommandAction.js',
-    type: 'channel',
-    args: [{name: 'command', type: 'text'}, {name: 'author', type: 'member'}],
-  },
-  {path: './SendDayStartMessageAction.js', type: 'channel'},
-  {path: './SendDayEndMessageAction.js', type: 'channel'},
-  {path: './SendPlayerRankMessageAction.js', type: 'channel'},
-  {path: './SendStatusListAction.js', type: 'channel'},
-  {path: './SendTeamRankMessageAction.js', type: 'channel'},
-  {path: './SendVictorAction.js', type: 'channel'},
-  {path: './SendEventMessageAction.js', type: 'channel'},
-  {path: './SendAutoplayingMessageAlertAction.js', type: 'channel'},
-];
-
-/**
- * @description Map of metadata for available triggers, to aid with UIs.
- * @public
- * @static
- * @type {object.&lt;{
- *   order: number,
- *   types: string[],
- *   description: string
- * }>}
- */
-Action.triggerMeta = {
-  gameStart: {
-    order: 10,
-    types: ['member', 'channel'],
-    description: 'Prior to game starting.',
-  },
-  dayStart: {
-    order: 20,
-    types: ['member', 'channel'],
-    description: 'Prior to day starting.',
-  },
-  eventInstant: {
-    order: 30,
-    types: ['member', 'channel'],
-    description: 'Moment the event occurs.',
-  },
-  eventPlayerDeath: {
-    order: 31,
-    types: ['member'],
-    description: 'Players who died during the event.',
-  },
-  eventPlayerRevive: {
-    order: 31,
-    types: ['member'],
-    description: 'Players who were revived during the event.',
-  },
-  eventPlayerWound: {
-    order: 31,
-    types: ['member'],
-    description: 'Players who were wounded during the event.',
-  },
-  eventPlayerHealed: {
-    order: 31,
-    types: ['member'],
-    description: 'Players who were healed during the event.',
-  },
-  eventPlayerKilled: {
-    order: 31,
-    types: ['member'],
-    description: 'Players who killed another player during the event.',
-  },
-  eventPlayerGainWeapon: {
-    order: 31,
-    types: ['member'],
-    description: 'Players who gained a weapon during the event.',
-  },
-  eventPlayerLoseWeapon: {
-    order: 31,
-    types: ['member'],
-    description: 'Players who lost a weapon during the event.',
-  },
-  eventPlayerUseWeapon: {
-    order: 31,
-    types: ['member'],
-    description: 'Players who used a weapon during the event, ' +
-        'and neither gained nor lost consumables.',
-  },
-  eventPlayerUnAffected: {
-    order: 31,
-    types: ['member'],
-    description: 'Players whose state did not change during the event, ' +
-        'but took part in the event.',
-  },
-  eventPlayerAffected: {
-    order: 31,
-    types: ['member'],
-    description: 'All players in the event.',
-  },
-  dayEnd: {
-    order: 40,
-    types: ['member', 'channel'],
-    description: 'After the day has ended.',
-  },
-  dayPlayerDead: {
-    order: 41,
-    types: ['member'],
-    description: 'After day has ended, for all players that are dead.',
-  },
-  dayPlayerAlive: {
-    order: 41,
-    types: ['member'],
-    description: 'After day has ended, for all players that are alive.',
-  },
-  dayPlayerWounded: {
-    order: 41,
-    types: ['member'],
-    description: 'After day has ended, for all players that are wounded.',
-  },
-  gameEnd: {
-    order: 50,
-    types: ['member', 'channel'],
-    description: 'After game has ended.',
-  },
-  gameAbort: {
-    order: 50,
-    types: ['member', 'channel'],
-    description: 'If game is ended early with command.',
-  },
-  gamePlayerDead: {
-    order: 51,
-    types: ['member', 'channel'],
-    description: 'After game ended, for all players that are dead.',
-  },
-  gamePlayerAlive: {
-    order: 51,
-    types: ['member', 'channel'],
-    description: 'After game ended, for all players that are alive.',
-  },
-  gamePlayerWounded: {
-    order: 51,
-    types: ['member', 'channel'],
-    description: 'After game ended, for all players that are wounded.',
-  },
-  gamePlayerWin: {
-    order: 52,
-    types: ['member'],
-    description: 'After game ended, for all players that won.',
-  },
-  gamePlayerLose: {
-    order: 52,
-    types: ['member'],
-    description: 'After game ended, for all players that lost.',
-  },
-};
-
-module.exports = Action;
-
-Action.actionList.forEach(
-    (el) => delete require.cache[require.resolve(el.path)]);
-Action.actionList.forEach((el) => {
-  try {
-    const obj = require(el.path);
-    Action[obj.name] = obj;
-    el.name = obj.name;
-  } catch (err) {
-    console.error(err);
-  }
-});
+module.exports = new Twitch();
 </pre>
     </article>
 </section>
