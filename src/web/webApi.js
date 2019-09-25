@@ -140,12 +140,31 @@ class WebApi extends SubModule {
     const url = req.url.replace(/^\/www.spikeybot.com(?:\/dev)?/, '');
     if (url.startsWith('/api')) {
       this._apiRequest(req, res, url, ip);
+    } else if (req.method === 'GET' && url === '/webhook/twitch/') {
+      this.common.log(
+          'Requested Twitch: ' + req.url + ' ' + req.headers['queries'], ip);
+      const query = req.headers['queries'];
+      if (!query || query.length < 2) {
+        res.writeHead(400);
+        res.end();
+        return;
+      }
+
+      // TODO: Link to Twitch SM to verify we requested this subscription.
+
+      const queries = {};
+      query.split('&').forEach((el) => {
+        const pair = el.split('=');
+        queries[pair[0]] = pair[1];
+      });
+      res.writeHead(200);
+      res.end(queries['hub.challenge']);
     } else if (req.method !== 'POST') {
       res.writeHead(405);
       res.end();
       this.common.log(
           'Requested endpoint with invalid method: ' + req.method + ' ' +
-              req.url,
+              req.url + ' ' + url,
           ip);
     } else if (url.startsWith('/webhook/botstart')) {
       this.common.logDebug('Bot start webhook request: ' + req.url, ip);
@@ -160,18 +179,17 @@ class WebApi extends SubModule {
       res.writeHead(501);
       res.end();
       this.common.log('Requested non-existent endpoint: ' + req.url, ip);
-    } else if (req.headers.authorization !== basicAuth) {
-      this.common.error(
-          'Requested webhook with incorrect authorization header: ' +
-              req.headers.authorization,
-          ip);
-      res.writeHead(401);
-      res.end();
+      /* } else if (req.headers.authorization !== basicAuth) {
+        this.common.error(
+            'Requested webhook with incorrect authorization header: ' +
+                req.headers.authorization,
+            ip);
+        res.writeHead(401);
+        res.end();
+        */
     } else {
       let content = '';
-      req.on('data', (chunk) => {
-        content += chunk;
-      });
+      req.on('data', (chunk) => content += chunk);
       req.on('end', () => {
         console.log(content);
         res.writeHead(204);
