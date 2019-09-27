@@ -140,25 +140,19 @@ class WebApi extends SubModule {
     const url = req.url.replace(/^\/www.spikeybot.com(?:\/dev)?/, '');
     if (url.startsWith('/api')) {
       this._apiRequest(req, res, url, ip);
-    } else if (req.method === 'GET' && url === '/webhook/twitch/') {
-      this.common.log(
-          'Requested Twitch: ' + req.url + ' ' + req.headers['queries'], ip);
-      const query = req.headers['queries'];
-      if (!query || query.length < 2) {
-        res.writeHead(400);
+    } else if (url === '/webhook/twitch/') {
+      if (req.method === 'GET') {
+        this._twitchConfirmation(req, res, url, ip);
+      } else if (req.method === 'POST') {
+        this._twitchWebhook(req, res, url, ip);
+      } else {
+        res.writeHead(405);
         res.end();
-        return;
+        this.common.log(
+            'Requested endpoint with invalid method: ' + req.method + ' ' +
+                req.url + ' ' + url + ' ' + req.headers['queries'],
+            ip);
       }
-
-      // TODO: Link to Twitch SM to verify we requested this subscription.
-
-      const queries = {};
-      query.split('&').forEach((el) => {
-        const pair = el.split('=');
-        queries[pair[0]] = pair[1];
-      });
-      res.writeHead(200);
-      res.end(queries['hub.challenge']);
     } else if (req.method !== 'POST') {
       res.writeHead(405);
       res.end();
@@ -412,6 +406,56 @@ class WebApi extends SubModule {
         this._rateLimits = parsed;
       } catch (e) {
         console.error(e);
+      }
+    });
+  }
+
+  /**
+   * @description Handle a request from Twitch to confirm adding a webhook to
+   * this endpoint.
+   * @private
+   * @param {http.IncomingMessage} req Client request.
+   * @param {http.ServerResponse} res Server response.
+   * @param {string} url The requested url. Generally a similar or slightly
+   * modified version of `req.url`.
+   * @param {string} ip IP for logging purposes.
+   */
+  _twitchConfirmation(req, res, url, ip) {
+    this.common.log(
+        'Requested Twitch: ' + req.url + ' ' + req.headers['queries'], ip);
+    const query = req.headers['queries'];
+    if (!query || query.length < 2) {
+      res.writeHead(400);
+      res.end();
+      return;
+    }
+
+    const queries = {};
+    query.split('&').forEach((el) => {
+      const pair = el.split('=');
+      queries[pair[0]] = pair[1];
+    });
+
+    const toSend = global.sqlCon.format(
+        'SELECT streamChangedState FROM TwitchUsers WHERE id=?', [
+          queries.id,
+        ]);
+    global.sqlCon.query(toSend, (err, rows) => {
+      if (err) {
+        this.error(
+            'Failed to check if attempting to Twitch confirm webhook: ' +
+            queries.id);
+        console.log(err);
+        res.writeHead(500);
+        res.end('500: Internal Server Error');
+        return;
+      }
+      if (rows && rows[0] && rows[0].streamChangedState == 1) {
+        res.writeHead(200);
+        res.end(queries['hub.challenge']);
+      } else {
+        res.writeHead(403);
+        res.end('403: Forbidden. Invalid ID.');
       }
     });
   }

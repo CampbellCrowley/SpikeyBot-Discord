@@ -1,6 +1,5 @@
 // Copyright 2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
-const fs = require('fs');
 const SubModule = require('./subModule.js');
 const auth = require('../auth.js');
 const https = require('https');
@@ -29,11 +28,22 @@ class Twitch extends SubModule {
      * confused with channel subscriptions, which we don't care about). Mapped
      * by Twitch User ID.
      * @private
-     * @type {object.<string>}
+     * @type {object.<object>}
      * @default
      * @constant
      */
     this._subscriptions = {};
+    /**
+     * @description Map of user login names to their cached Twitch user data.
+     * @private
+     * @type {object.<{
+     *  id: number,
+     *  login: string,
+     *  displayName: string,
+     *  createdAt: number
+     * }>}
+     */
+    this._userMap = {};
 
     /**
      * @description Instance of locale string manager.
@@ -144,6 +154,13 @@ class Twitch extends SubModule {
    * object from Twitch.
    */
   _fetchUser(login, cb) {
+    const user = this._userMap[login];
+    if (user) {
+      if (Date.now() - user.createdAt < 24 * 60 * 60 * 1000) {
+        cb(null, user.data[0]);
+        return;
+      }
+    }
     const host = Twitch.loginHost;
     host.path += encodeURIComponent(login);
     const req = https.request(host, (res) => {
@@ -152,7 +169,29 @@ class Twitch extends SubModule {
       res.on('end', () => {
         if (res.statusCode == 200) {
           try {
-            cb(null, JSON.parse(content));
+            const parsed = JSON.parse(content);
+            parsed.createdAt = Date.now();
+            this._userMap[login] = parsed;
+            const data = parsed.data[0];
+            const toSend = global.sqlCon.format(
+                'INSERT INTO TwitchUsers SET id=?, login=?, displayName=? ON ' +
+                    'DUPLICATE UPDATE SET login=? displayName=?',
+                [
+                  data.id,
+                  data.login,
+                  data.display_name,
+                  data.login,
+                  data.display_name,
+                ]);
+            global.sqlCon.query(toSend, (err) => {
+              if (err) {
+                this.error(
+                    'Failed to update TwitchUser data after fetching user: ' +
+                    login + ' ' + data.id);
+                console.log(err);
+              }
+            });
+            cb(null, parsed.data[0]);
           } catch (err) {
             this.error('Failed to parse response from Twitch');
             console.error(err, content);
