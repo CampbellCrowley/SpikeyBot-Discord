@@ -147,7 +147,7 @@ class Action {
     if (action) {
       out = action.create(client, id, obj.data);
       if (!out) {
-        console.error('Unable to create', obj.className, id, obj);
+        console.error('Action.js: Unable to create', obj.className, id, obj);
         return null;
       }
       if (typeof obj.delay === 'number') {

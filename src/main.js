@@ -2158,6 +2158,12 @@ function Main() {
    * @listens Command#fuckyou
    */
   function commandBan(msg) {
+    if (!msg.guild.me.hasPermission(
+        self.Discord.Permissions.FLAGS.BAN_MEMBERS)) {
+      self.common.reply(
+          msg, 'Failed', 'I do not have permission to ban members.');
+      return;
+    }
     const uIds = msg.text.match(/\d{17,19}/g);
     if (!uIds) {
       self.common.reply(
