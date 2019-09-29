@@ -15,7 +15,8 @@
     "./echo.js",
     "./roleColors.js",
     "./web/stats.js",
-    "./web/webApi.js"
+    "./web/webApi.js",
+    "./twitch.js"
   ],
   "dev": [
     "./main.js",
@@ -74,7 +75,8 @@
     "./web/account.js",
     "./web/stats.js",
     "./web/settings.js",
-    "./web/proxy.js"
+    "./web/proxy.js",
+    "./twitch.js"
   ],
   "rembot": [
     "./moderation.js",

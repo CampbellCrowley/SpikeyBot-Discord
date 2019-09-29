@@ -38,7 +38,7 @@ class Twitch extends SubModule {
     this._commandUnSubscribe = this._commandUnSubscribe.bind(this);
     this._resubCheck = this._resubCheck.bind(this);
     this.webhookHandler = this.webhookHandler.bind(this);
-    this._commandTest = this._commandTest.bind(this);
+    // this._commandTest = this._commandTest.bind(this);
   }
   /** @inheritdoc */
   initialize() {
@@ -64,7 +64,7 @@ class Twitch extends SubModule {
               ],
               this._commandUnSubscribe, perms),
           new this.command.SingleCommand(['resub'], this._resubCheck, perms),
-          new this.command.SingleCommand(['test'], this._commandTest, perms),
+          // new this.command.SingleCommand(['test'], this._commandTest, perms),
         ]));
 
     if (this.client.shard) {
@@ -273,7 +273,6 @@ class Twitch extends SubModule {
         this._strings.reply(this.common, msg, 'error');
         return;
       }
-      console.log(rows);
       if (rows[0].count >= 10) {
         this._strings.reply(this.common, msg, 'maxSubscriptions');
         return;
@@ -518,7 +517,7 @@ class Twitch extends SubModule {
    * @description Test firing a webhook from Twitch.
    * @private
    */
-  _commandTest() {
+  /* _commandTest() {
     const parsed = {
       'data': [{
         'game_id': '',
@@ -561,6 +560,6 @@ class Twitch extends SubModule {
         sm.webhookHandler(ids, content);
       }
     });
-  }
+  } */
 }
 module.exports = new Twitch();
