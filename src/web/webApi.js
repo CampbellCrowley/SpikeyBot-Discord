@@ -3,6 +3,7 @@
 const fs = require('fs');
 const http = require('http');
 const auth = require('../../auth.js');
+const crypto = require('crypto');
 const sIOClient = require('socket.io-client');
 const SubModule = require('../subModule.js');
 
@@ -121,6 +122,7 @@ class WebApi extends SubModule {
   }
   /** @inheritdoc */
   shutdown() {
+    fs.unwatchFile(this._rateLimitFile);
     if (this._app) {
       this._app.close();
       this._app = null;
@@ -421,8 +423,8 @@ class WebApi extends SubModule {
    */
   _twitchConfirmation(req, res, url, ip) {
     const query = req.headers['queries'];
-    this.common.log('Requested Twitch: ' + req.url + ' ' + query, ip);
     if (!query || query.length < 2) {
+      this.common.logDebug('400: ' + req.url + ' ' + query, ip);
       res.writeHead(400);
       res.end();
       return;
@@ -433,36 +435,47 @@ class WebApi extends SubModule {
       const pair = el.split('=');
       queries[pair[0]] = pair[1];
     });
+    const decode =
+        queries['hub.topic'] && decodeURIComponent(queries['hub.topic']);
+    const match = decode && decode.match(/user_id=(\d+)/);
+    const id = match && match[1];
+    if (!id) {
+      this.common.logDebug(
+          '403 Invalid ID: ' + decode + ' ' + req.url + ' ' + query, ip);
+      res.writeHead(403);
+      res.end('403: Forbidden. Invalid ID.');
+      return;
+    }
 
     const toSend = global.sqlCon.format(
-        'SELECT streamChangedState FROM TwitchUsers WHERE id=?', [
-          queries.id,
-        ]);
+        'SELECT streamChangedState FROM TwitchUsers WHERE id=?', [id]);
     global.sqlCon.query(toSend, (err, rows) => {
       if (err) {
+        this.common.logDebug('500: ' + req.url + ' ' + query, ip);
         this.common.error(
-            'Failed to check if attempting to Twitch confirm webhook: ' +
-                queries.id,
+            'Failed to check if attempting to Twitch confirm webhook: ' + id,
             ip);
         console.log(err);
         res.writeHead(500);
         res.end('500: Internal Server Error');
         return;
       }
-      if (rows && rows[0] && rows[0].streamChangedState == 1) {
+      if (rows && rows[0] && rows[0].streamChangedState >= 1) {
+        this.common.logDebug('200 Confirming: ' + req.url + ' ' + query, ip);
         res.writeHead(200);
         res.end(queries['hub.challenge']);
 
         const toSend = global.sqlCon.format(
-            'UPDATE TwitchUsers SET streamChangedState=2 WHERE id=?', [
-              queries.id,
+            'UPDATE TwitchUsers SET streamChangedState=2, expiresAt=' +
+                'FROM_UNIXTIME(?) WHERE id=?',
+            [
+              Math.floor(Date.now() / 1000) + queries['hub.lease_seconds'] * 1,
+              id,
             ]);
         global.sqlCon.query(toSend, (err) => {
           if (err) {
             this.common.error(
-                'Failed to update streamChangedState to confirmed: ' +
-                    queries.id,
-                ip);
+                'Failed to update streamChangedState to confirmed: ' + id, ip);
             console.log(err);
             res.writeHead(500);
             res.end('500: Internal Server Error');
@@ -470,6 +483,11 @@ class WebApi extends SubModule {
           }
         });
       } else {
+        this.common.logDebug(
+            '403 Invalid ID: ' +
+                ' ' + (rows && rows[0] && rows[0].streamChangedState) + ' ' +
+                req.url + ' ' + query,
+            ip);
         res.writeHead(403);
         res.end('403: Forbidden. Invalid ID.');
       }
@@ -491,6 +509,17 @@ class WebApi extends SubModule {
     let content = '';
     req.on('data', (c) => content += c);
     req.on('end', () => {
+      const sig = crypto.createHmac('sha256', auth.twitchSubSecret)
+          .update(content)
+          .read()
+          .toString('hex');
+      const verified = sig === req.headers['x-hub-signature'];
+      if (!verified) {
+        this.common.error('Failed to verify webhook signature!');
+        console.error(
+            'Lengths:', req.headers['content-length'], content.length,
+            'Signature:' + req.headers['x-hub-signature'], sig);
+      }
       let parsed;
       try {
         parsed = JSON.parse(content);
@@ -512,7 +541,8 @@ class WebApi extends SubModule {
       }
       this.common.logDebug('Twitch Webhook: ' + content, ip);
       const toSend = global.sqlCon.format(
-          'SELECT * FROM TwitchDiscord WHERE twitchId=?', [data.user_id]);
+          'SELECT * FROM TwitchDiscord WHERE twitchId=? AND bot=?',
+          [data.user_id, this.client.user.id]);
       global.sqlCon.query(toSend, (err, rows) => {
         if (err) {
           this.common.error('Failed to fetch TwitchDiscord database info.', ip);
@@ -525,14 +555,24 @@ class WebApi extends SubModule {
         if (this.client.shard) {
           this.client.shard
               .broadcastEval(`this.twitchWebhookHandler(${ids}, ${content})`)
+              .then(() => {
+                res.writeHead(204);
+                res.end();
+              })
               .catch((err) => {
                 this.error('Failed to broadcast webhook handler to shards.');
                 console.error(err);
               });
         } else {
           const sm = this.bot.getSubmodule('./twitch.js');
-          if (!sm) return;
+          if (!sm) {
+            res.writeHead(204);
+            res.end();
+            return;
+          }
           sm.webhookHandler(ids, content);
+          res.writeHead(204);
+          res.end();
         }
       });
     });

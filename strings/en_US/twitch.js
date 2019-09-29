@@ -24,6 +24,12 @@ class EnUsTwitch extends Locale {
     this.streamLiveTitle = '{} is now streaming on Twitch!';
     this.noPermEmbed =
         'I need permission to Embed Links for Twitch Alerts in this channel.';
+    this.error = 'Oops! Something went wrong while running that command.';
+    this.notSubscribed = 'Alerts disabled';
+    this.subscribed = 'Alerts enabled';
+    this.maxSubscriptions =
+        'You may not add any more Twitch alerts in this server. The limit ' +
+        'has been reached';
   }
 }
 

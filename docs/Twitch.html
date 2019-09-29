@@ -160,7 +160,7 @@
 		<ul class="dummy">
 			<li>
 				<a href="twitch.js.html">twitch.js</a>,
-				 <a href="twitch.js.html#sunlight-1-line-20">line 20</a>
+				 <a href="twitch.js.html#sunlight-1-line-19">line 19</a>
 			</li>
 		</ul>
 	</dd>
@@ -224,76 +224,6 @@
         <dl>
             
 <hr>
-<dt class="name" id=".apiHost">
-    <h4 id=".apiHost"><span class="type-signature">&lt;static> </span>apiHost<span class="type-signature"></span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        Get default host information for API client request.
-    </div>
-    
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="twitch.js.html">twitch.js</a>,
-				 <a href="twitch.js.html#sunlight-1-line-105">line 105</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
 <dt class="name" id=".loginHost">
     <h4 id=".loginHost"><span class="type-signature">&lt;static> </span>loginHost<span class="type-signature"></span></h4>
 
@@ -345,7 +275,7 @@ information.
 		<ul class="dummy">
 			<li>
 				<a href="twitch.js.html">twitch.js</a>,
-				 <a href="twitch.js.html#sunlight-1-line-126">line 126</a>
+				 <a href="twitch.js.html#sunlight-1-line-121">line 121</a>
 			</li>
 		</ul>
 	</dd>
@@ -416,7 +346,7 @@ unsubscribe from a webhook.
 		<ul class="dummy">
 			<li>
 				<a href="twitch.js.html">twitch.js</a>,
-				 <a href="twitch.js.html#sunlight-1-line-86">line 86</a>
+				 <a href="twitch.js.html#sunlight-1-line-100">line 100</a>
 			</li>
 		</ul>
 	</dd>
@@ -497,97 +427,7 @@ unsubscribe from a webhook.
 		<ul class="dummy">
 			<li>
 				<a href="twitch.js.html">twitch.js</a>,
-				 <a href="twitch.js.html#sunlight-1-line-45">line 45</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="_subscriptions">
-    <h4 id="_subscriptions"><span class="type-signature">&lt;private, constant> </span>_subscriptions<span class="type-signature"> :object.&lt;string></span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        Currently known webhook topic subscriptions (Not to be
-confused with channel subscriptions, which we don't care about). Mapped
-by Twitch User ID.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">object.&lt;string></span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
-	<dd class="tag-default">
-		<ul class="dummy">
-			<li>{}</li>
-		</ul>
-	</dd>
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="twitch.js.html">twitch.js</a>,
-				 <a href="twitch.js.html#sunlight-1-line-36">line 36</a>
+				 <a href="twitch.js.html#sunlight-1-line-33">line 33</a>
 			</li>
 		</ul>
 	</dd>
@@ -1677,194 +1517,6 @@ before begin(), otherwise it is ignored.
             
 <hr>
 <dt>
-    <h4 class="name" id="_apiRequest"><span class="type-signature">&lt;private> </span>_apiRequest(host, data, cb)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Send a request to the Twitch API. Given host data overrides
-the default data, and the data is sent as the payload.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>host</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">object</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The host information for the request.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>data</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Payload to send with request.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>cb</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">function</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Callback once completed, first parameter is optional
-error, second is response data object if no error.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="twitch.js.html">twitch.js</a>,
-				 <a href="twitch.js.html#sunlight-1-line-181">line 181</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
     <h4 class="name" id="_commandSubscribe"><span class="type-signature">&lt;private> </span>_commandSubscribe(msg)</h4>
     
     
@@ -1970,7 +1622,7 @@ error, second is response data object if no error.</td>
 		<ul class="dummy">
 			<li>
 				<a href="twitch.js.html">twitch.js</a>,
-				 <a href="twitch.js.html#sunlight-1-line-223">line 223</a>
+				 <a href="twitch.js.html#sunlight-1-line-261">line 261</a>
 			</li>
 		</ul>
 	</dd>
@@ -1993,6 +1645,94 @@ error, second is response data object if no error.</td>
     <ul>
         <li>Command#event:twitch_add</li>
     </ul>
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="_commandTest"><span class="type-signature">&lt;private> </span>_commandTest()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Test firing a webhook from Twitch.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="twitch.js.html">twitch.js</a>,
+				 <a href="twitch.js.html#sunlight-1-line-521">line 521</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
     
 
     
@@ -2113,7 +1853,7 @@ error, second is response data object if no error.</td>
 		<ul class="dummy">
 			<li>
 				<a href="twitch.js.html">twitch.js</a>,
-				 <a href="twitch.js.html#sunlight-1-line-202">line 202</a>
+				 <a href="twitch.js.html#sunlight-1-line-216">line 216</a>
 			</li>
 		</ul>
 	</dd>
@@ -2151,7 +1891,7 @@ error, second is response data object if no error.</td>
             
 <hr>
 <dt>
-    <h4 class="name" id="_fetchSubscriptions"><span class="type-signature">&lt;private> </span>_fetchSubscriptions()</h4>
+    <h4 class="name" id="_commandUnSubscribe"><span class="type-signature">&lt;private> </span>_commandUnSubscribe(msg)</h4>
     
     
 </dt>
@@ -2159,8 +1899,8 @@ error, second is response data object if no error.</td>
 
     
     <div class="description">
-        Fetch the current webhook subscriptions we have from Twitch
-API.
+        Unsubscribe from notifications for a streamer in a text
+channel.
     </div>
     
 
@@ -2169,6 +1909,56 @@ API.
     
 
     
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>msg</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Discord~Message</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Message that triggered command.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
     
 
     
@@ -2207,7 +1997,7 @@ API.
 		<ul class="dummy">
 			<li>
 				<a href="twitch.js.html">twitch.js</a>,
-				 <a href="twitch.js.html#sunlight-1-line-190">line 190</a>
+				 <a href="twitch.js.html#sunlight-1-line-333">line 333</a>
 			</li>
 		</ul>
 	</dd>
@@ -2225,6 +2015,11 @@ API.
 
     
 
+    
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>Command#event:twitch_remove</li>
+    </ul>
     
 
     
@@ -2370,7 +2165,302 @@ object from Twitch.</td>
 		<ul class="dummy">
 			<li>
 				<a href="twitch.js.html">twitch.js</a>,
-				 <a href="twitch.js.html#sunlight-1-line-146">line 146</a>
+				 <a href="twitch.js.html#sunlight-1-line-141">line 141</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="_formatMessage"><span class="type-signature">&lt;private> </span>_formatMessage(data [, locale])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Format the Twitch webhook into a Discord message to send.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Argument</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>data</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Webhook data from Twitch.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>locale</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last">Locale for formatting strings.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="twitch.js.html">twitch.js</a>,
+				 <a href="twitch.js.html#sunlight-1-line-476">line 476</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    Formatted embed message.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">external:Discord~MessageEmbed</span>
+
+
+
+    </dd>
+</dl>
+
+
+        
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="_resubCheck"><span class="type-signature">&lt;private> </span>_resubCheck()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Check our database for webhook subscriptions that are about to
+expire, and re-subscribe to them.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="twitch.js.html">twitch.js</a>,
+				 <a href="twitch.js.html#sunlight-1-line-500">line 500</a>
 			</li>
 		</ul>
 	</dd>
@@ -3725,6 +3815,144 @@ synchronous.</td>
             
 <hr>
 <dt>
+    <h4 class="name" id="subscribeToUser"><span class="type-signature"></span>subscribeToUser(user)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Subscribe to webhook requests for a given user.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>user</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The user data of which to subscribe to.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="twitch.js.html">twitch.js</a>,
+				 <a href="twitch.js.html#sunlight-1-line-375">line 375</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
     <h4 class="name" id="unloadable"><span class="type-signature">&lt;abstract> </span>unloadable()</h4>
     
     
@@ -4008,6 +4236,171 @@ doing such may risk putting the module into an uncontrollable state.
     
 </dd>
 
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="webhookHandler"><span class="type-signature"></span>webhookHandler(channels, data)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Format and send messages to all available channels that were
+specified and on the current shard, using the provided data from the
+webhook.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>channels</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;string></span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Array of all channel IDs this message is to be
+sent in. IDs not on this shard will be ignored.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>data</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Data received from Twitch webhook.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="twitch.js.html">twitch.js</a>,
+				 <a href="twitch.js.html#sunlight-1-line-445">line 445</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
         </dl>
     
 
@@ -4062,7 +4455,7 @@ doing such may risk putting the module into an uncontrollable state.
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a>
 	
-		on Tuesday, September 24, 2019 8:26 PM (-07:00)
+		on Sunday, September 29, 2019 3:50 PM (-07:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

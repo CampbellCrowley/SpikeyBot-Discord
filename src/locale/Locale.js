@@ -12,6 +12,15 @@ class Locale {
    */
   constructor() {
     this.get = this.get.bind(this);
+
+    /**
+     * @description The bot's username.
+     */
+    this.username = 'SpikeyBot';
+    /**
+     * @description Empty string to replace with passed data.
+     */
+    this.fillOne = '{}';
   }
 
   /**
@@ -24,10 +33,16 @@ class Locale {
    * find.
    */
   get(key, ...rep) {
-    const s = this[key];
-    let i = -1;
+    let s = this[key];
+    let i = 0;
+    if (Array.isArray(s)) s = s[Math.floor(Math.random() * s.length)];
     if (typeof s === 'string') {
-      return s.replace(/\{\}/g, () => rep[++i]);
+      return s.replace(/\{(\d*)\}/g, (m, p) => {
+        let out = rep[i++];
+        p *= 1;
+        if (p >= 0 && p < rep.length) out = rep[p];
+        return out;
+      });
     } else {
       return null;
     }
