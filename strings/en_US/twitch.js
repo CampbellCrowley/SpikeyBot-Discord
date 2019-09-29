@@ -21,6 +21,9 @@ class EnUsTwitch extends Locale {
     this.listTitle = 'Current Channel Alerts';
     this.subNoUsername = 'Please specify a Twitch username.';
     this.subBadUsername = 'That doesn\'t look like a valid username to me.';
+    this.streamLiveTitle = '{} is now streaming on Twitch!';
+    this.noPermEmbed =
+        'I need permission to Embed Links for Twitch Alerts in this channel.';
   }
 }
 

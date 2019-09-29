@@ -80,10 +80,21 @@ class Twitch extends SubModule {
               ['remove', 'unsubscribe', 'unsub', 'stop', 'off', 'disable'],
               this._commandUnSubscribe, perms),
         ]));
+
+    if (this.client.shard) {
+      /**
+       * @description Inject webhook handler into client for easier shard
+       * broadcasts. Set to undefined once shutdown.
+       * @public
+       * @see {@link Twitch.webhookHandler}
+       */
+      this.client.twitchWebhookHandler = this.webhookHandler;
+    }
   }
   /** @inheritdoc */
   shutdown() {
     this.command.removeListener('twitch');
+    this.client.twitchWebhookHandler = undefined;
   }
 
   /**
@@ -277,6 +288,68 @@ class Twitch extends SubModule {
       const sub = this._subscriptions[msg.guild.id];
       if (!sub[msg.channel.id]) sub[msg.channel.id] = {};
     });
+  }
+
+  /**
+   * @description Format and send messages to all available channels that were
+   * specified and on the current shard, using the provided data from the
+   * webhook.
+   * @public
+   * @param {string[]} channels Array of all channel IDs this message is to be
+   * sent in. IDs not on this shard will be ignored.
+   * @param {{
+   *   user_id: string,
+   *   user_name: string,
+   *   game_id: string,
+   *   type: string,
+   *   title, string,
+   *   viewer_count: number,
+   *   started_at: string,
+   *   language: string,
+   *   thumbnail_url: string
+   * }} data Data received from Twitch webhook.
+   */
+  webhookHandler(channels, data) {
+    if (typeof channels === 'string') channels = JSON.parse(channels);
+    if (typeof data === 'string') data = JSON.parse(data);
+    const message = this._formatMessage(data);
+    const pF = this.Discord.Permissions.FLAGS;
+    const needEmbed = this._strings.get('noPermEmbed', data.language);
+    channels.forEach((cId) => {
+      const chan = this.client.channels.get(cId);
+      if (!chan) return;
+      const perms = chan.guild && !chan.permissionsFor(chan.guild.me);
+      if (perms && !perms.has(pF.SEND_MESSAGES)) {
+        return;
+      } else if (perms && !perms.has(pF.EMBED_LINKS)) {
+        chan.send('```' + message.title + '```\n' + needEmbed);
+        return;
+      } else {
+        chan.send(message);
+      }
+    });
+  }
+
+  /**
+   * @description Format the Twitch webhook into a Discord message to send.
+   * @private
+   * @param {object} data Webhook data from Twitch.
+   * @returns {external:Discord~MessageEmbed} Formatted embed message.
+   */
+  _formatMessage(data) {
+    const embed = new this.Discord.MessageEmbed();
+    embed.setTitle(
+        this._strings.get('streamLiveTitle', data.language, data.user_name));
+    if (data.started_at) {
+      const date = Date.from(data.started_at).getTime();
+      if (date > 0) embed.setTimestamp(date);
+    }
+    embed.setURL(`https://twitch.tv/${data.user_name}`);
+    embed.setThumbnail(data.thumbnail_url);
+    embed.setColor([145, 71, 255]);
+    embed.setDescription(data.title);
+    embed.setFooter(`${data.viewer_count} viewers`);
+    return embed;
   }
 }
 module.exports = new Twitch();

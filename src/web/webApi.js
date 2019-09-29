@@ -173,14 +173,13 @@ class WebApi extends SubModule {
       res.writeHead(501);
       res.end();
       this.common.log('Requested non-existent endpoint: ' + req.url, ip);
-      /* } else if (req.headers.authorization !== basicAuth) {
-        this.common.error(
-            'Requested webhook with incorrect authorization header: ' +
-                req.headers.authorization,
-            ip);
-        res.writeHead(401);
-        res.end();
-        */
+    } else if (req.headers.authorization !== basicAuth) {
+      this.common.error(
+          'Requested webhook with incorrect authorization header: ' +
+              req.headers.authorization,
+          ip);
+      res.writeHead(401);
+      res.end();
     } else {
       let content = '';
       req.on('data', (chunk) => content += chunk);
@@ -421,9 +420,8 @@ class WebApi extends SubModule {
    * @param {string} ip IP for logging purposes.
    */
   _twitchConfirmation(req, res, url, ip) {
-    this.common.log(
-        'Requested Twitch: ' + req.url + ' ' + req.headers['queries'], ip);
     const query = req.headers['queries'];
+    this.common.log('Requested Twitch: ' + req.url + ' ' + query, ip);
     if (!query || query.length < 2) {
       res.writeHead(400);
       res.end();
@@ -442,9 +440,10 @@ class WebApi extends SubModule {
         ]);
     global.sqlCon.query(toSend, (err, rows) => {
       if (err) {
-        this.error(
+        this.common.error(
             'Failed to check if attempting to Twitch confirm webhook: ' +
-            queries.id);
+                queries.id,
+            ip);
         console.log(err);
         res.writeHead(500);
         res.end('500: Internal Server Error');
@@ -453,10 +452,89 @@ class WebApi extends SubModule {
       if (rows && rows[0] && rows[0].streamChangedState == 1) {
         res.writeHead(200);
         res.end(queries['hub.challenge']);
+
+        const toSend = global.sqlCon.format(
+            'UPDATE TwitchUsers SET streamChangedState=2 WHERE id=?', [
+              queries.id,
+            ]);
+        global.sqlCon.query(toSend, (err) => {
+          if (err) {
+            this.common.error(
+                'Failed to update streamChangedState to confirmed: ' +
+                    queries.id,
+                ip);
+            console.log(err);
+            res.writeHead(500);
+            res.end('500: Internal Server Error');
+            return;
+          }
+        });
       } else {
         res.writeHead(403);
         res.end('403: Forbidden. Invalid ID.');
       }
+    });
+  }
+
+  /**
+   * @description Handle a webhook event from Twitch.
+   * @private
+   * @param {http.IncomingMessage} req Client request.
+   * @param {http.ServerResponse} res Server response.
+   * @param {string} url The requested url. Generally a similar or slightly
+   * modified version of `req.url`.
+   * @param {string} ip IP for logging purposes.
+   */
+  _twitchWebhook(req, res, url, ip) {
+    const query = req.headers['queries'];
+    this.common.log('Twitch Webhook: ' + req.url + ' ' + query, ip);
+    let content = '';
+    req.on('data', (c) => content += c);
+    req.on('end', () => {
+      let parsed;
+      try {
+        parsed = JSON.parse(content);
+      } catch (err) {
+        this.common.logDebug(
+            'Failed to parse body of Twitch Webhook: ' + content, ip);
+        console.error(err);
+        res.writeHead(400);
+        res.end('400: Bad Request');
+        return;
+      }
+      const data = parsed.data && parsed.data[0];
+      if (!data) {
+        this.common.logDebug(
+            'Invalid webhook body from Twitch: ' + content, ip);
+        res.writeHead(400);
+        res.end('400: Bad Request');
+        return;
+      }
+      this.common.logDebug('Twitch Webhook: ' + content, ip);
+      const toSend = global.sqlCon.format(
+          'SELECT * FROM TwitchDiscord WHERE twitchId=?', [data.user_id]);
+      global.sqlCon.query(toSend, (err, rows) => {
+        if (err) {
+          this.common.error('Failed to fetch TwitchDiscord database info.', ip);
+          console.error(err);
+          res.writeHead(500);
+          res.end('500: Internal Server Error');
+          return;
+        }
+        const ids = JSON.stringify(rows.map((el) => el.channel));
+        if (this.client.shard) {
+          this.client.shard
+              .broadcastEval(`this.twitchWebhookHandler(${ids}, ${content})`)
+              .catch((err) => {
+                this.error('Failed to broadcast webhook handler to shards.');
+                console.error(err);
+              });
+        } else {
+          const sm = this.bot.getSubmodule('./twitch.js');
+          if (!sm) return;
+          sm.webhookHandler(ids, content);
+        }
+      });
     });
   }
 }
