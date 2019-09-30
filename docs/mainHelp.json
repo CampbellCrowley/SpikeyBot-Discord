@@ -141,6 +141,27 @@
               "result": "Cancel the scheduled command with the ID of xyz."
             }
           ]
+        },
+        {
+          "command": "twitch",
+          "description": "Manage Twitch notifications in text channels.",
+          "examples": [
+            {
+              "description": "List Alerts",
+              "command": "twitch",
+              "result": "Lists all current text channels and the notifications configured in each channel."
+            },
+            {
+              "description": "Add Alert",
+              "command": "twitch add SpikeyRobot",
+              "result": "The bot will start notifying you in the channel where the command was run, when SpikeyRobot starts streaming on Twitch. (Aliases: add, subscribe, sub, notify, notifications, on, enable, alert, a, notification)"
+            },
+            {
+              "description": "Remove Alert",
+              "command": "twitch remove SpikeyRobot",
+              "result": "The alert for SpikeyRobot's stream will be removed from the channel where the command was run."
+            }
+          ]
         }
       ]
     },
