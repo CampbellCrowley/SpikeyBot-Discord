@@ -509,16 +509,19 @@ class WebApi extends SubModule {
     let content = '';
     req.on('data', (c) => content += c);
     req.on('end', () => {
-      const sig = crypto.createHmac('sha256', auth.twitchSubSecret)
-          .update(content)
-          .read()
-          .toString('hex');
-      const verified = sig === req.headers['x-hub-signature'];
+      const hmac = crypto.createHmac('sha256', auth.twitchSubSecret);
+      hmac.update(content);
+      const sig = `sha256=${hmac.digest('hex')}`;
+      const sigReq = req.headers['x-hub-signature'];
+      const verified = sig === sigReq;
       if (!verified) {
         this.common.error('Failed to verify webhook signature!');
         console.error(
             'Lengths:', req.headers['content-length'], content.length,
-            'Signature:' + req.headers['x-hub-signature'], sig);
+            'Signatures: ' + sigReq, sig);
+        res.writeHead(403);
+        res.end('403: Forbidden');
+        return;
       }
       let parsed;
       try {
@@ -532,7 +535,12 @@ class WebApi extends SubModule {
         return;
       }
       const data = parsed.data && parsed.data[0];
-      if (!data) {
+      if (parsed.data && parsed.data.length === 0) {
+        this.common.logDebug('Empty webhook from Twitch: ' + content, ip);
+        res.writeHead(204);
+        res.end();
+        return;
+      } else if (!data) {
         this.common.logDebug(
             'Invalid webhook body from Twitch: ' + content, ip);
         res.writeHead(400);
