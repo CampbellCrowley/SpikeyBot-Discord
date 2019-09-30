@@ -1580,6 +1580,8 @@ function SpikeyBot() {
    * @public
    */
   client.reloadUpdatedMainModules = function() {
+    delete require.cache[require.resolve('../auth.js')];
+    auth = require('../auth.js');
     let smReloaded = false;
     try {
       common.log('Reloading updated mainModules.');
