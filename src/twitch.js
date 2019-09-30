@@ -174,6 +174,10 @@ class Twitch extends SubModule {
             try {
               const parsed = JSON.parse(content);
               const data = parsed.data[0];
+              if (!data) {
+                cb(null, null);
+                return;
+              }
               const toSend = global.sqlCon.format(
                   'INSERT INTO TwitchUsers SET id=?, login=?, displayName=? ' +
                       'ON DUPLICATE KEY UPDATE login=?, displayName=?',
@@ -298,6 +302,9 @@ class Twitch extends SubModule {
         if (err) {
           this._strings.reply(this.common, msg, 'error');
           return;
+        } else if (!user) {
+          this._strings.reply(this.common, msg, 'unknownUser');
+          return;
         }
         const toSend = global.sqlCon.format(
             'INSERT INTO TwitchDiscord SET channel=?, twitchId=?, guild=?, ' +
@@ -350,6 +357,9 @@ class Twitch extends SubModule {
     this._fetchUser(text, (err, user) => {
       if (err) {
         this._strings.reply(this.common, msg, 'error');
+        return;
+      } else if (!user) {
+        this._strings.reply(this.common, msg, 'unknownUser');
         return;
       }
       const toSend = global.sqlCon.format(

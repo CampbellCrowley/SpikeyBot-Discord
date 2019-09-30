@@ -30,6 +30,7 @@ class EnUsTwitch extends Locale {
     this.maxSubscriptions =
         'You may not add any more Twitch alerts in this server. The limit ' +
         'has been reached';
+    this.unknownUser = 'I was unable to find that Twitch streamer.';
   }
 }
 
