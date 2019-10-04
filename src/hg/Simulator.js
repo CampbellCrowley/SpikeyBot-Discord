@@ -1024,7 +1024,10 @@ Simulator.formatWeaponEvent = function(
             .replace(/\{action\}/g, eventTry.action)
             .replace(/\[C([^|]*)\|([^\]]*)\]/g, (consumed == 1 ? '$1' : '$2'));
   } else {
-    eventTry.message = eventTry.message.replace(/\{owner\}/g, owner);
+    eventTry.message =
+        eventTry.message
+            .replace(/\[C([^|]*)\|([^\]]*)\]/g, (consumed == 1 ? '$1' : '$2'))
+            .replace(/\{owner\}/g, owner);
   }
   return subMessage;
 };
