@@ -500,12 +500,12 @@ class Twitch extends SubModule {
     }
     const url = `https://twitch.tv/${data.user_name}`;
     embed.setURL(url);
-    embed.setThumbnail(
-        data.thumbnail_url.replace(/\{width\}/g, 320)
-            .replace(/\{height\}/g, 180));
+    embed.setImage(
+        data.thumbnail_url.replace(/\{width\}/g, 1280)
+            .replace(/\{height\}/g, 720));
     embed.setColor([145, 71, 255]);
     embed.setDescription(`${data.title}\n${url}`);
-    embed.setFooter(`${data.viewer_count} viewers`);
+    // embed.setFooter(`${data.viewer_count} viewers`);
     return embed;
   }
 
