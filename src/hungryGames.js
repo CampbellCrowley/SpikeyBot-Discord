@@ -957,15 +957,13 @@ function HG() {
     };
     if (g && g.currentGame && g.currentGame.inProgress) {
       if (!silent) {
-        self.common.reply(
-            msg,
-            'This server already has a Hungry Games in progress. If you wish ' +
-                'to create a new one, you must end the current one first ' +
-                'with "' + msg.prefix + self.postPrefix + 'end".');
+        reply(
+            msg, 'createInProgressTitle', 'createInProgressBody',
+            msg.prefix + self.postPrefix);
       }
       if (typeof cb === 'function') cb(null);
     } else if (g) {
-      if (!silent) self.common.reply(msg, 'Refreshing current game.');
+      if (!silent) reply(msg, 'createRefreshing');
       g.includedUsers = g.includedUsers.filter((u) => {
         const m = msg.guild.members.resolve(u);
         if (m && m.partial) m.fetch();
@@ -983,12 +981,7 @@ function HG() {
       hg.refresh(msg.guild, done);
     } else {
       hg.create(msg.guild, (game) => {
-        if (!silent) {
-          self.common.reply(
-              msg,
-              'Created a Hungry Games with default settings and all members ' +
-                  'included.');
-        }
+        if (!silent) reply(msg, 'createNew');
         done(game);
       });
     }
@@ -1952,7 +1945,7 @@ function HG() {
     if (!game || !game.currentGame) {
       createGame(msg, id, false, (game) => {
         if (!game) {
-          self.common.reply(msg, 'Failed to create game for unknown reason.');
+          reply(msg, 'createFailedUnknown');
           return;
         }
         includeUser(msg, id, game);
@@ -3076,7 +3069,7 @@ function HG() {
           current.teams[teamId2].players[playerId2];
       current.teams[teamId2].players[playerId2] = intVal;
     }
-    if (!silent) self.common.reply(msg, 'teamRandomizeSuccess');
+    if (!silent) reply(msg, 'teamRandomizeSuccess');
   }
 
   /**
@@ -3141,23 +3134,20 @@ function HG() {
   function commandClaimLegacyEvents(msg, id) {
     const game = hg.getGame(id);
     if (!game || !game.legacyEvents) {
-      self.common.reply(
-          msg, 'No legacy events.',
-          'Unable to find any legacy events, and thus there is no operation ' +
-              'to perform.');
+      reply(msg, 'legacyNoLegacyTitle', 'legacyNoLegacyBody');
       return;
     }
 
     self.claimLegacy(game, msg.author.id, (err, res, stringified) => {
       if (err) {
-        self.common.reply(msg, 'No Events Claimed', err);
+        reply(msg, 'legacyNoClaimed', err);
       } else {
-        self.common.reply(msg, 'Events claimed', res);
+        reply(msg, 'legacyClaimed', res);
         const perms = msg.channel.permissionsFor(self.client.user);
         if (perms.has(self.Discord.Permissions.FLAGS.SEND_MESSAGES) &&
             perms.has(self.Discord.Permissions.FLAGS.ATTACH_FILES)) {
           msg.channel.send(
-              'Backup of the saved legacy event data.',
+              strings.get('legacyBackup', msg.locale),
               new self.Discord.MessageAttachment(
                   Buffer.from(stringified), 'HGLegacyEventBackup.json'));
         }
@@ -3194,13 +3184,8 @@ function HG() {
       if (done < total) return;
 
       const additional =
-          (deleted ?
-               'Events that give weapons were reset.\n\nYou can edit events ' +
-                   'on the website to give the weapons again.' :
-               'No deleted weapon info.') +
-          (errored ?
-               '\nSome events failed to be converted due to unknown errors.' :
-               '\nNo errors.');
+          (deleted ? 'legacyWeaponReset' : 'legacyWeaponNoReset') +
+          (errored ? 'legacyFailuresUnknown' : 'legacyNoFailures');
 
       cb(null, additional, stringified);
 
@@ -3275,9 +3260,7 @@ function HG() {
       wepIterate(evt, i);
     });
 
-    if (total === 0) {
-      cb('No legacy events found to update.');
-    }
+    if (total === 0) cb('legacyNoneFound');
   };
 
   /**
@@ -3309,7 +3292,7 @@ function HG() {
     }
 
     if (!hg.getGame(id)) {
-      self.common.reply(msg, 'A game has not been created yet.');
+      reply(msg, 'gameNotCreated');
       return;
     }
 
@@ -3327,13 +3310,12 @@ function HG() {
         console.error(err);
       });
     } else if (msg.text && !['show', 'list'].includes(msg.text.trim())) {
-      self.common.reply(
-          msg, 'I\'m not sure which NPC that is.', msg.text + '\nUse `' +
-              msg.prefix + self.postPrefix +
-              'npc list` to show all current NPCs.');
+      reply(
+          msg, 'npcUnknownTitle', 'npcUnknownBody', msg.text,
+          `${msg.prefix}${self.postPrefix}`);
     } else {
       const finalMessage = new self.Discord.MessageEmbed();
-      finalMessage.setTitle('List of NPCs');
+      finalMessage.setTitle(strings.get('npcListTitle', msg.locale));
       finalMessage.setColor(defaultColor);
       let iList = [];
       let eList = [];
@@ -3348,19 +3330,22 @@ function HG() {
         const quarterLength = Math.ceil(iList.length / numCols);
         for (let i = 0; i < numCols - 1; i++) {
           const thisMessage =
-              iList.splice(0, quarterLength).join('\n').substr(0, 1024);
+              iList.splice(0, quarterLength).join('\n').substring(0, 1024);
           finalMessage.addField(
-              'Included (' + (i * quarterLength + 1) + '-' +
-                  ((i + 1) * quarterLength) + ')',
+              strings.get(
+                  'listPlayerIncludedNum', msg.locale,
+                  `${i * quarterLength + 1}-${(i + 1) * quarterLength}`),
               thisMessage, true);
         }
         finalMessage.addField(
-            'Included (' + ((numCols - 1) * quarterLength + 1) + '-' +
-                numINPCs + ')',
-            iList.join('\n').substr(0, 1024), true);
+            strings.get(
+                'listPlayerIncludedNum', msg.locale,
+                `${(numCols - 1) * quarterLength + 1}-${numINPCs}`),
+            iList.join('\n'), true);
       } else {
         finalMessage.addField(
-            'Included (' + numINPCs + ')', iList.join('\n') || 'None.', false);
+            strings.get('listPlayerIncludedNum', msg.locale, numINPCs),
+            iList.join('\n') || 'None', false);
       }
       if (eList.length >= 5) {
         const numCols = self.calcColNum(eList.length > 10 ? 3 : 2, eList);
@@ -3368,25 +3353,25 @@ function HG() {
         const quarterLength = Math.ceil(eList.length / numCols);
         for (let i = 0; i < numCols - 1; i++) {
           const thisMessage =
-              eList.splice(0, quarterLength).join('\n').substr(0, 1024);
+              eList.splice(0, quarterLength).join('\n').substring(0, 1024);
           finalMessage.addField(
-              'Excluded (' + (i * quarterLength + 1) + '-' +
-                  ((i + 1) * quarterLength) + ')',
+              strings.get(
+                  'listPlayerExcludedNum', msg.locale,
+                  `${i * quarterLength + 1}-${(i + 1) * quarterLength}`),
               thisMessage, true);
         }
         finalMessage.addField(
-            'Excluded (' + ((numCols - 1) * quarterLength + 1) + '-' +
-                numENPCs + ')',
-            eList.join('\n').substr(0, 1024), true);
+            strings.get(
+                'listPlayerExcludedNum', msg.locale,
+                `${(numCols - 1) * quarterLength + 1}-${numENPCs}`),
+            eList.join('\n'), true);
       } else {
         finalMessage.addField(
-            'Excluded (' + numENPCs + ')', eList.join('\n') || 'None.', false);
+            strings.get('listPlayerExcludedNum', msg.locale, numENPCs),
+            eList.join('\n') || 'None', false);
       }
       msg.channel.send(self.common.mention(msg), finalMessage).catch((err) => {
-        self.common.reply(
-            msg, 'Oops, Discord rejected my message for some reason...',
-            'This is possibly because there are too many NPCs in the games ' +
-                'to show in this list.');
+        reply(msg, 'messageRejected', 'npcTooMany');
         self.error('Failed to send list of NPCs message: ' + msg.channel.id);
         console.error(err);
       });

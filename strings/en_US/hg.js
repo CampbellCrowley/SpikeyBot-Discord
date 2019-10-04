@@ -32,6 +32,21 @@ class EnUsHG extends Locale {
         'runs the command, will be the only one who can edit the events, and ' +
         'will have sole ownership of the events.\n\nCustom events will not be' +
         ' used in the game until they have been claimed.';
+    this.legacyNoLegacyTitle = 'No legacy events.';
+    this.legacyNoLegacyBody =
+        'Unable to find any legacy events, and thus there is no operation to ' +
+        'perform.';
+    this.legacyNoClaimed = 'No Events Claimed';
+    this.legacyClaimed = 'Events claimed';
+    this.legacyBackup = 'Backup of the saved legacy event data.';
+    this.legacyWeaponReset =
+        'Events that give weapons were reset.\n\nYou can edit events on the ' +
+        'website to give the weapons again.';
+    this.legacyWeaponNoReset = 'No deleted weapon info.';
+    this.legacyFailuresUnknown =
+        '\nSome events failed to be converted due to unknown errors.';
+    this.legacyNoFailures = '\nNo errors.';
+    this.legacyNoneFound = 'No legacy events found to update.';
     this.loadingTitle = 'Still loading';
     this.loadingBody =
         'A previous command is still loading. Please wait for it to complete.';
@@ -237,6 +252,23 @@ class EnUsHG extends Locale {
     this.teamRenameSuccess = 'Renaming "{0}" to "{1}"';
     this.teamRandomizeNoTeams = 'There are no teams to randomize.';
     this.teamRandomizeSuccess = 'Teams have been randomized!';
+
+    this.createInProgressTitle =
+        'This server already has a Hungry Games in progress.';
+    this.createInProgressBody =
+        'If you wish to create a new one, you must end the current one first ' +
+        'with "{}end".';
+    this.createRefreshing = 'Refreshing current game.';
+    this.createNew =
+        'Created a Hungry Games with default settings and all members ' +
+        'included.';
+
+    this.npcUnknownTitle = 'I\'m not sure which NPC that is.';
+    this.npcUnknownBody = '{0}\nUse `{1}npc list` to show all current NPCs.';
+    this.npcListTitle = 'List of NPCs';
+    this.npcTooMany =
+        'This is possibly because there are too many NPCs in the games to ' +
+        'show in this list.';
 
     this.pageNumbers = 'Page {0} of {1}';
     this.success = 'Success';
