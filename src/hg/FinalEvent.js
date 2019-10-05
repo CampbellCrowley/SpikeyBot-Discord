@@ -104,8 +104,13 @@ class FinalEvent {
      * @type {Array.<{name: string, count: number}>}
      */
     this.consumes = evt.consumes;
-    if (!evt.consumes || typeof evt.consumes === 'number') {
-      this.consumes = [];
+    if (!evt.consumes || typeof evt.consumes === 'number' ||
+        evt.consumes.match(/^\d+$/)) {
+      if (evt.consumes != null) {
+        this.consumes = [evt.consumes * 1];
+      } else {
+        this.consumes = [];
+      }
     } else if (!Array.isArray(this.consumes)) {
       throw new TypeError('Consumes is not an array: ' + evt.consumes);
     }
