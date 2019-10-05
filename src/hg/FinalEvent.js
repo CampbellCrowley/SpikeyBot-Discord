@@ -105,7 +105,7 @@ class FinalEvent {
      */
     this.consumes = evt.consumes;
     if (!evt.consumes || typeof evt.consumes === 'number' ||
-        evt.consumes.match(/^\d+$/)) {
+        (typeof evt.consumes === 'string' && evt.consumes.match(/^\d+$/))) {
       if (evt.consumes != null) {
         this.consumes = [evt.consumes * 1];
       } else {
