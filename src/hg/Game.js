@@ -119,6 +119,7 @@ Game.from = function(data) {
   if (data.nextDay) game.nextDay = Day.from(data.nextDay);
   if (game.nextDay.num < 0) game.nextDay.num = 0;
   if (data.prevDay) game.prevDay = Day.from(data.prevDay);
+  if (game.day.state === 1) game.day.state = 0;
   game.includedUsers = game.includedUsers.map((el) => Player.from(el));
   if (!isNaN(data.numAlive)) {
     game.numAlive = data.numAlive;
