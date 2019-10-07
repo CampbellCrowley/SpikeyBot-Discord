@@ -3498,12 +3498,11 @@ function HG() {
         if (url) url = url[0];
       }
       if (typeof url !== 'string' || url.length == 0) {
-        self.common.reply(
-            msg, 'Hmm, you didn\'t give me an image to use as an avatar.');
+        reply(msg, 'npcNoImage');
       } else {
         username = formatUsername(msg.text, url);
         if (username.length &lt; 2) {
-          self.common.reply(msg, 'Please specify a valid username.', username);
+          reply(msg, 'npcNoUsername', 'fillOne', username);
           return;
         }
 
@@ -3541,14 +3540,9 @@ function HG() {
       if (incoming.statusCode != 200 ) {
         incoming.destroy();
         if (incoming.statusCode == 415) {
-          self.common.reply(
-              msg,
-              'Hmm, that link does not appear to be a supported media type.',
-              'HTTP status code: ' + incoming.statusCode);
+          reply(msg, 'npcBadURLMime', 'statusCode', incoming.statusCode);
         } else {
-          self.common.reply(
-              msg, 'Hmm, that link doesn\'t appear to work.',
-              'HTTP status code: ' + incoming.statusCode);
+          reply(msg, 'npcBadURL', 'statusCode', incoming.statusCode);
         }
         msg.channel.stopTyping();
         return;
@@ -3560,24 +3554,24 @@ function HG() {
       self.debug('MIME: ' + type + ', CL: ' + cl);
       if (!supported.includes(type)) {
         incoming.destroy();
-        self.common.reply(
-            msg, 'The provided filetype is not supported.',
-            type || 'unknown filetype');
+        reply(msg, 'invalidFileType', 'fillOne', type || 'unknown filetype');
         msg.channel.stopTyping();
         return;
       } else if (!cl) {
         incoming.destroy();
         self.common.reply(
-            msg, 'Please ensure the image is not larger than ' +
-                (self.maxBytes / 1000 / 1000) + 'MB.',
-            'Unable to determine download size.');
+            msg,
+            strings.get(
+                'invalidFileSize', msg.locale, self.maxBytes / 1000 / 1000),
+            strings.get('unknownFileSize', msg.locale));
         msg.channel.stopTyping();
         return;
       } else if (cl > self.maxBytes) {
         incoming.destroy();
         self.common.reply(
-            msg, 'Please ensure the image is not larger than ' +
-                (self.maxBytes / 1000 / 1000) + 'MB.',
+            msg,
+            strings.get(
+                'invalidFileSize', msg.locale, self.maxBytes / 1000 / 1000),
             Math.round(cl / 1000 / 100) / 10 + 'MB');
         msg.channel.stopTyping();
         return;
@@ -3590,9 +3584,10 @@ function HG() {
         if (reqBytes > self.maxBytes) {
           incoming.destroy();
           self.common.reply(
-              msg, 'Please ensure the image is not larger than ' +
-                  (self.maxBytes / 1000 / 1000) + 'MB.',
-              '>' + (Math.round(reqBytes / 1000 / 100) / 10) + 'MB');
+              msg,
+              strings.get(
+                  'invalidFileSize', msg.locale, self.maxBytes / 1000 / 1000),
+              `>${Math.round(reqBytes / 1000 / 100) / 10}MB`);
           msg.channel.stopTyping();
         }
       });
@@ -3622,9 +3617,7 @@ function HG() {
             });
           })
           .catch((err) => {
-            self.common.reply(
-                msg, 'I wasn\'t able to convert that file into an image.',
-                err.message);
+            reply(msg, 'invalidImage', 'fillOne', err.message);
             msg.channel.stopTyping();
             self.error('Failed to convert buffer to image.');
             console.error(err);
@@ -3641,13 +3634,14 @@ function HG() {
     function sendConfirmation(image, buffer) {
       msg.channel.stopTyping();
       const embed = new self.Discord.MessageEmbed();
-      embed.setTitle('Confirm NPC Creation');
+      embed.setTitle(strings.get('npcConfirmTitle', msg.locale));
       embed.setAuthor(username);
       embed.setDescription(
-          'Click the ' + emoji.whiteCheckMark + ' reaction to confirm, ' +
-          emoji.x + ' to cancel.');
+          strings.get(
+              'npcConfirmDescription', msg.locale, emoji.whiteCheckMark,
+              emoji.x));
       embed.attachFiles(
-          [new self.Discord.MessageAttachment(buffer, username + '.png')]);
+          [new self.Discord.MessageAttachment(buffer, `${username}.png`)]);
       msg.channel.send(embed)
           .then((msg_) => {
             msg_.react(emoji.whiteCheckMark).then(() => msg_.react(emoji.x));
@@ -3660,17 +3654,17 @@ function HG() {
               embed.setDescription('');
               if (reactions.size == 0) {
                 msg_.reactions.removeAll().catch(() => {});
-                embed.setFooter('Timed out');
+                embed.setFooter(strings.get('timedOut', msg.locale));
                 msg_.edit(embed);
               } else if (
                 reactions.first().emoji.name == emoji.whiteCheckMark) {
                 msg_.reactions.removeAll().catch(() => {});
-                embed.setFooter('Confirmed');
+                embed.setFooter(strings.get('confirmed', msg.locale));
                 msg_.edit(embed);
                 onConfirm(image);
               } else {
                 msg_.reactions.removeAll().catch(() => {});
-                embed.setFooter('Cancelled');
+                embed.setFooter(strings.get('cancelled', msg.locale));
                 msg_.edit(embed);
               }
             });
@@ -3691,17 +3685,16 @@ function HG() {
       const id = NPC.createID();
       const p = NPC.saveAvatar(image, id);
       if (!p) {
-        self.common.reply(
-            msg, 'Oops, something went wrong while creating that NPC...',
-            'This should not happen D:');
+        reply(msg, 'npcCreateWentWrongTitle', 'npcCreateWentWrongBody');
         return;
       } else {
         p.then((url) => {
           const error = self.createNPC(msg.guild.id, username, url, id);
           if (error) {
-            self.common.reply(msg, 'Failed to create NPC', error);
+            reply(msg, 'npcCreateFailed', error);
           } else {
-            self.common.reply(msg, 'Created NPC: ' + username, id);
+            self.common.reply(
+                msg, strings.get('npcCreated', msg.locale, username), id);
           }
         }).catch((err) => {
           self.error('Failed to create NPC.');
@@ -3722,18 +3715,18 @@ function HG() {
    * https://www.spikeybot.com/avatars/NPCBBBADEF031F83638/avatar1.png).
    * @param {string} id The npc id of this npc. Must match the id in the avatar
    * url.
-   * @returns {?string} Error message or null if no error.
+   * @returns {?string} Error message key or null if no error.
    */
   this.createNPC = function(gId, username, avatar, id) {
-    if (typeof avatar !== 'string') return 'Invalid Avatar URL.';
+    if (typeof avatar !== 'string') return 'invalidAvatarURL';
     const splitURL = avatar.match(/\/avatars\/(NPC[A-F0-9]+)\/\w+\.png/);
-    if (!splitURL) return 'Invalid Avatar URL.';
+    if (!splitURL) return 'invalidAvatarURL';
     const urlID = splitURL[1];
 
     if (!NPC.checkID(id)) {
-      return 'Invalid NPC ID.';
+      return 'invalidNPCId';
     } else if (urlID !== id) {
-      return 'ID does not match avatar ID.';
+      return 'avatarIdMismatch';
     }
 
     const npc = new NPC(formatUsername(username), avatar, id);
@@ -3792,9 +3785,11 @@ function HG() {
         msg.softMentions.users.filter((el) => el.id.startsWith('NPC'));
     if (mentions.size == 0) {
       if (msg.text &amp;&amp; msg.text.length > 1) {
-        self.common.reply(msg, 'I wasn\'t able to find that NPC.');
+        reply(
+            msg, 'npcUnknownTitle', 'npcUnknownBody', msg.text,
+            `${msg.prefix}${self.postPrefix}`);
       } else {
-        self.common.reply(msg, 'Please specify an NPC to rename.');
+        reply(msg, 'npcRenameSpecify');
       }
       return;
     }
@@ -3807,10 +3802,11 @@ function HG() {
     const newName = formatUsername(trimmed);
     const success = self.renameNPC(id, toRename.id, newName);
     if (success) {
-      self.common.reply(msg, 'Failed to rename NPC', success);
+      reply(msg, 'npcRenameFailed', success);
     } else {
-      self.common.reply(
-          msg, 'Renamed NPC', '`' + oldName + '` to `' + newName + '`');
+      reply(
+          msg, 'npcRenameSuccessTitle', 'npcRenameSuccessBody', oldName,
+          newName);
     }
   }
 
@@ -3826,10 +3822,10 @@ function HG() {
   this.renameNPC = function(gId, npcId, username) {
     const npc = hg.getGame(gId).includedNPCs.find((el) => el.id == npcId) ||
         hg.getGame(gId).excludedNPCs.find((el) => el.id == npcId);
-    if (!npc) return 'INVALID_NPC';
+    if (!npc) return 'npcUnknownTitle';
 
     username = formatUsername(username);
-    if (username.length &lt; 2) return 'INVALID_USERNAME';
+    if (username.length &lt; 2) return 'npcNoUsername';
     npc.username = username;
     npc.name = username;
 
@@ -3849,19 +3845,21 @@ function HG() {
         msg.softMentions.users.filter((el) => el.id.startsWith('NPC'));
     if (mentions.size == 0) {
       if (msg.text &amp;&amp; msg.text.length > 1) {
-        self.common.reply(msg, 'I wasn\'t able to find that NPC.');
+        reply(
+            msg, 'npcUnknownTitle', 'npcUnknownBody', msg.text,
+            `${msg.prefix}${self.postPrefix}`);
       } else {
-        self.common.reply(msg, 'Please specify an NPC to delete.');
+        reply(msg, 'npcDeleteSpecify');
       }
       return;
     }
     const toDelete = mentions.first();
-    const success = self.removeNPC(id, toDelete.id);
+    const success = self.removeNPC(id, toDelete.id, msg.locale);
     if (typeof success === 'string') {
-      self.common.reply(msg, success);
+      reply(msg, 'npcDeleteFailed', success);
     } else {
       msg.channel.send(success).catch(
-          () => self.common.reply(msg, 'NPC Deleted', toDelete.id));
+          () => reply(msg, 'npcDeleteSuccess', 'fillOne', toDelete.id));
     }
   }
   /**
@@ -3871,10 +3869,11 @@ function HG() {
    *
    * @param {string} gId Guild id of which to remove npc.
    * @param {string} npc ID of npc to delete.
-   * @returns {string|Discord~MessageEmbed} String if error, MessageEmbed to
+   * @param {string} [locale] Language locale to create MessageEmbed with.
+   * @returns {string|Discord~MessageEmbed} String key if error, MessageEmbed to
    * send if success.
    */
-  this.removeNPC = function(gId, npc) {
+  this.removeNPC = function(gId, npc, locale) {
     const incIndex =
         hg.getGame(gId).includedNPCs.findIndex((el) => el.id == npc);
     const excIndex =
@@ -3889,14 +3888,13 @@ function HG() {
       self._fire('memberRemove', gId, npc);
     } else {
       self.error('NPC HALF DISCOVERED :O ' + npc);
-      return 'Oops, I was only half able to find that NPC. ' +
-          'Something is broken...';
+      return 'npcHalfDiscovered';
     }
 
     if (!hg.getGame(gId).currentGame.inProgress) self.createGame(gId);
 
     const embed = new self.Discord.MessageEmbed();
-    embed.setTitle('Deleted NPC');
+    embed.setTitle(strings.get('npcDeleteSuccess', locale));
     embed.setDescription(toDelete.name);
     embed.setFooter(toDelete.id);
     embed.setThumbnail(toDelete.avatarURL);
@@ -5225,7 +5223,7 @@ module.exports = new HG();
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.4</a>
 	
-		on Friday, June 19, 2020 5:16 PM (-07:00)
+		on Friday, June 19, 2020 5:19 PM (-07:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

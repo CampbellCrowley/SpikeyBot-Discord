@@ -269,6 +269,40 @@ class EnUsHG extends Locale {
     this.npcTooMany =
         'This is possibly because there are too many NPCs in the games to ' +
         'show in this list.';
+    this.npcNoImage = 'Hmm, you didn\'t give me an image to use as an avatar.';
+    this.npcNoUsername = 'Please specify a valid username.';
+    this.npcBadURL = 'Hmm, that link doesn\'t appear to work.';
+    this.npcBadURLMime =
+        'Hmm, that link does not appear to be a supported media type.';
+    this.npcConfirmTitle = 'Confirm NPC Creation';
+    this.npcConfirmDescription =
+        'Click the {0} reaction to confirm, {1} to cancel.';
+    this.confirmed = 'Confirmed';
+    this.cancelled = 'Cancelled';
+    this.timedOut = 'Timed out';
+    this.npcCreateWentWrongTitle =
+        'Oops, something went wrong while creating that NPC...';
+    this.npcCreateWentWrongBody = 'This should not happen D:';
+    this.npcCreateFailed = 'Failed to create NPC';
+    this.invalidAvatarURL = 'Invalid Avatar URL.';
+    this.invalidNPCId = 'Invalid NPC ID.';
+    this.avatarIdMismatch = 'ID does not match avatar ID.';
+    this.npcCreated = 'Created NPC: {}';
+    this.npcRenameSpecify = 'Please specify an NPC to rename.';
+    this.npcRenameFailed = 'Failed to rename NPC';
+    this.npcRenameSuccessTitle = 'Renamed NPC';
+    this.npcRenameSuccessBody = '`{0}` to `{1}`';
+    this.npcDeleteSpecify = 'Please specify an NPC to delete.';
+    this.npcDeleteFailed = 'Failed to delete NPC';
+    this.npcDeleteSuccess = 'NPC Deleted';
+    this.npcHalfDiscovered =
+        'Oops, I was only half able to find that NPC. Something is broken...';
+
+    this.statusCode = 'Status code: {}';
+    this.invalidFileType = 'The provided filetype is not supported.';
+    this.invalidFileSize = 'Please ensure the image is not larger than {}MB.';
+    this.unknownFileSize = 'Unable to determine download size.';
+    this.invalidImage = 'I wasn\'t able to convert that file into an image.';
 
     this.pageNumbers = 'Page {0} of {1}';
     this.success = 'Success';
