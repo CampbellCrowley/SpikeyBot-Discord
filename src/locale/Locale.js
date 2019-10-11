@@ -12,6 +12,7 @@ class Locale {
    */
   constructor() {
     this.get = this.get.bind(this);
+    this.getRaw = this.getRaw.bind(this);
 
     /**
      * @description The bot's username.
@@ -33,7 +34,7 @@ class Locale {
    * find.
    */
   get(key, ...rep) {
-    let s = this[key];
+    let s = this.getRaw(key);
     let i = 0;
     if (Array.isArray(s)) s = s[Math.floor(Math.random() * s.length)];
     if (typeof s === 'string') {
@@ -46,6 +47,18 @@ class Locale {
     } else {
       return null;
     }
+  }
+
+  /**
+   * @description Get get the raw data from the locale file at the given key.
+   * @public
+   * @this Locale
+   * @param {string} key Key of string to lookup.
+   * @returns {?string|string[]} Data from locale file, or null if unable to
+   * find.
+   */
+  getRaw(key) {
+    return this[key] || null;
   }
 }
 

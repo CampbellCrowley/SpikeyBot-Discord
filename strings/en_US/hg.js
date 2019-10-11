@@ -304,6 +304,49 @@ class EnUsHG extends Locale {
     this.unknownFileSize = 'Unable to determine download size.';
     this.invalidImage = 'I wasn\'t able to convert that file into an image.';
 
+    this.noStats = 'No Stats';
+    this.statsAfterGame =
+        'You haven\'t started a game before. Stats will be available after a ' +
+        'game is started.';
+    this.statsUserTitle = '{}\'s HG Stats';
+    this.statsLifetime = 'Lifetime';
+    this.statsPrevious = 'Previous Game';
+    this.noGroupData = 'There is no group data yet.';
+    this.groupCreateFirst = 'Please create a group first.';
+    this.groupTitle = 'Stat Groups';
+    this.groupNotFound = 'I wasn\'t able to find that group.';
+    this.groupListFailedTitle = 'Failed to get list of groups.';
+    this.groupListFailedBody = 'Something broke...';
+    this.groupNone = 'There are no created groups.';
+    this.groupCreatedAndSelected = 'Created and selected new stat group';
+    this.groupDisabled = 'Disabled stat group';
+    this.groupListCommand = 'List groups with `{}groups`';
+    this.groupSelected = 'Selected Group';
+    this.groupSpecifyId = 'Please specify a valid group ID.';
+    this.groupRenamed = 'Renamed group';
+    this.groupDeleted = 'Deleted group: {}';
+    this.statsNoData = 'It doesn\'t look like you\'ve finished a game yet.';
+    this.groupNoData =
+        'It doesn\'t look like this group has any game data yet.';
+    this.completeGameFirst = 'Check back after a game to see your stats!';
+    this.lbFailed =
+        'Oops! Something went wrong while fetching the leaderboard...';
+    this.lbSendFailed =
+        'Oops! I wasn\'t able to send the leaderboard here for an unknown ' +
+        'reason.';
+    this.rankedBy = 'Rank by {}';
+    this.lifetime = 'lifetime';
+
+    this.groupWords = {
+      everyone: ['everyone', '@everyone', 'all'],
+      online: ['online', 'here', '@here'],
+      offline: ['offline'],
+      idle: ['idle', 'away', 'snooze', 'snoozed'],
+      dnd: ['dnd', 'busy'],
+      bots: ['bot', 'bots'],
+      npcs: ['npc', 'npcs', 'ai', 'ais'],
+    };
+
     this.pageNumbers = 'Page {0} of {1}';
     this.success = 'Success';
     this.noPermNext =

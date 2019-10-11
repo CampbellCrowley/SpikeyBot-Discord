@@ -3861,16 +3861,14 @@ function HG() {
   function commandStats(msg, id) {
     const game = hg.getGame(id);
     if (!game) {
-      self.common.reply(
-          msg, 'No Stats', 'You haven\'t started a game before. ' +
-              'Stats will be available after a game is started.');
+      reply(msg, 'noStats', 'statsAfterGame');
       return;
     }
     const numTotal = game.statGroup ? 3 : 2;
     const user = msg.softMentions.users.first() || msg.author;
     let numDone = 0;
     const embed = new self.Discord.MessageEmbed();
-    embed.setTitle(`${user.tag}'s HG Stats`);
+    embed.setTitle(strings.get('statsUserTitle', msg.locale, user.tag));
     embed.setColor([255, 0, 255]);
 
     const checkDone = function() {
@@ -3895,11 +3893,15 @@ function HG() {
           const list = data.keys.map(
               (el) => `${self.common.camelToSpaces(el)}: ${data.get(el)}`);
           if (group.id === 'global') {
-            embed.addField('Lifetime', list.join('\n'), true);
+            embed.addField(
+                strings.get('statsLifetime', msg.locale), list.join('\n'),
+                true);
             checkDone();
             return;
           } else if (group.id === 'previous') {
-            embed.addField('Previous Game', list.join('\n'), true);
+            embed.addField(
+                strings.get('statsPrevious', msg.locale), list.join('\n'),
+                true);
             checkDone();
             return;
           }
@@ -3936,8 +3938,7 @@ function HG() {
   function commandGroups(msg, id) {
     const game = hg.getGame(id);
     if (!game) {
-      self.common.reply(
-          msg, 'There is no group data yet.', 'Please create a group first.');
+      reply(msg, 'noGroupData', 'groupCreateFirst');
       return;
     }
     let total = 0;
@@ -3946,9 +3947,9 @@ function HG() {
     const checkDone = function() {
       done++;
       if (done >= total) {
-        self.common.reply(
-            msg, 'Stat Groups',
-            list.join('\n') || 'I wasn\'t able to find that group.');
+        reply(
+            msg, 'groupTitle', 'fillOne',
+            list.join('\n') || strings.get('groupNotFound', msg.locale));
       }
     };
     const groupDone = function(err, group) {
@@ -3982,17 +3983,14 @@ function HG() {
           } else {
             self.error('Failed to get list of stat groups.');
             console.error(err);
-            self.common.reply(
-                msg, 'Failed to get list of groups.', 'Something broke...');
+            reply(msg, 'groupListFailedTitle', 'groupListFailedBody');
             return;
           }
         }
         list = list.filter((el) => !['global', 'previous'].includes(el));
         total = list.length;
         list.forEach((el) => game._stats.fetchGroup(el, groupDone));
-        if (list.length === 0) {
-          self.common.reply(msg, 'There are no created groups.');
-        }
+        if (list.length === 0) reply(msg, 'groupNone');
       });
     }
   }
@@ -4011,7 +4009,7 @@ function HG() {
     if (!game) {
       createGame(msg, id, false, (game) => {
         if (!game) {
-          self.common.reply(msg, 'Failed to create game for unknown reason.');
+          reply(msg, 'createFailedUnknown');
           return;
         }
         commandNewGroup(msg, id, game);
@@ -4023,7 +4021,7 @@ function HG() {
       let res = group.id;
       if (name) res = `${res}: ${name}`;
       game.statGroup = group.id;
-      self.common.reply(msg, 'Created and selected new stat group', res);
+      reply(msg, 'groupCreatedAndSelected', 'fillOne', res);
     });
   }
 
@@ -4038,22 +4036,21 @@ function HG() {
   function commandSelectGroup(msg, id) {
     const game = hg.getGame(id);
     if (!game) {
-      self.common.reply(
-          msg, 'There is no group data yet.', 'Please create a group first.');
+      reply(msg, 'noGroupData', 'groupCreateFirst');
       return;
     }
     let groupID = msg.text.match(/\b([a-fA-F0-9]{4})\b/);
     if (!groupID) {
-      self.common.reply(msg, 'Disabled stat group');
+      reply(msg, 'groupDisabled');
       game.statGroup = null;
       return;
     }
     groupID = groupID[1].toUpperCase();
     game._stats.fetchGroup(groupID, (err, group) => {
       if (err) {
-        self.common.reply(
-            msg, 'I wasn\'t able to find that group.', 'List groups with `' +
-                msg.prefix + self.postPrefix + 'groups`');
+        reply(
+            msg, 'groupNotFound', 'groupListCommand',
+            `${msg.prefix}${self.postPrefix}`);
         return;
       }
       game.statGroup = groupID;
@@ -4063,7 +4060,7 @@ function HG() {
       } else {
         name = `${group.id}`;
       }
-      self.common.reply(msg, 'Selected group', name);
+      reply(msg, 'groupSelected', 'fillOne', name);
     });
   }
 
@@ -4078,25 +4075,24 @@ function HG() {
   function commandRenameGroup(msg, id) {
     const game = hg.getGame(id);
     if (!game) {
-      self.common.reply(
-          msg, 'There is no group data yet.', 'Please create a group first.');
+      reply(msg, 'noGroupData', 'groupCreateFirst');
       return;
     }
     const regex = /\b([a-fA-F0-9]{4})\b/;
     let groupID = msg.text.match(regex);
     if (!groupID) {
-      self.common.reply(
-          msg, 'Please specify a valid group ID to rename.',
-          'List groups with `' + msg.prefix + self.postPrefix + 'groups`');
+      reply(
+          msg, 'groupSpecifyId', 'groupListCommand',
+          `${msg.prefix}${self.postPrefix}`);
       return;
     }
     groupID = groupID[1].toUpperCase();
     const newName = msg.text.replace(regex, '').trim().slice(0, 24);
     game._stats.fetchGroup(groupID, (err, group) => {
       if (err) {
-        self.common.reply(
-            msg, 'I wasn\'t able to find that group.', 'List groups with `' +
-                msg.prefix + self.postPrefix + 'groups`');
+        reply(
+            msg, 'groupNotFound', 'groupListCommand',
+            `${msg.prefix}${self.postPrefix}`);
         return;
       }
       group.setMetaName(newName);
@@ -4106,7 +4102,7 @@ function HG() {
       } else {
         name = `${group.id}`;
       }
-      self.common.reply(msg, 'Renamed group', name);
+      reply(msg, 'groupRenamed', 'fillOne', name);
     });
   }
 
@@ -4121,32 +4117,32 @@ function HG() {
   function commandDeleteGroup(msg, id) {
     const game = hg.getGame(id);
     if (!game) {
-      self.common.reply(
-          msg, 'There is no group data yet.', 'Please create a group first.');
+      reply(msg, 'noGroupData', 'groupCreateFirst');
       return;
     }
     let groupID = msg.text.match(/\b([a-fA-F0-9]{4})\b/);
     if (!groupID) {
-      self.common.reply(
-          msg, 'Please specify a valid group ID to rename.',
-          'List groups with `' + msg.prefix + self.postPrefix + 'groups`');
+      reply(
+          msg, 'groupSpecifyId', 'groupListCommand',
+          `${msg.prefix}${self.postPrefix}`);
       return;
     }
     groupID = groupID[1].toUpperCase();
     game._stats.fetchGroup(groupID, (err, group) => {
       if (err) {
-        self.common.reply(
-            msg, 'I wasn\'t able to find that group.', 'List groups with `' +
-                msg.prefix + self.postPrefix + 'groups`');
+        reply(
+            msg, 'groupNotFound', 'groupListCommand',
+            `${msg.prefix}${self.postPrefix}`);
         return;
       }
       let additional = null;
       if (game.statGroup === group.id) {
-        additional = 'Disabled stat group';
+        additional = strings.get('groupDisabled', msg.locale);
         game.statGroup = null;
       }
       group.reset();
-      self.common.reply(msg, `Deleted group ${group.id}`, additional);
+      self.common.reply(
+          msg, strings.get('groupDeleted', msg.locale, group.id), additional);
     });
   }
 
@@ -4161,9 +4157,7 @@ function HG() {
   function commandLeaderboard(msg, id) {
     const game = hg.getGame(id);
     if (!game) {
-      self.common.reply(
-          msg, 'There is no game data to show stats for.',
-          'Try again after you have completed a game.');
+      reply(msg, 'statsNoData', 'completeGameFirst');
       return;
     }
     const regex = /\b([a-fA-F0-9]{4})\b/;
@@ -4188,14 +4182,11 @@ function HG() {
     game._stats.fetchGroup(groupID, (err, group) => {
       if (err) {
         if (groupID === 'previous' || groupID === 'global') {
-          self.common.reply(
-              msg, 'It doesn\'t look like you\'ve finished a game yet.',
-              'Check back after a game to see your stats!');
+          reply(msg, 'statsNoData', 'completeGameFirst');
         } else {
-          self.common.reply(
-              msg, 'I wasn\'t able to find that group.', 'List groups with `' +
-                  msg.prefix + self.postPrefix +
-                  'groups`, or say "lifetime" or "previous".');
+          reply(
+              msg, 'groupNotFound', 'groupListCommand',
+              `${msg.prefix}${self.postPrefix}`);
         }
         return;
       }
@@ -4207,15 +4198,11 @@ function HG() {
         if (err) {
           self.error('Failed to fetch leaderboard: ' + id + '/' + groupID);
           console.error(err);
-          self.common.reply(
-              msg,
-              'Oops! Something went wrong while fetching the leaderboard...');
+          reply(msg, 'lbFailed');
           return;
         }
         if (!rows || rows.length === 0) {
-          self.common.reply(
-              msg, 'It doesn\'t look like this group has any game data yet.',
-              'Check back after a game to see your stats!');
+          reply(msg, 'groupNoData', 'completeGameFirst');
           return;
         }
         const list = rows.map((el, i) => {
@@ -4240,8 +4227,10 @@ function HG() {
         });
 
         const embed = new self.Discord.MessageEmbed();
-        embed.setTitle(`Rank by ${col}`);
-        const groupName = groupID === 'global' ? 'lifetime' : groupID;
+        embed.setTitle(strings.get('rankedBy', msg.locale, col));
+        const groupName = groupID === 'global' ?
+            strings.get('lifetime', msg.locale) :
+            groupID;
         embed.setDescription(groupName);
         embed.setColor([255, 0, 255]);
 
@@ -4264,10 +4253,7 @@ function HG() {
           self.error(
               'Failed to send leaderboard in channel: ' + msg.channel.id);
           console.error(err);
-          self.common.reply(
-              msg, 'Oops! I wasn\'t able to send the leaderboard here for an ' +
-                  'unknown reason.',
-              err.code);
+          reply(msg, 'lbSendFailed', 'fillOne', err.code);
         });
       });
     });
@@ -4361,15 +4347,16 @@ function HG() {
 
     let firstWord = msg.text.trim().split(' ')[0];
     if (firstWord) firstWord = firstWord.toLowerCase();
-    const specialWords = {
-      everyone: ['everyone', '@everyone', 'all'],
-      online: ['online', 'here', '@here'],
-      offline: ['offline'],
-      idle: ['idle', 'away', 'snooze', 'snoozed'],
-      dnd: ['dnd', 'busy'],
-      bots: ['bot', 'bots'],
-      npcs: ['npc', 'npcs', 'ai', 'ais'],
-    };
+    const specialWords = strings.getRaw('groupWords');
+    // const specialWords = {
+    //   everyone: ['everyone', '@everyone', 'all'],
+    //   online: ['online', 'here', '@here'],
+    //   offline: ['offline'],
+    //   idle: ['idle', 'away', 'snooze', 'snoozed'],
+    //   dnd: ['dnd', 'busy'],
+    //   bots: ['bot', 'bots'],
+    //   npcs: ['npc', 'npcs', 'ai', 'ais'],
+    // };
 
     let players = [];
     const incU = game.currentGame.includedUsers;
