@@ -163,7 +163,7 @@ services.</div>
 		<ul class="dummy">
 			<li>
 				<a href="web_webApi.js.html">web/webApi.js</a>,
-				 <a href="web_webApi.js.html#sunlight-1-line-30">line 30</a>
+				 <a href="web_webApi.js.html#sunlight-1-line-31">line 31</a>
 			</li>
 		</ul>
 	</dd>
@@ -220,6 +220,76 @@ services.</div>
         <h3 class="subsection-title">Members</h3>
 
         <dl>
+            
+<hr>
+<dt class="name" id="._fetchGameHost">
+    <h4 id="._fetchGameHost"><span class="type-signature">&lt;private, static> </span>_fetchGameHost<span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Get the host data for requesting game information from Twitch.
+    </div>
+    
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_webApi.js.html">web/webApi.js</a>,
+				 <a href="web_webApi.js.html#sunlight-1-line-139">line 139</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
             
 <hr>
 <dt class="name" id="_app">
@@ -284,7 +354,7 @@ WebCommands._handler on requests.
 		<ul class="dummy">
 			<li>
 				<a href="web_webApi.js.html">web/webApi.js</a>,
-				 <a href="web_webApi.js.html#sunlight-1-line-40">line 40</a>
+				 <a href="web_webApi.js.html#sunlight-1-line-41">line 41</a>
 			</li>
 		</ul>
 	</dd>
@@ -373,7 +443,7 @@ redirect data.
 		<ul class="dummy">
 			<li>
 				<a href="web_webApi.js.html">web/webApi.js</a>,
-				 <a href="web_webApi.js.html#sunlight-1-line-51">line 51</a>
+				 <a href="web_webApi.js.html#sunlight-1-line-52">line 52</a>
 			</li>
 		</ul>
 	</dd>
@@ -462,7 +532,7 @@ user token.
 		<ul class="dummy">
 			<li>
 				<a href="web_webApi.js.html">web/webApi.js</a>,
-				 <a href="web_webApi.js.html#sunlight-1-line-83">line 83</a>
+				 <a href="web_webApi.js.html#sunlight-1-line-84">line 84</a>
 			</li>
 		</ul>
 	</dd>
@@ -550,7 +620,7 @@ user token.
 		<ul class="dummy">
 			<li>
 				<a href="web_webApi.js.html">web/webApi.js</a>,
-				 <a href="web_webApi.js.html#sunlight-1-line-72">line 72</a>
+				 <a href="web_webApi.js.html#sunlight-1-line-73">line 73</a>
 			</li>
 		</ul>
 	</dd>
@@ -638,7 +708,7 @@ user token.
 		<ul class="dummy">
 			<li>
 				<a href="web_webApi.js.html">web/webApi.js</a>,
-				 <a href="web_webApi.js.html#sunlight-1-line-92">line 92</a>
+				 <a href="web_webApi.js.html#sunlight-1-line-93">line 93</a>
 			</li>
 		</ul>
 	</dd>
@@ -1907,7 +1977,7 @@ endpoint.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_webApi.js.html">web/webApi.js</a>,
-				 <a href="web_webApi.js.html#sunlight-1-line-298">line 298</a>
+				 <a href="web_webApi.js.html#sunlight-1-line-318">line 318</a>
 			</li>
 		</ul>
 	</dd>
@@ -2118,7 +2188,7 @@ modified version of `req.url`.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_webApi.js.html">web/webApi.js</a>,
-				 <a href="web_webApi.js.html#sunlight-1-line-206">line 206</a>
+				 <a href="web_webApi.js.html#sunlight-1-line-226">line 226</a>
 			</li>
 		</ul>
 	</dd>
@@ -2281,7 +2351,7 @@ purposes of rate limiting.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_webApi.js.html">web/webApi.js</a>,
-				 <a href="web_webApi.js.html#sunlight-1-line-361">line 361</a>
+				 <a href="web_webApi.js.html#sunlight-1-line-381">line 381</a>
 			</li>
 		</ul>
 	</dd>
@@ -2330,6 +2400,194 @@ purposes of rate limiting.</td>
 
 
         
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="_fetchWebhookMetadata"><span class="type-signature">&lt;private> </span>_fetchWebhookMetadata(userId, gameId, content)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Fetch the necessary data for the parsed webhook request, then
+continue to sending alerts.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>userId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The Twitch user ID the request is for.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>gameId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The Twitch game ID the user is playing.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>content</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Full content string from the webhook to
+re-broadcast to shards.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_webApi.js.html">web/webApi.js</a>,
+				 <a href="web_webApi.js.html#sunlight-1-line-587">line 587</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
 
     
 </dd>
@@ -2467,7 +2725,171 @@ purposes of rate limiting.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_webApi.js.html">web/webApi.js</a>,
-				 <a href="web_webApi.js.html#sunlight-1-line-139">line 139</a>
+				 <a href="web_webApi.js.html#sunlight-1-line-159">line 159</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="_parseTwitchGameResponse"><span class="type-signature">&lt;private> </span>_parseTwitchGameResponse(content, cb)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Parse the response from Twitch containing information about a
+game.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>content</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Received content from request to Twitch API.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cb</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">First parameter is optional error string, otherwise
+the second parameter is the game object.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_webApi.js.html">web/webApi.js</a>,
+				 <a href="web_webApi.js.html#sunlight-1-line-666">line 666</a>
 			</li>
 		</ul>
 	</dd>
@@ -2679,7 +3101,170 @@ modified version of `req.url`.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_webApi.js.html">web/webApi.js</a>,
-				 <a href="web_webApi.js.html#sunlight-1-line-424">line 424</a>
+				 <a href="web_webApi.js.html#sunlight-1-line-444">line 444</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="_twitchFinal"><span class="type-signature">&lt;private> </span>_twitchFinal(ids, content)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        All data has been received for a Twitch webhook request, and
+is ready to be sent to our shards for re-broadcast and alerting.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>ids</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Encoded array of ids to broadcast to shards.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>content</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Encoded content string to broadcast to shards.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_webApi.js.html">web/webApi.js</a>,
+				 <a href="web_webApi.js.html#sunlight-1-line-706">line 706</a>
 			</li>
 		</ul>
 	</dd>
@@ -2890,7 +3475,7 @@ modified version of `req.url`.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_webApi.js.html">web/webApi.js</a>,
-				 <a href="web_webApi.js.html#sunlight-1-line-506">line 506</a>
+				 <a href="web_webApi.js.html#sunlight-1-line-526">line 526</a>
 			</li>
 		</ul>
 	</dd>
@@ -2978,7 +3563,7 @@ modified version of `req.url`.</td>
 		<ul class="dummy">
 			<li>
 				<a href="web_webApi.js.html">web/webApi.js</a>,
-				 <a href="web_webApi.js.html#sunlight-1-line-398">line 398</a>
+				 <a href="web_webApi.js.html#sunlight-1-line-418">line 418</a>
 			</li>
 		</ul>
 	</dd>
@@ -3634,6 +4219,169 @@ register command listeners.</td>
 			<li>
 				<a href="subModule.js.html">subModule.js</a>,
 				 <a href="subModule.js.html#sunlight-1-line-242">line 242</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="fetchGameData"><span class="type-signature"></span>fetchGameData(gameId, cb)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Fetch a Twitch game information from its ID.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>gameId</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The ID of the game to fetch.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cb</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">First parameter is an optional error string, otherwise
+the second parameter is the fetched data object.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="web_webApi.js.html">web/webApi.js</a>,
+				 <a href="web_webApi.js.html#sunlight-1-line-624">line 624</a>
 			</li>
 		</ul>
 	</dd>
@@ -4670,7 +5418,7 @@ doing such may risk putting the module into an uncontrollable state.
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a>
 	
-		on Sunday, October 6, 2019 7:12 PM (-07:00)
+		on Saturday, October 12, 2019 2:36 PM (-07:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

@@ -95,6 +95,7 @@
 // Author: Campbell Crowley (dev@campbellcrowley.com)
 const fs = require('fs');
 const http = require('http');
+const https = require('https');
 const auth = require('../../auth.js');
 const crypto = require('crypto');
 const sIOClient = require('socket.io-client');
@@ -220,6 +221,25 @@ class WebApi extends SubModule {
       this._app.close();
       this._app = null;
     }
+  }
+
+  /**
+   * @description Get the host data for requesting game information from Twitch.
+   * @private
+   * @static
+   * @returns {object} Default header information.
+   */
+  static get _fetchGameHost() {
+    return {
+      protocol: 'https:',
+      host: 'api.twitch.tv',
+      path: '/helix/games?id=',
+      method: 'GET',
+      headers: {
+        'User-Agent': require('../common.js').ua,
+        'Client-ID': auth.twitchID,
+      },
+    };
   }
 
   /**
@@ -598,7 +618,9 @@ class WebApi extends SubModule {
    */
   _twitchWebhook(req, res, url, ip) {
     const query = req.headers['queries'];
-    this.common.log('Twitch Webhook: ' + req.url + ' ' + query, ip);
+    const link = req.headers['link'];
+    this.common.log(
+        'Twitch Webhook: ' + req.url + ' ' + query + ' LINK:' + link, ip);
     let content = '';
     req.on('data', (c) => content += c);
     req.on('end', () => {
@@ -611,7 +633,7 @@ class WebApi extends SubModule {
         this.common.error('Failed to verify webhook signature!');
         console.error(
             'Lengths:', req.headers['content-length'], content.length,
-            'Signatures: ' + sigReq, sig);
+            'Signatures:', sigReq, sig);
         res.writeHead(403);
         res.end('403: Forbidden');
         return;
@@ -641,42 +663,152 @@ class WebApi extends SubModule {
         return;
       }
       this.common.logDebug('Twitch Webhook: ' + content, ip);
-      const toSend = global.sqlCon.format(
-          'SELECT * FROM TwitchDiscord WHERE twitchId=? AND bot=?',
-          [data.user_id, this.client.user.id]);
-      global.sqlCon.query(toSend, (err, rows) => {
-        if (err) {
-          this.common.error('Failed to fetch TwitchDiscord database info.', ip);
-          console.error(err);
-          res.writeHead(500);
-          res.end('500: Internal Server Error');
-          return;
-        }
-        const ids = JSON.stringify(rows.map((el) => el.channel));
-        if (this.client.shard) {
-          this.client.shard
-              .broadcastEval(`this.twitchWebhookHandler(${ids}, ${content})`)
-              .then(() => {
-                res.writeHead(204);
-                res.end();
-              })
-              .catch((err) => {
-                this.error('Failed to broadcast webhook handler to shards.');
-                console.error(err);
-              });
-        } else {
-          const sm = this.bot.getSubmodule('./twitch.js');
-          if (!sm) {
-            res.writeHead(204);
-            res.end();
-            return;
-          }
-          sm.webhookHandler(ids, content);
-          res.writeHead(204);
-          res.end();
-        }
-      });
+      res.writeHead(204);
+      res.end();
+      this._fetchWebhookMetadata(data.user_id, data.game_id, content);
     });
+  }
+  /**
+   * @description Fetch the necessary data for the parsed webhook request, then
+   * continue to sending alerts.
+   * @private
+   * @param {string} userId The Twitch user ID the request is for.
+   * @param {string} gameId The Twitch game ID the user is playing.
+   * @param {string} content Full content string from the webhook to
+   * re-broadcast to shards.
+   */
+  _fetchWebhookMetadata(userId, gameId, content) {
+    let ids;
+
+    const numTotal = 2;
+    let numDone = 0;
+    const self = this;
+    const check = function() {
+      if (++numDone &lt; numTotal) return;
+      self._twitchFinal(ids, content);
+    };
+
+    if (gameId &amp;&amp; gameId.length > 0) {
+      this.fetchGameData(gameId, check);
+    } else {
+      check();
+    }
+
+    const toSend = global.sqlCon.format(
+        'SELECT * FROM TwitchDiscord WHERE twitchId=? AND bot=?',
+        [userId, this.client.user.id]);
+    global.sqlCon.query(toSend, (err, rows) => {
+      if (err) {
+        this.error('Failed to fetch TwitchDiscord database info: ' + userId);
+        console.error(err);
+        return;
+      }
+      ids = JSON.stringify(rows.map((el) => el.channel));
+      check();
+    });
+  }
+  /**
+   * @description Fetch a Twitch game information from its ID.
+   * @public
+   * @param {string} gameId The ID of the game to fetch.
+   * @param {Function} cb First parameter is an optional error string, otherwise
+   * the second parameter is the fetched data object.
+   */
+  fetchGameData(gameId, cb) {
+    const toSend = global.sqlCon.format(
+        'SELECT * FROM TwitchGames WHERE id=? AND ' +
+            'TIMESTAMPDIFF(DAY, lastModified, NOW()) &lt;= 7',
+        [gameId]);
+    global.sqlCon.query(toSend, (err, rows) => {
+      if (err) {
+        this.warn('Failed to fetch TwitchGames database info: ' + gameId);
+        console.error(err);
+        cb('DB_FAILED');
+        return;
+      }
+      if (rows &amp;&amp; rows.length > 0) {
+        cb(null, rows[0]);
+      } else {
+        const host = WebApi._fetchGameHost;
+        host.path += encodeURIComponent(gameId);
+        const req = https.request(host, (res) => {
+          let content = '';
+          res.on('data', (chunk) => content += chunk);
+          res.on('end', () => {
+            if (res.statusCode == 200) {
+              this._parseTwitchGameResponse(content, cb);
+            } else {
+              this.error(res.statusCode + ': ' + content);
+              console.error(host);
+              cb(res.statusCode + ' from Twitch');
+            }
+          });
+        });
+        req.end();
+      }
+    });
+  }
+  /**
+   * @description Parse the response from Twitch containing information about a
+   * game.
+   * @private
+   * @param {string} content Received content from request to Twitch API.
+   * @param {Function} cb First parameter is optional error string, otherwise
+   * the second parameter is the game object.
+   */
+  _parseTwitchGameResponse(content, cb) {
+    try {
+      const parsed = JSON.parse(content);
+      const data = parsed.data &amp;&amp; parsed.data[0];
+      if (!data) {
+        cb(null, null);
+        return;
+      }
+      const toSend = global.sqlCon.format(
+          'INSERT INTO TwitchGames SET id=?, name=?, thumbnailUrl=? ' +
+              'ON DUPLICATE KEY UPDATE name=?, thumbnailUrl=?',
+          [data.id, data.name, data.box_art_url, data.name, data.box_art_url]);
+      global.sqlCon.query(toSend, (err) => {
+        if (err) {
+          this.error(
+              'Failed to update TwitchGames data after fetching game: ' +
+              data.name + ' ' + data.id);
+          console.log(err);
+        }
+        cb(null, {
+          id: data.id,
+          name: data.name,
+          thumbnailUrl: data.box_art_url,
+          lastModified: new Date().toUTCString(),
+        });
+      });
+    } catch (err) {
+      this.error('Failed to parse response from Twitch');
+      console.error(err, content);
+      cb('Bad Response');
+      return;
+    }
+  }
+  /**
+   * @description All data has been received for a Twitch webhook request, and
+   * is ready to be sent to our shards for re-broadcast and alerting.
+   * @private
+   * @param {string} ids Encoded array of ids to broadcast to shards.
+   * @param {string} content Encoded content string to broadcast to shards.
+   */
+  _twitchFinal(ids, content) {
+    if (this.client.shard) {
+      this.client.shard
+          .broadcastEval(`this.twitchWebhookHandler(${ids}, ${content})`)
+          .catch((err) => {
+            this.error('Failed to broadcast webhook handler to shards.');
+            console.error(err);
+          });
+    } else {
+      const sm = this.bot.getSubmodule('./twitch.js');
+      if (!sm) return;
+      sm.webhookHandler(ids, content);
+    }
   }
 }
 module.exports = new WebApi();
@@ -725,7 +857,7 @@ module.exports = new WebApi();
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a>
 	
-		on Sunday, October 6, 2019 7:12 PM (-07:00)
+		on Saturday, October 12, 2019 2:36 PM (-07:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

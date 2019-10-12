@@ -148,7 +148,8 @@ class Twitch extends SubModule {
    */
   _fetchUser(login, cb) {
     const toSend = global.sqlCon.format(
-        'SELECT * from TwitchUsers WHERE login=?', [login]);
+        'SELECT * from TwitchUsers WHERE login=? AND bot=?',
+        [login, this.client.user.id]);
     global.sqlCon.query(toSend, (err, rows) => {
       if (err) {
         this.error('Failed to fetch users from TwitchUsers');
@@ -171,41 +172,7 @@ class Twitch extends SubModule {
         res.on('data', (chunk) => content += chunk);
         res.on('end', () => {
           if (res.statusCode == 200) {
-            try {
-              const parsed = JSON.parse(content);
-              const data = parsed.data[0];
-              if (!data) {
-                cb(null, null);
-                return;
-              }
-              const toSend = global.sqlCon.format(
-                  'INSERT INTO TwitchUsers SET id=?, login=?, displayName=? ' +
-                      'ON DUPLICATE KEY UPDATE login=?, displayName=?',
-                  [
-                    data.id, data.login, data.display_name, data.login,
-                    data.display_name,
-                  ]);
-              global.sqlCon.query(toSend, (err) => {
-                if (err) {
-                  this.error(
-                      'Failed to update TwitchUser data after fetching user: ' +
-                      login + ' ' + data.id);
-                  console.log(err);
-                }
-              });
-              cb(null, {
-                id: data.id,
-                login: data.login,
-                displayName: data.display_name,
-                lastModified: new Date().toUTCString(),
-                streamChangedState: 0,
-              });
-            } catch (err) {
-              this.error('Failed to parse response from Twitch');
-              console.error(err, content);
-              cb('Bad Response');
-              return;
-            }
+            this._parseTwitchUserResponse(content, cb);
           } else {
             this.error(res.statusCode + ': ' + content);
             console.error(host);
@@ -215,6 +182,50 @@ class Twitch extends SubModule {
       });
       req.end();
     });
+  }
+
+  /**
+   * @description Parse the data received from the request for user data.
+   * @private
+   * @param {string} content The received information from Twitch.
+   * @param {Function} cb Callback.
+   */
+  _parseTwitchUserResponse(content, cb) {
+    try {
+      const parsed = JSON.parse(content);
+      const data = parsed.data && parsed.data[0];
+      if (!data) {
+        cb(null, null);
+        return;
+      }
+      const toSend = global.sqlCon.format(
+          'INSERT INTO TwitchUsers SET id=?, login=?, displayName=?, ' +
+              'bot=? ON DUPLICATE KEY UPDATE login=?, displayName=?',
+          [
+            data.id, data.login, data.display_name, this.client.user.id,
+            data.login, data.display_name,
+          ]);
+      global.sqlCon.query(toSend, (err) => {
+        if (err) {
+          this.error(
+              'Failed to update TwitchUser data after fetching user: ' +
+              data.login + ' ' + data.id);
+          console.log(err);
+        }
+      });
+      cb(null, {
+        id: data.id,
+        login: data.login,
+        displayName: data.display_name,
+        lastModified: new Date().toUTCString(),
+        streamChangedState: 0,
+      });
+    } catch (err) {
+      this.error('Failed to parse response from Twitch');
+      console.error(err, content);
+      cb('Bad Response');
+      return;
+    }
   }
 
   /**
@@ -228,8 +239,9 @@ class Twitch extends SubModule {
   _commandTwitch(msg) {
     const toSend = global.sqlCon.format(
         'SELECT * FROM TwitchDiscord JOIN TwitchUsers ON twitchId=id ' +
-            'WHERE guild=? AND bot=? ORDER BY channel',
-        [msg.guild.id, this.client.user.id]);
+            'WHERE guild=? AND TwitchDiscord.bot=? AND TwitchUsers.bot=? ' +
+            'ORDER BY channel',
+        [msg.guild.id, this.client.user.id, this.client.user.id]);
     global.sqlCon.query(toSend, (err, rows) => {
       if (err) {
         this.error(
@@ -310,11 +322,8 @@ class Twitch extends SubModule {
             'INSERT INTO TwitchDiscord SET channel=?, twitchId=?, guild=?, ' +
                 'type=?, bot=?',
             [
-              msg.channel.id,
-              user.id,
-              msg.guild && msg.guild.id,
-              'Stream Changed',
-              this.client.user.id,
+              msg.channel.id, user.id, msg.guild && msg.guild.id,
+              'Stream Changed', this.client.user.id,
             ]);
         global.sqlCon.query(toSend, (err) => {
           if (err && err.code !== 'ER_DUP_ENTRY') {
@@ -392,8 +401,8 @@ class Twitch extends SubModule {
   subscribeToUser(user) {
     const toSend = global.sqlCon.format(
         'UPDATE TwitchUsers SET streamChangedState=1 WHERE id=? AND ' +
-            'streamChangedState<2',
-        [user.id]);
+            'streamChangedState<2 AND bot=?',
+        [user.id, this.client.user.id]);
     global.sqlCon.query(toSend, (err) => {
       if (err) {
         this.error('Failed to update streamChangedState.');
@@ -423,8 +432,8 @@ class Twitch extends SubModule {
           });
           const toSend = global.sqlCon.format(
               'UPDATE TwitchUsers SET streamChangedState=0 WHERE id=? AND ' +
-                  'streamChangedState<2',
-              [user.id]);
+                  'streamChangedState<2 AND bot=?',
+              [user.id, this.client.user.id]);
           global.sqlCon.query(toSend, (err) => {
             if (err) {
               this.error('Failed to update streamChangedState.');
@@ -463,24 +472,60 @@ class Twitch extends SubModule {
     if (typeof channels === 'string') channels = JSON.parse(channels);
     if (typeof data === 'string') data = JSON.parse(data);
     data = data.data[0];
-    const pF = this.Discord.Permissions.FLAGS;
-    channels.forEach((cId) => {
-      const chan = this.client.channels.get(cId);
-      if (!chan) return;
-      const perms = chan.guild && !chan.permissionsFor(chan.guild.me);
-      if (perms && !perms.has(pF.SEND_MESSAGES)) {
-        return;
-      }
-      const locale =
-          this.bot.getLocale && this.bot.getLocale(chan.guild && chan.guild.id);
-      const message = this._formatMessage(data, locale);
-      if (perms && !perms.has(pF.EMBED_LINKS)) {
-        const needEmbed = this._strings.get('noPermEmbed', locale);
-        chan.send('```' + message.title + '```\n' + needEmbed);
-      } else {
-        chan.send(message);
-      }
+    this._injectWebhookMetadata(data, (data) => {
+      const pF = this.Discord.Permissions.FLAGS;
+      channels.forEach((cId) => {
+        const chan = this.client.channels.get(cId);
+        if (!chan) return;
+        const perms = chan.guild && !chan.permissionsFor(chan.guild.me);
+        if (perms && !perms.has(pF.SEND_MESSAGES)) {
+          return;
+        }
+        const locale = this.bot.getLocale &&
+            this.bot.getLocale(chan.guild && chan.guild.id);
+        const message = this._formatMessage(data, locale);
+        if (perms && !perms.has(pF.EMBED_LINKS)) {
+          const needEmbed = this._strings.get('noPermEmbed', locale);
+          chan.send('```' + message.title + '```\n' + needEmbed);
+        } else {
+          chan.send(message);
+        }
+      });
     });
+  }
+
+  /**
+   * @description Fetch other metadata related to this webhook request that
+   * might be available, such as game information.
+   * @private
+   * @param {object} data Data object from {@link webhookHandler}.
+   * @param {Function} cb Callback with the same object that was passed in as
+   * the only parameter.
+   */
+  _injectWebhookMetadata(data, cb) {
+    const total = 1;
+    let done = 0;
+    const check = function() {
+      if (++done < total) return;
+      cb(data);
+    };
+    if (!data.game_id || data.game_id.length == 0) {
+      check();
+    } else {
+      const toSend = global.sqlCon.format(
+          'SELECT * FROM TwitchGames WHERE id=?', [data.game_id]);
+      global.sqlCon.query(toSend, (err, rows) => {
+        if (err) {
+          this.common.error(
+              'Failed to fetch TwitchGames database info: ' + data.game_id);
+          console.error(err);
+          check();
+          return;
+        }
+        if (rows) data.game = rows[0];
+        check();
+      });
+    }
   }
 
   /**
@@ -510,6 +555,12 @@ class Twitch extends SubModule {
     embed.setImage(thumb);
     embed.setColor([145, 71, 255]);
     embed.setDescription(`${data.title}\n${url}`);
+    if (data.game) {
+      embed.setFooter(data.game.name);
+      embed.setThumbnail(
+          data.game.thumbnailUrl.replace(/\{width\}/g, 600)
+              .replace(/\{height\}/g, 800));
+    }
     // embed.setFooter(`${data.viewer_count} viewers`);
     return embed;
   }
@@ -520,18 +571,21 @@ class Twitch extends SubModule {
    * @private
    */
   _resubCheck() {
-    const toSend = 'SELECT DISTINCT id,streamChangedState,login,lastModified,' +
-        'displayName,expiresAt FROM TwitchUsers INNER JOIN TwitchDiscord ' +
-        'ON id=twitchId WHERE ' +
-        'TIMESTAMPDIFF(DAY, expiresAt, NOW()) > -2 OR ' +
-        'TIMESTAMPDIFF(DAY, expiresAt, NOW()) IS NULL';
+    const toSend = global.sqlCon.format(
+        'SELECT DISTINCT id,streamChangedState,login,lastModified,' +
+            'displayName,expiresAt FROM TwitchUsers INNER JOIN TwitchDiscord ' +
+            'ON id=twitchId WHERE TwitchUsers.bot=? AND TwitchDiscord.bot=? ' +
+            'AND (TIMESTAMPDIFF(DAY, expiresAt, NOW()) > -2 OR ' +
+            'TIMESTAMPDIFF(DAY, expiresAt, NOW()) IS NULL)',
+        [this.client.user.id, this.client.user.id]);
     global.sqlCon.query(toSend, (err, rows) => {
       if (err) {
         this.error('Failed to fetch twitch alerts about to expire.');
         console.error(err);
         return;
       }
-      this.debug('Resubbing: ' + rows.map((el) => el.login).join(','));
+      if (rows.length === 0) return;
+      this.debug(`Resubbing: ${rows.map((el) => el.login).join(',')}`);
       rows.forEach((el) => this.subscribeToUser(el));
     });
   }
