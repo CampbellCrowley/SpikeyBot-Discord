@@ -56,8 +56,8 @@
             },
             {
               "description": "Disable NPC in Channel",
-              "command": "self",
-              "result": "Running the command without any arguments, will disable the text replacement."
+              "command": "self #roleplay",
+              "result": "Running the command with only the channel, will disable the text replacement in that channel."
             }
           ]
         },
