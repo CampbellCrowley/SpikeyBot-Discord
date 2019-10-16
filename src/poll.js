@@ -451,9 +451,8 @@ function Polling() {
       self.client.clearTimeout(poll.timeout);
       poll.timeout = null;
     }
-    const reactions = poll.message.reactions.filter((reaction) => {
-      return poll.emojis.concat(reaction.emoji.name);
-    });
+    const reactions = poll.message.reactions.filter(
+        (reaction) => poll.emojis.concat(reaction.emoji.name));
 
     const embed = new self.Discord.MessageEmbed();
     if (poll.title) embed.setTitle(poll.title);
@@ -470,9 +469,9 @@ function Polling() {
     let index = -1;
     let max = 0;
     reactions.forEach((r) => {
-      const i = poll.emojis.findIndex((e) => {
-        return e == r.emoji.name || e == r.emoji.id;
-      });
+      const i =
+          poll.emojis.findIndex((e) => e == r.emoji.name || e == r.emoji.id);
+      if (!poll.choices[i]) return;
       if (r.count - 1 > max) {
         index = i;
         max = r.count - 1;
@@ -485,16 +484,11 @@ function Polling() {
                 ' with ' + max + ' votes.');
     }
 
-    poll.message.channel.send(embed)
-        .then(() => {
-          // poll.message.delete().catch(() => {});
-        })
-        .catch((err) => {
-          self.error(
-              'Failed to send poll results to channel: ' +
-              poll.message.channel.id);
-          console.error(err);
-        });
+    poll.message.channel.send(embed).catch((err) => {
+      self.error(
+          'Failed to send poll results to channel: ' + poll.message.channel.id);
+      console.error(err);
+    });
     return true;
   }
 }
