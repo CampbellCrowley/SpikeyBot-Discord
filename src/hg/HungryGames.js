@@ -83,6 +83,15 @@ class HungryGames {
      */
     this.maxDelta = 5;
     /**
+     * @description The minimum amount of time to keep a
+     * {@link HungryGames~GuildGame} in memory before purging after a save.
+     * @private
+     * @type {number}
+     * @constant
+     * @default 3 minutes
+     */
+    this._purgeDelta = 3 * 60 * 1000;
+    /**
      * The file path to save current state for a specific guild relative to
      * {@link Common~guildSaveDir}.
      *
@@ -1106,7 +1115,7 @@ class HungryGames {
               this._parent.error('Failed to save HG data for ' + filename);
               console.error(err2);
             } else if (
-              this._findTimestamps[id] - saveStartTime < -15 * 60 * 1000) {
+              this._findTimestamps[id] - saveStartTime < -this._purgeDelta) {
               delete this._games[id];
               delete this._findTimestamps[id];
               this._parent.debug(`Purged ${id}`);
@@ -1128,7 +1137,7 @@ class HungryGames {
           console.error(err);
           return;
         }
-        if (this._findTimestamps[id] - Date.now() < -15 * 60 * 1000) {
+        if (this._findTimestamps[id] - Date.now() < -this._purgeDelta) {
           delete this._games[id];
           delete this._findTimestamps[id];
           this._parent.debug('Purged ' + id);

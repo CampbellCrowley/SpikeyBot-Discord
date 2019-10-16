@@ -588,10 +588,10 @@ function SpikeyBot() {
    *
    * @private
    * @constant
-   * @default 5 Minutes
+   * @default 2 Minutes
    * @type {number}
    */
-  const saveFrequency = 5 * 60 * 1000;
+  const saveFrequency = 2 * 60 * 1000;
 
   /**
    * Cache of all loaded guild's command prefixes. Populated asyncronously after
