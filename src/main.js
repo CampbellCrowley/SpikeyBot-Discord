@@ -2704,8 +2704,8 @@ function Main() {
       const median = Math.round(
           (sorted[Math.floor(sorted.length / 2)] +
                           sorted[Math.floor(
-                              (sorted.length % 2 == 0 ? sorted.length :
-                                                        sorted.length - 1) /
+                              (sorted.length % 2 == 0 ? sorted.length - 2 :
+                                                        sorted.length) /
                               2)]) /
                          2 * 10) /
           10;

@@ -13,10 +13,11 @@
     "strings/**/*.js",
     "*.js",
     ".*.js",
-    ".hooks/**/*.js"
+    ".hooks/**/*.js",
   ],
   "exclude": [
     "node_modules",
     "docs",
+    ".git",
   ]
 }
