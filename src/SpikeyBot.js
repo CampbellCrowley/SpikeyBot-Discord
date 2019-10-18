@@ -760,7 +760,7 @@ function SpikeyBot() {
                   common.error('Failed to edit reboot message.');
                   console.error(err);
                 });
-          } else {
+          } else if (parsed.channel) {
             common.error('Failed to find channel: ' + parsed.channel);
           }
           if (logChannel && !isDev && !testInstance && !botName) {

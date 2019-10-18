@@ -301,7 +301,7 @@ function WebStats() {
         delete host._allShards;
         host.path = host.path.replace('{id}', self.client.user.id);
 
-        if (!self.common.isRelease) {
+        if (!self.common.isRelease || !host.headers.Authorization) {
           self.debug(
               'NOOP POST: ' + host.host + host.path + ' ' +
               JSON.stringify(body));
@@ -310,9 +310,7 @@ function WebStats() {
 
         const req = https.request(host, (res) => {
           let content = '';
-          res.on('data', (chunk) => {
-            content += chunk;
-          });
+          res.on('data', (chunk) => content += chunk);
           res.on('end', () => {
             if (postTimeout) self.client.clearTimeout(postTimeout);
             postTimeout =
