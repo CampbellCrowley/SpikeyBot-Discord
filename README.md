@@ -38,6 +38,7 @@
 - airhorn (Plays airhorn sound)
 - rickroll (Plays Rick Astley in voice channel)
 - kokomo (Alias for `play kokomo`)
+- felix (Alias for `play felix`, which plays a sound clip of Felix saying "Don't touch me, I'm violent")
 - updategame (Changes bot's status)
 - reboot (Triggers a graceful shutdown of the entire bot. Assumes the parent process will restart automatically)
 - reload (Gracefully unloads all sub-modules, and re-loads and initializes them)
