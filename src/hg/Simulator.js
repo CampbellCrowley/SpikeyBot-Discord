@@ -124,6 +124,16 @@ class Simulator {
     });
     worker.on('exit', (code) => {
       if (code != 0) this.hg._parent.debug('Worker exited with code ' + code);
+      if (this.game.currentGame.day.state == 1) {
+        this.hg._parent.error(
+            'Worker exited but game is still in loading state! Considering ' +
+            'this a fatal error!');
+        this.game.currentGame.day.state = 0;
+        this.hg._parent.common.reply(
+            this.msg,
+            'Simulator crashed for unknown reason while simulating next day.',
+            'Try again with `hg next`, otherwise game may be in a bad state.');
+      }
     });
   }
 }
