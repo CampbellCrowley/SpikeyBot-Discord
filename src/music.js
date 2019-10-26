@@ -134,6 +134,11 @@ function Music() {
       url: 'https://www.youtube.com/watch?v=bOyJUF0p9Wc',
       file: './sounds/kokomo.ogg',
     },
+    'felix': {
+      cmd: 'felix',
+      url: 'https://uploads.twitchalerts.com/000/046/734/035/DontTouchMeImViolent-oxG.wav',
+      file: './sounds/DontTouchMeImViolent.wav',
+    },
   };
 
   /**
@@ -228,6 +233,10 @@ function Music() {
       msg.content = msg.prefix + 'play rickroll';
       self.command.trigger(msg);
     });
+    self.command.on('felix', (msg) => {
+      msg.content = msg.prefix + 'play felix';
+      self.command.trigger(msg);
+    });
 
     self.client.on('voiceStateUpdate', handleVoiceStateUpdate);
 
@@ -285,6 +294,7 @@ function Music() {
     self.command.deleteEvent('vi');
     self.command.deleteEvent('airhorn');
     self.command.deleteEvent('rickroll');
+    self.command.deleteEvent('felix');
     self.command.deleteEvent('follow');
     self.command.deleteEvent('musicstats');
     self.command.deleteEvent('volume');
@@ -474,11 +484,17 @@ function Music() {
     }
     const output = new self.Discord.MessageEmbed();
     const title = info.track || info.title;
+    const author = info.uploader ? `Uploaded by ${info.uploader}\n` : '';
+    const likes = (info.like_count || info.dislike_count) ?
+        `[👍 ${formNum(info.like_count)} 👎 ${formNum(info.dislike_count)}]: ` :
+        '';
+    const views =
+        info.view_count ? `[👁️ ${formNum(info.view_count)}]\n` : '';
+    const duration =
+        info._duration_raw ? `[${formatPlaytime(info._duration_raw)}]` : '';
     output.setDescription(
-        title + '\nUploaded by ' + info.uploader + '\n[👍 ' +
-        formNum(info.like_count) + ' 👎 ' + formNum(info.dislike_count) +
-        '][👁️ ' + formNum(info.view_count) + ']\n' + currentTime + '[' +
-        formatPlaytime(info._duration_raw) + ']' + remaining);
+        title + '\n' + author + likes + views + currentTime + duration +
+        remaining);
     if (info.thumbnail) output.setThumbnail(info.thumbnail);
     output.setURL(info.webpage_url);
     output.setColor([50, 200, 255]);
