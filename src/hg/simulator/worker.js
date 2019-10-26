@@ -145,7 +145,7 @@ class Worker {
                 .concat(sim.game.customEventStore.getArray('arena'))
                 .filter(
                     (evt) => !sim.game.disabledEventIds.arena.includes(evt.id));
-        do {
+        while (arenaEventPool.length > 0) {
           let total = arenaEventPool.length;
           if (sim.game.options.customEventWeight != 1) {
             arenaEventPool.forEach((el) => {
@@ -175,7 +175,7 @@ class Worker {
                     `**___${arenaEvent.message}___**`, sim.game));
             break;
           }
-        } while (arenaEventPool.length > 0);
+        }
         if (arenaEventPool.length == 0) doArenaEvent = false;
       }
       if (!doArenaEvent) {
