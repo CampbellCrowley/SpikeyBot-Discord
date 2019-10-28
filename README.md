@@ -76,7 +76,7 @@ Hungry Games requires a MariaDB server to be available for storage of all events
 1) Have a server/computer
     - SB is developed and tested solely on Debian Stretch (amd64), but other OS's may work.
 2) Install [NodeJS](https://nodejs.org/)
-    - The bot is currently running on NodeJS [v10.16.3](https://nodejs.org/dist/v10.16.3/). Other versions may work, but are untested.
+    - The bot is currently running on NodeJS [v10.17.0](https://nodejs.org/dist/v10.17.0/). Other versions may work, but are untested.
 3) Download source code
     - Clone this repository `git clone https://github.com/CampbellCrowley/SpikeyBot-Discord.git` or click the green download button in GitHub.
 4) Install system dependencies
