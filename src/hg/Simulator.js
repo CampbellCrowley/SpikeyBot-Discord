@@ -103,16 +103,17 @@ class Simulator {
         cb(msg.reason);
       }
       if (msg.game) {
-        this.game.currentGame = HungryGames.Game.from(msg.game.currentGame);
+        if (this.game.currentGame.day.state === 1) {
+          this.game.currentGame = HungryGames.Game.from(msg.game.currentGame);
+        } else {
+          this.hg._parent.warn(
+              'Aborted simulator saving due to not being in loading state.');
+        }
         cb();
       }
     });
-    worker.on('stdout', (msg) => {
-      this.hg._parent.debug(msg);
-    });
-    worker.on('stderr', (msg) => {
-      this.hg._parent.error(msg);
-    });
+    worker.on('stdout', (msg) => this.hg._parent.debug(msg));
+    worker.on('stderr', (msg) => this.hg._parent.error(msg));
     worker.on('error', (err) => {
       this.hg._parent.error('Simulation worker errored');
       console.error(err);

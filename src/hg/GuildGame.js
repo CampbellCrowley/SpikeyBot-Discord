@@ -421,6 +421,7 @@ class GuildGame {
     this.currentGame.ended = true;
     this.autoPlay = false;
     this.clearIntervals();
+    if (this.currentGame.day.state === 1) this.currentGame.day.state = 0;
   }
   /**
    * @description Clear all timeouts and intervals.

@@ -1565,10 +1565,11 @@ function HG() {
       // Signal ready to display events.
       self._fire('dayStateChange', id);
       HungryGames.ActionManager.dayStart(hg, game);
-
-      setTimeout(() => {
-        game.createInterval(dayStateModified);
-      }, game.options.disableOutput ? 0 : game.options.delayEvents);
+      if (!game._dayEventInterval && !game._autoPlayTimeout) {
+        game._autoPlayTimeout = setTimeout(() => {
+          if (!game._dayEventInterval) game.createInterval(dayStateModified);
+        }, game.options.disableOutput ? 0 : game.options.delayEvents);
+      }
     });
     const now = Date.now();
     if (now - iTime > 10) {
