@@ -106,7 +106,7 @@ class WebApi extends SubModule {
     });
     this._app.on('error', (err) => {
       if (err.code === 'EADDRINUSE') {
-        this.warn(
+        this.debug(
             'Webhooks failed to bind to port because it is in use. (' +
             err.port + ')');
         this.shutdown(true);

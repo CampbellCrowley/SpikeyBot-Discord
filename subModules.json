@@ -48,7 +48,8 @@
     "./cmdScheduling.js",
     "./hungryGames.js",
     "./web/hg.js",
-    "./twitch.js"
+    "./twitch.js",
+    "./memWatcher.js"
   ],
   "release": [
     "./moderation.js",
@@ -76,7 +77,8 @@
     "./web/stats.js",
     "./web/settings.js",
     "./web/proxy.js",
-    "./twitch.js"
+    "./twitch.js",
+    "./memWatcher.js"
   ],
   "rembot": [
     "./moderation.js",

@@ -260,7 +260,7 @@ function WebProxy() {
     if (err.code === 'EADDRINUSE') {
       aborted = true;
       self.shutdown(true);
-      self.warn(
+      self.debug(
           'Proxy failed to bind to port because it is in use. (' + err.port +
           ')');
     } else {

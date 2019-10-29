@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>SpikeyBot-Discord Source: hg/actions/RunCommandAction.js</title>
+	<title>SpikeyBot-Discord Source: memWatcher.js</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -86,119 +86,105 @@
 		<div id="main">
 			
 
-		<h1 class="page-title">Source: hg/actions/RunCommandAction.js</h1>
+		<h1 class="page-title">Source: memWatcher.js</h1>
     
 <section>
     <article>
         <pre
             class="sunlight-highlight-javascript linenums">// Copyright 2019 Campbell Crowley. All rights reserved.
 // Author: Campbell Crowley (dev@campbellcrowley.com)
-const ChannelAction = require('./ChannelAction.js');
-const MessageMaker = require('../../lib/MessageMaker.js');
+const SubModule = require('./subModule.js');
+const v8 = require('v8');
 
 /**
- * @description Run a command in the game channel.
- *
- * @memberof HungryGames~Action
- * @inner
- * @augments HungryGames~Action~ChannelAction
+ * @description Manages watching memory limits and attempts to mitigate issues
+ * that may arise as a result.
+ * @augments SubModule
  */
-class RunCommandAction extends ChannelAction {
+class MemWatcher extends SubModule {
   /**
-   * @description Create an action that will send a message to the game channel.
-   * @param {string} msg The command string.
-   * @param {string|external:Discord~User|external:Discord~GuildMember} author
-   * The Discord user ID to run this command as.
+   * @description Manages watching memory limits and attempts to mitigate issues
+   * that may arise as a result.
    */
-  constructor(msg, author) {
-    super((hg, game, channel) => {
-      try {
-        const res = hg._parent.command.trigger(
-            this._message,
-            new MessageMaker(
-                hg._parent, this._author, game.id, channel.id, this._message));
-        if (!res) {
-          channel
-              .send(
-                  `&lt;@${this._author}> RunCommandAction Failed: ` +
-                  `Unknown command: ${this._message}`)
-              .catch(() => {});
-        }
-      } catch (err) {
-        channel
-            .send(`&lt;@${this._author}> RunCommandAction Failed: ${err.message}.`)
-            .catch(() => {});
-      }
-    });
-    this.command = msg;
-    this.author = author;
+  constructor() {
+    super();
+    /** @inheritdoc */
+    this.myName = 'MemWatcher';
+    /**
+     * @description How often to check memory usage.
+     * @private
+     * @type {number}
+     * @default 5 Minutes
+     * @constant
+     */
+    this._frequency = 5 * 60 * 1000;
+    /**
+     * @description Amount of memory in bytes away from the limit to force this
+     * process to suicide.
+     * @private
+     * @type {number}
+     * @default 1000000 bytes (1MB)
+     * @constant
+     */
+    this._threshold = 1 * 1000 * 1000;
+
+    this.check = this.check.bind(this);
+    this.suicide = this.suicide.bind(this);
   }
-  /**
-   * @description Get the current command text.
-   * @public
-   * @returns {string} The current command text.
-   */
-  get command() {
-    return this._command;
+  /** @inheritdoc */
+  initialize() {
+    /**
+     * @description Created interval for checking memory usage.
+     * @private
+     * @type {?number}
+     */
+    this._interval = setInterval(this.check, this._frequency);
+    this.check();
   }
-  /**
-   * @description Update the message with a new value.
-   * @public
-   * @param {string} msg The new message text.
-   * @returns {?string} The new string, or null if failed for some reason.
-   */
-  set command(msg) {
-    if (typeof msg !== 'string' || msg.length === 0) return null;
-    this._message = msg;
-    this._saveData.command = msg;
-    return msg;
+  /** @inheritdoc */
+  shutdown() {
+    clearInterval(this._interval);
   }
+  /** @inheritdoc */
+  save() {}
+
   /**
-   * @description Get the current author ID.
+   * @description Check the current memory usage. Called in the interval, but
+   * can also be fired manually.
    * @public
-   * @returns {string} The current author ID.
    */
-  get author() {
-    return this._author;
-  }
-  /**
-   * @description Update the author with a new value.
-   * @public
-   * @param {string|external:Discord~User|external:Discord~GuildMember} author
-   * The new author or ID.
-   * @returns {?string} The new author ID, or null if failed for some reason.
-   */
-  set author(author) {
-    if (typeof author === 'string') {
-      if (author.length === 0) return null;
-    } else if (author &amp;&amp; author.id) {
-      author = author.id;
-    } else if (author &amp;&amp; author.user &amp;&amp; author.user.id) {
-      author = author.user.id;
-    } else {
-      return null;
+  check() {
+    const mem = v8.getHeapStatistics();
+    const limit = mem.heap_size_limit;
+    const total = mem.total_heap_size;
+
+    const mult = 1000000;
+
+    const limitHR = Math.round(limit / mult * 100) / 100;
+    const totalHR = Math.round(total / mult * 100) / 100;
+    const nums = `${total}/${limit}B (${totalHR}/${limitHR}MB)`;
+    const thresh =
+        `${limit-this._threshold-total} from threshold (${this._threshold})`;
+
+    this.debug(`Heap Snapshot: ${nums} ${thresh}`);
+
+    if (total >= limit - this._threshold) {
+      this.suicide();
+      return;
     }
-    this._author = author;
-    this._saveData.author = author;
-    return author;
   }
   /**
-   * @description Create action from save data.
+   * @description Attempts to force the bot to die because we are probably about
+   * to run out of memory and are about to crash anyways.
    * @public
-   * @static
-   * @override
-   * @param {external:Discord~Client} client Bot client context to get object
-   * references.
-   * @param {string} id Guild ID this action is for.
-   * @param {object} obj The parsed data from file.
-   * @returns {HungryGames~RunCommandAction} The created action.
    */
-  static create(client, id, obj) {
-    return new RunCommandAction(obj.command, obj.author);
+  suicide() {
+    this.warn(
+        'Causing process to suicide due to memory threshold being crossed.');
+    process.exit(-2);
   }
 }
-
-module.exports = RunCommandAction;
+module.exports = new MemWatcher();
 </pre>
     </article>
 </section>

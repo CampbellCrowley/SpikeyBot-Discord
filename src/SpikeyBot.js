@@ -1284,9 +1284,7 @@ function SpikeyBot() {
                   msg, 'Reboot scheduled. Waiting on at least ' +
                       mainModuleNames[i]);
             }
-            setTimeout(function() {
-              commandReboot(msg, true);
-            }, 10000);
+            setTimeout(() => commandReboot(msg, true), 10000);
             return;
           }
         }
@@ -1319,12 +1317,8 @@ function SpikeyBot() {
         const extra = doHardReboot ? ' (HARD)' : '';
         if (msg) {
           common.reply(msg, 'Rebooting...' + extra)
-              .then((msg_) => {
-                reboot(force, doHardReboot, msg_);
-              })
-              .catch(() => {
-                reboot(force, doHardReboot);
-              });
+              .then((msg_) => reboot(force, doHardReboot, msg_))
+              .catch(() => reboot(force, doHardReboot));
         } else {
           reboot(force, doHardReboot);
         }

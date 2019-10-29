@@ -31,7 +31,7 @@ function WebStats() {
 
   app.on('error', function(err) {
     if (err.code === 'EADDRINUSE') {
-      self.warn(
+      self.debug(
           'Stats failed to bind to port, starting in minimal mode. (' +
           err.port + ')');
       if (app) app.close();

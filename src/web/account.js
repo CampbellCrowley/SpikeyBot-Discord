@@ -36,7 +36,7 @@ function WebAccount() {
 
   app.on('error', function(err) {
     if (err.code === 'EADDRINUSE') {
-      self.warn(
+      self.debug(
           'Accounts failed to bind to port because it is in use. (' + err.port +
           ')');
       self.shutdown(true);

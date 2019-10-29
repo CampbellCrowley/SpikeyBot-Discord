@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>SpikeyBot-Discord Class: Echo</title>
+	<title>SpikeyBot-Discord Class: MemWatcher</title>
 
 	<!--[if lt IE 9]>
 	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -86,13 +86,13 @@
 		<div id="main">
 			
 
-	<h1 class="page-title">Class: Echo</h1>
+	<h1 class="page-title">Class: MemWatcher</h1>
 <section>
 
 <header>
     
         <h2>
-        Echo
+        MemWatcher
         </h2>
         
     
@@ -105,7 +105,7 @@
         
 <hr>
 <dt>
-    <h4 class="name" id="Echo"><span class="type-signature"></span>new Echo()</h4>
+    <h4 class="name" id="MemWatcher"><span class="type-signature"></span>new MemWatcher()</h4>
     
     
 </dt>
@@ -113,7 +113,8 @@
 
     
     <div class="description">
-        SubModule managing echo related commands.
+        Manages watching memory limits and attempts to mitigate issues
+that may arise as a result.
     </div>
     
 
@@ -159,8 +160,8 @@
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="echo.js.html">echo.js</a>,
-				 <a href="echo.js.html#sunlight-1-line-25">line 25</a>
+				<a href="memWatcher.js.html">memWatcher.js</a>,
+				 <a href="memWatcher.js.html#sunlight-1-line-16">line 16</a>
 			</li>
 		</ul>
 	</dd>
@@ -178,31 +179,6 @@
 
     
 
-    
-    <h5>Listens to Events:</h5>
-    <ul>
-        <li>external:Discord~Client#event:message</li>
-    
-        <li>Command#event:say</li>
-    
-        <li>Command#event:echo</li>
-    
-        <li>Command#event:become</li>
-    
-        <li>Command#event:self</li>
-    
-        <li>Command#event:be</li>
-    
-        <li>Command#event:character</li>
-    
-        <li>Command#event:impersonate</li>
-    
-        <li>Command#event:who</li>
-    
-        <li>Command#event:whois</li>
-    
-        <li>Command#event:whoami</li>
-    </ul>
     
 
     
@@ -233,13 +209,6 @@
     
 
     
-        <h3 class="subsection-title">Classes</h3>
-
-        <dl>
-            <dt><a href="Echo-Character.html">Character</a></dt>
-            <dd></dd>
-        </dl>
-    
 
     
 
@@ -251,15 +220,15 @@
         <dl>
             
 <hr>
-<dt class="name" id="._urlRegex">
-    <h4 id="._urlRegex"><span class="type-signature">&lt;private, static, constant> </span>_urlRegex<span class="type-signature"> :RegExp</span></h4>
+<dt class="name" id="_frequency">
+    <h4 id="_frequency"><span class="type-signature">&lt;private, constant> </span>_frequency<span class="type-signature"> :number</span></h4>
 
     
 </dt>
 <dd>
     
     <div class="description">
-        Regex to match all URLs in a string.
+        How often to check memory usage.
     </div>
     
 
@@ -268,89 +237,7 @@
         <ul>
             <li>
                 
-<span class="param-type">RegExp</span>
-
-
-
-            </li>
-        </ul>
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="echo.js.html">echo.js</a>,
-				 <a href="echo.js.html#sunlight-1-line-508">line 508</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt class="name" id="_characters">
-    <h4 id="_characters"><span class="type-signature">&lt;private> </span>_characters<span class="type-signature"> :object</span></h4>
-
-    
-</dt>
-<dd>
-    
-    <div class="description">
-        All npc characters a users are currently being. Mapped by
-guild id, then channel id, then user id.
-    </div>
-    
-
-    
-        <h5>Type:</h5>
-        <ul>
-            <li>
-                
-<span class="param-type">object</span>
+<span class="param-type">number</span>
 
 
 
@@ -388,7 +275,7 @@ guild id, then channel id, then user id.
 	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
 	<dd class="tag-default">
 		<ul class="dummy">
-			<li>{}</li>
+			<li>5 Minutes</li>
 		</ul>
 	</dd>
 	
@@ -400,8 +287,8 @@ guild id, then channel id, then user id.
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="echo.js.html">echo.js</a>,
-				 <a href="echo.js.html#sunlight-1-line-54">line 54</a>
+				<a href="memWatcher.js.html">memWatcher.js</a>,
+				 <a href="memWatcher.js.html#sunlight-1-line-27">line 27</a>
 			</li>
 		</ul>
 	</dd>
@@ -421,16 +308,15 @@ guild id, then channel id, then user id.
         
             
 <hr>
-<dt class="name" id="_prevUserSayCnt">
-    <h4 id="_prevUserSayCnt"><span class="type-signature">&lt;private> </span>_prevUserSayCnt<span class="type-signature"> :number</span></h4>
+<dt class="name" id="_interval">
+    <h4 id="_interval"><span class="type-signature">&lt;private, nullable> </span>_interval<span class="type-signature"> :number</span></h4>
 
     
 </dt>
 <dd>
     
     <div class="description">
-        The number of times the say command has been used
-consecutively by the previous user.
+        Created interval for checking memory usage.
     </div>
     
 
@@ -482,8 +368,8 @@ consecutively by the previous user.
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="echo.js.html">echo.js</a>,
-				 <a href="echo.js.html#sunlight-1-line-45">line 45</a>
+				<a href="memWatcher.js.html">memWatcher.js</a>,
+				 <a href="memWatcher.js.html#sunlight-1-line-48">line 48</a>
 			</li>
 		</ul>
 	</dd>
@@ -503,15 +389,16 @@ consecutively by the previous user.
         
             
 <hr>
-<dt class="name" id="_prevUserSayId">
-    <h4 id="_prevUserSayId"><span class="type-signature">&lt;private> </span>_prevUserSayId<span class="type-signature"> :string</span></h4>
+<dt class="name" id="_threshold">
+    <h4 id="_threshold"><span class="type-signature">&lt;private, constant> </span>_threshold<span class="type-signature"> :number</span></h4>
 
     
 </dt>
 <dd>
     
     <div class="description">
-        The id of the last user to use the say command.
+        Amount of memory in bytes away from the limit to force this
+process to suicide.
     </div>
     
 
@@ -520,7 +407,7 @@ consecutively by the previous user.
         <ul>
             <li>
                 
-<span class="param-type">string</span>
+<span class="param-type">number</span>
 
 
 
@@ -555,6 +442,13 @@ consecutively by the previous user.
 	
 
 	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>1000000 bytes (1MB)</li>
+		</ul>
+	</dd>
+	
 
 
 
@@ -563,8 +457,8 @@ consecutively by the previous user.
 	<dd class="tag-source">
 		<ul class="dummy">
 			<li>
-				<a href="echo.js.html">echo.js</a>,
-				 <a href="echo.js.html#sunlight-1-line-36">line 36</a>
+				<a href="memWatcher.js.html">memWatcher.js</a>,
+				 <a href="memWatcher.js.html#sunlight-1-line-36">line 36</a>
 			</li>
 		</ul>
 	</dd>
@@ -1654,1088 +1548,6 @@ before begin(), otherwise it is ignored.
             
 <hr>
 <dt>
-    <h4 class="name" id="_commandBecome"><span class="type-signature">&lt;private> </span>_commandBecome(msg)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Replace all following messages from a user with a character.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>msg</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Discord~Message</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Message that triggered command.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="echo.js.html">echo.js</a>,
-				 <a href="echo.js.html#sunlight-1-line-221">line 221</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-    <h5>Listens to Events:</h5>
-    <ul>
-        <li>Command#event:become</li>
-    
-        <li>Command#event:self</li>
-    
-        <li>Command#event:be</li>
-    
-        <li>Command#event:character</li>
-    
-        <li>Command#event:imprsonate</li>
-    </ul>
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="_commandResetCharacters"><span class="type-signature">&lt;private> </span>_commandResetCharacters(msg)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Reset all current characters, and delete all webhooks.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>msg</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Discord~Message</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The message that triggered this command.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="echo.js.html">echo.js</a>,
-				 <a href="echo.js.html#sunlight-1-line-432">line 432</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-    <h5>Listens to Events:</h5>
-    <ul>
-        <li>Command#event:resetcharacters</li>
-    </ul>
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="_commandSay"><span class="type-signature">&lt;private> </span>_commandSay(msg)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        The user's message will be deleted and the bot will send an
-identical message without the command to make it seem like the bot sent the
-message.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>msg</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Discord~Message</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">Message that triggered command.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="echo.js.html">echo.js</a>,
-				 <a href="echo.js.html#sunlight-1-line-188">line 188</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-    <h5>Listens to Events:</h5>
-    <ul>
-        <li>Command#event:say</li>
-    
-        <li>Command#event:echo</li>
-    </ul>
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="_commandWhoAmI"><span class="type-signature">&lt;private> </span>_commandWhoAmI(msg)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Tell the user who they are.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>msg</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Discord~Message</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The message that triggered this command.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="echo.js.html">echo.js</a>,
-				 <a href="echo.js.html#sunlight-1-line-309">line 309</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-    <h5>Listens to Events:</h5>
-    <ul>
-        <li>Command#event:whoami</li>
-    </ul>
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="_commandWhoIs"><span class="type-signature">&lt;private> </span>_commandWhoIs(msg)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        List all characters currently active in all channels of a guild.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>msg</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Discord~Message</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The message that triggered this command.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="echo.js.html">echo.js</a>,
-				 <a href="echo.js.html#sunlight-1-line-396">line 396</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-    <h5>Listens to Events:</h5>
-    <ul>
-        <li>Command#event:who</li>
-    
-        <li>Command#event:whois</li>
-    </ul>
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="_formatUsername"><span class="type-signature">&lt;private> </span>_formatUsername(u [, remove])</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Remove url from username, and format to rules similar to
-discord.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Argument</th>
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>u</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">The username.</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>remove</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-|
-
-<span class="param-type">RegExp</span>
-
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-
-            <td class="description last">A substring or RegExp to remove.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="echo.js.html">echo.js</a>,
-				 <a href="echo.js.html#sunlight-1-line-462">line 462</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    Formatted username.
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">string</span>
-
-
-
-    </dd>
-</dl>
-
-
-        
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
-    <h4 class="name" id="_onMessage"><span class="type-signature">&lt;private> </span>_onMessage(msg)</h4>
-    
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        Handle receiving a message for webhook replacing.
-    </div>
-    
-
-    
-
-    
-
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params table table-striped">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>msg</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Discord~Message</span>
-
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">The message that was sent.</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-    
-
-    
-<dl class="details">
-    
-
-	
-
-	
-
-	
-
-    
-
-    
-
-    
-
-    
-
-	
-
-	
-
-	
-
-	
-
-	
-
-
-
-	
-	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
-	<dd class="tag-source">
-		<ul class="dummy">
-			<li>
-				<a href="echo.js.html">echo.js</a>,
-				 <a href="echo.js.html#sunlight-1-line-138">line 138</a>
-			</li>
-		</ul>
-	</dd>
-	
-
-	
-
-	
-
-	
-</dl>
-
-
-    
-
-    
-
-    
-    <h5>Listens to Events:</h5>
-    <ul>
-        <li>Discord~Client#event:message</li>
-    </ul>
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-        
-            
-<hr>
-<dt>
     <h4 class="name" id="begin"><span class="type-signature"></span>begin(Discord, client, command, common, bot)</h4>
     
     
@@ -2953,6 +1765,95 @@ register command listeners.</td>
 			<li>
 				<a href="subModule.js.html">subModule.js</a>,
 				 <a href="subModule.js.html#sunlight-1-line-137">line 137</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="check"><span class="type-signature"></span>check()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Check the current memory usage. Called in the interval, but
+can also be fired manually.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="memWatcher.js.html">memWatcher.js</a>,
+				 <a href="memWatcher.js.html#sunlight-1-line-63">line 63</a>
 			</li>
 		</ul>
 	</dd>
@@ -4026,6 +2927,95 @@ synchronous.</td>
 			<li>
 				<a href="subModule.js.html">subModule.js</a>,
 				 <a href="subModule.js.html#sunlight-1-line-252">line 252</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="suicide"><span class="type-signature"></span>suicide()</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Attempts to force the bot to die because we are probably about
+to run out of memory and are about to crash anyways.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="memWatcher.js.html">memWatcher.js</a>,
+				 <a href="memWatcher.js.html#sunlight-1-line-88">line 88</a>
 			</li>
 		</ul>
 	</dd>
