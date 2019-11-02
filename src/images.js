@@ -41,7 +41,15 @@ class Images extends SubModule {
      * @type {number}
      * @default 1 Week
      */
-    this._cacheDuration = 7 * 24 * 60 * 60 * 1000;
+    this._imgurCacheDuration = 7 * 24 * 60 * 60 * 1000;
+    /**
+     * @description Maximum amount of time to cache a request to Giphy before we
+     * purge it.
+     * @private
+     * @type {number}
+     * @default 1 Day
+     */
+    this._giphyCacheDuration = 1 * 24 * 60 * 60 * 1000;
 
     this._commandCookie = this._commandCookie.bind(this);
     this._commandImgur = this._commandImgur.bind(this);
@@ -97,7 +105,6 @@ class Images extends SubModule {
       method: 'GET',
       headers: {
         'User-Agent': require('./common.js').ua,
-        'Authorization': 'Client-ID ' + auth.imgurID,
         'Content-Type': 'application/json',
       },
     };
@@ -116,7 +123,8 @@ class Images extends SubModule {
    */
   _imgurGet(path, cb) {
     if (this._imgurCache[path]) {
-      if (Date.now() - this._imgurCache[path].timestamp < this._cacheDuration) {
+      if (Date.now() - this._imgurCache[path].timestamp <
+          this._imgurCacheDuration) {
         cb(null, this._imgurCache[path].data);
         return;
       } else {
@@ -165,7 +173,8 @@ class Images extends SubModule {
    */
   _giphyGet(path, cb) {
     if (this._giphyCache[path]) {
-      if (Date.now() - this._giphyCache[path].timestamp < this._cacheDuration) {
+      if (Date.now() - this._giphyCache[path].timestamp <
+          this._giphyCacheDuration) {
         cb(null, this._giphyCache[path].data);
         return;
       } else {
