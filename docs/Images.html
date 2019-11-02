@@ -221,6 +221,77 @@
         <dl>
             
 <hr>
+<dt class="name" id=".giphyHost">
+    <h4 id=".giphyHost"><span class="type-signature">&lt;static> </span>giphyHost<span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Fetch the default host information for making a request to
+giphy.
+    </div>
+    
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="images.js.html">images.js</a>,
+				 <a href="images.js.html#sunlight-1-line-92">line 92</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
 <dt class="name" id=".imgurHost">
     <h4 id=".imgurHost"><span class="type-signature">&lt;static> </span>imgurHost<span class="type-signature"></span></h4>
 
@@ -272,7 +343,7 @@ imgur.
 		<ul class="dummy">
 			<li>
 				<a href="images.js.html">images.js</a>,
-				 <a href="images.js.html#sunlight-1-line-59">line 59</a>
+				 <a href="images.js.html#sunlight-1-line-71">line 71</a>
 			</li>
 		</ul>
 	</dd>
@@ -349,6 +420,95 @@ purge it.
 	<dd class="tag-default">
 		<ul class="dummy">
 			<li>1 Week</li>
+		</ul>
+	</dd>
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="images.js.html">images.js</a>,
+				 <a href="images.js.html#sunlight-1-line-44">line 44</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt class="name" id="_giphyCache">
+    <h4 id="_giphyCache"><span class="type-signature">&lt;private> </span>_giphyCache<span class="type-signature"> :object</span></h4>
+
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        Cached responses from recent requests to Giphy's API. Mapped
+by request path.
+    </div>
+    
+
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">object</span>
+
+
+
+            </li>
+        </ul>
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+	<dt class="tag-default method-doc-label method-doc-details-label">Default Value:</dt>
+	<dd class="tag-default">
+		<ul class="dummy">
+			<li>{}</li>
 		</ul>
 	</dd>
 	
@@ -1645,7 +1805,7 @@ before begin(), otherwise it is ignored.
 		<ul class="dummy">
 			<li>
 				<a href="images.js.html">images.js</a>,
-				 <a href="images.js.html#sunlight-1-line-172">line 172</a>
+				 <a href="images.js.html#sunlight-1-line-291">line 291</a>
 			</li>
 		</ul>
 	</dd>
@@ -1669,6 +1829,245 @@ before begin(), otherwise it is ignored.
         <li>Command#event:cookie</li>
     
         <li>Command#event:cookies</li>
+    </ul>
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="_commandGiphy"><span class="type-signature">&lt;private> </span>_commandGiphy(msg [, pages] [, count])</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Searches Giphy for the given query.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Argument</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>msg</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Discord~Message</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">Message that triggered command.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>pages</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    1
+                
+                </td>
+            
+
+            <td class="description last">Number of potential pages to view.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>count</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    20
+                
+                </td>
+            
+
+            <td class="description last">Number of results per each page.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="images.js.html">images.js</a>,
+				 <a href="images.js.html#sunlight-1-line-255">line 255</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
+    
+    <h5>Listens to Events:</h5>
+    <ul>
+        <li>Command#event:giphy</li>
     </ul>
     
 
@@ -1846,7 +2245,7 @@ before begin(), otherwise it is ignored.
 		<ul class="dummy">
 			<li>
 				<a href="images.js.html">images.js</a>,
-				 <a href="images.js.html#sunlight-1-line-131">line 131</a>
+				 <a href="images.js.html#sunlight-1-line-213">line 213</a>
 			</li>
 		</ul>
 	</dd>
@@ -1869,6 +2268,173 @@ before begin(), otherwise it is ignored.
     <ul>
         <li>Command#event:imgur</li>
     </ul>
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<hr>
+<dt>
+    <h4 class="name" id="_giphyGet"><span class="type-signature">&lt;private> </span>_giphyGet(path, cb)</h4>
+    
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Performs a get request to Giphy's API at the given path, and
+caches the result before returning it through the callback. If a cached
+response is available that isn't too old, that will immediately be returned
+instead.
+    </div>
+    
+
+    
+
+    
+
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params table table-striped">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>path</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The full API path after the domain and API version.
+Includes query parameters.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cb</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Callback once completed or failed. First parameter is
+optional error, second is otherwise the parsed JSON object from Imgur.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    
+
+    
+<dl class="details">
+    
+
+	
+
+	
+
+	
+
+    
+
+    
+
+    
+
+    
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+	
+	<dt class="tag-source method-doc-label method-doc-details-label">Source:</dt>
+	<dd class="tag-source">
+		<ul class="dummy">
+			<li>
+				<a href="images.js.html">images.js</a>,
+				 <a href="images.js.html#sunlight-1-line-166">line 166</a>
+			</li>
+		</ul>
+	</dd>
+	
+
+	
+
+	
+
+	
+</dl>
+
+
+    
+
+    
+
     
 
     
@@ -2018,7 +2584,7 @@ optional error, second is otherwise the parsed JSON object from Imgur.</td>
 		<ul class="dummy">
 			<li>
 				<a href="images.js.html">images.js</a>,
-				 <a href="images.js.html#sunlight-1-line-84">line 84</a>
+				 <a href="images.js.html#sunlight-1-line-117">line 117</a>
 			</li>
 		</ul>
 	</dd>
@@ -3710,7 +4276,7 @@ doing such may risk putting the module into an uncontrollable state.
 <span class="jsdoc-message">
 	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a>
 	
-		on Friday, November 1, 2019 7:13 PM (-07:00)
+		on Friday, November 1, 2019 7:39 PM (-07:00)
 	
 	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
 </span>

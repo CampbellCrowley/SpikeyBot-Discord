@@ -25,11 +25,24 @@
         {
           "command": "imgur",
           "description": "Lookup an image on Imgur.",
+          "aliases": "imgur, image, png, jpg, jpeg",
           "examples": [
             {
               "description": "Basic Usage",
               "command": "imgur cute cats",
               "result": "A reply with a picture that would show up if you searched 'cute cats' on Imgur will be sent."
+            }
+          ]
+        },
+        {
+          "command": "giphy",
+          "description": "Lookup a gif on Giphy.",
+          "aliases": "giphy, gif, giph",
+          "examples": [
+            {
+              "description": "Basic Usage",
+              "command": "gif cat",
+              "result": "A reply with a picture that would show up if you searched 'cat' on Giphy will be sent."
             }
           ]
         }
